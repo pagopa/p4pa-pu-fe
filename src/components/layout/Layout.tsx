@@ -5,7 +5,7 @@ import { BackButton } from '../BackButton';
 import { NavigateNext } from '@mui/icons-material';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 import { RouteHandleObject } from '../../models/Breadcrumbs';
-
+import { Header } from '../Header';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -33,7 +33,7 @@ export function Layout() {
           flexDirection="column"
           flexWrap={'nowrap'}>
           <Grid flexBasis={{ xs: 'fit-content' }} item xs={12} height="fit-content">
-            <Box width={'100%'}  p={3}>HEADER ELEMENT</Box>
+            <Header onAssistanceClick={() => window.open('/', '_blank')} />
           </Grid>
           <Grid
             item
