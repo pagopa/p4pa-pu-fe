@@ -3,14 +3,14 @@ export interface BreadcrumbPath {
     routeName?: string;
   }
   
-  export interface BreadcrumbElement {
+export interface BreadcrumbElement {
     name: string;
     fontWeight?: number;
     color?: string;
     href?: string;
   }
   
-  export interface RouteHandleObject {
+export interface RouteHandleObject {
     crumbs?: BreadcrumbPath;
     sidebar: { visible?: boolean };
     backButton?: boolean;

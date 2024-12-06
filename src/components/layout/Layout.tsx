@@ -32,7 +32,7 @@ export function Layout() {
           minHeight="100vh"
           flexDirection="column"
           flexWrap={'nowrap'}>
-          <Grid flexBasis={{ xs: 'fit-content' }} item xs={12} height="fit-content">
+          <Grid flexBasis={{ xs: 'fit-content' }} item xs={12} height="fit-content" component={'header'}>
             <Header onAssistanceClick={() => window.open('/', '_blank')} />
           </Grid>
           <Grid

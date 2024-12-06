@@ -1,4 +1,4 @@
-import {  Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 
 const Home = () => {
   
@@ -8,7 +8,7 @@ const Home = () => {
     <>
       <Typography variant="h3" >
           HOME
-        </Typography>
+      </Typography>
     </>
   );
 };

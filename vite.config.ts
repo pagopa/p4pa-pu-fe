@@ -1,9 +1,9 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import dotenv from 'dotenv'
-dotenv.config()
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import dotenv from 'dotenv';
+dotenv.config();
 
-const DEPLOY_PATH = process.env.DEPLOY_PATH || ''
+const DEPLOY_PATH = process.env.DEPLOY_PATH || '';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -14,7 +14,7 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      src: "/src",
+      src: '/src',
     },
   },
-})
+});

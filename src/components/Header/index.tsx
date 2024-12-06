@@ -2,7 +2,7 @@ import {
   HeaderAccount,
   HeaderProduct,
   JwtUser,
-  LogoPagoPAProduct,
+  PartyEntity,
   ProductEntity,
   UserAction
 } from '@pagopa/mui-italia';
@@ -10,8 +10,6 @@ import utils from '../../utils';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router-dom';
-import { Link } from '@mui/material';
-import { PageRoutes } from '../../routes/routes';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
@@ -33,11 +31,11 @@ export const Header = (props: HeaderProps) => {
   /* TO-DO call a service */
   const jwtUser: JwtUser | undefined = 
     {
-        id: 'marcopolo',
-        name: 'Marco',
-        surname: 'Polo',
-        email: ''
-      };
+      id: 'marcopolo',
+      name: 'Marco',
+      surname: 'Polo',
+      email: ''
+    };
 
   const userActions: UserAction[] = [
     {
@@ -59,15 +57,32 @@ export const Header = (props: HeaderProps) => {
 
   const product: ProductEntity = {
     id: '0',
-    title: ``,
-    productUrl: '#no-title',
-    linkType: 'external',
-    icon: (
-      <Link href={PageRoutes.HOME} target="_self">
-        <LogoPagoPAProduct color="default" title="PagoPA" />
-      </Link>
-    )
+    title: 'Area Riservata',
+    productUrl: '#area-riservata',
+    linkType: 'internal'
+    
   };
+  const partyList: Array<PartyEntity> = [
+    {
+      id: '0',
+      name: `Commissario straordinario per la realizzazione di
+      approdi temporanei e di interventi complementari per la
+      salvaguardia di Venezia`,
+      productRole: 'Amministratore',
+      logoUrl: '',
+    },
+    {
+      id: '1',
+      logoUrl: '',
+      name: 'Comune di Roma',
+      productRole: 'Operatore',
+    },
+    {
+      id: '2',
+      logoUrl: '',
+      name: 'Comune di Parma',
+      productRole: 'Operatore',
+    }];
 
   return (
     <>
@@ -79,7 +94,10 @@ export const Header = (props: HeaderProps) => {
         loggedUser={jwtUser}
         userActions={userActions}
       />
-      <HeaderProduct productsList={[product]} />
+      <HeaderProduct 
+        productsList={[product]}
+        partyList={partyList}
+        onSelectedParty={e => console.log('Selected Item:', e.name)} />
     </>
   );
 };
