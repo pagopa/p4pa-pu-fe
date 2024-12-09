@@ -4,8 +4,8 @@ import { Layout } from './components/layout/Layout';
 import { RouteHandleObject } from './models/Breadcrumbs';
 import Home from './routes/Home';
 import { PageRoutes } from './routes/routes';
-import { Theme } from './utils/theme'
-import { Navigate, RouterProvider, createBrowserRouter, useRouteError } from 'react-router-dom'
+import { Theme } from './utils/theme';
+import { Navigate, RouterProvider, createBrowserRouter, useRouteError } from 'react-router-dom';
 
 import './translations/i18n';
 
@@ -37,10 +37,10 @@ const router = createBrowserRouter([
 
 export const App = () => (
   <ErrorBoundary fallback={<ErrorFallback onReset={() => window.location.replace('/')} />}>
-      <Theme>
-        <RouterProvider router={router} />
-      </Theme>
+    <Theme>
+      <RouterProvider router={router} />
+    </Theme>
   </ErrorBoundary>
-)
+);
 
-export default App
+export default App;
