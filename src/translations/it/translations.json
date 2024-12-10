@@ -1,8 +1,15 @@
 {
     "app": {
-    "routes": {
-        "back": "Indietro"
+        "routes": {
+            "back": "Indietro"
+        }
+    },
+    "menu": {
+        "menu": "Menu",
+        "homepage": "Panoramica",
+        "debtpositions": "Dovuti",
+        "flows": "Flussi",
+        "subitem": "Item 1"
     }
-}
 }
   

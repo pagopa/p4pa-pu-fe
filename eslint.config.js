@@ -18,7 +18,6 @@ export default tseslint.config(
       'react-refresh': reactRefresh,
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
       'quotes': ['error', 'single'],
       'semi': ['error', 'always'],
       'indent': ['error', 2],

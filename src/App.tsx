@@ -21,9 +21,6 @@ const router = createBrowserRouter([
         element: <Home />,
         handle: {
           backButton: false,
-          sidebar: {
-            visibile: false
-          }
         } as RouteHandleObject
       },
       {

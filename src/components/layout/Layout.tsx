@@ -6,6 +6,8 @@ import { NavigateNext } from '@mui/icons-material';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 import { RouteHandleObject } from '../../models/Breadcrumbs';
 import { Header } from '../Header';
+import { Sidebar } from '../Sidebar/Sidebar';
+import utils from '../../utils';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -16,10 +18,16 @@ const defaultRouteHandle: RouteHandleObject = {
 export function Layout() {
   const matches = useMatches();
 
-  const { crumbs, backButton, backButtonText, backButtonFunction } = {
+  const overlay = utils.sidemenu.status.overlay.value;
+
+  document.body.style.overflow = overlay ? 'hidden' : 'auto';
+
+  const { crumbs, sidebar, backButton, backButtonText, backButtonFunction } = {
     ...defaultRouteHandle,
     ...(matches.find((match) => Boolean(match.handle))?.handle || {})
   } as RouteHandleObject;
+
+  const sidePadding = sidebar.visible ? 3 : { xs: 3, md: 12, lg: 27, xl: 34 };
 
   return (
     <>
@@ -42,8 +50,8 @@ export function Layout() {
             flexWrap={'wrap'}
             alignContent={'flex-start'}
             flexBasis={'50vh'}>
-            <Box>SIDEBAR</Box>
-            <Grid item bgcolor={grey['100']} padding={3} height={'100%'} xs >
+            {sidebar?.visible ? <Sidebar /> : null}
+            <Grid item bgcolor={grey['100']} padding={3} height={'100%'} xs paddingX={sidePadding}>
               {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
               {crumbs && (
                 <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
