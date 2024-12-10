@@ -57,8 +57,8 @@ export const Header = (props: HeaderProps) => {
 
   const product: ProductEntity = {
     id: '0',
-    title: 'Area Riservata',
-    productUrl: '#area-riservata',
+    title: 'Piattaforma Unitaria',
+    productUrl: '#pu',
     linkType: 'internal'
     
   };
