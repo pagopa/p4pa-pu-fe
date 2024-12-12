@@ -69,13 +69,19 @@ export const Sidebar: React.FC = () => {
           route: '/flows/item1',
           end: true
         },
+        {
+          label: t('menu.subitem'),
+          route: '/flows/item2',
+          end: true
+        },
       ]
     }
   ];
 
   return (
     <>
-      <Box sx={styles.container} component="aside">
+      <Box sx={styles.container} 
+        component="aside">
         <Grid
           alignItems="normal"
           display="flex"

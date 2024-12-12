@@ -18,7 +18,7 @@ export const sidebarStyles = (theme: Theme, collapsed: boolean): Record<string, 
     width: '100%',
     bgcolor: 'background.paper',
     transition: 'width 0.3s ease', // Add transition for smooth width change
-    [theme.breakpoints.up('sm')]: { width: collapsed ? '100%' : '300px' },
+    [theme.breakpoints.up('sm')]: { width: collapsed ? '100%' : '300px'},
     [theme.breakpoints.up('lg')]: { width: collapsed ? '88px' : '300px', minHeight: '50vh' }
   },
   overlay: {
@@ -37,7 +37,10 @@ export const sidebarStyles = (theme: Theme, collapsed: boolean): Record<string, 
   },
   list: {
     [theme.breakpoints.down('lg')]: {
-      display: collapsed ? 'none' : 'inline-block'
+      display: collapsed ? 'none' : 'inline-block',
+    },
+    [theme.breakpoints.up('lg')]: {
+      py: 3
     }
   },
   hamburgerBox: {
