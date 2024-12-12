@@ -1,4 +1,4 @@
-import { Box, Container, Grid } from '@mui/material';
+import { Container, Grid } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Outlet, ScrollRestoration, useMatches } from 'react-router-dom';
 import { BackButton } from '../BackButton';
@@ -8,6 +8,7 @@ import { RouteHandleObject } from '../../models/Breadcrumbs';
 import { Header } from '../Header';
 import { Sidebar } from '../Sidebar/Sidebar';
 import utils from '../../utils';
+import { Footer } from '../Footer';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -61,7 +62,7 @@ export function Layout() {
           </Grid>
           <Grid item xs={12} height="fit-content" flexBasis={{ xs: 'fit-content' }} flexShrink={3}>
             {/*xs in flex basis is specified to override mui clas.*/}
-            <Box width={'100%'}p={3}>FOOTER</Box>
+            <Footer />
           </Grid>
         </Grid>
       </Container>
