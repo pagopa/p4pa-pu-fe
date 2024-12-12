@@ -9,7 +9,11 @@
         "homepage": "Panoramica",
         "debtpositions": "Dovuti",
         "flows": "Flussi",
-        "subitem": "Item 1"
-    }
+        "subitem": "Second level item"
+    },
+    "sidebar": {
+    "collapse": "Comprimi il menu",
+    "expand": "Espandi il menu"
+  }
 }
   
