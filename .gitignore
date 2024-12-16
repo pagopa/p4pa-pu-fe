@@ -79,6 +79,7 @@ Desktop.ini
 ######################
 /bin/
 /deploy/
+/generated
 
 ######################
 # Logs
