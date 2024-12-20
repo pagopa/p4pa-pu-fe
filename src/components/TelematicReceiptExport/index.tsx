@@ -35,7 +35,7 @@ export const TelematicReceiptExport = () => {
                   Inserisci al meno uno dei campi per cominciare la ricerca.
                 </Typography>
               </Grid>
-              <Grid md={12} mx={1} my={1}>
+              <Grid md={12} my={1}>
                 <TextField
                   InputProps={{
                     endAdornment: <InputAdornment position="end"><Search/></InputAdornment>
@@ -50,7 +50,7 @@ export const TelematicReceiptExport = () => {
                 sx={{
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                }} my={1} mx={1}>
+                }} my={1}>
                 <Grid item lg={6}>
                   <TextField
                     InputProps={{
@@ -72,7 +72,7 @@ export const TelematicReceiptExport = () => {
                   />
                 </Grid>
               </Grid>
-              <Grid container md={12} mx={1} my={1}>
+              <Grid container md={12} my={1}>
                 <FormControl
                   fullWidth
                   size="small"
@@ -107,7 +107,7 @@ export const TelematicReceiptExport = () => {
                   </Select>
                 </FormControl>
               </Grid>
-              <Grid container md={12} direction="row-reverse" my={2} mx={1}>
+              <Grid container md={12} direction="row-reverse" my={2}>
                 <SearchButton/>
               </Grid>
             </Grid>
