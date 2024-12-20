@@ -1,7 +1,8 @@
 {
     "app": {
         "routes": {
-            "back": "Indietro"
+            "back": "Indietro",
+            "search": "Cerca"
         }
     },
     "menu": {
@@ -9,7 +10,7 @@
         "homepage": "Panoramica",
         "debtpositions": "Dovuti",
         "flows": "Flussi",
-        "subitem": "Second level item"
+        "subitem": "Ricevute Telematiche"
     },
     "sidebar": {
     "collapse": "Comprimi il menu",

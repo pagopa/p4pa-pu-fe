@@ -8,6 +8,7 @@ import { Theme } from './utils/theme';
 import { Navigate, RouterProvider, createBrowserRouter, useRouteError } from 'react-router-dom';
 
 import './translations/i18n';
+import TelematicReceiptExport from './routes/TelematicReceiptExport';
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
     }, 
     children: [
       {
+        path: '*',
+        element: <Navigate replace to={PageRoutes.HOME} />,
+      },
+      {
         path:PageRoutes.HOME,
         element: <Home />,
         handle: {
@@ -24,9 +29,12 @@ const router = createBrowserRouter([
         } as RouteHandleObject
       },
       {
-        path: '*',
-        element: <Navigate replace to={PageRoutes.HOME} />,
-      }
+        path:PageRoutes.TELEMATIC_RECEIPT_EXPORT,
+        element: <TelematicReceiptExport />,
+        handle: {
+          backButton: false,
+        } as RouteHandleObject
+      },
     ]
     
   }
