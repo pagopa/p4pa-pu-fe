@@ -11,6 +11,8 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router-dom';
 import { useOrganizations } from '../../hooks/useOrganizations';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
@@ -23,6 +25,7 @@ export const Header = (props: HeaderProps) => {
   const { onDocumentationClick = () => null } = props;
   const navigate = useNavigate();
   const organizations = useOrganizations();
+  const { setState, state } = useStore();
 
   const organizationsToMenuItems: PartyEntity[] | undefined = organizations?.map(item => ({
     id: item.organizationId.toString(),
@@ -72,6 +75,10 @@ export const Header = (props: HeaderProps) => {
     
   };
 
+  const onSelectedParty = (id: string) => {
+    setState(STATE.ORGANIZATION_ID, id);
+  }; 
+
   return (
     <>
       <HeaderAccount
@@ -82,10 +89,12 @@ export const Header = (props: HeaderProps) => {
         loggedUser={jwtUser}
         userActions={userActions}
       />
-      <HeaderProduct 
-        productsList={[product]}
+      <HeaderProduct
+        onSelectedParty={e => onSelectedParty(e.id)}
+        partyId={state.organizationId ? state.organizationId.toString() : undefined}
         partyList={organizationsToMenuItems}
-        onSelectedParty={e => console.log('Selected Item:', e.name)} />
+        productsList={[product]}
+      />
     </>
   );
 };
