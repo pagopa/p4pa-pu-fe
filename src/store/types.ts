@@ -1,7 +1,9 @@
 import { UserMemo } from '../models/User';
+import { OrganizationIdMemo } from '../models/Organization';
 
 export interface State {
   [STATE.USER_INFO]: UserMemo | undefined;
+  [STATE.ORGANIZATION_ID]: OrganizationIdMemo | undefined;
 }
 
 export interface StoreContextProps {
@@ -10,5 +12,6 @@ export interface StoreContextProps {
 }
 
 export enum STATE {
-  USER_INFO = 'userInfo'
+  USER_INFO = 'userInfo',
+  ORGANIZATION_ID = 'organizationId'
 }
