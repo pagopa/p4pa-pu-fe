@@ -11,12 +11,6 @@ export default defineConfig({
   build: {
     target: 'esnext'
   },
-  resolve: {
-    alias: {
-      src: "/src",
-      components: "/src/components"
-    },
-  },
   plugins: [react()],
   server: {
     port: 1234,
