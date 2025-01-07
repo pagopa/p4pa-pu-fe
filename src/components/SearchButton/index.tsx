@@ -10,7 +10,7 @@ export interface SearchButtonProps {
 export const SearchButton = (props: SearchButtonProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { text = 'search', onClick = () => navigate(-1) } = props;
+  const { text = 'search', onClick = () => navigate(0) } = props;
 
   return (
     <Button
