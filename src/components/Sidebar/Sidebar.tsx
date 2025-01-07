@@ -65,7 +65,7 @@ export const Sidebar: React.FC = () => {
       end: false,
       items: [
         {
-          label: t('menu.subitem'),
+          label: t('menu.telematicreceipt'),
           route: PageRoutes.TELEMATIC_RECEIPT_EXPORT,
           end: true
         },

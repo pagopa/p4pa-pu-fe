@@ -1,14 +1,24 @@
-import { ArrowForward, DateRange, Download, Search, Upload } from '@mui/icons-material';
+import { ArrowForward, ArrowForwardIos, DateRange, Download, Search, Upload } from '@mui/icons-material';
 import { Box, Button, Divider, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from '@mui/material';
 import { SearchButton } from '../../components/SearchButton';
+import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 
 export const TelematicReceiptExport = () => {
   const theme = useTheme();
 
   console.log(theme);
 
+  const breadcrumbs = {
+    elements: [
+      { name: 'flows', fontWeight:600, color: theme.palette.text.primary },
+      { name: 'telematicreceipt', color: theme.palette.text.disabled }
+    ]
+  };
+
   return (
     <>
+      <Breadcrumbs separator={<ArrowForwardIos sx={{ fontSize: '0.75rem' }} />} crumbs={breadcrumbs} />
+
       <Grid container direction="column">
         <Grid item mb={2}>
           <Typography variant="h3" >
