@@ -2,11 +2,12 @@ import { ArrowForward, ArrowForwardIos, DateRange, Download, Search, Upload } fr
 import { Box, Button, Divider, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from '@mui/material';
 import { SearchButton } from '../../components/SearchButton';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
+import { useState } from 'react';
 
 export const TelematicReceiptExport = () => {
   const theme = useTheme();
 
-  console.log(theme);
+  const [value, setValue] = useState('');
 
   const breadcrumbs = {
     elements: [
@@ -94,8 +95,8 @@ export const TelematicReceiptExport = () => {
                     id="search-by"
                     label="Tipo dovuto"
                     labelId="search-by-label"
-                    onChange={function noRefCheck(){}}
-                    value=""
+                    onChange={(event) => setValue(event.target.value)}
+                    value={value}
                   >
                     <MenuItem
                       selected
@@ -111,8 +112,8 @@ export const TelematicReceiptExport = () => {
                     </MenuItem>
                     <MenuItem 
                       selected
-                      value="option">
-                      Option
+                      value="">
+                      Empty
                     </MenuItem>
                   </Select>
                 </FormControl>
