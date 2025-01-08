@@ -1,7 +1,16 @@
 import React from 'react';
-import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText, useMediaQuery, type Theme, useTheme } from '@mui/material';
+import {
+  Collapse,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  useMediaQuery,
+  type Theme,
+  useTheme,
+} from '@mui/material';
 import { NavLink } from 'react-router-dom';
-import { SvgIconComponent } from '@mui/icons-material';
 import { alpha } from '@mui/material';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';
@@ -14,50 +23,47 @@ type Props = {
   onClick: React.MouseEventHandler<HTMLAnchorElement> | undefined;
 };
 
-function renderIcon(Icon: SvgIconComponent | (() => JSX.Element)) {
-  return <Icon></Icon>;
+function renderIcon(Icon: React.ElementType) {
+  return <Icon />;
 }
 
 export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
   const theme = useTheme();
-  const [selectedTarget, setSelectedTarget] = React.useState('');
   const [open, setOpen] = React.useState(false);
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const { changeMenuState } = useCollapseMenu(!lg);
+
   const handleCollapseClick = () => {
     if (collapsed) changeMenuState();
     setOpen(!open);
   };
-  const handleListItemClick = (target: string) => {
-    setSelectedTarget(target);
-  };
 
   return (
-    <ListItem disablePadding sx={{flexDirection: 'column', alignItems: 'stretch'}}>
+    <ListItem disablePadding sx={{ flexDirection: 'column', alignItems: 'stretch' }}>
       <ListItemButton
-        end={item.end || false}
-        component={NavLink}
-        to={item.route??''}
+        component={item.route && !item.items ? NavLink : 'div'} // Usa NavLink solo per elementi con una route senza figli
+        to={item.route ?? ''}
         onClick={item.items ? handleCollapseClick : onClick}
         sx={{
           px: 3,
           '&.hover': {
-            backgroundColor: 'none'
+            backgroundColor: 'none',
           },
           '&.active': {
-            fontWeight: 'bold',
+            fontWeight: item.route && !item.items ? 'bold' : 'normal', // Evidenzia solo gli elementi finali
             backgroundColor: alpha(theme.palette.primary.main, 0.08),
             borderRight: '2px solid',
             borderColor: theme.palette.primary.dark,
             '.MuiTypography-root': {
               fontWeight: 600,
-              color: theme.palette.primary.dark
+              color: theme.palette.primary.dark,
             },
             '.MuiListItemIcon-root': {
-              color: theme.palette.primary.dark
-            }
-          }
-        }}>
+              color: theme.palette.primary.dark,
+            },
+          },
+        }}
+      >
         {item.icon && <ListItemIcon aria-hidden="true">{renderIcon(item.icon)}</ListItemIcon>}
         {!collapsed && (
           <ListItemText
@@ -66,27 +72,23 @@ export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
             primary={item.label}
           />
         )}
-        {(item.items && !collapsed ) && 
-            (open ? <ExpandLessRoundedIcon color="action" /> : <ExpandMoreRoundedIcon color="action" />)}
+        {item.items && (open ? <ExpandLessRoundedIcon color="action" /> : <ExpandMoreRoundedIcon color="action" />)}
       </ListItemButton>
 
-      {item.items && 
+      {item.items && (
         <Collapse in={open && !collapsed} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
             {item.items.map((subitem, subindex) => (
-              <ListItemButton sx={{ pl: 8 }} 
-                selected={selectedTarget === `subitem-${subindex}`}
-                end={item.end || false}
-                component={NavLink}
-                to={subitem.route??''}
-                onClick={() => handleListItemClick(`subitem-${subindex}`)}
-                key={subindex}>
-                <ListItemText primary={subitem.label} key={subindex} />
-              </ListItemButton>
+              <SidebarMenuItem
+                key={subindex}
+                item={subitem}
+                collapsed={collapsed}
+                onClick={onClick}
+              />
             ))}
           </List>
         </Collapse>
-      }
+      )}
     </ListItem>
   );
 };
