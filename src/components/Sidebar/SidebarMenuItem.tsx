@@ -41,7 +41,7 @@ export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
   return (
     <ListItem disablePadding sx={{ flexDirection: 'column', alignItems: 'stretch' }}>
       <ListItemButton
-        component={item.route && !item.items ? NavLink : 'div'} // Usa NavLink solo per elementi con una route senza figli
+        component={item.route && !item.items ? NavLink : 'div'}
         to={item.route ?? ''}
         onClick={item.items ? handleCollapseClick : onClick}
         sx={{
@@ -50,7 +50,7 @@ export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
             backgroundColor: 'none',
           },
           '&.active': {
-            fontWeight: item.route && !item.items ? 'bold' : 'normal', // Evidenzia solo gli elementi finali
+            fontWeight: item.route && !item.items ? 'bold' : 'normal',
             backgroundColor: alpha(theme.palette.primary.main, 0.08),
             borderRight: '2px solid',
             borderColor: theme.palette.primary.dark,
