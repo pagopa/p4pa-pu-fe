@@ -61,12 +61,12 @@ export const Sidebar: React.FC = () => {
     {
       label: t('menu.flows'),
       icon: RotatedAltRouteIcon,
-      route: '/flows',
+      // route: '/flows',
       end: false,
       items: [
         {
           label: t('menu.telematicreceipt'),
-          route: PageRoutes.TELEMATIC_RECEIPT_EXPORT,
+          route: PageRoutes.TELEMATIC_RECEIPT,
           end: true
         },
         {

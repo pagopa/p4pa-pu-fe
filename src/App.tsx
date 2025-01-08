@@ -9,7 +9,7 @@ import { Navigate, RouterProvider, createBrowserRouter, useRouteError } from 're
 import { ApiClient } from './components/ApiClient';
 
 import './translations/i18n';
-import TelematicReceiptExport from './routes/TelematicReceiptExport';
+import TelematicReceiptExport from './routes/TelematicReceipt';
 import utils from './utils';
 
 const router = createBrowserRouter([
@@ -39,14 +39,14 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path:PageRoutes.TELEMATIC_RECEIPT_EXPORT,
+        path:PageRoutes.TELEMATIC_RECEIPT,
         element: <Layout />,
         handle: {
           backButton: false,
         } as RouteHandleObject,
         children: [
           {
-            path: PageRoutes.TELEMATIC_RECEIPT_EXPORT,
+            path: PageRoutes.TELEMATIC_RECEIPT,
             element: <TelematicReceiptExport />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />

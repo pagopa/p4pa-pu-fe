@@ -37,7 +37,7 @@ export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
       <ListItemButton
         end={item.end || false}
         component={NavLink}
-        to={item.route}
+        to={item.route??''}
         onClick={item.items ? handleCollapseClick : onClick}
         sx={{
           px: 3,
@@ -78,7 +78,7 @@ export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
                 selected={selectedTarget === `subitem-${subindex}`}
                 end={item.end || false}
                 component={NavLink}
-                to={subitem.route}
+                to={subitem.route??''}
                 onClick={() => handleListItemClick(`subitem-${subindex}`)}
                 key={subindex}>
                 <ListItemText primary={subitem.label} key={subindex} />
