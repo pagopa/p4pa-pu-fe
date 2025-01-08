@@ -10,6 +10,9 @@ import utils from '../../utils';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router-dom';
+import { useOrganizations } from '../../hooks/useOrganizations';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
@@ -21,6 +24,15 @@ export const Header = (props: HeaderProps) => {
   const { onAssistanceClick = () => null } = props;
   const { onDocumentationClick = () => null } = props;
   const navigate = useNavigate();
+  const organizations = useOrganizations();
+  const { setState, state } = useStore();
+
+  const organizationsToMenuItems: PartyEntity[] | undefined = organizations?.map(item => ({
+    id: item.organizationId.toString(),
+    logoUrl: item.orgLogo,
+    name: item.orgName || 'Ente senza nome',
+    productRole: item.operatorRole ? item.operatorRole[0] : ''
+  }));
 
   async function logoutUser() {
     /* TO-DO define a logout strategy */
@@ -62,27 +74,10 @@ export const Header = (props: HeaderProps) => {
     linkType: 'internal'
     
   };
-  const partyList: Array<PartyEntity> = [
-    {
-      id: '0',
-      name: `Commissario straordinario per la realizzazione di
-      approdi temporanei e di interventi complementari per la
-      salvaguardia di Venezia`,
-      productRole: 'Amministratore',
-      logoUrl: '',
-    },
-    {
-      id: '1',
-      logoUrl: '',
-      name: 'Comune di Roma',
-      productRole: 'Operatore',
-    },
-    {
-      id: '2',
-      logoUrl: '',
-      name: 'Comune di Parma',
-      productRole: 'Operatore',
-    }];
+
+  const onSelectedParty = (id: string) => {
+    setState(STATE.ORGANIZATION_ID, id);
+  }; 
 
   return (
     <>
@@ -94,10 +89,12 @@ export const Header = (props: HeaderProps) => {
         loggedUser={jwtUser}
         userActions={userActions}
       />
-      <HeaderProduct 
+      <HeaderProduct
+        onSelectedParty={e => onSelectedParty(e.id)}
+        partyId={state.organizationId ? state.organizationId.toString() : undefined}
+        partyList={organizationsToMenuItems}
         productsList={[product]}
-        partyList={partyList}
-        onSelectedParty={e => console.log('Selected Item:', e.name)} />
+      />
     </>
   );
 };
