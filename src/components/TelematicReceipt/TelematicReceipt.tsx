@@ -1,7 +1,7 @@
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
-import { ArrowForwardIos, DateRange, Download, Search, Upload } from '@mui/icons-material';
+import { ArrowForwardIos, CalendarToday, Download, Search, Upload } from '@mui/icons-material';
 import { Grid, Typography, useTheme } from '@mui/material';
 
 export const TelematicReceipt = () => {
@@ -42,8 +42,8 @@ export const TelematicReceipt = () => {
               description="Inserisci al meno uno dei campi per cominciare la ricerca."
               searchFields={[
                 { label: 'Cerca IUV', icon: <Search /> },
-                { label: 'Dal', icon: <DateRange />, gridWidth: 6},
-                { label: 'Al', icon: <DateRange />, gridWidth: 6 },
+                { label: 'Dal', icon: <CalendarToday />, gridWidth: 6},
+                { label: 'Al', icon: <CalendarToday />, gridWidth: 6 },
               ]}
               selectOptions={[
                 { label: 'TARI', value: 'tari' },

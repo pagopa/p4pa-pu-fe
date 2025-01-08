@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, Typography } from '@mui/material';
+import { Box, Button, Divider, Grid, Typography, useTheme } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 
 type ActionCardProps = {
@@ -12,6 +12,9 @@ type ActionCardProps = {
 };
 
 const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, onActionClick, onLinkClick }: ActionCardProps) => {
+
+  const theme = useTheme();
+
   return (
     <Box
       display="flex"
@@ -28,14 +31,21 @@ const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, on
         {description}
       </Typography>
       <Grid container direction="column" justifyContent={'start'}>
-        <Grid item lg={12}>
+        <Grid item lg={12} mb={1}>
           <Button
             size="large"
             startIcon={actionIcon}
             variant="outlined"
             fullWidth={false}
             onClick={onActionClick}
-            sx={{ mb: 2 }}
+            sx={{ 
+              mb: 2, 
+              borderWidth: '2px', 
+              borderColor: theme.palette.primary.main, 
+              '&:hover': {
+                borderWidth: '2px'
+              }
+            }}
           >
             {actionLabel}
           </Button>
@@ -43,7 +53,7 @@ const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, on
 
         <Divider orientation="horizontal" flexItem sx={{ display : 'block'}}/>
 
-        <Grid item lg={12}>
+        <Grid item lg={12} mt={2}>
           <Button
             size="large"
             endIcon={<ArrowForward />}

@@ -45,7 +45,7 @@ const SearchCard = ({ title, description, searchFields, selectOptions }: SearchC
               placeholder={field.placeholder || ''}
               InputProps={{
                 endAdornment: field.icon ? (
-                  <InputAdornment position="end">{field.icon}</InputAdornment>
+                  <InputAdornment position="end" sx={{ marginRight: '-16px' }}>{field.icon}</InputAdornment>
                 ) : undefined,
               }}
               size="small"
