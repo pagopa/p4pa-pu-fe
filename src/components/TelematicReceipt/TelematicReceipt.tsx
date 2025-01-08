@@ -26,7 +26,7 @@ export const TelematicReceipt = () => {
             Ricevute Telematiche
             </Typography>
           </Grid>
-          <Grid item mb={2}>
+          <Grid item mb={3}>
             <Typography variant="body1">
             Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato. 
             </Typography>

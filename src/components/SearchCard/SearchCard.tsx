@@ -39,7 +39,7 @@ const SearchCard = ({ title, description, searchFields, selectOptions }: SearchC
 
       <Grid container spacing={2}>
         {searchFields.map((field, index) => (
-          <Grid item xs={field.gridWidth || 12} key={index}>
+          <Grid item xs={field.gridWidth || 12} key={index} mb={1}>
             <TextField
               label={field.label}
               placeholder={field.placeholder || ''}
@@ -71,7 +71,7 @@ const SearchCard = ({ title, description, searchFields, selectOptions }: SearchC
         </Select>
       </FormControl>
 
-      <Box display="flex" justifyContent="flex-end" mt={2}>
+      <Box display="flex" justifyContent="flex-end" mt={1}>
         <SearchButton />
       </Box>
     </Box>
