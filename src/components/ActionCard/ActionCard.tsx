@@ -20,8 +20,8 @@ const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, on
       display="flex"
       flexDirection="column"
       width="100%"
-      borderRadius="4px"
-      padding="24px"
+      borderRadius={0.5}
+      padding={3}
       sx={{ backgroundColor: 'background.paper', mb: 3 }}
     >
       <Typography variant="h4" sx={{ mb: 1 }}>

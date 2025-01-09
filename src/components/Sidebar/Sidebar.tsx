@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Box,
   Divider,
@@ -30,6 +30,9 @@ export const Sidebar: React.FC = () => {
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
 
   const { collapsed, changeMenuState, setCollapsed, setOverlay, overlay } = useCollapseMenu(!lg);
+
+  const [selectedTarget, setSelectedTarget] = useState('');
+
 
   useEffect(() => {
     setOverlay(!(lg || collapsed));
@@ -114,7 +117,9 @@ export const Sidebar: React.FC = () => {
             aria-label={t('menu.description')}>
             {menuItems.map((item, index) => (
               <SidebarMenuItem
-                onClick={() => !lg && setCollapsed(true)}
+                onClick={() => !lg && setCollapsed(true) && setSelectedTarget('')}
+                selectedTarget={selectedTarget}
+                setSelectedTarget={setSelectedTarget}
                 collapsed={collapsed}
                 item={item}
                 key={index}

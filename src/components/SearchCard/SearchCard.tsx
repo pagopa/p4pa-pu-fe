@@ -26,8 +26,8 @@ const SearchCard = ({ title, description, searchFields, selectOptions }: SearchC
       display="flex"
       flexDirection="column"
       width="100%"
-      borderRadius="4px"
-      padding="24px"
+      borderRadius={0.5}
+      padding={3}
       sx={{ backgroundColor: 'background.paper' }}
     >
       <Typography variant="h6" sx={{ mb: 1 }}>
@@ -45,7 +45,7 @@ const SearchCard = ({ title, description, searchFields, selectOptions }: SearchC
               placeholder={field.placeholder || ''}
               InputProps={{
                 endAdornment: field.icon ? (
-                  <InputAdornment position="end" sx={{ marginRight: '-16px' }}>{field.icon}</InputAdornment>
+                  <InputAdornment position="end" sx={{ position:'relative', left: 16 }}>{field.icon}</InputAdornment>
                 ) : undefined,
               }}
               size="small"

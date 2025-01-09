@@ -19,7 +19,7 @@ export const SearchButton = (props: SearchButtonProps) => {
       size="medium"
       variant="contained"
       onClick={onClick}
-      sx={{ width: 80, height: 48 }}>
+      sx={{ width: '5rem', height: '3rem' }}>
       {t(`app.routes.${text}`)}
     </Button>
   );
