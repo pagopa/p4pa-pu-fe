@@ -7,37 +7,62 @@ import { PageRoutes } from './routes/routes';
 import { Theme } from './utils/theme';
 import { Navigate, RouterProvider, createBrowserRouter, useRouteError } from 'react-router-dom';
 import TelematicReceiptFlowExportOverview from './routes/TelematicReceiptFlowExportOverview';
+import { ApiClient } from './components/ApiClient';
+import { theme } from '@pagopa/mui-italia';
+
 import './translations/i18n';
+import utils from './utils';
 
 const router = createBrowserRouter([
   {
-    element: <Layout />,
-    ErrorBoundary: () => {
-      throw useRouteError();
-    }, 
+    element: <ApiClient client={utils.apiClient} />,
     children: [
-      {
-        path:PageRoutes.HOME,
-        element: <Home />,
-        handle: {
-          backButton: false,
-        } as RouteHandleObject
-      },
       {
         path: '*',
         element: <Navigate replace to={PageRoutes.HOME} />,
+        ErrorBoundary: () => {
+          throw useRouteError();
+        }
+      },
+      {
+        path: PageRoutes.HOME,
+        element: <Layout />,
+        handle: {
+          backButton: false,
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.HOME,
+            element: <Home />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
+        ]
       },
       {
         path:PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW,
-        element: <TelematicReceiptFlowExportOverview />,
+        element: <Layout />,
         handle: {
-          backButton: false,
-        } as RouteHandleObject
+          crumbs: {elements: [
+            { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
+            { name: 'telematicreceipt', color: theme.palette.text.primary },
+            { name: 'telematicReceiptFlowExportOverview', color: theme.palette.text.disabled }
+        ]},
+          backButton: true,
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW,
+            element: <TelematicReceiptFlowExportOverview />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
+        ]
       }
     ]
-    
   }
 ]);
+
 
 export const App = () => (
   <ErrorBoundary fallback={<ErrorFallback onReset={() => window.location.replace('/')} />}>

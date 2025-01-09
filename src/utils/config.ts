@@ -4,15 +4,23 @@ import { z, ZodError } from 'zod';
 /** Useful default values  */
 /** APIHOST default value works in conjunction with the proxy server. See the .proxyrc file */
 const {
-  DEPLOY_PATH = '/piattaformaunitaria',
+  VITE_DEPLOY_PATH = '/piattaformaunitaria',
+  VITE_APIHOST = 'http://localhost',
+  VITE_API_TIMEOUT = '10000',
 } = import.meta.env;
+const PARSED_API_TIMEOUT = Number.parseInt(VITE_API_TIMEOUT, 10);
+
 
 // ENV variables validation
 
 const DEPLOY_PATH_schema = z.string();
+const APIHOST_schema = z.string().url();
+const API_TIMEOUT_schema = z.number();
 
 try {
-  DEPLOY_PATH_schema.parse(DEPLOY_PATH);
+  DEPLOY_PATH_schema.parse(VITE_DEPLOY_PATH);
+  APIHOST_schema.parse(import.meta.env.VITE_APIHOST);
+  API_TIMEOUT_schema.parse(PARSED_API_TIMEOUT);
 } catch (e) {
   console.error('ENV variables validation fails', (e as ZodError).issues);
 }
@@ -21,6 +29,8 @@ type Config = {
   deployPath: string;
   pagopaLink: RootLinkType;
   tokenHeaderExcludePaths: string[];
+  baseURL: string;
+  apiTimeout: number;
 };
 
 const pagopaLink: RootLinkType = {
@@ -38,7 +48,17 @@ const config: Config = {
    *  see the command generate in the package.json file
    */
   pagopaLink,
-  deployPath: DEPLOY_PATH,
+  /** after timeout api call is aborted
+   * if settet to 0 will wait indefinitely
+   **/
+  apiTimeout: PARSED_API_TIMEOUT,
+  /** the prefix of all api calls works
+   * in conunction with the auto generated
+   * API client see the command generate
+   * in the package.json file
+   **/
+  baseURL: VITE_APIHOST,
+  deployPath: VITE_DEPLOY_PATH,
   /** This array is populated by paths that don't need a auth token */
   tokenHeaderExcludePaths: ['/token/']
 };
