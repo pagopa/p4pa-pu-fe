@@ -32,7 +32,7 @@ pool:
 
 stages:
   - stage: prepare_artifact
-    displayName: 'Build ${{ variables.environment }} apps'
+    displayName: 'Build ${{ variables.environment }} app'
     jobs:
       - job: job_build
         displayName: Build
@@ -73,7 +73,7 @@ stages:
               scriptType: 'bash'
               scriptLocation: inlineScript
               inlineScript: |
-                az storage blob sync --container '$web' --account-name $(storage_account) --source "$(Pipeline.Workspace)/Bundle --destination '$(blob_container_path)/'"
+                az storage blob sync --container '$web' --account-name $(storage_account) --source '$(Pipeline.Workspace)/Bundle' --destination '$(blob_container_path)/'
 
           - task: AzureCLI@1
             displayName: 'Purge CDN endpoint'
