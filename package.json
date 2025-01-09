@@ -9,7 +9,7 @@
     "generate-zod-schema": "yarn ts-to-zod --all",
     "generate": "yarn generate-api-client && yarn generate-data-contracts && yarn generate-zod-schema",
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "yarn generate && tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },
