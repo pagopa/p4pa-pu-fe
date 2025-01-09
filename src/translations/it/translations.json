@@ -1,7 +1,8 @@
 {
     "app": {
         "routes": {
-            "back": "Indietro"
+            "back": "Indietro",
+            "telematicReceiptFlowExportOverview": "Flussi esportati"
         }
     },
     "menu": {
@@ -14,6 +15,22 @@
     "sidebar": {
     "collapse": "Comprimi il menu",
     "expand": "Espandi il menu"
+  },
+  "telematicReceiptFlowExportOverview": {
+    "title": "Flussi esportati",
+    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+    "buttonReservationExport": "Prenota export",
+    "searchFlowName":"Cerca per nome flusso",
+    "from": "Dal",
+    "to": "Al",
+    "filter": "Filtra",
+    "removeFilter": "Rimuovi filtri"
+  },
+  "flowDataGrid": {
+    "name": "Nome",
+    "reservationDate": "Data prenotazione",
+    "operator": "Operatore",
+    "fileSize": "Dimensione File"
   }
 }
   
