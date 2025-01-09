@@ -1,33 +1,15 @@
 import { Box, Button, Grid, InputAdornment, TextField, Typography, useTheme } from '@mui/material';
-import { ArrowForwardIos, CalendarToday, Downloading, Search } from '@mui/icons-material';
+import { CalendarToday, Downloading, Search } from '@mui/icons-material';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import FlowDataGrid from '../../components/FlowDataGrid/FlowDataGrid';
-import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
-import { BackButton } from '../BackButton';
 import { useTranslation } from 'react-i18next';
 
 const TelematicReceiptFlowExportOverview = () => {
     const theme = useTheme();
     const { t } = useTranslation();
 
-    const breadcrumbs = {
-        elements: [
-            { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-            { name: 'telematicreceipt', color: theme.palette.text.primary },
-            { name: 'telematicReceiptFlowExportOverview', color: theme.palette.text.disabled }
-        ]
-    };
-
     return (
         <>
-            <Grid container direction={'row'}>
-                <Grid item alignContent={'center'}>
-                    <BackButton />
-                </Grid>
-                <Grid item alignContent={'center'} marginTop={0.5} marginLeft={2.5}>
-                    <Breadcrumbs separator={<ArrowForwardIos sx={{ fontSize: '0.75rem' }} />} crumbs={breadcrumbs} />
-                </Grid>
-            </Grid>
             <Box
                 sx={{
                     display: 'flex',
