@@ -6,7 +6,7 @@ import Home from './routes/Home';
 import { PageRoutes } from './routes/routes';
 import { Theme } from './utils/theme';
 import { Navigate, RouterProvider, createBrowserRouter, useRouteError } from 'react-router-dom';
-
+import TelematicReceiptFlowExportOverview from './routes/TelematicReceiptFlowExportOverview';
 import './translations/i18n';
 
 const router = createBrowserRouter([
@@ -26,6 +26,13 @@ const router = createBrowserRouter([
       {
         path: '*',
         element: <Navigate replace to={PageRoutes.HOME} />,
+      },
+      {
+        path:PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW,
+        element: <TelematicReceiptFlowExportOverview />,
+        handle: {
+          backButton: false,
+        } as RouteHandleObject
       }
     ]
     
