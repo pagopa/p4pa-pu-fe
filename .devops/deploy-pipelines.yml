@@ -43,9 +43,10 @@ stages:
               vite_deploy_path: '$(deploy_path)'
               vite_api_timeout: '$(api_timeout)'
               vite_apihost: '$(api_host)'
-      - script: |
-          yarn build
-        displayName: 'yarn build'
 
-      - publish: dist
-        artifact: Bundle
+          - script: |
+              yarn build
+            displayName: 'yarn build'
+
+          - publish: dist
+            artifact: Bundle
