@@ -1,5 +1,15 @@
 import React from 'react';
-import { Box, Grid, TextField, Typography, FormControl, InputLabel, Select, MenuItem, InputAdornment } from '@mui/material';
+import {
+  Box,
+  Grid,
+  TextField,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  InputAdornment,
+} from '@mui/material';
 import { SearchButton } from '../SearchButton';
 
 type SearchCardProps = {
@@ -18,7 +28,6 @@ type SearchCardProps = {
 };
 
 const SearchCard = ({ title, description, searchFields, selectOptions }: SearchCardProps) => {
-
   const [selectedValue, setSelectedValue] = React.useState('');
 
   return (
@@ -30,14 +39,18 @@ const SearchCard = ({ title, description, searchFields, selectOptions }: SearchC
       padding={3}
       sx={{ backgroundColor: 'background.paper' }}
     >
-      <Typography variant="h6" sx={{ mb: 1 }}>
+      <Typography id="search-card-title" variant="h6" sx={{ mb: 1 }}>
         {title}
       </Typography>
-      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+      <Typography
+        id="search-card-description"
+        variant="body2"
+        sx={{ color: 'text.secondary', mb: 2 }}
+      >
         {description}
       </Typography>
 
-      <Grid container spacing={2}>
+      <Grid container spacing={2} role="group" aria-labelledby="search-card-fields">
         {searchFields.map((field, index) => (
           <Grid item xs={field.gridWidth || 12} key={index} mb={1}>
             <TextField
@@ -45,7 +58,7 @@ const SearchCard = ({ title, description, searchFields, selectOptions }: SearchC
               placeholder={field.placeholder || ''}
               InputProps={{
                 endAdornment: field.icon ? (
-                  <InputAdornment position="end" sx={{ position:'relative', left: 16 }}>{field.icon}</InputAdornment>
+                  <InputAdornment position="end">{field.icon}</InputAdornment>
                 ) : undefined,
               }}
               size="small"
@@ -55,10 +68,16 @@ const SearchCard = ({ title, description, searchFields, selectOptions }: SearchC
         ))}
       </Grid>
 
-      <FormControl fullWidth size="small" sx={{ my: 2 }}>
-        <InputLabel id="due-type">Tipo dovuto</InputLabel>
+      <FormControl
+        fullWidth
+        size="small"
+        sx={{ my: 2 }}
+        role="combobox"
+        aria-labelledby="due-type-label"
+      >
+        <InputLabel id="due-type-label">Tipo dovuto</InputLabel>
         <Select
-          labelId="due-type"
+          labelId="due-type-label"
           value={selectedValue}
           onChange={(event) => setSelectedValue(event.target.value)}
           label="Tipo dovuto"

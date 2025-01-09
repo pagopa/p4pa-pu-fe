@@ -1,26 +1,15 @@
-import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
-import { ArrowForwardIos, CalendarToday, Download, Search, Upload } from '@mui/icons-material';
-import { Grid, Typography, useTheme } from '@mui/material';
+import { CalendarToday, Download, Search, Upload } from '@mui/icons-material';
+import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 export const TelematicReceipt = () => {
 
-  const theme = useTheme();
   const { t } = useTranslation();
-
-  const breadcrumbs = {
-    elements: [
-      { name: 'flows', fontWeight:600, color: theme.palette.text.primary },
-      { name: 'telematicreceipt', color: theme.palette.text.disabled }
-    ]
-  };
 
   return (
     <>
-
-      <Breadcrumbs separator={<ArrowForwardIos sx={{ fontSize: '0.75rem' }} />} crumbs={breadcrumbs} />
       <Grid container direction="row">
         <Grid container direction="column">
           <Grid item mb={2}>

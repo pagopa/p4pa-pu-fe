@@ -16,56 +16,58 @@ const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, on
   const theme = useTheme();
 
   return (
-    <Box
-      display="flex"
-      flexDirection="column"
-      width="100%"
-      borderRadius={0.5}
-      padding={3}
-      sx={{ backgroundColor: 'background.paper', mb: 3 }}
-    >
-      <Typography variant="h4" sx={{ mb: 1 }}>
-        {title}
-      </Typography>
-      <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
-        {description}
-      </Typography>
-      <Grid container direction="column" justifyContent={'start'}>
-        <Grid item lg={12} mb={1}>
-          <Button
-            size="large"
-            startIcon={actionIcon}
-            variant="outlined"
-            fullWidth={false}
-            onClick={onActionClick}
-            sx={{ 
-              mb: 2, 
-              borderWidth: '2px', 
-              borderColor: theme.palette.primary.main, 
-              '&:hover': {
-                borderWidth: '2px'
-              }
-            }}
-          >
-            {actionLabel}
-          </Button>
-        </Grid>
+    <section aria-labelledby="action-card-title">
+      <Box
+        display="flex"
+        flexDirection="column"
+        width="100%"
+        borderRadius={0.5}
+        padding={3}
+        sx={{ backgroundColor: 'background.paper', mb: 3 }}
+      >
+        <Typography id="action-card-title" variant="h6" sx={{ mb: 1 }}>
+          {title}
+        </Typography>
+        <Typography id="action-card-description" variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+          {description}
+        </Typography>
+        <Grid container direction="column" justifyContent={'start'}>
+          <Grid item lg={12} mb={1}>
+            <Button
+              size="large"
+              startIcon={actionIcon}
+              variant="outlined"
+              fullWidth={false}
+              onClick={onActionClick}
+              sx={{ 
+                mb: 2, 
+                borderWidth: '2px', 
+                borderColor: theme.palette.primary.main, 
+                '&:hover': {
+                  borderWidth: '2px'
+                }
+              }}
+            >
+              {actionLabel}
+            </Button>
+          </Grid>
 
-        <Divider orientation="horizontal" flexItem sx={{ display : 'block'}}/>
+          <Divider orientation="horizontal" flexItem sx={{ display : 'block'}}/>
 
-        <Grid item lg={12} mt={2}>
-          <Button
-            size="large"
-            endIcon={<ArrowForward />}
-            variant="text"
-            fullWidth={false}
-            onClick={onLinkClick}
-          >
-            {linkLabel}
-          </Button>
+          <Grid item lg={12} mt={2}>
+            <Button
+              size="large"
+              endIcon={<ArrowForward />}
+              variant="text"
+              fullWidth={false}
+              onClick={onLinkClick}
+            >
+              {linkLabel}
+            </Button>
+          </Grid>
         </Grid>
-      </Grid>
-    </Box>
+      </Box>
+    </section>
   );
 };
 
