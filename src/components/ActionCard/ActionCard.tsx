@@ -18,6 +18,7 @@ const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, on
   return (
     <section aria-labelledby="action-card-title">
       <Box
+        component={'section'}
         display="flex"
         flexDirection="column"
         width="100%"

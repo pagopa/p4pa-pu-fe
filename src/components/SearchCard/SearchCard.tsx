@@ -32,6 +32,7 @@ const SearchCard = ({ title, description, searchFields, selectOptions }: SearchC
 
   return (
     <Box
+      component={'section'}
       display="flex"
       flexDirection="column"
       width="100%"
