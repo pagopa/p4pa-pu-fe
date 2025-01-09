@@ -1,10 +1,10 @@
-import { DataGrid, GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { IconButton, useTheme } from '@mui/material';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { IconButton } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
+import CustomDataGrid from './CustomDataGrid';
 
 const FlowDataGrid = () => {
-  const theme = useTheme();
   const { t } = useTranslation();
 
   const rows = [
@@ -58,16 +58,12 @@ const FlowDataGrid = () => {
   ];
 
   return (
-    <DataGrid
+    <CustomDataGrid
       hideFooter
       disableColumnMenu
       disableColumnResize
       rows={rows}
       columns={columns}
-      sx={{
-        backgroundColor: theme.palette.background.paper,
-        border: 'none'
-      }}
     />
   );
 };
