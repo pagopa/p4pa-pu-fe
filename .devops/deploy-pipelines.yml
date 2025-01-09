@@ -15,11 +15,13 @@ pr: none
 variables:
   NODE_VERSION: '22.12.0'
   vmImageNameDefault: 'ubuntu-latest'
+  blob_container_path: 'piattaformaunitaria'
 
   environment: 'DEV'
   azure_subscription: '$(DEV_AZURE_SUBSCRIPTION)'
   cdn_endpoint: '$(DEV_CDN_ENDPOINT)'
   cdn_profile: '$(DEV_CDN_PROFILE)'
+  storage_account: '$(DEV_STORAGE_ACCOUNT_NAME)'
   resource_group: '$(DEV_STORAGE_ACCOUNT_RG)'
   deploy_path: '$(DEV_DEPLOY_PATH)'
   api_timeout: 0
@@ -50,3 +52,33 @@ stages:
 
           - publish: dist
             artifact: Bundle
+
+  # Deploy bundle
+  - stage: stage_deploy
+    displayName: 'Deploy to ${{ variables.environment }} storage'
+    condition: succeeded()
+    jobs:
+      - job: job_deploy
+        displayName: 'Deploy'
+        steps:
+          - checkout: none
+
+          - download: current
+            artifact: Bundle
+
+          - task: AzureCLI@2
+            displayName: 'Sync storage'
+            inputs:
+              azureSubscription: '$(AZURE_SUBSCRIPTION)'
+              scriptType: 'bash'
+              scriptLocation: inlineScript
+              inlineScript: |
+                az storage blob sync --container '$web' --account-name $(storage_account) --source "$(Pipeline.Workspace)/Bundle --destination '$(blob_container_path)/'"
+
+          - task: AzureCLI@1
+            displayName: 'Purge CDN endpoint'
+            inputs:
+              azureSubscription: '$(AZURE_SUBSCRIPTION)'
+              scriptLocation: inlineScript
+              inlineScript: |
+                az cdn endpoint purge -g $(resource_group) -n $(cdn_endpoint) --profile-name $(cdn_profile) --content-paths "/*"
