@@ -1,0 +1,45 @@
+# Azure DevOps pipeline to release a new version and deploy to production.
+trigger:
+  branches:
+    include:
+      - develop
+      - uat
+      - main
+      - P4ADEV-1694/deploy-pipeline
+  paths:
+    include:
+      - src/*
+
+pr: none
+
+variables:
+  NODE_VERSION: '22.12.0'
+  vmImageNameDefault: 'ubuntu-latest'
+
+  environment: 'DEV'
+  azure_subscription: '$(DEV_AZURE_SUBSCRIPTION)'
+  cdn_endpoint: '$(DEV_CDN_ENDPOINT)'
+  cdn_profile: '$(DEV_CDN_PROFILE)'
+  resource_group: '$(DEV_STORAGE_ACCOUNT_RG)'
+  deploy_path: '$(DEV_DEPLOY_PATH)'
+  api_timeout: 0
+  api_host: '$(DEV_API_HOST)'
+
+pool:
+  vmImage: '$(vmImageNameDefault)'
+
+stages:
+  - stage: prepare_artifact
+    displayName: 'Build ${{ variables.environment }} apps'
+    jobs:
+      - job: job_build
+        displayName: Build
+        steps:
+          - template: local-templates/node-job-setup.yaml
+
+          - template: local-templates/setup-env.yaml
+            parameters:
+              env: '$(environment)'
+              vite_deploy_path: '$(deploy_path)'
+              vite_api_timeout: '$(api_timeout)'
+              vite_apihost: '$(api_host)'
