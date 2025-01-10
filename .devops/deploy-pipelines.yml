@@ -5,7 +5,6 @@ trigger:
       - develop
       - uat
       - main
-      - P4ADEV-1694/deploy-pipeline
   paths:
     include:
       - src/*
