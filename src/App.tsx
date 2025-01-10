@@ -11,10 +11,13 @@ import { ApiClient } from './components/ApiClient';
 import { theme } from '@pagopa/mui-italia';
 
 import './translations/i18n';
+import TelematicReceiptExport from './routes/TelematicReceipt';
 import utils from './utils';
+
 
 const router = createBrowserRouter([
   {
+    
     element: <ApiClient client={utils.apiClient} />,
     children: [
       {
@@ -58,7 +61,28 @@ const router = createBrowserRouter([
             errorElement: <ErrorFallback />
           },
         ]
-      }
+      },
+      {
+        path:PageRoutes.TELEMATIC_RECEIPT,
+        element: <Layout />,
+        handle: {
+          crumbs: {
+            elements: [
+              { name: 'flows', fontWeight:600, color: theme.palette.text.primary },
+              { name: 'telematicreceipt', color: theme.palette.text.disabled }
+            ]
+          },
+          backButton: false,
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.TELEMATIC_RECEIPT,
+            element: <TelematicReceiptExport />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
+        ]
+      },
     ]
   }
 ]);
