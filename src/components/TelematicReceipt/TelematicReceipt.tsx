@@ -3,10 +3,13 @@ import ActionCard from '../ActionCard/ActionCard';
 import { CalendarToday, Download, Search, Upload } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { PageRoutes } from '../../routes/routes';
 
 export const TelematicReceipt = () => {
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -52,7 +55,7 @@ export const TelematicReceipt = () => {
               actionIcon={<Download/>}
               linkLabel={t('telematicReceipts.exportedflowsviewbutton')}
               onActionClick={() => console.log('Export triggered')}
-              onLinkClick={() => console.log('View exports')}
+              onLinkClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW)}
             />
 
             <ActionCard

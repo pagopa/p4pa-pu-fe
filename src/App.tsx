@@ -6,12 +6,13 @@ import Home from './routes/Home';
 import { PageRoutes } from './routes/routes';
 import { Theme } from './utils/theme';
 import { Navigate, RouterProvider, createBrowserRouter, useRouteError } from 'react-router-dom';
+import TelematicReceiptFlowExportOverview from './routes/TelematicReceiptFlowExportOverview';
 import { ApiClient } from './components/ApiClient';
+import { theme } from '@pagopa/mui-italia';
 
 import './translations/i18n';
 import TelematicReceiptExport from './routes/TelematicReceipt';
 import utils from './utils';
-import { theme } from '@pagopa/mui-italia';
 
 
 const router = createBrowserRouter([
@@ -36,6 +37,26 @@ const router = createBrowserRouter([
           {
             path: PageRoutes.HOME,
             element: <Home />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
+        ]
+      },
+      {
+        path:PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW,
+        element: <Layout />,
+        handle: {
+          crumbs: {elements: [
+            { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
+            { name: 'telematicreceipt', color: theme.palette.text.primary },
+            { name: 'telematicReceiptFlowExportOverview', color: theme.palette.text.disabled }
+        ]},
+          backButton: true,
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW,
+            element: <TelematicReceiptFlowExportOverview />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
           },
