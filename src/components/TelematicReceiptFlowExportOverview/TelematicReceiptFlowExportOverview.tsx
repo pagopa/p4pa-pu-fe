@@ -98,9 +98,8 @@ const TelematicReceiptFlowExportOverview = () => {
             </Grid>
             <Box
                 sx={{
-                    borderColor: theme.palette.grey[200],
-                    borderWidth: 20,
-                    borderStyle: 'solid'
+                    bgcolor: theme.palette.grey[200],
+                    padding: 2
                 }}
             >
                 <FlowDataGrid />
