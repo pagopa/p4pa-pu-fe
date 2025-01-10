@@ -1,7 +1,10 @@
 {
     "app": {
         "routes": {
-            "back": "Indietro"
+            "back": "Indietro",
+            "search": "Cerca",
+            "flows": "Flussi",
+            "telematicreceipt": "Ricevute Telematiche"
         }
     },
     "menu": {
@@ -9,11 +12,32 @@
         "homepage": "Panoramica",
         "debtpositions": "Dovuti",
         "flows": "Flussi",
-        "subitem": "Second level item"
+        "telematicreceipt": "Ricevute Telematiche",
+        "subitem": "Item"
     },
     "sidebar": {
     "collapse": "Comprimi il menu",
     "expand": "Espandi il menu"
+    },
+    "telematicReceipts": {
+    "title": "Ricevute Telematiche",
+    "description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
+    "search": "Cerca Ricevuta Telematica",
+    "searchdescription" :"Inserisci al meno uno dei campi per cominciare la ricerca.",
+    "iuv": "Cerca IUV",
+    "from": "Dal",
+    "to": "Al",
+    "duetipe": "Tipo dovuto",
+    "tari": "TARI",
+    "trafficoffence": "Violazione al codice della strada",
+    "downloadflowstitle": "Scarica Flussi di Ricevute Telematiche",
+    "downloadflowsdescription": "Richiede l’esportazione di Ricevute Telematiche in un certo intervallo di tempo.",
+    "exportrequestbutton": "Prenota export",
+    "exportedflowsviewbutton": "Vedi flussi esportati",
+    "importflowstitle": "Importa Flussi di Ricevute Telematiche",
+    "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Ricevute Telematiche mancanti.",
+    "importflowbutton": "Importa flusso",
+    "importedflowsviewbutton": "Vedi flussi importati"
   }
 }
   
