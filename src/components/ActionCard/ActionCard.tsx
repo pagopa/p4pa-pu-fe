@@ -1,4 +1,4 @@
-import { Box, Button, Divider, Grid, Typography, useTheme } from '@mui/material';
+import { Box, Button, Divider, Grid, Typography } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 
 type ActionCardProps = {
@@ -13,7 +13,6 @@ type ActionCardProps = {
 
 const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, onActionClick, onLinkClick }: ActionCardProps) => {
 
-  const theme = useTheme();
 
   return (
     <section aria-labelledby="action-card-title">
@@ -40,14 +39,6 @@ const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, on
               variant="outlined"
               fullWidth={false}
               onClick={onActionClick}
-              sx={{ 
-                mb: 2, 
-                borderWidth: '2px', 
-                borderColor: theme.palette.primary.main, 
-                '&:hover': {
-                  borderWidth: '2px'
-                }
-              }}
             >
               {actionLabel}
             </Button>
