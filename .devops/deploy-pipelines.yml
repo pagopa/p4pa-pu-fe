@@ -17,15 +17,39 @@ variables:
   vmImageNameDefault: 'ubuntu-latest'
   blob_container_path: 'piattaformaunitaria'
 
-  environment: 'DEV'
-  azure_subscription: '$(DEV_AZURE_SUBSCRIPTION)'
-  cdn_endpoint: '$(DEV_CDN_ENDPOINT)'
-  cdn_profile: '$(DEV_CDN_PROFILE)'
-  storage_account: '$(DEV_STORAGE_ACCOUNT_NAME)'
-  resource_group: '$(DEV_STORAGE_ACCOUNT_RG)'
-  deploy_path: '$(DEV_DEPLOY_PATH)'
-  api_timeout: 0
-  api_host: '$(DEV_API_HOST)'
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
+    environment: 'UAT'
+    azure_subscription: '$(UAT_AZURE_SUBSCRIPTION)'
+    cdn_endpoint: '$(UAT_CDN_ENDPOINT)'
+    cdn_profile: '$(UAT_CDN_PROFILE)'
+    storage_account: '$(UAT_STORAGE_ACCOUNT_NAME)'
+    resource_group: '$(UAT_STORAGE_ACCOUNT_RG)'
+    deploy_path: '$(UAT_DEPLOY_PATH)'
+    api_timeout: 0
+    api_host: '$(UAT_API_HOST)'
+
+  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+    environment: 'PROD'
+    azure_subscription: '$(PROD_AZURE_SUBSCRIPTION)'
+    cdn_endpoint: '$(PROD_CDN_ENDPOINT)'
+    cdn_profile: '$(PROD_CDN_PROFILE)'
+    storage_account: '$(PROD_STORAGE_ACCOUNT_NAME)'
+    resource_group: '$(PROD_STORAGE_ACCOUNT_RG)'
+    deploy_path: '$(PROD_DEPLOY_PATH)'
+    api_timeout: 0
+    api_host: '$(PROD_API_HOST)'
+
+  # every branch different from past will be considered as DEV
+  ${{ else }}:
+    environment: 'DEV'
+    azure_subscription: '$(DEV_AZURE_SUBSCRIPTION)'
+    cdn_endpoint: '$(DEV_CDN_ENDPOINT)'
+    cdn_profile: '$(DEV_CDN_PROFILE)'
+    storage_account: '$(DEV_STORAGE_ACCOUNT_NAME)'
+    resource_group: '$(DEV_STORAGE_ACCOUNT_RG)'
+    deploy_path: '$(DEV_DEPLOY_PATH)'
+    api_timeout: 0
+    api_host: '$(DEV_API_HOST)'
 
 pool:
   vmImage: '$(vmImageNameDefault)'
