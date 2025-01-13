@@ -1,42 +1,30 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { createMock } from 'zodock';
-import * as schemas from '../../generated/zod-schema';
+import * as schemas from '../../../generated/zod-schema';
 import { renderHook, waitFor } from "@testing-library/react";
-import utils from '.';
+import utils from '..';
 import { AxiosResponse } from 'axios';
-import loaders from './loaders';
+import loaders from '../loaders';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactNode } from 'react';
 
-// Mock the utils module
-vi.mock('./utils', () => {
-  const originalModule = vi.importActual('utils');
-  return {
-    ...originalModule,
-    apiClient: {
-      organizations: {
-        getOrganizations: vi.fn(),
-      }
-    }
-  };
-  
-});
 
+const queryClient = new QueryClient();
+const wrapper = ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider> );
 
 describe('api loaders', () => {
 
-  const queryClient = new QueryClient();
-  const wrapper = ({ children }: { children: ReactNode }) => (
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-  );
-  /* beforeEach(() => {
+  
+  beforeEach(() => {
     vi.clearAllMocks();
-  }); */
+    queryClient.clear();
+  });
 
   describe('Organizations API', () => {
 
     it('should call getOrganizations obtaining a formal response', async () => {
-      const dataMock = createMock(schemas.organizationDTOSchema.required());
+      const dataMock = [ createMock(schemas.organizationDTOSchema.required()) ] ;
 
       const apiMock = vi.spyOn(utils.apiClient.organizations, 'getOrganizations').mockResolvedValue({
         data: dataMock,
@@ -48,10 +36,9 @@ describe('api loaders', () => {
       })
       
       await waitFor(() => {
-        console.log()
         expect(apiMock).toHaveBeenCalled();
-        expect(result.current.isFetched).toBeTruthy();
-        // expect(result.current.data).toEqual(dataMock);
+        expect(result.current.isSuccess).toBeTruthy();
+        expect(result.current.data).toEqual(dataMock);
       });
 
     });
