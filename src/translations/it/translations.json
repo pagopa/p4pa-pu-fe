@@ -5,7 +5,8 @@
             "telematicReceiptFlowExportOverview": "Flussi esportati",
             "search": "Cerca",
             "flows": "Flussi",
-            "telematicreceipt": "Ricevute Telematiche"
+            "telematicreceipt": "Ricevute Telematiche",
+            "telematicreceiptsearchresults": "Risultato ricerca"
         }
     },
     "menu": {
@@ -35,7 +36,7 @@
     "reservationDate": "Data prenotazione",
     "operator": "Operatore",
     "fileSize": "Dimensione File"
-    },
+  },
     "telematicReceipts": {
     "title": "Ricevute Telematiche",
     "description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
@@ -44,7 +45,7 @@
     "iuv": "Cerca IUV",
     "from": "Dal",
     "to": "Al",
-    "duetipe": "Tipo dovuto",
+    "duetype": "Tipo dovuto",
     "tari": "TARI",
     "trafficoffence": "Violazione al codice della strada",
     "downloadflowstitle": "Scarica Flussi di Ricevute Telematiche",
@@ -55,6 +56,22 @@
     "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Ricevute Telematiche mancanti.",
     "importflowbutton": "Importa flusso",
     "importedflowsviewbutton": "Vedi flussi importati"
+  },
+  "telematicReceiptSearchResultsDataGrid": {
+    "iuv": "IUV",
+    "amount": "Importo",
+    "duetype": "Tipo dovuto",
+    "paymentdate": "Data Esito"
+  },
+  "telematicreceiptSearchResults":{
+    "title": "Risultato ricerca",
+    "description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
+    "searchIUV":"Cerca IUV",
+    "duetype":"Tipo dovuto",
+    "from": "Dal",
+    "to": "Al",
+    "filter": "Filtra",
+    "filterFields": "Filtri"
   }
 }
   

@@ -13,6 +13,7 @@ import { theme } from '@pagopa/mui-italia';
 import './translations/i18n';
 import TelematicReceiptExport from './routes/TelematicReceipt';
 import utils from './utils';
+import TelematicReceiptSearchResults from './components/TelematicReceiptSearchResults/TelematicReceiptSearchResults';
 
 
 const router = createBrowserRouter([
@@ -50,7 +51,7 @@ const router = createBrowserRouter([
             { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
             { name: 'telematicreceipt', color: theme.palette.text.primary },
             { name: 'telematicReceiptFlowExportOverview', color: theme.palette.text.disabled }
-        ]},
+          ]},
           backButton: true,
         } as RouteHandleObject,
         children: [
@@ -78,6 +79,28 @@ const router = createBrowserRouter([
           {
             path: PageRoutes.TELEMATIC_RECEIPT,
             element: <TelematicReceiptExport />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
+        ]
+      },
+      {
+        path:PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS,
+        element: <Layout />,
+        handle: {
+          crumbs: {
+            elements: [
+              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'telematicreceipt', color: theme.palette.text.primary },
+              { name: 'telematicreceiptsearchresults', color: theme.palette.text.disabled }
+            ]
+          },
+          backButton: true,
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS,
+            element: <TelematicReceiptSearchResults />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
           },
