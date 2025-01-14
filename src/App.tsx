@@ -50,7 +50,7 @@ const router = createBrowserRouter([
             { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
             { name: 'telematicreceipt', color: theme.palette.text.primary },
             { name: 'telematicReceiptFlowExportOverview', color: theme.palette.text.disabled }
-        ]},
+          ]},
           backButton: true,
         } as RouteHandleObject,
         children: [

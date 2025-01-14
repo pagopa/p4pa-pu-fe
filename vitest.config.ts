@@ -1,11 +1,8 @@
-import { configDefaults, defineConfig } from 'vitest/config';
-import { config } from 'dotenv';
-import path from 'path';
-
+import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     globals: true,
-		clearMocks: true,
+    clearMocks: true,
     environment: 'jsdom',
   },
 });
