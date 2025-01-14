@@ -2,6 +2,7 @@ import React from 'react';
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import MoreVert from '@mui/icons-material/MoreVert';
 import { FileDownload, ReadMore } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
 
 interface ActionMenuProps {
   rowId: number;
@@ -10,6 +11,7 @@ interface ActionMenuProps {
 const ActionMenu: React.FC<ActionMenuProps> = ({ rowId }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  const { t } = useTranslation();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -44,13 +46,13 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ rowId }) => {
           <ListItemIcon>
             <ReadMore fontSize="inherit" />
           </ListItemIcon>
-          <ListItemText>Dettagio</ListItemText>
+          <ListItemText>{t('actionMenu.detail')}</ListItemText>
         </MenuItem>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <FileDownload fontSize="inherit" />
           </ListItemIcon>
-          <ListItemText>Scarica</ListItemText>
+          <ListItemText>{t('actionMenu.download')}</ListItemText>
         </MenuItem>
       </Menu>
     </>

@@ -72,6 +72,10 @@
     "to": "Al",
     "filter": "Filtra",
     "filterFields": "Filtri"
+  },
+  "actionMenu":{
+    "detail": "Dettaglio",
+    "download": "Scarica"
   }
 }
   
