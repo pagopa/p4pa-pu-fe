@@ -104,8 +104,7 @@ const TelematicReceiptSearchResults = () => {
           </Grid>
         </Grid>
         <Grid 
-          item 
-          lg={12} 
+          container
           p={2}
           height="100%"
           sx={{
