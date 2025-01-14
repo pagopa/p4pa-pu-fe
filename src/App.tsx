@@ -11,9 +11,10 @@ import { ApiClient } from './components/ApiClient';
 import { theme } from '@pagopa/mui-italia';
 
 import './translations/i18n';
-import TelematicReceiptExport from './routes/TelematicReceipt';
 import utils from './utils';
-import TelematicReceiptSearchResults from './components/TelematicReceiptSearchResults/TelematicReceiptSearchResults';
+import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResults';
+import TelematicReceipt from './routes/TelematicReceipt';
+
 
 
 const router = createBrowserRouter([
@@ -78,7 +79,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: PageRoutes.TELEMATIC_RECEIPT,
-            element: <TelematicReceiptExport />,
+            element: <TelematicReceipt />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
           },
