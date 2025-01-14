@@ -21,7 +21,7 @@ export const setupInterceptors = (client: Client) => {
     (response) => response,
     (error) => {
       if (error.response.status === 401) {
-        /* TO-DO set a redirection */
+        console.log('401');
       }
     }
   );
