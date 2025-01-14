@@ -15,5 +15,8 @@ export default defineConfig({
   server: {
     port: 1234,
   },
+  define: {
+    _global: ({})
+  }
   
 });
