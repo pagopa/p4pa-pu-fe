@@ -39,6 +39,11 @@ const customTheme = createTheme({
           minHeight: theme.spacing(6)
         })
       }
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        asterisk: {color: theme.palette.error.dark}
+      }
     }
   }
 });
