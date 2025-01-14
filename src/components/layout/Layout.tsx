@@ -1,4 +1,4 @@
-import { Box, Container, Grid, Stack } from '@mui/material';
+import { Container, Grid, Stack } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Outlet, ScrollRestoration, useMatches } from 'react-router-dom';
 import { BackButton } from '../BackButton';
@@ -54,13 +54,13 @@ export function Layout() {
             {sidebar?.visible ? <Sidebar /> : null}
             <Grid item bgcolor={grey['100']} padding={3} height={'100%'} xs paddingX={sidePadding}>
               <Stack direction="row" 
-                     justifyContent="flex-start"
-                     alignItems="center"
-                     spacing={2}>
-              {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
-              {crumbs && (
-                <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
-              )}
+                justifyContent="flex-start"
+                alignItems="center"
+                spacing={2}>
+                {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
+                {crumbs && (
+                  <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
+                )}
               </Stack>
               <Outlet />
             </Grid>
