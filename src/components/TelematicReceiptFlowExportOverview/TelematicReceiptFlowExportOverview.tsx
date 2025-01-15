@@ -28,7 +28,7 @@ const TelematicReceiptFlowExportOverview = () => {
           size="large"
           startIcon={<Downloading />}
           variant="outlined"
-          onClick={() => navigate(PageRoutes.EXPORT_FLOW_RESERVATION) }
+          onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION) }
         >
           {t('telematicReceiptFlowExportOverview.buttonReservationExport')}
         </Button>

@@ -109,14 +109,17 @@ const router = createBrowserRouter([
         ]
       },
       {
-        path:PageRoutes.EXPORT_FLOW_RESERVATION,
+        path:PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION,
         element: <Layout />,
         handle: {
           backButton: true,
+          sidebar: {
+            visibile: false
+          },
         } as RouteHandleObject,
         children: [
           {
-            path: PageRoutes.EXPORT_FLOW_RESERVATION,
+            path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION,
             element: <ExportFlowReservation />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
