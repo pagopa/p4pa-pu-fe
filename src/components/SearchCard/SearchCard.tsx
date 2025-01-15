@@ -21,18 +21,19 @@ type SearchCardProps = {
     icon?: React.ReactNode;
     gridWidth?: number;
   }[];
+  selectLabel: string;
   selectOptions: {
     label: string;
     value: string;
   }[];
 };
 
-const SearchCard = ({ title, description, searchFields, selectOptions }: SearchCardProps) => {
+const SearchCard = ({ title, description, searchFields, selectLabel, selectOptions }: SearchCardProps) => {
   const [selectedValue, setSelectedValue] = React.useState('');
-
   return (
     <Box
       component={'section'}
+      aria-label={title}
       display="flex"
       flexDirection="column"
       width="100%"
@@ -76,12 +77,12 @@ const SearchCard = ({ title, description, searchFields, selectOptions }: SearchC
         role="combobox"
         aria-labelledby="due-type-label"
       >
-        <InputLabel id="due-type-label">Tipo dovuto</InputLabel>
+        <InputLabel id="due-type-label">{selectLabel}</InputLabel>
         <Select
           labelId="due-type-label"
           value={selectedValue}
           onChange={(event) => setSelectedValue(event.target.value)}
-          label="Tipo dovuto"
+          label={selectLabel}
         >
           {selectOptions.map((option, index) => (
             <MenuItem key={index} value={option.value}>

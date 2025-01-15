@@ -1,6 +1,7 @@
 import Button from '@mui/material/Button';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { PageRoutes } from '../../routes/routes';
 
 export interface SearchButtonProps {
   text?: string;
@@ -10,7 +11,7 @@ export interface SearchButtonProps {
 export const SearchButton = (props: SearchButtonProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { text = 'search', onClick = () => navigate(0) } = props;
+  const { text = 'search', onClick = () => navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS) } = props;
 
   return (
     <Button
