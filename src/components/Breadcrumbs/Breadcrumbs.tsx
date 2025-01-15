@@ -63,7 +63,7 @@ const Breadcrumbs = ({ separator, crumbs }: BreadcrumbsProps) => {
         <BreadcrumbsMUI
           separator={separator}
           aria-label={t('app.routes.breadcrumbs')}
-          sx={{ paddingBlock: 1, marginBottom: 1 }}>
+          sx={{ paddingBlock: 1 }}>
           {mdUp ? (
             crumbs.elements.map((r, i) => <Breadcrumb crumb={r} key={i} />)
           ) : (
