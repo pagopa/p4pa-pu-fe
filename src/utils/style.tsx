@@ -32,14 +32,6 @@ const customTheme = createTheme({
         })
       }
     },
-    MuiButton: {
-      ...theme?.components?.MuiButton,
-      styleOverrides: {
-        sizeLarge: ({ theme }) => ({
-          minHeight: theme.spacing(6)
-        })
-      }
-    }
   }
 });
 
