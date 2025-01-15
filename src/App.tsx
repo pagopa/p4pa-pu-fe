@@ -12,7 +12,7 @@ import { theme } from '@pagopa/mui-italia';
 
 import './translations/i18n';
 import utils from './utils';
-import ExportFlowReservation from './routes/ExportFlowReservation';
+import TelematicReceiptExportFlowReservation from './routes/TelematicReceiptExportFlowReservation';
 import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResults';
 import TelematicReceipt from './routes/TelematicReceipt';
 
@@ -120,7 +120,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION,
-            element: <ExportFlowReservation />,
+            element: <TelematicReceiptExportFlowReservation />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
           },

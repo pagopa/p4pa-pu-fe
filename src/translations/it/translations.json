@@ -57,12 +57,13 @@
     "importflowbutton": "Importa flusso",
     "importedflowsviewbutton": "Vedi flussi importati"
   },
-  "exportFlowReservation": {
+  "telematicReceiptExportFlowReservation": {
     "title": "Prenota export di un flusso",
     "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
+    "requiredFieldDescription": "* Indica un campo obbligatorio",
     "formTitle": "Configurazione della esportazione",
     "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
-    "buttonGoBack": "Indietro",
+    "buttonExit": "Esci",
     "buttonConfirmReservation": "Prenota",
     "paymentDate": "Data pagamento",
     "from": "Dal",
