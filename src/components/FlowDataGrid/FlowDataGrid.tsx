@@ -1,13 +1,21 @@
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams, GridValidRowModel } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
-import CustomDataGrid from './CustomDataGrid';
+import CustomDataGrid from './../DataGrid/CustomDataGrid';
+
+interface FlowDataRow extends GridValidRowModel {
+  id: number;
+  name: string;
+  date: string;
+  operator: string;
+  size: string;
+}
 
 const FlowDataGrid = () => {
   const { t } = useTranslation();
 
-  const rows = [
+  const rows: FlowDataRow[] = [
     {
       id: 1,
       name: 'Esportazione 1',
@@ -43,7 +51,7 @@ const FlowDataGrid = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams) => (
+      renderCell: (params: GridRenderCellParams<FlowDataRow>) => (
         <IconButton
           color="primary"
           size="small"
@@ -57,15 +65,13 @@ const FlowDataGrid = () => {
     },
   ];
 
-  return (
-    <CustomDataGrid
-      hideFooter
-      disableColumnMenu
-      disableColumnResize
-      rows={rows}
-      columns={columns}
-    />
-  );
+  return <CustomDataGrid 
+    rows={rows} 
+    columns={columns} 
+    hideFooter
+    disableColumnMenu
+    disableColumnResize
+  />;
 };
 
 export default FlowDataGrid;

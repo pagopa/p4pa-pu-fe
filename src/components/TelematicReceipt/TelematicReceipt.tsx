@@ -39,6 +39,7 @@ export const TelematicReceipt = () => {
                 { label: t('telematicReceipts.from'), icon: <CalendarToday />, gridWidth: 6},
                 { label: t('telematicReceipts.to'), icon: <CalendarToday />, gridWidth: 6 },
               ]}
+              selectLabel={t('telematicReceipts.duetype')}
               selectOptions={[
                 { label: t('telematicReceipts.tari'), value: 'tari' },
                 { label: t('telematicReceipts.trafficoffence'), value: 'violation' },
