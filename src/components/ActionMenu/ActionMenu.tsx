@@ -6,9 +6,10 @@ import { useTranslation } from 'react-i18next';
 
 interface ActionMenuProps {
   rowId: number;
+  onDetailClick: (rowId: number) => void;
 }
 
-const ActionMenu: React.FC<ActionMenuProps> = ({ rowId }) => {
+const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, onDetailClick }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const { t } = useTranslation();
@@ -42,7 +43,12 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ rowId }) => {
           'aria-labelledby': `menu-button-${rowId}`,
         }}
       >
-        <MenuItem onClick={handleClose}>
+        <MenuItem
+          onClick={() => {
+            handleClose();
+            onDetailClick(rowId);
+          }}
+        >
           <ListItemIcon>
             <ReadMore fontSize="inherit" />
           </ListItemIcon>
