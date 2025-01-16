@@ -111,7 +111,6 @@ const TelematicReceiptSearchResults = () => {
             bgcolor: theme.palette.grey[200],
             overflow: 'auto'
           }}
-          component='table'
           aria-label='results-table'
         >
           <SearchResultsDataGrid />
