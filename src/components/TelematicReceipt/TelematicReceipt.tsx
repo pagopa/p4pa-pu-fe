@@ -55,7 +55,7 @@ export const TelematicReceipt = () => {
               actionLabel={t('telematicReceipts.exportrequestbutton')}
               actionIcon={<Download/>}
               linkLabel={t('telematicReceipts.exportedflowsviewbutton')}
-              onActionClick={() => console.log('Export triggered')}
+              onActionClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION)}
               onLinkClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW)}
             />
 
