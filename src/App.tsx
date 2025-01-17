@@ -15,6 +15,7 @@ import utils from './utils';
 import TelematicReceiptExportFlowReservation from './routes/TelematicReceiptExportFlowReservation';
 import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResults';
 import TelematicReceipt from './routes/TelematicReceipt';
+import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExportFlowThankYouPage';
 
 
 
@@ -126,6 +127,24 @@ const router = createBrowserRouter([
           },
         ]
       },
+      {
+        path:PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE,
+        element: <Layout />,
+        handle: {
+          backButton: false,
+          sidebar: {
+            visibile: false
+          },
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE,
+            element: <TelematicReceiptExportFlowThankYouPage />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
+        ]
+      }
     ]
   }
 ]);
