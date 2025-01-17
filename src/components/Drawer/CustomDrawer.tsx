@@ -61,17 +61,18 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
           {title}
         </Typography>
       </Box>
-      <List>
+      <List >
         {fields.map((field) => (
-          <ListItem key={field.id} disableGutters>
+          <ListItem key={field.id} disableGutters disablePadding>
             <ListItemText
               primary={
-                <Typography variant="subtitle1" color="textSecondary" fontWeight={400} fontSize={16}>
+                <Typography variant="body2" color="textSecondary" fontWeight={400} >
                   {field.label}
                 </Typography>
               }
               secondary={
-                <Typography variant={field.variant || 'body1'} fontWeight={field.variant ?? 600}>
+                <Typography variant={field.variant || 'body1'} fontWeight={field.variant ?? 600} 
+                paragraph={true} sx={{wordBreak: 'break-word'}}>
                   {field.value}
                 </Typography>
               }
@@ -80,9 +81,10 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
         ))}
       </List>
       {buttonText && onButtonClick && (
-        <Box mt={4}>
+        <Box mt={2}>
           <Button
             fullWidth
+            size='large'
             variant="contained"
             onClick={onButtonClick}
             startIcon={startIcon}
