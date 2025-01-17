@@ -1,0 +1,1 @@
+export { TelematicReceiptExportFlowThankYouPage } from './TelematicReceiptExportFlowThankYouPage';
