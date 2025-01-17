@@ -13,7 +13,7 @@ export const useUserInfo = () => {
   };
   const user: UserMemo = { name: data.name, familyName: data.familyName, userId: data.userId };
   setState(STATE.USER_INFO, user);
-  
+
 
   return { userInfo: state.userInfo };
 };

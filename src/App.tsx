@@ -18,10 +18,8 @@ import TelematicReceipt from './routes/TelematicReceipt';
 import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExportFlowThankYouPage';
 
 
-
 const router = createBrowserRouter([
   {
-    
     element: <ApiClient client={utils.apiClient} />,
     children: [
       {

@@ -1,10 +1,13 @@
 import lang from '../../translations/lang';
 import { Footer as MUIFooter } from '@pagopa/mui-italia';
 import { useLanguage } from '../../hooks/useLanguage';
-
+import { useFeConfig } from '../../hooks/useFeConfig';
 
 export const Footer = () => {
   const { language, changeLanguage } = useLanguage();
+
+  const configFe = useFeConfig();
+  console.debug('Footer configFe', configFe);
 
   return (
     <MUIFooter
@@ -12,7 +15,8 @@ export const Footer = () => {
       companyLink={{ ariaLabel: 'PagoPA SPA' }}
       legalInfo={
         <>
-          <b>PagoPA S.p.A.</b> - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, <br />
+          <b>PagoPA S.p.A.</b> - Società per azioni con socio unico - Capitale sociale di euro
+          1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, <br />
           CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009
         </>
       }
