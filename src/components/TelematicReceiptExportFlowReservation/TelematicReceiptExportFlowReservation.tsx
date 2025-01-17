@@ -127,7 +127,9 @@ export const TelematicReceiptExportFlowReservation = () => {
           <Button
             size="large"
             variant="contained"
-            fullWidth >
+            fullWidth
+            onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE) }
+          >
             {t('telematicReceiptExportFlowReservation.buttonConfirmReservation')}
           </Button>
         </Grid>
