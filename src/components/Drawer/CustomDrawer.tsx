@@ -72,7 +72,7 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
               }
               secondary={
                 <Typography variant={field.variant || 'body1'} fontWeight={field.variant ?? 600} 
-                paragraph={true} sx={{wordBreak: 'break-word'}}>
+                  paragraph={true} sx={{wordBreak: 'break-word'}}>
                   {field.value}
                 </Typography>
               }
