@@ -31,7 +31,7 @@ export const Header = (props: HeaderProps) => {
     id: item.organizationId.toString(),
     logoUrl: item.orgLogo,
     name: item.orgName || 'Ente senza nome',
-    productRole: item.operatorRole ? item.operatorRole[0] : ''
+    productRole: item.operatorRole || ''
   }));
 
   async function logoutUser() {
