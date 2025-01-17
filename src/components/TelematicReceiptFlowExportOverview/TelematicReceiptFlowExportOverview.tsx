@@ -3,10 +3,13 @@ import { CalendarToday, Downloading, Search } from '@mui/icons-material';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import FlowDataGrid from '../../components/FlowDataGrid/FlowDataGrid';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { PageRoutes } from '../../routes/routes';
 
 const TelematicReceiptFlowExportOverview = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -26,7 +29,9 @@ const TelematicReceiptFlowExportOverview = () => {
             <Button
               size="large"
               startIcon={<Downloading />}
-              variant="outlined">
+              variant="outlined"
+              onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION) }
+            >
               {t('telematicReceiptFlowExportOverview.buttonReservationExport')}
             </Button>
           </Box>

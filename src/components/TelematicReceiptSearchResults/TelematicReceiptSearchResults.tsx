@@ -84,6 +84,7 @@ const TelematicReceiptSearchResults = () => {
                   label={t('telematicreceiptSearchResults.from')}
                 />
               </Grid>
+              
               <Grid item lg={2}>
                 <TextField
                   sx={{ bgcolor: theme.palette.common.white }}
