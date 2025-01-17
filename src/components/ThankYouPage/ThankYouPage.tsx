@@ -20,11 +20,11 @@ const ThankYouPage = ({ icon, title, description, buttonLabel, onButtonClick }: 
           </Grid>
         )}
         <Grid item marginBottom={1}>
-          <Typography variant="h3">{title}</Typography>
+          <Typography align='center' variant="h3">{title}</Typography>
         </Grid>
         {(
           <Grid item>
-            <Typography variant="body1" marginBottom={3}>
+            <Typography align='center' variant="body1" marginBottom={3}>
               {description}
             </Typography>
           </Grid>
