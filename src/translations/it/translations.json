@@ -86,7 +86,23 @@
     "from": "Dal",
     "to": "Al",
     "filter": "Filtra",
-    "filterFields": "Filtri"
+    "filterFields": "Filtri",
+    "drawer":{
+      "title":"Dettaglio Ricevuta Telematica",
+      "iuv": "IUV",
+      "amount": "Importo",
+      "reason": "Causale",
+      "dueType": "Tipo Dovuto",
+      "payer": "Pagatore",
+      "fiscalCodeorVat": "CF / Partita IVA",
+      "paymentDate": "Data Esito",
+      "paymentExecutor": "Versante",
+      "fiscalCodeorVatExecutor": "CF / Partita IVA",
+      "auditor": "Attestante",
+      "iud": "IUD",
+      "iur": "IUR",
+      "actionButton":"Scarica"
+    }
   },
   "actionMenu":{
     "detail": "Dettaglio",
