@@ -91,6 +91,11 @@
   "actionMenu":{
     "detail": "Dettaglio",
     "download": "Scarica"
+  },
+  "telematicReceiptExportFlowThankYouPage": {
+    "title": "Abbiamo ricevuto la tua richiesta!",
+    "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
+    "closeButton": "Chiudi"
   }
 }
   
