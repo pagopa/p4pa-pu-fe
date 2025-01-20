@@ -9,7 +9,7 @@ const getBrokersConfig = (options = {}) => {
     queryFn: async () => {
       const { data: config } = await utils.apiClient.brokers.getBrokerConfig();
       if (config) {
-        parseAndLog(configFESchema, { ...config, brokerId: config?.brokerId ?? '' });
+        parseAndLog(configFESchema, config);
       }
       return config;
     },

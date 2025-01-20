@@ -15,7 +15,6 @@ export const Footer = () => {
   const { language, changeLanguage } = useLanguage();
 
   const configFe = useFeConfig();
-  console.debug('Footer configFe', configFe);
 
   return (
     <MUIFooter
