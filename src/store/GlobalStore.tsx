@@ -4,16 +4,17 @@ import { organizationIdState, setOrganizationId } from './OrganizationIdStore';
 import { OrganizationIdMemo } from '../models/Organization';
 import { UserInfo } from '../models/User';
 import { setUserInfo, userInfoState } from './UserInfoStore';
-import { configFeState, setConfigFe } from './ConfigFeStore';
-import { ConfigFE } from '../../generated/apiClient';
+import { configFeState } from './ConfigFeStore';
+import { appState } from './AppStateStore';
 
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
 
 export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const combinedState: State = {
+    [STATE.APP_STATE]: appState?.value,
+    [STATE.CONFIG_FE]: configFeState?.value,
     [STATE.ORGANIZATION_ID]: organizationIdState.state?.value,
-    [STATE.USER_INFO]: userInfoState.state?.value,
-    [STATE.CONFIG_FE]: configFeState?.value
+    [STATE.USER_INFO]: userInfoState.state?.value
   };
 
   const setState = (key: STATE, value: unknown) => {
@@ -22,9 +23,6 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
     if (key === STATE.USER_INFO) {
       setUserInfo(value as UserInfo);
-    }
-    if (key === STATE.CONFIG_FE) {
-      setConfigFe(value as ConfigFE);
     }
   };
 
