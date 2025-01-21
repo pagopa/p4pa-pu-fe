@@ -9,7 +9,7 @@ import {
   useTheme,
   Tooltip,
   useMediaQuery,
-  type Theme,
+  type Theme
 } from '@mui/material';
 import { SidebarMenuItem } from './SidebarMenuItem';
 import { useTranslation } from 'react-i18next';
@@ -18,13 +18,15 @@ import CloseIcon from '@mui/icons-material/Close';
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
+import DnsIcon from '@mui/icons-material/Dns';
+import PeopleIcon from '@mui/icons-material/People';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import { sidebarStyles } from './sidebar.styles';
 import { PageRoutes } from '../../routes/routes';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
 
 export const Sidebar: React.FC = () => {
-  
   const { t } = useTranslation();
   const theme = useTheme();
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
@@ -32,7 +34,6 @@ export const Sidebar: React.FC = () => {
   const { collapsed, changeMenuState, setCollapsed, setOverlay, overlay } = useCollapseMenu(!lg);
 
   const [selectedTarget, setSelectedTarget] = useState('');
-
 
   useEffect(() => {
     setOverlay(!(lg || collapsed));
@@ -42,11 +43,8 @@ export const Sidebar: React.FC = () => {
   const styles = sidebarStyles(theme, collapsed);
 
   const RotatedAltRouteIcon = () => {
-    return (
-      <AltRouteIcon sx={{ transform: 'rotate(90deg)' }} />
-    );
+    return <AltRouteIcon sx={{ transform: 'rotate(90deg)' }} />;
   };
-  
 
   const menuItems: Array<ISidebarMenuItem> = [
     {
@@ -76,15 +74,35 @@ export const Sidebar: React.FC = () => {
           label: t('menu.subitem'),
           route: '/flows/item2',
           end: true
-        },
+        }
       ]
+    }
+  ];
+
+  const additionalItems = [
+    {
+      label: t('menu.entities'),
+      icon: DnsIcon,
+      route: '/debtpositions',
+      end: true
+    },
+    {
+      label: t('menu.users'),
+      icon: PeopleIcon,
+      route: '/debtpositions',
+      end: true
+    },
+    {
+      label: t('menu.deptstypes'),
+      icon: DashboardIcon,
+      route: '/debtpositions',
+      end: true
     }
   ];
 
   return (
     <>
-      <Box sx={styles.container} 
-        component="aside">
+      <Box sx={styles.container} component="aside">
         <Grid
           alignItems="normal"
           display="flex"
@@ -116,6 +134,23 @@ export const Sidebar: React.FC = () => {
             aria-hidden={collapsed && !lg}
             aria-label={t('menu.description')}>
             {menuItems.map((item, index) => (
+              <SidebarMenuItem
+                onClick={() => !lg && setCollapsed(true) && setSelectedTarget('')}
+                selectedTarget={selectedTarget}
+                setSelectedTarget={setSelectedTarget}
+                collapsed={collapsed}
+                item={item}
+                key={index}
+              />
+            ))}
+          </List>
+          <Divider orientation="horizontal" flexItem sx={{ display: lg ? 'block' : 'none' }} />
+          <List
+            sx={styles.list}
+            component="ol"
+            aria-hidden={collapsed && !lg}
+            aria-label={t('menu.description')}>
+            {additionalItems.map((item, index) => (
               <SidebarMenuItem
                 onClick={() => !lg && setCollapsed(true) && setSelectedTarget('')}
                 selectedTarget={selectedTarget}

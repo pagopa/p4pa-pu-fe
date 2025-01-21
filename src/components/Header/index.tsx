@@ -41,7 +41,7 @@ export const Header = (props: HeaderProps) => {
 
   /* Mocked data */
   /* TO-DO call a service */
-  const jwtUser: JwtUser | undefined = 
+  const jwtUser: JwtUser | undefined =
     {
       id: 'marcopolo',
       name: 'Marco',
@@ -72,12 +72,12 @@ export const Header = (props: HeaderProps) => {
     title: 'Piattaforma Unitaria',
     productUrl: '#pu',
     linkType: 'internal'
-    
+
   };
 
   const onSelectedParty = (id: string) => {
     setState(STATE.ORGANIZATION_ID, id);
-  }; 
+  };
 
   return (
     <>

@@ -2,6 +2,10 @@ HELP.md
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# testing
+/coverage
+/test_reports
+
 #**/src/main/resources/application-local*.properties
 
 ### STS ###
