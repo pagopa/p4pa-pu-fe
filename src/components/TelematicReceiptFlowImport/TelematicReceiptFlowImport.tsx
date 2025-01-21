@@ -60,7 +60,7 @@ const TelematicReceiptFlowImport = () => {
             variant="outlined"
             fullWidth
             startIcon={<ArrowBack />} 
-            onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW) }
+            onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW) }
           >
             {t('commons.exit')}
           </Button>

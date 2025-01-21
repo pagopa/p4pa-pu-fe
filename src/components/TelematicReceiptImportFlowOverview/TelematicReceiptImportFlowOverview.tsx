@@ -6,10 +6,13 @@ import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import FilterContainer, { COMPONENT_TYPE } from './FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
+import { useNavigate } from 'react-router-dom';
+import { PageRoutes } from '../../routes/routes';
 
 const TelematicReceiptImportFlowOverview = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   interface FlowDataRow {
     id: number;
@@ -153,6 +156,7 @@ const TelematicReceiptImportFlowOverview = () => {
               size="large"
               startIcon={<Upload />}
               variant="outlined"
+              onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW)}
             >
               {t('telematicReceiptImportFlowOverview.importFlowButton')}
             </Button>
