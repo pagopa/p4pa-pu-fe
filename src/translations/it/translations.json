@@ -93,7 +93,9 @@
   },
   "actionMenu":{
     "detail": "Dettaglio",
-    "download": "Scarica"
+    "download": "Scarica",
+    "importFile": "File importato",
+    "importResult": "Esito dell'importazione"
   },
   "telematicReceiptExportFlowThankYouPage": {
     "title": "Abbiamo ricevuto la tua richiesta!",
