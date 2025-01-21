@@ -15,7 +15,10 @@
         "debtpositions": "Dovuti",
         "flows": "Flussi",
         "telematicreceipt": "Ricevute Telematiche",
-        "subitem": "Item"
+        "subitem": "Item",
+				"entities": "Enti gestiti",
+				"users": "Utenti",
+				"deptstypes": "Tipi dovuti"
     },
     "sidebar": {
     "collapse": "Comprimi il menu",
@@ -114,4 +117,4 @@
     "closeButton": "Chiudi"
   }
 }
-  
+

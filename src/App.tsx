@@ -5,7 +5,13 @@ import { RouteHandleObject } from './models/Breadcrumbs';
 import Home from './routes/Home';
 import { PageRoutes } from './routes/routes';
 import { Theme } from './utils/theme';
-import { Navigate, RouterProvider, createBrowserRouter, useRouteError } from 'react-router-dom';
+import {
+  Navigate,
+  RouterProvider,
+  ScrollRestoration,
+  createBrowserRouter,
+  useRouteError
+} from 'react-router-dom';
 import TelematicReceiptFlowExportOverview from './routes/TelematicReceiptFlowExportOverview';
 import { ApiClient } from './components/ApiClient';
 import { theme } from '@pagopa/mui-italia';
@@ -16,12 +22,11 @@ import TelematicReceiptExportFlowReservation from './routes/TelematicReceiptExpo
 import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResults';
 import TelematicReceipt from './routes/TelematicReceipt';
 import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExportFlowThankYouPage';
-
-
+import { Overlay } from './components/Overlay';
+import { useStore } from './store/GlobalStore';
 
 const router = createBrowserRouter([
   {
-    
     element: <ApiClient client={utils.apiClient} />,
     children: [
       {
@@ -35,7 +40,7 @@ const router = createBrowserRouter([
         path: PageRoutes.HOME,
         element: <Layout />,
         handle: {
-          backButton: false,
+          backButton: false
         } as RouteHandleObject,
         children: [
           {
@@ -43,19 +48,21 @@ const router = createBrowserRouter([
             element: <Home />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
-          },
+          }
         ]
       },
       {
-        path:PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW,
+        path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW,
         element: <Layout />,
         handle: {
-          crumbs: {elements: [
-            { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-            { name: 'telematicreceipt', color: theme.palette.text.primary },
-            { name: 'telematicReceiptFlowExportOverview', color: theme.palette.text.disabled }
-          ]},
-          backButton: true,
+          crumbs: {
+            elements: [
+              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'telematicreceipt', color: theme.palette.text.primary },
+              { name: 'telematicReceiptFlowExportOverview', color: theme.palette.text.disabled }
+            ]
+          },
+          backButton: true
         } as RouteHandleObject,
         children: [
           {
@@ -63,20 +70,20 @@ const router = createBrowserRouter([
             element: <TelematicReceiptFlowExportOverview />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
-          },
+          }
         ]
       },
       {
-        path:PageRoutes.TELEMATIC_RECEIPT,
+        path: PageRoutes.TELEMATIC_RECEIPT,
         element: <Layout />,
         handle: {
           crumbs: {
             elements: [
-              { name: 'flows', fontWeight:600, color: theme.palette.text.primary },
+              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
               { name: 'telematicreceipt', color: theme.palette.text.disabled }
             ]
           },
-          backButton: false,
+          backButton: false
         } as RouteHandleObject,
         children: [
           {
@@ -84,11 +91,11 @@ const router = createBrowserRouter([
             element: <TelematicReceipt />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
-          },
+          }
         ]
       },
       {
-        path:PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS,
+        path: PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS,
         element: <Layout />,
         handle: {
           crumbs: {
@@ -98,7 +105,7 @@ const router = createBrowserRouter([
               { name: 'telematicreceiptsearchresults', color: theme.palette.text.disabled }
             ]
           },
-          backButton: true,
+          backButton: true
         } as RouteHandleObject,
         children: [
           {
@@ -106,17 +113,17 @@ const router = createBrowserRouter([
             element: <TelematicReceiptSearchResults />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
-          },
+          }
         ]
       },
       {
-        path:PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION,
+        path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION,
         element: <Layout />,
         handle: {
           backButton: true,
           sidebar: {
             visibile: false
-          },
+          }
         } as RouteHandleObject,
         children: [
           {
@@ -124,17 +131,17 @@ const router = createBrowserRouter([
             element: <TelematicReceiptExportFlowReservation />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
-          },
+          }
         ]
       },
       {
-        path:PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE,
+        path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE,
         element: <Layout />,
         handle: {
           backButton: false,
           sidebar: {
             visibile: false
-          },
+          }
         } as RouteHandleObject,
         children: [
           {
@@ -142,20 +149,25 @@ const router = createBrowserRouter([
             element: <TelematicReceiptExportFlowThankYouPage />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
-          },
+          }
         ]
       }
     ]
   }
 ]);
 
-
-export const App = () => (
-  <ErrorBoundary fallback={<ErrorFallback onReset={() => window.location.replace('/')} />}>
-    <Theme>
-      <RouterProvider router={router} />
-    </Theme>
-  </ErrorBoundary>
-);
+export const App = () => {
+  const {
+    state: { appState }
+  } = useStore();
+  return (
+    <ErrorBoundary fallback={<ErrorFallback onReset={() => window.location.replace('/')} />}>
+      <Theme>
+        <Overlay visible={appState.loading} />
+        <RouterProvider router={router} />
+      </Theme>
+    </ErrorBoundary>
+  );
+};
 
 export default App;
