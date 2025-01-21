@@ -2,6 +2,7 @@ import { GridColDef, GridRenderCellParams, GridValidRowModel } from '@mui/x-data
 import { useTranslation } from 'react-i18next';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import CustomDataGrid from './../DataGrid/CustomDataGrid';
+import { FileDownload, ReadMore } from '@mui/icons-material';
 
 interface SearchResultDataRow extends GridValidRowModel {
   id: number;
@@ -50,7 +51,22 @@ const SearchResultsDataGrid = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => <ActionMenu rowId={params.row.id} />,
+      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => 
+        <ActionMenu 
+          rowId={params.row.id}
+          menuItems={[
+            {
+              icon: <ReadMore fontSize="small" />,
+              label: t('actionMenu.detail'),
+              action: () => console.log('Download esito importazione per ID: ', params.row.id),
+            },
+            {
+              icon: <FileDownload fontSize="small" />,
+              label: t('actionMenu.download'),
+              action: () => console.log('Scarica file per ID: ', params.row.id),
+            }
+          ]}
+        />,
     },
   ];
 
