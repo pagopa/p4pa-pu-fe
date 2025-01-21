@@ -17,9 +17,9 @@ export const TelematicReceiptFlowImportThankYouPage = () => {
     <>
       <ThankYouPage 
         icon={<CheckCircleOutlineOutlinedIcon sx={{fontSize: 60, color: theme.palette.secondary.main}} />}
-        title={t('telematicReceiptExportFlowThankYouPage.title')}
-        description={t('telematicReceiptExportFlowThankYouPage.description')}
-        buttonLabel={t('telematicReceiptExportFlowThankYouPage.closeButton')}
+        title={t('telematicReceiptFlowImportThankYouPage.title')}
+        description={t('telematicReceiptFlowImportThankYouPage.description')}
+        buttonLabel={t('telematicReceiptFlowImportThankYouPage.closeButton')}
         onButtonClick={handleButtonClick}
       />
     </>
