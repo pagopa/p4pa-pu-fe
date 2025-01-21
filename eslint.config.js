@@ -23,7 +23,7 @@ export default tseslint.config(
       'indent': ['error', 2],
       'no-multi-spaces': ['error'],
       'react-refresh/only-export-components': [
-        'warn',
+        'off',
         { allowConstantExport: true },
       ],
     },

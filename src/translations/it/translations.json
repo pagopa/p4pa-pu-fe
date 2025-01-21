@@ -16,7 +16,10 @@
         "debtpositions": "Dovuti",
         "flows": "Flussi",
         "telematicreceipt": "Ricevute Telematiche",
-        "subitem": "Item"
+        "subitem": "Item",
+				"entities": "Enti gestiti",
+				"users": "Utenti",
+				"deptstypes": "Tipi dovuti"
     },
     "sidebar": {
     "collapse": "Comprimi il menu",
@@ -89,7 +92,23 @@
     "from": "Dal",
     "to": "Al",
     "filter": "Filtra",
-    "filterFields": "Filtri"
+    "filterFields": "Filtri",
+    "drawer":{
+      "title":"Dettaglio Ricevuta Telematica",
+      "iuv": "IUV",
+      "amount": "Importo",
+      "reason": "Causale",
+      "dueType": "Tipo Dovuto",
+      "payer": "Pagatore",
+      "fiscalCodeorVat": "CF / Partita IVA",
+      "paymentDate": "Data Esito",
+      "paymentExecutor": "Versante",
+      "fiscalCodeorVatExecutor": "CF / Partita IVA",
+      "auditor": "Attestante",
+      "iud": "IUD",
+      "iur": "IUR",
+      "actionButton":"Scarica"
+    }
   },
   "actionMenu":{
     "detail": "Dettaglio",
@@ -118,4 +137,4 @@
     "loadedDiscarded": "Caricati/Scarti"
   }
 }
-  
+
