@@ -1,18 +1,20 @@
 import React from 'react';
 import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
 import MoreVert from '@mui/icons-material/MoreVert';
-import { FileDownload, ReadMore } from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
+interface MenuItemProps {
+  icon: React.ReactNode;
+  label: string;
+  action: () => void;
+}
 
 interface ActionMenuProps {
   rowId: number;
-  onDetailClick: (rowId: number) => void;
+  menuItems: MenuItemProps[];
 }
 
-const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, onDetailClick }) => {
+const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  const { t } = useTranslation();
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
@@ -43,23 +45,18 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, onDetailClick }) => {
           'aria-labelledby': `menu-button-${rowId}`,
         }}
       >
-        <MenuItem
-          onClick={() => {
-            handleClose();
-            onDetailClick(rowId);
-          }}
-        >
-          <ListItemIcon>
-            <ReadMore fontSize="inherit" />
-          </ListItemIcon>
-          <ListItemText aria-label={t('actionMenu.detail')}>{t('actionMenu.detail')}</ListItemText>
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <FileDownload fontSize="inherit" />
-          </ListItemIcon>
-          <ListItemText aria-label={t('actionMenu.download')}>{t('actionMenu.download')}</ListItemText>
-        </MenuItem>
+        {menuItems.map((item, index) => (
+          <MenuItem 
+            key={`${rowId}-${index}`}
+            onClick={ () => {
+              item.action();
+              handleClose();
+            }}
+          >
+            <ListItemIcon>{item.icon}</ListItemIcon>
+            <ListItemText>{item.label}</ListItemText>
+          </MenuItem>
+        ))}
       </Menu>
     </>
   );

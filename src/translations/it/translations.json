@@ -6,7 +6,8 @@
             "search": "Cerca",
             "flows": "Flussi",
             "telematicreceipt": "Ricevute Telematiche",
-            "telematicreceiptsearchresults": "Risultato ricerca"
+            "telematicreceiptsearchresults": "Risultato ricerca",
+            "telematicReceiptImportFlowOverview": "Flussi importati"
         }
     },
     "menu": {
@@ -38,6 +39,8 @@
     "name": "Nome",
     "reservationDate": "Data prenotazione",
     "operator": "Operatore",
+    "internalID": "ID Interno",
+    "loadedDiscarded": "Caricati/Scarti",
     "fileSize": "Dimensione File"
   },
     "telematicReceipts": {
@@ -109,12 +112,29 @@
   },
   "actionMenu":{
     "detail": "Dettaglio",
-    "download": "Scarica"
+    "download": "Scarica",
+    "importFile": "File importato",
+    "importResult": "Esito dell'importazione"
   },
   "telematicReceiptExportFlowThankYouPage": {
     "title": "Abbiamo ricevuto la tua richiesta!",
     "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
     "closeButton": "Chiudi"
+  },
+  "telematicReceiptImportFlowOverview": {
+    "title": "Flussi importati",
+    "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
+    "importFlowButton": "Importa flusso",
+    "searchDescription": "Cerca Nome",
+    "state": "Stato",
+    "from": "Caricati dal",
+    "to": "Al",
+    "filterButton": "Filtra",
+    "internalID": "ID interno",
+    "name": "Nome",
+    "uploadDate": "Data Caricamento",
+    "operator": "Operatore",
+    "loadedDiscarded": "Caricati/Scarti"
   }
 }
 

@@ -3,6 +3,7 @@ import { GridColDef, GridRenderCellParams, GridValidRowModel } from '@mui/x-data
 import { useTranslation } from 'react-i18next';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import CustomDataGrid from './../DataGrid/CustomDataGrid';
+import { FileDownload, ReadMore } from '@mui/icons-material';
 import CustomDrawer from '../Drawer/CustomDrawer';
 import { Download } from '@mui/icons-material';
 
@@ -80,15 +81,22 @@ const SearchResultsDataGrid = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => (
-        <ActionMenu
+      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => 
+        <ActionMenu 
           rowId={params.row.id}
-          onDetailClick={() => {
-            console.log('Detail clicked for row:', params.row);
-            handleDetailClick(params.row);
-          }}
-        />
-      ),
+          menuItems={[
+            {
+              icon: <ReadMore fontSize="small" />,
+              label: t('actionMenu.detail'),
+              action: () => handleDetailClick(params.row),
+            },
+            {
+              icon: <FileDownload fontSize="small" />,
+              label: t('actionMenu.download'),
+              action: () => console.log('Scarica file per ID: ', params.row.id),
+            }
+          ]}
+        />,
     },
   ];
 

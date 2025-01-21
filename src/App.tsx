@@ -8,7 +8,6 @@ import { Theme } from './utils/theme';
 import {
   Navigate,
   RouterProvider,
-  ScrollRestoration,
   createBrowserRouter,
   useRouteError
 } from 'react-router-dom';
@@ -22,6 +21,9 @@ import TelematicReceiptExportFlowReservation from './routes/TelematicReceiptExpo
 import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResults';
 import TelematicReceipt from './routes/TelematicReceipt';
 import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExportFlowThankYouPage';
+import TelematicReceiptImportFlowOverview from './routes/TelematicReceiptImportFlowOverview';
+
+
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
 
@@ -151,7 +153,27 @@ const router = createBrowserRouter([
             errorElement: <ErrorFallback />
           }
         ]
-      }
+      },
+      {
+        path:PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW,
+        element: <Layout />,
+        handle: {
+          crumbs: {elements: [
+            { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
+            { name: 'telematicreceipt', color: theme.palette.text.primary },
+            { name: 'telematicReceiptImportFlowOverview', color: theme.palette.text.disabled }
+          ]},
+          backButton: true,
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW,
+            element: <TelematicReceiptImportFlowOverview />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
+        ]
+      },
     ]
   }
 ]);
