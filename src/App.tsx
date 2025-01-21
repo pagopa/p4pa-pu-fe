@@ -8,7 +8,6 @@ import { Theme } from './utils/theme';
 import {
   Navigate,
   RouterProvider,
-  ScrollRestoration,
   createBrowserRouter,
   useRouteError
 } from 'react-router-dom';
