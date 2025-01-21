@@ -47,7 +47,7 @@ const TelematicReceiptFlowImport = () => {
                 file={file} setFile={setFile} 
                 description={t('FileUploaderFlowImport.description')} 
                 requiredFieldText={t('FileUploaderFlowImport.requiredFieldText')} 
-                fileExtensionAllowed={'.zip'}
+                fileExtensionsAllowed={['zip']}
               />
             </Box>
           </Box>

@@ -21,7 +21,7 @@ type FileUploaderProps = {
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
   description: string;
   requiredFieldText: string;
-  fileExtensionAllowed: string;
+  fileExtensionsAllowed: string[];
 };
 
 const FileUploader = ({
@@ -33,17 +33,21 @@ const FileUploader = ({
   setFile,
   description,
   requiredFieldText,
-  fileExtensionAllowed,
+  fileExtensionsAllowed,
 }: FileUploaderProps) => {
-
   const { t } = useTranslation();
 
   const [error, setError] = useState<string | null>(null);
 
+  const isExtensionAllowed = (fileName: string) => {
+    const fileExtension = fileName.split('.').pop();
+    return fileExtensionsAllowed.some((ext) => ext === fileExtension);
+  };  
+
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      if (!selectedFile.name.endsWith(fileExtensionAllowed)) {
+      if (!isExtensionAllowed(selectedFile.name)) {
         setError(t('commons.fileNotValid'));
         return;
       }
@@ -58,7 +62,7 @@ const FileUploader = ({
 
     const selectedFile = event.dataTransfer.files[0];
     if (selectedFile) {
-      if (!selectedFile.name.endsWith(fileExtensionAllowed)) {
+      if (!isExtensionAllowed(selectedFile.name)) {
         setError(t('commons.fileNotValid'));
         return;
       }
@@ -169,7 +173,7 @@ const FileUploader = ({
               type="file"
               hidden
               onChange={handleFileUpload}
-              accept={fileExtensionAllowed}
+              accept={fileExtensionsAllowed.map((ext) => `.${ext}`).join(',')}
             />
           </Button>
         </Box>
