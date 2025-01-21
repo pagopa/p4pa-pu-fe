@@ -1,8 +1,11 @@
 import React from 'react';
 import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
+import { COMPONENT_TYPE } from '../../store/types';
+
+
 
 type FilterItem = {
-  type: 'textField' | 'select' | 'button';
+  type: COMPONENT_TYPE;
   label: string;
   gridWidth: number;
   icon?: React.ReactNode;
@@ -22,7 +25,7 @@ const FilterContainer = ({ items }: FilterContainerProps) => {
       {items.map((item, index) => {
         const key = `${item.type}-${item.label}-${index}`;
 
-        if (item.type === 'textField') {
+        if (item.type === COMPONENT_TYPE.textField) {
           return (
             <Grid item lg={item.gridWidth} key={key}>
               <TextField
@@ -40,7 +43,7 @@ const FilterContainer = ({ items }: FilterContainerProps) => {
           );
         }
 
-        if (item.type === 'select') {
+        if (item.type === COMPONENT_TYPE.select) {
           return (
             <Grid item lg={item.gridWidth} key={key}>
               <FormControl fullWidth size="small">
@@ -62,7 +65,7 @@ const FilterContainer = ({ items }: FilterContainerProps) => {
           );
         }
 
-        if (item.type === 'button') {
+        if (item.type === COMPONENT_TYPE.button) {
           return (
             <Grid item lg={item.gridWidth} key={key}>
               <Button

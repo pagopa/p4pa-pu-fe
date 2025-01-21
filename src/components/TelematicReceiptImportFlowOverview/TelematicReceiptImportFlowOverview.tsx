@@ -6,6 +6,7 @@ import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import FilterContainer from './FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
+import { COMPONENT_TYPE } from '../../store/types';
 
 const TelematicReceiptImportFlowOverview = () => {
   const theme = useTheme();
@@ -169,14 +170,14 @@ const TelematicReceiptImportFlowOverview = () => {
             }}>
             <FilterContainer
               items={[
-                { type: 'textField', label: t('telematicReceiptImportFlowOverview.searchDescription'), icon: <Search />, gridWidth: 5 },
-                { type: 'select', label: t('telematicReceiptImportFlowOverview.state'), gridWidth: 2, options: [
+                { type: COMPONENT_TYPE.textField, label: t('telematicReceiptImportFlowOverview.searchDescription'), icon: <Search />, gridWidth: 5 },
+                { type: COMPONENT_TYPE.select, label: t('telematicReceiptImportFlowOverview.state'), gridWidth: 2, options: [
                   { label: 'Caricato', value: 'Caricato' },
                   { label: 'Annullato', value: 'Annullato' },
                 ]},
-                { type: 'textField', label: t('telematicReceiptImportFlowOverview.from'), icon: <CalendarToday />, gridWidth: 2 },
-                { type: 'textField', label: t('telematicReceiptImportFlowOverview.to'), icon: <CalendarToday />, gridWidth: 2 },
-                { type: 'button', label: t('telematicReceiptImportFlowOverview.filterButton'), gridWidth: 1, onClick: () => console.log('Filter applied') },
+                { type: COMPONENT_TYPE.textField, label: t('telematicReceiptImportFlowOverview.from'), icon: <CalendarToday />, gridWidth: 2 },
+                { type: COMPONENT_TYPE.textField, label: t('telematicReceiptImportFlowOverview.to'), icon: <CalendarToday />, gridWidth: 2 },
+                { type: COMPONENT_TYPE.button, label: t('telematicReceiptImportFlowOverview.filterButton'), gridWidth: 1, onClick: () => console.log('Filter applied') },
               ]}
             />
           </Grid>
