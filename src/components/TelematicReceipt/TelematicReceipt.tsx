@@ -66,7 +66,7 @@ export const TelematicReceipt = () => {
               actionIcon={<Upload/>}
               linkLabel={t('telematicReceipts.importedflowsviewbutton')}
               onActionClick={() => console.log('Import triggered')}
-              onLinkClick={() => console.log('View imports')}
+              onLinkClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW)}
             />
           </Grid>
         </Grid>
