@@ -27,7 +27,7 @@ const FilterContainer = ({ items }: FilterContainerProps) => {
 
         if (item.type === COMPONENT_TYPE.textField) {
           return (
-            <Grid item lg={item.gridWidth} key={key}>
+            <Grid item lg={item.gridWidth} md={item.gridWidth} key={key}>
               <TextField
                 sx={{ bgcolor: theme.palette.common.white }}
                 fullWidth
@@ -45,7 +45,7 @@ const FilterContainer = ({ items }: FilterContainerProps) => {
 
         if (item.type === COMPONENT_TYPE.select) {
           return (
-            <Grid item lg={item.gridWidth} key={key}>
+            <Grid item lg={item.gridWidth} md={item.gridWidth} key={key}>
               <FormControl fullWidth size="small">
                 <InputLabel>{item.label}</InputLabel>
                 <Select
@@ -67,7 +67,7 @@ const FilterContainer = ({ items }: FilterContainerProps) => {
 
         if (item.type === COMPONENT_TYPE.button) {
           return (
-            <Grid item lg={item.gridWidth} key={key}>
+            <Grid item lg={item.gridWidth} md={item.gridWidth} key={key}>
               <Button
                 fullWidth
                 size="medium"
