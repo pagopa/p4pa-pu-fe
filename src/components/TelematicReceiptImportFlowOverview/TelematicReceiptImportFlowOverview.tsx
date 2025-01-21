@@ -4,9 +4,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import FilterContainer from './FilterContainer';
+import FilterContainer, { COMPONENT_TYPE } from './FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
-import { COMPONENT_TYPE } from '../../store/types';
 
 const TelematicReceiptImportFlowOverview = () => {
   const theme = useTheme();

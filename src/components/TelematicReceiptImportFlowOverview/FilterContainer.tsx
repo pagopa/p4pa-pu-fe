@@ -1,8 +1,11 @@
 import React from 'react';
 import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
-import { COMPONENT_TYPE } from '../../store/types';
 
-
+export enum COMPONENT_TYPE{
+  textField,
+  select,
+  button
+}
 
 type FilterItem = {
   type: COMPONENT_TYPE;

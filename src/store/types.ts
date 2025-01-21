@@ -21,9 +21,3 @@ export enum STATE {
   CONFIG_FE = 'configFe',
   ORGANIZATION_ID = 'organizationId'
 }
-
-export enum COMPONENT_TYPE{
-  textField,
-  select,
-  button
-}
