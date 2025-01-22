@@ -6,6 +6,7 @@ import {
   LinearProgress,
   Grid,
   Alert,
+  alpha,
 } from '@mui/material';
 import { CloudUpload, AttachFile, Close, InsertDriveFile } from '@mui/icons-material';
 import { theme } from '@pagopa/mui-italia';
@@ -147,15 +148,15 @@ const FileUploader = ({
             onDrop={handleDrop}
             onDragOver={handleDragOver}
             sx={{
-              border: '2px dashed #90caf9',
+              border: `1px dashed ${theme.palette.primary.main}`,
               borderRadius: 2,
               p: 3,
-              bgcolor: '#e3f2fd',
+              bgcolor: alpha(theme.palette.primary[100], 0.5),
               textAlign: 'center',
             }}
             data-testid="drop-zone"
           >
-            <CloudUpload sx={{ fontSize: 40, color: '#1976d2' }} />
+            <CloudUpload sx={{ fontSize: 40, color: theme.palette.primary.main }} />
             <Typography variant="body1" mt={2} mb={3}>
               {description}
             </Typography>
@@ -193,9 +194,9 @@ const FileUploader = ({
             sx={{
               height: 8,
               borderRadius: 5,
-              bgcolor: '#bbdefb',
+              bgcolor: theme.palette.primary[100],
               '& .MuiLinearProgress-bar': {
-                bgcolor: '#1976d2',
+                bgcolor: theme.palette.primary.main,
               },
             }}
           />
@@ -208,15 +209,15 @@ const FileUploader = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            border: '1px solid #90caf9',
+            border: `1px solid ${theme.palette.primary.main}`,
             borderRadius: 2,
             p: 2,
             mt: 2,
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <AttachFile sx={{ color: '#1976d2', mr: 1 }} />
-            <Typography variant="body1" sx={{ fontWeight: 400 }} color={'#0073E6'}>
+            <AttachFile sx={{ color: theme.palette.primary.main, mr: 1 }} />
+            <Typography variant="body1" sx={{ fontWeight: 400 }} color={theme.palette.primary.main}>
               {file.name}
             </Typography>
             <Typography variant="body2" fontWeight={700} sx={{ marginLeft: 2 }}>
