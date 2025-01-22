@@ -13,6 +13,7 @@ const getBrokersConfig = (options = {}) => {
       }
       return config;
     },
+    retry: 2,
     ...options
   });
 };

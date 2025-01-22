@@ -60,7 +60,6 @@ describe('useFeConfig', () => {
     const { result } = renderHook(useFeConfig);
 
     expect(result.current).toBeNull();
-    expect(setLoading).toHaveBeenCalledWith(false);
     expect(setConfigFe).toHaveBeenCalledWith(mockData);
   });
 
@@ -77,8 +76,11 @@ describe('useFeConfig', () => {
     } as unknown as ReturnType<typeof brokers.getBrokersConfig>);
 
     renderHook(useFeConfig);
+    const { result } = renderHook(useStore);
 
-    expect(setLoading).toHaveBeenCalledWith(true);
+    expect(result.current.setState).toHaveBeenCalledWith(['appState', 'loading'], {
+      loading: true
+    });
     expect(setConfigFe).not.toHaveBeenCalled();
   });
 

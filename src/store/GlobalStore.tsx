@@ -5,7 +5,8 @@ import { OrganizationIdMemo } from '../models/Organization';
 import { UserInfo } from '../models/User';
 import { setUserInfo, userInfoState } from './UserInfoStore';
 import { configFeState } from './ConfigFeStore';
-import { appState } from './AppStateStore';
+import { appState, setAppState } from './AppStateStore';
+import { AppState } from '../models/AppState';
 
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
 
@@ -23,6 +24,9 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     }
     if (key === STATE.USER_INFO) {
       setUserInfo(value as UserInfo);
+    }
+    if (key === STATE.APP_STATE) {
+      setAppState(value as AppState);
     }
   };
 
