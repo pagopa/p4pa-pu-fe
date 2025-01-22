@@ -11,6 +11,7 @@ import { CloudUpload, AttachFile, Close, InsertDriveFile } from '@mui/icons-mate
 import { theme } from '@pagopa/mui-italia';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { isExtensionAllowed } from '../../utils/filevalidation';
 
 type FileUploaderProps = {
   uploading: boolean;
@@ -39,15 +40,10 @@ const FileUploader = ({
 
   const [error, setError] = useState<string | null>(null);
 
-  const isExtensionAllowed = (fileName: string) => {
-    const fileExtension = fileName.split('.').pop();
-    return fileExtensionsAllowed.some((ext) => ext === fileExtension);
-  };  
-
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
-      if (!isExtensionAllowed(selectedFile.name)) {
+      if (!isExtensionAllowed(selectedFile, fileExtensionsAllowed)) {
         setError(t('commons.fileNotValid'));
         return;
       }
@@ -62,7 +58,7 @@ const FileUploader = ({
 
     const selectedFile = event.dataTransfer.files[0];
     if (selectedFile) {
-      if (!isExtensionAllowed(selectedFile.name)) {
+      if (!isExtensionAllowed(selectedFile, fileExtensionsAllowed)) {
         setError(t('commons.fileNotValid'));
         return;
       }
@@ -135,7 +131,7 @@ const FileUploader = ({
               onClick={() => setError(null)}
               sx={{ color: theme.palette.primary.dark }}
             >
-              <Close fontSize="small" />
+              <Close fontSize="small" data-testid="close-alert-button"/>
             </IconButton>
           }
           severity="error" 
@@ -156,6 +152,7 @@ const FileUploader = ({
             bgcolor: '#e3f2fd',
             textAlign: 'center',
           }}
+          data-testid="drop-zone"
         >
           <CloudUpload sx={{ fontSize: 40, color: '#1976d2' }} />
           <Typography variant="body1" mt={2} mb={3}>
@@ -172,6 +169,7 @@ const FileUploader = ({
             <input
               type="file"
               hidden
+              data-testid="input-file"
               onChange={handleFileUpload}
               accept={fileExtensionsAllowed.map((ext) => `.${ext}`).join(',')}
             />
