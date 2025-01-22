@@ -30,7 +30,8 @@
     "fileNotValid": "Il file non è valido",
     "uploadButtonText": "Carica il file",
     "file": "File",
-    "uploadInProgress": "Caricamento in corso..."
+    "uploadInProgress": "Caricamento in corso...",
+    "removeFile": "Rimuovi file"
   },
   "telematicReceiptFlowExportOverview": {
     "title": "Flussi esportati",

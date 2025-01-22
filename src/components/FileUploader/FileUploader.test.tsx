@@ -130,7 +130,7 @@ describe('FileUploader Component', () => {
       const file = new File(['test content'], 'test.zip', { type: 'application/zip' });
       renderWithTheme(<FileUploader {...defaultProps} file={file} />);
 
-      const removeButton = screen.getByLabelText('Rimuovi file');
+      const removeButton = screen.getByLabelText('commons.removeFile');
       fireEvent.click(removeButton);
 
       expect(mockSetFile).toHaveBeenCalledWith(null);

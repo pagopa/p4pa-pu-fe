@@ -142,39 +142,44 @@ const FileUploader = ({
       )}
 
       {!file && !uploading && (
-        <Box
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          sx={{
-            border: '2px dashed #90caf9',
-            borderRadius: 2,
-            p: 3,
-            bgcolor: '#e3f2fd',
-            textAlign: 'center',
-          }}
-          data-testid="drop-zone"
-        >
-          <CloudUpload sx={{ fontSize: 40, color: '#1976d2' }} />
-          <Typography variant="body1" mt={2} mb={3}>
-            {description}
-          </Typography>
-          <Button
-            variant="contained"
-            component="label"
+        <>
+          <Box
+            onDrop={handleDrop}
+            onDragOver={handleDragOver}
             sx={{
-              padding: 1.5,
+              border: '2px dashed #90caf9',
+              borderRadius: 2,
+              p: 3,
+              bgcolor: '#e3f2fd',
+              textAlign: 'center',
             }}
+            data-testid="drop-zone"
           >
-            {t('commons.uploadButtonText')}
-            <input
-              type="file"
-              hidden
-              data-testid="input-file"
-              onChange={handleFileUpload}
-              accept={fileExtensionsAllowed.map((ext) => `.${ext}`).join(',')}
-            />
-          </Button>
-        </Box>
+            <CloudUpload sx={{ fontSize: 40, color: '#1976d2' }} />
+            <Typography variant="body1" mt={2} mb={3}>
+              {description}
+            </Typography>
+            <Button
+              variant="contained"
+              component="label"
+              sx={{
+                padding: 1.5,
+              }}
+            >
+              {t('commons.uploadButtonText')}
+              <input
+                type="file"
+                hidden
+                data-testid="input-file"
+                onChange={handleFileUpload}
+                accept={fileExtensionsAllowed.map((ext) => `.${ext}`).join(',')}
+              />
+            </Button>
+          </Box>
+          <Typography variant="body2" mt={2} color="textSecondary">
+            {requiredFieldText}
+          </Typography>
+        </>
       )}
 
       {uploading && (
@@ -219,7 +224,7 @@ const FileUploader = ({
             </Typography>
           </Box>
           <IconButton
-            aria-label="Rimuovi file"
+            aria-label={t('commons.removeFile')}
             onClick={handleRemoveFile}
             sx={{ color: theme.palette.primary.main }}
           >
@@ -227,10 +232,6 @@ const FileUploader = ({
           </IconButton>
         </Box>
       )}
-
-      <Typography variant="body2" mt={2} color="textSecondary">
-        {requiredFieldText}
-      </Typography>
     </>
   );
 };
