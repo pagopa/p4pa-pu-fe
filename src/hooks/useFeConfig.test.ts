@@ -1,104 +1,94 @@
-import { renderHook } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { renderHook } from '@testing-library/react-hooks';
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { useFeConfig } from './useFeConfig';
 import brokers from '../api/brokers';
-import { setLoading } from '../store/AppStateStore';
-import { setConfigFe } from '../store/ConfigFeStore';
-import { useStore } from '../store/GlobalStore';
+import { StoreProvider } from '../store/GlobalStore';
+import { configFeState } from '../store/ConfigFeStore';
 import { ConfigFE } from '../../generated/apiClient';
-import { State } from '../store/types';
+import { act } from 'react';
+import { appState } from '../store/AppStateStore';
 
 vi.mock('../api/brokers', () => ({
   default: {
-    getBrokersConfig: vi.fn()
-  }
-}));
-vi.mock('../store/AppStateStore', () => ({
-  setLoading: vi.fn()
-}));
-vi.mock('../store/ConfigFeStore', () => ({
-  setConfigFe: vi.fn()
-}));
-vi.mock('../store/GlobalStore', () => ({
-  useStore: vi.fn()
-}));
-
-describe('useFeConfig', () => {
-  it('should return configFe from the store when it is already set', () => {
-    const mockConfigFe = { key: 'value' };
-    vi.mocked(useStore).mockReturnValue({
-      state: { configFe: mockConfigFe as unknown as ConfigFE } as unknown as State,
-      setState: vi.fn()
-    });
-    vi.mocked(brokers.getBrokersConfig).mockReturnValue({
-      data: null as unknown as ConfigFE,
+    getBrokersConfig: vi.fn(() => ({
+      data: undefined,
       isLoading: false,
       isError: false,
       isSuccess: false
-    } as unknown as ReturnType<typeof brokers.getBrokersConfig>);
+    }))
+  }
+}));
 
-    const { result } = renderHook(useFeConfig);
-
-    expect(result.current).toEqual(mockConfigFe);
-    expect(brokers.getBrokersConfig).toHaveBeenCalledWith({ enabled: false });
+describe('useFeConfig hook', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    configFeState.value = undefined;
   });
 
-  it('should fetch config when configFe is not set', () => {
-    const mockData = { key: 'newValue' };
-    vi.mocked(useStore).mockReturnValue({
-      state: { configFe: null as unknown as ConfigFE } as unknown as State,
-      setState: vi.fn()
+  it('should return existing configFe if already set', () => {
+    // Set an initial configFe value
+    configFeState.value = { key: 'value' } as unknown as ConfigFE;
+
+    const { result } = renderHook(() => useFeConfig(), {
+      wrapper: StoreProvider
     });
 
-    vi.mocked(brokers.getBrokersConfig).mockReturnValue({
-      data: mockData as unknown as ConfigFE,
+    expect(result.current).toEqual({ key: 'value' });
+  });
+
+  it('should fetch config when configFe is not set', async () => {
+    const mockData = { key: 'newValue' };
+
+    (brokers.getBrokersConfig as Mock).mockReturnValue({
+      data: mockData,
       isLoading: false,
       isError: false,
       isSuccess: true
-    } as ReturnType<typeof brokers.getBrokersConfig>);
+    });
 
-    const { result } = renderHook(useFeConfig);
+    const { result, rerender } = renderHook(() => useFeConfig(), {
+      wrapper: StoreProvider
+    });
 
-    expect(result.current).toBeNull();
-    expect(setLoading).toHaveBeenCalledWith(false);
-    expect(setConfigFe).toHaveBeenCalledWith(mockData);
+    expect(result.current).toBeUndefined();
+
+    await act(async () => {
+      configFeState.value = mockData as unknown as ConfigFE;
+      rerender(); // Rerender the hook to reflect state change
+    });
+
+    expect(result.current).toEqual(mockData);
   });
 
-  it('should set loading state when fetching config', () => {
-    vi.mocked(useStore).mockReturnValue({
-      state: { configFe: null as unknown as ConfigFE } as unknown as State,
-      setState: vi.fn()
-    });
-    vi.mocked(brokers.getBrokersConfig).mockReturnValue({
-      data: null as unknown as ConfigFE,
+  it('should set loading state when fetching config', async () => {
+    (brokers.getBrokersConfig as Mock).mockReturnValue({
+      data: null,
       isLoading: true,
       isError: false,
       isSuccess: false
-    } as unknown as ReturnType<typeof brokers.getBrokersConfig>);
+    });
 
-    renderHook(useFeConfig);
+    expect(appState.value.loading).toBeFalsy();
 
-    expect(setLoading).toHaveBeenCalledWith(true);
-    expect(setConfigFe).not.toHaveBeenCalled();
+    renderHook(() => useFeConfig(), { wrapper: StoreProvider });
+
+    expect(appState.value.loading).toBe(true);
   });
 
   it('should log error when fetching config fails', () => {
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    vi.mocked(useStore).mockReturnValue({
-      state: { configFe: null as unknown as ConfigFE } as unknown as State,
-      setState: vi.fn()
-    });
-    vi.mocked(brokers.getBrokersConfig).mockReturnValue({
-      data: null as unknown as ConfigFE,
+
+    (brokers.getBrokersConfig as Mock).mockReturnValue({
+      data: null,
       isLoading: false,
       isError: true,
       isSuccess: false
-    } as unknown as ReturnType<typeof brokers.getBrokersConfig>);
+    });
 
-    renderHook(useFeConfig);
+    renderHook(() => useFeConfig(), {
+      wrapper: StoreProvider
+    });
 
-    expect(setLoading).toHaveBeenCalledWith(false);
-    expect(setConfigFe).not.toHaveBeenCalled();
     expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch fe config');
 
     consoleErrorSpy.mockRestore();

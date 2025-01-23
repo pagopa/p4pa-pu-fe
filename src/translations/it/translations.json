@@ -26,6 +26,14 @@
     "collapse": "Comprimi il menu",
     "expand": "Espandi il menu"
   },
+  "commons":{
+    "exit": "Esci",
+    "fileNotValid": "Il file non è valido",
+    "uploadButtonText": "Carica il file",
+    "file": "File",
+    "uploadInProgress": "Caricamento in corso...",
+    "removeFile": "Rimuovi file"
+  },
   "telematicReceiptFlowExportOverview": {
     "title": "Flussi esportati",
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
@@ -121,6 +129,23 @@
   "telematicReceiptExportFlowThankYouPage": {
     "title": "Abbiamo ricevuto la tua richiesta!",
     "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
+    "closeButton": "Chiudi"
+  },
+  "telematicReceiptFlowImport": {
+    "title": "Carica un nuovo flusso",
+    "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+    "boxTitle": "Configurazione flusso",
+    "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+    "manualLink": "Dubbi? Vai al manuale",
+    "uploadButton": "Carica il flusso"
+  },
+  "FileUploaderFlowImport": {
+    "description": "Carica qui il file .zip con le Ricevute Telematiche",
+    "requiredFieldText": "Campo obbligatorio. Carica un file .zip"
+  },
+  "telematicReceiptFlowImportThankYouPage": {
+    "title": "Flusso caricato con successo",
+    "description": "Troverai il flusso caricato nella sezione Flussi importati",
     "closeButton": "Chiudi"
   },
   "telematicReceiptImportFlowOverview": {
