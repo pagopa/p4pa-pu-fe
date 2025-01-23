@@ -1,11 +1,10 @@
-import { useState } from 'react';
 import { GridColDef, GridRenderCellParams, GridValidRowModel } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import CustomDataGrid from './../DataGrid/CustomDataGrid';
 import { FileDownload, ReadMore } from '@mui/icons-material';
-import CustomDrawer from '../Drawer/CustomDrawer';
-import { Download } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
+import { PageRoutes } from '../../routes/routes';
 
 interface SearchResultDataRow extends GridValidRowModel {
   id: number;
@@ -17,9 +16,7 @@ interface SearchResultDataRow extends GridValidRowModel {
 
 const SearchResultsDataGrid = () => {
   const { t } = useTranslation();
-
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [selectedRow, setSelectedRow] = useState<SearchResultDataRow | null>(null);
+  const navigate = useNavigate();
 
   const rows: SearchResultDataRow[] = [
     {
@@ -88,7 +85,7 @@ const SearchResultsDataGrid = () => {
             {
               icon: <ReadMore fontSize="small" />,
               label: t('actionMenu.detail'),
-              action: () => handleDetailClick(params.row),
+              action: () => navigate(PageRoutes.TELEMATIC_RECEIPT_DETAIL)
             },
             {
               icon: <FileDownload fontSize="small" />,
@@ -100,45 +97,6 @@ const SearchResultsDataGrid = () => {
     },
   ];
 
-  const handleDetailClick = (row: SearchResultDataRow) => {
-    setSelectedRow(row);
-    setDrawerOpen(true);
-  };
-  
-
-  const handleDrawerClose = () => {
-    setDrawerOpen(false);
-    setSelectedRow(null);
-  };
-
-  const fieldConfigurations = [
-    { id: 'iuv', labelKey: 'telematicreceiptSearchResults.drawer.iuv', variant: 'monospaced' },
-    { id: 'amount', labelKey: 'telematicreceiptSearchResults.drawer.amount' },
-    { id: 'reason', labelKey: 'telematicreceiptSearchResults.drawer.reason' },
-    { id: 'dueType', labelKey: 'telematicreceiptSearchResults.drawer.dueType' },
-    { id: 'payer', labelKey: 'telematicreceiptSearchResults.drawer.payer' },
-    { id: 'fiscalCodeorVat', labelKey: 'telematicreceiptSearchResults.drawer.fiscalCodeorVat' },
-    { id: 'paymentDate', labelKey: 'telematicreceiptSearchResults.drawer.paymentDate' },
-    { id: 'paymentExecutor', labelKey: 'telematicreceiptSearchResults.drawer.paymentExecutor' },
-    {
-      id: 'fiscalCodeorVatExecutor',
-      labelKey: 'telematicreceiptSearchResults.drawer.fiscalCodeorVatExecutor',
-    },
-    { id: 'auditor', labelKey: 'telematicreceiptSearchResults.drawer.auditor' },
-    { id: 'iud', labelKey: 'telematicreceiptSearchResults.drawer.iud' },
-    { id: 'iur', labelKey: 'telematicreceiptSearchResults.drawer.iur' },
-  ];
-  
-  const drawerFields = selectedRow
-    ? fieldConfigurations.map(({ id, labelKey, variant }) => ({
-      id,
-      label: t(labelKey),
-      value: selectedRow[id as keyof SearchResultDataRow]?.toString() || '',
-      variant: variant as 'monospaced',
-    }))
-    : [];
-
-
   return (
     <>
       <CustomDataGrid
@@ -147,15 +105,6 @@ const SearchResultsDataGrid = () => {
         hideFooter
         disableColumnMenu
         disableColumnResize
-      />
-      <CustomDrawer
-        open={drawerOpen}
-        onClose={handleDrawerClose}
-        fields={drawerFields}
-        title={t('telematicreceiptSearchResults.drawer.title')}
-        buttonText={t('telematicreceiptSearchResults.drawer.actionButton')}
-        onButtonClick={() => console.log('Download Button clicked!')}
-        startIcon={<Download/>}
       />
     </>
   );
