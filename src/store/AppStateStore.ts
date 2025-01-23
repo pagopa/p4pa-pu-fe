@@ -10,7 +10,3 @@ export function setAppState(newState: AppState) {
 export function setLoading(newState: AppState['loading']) {
   appState.value.loading = newState;
 }
-
-export function toggleLoading() {
-  setLoading(!appState.value.loading);
-}

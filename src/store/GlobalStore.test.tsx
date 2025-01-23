@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { vi, describe, it, expect } from 'vitest';
+import { vi, describe, it, expect, afterEach } from 'vitest';
 import { STATE } from './types';
 import { setOrganizationId } from './OrganizationIdStore';
 import { setUserInfo } from './UserInfoStore';
@@ -25,6 +25,11 @@ vi.mock('./AppStateStore', () => ({
 }));
 
 describe('StoreContext', () => {
+  afterEach(() => {
+    // Restore the original console.error after the test
+    vi.restoreAllMocks();
+  });
+
   it('should provide combined state to children', () => {
     const TestComponent = () => {
       const { state } = useStore();
@@ -81,6 +86,7 @@ describe('StoreContext', () => {
   });
 
   it('should throw an error if useStore is used outside of StoreProvider', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
     const TestComponent = () => {
       useStore();
       return null;

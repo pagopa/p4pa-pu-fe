@@ -1,6 +1,6 @@
 import { describe, it, vi, expect } from 'vitest';
 import { AppState } from '../models/AppState';
-import { appState, setAppState, setLoading, toggleLoading } from './AppStateStore';
+import { appState, setAppState, setLoading } from './AppStateStore';
 
 vi.mock('@preact/signals-react', async () => {
   const actual =
@@ -30,16 +30,5 @@ describe('AppState Store', () => {
     setLoading(true);
 
     expect(appState.value).toEqual({ loading: true });
-  });
-
-  it('toggleLoading should invert the current loading state', () => {
-    appState.value = { loading: false }; // Ensure initial state
-    toggleLoading();
-
-    expect(appState.value).toEqual({ loading: true });
-
-    toggleLoading();
-
-    expect(appState.value).toEqual({ loading: false });
   });
 });
