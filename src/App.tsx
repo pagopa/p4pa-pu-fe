@@ -21,6 +21,8 @@ import TelematicReceiptExportFlowReservation from './routes/TelematicReceiptExpo
 import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResults';
 import TelematicReceipt from './routes/TelematicReceipt';
 import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExportFlowThankYouPage';
+import TelematicReceiptFlowImport from './routes/TelematicReceiptFlowImport';
+import TelematicReceiptFlowImportThankYouPage from './routes/TelematicReceiptFlowImportThankYouPage';
 import TelematicReceiptImportFlowOverview from './routes/TelematicReceiptImportFlowOverview';
 
 
@@ -169,6 +171,42 @@ const router = createBrowserRouter([
           {
             path: PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW,
             element: <TelematicReceiptImportFlowOverview />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
+        ]
+      },
+      {
+        path:PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW,
+        element: <Layout />,
+        handle: {
+          backButton: true,
+          sidebar: {
+            visibile: false
+          },
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW,
+            element: <TelematicReceiptFlowImport />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
+        ]
+      },
+      {
+        path:PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE,
+        element: <Layout />,
+        handle: {
+          backButton: false,
+          sidebar: {
+            visibile: false
+          },
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE,
+            element: <TelematicReceiptFlowImportThankYouPage />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
           },

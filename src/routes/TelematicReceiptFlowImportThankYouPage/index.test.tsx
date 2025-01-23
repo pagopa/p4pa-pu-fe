@@ -1,19 +1,19 @@
 import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, vi } from 'vitest';
-import TelematicReceiptImportFlowOverview from '.';
+import TelematicReceiptFlowImportThankYouPage from '.';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
 }));
 
-describe('TelematicReceiptImportFlowOverview Page', () => {
+describe('TelematicReceiptFlowImportThankYouPage Page', () => {
   const queryClient = new QueryClient();
 
-  it('renders Telematic Receipt Import Flow Overview results view without crashing', () => {
+  it('renders Telematic Receipt Import Thenk You Page without crashing', () => {
     render(
       <QueryClientProvider client={queryClient}>
-        <TelematicReceiptImportFlowOverview />
+        <TelematicReceiptFlowImportThankYouPage />
       </QueryClientProvider>
     );
   });
