@@ -3,12 +3,18 @@ import { Button, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer from './DetailContainer';
 
+export interface TelematicReceiptDetailData {
+  label: string;
+  value: string;
+  variant?: 'body1' | 'body2' | 'h6' | 'subtitle1' | 'monospaced';
+}
+
 export const TelematicReceiptDetail = () => {
 
   const { t } = useTranslation();
 
-  const summaryData = [
-    { label: 'IUV', value: '0300330000000001' },
+  const summaryData: TelematicReceiptDetailData[] = [
+    { label: 'IUV', value: '0300330000000001', variant: 'monospaced' },
     { label: 'Importo', value: '50,00 €' },
     { label: 'Causale', value: 'TARI 2024' },
     { label: 'Tipo dovuto', value: 'TARI' },
@@ -16,7 +22,7 @@ export const TelematicReceiptDetail = () => {
     { label: 'CF / Partita IVA', value: 'BNCMRA82B42C933X (Persona fisica)' },
   ];
 
-  const paymentData = [
+  const paymentData: TelematicReceiptDetailData[] = [
     { label: 'Data esito', value: '01/09/2024' },
     { label: 'Versante', value: 'Paolo Rossi' },
     { label: 'CF / Partita IVA', value: 'PLRSRA82B42C933X (Persona fisica)' },

@@ -1,8 +1,9 @@
 import { Card, CardContent, Typography, Grid, useTheme } from '@mui/material';
+import { TelematicReceiptDetailData } from './TelematicReceiptDetail';
 
 type DetailSectionProps = {
   title: string;
-  data: { label: string; value: string | number }[];
+  data: TelematicReceiptDetailData[];
 };
 
 const DetailContainer = ({ title, data }: DetailSectionProps) => {
@@ -17,14 +18,12 @@ const DetailContainer = ({ title, data }: DetailSectionProps) => {
         <Grid container direction='column' spacing={1} marginTop={1}>
           {data.map((item, index) => (
             <Grid item key={index}>
-              <Typography fontSize={16} color={theme.palette.action.active}>
+              <Typography variant='body2' color={theme.palette.action.active}>
                 {item.label}
               </Typography>
               <Typography 
-                fontSize={item.label === 'IUV' ? 16 : 18}
-                fontWeight={item.label === 'IUV' ? 400 : 600}
-                color={theme.palette.text.primary}
-                variant= {item.label === 'IUV' ? 'monospaced' : 'inherit'}
+                fontWeight={item.variant ?? 600}
+                variant= {item.variant ?? 'body1'}
               >
                 {item.value}
               </Typography>
