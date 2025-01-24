@@ -15,20 +15,27 @@ import { SearchButton } from '../SearchButton';
 type SearchCardProps = {
   title: string;
   description: string;
-  searchFields: {
+  searchFields?: {
     label: string;
     placeholder?: string;
     icon?: React.ReactNode;
     gridWidth?: number;
   }[];
-  selectLabel: string;
-  selectOptions: {
-    label: string;
-    value: string;
+  selectField?: {
+    selectLabel?: string;
+    selectOptions?: {
+      label: string;
+      value: string;
+    }[];
+  }[];
+  button?: {
+    text: string;
+    variant?: 'contained' | 'outlined'
+    onClick?: () => void;
   }[];
 };
 
-const SearchCard = ({ title, description, searchFields, selectLabel, selectOptions }: SearchCardProps) => {
+const SearchCard = ({ title, description, searchFields, selectField, button }: SearchCardProps) => {
   const [selectedValue, setSelectedValue] = React.useState('');
   return (
     <Box
@@ -53,7 +60,7 @@ const SearchCard = ({ title, description, searchFields, selectLabel, selectOptio
       </Typography>
 
       <Grid container spacing={2} role="group" aria-labelledby="search-card-fields">
-        {searchFields.map((field, index) => (
+        {searchFields?.map((field, index) => (
           <Grid item xs={field.gridWidth || 12} key={index} mb={1}>
             <TextField
               label={field.label}
@@ -69,33 +76,44 @@ const SearchCard = ({ title, description, searchFields, selectLabel, selectOptio
           </Grid>
         ))}
       </Grid>
-
-      <FormControl
-        fullWidth
-        size="small"
-        sx={{ my: 2 }}
-        role="combobox"
-        aria-labelledby="due-type-label"
-      >
-        <InputLabel id="due-type-label">{selectLabel}</InputLabel>
-        <Select
-          labelId="due-type-label"
-          value={selectedValue}
-          onChange={(event) => setSelectedValue(event.target.value)}
-          label={selectLabel}
+      
+      {selectField?.map((field, index) => 
+        <FormControl
+          fullWidth
+          size="small"
+          key={index}
+          sx={{ my: 2 }}
+          role="combobox"
+          aria-labelledby={`select-label-${index}`}
         >
-          {selectOptions.map((option, index) => (
-            <MenuItem key={index} value={option.value}>
-              {option.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-
-      <Box display="flex" justifyContent="flex-end" mt={1}>
-        <SearchButton />
+          <InputLabel id={`select-label-${index}`}>{field.selectLabel}</InputLabel>
+          <Select
+            labelId={`select-label-${index}`}
+            value={selectedValue}
+            onChange={(event) => setSelectedValue(event.target.value)}
+            label={field.selectLabel}
+          >
+            {field.selectOptions?.map((option, index) => (
+              <MenuItem key={`${option.label}-${option.value}-${index}`} value={option.value}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+      
+      <Box display="flex" justifyContent="flex-end" gap={2} mt={1}>
+        {button?.map((field, index) => 
+          <SearchButton
+            key={index}
+            text={field.text}
+            onClick={field.onClick}
+            variant={field.variant}
+          />
+        )}
       </Box>
     </Box>
+
   );
 };
 
