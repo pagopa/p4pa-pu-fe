@@ -71,6 +71,11 @@ export const Sidebar: React.FC = () => {
           end: true
         },
         {
+          label: t('menu.reporting'),
+          route: PageRoutes.REPORTING,
+          end: true
+        },
+        {
           label: t('menu.subitem'),
           route: '/flows/item2',
           end: true
