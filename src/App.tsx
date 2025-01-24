@@ -29,6 +29,7 @@ import TelematicReceiptImportFlowOverview from './routes/TelematicReceiptImportF
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
+import Reporting from './routes/Reporting';
 
 const router = createBrowserRouter([
   {
@@ -236,6 +237,27 @@ const router = createBrowserRouter([
           },
         ]
       },
+      {
+        path: PageRoutes.REPORTING,
+        element: <Layout />,
+        handle: {
+          crumbs: {
+            elements: [
+              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'reporting', color: theme.palette.text.disabled }
+            ]
+          },
+          backButton: false
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.REPORTING,
+            element: <Reporting />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          }
+        ]
+      }
     ]
   }
 ]);
