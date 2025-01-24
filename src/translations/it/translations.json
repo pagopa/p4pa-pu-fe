@@ -1,167 +1,169 @@
 {
-    "app": {
-        "routes": {
-            "back": "Indietro",
-            "telematicReceiptFlowExportOverview": "Flussi esportati",
-            "search": "Cerca",
-            "flows": "Flussi",
-            "telematicreceipt": "Ricevute Telematiche",
-            "telematicreceiptsearchresults": "Risultato ricerca",
-            "telematicreceiptdetail": "Dettaglio Ricevuta Telematica",
-            "telematicReceiptImportFlowOverview": "Flussi importati"
-        }
-    },
-    "menu": {
-        "menu": "Menu",
-        "homepage": "Panoramica",
-        "debtpositions": "Dovuti",
-        "flows": "Flussi",
-        "telematicreceipt": "Ricevute Telematiche",
-        "subitem": "Item",
-				"entities": "Enti gestiti",
-				"users": "Utenti",
-				"deptstypes": "Tipi dovuti"
-    },
-    "sidebar": {
-    "collapse": "Comprimi il menu",
-    "expand": "Espandi il menu"
-  },
-  "commons":{
-    "exit": "Esci",
-    "fileNotValid": "Il file non è valido",
-    "uploadButtonText": "Carica il file",
-    "file": "File",
-    "uploadInProgress": "Caricamento in corso...",
-    "removeFile": "Rimuovi file"
-  },
-  "telematicReceiptFlowExportOverview": {
-    "title": "Flussi esportati",
-    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
-    "buttonReservationExport": "Prenota export",
-    "searchFlowName":"Cerca per nome flusso",
-    "from": "Dal",
-    "to": "Al",
-    "filter": "Filtra",
-    "removeFilter": "Rimuovi filtri"
-  },
-  "flowDataGrid": {
-    "name": "Nome",
-    "reservationDate": "Data prenotazione",
-    "operator": "Operatore",
-    "internalID": "ID Interno",
-    "loadedDiscarded": "Caricati/Scarti",
-    "fileSize": "Dimensione File"
-  },
-    "telematicReceipts": {
-    "title": "Ricevute Telematiche",
-    "description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
-    "search": "Cerca Ricevuta Telematica",
-    "searchdescription" :"Inserisci al meno uno dei campi per cominciare la ricerca.",
-    "iuv": "Cerca IUV",
-    "from": "Dal",
-    "to": "Al",
-    "duetype": "Tipo dovuto",
-    "tari": "TARI",
-    "trafficoffence": "Violazione al codice della strada",
-    "downloadflowstitle": "Scarica Flussi di Ricevute Telematiche",
-    "downloadflowsdescription": "Richiede l’esportazione di Ricevute Telematiche in un certo intervallo di tempo.",
-    "exportrequestbutton": "Prenota export",
-    "exportedflowsviewbutton": "Vedi flussi esportati",
-    "importflowstitle": "Importa Flussi di Ricevute Telematiche",
-    "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Ricevute Telematiche mancanti.",
-    "importflowbutton": "Importa flusso",
-    "importedflowsviewbutton": "Vedi flussi importati"
-  },
-  "telematicReceiptExportFlowReservation": {
-    "title": "Prenota export di un flusso",
-    "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
-    "requiredFieldDescription": "* Indica un campo obbligatorio",
-    "formTitle": "Configurazione della esportazione",
-    "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
-    "buttonExit": "Esci",
-    "buttonConfirmReservation": "Prenota",
-    "paymentDate": "Data pagamento",
-    "from": "Dal",
-    "to": "Al",
-    "fileVersion": "Versione tracciato",
-    "dueTipe": "Tipo di dovuto",
-    "dueTipePlaceHolder": "Tipo di dovuto da prenotare"
-  },
-  "telematicReceiptSearchResultsDataGrid": {
-    "iuv": "IUV",
-    "amount": "Importo",
-    "duetype": "Tipo dovuto",
-    "paymentdate": "Data Esito"
-  },
-  "telematicreceiptSearchResults":{
-    "title": "Risultato ricerca",
-    "description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
-    "searchIUV":"Cerca IUV",
-    "duetype":"Tipo dovuto",
-    "from": "Dal",
-    "to": "Al",
-    "filter": "Filtra",
-    "filterFields": "Filtri"
-  },
-  "telematicReceiptDetail": {
-    "title": "Dettaglio Ricevuta Telematica",
-    "downloadButtonLabel": "Scarica",
-    "summary": "riepilogo",
-    "iuv": "IUV",
-    "amount": "Importo",
-    "reason": "Causale",
-    "dueType": "Tipo Dovuto",
-    "payer": "Pagatore",
-    "fiscalCodeorVat": "CF / Partita IVA",
-    "payment": "Pagamento",
-    "paymentExecutor": "Versante",
-    "fiscalCodeorVatExecutor": "CF / Partita IVA",
-    "auditor": "Attestante",
-    "iud": "IUD",
-    "iur": "IUR"
-  },
-  "actionMenu":{
-    "detail": "Dettaglio",
-    "download": "Scarica",
-    "importFile": "File importato",
-    "importResult": "Esito dell'importazione"
-  },
-  "telematicReceiptExportFlowThankYouPage": {
-    "title": "Abbiamo ricevuto la tua richiesta!",
-    "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
-    "closeButton": "Chiudi"
-  },
-  "telematicReceiptFlowImport": {
-    "title": "Carica un nuovo flusso",
-    "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
-    "boxTitle": "Configurazione flusso",
-    "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
-    "manualLink": "Dubbi? Vai al manuale",
-    "uploadButton": "Carica il flusso"
-  },
-  "FileUploaderFlowImport": {
-    "description": "Carica qui il file .zip con le Ricevute Telematiche",
-    "requiredFieldText": "Campo obbligatorio. Carica un file .zip"
-  },
-  "telematicReceiptFlowImportThankYouPage": {
-    "title": "Flusso caricato con successo",
-    "description": "Troverai il flusso caricato nella sezione Flussi importati",
-    "closeButton": "Chiudi"
-  },
-  "telematicReceiptImportFlowOverview": {
-    "title": "Flussi importati",
-    "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
-    "importFlowButton": "Importa flusso",
-    "searchDescription": "Cerca Nome",
-    "state": "Stato",
-    "from": "Caricati dal",
-    "to": "Al",
-    "filterButton": "Filtra",
-    "internalID": "ID interno",
-    "name": "Nome",
-    "uploadDate": "Data Caricamento",
-    "operator": "Operatore",
-    "loadedDiscarded": "Caricati/Scarti"
-  }
+	"app": {
+		"routes": {
+			"back": "Indietro",
+			"telematicReceiptFlowExportOverview": "Flussi esportati",
+			"search": "Cerca",
+			"flows": "Flussi",
+			"telematicreceipt": "Ricevute Telematiche",
+			"telematicreceiptsearchresults": "Risultato ricerca",
+			"telematicreceiptdetail": "Dettaglio Ricevuta Telematica",
+			"telematicReceiptImportFlowOverview": "Flussi importati"
+		}
+	},
+	"menu": {
+		"menu": "Menu",
+		"homepage": "Panoramica",
+		"debtpositions": "Dovuti",
+		"flows": "Flussi",
+		"telematicreceipt": "Ricevute Telematiche",
+		"subitem": "Item",
+		"entities": "Enti gestiti",
+		"users": "Utenti",
+		"deptstypes": "Tipi dovuti"
+	},
+	"sidebar": {
+		"collapse": "Comprimi il menu",
+		"expand": "Espandi il menu"
+	},
+	"footer": {
+		"infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
+	},
+	"commons": {
+		"exit": "Esci",
+		"fileNotValid": "Il file non è valido",
+		"uploadButtonText": "Carica il file",
+		"file": "File",
+		"uploadInProgress": "Caricamento in corso...",
+		"removeFile": "Rimuovi file"
+	},
+	"telematicReceiptFlowExportOverview": {
+		"title": "Flussi esportati",
+		"description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+		"buttonReservationExport": "Prenota export",
+		"searchFlowName": "Cerca per nome flusso",
+		"from": "Dal",
+		"to": "Al",
+		"filter": "Filtra",
+		"removeFilter": "Rimuovi filtri"
+	},
+	"flowDataGrid": {
+		"name": "Nome",
+		"reservationDate": "Data prenotazione",
+		"operator": "Operatore",
+		"internalID": "ID Interno",
+		"loadedDiscarded": "Caricati/Scarti",
+		"fileSize": "Dimensione File"
+	},
+	"telematicReceipts": {
+		"title": "Ricevute Telematiche",
+		"description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
+		"search": "Cerca Ricevuta Telematica",
+		"searchdescription": "Inserisci al meno uno dei campi per cominciare la ricerca.",
+		"iuv": "Cerca IUV",
+		"from": "Dal",
+		"to": "Al",
+		"duetype": "Tipo dovuto",
+		"tari": "TARI",
+		"trafficoffence": "Violazione al codice della strada",
+		"downloadflowstitle": "Scarica Flussi di Ricevute Telematiche",
+		"downloadflowsdescription": "Richiede l’esportazione di Ricevute Telematiche in un certo intervallo di tempo.",
+		"exportrequestbutton": "Prenota export",
+		"exportedflowsviewbutton": "Vedi flussi esportati",
+		"importflowstitle": "Importa Flussi di Ricevute Telematiche",
+		"importflowsdescription": "Carica un file .zip con l’informazione necessaria di Ricevute Telematiche mancanti.",
+		"importflowbutton": "Importa flusso",
+		"importedflowsviewbutton": "Vedi flussi importati"
+	},
+	"telematicReceiptExportFlowReservation": {
+		"title": "Prenota export di un flusso",
+		"description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
+		"requiredFieldDescription": "* Indica un campo obbligatorio",
+		"formTitle": "Configurazione della esportazione",
+		"formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
+		"buttonExit": "Esci",
+		"buttonConfirmReservation": "Prenota",
+		"paymentDate": "Data pagamento",
+		"from": "Dal",
+		"to": "Al",
+		"fileVersion": "Versione tracciato",
+		"dueTipe": "Tipo di dovuto",
+		"dueTipePlaceHolder": "Tipo di dovuto da prenotare"
+	},
+	"telematicReceiptSearchResultsDataGrid": {
+		"iuv": "IUV",
+		"amount": "Importo",
+		"duetype": "Tipo dovuto",
+		"paymentdate": "Data Esito"
+	},
+	"telematicreceiptSearchResults": {
+		"title": "Risultato ricerca",
+		"description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
+		"searchIUV": "Cerca IUV",
+		"duetype": "Tipo dovuto",
+		"from": "Dal",
+		"to": "Al",
+		"filter": "Filtra",
+		"filterFields": "Filtri"
+	},
+	"telematicReceiptDetail": {
+		"title": "Dettaglio Ricevuta Telematica",
+		"downloadButtonLabel": "Scarica",
+		"summary": "riepilogo",
+		"iuv": "IUV",
+		"amount": "Importo",
+		"reason": "Causale",
+		"dueType": "Tipo Dovuto",
+		"payer": "Pagatore",
+		"fiscalCodeorVat": "CF / Partita IVA",
+		"payment": "Pagamento",
+		"paymentExecutor": "Versante",
+		"fiscalCodeorVatExecutor": "CF / Partita IVA",
+		"auditor": "Attestante",
+		"iud": "IUD",
+		"iur": "IUR"
+	},
+	"actionMenu": {
+		"detail": "Dettaglio",
+		"download": "Scarica",
+		"importFile": "File importato",
+		"importResult": "Esito dell'importazione"
+	},
+	"telematicReceiptExportFlowThankYouPage": {
+		"title": "Abbiamo ricevuto la tua richiesta!",
+		"description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
+		"closeButton": "Chiudi"
+	},
+	"telematicReceiptFlowImport": {
+		"title": "Carica un nuovo flusso",
+		"description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+		"boxTitle": "Configurazione flusso",
+		"boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+		"manualLink": "Dubbi? Vai al manuale",
+		"uploadButton": "Carica il flusso"
+	},
+	"FileUploaderFlowImport": {
+		"description": "Carica qui il file .zip con le Ricevute Telematiche",
+		"requiredFieldText": "Campo obbligatorio. Carica un file .zip"
+	},
+	"telematicReceiptFlowImportThankYouPage": {
+		"title": "Flusso caricato con successo",
+		"description": "Troverai il flusso caricato nella sezione Flussi importati",
+		"closeButton": "Chiudi"
+	},
+	"telematicReceiptImportFlowOverview": {
+		"title": "Flussi importati",
+		"description": "Visualizza i flussi importati in precedenza e importa nuovi.",
+		"importFlowButton": "Importa flusso",
+		"searchDescription": "Cerca Nome",
+		"state": "Stato",
+		"from": "Caricati dal",
+		"to": "Al",
+		"filterButton": "Filtra",
+		"internalID": "ID interno",
+		"name": "Nome",
+		"uploadDate": "Data Caricamento",
+		"operator": "Operatore",
+		"loadedDiscarded": "Caricati/Scarti"
+	}
 }
-

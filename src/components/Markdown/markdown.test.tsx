@@ -1,0 +1,33 @@
+import { render, screen } from '@testing-library/react';
+import { describe, expect, it } from 'vitest';
+import { Markdown } from '../Markdown';
+import 'vitest-dom/extend-expect';
+
+describe('MarkdownText Component', () => {
+  it('renders allowed tags in the markdown', () => {
+    const markdown = `# Heading \n &nsbp;
+			**Bold Text** _Italic Text_`;
+    render(<Markdown>{markdown}</Markdown>);
+
+    expect(screen.getByText('Heading').tagName).toBe('H1');
+    expect(screen.getByText('Bold Text').tagName).toBe('STRONG');
+    expect(screen.getByText('Italic Text').tagName).toBe('EM');
+  });
+
+  it('does not render non-whitelisted tags', () => {
+    const markdown = '[link](phishing)';
+    render(<Markdown>{markdown}</Markdown>);
+
+    expect(screen.getByText('link').tagName).toBe('P');
+    expect(screen.queryByText('A')).not.toBeInTheDocument();
+  });
+
+  it('sanitizes dangerous HTML content', () => {
+    const markdown = '**Safe**<script>alert(\'Hacked!\')';
+    render(<Markdown>{markdown}</Markdown>);
+
+    expect(screen.getByText('alert(\'Hacked!\')').tagName).not.toBe('SCRIPT');
+    expect(screen.getByText('Safe')).toBeInTheDocument();
+    expect(screen.getByText('Safe').tagName).toBe('STRONG');
+  });
+});

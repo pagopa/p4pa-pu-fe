@@ -2,25 +2,20 @@ import lang from '../../translations/lang';
 import { Footer as MUIFooter } from '@pagopa/mui-italia';
 import { useLanguage } from '../../hooks/useLanguage';
 import { useFeConfig } from '../../hooks/useFeConfig';
-
-const LegalInfoFallback = () => (
-  <>
-    <b>PagoPA S.p.A.</b> - Società per azioni con socio unico - Capitale sociale di euro 1,000,000
-    interamente versato - Sede legale in Roma, Piazza Colonna 370, <br />
-    CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009
-  </>
-);
+import { Markdown } from '../Markdown';
+import { useTranslation } from 'react-i18next';
 
 export const Footer = () => {
   const { language, changeLanguage } = useLanguage();
 
   const configFe = useFeConfig();
+  const { t } = useTranslation();
 
   return (
     <MUIFooter
       loggedUser={true}
       companyLink={{ ariaLabel: 'PagoPA SPA' }}
-      legalInfo={<>{configFe?.footerDescText ?? <LegalInfoFallback />}</>}
+      legalInfo={<Markdown>{configFe?.footerDescText ?? t('footer.infoFallback')}</Markdown>}
       postLoginLinks={[
         {
           label: 'Informativa Privacy',
