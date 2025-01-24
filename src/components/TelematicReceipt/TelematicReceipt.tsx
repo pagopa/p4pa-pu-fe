@@ -1,10 +1,11 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { CalendarToday, Download, Search, Upload } from '@mui/icons-material';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
+import TitleComponent from '../TitleComponent/TitleComponent';
 
 export const TelematicReceipt = () => {
 
@@ -13,20 +14,11 @@ export const TelematicReceipt = () => {
 
   return (
     <>
+      <TitleComponent 
+        title={t('telematicReceipts.title')}
+        description={t('telematicReceipts.description')}
+      />
       <Grid container direction="row">
-        <Grid container direction="column">
-          <Grid item mb={2}>
-            <Typography variant="h3" >
-              {t('telematicReceipts.title')}
-            </Typography>
-          </Grid>
-          <Grid item mb={3}>
-            <Typography variant="body1">
-              {t('telematicReceipts.description')}
-            </Typography>
-          </Grid>
-        </Grid>
-
         <Grid container spacing={2} 
           // width={900}
         >

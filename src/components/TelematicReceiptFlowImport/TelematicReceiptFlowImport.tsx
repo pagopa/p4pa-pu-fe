@@ -6,6 +6,7 @@ import { ArrowBack } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
+import TitleComponent from '../TitleComponent/TitleComponent';
 
 const TelematicReceiptFlowImport = () => {
 
@@ -20,14 +21,10 @@ const TelematicReceiptFlowImport = () => {
     <>
       <Grid container direction="column" alignItems="center" marginTop={2}>
         <Grid container direction="column" alignItems="left" marginTop={2} ml={1} mb={4}>
-          <Grid item marginBottom={1}>
-            <Typography align='left' variant="h4" gutterBottom>{t('telematicReceiptFlowImport.title')}</Typography>
-          </Grid>
-          <Grid item>
-            <Typography align='left' variant="body1" marginBottom={3}>
-              {t('telematicReceiptFlowImport.description')}
-            </Typography>
-          </Grid>
+          <TitleComponent 
+            title={t('telematicReceiptFlowImport.title')}
+            description={t('telematicReceiptFlowImport.description')}
+          />
           <Box bgcolor={theme.palette.common.white} borderRadius={0.5} p={3} gap={3}>
             <Grid item lg={12} mb={3}>
               <Grid item lg={12} mb={2}>
