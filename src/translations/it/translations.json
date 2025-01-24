@@ -8,8 +8,9 @@
             "telematicreceipt": "Ricevute Telematiche",
             "telematicreceiptsearchresults": "Risultato ricerca",
             "telematicreceiptdetail": "Dettaglio Ricevuta Telematica",
-            "telematicReceiptImportFlowOverview": "Flussi importati"
-        }
+            "telematicReceiptImportFlowOverview": "Flussi importati",
+            "reporting": "Rendicontazione"
+          }
     },
     "menu": {
         "menu": "Menu",
@@ -17,6 +18,7 @@
         "debtpositions": "Dovuti",
         "flows": "Flussi",
         "telematicreceipt": "Ricevute Telematiche",
+        "reporting": "Rendicontazione",
         "subitem": "Item",
 				"entities": "Enti gestiti",
 				"users": "Utenti",
@@ -32,7 +34,8 @@
     "uploadButtonText": "Carica il file",
     "file": "File",
     "uploadInProgress": "Caricamento in corso...",
-    "removeFile": "Rimuovi file"
+    "removeFile": "Rimuovi file",
+    "search": "Cerca"
   },
   "telematicReceiptFlowExportOverview": {
     "title": "Flussi esportati",
@@ -162,6 +165,22 @@
     "uploadDate": "Data Caricamento",
     "operator": "Operatore",
     "loadedDiscarded": "Caricati/Scarti"
+  },
+  "reporting": {
+    "title": "Rendicontazione",
+    "description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
+    "searchTitleContainer": "Cerca flussi di Rendicontazione",
+    "searchDescriptionContainer" :"Inserisci al meno uno dei campi per cominciare la ricerca.",
+    "searchReportingId": "Cerca ID Rendicontazione",
+    "searchRegulationId": "Cerca ID Regolamento",
+    "regulationFrom": "Regolamento dal",
+    "regulationTo": "Al",
+    "removeFilter": "Rimuovi filtri",
+    "filterButton": "Filtra",
+    "importFlowsTitleContainer": "Importa flussi di Rendicontazione",
+    "importFlowsDescriptionContainer": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
+    "importFlowButton": "Importa flusso",
+    "showAllFlows": "Vedi tutti i flussi"
   }
 }
 
