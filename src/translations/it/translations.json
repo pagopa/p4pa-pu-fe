@@ -1,34 +1,37 @@
 {
-    "app": {
-        "routes": {
-            "back": "Indietro",
-            "telematicReceiptFlowExportOverview": "Flussi esportati",
-            "search": "Cerca",
-            "flows": "Flussi",
-            "telematicreceipt": "Ricevute Telematiche",
-            "telematicreceiptsearchresults": "Risultato ricerca",
-            "telematicreceiptdetail": "Dettaglio Ricevuta Telematica",
-            "telematicReceiptImportFlowOverview": "Flussi importati",
-            "reporting": "Rendicontazione"
-          }
-    },
-    "menu": {
-        "menu": "Menu",
-        "homepage": "Panoramica",
-        "debtpositions": "Dovuti",
-        "flows": "Flussi",
-        "telematicreceipt": "Ricevute Telematiche",
-        "reporting": "Rendicontazione",
-        "subitem": "Item",
-				"entities": "Enti gestiti",
-				"users": "Utenti",
-				"deptstypes": "Tipi dovuti"
-    },
-    "sidebar": {
+  "app": {
+    "routes": {
+      "back": "Indietro",
+      "telematicReceiptFlowExportOverview": "Flussi esportati",
+      "search": "Cerca",
+      "flows": "Flussi",
+      "telematicreceipt": "Ricevute Telematiche",
+      "telematicreceiptsearchresults": "Risultato ricerca",
+      "telematicreceiptdetail": "Dettaglio Ricevuta Telematica",
+      "telematicReceiptImportFlowOverview": "Flussi importati",
+      "reporting": "Rendicontazione"
+    }
+  },
+  "menu": {
+    "menu": "Menu",
+    "homepage": "Panoramica",
+    "debtpositions": "Dovuti",
+    "flows": "Flussi",
+    "telematicreceipt": "Ricevute Telematiche",
+    "reporting": "Rendicontazione",
+    "subitem": "Item",
+    "entities": "Enti gestiti",
+    "users": "Utenti",
+    "deptstypes": "Tipi dovuti"
+  },
+  "sidebar": {
     "collapse": "Comprimi il menu",
     "expand": "Espandi il menu"
   },
-  "commons":{
+  "footer": {
+    "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
+  },
+  "commons": {
     "exit": "Esci",
     "fileNotValid": "Il file non è valido",
     "uploadButtonText": "Carica il file",
@@ -41,7 +44,7 @@
     "title": "Flussi esportati",
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "buttonReservationExport": "Prenota export",
-    "searchFlowName":"Cerca per nome flusso",
+    "searchFlowName": "Cerca per nome flusso",
     "from": "Dal",
     "to": "Al",
     "filter": "Filtra",
@@ -55,11 +58,11 @@
     "loadedDiscarded": "Caricati/Scarti",
     "fileSize": "Dimensione File"
   },
-    "telematicReceipts": {
+  "telematicReceipts": {
     "title": "Ricevute Telematiche",
     "description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
     "search": "Cerca Ricevuta Telematica",
-    "searchdescription" :"Inserisci al meno uno dei campi per cominciare la ricerca.",
+    "searchdescription": "Inserisci al meno uno dei campi per cominciare la ricerca.",
     "iuv": "Cerca IUV",
     "from": "Dal",
     "to": "Al",
@@ -96,11 +99,11 @@
     "duetype": "Tipo dovuto",
     "paymentdate": "Data Esito"
   },
-  "telematicreceiptSearchResults":{
+  "telematicreceiptSearchResults": {
     "title": "Risultato ricerca",
     "description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
-    "searchIUV":"Cerca IUV",
-    "duetype":"Tipo dovuto",
+    "searchIUV": "Cerca IUV",
+    "duetype": "Tipo dovuto",
     "from": "Dal",
     "to": "Al",
     "filter": "Filtra",
@@ -123,7 +126,7 @@
     "iud": "IUD",
     "iur": "IUR"
   },
-  "actionMenu":{
+  "actionMenu": {
     "detail": "Dettaglio",
     "download": "Scarica",
     "importFile": "File importato",
@@ -170,7 +173,7 @@
     "title": "Rendicontazione",
     "description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
     "searchTitleContainer": "Cerca flussi di Rendicontazione",
-    "searchDescriptionContainer" :"Inserisci al meno uno dei campi per cominciare la ricerca.",
+    "searchDescriptionContainer": "Inserisci al meno uno dei campi per cominciare la ricerca.",
     "searchReportingId": "Cerca ID Rendicontazione",
     "searchRegulationId": "Cerca ID Regolamento",
     "regulationFrom": "Regolamento dal",
@@ -183,4 +186,3 @@
     "showAllFlows": "Vedi tutti i flussi"
   }
 }
-
