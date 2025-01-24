@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import TelematicReceiptExportFlowReservationContainer from './TelematicReceiptExportFlowReservationContainer';
 import { useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
+import TitleComponent from '../TitleComponent/TitleComponent';
 
 export const TelematicReceiptExportFlowReservation = () => {
   const theme = useTheme();
@@ -24,18 +25,10 @@ export const TelematicReceiptExportFlowReservation = () => {
 
   return (
     <>
-      <Grid container direction="column">
-        <Grid item mb={2}>
-          <Typography variant="h3" >
-            {t('telematicReceiptExportFlowReservation.title')}
-          </Typography>
-        </Grid>
-        <Grid item mb={3}>
-          <Typography variant="body1">
-            {t('telematicReceiptExportFlowReservation.description')}
-          </Typography>
-        </Grid>
-      </Grid>
+      <TitleComponent 
+        title={t('telematicReceiptExportFlowReservation.title')}
+        description={t('telematicReceiptExportFlowReservation.description')}
+      />
       <Box
         display="flex"
         flexDirection="column"

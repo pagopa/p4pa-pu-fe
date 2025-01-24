@@ -1,7 +1,11 @@
 import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, it } from 'vitest';
+import { describe, it, vi } from 'vitest';
 import TelematicReceiptSearchResults from '.';
+
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(),
+}));
 
 describe('TelematicReceiptSearchResults Page', () => {
   const queryClient = new QueryClient();

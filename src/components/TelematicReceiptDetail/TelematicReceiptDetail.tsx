@@ -1,7 +1,8 @@
 import { Download } from '@mui/icons-material';
-import { Button, Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer from './DetailContainer';
+import TitleComponent from '../TitleComponent/TitleComponent';
 
 export interface TelematicReceiptDetailData {
   label: string;
@@ -34,25 +35,19 @@ export const TelematicReceiptDetail = () => {
 
   return (
     <>
-      <Grid container direction="row" marginTop={3} marginBottom={3} justifyContent={'space-between'}>
-        <Grid item>
-          <Typography variant="h3" >
-            {t('telematicReceiptDetail.title')}
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Button
-            size="large"
-            variant="contained"
-            fullWidth
-            startIcon={<Download />} 
-            onClick={() => console.log('download')}
-          >
-            {t('telematicReceiptDetail.downloadButtonLabel')}
-          </Button>
-        </Grid>
-      </Grid>
-
+      <TitleComponent 
+        title={t('telematicReceiptDetail.title')}
+        callToAction={
+          [
+            {
+              icon: <Download />, 
+              variant: 'contained', 
+              buttonText: t('telematicReceiptDetail.downloadButtonLabel'), 
+              onActionClick: () => console.log('download')
+            },
+          ]
+        } 
+      />
       <Grid container spacing={3}>
         <Grid item lg={6} md={6}>
           <DetailContainer title={t('telematicReceiptDetail.summary')} data={summaryData} />

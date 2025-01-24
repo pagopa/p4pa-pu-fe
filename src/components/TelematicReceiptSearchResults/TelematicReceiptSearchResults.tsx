@@ -1,8 +1,9 @@
-import { Box, Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, Typography, useTheme } from '@mui/material';
+import { Box, Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
 import { CalendarToday, Search } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import React from 'react';
+import TitleComponent from '../TitleComponent/TitleComponent';
 
 const TelematicReceiptSearchResults = () => {
   const theme = useTheme();
@@ -13,25 +14,11 @@ const TelematicReceiptSearchResults = () => {
     <>
       <Box sx={{ flex: 1, position: 'relative' }}>
         <Box sx={{ position: 'absolute', inset: 0 }}>
+          <TitleComponent 
+            title={t('telematicreceiptSearchResults.title')}
+            description={t('telematicreceiptSearchResults.description')} 
+          />
           <Grid container direction="row">
-            <Grid 
-              container 
-              direction="column"
-              component='div'
-              aria-label={t('telematicreceiptSearchResults.title')}
-            >
-              <Grid item mb={2}>
-                <Typography variant="h3" >
-                  {t('telematicreceiptSearchResults.title')}
-                </Typography>
-              </Grid>
-              <Grid item mb={3}>
-                <Typography variant="body1">
-                  {t('telematicreceiptSearchResults.description')}
-                </Typography>
-              </Grid>
-            </Grid>
-        
             <Grid container 
               direction="row" 
               spacing={2} 

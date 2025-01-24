@@ -1,10 +1,11 @@
-import { Box, Button, Grid, InputAdornment, TextField, Typography, useTheme } from '@mui/material';
+import { Box, Button, Grid, InputAdornment, TextField, useTheme } from '@mui/material';
 import { CalendarToday, Downloading, Search } from '@mui/icons-material';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import FlowDataGrid from '../../components/FlowDataGrid/FlowDataGrid';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
+import TitleComponent from '../TitleComponent/TitleComponent';
 
 const TelematicReceiptFlowExportOverview = () => {
   const theme = useTheme();
@@ -15,31 +16,21 @@ const TelematicReceiptFlowExportOverview = () => {
     <>
       <Box sx={{ flex: 1, position: 'relative' }}>
         <Box sx={{ position: 'absolute', inset: 0 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 2
-            }}
-          >
-            <Typography variant="h3">
-              {t('telematicReceiptFlowExportOverview.title')}
-            </Typography>
-            <Button
-              size="large"
-              startIcon={<Downloading />}
-              variant="outlined"
-              onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION) }
-            >
-              {t('telematicReceiptFlowExportOverview.buttonReservationExport')}
-            </Button>
-          </Box>
-
-          <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            {t('telematicReceiptFlowExportOverview.description')}
-          </Typography>
-          <Grid container direction="row" spacing={2}
+          <TitleComponent 
+            title= {t('telematicReceiptFlowExportOverview.title')} 
+            callToAction={
+              [
+                {
+                  icon: <Downloading />, 
+                  variant: 'outlined', 
+                  buttonText: t('telematicReceiptFlowExportOverview.buttonReservationExport'), 
+                  onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION)
+                },
+              ]
+            } 
+            description= {t('telematicReceiptFlowExportOverview.description')}
+          />
+          <Grid container direction="row" spacing={2} mt={2}
             sx={{
               alignItems: 'center',
               justifyContent: 'space-between',

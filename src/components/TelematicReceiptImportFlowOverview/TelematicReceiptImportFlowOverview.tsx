@@ -1,4 +1,4 @@
-import { Box, Button, Chip, Grid, IconButton, Typography, useTheme } from '@mui/material';
+import { Box, Chip, Grid, IconButton, useTheme } from '@mui/material';
 import { CalendarToday, Search, Upload } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import FilterContainer, { COMPONENT_TYPE } from './FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import { useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
+import TitleComponent from '../TitleComponent/TitleComponent';
 
 const TelematicReceiptImportFlowOverview = () => {
   const theme = useTheme();
@@ -141,30 +142,20 @@ const TelematicReceiptImportFlowOverview = () => {
     <>
       <Box sx={{ flex: 1, position: 'relative' }}>
         <Box sx={{ position: 'absolute', inset: 0 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 2
-            }}
-          >
-            <Typography variant="h3">
-              {t('telematicReceiptImportFlowOverview.title')}
-            </Typography>
-            <Button
-              size="large"
-              startIcon={<Upload />}
-              variant="outlined"
-              onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW)}
-            >
-              {t('telematicReceiptImportFlowOverview.importFlowButton')}
-            </Button>
-          </Box>
-
-          <Typography variant="body1" sx={{ marginBottom: 2 }}>
-            {t('telematicReceiptImportFlowOverview.description')}
-          </Typography>
+          <TitleComponent 
+            title={t('telematicReceiptImportFlowOverview.title')} 
+            callToAction={
+              [
+                {
+                  icon: <Upload/>, 
+                  variant: 'outlined', 
+                  buttonText: t('telematicReceiptImportFlowOverview.importFlowButton'), 
+                  onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW)
+                },
+              ]
+            } 
+            description={t('telematicReceiptImportFlowOverview.description')} 
+          />
           <Grid container direction="row" spacing={2}
             sx={{
               alignItems: 'center',
