@@ -2,6 +2,7 @@ import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, vi } from 'vitest';
 import Reporting from '.';
+import { BrowserRouter } from 'react-router';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
@@ -13,9 +14,11 @@ describe('Reporting Page', () => {
 
   it('renders Reporting without crashing', () => {
     render(
-      <QueryClientProvider client={queryClient}>
-        <Reporting />
-      </QueryClientProvider>
+      <BrowserRouter>
+        <QueryClientProvider client={queryClient}>
+          <Reporting />
+        </QueryClientProvider>
+      </BrowserRouter>
     );
   });
 });
