@@ -4,10 +4,13 @@ import { CalendarToday, FileUpload, Search } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '../../routes/routes';
 
 export const Reporting = () => {
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -42,7 +45,7 @@ export const Reporting = () => {
               actionIcon={<FileUpload/>}
               linkLabel={t('reporting.showAllFlows')}
               onActionClick={() => console.log('import flow')}
-              onLinkClick={() => console.log('show all flows')}
+              onLinkClick={() => navigate(PageRoutes.REPORTING_IMPORT_OVERVIEW)}
             />
           </Grid>
         </Grid>

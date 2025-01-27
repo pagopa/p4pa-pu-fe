@@ -9,7 +9,8 @@
       "telematicreceiptsearchresults": "Risultato ricerca",
       "telematicreceiptdetail": "Dettaglio Ricevuta Telematica",
       "telematicReceiptImportFlowOverview": "Flussi importati",
-      "reporting": "Rendicontazione"
+      "reporting": "Rendicontazione",
+      "reportingImportFlowOverview": "Flussi importati"
     }
   },
   "menu": {
@@ -38,7 +39,10 @@
     "file": "File",
     "uploadInProgress": "Caricamento in corso...",
     "removeFile": "Rimuovi file",
-    "search": "Cerca"
+    "search": "Cerca",
+    "state": "Stato",
+    "uploaded": "Caricato",
+    "cancelled": "Annullato"
   },
   "telematicReceiptFlowExportOverview": {
     "title": "Flussi esportati",
@@ -184,5 +188,20 @@
     "importFlowsDescriptionContainer": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
     "importFlowButton": "Importa flusso",
     "showAllFlows": "Vedi tutti i flussi"
+  },
+  "reportingImportFlowOverview": {
+    "title": "Flussi importati",
+    "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
+    "importFlowButton": "Importa flusso",
+    "searchDescription": "Cerca Nome",
+    "state": "Stato",
+    "from": "Caricati dal",
+    "to": "Al",
+    "filterButton": "Filtra",
+    "internalID": "ID interno",
+    "name": "Nome",
+    "uploadDate": "Data Caricamento",
+    "operator": "Operatore",
+    "loadedDiscarded": "Caricati/Scarti"
   }
 }
