@@ -1,8 +1,9 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { CalendarToday, FileUpload, Search } from '@mui/icons-material';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import TitleComponent from '../TitleComponent/TitleComponent';
 
 export const Reporting = () => {
 
@@ -10,20 +11,11 @@ export const Reporting = () => {
 
   return (
     <>
+      <TitleComponent 
+        title={t('reporting.title')}
+        description={t('reporting.description')}
+      />
       <Grid container direction="row">
-        <Grid container direction="column">
-          <Grid item mb={2}>
-            <Typography variant="h3" >
-              {t('reporting.title')}
-            </Typography>
-          </Grid>
-          <Grid item mb={3}>
-            <Typography variant="body1">
-              {t('reporting.description')}
-            </Typography>
-          </Grid>
-        </Grid>
-
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <SearchCard
