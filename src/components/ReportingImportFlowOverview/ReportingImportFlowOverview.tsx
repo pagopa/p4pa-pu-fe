@@ -6,14 +6,11 @@ import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import FilterContainer, { COMPONENT_TYPE } from '../TelematicReceiptImportFlowOverview/FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
-import { useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 
 export const ReportingImportFlowOverview = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   interface FlowDataRow {
     id: number;
@@ -71,7 +68,7 @@ export const ReportingImportFlowOverview = () => {
     'Errore': 'error',
   };
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef[] = [ 
     { field: 'internalID', headerName: t('flowDataGrid.internalID'), flex: 1, type: 'string' },
     { field: 'name', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
     { field: 'date', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string' },
@@ -150,7 +147,7 @@ export const ReportingImportFlowOverview = () => {
                   icon: <Upload/>, 
                   variant: 'outlined', 
                   buttonText: t('reportingImportFlowOverview.importFlowButton'), 
-                  onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW)
+                  onActionClick: () => console.log('import flow click')
                 },
               ]
             } 
