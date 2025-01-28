@@ -68,7 +68,7 @@ export const ReportingImportFlowOverview = () => {
     'Errore': 'error',
   };
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef[] = [ 
     { field: 'internalID', headerName: t('flowDataGrid.internalID'), flex: 1, type: 'string' },
     { field: 'name', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
     { field: 'date', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string' },
@@ -147,7 +147,7 @@ export const ReportingImportFlowOverview = () => {
                   icon: <Upload/>, 
                   variant: 'outlined', 
                   buttonText: t('reportingImportFlowOverview.importFlowButton'), 
-                  onActionClick: () => console.log("importa flusso click")
+                  onActionClick: () => console.log('import flow click')
                 },
               ]
             } 
