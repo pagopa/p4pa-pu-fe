@@ -79,6 +79,8 @@
             "uploaded": "Caricato",
             "cancelled": "Annullato"
         },
+        "successExport": "Abbiamo ricevuto la tua richiesta!",
+        "successImport": "Flusso caricato con sucesso",
         "summary": "riepilogo",
         "to": "Al"
     },
