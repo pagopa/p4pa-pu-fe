@@ -28,7 +28,7 @@ const Breadcrumbs = ({ separator, crumbs }: BreadcrumbsProps) => {
       onClick={() => navigate(-1)}
       role="link"
       sx={{ cursor: 'pointer' }}
-      aria-label={t('app.routes.back')}>
+      aria-label={t('commons.back')}>
       <ArrowBack fontSize="small" color="inherit" />
     </Typography>
   );
@@ -37,7 +37,7 @@ const Breadcrumbs = ({ separator, crumbs }: BreadcrumbsProps) => {
     crumb?.href ? (
       <Typography
         onClick={() => navigate(crumb.href as string)}
-        aria-label={t('app.routes.breadcrumbsElementClickable')}
+        aria-label={t('commons.breadcrumbsElementClickable')}
         fontWeight={crumb?.fontWeight}
         role="link"
         sx={{ cursor: 'pointer' }}
@@ -47,11 +47,11 @@ const Breadcrumbs = ({ separator, crumbs }: BreadcrumbsProps) => {
     ) : (
       <Typography
         alignItems="center"
-        aria-label={t('app.routes.breadcrumbsElement')}
+        aria-label={t('commons.breadcrumbsElement')}
         aria-current="page"
         fontWeight={crumb?.fontWeight}
         color={crumb?.color || theme.palette.text.primary}>
-        {t(`app.routes.${crumb.name}`)}
+        {t(`commons.routes.${crumb.name}`)}
       </Typography>
     );
 
@@ -62,7 +62,7 @@ const Breadcrumbs = ({ separator, crumbs }: BreadcrumbsProps) => {
         {!mdUp && <BackButton />}
         <BreadcrumbsMUI
           separator={separator}
-          aria-label={t('app.routes.breadcrumbs')}
+          aria-label={t('commons.breadcrumbs')}
           sx={{ paddingBlock: 1 }}>
           {mdUp ? (
             crumbs.elements.map((r, i) => <Breadcrumb crumb={r} key={i} />)

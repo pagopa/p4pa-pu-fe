@@ -15,7 +15,7 @@ const TelematicReceiptSearchResults = () => {
       <Box sx={{ flex: 1, position: 'relative' }}>
         <Box sx={{ position: 'absolute', inset: 0 }}>
           <TitleComponent 
-            title={t('telematicreceiptSearchResults.title')}
+            title={t('commons.routes.TELEMATIC_RECEIPT_SEARCH_RESULTS')}
             description={t('telematicreceiptSearchResults.description')} 
           />
           <Grid container direction="row">
@@ -26,7 +26,7 @@ const TelematicReceiptSearchResults = () => {
               justifyContent={'space-between'} 
               mb={2}
               component='div'
-              aria-label={t('telematicreceiptSearchResults.filterFields')}
+              aria-label={t('commons.filters.filtersField')}
             >
               <Grid item lg={3}>
                 <TextField
@@ -47,12 +47,12 @@ const TelematicReceiptSearchResults = () => {
                   role="combobox"
                   aria-labelledby="due-type-label"
                 >
-                  <InputLabel id="due-type-label">{t('telematicreceiptSearchResults.duetype')}</InputLabel>
+                  <InputLabel id="due-type-label">{t('commons.duetype')}</InputLabel>
                   <Select
                     labelId="due-type-label"
                     value={selectedValue}
                     onChange={(event) => setSelectedValue(event.target.value)}
-                    label={t('telematicreceiptSearchResults.duetype')}
+                    label={t('commons.duetype')}
                   >
                     <MenuItem >
                   Placeholder
@@ -68,7 +68,7 @@ const TelematicReceiptSearchResults = () => {
                   InputProps={{
                     endAdornment: <InputAdornment position="end"><CalendarToday /></InputAdornment>
                   }}
-                  label={t('telematicreceiptSearchResults.from')}
+                  label={t('commons.from')}
                 />
               </Grid>
               
@@ -80,7 +80,7 @@ const TelematicReceiptSearchResults = () => {
                   InputProps={{
                     endAdornment: <InputAdornment position="end"><CalendarToday /></InputAdornment>
                   }}
-                  label={t('telematicreceiptSearchResults.to')}
+                  label={t('commons.to')}
                 />
               </Grid>
               <Grid item lg={1}>
@@ -89,7 +89,7 @@ const TelematicReceiptSearchResults = () => {
                   size="medium"
                   variant="contained"
                   sx={{height: 40}}>
-                  {t('telematicreceiptSearchResults.filter')}
+                  {t('commons.filters.filterResults')}
                 </Button>
               </Grid>
             </Grid>

@@ -43,7 +43,7 @@ const FlowDataGrid = () => {
     { field: 'name', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
     { field: 'date', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string' },
     { field: 'operator', headerName: t('flowDataGrid.operator'), flex: 1, type: 'string' },
-    { field: 'size', headerName: t('flowDataGrid.fileSize'), flex: 1, type: 'string' },
+    { field: 'size', headerName: t('commons.files.size'), flex: 1, type: 'string' },
     {
       field: 'download',
       headerName: '',

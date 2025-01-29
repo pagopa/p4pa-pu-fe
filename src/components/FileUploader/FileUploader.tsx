@@ -45,7 +45,7 @@ const FileUploader = ({
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       if (!isExtensionAllowed(selectedFile, fileExtensionsAllowed)) {
-        setError(t('commons.fileNotValid'));
+        setError(t('commons.files.notvalid'));
         return;
       }
       setError(null);
@@ -60,7 +60,7 @@ const FileUploader = ({
     const selectedFile = event.dataTransfer.files[0];
     if (selectedFile) {
       if (!isExtensionAllowed(selectedFile, fileExtensionsAllowed)) {
-        setError(t('commons.fileNotValid'));
+        setError(t('commons.files.notvalid'));
         return;
       }
       setError(null);
@@ -167,7 +167,7 @@ const FileUploader = ({
                 padding: 1.5,
               }}
             >
-              {t('commons.uploadButtonText')}
+              {t('commons.files.upload')}
               <input
                 type="file"
                 hidden

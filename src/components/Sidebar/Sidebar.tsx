@@ -48,36 +48,31 @@ export const Sidebar: React.FC = () => {
 
   const menuItems: Array<ISidebarMenuItem> = [
     {
-      label: t('menu.homepage'),
+      label: t('commons.routes.HOME'),
       icon: ViewSidebarIcon,
       route: PageRoutes.HOME,
       end: true
     },
     {
-      label: t('menu.debtpositions'),
+      label: t('commons.routes.DEBT_POSITIONS'),
       icon: ReceiptLongIcon,
       route: '/debtpositions',
       end: true
     },
     {
-      label: t('menu.flows'),
+      label: t('commons.routes.FLOWS'),
       icon: RotatedAltRouteIcon,
       // route: '/flows',
       end: false,
       items: [
         {
-          label: t('menu.telematicreceipt'),
+          label: t('commons.routes.TELEMATIC_RECEIPT'),
           route: PageRoutes.TELEMATIC_RECEIPT,
           end: true
         },
         {
-          label: t('menu.reporting'),
+          label: t('commons.routes.REPORTING'),
           route: PageRoutes.REPORTING,
-          end: true
-        },
-        {
-          label: t('menu.subitem'),
-          route: '/flows/item2',
           end: true
         }
       ]
@@ -86,19 +81,19 @@ export const Sidebar: React.FC = () => {
 
   const additionalItems = [
     {
-      label: t('menu.entities'),
+      label: t('commons.routes.ORGANIZATIONS'),
       icon: DnsIcon,
       route: '/debtpositions',
       end: true
     },
     {
-      label: t('menu.users'),
+      label: t('commons.routes.USERS'),
       icon: PeopleIcon,
       route: '/debtpositions',
       end: true
     },
     {
-      label: t('menu.deptstypes'),
+      label: t('commons.routes.DEBT_TYPES'),
       icon: DashboardIcon,
       route: '/debtpositions',
       end: true
@@ -115,17 +110,17 @@ export const Sidebar: React.FC = () => {
           item
           component="nav"
           aria-expanded={!collapsed}
-          aria-label={t('menu.navigationMenu')}
+          aria-label={t('commons.sidebar.menu')}
           role="navigation"
           sx={styles.nav}>
           {overlay && (
             <Box sx={styles.collapseIcon}>
               <Tooltip
                 placement="left"
-                title={t(!collapsed ? 'sidebar.collapse' : 'sidebar.expand')}>
+                title={t(!collapsed ? 'commons.sidebar.collapse' : 'commons.sidebar.expand')}>
                 <IconButton
                   data-testid="collapseClose"
-                  aria-label={t(!collapsed ? 'sidebar.collapse' : 'sidebar.expand')}
+                  aria-label={t(!collapsed ? 'commons.sidebar.collapse' : 'commons.sidebar.expand')}
                   onClick={() => changeMenuState()}
                   size="large">
                   <CloseIcon />
@@ -137,7 +132,7 @@ export const Sidebar: React.FC = () => {
             sx={styles.list}
             component="ol"
             aria-hidden={collapsed && !lg}
-            aria-label={t('menu.description')}>
+            aria-label={t('commons.sidebar.menudescription')}>
             {menuItems.map((item, index) => (
               <SidebarMenuItem
                 onClick={() => !lg && setCollapsed(true) && setSelectedTarget('')}
@@ -154,7 +149,7 @@ export const Sidebar: React.FC = () => {
             sx={styles.list}
             component="ol"
             aria-hidden={collapsed && !lg}
-            aria-label={t('menu.description')}>
+            aria-label={t('commons.sidebar.menudescription')}>
             {additionalItems.map((item, index) => (
               <SidebarMenuItem
                 onClick={() => !lg && setCollapsed(true) && setSelectedTarget('')}
@@ -171,16 +166,16 @@ export const Sidebar: React.FC = () => {
             <Box sx={styles.hamburgerIcon}>
               <Tooltip
                 placement="right"
-                title={t(!collapsed ? 'sidebar.collapse' : 'sidebar.expand')}>
+                title={t(!collapsed ? 'commons.sidebar.collapse' : 'commons.sidebar.expand')}>
                 <IconButton
                   data-testid="hamburgerButton"
-                  aria-label={t(!collapsed ? 'sidebar.collapse' : 'sidebar.expand')}
+                  aria-label={t(!collapsed ? 'commons.sidebar.collapse' : 'commons.sidebar.expand')}
                   onClick={() => changeMenuState()}
                   size="large">
                   <MenuIcon />
                   {!lg && (
                     <Typography variant="button" sx={styles.hamburgerTypography}>
-                      {t('menu.menu')}
+                      {t('commons.sidebar.menu')}
                     </Typography>
                   )}
                 </IconButton>

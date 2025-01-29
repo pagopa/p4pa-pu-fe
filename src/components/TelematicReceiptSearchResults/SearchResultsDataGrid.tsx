@@ -67,10 +67,10 @@ const SearchResultsDataGrid = () => {
   ];
 
   const columns: GridColDef[] = [
-    { field: 'iuv', headerName: t('telematicReceiptSearchResultsDataGrid.iuv'), flex: 1, type: 'string' },
-    { field: 'amount', headerName: t('telematicReceiptSearchResultsDataGrid.amount'), flex: 1, type: 'string' },
-    { field: 'dueType', headerName: t('telematicReceiptSearchResultsDataGrid.duetype'), flex: 1, type: 'string' },
-    { field: 'paymentDate', headerName: t('telematicReceiptSearchResultsDataGrid.paymentdate'), flex: 1, type: 'string' },
+    { field: 'iuv', headerName: t('commons..iuv'), flex: 1, type: 'string' },
+    { field: 'amount', headerName: t('commons.amount'), flex: 1, type: 'string' },
+    { field: 'dueType', headerName: t('commons.duetype'), flex: 1, type: 'string' },
+    { field: 'paymentDate', headerName: t('commons.paymentdate'), flex: 1, type: 'string' },
     {
       field: 'action',
       headerName: '',
@@ -84,12 +84,12 @@ const SearchResultsDataGrid = () => {
           menuItems={[
             {
               icon: <ReadMore fontSize="small" />,
-              label: t('actionMenu.detail'),
+              label: t('commons.detail'),
               action: () => navigate(PageRoutes.TELEMATIC_RECEIPT_DETAIL)
             },
             {
               icon: <FileDownload fontSize="small" />,
-              label: t('actionMenu.download'),
+              label: t('commons.files.download'),
               action: () => console.log('Scarica file per ID: ', params.row.id),
             }
           ]}

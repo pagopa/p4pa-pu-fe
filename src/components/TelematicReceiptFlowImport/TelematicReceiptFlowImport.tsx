@@ -22,7 +22,7 @@ const TelematicReceiptFlowImport = () => {
       <Grid container direction="column" alignItems="center" marginTop={2}>
         <Grid container direction="column" alignItems="left" marginTop={2} ml={1} mb={4}>
           <TitleComponent 
-            title={t('telematicReceiptFlowImport.title')}
+            title={t('commons.routes.TELEMATIC_RECEIPT_IMPORT_FLOW')}
             description={t('telematicReceiptFlowImport.description')}
           />
           <Box bgcolor={theme.palette.common.white} borderRadius={0.5} p={3} gap={3}>
