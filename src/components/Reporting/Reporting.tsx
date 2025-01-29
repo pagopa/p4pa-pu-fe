@@ -3,10 +3,13 @@ import ActionCard from '../ActionCard/ActionCard';
 import { CalendarToday, FileUpload, Search } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '../../routes/routes';
 
 export const Reporting = () => {
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -49,7 +52,7 @@ export const Reporting = () => {
               actionLabel={t('reporting.importFlowButton')}
               actionIcon={<FileUpload/>}
               linkLabel={t('reporting.showAllFlows')}
-              onActionClick={() => console.log('import flow')}
+              onActionClick={() => navigate(PageRoutes.REPORTING_IMPORT_FLOW)}
               onLinkClick={() => console.log('show all flows')}
             />
           </Grid>

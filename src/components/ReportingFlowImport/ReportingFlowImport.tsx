@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 
-const TelematicReceiptFlowImport = () => {
+const ReportingFlowImport = () => {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -78,4 +78,4 @@ const TelematicReceiptFlowImport = () => {
   );
 };
 
-export default TelematicReceiptFlowImport;
+export default ReportingFlowImport;
