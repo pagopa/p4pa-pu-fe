@@ -14,7 +14,6 @@ void await i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    debug: true,
     detection: DETECTION_OPTIONS,
     fallbackLng: fallbackLang,
     resources: {
