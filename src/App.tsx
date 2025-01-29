@@ -25,13 +25,15 @@ import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExp
 import TelematicReceiptFlowImport from './routes/TelematicReceiptFlowImport';
 import TelematicReceiptFlowImportThankYouPage from './routes/TelematicReceiptFlowImportThankYouPage';
 import TelematicReceiptImportFlowOverview from './routes/TelematicReceiptImportFlowOverview';
-import ReportingFlowImport from './components/ReportingFlowImport/ReportingFlowImport';
-import ReportingFlowImportThankYouPage from './components/ReportingFlowImport/ReportingFlowImportThankYouPage';
+import Reporting from './routes/Reporting';
+import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
+import ReportingFlowImport from './routes/ReportingFlowImport';
+import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYouPage';
 
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
-import Reporting from './routes/Reporting';
+
 
 const router = createBrowserRouter([
   {
@@ -130,10 +132,10 @@ const router = createBrowserRouter([
         handle: {
           crumbs: {
             elements: [
-              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'telematicreceipt', color: theme.palette.text.primary },
-              { name: 'telematicreceiptsearchresults', color: theme.palette.text.primary },
-              { name: 'telematicreceiptdetail', color: theme.palette.text.disabled }
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT_SEARCH_RESULTS', color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT_DETAIL', color: theme.palette.text.disabled }
             ]
           },
           backButton: true
@@ -245,8 +247,8 @@ const router = createBrowserRouter([
         handle: {
           crumbs: {
             elements: [
-              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'reporting', color: theme.palette.text.disabled }
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'REPORTING', color: theme.palette.text.disabled }
             ]
           },
           backButton: false
@@ -296,6 +298,28 @@ const router = createBrowserRouter([
           },
         ]
       },
+      {
+        path: PageRoutes.REPORTING_IMPORT_OVERVIEW,
+        element: <Layout />,
+        handle: {
+          crumbs: {
+            elements: [
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'REPORTING', color: theme.palette.text.primary },
+              { name: 'REPORTING_IMPORT_FLOW_OVERVIEW', color: theme.palette.text.disabled}
+            ]
+          },
+          backButton: true
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.REPORTING_IMPORT_OVERVIEW,
+            element: <ReportingImportFlowOverview />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          }
+        ]
+      }
     ]
   }
 ]);
