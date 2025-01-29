@@ -102,7 +102,7 @@ const SearchCard = ({ title, description, searchFields, selectField, button }: S
         </FormControl>
       )}
       
-      <Box display="flex" justifyContent="flex-end" gap={2} mt={1}>
+      <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
         {button?.map((field, index) => 
           <SearchButton
             key={index}

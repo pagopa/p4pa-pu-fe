@@ -52,6 +52,7 @@
             "HOME": "Panoramica",
             "ORGANIZATIONS": "Enti gestiti",
             "REPORTING": "Rendicontazione",
+            "REPORTING_IMPORT_FLOW_OVERVIEW": "Flussi importati",
             "TELEMATIC_RECEIPT": "Ricevute Telematiche",
             "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
             "TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION": "Prenota export di un flusso",
@@ -64,6 +65,7 @@
             "USERS": "Utenti"
         },
         "search": "Cerca",
+        "searchName": "Cerca Nome",
         "sidebar": {
             "collapse": "Comprimi il menu",
             "entities": "Enti gestiti",
@@ -73,6 +75,12 @@
             "users": "Utenti"
         },
         "state": "Stato",
+        "states": {
+            "uploaded": "Caricato",
+            "cancelled": "Annullato"
+        },
+        "successExport": "Abbiamo ricevuto la tua richiesta!",
+        "successImport": "Flusso caricato con sucesso",
         "summary": "riepilogo",
         "to": "Al"
     },
@@ -97,7 +105,12 @@
         "searchRegulationId": "Cerca ID Regolamento",
         "searchReportingId": "Cerca ID Rendicontazione",
         "searchTitleContainer": "Cerca flussi di Rendicontazione",
-        "showAllFlows": "Vedi tutti i flussi"
+        "showAllFlows": "Vedi tutti i flussi",
+        "title":"Rendicontazione"
+    },
+    "reportingImportFlowOverview": {
+        "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
+        "importFlowButton": "Importa flusso"
     },
     "telematicReceiptDetail": {
         "title": "Dettaglio Ricevuta Telematica"

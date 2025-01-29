@@ -18,7 +18,7 @@ export const TelematicReceiptExportFlowThankYouPage = () => {
     <>
       <ThankYouPage 
         icon={<CheckCircleOutlineOutlinedIcon sx={{fontSize: 60, color: theme.palette.secondary.main}} />}
-        title={t('commons.routes.TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE')}
+        title={t('commons.successExport')}
         description={t('telematicReceiptExportFlowThankYouPage.description')}
         buttonLabel={t('commons.close')}
         onButtonClick={handleButtonClick}

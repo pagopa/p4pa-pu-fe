@@ -42,7 +42,7 @@ export const TelematicReceiptDetail = () => {
             {
               icon: <Download />, 
               variant: 'contained', 
-              buttonText: t('telematicReceiptDetail.downloadButtonLabel'), 
+              buttonText: t('commons.files.download'), 
               onActionClick: () => console.log('download')
             },
           ]
@@ -50,10 +50,10 @@ export const TelematicReceiptDetail = () => {
       />
       <Grid container spacing={3}>
         <Grid item lg={6} md={6}>
-          <DetailContainer title={t('telematicReceiptDetail.summary')} data={summaryData} />
+          <DetailContainer title={t('commons.summary')} data={summaryData} />
         </Grid>
         <Grid item lg={6} md={6}>
-          <DetailContainer title={t('telematicReceiptDetail.payment')} data={paymentData} />
+          <DetailContainer title={t('commons.payment')} data={paymentData} />
         </Grid>
       </Grid>
     </>
