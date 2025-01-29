@@ -15,7 +15,7 @@ export const TelematicReceipt = () => {
   return (
     <>
       <TitleComponent 
-        title={t('telematicReceipts.title')}
+        title={t('commons.routes.TELEMATIC_RECEIPT')}
         description={t('telematicReceipts.description')}
       />
       <Grid container direction="row">
@@ -27,12 +27,12 @@ export const TelematicReceipt = () => {
               title={t('telematicReceipts.search')}
               description={t('telematicReceipts.searchdescription')}
               searchFields={[
-                { label: t('telematicReceipts.iuv'), icon: <Search /> },
-                { label: t('telematicReceipts.from'), icon: <CalendarToday />, gridWidth: 6},
-                { label: t('telematicReceipts.to'), icon: <CalendarToday />, gridWidth: 6 },
+                { label: t('commons.iuv'), icon: <Search /> },
+                { label: t('commons.from'), icon: <CalendarToday />, gridWidth: 6},
+                { label: t('commons.to'), icon: <CalendarToday />, gridWidth: 6 },
               ]}
               selectField={[
-                { selectLabel: t('telematicReceipts.duetype') ,
+                { selectLabel: t('commons.duetype') ,
                   selectOptions: [
                     { label: t('telematicReceipts.tari'), value: 'tari' },
                     { label: t('telematicReceipts.trafficoffence'), value: 'violation' }

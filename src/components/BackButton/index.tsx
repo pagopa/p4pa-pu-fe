@@ -22,7 +22,7 @@ export const BackButton = (props: BackButtonProps) => {
       variant="text"
       onClick={onClick}
       sx={{ marginBottom: 3 }}>
-      {t(`app.routes.${text}`)}
+      {t(`commons.${text}`)}
     </Button>
   );
 };

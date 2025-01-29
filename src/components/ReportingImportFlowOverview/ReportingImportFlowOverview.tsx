@@ -4,16 +4,13 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import FilterContainer, { COMPONENT_TYPE } from '../TelematicReceiptImportFlowOverview/FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
-import { useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 
-const TelematicReceiptImportFlowOverview = () => {
+export const ReportingImportFlowOverview = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const navigate = useNavigate();
 
   interface FlowDataRow {
     id: number;
@@ -29,7 +26,7 @@ const TelematicReceiptImportFlowOverview = () => {
     {
       id: 1,
       internalID: '1111111',
-      name: 'Esportazione 1',
+      name: 'Import 1',
       date: '05/11/2024',
       operator: 'Sistema Informativo 1',
       loadedDiscarded: '1000/1',
@@ -38,7 +35,7 @@ const TelematicReceiptImportFlowOverview = () => {
     {
       id: 2,
       internalID: '2222222',
-      name: 'Esportazione 2',
+      name: 'Import 2',
       date: '06/11/2024',
       operator: 'Sistema Informativo 2',
       loadedDiscarded: '1000/2',
@@ -47,7 +44,7 @@ const TelematicReceiptImportFlowOverview = () => {
     {
       id: 3,
       internalID: '3333333',
-      name: 'Esportazione 3',
+      name: 'Import 3',
       date: '06/11/2024',
       operator: 'Sistema Informativo 3',
       loadedDiscarded: '1000/3',
@@ -56,7 +53,7 @@ const TelematicReceiptImportFlowOverview = () => {
     {
       id: 4,
       internalID: '4444444',
-      name: 'Esportazione 4',
+      name: 'Import 4',
       date: '07/11/2024',
       operator: 'Sistema Informativo 4',
       loadedDiscarded: '1000/4',
@@ -64,14 +61,14 @@ const TelematicReceiptImportFlowOverview = () => {
     },
   ];
 
-  const stateColors: { [key: string]: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'success' } = {
+  const stateColors: { [key: string]: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'success' | 'info' } = {
     'Elaborato': 'success',
-    'Caricato': 'primary',
-    'In Elaborazione': 'primary',
+    'Caricato': 'info',
+    'In Elaborazione': 'info',
     'Errore': 'error',
   };
 
-  const columns: GridColDef[] = [
+  const columns: GridColDef[] = [ 
     { field: 'internalID', headerName: t('flowDataGrid.internalID'), flex: 1, type: 'string' },
     { field: 'name', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
     { field: 'date', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string' },
@@ -143,18 +140,18 @@ const TelematicReceiptImportFlowOverview = () => {
       <Box sx={{ flex: 1, position: 'relative' }}>
         <Box sx={{ position: 'absolute', inset: 0 }}>
           <TitleComponent 
-            title={t('commons.routes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW')} 
+            title={t('commons.routes.REPORTING_IMPORT_FLOW_OVERVIEW')} 
             callToAction={
               [
                 {
                   icon: <Upload/>, 
                   variant: 'outlined', 
-                  buttonText: t('telematicReceiptImportFlowOverview.importFlowButton'), 
-                  onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW)
+                  buttonText: t('reportingImportFlowOverview.importFlowButton'), 
+                  onActionClick: () => console.log('import flow click')
                 },
               ]
             } 
-            description={t('telematicReceiptImportFlowOverview.description')} 
+            description={t('reportingImportFlowOverview.description')} 
           />
           <Grid container direction="row" spacing={2}
             sx={{
@@ -164,10 +161,10 @@ const TelematicReceiptImportFlowOverview = () => {
             }}>
             <FilterContainer
               items={[
-                { type: COMPONENT_TYPE.textField, label: t('telematicReceiptImportFlowOverview.searchDescription'), icon: <Search />, gridWidth: 5 },
+                { type: COMPONENT_TYPE.textField, label: t('commons.searchName'), icon: <Search />, gridWidth: 5 },
                 { type: COMPONENT_TYPE.select, label: t('commons.state'), gridWidth: 2, options: [
-                  { label: 'Caricato', value: 'Caricato' },
-                  { label: 'Annullato', value: 'Annullato' },
+                  { label: t('commons.states.uploaded'), value: 'Caricato' },
+                  { label: t('commons.states.cancelled'), value: 'Annullato' },
                 ]},
                 { type: COMPONENT_TYPE.textField, label: t('commons.from'), icon: <CalendarToday />, gridWidth: 2 },
                 { type: COMPONENT_TYPE.textField, label: t('commons.to'), icon: <CalendarToday />, gridWidth: 2 },
@@ -195,4 +192,4 @@ const TelematicReceiptImportFlowOverview = () => {
   );
 };
 
-export default TelematicReceiptImportFlowOverview;
+export default ReportingImportFlowOverview;

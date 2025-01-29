@@ -17,7 +17,7 @@ const TelematicReceiptFlowExportOverview = () => {
       <Box sx={{ flex: 1, position: 'relative' }}>
         <Box sx={{ position: 'absolute', inset: 0 }}>
           <TitleComponent 
-            title= {t('telematicReceiptFlowExportOverview.title')} 
+            title= {t('commons.routes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW')} 
             callToAction={
               [
                 {
@@ -55,7 +55,7 @@ const TelematicReceiptFlowExportOverview = () => {
                 InputProps={{
                   endAdornment: <InputAdornment position="end"><CalendarToday /></InputAdornment>
                 }}
-                label={t('telematicReceiptFlowExportOverview.from')}
+                label={t('commons.from')}
               />
             </Grid>
             <Grid item lg={2}>
@@ -66,7 +66,7 @@ const TelematicReceiptFlowExportOverview = () => {
                 InputProps={{
                   endAdornment: <InputAdornment position="end"><CalendarToday /></InputAdornment>
                 }}
-                label={t('telematicReceiptFlowExportOverview.to')}
+                label={t('commons.to')}
               />
             </Grid>
             <Grid item lg={1}>
@@ -75,7 +75,7 @@ const TelematicReceiptFlowExportOverview = () => {
                 size="medium"
                 variant="contained"
                 sx={{height: 40}}>
-                {t('telematicReceiptFlowExportOverview.filter')}
+                {t('commons.filters.filterResults')}
               </Button>
             </Grid>
             <Grid item lg={2}
@@ -90,7 +90,7 @@ const TelematicReceiptFlowExportOverview = () => {
                 size='small'
                 onFocusVisible={function noRefCheck() { }}
               >
-                {t('telematicReceiptFlowExportOverview.removeFilter')}
+                {t('commons.filters.remove')}
               </ButtonNaked>
             </Grid>
           </Grid>

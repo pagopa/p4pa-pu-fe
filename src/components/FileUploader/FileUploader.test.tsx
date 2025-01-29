@@ -42,7 +42,7 @@ describe('FileUploader Component', () => {
     expect(screen.getByText(defaultProps.description)).toBeDefined();
     expect(screen.getByText(defaultProps.requiredFieldText)).toBeDefined();
     expect(screen.getByTestId('drop-zone')).toBeDefined();
-    expect(screen.getByText('commons.uploadButtonText')).toBeDefined();
+    expect(screen.getByText('commons.files.upload')).toBeDefined();
   });
 
   describe('File Upload Handling', () => {
@@ -67,7 +67,7 @@ describe('FileUploader Component', () => {
 
       fireEvent.change(input, { target: { files: [invalidFile] } });
 
-      expect(screen.getByText('commons.fileNotValid')).toBeDefined();
+      expect(screen.getByText('commons.files.notvalid')).toBeDefined();
       expect(mockSetFile).not.toHaveBeenCalled();
     });
 
@@ -112,7 +112,7 @@ describe('FileUploader Component', () => {
         }
       });
 
-      expect(screen.getByText('commons.fileNotValid')).toBeDefined();
+      expect(screen.getByText('commons.files.notvalid')).toBeDefined();
       expect(mockSetFile).not.toHaveBeenCalled();
     });
   });
@@ -172,7 +172,7 @@ describe('FileUploader Component', () => {
       
       fireEvent.click(closeButton);
       
-      expect(screen.queryByText('commons.fileNotValid')).toBeNull();
+      expect(screen.queryByText('commons.files.notvalid')).toBeNull();
     });
   });
 });
