@@ -39,14 +39,14 @@ const CustomPagination = ({ sizePageOptions = [10, 20, 30], defaultPageOption = 
       alignItems='center'
       width='100%'
       bgcolor={theme.palette.grey[200]}
-      paddingTop={2}
+      py={2}
     >
       <Select
         value={defaultPageOption}
         onChange={() => console.log('')}
         size='small'
         sx={{
-          backgroundColor: theme.palette.background.paper
+          fontSize: 12,
         }}
       >
         {sizePageOptions && sizePageOptions.map((size) => (
