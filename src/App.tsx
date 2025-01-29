@@ -130,10 +130,10 @@ const router = createBrowserRouter([
         handle: {
           crumbs: {
             elements: [
-              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'telematicreceipt', color: theme.palette.text.primary },
-              { name: 'telematicreceiptsearchresults', color: theme.palette.text.primary },
-              { name: 'telematicreceiptdetail', color: theme.palette.text.disabled }
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT_SEARCH_RESULTS', color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT_DETAIL', color: theme.palette.text.disabled }
             ]
           },
           backButton: true
