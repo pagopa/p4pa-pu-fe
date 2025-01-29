@@ -15,7 +15,7 @@ export const Footer = () => {
     <MUIFooter
       loggedUser={true}
       companyLink={{ ariaLabel: 'PagoPA SPA' }}
-      legalInfo={<Markdown>{configFe?.footerDescText ?? t('footer.infoFallback')}</Markdown>}
+      legalInfo={<Markdown>{configFe?.footerDescText ?? t('commons.footer.infoFallback')}</Markdown>}
       postLoginLinks={[
         {
           label: 'Informativa Privacy',

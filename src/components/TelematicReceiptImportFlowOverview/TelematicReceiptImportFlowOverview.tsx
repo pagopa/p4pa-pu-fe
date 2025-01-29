@@ -79,7 +79,7 @@ const TelematicReceiptImportFlowOverview = () => {
     { field: 'loadedDiscarded', headerName: t('flowDataGrid.loadedDiscarded'), flex: 1, type: 'string' },
     {
       field: 'state',
-      headerName: t('telematicReceiptImportFlowOverview.state'),
+      headerName: t('commons.state'),
       flex: 1,
       type: 'string',
       sortable: true,
@@ -109,12 +109,12 @@ const TelematicReceiptImportFlowOverview = () => {
             menuItems={[
               {
                 icon: <DownloadIcon fontSize="small" color='primary'/>,
-                label: t('actionMenu.importFile'),
+                label: t('commons.files.imported'),
                 action: () => console.log('Scarica file per ID: ', params.row.id),
               },
               {
                 icon: <DownloadIcon fontSize="small" color='primary'/>,
-                label: t('actionMenu.importResult'),
+                label: t('commons.files.importedResult'),
                 action: () => console.log('Download esito importazione per ID: ', params.row.id),
               },
             ]}
@@ -143,7 +143,7 @@ const TelematicReceiptImportFlowOverview = () => {
       <Box sx={{ flex: 1, position: 'relative' }}>
         <Box sx={{ position: 'absolute', inset: 0 }}>
           <TitleComponent 
-            title={t('telematicReceiptImportFlowOverview.title')} 
+            title={t('commons.routes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW')} 
             callToAction={
               [
                 {
@@ -165,13 +165,13 @@ const TelematicReceiptImportFlowOverview = () => {
             <FilterContainer
               items={[
                 { type: COMPONENT_TYPE.textField, label: t('telematicReceiptImportFlowOverview.searchDescription'), icon: <Search />, gridWidth: 5 },
-                { type: COMPONENT_TYPE.select, label: t('telematicReceiptImportFlowOverview.state'), gridWidth: 2, options: [
+                { type: COMPONENT_TYPE.select, label: t('commons.state'), gridWidth: 2, options: [
                   { label: 'Caricato', value: 'Caricato' },
                   { label: 'Annullato', value: 'Annullato' },
                 ]},
-                { type: COMPONENT_TYPE.textField, label: t('telematicReceiptImportFlowOverview.from'), icon: <CalendarToday />, gridWidth: 2 },
-                { type: COMPONENT_TYPE.textField, label: t('telematicReceiptImportFlowOverview.to'), icon: <CalendarToday />, gridWidth: 2 },
-                { type: COMPONENT_TYPE.button, label: t('telematicReceiptImportFlowOverview.filterButton'), gridWidth: 1, onClick: () => console.log('Filter applied') },
+                { type: COMPONENT_TYPE.textField, label: t('commons.from'), icon: <CalendarToday />, gridWidth: 2 },
+                { type: COMPONENT_TYPE.textField, label: t('commons.to'), icon: <CalendarToday />, gridWidth: 2 },
+                { type: COMPONENT_TYPE.button, label: t('commons.filters.filterResults'), gridWidth: 1, onClick: () => console.log('Filter applied') },
               ]}
             />
           </Grid>

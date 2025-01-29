@@ -63,9 +63,9 @@ const router = createBrowserRouter([
         handle: {
           crumbs: {
             elements: [
-              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'telematicreceipt', color: theme.palette.text.primary },
-              { name: 'telematicReceiptFlowExportOverview', color: theme.palette.text.disabled }
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT_EXPORT_OVERVIEW', color: theme.palette.text.disabled }
             ]
           },
           backButton: true
@@ -85,8 +85,8 @@ const router = createBrowserRouter([
         handle: {
           crumbs: {
             elements: [
-              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'telematicreceipt', color: theme.palette.text.disabled }
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.disabled }
             ]
           },
           backButton: false
@@ -106,9 +106,9 @@ const router = createBrowserRouter([
         handle: {
           crumbs: {
             elements: [
-              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'telematicreceipt', color: theme.palette.text.primary },
-              { name: 'telematicreceiptsearchresults', color: theme.palette.text.disabled }
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
+              { name: 'TELEMATIC_RECEIPT_DETAIL', color: theme.palette.text.disabled }
             ]
           },
           backButton: true
@@ -186,9 +186,9 @@ const router = createBrowserRouter([
         element: <Layout />,
         handle: {
           crumbs: {elements: [
-            { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-            { name: 'telematicreceipt', color: theme.palette.text.primary },
-            { name: 'telematicReceiptImportFlowOverview', color: theme.palette.text.disabled }
+            { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+            { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
+            { name: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW', color: theme.palette.text.disabled }
           ]},
           backButton: true,
         } as RouteHandleObject,

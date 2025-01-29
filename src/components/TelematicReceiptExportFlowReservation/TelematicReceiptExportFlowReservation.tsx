@@ -26,7 +26,7 @@ export const TelematicReceiptExportFlowReservation = () => {
   return (
     <>
       <TitleComponent 
-        title={t('telematicReceiptExportFlowReservation.title')}
+        title={t('commons.routes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION')}
         description={t('telematicReceiptExportFlowReservation.description')}
       />
       <Box
@@ -44,24 +44,24 @@ export const TelematicReceiptExportFlowReservation = () => {
           {t('telematicReceiptExportFlowReservation.formDescription')}
         </Typography>
         <Typography variant="body2" sx={{ color: theme.palette.error.dark, mb: 4 }}>
-          {t('telematicReceiptExportFlowReservation.requiredFieldDescription')}
+          {t('commons.requiredFieldDescription')}
         </Typography>
         <Grid container direction="row" justifyContent={'start'} sx={{ border: 1, borderRadius: 2, padding: 3, borderColor: theme.palette.divider }}>
           <TelematicReceiptExportFlowReservationContainer
             title={{
               icon: <InsertDriveFile sx={{marginRight: 1}}/>,
-              label: t('telematicReceiptExportFlowReservation.paymentDate')
+              label: t('commons.paymentDate')
             }}
             inputFields={[
               {
                 required: true,
-                label: t('telematicReceiptExportFlowReservation.from'),
+                label: t('commons.from'),
                 icon: <CalendarToday />,
                 gridWidth: 6
               },
               {
                 required: true,
-                label: t('telematicReceiptExportFlowReservation.to'),
+                label: t('commons.to'),
                 icon: <CalendarToday />,
                 gridWidth: 6
               }
@@ -113,7 +113,7 @@ export const TelematicReceiptExportFlowReservation = () => {
             startIcon={<ArrowBack />} 
             onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW) }
           >
-            {t('telematicReceiptExportFlowReservation.buttonExit')}
+            {t('commons.exit')}
           </Button>
         </Grid>
         <Grid item>
