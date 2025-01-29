@@ -109,7 +109,6 @@
         "title":"Rendicontazione"
     },
     "reportingImportFlowOverview": {
-        "title": "Flussi importati",
         "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
         "importFlowButton": "Importa flusso"
     },

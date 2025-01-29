@@ -140,7 +140,7 @@ export const ReportingImportFlowOverview = () => {
       <Box sx={{ flex: 1, position: 'relative' }}>
         <Box sx={{ position: 'absolute', inset: 0 }}>
           <TitleComponent 
-            title={t('reportingImportFlowOverview.title')} 
+            title={t('commons.routes.REPORTING_IMPORT_FLOW_OVERVIEW')} 
             callToAction={
               [
                 {
