@@ -3,10 +3,13 @@ import ActionCard from '../ActionCard/ActionCard';
 import { CalendarToday, FileUpload, Search } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { PageRoutes } from '../../routes/routes';
 
 export const Reporting = () => {
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   return (
     <>
@@ -37,7 +40,7 @@ export const Reporting = () => {
               ]}
               button={[
                 { text: t('reporting.removeFilter'), variant: 'outlined', onClick: () => console.log('remove filter') },
-                { text: t('reporting.filterButton'), variant: 'contained', onClick: () => console.log('filter')}
+                { text: t('reporting.filterButton'), variant: 'contained', onClick: () => navigate(PageRoutes.REPORTING_SEARCH_RESULTS) }
               ]}
             />
           </Grid>

@@ -25,6 +25,7 @@ import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExp
 import TelematicReceiptFlowImport from './routes/TelematicReceiptFlowImport';
 import TelematicReceiptFlowImportThankYouPage from './routes/TelematicReceiptFlowImportThankYouPage';
 import TelematicReceiptImportFlowOverview from './routes/TelematicReceiptImportFlowOverview';
+import ReportingSearchResults from './routes/ReportingSearchResults';
 
 
 import { Overlay } from './components/Overlay';
@@ -257,7 +258,29 @@ const router = createBrowserRouter([
             errorElement: <ErrorFallback />
           }
         ]
-      }
+      },
+      {
+        path: PageRoutes.REPORTING_SEARCH_RESULTS,
+        element: <Layout />,
+        handle: {
+          crumbs: {
+            elements: [
+              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'reporting', color: theme.palette.text.primary },
+              { name: 'reportingSearchResults', color: theme.palette.text.disabled }
+            ]
+          },
+          backButton: true
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.REPORTING_SEARCH_RESULTS,
+            element: <ReportingSearchResults />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          }
+        ]
+      },
     ]
   }
 ]);
