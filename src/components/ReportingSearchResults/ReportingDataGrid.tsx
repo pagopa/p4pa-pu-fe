@@ -67,12 +67,12 @@ const SearchResultsDataGrid = () => {
           menuItems={[
             {
               icon: <Visibility fontSize="small" />,
-              label: t('actionMenu.viewDetail'),
+              label: t('commons.view'),
               action: () => console.log('Visualizza')
             },
             {
               icon: <FileDownload fontSize="small" />,
-              label: t('actionMenu.download'),
+              label: t('commons.files.download'),
               action: () => console.log('Scarica file per ID: ', params.row.id),
             }
           ]}

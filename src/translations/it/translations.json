@@ -53,6 +53,7 @@
             "ORGANIZATIONS": "Enti gestiti",
             "REPORTING": "Rendicontazione",
             "REPORTING_IMPORT_FLOW_OVERVIEW": "Flussi importati",
+            "REPORTING_SEARCH_RESULTS": "Risultato ricerca", 
             "TELEMATIC_RECEIPT": "Ricevute Telematiche",
             "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
             "TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION": "Prenota export di un flusso",
@@ -82,7 +83,8 @@
         "successExport": "Abbiamo ricevuto la tua richiesta!",
         "successImport": "Flusso caricato con sucesso",
         "summary": "riepilogo",
-        "to": "Al"
+        "to": "Al",
+        "view": "Visualizza"
     },
     "FileUploaderFlowImport": {
         "description": "Carica qui il file .zip con le Ricevute Telematiche",
@@ -107,6 +109,15 @@
         "searchTitleContainer": "Cerca flussi di Rendicontazione",
         "showAllFlows": "Vedi tutti i flussi",
         "title":"Rendicontazione"
+    },
+    "reportingSearchResults": {
+      "description": "Visualizza in dettaglio e scarica i flussi di Rendicontazione.",
+      "searchReportingId": "ID Rendicontazione",
+      "searchRegulationId": "ID Regolamento",
+      "regulationDate": "Data Regolamento",
+      "flowDate": "Data flusso",
+      "payments": "Pagamenti",
+      "totalAmount": "Importo totale"
     },
     "reportingImportFlowOverview": {
         "description": "Visualizza i flussi importati in precedenza e importa nuovi.",

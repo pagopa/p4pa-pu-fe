@@ -15,7 +15,7 @@ const ReportingSearchResults = () => {
       <Box sx={{ flex: 1, position: 'relative' }}>
         <Box sx={{ position: 'absolute', inset: 0 }}>
           <TitleComponent 
-            title={t('reportingSearchResults.title')}
+            title={t('commons.routes.REPORTING_SEARCH_RESULTS')}
             description={t('reportingSearchResults.description')} 
           />
           <Grid>
@@ -30,9 +30,9 @@ const ReportingSearchResults = () => {
                 items={[
                   { type: COMPONENT_TYPE.textField, label: t('reportingSearchResults.searchReportingId'), icon: <Search />, gridWidth: 3 },
                   { type: COMPONENT_TYPE.textField, label: t('reportingSearchResults.searchRegulationId'), icon: <Search />, gridWidth: 3 },
-                  { type: COMPONENT_TYPE.textField, label: t('reportingSearchResults.regulationFrom'), icon: <CalendarToday />, gridWidth: 2 },
-                  { type: COMPONENT_TYPE.textField, label: t('reportingSearchResults.regulationTo'), icon: <CalendarToday />, gridWidth: 2 },
-                  { type: COMPONENT_TYPE.button, label: t('reportingSearchResults.filterButton'), gridWidth: 1, onClick: () => console.log('Filter applied') },
+                  { type: COMPONENT_TYPE.textField, label: t('reporting.regulationFrom'), icon: <CalendarToday />, gridWidth: 2 },
+                  { type: COMPONENT_TYPE.textField, label: t('commons.to'), icon: <CalendarToday />, gridWidth: 2 },
+                  { type: COMPONENT_TYPE.button, label: t('commons.filters.filterResults'), gridWidth: 1, onClick: () => console.log('Filter applied') },
                 ]}
               />
             </Grid>

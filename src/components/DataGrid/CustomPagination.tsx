@@ -13,7 +13,7 @@ const CustomPagination = ({ sizePageOptions = [10, 20, 30], defaultPageOption = 
   const [hideNextButton, setHideNextButton] = useState(false);
   const [page, setPage] = useState(1);
 
-  const handlePage = (event: React.ChangeEvent<unknown>, value: number) => {
+  const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
     setPage(value);
   };
 

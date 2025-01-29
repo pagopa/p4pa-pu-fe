@@ -4,7 +4,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import FilterContainer, { COMPONENT_TYPE } from '../TelematicReceiptImportFlowOverview/FilterContainer';
+import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import TitleComponent from '../TitleComponent/TitleComponent';
 
