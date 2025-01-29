@@ -9,7 +9,8 @@
       "telematicreceiptsearchresults": "Risultato ricerca",
       "telematicreceiptdetail": "Dettaglio Ricevuta Telematica",
       "telematicReceiptImportFlowOverview": "Flussi importati",
-      "reporting": "Rendicontazione"
+      "reporting": "Rendicontazione",
+      "reportingSearchResults": "Risultato ricerca"
     }
   },
   "menu": {
@@ -56,7 +57,8 @@
     "operator": "Operatore",
     "internalID": "ID Interno",
     "loadedDiscarded": "Caricati/Scarti",
-    "fileSize": "Dimensione File"
+    "fileSize": "Dimensione File",
+    "labelRowsPerPage": "Elementi per pagina"
   },
   "telematicReceipts": {
     "title": "Ricevute Telematiche",
@@ -130,7 +132,8 @@
     "detail": "Dettaglio",
     "download": "Scarica",
     "importFile": "File importato",
-    "importResult": "Esito dell'importazione"
+    "importResult": "Esito dell'importazione",
+    "viewDetail": "Visualizza"
   },
   "telematicReceiptExportFlowThankYouPage": {
     "title": "Abbiamo ricevuto la tua richiesta!",
@@ -184,5 +187,18 @@
     "importFlowsDescriptionContainer": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
     "importFlowButton": "Importa flusso",
     "showAllFlows": "Vedi tutti i flussi"
+  },
+  "reportingSearchResults": {
+    "title": "Risultato ricerca",
+    "description": "Visualizza in dettaglio e scarica i flussi di Rendicontazione.",
+    "searchReportingId": "ID Rendicontazione",
+    "searchRegulationId": "ID Regolamento",
+    "regulationFrom": "Regolamento dal",
+    "regulationTo": "Al",
+    "filterButton": "Filtra",
+    "regulationDate": "Data Regolamento",
+    "flowDate": "Data flusso",
+    "payments": "Pagamenti",
+    "totalAmount": "Importo totale"
   }
 }
