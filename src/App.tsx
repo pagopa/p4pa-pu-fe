@@ -3,7 +3,7 @@ import { ErrorFallback } from './components/ErrorFallback';
 import { Layout } from './components/layout/Layout';
 import { RouteHandleObject } from './models/Breadcrumbs';
 import Home from './routes/Home';
-import { PageRoutes } from './routes/routes';
+import { PageRoutes, PageRoutesConf } from './routes/routes';
 import { Theme } from './utils/theme';
 import {
   Navigate,
@@ -52,35 +52,12 @@ const router = createBrowserRouter([
           {
             path: PageRoutes.HOME,
             element: <Home />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
           }
         ]
       },
+      /* -- TELEMATIC RECEIPTS' SECTION -- */
       {
-        path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW,
-        element: <Layout />,
-        handle: {
-          crumbs: {
-            elements: [
-              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
-              { name: 'TELEMATIC_RECEIPT_EXPORT_OVERVIEW', color: theme.palette.text.disabled }
-            ]
-          },
-          backButton: true
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW,
-            element: <TelematicReceiptFlowExportOverview />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
-          }
-        ]
-      },
-      {
-        path: PageRoutes.TELEMATIC_RECEIPT,
+        path: PageRoutesConf.TELEMATIC_RECEIPT.path,
         element: <Layout />,
         handle: {
           crumbs: {
@@ -91,176 +68,133 @@ const router = createBrowserRouter([
           },
           backButton: false
         } as RouteHandleObject,
+        /* -- TELEMATIC RECEIPTS CHILDREN ROUTES -- */
         children: [
           {
-            path: PageRoutes.TELEMATIC_RECEIPT,
+            index: true,
             element: <TelematicReceipt />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
-          }
+          },
+          {
+            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.EXPORT_OVERVIEW.path,
+            element: <TelematicReceiptFlowExportOverview />,
+            handle: {
+              crumbs: {
+                elements: [
+                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+                  { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
+                  { name: 'TELEMATIC_RECEIPT_EXPORT_OVERVIEW', color: theme.palette.text.disabled }
+                ]
+              },
+              backButton: true
+            } as RouteHandleObject,
+          },
+          {
+            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.SEARCH_RESULTS.path,
+            element: <TelematicReceiptSearchResults />,
+            handle: {
+              crumbs: {
+                elements: [
+                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+                  { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
+                ]
+              },
+              backButton: true
+            } as RouteHandleObject,
+          },
+          {
+            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.DETAIL.path,
+            element: <TelematicReceiptDetail />,
+            handle: {
+              crumbs: {
+                elements: [
+                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+                  { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
+                  { name: 'TELEMATIC_RECEIPT_DETAIL', color: theme.palette.text.disabled }
+                ]
+              },
+              backButton: true
+            } as RouteHandleObject,
+          },
+          {
+            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.EXPORT_FLOW_RESERVATION.path,
+            element: <TelematicReceiptExportFlowReservation />,
+            handle: {
+              backButton: true,
+              sidebar: {
+                visibile: false
+              }
+            } as RouteHandleObject,
+          },
+          {
+            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.EXPORT_FLOW_THANK_YOU_PAGE.path,
+            element: <TelematicReceiptExportFlowThankYouPage />,
+            handle: {
+              backButton: false,
+              sidebar: {
+                visibile: false
+              }
+            } as RouteHandleObject,
+          },
+          {
+            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.IMPORT_OVERVIEW.path,
+            element: <TelematicReceiptImportFlowOverview />,
+            handle: {
+              crumbs: {elements: [
+                { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+                { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
+                { name: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW', color: theme.palette.text.disabled }
+              ]},
+              backButton: true,
+            } as RouteHandleObject,
+          },
+          {
+            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.IMPORT_FLOW.path,
+            element: <TelematicReceiptFlowImport />,
+            handle: {
+              backButton: true,
+              sidebar: {
+                visibile: false
+              },
+            } as RouteHandleObject,
+          },
+          {
+            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.IMPORT_FLOW_THANK_YOU_PAGE.path,
+            element: <TelematicReceiptFlowImportThankYouPage />,
+            handle: {
+              backButton: true,
+              sidebar: {
+                visibile: false
+              },
+            } as RouteHandleObject,
+          },
         ]
       },
+      /* -- END - TELEMATIC RECEIPTS' SECTION -- */
+      /* -- REPORTING SECTION -- */
       {
-        path: PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS,
+        path: PageRoutesConf.REPORTING.path,
         element: <Layout />,
         handle: {
           crumbs: {
             elements: [
               { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
-              { name: 'TELEMATIC_RECEIPT_DETAIL', color: theme.palette.text.disabled }
-            ]
-          },
-          backButton: true
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS,
-            element: <TelematicReceiptSearchResults />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
-          }
-        ]
-      },
-      {
-        path: PageRoutes.TELEMATIC_RECEIPT_DETAIL,
-        element: <Layout />,
-        handle: {
-          crumbs: {
-            elements: [
-              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'telematicreceipt', color: theme.palette.text.primary },
-              { name: 'telematicreceiptsearchresults', color: theme.palette.text.primary },
-              { name: 'telematicreceiptdetail', color: theme.palette.text.disabled }
-            ]
-          },
-          backButton: true
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutes.TELEMATIC_RECEIPT_DETAIL,
-            element: <TelematicReceiptDetail />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
-          }
-        ]
-      },
-      {
-        path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION,
-        element: <Layout />,
-        handle: {
-          backButton: true,
-          sidebar: {
-            visibile: false
-          }
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION,
-            element: <TelematicReceiptExportFlowReservation />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
-          }
-        ]
-      },
-      {
-        path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE,
-        element: <Layout />,
-        handle: {
-          backButton: false,
-          sidebar: {
-            visibile: false
-          }
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE,
-            element: <TelematicReceiptExportFlowThankYouPage />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
-          }
-        ]
-      },
-      {
-        path:PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW,
-        element: <Layout />,
-        handle: {
-          crumbs: {elements: [
-            { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-            { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
-            { name: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW', color: theme.palette.text.disabled }
-          ]},
-          backButton: true,
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW,
-            element: <TelematicReceiptImportFlowOverview />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
-          },
-        ]
-      },
-      {
-        path:PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW,
-        element: <Layout />,
-        handle: {
-          backButton: true,
-          sidebar: {
-            visibile: false
-          },
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW,
-            element: <TelematicReceiptFlowImport />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
-          },
-        ]
-      },
-      {
-        path:PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE,
-        element: <Layout />,
-        handle: {
-          backButton: false,
-          sidebar: {
-            visibile: false
-          },
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE,
-            element: <TelematicReceiptFlowImportThankYouPage />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
-          },
-        ]
-      },
-      {
-        path: PageRoutes.REPORTING,
-        element: <Layout />,
-        handle: {
-          crumbs: {
-            elements: [
-              { name: 'flows', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'reporting', color: theme.palette.text.disabled }
+              { name: 'REPORTING', color: theme.palette.text.disabled }
             ]
           },
           backButton: false
         } as RouteHandleObject,
+        /* -- REPORTING SECTION CHILDREN ROUTES -- */
         children: [
           {
-            path: PageRoutes.REPORTING,
+            index: true,
             element: <Reporting />,
-            // TEMPORARY ERROR ELEMENT
-            errorElement: <ErrorFallback />
-          }
-        ]
-      }
+          },
+        ]},
+      /* -- END - TELEMATIC RECEIPTS' SECTION -- */
     ]
   }
 ]);
+
 
 export const App = () => {
   const {
