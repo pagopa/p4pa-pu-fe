@@ -38,7 +38,7 @@ describe('FileUploader Component', () => {
   it('renders initial state correctly', () => {
     renderWithTheme(<FileUploader {...defaultProps} />);
     
-    expect(screen.getByText('commons.file')).toBeDefined();
+    expect(screen.getByText('commons.files.file')).toBeDefined();
     expect(screen.getByText(defaultProps.description)).toBeDefined();
     expect(screen.getByText(defaultProps.requiredFieldText)).toBeDefined();
     expect(screen.getByTestId('drop-zone')).toBeDefined();

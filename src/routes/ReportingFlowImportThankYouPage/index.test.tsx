@@ -8,10 +8,10 @@ vi.mock('react-router-dom', () => ({
 }));
 
 
-describe('Reporting Page', () => {
+describe('Reporting Thank You Page', () => {
   const queryClient = new QueryClient();
 
-  it('renders Reporting without crashing', () => {
+  it('renders Reporting Thank You Page without crashing', () => {
     render(
       <QueryClientProvider client={queryClient}>
         <ReportingFlowImportThankYouPage />
