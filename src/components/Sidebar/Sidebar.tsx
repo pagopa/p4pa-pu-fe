@@ -74,7 +74,12 @@ export const Sidebar: React.FC = () => {
           label: t('commons.routes.REPORTING'),
           route: PageRoutes.REPORTING,
           end: true
-        }
+        },
+        {
+          label: t('commons.routes.TREASURY'),
+          route: PageRoutes.TREASURY,
+          end: true
+        },
       ]
     }
   ];

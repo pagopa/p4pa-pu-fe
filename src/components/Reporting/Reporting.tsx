@@ -24,11 +24,11 @@ export const Reporting = () => {
             <SearchCard
               title={t('reporting.searchTitleContainer')}
               description={t('reporting.searchDescriptionContainer')}
-              searchFields={[
-                { label: t('reporting.searchReportingId'), icon: <Search /> },
-                { label: t('reporting.searchRegulationId'), icon: <Search /> },
-                { label: t('reporting.regulationFrom'), icon: <CalendarToday />, gridWidth: 6},
-                { label: t('commons.to'), icon: <CalendarToday />, gridWidth: 6 },
+              fields={[
+                { type: 'input', label: t('reporting.searchReportingId'), icon: <Search /> },
+                { type: 'input', label: t('reporting.searchRegulationId'), icon: <Search /> },
+                { type: 'input', label: t('reporting.regulationFrom'), icon: <CalendarToday />, gridWidth: 6},
+                { type: 'input', label: t('commons.to'), icon: <CalendarToday />, gridWidth: 6 },
               ]}
               button={[
                 { text: t('commons.filters.remove'), variant: 'outlined', onClick: () => console.log('remove filter') },

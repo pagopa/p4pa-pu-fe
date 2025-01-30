@@ -29,6 +29,7 @@ import Reporting from './routes/Reporting';
 import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
 import ReportingFlowImport from './routes/ReportingFlowImport';
 import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYouPage';
+import Treasury from './routes/Treasury';
 
 
 import { Overlay } from './components/Overlay';
@@ -315,6 +316,27 @@ const router = createBrowserRouter([
           {
             path: PageRoutes.REPORTING_IMPORT_OVERVIEW,
             element: <ReportingImportFlowOverview />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          }
+        ]
+      },
+      {
+        path: PageRoutes.TREASURY,
+        element: <Layout />,
+        handle: {
+          crumbs: {
+            elements: [
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'TREASURY', color: theme.palette.text.disabled }
+            ]
+          },
+          backButton: false
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.TREASURY,
+            element: <Treasury />,
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
           }

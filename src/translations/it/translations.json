@@ -1,5 +1,6 @@
 {
     "commons": {
+        "addfilter": "Aggiunge filtro",
         "amount": "Importo",
         "auditor": "Attestante",
         "back": "Indietro",
@@ -71,9 +72,11 @@
             "TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE": "Flussi importati OK",
             "TELEMATIC_RECEIPT_IMPORT_OVERVIEW": "Flussi importati",
             "TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
+            "TREASURY": "Tesoreria",
             "USERS": "Utenti"
         },
         "search": "Cerca",
+        "searchFor": "Cerca per",
         "searchName": "Cerca Nome",
         "sidebar": {
             "collapse": "Comprimi il menu",
@@ -180,5 +183,14 @@
         "description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
         "searchIUV": "Cerca IUV",
         "title": "Risultato ricerca"
+    },
+    "treasury": {
+        "description": "Ricerca, visualizza o integra flussi di Tesoreria.",
+        "search": "Cerca flussi di Tesoreria",
+        "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
+        "importedflowsviewbutton": "Vedi tutti i flussi",
+        "importflowbutton": "Importa flusso",
+        "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
+        "importflowstitle": "Importa Flussi di Tesoreria"
     }
 }

@@ -33,7 +33,7 @@ const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, on
           {description}
         </Typography>
         <Grid container direction="column" justifyContent={'start'}>
-          <Grid item lg={12} mb={1}>
+          <Grid item lg={12} mb={4}>
             <Button
               size="large"
               startIcon={actionIcon}
