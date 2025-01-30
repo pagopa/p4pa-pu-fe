@@ -120,7 +120,7 @@ const FileUploader = ({
       <Grid container direction={'row'} mb={3}>
         <InsertDriveFile />
         <Typography fontWeight={600} ml={1}>
-          {t('commons.file')}
+          {t('commons.files.file')}
         </Typography>
       </Grid>
 
