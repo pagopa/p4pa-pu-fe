@@ -14,6 +14,7 @@ export const PageRoutes = {
   TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE: `${deployPath}/flows/telematic-receipt/import-flow/import-flow-thank-you-page`,
   TELEMATIC_RECEIPT_IMPORT_OVERVIEW: `${deployPath}/flows/telematic-receipt/import-overview`,
   REPORTING: `${deployPath}/flows/reporting/`,
+  REPORTING_SEARCH_RESULTS: `${deployPath}/flows/reporting/search-results`,
   REPORTING_IMPORT_FLOW: `${deployPath}/flows/reporting/import-flow`,
   REPORTING_IMPORT_FLOW_THANK_YOU_PAGE: `${deployPath}/flows/reporting/import-flow/import-flow-thank-you-page`,
   REPORTING_IMPORT_OVERVIEW: `${deployPath}/flows/reporting/import-overview`,

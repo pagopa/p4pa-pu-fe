@@ -25,6 +25,7 @@ import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExp
 import TelematicReceiptFlowImport from './routes/TelematicReceiptFlowImport';
 import TelematicReceiptFlowImportThankYouPage from './routes/TelematicReceiptFlowImportThankYouPage';
 import TelematicReceiptImportFlowOverview from './routes/TelematicReceiptImportFlowOverview';
+import ReportingSearchResults from './routes/ReportingSearchResults';
 import Reporting from './routes/Reporting';
 import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
 import ReportingFlowImport from './routes/ReportingFlowImport';
@@ -33,7 +34,6 @@ import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYo
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
-
 
 const router = createBrowserRouter([
   {
@@ -260,6 +260,28 @@ const router = createBrowserRouter([
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
           }
+        ]
+      },
+      {
+        path: PageRoutes.REPORTING_SEARCH_RESULTS,
+        element: <Layout />,
+        handle: {
+          crumbs: {
+            elements: [
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'REPORTING', color: theme.palette.text.primary },
+              { name: 'REPORTING_SEARCH_RESULTS', color: theme.palette.text.disabled }
+            ]
+          },
+          backButton: true
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.REPORTING_SEARCH_RESULTS,
+            element: <ReportingSearchResults />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
         ]
       },
       {
