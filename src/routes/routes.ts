@@ -32,20 +32,18 @@ export const PageRoutesConf: PageRoutes = {
   }
 };
 
-export const PageRoutesFuncReduce = () => {
-  const flatRoutes: Record<string, string> = {};
-  Object.keys(PageRoutesConf).forEach(el => {
-    flatRoutes[el] = PageRoutesConf[el].path;
-    if ('children' in PageRoutesConf[el]) {
-      const childrenObj = PageRoutesConf[el].children || {};
-      const firstBranchPath = PageRoutesConf[el].path;
-      Object.keys(childrenObj).map( (childKey: string) => {
-        const childObj = childKey in childrenObj ? childrenObj[childKey] : undefined;
-        flatRoutes[`${el}_${childKey}`] = childObj ? `${firstBranchPath}${childObj.path}` : '';
-      } );
+export const generateFlatRoutes = (routes: PageRoutes = PageRoutesConf): Record<string, string> => {
+  return Object.entries(routes).reduce((acc, [key, value]) => {
+    acc[key] = value.path;
+
+    if (value.children) {
+      Object.entries(value.children).forEach(([childKey, childValue]) => {
+        acc[`${key}_${childKey}`] = `${value.path}${childValue.path}`;
+      });
     }
-  });
-  return flatRoutes;
+
+    return acc;
+  }, {} as Record<string, string>);
 };
 
-export const PageRoutes = PageRoutesFuncReduce();
+export const PageRoutes = generateFlatRoutes();

@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
 import config from '../utils/config';
-import { PageRoutesFuncReduce } from './routes'; // Regola il percorso in base al tuo progetto
+import { generateFlatRoutes } from './routes'; // Regola il percorso in base al tuo progetto
 
 const deployPath = config.deployPath;
 
 describe('PageRoutesFuncReduce', () => {
   it('should correctly build flat routes including child routes', () => {
-    const flatRoutes = PageRoutesFuncReduce();
+    const flatRoutes = generateFlatRoutes();
     
     expect(flatRoutes).toHaveProperty('HOME');
     expect(flatRoutes['HOME']).toBe(`${deployPath}/home`);
@@ -19,7 +19,7 @@ describe('PageRoutesFuncReduce', () => {
   });
 
   it('should handle routes without children correctly', () => {
-    const flatRoutes = PageRoutesFuncReduce();
+    const flatRoutes = generateFlatRoutes();
     expect(flatRoutes).toHaveProperty('REPORTING');
     expect(flatRoutes['REPORTING']).toBe(`${deployPath}/flows/reporting/`);
   });
