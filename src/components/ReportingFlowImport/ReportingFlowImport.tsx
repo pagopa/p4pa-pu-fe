@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 
-const TelematicReceiptFlowImport = () => {
+const ReportingFlowImport = () => {
 
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -22,7 +22,7 @@ const TelematicReceiptFlowImport = () => {
       <Grid container direction="column" alignItems="center" marginTop={2}>
         <Grid container direction="column" alignItems="left" marginTop={2} ml={1} mb={4}>
           <TitleComponent 
-            title={t('commons.routes.TELEMATIC_RECEIPT_IMPORT_FLOW')}
+            title={t('commons.routes.REPORTING_IMPORT_FLOW')}
             description={t('commons.flowImport.description')}
           />
           <Box bgcolor={theme.palette.common.white} borderRadius={0.5} p={3} gap={3}>
@@ -57,7 +57,7 @@ const TelematicReceiptFlowImport = () => {
             variant="outlined"
             fullWidth
             startIcon={<ArrowBack />} 
-            onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW) }
+            onClick={() => navigate(PageRoutes.REPORTING_IMPORT_OVERVIEW) }
           >
             {t('commons.exit')}
           </Button>
@@ -68,7 +68,7 @@ const TelematicReceiptFlowImport = () => {
             variant="contained"
             fullWidth
             disabled = {(uploading || !file) ?? true}
-            onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE) }
+            onClick={() => navigate(PageRoutes.REPORTING_IMPORT_FLOW_THANK_YOU_PAGE) }
           >
             {t('commons.flowImport.uploadButton')}
           </Button>
@@ -78,4 +78,4 @@ const TelematicReceiptFlowImport = () => {
   );
 };
 
-export default TelematicReceiptFlowImport;
+export default ReportingFlowImport;

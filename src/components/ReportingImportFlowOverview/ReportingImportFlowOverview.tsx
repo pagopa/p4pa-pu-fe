@@ -7,10 +7,13 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import FilterContainer, { COMPONENT_TYPE } from '../TelematicReceiptImportFlowOverview/FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import TitleComponent from '../TitleComponent/TitleComponent';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '../../routes/routes';
 
 export const ReportingImportFlowOverview = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   interface FlowDataRow {
     id: number;
@@ -147,7 +150,7 @@ export const ReportingImportFlowOverview = () => {
                   icon: <Upload/>, 
                   variant: 'outlined', 
                   buttonText: t('reportingImportFlowOverview.importFlowButton'), 
-                  onActionClick: () => console.log('import flow click')
+                  onActionClick: () => navigate(PageRoutes.REPORTING_IMPORT_FLOW)
                 },
               ]
             } 

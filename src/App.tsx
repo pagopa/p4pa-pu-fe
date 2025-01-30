@@ -25,12 +25,14 @@ import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExp
 import TelematicReceiptFlowImport from './routes/TelematicReceiptFlowImport';
 import TelematicReceiptFlowImportThankYouPage from './routes/TelematicReceiptFlowImportThankYouPage';
 import TelematicReceiptImportFlowOverview from './routes/TelematicReceiptImportFlowOverview';
+import Reporting from './routes/Reporting';
+import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
+import ReportingFlowImport from './routes/ReportingFlowImport';
+import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYouPage';
 
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
-import Reporting from './routes/Reporting';
-import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
 
 
 const router = createBrowserRouter([
@@ -258,6 +260,42 @@ const router = createBrowserRouter([
             // TEMPORARY ERROR ELEMENT
             errorElement: <ErrorFallback />
           }
+        ]
+      },
+      {
+        path:PageRoutes.REPORTING_IMPORT_FLOW,
+        element: <Layout />,
+        handle: {
+          backButton: true,
+          sidebar: {
+            visibile: false
+          },
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.REPORTING_IMPORT_FLOW,
+            element: <ReportingFlowImport />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
+        ]
+      },
+      {
+        path:PageRoutes.REPORTING_IMPORT_FLOW_THANK_YOU_PAGE,
+        element: <Layout />,
+        handle: {
+          backButton: false,
+          sidebar: {
+            visibile: false
+          },
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutes.REPORTING_IMPORT_FLOW_THANK_YOU_PAGE,
+            element: <ReportingFlowImportThankYouPage />,
+            // TEMPORARY ERROR ELEMENT
+            errorElement: <ErrorFallback />
+          },
         ]
       },
       {
