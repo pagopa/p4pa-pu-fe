@@ -6,6 +6,7 @@ import { BrowserRouter } from 'react-router';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
+  useParams: () => ({ id: '123' }),
 }));
 
 
