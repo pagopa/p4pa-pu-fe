@@ -12,6 +12,7 @@
         "exit": "Esci",
         "files": {
             "download": "Scarica",
+            "downloadFlow": "Scarica flusso",
             "file": "File",
             "imported": "File importato",
             "importedResult": "Esito dell'importazione",
@@ -93,7 +94,8 @@
         "successImport": "Flusso caricato con sucesso",
         "summary": "riepilogo",
         "to": "Al",
-        "view": "Visualizza"
+        "view": "Visualizza",
+        "searchIUV": "Cerca IUV"
     },
     "FileUploaderFlowImport": {
         "description": "Carica qui il file .zip con le Ricevute Telematiche",
@@ -189,7 +191,6 @@
     },
     "telematicreceiptSearchResults": {
         "description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
-        "searchIUV": "Cerca IUV",
         "title": "Risultato ricerca"
     }
 }
