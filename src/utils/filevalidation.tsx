@@ -2,7 +2,7 @@ const mimeTypes: Record<string, string[]> = {
   jpg: ['image/jpeg'],
   png: ['image/png'],
   pdf: ['application/pdf'],
-  zip: ['application/zip']
+  zip: ['application/zip', 'application/x-zip-compressed']
 };
 
 export const isExtensionAllowed = (
