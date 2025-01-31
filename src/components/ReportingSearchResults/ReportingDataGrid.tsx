@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { FileDownload, Visibility } from '@mui/icons-material';
+import { generatePath, useNavigate } from 'react-router-dom';
+import { PageRoutes } from '../../routes/routes';
 
 interface SearchResultDataRow extends GridValidRowModel {
   id: number;
@@ -15,7 +17,9 @@ interface SearchResultDataRow extends GridValidRowModel {
 }
 
 const SearchResultsDataGrid = () => {
+
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const rows: SearchResultDataRow[] = [
     {
@@ -68,7 +72,7 @@ const SearchResultsDataGrid = () => {
             {
               icon: <Visibility fontSize="small" />,
               label: t('commons.view'),
-              action: () => console.log('Visualizza')
+              action: () => navigate(generatePath(PageRoutes.REPORTING_DETAIL, {id: params.row.idReporting}))
             },
             {
               icon: <FileDownload fontSize="small" />,

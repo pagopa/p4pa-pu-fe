@@ -1,11 +1,11 @@
-import { Box, Button, Grid, InputAdornment, TextField, useTheme } from '@mui/material';
+import { Box, Grid, useTheme } from '@mui/material';
 import { CalendarToday, Downloading, Search } from '@mui/icons-material';
-import { ButtonNaked } from '@pagopa/mui-italia';
 import FlowDataGrid from '../../components/FlowDataGrid/FlowDataGrid';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
+import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 
 const TelematicReceiptFlowExportOverview = () => {
   const theme = useTheme();
@@ -30,69 +30,17 @@ const TelematicReceiptFlowExportOverview = () => {
             } 
             description= {t('telematicReceiptFlowExportOverview.description')}
           />
-          <Grid container direction="row" spacing={2} mt={2}
-            sx={{
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 2
-            }}>
-            <Grid item lg={5}>
-              <TextField
-                sx={{ bgcolor: theme.palette.common.white }}
-                fullWidth
-                size="small"
-                InputProps={{
-                  startAdornment: <InputAdornment position="start"><Search /></InputAdornment>
-                }}
-                label={t('telematicReceiptFlowExportOverview.searchFlowName')}
-              />
-            </Grid>
-            <Grid item lg={2}>
-              <TextField
-                sx={{ bgcolor: theme.palette.common.white }}
-                fullWidth
-                size="small"
-                InputProps={{
-                  endAdornment: <InputAdornment position="end"><CalendarToday /></InputAdornment>
-                }}
-                label={t('commons.from')}
-              />
-            </Grid>
-            <Grid item lg={2}>
-              <TextField
-                sx={{ bgcolor: theme.palette.common.white }}
-                fullWidth
-                size="small"
-                InputProps={{
-                  endAdornment: <InputAdornment position="end"><CalendarToday /></InputAdornment>
-                }}
-                label={t('commons.to')}
-              />
-            </Grid>
-            <Grid item lg={1}>
-              <Button
-                fullWidth
-                size="medium"
-                variant="contained"
-                sx={{height: 40}}>
-                {t('commons.filters.filterResults')}
-              </Button>
-            </Grid>
-            <Grid item lg={2}
-              display={'flex'}
-              justifyContent={'center'}
-              alignContent={'center'} 
-            >
-              <ButtonNaked
-                fullWidth
-                color='text'
-                weight='default'
-                size='small'
-                onFocusVisible={function noRefCheck() { }}
-              >
-                {t('commons.filters.remove')}
-              </ButtonNaked>
-            </Grid>
+          <Grid container direction="row" spacing={2} alignItems={'center'}
+            justifyContent={'space-between'} my={2}
+          >
+            <FilterContainer
+              items={[
+                { type: COMPONENT_TYPE.textField, label: t('commons.searchName'), icon: <Search />, gridWidth: 5 },
+                { type: COMPONENT_TYPE.textField, label: t('telematicReceiptFlowExportOverview.exportFrom'), icon: <CalendarToday />, gridWidth: 3 },
+                { type: COMPONENT_TYPE.textField, label: t('commons.to'), icon: <CalendarToday />, gridWidth: 3 },
+                { type: COMPONENT_TYPE.button, label: t('commons.filters.filterResults'), gridWidth: 1, onClick: () => console.log('Filter applied') },
+              ]}
+            />
           </Grid>
           <Box
             sx={{

@@ -36,7 +36,7 @@ const TelematicReceiptSearchResults = () => {
                   InputProps={{
                     startAdornment: <InputAdornment position="start"><Search /></InputAdornment>
                   }}
-                  label={t('telematicreceiptSearchResults.searchIUV')}
+                  label={t('commons.searchIUV')}
                 />
               </Grid>
               <Grid item lg={3}>

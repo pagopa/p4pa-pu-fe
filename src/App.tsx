@@ -31,10 +31,11 @@ import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
 import ReportingFlowImport from './routes/ReportingFlowImport';
 import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYouPage';
 import Treasury from './routes/Treasury';
-
+import ReportingDetail from './routes/ReportingDetail';
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
+
 
 const router = createBrowserRouter([
   {
@@ -207,6 +208,21 @@ const router = createBrowserRouter([
               },
               backButton: true
             } as RouteHandleObject,
+          },
+          {
+            path: PageRoutesConf.REPORTING.children?.DETAIL.path,
+            element: <ReportingDetail />,
+            handle: ({params}: {params: Record<string, string>}) => ({
+              crumbs: {
+                elements: [
+                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+                  { name: 'REPORTING', color: theme.palette.text.primary },
+                  { name: 'REPORTING_SEARCH_RESULTS', color: theme.palette.text.primary },
+                  { name: params.id, color: theme.palette.text.disabled}
+                ]
+              },
+              backButton: true
+            }) as RouteHandleObject,
           },
           {
             path: PageRoutesConf.REPORTING.children?.IMPORT_FLOW.path,

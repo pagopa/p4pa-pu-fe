@@ -164,7 +164,7 @@ const TelematicReceiptImportFlowOverview = () => {
             }}>
             <FilterContainer
               items={[
-                { type: COMPONENT_TYPE.textField, label: t('telematicReceiptImportFlowOverview.searchDescription'), icon: <Search />, gridWidth: 5 },
+                { type: COMPONENT_TYPE.textField, label: t('commons.searchName'), icon: <Search />, gridWidth: 5 },
                 { type: COMPONENT_TYPE.select, label: t('commons.state'), gridWidth: 2, options: [
                   { label: 'Caricato', value: 'Caricato' },
                   { label: 'Annullato', value: 'Annullato' },
