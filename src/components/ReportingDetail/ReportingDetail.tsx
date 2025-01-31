@@ -6,7 +6,7 @@ import DetailContainer, { DetailData } from '../DetailContainer/DetailContainer'
 import { useParams } from 'react-router-dom';
 import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 import { CalendarToday, Search } from '@mui/icons-material';
-import SearchResultsDataGrid from './ReportingDetailDataGrid';
+import ReportingDetailDataGrid from './ReportingDetailDataGrid';
 
 export const ReportingDetail = () => {
 
@@ -87,7 +87,7 @@ export const ReportingDetail = () => {
               }}
               aria-label='results-table'
             >
-              <SearchResultsDataGrid />
+              <ReportingDetailDataGrid />
             </Grid>
           </Grid>
         </Box>
