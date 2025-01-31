@@ -12,6 +12,7 @@
         "exit": "Esci",
         "files": {
             "download": "Scarica",
+            "downloadFlow": "Scarica flusso",
             "file": "File",
             "imported": "File importato",
             "importedResult": "Esito dell'importazione",
@@ -93,7 +94,8 @@
         "successImport": "Flusso caricato con sucesso",
         "summary": "riepilogo",
         "to": "Al",
-        "view": "Visualizza"
+        "view": "Visualizza",
+        "searchIUV": "Cerca IUV"
     },
     "FileUploaderFlowImport": {
         "description": "Carica qui il file .zip con le Ricevute Telematiche",
@@ -153,7 +155,7 @@
     "telematicReceiptFlowExportOverview": {
         "buttonReservationExport": "Prenota export",
         "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
-        "searchFlowName": "Cerca per nome flusso"
+        "exportFrom": "Esportati dal"
     },
     "telematicReceiptFlowImport": {
         "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
@@ -169,8 +171,7 @@
         "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
         "importFlowButton": "Importa flusso",
         "internalID": "ID interno",
-        "loadedDiscarded": "Caricati/Scarti",
-        "searchDescription": "Cerca Nome"
+        "loadedDiscarded": "Caricati/Scarti"
     },
     "telematicReceipts": {
         "description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
@@ -189,7 +190,6 @@
     },
     "telematicreceiptSearchResults": {
         "description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
-        "searchIUV": "Cerca IUV",
         "title": "Risultato ricerca"
     }
 }
