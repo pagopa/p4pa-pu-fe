@@ -78,7 +78,7 @@ const MultiFilter = ({ selectLabel, inputLabel, selectOptions }: MultiFilterProp
             </Grid>
           )}
 
-          <Grid item lg={4}>
+          <Grid item md={4} lg={4}>
             <FormControl fullWidth size="small">
               <InputLabel id={`select-label-${index}`}>{selectLabel}</InputLabel>
               <Select
@@ -96,7 +96,7 @@ const MultiFilter = ({ selectLabel, inputLabel, selectOptions }: MultiFilterProp
             </FormControl>
           </Grid>
 
-          <Grid item lg={index === 0 ? 8 : 7}>
+          <Grid item md={index === 0 ? 8 : 7} lg={index === 0 ? 8 : 7}>
             <TextField
               label={inputLabel.label}
               value={filter.inputValue}

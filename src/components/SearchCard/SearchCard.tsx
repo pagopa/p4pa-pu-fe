@@ -67,6 +67,7 @@ const SearchCard = ({ title, description, fields, button, multiFilterConfig }: S
               <TextField
                 label={field.label}
                 placeholder={field.placeholder || ''}
+                data-testid={`search-input-${index}`}
                 InputProps={{
                   endAdornment: field.icon ? (
                     <InputAdornment position="end">{field.icon}</InputAdornment>
@@ -77,8 +78,13 @@ const SearchCard = ({ title, description, fields, button, multiFilterConfig }: S
               />
             ) : (
               <FormControl fullWidth size="small">
-                <InputLabel>{field.selectLabel}</InputLabel>
-                <Select>
+                <InputLabel id={`select-label-${index}`}>{field.selectLabel}</InputLabel>
+                <Select
+                  labelId={`select-label-${index}`}
+                  value=""
+                  label={field.selectLabel}
+                  data-testid={`search-select-${index}`}
+                >
                   {field.selectOptions.map((option, i) => (
                     <MenuItem key={i} value={option.value}>
                       {option.label}
