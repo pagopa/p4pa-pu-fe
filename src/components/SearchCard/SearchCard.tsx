@@ -41,7 +41,7 @@ interface MultiFilterConfig {
     label: string;
     icon?: React.ReactNode;
   };
-  selectOptions: { label: string; value: string }[]; // ✅ Opzioni dinamiche per la select
+  selectOptions: { label: string; value: string }[];
 }
 
 type FieldType = SearchField | SelectField;
