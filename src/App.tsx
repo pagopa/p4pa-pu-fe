@@ -30,6 +30,7 @@ import Reporting from './routes/Reporting';
 import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
 import ReportingFlowImport from './routes/ReportingFlowImport';
 import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYouPage';
+import Treasury from './routes/Treasury';
 import ReportingDetail from './routes/ReportingDetail';
 
 import { Overlay } from './components/Overlay';
@@ -257,8 +258,31 @@ const router = createBrowserRouter([
               backButton: true
             } as RouteHandleObject,
           },
-        ]},
-      /* -- END - TELEMATIC RECEIPTS' SECTION -- */
+        ]
+      },
+      /* -- END - REPORTING SECTION -- */
+      /* -- TREASURY SECTION -- */
+      {
+        path: PageRoutesConf.TREASURY.path,
+        element: <Layout />,
+        handle: {
+          crumbs: {
+            elements: [
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'TREASURY', color: theme.palette.text.disabled }
+            ]
+          },
+          backButton: false
+        } as RouteHandleObject,
+        children: [
+          {
+            index: true,
+            element: <Treasury />,
+          }
+        ]
+      }
+      /* -- TREASURY SECTION CHILDREN ROUTES -- */
+      /* -- END - TREASURY SECTION -- */
     ]
   }
 ]);

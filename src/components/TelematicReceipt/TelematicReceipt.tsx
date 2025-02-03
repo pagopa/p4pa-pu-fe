@@ -26,13 +26,11 @@ export const TelematicReceipt = () => {
             <SearchCard
               title={t('telematicReceipts.search')}
               description={t('telematicReceipts.searchdescription')}
-              searchFields={[
-                { label: t('commons.iuv'), icon: <Search /> },
-                { label: t('commons.from'), icon: <CalendarToday />, gridWidth: 6},
-                { label: t('commons.to'), icon: <CalendarToday />, gridWidth: 6 },
-              ]}
-              selectField={[
-                { selectLabel: t('commons.duetype') ,
+              fields={[
+                { type: 'input', label: t('commons.iuv'), icon: <Search /> },
+                { type: 'input', label: t('commons.from'), icon: <CalendarToday />, gridWidth: 6},
+                { type: 'input', label: t('commons.to'), icon: <CalendarToday />, gridWidth: 6 },
+                { type: 'select', selectLabel: t('commons.duetype') ,
                   selectOptions: [
                     { label: t('telematicReceipts.tari'), value: 'tari' },
                     { label: t('telematicReceipts.trafficoffence'), value: 'violation' }
