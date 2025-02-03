@@ -18,7 +18,7 @@ describe('MarkdownText Component', () => {
     const markdown = '[link](phishing)';
     render(<Markdown>{markdown}</Markdown>);
 
-    expect(screen.getByText('link').tagName).toBe('P');
+    expect(screen.getByText('link').tagName).toBe('DIV');
     expect(screen.queryByText('A')).not.toBeInTheDocument();
   });
 

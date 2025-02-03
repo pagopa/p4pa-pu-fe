@@ -6,7 +6,7 @@ type MarkdownTextProps = {
 };
 
 const allowedTags = {
-  tagNames: ['strong', 'em', 'p', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'br']
+  tagNames: ['strong', 'em', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'br']
 };
 
 export const Markdown = ({ children: markdown }: MarkdownTextProps) => (
