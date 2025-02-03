@@ -44,7 +44,7 @@ export const Reporting = () => {
               actionLabel={t('reporting.importFlowButton')}
               actionIcon={<FileUpload/>}
               linkLabel={t('reporting.showAllFlows')}
-              onActionClick={() => navigate(PageRoutes.REPORTING_IMPORT_FLOW)}
+              onActionClick={() => navigate(PageRoutes.IMPORT_FLOW_REPORTING)}
               onLinkClick={() => navigate(PageRoutes.REPORTING_IMPORT_OVERVIEW)}  
             />
           </Grid>

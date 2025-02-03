@@ -4,10 +4,13 @@ import { FileUpload, Search } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
+import { PageRoutes } from '../../routes/routes';
+import { useNavigate } from 'react-router';
 
 export const Treasury = () => {
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
   return (
     <>
       <TitleComponent 
@@ -47,7 +50,7 @@ export const Treasury = () => {
               actionLabel={t('treasury.importflowbutton')}
               actionIcon={<FileUpload/>}
               linkLabel={t('treasury.importedflowsviewbutton')}
-              onActionClick={() => console.log('import flow click')}
+              onActionClick={() => navigate(PageRoutes.IMPORT_FLOW_TREASURY)}
               onLinkClick={() => console.log('imported flows overview')}  
             />
           </Grid>

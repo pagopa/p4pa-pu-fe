@@ -150,7 +150,7 @@ const TelematicReceiptImportFlowOverview = () => {
                   icon: <Upload/>, 
                   variant: 'outlined', 
                   buttonText: t('telematicReceiptImportFlowOverview.importFlowButton'), 
-                  onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW)
+                  onActionClick: () => navigate(PageRoutes.IMPORT_FLOW_TELEMATIC_RECEIPT)
                 },
               ]
             } 

@@ -150,7 +150,7 @@ export const ReportingImportFlowOverview = () => {
                   icon: <Upload/>, 
                   variant: 'outlined', 
                   buttonText: t('reportingImportFlowOverview.importFlowButton'), 
-                  onActionClick: () => navigate(PageRoutes.REPORTING_IMPORT_FLOW)
+                  onActionClick: () => navigate(PageRoutes.IMPORT_FLOW_REPORTING)
                 },
               ]
             } 
