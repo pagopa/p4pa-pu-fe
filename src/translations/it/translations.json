@@ -75,6 +75,7 @@
             "TELEMATIC_RECEIPT_IMPORT_OVERVIEW": "Flussi importati",
             "TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
             "TREASURY": "Tesoreria",
+            "TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
             "USERS": "Utenti"
         },
         "search": "Cerca",
@@ -203,5 +204,9 @@
         "importflowbutton": "Importa flusso",
         "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
         "importflowstitle": "Importa Flussi di Tesoreria"
+    },
+    "treasuryImportFlowOverview": {
+      "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
+      "importflowbutton": "Importa flusso"
     }
 }
