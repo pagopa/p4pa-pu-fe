@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
+import React, { useState } from 'react';
+import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, SelectChangeEvent, TextField, useTheme } from '@mui/material';
 
 export enum COMPONENT_TYPE{
   textField,
@@ -22,6 +22,12 @@ type FilterContainerProps = {
 
 const FilterContainer = ({ items }: FilterContainerProps) => {
   const theme = useTheme();
+
+  const [selectValue, setSelectValue] = useState('');
+
+  const handleChange = (event: SelectChangeEvent<string>) => {
+    setSelectValue(event.target.value);
+  };
 
   return (
     <>
@@ -54,8 +60,8 @@ const FilterContainer = ({ items }: FilterContainerProps) => {
                 <Select
                   sx={{ bgcolor: theme.palette.common.white }}
                   label={item.label}
-                  onChange={function noRefCheck() {}}
-                  value=""
+                  onChange={handleChange}
+                  value={selectValue}
                 >
                   {item.options?.map((option, optionIndex) => (
                     <MenuItem key={`${item.label}-${option.value}-${optionIndex}`} value={option.value}>
