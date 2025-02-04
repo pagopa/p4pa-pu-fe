@@ -102,7 +102,7 @@ const ImportFlow = () => {
                   {t('commons.flowType')}
                 </Typography>
               </Grid>
-              <FormControl required fullWidth size="small">
+              <FormControl role='select-flowType' required fullWidth size="small">
                 <InputLabel id='select-label'>{t('commons.flowType')}</InputLabel>
                 <Select
                   value={flowType}
@@ -136,6 +136,7 @@ const ImportFlow = () => {
         </Grid>
         <Grid item>
           <Button
+            data-testid="success-button"
             size="large"
             variant="contained"
             fullWidth
