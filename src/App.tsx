@@ -30,11 +30,13 @@ import Reporting from './routes/Reporting';
 import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
 import ReportingFlowImport from './routes/ReportingFlowImport';
 import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYouPage';
-import Treasury from './routes/Treasury';
 import ReportingDetail from './routes/ReportingDetail';
+import Treasury from './routes/Treasury';
+import TreasuryImportFlowOverview from './routes/TreasuryImportFlowOverview';
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
+
 
 
 const router = createBrowserRouter([
@@ -274,14 +276,28 @@ const router = createBrowserRouter([
           },
           backButton: false
         } as RouteHandleObject,
+        /* -- TREASURY SECTION CHILDREN ROUTES -- */
         children: [
           {
             index: true,
             element: <Treasury />,
-          }
+          },
+          {
+            path: PageRoutesConf.TREASURY.children?.IMPORT_OVERVIEW.path,
+            element: <TreasuryImportFlowOverview />,
+            handle: {
+              crumbs: {
+                elements: [
+                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+                  { name: 'TREASURY', color: theme.palette.text.primary },
+                  { name: 'TREASURY_IMPORT_OVERVIEW', color: theme.palette.text.disabled}
+                ]
+              },
+              backButton: true
+            } as RouteHandleObject,
+          },
         ]
       }
-      /* -- TREASURY SECTION CHILDREN ROUTES -- */
       /* -- END - TREASURY SECTION -- */
     ]
   }
