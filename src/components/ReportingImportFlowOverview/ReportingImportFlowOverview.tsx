@@ -140,56 +140,52 @@ export const ReportingImportFlowOverview = () => {
 
   return (
     <>
-      <Box>
-        <Box >
-          <TitleComponent 
-            title={t('commons.routes.REPORTING_IMPORT_FLOW_OVERVIEW')} 
-            callToAction={
-              [
-                {
-                  icon: <Upload/>, 
-                  variant: 'outlined', 
-                  buttonText: t('reportingImportFlowOverview.importFlowButton'), 
-                  onActionClick: () => navigate(PageRoutes.REPORTING_IMPORT_FLOW)
-                },
-              ]
-            } 
-            description={t('reportingImportFlowOverview.description')} 
-          />
-          <Grid container direction="row" spacing={2}
-            sx={{
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 2
-            }}>
-            <FilterContainer
-              items={[
-                { type: COMPONENT_TYPE.textField, label: t('commons.searchName'), icon: <Search />, gridWidth: 5 },
-                { type: COMPONENT_TYPE.select, label: t('commons.state'), gridWidth: 2, options: [
-                  { label: t('commons.states.uploaded'), value: 'Caricato' },
-                  { label: t('commons.states.cancelled'), value: 'Annullato' },
-                ]},
-                { type: COMPONENT_TYPE.textField, label: t('commons.from'), icon: <CalendarToday />, gridWidth: 2 },
-                { type: COMPONENT_TYPE.textField, label: t('commons.to'), icon: <CalendarToday />, gridWidth: 2 },
-                { type: COMPONENT_TYPE.button, label: t('commons.filters.filterResults'), gridWidth: 1, onClick: () => console.log('Filter applied') },
-              ]}
-            />
-          </Grid>
-          <Box
-            sx={{
-              bgcolor: theme.palette.grey[200],
-              padding: 2
-            }}
-          >
-            <CustomDataGrid
-              rows={rows} 
-              columns={columns} 
-              hideFooter
-              disableColumnMenu
-              disableColumnResize
-            />
-          </Box>
-        </Box>
+      <TitleComponent 
+        title={t('commons.routes.REPORTING_IMPORT_FLOW_OVERVIEW')} 
+        callToAction={
+          [
+            {
+              icon: <Upload/>, 
+              variant: 'outlined', 
+              buttonText: t('reportingImportFlowOverview.importFlowButton'), 
+              onActionClick: () => navigate(PageRoutes.REPORTING_IMPORT_FLOW)
+            },
+          ]
+        } 
+        description={t('reportingImportFlowOverview.description')} 
+      />
+      <Grid container direction="row" spacing={2}
+        sx={{
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 2
+        }}>
+        <FilterContainer
+          items={[
+            { type: COMPONENT_TYPE.textField, label: t('commons.searchName'), icon: <Search />, gridWidth: 5 },
+            { type: COMPONENT_TYPE.select, label: t('commons.state'), gridWidth: 2, options: [
+              { label: t('commons.states.uploaded'), value: 'Caricato' },
+              { label: t('commons.states.cancelled'), value: 'Annullato' },
+            ]},
+            { type: COMPONENT_TYPE.textField, label: t('commons.from'), icon: <CalendarToday />, gridWidth: 2 },
+            { type: COMPONENT_TYPE.textField, label: t('commons.to'), icon: <CalendarToday />, gridWidth: 2 },
+            { type: COMPONENT_TYPE.button, label: t('commons.filters.filterResults'), gridWidth: 1, onClick: () => console.log('Filter applied') },
+          ]}
+        />
+      </Grid>
+      <Box
+        sx={{
+          bgcolor: theme.palette.grey[200],
+          padding: 2
+        }}
+      >
+        <CustomDataGrid
+          rows={rows} 
+          columns={columns} 
+          hideFooter
+          disableColumnMenu
+          disableColumnResize
+        />
       </Box>
     </>
   );

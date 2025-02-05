@@ -14,43 +14,39 @@ const TelematicReceiptFlowExportOverview = () => {
 
   return (
     <>
-      <Box >
-        <Box>
-          <TitleComponent 
-            title= {t('commons.routes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW')} 
-            callToAction={
-              [
-                {
-                  icon: <Downloading />, 
-                  variant: 'outlined', 
-                  buttonText: t('telematicReceiptFlowExportOverview.buttonReservationExport'), 
-                  onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION)
-                },
-              ]
-            } 
-            description= {t('telematicReceiptFlowExportOverview.description')}
-          />
-          <Grid container direction="row" spacing={2} alignItems={'center'}
-            justifyContent={'space-between'} my={2}
-          >
-            <FilterContainer
-              items={[
-                { type: COMPONENT_TYPE.textField, label: t('commons.searchName'), icon: <Search />, gridWidth: 5 },
-                { type: COMPONENT_TYPE.textField, label: t('telematicReceiptFlowExportOverview.exportFrom'), icon: <CalendarToday />, gridWidth: 3 },
-                { type: COMPONENT_TYPE.textField, label: t('commons.to'), icon: <CalendarToday />, gridWidth: 3 },
-                { type: COMPONENT_TYPE.button, label: t('commons.filters.filterResults'), gridWidth: 1, onClick: () => console.log('Filter applied') },
-              ]}
-            />
-          </Grid>
-          <Box
-            sx={{
-              bgcolor: theme.palette.grey[200],
-              padding: 2
-            }}
-          >
-            <FlowDataGrid />
-          </Box>
-        </Box>
+      <TitleComponent 
+        title= {t('commons.routes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW')} 
+        callToAction={
+          [
+            {
+              icon: <Downloading />, 
+              variant: 'outlined', 
+              buttonText: t('telematicReceiptFlowExportOverview.buttonReservationExport'), 
+              onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION)
+            },
+          ]
+        } 
+        description= {t('telematicReceiptFlowExportOverview.description')}
+      />
+      <Grid container direction="row" spacing={2} alignItems={'center'}
+        justifyContent={'space-between'} my={2}
+      >
+        <FilterContainer
+          items={[
+            { type: COMPONENT_TYPE.textField, label: t('commons.searchName'), icon: <Search />, gridWidth: 5 },
+            { type: COMPONENT_TYPE.textField, label: t('telematicReceiptFlowExportOverview.exportFrom'), icon: <CalendarToday />, gridWidth: 3 },
+            { type: COMPONENT_TYPE.textField, label: t('commons.to'), icon: <CalendarToday />, gridWidth: 3 },
+            { type: COMPONENT_TYPE.button, label: t('commons.filters.filterResults'), gridWidth: 1, onClick: () => console.log('Filter applied') },
+          ]}
+        />
+      </Grid>
+      <Box
+        sx={{
+          bgcolor: theme.palette.grey[200],
+          padding: 2
+        }}
+      >
+        <FlowDataGrid />
       </Box>
     </>
   );
