@@ -2,12 +2,15 @@ import { SxProps, Theme } from '@mui/material';
 
 export const sidebarStyles = (theme: Theme, collapsed: boolean): Record<string, SxProps> => ({
   container: {
-    // position: collapsed ? 'relative' : 'fixed',
     zIndex: collapsed ? 1 : 100,
     top: 0,
     height: '100vh',
     transition: 'width 0.3s ease, height 0.3s ease', // Add transition for smooth resizing
-    [theme.breakpoints.down('lg')]: { height: collapsed ? 'fit-content' : '100%', maxWidth: 'unset', position: 'sticky', width: '100%' }
+    [theme.breakpoints.down('lg')]: { 
+      height: collapsed ? 'fit-content' : '100%', 
+      maxWidth: 'unset', 
+      position: collapsed ? 'sticky' : 'fixed',
+      width: '100%' }
   },
   nav: {
     minHeight: collapsed ? '1vh' : '50vh',

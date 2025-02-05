@@ -12,8 +12,8 @@ const ReportingSearchResults = () => {
 
   return (
     <>
-      <Box sx={{ flex: 1, position: 'relative' }}>
-        <Box sx={{ position: 'absolute', inset: 0 }}>
+      <Box >
+        <Box>
           <TitleComponent 
             title={t('commons.routes.REPORTING_SEARCH_RESULTS')}
             description={t('reportingSearchResults.description')} 

@@ -29,8 +29,8 @@ export const ReportingDetail = () => {
 
   return (
     <>
-      <Box sx={{ flex: 1, position: 'relative' }}>
-        <Box sx={{ position: 'absolute', inset: 0 }}>
+      <Box >
+        <Box >
           <TitleComponent 
             title={idReporting}
             callToAction={[

@@ -14,8 +14,8 @@ const TelematicReceiptFlowExportOverview = () => {
 
   return (
     <>
-      <Box sx={{ flex: 1, position: 'relative' }}>
-        <Box sx={{ position: 'absolute', inset: 0 }}>
+      <Box >
+        <Box>
           <TitleComponent 
             title= {t('commons.routes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW')} 
             callToAction={
