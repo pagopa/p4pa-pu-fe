@@ -2,7 +2,7 @@ import { SxProps, Theme } from '@mui/material';
 
 export const sidebarStyles = (theme: Theme, collapsed: boolean): Record<string, SxProps> => ({
   container: {
-    zIndex: collapsed ? 1 : 100,
+    zIndex: 1,
     top: 0,
     height: '100vh',
     transition: 'width 0.3s ease, height 0.3s ease', // Add transition for smooth resizing
