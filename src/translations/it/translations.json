@@ -55,6 +55,7 @@
         "reason": "Causale",
         "requiredFieldDescription": "* Indica un campo obbligatorio",
         "routes": {
+            "CONSERVATION": "Conservazione",
             "DEBT_POSITIONS": "Posizioni debitorie",
             "DEBT_TYPES": "Tipi dovuti",
             "FLOWS": "Flussi",
@@ -101,6 +102,11 @@
         "view": "Visualizza",
         "searchIUV": "Cerca IUV"
     },
+    "conservation": {
+        "buttonReservationExport": "Prenota export",
+        "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+        "exportFrom": "Esportati dal"
+    },
     "FileUploaderFlowImport": {
         "description": "Carica qui il file .zip con le Ricevute Telematiche",
         "requiredFieldText": "Campo obbligatorio. Carica un file .zip"
@@ -110,6 +116,8 @@
         "loadedDiscarded": "Caricati/Scarti",
         "name": "Nome",
         "operator": "Operatore",
+        "paymentFromDate": "Pagamento dal",
+        "paymentToDate": "Pagamento al",
         "reservationDate": "Data prenotazione"
     },
     "reporting": {

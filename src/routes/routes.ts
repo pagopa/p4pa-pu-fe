@@ -14,6 +14,9 @@ export const PageRoutesConf: PageRoutes = {
   HOME: {
     path: `${deployPath}/home`
   },
+  CONSERVATION: {
+    path: `${deployPath}/flows/conservation`
+  },
   TELEMATIC_RECEIPT: {
     path: `${deployPath}/flows/telematic-receipt/`,
     children: {

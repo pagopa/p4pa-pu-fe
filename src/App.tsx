@@ -17,6 +17,7 @@ import { theme } from '@pagopa/mui-italia';
 
 import './translations/i18n';
 import utils from './utils';
+import Conservation from './routes/Conservation/Index';
 import TelematicReceiptExportFlowReservation from './routes/TelematicReceiptExportFlowReservation';
 import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResults';
 import TelematicReceipt from './routes/TelematicReceipt';
@@ -297,8 +298,30 @@ const router = createBrowserRouter([
             } as RouteHandleObject,
           },
         ]
-      }
+      },
       /* -- END - TREASURY SECTION -- */
+      /* -- CONSERVATION SECTION -- */
+      {
+        path: PageRoutesConf.CONSERVATION.path,
+        element: <Layout />,
+        handle: {
+          crumbs: {
+            elements: [
+              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+              { name: 'CONSERVATION', color: theme.palette.text.disabled }
+            ]
+          },
+          backButton: false
+        } as RouteHandleObject,
+        /* -- CONSERVATION SECTION CHILDREN ROUTES -- */
+        children: [
+          {
+            index: true,
+            element: <Conservation />,
+          }
+        ]
+      }
+      /* -- END - CONSERVATION SECTION -- */
     ]
   }
 ]);
