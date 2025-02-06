@@ -22,13 +22,11 @@ import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResult
 import TelematicReceipt from './routes/TelematicReceipt';
 import TelematicReceiptDetail from './routes/TelematicReceiptDetail';
 import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExportFlowThankYouPage';
-import TelematicReceiptFlowImport from './routes/TelematicReceiptFlowImport';
 import TelematicReceiptFlowImportThankYouPage from './routes/TelematicReceiptFlowImportThankYouPage';
 import TelematicReceiptImportFlowOverview from './routes/TelematicReceiptImportFlowOverview';
 import ReportingSearchResults from './routes/ReportingSearchResults';
 import Reporting from './routes/Reporting';
 import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
-import ReportingFlowImport from './routes/ReportingFlowImport';
 import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYouPage';
 import ReportingDetail from './routes/ReportingDetail';
 import Treasury from './routes/Treasury';
@@ -36,8 +34,7 @@ import TreasuryImportFlowOverview from './routes/TreasuryImportFlowOverview';
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
-
-
+import ImportFlow from './routes/ImportFlowPage';
 
 const router = createBrowserRouter([
   {
@@ -156,16 +153,6 @@ const router = createBrowserRouter([
             } as RouteHandleObject,
           },
           {
-            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.IMPORT_FLOW.path,
-            element: <TelematicReceiptFlowImport />,
-            handle: {
-              backButton: true,
-              sidebar: {
-                visibile: false
-              },
-            } as RouteHandleObject,
-          },
-          {
             path: PageRoutesConf.TELEMATIC_RECEIPT.children?.IMPORT_FLOW_THANK_YOU_PAGE.path,
             element: <TelematicReceiptFlowImportThankYouPage />,
             handle: {
@@ -225,16 +212,6 @@ const router = createBrowserRouter([
               },
               backButton: true
             }) as RouteHandleObject,
-          },
-          {
-            path: PageRoutesConf.REPORTING.children?.IMPORT_FLOW.path,
-            element: <ReportingFlowImport />,
-            handle: {
-              backButton: true,
-              sidebar: {
-                visibile: false
-              },
-            } as RouteHandleObject,
           },
           {
             path: PageRoutesConf.REPORTING.children?.IMPORT_FLOW_THANK_YOU_PAGE.path,
@@ -297,8 +274,26 @@ const router = createBrowserRouter([
             } as RouteHandleObject,
           },
         ]
-      }
+      },
       /* -- END - TREASURY SECTION -- */
+      /* -- IMPORT SECTION -- */
+      {
+        path: PageRoutesConf.IMPORT.path,
+        element: <Layout />,
+        handle: {
+          backButton: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutesConf.IMPORT.children?.FLOWS.path,
+            element: <ImportFlow />,
+          }
+        ]
+      }
+      /* -- END - IMPORT SECTION -- */
     ]
   }
 ]);

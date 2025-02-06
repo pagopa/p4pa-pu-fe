@@ -3,7 +3,7 @@ import ActionCard from '../ActionCard/ActionCard';
 import { CalendarToday, Download, Search, Upload } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 
@@ -60,7 +60,7 @@ export const TelematicReceipt = () => {
               actionLabel={t('telematicReceipts.importflowbutton')}
               actionIcon={<Upload/>}
               linkLabel={t('telematicReceipts.importedflowsviewbutton')}
-              onActionClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW)}
+              onActionClick={() => navigate(generatePath(PageRoutes.IMPORT_FLOWS, {category: 'telematic-receipt'}))}
               onLinkClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW)}
             />
           </Grid>

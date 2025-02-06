@@ -22,7 +22,7 @@ type FileUploaderProps = {
   file: File | null;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
   description: string;
-  requiredFieldText: string;
+  requiredFileText: string;
   fileExtensionsAllowed: string[];
 };
 
@@ -34,7 +34,7 @@ const FileUploader = ({
   file,
   setFile,
   description,
-  requiredFieldText,
+  requiredFileText,
   fileExtensionsAllowed,
 }: FileUploaderProps) => {
   const { t } = useTranslation();
@@ -178,7 +178,7 @@ const FileUploader = ({
             </Button>
           </Box>
           <Typography variant="body2" mt={2} color="textSecondary">
-            {requiredFieldText}
+            {requiredFileText}
           </Typography>
         </>
       )}

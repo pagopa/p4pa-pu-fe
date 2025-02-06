@@ -4,7 +4,7 @@ import { CalendarToday, FileUpload, Search } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { useNavigate } from 'react-router';
+import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes/routes';
 
 export const Reporting = () => {
@@ -44,7 +44,7 @@ export const Reporting = () => {
               actionLabel={t('reporting.importFlowButton')}
               actionIcon={<FileUpload/>}
               linkLabel={t('reporting.showAllFlows')}
-              onActionClick={() => navigate(PageRoutes.REPORTING_IMPORT_FLOW)}
+              onActionClick={() => navigate(generatePath(PageRoutes.IMPORT_FLOWS, {category: 'reporting'}))}
               onLinkClick={() => navigate(PageRoutes.REPORTING_IMPORT_OVERVIEW)}  
             />
           </Grid>
