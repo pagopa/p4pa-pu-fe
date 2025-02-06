@@ -10,6 +10,7 @@ import { Sidebar } from '../Sidebar/Sidebar';
 import utils from '../../utils';
 import { Footer } from '../Footer';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
+import { useFooterData } from '../../hooks/useFooterData';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -19,6 +20,7 @@ const defaultRouteHandle: RouteHandleObject = {
 
 export function Layout() {
   const matches = useMatches();
+  const footerData = useFooterData();
 
   const overlay = utils.sidemenu.status.overlay.value;
 
@@ -36,9 +38,7 @@ export function Layout() {
 
   return (
     <>
-      <Container
-        maxWidth={false}
-        disableGutters>
+      <Container maxWidth={false} disableGutters>
         <Grid
           container
           direction={'column'}
@@ -48,17 +48,17 @@ export function Layout() {
           <Grid item xs={12} height="fit-content" component={'header'}>
             <Header onAssistanceClick={() => window.open('/', '_blank')} />
           </Grid>
-          <Grid
-            container
-            direction={'row'}
-            flexGrow={1}
-          >
+          <Grid container direction={'row'} flexGrow={1}>
             {sidebar?.visible ? <Sidebar /> : null}
-            <Grid item bgcolor={grey['100']} padding={3} height={'100%'} xs={12} lg={collapsed ? 11 : 10} paddingX={sidePadding} >
-              <Stack direction="row" 
-                justifyContent="flex-start"
-                alignItems="center"
-                spacing={2}>
+            <Grid
+              item
+              bgcolor={grey['100']}
+              padding={3}
+              height={'100%'}
+              xs={12}
+              lg={collapsed ? 11 : 10}
+              paddingX={sidePadding}>
+              <Stack direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
                 {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
                 {crumbs && (
                   <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
@@ -67,9 +67,8 @@ export function Layout() {
               <Outlet />
             </Grid>
           </Grid>
-          <Grid item xs={12} height="fit-content" mt={'auto'} >
-            {/*xs in flex basis is specified to override mui clas.*/}
-            <Footer />
+          <Grid item xs={12} height="fit-content" mt={'auto'}>
+            <Footer {...footerData} />
           </Grid>
         </Grid>
       </Container>

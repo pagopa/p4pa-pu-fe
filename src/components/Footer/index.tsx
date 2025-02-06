@@ -1,63 +1,73 @@
-import lang from '../../translations/lang';
-import { Footer as MUIFooter } from '@pagopa/mui-italia';
-import { useLanguage } from '../../hooks/useLanguage';
-import { useFeConfig } from '../../hooks/useFeConfig';
-import { Markdown } from '../Markdown';
-import { useTranslation } from 'react-i18next';
+import { Stack, Box, Container, Link } from '@mui/material';
 
-export const Footer = () => {
-  const { language, changeLanguage } = useLanguage();
+import {
+  LangSwitchProps,
+  LangSwitch,
+  FooterLegal,
+  FooterLinksType,
+  CompanyLinkType as MuiCompanyLinkType
+} from '@pagopa/mui-italia';
+import { LinksType } from '../../models/Links';
 
-  const configFe = useFeConfig();
-  const { t } = useTranslation();
-
-  return (
-    <MUIFooter
-      loggedUser={true}
-      companyLink={{ ariaLabel: 'PagoPA SPA' }}
-      legalInfo={<Markdown>{configFe?.footerDescText ?? t('commons.footer.infoFallback')}</Markdown>}
-      postLoginLinks={[
-        {
-          label: 'Informativa Privacy',
-          ariaLabel: 'Informativa Privacy',
-          href: configFe?.footerPrivacyInfoUrl,
-          linkType: 'external'
-        },
-        {
-          label: 'Diritto alla protezione dei dati personali',
-          ariaLabel: 'Diritto alla protezione dei dati personali',
-          href: configFe?.footerGDPRUrl,
-          linkType: 'external'
-        },
-        {
-          label: 'Termini e condizioni d’uso',
-          ariaLabel: 'Termini e condizioni d’uso',
-          href: configFe?.footerTermsCondUrl,
-          linkType: 'external'
-        },
-        {
-          label: 'Accessibilità',
-          ariaLabel: 'Accessibilità',
-          href: configFe?.footerAccessibilityUrl,
-          linkType: 'external'
-        }
-      ]}
-      preLoginLinks={{
-        aboutUs: {
-          links: []
-        },
-        resources: {
-          links: []
-        },
-        followUs: {
-          title: '',
-          socialLinks: [],
-          links: []
-        }
-      }}
-      currentLangCode={language}
-      languages={lang}
-      onLanguageChanged={changeLanguage}
-    />
-  );
+export type CompanyLinkType = MuiCompanyLinkType & {
+  image?: React.ReactNode;
 };
+
+type FooterProps = LangSwitchProps & {
+  companyLink: CompanyLinkType;
+  links: Array<FooterLinksType>;
+  legalInfo: JSX.Element | Array<JSX.Element>;
+};
+
+export const Footer = ({
+  companyLink,
+  links,
+  legalInfo,
+  ...langProps
+}: FooterProps): JSX.Element => (
+  <Box component="footer">
+    <Box
+      sx={{
+        borderTop: 1,
+        borderColor: 'divider',
+        backgroundColor: 'background.paper'
+      }}>
+      <Container maxWidth={false} sx={{ py: { xs: 3, md: 2 } }}>
+        <Stack
+          spacing={{ xs: 4, md: 3 }}
+          direction={{ xs: 'column', md: 'row' }}
+          justifyContent="space-between"
+          sx={{ alignItems: 'center' }}>
+          <Link
+            aria-label={companyLink?.ariaLabel}
+            href={companyLink?.href ?? LinksType.NO_OP}
+            onClick={companyLink.onClick}
+            sx={{ display: 'inline-flex' }}>
+            {companyLink.image}
+          </Link>
+          <Stack
+            spacing={{ xs: 1, md: 3 }}
+            direction={{ xs: 'column', md: 'row' }}
+            sx={{ alignItems: 'center' }}>
+            {links.map(({ href = LinksType.NO_OP, label, ariaLabel, onClick }, i) => (
+              <Link
+                aria-label={ariaLabel}
+                href={href}
+                onClick={onClick}
+                key={i}
+                underline="none"
+                color="text.primary"
+                sx={{ display: 'inline-block' }}
+                variant="subtitle2">
+                {label}
+              </Link>
+            ))}
+
+            <LangSwitch {...langProps} />
+          </Stack>
+        </Stack>
+      </Container>
+    </Box>
+    <FooterLegal content={legalInfo} />
+  </Box>
+);
