@@ -4,7 +4,7 @@ import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { PageRoutes } from '../../routes/routes';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 interface ReportingDetailDataRow extends GridValidRowModel {
   id: number;
@@ -16,7 +16,6 @@ interface ReportingDetailDataRow extends GridValidRowModel {
 
 const ReportingDetailDataGrid = () => {
 
-  const navigate = useNavigate();
   const { t } = useTranslation();
 
   const rows: ReportingDetailDataRow[] = [
@@ -57,15 +56,18 @@ const ReportingDetailDataGrid = () => {
       align: 'right',
       headerAlign: 'right',
       renderCell: () => (
-        <IconButton
-          color="primary"
-          size="small"
-          onClick={() => navigate(PageRoutes.REPORTING_PAYMENT_DETAIL)}
+        <Link
+          to={PageRoutes.REPORTING_PAYMENT_DETAIL}
+          aria-label='go to reporting payment detail'
         >
-          <ReadMore />
-        </IconButton>
+          <IconButton
+            color="primary"
+            size="small"
+          >
+            <ReadMore />
+          </IconButton>
+        </Link>
       ),
-        
     },
   ];
 

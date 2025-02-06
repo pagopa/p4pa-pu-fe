@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography, Grid, useTheme, Chip } from '@mui/material';
+import { Card, CardContent, Typography, Grid, useTheme, Chip, ChipOwnProps } from '@mui/material';
 
 export interface DetailData {
   label: string;
@@ -14,7 +14,7 @@ type DetailSectionProps = {
   }[]
 };
 
-const stateColors: { [key: string]: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'success' } = {
+const stateColors: Record<DetailData['value'], ChipOwnProps['color']> = {
   'Pagato': 'success',
   //TODO
 };

@@ -41,7 +41,7 @@ export const ReportingDetail = () => {
         ]}
       />
       <Grid container spacing={2}>
-        <Grid item lg={12} md={12}>
+        <Grid item md={12}>
           <DetailContainer 
             sections={[
               {

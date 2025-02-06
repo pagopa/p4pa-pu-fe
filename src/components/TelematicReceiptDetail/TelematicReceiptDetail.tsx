@@ -44,12 +44,12 @@ export const TelematicReceiptDetail = () => {
         } 
       />
       <Grid container spacing={3}>
-        <Grid item lg={6} md={6}>
+        <Grid item md={6}>
           <DetailContainer 
             sections={[{title: t('commons.summary'), data: [...summaryData]}]} 
           />
         </Grid>
-        <Grid item lg={6} md={6}>
+        <Grid item md={6}>
           <DetailContainer 
             sections={[{title: t('commons.payment'), data: [...paymentData]}]}
           />
