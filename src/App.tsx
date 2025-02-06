@@ -17,7 +17,7 @@ import { theme } from '@pagopa/mui-italia';
 
 import './translations/i18n';
 import utils from './utils';
-import Conservation from './routes/Conservation/Index';
+import { Conservation } from './components/Conservation';
 import TelematicReceiptExportFlowReservation from './routes/TelematicReceiptExportFlowReservation';
 import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResults';
 import TelematicReceipt from './routes/TelematicReceipt';
