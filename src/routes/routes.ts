@@ -37,7 +37,8 @@ export const PageRoutesConf: PageRoutes = {
       IMPORT_FLOW: { path: 'import-flow' },
       IMPORT_FLOW_THANK_YOU_PAGE: { path: 'import-flow/import-flow-thank-you-page' },
       IMPORT_OVERVIEW: { path: 'import-overview' },
-      DETAIL: { path: 'detail/:id' }
+      DETAIL: { path: 'detail/:id' },
+      PAYMENT_DETAIL: { path: 'payment-detail'}
     }
   }
 };
