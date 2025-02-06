@@ -281,7 +281,10 @@ const router = createBrowserRouter([
         path: PageRoutesConf.IMPORT.path,
         element: <Layout />,
         handle: {
-          backButton: true
+          backButton: true,
+          sidebar: {
+            visible: false
+          }
         } as RouteHandleObject,
         children: [
           {
