@@ -5,8 +5,8 @@ import { useTranslation } from 'react-i18next';
 import { AltRoute, ArrowBack } from '@mui/icons-material';
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { importFlowConfig } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
+import { importFlowConfig } from '../../models/ImportDetails';
 
 const ImportFlow = () => {
 

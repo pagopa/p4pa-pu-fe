@@ -36,13 +36,6 @@ import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
 import ImportFlow from './routes/ImportFlowPage';
 
-console.log('PageRoutesConf:', PageRoutesConf);
-console.log('IMPORT:', PageRoutesConf.IMPORT);
-console.log('IMPORT children:', PageRoutesConf.IMPORT?.children);
-console.log('IMPORT_FLOWS path:', PageRoutesConf.IMPORT?.children?.FLOWS?.path);
-
-
-
 const router = createBrowserRouter([
   {
     element: <ApiClient client={utils.apiClient} />,
