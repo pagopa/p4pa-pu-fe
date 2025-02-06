@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography, Grid, useTheme } from '@mui/material';
+import { Card, CardContent, Typography, Grid, useTheme, Chip } from '@mui/material';
 
 export interface DetailData {
   label: string;
@@ -14,11 +14,16 @@ type DetailSectionProps = {
   }[]
 };
 
+const stateColors: { [key: string]: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'success' } = {
+  'Pagato': 'success',
+  //TODO
+};
+
 const DetailContainer = ({ sections }: DetailSectionProps) => {
   const theme = useTheme();
 
   return (
-    <Card sx={{borderRadius: 2, padding: 2}}>
+    <Card sx={{borderRadius: 2, padding: 2, height: '100%'}}>
       <CardContent>
         <Grid container spacing={2}>
           {sections.map((section, index) => (
@@ -35,12 +40,19 @@ const DetailContainer = ({ sections }: DetailSectionProps) => {
                       </Typography>
                     </Grid>
                     <Grid item lg={section.inline ? 6 : 12} md={section.inline ? 6 : 12}>
-                      <Typography 
-                        fontWeight={item.variant ?? 600}
-                        variant= {item.variant ?? 'body1'}
-                      >
-                        {item.value}
-                      </Typography>
+                      {item.label === 'Stato' ? (
+                        <Chip
+                          color={stateColors[item.value]}
+                          label={item.value}
+                        />
+                      ): (
+                        <Typography 
+                          fontWeight={item.variant ?? 600}
+                          variant= {item.variant ?? 'body1'}
+                        >
+                          {item.value}
+                        </Typography>
+                      )}
                     </Grid>
                   </Grid>
                 ))}
