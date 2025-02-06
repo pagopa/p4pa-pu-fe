@@ -1,21 +1,23 @@
 import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, vi } from 'vitest';
-import Treasury from '.';
+import ImportFlowPage from '.';
 import { BrowserRouter } from 'react-router';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
+  useParams: () => ({ category: 'treasury' }),
 }));
 
-describe('Treasury Page', () => {
+
+describe('Import Flow Page', () => {
   const queryClient = new QueryClient();
 
-  it('renders Treasury Page without crashing', () => {
+  it('renders Import Flow without crashing', () => {
     render(
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
-          <Treasury />
+          <ImportFlowPage />
         </QueryClientProvider>
       </BrowserRouter>
     );

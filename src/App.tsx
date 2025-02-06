@@ -22,21 +22,20 @@ import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResult
 import TelematicReceipt from './routes/TelematicReceipt';
 import TelematicReceiptDetail from './routes/TelematicReceiptDetail';
 import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExportFlowThankYouPage';
-import TelematicReceiptFlowImport from './routes/TelematicReceiptFlowImport';
 import TelematicReceiptFlowImportThankYouPage from './routes/TelematicReceiptFlowImportThankYouPage';
 import TelematicReceiptImportFlowOverview from './routes/TelematicReceiptImportFlowOverview';
 import ReportingSearchResults from './routes/ReportingSearchResults';
 import Reporting from './routes/Reporting';
 import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
-import ReportingFlowImport from './routes/ReportingFlowImport';
 import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYouPage';
-import Treasury from './routes/Treasury';
 import ReportingDetail from './routes/ReportingDetail';
 import ReportingPaymentDetail from './routes/ReportingPaymentDetail';
+import Treasury from './routes/Treasury';
+import TreasuryImportFlowOverview from './routes/TreasuryImportFlowOverview';
+import ImportFlow from './routes/ImportFlowPage';
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
-
 
 const router = createBrowserRouter([
   {
@@ -155,16 +154,6 @@ const router = createBrowserRouter([
             } as RouteHandleObject,
           },
           {
-            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.IMPORT_FLOW.path,
-            element: <TelematicReceiptFlowImport />,
-            handle: {
-              backButton: true,
-              sidebar: {
-                visibile: false
-              },
-            } as RouteHandleObject,
-          },
-          {
             path: PageRoutesConf.TELEMATIC_RECEIPT.children?.IMPORT_FLOW_THANK_YOU_PAGE.path,
             element: <TelematicReceiptFlowImportThankYouPage />,
             handle: {
@@ -241,16 +230,6 @@ const router = createBrowserRouter([
             } as RouteHandleObject,
           },
           {
-            path: PageRoutesConf.REPORTING.children?.IMPORT_FLOW.path,
-            element: <ReportingFlowImport />,
-            handle: {
-              backButton: true,
-              sidebar: {
-                visibile: false
-              },
-            } as RouteHandleObject,
-          },
-          {
             path: PageRoutesConf.REPORTING.children?.IMPORT_FLOW_THANK_YOU_PAGE.path,
             element: <ReportingFlowImportThankYouPage />,
             handle: {
@@ -290,15 +269,47 @@ const router = createBrowserRouter([
           },
           backButton: false
         } as RouteHandleObject,
+        /* -- TREASURY SECTION CHILDREN ROUTES -- */
         children: [
           {
             index: true,
             element: <Treasury />,
+          },
+          {
+            path: PageRoutesConf.TREASURY.children?.IMPORT_OVERVIEW.path,
+            element: <TreasuryImportFlowOverview />,
+            handle: {
+              crumbs: {
+                elements: [
+                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+                  { name: 'TREASURY', color: theme.palette.text.primary },
+                  { name: 'TREASURY_IMPORT_OVERVIEW', color: theme.palette.text.disabled}
+                ]
+              },
+              backButton: true
+            } as RouteHandleObject,
+          },
+        ]
+      },
+      /* -- END - TREASURY SECTION -- */
+      /* -- IMPORT SECTION -- */
+      {
+        path: PageRoutesConf.IMPORT.path,
+        element: <Layout />,
+        handle: {
+          backButton: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutesConf.IMPORT.children?.FLOWS.path,
+            element: <ImportFlow />,
           }
         ]
       }
-      /* -- TREASURY SECTION CHILDREN ROUTES -- */
-      /* -- END - TREASURY SECTION -- */
+      /* -- END - IMPORT SECTION -- */
     ]
   }
 ]);
