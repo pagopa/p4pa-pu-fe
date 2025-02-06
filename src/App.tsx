@@ -36,6 +36,11 @@ import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
 import ImportFlow from './routes/ImportFlowPage';
 
+console.log('PageRoutesConf:', PageRoutesConf);
+console.log('IMPORT:', PageRoutesConf.IMPORT);
+console.log('IMPORT children:', PageRoutesConf.IMPORT?.children);
+console.log('IMPORT_FLOWS path:', PageRoutesConf.IMPORT?.children?.FLOWS?.path);
+
 
 
 const router = createBrowserRouter([
@@ -280,18 +285,15 @@ const router = createBrowserRouter([
       /* -- END - TREASURY SECTION -- */
       /* -- IMPORT SECTION -- */
       {
-        path: PageRoutesConf.IMPORT_FLOW.path,
+        path: PageRoutesConf.IMPORT.path,
         element: <Layout />,
         handle: {
           backButton: true
         } as RouteHandleObject,
         children: [
           {
-            path: ':category',
+            path: PageRoutesConf.IMPORT.children?.FLOWS.path,
             element: <ImportFlow />,
-            // handle: ({params}: {params: Record<string, string>}) => ({
-
-            // })
           }
         ]
       }
