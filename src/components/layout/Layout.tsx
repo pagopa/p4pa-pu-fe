@@ -1,4 +1,4 @@
-import { Container, Grid, Stack } from '@mui/material';
+import { Container, Grid, Stack, Theme, useMediaQuery } from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Outlet, ScrollRestoration, useMatches } from 'react-router-dom';
 import { BackButton } from '../BackButton';
@@ -9,6 +9,7 @@ import { Header } from '../Header';
 import { Sidebar } from '../Sidebar/Sidebar';
 import utils from '../../utils';
 import { Footer } from '../Footer';
+import useCollapseMenu from '../../hooks/useCollapseMenu';
 
 const defaultRouteHandle: RouteHandleObject = {
   sidebar: { visible: true },
@@ -22,6 +23,9 @@ export function Layout() {
   const overlay = utils.sidemenu.status.overlay.value;
 
   document.body.style.overflow = overlay ? 'hidden' : 'auto';
+
+  const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
+  const { collapsed } = useCollapseMenu(!lg);
 
   const { crumbs, sidebar, backButton, backButtonText, backButtonFunction } = {
     ...defaultRouteHandle,
@@ -37,22 +41,20 @@ export function Layout() {
         disableGutters>
         <Grid
           container
+          direction={'column'}
           height={'100%'}
           minHeight="100vh"
-          flexDirection="column"
-          flexWrap={'nowrap'}>
-          <Grid flexBasis={{ xs: 'fit-content' }} item xs={12} height="fit-content" component={'header'}>
+          bgcolor={grey['100']}>
+          <Grid item xs={12} height="fit-content" component={'header'}>
             <Header onAssistanceClick={() => window.open('/', '_blank')} />
           </Grid>
           <Grid
-            item
-            display={'flex'}
+            container
+            direction={'row'}
             flexGrow={1}
-            flexWrap={'wrap'}
-            alignContent={'flex-start'}
-            flexBasis={'50vh'}>
+          >
             {sidebar?.visible ? <Sidebar /> : null}
-            <Grid item bgcolor={grey['100']} padding={3} height={'100%'} xs paddingX={sidePadding}>
+            <Grid item bgcolor={grey['100']} padding={3} height={'100%'} xs={12} lg={collapsed ? 11 : 10} paddingX={sidePadding} >
               <Stack direction="row" 
                 justifyContent="flex-start"
                 alignItems="center"
@@ -65,7 +67,7 @@ export function Layout() {
               <Outlet />
             </Grid>
           </Grid>
-          <Grid item xs={12} height="fit-content" flexBasis={{ xs: 'fit-content' }} flexShrink={3}>
+          <Grid item xs={12} height="fit-content" mt={'auto'} >
             {/*xs in flex basis is specified to override mui clas.*/}
             <Footer />
           </Grid>

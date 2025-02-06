@@ -107,17 +107,21 @@ export const Sidebar: React.FC = () => {
 
   return (
     <>
-      <Box sx={styles.container} component="aside">
-        <Grid
+      <Grid
+        component={'aside'}
+        item
+        sx={styles.container}
+        lg={collapsed ? 'auto' : 2}>
+        <Box
           alignItems="normal"
           display="flex"
           flexDirection="column"
-          item
           component="nav"
           aria-expanded={!collapsed}
           aria-label={t('commons.sidebar.menu')}
           role="navigation"
-          sx={styles.nav}>
+          sx={styles.nav}
+        >
           {overlay && (
             <Box sx={styles.collapseIcon}>
               <Tooltip
@@ -187,9 +191,9 @@ export const Sidebar: React.FC = () => {
               </Tooltip>
             </Box>
           </Box>
-        </Grid>
-      </Box>
-      {overlay && <Box sx={styles.overlay} />}
+        </Box>
+        {overlay && <Box sx={styles.overlay} />}
+      </Grid>
     </>
   );
 };
