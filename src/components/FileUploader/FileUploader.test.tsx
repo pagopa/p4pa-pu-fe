@@ -23,7 +23,7 @@ describe('FileUploader Component', () => {
     file: null,
     setFile: mockSetFile,
     description: 'Drag and drop or upload a file',
-    requiredFieldText: 'This field is required',
+    requiredFileText: 'This field is required',
     fileExtensionsAllowed: ['zip'],
   };
 
@@ -40,7 +40,7 @@ describe('FileUploader Component', () => {
     
     expect(screen.getByText('commons.files.file')).toBeDefined();
     expect(screen.getByText(defaultProps.description)).toBeDefined();
-    expect(screen.getByText(defaultProps.requiredFieldText)).toBeDefined();
+    expect(screen.getByText(defaultProps.requiredFileText)).toBeDefined();
     expect(screen.getByTestId('drop-zone')).toBeDefined();
     expect(screen.getByText('commons.files.upload')).toBeDefined();
   });
