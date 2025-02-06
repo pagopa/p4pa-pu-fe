@@ -80,6 +80,11 @@ export const Sidebar: React.FC = () => {
           route: PageRoutes.TREASURY,
           end: true
         },
+        {
+          label: t('commons.routes.CONSERVATION'),
+          route: PageRoutes.CONSERVATION,
+          end: true
+        },
       ]
     }
   ];
