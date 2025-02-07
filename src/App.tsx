@@ -30,12 +30,13 @@ import Reporting from './routes/Reporting';
 import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
 import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYouPage';
 import ReportingDetail from './routes/ReportingDetail';
+import ReportingPaymentDetail from './routes/ReportingPaymentDetail';
 import Treasury from './routes/Treasury';
 import TreasuryImportFlowOverview from './routes/TreasuryImportFlowOverview';
+import ImportFlow from './routes/ImportFlowPage';
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
-import ImportFlow from './routes/ImportFlowPage';
 
 const router = createBrowserRouter([
   {
@@ -213,6 +214,21 @@ const router = createBrowserRouter([
               },
               backButton: true
             }) as RouteHandleObject,
+          },
+          {
+            path: PageRoutesConf.REPORTING.children?.PAYMENT_DETAIL.path,
+            element: <ReportingPaymentDetail />,
+            handle: {
+              crumbs: {
+                elements: [
+                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+                  { name: 'REPORTING', color: theme.palette.text.primary },
+                  { name: 'REPORTING_SEARCH_RESULTS', color: theme.palette.text.primary },
+                  { name: 'REPORTING_PAYMENT_DETAIL', color: theme.palette.text.disabled}
+                ]
+              },
+              backButton: true
+            } as RouteHandleObject,
           },
           {
             path: PageRoutesConf.REPORTING.children?.IMPORT_FLOW_THANK_YOU_PAGE.path,

@@ -1,8 +1,10 @@
-import { GridColDef, GridRenderCellParams, GridValidRowModel } from '@mui/x-data-grid';
+import { GridColDef, GridValidRowModel } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
+import { PageRoutes } from '../../routes/routes';
+import { Link } from 'react-router-dom';
 
 interface ReportingDetailDataRow extends GridValidRowModel {
   id: number;
@@ -53,18 +55,19 @@ const ReportingDetailDataGrid = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<ReportingDetailDataRow>) => (
-        <IconButton
-          color="primary"
-          size="small"
-          onClick={() => {
-            console.log(`Payment detail: ${params.row.id}`);
-          }}
+      renderCell: () => (
+        <Link
+          to={PageRoutes.REPORTING_PAYMENT_DETAIL}
+          aria-label='go to reporting payment detail'
         >
-          <ReadMore />
-        </IconButton>
+          <IconButton
+            color="primary"
+            size="small"
+          >
+            <ReadMore />
+          </IconButton>
+        </Link>
       ),
-        
     },
   ];
 

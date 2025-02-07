@@ -1,0 +1,1 @@
+export { ReportingPaymentDetail } from './ReportingPaymentDetail';
