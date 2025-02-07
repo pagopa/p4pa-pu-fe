@@ -7,7 +7,7 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { useNavigate } from 'react-router';
+import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes/routes';
 
 export const TreasuryImportFlowOverview = () => {
@@ -148,7 +148,7 @@ export const TreasuryImportFlowOverview = () => {
               icon: <Upload/>, 
               variant: 'outlined', 
               buttonText: t('treasuryImportFlowOverview.importflowbutton'), 
-              onActionClick: () => navigate(PageRoutes.REPORTING_IMPORT_FLOW)
+              onActionClick: () => navigate(generatePath(PageRoutes.IMPORT_FLOWS, {category: 'treasury'}))
             },
           ]
         } 
