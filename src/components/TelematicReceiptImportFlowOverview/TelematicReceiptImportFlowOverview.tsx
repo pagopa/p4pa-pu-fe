@@ -6,7 +6,7 @@ import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
-import { useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 
@@ -148,7 +148,7 @@ const TelematicReceiptImportFlowOverview = () => {
               icon: <Upload/>, 
               variant: 'outlined', 
               buttonText: t('telematicReceiptImportFlowOverview.importFlowButton'), 
-              onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_FLOW)
+              onActionClick: () => navigate(generatePath(PageRoutes.IMPORT_FLOWS, {category: 'telematic-receipt'}))
             },
           ]
         } 
