@@ -2,9 +2,12 @@ import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, vi } from 'vitest';
 import TelematicReceiptImportFlowOverview from '.';
+import { StoreProvider } from '../../store/GlobalStore';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
+  getIngestionFlowFiles: vi.fn(),
+  useStore: vi.fn()
 }));
 
 describe('TelematicReceiptImportFlowOverview Page', () => {
@@ -12,9 +15,11 @@ describe('TelematicReceiptImportFlowOverview Page', () => {
 
   it('renders Telematic Receipt Import Flow Overview results view without crashing', () => {
     render(
-      <QueryClientProvider client={queryClient}>
-        <TelematicReceiptImportFlowOverview />
-      </QueryClientProvider>
+      <StoreProvider>
+        <QueryClientProvider client={queryClient}>
+          <TelematicReceiptImportFlowOverview />
+        </QueryClientProvider>
+      </StoreProvider>
     );
   });
 });

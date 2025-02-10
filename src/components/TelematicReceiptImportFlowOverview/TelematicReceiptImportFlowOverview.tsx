@@ -10,7 +10,7 @@ import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useState } from 'react';
-import { useIngestionFlowFiles } from '../../api/ingestionFlowFiles';
+import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 
@@ -19,40 +19,41 @@ const TelematicReceiptImportFlowOverview = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [filters, setFilters] = useState({
-    flowFileType: 'RECEIPT',
+  //TODO: add set for filters
+  const [filters] = useState({
+    flowFileTypes: ['RECEIPT'],
   });
 
   const { state } = useStore();
-  const organizationId = state[STATE.ORGANIZATION_ID]?.organizationId;
+  const organization = state[STATE.ORGANIZATION_ID];
+  const organizationId = Number(organization);
 
-  console.log(organizationId);
-
-  const { data } = useIngestionFlowFiles(organizationId ?? 0, filters);
+  const { data } = getIngestionFlowFiles(organizationId, filters);
 
   const stateColors: { [key: string]: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'success' } = {
     'COMPLETED': 'success',
     'UPLOADED': 'primary',
-    'PROCESSING': 'warning',
+    'PROCESSING': 'primary',
     'EXPIRED': 'secondary',
     'ERROR': 'error',
   };
-
+  
   const columns: GridColDef[] = [
-    { field: 'ingestionFlowFileId', headerName: t('flowDataGrid.internalID'), flex: 1, type: 'number' },
+    { field: 'ingestionFlowFileId', headerName: t('flowDataGrid.internalID'), flex: 1, type: 'number', headerAlign: 'left', align: 'left' },
     { field: 'fileName', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
     { field: 'creationDate', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string' },
     { field: 'operator', headerName: t('flowDataGrid.operator'), flex: 1, type: 'string' },
-    { field: 'discardedRows', headerName: t('flowDataGrid.loadedDiscarded'), flex: 1, type: 'number' },
+    { field: 'discardedRows', headerName: t('flowDataGrid.loadedDiscarded'), flex: 1, type: 'number', headerAlign: 'left', align: 'left' },
     {
       field: 'status',
       headerName: t('commons.state'),
       flex: 0.5,
       type: 'string',
       sortable: true,
+      valueFormatter: (params: { value: string }) => t(`common.status.${params.value}`, params.value),
       renderCell: (params: GridRenderCellParams) => (
         <Chip
-          label={params.value}
+          label={t(`commons.status.${params.value}`, params.value).toString()}
           color={stateColors[params.value] || 'default'}
           size="small"
         />
@@ -136,7 +137,7 @@ const TelematicReceiptImportFlowOverview = () => {
               { label: 'Caricato', value: 'Caricato' },
               { label: 'Annullato', value: 'Annullato' },
             ]},
-            { type: COMPONENT_TYPE.textField, label: t('commons.from'), icon: <CalendarToday />, gridWidth: 2 },
+            { type: COMPONENT_TYPE.textField, label: t('commons.uploadedFrom'), icon: <CalendarToday />, gridWidth: 2 },
             { type: COMPONENT_TYPE.textField, label: t('commons.to'), icon: <CalendarToday />, gridWidth: 2 },
             { type: COMPONENT_TYPE.button, label: t('commons.filters.filterResults'), gridWidth: 1, onClick: () => console.log('Filter applied') },
           ]}

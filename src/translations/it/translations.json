@@ -98,12 +98,20 @@
             "uploaded": "Caricato",
             "cancelled": "Annullato"
         },
+        "status": {
+          "COMPLETED": "Elaborato",
+          "UPLOADED": "Caricato",
+          "PROCESSING": "In elaborazione",
+          "ERROR": "Errore",
+          "EXPIRED": "Scaduto"
+        },
         "successExport": "Abbiamo ricevuto la tua richiesta!",
         "successImport": "Flusso caricato con sucesso",
         "summary": "riepilogo",
         "to": "Al",
         "view": "Visualizza",
-        "searchIUV": "Cerca IUV"
+        "searchIUV": "Cerca IUV",
+        "uploadedFrom": "Caricati dal"
     },
     "conservation": {
         "buttonReservationExport": "Prenota export",
