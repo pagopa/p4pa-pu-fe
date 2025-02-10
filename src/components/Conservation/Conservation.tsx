@@ -1,7 +1,7 @@
 import { Box, Grid, IconButton, useTheme } from '@mui/material';
 import { CalendarToday, Downloading, Search } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, generatePath } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -91,7 +91,7 @@ export const Conservation = () => {
               icon: <Downloading />, 
               variant: 'outlined', 
               buttonText: t('conservation.buttonReservationExport'), 
-              onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION)
+              onActionClick: () => navigate(generatePath(PageRoutes.EXPORT_FLOWS, {category: 'conservation'}))
             },
           ]
         } 
