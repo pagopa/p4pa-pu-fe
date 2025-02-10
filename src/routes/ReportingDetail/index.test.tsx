@@ -7,13 +7,15 @@ import { BrowserRouter } from 'react-router';
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
   useParams: () => ({ id: '123' }),
+  Link: ({ to, children }: { to: string; children: React.ReactNode }) =>
+    <a href={to}>{children}</a>,
 }));
 
 
-describe('Reporting Page', () => {
+describe('Reporting Detail Page', () => {
   const queryClient = new QueryClient();
 
-  it('renders Reporting without crashing', () => {
+  it('renders Reporting Detail without crashing', () => {
     render(
       <BrowserRouter>
         <QueryClientProvider client={queryClient}>
