@@ -12,7 +12,7 @@ import {
   Box,
 } from '@mui/material';
 
-type TelematicReceiptExportFlowReservationContainerProps = {
+type ExportFlowContainerProps = {
   title: {
     icon: React.ReactNode;
     label: string;
@@ -31,7 +31,7 @@ type TelematicReceiptExportFlowReservationContainerProps = {
   }[];
 };
 
-const TelematicReceiptExportFlowReservationContainer = ({ title, inputFields, isSelectInput, selectOptions }: TelematicReceiptExportFlowReservationContainerProps) => {
+const ExportFlowContainer = ({ title, inputFields, isSelectInput, selectOptions }: ExportFlowContainerProps) => {
   const [selectedValue, setSelectedValue] = React.useState('');
   const theme = useTheme();
 
@@ -90,9 +90,7 @@ const TelematicReceiptExportFlowReservationContainer = ({ title, inputFields, is
                     label={field.label}
                   />
                 </Grid>
-
-              )
-              }
+              )}
             </Grid>
           }
         </Grid>
@@ -101,4 +99,4 @@ const TelematicReceiptExportFlowReservationContainer = ({ title, inputFields, is
   );
 };
 
-export default TelematicReceiptExportFlowReservationContainer;
+export default ExportFlowContainer;

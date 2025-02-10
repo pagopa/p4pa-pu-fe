@@ -1,10 +1,10 @@
 import { ArrowBack, CalendarToday, Dashboard, InsertDriveFile } from '@mui/icons-material';
 import { Box, Button, Grid, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import TelematicReceiptExportFlowReservationContainer from './TelematicReceiptExportFlowReservationContainer';
 import { useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
+import ExportFlowContainer from '../ExportFlowContainer/ExportFlowContainer';
 
 export const TelematicReceiptExportFlowReservation = () => {
   const theme = useTheme();
@@ -47,7 +47,7 @@ export const TelematicReceiptExportFlowReservation = () => {
           {t('commons.requiredFieldDescription')}
         </Typography>
         <Grid container direction="row" justifyContent={'start'} sx={{ border: 1, borderRadius: 2, padding: 3, borderColor: theme.palette.divider }}>
-          <TelematicReceiptExportFlowReservationContainer
+          <ExportFlowContainer
             title={{
               icon: <InsertDriveFile sx={{marginRight: 1}}/>,
               label: t('commons.paymentDate')
@@ -70,7 +70,7 @@ export const TelematicReceiptExportFlowReservation = () => {
         </Grid>
         <Grid container direction="column" justifyContent={'start'} 
           sx={{ border: 1, borderRadius: 2, padding: 3, borderColor: theme.palette.divider, marginTop: 3 }}>
-          <TelematicReceiptExportFlowReservationContainer
+          <ExportFlowContainer
             title={{
               icon: <InsertDriveFile sx={{marginRight: 1}}/>,
               label: t('telematicReceiptExportFlowReservation.fileVersion')
@@ -88,7 +88,7 @@ export const TelematicReceiptExportFlowReservation = () => {
         </Grid>
         <Grid container direction="column" justifyContent={'start'} 
           sx={{ border: 1, borderRadius: 2, padding: 3, borderColor: theme.palette.divider, marginTop: 3 }}>
-          <TelematicReceiptExportFlowReservationContainer
+          <ExportFlowContainer
             title={{
               icon: <Dashboard sx={{marginRight: 1}} />,
               label: t('telematicReceiptExportFlowReservation.dueTipe')
