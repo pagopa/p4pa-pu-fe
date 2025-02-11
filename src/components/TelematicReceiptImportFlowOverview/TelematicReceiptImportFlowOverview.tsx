@@ -111,6 +111,7 @@ const TelematicReceiptImportFlowOverview = () => {
               color="primary"
               size="small"
               onClick={() => console.log(`Download ID: ${ingestionFlowFileId}`)}
+              data-testid='download-button'
             >
               <DownloadIcon />
             </IconButton>
