@@ -214,8 +214,8 @@
         "title": "Prenota export di un flusso",
         "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
         "buttonConfirmReservation": "Prenota",
-        "dueTipe": "Tipo di dovuto",
-        "dueTipePlaceHolder": "Tipo di dovuto da prenotare",
+        "dueType": "Tipo di dovuto",
+        "dueTypePlaceHolder": "Tipo di dovuto da prenotare",
         "fileVersion": "Versione tracciato",
         "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
         "formTitle": "Configurazione della esportazione"

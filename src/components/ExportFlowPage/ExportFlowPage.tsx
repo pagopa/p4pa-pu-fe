@@ -1,16 +1,32 @@
 import { ArrowBack, CalendarToday, Dashboard, InsertDriveFile } from '@mui/icons-material';
-import { Box, Button, Grid, Typography, useTheme } from '@mui/material';
+import { Button, Grid, GridDirection } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import ExportFlowContainer from '../ExportFlowContainer/ExportFlowContainer';
+import { useState } from 'react';
 
 export const ExportFlowPage = () => {
-  const theme = useTheme();
+
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { category } = useParams<{category: string}>();
+
+  const [formData, setFormData] = useState({
+    from: '',
+    to: '',
+    fileVersion: '',
+  });
+
+  const handleChange = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value
+    }));
+  };
+
+  const isButtonEnabled = formData.from && formData.to && formData.fileVersion;
 
   const selectOptionsFileVersion = [
     { label: 'version1', value: 'version1' },
@@ -18,7 +34,7 @@ export const ExportFlowPage = () => {
     { label: 'version3', value: 'version3' }
   ];
 
-  const selectOptionsDueTipe = [
+  const selectOptionsDueType = [
     { label: 'test1', value: 'test1' },
     { label: 'test12', value: 'test12' },
     { label: 'test123', value: 'test123' }
@@ -30,84 +46,71 @@ export const ExportFlowPage = () => {
         title={t('exportFlow.title')}
         description={t('exportFlow.description')}
       />
-      <Box
-        display="flex"
-        flexDirection="column"
-        width="100%"
-        borderRadius={0.5}
-        padding={3}
-        mb={3}
-        sx={{ bgcolor: theme.palette.common.white }} >
-        <Typography variant="h6" sx={{ mb: 1 }}>
-          {t('exportFlow.formTitle')}
-        </Typography>
-        <Typography variant="body2" sx={{ color: theme.palette.text.primary, mb: 2 }}>
-          {t('exportFlow.formDescription')}
-        </Typography>
-        <Typography variant="body2" sx={{ color: theme.palette.error.dark, mb: 4 }}>
-          {t('commons.requiredFieldDescription')}
-        </Typography>
-        <Grid container direction="row" justifyContent={'start'} sx={{ border: 1, borderRadius: 2, padding: 3, borderColor: theme.palette.divider }}>
-          <ExportFlowContainer
-            title={{
+      <ExportFlowContainer
+        section={[
+          {
+            direction: 'row',
+            title: {
               icon: <InsertDriveFile sx={{marginRight: 1}}/>,
               label: t('commons.paymentDate')
-            }}
-            inputFields={[
+            },
+            inputFields: [
               {
                 required: true,
                 label: t('commons.from'),
                 icon: <CalendarToday />,
-                gridWidth: 6
+                gridWidth: 6,
+                fieldKey: 'from'
               },
               {
                 required: true,
                 label: t('commons.to'),
                 icon: <CalendarToday />,
-                gridWidth: 6
+                gridWidth: 6,
+                fieldKey: 'to'
               }
-            ]}
-          />
-        </Grid>
-        <Grid container direction="column" justifyContent={'start'} 
-          sx={{ border: 1, borderRadius: 2, padding: 3, borderColor: theme.palette.divider, marginTop: 3 }}>
-          <ExportFlowContainer
-            title={{
+            ]
+          },
+          {
+            direction: 'column',
+            title: {
               icon: <InsertDriveFile sx={{marginRight: 1}}/>,
               label: t('exportFlow.fileVersion')
-            }}
-            inputFields={[
+            },
+            inputFields: [
               {
                 required: true,
                 label: t('exportFlow.fileVersion'),
-                gridWidth: 12
+                gridWidth: 12,
+                fieldKey: 'fileVersion'
               }
-            ]}
-            isSelectInput
-            selectOptions={selectOptionsFileVersion}
-          />
-        </Grid>
-        {category !== 'conservation' && (
-          <Grid container direction="column" justifyContent={'start'} 
-            sx={{ border: 1, borderRadius: 2, padding: 3, borderColor: theme.palette.divider, marginTop: 3 }}>
-            <ExportFlowContainer
-              title={{
-                icon: <Dashboard sx={{marginRight: 1}} />,
-                label: t('exportFlow.dueTipe')
-              }}
-              inputFields={[
-                {
-                  label: t('exportFlow.dueTipePlaceHolder'),
-                  gridWidth: 12
-                }
-              ]}
-              isSelectInput
-              selectOptions={selectOptionsDueTipe}
-            />
-          </Grid>
-        )}
+            ],
+            selectOptions: selectOptionsFileVersion
+          },
+          ...(category !== 'conservation'
+            ? [
+              {
+                direction: 'column' as GridDirection,
+                title: {
+                  icon: <Dashboard sx={{ marginRight: 1 }} />,
+                  label: t('exportFlow.dueType')
+                },
+                inputFields: [
+                  {
+                    label: t('exportFlow.dueTypePlaceHolder'),
+                    gridWidth: 12,
+                    fieldKey: 'dueType'
+                  }
+                ],
+                selectOptions: selectOptionsDueType
+              }
+            ]
+            : [])
+        ]}
+        formData={formData}
+        onSelectChange={handleChange}
+      />
 
-      </Box>
       <Grid container direction={'row'} justifyContent={'space-between'}>
         <Grid item>
           <Button
@@ -122,6 +125,7 @@ export const ExportFlowPage = () => {
         </Grid>
         <Grid item>
           <Button
+            disabled={!isButtonEnabled}
             size="large"
             variant="contained"
             fullWidth
