@@ -7,10 +7,19 @@ import { z } from 'zod';
 export const getIngestionFlowFiles = (
   organizationId: number,
   query: {
-    flowFileTypes: string[];
+    flowFileTypes: (
+      | 'RECEIPT'
+      | 'RECEIPT_PAGOPA'
+      | 'PAYMENTS_REPORTING'
+      | 'PAYMENTS_REPORTING_PAGOPA'
+      | 'TREASURY_OPI'
+      | 'TREASURY_CSV'
+      | 'TREASURY_XLS'
+      | 'TREASURY_POSTE'
+    )[];
     creationDateFrom?: string;
     creationDateTo?: string;
-    status?: 'REQUESTED' | 'PROCESSING' | 'COMPLETED' | 'EXPIRED' | 'ERROR';
+    status?: string;
     fileName?: string;
   },
   options = {}
@@ -18,11 +27,11 @@ export const getIngestionFlowFiles = (
   return useQuery({
     queryKey: ['ingestionFlowFiles', organizationId, query],
     queryFn: async () => {
-      const { data: files } = await utils.apiClient.ingestionFlowFiles.getIngestionFlowFiles(
+      const { data: files } = await utils.apiClient.bff.getIngestionFlowFiles(
         organizationId,
         query,
         {
-          // necessario per serializzare i parametri visto il cambio dell'OpenAPI in cui i flowFileTypes sono un'array (di stringhe perché il tipo non viene fornito)
+          // To serialize flowFileTypes parameters
           paramsSerializer: {
             serialize: (params) => {
               const searchParams = new URLSearchParams();
@@ -39,7 +48,7 @@ export const getIngestionFlowFiles = (
         }
       );
 
-      // La data per come è in input da problemi per la validazione serve necessariamente una ISO string
+      // Conversion to ISO date for Zod validation
       if (files?.content) {
         const transformedFiles = {
           ...files,

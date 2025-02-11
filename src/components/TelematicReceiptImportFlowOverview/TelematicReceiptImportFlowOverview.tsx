@@ -20,15 +20,27 @@ const TelematicReceiptImportFlowOverview = () => {
   const navigate = useNavigate();
 
   //TODO: add set for filters
-  const [filters] = useState({
-    flowFileTypes: ['RECEIPT'],
-  });
-
+  const [filters] = useState<{
+    flowFileTypes: (
+      | 'RECEIPT'
+      | 'RECEIPT_PAGOPA'
+      | 'PAYMENTS_REPORTING'
+      | 'PAYMENTS_REPORTING_PAGOPA'
+      | 'TREASURY_OPI'
+      | 'TREASURY_CSV'
+      | 'TREASURY_XLS'
+      | 'TREASURY_POSTE'
+    )[];
+      }>({
+        flowFileTypes: ['RECEIPT'],
+      });
+  
   const { state } = useStore();
   const organization = state[STATE.ORGANIZATION_ID];
   const organizationId = Number(organization);
-
+  
   const { data } = getIngestionFlowFiles(organizationId, filters);
+  
 
   const stateColors: { [key: string]: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'success' } = {
     'COMPLETED': 'success',
@@ -41,7 +53,9 @@ const TelematicReceiptImportFlowOverview = () => {
   const columns: GridColDef[] = [
     { field: 'ingestionFlowFileId', headerName: t('flowDataGrid.internalID'), flex: 1, type: 'number', headerAlign: 'left', align: 'left' },
     { field: 'fileName', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
-    { field: 'creationDate', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string' },
+    { field: 'creationDate', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string', 
+      renderCell: (params: GridRenderCellParams) => params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''    
+    },
     { field: 'operator', headerName: t('flowDataGrid.operator'), flex: 1, type: 'string' },
     { field: 'discardedRows', headerName: t('flowDataGrid.loadedDiscarded'), flex: 1, type: 'number', headerAlign: 'left', align: 'left' },
     {

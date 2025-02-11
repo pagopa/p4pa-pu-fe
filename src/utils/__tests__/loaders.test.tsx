@@ -26,7 +26,7 @@ describe('api loaders', () => {
     it('should call getOrganizations obtaining a formal response', async () => {
       const dataMock = [ createMock(schemas.organizationDTOSchema.required()) ] ;
 
-      const apiMock = vi.spyOn(utils.apiClient.organizations, 'getOrganizations').mockResolvedValue({
+      const apiMock = vi.spyOn(utils.apiClient.bff, 'getOrganizations').mockResolvedValue({
         data: dataMock,
         headers: {}
       } as AxiosResponse);

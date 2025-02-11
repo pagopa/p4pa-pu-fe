@@ -7,7 +7,7 @@ const getBrokersConfig = (options = {}) => {
   return useQuery({
     queryKey: ['brokersConfig'],
     queryFn: async () => {
-      const { data: config } = await utils.apiClient.brokers.getBrokerConfig();
+      const { data: config } = await utils.apiClient.bff.getBrokerConfig();
       if (config) {
         parseAndLog(configFESchema, config);
       }
