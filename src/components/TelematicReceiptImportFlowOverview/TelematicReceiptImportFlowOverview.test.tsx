@@ -1,24 +1,13 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useNavigate, generatePath } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-import { useStore } from '../../store/GlobalStore';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import TelematicReceiptImportFlowOverview from './TelematicReceiptImportFlowOverview';
 import { PageRoutes } from '../../routes/routes';
-import { ThemeProvider, createTheme } from '@mui/material';
+import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
   generatePath: vi.fn()
-}));
-
-vi.mock('react-i18next', () => ({
-  useTranslation: vi.fn()
-}));
-
-vi.mock('../../store/GlobalStore', () => ({
-  useStore: vi.fn()
 }));
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
@@ -27,8 +16,6 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
 
 describe('TelematicReceiptImportFlowOverview', () => {
   const mockNavigate = vi.fn();
-  const mockT = vi.fn((key) => key);
-  const mockTheme = createTheme();
   
   const mockData = {
     content: [
@@ -63,19 +50,15 @@ describe('TelematicReceiptImportFlowOverview', () => {
     vi.clearAllMocks();
     
     (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
-    (useTranslation as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ t: mockT });
-    (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ 
-      state: { ORGANIZATION_ID: '123' }
-    });
     (getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ data: mockData });
     (generatePath as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => '/mock-path');
   });
 
   it('renders successfully', () => {
     render(
-      <ThemeProvider theme={mockTheme}>
-        <TelematicReceiptImportFlowOverview />
-      </ThemeProvider>
+      
+      <TelematicReceiptImportFlowOverview />
+      
     );
 
     expect(screen.getByText('commons.routes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW')).toBeDefined();
@@ -83,9 +66,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
   it('calls navigate when import button is clicked', () => {
     render(
-      <ThemeProvider theme={mockTheme}>
-        <TelematicReceiptImportFlowOverview />
-      </ThemeProvider>
+      
+      <TelematicReceiptImportFlowOverview />
+      
     );
 
     const importButton = screen.getByText('telematicReceiptImportFlowOverview.importFlowButton');
@@ -99,9 +82,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
   it('displays data in the grid', async () => {
     const { container } = render(
-      <ThemeProvider theme={mockTheme}>
-        <TelematicReceiptImportFlowOverview />
-      </ThemeProvider>
+      
+      <TelematicReceiptImportFlowOverview />
+      
     );
 
     await waitFor(() => {
@@ -111,9 +94,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
   it('renders action menu for COMPLETED status', async () => {
     const { container } = render(
-      <ThemeProvider theme={mockTheme}>
-        <TelematicReceiptImportFlowOverview />
-      </ThemeProvider>
+      
+      <TelematicReceiptImportFlowOverview />
+      
     );
 
     const completedRow = mockData.content.find(row => row.status === 'COMPLETED');
@@ -128,9 +111,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
   it('renders download button for UPLOADED status', async () => {
     const { container } = render(
-      <ThemeProvider theme={mockTheme}>
-        <TelematicReceiptImportFlowOverview />
-      </ThemeProvider>
+      
+      <TelematicReceiptImportFlowOverview />
+      
     );
 
     await waitFor(() => {
@@ -140,9 +123,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
   it('do not renders download button or action menu for PROCESSING status', async () => {
     const { container } = render(
-      <ThemeProvider theme={mockTheme}>
-        <TelematicReceiptImportFlowOverview />
-      </ThemeProvider>
+      
+      <TelematicReceiptImportFlowOverview />
+      
     );
 
     const completedRow = mockData.content.find(row => row.status === 'PROCESSING');
@@ -157,9 +140,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
   it('applies filters when filter button is clicked', () => {
     render(
-      <ThemeProvider theme={mockTheme}>
-        <TelematicReceiptImportFlowOverview />
-      </ThemeProvider>
+      
+      <TelematicReceiptImportFlowOverview />
+      
     );
 
     const filterButton = screen.getByText('commons.filters.filterResults');
@@ -173,9 +156,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
   it('displays correct chip colors for different statuses', async () => {
     const { container } = render(
-      <ThemeProvider theme={mockTheme}>
-        <TelematicReceiptImportFlowOverview />
-      </ThemeProvider>
+      
+      <TelematicReceiptImportFlowOverview />
+      
     );
 
     await waitFor(() => {
@@ -189,9 +172,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
   it('calls getIngestionFlowFiles with correct parameters', () => {
     render(
-      <ThemeProvider theme={mockTheme}>
-        <TelematicReceiptImportFlowOverview />
-      </ThemeProvider>
+      
+      <TelematicReceiptImportFlowOverview />
+      
     );
 
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(
