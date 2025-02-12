@@ -10,7 +10,7 @@ export const useFeConfig = () => {
     setState
   } = useStore();
 
-  const { data, isLoading, isError, isSuccess } = brokers.getBrokersConfig({
+  const { data, isLoading, isError, isSuccess, error } = brokers.getBrokersConfig({
     enabled: !configFe
   });
 
@@ -24,7 +24,7 @@ export const useFeConfig = () => {
 
       if (isError) {
         // TODO: Handle error (e.g., show a toast)
-        console.error('Failed to fetch fe config');
+        console.error('Failed to fetch fe config', error);
       }
     }
   }, [data, isLoading, isError, isSuccess]);

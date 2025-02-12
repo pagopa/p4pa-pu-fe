@@ -1,223 +1,231 @@
 {
-    "commons": {
-        "addfilter": "Aggiunge filtro",
-        "amount": "Importo",
-        "auditor": "Attestante",
-        "back": "Indietro",
-        "breadcrumbs": "Elementi di navigazione breadcrumbs",
-        "breadcrumbsElement": "Elemento breadcrumb",
-        "breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
-        "close": "Chiudi",
-        "detail": "Dettaglio",
-        "duetype": "Tipo dovuto",
-        "exit": "Esci",
-        "files": {
-            "download": "Scarica",
-            "downloadFlow": "Scarica flusso",
-            "file": "File",
-            "imported": "File importato",
-            "importedResult": "Esito dell'importazione",
-            "notvalid": "Il file non è valido",
-            "remove": "Rimuovi file",
-            "size": "Dimensione File",
-            "upload": "Carica il file",
-            "uploadDate": "Data Caricamento",
-            "uploadInProgress": "Caricamento in corso..."
-        },
-        "filters": {
-            "add": "Aggiungi filtro",
-            "filterResults": "Filtra",
-            "filtersField": "Filtri",
-            "remove": "Rimuovi filtri"
-        },
-        "fiscalCodeorVat": "CF / Partita IVA",
-        "fiscalCodeorVatExecutor": "CF / Partita IVA",
-        "flowImport": {
-            "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
-            "boxTitle": "Configurazione flusso",
-            "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
-            "manualLink": "Dubbi? Vai al manuale",
-            "uploadButton": "Carica il flusso"
-        },
-        "flowType": "Tipo flusso",
-        "footer": {
-            "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
-        },
-        "from": "Dal",
-        "iud": "IUD",
-        "iur": "IUR",
-        "iuv": "IUV",
-        "operator": "Operatore",
-        "payer": "Pagatore",
-        "payment": "Pagamento",
-        "paymentDate": "Data pagamento",
-        "paymentdate": "Data Esito",
-        "paymentExecutor": "Versante",
-        "reason": "Causale",
-        "requiredFieldDescription": "* Indica un campo obbligatorio",
-        "routes": {
-            "CONSERVATION": "Conservazione",
-            "DEBT_POSITIONS": "Posizioni debitorie",
-            "DEBT_TYPES": "Tipi dovuti",
-            "FLOWS": "Flussi",
-            "HOME": "Panoramica",
-            "ORGANIZATIONS": "Enti gestiti",
-            "REPORTING": "Rendicontazione",
-            "REPORTING_IMPORT_FLOW_OVERVIEW": "Flussi importati",
-            "REPORTING_SEARCH_RESULTS": "Risultato ricerca", 
-            "REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
-            "REPORTING_IMPORT_FLOW_THANK_YOU_PAGE": "Flussi importati OK",
-            "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
-            "TELEMATIC_RECEIPT": "Ricevute Telematiche",
-            "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
-            "TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION": "Prenota export di un flusso",
-            "TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE": "Flussi esportati OK",
-            "TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
-            "TELEMATIC_RECEIPT_IMPORT_FLOW": "Carica un nuovo flusso",
-            "TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE": "Flussi importati OK",
-            "TELEMATIC_RECEIPT_IMPORT_OVERVIEW": "Flussi importati",
-            "TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
-            "TREASURY": "Tesoreria",
-            "TREASURY_IMPORT_FLOW": "Carica un nuovo flusso",
-            "TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
-            "USERS": "Utenti"
-        },
-        "search": "Cerca",
-        "searchFor": "Cerca per",
-        "searchName": "Cerca Nome",
-        "sidebar": {
-            "collapse": "Comprimi il menu",
-            "entities": "Enti gestiti",
-            "expand": "Espandi il menu",
-            "menu": "Menu",
-            "menudescription": "Lista di navigazione",
-            "users": "Utenti"
-        },
-        "state": "Stato",
-        "states": {
-            "uploaded": "Caricato",
-            "cancelled": "Annullato"
-        },
-        "successExport": "Abbiamo ricevuto la tua richiesta!",
-        "successImport": "Flusso caricato con sucesso",
-        "summary": "riepilogo",
-        "to": "Al",
-        "view": "Visualizza",
-        "searchIUV": "Cerca IUV"
-    },
-    "conservation": {
-        "buttonReservationExport": "Prenota export",
-        "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
-        "exportFrom": "Esportati dal"
-    },
-    "FileUploaderFlowImport": {
-        "description": "Carica qui il file .zip con le Ricevute Telematiche",
-        "requiredFileText": "Campo obbligatorio. Carica un file .zip"
-    },
-    "flowDataGrid": {
-        "internalID": "ID Interno",
-        "loadedDiscarded": "Caricati/Scarti",
-        "name": "Nome",
-        "operator": "Operatore",
-        "paymentFromDate": "Pagamento dal",
-        "paymentToDate": "Pagamento al",
-        "reservationDate": "Data prenotazione"
-    },
-    "reporting": {
-        "description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
-        "importFlowButton": "Importa flusso",
-        "importFlowsDescriptionContainer": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
-        "importFlowsTitleContainer": "Importa flussi di Rendicontazione",
-        "regulationFrom": "Regolamento dal",
-        "searchDescriptionContainer": "Inserisci al meno uno dei campi per cominciare la ricerca.",
-        "searchRegulationId": "Cerca ID Regolamento",
-        "searchReportingId": "Cerca ID Rendicontazione",
-        "searchTitleContainer": "Cerca flussi di Rendicontazione",
-        "showAllFlows": "Vedi tutti i flussi",
-        "title":"Rendicontazione"
-    },
-    "reportingSearchResults": {
-      "description": "Visualizza in dettaglio e scarica i flussi di Rendicontazione.",
-      "searchReportingId": "ID Rendicontazione",
-      "searchRegulationId": "ID Regolamento",
-      "regulationDate": "Data Regolamento",
-      "flowDate": "Data flusso",
-      "payments": "Pagamenti",
-      "totalAmount": "Importo totale"
-    },
-    "reportingImportFlowOverview": {
-        "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
-        "importFlowButton": "Importa flusso"
-    },
-    "reportingImportThankYouPage": {
-      "description":  "Troverai il flusso caricato nella sezione Flussi importati"
-    },
-    "telematicReceiptDetail": {
-        "title": "Dettaglio Ricevuta Telematica"
-    },
-    "telematicReceiptExportFlowReservation": {
-        "buttonConfirmReservation": "Prenota",
-        "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
-        "dueTipe": "Tipo di dovuto",
-        "dueTipePlaceHolder": "Tipo di dovuto da prenotare",
-        "fileVersion": "Versione tracciato",
-        "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
-        "formTitle": "Configurazione della esportazione"
-    },
-    "telematicReceiptExportFlowThankYouPage": {
-        "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
-    },
-    "telematicReceiptFlowExportOverview": {
-        "buttonReservationExport": "Prenota export",
-        "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
-        "exportFrom": "Esportati dal"
-    },
-    "telematicReceiptFlowImport": {
-        "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
-        "boxTitle": "Configurazione flusso",
-        "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
-        "manualLink": "Dubbi? Vai al manuale",
-        "uploadButton": "Carica il flusso"
-    },
-    "telematicReceiptFlowImportThankYouPage": {
-        "description": "Troverai il flusso caricato nella sezione Flussi importati"
-    },
-    "telematicReceiptImportFlowOverview": {
-        "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
-        "importFlowButton": "Importa flusso",
-        "internalID": "ID interno",
-        "loadedDiscarded": "Caricati/Scarti"
-    },
-    "telematicReceipts": {
-        "description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
-        "downloadflowsdescription": "Richiede l’esportazione di Ricevute Telematiche in un certo intervallo di tempo.",
-        "downloadflowstitle": "Scarica Flussi di Ricevute Telematiche",
-        "exportedflowsviewbutton": "Vedi flussi esportati",
-        "exportrequestbutton": "Prenota export",
-        "importedflowsviewbutton": "Vedi flussi importati",
-        "importflowbutton": "Importa flusso",
-        "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Ricevute Telematiche mancanti.",
-        "importflowstitle": "Importa Flussi di Ricevute Telematiche",
-        "search": "Cerca Ricevuta Telematica",
-        "searchdescription": "Inserisci al meno uno dei campi per cominciare la ricerca.",
-        "tari": "TARI",
-        "trafficoffence": "Violazione al codice della strada"
-    },
-    "telematicreceiptSearchResults": {
-        "description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
-        "title": "Risultato ricerca"
-    },
-    "treasury": {
-        "description": "Ricerca, visualizza o integra flussi di Tesoreria.",
-        "search": "Cerca flussi di Tesoreria",
-        "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
-        "importedflowsviewbutton": "Vedi tutti i flussi",
-        "importflowbutton": "Importa flusso",
-        "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
-        "importflowstitle": "Importa Flussi di Tesoreria"
-    },
-    "treasuryImportFlowOverview": {
-      "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
-      "importflowbutton": "Importa flusso"
-    }
+	"commons": {
+		"addfilter": "Aggiunge filtro",
+		"amount": "Importo",
+		"auditor": "Attestante",
+		"back": "Indietro",
+		"breadcrumbs": "Elementi di navigazione breadcrumbs",
+		"breadcrumbsElement": "Elemento breadcrumb",
+		"breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
+		"close": "Chiudi",
+		"detail": "Dettaglio",
+		"duetype": "Tipo dovuto",
+		"exit": "Esci",
+		"files": {
+			"download": "Scarica",
+			"downloadFlow": "Scarica flusso",
+			"file": "File",
+			"imported": "File importato",
+			"importedResult": "Esito dell'importazione",
+			"notvalid": "Il file non è valido",
+			"remove": "Rimuovi file",
+			"size": "Dimensione File",
+			"upload": "Carica il file",
+			"uploadDate": "Data Caricamento",
+			"uploadInProgress": "Caricamento in corso..."
+		},
+		"filters": {
+			"add": "Aggiungi filtro",
+			"filterResults": "Filtra",
+			"filtersField": "Filtri",
+			"remove": "Rimuovi filtri"
+		},
+		"fiscalCodeorVat": "CF / Partita IVA",
+		"fiscalCodeorVatExecutor": "CF / Partita IVA",
+		"flowImport": {
+			"boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+			"boxTitle": "Configurazione flusso",
+			"description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+			"manualLink": "Dubbi? Vai al manuale",
+			"uploadButton": "Carica il flusso"
+		},
+		"flowType": "Tipo flusso",
+		"footer": {
+			"infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
+		},
+		"from": "Dal",
+		"iud": "IUD",
+		"iur": "IUR",
+		"iuv": "IUV",
+		"operator": "Operatore",
+		"payer": "Pagatore",
+		"payment": "Pagamento",
+		"paymentDate": "Data pagamento",
+		"paymentdate": "Data Esito",
+		"paymentExecutor": "Versante",
+		"reason": "Causale",
+		"requiredFieldDescription": "* Indica un campo obbligatorio",
+		"routes": {
+			"CONSERVATION": "Conservazione",
+			"DEBT_POSITIONS": "Posizioni debitorie",
+			"DEBT_TYPES": "Tipi dovuti",
+			"FLOWS": "Flussi",
+			"HOME": "Panoramica",
+			"ORGANIZATIONS": "Enti gestiti",
+			"REPORTING": "Rendicontazione",
+			"REPORTING_IMPORT_FLOW_OVERVIEW": "Flussi importati",
+			"REPORTING_SEARCH_RESULTS": "Risultato ricerca",
+			"REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
+			"REPORTING_IMPORT_FLOW_THANK_YOU_PAGE": "Flussi importati OK",
+			"REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
+			"TELEMATIC_RECEIPT": "Ricevute Telematiche",
+			"TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
+			"TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION": "Prenota export di un flusso",
+			"TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE": "Flussi esportati OK",
+			"TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
+			"TELEMATIC_RECEIPT_IMPORT_FLOW": "Carica un nuovo flusso",
+			"TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE": "Flussi importati OK",
+			"TELEMATIC_RECEIPT_IMPORT_OVERVIEW": "Flussi importati",
+			"TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
+			"TREASURY": "Tesoreria",
+			"TREASURY_IMPORT_FLOW": "Carica un nuovo flusso",
+			"TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
+			"USERS": "Utenti"
+		},
+		"search": "Cerca",
+		"searchFor": "Cerca per",
+		"searchName": "Cerca Nome",
+		"sidebar": {
+			"collapse": "Comprimi il menu",
+			"entities": "Enti gestiti",
+			"expand": "Espandi il menu",
+			"menu": "Menu",
+			"menudescription": "Lista di navigazione",
+			"users": "Utenti"
+		},
+		"state": "Stato",
+		"states": {
+			"uploaded": "Caricato",
+			"cancelled": "Annullato"
+		},
+		"successExport": "Abbiamo ricevuto la tua richiesta!",
+		"successImport": "Flusso caricato con sucesso",
+		"summary": "riepilogo",
+		"to": "Al",
+		"view": "Visualizza",
+		"searchIUV": "Cerca IUV"
+	},
+	"dates": {
+		"from": "Dal",
+		"to": "Al",
+		"validations": {
+			"from": "Data non valida",
+			"to": "Data non valida"
+		}
+	},
+	"conservation": {
+		"buttonReservationExport": "Prenota export",
+		"description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+		"exportFrom": "Esportati dal"
+	},
+	"FileUploaderFlowImport": {
+		"description": "Carica qui il file .zip con le Ricevute Telematiche",
+		"requiredFileText": "Campo obbligatorio. Carica un file .zip"
+	},
+	"flowDataGrid": {
+		"internalID": "ID Interno",
+		"loadedDiscarded": "Caricati/Scarti",
+		"name": "Nome",
+		"operator": "Operatore",
+		"paymentFromDate": "Pagamento dal",
+		"paymentToDate": "Pagamento al",
+		"reservationDate": "Data prenotazione"
+	},
+	"reporting": {
+		"description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
+		"importFlowButton": "Importa flusso",
+		"importFlowsDescriptionContainer": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
+		"importFlowsTitleContainer": "Importa flussi di Rendicontazione",
+		"regulationFrom": "Regolamento dal",
+		"searchDescriptionContainer": "Inserisci al meno uno dei campi per cominciare la ricerca.",
+		"searchRegulationId": "Cerca ID Regolamento",
+		"searchReportingId": "Cerca ID Rendicontazione",
+		"searchTitleContainer": "Cerca flussi di Rendicontazione",
+		"showAllFlows": "Vedi tutti i flussi",
+		"title": "Rendicontazione"
+	},
+	"reportingSearchResults": {
+		"description": "Visualizza in dettaglio e scarica i flussi di Rendicontazione.",
+		"searchReportingId": "ID Rendicontazione",
+		"searchRegulationId": "ID Regolamento",
+		"regulationDate": "Data Regolamento",
+		"flowDate": "Data flusso",
+		"payments": "Pagamenti",
+		"totalAmount": "Importo totale"
+	},
+	"reportingImportFlowOverview": {
+		"description": "Visualizza i flussi importati in precedenza e importa nuovi.",
+		"importFlowButton": "Importa flusso"
+	},
+	"reportingImportThankYouPage": {
+		"description": "Troverai il flusso caricato nella sezione Flussi importati"
+	},
+	"telematicReceiptDetail": {
+		"title": "Dettaglio Ricevuta Telematica"
+	},
+	"telematicReceiptExportFlowReservation": {
+		"buttonConfirmReservation": "Prenota",
+		"description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
+		"dueTipe": "Tipo di dovuto",
+		"dueTipePlaceHolder": "Tipo di dovuto da prenotare",
+		"fileVersion": "Versione tracciato",
+		"formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
+		"formTitle": "Configurazione della esportazione"
+	},
+	"telematicReceiptExportFlowThankYouPage": {
+		"description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
+	},
+	"telematicReceiptFlowExportOverview": {
+		"buttonReservationExport": "Prenota export",
+		"description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+		"exportFrom": "Esportati dal"
+	},
+	"telematicReceiptFlowImport": {
+		"boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+		"boxTitle": "Configurazione flusso",
+		"description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+		"manualLink": "Dubbi? Vai al manuale",
+		"uploadButton": "Carica il flusso"
+	},
+	"telematicReceiptFlowImportThankYouPage": {
+		"description": "Troverai il flusso caricato nella sezione Flussi importati"
+	},
+	"telematicReceiptImportFlowOverview": {
+		"description": "Visualizza i flussi importati in precedenza e importa nuovi.",
+		"importFlowButton": "Importa flusso",
+		"internalID": "ID interno",
+		"loadedDiscarded": "Caricati/Scarti"
+	},
+	"telematicReceipts": {
+		"description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
+		"downloadflowsdescription": "Richiede l’esportazione di Ricevute Telematiche in un certo intervallo di tempo.",
+		"downloadflowstitle": "Scarica Flussi di Ricevute Telematiche",
+		"exportedflowsviewbutton": "Vedi flussi esportati",
+		"exportrequestbutton": "Prenota export",
+		"importedflowsviewbutton": "Vedi flussi importati",
+		"importflowbutton": "Importa flusso",
+		"importflowsdescription": "Carica un file .zip con l’informazione necessaria di Ricevute Telematiche mancanti.",
+		"importflowstitle": "Importa Flussi di Ricevute Telematiche",
+		"search": "Cerca Ricevuta Telematica",
+		"searchdescription": "Inserisci al meno uno dei campi per cominciare la ricerca.",
+		"tari": "TARI",
+		"trafficoffence": "Violazione al codice della strada"
+	},
+	"telematicreceiptSearchResults": {
+		"description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
+		"title": "Risultato ricerca"
+	},
+	"treasury": {
+		"description": "Ricerca, visualizza o integra flussi di Tesoreria.",
+		"search": "Cerca flussi di Tesoreria",
+		"searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
+		"importedflowsviewbutton": "Vedi tutti i flussi",
+		"importflowbutton": "Importa flusso",
+		"importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
+		"importflowstitle": "Importa Flussi di Tesoreria"
+	},
+	"treasuryImportFlowOverview": {
+		"description": "Visualizza i flussi importati in precedenza e importa nuovi.",
+		"importflowbutton": "Importa flusso"
+	}
 }
