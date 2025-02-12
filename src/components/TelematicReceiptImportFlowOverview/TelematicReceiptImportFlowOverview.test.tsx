@@ -8,7 +8,6 @@ import TelematicReceiptImportFlowOverview from './TelematicReceiptImportFlowOver
 import { PageRoutes } from '../../routes/routes';
 import { ThemeProvider, createTheme } from '@mui/material';
 
-// Mock delle dipendenze
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
   generatePath: vi.fn()
