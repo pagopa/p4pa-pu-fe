@@ -1,4 +1,4 @@
-import { Box, Chip, Grid, IconButton, useTheme } from '@mui/material';
+import { Box, Chip, ChipOwnProps, Grid, IconButton, useTheme } from '@mui/material';
 import { Search, Upload } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
@@ -42,7 +42,7 @@ const TelematicReceiptImportFlowOverview = () => {
   const { data } = getIngestionFlowFiles(organizationId, filters);
   
 
-  const stateColors: { [key: string]: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'success' } = {
+  const stateColors: Record<string, ChipOwnProps['color']> = {
     'COMPLETED': 'success',
     'UPLOADED': 'primary',
     'PROCESSING': 'primary',
