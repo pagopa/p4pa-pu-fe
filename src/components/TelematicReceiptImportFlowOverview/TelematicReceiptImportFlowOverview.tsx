@@ -1,4 +1,4 @@
-import { Box, Chip, Grid, IconButton, useTheme } from '@mui/material';
+import { Box, Chip, ChipOwnProps, Grid, IconButton, useTheme } from '@mui/material';
 import { Search, Upload } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
@@ -9,90 +9,69 @@ import ActionMenu from '../ActionMenu/ActionMenu';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
+import { useState } from 'react';
+import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
 
 const TelematicReceiptImportFlowOverview = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  interface FlowDataRow {
-    id: number;
-    internalID: string;
-    name: string;
-    date: string;
-    operator: string;
-    loadedDiscarded: string;
-    state: string;
-  }
+  //TODO: add set for filters
+  const [filters] = useState<{
+    flowFileTypes: (
+      | 'RECEIPT'
+      | 'RECEIPT_PAGOPA'
+      | 'PAYMENTS_REPORTING'
+      | 'PAYMENTS_REPORTING_PAGOPA'
+      | 'TREASURY_OPI'
+      | 'TREASURY_CSV'
+      | 'TREASURY_XLS'
+      | 'TREASURY_POSTE'
+    )[];
+      }>({
+        flowFileTypes: ['RECEIPT'],
+      });
+  
+  const { state } = useStore();
+  const organization = state[STATE.ORGANIZATION_ID];
+  const organizationId = Number(organization);
+  
+  const { data } = getIngestionFlowFiles(organizationId, filters);
+  
 
-  const rows: FlowDataRow[] = [
-    {
-      id: 1,
-      internalID: '1111111',
-      name: 'Esportazione 1',
-      date: '05/11/2024',
-      operator: 'Sistema Informativo 1',
-      loadedDiscarded: '1000/1',
-      state: 'Elaborato'
-    },
-    {
-      id: 2,
-      internalID: '2222222',
-      name: 'Esportazione 2',
-      date: '06/11/2024',
-      operator: 'Sistema Informativo 2',
-      loadedDiscarded: '1000/2',
-      state: 'Caricato'
-    },
-    {
-      id: 3,
-      internalID: '3333333',
-      name: 'Esportazione 3',
-      date: '06/11/2024',
-      operator: 'Sistema Informativo 3',
-      loadedDiscarded: '1000/3',
-      state: 'In Elaborazione'
-    },
-    {
-      id: 4,
-      internalID: '4444444',
-      name: 'Esportazione 4',
-      date: '07/11/2024',
-      operator: 'Sistema Informativo 4',
-      loadedDiscarded: '1000/4',
-      state: 'Errore'
-    }
-  ];
-
-  const stateColors: {
-    [key: string]: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'success';
-  } = {
-    Elaborato: 'success',
-    Caricato: 'primary',
-    'In Elaborazione': 'primary',
-    Errore: 'error'
+  const stateColors: Record<string, ChipOwnProps['color']> = {
+    'COMPLETED': 'success',
+    'UPLOADED': 'primary',
+    'PROCESSING': 'primary',
+    'EXPIRED': 'secondary',
+    'ERROR': 'error',
   };
-
+  
   const columns: GridColDef[] = [
-    { field: 'internalID', headerName: t('flowDataGrid.internalID'), flex: 1, type: 'string' },
-    { field: 'name', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
-    { field: 'date', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string' },
-    { field: 'operator', headerName: t('flowDataGrid.operator'), flex: 1, type: 'string' },
-    {
-      field: 'loadedDiscarded',
-      headerName: t('flowDataGrid.loadedDiscarded'),
-      flex: 1,
-      type: 'string'
+    { field: 'ingestionFlowFileId', headerName: t('flowDataGrid.internalID'), flex: 1, type: 'number', headerAlign: 'left', align: 'left' },
+    { field: 'fileName', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
+    { field: 'creationDate', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string', 
+      renderCell: (params: GridRenderCellParams) => params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''    
     },
+    { field: 'operator', headerName: t('flowDataGrid.operator'), flex: 1, type: 'string' },
+    { field: 'discardedRows', headerName: t('flowDataGrid.loadedDiscarded'), flex: 1, type: 'number', headerAlign: 'left', align: 'left' },
     {
-      field: 'state',
+      field: 'status',
       headerName: t('commons.state'),
-      flex: 1,
+      flex: 0.5,
       type: 'string',
       sortable: true,
-      renderCell: (params: GridRenderCellParams<FlowDataRow>) => (
-        <Chip label={params.value} color={stateColors[params.value]} size="small" />
-      )
+      valueFormatter: (params: { value: string }) => t(`common.status.${params.value}`, params.value),
+      renderCell: (params: GridRenderCellParams) => (
+        <Chip
+          label={t(`commons.status.${params.value}`, params.value).toString()}
+          color={stateColors[params.value] || 'default'}
+          size="small"
+        />
+      ),
     },
     {
       field: 'menu',
@@ -101,44 +80,48 @@ const TelematicReceiptImportFlowOverview = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<FlowDataRow>) => {
-        const { state, id } = params.row;
-        const menuStates = ['Elaborato', 'Errore'];
-        const downloadStates = ['Caricato'];
-
-        if (menuStates.includes(state)) {
+      renderCell: (params: GridRenderCellParams) => {
+        const { ingestionFlowFileId, status } = params.row;
+        const menuStates = ['COMPLETED', 'ERROR'];
+        const downloadStates = ['UPLOADED'];
+    
+        if (menuStates.includes(status)) {
           return (
-            <ActionMenu
-              rowId={id}
+            <ActionMenu 
+              rowId={ingestionFlowFileId}
               menuItems={[
                 {
-                  icon: <DownloadIcon fontSize="small" color="primary" />,
+                  icon: <DownloadIcon fontSize="small" color='primary' />,
                   label: t('commons.files.imported'),
-                  action: () => console.log('Scarica file per ID: ', params.row.id)
+                  action: () => console.log('Scarica file per ID:', ingestionFlowFileId),
                 },
                 {
-                  icon: <DownloadIcon fontSize="small" color="primary" />,
+                  icon: <DownloadIcon fontSize="small" color='primary' />,
                   label: t('commons.files.importedResult'),
-                  action: () => console.log('Download esito importazione per ID: ', params.row.id)
-                }
+                  action: () => console.log('Download esito importazione per ID:', ingestionFlowFileId),
+                },
               ]}
             />
           );
         }
-        if (downloadStates.includes(state)) {
+    
+        if (downloadStates.includes(status)) {
           return (
             <IconButton
               color="primary"
               size="small"
-              onClick={() => {
-                console.log(`Download ID: ${params.row.id}`);
-              }}>
+              onClick={() => console.log(`Download ID: ${ingestionFlowFileId}`)}
+              data-testid='download-button'
+            >
               <DownloadIcon />
             </IconButton>
           );
-        } else return null;
-      }
+        }
+    
+        return null;
+      },
     }
+    
   ];
 
   return (
@@ -192,14 +175,16 @@ const TelematicReceiptImportFlowOverview = () => {
           ]}
         />
       </Grid>
+
       <Box
         sx={{
           bgcolor: theme.palette.grey[200],
           padding: 2
         }}>
         <CustomDataGrid
-          rows={rows}
+          rows={data?.content || []}
           columns={columns}
+          getRowId={(row) => row.ingestionFlowFileId}
           hideFooter
           disableColumnMenu
           disableColumnResize

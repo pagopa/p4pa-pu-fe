@@ -5,15 +5,18 @@ import { it } from 'date-fns/locale/it';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 import { Theme } from '../utils/theme';
+import { StoreProvider } from '../store/GlobalStore';
 
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient();
   return (
     <MemoryRouter>
       <QueryClientProvider client={queryClient}>
-        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
-          <Theme>{children}</Theme>
-        </LocalizationProvider>
+        <StoreProvider>
+          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
+            <Theme>{children}</Theme>
+          </LocalizationProvider>
+        </StoreProvider>
       </QueryClientProvider>
     </MemoryRouter>
   );
