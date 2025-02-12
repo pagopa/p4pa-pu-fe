@@ -1,25 +1,9 @@
-import { render } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, it, vi } from 'vitest';
+import { describe, it } from 'vitest';
 import ReportingDetail from '.';
-import { BrowserRouter } from 'react-router';
-
-vi.mock('react-router-dom', () => ({
-  useNavigate: vi.fn(),
-  useParams: () => ({ id: '123' }),
-}));
-
+import { render } from '../../__tests__/renderers';
 
 describe('Reporting Page', () => {
-  const queryClient = new QueryClient();
-
   it('renders Reporting without crashing', () => {
-    render(
-      <BrowserRouter>
-        <QueryClientProvider client={queryClient}>
-          <ReportingDetail />
-        </QueryClientProvider>
-      </BrowserRouter>
-    );
+    render(<ReportingDetail />);
   });
 });

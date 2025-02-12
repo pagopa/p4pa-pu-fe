@@ -25,7 +25,7 @@ export const TelematicReceiptExportFlowReservation = () => {
 
   return (
     <>
-      <TitleComponent 
+      <TitleComponent
         title={t('commons.routes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION')}
         description={t('telematicReceiptExportFlowReservation.description')}
       />
@@ -68,7 +68,7 @@ export const TelematicReceiptExportFlowReservation = () => {
             ]}
           />
         </Grid>
-        <Grid container direction="column" justifyContent={'start'} 
+        <Grid container direction="column" justifyContent={'start'}
           sx={{ border: 1, borderRadius: 2, padding: 3, borderColor: theme.palette.divider, marginTop: 3 }}>
           <TelematicReceiptExportFlowReservationContainer
             title={{
@@ -86,7 +86,7 @@ export const TelematicReceiptExportFlowReservation = () => {
             selectOptions={selectOptionsFileVersion}
           />
         </Grid>
-        <Grid container direction="column" justifyContent={'start'} 
+        <Grid container direction="column" justifyContent={'start'}
           sx={{ border: 1, borderRadius: 2, padding: 3, borderColor: theme.palette.divider, marginTop: 3 }}>
           <TelematicReceiptExportFlowReservationContainer
             title={{
@@ -110,7 +110,7 @@ export const TelematicReceiptExportFlowReservation = () => {
             size="large"
             variant="outlined"
             fullWidth
-            startIcon={<ArrowBack />} 
+            startIcon={<ArrowBack />}
             onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW) }
           >
             {t('commons.exit')}

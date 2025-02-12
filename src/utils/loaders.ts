@@ -19,7 +19,7 @@ const getOrganizations = () => {
   return useQuery({
     queryKey: ['organizations'],
     queryFn: async () => {
-      const { data: organizations } = await utils.apiClient.organizations.getOrganizations();
+      const { data: organizations } = await utils.apiClient.bff.getOrganizations();
       if (organizations) {
         parseAndLog(zodSchema.organizationDTOSchema, organizations[0]);
       }

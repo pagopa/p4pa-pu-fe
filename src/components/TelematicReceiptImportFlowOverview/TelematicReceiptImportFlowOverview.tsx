@@ -1,5 +1,5 @@
 import { Box, Chip, Grid, IconButton, useTheme } from '@mui/material';
-import { CalendarToday, Search, Upload } from '@mui/icons-material';
+import { Search, Upload } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
@@ -61,14 +61,16 @@ const TelematicReceiptImportFlowOverview = () => {
       operator: 'Sistema Informativo 4',
       loadedDiscarded: '1000/4',
       state: 'Errore'
-    },
+    }
   ];
 
-  const stateColors: { [key: string]: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'success' } = {
-    'Elaborato': 'success',
-    'Caricato': 'primary',
+  const stateColors: {
+    [key: string]: 'default' | 'primary' | 'secondary' | 'error' | 'warning' | 'success';
+  } = {
+    Elaborato: 'success',
+    Caricato: 'primary',
     'In Elaborazione': 'primary',
-    'Errore': 'error',
+    Errore: 'error'
   };
 
   const columns: GridColDef[] = [
@@ -76,7 +78,12 @@ const TelematicReceiptImportFlowOverview = () => {
     { field: 'name', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
     { field: 'date', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string' },
     { field: 'operator', headerName: t('flowDataGrid.operator'), flex: 1, type: 'string' },
-    { field: 'loadedDiscarded', headerName: t('flowDataGrid.loadedDiscarded'), flex: 1, type: 'string' },
+    {
+      field: 'loadedDiscarded',
+      headerName: t('flowDataGrid.loadedDiscarded'),
+      flex: 1,
+      type: 'string'
+    },
     {
       field: 'state',
       headerName: t('commons.state'),
@@ -84,12 +91,8 @@ const TelematicReceiptImportFlowOverview = () => {
       type: 'string',
       sortable: true,
       renderCell: (params: GridRenderCellParams<FlowDataRow>) => (
-        <Chip
-          label={params.value}
-          color={stateColors[params.value]}
-          size="small"
-        />
-      ),
+        <Chip label={params.value} color={stateColors[params.value]} size="small" />
+      )
     },
     {
       field: 'menu',
@@ -104,21 +107,23 @@ const TelematicReceiptImportFlowOverview = () => {
         const downloadStates = ['Caricato'];
 
         if (menuStates.includes(state)) {
-          return <ActionMenu 
-            rowId={id}
-            menuItems={[
-              {
-                icon: <DownloadIcon fontSize="small" color='primary'/>,
-                label: t('commons.files.imported'),
-                action: () => console.log('Scarica file per ID: ', params.row.id),
-              },
-              {
-                icon: <DownloadIcon fontSize="small" color='primary'/>,
-                label: t('commons.files.importedResult'),
-                action: () => console.log('Download esito importazione per ID: ', params.row.id),
-              },
-            ]}
-          />;
+          return (
+            <ActionMenu
+              rowId={id}
+              menuItems={[
+                {
+                  icon: <DownloadIcon fontSize="small" color="primary" />,
+                  label: t('commons.files.imported'),
+                  action: () => console.log('Scarica file per ID: ', params.row.id)
+                },
+                {
+                  icon: <DownloadIcon fontSize="small" color="primary" />,
+                  label: t('commons.files.importedResult'),
+                  action: () => console.log('Download esito importazione per ID: ', params.row.id)
+                }
+              ]}
+            />
+          );
         }
         if (downloadStates.includes(state)) {
           return (
@@ -127,34 +132,34 @@ const TelematicReceiptImportFlowOverview = () => {
               size="small"
               onClick={() => {
                 console.log(`Download ID: ${params.row.id}`);
-              }}
-            >
+              }}>
               <DownloadIcon />
             </IconButton>
           );
-        }
-        else return null;
-      },
+        } else return null;
+      }
     }
   ];
 
   return (
     <>
-      <TitleComponent 
-        title={t('commons.routes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW')} 
-        callToAction={
-          [
-            {
-              icon: <Upload/>, 
-              variant: 'outlined', 
-              buttonText: t('telematicReceiptImportFlowOverview.importFlowButton'), 
-              onActionClick: () => navigate(generatePath(PageRoutes.IMPORT_FLOWS, {category: 'telematic-receipt'}))
-            },
-          ]
-        } 
-        description={t('telematicReceiptImportFlowOverview.description')} 
+      <TitleComponent
+        title={t('commons.routes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW')}
+        callToAction={[
+          {
+            icon: <Upload />,
+            variant: 'outlined',
+            buttonText: t('telematicReceiptImportFlowOverview.importFlowButton'),
+            onActionClick: () =>
+              navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'telematic-receipt' }))
+          }
+        ]}
+        description={t('telematicReceiptImportFlowOverview.description')}
       />
-      <Grid container direction="row" spacing={2}
+      <Grid
+        container
+        direction="row"
+        spacing={2}
         sx={{
           alignItems: 'center',
           justifyContent: 'space-between',
@@ -162,14 +167,28 @@ const TelematicReceiptImportFlowOverview = () => {
         }}>
         <FilterContainer
           items={[
-            { type: COMPONENT_TYPE.textField, label: t('commons.searchName'), icon: <Search />, gridWidth: 5 },
-            { type: COMPONENT_TYPE.select, label: t('commons.state'), gridWidth: 2, options: [
-              { label: 'Caricato', value: 'Caricato' },
-              { label: 'Annullato', value: 'Annullato' },
-            ]},
-            { type: COMPONENT_TYPE.textField, label: t('commons.from'), icon: <CalendarToday />, gridWidth: 2 },
-            { type: COMPONENT_TYPE.textField, label: t('commons.to'), icon: <CalendarToday />, gridWidth: 2 },
-            { type: COMPONENT_TYPE.button, label: t('commons.filters.filterResults'), gridWidth: 1, onClick: () => console.log('Filter applied') },
+            {
+              type: COMPONENT_TYPE.textField,
+              label: t('commons.searchName'),
+              icon: <Search />,
+              gridWidth: 5
+            },
+            {
+              type: COMPONENT_TYPE.select,
+              label: t('commons.state'),
+              gridWidth: 2,
+              options: [
+                { label: 'Caricato', value: 'Caricato' },
+                { label: 'Annullato', value: 'Annullato' }
+              ]
+            },
+            { type: COMPONENT_TYPE.dateRange, label: 'dateRange', gridWidth: 4 },
+            {
+              type: COMPONENT_TYPE.button,
+              label: t('commons.filters.filterResults'),
+              gridWidth: 1,
+              onClick: () => console.log('Filter applied')
+            }
           ]}
         />
       </Grid>
@@ -177,11 +196,10 @@ const TelematicReceiptImportFlowOverview = () => {
         sx={{
           bgcolor: theme.palette.grey[200],
           padding: 2
-        }}
-      >
+        }}>
         <CustomDataGrid
-          rows={rows} 
-          columns={columns} 
+          rows={rows}
+          columns={columns}
           hideFooter
           disableColumnMenu
           disableColumnResize

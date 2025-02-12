@@ -1,20 +1,13 @@
-import { render } from '@testing-library/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { describe, it, vi } from 'vitest';
 import TelematicReceiptSearchResults from '.';
+import { render } from '../../__tests__/renderers';
 
 vi.mock('react-router-dom', () => ({
-  useNavigate: vi.fn(),
+  useNavigate: vi.fn()
 }));
 
 describe('TelematicReceiptSearchResults Page', () => {
-  const queryClient = new QueryClient();
-
   it('renders Telematic Receipt Search results view without crashing', () => {
-    render(
-      <QueryClientProvider client={queryClient}>
-        <TelematicReceiptSearchResults />
-      </QueryClientProvider>
-    );
+    render(<TelematicReceiptSearchResults />);
   });
 });
