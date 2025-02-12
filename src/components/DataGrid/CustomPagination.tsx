@@ -1,55 +1,66 @@
-import { Box, Select, MenuItem, useTheme, Pagination } from '@mui/material';
+import { Box, Select, MenuItem, useTheme, Pagination, SelectChangeEvent } from '@mui/material';
 import { useEffect, useState } from 'react';
 
 type CustomPaginationProps = {
   sizePageOptions?: number[];
   defaultPageOption?: number;
   totalPages?: number;
+  currentPage?: number;
+  onPageChange?: (page: number) => void;
+  onPageSizeChange?: (pageSize: number) => void;
 };
 
-const CustomPagination = ({ sizePageOptions = [10, 20, 30], defaultPageOption = 10, totalPages }: CustomPaginationProps) => {
+const CustomPagination = ({
+  sizePageOptions,
+  defaultPageOption,
+  totalPages,
+  currentPage = 1,
+  onPageChange,
+  onPageSizeChange
+}: CustomPaginationProps) => {
   const theme = useTheme();
   const [hidePreviousButton, setHidePreviousButton] = useState(false);
   const [hideNextButton, setHideNextButton] = useState(false);
-  const [page, setPage] = useState(1);
 
   const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
-    setPage(value);
+    onPageChange?.(value);
   };
 
-  const hideButtons = (page: number) => {
-    if(page === 1) {
-      setHidePreviousButton(true);
-    }
-    else if(page === totalPages) setHideNextButton(true);
-    else {
-      setHidePreviousButton(false);
-      setHideNextButton(false);
+  const handlePageSizeChange = (event: SelectChangeEvent<number>) => {
+    const newSize = Number(event.target.value);
+    if (!isNaN(newSize)) {
+      onPageSizeChange?.(newSize);
     }
   };
 
   useEffect(() => {
-    hideButtons(page);
-  }, [page]);
+    const hideButtons = (page: number) => {
+      setHidePreviousButton(page === 1);
+      setHideNextButton(page === totalPages);
+    };
+    
+    hideButtons(currentPage);
+  }, [currentPage, totalPages]);
 
   return (
     <Box
-      display='flex'
-      justifyContent='space-between'
-      alignItems='center'
-      width='100%'
+      display="flex"
+      justifyContent="space-between"
+      alignItems="center"
+      width="100%"
       bgcolor={theme.palette.grey[200]}
       py={2}
+      px={2}
     >
       <Select
         value={defaultPageOption}
-        onChange={() => console.log('')}
-        size='small'
+        onChange={handlePageSizeChange}
+        size="small"
         sx={{
           fontSize: 12,
         }}
       >
-        {sizePageOptions && sizePageOptions.map((size) => (
+        {sizePageOptions?.map((size) => (
           <MenuItem key={size} value={size}>
             {size}
           </MenuItem>
@@ -58,7 +69,7 @@ const CustomPagination = ({ sizePageOptions = [10, 20, 30], defaultPageOption = 
 
       <Pagination
         variant="text"
-        defaultPage={1}
+        page={currentPage}
         siblingCount={1}
         boundaryCount={0}
         count={totalPages}

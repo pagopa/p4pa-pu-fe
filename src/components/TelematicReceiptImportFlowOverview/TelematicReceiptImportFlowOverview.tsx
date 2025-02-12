@@ -19,8 +19,7 @@ const TelematicReceiptImportFlowOverview = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  //TODO: add set for filters
-  const [filters] = useState<{
+  const [filters, setFilters] = useState<{
     flowFileTypes: (
       | 'RECEIPT'
       | 'RECEIPT_PAGOPA'
@@ -30,9 +29,13 @@ const TelematicReceiptImportFlowOverview = () => {
       | 'TREASURY_CSV'
       | 'TREASURY_XLS'
       | 'TREASURY_POSTE'
-    )[];
+    )[],
+    size: number;
+    page: number;
       }>({
         flowFileTypes: ['RECEIPT'],
+        size: 10,
+        page: 0,
       });
   
   const { state } = useStore();
@@ -40,6 +43,21 @@ const TelematicReceiptImportFlowOverview = () => {
   const organizationId = Number(organization);
   
   const { data } = getIngestionFlowFiles(organizationId, filters);
+
+  const handlePageChange = (newPage: number) => {
+    setFilters(prev => ({
+      ...prev,
+      page: newPage - 1
+    }));
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setFilters(prev => ({
+      ...prev,
+      size: newSize,
+      page: 0
+    }));
+  };
   
 
   const stateColors: Record<string, ChipOwnProps['color']> = {
@@ -185,9 +203,16 @@ const TelematicReceiptImportFlowOverview = () => {
           rows={data?.content || []}
           columns={columns}
           getRowId={(row) => row.ingestionFlowFileId}
-          hideFooter
           disableColumnMenu
           disableColumnResize
+          customPagination={{
+            totalPages: data?.totalPages,
+            defaultPageOption: filters.size,
+            sizePageOptions: [5, 10, 15, 20],
+            onPageChange: handlePageChange,
+            onPageSizeChange: handlePageSizeChange,
+            currentPage: filters.page + 1
+          }}
         />
       </Box>
     </>

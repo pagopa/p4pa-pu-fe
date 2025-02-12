@@ -21,6 +21,9 @@ export const getIngestionFlowFiles = (
     creationDateTo?: string;
     status?: string;
     fileName?: string;
+    page?: number;
+    size?: number;
+    sort?: string[];
   },
   options = {}
 ) => {
