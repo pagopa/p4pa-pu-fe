@@ -1,4 +1,12 @@
 {
+    "dates": {
+      "from": "Dal",
+      "to": "Al",
+      "validations": {
+        "from": "Data non valida",
+        "to": "Data non valida"
+      }
+	  },
     "commons": {
         "addfilter": "Aggiunge filtro",
         "amount": "Importo",
