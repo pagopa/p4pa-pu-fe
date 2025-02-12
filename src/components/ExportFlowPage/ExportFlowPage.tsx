@@ -114,6 +114,7 @@ export const ExportFlowPage = () => {
       <Grid container direction={'row'} justifyContent={'space-between'}>
         <Grid item>
           <Button
+            data-testid="exit-button"
             size="large"
             variant="outlined"
             fullWidth
@@ -125,6 +126,7 @@ export const ExportFlowPage = () => {
         </Grid>
         <Grid item>
           <Button
+            data-testid="success-button"
             disabled={!isButtonEnabled}
             size="large"
             variant="contained"

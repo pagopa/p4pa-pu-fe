@@ -87,16 +87,16 @@ const ExportFlowContainer = ({ section, formData, onSelectChange }: ExportFlowCo
               <Grid item lg={12}>
                 {item.selectOptions ? (
                   item.inputFields.map((field, index) => (
-                    <FormControl key={index} fullWidth size="small" role="combobox" aria-labelledby="select-label">
-                      <InputLabel required={field?.required} id="select-label">
+                    <FormControl key={index} fullWidth size="small">
+                      <InputLabel required={field?.required} id={`select-label-${index}`}>
                         {field.label}
                       </InputLabel>
                       <Select
                         fullWidth
                         required={field?.required}
-                        labelId="select-label"
-                        value={formData[field?.fieldKey || '']}
-                        onChange={(event) => onSelectChange(field?.fieldKey || '', event.target.value)}
+                        labelId={`select-label-${index}`}
+                        value={formData[field?.fieldKey || ''] ?? ''}
+                        onChange={(event) => onSelectChange(field?.fieldKey ?? '', event.target.value)}
                         label={field.label}
                       >
                         {item.selectOptions &&
@@ -121,8 +121,8 @@ const ExportFlowContainer = ({ section, formData, onSelectChange }: ExportFlowCo
                             endAdornment: field.icon ? <InputAdornment position="end">{field.icon}</InputAdornment> : undefined,
                           }}
                           label={field.label}
-                          value={formData[field?.fieldKey || '']}
-                          onChange={(event) => onSelectChange(field?.fieldKey || '', event.target.value)}
+                          value={formData[field?.fieldKey || ''] ?? ''}
+                          onChange={(event) => onSelectChange(field?.fieldKey ?? '', event.target.value)}
                         />
                       </Grid>
                     ))}
