@@ -48,7 +48,7 @@ export const getIngestionFlowFiles = (
         }
       );
 
-      // Conversion to ISO date for Zod validation
+      // ISO date conversion without offset for Zod validation. Need to investigate how to add the { offset: true } flag to the generated schema.
       if (files?.content) {
         const transformedFiles = {
           ...files,
