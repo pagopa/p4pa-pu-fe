@@ -22,7 +22,6 @@ export const PageRoutesConf: PageRoutes = {
     children: {
       EXPORT_OVERVIEW: { path: 'export-overview' },
       SEARCH_RESULTS: { path: 'search-results' },
-      DETAIL: { path: 'detail' },
       EXPORT_FLOW_RESERVATION: { path: 'export-overview/export-flow-reservation' },
       EXPORT_FLOW_THANK_YOU_PAGE: { path: 'export-overview/export-flow-thank-you-page' },
       IMPORT_FLOW_THANK_YOU_PAGE: { path: 'import-flow/import-flow-thank-you-page' },
@@ -41,8 +40,7 @@ export const PageRoutesConf: PageRoutes = {
       SEARCH_RESULTS: { path: 'search-results' },
       IMPORT_FLOW_THANK_YOU_PAGE: { path: 'import-flow/import-flow-thank-you-page' },
       IMPORT_OVERVIEW: { path: 'import-overview' },
-      DETAIL: { path: 'detail/:id' },
-      PAYMENT_DETAIL: { path: 'payment-detail'}
+      DETAIL: { path: 'detail/:id' }
     }
   },
   IMPORT: {
