@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
+import { useDataGridPagination } from '../../hooks/useDatagridPagination';
 
 const TelematicReceiptImportFlowOverview = () => {
   const theme = useTheme();
@@ -37,28 +38,27 @@ const TelematicReceiptImportFlowOverview = () => {
         size: 10,
         page: 0,
       });
-  
+
   const { state } = useStore();
+  const { pagination, handlePageChange, handlePageSizeChange } = useDataGridPagination({
+    initialSize: 10,
+    initialPage: 0,
+    onPaginationChange: (newPagination) => {
+      setFilters(prev => ({
+        ...prev,
+        ...newPagination
+      }));
+    }
+  });
   const organization = state[STATE.ORGANIZATION_ID];
   const organizationId = Number(organization);
   
-  const { data } = getIngestionFlowFiles(organizationId, filters);
+  const { data } = getIngestionFlowFiles(organizationId, {
+    ...filters,
+    page: pagination.page,
+    size: pagination.size
+  });
 
-  const handlePageChange = (newPage: number) => {
-    setFilters(prev => ({
-      ...prev,
-      page: newPage - 1
-    }));
-  };
-
-  const handlePageSizeChange = (newSize: number) => {
-    setFilters(prev => ({
-      ...prev,
-      size: newSize,
-      page: 0
-    }));
-  };
-  
 
   const stateColors: Record<string, ChipOwnProps['color']> = {
     'COMPLETED': 'success',
@@ -207,11 +207,11 @@ const TelematicReceiptImportFlowOverview = () => {
           disableColumnResize
           customPagination={{
             totalPages: data?.totalPages,
-            defaultPageOption: filters.size,
+            defaultPageOption: pagination.size,
             sizePageOptions: [5, 10, 15, 20],
             onPageChange: handlePageChange,
             onPageSizeChange: handlePageSizeChange,
-            currentPage: filters.page + 1
+            currentPage: pagination.currentPage
           }}
         />
       </Box>

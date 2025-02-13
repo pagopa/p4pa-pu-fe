@@ -56,12 +56,13 @@ const CustomPagination = ({
         value={defaultPageOption}
         onChange={handlePageSizeChange}
         size="small"
+        data-testid='result-set-select'
         sx={{
           fontSize: 12,
         }}
       >
         {sizePageOptions?.map((size) => (
-          <MenuItem key={size} value={size}>
+          <MenuItem key={size} value={size} data-testid={`select-size-${size}`}>
             {size}
           </MenuItem>
         ))}
