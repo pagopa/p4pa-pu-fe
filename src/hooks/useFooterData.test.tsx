@@ -1,10 +1,8 @@
-import { renderHook } from '@testing-library/react-hooks';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFooterData } from './useFooterData';
 import { useFeConfig } from './useFeConfig';
 import { ConfigFE } from '../../generated/apiClient';
-import { render } from '@testing-library/react';
-import 'vitest-dom/extend-expect';
+import { render, renderHook } from '../__tests__/renderers';
 
 vi.mock('./useFeConfig');
 
@@ -64,9 +62,9 @@ describe('useFooterData', () => {
     const { result } = renderHook(() => useFooterData());
 
     const image = result.current.companyLink.image;
-    const lol = render(image);
+    const imageEl = render(image);
 
-    expect(lol.getByAltText('PagoPA Logo')).toBeInTheDocument();
+    expect(imageEl.getByAltText('PagoPA Logo')).toBeInTheDocument();
   });
 
   it('should return the legalInfo markdown component with the configured text', () => {

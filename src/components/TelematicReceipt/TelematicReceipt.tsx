@@ -1,25 +1,27 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
-import { CalendarToday, Download, Search, Upload } from '@mui/icons-material';
+import { Download, Search, Upload } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
+import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 
 export const TelematicReceipt = () => {
-
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
     <>
-      <TitleComponent 
+      <TitleComponent
         title={t('commons.routes.TELEMATIC_RECEIPT')}
         description={t('telematicReceipts.description')}
       />
       <Grid container direction="row">
-        <Grid container spacing={2} 
+        <Grid
+          container
+          spacing={2}
           // width={900}
         >
           <Grid item xs={12} md={6}>
@@ -27,18 +29,23 @@ export const TelematicReceipt = () => {
               title={t('telematicReceipts.search')}
               description={t('telematicReceipts.searchdescription')}
               fields={[
-                { type: 'input', label: t('commons.iuv'), icon: <Search /> },
-                { type: 'input', label: t('commons.from'), icon: <CalendarToday />, gridWidth: 6},
-                { type: 'input', label: t('commons.to'), icon: <CalendarToday />, gridWidth: 6 },
-                { type: 'select', selectLabel: t('commons.duetype') ,
-                  selectOptions: [
+                { type: COMPONENT_TYPE.textField, label: t('commons.iuv'), icon: <Search /> },
+                { type: COMPONENT_TYPE.dateRange, label: 'daterange' },
+                {
+                  type: COMPONENT_TYPE.select,
+                  label: t('commons.duetype'),
+                  options: [
                     { label: t('telematicReceipts.tari'), value: 'tari' },
                     { label: t('telematicReceipts.trafficoffence'), value: 'violation' }
                   ]
                 }
               ]}
               button={[
-                { text: t('commons.search'), variant: 'contained', onClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS) }
+                {
+                  text: t('commons.search'),
+                  variant: 'contained',
+                  onClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS)
+                }
               ]}
             />
           </Grid>
@@ -48,7 +55,7 @@ export const TelematicReceipt = () => {
               title={t('telematicReceipts.downloadflowstitle')}
               description={t('telematicReceipts.downloadflowsdescription')}
               actionLabel={t('telematicReceipts.exportrequestbutton')}
-              actionIcon={<Download/>}
+              actionIcon={<Download />}
               linkLabel={t('telematicReceipts.exportedflowsviewbutton')}
               onActionClick={() => navigate(generatePath(PageRoutes.EXPORT_FLOWS, {category: 'receipt'}))}
               onLinkClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW)}
@@ -58,14 +65,15 @@ export const TelematicReceipt = () => {
               title={t('telematicReceipts.importflowstitle')}
               description={t('telematicReceipts.importflowsdescription')}
               actionLabel={t('telematicReceipts.importflowbutton')}
-              actionIcon={<Upload/>}
+              actionIcon={<Upload />}
               linkLabel={t('telematicReceipts.importedflowsviewbutton')}
-              onActionClick={() => navigate(generatePath(PageRoutes.IMPORT_FLOWS, {category: 'telematic-receipt'}))}
+              onActionClick={() =>
+                navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'telematic-receipt' }))
+              }
               onLinkClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW)}
             />
           </Grid>
         </Grid>
-
       </Grid>
     </>
   );

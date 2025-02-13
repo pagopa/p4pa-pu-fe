@@ -34,7 +34,12 @@ const customTheme = createTheme({
     },
     MuiInputLabel: {
       styleOverrides: {
-        asterisk: {color: theme.palette.error.dark}
+        asterisk: {color: theme.palette.error.dark},
+      }
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: ({theme}) => ({backgroundColor: theme.palette.common.white})
       }
     }
   }
