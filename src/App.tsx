@@ -317,7 +317,7 @@ const router = createBrowserRouter([
           }
         ]
       }
-      /* -- END - IMPORT SECTION -- */
+      /* -- END - DETAIL SECTION -- */
     ]
   }
 ]);
