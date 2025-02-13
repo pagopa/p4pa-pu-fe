@@ -34,6 +34,7 @@ import ReportingPaymentDetail from './routes/ReportingPaymentDetail';
 import Treasury from './routes/Treasury';
 import TreasuryImportFlowOverview from './routes/TreasuryImportFlowOverview';
 import ImportFlow from './routes/ImportFlowPage';
+import DetailFlowPage from './routes/DetailFlowPage';
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
@@ -329,6 +330,21 @@ const router = createBrowserRouter([
           {
             path: PageRoutesConf.IMPORT.children?.FLOWS.path,
             element: <ImportFlow />,
+          }
+        ]
+      },
+      /* -- END - IMPORT SECTION -- */
+      /* -- DETAIL SECTION -- */
+      {
+        path: PageRoutesConf.DETAIL.path,
+        element: <Layout />,
+        handle: {
+          backButton: true,
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutesConf.DETAIL.children?.FLOWS.path,
+            element: <DetailFlowPage />,
           }
         ]
       }
