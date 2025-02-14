@@ -33,12 +33,12 @@ const CustomPagination = ({
     }
   };
 
-  useEffect(() => {
-    const hideButtons = (page: number) => {
-      setHidePreviousButton(page === 1);
-      setHideNextButton(page === totalPages);
-    };
-    
+  const hideButtons = (page: number) => {
+    setHidePreviousButton(page === 1);
+    setHideNextButton(page === totalPages);
+  };
+
+  useEffect(() => {  
     hideButtons(currentPage);
   }, [currentPage, totalPages]);
 
