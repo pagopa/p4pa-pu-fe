@@ -52,6 +52,8 @@ const TelematicReceiptImportFlowOverview = () => {
   });
   const organization = state[STATE.ORGANIZATION_ID];
   const organizationId = Number(organization);
+
+  console.log(organization);
   
   const { data } = getIngestionFlowFiles(organizationId, {
     ...filters,

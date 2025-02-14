@@ -68,6 +68,7 @@ export const getIngestionFlowFiles = (
       return files;
     },
     retry: false,
+    enabled: !!organizationId,
     ...options
   });
 };
