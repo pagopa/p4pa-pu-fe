@@ -54,6 +54,12 @@ export const PageRoutesConf: PageRoutes = {
     children: {
       FLOWS: { path: 'flows/:category' }
     }
+  },
+  EXPORT: {
+    path: `${deployPath}/export/`,
+    children: {
+      FLOWS: { path: 'flows/:category' }
+    }
   }
 };
 

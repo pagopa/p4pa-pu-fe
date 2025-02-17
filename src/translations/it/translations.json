@@ -78,7 +78,6 @@
             "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
             "TELEMATIC_RECEIPT": "Ricevute Telematiche",
             "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
-            "TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION": "Prenota export di un flusso",
             "TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE": "Flussi esportati OK",
             "TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
             "TELEMATIC_RECEIPT_IMPORT_FLOW": "Carica un nuovo flusso",
@@ -171,15 +170,6 @@
     "telematicReceiptDetail": {
         "title": "Dettaglio Ricevuta Telematica"
     },
-    "telematicReceiptExportFlowReservation": {
-        "buttonConfirmReservation": "Prenota",
-        "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
-        "dueTipe": "Tipo di dovuto",
-        "dueTipePlaceHolder": "Tipo di dovuto da prenotare",
-        "fileVersion": "Versione tracciato",
-        "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
-        "formTitle": "Configurazione della esportazione"
-    },
     "telematicReceiptExportFlowThankYouPage": {
         "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
     },
@@ -236,5 +226,15 @@
     "treasuryImportFlowOverview": {
       "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
       "importflowbutton": "Importa flusso"
+    },
+    "exportFlow": {
+        "title": "Prenota export di un flusso",
+        "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
+        "buttonConfirmReservation": "Prenota",
+        "dueType": "Tipo di dovuto",
+        "dueTypePlaceHolder": "Tipo di dovuto da prenotare",
+        "fileVersion": "Versione tracciato",
+        "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
+        "formTitle": "Configurazione della esportazione"
     }
 }

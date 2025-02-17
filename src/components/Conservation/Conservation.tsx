@@ -1,7 +1,7 @@
 import { Box, Grid, IconButton, useTheme } from '@mui/material';
 import { Downloading, Search } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, generatePath } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -17,8 +17,8 @@ export const Conservation = () => {
   interface FlowDataRow {
     id: number;
     name: string;
-    paymentFromDate: string;
-    paymentToDate: string;
+    reservationDate: string;
+    operator: string;
     size: string;
   }
 
@@ -26,47 +26,37 @@ export const Conservation = () => {
     {
       id: 1,
       name: 'Esportazione 1',
-      paymentFromDate: '05/10/2024',
-      paymentToDate: '05/11/2024',
+      reservationDate: '05/10/2024 10:06:55',
+      operator: 'Sistema Informativo',
       size: '100 bytes'
     },
     {
       id: 2,
       name: 'Esportazione 2',
-      paymentFromDate: '10/11/2024',
-      paymentToDate: '10/12/2024',
+      reservationDate: '10/11/2024 12:06:55',
+      operator: 'Sistema Informativo',
       size: '200 bytes'
     },
     {
       id: 3,
       name: 'Esportazione 3',
-      paymentFromDate: '15/09/2024',
-      paymentToDate: '15/10/2024',
+      reservationDate: '15/09/2024 08:06:55',
+      operator: 'Sistema Informativo',
       size: '300 bytes'
     },
     {
       id: 4,
       name: 'Esportazione 4',
-      paymentFromDate: '20/08/2024',
-      paymentToDate: '20/09/2024',
+      reservationDate: '20/08/2024 11:06:55',
+      operator: 'Sistema Informativo',
       size: '200 bytes'
     }
   ];
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
-    {
-      field: 'paymentFromDate',
-      headerName: t('flowDataGrid.paymentFromDate'),
-      flex: 1,
-      type: 'string'
-    },
-    {
-      field: 'paymentToDate',
-      headerName: t('flowDataGrid.paymentToDate'),
-      flex: 1,
-      type: 'string'
-    },
+    { field: 'reservationDate', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string' },
+    { field: 'operator', headerName: t('flowDataGrid.operator'), flex: 1, type: 'string' },
     { field: 'size', headerName: t('commons.files.size'), flex: 1, type: 'string' },
     {
       field: 'download',
@@ -90,17 +80,19 @@ export const Conservation = () => {
 
   return (
     <>
-      <TitleComponent
-        title={t('commons.routes.CONSERVATION')}
-        callToAction={[
-          {
-            icon: <Downloading />,
-            variant: 'outlined',
-            buttonText: t('conservation.buttonReservationExport'),
-            onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION)
-          }
-        ]}
-        description={t('conservation.description')}
+      <TitleComponent 
+        title= {t('commons.routes.CONSERVATION')} 
+        callToAction={
+          [
+            {
+              icon: <Downloading />, 
+              variant: 'outlined', 
+              buttonText: t('conservation.buttonReservationExport'), 
+              onActionClick: () => navigate(generatePath(PageRoutes.EXPORT_FLOWS, {category: 'conservation'}))
+            },
+          ]
+        } 
+        description= {t('conservation.description')}
       />
       <Grid
         container

@@ -18,7 +18,6 @@ import { theme } from '@pagopa/mui-italia';
 import './translations/i18n';
 import utils from './utils';
 import { Conservation } from './components/Conservation';
-import TelematicReceiptExportFlowReservation from './routes/TelematicReceiptExportFlowReservation';
 import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResults';
 import TelematicReceipt from './routes/TelematicReceipt';
 import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExportFlowThankYouPage';
@@ -33,6 +32,7 @@ import Treasury from './routes/Treasury';
 import TreasuryImportFlowOverview from './routes/TreasuryImportFlowOverview';
 import ImportFlow from './routes/ImportFlowPage';
 import DetailFlowPage from './routes/DetailFlowPage';
+import ExportFlow from './routes/ExportFlowPage/ExportFlowPage';
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
@@ -105,16 +105,6 @@ const router = createBrowserRouter([
                 ]
               },
               backButton: true
-            } as RouteHandleObject,
-          },
-          {
-            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.EXPORT_FLOW_RESERVATION.path,
-            element: <TelematicReceiptExportFlowReservation />,
-            handle: {
-              backButton: true,
-              sidebar: {
-                visibile: false
-              }
             } as RouteHandleObject,
           },
           {
@@ -316,8 +306,26 @@ const router = createBrowserRouter([
             element: <DetailFlowPage />,
           }
         ]
-      }
+      },
       /* -- END - DETAIL SECTION -- */
+      /* -- EXPORT SECTION -- */
+      {
+        path: PageRoutesConf.EXPORT.path,
+        element: <Layout />,
+        handle: {
+          backButton: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject,
+        children: [
+          {
+            path: PageRoutesConf.EXPORT.children?.FLOWS.path,
+            element: <ExportFlow />,
+          }
+        ]
+      }
+      /* -- END - EXPORT SECTION -- */
     ]
   }
 ]);
