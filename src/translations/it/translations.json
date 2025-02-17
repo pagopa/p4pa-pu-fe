@@ -135,8 +135,7 @@
         "name": "Nome",
         "operator": "Operatore",
         "paymentFromDate": "Pagamento dal",
-        "paymentToDate": "Pagamento al",
-        "reservationDate": "Data prenotazione"
+        "paymentToDate": "Pagamento al"
     },
     "reporting": {
         "description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
@@ -235,5 +234,15 @@
         "fileVersion": "Versione tracciato",
         "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
         "formTitle": "Configurazione della esportazione"
+    },
+    "treasurySearchResults": {
+        "description": "Visualizza i flussi, seleziona e prenota gli export.",
+        "uploadFlow": "Carica flusso",
+        "reservationDate": "Data prenotazione",
+        "billingYear": "Anno bolletta",
+        "billingCode": "Codice bolletta",
+        "valueDate": "Data Valuta",
+        "accountingDate": "Data Contabile",
+        "reportingId": "ID Rendicontazione"
     }
 }
