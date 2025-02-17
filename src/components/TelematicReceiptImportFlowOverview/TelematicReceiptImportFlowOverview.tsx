@@ -13,14 +13,14 @@ import { useState } from 'react';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
+import { useDataGridPagination } from '../../hooks/useDatagridPagination';
 
 const TelematicReceiptImportFlowOverview = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  //TODO: add set for filters
-  const [filters] = useState<{
+  const [filters, setFilters] = useState<{
     flowFileTypes: (
       | 'RECEIPT'
       | 'RECEIPT_PAGOPA'
@@ -30,17 +30,35 @@ const TelematicReceiptImportFlowOverview = () => {
       | 'TREASURY_CSV'
       | 'TREASURY_XLS'
       | 'TREASURY_POSTE'
-    )[];
+    )[],
+    size: number;
+    page: number;
       }>({
         flowFileTypes: ['RECEIPT'],
+        size: 10,
+        page: 0,
       });
-  
+
   const { state } = useStore();
+  const { pagination, handlePageChange, handlePageSizeChange } = useDataGridPagination({
+    initialSize: 10,
+    initialPage: 0,
+    onPaginationChange: (newPagination) => {
+      setFilters(prev => ({
+        ...prev,
+        ...newPagination
+      }));
+    }
+  });
   const organization = state[STATE.ORGANIZATION_ID];
   const organizationId = Number(organization);
   
-  const { data } = getIngestionFlowFiles(organizationId, filters);
-  
+  const { data } = getIngestionFlowFiles(organizationId, {
+    ...filters,
+    page: pagination.page,
+    size: pagination.size
+  });
+
 
   const stateColors: Record<string, ChipOwnProps['color']> = {
     'COMPLETED': 'success',
@@ -185,9 +203,16 @@ const TelematicReceiptImportFlowOverview = () => {
           rows={data?.content || []}
           columns={columns}
           getRowId={(row) => row.ingestionFlowFileId}
-          hideFooter
           disableColumnMenu
           disableColumnResize
+          customPagination={{
+            totalPages: data?.totalPages,
+            defaultPageOption: pagination.size,
+            sizePageOptions: [5, 10, 15, 20],
+            onPageChange: handlePageChange,
+            onPageSizeChange: handlePageSizeChange,
+            currentPage: pagination.currentPage
+          }}
         />
       </Box>
     </>

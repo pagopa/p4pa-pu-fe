@@ -21,6 +21,9 @@ export const getIngestionFlowFiles = (
     creationDateTo?: string;
     status?: string;
     fileName?: string;
+    page?: number;
+    size?: number;
+    sort?: string[];
   },
   options = {}
 ) => {
@@ -57,6 +60,9 @@ export const getIngestionFlowFiles = (
             creationDate: new Date(file.creationDate).toISOString()
           }))
         };
+      
+        // Use this after bff fix
+        // parseAndLog((pagedIngestionFlowFileSchema), transformedFiles);
 
         parseAndLog(z.object({ content: z.array(ingestionFlowFileSchema) }), transformedFiles);
 
@@ -65,6 +71,7 @@ export const getIngestionFlowFiles = (
       return files;
     },
     retry: false,
+    enabled: !!organizationId,
     ...options
   });
 };

@@ -21,6 +21,9 @@ interface CustomDataGridProps<T extends GridValidRowModel> extends Omit<DataGrid
     sizePageOptions?: number[];
     defaultPageOption?: number;
     totalPages?: number;
+    currentPage?: number;
+    onPageChange?: (page: number) => void;
+    onPageSizeChange?: (pageSize: number) => void;
   }
 }
 
@@ -41,6 +44,9 @@ const CustomDataGrid = <T extends GridValidRowModel>({
             sizePageOptions={customPagination?.sizePageOptions}
             defaultPageOption={customPagination?.defaultPageOption}
             totalPages={customPagination?.totalPages}
+            currentPage={customPagination?.currentPage}
+            onPageChange={customPagination?.onPageChange}
+            onPageSizeChange={customPagination?.onPageSizeChange}
           />
         )
       }}
