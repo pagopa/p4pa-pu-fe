@@ -34,6 +34,7 @@ import Treasury from './routes/Treasury';
 import TreasuryImportFlowOverview from './routes/TreasuryImportFlowOverview';
 import ImportFlow from './routes/ImportFlowPage';
 import ExportFlow from './routes/ExportFlowPage/ExportFlowPage';
+import TreasurySearchResults from './routes/TreasurySearchResults';
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
@@ -280,6 +281,19 @@ const router = createBrowserRouter([
               backButton: true
             } as RouteHandleObject,
           },
+          {
+            path: PageRoutesConf.TREASURY.children?.SEARCH_RESULTS.path,
+            element: <TreasurySearchResults />,
+            handle: {
+              crumbs: {
+                elements: [
+                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
+                  { name: 'TREASURY', color: theme.palette.text.primary },
+                ]
+              },
+              backButton: true
+            } as RouteHandleObject,
+          }
         ]
       },
       /* -- END - TREASURY SECTION -- */

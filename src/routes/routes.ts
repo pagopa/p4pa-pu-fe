@@ -32,7 +32,8 @@ export const PageRoutesConf: PageRoutes = {
   TREASURY: {
     path: `${deployPath}/flows/treasury/`,
     children: {
-      IMPORT_OVERVIEW: { path: 'import-overview'}
+      IMPORT_OVERVIEW: { path: 'import-overview'},
+      SEARCH_RESULTS: { path: 'search-results' }
     }
   },
   REPORTING: {

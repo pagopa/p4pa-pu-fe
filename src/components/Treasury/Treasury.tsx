@@ -38,7 +38,7 @@ export const Treasury = () => {
               }}
               button={[
                 { text: t('commons.filters.remove'), variant: 'outlined', onClick: () => console.log('remove filter') },
-                { text: t('commons.filters.filterResults'), variant: 'contained', onClick: () => console.log('filter')}
+                { text: t('commons.filters.filterResults'), variant: 'contained', onClick: () => navigate(PageRoutes.TREASURY_SEARCH_RESULTS)}
               ]}
             />
           </Grid>
