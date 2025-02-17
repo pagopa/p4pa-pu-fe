@@ -2,7 +2,7 @@ import { Box, Grid, useTheme } from '@mui/material';
 import { Downloading, Search } from '@mui/icons-material';
 import FlowDataGrid from '../../components/FlowDataGrid/FlowDataGrid';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
@@ -14,17 +14,19 @@ const TelematicReceiptFlowExportOverview = () => {
 
   return (
     <>
-      <TitleComponent
-        title={t('commons.routes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW')}
-        callToAction={[
-          {
-            icon: <Downloading />,
-            variant: 'outlined',
-            buttonText: t('telematicReceiptFlowExportOverview.buttonReservationExport'),
-            onActionClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION)
-          }
-        ]}
-        description={t('telematicReceiptFlowExportOverview.description')}
+      <TitleComponent 
+        title= {t('commons.routes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW')} 
+        callToAction={
+          [
+            {
+              icon: <Downloading />, 
+              variant: 'outlined', 
+              buttonText: t('telematicReceiptFlowExportOverview.buttonReservationExport'), 
+              onActionClick: () => navigate(generatePath(PageRoutes.EXPORT_FLOWS, {category: 'receipt'}))
+            },
+          ]
+        } 
+        description= {t('telematicReceiptFlowExportOverview.description')}
       />
       <Grid
         container

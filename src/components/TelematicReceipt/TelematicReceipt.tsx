@@ -57,7 +57,7 @@ export const TelematicReceipt = () => {
               actionLabel={t('telematicReceipts.exportrequestbutton')}
               actionIcon={<Download />}
               linkLabel={t('telematicReceipts.exportedflowsviewbutton')}
-              onActionClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION)}
+              onActionClick={() => navigate(generatePath(PageRoutes.EXPORT_FLOWS, {category: 'receipt'}))}
               onLinkClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW)}
             />
 
