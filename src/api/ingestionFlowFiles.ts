@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import { ingestionFlowFileSchema } from '../../generated/zod-schema';
-import { z } from 'zod';
 
 export const getIngestionFlowFiles = (
   organizationId: number,
@@ -61,7 +60,7 @@ export const getIngestionFlowFiles = (
           }))
         };
 
-        parseAndLog(z.object({ content: z.array(ingestionFlowFileSchema) }), transformedFiles);
+        parseAndLog((ingestionFlowFileSchema), transformedFiles);
 
         return transformedFiles;
       }
