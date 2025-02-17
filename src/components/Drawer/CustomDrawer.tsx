@@ -9,13 +9,25 @@ import {
   Typography,
   IconButton,
   useTheme,
+  Grid,
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
+import MultiFilter from '../MultiFilter/MultiFilter';
+
+interface MultiFilterConfig {
+  enabled: boolean;
+  selectLabel: string;
+  inputLabel: {
+    label: string;
+    icon?: React.ReactNode;
+  };
+  selectOptions: { label: string; value: string }[];
+}
 
 interface CustomDrawerProps {
   open: boolean;
   onClose: () => void;
-  fields: {
+  fields?: {
     id: string;
     label: string;
     value: string;
@@ -26,6 +38,7 @@ interface CustomDrawerProps {
   buttonText?: string;
   onButtonClick?: () => void;
   startIcon?: React.ReactNode;
+  multiFilterConfig?: MultiFilterConfig;
 }
 
 const CustomDrawer: React.FC<CustomDrawerProps> = ({
@@ -36,6 +49,7 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
   buttonText,
   onButtonClick,
   startIcon,
+  multiFilterConfig
 }) => {
   const theme = useTheme();
 
@@ -51,18 +65,16 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
         },
       }}
     >
-      <Box display="flex" justifyContent='end' mb={2}>
-        <IconButton onClick={onClose}>
-          <Close/>
-        </IconButton>
-      </Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6" gutterBottom fontWeight={700}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h6" fontWeight={700}>
           {title}
         </Typography>
+        <IconButton onClick={onClose} data-testid='close-icon'>
+          <Close />
+        </IconButton>
       </Box>
       <List >
-        {fields.map((field) => (
+        {fields?.map((field) => (
           <ListItem key={field.id} disableGutters disablePadding>
             <ListItemText
               primary={
@@ -80,6 +92,15 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
           </ListItem>
         ))}
       </List>
+      {multiFilterConfig?.enabled && (
+        <Grid item lg={12}>
+          <MultiFilter
+            selectLabel={multiFilterConfig.selectLabel}
+            inputLabel={multiFilterConfig.inputLabel}
+            selectOptions={multiFilterConfig.selectOptions}
+          />
+        </Grid>
+      )}
       {buttonText && onButtonClick && (
         <Box mt={2}>
           <Button
