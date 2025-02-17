@@ -1,5 +1,5 @@
-import { Box, Select, MenuItem, useTheme, Pagination, SelectChangeEvent } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { Box, Select, MenuItem, Pagination, SelectChangeEvent } from '@mui/material';
+import { theme } from '@pagopa/mui-italia';
 
 type CustomPaginationProps = {
   sizePageOptions?: number[];
@@ -13,14 +13,14 @@ type CustomPaginationProps = {
 const CustomPagination = ({
   sizePageOptions,
   defaultPageOption,
-  totalPages,
+  totalPages = 1,
   currentPage = 1,
   onPageChange,
   onPageSizeChange
 }: CustomPaginationProps) => {
-  const theme = useTheme();
-  const [hidePreviousButton, setHidePreviousButton] = useState(false);
-  const [hideNextButton, setHideNextButton] = useState(false);
+
+  const hidePreviousButton = currentPage === 1;
+  const hideNextButton = currentPage === totalPages;
 
   const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
     onPageChange?.(value);
@@ -32,15 +32,6 @@ const CustomPagination = ({
       onPageSizeChange?.(newSize);
     }
   };
-
-  const hideButtons = (page: number) => {
-    setHidePreviousButton(page === 1);
-    setHideNextButton(page === totalPages);
-  };
-
-  useEffect(() => {  
-    hideButtons(currentPage);
-  }, [currentPage, totalPages]);
 
   return (
     <Box

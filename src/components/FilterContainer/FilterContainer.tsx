@@ -15,35 +15,37 @@ export enum COMPONENT_TYPE {
   dateRange
 }
 
-type SearchField = {
-  type: COMPONENT_TYPE.textField;
+type BaseField = {
+  gridWidth?: number;
   label: string;
+};
+
+type SearchField = BaseField & {
+  type: COMPONENT_TYPE.textField;
   placeholder?: string;
   icon?: React.ReactNode;
-  gridWidth?: number;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-type SelectField = {
+type SelectField = BaseField & {
   type: COMPONENT_TYPE.select;
   options?: { label: string; value: string }[];
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
-type DateRangeField = DateRangeProps & {
+type DateRangeField = BaseField & DateRangeProps & {
   type: COMPONENT_TYPE.dateRange;
 };
 
-type ButtonField = {
+type ButtonField = BaseField & {
   type: COMPONENT_TYPE.button;
   variant?: 'contained' | 'outlined';
   onClick: () => void;
 };
 
-type TypeUnion = SearchField | SelectField | ButtonField | DateRangeField;
-
-export type FilterItem = TypeUnion & {
-  gridWidth?: number;
-  label: string;
-};
+export type FilterItem = SearchField | SelectField | ButtonField | DateRangeField;
 
 type FilterContainerProps = {
   items: FilterItem[];
@@ -64,12 +66,21 @@ const RenderComponent = ({ item, id }: { item: FilterItem; id: string }) => {
         label={item.label}
         size="small"
         placeholder={item.placeholder || ''}
+        onChange={item.onChange}
       />
     );
 
   case COMPONENT_TYPE.select:
     return (
-      <TextField fullWidth size="small" data-testid={id} label={item.label} select value=''>
+      <TextField 
+        fullWidth 
+        size="small" 
+        data-testid={id} 
+        label={item.label} 
+        select 
+        value={item.value || ''}
+        onChange={item.onChange}
+      >
         {item.options?.map((option, optionIndex) => (
           <MenuItem key={`${item.label}-${option.value}-${optionIndex}`} value={option.value}>
             {option.label}
@@ -83,7 +94,7 @@ const RenderComponent = ({ item, id }: { item: FilterItem; id: string }) => {
       <Button
         fullWidth
         size="medium"
-        variant="contained"
+        variant={item.variant || 'contained'}
         sx={{ height: 40 }}
         onClick={item.onClick}>
         {item.label}

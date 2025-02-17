@@ -9,56 +9,87 @@ import ActionMenu from '../ActionMenu/ActionMenu';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { useDataGridPagination } from '../../hooks/useDatagridPagination';
+
+interface FilterState {
+  flowFileTypes: ('RECEIPT' | 'RECEIPT_PAGOPA' | 'PAYMENTS_REPORTING' | 'PAYMENTS_REPORTING_PAGOPA' | 'TREASURY_OPI' | 'TREASURY_CSV' | 'TREASURY_XLS' | 'TREASURY_POSTE')[];
+  fileName?: string;
+  status?: string;
+  creationDateFrom?: string;
+  creationDateTo?: string;
+  size: number;
+  page: number;
+}
 
 const TelematicReceiptImportFlowOverview = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [filters, setFilters] = useState<{
-    flowFileTypes: (
-      | 'RECEIPT'
-      | 'RECEIPT_PAGOPA'
-      | 'PAYMENTS_REPORTING'
-      | 'PAYMENTS_REPORTING_PAGOPA'
-      | 'TREASURY_OPI'
-      | 'TREASURY_CSV'
-      | 'TREASURY_XLS'
-      | 'TREASURY_POSTE'
-    )[],
-    size: number;
-    page: number;
-      }>({
-        flowFileTypes: ['RECEIPT'],
-        size: 10,
-        page: 0,
-      });
+  const [filters, setFilters] = useState<FilterState>({
+    flowFileTypes: ['RECEIPT'],
+    size: 10,
+    page: 0,
+  });
+  
+  const [filterFields, setFilterFields] = useState<Partial<FilterState>>({});
 
   const { state } = useStore();
   const { pagination, handlePageChange, handlePageSizeChange } = useDataGridPagination({
-    initialSize: 10,
-    initialPage: 0,
+    initialSize: filters.size,
+    initialPage: filters.page,
     onPaginationChange: (newPagination) => {
       setFilters(prev => ({
         ...prev,
-        ...newPagination
+        size: newPagination.size,
+        page: newPagination.page
       }));
     }
   });
+
   const organization = state[STATE.ORGANIZATION_ID];
   const organizationId = Number(organization);
   
   const { data } = getIngestionFlowFiles(organizationId, {
     ...filters,
-    page: pagination.page,
-    size: pagination.size
   });
 
+  const handleFilterChange = useCallback((type: keyof FilterState, value: unknown) => {
+    setFilterFields(prev => ({
+      ...prev,
+      [type]: value,
+    }));
+  }, []);
+
+  const handleDateFromChange = useCallback((date: Date | null) => {
+    setFilterFields(prev => ({
+      ...prev,
+      creationDateFrom: date ? 
+        new Date(date.setHours(0, 0, 0, 0)).toISOString() : 
+        undefined,
+    }));
+  }, []);
+
+  const handleDateToChange = useCallback((date: Date | null) => {
+    setFilterFields(prev => ({
+      ...prev,
+      creationDateTo: date ? 
+        new Date(date.setHours(23, 59, 59, 999)).toISOString() : 
+        undefined,
+    }));
+  }, []);
+
+  const handleApplyFilters = useCallback(() => {
+    setFilters(prev => ({
+      ...prev,
+      ...filterFields,
+      page: 0
+    }));
+  }, [filterFields]);
 
   const stateColors: Record<string, ChipOwnProps['color']> = {
     'COMPLETED': 'success',
@@ -139,7 +170,6 @@ const TelematicReceiptImportFlowOverview = () => {
         return null;
       },
     }
-    
   ];
 
   return (
@@ -172,23 +202,45 @@ const TelematicReceiptImportFlowOverview = () => {
               type: COMPONENT_TYPE.textField,
               label: t('commons.searchName'),
               icon: <Search />,
-              gridWidth: 5
+              gridWidth: 5,
+              value: filterFields.fileName ?? filters.fileName ?? '',
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) => 
+                handleFilterChange('fileName', e.target.value)
             },
             {
               type: COMPONENT_TYPE.select,
               label: t('commons.state'),
               gridWidth: 2,
               options: [
-                { label: 'Caricato', value: 'Caricato' },
-                { label: 'Annullato', value: 'Annullato' }
-              ]
+                { label: t('commons.status.UPLOADED'), value: 'UPLOADED' },
+                { label: t('commons.status.PROCESSING'), value: 'PROCESSING' },
+                { label: t('commons.status.COMPLETED'), value: 'COMPLETED' },
+                { label: t('commons.status.ERROR'), value: 'ERROR' }
+              ],
+              value: filterFields.status ?? filters.status ?? '',
+              onChange: (e: React.ChangeEvent<HTMLInputElement>) => 
+                handleFilterChange('status', e.target.value)
             },
-            { type: COMPONENT_TYPE.dateRange, label: 'dateRange', gridWidth: 4 },
+            { 
+              type: COMPONENT_TYPE.dateRange,
+              label: 'dateRange',
+              gridWidth: 4,
+              from: {
+                label: t('dates.from'),
+                errorMessage: t('dates.validations.from'),
+                onChange: handleDateFromChange
+              },
+              to: {
+                label: t('dates.to'),
+                errorMessage: t('dates.validations.to'),
+                onChange: handleDateToChange
+              }
+            },
             {
               type: COMPONENT_TYPE.button,
               label: t('commons.filters.filterResults'),
               gridWidth: 1,
-              onClick: () => console.log('Filter applied')
+              onClick: handleApplyFilters
             }
           ]}
         />
