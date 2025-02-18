@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { Link } from 'react-router-dom';
+import { generatePath, Link } from 'react-router-dom';
+import { PageRoutes } from '../../routes/routes';
 
 interface SearchResultDataRow extends GridValidRowModel {
   id: number;
@@ -63,8 +64,7 @@ const SearchResultsDataGrid = () => {
       headerAlign: 'right',
       renderCell: () => (
         <Link
-          // TODO
-          to={''}
+          to={generatePath(PageRoutes.DETAIL_FLOWS, {category: 'treasury'})}
           aria-label='go to treasury detail'
         >
           <IconButton
