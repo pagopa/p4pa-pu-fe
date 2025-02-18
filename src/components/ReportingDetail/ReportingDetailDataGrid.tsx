@@ -5,6 +5,7 @@ import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { PageRoutes } from '../../routes/routes';
 import { Link } from 'react-router-dom';
+import { generatePath } from 'react-router-dom';
 
 interface ReportingDetailDataRow extends GridValidRowModel {
   id: number;
@@ -57,7 +58,7 @@ const ReportingDetailDataGrid = () => {
       headerAlign: 'right',
       renderCell: () => (
         <Link
-          to={PageRoutes.REPORTING_PAYMENT_DETAIL}
+          to={generatePath(PageRoutes.DETAIL_FLOWS, {category: 'reporting'})}
           aria-label='go to reporting payment detail'
         >
           <IconButton

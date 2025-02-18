@@ -219,7 +219,8 @@
         "importedflowsviewbutton": "Vedi tutti i flussi",
         "importflowbutton": "Importa flusso",
         "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
-        "importflowstitle": "Importa Flussi di Tesoreria"
+        "importflowstitle": "Importa Flussi di Tesoreria",
+        "billDetail": "Dettaglio Bolletta"
     },
     "treasuryImportFlowOverview": {
       "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
