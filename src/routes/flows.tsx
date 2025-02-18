@@ -71,7 +71,7 @@ export const flowsRoutes = [{
         {
           id: 'TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE',
           path: 'import-flow/import-flow-thank-you-page',
-          element: <TelematicReceiptImportFlowOverview />,
+          element: <TelematicReceiptFlowImportThankYouPage />,
           handle: {
             backButton: true,
           } as RouteHandleObject,
@@ -79,7 +79,7 @@ export const flowsRoutes = [{
         {
           id: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW',
           path: 'import-overview',
-          element: <TelematicReceiptFlowImportThankYouPage />,
+          element: <TelematicReceiptImportFlowOverview />,
           handle: {
             backButton: true,
             sidebar: {
