@@ -2,10 +2,11 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useNavigate, generatePath } from 'react-router-dom';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import TelematicReceiptImportFlowOverview from './TelematicReceiptImportFlowOverview';
-import { PageRoutes } from '../../routes/routes';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
+import { PageRoutes } from '../../App';
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
   useNavigate: vi.fn(),
   generatePath: vi.fn()
 }));

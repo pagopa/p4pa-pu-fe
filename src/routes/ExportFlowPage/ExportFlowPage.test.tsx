@@ -4,11 +4,11 @@ import { describe, it, vi } from 'vitest';
 import { BrowserRouter } from 'react-router';
 import ExportFlowPage from './ExportFlowPage';
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
   useNavigate: vi.fn(),
   useParams: () => ({ category: 'treasury' }),
 }));
-
 
 describe('Import Flow Page', () => {
   const queryClient = new QueryClient();
