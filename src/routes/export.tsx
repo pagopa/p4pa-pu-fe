@@ -18,7 +18,8 @@ export const exportRoutes = [
         handle: {
           backButton: true,
           sidebar: {
-            visible: false
+            visible: false,
+            omitBreadcrumbs: true,
           }
         } as RouteHandleObject,
       }
