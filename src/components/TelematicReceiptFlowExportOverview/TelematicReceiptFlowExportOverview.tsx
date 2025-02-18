@@ -3,7 +3,7 @@ import { CalendarToday, Downloading, Search } from '@mui/icons-material';
 import FlowDataGrid from '../../components/FlowDataGrid/FlowDataGrid';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 

@@ -8,7 +8,7 @@ import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContai
 import ActionMenu from '../ActionMenu/ActionMenu';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 
 export const ReportingImportFlowOverview = () => {
   const theme = useTheme();

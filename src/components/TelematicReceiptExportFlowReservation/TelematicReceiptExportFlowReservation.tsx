@@ -3,7 +3,7 @@ import { Box, Button, Grid, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TelematicReceiptExportFlowReservationContainer from './TelematicReceiptExportFlowReservationContainer';
 import { useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 import TitleComponent from '../TitleComponent/TitleComponent';
 
 export const TelematicReceiptExportFlowReservation = () => {

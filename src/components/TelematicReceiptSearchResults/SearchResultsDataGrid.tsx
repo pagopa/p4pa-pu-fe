@@ -4,7 +4,7 @@ import ActionMenu from '../ActionMenu/ActionMenu';
 import CustomDataGrid from './../DataGrid/CustomDataGrid';
 import { FileDownload, ReadMore } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 
 interface SearchResultDataRow extends GridValidRowModel {
   id: number;

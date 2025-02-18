@@ -22,7 +22,7 @@ import DnsIcon from '@mui/icons-material/Dns';
 import PeopleIcon from '@mui/icons-material/People';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import { sidebarStyles } from './sidebar.styles';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
 
