@@ -30,7 +30,7 @@ const TelematicReceiptImportFlowOverview = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [filters, setFilters] = useState<FilterState>({
+  const [paginationFilters, setPaginationFilters] = useState<FilterState>({
     flowFileTypes: ['RECEIPT'],
     size: 10,
     page: 0,
@@ -40,10 +40,10 @@ const TelematicReceiptImportFlowOverview = () => {
 
   const { state } = useStore();
   const { pagination, handlePageChange, handlePageSizeChange } = useDataGridPagination({
-    initialSize: filters.size,
-    initialPage: filters.page,
+    initialSize: paginationFilters.size,
+    initialPage: paginationFilters.page,
     onPaginationChange: (newPagination) => {
-      setFilters(prev => ({
+      setPaginationFilters(prev => ({
         ...prev,
         size: newPagination.size,
         page: newPagination.page
@@ -55,7 +55,7 @@ const TelematicReceiptImportFlowOverview = () => {
   const organizationId = Number(organization);
   
   const { data } = getIngestionFlowFiles(organizationId, {
-    ...filters,
+    ...paginationFilters,
   });
 
   const handleFilterChange = useCallback((type: keyof FilterState, value: unknown) => {
@@ -84,7 +84,7 @@ const TelematicReceiptImportFlowOverview = () => {
   }, []);
 
   const handleApplyFilters = useCallback(() => {
-    setFilters(prev => ({
+    setPaginationFilters(prev => ({
       ...prev,
       ...filterFields,
       page: 0
@@ -203,7 +203,7 @@ const TelematicReceiptImportFlowOverview = () => {
               label: t('commons.searchName'),
               icon: <Search />,
               gridWidth: 5,
-              value: filterFields.fileName ?? filters.fileName ?? '',
+              value: filterFields.fileName ?? paginationFilters.fileName ?? '',
               onChange: (e: React.ChangeEvent<HTMLInputElement>) => 
                 handleFilterChange('fileName', e.target.value)
             },
@@ -217,7 +217,7 @@ const TelematicReceiptImportFlowOverview = () => {
                 { label: t('commons.status.COMPLETED'), value: 'COMPLETED' },
                 { label: t('commons.status.ERROR'), value: 'ERROR' }
               ],
-              value: filterFields.status ?? filters.status ?? '',
+              value: filterFields.status ?? paginationFilters.status ?? '',
               onChange: (e: React.ChangeEvent<HTMLInputElement>) => 
                 handleFilterChange('status', e.target.value)
             },

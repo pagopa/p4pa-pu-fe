@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import { pagedIngestionFlowFileSchema } from '../../generated/zod-schema';
-import { toUTCString } from '../utils/dateFormatter';
+import { toUTCString } from '../utils/formatter';
 
 export const getIngestionFlowFiles = (
   organizationId: number,
