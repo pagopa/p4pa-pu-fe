@@ -1,4 +1,12 @@
 {
+    "dates": {
+      "from": "Dal",
+      "to": "Al",
+      "validations": {
+        "from": "Data non valida",
+        "to": "Data non valida"
+      }
+	  },
     "commons": {
         "addfilter": "Aggiunge filtro",
         "amount": "Importo",
@@ -74,7 +82,6 @@
             "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
             "TELEMATIC_RECEIPT": "Ricevute Telematiche",
             "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
-            "TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION": "Prenota export di un flusso",
             "TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE": "Flussi esportati OK",
             "TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
             "TELEMATIC_RECEIPT_IMPORT_FLOW": "Carica un nuovo flusso",
@@ -104,12 +111,20 @@
             "uploaded": "Caricato",
             "cancelled": "Annullato"
         },
+        "status": {
+          "COMPLETED": "Elaborato",
+          "UPLOADED": "Caricato",
+          "PROCESSING": "In elaborazione",
+          "ERROR": "Errore",
+          "EXPIRED": "Scaduto"
+        },
         "successExport": "Abbiamo ricevuto la tua richiesta!",
         "successImport": "Flusso caricato con sucesso",
         "summary": "riepilogo",
         "to": "Al",
         "view": "Visualizza",
-        "searchIUV": "Cerca IUV"
+        "searchIUV": "Cerca IUV",
+        "uploadedFrom": "Caricati dal"
     },
     "conservation": {
         "buttonReservationExport": "Prenota export",
@@ -161,15 +176,6 @@
     "telematicReceiptDetail": {
         "title": "Dettaglio Ricevuta Telematica"
     },
-    "telematicReceiptExportFlowReservation": {
-        "buttonConfirmReservation": "Prenota",
-        "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
-        "dueTipe": "Tipo di dovuto",
-        "dueTipePlaceHolder": "Tipo di dovuto da prenotare",
-        "fileVersion": "Versione tracciato",
-        "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
-        "formTitle": "Configurazione della esportazione"
-    },
     "telematicReceiptExportFlowThankYouPage": {
         "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
     },
@@ -220,10 +226,21 @@
         "importedflowsviewbutton": "Vedi tutti i flussi",
         "importflowbutton": "Importa flusso",
         "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
-        "importflowstitle": "Importa Flussi di Tesoreria"
+        "importflowstitle": "Importa Flussi di Tesoreria",
+        "billDetail": "Dettaglio Bolletta"
     },
     "treasuryImportFlowOverview": {
       "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
       "importflowbutton": "Importa flusso"
+    },
+    "exportFlow": {
+        "title": "Prenota export di un flusso",
+        "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
+        "buttonConfirmReservation": "Prenota",
+        "dueType": "Tipo di dovuto",
+        "dueTypePlaceHolder": "Tipo di dovuto da prenotare",
+        "fileVersion": "Versione tracciato",
+        "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
+        "formTitle": "Configurazione della esportazione"
     }
 }

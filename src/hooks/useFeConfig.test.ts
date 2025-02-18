@@ -1,4 +1,3 @@
-import { renderHook } from '@testing-library/react-hooks';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { useFeConfig } from './useFeConfig';
 import brokers from '../api/brokers';
@@ -7,6 +6,7 @@ import { configFeState } from '../store/ConfigFeStore';
 import { ConfigFE } from '../../generated/apiClient';
 import { act } from 'react';
 import { appState } from '../store/AppStateStore';
+import { renderHook } from '../__tests__/renderers';
 
 vi.mock('../api/brokers', () => ({
   default: {
@@ -89,7 +89,7 @@ describe('useFeConfig hook', () => {
       wrapper: StoreProvider
     });
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch fe config');
+    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch fe config', undefined);
 
     consoleErrorSpy.mockRestore();
   });

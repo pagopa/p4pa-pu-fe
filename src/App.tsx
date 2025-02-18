@@ -21,6 +21,8 @@ import { useStore } from './store/GlobalStore';
 import config from './utils/config';
 import { flowsRoutes } from './routes/flows';
 import { importRoutes } from './routes/import';
+import { detailRoutes } from './routes/detail';
+import { exportRoutes } from './routes/export';
 
 const deployPath = config.deployPath;
 
@@ -57,6 +59,12 @@ const routesDef = [
       /* -- IMPORT SECTION -- */
       ...importRoutes,
       /* -- END - IMPORT SECTION -- */
+      /* -- DETAIL SECTION -- */
+      ...detailRoutes,
+      /* -- END - DETAIL SECTION -- */
+      /* -- EXPORT SECTION -- */
+      ...exportRoutes,
+      /* -- END - EXPORT SECTION -- */
     ]
   }
 ];
