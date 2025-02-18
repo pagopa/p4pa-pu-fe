@@ -10,12 +10,12 @@ export type DateRange = {
   onChange?: (date: Date | null) => void;
 };
 
-export type DateRangeProps = {
+export type _DateRangeProps = {
   from?: DateRange;
   to?: DateRange;
 };
 
-export const DateRange = ({ from, to }: DateRangeProps) => {
+export const _DateRange = ({ from, to }: _DateRangeProps) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -58,34 +58,36 @@ export const DateRange = ({ from, to }: DateRangeProps) => {
             size: 'small',
             variant: 'outlined',
             error: !!startDateError,
-            helperText: startDateError ? (from?.errorMessage ?? t('dates.validations.from')) : '',
+            helperText: startDateError ? (from?.errorMessage ?? t('dates.validations.from')) : ''
           }
         }}
         {...from}
         onChange={handleStartDateChange}
       />
-      <DatePicker
-        sx={{ width: '100%' }}
-        label={t('dates.to')}
-        value={endDate}
-        open={isToDialogOpen}
-        onClose={() => setIsToDialogOpen(false)}
-        minDate={startDate || undefined}
-        onError={setEndDateError}
-        slotProps={{
-          textField: {
-            size: 'small',
-            variant: 'outlined',
-            error: !!endDateError,
-            helperText: endDateError ? (to?.errorMessage ?? t('dates.validations.to')) : ''
-          },
-          inputAdornment: {
-            onClick: () => setIsToDialogOpen(!isToDialogOpen)
-          }
-        }}
-        {...to}
-        onChange={handleEndDateChange}
-      />
+      {to && (
+        <DatePicker
+          sx={{ width: '100%' }}
+          label={t('dates.to')}
+          value={endDate}
+          open={isToDialogOpen}
+          onClose={() => setIsToDialogOpen(false)}
+          minDate={startDate || undefined}
+          onError={setEndDateError}
+          slotProps={{
+            textField: {
+              size: 'small',
+              variant: 'outlined',
+              error: !!endDateError,
+              helperText: endDateError ? (to?.errorMessage ?? t('dates.validations.to')) : ''
+            },
+            inputAdornment: {
+              onClick: () => setIsToDialogOpen(!isToDialogOpen)
+            }
+          }}
+          {...to}
+          onChange={handleEndDateChange}
+        />
+      )}
     </Stack>
   );
 };

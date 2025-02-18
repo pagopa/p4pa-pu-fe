@@ -48,7 +48,8 @@ describe('StoreContext', () => {
         [STATE.APP_STATE]: { loading: false },
         [STATE.CONFIG_FE]: null,
         [STATE.ORGANIZATION_ID]: null,
-        [STATE.USER_INFO]: null
+        [STATE.USER_INFO]: null,
+        [STATE.FILTERS]: [0]
       })
     );
   });

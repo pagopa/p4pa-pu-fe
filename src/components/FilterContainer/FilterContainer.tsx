@@ -1,110 +1,66 @@
-import React from 'react';
-import {
-  Button,
-  Grid,
-  InputAdornment,
-  MenuItem,
-  TextField
-} from '@mui/material';
-import { DateRange, DateRangeProps } from '../DateRange';
+import { Grid } from '@mui/material';
+import { FormComponent } from '../FormComponent';
+import type { ButtonProps, DateRangeProps, SelectProps, TextFieldProps } from '../FormComponent';
 
 export enum COMPONENT_TYPE {
   textField,
   select,
   button,
-  dateRange
+  dateRange,
+  amount
 }
 
-type BaseField = {
-  gridWidth?: number;
-  label: string;
-};
-
-type SearchField = BaseField & {
+type SearchField = {
   type: COMPONENT_TYPE.textField;
-  placeholder?: string;
-  icon?: React.ReactNode;
-  value?: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-};
+} & TextFieldProps;
 
-type SelectField = BaseField & {
+type AmountField = {
+  type: COMPONENT_TYPE.amount;
+} & TextFieldProps;
+
+type SelectField = {
   type: COMPONENT_TYPE.select;
-  options?: { label: string; value: string }[];
-  value?: string;
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
-};
+} & SelectProps;
 
-type DateRangeField = BaseField & DateRangeProps & {
+type ButtonField = {
+  type: COMPONENT_TYPE.button;
+  variant?: 'contained' | 'outlined';
+} & ButtonProps;
+
+type DateRangeField = DateRangeProps & {
   type: COMPONENT_TYPE.dateRange;
 };
 
-type ButtonField = BaseField & {
-  type: COMPONENT_TYPE.button;
-  variant?: 'contained' | 'outlined';
-  onClick: () => void;
-  disabled?: boolean;
-};
+type TypeUnion = SearchField | AmountField | SelectField | ButtonField | DateRangeField;
 
-export type FilterItem = SearchField | SelectField | ButtonField | DateRangeField;
+export type FilterItem = TypeUnion & {
+  gridWidth?: number;
+  label: string;
+};
 
 type FilterContainerProps = {
   items: FilterItem[];
 };
 
-const RenderComponent = ({ item, id }: { item: FilterItem; id: string }) => {
+const RenderComponent = ({ item }: { item: FilterItem }) => {
   switch (item.type) {
   case COMPONENT_TYPE.textField:
-    return (
-      <TextField
-        data-testid={id}
-        fullWidth
-        InputProps={{
-          endAdornment: item.icon ? (
-            <InputAdornment position="end">{item.icon}</InputAdornment>
-          ) : undefined
-        }}
-        label={item.label}
-        size="small"
-        placeholder={item.placeholder || ''}
-        onChange={item.onChange}
-      />
-    );
+    return <FormComponent.TextField {...item} />;
 
   case COMPONENT_TYPE.select:
-    return (
-      <TextField 
-        fullWidth 
-        size="small" 
-        data-testid={id} 
-        label={item.label} 
-        select 
-        value={item.value || ''}
-        onChange={item.onChange}
-      >
-        {item.options?.map((option, optionIndex) => (
-          <MenuItem key={`${item.label}-${option.value}-${optionIndex}`} value={option.value}>
-            {option.label}
-          </MenuItem>
-        ))}
-      </TextField>
-    );
+    return <FormComponent.Select {...item} />;
 
   case COMPONENT_TYPE.button:
-    return (
-      <Button
-        fullWidth
-        size="medium"
-        variant={item.variant || 'contained'}
-        sx={{ height: 40 }}
-        disabled={item.disabled}
-        onClick={item.onClick}>
-        {item.label}
-      </Button>
-    );
+    return <FormComponent.Button {...item} />;
 
   case COMPONENT_TYPE.dateRange:
-    return <DateRange {...item} />;
+    return <FormComponent.DateRange {...item} />;
+
+  case COMPONENT_TYPE.amount:
+    return <FormComponent.AmountField {...item} />;
+
+  default:
+    return <FormComponent.TextField {...(item as SearchField)} />;
   }
 };
 
@@ -117,10 +73,11 @@ const FilterContainer = ({ items }: FilterContainerProps) =>
         item
         xs={item.gridWidth ?? 12}
         height="100%"
-        key={index}
+        data-testid="filter-container"
+        key={key}
         display="flex"
         alignItems="center">
-        <RenderComponent item={item} id={key} />
+        <RenderComponent item={item} key={key} />
       </Grid>
     );
   });

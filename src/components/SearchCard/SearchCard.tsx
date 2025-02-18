@@ -1,7 +1,7 @@
-import React from 'react';
 import { Box, Grid, Typography, Button } from '@mui/material';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import FilterContainer, { FilterItem } from '../FilterContainer/FilterContainer';
+import { FilterMap } from '../../hooks/useFilters';
 
 interface ButtonField {
   text: string;
@@ -9,22 +9,12 @@ interface ButtonField {
   onClick?: () => void;
 }
 
-interface MultiFilterConfig {
-  enabled: boolean;
-  selectLabel: string;
-  inputLabel: {
-    label: string;
-    icon?: React.ReactNode;
-  };
-  selectOptions: { label: string; value: string }[];
-}
-
 type SearchCardProps = {
   title: string;
   description: string;
   fields?: FilterItem[];
   button?: ButtonField[];
-  multiFilterConfig?: MultiFilterConfig;
+  multiFilterConfig?: FilterMap;
 };
 
 const SearchCard = ({ title, description, fields, button, multiFilterConfig }: SearchCardProps) => {
@@ -45,13 +35,9 @@ const SearchCard = ({ title, description, fields, button, multiFilterConfig }: S
       <Grid container spacing={2} alignItems="center">
         {fields && <FilterContainer items={fields} />}
 
-        {multiFilterConfig?.enabled && (
+        {multiFilterConfig && (
           <Grid item lg={12}>
-            <MultiFilter
-              selectLabel={multiFilterConfig.selectLabel}
-              inputLabel={multiFilterConfig.inputLabel}
-              selectOptions={multiFilterConfig.selectOptions}
-            />
+            <MultiFilter filterMap={multiFilterConfig} />
           </Grid>
         )}
       </Grid>
