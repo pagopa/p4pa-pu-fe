@@ -3,9 +3,9 @@ import { Downloading, Search } from '@mui/icons-material';
 import FlowDataGrid from '../../components/FlowDataGrid/FlowDataGrid';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import { PageRoutes } from '../../App';
 
 const TelematicReceiptFlowExportOverview = () => {
   const theme = useTheme();
