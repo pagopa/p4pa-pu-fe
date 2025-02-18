@@ -6,11 +6,8 @@ import Reporting from './Reporting';
 import ReportingDetail from './ReportingDetail';
 import ReportingFlowImportThankYouPage from './ReportingFlowImportThankYouPage';
 import ReportingImportFlowOverview from './ReportingImportFlowOverview';
-import ReportingPaymentDetail from './ReportingPaymentDetail';
 import ReportingSearchResults from './ReportingSearchResults';
 import TelematicReceipt from './TelematicReceipt';
-import TelematicReceiptDetail from './TelematicReceiptDetail';
-import TelematicReceiptExportFlowReservation from './TelematicReceiptExportFlowReservation';
 import TelematicReceiptExportFlowThankYouPage from './TelematicReceiptExportFlowThankYouPage';
 import TelematicReceiptFlowExportOverview from './TelematicReceiptFlowExportOverview';
 import TelematicReceiptFlowImportThankYouPage from './TelematicReceiptFlowImportThankYouPage';
@@ -58,25 +55,6 @@ export const flowsRoutes = [{
           element: <TelematicReceiptSearchResults />,
           handle: {
             backButton: true
-          } as RouteHandleObject,
-        },
-        {
-          id: 'TELEMATIC_RECEIPT_DETAIL',
-          path: 'detail',
-          element: <TelematicReceiptDetail />,
-          handle: {
-            backButton: true
-          } as RouteHandleObject,
-        },
-        {
-          id: 'TELEMATIC_RECEIPT_EXPORT_FLOW_RESERVATION',
-          path: 'export-overview/export-flow-reservation',
-          element: <TelematicReceiptExportFlowReservation />,
-          handle: {
-            backButton: true,
-            sidebar: {
-              visibile: false
-            }
           } as RouteHandleObject,
         },
         {
@@ -138,14 +116,6 @@ export const flowsRoutes = [{
           id: 'REPORTING_DETAIL',
           path: 'detail/:id',
           element: <ReportingDetail />,
-          handle: {
-            backButton: true
-          } as RouteHandleObject,
-        },
-        {
-          id: 'REPORTING_PAYMENT_DETAIL',
-          path: 'payment-detail',
-          element: <ReportingPaymentDetail />,
           handle: {
             backButton: true
           } as RouteHandleObject,
