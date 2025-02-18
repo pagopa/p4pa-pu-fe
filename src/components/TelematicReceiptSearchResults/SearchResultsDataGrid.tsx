@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import CustomDataGrid from './../DataGrid/CustomDataGrid';
 import { FileDownload, ReadMore } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes/routes';
 
 interface SearchResultDataRow extends GridValidRowModel {
@@ -85,7 +85,7 @@ const SearchResultsDataGrid = () => {
             {
               icon: <ReadMore fontSize="small" />,
               label: t('commons.detail'),
-              action: () => navigate(PageRoutes.TELEMATIC_RECEIPT_DETAIL)
+              action: () => navigate(generatePath(PageRoutes.DETAIL_FLOWS, {category: 'receipt'}))
             },
             {
               icon: <FileDownload fontSize="small" />,
