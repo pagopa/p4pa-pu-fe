@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { importFlowConfig } from '../../models/ImportDetails';
+import { PageRoutes } from '../../App';
 
 const ImportFlow = () => {
 
@@ -94,7 +95,7 @@ const ImportFlow = () => {
             variant="outlined"
             fullWidth
             startIcon={<ArrowBack />} 
-            onClick={() => navigate(config.backRoute) }
+            onClick={() => navigate(PageRoutes[config.backRoute]) }
           >
             {t('commons.exit')}
           </Button>
@@ -106,7 +107,7 @@ const ImportFlow = () => {
             variant="contained"
             fullWidth
             disabled = {handleDisabledButton()}
-            onClick={() => navigate(config.successRoute) }
+            onClick={() => navigate(PageRoutes[config.successRoute]) }
           >
             {t('commons.flowImport.uploadButton')}
           </Button>

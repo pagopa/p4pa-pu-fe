@@ -4,7 +4,7 @@ import { FileUpload, Search } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 import { generatePath, useNavigate } from 'react-router';
 
 export const Treasury = () => {

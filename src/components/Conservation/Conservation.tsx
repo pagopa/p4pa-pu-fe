@@ -2,12 +2,12 @@ import { Box, Grid, IconButton, useTheme } from '@mui/material';
 import { Downloading, Search } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, generatePath } from 'react-router-dom';
-import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DownloadIcon from '@mui/icons-material/Download';
 import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
+import { PageRoutes } from '../../App';
 
 export const Conservation = () => {
   const theme = useTheme();

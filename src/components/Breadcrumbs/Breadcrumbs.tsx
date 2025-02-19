@@ -4,22 +4,22 @@ import {
   useTheme,
   Typography,
   useMediaQuery,
-  Stack
+  Stack,
+  Link as MUILink
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { BreadcrumbElement, BreadcrumbPath } from '../../models/Breadcrumbs';
-import { useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useMatches, useNavigate } from 'react-router-dom';
 
 export type BreadcrumbsProps = {
   separator: React.ReactElement;
-  crumbs: BreadcrumbPath;
 };
 
-const Breadcrumbs = ({ separator, crumbs }: BreadcrumbsProps) => {
+const Breadcrumbs = ({ separator }: BreadcrumbsProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const matches = useMatches();
 
   const mdUp = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -33,42 +33,28 @@ const Breadcrumbs = ({ separator, crumbs }: BreadcrumbsProps) => {
     </Typography>
   );
 
-  const Breadcrumb = ({ crumb }: { crumb: BreadcrumbElement }) =>
-    crumb?.href ? (
-      <Typography
-        onClick={() => navigate(crumb.href as string)}
-        aria-label={t('commons.breadcrumbsElementClickable')}
-        fontWeight={crumb?.fontWeight}
-        role="link"
-        sx={{ cursor: 'pointer' }}
-        color={crumb.color || theme.palette.text.primary}>
-        {t(`app.routes.${crumb.name}`)}
-      </Typography>
-    ) : (
-      <Typography
-        alignItems="center"
-        aria-label={t('commons.breadcrumbsElement')}
-        aria-current="page"
-        fontWeight={crumb?.fontWeight}
-        color={crumb?.color || theme.palette.text.primary}>
-        {t(`commons.routes.${crumb.name}`)}
-      </Typography>
-    );
-
   return (
-    crumbs?.elements &&
-    crumbs?.elements?.length > 1 && (
+    matches.length > 1 && (
       <Stack direction="row" marginBottom={3} alignItems="center">
         {!mdUp && <BackButton />}
         <BreadcrumbsMUI
           separator={separator}
           aria-label={t('commons.breadcrumbs')}
           sx={{ paddingBlock: 1 }}>
-          {mdUp ? (
-            crumbs.elements.map((r, i) => <Breadcrumb crumb={r} key={i} />)
-          ) : (
-            <Breadcrumb crumb={crumbs.elements[0]} />
-          )}
+          { matches.slice(1).map((b, i, array) => {
+            const isLastElement = i === array.length - 1;
+            return <MUILink
+              color="textSecondary"
+              fontWeight={isLastElement ? '400' : '600'}
+              component={RouterLink}
+              to={b.pathname}
+              underline={'hover'}
+              key={`breadcrumb-${i}`}
+            >
+              {t(`commons.routes.${b.id}`)}
+            </MUILink>;}
+          )
+          }
         </BreadcrumbsMUI>
       </Stack>
     )
