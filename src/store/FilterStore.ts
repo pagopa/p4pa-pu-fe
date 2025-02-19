@@ -1,28 +1,29 @@
 import { signal } from '@preact/signals-react';
 
-export const MAX_FILTERS = 10;
+export const filtersState = signal<string[]>(['']);
 
-export const filtersState = signal([0]);
-
-export function setFiltersState(newState: number[]) {
+export function setFiltersState(newState: string[]) {
   filtersState.value = newState;
 }
 
-export const addFilterRow = () => {
+export const addFilterRow = (nextId?: string) => {
   const filters = filtersState.value;
-  if (filters.length < MAX_FILTERS) {
-    const nextId = filters.length ? Math.max(...filters) + 1 : 0;
-    setFiltersState([...filters, nextId]);
-  }
+  setFiltersState([...filters, nextId ?? '']);
 };
 
-export const removeFilterRow = (id: number) => {
+export const removeFilterRow = (id: string) => {
   const filters = filtersState.value;
   if (filters.length > 1) {
     setFiltersState(filters.filter((filterId) => filterId !== id));
   }
 };
 
+export const updateFilter = (id: string, index: number) => {
+  const filters = [...filtersState.value];
+  filters[index] = id;
+  setFiltersState(filters);
+};
+
 export const removeAllFilters = () => {
-  setFiltersState([0]);
+  setFiltersState(['']);
 };

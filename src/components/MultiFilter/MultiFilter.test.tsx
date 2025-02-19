@@ -1,51 +1,75 @@
-import userEvent from '@testing-library/user-event';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { render, screen, fireEvent } from '../../__tests__/renderers';
 import MultiFilter from './MultiFilter';
-import { render, screen } from '../../__tests__/renderers';
-import { MAX_FILTERS, setFiltersState, filtersState } from '../../store/FilterStore';
+import { filtersState, setFiltersState } from '../../store/FilterStore';
+import { FilterMap } from '../../hooks/useFilters';
 
-vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (key: string) => key }) }));
-
-const mockFilterMap = {
-  search: { label: 'Search', fields: [{ type: 0, label: 'Search Field' }] }
+const mockFilterMap: FilterMap = {
+  search: { label: 'Search', fields: [{ type: 0, label: 'Search Field' }] },
+  name: { label: 'Name', fields: [{ type: 0, label: 'Name Field' }] }
 };
 
 describe('MultiFilter Component', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    setFiltersState(['search']);
+  });
+
   it('renders filters based on store state', () => {
-    setFiltersState([1, 2]);
     render(<MultiFilter filterMap={mockFilterMap} />);
-    expect(screen.getAllByTestId('filter-component')).toHaveLength(2);
+
+    // filter components is rendered with the correct filters
+    const filterComponents = screen.getAllByTestId('filter-component');
+    expect(filterComponents).toHaveLength(1);
   });
 
   it('renders remove buttons for multiple filters', () => {
-    setFiltersState([1, 2]);
+    setFiltersState(['search', 'name']);
+
     render(<MultiFilter filterMap={mockFilterMap} />);
-    expect(screen.getAllByRole('button', { name: 'remove' })).toHaveLength(2);
+
+    // Verify that remove buttons are rendered for each filter
+    const removeButtons = screen.getAllByRole('button', { name: 'remove' });
+    expect(removeButtons).toHaveLength(2);
   });
 
   it('hides remove button for a single filter', () => {
-    setFiltersState([1]);
     render(<MultiFilter filterMap={mockFilterMap} />);
-    expect(screen.queryByRole('button', { name: 'remove' })).not.toBeInTheDocument();
+
+    // Verify that no remove button is rendered for a single filter
+    const removeButton = screen.queryByRole('button', { name: 'remove' });
+    expect(removeButton).not.toBeInTheDocument();
   });
 
-  it('invokes addFilterRow on add button click', async () => {
-    setFiltersState([1]);
+  it('invokes addFilterRow on add button click', () => {
     render(<MultiFilter filterMap={mockFilterMap} />);
-    await userEvent.click(screen.getByRole('button', { name: /commons.addfilter/i }));
+
+    const addButton = screen.getByRole('button', { name: /commons.addfilter/i });
+    fireEvent.click(addButton);
+
     expect(filtersState.value).toHaveLength(2);
   });
 
-  it('invokes removeFilterRow with correct ID on remove button click', async () => {
-    setFiltersState([0, 1, 2]);
+  it('invokes removeFilterRow with correct ID on remove button click', () => {
+    setFiltersState(['search', 'name']);
+
     render(<MultiFilter filterMap={mockFilterMap} />);
-    await userEvent.click(screen.getAllByRole('button', { name: 'remove' })[0]);
-    expect(filtersState.value).toHaveLength(2);
+
+    // Click the first remove button
+    const removeButtons = screen.getAllByRole('button', { name: 'remove' });
+    fireEvent.click(removeButtons[0]);
+
+    expect(filtersState.value).toStrictEqual(['name']);
   });
 
   it('disables add button at maximum filters', () => {
-    setFiltersState(Array(MAX_FILTERS).fill(0));
+    setFiltersState(['search', 'name']);
+
     render(<MultiFilter filterMap={mockFilterMap} />);
-    expect(screen.getByRole('button', { name: /commons.addfilter/i })).toBeDisabled();
+
+    // Verify that the add button is disabled
+    const addButton = screen.getByRole('button', { name: /commons.addfilter/i });
+    expect(addButton).toBeDisabled();
   });
 });

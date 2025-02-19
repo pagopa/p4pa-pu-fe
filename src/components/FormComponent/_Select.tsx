@@ -1,9 +1,9 @@
-import MenuItem from '@mui/material/MenuItem';
+import MenuItem, { MenuItemProps } from '@mui/material/MenuItem';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { ChangeEvent, useState } from 'react';
 
 export type _SelectProps = Omit<TextFieldProps, 'select' | 'type'> & {
-  options?: { label: string; value: string }[];
+  options?: Array<MenuItemProps & { label: string }>;
 };
 
 export const _Select = (props: _SelectProps) => {
@@ -22,7 +22,7 @@ export const _Select = (props: _SelectProps) => {
       {...props}
       select>
       {props.options?.map((option, optionIndex) => (
-        <MenuItem key={`${props.label}-${option.value}-${optionIndex}`} value={option.value}>
+        <MenuItem key={`${props.label}-${option.value}-${optionIndex}`} {...option}>
           {option.label}
         </MenuItem>
       ))}

@@ -3,11 +3,11 @@ import { FormComponent } from '../FormComponent';
 import type { ButtonProps, DateRangeProps, SelectProps, TextFieldProps } from '../FormComponent';
 
 export enum COMPONENT_TYPE {
-  textField,
-  select,
-  button,
-  dateRange,
-  amount
+  textField = 'textField',
+  select = 'select',
+  button = 'button',
+  dateRange = 'dateRange',
+  amount = 'amount'
 }
 
 type SearchField = {

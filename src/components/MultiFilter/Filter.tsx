@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent } from 'react';
 import { Stack } from '@mui/material';
 import { FormComponent } from '../FormComponent';
 import FilterContainer from '../FilterContainer/FilterContainer';
@@ -7,23 +7,20 @@ import { useTranslation } from 'react-i18next';
 
 export type FilterProps = {
   filterMap: FilterMap;
+  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  value: string;
+  selectedFilters: string[];
 };
 
-export const Filter = ({ filterMap }: FilterProps) => {
+export const Filter = ({ filterMap, onChange, value, selectedFilters }: FilterProps) => {
   const { t } = useTranslation();
-  const [selectedValue, setSelectedValue] = useState<keyof FilterMap>(Object.keys(filterMap)[0]);
-
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelectedValue(e.target.value);
-  };
 
   // Sort the entries by label before mapping them to options
-  const sortedOptions = Object.entries(filterMap)
-    .sort(([, a], [, b]) => a.label.localeCompare(b.label))
-    .map(([key, value]) => ({
-      label: value.label,
-      value: key
-    }));
+  const sortedOptions = Object.entries(filterMap).map(([key, value]) => ({
+    label: value.label,
+    value: key,
+    disabled: selectedFilters.includes(key)
+  }));
 
   return (
     <Stack direction="row" gap={3} width="100%" data-testid="filter-component">
@@ -31,11 +28,11 @@ export const Filter = ({ filterMap }: FilterProps) => {
         id="filter-select"
         options={sortedOptions}
         label={t('commons.searchFor')}
-        value={selectedValue}
+        value={value}
         onChange={onChange}
       />
 
-      <FilterContainer items={filterMap[selectedValue]?.fields || []} />
+      <FilterContainer items={filterMap[value]?.fields || []} />
     </Stack>
   );
 };
