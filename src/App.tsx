@@ -40,11 +40,11 @@ const routesDef = [
       {
         path: `${deployPath}/`,
         element: <Layout />,
-        id: 'Home',
         children: [
           {
             path: `${deployPath}/`,
             element: <Home />,
+            id: 'HOME',
             index: true,
             handle: {
               backButton: false,

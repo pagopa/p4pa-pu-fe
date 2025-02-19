@@ -82,6 +82,7 @@
             "REPORTING_SEARCH_RESULTS": "Risultato ricerca", 
             "REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
             "REPORTING_IMPORT_FLOW_THANK_YOU_PAGE": "Flussi importati OK",
+            "REPORTING_IMPORT_OVERVIEW": "Flussi importati",
             "REPORTING_INDEX": "Pagina principale",
             "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
             "TELEMATIC_RECEIPT": "Ricevute Telematiche",
@@ -96,6 +97,7 @@
             "TREASURY": "Tesoreria",
             "TREASURY_IMPORT_FLOW": "Carica un nuovo flusso",
             "TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
+            "TREASURY_IMPORT_OVERVIEW": "Flussi importati",
             "TREASURY_INDEX": "Pagina principale",
             "USERS": "Utenti"
         },

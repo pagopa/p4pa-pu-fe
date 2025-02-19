@@ -83,7 +83,7 @@ export const flowsRoutes = [{
           handle: {
             backButton: true,
             sidebar: {
-              visibile: false
+              visibile: true
             },
           } as RouteHandleObject,
         },
