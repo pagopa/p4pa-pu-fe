@@ -410,7 +410,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
     const statusSelect = screen.getByLabelText('commons.state');
     fireEvent.mouseDown(statusSelect);
  
-    const completedOption = screen.getByText('commons.status.COMPLETED');
+    const completedOption = screen.getByRole('option', { name: 'commons.status.COMPLETED' });
     fireEvent.click(completedOption);
   
     const filterButton = screen.getByText('commons.filters.filterResults');
@@ -434,7 +434,8 @@ describe('TelematicReceiptImportFlowOverview', () => {
   
     const statusSelect = screen.getByLabelText('commons.state');
     fireEvent.mouseDown(statusSelect);
-    const errorOption = screen.getByText('commons.status.ERROR');
+
+    const errorOption = screen.getByRole('option', { name: 'commons.status.ERROR' });
     fireEvent.click(errorOption);
   
     const filterButton = screen.getByText('commons.filters.filterResults');
@@ -472,6 +473,81 @@ describe('TelematicReceiptImportFlowOverview', () => {
           page: 1
         })
       );
+    });
+  });
+
+  it('returns null for action cell with PROCESSING status', async () => {
+    const { container } = render(<TelematicReceiptImportFlowOverview />);
+    
+    const processingRow = mockData.content.find(row => row.status === 'PROCESSING');
+
+    expect(processingRow).toBeDefined();
+    
+    if (!processingRow) {
+      throw new Error('Test data does not contain a PROCESSING status row');
+    }
+    
+    await waitFor(() => {
+      const rowCells = container.querySelectorAll('[role="row"]');
+      const processingRowCell = Array.from(rowCells).find(row => 
+        row.textContent?.includes(processingRow.ingestionFlowFileId.toString())
+      );
+      
+      expect(processingRowCell).toBeDefined();
+      expect(processingRowCell?.querySelector('[data-testid="action-menu"]')).toBeNull();
+      expect(processingRowCell?.querySelector('[data-testid="download-button"]')).toBeNull();
+    });
+  });
+
+  it('handles undefined values in grid cells', async () => {
+    const modifiedMockData = {
+      ...mockData,
+      content: [
+        {
+          ...mockData.content[0],
+          creationDate: undefined,
+          operator: undefined,
+          discardedRows: undefined
+        }
+      ]
+    };
+    
+    (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mockReturnValue({ data: modifiedMockData });
+    
+    const { container } = render(<TelematicReceiptImportFlowOverview />);
+    
+    await waitFor(() => {
+      const rowCells = container.querySelectorAll('[role="row"]');
+      const undefinedValuesRow = Array.from(rowCells).find(row => 
+        row.textContent?.includes(modifiedMockData.content[0].ingestionFlowFileId.toString())
+      );
+      
+      expect(undefinedValuesRow?.querySelector('[data-field="creationDate"]')?.textContent).toBe('');
+      expect(undefinedValuesRow?.querySelector('[data-field="operator"]')?.textContent).toBe('');
+      expect(undefinedValuesRow?.querySelector('[data-field="discardedRows"]')?.textContent).toBe('');
+    });
+  });
+
+  it('handles unknown status color fallback correctly', async () => {
+
+    const modifiedMockData = {
+      ...mockData,
+      content: [
+        {
+          ...mockData.content[0],
+          status: 'UNKNOWN_STATUS'
+        }
+      ]
+    };
+    
+    (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mockReturnValue({ data: modifiedMockData });
+    
+    const { container } = render(<TelematicReceiptImportFlowOverview />);
+    
+    await waitFor(() => {
+      const chip = container.querySelector('.MuiChip-colorDefault');
+      expect(chip).toBeDefined();
+      expect(chip).not.toBeNull();
     });
   });
 });
