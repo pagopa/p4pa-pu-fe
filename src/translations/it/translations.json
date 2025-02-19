@@ -110,7 +110,8 @@
           "UPLOADED": "Caricato",
           "PROCESSING": "In elaborazione",
           "ERROR": "Errore",
-          "EXPIRED": "Scaduto"
+          "EXPIRED": "Scaduto",
+          "ALL": "Tutti"
         },
         "successExport": "Abbiamo ricevuto la tua richiesta!",
         "successImport": "Flusso caricato con sucesso",

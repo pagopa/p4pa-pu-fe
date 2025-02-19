@@ -174,12 +174,20 @@ const TelematicReceiptImportFlowOverview = () => {
               type: COMPONENT_TYPE.select,
               label: t('commons.state'),
               gridWidth: 2,
-              options: Object.values(FlowStatus).map(status => ({
-                label: t(`commons.status.${status}`),
-                value: status
-              })),
-              value: draftFilters.status || '',
-              onChange: (e) => updateDraftFilters({ status: e.target.value as FlowStatus })
+              options: [
+                { label: t('commons.status.ALL'), value: 'ALL' },
+                ...Object.values(FlowStatus).map(status => ({
+                  label: t(`commons.status.${status}`),
+                  value: status
+                }))
+              ],
+              value: draftFilters.status || 'ALL',
+              onChange: (e) => {
+                const value = e.target.value;
+                updateDraftFilters({ 
+                  status: value === 'ALL' ? undefined : value as FlowStatus 
+                });
+              }
             },
             { 
               type: COMPONENT_TYPE.dateRange,
