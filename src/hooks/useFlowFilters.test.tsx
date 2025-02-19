@@ -1,7 +1,7 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useFlowFilters } from './useFlowFilters';
-import { FlowFileType, FlowStatus } from '../store/types';
+import { FlowFileType } from '../models/Filters';
 
 
 describe('useFlowFilters', () => {
@@ -53,7 +53,7 @@ describe('useFlowFilters', () => {
     act(() => {
       result.current.updateDraftFilters({ 
         fileName: 'test.pdf',
-        status: FlowStatus.COMPLETED,
+        status: 'COMPLETED',
         page: 2
       });
     });
@@ -107,7 +107,7 @@ describe('useFlowFilters', () => {
     });
 
     act(() => {
-      result.current.updateDraftFilters({ status: FlowStatus.COMPLETED });
+      result.current.updateDraftFilters({ status: 'COMPLETED' });
     });
 
     act(() => {
@@ -117,7 +117,7 @@ describe('useFlowFilters', () => {
     expect(result.current.appliedFilters).toEqual(
       expect.objectContaining({
         fileName: 'test.pdf',
-        status: FlowStatus.COMPLETED,
+        status: 'COMPLETED',
         flowFileTypes: [FlowFileType.RECEIPT]
       })
     );

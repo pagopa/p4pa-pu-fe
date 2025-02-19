@@ -10,10 +10,11 @@ import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContai
 import ActionMenu from '../ActionMenu/ActionMenu';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useStore } from '../../store/GlobalStore';
-import { DOWNLOAD_STATES, FlowFileType, FlowStatus, MENU_STATES, STATE, STATE_COLORS } from '../../store/types';
+import { DOWNLOAD_STATES, FLOW_STATUS_VALUES, FlowFileType, FlowStatus, MENU_STATES, STATE_COLORS } from '../../models/Filters';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import { PageRoutes } from '../../routes/routes';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
+import { STATE } from '../../store/types';
 
 
 const TelematicReceiptImportFlowOverview = () => {
@@ -176,7 +177,7 @@ const TelematicReceiptImportFlowOverview = () => {
               gridWidth: 2,
               options: [
                 { label: t('commons.status.ALL'), value: 'ALL' },
-                ...Object.values(FlowStatus).map(status => ({
+                ...FLOW_STATUS_VALUES.map(status => ({
                   label: t(`commons.status.${status}`),
                   value: status
                 }))
