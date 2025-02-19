@@ -1,3 +1,4 @@
+import { Navigate } from 'react-router-dom';
 import { Conservation } from '../components/Conservation';
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Breadcrumbs';
@@ -27,6 +28,10 @@ export const flowsRoutes = [{
   } as RouteHandleObject,
   /* -- TELEMATIC RECEIPTS CHILDREN ROUTES -- */
   children: [
+    {
+      element: <Navigate replace to={`${deployPath}/`} />,
+      index: true,
+    },
     /* -- TELEMATIC RECEIPTS' SECTION -- */
     {
       path: 'telematic-receipt/',
