@@ -2,10 +2,10 @@ import { ArrowBack, CalendarToday, Dashboard, InsertDriveFile } from '@mui/icons
 import { Button, Grid, GridDirection } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
-import { PageRoutes } from '../../routes/routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import ExportFlowContainer from '../ExportFlowContainer/ExportFlowContainer';
 import { useState } from 'react';
+import { PageRoutes } from '../../App';
 
 export const ExportFlowPage = () => {
 

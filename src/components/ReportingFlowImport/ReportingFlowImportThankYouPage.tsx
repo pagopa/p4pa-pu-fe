@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import ThankYouPage from '../ThankYouPage/ThankYouPage';
 import { theme } from '@pagopa/mui-italia';

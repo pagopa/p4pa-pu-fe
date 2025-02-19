@@ -1,1 +1,0 @@
-export { TelematicReceiptDetail } from './TelematicReceiptDetail';
