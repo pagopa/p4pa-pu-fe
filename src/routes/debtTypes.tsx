@@ -16,7 +16,8 @@ export const debtTypesRoutes = [
         path: 'catalog',
         element: <DebtTypes />,
         handle: {
-          backButton: true
+          backButton: false,
+          hideBreadcrumbs: true
         } as RouteHandleObject,
       }
     ]
