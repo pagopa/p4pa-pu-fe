@@ -5,7 +5,7 @@ import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 
 export const Reporting = () => {

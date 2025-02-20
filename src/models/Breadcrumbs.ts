@@ -11,10 +11,10 @@ export interface BreadcrumbElement {
   }
   
 export interface RouteHandleObject {
-    crumbs?: BreadcrumbPath;
-    sidebar: { visible?: boolean };
     backButton?: boolean;
     backButtonText?: string;
     backButtonFunction?: () => void;
+    hideBreadcrumbs?: boolean;
+    sidebar: { visible?: boolean };
   }
   

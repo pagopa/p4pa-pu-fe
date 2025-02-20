@@ -3,7 +3,8 @@ import { fireEvent, render, screen, within } from '@testing-library/react';
 import ExportFlow from './ExportFlowPage';
 import { useParams } from 'react-router-dom';
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
   useNavigate: vi.fn(),
   useParams: vi.fn(),
 }));

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 import { Link } from 'react-router-dom';
 import { generatePath } from 'react-router-dom';
 

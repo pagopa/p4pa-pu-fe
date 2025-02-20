@@ -3,347 +3,92 @@ import { ErrorFallback } from './components/ErrorFallback';
 import { Layout } from './components/layout/Layout';
 import { RouteHandleObject } from './models/Breadcrumbs';
 import Home from './routes/Home';
-import { PageRoutes, PageRoutesConf } from './routes/routes';
 import { Theme } from './utils/theme';
 import {
   Navigate,
+  RouteObject,
   RouterProvider,
   createBrowserRouter,
   useRouteError
 } from 'react-router-dom';
-import TelematicReceiptFlowExportOverview from './routes/TelematicReceiptFlowExportOverview';
 import { ApiClient } from './components/ApiClient';
-import { theme } from '@pagopa/mui-italia';
 
 import './translations/i18n';
 import utils from './utils';
-import { Conservation } from './components/Conservation';
-import TelematicReceiptSearchResults from './routes/TelematicReceiptSearchResults';
-import TelematicReceipt from './routes/TelematicReceipt';
-import TelematicReceiptExportFlowThankYouPage from './routes/TelematicReceiptExportFlowThankYouPage';
-import TelematicReceiptFlowImportThankYouPage from './routes/TelematicReceiptFlowImportThankYouPage';
-import TelematicReceiptImportFlowOverview from './routes/TelematicReceiptImportFlowOverview';
-import ReportingSearchResults from './routes/ReportingSearchResults';
-import Reporting from './routes/Reporting';
-import ReportingImportFlowOverview from './routes/ReportingImportFlowOverview';
-import ReportingFlowImportThankYouPage from './routes/ReportingFlowImportThankYouPage';
-import ReportingDetail from './routes/ReportingDetail';
-import Treasury from './routes/Treasury';
-import TreasuryImportFlowOverview from './routes/TreasuryImportFlowOverview';
-import ImportFlow from './routes/ImportFlowPage';
-import DetailFlowPage from './routes/DetailFlowPage';
-import ExportFlow from './routes/ExportFlowPage/ExportFlowPage';
-import TreasurySearchResults from './routes/TreasurySearchResults';
 
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
+import config from './utils/config';
+import { flowsRoutes } from './routes/flows';
+import { importRoutes } from './routes/import';
+import { detailRoutes } from './routes/detail';
+import { exportRoutes } from './routes/export';
 
-const router = createBrowserRouter([
+const deployPath = config.deployPath;
+
+const routesDef = [
   {
     element: <ApiClient client={utils.apiClient} />,
     children: [
       {
         path: '*',
-        element: <Navigate replace to={PageRoutes.HOME} />,
+        element: <Navigate replace to={`${deployPath}/`} />,
         ErrorBoundary: () => {
           throw useRouteError();
         }
       },
       {
-        path: PageRoutes.HOME,
+        path: `${deployPath}/`,
         element: <Layout />,
-        handle: {
-          backButton: false
-        } as RouteHandleObject,
         children: [
           {
-            path: PageRoutes.HOME,
+            path: `${deployPath}/`,
             element: <Home />,
-          }
-        ]
-      },
-      /* -- TELEMATIC RECEIPTS' SECTION -- */
-      {
-        path: PageRoutesConf.TELEMATIC_RECEIPT.path,
-        element: <Layout />,
-        handle: {
-          crumbs: {
-            elements: [
-              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.disabled }
-            ]
-          },
-          backButton: false
-        } as RouteHandleObject,
-        /* -- TELEMATIC RECEIPTS CHILDREN ROUTES -- */
-        children: [
-          {
+            id: 'HOME',
             index: true,
-            element: <TelematicReceipt />,
-          },
-          {
-            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.EXPORT_OVERVIEW.path,
-            element: <TelematicReceiptFlowExportOverview />,
-            handle: {
-              crumbs: {
-                elements: [
-                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-                  { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
-                  { name: 'TELEMATIC_RECEIPT_EXPORT_OVERVIEW', color: theme.palette.text.disabled }
-                ]
-              },
-              backButton: true
-            } as RouteHandleObject,
-          },
-          {
-            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.SEARCH_RESULTS.path,
-            element: <TelematicReceiptSearchResults />,
-            handle: {
-              crumbs: {
-                elements: [
-                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-                  { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
-                ]
-              },
-              backButton: true
-            } as RouteHandleObject,
-          },
-          {
-            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.EXPORT_FLOW_THANK_YOU_PAGE.path,
-            element: <TelematicReceiptExportFlowThankYouPage />,
             handle: {
               backButton: false,
-              sidebar: {
-                visibile: false
-              }
-            } as RouteHandleObject,
-          },
-          {
-            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.IMPORT_OVERVIEW.path,
-            element: <TelematicReceiptImportFlowOverview />,
-            handle: {
-              crumbs: {elements: [
-                { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-                { name: 'TELEMATIC_RECEIPT', color: theme.palette.text.primary },
-                { name: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW', color: theme.palette.text.disabled }
-              ]},
-              backButton: true,
-            } as RouteHandleObject,
-          },
-          {
-            path: PageRoutesConf.TELEMATIC_RECEIPT.children?.IMPORT_FLOW_THANK_YOU_PAGE.path,
-            element: <TelematicReceiptFlowImportThankYouPage />,
-            handle: {
-              backButton: true,
-              sidebar: {
-                visibile: false
-              },
-            } as RouteHandleObject,
-          },
-        ]
-      },
-      /* -- END - TELEMATIC RECEIPTS' SECTION -- */
-      /* -- REPORTING SECTION -- */
-      {
-        path: PageRoutesConf.REPORTING.path,
-        element: <Layout />,
-        handle: {
-          crumbs: {
-            elements: [
-              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'REPORTING', color: theme.palette.text.disabled }
-            ]
-          },
-          backButton: false
-        } as RouteHandleObject,
-        /* -- REPORTING SECTION CHILDREN ROUTES -- */
-        children: [
-          {
-            index: true,
-            element: <Reporting />,
-          },
-          {
-            path: PageRoutesConf.REPORTING.children?.SEARCH_RESULTS.path,
-            element: <ReportingSearchResults />,
-            handle: {
-              crumbs: {
-                elements: [
-                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-                  { name: 'REPORTING', color: theme.palette.text.primary },
-                  { name: 'REPORTING_SEARCH_RESULTS', color: theme.palette.text.disabled }
-                ]
-              },
-              backButton: true
-            } as RouteHandleObject,
-          },
-          {
-            path: PageRoutesConf.REPORTING.children?.DETAIL.path,
-            element: <ReportingDetail />,
-            handle: ({params}: {params: Record<string, string>}) => ({
-              crumbs: {
-                elements: [
-                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-                  { name: 'REPORTING', color: theme.palette.text.primary },
-                  { name: 'REPORTING_SEARCH_RESULTS', color: theme.palette.text.primary },
-                  { name: params.id, color: theme.palette.text.disabled}
-                ]
-              },
-              backButton: true
-            }) as RouteHandleObject,
-          },
-          {
-            path: PageRoutesConf.REPORTING.children?.IMPORT_FLOW_THANK_YOU_PAGE.path,
-            element: <ReportingFlowImportThankYouPage />,
-            handle: {
-              backButton: true,
-              sidebar: {
-                visibile: false
-              },
-            } as RouteHandleObject,
-          },
-          {
-            path: PageRoutesConf.REPORTING.children?.IMPORT_OVERVIEW.path,
-            element: <ReportingImportFlowOverview />,
-            handle: {
-              crumbs: {
-                elements: [
-                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-                  { name: 'REPORTING', color: theme.palette.text.primary },
-                  { name: 'REPORTING_IMPORT_FLOW_OVERVIEW', color: theme.palette.text.disabled}
-                ]
-              },
-              backButton: true
-            } as RouteHandleObject,
-          },
-        ]
-      },
-      /* -- END - REPORTING SECTION -- */
-      /* -- TREASURY SECTION -- */
-      {
-        path: PageRoutesConf.TREASURY.path,
-        element: <Layout />,
-        handle: {
-          crumbs: {
-            elements: [
-              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'TREASURY', color: theme.palette.text.disabled }
-            ]
-          },
-          backButton: false
-        } as RouteHandleObject,
-        /* -- TREASURY SECTION CHILDREN ROUTES -- */
-        children: [
-          {
-            index: true,
-            element: <Treasury />,
-          },
-          {
-            path: PageRoutesConf.TREASURY.children?.IMPORT_OVERVIEW.path,
-            element: <TreasuryImportFlowOverview />,
-            handle: {
-              crumbs: {
-                elements: [
-                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-                  { name: 'TREASURY', color: theme.palette.text.primary },
-                  { name: 'TREASURY_IMPORT_OVERVIEW', color: theme.palette.text.disabled}
-                ]
-              },
-              backButton: true
-            } as RouteHandleObject,
-          },
-          {
-            path: PageRoutesConf.TREASURY.children?.SEARCH_RESULTS.path,
-            element: <TreasurySearchResults />,
-            handle: {
-              crumbs: {
-                elements: [
-                  { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-                  { name: 'TREASURY', color: theme.palette.text.primary },
-                ]
-              },
-              backButton: true
+              hideBreadcrumbs: true,
             } as RouteHandleObject,
           }
         ]
       },
-      /* -- END - TREASURY SECTION -- */
-      /* -- CONSERVATION SECTION -- */
-      {
-        path: PageRoutesConf.CONSERVATION.path,
-        element: <Layout />,
-        handle: {
-          crumbs: {
-            elements: [
-              { name: 'FLOWS', fontWeight: 600, color: theme.palette.text.primary },
-              { name: 'CONSERVATION', color: theme.palette.text.disabled }
-            ]
-          },
-          backButton: false
-        } as RouteHandleObject,
-        /* -- CONSERVATION SECTION CHILDREN ROUTES -- */
-        children: [
-          {
-            index: true,
-            element: <Conservation />,
-          }
-        ]
-      },
-      /* -- END - CONSERVATION SECTION -- */
+      /* -- FLOWS SECTION -- */
+      ...flowsRoutes,
+      /* -- END - FLOWS SECTION -- */
       /* -- IMPORT SECTION -- */
-      {
-        path: PageRoutesConf.IMPORT.path,
-        element: <Layout />,
-        handle: {
-          backButton: true,
-          sidebar: {
-            visible: false
-          }
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutesConf.IMPORT.children?.FLOWS.path,
-            element: <ImportFlow />,
-          }
-        ]
-      },
+      ...importRoutes,
       /* -- END - IMPORT SECTION -- */
       /* -- DETAIL SECTION -- */
-      {
-        path: PageRoutesConf.DETAIL.path,
-        element: <Layout />,
-        handle: {
-          backButton: true,
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutesConf.DETAIL.children?.FLOWS.path,
-            element: <DetailFlowPage />,
-          }
-        ]
-      },
+      ...detailRoutes,
       /* -- END - DETAIL SECTION -- */
       /* -- EXPORT SECTION -- */
-      {
-        path: PageRoutesConf.EXPORT.path,
-        element: <Layout />,
-        handle: {
-          backButton: true,
-          sidebar: {
-            visible: false
-          }
-        } as RouteHandleObject,
-        children: [
-          {
-            path: PageRoutesConf.EXPORT.children?.FLOWS.path,
-            element: <ExportFlow />,
-          }
-        ]
-      }
+      ...exportRoutes,
       /* -- END - EXPORT SECTION -- */
     ]
   }
-]);
+];
 
+const router = createBrowserRouter(routesDef);
+
+const extractPathsWithIds = (routes: RouteObject[], basePath: string = ''): { [key: string]: string } => {
+  let paths: { [key: string]: string } = {};
+
+  routes.forEach((route) => {
+    const fullPath = `${basePath}${route.path || ''}`;
+
+    paths[route.id || 'none'] = fullPath;
+
+    if (route.children) {
+      const childPaths = extractPathsWithIds(route.children, fullPath);
+      paths = { ...paths, ...childPaths }; 
+    }
+  });
+
+  return paths;
+};
+
+export const PageRoutes = extractPathsWithIds(routesDef);
 
 export const App = () => {
   const {

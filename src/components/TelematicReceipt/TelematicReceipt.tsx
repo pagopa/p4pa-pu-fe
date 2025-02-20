@@ -4,7 +4,7 @@ import { Download, Search, Upload } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 

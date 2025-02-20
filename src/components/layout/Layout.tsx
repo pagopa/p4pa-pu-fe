@@ -13,14 +13,15 @@ import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useFooterData } from '../../hooks/useFooterData';
 
 const defaultRouteHandle: RouteHandleObject = {
+  backButton: true,
+  hideBreadcrumbs: false,
   sidebar: { visible: true },
-  crumbs: { routeName: '', elements: [] },
-  backButton: false
 };
 
 export function Layout() {
   const matches = useMatches();
   const footerData = useFooterData();
+  const currentMatch = matches.length > 1 ? matches.slice(-1) : matches;
 
   const overlay = utils.sidemenu.status.overlay.value;
 
@@ -29,12 +30,14 @@ export function Layout() {
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const { collapsed } = useCollapseMenu(!lg);
 
-  const { crumbs, sidebar, backButton, backButtonText, backButtonFunction } = {
+  const { hideBreadcrumbs, sidebar, backButton, backButtonText, backButtonFunction } = {
     ...defaultRouteHandle,
-    ...(matches.find((match) => Boolean(match.handle))?.handle || {})
+    ...(currentMatch.find((match) => Boolean(match.handle))?.handle || {})
   } as RouteHandleObject;
 
   const sidePadding = sidebar.visible ? 3 : { xs: 3, md: 12, lg: 27, xl: 34 };
+
+  const mainColumnWidth = !sidebar.visible ? 12 : (collapsed ? 11 : 10);
 
   return (
     <>
@@ -55,13 +58,12 @@ export function Layout() {
               bgcolor={grey['100']}
               padding={3}
               height={'100%'}
-              xs={12}
-              lg={collapsed ? 11 : 10}
+              xs={mainColumnWidth}
               paddingX={sidePadding}>
               <Stack direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
                 {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
-                {crumbs && (
-                  <Breadcrumbs crumbs={crumbs} separator={<NavigateNext fontSize="small" />} />
+                {!hideBreadcrumbs && (
+                  <Breadcrumbs separator={<NavigateNext fontSize="small" />} />
                 )}
               </Stack>
               <Outlet />
