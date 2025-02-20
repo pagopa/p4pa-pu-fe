@@ -40,12 +40,12 @@ export const Reporting = () => {
               ]}
               button={[
                 {
-                  text: t('commons.filters.remove'),
+                  label: t('commons.filters.remove'),
                   variant: 'outlined',
                   onClick: () => console.log('remove filter')
                 },
                 {
-                  text: t('commons.filters.filterResults'),
+                  label: t('commons.filters.filterResults'),
                   variant: 'contained',
                   onClick: () => navigate(PageRoutes.REPORTING_SEARCH_RESULTS)
                 }
