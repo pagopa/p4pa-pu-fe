@@ -88,9 +88,6 @@ export const flowsRoutes = [{
           element: <TelematicReceiptImportFlowOverview />,
           handle: {
             backButton: true,
-            sidebar: {
-              visibile: true
-            },
           } as RouteHandleObject,
         },
       ]
