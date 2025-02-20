@@ -1,8 +1,8 @@
 import { useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { ingestionFlowFileSchema } from '../../generated/zod-schema';
-import { z } from 'zod';
+import { pagedIngestionFlowFileSchema } from '../../generated/zod-schema';
+import { toUTCString } from '../utils/formatter';
 
 export const getIngestionFlowFiles = (
   organizationId: number,
@@ -57,14 +57,11 @@ export const getIngestionFlowFiles = (
           ...files,
           content: files.content.map((file) => ({
             ...file,
-            creationDate: new Date(file.creationDate).toISOString()
+            creationDate: toUTCString(file.creationDate)
           }))
         };
-      
-        // Use this after bff fix
-        // parseAndLog((pagedIngestionFlowFileSchema), transformedFiles);
 
-        parseAndLog(z.object({ content: z.array(ingestionFlowFileSchema) }), transformedFiles);
+        parseAndLog((pagedIngestionFlowFileSchema), transformedFiles);
 
         return transformedFiles;
       }
@@ -75,3 +72,4 @@ export const getIngestionFlowFiles = (
     ...options
   });
 };
+
