@@ -1,30 +1,15 @@
-import React from 'react';
-import { Box, Grid, Typography, Button } from '@mui/material';
+import { Box, Grid, Stack, Typography } from '@mui/material';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import FilterContainer, { FilterItem } from '../FilterContainer/FilterContainer';
-
-interface ButtonField {
-  text: string;
-  variant?: 'contained' | 'outlined';
-  onClick?: () => void;
-}
-
-interface MultiFilterConfig {
-  enabled: boolean;
-  selectLabel: string;
-  inputLabel: {
-    label: string;
-    icon?: React.ReactNode;
-  };
-  selectOptions: { label: string; value: string }[];
-}
+import { FilterMap } from '../../hooks/useFilters';
+import { ButtonProps, FormComponent } from '../FormComponent';
 
 type SearchCardProps = {
   title: string;
   description: string;
   fields?: FilterItem[];
-  button?: ButtonField[];
-  multiFilterConfig?: MultiFilterConfig;
+  button?: ButtonProps[];
+  multiFilterConfig?: FilterMap;
 };
 
 const SearchCard = ({ title, description, fields, button, multiFilterConfig }: SearchCardProps) => {
@@ -45,24 +30,18 @@ const SearchCard = ({ title, description, fields, button, multiFilterConfig }: S
       <Grid container spacing={2} alignItems="center">
         {fields && <FilterContainer items={fields} />}
 
-        {multiFilterConfig?.enabled && (
+        {multiFilterConfig && (
           <Grid item lg={12}>
-            <MultiFilter
-              selectLabel={multiFilterConfig.selectLabel}
-              inputLabel={multiFilterConfig.inputLabel}
-              selectOptions={multiFilterConfig.selectOptions}
-            />
+            <MultiFilter filterMap={multiFilterConfig} />
           </Grid>
         )}
       </Grid>
 
-      <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
-        {button?.map((btn, index) => (
-          <Button key={index} variant={btn.variant} onClick={btn.onClick}>
-            {btn.text}
-          </Button>
-        ))}
-      </Box>
+      <Stack direction="row" justifyContent="flex-end">
+        <Stack direction="row" gap={2} flex={0.6}>
+          {button?.map((btn, index) => <FormComponent.Button key={index} {...btn} />)}
+        </Stack>
+      </Stack>
     </Box>
   );
 };
