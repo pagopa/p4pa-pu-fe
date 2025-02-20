@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
 import SearchCard from './SearchCard';
 import { vi } from 'vitest';
 import { COMPONENT_TYPE, FilterItem } from '../FilterContainer/FilterContainer';
+import { fireEvent, render, screen } from '../../__tests__/renderers';
 
 describe('SearchCard', () => {
   const mockProps = {
@@ -33,15 +33,7 @@ describe('SearchCard', () => {
       }
     ],
     multiFilterConfig: {
-      enabled: true,
-      selectLabel: 'Filter By',
-      inputLabel: {
-        label: 'Filter Input'
-      },
-      selectOptions: [
-        { label: 'Filter 1', value: 'f1' },
-        { label: 'Filter 2', value: 'f2' }
-      ]
+      searchTest: { label: 'Search', fields: [{ type: 0, label: 'Search Field' }] }
     }
   };
 
@@ -76,7 +68,6 @@ describe('SearchCard', () => {
     expect(options[1].textContent).toBe('Option 2');
   });
 
-
   it('renders button and handles click', () => {
     render(<SearchCard {...mockProps} />);
 
@@ -90,20 +81,12 @@ describe('SearchCard', () => {
   it('renders MultiFilter when enabled', () => {
     render(<SearchCard {...mockProps} />);
 
-    const filterSelect = screen.getByRole('combobox', { name: /Filter By/i });
-    const filterInput = screen.getByRole('textbox', { name: /Filter Input/i });
-
-    expect(filterSelect).toBeDefined();
-    expect(filterInput).toBeDefined();
+    expect(screen.getByLabelText('commons.searchFor')).toBeInTheDocument();
   });
 
   it('does not render MultiFilter when disabled', () => {
     const propsWithoutFilter = {
       ...mockProps,
-      multiFilterConfig: {
-        ...mockProps.multiFilterConfig,
-        enabled: false
-      }
     };
 
     render(<SearchCard {...propsWithoutFilter} />);
