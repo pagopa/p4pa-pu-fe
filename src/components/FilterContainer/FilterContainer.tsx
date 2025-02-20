@@ -43,6 +43,7 @@ type ButtonField = BaseField & {
   type: COMPONENT_TYPE.button;
   variant?: 'contained' | 'outlined';
   onClick: () => void;
+  disabled?: boolean;
 };
 
 export type FilterItem = SearchField | SelectField | ButtonField | DateRangeField;
@@ -96,6 +97,7 @@ const RenderComponent = ({ item, id }: { item: FilterItem; id: string }) => {
         size="medium"
         variant={item.variant || 'contained'}
         sx={{ height: 40 }}
+        disabled={item.disabled}
         onClick={item.onClick}>
         {item.label}
       </Button>

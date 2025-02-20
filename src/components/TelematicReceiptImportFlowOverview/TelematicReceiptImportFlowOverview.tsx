@@ -31,12 +31,14 @@ const TelematicReceiptImportFlowOverview = () => {
     applyFilters,
     updatePagination,
     handleDateFromChange,
-    handleDateToChange 
+    handleDateToChange,
+    hasActiveFilters 
   } = useFlowFilters({
     flowFileTypes: [FlowFileType.RECEIPT],
   });
 
   const { data } = getIngestionFlowFiles(organizationId, appliedFilters);
+
 
   const renderActionCell = (params: GridRenderCellParams) => {
     const { ingestionFlowFileId, status } = params.row;
@@ -208,7 +210,8 @@ const TelematicReceiptImportFlowOverview = () => {
               type: COMPONENT_TYPE.button,
               label: t('commons.filters.filterResults'),
               gridWidth: 1,
-              onClick: applyFilters
+              onClick: applyFilters,
+              disabled: !hasActiveFilters()
             }
           ]}
         />

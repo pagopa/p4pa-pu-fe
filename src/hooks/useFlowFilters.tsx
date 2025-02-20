@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { FlowFileFilters, FlowFileType, PaginationParams } from '../store/types';
+import { FlowFileFilters, FlowFileType, PaginationParams } from '../models/Filters';
 
 
 interface UseFlowFiltersProps {
@@ -24,6 +24,23 @@ export const useFlowFilters = ({
 
   const [draftFilters, setDraftFilters] = useState<FlowFileFilters>(appliedFilters);
 
+  const hasActiveFilters = useCallback(() => {
+    const isFileNameChanged = (draftFilters.fileName || '') !== (appliedFilters.fileName || '');
+    const isDateFromChanged = draftFilters.creationDateFrom !== appliedFilters.creationDateFrom;
+    const isDateToChanged = draftFilters.creationDateTo !== appliedFilters.creationDateTo;
+    const isStatusChanged = draftFilters.status !== appliedFilters.status;
+
+    return isFileNameChanged || isDateFromChanged || isDateToChanged || isStatusChanged;
+  }, [
+    draftFilters.fileName,
+    draftFilters.creationDateFrom,
+    draftFilters.creationDateTo,
+    draftFilters.status,
+    appliedFilters.fileName,
+    appliedFilters.creationDateFrom,
+    appliedFilters.creationDateTo,
+    appliedFilters.status
+  ]);
 
   const updateDraftFilters = useCallback((updates: Partial<FlowFileFilters>) => {
     setDraftFilters(prev => ({
@@ -74,6 +91,7 @@ export const useFlowFilters = ({
     applyFilters,
     updatePagination,
     handleDateFromChange,
-    handleDateToChange
+    handleDateToChange,
+    hasActiveFilters
   };
 };
