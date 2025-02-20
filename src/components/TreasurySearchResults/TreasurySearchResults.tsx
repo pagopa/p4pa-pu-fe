@@ -3,11 +3,13 @@ import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
-import { Download, FilterAlt, Search } from '@mui/icons-material';
+import { FilterAlt } from '@mui/icons-material';
 import CustomDrawer from '../Drawer/CustomDrawer';
 import { useState } from 'react';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
+import { useFilters } from '../../hooks/useFilters';
+import { useStore } from '../../store/GlobalStore';
 
 
 const TreasurySearchResults = () => {
@@ -15,6 +17,10 @@ const TreasurySearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const filterMap = useFilters();
+  const {
+    state: { filters }
+  } = useStore();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -43,7 +49,7 @@ const TreasurySearchResults = () => {
           startIcon={<FilterAlt />}
           onClick={toggleDrawer}
         >
-          {t('commons.filters.filtersField')}
+          {`${t('commons.filters.filtersField')} (${filters.length})`}
         </ButtonNaked>
       </Grid>
 
@@ -55,20 +61,11 @@ const TreasurySearchResults = () => {
         open={drawerOpen}
         onClose={toggleDrawer}
         title={t('commons.filters.filtersField')}
-        startIcon={<Download />}
-        multiFilterConfig={{
-          enabled: true,
-          selectLabel: t('commons.searchFor'),
-          inputLabel: {
-            label: t('commons.search'),
-            icon: <Search />
-          },
-          selectOptions: [
-            { label: 'Option 1', value: '1' },
-            { label: 'Option 2', value: '2' },
-            { label: 'Option 3', value: '3' },
-          ]
-        }} 
+        multiFilterConfig={filterMap}
+        buttons={[
+          {buttonText: t('commons.filters.filterResults'), onButtonClick: toggleDrawer, variant: 'contained', disabled: filters[0] === '' || filters.length === 0},
+          {buttonText: t('commons.filters.remove'), onButtonClick: () => console.log('filter applied'), variant: 'text'}
+        ]}
       />
     </>
   );
