@@ -1,7 +1,8 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useFlowFilters } from './useFlowFilters';
-import { FlowFileType } from '../models/Filters';
+import { FlowFileFilters, FlowFileType } from '../models/Filters';
+import { GridSortModel } from '@mui/x-data-grid';
 
 
 describe('useFlowFilters', () => {
@@ -155,5 +156,183 @@ describe('useFlowFilters', () => {
     expect(new Date(dateToValue!).getUTCMinutes()).toBe(59);
     expect(new Date(dateToValue!).getUTCSeconds()).toBe(59);
     expect(new Date(dateToValue!).getUTCMilliseconds()).toBe(999);
+  });
+
+  it('should update sort model and filters when sorting is applied', () => {
+
+    const onFiltersChange = vi.fn();
+    
+    const { result } = renderHook(() => useFlowFilters({
+      flowFileTypes: [FlowFileType.RECEIPT],
+      onFiltersChange
+    }));
+
+    const newSortModel: GridSortModel = [
+      { field: 'fileName', sort: 'asc' }
+    ];
+
+    act(() => {
+      result.current.handleSortModelChange(newSortModel);
+    });
+
+    expect(result.current.sortModel).toEqual(newSortModel);
+
+    expect(result.current.appliedFilters).toEqual(
+      expect.objectContaining({
+        sort: ['fileName,asc'],
+        page: 0
+      })
+    );
+
+    expect(result.current.draftFilters).toEqual(result.current.appliedFilters);
+
+    expect(onFiltersChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        sort: ['fileName,asc'],
+        page: 0
+      })
+    );
+  });
+
+  it('should remove sort when empty sort model is provided', () => {
+    const onFiltersChange = vi.fn();
+    
+    const { result } = renderHook(() => useFlowFilters({
+      flowFileTypes: [FlowFileType.RECEIPT],
+      onFiltersChange
+    }));
+
+    act(() => {
+      result.current.handleSortModelChange([
+        { field: 'fileName', sort: 'asc' }
+      ]);
+    });
+
+    act(() => {
+      result.current.handleSortModelChange([]);
+    });
+
+    expect(result.current.appliedFilters.sort).toBeUndefined();
+    expect(result.current.draftFilters.sort).toBeUndefined();
+    expect(result.current.sortModel).toEqual([]);
+
+    expect(onFiltersChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        sort: undefined,
+        page: 0
+      })
+    );
+  });
+
+  it('should maintain other filter values when updating sort', () => {
+
+    type FlowFileStatus = 'UPLOADED' | 'PROCESSING' | 'COMPLETED' | 'ERROR';
+    
+    const initialFilters: Partial<FlowFileFilters> = {
+      fileName: 'test.pdf',
+      status: 'COMPLETED' as FlowFileStatus
+    };
+
+    const { result } = renderHook(() => useFlowFilters({
+      flowFileTypes: [FlowFileType.RECEIPT],
+      initialFilters
+    }));
+
+    act(() => {
+      result.current.handleSortModelChange([
+        { field: 'fileName', sort: 'desc' }
+      ]);
+    });
+
+    expect(result.current.appliedFilters).toEqual(
+      expect.objectContaining({
+        fileName: 'test.pdf',
+        status: 'COMPLETED',
+        sort: ['fileName,desc'],
+        page: 0
+      })
+    );
+  });
+
+  it('should return false when draft filters match applied filters', () => {
+    const { result } = renderHook(() => useFlowFilters({
+      flowFileTypes: [FlowFileType.RECEIPT]
+    }));
+
+    expect(result.current.hasActiveFilters()).toBe(false);
+  });
+
+  it('should return true when fileName is changed', () => {
+    const { result } = renderHook(() => useFlowFilters({
+      flowFileTypes: [FlowFileType.RECEIPT]
+    }));
+
+    act(() => {
+      result.current.updateDraftFilters({ fileName: 'test.pdf' });
+    });
+
+    expect(result.current.hasActiveFilters()).toBe(true);
+  });
+
+  it('should return true when status is changed', () => {
+    const { result } = renderHook(() => useFlowFilters({
+      flowFileTypes: [FlowFileType.RECEIPT]
+    }));
+
+    act(() => {
+      result.current.updateDraftFilters({ status: 'COMPLETED' });
+    });
+
+    expect(result.current.hasActiveFilters()).toBe(true);
+  });
+
+  it('should return true when dates are changed', () => {
+    const { result } = renderHook(() => useFlowFilters({
+      flowFileTypes: [FlowFileType.RECEIPT]
+    }));
+
+    const testDate = new Date('2024-01-01T12:00:00.000Z').toISOString();
+
+    act(() => {
+      result.current.updateDraftFilters({ 
+        creationDateFrom: testDate,
+        creationDateTo: testDate
+      });
+    });
+
+    expect(result.current.hasActiveFilters()).toBe(true);
+  });
+
+  it('should return false after applying filters', () => {
+    const { result } = renderHook(() => useFlowFilters({
+      flowFileTypes: [FlowFileType.RECEIPT]
+    }));
+
+    act(() => {
+      result.current.updateDraftFilters({ fileName: 'test.pdf' });
+    });
+
+    expect(result.current.hasActiveFilters()).toBe(true);
+
+    act(() => {
+      result.current.applyFilters();
+    });
+
+    expect(result.current.hasActiveFilters()).toBe(false);
+  });
+
+  it('should handle undefined values correctly', () => {
+    const { result } = renderHook(() => useFlowFilters({
+      flowFileTypes: [FlowFileType.RECEIPT],
+      initialFilters: {
+        fileName: 'initial.pdf'
+      }
+    }));
+
+    act(() => {
+      result.current.updateDraftFilters({ fileName: undefined });
+    });
+
+    expect(result.current.hasActiveFilters()).toBe(true);
   });
 });

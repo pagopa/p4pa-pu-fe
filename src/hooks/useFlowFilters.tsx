@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
+import { GridSortModel } from '@mui/x-data-grid';
 import { FlowFileFilters, FlowFileType, PaginationParams } from '../models/Filters';
-
 
 interface UseFlowFiltersProps {
   initialFilters?: Partial<FlowFileFilters>;
@@ -23,6 +23,8 @@ export const useFlowFilters = ({
   }));
 
   const [draftFilters, setDraftFilters] = useState<FlowFileFilters>(appliedFilters);
+  
+  const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
   const hasActiveFilters = useCallback(() => {
     const isFileNameChanged = (draftFilters.fileName || '') !== (appliedFilters.fileName || '');
@@ -84,6 +86,23 @@ export const useFlowFilters = ({
     });
   }, [updateDraftFilters]);
 
+  const handleSortModelChange = useCallback((newModel: GridSortModel) => {
+    setSortModel(newModel);
+    
+    const [firstSort] = newModel;
+    const sortValue = firstSort && `${firstSort.field},${firstSort.sort}`;
+    
+    const newFilters = {
+      ...appliedFilters,
+      page: 0,
+      sort: sortValue ? [sortValue] : undefined
+    };
+    
+    setAppliedFilters(newFilters);
+    setDraftFilters(newFilters);
+    onFiltersChange?.(newFilters);
+  }, [appliedFilters, onFiltersChange]);
+
   return {
     appliedFilters,
     draftFilters,
@@ -92,6 +111,8 @@ export const useFlowFilters = ({
     updatePagination,
     handleDateFromChange,
     handleDateToChange,
-    hasActiveFilters
+    hasActiveFilters,
+    sortModel,
+    handleSortModelChange
   };
 };
