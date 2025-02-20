@@ -7,7 +7,7 @@ import { Download, FilterAlt, Search } from '@mui/icons-material';
 import CustomDrawer from '../Drawer/CustomDrawer';
 import { useState } from 'react';
 import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../routes/routes';
+import { PageRoutes } from '../../App';
 
 
 const TreasurySearchResults = () => {
