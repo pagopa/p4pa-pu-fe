@@ -13,16 +13,7 @@ import {
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
 import MultiFilter from '../MultiFilter/MultiFilter';
-
-interface MultiFilterConfig {
-  enabled: boolean;
-  selectLabel: string;
-  inputLabel: {
-    label: string;
-    icon?: React.ReactNode;
-  };
-  selectOptions: { label: string; value: string }[];
-}
+import { FilterMap } from '../../hooks/useFilters';
 
 interface CustomDrawerProps {
   open: boolean;
@@ -35,10 +26,13 @@ interface CustomDrawerProps {
     variant?: 'body1' | 'body2' | 'h6' | 'subtitle1' | 'monospaced';
   }[];
   title: string;
-  buttonText?: string;
-  onButtonClick?: () => void;
-  startIcon?: React.ReactNode;
-  multiFilterConfig?: MultiFilterConfig;
+  multiFilterConfig?: FilterMap;
+  buttons?: {
+    buttonText?: string;
+    onButtonClick?: () => void;
+    variant?: 'contained' | 'outlined' | 'text';
+    disabled?: boolean
+  }[];
 }
 
 const CustomDrawer: React.FC<CustomDrawerProps> = ({
@@ -46,9 +40,7 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
   onClose,
   fields,
   title,
-  buttonText,
-  onButtonClick,
-  startIcon,
+  buttons,
   multiFilterConfig
 }) => {
   const theme = useTheme();
@@ -60,7 +52,7 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
       onClose={onClose}
       PaperProps={{
         sx: {
-          width: 420,
+          width: 500,
           padding: theme.spacing(3),
         },
       }}
@@ -92,28 +84,27 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
           </ListItem>
         ))}
       </List>
-      {multiFilterConfig?.enabled && (
-        <Grid item lg={12}>
-          <MultiFilter
-            selectLabel={multiFilterConfig.selectLabel}
-            inputLabel={multiFilterConfig.inputLabel}
-            selectOptions={multiFilterConfig.selectOptions}
-          />
+      {multiFilterConfig && (
+        <Grid item md={12}>
+          <MultiFilter filterMap={multiFilterConfig}/>
         </Grid>
       )}
-      {buttonText && onButtonClick && (
-        <Box mt={2}>
-          <Button
-            fullWidth
-            size='large'
-            variant="contained"
-            onClick={onButtonClick}
-            startIcon={startIcon}
-          >
-            {buttonText}
-          </Button>
-        </Box>
-      )}
+      <Grid container direction={'column'}>
+        {buttons && buttons.map((btn, index) => (
+          <Grid item mb={1}>
+            <Button
+              key={index}
+              fullWidth
+              size='large'
+              variant={btn.variant}
+              onClick={btn.onButtonClick}
+              disabled={btn.disabled}
+            >
+              {btn.buttonText}
+            </Button>
+          </Grid>
+        ))}
+      </Grid>
     </Drawer>
   );
 };
