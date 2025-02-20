@@ -172,7 +172,7 @@ export const flowsRoutes = [{
           path: 'search-results',
           element: <TreasurySearchResults />,
           handle: {
-            backButton: true
+            backButton: false,
           } as RouteHandleObject,
         },
       ]
