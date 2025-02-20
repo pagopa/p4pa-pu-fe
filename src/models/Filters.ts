@@ -21,6 +21,7 @@ export interface FlowFilters {
     status?: FlowStatus;
     creationDateFrom?: string;
     creationDateTo?: string;
+    sort?: string[];
 }
 
 export interface PaginationParams {

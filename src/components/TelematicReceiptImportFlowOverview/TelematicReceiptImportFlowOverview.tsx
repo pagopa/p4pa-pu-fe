@@ -32,7 +32,9 @@ const TelematicReceiptImportFlowOverview = () => {
     updatePagination,
     handleDateFromChange,
     handleDateToChange,
-    hasActiveFilters 
+    hasActiveFilters,
+    sortModel,
+    handleSortModelChange
   } = useFlowFilters({
     flowFileTypes: [FlowFileType.RECEIPT],
   });
@@ -224,6 +226,8 @@ const TelematicReceiptImportFlowOverview = () => {
           getRowId={(row) => row.ingestionFlowFileId}
           disableColumnMenu
           disableColumnResize
+          sortModel={sortModel}
+          onSortModelChange={handleSortModelChange}
           customPagination={{
             totalPages: data?.totalPages,
             defaultPageOption: appliedFilters.size,

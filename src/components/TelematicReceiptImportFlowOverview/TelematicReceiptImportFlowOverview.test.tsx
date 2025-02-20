@@ -551,4 +551,80 @@ describe('TelematicReceiptImportFlowOverview', () => {
       expect(chip).not.toBeNull();
     });
   });
+
+  it('clears status filter when ALL is selected', async () => {
+    render(<TelematicReceiptImportFlowOverview />);
+  
+    const statusSelect = screen.getByLabelText('commons.state');
+    fireEvent.mouseDown(statusSelect);
+    const completedOption = screen.getByRole('option', { name: 'commons.status.COMPLETED' });
+    fireEvent.click(completedOption);
+
+    fireEvent.mouseDown(statusSelect);
+    const allOption = screen.getByRole('option', { name: 'commons.status.ALL' });
+    fireEvent.click(allOption);
+    
+    const filterButton = screen.getByText('commons.filters.filterResults');
+    fireEvent.click(filterButton);
+  
+    await waitFor(() => {
+      expect(getIngestionFlowFiles).toHaveBeenCalledWith(
+        123,
+        expect.objectContaining({
+          flowFileTypes: ['RECEIPT'],
+          page: 0,
+          size: 10
+        })
+      );
+    });
+  });
+  
+  it('sets correct status when a specific status is selected', async () => {
+    render(<TelematicReceiptImportFlowOverview />);
+  
+    const statusSelect = screen.getByLabelText('commons.state');
+    fireEvent.mouseDown(statusSelect);
+    const completedOption = screen.getByRole('option', { name: 'commons.status.COMPLETED' });
+    fireEvent.click(completedOption);
+    
+    const filterButton = screen.getByText('commons.filters.filterResults');
+    fireEvent.click(filterButton);
+  
+    await waitFor(() => {
+      expect(getIngestionFlowFiles).toHaveBeenCalledWith(
+        123,
+        expect.objectContaining({
+          flowFileTypes: ['RECEIPT'],
+          page: 0,
+          size: 10,
+          status: 'COMPLETED'
+        })
+      );
+    });
+  });
+
+  it('renders grid with data when data is available', async () => {
+    (getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ 
+      data: mockData 
+    });
+  
+    const { container } = render(<TelematicReceiptImportFlowOverview />);
+  
+    await waitFor(() => {
+      const firstRow = mockData.content[0];
+      expect(container.querySelector(`[data-id="${firstRow.ingestionFlowFileId}"]`)).toBeDefined();
+    });
+  });
+  
+  it('renders empty grid when data is undefined', async () => {
+    (getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ 
+      data: undefined 
+    });
+  
+    const { container } = render(<TelematicReceiptImportFlowOverview />);
+  
+    await waitFor(() => {
+      expect(container.querySelector('.MuiDataGrid-overlay')).toHaveTextContent('No rows');
+    });
+  });
 });
