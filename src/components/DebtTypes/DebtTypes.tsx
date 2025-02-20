@@ -5,18 +5,14 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
+import { useEffect, useState } from 'react';
 
 export const DebtTypes = () => {
+  
   const theme = useTheme();
   const { t } = useTranslation();
 
-  interface DebtTypesDataRow {
-    id: number;
-    name: string;
-    lastUpdate: string;
-    authorizedOrganizations: string;
-  }
-
+  /*START MOCK DATA*/
   const rows: DebtTypesDataRow[] = [
     {
       id: 1,
@@ -61,6 +57,34 @@ export const DebtTypes = () => {
       )
     }
   ];
+  /*END MOCK DATA*/
+
+  const [searchInputField, setSearchInputField] = useState('');
+  const [filterDataRow, setFilterDataRow] = useState<DebtTypesDataRow[]>(rows);
+  const [isSearchEnabled, setIsSearchEnabled] = useState(false);
+
+  interface DebtTypesDataRow {
+    id: number;
+    name: string;
+    lastUpdate: string;
+    authorizedOrganizations: string;
+  }
+
+  const handleSearch = () => {
+    const filteredData = rows.filter((row) =>
+      row.name.toLowerCase().includes(searchInputField.toLowerCase())
+    );
+    setFilterDataRow(filteredData);
+  };
+
+  useEffect(() => {
+    if (searchInputField.length >= 3) {
+      setIsSearchEnabled(true);
+    } else {
+      setIsSearchEnabled(false);
+      setFilterDataRow(rows);
+    }
+  }, [searchInputField]);
 
   return (
     <>
@@ -89,6 +113,8 @@ export const DebtTypes = () => {
             {
               type: COMPONENT_TYPE.textField,
               label: t('debtTypes.searchDescription'),
+              value: searchInputField,
+              onChange: (e) => setSearchInputField(e.target.value),
               icon: <Search />,
               gridWidth: 11
             },
@@ -96,7 +122,8 @@ export const DebtTypes = () => {
               type: COMPONENT_TYPE.button,
               label: t('commons.search'),
               gridWidth: 1,
-              onClick: () => console.log('Search')
+              onClick: handleSearch,
+              disabled: !isSearchEnabled
             }
           ]}
         />
@@ -107,7 +134,7 @@ export const DebtTypes = () => {
           padding: 2
         }}>
         <CustomDataGrid
-          rows={rows}
+          rows={filterDataRow}
           columns={columns}
           hideFooter
           disableColumnMenu
