@@ -146,6 +146,7 @@
         "requiredFileText": "Campo obbligatorio. Carica un file .zip"
     },
     "flowDataGrid": {
+        "noDataRows": "Nessun elemento trovato",
         "internalID": "ID Interno",
         "loadedDiscarded": "Caricati/Scarti",
         "name": "Nome",

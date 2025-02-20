@@ -139,6 +139,7 @@ export const DebtTypes = () => {
           hideFooter
           disableColumnMenu
           disableColumnResize
+          localeText={{noRowsLabel: t('flowDataGrid.noDataRows')}}
         />
       </Box>
     </>
