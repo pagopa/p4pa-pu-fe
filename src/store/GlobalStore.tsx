@@ -7,6 +7,7 @@ import { setUserInfo, userInfoState } from './UserInfoStore';
 import { configFeState } from './ConfigFeStore';
 import { appState, setAppState } from './AppStateStore';
 import { AppState } from '../models/AppState';
+import { filtersState } from './FilterStore';
 
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
 
@@ -15,7 +16,8 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     [STATE.APP_STATE]: appState?.value,
     [STATE.CONFIG_FE]: configFeState?.value,
     [STATE.ORGANIZATION_ID]: organizationIdState.state?.value,
-    [STATE.USER_INFO]: userInfoState.state?.value
+    [STATE.USER_INFO]: userInfoState.state?.value,
+    [STATE.FILTERS]: filtersState?.value
   };
 
   const setState = (key: STATE, value: unknown) => {

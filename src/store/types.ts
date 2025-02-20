@@ -8,6 +8,7 @@ export interface State {
   [STATE.ORGANIZATION_ID]: OrganizationIdMemo | undefined;
   [STATE.CONFIG_FE]: ConfigFE | undefined;
   [STATE.APP_STATE]: AppState;
+  [STATE.FILTERS]: string[];
 }
 
 export interface StoreContextProps {
@@ -19,5 +20,6 @@ export enum STATE {
   APP_STATE = 'appState',
   USER_INFO = 'userInfo',
   CONFIG_FE = 'configFe',
-  ORGANIZATION_ID = 'organizationId'
+  ORGANIZATION_ID = 'organizationId',
+  FILTERS = 'filters'
 }
