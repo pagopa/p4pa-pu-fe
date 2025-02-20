@@ -63,11 +63,13 @@
         "paymentExecutor": "Versante",
         "reason": "Causale",
         "requiredFieldDescription": "* Indica un campo obbligatorio",
+        "createNew": "Crea nuovo",
         "routes": {
             "CONSERVATION": "Conservazione",
             "CONSERVATION_INDEX": "Pagina principale",
             "DEBT_POSITIONS": "Posizioni debitorie",
             "DEBT_TYPES": "Tipi dovuti",
+            "DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
             "DETAIL": "Dettagli",
             "DETAIL_FLOWS": "Dettaglio flusso",
             "EXPORT": "Export",
@@ -150,7 +152,9 @@
         "operator": "Operatore",
         "paymentFromDate": "Pagamento dal",
         "paymentToDate": "Pagamento al",
-        "reservationDate": "Data prenotazione"
+        "reservationDate": "Data prenotazione",
+        "lastUpdate": "Ultima Modifica",
+        "authorizedOrganizations": "Enti abilitati"
     },
     "reporting": {
         "description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
@@ -250,5 +254,9 @@
         "fileVersion": "Versione tracciato",
         "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
         "formTitle": "Configurazione della esportazione"
+    },
+    "debtTypes": {
+        "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
+        "searchDescription": "Codice per Descrizione"
     }
 }
