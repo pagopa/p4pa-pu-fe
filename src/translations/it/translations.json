@@ -194,7 +194,8 @@
 		"paymentToDate": "Pagamento al",
 		"reservationDate": "Data prenotazione",
         "lastUpdate": "Ultima Modifica",
-        "authorizedOrganizations": "Enti abilitati"
+        "authorizedOrganizations": "Enti abilitati",
+		"noDataRows": "Nessun elemento trovato"
 	},
 	"reporting": {
 		"description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
