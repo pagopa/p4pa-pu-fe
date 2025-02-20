@@ -38,7 +38,7 @@ const SearchCard = ({ title, description, fields, button, multiFilterConfig }: S
       </Grid>
 
       <Stack direction="row" justifyContent="flex-end">
-        <Stack direction="row" gap={2} flex={0.6}>
+        <Stack direction="row" gap={2} flex={0.6} mt={2}>
           {button?.map((btn, index) => <FormComponent.Button key={index} {...btn} />)}
         </Stack>
       </Stack>
