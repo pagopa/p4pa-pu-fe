@@ -3,7 +3,6 @@ import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { Filter } from './Filter';
 import { FilterItem, COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 
-// Mock the FilterContainer component and export the COMPONENT_TYPE enum
 vi.mock('../FilterContainer/FilterContainer', () => ({
   default: vi.fn(({ items }) => (
     <div data-testid="filter-container">
