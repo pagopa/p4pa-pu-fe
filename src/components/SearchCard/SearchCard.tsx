@@ -1,19 +1,14 @@
-import { Box, Grid, Typography, Button } from '@mui/material';
+import { Box, Grid, Stack, Typography } from '@mui/material';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import FilterContainer, { FilterItem } from '../FilterContainer/FilterContainer';
 import { FilterMap } from '../../hooks/useFilters';
-
-interface ButtonField {
-  text: string;
-  variant?: 'contained' | 'outlined';
-  onClick?: () => void;
-}
+import { ButtonProps, FormComponent } from '../FormComponent';
 
 type SearchCardProps = {
   title: string;
   description: string;
   fields?: FilterItem[];
-  button?: ButtonField[];
+  button?: ButtonProps[];
   multiFilterConfig?: FilterMap;
 };
 
@@ -42,13 +37,11 @@ const SearchCard = ({ title, description, fields, button, multiFilterConfig }: S
         )}
       </Grid>
 
-      <Box display="flex" justifyContent="flex-end" gap={2} mt={2}>
-        {button?.map((btn, index) => (
-          <Button key={index} variant={btn.variant} onClick={btn.onClick}>
-            {btn.text}
-          </Button>
-        ))}
-      </Box>
+      <Stack direction="row" justifyContent="flex-end">
+        <Stack direction="row" gap={2} flex={0.6}>
+          {button?.map((btn, index) => <FormComponent.Button key={index} {...btn} />)}
+        </Stack>
+      </Stack>
     </Box>
   );
 };

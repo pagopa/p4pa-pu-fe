@@ -8,11 +8,16 @@ import { PageRoutes } from '../../App';
 import { generatePath, useNavigate } from 'react-router';
 import { useFilters } from '../../hooks/useFilters';
 import { removeAllFilters } from '../../store/FilterStore';
+import { useStore } from '../../store/GlobalStore';
 
 export const Treasury = () => {
   const { t } = useTranslation();
   const filterMap = useFilters();
   const navigate = useNavigate();
+  const {
+    state: { filters }
+  } = useStore();
+
   return (
     <>
       <TitleComponent
@@ -28,13 +33,14 @@ export const Treasury = () => {
               multiFilterConfig={filterMap}
               button={[
                 {
-                  text: t('commons.filters.remove'),
+                  label: t('commons.filters.remove'),
                   variant: 'outlined',
                   onClick: removeAllFilters
                 },
                 {
-                  text: t('commons.filters.filterResults'),
+                  label: t('commons.filters.filterResults'),
                   variant: 'contained',
+                  disabled: filters[0] === '' || filters.length === 0,
                   onClick: () => console.log('filter')
                 }
               ]}

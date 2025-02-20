@@ -4,8 +4,13 @@ import { useTranslation } from 'react-i18next';
 import { Filter } from './Filter';
 import { FilterMap } from '../../hooks/useFilters';
 import { useStore } from '../../store/GlobalStore';
-import { addFilterRow, removeFilterRow, updateFilter } from '../../store/FilterStore';
-import { ChangeEvent } from 'react';
+import {
+  addFilterRow,
+  removeAllFilters,
+  removeFilterRow,
+  updateFilter
+} from '../../store/FilterStore';
+import { ChangeEvent, useEffect } from 'react';
 
 export type MultiFilterProps = {
   filterMap: FilterMap;
@@ -16,6 +21,10 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
     state: { filters }
   } = useStore();
   const { t } = useTranslation();
+
+  useEffect(() => {
+    removeAllFilters();
+  }, []);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     updateFilter(e.target.value, index);

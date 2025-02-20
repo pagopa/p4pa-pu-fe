@@ -1,7 +1,7 @@
 import { ButtonProps, Button } from '@mui/material';
 
 export type _ButtonProps = Omit<ButtonProps, 'type'> & {
-  label: string;
+  label?: string;
 };
 
 export const _Button = (props: _ButtonProps) => (

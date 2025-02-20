@@ -65,13 +65,13 @@ const RenderComponent = ({ item }: { item: FilterItem }) => {
 };
 
 const FilterContainer = ({ items }: FilterContainerProps) =>
-  items.map((item, index) => {
+  items.map(({ gridWidth, ...item }, index) => {
     const key = `${item.type}-${item.label}-${index}`;
 
     return (
       <Grid
         item
-        xs={item.gridWidth ?? 12}
+        xs={gridWidth ?? 12}
         height="100%"
         data-testid="filter-container"
         key={key}
