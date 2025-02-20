@@ -103,15 +103,17 @@
 		"paymentExecutor": "Versante",
 		"reason": "Causale",
 		"requiredFieldDescription": "* Indica un campo obbligatorio",
+		"createNew": "Crea nuovo",
 		"routes": {
 			"CONSERVATION": "Conservazione",
 			"CONSERVATION_INDEX": "Pagina principale",
 			"DEBT_POSITIONS": "Posizioni debitorie",
 			"DEBT_TYPES": "Tipi dovuti",
+			"DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
 			"DETAIL": "Dettagli",
 			"DETAIL_FLOWS": "Dettaglio flusso",
 			"EXPORT": "Export",
-			"EXPORT_FLOWS": "Esportazzione flussi",
+			"EXPORT_FLOWS": "Esportazione flussi",
 			"FLOWS": "Flussi",
 			"HOME": "Panoramica",
 			"IMPORT": "Import",
@@ -190,7 +192,10 @@
 		"operator": "Operatore",
 		"paymentFromDate": "Pagamento dal",
 		"paymentToDate": "Pagamento al",
-		"reservationDate": "Data prenotazione"
+		"reservationDate": "Data prenotazione",
+        "lastUpdate": "Ultima Modifica",
+        "authorizedOrganizations": "Enti abilitati",
+		"noDataRows": "Nessun elemento trovato"
 	},
 	"reporting": {
 		"description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
@@ -300,5 +305,9 @@
 		"valueDate": "Data Valuta",
 		"accountingDate": "Data Contabile",
 		"reportingId": "ID Rendicontazione"
-	}
+	},
+    "debtTypes": {
+        "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
+        "searchDescription": "Codice per Descrizione"
+    }
 }
