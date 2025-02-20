@@ -42,7 +42,7 @@ export const TelematicReceipt = () => {
               ]}
               button={[
                 {
-                  text: t('commons.search'),
+                  label: t('commons.search'),
                   variant: 'contained',
                   onClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS)
                 }

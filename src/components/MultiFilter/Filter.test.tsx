@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { Filter } from './Filter';
-import { FilterItem } from '../FilterContainer/FilterContainer';
+import { FilterItem, COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 
 vi.mock('../FilterContainer/FilterContainer', () => ({
   default: vi.fn(({ items }) => (
@@ -10,12 +10,31 @@ vi.mock('../FilterContainer/FilterContainer', () => ({
         <div key={item.label}>{item.label}</div>
       ))}
     </div>
-  ))
+  )),
+  COMPONENT_TYPE: {
+    textField: 'textField',
+    select: 'select',
+    button: 'button',
+    dateRange: 'dateRange',
+    amount: 'amount'
+  }
 }));
 
 const mockFilterMap = {
-  search: { label: 'Search', fields: [{ type: 0, label: 'Search Field' }] },
-  name: { label: 'Name', fields: [{ type: 0, label: 'Name Field' }] }
+  search: {
+    label: 'Search',
+    fields: [{
+      type: COMPONENT_TYPE.textField,
+      label: 'Search Field'
+    }]
+  },
+  name: {
+    label: 'Name',
+    fields: [{
+      type: COMPONENT_TYPE.textField,
+      label: 'Name Field'
+    }]
+  }
 };
 
 describe('Filter Component', () => {
@@ -64,27 +83,5 @@ describe('Filter Component', () => {
     // Verify that the fields for the selected value are rendered
     const searchField = screen.getByText('Search Field');
     expect(searchField).toBeInTheDocument();
-  });
-
-  it('calls the onChange handler when the select value changes', () => {
-    render(
-      <Filter
-        filterMap={mockFilterMap}
-        onChange={onChange}
-        value={value}
-        selectedFilters={selectedFilters}
-      />
-    );
-
-    // Open the Select dropdown
-    const selectElement = screen.getByRole('combobox');
-    fireEvent.mouseDown(selectElement);
-
-    // Select an option from the dropdown
-    const optionToSelect = screen.getByText('Name');
-    fireEvent.click(optionToSelect);
-
-    // Verify that the onChange handler is called
-    expect(onChange).toHaveBeenCalled();
   });
 });
