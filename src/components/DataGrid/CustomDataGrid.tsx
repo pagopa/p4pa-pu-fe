@@ -1,5 +1,5 @@
 import { styled } from '@mui/material';
-import { DataGrid, DataGridProps, GridColDef, GridValidRowModel } from '@mui/x-data-grid';
+import { DataGrid, DataGridProps, GridColDef, GridValidRowModel, GridSortModel } from '@mui/x-data-grid';
 import { theme } from '@pagopa/mui-italia';
 import CustomPagination from './CustomPagination';
 
@@ -17,6 +17,8 @@ const StyledDataGrid = styled(DataGrid)({
 interface CustomDataGridProps<T extends GridValidRowModel> extends Omit<DataGridProps, 'rows' | 'columns'> {
   rows: T[];
   columns: GridColDef[];
+  sortModel?: GridSortModel;
+  onSortModelChange?: (model: GridSortModel) => void;
   customPagination?: {
     sizePageOptions?: number[];
     defaultPageOption?: number;
@@ -30,6 +32,8 @@ interface CustomDataGridProps<T extends GridValidRowModel> extends Omit<DataGrid
 const CustomDataGrid = <T extends GridValidRowModel>({
   rows,
   columns,
+  sortModel,
+  onSortModelChange,
   customPagination,
   ...restProps
 }: CustomDataGridProps<T>) => (
@@ -38,6 +42,8 @@ const CustomDataGrid = <T extends GridValidRowModel>({
       columns={columns}
       pagination
       disableRowSelectionOnClick
+      sortModel={sortModel}
+      onSortModelChange={onSortModelChange}
       slots={{
         pagination: () => (
           <CustomPagination
