@@ -28,7 +28,22 @@ const customTheme = createTheme({
         root: ({ ownerState, theme }) => ({
           ...(ownerState.color === 'success' && {
             backgroundColor: theme.palette.success.extraLight
-          })
+          }),
+          ...(ownerState.color === 'success' && {
+            backgroundColor: theme.palette.success[100],
+            color: theme.palette.success[850]
+          }),
+          ...(ownerState.color === 'info' && {
+            backgroundColor: theme.palette.info[100],
+            color: theme.palette.info[850]
+          }),
+          ...(ownerState.color === 'error' && {
+            backgroundColor: theme.palette.error[100],
+            color: theme.palette.error[850]
+          }),
+          '& .MuiChip-label': {
+            fontWeight: 600
+          }
         })
       }
     },
