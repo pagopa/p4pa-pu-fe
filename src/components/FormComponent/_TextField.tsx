@@ -10,6 +10,11 @@ export const _TextField = (props: _TextFieldProps) => (
   <TextField
     data-testid={props.id}
     fullWidth
+    sx={{
+      '.MuiInputBase-input': {
+        textOverflow: 'ellipsis' 
+      }
+    }}
     InputProps={{
       endAdornment: (
         <InputAdornment position="end">{props?.icon?? <SearchRoundedIcon />}</InputAdornment>

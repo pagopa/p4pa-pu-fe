@@ -10,6 +10,7 @@ import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 import { useFilters } from '../../hooks/useFilters';
 import { useStore } from '../../store/GlobalStore';
+import { removeAllFilters } from '../../store/FilterStore';
 
 
 const TreasurySearchResults = () => {
@@ -64,7 +65,7 @@ const TreasurySearchResults = () => {
         multiFilterConfig={filterMap}
         buttons={[
           {buttonText: t('commons.filters.filterResults'), onButtonClick: toggleDrawer, variant: 'contained', disabled: filters[0] === '' || filters.length === 0},
-          {buttonText: t('commons.filters.remove'), onButtonClick: () => console.log('filter applied'), variant: 'text'}
+          {buttonText: t('commons.filters.remove'), onButtonClick: removeAllFilters, variant: 'text'}
         ]}
       />
     </>
