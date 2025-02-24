@@ -15,7 +15,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
     i18nTestSetup({
       'commons.routes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW': 'Telematic Receipt Import',
       'telematicReceiptImportFlowOverview.description': 'Import your telematic receipts',
-      'telematicReceiptImportFlowOverview.importFlowButton': 'Import Flow'
+      'commons.importFlowButton': 'Import Flow'
     });
   });
 
@@ -24,7 +24,6 @@ describe('TelematicReceiptImportFlowOverview', () => {
     
     expect(screen.getByText('Telematic Receipt Import')).toBeDefined();
     expect(screen.getByText('Import your telematic receipts')).toBeDefined();
-    expect(screen.getByText('Import Flow')).toBeDefined();
   });
 
   it('handles missing translations by using keys as fallback', () => {

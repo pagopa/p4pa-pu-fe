@@ -15,14 +15,14 @@ import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { STATE } from '../../store/types';
 
-export interface FlowOverviewProps {
+export interface ImportFlowOverviewProps {
   routingCategory: string;
   title: string;
   description: string;
   flowFileTypes: FlowFileType[];
 }
 
-const FlowOverview :React.FC<FlowOverviewProps> = ({
+const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
   routingCategory,
   title,
   description,
@@ -162,7 +162,7 @@ const FlowOverview :React.FC<FlowOverviewProps> = ({
           {
             icon: <Upload />,
             variant: 'outlined',
-            buttonText: t('telematicReceiptImportFlowOverview.importFlowButton'),
+            buttonText: t('commons.importFlowButton'),
             onActionClick: () =>
               navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: routingCategory }))
           }
@@ -253,4 +253,4 @@ const FlowOverview :React.FC<FlowOverviewProps> = ({
   );
 };
 
-export default FlowOverview;
+export default ImportFlowOverview;

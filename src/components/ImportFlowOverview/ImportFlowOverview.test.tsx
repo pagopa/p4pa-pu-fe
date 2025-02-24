@@ -216,7 +216,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
       
     );
 
-    const importButton = screen.getByText('telematicReceiptImportFlowOverview.importFlowButton');
+    const importButton = screen.getByText('commons.importFlowButton');
     fireEvent.click(importButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/mock-path');
