@@ -1,6 +1,20 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import CustomDrawer from './CustomDrawer';
+import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import { useFilters } from '../../hooks/useFilters';
+import { StoreProvider } from '../../store/GlobalStore';
+
+vi.mock('../../hooks/useFilters', () => ({
+  useFilters: () => ({
+    FILTER_TYPE_1: {
+      label: 'Filtro 1',
+      fields: [
+        { type: COMPONENT_TYPE.textField, label: 'commons.searchFor' }
+      ]
+    }
+  })
+}));
 
 describe('CustomDrawer Component', () => {
   let mockOnClose: () => void;
@@ -38,22 +52,19 @@ describe('CustomDrawer Component', () => {
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('renders drawer with multiFilter', () => {
+  it('renders drawer with multiFilter', () => {    
     render(
-      <CustomDrawer
-        open={true}
-        onClose={mockOnClose}
-        title="Test Drawer"
-        multiFilterConfig={{
-          enabled: true,
-          selectLabel: 'Select Option',
-          inputLabel: { label: 'Input Label' },
-          selectOptions: [{ label: 'Option 1', value: 'option1' }],
-        }}
-      />
+      <StoreProvider>
+        <CustomDrawer
+          open={true}
+          onClose={mockOnClose}
+          title="Test Drawer"
+          multiFilterConfig={useFilters()}
+        />
+      </StoreProvider>
     );
   
-    const selectLabels = screen.getAllByText('Select Option');
-    expect(selectLabels[0]).toHaveTextContent('Select Option');
+    const selectLabels = screen.getAllByText('commons.searchFor');
+    expect(selectLabels[0]).toBeTruthy();
   });  
 });

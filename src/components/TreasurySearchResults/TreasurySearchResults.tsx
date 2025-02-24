@@ -45,12 +45,13 @@ const TreasurySearchResults = () => {
 
       <Grid container justifyContent="flex-end" p={2}>
         <ButtonNaked
+          data-testid='open-drawer'
           color="primary"
           size="medium"
           startIcon={<FilterAlt />}
           onClick={toggleDrawer}
         >
-          {`${t('commons.filters.filtersField')} (${filters.length})`}
+          {`${t('commons.filters.filtersField')} (${(filters[0] === '') ? 0 : filters.length})`}
         </ButtonNaked>
       </Grid>
 

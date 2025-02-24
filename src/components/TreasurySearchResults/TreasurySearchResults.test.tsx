@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import TreasurySearchResults from './TreasurySearchResults';
+import { StoreProvider } from '../../store/GlobalStore';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -10,7 +11,8 @@ vi.mock('react-i18next', () => ({
 
 vi.mock('react-router', () => ({
   useNavigate: vi.fn(),
-  generatePath: vi.fn()
+  generatePath: vi.fn(),
+  Navigate: ({to}: {to: string}) => `Navigation to ${to}`
 }));
 
 vi.mock('../Drawer/CustomDrawer', () => ({
@@ -26,26 +28,30 @@ vi.mock('./SearchResultsDataGrid', () => ({
   default: () => <div data-testid="search-results-grid" />
 }));
 
+const renderWithProviders = (ui: React.ReactElement) => {
+  return render(<StoreProvider>{ui}</StoreProvider>);
+};
+
 describe('TreasurySearchResults Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders the component with title and description', () => {
-    render(<TreasurySearchResults />);
+    renderWithProviders(<TreasurySearchResults />);
     expect(screen.getByText('commons.routes.TREASURY')).toBeDefined();
     expect(screen.getByText('treasurySearchResults.description')).toBeDefined();
   });
 
   it('renders the search results table', () => {
-    render(<TreasurySearchResults />);
+    renderWithProviders(<TreasurySearchResults />);
     expect(screen.getByTestId('search-results-grid')).toBeDefined();
   });
 
   it('opens and closes the drawer when clicking the filter button', () => {
-    render(<TreasurySearchResults />);
+    renderWithProviders(<TreasurySearchResults />);
 
-    const filterButton = screen.getByText('commons.filters.filtersField');
+    const filterButton = screen.getByTestId('open-drawer');
     expect(filterButton).toBeDefined();
 
     expect(screen.getByTestId('custom-drawer')).toHaveStyle('display: none');
