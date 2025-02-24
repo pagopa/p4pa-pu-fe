@@ -50,9 +50,16 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
       anchor="right"
       open={open}
       onClose={onClose}
+      keepMounted
+      disableScrollLock
       PaperProps={{
         sx: {
           width: 500,
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'auto',
+          scrollbarWidth: 'none',
           padding: theme.spacing(3),
         },
       }}
@@ -85,15 +92,12 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
         ))}
       </List>
       {multiFilterConfig && (
-        <Grid item md={12}>
-          <MultiFilter filterMap={multiFilterConfig}/>
-        </Grid>
+        <MultiFilter filterMap={multiFilterConfig}/>
       )}
-      <Grid container direction={'column'}>
+      <Grid container direction={'column'} marginTop={2}>
         {buttons && buttons.map((btn, index) => (
-          <Grid item mb={1}>
+          <Grid item mb={1} key={`${btn.buttonText}-${index}`}>
             <Button
-              key={index}
               fullWidth
               size='large'
               variant={btn.variant}
