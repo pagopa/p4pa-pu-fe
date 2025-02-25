@@ -115,6 +115,27 @@ export const Sidebar: React.FC = () => {
   }
 
   if (state.superAdmin || state.operatorRole == 'ROLE_ADMIN') {
+    const debtypes = [];
+
+    // Debtypes catalog only for superAdmin
+    if (state.superAdmin) {
+      debtypes.push(
+        {
+        label: t('commons.routes.DEBT_TYPES_CATALOG'),
+        route: PageRoutes.DEBT_TYPES_CATALOG,
+        end: true
+        }
+      );
+    }
+    
+    debtypes.push(
+      {
+        label: t('commons.routes.DEBT_TYPES_CREATED'),
+        route: PageRoutes.DEBT_TYPES_CATALOG,
+        end: true
+      }
+    );
+
     additionalItems.push(
       {
         label: t('commons.routes.USERS'),
@@ -126,13 +147,7 @@ export const Sidebar: React.FC = () => {
         label: t('commons.routes.DEBT_TYPES'),
         icon: DashboardIcon,
         end: false,
-        items: [
-          {
-            label: t('commons.routes.DEBT_TYPES_CATALOG'),
-            route: PageRoutes.DEBT_TYPES_CATALOG,
-            end: true
-          }
-        ]
+        items: debtypes
       }
     );
   }
