@@ -27,22 +27,26 @@ export const useFilters = () => {
     BILL: {
       label: t('commons.filters.bill.label'),
       fields: [
-        { label: t('commons.filters.bill.code'), type: COMPONENT_TYPE.textField },
+        { label: t('commons.filters.bill.code'), type: COMPONENT_TYPE.textField, gridWidth: 6 },
         {
           label: t('commons.filters.bill.date.label'),
           type: COMPONENT_TYPE.dateRange,
-          from: { label: t('dates.year') }
+          from: { label: t('dates.year') },
+          isYear: true,
+          gridWidth: 6
         }
       ]
     },
     DOCUMENT_CODE: {
       label: t('commons.filters.documentCode.label'),
       fields: [
-        { type: COMPONENT_TYPE.textField, label: t('commons.filters.documentCode.code') },
+        { type: COMPONENT_TYPE.textField, label: t('commons.filters.documentCode.code'), gridWidth: 6 },
         {
           label: t('commons.filters.documentCode.label'),
           type: COMPONENT_TYPE.dateRange,
-          from: { label: t('dates.year') }
+          from: { label: t('dates.year') },
+          isYear: true,
+          gridWidth: 6
         }
       ]
     },
@@ -61,11 +65,13 @@ export const useFilters = () => {
     TEMPORARY_CODE: {
       label: t('commons.filters.temporaryCode.label'),
       fields: [
-        { type: COMPONENT_TYPE.textField, label: t('commons.filters.temporaryCode.code') },
+        { type: COMPONENT_TYPE.textField, label: t('commons.filters.temporaryCode.code'), gridWidth: 6 },
         {
           label: t('commons.filters.temporaryCode.label'),
           type: COMPONENT_TYPE.dateRange,
-          from: { label: t('dates.year') }
+          from: { label: t('dates.year') },
+          isYear: true,
+          gridWidth: 6
         }
       ]
     },

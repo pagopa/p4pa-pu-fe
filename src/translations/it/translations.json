@@ -114,7 +114,7 @@
 			"DETAIL": "Dettagli",
 			"DETAIL_FLOWS": "Dettaglio flusso",
 			"EXPORT": "Export",
-			"EXPORT_FLOWS": "Esportazzione flussi",
+			"EXPORT_FLOWS": "Esportazione flussi",
 			"FLOWS": "Flussi",
 			"HOME": "Panoramica",
 			"IMPORT": "Import",
@@ -143,6 +143,7 @@
 			"TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
 			"TREASURY_IMPORT_OVERVIEW": "Flussi importati",
 			"TREASURY_INDEX": "Pagina principale",
+			"TREASURY_SEARCH_RESULTS": "Risultato ricerca",
 			"USERS": "Utenti"
 		},
 		"search": "Cerca",
@@ -296,6 +297,16 @@
 		"fileVersion": "Versione tracciato",
 		"formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
 		"formTitle": "Configurazione della esportazione"
+	},
+	"treasurySearchResults": {
+		"description": "Visualizza i flussi, seleziona e prenota gli export.",
+		"uploadFlow": "Carica flusso",
+		"reservationDate": "Data prenotazione",
+		"billingYear": "Anno bolletta",
+		"billingCode": "Codice bolletta",
+		"valueDate": "Data Valuta",
+		"accountingDate": "Data Contabile",
+		"reportingId": "ID Rendicontazione"
 	},
     "debtTypes": {
         "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",

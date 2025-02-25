@@ -97,7 +97,6 @@ export const Conservation = () => {
       <Grid
         container
         direction="row"
-        spacing={2}
         alignItems={'center'}
         justifyContent={'space-between'}
         my={2}>
@@ -107,13 +106,13 @@ export const Conservation = () => {
               type: COMPONENT_TYPE.textField,
               label: t('commons.searchName'),
               icon: <Search />,
-              gridWidth: 5
+              gridWidth: 6
             },
             {
               type: COMPONENT_TYPE.dateRange,
               label: 'dateRange',
-              gridWidth: 6,
-              from: { label: t('conservation.exportFrom') }
+              gridWidth: 5,
+              from: { label: t('dates.from') }, to: { label: t('dates.to') }
             },
             {
               type: COMPONENT_TYPE.button,

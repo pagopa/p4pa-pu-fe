@@ -9,13 +9,16 @@ import {
   Typography,
   IconButton,
   useTheme,
+  Grid,
 } from '@mui/material';
 import { Close } from '@mui/icons-material';
+import MultiFilter from '../MultiFilter/MultiFilter';
+import { FilterMap } from '../../hooks/useFilters';
 
 interface CustomDrawerProps {
   open: boolean;
   onClose: () => void;
-  fields: {
+  fields?: {
     id: string;
     label: string;
     value: string;
@@ -23,9 +26,13 @@ interface CustomDrawerProps {
     variant?: 'body1' | 'body2' | 'h6' | 'subtitle1' | 'monospaced';
   }[];
   title: string;
-  buttonText?: string;
-  onButtonClick?: () => void;
-  startIcon?: React.ReactNode;
+  multiFilterConfig?: FilterMap;
+  buttons?: {
+    buttonText?: string;
+    onButtonClick?: () => void;
+    variant?: 'contained' | 'outlined' | 'text';
+    disabled?: boolean
+  }[];
 }
 
 const CustomDrawer: React.FC<CustomDrawerProps> = ({
@@ -33,9 +40,8 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
   onClose,
   fields,
   title,
-  buttonText,
-  onButtonClick,
-  startIcon,
+  buttons,
+  multiFilterConfig
 }) => {
   const theme = useTheme();
 
@@ -44,25 +50,30 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
       anchor="right"
       open={open}
       onClose={onClose}
+      keepMounted
+      disableScrollLock
       PaperProps={{
         sx: {
-          width: 420,
+          width: 500,
+          height: '100vh',
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'auto',
+          scrollbarWidth: 'none',
           padding: theme.spacing(3),
         },
       }}
     >
-      <Box display="flex" justifyContent='end' mb={2}>
-        <IconButton onClick={onClose}>
-          <Close/>
-        </IconButton>
-      </Box>
-      <Box display="flex" justifyContent="space-between" alignItems="center">
-        <Typography variant="h6" gutterBottom fontWeight={700}>
+      <Box display="flex" justifyContent="space-between" alignItems="center" mb={2}>
+        <Typography variant="h6" fontWeight={700}>
           {title}
         </Typography>
+        <IconButton onClick={onClose} data-testid='close-icon'>
+          <Close />
+        </IconButton>
       </Box>
       <List >
-        {fields.map((field) => (
+        {fields?.map((field) => (
           <ListItem key={field.id} disableGutters disablePadding>
             <ListItemText
               primary={
@@ -80,19 +91,24 @@ const CustomDrawer: React.FC<CustomDrawerProps> = ({
           </ListItem>
         ))}
       </List>
-      {buttonText && onButtonClick && (
-        <Box mt={2}>
-          <Button
-            fullWidth
-            size='large'
-            variant="contained"
-            onClick={onButtonClick}
-            startIcon={startIcon}
-          >
-            {buttonText}
-          </Button>
-        </Box>
+      {multiFilterConfig && (
+        <MultiFilter filterMap={multiFilterConfig}/>
       )}
+      <Grid container direction={'column'} marginTop={2}>
+        {buttons && buttons.map((btn, index) => (
+          <Grid item mb={1} key={`${btn.buttonText}-${index}`}>
+            <Button
+              fullWidth
+              size='large'
+              variant={btn.variant}
+              onClick={btn.onButtonClick}
+              disabled={btn.disabled}
+            >
+              {btn.buttonText}
+            </Button>
+          </Grid>
+        ))}
+      </Grid>
     </Drawer>
   );
 };

@@ -19,7 +19,6 @@ const ReportingSearchResults = () => {
         <Grid
           container
           direction="row"
-          spacing={2}
           sx={{
             alignItems: 'center',
             justifyContent: 'space-between',
@@ -44,7 +43,8 @@ const ReportingSearchResults = () => {
                 type: COMPONENT_TYPE.dateRange,
                 label: 'reportingSearchResults.searchDateRange',
                 from: { label: t('reporting.regulationFrom') },
-                gridWidth: 4
+                to: { label: t('dates.to')},
+                gridWidth: 5
               },
               {
                 type: COMPONENT_TYPE.button,

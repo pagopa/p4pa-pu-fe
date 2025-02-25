@@ -13,9 +13,10 @@ export type DateRange = {
 export type _DateRangeProps = {
   from?: DateRange;
   to?: DateRange;
+  isYear?: boolean;
 };
 
-export const _DateRange = ({ from, to }: _DateRangeProps) => {
+export const _DateRange = ({ from, to, isYear }: _DateRangeProps) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -48,6 +49,9 @@ export const _DateRange = ({ from, to }: _DateRangeProps) => {
   return (
     <Stack direction={{ xs: 'row' }} justifyContent="row" gap={2} width="100%">
       <DatePicker
+        views={isYear ? ['year'] : ['day', 'month', 'year']}
+        format={isYear ? 'yyyy' : 'dd/MM/yyyy'}
+        openTo={isYear ? 'year' : 'day'}
         sx={{ width: '100%' }}
         label={t('dates.from')}
         value={startDate}
@@ -66,6 +70,7 @@ export const _DateRange = ({ from, to }: _DateRangeProps) => {
       />
       {to && (
         <DatePicker
+          views={['day', 'month', 'year']}
           sx={{ width: '100%' }}
           label={t('dates.to')}
           value={endDate}

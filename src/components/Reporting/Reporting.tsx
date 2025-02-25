@@ -35,7 +35,7 @@ export const Reporting = () => {
                 {
                   type: COMPONENT_TYPE.dateRange,
                   label: 'reporting.searchDateRange',
-                  from: { label: t('reporting.regulationFrom') }
+                  from: { label: t('dates.from') }, to: { label: t('dates.to') }
                 }
               ]}
               button={[

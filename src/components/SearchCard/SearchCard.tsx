@@ -27,7 +27,7 @@ const SearchCard = ({ title, description, fields, button, multiFilterConfig }: S
         {description}
       </Typography>
 
-      <Grid container spacing={2} alignItems="center">
+      <Grid container alignItems="center">
         {fields && <FilterContainer items={fields} />}
 
         {multiFilterConfig && (
@@ -38,9 +38,17 @@ const SearchCard = ({ title, description, fields, button, multiFilterConfig }: S
       </Grid>
 
       <Stack direction="row" justifyContent="flex-end">
-        <Stack direction="row" gap={2} flex={0.6} mt={2}>
-          {button?.map((btn, index) => <FormComponent.Button key={index} {...btn} />)}
-        </Stack>
+        <Grid container spacing={2} mt={2} sx={{ width: 'auto' }}>
+          {button?.map((btn, index) => (
+            <Grid
+              item
+              key={index}
+              md={button.length === 1 ? 12 : index === 0 ? 8 : 4}
+            >
+              <FormComponent.Button {...btn} fullWidth />
+            </Grid>
+          ))}
+        </Grid>
       </Stack>
     </Box>
   );

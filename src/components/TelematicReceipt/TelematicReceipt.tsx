@@ -30,7 +30,7 @@ export const TelematicReceipt = () => {
               description={t('telematicReceipts.searchdescription')}
               fields={[
                 { type: COMPONENT_TYPE.textField, label: t('commons.iuv'), icon: <Search /> },
-                { type: COMPONENT_TYPE.dateRange, label: 'daterange' },
+                { type: COMPONENT_TYPE.dateRange, label: 'daterange', from: { label: t('dates.from') }, to: { label: t('dates.to') } },
                 {
                   type: COMPONENT_TYPE.select,
                   label: t('commons.duetype'),

@@ -23,7 +23,7 @@ export const Filter = ({ filterMap, onChange, value, selectedFilters }: FilterPr
   }));
 
   return (
-    <Stack direction="row" gap={3} width="100%" data-testid="filter-component">
+    <Stack direction="column" gap={3} width="100%" data-testid="filter-component">
       <FormComponent.Select
         id="filter-select"
         options={sortedOptions}
