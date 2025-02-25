@@ -53,8 +53,11 @@ export const Sidebar: React.FC = () => {
   const configFe = useFeConfig();
   const organizations = useOrganizations();
   const containsBrokerCF = organizations?.some(item => item.orgFiscalCode === configFe?.brokerFiscalCode);
+  const adminAtLeast = organizations?.some(item => item.operatorRole === 'ROLE_ADMIN' );
 
-  if (containsBrokerCF) {
+  // a user is superAdmin when the broker CF is contained in an organization AND
+  // the Broker's CF is equal at least one of the organizations
+  if (containsBrokerCF && adminAtLeast) {
     setSuperAdmin(true);
   }
 
