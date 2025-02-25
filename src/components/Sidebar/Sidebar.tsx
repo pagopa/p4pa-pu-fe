@@ -121,9 +121,9 @@ export const Sidebar: React.FC = () => {
     if (state.superAdmin) {
       debtypes.push(
         {
-        label: t('commons.routes.DEBT_TYPES_CATALOG'),
-        route: PageRoutes.DEBT_TYPES_CATALOG,
-        end: true
+          label: t('commons.routes.DEBT_TYPES_CATALOG'),
+          route: PageRoutes.DEBT_TYPES_CATALOG,
+          end: true
         }
       );
     }
