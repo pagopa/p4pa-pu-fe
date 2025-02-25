@@ -25,6 +25,10 @@ import { sidebarStyles } from './sidebar.styles';
 import { PageRoutes } from '../../App';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
+import { useStore } from '../../store/GlobalStore';
+import { useFeConfig } from '../../hooks/useFeConfig';
+import { setSuperAdmin } from '../../store/SuperAdminStore';
+import { useOrganizations } from '../../hooks/useOrganizations';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -45,6 +49,14 @@ export const Sidebar: React.FC = () => {
   const RotatedAltRouteIcon = () => {
     return <AltRouteIcon sx={{ transform: 'rotate(90deg)' }} />;
   };
+  const { state } = useStore();
+  const configFe = useFeConfig();
+  const organizations = useOrganizations();
+  const containsBrokerCF = organizations?.some(item => item.orgFiscalCode === configFe?.brokerFiscalCode);
+
+  if (containsBrokerCF) {
+    setSuperAdmin(true);
+  }
 
   const menuItems: Array<ISidebarMenuItem> = [
     {
@@ -89,32 +101,41 @@ export const Sidebar: React.FC = () => {
     }
   ];
 
-  const additionalItems = [
-    {
-      label: t('commons.routes.ORGANIZATIONS'),
-      icon: DnsIcon,
-      route: '/debtpositions',
-      end: true
-    },
-    {
-      label: t('commons.routes.USERS'),
-      icon: PeopleIcon,
-      route: '/debtpositions',
-      end: true
-    },
-    {
-      label: t('commons.routes.DEBT_TYPES'),
-      icon: DashboardIcon,
-      end: false,
-      items: [
-        {
-          label: t('commons.routes.DEBT_TYPES_CATALOG'),
-          route: PageRoutes.DEBT_TYPES_CATALOG,
-          end: true
-        }
-      ]
-    }
-  ];
+  const additionalItems = [];
+
+  if (state.superAdmin) {
+    additionalItems.push(
+      {
+        label: t('commons.routes.ORGANIZATIONS'),
+        icon: DnsIcon,
+        route: '/debtpositions',
+        end: true
+      }
+    );
+  }
+
+  if (state.superAdmin || state.operatorRole == 'ROLE_ADMIN') {
+    additionalItems.push(
+      {
+        label: t('commons.routes.USERS'),
+        icon: PeopleIcon,
+        route: '/debtpositions',
+        end: true
+      },
+      {
+        label: t('commons.routes.DEBT_TYPES'),
+        icon: DashboardIcon,
+        end: false,
+        items: [
+          {
+            label: t('commons.routes.DEBT_TYPES_CATALOG'),
+            route: PageRoutes.DEBT_TYPES_CATALOG,
+            end: true
+          }
+        ]
+      }
+    );
+  }
 
   return (
     <>
