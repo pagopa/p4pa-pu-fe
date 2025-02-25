@@ -41,7 +41,7 @@ export const Treasury = () => {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
                   disabled: filters[0] === '' || filters.length === 0,
-                  onClick: () => console.log('filter')
+                  onClick: () => navigate(PageRoutes.TREASURY_SEARCH_RESULTS)
                 }
               ]}
             />

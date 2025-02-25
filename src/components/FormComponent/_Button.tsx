@@ -9,7 +9,6 @@ export const _Button = (props: _ButtonProps) => (
     fullWidth
     size="medium"
     variant="contained"
-    sx={{ height: 40 }}
     onClick={props.onClick}
     {...props}>
     {props.children || props.label}

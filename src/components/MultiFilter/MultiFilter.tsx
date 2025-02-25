@@ -1,4 +1,4 @@
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Button, IconButton, Stack, useTheme } from '@mui/material';
 import { Add, RemoveCircleOutline } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Filter } from './Filter';
@@ -17,10 +17,12 @@ export type MultiFilterProps = {
 };
 
 const MultiFilter = ({ filterMap }: MultiFilterProps) => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+  
   const {
     state: { filters }
   } = useStore();
-  const { t } = useTranslation();
 
   useEffect(() => {
     removeAllFilters();
@@ -39,13 +41,12 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
       {filters.map((filterId, index) => (
         <Stack key={filterId} direction="row" gap={2} justifyContent="space-between">
           {filters.length > 1 && (
-            <Button
+            <IconButton
+              sx={{color: theme.palette.error.dark, alignSelf: 'flex-start'}}
               onClick={() => removeFilterRow(filterId)}
-              variant="text"
-              color="error"
               aria-label="remove">
               <RemoveCircleOutline fontSize="small" />
-            </Button>
+            </IconButton>
           )}
           <Filter
             value={filterId}

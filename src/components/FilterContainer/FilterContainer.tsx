@@ -29,6 +29,7 @@ type ButtonField = {
 
 type DateRangeField = DateRangeProps & {
   type: COMPONENT_TYPE.dateRange;
+  isYear?: boolean;
 };
 
 type TypeUnion = SearchField | AmountField | SelectField | ButtonField | DateRangeField;
@@ -64,22 +65,27 @@ const RenderComponent = ({ item }: { item: FilterItem }) => {
   }
 };
 
-const FilterContainer = ({ items }: FilterContainerProps) =>
-  items.map(({ gridWidth, ...item }, index) => {
-    const key = `${item.type}-${item.label}-${index}`;
+const FilterContainer = ({ items }: FilterContainerProps) => (
+  <Grid
+    container
+    spacing={2}
+    data-testid="filter-container"
+  >
+    {items.map(({ gridWidth, ...item }, index) => {
+      const key = `${item.type}-${item.label}-${index}`;
 
-    return (
-      <Grid
-        item
-        xs={gridWidth ?? 12}
-        height="100%"
-        data-testid="filter-container"
-        key={key}
-        display="flex"
-        alignItems="center">
-        <RenderComponent item={item} key={key} />
-      </Grid>
-    );
-  });
+      return (
+        <Grid
+          item
+          xs={gridWidth ?? 12}
+          key={key}
+          sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
+        >
+          <RenderComponent item={item} />
+        </Grid>
+      );
+    })}
+  </Grid>
+);
 
 export default FilterContainer;
