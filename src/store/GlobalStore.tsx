@@ -9,7 +9,7 @@ import { appState, setAppState } from './AppStateStore';
 import { AppState } from '../models/AppState';
 import { filtersState } from './FilterStore';
 import { setSuperAdmin, superAdminState } from './SuperAdminStore';
-import { operatorRoleState, setOperatorRole } from './operatorRoleStore';
+import { operatorRoleState, setOperatorRole } from './OperatorRoleStore';
 import { OperatoRole } from '../models/OperatorRole';
 
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
