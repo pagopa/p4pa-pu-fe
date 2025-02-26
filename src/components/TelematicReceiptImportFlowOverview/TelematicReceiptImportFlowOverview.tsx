@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { FlowFileType } from '../../models/Filters';
 import ImportFlowOverview from '../ImportFlowOverview/ImportFlowOverview';
 
-
 const TelematicReceiptImportFlowOverview = () => {
   const { t } = useTranslation();
 
