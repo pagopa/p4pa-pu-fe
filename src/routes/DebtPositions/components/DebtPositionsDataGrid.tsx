@@ -102,7 +102,8 @@ export const DataGrid = () => {
       disableColumnMenu
       disableColumnResize
       customPagination={{
-        totalPages: 10
+        defaultPageOption: 5,
+        sizePageOptions: [5, 10, 20]
       }}
     />
   );
