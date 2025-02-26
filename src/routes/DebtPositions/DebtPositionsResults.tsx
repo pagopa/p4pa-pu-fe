@@ -10,7 +10,7 @@ export const DebtPositionsResults = () => {
   const { t } = useTranslation();
 
   return (
-    <Stack gap={3}>
+    <Stack gap={5}>
       <TitleComponent
         title={t('DebtPositions.Results.title')}
         callToAction={[
@@ -21,7 +21,7 @@ export const DebtPositionsResults = () => {
           }
         ]}
       />
-      <Stack direction="row" gap={2} alignItems={'center'} justifyContent={'space-between'} my={1}>
+      <Stack gap={3}>
         <FilterContainer
           items={[
             {
@@ -39,7 +39,7 @@ export const DebtPositionsResults = () => {
             {
               type: COMPONENT_TYPE.select,
               label: t('commons.duetype'),
-              gridWidth: 3,
+              gridWidth: 2,
               options: [
                 { label: 'TARI', value: 'TARI' },
                 { label: 'DOVUTO', value: 'DOVUTO' }
@@ -48,7 +48,7 @@ export const DebtPositionsResults = () => {
             {
               type: COMPONENT_TYPE.select,
               label: t('commons.state'),
-              gridWidth: 3,
+              gridWidth: 2,
               options: [{ label: 'TUTTI', value: 'TUTTI' }]
             },
             {
@@ -59,18 +59,18 @@ export const DebtPositionsResults = () => {
             }
           ]}
         />
+        <Grid
+          container
+          p={2}
+          height="100%"
+          sx={{
+            bgcolor: theme.palette.grey[200],
+            overflow: 'auto'
+          }}
+          aria-label="results-table">
+          <DataGrid />
+        </Grid>
       </Stack>
-      <Grid
-        container
-        p={2}
-        height="100%"
-        sx={{
-          bgcolor: theme.palette.grey[200],
-          overflow: 'auto'
-        }}
-        aria-label="results-table">
-        <DataGrid />
-      </Grid>
     </Stack>
   );
 };

@@ -7,7 +7,7 @@ export type _ButtonProps = Omit<ButtonProps, 'type'> & {
 export const _Button = (props: _ButtonProps) => (
   <Button
     fullWidth
-    size="medium"
+    size="small"
     variant="contained"
     onClick={props.onClick}
     {...props}>
