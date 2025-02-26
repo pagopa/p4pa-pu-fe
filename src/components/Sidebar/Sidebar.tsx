@@ -69,12 +69,6 @@ export const Sidebar: React.FC = () => {
       end: true
     },
     {
-      label: t('commons.routes.DEBT_POSITIONS'),
-      icon: ReceiptLongIcon,
-      route: '/debtpositions',
-      end: true
-    },
-    {
       label: t('commons.routes.FLOWS'),
       icon: RotatedAltRouteIcon,
       // route: '/flows',
@@ -107,6 +101,13 @@ export const Sidebar: React.FC = () => {
   const additionalItems = [];
 
   if (state.superAdmin) {
+    menuItems.splice(1, 0, {
+      label: t('commons.routes.DEBT_POSITIONS'),
+      icon: ReceiptLongIcon,
+      route: PageRoutes.DEBT_POSITIONS_INDEX,
+      end: true
+    });
+
     additionalItems.push(
       {
         label: t('commons.routes.ORGANIZATIONS'),
