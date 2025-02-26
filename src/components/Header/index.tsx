@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { useOrganizations } from '../../hooks/useOrganizations';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
+import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
 
 export interface HeaderProps {
   onAssistanceClick?: () => void;
@@ -75,8 +76,9 @@ export const Header = (props: HeaderProps) => {
 
   };
 
-  const onSelectedParty = (id: string) => {
-    setState(STATE.ORGANIZATION_ID, id);
+  const onSelectedParty = (organization: PartySwitchItem) => {
+    setState(STATE.ORGANIZATION_ID, organization.id);
+    setState(STATE.OPERATOR_ROLE, organization.productRole);
   };
 
   return (
@@ -90,7 +92,7 @@ export const Header = (props: HeaderProps) => {
         userActions={userActions}
       />
       <HeaderProduct
-        onSelectedParty={e => onSelectedParty(e.id)}
+        onSelectedParty={e => onSelectedParty(e)}
         partyId={state.organizationId ? state.organizationId.toString() : undefined}
         partyList={organizationsToMenuItems}
         productsList={[product]}
