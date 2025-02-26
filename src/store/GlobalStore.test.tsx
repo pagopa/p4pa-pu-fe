@@ -49,7 +49,8 @@ describe('StoreContext', () => {
         [STATE.CONFIG_FE]: null,
         [STATE.ORGANIZATION_ID]: null,
         [STATE.USER_INFO]: null,
-        [STATE.FILTERS]: ['']
+        [STATE.FILTERS]: [''],
+        [STATE.SUPER_ADMIN]: false
       })
     );
   });
