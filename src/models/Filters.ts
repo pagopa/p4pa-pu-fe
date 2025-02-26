@@ -31,10 +31,10 @@ export interface PaginationParams {
 
 export type FlowFileFilters = FlowFilters & PaginationParams;
 
-export const STATE_COLORS: Record<FlowStatus, 'success' | 'primary' | 'secondary' | 'error'> = {
+export const STATE_COLORS: Record<FlowStatus, 'success' | 'info' | 'secondary' | 'error'> = {
   COMPLETED: 'success',
-  UPLOADED: 'primary',
-  PROCESSING: 'primary',
+  UPLOADED: 'info',
+  PROCESSING: 'info',
   ERROR: 'error'
 };
 

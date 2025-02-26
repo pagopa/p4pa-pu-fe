@@ -26,6 +26,8 @@ const ImportFlow = () => {
     const defaultCondition = uploading || !file;
     return config?.flowTypes ? (!flowType || defaultCondition) : defaultCondition;
   };
+
+  const fileUploaderDescriptionKey = `FileUploaderFlowImport.${category}.description`;
   
   return (
     <>
@@ -55,7 +57,7 @@ const ImportFlow = () => {
                 progress={progress} 
                 setProgress={setProgress} 
                 file={file} setFile={setFile} 
-                description={t('FileUploaderFlowImport.description')} 
+                description={t(fileUploaderDescriptionKey)} 
                 requiredFileText={t('FileUploaderFlowImport.requiredFileText')} 
                 fileExtensionsAllowed={config.fileExtensionsAllowed}
               />

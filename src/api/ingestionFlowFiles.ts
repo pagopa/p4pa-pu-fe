@@ -3,6 +3,7 @@ import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import { pagedIngestionFlowFileSchema } from '../../generated/zod-schema';
 import { toUTCString } from '../utils/formatter';
+import { FlowStatus } from '../models/Filters';
 
 export const getIngestionFlowFiles = (
   organizationId: number,
@@ -19,7 +20,7 @@ export const getIngestionFlowFiles = (
     )[];
     creationDateFrom?: string;
     creationDateTo?: string;
-    status?: string;
+    status?: FlowStatus;
     fileName?: string;
     page?: number;
     size?: number;

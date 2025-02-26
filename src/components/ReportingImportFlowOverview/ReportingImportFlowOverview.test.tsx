@@ -1,53 +1,53 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
-import TelematicReceiptImportFlowOverview from './TelematicReceiptImportFlowOverview';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
+import ReportingImportFlowOverview from './ReportingImportFlowOverview';
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } })
 }));
 
-describe('TelematicReceiptImportFlowOverview', () => {
+describe('ReportingImportFlowOverview', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     
     i18nTestSetup({
-      'commons.routes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW': 'Telematic Receipt Import',
-      'telematicReceiptImportFlowOverview.description': 'Import your telematic receipts',
+      'commons.routes.REPORTING_IMPORT_FLOW_OVERVIEW': 'Reporting Import',
+      'reportingImportFlowOverview.description': 'Import your Reporting',
       'commons.importFlowButton': 'Import Flow'
     });
   });
 
   it('renders with correct translations', () => {
-    render(<TelematicReceiptImportFlowOverview />);
+    render(<ReportingImportFlowOverview />);
     
-    expect(screen.getByText('Telematic Receipt Import')).toBeDefined();
-    expect(screen.getByText('Import your telematic receipts')).toBeDefined();
+    expect(screen.getByText('Reporting Import')).toBeDefined();
+    expect(screen.getByText('Import your Reporting')).toBeDefined();
   });
 
   it('handles missing translations by using keys as fallback', () => {
     i18nTestSetup({});
     
-    render(<TelematicReceiptImportFlowOverview />);
+    render(<ReportingImportFlowOverview />);
     
-    expect(screen.getByText('commons.routes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW')).toBeDefined();
-    expect(screen.getByText('telematicReceiptImportFlowOverview.description')).toBeDefined();
+    expect(screen.getByText('commons.routes.REPORTING_IMPORT_FLOW_OVERVIEW')).toBeDefined();
+    expect(screen.getByText('reportingImportFlowOverview.description')).toBeDefined();
   });
 
   it('calls API with correct flow file types', () => {
-    render(<TelematicReceiptImportFlowOverview />);
+    render(<ReportingImportFlowOverview />);
     
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(
       expect.any(Number),
       expect.objectContaining({
-        flowFileTypes: ['RECEIPT', 'RECEIPT_PAGOPA']
+        flowFileTypes: ['PAYMENTS_REPORTING', 'PAYMENTS_REPORTING_PAGOPA']
       })
     );
   });
 
   it('renders import button that matches routing category', () => {
-    render(<TelematicReceiptImportFlowOverview />);
+    render(<ReportingImportFlowOverview />);
     
     const importButton = screen.getByText('Import Flow');
     expect(importButton).toBeDefined();
@@ -56,20 +56,20 @@ describe('TelematicReceiptImportFlowOverview', () => {
   });
 
   it('integrates with the date picker for filtering', () => {
-    render(<TelematicReceiptImportFlowOverview />);
+    render(<ReportingImportFlowOverview />);
     
     expect(screen.getByLabelText('dates.from')).toBeDefined();
     expect(screen.getByLabelText('dates.to')).toBeDefined();
   });
 
   it('integrates with search functionality', () => {
-    render(<TelematicReceiptImportFlowOverview />);
+    render(<ReportingImportFlowOverview />);
    
     expect(screen.getByLabelText('commons.searchName')).toBeDefined();
   });
 
   it('shows filter button for applying filters', () => {
-    render(<TelematicReceiptImportFlowOverview />);
+    render(<ReportingImportFlowOverview />);
 
     expect(screen.getByText('commons.filters.filterResults')).toBeDefined();
   });

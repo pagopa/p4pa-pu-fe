@@ -3,7 +3,7 @@ import { ZodSchema } from 'zod';
 import * as zodSchema from '../../generated/zod-schema';
 import utils from '.';
 import { setOrganizationId } from '../store/OrganizationIdStore';
-import { setOperatorRole } from '../store/operatorRoleStore';
+import { setOperatorRole } from '../store/OperatorRoleStore';
 
 export const parseAndLog = <T>(
   schema: ZodSchema,
