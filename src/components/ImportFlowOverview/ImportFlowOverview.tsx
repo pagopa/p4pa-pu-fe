@@ -170,7 +170,7 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
         description={description}
       />
 
-      <Grid container direction="row" spacing={2} sx={{
+      <Grid container direction="row" sx={{
         alignItems: 'center',
         justifyContent: 'space-between',
         marginBottom: 2

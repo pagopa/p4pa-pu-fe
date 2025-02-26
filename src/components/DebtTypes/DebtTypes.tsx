@@ -104,7 +104,6 @@ export const DebtTypes = () => {
       <Grid
         container
         direction="row"
-        spacing={3}
         alignItems={'center'}
         justifyContent={'space-between'}
         my={2}>
