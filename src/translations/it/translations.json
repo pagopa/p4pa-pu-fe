@@ -185,7 +185,15 @@
 		"exportFrom": "Esportati dal"
 	},
 	"FileUploaderFlowImport": {
-		"description": "Carica qui il file .zip con le Ricevute Telematiche",
+    "telematic-receipt": {
+      "description": "Carica qui il file .zip con le Ricevute Telematiche"
+    },
+		"treasury": {
+      "description": "Carica qui il file .zip con i giornali di cassa"
+    },
+    "reporting": {
+      "description": "Carica qui il file .zip con le Rendicontazioni"
+    },
 		"requiredFileText": "Campo obbligatorio. Carica un file .zip"
 	},
 	"flowDataGrid": {
