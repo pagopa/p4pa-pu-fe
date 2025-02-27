@@ -4,7 +4,7 @@ import FileUploader from '../FileUploader/FileUploader';
 import { useTranslation } from 'react-i18next';
 import { AltRoute, ArrowBack } from '@mui/icons-material';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { importFlowConfig } from '../../models/ImportDetails';
 import { PageRoutes } from '../../App';
@@ -21,6 +21,7 @@ const ImportFlow = () => {
   const [file, setFile] = useState<File | null>(null);
 
   const config = importFlowConfig[category as keyof typeof importFlowConfig];
+  const thankyouPage = generatePath(PageRoutes.RESPONSES_THANKYOU, {category: config.successRoute});
 
   const handleDisabledButton = () => {
     const defaultCondition = uploading || !file;
@@ -109,7 +110,7 @@ const ImportFlow = () => {
             variant="contained"
             fullWidth
             disabled = {handleDisabledButton()}
-            onClick={() => navigate(PageRoutes[config.successRoute]) }
+            onClick={() => navigate(thankyouPage) }
           >
             {t('commons.flowImport.uploadButton')}
           </Button>

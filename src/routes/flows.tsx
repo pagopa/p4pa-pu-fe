@@ -5,13 +5,10 @@ import { RouteHandleObject } from '../models/Breadcrumbs';
 import config from '../utils/config';
 import Reporting from './Reporting';
 import ReportingDetail from './ReportingDetail';
-import ReportingFlowImportThankYouPage from './ReportingFlowImportThankYouPage';
 import ReportingImportFlowOverview from './ReportingImportFlowOverview';
 import ReportingSearchResults from './ReportingSearchResults';
 import TelematicReceipt from './TelematicReceipt';
-import TelematicReceiptExportFlowThankYouPage from './TelematicReceiptExportFlowThankYouPage';
 import TelematicReceiptFlowExportOverview from './TelematicReceiptFlowExportOverview';
-import TelematicReceiptFlowImportThankYouPage from './TelematicReceiptFlowImportThankYouPage';
 import TelematicReceiptImportFlowOverview from './TelematicReceiptImportFlowOverview';
 import TelematicReceiptSearchResults from './TelematicReceiptSearchResults';
 import Treasury from './Treasury';
@@ -64,25 +61,6 @@ export const flowsRoutes = [{
           } as RouteHandleObject,
         },
         {
-          id: 'TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE',
-          path: 'export-overview/export-flow-thank-you-page',
-          element: <TelematicReceiptExportFlowThankYouPage />,
-          handle: {
-            backButton: false,
-            sidebar: {
-              visibile: false
-            }
-          } as RouteHandleObject,
-        },
-        {
-          id: 'TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE',
-          path: 'import-flow/import-flow-thank-you-page',
-          element: <TelematicReceiptFlowImportThankYouPage />,
-          handle: {
-            backButton: true,
-          } as RouteHandleObject,
-        },
-        {
           id: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW',
           path: 'import-overview',
           element: <TelematicReceiptImportFlowOverview />,
@@ -121,17 +99,6 @@ export const flowsRoutes = [{
           element: <ReportingDetail />,
           handle: {
             backButton: true
-          } as RouteHandleObject,
-        },
-        {
-          id: 'REPORTING_IMPORT_FLOW_THANK_YOU_PAGE',
-          path: 'import-flow/import-flow-thank-you-page',
-          element: <ReportingFlowImportThankYouPage />,
-          handle: {
-            backButton: true,
-            sidebar: {
-              visibile: false
-            },
           } as RouteHandleObject,
         },
         {
