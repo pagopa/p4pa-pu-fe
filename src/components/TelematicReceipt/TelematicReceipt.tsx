@@ -64,7 +64,7 @@ export const TelematicReceipt = () => {
             <ActionCard
               title={t('telematicReceipts.importflowstitle')}
               description={t('telematicReceipts.importflowsdescription')}
-              actionLabel={t('telematicReceipts.importflowbutton')}
+              actionLabel={t('commons.importFlow')}
               actionIcon={<Upload />}
               linkLabel={t('telematicReceipts.importedflowsviewbutton')}
               onActionClick={() =>

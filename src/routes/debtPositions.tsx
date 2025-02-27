@@ -1,4 +1,6 @@
+import { DebtPositionsPage } from '../components/DebtPositionsPage';
 import { Layout } from '../components/layout/Layout';
+import { RouteHandleObject } from '../models/Breadcrumbs';
 import config from '../utils/config';
 import { DebtPositionsResults } from './DebtPositions/DebtPositionsResults';
 import DebtPositionSearchResults from './DebtPositionSearchResults';
@@ -11,6 +13,15 @@ export const debtPositionsRoutes = [
     path: `${deployPath}/debt-positions/`,
     element: <Layout />,
     children: [
+      {
+        index: true,
+        id: 'DEBT_POSITIONS_INDEX',
+        element: <DebtPositionsPage />,
+        handle: {
+          backButton: false,
+          hideBreadcrumbs: true
+        } as RouteHandleObject,
+      },
       {
         id: 'DEBT_POSITIONS_RESULTS',
         path: 'results',
