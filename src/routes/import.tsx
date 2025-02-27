@@ -17,6 +17,7 @@ export const importRoutes = [
         element: <ImportFlow />,
         handle: {
           backButton: true,
+          hideBreadcrumbs: true,
           sidebar: {
             visible: false
           }
