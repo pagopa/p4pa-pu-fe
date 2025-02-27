@@ -24,7 +24,7 @@ import { importRoutes } from './routes/import';
 import { detailRoutes } from './routes/detail';
 import { exportRoutes } from './routes/export';
 import { debtTypesRoutes } from './routes/debtTypes';
-import { debtPositionsRoutes } from './routes/deptPosition';
+import { debtPositionsRoutes } from './routes/debtPositions';
 
 const deployPath = config.deployPath;
 

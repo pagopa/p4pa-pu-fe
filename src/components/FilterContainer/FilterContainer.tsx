@@ -37,6 +37,7 @@ type TypeUnion = SearchField | AmountField | SelectField | ButtonField | DateRan
 export type FilterItem = TypeUnion & {
   gridWidth?: number;
   label: string;
+  required?: boolean;
 };
 
 type FilterContainerProps = {

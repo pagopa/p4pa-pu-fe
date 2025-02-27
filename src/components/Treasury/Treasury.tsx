@@ -51,9 +51,9 @@ export const Treasury = () => {
             <ActionCard
               title={t('treasury.importflowstitle')}
               description={t('treasury.importflowsdescription')}
-              actionLabel={t('treasury.importflowbutton')}
+              actionLabel={t('commons.importFlow')}
               actionIcon={<FileUpload />}
-              linkLabel={t('treasury.importedflowsviewbutton')}
+              linkLabel={t('commons.showAllFlows')}
               onLinkClick={() => navigate(PageRoutes.TREASURY_IMPORT_OVERVIEW)}
               onActionClick={() =>
                 navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'treasury' }))
