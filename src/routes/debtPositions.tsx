@@ -2,6 +2,7 @@ import { DebtPositionsPage } from '../components/DebtPositionsPage';
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Breadcrumbs';
 import config from '../utils/config';
+import { DebtPositionsResults } from './DebtPositions/DebtPositionsResults';
 
 const deployPath = config.deployPath;
 
@@ -19,6 +20,11 @@ export const debtPositionsRoutes = [
           backButton: false,
           hideBreadcrumbs: true
         } as RouteHandleObject,
+      },
+      {
+        id: 'DEBT_POSITIONS_RESULTS',
+        path: 'results',
+        element: <DebtPositionsResults />,
       }
     ]
   }

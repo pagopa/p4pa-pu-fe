@@ -50,36 +50,27 @@ const routesDef = [
             index: true,
             handle: {
               backButton: false,
-              hideBreadcrumbs: true,
-            } as RouteHandleObject,
+              hideBreadcrumbs: true
+            } as RouteHandleObject
           }
         ]
       },
-      /* -- FLOWS SECTION -- */
       ...flowsRoutes,
-      /* -- END - FLOWS SECTION -- */
-      /* -- IMPORT SECTION -- */
       ...importRoutes,
-      /* -- END - IMPORT SECTION -- */
-      /* -- DETAIL SECTION -- */
       ...detailRoutes,
-      /* -- END - DETAIL SECTION -- */
-      /* -- EXPORT SECTION -- */
       ...exportRoutes,
-      /* -- END - EXPORT SECTION -- */
-      /* -- DEBT POSITIONS SECTION -- */
-      ...debtPositionsRoutes,
-      /* -- END POSITIONS - DEBT SECTION -- */
-      /* -- DEBT TYPES SECTION -- */
       ...debtTypesRoutes,
-      /* -- END - DEBT TYPES SECTION -- */
+      ...debtPositionsRoutes
     ]
   }
 ];
 
 const router = createBrowserRouter(routesDef);
 
-const extractPathsWithIds = (routes: RouteObject[], basePath: string = ''): { [key: string]: string } => {
+const extractPathsWithIds = (
+  routes: RouteObject[],
+  basePath: string = ''
+): { [key: string]: string } => {
   let paths: { [key: string]: string } = {};
 
   routes.forEach((route) => {
@@ -89,7 +80,7 @@ const extractPathsWithIds = (routes: RouteObject[], basePath: string = ''): { [k
 
     if (route.children) {
       const childPaths = extractPathsWithIds(route.children, fullPath);
-      paths = { ...paths, ...childPaths }; 
+      paths = { ...paths, ...childPaths };
     }
   });
 

@@ -5,9 +5,12 @@ import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { getTabsConfig } from './DebtTabsConfig';
+import { PageRoutes } from '../../App';
+import { useNavigate } from 'react-router';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const debtTabsConfig = getTabsConfig(t);
 
   return (
@@ -39,8 +42,7 @@ export const DebtPositionsPage = () => {
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: () => console.log('go to results'),
-                  // disabled: //TODO
+                  onClick: () => navigate(PageRoutes.DEBT_POSITIONS_RESULTS)
                 }
               ]}
             />

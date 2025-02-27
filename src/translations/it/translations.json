@@ -104,11 +104,12 @@
 		"paymentExecutor": "Versante",
 		"reason": "Causale",
 		"requiredFieldDescription": "* Indica un campo obbligatorio",
-		"createNew": "Crea nuovo",
+		"createNew": "Crea nuova",
 		"routes": {
 			"CONSERVATION": "Conservazione",
 			"CONSERVATION_INDEX": "Pagina principale",
-			"DEBT_POSITIONS": "Posizioni debitorie",
+			"DEBT_POSITIONS": "Dovuti",
+			"DEBT_POSITIONS_RESULTS": "Posizione debitorie",
 			"DEBT_TYPES": "Tipi dovuti",
 			"DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
 			"DEBT_TYPES_CREATED": "Tipi dovuti impostati",
@@ -177,14 +178,32 @@
 		"to": "Al",
 		"view": "Visualizza",
 		"searchIUV": "Cerca IUV",
-		"uploadedFrom": "Caricati dal",
 		"importFlow": "Importa flusso",
-		"showAllFlows": "Vedi tutti i flussi"
+		"showAllFlows": "Vedi tutti i flussi",
+		"searchCF": "Cerca CF",
+		"uploadedFrom": "Caricati dal"
 	},
 	"conservation": {
 		"buttonReservationExport": "Prenota export",
 		"description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
 		"exportFrom": "Esportati dal"
+	},
+	"DebtPositions": {
+		"Results": {
+			"title": "Posizione Debitorie",
+			"filters": {
+				"from": "Creazione dal"
+			},
+			"table": {
+				"description": "Descrizione",
+				"debtType": "Tipo dovuto",
+				"creationDate": "Data creazione",
+				"status": "Stato"
+			},
+			"status": {
+				"TO_PAY": "Da pagare"
+			}
+		}
 	},
 	"FileUploaderFlowImport": {
     "telematic-receipt": {
@@ -206,8 +225,8 @@
 		"paymentFromDate": "Pagamento dal",
 		"paymentToDate": "Pagamento al",
 		"reservationDate": "Data prenotazione",
-        "lastUpdate": "Ultima Modifica",
-        "authorizedOrganizations": "Enti abilitati",
+		"lastUpdate": "Ultima Modifica",
+		"authorizedOrganizations": "Enti abilitati",
 		"noDataRows": "Nessun elemento trovato"
 	},
 	"reporting": {

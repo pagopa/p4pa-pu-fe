@@ -104,7 +104,7 @@ export const Sidebar: React.FC = () => {
     menuItems.splice(1, 0, {
       label: t('commons.routes.DEBT_POSITIONS'),
       icon: ReceiptLongIcon,
-      route: PageRoutes.DEBT_POSITIONS_INDEX,
+      route: PageRoutes.DEBT_POSITIONS,
       end: true
     });
 
