@@ -11,6 +11,6 @@ vi.mock('react-router-dom', async (importOriginal) => ({
 describe('Responses Page', () => {
   it('renders Thank you page', () => {
     render(<ImportFlowPage />);
-    expect(screen.getByText("commons.successImport")).toBeInTheDocument();
+    expect(screen.getByText('commons.successImport')).toBeInTheDocument();
   });
 });
