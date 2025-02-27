@@ -71,7 +71,7 @@ export const Sidebar: React.FC = () => {
     {
       label: t('commons.routes.DEBT_POSITIONS'),
       icon: ReceiptLongIcon,
-      route: '/debtpositions',
+      route: PageRoutes.DEBT_POSITIONS,
       end: true
     },
     {
