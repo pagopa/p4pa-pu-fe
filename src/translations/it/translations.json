@@ -125,7 +125,6 @@
 			"REPORTING": "Rendicontazione",
 			"REPORTING_DETAIL": "Dettaglio",
 			"REPORTING_IMPORT_FLOW_OVERVIEW": "Flussi importati",
-			"REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
 			"REPORTING_IMPORT_FLOW_THANK_YOU_PAGE": "Flussi importati OK",
 			"REPORTING_IMPORT_OVERVIEW": "Flussi importati",
 			"REPORTING_INDEX": "Pagina principale",
@@ -135,13 +134,11 @@
 			"TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
 			"TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE": "Flussi esportati OK",
 			"TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
-			"TELEMATIC_RECEIPT_IMPORT_FLOW": "Carica un nuovo flusso",
 			"TELEMATIC_RECEIPT_IMPORT_FLOW_THANK_YOU_PAGE": "Flussi importati OK",
 			"TELEMATIC_RECEIPT_IMPORT_OVERVIEW": "Flussi importati",
 			"TELEMATIC_RECEIPT_INDEX": "Pagina principale",
 			"TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
 			"TREASURY": "Tesoreria",
-			"TREASURY_IMPORT_FLOW": "Carica un nuovo flusso",
 			"TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
 			"TREASURY_IMPORT_OVERVIEW": "Flussi importati",
 			"TREASURY_INDEX": "Pagina principale",
@@ -181,7 +178,8 @@
 		"importFlow": "Importa flusso",
 		"showAllFlows": "Vedi tutti i flussi",
 		"searchCF": "Cerca CF",
-		"uploadedFrom": "Caricati dal"
+		"uploadedFrom": "Caricati dal",
+		"importNewFlow": "Carica un nuovo flusso"
 	},
 	"conservation": {
 		"buttonReservationExport": "Prenota export",
@@ -214,6 +212,9 @@
     },
     "reporting": {
       "description": "Carica qui il file .zip con le Rendicontazioni"
+    },
+    "debt-positions": {
+      "description": "Carica qui il file .zip con le Ricevute Telematiche"
     },
 		"requiredFileText": "Campo obbligatorio. Carica un file .zip"
 	},

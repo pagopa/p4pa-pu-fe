@@ -17,9 +17,9 @@ export const exportRoutes = [
         element: <ExportFlow />,
         handle: {
           backButton: true,
+          hideBreadcrumbs: true,
           sidebar: {
-            visible: false,
-            omitBreadcrumbs: true,
+            visible: false
           }
         } as RouteHandleObject,
       }
