@@ -105,11 +105,12 @@
 		"reason": "Causale",
 		"requiredFieldDescription": "* Indica un campo obbligatorio",
 		"createNew": "Crea nuova",
+    "createNewOne": "Crea nuovo",
 		"routes": {
 			"CONSERVATION": "Conservazione",
 			"CONSERVATION_INDEX": "Pagina principale",
 			"DEBT_POSITIONS": "Dovuti",
-			"DEBT_POSITIONS_RESULTS": "Posizione debitorie",
+			"DEBT_POSITIONS_RESULTS": "Posizioni debitorie",
       "DEBT_POSITION_SEARCH_RESULTS": "Avvisi (IUV)",
 			"DEBT_TYPES": "Tipi dovuti",
 			"DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
@@ -191,7 +192,7 @@
 	},
 	"DebtPositions": {
 		"Results": {
-			"title": "Posizione Debitorie",
+			"title": "Posizioni Debitorie",
       "titleIUV": "Avvisi (IUV)",
 			"filters": {
 				"from": "Creazione dal"

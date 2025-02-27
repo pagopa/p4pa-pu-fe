@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { FileUpload } from '@mui/icons-material';
@@ -7,11 +8,30 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import { getTabsConfig } from './DebtTabsConfig';
 import { PageRoutes } from '../../App';
 import { useNavigate } from 'react-router';
+import { SearchType } from '../../routes/DebtPositions/DebtPositionsResults';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const debtTabsConfig = getTabsConfig(t);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+
+  const handleTabChange = (index: number) => {
+    setActiveTabIndex(index);
+  };
+
+  const navigateToResults = () => {
+
+    if (activeTabIndex === 0) {
+      navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, { 
+        state: { searchType: SearchType.IUV }
+      });
+    } else {
+      navigate(PageRoutes.DEBT_POSITIONS_RESULTS, {
+        state: { searchType: SearchType.DEBT_POSITION }
+      });
+    }
+  };
 
   return (
     <>
@@ -33,6 +53,7 @@ export const DebtPositionsPage = () => {
               title={t('debtPositions.searchCardTitle')}
               description={t('debtPositions.searchCardDescription')}
               tabsConfig={debtTabsConfig}
+              onTabChange={handleTabChange}
               button={[
                 {
                   label: t('commons.filters.remove'),
@@ -42,7 +63,7 @@ export const DebtPositionsPage = () => {
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: () => navigate(PageRoutes.DEBT_POSITIONS_RESULTS)
+                  onClick: navigateToResults
                 }
               ]}
             />

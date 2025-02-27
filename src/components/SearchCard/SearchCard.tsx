@@ -17,11 +17,19 @@ type SearchCardProps = {
   fields?: FilterItem[];
   button?: ButtonProps[];
   multiFilterConfig?: FilterMap;
+  onTabChange?: (index: number) => void;
 };
 
-const SearchCard = ({ title, description, tabsConfig, fields, button, multiFilterConfig }: SearchCardProps) => {
+const SearchCard = ({ title, description, tabsConfig, fields, button, multiFilterConfig, onTabChange }: SearchCardProps) => {
   const [activeTab, setActiveTab] = useState(0);
   const activeFields = tabsConfig && tabsConfig.length > 0 ? tabsConfig[activeTab].fields : fields;
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    setActiveTab(newValue);
+    if (onTabChange) {
+      onTabChange(newValue);
+    }
+  };
 
   return (
     <Box
@@ -40,7 +48,7 @@ const SearchCard = ({ title, description, tabsConfig, fields, button, multiFilte
       {tabsConfig && tabsConfig.length > 0 && (
         <Tabs 
           value={activeTab}
-          onChange={(_, newValue) => setActiveTab(newValue)}
+          onChange={handleTabChange}
           sx={{ maxWidth: '100%', mb:2 }}>
           {tabsConfig.map((tab, index) => (
             <Tab key={index} label={tab.label} sx={{ flexGrow: 1}}/>
