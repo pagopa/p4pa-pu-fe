@@ -57,9 +57,9 @@ export const Reporting = () => {
             <ActionCard
               title={t('reporting.importFlowsTitleContainer')}
               description={t('reporting.importFlowsDescriptionContainer')}
-              actionLabel={t('reporting.importFlowButton')}
+              actionLabel={t('commons.importFlow')}
               actionIcon={<FileUpload />}
-              linkLabel={t('reporting.showAllFlows')}
+              linkLabel={t('commons.showAllFlows')}
               onActionClick={() =>
                 navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'reporting' }))
               }

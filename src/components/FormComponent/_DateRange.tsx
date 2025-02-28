@@ -14,9 +14,10 @@ export type _DateRangeProps = {
   from?: DateRange;
   to?: DateRange;
   isYear?: boolean;
+  required?: boolean
 };
 
-export const _DateRange = ({ from, to, isYear }: _DateRangeProps) => {
+export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
@@ -62,7 +63,8 @@ export const _DateRange = ({ from, to, isYear }: _DateRangeProps) => {
             size: 'small',
             variant: 'outlined',
             error: !!startDateError,
-            helperText: startDateError ? (from?.errorMessage ?? t('dates.validations.from')) : ''
+            helperText: startDateError ? (from?.errorMessage ?? t('dates.validations.from')) : '',
+            required: required
           }
         }}
         {...from}
@@ -83,7 +85,8 @@ export const _DateRange = ({ from, to, isYear }: _DateRangeProps) => {
               size: 'small',
               variant: 'outlined',
               error: !!endDateError,
-              helperText: endDateError ? (to?.errorMessage ?? t('dates.validations.to')) : ''
+              helperText: endDateError ? (to?.errorMessage ?? t('dates.validations.to')) : '',
+              required: required
             },
             inputAdornment: {
               onClick: () => setIsToDialogOpen(!isToDialogOpen)

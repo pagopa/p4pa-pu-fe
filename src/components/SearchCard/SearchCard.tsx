@@ -1,18 +1,28 @@
-import { Box, Grid, Stack, Typography } from '@mui/material';
+import { Box, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import FilterContainer, { FilterItem } from '../FilterContainer/FilterContainer';
 import { FilterMap } from '../../hooks/useFilters';
 import { ButtonProps, FormComponent } from '../FormComponent';
+import { useState } from 'react';
+
+export type TabsConfig = {
+  label: string;
+  fields: FilterItem[];
+}
 
 type SearchCardProps = {
   title: string;
   description: string;
+  tabsConfig?: TabsConfig[];
   fields?: FilterItem[];
   button?: ButtonProps[];
   multiFilterConfig?: FilterMap;
 };
 
-const SearchCard = ({ title, description, fields, button, multiFilterConfig }: SearchCardProps) => {
+const SearchCard = ({ title, description, tabsConfig, fields, button, multiFilterConfig }: SearchCardProps) => {
+  const [activeTab, setActiveTab] = useState(0);
+  const activeFields = tabsConfig && tabsConfig.length > 0 ? tabsConfig[activeTab].fields : fields;
+
   return (
     <Box
       component="section"
@@ -27,8 +37,23 @@ const SearchCard = ({ title, description, fields, button, multiFilterConfig }: S
         {description}
       </Typography>
 
+      {tabsConfig && tabsConfig.length > 0 && (
+        <Tabs 
+          value={activeTab}
+          onChange={(_, newValue) => setActiveTab(newValue)}
+          sx={{ maxWidth: '100%', mb:2 }}>
+          {tabsConfig.map((tab, index) => (
+            <Tab key={index} label={tab.label} sx={{ flexGrow: 1}}/>
+          ))}
+        </Tabs>
+      )}
+
       <Grid container alignItems="center">
-        {fields && <FilterContainer items={fields} />}
+        {activeFields && (
+          <FilterContainer
+            items={activeFields} 
+          />
+        )}
 
         {multiFilterConfig && (
           <Grid item lg={12}>

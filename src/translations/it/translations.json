@@ -104,11 +104,12 @@
 		"paymentExecutor": "Versante",
 		"reason": "Causale",
 		"requiredFieldDescription": "* Indica un campo obbligatorio",
-		"createNew": "Crea nuovo",
+		"createNew": "Crea nuova",
 		"routes": {
 			"CONSERVATION": "Conservazione",
 			"CONSERVATION_INDEX": "Pagina principale",
-			"DEBT_POSITIONS": "Posizioni debitorie",
+			"DEBT_POSITIONS": "Dovuti",
+			"DEBT_POSITIONS_RESULTS": "Posizione debitorie",
 			"DEBT_TYPES": "Tipi dovuti",
 			"DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
 			"DEBT_TYPES_CREATED": "Tipi dovuti impostati",
@@ -137,7 +138,6 @@
 			"TELEMATIC_RECEIPT_INDEX": "Pagina principale",
 			"TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
 			"TREASURY": "Tesoreria",
-			"TREASURY_IMPORT_FLOW": "Carica un nuovo flusso",
 			"TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
 			"TREASURY_IMPORT_OVERVIEW": "Flussi importati",
 			"TREASURY_INDEX": "Pagina principale",
@@ -174,12 +174,33 @@
 		"to": "Al",
 		"view": "Visualizza",
 		"searchIUV": "Cerca IUV",
-		"uploadedFrom": "Caricati dal"
+		"importFlow": "Importa flusso",
+		"showAllFlows": "Vedi tutti i flussi",
+		"searchCF": "Cerca CF",
+		"uploadedFrom": "Caricati dal",
+		"importNewFlow": "Carica un nuovo flusso"
 	},
 	"conservation": {
 		"buttonReservationExport": "Prenota export",
 		"description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
 		"exportFrom": "Esportati dal"
+	},
+	"DebtPositions": {
+		"Results": {
+			"title": "Posizione Debitorie",
+			"filters": {
+				"from": "Creazione dal"
+			},
+			"table": {
+				"description": "Descrizione",
+				"debtType": "Tipo dovuto",
+				"creationDate": "Data creazione",
+				"status": "Stato"
+			},
+			"status": {
+				"TO_PAY": "Da pagare"
+			}
+		}
 	},
 	"FileUploaderFlowImport": {
     "telematic-receipt": {
@@ -191,6 +212,9 @@
     "reporting": {
       "description": "Carica qui il file .zip con le Rendicontazioni"
     },
+    "debt-positions": {
+      "description": "Carica qui il file .zip con le Ricevute Telematiche"
+    },
 		"requiredFileText": "Campo obbligatorio. Carica un file .zip"
 	},
 	"flowDataGrid": {
@@ -201,13 +225,12 @@
 		"paymentFromDate": "Pagamento dal",
 		"paymentToDate": "Pagamento al",
 		"reservationDate": "Data prenotazione",
-        "lastUpdate": "Ultima Modifica",
-        "authorizedOrganizations": "Enti abilitati",
+		"lastUpdate": "Ultima Modifica",
+		"authorizedOrganizations": "Enti abilitati",
 		"noDataRows": "Nessun elemento trovato"
 	},
 	"reporting": {
 		"description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
-		"importFlowButton": "Importa flusso",
 		"importFlowsDescriptionContainer": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
 		"importFlowsTitleContainer": "Importa flussi di Rendicontazione",
 		"regulationFrom": "Regolamento dal",
@@ -215,7 +238,6 @@
 		"searchRegulationId": "Cerca ID Regolamento",
 		"searchReportingId": "Cerca ID Rendicontazione",
 		"searchTitleContainer": "Cerca flussi di Rendicontazione",
-		"showAllFlows": "Vedi tutti i flussi",
 		"title": "Rendicontazione"
 	},
 	"reportingSearchResults": {
@@ -228,8 +250,7 @@
 		"totalAmount": "Importo totale"
 	},
 	"reportingImportFlowOverview": {
-		"description": "Visualizza i flussi importati in precedenza e importa nuovi.",
-		"importFlowButton": "Importa flusso"
+		"description": "Visualizza i flussi importati in precedenza e importa nuovi."
 	},
 	"reportingImportThankYouPage": {
 		"description": "Troverai il flusso caricato nella sezione Flussi importati"
@@ -257,7 +278,6 @@
 	},
 	"telematicReceiptImportFlowOverview": {
 		"description": "Visualizza i flussi importati in precedenza e importa nuovi.",
-		"importFlowButton": "Importa flusso",
 		"internalID": "ID interno",
 		"loadedDiscarded": "Caricati/Scarti"
 	},
@@ -268,7 +288,6 @@
 		"exportedflowsviewbutton": "Vedi flussi esportati",
 		"exportrequestbutton": "Prenota export",
 		"importedflowsviewbutton": "Vedi flussi importati",
-		"importflowbutton": "Importa flusso",
 		"importflowsdescription": "Carica un file .zip con l’informazione necessaria di Ricevute Telematiche mancanti.",
 		"importflowstitle": "Importa Flussi di Ricevute Telematiche",
 		"search": "Cerca Ricevuta Telematica",
@@ -284,15 +303,12 @@
 		"description": "Ricerca, visualizza o integra flussi di Tesoreria.",
 		"search": "Cerca flussi di Tesoreria",
 		"searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
-		"importedflowsviewbutton": "Vedi tutti i flussi",
-		"importflowbutton": "Importa flusso",
 		"importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
 		"importflowstitle": "Importa Flussi di Tesoreria",
 		"billDetail": "Dettaglio Bolletta"
 	},
 	"treasuryImportFlowOverview": {
-		"description": "Visualizza i flussi importati in precedenza e importa nuovi.",
-		"importflowbutton": "Importa flusso"
+		"description": "Visualizza i flussi importati in precedenza e importa nuovi."
 	},
 	"exportFlow": {
 		"title": "Prenota export di un flusso",
@@ -317,5 +333,17 @@
     "debtTypes": {
         "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
         "searchDescription": "Codice per Descrizione"
-    }
+    },
+	"debtPositions": {
+		"searchCardTitle": "Cosa stai cercando?",
+		"searchCardDescription": "Seleziona cosa stai cercando e inserisci i filtri per avviare la ricerca.",
+		"searchCardIUVOption": "Avviso (IUV)",
+		"searchCardDebtPositionOption":"Posizione Debitoria",
+		"searchIUVDescription": "Cerca Codice Avviso (IUV)",
+		"searchFiscalCodeDescription": "Cerca Codice Fiscale",
+		"importDebtFlow": "Importa flussi di dovuti",
+		"importDebtFlowDescription": "Carica un file .zip con l'informazione necessaria di dovuti mancanti.",
+		"expirationFrom": "Scadenza dal",
+		"creationFrom": "Creazione dal"
+	}
 }
