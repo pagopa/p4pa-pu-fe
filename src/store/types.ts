@@ -6,7 +6,7 @@ import { OperatoRole } from '../models/OperatorRole';
 
 export interface State {
   [STATE.USER_INFO]: UserMemo | undefined;
-  [STATE.ORGANIZATION_ID]: OrganizationIdMemo | undefined;
+  [STATE.ORGANIZATION_ID]: OrganizationIdMemo;
   [STATE.CONFIG_FE]: ConfigFE | undefined;
   [STATE.APP_STATE]: AppState;
   [STATE.FILTERS]: string[];

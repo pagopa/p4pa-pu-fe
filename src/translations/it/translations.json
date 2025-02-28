@@ -88,11 +88,22 @@
 			"uploadButton": "Carica il flusso"
 		},
 		"flowType": "Tipo flusso",
+		"flowTypes": {
+			"RECEIPT": "Ricevuta",
+			"RECEIPT_PAGOPA": "Ricevuta PagoPA",
+			"PAYMENTS_REPORTING": "Rendicontazione di pagamento",
+			"PAYMENTS_REPORTING_PAGOPA": "Rendicontazione di pagamento PagoPA",
+			"TREASURY_OPI": "Giornale di Cassa OPI",
+			"TREASURY_CSV": "Giornale di Cassa CSV",
+			"TREASURY_XLS": "Giornale di Cassa XLS",
+			"TREASURY_POSTE": "Estrato conto poste",
+			"DP_INSTALLMENTS": "Rate posizioni debitorie"
+		},
 		"footer": {
 			"infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
 		},
 		"from": "Dal",
-    "importFlowButton": "Importa flusso",
+		"importFlowButton": "Importa flusso",
 		"iud": "IUD",
 		"iur": "IUR",
 		"iuv": "IUV",
@@ -203,18 +214,18 @@
 		}
 	},
 	"FileUploaderFlowImport": {
-    "telematic-receipt": {
-      "description": "Carica qui il file .zip con le Ricevute Telematiche"
-    },
+		"telematic-receipt": {
+			"description": "Carica qui il file .zip con le Ricevute Telematiche"
+		},
 		"treasury": {
-      "description": "Carica qui il file .zip con i giornali di cassa"
-    },
-    "reporting": {
-      "description": "Carica qui il file .zip con le Rendicontazioni"
-    },
-    "debt-positions": {
-      "description": "Carica qui il file .zip con le Ricevute Telematiche"
-    },
+			"description": "Carica qui il file .zip con i giornali di cassa"
+		},
+		"reporting": {
+			"description": "Carica qui il file .zip con le Rendicontazioni"
+		},
+		"debt-positions": {
+			"description": "Carica qui il file .zip con le Ricevute Telematiche"
+		},
 		"requiredFileText": "Campo obbligatorio. Carica un file .zip"
 	},
 	"flowDataGrid": {
@@ -330,15 +341,15 @@
 		"accountingDate": "Data Contabile",
 		"reportingId": "ID Rendicontazione"
 	},
-    "debtTypes": {
-        "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
-        "searchDescription": "Codice per Descrizione"
-    },
+	"debtTypes": {
+		"description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
+		"searchDescription": "Codice per Descrizione"
+	},
 	"debtPositions": {
 		"searchCardTitle": "Cosa stai cercando?",
 		"searchCardDescription": "Seleziona cosa stai cercando e inserisci i filtri per avviare la ricerca.",
 		"searchCardIUVOption": "Avviso (IUV)",
-		"searchCardDebtPositionOption":"Posizione Debitoria",
+		"searchCardDebtPositionOption": "Posizione Debitoria",
 		"searchIUVDescription": "Cerca Codice Avviso (IUV)",
 		"searchFiscalCodeDescription": "Cerca Codice Fiscale",
 		"importDebtFlow": "Importa flussi di dovuti",
