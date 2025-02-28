@@ -24,7 +24,7 @@ describe('ImportFlow', () => {
     it('renders without select', () => {
       render(<ImportFlow/>);
 
-      expect(screen.getByText('commons.routes.REPORTING_IMPORT_FLOW')).toBeDefined();
+      expect(screen.getByText('commons.importNewFlow')).toBeDefined();
       expect(screen.getByText('commons.flowImport.description')).toBeDefined();
       expect(screen.getByText('commons.flowImport.boxTitle')).toBeDefined();
       expect(screen.getByText('commons.flowImport.boxDescription')).toBeDefined();
@@ -62,7 +62,7 @@ describe('ImportFlow', () => {
     it('renders with select', () => {
       render(<ImportFlow />);
 
-      expect(screen.getByText('commons.routes.TREASURY_IMPORT_FLOW')).toBeDefined();
+      expect(screen.getByText('commons.importNewFlow')).toBeDefined();
       expect(screen.getByText('commons.requiredFieldDescription')).toBeDefined();
       expect(screen.getByRole('select-flowType')).toBeDefined();
       expect(screen.getByTestId('success-button')).toHaveProperty('disabled', true);

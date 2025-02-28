@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { getTabsConfig } from './DebtTabsConfig';
 import { PageRoutes } from '../../App';
-import { useNavigate } from 'react-router';
+import { generatePath, useNavigate } from 'react-router';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
@@ -55,7 +55,9 @@ export const DebtPositionsPage = () => {
               actionLabel={t('commons.importFlow')}
               actionIcon={<FileUpload />}
               linkLabel={t('commons.showAllFlows')}
-              onActionClick={() => console.log('go to all flows')}
+              onActionClick={
+                () => navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'debt-positions' }))
+              }
               onLinkClick={() => console.log('import flow')}
             />
           </Grid>
