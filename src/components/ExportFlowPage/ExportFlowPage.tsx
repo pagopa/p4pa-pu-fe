@@ -1,7 +1,7 @@
 import { ArrowBack, CalendarToday, Dashboard, InsertDriveFile } from '@mui/icons-material';
 import { Button, Grid, GridDirection } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import ExportFlowContainer from '../ExportFlowContainer/ExportFlowContainer';
 import { useState } from 'react';
@@ -131,7 +131,7 @@ export const ExportFlowPage = () => {
             size="large"
             variant="contained"
             fullWidth
-            onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_FLOW_THANK_YOU_PAGE) }
+            onClick={() => navigate(generatePath(PageRoutes.RESPONSES_THANKYOU, {category: 'telematic-receipt-export'})) }
           >
             {t('exportFlow.buttonConfirmReservation')}
           </Button>
