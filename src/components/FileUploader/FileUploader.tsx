@@ -186,7 +186,7 @@ const FileUploader = ({
       {uploading && (
         <Box sx={{ textAlign: 'center', mt: 2 }}>
           <Typography variant="body1" mb={2}>
-            {t('commons.uploadInProgress')}
+            {t('commons.files.uploadInProgress')}
           </Typography>
           <LinearProgress
             variant="determinate"

@@ -74,7 +74,7 @@ describe('FileUploader Component', () => {
     it('shows upload progress', () => {
       renderWithTheme(<FileUploader {...defaultProps} uploading={true} progress={50} />);
       
-      expect(screen.getByText('commons.uploadInProgress')).toBeDefined();
+      expect(screen.getByText('commons.files.uploadInProgress')).toBeDefined();
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar.getAttribute('aria-valuenow')).toBe('50');
     });
