@@ -9,14 +9,14 @@ import DebtPositionsPage from './DebtPositionsPage';
 
 const deployPath = config.deployPath;
 
-const DebtPositionResultsComponent = () => (
+const DebtPositionSearchResults = () => (
   <DebtPositionResults 
     searchType={SearchType.DEBT_POSITION} 
     dataGridComponent={<DebtPositionsDataGrid />}
   />
 );
 
-const DebtPositionSearchResultsComponent = () => (
+const DebtPositionSearchResultsIUV = () => (
   <DebtPositionResults 
     searchType={SearchType.IUV} 
     dataGridComponent={<DebtPositionIUVDataGrid />}
@@ -41,12 +41,12 @@ export const debtPositionsRoutes = [
       {
         id: 'DEBT_POSITIONS_RESULTS',
         path: 'results',
-        element: <DebtPositionResultsComponent />,
+        element: <DebtPositionSearchResults />,
       },
       {
         id: 'DEBT_POSITION_SEARCH_RESULTS',
-        path: 'search-results',
-        element: <DebtPositionSearchResultsComponent />,
+        path: 'results-IUV',
+        element: <DebtPositionSearchResultsIUV />,
       }
     ]
   }
