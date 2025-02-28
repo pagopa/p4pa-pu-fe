@@ -194,5 +194,71 @@ describe('DebtPositionsResults', () => {
       
       expect(screen.getByLabelText('results-table')).toBeInTheDocument();
     });
+    
+    it('renders the correct options for due type select', async () => {
+      render(
+        <DebtPositionResults
+          searchType={SearchType.DEBT_POSITION}
+          dataGridComponent={<div data-testid="mock-grid" />}
+        />
+      );
+      const user = userEvent.setup();
+  
+      const dueTypeSelect = screen.getByLabelText('Tipo Dovuto');
+      await user.click(dueTypeSelect);
+  
+      expect(screen.getByText('TARI')).toBeInTheDocument();
+      expect(screen.getByText('DOVUTO')).toBeInTheDocument();
+    });
+
+    it('allows selecting date range values', async () => {
+      const user = userEvent.setup();
+  
+      render(
+        <DebtPositionResults
+          searchType={SearchType.DEBT_POSITION}
+          dataGridComponent={<div data-testid="mock-grid" />}
+        />
+      );
+  
+      const fromDateInput = screen.getByLabelText('Da');
+      await user.type(fromDateInput, '01/01/2025');
+  
+      const toDateInput = screen.getByLabelText('A');
+      await user.type(toDateInput, '31/01/2025');
+  
+      expect(fromDateInput).toHaveValue('01/01/2025');
+      expect(toDateInput).toHaveValue('31/01/2025');
+    });
+
+    it('shows Add icon for DEBT_POSITION search type', () => {
+      render(
+        <DebtPositionResults
+          searchType={SearchType.DEBT_POSITION}
+          dataGridComponent={<div data-testid="mock-grid" />}
+        />
+      );
+  
+      const addIcon = document.querySelector('svg.MuiSvgIcon-root');
+      expect(addIcon).toBeInTheDocument();
+    });
+
+    it('renders complex dataGridComponent correctly', () => {
+      render(
+        <DebtPositionResults
+          searchType={SearchType.DEBT_POSITION}
+          dataGridComponent={
+            <div data-testid="complex-grid">
+              <span>Complex Grid Component</span>
+              <button>Grid Action</button>
+            </div>
+          }
+        />
+      );
+  
+      expect(screen.getByTestId('complex-grid')).toBeInTheDocument();
+      expect(screen.getByText('Complex Grid Component')).toBeInTheDocument();
+      expect(screen.getByRole('button', { name: 'Grid Action' })).toBeInTheDocument();
+    });
   });
 });
