@@ -1,8 +1,9 @@
 import { Stack } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateValidationError } from '@mui/x-date-pickers/models';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { DateRangeValue } from '../../store/SearchCardStore';
 
 export type DateRange = {
   label?: string;
@@ -14,12 +15,14 @@ export type _DateRangeProps = {
   from?: DateRange;
   to?: DateRange;
   isYear?: boolean;
-  required?: boolean
+  required?: boolean;
+  value?: DateRangeValue;
+  onChange?: (range: DateRangeValue) => void;
 };
 
-export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
+export const _DateRange = ({ from, to, isYear, required, value, onChange }: _DateRangeProps) => {
+  const [startDate, setStartDate] = useState<Date | null>(value?.from || null);
+  const [endDate, setEndDate] = useState<Date | null>(value?.to || null);
 
   const [startDateError, setStartDateError] = useState<DateValidationError | null>(null);
   const [endDateError, setEndDateError] = useState<DateValidationError | null>(null);
@@ -28,14 +31,38 @@ export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
 
   const { t } = useTranslation();
 
+
+  useEffect(() => {
+    if (value) {
+      setStartDate(value.from);
+      setEndDate(value.to);
+    }
+  }, [value]);
+
   const handleStartDateChange = (date: Date | null) => {
     setStartDate(date);
+ 
+    if (onChange) {
+      onChange({
+        from: date,
+        to: endDate
+      });
+    }
+    
     from?.onChange?.(date);
   };
 
   const handleStartDateOnAccept = (date: Date | null) => {
     if (!endDate || (date && date > endDate)) {
       setEndDate(null);
+      
+      if (onChange) {
+        onChange({
+          from: date,
+          to: null
+        });
+      }
+      
       setIsToDialogOpen(true);
     }
   };
@@ -43,7 +70,15 @@ export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
   const handleEndDateChange = (date: Date | null) => {
     if (!startDate || (date && date >= startDate)) {
       setEndDate(date);
+      
+      if (onChange) {
+        onChange({
+          from: startDate,
+          to: date
+        });
+      }
     }
+    
     to?.onChange?.(date);
   };
 

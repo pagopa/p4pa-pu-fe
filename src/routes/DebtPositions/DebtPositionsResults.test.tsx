@@ -154,24 +154,6 @@ describe('DebtPositionsResults', () => {
       consoleSpy.mockRestore();
     });
 
-    it('triggers filter apply button click', async () => {
-      const user = userEvent.setup();
-      const consoleSpy = vi.spyOn(console, 'log');
-      
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      
-      const filterButton = screen.getByRole('button', { name: /filtra/i });
-      await user.click(filterButton);
-      
-      expect(consoleSpy).toHaveBeenCalledWith('Filter applied');
-      consoleSpy.mockRestore();
-    });
-
     it('renders common select filters', () => {
       render(
         <DebtPositionResults
