@@ -4,13 +4,16 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DetailContainer, { DetailData } from '../DetailContainer/DetailContainer';
 import EmptyDetailContainer from './EmptyDetailContainer';
+import { InstallmentDTO } from '../../../generated/apiClient';
 
 
 export const DebtPositionsInstallmentDetail = () => {
 
-  const DEBT_RESOLVED_STATES = ['PAID', 'REPORTED'];
-  const DEBT_PENDING_STATES = ['UNPAID', 'EXPIRED', 'INVALID', 'CANCELLED'];
-  
+  type DebtStatus = Pick<InstallmentDTO, 'status'>['status'];
+
+  const DEBT_RESOLVED_STATES: DebtStatus[] = ['PAID', 'REPORTED'];
+  const DEBT_PENDING_STATES: DebtStatus[] = ['UNPAID', 'EXPIRED', 'INVALID', 'CANCELLED'];
+
   /*START - TMP MOCK DATA*/
   type DetailDataValue = Record<string, DetailData[]> | DetailData[];
   const summaryTitleMock: string = 'Saldo Tari 2025';
@@ -36,10 +39,10 @@ export const DebtPositionsInstallmentDetail = () => {
 
   const { t } = useTranslation();
 
-  const currentState = tmpMockData.summaryData.find(item => item.label === 'Stato')?.value;
+  const currentState = tmpMockData.summaryData.find(item => item.label === 'Stato')?.value as DebtStatus;
 
-  const isResolved = currentState && DEBT_RESOLVED_STATES.includes(currentState);
-  const isPending = currentState && DEBT_PENDING_STATES.includes(currentState);
+  const isResolved = DEBT_RESOLVED_STATES.includes(currentState);
+  const isPending = DEBT_PENDING_STATES.includes(currentState);
 
   return (
     <>
