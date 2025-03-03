@@ -43,12 +43,12 @@ export const ReportingDetail = () => {
           <DetailContainer
             sections={[
               {
-                title: t('commons.summary'),
+                title: {label: t('commons.summary'), variant: 'overline'},
                 data: [...summaryData],
                 inline: true
               },
               {
-                title: t('commons.payment'),
+                title: {label: t('commons.payment'), variant: 'overline'},
                 data: [...paymentData],
                 inline: true
               }
