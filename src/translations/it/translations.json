@@ -341,10 +341,10 @@
 		"accountingDate": "Data Contabile",
 		"reportingId": "ID Rendicontazione"
 	},
-    "debtTypes": {
-        "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
-        "searchDescription": "Codice per Descrizione"
-    },
+  "debtTypes": {
+    "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
+    "searchDescription": "Codice per Descrizione"
+  },
 	"debtPositions": {
 		"searchCardTitle": "Cosa stai cercando?",
 		"searchCardDescription": "Seleziona cosa stai cercando e inserisci i filtri per avviare la ricerca.",
