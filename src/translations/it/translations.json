@@ -105,11 +105,13 @@
 		"reason": "Causale",
 		"requiredFieldDescription": "* Indica un campo obbligatorio",
 		"createNew": "Crea nuova",
+    "createNewOne": "Crea nuovo",
 		"routes": {
 			"CONSERVATION": "Conservazione",
 			"CONSERVATION_INDEX": "Pagina principale",
 			"DEBT_POSITIONS": "Dovuti",
-			"DEBT_POSITIONS_RESULTS": "Posizione debitorie",
+			"DEBT_POSITIONS_RESULTS": "Posizioni debitorie",
+      "DEBT_POSITION_SEARCH_RESULTS": "Avvisi (IUV)",
 			"DEBT_TYPES": "Tipi dovuti",
 			"DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
 			"DEBT_TYPES_CREATED": "Tipi dovuti impostati",
@@ -187,7 +189,8 @@
 	},
 	"DebtPositions": {
 		"Results": {
-			"title": "Posizione Debitorie",
+			"title": "Posizioni Debitorie",
+      "titleIUV": "Avvisi (IUV)",
 			"filters": {
 				"from": "Creazione dal"
 			},
@@ -198,10 +201,18 @@
 				"status": "Stato"
 			},
 			"status": {
-				"TO_PAY": "Da pagare"
+				"TO_PAY": "Da pagare",
+        "PAYED": "Pagato"
 			}
 		}
 	},
+  "debtPositionSearchResults": {
+    "iuv": "Codice Avviso (IUV)",
+    "subject": "Oggetto del pagamento",
+    "amount": "Importo",
+    "expirationDate": "Data Scadenza",
+    "status": "Stato"
+  },
 	"FileUploaderFlowImport": {
     "telematic-receipt": {
       "description": "Carica qui il file .zip con le Ricevute Telematiche"
@@ -330,10 +341,10 @@
 		"accountingDate": "Data Contabile",
 		"reportingId": "ID Rendicontazione"
 	},
-    "debtTypes": {
-        "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
-        "searchDescription": "Codice per Descrizione"
-    },
+  "debtTypes": {
+    "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
+    "searchDescription": "Codice per Descrizione"
+  },
 	"debtPositions": {
 		"searchCardTitle": "Cosa stai cercando?",
 		"searchCardDescription": "Seleziona cosa stai cercando e inserisci i filtri per avviare la ricerca.",

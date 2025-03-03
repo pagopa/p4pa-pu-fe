@@ -1,17 +1,35 @@
+import { Grid } from '@mui/material';
+import { FileUpload } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import { generatePath, useNavigate } from 'react-router';
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
-import { FileUpload } from '@mui/icons-material';
-import { Grid } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { getTabsConfig } from './DebtTabsConfig';
 import { PageRoutes } from '../../App';
-import { generatePath, useNavigate } from 'react-router';
+import { SearchType } from '../../routes/DebtPositions/DebtPositionsResults';
+import { activeTabIndex, resetFilters } from '../../store/SearchCardStore';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const debtTabsConfig = getTabsConfig(t);
+
+  const navigateToResults = () => {
+    if (activeTabIndex.value === 0) {
+      navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, { 
+        state: { searchType: SearchType.IUV }
+      });
+    } else {
+      navigate(PageRoutes.DEBT_POSITIONS_RESULTS, {
+        state: { searchType: SearchType.DEBT_POSITION }
+      });
+    }
+  };
+
+  const resetCurrentFilters = () => {
+    resetFilters(activeTabIndex.value);
+  };
 
   return (
     <>
@@ -37,12 +55,12 @@ export const DebtPositionsPage = () => {
                 {
                   label: t('commons.filters.remove'),
                   variant: 'outlined',
-                  // onClick: () => //TODO
+                  onClick: resetCurrentFilters
                 },
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: () => navigate(PageRoutes.DEBT_POSITIONS_RESULTS)
+                  onClick: navigateToResults
                 }
               ]}
             />

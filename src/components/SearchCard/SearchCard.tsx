@@ -1,9 +1,12 @@
+// SearchCard.tsx
 import { Box, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import FilterContainer, { FilterItem } from '../FilterContainer/FilterContainer';
 import { FilterMap } from '../../hooks/useFilters';
 import { ButtonProps, FormComponent } from '../FormComponent';
-import { useState } from 'react';
+import { useSignal } from '@preact/signals-react';
+import { activeTabIndex, getActiveFilterSignal, resetFilters } from '../../store/SearchCardStore';
+import { useEffect } from 'react';
 
 export type TabsConfig = {
   label: string;
@@ -17,11 +20,28 @@ type SearchCardProps = {
   fields?: FilterItem[];
   button?: ButtonProps[];
   multiFilterConfig?: FilterMap;
+  onTabChange?: (index: number) => void;
 };
 
-const SearchCard = ({ title, description, tabsConfig, fields, button, multiFilterConfig }: SearchCardProps) => {
-  const [activeTab, setActiveTab] = useState(0);
-  const activeFields = tabsConfig && tabsConfig.length > 0 ? tabsConfig[activeTab].fields : fields;
+const SearchCard = ({ title, description, tabsConfig, fields, button, multiFilterConfig, onTabChange }: SearchCardProps) => {
+  const localActiveTab = useSignal(activeTabIndex.value);
+
+  const activeFilterSignal = getActiveFilterSignal();
+  
+  const activeFields = tabsConfig && tabsConfig.length > 0 ? tabsConfig[localActiveTab.value].fields : fields;
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    localActiveTab.value = newValue;
+    activeTabIndex.value = newValue;
+    
+    if (onTabChange) {
+      onTabChange(newValue);
+    }
+  };
+
+  useEffect(() => {
+    resetFilters();
+  },[]);
 
   return (
     <Box
@@ -39,8 +59,8 @@ const SearchCard = ({ title, description, tabsConfig, fields, button, multiFilte
 
       {tabsConfig && tabsConfig.length > 0 && (
         <Tabs 
-          value={activeTab}
-          onChange={(_, newValue) => setActiveTab(newValue)}
+          value={localActiveTab.value}
+          onChange={handleTabChange}
           sx={{ maxWidth: '100%', mb:2 }}>
           {tabsConfig.map((tab, index) => (
             <Tab key={index} label={tab.label} sx={{ flexGrow: 1}}/>
@@ -51,7 +71,11 @@ const SearchCard = ({ title, description, tabsConfig, fields, button, multiFilte
       <Grid container alignItems="center">
         {activeFields && (
           <FilterContainer
-            items={activeFields} 
+            items={activeFields.map(field => ({
+              ...field,
+              id: field.id || field.label.replace(/\s+/g, '').toLowerCase()
+            }))}
+            valuesSignal={activeFilterSignal}
           />
         )}
 

@@ -1,10 +1,27 @@
-import { DebtPositionsPage } from '../components/DebtPositionsPage';
+
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Breadcrumbs';
 import config from '../utils/config';
-import { DebtPositionsResults } from './DebtPositions/DebtPositionsResults';
+import DebtPositionIUVDataGrid from './DebtPositions/components/DebtPositionIUVDataGrid';
+import { DataGrid as DebtPositionsDataGrid } from './DebtPositions/components/DebtPositionsDataGrid';
+import DebtPositionResults, { SearchType } from './DebtPositions/DebtPositionsResults';
+import DebtPositionsPage from './DebtPositionsPage';
 
 const deployPath = config.deployPath;
+
+const DebtPositionSearchResults = () => (
+  <DebtPositionResults 
+    searchType={SearchType.DEBT_POSITION} 
+    dataGridComponent={<DebtPositionsDataGrid />}
+  />
+);
+
+const DebtPositionSearchResultsIUV = () => (
+  <DebtPositionResults 
+    searchType={SearchType.IUV} 
+    dataGridComponent={<DebtPositionIUVDataGrid />}
+  />
+);
 
 export const debtPositionsRoutes = [
   {
@@ -24,7 +41,12 @@ export const debtPositionsRoutes = [
       {
         id: 'DEBT_POSITIONS_RESULTS',
         path: 'results',
-        element: <DebtPositionsResults />,
+        element: <DebtPositionSearchResults />,
+      },
+      {
+        id: 'DEBT_POSITION_SEARCH_RESULTS',
+        path: 'results-IUV',
+        element: <DebtPositionSearchResultsIUV />,
       }
     ]
   }
