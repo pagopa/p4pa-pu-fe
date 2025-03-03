@@ -31,7 +31,7 @@ const ImportFlow = () => {
   } = useStore();
 
   const config = importFlowConfig[category as keyof typeof importFlowConfig];
-  const thankyouPage = generatePath(PageRoutes.RESPONSES_THANKYOU, {category: config.successRoute});
+  const thankyouPage = generatePath(PageRoutes.RESPONSES_THANKYOU, {category: config.category});
 
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);

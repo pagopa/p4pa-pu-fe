@@ -14,15 +14,17 @@ export const ReportingFlowImportThankYouPage = () => {
   };
 
   return (
-    <>
-      <ThankYouPage 
-        icon={<CheckCircleOutlineOutlinedIcon sx={{fontSize: 60, color: theme.palette.secondary.main}} />}
-        title={t('commons.successImport')}
-        description={t('reportingImportThankYouPage.description')}
-        buttonLabel={t('commons.close')}
-        onButtonClick={handleButtonClick}
-      />
-    </>
+    <ThankYouPage
+      icon={
+        <CheckCircleOutlineOutlinedIcon
+          sx={{ fontSize: 60, color: theme.palette.secondary.main }}
+        />
+      }
+      title={t('commons.successImport')}
+      description={t('reportingImportThankYouPage.description')}
+      buttonLabel={t('commons.close')}
+      onButtonClick={handleButtonClick}
+    />
   );
 };
 

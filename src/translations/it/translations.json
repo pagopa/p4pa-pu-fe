@@ -272,6 +272,9 @@
 	"telematicReceiptExportFlowThankYouPage": {
 		"description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
 	},
+	"debtPositionsImportThankYouPage": {
+		"description": "Troverai il flusso caricato nella sezione Flussi importati"
+	},
 	"telematicReceiptFlowExportOverview": {
 		"buttonReservationExport": "Prenota export",
 		"description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",

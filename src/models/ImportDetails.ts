@@ -4,7 +4,7 @@ interface ImportFlowDetail {
   title: string;
   fileExtensionsAllowed: string[];
   backRoute: string;
-  successRoute: string;
+  category: string;
   requiredFieldDescription?: string;
   flowTypes: IngestionFlowFileType[];
 }
@@ -16,21 +16,21 @@ export const importFlowConfig: ImportFlowDetails = {
     title: 'commons.importNewFlow',
     fileExtensionsAllowed: ['zip'],
     backRoute: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW',
-    successRoute: 'telematic-receipt-import',
-    flowTypes: [IngestionFlowFileType.RECEIPT_PAGOPA, IngestionFlowFileType.RECEIPT]
+    category: 'telematic-receipt-import',
+    flowTypes: [IngestionFlowFileType.RECEIPT]
   },
   reporting: {
     title: 'commons.importNewFlow',
     fileExtensionsAllowed: ['zip'],
     backRoute: 'REPORTING_IMPORT_OVERVIEW',
-    successRoute: 'reporting-import',
+    category: 'reporting-import',
     flowTypes: [IngestionFlowFileType.PAYMENTS_REPORTING]
   },
   treasury: {
     title: 'commons.importNewFlow',
     fileExtensionsAllowed: ['zip'],
     backRoute: 'TREASURY',
-    successRoute: 'treasury-import',
+    category: 'treasury-import',
     requiredFieldDescription: 'commons.requiredFieldDescription',
     flowTypes: [
       IngestionFlowFileType.TREASURY_XLS,
@@ -43,9 +43,7 @@ export const importFlowConfig: ImportFlowDetails = {
     title: 'commons.importNewFlow',
     fileExtensionsAllowed: ['zip'],
     backRoute: 'DEBT_POSITIONS',
-    successRoute: 'reporting-import',
-    flowTypes: [
-      IngestionFlowFileType.DP_INSTALLMENTS,
-    ]
+    category: 'debt-positions',
+    flowTypes: [IngestionFlowFileType.DP_INSTALLMENTS]
   }
 };
