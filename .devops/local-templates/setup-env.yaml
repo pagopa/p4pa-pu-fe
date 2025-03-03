@@ -16,6 +16,10 @@ parameters:
     type: string
     default: ''
 
+  - name: 'vite_fileshare_apihost'
+    type: string
+    default: ''
+
 steps:
 - bash: |
     chmod +x env.sh
@@ -24,6 +28,7 @@ steps:
       PU_VITE_DEPLOY_PATH=${{ parameters.vite_deploy_path }} \
       PU_VITE_API_TIMEOUT=${{ parameters.vite_api_timeout }} \
       PU_VITE_APIHOST=${{ parameters.vite_apihost }} \
+      PU_VITE_FILESHARE_APIHOST=${{ parameters.vite_fileshare_apihost }} \
       bash env.sh
 
   displayName: 'Populate environment file'
