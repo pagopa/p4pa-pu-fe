@@ -109,7 +109,8 @@
 			"CONSERVATION": "Conservazione",
 			"CONSERVATION_INDEX": "Pagina principale",
 			"DEBT_POSITIONS": "Dovuti",
-			"DEBT_POSITIONS_RESULTS": "Posizione debitorie",
+			"DEBT_POSITIONS_RESULTS": "Posizioni debitorie",
+			"DEBT_POSITION_INSTALLMENT_DETAIL": "Dettaglio Avviso",
 			"DEBT_TYPES": "Tipi dovuti",
 			"DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
 			"DEBT_TYPES_CREATED": "Tipi dovuti impostati",
@@ -167,6 +168,10 @@
 			"ERROR": "Errore",
 			"EXPIRED": "Scaduto",
 			"ALL": "Tutti"
+		},
+		"chipStaus": {
+			"PAID": "Pagato",
+			"UNPAID": "Non pagato"
 		},
 		"successExport": "Abbiamo ricevuto la tua richiesta!",
 		"successImport": "Flusso caricato con successo",
@@ -345,5 +350,13 @@
 		"importDebtFlowDescription": "Carica un file .zip con l'informazione necessaria di dovuti mancanti.",
 		"expirationFrom": "Scadenza dal",
 		"creationFrom": "Creazione dal"
+	},
+	"installmentDetailPage": {
+		"title": "Dettagli Avviso",
+		"showDebtPositions": "Vedi Posizione debitoria",
+		"showOtherBeneficiaries": "Vedi altri beneficiari",
+		"noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+		"downloadInstallment": "Scarica avviso",
+		"paymentInformation": "Informazione sul pagamento"
 	}
 }

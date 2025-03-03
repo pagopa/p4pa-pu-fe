@@ -1,4 +1,4 @@
-import { Box, Typography, Button, ButtonProps } from '@mui/material';
+import { Box, Typography, Button, ButtonProps, useTheme } from '@mui/material';
 
 type TitleComponentProps = {
   title: string;
@@ -6,13 +6,15 @@ type TitleComponentProps = {
   callToAction?: {
     icon?: React.ReactNode;
     variant?: 'text' | 'outlined' | 'contained';
-    buttonText: string;
+    buttonText?: string;
     color?: 'inherit' | 'primary' | 'secondary' | 'success' | 'error' | 'info' | 'warning';
     onActionClick: () => void;
   }[];
 };
 
 const TitleComponent = ({ title, description, callToAction }: TitleComponentProps) => {
+  const theme = useTheme();
+  
   return (
     <>
       <Box
@@ -31,13 +33,14 @@ const TitleComponent = ({ title, description, callToAction }: TitleComponentProp
               <Button
                 key={`${action.buttonText}-${index}`}
                 size="large"
-                startIcon={action.icon}
+                startIcon={action.buttonText ? action.icon : undefined}
                 variant={action.variant || 'contained'}
                 color={action.color as ButtonProps['color'] || 'primary'}
                 onClick={action.onActionClick}
                 aria-label={`${action.buttonText}`}
+                sx= { action.buttonText ? undefined : { bgcolor: theme.palette.primary.contrastText } }
               >
-                {action.buttonText}
+                {action.buttonText ?? action.icon}
               </Button>
             ))}
           </Box>
