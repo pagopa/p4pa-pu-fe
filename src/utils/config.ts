@@ -6,20 +6,22 @@ import { z, ZodError } from 'zod';
 const {
   VITE_DEPLOY_PATH = '/piattaformaunitaria',
   VITE_APIHOST = 'http://localhost',
-  VITE_API_TIMEOUT = '10000',
+  VITE_FILESHARE_APIHOST = 'http://localhost',
+  VITE_API_TIMEOUT = '10000'
 } = import.meta.env;
 const PARSED_API_TIMEOUT = Number.parseInt(VITE_API_TIMEOUT, 10);
-
 
 // ENV variables validation
 
 const DEPLOY_PATH_schema = z.string();
 const APIHOST_schema = z.string().url();
+const FILESHARE_APIHOST_schema = z.string().url();
 const API_TIMEOUT_schema = z.number();
 
 try {
   DEPLOY_PATH_schema.parse(VITE_DEPLOY_PATH);
   APIHOST_schema.parse(import.meta.env.VITE_APIHOST);
+  FILESHARE_APIHOST_schema.parse(import.meta.env.VITE_FILESHARE_APIHOST);
   API_TIMEOUT_schema.parse(PARSED_API_TIMEOUT);
 } catch (e) {
   console.error('ENV variables validation fails', (e as ZodError).issues);
@@ -30,6 +32,7 @@ type Config = {
   pagopaLink: RootLinkType;
   tokenHeaderExcludePaths: string[];
   baseURL: string;
+  fileshareURL: string;
   apiTimeout: number;
 };
 
@@ -58,6 +61,7 @@ const config: Config = {
    * in the package.json file
    **/
   baseURL: VITE_APIHOST,
+  fileshareURL: VITE_FILESHARE_APIHOST,
   deployPath: VITE_DEPLOY_PATH,
   /** This array is populated by paths that don't need a auth token */
   tokenHeaderExcludePaths: ['/token/']

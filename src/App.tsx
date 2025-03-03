@@ -31,7 +31,7 @@ const deployPath = config.deployPath;
 
 const routesDef = [
   {
-    element: <ApiClient client={utils.apiClient} />,
+    element: <ApiClient clients={[utils.apiClient, utils.fileshareClient]} />,
     children: [
       {
         path: '*',

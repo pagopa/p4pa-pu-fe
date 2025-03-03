@@ -1,13 +1,13 @@
 interface ThankyouPage {
-    title: string,
-    description: string,
-    routeID: string
-  }
-  
-  type ThankyouOpts = Record<string, ThankyouPage>
-  
+  title: string;
+  description: string;
+  routeID: string;
+}
+
+type ThankyouOpts = Record<string, ThankyouPage>;
+
 export const ThankyouPageConfig: ThankyouOpts = {
-  'default': {
+  default: {
     title: 'commons.successImport',
     description: 'reportingImportThankYouPage.description',
     routeID: 'TREASURY_IMPORT_OVERVIEW'
@@ -32,5 +32,10 @@ export const ThankyouPageConfig: ThankyouOpts = {
     description: 'reportingImportThankYouPage.description',
     routeID: 'TREASURY_IMPORT_OVERVIEW'
   },
+  'debt-positions': {
+    title: 'commons.successImport',
+    description: 'debtPositionsImportThankYouPage.description',
+    routeID: 'DEBT_POSITIONS'
+  }
 };
-  
+
