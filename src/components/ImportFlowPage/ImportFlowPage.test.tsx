@@ -1,12 +1,12 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '../../__tests__/renderers';
 import ImportFlow from './ImportFlowPage';
 import { useParams } from 'react-router-dom';
 
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal()),
   useNavigate: vi.fn(),
-  useParams: vi.fn(),
+  useParams: vi.fn()
 }));
 
 describe('ImportFlow', () => {
@@ -22,7 +22,7 @@ describe('ImportFlow', () => {
     });
 
     it('renders without select', () => {
-      render(<ImportFlow/>);
+      render(<ImportFlow />);
 
       expect(screen.getByText('commons.importNewFlow')).toBeDefined();
       expect(screen.getByText('commons.flowImport.description')).toBeDefined();
@@ -34,9 +34,8 @@ describe('ImportFlow', () => {
     });
 
     it('should enable button when a file is uploaded', async () => {
-
       render(<ImportFlow />);
-    
+
       const file = new File(['content'], 'test.zip', { type: 'application/zip' });
       const dropZone = screen.getByTestId('drop-zone');
 
@@ -46,7 +45,7 @@ describe('ImportFlow', () => {
           files: [file]
         }
       });
-      
+
       await vi.waitFor(() => expect(screen.getAllByText('test.zip')).toBeDefined());
       const successButton = screen.getByTestId('success-button');
 
@@ -70,27 +69,26 @@ describe('ImportFlow', () => {
 
     it('should show all flow type options when select is clicked', () => {
       render(<ImportFlow />);
-    
+
       const selectCombo = screen.getByRole('combobox', { name: 'commons.flowType' });
       fireEvent.mouseDown(selectCombo);
-    
+
       const listbox = within(screen.getByRole('listbox'));
-    
+
       const options = [
-        'Giornale di Cassa XLS',
-        'Giornale di Cassa CSV',
-        'Giornale di Cassa OPI',
-        'Estrato conto poste'
+        'commons.flowTypes.TREASURY_OPI',
+        'commons.flowTypes.TREASURY_CSV',
+        'commons.flowTypes.TREASURY_XLS',
+        'commons.flowTypes.TREASURY_POSTE',
       ];
-    
-      options.forEach(option => {
+
+      options.forEach((option) => {
         expect(listbox.getByText(option)).toBeDefined();
       });
-    }); 
+    });
     it('should enable button when a file is uploaded and a flow type is selected', async () => {
-
       render(<ImportFlow />);
-    
+
       const file = new File(['content'], 'test.zip', { type: 'application/zip' });
       const dropZone = screen.getByTestId('drop-zone');
 
@@ -100,12 +98,12 @@ describe('ImportFlow', () => {
           files: [file]
         }
       });
-      
+
       await vi.waitFor(() => expect(screen.getAllByText('test.zip')).toBeDefined());
 
       const selectCombo = screen.getByRole('combobox', { name: 'commons.flowType' });
       fireEvent.mouseDown(selectCombo);
-      
+
       const firstOption = within(screen.getByRole('listbox')).getAllByRole('option')[0];
       fireEvent.click(firstOption);
 

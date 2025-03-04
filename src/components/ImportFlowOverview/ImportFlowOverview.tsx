@@ -31,11 +31,11 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  
+
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  const { 
+  const {
     appliedFilters,
     draftFilters,
     updateDraftFilters,
@@ -58,7 +58,7 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
 
     if (MENU_STATES.includes(status)) {
       return (
-        <ActionMenu 
+        <ActionMenu
           rowId={ingestionFlowFileId}
           menuItems={[
             {
@@ -93,41 +93,41 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
   };
 
   const columns: GridColDef[] = [
-    { 
-      field: 'ingestionFlowFileId', 
-      headerName: t('flowDataGrid.internalID'), 
-      flex: 1, 
-      type: 'number', 
-      headerAlign: 'left', 
-      align: 'left' 
+    {
+      field: 'ingestionFlowFileId',
+      headerName: t('flowDataGrid.internalID'),
+      flex: 1,
+      type: 'number',
+      headerAlign: 'left',
+      align: 'left'
     },
-    { 
-      field: 'fileName', 
-      headerName: t('flowDataGrid.name'), 
-      flex: 1, 
-      type: 'string' 
+    {
+      field: 'fileName',
+      headerName: t('flowDataGrid.name'),
+      flex: 1,
+      type: 'string'
     },
-    { 
-      field: 'creationDate', 
-      headerName: t('flowDataGrid.reservationDate'), 
-      flex: 1, 
+    {
+      field: 'creationDate',
+      headerName: t('flowDataGrid.reservationDate'),
+      flex: 1,
       type: 'string',
-      renderCell: (params: GridRenderCellParams) => 
+      renderCell: (params: GridRenderCellParams) =>
         params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
     },
-    { 
-      field: 'operator', 
-      headerName: t('flowDataGrid.operator'), 
-      flex: 1, 
-      type: 'string' 
+    {
+      field: 'operator',
+      headerName: t('flowDataGrid.operator'),
+      flex: 1,
+      type: 'string'
     },
-    { 
-      field: 'discardedRows', 
-      headerName: t('flowDataGrid.loadedDiscarded'), 
-      flex: 1, 
-      type: 'number', 
-      headerAlign: 'left', 
-      align: 'left' 
+    {
+      field: 'discardedRows',
+      headerName: t('flowDataGrid.loadedDiscarded'),
+      flex: 1,
+      type: 'number',
+      headerAlign: 'left',
+      align: 'left'
     },
     {
       field: 'status',
@@ -199,12 +199,12 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
               value: draftFilters.status || 'ALL',
               onChange: (e) => {
                 const value = e.target.value;
-                updateDraftFilters({ 
-                  status: value === 'ALL' ? undefined : value as FlowStatus 
+                updateDraftFilters({
+                  status: value === 'ALL' ? undefined : value as FlowStatus
                 });
               }
             },
-            { 
+            {
               type: COMPONENT_TYPE.dateRange,
               label: 'dateRange',
               gridWidth: 4,

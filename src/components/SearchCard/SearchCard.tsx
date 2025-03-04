@@ -3,7 +3,8 @@ import MultiFilter from '../MultiFilter/MultiFilter';
 import FilterContainer, { FilterItem } from '../FilterContainer/FilterContainer';
 import { FilterMap } from '../../hooks/useFilters';
 import { ButtonProps, FormComponent } from '../FormComponent';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 
 export type TabsConfig = {
   label: string;
@@ -17,11 +18,54 @@ type SearchCardProps = {
   fields?: FilterItem[];
   button?: ButtonProps[];
   multiFilterConfig?: FilterMap;
+  activeTabIndex?: number;
+  onTabChange?: (index: number) => void;
+  filterValues?: BaseFilterValues;
+  onFilterChange?: (id: string, value: FilterFieldValue) => void;
+  onReset?: () => void;
 };
 
-const SearchCard = ({ title, description, tabsConfig, fields, button, multiFilterConfig }: SearchCardProps) => {
-  const [activeTab, setActiveTab] = useState(0);
-  const activeFields = tabsConfig && tabsConfig.length > 0 ? tabsConfig[activeTab].fields : fields;
+const SearchCard = ({ 
+  title, 
+  description, 
+  tabsConfig, 
+  fields, 
+  button, 
+  multiFilterConfig, 
+  activeTabIndex = 0, 
+  onTabChange,
+  filterValues = {},
+  onFilterChange,
+  onReset
+}: SearchCardProps) => {
+  const [localActiveTab, setLocalActiveTab] = useState<number>(activeTabIndex);
+  
+  const isControlled = onTabChange !== undefined;
+  const currentTabIndex = isControlled ? activeTabIndex : localActiveTab;
+
+  const activeFields = tabsConfig && tabsConfig.length > 0 
+    ? tabsConfig[currentTabIndex].fields 
+    : fields || [];
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    if (isControlled) {
+      onTabChange(newValue);
+    } else {
+      setLocalActiveTab(newValue);
+    }
+  };
+
+  useEffect(() => {
+    if (!isControlled) {
+      setLocalActiveTab(activeTabIndex);
+    }
+  }, [activeTabIndex, isControlled]);
+
+  useEffect(() => {
+    if (onReset) {
+      onReset();
+    }
+  }, [onReset]);
 
   return (
     <Box
@@ -39,19 +83,24 @@ const SearchCard = ({ title, description, tabsConfig, fields, button, multiFilte
 
       {tabsConfig && tabsConfig.length > 0 && (
         <Tabs 
-          value={activeTab}
-          onChange={(_, newValue) => setActiveTab(newValue)}
-          sx={{ maxWidth: '100%', mb:2 }}>
+          value={currentTabIndex}
+          onChange={handleTabChange}
+          sx={{ maxWidth: '100%', mb: 2 }}>
           {tabsConfig.map((tab, index) => (
-            <Tab key={index} label={tab.label} sx={{ flexGrow: 1}}/>
+            <Tab key={index} label={tab.label} sx={{ flexGrow: 1 }}/>
           ))}
         </Tabs>
       )}
 
       <Grid container alignItems="center">
-        {activeFields && (
+        {activeFields.length > 0 && (
           <FilterContainer
-            items={activeFields} 
+            items={activeFields.map(field => ({
+              ...field,
+              id: field.id || field.label.replace(/\s+/g, '').toLowerCase()
+            }))}
+            values={filterValues}
+            onChange={onFilterChange}
           />
         )}
 
