@@ -46,8 +46,7 @@ export const DebtPositionsPage = () => {
   }, [activeTabIndex, filters]);
 
   const handleFilterChange = useCallback((id: string, value: FilterFieldValue) => {
-    console.log('Filter changed:', id, value);
-    
+
     setFilters(prevFilters => {
       const newFilters = [...prevFilters];
       newFilters[activeTabIndex] = {
@@ -62,8 +61,6 @@ export const DebtPositionsPage = () => {
     setActiveTabIndex(newTabIndex);
   }, []);
 
-  console.log('Current tab:', activeTabIndex);
-  console.log('Current filters:', filters);
 
   return (
     <>
