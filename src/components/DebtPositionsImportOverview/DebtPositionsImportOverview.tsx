@@ -214,7 +214,7 @@ const DebtPositionsImportOverview = () => {
                 }))
               ],
               value: selectedState,
-              onChange:(e) => setSelectedState(e.target.value) 
+              onChange:(e) => setSelectedState(e.target.value as string) 
             },
             { 
               type: COMPONENT_TYPE.dateRange,
@@ -223,13 +223,11 @@ const DebtPositionsImportOverview = () => {
               from: {
                 label: t('dates.from'),
                 errorMessage: t('dates.validations.from'),
-                value: dateRange.from,
                 onChange: (date: Date | null) => setDateRange(prev => ({ ...prev, from: date}))
               },
               to: {
                 label: t('dates.to'),
                 errorMessage: t('dates.validations.to'),
-                value: dateRange.to,
                 onChange: (date: Date | null) => setDateRange(prev => ({ ...prev, to: date}))
               }
             },

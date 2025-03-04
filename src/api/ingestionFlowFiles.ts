@@ -1,9 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import { pagedIngestionFlowFileSchema } from '../../generated/zod-schema';
 import { toUTCString } from '../utils/formatter';
 import { FlowStatus } from '../models/Filters';
+import {
+  FileOrigin,
+  IngestionFlowFileType,
+  RequestParams
+} from '../../generated/fileshare/fileshareClient';
 
 export const getIngestionFlowFiles = (
   organizationId: number,
@@ -41,7 +46,7 @@ export const getIngestionFlowFiles = (
               const searchParams = new URLSearchParams();
               Object.entries(params).forEach(([key, value]) => {
                 if (Array.isArray(value)) {
-                  value.forEach(val => searchParams.append(key, val));
+                  value.forEach((val) => searchParams.append(key, val));
                 } else if (value !== undefined) {
                   searchParams.append(key, value);
                 }
@@ -62,7 +67,7 @@ export const getIngestionFlowFiles = (
           }))
         };
 
-        parseAndLog((pagedIngestionFlowFileSchema), transformedFiles);
+        parseAndLog(pagedIngestionFlowFileSchema, transformedFiles);
 
         return transformedFiles;
       }
@@ -74,3 +79,30 @@ export const getIngestionFlowFiles = (
   });
 };
 
+export const uploadIngestionFlowFile = ({
+  organizationId,
+  ingestionFlowFileType
+}: {
+  organizationId: number;
+  ingestionFlowFileType: IngestionFlowFileType;
+}) =>
+  useMutation({
+    mutationKey: ['uploadIngestionFlowFiles', organizationId],
+    mutationFn: async (file: File, params?: RequestParams) => {
+      const { data: response } =
+        await utils.fileshareClient.ingestionflowfiles.uploadIngestionFlowFile(
+          organizationId,
+          {
+            ingestionFlowFileType,
+            fileOrigin: FileOrigin.PORTAL,
+            fileName: file.name
+          },
+          {
+            ingestionFlowFile: file
+          },
+          params
+        );
+
+      return response;
+    }
+  });
