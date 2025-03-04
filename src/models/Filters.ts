@@ -40,3 +40,22 @@ export const STATE_COLORS: Record<FlowStatus, 'success' | 'info' | 'secondary' |
 
 export const MENU_STATES = ['COMPLETED', 'ERROR'] as const;
 export const DOWNLOAD_STATES = ['UPLOADED'] as const;
+
+
+export interface DateRangeValue {
+  from: Date | null;
+  to: Date | null;
+}
+
+export type FilterFieldValue = 
+  | string 
+  | number 
+  | boolean 
+  | Date 
+  | DateRangeValue 
+  | null 
+  | undefined;
+
+export type BaseFilterValues = {
+  [key: string]: FilterFieldValue;
+};

@@ -1,17 +1,64 @@
+import { Grid } from '@mui/material';
+import { FileUpload } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import { generatePath, useNavigate } from 'react-router';
+import { useState, useCallback } from 'react';
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
-import { FileUpload } from '@mui/icons-material';
-import { Grid } from '@mui/material';
-import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { getTabsConfig } from './DebtTabsConfig';
 import { PageRoutes } from '../../App';
-import { generatePath, useNavigate } from 'react-router';
+import { SearchType } from '../../routes/DebtPositions/DebtPositionsResults';
+import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const debtTabsConfig = getTabsConfig(t);
+
+  const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+  const [filters, setFilters] = useState<BaseFilterValues[]>([{}, {}]);
+
+  const navigateToResults = useCallback(() => {
+    if (activeTabIndex === 0) {
+      navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, { 
+        state: { 
+          searchType: SearchType.IUV,
+          filters: filters[activeTabIndex]
+        }
+      });
+    } else {
+      navigate(PageRoutes.DEBT_POSITIONS_RESULTS, {
+        state: { 
+          searchType: SearchType.DEBT_POSITION,
+          filters: filters[activeTabIndex]
+        }
+      });
+    }
+  }, [activeTabIndex, filters, navigate]);
+
+  const resetCurrentFilters = useCallback(() => {
+    const newFilters = [...filters];
+    newFilters[activeTabIndex] = {};
+    setFilters(newFilters);
+  }, [activeTabIndex, filters]);
+
+  const handleFilterChange = useCallback((id: string, value: FilterFieldValue) => {
+
+    setFilters(prevFilters => {
+      const newFilters = [...prevFilters];
+      newFilters[activeTabIndex] = {
+        ...newFilters[activeTabIndex],
+        [id]: value
+      };
+      return newFilters;
+    });
+  }, [activeTabIndex]);
+
+  const handleTabChange = (newTabIndex: number) => {
+    setActiveTabIndex(newTabIndex);
+  };
+
 
   return (
     <>
@@ -33,16 +80,20 @@ export const DebtPositionsPage = () => {
               title={t('debtPositions.searchCardTitle')}
               description={t('debtPositions.searchCardDescription')}
               tabsConfig={debtTabsConfig}
+              activeTabIndex={activeTabIndex}
+              onTabChange={handleTabChange}
+              filterValues={filters[activeTabIndex]}
+              onFilterChange={handleFilterChange}
               button={[
                 {
                   label: t('commons.filters.remove'),
                   variant: 'outlined',
-                  // onClick: () => //TODO
+                  onClick: resetCurrentFilters
                 },
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: () => navigate(PageRoutes.DEBT_POSITIONS_RESULTS)
+                  onClick: navigateToResults
                 }
               ]}
             />
