@@ -58,7 +58,7 @@ export const DebtPositionsPage = () => {
               onActionClick={
                 () => navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'debt-positions' }))
               }
-              onLinkClick={() => console.log('import flow')}
+              onLinkClick={() => navigate(PageRoutes.DEBT_POSITIONS_IMPORT_OVERVIEW)}
             />
           </Grid>
         </Grid>
