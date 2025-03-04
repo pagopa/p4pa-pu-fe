@@ -6,7 +6,7 @@ import {
   LinearProgress,
   Grid,
   Alert,
-  alpha,
+  alpha
 } from '@mui/material';
 import { CloudUpload, AttachFile, Close, InsertDriveFile } from '@mui/icons-material';
 import { theme } from '@pagopa/mui-italia';
@@ -35,7 +35,7 @@ const FileUploader = ({
   setFile,
   description,
   requiredFileText,
-  fileExtensionsAllowed,
+  fileExtensionsAllowed
 }: FileUploaderProps) => {
   const { t } = useTranslation();
 
@@ -130,13 +130,12 @@ const FileUploader = ({
             <IconButton
               size="small"
               onClick={() => setError(null)}
-              sx={{ color: theme.palette.primary.dark }}
-            >
-              <Close fontSize="small" data-testid="close-alert-button"/>
+              sx={{ color: theme.palette.primary.dark }}>
+              <Close fontSize="small" data-testid="close-alert-button" />
             </IconButton>
           }
-          severity="error" 
-          variant="standard" 
+          severity="error"
+          variant="standard"
           sx={{ mb: 2, fontWeight: 600 }}>
           {error}
         </Alert>
@@ -152,10 +151,9 @@ const FileUploader = ({
               borderRadius: 2,
               p: 3,
               bgcolor: alpha(theme.palette.primary[100], 0.5),
-              textAlign: 'center',
+              textAlign: 'center'
             }}
-            data-testid="drop-zone"
-          >
+            data-testid="drop-zone">
             <CloudUpload sx={{ fontSize: 40, color: theme.palette.primary.main }} />
             <Typography variant="body1" mt={2} mb={3}>
               {description}
@@ -164,9 +162,8 @@ const FileUploader = ({
               variant="contained"
               component="label"
               sx={{
-                padding: 1.5,
-              }}
-            >
+                padding: 1.5
+              }}>
               {t('commons.files.upload')}
               <input
                 type="file"
@@ -196,8 +193,8 @@ const FileUploader = ({
               borderRadius: 5,
               bgcolor: theme.palette.primary[100],
               '& .MuiLinearProgress-bar': {
-                bgcolor: theme.palette.primary.main,
-              },
+                bgcolor: theme.palette.primary.main
+              }
             }}
           />
         </Box>
@@ -212,9 +209,8 @@ const FileUploader = ({
             border: `1px solid ${theme.palette.primary.main}`,
             borderRadius: 2,
             p: 2,
-            mt: 2,
-          }}
-        >
+            mt: 2
+          }}>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <AttachFile sx={{ color: theme.palette.primary.main, mr: 1 }} />
             <Typography variant="body1" sx={{ fontWeight: 400 }} color={theme.palette.primary.main}>
@@ -227,8 +223,7 @@ const FileUploader = ({
           <IconButton
             aria-label={t('commons.removeFile')}
             onClick={handleRemoveFile}
-            sx={{ color: theme.palette.primary.main }}
-          >
+            sx={{ color: theme.palette.primary.main }}>
             <Close />
           </IconButton>
         </Box>
