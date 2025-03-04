@@ -42,7 +42,6 @@ export const MENU_STATES = ['COMPLETED', 'ERROR'] as const;
 export const DOWNLOAD_STATES = ['UPLOADED'] as const;
 
 
-
 export interface DateRangeValue {
   from: Date | null;
   to: Date | null;

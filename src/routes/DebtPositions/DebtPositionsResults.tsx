@@ -7,7 +7,6 @@ import { useLocation } from 'react-router-dom';
 import FilterContainer, { COMPONENT_TYPE, FilterItem } from '../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
-import { FilterFieldIds } from '../../models/SearchCardFields';
 import { TFunction } from 'i18next';
 
 export enum SearchType {
@@ -26,7 +25,6 @@ export interface DebtResultsProps {
 }
 
 const getFilterItems = (searchType: SearchType, t: TFunction): FilterItem[] => {
-
   const commonFilters: FilterItem[] = [
     {
       type: COMPONENT_TYPE.select,
@@ -37,7 +35,7 @@ const getFilterItems = (searchType: SearchType, t: TFunction): FilterItem[] => {
         { label: 'Tari', value: 'TARI' },
         { label: 'Dovuto', value: 'DOVUTO' }
       ],
-      id: FilterFieldIds.DUETYPE,
+      id: 'duetype',
       defaultValue: 'TUTTI'
     }
   ];
@@ -51,7 +49,7 @@ const getFilterItems = (searchType: SearchType, t: TFunction): FilterItem[] => {
         { label: 'Tutti', value: 'TUTTI' },
         { label: 'Rata', value: 'RATA'}
       ],
-      id: FilterFieldIds.STATE,
+      id: 'state',
       defaultValue: 'TUTTI'
     });
   }
@@ -63,14 +61,14 @@ const getFilterItems = (searchType: SearchType, t: TFunction): FilterItem[] => {
         label: t('commons.searchIUV'),
         icon: <SearchIcon />,
         gridWidth: 3,
-        id: FilterFieldIds.SEARCH_IUV
+        id: 'iuv'
       },
       {
         type: COMPONENT_TYPE.textField,
         label: t('commons.searchCF'),
         icon: <SearchIcon />,
         gridWidth: 2,
-        id: FilterFieldIds.SEARCH_CF
+        id: 'fiscalCode'
       },
       {
         type: COMPONENT_TYPE.dateRange,
@@ -79,12 +77,11 @@ const getFilterItems = (searchType: SearchType, t: TFunction): FilterItem[] => {
         gridWidth: 4,
         from: { label: t('DebtPositions.Results.filters.from') },
         to: { label: t('dates.to') },
-        id: FilterFieldIds.DATE_RANGE
+        id: 'dateRange'
       },
       ...commonFilters
     ];
-  } 
-
+  }
   else {
     return [
       {
@@ -92,7 +89,7 @@ const getFilterItems = (searchType: SearchType, t: TFunction): FilterItem[] => {
         label: t('commons.searchCF'),
         icon: <SearchIcon />,
         gridWidth: 3,
-        id: FilterFieldIds.SEARCH_CF
+        id: 'fiscalCode'
       },
       {
         type: COMPONENT_TYPE.dateRange,
@@ -101,55 +98,11 @@ const getFilterItems = (searchType: SearchType, t: TFunction): FilterItem[] => {
         gridWidth: 4,
         from: { label: t('DebtPositions.Results.filters.from') },
         to: { label: t('dates.to') },
-        id: FilterFieldIds.DATE_RANGE
+        id: 'dateRange'
       },
       ...commonFilters
     ];
   }
-};
-
-const mapSearchToResultsFilters = (
-  searchValues: BaseFilterValues, 
-  searchType: SearchType
-): BaseFilterValues => {
-  const mappedFilters: BaseFilterValues = {};
-
-  if (FilterFieldIds.DUETYPE in searchValues) {
-    mappedFilters[FilterFieldIds.DUETYPE] = searchValues[FilterFieldIds.DUETYPE];
-  }
-
-  if (FilterFieldIds.STATE in searchValues) {
-    mappedFilters[FilterFieldIds.STATE] = searchValues[FilterFieldIds.STATE];
-  }
-
-  if (searchType === SearchType.IUV) {
-    if (FilterFieldIds.IUV_CODE in searchValues) {
-      mappedFilters[FilterFieldIds.SEARCH_IUV] = searchValues[FilterFieldIds.IUV_CODE];
-    }
-    
-    if (FilterFieldIds.FISCAL_CODE in searchValues) {
-      mappedFilters[FilterFieldIds.SEARCH_CF] = searchValues[FilterFieldIds.FISCAL_CODE];
-    }
-  } else {
-    if (FilterFieldIds.FISCAL_CODE in searchValues) {
-      mappedFilters[FilterFieldIds.SEARCH_CF] = searchValues[FilterFieldIds.FISCAL_CODE];
-    }
-  }
-
-  if (FilterFieldIds.DATE_RANGE in searchValues) {
-    const dateRangeFilter = searchValues[FilterFieldIds.DATE_RANGE];
-    
-    if (dateRangeFilter && typeof dateRangeFilter === 'object') {
-      if ('from' in dateRangeFilter && 'to' in dateRangeFilter) {
-        mappedFilters[FilterFieldIds.DATE_RANGE] = {
-          from: dateRangeFilter.from,
-          to: dateRangeFilter.to
-        };
-      }
-    }
-  }
-  
-  return mappedFilters;
 };
 
 export const DebtPositionResults = ({ searchType, dataGridComponent }: DebtResultsProps) => {
@@ -158,18 +111,16 @@ export const DebtPositionResults = ({ searchType, dataGridComponent }: DebtResul
   const location = useLocation();
   
   const locationState = location.state as LocationState | undefined;
+  
   const initialFilters = locationState?.filters || {};
   
-  const mappedInitialFilters = mapSearchToResultsFilters(initialFilters, searchType);
-  
-  const [filterValues, setFilterValues] = useState<BaseFilterValues>(mappedInitialFilters);
+  const [filterValues, setFilterValues] = useState<BaseFilterValues>(initialFilters);
 
   useEffect(() => {
     if (locationState?.filters) {
-      const mappedFilters = mapSearchToResultsFilters(locationState.filters, searchType);
-      setFilterValues(mappedFilters);
+      setFilterValues(locationState.filters);
     }
-  }, [locationState, searchType]);
+  }, [locationState]);
 
   const handleFilterChange = (id: string, value: FilterFieldValue) => {
     setFilterValues(prev => ({ ...prev, [id]: value }));

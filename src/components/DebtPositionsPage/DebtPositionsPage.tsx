@@ -20,8 +20,6 @@ export const DebtPositionsPage = () => {
   const [filters, setFilters] = useState<BaseFilterValues[]>([{}, {}]);
 
   const navigateToResults = useCallback(() => {
-    console.log('Navigating with filters:', filters[activeTabIndex]);
-    
     if (activeTabIndex === 0) {
       navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, { 
         state: { 
@@ -57,9 +55,9 @@ export const DebtPositionsPage = () => {
     });
   }, [activeTabIndex]);
 
-  const handleTabChange = useCallback((newTabIndex: number) => {
+  const handleTabChange = (newTabIndex: number) => {
     setActiveTabIndex(newTabIndex);
-  }, []);
+  };
 
 
   return (
