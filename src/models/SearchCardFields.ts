@@ -1,4 +1,3 @@
-
 export const FilterFieldIds = {
   IUV_CODE: 'iuv',
   FISCAL_CODE: 'fiscalCode',
@@ -7,5 +6,5 @@ export const FilterFieldIds = {
   SEARCH_CF: 'searchCF',
   DUETYPE: 'duetype',
   STATE: 'state',
-  DATE_RANGE: 'daterange'
+  DATE_RANGE: 'dateRange'
 };

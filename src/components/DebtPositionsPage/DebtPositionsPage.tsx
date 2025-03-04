@@ -2,34 +2,68 @@ import { Grid } from '@mui/material';
 import { FileUpload } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router';
+import { useState, useCallback } from 'react';
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { getTabsConfig } from './DebtTabsConfig';
 import { PageRoutes } from '../../App';
 import { SearchType } from '../../routes/DebtPositions/DebtPositionsResults';
-import { activeTabIndex, resetFilters } from '../../store/SearchCardStore';
+import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const debtTabsConfig = getTabsConfig(t);
 
-  const navigateToResults = () => {
-    if (activeTabIndex.value === 0) {
+  const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+  const [filters, setFilters] = useState<BaseFilterValues[]>([{}, {}]);
+
+  const navigateToResults = useCallback(() => {
+    console.log('Navigating with filters:', filters[activeTabIndex]);
+    
+    if (activeTabIndex === 0) {
       navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, { 
-        state: { searchType: SearchType.IUV }
+        state: { 
+          searchType: SearchType.IUV,
+          filters: filters[activeTabIndex]
+        }
       });
     } else {
       navigate(PageRoutes.DEBT_POSITIONS_RESULTS, {
-        state: { searchType: SearchType.DEBT_POSITION }
+        state: { 
+          searchType: SearchType.DEBT_POSITION,
+          filters: filters[activeTabIndex]
+        }
       });
     }
-  };
+  }, [activeTabIndex, filters, navigate]);
 
-  const resetCurrentFilters = () => {
-    resetFilters(activeTabIndex.value);
-  };
+  const resetCurrentFilters = useCallback(() => {
+    const newFilters = [...filters];
+    newFilters[activeTabIndex] = {};
+    setFilters(newFilters);
+  }, [activeTabIndex, filters]);
+
+  const handleFilterChange = useCallback((id: string, value: FilterFieldValue) => {
+    console.log('Filter changed:', id, value);
+    
+    setFilters(prevFilters => {
+      const newFilters = [...prevFilters];
+      newFilters[activeTabIndex] = {
+        ...newFilters[activeTabIndex],
+        [id]: value
+      };
+      return newFilters;
+    });
+  }, [activeTabIndex]);
+
+  const handleTabChange = useCallback((newTabIndex: number) => {
+    setActiveTabIndex(newTabIndex);
+  }, []);
+
+  console.log('Current tab:', activeTabIndex);
+  console.log('Current filters:', filters);
 
   return (
     <>
@@ -51,6 +85,10 @@ export const DebtPositionsPage = () => {
               title={t('debtPositions.searchCardTitle')}
               description={t('debtPositions.searchCardDescription')}
               tabsConfig={debtTabsConfig}
+              activeTabIndex={activeTabIndex}
+              onTabChange={handleTabChange}
+              filterValues={filters[activeTabIndex]}
+              onFilterChange={handleFilterChange}
               button={[
                 {
                   label: t('commons.filters.remove'),

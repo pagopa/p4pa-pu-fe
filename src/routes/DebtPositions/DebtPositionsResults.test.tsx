@@ -45,8 +45,8 @@ describe('DebtPositionsResults', () => {
       expect(screen.getByLabelText('Cerca IUV')).toBeInTheDocument();
       expect(screen.getByLabelText('Cerca Codice Fiscale')).toBeInTheDocument();
 
-      expect(screen.getByLabelText('Da')).toBeInTheDocument();
-      expect(screen.getByLabelText('A')).toBeInTheDocument();
+      expect(screen.getByText('Da')).toBeInTheDocument();
+      expect(screen.getByText('A')).toBeInTheDocument();
     });
 
     it('renders the correct data grid component', () => {
@@ -81,8 +81,8 @@ describe('DebtPositionsResults', () => {
       expect(screen.queryByLabelText('Cerca IUV')).not.toBeInTheDocument();
       expect(screen.getByLabelText('Cerca Codice Fiscale')).toBeInTheDocument();
 
-      expect(screen.getByLabelText('Da')).toBeInTheDocument();
-      expect(screen.getByLabelText('A')).toBeInTheDocument();
+      expect(screen.getByText('Da')).toBeInTheDocument();
+      expect(screen.getByText('A')).toBeInTheDocument();
     });
 
     it('renders the correct data grid component', () => {
@@ -189,8 +189,8 @@ describe('DebtPositionsResults', () => {
       const dueTypeSelect = screen.getByLabelText('Tipo Dovuto');
       await user.click(dueTypeSelect);
   
-      expect(screen.getByText('TARI')).toBeInTheDocument();
-      expect(screen.getByText('DOVUTO')).toBeInTheDocument();
+      expect(screen.getByText('Tari')).toBeInTheDocument();
+      expect(screen.getByText('Dovuto')).toBeInTheDocument();
     });
 
     it('allows selecting date range values', async () => {
@@ -202,13 +202,17 @@ describe('DebtPositionsResults', () => {
           dataGridComponent={<div data-testid="mock-grid" />}
         />
       );
+
+      const inputs = screen.getAllByRole('textbox', { name: /da|a/i });
   
-      const fromDateInput = screen.getByLabelText('Da');
+      expect(inputs).toHaveLength(3);
+
+      const fromDateInput = inputs[1];
+      const toDateInput = inputs[2];
+
       await user.type(fromDateInput, '01/01/2025');
-  
-      const toDateInput = screen.getByLabelText('A');
       await user.type(toDateInput, '31/01/2025');
-  
+
       expect(fromDateInput).toHaveValue('01/01/2025');
       expect(toDateInput).toHaveValue('31/01/2025');
     });
