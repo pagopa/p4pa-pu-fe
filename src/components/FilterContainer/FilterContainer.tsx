@@ -1,4 +1,3 @@
-// FilterContainer.tsx
 import { Grid } from '@mui/material';
 import { FormComponent } from '../FormComponent';
 import type { ButtonProps, DateRangeProps, SelectProps, TextFieldProps } from '../FormComponent';
@@ -25,13 +24,10 @@ export type SelectChangeEvent = ChangeEvent<{ value: unknown }>;
 type SearchField = {
   type: COMPONENT_TYPE.textField;
   value?: TextFieldValue;
-  onChange?: (e: TextFieldChangeEvent) => void;
 } & TextFieldProps;
 
 type AmountField = {
   type: COMPONENT_TYPE.amount;
-  value?: AmountFieldValue;
-  onChange?: (e: TextFieldChangeEvent) => void;
 } & TextFieldProps;
 
 type SelectField = {
@@ -42,15 +38,11 @@ type SelectField = {
 
 type ButtonField = {
   type: COMPONENT_TYPE.button;
-  variant?: 'contained' | 'outlined';
-  onClick?: () => void;
 } & ButtonProps;
 
 type DateRangeField = DateRangeProps & {
   type: COMPONENT_TYPE.dateRange;
   isYear?: boolean;
-  value?: DateRangeFieldValue;
-  onChange?: (range: DateRangeFieldValue) => void;
 };
 
 type TypeUnion = SearchField | AmountField | SelectField | ButtonField | DateRangeField;
