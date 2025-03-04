@@ -16,7 +16,7 @@ describe('DetailContainer', () => {
         title: {label: 'commons.payment'},
         data: [
           { label: 'Pagatore', value: 'Maria Bianchi [CF/PIVA: BNCMRA82B42C933X (Persona fisica)]' },
-          { label: 'Stato', value: 'Pagato' }
+          { label: 'Stato', value: 'PAID' }
         ],
       },
     ],
@@ -39,7 +39,7 @@ describe('DetailContainer', () => {
   it('renders with Chip', () => {
     render(<DetailContainer {...mockProps} />);
 
-    const statusChip = screen.getByText('Pagato');
+    const statusChip = screen.getByText('commons.chipStaus.PAID');
     expect(statusChip).toBeDefined();
     expect(statusChip).toHaveClass('MuiChip-label');
   });
