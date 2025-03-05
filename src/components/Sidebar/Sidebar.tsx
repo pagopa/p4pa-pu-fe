@@ -53,8 +53,8 @@ export const Sidebar: React.FC = () => {
   const organizations = useOrganizations();
   const containsBrokerCF = organizations?.some(item => item.orgFiscalCode === configFe?.brokerFiscalCode);
   const adminAtLeast = organizations?.some(item => item.operatorRole === 'ROLE_ADMIN' );
-  const superAdmin = containsBrokerCF && adminAtLeast
-  ;
+  const superAdmin = containsBrokerCF && adminAtLeast;
+  
   const menuItems: Array<ISidebarMenuItem> = [
     {
       label: t('commons.routes.HOME'),
