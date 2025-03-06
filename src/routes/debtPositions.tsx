@@ -1,9 +1,9 @@
+import DebtPositionResults from './DebtPositions/DebtPositionsResults';
+import DebtPositionsInstallmentDetail from './DebtPositionsInstallmentDetail';
+import DebtPositionsPage from './DebtPositionsPage';
+import config from '../utils/config';
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Breadcrumbs';
-import config from '../utils/config';
-import DebtPositionsInstallmentDetail from './DebtPositionsInstallmentDetail';
-import DebtPositionResults from './DebtPositions/DebtPositionsResults';
-import DebtPositionsPage from './DebtPositionsPage';
 
 const deployPath = config.deployPath;
 
