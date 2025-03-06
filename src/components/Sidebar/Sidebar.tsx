@@ -27,7 +27,6 @@ import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useStore } from '../../store/GlobalStore';
 import { useFeConfig } from '../../hooks/useFeConfig';
-import { setSuperAdmin } from '../../store/SuperAdminStore';
 import { useOrganizations } from '../../hooks/useOrganizations';
 
 export const Sidebar: React.FC = () => {
@@ -54,13 +53,8 @@ export const Sidebar: React.FC = () => {
   const organizations = useOrganizations();
   const containsBrokerCF = organizations?.some(item => item.orgFiscalCode === configFe?.brokerFiscalCode);
   const adminAtLeast = organizations?.some(item => item.operatorRole === 'ROLE_ADMIN' );
-
-  // a user is superAdmin when the broker CF is contained in an organization AND
-  // the Broker's CF is equal at least one of the organizations
-  if (containsBrokerCF && adminAtLeast) {
-    setSuperAdmin(true);
-  }
-
+  const superAdmin = containsBrokerCF && adminAtLeast;
+  
   const menuItems: Array<ISidebarMenuItem> = [
     {
       label: t('commons.routes.HOME'),
@@ -100,7 +94,7 @@ export const Sidebar: React.FC = () => {
 
   const additionalItems = [];
 
-  if (state.superAdmin) {
+  if (superAdmin) {
     menuItems.splice(1, 0, {
       label: t('commons.routes.DEBT_POSITIONS'),
       icon: ReceiptLongIcon,
@@ -118,11 +112,11 @@ export const Sidebar: React.FC = () => {
     );
   }
 
-  if (state.superAdmin || state.operatorRole == 'ROLE_ADMIN') {
+  if (superAdmin || state.operatorRole == 'ROLE_ADMIN') {
     const debtypes = [];
 
     // Debtypes catalog only for superAdmin
-    if (state.superAdmin) {
+    if (superAdmin) {
       debtypes.push(
         {
           label: t('commons.routes.DEBT_TYPES_CATALOG'),
