@@ -4,14 +4,12 @@ import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import React from 'react';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { getReceipts } from '../../api/receipts';
 
 const TelematicReceiptSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const [selectedValue, setSelectedValue] = React.useState('');
-  const receipts = getReceipts({organizationId: 4, receiptOrigin: "RECEIPT_PAGOPA"});
-  console.log(receipts)
+  
 
   return (
     <>

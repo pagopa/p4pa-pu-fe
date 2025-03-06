@@ -5,6 +5,11 @@ import CustomDataGrid from './../DataGrid/CustomDataGrid';
 import { FileDownload, ReadMore } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../App';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
+import { getReceipts } from '../../api/receipts';
+import { useFlowFilters } from '../../hooks/useFlowFilters';
+import { FlowFileType } from '../../models/Filters';
 
 interface SearchResultDataRow extends GridValidRowModel {
   id: number;
@@ -17,60 +22,39 @@ interface SearchResultDataRow extends GridValidRowModel {
 const SearchResultsDataGrid = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { state } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+  const flowFileTypes = [FlowFileType.RECEIPT_PAGOPA];
+  const {
+    appliedFilters,
+    handleSortModelChange,
+    sortModel,
+    updatePagination,
+  } = useFlowFilters({
+    flowFileTypes: flowFileTypes,
+  });
+  
 
-  const rows: SearchResultDataRow[] = [
-    {
-      id: 1,
-      iuv: '03003300003',
-      amount: '50,00€',
-      reason: 'TARI 2024',
-      dueType: 'TARI',
-      payer: 'Maria Bianchi',
-      fiscalCodeorVat: 'BNCMRA82B42C933X (Persona fisica)',
-      paymentDate: '13/01/2025',
-      paymentExecutor: 'Paolo Rossi',
-      fiscalCodeorVatExecutor: 'PLRSRA82B42C933X (Persona fisica)',
-      auditor: 'POSTMAN_TEST',
-      iud: '000a99aa114e6b142268f27abb8b347c37d',
-      iur: 'hR3sT2uG888KkKK'
-    },
-    {
-      id: 2,
-      iuv: '02002200002',
-      amount: '100,00€',
-      reason: 'DOVUTO',
-      dueType: 'DOVUTO 1',
-      payer: 'Mario Rossi',
-      fiscalCodeorVat: 'MRORSI82B42C933X (Persona fisica)',
-      paymentDate: '18/03/2025',
-      paymentExecutor: 'Giuseppe Verdi',
-      fiscalCodeorVatExecutor: 'GSUVRD82B42C933X (Persona fisica)',
-      auditor: 'POSTMAN_TEST_1',
-      iud: 'iud_test_1',
-      iur: 'iur_test_1'
-    },
-    {
-      id: 3,
-      iuv: '01001100001',
-      amount: '200,00€',
-      reason: 'DOVUTO',
-      dueType: 'DOVUTO 2',
-      payer: 'Valerio Verdi',
-      fiscalCodeorVat: 'VLRVRD82B42C933X (Persona fisica)',
-      paymentDate: '18/12/2024',
-      paymentExecutor: 'Barbara Gialli',
-      fiscalCodeorVatExecutor: 'BRBGLL82B42C933X (Persona fisica)',
-      auditor: 'POSTMAN_TEST_2',
-      iud: 'iud_test_2',
-      iur: 'iur_test_2'
-    },
-  ];
+  const { data } = getReceipts(organizationId, {...appliedFilters, receiptOrigin: 'RECEIPT_PAGOPA'});
+  
 
   const columns: GridColDef[] = [
     { field: 'iuv', headerName: t('commons.iuv'), flex: 1, type: 'string' },
-    { field: 'amount', headerName: t('commons.amount'), flex: 1, type: 'string' },
-    { field: 'dueType', headerName: t('commons.duetype'), flex: 1, type: 'string' },
-    { field: 'paymentDate', headerName: t('commons.paymentdate'), flex: 1, type: 'string' },
+    { field: 'paymentAmountCents', headerName: t('commons.amount'), flex: 1, type: 'number', align: 'left', headerAlign: 'left',
+      // TO REFACT AS UTILITY
+      renderCell: (params: GridRenderCellParams) => {
+        const euro = params.value / 100;
+        return new Intl.NumberFormat('it-IT', {
+          style: 'currency',
+          currency: 'EUR'
+        }).format(euro);
+      }
+    },
+    { field: 'debtPositionTypeOrgDescription', headerName: t('commons.duetype'), flex: 1, type: 'string' },
+    { field: 'paymentDateTime', headerName: t('commons.paymentdate'), flex: 1, type: 'string', 
+      renderCell: (params: GridRenderCellParams) =>
+        params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
+    },
     {
       field: 'action',
       headerName: '',
@@ -100,11 +84,21 @@ const SearchResultsDataGrid = () => {
   return (
     <>
       <CustomDataGrid
-        rows={rows}
         columns={columns}
-        hideFooter
+        customPagination={{
+          totalPages: data?.totalPages,
+          defaultPageOption: appliedFilters.size,
+          sizePageOptions: [5, 10, 15, 20],
+          onPageChange: (page) => updatePagination({ page: page - 1, size: appliedFilters.size }),
+          onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
+          currentPage: appliedFilters.page + 1
+        }}
         disableColumnMenu
         disableColumnResize
+        getRowId={(row) => row.receiptId}
+        onSortModelChange={handleSortModelChange}
+        rows={data?.content || []}
+        sortModel={sortModel}
       />
     </>
   );

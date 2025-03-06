@@ -2,8 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 
 export const getReceipts = (
+  organizationId: number,
   query: {
-    organizationId: number;
     receiptOrigin: 'RECEIPT_PAGOPA' | 'RECEIPT_FILE' | 'PAYMENTS_REPORTING';
     page?: number;
     size?: number;
@@ -15,6 +15,7 @@ export const getReceipts = (
     queryKey: ['receipts', query],
     queryFn: async () => {
       const { data: receipts } = await utils.apiClient.bff.getReceipts(
+        organizationId,
         query,
         {
           // To serialize parameters
