@@ -1,10 +1,10 @@
-import { Layout } from '../components/layout/Layout';
-import { RouteHandleObject } from '../models/Breadcrumbs';
-import config from '../utils/config';
+import DebtPositionResults from './DebtPositions/DebtPositionsResults';
 import DebtPositionsImportOverview from './DebtPositionsImportOverview';
 import DebtPositionsInstallmentDetail from './DebtPositionsInstallmentDetail';
-import DebtPositionResults from './DebtPositions/DebtPositionsResults';
 import DebtPositionsPage from './DebtPositionsPage';
+import config from '../utils/config';
+import { Layout } from '../components/layout/Layout';
+import { RouteHandleObject } from '../models/Breadcrumbs';
 
 const deployPath = config.deployPath;
 
