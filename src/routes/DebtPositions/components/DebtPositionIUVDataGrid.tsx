@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
 import { Chip, ChipProps, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
+import { moneyFormat } from '../../../utils/formatters';
 
 interface SearchResultDataRow extends GridValidRowModel {
   iuv: string;
@@ -26,21 +27,21 @@ const DebtPositionDataGrid = () => {
     {
       iuv: '03003300033300003333',
       subject: '2024-11-10123531',
-      amount: 100,
+      amount: 10000,
       expirationDate: '05/11/2021',
       status: 'TO_PAY'
     },
     {
       iuv: '02002200022200002222',
       subject: '2024-12-11123531',
-      amount: 200,
+      amount: 20000,
       expirationDate: '05/12/2021',
       status: 'PAYED'
     },
     {
       iuv: '01001100011100001111',
       subject: '2024-11-10123531',
-      amount: 100,
+      amount: 10000,
       expirationDate: '05/11/2021',
       status: 'TO_PAY'
     },
@@ -53,9 +54,16 @@ const DebtPositionDataGrid = () => {
       </Typography>
     ) },
     { field: 'subject', headerName: t('debtPositionSearchResults.subject'), flex: 1, type: 'string' },
-    { field: 'amount', headerName: t('debtPositionSearchResults.amount'), flex: 1, type: 'number', 
+    { 
+      field: 'amount', 
+      headerName: t('debtPositionSearchResults.amount'), 
+      flex: 1, 
+      type: 'number', 
       headerAlign: 'left', 
-      align: 'left' 
+      align: 'left',
+      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => (
+        moneyFormat(params.value as number)
+      )
     },
     { field: 'expirationDate', headerName: t('debtPositionSearchResults.expirationDate'), flex: 1, type: 'string' },
     { field: 'status', headerName: t('debtPositionSearchResults.status'), flex: 1, type: 'string', 
