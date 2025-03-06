@@ -10,7 +10,6 @@ export interface State {
   [STATE.CONFIG_FE]: ConfigFE | undefined;
   [STATE.APP_STATE]: AppState;
   [STATE.FILTERS]: string[];
-  [STATE.SUPER_ADMIN]: boolean;
   [STATE.OPERATOR_ROLE]: OperatoRole| undefined;
 }
 
@@ -25,6 +24,5 @@ export enum STATE {
   CONFIG_FE = 'configFe',
   ORGANIZATION_ID = 'organizationId',
   FILTERS = 'filters',
-  SUPER_ADMIN = 'superAdmin',
   OPERATOR_ROLE = 'operatorRole',
 }
