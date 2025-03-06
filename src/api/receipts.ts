@@ -18,19 +18,9 @@ export const getReceipts = (
         organizationId,
         query,
         {
-          // To serialize parameters
           paramsSerializer: {
-            serialize: (params) => {
-              const searchParams = new URLSearchParams();
-              Object.entries(params).forEach(([key, value]) => {
-                if (Array.isArray(value)) {
-                  value.forEach((val) => searchParams.append(key, val));
-                } else if (value !== undefined) {
-                  searchParams.append(key, value);
-                }
-              });
-              return searchParams.toString();
-            }
+            // repeat array params as query string
+            indexes: null
           }
         }
       );
