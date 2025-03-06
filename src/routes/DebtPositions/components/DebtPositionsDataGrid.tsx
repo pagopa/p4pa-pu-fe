@@ -1,4 +1,9 @@
-import { GridColDef, GridRenderCellParams, GridValidRowModel } from '@mui/x-data-grid';
+import {
+  GridColDef,
+  GridRenderCellParams,
+  GridSortModel,
+  GridValidRowModel
+} from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { FileDownload, Visibility } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router-dom';
@@ -6,6 +11,8 @@ import { PageRoutes } from '../../../App';
 import ActionMenu from '../../../components/ActionMenu/ActionMenu';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import Chip, { ChipProps } from '@mui/material/Chip';
+import { PagedDebtPositionView } from '../../../../generated/data-contracts';
+import { format } from 'date-fns';
 
 interface ResultDataRow extends GridValidRowModel {
   id: number;
@@ -15,23 +22,37 @@ interface ResultDataRow extends GridValidRowModel {
   status: string;
 }
 
-export const DataGrid = () => {
+export type DataGridProps = {
+  data?: PagedDebtPositionView;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (page: number) => void;
+  onSortChange: (model: string[]) => void;
+  pagination: {
+    currentPage: number;
+    page: number;
+    size: number;
+  };
+};
+
+export const DataGrid = ({
+  data,
+  onPageChange,
+  onPageSizeChange,
+  onSortChange,
+  pagination
+}: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const rows: ResultDataRow[] = [
-    {
-      id: 1,
-      description: 'Pagamento Tari 2025',
-      debtType: 'TARI',
-      creationDate: '12/02/2025',
-      status: 'TO_PAY'
-    }
-  ];
-
   const stateColors: Record<string, ChipProps['color']> = {
-    TO_PAY: 'info',
-    ERROR: 'error'
+    CANCELLED: 'error',
+    DRAFT: 'default',
+    EXPIRED: 'error',
+    PAID: 'success',
+    PARTIALLY_PAID: 'info',
+    REPORTED: 'success',
+    TO_SYNC: 'default',
+    UNPAID: 'info'
   };
 
   const columns: GridColDef[] = [
@@ -42,7 +63,7 @@ export const DataGrid = () => {
       type: 'string'
     },
     {
-      field: 'debtType',
+      field: 'debtPositionOrigin',
       headerName: t('DebtPositions.Results.table.debtType'),
       flex: 1,
       type: 'string'
@@ -51,7 +72,9 @@ export const DataGrid = () => {
       field: 'creationDate',
       headerName: t('DebtPositions.Results.table.creationDate'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      renderCell: (params: GridRenderCellParams<ResultDataRow>) =>
+        format(params.value, 'dd/MM/yyyy')
     },
     {
       field: 'status',
@@ -95,15 +118,29 @@ export const DataGrid = () => {
     }
   ];
 
+  const onSort = (model: GridSortModel) => {
+    if (model?.length) {
+      const sort = model.map((item) => `${item.field},${item.sort!.toUpperCase()}`);
+      onPageChange(1);
+      onSortChange(sort);
+    }
+  };
+
   return (
     <CustomDataGrid
-      rows={rows}
+      rows={data?.content ?? []}
+      getRowId={(row) => row.debtPositionId}
       columns={columns}
       disableColumnMenu
       disableColumnResize
+      onSortModelChange={onSort}
       customPagination={{
-        defaultPageOption: 5,
-        sizePageOptions: [5, 10, 20]
+        defaultPageOption: pagination.size,
+        sizePageOptions: [5, 10, 20],
+        totalPages: data?.totalPages,
+        currentPage: pagination.currentPage,
+        onPageChange,
+        onPageSizeChange
       }}
     />
   );
