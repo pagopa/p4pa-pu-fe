@@ -8,8 +8,8 @@ import ActionCard from '../ActionCard/ActionCard';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { getTabsConfig } from './DebtTabsConfig';
 import { PageRoutes } from '../../App';
-import { SearchType } from '../../routes/DebtPositions/DebtPositionsResults';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
+import { SearchType } from '../../models/DebtPositiosn';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
@@ -21,15 +21,15 @@ export const DebtPositionsPage = () => {
 
   const navigateToResults = useCallback(() => {
     if (activeTabIndex === 0) {
-      navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, { 
-        state: { 
+      navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, {
+        state: {
           searchType: SearchType.IUV,
           filters: filters[activeTabIndex]
         }
       });
     } else {
       navigate(PageRoutes.DEBT_POSITIONS_RESULTS, {
-        state: { 
+        state: {
           searchType: SearchType.DEBT_POSITION,
           filters: filters[activeTabIndex]
         }
@@ -43,35 +43,35 @@ export const DebtPositionsPage = () => {
     setFilters(newFilters);
   }, [activeTabIndex, filters]);
 
-  const handleFilterChange = useCallback((id: string, value: FilterFieldValue) => {
-
-    setFilters(prevFilters => {
-      const newFilters = [...prevFilters];
-      newFilters[activeTabIndex] = {
-        ...newFilters[activeTabIndex],
-        [id]: value
-      };
-      return newFilters;
-    });
-  }, [activeTabIndex]);
+  const handleFilterChange = useCallback(
+    (id: string, value: FilterFieldValue) => {
+      setFilters((prevFilters) => {
+        const newFilters = [...prevFilters];
+        newFilters[activeTabIndex] = {
+          ...newFilters[activeTabIndex],
+          [id]: value
+        };
+        return newFilters;
+      });
+    },
+    [activeTabIndex]
+  );
 
   const handleTabChange = (newTabIndex: number) => {
     setActiveTabIndex(newTabIndex);
   };
 
-
   return (
     <>
-      <TitleComponent title={t('commons.routes.DEBT_POSITIONS')}
-        callToAction={
-          [
-            {
-              variant: 'contained', 
-              buttonText: t('commons.createNew'), 
-              onActionClick: () => console.log('create new')
-            },
-          ]
-        } 
+      <TitleComponent
+        title={t('commons.routes.DEBT_POSITIONS')}
+        callToAction={[
+          {
+            variant: 'contained',
+            buttonText: t('commons.createNew'),
+            onActionClick: () => console.log('create new')
+          }
+        ]}
       />
       <Grid container direction="row">
         <Grid container spacing={2}>
@@ -106,8 +106,8 @@ export const DebtPositionsPage = () => {
               actionLabel={t('commons.importFlow')}
               actionIcon={<FileUpload />}
               linkLabel={t('commons.showAllFlows')}
-              onActionClick={
-                () => navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'debt-positions' }))
+              onActionClick={() =>
+                navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'debt-positions' }))
               }
               onLinkClick={() => console.log('import flow')}
             />
