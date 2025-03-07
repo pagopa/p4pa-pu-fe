@@ -10,6 +10,7 @@ import { STATE } from '../../store/types';
 import { getReceipts } from '../../api/receipts';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { FlowFileType } from '../../models/Filters';
+import { moneyFormat } from '../../utils/formatters';
 
 interface SearchResultDataRow extends GridValidRowModel {
   id: number;
@@ -41,14 +42,9 @@ const SearchResultsDataGrid = () => {
   const columns: GridColDef[] = [
     { field: 'iuv', headerName: t('commons.iuv'), flex: 1, type: 'string' },
     { field: 'paymentAmountCents', headerName: t('commons.amount'), flex: 1, type: 'number', align: 'left', headerAlign: 'left',
-      // TO REFACT AS UTILITY
-      renderCell: (params: GridRenderCellParams) => {
-        const euro = params.value / 100;
-        return new Intl.NumberFormat('it-IT', {
-          style: 'currency',
-          currency: 'EUR'
-        }).format(euro);
-      }
+      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => (
+        moneyFormat(params.value as number)
+      )
     },
     { field: 'debtPositionTypeOrgDescription', headerName: t('commons.duetype'), flex: 1, type: 'string' },
     { field: 'paymentDateTime', headerName: t('commons.paymentdate'), flex: 1, type: 'string', 
