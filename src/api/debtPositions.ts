@@ -18,7 +18,7 @@ export const getDebtPositionViews = ({
   organizationId: DebtPositionViewRequest['organizationId'];
 }) =>
   useMutation({
-    mutationKey: ['uploadIngestionFlowFiles', organizationId],
+    mutationKey: ['getDebtPositionViews', organizationId],
     mutationFn: async (query: DebtPositionViewQuery) => {
       const { data: response } = await utils.apiClient.bff.getDebtPositionViews(
         organizationId,
@@ -38,5 +38,33 @@ export const getDebtPositionViews = ({
 export const getDebtPositionsTypes = ({ organizationId }: { organizationId: number }) =>
   useQuery({
     queryKey: ['getDebtPositionsTypes'],
-    queryFn: () => utils.apiClient.bff.getDebtPositionTypeWithCount(organizationId),
+    queryFn: () => utils.apiClient.bff.getDebtPositionTypeWithCount(organizationId)
+  });
+
+type DebtPositionInstallmentsParams = Parameters<typeof utils.apiClient.bff.getInstallments>;
+
+export type DebtPositionInstallmentsQuery = DebtPositionInstallmentsParams[1];
+
+export type DebtPositionInstallmentsRequest = {
+  organizationId: DebtPositionInstallmentsParams[0];
+  query: DebtPositionInstallmentsQuery;
+};
+
+export const getInstallments = ({
+  organizationId
+}: {
+  organizationId: DebtPositionInstallmentsRequest['organizationId'];
+}) =>
+  useMutation({
+    mutationKey: ['getInstallments', organizationId],
+    mutationFn: async (query: DebtPositionInstallmentsQuery) => {
+      const { data: response } = await utils.apiClient.bff.getInstallments(organizationId, query, {
+        paramsSerializer: {
+          // repeat array params as query string
+          indexes: null
+        }
+      });
+
+      return response;
+    }
   });
