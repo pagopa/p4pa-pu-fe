@@ -9,6 +9,7 @@ const TelematicReceiptSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const [selectedValue, setSelectedValue] = React.useState('');
+  
 
   return (
     <>

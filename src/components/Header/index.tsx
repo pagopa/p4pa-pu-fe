@@ -79,6 +79,7 @@ export const Header = (props: HeaderProps) => {
   const onSelectedParty = (organization: PartySwitchItem) => {
     setState(STATE.ORGANIZATION_ID, organization.id);
     setState(STATE.OPERATOR_ROLE, organization.productRole);
+    navigate(0);
   };
 
   return (
