@@ -11,7 +11,9 @@ import { PageRoutes } from '../../../App';
 import ActionMenu from '../../../components/ActionMenu/ActionMenu';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import Chip, { ChipProps } from '@mui/material/Chip';
-import { PagedDebtPositionView } from '../../../../generated/data-contracts';
+import {
+  PagedDebtPositionView,
+} from '../../../../generated/data-contracts';
 import { format } from 'date-fns';
 
 interface ResultDataRow extends GridValidRowModel {
@@ -34,7 +36,7 @@ export type DataGridProps = {
   };
 };
 
-export const DataGrid = ({
+export const DebtPositionsDataGrid = ({
   data,
   onPageChange,
   onPageSizeChange,

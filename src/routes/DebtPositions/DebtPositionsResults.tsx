@@ -5,9 +5,10 @@ import { useLocation } from 'react-router-dom';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { BaseFilterValues } from '../../models/Filters';
-import { DataGrid } from './components/DebtPositionsDataGrid';
 import { SearchType } from '../../models/DebtPositiosn';
 import useDebtPositionsSearch from '../../hooks/useDebtPositionsSearch';
+import { IUVDataGrid } from './components/DebtPositionIUVDataGrid';
+import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
 
 export interface LocationState {
   searchType: SearchType;
@@ -29,6 +30,8 @@ export const DebtPositionResults = () => {
     initialFilters,
     searchType
   });
+
+  const DataGrid = searchType === SearchType.IUV ? IUVDataGrid : DebtPositionsDataGrid;
 
   return (
     <Stack gap={5}>
@@ -63,7 +66,7 @@ export const DebtPositionResults = () => {
           }}
           aria-label="results-table">
           <DataGrid
-            data={debtPosition.debtPositionQuery.data}
+            data={debtPosition.query.data}
             onPageChange={debtPosition.handlePageChange}
             onPageSizeChange={debtPosition.handlePageSizeChange}
             onSortChange={debtPosition.setSort}
