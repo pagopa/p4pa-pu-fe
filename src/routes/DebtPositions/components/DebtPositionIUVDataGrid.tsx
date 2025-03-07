@@ -61,7 +61,14 @@ export const IUVDataGrid = ({
       flex: 1,
       type: 'number',
       headerAlign: 'left',
-      align: 'left'
+      align: 'left',
+      renderCell: (params: GridRenderCellParams<InstallmentView>) =>
+        params.value
+          ? new Intl.NumberFormat('it-IT', {
+            style: 'currency',
+            currency: 'EUR'
+          }).format(params.value / 100)
+          : ''
     },
     {
       field: 'dueDate',
