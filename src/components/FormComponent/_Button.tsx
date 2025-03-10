@@ -9,7 +9,6 @@ export const _Button = (props: _ButtonProps) => (
     fullWidth
     size="small"
     variant="contained"
-    onClick={props.onClick}
     {...props}>
     {props.children || props.label}
   </Button>

@@ -21,27 +21,27 @@ export type TextFieldChangeEvent = ChangeEvent<HTMLInputElement | HTMLTextAreaEl
 export type SelectChangeEvent = ChangeEvent<{ value: unknown }>;
 export type ButtonClickEvent = MouseEvent<HTMLButtonElement, globalThis.MouseEvent>;
 
-type SearchField = {
+export type SearchField = {
   type: COMPONENT_TYPE.textField;
   value?: TextFieldValue;
 } & TextFieldProps;
 
-type AmountField = {
+export type AmountField = {
   type: COMPONENT_TYPE.amount;
 } & TextFieldProps;
 
-type SelectField = {
+export type SelectField = {
   type: COMPONENT_TYPE.select;
   value?: SelectValue;
   onChange?: (e: SelectChangeEvent) => void;
 } & SelectProps;
 
-type ButtonField = {
+export type ButtonField = {
   type: COMPONENT_TYPE.button;
   onClick?: (e: ButtonClickEvent) => void;
 } & ButtonProps;
 
-type DateRangeField = {
+export type DateRangeField = {
   type: COMPONENT_TYPE.dateRange;
   isYear?: boolean;
   from?: {
@@ -71,28 +71,28 @@ type FilterContainerProps = {
   onChange?: (id: string, value: FilterFieldValue) => void;
 };
 
-const RenderComponent = ({ 
-  item, 
+const RenderComponent = ({
+  item,
   values,
-  onChange 
-}: { 
-  item: FilterItem; 
+  onChange
+}: {
+  item: FilterItem;
   values?: BaseFilterValues;
   onChange?: (id: string, value: FilterFieldValue) => void;
 }) => {
   const fieldId = item.id || item.label.replace(/\s+/g, '').toLowerCase();
-  
+
   switch (item.type) {
   case COMPONENT_TYPE.textField: {
     const textItem = item as SearchField;
     const defaultValue = '';
-    const currentValue = values && fieldId in values 
-      ? values[fieldId] as string ?? defaultValue 
+    const currentValue = values && fieldId in values
+      ? values[fieldId] as string ?? defaultValue
       : textItem.value ?? defaultValue;
-      
+
     return (
-      <FormComponent.TextField 
-        {...textItem} 
+      <FormComponent.TextField
+        {...textItem}
         value={currentValue}
         onChange={(e: TextFieldChangeEvent) => {
           if (onChange) {
@@ -108,13 +108,13 @@ const RenderComponent = ({
   case COMPONENT_TYPE.select: {
     const selectItem = item as SelectField;
     const defaultValue = selectItem.defaultValue || '';
-    const currentValue = values && fieldId in values 
-      ? values[fieldId] as string ?? defaultValue 
+    const currentValue = values && fieldId in values
+      ? values[fieldId] as string ?? defaultValue
       : selectItem.value ?? defaultValue;
-    
+
     return (
-      <FormComponent.Select 
-        {...selectItem} 
+      <FormComponent.Select
+        {...selectItem}
         value={currentValue}
         onChange={(e: SelectChangeEvent) => {
           if (onChange) {
@@ -129,12 +129,12 @@ const RenderComponent = ({
 
   case COMPONENT_TYPE.button: {
     const buttonItem = item as ButtonField;
-    
+
     return (
-      <FormComponent.Button 
-        {...buttonItem} 
+      <FormComponent.Button
+        {...buttonItem}
         onClick={(e: ButtonClickEvent) => {
-          if (buttonItem.onClick) {
+          if (buttonItem?.onClick) {
             buttonItem.onClick(e);
           }
         }}
@@ -144,21 +144,21 @@ const RenderComponent = ({
 
   case COMPONENT_TYPE.dateRange: {
     const dateItem = item as DateRangeField;
-    const currentValue = values && fieldId in values 
-      ? values[fieldId] as DateRangeFieldValue 
+    const currentValue = values && fieldId in values
+      ? values[fieldId] as DateRangeFieldValue
       : undefined;
-        
-    const fromConfig = dateItem.from ? {
-      ...dateItem.from,
-      value: currentValue && 'from' in currentValue ? currentValue.from : null,
+
+    const fromConfig = dateItem?.from ? {
+      ...dateItem?.from,
+      value: currentValue && 'from' in currentValue ? currentValue?.from : null,
       onChange: (date: Date | null) => {
-        if (dateItem.from?.onChange) {
-          dateItem.from.onChange(date);
+        if (dateItem?.from?.onChange) {
+          dateItem?.from.onChange(date);
         }
-        
+
         if (onChange) {
-          const toDate = currentValue && 'to' in currentValue ? currentValue.to : null;
-          
+          const toDate = currentValue && 'to' in currentValue ? currentValue?.to : null;
+
           onChange(fieldId, {
             from: date,
             to: toDate
@@ -166,18 +166,18 @@ const RenderComponent = ({
         }
       }
     } : undefined;
-    
-    const toConfig = dateItem.to ? {
-      ...dateItem.to,
+
+    const toConfig = dateItem?.to ? {
+      ...dateItem?.to,
       value: currentValue && 'to' in currentValue ? currentValue.to : null,
       onChange: (date: Date | null) => {
-        if (dateItem.to?.onChange) {
-          dateItem.to.onChange(date);
+        if (dateItem?.to?.onChange) {
+          dateItem?.to.onChange(date);
         }
-        
+
         if (onChange) {
           const fromDate = currentValue && 'from' in currentValue ? currentValue.from : null;
-          
+
           onChange(fieldId, {
             from: fromDate,
             to: date
@@ -185,9 +185,9 @@ const RenderComponent = ({
         }
       }
     } : undefined;
-    
+
     return (
-      <FormComponent.DateRange 
+      <FormComponent.DateRange
         {...dateItem}
         from={fromConfig}
         to={toConfig}
@@ -198,13 +198,13 @@ const RenderComponent = ({
   case COMPONENT_TYPE.amount: {
     const amountItem = item as AmountField;
     const defaultValue = '';
-    const currentValue = values && fieldId in values 
-      ? values[fieldId] as AmountFieldValue ?? defaultValue 
+    const currentValue = values && fieldId in values
+      ? values[fieldId] as AmountFieldValue ?? defaultValue
       : amountItem.value ?? defaultValue;
-      
+
     return (
-      <FormComponent.AmountField 
-        {...amountItem} 
+      <FormComponent.AmountField
+        {...amountItem}
         value={currentValue}
         onChange={(e: TextFieldChangeEvent) => {
           if (onChange) {

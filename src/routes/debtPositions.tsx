@@ -1,29 +1,12 @@
-
-import { Layout } from '../components/layout/Layout';
-import { RouteHandleObject } from '../models/Breadcrumbs';
-import config from '../utils/config';
+import DebtPositionResults from './DebtPositions/DebtPositionsResults';
 import DebtPositionsImportOverview from './DebtPositionsImportOverview';
 import DebtPositionsInstallmentDetail from './DebtPositionsInstallmentDetail';
-import DebtPositionIUVDataGrid from './DebtPositions/components/DebtPositionIUVDataGrid';
-import { DataGrid as DebtPositionsDataGrid } from './DebtPositions/components/DebtPositionsDataGrid';
-import DebtPositionResults, { SearchType } from './DebtPositions/DebtPositionsResults';
 import DebtPositionsPage from './DebtPositionsPage';
+import config from '../utils/config';
+import { Layout } from '../components/layout/Layout';
+import { RouteHandleObject } from '../models/Breadcrumbs';
 
 const deployPath = config.deployPath;
-
-const DebtPositionSearchResults = () => (
-  <DebtPositionResults 
-    searchType={SearchType.DEBT_POSITION} 
-    dataGridComponent={<DebtPositionsDataGrid />}
-  />
-);
-
-const DebtPositionSearchResultsIUV = () => (
-  <DebtPositionResults 
-    searchType={SearchType.IUV} 
-    dataGridComponent={<DebtPositionIUVDataGrid />}
-  />
-);
 
 export const debtPositionsRoutes = [
   {
@@ -38,17 +21,17 @@ export const debtPositionsRoutes = [
         handle: {
           backButton: false,
           hideBreadcrumbs: true
-        } as RouteHandleObject,
+        } as RouteHandleObject
       },
       {
         id: 'DEBT_POSITIONS_RESULTS',
         path: 'results',
-        element: <DebtPositionSearchResults />,
+        element: <DebtPositionResults />
       },
       {
         id: 'DEBT_POSITION_SEARCH_RESULTS',
         path: 'results-IUV',
-        element: <DebtPositionSearchResultsIUV />,
+        element: <DebtPositionResults />,
       },
 	   {
         id: 'DEBT_POSITIONS_IMPORT_OVERVIEW',
