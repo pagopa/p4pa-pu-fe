@@ -1,6 +1,7 @@
 import { Card, CardContent, Typography, Grid, useTheme, Chip, ChipOwnProps, Button, Divider } from '@mui/material';
 import { Variant } from '@mui/material/styles/createTypography';
 import { useTranslation } from 'react-i18next';
+import { moneyFormat } from '../../utils/formatters';
 export interface DetailData {
   label: string;
   value: string;
@@ -38,7 +39,7 @@ const DetailContainer = ({ sections }: DetailSectionProps) => {
   const { t } = useTranslation();
 
   return (
-    <Card sx={{ borderRadius: 2, padding: 2, height: 'auto' }}>
+    <Card sx={{ borderRadius: 2, height: 'auto' }}>
       <CardContent>
         <Grid container spacing={2}>
           {sections.map((section, index) => (
@@ -63,10 +64,17 @@ const DetailContainer = ({ sections }: DetailSectionProps) => {
                           label={t(`commons.chipStaus.${item.value}`)}
                           variant={item.chipConfig?.variant}
                         />
-                      ): (
+                      ) : item.label === 'Importo' || !isNaN(Number(item.value)) ? (
                         <Typography
                           fontWeight={item.variant ?? 600}
-                          variant= {item.variant ?? 'body1'}
+                          variant={item.variant ?? 'body1'}
+                        >
+                          {moneyFormat(typeof item.value === 'number' ? item.value : Number(item.value))}
+                        </Typography>
+                      ) : (
+                        <Typography
+                          fontWeight={item.variant ?? 600}
+                          variant={item.variant ?? 'body1'}
                         >
                           {item.value || '-'}
                         </Typography>
