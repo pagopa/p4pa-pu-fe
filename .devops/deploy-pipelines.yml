@@ -26,7 +26,7 @@ variables:
     deploy_path: '$(UAT_DEPLOY_PATH)'
     api_timeout: 0
     api_host: '$(UAT_API_HOST)'
-    fileshare_host: '$(UAT_API_FILESHATE_HOST)'
+    fileshare_host: '$(UAT_API_FILESHARE_HOST)'
 
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     environment: 'PROD'
@@ -38,7 +38,7 @@ variables:
     deploy_path: '$(PROD_DEPLOY_PATH)'
     api_timeout: 0
     api_host: '$(PROD_API_HOST)'
-    fileshare_host: '$(PROD_API_FILESHATE_HOST)'
+    fileshare_host: '$(PROD_API_FILESHARE_HOST)'
 
   # every branch different from past will be considered as DEV
   ${{ else }}:
@@ -51,7 +51,7 @@ variables:
     deploy_path: '$(DEV_DEPLOY_PATH)'
     api_timeout: 0
     api_host: '$(DEV_API_HOST)'
-    fileshare_host: '$(DEV_API_FILESHATE_HOST)'
+    fileshare_host: '$(DEV_API_FILESHARE_HOST)'
 
 pool:
   vmImage: '$(vmImageNameDefault)'

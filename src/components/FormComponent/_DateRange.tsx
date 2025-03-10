@@ -8,6 +8,7 @@ export type DateRange = {
   label?: string;
   errorMessage?: string;
   onChange?: (date: Date | null) => void;
+  value?: Date | null;
 };
 
 export type _DateRangeProps = {
@@ -50,7 +51,7 @@ export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
   return (
     <Stack direction={{ xs: 'row' }} justifyContent="row" gap={2} width="100%">
       <DatePicker
-        views={isYear ? ['year'] : ['day', 'month', 'year']}
+        views={isYear ? ['year'] : undefined}
         format={isYear ? 'yyyy' : 'dd/MM/yyyy'}
         openTo={isYear ? 'year' : 'day'}
         sx={{ width: '100%' }}
@@ -72,7 +73,6 @@ export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
       />
       {to && (
         <DatePicker
-          views={['day', 'month', 'year']}
           sx={{ width: '100%' }}
           label={t('dates.to')}
           value={endDate}

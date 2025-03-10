@@ -122,7 +122,9 @@
 			"CONSERVATION_INDEX": "Pagina principale",
 			"DEBT_POSITIONS": "Dovuti",
 			"DEBT_POSITIONS_RESULTS": "Posizioni debitorie",
-      "DEBT_POSITION_SEARCH_RESULTS": "Avvisi (IUV)",
+			"DEBT_POSITIONS_IMPORT_OVERVIEW": "Flussi",
+			"DEBT_POSITION_INSTALLMENT_DETAIL": "Dettaglio Avviso",
+      		"DEBT_POSITION_SEARCH_RESULTS": "Avvisi (IUV)",
 			"DEBT_TYPES": "Tipi dovuti",
 			"DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
 			"DEBT_TYPES_CREATED": "Tipi dovuti impostati",
@@ -181,6 +183,10 @@
 			"EXPIRED": "Scaduto",
 			"ALL": "Tutti"
 		},
+		"chipStaus": {
+			"PAID": "Pagato",
+			"UNPAID": "Non pagato"
+		},
 		"successExport": "Abbiamo ricevuto la tua richiesta!",
 		"successImport": "Flusso caricato con successo",
 		"summary": "riepilogo",
@@ -191,7 +197,8 @@
 		"showAllFlows": "Vedi tutti i flussi",
 		"searchCF": "Cerca CF",
 		"uploadedFrom": "Caricati dal",
-		"importNewFlow": "Carica un nuovo flusso"
+		"importNewFlow": "Carica un nuovo flusso",
+		"debtFlow": "Flussi dovuti"
 	},
 	"conservation": {
 		"buttonReservationExport": "Prenota export",
@@ -249,7 +256,8 @@
 		"reservationDate": "Data prenotazione",
 		"lastUpdate": "Ultima Modifica",
 		"authorizedOrganizations": "Enti abilitati",
-		"noDataRows": "Nessun elemento trovato"
+		"noDataRows": "Nessun elemento trovato",
+		"uploadDate": "Data Caricamento"
 	},
 	"reporting": {
 		"description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
@@ -370,5 +378,13 @@
 		"importDebtFlowDescription": "Carica un file .zip con l'informazione necessaria di dovuti mancanti.",
 		"expirationFrom": "Scadenza dal",
 		"creationFrom": "Creazione dal"
+	},
+	"installmentDetailPage": {
+		"title": "Dettagli Avviso",
+		"showDebtPositions": "Vedi Posizione debitoria",
+		"showOtherBeneficiaries": "Vedi altri beneficiari",
+		"noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+		"downloadInstallment": "Scarica avviso",
+		"paymentInformation": "Informazione sul pagamento"
 	}
 }

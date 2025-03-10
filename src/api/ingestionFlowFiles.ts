@@ -78,7 +78,7 @@ export const uploadIngestionFlowFile = ({
     mutationKey: ['uploadIngestionFlowFiles', organizationId],
     mutationFn: async (file: File, params?: RequestParams) => {
       const { data: response } =
-        await utils.fileshareClient.ingestionflowfiles.uploadIngestionFlowFile(
+        await utils.fileshareClient.organization.uploadIngestionFlowFile(
           organizationId,
           {
             ingestionFlowFileType,
