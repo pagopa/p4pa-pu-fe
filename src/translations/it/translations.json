@@ -122,6 +122,7 @@
 			"CONSERVATION_INDEX": "Pagina principale",
 			"DEBT_POSITIONS": "Dovuti",
 			"DEBT_POSITIONS_RESULTS": "Posizioni debitorie",
+			"DEBT_POSITIONS_IMPORT_OVERVIEW": "Flussi",
 			"DEBT_POSITION_INSTALLMENT_DETAIL": "Dettaglio Avviso",
       		"DEBT_POSITION_SEARCH_RESULTS": "Avvisi (IUV)",
 			"DEBT_TYPES": "Tipi dovuti",
@@ -196,7 +197,8 @@
 		"showAllFlows": "Vedi tutti i flussi",
 		"searchCF": "Cerca CF",
 		"uploadedFrom": "Caricati dal",
-		"importNewFlow": "Carica un nuovo flusso"
+		"importNewFlow": "Carica un nuovo flusso",
+		"debtFlow": "Flussi dovuti"
 	},
 	"conservation": {
 		"buttonReservationExport": "Prenota export",
@@ -254,7 +256,8 @@
 		"reservationDate": "Data prenotazione",
 		"lastUpdate": "Ultima Modifica",
 		"authorizedOrganizations": "Enti abilitati",
-		"noDataRows": "Nessun elemento trovato"
+		"noDataRows": "Nessun elemento trovato",
+		"uploadDate": "Data Caricamento"
 	},
 	"reporting": {
 		"description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",

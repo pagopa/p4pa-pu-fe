@@ -2,6 +2,7 @@
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Breadcrumbs';
 import config from '../utils/config';
+import DebtPositionsImportOverview from './DebtPositionsImportOverview';
 import DebtPositionsInstallmentDetail from './DebtPositionsInstallmentDetail';
 import DebtPositionIUVDataGrid from './DebtPositions/components/DebtPositionIUVDataGrid';
 import { DataGrid as DebtPositionsDataGrid } from './DebtPositions/components/DebtPositionsDataGrid';
@@ -48,6 +49,14 @@ export const debtPositionsRoutes = [
         id: 'DEBT_POSITION_SEARCH_RESULTS',
         path: 'results-IUV',
         element: <DebtPositionSearchResultsIUV />,
+      },
+	   {
+        id: 'DEBT_POSITIONS_IMPORT_OVERVIEW',
+        path: 'import-overview',
+        element: <DebtPositionsImportOverview />,
+        handle: {
+          backButton: true,
+        } as RouteHandleObject,
       },
       {
         id: 'DEBT_POSITION_INSTALLMENT_DETAIL',
