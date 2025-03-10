@@ -1,250 +1,105 @@
-import userEvent from '@testing-library/user-event';
-import { DebtPositionResults, SearchType } from './DebtPositionsResults';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { screen } from '@testing-library/react';
-import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
-import { render } from '../../__tests__/renderers';
+import { describe, expect, it, Mock, vi } from 'vitest';
+import { render, screen } from '../../__tests__/renderers';
+import { useLocation } from 'react-router-dom';
+import FilterContainer from '../../components/FilterContainer/FilterContainer';
+import { SearchType } from '../../models/DebtPositiosn';
+import DebtPositionResults from './DebtPositionsResults';
+import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
 
-const mockTranslations = {
-  'DebtPositions.Results.titleIUV': 'Risultati Ricerca IUV',
-  'DebtPositions.Results.title': 'Risultati Posizioni Debitorie',
-  'commons.createNewOne': 'Crea Nuovo IUV',
-  'commons.createNew': 'Crea Nuovo',
-  'commons.searchIUV': 'Cerca IUV',
-  'commons.searchCF': 'Cerca Codice Fiscale',
-  'commons.duetype': 'Tipo Dovuto',
-  'commons.state': 'Stato',
-  'commons.filters.filterResults': 'Filtra',
-  'DebtPositions.Results.filters.from': 'Da',
-  'dates.to': 'A'
-};
+// Mock dependencies
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({ t: (key: string) => key }),
+}));
 
-describe('DebtPositionsResults', () => {
-  beforeEach(() => {
-    i18nTestSetup(mockTranslations);
+vi.mock('react-router-dom', () => ({
+  useLocation: vi.fn(),
+}));
+
+vi.mock('../../hooks/useDebtPositionsSearch', () => ({
+  default: vi.fn(() => ({
+    query: { data: { content: [], totalElements: 0 } },
+    applyFilters: vi.fn(),
+    handleFilterChange: vi.fn(),
+    handlePageChange: vi.fn(),
+    handlePageSizeChange: vi.fn(),
+    setSort: vi.fn(),
+    pagination: { page: 0, size: 10 },
+    filterValues: {},
+  }))
+}));
+
+vi.mock('../../hooks/useDebtPositionsFilters', () => ({
+  default: vi.fn(() => ({
+    filters: [],
+  }))
+}));
+
+vi.mock('../../components/TitleComponent/TitleComponent', () => ({
+  default: vi.fn(({ title }) => <div>{title}</div>),
+}));
+
+vi.mock('../../components/FilterContainer/FilterContainer', () => ({
+  default: vi.fn(() => <div>FilterContainer</div>),
+}));
+
+vi.mock('./components/DebtPositionIUVDataGrid', () => ({
+  IUVDataGrid: vi.fn(() => <div>IUVDataGrid</div>),
+}));
+
+vi.mock('./components/DebtPositionsDataGrid', () => ({
+  DebtPositionsDataGrid: vi.fn(() => <div>DebtPositionsDataGrid</div>),
+}));
+
+describe('DebtPositionResults', () => {
+  const mockLocationState = (searchType: SearchType) => ({
+    state: {
+      searchType,
+      filters: {
+        // Add mock filter values if needed for your tests
+      }
+    }
   });
 
-  describe('IUV Search Type', () => {
-    it('renders correct title for IUV search', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.IUV}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      expect(screen.getByText('Risultati Ricerca IUV')).toBeInTheDocument();
-    });
+  it('should render IUV version correctly', () => {
+    (useLocation as Mock).mockReturnValue(mockLocationState(SearchType.IUV));
 
-    it('renders IUV specific filters', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.IUV}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      expect(screen.getByLabelText('Cerca IUV')).toBeInTheDocument();
-      expect(screen.getByLabelText('Cerca Codice Fiscale')).toBeInTheDocument();
+    render(<DebtPositionResults />);
 
-      expect(screen.getByText('Da')).toBeInTheDocument();
-      expect(screen.getByText('A')).toBeInTheDocument();
-    });
-
-    it('renders the correct data grid component', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.IUV}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      expect(screen.getByTestId('mock-grid')).toBeInTheDocument();
-    });
+    expect(screen.getByText('DebtPositions.Results.titleIUV')).toBeInTheDocument();
+    expect(screen.getByText('IUVDataGrid')).toBeInTheDocument();
   });
 
-  describe('DEBT_POSITION Search Type', () => {
-    it('renders correct title for debt position search', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      expect(screen.getByText('Risultati Posizioni Debitorie')).toBeInTheDocument();
-    });
+  it('should render standard version correctly', () => {
+    (useLocation as Mock).mockReturnValue(mockLocationState(SearchType.DEBT_POSITION));
 
-    it('renders debt position specific filters', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      expect(screen.queryByLabelText('Cerca IUV')).not.toBeInTheDocument();
-      expect(screen.getByLabelText('Cerca Codice Fiscale')).toBeInTheDocument();
+    render(<DebtPositionResults />);
 
-      expect(screen.getByText('Da')).toBeInTheDocument();
-      expect(screen.getByText('A')).toBeInTheDocument();
-    });
-
-    it('renders the correct data grid component', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      expect(screen.getByTestId('mock-grid')).toBeInTheDocument();
-    });
+    expect(screen.getByText('DebtPositions.Results.title')).toBeInTheDocument();
+    expect(screen.getByText('DebtPositionsDataGrid')).toBeInTheDocument();
   });
 
-  describe('Navigation State Handling', () => {
-    it('uses search type from location state when provided', () => {
+  it('should pass correct props to FilterContainer', () => {
+    (useLocation as Mock).mockReturnValue(mockLocationState(SearchType.DEBT_POSITION));
 
-      render(
-    
-        <DebtPositionResults
-          searchType={SearchType.IUV}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      
-      expect(screen.getByText('Risultati Ricerca IUV')).toBeInTheDocument();
-      expect(screen.getByLabelText('Cerca IUV')).toBeInTheDocument();
-    });
+    render(<DebtPositionResults />);
 
-    it('uses default search type when no location state provided', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      
-      expect(screen.getByText('Risultati Posizioni Debitorie')).toBeInTheDocument();
-    });
+    expect(FilterContainer).toHaveBeenCalledWith(expect.objectContaining({
+      items: expect.any(Array),
+      values: expect.any(Object),
+      onChange: expect.any(Function)
+    }), expect.anything());
   });
 
-  describe('Common Functionality', () => {
-    it('renders call to action button', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      
-      expect(screen.getByRole('button', { name: /crea nuovo/i })).toBeInTheDocument();
-    });
+  it('should pass pagination to DataGrid', () => {
+    (useLocation as Mock).mockReturnValue(mockLocationState(SearchType.DEBT_POSITION));
 
-    it('triggers create button click', async () => {
-      const user = userEvent.setup();
+    render(<DebtPositionResults />);
 
-      const consoleSpy = vi.spyOn(console, 'log');
-      
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      
-      const createButton = screen.getByRole('button', { name: /crea nuovo/i });
-      await user.click(createButton);
-      
-      expect(consoleSpy).toHaveBeenCalledWith('create button clicked');
-      consoleSpy.mockRestore();
-    });
-
-    it('renders common select filters', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-
-      expect(screen.getByLabelText('Tipo Dovuto')).toBeInTheDocument();
-      expect(screen.getByLabelText('Stato')).toBeInTheDocument();
-    });
-
-    it('renders results table container', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      
-      expect(screen.getByLabelText('results-table')).toBeInTheDocument();
-    });
-    
-    it('renders the correct options for due type select', async () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-      const user = userEvent.setup();
-  
-      const dueTypeSelect = screen.getByLabelText('Tipo Dovuto');
-      await user.click(dueTypeSelect);
-  
-      expect(screen.getByText('Tari')).toBeInTheDocument();
-      expect(screen.getByText('Dovuto')).toBeInTheDocument();
-    });
-
-    it('allows selecting date range values', async () => {
-      const user = userEvent.setup();
-  
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-
-      const inputs = screen.getAllByRole('textbox', { name: /da|a/i });
-  
-      expect(inputs).toHaveLength(3);
-
-      const fromDateInput = inputs[1];
-      const toDateInput = inputs[2];
-
-      await user.type(fromDateInput, '01/01/2025');
-      await user.type(toDateInput, '31/01/2025');
-
-      expect(fromDateInput).toHaveValue('01/01/2025');
-      expect(toDateInput).toHaveValue('31/01/2025');
-    });
-
-    it('shows Add icon for DEBT_POSITION search type', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={<div data-testid="mock-grid" />}
-        />
-      );
-  
-      const addIcon = document.querySelector('svg.MuiSvgIcon-root');
-      expect(addIcon).toBeInTheDocument();
-    });
-
-    it('renders complex dataGridComponent correctly', () => {
-      render(
-        <DebtPositionResults
-          searchType={SearchType.DEBT_POSITION}
-          dataGridComponent={
-            <div data-testid="complex-grid">
-              <span>Complex Grid Component</span>
-              <button>Grid Action</button>
-            </div>
-          }
-        />
-      );
-  
-      expect(screen.getByTestId('complex-grid')).toBeInTheDocument();
-      expect(screen.getByText('Complex Grid Component')).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: 'Grid Action' })).toBeInTheDocument();
-    });
+    expect(DebtPositionsDataGrid).toHaveBeenCalledWith(expect.objectContaining({
+      pagination: expect.objectContaining({
+        page: 0,
+        size: 10
+      })
+    }), expect.anything());
   });
 });

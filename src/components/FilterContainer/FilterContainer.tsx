@@ -21,27 +21,27 @@ export type TextFieldChangeEvent = ChangeEvent<HTMLInputElement | HTMLTextAreaEl
 export type SelectChangeEvent = ChangeEvent<{ value: unknown }>;
 export type ButtonClickEvent = MouseEvent<HTMLButtonElement, globalThis.MouseEvent>;
 
-type SearchField = {
+export type SearchField = {
   type: COMPONENT_TYPE.textField;
   value?: TextFieldValue;
 } & TextFieldProps;
 
-type AmountField = {
+export type AmountField = {
   type: COMPONENT_TYPE.amount;
 } & TextFieldProps;
 
-type SelectField = {
+export type SelectField = {
   type: COMPONENT_TYPE.select;
   value?: SelectValue;
   onChange?: (e: SelectChangeEvent) => void;
 } & SelectProps;
 
-type ButtonField = {
+export type ButtonField = {
   type: COMPONENT_TYPE.button;
   onClick?: (e: ButtonClickEvent) => void;
 } & ButtonProps;
 
-type DateRangeField = {
+export type DateRangeField = {
   type: COMPONENT_TYPE.dateRange;
   isYear?: boolean;
   from?: {
@@ -134,7 +134,7 @@ const RenderComponent = ({
       <FormComponent.Button
         {...buttonItem}
         onClick={(e: ButtonClickEvent) => {
-          if (buttonItem.onClick) {
+          if (buttonItem?.onClick) {
             buttonItem.onClick(e);
           }
         }}

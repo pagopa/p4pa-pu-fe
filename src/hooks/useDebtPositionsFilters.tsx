@@ -4,24 +4,16 @@ import SearchIcon from '@mui/icons-material/Search';
 import { DebtPositionTypeWithCount } from '../../generated/data-contracts';
 import { COMPONENT_TYPE, FilterItem } from '../components/FilterContainer/FilterContainer';
 import { SearchType } from '../models/DebtPositiosn';
-import { DebtPositionViewQuery, getDebtPositionsTypes } from '../api/debtPositions';
+import { getDebtPositionsTypes } from '../api/debtPositions';
 import { useStore } from '../store/GlobalStore';
+import { DebtPositionFilters } from './useDebtPositionsSearch';
 
-export type DebtPositionFilters = {
-  dateRange?: {
-    from: Date;
-    to: Date;
-  };
-  status?: DebtPositionViewQuery['status'] | 'TUTTI';
-  fiscalCode?: string;
-};
-
-type UseDebtPositionFiltersProps = {
+type UseDebtPositionSearchProps = {
   searchType: SearchType;
   onFilter: (filters: DebtPositionFilters) => void;
 };
 
-export const useDebtPositionFilters = ({ searchType, onFilter }: UseDebtPositionFiltersProps) => {
+export const useDebtPositionFilters = ({ searchType, onFilter }: UseDebtPositionSearchProps) => {
   const { t } = useTranslation();
   const [dueTypes, setDueTypes] = useState<Array<{ label: string; value: string | number }> | []>(
     []

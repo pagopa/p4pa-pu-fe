@@ -14,7 +14,7 @@ const StyledDataGrid = styled(DataGrid)({
   backgroundColor: theme.palette.background.paper,
 });
 
-interface CustomDataGridProps<T extends GridValidRowModel> extends Omit<DataGridProps, 'rows' | 'columns'> {
+export interface CustomDataGridProps<T extends GridValidRowModel> extends Omit<DataGridProps, 'rows' | 'columns'> {
   rows: T[];
   columns: GridColDef[];
   sortModel?: GridSortModel;
