@@ -2,7 +2,6 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import { pagedIngestionFlowFileSchema } from '../../generated/zod-schema';
-import { toUTCString } from '../utils/formatter';
 import { FlowStatus } from '../models/Filters';
 import {
   FileOrigin,
@@ -57,19 +56,8 @@ export const getIngestionFlowFiles = (
         }
       );
 
-      // ISO date conversion without offset for Zod validation. Need to investigate how to add the { offset: true } flag to the generated schema.
       if (files?.content) {
-        const transformedFiles = {
-          ...files,
-          content: files.content.map((file) => ({
-            ...file,
-            creationDate: toUTCString(file.creationDate)
-          }))
-        };
-
-        parseAndLog(pagedIngestionFlowFileSchema, transformedFiles);
-
-        return transformedFiles;
+        parseAndLog(pagedIngestionFlowFileSchema, files);
       }
       return files;
     },
@@ -90,7 +78,7 @@ export const uploadIngestionFlowFile = ({
     mutationKey: ['uploadIngestionFlowFiles', organizationId],
     mutationFn: async (file: File, params?: RequestParams) => {
       const { data: response } =
-        await utils.fileshareClient.ingestionflowfiles.uploadIngestionFlowFile(
+        await utils.fileshareClient.organization.uploadIngestionFlowFile(
           organizationId,
           {
             ingestionFlowFileType,

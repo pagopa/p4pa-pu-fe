@@ -50,7 +50,6 @@ describe('StoreContext', () => {
         [STATE.ORGANIZATION_ID]: null,
         [STATE.USER_INFO]: null,
         [STATE.FILTERS]: [''],
-        [STATE.SUPER_ADMIN]: false
       })
     );
   });

@@ -11,7 +11,7 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('../utils', () => ({
   default: {
     fileshareClient: {
-      ingestionflowfiles: {
+      organization: {
         uploadIngestionFlowFile: vi.fn()
       }
     }
@@ -19,7 +19,7 @@ vi.mock('../utils', () => ({
 }));
 
 const mockUploadIngestionFlowFile = vi.mocked(
-  utils.fileshareClient.ingestionflowfiles.uploadIngestionFlowFile
+  utils.fileshareClient.organization.uploadIngestionFlowFile
 );
 
 describe('uploadIngestionFlowFile', () => {
