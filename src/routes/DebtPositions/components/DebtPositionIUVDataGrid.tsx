@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
 import { Chip, ChipProps, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
+import { PageRoutes } from '../../../App';
+import { useNavigate } from 'react-router';
 
 interface SearchResultDataRow extends GridValidRowModel {
   iuv: string;
@@ -15,6 +17,7 @@ interface SearchResultDataRow extends GridValidRowModel {
 const DebtPositionDataGrid = () => {
 
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const stateColors: Record<string, ChipProps['color']> = {
     TO_PAY: 'info',
@@ -75,13 +78,13 @@ const DebtPositionDataGrid = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => (
+      renderCell: () => (
         <ReadMore 
           fontSize="small"
           color='primary'
           sx={{ cursor: 'pointer' }}
           onClick={() => {
-            console.log('Dettaglio per ID: ', params.row.iuv);
+            navigate(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL);
           }}
         />
       ),
