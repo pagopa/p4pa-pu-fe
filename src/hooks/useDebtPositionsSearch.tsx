@@ -1,10 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useStore } from '../store/GlobalStore';
 import { DebtPositionViewQuery, getDebtPositionViews, getInstallments } from '../api/debtPositions';
 import { FilterFieldValue } from '../models/Filters';
-import { SearchType } from '../models/DebtPositiosn';
 import { useDataGridPagination } from './useDatagridPagination';
-import useDebtPositionFilters from './useDebtPositionsFilters';
 
 export type DebtPositionFilters = {
   dateRange?: {
@@ -18,12 +16,12 @@ export type DebtPositionFilters = {
 
 export type UseDebtPositionFiltersProps = {
   initialFilters: DebtPositionFilters;
-  searchType: SearchType;
+  requestFn: typeof getDebtPositionViews | typeof getInstallments; // Allow passing the request function
 };
 
 export const useDebtPositionSearch = ({
   initialFilters,
-  searchType
+  requestFn,
 }: UseDebtPositionFiltersProps) => {
   const [filterValues, setFilterValues] = useState<DebtPositionFilters>(initialFilters);
   const [sort, setSort] = useState<string[]>([]);
@@ -32,9 +30,7 @@ export const useDebtPositionSearch = ({
     state: { organizationId }
   } = useStore();
 
-  const request = searchType === SearchType.IUV ? getInstallments : getDebtPositionViews;
-
-  const query = request({ organizationId });
+  const query = requestFn({ organizationId });
 
   const { pagination, handlePageChange, handlePageSizeChange } = useDataGridPagination({
     initialPage: 0,
@@ -68,12 +64,9 @@ export const useDebtPositionSearch = ({
     query.mutate(filterToRequest());
   }, [filterToRequest, query]);
 
-  const { filters } = useDebtPositionFilters({ searchType, onFilter: applyFilters });
-
   return {
     applyFilters,
     query,
-    filters,
     filterValues,
     handleFilterChange,
     handlePageChange,

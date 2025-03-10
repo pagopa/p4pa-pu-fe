@@ -9,6 +9,9 @@ import { SearchType } from '../../models/DebtPositiosn';
 import useDebtPositionsSearch from '../../hooks/useDebtPositionsSearch';
 import { IUVDataGrid } from './components/DebtPositionIUVDataGrid';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
+import { getDebtPositionViews, getInstallments } from '../../api/debtPositions';
+import useDebtPositionFilters from '../../hooks/useDebtPositionsFilters';
+import { PagedInstallmentView, PagedDebtPositionView } from '../../../generated/apiClient';
 
 export interface LocationState {
   searchType: SearchType;
@@ -28,8 +31,10 @@ export const DebtPositionResults = () => {
 
   const debtPosition = useDebtPositionsSearch({
     initialFilters,
-    searchType
+    requestFn: searchType === SearchType.IUV ? getInstallments : getDebtPositionViews
   });
+
+  const { filters } = useDebtPositionFilters({ searchType, onFilter: debtPosition.applyFilters });
 
   const DataGrid = searchType === SearchType.IUV ? IUVDataGrid : DebtPositionsDataGrid;
 
@@ -52,7 +57,7 @@ export const DebtPositionResults = () => {
       />
       <Stack gap={3}>
         <FilterContainer
-          items={debtPosition.filters}
+          items={filters}
           values={debtPosition.filterValues}
           onChange={debtPosition.handleFilterChange}
         />
@@ -66,7 +71,7 @@ export const DebtPositionResults = () => {
           }}
           aria-label="results-table">
           <DataGrid
-            data={debtPosition.query.data}
+            data={debtPosition.query.data as PagedInstallmentView & PagedDebtPositionView}
             onPageChange={debtPosition.handlePageChange}
             onPageSizeChange={debtPosition.handlePageSizeChange}
             onSortChange={debtPosition.setSort}

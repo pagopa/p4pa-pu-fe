@@ -25,7 +25,7 @@ interface ResultDataRow extends GridValidRowModel {
 }
 
 export type DataGridProps = {
-  data?: PagedDebtPositionView;
+  data: PagedDebtPositionView;
   onPageChange: (page: number) => void;
   onPageSizeChange: (page: number) => void;
   onSortChange: (model: string[]) => void;
