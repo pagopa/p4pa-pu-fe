@@ -2,6 +2,7 @@
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Breadcrumbs';
 import config from '../utils/config';
+import DebtPositionsInstallmentDetail from './DebtPositionsInstallmentDetail';
 import DebtPositionIUVDataGrid from './DebtPositions/components/DebtPositionIUVDataGrid';
 import { DataGrid as DebtPositionsDataGrid } from './DebtPositions/components/DebtPositionsDataGrid';
 import DebtPositionResults, { SearchType } from './DebtPositions/DebtPositionsResults';
@@ -47,7 +48,12 @@ export const debtPositionsRoutes = [
         id: 'DEBT_POSITION_SEARCH_RESULTS',
         path: 'results-IUV',
         element: <DebtPositionSearchResultsIUV />,
-      }
+      },
+      {
+        id: 'DEBT_POSITION_INSTALLMENT_DETAIL',
+        path: 'installment-detail',
+        element: <DebtPositionsInstallmentDetail />,
+      },
     ]
   }
 ];

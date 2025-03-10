@@ -94,12 +94,12 @@ export const DetailFlowPage = () => {
         <Grid container spacing={3}>
           <Grid item md={6}>
             <DetailContainer 
-              sections={[{title: t('commons.summary'), data: summaryData}]} 
+              sections={[{title: {label: t('commons.summary'), variant: 'overline'}, data: summaryData}]} 
             />
           </Grid>
           <Grid item md={6}>
             <DetailContainer 
-              sections={[{title: t('commons.payment'), data: paymentData}]}
+              sections={[{title: {label: t('commons.payment'), variant: 'overline'}, data: paymentData}]}
             />
           </Grid>
         </Grid> :
