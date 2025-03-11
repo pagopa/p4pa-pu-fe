@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { moneyFormat } from '../../utils/formatters';
 export interface DetailData {
   label: string;
-  value: string;
+  value: string | number;
   variant?: 'body1' | 'body2' | 'h6' | 'subtitle1' | 'monospaced';
   chipConfig?: { color?: ChipOwnProps['color'], variant?: ChipOwnProps['variant'] };
 };
@@ -64,7 +64,7 @@ const DetailContainer = ({ sections }: DetailSectionProps) => {
                           label={t(`commons.chipStaus.${item.value}`)}
                           variant={item.chipConfig?.variant}
                         />
-                      ) : item.label === 'Importo' || !isNaN(Number(item.value)) ? (
+                      ) : item.label === 'Importo' ? (
                         <Typography
                           fontWeight={item.variant ?? 600}
                           variant={item.variant ?? 'body1'}

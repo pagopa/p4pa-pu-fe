@@ -1,4 +1,4 @@
-import DebtPositionDetail from '../components/DebtPositionDetail/DebtPositionDetail';
+import DebtPositionDetail from './DebtPositionDetail/DebtPositionDetail';
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Breadcrumbs';
 import config from '../utils/config';

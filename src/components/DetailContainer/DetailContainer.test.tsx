@@ -9,7 +9,7 @@ describe('DetailContainer', () => {
         title: {label: 'commons.summary'},
         data: [
           { label: 'IUV', value: '03234234234324', variant: 'monospaced' as const },
-          { label: 'Importo', value: '80,00 €' },
+          { label: 'Importo', value: 8000 },
         ]
       },
       {
