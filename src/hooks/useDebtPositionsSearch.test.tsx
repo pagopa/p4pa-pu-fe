@@ -7,24 +7,23 @@ const mockRequest = vi.fn().mockReturnValue({
   mutate: vi.fn(),
   data: [],
   isSuccess: true,
-  isLoading: false,
+  isLoading: false
 });
 
 describe('useDebtPositionSearch', () => {
   const initialFilters: DebtPositionFilters = {
     dateRange: {
       from: new Date('2024-01-01'),
-      to: new Date('2024-12-31'),
+      to: new Date('2024-12-31')
     },
-    status: 'TUTTI',
+    status: 'TUTTI'
   };
 
   it('should initialize with default values', () => {
     const { result } = renderHook(() =>
       useDebtPositionSearch({
         initialFilters,
-        requestFn: mockRequest,
-        autoFetch: false,
+        requestFn: mockRequest
       })
     );
 
@@ -37,8 +36,7 @@ describe('useDebtPositionSearch', () => {
     const { result } = renderHook(() =>
       useDebtPositionSearch({
         initialFilters,
-        requestFn: mockRequest,
-        autoFetch: false,
+        requestFn: mockRequest
       })
     );
 
@@ -53,8 +51,7 @@ describe('useDebtPositionSearch', () => {
     const { result } = renderHook(() =>
       useDebtPositionSearch({
         initialFilters,
-        requestFn: mockRequest,
-        autoFetch: false,
+        requestFn: mockRequest
       })
     );
 
