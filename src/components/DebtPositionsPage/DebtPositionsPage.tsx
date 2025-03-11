@@ -9,7 +9,7 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import { getTabsConfig } from './DebtTabsConfig';
 import { PageRoutes } from '../../App';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
-import { SearchType } from '../../models/DebtPositiosn';
+import { SearchType } from '../../models/DebtPositions';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();

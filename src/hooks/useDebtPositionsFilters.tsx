@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import SearchIcon from '@mui/icons-material/Search';
 import { DebtPositionTypeWithCount } from '../../generated/data-contracts';
 import { COMPONENT_TYPE, FilterItem } from '../components/FilterContainer/FilterContainer';
-import { SearchType } from '../models/DebtPositiosn';
+import { SearchType } from '../models/DebtPositions';
 import { getDebtPositionsTypes } from '../api/debtPositions';
 import { useStore } from '../store/GlobalStore';
 import { DebtPositionFilters } from './useDebtPositionsSearch';
