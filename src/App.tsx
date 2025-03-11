@@ -61,7 +61,7 @@ const routesDef = [
       {
         path: `${deployPath}/auth-callback`,
         element: <AuthCallback />,
-        loader: ({}) => postToken()
+        loader: () => postToken()
       },
       ...flowsRoutes,
       ...importRoutes,

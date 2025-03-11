@@ -11,7 +11,7 @@ vi.mock('react-router', async (importOriginal) => ({
 describe('AutchCallback Page', () => {
 
   afterEach(() => {
-        vi.clearAllMocks();
+    vi.clearAllMocks();
   });
       
   it('renders Auth callback without crashing', async () => {
@@ -22,6 +22,6 @@ describe('AutchCallback Page', () => {
     
     render(
       <AuthCallback />
-          );
+    );
   });
 });

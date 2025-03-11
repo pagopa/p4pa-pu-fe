@@ -7,7 +7,7 @@ export default function AuthCallback() {
   const result = useLoaderData() as Awaited<ReturnType<typeof postToken>>;
 
   if (result?.access_token) {
-    window.localStorage.setItem('accessToken', result.access_token)
+    window.localStorage.setItem('accessToken', result.access_token);
     window.location.replace('/piattaformaunitaria');
   } else {
     window.location.replace('/piattaformaunitaria#error');
