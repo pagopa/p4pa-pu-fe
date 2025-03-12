@@ -1,5 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
+import { parseAndLog } from '../utils/loaders';
+import { installmentDetailDTOSchema } from '../../generated/zod-schema';
 
 type DebtPositionViewParams = Parameters<typeof utils.apiClient.bff.getDebtPositionViews>;
 
@@ -68,3 +70,25 @@ export const getInstallments = ({
       return response;
     }
   });
+
+export const getInstallmentDetail = (
+  organizationId: number,
+  installmentId: number
+) => {
+  return useQuery({
+    queryKey: ['installmentDetail', organizationId, installmentId],
+    queryFn: async () => {
+      const { data: installment } = 
+        await utils.apiClient.bff.getInstallmentDetail(
+          organizationId,
+          installmentId
+        );
+      if (installment) {
+        parseAndLog(installmentDetailDTOSchema, installment);
+      }
+      return installment;
+    },
+    enabled: !!organizationId && !!installmentId,
+    retry: false
+  });
+};
