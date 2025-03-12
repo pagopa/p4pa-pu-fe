@@ -35,12 +35,10 @@ export const useDebtPositionSearch = ({
   const { pagination, handlePageChange, handlePageSizeChange } = useDataGridPagination({
     initialPage: 0,
     initialSize: 10,
-    // @ts-expect-error FIXME: static type error during build
     onPaginationChange: () => query.mutate(filterToRequest())
   });
 
   useEffect(() => {
-    // @ts-expect-error FIXME: static type error during build
     query.mutate(filterToRequest());
   }, [organizationId, pagination.page, pagination.size, sort]);
 
@@ -63,7 +61,6 @@ export const useDebtPositionSearch = ({
   }, []);
 
   const applyFilters = useCallback(() => {
-    // @ts-expect-error FIXME: type error only due to react-query
     query.mutate(filterToRequest());
   }, [filterToRequest, query]);
 
