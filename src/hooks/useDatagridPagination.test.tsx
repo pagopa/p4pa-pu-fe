@@ -34,7 +34,9 @@ describe('useDataGridPagination', () => {
     const onPaginationChange = vi.fn();
     const { result } = renderHook(
       () => useDataGridPagination({ onPaginationChange }),
-      { wrapper: StoreProvider }
+      {
+        wrapper: StoreProvider
+      }
     );
 
     act(() => {
@@ -56,7 +58,9 @@ describe('useDataGridPagination', () => {
     const onPaginationChange = vi.fn();
     const { result } = renderHook(
       () => useDataGridPagination({ onPaginationChange }),
-      { wrapper: StoreProvider }
+      {
+        wrapper: StoreProvider
+      }
     );
 
     act(() => {
@@ -77,7 +81,9 @@ describe('useDataGridPagination', () => {
   it('should reset page to 0 when changing page size', () => {
     const { result } = renderHook(
       () => useDataGridPagination({ initialPage: 2 }),
-      { wrapper: StoreProvider }
+      {
+        wrapper: StoreProvider
+      }
     );
 
     act(() => {

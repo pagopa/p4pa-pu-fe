@@ -2,18 +2,19 @@ import { Box, Grid, IconButton, useTheme } from '@mui/material';
 import { Add, ChevronRight, Search } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import FilterContainer, {
+  COMPONENT_TYPE
+} from '../FilterContainer/FilterContainer';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { useEffect, useState } from 'react';
 
 export const DebtTypes = () => {
-  
   const theme = useTheme();
   const { t } = useTranslation();
 
   /*START MOCK DATA*/
-  const rows: DebtTypesDataRow[] = [
+  const rows: Array<DebtTypesDataRow> = [
     {
       id: 1,
       name: 'Cosap/Tosap',
@@ -34,10 +35,25 @@ export const DebtTypes = () => {
     }
   ];
 
-  const columns: GridColDef[] = [
-    { field: 'name', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
-    { field: 'lastUpdate', headerName: t('flowDataGrid.lastUpdate'), flex: 1, type: 'string' },
-    { field: 'authorizedOrganizations', headerName: t('flowDataGrid.authorizedOrganizations'), flex: 1, type: 'string' },
+  const columns: Array<GridColDef> = [
+    {
+      field: 'name',
+      headerName: t('flowDataGrid.name'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'lastUpdate',
+      headerName: t('flowDataGrid.lastUpdate'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'authorizedOrganizations',
+      headerName: t('flowDataGrid.authorizedOrganizations'),
+      flex: 1,
+      type: 'string'
+    },
     {
       field: 'detail',
       headerName: '',
@@ -51,7 +67,8 @@ export const DebtTypes = () => {
           size="small"
           onClick={() => {
             console.log(`detail: ${params.row.name}`);
-          }}>
+          }}
+        >
           <ChevronRight />
         </IconButton>
       )
@@ -60,15 +77,16 @@ export const DebtTypes = () => {
   /*END MOCK DATA*/
 
   const [searchInputField, setSearchInputField] = useState('');
-  const [filterDataRow, setFilterDataRow] = useState<DebtTypesDataRow[]>(rows);
+  const [filterDataRow, setFilterDataRow] =
+    useState<Array<DebtTypesDataRow>>(rows);
   const [isSearchEnabled, setIsSearchEnabled] = useState(false);
 
-  interface DebtTypesDataRow {
+  type DebtTypesDataRow = {
     id: number;
     name: string;
     lastUpdate: string;
     authorizedOrganizations: string;
-  }
+  };
 
   const handleSearch = () => {
     const filteredData = rows.filter((row) =>
@@ -88,25 +106,24 @@ export const DebtTypes = () => {
 
   return (
     <>
-      <TitleComponent 
-        title= {t('commons.routes.DEBT_TYPES_CATALOG')} 
-        callToAction={
-          [
-            {
-              icon: <Add />, 
-              buttonText: t('commons.createNew'), 
-              onActionClick: () => console.log('create new')
-            },
-          ]
-        } 
-        description= {t('debtTypes.description')}
+      <TitleComponent
+        title={t('commons.routes.DEBT_TYPES_CATALOG')}
+        callToAction={[
+          {
+            icon: <Add />,
+            buttonText: t('commons.createNew'),
+            onActionClick: () => console.log('create new')
+          }
+        ]}
+        description={t('debtTypes.description')}
       />
       <Grid
         container
         direction="row"
         alignItems={'center'}
         justifyContent={'space-between'}
-        my={2}>
+        my={2}
+      >
         <FilterContainer
           items={[
             {
@@ -131,14 +148,15 @@ export const DebtTypes = () => {
         sx={{
           bgcolor: theme.palette.grey[200],
           padding: 2
-        }}>
+        }}
+      >
         <CustomDataGrid
           rows={filterDataRow}
           columns={columns}
           hideFooter
           disableColumnMenu
           disableColumnResize
-          localeText={{noRowsLabel: t('flowDataGrid.noDataRows')}}
+          localeText={{ noRowsLabel: t('flowDataGrid.noDataRows') }}
         />
       </Box>
     </>

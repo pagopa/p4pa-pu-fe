@@ -12,7 +12,7 @@ import {
 export const getIngestionFlowFiles = (
   organizationId: number,
   query: {
-    flowFileTypes: (
+    flowFileTypes: Array<
       | 'RECEIPT'
       | 'RECEIPT_PAGOPA'
       | 'PAYMENTS_REPORTING'
@@ -21,14 +21,14 @@ export const getIngestionFlowFiles = (
       | 'TREASURY_CSV'
       | 'TREASURY_XLS'
       | 'TREASURY_POSTE'
-    )[];
+    >;
     creationDateFrom?: string;
     creationDateTo?: string;
     status?: FlowStatus;
     fileName?: string;
     page?: number;
     size?: number;
-    sort?: string[];
+    sort?: Array<string>;
   },
   options = {}
 ) => {

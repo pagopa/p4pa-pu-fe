@@ -5,13 +5,13 @@ import { setOperatorRole } from '../store/OperatorRoleStore';
 import { setOrganizationId } from '../store/OrganizationIdStore';
 
 export const useOrganizations = () => {
-
   const {
-    state: { organizationId },
+    state: { organizationId }
   } = useStore();
-  
-  const { data, isLoading, isError, isSuccess, error } = utils.loaders.getOrganizations();
-  
+
+  const { data, isLoading, isError, isSuccess, error } =
+    utils.loaders.getOrganizations();
+
   useEffect(() => {
     if (!organizationId && data) {
       const firstOrganization = data[0];
@@ -24,6 +24,6 @@ export const useOrganizations = () => {
       }
     }
   }, [data, isLoading, isError, isSuccess]);
-  
+
   return data;
 };

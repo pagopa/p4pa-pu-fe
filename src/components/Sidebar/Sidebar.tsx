@@ -34,7 +34,8 @@ export const Sidebar: React.FC = () => {
   const theme = useTheme();
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
 
-  const { collapsed, changeMenuState, setCollapsed, setOverlay, overlay } = useCollapseMenu(!lg);
+  const { collapsed, changeMenuState, setCollapsed, setOverlay, overlay } =
+    useCollapseMenu(!lg);
 
   const [selectedTarget, setSelectedTarget] = useState('');
 
@@ -51,10 +52,14 @@ export const Sidebar: React.FC = () => {
   const { state } = useStore();
   const configFe = useFeConfig();
   const organizations = useOrganizations();
-  const containsBrokerCF = organizations?.some(item => item.orgFiscalCode === configFe?.brokerFiscalCode);
-  const adminAtLeast = organizations?.some(item => item.operatorRole === 'ROLE_ADMIN' );
+  const containsBrokerCF = organizations?.some(
+    (item) => item.orgFiscalCode === configFe?.brokerFiscalCode
+  );
+  const adminAtLeast = organizations?.some(
+    (item) => item.operatorRole === 'ROLE_ADMIN'
+  );
   const superAdmin = containsBrokerCF && adminAtLeast;
-  
+
   const menuItems: Array<ISidebarMenuItem> = [
     {
       label: t('commons.routes.HOME'),
@@ -93,7 +98,7 @@ export const Sidebar: React.FC = () => {
           label: t('commons.routes.CONSERVATION'),
           route: PageRoutes.CONSERVATION,
           end: true
-        },
+        }
       ]
     }
   ];
@@ -101,15 +106,12 @@ export const Sidebar: React.FC = () => {
   const additionalItems = [];
 
   if (superAdmin) {
-
-    additionalItems.push(
-      {
-        label: t('commons.routes.ORGANIZATIONS'),
-        icon: DnsIcon,
-        route: '/debtpositions',
-        end: true
-      }
-    );
+    additionalItems.push({
+      label: t('commons.routes.ORGANIZATIONS'),
+      icon: DnsIcon,
+      route: '/debtpositions',
+      end: true
+    });
   }
 
   if (superAdmin || state.operatorRole == 'ROLE_ADMIN') {
@@ -117,22 +119,18 @@ export const Sidebar: React.FC = () => {
 
     // Debtypes catalog only for superAdmin
     if (superAdmin) {
-      debtypes.push(
-        {
-          label: t('commons.routes.DEBT_TYPES_CATALOG'),
-          route: PageRoutes.DEBT_TYPES_CATALOG,
-          end: true
-        }
-      );
-    }
-    
-    debtypes.push(
-      {
-        label: t('commons.routes.DEBT_TYPES_CREATED'),
+      debtypes.push({
+        label: t('commons.routes.DEBT_TYPES_CATALOG'),
         route: PageRoutes.DEBT_TYPES_CATALOG,
         end: true
-      }
-    );
+      });
+    }
+
+    debtypes.push({
+      label: t('commons.routes.DEBT_TYPES_CREATED'),
+      route: PageRoutes.DEBT_TYPES_CATALOG,
+      end: true
+    });
 
     additionalItems.push(
       {
@@ -156,7 +154,8 @@ export const Sidebar: React.FC = () => {
         component={'aside'}
         item
         sx={styles.container}
-        lg={collapsed ? 'auto' : 2}>
+        lg={collapsed ? 'auto' : 2}
+      >
         <Box
           alignItems="normal"
           display="flex"
@@ -171,12 +170,22 @@ export const Sidebar: React.FC = () => {
             <Box sx={styles.collapseIcon}>
               <Tooltip
                 placement="left"
-                title={t(!collapsed ? 'commons.sidebar.collapse' : 'commons.sidebar.expand')}>
+                title={t(
+                  !collapsed
+                    ? 'commons.sidebar.collapse'
+                    : 'commons.sidebar.expand'
+                )}
+              >
                 <IconButton
                   data-testid="collapseClose"
-                  aria-label={t(!collapsed ? 'commons.sidebar.collapse' : 'commons.sidebar.expand')}
-                  onClick={() => changeMenuState()}
-                  size="large">
+                  aria-label={t(
+                    !collapsed
+                      ? 'commons.sidebar.collapse'
+                      : 'commons.sidebar.expand'
+                  )}
+                  onClick={changeMenuState}
+                  size="large"
+                >
                   <CloseIcon />
                 </IconButton>
               </Tooltip>
@@ -186,10 +195,13 @@ export const Sidebar: React.FC = () => {
             sx={styles.list}
             component="ol"
             aria-hidden={collapsed && !lg}
-            aria-label={t('commons.sidebar.menudescription')}>
+            aria-label={t('commons.sidebar.menudescription')}
+          >
             {menuItems.map((item, index) => (
               <SidebarMenuItem
-                onClick={() => !lg && setCollapsed(true) && setSelectedTarget('')}
+                onClick={() =>
+                  !lg && setCollapsed(true) && setSelectedTarget('')
+                }
                 selectedTarget={selectedTarget}
                 setSelectedTarget={setSelectedTarget}
                 collapsed={collapsed}
@@ -198,15 +210,22 @@ export const Sidebar: React.FC = () => {
               />
             ))}
           </List>
-          <Divider orientation="horizontal" flexItem sx={{ display: lg ? 'block' : 'none' }} />
+          <Divider
+            orientation="horizontal"
+            flexItem
+            sx={{ display: lg ? 'block' : 'none' }}
+          />
           <List
             sx={styles.list}
             component="ol"
             aria-hidden={collapsed && !lg}
-            aria-label={t('commons.sidebar.menudescription')}>
+            aria-label={t('commons.sidebar.menudescription')}
+          >
             {additionalItems.map((item, index) => (
               <SidebarMenuItem
-                onClick={() => !lg && setCollapsed(true) && setSelectedTarget('')}
+                onClick={() =>
+                  !lg && setCollapsed(true) && setSelectedTarget('')
+                }
                 selectedTarget={selectedTarget}
                 setSelectedTarget={setSelectedTarget}
                 collapsed={collapsed}
@@ -216,19 +235,36 @@ export const Sidebar: React.FC = () => {
             ))}
           </List>
           <Box sx={styles.hamburgerBox}>
-            <Divider orientation="horizontal" flexItem sx={{ display: lg ? 'block' : 'none' }} />
+            <Divider
+              orientation="horizontal"
+              flexItem
+              sx={{ display: lg ? 'block' : 'none' }}
+            />
             <Box sx={styles.hamburgerIcon}>
               <Tooltip
                 placement="right"
-                title={t(!collapsed ? 'commons.sidebar.collapse' : 'commons.sidebar.expand')}>
+                title={t(
+                  !collapsed
+                    ? 'commons.sidebar.collapse'
+                    : 'commons.sidebar.expand'
+                )}
+              >
                 <IconButton
                   data-testid="hamburgerButton"
-                  aria-label={t(!collapsed ? 'commons.sidebar.collapse' : 'commons.sidebar.expand')}
-                  onClick={() => changeMenuState()}
-                  size="large">
+                  aria-label={t(
+                    !collapsed
+                      ? 'commons.sidebar.collapse'
+                      : 'commons.sidebar.expand'
+                  )}
+                  onClick={changeMenuState}
+                  size="large"
+                >
                   <MenuIcon />
                   {!lg && (
-                    <Typography variant="button" sx={styles.hamburgerTypography}>
+                    <Typography
+                      variant="button"
+                      sx={styles.hamburgerTypography}
+                    >
                       {t('commons.sidebar.menu')}
                     </Typography>
                   )}

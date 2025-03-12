@@ -49,7 +49,7 @@ describe('StoreContext', () => {
         [STATE.CONFIG_FE]: null,
         [STATE.ORGANIZATION_ID]: null,
         [STATE.USER_INFO]: null,
-        [STATE.FILTERS]: [''],
+        [STATE.FILTERS]: ['']
       })
     );
   });
@@ -87,7 +87,7 @@ describe('StoreContext', () => {
   });
 
   it('should throw an error if useStore is used outside of StoreProvider', () => {
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, 'error').mockImplementation(() => '');
     const TestComponent = () => {
       useStore();
       return null;

@@ -14,7 +14,10 @@ export const Reporting = () => {
 
   return (
     <>
-      <TitleComponent title={t('reporting.title')} description={t('reporting.description')} />
+      <TitleComponent
+        title={t('reporting.title')}
+        description={t('reporting.description')}
+      />
       <Grid container direction="row">
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
@@ -35,7 +38,8 @@ export const Reporting = () => {
                 {
                   type: COMPONENT_TYPE.dateRange,
                   label: 'reporting.searchDateRange',
-                  from: { label: t('dates.from') }, to: { label: t('dates.to') }
+                  from: { label: t('dates.from') },
+                  to: { label: t('dates.to') }
                 }
               ]}
               button={[
@@ -61,7 +65,11 @@ export const Reporting = () => {
               actionIcon={<FileUpload />}
               linkLabel={t('commons.showAllFlows')}
               onActionClick={() =>
-                navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'reporting' }))
+                navigate(
+                  generatePath(PageRoutes.IMPORT_FLOWS, {
+                    category: 'reporting'
+                  })
+                )
               }
               onLinkClick={() => navigate(PageRoutes.REPORTING_IMPORT_OVERVIEW)}
             />

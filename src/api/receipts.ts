@@ -7,7 +7,7 @@ export const getReceipts = (
     receiptOrigin: 'RECEIPT_PAGOPA' | 'RECEIPT_FILE' | 'PAYMENTS_REPORTING';
     page?: number;
     size?: number;
-    sort?: string[];
+    sort?: Array<string>;
   },
   options = {}
 ) => {

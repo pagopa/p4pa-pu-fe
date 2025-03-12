@@ -30,7 +30,7 @@ try {
 type Config = {
   deployPath: string;
   pagopaLink: RootLinkType;
-  tokenHeaderExcludePaths: string[];
+  tokenHeaderExcludePaths: Array<string>;
   baseURL: string;
   fileshareURL: string;
   apiTimeout: number;

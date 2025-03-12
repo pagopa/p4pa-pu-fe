@@ -4,10 +4,18 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
-import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import FilterContainer, {
+  COMPONENT_TYPE
+} from '../FilterContainer/FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { DOWNLOAD_STATES, FLOW_STATUS_VALUES, FlowStatus, MENU_STATES, STATE_COLORS } from '../../models/Filters';
+import {
+  DOWNLOAD_STATES,
+  FLOW_STATUS_VALUES,
+  FlowStatus,
+  MENU_STATES,
+  STATE_COLORS
+} from '../../models/Filters';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 import { useState } from 'react';
@@ -19,7 +27,13 @@ const DebtPositionsImportOverview = () => {
 
   const [searchName, setSearchName] = useState('');
   const [selectedState, setSelectedState] = useState('ALL');
-  const [dateRange, setDateRange] = useState<{ from: Date | null; to: Date | null}>({from: null, to: null});
+  const [dateRange, setDateRange] = useState<{
+    from: Date | null;
+    to: Date | null;
+  }>({
+    from: null,
+    to: null
+  });
 
   const handleApplyFilters = () => {
     console.log('applied filters:', {
@@ -29,8 +43,7 @@ const DebtPositionsImportOverview = () => {
         from: dateRange.from?.toISOString(),
         to: dateRange.to?.toISOString()
       }
-    }
-    );
+    });
   };
 
   const renderActionCell = (params: GridRenderCellParams) => {
@@ -38,19 +51,19 @@ const DebtPositionsImportOverview = () => {
 
     if (MENU_STATES.includes(status)) {
       return (
-        <ActionMenu 
+        <ActionMenu
           rowId={id}
           menuItems={[
             {
-              icon: <DownloadIcon fontSize="small" color='primary' />,
+              icon: <DownloadIcon fontSize="small" color="primary" />,
               label: t('commons.files.imported'),
-              action: () => console.log('Download file:', id),
+              action: () => console.log('Download file:', id)
             },
             {
-              icon: <DownloadIcon fontSize="small" color='primary' />,
+              icon: <DownloadIcon fontSize="small" color="primary" />,
               label: t('commons.files.importedResult'),
-              action: () => console.log('Download result:', id),
-            },
+              action: () => console.log('Download result:', id)
+            }
           ]}
         />
       );
@@ -62,7 +75,7 @@ const DebtPositionsImportOverview = () => {
           color="primary"
           size="small"
           onClick={() => console.log(`Download: ${id}`)}
-          data-testid='download-button'
+          data-testid="download-button"
         >
           <DownloadIcon />
         </IconButton>
@@ -72,42 +85,42 @@ const DebtPositionsImportOverview = () => {
     return null;
   };
 
-  const columns: GridColDef[] = [
-    { 
-      field: 'internalID', 
-      headerName: t('flowDataGrid.internalID'), 
-      flex: 1, 
-      type: 'number', 
-      headerAlign: 'left', 
-      align: 'left' 
+  const columns: Array<GridColDef> = [
+    {
+      field: 'internalID',
+      headerName: t('flowDataGrid.internalID'),
+      flex: 1,
+      type: 'number',
+      headerAlign: 'left',
+      align: 'left'
     },
-    { 
-      field: 'fileName', 
-      headerName: t('flowDataGrid.name'), 
-      flex: 1, 
-      type: 'string' 
+    {
+      field: 'fileName',
+      headerName: t('flowDataGrid.name'),
+      flex: 1,
+      type: 'string'
     },
-    { 
-      field: 'uploadDate', 
-      headerName: t('flowDataGrid.uploadDate'), 
-      flex: 1, 
+    {
+      field: 'uploadDate',
+      headerName: t('flowDataGrid.uploadDate'),
+      flex: 1,
       type: 'string',
-      renderCell: (params: GridRenderCellParams) => 
+      renderCell: (params: GridRenderCellParams) =>
         params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
     },
-    { 
-      field: 'operator', 
-      headerName: t('flowDataGrid.operator'), 
-      flex: 1, 
-      type: 'string' 
+    {
+      field: 'operator',
+      headerName: t('flowDataGrid.operator'),
+      flex: 1,
+      type: 'string'
     },
-    { 
-      field: 'loadedDiscarded', 
-      headerName: t('flowDataGrid.loadedDiscarded'), 
-      flex: 1, 
-      type: 'string', 
-      headerAlign: 'left', 
-      align: 'left' 
+    {
+      field: 'loadedDiscarded',
+      headerName: t('flowDataGrid.loadedDiscarded'),
+      flex: 1,
+      type: 'string',
+      headerAlign: 'left',
+      align: 'left'
     },
     {
       field: 'status',
@@ -121,7 +134,7 @@ const DebtPositionsImportOverview = () => {
           color={STATE_COLORS[params.value as FlowStatus] || 'default'}
           size="small"
         />
-      ),
+      )
     },
     {
       field: 'menu',
@@ -130,7 +143,7 @@ const DebtPositionsImportOverview = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: renderActionCell,
+      renderCell: renderActionCell
     }
   ];
 
@@ -182,16 +195,25 @@ const DebtPositionsImportOverview = () => {
             icon: <Upload />,
             variant: 'outlined',
             buttonText: t('commons.importFlowButton'),
-            onActionClick: () => navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'debt-positions' }))
+            onActionClick: () =>
+              navigate(
+                generatePath(PageRoutes.IMPORT_FLOWS, {
+                  category: 'debt-positions'
+                })
+              )
           }
         ]}
       />
 
-      <Grid container direction="row" sx={{
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 2
-      }}>
+      <Grid
+        container
+        direction="row"
+        sx={{
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 2
+        }}
+      >
         <FilterContainer
           items={[
             {
@@ -200,7 +222,7 @@ const DebtPositionsImportOverview = () => {
               icon: <Search />,
               gridWidth: 5,
               value: searchName,
-              onChange:(e) => setSearchName(e.target.value) 
+              onChange: (e) => setSearchName(e.target.value)
             },
             {
               type: COMPONENT_TYPE.select,
@@ -208,27 +230,29 @@ const DebtPositionsImportOverview = () => {
               gridWidth: 2,
               options: [
                 { label: t('commons.status.ALL'), value: 'ALL' },
-                ...FLOW_STATUS_VALUES.map(status => ({
+                ...FLOW_STATUS_VALUES.map((status) => ({
                   label: t(`commons.status.${status}`),
                   value: status
                 }))
               ],
               value: selectedState,
-              onChange:(e) => setSelectedState(e.target.value as string) 
+              onChange: (e) => setSelectedState(e.target.value as string)
             },
-            { 
+            {
               type: COMPONENT_TYPE.dateRange,
               label: 'dateRange',
               gridWidth: 4,
               from: {
                 label: t('dates.from'),
                 errorMessage: t('dates.validations.from'),
-                onChange: (date: Date | null) => setDateRange(prev => ({ ...prev, from: date}))
+                onChange: (date: Date | null) =>
+                  setDateRange((prev) => ({ ...prev, from: date }))
               },
               to: {
                 label: t('dates.to'),
                 errorMessage: t('dates.validations.to'),
-                onChange: (date: Date | null) => setDateRange(prev => ({ ...prev, to: date}))
+                onChange: (date: Date | null) =>
+                  setDateRange((prev) => ({ ...prev, to: date }))
               }
             },
             {

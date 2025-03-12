@@ -10,9 +10,10 @@ export const useFeConfig = () => {
     setState
   } = useStore();
 
-  const { data, isLoading, isError, isSuccess, error } = brokers.getBrokersConfig({
-    enabled: !configFe
-  });
+  const { data, isLoading, isError, isSuccess, error } =
+    brokers.getBrokersConfig({
+      enabled: !configFe
+    });
 
   useEffect(() => {
     if (!configFe) {

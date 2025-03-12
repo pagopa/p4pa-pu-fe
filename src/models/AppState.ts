@@ -1,4 +1,3 @@
-
 export type AppState = {
-	loading: boolean;
+  loading: boolean;
 };

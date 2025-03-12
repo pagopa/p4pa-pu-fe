@@ -1,11 +1,18 @@
-import { GridColDef, GridRenderCellParams, GridSortModel } from '@mui/x-data-grid';
+import {
+  GridColDef,
+  GridRenderCellParams,
+  GridSortModel
+} from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
 import { Chip, ChipProps, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../../App';
 import { useNavigate } from 'react-router';
-import { InstallmentView, PagedInstallmentView } from '../../../../generated/data-contracts';
+import {
+  InstallmentView,
+  PagedInstallmentView
+} from '../../../../generated/data-contracts';
 import { format } from 'date-fns/format';
 import { moneyFormat } from '../../../utils/formatters';
 
@@ -13,7 +20,7 @@ export type DataGridProps = {
   data?: PagedInstallmentView;
   onPageChange: (page: number) => void;
   onPageSizeChange: (page: number) => void;
-  onSortChange: (model: string[]) => void;
+  onSortChange: (model: Array<string>) => void;
   pagination: {
     currentPage: number;
     page: number;
@@ -42,13 +49,15 @@ export const IUVDataGrid = ({
     UNPAID: 'info'
   };
 
-  const columns: GridColDef<InstallmentView>[] = [
+  const columns: Array<GridColDef<InstallmentView>> = [
     {
       field: 'iuv',
       headerName: t('debtPositionSearchResults.iuv'),
       flex: 1,
       type: 'string',
-      renderCell: (params) => <Typography variant="monospaced">{params.value}</Typography>
+      renderCell: (params) => (
+        <Typography variant="monospaced">{params.value}</Typography>
+      )
     },
     {
       field: 'remittanceInformation',
@@ -110,7 +119,9 @@ export const IUVDataGrid = ({
 
   const onSort = (model: GridSortModel) => {
     if (model?.length) {
-      const sort = model.map((item) => `${item.field},${item.sort!.toUpperCase()}`);
+      const sort = model.map((item) =>
+        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
+      );
       onPageChange(1);
       onSortChange(sort);
     }

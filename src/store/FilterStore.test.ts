@@ -5,7 +5,7 @@ import {
   addFilterRow,
   removeFilterRow,
   updateFilter,
-  removeAllFilters,
+  removeAllFilters
 } from './FilterStore';
 
 describe('FilterStore', () => {

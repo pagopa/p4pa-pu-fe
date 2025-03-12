@@ -19,9 +19,9 @@ export const detailRoutes = [
           backButton: true,
           sidebar: {
             visible: false,
-            omitBreadcrumbs: true,
+            omitBreadcrumbs: true
           }
-        } as RouteHandleObject,
+        } as RouteHandleObject
       }
     ]
   }

@@ -1,15 +1,15 @@
 import { useState, useCallback } from 'react';
 
-export interface PaginationState {
+export type PaginationState = {
   page: number;
   size: number;
-}
+};
 
-interface UseDataGridPaginationProps {
+type UseDataGridPaginationProps = {
   initialPage?: number;
   initialSize?: number;
   onPaginationChange?: (newPagination: PaginationState) => void;
-}
+};
 
 export const useDataGridPagination = ({
   initialPage = 0,
@@ -21,23 +21,29 @@ export const useDataGridPagination = ({
     size: initialSize
   });
 
-  const handlePageChange = useCallback((newPage: number) => {
-    const newPagination = {
-      ...pagination,
-      page: newPage - 1
-    };
-    setPagination(newPagination);
-    onPaginationChange?.(newPagination);
-  }, [pagination, onPaginationChange]);
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      const newPagination = {
+        ...pagination,
+        page: newPage - 1
+      };
+      setPagination(newPagination);
+      onPaginationChange?.(newPagination);
+    },
+    [pagination, onPaginationChange]
+  );
 
-  const handlePageSizeChange = useCallback((newSize: number) => {
-    const newPagination = {
-      size: newSize,
-      page: 0 
-    };
-    setPagination(newPagination);
-    onPaginationChange?.(newPagination);
-  }, [onPaginationChange]);
+  const handlePageSizeChange = useCallback(
+    (newSize: number) => {
+      const newPagination = {
+        size: newSize,
+        page: 0
+      };
+      setPagination(newPagination);
+      onPaginationChange?.(newPagination);
+    },
+    [onPaginationChange]
+  );
 
   return {
     pagination: {

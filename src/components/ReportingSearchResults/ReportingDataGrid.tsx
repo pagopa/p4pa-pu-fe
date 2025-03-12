@@ -1,4 +1,8 @@
-import { GridColDef, GridRenderCellParams, GridValidRowModel } from '@mui/x-data-grid';
+import {
+  GridColDef,
+  GridRenderCellParams,
+  GridValidRowModel
+} from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
@@ -6,7 +10,7 @@ import { FileDownload, Visibility } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../App';
 
-interface SearchResultDataRow extends GridValidRowModel {
+type SearchResultDataRow = {
   id: number;
   idReporting: string;
   idRegulation: string;
@@ -14,14 +18,13 @@ interface SearchResultDataRow extends GridValidRowModel {
   flowDate: string;
   payments: string;
   totalAmount: string;
-}
+} & GridValidRowModel;
 
 const SearchResultsDataGrid = () => {
-
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const rows: SearchResultDataRow[] = [
+  const rows: Array<SearchResultDataRow> = [
     {
       id: 1,
       idReporting: '2024-11-10123531',
@@ -48,16 +51,46 @@ const SearchResultsDataGrid = () => {
       flowDate: '07/11/2021 06:06:44',
       payments: '300',
       totalAmount: '300,00 €'
-    },
+    }
   ];
 
-  const columns: GridColDef[] = [
-    { field: 'idReporting', headerName: t('reportingSearchResults.searchReportingId'), flex: 1, type: 'string' },
-    { field: 'idRegulation', headerName: t('reportingSearchResults.searchRegulationId'), flex: 1, type: 'string' },
-    { field: 'regulationDate', headerName: t('reportingSearchResults.regulationDate'), flex: 1, type: 'string' },
-    { field: 'flowDate', headerName: t('reportingSearchResults.flowDate'), flex: 1, type: 'string' },
-    { field: 'payments', headerName: t('reportingSearchResults.payments'), flex: 1, type: 'string' },
-    { field: 'totalAmount', headerName: t('reportingSearchResults.totalAmount'), flex: 1, type: 'string' },
+  const columns: Array<GridColDef> = [
+    {
+      field: 'idReporting',
+      headerName: t('reportingSearchResults.searchReportingId'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'idRegulation',
+      headerName: t('reportingSearchResults.searchRegulationId'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'regulationDate',
+      headerName: t('reportingSearchResults.regulationDate'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'flowDate',
+      headerName: t('reportingSearchResults.flowDate'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'payments',
+      headerName: t('reportingSearchResults.payments'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'totalAmount',
+      headerName: t('reportingSearchResults.totalAmount'),
+      flex: 1,
+      type: 'string'
+    },
     {
       field: 'action',
       headerName: '',
@@ -65,23 +98,29 @@ const SearchResultsDataGrid = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => 
-        <ActionMenu 
+      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => (
+        <ActionMenu
           rowId={params.row.id}
           menuItems={[
             {
               icon: <Visibility fontSize="small" />,
               label: t('commons.view'),
-              action: () => navigate(generatePath(PageRoutes.REPORTING_DETAIL, {id: params.row.idReporting}))
+              action: () =>
+                navigate(
+                  generatePath(PageRoutes.REPORTING_DETAIL, {
+                    id: params.row.idReporting
+                  })
+                )
             },
             {
               icon: <FileDownload fontSize="small" />,
               label: t('commons.files.download'),
-              action: () => console.log('Scarica file per ID: ', params.row.id),
+              action: () => console.log('Scarica file per ID: ', params.row.id)
             }
           ]}
-        />,
-    },
+        />
+      )
+    }
   ];
 
   return (

@@ -1,8 +1,11 @@
 import { CircularProgress, Grid, Portal } from '@mui/material';
 import React, { useEffect } from 'react';
 
-export const Overlay = ({ visible }: { visible: boolean }): React.ReactElement => {
-
+export const Overlay = ({
+  visible
+}: {
+  visible: boolean;
+}): React.ReactElement => {
   useEffect(() => {
     if (visible) {
       document.body.style.overflow = 'hidden';
@@ -18,7 +21,12 @@ export const Overlay = ({ visible }: { visible: boolean }): React.ReactElement =
   return visible ? (
     <Portal>
       <Grid sx={style.overlay} data-testid="overlay-background" />
-      <Grid sx={style.background} alignItems="center" justifyContent="center" container>
+      <Grid
+        sx={style.background}
+        alignItems="center"
+        justifyContent="center"
+        container
+      >
         <CircularProgress
           sx={{ position: 'absolute', top: '40%' }}
           color="primary"

@@ -12,7 +12,6 @@ const allowedTags = {
 export const Markdown = ({ children: markdown }: MarkdownTextProps) => (
   <ReactMarkdown
     data-testid="markdown-content"
-    children={markdown}
     rehypePlugins={[
       [
         rehypeSanitize,
@@ -22,5 +21,7 @@ export const Markdown = ({ children: markdown }: MarkdownTextProps) => (
         }
       ]
     ]}
-  />
+  >
+    {markdown}
+  </ReactMarkdown>
 );

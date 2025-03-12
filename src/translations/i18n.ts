@@ -10,7 +10,7 @@ const DETECTION_OPTIONS = {
   caches: []
 };
 
-void await i18n
+await i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({

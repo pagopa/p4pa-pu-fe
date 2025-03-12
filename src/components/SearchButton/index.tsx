@@ -1,13 +1,17 @@
 import Button from '@mui/material/Button';
 
-export interface SearchButtonProps {
+export type SearchButtonProps = {
   text?: string;
   variant?: 'contained' | 'outlined';
   onClick?: () => void;
-}
+};
 
 export const SearchButton = (props: SearchButtonProps) => {
-  const { text = props.text, onClick = props.onClick, variant= props.variant} = props;
+  const {
+    text = props.text,
+    onClick = props.onClick,
+    variant = props.variant
+  } = props;
 
   return (
     <Button

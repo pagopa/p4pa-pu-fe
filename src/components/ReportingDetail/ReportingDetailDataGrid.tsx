@@ -7,19 +7,18 @@ import { PageRoutes } from '../../App';
 import { Link } from 'react-router-dom';
 import { generatePath } from 'react-router-dom';
 
-interface ReportingDetailDataRow extends GridValidRowModel {
+type ReportingDetailDataRow = {
   id: number;
   iuv: string;
   iur: string;
   totalAmount: string;
   paymentDate: string;
-}
+} & GridValidRowModel;
 
 const ReportingDetailDataGrid = () => {
-
   const { t } = useTranslation();
 
-  const rows: ReportingDetailDataRow[] = [
+  const rows: Array<ReportingDetailDataRow> = [
     {
       id: 1,
       iuv: '03003300003',
@@ -40,15 +39,24 @@ const ReportingDetailDataGrid = () => {
       iur: 'yuR3sT2uG888KkKK',
       totalAmount: '150,00 €',
       paymentDate: '12/10/2024'
-    },
-   
+    }
   ];
 
-  const columns: GridColDef[] = [
+  const columns: Array<GridColDef> = [
     { field: 'iuv', headerName: t('commons.iuv'), flex: 1, type: 'string' },
     { field: 'iur', headerName: t('commons.iur'), flex: 1, type: 'string' },
-    { field: 'totalAmount', headerName: t('commons.amount'), flex: 1, type: 'string' },
-    { field: 'paymentDate', headerName: t('commons.paymentdate'), flex: 1, type: 'string' },
+    {
+      field: 'totalAmount',
+      headerName: t('commons.amount'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'paymentDate',
+      headerName: t('commons.paymentdate'),
+      flex: 1,
+      type: 'string'
+    },
     {
       field: 'action',
       headerName: '',
@@ -58,18 +66,15 @@ const ReportingDetailDataGrid = () => {
       headerAlign: 'right',
       renderCell: () => (
         <Link
-          to={generatePath(PageRoutes.DETAIL_FLOWS, {category: 'reporting'})}
-          aria-label='go to reporting payment detail'
+          to={generatePath(PageRoutes.DETAIL_FLOWS, { category: 'reporting' })}
+          aria-label="go to reporting payment detail"
         >
-          <IconButton
-            color="primary"
-            size="small"
-          >
+          <IconButton color="primary" size="small">
             <ReadMore />
           </IconButton>
         </Link>
-      ),
-    },
+      )
+    }
   ];
 
   return (

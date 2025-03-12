@@ -1,19 +1,23 @@
 import { useState, useCallback } from 'react';
 import { GridSortModel } from '@mui/x-data-grid';
-import { FlowFileFilters, FlowFileType, PaginationParams } from '../models/Filters';
+import {
+  FlowFileFilters,
+  FlowFileType,
+  PaginationParams
+} from '../models/Filters';
 
-interface UseFlowFiltersProps {
+type UseFlowFiltersProps = {
   initialFilters?: Partial<FlowFileFilters>;
-  flowFileTypes: FlowFileType[];
+  flowFileTypes: Array<FlowFileType>;
   onFiltersChange?: (filters: FlowFileFilters) => void;
-}
+};
 
 const DEFAULT_PAGE_SIZE = 10;
 
-export const useFlowFilters = ({ 
+export const useFlowFilters = ({
   flowFileTypes,
   initialFilters,
-  onFiltersChange 
+  onFiltersChange
 }: UseFlowFiltersProps) => {
   const [appliedFilters, setAppliedFilters] = useState<FlowFileFilters>(() => ({
     flowFileTypes,
@@ -22,17 +26,26 @@ export const useFlowFilters = ({
     ...initialFilters
   }));
 
-  const [draftFilters, setDraftFilters] = useState<FlowFileFilters>(appliedFilters);
-  
+  const [draftFilters, setDraftFilters] =
+    useState<FlowFileFilters>(appliedFilters);
+
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
   const hasActiveFilters = useCallback(() => {
-    const isFileNameChanged = (draftFilters.fileName || '') !== (appliedFilters.fileName || '');
-    const isDateFromChanged = draftFilters.creationDateFrom !== appliedFilters.creationDateFrom;
-    const isDateToChanged = draftFilters.creationDateTo !== appliedFilters.creationDateTo;
+    const isFileNameChanged =
+      (draftFilters.fileName || '') !== (appliedFilters.fileName || '');
+    const isDateFromChanged =
+      draftFilters.creationDateFrom !== appliedFilters.creationDateFrom;
+    const isDateToChanged =
+      draftFilters.creationDateTo !== appliedFilters.creationDateTo;
     const isStatusChanged = draftFilters.status !== appliedFilters.status;
 
-    return isFileNameChanged || isDateFromChanged || isDateToChanged || isStatusChanged;
+    return (
+      isFileNameChanged ||
+      isDateFromChanged ||
+      isDateToChanged ||
+      isStatusChanged
+    );
   }, [
     draftFilters.fileName,
     draftFilters.creationDateFrom,
@@ -44,12 +57,15 @@ export const useFlowFilters = ({
     appliedFilters.status
   ]);
 
-  const updateDraftFilters = useCallback((updates: Partial<FlowFileFilters>) => {
-    setDraftFilters(prev => ({
-      ...prev,
-      ...updates
-    }));
-  }, []);
+  const updateDraftFilters = useCallback(
+    (updates: Partial<FlowFileFilters>) => {
+      setDraftFilters((prev) => ({
+        ...prev,
+        ...updates
+      }));
+    },
+    []
+  );
 
   const applyFilters = useCallback(() => {
     const filtersToApply = {
@@ -60,48 +76,60 @@ export const useFlowFilters = ({
     onFiltersChange?.(filtersToApply);
   }, [draftFilters, onFiltersChange]);
 
-  const updatePagination = useCallback((paginationUpdate: PaginationParams) => {
-    const newFilters = {
-      ...appliedFilters,
-      ...paginationUpdate
-    };
-    setAppliedFilters(newFilters);
-    setDraftFilters(newFilters);
-    onFiltersChange?.(newFilters);
-  }, [appliedFilters, onFiltersChange]);
+  const updatePagination = useCallback(
+    (paginationUpdate: PaginationParams) => {
+      const newFilters = {
+        ...appliedFilters,
+        ...paginationUpdate
+      };
+      setAppliedFilters(newFilters);
+      setDraftFilters(newFilters);
+      onFiltersChange?.(newFilters);
+    },
+    [appliedFilters, onFiltersChange]
+  );
 
-  const handleDateFromChange = useCallback((date: Date | null) => {
-    updateDraftFilters({
-      creationDateFrom: date ? 
-        new Date(date.setHours(0, 0, 0, 0)).toISOString() : 
-        undefined
-    });
-  }, [updateDraftFilters]);
+  const handleDateFromChange = useCallback(
+    (date: Date | null) => {
+      updateDraftFilters({
+        creationDateFrom: date
+          ? new Date(date.setHours(0, 0, 0, 0)).toISOString()
+          : undefined
+      });
+    },
+    [updateDraftFilters]
+  );
 
-  const handleDateToChange = useCallback((date: Date | null) => {
-    updateDraftFilters({
-      creationDateTo: date ? 
-        new Date(date.setHours(23, 59, 59, 999)).toISOString() : 
-        undefined
-    });
-  }, [updateDraftFilters]);
+  const handleDateToChange = useCallback(
+    (date: Date | null) => {
+      updateDraftFilters({
+        creationDateTo: date
+          ? new Date(date.setHours(23, 59, 59, 999)).toISOString()
+          : undefined
+      });
+    },
+    [updateDraftFilters]
+  );
 
-  const handleSortModelChange = useCallback((newModel: GridSortModel) => {
-    setSortModel(newModel);
-    
-    const [firstSort] = newModel;
-    const sortValue = firstSort && `${firstSort.field},${firstSort.sort}`;
-    
-    const newFilters = {
-      ...appliedFilters,
-      page: 0,
-      sort: sortValue ? [sortValue] : undefined
-    };
-    
-    setAppliedFilters(newFilters);
-    setDraftFilters(newFilters);
-    onFiltersChange?.(newFilters);
-  }, [appliedFilters, onFiltersChange]);
+  const handleSortModelChange = useCallback(
+    (newModel: GridSortModel) => {
+      setSortModel(newModel);
+
+      const [firstSort] = newModel;
+      const sortValue = firstSort && `${firstSort.field},${firstSort.sort}`;
+
+      const newFilters = {
+        ...appliedFilters,
+        page: 0,
+        sort: sortValue ? [sortValue] : undefined
+      };
+
+      setAppliedFilters(newFilters);
+      setDraftFilters(newFilters);
+      onFiltersChange?.(newFilters);
+    },
+    [appliedFilters, onFiltersChange]
+  );
 
   return {
     appliedFilters,

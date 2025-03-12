@@ -12,12 +12,14 @@ export const _TextField = (props: _TextFieldProps) => (
     fullWidth
     sx={{
       '.MuiInputBase-input': {
-        textOverflow: 'ellipsis' 
+        textOverflow: 'ellipsis'
       }
     }}
     InputProps={{
       endAdornment: (
-        <InputAdornment position="end">{props?.icon?? <SearchRoundedIcon />}</InputAdornment>
+        <InputAdornment position="end">
+          {props?.icon ?? <SearchRoundedIcon />}
+        </InputAdornment>
       )
     }}
     label={props.label}

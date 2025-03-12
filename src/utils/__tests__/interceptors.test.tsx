@@ -53,7 +53,9 @@ describe('setupInterceptors', () => {
     const accessToken = 'token';
     window.localStorage.setItem('accessToken', accessToken);
     setupInterceptors(client);
-    const requestInterceptor = (client.instance.interceptors.request.use as Mock).mock.calls[0][0];
+    const requestInterceptor = (
+      client.instance.interceptors.request.use as Mock
+    ).mock.calls[0][0];
     const result = requestInterceptor(request);
     expect(result.headers['Authorization']).toBe(`Bearer ${accessToken}`);
   });
@@ -61,9 +63,10 @@ describe('setupInterceptors', () => {
   it('should not add Authorization header to request if token is not present', () => {
     const request = { url: '/path3', headers: {} };
     setupInterceptors(client);
-    const requestInterceptor = (client.instance.interceptors.request.use as Mock).mock.calls[0][0];
+    const requestInterceptor = (
+      client.instance.interceptors.request.use as Mock
+    ).mock.calls[0][0];
     const result = requestInterceptor(request);
     expect(result.headers['Authorization']).toBeUndefined();
   });
-
 });

@@ -9,18 +9,21 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 
 const container = document.getElementById('root') as HTMLElement;
-const root = createRoot(container!);
 
-const queryClient = new QueryClient();
+if (container) {
+  const root = createRoot(container);
 
-root.render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <StoreProvider>
-        <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
-          <App />
-        </LocalizationProvider>
-      </StoreProvider>
-    </QueryClientProvider>
-  </StrictMode>
-);
+  const queryClient = new QueryClient();
+
+  root.render(
+    <StrictMode>
+      <QueryClientProvider client={queryClient}>
+        <StoreProvider>
+          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
+            <App />
+          </LocalizationProvider>
+        </StoreProvider>
+      </QueryClientProvider>
+    </StrictMode>
+  );
+}

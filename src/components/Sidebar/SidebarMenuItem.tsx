@@ -8,7 +8,7 @@ import {
   useMediaQuery,
   type Theme,
   useTheme,
-  Box,
+  Box
 } from '@mui/material';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { alpha } from '@mui/material';
@@ -29,19 +29,24 @@ function renderIcon(Icon: React.ElementType) {
   return <Icon />;
 }
 
-export const SidebarMenuItem = ({ collapsed, item, onClick, selectedTarget, setSelectedTarget }: Props) => {
+export const SidebarMenuItem = ({
+  collapsed,
+  item,
+  onClick,
+  selectedTarget,
+  setSelectedTarget
+}: Props) => {
   const theme = useTheme();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const { changeMenuState } = useCollapseMenu(!lg);
-  
+
   useEffect(() => {
     if (collapsed) {
       setOpen(false);
     }
   }, [collapsed]);
-  
 
   const handleCollapseClick = () => {
     if (collapsed) {
@@ -52,7 +57,7 @@ export const SidebarMenuItem = ({ collapsed, item, onClick, selectedTarget, setS
 
   const handleListItemClick = (target: string, route?: string) => {
     setSelectedTarget(target);
-  
+
     if (route) {
       navigate(route);
       if (!lg) {
@@ -70,7 +75,7 @@ export const SidebarMenuItem = ({ collapsed, item, onClick, selectedTarget, setS
         sx={{
           px: 3,
           '&.hover': {
-            backgroundColor: 'none',
+            backgroundColor: 'none'
           },
           '&.active': {
             fontWeight: item.route && !item.items ? 'bold' : 'normal',
@@ -79,15 +84,19 @@ export const SidebarMenuItem = ({ collapsed, item, onClick, selectedTarget, setS
             borderColor: theme.palette.primary.dark,
             '.MuiTypography-root': {
               fontWeight: 600,
-              color: theme.palette.primary.dark,
+              color: theme.palette.primary.dark
             },
             '.MuiListItemIcon-root': {
-              color: theme.palette.primary.dark,
-            },
-          },
+              color: theme.palette.primary.dark
+            }
+          }
         }}
       >
-        {item.icon && <ListItemIcon aria-hidden="true">{renderIcon(item.icon)}</ListItemIcon>}
+        {item.icon && (
+          <ListItemIcon aria-hidden="true">
+            {renderIcon(item.icon)}
+          </ListItemIcon>
+        )}
         {!collapsed && (
           <ListItemText
             id={`menu-item-${item.label.toLowerCase()}`}
@@ -95,8 +104,13 @@ export const SidebarMenuItem = ({ collapsed, item, onClick, selectedTarget, setS
             primary={item.label}
           />
         )}
-        {(item.items && !collapsed) &&
-         (open ? <ExpandLessRoundedIcon color="action" /> : <ExpandMoreRoundedIcon color="action" />)}
+        {item.items &&
+          !collapsed &&
+          (open ? (
+            <ExpandLessRoundedIcon color="action" />
+          ) : (
+            <ExpandMoreRoundedIcon color="action" />
+          ))}
       </ListItemButton>
 
       {item.items && (
@@ -104,10 +118,14 @@ export const SidebarMenuItem = ({ collapsed, item, onClick, selectedTarget, setS
           <Box sx={{ pl: 1 }}>
             <List component="div" disablePadding>
               {item.items.map((subitem, subindex) => (
-                <ListItemButton sx={{ pl: 8 }} 
-                  selected={selectedTarget === `subitem-${subindex}`} 
-                  onClick={() => handleListItemClick(`subitem-${subindex}`, subitem.route)}
-                  key={subindex}>
+                <ListItemButton
+                  sx={{ pl: 8 }}
+                  selected={selectedTarget === `subitem-${subindex}`}
+                  onClick={() =>
+                    handleListItemClick(`subitem-${subindex}`, subitem.route)
+                  }
+                  key={subindex}
+                >
                   <ListItemText primary={subitem.label} key={subindex} />
                 </ListItemButton>
               ))}

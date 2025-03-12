@@ -1,7 +1,13 @@
 import { useTranslation } from 'react-i18next';
-import { FilterItem, COMPONENT_TYPE } from '../components/FilterContainer/FilterContainer';
+import {
+  FilterItem,
+  COMPONENT_TYPE
+} from '../components/FilterContainer/FilterContainer';
 
-export type FilterMap = Record<string, { label: string; fields: FilterItem[] }>;
+export type FilterMap = Record<
+  string,
+  { label: string; fields: Array<FilterItem> }
+>;
 
 export const useFilters = () => {
   const { t } = useTranslation();
@@ -21,13 +27,21 @@ export const useFilters = () => {
     AMOUNT: {
       label: t('commons.filters.amount.label'),
       fields: [
-        { type: COMPONENT_TYPE.amount, label: t('commons.filters.amount.value'), defaultValue: 0 }
+        {
+          type: COMPONENT_TYPE.amount,
+          label: t('commons.filters.amount.value'),
+          defaultValue: 0
+        }
       ]
     },
     BILL: {
       label: t('commons.filters.bill.label'),
       fields: [
-        { label: t('commons.filters.bill.code'), type: COMPONENT_TYPE.textField, gridWidth: 6 },
+        {
+          label: t('commons.filters.bill.code'),
+          type: COMPONENT_TYPE.textField,
+          gridWidth: 6
+        },
         {
           label: t('commons.filters.bill.date.label'),
           type: COMPONENT_TYPE.dateRange,
@@ -40,7 +54,11 @@ export const useFilters = () => {
     DOCUMENT_CODE: {
       label: t('commons.filters.documentCode.label'),
       fields: [
-        { type: COMPONENT_TYPE.textField, label: t('commons.filters.documentCode.code'), gridWidth: 6 },
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('commons.filters.documentCode.code'),
+          gridWidth: 6
+        },
         {
           label: t('commons.filters.documentCode.label'),
           type: COMPONENT_TYPE.dateRange,
@@ -52,20 +70,36 @@ export const useFilters = () => {
     },
     IUV: {
       label: t('commons.filters.iuv.label'),
-      fields: [{ label: t('commons.filters.iuv.code'), type: COMPONENT_TYPE.textField }]
+      fields: [
+        { label: t('commons.filters.iuv.code'), type: COMPONENT_TYPE.textField }
+      ]
     },
     PAYER: {
       label: t('commons.filters.payer.label'),
-      fields: [{ type: COMPONENT_TYPE.textField, label: t('commons.filters.payer.name') }]
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('commons.filters.payer.name')
+        }
+      ]
     },
     REPORT_ID: {
       label: t('commons.filters.reportId.label'),
-      fields: [{ type: COMPONENT_TYPE.textField, label: t('commons.filters.reportId.code') }]
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('commons.filters.reportId.code')
+        }
+      ]
     },
     TEMPORARY_CODE: {
       label: t('commons.filters.temporaryCode.label'),
       fields: [
-        { type: COMPONENT_TYPE.textField, label: t('commons.filters.temporaryCode.code'), gridWidth: 6 },
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('commons.filters.temporaryCode.code'),
+          gridWidth: 6
+        },
         {
           label: t('commons.filters.temporaryCode.label'),
           type: COMPONENT_TYPE.dateRange,

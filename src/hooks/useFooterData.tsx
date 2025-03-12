@@ -12,7 +12,7 @@ export const useFooterData = () => {
   const configFe = useFeConfig();
   const { t } = useTranslation();
 
-  const links: FooterLinksType[] = [
+  const links: Array<FooterLinksType> = [
     {
       label: 'Informativa Privacy',
       ariaLabel: 'Informativa Privacy',
@@ -55,6 +55,10 @@ export const useFooterData = () => {
     currentLangCode: language,
     links,
     companyLink,
-    legalInfo: <Markdown>{configFe?.footerDescText ?? t('commons.footer.infoFallback')}</Markdown>
+    legalInfo: (
+      <Markdown>
+        {configFe?.footerDescText ?? t('commons.footer.infoFallback')}
+      </Markdown>
+    )
   };
 };

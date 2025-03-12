@@ -1,4 +1,8 @@
+/* global module */
+
 /**
+ *
+ * eslint-env node
  * ts-to-zod configuration.
  *
  * @type {import("ts-to-zod").TsToZodConfig}
