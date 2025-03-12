@@ -26,6 +26,8 @@ import { exportRoutes } from './routes/export';
 import { debtTypesRoutes } from './routes/debtTypes';
 import { responsesRoutes } from './routes/responses';
 import { debtPositionsRoutes } from './routes/debtPositions';
+import AuthCallback from './routes/AuthCallback';
+import { postToken } from './api/token';
 
 const deployPath = config.deployPath;
 
@@ -55,6 +57,11 @@ const routesDef = [
             } as RouteHandleObject
           }
         ]
+      },
+      {
+        path: `${deployPath}/auth-callback`,
+        element: <AuthCallback />,
+        loader: () => postToken()
       },
       ...flowsRoutes,
       ...importRoutes,
