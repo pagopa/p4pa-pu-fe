@@ -5,39 +5,55 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import DetailContainer, { DetailData } from '../DetailContainer/DetailContainer';
 import EmptyDetailContainer from './EmptyDetailContainer';
 import { InstallmentDTO } from '../../../generated/apiClient';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
+import { getInstallmentDetail } from '../../api/debtPositions';
+import { moneyFormat } from '../../utils/formatters';
+import { useParams } from 'react-router-dom';
 
-type DetailDataValue = Record<string, DetailData[]> | DetailData[];
-/*TMP MOCK DATA*/
-const summaryTitleMock: string = 'Saldo Tari 2025';
-export const tmpMockData: DetailDataValue = {
-  summaryData: [
-    { label: 'Stato', value: 'PAID', chipConfig: {color: 'default', variant: 'outlined'} },
-    { label: 'Codice Avviso (IUV)', value: '0300330000000001', variant: 'monospaced' },
-    { label: 'Importo', value: '50,00 €' },
-    { label: 'Data scadenza', value: '24/03/2025' },
-    { label: 'Debitore', value: 'Maria Bianchi' },
-    { label: 'CF / Partita IVA', value: 'BNCMRA82B42C933X (Persona fisica)' },
-    { label: 'Tipo dovuto', value: 'TARI' },
-  ],
-  paymentData: [
-    { label: 'Data esito', value: '01/09/2024' },
-    { label: 'Eseguito da', value: 'Paolo Rossi' },
-    { label: 'CF / Partita IVA', value: 'PLRSRA82B42C933X (Persona fisica)' },
-    { label: 'Gestore della transazione (PSP)', value: 'POSTMAN_TEST' },
-    { label: 'IUD', value: '000a99aa114e6b142268f27abb8b347c37d' },
-    { label: 'IUR', value: 'hR3sT2uG888KkKK' },
-  ]
-};
 
 export const DebtPositionsInstallmentDetail = () => {
 
-  type DebtStatus = Pick<InstallmentDTO, 'status'>['status'];
-  const DEBT_RESOLVED_STATES: DebtStatus[] = ['PAID', 'REPORTED'];
-
   const { t } = useTranslation();
+  const { state } = useStore();
+  const { id } = useParams<{ id: string }>();
+  
+  type DebtStatus = Pick<InstallmentDTO, 'status'>['status'];
+  
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+  const installmentId = Number(id);
 
-  const currentState = tmpMockData.summaryData.find(item => item.label === 'Stato')?.value as DebtStatus;
-  const isResolved = DEBT_RESOLVED_STATES.includes(currentState);
+  const { data: installment } = getInstallmentDetail(
+    organizationId, 
+    installmentId
+  );
+  
+  const DEBT_RESOLVED_STATES: DebtStatus[] = ['PAID', 'REPORTED'];
+  const isResolved = installment?.status && DEBT_RESOLVED_STATES.includes(installment.status);
+
+  type DetailDataValue = Record<string, DetailData[]> | DetailData[];
+
+  const summaryTitle: string = installment?.debtPositionDescription || '';
+  
+  const installmentDetailData: DetailDataValue = {
+    summaryData: [
+      { label: t('commons.state'), value: installment?.status || '', chipConfig: {color: 'default', variant: 'outlined'} },
+      { label: t('debtPositionSearchResults.iuv'), value: installment?.iuv || '', variant: 'monospaced' },
+      { label: t('debtPositionSearchResults.amount'), value: moneyFormat(installment?.amountCents as number) },
+      { label: t('debtPositionSearchResults.expirationDate'), value: installment?.dueDate ? new Date(installment?.dueDate).toLocaleDateString('it-IT') : '' },
+      { label:  t('installmentDetailPage.debtor'), value: installment?.debtor?.fullName || '' },
+      { label: t('commons.fiscalCodeorVatExecutor'), value: `${installment?.debtor?.fiscalCode} ${installment?.debtor?.entityType === 'F' ? `(${t('commons.individual')})` : ''}`},
+      { label: t('commons.duetype'), value: installment?.debtPositionTypeOrgDescription || '' },
+    ],
+    paymentData: [
+      { label: t('commons.paymentdate'), value: installment?.paymentDateTime ? new Date(installment?.paymentDateTime).toLocaleDateString('it-IT') : '' },
+      { label: t('installmentDetailPage.executedBy'), value: installment?.payer?.fullName || '' },
+      { label: t('commons.fiscalCodeorVatExecutor'), value: `${installment?.payer?.fiscalCode} ${installment?.payer?.entityType === 'F' ? `(${t('commons.individual')})` : ''}`},
+      { label: t('installmentDetailPage.transactionManager'), value: installment?.pspCompanyName || '' },
+      { label: t('commons.iud'), value: installment?.iud || '' },
+      { label: t('commons.iur'), value: installment?.iur || '' },
+    ]
+  };
 
   return (
     <>
@@ -63,10 +79,14 @@ export const DebtPositionsInstallmentDetail = () => {
         <Grid item md={6}>
           <DetailContainer 
             sections={[{
-              title: {label: t(summaryTitleMock), variant: 'h6'}, 
-              data: tmpMockData.summaryData, 
+              title: {label: t(summaryTitle), variant: 'h6'}, 
+              data: installmentDetailData.summaryData, 
               inline: true, 
-              footerLink: { label: t('installmentDetailPage.showDebtPositions'), icon: <Visibility /> }
+              footerLink: { 
+                label: t('installmentDetailPage.showDebtPositions'), 
+                icon: <Visibility />, 
+                onLinkClick: () => console.log('debtPositionId', installment?.debtPositionId)
+              }
             }]}
           />
         </Grid>
@@ -75,7 +95,7 @@ export const DebtPositionsInstallmentDetail = () => {
             <DetailContainer 
               sections={[{
                 title: {label: t('installmentDetailPage.paymentInformation'), variant: 'overline'},
-                data: tmpMockData.paymentData,
+                data: installmentDetailData.paymentData,
                 divider: true
               }]}
             />
@@ -89,7 +109,7 @@ export const DebtPositionsInstallmentDetail = () => {
           endIcon={<ReadMore />}
           variant="text"
           fullWidth={false}
-          onClick={() => console.log('')} 
+          onClick={() => console.log('installmentId: ', installmentId)} 
         >
           {t('installmentDetailPage.showOtherBeneficiaries')}
         </Button>

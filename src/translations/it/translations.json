@@ -185,7 +185,14 @@
 		},
 		"chipStaus": {
 			"PAID": "Pagato",
-			"UNPAID": "Non pagato"
+			"UNPAID": "Da pagare",
+			"TO_SYNC": "Da sincronizzare",
+			"CANCELLED": "Cancellato",
+			"DRAFT": "Bozza",
+			"EXPIRED": "Scaduto",
+			"PARTIALLY_PAID": "Pagamento iniziato",
+			"REPORTED": "Rendicontato",
+			"INVALID": "Non valido"
 		},
 		"successExport": "Abbiamo ricevuto la tua richiesta!",
 		"successImport": "Flusso caricato con successo",
@@ -198,7 +205,8 @@
 		"searchCF": "Cerca CF",
 		"uploadedFrom": "Caricati dal",
 		"importNewFlow": "Carica un nuovo flusso",
-		"debtFlow": "Flussi dovuti"
+		"debtFlow": "Flussi dovuti",
+		"individual": "Persona fisica"
 	},
 	"conservation": {
 		"buttonReservationExport": "Prenota export",
@@ -391,6 +399,9 @@
 		"showOtherBeneficiaries": "Vedi altri beneficiari",
 		"noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
 		"downloadInstallment": "Scarica avviso",
-		"paymentInformation": "Informazione sul pagamento"
+		"paymentInformation": "Informazione sul pagamento",
+		"debtor": "Debitore",
+		"executedBy": "Eseguito da",
+		"transactionManager": "Gestore della transazione (PSP)"
 	}
 }
