@@ -117,9 +117,12 @@
 		"paymentdate": "Data Esito",
 		"paymentExecutor": "Versante",
     "paymentOptions": {
-      "oneOffPayment": "Soluzione Unica",
-      "multiplePayments": "Soluzione a Rate"
+      "SINGLE_INSTALLMENT": "Soluzione Unica",
+      "INSTALLMENTS": "Soluzione a Rate",
+      "DOWN_PAYMENT": "Anticipo"
     },
+    "person": "Persona fisica",
+    "personLegal": "Persona giuridica",
 		"reason": "Causale",
 		"requiredFieldDescription": "* Indica un campo obbligatorio",
 		"createNew": "Crea nuova",
