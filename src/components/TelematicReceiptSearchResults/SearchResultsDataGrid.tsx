@@ -65,7 +65,7 @@ const SearchResultsDataGrid = () => {
             {
               icon: <ReadMore fontSize="small" />,
               label: t('commons.detail'),
-              action: () => navigate(generatePath(PageRoutes.DETAIL_FLOWS, {category: 'receipt'}))
+              action: () => navigate(generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {id: params.row.receiptId}))
             },
             {
               icon: <FileDownload fontSize="small" />,

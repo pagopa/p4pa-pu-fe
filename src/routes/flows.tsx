@@ -14,6 +14,7 @@ import TelematicReceiptSearchResults from './TelematicReceiptSearchResults';
 import Treasury from './Treasury';
 import TreasuryImportFlowOverview from './TreasuryImportFlowOverview';
 import TreasurySearchResults from './TreasurySearchResults';
+import TelematicReceiptDetail from './TelematicReceiptDetail';
 
 const deployPath = config.deployPath;
 
@@ -42,6 +43,19 @@ export const flowsRoutes = [{
           id: 'TELEMATIC_RECEIPT_INDEX',
           handle: {
             backButton: false
+          } as RouteHandleObject,
+        },
+        {
+          element: <TelematicReceiptDetail />,
+          id: 'TELEMATIC_RECEIPT_DETAIL',
+          path: ':id',
+          loader: async ({ params }) => Promise.resolve(params.id),
+          handle: {
+            backButton: true,
+            sidebar: {
+              visible: false,
+              omitBreadcrumbs: true,
+            }
           } as RouteHandleObject,
         },
         {
