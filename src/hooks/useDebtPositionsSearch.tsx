@@ -1,9 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useStore } from '../store/GlobalStore';
-import {
-  DebtPositionViewQuery,
-  getDebtPositionViews,
-  getInstallments
+import debtPositions, {
+  DebtPositionInstallmentsQuery,
+  DebtPositionViewQuery
 } from '../api/debtPositions';
 import { FilterFieldValue } from '../models/Filters';
 import { useDataGridPagination } from './useDatagridPagination';
@@ -16,11 +15,14 @@ export type DebtPositionFilters = {
   status?: DebtPositionViewQuery['status'] | 'TUTTI';
   fiscalCode?: string;
   iuv?: string;
+  typeOrgId?: number;
 };
 
 export type UseDebtPositionFiltersProps = {
   initialFilters: DebtPositionFilters;
-  requestFn: typeof getDebtPositionViews | typeof getInstallments; // Allow passing the request function
+  requestFn:
+    | typeof debtPositions.getDebtPositionViews
+    | typeof debtPositions.getInstallments; // Allow passing the request function
 };
 
 export const useDebtPositionSearch = ({
@@ -48,7 +50,8 @@ export const useDebtPositionSearch = ({
     query.mutate(filterToRequest());
   }, [organizationId, pagination.page, pagination.size, sort]);
 
-  const filterToRequest = () => ({
+  const filterToRequest = (): DebtPositionViewQuery &
+    DebtPositionInstallmentsQuery => ({
     dueDateFrom:
       filterValues?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
     dueDateTo:
@@ -59,6 +62,9 @@ export const useDebtPositionSearch = ({
       filterValues?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
     page: pagination.page,
     size: pagination.size,
+    ...(filterValues?.typeOrgId && {
+      debtPositionTypeOrgId: filterValues.typeOrgId
+    }),
     ...(filterValues?.iuv && { iuv: filterValues.iuv }),
     ...(filterValues?.fiscalCode && { fiscalCode: filterValues.fiscalCode }),
     ...(filterValues?.status &&
