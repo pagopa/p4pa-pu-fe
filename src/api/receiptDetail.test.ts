@@ -6,7 +6,6 @@ import { createMock } from 'zodock';
 import { getReceiptDetail } from './receiptDetail';
 import { renderHook, waitFor } from '../__tests__/renderers';
 
-
 vi.mock('./utils', () => {
   const originalModule = vi.importActual('utils');
   return {
@@ -20,28 +19,24 @@ vi.mock('./utils', () => {
 });
 
 describe('get Receipt Detail ', () => {
-
   it('returns data correctly', async () => {
-
     const dataMock = createMock(receiptDetailDTOSchema);
     const params = { organizationId: 33, receiptId: dataMock.receiptId };
 
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'getReceiptDetail')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
-    
+
     const { result } = renderHook(() =>
       getReceiptDetail(params.organizationId, params.receiptId)
     );
 
     await waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith(
-        params.organizationId, params.receiptId
+        params.organizationId,
+        params.receiptId
       );
       expect(result.current.data).toEqual(dataMock);
     });
-    
   });
-
-
 });

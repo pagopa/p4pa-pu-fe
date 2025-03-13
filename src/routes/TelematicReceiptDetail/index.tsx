@@ -6,104 +6,123 @@ import { getReceiptDetail } from '../../api/receiptDetail';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import DetailContainer, { DetailData } from '../../components/DetailContainer/DetailContainer';
+import DetailContainer, {
+  DetailData
+} from '../../components/DetailContainer/DetailContainer';
 import { moneyFormat } from '../../utils/formatters';
 
-
 export const TelematicReceiptDetail = () => {
-
   const { t } = useTranslation();
-  const { state } = useStore(); 
+  const { state } = useStore();
 
   const id = useLoaderData();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-  
+
   if (isNaN(id)) {
     // TO-DO
     // raise error
     console.error('ID is not a number');
   }
 
-  const { data, isLoading} = getReceiptDetail(organizationId, Number(id));
-  const debtorType: string = data?.debtor.entityType === 'F' ? `(${t('commons.person')})` : '';
+  const { data, isLoading } = getReceiptDetail(organizationId, Number(id));
+  const debtorType: string =
+    data?.debtor.entityType === 'F' ? `(${t('commons.person')})` : '';
 
-  const summaryData: DetailData[] = [
+  const summaryData: Array<DetailData> = [
     {
-      label: t('commons.iuv') ,
+      label: t('commons.iuv'),
       value: data?.iuv || ''
     },
     {
-      label: t('commons.amount') ,
+      label: t('commons.amount'),
       value: moneyFormat(data?.paymentAmountCents as number)
     },
     {
-      label: t('commons.reason') ,
+      label: t('commons.reason'),
       value: data?.debtPositionTypeOrgDescription || ''
     },
     {
-      label: t('commons.duetype') ,
+      label: t('commons.duetype'),
       value: data?.remittanceInformation || ''
     },
     {
-      label: t('commons.debtor') ,
+      label: t('commons.debtor'),
       value: data?.debtor.fullName || ''
     },
     {
-      label: t('commons.fiscalCodeorVat') ,
+      label: t('commons.fiscalCodeorVat'),
       value: `${data?.debtor.fiscalCode || ''} ${debtorType}`
-    },
+    }
   ];
 
-  const paymentData: DetailData[] = [
+  const paymentData: Array<DetailData> = [
     {
-      label: t('commons.paymentdate') ,
-      value: data?.paymentDateTime ? new Date(data.paymentDateTime).toLocaleDateString('it-IT') : ''
+      label: t('commons.paymentdate'),
+      value: data?.paymentDateTime
+        ? new Date(data.paymentDateTime).toLocaleDateString('it-IT')
+        : ''
     },
     {
-      label: t('commons.auditor') ,
+      label: t('commons.auditor'),
       value: data?.pspCompanyName || ''
     },
     {
-      label: t('commons.iud') ,
+      label: t('commons.iud'),
       value: data?.iud || ''
     },
     {
-      label: t('commons.iur') ,
+      label: t('commons.iur'),
       value: data?.iur || ''
-    },
+    }
   ];
 
   return (
     <>
-      {!isLoading &&
-      <>
-        <TitleComponent 
-          title={t('telematicReceiptDetail.title')}
-          callToAction= { [
-            {
-              icon: <Download />, 
-              variant: 'contained', 
-              buttonText: t('commons.files.download'), 
-              onActionClick: () => console.log('download')
-            }
-          ]
-          } 
-        />
-        { <Grid container spacing={3}>
-          <Grid item md={6}>
-            <DetailContainer 
-              sections={[{title: {label: t('commons.summary'), variant: 'overline'}, data: summaryData}]} 
-            />
-          </Grid>
-          <Grid item md={6}>
-            <DetailContainer 
-              sections={[{title: {label: t('commons.payment'), variant: 'overline'}, data: paymentData}]}
-            />
-          </Grid>
-        </Grid> 
-        }
-      </>
-      }
+      {!isLoading && (
+        <>
+          <TitleComponent
+            title={t('telematicReceiptDetail.title')}
+            callToAction={[
+              {
+                icon: <Download />,
+                variant: 'contained',
+                buttonText: t('commons.files.download'),
+                onActionClick: () => console.log('download')
+              }
+            ]}
+          />
+          {
+            <Grid container spacing={3}>
+              <Grid item md={6}>
+                <DetailContainer
+                  sections={[
+                    {
+                      title: {
+                        label: t('commons.summary'),
+                        variant: 'overline'
+                      },
+                      data: summaryData
+                    }
+                  ]}
+                />
+              </Grid>
+              <Grid item md={6}>
+                <DetailContainer
+                  sections={[
+                    {
+                      title: {
+                        label: t('commons.payment'),
+                        variant: 'overline'
+                      },
+                      data: paymentData
+                    }
+                  ]}
+                />
+              </Grid>
+            </Grid>
+          }
+        </>
+      )}
 
       {isLoading && <CircularProgress></CircularProgress>}
     </>
