@@ -10,14 +10,14 @@ vi.mock('react-i18next', () => ({
 
 describe('ExportFlowContainer', () => {
   let mockOnSelectChange: (field: string, value: string) => void;
-  let formData: { [key: string]: string };
+  let formData: Record<string, string>;
 
   beforeEach(() => {
     mockOnSelectChange = vi.fn();
     formData = {
       from: '',
       to: '',
-      fileVersion: '',
+      fileVersion: ''
     };
   });
 

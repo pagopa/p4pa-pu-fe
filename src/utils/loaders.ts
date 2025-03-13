@@ -3,23 +3,24 @@ import { ZodSchema } from 'zod';
 import * as zodSchema from '../../generated/zod-schema';
 import utils from '.';
 
-export const parseAndLog = <T>(
+export function parseAndLog<T>(
   schema: ZodSchema,
   data: T,
-  throwError: boolean = true
-): void | never => {
+  throwError = true
+): void | never {
   const result = schema.safeParse(data);
   if (!result.success) {
     console.error(result.error.issues);
     if (throwError) throw result.error;
   }
-};
+}
 
 const getOrganizations = () => {
   return useQuery({
     queryKey: ['organizations'],
     queryFn: async () => {
-      const { data: organizations } = await utils.apiClient.bff.getOrganizations();
+      const { data: organizations } =
+        await utils.apiClient.bff.getOrganizations();
       if (organizations) {
         parseAndLog(zodSchema.organizationDTOSchema, organizations[0]);
       }
@@ -31,4 +32,3 @@ const getOrganizations = () => {
 export default {
   getOrganizations
 };
-

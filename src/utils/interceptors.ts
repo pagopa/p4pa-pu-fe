@@ -5,7 +5,8 @@ import { AxiosError, InternalAxiosRequestConfig } from 'axios';
 export const setupInterceptors = (client: Client) => {
   client.instance.interceptors.request.use(
     (request: InternalAxiosRequestConfig) => {
-      const tokenHeaderExcludePaths: string[] = utils.config.tokenHeaderExcludePaths;
+      const tokenHeaderExcludePaths: Array<string> =
+        utils.config.tokenHeaderExcludePaths;
       const routeUrl = request.url || '';
       const accessToken = window.localStorage.getItem('accessToken');
       if (accessToken && !tokenHeaderExcludePaths.includes(routeUrl)) {

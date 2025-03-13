@@ -25,17 +25,21 @@ vi.mock('../FilterContainer/FilterContainer', () => ({
 const mockFilterMap: FilterMap = {
   search: {
     label: 'Search',
-    fields: [{
-      type: COMPONENT_TYPE.textField,
-      label: 'Search Field'
-    }]
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'Search Field'
+      }
+    ]
   },
   name: {
     label: 'Name',
-    fields: [{
-      type: COMPONENT_TYPE.textField,
-      label: 'Name Field'
-    }]
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'Name Field'
+      }
+    ]
   }
 };
 
@@ -48,7 +52,7 @@ describe('MultiFilter Component', () => {
   it('invokes removeFilterRow with correct ID on remove button click', () => {
     // Start with both filters
     setFiltersState(['search', 'name']);
-    
+
     render(<MultiFilter filterMap={mockFilterMap} />);
 
     // Verify initial render has both filters

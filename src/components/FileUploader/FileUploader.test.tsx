@@ -24,7 +24,7 @@ describe('FileUploader Component', () => {
     setFile: mockSetFile,
     description: 'Drag and drop or upload a file',
     requiredFileText: 'This field is required',
-    fileExtensionsAllowed: ['zip'],
+    fileExtensionsAllowed: ['zip']
   };
 
   const renderWithTheme = (ui: React.ReactElement) => {
@@ -37,7 +37,7 @@ describe('FileUploader Component', () => {
 
   it('renders initial state correctly', () => {
     renderWithTheme(<FileUploader {...defaultProps} />);
-    
+
     expect(screen.getByText('commons.files.file')).toBeDefined();
     expect(screen.getByText(defaultProps.description)).toBeDefined();
     expect(screen.getByText(defaultProps.requiredFileText)).toBeDefined();
@@ -48,7 +48,9 @@ describe('FileUploader Component', () => {
   describe('File Upload Handling', () => {
     it('handles valid file upload through input', async () => {
       renderWithTheme(<FileUploader {...defaultProps} />);
-      const file = new File(['test content'], 'test.zip', { type: 'application/zip' });
+      const file = new File(['test content'], 'test.zip', {
+        type: 'application/zip'
+      });
       const input = screen.getByTestId('input-file');
 
       fireEvent.change(input, { target: { files: [file] } });
@@ -62,7 +64,9 @@ describe('FileUploader Component', () => {
 
     it('handles invalid file extension through input', () => {
       renderWithTheme(<FileUploader {...defaultProps} />);
-      const invalidFile = new File(['content'], 'test.pdf', { type: 'application/pdf' });
+      const invalidFile = new File(['content'], 'test.pdf', {
+        type: 'application/pdf'
+      });
       const input = screen.getByTestId('input-file');
 
       fireEvent.change(input, { target: { files: [invalidFile] } });
@@ -72,8 +76,10 @@ describe('FileUploader Component', () => {
     });
 
     it('shows upload progress', () => {
-      renderWithTheme(<FileUploader {...defaultProps} uploading={true} progress={50} />);
-      
+      renderWithTheme(
+        <FileUploader {...defaultProps} uploading={true} progress={50} />
+      );
+
       expect(screen.getByText('commons.files.uploadInProgress')).toBeDefined();
       const progressBar = screen.getByRole('progressbar');
       expect(progressBar.getAttribute('aria-valuenow')).toBe('50');
@@ -83,7 +89,9 @@ describe('FileUploader Component', () => {
   describe('Drag and Drop Functionality', () => {
     it('handles valid file drop', async () => {
       renderWithTheme(<FileUploader {...defaultProps} />);
-      const file = new File(['content'], 'test.zip', { type: 'application/zip' });
+      const file = new File(['content'], 'test.zip', {
+        type: 'application/zip'
+      });
       const dropZone = screen.getByTestId('drop-zone');
 
       fireEvent.dragOver(dropZone);
@@ -102,7 +110,9 @@ describe('FileUploader Component', () => {
 
     it('handles invalid file drop', () => {
       renderWithTheme(<FileUploader {...defaultProps} />);
-      const invalidFile = new File(['content'], 'test.pdf', { type: 'application/pdf' });
+      const invalidFile = new File(['content'], 'test.pdf', {
+        type: 'application/pdf'
+      });
       const dropZone = screen.getByTestId('drop-zone');
 
       fireEvent.dragOver(dropZone);
@@ -119,7 +129,9 @@ describe('FileUploader Component', () => {
 
   describe('File Display and Removal', () => {
     it('displays uploaded file information correctly', () => {
-      const file = new File(['test content'], 'test.zip', { type: 'application/zip' });
+      const file = new File(['test content'], 'test.zip', {
+        type: 'application/zip'
+      });
       renderWithTheme(<FileUploader {...defaultProps} file={file} />);
 
       expect(screen.getByText('test.zip')).toBeDefined();
@@ -127,7 +139,9 @@ describe('FileUploader Component', () => {
     });
 
     it('handles file removal', () => {
-      const file = new File(['test content'], 'test.zip', { type: 'application/zip' });
+      const file = new File(['test content'], 'test.zip', {
+        type: 'application/zip'
+      });
       renderWithTheme(<FileUploader {...defaultProps} file={file} />);
 
       const removeButton = screen.getByLabelText('commons.removeFile');
@@ -140,23 +154,29 @@ describe('FileUploader Component', () => {
 
   describe('File Size Formatting', () => {
     it('formats file size in bytes', () => {
-      const file = new File(['x'.repeat(500)], 'test.zip', { type: 'application/zip' });
+      const file = new File(['x'.repeat(500)], 'test.zip', {
+        type: 'application/zip'
+      });
       renderWithTheme(<FileUploader {...defaultProps} file={file} />);
-      
+
       expect(screen.getByText(/500 Bytes/)).toBeDefined();
     });
 
     it('formats file size in KB', () => {
-      const file = new File(['x'.repeat(1024 * 2)], 'test.zip', { type: 'application/zip' });
+      const file = new File(['x'.repeat(1024 * 2)], 'test.zip', {
+        type: 'application/zip'
+      });
       renderWithTheme(<FileUploader {...defaultProps} file={file} />);
-      
+
       expect(screen.getByText(/2.0 KB/)).toBeDefined();
     });
 
     it('formats file size in MB', () => {
-      const file = new File(['x'.repeat(1024 * 1024 * 2)], 'test.zip', { type: 'application/zip' });
+      const file = new File(['x'.repeat(1024 * 1024 * 2)], 'test.zip', {
+        type: 'application/zip'
+      });
       renderWithTheme(<FileUploader {...defaultProps} file={file} />);
-      
+
       expect(screen.getByText(/2.00 MB/)).toBeDefined();
     });
   });
@@ -164,14 +184,16 @@ describe('FileUploader Component', () => {
   describe('Error Handling', () => {
     it('allows dismissing error message', () => {
       renderWithTheme(<FileUploader {...defaultProps} />);
-      const invalidFile = new File(['content'], 'test.pdf', { type: 'application/pdf' });
+      const invalidFile = new File(['content'], 'test.pdf', {
+        type: 'application/pdf'
+      });
       const input = screen.getByTestId('input-file');
 
       fireEvent.change(input, { target: { files: [invalidFile] } });
       const closeButton = screen.getByTestId('close-alert-button');
-      
+
       fireEvent.click(closeButton);
-      
+
       expect(screen.queryByText('commons.files.notvalid')).toBeNull();
     });
   });

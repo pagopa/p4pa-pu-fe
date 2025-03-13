@@ -1,8 +1,14 @@
-import { Box, Select, MenuItem, Pagination, SelectChangeEvent } from '@mui/material';
+import {
+  Box,
+  Select,
+  MenuItem,
+  Pagination,
+  SelectChangeEvent
+} from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 
 type CustomPaginationProps = {
-  sizePageOptions?: number[];
+  sizePageOptions?: Array<number>;
   defaultPageOption?: number;
   totalPages?: number;
   currentPage?: number;
@@ -18,7 +24,6 @@ const CustomPagination = ({
   onPageChange,
   onPageSizeChange
 }: CustomPaginationProps) => {
-
   const hidePreviousButton = currentPage === 1;
   const hideNextButton = currentPage === totalPages;
 
@@ -47,9 +52,9 @@ const CustomPagination = ({
         value={defaultPageOption}
         onChange={handlePageSizeChange}
         size="small"
-        data-testid='result-set-select'
+        data-testid="result-set-select"
         sx={{
-          fontSize: 12,
+          fontSize: 12
         }}
       >
         {sizePageOptions?.map((size) => (

@@ -8,11 +8,11 @@ import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
 
 // Mock dependencies
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key }),
+  useTranslation: () => ({ t: (key: string) => key })
 }));
 
 vi.mock('react-router-dom', () => ({
-  useLocation: vi.fn(),
+  useLocation: vi.fn()
 }));
 
 vi.mock('../../hooks/useDebtPositionsSearch', () => ({
@@ -24,30 +24,30 @@ vi.mock('../../hooks/useDebtPositionsSearch', () => ({
     handlePageSizeChange: vi.fn(),
     setSort: vi.fn(),
     pagination: { page: 0, size: 10 },
-    filterValues: {},
+    filterValues: {}
   }))
 }));
 
 vi.mock('../../hooks/useDebtPositionsFilters', () => ({
   default: vi.fn(() => ({
-    filters: [],
+    filters: []
   }))
 }));
 
 vi.mock('../../components/TitleComponent/TitleComponent', () => ({
-  default: vi.fn(({ title }) => <div>{title}</div>),
+  default: vi.fn(({ title }) => <div>{title}</div>)
 }));
 
 vi.mock('../../components/FilterContainer/FilterContainer', () => ({
-  default: vi.fn(() => <div>FilterContainer</div>),
+  default: vi.fn(() => <div>FilterContainer</div>)
 }));
 
 vi.mock('./components/DebtPositionIUVDataGrid', () => ({
-  IUVDataGrid: vi.fn(() => <div>IUVDataGrid</div>),
+  IUVDataGrid: vi.fn(() => <div>IUVDataGrid</div>)
 }));
 
 vi.mock('./components/DebtPositionsDataGrid', () => ({
-  DebtPositionsDataGrid: vi.fn(() => <div>DebtPositionsDataGrid</div>),
+  DebtPositionsDataGrid: vi.fn(() => <div>DebtPositionsDataGrid</div>)
 }));
 
 describe('DebtPositionResults', () => {
@@ -65,12 +65,16 @@ describe('DebtPositionResults', () => {
 
     render(<DebtPositionResults />);
 
-    expect(screen.getByText('DebtPositions.Results.titleIUV')).toBeInTheDocument();
+    expect(
+      screen.getByText('DebtPositions.Results.titleIUV')
+    ).toBeInTheDocument();
     expect(screen.getByText('IUVDataGrid')).toBeInTheDocument();
   });
 
   it('should render standard version correctly', () => {
-    (useLocation as Mock).mockReturnValue(mockLocationState(SearchType.DEBT_POSITION));
+    (useLocation as Mock).mockReturnValue(
+      mockLocationState(SearchType.DEBT_POSITION)
+    );
 
     render(<DebtPositionResults />);
 
@@ -79,27 +83,37 @@ describe('DebtPositionResults', () => {
   });
 
   it('should pass correct props to FilterContainer', () => {
-    (useLocation as Mock).mockReturnValue(mockLocationState(SearchType.DEBT_POSITION));
+    (useLocation as Mock).mockReturnValue(
+      mockLocationState(SearchType.DEBT_POSITION)
+    );
 
     render(<DebtPositionResults />);
 
-    expect(FilterContainer).toHaveBeenCalledWith(expect.objectContaining({
-      items: expect.any(Array),
-      values: expect.any(Object),
-      onChange: expect.any(Function)
-    }), expect.anything());
+    expect(FilterContainer).toHaveBeenCalledWith(
+      expect.objectContaining({
+        items: expect.any(Array),
+        values: expect.any(Object),
+        onChange: expect.any(Function)
+      }),
+      expect.anything()
+    );
   });
 
   it('should pass pagination to DataGrid', () => {
-    (useLocation as Mock).mockReturnValue(mockLocationState(SearchType.DEBT_POSITION));
+    (useLocation as Mock).mockReturnValue(
+      mockLocationState(SearchType.DEBT_POSITION)
+    );
 
     render(<DebtPositionResults />);
 
-    expect(DebtPositionsDataGrid).toHaveBeenCalledWith(expect.objectContaining({
-      pagination: expect.objectContaining({
-        page: 0,
-        size: 10
-      })
-    }), expect.anything());
+    expect(DebtPositionsDataGrid).toHaveBeenCalledWith(
+      expect.objectContaining({
+        pagination: expect.objectContaining({
+          page: 0,
+          size: 10
+        })
+      }),
+      expect.anything()
+    );
   });
 });

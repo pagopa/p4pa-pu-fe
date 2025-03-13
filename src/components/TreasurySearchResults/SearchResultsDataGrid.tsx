@@ -6,19 +6,19 @@ import { IconButton } from '@mui/material';
 import { generatePath, Link } from 'react-router-dom';
 import { PageRoutes } from '../../App';
 
-interface SearchResultDataRow extends GridValidRowModel {
+type SearchResultDataRow = {
   id: number;
   billingYear: string;
   billingCode: string;
   valueDate: string;
   reportingId: string;
   amount: string;
-}
+} & GridValidRowModel;
 
 const SearchResultsDataGrid = () => {
   const { t } = useTranslation();
 
-  const rows: SearchResultDataRow[] = [
+  const rows: Array<SearchResultDataRow> = [
     {
       id: 1,
       billingYear: '2024',
@@ -45,16 +45,46 @@ const SearchResultsDataGrid = () => {
       accountingDate: '11/09/2024',
       reportingId: '2024-09-23424234234',
       amount: '100,00 €'
-    },
+    }
   ];
 
-  const columns: GridColDef[] = [
-    { field: 'billingYear', headerName: t('treasurySearchResults.billingYear'), flex: 1, type: 'string' },
-    { field: 'billingCode', headerName: t('treasurySearchResults.billingCode'), flex: 1, type: 'string' },
-    { field: 'valueDate', headerName: t('treasurySearchResults.valueDate'), flex: 1, type: 'string' },
-    { field: 'accountingDate', headerName: t('treasurySearchResults.accountingDate'), flex: 1, type: 'string' },
-    { field: 'reportingId', headerName: t('treasurySearchResults.reportingId'), flex: 1, type: 'string' },
-    { field: 'amount', headerName: t('commons.amount'), flex: 1, type: 'string' },
+  const columns: Array<GridColDef> = [
+    {
+      field: 'billingYear',
+      headerName: t('treasurySearchResults.billingYear'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'billingCode',
+      headerName: t('treasurySearchResults.billingCode'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'valueDate',
+      headerName: t('treasurySearchResults.valueDate'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'accountingDate',
+      headerName: t('treasurySearchResults.accountingDate'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'reportingId',
+      headerName: t('treasurySearchResults.reportingId'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'amount',
+      headerName: t('commons.amount'),
+      flex: 1,
+      type: 'string'
+    },
     {
       field: 'action',
       headerName: '',
@@ -64,18 +94,15 @@ const SearchResultsDataGrid = () => {
       headerAlign: 'right',
       renderCell: () => (
         <Link
-          to={generatePath(PageRoutes.DETAIL_FLOWS, {category: 'treasury'})}
-          aria-label='go to treasury detail'
+          to={generatePath(PageRoutes.DETAIL_FLOWS, { category: 'treasury' })}
+          aria-label="go to treasury detail"
         >
-          <IconButton
-            color="primary"
-            size="small"
-          >
+          <IconButton color="primary" size="small">
             <ReadMore />
           </IconButton>
         </Link>
-      ),
-    },
+      )
+    }
   ];
 
   return (

@@ -11,35 +11,39 @@ import {
   InputAdornment,
   Box,
   GridDirection,
-  Stack,
+  Stack
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 type ExportFlowContainerProps = {
-  section: {
-    direction: GridDirection,
+  section: Array<{
+    direction: GridDirection;
     title: {
       icon: React.ReactNode;
       label: string;
-    },
-    inputFields: {
+    };
+    inputFields: Array<{
       label: string;
       placeholder?: string;
       gridWidth?: number;
       icon?: React.ReactNode;
       required?: boolean;
       fieldKey?: string;
-    }[];
-    selectOptions?: {
+    }>;
+    selectOptions?: Array<{
       label: string;
       value: string;
-    }[];
-  }[];
-  formData: { [key: string]: string };
+    }>;
+  }>;
+  formData: Record<string, string>;
   onSelectChange: (field: string, value: string) => void;
 };
 
-const ExportFlowContainer = ({ section, formData, onSelectChange }: ExportFlowContainerProps) => {
+const ExportFlowContainer = ({
+  section,
+  formData,
+  onSelectChange
+}: ExportFlowContainerProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -76,7 +80,13 @@ const ExportFlowContainer = ({ section, formData, onSelectChange }: ExportFlowCo
             bgcolor={theme.palette.common.white}
           >
             <Grid item lg={12}>
-              <Typography variant="subtitle1" display={'flex'} color={theme.palette.text.primary} alignItems={'center'} mb={2}>
+              <Typography
+                variant="subtitle1"
+                display={'flex'}
+                color={theme.palette.text.primary}
+                alignItems={'center'}
+                mb={2}
+              >
                 <Box display={'flex'} alignItems={'center'}>
                   {item.title.icon}
                 </Box>
@@ -88,7 +98,10 @@ const ExportFlowContainer = ({ section, formData, onSelectChange }: ExportFlowCo
                 {item.selectOptions ? (
                   item.inputFields.map((field, index) => (
                     <FormControl key={index} fullWidth size="small">
-                      <InputLabel required={field?.required} id={`select-label-${index}`}>
+                      <InputLabel
+                        required={field?.required}
+                        id={`select-label-${index}`}
+                      >
                         {field.label}
                       </InputLabel>
                       <Select
@@ -96,15 +109,20 @@ const ExportFlowContainer = ({ section, formData, onSelectChange }: ExportFlowCo
                         required={field?.required}
                         labelId={`select-label-${index}`}
                         value={formData[field?.fieldKey || ''] ?? ''}
-                        onChange={(event) => onSelectChange(field?.fieldKey ?? '', event.target.value)}
+                        onChange={(event) =>
+                          onSelectChange(
+                            field?.fieldKey ?? '',
+                            event.target.value
+                          )
+                        }
                         label={field.label}
                       >
                         {item.selectOptions &&
-                        item.selectOptions.map((option, index) => (
-                          <MenuItem key={index} value={option.value}>
-                            {option.label}
-                          </MenuItem>
-                        ))}
+                          item.selectOptions.map((option, index) => (
+                            <MenuItem key={index} value={option.value}>
+                              {option.label}
+                            </MenuItem>
+                          ))}
                       </Select>
                     </FormControl>
                   ))
@@ -118,11 +136,20 @@ const ExportFlowContainer = ({ section, formData, onSelectChange }: ExportFlowCo
                           fullWidth
                           size="small"
                           InputProps={{
-                            endAdornment: field.icon ? <InputAdornment position="end">{field.icon}</InputAdornment> : undefined,
+                            endAdornment: field.icon ? (
+                              <InputAdornment position="end">
+                                {field.icon}
+                              </InputAdornment>
+                            ) : undefined
                           }}
                           label={field.label}
                           value={formData[field?.fieldKey || ''] ?? ''}
-                          onChange={(event) => onSelectChange(field?.fieldKey ?? '', event.target.value)}
+                          onChange={(event) =>
+                            onSelectChange(
+                              field?.fieldKey ?? '',
+                              event.target.value
+                            )
+                          }
                         />
                       </Grid>
                     ))}

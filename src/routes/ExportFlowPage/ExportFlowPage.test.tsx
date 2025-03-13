@@ -7,7 +7,7 @@ import ExportFlowPage from './ExportFlowPage';
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal()),
   useNavigate: vi.fn(),
-  useParams: () => ({ category: 'treasury' }),
+  useParams: () => ({ category: 'treasury' })
 }));
 
 describe('Import Flow Page', () => {

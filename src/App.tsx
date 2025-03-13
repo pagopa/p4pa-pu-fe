@@ -61,7 +61,7 @@ const routesDef = [
       {
         path: `${deployPath}/auth-callback`,
         element: <AuthCallback />,
-        loader: () => postToken()
+        loader: postToken
       },
       ...flowsRoutes,
       ...importRoutes,
@@ -77,10 +77,10 @@ const routesDef = [
 const router = createBrowserRouter(routesDef);
 
 const extractPathsWithIds = (
-  routes: RouteObject[],
-  basePath: string = ''
-): { [key: string]: string } => {
-  let paths: { [key: string]: string } = {};
+  routes: Array<RouteObject>,
+  basePath = ''
+): Record<string, string> => {
+  let paths: Record<string, string> = {};
 
   routes.forEach((route) => {
     const fullPath = `${basePath}${route.path || ''}`;
@@ -103,7 +103,9 @@ export const App = () => {
     state: { appState }
   } = useStore();
   return (
-    <ErrorBoundary fallback={<ErrorFallback onReset={() => window.location.replace('/')} />}>
+    <ErrorBoundary
+      fallback={<ErrorFallback onReset={() => window.location.replace('/')} />}
+    >
       <Theme>
         <Overlay visible={appState.loading} />
         <RouterProvider router={router} />

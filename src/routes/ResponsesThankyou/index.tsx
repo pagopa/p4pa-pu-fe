@@ -9,9 +9,11 @@ import { ThankyouPageConfig } from '../../models/ThankyouPage';
 export const ResponsesThankyou = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { category } = useParams<{category: string}>();
+  const { category } = useParams<{ category: string }>();
 
-  const pageConfig = ThankyouPageConfig[category as keyof typeof ThankyouPageConfig] || ThankyouPageConfig['default'];
+  const pageConfig =
+    ThankyouPageConfig[category as keyof typeof ThankyouPageConfig] ||
+    ThankyouPageConfig['default'];
 
   const handleButtonClick = () => {
     navigate(PageRoutes[pageConfig.routeID]);
@@ -19,8 +21,12 @@ export const ResponsesThankyou = () => {
 
   return (
     <>
-      <ThankYouPage 
-        icon={<CheckCircleOutlineOutlinedIcon sx={{fontSize: 60, color: theme.palette.secondary.main}} />}
+      <ThankYouPage
+        icon={
+          <CheckCircleOutlineOutlinedIcon
+            sx={{ fontSize: 60, color: theme.palette.secondary.main }}
+          />
+        }
         title={t(pageConfig.title)}
         description={t(pageConfig.description)}
         buttonLabel={t('commons.close')}

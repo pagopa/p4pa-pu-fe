@@ -20,9 +20,9 @@ export const responsesRoutes = [
           backButton: false,
           hideBreadcrumbs: true,
           sidebar: {
-            visible: false,
+            visible: false
           }
-        } as RouteHandleObject,
+        } as RouteHandleObject
       }
     ]
   }

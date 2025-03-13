@@ -4,7 +4,9 @@ import FlowDataGrid from '../../components/FlowDataGrid/FlowDataGrid';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import FilterContainer, {
+  COMPONENT_TYPE
+} from '../FilterContainer/FilterContainer';
 import { PageRoutes } from '../../App';
 
 const TelematicReceiptFlowExportOverview = () => {
@@ -20,9 +22,13 @@ const TelematicReceiptFlowExportOverview = () => {
           {
             icon: <Downloading />,
             variant: 'outlined',
-            buttonText: t('telematicReceiptFlowExportOverview.buttonReservationExport'),
+            buttonText: t(
+              'telematicReceiptFlowExportOverview.buttonReservationExport'
+            ),
             onActionClick: () =>
-              navigate(generatePath(PageRoutes.EXPORT_FLOWS, { category: 'receipt' }))
+              navigate(
+                generatePath(PageRoutes.EXPORT_FLOWS, { category: 'receipt' })
+              )
           }
         ]}
         description={t('telematicReceiptFlowExportOverview.description')}
@@ -39,7 +45,9 @@ const TelematicReceiptFlowExportOverview = () => {
             {
               type: COMPONENT_TYPE.dateRange,
               label: 'dateRange',
-              from: { label: t('telematicReceiptFlowExportOverview.exportFrom') },
+              from: {
+                label: t('telematicReceiptFlowExportOverview.exportFrom')
+              },
               gridWidth: 6
             },
             {
@@ -54,7 +62,8 @@ const TelematicReceiptFlowExportOverview = () => {
           sx={{
             bgcolor: theme.palette.grey[200],
             padding: 2
-          }}>
+          }}
+        >
           <FlowDataGrid />
         </Box>
       </Stack>

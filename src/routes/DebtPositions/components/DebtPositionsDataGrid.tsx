@@ -11,24 +11,22 @@ import { PageRoutes } from '../../../App';
 import ActionMenu from '../../../components/ActionMenu/ActionMenu';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import Chip, { ChipProps } from '@mui/material/Chip';
-import {
-  PagedDebtPositionView,
-} from '../../../../generated/data-contracts';
+import { PagedDebtPositionView } from '../../../../generated/data-contracts';
 import { format } from 'date-fns';
 
-interface ResultDataRow extends GridValidRowModel {
+type ResultDataRow = {
   id: number;
   description: string;
   debtType: string;
   creationDate: string;
   status: string;
-}
+} & GridValidRowModel;
 
 export type DataGridProps = {
   data: PagedDebtPositionView;
   onPageChange: (page: number) => void;
   onPageSizeChange: (page: number) => void;
-  onSortChange: (model: string[]) => void;
+  onSortChange: (model: Array<string>) => void;
   pagination: {
     currentPage: number;
     page: number;
@@ -57,7 +55,7 @@ export const DebtPositionsDataGrid = ({
     UNPAID: 'info'
   };
 
-  const columns: GridColDef[] = [
+  const columns: Array<GridColDef> = [
     {
       field: 'description',
       headerName: t('DebtPositions.Results.table.description'),
@@ -107,7 +105,11 @@ export const DebtPositionsDataGrid = ({
               icon: <Visibility fontSize="small" />,
               label: t('commons.view'),
               action: () =>
-                navigate(generatePath(PageRoutes.REPORTING_DETAIL, { id: params.row.idReporting }))
+                navigate(
+                  generatePath(PageRoutes.REPORTING_DETAIL, {
+                    id: params.row.idReporting
+                  })
+                )
             },
             {
               icon: <FileDownload fontSize="small" />,
@@ -122,7 +124,9 @@ export const DebtPositionsDataGrid = ({
 
   const onSort = (model: GridSortModel) => {
     if (model?.length) {
-      const sort = model.map((item) => `${item.field},${item.sort!.toUpperCase()}`);
+      const sort = model.map((item) =>
+        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
+      );
       onPageChange(1);
       onSortChange(sort);
     }

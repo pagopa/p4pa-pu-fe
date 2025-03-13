@@ -7,10 +7,23 @@ const EmptyDetailContainer = () => {
   const theme = useTheme();
 
   return (
-    <Card sx={{ backgroundColor: theme.palette.divider, borderRadius: 2, height: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <Card
+      sx={{
+        backgroundColor: theme.palette.divider,
+        borderRadius: 2,
+        height: '50%',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center'
+      }}
+    >
       <CardContent sx={{ textAlign: 'center' }}>
-        <Category sx={{color: theme.palette.text.secondary}} />
-        <Typography variant="body1" color={theme.palette.text.secondary} sx={{ mt: 1 }}>
+        <Category sx={{ color: theme.palette.text.secondary }} />
+        <Typography
+          variant="body1"
+          color={theme.palette.text.secondary}
+          sx={{ mt: 1 }}
+        >
           {t('installmentDetailPage.noPaymentMade')}
         </Typography>
       </CardContent>

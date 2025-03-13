@@ -1,4 +1,14 @@
-import { Button, FormControl, Grid, InputAdornment, InputLabel, MenuItem, Select, TextField, useTheme } from '@mui/material';
+import {
+  Button,
+  FormControl,
+  Grid,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  useTheme
+} from '@mui/material';
 import { CalendarToday, Search } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
@@ -9,22 +19,22 @@ const TelematicReceiptSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const [selectedValue, setSelectedValue] = React.useState('');
-  
 
   return (
     <>
-      <TitleComponent 
+      <TitleComponent
         title={t('commons.routes.TELEMATIC_RECEIPT_SEARCH_RESULTS')}
-        description={t('telematicreceiptSearchResults.description')} 
+        description={t('telematicreceiptSearchResults.description')}
       />
       <Grid container direction="row">
-        <Grid container 
-          direction="row" 
-          spacing={2} 
-          alignItems={'center'} 
-          justifyContent={'space-between'} 
+        <Grid
+          container
+          direction="row"
+          spacing={2}
+          alignItems={'center'}
+          justifyContent={'space-between'}
           mb={2}
-          component='div'
+          component="div"
           aria-label={t('commons.filters.filtersField')}
         >
           <Grid item lg={3}>
@@ -33,7 +43,11 @@ const TelematicReceiptSearchResults = () => {
               fullWidth
               size="small"
               InputProps={{
-                startAdornment: <InputAdornment position="start"><Search /></InputAdornment>
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                )
               }}
               label={t('commons.searchIUV')}
             />
@@ -46,16 +60,16 @@ const TelematicReceiptSearchResults = () => {
               role="combobox"
               aria-labelledby="due-type-label"
             >
-              <InputLabel id="due-type-label">{t('commons.duetype')}</InputLabel>
+              <InputLabel id="due-type-label">
+                {t('commons.duetype')}
+              </InputLabel>
               <Select
                 labelId="due-type-label"
                 value={selectedValue}
                 onChange={(event) => setSelectedValue(event.target.value)}
                 label={t('commons.duetype')}
               >
-                <MenuItem >
-                  Placeholder
-                </MenuItem>
+                <MenuItem>Placeholder</MenuItem>
               </Select>
             </FormControl>
           </Grid>
@@ -65,19 +79,27 @@ const TelematicReceiptSearchResults = () => {
               fullWidth
               size="small"
               InputProps={{
-                endAdornment: <InputAdornment position="end"><CalendarToday /></InputAdornment>
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <CalendarToday />
+                  </InputAdornment>
+                )
               }}
               label={t('commons.from')}
             />
           </Grid>
-              
+
           <Grid item lg={2}>
             <TextField
               sx={{ bgcolor: theme.palette.common.white }}
               fullWidth
               size="small"
               InputProps={{
-                endAdornment: <InputAdornment position="end"><CalendarToday /></InputAdornment>
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <CalendarToday />
+                  </InputAdornment>
+                )
               }}
               label={t('commons.to')}
             />
@@ -87,12 +109,13 @@ const TelematicReceiptSearchResults = () => {
               fullWidth
               size="medium"
               variant="contained"
-              sx={{height: 40}}>
+              sx={{ height: 40 }}
+            >
               {t('commons.filters.filterResults')}
             </Button>
           </Grid>
         </Grid>
-        <Grid 
+        <Grid
           container
           p={2}
           height="100%"
@@ -100,7 +123,7 @@ const TelematicReceiptSearchResults = () => {
             bgcolor: theme.palette.grey[200],
             overflow: 'auto'
           }}
-          aria-label='results-table'
+          aria-label="results-table"
         >
           <SearchResultsDataGrid />
         </Grid>

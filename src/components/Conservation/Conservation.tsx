@@ -4,7 +4,9 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, generatePath } from 'react-router-dom';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DownloadIcon from '@mui/icons-material/Download';
-import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import FilterContainer, {
+  COMPONENT_TYPE
+} from '../FilterContainer/FilterContainer';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../App';
@@ -14,15 +16,15 @@ export const Conservation = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  interface FlowDataRow {
+  type FlowDataRow = {
     id: number;
     name: string;
     reservationDate: string;
     operator: string;
     size: string;
-  }
+  };
 
-  const rows: FlowDataRow[] = [
+  const rows: Array<FlowDataRow> = [
     {
       id: 1,
       name: 'Esportazione 1',
@@ -53,11 +55,31 @@ export const Conservation = () => {
     }
   ];
 
-  const columns: GridColDef[] = [
-    { field: 'name', headerName: t('flowDataGrid.name'), flex: 1, type: 'string' },
-    { field: 'reservationDate', headerName: t('flowDataGrid.reservationDate'), flex: 1, type: 'string' },
-    { field: 'operator', headerName: t('flowDataGrid.operator'), flex: 1, type: 'string' },
-    { field: 'size', headerName: t('commons.files.size'), flex: 1, type: 'string' },
+  const columns: Array<GridColDef> = [
+    {
+      field: 'name',
+      headerName: t('flowDataGrid.name'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'reservationDate',
+      headerName: t('flowDataGrid.reservationDate'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'operator',
+      headerName: t('flowDataGrid.operator'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'size',
+      headerName: t('commons.files.size'),
+      flex: 1,
+      type: 'string'
+    },
     {
       field: 'download',
       headerName: '',
@@ -71,7 +93,8 @@ export const Conservation = () => {
           size="small"
           onClick={() => {
             console.log(`Download ID: ${params.row.id}`);
-          }}>
+          }}
+        >
           <DownloadIcon />
         </IconButton>
       )
@@ -80,26 +103,30 @@ export const Conservation = () => {
 
   return (
     <>
-      <TitleComponent 
-        title= {t('commons.routes.CONSERVATION')} 
-        callToAction={
-          [
-            {
-              icon: <Downloading />, 
-              variant: 'outlined', 
-              buttonText: t('conservation.buttonReservationExport'), 
-              onActionClick: () => navigate(generatePath(PageRoutes.EXPORT_FLOWS, {category: 'conservation'}))
-            },
-          ]
-        } 
-        description= {t('conservation.description')}
+      <TitleComponent
+        title={t('commons.routes.CONSERVATION')}
+        callToAction={[
+          {
+            icon: <Downloading />,
+            variant: 'outlined',
+            buttonText: t('conservation.buttonReservationExport'),
+            onActionClick: () =>
+              navigate(
+                generatePath(PageRoutes.EXPORT_FLOWS, {
+                  category: 'conservation'
+                })
+              )
+          }
+        ]}
+        description={t('conservation.description')}
       />
       <Grid
         container
         direction="row"
         alignItems={'center'}
         justifyContent={'space-between'}
-        my={2}>
+        my={2}
+      >
         <FilterContainer
           items={[
             {
@@ -112,7 +139,8 @@ export const Conservation = () => {
               type: COMPONENT_TYPE.dateRange,
               label: 'dateRange',
               gridWidth: 5,
-              from: { label: t('dates.from') }, to: { label: t('dates.to') }
+              from: { label: t('dates.from') },
+              to: { label: t('dates.to') }
             },
             {
               type: COMPONENT_TYPE.button,
@@ -127,7 +155,8 @@ export const Conservation = () => {
         sx={{
           bgcolor: theme.palette.grey[200],
           padding: 2
-        }}>
+        }}
+      >
         <CustomDataGrid
           rows={rows}
           columns={columns}

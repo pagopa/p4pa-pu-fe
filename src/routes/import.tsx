@@ -21,7 +21,7 @@ export const importRoutes = [
           sidebar: {
             visible: false
           }
-        } as RouteHandleObject,
+        } as RouteHandleObject
       }
     ]
   }

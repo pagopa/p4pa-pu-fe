@@ -1,7 +1,9 @@
 import { act } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { renderHook } from '../__tests__/renderers';
-import useDebtPositionSearch, { DebtPositionFilters } from './useDebtPositionsSearch';
+import useDebtPositionSearch, {
+  DebtPositionFilters
+} from './useDebtPositionsSearch';
 
 const mockRequest = vi.fn().mockReturnValue({
   mutate: vi.fn(),

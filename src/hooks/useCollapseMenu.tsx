@@ -17,7 +17,8 @@ function useCollapseMenu(initialCollapsedState: boolean) {
 
   const changeMenuState = () => utils.sidemenu.setCollapsed(!collapsed);
   const setCollapsed = (value: boolean) => utils.sidemenu.setCollapsed(value);
-  const setOverlay = (overlayActive: boolean) => utils.sidemenu.setOverlay(overlayActive);
+  const setOverlay = (overlayActive: boolean) =>
+    utils.sidemenu.setOverlay(overlayActive);
 
   useEffect(() => {
     if (isBelowLg && !wasBelowLg) {

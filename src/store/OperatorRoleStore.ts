@@ -6,4 +6,3 @@ export const operatorRoleState = signal<OperatoRole>();
 export function setOperatorRole(operatorRole: OperatoRole) {
   operatorRoleState.value = operatorRole;
 }
-

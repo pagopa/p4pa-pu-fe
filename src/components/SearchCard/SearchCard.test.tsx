@@ -81,7 +81,9 @@ describe('SearchCard', () => {
     render(<SearchCard {...propsWithoutFilter} />);
 
     const filterSelect = screen.queryByRole('combobox', { name: /Filter By/i });
-    const filterInput = screen.queryByRole('textbox', { name: /Filter Input/i });
+    const filterInput = screen.queryByRole('textbox', {
+      name: /Filter Input/i
+    });
 
     expect(filterSelect).toBeNull();
     expect(filterInput).toBeNull();
