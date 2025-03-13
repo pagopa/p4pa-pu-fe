@@ -23,7 +23,7 @@ export const useDebtPositionsTypeOrg = ({ organizationId }: { organizationId: nu
           value: type.debtPositionTypeOrgId ?? 0
         }));
 
-      setDebtPositionsTypes([{ label: t('commons.all'), value: 'TUTTI' }, ...dueTypesMap]);
+      setDebtPositionsTypes([{ label: t('commons.all'), value: 0 }, ...dueTypesMap]);
     }
 
     if (isError) {

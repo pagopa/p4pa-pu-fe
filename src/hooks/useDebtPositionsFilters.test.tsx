@@ -62,15 +62,15 @@ describe('useDebtPositionFilters', () => {
       'fiscalCode',
       'dateRange',
       'status',
-      'duetype',
+      'typeOrgId',
       'applyFilters'
     ]);
 
-    // Check that the 'duetype' filter uses the optionsMap from the mocked hook
-    const duetypeFilter = result.current.filters.find(
-      (f) => f.id === 'duetype'
+    // Check that the 'typeOrgId' filter uses the optionsMap from the mocked hook
+    const typeOrgIdFilter = result.current.filters.find(
+      (f) => f.id === 'typeOrgId'
     ) as SelectField;
-    expect(duetypeFilter.options).toEqual([
+    expect(typeOrgIdFilter.options).toEqual([
       { label: 'Type A', value: 1 },
       { label: 'Type B', value: 2 },
       { label: 'Tutti', value: 'TUTTI' }
@@ -102,7 +102,7 @@ describe('useDebtPositionFilters', () => {
       'iuv',
       'fiscalCode',
       'dateRange',
-      'duetype',
+      'typeOrgId',
       'applyFilters'
     ]);
   });

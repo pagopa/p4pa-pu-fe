@@ -56,7 +56,7 @@ describe('useDebtPositionsTypeOrg', () => {
     const { result } = renderHook(() => useDebtPositionsTypeOrg({ organizationId: 1 }));
 
     expect(result.current.optionsMap).toEqual([
-      { label: 'commons.all', value: 'TUTTI' },
+      { label: 'commons.all', value: 0 },
       { label: 'Type A', value: 1 },
       { label: 'Type B', value: 2 }
     ]);
@@ -71,7 +71,7 @@ describe('useDebtPositionsTypeOrg', () => {
 
     const { result } = renderHook(() => useDebtPositionsTypeOrg({ organizationId: 1 }));
 
-    expect(result.current.optionsMap).toEqual([{ label: 'commons.all', value: 'TUTTI' }]);
+    expect(result.current.optionsMap).toEqual([{ label: 'commons.all', value: 0 }]);
   });
 
   it('should handle API error', () => {

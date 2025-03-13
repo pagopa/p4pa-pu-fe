@@ -61,8 +61,8 @@ export const useDebtPositionFilters = ({
           label: t('commons.duetype'),
           gridWidth: 2,
           options: debtPositionsTypes.optionsMap,
-          id: 'duetype',
-          defaultValue: 'TUTTI'
+          id: 'typeOrgId',
+          defaultValue: 0
         },
         {
           type: COMPONENT_TYPE.button,
@@ -103,8 +103,8 @@ export const useDebtPositionFilters = ({
         label: t('commons.duetype'),
         gridWidth: 2,
         options: debtPositionsTypes.optionsMap,
-        id: 'duetype',
-        defaultValue: 'TUTTI'
+        id: 'typeOrgId',
+        defaultValue: 0
       },
       {
         type: COMPONENT_TYPE.button,

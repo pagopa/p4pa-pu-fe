@@ -63,7 +63,7 @@ export const DebtPositionsDataGrid = ({
       type: 'string'
     },
     {
-      field: 'debtPositionOrigin',
+      field: 'debtPositionTypeOrgDescription',
       headerName: t('DebtPositions.Results.table.debtType'),
       flex: 1,
       type: 'string'
