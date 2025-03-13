@@ -32,12 +32,12 @@ describe('DebtPositionsInstallmentDetail', () => {
     debtor: {
       entityType: 'F',
       fiscalCode: 'RSSMRA92A12B123A',
-      fullName: 'Mario Rossi',
+      fullName: 'Mario Rossi'
     },
     payer: {
       entityType: 'F',
       fiscalCode: 'BNCMRA80A01H501X',
-      fullName: 'Mario Bianchi',
+      fullName: 'Mario Bianchi'
     },
     pspCompanyName: 'Payment Service Provider',
     iud: '123456789012345',
@@ -60,28 +60,38 @@ describe('DebtPositionsInstallmentDetail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
-    (useParams as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ id: mockInstallmentId });
+    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+      mockNavigate
+    );
+    (useParams as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      id: mockInstallmentId
+    });
     (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       state: { [STATE.ORGANIZATION_ID]: mockOrganizationId }
     });
-    (generatePath as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => '/mock-path');
+    (generatePath as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      () => '/mock-path'
+    );
 
-    (getInstallmentDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ data: mockPaidInstallment });
+    (
+      getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({ data: mockPaidInstallment });
   });
 
   it('renders the component with correct title', () => {
     render(<DebtPositionsInstallmentDetail />);
-    
-    expect(screen.getByText('commons.routes.DEBT_POSITION_INSTALLMENT_DETAIL')).toBeInTheDocument();
+
+    expect(
+      screen.getByText('commons.routes.DEBT_POSITION_INSTALLMENT_DETAIL')
+    ).toBeInTheDocument();
   });
 
   it('shows PAID installment', () => {
     render(<DebtPositionsInstallmentDetail />);
-    
+
     expect(screen.getByText('commons.state')).toBeInTheDocument();
     expect(screen.getByText('PAID')).toBeInTheDocument();
-    
+
     expect(screen.getByText('commons.paymentInformation')).toBeInTheDocument();
     expect(screen.getByText('commons.paymentdate')).toBeInTheDocument();
     expect(screen.getByText('commons.executedBy')).toBeInTheDocument();
@@ -90,15 +100,19 @@ describe('DebtPositionsInstallmentDetail', () => {
     expect(screen.getByText('Payment Service Provider')).toBeInTheDocument();
     expect(screen.getByText('commons.debtor')).toBeInTheDocument();
     expect(screen.getByText('Mario Rossi')).toBeInTheDocument();
-    expect(screen.getByText('RSSMRA92A12B123A (commons.person)')).toBeInTheDocument();
+    expect(
+      screen.getByText('RSSMRA92A12B123A (commons.person)')
+    ).toBeInTheDocument();
     expect(screen.queryByText('commons.noPaymentMade')).toBeNull();
   });
 
   it('shows UNPAID installment', () => {
-    (getInstallmentDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({ data: mockUnpaidInstallment });
-    
+    (
+      getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({ data: mockUnpaidInstallment });
+
     render(<DebtPositionsInstallmentDetail />);
-    
+
     expect(screen.getByText('commons.noPaymentMade')).toBeInTheDocument();
     expect(screen.queryByText('commons.paymentInformation')).toBeNull();
   });

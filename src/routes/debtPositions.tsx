@@ -44,8 +44,8 @@ export const debtPositionsRoutes = [
       {
         id: 'DEBT_POSITION_INSTALLMENT_DETAIL',
         path: 'installments/:id',
-        element: <DebtPositionsInstallmentDetail />,
-      },
+        element: <DebtPositionsInstallmentDetail />
+      }
     ]
   }
 ];

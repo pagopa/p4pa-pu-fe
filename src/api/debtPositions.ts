@@ -91,7 +91,7 @@ export const getInstallmentDetail = (
   return useQuery({
     queryKey: ['installmentDetail', organizationId, installmentId],
     queryFn: async () => {
-      const { data: installment } = 
+      const { data: installment } =
         await utils.apiClient.bff.getInstallmentDetail(
           organizationId,
           installmentId

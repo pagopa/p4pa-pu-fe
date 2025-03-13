@@ -9,7 +9,10 @@ import { Chip, ChipProps, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../../App';
 import { generatePath, useNavigate } from 'react-router';
-import { InstallmentView, PagedInstallmentView } from '../../../../generated/data-contracts';
+import {
+  InstallmentView,
+  PagedInstallmentView
+} from '../../../../generated/data-contracts';
 import { format } from 'date-fns/format';
 import { moneyFormat } from '../../../utils/formatters';
 
@@ -107,7 +110,11 @@ export const IUVDataGrid = ({
           color="primary"
           sx={{ cursor: 'pointer' }}
           onClick={() => {
-            navigate(generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, { id: params.row.installmentId }));
+            navigate(
+              generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
+                id: params.row.installmentId
+              })
+            );
           }}
         />
       )
