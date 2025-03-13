@@ -6,7 +6,7 @@ import {
   ButtonField,
   SelectField
 } from '../components/FilterContainer/FilterContainer';
-import debtPositions from '../api/debtPositions';
+import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 
 vi.mock('../api/debtPositions', () => ({
   default: {
@@ -32,7 +32,7 @@ describe('useDebtPositionFilters', () => {
   });
 
   it('should return correct filters for DEBT_POSITION search type', async () => {
-    (debtPositions.getDebtPositionsTypes as unknown as Mock).mockReturnValue({
+    (getDebtPositionsTypes as unknown as Mock).mockReturnValue({
       isSuccess: true,
       data: {
         data: {
@@ -78,7 +78,7 @@ describe('useDebtPositionFilters', () => {
   });
 
   it('should return correct filters for IUV search type', () => {
-    (debtPositions.getDebtPositionsTypes as unknown as Mock).mockReturnValue({
+    (getDebtPositionsTypes as unknown as Mock).mockReturnValue({
       isSuccess: true,
       data: {
         data: {
@@ -108,7 +108,7 @@ describe('useDebtPositionFilters', () => {
   });
 
   it('should call onFilter when the apply button is triggered', () => {
-    (debtPositions.getDebtPositionsTypes as unknown as Mock).mockReturnValue({
+    (getDebtPositionsTypes as unknown as Mock).mockReturnValue({
       isSuccess: true,
       data: {
         data: {

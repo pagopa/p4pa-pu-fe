@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import utils from '../utils';
 
 type DebtPositionViewParams = Parameters<
@@ -37,20 +37,6 @@ const getDebtPositionViews = ({
     }
   });
 
-const getDebtPositionsTypes = ({
-  organizationId
-}: {
-  organizationId: number;
-}) =>
-  useQuery({
-    queryKey: ['getDebtPositionsTypes'],
-    queryFn: async () => {
-      const { data: response } =
-        await utils.apiClient.bff.getDebtPositionTypeOrgs(organizationId);
-      return response;
-    }
-  });
-
 type DebtPositionInstallmentsParams = Parameters<
   typeof utils.apiClient.bff.getInstallments
 >;
@@ -85,4 +71,4 @@ const getInstallments = ({
     }
   });
 
-export default { getDebtPositionViews, getDebtPositionsTypes, getInstallments };
+export default { getDebtPositionViews, getInstallments };

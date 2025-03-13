@@ -1,9 +1,9 @@
 import { renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
-import debtPositions from '../api/debtPositions';
 import { QueryObserverPendingResult } from '@tanstack/react-query';
 import { DebtPositionTypeOrg } from '../../generated/apiClient';
+import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 
 vi.mock('../api/debtPositions', () => ({
   default: {
@@ -17,7 +17,10 @@ vi.mock('react-i18next', () => ({
   })
 }));
 
-type MockQueryType = QueryObserverPendingResult<DebtPositionTypeOrg[], Error>;
+type MockQueryType = QueryObserverPendingResult<
+  Array<DebtPositionTypeOrg>,
+  Error
+>;
 
 describe('useDebtPositionsTypeOrg', () => {
   const mockQueryResult = {
@@ -34,9 +37,11 @@ describe('useDebtPositionsTypeOrg', () => {
   });
 
   it('should initialize with an empty options list', () => {
-    vi.mocked(debtPositions.getDebtPositionsTypes).mockReturnValue(mockQueryResult);
+    vi.mocked(getDebtPositionsTypes).mockReturnValue(mockQueryResult);
 
-    const { result } = renderHook(() => useDebtPositionsTypeOrg({ organizationId: 1 }));
+    const { result } = renderHook(() =>
+      useDebtPositionsTypeOrg({ organizationId: 1 })
+    );
 
     expect(result.current.optionsMap).toEqual([]);
   });
@@ -47,13 +52,15 @@ describe('useDebtPositionsTypeOrg', () => {
       { description: 'Type B', debtPositionTypeOrgId: 2 }
     ];
 
-    vi.mocked(debtPositions.getDebtPositionsTypes).mockReturnValue({
+    vi.mocked(getDebtPositionsTypes).mockReturnValue({
       ...mockQueryResult,
       data: mockData,
       isSuccess: true
     } as unknown as MockQueryType);
 
-    const { result } = renderHook(() => useDebtPositionsTypeOrg({ organizationId: 1 }));
+    const { result } = renderHook(() =>
+      useDebtPositionsTypeOrg({ organizationId: 1 })
+    );
 
     expect(result.current.optionsMap).toEqual([
       { label: 'commons.all', value: 0 },
@@ -63,21 +70,27 @@ describe('useDebtPositionsTypeOrg', () => {
   });
 
   it('should handle empty or invalid response', () => {
-    vi.mocked(debtPositions.getDebtPositionsTypes).mockReturnValue({
+    vi.mocked(getDebtPositionsTypes).mockReturnValue({
       ...mockQueryResult,
       data: [],
       isSuccess: true
     } as unknown as MockQueryType);
 
-    const { result } = renderHook(() => useDebtPositionsTypeOrg({ organizationId: 1 }));
+    const { result } = renderHook(() =>
+      useDebtPositionsTypeOrg({ organizationId: 1 })
+    );
 
-    expect(result.current.optionsMap).toEqual([{ label: 'commons.all', value: 0 }]);
+    expect(result.current.optionsMap).toEqual([
+      { label: 'commons.all', value: 0 }
+    ]);
   });
 
   it('should handle API error', () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => null);
 
-    vi.mocked(debtPositions.getDebtPositionsTypes).mockReturnValue({
+    vi.mocked(getDebtPositionsTypes).mockReturnValue({
       ...mockQueryResult,
       isError: true,
       error: new Error('API error')
