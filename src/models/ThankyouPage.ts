@@ -1,8 +1,8 @@
-interface ThankyouPage {
+type ThankyouPage = {
   title: string;
   description: string;
   routeID: string;
-}
+};
 
 type ThankyouOpts = Record<string, ThankyouPage>;
 
@@ -38,4 +38,3 @@ export const ThankyouPageConfig: ThankyouOpts = {
     routeID: 'DEBT_POSITIONS'
   }
 };
-

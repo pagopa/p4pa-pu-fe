@@ -1,16 +1,22 @@
 import React from 'react';
-import { IconButton, Menu, MenuItem, ListItemIcon, ListItemText } from '@mui/material';
+import {
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText
+} from '@mui/material';
 import MoreVert from '@mui/icons-material/MoreVert';
-interface MenuItemProps {
+type MenuItemProps = {
   icon: React.ReactNode;
   label: string;
   action: () => void;
-}
+};
 
-interface ActionMenuProps {
+type ActionMenuProps = {
   rowId: number;
-  menuItems: MenuItemProps[];
-}
+  menuItems: Array<MenuItemProps>;
+};
 
 const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
@@ -42,13 +48,13 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
         open={open}
         onClose={handleClose}
         MenuListProps={{
-          'aria-labelledby': `menu-button-${rowId}`,
+          'aria-labelledby': `menu-button-${rowId}`
         }}
       >
         {menuItems.map((item, index) => (
-          <MenuItem 
+          <MenuItem
             key={`${rowId}-${index}`}
-            onClick={ () => {
+            onClick={() => {
               item.action();
               handleClose();
             }}

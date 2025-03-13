@@ -4,7 +4,6 @@ import { useFlowFilters } from './useFlowFilters';
 import { FlowFileFilters, FlowFileType } from '../models/Filters';
 import { GridSortModel } from '@mui/x-data-grid';
 
-
 describe('useFlowFilters', () => {
   beforeEach(() => {
     vi.useFakeTimers();
@@ -16,9 +15,11 @@ describe('useFlowFilters', () => {
   });
 
   it('should initialize with default values', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     expect(result.current.appliedFilters).toEqual({
       flowFileTypes: [FlowFileType.RECEIPT],
@@ -34,9 +35,11 @@ describe('useFlowFilters', () => {
   });
 
   it('should update draft filters without affecting applied filters', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     act(() => {
       result.current.updateDraftFilters({ fileName: 'test.pdf' });
@@ -47,12 +50,14 @@ describe('useFlowFilters', () => {
   });
 
   it('should apply filters and reset page to 0', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     act(() => {
-      result.current.updateDraftFilters({ 
+      result.current.updateDraftFilters({
         fileName: 'test.pdf',
         status: 'COMPLETED',
         page: 2
@@ -70,9 +75,11 @@ describe('useFlowFilters', () => {
   });
 
   it('should update pagination immediately', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     act(() => {
       result.current.updatePagination({ page: 2, size: 20 });
@@ -85,9 +92,11 @@ describe('useFlowFilters', () => {
   });
 
   it('should handle null dates correctly', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     act(() => {
       result.current.handleDateFromChange(null);
@@ -99,9 +108,11 @@ describe('useFlowFilters', () => {
   });
 
   it('should maintain all filters when applying new ones', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     act(() => {
       result.current.updateDraftFilters({ fileName: 'test.pdf' });
@@ -125,9 +136,11 @@ describe('useFlowFilters', () => {
   });
 
   it('should handle date from changes correctly', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
     const testDate = new Date('2024-01-01T12:00:00.000Z');
 
     act(() => {
@@ -142,9 +155,11 @@ describe('useFlowFilters', () => {
   });
 
   it('should handle date to changes correctly', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
     const testDate = new Date('2024-01-01T12:00:00.000Z');
 
     act(() => {
@@ -159,17 +174,16 @@ describe('useFlowFilters', () => {
   });
 
   it('should update sort model and filters when sorting is applied', () => {
-
     const onFiltersChange = vi.fn();
-    
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-      onFiltersChange
-    }));
 
-    const newSortModel: GridSortModel = [
-      { field: 'fileName', sort: 'asc' }
-    ];
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT],
+        onFiltersChange
+      })
+    );
+
+    const newSortModel: GridSortModel = [{ field: 'fileName', sort: 'asc' }];
 
     act(() => {
       result.current.handleSortModelChange(newSortModel);
@@ -196,11 +210,13 @@ describe('useFlowFilters', () => {
 
   it('should remove sort when empty sort model is provided', () => {
     const onFiltersChange = vi.fn();
-    
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-      onFiltersChange
-    }));
+
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT],
+        onFiltersChange
+      })
+    );
 
     act(() => {
       result.current.handleSortModelChange([
@@ -225,18 +241,19 @@ describe('useFlowFilters', () => {
   });
 
   it('should maintain other filter values when updating sort', () => {
-
     type FlowFileStatus = 'UPLOADED' | 'PROCESSING' | 'COMPLETED' | 'ERROR';
-    
+
     const initialFilters: Partial<FlowFileFilters> = {
       fileName: 'test.pdf',
       status: 'COMPLETED' as FlowFileStatus
     };
 
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-      initialFilters
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT],
+        initialFilters
+      })
+    );
 
     act(() => {
       result.current.handleSortModelChange([
@@ -255,17 +272,21 @@ describe('useFlowFilters', () => {
   });
 
   it('should return false when draft filters match applied filters', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT]
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     expect(result.current.hasActiveFilters()).toBe(false);
   });
 
   it('should return true when fileName is changed', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT]
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     act(() => {
       result.current.updateDraftFilters({ fileName: 'test.pdf' });
@@ -275,9 +296,11 @@ describe('useFlowFilters', () => {
   });
 
   it('should return true when status is changed', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT]
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     act(() => {
       result.current.updateDraftFilters({ status: 'COMPLETED' });
@@ -287,14 +310,16 @@ describe('useFlowFilters', () => {
   });
 
   it('should return true when dates are changed', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT]
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     const testDate = new Date('2024-01-01T12:00:00.000Z').toISOString();
 
     act(() => {
-      result.current.updateDraftFilters({ 
+      result.current.updateDraftFilters({
         creationDateFrom: testDate,
         creationDateTo: testDate
       });
@@ -304,9 +329,11 @@ describe('useFlowFilters', () => {
   });
 
   it('should return false after applying filters', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT]
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT]
+      })
+    );
 
     act(() => {
       result.current.updateDraftFilters({ fileName: 'test.pdf' });
@@ -322,12 +349,14 @@ describe('useFlowFilters', () => {
   });
 
   it('should handle undefined values correctly', () => {
-    const { result } = renderHook(() => useFlowFilters({
-      flowFileTypes: [FlowFileType.RECEIPT],
-      initialFilters: {
-        fileName: 'initial.pdf'
-      }
-    }));
+    const { result } = renderHook(() =>
+      useFlowFilters({
+        flowFileTypes: [FlowFileType.RECEIPT],
+        initialFilters: {
+          fileName: 'initial.pdf'
+        }
+      })
+    );
 
     act(() => {
       result.current.updateDraftFilters({ fileName: undefined });

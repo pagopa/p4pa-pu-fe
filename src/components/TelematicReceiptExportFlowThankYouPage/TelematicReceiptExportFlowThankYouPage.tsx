@@ -16,8 +16,12 @@ export const TelematicReceiptExportFlowThankYouPage = () => {
 
   return (
     <>
-      <ThankYouPage 
-        icon={<CheckCircleOutlineOutlinedIcon sx={{fontSize: 60, color: theme.palette.secondary.main}} />}
+      <ThankYouPage
+        icon={
+          <CheckCircleOutlineOutlinedIcon
+            sx={{ fontSize: 60, color: theme.palette.secondary.main }}
+          />
+        }
         title={t('commons.successExport')}
         description={t('telematicReceiptExportFlowThankYouPage.description')}
         buttonLabel={t('commons.close')}

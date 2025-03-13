@@ -1,5 +1,10 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, renderHook, RenderHookOptions, RenderOptions } from '@testing-library/react';
+import {
+  render,
+  renderHook,
+  RenderHookOptions,
+  RenderOptions
+} from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
 import { it } from 'date-fns/locale/it';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';

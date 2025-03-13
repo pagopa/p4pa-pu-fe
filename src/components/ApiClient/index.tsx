@@ -3,11 +3,10 @@ import { Outlet } from 'react-router-dom';
 import { setupInterceptors } from '../../utils/interceptors';
 
 type ApiClientProps = {
-  clients: Client[];
+  clients: Array<Client>;
 };
 
 export const ApiClient = ({ clients }: ApiClientProps) => {
-
   clients.forEach((c) => {
     setupInterceptors(c);
   });

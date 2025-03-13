@@ -23,7 +23,6 @@ const mockUploadIngestionFlowFile = vi.mocked(
 );
 
 describe('uploadIngestionFlowFile', () => {
-
   it('uploads file with correct parameters', async () => {
     const file = new File(['test content'], 'test.csv', { type: 'text/csv' });
     const mockResponse = { success: true };

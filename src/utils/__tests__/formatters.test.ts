@@ -26,17 +26,23 @@ describe('moneyFormat', () => {
 
   it('should handle negative values correctly', () => {
     const formattedNegative = moneyFormat(-10000);
-    console.log(`Negative formatted value: "${formattedNegative}", length: ${formattedNegative.length}`);
-    
+    console.log(
+      `Negative formatted value: "${formattedNegative}", length: ${formattedNegative.length}`
+    );
+
     expect(formattedNegative).toMatch(/-100,00/);
     expect(moneyFormat(-10000, 0)).toMatch(/-10\.000,00/);
   });
 
   it('should handle decimal input values correctly', () => {
     const formattedValue = moneyFormat(1234.56);
-    console.log(`Formatted value: "${formattedValue}", length: ${formattedValue.length}`);
+    console.log(
+      `Formatted value: "${formattedValue}", length: ${formattedValue.length}`
+    );
 
     expect(formattedValue).toEqual(expect.stringContaining('12,35'));
-    expect(moneyFormat(1234.56, 0)).toEqual(expect.stringContaining('1.234,56'));
+    expect(moneyFormat(1234.56, 0)).toEqual(
+      expect.stringContaining('1.234,56')
+    );
   });
 });

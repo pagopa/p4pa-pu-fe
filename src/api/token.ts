@@ -5,10 +5,10 @@ import { accessTokenSchema } from '../../generated/zod-schema';
 export const postToken = async () => {
   const currentUrl = new URL(window.location.href);
   const idToken = currentUrl.hash.replace('#', '') || '';
-  
+
   try {
-    const { data: token } = await utils.apiClient.bff.postToken({idToken});
-      
+    const { data: token } = await utils.apiClient.bff.postToken({ idToken });
+
     parseAndLog(accessTokenSchema, token);
     return token;
   } catch {

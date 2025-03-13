@@ -15,10 +15,10 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
 
-export interface HeaderProps {
+export type HeaderProps = {
   onAssistanceClick?: () => void;
   onDocumentationClick?: () => void;
-}
+};
 
 export const Header = (props: HeaderProps) => {
   /* istanbul ignore next */
@@ -28,12 +28,13 @@ export const Header = (props: HeaderProps) => {
   const organizations = useOrganizations();
   const { setState, state } = useStore();
 
-  const organizationsToMenuItems: PartyEntity[] | undefined = organizations?.map(item => ({
-    id: item.organizationId.toString(),
-    logoUrl: item.orgLogo,
-    name: item.orgName || 'Ente senza nome',
-    productRole: item.operatorRole || ''
-  }));
+  const organizationsToMenuItems: Array<PartyEntity> | undefined =
+    organizations?.map((item) => ({
+      id: item.organizationId.toString(),
+      logoUrl: item.orgLogo,
+      name: item.orgName || 'Ente senza nome',
+      productRole: item.operatorRole || ''
+    }));
 
   async function logoutUser() {
     /* TO-DO define a logout strategy */
@@ -42,15 +43,14 @@ export const Header = (props: HeaderProps) => {
 
   /* Mocked data */
   /* TO-DO call a service */
-  const jwtUser: JwtUser | undefined =
-    {
-      id: 'marcopolo',
-      name: 'Marco',
-      surname: 'Polo',
-      email: ''
-    };
+  const jwtUser: JwtUser | undefined = {
+    id: 'marcopolo',
+    name: 'Marco',
+    surname: 'Polo',
+    email: ''
+  };
 
-  const userActions: UserAction[] = [
+  const userActions: Array<UserAction> = [
     {
       id: 'profile',
       label: 'I tuoi dati',
@@ -73,7 +73,6 @@ export const Header = (props: HeaderProps) => {
     title: 'Piattaforma Unitaria',
     productUrl: '#pu',
     linkType: 'internal'
-
   };
 
   const onSelectedParty = (organization: PartySwitchItem) => {
@@ -93,8 +92,10 @@ export const Header = (props: HeaderProps) => {
         userActions={userActions}
       />
       <HeaderProduct
-        onSelectedParty={e => onSelectedParty(e)}
-        partyId={state.organizationId ? state.organizationId.toString() : undefined}
+        onSelectedParty={onSelectedParty}
+        partyId={
+          state.organizationId ? state.organizationId.toString() : undefined
+        }
         partyList={organizationsToMenuItems}
         productsList={[product]}
       />

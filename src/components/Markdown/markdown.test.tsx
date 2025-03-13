@@ -23,10 +23,10 @@ describe('MarkdownText Component', () => {
   });
 
   it('sanitizes dangerous HTML content', () => {
-    const markdown = '**Safe**<script>alert(\'Hacked!\')';
+    const markdown = "**Safe**<script>alert('Hacked!')";
     render(<Markdown>{markdown}</Markdown>);
 
-    expect(screen.getByText('alert(\'Hacked!\')').tagName).not.toBe('SCRIPT');
+    expect(screen.getByText("alert('Hacked!')").tagName).not.toBe('SCRIPT');
     expect(screen.getByText('Safe')).toBeInTheDocument();
     expect(screen.getByText('Safe').tagName).toBe('STRONG');
   });

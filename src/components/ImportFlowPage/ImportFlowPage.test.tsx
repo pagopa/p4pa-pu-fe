@@ -27,7 +27,9 @@ describe('ImportFlow', () => {
       expect(screen.getByText('commons.importNewFlow')).toBeDefined();
       expect(screen.getByText('commons.flowImport.description')).toBeDefined();
       expect(screen.getByText('commons.flowImport.boxTitle')).toBeDefined();
-      expect(screen.getByText('commons.flowImport.boxDescription')).toBeDefined();
+      expect(
+        screen.getByText('commons.flowImport.boxDescription')
+      ).toBeDefined();
       expect(screen.getByText('commons.flowImport.manualLink')).toBeDefined();
       expect(screen.queryByText('commons.requiredFieldDescription')).toBeNull();
       expect(screen.queryByLabelText('commons.flowType')).toBeNull();
@@ -36,7 +38,9 @@ describe('ImportFlow', () => {
     it('should enable button when a file is uploaded', async () => {
       render(<ImportFlow />);
 
-      const file = new File(['content'], 'test.zip', { type: 'application/zip' });
+      const file = new File(['content'], 'test.zip', {
+        type: 'application/zip'
+      });
       const dropZone = screen.getByTestId('drop-zone');
 
       fireEvent.dragOver(dropZone);
@@ -46,7 +50,9 @@ describe('ImportFlow', () => {
         }
       });
 
-      await vi.waitFor(() => expect(screen.getAllByText('test.zip')).toBeDefined());
+      await vi.waitFor(() =>
+        expect(screen.getAllByText('test.zip')).toBeDefined()
+      );
       const successButton = screen.getByTestId('success-button');
 
       expect(successButton).toHaveProperty('disabled', false);
@@ -62,15 +68,22 @@ describe('ImportFlow', () => {
       render(<ImportFlow />);
 
       expect(screen.getByText('commons.importNewFlow')).toBeDefined();
-      expect(screen.getByText('commons.requiredFieldDescription')).toBeDefined();
+      expect(
+        screen.getByText('commons.requiredFieldDescription')
+      ).toBeDefined();
       expect(screen.getByRole('select-flowType')).toBeDefined();
-      expect(screen.getByTestId('success-button')).toHaveProperty('disabled', true);
+      expect(screen.getByTestId('success-button')).toHaveProperty(
+        'disabled',
+        true
+      );
     });
 
     it('should show all flow type options when select is clicked', () => {
       render(<ImportFlow />);
 
-      const selectCombo = screen.getByRole('combobox', { name: 'commons.flowType' });
+      const selectCombo = screen.getByRole('combobox', {
+        name: 'commons.flowType'
+      });
       fireEvent.mouseDown(selectCombo);
 
       const listbox = within(screen.getByRole('listbox'));
@@ -79,7 +92,7 @@ describe('ImportFlow', () => {
         'commons.flowTypes.TREASURY_OPI',
         'commons.flowTypes.TREASURY_CSV',
         'commons.flowTypes.TREASURY_XLS',
-        'commons.flowTypes.TREASURY_POSTE',
+        'commons.flowTypes.TREASURY_POSTE'
       ];
 
       options.forEach((option) => {
@@ -89,7 +102,9 @@ describe('ImportFlow', () => {
     it('should enable button when a file is uploaded and a flow type is selected', async () => {
       render(<ImportFlow />);
 
-      const file = new File(['content'], 'test.zip', { type: 'application/zip' });
+      const file = new File(['content'], 'test.zip', {
+        type: 'application/zip'
+      });
       const dropZone = screen.getByTestId('drop-zone');
 
       fireEvent.dragOver(dropZone);
@@ -99,15 +114,24 @@ describe('ImportFlow', () => {
         }
       });
 
-      await vi.waitFor(() => expect(screen.getAllByText('test.zip')).toBeDefined());
+      await vi.waitFor(() =>
+        expect(screen.getAllByText('test.zip')).toBeDefined()
+      );
 
-      const selectCombo = screen.getByRole('combobox', { name: 'commons.flowType' });
+      const selectCombo = screen.getByRole('combobox', {
+        name: 'commons.flowType'
+      });
       fireEvent.mouseDown(selectCombo);
 
-      const firstOption = within(screen.getByRole('listbox')).getAllByRole('option')[0];
+      const firstOption = within(screen.getByRole('listbox')).getAllByRole(
+        'option'
+      )[0];
       fireEvent.click(firstOption);
 
-      expect(screen.getByTestId('success-button')).toHaveProperty('disabled', false);
+      expect(screen.getByTestId('success-button')).toHaveProperty(
+        'disabled',
+        false
+      );
     });
   });
 });

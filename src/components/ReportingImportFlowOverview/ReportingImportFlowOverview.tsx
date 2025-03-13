@@ -10,7 +10,10 @@ export const ReportingImportFlowOverview = () => {
       routingCategory="reporting"
       title={t('commons.routes.REPORTING_IMPORT_FLOW_OVERVIEW')}
       description={t('reportingImportFlowOverview.description')}
-      flowFileTypes={[FlowFileType.PAYMENTS_REPORTING, FlowFileType.PAYMENTS_REPORTING_PAGOPA]}
+      flowFileTypes={[
+        FlowFileType.PAYMENTS_REPORTING,
+        FlowFileType.PAYMENTS_REPORTING_PAGOPA
+      ]}
     />
   );
 };

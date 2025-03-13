@@ -1,23 +1,22 @@
+type DetailFlowData = {
+  title: string;
+  downloadButton?: boolean;
+  splitCard?: boolean;
+};
 
-interface DetailFlowData {
-  title: string,
-  downloadButton?: boolean,
-  splitCard?: boolean,
-}
-
-type DetailsFlowData = Record<string, DetailFlowData>
+type DetailsFlowData = Record<string, DetailFlowData>;
 
 export const detailConfig: DetailsFlowData = {
-  'receipt': {
+  receipt: {
     title: 'telematicReceiptDetail.title',
     downloadButton: true,
     splitCard: true
   },
-  'reporting': {
+  reporting: {
     title: 'commons.routes.REPORTING_PAYMENT_DETAIL',
     splitCard: true
   },
-  'treasury': {
+  treasury: {
     title: 'treasury.billDetail',
     downloadButton: true
   }

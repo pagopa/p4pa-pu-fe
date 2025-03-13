@@ -19,7 +19,7 @@ export type MultiFilterProps = {
 const MultiFilter = ({ filterMap }: MultiFilterProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
-  
+
   const {
     state: { filters }
   } = useStore();
@@ -39,12 +39,18 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
   return (
     <Stack gap={3}>
       {filters.map((filterId, index) => (
-        <Stack key={filterId} direction="row" gap={2} justifyContent="space-between">
+        <Stack
+          key={filterId}
+          direction="row"
+          gap={2}
+          justifyContent="space-between"
+        >
           {filters.length > 1 && (
             <IconButton
-              sx={{color: theme.palette.error.dark, alignSelf: 'flex-start'}}
+              sx={{ color: theme.palette.error.dark, alignSelf: 'flex-start' }}
               onClick={() => removeFilterRow(filterId)}
-              aria-label="remove">
+              aria-label="remove"
+            >
               <RemoveCircleOutline fontSize="small" />
             </IconButton>
           )}
@@ -62,7 +68,8 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
           variant="text"
           onClick={addNextFilterRow}
           startIcon={<Add />}
-          disabled={filters.length >= Object.keys(filterMap).length}>
+          disabled={filters.length >= Object.keys(filterMap).length}
+        >
           {t('commons.addfilter')}
         </Button>
       </Box>

@@ -21,7 +21,7 @@ export const exportRoutes = [
           sidebar: {
             visible: false
           }
-        } as RouteHandleObject,
+        } as RouteHandleObject
       }
     ]
   }

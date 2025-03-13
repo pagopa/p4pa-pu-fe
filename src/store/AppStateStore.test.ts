@@ -3,8 +3,9 @@ import { AppState } from '../models/AppState';
 import { appState, setAppState, setLoading } from './AppStateStore';
 
 vi.mock('@preact/signals-react', async () => {
-  const actual =
-    await vi.importActual<typeof import('@preact/signals-react')>('@preact/signals-react');
+  const actual = await vi.importActual<typeof import('@preact/signals-react')>(
+    '@preact/signals-react'
+  );
   return {
     ...actual,
     signal: vi.fn(actual.signal)

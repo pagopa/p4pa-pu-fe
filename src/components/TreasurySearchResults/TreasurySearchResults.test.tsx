@@ -12,14 +12,19 @@ vi.mock('react-i18next', () => ({
 vi.mock('react-router', () => ({
   useNavigate: vi.fn(),
   generatePath: vi.fn(),
-  Navigate: ({to}: {to: string}) => `Navigation to ${to}`
+  Navigate: ({ to }: { to: string }) => `Navigation to ${to}`
 }));
 
 vi.mock('../Drawer/CustomDrawer', () => ({
-  default: ({ open, onClose }: {open: boolean, onClose: () => void}) => (
-    <div data-testid="custom-drawer" style={{ display: open ? 'block' : 'none' }}>
+  default: ({ open, onClose }: { open: boolean; onClose: () => void }) => (
+    <div
+      data-testid="custom-drawer"
+      style={{ display: open ? 'block' : 'none' }}
+    >
       Drawer Content
-      <button onClick={onClose} data-testid="close-drawer">Close</button>
+      <button onClick={onClose} data-testid="close-drawer">
+        Close
+      </button>
     </div>
   )
 }));

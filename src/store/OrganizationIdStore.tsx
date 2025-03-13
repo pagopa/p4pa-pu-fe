@@ -1,4 +1,3 @@
-
 import { usePersistentSignal } from '../hooks/usePersistentSignal';
 import { OrganizationIdMemo } from '../models/Organization';
 import { STATE } from './types';
@@ -6,7 +5,9 @@ import { STATE } from './types';
 // Initialize the persistent store
 export const organizationIdState = usePersistentSignal<OrganizationIdMemo>(
   STATE.ORGANIZATION_ID,
-  { storage: sessionStorage }
+  {
+    storage: sessionStorage
+  }
 );
 
 // Function to update the organizationId

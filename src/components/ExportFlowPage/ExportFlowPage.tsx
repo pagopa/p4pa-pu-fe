@@ -1,4 +1,9 @@
-import { ArrowBack, CalendarToday, Dashboard, InsertDriveFile } from '@mui/icons-material';
+import {
+  ArrowBack,
+  CalendarToday,
+  Dashboard,
+  InsertDriveFile
+} from '@mui/icons-material';
 import { Button, Grid, GridDirection } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router-dom';
@@ -8,15 +13,14 @@ import { useState } from 'react';
 import { PageRoutes } from '../../App';
 
 export const ExportFlowPage = () => {
-
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { category } = useParams<{category: string}>();
+  const { category } = useParams<{ category: string }>();
 
   const [formData, setFormData] = useState({
     from: '',
     to: '',
-    fileVersion: '',
+    fileVersion: ''
   });
 
   const handleChange = (field: string, value: string) => {
@@ -42,7 +46,7 @@ export const ExportFlowPage = () => {
 
   return (
     <>
-      <TitleComponent 
+      <TitleComponent
         title={t('exportFlow.title')}
         description={t('exportFlow.description')}
       />
@@ -51,7 +55,7 @@ export const ExportFlowPage = () => {
           {
             direction: 'row',
             title: {
-              icon: <InsertDriveFile sx={{marginRight: 1}}/>,
+              icon: <InsertDriveFile sx={{ marginRight: 1 }} />,
               label: t('commons.paymentDate')
             },
             inputFields: [
@@ -74,7 +78,7 @@ export const ExportFlowPage = () => {
           {
             direction: 'column',
             title: {
-              icon: <InsertDriveFile sx={{marginRight: 1}}/>,
+              icon: <InsertDriveFile sx={{ marginRight: 1 }} />,
               label: t('exportFlow.fileVersion')
             },
             inputFields: [
@@ -89,22 +93,22 @@ export const ExportFlowPage = () => {
           },
           ...(category !== 'conservation'
             ? [
-              {
-                direction: 'column' as GridDirection,
-                title: {
-                  icon: <Dashboard sx={{ marginRight: 1 }} />,
-                  label: t('exportFlow.dueType')
-                },
-                inputFields: [
-                  {
-                    label: t('exportFlow.dueTypePlaceHolder'),
-                    gridWidth: 12,
-                    fieldKey: 'dueType'
-                  }
-                ],
-                selectOptions: selectOptionsDueType
-              }
-            ]
+                {
+                  direction: 'column' as GridDirection,
+                  title: {
+                    icon: <Dashboard sx={{ marginRight: 1 }} />,
+                    label: t('exportFlow.dueType')
+                  },
+                  inputFields: [
+                    {
+                      label: t('exportFlow.dueTypePlaceHolder'),
+                      gridWidth: 12,
+                      fieldKey: 'dueType'
+                    }
+                  ],
+                  selectOptions: selectOptionsDueType
+                }
+              ]
             : [])
         ]}
         formData={formData}
@@ -118,8 +122,10 @@ export const ExportFlowPage = () => {
             size="large"
             variant="outlined"
             fullWidth
-            startIcon={<ArrowBack />} 
-            onClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW) }
+            startIcon={<ArrowBack />}
+            onClick={() =>
+              navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW)
+            }
           >
             {t('commons.exit')}
           </Button>
@@ -131,7 +137,13 @@ export const ExportFlowPage = () => {
             size="large"
             variant="contained"
             fullWidth
-            onClick={() => navigate(generatePath(PageRoutes.RESPONSES_THANKYOU, {category: 'telematic-receipt-export'})) }
+            onClick={() =>
+              navigate(
+                generatePath(PageRoutes.RESPONSES_THANKYOU, {
+                  category: 'telematic-receipt-export'
+                })
+              )
+            }
           >
             {t('exportFlow.buttonConfirmReservation')}
           </Button>
