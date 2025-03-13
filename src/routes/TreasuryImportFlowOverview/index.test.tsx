@@ -8,7 +8,6 @@ vi.mock('react-router-dom', async (importOriginal) => ({
 }));
 
 describe('Treasury Import Flow Overview Page', () => {
-
   it('renders Treasury Import Flow Overview Page without crashing', () => {
     render(<TreasuryImportFlowOverview />);
   });

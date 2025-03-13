@@ -90,7 +90,7 @@ describe('DebtPositionsInstallmentDetail', () => {
     expect(screen.getByText('Payment Service Provider')).toBeInTheDocument();
     expect(screen.getByText('commons.debtor')).toBeInTheDocument();
     expect(screen.getByText('Mario Rossi')).toBeInTheDocument();
-    expect(screen.getByText('RSSMRA92A12B123A (commons.individual)')).toBeInTheDocument();
+    expect(screen.getByText('RSSMRA92A12B123A (commons.person)')).toBeInTheDocument();
     expect(screen.queryByText('commons.noPaymentMade')).toBeNull();
   });
 

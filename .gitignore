@@ -97,6 +97,7 @@ Desktop.ini
 *.*~
 *~
 .merge_file*
+tsconfig.tsbuildinfo
 
 ######################
 # Gradle Wrapper

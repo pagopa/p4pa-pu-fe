@@ -76,7 +76,9 @@ describe('useFeConfig hook', () => {
   });
 
   it('should log error when fetching config fails', () => {
-    const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => null);
 
     (brokers.getBrokersConfig as Mock).mockReturnValue({
       data: null,
@@ -89,7 +91,10 @@ describe('useFeConfig hook', () => {
       wrapper: StoreProvider
     });
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch fe config', undefined);
+    expect(consoleErrorSpy).toHaveBeenCalledWith(
+      'Failed to fetch fe config',
+      undefined
+    );
 
     consoleErrorSpy.mockRestore();
   });

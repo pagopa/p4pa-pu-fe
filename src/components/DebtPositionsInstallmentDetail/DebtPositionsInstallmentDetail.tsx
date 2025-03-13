@@ -2,7 +2,9 @@ import { Download, History, ReadMore, Visibility } from '@mui/icons-material';
 import { Button, CircularProgress, Divider, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import DetailContainer, { DetailData } from '../DetailContainer/DetailContainer';
+import DetailContainer, {
+  DetailData
+} from '../DetailContainer/DetailContainer';
 import EmptyDetailContainer from './EmptyDetailContainer';
 import { InstallmentDTO } from '../../../generated/apiClient';
 import { useStore } from '../../store/GlobalStore';

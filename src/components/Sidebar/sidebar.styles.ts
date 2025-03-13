@@ -1,6 +1,9 @@
 import { SxProps, Theme } from '@mui/material';
 
-export const sidebarStyles = (theme: Theme, collapsed: boolean): Record<string, SxProps> => ({
+export const sidebarStyles = (
+  theme: Theme,
+  collapsed: boolean
+): Record<string, SxProps> => ({
   container: {
     zIndex: 5,
     top: 0,
@@ -10,14 +13,15 @@ export const sidebarStyles = (theme: Theme, collapsed: boolean): Record<string, 
       height: collapsed ? 'fit-content' : '100%',
       maxWidth: 'unset',
       position: collapsed ? 'sticky' : 'fixed',
-      width: '100%' }
+      width: '100%'
+    }
   },
   nav: {
     minHeight: collapsed ? '1vh' : '50vh',
     height: '100%',
     width: '100%',
     bgcolor: 'background.paper',
-    transition: 'width 0.3s ease', // Add transition for smooth width change
+    transition: 'width 0.3s ease' // Add transition for smooth width change
   },
   overlay: {
     bgcolor: 'rgba(23, 50, 77, 0.7)',
@@ -35,7 +39,7 @@ export const sidebarStyles = (theme: Theme, collapsed: boolean): Record<string, 
   },
   list: {
     [theme.breakpoints.down('lg')]: {
-      display: collapsed ? 'none' : 'inline-block',
+      display: collapsed ? 'none' : 'inline-block'
     },
     [theme.breakpoints.up('lg')]: {
       py: 3

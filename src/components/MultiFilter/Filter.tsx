@@ -9,10 +9,15 @@ export type FilterProps = {
   filterMap: FilterMap;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   value: string;
-  selectedFilters: string[];
+  selectedFilters: Array<string>;
 };
 
-export const Filter = ({ filterMap, onChange, value, selectedFilters }: FilterProps) => {
+export const Filter = ({
+  filterMap,
+  onChange,
+  value,
+  selectedFilters
+}: FilterProps) => {
   const { t } = useTranslation();
 
   // Sort the entries by label before mapping them to options
@@ -23,7 +28,12 @@ export const Filter = ({ filterMap, onChange, value, selectedFilters }: FilterPr
   }));
 
   return (
-    <Stack direction="column" gap={3} width="100%" data-testid="filter-component">
+    <Stack
+      direction="column"
+      gap={3}
+      width="100%"
+      data-testid="filter-component"
+    >
       <FormComponent.Select
         id="filter-select"
         options={sortedOptions}

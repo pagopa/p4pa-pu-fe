@@ -4,7 +4,7 @@ import TitleComponent from './TitleComponent';
 
 describe('TitleComponent', () => {
   const defaultProps = {
-    title: 'Test Title',
+    title: 'Test Title'
   };
 
   it('renders title correctly', () => {
@@ -15,7 +15,7 @@ describe('TitleComponent', () => {
   it('renders description when provided', () => {
     const props = {
       ...defaultProps,
-      description: 'Test Description',
+      description: 'Test Description'
     };
     render(<TitleComponent {...props} />);
     expect(screen.getByText('Test Description')).toBeDefined();
@@ -40,9 +40,9 @@ describe('TitleComponent', () => {
       callToAction: [
         {
           buttonText: 'Action Button',
-          onActionClick: mockClickHandler,
-        },
-      ],
+          onActionClick: mockClickHandler
+        }
+      ]
     };
     render(<TitleComponent {...props} />);
     const button = screen.getByText('Action Button');
@@ -56,15 +56,15 @@ describe('TitleComponent', () => {
       callToAction: [
         {
           buttonText: 'Action Button',
-          onActionClick: mockClickHandler,
-        },
-      ],
+          onActionClick: mockClickHandler
+        }
+      ]
     };
     render(<TitleComponent {...props} />);
     const button = screen.getByText('Action Button');
-    
+
     fireEvent.click(button);
-    
+
     expect(mockClickHandler).toHaveBeenCalledTimes(1);
   });
 
@@ -73,11 +73,11 @@ describe('TitleComponent', () => {
       ...defaultProps,
       callToAction: [
         { buttonText: 'Button 1', onActionClick: vi.fn() },
-        { buttonText: 'Button 2', onActionClick: vi.fn() },
-      ],
+        { buttonText: 'Button 2', onActionClick: vi.fn() }
+      ]
     };
     render(<TitleComponent {...props} />);
-    
+
     const buttons = screen.getAllByRole('button');
     expect(buttons).toHaveLength(2);
     expect(screen.getByText('Button 1')).toBeDefined();
@@ -88,15 +88,15 @@ describe('TitleComponent', () => {
     const props = {
       ...defaultProps,
       callToAction: [
-        { 
-          buttonText: 'Outlined Button', 
+        {
+          buttonText: 'Outlined Button',
           variant: 'outlined' as const,
-          onActionClick: vi.fn() 
-        },
-      ],
+          onActionClick: vi.fn()
+        }
+      ]
     };
     render(<TitleComponent {...props} />);
-    
+
     const button = screen.getByText('Outlined Button');
     expect(button.className).toContain('MuiButton-outlined');
   });
@@ -105,14 +105,14 @@ describe('TitleComponent', () => {
     const props = {
       ...defaultProps,
       callToAction: [
-        { 
-          buttonText: 'Default Button', 
-          onActionClick: vi.fn() 
-        },
-      ],
+        {
+          buttonText: 'Default Button',
+          onActionClick: vi.fn()
+        }
+      ]
     };
     render(<TitleComponent {...props} />);
-    
+
     const button = screen.getByText('Default Button');
     expect(button.className).toContain('MuiButton-contained');
   });
@@ -121,15 +121,15 @@ describe('TitleComponent', () => {
     const props = {
       ...defaultProps,
       callToAction: [
-        { 
-          buttonText: 'Warning Button', 
+        {
+          buttonText: 'Warning Button',
           color: 'warning' as const,
-          onActionClick: vi.fn() 
-        },
-      ],
+          onActionClick: vi.fn()
+        }
+      ]
     };
     render(<TitleComponent {...props} />);
-    
+
     const button = screen.getByText('Warning Button');
     expect(button.className).toContain('MuiButton-colorWarning');
   });
@@ -138,14 +138,14 @@ describe('TitleComponent', () => {
     const props = {
       ...defaultProps,
       callToAction: [
-        { 
-          buttonText: 'Default Color Button', 
-          onActionClick: vi.fn() 
-        },
-      ],
+        {
+          buttonText: 'Default Color Button',
+          onActionClick: vi.fn()
+        }
+      ]
     };
     render(<TitleComponent {...props} />);
-    
+
     const button = screen.getByText('Default Color Button');
     expect(button.className).toContain('MuiButton-colorPrimary');
   });

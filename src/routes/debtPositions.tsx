@@ -31,15 +31,15 @@ export const debtPositionsRoutes = [
       {
         id: 'DEBT_POSITION_SEARCH_RESULTS',
         path: 'results-IUV',
-        element: <DebtPositionResults />,
+        element: <DebtPositionResults />
       },
-	   {
+      {
         id: 'DEBT_POSITIONS_IMPORT_OVERVIEW',
         path: 'import-overview',
         element: <DebtPositionsImportOverview />,
         handle: {
-          backButton: true,
-        } as RouteHandleObject,
+          backButton: true
+        } as RouteHandleObject
       },
       {
         id: 'DEBT_POSITION_INSTALLMENT_DETAIL',

@@ -1,4 +1,8 @@
-import { GridColDef, GridRenderCellParams, GridValidRowModel } from '@mui/x-data-grid';
+import {
+  GridColDef,
+  GridRenderCellParams,
+  GridValidRowModel
+} from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import CustomDataGrid from './../DataGrid/CustomDataGrid';
@@ -12,13 +16,13 @@ import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { FlowFileType } from '../../models/Filters';
 import { moneyFormat } from '../../utils/formatters';
 
-interface SearchResultDataRow extends GridValidRowModel {
+type SearchResultDataRow = {
   id: number;
   iuv: string;
   amount: string;
   dueType: string;
   paymentDate: string;
-}
+} & GridValidRowModel;
 
 const SearchResultsDataGrid = () => {
   const { t } = useTranslation();
@@ -26,28 +30,39 @@ const SearchResultsDataGrid = () => {
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const flowFileTypes = [FlowFileType.RECEIPT_PAGOPA];
-  const {
-    appliedFilters,
-    handleSortModelChange,
-    sortModel,
-    updatePagination,
-  } = useFlowFilters({
-    flowFileTypes: flowFileTypes,
+  const { appliedFilters, handleSortModelChange, sortModel, updatePagination } =
+    useFlowFilters({
+      flowFileTypes: flowFileTypes
+    });
+
+  const { data } = getReceipts(organizationId, {
+    ...appliedFilters,
+    receiptOrigin: 'RECEIPT_PAGOPA'
   });
-  
 
-  const { data } = getReceipts(organizationId, {...appliedFilters, receiptOrigin: 'RECEIPT_PAGOPA'});
-  
-
-  const columns: GridColDef[] = [
+  const columns: Array<GridColDef> = [
     { field: 'iuv', headerName: t('commons.iuv'), flex: 1, type: 'string' },
-    { field: 'paymentAmountCents', headerName: t('commons.amount'), flex: 1, type: 'number', align: 'left', headerAlign: 'left',
-      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => (
+    {
+      field: 'paymentAmountCents',
+      headerName: t('commons.amount'),
+      flex: 1,
+      type: 'number',
+      align: 'left',
+      headerAlign: 'left',
+      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) =>
         moneyFormat(params.value as number)
-      )
     },
-    { field: 'debtPositionTypeOrgDescription', headerName: t('commons.duetype'), flex: 1, type: 'string' },
-    { field: 'paymentDateTime', headerName: t('commons.paymentdate'), flex: 1, type: 'string', 
+    {
+      field: 'debtPositionTypeOrgDescription',
+      headerName: t('commons.duetype'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'paymentDateTime',
+      headerName: t('commons.paymentdate'),
+      flex: 1,
+      type: 'string',
       renderCell: (params: GridRenderCellParams) =>
         params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
     },
@@ -58,23 +73,29 @@ const SearchResultsDataGrid = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => 
-        <ActionMenu 
+      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => (
+        <ActionMenu
           rowId={params.row.id}
           menuItems={[
             {
               icon: <ReadMore fontSize="small" />,
               label: t('commons.detail'),
-              action: () => navigate(generatePath(PageRoutes.DETAIL_FLOWS, {category: 'receipt'}))
+              action: () =>
+                navigate(
+                  generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
+                    id: params.row.receiptId
+                  })
+                )
             },
             {
               icon: <FileDownload fontSize="small" />,
               label: t('commons.files.download'),
-              action: () => console.log('Scarica file per ID: ', params.row.id),
+              action: () => console.log('Scarica file per ID: ', params.row.id)
             }
           ]}
-        />,
-    },
+        />
+      )
+    }
   ];
 
   return (
@@ -85,7 +106,8 @@ const SearchResultsDataGrid = () => {
           totalPages: data?.totalPages,
           defaultPageOption: appliedFilters.size,
           sizePageOptions: [5, 10, 15, 20],
-          onPageChange: (page) => updatePagination({ page: page - 1, size: appliedFilters.size }),
+          onPageChange: (page) =>
+            updatePagination({ page: page - 1, size: appliedFilters.size }),
           onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
           currentPage: appliedFilters.page + 1
         }}

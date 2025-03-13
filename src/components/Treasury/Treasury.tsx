@@ -56,7 +56,11 @@ export const Treasury = () => {
               linkLabel={t('commons.showAllFlows')}
               onLinkClick={() => navigate(PageRoutes.TREASURY_IMPORT_OVERVIEW)}
               onActionClick={() =>
-                navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'treasury' }))
+                navigate(
+                  generatePath(PageRoutes.IMPORT_FLOWS, {
+                    category: 'treasury'
+                  })
+                )
               }
             />
           </Grid>

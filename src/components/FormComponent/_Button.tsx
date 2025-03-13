@@ -5,11 +5,7 @@ export type _ButtonProps = Omit<ButtonProps, 'type'> & {
 };
 
 export const _Button = (props: _ButtonProps) => (
-  <Button
-    fullWidth
-    size="small"
-    variant="contained"
-    {...props}>
+  <Button fullWidth size="small" variant="contained" {...props}>
     {props.children || props.label}
   </Button>
 );

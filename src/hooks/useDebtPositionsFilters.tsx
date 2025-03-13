@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import SearchIcon from '@mui/icons-material/Search';
 import { DebtPositionTypeWithCount } from '../../generated/data-contracts';
-import { COMPONENT_TYPE, FilterItem } from '../components/FilterContainer/FilterContainer';
+import {
+  COMPONENT_TYPE,
+  FilterItem
+} from '../components/FilterContainer/FilterContainer';
 import { SearchType } from '../models/DebtPositiosn';
 import { getDebtPositionsTypes } from '../api/debtPositions';
 import { useStore } from '../store/GlobalStore';
@@ -13,11 +16,14 @@ type UseDebtPositionSearchProps = {
   onFilter: (filters: DebtPositionFilters) => void;
 };
 
-export const useDebtPositionFilters = ({ searchType, onFilter }: UseDebtPositionSearchProps) => {
+export const useDebtPositionFilters = ({
+  searchType,
+  onFilter
+}: UseDebtPositionSearchProps) => {
   const { t } = useTranslation();
-  const [dueTypes, setDueTypes] = useState<Array<{ label: string; value: string | number }> | []>(
-    []
-  );
+  const [dueTypes, setDueTypes] = useState<
+    Array<{ label: string; value: string | number }> | []
+  >([]);
 
   const {
     state: { organizationId }
@@ -33,16 +39,18 @@ export const useDebtPositionFilters = ({ searchType, onFilter }: UseDebtPosition
         }
       } = debtPositionsTypes;
 
-      const dueTypesMap = debtPositionsTypesContent.map((type: DebtPositionTypeWithCount) => ({
-        label: type.description,
-        value: type.debtPositionTypeId
-      }));
+      const dueTypesMap = debtPositionsTypesContent.map(
+        (type: DebtPositionTypeWithCount) => ({
+          label: type.description,
+          value: type.debtPositionTypeId
+        })
+      );
 
       setDueTypes(dueTypesMap);
     }
   }, [debtPositionsTypes.data]);
 
-  const getFilterItems = (): FilterItem[] => {
+  const getFilterItems = (): Array<FilterItem> => {
     if (searchType === SearchType.DEBT_POSITION) {
       return [
         {

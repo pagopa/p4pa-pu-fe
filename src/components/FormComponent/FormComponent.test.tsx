@@ -12,13 +12,23 @@ describe('TextField Component', () => {
 
   it('renders with custom icon when provided', () => {
     const CustomIcon = () => <span data-testid="custom-icon">*</span>;
-    render(<FormComponent.TextField id="test-input" label="With Icon" icon={<CustomIcon />} />);
+    render(
+      <FormComponent.TextField
+        id="test-input"
+        label="With Icon"
+        icon={<CustomIcon />}
+      />
+    );
     expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
   });
 
   it('renders with provided placeholder', () => {
     render(
-      <FormComponent.TextField id="test-input" label="With Placeholder" placeholder="Enter text" />
+      <FormComponent.TextField
+        id="test-input"
+        label="With Placeholder"
+        placeholder="Enter text"
+      />
     );
     expect(screen.getByPlaceholderText('Enter text')).toBeInTheDocument();
   });

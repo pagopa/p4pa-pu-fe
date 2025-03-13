@@ -4,7 +4,7 @@ import DebtPositionsImportOverview from './DebtPositionsImportOverview';
 
 describe('DebtPositionsImportOverview', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => null);
     vi.clearAllMocks();
   });
 
@@ -26,16 +26,16 @@ it('renders action menu for UPLOADED status', () => {
 
 it('applies filters when filter button is clicked', () => {
   render(<DebtPositionsImportOverview />);
-    
+
   const searchInput = screen.getByLabelText('commons.searchName');
   fireEvent.change(searchInput, { target: { value: 'test' } });
-    
+
   const filterButton = screen.getByText('commons.filters.filterResults');
   fireEvent.click(filterButton);
 
   expect(console.log).toHaveBeenCalledWith(
     expect.stringContaining('applied filters:'),
-    expect.objectContaining({searchName: 'test'})
+    expect.objectContaining({ searchName: 'test' })
   );
 });
 

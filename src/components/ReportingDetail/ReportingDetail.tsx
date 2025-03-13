@@ -2,9 +2,13 @@ import { Grid, Typography, useTheme } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import DetailContainer, { DetailData } from '../DetailContainer/DetailContainer';
+import DetailContainer, {
+  DetailData
+} from '../DetailContainer/DetailContainer';
 import { useParams } from 'react-router-dom';
-import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import FilterContainer, {
+  COMPONENT_TYPE
+} from '../FilterContainer/FilterContainer';
 import { Search } from '@mui/icons-material';
 import ReportingDetailDataGrid from './ReportingDetailDataGrid';
 
@@ -14,14 +18,14 @@ export const ReportingDetail = () => {
   const { id } = useParams<{ id: string }>();
   const idReporting = id ?? '';
 
-  const summaryData: DetailData[] = [
+  const summaryData: Array<DetailData> = [
     { label: 'ID Rendicontazione / IUF', value: idReporting },
     { label: 'ID Regolamento', value: '49509-241009-39X-451585346538' },
     { label: 'Data e ora', value: '10/10/2024 14:00:40' },
     { label: 'Data regolamento', value: '10/10/2024' }
   ];
 
-  const paymentData: DetailData[] = [
+  const paymentData: Array<DetailData> = [
     { label: 'Totale pagamenti', value: '100' },
     { label: 'Importo totale', value: '100,00 €' }
   ];
@@ -43,12 +47,12 @@ export const ReportingDetail = () => {
           <DetailContainer
             sections={[
               {
-                title: {label: t('commons.summary'), variant: 'overline'},
+                title: { label: t('commons.summary'), variant: 'overline' },
                 data: [...summaryData],
                 inline: true
               },
               {
-                title: {label: t('commons.payment'), variant: 'overline'},
+                title: { label: t('commons.payment'), variant: 'overline' },
                 data: [...paymentData],
                 inline: true
               }
@@ -64,7 +68,8 @@ export const ReportingDetail = () => {
           spacing={2}
           alignItems={'center'}
           justifyContent={'space-between'}
-          my={1}>
+          my={1}
+        >
           <FilterContainer
             items={[
               {
@@ -73,7 +78,11 @@ export const ReportingDetail = () => {
                 icon: <Search />,
                 gridWidth: 5
               },
-              { type: COMPONENT_TYPE.dateRange, label: 'daterange', gridWidth: 3 },
+              {
+                type: COMPONENT_TYPE.dateRange,
+                label: 'daterange',
+                gridWidth: 3
+              },
               {
                 type: COMPONENT_TYPE.select,
                 label: t('commons.duetype'),
@@ -100,7 +109,8 @@ export const ReportingDetail = () => {
             bgcolor: theme.palette.grey[200],
             overflow: 'auto'
           }}
-          aria-label="results-table">
+          aria-label="results-table"
+        >
           <ReportingDetailDataGrid />
         </Grid>
       </Grid>
@@ -109,4 +119,3 @@ export const ReportingDetail = () => {
 };
 
 export default ReportingDetail;
-

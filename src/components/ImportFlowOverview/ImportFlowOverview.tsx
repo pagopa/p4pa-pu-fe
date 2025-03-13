@@ -4,30 +4,39 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
-import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import FilterContainer, {
+  COMPONENT_TYPE
+} from '../FilterContainer/FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../App';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useStore } from '../../store/GlobalStore';
-import { DOWNLOAD_STATES, FLOW_STATUS_VALUES, FlowFileType, FlowStatus, MENU_STATES, STATE_COLORS } from '../../models/Filters';
+import {
+  DOWNLOAD_STATES,
+  FLOW_STATUS_VALUES,
+  FlowFileType,
+  FlowStatus,
+  MENU_STATES,
+  STATE_COLORS
+} from '../../models/Filters';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { STATE } from '../../store/types';
 
-export interface ImportFlowOverviewProps {
+export type ImportFlowOverviewProps = {
   routingCategory: string;
   title: string;
   description: string;
-  flowFileTypes: FlowFileType[];
-}
+  flowFileTypes: Array<FlowFileType>;
+};
 
-const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
+const ImportFlowOverview = ({
   routingCategory,
   title,
   description,
   flowFileTypes
-}) => {
+}: ImportFlowOverviewProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -47,11 +56,10 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
     sortModel,
     handleSortModelChange
   } = useFlowFilters({
-    flowFileTypes: flowFileTypes,
+    flowFileTypes: flowFileTypes
   });
 
   const { data } = getIngestionFlowFiles(organizationId, appliedFilters);
-
 
   const renderActionCell = (params: GridRenderCellParams) => {
     const { ingestionFlowFileId, status } = params.row;
@@ -62,15 +70,15 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
           rowId={ingestionFlowFileId}
           menuItems={[
             {
-              icon: <DownloadIcon fontSize="small" color='primary' />,
+              icon: <DownloadIcon fontSize="small" color="primary" />,
               label: t('commons.files.imported'),
-              action: () => console.log('Download file:', ingestionFlowFileId),
+              action: () => console.log('Download file:', ingestionFlowFileId)
             },
             {
-              icon: <DownloadIcon fontSize="small" color='primary' />,
+              icon: <DownloadIcon fontSize="small" color="primary" />,
               label: t('commons.files.importedResult'),
-              action: () => console.log('Download result:', ingestionFlowFileId),
-            },
+              action: () => console.log('Download result:', ingestionFlowFileId)
+            }
           ]}
         />
       );
@@ -82,7 +90,7 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
           color="primary"
           size="small"
           onClick={() => console.log(`Download: ${ingestionFlowFileId}`)}
-          data-testid='download-button'
+          data-testid="download-button"
         >
           <DownloadIcon />
         </IconButton>
@@ -92,7 +100,7 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
     return null;
   };
 
-  const columns: GridColDef[] = [
+  const columns: Array<GridColDef> = [
     {
       field: 'ingestionFlowFileId',
       headerName: t('flowDataGrid.internalID'),
@@ -141,7 +149,7 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
           color={STATE_COLORS[params.value as FlowStatus] || 'default'}
           size="small"
         />
-      ),
+      )
     },
     {
       field: 'menu',
@@ -150,7 +158,7 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: renderActionCell,
+      renderCell: renderActionCell
     }
   ];
 
@@ -164,17 +172,25 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
             variant: 'outlined',
             buttonText: t('commons.importFlowButton'),
             onActionClick: () =>
-              navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: routingCategory }))
+              navigate(
+                generatePath(PageRoutes.IMPORT_FLOWS, {
+                  category: routingCategory
+                })
+              )
           }
         ]}
         description={description}
       />
 
-      <Grid container direction="row" sx={{
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        marginBottom: 2
-      }}>
+      <Grid
+        container
+        direction="row"
+        sx={{
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 2
+        }}
+      >
         <FilterContainer
           items={[
             {
@@ -191,7 +207,7 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
               gridWidth: 2,
               options: [
                 { label: t('commons.status.ALL'), value: 'ALL' },
-                ...FLOW_STATUS_VALUES.map(status => ({
+                ...FLOW_STATUS_VALUES.map((status) => ({
                   label: t(`commons.status.${status}`),
                   value: status
                 }))
@@ -200,7 +216,7 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
               onChange: (e) => {
                 const value = e.target.value;
                 updateDraftFilters({
-                  status: value === 'ALL' ? undefined : value as FlowStatus
+                  status: value === 'ALL' ? undefined : (value as FlowStatus)
                 });
               }
             },
@@ -243,7 +259,8 @@ const ImportFlowOverview :React.FC<ImportFlowOverviewProps> = ({
             totalPages: data?.totalPages,
             defaultPageOption: appliedFilters.size,
             sizePageOptions: [5, 10, 15, 20],
-            onPageChange: (page) => updatePagination({ page: page - 1, size: appliedFilters.size }),
+            onPageChange: (page) =>
+              updatePagination({ page: page - 1, size: appliedFilters.size }),
             onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
             currentPage: appliedFilters.page + 1
           }}

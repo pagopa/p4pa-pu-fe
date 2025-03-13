@@ -3,7 +3,9 @@ import { Search } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './ReportingDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import FilterContainer, { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import FilterContainer, {
+  COMPONENT_TYPE
+} from '../FilterContainer/FilterContainer';
 
 const ReportingSearchResults = () => {
   const theme = useTheme();
@@ -24,7 +26,8 @@ const ReportingSearchResults = () => {
             justifyContent: 'space-between',
             marginBottom: 2,
             flexWrap: 'nowrap'
-          }}>
+          }}
+        >
           <FilterContainer
             items={[
               {
@@ -43,7 +46,7 @@ const ReportingSearchResults = () => {
                 type: COMPONENT_TYPE.dateRange,
                 label: 'reportingSearchResults.searchDateRange',
                 from: { label: t('reporting.regulationFrom') },
-                to: { label: t('dates.to')},
+                to: { label: t('dates.to') },
                 gridWidth: 5
               },
               {
@@ -63,7 +66,8 @@ const ReportingSearchResults = () => {
             bgcolor: theme.palette.grey[200],
             overflow: 'auto'
           }}
-          aria-label="results-table">
+          aria-label="results-table"
+        >
           <SearchResultsDataGrid />
         </Grid>
       </Grid>

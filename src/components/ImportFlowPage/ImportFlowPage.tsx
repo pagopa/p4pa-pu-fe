@@ -31,11 +31,15 @@ const ImportFlow = () => {
   } = useStore();
 
   const config = importFlowConfig[category as keyof typeof importFlowConfig];
-  const thankyouPage = generatePath(PageRoutes.RESPONSES_THANKYOU, {category: config.category});
+  const thankyouPage = generatePath(PageRoutes.RESPONSES_THANKYOU, {
+    category: config.category
+  });
 
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
-  const [flowType, setFlowType] = useState<IngestionFlowFileType>(config.flowTypes[0]);
+  const [flowType, setFlowType] = useState<IngestionFlowFileType>(
+    config.flowTypes[0]
+  );
   const [file, setFile] = useState<File | null>(null);
 
   const ingestionFlowFile = uploadIngestionFlowFile({
@@ -58,12 +62,24 @@ const ImportFlow = () => {
   return (
     <>
       <Grid container direction="column" alignItems="center" marginTop={2}>
-        <Grid container direction="column" alignItems="left" marginTop={2} ml={1} mb={4}>
+        <Grid
+          container
+          direction="column"
+          alignItems="left"
+          marginTop={2}
+          ml={1}
+          mb={4}
+        >
           <TitleComponent
             title={t(config.title)}
             description={t('commons.flowImport.description')}
           />
-          <Box bgcolor={theme.palette.common.white} borderRadius={0.5} p={3} gap={3}>
+          <Box
+            bgcolor={theme.palette.common.white}
+            borderRadius={0.5}
+            p={3}
+            gap={3}
+          >
             <Grid item lg={12} mb={2}>
               <Grid item lg={12} mb={2}>
                 <Typography variant="h6" gutterBottom>
@@ -82,11 +98,18 @@ const ImportFlow = () => {
                 variant="caption"
                 mb={3}
                 display={'block'}
-                sx={{ color: theme.palette.error.dark }}>
+                sx={{ color: theme.palette.error.dark }}
+              >
                 {t(config.requiredFieldDescription)}
               </Typography>
             )}
-            <Box borderRadius={1} border={1} p={3} gap={2} borderColor={theme.palette.divider}>
+            <Box
+              borderRadius={1}
+              border={1}
+              p={3}
+              gap={2}
+              borderColor={theme.palette.divider}
+            >
               <FileUploader
                 uploading={uploading}
                 setUploading={setUploading}
@@ -106,22 +129,31 @@ const ImportFlow = () => {
                 p={3}
                 gap={2}
                 mt={3}
-                borderColor={theme.palette.divider}>
+                borderColor={theme.palette.divider}
+              >
                 <Grid container direction={'row'} mb={3}>
                   <AltRoute sx={{ transform: 'rotate(90deg)' }} />
                   <Typography fontWeight={600} ml={1}>
                     {t('commons.flowType')}
                   </Typography>
                 </Grid>
-                <FormControl role="select-flowType" required fullWidth size="small">
-                  <InputLabel id="select-label">{t('commons.flowType')}</InputLabel>
+                <FormControl
+                  role="select-flowType"
+                  required
+                  fullWidth
+                  size="small"
+                >
+                  <InputLabel id="select-label">
+                    {t('commons.flowType')}
+                  </InputLabel>
                   <Select
                     value={flowType}
                     labelId="select-label"
                     label={t('commons.flowType')}
                     onChange={(event) => {
                       setFlowType(event.target.value as IngestionFlowFileType);
-                    }}>
+                    }}
+                  >
                     {config.flowTypes.map((option, i) => (
                       <MenuItem key={i} value={option}>
                         {t(`commons.flowTypes.${option}`)}
@@ -141,7 +173,8 @@ const ImportFlow = () => {
             variant="outlined"
             fullWidth
             startIcon={<ArrowBack />}
-            onClick={() => navigate(PageRoutes[config.backRoute])}>
+            onClick={() => navigate(PageRoutes[config.backRoute])}
+          >
             {t('commons.exit')}
           </Button>
         </Grid>
@@ -152,7 +185,8 @@ const ImportFlow = () => {
             variant="contained"
             fullWidth
             disabled={buttonDisabled}
-            onClick={handleFileUpload}>
+            onClick={handleFileUpload}
+          >
             {t('commons.flowImport.uploadButton')}
           </Button>
         </Grid>

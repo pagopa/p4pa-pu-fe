@@ -3,10 +3,10 @@ import Button from '@mui/material/Button';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-export interface BackButtonProps {
+export type BackButtonProps = {
   text?: string;
   onClick?: () => void;
-}
+};
 
 export const BackButton = (props: BackButtonProps) => {
   const navigate = useNavigate();
@@ -21,7 +21,8 @@ export const BackButton = (props: BackButtonProps) => {
       startIcon={<ArrowBack />}
       variant="text"
       onClick={onClick}
-      sx={{ marginBottom: 3 }}>
+      sx={{ marginBottom: 3 }}
+    >
       {t(`commons.${text}`)}
     </Button>
   );

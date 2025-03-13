@@ -23,17 +23,21 @@ vi.mock('../FilterContainer/FilterContainer', () => ({
 const mockFilterMap = {
   search: {
     label: 'Search',
-    fields: [{
-      type: COMPONENT_TYPE.textField,
-      label: 'Search Field'
-    }]
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'Search Field'
+      }
+    ]
   },
   name: {
     label: 'Name',
-    fields: [{
-      type: COMPONENT_TYPE.textField,
-      label: 'Name Field'
-    }]
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'Name Field'
+      }
+    ]
   }
 };
 

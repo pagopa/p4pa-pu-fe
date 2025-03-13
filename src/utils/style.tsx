@@ -1,4 +1,3 @@
-
 import { createTheme } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 
@@ -34,12 +33,12 @@ const customTheme = createTheme({
     },
     MuiInputLabel: {
       styleOverrides: {
-        asterisk: {color: theme.palette.error.dark},
+        asterisk: { color: theme.palette.error.dark }
       }
     },
     MuiOutlinedInput: {
       styleOverrides: {
-        root: ({theme}) => ({backgroundColor: theme.palette.common.white})
+        root: ({ theme }) => ({ backgroundColor: theme.palette.common.white })
       }
     }
   }

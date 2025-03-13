@@ -7,7 +7,10 @@ import { FileshareApi } from '../../generated/fileshare/fileshareClient';
 
 export default {
   apiClient: new Api({ baseURL: config.baseURL, timeout: config.apiTimeout }),
-  fileshareClient: new FileshareApi({ baseURL: config.fileshareURL, timeout: config.apiTimeout }),
+  fileshareClient: new FileshareApi({
+    baseURL: config.fileshareURL,
+    timeout: config.apiTimeout
+  }),
   config,
   loaders,
   sidemenu,
