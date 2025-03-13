@@ -82,7 +82,9 @@ const SearchResultsDataGrid = () => {
               label: t('commons.detail'),
               action: () =>
                 navigate(
-                  generatePath(PageRoutes.DETAIL_FLOWS, { category: 'receipt' })
+                  generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
+                    id: params.row.receiptId
+                  })
                 )
             },
             {

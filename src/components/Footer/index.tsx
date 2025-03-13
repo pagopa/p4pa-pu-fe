@@ -16,7 +16,7 @@ export type CompanyLinkType = MuiCompanyLinkType & {
 type FooterProps = LangSwitchProps & {
   companyLink: CompanyLinkType;
   links: Array<FooterLinksType>;
-  legalInfo: JSX.Element | Array<JSX.Element>;
+  legalInfo: React.ReactNode | Array<React.ReactNode>;
 };
 
 export const Footer = ({
@@ -24,7 +24,7 @@ export const Footer = ({
   links,
   legalInfo,
   ...langProps
-}: FooterProps): JSX.Element => (
+}: FooterProps): React.ReactNode => (
   <Box component="footer">
     <Box
       sx={{

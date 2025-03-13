@@ -1,4 +1,4 @@
-import { Navigate } from 'react-router-dom';
+import { LoaderFunction, LoaderFunctionArgs, Navigate } from 'react-router-dom';
 import { Conservation } from '../components/Conservation';
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Breadcrumbs';
@@ -15,7 +15,13 @@ import Treasury from './Treasury';
 import TreasuryImportFlowOverview from './TreasuryImportFlowOverview';
 import TreasurySearchResults from './TreasurySearchResults';
 
+import TelematicReceiptDetail from './TelematicReceiptDetail';
+
 const deployPath = config.deployPath;
+
+const loaderWithId: LoaderFunction = async ({ params }: LoaderFunctionArgs) => {
+  return params.id;
+};
 
 export const flowsRoutes = [
   {
@@ -43,6 +49,19 @@ export const flowsRoutes = [
             id: 'TELEMATIC_RECEIPT_INDEX',
             handle: {
               backButton: false
+            } as RouteHandleObject
+          },
+          {
+            element: <TelematicReceiptDetail />,
+            id: 'TELEMATIC_RECEIPT_DETAIL',
+            path: ':id',
+            loader: loaderWithId,
+            handle: {
+              backButton: true,
+              sidebar: {
+                visible: false,
+                omitBreadcrumbs: true
+              }
             } as RouteHandleObject
           },
           {
