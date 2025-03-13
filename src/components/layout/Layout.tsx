@@ -29,6 +29,10 @@ export function Layout() {
 
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const { collapsed } = useCollapseMenu(!lg);
+  const getMainColumnWidth = () => {
+    if (!sidebar.visible) return 12;
+    return collapsed ? 11 : 10;
+  };
 
   const {
     hideBreadcrumbs,
@@ -43,7 +47,7 @@ export function Layout() {
 
   const sidePadding = sidebar.visible ? 3 : { xs: 3, md: 12, lg: 27, xl: 34 };
 
-  const mainColumnWidth = !sidebar.visible ? 12 : collapsed ? 11 : 10;
+  const mainColumnWidth = getMainColumnWidth();
 
   return (
     <>
