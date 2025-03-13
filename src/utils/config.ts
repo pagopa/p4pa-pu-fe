@@ -64,7 +64,7 @@ const config: Config = {
   fileshareURL: VITE_FILESHARE_APIHOST,
   deployPath: VITE_DEPLOY_PATH,
   /** This array is populated by paths that don't need a auth token */
-  tokenHeaderExcludePaths: ['/token/']
+  tokenHeaderExcludePaths: ['/auth-callback']
 };
 
 export default config;
