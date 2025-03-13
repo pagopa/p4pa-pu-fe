@@ -41,17 +41,7 @@ export const getIngestionFlowFiles = (
         {
           // To serialize flowFileTypes parameters
           paramsSerializer: {
-            serialize: (params) => {
-              const searchParams = new URLSearchParams();
-              Object.entries(params).forEach(([key, value]) => {
-                if (Array.isArray(value)) {
-                  value.forEach((val) => searchParams.append(key, val));
-                } else if (value !== undefined) {
-                  searchParams.append(key, value);
-                }
-              });
-              return searchParams.toString();
-            }
+            indexes: null
           }
         }
       );
