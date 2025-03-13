@@ -206,7 +206,15 @@
 		"uploadedFrom": "Caricati dal",
 		"importNewFlow": "Carica un nuovo flusso",
 		"debtFlow": "Flussi dovuti",
-		"individual": "Persona fisica"
+		"individual": "Persona fisica",
+		"showDebtPositions": "Vedi Posizione debitoria",
+		"showOtherBeneficiaries": "Vedi altri beneficiari",
+		"noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+		"downloadInstallment": "Scarica avviso",
+		"paymentInformation": "Informazione sul pagamento",
+		"debtor": "Debitore",
+		"executedBy": "Eseguito da",
+		"transactionManager": "Gestore della transazione (PSP)"
 	},
 	"conservation": {
 		"buttonReservationExport": "Prenota export",
@@ -392,16 +400,5 @@
 		"importDebtFlowDescription": "Carica un file .zip con l'informazione necessaria di dovuti mancanti.",
 		"expirationFrom": "Scadenza dal",
 		"creationFrom": "Creazione dal"
-	},
-	"installmentDetailPage": {
-		"title": "Dettagli Avviso",
-		"showDebtPositions": "Vedi Posizione debitoria",
-		"showOtherBeneficiaries": "Vedi altri beneficiari",
-		"noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
-		"downloadInstallment": "Scarica avviso",
-		"paymentInformation": "Informazione sul pagamento",
-		"debtor": "Debitore",
-		"executedBy": "Eseguito da",
-		"transactionManager": "Gestore della transazione (PSP)"
 	}
 }

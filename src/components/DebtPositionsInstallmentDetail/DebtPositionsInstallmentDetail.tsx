@@ -41,15 +41,15 @@ export const DebtPositionsInstallmentDetail = () => {
       { label: t('debtPositionSearchResults.iuv'), value: installment?.iuv || '', variant: 'monospaced' },
       { label: t('debtPositionSearchResults.amount'), value: moneyFormat(installment?.amountCents as number) },
       { label: t('debtPositionSearchResults.expirationDate'), value: installment?.dueDate ? new Date(installment?.dueDate).toLocaleDateString('it-IT') : '' },
-      { label:  t('installmentDetailPage.debtor'), value: installment?.debtor?.fullName || '' },
+      { label:  t('commons.debtor'), value: installment?.debtor?.fullName || '' },
       { label: t('commons.fiscalCodeorVatExecutor'), value: `${installment?.debtor?.fiscalCode} ${installment?.debtor?.entityType === 'F' ? `(${t('commons.individual')})` : ''}`},
       { label: t('commons.duetype'), value: installment?.debtPositionTypeOrgDescription || '' },
     ],
     paymentData: [
       { label: t('commons.paymentdate'), value: installment?.paymentDateTime ? new Date(installment?.paymentDateTime).toLocaleDateString('it-IT') : '' },
-      { label: t('installmentDetailPage.executedBy'), value: installment?.payer?.fullName || '' },
+      { label: t('commons.executedBy'), value: installment?.payer?.fullName || '' },
       { label: t('commons.fiscalCodeorVatExecutor'), value: `${installment?.payer?.fiscalCode} ${installment?.payer?.entityType === 'F' ? `(${t('commons.individual')})` : ''}`},
-      { label: t('installmentDetailPage.transactionManager'), value: installment?.pspCompanyName || '' },
+      { label: t('commons.transactionManager'), value: installment?.pspCompanyName || '' },
       { label: t('commons.iud'), value: installment?.iud || '' },
       { label: t('commons.iur'), value: installment?.iur || '' },
     ]
@@ -58,7 +58,7 @@ export const DebtPositionsInstallmentDetail = () => {
   return (
     <>
       <TitleComponent 
-        title={t('installmentDetailPage.title')}
+        title={t('commons.routes.DEBT_POSITION_INSTALLMENT_DETAIL')}
         callToAction= {
           [
             {
@@ -69,7 +69,7 @@ export const DebtPositionsInstallmentDetail = () => {
             {
               icon: <Download />, 
               variant: 'contained', 
-              buttonText: t('installmentDetailPage.downloadInstallment'), 
+              buttonText: t('commons.downloadInstallment'), 
               onActionClick: () => console.log('download')
             }
           ]
@@ -83,7 +83,7 @@ export const DebtPositionsInstallmentDetail = () => {
               data: installmentDetailData.summaryData, 
               inline: true, 
               footerLink: { 
-                label: t('installmentDetailPage.showDebtPositions'), 
+                label: t('commons.showDebtPositions'), 
                 icon: <Visibility />, 
                 onLinkClick: () => console.log('debtPositionId', installment?.debtPositionId)
               }
@@ -94,7 +94,7 @@ export const DebtPositionsInstallmentDetail = () => {
           {isResolved ? (
             <DetailContainer 
               sections={[{
-                title: {label: t('installmentDetailPage.paymentInformation'), variant: 'overline'},
+                title: {label: t('commons.paymentInformation'), variant: 'overline'},
                 data: installmentDetailData.paymentData,
                 divider: true
               }]}
@@ -111,7 +111,7 @@ export const DebtPositionsInstallmentDetail = () => {
           fullWidth={false}
           onClick={() => console.log('installmentId: ', installmentId)} 
         >
-          {t('installmentDetailPage.showOtherBeneficiaries')}
+          {t('commons.showOtherBeneficiaries')}
         </Button>
       </Grid>
     </>

@@ -11,7 +11,7 @@ const EmptyDetailContainer = () => {
       <CardContent sx={{ textAlign: 'center' }}>
         <Category sx={{color: theme.palette.text.secondary}} />
         <Typography variant="body1" color={theme.palette.text.secondary} sx={{ mt: 1 }}>
-          {t('installmentDetailPage.noPaymentMade')}
+          {t('commons.noPaymentMade')}
         </Typography>
       </CardContent>
     </Card>

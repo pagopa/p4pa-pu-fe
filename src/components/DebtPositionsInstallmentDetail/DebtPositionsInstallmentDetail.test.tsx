@@ -73,7 +73,7 @@ describe('DebtPositionsInstallmentDetail', () => {
   it('renders the component with correct title', () => {
     render(<DebtPositionsInstallmentDetail />);
     
-    expect(screen.getByText('installmentDetailPage.title')).toBeInTheDocument();
+    expect(screen.getByText('commons.routes.DEBT_POSITION_INSTALLMENT_DETAIL')).toBeInTheDocument();
   });
 
   it('shows PAID installment', () => {
@@ -82,16 +82,16 @@ describe('DebtPositionsInstallmentDetail', () => {
     expect(screen.getByText('commons.state')).toBeInTheDocument();
     expect(screen.getByText('PAID')).toBeInTheDocument();
     
-    expect(screen.getByText('installmentDetailPage.paymentInformation')).toBeInTheDocument();
+    expect(screen.getByText('commons.paymentInformation')).toBeInTheDocument();
     expect(screen.getByText('commons.paymentdate')).toBeInTheDocument();
-    expect(screen.getByText('installmentDetailPage.executedBy')).toBeInTheDocument();
+    expect(screen.getByText('commons.executedBy')).toBeInTheDocument();
     expect(screen.getByText('Mario Bianchi')).toBeInTheDocument();
-    expect(screen.getByText('installmentDetailPage.transactionManager')).toBeInTheDocument();
+    expect(screen.getByText('commons.transactionManager')).toBeInTheDocument();
     expect(screen.getByText('Payment Service Provider')).toBeInTheDocument();
-    expect(screen.getByText('installmentDetailPage.debtor')).toBeInTheDocument();
+    expect(screen.getByText('commons.debtor')).toBeInTheDocument();
     expect(screen.getByText('Mario Rossi')).toBeInTheDocument();
     expect(screen.getByText('RSSMRA92A12B123A (commons.individual)')).toBeInTheDocument();
-    expect(screen.queryByText('installmentDetailPage.noPaymentMade')).toBeNull();
+    expect(screen.queryByText('commons.noPaymentMade')).toBeNull();
   });
 
   it('shows UNPAID installment', () => {
@@ -99,7 +99,7 @@ describe('DebtPositionsInstallmentDetail', () => {
     
     render(<DebtPositionsInstallmentDetail />);
     
-    expect(screen.getByText('installmentDetailPage.noPaymentMade')).toBeInTheDocument();
-    expect(screen.queryByText('installmentDetailPage.paymentInformation')).toBeNull();
+    expect(screen.getByText('commons.noPaymentMade')).toBeInTheDocument();
+    expect(screen.queryByText('commons.paymentInformation')).toBeNull();
   });
 });
