@@ -1,50 +1,59 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { fireEvent, render, screen } from '../../__tests__/renderers';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { render, screen } from '../../__tests__/renderers';
 import DebtPositionsImportOverview from './DebtPositionsImportOverview';
+import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
+
+vi.mock('../../api/ingestionFlowFiles', () => ({
+  getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } })
+}));
 
 describe('DebtPositionsImportOverview', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'log').mockImplementation(() => null);
     vi.clearAllMocks();
   });
 
-  it('renders successfully', () => {
+  it('renders with title', () => {
     render(<DebtPositionsImportOverview />);
+
     expect(screen.getByText('commons.debtFlow')).toBeDefined();
   });
 
-  it('displays data in the grid', () => {
-    const { container } = render(<DebtPositionsImportOverview />);
-    expect(container.querySelector('[data-field="fileName"]')).toBeDefined();
+  it('calls API with correct flow file types', () => {
+    render(<DebtPositionsImportOverview />);
+
+    expect(getIngestionFlowFiles).toHaveBeenCalledWith(
+      expect.any(Number),
+      expect.objectContaining({
+        flowFileTypes: ['DP_INSTALLMENTS']
+      })
+    );
   });
-});
 
-it('renders action menu for UPLOADED status', () => {
-  render(<DebtPositionsImportOverview />);
-  expect(screen.getByTestId('download-button')).toBeDefined();
-});
+  it('renders import button that matches routing category', () => {
+    render(<DebtPositionsImportOverview />);
 
-it('applies filters when filter button is clicked', () => {
-  render(<DebtPositionsImportOverview />);
+    const importButton = screen.getByLabelText('commons.importFlowButton');
+    expect(importButton).toBeDefined();
 
-  const searchInput = screen.getByLabelText('commons.searchName');
-  fireEvent.change(searchInput, { target: { value: 'test' } });
+    expect(importButton.closest('button')).not.toBeDisabled();
+  });
 
-  const filterButton = screen.getByText('commons.filters.filterResults');
-  fireEvent.click(filterButton);
+  it('integrates with the date picker for filtering', () => {
+    render(<DebtPositionsImportOverview />);
 
-  expect(console.log).toHaveBeenCalledWith(
-    expect.stringContaining('applied filters:'),
-    expect.objectContaining({ searchName: 'test' })
-  );
-});
+    expect(screen.getByLabelText('dates.from')).toBeDefined();
+    expect(screen.getByLabelText('dates.to')).toBeDefined();
+  });
 
-it('renders correct chip colors for different statuses', () => {
-  const { container } = render(<DebtPositionsImportOverview />);
+  it('integrates with search functionality', () => {
+    render(<DebtPositionsImportOverview />);
 
-  const uploadedChip = container.querySelector('.MuiChip-colorPrimary');
-  const completedChip = container.querySelector('.MuiChip-colorSuccess');
+    expect(screen.getByLabelText('commons.searchName')).toBeDefined();
+  });
 
-  expect(uploadedChip).toBeDefined();
-  expect(completedChip).toBeDefined();
+  it('shows filter button for applying filters', () => {
+    render(<DebtPositionsImportOverview />);
+
+    expect(screen.getByText('commons.filters.filterResults')).toBeDefined();
+  });
 });
