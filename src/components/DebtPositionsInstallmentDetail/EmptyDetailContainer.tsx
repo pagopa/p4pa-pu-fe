@@ -24,7 +24,7 @@ const EmptyDetailContainer = () => {
           color={theme.palette.text.secondary}
           sx={{ mt: 1 }}
         >
-          {t('installmentDetailPage.noPaymentMade')}
+          {t('commons.noPaymentMade')}
         </Typography>
       </CardContent>
     </Card>

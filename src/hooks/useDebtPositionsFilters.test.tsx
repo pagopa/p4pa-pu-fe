@@ -8,10 +8,8 @@ import {
 } from '../components/FilterContainer/FilterContainer';
 import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 
-vi.mock('../api/debtPositions', () => ({
-  default: {
-    getDebtPositionsTypes: vi.fn()
-  }
+vi.mock('../api/debtPositionsTypes', () => ({
+  getDebtPositionsTypes: vi.fn()
 }));
 
 vi.mock('./useDebtPositionsTypeOrg', () => ({

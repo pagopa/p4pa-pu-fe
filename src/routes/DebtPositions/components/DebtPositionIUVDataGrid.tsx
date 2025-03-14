@@ -8,7 +8,7 @@ import { ReadMore } from '@mui/icons-material';
 import { Chip, ChipProps, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../../App';
-import { useNavigate } from 'react-router';
+import { generatePath, useNavigate } from 'react-router';
 import {
   InstallmentView,
   PagedInstallmentView
@@ -104,13 +104,17 @@ export const IUVDataGrid = ({
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: () => (
+      renderCell: (params: GridRenderCellParams<InstallmentView>) => (
         <ReadMore
           fontSize="small"
           color="primary"
           sx={{ cursor: 'pointer' }}
           onClick={() => {
-            navigate(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL);
+            navigate(
+              generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
+                id: params.row.installmentId
+              })
+            );
           }}
         />
       )

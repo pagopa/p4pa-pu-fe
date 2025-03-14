@@ -1,5 +1,5 @@
 import { Download, History, ReadMore, Visibility } from '@mui/icons-material';
-import { Button, Divider, Grid } from '@mui/material';
+import { Button, CircularProgress, Divider, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DetailContainer, {
@@ -7,118 +7,192 @@ import DetailContainer, {
 } from '../DetailContainer/DetailContainer';
 import EmptyDetailContainer from './EmptyDetailContainer';
 import { InstallmentDTO } from '../../../generated/apiClient';
-
-type DetailDataValue = Record<string, Array<DetailData>> | Array<DetailData>;
-/*TMP MOCK DATA*/
-const summaryTitleMock = 'Saldo Tari 2025';
-export const tmpMockData: DetailDataValue = {
-  summaryData: [
-    {
-      label: 'Stato',
-      value: 'PAID',
-      chipConfig: { color: 'default', variant: 'outlined' }
-    },
-    {
-      label: 'Codice Avviso (IUV)',
-      value: '0300330000000001',
-      variant: 'monospaced'
-    },
-    { label: 'Importo', value: '50,00 €' },
-    { label: 'Data scadenza', value: '24/03/2025' },
-    { label: 'Debitore', value: 'Maria Bianchi' },
-    { label: 'CF / Partita IVA', value: 'BNCMRA82B42C933X (Persona fisica)' },
-    { label: 'Tipo dovuto', value: 'TARI' }
-  ],
-  paymentData: [
-    { label: 'Data esito', value: '01/09/2024' },
-    { label: 'Eseguito da', value: 'Paolo Rossi' },
-    { label: 'CF / Partita IVA', value: 'PLRSRA82B42C933X (Persona fisica)' },
-    { label: 'Gestore della transazione (PSP)', value: 'POSTMAN_TEST' },
-    { label: 'IUD', value: '000a99aa114e6b142268f27abb8b347c37d' },
-    { label: 'IUR', value: 'hR3sT2uG888KkKK' }
-  ]
-};
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
+import debtPositions from '../../api/debtPositions';
+import { moneyFormat } from '../../utils/formatters';
+import { useParams } from 'react-router-dom';
 
 export const DebtPositionsInstallmentDetail = () => {
-  type DebtStatus = Pick<InstallmentDTO, 'status'>['status'];
-  const DEBT_RESOLVED_STATES: Array<DebtStatus> = ['PAID', 'REPORTED'];
-
   const { t } = useTranslation();
+  const { state } = useStore();
+  const { id } = useParams<{ id: string }>();
 
-  const currentState = tmpMockData.summaryData.find(
-    (item) => item.label === 'Stato'
-  )?.value as DebtStatus;
-  const isResolved = DEBT_RESOLVED_STATES.includes(currentState);
+  type DebtStatus = Pick<InstallmentDTO, 'status'>['status'];
+
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+  const installmentId = Number(id);
+
+  if (isNaN(installmentId)) {
+    // TO-DO
+    // raise error
+    console.error('ID is not a number');
+  }
+
+  const { data: installment, isLoading } = debtPositions.getInstallmentDetail(
+    organizationId,
+    installmentId
+  );
+
+  const getEntityTypeLabel = (entityType = ''): string =>
+    entityType === 'F' ? `(${t('commons.person')})` : '';
+
+  const DEBT_RESOLVED_STATES: Array<DebtStatus> = ['PAID', 'REPORTED'];
+  const isResolved =
+    installment?.status && DEBT_RESOLVED_STATES.includes(installment.status);
+
+  type DetailDataValue = Record<string, Array<DetailData>> | Array<DetailData>;
+
+  const summaryTitle: string = installment?.debtPositionDescription || '';
+
+  const installmentDetailData: DetailDataValue = {
+    summaryData: [
+      {
+        label: t('commons.state'),
+        value: installment?.status || '',
+        chipConfig: { color: 'default', variant: 'outlined' }
+      },
+      {
+        label: t('debtPositionSearchResults.iuv'),
+        value: installment?.iuv || '',
+        variant: 'monospaced'
+      },
+      {
+        label: t('debtPositionSearchResults.amount'),
+        value: moneyFormat(installment?.amountCents as number)
+      },
+      {
+        label: t('debtPositionSearchResults.expirationDate'),
+        value: installment?.dueDate
+          ? new Date(installment?.dueDate).toLocaleDateString('it-IT')
+          : ''
+      },
+      {
+        label: t('commons.debtor'),
+        value: installment?.debtor?.fullName || ''
+      },
+      {
+        label: t('commons.fiscalCodeorVatExecutor'),
+        value: `${installment?.debtor?.fiscalCode} ${getEntityTypeLabel(installment?.debtor?.entityType)}`
+      },
+      {
+        label: t('commons.duetype'),
+        value: installment?.debtPositionTypeOrgDescription || ''
+      }
+    ],
+    paymentData: [
+      {
+        label: t('commons.paymentdate'),
+        value: installment?.paymentDateTime
+          ? new Date(installment?.paymentDateTime).toLocaleDateString('it-IT')
+          : ''
+      },
+      {
+        label: t('commons.executedBy'),
+        value: installment?.payer?.fullName || ''
+      },
+      {
+        label: t('commons.fiscalCodeorVatExecutor'),
+        value: `${installment?.payer?.fiscalCode} ${getEntityTypeLabel(installment?.payer?.entityType)}`
+      },
+      {
+        label: t('commons.transactionManager'),
+        value: installment?.pspCompanyName || ''
+      },
+      { label: t('commons.iud'), value: installment?.iud || '' },
+      { label: t('commons.iur'), value: installment?.iur || '' }
+    ]
+  };
 
   return (
     <>
-      <TitleComponent
-        title={t('installmentDetailPage.title')}
-        callToAction={[
-          {
-            icon: <History />,
-            variant: 'text',
-            onActionClick: () => console.log('history')
-          },
-          {
-            icon: <Download />,
-            variant: 'contained',
-            buttonText: t('installmentDetailPage.downloadInstallment'),
-            onActionClick: () => console.log('download')
-          }
-        ]}
-      />
-      <Grid container spacing={3}>
-        <Grid item md={6}>
-          <DetailContainer
-            sections={[
+      {!isLoading && (
+        <>
+          <TitleComponent
+            title={t('commons.routes.DEBT_POSITION_INSTALLMENT_DETAIL')}
+            callToAction={[
               {
-                title: { label: t(summaryTitleMock), variant: 'h6' },
-                data: tmpMockData.summaryData,
-                inline: true,
-                footerLink: {
-                  label: t('installmentDetailPage.showDebtPositions'),
-                  icon: <Visibility />
-                }
+                icon: <History />,
+                variant: 'text',
+                onActionClick: () => console.log('history')
+              },
+              {
+                icon: <Download />,
+                variant: 'contained',
+                buttonText: t('commons.downloadInstallment'),
+                onActionClick: () => console.log('download')
               }
             ]}
           />
-        </Grid>
-        <Grid item md={6}>
-          {isResolved ? (
-            <DetailContainer
-              sections={[
-                {
-                  title: {
-                    label: t('installmentDetailPage.paymentInformation'),
-                    variant: 'overline'
-                  },
-                  data: tmpMockData.paymentData,
-                  divider: true
-                }
-              ]}
-            />
-          ) : (
-            <EmptyDetailContainer />
-          )}
-        </Grid>
-      </Grid>
-      <Divider
-        orientation="horizontal"
-        flexItem
-        sx={{ display: 'block', mt: 3 }}
-      />
-      <Grid container mt={1}>
-        <Button
-          size="large"
-          endIcon={<ReadMore />}
-          variant="text"
-          fullWidth={false}
-          onClick={() => console.log('')}
+          <Grid container spacing={3}>
+            <Grid item md={6}>
+              <DetailContainer
+                sections={[
+                  {
+                    title: { label: t(summaryTitle), variant: 'h6' },
+                    data: installmentDetailData.summaryData,
+                    inline: true,
+                    footerLink: {
+                      label: t('commons.showDebtPositions'),
+                      icon: <Visibility />,
+                      onLinkClick: () =>
+                        console.log(
+                          'debtPositionId',
+                          installment?.debtPositionId
+                        )
+                    }
+                  }
+                ]}
+              />
+            </Grid>
+            <Grid item md={6}>
+              {isResolved ? (
+                <DetailContainer
+                  sections={[
+                    {
+                      title: {
+                        label: t('commons.paymentInformation'),
+                        variant: 'overline'
+                      },
+                      data: installmentDetailData.paymentData,
+                      divider: true
+                    }
+                  ]}
+                />
+              ) : (
+                <EmptyDetailContainer />
+              )}
+            </Grid>
+          </Grid>
+          <Divider
+            orientation="horizontal"
+            flexItem
+            sx={{ display: 'block', mt: 3 }}
+          />
+          <Grid container mt={1}>
+            <Button
+              size="large"
+              endIcon={<ReadMore />}
+              variant="text"
+              fullWidth={false}
+              onClick={() => console.log('installmentId: ', installmentId)}
+            >
+              {t('commons.showOtherBeneficiaries')}
+            </Button>
+          </Grid>
+        </>
+      )}
+
+      {isLoading && (
+        <Grid
+          container
+          justifyContent={'center'}
+          alignItems={'center'}
+          width={'100%'}
         >
-          {t('installmentDetailPage.showOtherBeneficiaries')}
-        </Button>
-      </Grid>
+          <CircularProgress />
+        </Grid>
+      )}
     </>
   );
 };
