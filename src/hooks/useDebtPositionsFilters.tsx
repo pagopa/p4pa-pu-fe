@@ -1,15 +1,13 @@
-import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import SearchIcon from '@mui/icons-material/Search';
-import { DebtPositionTypeWithCount } from '../../generated/data-contracts';
 import {
   COMPONENT_TYPE,
   FilterItem
 } from '../components/FilterContainer/FilterContainer';
 import { SearchType } from '../models/DebtPositions';
-import { getDebtPositionsTypes } from '../api/debtPositions';
 import { useStore } from '../store/GlobalStore';
 import { DebtPositionFilters } from './useDebtPositionsSearch';
+import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 
 type UseDebtPositionSearchProps = {
   searchType: SearchType;
@@ -21,34 +19,11 @@ export const useDebtPositionFilters = ({
   onFilter
 }: UseDebtPositionSearchProps) => {
   const { t } = useTranslation();
-  const [dueTypes, setDueTypes] = useState<
-    Array<{ label: string; value: string | number }> | []
-  >([]);
-
   const {
     state: { organizationId }
   } = useStore();
 
-  const debtPositionsTypes = getDebtPositionsTypes({ organizationId });
-
-  useEffect(() => {
-    if (debtPositionsTypes.isSuccess) {
-      const {
-        data: {
-          data: { content: debtPositionsTypesContent }
-        }
-      } = debtPositionsTypes;
-
-      const dueTypesMap = debtPositionsTypesContent.map(
-        (type: DebtPositionTypeWithCount) => ({
-          label: type.description,
-          value: type.debtPositionTypeId
-        })
-      );
-
-      setDueTypes(dueTypesMap);
-    }
-  }, [debtPositionsTypes.data]);
+  const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
 
   const getFilterItems = (): Array<FilterItem> => {
     if (searchType === SearchType.DEBT_POSITION) {
@@ -85,9 +60,9 @@ export const useDebtPositionFilters = ({
           type: COMPONENT_TYPE.select,
           label: t('commons.duetype'),
           gridWidth: 2,
-          options: [...dueTypes, { label: 'Tutti', value: 'TUTTI' }],
-          id: 'duetype',
-          defaultValue: 'TUTTI'
+          options: debtPositionsTypes.optionsMap,
+          id: 'typeOrgId',
+          defaultValue: 0
         },
         {
           type: COMPONENT_TYPE.button,
@@ -127,9 +102,9 @@ export const useDebtPositionFilters = ({
         type: COMPONENT_TYPE.select,
         label: t('commons.duetype'),
         gridWidth: 2,
-        options: [...dueTypes, { label: 'Tutti', value: 'TUTTI' }],
-        id: 'duetype',
-        defaultValue: 'TUTTI'
+        options: debtPositionsTypes.optionsMap,
+        id: 'typeOrgId',
+        defaultValue: 0
       },
       {
         type: COMPONENT_TYPE.button,

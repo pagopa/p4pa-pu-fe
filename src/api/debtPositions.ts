@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import utils from '../utils';
 
 type DebtPositionViewParams = Parameters<
@@ -14,7 +14,7 @@ export type DebtPositionViewRequest = {
   query: DebtPositionViewQuery;
 };
 
-export const getDebtPositionViews = ({
+const getDebtPositionViews = ({
   organizationId
 }: {
   organizationId: DebtPositionViewRequest['organizationId'];
@@ -37,17 +37,6 @@ export const getDebtPositionViews = ({
     }
   });
 
-export const getDebtPositionsTypes = ({
-  organizationId
-}: {
-  organizationId: number;
-}) =>
-  useQuery({
-    queryKey: ['getDebtPositionsTypes'],
-    queryFn: () =>
-      utils.apiClient.bff.getDebtPositionTypeWithCount(organizationId)
-  });
-
 type DebtPositionInstallmentsParams = Parameters<
   typeof utils.apiClient.bff.getInstallments
 >;
@@ -59,7 +48,7 @@ export type DebtPositionInstallmentsRequest = {
   query: DebtPositionInstallmentsQuery;
 };
 
-export const getInstallments = ({
+const getInstallments = ({
   organizationId
 }: {
   organizationId: DebtPositionInstallmentsRequest['organizationId'];
@@ -81,3 +70,5 @@ export const getInstallments = ({
       return response;
     }
   });
+
+export default { getDebtPositionViews, getInstallments };

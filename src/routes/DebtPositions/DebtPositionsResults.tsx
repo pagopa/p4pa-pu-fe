@@ -9,12 +9,12 @@ import { SearchType } from '../../models/DebtPositions';
 import useDebtPositionsSearch from '../../hooks/useDebtPositionsSearch';
 import { IUVDataGrid } from './components/DebtPositionIUVDataGrid';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
-import { getDebtPositionViews, getInstallments } from '../../api/debtPositions';
 import useDebtPositionFilters from '../../hooks/useDebtPositionsFilters';
 import {
   PagedInstallmentView,
   PagedDebtPositionView
 } from '../../../generated/apiClient';
+import debtPositions from '../../api/debtPositions';
 
 export type LocationState = {
   searchType: SearchType;
@@ -35,7 +35,9 @@ export const DebtPositionResults = () => {
   const debtPosition = useDebtPositionsSearch({
     initialFilters,
     requestFn:
-      searchType === SearchType.IUV ? getInstallments : getDebtPositionViews
+      searchType === SearchType.IUV
+        ? debtPositions.getInstallments
+        : debtPositions.getDebtPositionViews
   });
 
   const { filters } = useDebtPositionFilters({
