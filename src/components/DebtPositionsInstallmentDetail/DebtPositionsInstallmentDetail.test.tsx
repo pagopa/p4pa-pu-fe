@@ -19,7 +19,7 @@ describe('DebtPositionsInstallmentDetail', () => {
     render(<DebtPositionsInstallmentDetail />);
     expect(screen.getByText('installmentDetailPage.title')).toBeInTheDocument();
     expect(screen.getByText('Saldo Tari 2025')).toBeInTheDocument();
-    expect(screen.getByText('commons.chipStaus.PAID')).toBeInTheDocument();
+    expect(screen.getByText('PAID')).toBeInTheDocument();
   });
 
   it('shows payment details for PAID debt', () => {

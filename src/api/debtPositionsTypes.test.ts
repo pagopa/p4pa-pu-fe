@@ -4,9 +4,11 @@ import utils from '../utils';
 import { getDebtPositionsTypes } from './debtPositionsTypes';
 
 vi.mock('../utils', () => ({
-  apiClient: {
-    bff: {
-      getDebtPositionTypeOrgs: vi.fn()
+  default: {
+    apiClient: {
+      bff: {
+        getDebtPositionTypeOrgs: vi.fn()
+      }
     }
   }
 }));

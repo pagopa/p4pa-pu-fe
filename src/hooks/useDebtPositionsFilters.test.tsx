@@ -9,9 +9,7 @@ import {
 import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 
 vi.mock('../api/debtPositions', () => ({
-  default: {
-    getDebtPositionsTypes: vi.fn()
-  }
+  getDebtPositionsTypes: vi.fn()
 }));
 
 vi.mock('./useDebtPositionsTypeOrg', () => ({

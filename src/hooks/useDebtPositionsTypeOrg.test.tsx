@@ -5,10 +5,8 @@ import { QueryObserverPendingResult } from '@tanstack/react-query';
 import { DebtPositionTypeOrg } from '../../generated/apiClient';
 import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 
-vi.mock('../api/debtPositions', () => ({
-  default: {
-    getDebtPositionsTypes: vi.fn()
-  }
+vi.mock('../api/debtPositionsTypes', () => ({
+  getDebtPositionsTypes: vi.fn()
 }));
 
 vi.mock('react-i18next', () => ({
