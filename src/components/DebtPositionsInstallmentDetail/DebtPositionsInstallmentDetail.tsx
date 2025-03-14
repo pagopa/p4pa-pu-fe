@@ -9,7 +9,7 @@ import EmptyDetailContainer from './EmptyDetailContainer';
 import { InstallmentDTO } from '../../../generated/apiClient';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { getInstallmentDetail } from '../../api/debtPositions';
+import debtPositions from '../../api/debtPositions';
 import { moneyFormat } from '../../utils/formatters';
 import { useParams } from 'react-router-dom';
 
@@ -29,7 +29,7 @@ export const DebtPositionsInstallmentDetail = () => {
     console.error('ID is not a number');
   }
 
-  const { data: installment, isLoading } = getInstallmentDetail(
+  const { data: installment, isLoading } = debtPositions.getInstallmentDetail(
     organizationId,
     installmentId
   );

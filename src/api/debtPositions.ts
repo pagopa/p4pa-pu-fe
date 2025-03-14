@@ -73,7 +73,7 @@ const getInstallments = ({
     }
   });
 
-export const getInstallmentDetail = (
+const getInstallmentDetail = (
   organizationId: number,
   installmentId: number
 ) => {
@@ -95,4 +95,4 @@ export const getInstallmentDetail = (
   });
 };
 
-export default { getDebtPositionViews, getInstallments };
+export default { getDebtPositionViews, getInstallments, getInstallmentDetail };

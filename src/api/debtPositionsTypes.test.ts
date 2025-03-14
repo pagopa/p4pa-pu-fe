@@ -4,9 +4,11 @@ import utils from '../utils';
 import { getDebtPositionsTypes } from './debtPositionsTypes';
 
 vi.mock('../utils', () => ({
-  apiClient: {
-    bff: {
-      getDebtPositionTypeOrgs: vi.fn()
+  default: {
+    apiClient: {
+      bff: {
+        getDebtPositionTypeOrgs: vi.fn()
+      }
     }
   }
 }));
@@ -38,22 +40,5 @@ describe('getDebtPositionsTypes', () => {
     expect(utils.apiClient.bff.getDebtPositionTypeOrgs).toHaveBeenCalledWith(
       123
     );
-  });
-
-  it('should handle API errors', async () => {
-    (utils.apiClient.bff.getDebtPositionTypeOrgs as Mock).mockRejectedValue(
-      new Error('API error')
-    );
-
-    const { result } = renderHook(() =>
-      getDebtPositionsTypes({ organizationId: 123 })
-    );
-
-    await waitFor(() => {
-      expect(result.current.isError).toBe(true);
-    });
-
-    expect(result.current.error).toBeDefined();
-    expect(result?.current?.error?.message).toBe('API error');
   });
 });

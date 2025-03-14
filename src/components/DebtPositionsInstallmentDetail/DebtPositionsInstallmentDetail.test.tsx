@@ -1,7 +1,7 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { DebtPositionsInstallmentDetail } from './DebtPositionsInstallmentDetail';
-import { getInstallmentDetail } from '../../api/debtPositions';
+import debtPositions from '../../api/debtPositions';
 import { useNavigate, generatePath, useParams } from 'react-router-dom';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
@@ -13,7 +13,7 @@ vi.mock('react-router-dom', () => ({
 }));
 
 vi.mock('../../api/debtPositions', () => ({
-  getInstallmentDetail: vi.fn()
+  default: { getInstallmentDetail: vi.fn() }
 }));
 
 vi.mock('../../store/GlobalStore', () => ({
@@ -74,7 +74,7 @@ describe('DebtPositionsInstallmentDetail', () => {
     );
 
     (
-      getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
+      debtPositions.getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({ data: mockPaidInstallment });
   });
 
@@ -108,7 +108,7 @@ describe('DebtPositionsInstallmentDetail', () => {
 
   it('shows UNPAID installment', () => {
     (
-      getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
+      debtPositions.getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({ data: mockUnpaidInstallment });
 
     render(<DebtPositionsInstallmentDetail />);
