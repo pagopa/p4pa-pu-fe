@@ -43,7 +43,7 @@ beforeEach(() => {
 
 describe('PaymentOptionSection Component', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => undefined);
   });
 
   it('renders with the correct title and chip', () => {

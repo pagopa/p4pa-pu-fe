@@ -4,7 +4,8 @@ import {
   Accordion,
   AccordionSummary,
   Typography,
-  Chip
+  Chip,
+  ChipProps
 } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import { t } from 'i18next';
@@ -23,6 +24,16 @@ export const PaymentOptionSection = ({
   const detailSection = {
     data: optionData.details,
     inline: true
+  };
+
+  const getChipColorForStatus = (status: string): ChipProps['color'] => {
+    if (status === t('commons.paid')) {
+      return 'success';
+    }
+    if (status === t('commons.unpaid')) {
+      return 'error';
+    }
+    return 'info';
   };
 
   const renderInstallmentColumns = (): Array<GridColDef> => [
@@ -58,13 +69,7 @@ export const PaymentOptionSection = ({
       flex: 0.5,
       type: 'string',
       renderCell: (params: GridRenderCellParams) => {
-        const chipColor =
-          params.row.status === t('commons.paid')
-            ? 'success'
-            : params.row.status === t('commons.unpaid')
-              ? 'error'
-              : 'info';
-
+        const chipColor = getChipColorForStatus(params.row.status);
         return <Chip label={params.row.status} color={chipColor} />;
       }
     },
