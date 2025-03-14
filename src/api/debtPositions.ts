@@ -16,7 +16,7 @@ export type DebtPositionViewRequest = {
   query: DebtPositionViewQuery;
 };
 
-export const getDebtPositionViews = ({
+const getDebtPositionViews = ({
   organizationId
 }: {
   organizationId: DebtPositionViewRequest['organizationId'];
@@ -39,17 +39,6 @@ export const getDebtPositionViews = ({
     }
   });
 
-export const getDebtPositionsTypes = ({
-  organizationId
-}: {
-  organizationId: number;
-}) =>
-  useQuery({
-    queryKey: ['getDebtPositionsTypes'],
-    queryFn: () =>
-      utils.apiClient.bff.getDebtPositionTypeWithCount(organizationId)
-  });
-
 type DebtPositionInstallmentsParams = Parameters<
   typeof utils.apiClient.bff.getInstallments
 >;
@@ -61,7 +50,7 @@ export type DebtPositionInstallmentsRequest = {
   query: DebtPositionInstallmentsQuery;
 };
 
-export const getInstallments = ({
+const getInstallments = ({
   organizationId
 }: {
   organizationId: DebtPositionInstallmentsRequest['organizationId'];
@@ -105,3 +94,5 @@ export const getInstallmentDetail = (
     retry: false
   });
 };
+
+export default { getDebtPositionViews, getInstallments };

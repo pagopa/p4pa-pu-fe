@@ -29,7 +29,9 @@
 		"types": [
 			"vitest/globals",
 			"vite/client",
-			"globals"
+			"globals",
+			"react",
+			"react-dom"
 		]
 	},
 	"include": [
