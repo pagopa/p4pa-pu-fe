@@ -31,7 +31,7 @@ beforeEach(() => {
 
 describe('DebtPositionDetail Component', () => {
   beforeEach(() => {
-    vi.spyOn(console, 'log').mockImplementation(() => {});
+    vi.spyOn(console, 'log').mockImplementation(() => undefined);
   });
 
   afterEach(() => {

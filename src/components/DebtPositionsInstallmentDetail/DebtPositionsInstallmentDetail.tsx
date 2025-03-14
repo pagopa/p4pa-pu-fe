@@ -23,7 +23,7 @@ export const tmpMockData: DetailDataValue = {
       value: '0300330000000001',
       variant: 'monospaced'
     },
-    { label: 'Importo', value: '50,00 €' },
+    { label: 'Importo', value: 5000 },
     { label: 'Data scadenza', value: '24/03/2025' },
     { label: 'Debitore', value: 'Maria Bianchi' },
     { label: 'CF / Partita IVA', value: 'BNCMRA82B42C933X (Persona fisica)' },

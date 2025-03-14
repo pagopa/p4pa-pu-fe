@@ -12,6 +12,7 @@ import {
 import { Variant } from '@mui/material/styles/createTypography';
 import { useTranslation } from 'react-i18next';
 import { moneyFormat } from '../../utils/formatters';
+import React from 'react';
 export type DetailData = {
   label: string;
   value: string | number;
@@ -49,6 +50,46 @@ const stateColors: Record<DetailData['value'], ChipOwnProps['color']> = {
 const DetailContainer = ({ sections }: DetailSectionProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
+
+  const renderItemValue = (item: DetailData): JSX.Element => {
+    if (item.label === t('commons.state')) {
+      return (
+        <React.Fragment>
+          <Chip
+            color={item.chipConfig?.color ?? stateColors[item.value]}
+            label={t(`commons.chipStaus.${item.value}`)}
+            variant={item.chipConfig?.variant}
+          />
+        </React.Fragment>
+      );
+    }
+
+    if (item.label === t('commons.amount')) {
+      return (
+        <React.Fragment>
+          <Typography
+            fontWeight={item.variant ?? 600}
+            variant={item.variant ?? 'body1'}
+          >
+            {moneyFormat(
+              typeof item.value === 'number' ? item.value : Number(item.value)
+            )}
+          </Typography>
+        </React.Fragment>
+      );
+    }
+
+    return (
+      <React.Fragment>
+        <Typography
+          fontWeight={item.variant ?? 600}
+          variant={item.variant ?? 'body1'}
+        >
+          {item.value || '-'}
+        </Typography>
+      </React.Fragment>
+    );
+  };
 
   return (
     <Card sx={{ borderRadius: 2, height: 'auto' }}>
@@ -89,33 +130,7 @@ const DetailContainer = ({ sections }: DetailSectionProps) => {
                       lg={section.inline ? 6 : 12}
                       md={section.inline ? 6 : 12}
                     >
-                      {item.label === t('commons.state') ? (
-                        <Chip
-                          color={
-                            item.chipConfig?.color ?? stateColors[item.value]
-                          }
-                          label={t(`commons.chipStaus.${item.value}`)}
-                          variant={item.chipConfig?.variant}
-                        />
-                      ) : item.label === t('commons.amount') ? (
-                        <Typography
-                          fontWeight={item.variant ?? 600}
-                          variant={item.variant ?? 'body1'}
-                        >
-                          {moneyFormat(
-                            typeof item.value === 'number'
-                              ? item.value
-                              : Number(item.value)
-                          )}
-                        </Typography>
-                      ) : (
-                        <Typography
-                          fontWeight={item.variant ?? 600}
-                          variant={item.variant ?? 'body1'}
-                        >
-                          {item.value || '-'}
-                        </Typography>
-                      )}
+                      {renderItemValue(item)}
                     </Grid>
                     {section.divider && index !== section.data.length - 1 && (
                       <Divider
