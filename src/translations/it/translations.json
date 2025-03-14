@@ -18,7 +18,8 @@
 		"breadcrumbsElement": "Elemento breadcrumb",
 		"breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
 		"close": "Chiudi",
-		"debtor": "Debitore",
+    "debtor": "Debitore",
+    "description": "Descrizione",
 		"detail": "Dettaglio",
 		"duetype": "Tipo dovuto",
 		"exit": "Esci",
@@ -106,6 +107,7 @@
 		},
 		"from": "Dal",
 		"importFlowButton": "Importa flusso",
+    "internalCode": "Codice Interno",
 		"iud": "IUD",
 		"iur": "IUR",
 		"iuv": "IUV",
@@ -115,7 +117,13 @@
 		"paymentDate": "Data pagamento",
 		"paymentdate": "Data Esito",
 		"paymentExecutor": "Versante",
-		"person": "Persona fisica",
+    "paymentOptions": {
+      "SINGLE_INSTALLMENT": "Soluzione Unica",
+      "INSTALLMENTS": "Soluzione a Rate",
+      "DOWN_PAYMENT": "Anticipo"
+    },
+    "person": "Persona fisica",
+    "personLegal": "Persona giuridica",
 		"reason": "Causale",
 		"requiredFieldDescription": "* Indica un campo obbligatorio",
 		"createNew": "Crea nuova",
@@ -247,6 +255,11 @@
 			}
 		}
 	},
+  "debtPositionDetail": {
+    "debtPositionInfo": "Informazioni sulla posizione debitoria",
+    "paymentOptions": "Opzioni di Pagamento",
+    "solutionDetail": "Dettaglio soluzione"
+  },
 	"debtPositionSearchResults": {
 		"iuv": "Codice Avviso (IUV)",
 		"subject": "Oggetto del pagamento",

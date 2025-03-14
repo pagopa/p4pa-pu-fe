@@ -11,9 +11,11 @@ import {
 } from '@mui/material';
 import { Variant } from '@mui/material/styles/createTypography';
 import { useTranslation } from 'react-i18next';
+import { moneyFormat } from '../../utils/formatters';
+import React from 'react';
 export type DetailData = {
   label: string;
-  value: string;
+  value: string | number;
   variant?: 'body1' | 'body2' | 'h6' | 'subtitle1' | 'monospaced';
   chipConfig?: {
     color?: ChipOwnProps['color'];
@@ -49,8 +51,48 @@ const DetailContainer = ({ sections }: DetailSectionProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
+  const renderItemValue = (item: DetailData): JSX.Element => {
+    if (item.label === t('commons.state')) {
+      return (
+        <React.Fragment>
+          <Chip
+            color={item.chipConfig?.color ?? stateColors[item.value]}
+            label={t(`commons.chipStaus.${item.value}`)}
+            variant={item.chipConfig?.variant}
+          />
+        </React.Fragment>
+      );
+    }
+
+    if (item.label === t('commons.amount')) {
+      return (
+        <React.Fragment>
+          <Typography
+            fontWeight={item.variant ?? 600}
+            variant={item.variant ?? 'body1'}
+          >
+            {moneyFormat(
+              typeof item.value === 'number' ? item.value : Number(item.value)
+            )}
+          </Typography>
+        </React.Fragment>
+      );
+    }
+
+    return (
+      <React.Fragment>
+        <Typography
+          fontWeight={item.variant ?? 600}
+          variant={item.variant ?? 'body1'}
+        >
+          {item.value || '-'}
+        </Typography>
+      </React.Fragment>
+    );
+  };
+
   return (
-    <Card sx={{ borderRadius: 2, padding: 2, height: 'auto' }}>
+    <Card sx={{ borderRadius: 2, height: 'auto' }}>
       <CardContent>
         <Grid container spacing={2}>
           {sections.map((section, index) => (
@@ -88,22 +130,7 @@ const DetailContainer = ({ sections }: DetailSectionProps) => {
                       lg={section.inline ? 6 : 12}
                       md={section.inline ? 6 : 12}
                     >
-                      {item.label === 'Stato' ? (
-                        <Chip
-                          color={
-                            item.chipConfig?.color ?? stateColors[item.value]
-                          }
-                          label={t(`commons.chipStaus.${item.value}`)}
-                          variant={item.chipConfig?.variant}
-                        />
-                      ) : (
-                        <Typography
-                          fontWeight={item.variant ?? 600}
-                          variant={item.variant ?? 'body1'}
-                        >
-                          {item.value || '-'}
-                        </Typography>
-                      )}
+                      {renderItemValue(item)}
                     </Grid>
                     {section.divider && index !== section.data.length - 1 && (
                       <Divider

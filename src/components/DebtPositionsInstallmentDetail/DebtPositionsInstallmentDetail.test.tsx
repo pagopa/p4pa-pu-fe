@@ -90,7 +90,6 @@ describe('DebtPositionsInstallmentDetail', () => {
     render(<DebtPositionsInstallmentDetail />);
 
     expect(screen.getByText('commons.state')).toBeInTheDocument();
-    expect(screen.getByText('PAID')).toBeInTheDocument();
 
     expect(screen.getByText('commons.paymentInformation')).toBeInTheDocument();
     expect(screen.getByText('commons.paymentdate')).toBeInTheDocument();

@@ -4,7 +4,7 @@ import {
   COMPONENT_TYPE,
   FilterItem
 } from '../components/FilterContainer/FilterContainer';
-import { SearchType } from '../models/DebtPositiosn';
+import { SearchType } from '../models/DebtPositions';
 import { useStore } from '../store/GlobalStore';
 import { DebtPositionFilters } from './useDebtPositionsSearch';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';

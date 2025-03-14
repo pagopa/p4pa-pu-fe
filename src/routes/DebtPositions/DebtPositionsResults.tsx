@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { BaseFilterValues } from '../../models/Filters';
-import { SearchType } from '../../models/DebtPositiosn';
+import { SearchType } from '../../models/DebtPositions';
 import useDebtPositionsSearch from '../../hooks/useDebtPositionsSearch';
 import { IUVDataGrid } from './components/DebtPositionIUVDataGrid';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';

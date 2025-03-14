@@ -2,6 +2,19 @@ import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import DetailContainer from '../DetailContainer/DetailContainer';
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'commons.state': 'Stato',
+        'commons.amount': 'Importo',
+        'commons.chipStaus.PAID': 'commons.chipStaus.PAID'
+      };
+      return translations[key] || key;
+    }
+  })
+}));
+
 describe('DetailContainer', () => {
   const mockProps = {
     sections: [
@@ -13,7 +26,7 @@ describe('DetailContainer', () => {
             value: '03234234234324',
             variant: 'monospaced' as const
           },
-          { label: 'Importo', value: '80,00 €' }
+          { label: 'Importo', value: 8000 }
         ]
       },
       {

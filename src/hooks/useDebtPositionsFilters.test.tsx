@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, waitFor } from '../__tests__/renderers';
-import { SearchType } from '../models/DebtPositiosn';
+import { SearchType } from '../models/DebtPositions';
 import useDebtPositionFilters from './useDebtPositionsFilters';
 import {
   ButtonField,

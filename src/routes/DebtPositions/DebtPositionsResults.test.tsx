@@ -2,7 +2,7 @@ import { describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { useLocation } from 'react-router-dom';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
-import { SearchType } from '../../models/DebtPositiosn';
+import { SearchType } from '../../models/DebtPositions';
 import DebtPositionResults from './DebtPositionsResults';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
 

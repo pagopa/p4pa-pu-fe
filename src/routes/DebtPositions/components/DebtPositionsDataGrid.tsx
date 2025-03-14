@@ -5,10 +5,9 @@ import {
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { FileDownload, Visibility } from '@mui/icons-material';
+import { ChevronRight } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../../App';
-import ActionMenu from '../../../components/ActionMenu/ActionMenu';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import Chip, { ChipProps } from '@mui/material/Chip';
 import { PagedDebtPositionView } from '../../../../generated/data-contracts';
@@ -98,26 +97,26 @@ export const DebtPositionsDataGrid = ({
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<ResultDataRow>) => (
-        <ActionMenu
-          rowId={params.row.id}
-          menuItems={[
-            {
-              icon: <Visibility fontSize="small" />,
-              label: t('commons.view'),
-              action: () =>
-                navigate(
-                  generatePath(PageRoutes.REPORTING_DETAIL, {
-                    id: params.row.idReporting
-                  })
-                )
-            },
-            {
-              icon: <FileDownload fontSize="small" />,
-              label: t('commons.files.download'),
-              action: () => console.log('Scarica file per ID: ', params.row.id)
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            height: '100%',
+            width: '100%'
+          }}
+        >
+          <ChevronRight
+            color="primary"
+            onClick={() =>
+              navigate(
+                generatePath(PageRoutes.DETAIL_DEBT_POSITION, {
+                  id: params.row.debtPositionId
+                })
+              )
             }
-          ]}
-        />
+          />
+        </div>
       )
     }
   ];
