@@ -11,12 +11,14 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
 import { moneyFormat } from '../../utils/formatters';
-import { useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import { PageRoutes } from '../../App';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
   const { state } = useStore();
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
 
   type DebtStatus = Pick<InstallmentDTO, 'status'>['status'];
 
@@ -136,9 +138,10 @@ export const DebtPositionsInstallmentDetail = () => {
                       label: t('commons.showDebtPositions'),
                       icon: <Visibility />,
                       onLinkClick: () =>
-                        console.log(
-                          'debtPositionId',
-                          installment?.debtPositionId
+                        navigate(
+                          generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
+                            id: installment?.debtPositionId
+                          })
                         )
                     }
                   }

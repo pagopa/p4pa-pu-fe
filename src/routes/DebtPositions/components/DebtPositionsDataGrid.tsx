@@ -108,13 +108,13 @@ export const DebtPositionsDataGrid = ({
         >
           <ChevronRight
             color="primary"
-            onClick={() =>
+            onClick={() => {
               navigate(
-                generatePath(PageRoutes.DETAIL_DEBT_POSITION, {
+                generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
                   id: params.row.debtPositionId
                 })
-              )
-            }
+              );
+            }}
           />
         </div>
       )
