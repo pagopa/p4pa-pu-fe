@@ -196,7 +196,14 @@
 		},
 		"chipStaus": {
 			"PAID": "Pagato",
-			"UNPAID": "Non pagato"
+			"UNPAID": "Da pagare",
+			"TO_SYNC": "Da sincronizzare",
+			"CANCELLED": "Cancellato",
+			"DRAFT": "Bozza",
+			"EXPIRED": "Scaduto",
+			"PARTIALLY_PAID": "Pagamento iniziato",
+			"REPORTED": "Rendicontato",
+			"INVALID": "Non valido"
 		},
 		"successExport": "Abbiamo ricevuto la tua richiesta!",
 		"successImport": "Flusso caricato con successo",
@@ -209,7 +216,14 @@
 		"searchCF": "Cerca CF",
 		"uploadedFrom": "Caricati dal",
 		"importNewFlow": "Carica un nuovo flusso",
-		"debtFlow": "Flussi dovuti"
+		"debtFlow": "Flussi dovuti",
+		"showDebtPositions": "Vedi Posizione debitoria",
+		"showOtherBeneficiaries": "Vedi altri beneficiari",
+		"noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+		"downloadInstallment": "Scarica avviso",
+		"paymentInformation": "Informazione sul pagamento",
+		"executedBy": "Eseguito da",
+		"transactionManager": "Gestore della transazione (PSP)"
 	},
 	"conservation": {
 		"buttonReservationExport": "Prenota export",
@@ -400,13 +414,5 @@
 		"importDebtFlowDescription": "Carica un file .zip con l'informazione necessaria di dovuti mancanti.",
 		"expirationFrom": "Scadenza dal",
 		"creationFrom": "Creazione dal"
-	},
-	"installmentDetailPage": {
-		"title": "Dettagli Avviso",
-		"showDebtPositions": "Vedi Posizione debitoria",
-		"showOtherBeneficiaries": "Vedi altri beneficiari",
-		"noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
-		"downloadInstallment": "Scarica avviso",
-		"paymentInformation": "Informazione sul pagamento"
 	}
 }

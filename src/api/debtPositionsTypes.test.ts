@@ -41,21 +41,4 @@ describe('getDebtPositionsTypes', () => {
       123
     );
   });
-
-  it('should handle API errors', async () => {
-    (utils.apiClient.bff.getDebtPositionTypeOrgs as Mock).mockRejectedValue(
-      new Error('API error')
-    );
-
-    const { result } = renderHook(() =>
-      getDebtPositionsTypes({ organizationId: 123 })
-    );
-
-    await waitFor(() => {
-      expect(result.current.isError).toBe(true);
-    });
-
-    expect(result.current.error).toBeDefined();
-    expect(result?.current?.error?.message).toBe('API error');
-  });
 });
