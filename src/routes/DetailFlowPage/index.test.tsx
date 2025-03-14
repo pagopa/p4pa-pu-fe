@@ -5,12 +5,10 @@ import DetailFlowPage from '.';
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal()),
   useNavigate: vi.fn(),
-  useParams: () => ({ category: 'receipt' }),
+  useParams: () => ({ category: 'receipt' })
 }));
 
-
 describe('Detail Flow Page', () => {
-
   it('renders Detail Flow without crashing', () => {
     render(<DetailFlowPage />);
   });

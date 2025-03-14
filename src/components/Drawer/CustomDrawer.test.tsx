@@ -9,9 +9,7 @@ vi.mock('../../hooks/useFilters', () => ({
   useFilters: () => ({
     FILTER_TYPE_1: {
       label: 'Filtro 1',
-      fields: [
-        { type: COMPONENT_TYPE.textField, label: 'commons.searchFor' }
-      ]
+      fields: [{ type: COMPONENT_TYPE.textField, label: 'commons.searchFor' }]
     }
   })
 }));
@@ -28,10 +26,10 @@ describe('CustomDrawer Component', () => {
       <CustomDrawer
         open={true}
         onClose={mockOnClose}
-        title='Test Drawer'
+        title="Test Drawer"
         fields={[
           { id: '1', label: 'Field 1', value: 'Value 1' },
-          { id: '2', label: 'Field 2', value: 'Value 2' },
+          { id: '2', label: 'Field 2', value: 'Value 2' }
         ]}
       />
     );
@@ -44,7 +42,9 @@ describe('CustomDrawer Component', () => {
   });
 
   it('close drawer when close icon is clicked', () => {
-    render(<CustomDrawer open={true} onClose={mockOnClose} title='Test Drawer' />);
+    render(
+      <CustomDrawer open={true} onClose={mockOnClose} title="Test Drawer" />
+    );
 
     const closeButton = screen.getByTestId('close-icon');
     fireEvent.click(closeButton);
@@ -52,7 +52,7 @@ describe('CustomDrawer Component', () => {
     expect(mockOnClose).toHaveBeenCalled();
   });
 
-  it('renders drawer with multiFilter', () => {    
+  it('renders drawer with multiFilter', () => {
     render(
       <StoreProvider>
         <CustomDrawer
@@ -63,8 +63,8 @@ describe('CustomDrawer Component', () => {
         />
       </StoreProvider>
     );
-  
+
     const selectLabels = screen.getAllByText('commons.searchFor');
     expect(selectLabels[0]).toBeTruthy();
-  });  
+  });
 });

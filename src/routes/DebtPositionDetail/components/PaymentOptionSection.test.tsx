@@ -48,9 +48,9 @@ describe('PaymentOptionSection Component', () => {
 
   it('renders with the correct title and chip', () => {
     render(<PaymentOptionSection optionData={mockOptionData} />);
-    
+
     expect(screen.getByText('Test Payment Option')).toBeDefined();
-    
+
     const statusChip = screen.getByText('Test Status');
     expect(statusChip).toBeDefined();
     expect(statusChip.closest('.MuiChip-root')).not.toBeNull();
@@ -58,32 +58,35 @@ describe('PaymentOptionSection Component', () => {
 
   it('expands accordion when clicked', async () => {
     render(<PaymentOptionSection optionData={mockOptionData} />);
-    
+
     const accordionSummary = screen.getByText('Solution Detail');
     expect(accordionSummary).toBeDefined();
-    
+
     const button = accordionSummary.closest('[role="button"]');
     expect(button).not.toBeNull();
-    
+
     if (button) {
       fireEvent.click(button);
-      
-      await vi.waitFor(() => {
-        expect(screen.getByText('Description')).toBeDefined();
-        expect(screen.getByText('Test Description')).toBeDefined();
-      }, { timeout: 2000 });
+
+      await vi.waitFor(
+        () => {
+          expect(screen.getByText('Description')).toBeDefined();
+          expect(screen.getByText('Test Description')).toBeDefined();
+        },
+        { timeout: 2000 }
+      );
     }
   });
 
   it('renders the data grid with correct installments', () => {
     render(<PaymentOptionSection optionData={mockOptionData} />);
-    
+
     expect(screen.getByText('Codice Avviso (IUV)')).toBeDefined();
     expect(screen.getByText('Oggetto del pagamento')).toBeDefined();
     expect(screen.getByText('Importo')).toBeDefined();
     expect(screen.getByText('Data scadenza')).toBeDefined();
     expect(screen.getByText('Stato')).toBeDefined();
-    
+
     expect(screen.getByText('TEST12345')).toBeDefined();
     expect(screen.getByText('TEST67890')).toBeDefined();
     expect(screen.getByText('Test Installment')).toBeDefined();
@@ -92,13 +95,13 @@ describe('PaymentOptionSection Component', () => {
 
   it('triggers ReadMore function with correct IUV when clicked', () => {
     render(<PaymentOptionSection optionData={mockOptionData} />);
-    
+
     const readMoreIcons = screen.getAllByTestId('ReadMoreIcon');
     expect(readMoreIcons.length).toBe(2);
-    
+
     fireEvent.click(readMoreIcons[0]);
     expect(console.log).toHaveBeenCalledWith('ReadMore Click iuv', 'TEST12345');
-    
+
     fireEvent.click(readMoreIcons[1]);
     expect(console.log).toHaveBeenCalledWith('ReadMore Click iuv', 'TEST67890');
   });
@@ -133,28 +136,30 @@ describe('PaymentOptionSection Component', () => {
         }
       ]
     };
-    
+
     render(<PaymentOptionSection optionData={mockWithDifferentStatuses} />);
-    
+
     const statusChips = screen.getAllByText((content) => {
       return ['Paid', 'Unpaid', 'Other Status'].includes(content);
     });
-    
+
     expect(statusChips.length).toBe(3);
-    
+
     const paidChip = screen.getByText('Paid').closest('.MuiChip-root');
     expect(paidChip).toHaveClass('MuiChip-colorSuccess');
-    
+
     const unpaidChip = screen.getByText('Unpaid').closest('.MuiChip-root');
     expect(unpaidChip).toHaveClass('MuiChip-colorError');
-    
-    const otherStatusChip = screen.getByText('Other Status').closest('.MuiChip-root');
+
+    const otherStatusChip = screen
+      .getByText('Other Status')
+      .closest('.MuiChip-root');
     expect(otherStatusChip).toHaveClass('MuiChip-colorInfo');
   });
 
   it('hides footer when installments length is 5 or less', () => {
     render(<PaymentOptionSection optionData={mockOptionData} />);
-    
+
     const pagination = screen.queryByRole('navigation');
     expect(pagination).toBeNull();
   });
@@ -162,18 +167,20 @@ describe('PaymentOptionSection Component', () => {
   it('shows footer when installments length is more than 5', () => {
     const mockWithManyInstallments: PaymentOptionDisplayData = {
       ...mockOptionData,
-      installments: Array(6).fill(0).map((_, index) => ({
-        id: index + 1,
-        iuv: `TEST${index}`,
-        subject: `Test Installment ${index + 1}`,
-        amount: 1000,
-        expirationDate: '2025-12-31',
-        status: 'Unpaid'
-      }))
+      installments: Array(6)
+        .fill(0)
+        .map((_, index) => ({
+          id: index + 1,
+          iuv: `TEST${index}`,
+          subject: `Test Installment ${index + 1}`,
+          amount: 1000,
+          expirationDate: '2025-12-31',
+          status: 'Unpaid'
+        }))
     };
-    
+
     render(<PaymentOptionSection optionData={mockWithManyInstallments} />);
-    
+
     const pagination = screen.queryByRole('navigation');
     expect(pagination).not.toBeNull();
   });

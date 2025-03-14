@@ -5,7 +5,6 @@ import { accessTokenSchema } from '../../generated/zod-schema';
 import { createMock } from 'zodock';
 import { postToken } from './token';
 
-
 vi.mock('./utils', () => {
   const originalModule = vi.importActual('utils');
   return {
@@ -20,13 +19,10 @@ vi.mock('./utils', () => {
   };
 });
 
-
 describe('get Token API ', () => {
-
   const fakeSelfCareToken = '123456789abc';
 
   it('returns Token correctly', async () => {
-
     globalThis.location = {
       ...globalThis.location,
       href: `http://sito.it/auth-callback#${fakeSelfCareToken}`
@@ -39,22 +35,19 @@ describe('get Token API ', () => {
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
     const token = await postToken();
 
-    expect(apiMock).toHaveBeenCalledWith(
-      { idToken : fakeSelfCareToken },
-    );
+    expect(apiMock).toHaveBeenCalledWith({ idToken: fakeSelfCareToken });
     expect(token).toEqual(dataMock);
   });
 
   it('should return null on failure', async () => {
     globalThis.location = {
       ...globalThis.location,
-      href: 'http://sito.it/auth-callback'
+      href: 'https://sito.it/auth-callback'
     };
-  
+
     vi.mocked(utils.apiClient.bff.postToken).mockRejectedValue(new Error());
     const result = await postToken();
-  
+
     expect(result).toBe(null);
   });
-
 });

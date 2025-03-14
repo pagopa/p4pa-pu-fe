@@ -4,7 +4,7 @@ import DetailFlowPage from '../DetailFlowPage/DetailFlowPage';
 import { useParams } from 'react-router-dom';
 
 vi.mock('react-router-dom', () => ({
-  useParams: vi.fn(),
+  useParams: vi.fn()
 }));
 
 vi.mock('react-i18next', () => ({
@@ -27,7 +27,9 @@ describe('DetailFlowPage', () => {
 
     expect(screen.getByText(/commons.summary/i)).toBeDefined();
     expect(screen.getByText(/commons.payment/i)).toBeDefined();
-    expect(screen.getByRole('button', { name: 'commons.files.download' })).toBeDefined();
+    expect(
+      screen.getByRole('button', { name: 'commons.files.download' })
+    ).toBeDefined();
   });
 
   it('renders double card without download button', () => {
@@ -35,7 +37,9 @@ describe('DetailFlowPage', () => {
 
     render(<DetailFlowPage />);
 
-    expect(screen.queryByRole('button', { name: 'commons.files.download' })).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: 'commons.files.download' })
+    ).toBeNull();
   });
 
   it('renders single card without section titles', () => {

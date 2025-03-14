@@ -15,7 +15,7 @@ import { useFooterData } from '../../hooks/useFooterData';
 const defaultRouteHandle: RouteHandleObject = {
   backButton: true,
   hideBreadcrumbs: false,
-  sidebar: { visible: true },
+  sidebar: { visible: true }
 };
 
 export function Layout() {
@@ -29,15 +29,25 @@ export function Layout() {
 
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
   const { collapsed } = useCollapseMenu(!lg);
+  const getMainColumnWidth = () => {
+    if (!sidebar.visible) return 12;
+    return collapsed ? 11 : 10;
+  };
 
-  const { hideBreadcrumbs, sidebar, backButton, backButtonText, backButtonFunction } = {
+  const {
+    hideBreadcrumbs,
+    sidebar,
+    backButton,
+    backButtonText,
+    backButtonFunction
+  } = {
     ...defaultRouteHandle,
     ...(currentMatch.find((match) => Boolean(match.handle))?.handle || {})
   } as RouteHandleObject;
 
   const sidePadding = sidebar.visible ? 3 : { xs: 3, md: 12, lg: 27, xl: 34 };
 
-  const mainColumnWidth = !sidebar.visible ? 12 : (collapsed ? 11 : 10);
+  const mainColumnWidth = getMainColumnWidth();
 
   return (
     <>
@@ -47,7 +57,8 @@ export function Layout() {
           direction={'column'}
           height={'100%'}
           minHeight="100vh"
-          bgcolor={grey['100']}>
+          bgcolor={grey['100']}
+        >
           <Grid item xs={12} height="fit-content" component={'header'}>
             <Header onAssistanceClick={() => window.open('/', '_blank')} />
           </Grid>
@@ -59,9 +70,20 @@ export function Layout() {
               padding={3}
               height={'100%'}
               xs={mainColumnWidth}
-              paddingX={sidePadding}>
-              <Stack direction="row" justifyContent="flex-start" alignItems="center" spacing={2}>
-                {backButton && <BackButton onClick={backButtonFunction} text={backButtonText} />}
+              paddingX={sidePadding}
+            >
+              <Stack
+                direction="row"
+                justifyContent="flex-start"
+                alignItems="center"
+                spacing={2}
+              >
+                {backButton && (
+                  <BackButton
+                    onClick={backButtonFunction}
+                    text={backButtonText}
+                  />
+                )}
                 {!hideBreadcrumbs && (
                   <Breadcrumbs separator={<NavigateNext fontSize="small" />} />
                 )}

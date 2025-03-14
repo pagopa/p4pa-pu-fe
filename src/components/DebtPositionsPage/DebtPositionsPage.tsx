@@ -17,7 +17,7 @@ export const DebtPositionsPage = () => {
   const debtTabsConfig = getTabsConfig(t);
 
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
-  const [filters, setFilters] = useState<BaseFilterValues[]>([{}, {}]);
+  const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}, {}]);
 
   const navigateToResults = useCallback(() => {
     if (activeTabIndex === 0) {
@@ -107,9 +107,15 @@ export const DebtPositionsPage = () => {
               actionIcon={<FileUpload />}
               linkLabel={t('commons.showAllFlows')}
               onActionClick={() =>
-                navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'debt-positions' }))
+                navigate(
+                  generatePath(PageRoutes.IMPORT_FLOWS, {
+                    category: 'debt-positions'
+                  })
+                )
               }
-              onLinkClick={() => navigate(PageRoutes.DEBT_POSITIONS_IMPORT_OVERVIEW)}
+              onLinkClick={() =>
+                navigate(PageRoutes.DEBT_POSITIONS_IMPORT_OVERVIEW)
+              }
             />
           </Grid>
         </Grid>

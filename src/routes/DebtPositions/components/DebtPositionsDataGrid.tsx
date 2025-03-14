@@ -10,24 +10,22 @@ import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../../App';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import Chip, { ChipProps } from '@mui/material/Chip';
-import {
-  PagedDebtPositionView,
-} from '../../../../generated/data-contracts';
+import { PagedDebtPositionView } from '../../../../generated/data-contracts';
 import { format } from 'date-fns';
 
-interface ResultDataRow extends GridValidRowModel {
+type ResultDataRow = {
   id: number;
   description: string;
   debtType: string;
   creationDate: string;
   status: string;
-}
+} & GridValidRowModel;
 
 export type DataGridProps = {
   data: PagedDebtPositionView;
   onPageChange: (page: number) => void;
   onPageSizeChange: (page: number) => void;
-  onSortChange: (model: string[]) => void;
+  onSortChange: (model: Array<string>) => void;
   pagination: {
     currentPage: number;
     page: number;
@@ -56,7 +54,7 @@ export const DebtPositionsDataGrid = ({
     UNPAID: 'info'
   };
 
-  const columns: GridColDef[] = [
+  const columns: Array<GridColDef> = [
     {
       field: 'description',
       headerName: t('DebtPositions.Results.table.description'),
@@ -99,16 +97,24 @@ export const DebtPositionsDataGrid = ({
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<ResultDataRow>) => (
-        <div style={{ 
-          display: 'flex', 
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          height: '100%',
-          width: '100%'
-        }}>
-          <ChevronRight 
-            color='primary'
-            onClick={() => navigate(generatePath(PageRoutes.DETAIL_DEBT_POSITION, { id: params.row.debtPositionId }))}
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            height: '100%',
+            width: '100%'
+          }}
+        >
+          <ChevronRight
+            color="primary"
+            onClick={() =>
+              navigate(
+                generatePath(PageRoutes.DETAIL_DEBT_POSITION, {
+                  id: params.row.debtPositionId
+                })
+              )
+            }
           />
         </div>
       )
@@ -117,7 +123,9 @@ export const DebtPositionsDataGrid = ({
 
   const onSort = (model: GridSortModel) => {
     if (model?.length) {
-      const sort = model.map((item) => `${item.field},${item.sort!.toUpperCase()}`);
+      const sort = model.map((item) =>
+        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
+      );
       onPageChange(1);
       onSortChange(sort);
     }

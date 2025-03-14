@@ -4,19 +4,19 @@ import { ConfigFE } from '../../generated/apiClient';
 import { AppState } from '../models/AppState';
 import { OperatoRole } from '../models/OperatorRole';
 
-export interface State {
+export type State = {
   [STATE.USER_INFO]: UserMemo | undefined;
   [STATE.ORGANIZATION_ID]: OrganizationIdMemo;
   [STATE.CONFIG_FE]: ConfigFE | undefined;
   [STATE.APP_STATE]: AppState;
-  [STATE.FILTERS]: string[];
-  [STATE.OPERATOR_ROLE]: OperatoRole| undefined;
-}
+  [STATE.FILTERS]: Array<string>;
+  [STATE.OPERATOR_ROLE]: OperatoRole | undefined;
+};
 
-export interface StoreContextProps {
+export type StoreContextProps = {
   state: State;
   setState: (key: keyof State, value: unknown) => void;
-}
+};
 
 export enum STATE {
   APP_STATE = 'appState',
@@ -24,5 +24,5 @@ export enum STATE {
   CONFIG_FE = 'configFe',
   ORGANIZATION_ID = 'organizationId',
   FILTERS = 'filters',
-  OPERATOR_ROLE = 'operatorRole',
+  OPERATOR_ROLE = 'operatorRole'
 }

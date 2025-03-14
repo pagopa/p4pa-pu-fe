@@ -1,4 +1,4 @@
-const mimeTypes: Record<string, string[]> = {
+const mimeTypes: Record<string, Array<string>> = {
   jpg: ['image/jpeg'],
   png: ['image/png'],
   pdf: ['application/pdf'],
@@ -7,7 +7,7 @@ const mimeTypes: Record<string, string[]> = {
 
 export const isExtensionAllowed = (
   file: File,
-  fileExtensionsAllowed: string[]
+  fileExtensionsAllowed: Array<string>
 ): boolean => {
   const isMimeValid = Object.values(mimeTypes).some((types) =>
     types.includes(file.type)

@@ -12,7 +12,7 @@ describe('Footer', () => {
     image: <span data-testid="company-image">Company Logo</span>
   };
 
-  const links: FooterLinksType[] = [
+  const links: Array<FooterLinksType> = [
     {
       href: 'https://example.com/link1',
       label: 'Link 1',
@@ -42,10 +42,19 @@ describe('Footer', () => {
   };
 
   it('should render the company link correctly', () => {
-    render(<Footer companyLink={companyLink} links={links} legalInfo={legalInfo} {...langProps} />);
+    render(
+      <Footer
+        companyLink={companyLink}
+        links={links}
+        legalInfo={legalInfo}
+        {...langProps}
+      />
+    );
 
     // Verify that the company link is rendered
-    const companyLinkElement = screen.getByRole('link', { name: 'Company Link' });
+    const companyLinkElement = screen.getByRole('link', {
+      name: 'Company Link'
+    });
     expect(companyLinkElement).toBeInTheDocument();
     expect(companyLinkElement).toHaveAttribute('href', 'https://example.com');
 
@@ -55,7 +64,14 @@ describe('Footer', () => {
   });
 
   it('should render the links correctly', () => {
-    render(<Footer companyLink={companyLink} links={links} legalInfo={legalInfo} {...langProps} />);
+    render(
+      <Footer
+        companyLink={companyLink}
+        links={links}
+        legalInfo={legalInfo}
+        {...langProps}
+      />
+    );
 
     // Verify that all links are rendered
     links.forEach((link) => {
@@ -67,7 +83,14 @@ describe('Footer', () => {
   });
 
   it('should render the legal information correctly', () => {
-    render(<Footer companyLink={companyLink} links={links} legalInfo={legalInfo} {...langProps} />);
+    render(
+      <Footer
+        companyLink={companyLink}
+        links={links}
+        legalInfo={legalInfo}
+        {...langProps}
+      />
+    );
 
     // Verify that the legal information is rendered
     const legalInfoElement = screen.getByTestId('legal-info');

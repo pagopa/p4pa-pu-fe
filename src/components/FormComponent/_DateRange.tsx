@@ -15,15 +15,18 @@ export type _DateRangeProps = {
   from?: DateRange;
   to?: DateRange;
   isYear?: boolean;
-  required?: boolean
+  required?: boolean;
 };
 
 export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
 
-  const [startDateError, setStartDateError] = useState<DateValidationError | null>(null);
-  const [endDateError, setEndDateError] = useState<DateValidationError | null>(null);
+  const [startDateError, setStartDateError] =
+    useState<DateValidationError | null>(null);
+  const [endDateError, setEndDateError] = useState<DateValidationError | null>(
+    null
+  );
 
   const [isToDialogOpen, setIsToDialogOpen] = useState<boolean>(false);
 
@@ -64,7 +67,9 @@ export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
             size: 'small',
             variant: 'outlined',
             error: !!startDateError,
-            helperText: startDateError ? (from?.errorMessage ?? t('dates.validations.from')) : '',
+            helperText: startDateError
+              ? (from?.errorMessage ?? t('dates.validations.from'))
+              : '',
             required: required
           }
         }}
@@ -85,7 +90,9 @@ export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
               size: 'small',
               variant: 'outlined',
               error: !!endDateError,
-              helperText: endDateError ? (to?.errorMessage ?? t('dates.validations.to')) : '',
+              helperText: endDateError
+                ? (to?.errorMessage ?? t('dates.validations.to'))
+                : '',
               required: required
             },
             inputAdornment: {

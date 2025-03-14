@@ -26,7 +26,7 @@ describe('moneyFormat', () => {
 
   it('should handle negative values correctly', () => {
     const formattedNegative = moneyFormat(-10000);
-    
+
     expect(formattedNegative).toMatch(/-100,00/);
     expect(moneyFormat(-10000, 0)).toMatch(/-10\.000,00/);
   });
@@ -35,6 +35,8 @@ describe('moneyFormat', () => {
     const formattedValue = moneyFormat(1234.56);
 
     expect(formattedValue).toEqual(expect.stringContaining('12,35'));
-    expect(moneyFormat(1234.56, 0)).toEqual(expect.stringContaining('1.234,56'));
+    expect(moneyFormat(1234.56, 0)).toEqual(
+      expect.stringContaining('1.234,56')
+    );
   });
 });

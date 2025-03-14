@@ -28,22 +28,24 @@ const Breadcrumbs = ({ separator }: BreadcrumbsProps) => {
       onClick={() => navigate(-1)}
       role="link"
       sx={{ cursor: 'pointer' }}
-      aria-label={t('commons.back')}>
+      aria-label={t('commons.back')}
+    >
       <ArrowBack fontSize="small" color="inherit" />
     </Typography>
   );
 
-  return (
-    matches.length > 1 && (
-      <Stack direction="row" marginBottom={3} alignItems="center">
-        {!mdUp && <BackButton />}
-        <BreadcrumbsMUI
-          separator={separator}
-          aria-label={t('commons.breadcrumbs')}
-          sx={{ paddingBlock: 1 }}>
-          { matches.slice(1).map((b, i, array) => {
-            const isLastElement = i === array.length - 1;
-            return <MUILink
+  return matches?.length > 1 ? (
+    <Stack direction="row" marginBottom={3} alignItems="center">
+      {!mdUp && <BackButton />}
+      <BreadcrumbsMUI
+        separator={separator}
+        aria-label={t('commons.breadcrumbs')}
+        sx={{ paddingBlock: 1 }}
+      >
+        {matches.slice(1).map((b, i, array) => {
+          const isLastElement = i === array.length - 1;
+          return (
+            <MUILink
               color="textSecondary"
               fontWeight={isLastElement ? '400' : '600'}
               component={RouterLink}
@@ -52,13 +54,12 @@ const Breadcrumbs = ({ separator }: BreadcrumbsProps) => {
               key={`breadcrumb-${i}`}
             >
               {t(`commons.routes.${b.id}`)}
-            </MUILink>;}
-          )
-          }
-        </BreadcrumbsMUI>
-      </Stack>
-    )
-  );
+            </MUILink>
+          );
+        })}
+      </BreadcrumbsMUI>
+    </Stack>
+  ) : null;
 };
 
 export default Breadcrumbs;

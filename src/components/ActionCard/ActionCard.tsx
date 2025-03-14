@@ -11,9 +11,15 @@ type ActionCardProps = {
   onLinkClick: () => void;
 };
 
-const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, onActionClick, onLinkClick }: ActionCardProps) => {
-
-
+const ActionCard = ({
+  title,
+  description,
+  actionLabel,
+  actionIcon,
+  linkLabel,
+  onActionClick,
+  onLinkClick
+}: ActionCardProps) => {
   return (
     <section aria-labelledby="action-card-title">
       <Box
@@ -29,7 +35,11 @@ const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, on
         <Typography id="action-card-title" variant="h6" sx={{ mb: 1 }}>
           {title}
         </Typography>
-        <Typography id="action-card-description" variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>
+        <Typography
+          id="action-card-description"
+          variant="body2"
+          sx={{ color: 'text.secondary', mb: 2 }}
+        >
           {description}
         </Typography>
         <Grid container direction="column" justifyContent={'start'}>
@@ -45,7 +55,11 @@ const ActionCard = ({ title, description, actionLabel, actionIcon, linkLabel, on
             </Button>
           </Grid>
 
-          <Divider orientation="horizontal" flexItem sx={{ display : 'block'}}/>
+          <Divider
+            orientation="horizontal"
+            flexItem
+            sx={{ display: 'block' }}
+          />
 
           <Grid item lg={12} mt={2}>
             <Button

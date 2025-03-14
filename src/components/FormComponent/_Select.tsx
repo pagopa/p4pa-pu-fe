@@ -9,7 +9,8 @@ export type _SelectProps = Omit<TextFieldProps, 'select' | 'type'> & {
 export const _Select = (props: _SelectProps) => {
   const [value, setValue] = useState('');
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) => setValue(e.target.value);
+  const onChange = (e: ChangeEvent<HTMLInputElement>) =>
+    setValue(e.target.value);
 
   return (
     <TextField
@@ -20,9 +21,13 @@ export const _Select = (props: _SelectProps) => {
       value={value}
       onChange={onChange}
       {...props}
-      select>
+      select
+    >
       {props.options?.map((option, optionIndex) => (
-        <MenuItem key={`${props.label}-${option.value}-${optionIndex}`} {...option}>
+        <MenuItem
+          key={`${props.label}-${option.value}-${optionIndex}`}
+          {...option}
+        >
           {option.label}
         </MenuItem>
       ))}

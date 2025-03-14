@@ -11,16 +11,19 @@ import { IUVDataGrid } from './components/DebtPositionIUVDataGrid';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
 import { getDebtPositionViews, getInstallments } from '../../api/debtPositions';
 import useDebtPositionFilters from '../../hooks/useDebtPositionsFilters';
-import { PagedInstallmentView, PagedDebtPositionView } from '../../../generated/apiClient';
+import {
+  PagedInstallmentView,
+  PagedDebtPositionView
+} from '../../../generated/apiClient';
 
-export interface LocationState {
+export type LocationState = {
   searchType: SearchType;
   filters: BaseFilterValues;
-}
+};
 
-export interface DebtResultsProps {
+export type DebtResultsProps = {
   searchType: SearchType;
-}
+};
 
 export const DebtPositionResults = () => {
   const theme = useTheme();
@@ -31,12 +34,17 @@ export const DebtPositionResults = () => {
 
   const debtPosition = useDebtPositionsSearch({
     initialFilters,
-    requestFn: searchType === SearchType.IUV ? getInstallments : getDebtPositionViews
+    requestFn:
+      searchType === SearchType.IUV ? getInstallments : getDebtPositionViews
   });
 
-  const { filters } = useDebtPositionFilters({ searchType, onFilter: debtPosition.applyFilters });
+  const { filters } = useDebtPositionFilters({
+    searchType,
+    onFilter: debtPosition.applyFilters
+  });
 
-  const DataGrid = searchType === SearchType.IUV ? IUVDataGrid : DebtPositionsDataGrid;
+  const DataGrid =
+    searchType === SearchType.IUV ? IUVDataGrid : DebtPositionsDataGrid;
 
   return (
     <Stack gap={5}>
@@ -50,7 +58,9 @@ export const DebtPositionResults = () => {
           {
             icon: searchType === SearchType.IUV ? null : <Add />,
             buttonText:
-              searchType === SearchType.IUV ? t('commons.createNewOne') : t('commons.createNew'),
+              searchType === SearchType.IUV
+                ? t('commons.createNewOne')
+                : t('commons.createNew'),
             onActionClick: () => console.log('create button clicked')
           }
         ]}
@@ -69,9 +79,13 @@ export const DebtPositionResults = () => {
             bgcolor: theme.palette.grey[200],
             overflow: 'auto'
           }}
-          aria-label="results-table">
+          aria-label="results-table"
+        >
           <DataGrid
-            data={debtPosition.query.data as PagedInstallmentView & PagedDebtPositionView}
+            data={
+              debtPosition.query.data as PagedInstallmentView &
+                PagedDebtPositionView
+            }
             onPageChange={debtPosition.handlePageChange}
             onPageSizeChange={debtPosition.handlePageSizeChange}
             onSortChange={debtPosition.setSort}

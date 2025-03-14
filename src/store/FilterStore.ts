@@ -1,8 +1,8 @@
 import { signal } from '@preact/signals-react';
 
-export const filtersState = signal<string[]>(['']);
+export const filtersState = signal<Array<string>>(['']);
 
-export function setFiltersState(newState: string[]) {
+export function setFiltersState(newState: Array<string>) {
   filtersState.value = newState;
 }
 

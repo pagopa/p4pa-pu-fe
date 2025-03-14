@@ -1,6 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useStore } from '../store/GlobalStore';
-import { DebtPositionViewQuery, getDebtPositionViews, getInstallments } from '../api/debtPositions';
+import {
+  DebtPositionViewQuery,
+  getDebtPositionViews,
+  getInstallments
+} from '../api/debtPositions';
 import { FilterFieldValue } from '../models/Filters';
 import { useDataGridPagination } from './useDatagridPagination';
 
@@ -21,10 +25,11 @@ export type UseDebtPositionFiltersProps = {
 
 export const useDebtPositionSearch = ({
   initialFilters,
-  requestFn,
+  requestFn
 }: UseDebtPositionFiltersProps) => {
-  const [filterValues, setFilterValues] = useState<DebtPositionFilters>(initialFilters);
-  const [sort, setSort] = useState<string[]>([]);
+  const [filterValues, setFilterValues] =
+    useState<DebtPositionFilters>(initialFilters);
+  const [sort, setSort] = useState<Array<string>>([]);
 
   const {
     state: { organizationId }
@@ -32,23 +37,26 @@ export const useDebtPositionSearch = ({
 
   const query = requestFn({ organizationId });
 
-  const { pagination, handlePageChange, handlePageSizeChange } = useDataGridPagination({
-    initialPage: 0,
-    initialSize: 10,
-    // @ts-expect-error FIXME: static type error during build
-    onPaginationChange: () => query.mutate(filterToRequest())
-  });
+  const { pagination, handlePageChange, handlePageSizeChange } =
+    useDataGridPagination({
+      initialPage: 0,
+      initialSize: 10,
+      onPaginationChange: () => query.mutate(filterToRequest())
+    });
 
   useEffect(() => {
-    // @ts-expect-error FIXME: static type error during build
     query.mutate(filterToRequest());
   }, [organizationId, pagination.page, pagination.size, sort]);
 
   const filterToRequest = () => ({
-    dueDateFrom: filterValues?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
-    dueDateTo: filterValues?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
-    creationDateFrom: filterValues?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
-    creationDateTo: filterValues?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
+    dueDateFrom:
+      filterValues?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
+    dueDateTo:
+      filterValues?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
+    creationDateFrom:
+      filterValues?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
+    creationDateTo:
+      filterValues?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
     page: pagination.page,
     size: pagination.size,
     ...(filterValues?.iuv && { iuv: filterValues.iuv }),
@@ -58,12 +66,14 @@ export const useDebtPositionSearch = ({
     ...(sort.length && { sort })
   });
 
-  const handleFilterChange = useCallback((id: string, value: FilterFieldValue): void => {
-    setFilterValues((prev) => ({ ...prev, [id]: value }));
-  }, []);
+  const handleFilterChange = useCallback(
+    (id: string, value: FilterFieldValue): void => {
+      setFilterValues((prev) => ({ ...prev, [id]: value }));
+    },
+    []
+  );
 
   const applyFilters = useCallback(() => {
-    // @ts-expect-error FIXME: type error only due to react-query
     query.mutate(filterToRequest());
   }, [filterToRequest, query]);
 

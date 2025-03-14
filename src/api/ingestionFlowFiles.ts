@@ -12,7 +12,7 @@ import {
 export const getIngestionFlowFiles = (
   organizationId: number,
   query: {
-    flowFileTypes: (
+    flowFileTypes: Array<
       | 'RECEIPT'
       | 'RECEIPT_PAGOPA'
       | 'PAYMENTS_REPORTING'
@@ -21,14 +21,14 @@ export const getIngestionFlowFiles = (
       | 'TREASURY_CSV'
       | 'TREASURY_XLS'
       | 'TREASURY_POSTE'
-    )[];
+    >;
     creationDateFrom?: string;
     creationDateTo?: string;
     status?: FlowStatus;
     fileName?: string;
     page?: number;
     size?: number;
-    sort?: string[];
+    sort?: Array<string>;
   },
   options = {}
 ) => {
@@ -41,17 +41,7 @@ export const getIngestionFlowFiles = (
         {
           // To serialize flowFileTypes parameters
           paramsSerializer: {
-            serialize: (params) => {
-              const searchParams = new URLSearchParams();
-              Object.entries(params).forEach(([key, value]) => {
-                if (Array.isArray(value)) {
-                  value.forEach((val) => searchParams.append(key, val));
-                } else if (value !== undefined) {
-                  searchParams.append(key, value);
-                }
-              });
-              return searchParams.toString();
-            }
+            indexes: null
           }
         }
       );

@@ -1,5 +1,11 @@
 import { KeyboardArrowDown, ReadMore } from '@mui/icons-material';
-import { Box, Accordion, AccordionSummary, Typography, Chip } from '@mui/material';
+import {
+  Box,
+  Accordion,
+  AccordionSummary,
+  Typography,
+  Chip
+} from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import { t } from 'i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
@@ -9,24 +15,28 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { moneyFormat } from '../../../utils/formatters';
 import { PaymentOptionDisplayData } from '../DebtPositionDetail';
 
-export const PaymentOptionSection = ({ optionData }: { optionData: PaymentOptionDisplayData }) => {
+export const PaymentOptionSection = ({
+  optionData
+}: {
+  optionData: PaymentOptionDisplayData;
+}) => {
   const detailSection = {
     data: optionData.details,
     inline: true
   };
 
-  const renderInstallmentColumns = (): GridColDef[] => [
+  const renderInstallmentColumns = (): Array<GridColDef> => [
     {
       field: 'iuv',
       headerName: 'Codice Avviso (IUV)',
       flex: 1,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'subject',
       headerName: 'Oggetto del pagamento',
       flex: 1,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'amount',
@@ -40,7 +50,7 @@ export const PaymentOptionSection = ({ optionData }: { optionData: PaymentOption
       field: 'expirationDate',
       headerName: 'Data scadenza',
       flex: 1,
-      type: 'string',
+      type: 'string'
     },
     {
       field: 'status',
@@ -48,11 +58,12 @@ export const PaymentOptionSection = ({ optionData }: { optionData: PaymentOption
       flex: 0.5,
       type: 'string',
       renderCell: (params: GridRenderCellParams) => {
-        const chipColor = params.row.status === t('commons.paid')
-          ? 'success'
-          : params.row.status === t('commons.unpaid')
-            ? 'error'
-            : 'info';
+        const chipColor =
+          params.row.status === t('commons.paid')
+            ? 'success'
+            : params.row.status === t('commons.unpaid')
+              ? 'error'
+              : 'info';
 
         return <Chip label={params.row.status} color={chipColor} />;
       }
@@ -66,23 +77,25 @@ export const PaymentOptionSection = ({ optionData }: { optionData: PaymentOption
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams) => (
-        <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          height: '100%',
-          width: '100%'
-        }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            height: '100%',
+            width: '100%'
+          }}
+        >
           <ReadMore
             fontSize="small"
-            color='primary'
+            color="primary"
             sx={{ cursor: 'pointer' }}
             onClick={() => {
               console.log('ReadMore Click iuv', params.row.iuv);
             }}
           />
         </div>
-      ),
+      )
     }
   ];
 
@@ -106,7 +119,7 @@ export const PaymentOptionSection = ({ optionData }: { optionData: PaymentOption
           expandIcon={<KeyboardArrowDown color="primary" />}
           aria-controls="payment-detail"
         >
-          <Typography variant='overline' ml={1}>
+          <Typography variant="overline" ml={1}>
             {t('debtPositionDetail.solutionDetail')}
           </Typography>
         </AccordionSummary>

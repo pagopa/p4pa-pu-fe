@@ -1,2 +1,2 @@
 import TelematicReceiptImportFlowOverview from '../../components/TelematicReceiptImportFlowOverview';
-export default TelematicReceiptImportFlowOverview; 
+export default TelematicReceiptImportFlowOverview;

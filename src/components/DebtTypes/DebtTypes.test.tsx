@@ -33,7 +33,7 @@ describe('DebtTypes Component', () => {
 
     const searchInput = screen.getByLabelText('debtTypes.searchDescription');
     const searchButton = screen.getByText('commons.search');
-    
+
     //first row for header
     expect(screen.getAllByRole('row').length).toBe(4);
 
@@ -42,7 +42,7 @@ describe('DebtTypes Component', () => {
 
     expect(screen.getAllByRole('row').length).toBe(2);
     expect(screen.getByText('Cosap/Tosap')).toBeDefined();
-    
+
     fireEvent.change(searchInput, { target: { value: 'test' } });
     fireEvent.click(searchButton);
 

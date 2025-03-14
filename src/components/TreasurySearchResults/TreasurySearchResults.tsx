@@ -12,9 +12,7 @@ import { useFilters } from '../../hooks/useFilters';
 import { useStore } from '../../store/GlobalStore';
 import { removeAllFilters } from '../../store/FilterStore';
 
-
 const TreasurySearchResults = () => {
-
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -26,18 +24,21 @@ const TreasurySearchResults = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
-    setDrawerOpen(prev => !prev);
+    setDrawerOpen((prev) => !prev);
   };
 
   return (
     <>
-      <TitleComponent 
+      <TitleComponent
         title={t('commons.routes.TREASURY')}
         callToAction={[
           {
             variant: 'outlined',
             buttonText: t('treasurySearchResults.uploadFlow'),
-            onActionClick: () => navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'treasury' })),
+            onActionClick: () =>
+              navigate(
+                generatePath(PageRoutes.IMPORT_FLOWS, { category: 'treasury' })
+              )
           }
         ]}
         description={t('treasurySearchResults.description')}
@@ -45,17 +46,22 @@ const TreasurySearchResults = () => {
 
       <Grid container justifyContent="flex-end" p={2}>
         <ButtonNaked
-          data-testid='open-drawer'
+          data-testid="open-drawer"
           color="primary"
           size="medium"
           startIcon={<FilterAlt />}
           onClick={toggleDrawer}
         >
-          {`${t('commons.filters.filtersField')} (${(filters[0] === '') ? 0 : filters.length})`}
+          {`${t('commons.filters.filtersField')} (${filters[0] === '' ? 0 : filters.length})`}
         </ButtonNaked>
       </Grid>
 
-      <Grid container p={2} sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }} aria-label="results-table">
+      <Grid
+        container
+        p={2}
+        sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
+        aria-label="results-table"
+      >
         <SearchResultsDataGrid />
       </Grid>
 
@@ -65,8 +71,17 @@ const TreasurySearchResults = () => {
         title={t('commons.filters.filtersField')}
         multiFilterConfig={filterMap}
         buttons={[
-          {buttonText: t('commons.filters.filterResults'), onButtonClick: toggleDrawer, variant: 'contained', disabled: filters[0] === '' || filters.length === 0},
-          {buttonText: t('commons.filters.remove'), onButtonClick: removeAllFilters, variant: 'text'}
+          {
+            buttonText: t('commons.filters.filterResults'),
+            onButtonClick: toggleDrawer,
+            variant: 'contained',
+            disabled: filters[0] === '' || filters.length === 0
+          },
+          {
+            buttonText: t('commons.filters.remove'),
+            onButtonClick: removeAllFilters,
+            variant: 'text'
+          }
         ]}
       />
     </>

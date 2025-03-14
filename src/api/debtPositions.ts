@@ -1,7 +1,9 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 
-type DebtPositionViewParams = Parameters<typeof utils.apiClient.bff.getDebtPositionViews>;
+type DebtPositionViewParams = Parameters<
+  typeof utils.apiClient.bff.getDebtPositionViews
+>;
 
 export type DebtPositionViewQuery = DebtPositionViewParams[1] & {
   status?: DebtPositionViewParams[1]['status'] | 'TUTTI';
@@ -35,13 +37,20 @@ export const getDebtPositionViews = ({
     }
   });
 
-export const getDebtPositionsTypes = ({ organizationId }: { organizationId: number }) =>
+export const getDebtPositionsTypes = ({
+  organizationId
+}: {
+  organizationId: number;
+}) =>
   useQuery({
     queryKey: ['getDebtPositionsTypes'],
-    queryFn: () => utils.apiClient.bff.getDebtPositionTypeWithCount(organizationId)
+    queryFn: () =>
+      utils.apiClient.bff.getDebtPositionTypeWithCount(organizationId)
   });
 
-type DebtPositionInstallmentsParams = Parameters<typeof utils.apiClient.bff.getInstallments>;
+type DebtPositionInstallmentsParams = Parameters<
+  typeof utils.apiClient.bff.getInstallments
+>;
 
 export type DebtPositionInstallmentsQuery = DebtPositionInstallmentsParams[1];
 
@@ -58,12 +67,16 @@ export const getInstallments = ({
   useMutation({
     mutationKey: ['getInstallments', organizationId],
     mutationFn: async (query: DebtPositionInstallmentsQuery) => {
-      const { data: response } = await utils.apiClient.bff.getInstallments(organizationId, query, {
-        paramsSerializer: {
-          // repeat array params as query string
-          indexes: null
+      const { data: response } = await utils.apiClient.bff.getInstallments(
+        organizationId,
+        query,
+        {
+          paramsSerializer: {
+            // repeat array params as query string
+            indexes: null
+          }
         }
-      });
+      );
 
       return response;
     }

@@ -8,15 +8,18 @@ const DEPLOY_PATH = process.env.DEPLOY_PATH || '';
 // https://vite.dev/config/
 export default defineConfig({
   base: `${DEPLOY_PATH}`,
+  server: {
+    port: 1234
+  },
   build: {
     target: 'esnext'
   },
   plugins: [react()],
-  server: {
-    port: 1234,
+  resolve: {
+    extensions: ['.ts', '.js', '.mjs', '.json', '.tsx']
   },
-  define: {
-    _global: ({})
+  esbuild: {
+    loader: 'tsx',
+    include: /\.(ts|tsx|js|mjs)$/
   }
-  
 });

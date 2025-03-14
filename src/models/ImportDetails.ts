@@ -1,13 +1,13 @@
 import { IngestionFlowFileType } from '../../generated/fileshare/fileshareClient';
 
-interface ImportFlowDetail {
+type ImportFlowDetail = {
   title: string;
-  fileExtensionsAllowed: string[];
+  fileExtensionsAllowed: Array<string>;
   backRoute: string;
   category: string;
   requiredFieldDescription?: string;
-  flowTypes: IngestionFlowFileType[];
-}
+  flowTypes: Array<IngestionFlowFileType>;
+};
 
 type ImportFlowDetails = Record<string, ImportFlowDetail>;
 

@@ -2,36 +2,44 @@ import { IngestionFlowFile } from '../../generated/data-contracts';
 
 export type FlowStatus = Pick<IngestionFlowFile, 'status'>['status'];
 
-export const FLOW_STATUS_VALUES = ['UPLOADED', 'PROCESSING', 'COMPLETED', 'ERROR'] as const;
+export const FLOW_STATUS_VALUES = [
+  'UPLOADED',
+  'PROCESSING',
+  'COMPLETED',
+  'ERROR'
+] as const;
 
 export enum FlowFileType {
-    RECEIPT = 'RECEIPT',
-    RECEIPT_PAGOPA = 'RECEIPT_PAGOPA',
-    PAYMENTS_REPORTING = 'PAYMENTS_REPORTING',
-    PAYMENTS_REPORTING_PAGOPA = 'PAYMENTS_REPORTING_PAGOPA',
-    TREASURY_OPI = 'TREASURY_OPI',
-    TREASURY_CSV = 'TREASURY_CSV',
-    TREASURY_XLS = 'TREASURY_XLS',
-    TREASURY_POSTE = 'TREASURY_POSTE'
+  RECEIPT = 'RECEIPT',
+  RECEIPT_PAGOPA = 'RECEIPT_PAGOPA',
+  PAYMENTS_REPORTING = 'PAYMENTS_REPORTING',
+  PAYMENTS_REPORTING_PAGOPA = 'PAYMENTS_REPORTING_PAGOPA',
+  TREASURY_OPI = 'TREASURY_OPI',
+  TREASURY_CSV = 'TREASURY_CSV',
+  TREASURY_XLS = 'TREASURY_XLS',
+  TREASURY_POSTE = 'TREASURY_POSTE'
 }
 
-export interface FlowFilters {
-    flowFileTypes: FlowFileType[];
-    fileName?: string;
-    status?: FlowStatus;
-    creationDateFrom?: string;
-    creationDateTo?: string;
-    sort?: string[];
-}
+export type FlowFilters = {
+  flowFileTypes: Array<FlowFileType>;
+  fileName?: string;
+  status?: FlowStatus;
+  creationDateFrom?: string;
+  creationDateTo?: string;
+  sort?: Array<string>;
+};
 
-export interface PaginationParams {
-    size: number;
-    page: number;
-}
+export type PaginationParams = {
+  size: number;
+  page: number;
+};
 
 export type FlowFileFilters = FlowFilters & PaginationParams;
 
-export const STATE_COLORS: Record<FlowStatus, 'success' | 'info' | 'secondary' | 'error'> = {
+export const STATE_COLORS: Record<
+  FlowStatus,
+  'success' | 'info' | 'secondary' | 'error'
+> = {
   COMPLETED: 'success',
   UPLOADED: 'info',
   PROCESSING: 'info',
@@ -41,21 +49,18 @@ export const STATE_COLORS: Record<FlowStatus, 'success' | 'info' | 'secondary' |
 export const MENU_STATES = ['COMPLETED', 'ERROR'] as const;
 export const DOWNLOAD_STATES = ['UPLOADED'] as const;
 
-
-export interface DateRangeValue {
+export type DateRangeValue = {
   from: Date | null;
   to: Date | null;
-}
+};
 
-export type FilterFieldValue = 
-  | string 
-  | number 
-  | boolean 
-  | Date 
-  | DateRangeValue 
-  | null 
+export type FilterFieldValue =
+  | string
+  | number
+  | boolean
+  | Date
+  | DateRangeValue
+  | null
   | undefined;
 
-export type BaseFilterValues = {
-  [key: string]: FilterFieldValue;
-};
+export type BaseFilterValues = Record<string, FilterFieldValue>;

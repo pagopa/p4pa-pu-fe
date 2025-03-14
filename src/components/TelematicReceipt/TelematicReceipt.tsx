@@ -29,14 +29,26 @@ export const TelematicReceipt = () => {
               title={t('telematicReceipts.search')}
               description={t('telematicReceipts.searchdescription')}
               fields={[
-                { type: COMPONENT_TYPE.textField, label: t('commons.iuv'), icon: <Search /> },
-                { type: COMPONENT_TYPE.dateRange, label: 'daterange', from: { label: t('dates.from') }, to: { label: t('dates.to') } },
+                {
+                  type: COMPONENT_TYPE.textField,
+                  label: t('commons.iuv'),
+                  icon: <Search />
+                },
+                {
+                  type: COMPONENT_TYPE.dateRange,
+                  label: 'daterange',
+                  from: { label: t('dates.from') },
+                  to: { label: t('dates.to') }
+                },
                 {
                   type: COMPONENT_TYPE.select,
                   label: t('commons.duetype'),
                   options: [
                     { label: t('telematicReceipts.tari'), value: 'tari' },
-                    { label: t('telematicReceipts.trafficoffence'), value: 'violation' }
+                    {
+                      label: t('telematicReceipts.trafficoffence'),
+                      value: 'violation'
+                    }
                   ]
                 }
               ]}
@@ -44,7 +56,8 @@ export const TelematicReceipt = () => {
                 {
                   label: t('commons.search'),
                   variant: 'contained',
-                  onClick: () => navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS)
+                  onClick: () =>
+                    navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS)
                 }
               ]}
             />
@@ -57,8 +70,14 @@ export const TelematicReceipt = () => {
               actionLabel={t('telematicReceipts.exportrequestbutton')}
               actionIcon={<Download />}
               linkLabel={t('telematicReceipts.exportedflowsviewbutton')}
-              onActionClick={() => navigate(generatePath(PageRoutes.EXPORT_FLOWS, {category: 'receipt'}))}
-              onLinkClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW)}
+              onActionClick={() =>
+                navigate(
+                  generatePath(PageRoutes.EXPORT_FLOWS, { category: 'receipt' })
+                )
+              }
+              onLinkClick={() =>
+                navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW)
+              }
             />
 
             <ActionCard
@@ -68,9 +87,15 @@ export const TelematicReceipt = () => {
               actionIcon={<Upload />}
               linkLabel={t('telematicReceipts.importedflowsviewbutton')}
               onActionClick={() =>
-                navigate(generatePath(PageRoutes.IMPORT_FLOWS, { category: 'telematic-receipt' }))
+                navigate(
+                  generatePath(PageRoutes.IMPORT_FLOWS, {
+                    category: 'telematic-receipt'
+                  })
+                )
               }
-              onLinkClick={() => navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW)}
+              onLinkClick={() =>
+                navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW)
+              }
             />
           </Grid>
         </Grid>

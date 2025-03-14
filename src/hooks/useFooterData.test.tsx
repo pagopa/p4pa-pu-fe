@@ -70,6 +70,8 @@ describe('useFooterData', () => {
   it('should return the legalInfo markdown component with the configured text', () => {
     const { result } = renderHook(() => useFooterData());
 
-    expect(result.current.legalInfo.props.children).toBe('Some legal information text');
+    expect(result.current.legalInfo.props.children).toBe(
+      'Some legal information text'
+    );
   });
 });

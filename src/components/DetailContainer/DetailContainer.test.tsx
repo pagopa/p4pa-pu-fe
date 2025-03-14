@@ -6,20 +6,27 @@ describe('DetailContainer', () => {
   const mockProps = {
     sections: [
       {
-        title: {label: 'commons.summary'},
+        title: { label: 'commons.summary' },
         data: [
-          { label: 'IUV', value: '03234234234324', variant: 'monospaced' as const },
-          { label: 'Importo', value: 8000 },
+          {
+            label: 'IUV',
+            value: '03234234234324',
+            variant: 'monospaced' as const
+          },
+          { label: 'Importo', value: 8000 }
         ]
       },
       {
-        title: {label: 'commons.payment'},
+        title: { label: 'commons.payment' },
         data: [
-          { label: 'Pagatore', value: 'Maria Bianchi [CF/PIVA: BNCMRA82B42C933X (Persona fisica)]' },
+          {
+            label: 'Pagatore',
+            value: 'Maria Bianchi [CF/PIVA: BNCMRA82B42C933X (Persona fisica)]'
+          },
           { label: 'Stato', value: 'PAID' }
-        ],
-      },
-    ],
+        ]
+      }
+    ]
   };
 
   it('renders sections with titles and values', () => {
@@ -33,7 +40,11 @@ describe('DetailContainer', () => {
     expect(screen.getByText('Importo')).toBeDefined();
     expect(screen.getByText('80,00 €')).toBeDefined();
     expect(screen.getByText('Pagatore')).toBeDefined();
-    expect(screen.getByText('Maria Bianchi [CF/PIVA: BNCMRA82B42C933X (Persona fisica)]')).toBeDefined();
+    expect(
+      screen.getByText(
+        'Maria Bianchi [CF/PIVA: BNCMRA82B42C933X (Persona fisica)]'
+      )
+    ).toBeDefined();
   });
 
   it('renders with Chip', () => {
@@ -50,10 +61,10 @@ describe('DetailContainer', () => {
         {
           data: [
             { label: 'Ordinante', value: '' },
-            { label: 'Conto', value: '' },
-          ],
-        },
-      ],
+            { label: 'Conto', value: '' }
+          ]
+        }
+      ]
     };
 
     render(<DetailContainer {...missingValuesProps} />);
@@ -71,41 +82,53 @@ describe('DetailContainer', () => {
     const inlineProps = {
       sections: [
         {
-          title: {label: 'commons.summary'},
+          title: { label: 'commons.summary' },
           inline: true,
           data: [
             { label: 'Codice Boletta', value: '2000777' },
-            { label: 'Anno Boletta', value: '2024' },
-          ],
-        },
-      ],
+            { label: 'Anno Boletta', value: '2024' }
+          ]
+        }
+      ]
     };
-  
+
     render(<DetailContainer {...inlineProps} />);
-  
-    const gridContainer = screen.getByText('Codice Boletta').closest('.MuiGrid-container');
-    expect(gridContainer?.querySelector('.MuiGrid-item.MuiGrid-grid-md-6')).not.toBeNull();
-    expect(gridContainer?.querySelector('.MuiGrid-item.MuiGrid-grid-md-12')).toBeNull();
+
+    const gridContainer = screen
+      .getByText('Codice Boletta')
+      .closest('.MuiGrid-container');
+    expect(
+      gridContainer?.querySelector('.MuiGrid-item.MuiGrid-grid-md-6')
+    ).not.toBeNull();
+    expect(
+      gridContainer?.querySelector('.MuiGrid-item.MuiGrid-grid-md-12')
+    ).toBeNull();
   });
-  
+
   it('renders non-inline layout with correct Grid direction and sizes', () => {
     const nonInlineProps = {
       sections: [
         {
-          title: {label: 'commons.summary'},
+          title: { label: 'commons.summary' },
           inline: false,
           data: [
             { label: 'Codice Boletta', value: '2000777' },
-            { label: 'Anno Boletta', value: '2024' },
-          ],
-        },
-      ],
+            { label: 'Anno Boletta', value: '2024' }
+          ]
+        }
+      ]
     };
 
     render(<DetailContainer {...nonInlineProps} />);
-  
-    const gridContainer = screen.getByText('Codice Boletta').closest('.MuiGrid-container');
-    expect(gridContainer?.querySelector('.MuiGrid-item.MuiGrid-grid-md-6')).toBeNull();
-    expect(gridContainer?.querySelector('.MuiGrid-item.MuiGrid-grid-md-12')).not.toBeNull();
-  });  
+
+    const gridContainer = screen
+      .getByText('Codice Boletta')
+      .closest('.MuiGrid-container');
+    expect(
+      gridContainer?.querySelector('.MuiGrid-item.MuiGrid-grid-md-6')
+    ).toBeNull();
+    expect(
+      gridContainer?.querySelector('.MuiGrid-item.MuiGrid-grid-md-12')
+    ).not.toBeNull();
+  });
 });

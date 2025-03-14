@@ -17,16 +17,16 @@ export const detailRoutes = [
         path: 'flows/:category',
         element: <DetailFlowPage />,
         handle: {
-          backButton: true,
-        } as RouteHandleObject,
+          backButton: true
+        } as RouteHandleObject
       },
       {
         id: 'DETAIL_DEBT_POSITION',
         path: 'debt-position/:id',
         element: <DebtPositionDetail />,
         handle: {
-          backButton: true,
-        } as RouteHandleObject,
+          backButton: true
+        } as RouteHandleObject
       }
     ]
   }

@@ -4,7 +4,7 @@ import { TabsConfig } from '../SearchCard/SearchCard';
 import { TFunction } from 'i18next';
 import { FilterFieldIds } from '../../models/SearchCardFields';
 
-export const getTabsConfig = (t: TFunction): TabsConfig[] => [
+export const getTabsConfig = (t: TFunction): Array<TabsConfig> => [
   {
     label: t('debtPositions.searchCardIUVOption'),
     fields: [
@@ -38,7 +38,7 @@ export const getTabsConfig = (t: TFunction): TabsConfig[] => [
         ],
         id: FilterFieldIds.DUETYPE,
         defaultValue: ''
-      },
+      }
     ]
   },
   {
@@ -75,12 +75,12 @@ export const getTabsConfig = (t: TFunction): TabsConfig[] => [
         label: t('commons.state'),
         options: [
           { label: 'Tutti', value: 'TUTTI' },
-          { label: 'Rata', value: 'RATA'}
+          { label: 'Rata', value: 'RATA' }
         ],
         gridWidth: 6,
         id: FilterFieldIds.STATE,
         defaultValue: ''
-      },
+      }
     ]
   }
 ];

@@ -6,7 +6,7 @@ import { useParams } from 'react-router-dom';
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal()),
   useNavigate: vi.fn(),
-  useParams: vi.fn(),
+  useParams: vi.fn()
 }));
 
 vi.mock('react-i18next', () => ({
@@ -28,7 +28,7 @@ describe('ExportFlow', () => {
     });
 
     it('renders with dueType select', () => {
-      render(<ExportFlow/>);
+      render(<ExportFlow />);
 
       expect(screen.getByText('exportFlow.title')).toBeDefined();
       expect(screen.getByText('commons.paymentDate')).toBeDefined();
@@ -41,12 +41,11 @@ describe('ExportFlow', () => {
     });
 
     it('enable button when required fields are filled', async () => {
-  
       render(<ExportFlow />);
 
       const inputsDate = screen.getAllByRole('textbox');
       const inputfileVersion = screen.getAllByRole('combobox');
-      
+
       fireEvent.change(inputsDate[0], { target: { value: '10/10/2025' } });
       fireEvent.change(inputsDate[1], { target: { value: '20/10/2025' } });
 
@@ -54,7 +53,7 @@ describe('ExportFlow', () => {
 
       expect(screen.getByRole('listbox')).toBeDefined();
       const listbox = screen.getAllByRole('listbox')[0];
-      
+
       const firstOption = within(listbox).getAllByRole('option')[0];
       fireEvent.click(firstOption);
 
@@ -69,7 +68,7 @@ describe('ExportFlow', () => {
     });
 
     it('renders without dueType select', () => {
-      render(<ExportFlow/>);
+      render(<ExportFlow />);
 
       expect(screen.queryByText('exportFlow.dueType')).toBeNull();
     });
