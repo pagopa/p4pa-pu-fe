@@ -1,0 +1,155 @@
+import utils from '../utils';
+import { AxiosResponse } from 'axios';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  debtPositionViewSchema,
+  debtPositionTypeSchema,
+  installmentDTOSchema,
+  installmentDetailDTOSchema
+} from '../../generated/zod-schema';
+import { createMock } from 'zodock';
+import {
+  getDebtPositionViews,
+  getDebtPositionsTypes,
+  getInstallments,
+  getInstallmentDetail,
+  DebtPositionViewQuery
+} from './debtPositions';
+import { renderHook, waitFor } from '../__tests__/renderers';
+
+vi.mock('../utils', () => {
+  return {
+    default: {
+      apiClient: {
+        bff: {
+          getDebtPositionViews: vi.fn(),
+          getDebtPositionTypeWithCount: vi.fn(),
+          getInstallments: vi.fn(),
+          getInstallmentDetail: vi.fn()
+        }
+      }
+    },
+    parseAndLog: vi.fn()
+  };
+});
+
+describe('getDebtPositionViews', () => {
+  it('returns data correctly', async () => {
+    const dataMock = createMock(debtPositionViewSchema);
+    const params = { organizationId: 10 };
+    const query: DebtPositionViewQuery = {
+      status: 'PAID',
+      creationDateFrom: '',
+      creationDateTo: '',
+      fiscalCode: '',
+      debtPositionTypeOrgId: undefined,
+      page: undefined,
+      size: undefined,
+      sort: undefined
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getDebtPositionViews')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const { result } = renderHook(() => getDebtPositionViews(params));
+
+    result.current.mutate(query);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(dataMock);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(params.organizationId, query, {
+      paramsSerializer: {
+        indexes: null
+      }
+    });
+  });
+});
+
+describe('getDebtPositionsTypes', () => {
+  it('returns data correctly', async () => {
+    const dataMock = createMock(debtPositionTypeSchema);
+    const params = { organizationId: 22 };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getDebtPositionTypeWithCount')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const { result } = renderHook(() => getDebtPositionsTypes(params));
+
+    await waitFor(() => {
+      expect(result.current.data?.data).toEqual(dataMock);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(params.organizationId);
+  });
+});
+
+describe('getInstallments', () => {
+  it('returns data correctly', async () => {
+    const dataMock = createMock(installmentDTOSchema);
+    const params = { organizationId: 101 };
+    const query = {
+      debtPositionId: 555,
+      dueDateFrom: '',
+      dueDateTo: '',
+      iuv: '',
+      fiscalCode: '',
+      debtPositionTypeOrgId: undefined,
+      page: undefined,
+      size: undefined,
+      sort: undefined
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getInstallments')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const { result } = renderHook(() => getInstallments(params));
+
+    result.current.mutate(query);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(dataMock);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(params.organizationId, query, {
+      paramsSerializer: {
+        indexes: null
+      }
+    });
+  });
+});
+
+describe('getInstallmentDetail', () => {
+  it('returns data correctly', async () => {
+    const dataMock = createMock(installmentDetailDTOSchema);
+    const params = { organizationId: 34, installmentId: 22 };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getInstallmentDetail')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      getInstallmentDetail(params.organizationId, params.installmentId)
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        params.organizationId,
+        params.installmentId
+      );
+      expect(result.current.data).toEqual(dataMock);
+    });
+  });
+
+  it('does not run query when parameters are missing', async () => {
+    const apiMock = vi.spyOn(utils.apiClient.bff, 'getInstallmentDetail');
+
+    renderHook(() => getInstallmentDetail(0, 0));
+
+    expect(apiMock).not.toHaveBeenCalled();
+  });
+});
