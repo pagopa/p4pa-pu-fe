@@ -15,6 +15,7 @@
 		"build": "yarn generate && tsc -b && vite build",
 		"preview": "vite preview",
 		"test": "vitest",
+		"coverage": "vitest --coverage",
 		"lint:fix": "eslint --fix",
 		"lint:lines": "eslint -f unix",
 		"lint": "eslint",
