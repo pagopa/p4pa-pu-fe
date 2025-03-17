@@ -124,9 +124,12 @@ export const DebtPositionsInstallmentDetail = () => {
       () => (
         <>
           <List>
-            <Typography variant="overline" sx={{ mb: 2 }}>
-              NOME ENTE BENEFICIARIO
-            </Typography>
+            <Drawer.Field
+              id="name"
+              label=""
+              variant="overline"
+              value="NOME ENTE BENEFICIARIO"
+            />
             <Drawer.Field
               id="importo"
               label="importo"
@@ -152,9 +155,12 @@ export const DebtPositionsInstallmentDetail = () => {
             />
           </List>
           <List>
-            <Typography variant="overline" sx={{ mb: 2 }}>
-              NOME ENTE BENEFICIARIO
-            </Typography>
+            <Drawer.Field
+              id="name"
+              label=""
+              variant="overline"
+              value="NOME ENTE BENEFICIARIO"
+            />
             <Drawer.Field
               id="importo"
               label="importo"

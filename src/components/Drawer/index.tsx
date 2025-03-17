@@ -44,19 +44,14 @@ export const Drawer: React.FC<DrawerProps> & { Field: typeof DetailField } = ({
         }
       }}
     >
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={2}
-      >
-        <Typography variant="h6" fontWeight={700}>
-          {title}
-        </Typography>
+      <Box display="flex" justifyContent="flex-end" alignItems="center">
         <IconButton onClick={onClose} data-testid="close-icon">
           <Close />
         </IconButton>
       </Box>
+      <Typography variant="h6" fontWeight={700} mb={3}>
+        {title}
+      </Typography>
       {children}
     </MuiDrawer>
   );
