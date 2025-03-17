@@ -31,7 +31,8 @@ export const useDebtPositionsTypeOrg = ({
         .map((type) => ({
           label: type.description ?? '',
           value: type.debtPositionTypeOrgId ?? 0
-        }));
+        }))
+        .sort((a, b) => a.label.localeCompare(b.label));
 
       setDebtPositionsTypes([
         { label: t('commons.all'), value: 0 },
