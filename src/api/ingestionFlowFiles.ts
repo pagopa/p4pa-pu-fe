@@ -21,6 +21,7 @@ export const getIngestionFlowFiles = (
       | 'TREASURY_CSV'
       | 'TREASURY_XLS'
       | 'TREASURY_POSTE'
+      | 'DP_INSTALLMENTS'
     >;
     creationDateFrom?: string;
     creationDateTo?: string;

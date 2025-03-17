@@ -27,7 +27,7 @@ import { STATE } from '../../store/types';
 export type ImportFlowOverviewProps = {
   routingCategory: string;
   title: string;
-  description: string;
+  description?: string;
   flowFileTypes: Array<FlowFileType>;
 };
 
@@ -117,7 +117,7 @@ const ImportFlowOverview = ({
     },
     {
       field: 'creationDate',
-      headerName: t('flowDataGrid.reservationDate'),
+      headerName: t('flowDataGrid.uploadDate'),
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams) =>
