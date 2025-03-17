@@ -148,7 +148,7 @@ describe('useFlowFilters', () => {
     });
 
     const dateFromValue = result.current.draftFilters.creationDateFrom;
-    expect(new Date(dateFromValue!).getUTCHours()).toBe(23);
+    expect(new Date(dateFromValue!).getUTCHours()).toBe(0);
     expect(new Date(dateFromValue!).getUTCMinutes()).toBe(0);
     expect(new Date(dateFromValue!).getUTCSeconds()).toBe(0);
     expect(new Date(dateFromValue!).getUTCMilliseconds()).toBe(0);
@@ -167,7 +167,7 @@ describe('useFlowFilters', () => {
     });
 
     const dateToValue = result.current.draftFilters.creationDateTo;
-    expect(new Date(dateToValue!).getUTCHours()).toBe(22);
+    expect(new Date(dateToValue!).getUTCHours()).toBe(23);
     expect(new Date(dateToValue!).getUTCMinutes()).toBe(59);
     expect(new Date(dateToValue!).getUTCSeconds()).toBe(59);
     expect(new Date(dateToValue!).getUTCMilliseconds()).toBe(999);
