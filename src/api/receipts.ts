@@ -1,19 +1,20 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import utils from '../utils';
+
+
+type TelematicReceiptsParams = Parameters<
+  typeof utils.apiClient.bff.getReceipts
+>;
+export type TelematicReceiptsQuery = TelematicReceiptsParams[1];
 
 export const getReceipts = (
   organizationId: number,
-  query: {
-    receiptOrigin: 'RECEIPT_PAGOPA' | 'RECEIPT_FILE' | 'PAYMENTS_REPORTING';
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
-  },
-  options = {}
 ) => {
-  return useQuery({
-    queryKey: ['receipts', query],
-    queryFn: async () => {
+  return useMutation({
+    // queryKey: ['receipts', query],
+    mutationKey: ['getReceipts', organizationId],
+    mutationFn: async (query:TelematicReceiptsQuery ) => {
+
       const { data: receipts } = await utils.apiClient.bff.getReceipts(
         organizationId,
         query,
@@ -25,8 +26,6 @@ export const getReceipts = (
         }
       );
       return receipts;
-    },
-    retry: false,
-    ...options
+    }
   });
 };

@@ -1,6 +1,7 @@
 import {
   GridColDef,
   GridRenderCellParams,
+  GridSortModel,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
@@ -15,6 +16,7 @@ import { getReceipts } from '../../api/receipts';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { FlowFileType } from '../../models/Filters';
 import { moneyFormat } from '../../utils/formatters';
+import { PagedReceiptView } from '../../../generated/data-contracts';
 
 type SearchResultDataRow = {
   id: number;
@@ -24,21 +26,37 @@ type SearchResultDataRow = {
   paymentDate: string;
 } & GridValidRowModel;
 
-const SearchResultsDataGrid = () => {
+export type DataGridProps = {
+  data: PagedReceiptView;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (page: number) => void;
+  onSortChange: (model: Array<string>) => void;
+  pagination: {
+    currentPage: number;
+    page: number;
+    size: number;
+  };
+};
+
+const SearchResultsDataGrid = ({
+  data,
+  onPageChange,
+  onPageSizeChange,
+  onSortChange,
+  pagination
+}: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { state } = useStore();
-  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-  const flowFileTypes = [FlowFileType.RECEIPT_PAGOPA];
-  const { appliedFilters, handleSortModelChange, sortModel, updatePagination } =
-    useFlowFilters({
-      flowFileTypes: flowFileTypes
-    });
 
-  const { data } = getReceipts(organizationId, {
-    ...appliedFilters,
-    receiptOrigin: 'RECEIPT_PAGOPA'
-  });
+  const onSort = (model: GridSortModel) => {
+      if (model?.length) {
+        const sort = model.map((item) =>
+          item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
+        );
+        onPageChange(1);
+        onSortChange(sort);
+      }
+    };
 
   const columns: Array<GridColDef> = [
     { field: 'iuv', headerName: t('commons.iuv'), flex: 1, type: 'string' },
@@ -100,24 +118,22 @@ const SearchResultsDataGrid = () => {
 
   return (
     <>
-      <CustomDataGrid
-        columns={columns}
-        customPagination={{
-          totalPages: data?.totalPages,
-          defaultPageOption: appliedFilters.size,
-          sizePageOptions: [5, 10, 15, 20],
-          onPageChange: (page) =>
-            updatePagination({ page: page - 1, size: appliedFilters.size }),
-          onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
-          currentPage: appliedFilters.page + 1
-        }}
-        disableColumnMenu
-        disableColumnResize
-        getRowId={(row) => row.receiptId}
-        onSortModelChange={handleSortModelChange}
-        rows={data?.content || []}
-        sortModel={sortModel}
-      />
+    <CustomDataGrid
+      rows={data?.content ?? []}
+      getRowId={(row) => row.receiptId}
+      columns={columns}
+      disableColumnMenu
+      disableColumnResize
+      onSortModelChange={onSort}
+      customPagination={{
+        defaultPageOption: pagination.size,
+        sizePageOptions: [5, 10, 20],
+        totalPages: data?.totalPages,
+        currentPage: pagination.currentPage,
+        onPageChange,
+        onPageSizeChange
+      }}
+    />
     </>
   );
 };
