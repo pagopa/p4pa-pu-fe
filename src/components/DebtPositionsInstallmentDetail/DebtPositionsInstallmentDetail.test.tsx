@@ -1,15 +1,27 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render } from '../../__tests__/renderers';
+import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
+import { screen } from '@testing-library/react';
 import { DebtPositionsInstallmentDetail } from './DebtPositionsInstallmentDetail';
 import debtPositions from '../../api/debtPositions';
-import { useNavigate, generatePath, useParams } from 'react-router-dom';
+import {
+  useNavigate,
+  generatePath,
+  useParams,
+  useLocation
+} from 'react-router-dom';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
   generatePath: vi.fn(),
-  useParams: vi.fn()
+  useParams: vi.fn(),
+  useLocation: vi.fn(),
+  createBrowserRouter: vi.fn(),
+  Navigate: vi.fn(({ to }) => ({
+    type: 'div',
+    props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
+  }))
 }));
 
 vi.mock('../../api/debtPositions', () => ({
@@ -17,7 +29,10 @@ vi.mock('../../api/debtPositions', () => ({
 }));
 
 vi.mock('../../store/GlobalStore', () => ({
-  useStore: vi.fn()
+  useStore: vi.fn(() => ({
+    state: { ORGANIZATION_ID: 3 }
+  })),
+  StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
 describe('DebtPositionsInstallmentDetail', () => {
@@ -76,6 +91,12 @@ describe('DebtPositionsInstallmentDetail', () => {
     (
       debtPositions.getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({ data: mockPaidInstallment });
+
+    (useLocation as Mock).mockReturnValue({
+      state: {
+        remittanceInformation: 'test remittanceInformation'
+      }
+    });
   });
 
   it('renders the component with correct title', () => {

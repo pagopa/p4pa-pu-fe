@@ -10,13 +10,22 @@ import { InstallmentDTO } from '../../../generated/apiClient';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
-import { moneyFormat } from '../../utils/formatters';
-import { useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useParams,
+  useNavigate,
+  generatePath
+} from 'react-router-dom';
+import { PageRoutes } from '../../App';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { state } = useStore();
   const { id } = useParams<{ id: string }>();
+  const {
+    state: { remittanceInformation: remittanceInformation }
+  } = useLocation();
 
   type DebtStatus = Pick<InstallmentDTO, 'status'>['status'];
 
@@ -34,8 +43,17 @@ export const DebtPositionsInstallmentDetail = () => {
     installmentId
   );
 
-  const getEntityTypeLabel = (entityType = ''): string =>
-    entityType === 'F' ? `(${t('commons.person')})` : '';
+  const getFiscalCodeValue = (
+    fiscalCode?: string,
+    entityType?: string
+  ): string => {
+    if (!fiscalCode) {
+      return '-';
+    }
+
+    const entityLabel = entityType === 'F' ? ` (${t('commons.person')})` : '';
+    return `${fiscalCode}${entityLabel}`;
+  };
 
   const DEBT_RESOLVED_STATES: Array<DebtStatus> = ['PAID', 'REPORTED'];
   const isResolved =
@@ -43,7 +61,7 @@ export const DebtPositionsInstallmentDetail = () => {
 
   type DetailDataValue = Record<string, Array<DetailData>> | Array<DetailData>;
 
-  const summaryTitle: string = installment?.debtPositionDescription || '';
+  const summaryTitle: string = remittanceInformation || '';
 
   const installmentDetailData: DetailDataValue = {
     summaryData: [
@@ -59,7 +77,7 @@ export const DebtPositionsInstallmentDetail = () => {
       },
       {
         label: t('debtPositionSearchResults.amount'),
-        value: moneyFormat(installment?.amountCents as number)
+        value: installment?.amountCents as number
       },
       {
         label: t('debtPositionSearchResults.expirationDate'),
@@ -73,7 +91,10 @@ export const DebtPositionsInstallmentDetail = () => {
       },
       {
         label: t('commons.fiscalCodeorVatExecutor'),
-        value: `${installment?.debtor?.fiscalCode} ${getEntityTypeLabel(installment?.debtor?.entityType)}`
+        value: getFiscalCodeValue(
+          installment?.debtor?.fiscalCode,
+          installment?.debtor?.entityType
+        )
       },
       {
         label: t('commons.duetype'),
@@ -93,7 +114,10 @@ export const DebtPositionsInstallmentDetail = () => {
       },
       {
         label: t('commons.fiscalCodeorVatExecutor'),
-        value: `${installment?.payer?.fiscalCode} ${getEntityTypeLabel(installment?.payer?.entityType)}`
+        value: getFiscalCodeValue(
+          installment?.payer?.fiscalCode,
+          installment?.payer?.entityType
+        )
       },
       {
         label: t('commons.transactionManager'),
@@ -136,9 +160,10 @@ export const DebtPositionsInstallmentDetail = () => {
                       label: t('commons.showDebtPositions'),
                       icon: <Visibility />,
                       onLinkClick: () =>
-                        console.log(
-                          'debtPositionId',
-                          installment?.debtPositionId
+                        navigate(
+                          generatePath(PageRoutes.DETAIL_DEBT_POSITION, {
+                            id: installment?.debtPositionId
+                          })
                         )
                     }
                   }

@@ -113,7 +113,12 @@ export const IUVDataGrid = ({
             navigate(
               generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
                 id: params.row.installmentId
-              })
+              }),
+              {
+                state: {
+                  remittanceInformation: params.row.remittanceInformation
+                }
+              }
             );
           }}
         />
