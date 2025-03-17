@@ -22,6 +22,7 @@ export const DetailField = ({
 }: DetailFieldProps) => (
   <ListItem key={id} disableGutters disablePadding>
     <ListItemText
+      disableTypography
       primary={
         <Typography variant="body2" color="textSecondary" fontWeight={400}>
           {label}
