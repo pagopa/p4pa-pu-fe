@@ -23,7 +23,6 @@ export const useTelematicReceiptsFilters = ({
   const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
 
   const getFilterItems = (): Array<FilterItem> => {
-    
     return [
       {
         type: COMPONENT_TYPE.textField,

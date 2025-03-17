@@ -1,16 +1,4 @@
-import {
-  Button,
-  FormControl,
-  Grid,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  Stack,
-  TextField,
-  useTheme
-} from '@mui/material';
-import { CalendarToday, Search } from '@mui/icons-material';
+import { Grid, Stack, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
@@ -25,7 +13,6 @@ export type LocationState = {
   filters: BaseFilterValues;
 };
 
-
 const TelematicReceiptSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -38,14 +25,12 @@ const TelematicReceiptSearchResults = () => {
     initialFilters
   });
 
-  
   const { filters } = useTelematicReceiptsFilters({
     onFilter: telematicReceipts.applyFilters
-  }); 
-
+  });
 
   return (
-    <Stack >
+    <Stack>
       <TitleComponent
         title={t('commons.routes.TELEMATIC_RECEIPT_SEARCH_RESULTS')}
         description={t('telematicreceiptSearchResults.description')}
@@ -68,13 +53,12 @@ const TelematicReceiptSearchResults = () => {
           aria-label="results-table"
         >
           <SearchResultsDataGrid
-              data={
-                telematicReceipts.query.data as PagedReceiptView}
-              onPageChange={telematicReceipts.handlePageChange}
-              onPageSizeChange={telematicReceipts.handlePageSizeChange}
-              onSortChange={telematicReceipts.setSort}
-              pagination={telematicReceipts.pagination}
-            />
+            data={telematicReceipts.query.data as PagedReceiptView}
+            onPageChange={telematicReceipts.handlePageChange}
+            onPageSizeChange={telematicReceipts.handlePageSizeChange}
+            onSortChange={telematicReceipts.setSort}
+            pagination={telematicReceipts.pagination}
+          />
         </Grid>
       </Stack>
     </Stack>

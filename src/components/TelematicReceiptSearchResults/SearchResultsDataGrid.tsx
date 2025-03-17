@@ -10,11 +10,6 @@ import CustomDataGrid from './../DataGrid/CustomDataGrid';
 import { FileDownload, ReadMore } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../App';
-import { useStore } from '../../store/GlobalStore';
-import { STATE } from '../../store/types';
-import { getReceipts } from '../../api/receipts';
-import { useFlowFilters } from '../../hooks/useFlowFilters';
-import { FlowFileType } from '../../models/Filters';
 import { moneyFormat } from '../../utils/formatters';
 import { PagedReceiptView } from '../../../generated/data-contracts';
 
@@ -49,14 +44,14 @@ const SearchResultsDataGrid = ({
   const navigate = useNavigate();
 
   const onSort = (model: GridSortModel) => {
-      if (model?.length) {
-        const sort = model.map((item) =>
-          item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
-        );
-        onPageChange(1);
-        onSortChange(sort);
-      }
-    };
+    if (model?.length) {
+      const sort = model.map((item) =>
+        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
+      );
+      onPageChange(1);
+      onSortChange(sort);
+    }
+  };
 
   const columns: Array<GridColDef> = [
     { field: 'iuv', headerName: t('commons.iuv'), flex: 1, type: 'string' },
@@ -118,22 +113,22 @@ const SearchResultsDataGrid = ({
 
   return (
     <>
-    <CustomDataGrid
-      rows={data?.content ?? []}
-      getRowId={(row) => row.receiptId}
-      columns={columns}
-      disableColumnMenu
-      disableColumnResize
-      onSortModelChange={onSort}
-      customPagination={{
-        defaultPageOption: pagination.size,
-        sizePageOptions: [5, 10, 20],
-        totalPages: data?.totalPages,
-        currentPage: pagination.currentPage,
-        onPageChange,
-        onPageSizeChange
-      }}
-    />
+      <CustomDataGrid
+        rows={data?.content ?? []}
+        getRowId={(row) => row.receiptId}
+        columns={columns}
+        disableColumnMenu
+        disableColumnResize
+        onSortModelChange={onSort}
+        customPagination={{
+          defaultPageOption: pagination.size,
+          sizePageOptions: [5, 10, 20],
+          totalPages: data?.totalPages,
+          currentPage: pagination.currentPage,
+          onPageChange,
+          onPageSizeChange
+        }}
+      />
     </>
   );
 };

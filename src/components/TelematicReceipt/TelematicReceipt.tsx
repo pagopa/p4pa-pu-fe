@@ -18,38 +18,37 @@ export const TelematicReceipt = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}]);
   const {
-      state: { organizationId }
-    } = useStore();
+    state: { organizationId }
+  } = useStore();
   const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
 
   const navigateToResults = useCallback(() => {
-        navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS, {
-          state: {
-            filters: filters[0]
-          }
-        });
-    }, [0, filters, navigate]);
-  
+    navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS, {
+      state: {
+        filters: filters[0]
+      }
+    });
+  }, [0, filters, navigate]);
+
   const resetCurrentFilters = useCallback(() => {
-      const newFilters = [...filters];
-      newFilters[0] = {};
-      setFilters(newFilters);
-    }, [0, filters]);
-  
+    const newFilters = [...filters];
+    newFilters[0] = {};
+    setFilters(newFilters);
+  }, [0, filters]);
+
   const handleFilterChange = useCallback(
-      (id: string, value: FilterFieldValue) => {
-        setFilters((prevFilters) => {
-          const newFilters = [...prevFilters];
-          newFilters[0] = {
-            ...newFilters[0],
-            [id]: value
-          };
-          return newFilters;
-        });
-      },
-      [0]
-    );
-  
+    (id: string, value: FilterFieldValue) => {
+      setFilters((prevFilters) => {
+        const newFilters = [...prevFilters];
+        newFilters[0] = {
+          ...newFilters[0],
+          [id]: value
+        };
+        return newFilters;
+      });
+    },
+    [0]
+  );
 
   return (
     <>
@@ -64,7 +63,7 @@ export const TelematicReceipt = () => {
           // width={900}
         >
           <Grid item xs={12} md={6}>
-          <SearchCard
+            <SearchCard
               title={t('telematicReceipts.search')}
               description={t('telematicReceipts.searchdescription')}
               filterValues={filters[0]}
@@ -104,7 +103,6 @@ export const TelematicReceipt = () => {
                 }
               ]}
             />
-            
           </Grid>
 
           <Grid item xs={12} md={6}>
