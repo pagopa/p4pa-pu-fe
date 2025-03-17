@@ -110,9 +110,9 @@ const getDebtPositionDetail = (
           organizationId,
           debtPositionId
         );
-      // if (debtPosition) {
-      //   parseAndLog(debtPositionDetailDTOSchema, debtPosition);
-      // }
+      if (debtPosition) {
+        parseAndLog(debtPositionDetailDTOSchema, debtPosition);
+      }
       return debtPosition;
     },
     enabled: !!organizationId && !!debtPositionId,
