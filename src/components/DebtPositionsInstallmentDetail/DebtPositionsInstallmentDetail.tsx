@@ -22,7 +22,6 @@ import { moneyFormat } from '../../utils/formatters';
 import { useParams } from 'react-router-dom';
 import { useMemo, useState } from 'react';
 import { Drawer } from '../Drawer';
-import { CopiableTypography } from '../CopiableTypography';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
@@ -125,9 +124,9 @@ export const DebtPositionsInstallmentDetail = () => {
       () => (
         <>
           <List>
-            <CopiableTypography variant="overline" sx={{ mb: 2 }}>
+            <Typography variant="overline" sx={{ mb: 2 }}>
               NOME ENTE BENEFICIARIO
-            </CopiableTypography>
+            </Typography>
             <Drawer.Field
               id="importo"
               label="importo"
@@ -153,9 +152,9 @@ export const DebtPositionsInstallmentDetail = () => {
             />
           </List>
           <List>
-            <CopiableTypography variant="overline" sx={{ mb: 2 }}>
+            <Typography variant="overline" sx={{ mb: 2 }}>
               NOME ENTE BENEFICIARIO
-            </CopiableTypography>
+            </Typography>
             <Drawer.Field
               id="importo"
               label="importo"

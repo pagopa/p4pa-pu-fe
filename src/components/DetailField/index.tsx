@@ -4,7 +4,6 @@ import {
   Typography,
   TypographyOwnProps
 } from '@mui/material';
-import { CopiableTypography } from '../CopiableTypography';
 
 export type DetailFieldProps = {
   id: string;
@@ -29,13 +28,13 @@ export const DetailField = ({
         </Typography>
       }
       secondary={
-        <CopiableTypography
+        <Typography
           variant={variant}
           paragraph
           sx={{ wordBreak: 'break-word' }}
         >
           {value}
-        </CopiableTypography>
+        </Typography>
       }
     />
   </ListItem>
