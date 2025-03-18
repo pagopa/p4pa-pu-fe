@@ -1,16 +1,37 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { fireEvent, render, screen } from '../../__tests__/renderers';
+import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
+// import { screen } from '@testing-library/react';
 import { DebtPositionsInstallmentDetail } from './DebtPositionsInstallmentDetail';
 import debtPositions from '../../api/debtPositions';
+import { useLocation, useParams } from 'react-router-dom';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
+
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(),
+  generatePath: vi.fn(),
+  useParams: vi.fn(),
+  useLocation: vi.fn(),
+  createBrowserRouter: vi.fn(),
+  Navigate: vi.fn(({ to }) => ({
+    type: 'div',
+    props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
+  }))
+}));
 
 vi.mock('../../api/debtPositions', () => ({
   default: { getInstallmentDetail: vi.fn() }
 }));
 
+vi.mock('../../store/GlobalStore', () => ({
+  useStore: vi.fn(() => ({
+    state: { ORGANIZATION_ID: 3 }
+  })),
+  StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
+}));
+
 describe('DebtPositionsInstallmentDetail', () => {
   const mockOrganizationId = 123;
-
+  const mockUseParams = vi.mocked(useParams);
   const mockPaidInstallment = {
     installmentId: 288,
     paymentOptionId: 301,
@@ -46,10 +67,17 @@ describe('DebtPositionsInstallmentDetail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
+    mockUseParams.mockReturnValue({ id: '123' });
+
     (
       debtPositions.getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({ data: mockPaidInstallment });
 
+    (useLocation as Mock).mockReturnValue({
+      state: {
+        remittanceInformation: 'test remittanceInformation'
+      }
+    });
     setOrganizationId(mockOrganizationId);
   });
 
