@@ -88,7 +88,6 @@ const DebtPositionDetail = () => {
     };
   };
 
-  // Controlla se debtPositionDetail è definito prima di utilizzarlo
   if (!debtPositionDetail && !isLoading) {
     return (
       <Box mt={3}>
@@ -97,7 +96,6 @@ const DebtPositionDetail = () => {
     );
   }
 
-  // Non procedere con il resto della logica se i dati non sono ancora disponibili
   if (isLoading || !debtPositionDetail) {
     return (
       <Grid
@@ -112,7 +110,6 @@ const DebtPositionDetail = () => {
     );
   }
 
-  // A questo punto siamo sicuri che debtPositionDetail esiste
   const statusChip = getStatusChipProps(debtPositionDetail.status);
 
   const debtorSection = {
