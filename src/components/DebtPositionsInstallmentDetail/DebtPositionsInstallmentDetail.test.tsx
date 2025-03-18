@@ -32,7 +32,6 @@ vi.mock('../../store/GlobalStore', () => ({
 describe('DebtPositionsInstallmentDetail', () => {
   const mockOrganizationId = 123;
   const mockUseParams = vi.mocked(useParams);
-  
   const mockPaidInstallment = {
     installmentId: 288,
     paymentOptionId: 301,
