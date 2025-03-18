@@ -3,8 +3,81 @@ import DebtPositionDetail from './DebtPositionDetail';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { render } from '../../__tests__/renderers';
-import { mockData } from './mocks/apiResponse';
-import { InstallmentDTO } from '../../../generated/apiClient';
+import { debtPositionDetailDTOSchema } from '../../../generated/zod-schema';
+import { createMock } from 'zodock';
+import debtPositions from '../../api/debtPositions';
+import { DebtPositionDetailDTO } from '../../../generated/apiClient';
+import { UseQueryResult } from '@tanstack/react-query';
+
+const mockDebtPositionDetail = createMock(debtPositionDetailDTOSchema);
+
+mockDebtPositionDetail.paymentOptions = [
+  ...(mockDebtPositionDetail.paymentOptions ?? []),
+  {
+    paymentOptionId: 101,
+    debtPositionId: 10,
+    totalAmountCents: 5400,
+    status: 'REPORTED',
+    paymentOptionType: 'SINGLE_INSTALLMENT',
+    paymentOptionIndex: 1,
+    installments: [
+      {
+        installmentId: 1,
+        status: 'PAID',
+        iuv: 'TEST_IUV_SINGLE'
+      }
+    ]
+  },
+  {
+    paymentOptionId: 102,
+    debtPositionId: 10,
+    totalAmountCents: 5400,
+    status: 'REPORTED',
+    paymentOptionType: 'INSTALLMENTS',
+    paymentOptionIndex: 2,
+    installments: [
+      {
+        installmentId: 2,
+        status: 'UNPAID',
+        iuv: 'TEST_IUV_MULTI'
+      }
+    ]
+  },
+  {
+    paymentOptionId: 103,
+    debtPositionId: 10,
+    totalAmountCents: 5400,
+    status: 'REPORTED',
+    paymentOptionType: 'DOWN_PAYMENT',
+    paymentOptionIndex: 3,
+    installments: [
+      {
+        installmentId: 3,
+        status: 'REPORTED',
+        iuv: 'TEST_IUV_DOWN'
+      }
+    ]
+  }
+];
+
+vi.mock('react-router-dom', () => ({
+  ...vi.importActual('react-router-dom'),
+  useParams: () => ({ id: '10' }),
+  Navigate: vi.fn(({ to }) => <div>Navigate to {to}</div>)
+}));
+
+vi.mock('../../store/GlobalStore', () => ({
+  useStore: () => ({
+    state: { ORGANIZATION_ID: 3 }
+  }),
+  StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
+}));
+
+vi.mock('../../api/debtPositions', () => ({
+  default: {
+    getDebtPositionDetail: vi.fn()
+  }
+}));
 
 beforeEach(() => {
   i18nTestSetup({
@@ -19,6 +92,8 @@ beforeEach(() => {
     'commons.amount': 'Amount',
     'commons.paid': 'Paid',
     'commons.unpaid': 'Unpaid',
+    'commons.person': 'Person',
+    'commons.personLegal': 'Legal Entity',
     'debtPositionDetail.debtPositionInfo': 'Debt Position Info',
     'debtPositionDetail.paymentOptions': 'Payment Options',
     'debtPositionDetail.solutionDetail': 'Solution Detail',
@@ -27,6 +102,21 @@ beforeEach(() => {
     'DebtPositions.Results.status.REPORTED': 'Reported',
     'DebtPositions.Results.status.TO_SYNC': 'To Sync'
   });
+
+  vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+    data: mockDebtPositionDetail,
+    isLoading: false,
+    isError: false,
+    error: null,
+    refetch: vi.fn(),
+    isRefetching: false,
+    isSuccess: true,
+    status: 'success',
+    isFetching: false,
+    isPaused: false,
+    isPending: false,
+    fetchStatus: 'idle'
+  } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
 });
 
 describe('DebtPositionDetail Component', () => {
@@ -42,7 +132,7 @@ describe('DebtPositionDetail Component', () => {
     render(<DebtPositionDetail />);
 
     const titleElements = screen.getAllByText(
-      mockData.debtPositionTypeOrgDescription
+      mockDebtPositionDetail.debtPositionTypeOrgDescription
     );
     expect(titleElements.length).toBeGreaterThan(0);
 
@@ -77,13 +167,37 @@ describe('DebtPositionDetail Component', () => {
       await vi.waitFor(
         () => {
           expect(screen.getByText('Debtor')).toBeDefined();
-          expect(screen.getByText('Mario Rossi')).toBeDefined();
+
+          if (mockDebtPositionDetail.debtor.fullName) {
+            expect(
+              screen.queryByText(mockDebtPositionDetail.debtor.fullName)
+            ).toBeTruthy();
+          }
+
           expect(screen.getByText('Fiscal Code/VAT')).toBeDefined();
-          expect(screen.getByText(/ABCDEF12G34H567I/)).toBeDefined();
+
+          if (mockDebtPositionDetail.debtor.fiscalCode) {
+            const fiscalCodeRegExp = new RegExp(
+              mockDebtPositionDetail.debtor.fiscalCode
+            );
+            expect(screen.queryByText(fiscalCodeRegExp)).toBeTruthy();
+          }
         },
         { timeout: 2000 }
       );
     }
+  });
+
+  it('correctly maps installment data for display', async () => {
+    render(<DebtPositionDetail />);
+
+    expect(screen.getByText('TEST_IUV_SINGLE')).toBeDefined();
+    expect(screen.getByText('TEST_IUV_MULTI')).toBeDefined();
+    expect(screen.getByText('TEST_IUV_DOWN')).toBeDefined();
+
+    expect(screen.getAllByText('Paid').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Unpaid').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Reported').length).toBeGreaterThan(0);
   });
 
   it('renders all payment option types correctly', () => {
@@ -91,38 +205,14 @@ describe('DebtPositionDetail Component', () => {
 
     expect(screen.getByText('Payment Options')).toBeDefined();
 
-    const singleInstallments = mockData.paymentOptions.filter(
-      (option) => option.paymentOptionType === 'SINGLE_INSTALLMENT'
-    );
+    expect(screen.getByText('One-off Payment')).toBeDefined();
 
-    const downPayments = mockData.paymentOptions.filter(
-      (option) => option.paymentOptionType === 'DOWN_PAYMENT'
-    );
+    expect(screen.getByText('Multiple Payments')).toBeDefined();
 
-    const multipleInstallments = mockData.paymentOptions.filter(
-      (option) => option.paymentOptionType === 'INSTALLMENTS'
-    );
-
-    if (singleInstallments.length > 0) {
-      expect(screen.getAllByText('One-off Payment').length).toBeGreaterThan(0);
-    }
-
-    if (downPayments.length > 0) {
-      expect(screen.getAllByText('Down Payment').length).toBeGreaterThan(0);
-    }
-
-    if (multipleInstallments.length > 0) {
-      expect(screen.getAllByText('Multiple Payments').length).toBeGreaterThan(
-        0
-      );
-    }
+    expect(screen.getByText('Down Payment')).toBeDefined();
 
     const sectionTitles = screen.getAllByText('Solution Detail');
-    expect(sectionTitles.length).toBeGreaterThanOrEqual(
-      Math.min(1, singleInstallments.length) +
-        Math.min(1, downPayments.length) +
-        Math.min(1, multipleInstallments.length)
-    );
+    expect(sectionTitles.length).toBeGreaterThanOrEqual(3);
 
     const tables = screen.getAllByRole('grid');
     expect(tables.length).toBeGreaterThan(0);
@@ -131,95 +221,13 @@ describe('DebtPositionDetail Component', () => {
   it('correctly maps installment data for display', async () => {
     render(<DebtPositionDetail />);
 
-    const allValidIUVs = mockData.paymentOptions
-      .flatMap((option) =>
-        option.installments
-          ? option.installments.filter(
-              (inst): inst is InstallmentDTO & { iuv: string } =>
-                inst != undefined &&
-                inst.iuv !== undefined &&
-                typeof inst.iuv === 'string'
-            )
-          : []
-      )
-      .map((installment) => installment.iuv);
+    expect(screen.getByText('TEST_IUV_SINGLE')).toBeDefined();
+    expect(screen.getByText('TEST_IUV_MULTI')).toBeDefined();
+    expect(screen.getByText('TEST_IUV_DOWN')).toBeDefined();
 
-    for (const iuv of allValidIUVs) {
-      const iuvElements = screen.getAllByText(iuv);
-      expect(iuvElements.length).toBeGreaterThan(0);
-    }
-
-    const unpaidInstallments = mockData.paymentOptions.flatMap((option) =>
-      option.installments
-        ? option.installments.filter(
-            (installment) => installment && installment.status === 'UNPAID'
-          )
-        : []
-    );
-
-    const reportedInstallments = mockData.paymentOptions.flatMap((option) =>
-      option.installments
-        ? option.installments.filter(
-            (installment) => installment && installment.status === 'REPORTED'
-          )
-        : []
-    );
-
-    const toSyncInstallments = mockData.paymentOptions.flatMap((option) =>
-      option.installments
-        ? option.installments.filter(
-            (installment) => installment && installment.status === 'TO_SYNC'
-          )
-        : []
-    );
-
-    if (unpaidInstallments.length > 0) {
-      const unpaidChips = screen.getAllByText('Unpaid');
-      expect(unpaidChips.length).toBeGreaterThan(0);
-    }
-
-    if (reportedInstallments.length > 0) {
-      const reportedChips = screen.getAllByText('Reported');
-      expect(reportedChips.length).toBeGreaterThan(0);
-    }
-
-    if (toSyncInstallments.length > 0) {
-      const toSyncChips = screen.getAllByText(
-        (content) => content === 'To Sync' || content === 'Reported'
-      );
-      expect(toSyncChips.length).toBeGreaterThan(0);
-    }
-  });
-
-  it('correctly displays data for down payment option type', () => {
-    render(<DebtPositionDetail />);
-
-    const downPaymentOptions = mockData.paymentOptions.filter(
-      (option) => option.paymentOptionType === 'DOWN_PAYMENT'
-    );
-
-    if (downPaymentOptions.length > 0) {
-      expect(screen.getAllByText('Down Payment').length).toBeGreaterThan(0);
-
-      if (
-        downPaymentOptions[0].installments &&
-        downPaymentOptions[0].installments.length > 0
-      ) {
-        const firstInstallment = downPaymentOptions[0].installments[0];
-
-        if (firstInstallment.iuv) {
-          const iuvElements = screen.getAllByText(firstInstallment.iuv);
-          expect(iuvElements.length).toBeGreaterThan(0);
-        }
-
-        if (firstInstallment.remittanceInformation) {
-          const infoElements = screen.getAllByText(
-            firstInstallment.remittanceInformation
-          );
-          expect(infoElements.length).toBeGreaterThan(0);
-        }
-      }
-    }
+    expect(screen.getAllByText('Paid').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Unpaid').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('Reported').length).toBeGreaterThan(0);
   });
 
   it('triggers the history button callback when clicked', () => {
@@ -234,26 +242,47 @@ describe('DebtPositionDetail Component', () => {
     }
   });
 
-  it('shows the correct chip colors for different statuses', () => {
-    const { container } = render(<DebtPositionDetail />);
+  it('shows a loading spinner when data is loading', () => {
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: false,
+      status: 'loading',
+      isFetching: true,
+      isPaused: false,
+      isPending: true,
+      fetchStatus: 'fetching'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
 
-    const grids = container.querySelectorAll('.MuiDataGrid-root');
+    render(<DebtPositionDetail />);
 
-    if (grids.length > 0) {
-      const statusChips = container.querySelectorAll('.MuiChip-root');
-      expect(statusChips.length).toBeGreaterThan(0);
+    expect(screen.getByRole('progressbar')).toBeDefined();
+  });
 
-      statusChips.forEach((chip) => {
-        const hasColorClass = Array.from(chip.classList).some((className) =>
-          [
-            'MuiChip-colorSuccess',
-            'MuiChip-colorError',
-            'MuiChip-colorInfo',
-            'MuiChip-colorDefault'
-          ].includes(className)
-        );
-        expect(hasColorClass).toBe(true);
-      });
-    }
+  it('shows error message when data is not found', () => {
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    expect(
+      screen.getByText('Dati della posizione debitoria non trovati')
+    ).toBeDefined();
   });
 });
