@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { DebtPositionTypeOrg } from '../../generated/apiClient';
-import { SelectProps } from '../components/FormComponent';
 import { useTranslation } from 'react-i18next';
 import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 
@@ -10,7 +9,7 @@ export const useDebtPositionsTypeOrg = ({
   organizationId: number;
 }) => {
   const [debtPositionsTypes, setDebtPositionsTypes] = useState<
-    SelectProps['options']
+    Array<{ label: string; value: number }>
   >([]);
   const { t } = useTranslation();
 
@@ -29,8 +28,8 @@ export const useDebtPositionsTypeOrg = ({
             type?.description && type?.debtPositionTypeOrgId
         )
         .map((type) => ({
-          label: type.description ?? '',
-          value: type.debtPositionTypeOrgId ?? 0
+          label: type?.description ?? '',
+          value: type?.debtPositionTypeOrgId ?? 0
         }))
         .sort((a, b) => a.label.localeCompare(b.label));
 

@@ -11,12 +11,20 @@ import FilterContainer, {
 } from '../FilterContainer/FilterContainer';
 import { Search } from '@mui/icons-material';
 import ReportingDetailDataGrid from './ReportingDetailDataGrid';
+import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
+import { useStore } from '../../store/GlobalStore';
 
 export const ReportingDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { id } = useParams<{ id: string }>();
   const idReporting = id ?? '';
+
+  const {
+    state: { organizationId }
+  } = useStore();
+
+  const types = useDebtPositionsTypeOrg({ organizationId });
 
   const summaryData: Array<DetailData> = [
     { label: 'ID Rendicontazione / IUF', value: idReporting },
@@ -87,10 +95,7 @@ export const ReportingDetail = () => {
                 type: COMPONENT_TYPE.select,
                 label: t('commons.duetype'),
                 gridWidth: 2,
-                options: [
-                  { label: 'TARI', value: 'TARI' },
-                  { label: 'DOVUTO', value: 'DOVUTO' }
-                ]
+                options: types.optionsMap
               },
               {
                 type: COMPONENT_TYPE.button,

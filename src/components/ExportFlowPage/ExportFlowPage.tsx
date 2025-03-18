@@ -11,17 +11,25 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import ExportFlowContainer from '../ExportFlowContainer/ExportFlowContainer';
 import { useState } from 'react';
 import { PageRoutes } from '../../App';
+import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
+import { useStore } from '../../store/GlobalStore';
 
 export const ExportFlowPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { category } = useParams<{ category: string }>();
 
+  const {
+    state: { organizationId }
+  } = useStore();
+
   const [formData, setFormData] = useState({
     from: '',
     to: '',
     fileVersion: ''
   });
+
+  const types = useDebtPositionsTypeOrg({ organizationId });
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -36,12 +44,6 @@ export const ExportFlowPage = () => {
     { label: 'version1', value: 'version1' },
     { label: 'version2', value: 'version2' },
     { label: 'version3', value: 'version3' }
-  ];
-
-  const selectOptionsDueType = [
-    { label: 'test1', value: 'test1' },
-    { label: 'test12', value: 'test12' },
-    { label: 'test123', value: 'test123' }
   ];
 
   return (
@@ -91,7 +93,7 @@ export const ExportFlowPage = () => {
             ],
             selectOptions: selectOptionsFileVersion
           },
-          ...(category !== 'conservation'
+          ...(category !== 'conservation' && types.isSuccess
             ? [
                 {
                   direction: 'column' as GridDirection,
@@ -106,7 +108,7 @@ export const ExportFlowPage = () => {
                       fieldKey: 'dueType'
                     }
                   ],
-                  selectOptions: selectOptionsDueType
+                  selectOptions: types.optionsMap
                 }
               ]
             : [])

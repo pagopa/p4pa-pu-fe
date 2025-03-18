@@ -6,7 +6,7 @@ import { useState, useCallback } from 'react';
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { getTabsConfig } from './DebtTabsConfig';
+import { useTabsConfig } from './useDebtTabsConfig';
 import { PageRoutes } from '../../App';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { SearchType } from '../../models/DebtPositions';
@@ -14,7 +14,7 @@ import { SearchType } from '../../models/DebtPositions';
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const debtTabsConfig = getTabsConfig(t);
+  const debtTabsConfig = useTabsConfig();
 
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
   const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}, {}]);
