@@ -1,5 +1,13 @@
 import { Download, History, ReadMore, Visibility } from '@mui/icons-material';
-import { Button, CircularProgress, Divider, Grid } from '@mui/material';
+import {
+  Button,
+  CircularProgress,
+  Divider,
+  Grid,
+  List,
+  Stack,
+  Typography
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DetailContainer, {
@@ -17,6 +25,9 @@ import {
   generatePath
 } from 'react-router-dom';
 import { PageRoutes } from '../../App';
+import { moneyFormat } from '../../utils/formatters';
+import { useMemo, useState } from 'react';
+import { Drawer } from '../Drawer';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
@@ -26,6 +37,11 @@ export const DebtPositionsInstallmentDetail = () => {
   const {
     state: { remittanceInformation: remittanceInformation }
   } = useLocation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setDrawerOpen((prev) => !prev);
+  };
 
   type DebtStatus = Pick<InstallmentDTO, 'status'>['status'];
 
@@ -128,6 +144,77 @@ export const DebtPositionsInstallmentDetail = () => {
     ]
   };
 
+  const Details = () =>
+    useMemo(
+      () => (
+        <>
+          <List>
+            <Drawer.Field
+              id="name"
+              label=""
+              variant="overline"
+              value="NOME ENTE BENEFICIARIO"
+            />
+            <Drawer.Field
+              id="importo"
+              label="importo"
+              variant="sidenav"
+              value={moneyFormat(3000)}
+            />
+            <Drawer.Field
+              id="fiscalCode"
+              label="Codice fiscale"
+              value={'03003300000300001'}
+            />
+            <Drawer.Field id="iban" label="IBAN" value={'03003300000300001'} />
+            <Drawer.Field
+              id="postalCode"
+              label="Conto Corrente Postale"
+              value={'03003300000300001'}
+            />
+            <Drawer.Field
+              id="taxCode"
+              label="Codice Tassonomico"
+              variant="sidenav"
+              value={'10938'}
+            />
+          </List>
+          <List>
+            <Drawer.Field
+              id="name"
+              label=""
+              variant="overline"
+              value="NOME ENTE BENEFICIARIO"
+            />
+            <Drawer.Field
+              id="importo"
+              label="importo"
+              variant="sidenav"
+              value={moneyFormat(3000)}
+            />
+            <Drawer.Field
+              id="fiscalCode"
+              label="Codice fiscale"
+              value={'03003300000300001'}
+            />
+            <Drawer.Field id="iban" label="IBAN" value={'03003300000300001'} />
+            <Drawer.Field
+              id="postalCode"
+              label="Conto Corrente Postale"
+              value={'03003300000300001'}
+            />
+            <Drawer.Field
+              id="taxCode"
+              label="Codice Tassonomico"
+              variant="sidenav"
+              value={'10938'}
+            />
+          </List>
+        </>
+      ),
+      []
+    );
+
   return (
     <>
       {!isLoading && (
@@ -200,11 +287,23 @@ export const DebtPositionsInstallmentDetail = () => {
               endIcon={<ReadMore />}
               variant="text"
               fullWidth={false}
-              onClick={() => console.log('installmentId: ', installmentId)}
+              onClick={() => setDrawerOpen(true)}
             >
               {t('commons.showOtherBeneficiaries')}
             </Button>
           </Grid>
+          <Drawer
+            open={drawerOpen}
+            onClose={toggleDrawer}
+            title={t('debtPositionInstallmentDetail.drawer.title')}
+          >
+            <Stack gap={2.5}>
+              <Typography variant="body2" fontSize={14}>
+                {t('debtPositionInstallmentDetail.drawer.info')}
+              </Typography>
+              <Details />
+            </Stack>
+          </Drawer>
         </>
       )}
 
