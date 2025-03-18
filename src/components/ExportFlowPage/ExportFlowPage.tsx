@@ -93,7 +93,7 @@ export const ExportFlowPage = () => {
             ],
             selectOptions: selectOptionsFileVersion
           },
-          ...(category !== 'conservation' && types.isSuccess
+          ...(category !== 'conservation'
             ? [
                 {
                   direction: 'column' as GridDirection,

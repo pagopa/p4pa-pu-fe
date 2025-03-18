@@ -1,4 +1,4 @@
-import { render, screen, cleanup } from '@testing-library/react';
+import { render, screen, cleanup } from '../../__tests__/renderers';
 import { Overlay } from '../Overlay';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import 'vitest-dom/extend-expect';

@@ -1,4 +1,4 @@
-import { renderHook } from '@testing-library/react';
+import { renderHook } from '../__tests__/renderers';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 import { QueryObserverPendingResult } from '@tanstack/react-query';

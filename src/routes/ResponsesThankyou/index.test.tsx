@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import ImportFlowPage from '.';
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '../../__tests__/renderers';
 
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal()),
