@@ -7,10 +7,48 @@ import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../App';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import { useCallback, useState } from 'react';
+import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
+import { FilterFieldIds } from '../../models/SearchCardFields';
+import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
+import { useStore } from '../../store/GlobalStore';
 
 export const TelematicReceipt = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}]);
+  const {
+    state: { organizationId }
+  } = useStore();
+  const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
+
+  const navigateToResults = useCallback(() => {
+    navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS, {
+      state: {
+        filters: filters[0]
+      }
+    });
+  }, [0, filters, navigate]);
+
+  const resetCurrentFilters = useCallback(() => {
+    const newFilters = [...filters];
+    newFilters[0] = {};
+    setFilters(newFilters);
+  }, [0, filters]);
+
+  const handleFilterChange = useCallback(
+    (id: string, value: FilterFieldValue) => {
+      setFilters((prevFilters) => {
+        const newFilters = [...prevFilters];
+        newFilters[0] = {
+          ...newFilters[0],
+          [id]: value
+        };
+        return newFilters;
+      });
+    },
+    [0]
+  );
 
   return (
     <>
@@ -28,36 +66,40 @@ export const TelematicReceipt = () => {
             <SearchCard
               title={t('telematicReceipts.search')}
               description={t('telematicReceipts.searchdescription')}
+              filterValues={filters[0]}
+              onFilterChange={handleFilterChange}
               fields={[
                 {
                   type: COMPONENT_TYPE.textField,
                   label: t('commons.iuv'),
-                  icon: <Search />
+                  icon: <Search />,
+                  id: FilterFieldIds.IUV_CODE
                 },
                 {
                   type: COMPONENT_TYPE.dateRange,
                   label: 'daterange',
                   from: { label: t('dates.from') },
-                  to: { label: t('dates.to') }
+                  to: { label: t('dates.to') },
+                  id: FilterFieldIds.DATE_RANGE
                 },
                 {
                   type: COMPONENT_TYPE.select,
                   label: t('commons.duetype'),
-                  options: [
-                    { label: t('telematicReceipts.tari'), value: 'tari' },
-                    {
-                      label: t('telematicReceipts.trafficoffence'),
-                      value: 'violation'
-                    }
-                  ]
+                  id: FilterFieldIds.DUETYPE,
+                  options: debtPositionsTypes.optionsMap,
+                  defaultValue: 0
                 }
               ]}
               button={[
                 {
-                  label: t('commons.search'),
+                  label: t('commons.filters.remove'),
+                  variant: 'outlined',
+                  onClick: resetCurrentFilters
+                },
+                {
+                  label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: () =>
-                    navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS)
+                  onClick: navigateToResults
                 }
               ]}
             />

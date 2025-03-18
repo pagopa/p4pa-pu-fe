@@ -1,16 +1,16 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '../../__tests__/renderers';
+import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
+// import { screen } from '@testing-library/react';
 import { DebtPositionsInstallmentDetail } from './DebtPositionsInstallmentDetail';
 import debtPositions from '../../api/debtPositions';
-import { useNavigate, generatePath, useParams } from 'react-router-dom';
-import { useStore } from '../../store/GlobalStore';
-import { STATE } from '../../store/types';
-import { render } from '../../__tests__/renderers';
+import { useLocation, useParams } from 'react-router-dom';
+import { setOrganizationId } from '../../store/OrganizationIdStore';
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
   generatePath: vi.fn(),
   useParams: vi.fn(),
+  useLocation: vi.fn(),
   createBrowserRouter: vi.fn(),
   Navigate: vi.fn(({ to }) => ({
     type: 'div',
@@ -30,10 +30,8 @@ vi.mock('../../store/GlobalStore', () => ({
 }));
 
 describe('DebtPositionsInstallmentDetail', () => {
-  const mockNavigate = vi.fn();
-  const mockOrganizationId = '123';
-  const mockInstallmentId = '288';
-
+  const mockOrganizationId = 123;
+  const mockUseParams = vi.mocked(useParams);
   const mockPaidInstallment = {
     installmentId: 288,
     paymentOptionId: 301,
@@ -69,22 +67,18 @@ describe('DebtPositionsInstallmentDetail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockNavigate
-    );
-    (useParams as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      id: mockInstallmentId
-    });
-    (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      state: { [STATE.ORGANIZATION_ID]: mockOrganizationId }
-    });
-    (generatePath as unknown as ReturnType<typeof vi.fn>).mockImplementation(
-      () => '/mock-path'
-    );
+    mockUseParams.mockReturnValue({ id: '123' });
 
     (
       debtPositions.getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({ data: mockPaidInstallment });
+
+    (useLocation as Mock).mockReturnValue({
+      state: {
+        remittanceInformation: 'test remittanceInformation'
+      }
+    });
+    setOrganizationId(mockOrganizationId);
   });
 
   it('renders the component with correct title', () => {
@@ -123,5 +117,17 @@ describe('DebtPositionsInstallmentDetail', () => {
 
     expect(screen.getByText('commons.noPaymentMade')).toBeInTheDocument();
     expect(screen.queryByText('commons.paymentInformation')).toBeNull();
+  });
+
+  it('opens and closes the drawer when clicking the filter button', () => {
+    render(<DebtPositionsInstallmentDetail />);
+
+    const showMore = screen.getByText('commons.showOtherBeneficiaries');
+    expect(showMore).toBeDefined();
+
+    expect(screen.getByTestId('drawer')).toHaveStyle('visibility: hidden');
+
+    fireEvent.click(showMore);
+    expect(screen.getByTestId('drawer')).toHaveStyle('visibility: visible');
   });
 });

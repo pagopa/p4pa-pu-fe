@@ -18,8 +18,9 @@
 		"breadcrumbsElement": "Elemento breadcrumb",
 		"breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
 		"close": "Chiudi",
-    "debtor": "Debitore",
-    "description": "Descrizione",
+		"copied": "Copiato!",
+		"debtor": "Debitore",
+		"description": "Descrizione",
 		"detail": "Dettaglio",
 		"duetype": "Tipo dovuto",
 		"exit": "Esci",
@@ -107,7 +108,7 @@
 		},
 		"from": "Dal",
 		"importFlowButton": "Importa flusso",
-    "internalCode": "Codice Interno",
+		"internalCode": "Codice Interno",
 		"iud": "IUD",
 		"iur": "IUR",
 		"iuv": "IUV",
@@ -117,13 +118,13 @@
 		"paymentDate": "Data pagamento",
 		"paymentdate": "Data Esito",
 		"paymentExecutor": "Versante",
-    "paymentOptions": {
-      "SINGLE_INSTALLMENT": "Soluzione Unica",
-      "INSTALLMENTS": "Soluzione a Rate",
-      "DOWN_PAYMENT": "Anticipo"
-    },
-    "person": "Persona fisica",
-    "personLegal": "Persona giuridica",
+		"paymentOptions": {
+			"SINGLE_INSTALLMENT": "Soluzione Unica",
+			"INSTALLMENTS": "Soluzione a Rate",
+			"DOWN_PAYMENT": "Anticipo"
+		},
+		"person": "Persona fisica",
+		"personLegal": "Persona giuridica",
 		"reason": "Causale",
 		"requiredFieldDescription": "* Indica un campo obbligatorio",
 		"createNew": "Crea nuova",
@@ -255,17 +256,23 @@
 			}
 		}
 	},
-  "debtPositionDetail": {
-    "debtPositionInfo": "Informazioni sulla posizione debitoria",
-    "paymentOptions": "Opzioni di Pagamento",
-    "solutionDetail": "Dettaglio soluzione"
-  },
+	"debtPositionDetail": {
+		"debtPositionInfo": "Informazioni sulla posizione debitoria",
+		"paymentOptions": "Opzioni di Pagamento",
+		"solutionDetail": "Dettaglio soluzione"
+	},
 	"debtPositionSearchResults": {
 		"iuv": "Codice Avviso (IUV)",
 		"subject": "Oggetto del pagamento",
 		"amount": "Importo",
 		"expirationDate": "Data Scadenza",
 		"status": "Stato"
+	},
+	"debtPositionInstallmentDetail": {
+		"drawer": {
+			"title": "Beneficiari",
+			"info": "Ci sono presenti altri beneficiari diversi al tuo ente."
+		}
 	},
 	"FileUploaderFlowImport": {
 		"telematic-receipt": {

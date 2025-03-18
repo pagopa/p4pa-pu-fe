@@ -1,5 +1,13 @@
 import { Download, History, ReadMore, Visibility } from '@mui/icons-material';
-import { Button, CircularProgress, Divider, Grid } from '@mui/material';
+import {
+  Button,
+  CircularProgress,
+  Divider,
+  Grid,
+  List,
+  Stack,
+  Typography
+} from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DetailContainer, {
@@ -10,15 +18,30 @@ import { InstallmentDTO } from '../../../generated/apiClient';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
-import { moneyFormat } from '../../utils/formatters';
-import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import {
+  useLocation,
+  useParams,
+  useNavigate,
+  generatePath
+} from 'react-router-dom';
 import { PageRoutes } from '../../App';
+import { moneyFormat } from '../../utils/formatters';
+import { useMemo, useState } from 'react';
+import { Drawer } from '../Drawer';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { state } = useStore();
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
+  const {
+    state: { remittanceInformation: remittanceInformation }
+  } = useLocation();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const toggleDrawer = () => {
+    setDrawerOpen((prev) => !prev);
+  };
 
   type DebtStatus = Pick<InstallmentDTO, 'status'>['status'];
 
@@ -36,8 +59,17 @@ export const DebtPositionsInstallmentDetail = () => {
     installmentId
   );
 
-  const getEntityTypeLabel = (entityType = ''): string =>
-    entityType === 'F' ? `(${t('commons.person')})` : '';
+  const getFiscalCodeValue = (
+    fiscalCode?: string,
+    entityType?: string
+  ): string => {
+    if (!fiscalCode) {
+      return '-';
+    }
+
+    const entityLabel = entityType === 'F' ? ` (${t('commons.person')})` : '';
+    return `${fiscalCode}${entityLabel}`;
+  };
 
   const DEBT_RESOLVED_STATES: Array<DebtStatus> = ['PAID', 'REPORTED'];
   const isResolved =
@@ -45,7 +77,7 @@ export const DebtPositionsInstallmentDetail = () => {
 
   type DetailDataValue = Record<string, Array<DetailData>> | Array<DetailData>;
 
-  const summaryTitle: string = installment?.debtPositionDescription || '';
+  const summaryTitle: string = remittanceInformation || '';
 
   const installmentDetailData: DetailDataValue = {
     summaryData: [
@@ -61,7 +93,7 @@ export const DebtPositionsInstallmentDetail = () => {
       },
       {
         label: t('debtPositionSearchResults.amount'),
-        value: moneyFormat(installment?.amountCents as number)
+        value: installment?.amountCents as number
       },
       {
         label: t('debtPositionSearchResults.expirationDate'),
@@ -75,7 +107,10 @@ export const DebtPositionsInstallmentDetail = () => {
       },
       {
         label: t('commons.fiscalCodeorVatExecutor'),
-        value: `${installment?.debtor?.fiscalCode} ${getEntityTypeLabel(installment?.debtor?.entityType)}`
+        value: getFiscalCodeValue(
+          installment?.debtor?.fiscalCode,
+          installment?.debtor?.entityType
+        )
       },
       {
         label: t('commons.duetype'),
@@ -95,7 +130,10 @@ export const DebtPositionsInstallmentDetail = () => {
       },
       {
         label: t('commons.fiscalCodeorVatExecutor'),
-        value: `${installment?.payer?.fiscalCode} ${getEntityTypeLabel(installment?.payer?.entityType)}`
+        value: getFiscalCodeValue(
+          installment?.payer?.fiscalCode,
+          installment?.payer?.entityType
+        )
       },
       {
         label: t('commons.transactionManager'),
@@ -105,6 +143,77 @@ export const DebtPositionsInstallmentDetail = () => {
       { label: t('commons.iur'), value: installment?.iur || '' }
     ]
   };
+
+  const Details = () =>
+    useMemo(
+      () => (
+        <>
+          <List>
+            <Drawer.Field
+              id="name"
+              label=""
+              variant="overline"
+              value="NOME ENTE BENEFICIARIO"
+            />
+            <Drawer.Field
+              id="importo"
+              label="importo"
+              variant="sidenav"
+              value={moneyFormat(3000)}
+            />
+            <Drawer.Field
+              id="fiscalCode"
+              label="Codice fiscale"
+              value={'03003300000300001'}
+            />
+            <Drawer.Field id="iban" label="IBAN" value={'03003300000300001'} />
+            <Drawer.Field
+              id="postalCode"
+              label="Conto Corrente Postale"
+              value={'03003300000300001'}
+            />
+            <Drawer.Field
+              id="taxCode"
+              label="Codice Tassonomico"
+              variant="sidenav"
+              value={'10938'}
+            />
+          </List>
+          <List>
+            <Drawer.Field
+              id="name"
+              label=""
+              variant="overline"
+              value="NOME ENTE BENEFICIARIO"
+            />
+            <Drawer.Field
+              id="importo"
+              label="importo"
+              variant="sidenav"
+              value={moneyFormat(3000)}
+            />
+            <Drawer.Field
+              id="fiscalCode"
+              label="Codice fiscale"
+              value={'03003300000300001'}
+            />
+            <Drawer.Field id="iban" label="IBAN" value={'03003300000300001'} />
+            <Drawer.Field
+              id="postalCode"
+              label="Conto Corrente Postale"
+              value={'03003300000300001'}
+            />
+            <Drawer.Field
+              id="taxCode"
+              label="Codice Tassonomico"
+              variant="sidenav"
+              value={'10938'}
+            />
+          </List>
+        </>
+      ),
+      []
+    );
 
   return (
     <>
@@ -139,7 +248,7 @@ export const DebtPositionsInstallmentDetail = () => {
                       icon: <Visibility />,
                       onLinkClick: () =>
                         navigate(
-                          generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
+                          generatePath(PageRoutes.DETAIL_DEBT_POSITION, {
                             id: installment?.debtPositionId
                           })
                         )
@@ -178,11 +287,23 @@ export const DebtPositionsInstallmentDetail = () => {
               endIcon={<ReadMore />}
               variant="text"
               fullWidth={false}
-              onClick={() => console.log('installmentId: ', installmentId)}
+              onClick={() => setDrawerOpen(true)}
             >
               {t('commons.showOtherBeneficiaries')}
             </Button>
           </Grid>
+          <Drawer
+            open={drawerOpen}
+            onClose={toggleDrawer}
+            title={t('debtPositionInstallmentDetail.drawer.title')}
+          >
+            <Stack gap={2.5}>
+              <Typography variant="body2" fontSize={14}>
+                {t('debtPositionInstallmentDetail.drawer.info')}
+              </Typography>
+              <Details />
+            </Stack>
+          </Drawer>
         </>
       )}
 

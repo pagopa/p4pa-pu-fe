@@ -1,120 +1,47 @@
-import {
-  Button,
-  FormControl,
-  Grid,
-  InputAdornment,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField,
-  useTheme
-} from '@mui/material';
-import { CalendarToday, Search } from '@mui/icons-material';
+import { Grid, Stack, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
-import React from 'react';
 import TitleComponent from '../TitleComponent/TitleComponent';
+import { BaseFilterValues } from '../../models/Filters';
+import useTelematicReceiptSearch from '../../hooks/useTelematicReceiptsSearch';
+import { useLocation } from 'react-router-dom';
+import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
+import FilterContainer from '../FilterContainer/FilterContainer';
+import { PagedReceiptView } from '../../../generated/data-contracts';
+
+export type LocationState = {
+  filters: BaseFilterValues;
+};
 
 const TelematicReceiptSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const [selectedValue, setSelectedValue] = React.useState('');
+
+  const {
+    state: { filters: initialFilters }
+  }: { state: LocationState } = useLocation();
+
+  const telematicReceipts = useTelematicReceiptSearch({
+    initialFilters
+  });
+
+  const { filters } = useTelematicReceiptsFilters({
+    onFilter: telematicReceipts.applyFilters
+  });
 
   return (
-    <>
+    <Stack>
       <TitleComponent
         title={t('commons.routes.TELEMATIC_RECEIPT_SEARCH_RESULTS')}
         description={t('telematicreceiptSearchResults.description')}
       />
-      <Grid container direction="row">
-        <Grid
-          container
-          direction="row"
-          spacing={2}
-          alignItems={'center'}
-          justifyContent={'space-between'}
-          mb={2}
-          component="div"
-          aria-label={t('commons.filters.filtersField')}
-        >
-          <Grid item lg={3}>
-            <TextField
-              sx={{ bgcolor: theme.palette.common.white }}
-              fullWidth
-              size="small"
-              InputProps={{
-                startAdornment: (
-                  <InputAdornment position="start">
-                    <Search />
-                  </InputAdornment>
-                )
-              }}
-              label={t('commons.searchIUV')}
-            />
-          </Grid>
-          <Grid item lg={3}>
-            <FormControl
-              fullWidth
-              size="small"
-              sx={{ my: 2, bgcolor: theme.palette.common.white }}
-              role="combobox"
-              aria-labelledby="due-type-label"
-            >
-              <InputLabel id="due-type-label">
-                {t('commons.duetype')}
-              </InputLabel>
-              <Select
-                labelId="due-type-label"
-                value={selectedValue}
-                onChange={(event) => setSelectedValue(event.target.value)}
-                label={t('commons.duetype')}
-              >
-                <MenuItem>Placeholder</MenuItem>
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item lg={2}>
-            <TextField
-              sx={{ bgcolor: theme.palette.common.white }}
-              fullWidth
-              size="small"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <CalendarToday />
-                  </InputAdornment>
-                )
-              }}
-              label={t('commons.from')}
-            />
-          </Grid>
 
-          <Grid item lg={2}>
-            <TextField
-              sx={{ bgcolor: theme.palette.common.white }}
-              fullWidth
-              size="small"
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <CalendarToday />
-                  </InputAdornment>
-                )
-              }}
-              label={t('commons.to')}
-            />
-          </Grid>
-          <Grid item lg={1}>
-            <Button
-              fullWidth
-              size="medium"
-              variant="contained"
-              sx={{ height: 40 }}
-            >
-              {t('commons.filters.filterResults')}
-            </Button>
-          </Grid>
-        </Grid>
+      <Stack gap={3}>
+        <FilterContainer
+          items={filters}
+          values={telematicReceipts.filterValues}
+          onChange={telematicReceipts.handleFilterChange}
+        />
         <Grid
           container
           p={2}
@@ -125,10 +52,16 @@ const TelematicReceiptSearchResults = () => {
           }}
           aria-label="results-table"
         >
-          <SearchResultsDataGrid />
+          <SearchResultsDataGrid
+            data={telematicReceipts.query.data as PagedReceiptView}
+            onPageChange={telematicReceipts.handlePageChange}
+            onPageSizeChange={telematicReceipts.handlePageSizeChange}
+            onSortChange={telematicReceipts.setSort}
+            pagination={telematicReceipts.pagination}
+          />
         </Grid>
-      </Grid>
-    </>
+      </Stack>
+    </Stack>
   );
 };
 

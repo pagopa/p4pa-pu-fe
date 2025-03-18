@@ -4,13 +4,13 @@ import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
-import CustomDrawer from '../Drawer/CustomDrawer';
 import { useState } from 'react';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 import { useFilters } from '../../hooks/useFilters';
 import { useStore } from '../../store/GlobalStore';
 import { removeAllFilters } from '../../store/FilterStore';
+import { FilterDrawer } from '../Drawer/FilterDrawer';
 
 const TreasurySearchResults = () => {
   const theme = useTheme();
@@ -65,11 +65,11 @@ const TreasurySearchResults = () => {
         <SearchResultsDataGrid />
       </Grid>
 
-      <CustomDrawer
+      <FilterDrawer
         open={drawerOpen}
         onClose={toggleDrawer}
         title={t('commons.filters.filtersField')}
-        multiFilterConfig={filterMap}
+        filterMap={filterMap}
         buttons={[
           {
             buttonText: t('commons.filters.filterResults'),
