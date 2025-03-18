@@ -83,6 +83,7 @@
 			}
 		},
 		"fiscalCodeorVat": "CF / Partita IVA",
+		"fiscalCode": "Codice Fiscale",
 		"fiscalCodeorVatExecutor": "CF / Partita IVA",
 		"flowImport": {
 			"boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
@@ -125,6 +126,7 @@
 		},
 		"person": "Persona fisica",
 		"personLegal": "Persona giuridica",
+		"postAccount": "Conto Corrente Postale",
 		"reason": "Causale",
 		"requiredFieldDescription": "* Indica un campo obbligatorio",
 		"createNew": "Crea nuova",
@@ -209,6 +211,7 @@
 		"successExport": "Abbiamo ricevuto la tua richiesta!",
 		"successImport": "Flusso caricato con successo",
 		"summary": "riepilogo",
+		"taxCode": "Codice Tassonomico",
 		"to": "Al",
 		"view": "Visualizza",
 		"searchIUV": "Cerca IUV",
