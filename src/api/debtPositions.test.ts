@@ -2,6 +2,7 @@ import utils from '../utils';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import {
+  debtPositionDetailDTOSchema,
   debtPositionViewSchema,
   installmentDTOSchema,
   installmentDetailDTOSchema
@@ -17,7 +18,8 @@ vi.mock('../utils', () => {
         bff: {
           getDebtPositionViews: vi.fn(),
           getInstallments: vi.fn(),
-          getInstallmentDetail: vi.fn()
+          getInstallmentDetail: vi.fn(),
+          getDebtPositionDetail: vi.fn()
         }
       }
     },
@@ -129,5 +131,36 @@ describe('getInstallmentDetail', () => {
     renderHook(() => debtPositions.getInstallmentDetail(0, 0));
 
     expect(apiMock).not.toHaveBeenCalled();
+  });
+
+  describe('getDebtPositionDetail', () => {
+    it('returns data correctly', async () => {
+      const dataMock = createMock(debtPositionDetailDTOSchema);
+      const organizationId = 42;
+      const debtPositionId = 123;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getDebtPositionDetail')
+        .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getDebtPositionDetail(organizationId, debtPositionId)
+      );
+
+      await waitFor(() => {
+        expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+        expect(result.current.data).toEqual(dataMock);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+    });
+
+    it('does not run query when parameters are missing', async () => {
+      const apiMock = vi.spyOn(utils.apiClient.bff, 'getDebtPositionDetail');
+
+      renderHook(() => debtPositions.getDebtPositionDetail(0, 0));
+
+      expect(apiMock).not.toHaveBeenCalled();
+    });
   });
 });
