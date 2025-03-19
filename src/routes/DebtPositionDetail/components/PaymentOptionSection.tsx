@@ -15,6 +15,8 @@ import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { moneyFormat } from '../../../utils/formatters';
 import { PaymentOptionDisplayData } from '../DebtPositionDetail';
+import { generatePath, useNavigate } from 'react-router-dom';
+import { PageRoutes } from '../../../App';
 
 export const PaymentOptionSection = ({
   optionData
@@ -25,6 +27,8 @@ export const PaymentOptionSection = ({
     data: optionData.details,
     inline: true
   };
+
+  const navigate = useNavigate();
 
   const getChipColorForStatus = (status: string): ChipProps['color'] => {
     if (status === t('commons.paid')) {
@@ -96,7 +100,16 @@ export const PaymentOptionSection = ({
             color="primary"
             sx={{ cursor: 'pointer' }}
             onClick={() => {
-              console.log('ReadMore Click iuv', params.row.iuv);
+              navigate(
+                generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
+                  id: params.row.id
+                }),
+                {
+                  state: {
+                    remittanceInformation: params.row.remittanceInformation
+                  }
+                }
+              );
             }}
           />
         </div>

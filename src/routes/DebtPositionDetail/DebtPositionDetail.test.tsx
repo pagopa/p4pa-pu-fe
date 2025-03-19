@@ -60,11 +60,16 @@ mockDebtPositionDetail.paymentOptions = [
   }
 ];
 
-vi.mock('react-router-dom', () => ({
-  ...vi.importActual('react-router-dom'),
-  useParams: () => ({ id: '10' }),
-  Navigate: vi.fn(({ to }) => <div>Navigate to {to}</div>)
-}));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useParams: () => ({ id: '10' }),
+    Navigate: vi.fn(({ to }) => <div>Navigate to {to}</div>),
+    useNavigate: () => vi.fn(),
+    createBrowserRouter: vi.fn()
+  };
+});
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: () => ({
