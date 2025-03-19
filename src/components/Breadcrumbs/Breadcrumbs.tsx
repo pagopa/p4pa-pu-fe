@@ -13,13 +13,23 @@ import { Link as RouterLink, useMatches, useNavigate } from 'react-router-dom';
 
 export type BreadcrumbsProps = {
   separator: React.ReactElement;
+  items?: BredcrumbItem[];
 };
 
-const Breadcrumbs = ({ separator }: BreadcrumbsProps) => {
+type BredcrumbItem = {
+  id: string;
+  pathname: string;
+  label?: string;
+}
+
+const Breadcrumbs = ({ separator, items }: BreadcrumbsProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const matches = useMatches();
+  // use an items passed, otherwise use the react-router dom routes definition's
+  const matches = items || useMatches() as BredcrumbItem[];
+  // in case of auto breadcrums, it strips the first element tho avoid "home"
+  const normalizedMatches = !items && matches.length > 1 ? matches.slice(1) : matches;
 
   const mdUp = useMediaQuery(theme.breakpoints.up('md'));
 
@@ -34,7 +44,7 @@ const Breadcrumbs = ({ separator }: BreadcrumbsProps) => {
     </Typography>
   );
 
-  return matches?.length > 1 ? (
+  return normalizedMatches?.length > 0 ? (
     <Stack direction="row" marginBottom={3} alignItems="center">
       {!mdUp && <BackButton />}
       <BreadcrumbsMUI
@@ -42,7 +52,7 @@ const Breadcrumbs = ({ separator }: BreadcrumbsProps) => {
         aria-label={t('commons.breadcrumbs')}
         sx={{ paddingBlock: 1 }}
       >
-        {matches.slice(1).map((b, i, array) => {
+        {normalizedMatches.map((b, i, array) => {
           const isLastElement = i === array.length - 1;
           return (
             <MUILink
@@ -53,7 +63,7 @@ const Breadcrumbs = ({ separator }: BreadcrumbsProps) => {
               underline={'hover'}
               key={`breadcrumb-${i}`}
             >
-              {t(`commons.routes.${b.id}`)}
+              {b.label ? b.label : t(`commons.routes.${b.id}`)}
             </MUILink>
           );
         })}
