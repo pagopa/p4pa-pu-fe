@@ -85,7 +85,7 @@ export const TelematicReceipt = () => {
                 {
                   type: COMPONENT_TYPE.select,
                   label: t('commons.duetype'),
-                  id: FilterFieldIds.DUETYPE,
+                  id: FilterFieldIds.TYPE_ORG,
                   options: debtPositionsTypes.optionsMap,
                   defaultValue: 0
                 }
