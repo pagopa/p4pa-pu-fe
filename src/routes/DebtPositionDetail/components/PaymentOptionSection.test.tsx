@@ -1,9 +1,21 @@
 import { screen, fireEvent } from '@testing-library/react';
 import { PaymentOptionSection } from './PaymentOptionSection';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import { render } from '../../../__tests__/renderers';
 import { PaymentOptionDisplayData } from '../DebtPositionDetail';
+import { PageRoutes } from '../../../App';
+
+const navigateMock = vi.fn();
+
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: () => navigateMock,
+    createBrowserRouter: vi.fn()
+  };
+});
 
 const mockOptionData: PaymentOptionDisplayData = {
   title: 'Test Payment Option',
@@ -41,11 +53,11 @@ beforeEach(() => {
   });
 });
 
-describe('PaymentOptionSection Component', () => {
-  beforeEach(() => {
-    vi.spyOn(console, 'log').mockImplementation(() => undefined);
-  });
+afterEach(() => {
+  vi.clearAllMocks();
+});
 
+describe('PaymentOptionSection Component', () => {
   it('renders with the correct title and chip', () => {
     render(<PaymentOptionSection optionData={mockOptionData} />);
 
@@ -93,17 +105,33 @@ describe('PaymentOptionSection Component', () => {
     expect(screen.getByText('Test Installment 2')).toBeDefined();
   });
 
-  it('triggers ReadMore function with correct IUV when clicked', () => {
+  it('navigates to detail page with correct ID when ReadMore is clicked', () => {
     render(<PaymentOptionSection optionData={mockOptionData} />);
 
     const readMoreIcons = screen.getAllByTestId('ReadMoreIcon');
     expect(readMoreIcons.length).toBe(2);
 
     fireEvent.click(readMoreIcons[0]);
-    expect(console.log).toHaveBeenCalledWith('ReadMore Click iuv', 'TEST12345');
+    expect(navigateMock).toHaveBeenCalledWith(
+      PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL.replace(':id', '1'),
+      {
+        state: {
+          remittanceInformation: undefined
+        }
+      }
+    );
+
+    navigateMock.mockClear();
 
     fireEvent.click(readMoreIcons[1]);
-    expect(console.log).toHaveBeenCalledWith('ReadMore Click iuv', 'TEST67890');
+    expect(navigateMock).toHaveBeenCalledWith(
+      PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL.replace(':id', '2'),
+      {
+        state: {
+          remittanceInformation: undefined
+        }
+      }
+    );
   });
 
   it('applies the correct status chip colors', () => {

@@ -1,6 +1,5 @@
 import { fireEvent, render, screen } from '../../__tests__/renderers';
 import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
-// import { screen } from '@testing-library/react';
 import { DebtPositionsInstallmentDetail } from './DebtPositionsInstallmentDetail';
 import debtPositions from '../../api/debtPositions';
 import { useLocation, useParams } from 'react-router-dom';

@@ -9,7 +9,6 @@ import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';
-import { moneyFormat } from '../../utils/formatters';
 
 export const TelematicReceiptDetail = () => {
   const { t } = useTranslation();
@@ -35,7 +34,7 @@ export const TelematicReceiptDetail = () => {
     },
     {
       label: t('commons.amount'),
-      value: moneyFormat(data?.paymentAmountCents as number)
+      value: (data?.paymentAmountCents as number) || 0
     },
     {
       label: t('commons.reason'),
