@@ -1,12 +1,6 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
-import { render, screen, fireEvent, within } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '../../__tests__/renderers';
 import ExportFlowContainer from './ExportFlowContainer';
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key
-  })
-}));
 
 describe('ExportFlowContainer', () => {
   let mockOnSelectChange: (field: string, value: string) => void;

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { Drawer } from '../Drawer';
 
