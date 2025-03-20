@@ -1,5 +1,5 @@
 import { Download, History, ReadMore, Visibility } from '@mui/icons-material';
-import { Button, Divider, Grid } from '@mui/material';
+import { Button, CircularProgress, Divider, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DetailContainer, {
@@ -208,7 +208,7 @@ export const DebtPositionsInstallmentDetail = () => {
               endIcon={<ReadMore />}
               variant="text"
               fullWidth={false}
-              onClick={toggleDrawer}
+              onClick={() => setDrawerOpen(true)}
             >
               {t('commons.showOtherBeneficiaries')}
             </Button>
@@ -221,6 +221,16 @@ export const DebtPositionsInstallmentDetail = () => {
             organizationId={organizationId}
           />
         </>
+      )}
+      {isLoading && (
+        <Grid
+          container
+          justifyContent={'center'}
+          alignItems={'center'}
+          width={'100%'}
+        >
+          <CircularProgress />
+        </Grid>
       )}
     </>
   );
