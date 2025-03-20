@@ -17,13 +17,14 @@ import {
   generatePath
 } from 'react-router-dom';
 import { PageRoutes } from '../../App';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { BredcrumbItem } from '../Breadcrumbs/Breadcrumbs';
 import { InstallmentDetailDrawer } from './InstallmentDetailDrawer';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { state } = useStore();
+  const { state, setState } = useStore();
   const { id } = useParams<{ id: string }>();
 
   const {
@@ -135,6 +136,31 @@ export const DebtPositionsInstallmentDetail = () => {
       { label: t('commons.iur'), value: installment?.iur || '' }
     ]
   };
+
+  useEffect(() => {
+    if (installment) {
+      const customBreadcrumbsItems: Array<BredcrumbItem> = [
+        { pathname: PageRoutes.DEBT_POSITIONS_INDEX, id: 'DEBT_POSITIONS' },
+        {
+          pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
+            id: installment.debtPositionId
+          }),
+          label: installment.debtPositionTypeOrgDescription || '',
+          id: 'branch'
+        },
+        {
+          pathname: generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
+            id: installment.installmentId
+          }),
+          id: 'DEBT_POSITION_INSTALLMENT_DETAIL'
+        }
+      ];
+      setState(STATE.APP_STATE, {
+        loading: false,
+        customBreadcrumbsItems: customBreadcrumbsItems
+      });
+    }
+  }, [installment]);
 
   return (
     <>

@@ -1,7 +1,7 @@
 import { LoaderFunction, LoaderFunctionArgs, Navigate } from 'react-router-dom';
 import { Conservation } from '../components/Conservation';
 import { Layout } from '../components/layout/Layout';
-import { RouteHandleObject } from '../models/Breadcrumbs';
+import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
 import Reporting from './Reporting';
 import ReportingDetail from './ReportingDetail';
@@ -59,8 +59,7 @@ export const flowsRoutes = [
             handle: {
               backButton: true,
               sidebar: {
-                visible: false,
-                omitBreadcrumbs: true
+                visible: false
               }
             } as RouteHandleObject
           },

@@ -4,7 +4,7 @@ import { Outlet, ScrollRestoration, useMatches } from 'react-router-dom';
 import { BackButton } from '../BackButton';
 import { NavigateNext } from '@mui/icons-material';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
-import { RouteHandleObject } from '../../models/Breadcrumbs';
+import { RouteHandleObject } from '../../models/Routes';
 import { Header } from '../Header';
 import { Sidebar } from '../Sidebar/Sidebar';
 import utils from '../../utils';
@@ -13,6 +13,7 @@ import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useFooterData } from '../../hooks/useFooterData';
 
 const defaultRouteHandle: RouteHandleObject = {
+  custom: false,
   backButton: true,
   hideBreadcrumbs: false,
   sidebar: { visible: true }
@@ -35,6 +36,7 @@ export function Layout() {
   };
 
   const {
+    custom,
     hideBreadcrumbs,
     sidebar,
     backButton,
@@ -85,7 +87,10 @@ export function Layout() {
                   />
                 )}
                 {!hideBreadcrumbs && (
-                  <Breadcrumbs separator={<NavigateNext fontSize="small" />} />
+                  <Breadcrumbs
+                    custom={custom}
+                    separator={<NavigateNext fontSize="small" />}
+                  />
                 )}
               </Stack>
               <Outlet />

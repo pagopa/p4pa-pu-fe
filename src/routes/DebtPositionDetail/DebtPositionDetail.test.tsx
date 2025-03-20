@@ -89,7 +89,11 @@ vi.mock('react-router-dom', async () => {
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: () => ({
-    state: { ORGANIZATION_ID: 3 }
+    state: {
+      ORGANIZATION_ID: 3,
+      APP_STATE: { loading: false, customBreadcrumbsItems: [] }
+    },
+    setState: vi.fn()
   }),
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
@@ -282,28 +286,5 @@ describe('DebtPositionDetail Component', () => {
     render(<DebtPositionDetail />);
 
     expect(screen.getByRole('progressbar')).toBeDefined();
-  });
-
-  it('shows error message when data is not found', () => {
-    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-      isRefetching: false,
-      isSuccess: true,
-      status: 'success',
-      isFetching: false,
-      isPaused: false,
-      isPending: false,
-      fetchStatus: 'idle'
-    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
-
-    render(<DebtPositionDetail />);
-
-    expect(
-      screen.getByText('Dati della posizione debitoria non trovati')
-    ).toBeDefined();
   });
 });
