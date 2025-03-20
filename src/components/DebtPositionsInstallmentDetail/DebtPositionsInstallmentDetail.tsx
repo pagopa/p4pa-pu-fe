@@ -141,12 +141,12 @@ export const DebtPositionsInstallmentDetail = () => {
       const customBreadcrumbsItems: Array<BredcrumbItem> = [
         { pathname: PageRoutes.DEBT_POSITIONS_INDEX, id: 'DEBT_POSITIONS' },
         {
-          pathname: PageRoutes.DEBT_POSITIONS_INDEX,
+          pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, { id: installment.debtPositionId}),
           label: installment.debtPositionTypeOrgDescription || '',
           id: 'branch'
         },
         {
-          pathname: PageRoutes.DEBT_POSITIONS_INDEX,
+          pathname: generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, { id: installment.installmentId}),
           id: 'DEBT_POSITION_INSTALLMENT_DETAIL'
         }
       ];

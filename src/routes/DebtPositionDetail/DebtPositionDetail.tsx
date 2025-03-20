@@ -21,7 +21,10 @@ import { PaymentOptionDTO, InstallmentDTO } from '../../../generated/apiClient';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { useParams } from 'react-router-dom';
+import { generatePath, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
+import { PageRoutes } from '../../App';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -48,7 +51,7 @@ const PaymentOptionTypes = {
 
 const DebtPositionDetail = () => {
   const { t } = useTranslation();
-  const { state } = useStore();
+  const { state, setState} = useStore();
   const { id } = useParams<{ id: string }>();
 
   const stateColors: Record<string, ChipProps['color']> = {
@@ -88,31 +91,9 @@ const DebtPositionDetail = () => {
     };
   };
 
-  if (!debtPositionDetail && !isLoading) {
-    return (
-      <Box mt={3}>
-        <Typography>Dati della posizione debitoria non trovati</Typography>
-      </Box>
-    );
-  }
+  const statusChip = debtPositionDetail && getStatusChipProps(debtPositionDetail.status);
 
-  if (isLoading || !debtPositionDetail) {
-    return (
-      <Grid
-        container
-        justifyContent={'center'}
-        alignItems={'center'}
-        width={'100%'}
-        height={'200px'}
-      >
-        <CircularProgress />
-      </Grid>
-    );
-  }
-
-  const statusChip = getStatusChipProps(debtPositionDetail.status);
-
-  const debtorSection = {
+  const debtorSection = debtPositionDetail && {
     data: [
       { label: t('commons.debtor'), value: debtPositionDetail.debtor.fullName },
       {
@@ -189,33 +170,50 @@ const DebtPositionDetail = () => {
   };
 
   const groupedPaymentOptions = {
-    singleInstallments: debtPositionDetail.paymentOptions.filter(
+    singleInstallments: debtPositionDetail && debtPositionDetail.paymentOptions.filter(
       (option) =>
         option.paymentOptionType === PaymentOptionTypes.SINGLE_INSTALLMENT
     ),
-    downPayments: debtPositionDetail.paymentOptions.filter(
+    downPayments: debtPositionDetail && debtPositionDetail.paymentOptions.filter(
       (option) => option.paymentOptionType === PaymentOptionTypes.DOWN_PAYMENT
     ),
-    multipleInstallments: debtPositionDetail.paymentOptions.filter(
+    multipleInstallments: debtPositionDetail && debtPositionDetail.paymentOptions.filter(
       (option) => option.paymentOptionType === PaymentOptionTypes.INSTALLMENTS
     )
   };
 
   const paymentOptionsDisplayData = {
-    singleInstallments: groupedPaymentOptions.singleInstallments.map(
+    singleInstallments: groupedPaymentOptions.singleInstallments?.map(
       createPaymentOptionDisplayData
     ),
-    downPayments: groupedPaymentOptions.downPayments.map(
+    downPayments: groupedPaymentOptions.downPayments?.map(
       createPaymentOptionDisplayData
     ),
-    multipleInstallments: groupedPaymentOptions.multipleInstallments.map(
+    multipleInstallments: groupedPaymentOptions.multipleInstallments?.map(
       createPaymentOptionDisplayData
     )
   };
 
+  useEffect(() => {
+    if (debtPositionDetail) {
+      const customBreadcrumbsItems: Array<BredcrumbItem> = [
+        { pathname: PageRoutes.DEBT_POSITIONS_INDEX, id: 'DEBT_POSITIONS' },
+        {
+          pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, { id: debtPositionDetail.paymentOptions[0].debtPositionId}),
+          label: debtPositionDetail.debtPositionTypeOrgDescription || '',
+          id: 'branch'
+        },
+      ];
+      setState(STATE.APP_STATE, {
+        loading: false,
+        customBreadcrumbsItems: customBreadcrumbsItems
+      });
+    }
+  }, [debtPositionDetail]);
+
   return (
     <>
-      {!isLoading && (
+      {debtPositionDetail && (
         <>
           <TitleComponent
             title={debtPositionDetail.debtPositionTypeOrgDescription}
@@ -254,7 +252,7 @@ const DebtPositionDetail = () => {
           </Box>
 
           {/* Opzioni di pagamento a rata unica */}
-          {paymentOptionsDisplayData.singleInstallments.length > 0 && (
+          {paymentOptionsDisplayData.singleInstallments && (
             <>
               {paymentOptionsDisplayData.singleInstallments.map(
                 (optionData, index) => (
@@ -269,7 +267,7 @@ const DebtPositionDetail = () => {
           )}
 
           {/* Opzioni di pagamento per anticipo */}
-          {paymentOptionsDisplayData.downPayments.length > 0 && (
+          {paymentOptionsDisplayData.downPayments && (
             <>
               {paymentOptionsDisplayData.downPayments.map(
                 (optionData, index) => (
@@ -284,7 +282,7 @@ const DebtPositionDetail = () => {
           )}
 
           {/* Opzioni di pagamento per rate multiple */}
-          {paymentOptionsDisplayData.multipleInstallments.length > 0 && (
+          {paymentOptionsDisplayData.multipleInstallments && (
             <>
               {paymentOptionsDisplayData.multipleInstallments.map(
                 (optionData, index) => (
@@ -314,3 +312,7 @@ const DebtPositionDetail = () => {
 };
 
 export default DebtPositionDetail;
+function setState(APP_STATE: STATE, arg1: { loading: boolean; customBreadcrumbsItems: BredcrumbItem[]; }) {
+  throw new Error('Function not implemented.');
+}
+

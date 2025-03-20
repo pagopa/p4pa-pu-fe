@@ -53,7 +53,10 @@ export const debtPositionsRoutes = [
       {
         id: 'DEBT_POSITION_DETAIL',
         path: ':id',
-        element: <DebtPositionDetail />
+        element: <DebtPositionDetail />,
+        handle: {
+          custom: true
+        } as RouteHandleObject
       }
     ]
   }
