@@ -51,7 +51,7 @@ const PaymentOptionTypes = {
 
 const DebtPositionDetail = () => {
   const { t } = useTranslation();
-  const { state, setState} = useStore();
+  const { state, setState } = useStore();
   const { id } = useParams<{ id: string }>();
 
   const stateColors: Record<string, ChipProps['color']> = {
@@ -91,7 +91,8 @@ const DebtPositionDetail = () => {
     };
   };
 
-  const statusChip = debtPositionDetail && getStatusChipProps(debtPositionDetail.status);
+  const statusChip =
+    debtPositionDetail && getStatusChipProps(debtPositionDetail.status);
 
   const debtorSection = debtPositionDetail && {
     data: [
@@ -170,16 +171,22 @@ const DebtPositionDetail = () => {
   };
 
   const groupedPaymentOptions = {
-    singleInstallments: debtPositionDetail && debtPositionDetail.paymentOptions.filter(
-      (option) =>
-        option.paymentOptionType === PaymentOptionTypes.SINGLE_INSTALLMENT
-    ),
-    downPayments: debtPositionDetail && debtPositionDetail.paymentOptions.filter(
-      (option) => option.paymentOptionType === PaymentOptionTypes.DOWN_PAYMENT
-    ),
-    multipleInstallments: debtPositionDetail && debtPositionDetail.paymentOptions.filter(
-      (option) => option.paymentOptionType === PaymentOptionTypes.INSTALLMENTS
-    )
+    singleInstallments:
+      debtPositionDetail &&
+      debtPositionDetail.paymentOptions.filter(
+        (option) =>
+          option.paymentOptionType === PaymentOptionTypes.SINGLE_INSTALLMENT
+      ),
+    downPayments:
+      debtPositionDetail &&
+      debtPositionDetail.paymentOptions.filter(
+        (option) => option.paymentOptionType === PaymentOptionTypes.DOWN_PAYMENT
+      ),
+    multipleInstallments:
+      debtPositionDetail &&
+      debtPositionDetail.paymentOptions.filter(
+        (option) => option.paymentOptionType === PaymentOptionTypes.INSTALLMENTS
+      )
   };
 
   const paymentOptionsDisplayData = {
@@ -199,10 +206,12 @@ const DebtPositionDetail = () => {
       const customBreadcrumbsItems: Array<BredcrumbItem> = [
         { pathname: PageRoutes.DEBT_POSITIONS_INDEX, id: 'DEBT_POSITIONS' },
         {
-          pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, { id: debtPositionDetail.paymentOptions[0].debtPositionId}),
+          pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
+            id: debtPositionDetail.paymentOptions[0].debtPositionId
+          }),
           label: debtPositionDetail.debtPositionTypeOrgDescription || '',
           id: 'branch'
-        },
+        }
       ];
       setState(STATE.APP_STATE, {
         customBreadcrumbsItems: customBreadcrumbsItems

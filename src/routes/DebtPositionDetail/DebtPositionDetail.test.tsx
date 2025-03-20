@@ -89,7 +89,10 @@ vi.mock('react-router-dom', async () => {
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: () => ({
-    state: { ORGANIZATION_ID: 3, APP_STATE: { loading: false, customBreadcrumbsItems: []} },
+    state: {
+      ORGANIZATION_ID: 3,
+      APP_STATE: { loading: false, customBreadcrumbsItems: [] }
+    },
     setState: vi.fn()
   }),
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
@@ -284,5 +287,4 @@ describe('DebtPositionDetail Component', () => {
 
     expect(screen.getByRole('progressbar')).toBeDefined();
   });
-
 });
