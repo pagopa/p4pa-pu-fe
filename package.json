@@ -6,8 +6,8 @@
 	"scripts": {
 		"generate-api-client": "swagger-typescript-api -p https://raw.githubusercontent.com/pagopa/p4pa-pu-bff/refs/heads/develop/openapi/generated.openapi.json -o ./generated -n apiClient --axios",
 		"generate-api-contracts": "swagger-typescript-api  --modular --no-client -p https://raw.githubusercontent.com/pagopa/p4pa-pu-bff/refs/heads/develop/openapi/generated.openapi.json -o ./generated",
-		"generate-fileshare-client": "swagger-typescript-api -p https://raw.githubusercontent.com/pagopa/p4pa-fileshare/refs/heads/develop/openapi/p4pa-fileshare.openapi.yaml -o ./generated/fileshare --axios -n fileshareClient --api-class-name FileshareApi",
-		"generate-fileshare-contracts": "swagger-typescript-api --modular --no-client -p https://raw.githubusercontent.com/pagopa/p4pa-fileshare/refs/heads/develop/openapi/p4pa-fileshare.openapi.yaml -o ./generated/fileshare",
+		"generate-fileshare-client": "swagger-typescript-api -p https://raw.githubusercontent.com/pagopa/p4pa-fileshare/refs/heads/develop/openapi/generated.openapi.json -o ./generated/fileshare --axios -n fileshareClient --api-class-name FileshareApi",
+		"generate-fileshare-contracts": "swagger-typescript-api --modular --no-client -p https://raw.githubusercontent.com/pagopa/p4pa-fileshare/refs/heads/develop/openapi/generated.openapi.json -o ./generated/fileshare",
 		"generate-zod-schema": "yarn ts-to-zod --all",
 		"replace-datetime": "node replaceDatetime.js",
 		"generate": "yarn generate-api-client && yarn generate-api-contracts && yarn generate-fileshare-client && yarn generate-fileshare-contracts && yarn generate-zod-schema && yarn replace-datetime",
