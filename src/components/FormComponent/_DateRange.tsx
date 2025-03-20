@@ -32,23 +32,67 @@ export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
 
   const { t } = useTranslation();
 
+  const setTimeToStartOfDay = (date: Date | null): Date | null => {
+    if (!date) return null;
+
+    return new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      0,
+      0,
+      0,
+      0
+    );
+  };
+
+  const setTimeToEndOfDay = (date: Date | null): Date | null => {
+    if (!date) return null;
+
+    return new Date(
+      date.getFullYear(),
+      date.getMonth(),
+      date.getDate(),
+      23,
+      59,
+      59,
+      999
+    );
+  };
+
   const handleStartDateChange = (date: Date | null) => {
-    setStartDate(date);
-    from?.onChange?.(date);
+    const dateWithTime = setTimeToStartOfDay(date);
+    setStartDate(dateWithTime);
+    from?.onChange?.(dateWithTime);
   };
 
   const handleStartDateOnAccept = (date: Date | null) => {
-    if (!endDate || (date && date > endDate)) {
+    const dateWithTime = setTimeToStartOfDay(date);
+
+    if (dateWithTime && endDate && dateWithTime > endDate) {
       setEndDate(null);
+      to?.onChange?.(null);
+      setIsToDialogOpen(true);
+    } else if (dateWithTime && !endDate) {
       setIsToDialogOpen(true);
     }
   };
 
   const handleEndDateChange = (date: Date | null) => {
-    if (!startDate || (date && date >= startDate)) {
-      setEndDate(date);
+    if (!date) {
+      setEndDate(null);
+      to?.onChange?.(null);
+      return;
     }
-    to?.onChange?.(date);
+
+    const endOfDayDate = setTimeToEndOfDay(date);
+
+    if (!startDate || (endOfDayDate && endOfDayDate >= startDate)) {
+      setEndDate(endOfDayDate);
+      to?.onChange?.(endOfDayDate);
+    } else {
+      to?.onChange?.(null);
+    }
   };
 
   return (

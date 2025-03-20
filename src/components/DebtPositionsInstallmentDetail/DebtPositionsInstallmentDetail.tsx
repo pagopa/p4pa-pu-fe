@@ -25,6 +25,7 @@ export const DebtPositionsInstallmentDetail = () => {
   const navigate = useNavigate();
   const { state } = useStore();
   const { id } = useParams<{ id: string }>();
+
   const {
     state: { remittanceInformation: remittanceInformation }
   } = useLocation();
@@ -168,7 +169,7 @@ export const DebtPositionsInstallmentDetail = () => {
                       icon: <Visibility />,
                       onLinkClick: () =>
                         navigate(
-                          generatePath(PageRoutes.DETAIL_DEBT_POSITION, {
+                          generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
                             id: installment?.debtPositionId
                           })
                         )
@@ -221,7 +222,6 @@ export const DebtPositionsInstallmentDetail = () => {
           />
         </>
       )}
-
       {isLoading && (
         <Grid
           container

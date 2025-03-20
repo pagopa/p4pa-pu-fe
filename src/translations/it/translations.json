@@ -255,7 +255,8 @@
 				"PARTIALLY_PAID": "Pagamento iniziato",
 				"REPORTED": "Rendicontato",
 				"TO_SYNC": "Da sincronizzare",
-				"UNPAID": "Da pagare"
+				"UNPAID": "Da pagare",
+        "INVALID": "Non valido"
 			}
 		}
 	},
