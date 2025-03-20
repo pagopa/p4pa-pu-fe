@@ -59,7 +59,8 @@ const DebtPositionDetail = () => {
     PARTIALLY_PAID: 'info',
     REPORTED: 'success',
     TO_SYNC: 'default',
-    UNPAID: 'info'
+    UNPAID: 'info',
+    INVALID: 'error'
   };
 
   type StateKey = keyof typeof stateColors;
