@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '../../__tests__/renderers';
 import { describe, expect, it } from 'vitest';
 import { Markdown } from '../Markdown';
 import 'vitest-dom/extend-expect';

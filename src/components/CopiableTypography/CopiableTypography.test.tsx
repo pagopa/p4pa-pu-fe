@@ -4,7 +4,7 @@ import {
   fireEvent,
   waitFor,
   act
-} from '@testing-library/react';
+} from '../../__tests__/renderers';
 import { CopiableTypography } from '../CopiableTypography';
 import { describe, it, vi } from 'vitest';
 

@@ -1,5 +1,5 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
-import { fireEvent, render, screen, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '../../__tests__/renderers';
 import ExportFlow from './ExportFlowPage';
 import { useParams } from 'react-router-dom';
 
@@ -9,9 +9,14 @@ vi.mock('react-router-dom', async (importOriginal) => ({
   useParams: vi.fn()
 }));
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key
+vi.mock('./useDebtPositionsTypeOrg', () => ({
+  useDebtPositionsTypeOrg: () => ({
+    isSuccess: true,
+    optionsMap: [
+      { label: 'Type A', value: 1 },
+      { label: 'Type B', value: 2 },
+      { label: 'Tutti', value: 'TUTTI' }
+    ]
   })
 }));
 

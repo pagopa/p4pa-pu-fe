@@ -32,7 +32,7 @@ type ExportFlowContainerProps = {
     }>;
     selectOptions?: Array<{
       label: string;
-      value: string;
+      value: string | number;
     }>;
   }>;
   formData: Record<string, string>;

@@ -1,4 +1,4 @@
-import { act } from '@testing-library/react';
+import { act } from '../__tests__/renderers';
 import { describe, it, expect, vi } from 'vitest';
 import { useDataGridPagination } from './useDatagridPagination';
 import { StoreProvider } from '../store/GlobalStore';
