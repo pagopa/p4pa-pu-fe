@@ -4,6 +4,12 @@ import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import ReportingImportFlowOverview from './ReportingImportFlowOverview';
 
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: vi.fn(),
+  generatePath: vi.fn()
+}));
+
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
   IngestionFlowFileType: {

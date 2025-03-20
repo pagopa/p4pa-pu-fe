@@ -3,6 +3,12 @@ import { render, screen } from '../../__tests__/renderers';
 import DebtPositionsImportOverview from './DebtPositionsImportOverview';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: vi.fn(),
+  generatePath: vi.fn()
+}));
+
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
   IngestionFlowFileType: {
