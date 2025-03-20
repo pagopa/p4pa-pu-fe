@@ -4,8 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   debtPositionDetailDTOSchema,
   debtPositionViewSchema,
-  installmentDTOSchema,
-  installmentDetailDTOSchema
+  installmentDTOSchema
 } from '../../generated/zod-schema';
 import { createMock } from 'zodock';
 import debtPositions, { DebtPositionViewQuery } from './debtPositions';
@@ -22,8 +21,7 @@ vi.mock('../utils', () => {
           getDebtPositionDetail: vi.fn()
         }
       }
-    },
-    parseAndLog: vi.fn()
+    }
   };
 });
 
@@ -102,7 +100,21 @@ describe('getInstallments', () => {
 
 describe('getInstallmentDetail', () => {
   it('returns data correctly', async () => {
-    const dataMock = createMock(installmentDetailDTOSchema);
+    const dataMock = {
+      installmentId: 123,
+      status: 'PAID',
+      iuv: '123456789',
+      amountCents: 5000,
+      dueDate: '2025-03-20',
+      debtor: {
+        entityType: 'F',
+        fiscalCode: 'ABCDEF12G34H567I',
+        fullName: 'Test User'
+      },
+      debtPositionTypeOrgDescription: 'Test Debt Type',
+      debtPositionDescription: 'Test Description',
+      debtPositionId: 456
+    };
     const params = { organizationId: 34, installmentId: 22 };
 
     const apiMock = vi
