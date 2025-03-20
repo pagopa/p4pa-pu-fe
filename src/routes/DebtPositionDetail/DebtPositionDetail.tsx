@@ -251,7 +251,7 @@ const DebtPositionDetail = () => {
                   {t('debtPositionDetail.debtPositionInfo')}
                 </Typography>
               </AccordionSummary>
-              <DetailContainer sections={[debtorSection]} />
+              {debtorSection && <DetailContainer sections={[debtorSection]} />}
             </Accordion>
 
             <Typography variant="h5" mb={2} mt={3}>
