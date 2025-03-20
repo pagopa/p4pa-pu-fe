@@ -1,6 +1,6 @@
 import { afterEach, describe, it, vi } from 'vitest';
 import AuthCallback from './index';
-import { render } from '@testing-library/react';
+import { render } from '../../__tests__/renderers';
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),

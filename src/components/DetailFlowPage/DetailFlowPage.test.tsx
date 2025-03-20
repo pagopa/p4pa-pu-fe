@@ -1,16 +1,10 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen } from '../../__tests__/renderers';
 import DetailFlowPage from '../DetailFlowPage/DetailFlowPage';
 import { useParams } from 'react-router-dom';
 
 vi.mock('react-router-dom', () => ({
   useParams: vi.fn()
-}));
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key
-  })
 }));
 
 describe('DetailFlowPage', () => {

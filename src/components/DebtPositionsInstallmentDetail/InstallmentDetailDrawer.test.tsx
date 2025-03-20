@@ -37,7 +37,9 @@ describe('InstallmentDetailDrawer', () => {
       category: 'Tax',
       iban: 'IT60X0542811101000000123456',
       orgFiscalCode: '12345678901',
-      orgName: 'Organization A'
+      orgName: 'Organization A',
+      remittanceInformation: '',
+      transferIndex: 0
     };
 
     (getTransfers as Mock).mockReturnValue({

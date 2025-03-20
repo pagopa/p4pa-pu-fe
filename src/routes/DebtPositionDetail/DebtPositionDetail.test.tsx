@@ -3,7 +3,10 @@ import DebtPositionDetail from './DebtPositionDetail';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { render } from '../../__tests__/renderers';
-import { debtPositionDetailDTOSchema } from '../../../generated/zod-schema';
+import {
+  debtPositionDetailDTOSchema,
+  personDTOSchema
+} from '../../../generated/zod-schema';
 import { createMock } from 'zodock';
 import debtPositions from '../../api/debtPositions';
 import { DebtPositionDetailDTO } from '../../../generated/apiClient';
@@ -11,8 +14,9 @@ import { UseQueryResult } from '@tanstack/react-query';
 
 const mockDebtPositionDetail = createMock(debtPositionDetailDTOSchema);
 
+const mockDebtor = createMock(personDTOSchema);
+
 mockDebtPositionDetail.paymentOptions = [
-  ...(mockDebtPositionDetail.paymentOptions ?? []),
   {
     paymentOptionId: 101,
     debtPositionId: 10,
@@ -24,7 +28,11 @@ mockDebtPositionDetail.paymentOptions = [
       {
         installmentId: 1,
         status: 'PAID',
-        iuv: 'TEST_IUV_SINGLE'
+        iuv: 'TEST_IUV_SINGLE',
+        debtor: mockDebtor,
+        amountCents: 5400,
+        remittanceInformation: 'Pagamento singolo',
+        transfers: []
       }
     ]
   },
@@ -39,7 +47,11 @@ mockDebtPositionDetail.paymentOptions = [
       {
         installmentId: 2,
         status: 'UNPAID',
-        iuv: 'TEST_IUV_MULTI'
+        iuv: 'TEST_IUV_MULTI',
+        debtor: mockDebtor,
+        amountCents: 5400,
+        remittanceInformation: 'Pagamento multiplo',
+        transfers: []
       }
     ]
   },
@@ -54,7 +66,11 @@ mockDebtPositionDetail.paymentOptions = [
       {
         installmentId: 3,
         status: 'REPORTED',
-        iuv: 'TEST_IUV_DOWN'
+        iuv: 'TEST_IUV_DOWN',
+        debtor: mockDebtor,
+        amountCents: 5400,
+        remittanceInformation: 'Acconto',
+        transfers: []
       }
     ]
   }

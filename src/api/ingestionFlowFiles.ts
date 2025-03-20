@@ -3,11 +3,25 @@ import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import { pagedIngestionFlowFileSchema } from '../../generated/zod-schema';
 import { FlowStatus } from '../models/Filters';
-import {
-  FileOrigin,
-  IngestionFlowFileType,
-  RequestParams
-} from '../../generated/fileshare/fileshareClient';
+import { RequestParams } from '../../generated/fileshare/fileshareClient';
+
+export enum FileOrigin {
+  PORTAL = 'PORTAL',
+  SIL = 'SIL',
+  PAGOPA = 'PAGOPA'
+}
+
+export enum IngestionFlowFileType {
+  RECEIPT = 'RECEIPT',
+  RECEIPT_PAGOPA = 'RECEIPT_PAGOPA',
+  PAYMENTS_REPORTING = 'PAYMENTS_REPORTING',
+  PAYMENTS_REPORTING_PAGOPA = 'PAYMENTS_REPORTING_PAGOPA',
+  TREASURY_OPI = 'TREASURY_OPI',
+  TREASURY_CSV = 'TREASURY_CSV',
+  TREASURY_XLS = 'TREASURY_XLS',
+  TREASURY_POSTE = 'TREASURY_POSTE',
+  DP_INSTALLMENTS = 'DP_INSTALLMENTS'
+}
 
 export const getIngestionFlowFiles = (
   organizationId: number,

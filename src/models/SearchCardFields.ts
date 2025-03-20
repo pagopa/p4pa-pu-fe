@@ -4,7 +4,7 @@ export const FilterFieldIds = {
 
   SEARCH_IUV: 'searchIUV',
   SEARCH_CF: 'searchCF',
-  DUETYPE: 'duetype',
+  TYPE_ORG: 'typeOrgId',
   STATE: 'state',
   DATE_RANGE: 'dateRange'
 };
