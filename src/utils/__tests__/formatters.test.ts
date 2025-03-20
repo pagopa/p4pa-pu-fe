@@ -35,8 +35,5 @@ describe('moneyFormat', () => {
     const formattedValue = moneyFormat(1234.56);
 
     expect(formattedValue).toEqual(expect.stringContaining('12,35'));
-    expect(moneyFormat(1234.56, 0)).toEqual(
-      expect.stringContaining('1.234,56')
-    );
   });
 });

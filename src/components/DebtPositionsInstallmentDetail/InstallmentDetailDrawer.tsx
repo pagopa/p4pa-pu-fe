@@ -73,7 +73,10 @@ export const InstallmentDetailDrawer = ({
     return (
       <>
         {transfers.map((transfer) => (
-          <Details key={transfer.transferId} transfer={transfer} />
+          <Details
+            key={transfer.transferId}
+            transfer={transfer as unknown as TransferDTO}
+          />
         ))}
       </>
     );
