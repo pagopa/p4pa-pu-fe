@@ -1,5 +1,5 @@
 import { Download, History, ReadMore, Visibility } from '@mui/icons-material';
-import { Button, CircularProgress, Divider, Grid } from '@mui/material';
+import { Button, Divider, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DetailContainer, {
@@ -25,6 +25,7 @@ export const DebtPositionsInstallmentDetail = () => {
   const navigate = useNavigate();
   const { state } = useStore();
   const { id } = useParams<{ id: string }>();
+
   const {
     state: { remittanceInformation: remittanceInformation }
   } = useLocation();
@@ -168,7 +169,7 @@ export const DebtPositionsInstallmentDetail = () => {
                       icon: <Visibility />,
                       onLinkClick: () =>
                         navigate(
-                          generatePath(PageRoutes.DETAIL_DEBT_POSITION, {
+                          generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
                             id: installment?.debtPositionId
                           })
                         )
@@ -207,7 +208,7 @@ export const DebtPositionsInstallmentDetail = () => {
               endIcon={<ReadMore />}
               variant="text"
               fullWidth={false}
-              onClick={() => setDrawerOpen(true)}
+              onClick={toggleDrawer}
             >
               {t('commons.showOtherBeneficiaries')}
             </Button>
@@ -220,17 +221,6 @@ export const DebtPositionsInstallmentDetail = () => {
             organizationId={organizationId}
           />
         </>
-      )}
-
-      {isLoading && (
-        <Grid
-          container
-          justifyContent={'center'}
-          alignItems={'center'}
-          width={'100%'}
-        >
-          <CircularProgress />
-        </Grid>
       )}
     </>
   );
