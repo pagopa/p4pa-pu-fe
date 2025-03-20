@@ -1,6 +1,6 @@
 import { DebtTypes } from '../components/DebtTypes';
 import { Layout } from '../components/layout/Layout';
-import { RouteHandleObject } from '../models/Breadcrumbs';
+import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
 
 const deployPath = config.deployPath;

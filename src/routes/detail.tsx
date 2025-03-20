@@ -1,6 +1,6 @@
 import DebtPositionDetail from './DebtPositionDetail/DebtPositionDetail';
 import { Layout } from '../components/layout/Layout';
-import { RouteHandleObject } from '../models/Breadcrumbs';
+import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
 import DetailFlowPage from './DetailFlowPage';
 

@@ -25,7 +25,7 @@ describe('AppState Store', () => {
   });
 
   it('setLoading should update only the loading property in appState', () => {
-    const initialState: AppState = { loading: false };
+    const initialState: AppState = { loading: false, customBreadcrumbsItems: [] };
     appState.value = initialState; // Reset the state for this test
 
     setLoading(true);

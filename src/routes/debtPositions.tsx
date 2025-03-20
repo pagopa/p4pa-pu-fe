@@ -4,7 +4,7 @@ import DebtPositionsInstallmentDetail from './DebtPositionsInstallmentDetail';
 import DebtPositionsPage from './DebtPositionsPage';
 import config from '../utils/config';
 import { Layout } from '../components/layout/Layout';
-import { RouteHandleObject } from '../models/Breadcrumbs';
+import { RouteHandleObject } from '../models/Routes';
 
 const deployPath = config.deployPath;
 
@@ -44,7 +44,10 @@ export const debtPositionsRoutes = [
       {
         id: 'DEBT_POSITION_INSTALLMENT_DETAIL',
         path: 'installments/:id',
-        element: <DebtPositionsInstallmentDetail />
+        element: <DebtPositionsInstallmentDetail />,
+        handle: {
+          custom: true
+        } as RouteHandleObject
       }
     ]
   }

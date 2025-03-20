@@ -1,7 +1,7 @@
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { ErrorFallback } from './components/ErrorFallback';
 import { Layout } from './components/layout/Layout';
-import { RouteHandleObject } from './models/Breadcrumbs';
+import { RouteHandleObject } from './models/Routes';
 import Home from './routes/Home';
 import { Theme } from './utils/theme';
 import {
