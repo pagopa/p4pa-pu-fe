@@ -23,7 +23,8 @@ vi.mock('../../api/debtPositions', () => ({
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn(() => ({
-    state: { ORGANIZATION_ID: 3 }
+    state: { ORGANIZATION_ID: 3, customBreadcrumbsItems: [] },
+    setState: vi.fn()
   })),
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));

@@ -205,7 +205,6 @@ const DebtPositionDetail = () => {
         },
       ];
       setState(STATE.APP_STATE, {
-        loading: false,
         customBreadcrumbsItems: customBreadcrumbsItems
       });
     }
@@ -312,7 +311,3 @@ const DebtPositionDetail = () => {
 };
 
 export default DebtPositionDetail;
-function setState(APP_STATE: STATE, arg1: { loading: boolean; customBreadcrumbsItems: BredcrumbItem[]; }) {
-  throw new Error('Function not implemented.');
-}
-

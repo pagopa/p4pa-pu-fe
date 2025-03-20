@@ -14,11 +14,11 @@ vi.mock('@preact/signals-react', async () => {
 
 describe('AppState Store', () => {
   it('should initialize appState with the default value', () => {
-    expect(appState.value).toEqual({ loading: false });
+    expect(appState.value).toEqual({ loading: false, customBreadcrumbsItems: [] });
   });
 
   it('setAppState should update the appState to the provided new state', () => {
-    const newState: AppState = { loading: true };
+    const newState: AppState = { loading: true, customBreadcrumbsItems: []  };
     setAppState(newState);
 
     expect(appState.value).toEqual(newState);
@@ -30,6 +30,6 @@ describe('AppState Store', () => {
 
     setLoading(true);
 
-    expect(appState.value).toEqual({ loading: true });
+    expect(appState.value).toEqual({ loading: true, customBreadcrumbsItems: [] });
   });
 });
