@@ -4,9 +4,7 @@ import {
   Accordion,
   AccordionSummary,
   ChipOwnProps,
-  ChipProps,
-  CircularProgress,
-  Grid
+  ChipProps
 } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { History, KeyboardArrowDown } from '@mui/icons-material';
@@ -23,8 +21,8 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { generatePath, useParams } from 'react-router-dom';
 import { useEffect } from 'react';
-import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import { PageRoutes } from '../../App';
+import { setLoading } from '../../store/AppStateStore';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -42,12 +40,6 @@ type InstallmentRow = {
   expirationDate: string;
   status: string;
 };
-
-const PaymentOptionTypes = {
-  SINGLE_INSTALLMENT: 'SINGLE_INSTALLMENT',
-  INSTALLMENTS: 'INSTALLMENTS',
-  DOWN_PAYMENT: 'DOWN_PAYMENT'
-} as const;
 
 const DebtPositionDetail = () => {
   const { t } = useTranslation();
@@ -72,6 +64,25 @@ const DebtPositionDetail = () => {
 
   const { data: debtPositionDetail, isLoading } =
     debtPositions.getDebtPositionDetail(organizationId, debtPositionId);
+
+  setLoading(isLoading);
+
+  useEffect(() => {
+    if (debtPositionDetail?.paymentOptions?.length) {
+      setState(STATE.APP_STATE, {
+        customBreadcrumbsItems: [
+          { pathname: PageRoutes.DEBT_POSITIONS_INDEX, id: 'DEBT_POSITIONS' },
+          {
+            pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
+              id: debtPositionDetail.paymentOptions[0].debtPositionId
+            }),
+            label: debtPositionDetail.debtPositionTypeOrgDescription || '',
+            id: 'branch'
+          }
+        ]
+      });
+    }
+  }, [debtPositionDetail?.paymentOptions]);
 
   const getStatusChipProps = (
     status: string
@@ -129,26 +140,12 @@ const DebtPositionDetail = () => {
     };
   };
 
-  const getPaymentOptionTitle = (paymentOptionType: string): string => {
-    switch (paymentOptionType) {
-      case PaymentOptionTypes.SINGLE_INSTALLMENT:
-        return t('commons.paymentOptions.SINGLE_INSTALLMENT');
-      case PaymentOptionTypes.INSTALLMENTS:
-        return t('commons.paymentOptions.INSTALLMENTS');
-      case PaymentOptionTypes.DOWN_PAYMENT:
-        return t('commons.paymentOptions.DOWN_PAYMENT');
-      default:
-        return '';
-    }
-  };
-
   const createPaymentOptionDisplayData = (
     paymentOption: PaymentOptionDTO
   ): PaymentOptionDisplayData => {
     return {
-      title: paymentOption.paymentOptionType
-        ? getPaymentOptionTitle(paymentOption.paymentOptionType)
-        : 'N/A',
+      title:
+        t(`commons.paymentOptions.${paymentOption.paymentOptionType}`) || 'N/A',
       tag: paymentOption.status
         ? getStatusChipProps(paymentOption.status).label
         : 'N/A',
@@ -171,153 +168,57 @@ const DebtPositionDetail = () => {
     };
   };
 
-  const groupedPaymentOptions = {
-    singleInstallments:
-      debtPositionDetail &&
-      debtPositionDetail.paymentOptions.filter(
-        (option) =>
-          option.paymentOptionType === PaymentOptionTypes.SINGLE_INSTALLMENT
-      ),
-    downPayments:
-      debtPositionDetail &&
-      debtPositionDetail.paymentOptions.filter(
-        (option) => option.paymentOptionType === PaymentOptionTypes.DOWN_PAYMENT
-      ),
-    multipleInstallments:
-      debtPositionDetail &&
-      debtPositionDetail.paymentOptions.filter(
-        (option) => option.paymentOptionType === PaymentOptionTypes.INSTALLMENTS
-      )
-  };
+  const paymentOptionsDisplayData = (
+    debtPositionDetail?.paymentOptions ?? []
+  ).map(createPaymentOptionDisplayData);
 
-  const paymentOptionsDisplayData = {
-    singleInstallments: groupedPaymentOptions.singleInstallments?.map(
-      createPaymentOptionDisplayData
-    ),
-    downPayments: groupedPaymentOptions.downPayments?.map(
-      createPaymentOptionDisplayData
-    ),
-    multipleInstallments: groupedPaymentOptions.multipleInstallments?.map(
-      createPaymentOptionDisplayData
-    )
-  };
-
-  useEffect(() => {
-    if (debtPositionDetail) {
-      const customBreadcrumbsItems: Array<BredcrumbItem> = [
-        { pathname: PageRoutes.DEBT_POSITIONS_INDEX, id: 'DEBT_POSITIONS' },
-        {
-          pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
-            id: debtPositionDetail.paymentOptions[0].debtPositionId
-          }),
-          label: debtPositionDetail.debtPositionTypeOrgDescription || '',
-          id: 'branch'
-        }
-      ];
-      setState(STATE.APP_STATE, {
-        customBreadcrumbsItems: customBreadcrumbsItems
-      });
-    }
-  }, [debtPositionDetail]);
-
-  return (
+  return debtPositionDetail ? (
     <>
-      {debtPositionDetail && (
-        <>
-          <TitleComponent
-            title={debtPositionDetail.debtPositionTypeOrgDescription}
-            chip={statusChip}
-            callToAction={[
-              {
-                icon: <History />,
-                variant: 'text',
-                onActionClick: () => console.log('History clicked')
-              }
-            ]}
-          />
-          <Box mt={3}>
-            <Accordion
-              disableGutters
-              sx={{
-                py: 3,
-                bgcolor: theme.palette.background.paper,
-                borderRadius: 2
-              }}
-            >
-              <AccordionSummary
-                expandIcon={<KeyboardArrowDown color="primary" />}
-                aria-controls="debt-position-detail"
-              >
-                <Typography variant="overline" ml={1}>
-                  {t('debtPositionDetail.debtPositionInfo')}
-                </Typography>
-              </AccordionSummary>
-              {debtorSection && <DetailContainer sections={[debtorSection]} />}
-            </Accordion>
-
-            <Typography variant="h5" mb={2} mt={3}>
-              {t('debtPositionDetail.paymentOptions')}
-            </Typography>
-          </Box>
-
-          {/* Opzioni di pagamento a rata unica */}
-          {paymentOptionsDisplayData.singleInstallments && (
-            <>
-              {paymentOptionsDisplayData.singleInstallments.map(
-                (optionData, index) => (
-                  <PaymentOptionSection
-                    key={`single-${index}`}
-                    optionData={optionData}
-                    data-testid="single-installment-section"
-                  />
-                )
-              )}
-            </>
-          )}
-
-          {/* Opzioni di pagamento per anticipo */}
-          {paymentOptionsDisplayData.downPayments && (
-            <>
-              {paymentOptionsDisplayData.downPayments.map(
-                (optionData, index) => (
-                  <PaymentOptionSection
-                    key={`down-payment-${index}`}
-                    optionData={optionData}
-                    data-testid="down-payment-section"
-                  />
-                )
-              )}
-            </>
-          )}
-
-          {/* Opzioni di pagamento per rate multiple */}
-          {paymentOptionsDisplayData.multipleInstallments && (
-            <>
-              {paymentOptionsDisplayData.multipleInstallments.map(
-                (optionData, index) => (
-                  <PaymentOptionSection
-                    key={`multiple-${index}`}
-                    optionData={optionData}
-                    data-testid="multiple-installments-section"
-                  />
-                )
-              )}
-            </>
-          )}
-        </>
-      )}
-      {isLoading && (
-        <Grid
-          container
-          justifyContent={'center'}
-          alignItems={'center'}
-          width={'100%'}
+      <TitleComponent
+        title={debtPositionDetail.debtPositionTypeOrgDescription}
+        chip={statusChip}
+        callToAction={[
+          {
+            icon: <History />,
+            variant: 'text',
+            onActionClick: () => console.log('History clicked')
+          }
+        ]}
+      />
+      <Box mt={3}>
+        <Accordion
+          disableGutters
+          sx={{
+            py: 3,
+            bgcolor: theme.palette.background.paper,
+            borderRadius: 2
+          }}
         >
-          <CircularProgress />
-        </Grid>
-      )}
+          <AccordionSummary
+            expandIcon={<KeyboardArrowDown color="primary" />}
+            aria-controls="debt-position-detail"
+          >
+            <Typography variant="overline" ml={1}>
+              {t('debtPositionDetail.debtPositionInfo')}
+            </Typography>
+          </AccordionSummary>
+          {debtorSection && <DetailContainer sections={[debtorSection]} />}
+        </Accordion>
+
+        <Typography variant="h5" mb={2} mt={3}>
+          {t('debtPositionDetail.paymentOptions')}
+        </Typography>
+      </Box>
+
+      {paymentOptionsDisplayData.map((optionData, index) => (
+        <PaymentOptionSection
+          key={`option-${index}`}
+          optionData={optionData}
+          data-testid={`payment-option`}
+        />
+      ))}
     </>
-  );
+  ) : null;
 };
 
 export default DebtPositionDetail;
