@@ -256,14 +256,18 @@
 				"REPORTED": "Rendicontato",
 				"TO_SYNC": "Da sincronizzare",
 				"UNPAID": "Da pagare",
-        "INVALID": "Non valido"
+				"INVALID": "Non valido"
 			}
 		}
 	},
 	"debtPositionDetail": {
 		"debtPositionInfo": "Informazioni sulla posizione debitoria",
 		"paymentOptions": "Opzioni di Pagamento",
-		"solutionDetail": "Dettaglio soluzione"
+		"solutionDetail": "Dettaglio soluzione",
+		"timeline": {
+			"title": "Storico Posizione Debitoria",
+			"message": "È stato inviato un messaggio al cittadino su IO. ID messaggio"
+		}
 	},
 	"debtPositionSearchResults": {
 		"iuv": "Codice Avviso (IUV)",

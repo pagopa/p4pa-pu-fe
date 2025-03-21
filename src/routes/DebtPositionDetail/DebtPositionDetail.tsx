@@ -20,9 +20,10 @@ import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { generatePath, useParams } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { PageRoutes } from '../../App';
 import { setLoading } from '../../store/AppStateStore';
+import { TimelineDrawer } from './components/TimelineDrawer';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -61,6 +62,8 @@ const DebtPositionDetail = () => {
   type StateKey = keyof typeof stateColors;
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const debtPositionId = Number(id);
+
+  const [timelineOpen, setTimelineOpen] = useState(false);
 
   const { data: debtPositionDetail, isLoading } =
     debtPositions.getDebtPositionDetail(organizationId, debtPositionId);
@@ -181,7 +184,7 @@ const DebtPositionDetail = () => {
           {
             icon: <History />,
             variant: 'text',
-            onActionClick: () => console.log('History clicked')
+            onActionClick: () => setTimelineOpen(true)
           }
         ]}
       />
@@ -217,6 +220,32 @@ const DebtPositionDetail = () => {
           data-testid={`payment-option`}
         />
       ))}
+
+      <TimelineDrawer
+        title={t('debtPositionDetail.timeline.title')}
+        open={timelineOpen}
+        onClose={() => setTimelineOpen(false)}
+        nodes={[
+          {
+            first: true,
+            date: new Date(2025, 2, 1, 14),
+            element: (
+              <Typography>
+                {t('debtPositionDetail.timeline.message')} <b>XXXXXXXXXXX</b>
+              </Typography>
+            )
+          },
+          {
+            last: true,
+            date: new Date(2025, 2, 1, 14),
+            element: (
+              <Typography>
+                {t('debtPositionDetail.timeline.message')} <b>XXXXXXXXXXX</b>
+              </Typography>
+            )
+          }
+        ]}
+      />
     </>
   ) : null;
 };
