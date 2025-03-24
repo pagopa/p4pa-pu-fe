@@ -1,6 +1,7 @@
 import { Stack } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateValidationError } from '@mui/x-date-pickers/models';
+import { endOfDay, startOfDay } from 'date-fns';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -16,84 +17,24 @@ export type _DateRangeProps = {
   to?: DateRange;
   isYear?: boolean;
   required?: boolean;
+  onFromErrorChange?: (error: DateValidationError | null) => void;
+  onToErrorChange?: (error: DateValidationError | null) => void;
 };
 
-export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
-  const [startDate, setStartDate] = useState<Date | null>(null);
-  const [endDate, setEndDate] = useState<Date | null>(null);
-
+export const _DateRange = ({
+  from,
+  to,
+  isYear,
+  required,
+  onFromErrorChange,
+  onToErrorChange
+}: _DateRangeProps) => {
+  const { t } = useTranslation();
   const [startDateError, setStartDateError] =
     useState<DateValidationError | null>(null);
   const [endDateError, setEndDateError] = useState<DateValidationError | null>(
     null
   );
-
-  const [isToDialogOpen, setIsToDialogOpen] = useState<boolean>(false);
-
-  const { t } = useTranslation();
-
-  const setTimeToStartOfDay = (date: Date | null): Date | null => {
-    if (!date) return null;
-
-    return new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate(),
-      0,
-      0,
-      0,
-      0
-    );
-  };
-
-  const setTimeToEndOfDay = (date: Date | null): Date | null => {
-    if (!date) return null;
-
-    return new Date(
-      date.getFullYear(),
-      date.getMonth(),
-      date.getDate(),
-      23,
-      59,
-      59,
-      999
-    );
-  };
-
-  const handleStartDateChange = (date: Date | null) => {
-    const dateWithTime = setTimeToStartOfDay(date);
-    setStartDate(dateWithTime);
-    from?.onChange?.(dateWithTime);
-  };
-
-  const handleStartDateOnAccept = (date: Date | null) => {
-    const dateWithTime = setTimeToStartOfDay(date);
-
-    if (dateWithTime && endDate && dateWithTime > endDate) {
-      setEndDate(null);
-      to?.onChange?.(null);
-      setIsToDialogOpen(true);
-    } else if (dateWithTime && !endDate) {
-      setIsToDialogOpen(true);
-    }
-  };
-
-  const handleEndDateChange = (date: Date | null) => {
-    if (!date) {
-      setEndDate(null);
-      to?.onChange?.(null);
-      return;
-    }
-
-    const endOfDayDate = setTimeToEndOfDay(date);
-
-    if (!startDate || (endOfDayDate && endOfDayDate >= startDate)) {
-      setEndDate(endOfDayDate);
-      to?.onChange?.(endOfDayDate);
-    } else {
-      to?.onChange?.(null);
-    }
-  };
 
   return (
     <Stack direction={{ xs: 'row' }} justifyContent="row" gap={2} width="100%">
@@ -103,9 +44,12 @@ export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
         openTo={isYear ? 'year' : 'day'}
         sx={{ width: '100%' }}
         label={t('dates.from')}
-        value={startDate}
-        onAccept={handleStartDateOnAccept}
-        onError={setStartDateError}
+        value={from?.value && startOfDay(from?.value)}
+        onChange={from?.onChange}
+        onError={(err) => {
+          setStartDateError(err);
+          onFromErrorChange?.(err);
+        }}
         slotProps={{
           textField: {
             size: 'small',
@@ -114,21 +58,22 @@ export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
             helperText: startDateError
               ? (from?.errorMessage ?? t('dates.validations.from'))
               : '',
-            required: required
+            required
           }
         }}
-        {...from}
-        onChange={handleStartDateChange}
       />
+
       {to && (
         <DatePicker
           sx={{ width: '100%' }}
           label={t('dates.to')}
-          value={endDate}
-          open={isToDialogOpen}
-          onClose={() => setIsToDialogOpen(false)}
-          minDate={startDate || undefined}
-          onError={setEndDateError}
+          value={to?.value && endOfDay(to?.value)}
+          onChange={to?.onChange}
+          onError={(err) => {
+            setEndDateError(err);
+            onToErrorChange?.(err);
+          }}
+          minDate={from?.value || undefined}
           slotProps={{
             textField: {
               size: 'small',
@@ -137,14 +82,9 @@ export const _DateRange = ({ from, to, isYear, required }: _DateRangeProps) => {
               helperText: endDateError
                 ? (to?.errorMessage ?? t('dates.validations.to'))
                 : '',
-              required: required
-            },
-            inputAdornment: {
-              onClick: () => setIsToDialogOpen(!isToDialogOpen)
+              required
             }
           }}
-          {...to}
-          onChange={handleEndDateChange}
         />
       )}
     </Stack>
