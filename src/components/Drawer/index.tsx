@@ -4,9 +4,10 @@ import {
   Box,
   Typography,
   IconButton,
-  useTheme
+  useTheme,
+  Stack
 } from '@mui/material';
-import { Close } from '@mui/icons-material';
+import Close from '@mui/icons-material/Close';
 import { DetailField } from '../DetailField';
 
 export type DrawerProps = {
@@ -14,13 +15,15 @@ export type DrawerProps = {
   onClose: () => void;
   title: string;
   children?: React.ReactNode;
+  titleDecoration?: React.ReactNode;
 };
 
 export const Drawer: React.FC<DrawerProps> & { Field: typeof DetailField } = ({
   open,
   onClose,
   title,
-  children
+  children,
+  titleDecoration
 }: DrawerProps) => {
   const theme = useTheme();
 
@@ -40,7 +43,8 @@ export const Drawer: React.FC<DrawerProps> & { Field: typeof DetailField } = ({
           flexDirection: 'column',
           overflowY: 'auto',
           scrollbarWidth: 'none',
-          padding: theme.spacing(3)
+          paddingX: theme.spacing(3),
+          paddingY: theme.spacing(1)
         }
       }}
     >
@@ -49,9 +53,12 @@ export const Drawer: React.FC<DrawerProps> & { Field: typeof DetailField } = ({
           <Close />
         </IconButton>
       </Box>
-      <Typography variant="h6" fontWeight={700} mb={3}>
-        {title}
-      </Typography>
+      <Stack direction="row" alignItems="center" gap={1} mb={3}>
+        {titleDecoration ?? null}
+        <Typography variant="h6" fontWeight={700}>
+          {title}
+        </Typography>
+      </Stack>
       {children}
     </MuiDrawer>
   );
