@@ -9,7 +9,9 @@ export const DebtPositionsImportOverview = () => {
     <ImportFlowOverview
       routingCategory="debt-positions"
       title={t('commons.debtFlow')}
-      flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.DP_INSTALLMENTS]}
+      flowFileTypes={[
+        GetIngestionFlowFilesParamsFlowFileTypesEnum.DP_INSTALLMENTS
+      ]}
     />
   );
 };

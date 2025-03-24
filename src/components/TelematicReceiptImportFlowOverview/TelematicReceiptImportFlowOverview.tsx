@@ -10,7 +10,10 @@ const TelematicReceiptImportFlowOverview = () => {
       routingCategory="telematic-receipt"
       title={t('commons.routes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW')}
       description={t('telematicReceiptImportFlowOverview.description')}
-      flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT, GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT_PAGOPA]}
+      flowFileTypes={[
+        GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT,
+        GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT_PAGOPA
+      ]}
     />
   );
 };

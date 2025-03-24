@@ -1,7 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { RequestParams } from '../../generated/fileshare/fileshareClient';
-import { GetIngestionFlowFilesParamsFlowFileTypesEnum, GetIngestionFlowFilesParamsStatusEnum } from '../../generated/apiClient';
+import {
+  GetIngestionFlowFilesParamsFlowFileTypesEnum,
+  GetIngestionFlowFilesParamsStatusEnum
+} from '../../generated/apiClient';
 
 export enum FileOrigin {
   PORTAL = 'PORTAL',

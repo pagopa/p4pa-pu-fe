@@ -4,7 +4,10 @@ import { useFlowFilters } from './useFlowFilters';
 import { FlowFileFilters, FlowFileType } from '../models/Filters';
 import { GridSortModel } from '@mui/x-data-grid';
 import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../generated/data-contracts';
-import { IngestionFlowFileStatusEnum } from '../../generated/apiClient';
+import {
+  GetIngestionFlowFilesParamsStatusEnum,
+  IngestionFlowFileStatusEnum
+} from '../../generated/apiClient';
 
 describe('useFlowFilters', () => {
   beforeEach(() => {
@@ -61,7 +64,7 @@ describe('useFlowFilters', () => {
     act(() => {
       result.current.updateDraftFilters({
         fileName: 'test.pdf',
-        status: IngestionFlowFileStatusEnum.COMPLETED,
+        status: GetIngestionFlowFilesParamsStatusEnum.COMPLETED,
         page: 2
       });
     });
@@ -121,7 +124,9 @@ describe('useFlowFilters', () => {
     });
 
     act(() => {
-      result.current.updateDraftFilters({ status: IngestionFlowFileStatusEnum.COMPLETED });
+      result.current.updateDraftFilters({
+        status: GetIngestionFlowFilesParamsStatusEnum.COMPLETED
+      });
     });
 
     act(() => {
@@ -243,10 +248,9 @@ describe('useFlowFilters', () => {
   });
 
   it('should maintain other filter values when updating sort', () => {
-
     const initialFilters: Partial<FlowFileFilters> = {
       fileName: 'test.pdf',
-      status: IngestionFlowFileStatusEnum.COMPLETED
+      status: GetIngestionFlowFilesParamsStatusEnum.COMPLETED
     };
 
     const { result } = renderHook(() =>
@@ -304,7 +308,9 @@ describe('useFlowFilters', () => {
     );
 
     act(() => {
-      result.current.updateDraftFilters({ status: IngestionFlowFileStatusEnum.COMPLETED });
+      result.current.updateDraftFilters({
+        status: GetIngestionFlowFilesParamsStatusEnum.COMPLETED
+      });
     });
 
     expect(result.current.hasActiveFilters()).toBe(true);

@@ -62,7 +62,10 @@ export const DebtPositionsInstallmentDetail = () => {
     return `${fiscalCode}${entityLabel}`;
   };
 
-  const DEBT_RESOLVED_STATES: Array<InstallmentDetailDtoStatusEnum> = [InstallmentDetailDtoStatusEnum.PAID, InstallmentDetailDtoStatusEnum.REPORTED];
+  const DEBT_RESOLVED_STATES: Array<InstallmentDetailDtoStatusEnum> = [
+    InstallmentDetailDtoStatusEnum.PAID,
+    InstallmentDetailDtoStatusEnum.REPORTED
+  ];
   const isResolved =
     installment?.status && DEBT_RESOLVED_STATES.includes(installment.status);
 

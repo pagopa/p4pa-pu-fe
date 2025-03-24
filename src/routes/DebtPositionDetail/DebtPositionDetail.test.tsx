@@ -11,7 +11,11 @@ import { createMock } from 'zodock';
 import debtPositions from '../../api/debtPositions';
 import { DebtPositionDetailDTO } from '../../../generated/apiClient';
 import { UseQueryResult } from '@tanstack/react-query';
-import { InstallmentDtoStatusEnum, PaymentOptionDtoPaymentOptionTypeEnum, PaymentOptionDtoStatusEnum } from '../../../generated/data-contracts';
+import {
+  InstallmentDtoStatusEnum,
+  PaymentOptionDtoPaymentOptionTypeEnum,
+  PaymentOptionDtoStatusEnum
+} from '../../../generated/data-contracts';
 
 const mockDebtPositionDetail = createMock(debtPositionDetailDTOSchema);
 
