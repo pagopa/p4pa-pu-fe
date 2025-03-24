@@ -1,4 +1,8 @@
-import { GridColDef, GridValidRowModel } from '@mui/x-data-grid';
+import {
+  GridColDef,
+  GridRenderCellParams,
+  GridSortModel
+} from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
@@ -6,56 +10,51 @@ import { IconButton } from '@mui/material';
 import { PageRoutes } from '../../App';
 import { Link } from 'react-router-dom';
 import { generatePath } from 'react-router-dom';
+import { moneyFormat } from '../../utils/formatters';
+import { PaymentsReporting } from '../../../generated/apiClient';
 
-type ReportingDetailDataRow = {
-  id: number;
-  iuv: string;
-  iur: string;
-  totalAmount: string;
-  paymentDate: string;
-} & GridValidRowModel;
+type CustomPaginationProps = {
+  totalPages?: number;
+  totalElements?: number;
+  defaultPageOption?: number;
+  sizePageOptions?: Array<number>;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (size: number) => void;
+  currentPage?: number;
+};
 
-const ReportingDetailDataGrid = () => {
+type ReportingDetailDataGridProps = {
+  rows: Array<PaymentsReporting>;
+  sortModel: GridSortModel;
+  onSortModelChange: (model: GridSortModel) => void;
+  customPagination: CustomPaginationProps;
+};
+
+const ReportingDetailDataGrid = ({
+  rows,
+  sortModel,
+  onSortModelChange,
+  customPagination
+}: ReportingDetailDataGridProps) => {
   const { t } = useTranslation();
-
-  const rows: Array<ReportingDetailDataRow> = [
-    {
-      id: 1,
-      iuv: '03003300003',
-      iur: 'ceae4bca84desdf3',
-      totalAmount: '100,00 €',
-      paymentDate: '10/10/2024'
-    },
-    {
-      id: 2,
-      iuv: '130036540003',
-      iur: 'iR3sT2uG888KkKK',
-      totalAmount: '200,00 €',
-      paymentDate: '11/10/2024'
-    },
-    {
-      id: 3,
-      iuv: '330112200003',
-      iur: 'yuR3sT2uG888KkKK',
-      totalAmount: '150,00 €',
-      paymentDate: '12/10/2024'
-    }
-  ];
 
   const columns: Array<GridColDef> = [
     { field: 'iuv', headerName: t('commons.iuv'), flex: 1, type: 'string' },
     { field: 'iur', headerName: t('commons.iur'), flex: 1, type: 'string' },
     {
-      field: 'totalAmount',
+      field: 'amountPaidCents',
       headerName: t('commons.amount'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      valueFormatter: ({ value }) => moneyFormat(value || 0)
     },
     {
-      field: 'paymentDate',
+      field: 'payDate',
       headerName: t('commons.paymentdate'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      renderCell: (params: GridRenderCellParams) =>
+        params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
     },
     {
       field: 'action',
@@ -64,9 +63,12 @@ const ReportingDetailDataGrid = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: () => (
+      renderCell: (params) => (
         <Link
-          to={generatePath(PageRoutes.DETAIL_FLOWS, { category: 'reporting' })}
+          to={generatePath(PageRoutes.DETAIL_FLOWS, {
+            category: 'reporting',
+            id: params.row.paymentsReportingId
+          })}
           aria-label="go to reporting payment detail"
         >
           <IconButton color="primary" size="small">
@@ -82,11 +84,12 @@ const ReportingDetailDataGrid = () => {
       <CustomDataGrid
         rows={rows}
         columns={columns}
+        getRowId={(row) => row.paymentsReportingId}
         disableColumnMenu
         disableColumnResize
-        customPagination={{
-          totalPages: 10
-        }}
+        sortModel={sortModel}
+        onSortModelChange={onSortModelChange}
+        customPagination={customPagination}
       />
     </>
   );

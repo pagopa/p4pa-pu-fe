@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Grid, Typography, useTheme } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
@@ -11,37 +12,91 @@ import FilterContainer, {
 } from '../FilterContainer/FilterContainer';
 import { Search } from '@mui/icons-material';
 import ReportingDetailDataGrid from './ReportingDetailDataGrid';
-import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
 import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
+import { getPaymentsReportingRows } from '../../api/reporting';
+import { moneyFormat } from '../../utils/formatters';
+import { useReportingDetailFilters } from '../../hooks/useReportingDetailFilters';
 
 export const ReportingDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { id } = useParams<{ id: string }>();
-  const idReporting = id ?? '';
+  const iuf = id ?? '';
+
+  const { state } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
   const {
-    state: { organizationId }
-  } = useStore();
+    appliedFilters,
+    draftFilters,
+    updateDraftFilters,
+    applyFilters,
+    updatePagination,
+    handleDateFromChange,
+    handleDateToChange,
+    hasActiveFilters,
+    sortModel,
+    handleSortModelChange
+  } = useReportingDetailFilters();
 
-  const types = useDebtPositionsTypeOrg({ organizationId });
+  const { data, mutate } = getPaymentsReportingRows(organizationId, iuf);
+
+  useEffect(() => {
+    if (iuf && organizationId) {
+      mutate(appliedFilters);
+    }
+  }, [iuf, organizationId, appliedFilters, mutate]);
+
+  const firstReportItem = data?.content?.[0];
+
+  const formatDate = (dateString?: string) => {
+    if (!dateString) return '';
+    return new Date(dateString).toLocaleDateString('it-IT');
+  };
+
+  const formatDateTime = (dateTimeString?: string) => {
+    if (!dateTimeString) return '';
+    const date = new Date(dateTimeString);
+    return `${date.toLocaleDateString('it-IT')} ${date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+  };
 
   const summaryData: Array<DetailData> = [
-    { label: 'ID Rendicontazione / IUF', value: idReporting },
-    { label: 'ID Regolamento', value: '49509-241009-39X-451585346538' },
-    { label: 'Data e ora', value: '10/10/2024 14:00:40' },
-    { label: 'Data regolamento', value: '10/10/2024' }
+    {
+      label: 'ID Rendicontazione / IUF',
+      value: firstReportItem?.iuf || iuf
+    },
+    {
+      label: 'ID Regolamento',
+      value: firstReportItem?.regulationUniqueIdentifier || ''
+    },
+    {
+      label: 'Data e ora',
+      value: formatDateTime(firstReportItem?.flowDateTime)
+    },
+    {
+      label: 'Data regolamento',
+      value: formatDate(firstReportItem?.regulationDate)
+    }
   ];
 
   const paymentData: Array<DetailData> = [
-    { label: 'Totale pagamenti', value: '100' },
-    { label: 'Importo totale', value: '100,00 €' }
+    {
+      label: 'Totale pagamenti',
+      value: firstReportItem?.totalPayments?.toString() || ''
+    },
+    {
+      label: 'Importo totale',
+      value: firstReportItem?.totalAmountCents
+        ? moneyFormat(firstReportItem.totalAmountCents)
+        : ''
+    }
   ];
 
   return (
     <>
       <TitleComponent
-        title={idReporting}
+        title={iuf}
         callToAction={[
           {
             icon: <DownloadIcon fontSize="small" />,
@@ -73,10 +128,11 @@ export const ReportingDetail = () => {
         <Grid
           container
           direction="row"
-          spacing={2}
-          alignItems={'center'}
-          justifyContent={'space-between'}
-          my={1}
+          my={2}
+          sx={{
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
         >
           <FilterContainer
             items={[
@@ -84,24 +140,31 @@ export const ReportingDetail = () => {
                 type: COMPONENT_TYPE.textField,
                 label: t('commons.searchIUV'),
                 icon: <Search />,
-                gridWidth: 5
+                gridWidth: 5,
+                value: draftFilters.iuv || '',
+                onChange: (e) => updateDraftFilters({ iuv: e.target.value })
               },
               {
                 type: COMPONENT_TYPE.dateRange,
-                label: 'daterange',
-                gridWidth: 3
-              },
-              {
-                type: COMPONENT_TYPE.select,
-                label: t('commons.duetype'),
-                gridWidth: 2,
-                options: types.optionsMap
+                label: 'dateRange',
+                gridWidth: 6,
+                from: {
+                  label: t('dates.from'),
+                  errorMessage: t('dates.validations.from'),
+                  onChange: handleDateFromChange
+                },
+                to: {
+                  label: t('dates.to'),
+                  errorMessage: t('dates.validations.to'),
+                  onChange: handleDateToChange
+                }
               },
               {
                 type: COMPONENT_TYPE.button,
                 label: t('commons.filters.filterResults'),
                 gridWidth: 1,
-                onClick: () => console.log('Filter applied')
+                onClick: applyFilters,
+                disabled: !hasActiveFilters()
               }
             ]}
           />
@@ -116,7 +179,21 @@ export const ReportingDetail = () => {
           }}
           aria-label="results-table"
         >
-          <ReportingDetailDataGrid />
+          <ReportingDetailDataGrid
+            rows={data?.content || []}
+            sortModel={sortModel}
+            onSortModelChange={handleSortModelChange}
+            customPagination={{
+              totalPages: data?.totalPages || 0,
+              totalElements: data?.totalElements || 0,
+              defaultPageOption: appliedFilters.size,
+              sizePageOptions: [5, 10, 15, 20],
+              onPageChange: (page) =>
+                updatePagination({ page: page - 1, size: appliedFilters.size }),
+              onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
+              currentPage: appliedFilters.page + 1
+            }}
+          />
         </Grid>
       </Grid>
     </>
