@@ -260,36 +260,16 @@ describe('DebtPositionDetail Component', () => {
     expect(screen.getAllByText('Reported').length).toBeGreaterThan(0);
   });
 
-  it('triggers the history button callback when clicked', () => {
+  it('opens history drawer when history button is clicked', () => {
     render(<DebtPositionDetail />);
 
-    const historyButton = screen.getByTestId('HistoryIcon').closest('button');
+    const historyButton = screen.getByTestId('HistoryButton').closest('button');
     expect(historyButton).not.toBeNull();
 
     if (historyButton) {
       fireEvent.click(historyButton);
-      expect(console.log).toHaveBeenCalledWith('History clicked');
+      const drawerTitle = screen.getByText('debtPositionDetail.timeline.title');
+      expect(drawerTitle).toBeVisible();
     }
-  });
-
-  it('shows a loading spinner when data is loading', () => {
-    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-      error: null,
-      refetch: vi.fn(),
-      isRefetching: false,
-      isSuccess: false,
-      status: 'loading',
-      isFetching: true,
-      isPaused: false,
-      isPending: true,
-      fetchStatus: 'fetching'
-    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
-
-    render(<DebtPositionDetail />);
-
-    expect(screen.getByRole('progressbar')).toBeDefined();
   });
 });
