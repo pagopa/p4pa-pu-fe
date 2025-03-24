@@ -6,7 +6,7 @@ import DetailContainer, {
   DetailData
 } from '../DetailContainer/DetailContainer';
 import EmptyDetailContainer from './EmptyDetailContainer';
-import { InstallmentDTO } from '../../../generated/apiClient';
+import { InstallmentDetailDtoStatusEnum } from '../../../generated/apiClient';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
@@ -36,8 +36,6 @@ export const DebtPositionsInstallmentDetail = () => {
     setDrawerOpen((prev) => !prev);
   };
 
-  type DebtStatus = Pick<InstallmentDTO, 'status'>['status'];
-
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const installmentId = Number(id);
 
@@ -64,7 +62,7 @@ export const DebtPositionsInstallmentDetail = () => {
     return `${fiscalCode}${entityLabel}`;
   };
 
-  const DEBT_RESOLVED_STATES: Array<DebtStatus> = ['PAID', 'REPORTED'];
+  const DEBT_RESOLVED_STATES: Array<InstallmentDetailDtoStatusEnum> = [InstallmentDetailDtoStatusEnum.PAID, InstallmentDetailDtoStatusEnum.REPORTED];
   const isResolved =
     installment?.status && DEBT_RESOLVED_STATES.includes(installment.status);
 

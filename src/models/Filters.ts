@@ -1,4 +1,4 @@
-import { IngestionFlowFile } from '../../generated/data-contracts';
+import { GetIngestionFlowFilesParamsStatusEnum, IngestionFlowFile } from '../../generated/data-contracts';
 
 export type FlowStatus = Pick<IngestionFlowFile, 'status'>['status'];
 
@@ -22,7 +22,7 @@ export enum FlowFileType {
 }
 
 export type FlowFilters = {
-  flowFileTypes: Array<FlowFileType>;
+  flowFileTypes: Array<GetIngestionFlowFilesParamsStatusEnum>;
   fileName?: string;
   status?: FlowStatus;
   creationDateFrom?: string;

@@ -15,7 +15,6 @@ vi.mock('./useDebtPositionsTypeOrg', () => ({
     optionsMap: [
       { label: 'Type A', value: 1 },
       { label: 'Type B', value: 2 },
-      { label: 'Tutti', value: 'TUTTI' }
     ]
   })
 }));
