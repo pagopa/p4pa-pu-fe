@@ -23,7 +23,7 @@ import { generatePath, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { PageRoutes } from '../../App';
 import { setLoading } from '../../store/AppStateStore';
-import { TimelineDrawer } from './components/TimelineDrawer';
+import { Timeline } from '../../components/Timeline';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -221,31 +221,38 @@ const DebtPositionDetail = () => {
         />
       ))}
 
-      <TimelineDrawer
+      <Timeline.Drawer
         title={t('debtPositionDetail.timeline.title')}
         open={timelineOpen}
         onClose={() => setTimelineOpen(false)}
-        nodes={[
-          {
-            first: true,
-            date: new Date(2025, 2, 1, 14),
-            element: (
-              <Typography>
-                {t('debtPositionDetail.timeline.message')} <b>XXXXXXXXXXX</b>
-              </Typography>
-            )
-          },
-          {
-            last: true,
-            date: new Date(2025, 2, 1, 14),
-            element: (
-              <Typography>
-                {t('debtPositionDetail.timeline.message')} <b>XXXXXXXXXXX</b>
-              </Typography>
-            )
+      >
+        <Timeline.Element
+          date={new Date(2025, 2, 1, 14)}
+          element={
+            <Typography>
+              {t('debtPositionDetail.timeline.message')} <b>XXXXXXXXXXX</b>
+            </Typography>
           }
-        ]}
-      />
+          first
+        />
+        <Timeline.Element
+          date={new Date(2025, 3, 3, 9)}
+          element={
+            <Typography>
+              {t('debtPositionDetail.timeline.message')} <b>XXXXXXXXXXX</b>
+            </Typography>
+          }
+        />
+        <Timeline.Element
+          date={new Date()}
+          element={
+            <Typography>
+              {t('debtPositionDetail.timeline.message')} <b>XXXXXXXXXXX</b>
+            </Typography>
+          }
+          last
+        />
+      </Timeline.Drawer>
     </>
   ) : null;
 };
