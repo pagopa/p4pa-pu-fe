@@ -171,9 +171,15 @@ const DebtPositionDetail = () => {
     };
   };
 
-  const paymentOptionsDisplayData = (
-    debtPositionDetail?.paymentOptions ?? []
-  ).map(createPaymentOptionDisplayData);
+  const priorityType = ['SINGLE_INSTALLMENT', 'DOWN_PAYMENT', 'INSTALLMENTS'];
+
+  const paymentOptionsDisplayData = (debtPositionDetail?.paymentOptions ?? [])
+    .sort(
+      (optionA, optionB) =>
+        priorityType.indexOf(optionA.paymentOptionType) -
+        priorityType.indexOf(optionB.paymentOptionType)
+    )
+    .map(createPaymentOptionDisplayData);
 
   return debtPositionDetail ? (
     <>
@@ -182,7 +188,7 @@ const DebtPositionDetail = () => {
         chip={statusChip}
         callToAction={[
           {
-            icon: <History />,
+            icon: <History data-testid="HistoryButton" />,
             variant: 'text',
             onActionClick: () => setTimelineOpen(true)
           }
