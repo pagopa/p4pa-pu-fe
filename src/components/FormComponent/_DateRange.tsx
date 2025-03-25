@@ -35,6 +35,36 @@ export const _DateRange = ({
   const [endDateError, setEndDateError] = useState<DateValidationError | null>(
     null
   );
+  const [isToDialogOpen, setIsToDialogOpen] = useState<boolean>(false);
+
+  const handleStartDateChange = (date: Date | null) => {
+    from?.onChange?.(date);
+    if (!!date && to?.value && date > to.value) {
+      to?.onChange?.(null);
+    }
+  };
+
+  const handleStartDateOnAccept = (date: Date | null) => {
+    if (!startDateError || date) {
+      if (date && to?.value && date > to.value) {
+        to?.onChange?.(null);
+      }
+      setIsToDialogOpen(true);
+
+      if (startDateError && date) {
+        setStartDateError(null);
+        from?.onChange?.(date);
+      }
+    }
+  };
+
+  const handleStartDateError = (error: DateValidationError | null) => {
+    setStartDateError(error);
+    onFromErrorChange?.(error);
+    if (error) {
+      setIsToDialogOpen(false);
+    }
+  };
 
   return (
     <Stack direction={{ xs: 'row' }} justifyContent="row" gap={2} width="100%">
@@ -45,11 +75,9 @@ export const _DateRange = ({
         sx={{ width: '100%' }}
         label={t('dates.from')}
         value={from?.value && startOfDay(from?.value)}
-        onChange={from?.onChange}
-        onError={(err) => {
-          setStartDateError(err);
-          onFromErrorChange?.(err);
-        }}
+        onChange={handleStartDateChange}
+        onAccept={handleStartDateOnAccept}
+        onError={handleStartDateError}
         slotProps={{
           textField: {
             size: 'small',
@@ -69,6 +97,8 @@ export const _DateRange = ({
           label={t('dates.to')}
           value={to?.value && endOfDay(to?.value)}
           onChange={to?.onChange}
+          open={isToDialogOpen}
+          onClose={() => setIsToDialogOpen(false)}
           onError={(err) => {
             setEndDateError(err);
             onToErrorChange?.(err);
@@ -83,6 +113,9 @@ export const _DateRange = ({
                 ? (to?.errorMessage ?? t('dates.validations.to'))
                 : '',
               required
+            },
+            inputAdornment: {
+              onClick: () => setIsToDialogOpen(!isToDialogOpen)
             }
           }}
         />
