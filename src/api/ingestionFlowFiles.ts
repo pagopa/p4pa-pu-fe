@@ -1,9 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
-import { parseAndLog } from '../utils/loaders';
-import { pagedIngestionFlowFileSchema } from '../../generated/zod-schema';
-import { FlowStatus } from '../models/Filters';
 import { RequestParams } from '../../generated/fileshare/fileshareClient';
+import {
+  GetIngestionFlowFilesParamsFlowFileTypesEnum,
+  GetIngestionFlowFilesParamsStatusEnum
+} from '../../generated/apiClient';
 
 export enum FileOrigin {
   PORTAL = 'PORTAL',
@@ -26,20 +27,10 @@ export enum IngestionFlowFileType {
 export const getIngestionFlowFiles = (
   organizationId: number,
   query: {
-    flowFileTypes: Array<
-      | 'RECEIPT'
-      | 'RECEIPT_PAGOPA'
-      | 'PAYMENTS_REPORTING'
-      | 'PAYMENTS_REPORTING_PAGOPA'
-      | 'TREASURY_OPI'
-      | 'TREASURY_CSV'
-      | 'TREASURY_XLS'
-      | 'TREASURY_POSTE'
-      | 'DP_INSTALLMENTS'
-    >;
+    flowFileTypes: Array<GetIngestionFlowFilesParamsFlowFileTypesEnum>;
     creationDateFrom?: string;
     creationDateTo?: string;
-    status?: FlowStatus;
+    status?: GetIngestionFlowFilesParamsStatusEnum;
     fileName?: string;
     page?: number;
     size?: number;
@@ -61,9 +52,6 @@ export const getIngestionFlowFiles = (
         }
       );
 
-      if (files?.content) {
-        parseAndLog(pagedIngestionFlowFileSchema, files);
-      }
       return files;
     },
     retry: false,

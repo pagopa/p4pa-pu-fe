@@ -5,6 +5,8 @@ import { FilterFieldIds } from '../../models/SearchCardFields';
 import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
 import { useStore } from '../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
+import { PaymentsReportingDetailDtoStatusEnum } from '../../../generated/data-contracts';
+import { optionMapsConverter } from '../../utils/formatters';
 
 export const useTabsConfig = (): Array<TabsConfig> => {
   const { t } = useTranslation();
@@ -13,6 +15,11 @@ export const useTabsConfig = (): Array<TabsConfig> => {
   } = useStore();
 
   const types = useDebtPositionsTypeOrg({ organizationId });
+
+  const debtPositionsStatus = Object.values(
+    PaymentsReportingDetailDtoStatusEnum
+  );
+  const debtPositionList = optionMapsConverter(debtPositionsStatus);
 
   return [
     {
@@ -75,10 +82,7 @@ export const useTabsConfig = (): Array<TabsConfig> => {
         {
           type: COMPONENT_TYPE.select,
           label: t('commons.state'),
-          options: [
-            { label: 'Tutti', value: 'TUTTI' },
-            { label: 'Rata', value: 'RATA' }
-          ],
+          options: debtPositionList,
           gridWidth: 6,
           id: FilterFieldIds.STATE,
           defaultValue: ''

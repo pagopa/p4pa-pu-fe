@@ -1,14 +1,11 @@
 import { useState, useCallback } from 'react';
 import { GridSortModel } from '@mui/x-data-grid';
-import {
-  FlowFileFilters,
-  FlowFileType,
-  PaginationParams
-} from '../models/Filters';
+import { FlowFileFilters, PaginationParams } from '../models/Filters';
+import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../generated/apiClient';
 
 type UseFlowFiltersProps = {
   initialFilters?: Partial<FlowFileFilters>;
-  flowFileTypes: Array<FlowFileType>;
+  flowFileTypes: Array<GetIngestionFlowFilesParamsFlowFileTypesEnum>;
   onFiltersChange?: (filters: FlowFileFilters) => void;
 };
 
