@@ -15,7 +15,6 @@ import { useStore } from '../../store/GlobalStore';
 import {
   DOWNLOAD_STATES,
   FLOW_STATUS_VALUES,
-  FlowFileType,
   FlowStatus,
   MENU_STATES,
   STATE_COLORS
@@ -23,12 +22,13 @@ import {
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { STATE } from '../../store/types';
+import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../../generated/apiClient';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
   title: string;
   description?: string;
-  flowFileTypes: Array<FlowFileType>;
+  flowFileTypes: Array<GetIngestionFlowFilesParamsFlowFileTypesEnum>;
 };
 
 const ImportFlowOverview = ({

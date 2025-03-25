@@ -1,6 +1,6 @@
-import { IngestionFlowFile } from '../../generated/data-contracts';
-
-export type FlowStatus = Pick<IngestionFlowFile, 'status'>['status'];
+import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../generated/apiClient';
+import { GetIngestionFlowFilesParamsStatusEnum } from '../../generated/apiClient';
+export type FlowStatus = GetIngestionFlowFilesParamsStatusEnum;
 
 export const FLOW_STATUS_VALUES = [
   'UPLOADED',
@@ -22,9 +22,9 @@ export enum FlowFileType {
 }
 
 export type FlowFilters = {
-  flowFileTypes: Array<FlowFileType>;
+  flowFileTypes: Array<GetIngestionFlowFilesParamsFlowFileTypesEnum>;
   fileName?: string;
-  status?: FlowStatus;
+  status?: GetIngestionFlowFilesParamsStatusEnum;
   creationDateFrom?: string;
   creationDateTo?: string;
   sort?: Array<string>;

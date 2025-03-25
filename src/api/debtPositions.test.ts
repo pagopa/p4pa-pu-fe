@@ -9,6 +9,7 @@ import {
 import { createMock } from 'zodock';
 import debtPositions, { DebtPositionViewQuery } from './debtPositions';
 import { renderHook, waitFor } from '../__tests__/renderers';
+import { GetDebtPositionViewsParamsStatusEnum } from '../../generated/apiClient';
 
 vi.mock('../utils', () => {
   return {
@@ -30,7 +31,7 @@ describe('getDebtPositionViews', () => {
     const dataMock = createMock(debtPositionViewSchema);
     const params = { organizationId: 10 };
     const query: DebtPositionViewQuery = {
-      status: 'PAID',
+      status: GetDebtPositionViewsParamsStatusEnum.PAID,
       creationDateFrom: '',
       creationDateTo: '',
       fiscalCode: '',
