@@ -12,7 +12,7 @@ export type DebtPositionFilters = {
     from: Date;
     to: Date;
   };
-  status?: DebtPositionViewQuery['status'] | 'TUTTI';
+  status?: DebtPositionViewQuery['status'];
   fiscalCode?: string;
   iuv?: string;
   typeOrgId?: number;
@@ -67,8 +67,7 @@ export const useDebtPositionSearch = ({
     }),
     ...(filterValues?.iuv && { iuv: filterValues.iuv }),
     ...(filterValues?.fiscalCode && { fiscalCode: filterValues.fiscalCode }),
-    ...(filterValues?.status &&
-      filterValues?.status !== 'TUTTI' && { status: filterValues.status }),
+    ...(filterValues?.status && { status: filterValues.status }),
     ...(sort.length && { sort })
   });
 

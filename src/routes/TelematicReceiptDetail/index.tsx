@@ -25,7 +25,7 @@ export const TelematicReceiptDetail = () => {
 
   const { data, isLoading } = getReceiptDetail(organizationId, Number(id));
   const debtorType: string =
-    data?.debtor.entityType === 'F' ? `(${t('commons.person')})` : '';
+    data?.debtor.entityType == 'F' ? `(${t('commons.person')})` : '';
 
   const summaryData: Array<DetailData> = [
     {

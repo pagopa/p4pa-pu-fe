@@ -3,6 +3,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { useFlowFilters } from './useFlowFilters';
 import { FlowFileFilters, FlowFileType } from '../models/Filters';
 import { GridSortModel } from '@mui/x-data-grid';
+import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../generated/data-contracts';
+import {
+  GetIngestionFlowFilesParamsStatusEnum,
+  IngestionFlowFileStatusEnum
+} from '../../generated/apiClient';
 
 describe('useFlowFilters', () => {
   beforeEach(() => {
@@ -17,7 +22,7 @@ describe('useFlowFilters', () => {
   it('should initialize with default values', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
@@ -37,7 +42,7 @@ describe('useFlowFilters', () => {
   it('should update draft filters without affecting applied filters', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
@@ -52,14 +57,14 @@ describe('useFlowFilters', () => {
   it('should apply filters and reset page to 0', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
     act(() => {
       result.current.updateDraftFilters({
         fileName: 'test.pdf',
-        status: 'COMPLETED',
+        status: GetIngestionFlowFilesParamsStatusEnum.COMPLETED,
         page: 2
       });
     });
@@ -77,7 +82,7 @@ describe('useFlowFilters', () => {
   it('should update pagination immediately', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
@@ -94,7 +99,7 @@ describe('useFlowFilters', () => {
   it('should handle null dates correctly', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
@@ -110,7 +115,7 @@ describe('useFlowFilters', () => {
   it('should maintain all filters when applying new ones', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
@@ -119,7 +124,9 @@ describe('useFlowFilters', () => {
     });
 
     act(() => {
-      result.current.updateDraftFilters({ status: 'COMPLETED' });
+      result.current.updateDraftFilters({
+        status: GetIngestionFlowFilesParamsStatusEnum.COMPLETED
+      });
     });
 
     act(() => {
@@ -129,7 +136,7 @@ describe('useFlowFilters', () => {
     expect(result.current.appliedFilters).toEqual(
       expect.objectContaining({
         fileName: 'test.pdf',
-        status: 'COMPLETED',
+        status: IngestionFlowFileStatusEnum.COMPLETED,
         flowFileTypes: [FlowFileType.RECEIPT]
       })
     );
@@ -138,7 +145,7 @@ describe('useFlowFilters', () => {
   it('should handle date from changes correctly', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
     const testDate = new Date('2024-01-01T12:00:00.000Z');
@@ -157,7 +164,7 @@ describe('useFlowFilters', () => {
   it('should handle date to changes correctly', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
     const testDate = new Date('2024-01-01T12:00:00.000Z');
@@ -178,7 +185,7 @@ describe('useFlowFilters', () => {
 
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT],
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT],
         onFiltersChange
       })
     );
@@ -213,7 +220,7 @@ describe('useFlowFilters', () => {
 
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT],
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT],
         onFiltersChange
       })
     );
@@ -241,16 +248,14 @@ describe('useFlowFilters', () => {
   });
 
   it('should maintain other filter values when updating sort', () => {
-    type FlowFileStatus = 'UPLOADED' | 'PROCESSING' | 'COMPLETED' | 'ERROR';
-
     const initialFilters: Partial<FlowFileFilters> = {
       fileName: 'test.pdf',
-      status: 'COMPLETED' as FlowFileStatus
+      status: GetIngestionFlowFilesParamsStatusEnum.COMPLETED
     };
 
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT],
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT],
         initialFilters
       })
     );
@@ -264,7 +269,7 @@ describe('useFlowFilters', () => {
     expect(result.current.appliedFilters).toEqual(
       expect.objectContaining({
         fileName: 'test.pdf',
-        status: 'COMPLETED',
+        status: IngestionFlowFileStatusEnum.COMPLETED,
         sort: ['fileName,desc'],
         page: 0
       })
@@ -274,7 +279,7 @@ describe('useFlowFilters', () => {
   it('should return false when draft filters match applied filters', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
@@ -284,7 +289,7 @@ describe('useFlowFilters', () => {
   it('should return true when fileName is changed', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
@@ -298,12 +303,14 @@ describe('useFlowFilters', () => {
   it('should return true when status is changed', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
     act(() => {
-      result.current.updateDraftFilters({ status: 'COMPLETED' });
+      result.current.updateDraftFilters({
+        status: GetIngestionFlowFilesParamsStatusEnum.COMPLETED
+      });
     });
 
     expect(result.current.hasActiveFilters()).toBe(true);
@@ -312,7 +319,7 @@ describe('useFlowFilters', () => {
   it('should return true when dates are changed', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
@@ -331,7 +338,7 @@ describe('useFlowFilters', () => {
   it('should return false after applying filters', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT]
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]
       })
     );
 
@@ -351,7 +358,7 @@ describe('useFlowFilters', () => {
   it('should handle undefined values correctly', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
-        flowFileTypes: [FlowFileType.RECEIPT],
+        flowFileTypes: [GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT],
         initialFilters: {
           fileName: 'initial.pdf'
         }

@@ -8,6 +8,8 @@ import { SearchType } from '../models/DebtPositions';
 import { useStore } from '../store/GlobalStore';
 import { DebtPositionFilters } from './useDebtPositionsSearch';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
+import { PaymentsReportingDetailDtoStatusEnum } from '../../generated/data-contracts';
+import { optionMapsConverter } from '../utils/formatters';
 
 type UseDebtPositionSearchProps = {
   searchType: SearchType;
@@ -24,6 +26,10 @@ export const useDebtPositionFilters = ({
   } = useStore();
 
   const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
+
+  const debtPositionsStatus = Object.values(
+    PaymentsReportingDetailDtoStatusEnum
+  );
 
   const getFilterItems = (): Array<FilterItem> => {
     if (searchType === SearchType.DEBT_POSITION) {
@@ -49,12 +55,8 @@ export const useDebtPositionFilters = ({
           type: COMPONENT_TYPE.select,
           label: t('commons.state'),
           gridWidth: 2,
-          options: [
-            { label: 'Tutti', value: 'TUTTI' },
-            { label: 'Rata', value: 'RATA' }
-          ],
-          id: 'status',
-          defaultValue: 'TUTTI'
+          options: optionMapsConverter(debtPositionsStatus),
+          id: 'status'
         },
         {
           type: COMPONENT_TYPE.select,

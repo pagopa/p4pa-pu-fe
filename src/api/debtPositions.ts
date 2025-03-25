@@ -11,7 +11,7 @@ type DebtPositionViewParams = Parameters<
 >;
 
 export type DebtPositionViewQuery = DebtPositionViewParams[1] & {
-  status?: DebtPositionViewParams[1]['status'] | 'TUTTI';
+  status?: DebtPositionViewParams[1]['status'];
 };
 
 export type DebtPositionViewRequest = {

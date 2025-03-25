@@ -16,8 +16,7 @@ vi.mock('./useDebtPositionsTypeOrg', () => ({
   useDebtPositionsTypeOrg: () => ({
     optionsMap: [
       { label: 'Type A', value: 1 },
-      { label: 'Type B', value: 2 },
-      { label: 'Tutti', value: 'TUTTI' }
+      { label: 'Type B', value: 2 }
     ]
   })
 }));
@@ -70,8 +69,7 @@ describe('useDebtPositionFilters', () => {
     ) as SelectField;
     expect(typeOrgIdFilter.options).toEqual([
       { label: 'Type A', value: 1 },
-      { label: 'Type B', value: 2 },
-      { label: 'Tutti', value: 'TUTTI' }
+      { label: 'Type B', value: 2 }
     ]);
   });
 
