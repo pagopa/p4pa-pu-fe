@@ -125,9 +125,12 @@ describe('DebtPositionsInstallmentDetail', () => {
     const showMore = screen.getByText('commons.showOtherBeneficiaries');
     expect(showMore).toBeDefined();
 
-    expect(screen.getByTestId('drawer')).toHaveStyle('visibility: hidden');
+    const drawerTitle = screen.getByText(
+      'debtPositionInstallmentDetail.drawer.title'
+    );
+    expect(drawerTitle).not.toBeVisible();
 
     fireEvent.click(showMore);
-    expect(screen.getByTestId('drawer')).toHaveStyle('visibility: visible');
+    expect(drawerTitle).toBeVisible();
   });
 });
