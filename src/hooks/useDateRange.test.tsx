@@ -1,0 +1,114 @@
+import { renderHook, act } from '@testing-library/react';
+import { describe, expect, it, beforeEach, afterEach, vi } from 'vitest';
+import { useDateRange } from './useDateRange';
+import { startOfDay, endOfDay, subMonths } from 'date-fns';
+
+describe('useDateRange', () => {
+  const today = new Date('2025-03-24T12:00:00Z');
+  const oneMonthAgo = subMonths(today, 1);
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(today);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should initialize with default range (1 month ago to today)', () => {
+    const { result } = renderHook(() => useDateRange(0));
+
+    expect(result.current.fromDate).toEqual(startOfDay(oneMonthAgo));
+    expect(result.current.toDate).toEqual(endOfDay(today));
+    expect(result.current.isButtonDisabled).toBe(false);
+  });
+
+  it('should update fromDate and validate correctly', () => {
+    const { result } = renderHook(() => useDateRange(0));
+
+    const newFrom = new Date('2025-03-01');
+
+    act(() => {
+      result.current.setFromDate(newFrom);
+    });
+
+    expect(result.current.fromDate).toEqual(startOfDay(newFrom));
+    expect(result.current.isButtonDisabled).toBe(false);
+  });
+
+  it('should update toDate and validate correctly', () => {
+    const { result } = renderHook(() => useDateRange(0));
+
+    const newTo = new Date('2025-03-10');
+
+    act(() => {
+      result.current.setToDate(newTo);
+    });
+
+    expect(result.current.toDate).toEqual(endOfDay(newTo));
+    expect(result.current.isButtonDisabled).toBe(false);
+  });
+
+  it('should set toError if from > to', () => {
+    const { result } = renderHook(() => useDateRange(0));
+
+    act(() => {
+      result.current.setFromDate(new Date('2025-03-25'));
+    });
+
+    expect(result.current.isButtonDisabled).toBe(true);
+  });
+
+  it('should handle null values', () => {
+    const { result } = renderHook(() => useDateRange(0));
+
+    act(() => {
+      result.current.setFromDate(null);
+      result.current.setToDate(null);
+    });
+
+    expect(result.current.fromDate).toBeNull();
+    expect(result.current.toDate).toBeNull();
+    expect(result.current.isButtonDisabled).toBe(true);
+  });
+
+  it('should reset to default dates and clear errors', () => {
+    const { result } = renderHook(() => useDateRange(0));
+
+    act(() => {
+      result.current.setFromDate(new Date('2025-01-01'));
+      result.current.setToDate(new Date('2025-01-10'));
+      result.current.setFromError('invalidDate');
+      result.current.setToError('invalidDate');
+    });
+
+    expect(result.current.isButtonDisabled).toBe(true);
+
+    act(() => {
+      result.current.resetDates();
+    });
+
+    expect(result.current.fromDate).toEqual(startOfDay(oneMonthAgo));
+    expect(result.current.toDate).toEqual(endOfDay(today));
+    expect(result.current.isButtonDisabled).toBe(false);
+  });
+
+  it('should keep separate state tab index', () => {
+    const { result } = renderHook(() => useDateRange(0));
+    const { result: result2 } = renderHook(() => useDateRange(1));
+
+    act(() => {
+      result.current.setFromDate(new Date('2025-02-01'));
+    });
+
+    act(() => {
+      result2.current.setFromDate(new Date('2025-01-01'));
+    });
+
+    expect(result.current.fromDate).toEqual(startOfDay(new Date('2025-02-01')));
+    expect(result2.current.fromDate).toEqual(
+      startOfDay(new Date('2025-01-01'))
+    );
+  });
+});
