@@ -280,6 +280,10 @@
 		"drawer": {
 			"title": "Beneficiari",
 			"info": "Ci sono presenti altri beneficiari diversi al tuo ente."
+		},
+		"timeline": {
+			"title": "Storico Avviso",
+			"message": "È stato inviato un messaggio al cittadino su IO. ID messaggio"
 		}
 	},
 	"FileUploaderFlowImport": {

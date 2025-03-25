@@ -12,7 +12,11 @@ export const _TimelineDrawer = ({
   ...drawerProps
 }: TimelineDetailDrawerProps) => {
   return (
-    <Drawer {...drawerProps} titleDecoration={<History />}>
+    <Drawer
+      {...drawerProps}
+      titleDecoration={<History />}
+      data-testid="timeline-drawer"
+    >
       <MuiTimeline sx={{ padding: 0, margin: 0 }}>{children}</MuiTimeline>
     </Drawer>
   );
