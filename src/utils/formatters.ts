@@ -1,3 +1,12 @@
+type optionMapItem = {
+  label: string;
+  value: string;
+};
+
+function sortItems(items: Array<string>) {
+  return items.sort((a, b) => a.localeCompare(b));
+}
+
 export function moneyFormat(
   amount: number,
   decimalDigits = 2,
@@ -9,4 +18,14 @@ export function moneyFormat(
     minimumFractionDigits: fractionDigits,
     maximumFractionDigits: fractionDigits
   }).format(amount ? amount / Math.pow(10, decimalDigits) : 0);
+}
+
+export function optionMapsConverter(
+  items: Array<string>
+): Array<optionMapItem> {
+  const sortedItems = sortItems(items);
+  return sortedItems.map((item) => ({
+    label: item,
+    value: item
+  }));
 }

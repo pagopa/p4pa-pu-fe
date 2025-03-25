@@ -11,6 +11,11 @@ import { createMock } from 'zodock';
 import debtPositions from '../../api/debtPositions';
 import { DebtPositionDetailDTO } from '../../../generated/apiClient';
 import { UseQueryResult } from '@tanstack/react-query';
+import {
+  InstallmentDtoStatusEnum,
+  PaymentOptionDtoPaymentOptionTypeEnum,
+  PaymentOptionDtoStatusEnum
+} from '../../../generated/data-contracts';
 
 const mockDebtPositionDetail = createMock(debtPositionDetailDTOSchema);
 
@@ -21,13 +26,13 @@ mockDebtPositionDetail.paymentOptions = [
     paymentOptionId: 101,
     debtPositionId: 10,
     totalAmountCents: 5400,
-    status: 'REPORTED',
-    paymentOptionType: 'SINGLE_INSTALLMENT',
+    status: PaymentOptionDtoStatusEnum.REPORTED,
+    paymentOptionType: PaymentOptionDtoPaymentOptionTypeEnum.SINGLE_INSTALLMENT,
     paymentOptionIndex: 1,
     installments: [
       {
         installmentId: 1,
-        status: 'PAID',
+        status: InstallmentDtoStatusEnum.PAID,
         iuv: 'TEST_IUV_SINGLE',
         debtor: mockDebtor,
         amountCents: 5400,
@@ -40,13 +45,13 @@ mockDebtPositionDetail.paymentOptions = [
     paymentOptionId: 102,
     debtPositionId: 10,
     totalAmountCents: 5400,
-    status: 'REPORTED',
-    paymentOptionType: 'INSTALLMENTS',
+    status: PaymentOptionDtoStatusEnum.REPORTED,
+    paymentOptionType: PaymentOptionDtoPaymentOptionTypeEnum.INSTALLMENTS,
     paymentOptionIndex: 2,
     installments: [
       {
         installmentId: 2,
-        status: 'UNPAID',
+        status: InstallmentDtoStatusEnum.UNPAID,
         iuv: 'TEST_IUV_MULTI',
         debtor: mockDebtor,
         amountCents: 5400,
@@ -59,13 +64,13 @@ mockDebtPositionDetail.paymentOptions = [
     paymentOptionId: 103,
     debtPositionId: 10,
     totalAmountCents: 5400,
-    status: 'REPORTED',
-    paymentOptionType: 'DOWN_PAYMENT',
+    status: PaymentOptionDtoStatusEnum.REPORTED,
+    paymentOptionType: PaymentOptionDtoPaymentOptionTypeEnum.DOWN_PAYMENT,
     paymentOptionIndex: 3,
     installments: [
       {
         installmentId: 3,
-        status: 'REPORTED',
+        status: InstallmentDtoStatusEnum.REPORTED,
         iuv: 'TEST_IUV_DOWN',
         debtor: mockDebtor,
         amountCents: 5400,
