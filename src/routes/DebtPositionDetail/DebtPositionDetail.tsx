@@ -15,7 +15,11 @@ import DetailContainer, {
 import { useTranslation } from 'react-i18next';
 import { PaymentOptionSection } from './components/PaymentOptionSection';
 import { format, parseISO } from 'date-fns';
-import { PaymentOptionDTO, InstallmentDTO } from '../../../generated/apiClient';
+import {
+  PaymentOptionDTO,
+  InstallmentDTO,
+  PaymentOptionDtoPaymentOptionTypeEnum
+} from '../../../generated/apiClient';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
@@ -171,7 +175,11 @@ const DebtPositionDetail = () => {
     };
   };
 
-  const priorityType = ['SINGLE_INSTALLMENT', 'DOWN_PAYMENT', 'INSTALLMENTS'];
+  const priorityType = [
+    PaymentOptionDtoPaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+    PaymentOptionDtoPaymentOptionTypeEnum.DOWN_PAYMENT,
+    PaymentOptionDtoPaymentOptionTypeEnum.INSTALLMENTS
+  ];
 
   const paymentOptionsDisplayData = (debtPositionDetail?.paymentOptions ?? [])
     .sort(
