@@ -2,14 +2,14 @@ import { useEffect, useState, useMemo } from 'react';
 import { Grid, Typography, useTheme } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
-import TitleComponent from '../TitleComponent/TitleComponent';
-import DetailContainer from '../DetailContainer/DetailContainer';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
+import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import { useParams } from 'react-router-dom';
 import FilterContainer, {
   COMPONENT_TYPE
-} from '../FilterContainer/FilterContainer';
+} from '../../components/FilterContainer/FilterContainer';
 import { Search } from '@mui/icons-material';
-import ReportingDetailDataGrid from './ReportingDetailDataGrid';
+import ReportingDetailDataGrid from './components/ReportingDetailDataGrid';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getPaymentsReportingRows } from '../../api/reporting';
