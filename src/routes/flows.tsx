@@ -14,8 +14,8 @@ import TelematicReceiptSearchResults from './TelematicReceiptSearchResults';
 import Treasury from './Treasury';
 import TreasuryImportFlowOverview from './TreasuryImportFlowOverview';
 import TreasurySearchResults from './TreasurySearchResults';
-
 import TelematicReceiptDetail from './TelematicReceiptDetail';
+import TreasuryDetail from './TreasuryDetail';
 
 const deployPath = config.deployPath;
 
@@ -159,6 +159,15 @@ export const flowsRoutes = [
             element: <TreasurySearchResults />,
             handle: {
               backButton: false
+            } as RouteHandleObject
+          },
+          {
+            id: 'TREASURY_DETAIL',
+            path: ':id',
+            element: <TreasuryDetail />,
+            loader: loaderWithId,
+            handle: {
+              backButton: true
             } as RouteHandleObject
           }
         ]

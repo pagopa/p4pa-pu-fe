@@ -10,6 +10,10 @@ import { useTabsConfig } from './useDebtTabsConfig';
 import { PageRoutes } from '../../App';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { SearchType } from '../../models/DebtPositions';
+import { useDateRange } from '../../hooks/useDateRange';
+import { FilterFieldIds } from '../../models/SearchCardFields';
+import { DateValidationError } from '@mui/x-date-pickers';
+import { endOfDay, startOfDay, subMonths } from 'date-fns';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
@@ -17,7 +21,22 @@ export const DebtPositionsPage = () => {
   const debtTabsConfig = useTabsConfig();
 
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
-  const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}, {}]);
+
+  const {
+    fromDate,
+    toDate,
+    setFromDate,
+    setToDate,
+    setFromError,
+    setToError,
+    resetDates,
+    isButtonDisabled
+  } = useDateRange(activeTabIndex);
+
+  const [filters, setFilters] = useState<Array<BaseFilterValues>>([
+    { [FilterFieldIds.DATE_RANGE]: { from: fromDate, to: toDate } },
+    { [FilterFieldIds.DATE_RANGE]: { from: fromDate, to: toDate } }
+  ]);
 
   const navigateToResults = useCallback(() => {
     if (activeTabIndex === 0) {
@@ -38,23 +57,54 @@ export const DebtPositionsPage = () => {
   }, [activeTabIndex, filters, navigate]);
 
   const resetCurrentFilters = useCallback(() => {
+    resetDates();
     const newFilters = [...filters];
-    newFilters[activeTabIndex] = {};
+    newFilters[activeTabIndex] = {
+      ...newFilters[activeTabIndex],
+      [FilterFieldIds.DATE_RANGE]: {
+        from: startOfDay(subMonths(new Date(), 1)),
+        to: endOfDay(new Date())
+      }
+    };
     setFilters(newFilters);
-  }, [activeTabIndex, filters]);
+  }, [activeTabIndex, filters, resetDates]);
 
   const handleFilterChange = useCallback(
     (id: string, value: FilterFieldValue) => {
-      setFilters((prevFilters) => {
-        const newFilters = [...prevFilters];
+      const newFilters = [...filters];
+
+      if (id === FilterFieldIds.DATE_RANGE) {
+        const { from, to } = value as { from?: Date; to?: Date };
+        const normalizedFrom = from ?? null;
+        const normalizedTo = to ?? null;
+
+        setFromDate(normalizedFrom);
+        setToDate(normalizedTo);
+
+        if (normalizedFrom && normalizedTo && normalizedFrom > normalizedTo) {
+          setToError('invalidDate');
+        } else {
+          setToError(null);
+        }
+
+        newFilters[activeTabIndex] = {
+          ...newFilters[activeTabIndex],
+          [id]: { from: normalizedFrom, to: normalizedTo }
+        };
+      } else if (id === FilterFieldIds.DATE_RANGE + '_fromError') {
+        setFromError(value as DateValidationError | null);
+      } else if (id === FilterFieldIds.DATE_RANGE + '_toError') {
+        setToError(value as DateValidationError | null);
+      } else {
         newFilters[activeTabIndex] = {
           ...newFilters[activeTabIndex],
           [id]: value
         };
-        return newFilters;
-      });
+      }
+
+      setFilters(newFilters);
     },
-    [activeTabIndex]
+    [activeTabIndex, filters, setFromDate, setToDate, setFromError, setToError]
   );
 
   const handleTabChange = (newTabIndex: number) => {
@@ -93,7 +143,8 @@ export const DebtPositionsPage = () => {
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: navigateToResults
+                  onClick: navigateToResults,
+                  disabled: isButtonDisabled
                 }
               ]}
             />

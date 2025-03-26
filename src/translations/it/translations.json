@@ -168,6 +168,7 @@
 			"TELEMATIC_RECEIPT_INDEX": "Pagina principale",
 			"TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
 			"TREASURY": "Tesoreria",
+			"TREASURY_DETAIL": "Dettaglio Bolletta",
 			"TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
 			"TREASURY_IMPORT_OVERVIEW": "Flussi importati",
 			"TREASURY_INDEX": "Pagina principale",
@@ -257,14 +258,18 @@
 				"REPORTED": "Rendicontato",
 				"TO_SYNC": "Da sincronizzare",
 				"UNPAID": "Da pagare",
-        "INVALID": "Non valido"
+				"INVALID": "Non valido"
 			}
 		}
 	},
 	"debtPositionDetail": {
 		"debtPositionInfo": "Informazioni sulla posizione debitoria",
 		"paymentOptions": "Opzioni di Pagamento",
-		"solutionDetail": "Dettaglio soluzione"
+		"solutionDetail": "Dettaglio soluzione",
+		"timeline": {
+			"title": "Storico Posizione Debitoria",
+			"message": "È stato inviato un messaggio al cittadino su IO. ID messaggio"
+		}
 	},
 	"debtPositionSearchResults": {
 		"iuv": "Codice Avviso (IUV)",
@@ -277,6 +282,10 @@
 		"drawer": {
 			"title": "Beneficiari",
 			"info": "Ci sono presenti altri beneficiari diversi al tuo ente."
+		},
+		"timeline": {
+			"title": "Storico Avviso",
+			"message": "È stato inviato un messaggio al cittadino su IO. ID messaggio"
 		}
 	},
 	"FileUploaderFlowImport": {
@@ -394,7 +403,13 @@
 		"searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
 		"importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
 		"importflowstitle": "Importa Flussi di Tesoreria",
-		"billDetail": "Dettaglio Bolletta"
+		"billDetail": "Dettaglio Bolletta",
+		"payer": "Ordinante",
+		"account": "Conto",
+		"billingYear": "Anno codice documento",
+		"documentCode": "Codice documento",
+		"tempDocumentYear": "Anno codice Provvisorio",
+		"tempDocumentCode": "Codice provvisorio"
 	},
 	"treasuryImportFlowOverview": {
 		"description": "Visualizza i flussi importati in precedenza e importa nuovi."

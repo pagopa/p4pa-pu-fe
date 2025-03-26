@@ -12,6 +12,7 @@ import {
   BaseFilterValues,
   FilterFieldValue
 } from '../../models/Filters';
+import { endOfDay, startOfDay } from 'date-fns';
 
 export enum COMPONENT_TYPE {
   textField = 'textField',
@@ -173,22 +174,22 @@ const RenderComponent = ({
             ...dateItem?.from,
             value:
               currentValue && 'from' in currentValue
-                ? currentValue?.from
+                ? currentValue?.from && startOfDay(currentValue?.from)
                 : null,
             onChange: (date: Date | null) => {
               if (dateItem?.from?.onChange) {
-                dateItem?.from.onChange(date);
+                dateItem?.from.onChange(date && startOfDay(date));
               }
 
               if (onChange) {
                 const toDate =
                   currentValue && 'to' in currentValue
-                    ? currentValue?.to
+                    ? currentValue?.to && endOfDay(currentValue?.to)
                     : null;
 
                 onChange(fieldId, {
-                  from: date,
-                  to: toDate
+                  from: date && startOfDay(date),
+                  to: toDate && endOfDay(toDate)
                 });
               }
             }
@@ -199,21 +200,23 @@ const RenderComponent = ({
         ? {
             ...dateItem?.to,
             value:
-              currentValue && 'to' in currentValue ? currentValue.to : null,
+              currentValue && 'to' in currentValue
+                ? currentValue.to && endOfDay(currentValue.to)
+                : null,
             onChange: (date: Date | null) => {
               if (dateItem?.to?.onChange) {
-                dateItem?.to.onChange(date);
+                dateItem?.to.onChange(date && endOfDay(date));
               }
 
               if (onChange) {
                 const fromDate =
                   currentValue && 'from' in currentValue
-                    ? currentValue.from
+                    ? currentValue?.from && startOfDay(currentValue?.from)
                     : null;
 
                 onChange(fieldId, {
-                  from: fromDate,
-                  to: date
+                  from: fromDate && startOfDay(fromDate),
+                  to: date && endOfDay(date)
                 });
               }
             }
@@ -225,6 +228,12 @@ const RenderComponent = ({
           {...dateItem}
           from={fromConfig}
           to={toConfig}
+          onFromErrorChange={(err) => {
+            if (onChange) onChange(`${fieldId}_fromError`, err);
+          }}
+          onToErrorChange={(err) => {
+            if (onChange) onChange(`${fieldId}_toError`, err);
+          }}
         />
       );
     }
