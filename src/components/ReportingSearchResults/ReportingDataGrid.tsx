@@ -44,38 +44,6 @@ const SearchResultsDataGrid = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  console.log('data', data);
-
-  // const rows: Array<SearchResultDataRow> = [
-  //   {
-  //     id: 1,
-  //     idReporting: '2024-11-10123531',
-  //     idRegulation: '49445-2454456456',
-  //     regulationDate: '05/11/2021',
-  //     flowDateTime: '05/11/2021 04:06:44',
-  //     totalPayments: '100',
-  //     totalAmountCents: '100,00 €'
-  //   },
-  //   {
-  //     id: 2,
-  //     idReporting: '2024-11-10123531',
-  //     idRegulation: '50445-2454456456',
-  //     regulationDate: '06/11/2021',
-  //     flowDateTime: '06/11/2021 05:06:44',
-  //     totalPayments: '200',
-  //     totalAmountCents: '200,00 €'
-  //   },
-  //   {
-  //     id: 3,
-  //     idReporting: '2024-12-10123531',
-  //     idRegulation: '514453-2454456456',
-  //     regulationDate: '07/11/2021',
-  //     flowDateTime: '07/11/2021 06:06:44',
-  //     totalPayments: '300',
-  //     totalAmountCents: '300,00 €'
-  //   }
-  // ];
-
   const columns: Array<GridColDef> = [
     {
       field: 'iuf',

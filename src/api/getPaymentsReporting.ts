@@ -18,7 +18,6 @@ export const getPaymentsReporting = (organizationId: number) => {
             indexes: null
           }
         });
-      console.log('paymentsReporting', paymentsReporting);
       return paymentsReporting;
     }
   });
