@@ -21,19 +21,18 @@ export type UseReportingSearchProps = {
   initialFilters: PaymentsReportingFilters;
   initialPage?: number;
   initialSize?: number;
+  totalElements?: number;
 };
 
 export const useReportingSearch = ({
   initialFilters,
   initialPage,
-  initialSize
+  initialSize,
+  totalElements
 }: UseReportingSearchProps) => {
   const [filterValues, setFilterValues] =
     useState<PaymentsReportingFilters>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
-
-  console.log('initialPage', initialPage);
-  console.log('initialSize', initialSize);
 
   const {
     state: { organizationId }
@@ -45,7 +44,10 @@ export const useReportingSearch = ({
     useDataGridPagination({
       initialPage: initialPage ?? 0,
       initialSize: initialSize ?? 10,
-      onPaginationChange: () => query.mutate(filterToRequest())
+      onPaginationChange: () => {
+        query.mutate(filterToRequest());
+      },
+      totalElements
     });
 
   useEffect(() => {
