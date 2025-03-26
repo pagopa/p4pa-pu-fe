@@ -29,3 +29,14 @@ export function optionMapsConverter(
     value: item
   }));
 }
+
+export function formatDate(dateString?: string) {
+  if (!dateString) return '';
+  return new Date(dateString).toLocaleDateString('it-IT');
+}
+
+export function formatDateTime(dateTimeString?: string) {
+  if (!dateTimeString) return '';
+  const date = new Date(dateTimeString);
+  return `${date.toLocaleDateString('it-IT')} ${date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+}

@@ -28,30 +28,43 @@ type ReportingDetailDataGridProps = {
   sortModel: GridSortModel;
   onSortModelChange: (model: GridSortModel) => void;
   customPagination: CustomPaginationProps;
+  isLoading?: boolean;
 };
 
 const ReportingDetailDataGrid = ({
   rows,
   sortModel,
   onSortModelChange,
-  customPagination
+  customPagination,
+  isLoading = false
 }: ReportingDetailDataGridProps) => {
   const { t } = useTranslation();
 
   const columns: Array<GridColDef> = [
-    { field: 'iuv', headerName: t('commons.iuv'), flex: 1, type: 'string' },
-    { field: 'iur', headerName: t('commons.iur'), flex: 1, type: 'string' },
+    {
+      field: 'iuv',
+      headerName: t('commons.iuv'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'iur',
+      headerName: t('commons.iur'),
+      flex: 1,
+      type: 'string'
+    },
     {
       field: 'amountPaidCents',
       headerName: t('commons.amount'),
-      flex: 1,
+      flex: 0.7,
       type: 'string',
-      valueFormatter: ({ value }) => moneyFormat(value || 0)
+      renderCell: (params: GridRenderCellParams<PaymentsReporting>) =>
+        moneyFormat(params.value as number)
     },
     {
       field: 'payDate',
       headerName: t('commons.paymentdate'),
-      flex: 1,
+      flex: 0.5,
       type: 'string',
       renderCell: (params: GridRenderCellParams) =>
         params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
@@ -90,6 +103,7 @@ const ReportingDetailDataGrid = ({
         sortModel={sortModel}
         onSortModelChange={onSortModelChange}
         customPagination={customPagination}
+        loading={isLoading}
       />
     </>
   );

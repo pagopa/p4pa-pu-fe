@@ -1,11 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { Grid, Typography, useTheme } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import DetailContainer, {
-  DetailData
-} from '../DetailContainer/DetailContainer';
+import DetailContainer from '../DetailContainer/DetailContainer';
 import { useParams } from 'react-router-dom';
 import FilterContainer, {
   COMPONENT_TYPE
@@ -15,8 +13,14 @@ import ReportingDetailDataGrid from './ReportingDetailDataGrid';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getPaymentsReportingRows } from '../../api/reporting';
-import { moneyFormat } from '../../utils/formatters';
+import {
+  formatDate,
+  formatDateTime,
+  moneyFormat
+} from '../../utils/formatters';
 import { useReportingDetailFilters } from '../../hooks/useReportingDetailFilters';
+import { PaymentsReporting } from '../../../generated/apiClient';
+import { Variant } from '@mui/material/styles/createTypography';
 
 export const ReportingDetail = () => {
   const { t } = useTranslation();
@@ -26,6 +30,8 @@ export const ReportingDetail = () => {
 
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
+  const [detailItem, setDetailItem] = useState<PaymentsReporting | null>(null);
 
   const {
     appliedFilters,
@@ -40,58 +46,75 @@ export const ReportingDetail = () => {
     handleSortModelChange
   } = useReportingDetailFilters();
 
-  const { data, mutate } = getPaymentsReportingRows(organizationId, iuf);
+  const cleanedFilters = useMemo(() => {
+    const cleaned = { ...appliedFilters };
+    if (cleaned.iuv === '') {
+      cleaned.iuv = undefined;
+    }
+    return cleaned;
+  }, [appliedFilters]);
+
+  const { data, isLoading } = getPaymentsReportingRows(
+    organizationId,
+    iuf,
+    cleanedFilters,
+    { enabled: !!organizationId && !!iuf }
+  );
 
   useEffect(() => {
-    if (iuf && organizationId) {
-      mutate(appliedFilters);
+    if (data?.content?.[0] && !detailItem) {
+      setDetailItem(data.content[0]);
     }
-  }, [iuf, organizationId, appliedFilters, mutate]);
+  }, [data, detailItem]);
 
-  const firstReportItem = data?.content?.[0];
+  const detailSections = useMemo(() => {
+    const firstReportItem = detailItem;
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return '';
-    return new Date(dateString).toLocaleDateString('it-IT');
-  };
+    const summaryData = [
+      {
+        label: t('reportingDetail.reportingIdOrIUF'),
+        value: firstReportItem?.iuf || iuf
+      },
+      {
+        label: t('reportingDetail.regulationId'),
+        value: firstReportItem?.regulationUniqueIdentifier || ''
+      },
+      {
+        label: t('reportingDetail.hourAndDate'),
+        value: formatDateTime(firstReportItem?.flowDateTime)
+      },
+      {
+        label: t('reportingDetail.regulationDate'),
+        value: formatDate(firstReportItem?.regulationDate)
+      }
+    ];
 
-  const formatDateTime = (dateTimeString?: string) => {
-    if (!dateTimeString) return '';
-    const date = new Date(dateTimeString);
-    return `${date.toLocaleDateString('it-IT')} ${date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
-  };
+    const paymentData = [
+      {
+        label: t('reportingDetail.totalPayments'),
+        value: firstReportItem?.totalPayments?.toString() || ''
+      },
+      {
+        label: t('reportingDetail.totalAmount'),
+        value: firstReportItem?.totalAmountCents
+          ? moneyFormat(firstReportItem.totalAmountCents)
+          : ''
+      }
+    ];
 
-  const summaryData: Array<DetailData> = [
-    {
-      label: 'ID Rendicontazione / IUF',
-      value: firstReportItem?.iuf || iuf
-    },
-    {
-      label: 'ID Regolamento',
-      value: firstReportItem?.regulationUniqueIdentifier || ''
-    },
-    {
-      label: 'Data e ora',
-      value: formatDateTime(firstReportItem?.flowDateTime)
-    },
-    {
-      label: 'Data regolamento',
-      value: formatDate(firstReportItem?.regulationDate)
-    }
-  ];
-
-  const paymentData: Array<DetailData> = [
-    {
-      label: 'Totale pagamenti',
-      value: firstReportItem?.totalPayments?.toString() || ''
-    },
-    {
-      label: 'Importo totale',
-      value: firstReportItem?.totalAmountCents
-        ? moneyFormat(firstReportItem.totalAmountCents)
-        : ''
-    }
-  ];
+    return [
+      {
+        title: { label: t('commons.summary'), variant: 'overline' as Variant },
+        data: [...summaryData],
+        inline: true
+      },
+      {
+        title: { label: t('commons.payments'), variant: 'overline' as Variant },
+        data: [...paymentData],
+        inline: true
+      }
+    ];
+  }, [detailItem, iuf, t]);
 
   return (
     <>
@@ -105,24 +128,13 @@ export const ReportingDetail = () => {
           }
         ]}
       />
+
       <Grid container spacing={2}>
         <Grid item md={12}>
-          <DetailContainer
-            sections={[
-              {
-                title: { label: t('commons.summary'), variant: 'overline' },
-                data: [...summaryData],
-                inline: true
-              },
-              {
-                title: { label: t('commons.payment'), variant: 'overline' },
-                data: [...paymentData],
-                inline: true
-              }
-            ]}
-          />
+          <DetailContainer sections={detailSections} />
         </Grid>
       </Grid>
+
       <Grid container marginTop={4}>
         <Typography variant="h6">{t('commons.detail')}</Typography>
         <Grid
@@ -183,13 +195,17 @@ export const ReportingDetail = () => {
             rows={data?.content || []}
             sortModel={sortModel}
             onSortModelChange={handleSortModelChange}
+            isLoading={isLoading}
             customPagination={{
               totalPages: data?.totalPages || 0,
               totalElements: data?.totalElements || 0,
               defaultPageOption: appliedFilters.size,
               sizePageOptions: [5, 10, 15, 20],
               onPageChange: (page) =>
-                updatePagination({ page: page - 1, size: appliedFilters.size }),
+                updatePagination({
+                  page: page - 1,
+                  size: appliedFilters.size
+                }),
               onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
               currentPage: appliedFilters.page + 1
             }}

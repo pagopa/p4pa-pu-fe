@@ -57,10 +57,22 @@ export const useReportingDetailFilters = ({
 
   const updateDraftFilters = useCallback(
     (updates: Partial<ReportingDetailFilters>) => {
-      setDraftFilters((prev) => ({
-        ...prev,
-        ...updates
-      }));
+      setDraftFilters((prev) => {
+        const cleanedUpdates = { ...updates };
+
+        Object.keys(cleanedUpdates).forEach((key) => {
+          const typedKey = key as keyof ReportingDetailFilters;
+          const value = cleanedUpdates[typedKey];
+          if (typeof value === 'string' && value === '') {
+            cleanedUpdates[typedKey] = undefined;
+          }
+        });
+
+        return {
+          ...prev,
+          ...cleanedUpdates
+        };
+      });
     },
     []
   );
@@ -68,6 +80,7 @@ export const useReportingDetailFilters = ({
   const applyFilters = useCallback(() => {
     const filtersToApply = {
       ...draftFilters,
+      iuv: draftFilters.iuv?.trim() || undefined,
       page: 0
     };
     setAppliedFilters(filtersToApply);
