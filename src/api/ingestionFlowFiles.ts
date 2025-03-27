@@ -1,9 +1,12 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
-import { RequestParams } from '../../generated/fileshare/fileshareClient';
 import {
-  GetIngestionFlowFilesParamsFlowFileTypesEnum,
-  GetIngestionFlowFilesParamsStatusEnum
+  IngestionFlowFileType,
+  RequestParams
+} from '../../generated/fileshare/fileshareClient';
+import {
+  IngestionFlowFileStatus,
+  IngestionFlowFileTypeEnum
 } from '../../generated/apiClient';
 
 export enum FileOrigin {
@@ -12,25 +15,13 @@ export enum FileOrigin {
   PAGOPA = 'PAGOPA'
 }
 
-export enum IngestionFlowFileType {
-  RECEIPT = 'RECEIPT',
-  RECEIPT_PAGOPA = 'RECEIPT_PAGOPA',
-  PAYMENTS_REPORTING = 'PAYMENTS_REPORTING',
-  PAYMENTS_REPORTING_PAGOPA = 'PAYMENTS_REPORTING_PAGOPA',
-  TREASURY_OPI = 'TREASURY_OPI',
-  TREASURY_CSV = 'TREASURY_CSV',
-  TREASURY_XLS = 'TREASURY_XLS',
-  TREASURY_POSTE = 'TREASURY_POSTE',
-  DP_INSTALLMENTS = 'DP_INSTALLMENTS'
-}
-
 export const getIngestionFlowFiles = (
   organizationId: number,
   query: {
-    flowFileTypes: Array<GetIngestionFlowFilesParamsFlowFileTypesEnum>;
+    ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
     creationDateFrom?: string;
     creationDateTo?: string;
-    status?: GetIngestionFlowFilesParamsStatusEnum;
+    status?: IngestionFlowFileStatus;
     fileName?: string;
     page?: number;
     size?: number;

@@ -22,20 +22,20 @@ import {
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { STATE } from '../../store/types';
-import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../../generated/apiClient';
+import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
   title: string;
   description?: string;
-  flowFileTypes: Array<GetIngestionFlowFilesParamsFlowFileTypesEnum>;
+  ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
 };
 
 const ImportFlowOverview = ({
   routingCategory,
   title,
   description,
-  flowFileTypes
+  ingestionFlowFileTypes
 }: ImportFlowOverviewProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -56,7 +56,7 @@ const ImportFlowOverview = ({
     sortModel,
     handleSortModelChange
   } = useFlowFilters({
-    flowFileTypes: flowFileTypes
+    ingestionFlowFileTypes: ingestionFlowFileTypes
   });
 
   const { data } = getIngestionFlowFiles(organizationId, appliedFilters);

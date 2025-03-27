@@ -5,7 +5,7 @@ import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../App';
 import FlowOverview from './ImportFlowOverview';
-import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../../generated/apiClient';
+import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
 
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal()),
@@ -223,7 +223,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -237,7 +237,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -256,7 +256,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -271,7 +271,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -297,7 +297,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -314,7 +314,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -340,7 +340,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -367,7 +367,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -390,12 +390,12 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(expect.any(Number), {
-      flowFileTypes: ['RECEIPT'],
+      ingestionFlowFileTypes: ['RECEIPT'],
       page: 0,
       size: 10
     });
@@ -407,7 +407,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -433,14 +433,14 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(
       expect.any(Number),
       expect.objectContaining({
-        flowFileTypes: ['RECEIPT'],
+        ingestionFlowFileTypes: ['RECEIPT'],
         page: 0,
         size: 10
       })
@@ -458,7 +458,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         expect(getIngestionFlowFiles).toHaveBeenCalledWith(
           expect.any(Number),
           expect.objectContaining({
-            flowFileTypes: ['RECEIPT'],
+            ingestionFlowFileTypes: ['RECEIPT'],
             page: 0,
             size: 20
           })
@@ -473,7 +473,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -490,7 +490,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         expect(getIngestionFlowFiles).toHaveBeenCalledWith(
           expect.any(Number),
           expect.objectContaining({
-            flowFileTypes: ['RECEIPT'],
+            ingestionFlowFileTypes: ['RECEIPT'],
             page: 1,
             size: 10
           })
@@ -505,7 +505,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -536,7 +536,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -572,7 +572,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -602,7 +602,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -654,7 +654,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -701,7 +701,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -718,7 +718,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -742,7 +742,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
       expect(getIngestionFlowFiles).toHaveBeenCalledWith(
         123,
         expect.objectContaining({
-          flowFileTypes: ['RECEIPT'],
+          ingestionFlowFileTypes: ['RECEIPT'],
           page: 0,
           size: 10
         })
@@ -756,7 +756,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -774,7 +774,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
       expect(getIngestionFlowFiles).toHaveBeenCalledWith(
         123,
         expect.objectContaining({
-          flowFileTypes: ['RECEIPT'],
+          ingestionFlowFileTypes: ['RECEIPT'],
           page: 0,
           size: 10,
           status: 'COMPLETED'
@@ -795,7 +795,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
@@ -819,7 +819,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         routingCategory={'test'}
         title={'test title'}
         description={'test description'}
-        flowFileTypes={[GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT]}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 

@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import ImportFlowOverview from '../ImportFlowOverview/ImportFlowOverview';
-import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../../generated/apiClient';
+import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
 
 const TelematicReceiptImportFlowOverview = () => {
   const { t } = useTranslation();
@@ -10,9 +10,9 @@ const TelematicReceiptImportFlowOverview = () => {
       routingCategory="telematic-receipt"
       title={t('commons.routes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW')}
       description={t('telematicReceiptImportFlowOverview.description')}
-      flowFileTypes={[
-        GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT,
-        GetIngestionFlowFilesParamsFlowFileTypesEnum.RECEIPT_PAGOPA
+      ingestionFlowFileTypes={[
+        IngestionFlowFileTypeEnum.RECEIPT,
+        IngestionFlowFileTypeEnum.RECEIPT_PAGOPA
       ]}
     />
   );
