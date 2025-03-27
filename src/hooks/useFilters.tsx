@@ -1,16 +1,42 @@
 import { useTranslation } from 'react-i18next';
 import {
-  FilterItem,
-  COMPONENT_TYPE
+  COMPONENT_TYPE,
+  FilterItem
 } from '../components/FilterContainer/FilterContainer';
+import { useStore } from '../store/GlobalStore';
+import {
+  initialFilterValues,
+  setFilterValues
+} from '../store/FilterValuesStore';
+import { ChangeEvent, useEffect } from 'react';
+import { removeAllFilters } from '../store/FilterStore';
 
 export type FilterMap = Record<
   string,
   { label: string; fields: Array<FilterItem> }
 >;
 
-export const useFilters = () => {
+export const useFilters = (props?: { cleanOnMount?: boolean }) => {
   const { t } = useTranslation();
+  const {
+    state: { filterValues }
+  } = useStore();
+
+  useEffect(() => {
+    if (props?.cleanOnMount) {
+      setFilterValues(initialFilterValues);
+      removeAllFilters();
+    }
+  }, []);
+
+  const fieldControl = <V, C = V | null>(
+    field: keyof typeof filterValues,
+    extract: (value: C) => V | C = (v: C) => v
+  ) => ({
+    value: filterValues[field] as V,
+    onChange: (value: C) =>
+      setFilterValues({ ...filterValues, [field]: extract(value) })
+  });
 
   const filterMap: FilterMap = {
     ACCOUNTING_DATE: {
@@ -19,8 +45,14 @@ export const useFilters = () => {
         {
           type: COMPONENT_TYPE.dateRange,
           label: t('commons.filters.accountingDate.date'),
-          from: { label: t('dates.from') },
-          to: { label: t('dates.to') }
+          from: {
+            label: t('dates.from'),
+            ...fieldControl<Date>('ACCOUNTING_DATE_FROM')
+          },
+          to: {
+            label: t('dates.to'),
+            ...fieldControl<Date>('ACCOUNTING_DATE_TO')
+          }
         }
       ]
     },
@@ -30,7 +62,10 @@ export const useFilters = () => {
         {
           type: COMPONENT_TYPE.amount,
           label: t('commons.filters.amount.value'),
-          defaultValue: 0
+          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
+            'AMOUNT',
+            (v) => v.target.value
+          )
         }
       ]
     },
@@ -40,12 +75,19 @@ export const useFilters = () => {
         {
           label: t('commons.filters.bill.code'),
           type: COMPONENT_TYPE.textField,
-          gridWidth: 6
+          gridWidth: 6,
+          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
+            'BILL_CODE',
+            (v) => v.target.value
+          )
         },
         {
           label: t('commons.filters.bill.date.label'),
           type: COMPONENT_TYPE.dateRange,
-          from: { label: t('dates.year') },
+          from: {
+            label: t('dates.year'),
+            ...fieldControl<Date>('BILL_FROM')
+          },
           isYear: true,
           gridWidth: 6
         }
@@ -57,12 +99,19 @@ export const useFilters = () => {
         {
           type: COMPONENT_TYPE.textField,
           label: t('commons.filters.documentCode.code'),
-          gridWidth: 6
+          gridWidth: 6,
+          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
+            'DOCUMENT_CODE',
+            (v) => v.target.value
+          )
         },
         {
           label: t('commons.filters.documentCode.label'),
           type: COMPONENT_TYPE.dateRange,
-          from: { label: t('dates.year') },
+          from: {
+            label: t('dates.year'),
+            ...fieldControl<Date>('DOCUMENT_CODE_FROM')
+          },
           isYear: true,
           gridWidth: 6
         }
@@ -71,7 +120,14 @@ export const useFilters = () => {
     IUV: {
       label: t('commons.filters.iuv.label'),
       fields: [
-        { label: t('commons.filters.iuv.code'), type: COMPONENT_TYPE.textField }
+        {
+          label: t('commons.filters.iuv.code'),
+          type: COMPONENT_TYPE.textField,
+          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
+            'IUV',
+            (v) => v.target.value
+          )
+        }
       ]
     },
     PAYER: {
@@ -79,7 +135,11 @@ export const useFilters = () => {
       fields: [
         {
           type: COMPONENT_TYPE.textField,
-          label: t('commons.filters.payer.name')
+          label: t('commons.filters.payer.name'),
+          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
+            'PAYER',
+            (v) => v.target.value
+          )
         }
       ]
     },
@@ -88,7 +148,11 @@ export const useFilters = () => {
       fields: [
         {
           type: COMPONENT_TYPE.textField,
-          label: t('commons.filters.reportId.code')
+          label: t('commons.filters.reportId.code'),
+          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
+            'REPORT_ID',
+            (v) => v.target.value
+          )
         }
       ]
     },
@@ -98,12 +162,19 @@ export const useFilters = () => {
         {
           type: COMPONENT_TYPE.textField,
           label: t('commons.filters.temporaryCode.code'),
-          gridWidth: 6
+          gridWidth: 6,
+          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
+            'TEMPORARY_CODE',
+            (v) => v.target.value
+          )
         },
         {
           label: t('commons.filters.temporaryCode.label'),
           type: COMPONENT_TYPE.dateRange,
-          from: { label: t('dates.year') },
+          from: {
+            label: t('dates.year'),
+            ...fieldControl<Date>('TEMPORARY_CODE_FROM')
+          },
           isYear: true,
           gridWidth: 6
         }
@@ -115,8 +186,14 @@ export const useFilters = () => {
         {
           type: COMPONENT_TYPE.dateRange,
           label: t('commons.filters.valueDate.date'),
-          from: { label: t('dates.from') },
-          to: { label: t('dates.to') }
+          from: {
+            label: t('dates.from'),
+            ...fieldControl<Date>('VALUE_DATE_FROM')
+          },
+          to: {
+            label: t('dates.to'),
+            ...fieldControl<Date>('VALUE_DATE_TO')
+          }
         }
       ]
     }

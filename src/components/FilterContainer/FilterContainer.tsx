@@ -57,17 +57,7 @@ export type ButtonField = {
 export type DateRangeField = {
   type: COMPONENT_TYPE.dateRange;
   isYear?: boolean;
-  from?: {
-    label?: string;
-    errorMessage?: string;
-    onChange?: (date: Date | null) => void;
-  };
-  to?: {
-    label?: string;
-    errorMessage?: string;
-    onChange?: (date: Date | null) => void;
-  };
-} & Omit<DateRangeProps, 'from' | 'to' | 'onChange'>;
+} & DateRangeProps;
 
 type TypeUnion =
   | SearchField
@@ -225,9 +215,9 @@ const RenderComponent = ({
 
       return (
         <FormComponent.DateRange
-          {...dateItem}
           from={fromConfig}
           to={toConfig}
+          {...dateItem}
           onFromErrorChange={(err) => {
             if (onChange) onChange(`${fieldId}_fromError`, err);
           }}

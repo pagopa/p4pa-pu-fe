@@ -7,10 +7,17 @@ import { FilterAlt } from '@mui/icons-material';
 import { useState } from 'react';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
-import { useFilters } from '../../hooks/useFilters';
+import { FilterMap, useFilters } from '../../hooks/useFilters';
 import { useStore } from '../../store/GlobalStore';
 import { removeAllFilters } from '../../store/FilterStore';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
+import { BaseFilterValues } from '../../models/Filters';
+
+export type LocationState = {
+  category: string;
+  filters: BaseFilterValues;
+  filterMap: FilterMap;
+};
 
 const TreasurySearchResults = () => {
   const theme = useTheme();

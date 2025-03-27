@@ -6,11 +6,10 @@ import { FilterMap } from '../../hooks/useFilters';
 import { useStore } from '../../store/GlobalStore';
 import {
   addFilterRow,
-  removeAllFilters,
   removeFilterRow,
   updateFilter
 } from '../../store/FilterStore';
-import { ChangeEvent, useEffect } from 'react';
+import { ChangeEvent } from 'react';
 
 export type MultiFilterProps = {
   filterMap: FilterMap;
@@ -23,10 +22,6 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
   const {
     state: { filters }
   } = useStore();
-
-  useEffect(() => {
-    removeAllFilters();
-  }, []);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     updateFilter(e.target.value, index);

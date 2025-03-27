@@ -10,6 +10,7 @@ import { AppState } from '../models/AppState';
 import { filtersState } from './FilterStore';
 import { operatorRoleState, setOperatorRole } from './OperatorRoleStore';
 import { OperatoRole } from '../models/OperatorRole';
+import { filterValues } from './FilterValuesStore';
 
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
 
@@ -22,6 +23,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({
     [STATE.ORGANIZATION_ID]: organizationIdState.state?.value,
     [STATE.USER_INFO]: userInfoState.state?.value,
     [STATE.FILTERS]: filtersState?.value,
+    [STATE.FILTER_VALUES]: filterValues?.value,
     [STATE.OPERATOR_ROLE]: operatorRoleState.value
   };
 

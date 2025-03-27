@@ -12,7 +12,7 @@ import { useStore } from '../../store/GlobalStore';
 
 export const Treasury = () => {
   const { t } = useTranslation();
-  const filterMap = useFilters();
+  const filterMap = useFilters({ cleanOnMount: true });
   const navigate = useNavigate();
   const {
     state: { filters }
@@ -41,7 +41,12 @@ export const Treasury = () => {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
                   disabled: filters[0] === '' || filters.length === 0,
-                  onClick: () => navigate(PageRoutes.TREASURY_SEARCH_RESULTS)
+                  onClick: () =>
+                    navigate(PageRoutes.TREASURY_SEARCH_RESULTS, {
+                      state: {
+                        filters
+                      }
+                    })
                 }
               ]}
             />
