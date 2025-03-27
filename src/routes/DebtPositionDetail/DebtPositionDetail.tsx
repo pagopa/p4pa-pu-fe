@@ -18,7 +18,7 @@ import { format, parseISO } from 'date-fns';
 import {
   PaymentOptionDTO,
   InstallmentDTO,
-  PaymentOptionDtoPaymentOptionTypeEnum
+  PaymentOptionTypeEnum
 } from '../../../generated/apiClient';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
@@ -176,9 +176,9 @@ const DebtPositionDetail = () => {
   };
 
   const priorityType = [
-    PaymentOptionDtoPaymentOptionTypeEnum.SINGLE_INSTALLMENT,
-    PaymentOptionDtoPaymentOptionTypeEnum.DOWN_PAYMENT,
-    PaymentOptionDtoPaymentOptionTypeEnum.INSTALLMENTS
+    PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+    PaymentOptionTypeEnum.DOWN_PAYMENT,
+    PaymentOptionTypeEnum.INSTALLMENTS
   ];
 
   const paymentOptionsDisplayData = (debtPositionDetail?.paymentOptions ?? [])
