@@ -4,7 +4,7 @@ import { renderHook } from '../__tests__/renderers';
 import useDebtPositionSearch, {
   DebtPositionFilters
 } from './useDebtPositionsSearch';
-import { GetDebtPositionViewsParamsStatusEnum } from '../../generated/apiClient';
+import { DebtPositionStatus } from '../../generated/apiClient';
 
 const mockRequest = vi.fn().mockReturnValue({
   mutate: vi.fn(),
@@ -19,7 +19,7 @@ describe('useDebtPositionSearch', () => {
       from: new Date('2024-01-01'),
       to: new Date('2024-12-31')
     },
-    status: GetDebtPositionViewsParamsStatusEnum.TO_SYNC
+    status: DebtPositionStatus.TO_SYNC
   };
 
   it('should initialize with default values', () => {

@@ -64,7 +64,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(
       expect.any(Number),
       expect.objectContaining({
-        flowFileTypes: ['RECEIPT', 'RECEIPT_PAGOPA']
+        ingestionFlowFileTypes: ['RECEIPT', 'RECEIPT_PAGOPA']
       })
     );
   });

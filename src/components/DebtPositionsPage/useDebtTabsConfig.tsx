@@ -5,7 +5,7 @@ import { FilterFieldIds } from '../../models/SearchCardFields';
 import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
 import { useStore } from '../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
-import { PaymentsReportingDetailDtoStatusEnum } from '../../../generated/data-contracts';
+import { DebtPositionStatus } from '../../../generated/data-contracts';
 import { optionMapsConverter } from '../../utils/formatters';
 
 export const useTabsConfig = (): Array<TabsConfig> => {
@@ -16,9 +16,7 @@ export const useTabsConfig = (): Array<TabsConfig> => {
 
   const types = useDebtPositionsTypeOrg({ organizationId });
 
-  const debtPositionsStatus = Object.values(
-    PaymentsReportingDetailDtoStatusEnum
-  );
+  const debtPositionsStatus = Object.values(DebtPositionStatus);
   const debtPositionList = optionMapsConverter(debtPositionsStatus);
 
   return [

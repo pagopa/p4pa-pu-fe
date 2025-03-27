@@ -17,11 +17,9 @@ import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { importFlowConfig } from '../../models/ImportDetails';
 import { PageRoutes } from '../../App';
-import {
-  IngestionFlowFileType,
-  uploadIngestionFlowFile
-} from '../../api/ingestionFlowFiles';
+import { uploadIngestionFlowFile } from '../../api/ingestionFlowFiles';
 import { useStore } from '../../store/GlobalStore';
+import { IngestionFlowFileType } from '../../../generated/fileshare/fileshareClient';
 
 const ImportFlow = () => {
   const { t } = useTranslation();

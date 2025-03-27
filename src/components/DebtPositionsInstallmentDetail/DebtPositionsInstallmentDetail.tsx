@@ -6,7 +6,7 @@ import DetailContainer, {
   DetailData
 } from '../DetailContainer/DetailContainer';
 import EmptyDetailContainer from './EmptyDetailContainer';
-import { InstallmentDetailDtoStatusEnum } from '../../../generated/apiClient';
+import { InstallmentStatus } from '../../../generated/apiClient';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
@@ -66,9 +66,9 @@ export const DebtPositionsInstallmentDetail = () => {
     return `${fiscalCode}${entityLabel}`;
   };
 
-  const DEBT_RESOLVED_STATES: Array<InstallmentDetailDtoStatusEnum> = [
-    InstallmentDetailDtoStatusEnum.PAID,
-    InstallmentDetailDtoStatusEnum.REPORTED
+  const DEBT_RESOLVED_STATES: Array<InstallmentStatus> = [
+    InstallmentStatus.PAID,
+    InstallmentStatus.REPORTED
   ];
   const isResolved =
     installment?.status && DEBT_RESOLVED_STATES.includes(installment.status);
