@@ -62,7 +62,7 @@ describe('TreasuryImportFlowOverview', () => {
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(
       expect.any(Number),
       expect.objectContaining({
-        flowFileTypes: [
+        ingestionFlowFileTypes: [
           'TREASURY_CSV',
           'TREASURY_OPI',
           'TREASURY_POSTE',

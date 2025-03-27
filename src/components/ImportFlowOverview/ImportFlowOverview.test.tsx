@@ -395,7 +395,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
     );
 
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(expect.any(Number), {
-      flowFileTypes: ['RECEIPT'],
+      ingestionFlowFileTypes: ['RECEIPT'],
       page: 0,
       size: 10
     });
@@ -440,7 +440,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(
       expect.any(Number),
       expect.objectContaining({
-        flowFileTypes: ['RECEIPT'],
+        ingestionFlowFileTypes: ['RECEIPT'],
         page: 0,
         size: 10
       })
@@ -458,7 +458,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         expect(getIngestionFlowFiles).toHaveBeenCalledWith(
           expect.any(Number),
           expect.objectContaining({
-            flowFileTypes: ['RECEIPT'],
+            ingestionFlowFileTypes: ['RECEIPT'],
             page: 0,
             size: 20
           })
@@ -490,7 +490,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         expect(getIngestionFlowFiles).toHaveBeenCalledWith(
           expect.any(Number),
           expect.objectContaining({
-            flowFileTypes: ['RECEIPT'],
+            ingestionFlowFileTypes: ['RECEIPT'],
             page: 1,
             size: 10
           })
@@ -742,7 +742,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
       expect(getIngestionFlowFiles).toHaveBeenCalledWith(
         123,
         expect.objectContaining({
-          flowFileTypes: ['RECEIPT'],
+          ingestionFlowFileTypes: ['RECEIPT'],
           page: 0,
           size: 10
         })
@@ -774,7 +774,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
       expect(getIngestionFlowFiles).toHaveBeenCalledWith(
         123,
         expect.objectContaining({
-          flowFileTypes: ['RECEIPT'],
+          ingestionFlowFileTypes: ['RECEIPT'],
           page: 0,
           size: 10,
           status: 'COMPLETED'
