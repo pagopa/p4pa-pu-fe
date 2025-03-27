@@ -38,7 +38,7 @@ const ReportingSearchResults = () => {
   const { filters } = useReportingFilters({
     onFilter: () => {
       reportingSearch.applyFilters();
-      // forzo la pagina a 0
+      // forzo la pagina a 0 + 1 perché la pagina in url è 1-based
       handlePageChange(0 + 1);
     }
   });
