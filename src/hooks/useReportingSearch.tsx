@@ -8,17 +8,18 @@ import {
 } from '../api/getPaymentsReporting';
 
 // Definizione dei filtri per la ricerca
-export type PaymentsReportingFilters = {
+export type ReportingFilters = {
   dateRange?: {
     from: Date;
     to: Date;
   };
   regulationUniqueIdentifier?: string;
   organizationId?: number;
+  iuf?: string;
 };
 
 export type UseReportingSearchProps = {
-  initialFilters: PaymentsReportingFilters;
+  initialFilters: ReportingFilters;
   initialPage?: number;
   initialSize?: number;
   totalElements?: number;
@@ -31,7 +32,7 @@ export const useReportingSearch = ({
   totalElements
 }: UseReportingSearchProps) => {
   const [filterValues, setFilterValues] =
-    useState<PaymentsReportingFilters>(initialFilters);
+    useState<ReportingFilters>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
 
   const {
@@ -58,7 +59,6 @@ export const useReportingSearch = ({
     regulationDateFrom:
       filterValues?.dateRange?.from?.toISOString().slice(0, 10) ??
       new Date(0).toISOString().slice(0, 10),
-
     regulationDateTo:
       filterValues?.dateRange?.to?.toISOString().slice(0, 10) ??
       new Date().toISOString().slice(0, 10),
@@ -71,8 +71,8 @@ export const useReportingSearch = ({
     ...(filterValues?.regulationUniqueIdentifier && {
       regulationUniqueIdentifier: filterValues.regulationUniqueIdentifier
     }),
+    ...(filterValues?.iuf && { iuf: filterValues.iuf }),
     ...(sort.length && { sort })
-    // receiptOrigin: 'RECEIPT_PAGOPA'
   });
 
   const handleFilterChange = useCallback(
