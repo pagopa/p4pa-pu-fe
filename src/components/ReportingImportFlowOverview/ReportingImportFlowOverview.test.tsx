@@ -62,7 +62,10 @@ describe('ReportingImportFlowOverview', () => {
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(
       expect.any(Number),
       expect.objectContaining({
-        ingestionFlowFileTypes: ['PAYMENTS_REPORTING', 'PAYMENTS_REPORTING_PAGOPA']
+        ingestionFlowFileTypes: [
+          'PAYMENTS_REPORTING',
+          'PAYMENTS_REPORTING_PAGOPA'
+        ]
       })
     );
   });
