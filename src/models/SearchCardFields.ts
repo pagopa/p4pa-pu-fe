@@ -7,5 +7,6 @@ export const FilterFieldIds = {
   TYPE_ORG: 'typeOrgId',
   STATE: 'status',
   DATE_RANGE: 'dateRange',
+  IUF: 'iuf',
   REGULATION_UNIQUE_IDENTIFIER: 'regulationUniqueIdentifier'
 };

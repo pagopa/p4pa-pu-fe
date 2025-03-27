@@ -27,11 +27,11 @@ export const Reporting = () => {
     });
   }, [0, filters, navigate]);
 
-  // const resetCurrentFilters = useCallback(() => {
-  //   const newFilters = [...filters];
-  //   newFilters[0] = {};
-  //   setFilters(newFilters);
-  // }, [0, filters]);
+  const resetCurrentFilters = useCallback(() => {
+    const newFilters = [...filters];
+    newFilters[0] = {};
+    setFilters(newFilters);
+  }, [0, filters]);
 
   const handleFilterChange = useCallback(
     (id: string, value: FilterFieldValue) => {
@@ -65,7 +65,8 @@ export const Reporting = () => {
                 {
                   type: COMPONENT_TYPE.textField,
                   label: t('reporting.searchReportingId'),
-                  icon: <Search />
+                  icon: <Search />,
+                  id: FilterFieldIds.IUF
                 },
                 {
                   type: COMPONENT_TYPE.textField,
@@ -85,7 +86,7 @@ export const Reporting = () => {
                 {
                   label: t('commons.filters.remove'),
                   variant: 'outlined',
-                  onClick: () => console.log('remove filter')
+                  onClick: resetCurrentFilters
                 },
                 {
                   label: t('commons.filters.filterResults'),
