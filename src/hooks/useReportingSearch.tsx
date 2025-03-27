@@ -62,10 +62,6 @@ export const useReportingSearch = ({
     regulationDateTo:
       filterValues?.dateRange?.to?.toISOString().slice(0, 10) ??
       new Date().toISOString().slice(0, 10),
-    // regulationDateFrom:
-    //   filterValues?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
-    // paymentDateTimeTo:
-    //   filterValues?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
     page: pagination.page,
     size: pagination.size,
     ...(filterValues?.regulationUniqueIdentifier && {
