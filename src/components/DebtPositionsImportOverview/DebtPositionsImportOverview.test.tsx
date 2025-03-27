@@ -41,7 +41,7 @@ describe('DebtPositionsImportOverview', () => {
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(
       expect.any(Number),
       expect.objectContaining({
-        flowFileTypes: ['DP_INSTALLMENTS']
+        ingestionFlowFileTypes: ['DP_INSTALLMENTS']
       })
     );
   });

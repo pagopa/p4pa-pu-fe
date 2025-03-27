@@ -8,7 +8,7 @@ import { SearchType } from '../models/DebtPositions';
 import { useStore } from '../store/GlobalStore';
 import { DebtPositionFilters } from './useDebtPositionsSearch';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
-import { PaymentsReportingDetailDtoStatusEnum } from '../../generated/data-contracts';
+import { DebtPositionStatus } from '../../generated/data-contracts';
 import { optionMapsConverter } from '../utils/formatters';
 
 type UseDebtPositionSearchProps = {
@@ -27,9 +27,7 @@ export const useDebtPositionFilters = ({
 
   const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
 
-  const debtPositionsStatus = Object.values(
-    PaymentsReportingDetailDtoStatusEnum
-  );
+  const debtPositionsStatus = Object.values(DebtPositionStatus);
 
   const getFilterItems = (): Array<FilterItem> => {
     if (searchType === SearchType.DEBT_POSITION) {
