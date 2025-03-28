@@ -113,9 +113,10 @@ export const flowsRoutes = [
             } as RouteHandleObject
           },
           {
-            id: 'REPORTING_DETAIL',
-            path: 'detail/:id',
             element: <ReportingDetail />,
+            id: 'REPORTING_DETAIL',
+            path: ':id',
+            loader: loaderWithId,
             handle: {
               backButton: true
             } as RouteHandleObject
