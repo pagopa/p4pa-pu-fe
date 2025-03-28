@@ -1,3 +1,6 @@
+import { endOfDay } from 'date-fns/endOfDay';
+import { startOfDay } from 'date-fns/startOfDay';
+
 type optionMapItem = {
   label: string;
   value: string;
@@ -28,4 +31,12 @@ export function optionMapsConverter(
     label: item,
     value: item
   }));
+}
+
+export function toStartOfDay(date?: Date | null) {
+  return date ? startOfDay(date) : null;
+}
+
+export function toEndOfDay(date?: Date | null) {
+  return date ? endOfDay(date) : null;
 }

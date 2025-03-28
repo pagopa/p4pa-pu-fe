@@ -28,13 +28,16 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
     }
   }, []);
 
-  const fieldControl = <V, C = V | null>(
-    field: keyof typeof filterValues,
-    extract: (value: C) => V | C = (v: C) => v
-  ) => ({
-    value: filterValues[field] as V,
-    onChange: (value: C) =>
-      setFilterValues({ ...filterValues, [field]: extract(value) })
+  const fieldControl = (field: keyof typeof filterValues) => ({
+    value: filterValues[field] as string,
+    onChange: (e: ChangeEvent<HTMLInputElement>) =>
+      setFilterValues({ ...filterValues, [field]: e.target?.value })
+  });
+
+  const dateControl = (field: keyof typeof filterValues) => ({
+    value: filterValues[field] as Date | null,
+    onChange: (date: Date | null) =>
+      setFilterValues({ ...filterValues, [field]: date })
   });
 
   const filterMap: FilterMap = {
@@ -46,11 +49,11 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
           label: t('commons.filters.accountingDate.date'),
           from: {
             label: t('dates.from'),
-            ...fieldControl<Date>('ACCOUNTING_DATE_FROM')
+            ...dateControl('ACCOUNTING_DATE_FROM')
           },
           to: {
             label: t('dates.to'),
-            ...fieldControl<Date>('ACCOUNTING_DATE_TO')
+            ...dateControl('ACCOUNTING_DATE_TO')
           }
         }
       ]
@@ -61,10 +64,7 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
         {
           type: COMPONENT_TYPE.amount,
           label: t('commons.filters.amount.value'),
-          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
-            'AMOUNT',
-            (v) => v.target.value
-          )
+          ...fieldControl('AMOUNT')
         }
       ]
     },
@@ -75,17 +75,14 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
           label: t('commons.filters.bill.code'),
           type: COMPONENT_TYPE.textField,
           gridWidth: 6,
-          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
-            'BILL_CODE',
-            (v) => v.target.value
-          )
+          ...fieldControl('BILL_CODE')
         },
         {
           label: t('commons.filters.bill.date.label'),
           type: COMPONENT_TYPE.dateRange,
           from: {
             label: t('dates.year'),
-            ...fieldControl<Date>('BILL_FROM')
+            ...dateControl('BILL_FROM')
           },
           isYear: true,
           gridWidth: 6
@@ -99,17 +96,14 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
           type: COMPONENT_TYPE.textField,
           label: t('commons.filters.documentCode.code'),
           gridWidth: 6,
-          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
-            'DOCUMENT_CODE',
-            (v) => v.target.value
-          )
+          ...fieldControl('DOCUMENT_CODE')
         },
         {
           label: t('commons.filters.documentCode.label'),
           type: COMPONENT_TYPE.dateRange,
           from: {
             label: t('dates.year'),
-            ...fieldControl<Date>('DOCUMENT_CODE_FROM')
+            ...dateControl('DOCUMENT_CODE_FROM')
           },
           isYear: true,
           gridWidth: 6
@@ -122,10 +116,7 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
         {
           label: t('commons.filters.iuv.code'),
           type: COMPONENT_TYPE.textField,
-          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
-            'IUV',
-            (v) => v.target.value
-          )
+          ...fieldControl('IUV')
         }
       ]
     },
@@ -135,10 +126,7 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
         {
           type: COMPONENT_TYPE.textField,
           label: t('commons.filters.payer.name'),
-          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
-            'PAYER',
-            (v) => v.target.value
-          )
+          ...fieldControl('PAYER')
         }
       ]
     },
@@ -148,10 +136,7 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
         {
           type: COMPONENT_TYPE.textField,
           label: t('commons.filters.reportId.code'),
-          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
-            'REPORT_ID',
-            (v) => v.target.value
-          )
+          ...fieldControl('REPORT_ID')
         }
       ]
     },
@@ -162,17 +147,14 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
           type: COMPONENT_TYPE.textField,
           label: t('commons.filters.temporaryCode.code'),
           gridWidth: 6,
-          ...fieldControl<string, ChangeEvent<HTMLInputElement>>(
-            'TEMPORARY_CODE',
-            (v) => v.target.value
-          )
+          ...fieldControl('TEMPORARY_CODE')
         },
         {
           label: t('commons.filters.temporaryCode.label'),
           type: COMPONENT_TYPE.dateRange,
           from: {
-            label: t('dates.year'),
-            ...fieldControl<Date>('TEMPORARY_CODE_FROM')
+            ...dateControl('TEMPORARY_CODE_FROM'),
+            label: t('dates.year')
           },
           isYear: true,
           gridWidth: 6
@@ -187,11 +169,11 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
           label: t('commons.filters.valueDate.date'),
           from: {
             label: t('dates.from'),
-            ...fieldControl<Date>('VALUE_DATE_FROM')
+            ...dateControl('VALUE_DATE_FROM')
           },
           to: {
             label: t('dates.to'),
-            ...fieldControl<Date>('VALUE_DATE_TO')
+            ...dateControl('VALUE_DATE_TO')
           }
         }
       ]
