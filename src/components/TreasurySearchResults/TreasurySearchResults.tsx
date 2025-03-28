@@ -89,7 +89,7 @@ const TreasurySearchResults = () => {
             buttonText: t('commons.filters.filterResults'),
             onButtonClick: applyFilters,
             variant: 'contained',
-            disabled: noFilterIsSelected()
+            disabled: !noFilterIsSelected.peek()
           },
           {
             buttonText: t('commons.filters.remove'),

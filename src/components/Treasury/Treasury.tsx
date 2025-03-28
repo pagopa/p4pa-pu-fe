@@ -37,7 +37,7 @@ export const Treasury = () => {
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  disabled: noFilterIsSelected(),
+                  disabled: !noFilterIsSelected.peek(),
                   onClick: () => navigate(PageRoutes.TREASURY_SEARCH_RESULTS)
                 }
               ]}

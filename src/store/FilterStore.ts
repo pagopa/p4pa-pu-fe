@@ -1,10 +1,10 @@
-import { signal } from '@preact/signals-react';
+import { computed, signal } from '@preact/signals-react';
 import { FilterValues } from '../models/Filters';
 
 export const initialFilterValues: FilterValues = {
   ACCOUNTING_DATE_FROM: null,
   ACCOUNTING_DATE_TO: null,
-  AMOUNT: '0',
+  AMOUNT: '',
   BILL_CODE: '',
   BILL_FROM: null,
   DOCUMENT_CODE: '',
@@ -42,10 +42,11 @@ export const updateFilter = (id: string, index: number) => {
   setSelectedFilters(filters);
 };
 
-export const noFilterIsSelected = () =>
-  selectedFilters.value[0] === '' || selectedFilters.value.length === 0;
-
 export const filterValues = signal<FilterValues>(initialFilterValues);
+
+export const noFilterIsSelected = computed(() =>
+  Object.values(filterValues.value).some((value) => !!value)
+);
 
 export const setFilterValues = (newState: FilterValues) => {
   filterValues.value = newState;
