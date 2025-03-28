@@ -12,7 +12,8 @@ i18nTestSetup({
   'commons.payments': 'Payments',
   'commons.detail': 'Detail',
   'commons.filters.filterResults': 'Filter',
-  'commons.files.downloadFlow': 'Download Flow'
+  'commons.files.downloadFlow': 'Download Flow',
+  'commons.searchIUV': 'Search IUV'
 });
 
 vi.mock('../../api/reporting', () => ({
@@ -103,7 +104,7 @@ describe('ReportingDetail Page', () => {
     render(<ReportingDetail />);
 
     const searchInput = screen.getByRole('textbox', {
-      name: /commons\.searchIUV/i
+      name: 'Search IUV'
     });
     fireEvent.change(searchInput, { target: { value: 'TEST-IUV' } });
 
