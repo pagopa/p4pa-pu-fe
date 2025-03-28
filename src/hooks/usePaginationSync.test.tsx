@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { useSearchParams } from 'react-router-dom';
 import usePaginationSync from './usePaginationSync';
 
@@ -13,7 +13,7 @@ describe('usePaginationSync', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    (useSearchParams as any).mockImplementation(() => [
+    (useSearchParams as Mock).mockImplementation(() => [
       new URLSearchParams(),
       mockSetSearchParams
     ]);
@@ -45,7 +45,7 @@ describe('usePaginationSync', () => {
     mockSearchParams.set('page', '5');
     mockSearchParams.set('size', '10');
 
-    (useSearchParams as any).mockImplementation(() => [
+    (useSearchParams as Mock).mockImplementation(() => [
       mockSearchParams,
       mockSetSearchParams
     ]);
