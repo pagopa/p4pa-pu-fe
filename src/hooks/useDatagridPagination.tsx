@@ -9,12 +9,14 @@ type UseDataGridPaginationProps = {
   initialPage?: number;
   initialSize?: number;
   onPaginationChange?: (newPagination: PaginationState) => void;
+  totalElements?: number;
 };
 
 export const useDataGridPagination = ({
   initialPage = 0,
   initialSize = 10,
-  onPaginationChange
+  onPaginationChange,
+  totalElements = 0
 }: UseDataGridPaginationProps = {}) => {
   const [pagination, setPagination] = useState<PaginationState>({
     page: initialPage,
@@ -35,14 +37,24 @@ export const useDataGridPagination = ({
 
   const handlePageSizeChange = useCallback(
     (newSize: number) => {
+      const maxPage = Math.ceil(totalElements / newSize); // quante pagine ci sono disponibili con la nuova size
+      const currentOneBasedPage = pagination.page + 1; // pagina attuale, in formato 1-based
+      // Se con la nuova size la pagina corrente (es. 5) supera le pagine disponibili (es. 3), lo riportiamo all’ultima pagina valida.
+
+      const newOneBasedPage =
+        currentOneBasedPage > maxPage ? maxPage : currentOneBasedPage;
+
       const newPagination = {
         size: newSize,
-        page: 0
+        page: newOneBasedPage - 1 // converte a zero-based
       };
-      setPagination(newPagination);
-      onPaginationChange?.(newPagination);
+
+      setPagination(newPagination); // aggiorna stato interno
+      onPaginationChange?.(newPagination); // notifica il cambiamento
+
+      return newOneBasedPage;
     },
-    [onPaginationChange]
+    [onPaginationChange, pagination.page, totalElements]
   );
 
   return {
