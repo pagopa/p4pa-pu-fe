@@ -16,6 +16,28 @@ i18nTestSetup({
   'commons.searchIUV': 'Search IUV'
 });
 
+const mockData = {
+  iuf: 'TEST-IUF-123',
+  regulationUniqueIdentifier: 'REG-123',
+  regulationDate: '2023-01-01',
+  payDate: '2023-01-02',
+  acquiringDate: '2023-01-03',
+  iuv: 'IUV123',
+  iur: 'IUR123',
+  transferIndex: 1,
+  pspIdentifier: 'PSP001',
+  flowDateTime: '2023-01-01T12:00:00.000Z',
+  senderPspType: 'TYPE1',
+  senderPspCode: 'CODE1',
+  totalPayments: 10,
+  totalAmountCents: 10000,
+  amountPaidCents: 10000,
+  paymentOutcomeCode: 'PAID',
+  ingestionFlowFileId: 1,
+  organizationId: 123,
+  paymentsReportingId: 'PR001'
+};
+
 vi.mock('../../api/reporting', () => ({
   getPaymentsReportingRows: vi.fn()
 }));
@@ -24,7 +46,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
   return {
     ...actual,
-    useParams: vi.fn()
+    useParams: vi.fn().mockReturnValue({ id: 'TEST-IUF-123' })
   };
 });
 
@@ -40,28 +62,6 @@ vi.mock('../../store/GlobalStore', () => ({
 }));
 
 describe('ReportingDetail Page', () => {
-  const mockData = {
-    iuf: 'TEST-IUF-123',
-    regulationUniqueIdentifier: 'REG-123',
-    regulationDate: '2023-01-01',
-    payDate: '2023-01-02',
-    acquiringDate: '2023-01-03',
-    iuv: 'IUV123',
-    iur: 'IUR123',
-    transferIndex: 1,
-    pspIdentifier: 'PSP001',
-    flowDateTime: '2023-01-01T12:00:00.000Z',
-    senderPspType: 'TYPE1',
-    senderPspCode: 'CODE1',
-    totalPayments: 10,
-    totalAmountCents: 10000,
-    amountPaidCents: 10000,
-    paymentOutcomeCode: 'PAID',
-    ingestionFlowFileId: 1,
-    organizationId: 123,
-    paymentsReportingId: 'PR001'
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
 
