@@ -10,20 +10,20 @@ import { useSearchParams } from 'react-router-dom';
 //  - Gestione del caso in cui la pagina corrente non è più valida (ad es. dopo un filtraggio)
 //  - Sincronizzazione del conteggio totale degli elementi tra API e stato locale
 
-interface PaginationData {
+type PaginationData = {
   number: number;
   size: number;
   totalElements?: number;
   totalPages?: number;
-}
+};
 
-interface UsePaginationSyncProps {
+type UsePaginationSyncProps = {
   paginationData: PaginationData | undefined;
   onPageChange: (newPage: number) => void;
   onPageSizeChange: (newSize: number) => void;
   totalElements: number;
   setTotalElements: (total: number) => void;
-}
+};
 
 const usePaginationSync = ({
   paginationData,
