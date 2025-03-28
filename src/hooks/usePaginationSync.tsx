@@ -69,17 +69,9 @@ const usePaginationSync = ({
     }
   }, [paginationData?.number, paginationData?.size]);
 
-  const handlePageChange = (newPage: number) => {
-    onPageChange(newPage);
-  };
-
-  const handlePageSizeChange = (newSize: number) => {
-    onPageSizeChange(newSize);
-  };
-
   return {
-    handlePageChange,
-    handlePageSizeChange
+    handlePageChange: onPageChange,
+    handlePageSizeChange: onPageSizeChange
   };
 };
 
