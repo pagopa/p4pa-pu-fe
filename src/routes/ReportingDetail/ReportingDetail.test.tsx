@@ -24,7 +24,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
   return {
     ...actual,
-    useParams: vi.fn().mockReturnValue({ id: 'TEST-IUF-123' })
+    useParams: vi.fn()
   };
 });
 
@@ -65,7 +65,7 @@ describe('ReportingDetail Page', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useParams as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({
       id: mockData.iuf
     });
 
