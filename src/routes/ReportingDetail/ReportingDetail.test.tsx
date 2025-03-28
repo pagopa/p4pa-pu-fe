@@ -24,7 +24,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
   return {
     ...actual,
-    useParams: vi.fn()
+    useParams: vi.fn().mockReturnValue({ id: 'TEST-IUF-123' })
   };
 });
 
