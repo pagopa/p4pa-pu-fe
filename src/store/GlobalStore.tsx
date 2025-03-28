@@ -1,14 +1,10 @@
 import React, { createContext, useContext, ReactNode } from 'react';
 import { STATE, State, StoreContextProps } from './types';
-import { organizationIdState, setOrganizationId } from './OrganizationIdStore';
-import { OrganizationIdMemo } from '../models/Organization';
-import { UserInfo } from '../models/User';
-import { setUserInfo, userInfoState } from './UserInfoStore';
+import { organizationIdState } from './OrganizationIdStore';
+import { userInfoState } from './UserInfoStore';
 import { configFeState } from './ConfigFeStore';
-import { appState, setAppState } from './AppStateStore';
-import { AppState } from '../models/AppState';
-import { operatorRoleState, setOperatorRole } from './OperatorRoleStore';
-import { OperatoRole } from '../models/OperatorRole';
+import { appState } from './AppStateStore';
+import { operatorRoleState } from './OperatorRoleStore';
 import { filterValues, selectedFilters } from './FilterStore';
 
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
@@ -26,23 +22,8 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({
     [STATE.OPERATOR_ROLE]: operatorRoleState.value
   };
 
-  const setState = (key: STATE, value: unknown) => {
-    if (key === STATE.ORGANIZATION_ID) {
-      setOrganizationId(value as OrganizationIdMemo);
-    }
-    if (key === STATE.USER_INFO) {
-      setUserInfo(value as UserInfo);
-    }
-    if (key === STATE.APP_STATE) {
-      setAppState(value as AppState);
-    }
-    if (key === STATE.OPERATOR_ROLE) {
-      setOperatorRole(value as OperatoRole);
-    }
-  };
-
   return (
-    <StoreContext.Provider value={{ state: combinedState, setState }}>
+    <StoreContext.Provider value={{ state: combinedState }}>
       {children}
     </StoreContext.Provider>
   );

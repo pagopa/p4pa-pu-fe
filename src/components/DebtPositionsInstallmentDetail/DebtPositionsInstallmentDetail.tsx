@@ -21,12 +21,12 @@ import { useEffect, useState } from 'react';
 import { BredcrumbItem } from '../Breadcrumbs/Breadcrumbs';
 import { InstallmentDetailDrawer } from './InstallmentDetailDrawer';
 import { Timeline } from '../Timeline';
-import { setLoading } from '../../store/AppStateStore';
+import { setAppState, setLoading } from '../../store/AppStateStore';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { state, setState } = useStore();
+  const { state } = useStore();
   const { id } = useParams<{ id: string }>();
 
   const {
@@ -160,7 +160,7 @@ export const DebtPositionsInstallmentDetail = () => {
           id: 'DEBT_POSITION_INSTALLMENT_DETAIL'
         }
       ];
-      setState(STATE.APP_STATE, {
+      setAppState({
         loading: false,
         customBreadcrumbsItems: customBreadcrumbsItems
       });

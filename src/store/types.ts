@@ -17,7 +17,6 @@ export type State = {
 
 export type StoreContextProps = {
   state: State;
-  setState: (key: keyof State, value: unknown) => void;
 };
 
 export enum STATE {
