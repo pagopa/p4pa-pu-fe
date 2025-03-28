@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
-import utils from '../utils'; // Questo dovrebbe contenere apiClient con definizione dei metodi
+import utils from '../utils';
+import { parseAndLog } from '../utils/loaders';
+import { pagedPaymentsReportingViewSchema } from '../../generated/zod-schema';
 
 type PaymentsReportingParams = Parameters<
   typeof utils.apiClient.bff.getPaymentsReporting
@@ -18,6 +20,9 @@ export const getPaymentsReporting = (organizationId: number) => {
             indexes: null
           }
         });
+      if (paymentsReporting) {
+        parseAndLog(pagedPaymentsReportingViewSchema, paymentsReporting);
+      }
       return paymentsReporting;
     }
   });
