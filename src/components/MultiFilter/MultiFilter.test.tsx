@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import MultiFilter from './MultiFilter';
-import { filtersState, setFiltersState } from '../../store/FilterStore';
 import { FilterMap } from '../../hooks/useMultiFilters';
 import { COMPONENT_TYPE, FilterItem } from '../FilterContainer/FilterContainer';
+import { selectedFilters, setSelectedFilters } from '../../store/FilterStore';
 
 vi.mock('../FilterContainer/FilterContainer', () => ({
   default: vi.fn(({ items }) => (
@@ -46,12 +46,12 @@ const mockFilterMap: FilterMap = {
 describe('MultiFilter Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    setFiltersState(['search']);
+    setSelectedFilters(['search']);
   });
 
   it('invokes removeFilterRow with correct ID on remove button click', () => {
     // Start with both filters
-    setFiltersState(['search', 'name']);
+    setSelectedFilters(['search', 'name']);
 
     render(<MultiFilter filterMap={mockFilterMap} />);
 
@@ -59,10 +59,9 @@ describe('MultiFilter Component', () => {
     const removeButtons = screen.getAllByRole('button', { name: 'remove' });
     expect(removeButtons).toHaveLength(2);
 
-    // Remove the first filter
+    // Remove firs filter row
     fireEvent.click(removeButtons[0]);
 
-    // After removal, the state resets to [''] as per FilterStore behavior
-    expect(filtersState.value).toEqual(['']);
+    expect(selectedFilters.value).toEqual(['name']);
   });
 });

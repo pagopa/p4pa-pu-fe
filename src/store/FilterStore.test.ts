@@ -1,7 +1,7 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import {
-  filtersState,
-  setFiltersState,
+  selectedFilters,
+  setSelectedFilters,
   addFilterRow,
   removeFilterRow,
   updateFilter,
@@ -10,50 +10,50 @@ import {
 
 describe('FilterStore', () => {
   beforeEach(() => {
-    // Reset filtersState to its initial value before each test
-    filtersState.value = [''];
+    // Reset selectedFilters to its initial value before each test
+    selectedFilters.value = [''];
   });
 
-  it('should initialize filtersState with an empty string', () => {
-    expect(filtersState.value).toEqual(['']);
+  it('should initialize selectedFilters with an empty string', () => {
+    expect(selectedFilters.value).toEqual(['']);
   });
 
-  it('should set filtersState to a new state', () => {
-    setFiltersState(['search', 'name']);
-    expect(filtersState.value).toEqual(['search', 'name']);
+  it('should set selectedFilters to a new state', () => {
+    setSelectedFilters(['search', 'name']);
+    expect(selectedFilters.value).toEqual(['search', 'name']);
   });
 
   it('should add a new filter row', () => {
     addFilterRow('search');
-    expect(filtersState.value).toEqual(['', 'search']);
+    expect(selectedFilters.value).toEqual(['', 'search']);
   });
 
   it('should add an empty filter row if no nextId is provided', () => {
     addFilterRow();
-    expect(filtersState.value).toEqual(['', '']);
+    expect(selectedFilters.value).toEqual(['', '']);
   });
 
   it('should remove a filter row by ID', () => {
-    setFiltersState(['search', 'name']);
+    setSelectedFilters(['search', 'name']);
     removeFilterRow('search');
-    expect(filtersState.value).toEqual(['name']);
+    expect(selectedFilters.value).toEqual(['name']);
   });
 
   it('should not remove the last filter row', () => {
-    setFiltersState(['search']);
+    setSelectedFilters(['search']);
     removeFilterRow('search');
-    expect(filtersState.value).toEqual(['search']);
+    expect(selectedFilters.value).toEqual(['search']);
   });
 
   it('should update a filter by index', () => {
-    setFiltersState(['search', 'name']);
+    setSelectedFilters(['search', 'name']);
     updateFilter('date', 1);
-    expect(filtersState.value).toEqual(['search', 'date']);
+    expect(selectedFilters.value).toEqual(['search', 'date']);
   });
 
   it('should remove all filters and reset to initial state', () => {
-    setFiltersState(['search', 'name', 'date']);
+    setSelectedFilters(['search', 'name', 'date']);
     removeAllFilters();
-    expect(filtersState.value).toEqual(['']);
+    expect(selectedFilters.value).toEqual(['']);
   });
 });

@@ -3,6 +3,7 @@ import { vi, describe, it, expect, afterEach } from 'vitest';
 import { STATE } from './types';
 import { useStore, StoreProvider } from './GlobalStore';
 import 'vitest-dom/extend-expect';
+import { initialFilterValues } from './FilterStore';
 
 vi.mock('./OrganizationIdStore', () => ({
   setOrganizationId: vi.fn(),
@@ -47,7 +48,8 @@ describe('StoreContext', () => {
         [STATE.CONFIG_FE]: null,
         [STATE.ORGANIZATION_ID]: null,
         [STATE.USER_INFO]: null,
-        [STATE.FILTERS]: ['']
+        [STATE.SELECTED_FILTERS]: [''],
+        [STATE.FILTER_VALUES]: initialFilterValues
       })
     );
   });

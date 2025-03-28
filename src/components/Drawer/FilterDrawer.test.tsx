@@ -1,4 +1,4 @@
-import { render, screen } from '../../__tests__/renderers';
+import { render, renderHook, screen } from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 import { FilterDrawer } from './FilterDrawer';
@@ -21,12 +21,13 @@ describe('Drawer Component', () => {
   });
 
   it('renders drawer with multiFilter', () => {
+    const { result } = renderHook(() => useMultiFilters());
     render(
       <FilterDrawer
         open={true}
         onClose={mockOnClose}
         title="Test Drawer"
-        filterMap={useMultiFilters()}
+        filterMap={result.current.filterMap}
       />
     );
 
