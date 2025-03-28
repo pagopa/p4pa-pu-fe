@@ -46,7 +46,9 @@ vi.mock('react-router-dom', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router-dom')>();
   return {
     ...actual,
-    useParams: vi.fn().mockReturnValue({ id: 'TEST-IUF-123' })
+    useParams: vi.fn().mockReturnValue({ id: 'TEST-IUF-123' }),
+    Link: ({ children }: { children: React.ReactNode }) => children,
+    generatePath: vi.fn().mockReturnValue('/mock-path')
   };
 });
 
