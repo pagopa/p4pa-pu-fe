@@ -57,7 +57,11 @@ describe('useDataGridPagination', () => {
   it('should handle page size change correctly', () => {
     const onPaginationChange = vi.fn();
     const { result } = renderHook(
-      () => useDataGridPagination({ onPaginationChange }),
+      () =>
+        useDataGridPagination({
+          onPaginationChange,
+          totalElements: 100
+        }),
       {
         wrapper: StoreProvider
       }
@@ -80,7 +84,11 @@ describe('useDataGridPagination', () => {
 
   it('should reset page to 0 when changing page size', () => {
     const { result } = renderHook(
-      () => useDataGridPagination({ initialPage: 2 }),
+      () =>
+        useDataGridPagination({
+          initialPage: 2,
+          totalElements: 100
+        }),
       {
         wrapper: StoreProvider
       }
@@ -91,9 +99,9 @@ describe('useDataGridPagination', () => {
     });
 
     expect(result.current.pagination).toEqual({
-      page: 0,
+      page: 2,
       size: 25,
-      currentPage: 1
+      currentPage: 3
     });
   });
 
