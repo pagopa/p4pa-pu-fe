@@ -1,444 +1,446 @@
 {
-	"dates": {
-		"from": "Dal",
-		"to": "Al",
-		"year": "Anno",
-		"validations": {
-			"from": "Data non valida",
-			"to": "Data non valida"
-		}
-	},
-	"commons": {
-		"addfilter": "Aggiunge filtro",
-		"all": "Tutti",
-		"amount": "Importo",
-		"auditor": "Attestante",
-		"back": "Indietro",
-		"breadcrumbs": "Elementi di navigazione breadcrumbs",
-		"breadcrumbsElement": "Elemento breadcrumb",
-		"breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
-		"close": "Chiudi",
-		"copied": "Copiato!",
-		"debtor": "Debitore",
-		"description": "Descrizione",
-		"detail": "Dettaglio",
-		"duetype": "Tipo dovuto",
-		"exit": "Esci",
-		"files": {
-			"download": "Scarica",
-			"downloadFlow": "Scarica flusso",
-			"file": "File",
-			"imported": "File importato",
-			"importedResult": "Esito dell'importazione",
-			"notvalid": "Il file non è valido",
-			"remove": "Rimuovi file",
-			"size": "Dimensione File",
-			"upload": "Carica il file",
-			"uploadDate": "Data Caricamento",
-			"uploadInProgress": "Caricamento in corso..."
-		},
-		"filters": {
-			"add": "Aggiungi filtro",
-			"filterResults": "Filtra",
-			"filtersField": "Filtri",
-			"remove": "Rimuovi filtri",
-			"iuv": {
-				"label": "IUV",
-				"code": "Codice IUV"
-			},
-			"bill": {
-				"label": "Bolletta",
-				"code": "Codice",
-				"date": {
-					"label": "Data Bolletta"
-				}
-			},
-			"reportId": {
-				"label": "ID Rendicontazione",
-				"code": "ID Rendicontazione"
-			},
-			"payer": {
-				"label": "Ordinante",
-				"name": "Nome ordinante"
-			},
-			"amount": {
-				"label": "Importo",
-				"value": "Importo"
-			},
-			"valueDate": {
-				"label": "Data Valuta",
-				"date": "Data Valuta"
-			},
-			"documentCode": {
-				"label": "Codice Documento",
-				"code": "Codice"
-			},
-			"accountingDate": {
-				"label": "Data Contabile",
-				"date": "Data Contabile"
-			},
-			"temporaryCode": {
-				"label": "Codice Provvisorio",
-				"code": "Codice"
-			}
-		},
-		"fiscalCodeorVat": "CF / Partita IVA",
-		"fiscalCode": "Codice Fiscale",
-		"fiscalCodeorVatExecutor": "CF / Partita IVA",
-		"flowImport": {
-			"boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
-			"boxTitle": "Configurazione flusso",
-			"description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
-			"manualLink": "Dubbi? Vai al manuale",
-			"uploadButton": "Carica il flusso"
-		},
-		"flowType": "Tipo flusso",
-		"flowTypes": {
-			"RECEIPT": "Ricevuta",
-			"RECEIPT_PAGOPA": "Ricevuta PagoPA",
-			"PAYMENTS_REPORTING": "Rendicontazione di pagamento",
-			"PAYMENTS_REPORTING_PAGOPA": "Rendicontazione di pagamento PagoPA",
-			"TREASURY_OPI": "Giornale di Cassa OPI",
-			"TREASURY_CSV": "Giornale di Cassa CSV",
-			"TREASURY_XLS": "Giornale di Cassa XLS",
-			"TREASURY_POSTE": "Estrato conto poste",
-			"DP_INSTALLMENTS": "Rate posizioni debitorie"
-		},
-		"footer": {
-			"infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
-		},
-		"from": "Dal",
-		"importFlowButton": "Importa flusso",
-		"internalCode": "Codice Interno",
-		"iud": "IUD",
-		"iur": "IUR",
-		"iuv": "IUV",
-		"operator": "Operatore",
-		"payer": "Pagatore",
-		"payment": "Pagamento",
-		"paymentDate": "Data pagamento",
-		"paymentdate": "Data Esito",
-		"paymentExecutor": "Versante",
-		"paymentOptions": {
-			"SINGLE_INSTALLMENT": "Soluzione Unica",
-			"INSTALLMENTS": "Soluzione a Rate",
-			"DOWN_PAYMENT": "Anticipo"
-		},
-		"person": "Persona fisica",
-		"personLegal": "Persona giuridica",
-		"postAccount": "Conto Corrente Postale",
-		"reason": "Causale",
-		"requiredFieldDescription": "* Indica un campo obbligatorio",
-		"createNew": "Crea nuova",
-		"createNewOne": "Crea nuovo",
-		"routes": {
-			"CONSERVATION": "Conservazione",
-			"CONSERVATION_INDEX": "Pagina principale",
-			"DEBT_POSITIONS": "Dovuti",
-			"DEBT_POSITIONS_RESULTS": "Posizioni debitorie",
-			"DEBT_POSITIONS_IMPORT_OVERVIEW": "Flussi",
-			"DEBT_POSITION_INSTALLMENT_DETAIL": "Dettaglio Avviso",
-			"DEBT_POSITION_SEARCH_RESULTS": "Avvisi (IUV)",
-			"DEBT_TYPES": "Tipi dovuti",
-			"DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
-			"DEBT_TYPES_CREATED": "Tipi dovuti impostati",
-			"DETAIL": "Dettagli",
-			"DETAIL_FLOWS": "Dettaglio flusso",
-			"EXPORT": "Export",
-			"EXPORT_FLOWS": "Esportazione flussi",
-			"FLOWS": "Flussi",
-			"HOME": "Panoramica",
-			"IMPORT": "Import",
-			"IMPORT_FLOWS": "Importa flusso",
-			"ORGANIZATIONS": "Enti gestiti",
-			"REPORTING": "Rendicontazione",
-			"REPORTING_DETAIL": "Dettaglio",
-			"REPORTING_IMPORT_FLOW_OVERVIEW": "Flussi importati",
-			"REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
-			"REPORTING_IMPORT_OVERVIEW": "Flussi importati",
-			"REPORTING_INDEX": "Pagina principale",
-			"REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
-			"REPORTING_SEARCH_RESULTS": "Risultato ricerca",
-			"TELEMATIC_RECEIPT": "Ricevute Telematiche",
-			"TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
-			"TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
-			"TELEMATIC_RECEIPT_IMPORT_FLOW": "Carica un nuovo flusso",
-			"TELEMATIC_RECEIPT_IMPORT_OVERVIEW": "Flussi importati",
-			"TELEMATIC_RECEIPT_INDEX": "Pagina principale",
-			"TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
-			"TREASURY": "Tesoreria",
-			"TREASURY_DETAIL": "Dettaglio Bolletta",
-			"TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
-			"TREASURY_IMPORT_OVERVIEW": "Flussi importati",
-			"TREASURY_INDEX": "Pagina principale",
-			"TREASURY_SEARCH_RESULTS": "Risultato ricerca",
-			"USERS": "Utenti"
-		},
-		"search": "Cerca",
-		"searchFor": "Cerca per",
-		"searchName": "Cerca Nome",
-		"sidebar": {
-			"collapse": "Comprimi il menu",
-			"entities": "Enti gestiti",
-			"expand": "Espandi il menu",
-			"menu": "Menu",
-			"menudescription": "Lista di navigazione",
-			"users": "Utenti"
-		},
-		"state": "Stato",
-		"states": {
-			"uploaded": "Caricato",
-			"cancelled": "Annullato"
-		},
-		"status": {
-			"COMPLETED": "Elaborato",
-			"UPLOADED": "Caricato",
-			"PROCESSING": "In elaborazione",
-			"ERROR": "Errore",
-			"EXPIRED": "Scaduto",
-			"ALL": "Tutti"
-		},
-		"chipStaus": {
-			"PAID": "Pagato",
-			"UNPAID": "Da pagare",
-			"TO_SYNC": "Da sincronizzare",
-			"CANCELLED": "Cancellato",
-			"DRAFT": "Bozza",
-			"EXPIRED": "Scaduto",
-			"PARTIALLY_PAID": "Pagamento iniziato",
-			"REPORTED": "Rendicontato",
-			"INVALID": "Non valido"
-		},
-		"successExport": "Abbiamo ricevuto la tua richiesta!",
-		"successImport": "Flusso caricato con successo",
-		"summary": "riepilogo",
-		"taxCode": "Codice Tassonomico",
-		"to": "Al",
-		"view": "Visualizza",
-		"searchIUV": "Cerca IUV",
-		"importFlow": "Importa flusso",
-		"showAllFlows": "Vedi tutti i flussi",
-		"searchCF": "Cerca CF",
-		"uploadedFrom": "Caricati dal",
-		"importNewFlow": "Carica un nuovo flusso",
-		"debtFlow": "Flussi dovuti",
-		"showDebtPositions": "Vedi Posizione debitoria",
-		"showOtherBeneficiaries": "Vedi altri beneficiari",
-		"noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
-		"downloadInstallment": "Scarica avviso",
-		"paymentInformation": "Informazione sul pagamento",
-		"executedBy": "Eseguito da",
-		"transactionManager": "Gestore della transazione (PSP)"
-	},
-	"conservation": {
-		"buttonReservationExport": "Prenota export",
-		"description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
-		"exportFrom": "Esportati dal"
-	},
-	"DebtPositions": {
-		"Results": {
-			"title": "Posizioni Debitorie",
-			"titleIUV": "Avvisi (IUV)",
-			"filters": {
-				"from": "Creazione dal"
-			},
-			"table": {
-				"description": "Descrizione",
-				"debtType": "Tipo dovuto",
-				"creationDate": "Data creazione",
-				"status": "Stato"
-			},
-			"status": {
-				"CANCELLED": "Cancellato",
-				"DRAFT": "Bozza",
-				"EXPIRED": "Scaduto",
-				"PAID": "Pagato",
-				"PARTIALLY_PAID": "Pagamento iniziato",
-				"REPORTED": "Rendicontato",
-				"TO_SYNC": "Da sincronizzare",
-				"UNPAID": "Da pagare",
-				"INVALID": "Non valido"
-			}
-		}
-	},
-	"debtPositionDetail": {
-		"debtPositionInfo": "Informazioni sulla posizione debitoria",
-		"paymentOptions": "Opzioni di Pagamento",
-		"solutionDetail": "Dettaglio soluzione",
-		"timeline": {
-			"title": "Storico Posizione Debitoria",
-			"message": "È stato inviato un messaggio al cittadino su IO. ID messaggio"
-		}
-	},
-	"debtPositionSearchResults": {
-		"iuv": "Codice Avviso (IUV)",
-		"subject": "Oggetto del pagamento",
-		"amount": "Importo",
-		"expirationDate": "Data Scadenza",
-		"status": "Stato"
-	},
-	"debtPositionInstallmentDetail": {
-		"drawer": {
-			"title": "Beneficiari",
-			"info": "Ci sono presenti altri beneficiari diversi al tuo ente."
-		},
-		"timeline": {
-			"title": "Storico Avviso",
-			"message": "È stato inviato un messaggio al cittadino su IO. ID messaggio"
-		}
-	},
-	"FileUploaderFlowImport": {
-		"telematic-receipt": {
-			"description": "Carica qui il file .zip con le Ricevute Telematiche"
-		},
-		"treasury": {
-			"description": "Carica qui il file .zip con i giornali di cassa"
-		},
-		"reporting": {
-			"description": "Carica qui il file .zip con le Rendicontazioni"
-		},
-		"debt-positions": {
-			"description": "Carica qui il file .zip con le Ricevute Telematiche"
-		},
-		"requiredFileText": "Campo obbligatorio. Carica un file .zip"
-	},
-	"flowDataGrid": {
-		"internalID": "ID Interno",
-		"loadedDiscarded": "Caricati/Scarti",
-		"name": "Nome",
-		"operator": "Operatore",
-		"paymentFromDate": "Pagamento dal",
-		"paymentToDate": "Pagamento al",
-		"reservationDate": "Data prenotazione",
-		"lastUpdate": "Ultima Modifica",
-		"authorizedOrganizations": "Enti abilitati",
-		"noDataRows": "Nessun elemento trovato",
-		"uploadDate": "Data Caricamento"
-	},
-	"reporting": {
-		"description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
-		"importFlowsDescriptionContainer": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
-		"importFlowsTitleContainer": "Importa flussi di Rendicontazione",
-		"regulationFrom": "Regolamento dal",
-		"searchDescriptionContainer": "Inserisci al meno uno dei campi per cominciare la ricerca.",
-		"searchRegulationId": "Cerca ID Regolamento",
-		"searchReportingId": "Cerca ID Rendicontazione",
-		"searchTitleContainer": "Cerca flussi di Rendicontazione",
-		"title": "Rendicontazione"
-	},
-	"reportingSearchResults": {
-		"description": "Visualizza in dettaglio e scarica i flussi di Rendicontazione.",
-		"searchReportingId": "ID Rendicontazione",
-		"searchRegulationId": "ID Regolamento",
-		"regulationDate": "Data Regolamento",
-		"flowDate": "Data flusso",
-		"payments": "Pagamenti",
-		"totalAmount": "Importo totale"
-	},
-	"reportingImportFlowOverview": {
-		"description": "Visualizza i flussi importati in precedenza e importa nuovi."
-	},
-	"reportingImportThankYouPage": {
-		"description": "Troverai il flusso caricato nella sezione Flussi importati"
-	},
-	"telematicReceiptDetail": {
-		"title": "Dettaglio Ricevuta Telematica"
-	},
-	"telematicReceiptExportFlowThankYouPage": {
-		"description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
-	},
-	"debtPositionsImportThankYouPage": {
-		"description": "Troverai il flusso caricato nella sezione Flussi importati"
-	},
-	"telematicReceiptFlowExportOverview": {
-		"buttonReservationExport": "Prenota export",
-		"description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
-		"exportFrom": "Esportati dal"
-	},
-	"telematicReceiptFlowImport": {
-		"boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
-		"boxTitle": "Configurazione flusso",
-		"description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
-		"manualLink": "Dubbi? Vai al manuale",
-		"uploadButton": "Carica il flusso"
-	},
-	"telematicReceiptFlowImportThankYouPage": {
-		"description": "Troverai il flusso caricato nella sezione Flussi importati"
-	},
-	"telematicReceiptImportFlowOverview": {
-		"description": "Visualizza i flussi importati in precedenza e importa nuovi.",
-		"internalID": "ID interno",
-		"loadedDiscarded": "Caricati/Scarti"
-	},
-	"telematicReceipts": {
-		"description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
-		"downloadflowsdescription": "Richiede l’esportazione di Ricevute Telematiche in un certo intervallo di tempo.",
-		"downloadflowstitle": "Scarica Flussi di Ricevute Telematiche",
-		"exportedflowsviewbutton": "Vedi flussi esportati",
-		"exportrequestbutton": "Prenota export",
-		"importedflowsviewbutton": "Vedi flussi importati",
-		"importflowsdescription": "Carica un file .zip con l’informazione necessaria di Ricevute Telematiche mancanti.",
-		"importflowstitle": "Importa Flussi di Ricevute Telematiche",
-		"search": "Cerca Ricevuta Telematica",
-		"searchdescription": "Inserisci al meno uno dei campi per cominciare la ricerca.",
-		"tari": "TARI",
-		"trafficoffence": "Violazione al codice della strada"
-	},
-	"telematicreceiptSearchResults": {
-		"description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
-		"title": "Risultato ricerca"
-	},
-	"treasury": {
-		"description": "Ricerca, visualizza o integra flussi di Tesoreria.",
-		"search": "Cerca flussi di Tesoreria",
-		"searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
-		"importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
-		"importflowstitle": "Importa Flussi di Tesoreria",
-		"billDetail": "Dettaglio Bolletta",
-		"payer": "Ordinante",
-		"account": "Conto",
-		"billingYear": "Anno codice documento",
-		"documentCode": "Codice documento",
-		"tempDocumentYear": "Anno codice Provvisorio",
-		"tempDocumentCode": "Codice provvisorio"
-	},
-	"treasuryImportFlowOverview": {
-		"description": "Visualizza i flussi importati in precedenza e importa nuovi."
-	},
-	"exportFlow": {
-		"title": "Prenota export di un flusso",
-		"description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
-		"buttonConfirmReservation": "Prenota",
-		"dueType": "Tipo di dovuto",
-		"dueTypePlaceHolder": "Tipo di dovuto da prenotare",
-		"fileVersion": "Versione tracciato",
-		"formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
-		"formTitle": "Configurazione della esportazione"
-	},
-	"treasurySearchResults": {
-		"description": "Visualizza i flussi, seleziona e prenota gli export.",
-		"uploadFlow": "Carica flusso",
-		"reservationDate": "Data prenotazione",
-		"billingYear": "Anno bolletta",
-		"billingCode": "Codice bolletta",
-		"valueDate": "Data Valuta",
-		"accountingDate": "Data Contabile",
-		"reportingId": "ID Rendicontazione"
-	},
-	"debtTypes": {
-		"description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
-		"searchDescription": "Codice per Descrizione"
-	},
-	"debtPositions": {
-		"searchCardTitle": "Cosa stai cercando?",
-		"searchCardDescription": "Seleziona cosa stai cercando e inserisci i filtri per avviare la ricerca.",
-		"searchCardIUVOption": "Avviso (IUV)",
-		"searchCardDebtPositionOption": "Posizione Debitoria",
-		"searchIUVDescription": "Cerca Codice Avviso (IUV)",
-		"searchFiscalCodeDescription": "Cerca Codice Fiscale",
-		"importDebtFlow": "Importa flussi di dovuti",
-		"importDebtFlowDescription": "Carica un file .zip con l'informazione necessaria di dovuti mancanti.",
-		"expirationFrom": "Scadenza dal",
-		"creationFrom": "Creazione dal"
-	}
+  "dates": {
+    "from": "Dal",
+    "to": "Al",
+    "year": "Anno",
+    "validations": {
+      "from": "Data non valida",
+      "to": "Data non valida"
+    }
+  },
+  "commons": {
+    "addfilter": "Aggiunge filtro",
+    "all": "Tutti",
+    "amount": "Importo",
+    "auditor": "Attestante",
+    "back": "Indietro",
+    "breadcrumbs": "Elementi di navigazione breadcrumbs",
+    "breadcrumbsElement": "Elemento breadcrumb",
+    "breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
+    "close": "Chiudi",
+    "copied": "Copiato!",
+    "debtor": "Debitore",
+    "description": "Descrizione",
+    "detail": "Dettaglio",
+    "duetype": "Tipo dovuto",
+    "exit": "Esci",
+    "files": {
+      "download": "Scarica",
+      "downloadFlow": "Scarica flusso",
+      "file": "File",
+      "imported": "File importato",
+      "importedResult": "Esito dell'importazione",
+      "notvalid": "Il file non è valido",
+      "remove": "Rimuovi file",
+      "size": "Dimensione File",
+      "upload": "Carica il file",
+      "uploadDate": "Data Caricamento",
+      "uploadInProgress": "Caricamento in corso..."
+    },
+    "filters": {
+      "add": "Aggiungi filtro",
+      "filterResults": "Filtra",
+      "filtersField": "Filtri",
+      "remove": "Rimuovi filtri",
+      "iuv": {
+        "label": "IUV",
+        "code": "Codice IUV"
+      },
+      "bill": {
+        "label": "Bolletta",
+        "code": "Codice",
+        "date": {
+          "label": "Data Bolletta"
+        }
+      },
+      "reportId": {
+        "label": "ID Rendicontazione",
+        "code": "ID Rendicontazione"
+      },
+      "payer": {
+        "label": "Ordinante",
+        "name": "Nome ordinante"
+      },
+      "amount": {
+        "label": "Importo",
+        "value": "Importo"
+      },
+      "valueDate": {
+        "label": "Data Valuta",
+        "date": "Data Valuta"
+      },
+      "documentCode": {
+        "label": "Codice Documento",
+        "code": "Codice"
+      },
+      "accountingDate": {
+        "label": "Data Contabile",
+        "date": "Data Contabile"
+      },
+      "temporaryCode": {
+        "label": "Codice Provvisorio",
+        "code": "Codice"
+      }
+    },
+    "fiscalCodeorVat": "CF / Partita IVA",
+    "fiscalCode": "Codice Fiscale",
+    "fiscalCodeorVatExecutor": "CF / Partita IVA",
+    "flowImport": {
+      "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+      "boxTitle": "Configurazione flusso",
+      "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+      "manualLink": "Dubbi? Vai al manuale",
+      "uploadButton": "Carica il flusso"
+    },
+    "flowType": "Tipo flusso",
+    "flowTypes": {
+      "RECEIPT": "Ricevuta",
+      "RECEIPT_PAGOPA": "Ricevuta PagoPA",
+      "PAYMENTS_REPORTING": "Rendicontazione di pagamento",
+      "PAYMENTS_REPORTING_PAGOPA": "Rendicontazione di pagamento PagoPA",
+      "TREASURY_OPI": "Giornale di Cassa OPI",
+      "TREASURY_CSV": "Giornale di Cassa CSV",
+      "TREASURY_XLS": "Giornale di Cassa XLS",
+      "TREASURY_POSTE": "Estrato conto poste",
+      "DP_INSTALLMENTS": "Rate posizioni debitorie"
+    },
+    "footer": {
+      "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
+    },
+    "from": "Dal",
+    "importFlowButton": "Importa flusso",
+    "internalCode": "Codice Interno",
+    "iud": "IUD",
+    "iur": "IUR",
+    "iuv": "IUV",
+    "operator": "Operatore",
+    "payer": "Pagatore",
+    "payment": "Pagamento",
+    "paymentDate": "Data pagamento",
+    "paymentdate": "Data Esito",
+    "paymentExecutor": "Versante",
+    "paymentOptions": {
+      "SINGLE_INSTALLMENT": "Soluzione Unica",
+      "INSTALLMENTS": "Soluzione a Rate",
+      "DOWN_PAYMENT": "Anticipo"
+    },
+    "person": "Persona fisica",
+    "personLegal": "Persona giuridica",
+    "postAccount": "Conto Corrente Postale",
+    "reason": "Causale",
+    "requiredFieldDescription": "* Indica un campo obbligatorio",
+    "createNew": "Crea nuova",
+    "createNewOne": "Crea nuovo",
+    "routes": {
+      "CONSERVATION": "Conservazione",
+      "CONSERVATION_INDEX": "Pagina principale",
+      "DEBT_POSITIONS": "Dovuti",
+      "DEBT_POSITIONS_RESULTS": "Posizioni debitorie",
+      "DEBT_POSITIONS_IMPORT_OVERVIEW": "Flussi",
+      "DEBT_POSITION_INSTALLMENT_DETAIL": "Dettaglio Avviso",
+      "DEBT_POSITION_SEARCH_RESULTS": "Avvisi (IUV)",
+      "DEBT_TYPES": "Tipi dovuti",
+      "DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
+      "DEBT_TYPES_CREATED": "Tipi dovuti impostati",
+      "DETAIL": "Dettagli",
+      "DETAIL_FLOWS": "Dettaglio flusso",
+      "EXPORT": "Export",
+      "EXPORT_FLOWS": "Esportazione flussi",
+      "FLOWS": "Flussi",
+      "HOME": "Panoramica",
+      "IMPORT": "Import",
+      "IMPORT_FLOWS": "Importa flusso",
+      "ORGANIZATIONS": "Enti gestiti",
+      "REPORTING": "Rendicontazione",
+      "REPORTING_DETAIL": "Dettaglio",
+      "REPORTING_IMPORT_FLOW_OVERVIEW": "Flussi importati",
+      "REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
+      "REPORTING_IMPORT_OVERVIEW": "Flussi importati",
+      "REPORTING_INDEX": "Pagina principale",
+      "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
+      "REPORTING_SEARCH_RESULTS": "Risultato ricerca",
+      "TELEMATIC_RECEIPT": "Ricevute Telematiche",
+      "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
+      "TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
+      "TELEMATIC_RECEIPT_IMPORT_FLOW": "Carica un nuovo flusso",
+      "TELEMATIC_RECEIPT_IMPORT_OVERVIEW": "Flussi importati",
+      "TELEMATIC_RECEIPT_INDEX": "Pagina principale",
+      "TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
+      "TREASURY": "Tesoreria",
+      "TREASURY_DETAIL": "Dettaglio Bolletta",
+      "TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
+      "TREASURY_IMPORT_OVERVIEW": "Flussi importati",
+      "TREASURY_INDEX": "Pagina principale",
+      "TREASURY_SEARCH_RESULTS": "Risultato ricerca",
+      "USERS": "Utenti"
+    },
+    "search": "Cerca",
+    "searchFor": "Cerca per",
+    "searchName": "Cerca Nome",
+    "sidebar": {
+      "collapse": "Comprimi il menu",
+      "entities": "Enti gestiti",
+      "expand": "Espandi il menu",
+      "menu": "Menu",
+      "menudescription": "Lista di navigazione",
+      "users": "Utenti"
+    },
+    "state": "Stato",
+    "states": {
+      "uploaded": "Caricato",
+      "cancelled": "Annullato"
+    },
+    "status": {
+      "COMPLETED": "Elaborato",
+      "UPLOADED": "Caricato",
+      "PROCESSING": "In elaborazione",
+      "ERROR": "Errore",
+      "EXPIRED": "Scaduto",
+      "ALL": "Tutti"
+    },
+    "chipStaus": {
+      "PAID": "Pagato",
+      "UNPAID": "Da pagare",
+      "TO_SYNC": "Da sincronizzare",
+      "CANCELLED": "Cancellato",
+      "DRAFT": "Bozza",
+      "EXPIRED": "Scaduto",
+      "PARTIALLY_PAID": "Pagamento iniziato",
+      "REPORTED": "Rendicontato",
+      "INVALID": "Non valido"
+    },
+    "successExport": "Abbiamo ricevuto la tua richiesta!",
+    "successImport": "Flusso caricato con successo",
+    "summary": "riepilogo",
+    "taxCode": "Codice Tassonomico",
+    "to": "Al",
+    "view": "Visualizza",
+    "searchIUV": "Cerca IUV",
+    "searchIUF": "ID Rendicontazione",
+    "searchRegulationUniqueIdentifier": "ID Regolamento",
+    "importFlow": "Importa flusso",
+    "showAllFlows": "Vedi tutti i flussi",
+    "searchCF": "Cerca CF",
+    "uploadedFrom": "Caricati dal",
+    "importNewFlow": "Carica un nuovo flusso",
+    "debtFlow": "Flussi dovuti",
+    "showDebtPositions": "Vedi Posizione debitoria",
+    "showOtherBeneficiaries": "Vedi altri beneficiari",
+    "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+    "downloadInstallment": "Scarica avviso",
+    "paymentInformation": "Informazione sul pagamento",
+    "executedBy": "Eseguito da",
+    "transactionManager": "Gestore della transazione (PSP)"
+  },
+  "conservation": {
+    "buttonReservationExport": "Prenota export",
+    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+    "exportFrom": "Esportati dal"
+  },
+  "DebtPositions": {
+    "Results": {
+      "title": "Posizioni Debitorie",
+      "titleIUV": "Avvisi (IUV)",
+      "filters": {
+        "from": "Creazione dal"
+      },
+      "table": {
+        "description": "Descrizione",
+        "debtType": "Tipo dovuto",
+        "creationDate": "Data creazione",
+        "status": "Stato"
+      },
+      "status": {
+        "CANCELLED": "Cancellato",
+        "DRAFT": "Bozza",
+        "EXPIRED": "Scaduto",
+        "PAID": "Pagato",
+        "PARTIALLY_PAID": "Pagamento iniziato",
+        "REPORTED": "Rendicontato",
+        "TO_SYNC": "Da sincronizzare",
+        "UNPAID": "Da pagare",
+        "INVALID": "Non valido"
+      }
+    }
+  },
+  "debtPositionDetail": {
+    "debtPositionInfo": "Informazioni sulla posizione debitoria",
+    "paymentOptions": "Opzioni di Pagamento",
+    "solutionDetail": "Dettaglio soluzione",
+    "timeline": {
+      "title": "Storico Posizione Debitoria",
+      "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio"
+    }
+  },
+  "debtPositionSearchResults": {
+    "iuv": "Codice Avviso (IUV)",
+    "subject": "Oggetto del pagamento",
+    "amount": "Importo",
+    "expirationDate": "Data Scadenza",
+    "status": "Stato"
+  },
+  "debtPositionInstallmentDetail": {
+    "drawer": {
+      "title": "Beneficiari",
+      "info": "Ci sono presenti altri beneficiari diversi al tuo ente."
+    },
+    "timeline": {
+      "title": "Storico Avviso",
+      "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio"
+    }
+  },
+  "FileUploaderFlowImport": {
+    "telematic-receipt": {
+      "description": "Carica qui il file .zip con le Ricevute Telematiche"
+    },
+    "treasury": {
+      "description": "Carica qui il file .zip con i giornali di cassa"
+    },
+    "reporting": {
+      "description": "Carica qui il file .zip con le Rendicontazioni"
+    },
+    "debt-positions": {
+      "description": "Carica qui il file .zip con le Ricevute Telematiche"
+    },
+    "requiredFileText": "Campo obbligatorio. Carica un file .zip"
+  },
+  "flowDataGrid": {
+    "internalID": "ID Interno",
+    "loadedDiscarded": "Caricati/Scarti",
+    "name": "Nome",
+    "operator": "Operatore",
+    "paymentFromDate": "Pagamento dal",
+    "paymentToDate": "Pagamento al",
+    "reservationDate": "Data prenotazione",
+    "lastUpdate": "Ultima Modifica",
+    "authorizedOrganizations": "Enti abilitati",
+    "noDataRows": "Nessun elemento trovato",
+    "uploadDate": "Data Caricamento"
+  },
+  "reporting": {
+    "description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
+    "importFlowsDescriptionContainer": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
+    "importFlowsTitleContainer": "Importa flussi di Rendicontazione",
+    "regulationFrom": "Regolamento dal",
+    "searchDescriptionContainer": "Inserisci al meno uno dei campi per cominciare la ricerca.",
+    "searchRegulationId": "Cerca ID Regolamento",
+    "searchReportingId": "Cerca ID Rendicontazione",
+    "searchTitleContainer": "Cerca flussi di Rendicontazione",
+    "title": "Rendicontazione"
+  },
+  "reportingSearchResults": {
+    "description": "Visualizza in dettaglio e scarica i flussi di Rendicontazione.",
+    "searchReportingId": "ID Rendicontazione",
+    "searchRegulationId": "ID Regolamento",
+    "regulationDate": "Data Regolamento",
+    "flowDate": "Data flusso",
+    "payments": "Pagamenti",
+    "totalAmount": "Importo totale"
+  },
+  "reportingImportFlowOverview": {
+    "description": "Visualizza i flussi importati in precedenza e importa nuovi."
+  },
+  "reportingImportThankYouPage": {
+    "description": "Troverai il flusso caricato nella sezione Flussi importati"
+  },
+  "telematicReceiptDetail": {
+    "title": "Dettaglio Ricevuta Telematica"
+  },
+  "telematicReceiptExportFlowThankYouPage": {
+    "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
+  },
+  "debtPositionsImportThankYouPage": {
+    "description": "Troverai il flusso caricato nella sezione Flussi importati"
+  },
+  "telematicReceiptFlowExportOverview": {
+    "buttonReservationExport": "Prenota export",
+    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+    "exportFrom": "Esportati dal"
+  },
+  "telematicReceiptFlowImport": {
+    "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+    "boxTitle": "Configurazione flusso",
+    "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+    "manualLink": "Dubbi? Vai al manuale",
+    "uploadButton": "Carica il flusso"
+  },
+  "telematicReceiptFlowImportThankYouPage": {
+    "description": "Troverai il flusso caricato nella sezione Flussi importati"
+  },
+  "telematicReceiptImportFlowOverview": {
+    "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
+    "internalID": "ID interno",
+    "loadedDiscarded": "Caricati/Scarti"
+  },
+  "telematicReceipts": {
+    "description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
+    "downloadflowsdescription": "Richiede l’esportazione di Ricevute Telematiche in un certo intervallo di tempo.",
+    "downloadflowstitle": "Scarica Flussi di Ricevute Telematiche",
+    "exportedflowsviewbutton": "Vedi flussi esportati",
+    "exportrequestbutton": "Prenota export",
+    "importedflowsviewbutton": "Vedi flussi importati",
+    "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Ricevute Telematiche mancanti.",
+    "importflowstitle": "Importa Flussi di Ricevute Telematiche",
+    "search": "Cerca Ricevuta Telematica",
+    "searchdescription": "Inserisci al meno uno dei campi per cominciare la ricerca.",
+    "tari": "TARI",
+    "trafficoffence": "Violazione al codice della strada"
+  },
+  "telematicreceiptSearchResults": {
+    "description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
+    "title": "Risultato ricerca"
+  },
+  "treasury": {
+    "description": "Ricerca, visualizza o integra flussi di Tesoreria.",
+    "search": "Cerca flussi di Tesoreria",
+    "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
+    "importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
+    "importflowstitle": "Importa Flussi di Tesoreria",
+    "billDetail": "Dettaglio Bolletta",
+    "payer": "Ordinante",
+    "account": "Conto",
+    "billingYear": "Anno codice documento",
+    "documentCode": "Codice documento",
+    "tempDocumentYear": "Anno codice Provvisorio",
+    "tempDocumentCode": "Codice provvisorio"
+  },
+  "treasuryImportFlowOverview": {
+    "description": "Visualizza i flussi importati in precedenza e importa nuovi."
+  },
+  "exportFlow": {
+    "title": "Prenota export di un flusso",
+    "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
+    "buttonConfirmReservation": "Prenota",
+    "dueType": "Tipo di dovuto",
+    "dueTypePlaceHolder": "Tipo di dovuto da prenotare",
+    "fileVersion": "Versione tracciato",
+    "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
+    "formTitle": "Configurazione della esportazione"
+  },
+  "treasurySearchResults": {
+    "description": "Visualizza i flussi, seleziona e prenota gli export.",
+    "uploadFlow": "Carica flusso",
+    "reservationDate": "Data prenotazione",
+    "billingYear": "Anno bolletta",
+    "billingCode": "Codice bolletta",
+    "valueDate": "Data Valuta",
+    "accountingDate": "Data Contabile",
+    "reportingId": "ID Rendicontazione"
+  },
+  "debtTypes": {
+    "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
+    "searchDescription": "Codice per Descrizione"
+  },
+  "debtPositions": {
+    "searchCardTitle": "Cosa stai cercando?",
+    "searchCardDescription": "Seleziona cosa stai cercando e inserisci i filtri per avviare la ricerca.",
+    "searchCardIUVOption": "Avviso (IUV)",
+    "searchCardDebtPositionOption": "Posizione Debitoria",
+    "searchIUVDescription": "Cerca Codice Avviso (IUV)",
+    "searchFiscalCodeDescription": "Cerca Codice Fiscale",
+    "importDebtFlow": "Importa flussi di dovuti",
+    "importDebtFlowDescription": "Carica un file .zip con l'informazione necessaria di dovuti mancanti.",
+    "expirationFrom": "Scadenza dal",
+    "creationFrom": "Creazione dal"
+  }
 }

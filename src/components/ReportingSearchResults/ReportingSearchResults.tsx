@@ -1,63 +1,68 @@
-import { Grid, useTheme } from '@mui/material';
-import { Search } from '@mui/icons-material';
+import { useState } from 'react';
+import { useLocation, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import SearchResultsDataGrid from './ReportingDataGrid';
+import { Grid, Stack, useTheme } from '@mui/material';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import FilterContainer, {
-  COMPONENT_TYPE
-} from '../FilterContainer/FilterContainer';
+import SearchResultsDataGrid from './ReportingDataGrid';
+import { BaseFilterValues } from '../../models/Filters';
+import { PagedPaymentsReportingView } from '../../../generated/data-contracts';
+import useReportingSearch from '../../hooks/useReportingSearch';
+import usePaginationSync from '../../hooks/usePaginationSync';
+import useReportingFilters from '../../hooks/useReportingFilters';
+import FilterContainer from '../FilterContainer/FilterContainer';
+
+export type LocationState = {
+  filters: BaseFilterValues;
+};
 
 const ReportingSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const [searchParams] = useSearchParams();
+  const [totalElements, setTotalElements] = useState<number>(0);
+  const { state } = useLocation() as { state?: LocationState };
+
+  const initialFilters = state?.filters ?? {};
+
+  // Se non c'è "page" nell’URL, la setto a '1'; se non c'è "size", la setto a '10'
+  const pageFromUrl = parseInt(searchParams.get('page') || '1');
+  const sizeFromUrl = parseInt(searchParams.get('size') || '10');
+
+  const reportingSearch = useReportingSearch({
+    initialFilters: initialFilters,
+    initialPage: pageFromUrl - 1, // -1 perché la pagina è 1-based
+    initialSize: sizeFromUrl,
+    totalElements
+  });
+
+  const { filters } = useReportingFilters({
+    onFilter: () => {
+      reportingSearch.applyFilters();
+      // forzo la pagina a 0 + 1 perché la pagina in url è 1-based
+      handlePageChange(0 + 1);
+    }
+  });
+
+  const { handlePageChange, handlePageSizeChange } = usePaginationSync({
+    paginationData: reportingSearch.query.data,
+    onPageChange: reportingSearch.handlePageChange,
+    onPageSizeChange: reportingSearch.handlePageSizeChange,
+    totalElements,
+    setTotalElements
+  });
 
   return (
-    <>
+    <Stack>
       <TitleComponent
         title={t('commons.routes.REPORTING_SEARCH_RESULTS')}
         description={t('reportingSearchResults.description')}
       />
-      <Grid>
-        <Grid
-          container
-          direction="row"
-          sx={{
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            marginBottom: 2,
-            flexWrap: 'nowrap'
-          }}
-        >
-          <FilterContainer
-            items={[
-              {
-                type: COMPONENT_TYPE.textField,
-                label: t('reportingSearchResults.searchReportingId'),
-                icon: <Search />,
-                gridWidth: 3
-              },
-              {
-                type: COMPONENT_TYPE.textField,
-                label: t('reportingSearchResults.searchRegulationId'),
-                icon: <Search />,
-                gridWidth: 3
-              },
-              {
-                type: COMPONENT_TYPE.dateRange,
-                label: 'reportingSearchResults.searchDateRange',
-                from: { label: t('reporting.regulationFrom') },
-                to: { label: t('dates.to') },
-                gridWidth: 5
-              },
-              {
-                type: COMPONENT_TYPE.button,
-                label: t('commons.filters.filterResults'),
-                gridWidth: 1,
-                onClick: () => console.log('Filter applied')
-              }
-            ]}
-          />
-        </Grid>
+      <Stack gap={3}>
+        <FilterContainer
+          items={filters}
+          values={reportingSearch.filterValues}
+          onChange={reportingSearch.handleFilterChange}
+        />
         <Grid
           container
           p={2}
@@ -68,10 +73,16 @@ const ReportingSearchResults = () => {
           }}
           aria-label="results-table"
         >
-          <SearchResultsDataGrid />
+          <SearchResultsDataGrid
+            data={reportingSearch.query.data as PagedPaymentsReportingView}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+            onSortChange={reportingSearch.setSort}
+            pagination={reportingSearch.pagination}
+          />
         </Grid>
-      </Grid>
-    </>
+      </Stack>
+    </Stack>
   );
 };
 

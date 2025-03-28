@@ -7,10 +7,42 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import { FilterFieldIds } from '../../models/SearchCardFields';
+import { useCallback, useState } from 'react';
+import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 
 export const Reporting = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}]);
+
+  const navigateToResults = useCallback(() => {
+    navigate(PageRoutes.REPORTING_SEARCH_RESULTS, {
+      state: {
+        filters: filters[0]
+      }
+    });
+  }, [0, filters, navigate]);
+
+  const resetCurrentFilters = useCallback(() => {
+    const newFilters = [...filters];
+    newFilters[0] = {};
+    setFilters(newFilters);
+  }, [0, filters]);
+
+  const handleFilterChange = useCallback(
+    (id: string, value: FilterFieldValue) => {
+      setFilters((prevFilters) => {
+        const newFilters = [...prevFilters];
+        newFilters[0] = {
+          ...newFilters[0],
+          [id]: value
+        };
+        return newFilters;
+      });
+    },
+    [0]
+  );
 
   return (
     <>
@@ -24,34 +56,39 @@ export const Reporting = () => {
             <SearchCard
               title={t('reporting.searchTitleContainer')}
               description={t('reporting.searchDescriptionContainer')}
+              filterValues={filters[0]}
+              onFilterChange={handleFilterChange}
               fields={[
                 {
                   type: COMPONENT_TYPE.textField,
                   label: t('reporting.searchReportingId'),
-                  icon: <Search />
+                  icon: <Search />,
+                  id: FilterFieldIds.IUF
                 },
                 {
                   type: COMPONENT_TYPE.textField,
                   label: t('reporting.searchRegulationId'),
-                  icon: <Search />
+                  icon: <Search />,
+                  id: FilterFieldIds.REGULATION_UNIQUE_IDENTIFIER
                 },
                 {
                   type: COMPONENT_TYPE.dateRange,
                   label: 'reporting.searchDateRange',
                   from: { label: t('dates.from') },
-                  to: { label: t('dates.to') }
+                  to: { label: t('dates.to') },
+                  id: FilterFieldIds.DATE_RANGE
                 }
               ]}
               button={[
                 {
                   label: t('commons.filters.remove'),
                   variant: 'outlined',
-                  onClick: () => console.log('remove filter')
+                  onClick: resetCurrentFilters
                 },
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: () => navigate(PageRoutes.REPORTING_SEARCH_RESULTS)
+                  onClick: navigateToResults
                 }
               ]}
             />
