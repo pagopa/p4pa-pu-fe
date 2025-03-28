@@ -108,7 +108,7 @@ const SearchResultsDataGrid = () => {
               action: () =>
                 navigate(
                   generatePath(PageRoutes.REPORTING_DETAIL, {
-                    id: '2024-03-19UNCRITMM-1iv6iotaa3td2'
+                    id: 'iuf2'
                   })
                 )
             },
