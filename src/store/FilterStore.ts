@@ -1,29 +1,57 @@
 import { signal } from '@preact/signals-react';
+import { FilterValues } from '../models/Filters';
 
-export const filtersState = signal<Array<string>>(['']);
+export const initialFilterValues: FilterValues = {
+  ACCOUNTING_DATE_FROM: null,
+  ACCOUNTING_DATE_TO: null,
+  AMOUNT: '0',
+  BILL_CODE: '',
+  BILL_FROM: null,
+  DOCUMENT_CODE: '',
+  DOCUMENT_CODE_FROM: null,
+  IUV: '',
+  PAYER: '',
+  REPORT_ID: '',
+  TEMPORARY_CODE: '',
+  TEMPORARY_CODE_FROM: null,
+  VALUE_DATE_FROM: null,
+  VALUE_DATE_TO: null
+};
 
-export function setFiltersState(newState: Array<string>) {
-  filtersState.value = newState;
+export const selectedFilters = signal<Array<string>>(['']);
+
+export function setSelectedFilters(newState: Array<string>) {
+  selectedFilters.value = newState;
 }
 
 export const addFilterRow = (nextId?: string) => {
-  const filters = filtersState.value;
-  setFiltersState([...filters, nextId ?? '']);
+  const filters = selectedFilters.value;
+  setSelectedFilters([...filters, nextId ?? '']);
 };
 
 export const removeFilterRow = (id: string) => {
-  const filters = filtersState.value;
+  const filters = selectedFilters.value;
   if (filters.length > 1) {
-    setFiltersState(filters.filter((filterId) => filterId !== id));
+    setSelectedFilters(filters.filter((filterId) => filterId !== id));
   }
 };
 
 export const updateFilter = (id: string, index: number) => {
-  const filters = [...filtersState.value];
+  const filters = [...selectedFilters.value];
   filters[index] = id;
-  setFiltersState(filters);
+  setSelectedFilters(filters);
+};
+
+export const noFilterIsSelected = () =>
+  selectedFilters.value[0] === '' || selectedFilters.value.length === 0;
+
+export const filterValues = signal<FilterValues>(initialFilterValues);
+
+export const setFilterValues = (newState: FilterValues) => {
+  filterValues.value = newState;
 };
 
 export const removeAllFilters = () => {
-  setFiltersState(['']);
+  setSelectedFilters(['']);
+  setFilterValues(initialFilterValues);
 };

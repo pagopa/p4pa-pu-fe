@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import MultiFilter from './MultiFilter';
 import { filtersState, setFiltersState } from '../../store/FilterStore';
-import { FilterMap } from '../../hooks/useFilters';
+import { FilterMap } from '../../hooks/useMultiFilters';
 import { COMPONENT_TYPE, FilterItem } from '../FilterContainer/FilterContainer';
 
 vi.mock('../FilterContainer/FilterContainer', () => ({

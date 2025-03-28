@@ -4,27 +4,26 @@ import {
   FilterItem
 } from '../components/FilterContainer/FilterContainer';
 import { useStore } from '../store/GlobalStore';
-import {
-  initialFilterValues,
-  setFilterValues
-} from '../store/FilterValuesStore';
 import { ChangeEvent, useEffect } from 'react';
-import { removeAllFilters } from '../store/FilterStore';
+import {
+  noFilterIsSelected,
+  removeAllFilters,
+  setFilterValues
+} from '../store/FilterStore';
 
 export type FilterMap = Record<
   string,
   { label: string; fields: Array<FilterItem> }
 >;
 
-export const useFilters = (props?: { cleanOnMount?: boolean }) => {
+export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
   const { t } = useTranslation();
   const {
-    state: { filterValues }
+    state: { filterValues, selectedFilters }
   } = useStore();
 
   useEffect(() => {
-    if (props?.cleanOnMount) {
-      setFilterValues(initialFilterValues);
+    if (props?.clearOnMount) {
       removeAllFilters();
     }
   }, []);
@@ -199,5 +198,11 @@ export const useFilters = (props?: { cleanOnMount?: boolean }) => {
     }
   };
 
-  return filterMap;
+  return {
+    filterMap,
+    selectedFilters,
+    removeAllFilters,
+    noFilterIsSelected,
+    filterValues
+  };
 };

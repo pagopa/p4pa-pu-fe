@@ -2,7 +2,7 @@ import { Box, Button, IconButton, Stack, useTheme } from '@mui/material';
 import { Add, RemoveCircleOutline } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Filter } from './Filter';
-import { FilterMap } from '../../hooks/useFilters';
+import { FilterMap } from '../../hooks/useMultiFilters';
 import { useStore } from '../../store/GlobalStore';
 import {
   addFilterRow,
@@ -20,7 +20,7 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
   const { t } = useTranslation();
 
   const {
-    state: { filters }
+    state: { selectedFilters }
   } = useStore();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
@@ -29,18 +29,20 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
 
   // Add the next not already selected filter
   const addNextFilterRow = () =>
-    addFilterRow(Object.keys(filterMap).find((id) => !filters.includes(id)));
+    addFilterRow(
+      Object.keys(filterMap).find((id: string) => !selectedFilters.includes(id))
+    );
 
   return (
     <Stack gap={3}>
-      {filters.map((filterId, index) => (
+      {selectedFilters.map((filterId, index) => (
         <Stack
           key={filterId}
           direction="row"
           gap={2}
           justifyContent="space-between"
         >
-          {filters.length > 1 && (
+          {selectedFilters.length > 1 && (
             <IconButton
               sx={{ color: theme.palette.error.dark, alignSelf: 'flex-start' }}
               onClick={() => removeFilterRow(filterId)}
@@ -52,7 +54,7 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
           <Filter
             value={filterId}
             filterMap={filterMap}
-            selectedFilters={filters}
+            selectedFilters={selectedFilters}
             onChange={(value) => onChange(value, index)}
           />
         </Stack>
@@ -63,7 +65,7 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
           variant="text"
           onClick={addNextFilterRow}
           startIcon={<Add />}
-          disabled={filters.length >= Object.keys(filterMap).length}
+          disabled={selectedFilters.length >= Object.keys(filterMap).length}
         >
           {t('commons.addfilter')}
         </Button>

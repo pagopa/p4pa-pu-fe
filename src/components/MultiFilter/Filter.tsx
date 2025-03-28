@@ -2,7 +2,7 @@ import { ChangeEvent } from 'react';
 import { Stack } from '@mui/material';
 import { FormComponent } from '../FormComponent';
 import FilterContainer from '../FilterContainer/FilterContainer';
-import { FilterMap } from '../../hooks/useFilters';
+import { FilterMap } from '../../hooks/useMultiFilters';
 import { useTranslation } from 'react-i18next';
 
 export type FilterProps = {
