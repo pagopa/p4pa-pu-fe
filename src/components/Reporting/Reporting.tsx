@@ -15,9 +15,6 @@ export const Reporting = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}]);
-  // const {
-  //   state: { organizationId }
-  // } = useStore();
 
   const navigateToResults = useCallback(() => {
     navigate(PageRoutes.REPORTING_SEARCH_RESULTS, {
