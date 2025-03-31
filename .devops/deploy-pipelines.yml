@@ -28,7 +28,7 @@ variables:
     api_host: '$(UAT_API_HOST)'
     fileshare_host: '$(UAT_API_FILESHARE_HOST)'
 
-  ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
+  ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     environment: 'PROD'
     azure_subscription: '$(PROD_AZURE_SUBSCRIPTION)'
     cdn_endpoint: '$(PROD_CDN_ENDPOINT)'
