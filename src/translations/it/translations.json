@@ -125,6 +125,7 @@
 			"INSTALLMENTS": "Soluzione a Rate",
 			"DOWN_PAYMENT": "Anticipo"
 		},
+    "payments":"Pagamenti",
 		"person": "Persona fisica",
 		"personLegal": "Persona giuridica",
 		"postAccount": "Conto Corrente Postale",
