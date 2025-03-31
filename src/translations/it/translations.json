@@ -24,6 +24,7 @@
 		"detail": "Dettaglio",
 		"duetype": "Tipo dovuto",
 		"exit": "Esci",
+		"unknownOrganization": "Ente senza nome",
 		"files": {
 			"download": "Scarica",
 			"downloadFlow": "Scarica flusso",
@@ -124,7 +125,6 @@
 			"INSTALLMENTS": "Soluzione a Rate",
 			"DOWN_PAYMENT": "Anticipo"
 		},
-    "payments": "Pagamenti",
 		"person": "Persona fisica",
 		"personLegal": "Persona giuridica",
 		"postAccount": "Conto Corrente Postale",

@@ -3,7 +3,7 @@ import MultiFilter from '../MultiFilter/MultiFilter';
 import FilterContainer, {
   FilterItem
 } from '../FilterContainer/FilterContainer';
-import { FilterMap } from '../../hooks/useFilters';
+import { FilterMap } from '../../hooks/useMultiFilters';
 import { ButtonProps, FormComponent } from '../FormComponent';
 import { useState, useEffect } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';

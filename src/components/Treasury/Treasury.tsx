@@ -6,17 +6,14 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { PageRoutes } from '../../App';
 import { generatePath, useNavigate } from 'react-router';
-import { useFilters } from '../../hooks/useFilters';
-import { removeAllFilters } from '../../store/FilterStore';
-import { useStore } from '../../store/GlobalStore';
+import { useMultiFilters } from '../../hooks/useMultiFilters';
 
 export const Treasury = () => {
   const { t } = useTranslation();
-  const filterMap = useFilters();
+  const { filterMap, removeAllFilters, noFilterIsSelected } = useMultiFilters({
+    clearOnMount: true
+  });
   const navigate = useNavigate();
-  const {
-    state: { filters }
-  } = useStore();
 
   return (
     <>
@@ -40,7 +37,7 @@ export const Treasury = () => {
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  disabled: filters[0] === '' || filters.length === 0,
+                  disabled: !noFilterIsSelected.peek(),
                   onClick: () => navigate(PageRoutes.TREASURY_SEARCH_RESULTS)
                 }
               ]}

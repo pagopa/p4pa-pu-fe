@@ -1,3 +1,6 @@
+import { endOfDay } from 'date-fns/endOfDay';
+import { startOfDay } from 'date-fns/startOfDay';
+
 type optionMapItem = {
   label: string;
   value: string;
@@ -39,4 +42,12 @@ export function formatDateTime(dateTimeString?: string) {
   if (!dateTimeString) return '';
   const date = new Date(dateTimeString);
   return `${date.toLocaleDateString('it-IT')} ${date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+}
+
+export function toStartOfDay(date?: Date | null) {
+  return date ? startOfDay(date) : null;
+}
+
+export function toEndOfDay(date?: Date | null) {
+  return date ? endOfDay(date) : null;
 }

@@ -7,24 +7,38 @@ import { FilterAlt } from '@mui/icons-material';
 import { useState } from 'react';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
-import { useFilters } from '../../hooks/useFilters';
-import { useStore } from '../../store/GlobalStore';
-import { removeAllFilters } from '../../store/FilterStore';
+import { FilterMap, useMultiFilters } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
+import { BaseFilterValues } from '../../models/Filters';
+
+export type LocationState = {
+  category: string;
+  filters: BaseFilterValues;
+  filterMap: FilterMap;
+};
 
 const TreasurySearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const filterMap = useFilters();
   const {
-    state: { filters }
-  } = useStore();
+    filterMap,
+    selectedFilters,
+    removeAllFilters,
+    noFilterIsSelected,
+    filterValues
+  } = useMultiFilters();
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   const toggleDrawer = () => {
     setDrawerOpen((prev) => !prev);
+  };
+
+  const applyFilters = () => {
+    // TODO: apply filters
+    console.log(filterValues);
+    setDrawerOpen(false);
   };
 
   return (
@@ -52,7 +66,7 @@ const TreasurySearchResults = () => {
           startIcon={<FilterAlt />}
           onClick={toggleDrawer}
         >
-          {`${t('commons.filters.filtersField')} (${filters[0] === '' ? 0 : filters.length})`}
+          {`${t('commons.filters.filtersField')} (${selectedFilters[0] === '' ? 0 : selectedFilters.length})`}
         </ButtonNaked>
       </Grid>
 
@@ -73,9 +87,9 @@ const TreasurySearchResults = () => {
         buttons={[
           {
             buttonText: t('commons.filters.filterResults'),
-            onButtonClick: toggleDrawer,
+            onButtonClick: applyFilters,
             variant: 'contained',
-            disabled: filters[0] === '' || filters.length === 0
+            disabled: !noFilterIsSelected.peek()
           },
           {
             buttonText: t('commons.filters.remove'),
