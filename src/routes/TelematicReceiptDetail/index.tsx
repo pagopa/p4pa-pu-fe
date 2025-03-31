@@ -18,7 +18,7 @@ export const TelematicReceiptDetail = () => {
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
   if (isNaN(id)) {
-    // TO-DO
+    // TODO
     // raise error
     console.error('ID is not a number');
   }

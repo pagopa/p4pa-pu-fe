@@ -97,8 +97,7 @@ vi.mock('../../store/GlobalStore', () => ({
     state: {
       ORGANIZATION_ID: 3,
       APP_STATE: { loading: false, customBreadcrumbsItems: [] }
-    },
-    setState: vi.fn()
+    }
   }),
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));

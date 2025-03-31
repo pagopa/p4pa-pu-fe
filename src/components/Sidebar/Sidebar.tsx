@@ -51,7 +51,7 @@ export const Sidebar: React.FC = () => {
   };
   const { state } = useStore();
   const configFe = useFeConfig();
-  const organizations = useOrganizations();
+  const { organizations } = useOrganizations();
   const containsBrokerCF = organizations?.some(
     (item) => item.orgFiscalCode === configFe?.brokerFiscalCode
   );

@@ -10,20 +10,20 @@ type DateRangeState = {
 };
 
 export const useDateRange = (tabIndex: number) => {
-  const [state, setState] = useState<Record<number, DateRangeState>>({
-    0: {
+  const [state, setState] = useState<Array<DateRangeState>>([
+    {
       from: startOfDay(subMonths(new Date(), 1)),
       to: endOfDay(new Date()),
       fromError: null,
       toError: null
     },
-    1: {
+    {
       from: startOfDay(subMonths(new Date(), 1)),
       to: endOfDay(new Date()),
       fromError: null,
       toError: null
     }
-  });
+  ]);
 
   const updateField = (key: keyof DateRangeState, value: unknown) => {
     setState((prev) => ({

@@ -4,6 +4,23 @@ import {
 } from '../../generated/apiClient';
 export type FlowStatus = IngestionFlowFileStatus;
 
+export type FilterValues = {
+  ACCOUNTING_DATE_FROM: Date | null;
+  ACCOUNTING_DATE_TO: Date | null;
+  AMOUNT: string;
+  BILL_CODE: string;
+  BILL_FROM: Date | null;
+  DOCUMENT_CODE: string;
+  DOCUMENT_CODE_FROM: Date | null;
+  IUV: string;
+  PAYER: string;
+  REPORT_ID: string;
+  TEMPORARY_CODE: string;
+  TEMPORARY_CODE_FROM: Date | null;
+  VALUE_DATE_FROM: Date | null;
+  VALUE_DATE_TO: Date | null;
+};
+
 export const FLOW_STATUS_VALUES = [
   'UPLOADED',
   'PROCESSING',

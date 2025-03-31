@@ -12,7 +12,7 @@ import {
   BaseFilterValues,
   FilterFieldValue
 } from '../../models/Filters';
-import { endOfDay, startOfDay } from 'date-fns';
+import { toEndOfDay, toStartOfDay } from '../../utils/formatters';
 
 export enum COMPONENT_TYPE {
   textField = 'textField',
@@ -57,17 +57,7 @@ export type ButtonField = {
 export type DateRangeField = {
   type: COMPONENT_TYPE.dateRange;
   isYear?: boolean;
-  from?: {
-    label?: string;
-    errorMessage?: string;
-    onChange?: (date: Date | null) => void;
-  };
-  to?: {
-    label?: string;
-    errorMessage?: string;
-    onChange?: (date: Date | null) => void;
-  };
-} & Omit<DateRangeProps, 'from' | 'to' | 'onChange'>;
+} & DateRangeProps;
 
 type TypeUnion =
   | SearchField
@@ -172,26 +162,14 @@ const RenderComponent = ({
       const fromConfig = dateItem?.from
         ? {
             ...dateItem?.from,
-            value:
-              currentValue && 'from' in currentValue
-                ? currentValue?.from && startOfDay(currentValue?.from)
-                : null,
+            value: toStartOfDay(dateItem?.from?.value ?? currentValue?.from),
             onChange: (date: Date | null) => {
-              if (dateItem?.from?.onChange) {
-                dateItem?.from.onChange(date && startOfDay(date));
-              }
+              dateItem?.from?.onChange?.(toStartOfDay(date));
 
-              if (onChange) {
-                const toDate =
-                  currentValue && 'to' in currentValue
-                    ? currentValue?.to && endOfDay(currentValue?.to)
-                    : null;
-
-                onChange(fieldId, {
-                  from: date && startOfDay(date),
-                  to: toDate && endOfDay(toDate)
-                });
-              }
+              onChange?.(fieldId, {
+                from: toStartOfDay(date),
+                to: toEndOfDay(currentValue?.to)
+              });
             }
           }
         : undefined;
@@ -199,26 +177,14 @@ const RenderComponent = ({
       const toConfig = dateItem?.to
         ? {
             ...dateItem?.to,
-            value:
-              currentValue && 'to' in currentValue
-                ? currentValue.to && endOfDay(currentValue.to)
-                : null,
+            value: toEndOfDay(dateItem?.to?.value ?? currentValue?.to),
             onChange: (date: Date | null) => {
-              if (dateItem?.to?.onChange) {
-                dateItem?.to.onChange(date && endOfDay(date));
-              }
+              dateItem?.to?.onChange?.(toEndOfDay(date));
 
-              if (onChange) {
-                const fromDate =
-                  currentValue && 'from' in currentValue
-                    ? currentValue?.from && startOfDay(currentValue?.from)
-                    : null;
-
-                onChange(fieldId, {
-                  from: fromDate && startOfDay(fromDate),
-                  to: date && endOfDay(date)
-                });
-              }
+              onChange?.(fieldId, {
+                from: toStartOfDay(currentValue?.from),
+                to: toEndOfDay(date)
+              });
             }
           }
         : undefined;

@@ -1,11 +1,11 @@
 import { UserMemo } from '../models/User';
-import { STATE } from '../store/types';
 import { useStore } from '../store/GlobalStore';
+import { setUserInfo } from '../store/UserInfoStore';
 
 export const useUserInfo = () => {
-  const { setState, state } = useStore();
+  const { state } = useStore();
 
-  /* TO-DO service to obtain user data */
+  /* TODO service to obtain user data */
   const data = {
     email: 'marcopolo@ilmilione.it',
     name: 'Marco',
@@ -17,7 +17,7 @@ export const useUserInfo = () => {
     familyName: data.familyName,
     userId: data.userId
   };
-  setState(STATE.USER_INFO, user);
+  setUserInfo(user);
 
   return { userInfo: state.userInfo };
 };

@@ -9,8 +9,7 @@ export const useOrganizations = () => {
     state: { organizationId }
   } = useStore();
 
-  const { data, isLoading, isError, isSuccess, error } =
-    utils.loaders.getOrganizations();
+  const { data, ...query } = utils.loaders.getOrganizations();
 
   useEffect(() => {
     if (!organizationId && data) {
@@ -18,12 +17,12 @@ export const useOrganizations = () => {
       setOrganizationId(firstOrganization.organizationId);
       setOperatorRole(firstOrganization.operatorRole);
 
-      if (isError) {
+      if (query.isError) {
         // TODO: Handle error (e.g., show a toast)
-        console.error('Failed to fetch fe config', error);
+        console.error('Failed to fetch fe config', query.error);
       }
     }
-  }, [data, isLoading, isError, isSuccess]);
+  }, [data, query.isLoading, query.isError, query.isSuccess]);
 
-  return data;
+  return { organizations: data, ...query };
 };
