@@ -2,6 +2,10 @@ HELP.md
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# testing
+/coverage
+/test_reports
+
 #**/src/main/resources/application-local*.properties
 
 ### STS ###
@@ -79,6 +83,7 @@ Desktop.ini
 ######################
 /bin/
 /deploy/
+/generated
 
 ######################
 # Logs
@@ -92,6 +97,7 @@ Desktop.ini
 *.*~
 *~
 .merge_file*
+tsconfig.tsbuildinfo
 
 ######################
 # Gradle Wrapper
@@ -130,3 +136,4 @@ Desktop.ini
 ### Local Sonar ###
 **.scannerwork
 **/sonar-project.properties
+node_modules

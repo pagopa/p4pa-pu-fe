@@ -1,0 +1,25 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import dotenv from 'dotenv';
+dotenv.config();
+
+const DEPLOY_PATH = process.env.DEPLOY_PATH || '';
+
+// https://vite.dev/config/
+export default defineConfig({
+  base: `${DEPLOY_PATH}`,
+  server: {
+    port: 1234
+  },
+  build: {
+    target: 'esnext'
+  },
+  plugins: [react()],
+  resolve: {
+    extensions: ['.ts', '.js', '.mjs', '.json', '.tsx']
+  },
+  esbuild: {
+    loader: 'tsx',
+    include: /\.(ts|tsx|js|mjs)$/
+  }
+});
