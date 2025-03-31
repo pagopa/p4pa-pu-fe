@@ -15,6 +15,7 @@ import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch'
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
+import { OperatorRoleEnum } from '../../../generated/apiClient';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;
@@ -33,7 +34,7 @@ export const Header = (props: HeaderProps) => {
     organizations?.map((item) => ({
       // TODO: Mui-italia should fix this type
       // passing a number here will break HeaderProduct
-      id: item.organizationId.toString() as unknown as number,
+      id: item.organizationId.toString(),
       logoUrl: item.orgLogo,
       name: item.orgName || t('commons.unknownOrganization'),
       productRole: item.operatorRole
@@ -78,8 +79,8 @@ export const Header = (props: HeaderProps) => {
   };
 
   const onSelectedParty = (organization: PartySwitchItem) => {
-    setOrganizationId(organization.id);
-    setOperatorRole(organization.productRole);
+    setOrganizationId(Number(organization.id));
+    setOperatorRole(organization.productRole as OperatorRoleEnum);
     navigate(0);
   };
 
