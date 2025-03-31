@@ -1,10 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect, afterEach } from 'vitest';
 import { STATE } from './types';
-import { setOrganizationId } from './OrganizationIdStore';
-import { setUserInfo } from './UserInfoStore';
 import { useStore, StoreProvider } from './GlobalStore';
 import 'vitest-dom/extend-expect';
+import { initialFilterValues } from './FilterStore';
 
 vi.mock('./OrganizationIdStore', () => ({
   setOrganizationId: vi.fn(),
@@ -49,41 +48,10 @@ describe('StoreContext', () => {
         [STATE.CONFIG_FE]: null,
         [STATE.ORGANIZATION_ID]: null,
         [STATE.USER_INFO]: null,
-        [STATE.FILTERS]: ['']
+        [STATE.SELECTED_FILTERS]: [''],
+        [STATE.FILTER_VALUES]: initialFilterValues
       })
     );
-  });
-
-  it('should call setOrganizationId when setting ORGANIZATION_ID', () => {
-    const TestComponent = () => {
-      const { setState } = useStore();
-      setState(STATE.ORGANIZATION_ID, { id: 'org123' });
-      return null;
-    };
-
-    render(
-      <StoreProvider>
-        <TestComponent />
-      </StoreProvider>
-    );
-
-    expect(setOrganizationId).toHaveBeenCalledWith({ id: 'org123' });
-  });
-
-  it('should call setUserInfo when setting USER_INFO', () => {
-    const TestComponent = () => {
-      const { setState } = useStore();
-      setState(STATE.USER_INFO, { name: 'John Doe' });
-      return null;
-    };
-
-    render(
-      <StoreProvider>
-        <TestComponent />
-      </StoreProvider>
-    );
-
-    expect(setUserInfo).toHaveBeenCalledWith({ name: 'John Doe' });
   });
 
   it('should throw an error if useStore is used outside of StoreProvider', () => {

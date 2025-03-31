@@ -1,4 +1,4 @@
-/* TO-DO import generated schema */
+// TODO: import generated schema
 export type UserInfo = {
   userId: string;
   fiscalCode: string;

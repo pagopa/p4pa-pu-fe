@@ -6,5 +6,7 @@ export const FilterFieldIds = {
   SEARCH_CF: 'searchCF',
   TYPE_ORG: 'typeOrgId',
   STATE: 'status',
-  DATE_RANGE: 'dateRange'
+  DATE_RANGE: 'dateRange',
+  IUF: 'iuf',
+  REGULATION_UNIQUE_IDENTIFIER: 'regulationUniqueIdentifier'
 };

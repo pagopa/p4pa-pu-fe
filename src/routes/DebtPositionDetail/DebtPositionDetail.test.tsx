@@ -12,9 +12,9 @@ import debtPositions from '../../api/debtPositions';
 import { DebtPositionDetailDTO } from '../../../generated/apiClient';
 import { UseQueryResult } from '@tanstack/react-query';
 import {
-  InstallmentDtoStatusEnum,
-  PaymentOptionDtoPaymentOptionTypeEnum,
-  PaymentOptionDtoStatusEnum
+  InstallmentStatus,
+  PaymentOptionTypeEnum,
+  PaymentOptionStatus
 } from '../../../generated/data-contracts';
 
 const mockDebtPositionDetail = createMock(debtPositionDetailDTOSchema);
@@ -26,13 +26,13 @@ mockDebtPositionDetail.paymentOptions = [
     paymentOptionId: 101,
     debtPositionId: 10,
     totalAmountCents: 5400,
-    status: PaymentOptionDtoStatusEnum.REPORTED,
-    paymentOptionType: PaymentOptionDtoPaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+    status: PaymentOptionStatus.REPORTED,
+    paymentOptionType: PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
     paymentOptionIndex: 1,
     installments: [
       {
         installmentId: 1,
-        status: InstallmentDtoStatusEnum.PAID,
+        status: InstallmentStatus.PAID,
         iuv: 'TEST_IUV_SINGLE',
         debtor: mockDebtor,
         amountCents: 5400,
@@ -45,13 +45,13 @@ mockDebtPositionDetail.paymentOptions = [
     paymentOptionId: 102,
     debtPositionId: 10,
     totalAmountCents: 5400,
-    status: PaymentOptionDtoStatusEnum.REPORTED,
-    paymentOptionType: PaymentOptionDtoPaymentOptionTypeEnum.INSTALLMENTS,
+    status: PaymentOptionStatus.REPORTED,
+    paymentOptionType: PaymentOptionTypeEnum.INSTALLMENTS,
     paymentOptionIndex: 2,
     installments: [
       {
         installmentId: 2,
-        status: InstallmentDtoStatusEnum.UNPAID,
+        status: InstallmentStatus.UNPAID,
         iuv: 'TEST_IUV_MULTI',
         debtor: mockDebtor,
         amountCents: 5400,
@@ -64,13 +64,13 @@ mockDebtPositionDetail.paymentOptions = [
     paymentOptionId: 103,
     debtPositionId: 10,
     totalAmountCents: 5400,
-    status: PaymentOptionDtoStatusEnum.REPORTED,
-    paymentOptionType: PaymentOptionDtoPaymentOptionTypeEnum.DOWN_PAYMENT,
+    status: PaymentOptionStatus.REPORTED,
+    paymentOptionType: PaymentOptionTypeEnum.DOWN_PAYMENT,
     paymentOptionIndex: 3,
     installments: [
       {
         installmentId: 3,
-        status: InstallmentDtoStatusEnum.REPORTED,
+        status: InstallmentStatus.REPORTED,
         iuv: 'TEST_IUV_DOWN',
         debtor: mockDebtor,
         amountCents: 5400,
@@ -97,8 +97,7 @@ vi.mock('../../store/GlobalStore', () => ({
     state: {
       ORGANIZATION_ID: 3,
       APP_STATE: { loading: false, customBreadcrumbsItems: [] }
-    },
-    setState: vi.fn()
+    }
   }),
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));

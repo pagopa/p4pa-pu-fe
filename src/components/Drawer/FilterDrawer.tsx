@@ -1,5 +1,5 @@
 import MultiFilter from '../MultiFilter/MultiFilter';
-import { FilterMap } from '../../hooks/useFilters';
+import { FilterMap } from '../../hooks/useMultiFilters';
 import { Grid, Button } from '@mui/material';
 import { Drawer, DrawerProps } from '../Drawer';
 

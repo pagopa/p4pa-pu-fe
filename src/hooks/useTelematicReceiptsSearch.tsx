@@ -3,7 +3,7 @@ import { useStore } from '../store/GlobalStore';
 import { FilterFieldValue } from '../models/Filters';
 import { useDataGridPagination } from './useDatagridPagination';
 import { getReceipts, TelematicReceiptsQuery } from '../api/receipts';
-import { GetReceiptsParamsReceiptOriginEnum } from '../../generated/apiClient';
+import { ReceiptOriginType } from '../../generated/apiClient';
 
 export type TelematicReceiptFilters = {
   dateRange?: {
@@ -54,7 +54,7 @@ export const useTelematicReceiptSearch = ({
     }),
     ...(filterValues?.iuv && { iuv: filterValues.iuv }),
     ...(sort.length && { sort }),
-    receiptOrigin: GetReceiptsParamsReceiptOriginEnum.RECEIPT_PAGOPA
+    receiptOrigin: ReceiptOriginType.RECEIPT_PAGOPA
   });
 
   const handleFilterChange = useCallback(

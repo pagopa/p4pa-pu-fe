@@ -6,7 +6,7 @@ import DetailContainer, {
   DetailData
 } from '../DetailContainer/DetailContainer';
 import EmptyDetailContainer from './EmptyDetailContainer';
-import { InstallmentDetailDtoStatusEnum } from '../../../generated/apiClient';
+import { InstallmentStatus } from '../../../generated/apiClient';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
@@ -21,12 +21,12 @@ import { useEffect, useState } from 'react';
 import { BredcrumbItem } from '../Breadcrumbs/Breadcrumbs';
 import { InstallmentDetailDrawer } from './InstallmentDetailDrawer';
 import { Timeline } from '../Timeline';
-import { setLoading } from '../../store/AppStateStore';
+import { setAppState, setLoading } from '../../store/AppStateStore';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { state, setState } = useStore();
+  const { state } = useStore();
   const { id } = useParams<{ id: string }>();
 
   const {
@@ -66,9 +66,9 @@ export const DebtPositionsInstallmentDetail = () => {
     return `${fiscalCode}${entityLabel}`;
   };
 
-  const DEBT_RESOLVED_STATES: Array<InstallmentDetailDtoStatusEnum> = [
-    InstallmentDetailDtoStatusEnum.PAID,
-    InstallmentDetailDtoStatusEnum.REPORTED
+  const DEBT_RESOLVED_STATES: Array<InstallmentStatus> = [
+    InstallmentStatus.PAID,
+    InstallmentStatus.REPORTED
   ];
   const isResolved =
     installment?.status && DEBT_RESOLVED_STATES.includes(installment.status);
@@ -160,7 +160,7 @@ export const DebtPositionsInstallmentDetail = () => {
           id: 'DEBT_POSITION_INSTALLMENT_DETAIL'
         }
       ];
-      setState(STATE.APP_STATE, {
+      setAppState({
         loading: false,
         customBreadcrumbsItems: customBreadcrumbsItems
       });

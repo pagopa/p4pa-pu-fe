@@ -18,7 +18,7 @@ import { format, parseISO } from 'date-fns';
 import {
   PaymentOptionDTO,
   InstallmentDTO,
-  PaymentOptionDtoPaymentOptionTypeEnum
+  PaymentOptionTypeEnum
 } from '../../../generated/apiClient';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
@@ -26,7 +26,10 @@ import { STATE } from '../../store/types';
 import { generatePath, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { PageRoutes } from '../../App';
-import { setLoading } from '../../store/AppStateStore';
+import {
+  setCustomBreadcrumbsItems,
+  setLoading
+} from '../../store/AppStateStore';
 import { Timeline } from '../../components/Timeline';
 
 export type PaymentOptionDisplayData = {
@@ -48,7 +51,7 @@ type InstallmentRow = {
 
 const DebtPositionDetail = () => {
   const { t } = useTranslation();
-  const { state, setState } = useStore();
+  const { state } = useStore();
   const { id } = useParams<{ id: string }>();
 
   const stateColors: Record<string, ChipProps['color']> = {
@@ -76,18 +79,16 @@ const DebtPositionDetail = () => {
 
   useEffect(() => {
     if (debtPositionDetail?.paymentOptions?.length) {
-      setState(STATE.APP_STATE, {
-        customBreadcrumbsItems: [
-          { pathname: PageRoutes.DEBT_POSITIONS_INDEX, id: 'DEBT_POSITIONS' },
-          {
-            pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
-              id: debtPositionDetail.paymentOptions[0].debtPositionId
-            }),
-            label: debtPositionDetail.debtPositionTypeOrgDescription || '',
-            id: 'branch'
-          }
-        ]
-      });
+      setCustomBreadcrumbsItems([
+        { pathname: PageRoutes.DEBT_POSITIONS_INDEX, id: 'DEBT_POSITIONS' },
+        {
+          pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
+            id: debtPositionDetail.paymentOptions[0].debtPositionId
+          }),
+          label: debtPositionDetail.debtPositionTypeOrgDescription || '',
+          id: 'branch'
+        }
+      ]);
     }
   }, [debtPositionDetail?.paymentOptions]);
 
@@ -176,9 +177,9 @@ const DebtPositionDetail = () => {
   };
 
   const priorityType = [
-    PaymentOptionDtoPaymentOptionTypeEnum.SINGLE_INSTALLMENT,
-    PaymentOptionDtoPaymentOptionTypeEnum.DOWN_PAYMENT,
-    PaymentOptionDtoPaymentOptionTypeEnum.INSTALLMENTS
+    PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+    PaymentOptionTypeEnum.DOWN_PAYMENT,
+    PaymentOptionTypeEnum.INSTALLMENTS
   ];
 
   const paymentOptionsDisplayData = (debtPositionDetail?.paymentOptions ?? [])

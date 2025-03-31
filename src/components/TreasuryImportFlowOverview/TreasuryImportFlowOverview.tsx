@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import ImportFlowOverview from '../ImportFlowOverview/ImportFlowOverview';
-import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../../generated/apiClient';
+import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
 
 export const TreasuryImportFlowOverview = () => {
   const { t } = useTranslation();
@@ -11,11 +11,11 @@ export const TreasuryImportFlowOverview = () => {
       routingCategory="treasury"
       title={t('commons.routes.TREASURY_IMPORT_FLOW_OVERVIEW')}
       description={t('treasuryImportFlowOverview.description')}
-      flowFileTypes={[
-        GetIngestionFlowFilesParamsFlowFileTypesEnum.TREASURY_CSV,
-        GetIngestionFlowFilesParamsFlowFileTypesEnum.TREASURY_OPI,
-        GetIngestionFlowFilesParamsFlowFileTypesEnum.TREASURY_POSTE,
-        GetIngestionFlowFilesParamsFlowFileTypesEnum.TREASURY_XLS
+      ingestionFlowFileTypes={[
+        IngestionFlowFileTypeEnum.TREASURY_CSV,
+        IngestionFlowFileTypeEnum.TREASURY_OPI,
+        IngestionFlowFileTypeEnum.TREASURY_POSTE,
+        IngestionFlowFileTypeEnum.TREASURY_XLS
       ]}
     />
   );

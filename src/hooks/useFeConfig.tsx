@@ -2,12 +2,11 @@ import { useEffect } from 'react';
 import brokers from '../api/brokers';
 import { setConfigFe } from '../store/ConfigFeStore';
 import { useStore } from '../store/GlobalStore';
-import { STATE } from '../store/types';
+import { setLoading } from '../store/AppStateStore';
 
 export const useFeConfig = () => {
   const {
-    state: { configFe },
-    setState
+    state: { configFe }
   } = useStore();
 
   const { data, isLoading, isError, isSuccess, error } =
@@ -17,7 +16,7 @@ export const useFeConfig = () => {
 
   useEffect(() => {
     if (!configFe) {
-      setState(STATE.APP_STATE, { loading: isLoading });
+      setLoading(isLoading);
 
       if (isSuccess && data) {
         setConfigFe(data);

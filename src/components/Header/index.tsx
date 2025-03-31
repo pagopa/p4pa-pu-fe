@@ -2,7 +2,6 @@ import {
   HeaderAccount,
   HeaderProduct,
   JwtUser,
-  PartyEntity,
   ProductEntity,
   UserAction
 } from '@pagopa/mui-italia';
@@ -12,8 +11,11 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router-dom';
 import { useOrganizations } from '../../hooks/useOrganizations';
 import { useStore } from '../../store/GlobalStore';
-import { STATE } from '../../store/types';
 import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
+import { setOrganizationId } from '../../store/OrganizationIdStore';
+import { setOperatorRole } from '../../store/OperatorRoleStore';
+import { useTranslation } from 'react-i18next';
+import { OperatorRoleEnum } from '../../../generated/apiClient';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;
@@ -21,28 +23,29 @@ export type HeaderProps = {
 };
 
 export const Header = (props: HeaderProps) => {
-  /* istanbul ignore next */
   const { onAssistanceClick = () => null } = props;
   const { onDocumentationClick = () => null } = props;
   const navigate = useNavigate();
-  const organizations = useOrganizations();
-  const { setState, state } = useStore();
+  const { organizations, isSuccess } = useOrganizations();
+  const { t } = useTranslation();
+  const { state } = useStore();
 
-  const organizationsToMenuItems: Array<PartyEntity> | undefined =
+  const organizationsToMenuItems: Array<PartySwitchItem> =
     organizations?.map((item) => ({
+      // TODO: Mui-italia should fix this type
+      // passing a number here will break HeaderProduct
       id: item.organizationId.toString(),
       logoUrl: item.orgLogo,
-      name: item.orgName || 'Ente senza nome',
-      productRole: item.operatorRole || ''
-    }));
+      name: item.orgName || t('commons.unknownOrganization'),
+      productRole: item.operatorRole
+    })) || [];
 
   async function logoutUser() {
-    /* TO-DO define a logout strategy */
+    // TODO: define logout
     navigate('/');
   }
 
-  /* Mocked data */
-  /* TO-DO call a service */
+  /* TODO: call user service */
   const jwtUser: JwtUser | undefined = {
     id: 'marcopolo',
     name: 'Marco',
@@ -55,7 +58,7 @@ export const Header = (props: HeaderProps) => {
       id: 'profile',
       label: 'I tuoi dati',
       onClick: () => {
-        /* TO-DO create a userdata page */
+        /* TODO: create a userdata page */
         navigate('/');
       },
       icon: <SettingsIcon fontSize="small" color="inherit" />
@@ -76,12 +79,12 @@ export const Header = (props: HeaderProps) => {
   };
 
   const onSelectedParty = (organization: PartySwitchItem) => {
-    setState(STATE.ORGANIZATION_ID, organization.id);
-    setState(STATE.OPERATOR_ROLE, organization.productRole);
+    setOrganizationId(Number(organization.id));
+    setOperatorRole(organization.productRole as OperatorRoleEnum);
     navigate(0);
   };
 
-  return (
+  return isSuccess ? (
     <>
       <HeaderAccount
         rootLink={utils.config.pagopaLink}
@@ -93,12 +96,10 @@ export const Header = (props: HeaderProps) => {
       />
       <HeaderProduct
         onSelectedParty={onSelectedParty}
-        partyId={
-          state.organizationId ? state.organizationId.toString() : undefined
-        }
+        partyId={state?.organizationId?.toString()}
         partyList={organizationsToMenuItems}
         productsList={[product]}
       />
     </>
-  );
+  ) : null;
 };

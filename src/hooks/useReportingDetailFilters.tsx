@@ -1,65 +1,78 @@
 import { useState, useCallback } from 'react';
 import { GridSortModel } from '@mui/x-data-grid';
-import { FlowFileFilters, PaginationParams } from '../models/Filters';
-import { IngestionFlowFileTypeEnum } from '../../generated/apiClient';
 
-type UseFlowFiltersProps = {
-  initialFilters?: Partial<FlowFileFilters>;
-  ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
-  onFiltersChange?: (filters: FlowFileFilters) => void;
+export type ReportingDetailFilters = {
+  iuv?: string;
+  payDateFrom?: string;
+  payDateTo?: string;
+  page: number;
+  size: number;
+  sort?: Array<string>;
+};
+
+type PaginationParams = {
+  page?: number;
+  size?: number;
+};
+
+type UseReportingFiltersProps = {
+  initialFilters?: Partial<ReportingDetailFilters>;
+  onFiltersChange?: (filters: ReportingDetailFilters) => void;
 };
 
 const DEFAULT_PAGE_SIZE = 10;
 
-export const useFlowFilters = ({
-  ingestionFlowFileTypes,
+export const useReportingDetailFilters = ({
   initialFilters,
   onFiltersChange
-}: UseFlowFiltersProps) => {
-  const [appliedFilters, setAppliedFilters] = useState<FlowFileFilters>(() => ({
-    ingestionFlowFileTypes,
-    size: initialFilters?.size || DEFAULT_PAGE_SIZE,
-    page: initialFilters?.page || 0,
-    ...initialFilters
-  }));
+}: UseReportingFiltersProps = {}) => {
+  const [appliedFilters, setAppliedFilters] = useState<ReportingDetailFilters>(
+    () => ({
+      size: initialFilters?.size || DEFAULT_PAGE_SIZE,
+      page: initialFilters?.page || 0,
+      ...initialFilters
+    })
+  );
 
   const [draftFilters, setDraftFilters] =
-    useState<FlowFileFilters>(appliedFilters);
-
+    useState<ReportingDetailFilters>(appliedFilters);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
   const hasActiveFilters = useCallback(() => {
-    const isFileNameChanged =
-      (draftFilters.fileName || '') !== (appliedFilters.fileName || '');
+    const isIuvChanged =
+      (draftFilters.iuv || '') !== (appliedFilters.iuv || '');
     const isDateFromChanged =
-      draftFilters.creationDateFrom !== appliedFilters.creationDateFrom;
-    const isDateToChanged =
-      draftFilters.creationDateTo !== appliedFilters.creationDateTo;
-    const isStatusChanged = draftFilters.status !== appliedFilters.status;
+      draftFilters.payDateFrom !== appliedFilters.payDateFrom;
+    const isDateToChanged = draftFilters.payDateTo !== appliedFilters.payDateTo;
 
-    return (
-      isFileNameChanged ||
-      isDateFromChanged ||
-      isDateToChanged ||
-      isStatusChanged
-    );
+    return isIuvChanged || isDateFromChanged || isDateToChanged;
   }, [
-    draftFilters.fileName,
-    draftFilters.creationDateFrom,
-    draftFilters.creationDateTo,
-    draftFilters.status,
-    appliedFilters.fileName,
-    appliedFilters.creationDateFrom,
-    appliedFilters.creationDateTo,
-    appliedFilters.status
+    draftFilters.iuv,
+    draftFilters.payDateFrom,
+    draftFilters.payDateTo,
+    appliedFilters.iuv,
+    appliedFilters.payDateFrom,
+    appliedFilters.payDateTo
   ]);
 
   const updateDraftFilters = useCallback(
-    (updates: Partial<FlowFileFilters>) => {
-      setDraftFilters((prev) => ({
-        ...prev,
-        ...updates
-      }));
+    (updates: Partial<ReportingDetailFilters>) => {
+      setDraftFilters((prev) => {
+        const cleanedUpdates = { ...updates };
+
+        Object.keys(cleanedUpdates).forEach((key) => {
+          const typedKey = key as keyof ReportingDetailFilters;
+          const value = cleanedUpdates[typedKey];
+          if (typeof value === 'string' && value === '') {
+            cleanedUpdates[typedKey] = undefined;
+          }
+        });
+
+        return {
+          ...prev,
+          ...cleanedUpdates
+        };
+      });
     },
     []
   );
@@ -67,6 +80,7 @@ export const useFlowFilters = ({
   const applyFilters = useCallback(() => {
     const filtersToApply = {
       ...draftFilters,
+      iuv: draftFilters.iuv?.trim() || undefined,
       page: 0
     };
     setAppliedFilters(filtersToApply);
@@ -89,8 +103,8 @@ export const useFlowFilters = ({
   const handleDateFromChange = useCallback(
     (date: Date | null) => {
       updateDraftFilters({
-        creationDateFrom: date
-          ? new Date(date.setHours(0, 0, 0, 0)).toISOString()
+        payDateFrom: date
+          ? new Date(date.setHours(0, 0, 0, 0)).toISOString().split('T')[0]
           : undefined
       });
     },
@@ -100,8 +114,8 @@ export const useFlowFilters = ({
   const handleDateToChange = useCallback(
     (date: Date | null) => {
       updateDraftFilters({
-        creationDateTo: date
-          ? new Date(date.setHours(23, 59, 59, 999)).toISOString()
+        payDateTo: date
+          ? new Date(date.setHours(23, 59, 59, 999)).toISOString().split('T')[0]
           : undefined
       });
     },

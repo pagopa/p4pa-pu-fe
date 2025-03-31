@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import ImportFlowOverview from '../ImportFlowOverview/ImportFlowOverview';
-import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../../generated/apiClient';
+import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
 
 export const DebtPositionsImportOverview = () => {
   const { t } = useTranslation();
@@ -9,9 +9,7 @@ export const DebtPositionsImportOverview = () => {
     <ImportFlowOverview
       routingCategory="debt-positions"
       title={t('commons.debtFlow')}
-      flowFileTypes={[
-        GetIngestionFlowFilesParamsFlowFileTypesEnum.DP_INSTALLMENTS
-      ]}
+      ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.DP_INSTALLMENTS]}
     />
   );
 };

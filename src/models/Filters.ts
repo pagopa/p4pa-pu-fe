@@ -1,6 +1,25 @@
-import { GetIngestionFlowFilesParamsFlowFileTypesEnum } from '../../generated/apiClient';
-import { GetIngestionFlowFilesParamsStatusEnum } from '../../generated/apiClient';
-export type FlowStatus = GetIngestionFlowFilesParamsStatusEnum;
+import {
+  IngestionFlowFileStatus,
+  IngestionFlowFileTypeEnum
+} from '../../generated/apiClient';
+export type FlowStatus = IngestionFlowFileStatus;
+
+export type FilterValues = {
+  ACCOUNTING_DATE_FROM: Date | null;
+  ACCOUNTING_DATE_TO: Date | null;
+  AMOUNT: string;
+  BILL_CODE: string;
+  BILL_FROM: Date | null;
+  DOCUMENT_CODE: string;
+  DOCUMENT_CODE_FROM: Date | null;
+  IUV: string;
+  PAYER: string;
+  REPORT_ID: string;
+  TEMPORARY_CODE: string;
+  TEMPORARY_CODE_FROM: Date | null;
+  VALUE_DATE_FROM: Date | null;
+  VALUE_DATE_TO: Date | null;
+};
 
 export const FLOW_STATUS_VALUES = [
   'UPLOADED',
@@ -9,22 +28,10 @@ export const FLOW_STATUS_VALUES = [
   'ERROR'
 ] as const;
 
-export enum FlowFileType {
-  RECEIPT = 'RECEIPT',
-  RECEIPT_PAGOPA = 'RECEIPT_PAGOPA',
-  PAYMENTS_REPORTING = 'PAYMENTS_REPORTING',
-  PAYMENTS_REPORTING_PAGOPA = 'PAYMENTS_REPORTING_PAGOPA',
-  TREASURY_OPI = 'TREASURY_OPI',
-  TREASURY_CSV = 'TREASURY_CSV',
-  TREASURY_XLS = 'TREASURY_XLS',
-  TREASURY_POSTE = 'TREASURY_POSTE',
-  DP_INSTALLMENTS = 'DP_INSTALLMENTS'
-}
-
 export type FlowFilters = {
-  flowFileTypes: Array<GetIngestionFlowFilesParamsFlowFileTypesEnum>;
+  ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
   fileName?: string;
-  status?: GetIngestionFlowFilesParamsStatusEnum;
+  status?: IngestionFlowFileStatus;
   creationDateFrom?: string;
   creationDateTo?: string;
   sort?: Array<string>;
