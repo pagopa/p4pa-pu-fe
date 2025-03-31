@@ -4,7 +4,6 @@ import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
 import Reporting from './Reporting';
-import ReportingDetail from './ReportingDetail';
 import ReportingImportFlowOverview from './ReportingImportFlowOverview';
 import ReportingSearchResults from './ReportingSearchResults';
 import TelematicReceipt from './TelematicReceipt';
@@ -16,6 +15,7 @@ import TreasuryImportFlowOverview from './TreasuryImportFlowOverview';
 import TreasurySearchResults from './TreasurySearchResults';
 import TelematicReceiptDetail from './TelematicReceiptDetail';
 import TreasuryDetail from './TreasuryDetail';
+import ReportingDetail from './ReportingDetail/ReportingDetail';
 
 const deployPath = config.deployPath;
 
@@ -113,9 +113,10 @@ export const flowsRoutes = [
             } as RouteHandleObject
           },
           {
-            id: 'REPORTING_DETAIL',
-            path: 'detail/:id',
             element: <ReportingDetail />,
+            id: 'REPORTING_DETAIL',
+            path: ':id',
+            loader: loaderWithId,
             handle: {
               backButton: true
             } as RouteHandleObject

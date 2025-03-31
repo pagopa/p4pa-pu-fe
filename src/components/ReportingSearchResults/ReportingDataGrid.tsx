@@ -115,18 +115,14 @@ const SearchResultsDataGrid = ({
               action: () =>
                 navigate(
                   generatePath(PageRoutes.REPORTING_DETAIL, {
-                    id: params.row.ingestionFlowFileId
+                    id: params.row.iuf
                   })
                 )
             },
             {
               icon: <FileDownload fontSize="small" />,
               label: t('commons.files.download'),
-              action: () =>
-                console.log(
-                  'Scarica file per ID: ',
-                  params.row.ingestionFlowFileId
-                )
+              action: () => console.log('Scarica file per ID: ', params.row.iuf)
             }
           ]}
         />
@@ -138,7 +134,7 @@ const SearchResultsDataGrid = ({
     <>
       <CustomDataGrid
         rows={data?.content ?? []}
-        getRowId={(row) => row.ingestionFlowFileId}
+        getRowId={(row) => row.iuf}
         columns={columns}
         disableColumnMenu
         disableColumnResize

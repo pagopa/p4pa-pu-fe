@@ -125,6 +125,7 @@
 			"INSTALLMENTS": "Soluzione a Rate",
 			"DOWN_PAYMENT": "Anticipo"
 		},
+    "payments":"Pagamenti",
 		"person": "Persona fisica",
 		"personLegal": "Persona giuridica",
 		"postAccount": "Conto Corrente Postale",
@@ -217,8 +218,8 @@
 		"to": "Al",
 		"view": "Visualizza",
 		"searchIUV": "Cerca IUV",
-		"searchIUF": "ID Rendicontazione",
-		"searchRegulationUniqueIdentifier": "ID Regolamento",
+    "searchIUF": "ID Rendicontazione",
+    "searchRegulationUniqueIdentifier": "ID Regolamento",
 		"importFlow": "Importa flusso",
 		"showAllFlows": "Vedi tutti i flussi",
 		"searchCF": "Cerca CF",
@@ -329,6 +330,14 @@
 		"searchTitleContainer": "Cerca flussi di Rendicontazione",
 		"title": "Rendicontazione"
 	},
+  "reportingDetail": {
+    "hourAndDate": "Data e ora",
+    "regulationDate": "Data Regolamento",
+    "regulationId": "ID Regolamento",
+    "reportingIdOrIUF": "ID Rendicontazione / IUF",
+    "totalAmount": "Importo totale",
+    "totalPayments": "Totale pagamenti"
+  },
 	"reportingSearchResults": {
 		"description": "Visualizza in dettaglio e scarica i flussi di Rendicontazione.",
 		"searchReportingId": "ID Rendicontazione",
