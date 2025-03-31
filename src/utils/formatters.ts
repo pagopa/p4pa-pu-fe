@@ -1,5 +1,7 @@
+import { format, parseISO } from 'date-fns';
 import { endOfDay } from 'date-fns/endOfDay';
 import { startOfDay } from 'date-fns/startOfDay';
+import { it } from 'date-fns/locale';
 
 type optionMapItem = {
   label: string;
@@ -33,15 +35,26 @@ export function optionMapsConverter(
   }));
 }
 
-export function formatDate(dateString?: string) {
+export function formatDate(dateString?: string): string {
   if (!dateString) return '';
-  return new Date(dateString).toLocaleDateString('it-IT');
+  try {
+    const date = parseISO(dateString);
+    return format(date, 'dd/MM/yyyy', { locale: it });
+  } catch (error) {
+    console.error('Error formatting date:', error);
+    return '';
+  }
 }
 
-export function formatDateTime(dateTimeString?: string) {
+export function formatDateTime(dateTimeString?: string): string {
   if (!dateTimeString) return '';
-  const date = new Date(dateTimeString);
-  return `${date.toLocaleDateString('it-IT')} ${date.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}`;
+  try {
+    const date = parseISO(dateTimeString);
+    return format(date, 'dd/MM/yyyy HH:mm:ss', { locale: it });
+  } catch (error) {
+    console.error('Error formatting datetime:', error);
+    return '';
+  }
 }
 
 export function toStartOfDay(date?: Date | null) {
