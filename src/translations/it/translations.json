@@ -178,6 +178,7 @@
 		},
 		"search": "Cerca",
 		"searchFor": "Cerca per",
+    "searchForDescription": "Cerca per descrizione",
 		"searchName": "Cerca Nome",
 		"sidebar": {
 			"collapse": "Comprimi il menu",
