@@ -2,11 +2,11 @@ import { Add, Search } from '@mui/icons-material';
 import { Box, Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import TitleComponent from '../TitleComponent/TitleComponent';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
-} from '../FilterContainer/FilterContainer';
-import DebtTypesDataGrid from './DebtTypesDataGrid';
+} from '../../components/FilterContainer/FilterContainer';
+import DebtTypesDataGrid from './components/DebtTypesDataGrid';
 import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
 import useDebtTypesFilters from '../../hooks/useDebtTypesFilters';
 import { useStore } from '../../store/GlobalStore';

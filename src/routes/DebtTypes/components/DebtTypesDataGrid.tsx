@@ -6,12 +6,12 @@ import {
 } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
 import { ChevronRight } from '@mui/icons-material';
-import CustomDataGrid from '../DataGrid/CustomDataGrid';
+import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import {
   PagedDebtPositionTypeWithCount,
   DebtPositionTypeWithCount
-} from '../../../generated/data-contracts';
-import { formatDate } from '../../utils/formatters';
+} from '../../../../generated/data-contracts';
+import { formatDate } from '../../../utils/formatters';
 
 export type DebtTypesDataGridProps = {
   data: PagedDebtPositionTypeWithCount;
