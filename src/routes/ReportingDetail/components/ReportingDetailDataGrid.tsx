@@ -78,8 +78,9 @@ const ReportingDetailDataGrid = ({
       headerAlign: 'right',
       renderCell: (params) => (
         <Link
-          to={generatePath(PageRoutes.DETAIL_FLOWS, {
+          to={generatePath(PageRoutes.REPORTING_PAYMENT_DETAIL, {
             category: 'reporting',
+            iuf: params.row.iuf,
             id: params.row.paymentsReportingId
           })}
           aria-label="go to reporting payment detail"
