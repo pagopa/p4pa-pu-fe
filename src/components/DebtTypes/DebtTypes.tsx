@@ -8,10 +8,13 @@ import FilterContainer, {
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '../../App';
 
 export const DebtTypes = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   /*START MOCK DATA*/
   const rows: Array<DebtTypesDataRow> = [
@@ -66,7 +69,11 @@ export const DebtTypes = () => {
           color="primary"
           size="small"
           onClick={() => {
-            console.log(`detail: ${params.row.name}`);
+            navigate(PageRoutes.DEBT_TYPE_CATALOG_DETAIL, {
+              state: {
+                debtTypeName: params.row.name
+              }
+            });
           }}
         >
           <ChevronRight />
