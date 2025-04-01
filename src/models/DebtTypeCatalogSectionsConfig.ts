@@ -107,8 +107,7 @@ export const accordionSectionsConfig = (
             {
               label: t('commons.anonymousFiscalCode'),
               value: getFlagLabel(data?.flagAnonymousFiscalCode)
-            },
-            { label: t('commons.voluntaryPayment'), value: 'Abilitato' }
+            }
           ]
         },
         {
@@ -120,8 +119,7 @@ export const accordionSectionsConfig = (
             },
             {
               label: t('commons.subject'),
-              value:
-                'Il servizio ti invia comunicazioni in merito alla Tassa sui rifiuti (TARI).'
+              value: '-'
             },
             {
               label: t('commons.message'),

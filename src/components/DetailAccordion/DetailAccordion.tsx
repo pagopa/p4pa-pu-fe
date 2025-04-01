@@ -28,15 +28,20 @@ export const DetailAccordion = ({
   return (
     <Accordion
       disableGutters
-      sx={{ py: 3, bgcolor: theme.palette.background.paper, borderRadius: 2 }}
+      sx={{
+        py: 3,
+        px: 2,
+        bgcolor: theme.palette.background.paper,
+        borderRadius: 2
+      }}
     >
       <AccordionSummary expandIcon={<KeyboardArrowDown color="primary" />}>
-        <Stack direction="row" alignItems="center" spacing={1}>
+        <Stack direction="row" alignItems="center" spacing={1} ml={2}>
           <Typography variant="caption-semibold">{idTitle}</Typography>
           <Typography variant="h6">{title}</Typography>
         </Stack>
       </AccordionSummary>
-      <Stack ml={2} mb={2}>
+      <Stack ml={3} mb={2}>
         <Typography variant="body1">{description}</Typography>
       </Stack>
       <DetailContainer
