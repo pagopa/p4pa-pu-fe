@@ -4,6 +4,7 @@ import sidemenu from './sidemenu';
 import loaders from './loaders';
 import { Api } from '../../generated/apiClient';
 import { FileshareApi } from '../../generated/fileshare/fileshareClient';
+import storage from './storage';
 
 export default {
   apiClient: new Api({ baseURL: config.baseURL, timeout: config.apiTimeout }),
@@ -14,5 +15,6 @@ export default {
   config,
   loaders,
   sidemenu,
-  style
+  style,
+  storage
 };
