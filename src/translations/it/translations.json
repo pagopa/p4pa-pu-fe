@@ -128,6 +128,7 @@
     "message": "Messaggio",
     "messages": "Messaggi",
     "payer": "Pagatore",
+    "payerDetails": "Anagrafica Pagatore",
     "payment": "Pagamento",
     "paymentDate": "Data pagamento",
     "paymentdate": "Data Esito",
