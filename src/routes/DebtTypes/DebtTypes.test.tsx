@@ -9,7 +9,7 @@ i18nTestSetup({
   'commons.routes.DEBT_TYPES_CATALOG': 'Debt Types Catalog',
   'commons.createNew': 'Create New',
   'debtTypes.description': 'Manage your debt types',
-  'debtTypes.searchDescription': 'Search by description',
+  'commons.searchForDescription': 'Search by description',
   'commons.search': 'Search',
   'flowDataGrid.name': 'Name',
   'flowDataGrid.lastUpdate': 'Last Update',

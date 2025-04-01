@@ -79,7 +79,7 @@ export const DebtTypes = () => {
           items={[
             {
               type: COMPONENT_TYPE.textField,
-              label: t('debtTypes.searchDescription'),
+              label: t('commons.searchForDescription'),
               value: draftFilters.description || '',
               onChange: (e) =>
                 updateDraftFilters({ description: e.target.value }),
