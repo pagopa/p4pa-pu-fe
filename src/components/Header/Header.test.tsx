@@ -5,8 +5,6 @@ import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
 import { useOrganizations } from '../../hooks/useOrganizations';
 import { OperatorRoleEnum } from '../../../generated/apiClient';
 import { PageRoutes } from '../../App';
-import { UseQueryResult } from '@tanstack/react-query';
-import { OrganizationDTO } from '../../../generated/data-contracts';
 
 // Mock dependencies
 vi.mock('react-router-dom', async () => {
