@@ -46,9 +46,9 @@ describe('DetailAccordion', () => {
   });
 
   it('renders correctly without idTitle', () => {
-    const { ...rest } = mockProps;
+    const { idTitle, ...rest } = mockProps;
     render(<DetailAccordion {...rest} />);
 
-    expect(screen.queryByText('1')).not.toBeInTheDocument();
+    expect(screen.queryByText(idTitle)).not.toBeInTheDocument();
   });
 });
