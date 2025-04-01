@@ -2,6 +2,7 @@ import { DebtTypes } from '../components/DebtTypes';
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
+import DebtTypeDetailView from './DebtTypeCatalogDetailView/DebtTypeCatalogDetailView';
 
 const deployPath = config.deployPath;
 
@@ -18,6 +19,18 @@ export const debtTypesRoutes = [
         handle: {
           backButton: false,
           hideBreadcrumbs: true
+        } as RouteHandleObject
+      },
+      {
+        id: 'DEBT_TYPE_CATALOG_DETAIL',
+        path: 'catalog-detail/',
+        element: <DebtTypeDetailView />,
+        handle: {
+          backButton: true,
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
         } as RouteHandleObject
       }
     ]
