@@ -12,17 +12,24 @@
 		"addfilter": "Aggiunge filtro",
 		"all": "Tutti",
 		"amount": "Importo",
+		"anonymousFiscalCode": "Codice Fiscale Anonimo",
 		"auditor": "Attestante",
 		"back": "Indietro",
+		"behavior": "Comportamento",
 		"breadcrumbs": "Elementi di navigazione breadcrumbs",
 		"breadcrumbsElement": "Elemento breadcrumb",
 		"breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
 		"close": "Chiudi",
+		"collectionReason": "Motivo Riscossione",
 		"copied": "Copiato!",
 		"debtor": "Debitore",
+		"debtTypeCode": "Codice Tipo dovuto",
+		"debtTypeName": "Nome del Tipo dovuto",
+		"delete": "Elimina",
 		"description": "Descrizione",
 		"detail": "Dettaglio",
 		"duetype": "Tipo dovuto",
+		"edit": "Modifica",
 		"exit": "Esci",
 		"unknownOrganization": "Ente senza nome",
 		"files": {
@@ -115,6 +122,11 @@
 		"iur": "IUR",
 		"iuv": "IUV",
 		"operator": "Operatore",
+		"organizationType": "Tipo ente",
+		"macroarea": "Macroarea",
+		"mandatoryDueDate": "Data di Scadenza Obbligatoria",
+		"message": "Messaggio",
+		"messages": "Messaggi",
 		"payer": "Pagatore",
 		"payment": "Pagamento",
 		"paymentDate": "Data pagamento",
@@ -180,6 +192,7 @@
 		"searchFor": "Cerca per",
     "searchForDescription": "Cerca per descrizione",
 		"searchName": "Cerca Nome",
+		"serviceType": "Tipo Servizio",
 		"sidebar": {
 			"collapse": "Comprimi il menu",
 			"entities": "Enti gestiti",
@@ -212,10 +225,12 @@
 			"REPORTED": "Rendicontato",
 			"INVALID": "Non valido"
 		},
+		"subject": "Oggetto",
 		"successExport": "Abbiamo ricevuto la tua richiesta!",
 		"successImport": "Flusso caricato con successo",
 		"summary": "riepilogo",
 		"taxCode": "Codice Tassonomico",
+		"taxonomy": "Tassonomia",
 		"to": "Al",
 		"view": "Visualizza",
 		"searchIUV": "Cerca IUV",
@@ -441,6 +456,27 @@
 	"debtTypes": {
 		"description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
 		"searchDescription": "Codice per Descrizione"
+	},
+	"debtTypeCatalogDetail": {
+		"description": "Ecco i dettagli del Tipo dovuto",
+		"IOAppMessageTemplate": "Template Messaggio su app IO",
+		"debtCatalogConfiguration": {
+			"title": "Configurazione Tipo dovuto",
+			"description": "Definizione del nome e tassonomia del Tipo dovuto."
+		},
+		"additionalSettings": {
+			"title": "Ulteriori impostazioni",
+			"description": "Altre caratteristiche del Tipo dovuto."
+		},
+		"confirmDialog": {
+			"title": "Sei sicuro di voler eliminare il Tipo dovuto?",
+			"description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
+		},
+		"errorDialog": {
+			"title": "Il tipo dovuto non può essere eliminato",
+			"alreadyUsedDescription": "Questo tipo dovuto è presente in un Catalogo / Posizione Debitoria, pertanto non può essere eliminato.",
+			"genericErrorDescription": "Siamo spiacenti, al momento non è possibile eliminare questo tipo di dovuto."
+		}
 	},
 	"debtPositions": {
 		"searchCardTitle": "Cosa stai cercando?",

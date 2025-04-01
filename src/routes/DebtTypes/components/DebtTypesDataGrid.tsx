@@ -12,6 +12,8 @@ import {
   DebtPositionTypeWithCount
 } from '../../../../generated/data-contracts';
 import { formatDate } from '../../../utils/formatters';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '../../../App';
 
 export type DebtTypesDataGridProps = {
   data: PagedDebtPositionTypeWithCount;
@@ -37,6 +39,7 @@ const DebtTypesDataGrid = ({
   isLoading = false
 }: DebtTypesDataGridProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const columns: Array<GridColDef> = [
     {
@@ -73,7 +76,11 @@ const DebtTypesDataGrid = ({
           color="primary"
           size="small"
           onClick={() => {
-            console.log(`click on id ${params.row.debtPositionTypeId}`);
+            navigate(PageRoutes.DEBT_TYPE_CATALOG_DETAIL, {
+              state: {
+                debtTypeName: params.row.description
+              }
+            });
           }}
         >
           <ChevronRight />
