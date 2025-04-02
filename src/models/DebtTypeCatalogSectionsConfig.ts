@@ -1,28 +1,13 @@
-import { useTranslation } from 'react-i18next';
 import {
   DetailData,
   titleConfig
 } from '../components/DetailContainer/DetailContainer';
+import { DebtPositionTypeDetailDTO } from '../../generated/apiClient';
 
 export enum AccordionSectionsEnum {
   DEBT_CATALOG_CONFIGURATION = 'DEBT_CATALOG_CONFIGURATION',
   ADDITIONAL_SETTINGS = 'ADDITIONAL_SETTINGS'
 }
-
-export type DebtTypeCatalogDetail = {
-  debtPositionTypeId: number;
-  code: string;
-  description: string;
-  organizationTypeDescription: string;
-  macroAreaName: string;
-  serviceType: string;
-  collectionReason: string;
-  taxonomyCode: string;
-  flagAnonymousFiscalCode: boolean;
-  flagMandatoryDueDate: boolean;
-  flagNotifyIo: boolean;
-  ioTemplateMessage: string;
-};
 
 export type AccordionSectionConfig = {
   configType: AccordionSectionsEnum;
@@ -35,14 +20,19 @@ export type AccordionSectionConfig = {
   }>;
 };
 
-const getFlagLabel = (value: boolean): string =>
-  value ? 'Abilitato' : 'Disabilitato';
+const getFlagLabel = (value: boolean | undefined): string => {
+  if (value === undefined) return '-';
+  return value ? 'commons.enabled' : 'commons.disabled';
+};
 
-export const accordionSectionsConfig = (
-  data: DebtTypeCatalogDetail
+const checkStringValue = (value: string | undefined): string => {
+  return value ?? '-';
+};
+
+export const getAccordionSectionsConfig = (
+  data: DebtPositionTypeDetailDTO,
+  t: (key: string) => string
 ): Array<AccordionSectionConfig> => {
-  const { t } = useTranslation();
-
   return [
     {
       configType: AccordionSectionsEnum.DEBT_CATALOG_CONFIGURATION,
@@ -56,11 +46,11 @@ export const accordionSectionsConfig = (
           data: [
             {
               label: t('commons.debtTypeCode'),
-              value: data?.code
+              value: checkStringValue(data?.code)
             },
             {
               label: t('commons.debtTypeName'),
-              value: data?.description
+              value: checkStringValue(data?.description)
             }
           ]
         },
@@ -69,29 +59,28 @@ export const accordionSectionsConfig = (
           data: [
             {
               label: t('commons.organizationType'),
-              value: data?.organizationTypeDescription
+              value: checkStringValue(data?.organizationTypeDescription)
             },
             {
               label: t('commons.macroarea'),
-              value: data?.macroAreaName
+              value: checkStringValue(data?.macroAreaName)
             },
             {
               label: t('commons.serviceType'),
-              value: data?.serviceType
+              value: checkStringValue(data?.serviceType)
             },
             {
               label: t('commons.collectionReason'),
-              value: data?.collectionReason
+              value: checkStringValue(data?.collectionReason)
             },
             {
               label: t('commons.taxCode'),
-              value: data?.taxonomyCode
+              value: checkStringValue(data?.taxonomyCode)
             }
           ]
         }
       ]
     },
-
     {
       configType: AccordionSectionsEnum.ADDITIONAL_SETTINGS,
       title: t('debtTypeCatalogDetail.additionalSettings.title'),
@@ -102,11 +91,11 @@ export const accordionSectionsConfig = (
           data: [
             {
               label: t('commons.mandatoryDueDate'),
-              value: getFlagLabel(data?.flagMandatoryDueDate)
+              value: t(getFlagLabel(data?.flagMandatoryDueDate))
             },
             {
               label: t('commons.anonymousFiscalCode'),
-              value: getFlagLabel(data?.flagAnonymousFiscalCode)
+              value: t(getFlagLabel(data?.flagAnonymousFiscalCode))
             }
           ]
         },
@@ -115,7 +104,7 @@ export const accordionSectionsConfig = (
           data: [
             {
               label: t('debtTypeCatalogDetail.IOAppMessageTemplate'),
-              value: getFlagLabel(data?.flagNotifyIo)
+              value: t(getFlagLabel(data?.flagNotifyIo))
             },
             {
               label: t('commons.subject'),
@@ -123,7 +112,7 @@ export const accordionSectionsConfig = (
             },
             {
               label: t('commons.message'),
-              value: data?.ioTemplateMessage
+              value: checkStringValue(data?.ioTemplateMessage)
             }
           ]
         }
