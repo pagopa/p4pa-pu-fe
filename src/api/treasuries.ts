@@ -11,25 +11,21 @@ export type TreasuriesRequest = {
   query: TreasuriesQuery;
 };
 
-const getTreasuries = ({
-    organizationId
-  }: {
-    organizationId: TreasuriesRequest['organizationId'];
-  }) =>
-    useMutation({
-      mutationKey: ['getTreasuries', organizationId],
-      mutationFn: async (query: TreasuriesQuery) => {
-        const { data: response } = await utils.apiClient.bff.getTreasuries(
-          organizationId,
-          query,
-          {
-            paramsSerializer: {
-              // repeat array params as query string
-              indexes: null
-            }
+export const getTreasuries = (organizationId: TreasuriesRequest['organizationId']) =>
+  useMutation({
+    mutationKey: ['getTreasuries', organizationId],
+    mutationFn: async (query: TreasuriesQuery) => {
+      const { data: response } = await utils.apiClient.bff.getTreasuries(
+        organizationId,
+        query,
+        {
+          paramsSerializer: {
+            // repeat array params as query string
+            indexes: null
           }
-        );
-  
-        return response;
-      }
-    });
+        }
+      );
+
+      return response;
+    }
+  });

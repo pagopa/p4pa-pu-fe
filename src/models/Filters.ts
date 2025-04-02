@@ -7,7 +7,7 @@ export type FlowStatus = IngestionFlowFileStatus;
 export type FilterValues = {
   ACCOUNTING_DATE_FROM: Date | null;
   ACCOUNTING_DATE_TO: Date | null;
-  AMOUNT: string;
+  AMOUNT: number;
   BILL_CODE: string;
   BILL_FROM: Date | null;
   DOCUMENT_CODE: string;

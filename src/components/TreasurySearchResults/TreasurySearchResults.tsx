@@ -10,6 +10,8 @@ import { PageRoutes } from '../../App';
 import { FilterMap, useMultiFilters } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
+import UseTreasurySearch from '../../hooks/useTreasurySearch';
+import { PagedTreasuryView } from '../../../generated/data-contracts';
 
 export type LocationState = {
   category: string;
@@ -35,11 +37,14 @@ const TreasurySearchResults = () => {
     setDrawerOpen((prev) => !prev);
   };
 
+  const treasuries = UseTreasurySearch({ initialFilters: filterValues })
+
   const applyFilters = () => {
-    // TODO: apply filters
-    console.log(filterValues);
+    treasuries.applyFilters(filterValues);
     setDrawerOpen(false);
   };
+
+
 
   return (
     <>
@@ -76,7 +81,12 @@ const TreasurySearchResults = () => {
         sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
         aria-label="results-table"
       >
-        <SearchResultsDataGrid />
+        <SearchResultsDataGrid
+          data={treasuries.query.data as PagedTreasuryView}
+          onPageChange={treasuries.handlePageChange}
+          onPageSizeChange={treasuries.handlePageSizeChange}
+          onSortChange={treasuries.setSort}
+          pagination={treasuries.pagination} />
       </Grid>
 
       <FilterDrawer
