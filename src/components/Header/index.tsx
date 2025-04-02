@@ -16,6 +16,7 @@ import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
 import { OperatorRoleEnum } from '../../../generated/apiClient';
+import { PageRoutes } from '../../App';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;
@@ -41,8 +42,14 @@ export const Header = (props: HeaderProps) => {
     })) || [];
 
   async function logoutUser() {
-    // TODO: define logout
-    navigate('/');
+    try {
+      await utils.apiClient.bff.logout();
+    } catch (e) {
+      console.warn(e);
+    } finally {
+      utils.storage.clear();
+      navigate(PageRoutes.HOME);
+    }
   }
 
   /* TODO: call user service */
@@ -81,6 +88,7 @@ export const Header = (props: HeaderProps) => {
   const onSelectedParty = (organization: PartySwitchItem) => {
     setOrganizationId(Number(organization.id));
     setOperatorRole(organization.productRole as OperatorRoleEnum);
+    // TODO: check if this is needed
     navigate(0);
   };
 
