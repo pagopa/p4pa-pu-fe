@@ -369,6 +369,9 @@
   "reportingImportThankYouPage": {
     "description": "Troverai il flusso caricato nella sezione Flussi importati"
   },
+  "reportingPaymentDetail": {
+    "title": "Dettaglio Pagamento"
+  },
   "telematicReceiptDetail": {
     "title": "Dettaglio Ricevuta Telematica"
   },
