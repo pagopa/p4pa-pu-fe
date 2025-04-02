@@ -4,10 +4,12 @@ import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { CircularProgress, Grid, ChipProps } from '@mui/material';
+import { Grid, ChipProps } from '@mui/material';
 import { useStore } from '../../store/GlobalStore';
 import { getPaymentsReportingDetail } from '../../api/getPaymentsReportingDetail';
 import { STATE } from '../../store/types';
+import { setLoading } from '../../store/AppStateStore';
+import { formatDate } from '../../utils/formatters';
 
 function ReportingPaymentDetail() {
   const { iuf, id } = useParams();
@@ -33,6 +35,8 @@ function ReportingPaymentDetail() {
     iuf ?? '',
     id ?? ''
   );
+
+  setLoading(isLoading);
 
   const debtorType: string =
     data?.debtor?.entityType == 'F' ? `(${t('commons.person')})` : '';
@@ -60,13 +64,13 @@ function ReportingPaymentDetail() {
   const paymentData: Array<DetailData> = [
     {
       label: t('commons.paymentdate'),
-      value: data?.paymentDateTime
-        ? new Date(data.paymentDateTime).toLocaleDateString('it-IT')
-        : ''
+      value: data?.paymentDateTime ? formatDate(data.paymentDateTime) : ''
     },
     {
       label: t('commons.payer'),
-      value: `${data?.debtor?.fullName || ''} [CF/PIVA: ${data?.debtor?.fiscalCode || ''} ${debtorType}]`
+      value: data?.debtor?.fullName
+        ? `${data.debtor.fullName}${data?.debtor?.fiscalCode ? ` [${t('commons.fiscalCodeorVat')}${':'} ${data.debtor.fiscalCode} ${debtorType}]` : ''}`
+        : ''
     },
     {
       label: t('commons.payerDetails'),
@@ -74,7 +78,9 @@ function ReportingPaymentDetail() {
     },
     {
       label: t('commons.fiscalCodeorVat') + ' ' + t('commons.payer'),
-      value: `${data?.debtor?.fiscalCode || ''} ${debtorType}`
+      value: data?.debtor?.fiscalCode
+        ? `${data.debtor.fiscalCode} ${debtorType}`
+        : ''
     },
     {
       label: t('commons.auditor'),
@@ -127,8 +133,6 @@ function ReportingPaymentDetail() {
           </Grid>
         </>
       )}
-
-      {isLoading && <CircularProgress />}
     </>
   );
 }
