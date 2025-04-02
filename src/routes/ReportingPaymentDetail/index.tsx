@@ -41,6 +41,18 @@ function ReportingPaymentDetail() {
   const debtorType: string =
     data?.debtor?.entityType == 'F' ? `(${t('commons.person')})` : '';
 
+  const getPayerValue = (
+    debtor: { fullName?: string; fiscalCode?: string } | undefined
+  ) => {
+    if (!debtor?.fullName) {
+      return '';
+    }
+    const fiscalCodeInfo = debtor.fiscalCode
+      ? ` [${t('commons.fiscalCodeorVat')}: ${debtor.fiscalCode} ${debtorType}]`
+      : '';
+    return `${debtor.fullName}${fiscalCodeInfo}`;
+  };
+
   const summaryData: Array<DetailData> = [
     {
       label: t('commons.iuv'),
@@ -68,9 +80,7 @@ function ReportingPaymentDetail() {
     },
     {
       label: t('commons.payer'),
-      value: data?.debtor?.fullName
-        ? `${data.debtor.fullName}${data?.debtor?.fiscalCode ? ` [${t('commons.fiscalCodeorVat')}${':'} ${data.debtor.fiscalCode} ${debtorType}]` : ''}`
-        : ''
+      value: getPayerValue(data?.debtor)
     },
     {
       label: t('commons.payerDetails'),
