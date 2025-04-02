@@ -5,10 +5,10 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../FilterContainer/FilterContainer';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import { GridColDef } from '@mui/x-data-grid';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router';
+import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 
 export const DebtTypes = () => {
@@ -64,17 +64,17 @@ export const DebtTypes = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<DebtTypesDataRow>) => (
+      renderCell: () => (
         <IconButton
           color="primary"
           size="small"
-          onClick={() => {
-            navigate(PageRoutes.DEBT_TYPE_CATALOG_DETAIL, {
-              state: {
-                debtTypeName: params.row.name
-              }
-            });
-          }}
+          onClick={() =>
+            navigate(
+              generatePath(PageRoutes.DEBT_TYPE_CATALOG_DETAIL, {
+                debtPositionTypeId: '3'
+              })
+            )
+          }
         >
           <ChevronRight />
         </IconButton>
