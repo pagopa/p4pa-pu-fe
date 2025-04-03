@@ -33,7 +33,7 @@ export type footerLinkConfig = {
   onLinkClick?: () => void;
 };
 
-type DetailSectionProps = {
+export type DetailSectionProps = {
   sections: Array<{
     title?: titleConfig;
     data: Array<DetailData>;
@@ -41,13 +41,17 @@ type DetailSectionProps = {
     footerLink?: footerLinkConfig;
     divider?: boolean;
   }>;
+  fullWidthSections?: boolean;
 };
 
 const stateColors: Record<DetailData['value'], ChipOwnProps['color']> = {
   Pagato: 'success'
 };
 
-const DetailContainer = ({ sections }: DetailSectionProps) => {
+const DetailContainer = ({
+  sections,
+  fullWidthSections
+}: DetailSectionProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
@@ -96,7 +100,12 @@ const DetailContainer = ({ sections }: DetailSectionProps) => {
       <CardContent>
         <Grid container spacing={2}>
           {sections.map((section, index) => (
-            <Grid item md={sections.length === 1 ? 12 : 6} key={index}>
+            <Grid
+              item
+              xs={12}
+              md={fullWidthSections || sections.length === 1 ? 12 : 6}
+              key={index}
+            >
               {section.title ? (
                 <Typography variant={section.title.variant}>
                   {section.title.uppercase

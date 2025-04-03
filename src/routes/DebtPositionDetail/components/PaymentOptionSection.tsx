@@ -118,17 +118,19 @@ export const PaymentOptionSection = ({
   ];
 
   return (
-    <Box mb={2}>
-      <TitleComponent
-        isSubtitle
-        title={optionData.title}
-        chip={optionData.chip}
-      />
+    <Box mb={4}>
+      <Box mb={3}>
+        <TitleComponent
+          isSubtitle
+          title={optionData.title}
+          chip={optionData.chip}
+        />
+      </Box>
 
       <Accordion
         disableGutters
         sx={{
-          py: 3,
+          py: 1.5,
           bgcolor: theme.palette.background.paper,
           borderRadius: 2
         }}
