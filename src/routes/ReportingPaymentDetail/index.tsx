@@ -8,15 +8,18 @@ import { Grid, ChipProps } from '@mui/material';
 import { useStore } from '../../store/GlobalStore';
 import { getPaymentsReportingDetail } from '../../api/getPaymentsReportingDetail';
 import { STATE } from '../../store/types';
-import { setLoading } from '../../store/AppStateStore';
+import { setAppState } from '../../store/AppStateStore';
 import { formatDate } from '../../utils/formatters';
+import { useEffect } from 'react';
+import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
+import { PageRoutes } from '../../App';
+import { generatePath } from 'react-router-dom';
 
 function ReportingPaymentDetail() {
   const { iuf, id } = useParams();
   const { t } = useTranslation();
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-
   // Definizione dei colori per gli stati
   const stateColors: Record<string, ChipProps['color']> = {
     CANCELLED: 'error',
@@ -36,7 +39,35 @@ function ReportingPaymentDetail() {
     id ?? ''
   );
 
-  setLoading(isLoading);
+  useEffect(() => {
+    if (data && iuf) {
+      const customBreadcrumbsItems: Array<BredcrumbItem> = [
+        {
+          pathname: PageRoutes.REPORTING_INDEX,
+          id: 'REPORTING_INDEX',
+          label: t('commons.routes.REPORTING')
+        },
+        {
+          pathname: generatePath(PageRoutes.REPORTING_DETAIL, {
+            id: iuf
+          }),
+          id: 'REPORTING_DETAIL',
+          label: iuf
+        },
+        {
+          pathname: generatePath(PageRoutes.REPORTING_PAYMENT_DETAIL, {
+            iuf: iuf,
+            id: data.paymentsReportingId
+          }),
+          id: 'REPORTING_PAYMENT_DETAIL'
+        }
+      ];
+      setAppState({
+        loading: false,
+        customBreadcrumbsItems: customBreadcrumbsItems
+      });
+    }
+  }, [data, iuf]);
 
   const debtorType: string =
     data?.debtor?.entityType == 'F' ? `(${t('commons.person')})` : '';

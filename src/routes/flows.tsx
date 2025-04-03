@@ -128,7 +128,8 @@ export const flowsRoutes = [
             path: ':iuf/:id/',
             loader: loaderWithId,
             handle: {
-              backButton: true
+              backButton: true,
+              custom: true
             } as RouteHandleObject
           },
           {

@@ -12,12 +12,17 @@ vi.mock('../../api/getPaymentsReportingDetail', () => ({
   getPaymentsReportingDetail: vi.fn()
 }));
 
-vi.mock('react-router-dom', () => {
-  const useParamsMock = vi.fn();
-  return {
-    useParams: useParamsMock
-  };
-});
+vi.mock('react-router-dom', () => ({
+  useNavigate: vi.fn(),
+  generatePath: vi.fn(),
+  useParams: vi.fn(),
+  useLocation: vi.fn(),
+  createBrowserRouter: vi.fn(),
+  Navigate: vi.fn(({ to }) => ({
+    type: 'div',
+    props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
+  }))
+}));
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()
