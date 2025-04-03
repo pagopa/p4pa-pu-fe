@@ -286,7 +286,7 @@
 	},
 	"debtPositionDetail": {
 		"debtPositionInfo": "Informazioni sulla posizione debitoria",
-		"paymentOptions": "Opzioni di Pagamento",
+		"paymentOptions": "Opzioni di pagamento",
 		"solutionDetail": "Dettaglio soluzione",
 		"timeline": {
 			"title": "Storico Posizione Debitoria",
