@@ -4,7 +4,8 @@ import {
   Accordion,
   AccordionSummary,
   ChipOwnProps,
-  ChipProps
+  ChipProps,
+  Divider
 } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { History, KeyboardArrowDown } from '@mui/icons-material';
@@ -203,11 +204,11 @@ const DebtPositionDetail = () => {
           }
         ]}
       />
-      <Box mt={3}>
+      <Box mt={4} mb={3}>
         <Accordion
           disableGutters
           sx={{
-            py: 3,
+            py: 1.5,
             bgcolor: theme.palette.background.paper,
             borderRadius: 2
           }}
@@ -223,17 +224,26 @@ const DebtPositionDetail = () => {
           {debtorSection && <DetailContainer sections={[debtorSection]} />}
         </Accordion>
 
-        <Typography variant="h5" mb={2} mt={3}>
+        <Typography variant="h5" mb={2} mt={4}>
           {t('debtPositionDetail.paymentOptions')}
         </Typography>
       </Box>
 
       {paymentOptionsDisplayData.map((optionData, index) => (
-        <PaymentOptionSection
-          key={`option-${index}`}
-          optionData={optionData}
-          data-testid={`payment-option`}
-        />
+        <Box key={`option-container-${index}`}>
+          <PaymentOptionSection
+            key={`option-${index}`}
+            optionData={optionData}
+            data-testid={`payment-option`}
+          />
+          {index < paymentOptionsDisplayData.length - 1 && (
+            <Divider
+              orientation="horizontal"
+              flexItem
+              sx={{ mb: 4, display: 'block' }}
+            />
+          )}
+        </Box>
       ))}
 
       <Timeline.Drawer

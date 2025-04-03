@@ -16,6 +16,7 @@ import TreasurySearchResults from './TreasurySearchResults';
 import TelematicReceiptDetail from './TelematicReceiptDetail';
 import TreasuryDetail from './TreasuryDetail';
 import ReportingDetail from './ReportingDetail/ReportingDetail';
+import ReportingPaymentDetail from './ReportingPaymentDetail';
 
 const deployPath = config.deployPath;
 
@@ -119,6 +120,16 @@ export const flowsRoutes = [
             loader: loaderWithId,
             handle: {
               backButton: true
+            } as RouteHandleObject
+          },
+          {
+            element: <ReportingPaymentDetail />,
+            id: 'REPORTING_PAYMENT_DETAIL',
+            path: ':iuf/:id/',
+            loader: loaderWithId,
+            handle: {
+              backButton: true,
+              custom: true
             } as RouteHandleObject
           },
           {
