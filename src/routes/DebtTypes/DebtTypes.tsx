@@ -47,14 +47,10 @@ export const DebtTypes = () => {
     }
   });
 
-  const { data, isLoading } = getDebtPositionTypeWithCount(organizationId, {
-    page: appliedFilters.page,
-    size: appliedFilters.size,
-    sort: appliedFilters.sort,
-    ...(appliedFilters.description && {
-      description: appliedFilters.description
-    })
-  });
+  const { data, isLoading } = getDebtPositionTypeWithCount(
+    organizationId,
+    appliedFilters
+  );
 
   setLoading(isLoading);
 
