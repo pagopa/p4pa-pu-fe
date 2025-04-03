@@ -1,7 +1,7 @@
-import { DebtTypes } from '../components/DebtTypes';
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
+import DebtTypes from './DebtTypes/DebtTypes';
 import DebtTypeDetailView from './DebtTypeCatalogDetailView/DebtTypeCatalogDetailView';
 
 const deployPath = config.deployPath;
