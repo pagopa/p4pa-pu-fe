@@ -126,6 +126,7 @@ export const DebtTypes = () => {
             totalPages: data?.totalPages || 0,
             size: appliedFilters.size
           }}
+          isLoading={isLoading}
         />
       </Box>
     </>
