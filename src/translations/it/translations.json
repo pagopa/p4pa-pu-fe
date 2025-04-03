@@ -190,6 +190,7 @@
 		},
 		"search": "Cerca",
 		"searchFor": "Cerca per",
+    "searchForDescription": "Cerca per descrizione",
 		"searchName": "Cerca Nome",
 		"serviceType": "Tipo Servizio",
 		"sidebar": {
