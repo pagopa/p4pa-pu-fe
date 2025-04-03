@@ -51,11 +51,11 @@ export const Sidebar: React.FC = () => {
   };
   const { state } = useStore();
   const configFe = useFeConfig();
-  const { organizations } = useOrganizations();
-  const containsBrokerCF = organizations?.some(
+  const organizations = useOrganizations();
+  const containsBrokerCF = organizations.data?.some(
     (item) => item.orgFiscalCode === configFe?.brokerFiscalCode
   );
-  const adminAtLeast = organizations?.some(
+  const adminAtLeast = organizations.data?.some(
     (item) => item.operatorRole === 'ROLE_ADMIN'
   );
   const superAdmin = containsBrokerCF && adminAtLeast;
