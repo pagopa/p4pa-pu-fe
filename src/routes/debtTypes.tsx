@@ -23,7 +23,7 @@ export const debtTypesRoutes = [
       },
       {
         id: 'DEBT_TYPE_CATALOG_DETAIL',
-        path: 'catalog-detail/',
+        path: 'catalog/detail/:debtPositionTypeId',
         element: <DebtTypeDetailView />,
         handle: {
           backButton: true,

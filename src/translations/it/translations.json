@@ -28,8 +28,10 @@
 		"delete": "Elimina",
 		"description": "Descrizione",
 		"detail": "Dettaglio",
+		"disabled": "Disabilitato",
 		"duetype": "Tipo dovuto",
 		"edit": "Modifica",
+		"enabled": "Abilitato",
 		"exit": "Esci",
 		"unknownOrganization": "Ente senza nome",
 		"files": {
