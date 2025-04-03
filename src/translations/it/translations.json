@@ -130,6 +130,7 @@
 		"message": "Messaggio",
 		"messages": "Messaggi",
 		"payer": "Pagatore",
+		"payerDetails": "Anagrafica Pagatore",
 		"payment": "Pagamento",
 		"paymentDate": "Data pagamento",
 		"paymentdate": "Data Esito",
@@ -139,7 +140,7 @@
 			"INSTALLMENTS": "Soluzione a Rate",
 			"DOWN_PAYMENT": "Anticipo"
 		},
-    "payments":"Pagamenti",
+		"payments": "Pagamenti",
 		"person": "Persona fisica",
 		"personLegal": "Persona giuridica",
 		"postAccount": "Conto Corrente Postale",
@@ -192,7 +193,7 @@
 		},
 		"search": "Cerca",
 		"searchFor": "Cerca per",
-    "searchForDescription": "Cerca per descrizione",
+		"searchForDescription": "Cerca per descrizione",
 		"searchName": "Cerca Nome",
 		"serviceType": "Tipo Servizio",
 		"sidebar": {
@@ -236,8 +237,8 @@
 		"to": "Al",
 		"view": "Visualizza",
 		"searchIUV": "Cerca IUV",
-    "searchIUF": "ID Rendicontazione",
-    "searchRegulationUniqueIdentifier": "ID Regolamento",
+		"searchIUF": "ID Rendicontazione",
+		"searchRegulationUniqueIdentifier": "ID Regolamento",
 		"importFlow": "Importa flusso",
 		"showAllFlows": "Vedi tutti i flussi",
 		"searchCF": "Cerca CF",
@@ -348,14 +349,14 @@
 		"searchTitleContainer": "Cerca flussi di Rendicontazione",
 		"title": "Rendicontazione"
 	},
-  "reportingDetail": {
-    "hourAndDate": "Data e ora",
-    "regulationDate": "Data Regolamento",
-    "regulationId": "ID Regolamento",
-    "reportingIdOrIUF": "ID Rendicontazione / IUF",
-    "totalAmount": "Importo totale",
-    "totalPayments": "Totale pagamenti"
-  },
+	"reportingDetail": {
+		"hourAndDate": "Data e ora",
+		"regulationDate": "Data Regolamento",
+		"regulationId": "ID Regolamento",
+		"reportingIdOrIUF": "ID Rendicontazione / IUF",
+		"totalAmount": "Importo totale",
+		"totalPayments": "Totale pagamenti"
+	},
 	"reportingSearchResults": {
 		"description": "Visualizza in dettaglio e scarica i flussi di Rendicontazione.",
 		"searchReportingId": "ID Rendicontazione",
@@ -370,6 +371,9 @@
 	},
 	"reportingImportThankYouPage": {
 		"description": "Troverai il flusso caricato nella sezione Flussi importati"
+	},
+	"reportingPaymentDetail": {
+		"title": "Dettaglio Pagamento"
 	},
 	"telematicReceiptDetail": {
 		"title": "Dettaglio Ricevuta Telematica"
@@ -402,12 +406,12 @@
 	},
 	"telematicReceipts": {
 		"description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
-		"downloadflowsdescription": "Richiede l’esportazione di Ricevute Telematiche in un certo intervallo di tempo.",
+		"downloadflowsdescription": "Richiede l'esportazione di Ricevute Telematiche in un certo intervallo di tempo.",
 		"downloadflowstitle": "Scarica Flussi di Ricevute Telematiche",
 		"exportedflowsviewbutton": "Vedi flussi esportati",
 		"exportrequestbutton": "Prenota export",
 		"importedflowsviewbutton": "Vedi flussi importati",
-		"importflowsdescription": "Carica un file .zip con l’informazione necessaria di Ricevute Telematiche mancanti.",
+		"importflowsdescription": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
 		"importflowstitle": "Importa Flussi di Ricevute Telematiche",
 		"search": "Cerca Ricevuta Telematica",
 		"searchdescription": "Inserisci al meno uno dei campi per cominciare la ricerca.",
@@ -422,7 +426,7 @@
 		"description": "Ricerca, visualizza o integra flussi di Tesoreria.",
 		"search": "Cerca flussi di Tesoreria",
 		"searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
-		"importflowsdescription": "Carica un file .zip con l’informazione necessaria di Giornale di Cassa mancanti.",
+		"importflowsdescription": "Carica un file .zip con l'informazione necessaria di Giornale di Cassa mancanti.",
 		"importflowstitle": "Importa Flussi di Tesoreria",
 		"billDetail": "Dettaglio Bolletta",
 		"payer": "Ordinante",
