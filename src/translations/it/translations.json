@@ -318,7 +318,7 @@
 			"description": "Carica qui il file .zip con le Rendicontazioni"
 		},
 		"debt-positions": {
-			"description": "Carica qui il file .zip con le Ricevute Telematiche"
+			"description": "Carica qui il file .zip con i Dovuti"
 		},
 		"requiredFileText": "Campo obbligatorio. Carica un file .zip"
 	},
