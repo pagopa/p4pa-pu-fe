@@ -3,14 +3,39 @@ import { useFeConfig } from './useFeConfig';
 import { useLanguage } from './useLanguage';
 import { Markdown } from '../components/Markdown';
 import lang from '../translations/lang';
-import { FooterLinksType, LogoPagoPACompany } from '@pagopa/mui-italia';
+import { FooterLinksType } from '@pagopa/mui-italia';
 import { CompanyLinkType } from '../components/Footer';
+import { useEffect, useState } from 'react';
+
+const isValidImage = (imgSrc: string): Promise<boolean> => {
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => resolve(true);
+    img.onerror = () => resolve(false);
+    img.src = imgSrc;
+  });
+};
 
 export const useFooterData = () => {
   const { language, changeLanguage } = useLanguage();
 
   const configFe = useFeConfig();
   const { t } = useTranslation();
+
+  const [validLogoImg, setValidLogoImg] = useState<string | null>(null);
+
+  useEffect(() => {
+    const validateLogo = async () => {
+      if (configFe?.logoFooterImg) {
+        const isValid = await isValidImage(configFe.logoFooterImg);
+        setValidLogoImg(isValid ? configFe.logoFooterImg : null);
+      } else {
+        setValidLogoImg(null);
+      }
+    };
+
+    validateLogo();
+  }, [configFe?.logoFooterImg]);
 
   const links: Array<FooterLinksType> = [
     {
@@ -42,11 +67,7 @@ export const useFooterData = () => {
   // TODO: logo aria-label and alt should be in config
   const companyLink: CompanyLinkType = {
     ariaLabel: 'PagoPA SPA',
-    image: configFe?.logoFooterImg ? (
-      <img src={configFe?.logoFooterImg} alt="PagoPA Logo" />
-    ) : (
-      <LogoPagoPACompany />
-    )
+    image: validLogoImg ? <img src={validLogoImg} alt="PagoPA Logo" /> : null
   };
 
   return {
