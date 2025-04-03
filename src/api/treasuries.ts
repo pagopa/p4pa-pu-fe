@@ -1,9 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../utils';
 
-type TreasuriesParams = Parameters<
-  typeof utils.apiClient.bff.getTreasuries
->;
+type TreasuriesParams = Parameters<typeof utils.apiClient.bff.getTreasuries>;
 export type TreasuriesQuery = TreasuriesParams[1];
 
 export type TreasuriesRequest = {
@@ -11,7 +9,9 @@ export type TreasuriesRequest = {
   query: TreasuriesQuery;
 };
 
-export const getTreasuries = (organizationId: TreasuriesRequest['organizationId']) =>
+export const getTreasuries = (
+  organizationId: TreasuriesRequest['organizationId']
+) =>
   useMutation({
     mutationKey: ['getTreasuries', organizationId],
     mutationFn: async (query: TreasuriesQuery) => {

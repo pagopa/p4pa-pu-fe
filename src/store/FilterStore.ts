@@ -4,7 +4,7 @@ import { FilterValues } from '../models/Filters';
 export const initialFilterValues: FilterValues = {
   ACCOUNTING_DATE_FROM: null,
   ACCOUNTING_DATE_TO: null,
-  AMOUNT: '',
+  AMOUNT: null,
   BILL_CODE: '',
   BILL_FROM: null,
   DOCUMENT_CODE: '',

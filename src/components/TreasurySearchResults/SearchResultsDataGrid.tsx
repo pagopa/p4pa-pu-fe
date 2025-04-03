@@ -1,4 +1,9 @@
-import { GridColDef, GridRenderCellParams, GridSortModel, GridValidRowModel } from '@mui/x-data-grid';
+import {
+  GridColDef,
+  GridRenderCellParams,
+  GridSortModel,
+  GridValidRowModel
+} from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
@@ -106,7 +111,6 @@ const SearchResultsDataGrid = ({
             <ReadMore />
           </IconButton>
         </Link>
-
       )
     }
   ];

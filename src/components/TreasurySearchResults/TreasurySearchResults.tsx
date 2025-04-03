@@ -37,14 +37,12 @@ const TreasurySearchResults = () => {
     setDrawerOpen((prev) => !prev);
   };
 
-  const treasuries = UseTreasurySearch({ initialFilters: filterValues })
+  const treasuries = UseTreasurySearch({ initialFilters: filterValues });
 
   const applyFilters = () => {
     treasuries.applyFilters(filterValues);
     setDrawerOpen(false);
   };
-
-
 
   return (
     <>
@@ -86,7 +84,8 @@ const TreasurySearchResults = () => {
           onPageChange={treasuries.handlePageChange}
           onPageSizeChange={treasuries.handlePageSizeChange}
           onSortChange={treasuries.setSort}
-          pagination={treasuries.pagination} />
+          pagination={treasuries.pagination}
+        />
       </Grid>
 
       <FilterDrawer
