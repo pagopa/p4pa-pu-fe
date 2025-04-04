@@ -93,6 +93,7 @@ export const UseTreasurySearch = ({
   const applyFilters = (filterValues: FilterValues) => {
     query.mutate(filterToRequest(filterValues));
     setFilterValues(filterValues);
+    handlePageChange(1);
   };
 
   return {
