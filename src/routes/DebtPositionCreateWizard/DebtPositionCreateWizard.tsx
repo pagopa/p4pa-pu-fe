@@ -4,28 +4,30 @@ import WizardStepper from './components/WizardStepper';
 import Step1GeneralConfiguration from './components/Step1GeneralConfiguration';
 import WizardStepWrapper from './components/WizardStepWrapper';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
+import { useTranslation } from 'react-i18next';
 
 const DebtPositionCreateWizard = () => {
+  const { t } = useTranslation();
   const [step, setStep] = useState(0); // numero di step attivo
   const [formData, setFormData] = useState({
     step1: {
-      tipoDovuto: {
+      debtPositionType: {
         value: '',
         readonly: false
       },
-      descrizione: {
+      description: {
         value: '',
         readonly: false
       }
-    },
-    step2: {
-      codiceFiscale: '',
-      nomeDebitore: ''
-    },
-    step3: {
-      importo: '',
-      scadenza: ''
     }
+    // step2: {
+    //   codiceFiscale: '',
+    //   nomeDebitore: ''
+    // },
+    // step3: {
+    //   importo: '',
+    //   scadenza: ''
+    // }
   }); // dati del form in base allo step
 
   const steps = [
@@ -60,15 +62,17 @@ const DebtPositionCreateWizard = () => {
           <Grid item lg={12} mb={6} mt={2}>
             <Grid item lg={12} mb={6}>
               <TitleComponent
-                title={'Crea una nuova Posizione Debitoria'}
-                description={'Compila i campi e crea una Posizione Debitoria'}
+                title={t('debtPositionCreateWizard.title')}
+                description={t('debtPositionCreateWizard.description')}
               />
             </Grid>
             <WizardStepper activeStep={0} />
           </Grid>
           <WizardStepWrapper
-            title="Configurazione generale"
-            subtitle="Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento."
+            title={t('debtPositionCreateWizard.generalConfiguration.title')}
+            subtitle={t(
+              'debtPositionCreateWizard.generalConfiguration.subtitle'
+            )}
           >
             {steps[step]}
           </WizardStepWrapper>

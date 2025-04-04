@@ -1,4 +1,3 @@
-// routes/DebtPositionWizard/components/WizardStepWrapper.tsx
 import { Box, Grid, Typography } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import { PropsWithChildren } from 'react';

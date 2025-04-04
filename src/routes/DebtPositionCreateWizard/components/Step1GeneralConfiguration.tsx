@@ -1,18 +1,26 @@
+import { useForm } from 'react-hook-form';
 import { useStore } from '../../../store/GlobalStore';
+import { useTranslation } from 'react-i18next';
+import { Box, MenuItem, TextField } from '@mui/material';
 import { useDebtPositionsTypeOrg } from '../../../hooks/useDebtPositionsTypeOrg';
 import SectionBox from './SectionBox';
-import { Box, MenuItem, TextField } from '@mui/material';
 import WizardStepButtons from './WizardStepButtons';
 
+// Tipizzazione per lo stato dello step 1
 type Step1Data = {
-  tipoDovuto: {
+  debtPositionType: {
     value: string;
     readonly: boolean;
   };
-  descrizione: {
+  description: {
     value: string;
     readonly: boolean;
   };
+};
+// Tipi per react-hook-form
+type FormValues = {
+  debtPositionType: string;
+  description: string;
 };
 
 type Props = {
@@ -22,78 +30,106 @@ type Props = {
   onBack?: () => void;
 };
 
-const Step1GeneralConfiguration = ({ data, setData, onNext }: Props) => {
+const Step1GeneralConfiguration = ({
+  data,
+  setData,
+  onNext,
+  onBack
+}: Props) => {
   const {
     state: { organizationId }
   } = useStore();
+  const { t } = useTranslation();
+  // Hook custom per recuperare i tipi di dovuto disponibili
+  const { optionsMap: debtPositionsTypes } = useDebtPositionsTypeOrg({
+    organizationId
+  });
 
-  const { optionsMap: debtPositionsTypes, isLoading } = useDebtPositionsTypeOrg(
-    {
-      organizationId
+  // Inizializzazione del form con react-hook-form
+  const {
+    register, // per collegare i campi
+    handleSubmit, // per gestire l'invio del form
+    watch, // per osservare i valori in tempo reale
+    formState: { errors } // contiene gli errori di validazione
+  } = useForm<FormValues>({
+    defaultValues: {
+      debtPositionType: data?.debtPositionType?.value || '',
+      description: data?.description?.value || ''
     }
-  );
-
-  const handleNext = () => {
+  });
+  // Funzione chiamata al submit valido del form
+  const onSubmit = (values: FormValues) => {
+    setData({
+      debtPositionType: {
+        value: values.debtPositionType,
+        readonly: data.debtPositionType.readonly
+      },
+      description: {
+        value: values.description,
+        readonly: data.description.readonly
+      }
+    });
     onNext();
   };
 
+  // Recupera in tempo reale il valore della select per abilitare/disabilitare il bottone
+  const debtPositionTypeSelected = watch('debtPositionType') || '';
+
   return (
     <Box>
-      <SectionBox title="Descrizione">
-        <TextField
-          label="Tipo di dovuto"
-          select
-          required
-          fullWidth
-          margin="normal"
-          disabled={data.descrizione.readonly}
-          value={data.tipoDovuto.value}
-          onChange={(e) =>
-            setData({
-              ...data,
-              tipoDovuto: {
-                value: e.target.value,
-                readonly: data.tipoDovuto.readonly
+      <SectionBox title={t('debtPositionCreateWizard.step1.title')}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Select - Tipo di dovuto */}
+          <TextField
+            label={t('debtPositionCreateWizard.step1.debtPositionType.label')}
+            select
+            required
+            fullWidth
+            margin="normal"
+            disabled={data.debtPositionType.readonly}
+            error={!!errors.debtPositionType}
+            helperText={errors.debtPositionType?.message}
+            {...register('debtPositionType', {
+              // required: t('commons.required')
+            })}
+            value={debtPositionTypeSelected} // Assicura un valore predefinito, evita warning MUI
+          >
+            {debtPositionsTypes.map((option) => (
+              <MenuItem key={option.value} value={option.value.toString()}>
+                {option.label}
+              </MenuItem>
+            ))}
+          </TextField>
+          {/* Input - Descrizione posizione debitoria */}
+          <TextField
+            label={t('debtPositionCreateWizard.step1.description.label')}
+            fullWidth
+            margin="normal"
+            disabled={data.description.readonly}
+            error={!!errors.description}
+            helperText={errors.description?.message}
+            {...register('description', {
+              validate: (value) => {
+                if (value.trim() === '') return true; // campo vuoto = ok
+                const wordCount = value.trim().split(/\s+/).length;
+                return (
+                  wordCount >= 5 ||
+                  t('debtPositionCreateWizard.step1.description.minWords')
+                );
               }
-            })
-          }
-        >
-          {!isLoading && debtPositionsTypes.length === 0 && (
-            <MenuItem disabled>Nessun tipo disponibile</MenuItem>
-          )}
-
-          {debtPositionsTypes.map((option) => (
-            <MenuItem
-              key={option.value}
-              value={option.value.toString()}
-              disabled={data.tipoDovuto.readonly}
-            >
-              {option.label}
-            </MenuItem>
-          ))}
-        </TextField>
-        <TextField
-          label="Descrizione Posizione Debitoria"
-          fullWidth
-          margin="normal"
-          value={data.descrizione.value}
-          disabled={data.descrizione.readonly}
-          onChange={(e) =>
-            setData({
-              ...data,
-              descrizione: {
-                value: e.target.value,
-                readonly: data.descrizione.readonly
-              }
-            })
-          }
-        />
-        <WizardStepButtons
-          // onBack={onBack}
-          onNext={handleNext}
-          disableNext={data.tipoDovuto.value === ''}
-          disableBack={true}
-        />
+            })}
+          />
+          <WizardStepButtons
+            onBack={onBack}
+            disableBack={true}
+            disableNext={
+              data.debtPositionType.readonly
+                ? false
+                : debtPositionTypeSelected === ''
+            }
+            onNext={handleSubmit(onSubmit)}
+          />
+        </form>
       </SectionBox>
     </Box>
   );

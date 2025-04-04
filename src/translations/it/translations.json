@@ -33,6 +33,7 @@
     "edit": "Modifica",
     "enabled": "Abilitato",
     "exit": "Esci",
+
     "unknownOrganization": "Ente senza nome",
     "files": {
       "download": "Scarica",
@@ -146,6 +147,7 @@
     "personLegal": "Persona giuridica",
     "postAccount": "Conto Corrente Postale",
     "reason": "Causale",
+    "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
@@ -309,6 +311,29 @@
     "timeline": {
       "title": "Storico Avviso",
       "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio"
+    }
+  },
+  "debtPositionCreateWizard": {
+    "title": "Crea una nuova Posizione Debitoria",
+    "description": "Compila i campi e crea una Posizione Debitoria",
+    "generalConfiguration": {
+      "title": "Configurazione Generale",
+      "subtitle": "Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento."
+    },
+    "step1": {
+      "title": "Descrizione",
+      "debtPositionType": {
+        "label": "Tipo di dovuto"
+      },
+      "description": {
+        "label": "Descrizione Posizione Debitoria"
+      },
+      "minWords": "Inserire almeno 5 parole nella descrizione"
+    },
+    "wizardStepper": {
+      "step1": "Configurazione Generale",
+      "step2": "Aggiungi debitore",
+      "step3": "Configurazione avviso"
     }
   },
   "FileUploaderFlowImport": {

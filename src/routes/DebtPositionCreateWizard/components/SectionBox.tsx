@@ -1,6 +1,7 @@
 import { Box, Typography } from '@mui/material';
 import { PropsWithChildren } from 'react';
 import BookIcon from '@mui/icons-material/MenuBook';
+
 type Props = {
   title: string;
 };
@@ -14,7 +15,6 @@ const SectionBox = ({ title, children }: PropsWithChildren<Props>) => {
           {title}
         </Typography>
       </Box>
-
       {children}
     </Box>
   );
