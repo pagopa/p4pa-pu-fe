@@ -65,14 +65,6 @@ export const TreasuryDetail = () => {
       value: data?.accountCode || ''
     },
     {
-      label: t('treasury.billingYear'),
-      value: data?.documentYear || ''
-    },
-    {
-      label: t('treasury.documentCode'),
-      value: data?.documentCode || ''
-    },
-    {
       label: t('treasury.tempDocumentYear'),
       value: data?.provisionalAe || ''
     },

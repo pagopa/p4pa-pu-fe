@@ -24,5 +24,5 @@ export const useOrganizations = () => {
     }
   }, [data, query.isLoading, query.isError, query.isSuccess]);
 
-  return { organizations: data, ...query };
+  return { data, ...query };
 };

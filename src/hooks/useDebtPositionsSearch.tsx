@@ -80,6 +80,7 @@ export const useDebtPositionSearch = ({
 
   const applyFilters = useCallback(() => {
     query.mutate(filterToRequest());
+    handlePageChange(1);
   }, [filterToRequest, query]);
 
   return {

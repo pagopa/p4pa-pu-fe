@@ -80,6 +80,7 @@ export const useReportingSearch = ({
 
   const applyFilters = useCallback(() => {
     query.mutate(filterToRequest());
+    handlePageChange(1);
   }, [filterToRequest, query]);
 
   return {

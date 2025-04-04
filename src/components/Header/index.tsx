@@ -17,6 +17,7 @@ import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
 import { OperatorRoleEnum } from '../../../generated/apiClient';
 import { PageRoutes } from '../../App';
+import { useUserInfo } from '../../hooks/useUserInfo';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;
@@ -24,17 +25,26 @@ export type HeaderProps = {
 };
 
 export const Header = (props: HeaderProps) => {
-  const { onAssistanceClick = () => null } = props;
-  const { onDocumentationClick = () => null } = props;
-  const navigate = useNavigate();
-  const { organizations, isSuccess } = useOrganizations();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { state } = useStore();
 
+  const organizations = useOrganizations();
+  const userInfo = useUserInfo();
+
+  const { onAssistanceClick = () => null } = props;
+  const { onDocumentationClick = () => null } = props;
+
+  const jwtUser: JwtUser | undefined = userInfo
+    ? {
+        id: userInfo.userId,
+        name: userInfo.name,
+        surname: userInfo.familyName
+      }
+    : undefined;
+
   const organizationsToMenuItems: Array<PartySwitchItem> =
-    organizations?.map((item) => ({
-      // TODO: Mui-italia should fix this type
-      // passing a number here will break HeaderProduct
+    organizations.data?.map((item) => ({
       id: item.organizationId.toString(),
       logoUrl: item.orgLogo,
       name: item.orgName || t('commons.unknownOrganization'),
@@ -51,14 +61,6 @@ export const Header = (props: HeaderProps) => {
       navigate(PageRoutes.HOME);
     }
   }
-
-  /* TODO: call user service */
-  const jwtUser: JwtUser | undefined = {
-    id: 'marcopolo',
-    name: 'Marco',
-    surname: 'Polo',
-    email: ''
-  };
 
   const userActions: Array<UserAction> = [
     {
@@ -88,11 +90,10 @@ export const Header = (props: HeaderProps) => {
   const onSelectedParty = (organization: PartySwitchItem) => {
     setOrganizationId(Number(organization.id));
     setOperatorRole(organization.productRole as OperatorRoleEnum);
-    // TODO: check if this is needed
     navigate(0);
   };
 
-  return isSuccess ? (
+  return organizations.isSuccess ? (
     <>
       <HeaderAccount
         rootLink={utils.config.pagopaLink}

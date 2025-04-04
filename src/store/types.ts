@@ -1,12 +1,12 @@
-import { UserMemo } from '../models/User';
-import { OrganizationIdMemo } from '../models/Organization';
-import { ConfigFE } from '../../generated/apiClient';
 import { AppState } from '../models/AppState';
-import { OperatoRole } from '../models/OperatorRole';
+import { ConfigFE } from '../../generated/apiClient';
 import { FilterValues } from '../models/Filters';
+import { OperatoRole } from '../models/OperatorRole';
+import { OrganizationIdMemo } from '../models/Organization';
+import { UserInfo } from '../../generated/data-contracts';
 
 export type State = {
-  [STATE.USER_INFO]: UserMemo | undefined;
+  [STATE.USER_INFO]: UserInfo | undefined;
   [STATE.ORGANIZATION_ID]: OrganizationIdMemo;
   [STATE.CONFIG_FE]: ConfigFE | undefined;
   [STATE.APP_STATE]: AppState;

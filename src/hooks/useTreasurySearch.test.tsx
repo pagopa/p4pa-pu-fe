@@ -1,0 +1,50 @@
+import { act } from 'react';
+import { describe, expect, it } from 'vitest';
+import { renderHook } from '../__tests__/renderers';
+import useTreasurySearch from './useTreasurySearch';
+import { FilterValues } from '../models/Filters';
+
+describe('useTreasurySearch', () => {
+  const initialFilters: FilterValues = {
+    ACCOUNTING_DATE_FROM: null,
+    ACCOUNTING_DATE_TO: null,
+    AMOUNT: null,
+    BILL_CODE: '',
+    BILL_FROM: null,
+    DOCUMENT_CODE: '',
+    DOCUMENT_CODE_FROM: null,
+    IUV: '',
+    PAYER: '',
+    REPORT_ID: '',
+    TEMPORARY_CODE: '',
+    TEMPORARY_CODE_FROM: null,
+    VALUE_DATE_FROM: null,
+    VALUE_DATE_TO: null
+  };
+
+  it('should initialize with default values', () => {
+    const { result } = renderHook(() =>
+      useTreasurySearch({
+        initialFilters
+      })
+    );
+
+    expect(result.current.filterValues).toEqual(initialFilters);
+    expect(result.current.pagination.page).toBe(0);
+    expect(result.current.pagination.size).toBe(10);
+  });
+
+  it('should update filter values on handleFilterChange', () => {
+    const { result } = renderHook(() =>
+      useTreasurySearch({
+        initialFilters
+      })
+    );
+
+    act(() => {
+      result.current.applyFilters({ ...initialFilters, ...{ AMOUNT: 123000 } });
+    });
+
+    expect(result.current.filterValues.AMOUNT).toBe(123000);
+  });
+});

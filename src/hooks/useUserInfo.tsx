@@ -1,23 +1,32 @@
-import { UserMemo } from '../models/User';
+import { useEffect } from 'react';
+import user from '../api/user';
 import { useStore } from '../store/GlobalStore';
+import { setLoading } from '../store/AppStateStore';
 import { setUserInfo } from '../store/UserInfoStore';
 
 export const useUserInfo = () => {
-  const { state } = useStore();
+  const {
+    state: { userInfo }
+  } = useStore();
 
-  /* TODO service to obtain user data */
-  const data = {
-    email: 'marcopolo@ilmilione.it',
-    name: 'Marco',
-    familyName: 'Polo',
-    userId: 'marcopolo'
-  };
-  const user: UserMemo = {
-    name: data.name,
-    familyName: data.familyName,
-    userId: data.userId
-  };
-  setUserInfo(user);
+  const { data, isLoading, isError, isSuccess, error } = user.getUserInfo({
+    enabled: !userInfo
+  });
 
-  return { userInfo: state.userInfo };
+  useEffect(() => {
+    if (!userInfo) {
+      setLoading(isLoading);
+
+      if (isSuccess && data) {
+        setUserInfo(data);
+      }
+
+      if (isError) {
+        // TODO: Handle error (e.g., show a toast)
+        console.error('Failed to fetch user info', error);
+      }
+    }
+  }, [data, isLoading, isError, isSuccess]);
+
+  return userInfo;
 };
