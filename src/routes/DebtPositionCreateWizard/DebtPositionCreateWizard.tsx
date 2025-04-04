@@ -1,15 +1,49 @@
-import { Box, Grid, Step, StepLabel, Stepper, Typography } from '@mui/material';
+import { useState } from 'react';
+import { Grid } from '@mui/material';
+import WizardStepper from './components/WizardStepper';
+import Step1GeneralConfiguration from './components/Step1GeneralConfiguration';
+import WizardStepWrapper from './components/WizardStepWrapper';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useTranslation } from 'react-i18next';
-import { theme } from '@pagopa/mui-italia';
 
 const DebtPositionCreateWizard = () => {
-  const { t } = useTranslation();
+  const [step, setStep] = useState(0); // numero di step attivo
+  const [formData, setFormData] = useState({
+    step1: {
+      tipoDovuto: {
+        value: '',
+        readonly: false
+      },
+      descrizione: {
+        value: '',
+        readonly: false
+      }
+    },
+    step2: {
+      codiceFiscale: '',
+      nomeDebitore: ''
+    },
+    step3: {
+      importo: '',
+      scadenza: ''
+    }
+  }); // dati del form in base allo step
 
   const steps = [
-    'Configurazione Generale',
-    'Aggiungi Debitore',
-    'Configurazione Avviso'
+    <Step1GeneralConfiguration
+      data={formData.step1}
+      setData={(step1) => setFormData((prev) => ({ ...prev, step1 }))}
+      onNext={() => setStep(step + 1)}
+    />
+    // <Step2AddDebtor
+    //   data={formData.step2}
+    //   setData={(step2) => setFormData(prev => ({ ...prev, step2 }))}
+    //   ...
+    // />,
+    // <Step3NoticeConfiguration
+    //   data={formData.step3}
+    //   setData={(step3) => setFormData(prev => ({ ...prev, step3 }))}
+    //   ...
+    // />
   ];
 
   return (
@@ -23,38 +57,21 @@ const DebtPositionCreateWizard = () => {
           ml={1}
           mb={4}
         >
-          <TitleComponent
-            title={'Crea una nuova Posizione Debitoria'}
-            description={'Compila i campi e crea una Posizione Debitoria'}
-          />
           <Grid item lg={12} mb={6} mt={2}>
-            <Stepper activeStep={0} alternativeLabel>
-              {steps.map((label) => (
-                <Step key={label}>
-                  <StepLabel>{label}</StepLabel>
-                </Step>
-              ))}
-            </Stepper>
-          </Grid>
-          <Box
-            bgcolor={theme.palette.common.white}
-            borderRadius={0.5}
-            p={3}
-            gap={3}
-          >
-            <Grid item lg={12} mb={2}>
-              <Grid item lg={12} mb={2}>
-                <Typography variant="h4" gutterBottom>
-                  {'Configurazione Generale'}
-                </Typography>
-                <Typography variant="body1" gutterBottom>
-                  {
-                    'Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento.'
-                  }
-                </Typography>
-              </Grid>
+            <Grid item lg={12} mb={6}>
+              <TitleComponent
+                title={'Crea una nuova Posizione Debitoria'}
+                description={'Compila i campi e crea una Posizione Debitoria'}
+              />
             </Grid>
-          </Box>
+            <WizardStepper activeStep={0} />
+          </Grid>
+          <WizardStepWrapper
+            title="Configurazione generale"
+            subtitle="Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento."
+          >
+            {steps[step]}
+          </WizardStepWrapper>
         </Grid>
       </Grid>
     </>
