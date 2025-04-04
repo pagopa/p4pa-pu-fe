@@ -1,16 +1,10 @@
-import { usePersistentSignal } from '../hooks/usePersistentSignal';
-import { UserMemo } from '../models/User';
-import { STATE } from './types';
+import { signal } from '@preact/signals-react';
+import { UserInfo } from '../../generated/data-contracts';
 
 // Initialize the persistent store
-export const userInfoState = usePersistentSignal<UserMemo | undefined>(
-  STATE.USER_INFO,
-  {
-    storage: sessionStorage
-  }
-);
+export const userInfoState = signal<UserInfo | undefined>();
 
 // Function to update the user info
-export function setUserInfo(user: UserMemo | undefined) {
-  userInfoState.state.value = user;
+export function setUserInfo(user: UserInfo | undefined) {
+  userInfoState.value = user;
 }

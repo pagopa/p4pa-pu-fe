@@ -4,7 +4,6 @@ import tseslint from 'typescript-eslint';
 import pluginReact from 'eslint-plugin-react';
 import prettier from 'eslint-plugin-prettier/recommended';
 import sonarjs from 'eslint-plugin-sonarjs';
-// TODO: add 'eslint-plugin-react-hooks'
 
 export default tseslint.config([
   pluginJs.configs.recommended,

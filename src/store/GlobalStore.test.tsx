@@ -47,7 +47,6 @@ describe('StoreContext', () => {
         [STATE.APP_STATE]: { loading: false },
         [STATE.CONFIG_FE]: null,
         [STATE.ORGANIZATION_ID]: null,
-        [STATE.USER_INFO]: null,
         [STATE.SELECTED_FILTERS]: [''],
         [STATE.FILTER_VALUES]: initialFilterValues
       })
