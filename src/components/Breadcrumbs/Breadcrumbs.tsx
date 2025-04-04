@@ -15,6 +15,7 @@ import { useStore } from '../../store/GlobalStore';
 export type BreadcrumbsProps = {
   separator: React.ReactElement;
   custom?: boolean;
+  goOut?: boolean;
 };
 
 export type BredcrumbItem = {
@@ -23,7 +24,7 @@ export type BredcrumbItem = {
   label?: string;
 };
 
-const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
+const Breadcrumbs = ({ separator, custom, goOut }: BreadcrumbsProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -36,13 +37,14 @@ const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
   const itemsToList = custom ? items || matches : matches;
 
   const mdUp = useMediaQuery(theme.breakpoints.up('md'));
+  console.log('goOut', goOut);
 
   const BackButton = () => (
     <Typography
       onClick={() => navigate(-1)}
       role="link"
       sx={{ cursor: 'pointer' }}
-      aria-label={t('commons.back')}
+      aria-label={!goOut ? t('commons.back') : 'Esci'}
     >
       <ArrowBack fontSize="small" color="inherit" />
     </Typography>

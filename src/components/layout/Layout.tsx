@@ -16,7 +16,8 @@ const defaultRouteHandle: RouteHandleObject = {
   custom: false,
   backButton: true,
   hideBreadcrumbs: false,
-  sidebar: { visible: true }
+  sidebar: { visible: true },
+  goOut: false
 };
 
 export function Layout() {
@@ -41,6 +42,7 @@ export function Layout() {
     sidebar,
     backButton,
     backButtonText,
+    goOut,
     backButtonFunction
   } = {
     ...defaultRouteHandle,
@@ -85,6 +87,9 @@ export function Layout() {
                     onClick={backButtonFunction}
                     text={backButtonText}
                   />
+                )}
+                {goOut && (
+                  <BackButton onClick={backButtonFunction} text={'goOut'} />
                 )}
                 {!hideBreadcrumbs && (
                   <Breadcrumbs

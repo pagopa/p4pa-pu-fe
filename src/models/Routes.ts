@@ -5,4 +5,5 @@ export type RouteHandleObject = {
   hideBreadcrumbs?: boolean;
   sidebar: { visible?: boolean };
   custom?: boolean;
+  goOut?: boolean;
 };
