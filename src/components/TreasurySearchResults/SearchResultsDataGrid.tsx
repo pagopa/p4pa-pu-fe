@@ -1,89 +1,97 @@
-import { GridColDef, GridValidRowModel } from '@mui/x-data-grid';
+import {
+  GridColDef,
+  GridRenderCellParams,
+  GridSortModel,
+  GridValidRowModel
+} from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { generatePath, Link } from 'react-router-dom';
 import { PageRoutes } from '../../App';
+import { PagedTreasuryView } from '../../../generated/apiClient';
+import { formatDate, moneyFormat } from '../../utils/formatters';
 
 type SearchResultDataRow = {
-  id: number;
-  billingYear: string;
-  billingCode: string;
-  valueDate: string;
-  reportingId: string;
-  amount: string;
+  billAmountCents: number;
+  billDate: string;
+  regionValueDate: string;
 } & GridValidRowModel;
 
-const SearchResultsDataGrid = () => {
+export type DataGridProps = {
+  data: PagedTreasuryView;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (page: number) => void;
+  onSortChange: (model: Array<string>) => void;
+  pagination: {
+    currentPage: number;
+    page: number;
+    size: number;
+  };
+};
+
+const SearchResultsDataGrid = ({
+  data,
+  onPageChange,
+  onPageSizeChange,
+  onSortChange,
+  pagination
+}: DataGridProps) => {
   const { t } = useTranslation();
 
-  const rows: Array<SearchResultDataRow> = [
-    {
-      id: 1,
-      billingYear: '2024',
-      billingCode: '2000777',
-      valueDate: '02/09/2024',
-      accountingDate: '02/09/2024',
-      reportingId: '2024-09-03424234234',
-      amount: '50,00 €'
-    },
-    {
-      id: 2,
-      billingYear: '2024',
-      billingCode: '2100777',
-      valueDate: '09/09/2024',
-      accountingDate: '09/09/2024',
-      reportingId: '2024-09-13424234234',
-      amount: '80,00 €'
-    },
-    {
-      id: 3,
-      billingYear: '2024',
-      billingCode: '2200777',
-      valueDate: '11/09/2024',
-      accountingDate: '11/09/2024',
-      reportingId: '2024-09-23424234234',
-      amount: '100,00 €'
+  const onSort = (model: GridSortModel) => {
+    if (model?.length) {
+      const sort = model.map((item) =>
+        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
+      );
+      onPageChange(1);
+      onSortChange(sort);
     }
-  ];
+  };
 
   const columns: Array<GridColDef> = [
     {
-      field: 'billingYear',
+      field: 'billYear',
       headerName: t('treasurySearchResults.billingYear'),
       flex: 1,
       type: 'string'
     },
     {
-      field: 'billingCode',
+      field: 'billCode',
       headerName: t('treasurySearchResults.billingCode'),
       flex: 1,
       type: 'string'
     },
     {
-      field: 'valueDate',
+      field: 'regionValueDate',
       headerName: t('treasurySearchResults.valueDate'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      renderCell: (params: GridRenderCellParams) =>
+        params.value && formatDate(params.value)
     },
     {
-      field: 'accountingDate',
+      field: 'billDate',
       headerName: t('treasurySearchResults.accountingDate'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      renderCell: (params: GridRenderCellParams) =>
+        params.value && formatDate(params.value)
     },
     {
-      field: 'reportingId',
+      field: 'iuf',
       headerName: t('treasurySearchResults.reportingId'),
       flex: 1,
       type: 'string'
     },
     {
-      field: 'amount',
+      field: 'billAmountCents',
       headerName: t('commons.amount'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) =>
+        moneyFormat(params.value as number)
     },
     {
       field: 'action',
@@ -92,10 +100,12 @@ const SearchResultsDataGrid = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: () => (
+      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => (
         <Link
-          to={generatePath(PageRoutes.DETAIL_FLOWS, { category: 'treasury' })}
-          aria-label="go to treasury detail"
+          to={generatePath(PageRoutes.TREASURY_DETAIL, {
+            id: params.row.treasuryId
+          })}
+          aria-label={t('commons.detail')}
         >
           <IconButton color="primary" size="small">
             <ReadMore />
@@ -108,11 +118,20 @@ const SearchResultsDataGrid = () => {
   return (
     <>
       <CustomDataGrid
-        rows={rows}
+        rows={data?.content ?? []}
+        getRowId={(row) => row.treasuryId}
         columns={columns}
-        hideFooter
         disableColumnMenu
         disableColumnResize
+        onSortModelChange={onSort}
+        customPagination={{
+          defaultPageOption: pagination.size,
+          sizePageOptions: [5, 10, 20],
+          totalPages: data?.totalPages,
+          currentPage: pagination.currentPage,
+          onPageChange,
+          onPageSizeChange
+        }}
       />
     </>
   );
