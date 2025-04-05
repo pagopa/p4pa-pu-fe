@@ -37,7 +37,6 @@ const Breadcrumbs = ({ separator, custom, goOut }: BreadcrumbsProps) => {
   const itemsToList = custom ? items || matches : matches;
 
   const mdUp = useMediaQuery(theme.breakpoints.up('md'));
-  console.log('goOut', goOut);
 
   const BackButton = () => (
     <Typography

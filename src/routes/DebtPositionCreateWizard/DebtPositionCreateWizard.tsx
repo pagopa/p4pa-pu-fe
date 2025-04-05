@@ -6,10 +6,37 @@ import WizardStepWrapper from './components/WizardStepWrapper';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { useTranslation } from 'react-i18next';
 
+type FormData = {
+  step1: {
+    debtPositionType: {
+      value: string;
+      readonly: boolean;
+    };
+    description: {
+      value: string;
+      readonly: boolean;
+    };
+  };
+};
+
+type StepKey = keyof FormData;
+
+type StepConfig<K extends StepKey = StepKey> = {
+  key: K;
+  Component: React.ComponentType<{
+    data: FormData[K];
+    setData: (data: FormData[K]) => void;
+    onNext: () => void;
+    onBack?: () => void;
+  }>;
+  title: string;
+  subtitle: string;
+};
+
 const DebtPositionCreateWizard = () => {
   const { t } = useTranslation();
   const [step, setStep] = useState(0); // numero di step attivo
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     step1: {
       debtPositionType: {
         value: '',
@@ -30,23 +57,24 @@ const DebtPositionCreateWizard = () => {
     // }
   }); // dati del form in base allo step
 
-  const steps = [
-    <Step1GeneralConfiguration
-      data={formData.step1}
-      setData={(step1) => setFormData((prev) => ({ ...prev, step1 }))}
-      onNext={() => setStep(step + 1)}
-    />
-    // <Step2AddDebtor
-    //   data={formData.step2}
-    //   setData={(step2) => setFormData(prev => ({ ...prev, step2 }))}
-    //   ...
-    // />,
-    // <Step3NoticeConfiguration
-    //   data={formData.step3}
-    //   setData={(step3) => setFormData(prev => ({ ...prev, step3 }))}
-    //   ...
-    // />
+  const allSteps: Array<StepConfig> = [
+    {
+      key: 'step1',
+      Component: Step1GeneralConfiguration,
+      title: t('debtPositionCreateWizard.generalConfiguration.title'),
+      subtitle: t('debtPositionCreateWizard.generalConfiguration.subtitle')
+    }
   ];
+
+  const steps = allSteps.map(({ key, Component }, index) => (
+    <Component
+      key={`step-${key}`}
+      data={formData[key]}
+      setData={(data) => setFormData((prev) => ({ ...prev, [key]: data }))}
+      onNext={() => setStep(index + 1)}
+      // onBack={() => setStep(index - 1)}
+    />
+  ));
 
   return (
     <>
@@ -66,7 +94,7 @@ const DebtPositionCreateWizard = () => {
                 description={t('debtPositionCreateWizard.description')}
               />
             </Grid>
-            <WizardStepper activeStep={0} />
+            <WizardStepper activeStep={step} />
           </Grid>
           <WizardStepWrapper
             title={t('debtPositionCreateWizard.generalConfiguration.title')}
