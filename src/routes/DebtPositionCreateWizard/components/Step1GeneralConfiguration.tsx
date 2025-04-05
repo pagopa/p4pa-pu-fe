@@ -113,8 +113,7 @@ const Step1GeneralConfiguration = ({
                 if (value.trim() === '') return true; // campo vuoto = ok
                 const wordCount = value.trim().split(/\s+/).length;
                 return (
-                  wordCount >= 5 ||
-                  t('debtPositionCreateWizard.step1.description.minWords')
+                  wordCount >= 5 || t('debtPositionCreateWizard.step1.minWords')
                 );
               }
             })}
