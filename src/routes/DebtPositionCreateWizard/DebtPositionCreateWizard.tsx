@@ -97,10 +97,8 @@ const DebtPositionCreateWizard = () => {
             <WizardStepper activeStep={step} />
           </Grid>
           <WizardStepWrapper
-            title={t('debtPositionCreateWizard.generalConfiguration.title')}
-            subtitle={t(
-              'debtPositionCreateWizard.generalConfiguration.subtitle'
-            )}
+            title={allSteps[step].title}
+            subtitle={allSteps[step].subtitle}
           >
             {steps[step]}
           </WizardStepWrapper>
