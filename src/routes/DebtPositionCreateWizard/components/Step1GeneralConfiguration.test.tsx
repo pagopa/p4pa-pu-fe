@@ -419,10 +419,10 @@ describe('Step1GeneralConfiguration', () => {
       // Verifica il comportamento della validazione con diversi input
       expect(descriptionValidate('')).toBe(true); // Campo vuoto è valido
       expect(descriptionValidate('parola')).toBe(
-        'debtPositionCreateWizard.step1.description.minWords'
+        'debtPositionCreateWizard.step1.minWords'
       );
       expect(descriptionValidate('uno due tre quattro')).toBe(
-        'debtPositionCreateWizard.step1.description.minWords'
+        'debtPositionCreateWizard.step1.minWords'
       );
       expect(descriptionValidate('uno due tre quattro cinque')).toBe(true);
     }
