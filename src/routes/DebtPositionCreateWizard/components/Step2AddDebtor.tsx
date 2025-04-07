@@ -180,7 +180,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
               </Typography>
             </Box>
 
-            <Typography variant="subtitle2" gutterBottom>
+            <Typography variant="subtitle1" gutterBottom>
               {t('debtPositionCreateWizard.step2.fiscalData')}
             </Typography>
 
@@ -247,7 +247,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
               inputProps={{ maxLength: 16 }} // Limita a 16 caratteri (lunghezza CF italiano)
             />
 
-            <Typography variant="subtitle2" sx={{ mt: 3 }} gutterBottom>
+            <Typography variant="subtitle1" sx={{ mt: 3 }} gutterBottom>
               {t('debtPositionCreateWizard.step2.personalData')}
             </Typography>
 
