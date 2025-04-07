@@ -1,0 +1,47 @@
+import { useQuery } from '@tanstack/react-query';
+import utils from '../utils';
+import {
+  ExportFileStatus,
+  ExportFileTypeEnum
+} from '../../generated/apiClient';
+import { parseAndLog } from '../utils/loaders';
+import { pagedExportFileSchema } from '../../generated/zod-schema';
+
+export const getExportFiles = (
+  organizationId: number,
+  query: {
+    exportFileType: ExportFileTypeEnum;
+    creationDateFrom?: string;
+    creationDateTo?: string;
+    status?: ExportFileStatus;
+    fileName?: string;
+    page?: number;
+    size?: number;
+    sort?: Array<string>;
+  },
+  options = {}
+) => {
+  return useQuery({
+    queryKey: ['exportFiles', organizationId, query],
+    queryFn: async () => {
+      const { data: files } = await utils.apiClient.bff.getExportFiles(
+        organizationId,
+        query,
+        {
+          // Per serializzare correttamente i parametri
+          paramsSerializer: {
+            indexes: null
+          }
+        }
+      );
+
+      if (files) {
+        parseAndLog(pagedExportFileSchema, files);
+      }
+      return files;
+    },
+    retry: false,
+    enabled: !!organizationId,
+    ...options
+  });
+};

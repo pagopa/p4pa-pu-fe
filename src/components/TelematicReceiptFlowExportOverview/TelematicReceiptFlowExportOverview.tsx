@@ -1,18 +1,107 @@
 import { Box, Stack, useTheme } from '@mui/material';
 import { Downloading, Search } from '@mui/icons-material';
-import FlowDataGrid from '../../components/FlowDataGrid/FlowDataGrid';
+import DownloadIcon from '@mui/icons-material/Download';
+import IconButton from '@mui/material/IconButton';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+
 import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../FilterContainer/FilterContainer';
+import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../App';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
+import { ExportFileTypeEnum } from '../../../generated/apiClient';
+import { EXPORT_DOWNLOAD_STATES } from '../../models/Filters';
+import { getExportFiles } from '../../api/exportFiles';
+import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
 
 const TelematicReceiptFlowExportOverview = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const { state } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
+  const {
+    appliedFilters,
+    draftFilters,
+    updateDraftFilters,
+    applyFilters,
+    updatePagination,
+    handleDateFromChange,
+    handleDateToChange,
+    hasActiveFilters,
+    sortModel,
+    handleSortModelChange
+  } = useExportFlowFilters({
+    exportFileType: ExportFileTypeEnum.PAID
+  });
+
+  const { data, isLoading } = getExportFiles(organizationId, appliedFilters);
+
+  const renderActionCell = (params: GridRenderCellParams) => {
+    const { exportFileId, status } = params.row;
+
+    if (EXPORT_DOWNLOAD_STATES.includes(status)) {
+      return (
+        <IconButton
+          color="primary"
+          size="small"
+          onClick={() => console.log(`Download: ${exportFileId}`)}
+          data-testid="download-button"
+        >
+          <DownloadIcon />
+        </IconButton>
+      );
+    }
+
+    return null;
+  };
+
+  const columns: Array<GridColDef> = [
+    {
+      field: 'fileName',
+      headerName: t('flowDataGrid.name'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'creationDate',
+      headerName: t('flowDataGrid.reservationDate'),
+      flex: 1,
+      type: 'string',
+      renderCell: (params: GridRenderCellParams) =>
+        params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
+    },
+    {
+      field: 'operator',
+      headerName: t('flowDataGrid.operator'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'size',
+      headerName: t('commons.files.size'),
+      flex: 1,
+      type: 'number',
+      headerAlign: 'left',
+      align: 'left'
+    },
+    {
+      field: 'menu',
+      headerName: '',
+      flex: 0.5,
+      sortable: false,
+      align: 'right',
+      headerAlign: 'right',
+      renderCell: renderActionCell
+    }
+  ];
 
   return (
     <>
@@ -40,21 +129,37 @@ const TelematicReceiptFlowExportOverview = () => {
               type: COMPONENT_TYPE.textField,
               label: t('commons.searchName'),
               icon: <Search />,
-              gridWidth: 5
+              gridWidth: 6,
+              value: draftFilters.fileName || '',
+              onChange: (e) => updateDraftFilters({ fileName: e.target.value })
             },
             {
               type: COMPONENT_TYPE.dateRange,
               label: 'dateRange',
+              gridWidth: 5,
               from: {
-                label: t('telematicReceiptFlowExportOverview.exportFrom')
+                label: t('telematicReceiptFlowExportOverview.exportFrom'),
+                errorMessage: t('dates.validations.from'),
+                value: draftFilters.creationDateFrom
+                  ? new Date(draftFilters.creationDateFrom)
+                  : null,
+                onChange: handleDateFromChange
               },
-              gridWidth: 6
+              to: {
+                label: t('dates.to'),
+                errorMessage: t('dates.validations.to'),
+                value: draftFilters.creationDateTo
+                  ? new Date(draftFilters.creationDateTo)
+                  : null,
+                onChange: handleDateToChange
+              }
             },
             {
               type: COMPONENT_TYPE.button,
               label: t('commons.filters.filterResults'),
               gridWidth: 1,
-              onClick: () => console.log('Filter applied')
+              onClick: applyFilters,
+              disabled: !hasActiveFilters()
             }
           ]}
         />
@@ -64,7 +169,25 @@ const TelematicReceiptFlowExportOverview = () => {
             padding: 2
           }}
         >
-          <FlowDataGrid />
+          <CustomDataGrid
+            rows={data?.content || []}
+            columns={columns}
+            getRowId={(row) => row.exportFileId}
+            disableColumnMenu
+            disableColumnResize
+            sortModel={sortModel}
+            onSortModelChange={handleSortModelChange}
+            loading={isLoading}
+            customPagination={{
+              totalPages: data?.totalPages || 1,
+              defaultPageOption: appliedFilters.size,
+              sizePageOptions: [5, 10, 15, 20],
+              onPageChange: (page) =>
+                updatePagination({ page: page - 1, size: appliedFilters.size }),
+              onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
+              currentPage: appliedFilters.page + 1
+            }}
+          />
         </Box>
       </Stack>
     </>
