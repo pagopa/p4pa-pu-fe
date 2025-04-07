@@ -2,6 +2,16 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import WizardStepButtons from './WizardStepButtons';
 
+// Mock della funzione di traduzione
+vi.mock('react-i18next', () => ({
+  useTranslation: vi.fn(() => ({
+    t: (key: string) => {
+      if (key === 'commons.back') return 'Indietro';
+      return key;
+    }
+  }))
+}));
+
 describe('WizardStepButtons', () => {
   it('renderizza correttamente i pulsanti con le etichette predefinite', () => {
     const onNext = vi.fn();

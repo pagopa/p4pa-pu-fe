@@ -1,5 +1,5 @@
 import { Box, Button } from '@mui/material';
-
+import { useTranslation } from 'react-i18next';
 type Props = {
   onBack?: () => void;
   onNext: () => void;
@@ -14,15 +14,18 @@ const WizardStepButtons = ({
   disableNext,
   disableBack = false,
   nextLabel = 'Continua'
-}: Props) => (
-  <Box mt={4} display="flex" justifyContent="space-between">
-    <Button variant="outlined" onClick={onBack} disabled={disableBack}>
-      Indietro
-    </Button>
-    <Button variant="contained" onClick={onNext} disabled={disableNext}>
-      {nextLabel}
-    </Button>
-  </Box>
-);
+}: Props) => {
+  const { t } = useTranslation();
+  return (
+    <Box mt={4} display="flex" justifyContent="space-between">
+      <Button variant="outlined" onClick={onBack} disabled={disableBack}>
+        {t('commons.back')}
+      </Button>
+      <Button variant="contained" onClick={onNext} disabled={disableNext}>
+        {nextLabel}
+      </Button>
+    </Box>
+  );
+};
 
 export default WizardStepButtons;
