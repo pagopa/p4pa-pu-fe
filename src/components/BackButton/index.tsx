@@ -11,19 +11,19 @@ export type BackButtonProps = {
 export const BackButton = (props: BackButtonProps) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { text = 'back', onClick = () => navigate(-1) } = props;
+  const { text = t('commons.back'), onClick = () => navigate(-1) } = props;
 
   return (
     <Button
       role="button"
-      aria-label={t(`app.routes.${text}`)}
+      aria-label={text}
       size="medium"
       startIcon={<ArrowBack />}
       variant="text"
       onClick={onClick}
       sx={{ marginBottom: 3 }}
     >
-      {t(`commons.${text}`)}
+      {text}
     </Button>
   );
 };
