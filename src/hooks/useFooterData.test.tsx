@@ -2,9 +2,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFooterData } from './useFooterData';
 import { useFeConfig } from './useFeConfig';
 import { ConfigFE } from '../../generated/apiClient';
-import { render, renderHook } from '../__tests__/renderers';
+import { render, renderHook, act } from '../__tests__/renderers';
 
 vi.mock('./useFeConfig');
+
+const mockImage = {
+  onload: vi.fn(),
+  onerror: vi.fn(),
+  src: ''
+};
+
+const originalImage = global.Image;
 
 describe('useFooterData', () => {
   const mockConfigFe = {
@@ -13,11 +21,18 @@ describe('useFooterData', () => {
     footerTermsCondUrl: 'https://terms.example.com',
     footerAccessibilityUrl: 'https://accessibility.example.com',
     footerDescText: 'Some legal information text',
-    logoFooterImg: 'https://example.com/logo.png'
+    logoFooterImg:
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
   } as ConfigFE;
 
   beforeEach(() => {
     vi.mocked(useFeConfig).mockReturnValue(mockConfigFe);
+
+    global.Image = vi.fn(() => mockImage) as unknown as typeof global.Image;
+  });
+
+  afterEach(() => {
+    global.Image = originalImage;
   });
 
   it('should return footer links from configFe', () => {
@@ -58,13 +73,30 @@ describe('useFooterData', () => {
     expect(result.current.onLanguageChanged).toBeInstanceOf(Function);
   });
 
-  it('should return the company link with the correct logo', () => {
+  it('should return the company link with the correct logo after validation', async () => {
     const { result } = renderHook(() => useFooterData());
 
-    const image = result.current.companyLink.image;
-    const imageEl = render(image);
+    expect(result.current.companyLink.image).toBeNull();
 
+    await act(async () => {
+      const imgInstance = mockImage;
+      expect(imgInstance.src).toBe(mockConfigFe.logoFooterImg);
+      imgInstance.onload();
+    });
+
+    const imageEl = render(result.current.companyLink.image);
     expect(imageEl.getByAltText('PagoPA Logo')).toBeInTheDocument();
+  });
+
+  it('should handle invalid image logo', async () => {
+    const { result } = renderHook(() => useFooterData());
+
+    await act(async () => {
+      const imgInstance = mockImage;
+      imgInstance.onerror();
+    });
+
+    expect(result.current.companyLink.image).toBeNull();
   });
 
   it('should return the legalInfo markdown component with the configured text', () => {
