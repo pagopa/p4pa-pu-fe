@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
 import {
@@ -41,7 +42,8 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     formState: { errors, isSubmitted },
     trigger,
     clearErrors,
-    setValue
+    setValue,
+    getValues
   } = useForm<Step2Data>({
     defaultValues: data,
     mode: 'onChange'
@@ -52,8 +54,18 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   const countryValue = watch('country.value') || '';
   const provinceValue = watch('province.value') || '';
 
+  // Aggiungo un effetto per ricalcolare la validazione quando cambia il tipo di soggetto
+  useEffect(() => {
+    if (isSubmitted) {
+      const taxCodeValue = getValues('taxCode.value');
+      if (taxCodeValue) {
+        trigger('taxCode.value');
+      }
+    }
+  }, [subjectTypeValue, isSubmitted, trigger, getValues]);
+
   const validateZipCode = (zipCode: string) => {
-    if (!zipCode) return t('common.required');
+    if (!zipCode) return t('commons.required');
     if (countryValue === 'IT' || !countryValue) {
       return (
         /^\d{5}$/.test(zipCode) || 'Il CAP deve essere di 5 cifre numeriche'
@@ -76,6 +88,20 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
         clearErrors(fieldName as any);
       }
     }
+  };
+
+  // Funzione per gestire il cambio del tipo di soggetto
+  const handleSubjectTypeChange = async (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const newValue = e.target.value;
+
+    // Aggiorna il valore del tipo di soggetto
+    setValue('subjectType.value', newValue, {
+      shouldValidate: true,
+      shouldDirty: true,
+      shouldTouch: true
+    });
   };
 
   const onSubmit = async (values: Step2Data) => {
@@ -119,7 +145,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             <Controller
               name="subjectType.value"
               control={control}
-              rules={{ required: t('common.required') }}
+              rules={{ required: t('commons.required') }}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -133,7 +159,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   helperText={isSubmitted && errors.subjectType?.value?.message}
                   onChange={(e) => {
                     field.onChange(e);
-                    handleFieldChange('subjectType.value', e.target.value);
+                    handleSubjectTypeChange(e);
                   }}
                 >
                   <MenuItem value="fisica">
@@ -151,13 +177,28 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             />
 
             <TextField
-              label={t('debtPositionCreateWizard.step2.taxCode.label')}
+              label={
+                subjectTypeValue === 'fisica'
+                  ? t('debtPositionCreateWizard.step2.taxCode.label')
+                  : subjectTypeValue === 'giuridica'
+                    ? t('debtPositionCreateWizard.step2.vat.label')
+                    : t('commons.fiscalCodeorVat')
+              }
+              placeholder={
+                subjectTypeValue === 'fisica'
+                  ? t('debtPositionCreateWizard.step2.taxCode.placeholder')
+                  : subjectTypeValue === 'giuridica'
+                    ? t('debtPositionCreateWizard.step2.vat.placeholder')
+                    : t(
+                        'debtPositionCreateWizard.step2.taxCodeOrVat.placeholder'
+                      )
+              }
               required
               fullWidth
               margin="normal"
               disabled={data.taxCode.readonly}
               {...register('taxCode.value', {
-                required: t('common.required'),
+                required: t('commons.required'),
                 validate: (value) => {
                   const result = validateTaxCode(value, subjectTypeValue);
                   return result === true ? true : t(result as string);
@@ -185,7 +226,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
               required
               disabled={data.fullName.readonly}
               {...register('fullName.value', {
-                required: t('common.required')
+                required: t('commons.required')
               })}
               error={isSubmitted && !!errors.fullName?.value}
               helperText={isSubmitted && errors.fullName?.value?.message}
@@ -202,7 +243,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   required
                   disabled={data.address.readonly}
                   {...register('address.value', {
-                    required: t('common.required')
+                    required: t('commons.required')
                   })}
                   error={isSubmitted && !!errors.address?.value}
                   helperText={isSubmitted && errors.address?.value?.message}
@@ -218,7 +259,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   required
                   disabled={data.civicNumber.readonly}
                   {...register('civicNumber.value', {
-                    required: t('common.required')
+                    required: t('commons.required')
                   })}
                   error={isSubmitted && !!errors.civicNumber?.value}
                   helperText={isSubmitted && errors.civicNumber?.value?.message}
@@ -234,7 +275,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   required
                   disabled={data.zipCode.readonly}
                   {...register('zipCode.value', {
-                    required: t('common.required'),
+                    required: t('commons.required'),
                     validate: validateZipCode
                   })}
                   error={isSubmitted && !!errors.zipCode?.value}
