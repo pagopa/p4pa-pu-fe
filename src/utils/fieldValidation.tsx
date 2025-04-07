@@ -6,16 +6,28 @@
  * @returns true se il codice fiscale è valido, false altrimenti
  */
 export const isValidCodiceFiscale = (cf: string): boolean => {
+  // Se il codice fiscale è vuoto o null, restituisce falso immediatamente
   if (!cf) return false;
 
-  // Normalizza codice fiscale: rimuovi spazi e converti in maiuscolo
+  // Normalizza il codice fiscale:
+  // - Rimuove tutti gli spazi usando un'espressione regolare (/\s/g)
+  // - Converte tutto in maiuscolo per uniformità
   cf = cf.replace(/\s/g, '').toUpperCase();
 
-  // Controllo lunghezza
+  // Verifica che la lunghezza sia esattamente 16 caratteri (standard CF italiano)
   if (cf.length !== 16) return false;
 
-  // Controllo formato: 6 lettere, 2 numeri, 1 lettera, 2 numeri, 1 lettera, 3 numeri, 1 lettera
+  // Controlla che il formato rispetti lo schema del codice fiscale italiano:
+  // - Prime 6 posizioni: lettere (cognome e nome)
+  // - Posizioni 7-8: numeri (anno di nascita)
+  // - Posizione 9: lettera (mese di nascita)
+  // - Posizioni 10-11: numeri (giorno di nascita + codice genere)
+  // - Posizione 12: lettera (codice catastale comune/stato estero)
+  // - Posizioni 13-15: numeri (codice individuale)
+  // - Posizione 16: lettera (carattere di controllo)
   const regex = /^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/;
+
+  // Verifica il formato usando l'espressione regolare e restituisce il risultato
   return regex.test(cf);
 };
 
@@ -25,48 +37,58 @@ export const isValidCodiceFiscale = (cf: string): boolean => {
  * @returns true se la partita IVA è valida, false altrimenti
  */
 export const isValidPartitaIVA = (piva: string): boolean => {
+  // Se la partita IVA è vuota o null, restituisce falso immediatamente
   if (!piva) return false;
 
-  // Normalizza: rimuovi spazi
+  // Normalizza la partita IVA rimuovendo tutti gli spazi
   piva = piva.replace(/\s/g, '');
 
-  // Controlla lunghezza e formato (11 cifre)
+  // Verifica che:
+  // 1. La lunghezza sia esattamente 11 caratteri (standard P.IVA italiana)
+  // 2. Sia composta solo da cifre numeriche (0-9)
+  // Nota: questa validazione controlla solo il formato, non implementa
+  // l'algoritmo di checksum per la verifica completa
   return piva.length === 11 && /^\d{11}$/.test(piva);
 };
 
 /**
- * Valida un codice fiscale in base al tipo di soggetto
+ * Valida un codice fiscale o una partita IVA in base al tipo di soggetto
  * @param value - Codice fiscale/P.IVA da validare
- * @param subjectType - Tipo di soggetto ('fisica' o 'giuridica')
- * @returns true se il codice è valido per il tipo specificato, false altrimenti
+ * @param subjectType - Tipo di soggetto ('fisica' per persone fisiche o 'giuridica' per aziende/enti)
+ * @returns true se il codice è valido per il tipo specificato, altrimenti una stringa con il codice errore
  */
 export const validateTaxCode = (
   value: string,
   subjectType: string
 ): boolean | string => {
-  if (!value) return 'common.required';
+  // Se il valore è vuoto o null, restituisce un codice di errore di campo obbligatorio
+  if (!value) return 'commons.required';
 
+  // Normalizza il valore: rimuove gli spazi e converte in maiuscolo
   const normalizedValue = value.replace(/\s/g, '').toUpperCase();
 
+  // CASO 1: Persona fisica
   if (subjectType === 'fisica') {
+    // Per le persone fisiche deve essere un codice fiscale valido
     if (!isValidCodiceFiscale(normalizedValue)) {
+      // Se non è valido, restituisce un codice di errore specifico
       return 'debtPositionCreateWizard.step2.taxCode.invalid';
     }
-  } else if (subjectType === 'giuridica') {
-    // Per le persone giuridiche verifica che sia una P.IVA valida
-    // o un codice fiscale valido (alcune aziende hanno CF di 16 caratteri)
+  }
+  // CASO 2: Persona giuridica (azienda/ente)
+  else if (subjectType === 'giuridica') {
+    // Per le persone giuridiche verifica il formato della partita IVA
     if (normalizedValue.length === 11) {
+      // Se ha 11 caratteri, verifica che sia una P.IVA valida
       if (!isValidPartitaIVA(normalizedValue)) {
         return 'debtPositionCreateWizard.step2.taxCode.invalidVAT';
       }
-    } else if (normalizedValue.length === 16) {
-      if (!isValidCodiceFiscale(normalizedValue)) {
-        return 'debtPositionCreateWizard.step2.taxCode.invalid';
-      }
     } else {
-      return 'debtPositionCreateWizard.step2.taxCode.invalidFormat';
+      // Se non ha 11 caratteri, restituisce un errore di P.IVA non valida
+      return 'debtPositionCreateWizard.step2.taxCode.invalidVAT';
     }
   }
 
+  // Se tutte le verifiche sono passate, restituisce true (validazione superata)
   return true;
 };
