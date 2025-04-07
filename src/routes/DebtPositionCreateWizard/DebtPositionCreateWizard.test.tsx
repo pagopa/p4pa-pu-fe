@@ -60,7 +60,7 @@ vi.mock('./components/Step1GeneralConfiguration', () => ({
   }
 }));
 
-vi.mock('./components/WizardStepper', () => ({
+vi.mock('../../components/Wizard/WizardStepper', () => ({
   default: ({ activeStep }: { activeStep: number }) => {
     return (
       <div data-testid="wizard-stepper">{`Active Step: ${activeStep}`}</div>
@@ -68,7 +68,7 @@ vi.mock('./components/WizardStepper', () => ({
   }
 }));
 
-vi.mock('./components/WizardStepWrapper', () => ({
+vi.mock('../../components/Wizard/WizardStepWrapper', () => ({
   default: ({
     children,
     title,

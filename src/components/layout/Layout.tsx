@@ -14,6 +14,7 @@ import { useFooterData } from '../../hooks/useFooterData';
 import { useTranslation } from 'react-i18next';
 
 const defaultRouteHandle: RouteHandleObject = {
+  backButton: true,
   custom: false,
   hideBreadcrumbs: false,
   sidebar: { visible: true },
@@ -40,6 +41,7 @@ export function Layout() {
     custom,
     hideBreadcrumbs,
     sidebar,
+    backButton,
     backButtonText,
     backButtonFunction
   } = {
@@ -80,10 +82,10 @@ export function Layout() {
                 alignItems="center"
                 spacing={2}
               >
-                {backButtonText && (
+                {backButton && (
                   <BackButton
                     onClick={backButtonFunction}
-                    text={t(backButtonText)}
+                    text={t(backButtonText ?? 'commons.back')}
                   />
                 )}
 

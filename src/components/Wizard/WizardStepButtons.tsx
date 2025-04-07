@@ -1,5 +1,7 @@
 import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { ArrowBack } from '@mui/icons-material';
+
 type Props = {
   onBack?: () => void;
   onNext: () => void;
@@ -18,7 +20,12 @@ const WizardStepButtons = ({
   const { t } = useTranslation();
   return (
     <Box mt={4} display="flex" justifyContent="space-between">
-      <Button variant="outlined" onClick={onBack} disabled={disableBack}>
+      <Button
+        variant="outlined"
+        onClick={onBack}
+        disabled={disableBack}
+        startIcon={<ArrowBack />}
+      >
         {t('commons.back')}
       </Button>
       <Button variant="contained" onClick={onNext} disabled={disableNext}>

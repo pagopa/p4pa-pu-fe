@@ -24,44 +24,6 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
 }));
 
-// Mock dei componenti
-vi.mock('./SectionBox', () => ({
-  default: ({
-    children,
-    title
-  }: {
-    children: React.ReactNode;
-    title: string;
-  }) => (
-    <div data-testid="section-box" data-title={title}>
-      {children}
-    </div>
-  )
-}));
-
-vi.mock('./WizardStepButtons', () => ({
-  default: ({
-    onNext,
-    onBack,
-    disableNext,
-    disableBack
-  }: {
-    onNext: () => void;
-    onBack?: () => void;
-    disableNext: boolean;
-    disableBack: boolean;
-  }) => (
-    <div data-testid="wizard-step-buttons">
-      <button data-testid="next-button" onClick={onNext} disabled={disableNext}>
-        Avanti
-      </button>
-      <button data-testid="back-button" onClick={onBack} disabled={disableBack}>
-        Indietro
-      </button>
-    </div>
-  )
-}));
-
 // Tipi per i mocks
 type FormValues = {
   debtPositionType: string;
@@ -153,7 +115,9 @@ describe('Step1GeneralConfiguration', () => {
     render(<Step1GeneralConfiguration {...defaultProps} />);
 
     // Verifica che il componente sia renderizzato
-    expect(screen.getByTestId('section-box')).toBeInTheDocument();
+    expect(
+      screen.getByText('debtPositionCreateWizard.step1.title')
+    ).toBeInTheDocument();
 
     // Verifica che i campi del form siano presenti
     expect(
@@ -167,9 +131,8 @@ describe('Step1GeneralConfiguration', () => {
     expect(descriptionLabels.length).toBeGreaterThan(0);
 
     // Verifica che i pulsanti siano presenti
-    expect(screen.getByTestId('wizard-step-buttons')).toBeInTheDocument();
-    expect(screen.getByTestId('next-button')).toBeInTheDocument();
-    expect(screen.getByTestId('back-button')).toBeInTheDocument();
+    expect(screen.getByText('commons.back')).toBeInTheDocument();
+    expect(screen.getByText('Continua')).toBeInTheDocument();
   });
 
   it('inizializza il form con i valori forniti', () => {
@@ -237,7 +200,7 @@ describe('Step1GeneralConfiguration', () => {
     render(<Step1GeneralConfiguration {...defaultProps} />);
 
     // Verifica che il pulsante Avanti sia disabilitato
-    const nextButton = screen.getByTestId('next-button');
+    const nextButton = screen.getByText('Continua');
     expect(nextButton).toBeDisabled();
   });
 
@@ -253,7 +216,7 @@ describe('Step1GeneralConfiguration', () => {
     render(<Step1GeneralConfiguration {...defaultProps} />);
 
     // Verifica che il pulsante Avanti sia disabilitato
-    const nextButton = screen.getByTestId('next-button');
+    const nextButton = screen.getByText('Continua');
     expect(nextButton).toBeDisabled();
   });
 
@@ -275,7 +238,7 @@ describe('Step1GeneralConfiguration', () => {
     render(<Step1GeneralConfiguration {...propsWithReadonly} />);
 
     // Verifica che il pulsante Avanti non sia disabilitato
-    const nextButton = screen.getByTestId('next-button');
+    const nextButton = screen.getByText('Continua');
     expect(nextButton).not.toBeDisabled();
   });
 
@@ -309,7 +272,7 @@ describe('Step1GeneralConfiguration', () => {
     render(<Step1GeneralConfiguration {...defaultProps} />);
 
     // Simula il click sul pulsante Avanti
-    const nextButton = screen.getByTestId('next-button');
+    const nextButton = screen.getByText('Continua');
     fireEvent.click(nextButton);
 
     // Verifica che handleSubmit sia stato chiamato con una funzione di callback
@@ -359,7 +322,7 @@ describe('Step1GeneralConfiguration', () => {
     ).toBeInTheDocument();
 
     // Verifica che il pulsante Avanti sia comunque abilitato (poiché il tipo è selezionato)
-    const nextButton = screen.getByTestId('next-button');
+    const nextButton = screen.getByText('Continua');
     expect(nextButton).not.toBeDisabled();
 
     // Simuliamo il click ma sappiamo che il submit non avrà successo a causa della validazione
@@ -461,7 +424,7 @@ describe('Step1GeneralConfiguration', () => {
     );
 
     // Dovremmo avere un pulsante Avanti disabilitato inizialmente
-    const nextButton = screen.getByTestId('next-button');
+    const nextButton = screen.getByText('Continua');
     expect(nextButton).toBeDisabled();
 
     // Simuliamo la selezione di un tipo di dovuto

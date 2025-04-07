@@ -3,8 +3,8 @@ import { useStore } from '../../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
 import { Box, MenuItem, TextField } from '@mui/material';
 import { useDebtPositionsTypeOrg } from '../../../hooks/useDebtPositionsTypeOrg';
-import SectionBox from './SectionBox';
-import WizardStepButtons from './WizardStepButtons';
+import SectionBox from '../../../components/Wizard/SectionBox';
+import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 
 // Tipizzazione per lo stato dello step 1
 type Step1Data = {

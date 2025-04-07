@@ -8,7 +8,12 @@ type Props = {
 
 const SectionBox = ({ title, children }: PropsWithChildren<Props>) => {
   return (
-    <Box sx={{ borderColor: 'divider' }} borderRadius="8px" p={3} mt={3}>
+    <Box
+      sx={{ border: '1px solid', borderColor: 'divider' }}
+      borderRadius="8px"
+      p={3}
+      mt={3}
+    >
       <Box display="flex" alignItems="center" mb={2}>
         <BookIcon color="action" sx={{ mr: 1 }} />
         <Typography variant="subtitle1" fontWeight={600}>

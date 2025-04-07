@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Grid } from '@mui/material';
-import WizardStepper from './components/WizardStepper';
+import WizardStepper from '../../components/Wizard/WizardStepper';
 import Step1GeneralConfiguration from './components/Step1GeneralConfiguration';
-import WizardStepWrapper from './components/WizardStepWrapper';
+import WizardStepWrapper from '../../components/Wizard/WizardStepWrapper';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { useTranslation } from 'react-i18next';
 
