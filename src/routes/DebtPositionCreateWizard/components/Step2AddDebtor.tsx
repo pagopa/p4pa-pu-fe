@@ -14,118 +14,160 @@ import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../components/Wizard/SectionBox';
 import { validateTaxCode } from '../../../utils/fieldValidation';
 
+/**
+ * Tipo che definisce la struttura dati dello Step 2 del wizard.
+ */
 type Step2Data = {
-  subjectType: { value: string; readonly: boolean };
-  taxCode: { value: string; readonly: boolean };
-  fullName: { value: string; readonly: boolean };
-  address: { value: string; readonly: boolean };
-  civicNumber: { value: string; readonly: boolean };
-  zipCode: { value: string; readonly: boolean };
-  country: { value: string; readonly: boolean };
-  province: { value: string; readonly: boolean };
-  city: { value: string; readonly: boolean };
+  subjectType: { value: string; readonly: boolean }; // Tipo soggetto (fisica/giuridica)
+  taxCode: { value: string; readonly: boolean }; // Codice fiscale o partita IVA
+  fullName: { value: string; readonly: boolean }; // Nome completo
+  address: { value: string; readonly: boolean }; // Indirizzo
+  civicNumber: { value: string; readonly: boolean }; // Numero civico
+  zipCode: { value: string; readonly: boolean }; // CAP
+  country: { value: string; readonly: boolean }; // Nazione
+  province: { value: string; readonly: boolean }; // Provincia
+  city: { value: string; readonly: boolean }; // Città
 };
 
+type Step2DataField = keyof Step2Data;
+
+/**
+ * Tipo che rappresenta il percorso completo al valore di un campo.
+ * Esempio: 'subjectType.value', 'taxCode.value'
+ */
+type NestedFieldName = `${Step2DataField}.value`;
+
 type Props = {
-  data: Step2Data;
-  setData: (data: Step2Data) => void;
-  onNext: () => void;
-  onBack: () => void;
+  data: Step2Data; // Dati attuali dello step
+  setData: (data: Step2Data) => void; // Funzione per aggiornare i dati
+  onNext: () => void; // Funzione per passare allo step successivo
+  onBack: () => void; // Funzione per tornare allo step precedente
 };
 
 const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   const {
-    register,
-    handleSubmit,
-    watch,
-    control,
-    formState: { errors, isSubmitted },
-    trigger,
-    clearErrors,
-    setValue,
-    getValues
+    register, // Funzione per registrare i campi del form
+    handleSubmit, // Funzione per gestire la sottomissione del form
+    watch, // Funzione per osservare i valori dei campi
+    control, // Oggetto di controllo per Controller
+    formState: { errors, isSubmitted }, // Stato del form: errori e flag di sottomissione
+    trigger, // Funzione per attivare la validazione manualmente
+    clearErrors, // Funzione per ripulire gli errori
+    setValue, // Funzione per impostare valori nei campi
+    getValues // Funzione per ottenere i valori attuali dei campi
   } = useForm<Step2Data>({
-    defaultValues: data,
-    mode: 'onChange'
+    defaultValues: data, // Inizializza il form con i dati esistenti
+    mode: 'onChange' // Modalità di validazione: alla modifica del campo
   });
+
   const { t } = useTranslation();
 
+  // Osservazione di campi specifici per reagire ai loro cambiamenti
   const subjectTypeValue = watch('subjectType.value') || '';
   const countryValue = watch('country.value') || '';
   const provinceValue = watch('province.value') || '';
 
-  // Aggiungo un effetto per ricalcolare la validazione quando cambia il tipo di soggetto
+  // Effetto che rivalida il codice fiscale/partita IVA quando cambia il tipo di soggetto.
+  // Questo è necessario perché la validazione del codice fiscale dipende dal tipo di soggetto.
+
   useEffect(() => {
     if (isSubmitted) {
       const taxCodeValue = getValues('taxCode.value');
       if (taxCodeValue) {
-        trigger('taxCode.value');
+        trigger('taxCode.value'); // Forza la rivalidazione del campo
       }
     }
   }, [subjectTypeValue, isSubmitted, trigger, getValues]);
 
+  // Funzione per validare il CAP.
+  // Per l'Italia deve essere un numero di 5 cifre.
+  // Per altri paesi è accettato qualsiasi valore non vuoto.
   const validateZipCode = (zipCode: string) => {
     if (!zipCode) return t('commons.required');
     if (countryValue === 'IT' || !countryValue) {
       return (
-        /^\d{5}$/.test(zipCode) || 'Il CAP deve essere di 5 cifre numeriche'
+        /^\d{5}$/.test(zipCode) ||
+        t('debtPositionCreateWizard.step2.zipCode.error')
       );
     }
     return true;
   };
 
-  // Funzione per gestire i cambiamenti nei campi
-  const handleFieldChange = async (fieldName: string, value: string) => {
-    setValue(fieldName as any, value, {
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true
-    });
-
+  // Funzione per gestire il cambiamento di un qualsiasi campo del form.
+  // Aggiorna il valore e attiva la validazione se il form è già stato inviato.
+  const handleFieldChange = async (
+    fieldName: NestedFieldName,
+    value: string
+  ) => {
+    // Imposta il nuovo valore nel form
+    setValue(fieldName, value);
+    // Se il form è già stato inviato, verifica il campo e pulisce eventuali errori
     if (isSubmitted) {
-      const isFieldValid = await trigger(fieldName as any);
+      const isFieldValid = await trigger(fieldName);
       if (isFieldValid) {
-        clearErrors(fieldName as any);
+        clearErrors(fieldName);
       }
     }
   };
 
-  // Funzione per gestire il cambio del tipo di soggetto
+  // Funzione specifica per gestire il cambiamento del tipo di soggetto.
+  // Questo campo influenza il comportamento di altri campi, come il codice fiscale.
   const handleSubjectTypeChange = async (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const newValue = e.target.value;
-
     // Aggiorna il valore del tipo di soggetto
-    setValue('subjectType.value', newValue, {
-      shouldValidate: true,
-      shouldDirty: true,
-      shouldTouch: true
-    });
+    setValue('subjectType.value', newValue);
   };
 
+  // Funzione chiamata alla submission valida del form.
+  // Salva i dati e passa allo step successivo.
   const onSubmit = async (values: Step2Data) => {
-    setData(values);
-    onNext();
+    setData(values); // Salva i dati nel contesto del wizard
+    onNext(); // Passa allo step successivo
   };
 
-  // Verifica se tutti i campi obbligatori sono stati compilati
-  const allRequiredFieldsFilled = () => {
-    const requiredFields = [
+  // Verifica se tutti i campi obbligatori sono compilati.
+  // Usata per abilitare/disabilitare il pulsante "Avanti".
+  const allRequiredFieldsFilled = (): boolean => {
+    // Lista dei campi obbligatori
+    const requiredFields: Array<NestedFieldName> = [
       'subjectType.value',
       'taxCode.value',
       'fullName.value',
       'address.value',
       'civicNumber.value',
       'zipCode.value'
-    ] as const;
+    ];
 
+    // Verifica che tutti i campi obbligatori abbiano un valore
     return requiredFields.every((field) => {
-      const value = watch(field as any);
-      return value && typeof value === 'string' && value.trim() !== '';
+      const value = watch(field);
+      return typeof value === 'string' && value.trim() !== '';
     });
   };
 
+  const getTaxCodeLabel = () => {
+    if (subjectTypeValue === 'fisica') {
+      return t('debtPositionCreateWizard.step2.taxCode.label'); // Codice Fiscale
+    } else if (subjectTypeValue === 'giuridica') {
+      return t('debtPositionCreateWizard.step2.vat.label'); // Partita IVA
+    } else {
+      return t('commons.fiscalCodeorVat'); // CF / Partita IVA
+    }
+  };
+
+  const getTaxCodePlaceholder = () => {
+    if (subjectTypeValue === 'fisica') {
+      return t('debtPositionCreateWizard.step2.taxCode.placeholder');
+    } else if (subjectTypeValue === 'giuridica') {
+      return t('debtPositionCreateWizard.step2.vat.placeholder');
+    } else {
+      return t('debtPositionCreateWizard.step2.taxCodeOrVat.placeholder');
+    }
+  };
+
+  // Rendering del componente
   return (
     <Box>
       <SectionBox hideHeader>
@@ -142,6 +184,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
               {t('debtPositionCreateWizard.step2.fiscalData')}
             </Typography>
 
+            {/* Campo per selezionare il tipo di soggetto (persona fisica o giuridica) */}
             <Controller
               name="subjectType.value"
               control={control}
@@ -158,8 +201,8 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   error={isSubmitted && !!errors.subjectType?.value}
                   helperText={isSubmitted && errors.subjectType?.value?.message}
                   onChange={(e) => {
-                    field.onChange(e);
-                    handleSubjectTypeChange(e);
+                    field.onChange(e); // Gestione standard del Controller
+                    handleSubjectTypeChange(e); // Gestione specifica per questo campo
                   }}
                 >
                   <MenuItem value="fisica">
@@ -176,29 +219,17 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
               )}
             />
 
+            {/* Campo per il codice fiscale o partita IVA */}
             <TextField
-              label={
-                subjectTypeValue === 'fisica'
-                  ? t('debtPositionCreateWizard.step2.taxCode.label')
-                  : subjectTypeValue === 'giuridica'
-                    ? t('debtPositionCreateWizard.step2.vat.label')
-                    : t('commons.fiscalCodeorVat')
-              }
-              placeholder={
-                subjectTypeValue === 'fisica'
-                  ? t('debtPositionCreateWizard.step2.taxCode.placeholder')
-                  : subjectTypeValue === 'giuridica'
-                    ? t('debtPositionCreateWizard.step2.vat.placeholder')
-                    : t(
-                        'debtPositionCreateWizard.step2.taxCodeOrVat.placeholder'
-                      )
-              }
+              label={getTaxCodeLabel()}
+              placeholder={getTaxCodePlaceholder()}
               required
               fullWidth
               margin="normal"
               disabled={data.taxCode.readonly}
               {...register('taxCode.value', {
                 required: t('commons.required'),
+                // Validazione personalizzata che dipende dal tipo di soggetto
                 validate: (value) => {
                   const result = validateTaxCode(value, subjectTypeValue);
                   return result === true ? true : t(result as string);
@@ -207,18 +238,20 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
               error={isSubmitted && !!errors.taxCode?.value}
               helperText={isSubmitted && errors.taxCode?.value?.message}
               onChange={(e) => {
+                // Converte automaticamente in maiuscolo per i codici fiscali
                 handleFieldChange(
                   'taxCode.value',
                   e.target.value.toUpperCase()
                 );
               }}
-              inputProps={{ maxLength: 16 }}
+              inputProps={{ maxLength: 16 }} // Limita a 16 caratteri (lunghezza CF italiano)
             />
 
             <Typography variant="subtitle2" sx={{ mt: 3 }} gutterBottom>
               {t('debtPositionCreateWizard.step2.personalData')}
             </Typography>
 
+            {/* Campo per il nome completo */}
             <TextField
               label={t('debtPositionCreateWizard.step2.fullName.label')}
               fullWidth
@@ -235,7 +268,9 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
               }}
             />
 
+            {/* Grid per indirizzo, numero civico e CAP */}
             <Grid container spacing={2} mt={1}>
+              {/* Campo per l'indirizzo */}
               <Grid item xs={12} sm={6} md={6}>
                 <TextField
                   label={t('debtPositionCreateWizard.step2.address.label')}
@@ -252,6 +287,8 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   }}
                 />
               </Grid>
+
+              {/* Campo per il numero civico */}
               <Grid item xs={6} sm={3} md={3}>
                 <TextField
                   label={t('debtPositionCreateWizard.step2.civicNumber.label')}
@@ -268,6 +305,8 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   }}
                 />
               </Grid>
+
+              {/* Campo per il CAP con validazione specifica */}
               <Grid item xs={6} sm={3} md={3}>
                 <TextField
                   label={t('debtPositionCreateWizard.step2.zipCode.label')}
@@ -276,19 +315,21 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   disabled={data.zipCode.readonly}
                   {...register('zipCode.value', {
                     required: t('commons.required'),
-                    validate: validateZipCode
+                    validate: validateZipCode // Validazione specifica per il CAP
                   })}
                   error={isSubmitted && !!errors.zipCode?.value}
                   helperText={isSubmitted && errors.zipCode?.value?.message}
                   onChange={(e) => {
                     handleFieldChange('zipCode.value', e.target.value);
                   }}
-                  inputProps={{ maxLength: 5 }}
+                  inputProps={{ maxLength: 5 }} // Limita a 5 caratteri (lunghezza CAP italiano)
                 />
               </Grid>
             </Grid>
 
+            {/* Grid per nazione, provincia e città */}
             <Grid container spacing={2} mt={1}>
+              {/* Select per la nazione */}
               <Grid item xs={12} sm={4}>
                 <TextField
                   label={t('debtPositionCreateWizard.step2.country.label')}
@@ -296,7 +337,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   fullWidth
                   disabled={data.country.readonly}
                   {...register('country.value')}
-                  value={countryValue}
+                  value={countryValue} // Usa il valore osservato
                   onChange={(e) => {
                     handleFieldChange('country.value', e.target.value);
                   }}
@@ -306,6 +347,8 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   <MenuItem value="DE">Germania</MenuItem>
                 </TextField>
               </Grid>
+
+              {/* Select per la provincia */}
               <Grid item xs={12} sm={4}>
                 <TextField
                   label={t('debtPositionCreateWizard.step2.province.label')}
@@ -313,7 +356,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   fullWidth
                   disabled={data.province.readonly}
                   {...register('province.value')}
-                  value={provinceValue}
+                  value={provinceValue} // Usa il valore osservato
                   onChange={(e) => {
                     handleFieldChange('province.value', e.target.value);
                   }}
@@ -323,6 +366,8 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   <MenuItem value="TO">TO</MenuItem>
                 </TextField>
               </Grid>
+
+              {/* Campo per la città */}
               <Grid item xs={12} sm={4}>
                 <TextField
                   label={t('debtPositionCreateWizard.step2.city.label')}
@@ -337,10 +382,11 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             </Grid>
           </Paper>
 
+          {/* Pulsanti per navigare nel wizard */}
           <WizardStepButtons
-            onBack={onBack}
-            onNext={handleSubmit(onSubmit)}
-            disableNext={!allRequiredFieldsFilled()}
+            onBack={onBack} // Torna allo step precedente
+            onNext={handleSubmit(onSubmit)} // Procedi se la validazione passa
+            disableNext={!allRequiredFieldsFilled()} // Disabilita se mancano campi obbligatori
           />
         </form>
       </SectionBox>

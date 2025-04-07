@@ -360,6 +360,7 @@
         "invalid": "Partita IVA non valida",
         "placeholder": "Inserisci la partita IVA (11 cifre)"
       },
+
       "fullName": {
         "label": "Nome e cognome"
       },
@@ -371,7 +372,8 @@
       },
       "zipCode": {
         "label": "CAP",
-        "invalid": "CAP non valido"
+        "invalid": "CAP non valido",
+        "error": "Il CAP deve essere di 5 cifre numeriche"
       },
       "country": {
         "label": "Nazione"
