@@ -11,13 +11,13 @@ import utils from '../../utils';
 import { Footer } from '../Footer';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useFooterData } from '../../hooks/useFooterData';
+import { useTranslation } from 'react-i18next';
 
 const defaultRouteHandle: RouteHandleObject = {
   custom: false,
-  backButton: true,
   hideBreadcrumbs: false,
   sidebar: { visible: true },
-  goOut: false
+  backButtonText: 'commons.back' // <- default: Indietro
 };
 
 export function Layout() {
@@ -40,17 +40,15 @@ export function Layout() {
     custom,
     hideBreadcrumbs,
     sidebar,
-    backButton,
     backButtonText,
-    goOut,
     backButtonFunction
   } = {
     ...defaultRouteHandle,
     ...(currentMatch.find((match) => Boolean(match.handle))?.handle || {})
   } as RouteHandleObject;
 
+  const { t } = useTranslation();
   const sidePadding = sidebar.visible ? 3 : { xs: 3, md: 12, lg: 27, xl: 34 };
-
   const mainColumnWidth = getMainColumnWidth();
 
   return (
@@ -82,15 +80,13 @@ export function Layout() {
                 alignItems="center"
                 spacing={2}
               >
-                {backButton && (
+                {backButtonText && (
                   <BackButton
                     onClick={backButtonFunction}
-                    text={backButtonText}
+                    text={t(backButtonText)}
                   />
                 )}
-                {goOut && (
-                  <BackButton onClick={backButtonFunction} text={'goOut'} />
-                )}
+
                 {!hideBreadcrumbs && (
                   <Breadcrumbs
                     custom={custom}

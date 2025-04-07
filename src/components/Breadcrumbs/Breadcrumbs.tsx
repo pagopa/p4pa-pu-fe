@@ -15,7 +15,6 @@ import { useStore } from '../../store/GlobalStore';
 export type BreadcrumbsProps = {
   separator: React.ReactElement;
   custom?: boolean;
-  goOut?: boolean;
 };
 
 export type BredcrumbItem = {
@@ -24,7 +23,7 @@ export type BredcrumbItem = {
   label?: string;
 };
 
-const Breadcrumbs = ({ separator, custom, goOut }: BreadcrumbsProps) => {
+const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -43,7 +42,7 @@ const Breadcrumbs = ({ separator, custom, goOut }: BreadcrumbsProps) => {
       onClick={() => navigate(-1)}
       role="link"
       sx={{ cursor: 'pointer' }}
-      aria-label={!goOut ? t('commons.back') : 'Esci'}
+      aria-label={t('commons.back')}
     >
       <ArrowBack fontSize="small" color="inherit" />
     </Typography>

@@ -40,7 +40,7 @@ export const debtTypesRoutes = [
         element: <DebtPositionCreateWizard />,
         handle: {
           backButton: false,
-          goOut: true,
+          backButtonText: 'commons.exit',
           hideBreadcrumbs: true,
           sidebar: {
             visible: false
