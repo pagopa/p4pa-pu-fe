@@ -10,7 +10,7 @@ const SectionBox = ({ title, children }: PropsWithChildren<Props>) => {
   return (
     <Box
       sx={{ border: '1px solid', borderColor: 'divider' }}
-      borderRadius="8px"
+      borderRadius={2}
       p={3}
       mt={3}
     >
