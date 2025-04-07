@@ -102,7 +102,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
 
   return (
     <Box>
-      <SectionBox title={t('debtPositionCreateWizard.step2.title')}>
+      <SectionBox hideHeader>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <Paper variant="outlined" sx={{ p: 3, mt: 2 }}>
             <Box display="flex" alignItems="center" mb={2}>
