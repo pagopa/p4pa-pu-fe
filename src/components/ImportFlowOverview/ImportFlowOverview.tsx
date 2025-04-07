@@ -14,7 +14,6 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import { useStore } from '../../store/GlobalStore';
 import {
   DOWNLOAD_STATES,
-  FLOW_STATUS_VALUES,
   FlowStatus,
   MENU_STATES,
   STATE_COLORS
@@ -22,7 +21,10 @@ import {
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { STATE } from '../../store/types';
-import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
+import {
+  IngestionFlowFileStatus,
+  IngestionFlowFileTypeEnum
+} from '../../../generated/apiClient';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
@@ -207,7 +209,7 @@ const ImportFlowOverview = ({
               gridWidth: 2,
               options: [
                 { label: t('commons.status.ALL'), value: 'ALL' },
-                ...FLOW_STATUS_VALUES.map((status) => ({
+                ...Object.values(IngestionFlowFileStatus).map((status) => ({
                   label: t(`commons.status.${status}`),
                   value: status
                 }))
