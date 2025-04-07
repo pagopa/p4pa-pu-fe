@@ -95,6 +95,7 @@ type Step2Config = {
 const DebtPositionCreateWizard = () => {
   const { t } = useTranslation();
   const [step, setStep] = useState(0); // numero di step attivo
+  // dati del form in base allo step
   const [formData, setFormData] = useState<FormData>({
     step1: {
       debtPositionType: {
@@ -145,7 +146,6 @@ const DebtPositionCreateWizard = () => {
       }
     }
   });
-  // dati del form in base allo step
 
   console.log('formData', formData);
 
