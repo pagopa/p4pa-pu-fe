@@ -79,7 +79,17 @@ vi.mock('./components/Step2AddDebtor', () => ({
       province: { value: string; readonly: boolean };
       city: { value: string; readonly: boolean };
     };
-    setData: (data: any) => void;
+    setData: (data: {
+      subjectType: { value: string; readonly: boolean };
+      taxCode: { value: string; readonly: boolean };
+      fullName: { value: string; readonly: boolean };
+      address: { value: string; readonly: boolean };
+      civicNumber: { value: string; readonly: boolean };
+      zipCode: { value: string; readonly: boolean };
+      country: { value: string; readonly: boolean };
+      province: { value: string; readonly: boolean };
+      city: { value: string; readonly: boolean };
+    }) => void;
     onNext: () => void;
     onBack?: () => void;
   }) => {
