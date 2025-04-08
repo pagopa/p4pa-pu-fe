@@ -41,7 +41,12 @@ vi.mock('react-hook-form', () => ({
 
 // Mock di react-i18next
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key })
+  useTranslation: () => ({
+    t: (key: string) => {
+      if (key === 'commons.continue') return 'Continua';
+      return key;
+    }
+  })
 }));
 
 // Tipi per i mocks
