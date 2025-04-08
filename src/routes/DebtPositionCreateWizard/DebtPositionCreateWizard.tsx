@@ -31,30 +31,30 @@ type Step2Data = {
     value: string;
     readonly: boolean;
   };
-  address: {
-    value: string;
-    readonly: boolean;
-  };
-  civicNumber: {
-    value: string;
-    readonly: boolean;
-  };
-  zipCode: {
-    value: string;
-    readonly: boolean;
-  };
-  country: {
-    value: string;
-    readonly: boolean;
-  };
-  province: {
-    value: string;
-    readonly: boolean;
-  };
-  city: {
-    value: string;
-    readonly: boolean;
-  };
+  // address: {
+  //   value: string;
+  //   readonly: boolean;
+  // };
+  // civicNumber: {
+  //   value: string;
+  //   readonly: boolean;
+  // };
+  // zipCode: {
+  //   value: string;
+  //   readonly: boolean;
+  // };
+  // country: {
+  //   value: string;
+  //   readonly: boolean;
+  // };
+  // province: {
+  //   value: string;
+  //   readonly: boolean;
+  // };
+  // city: {
+  //   value: string;
+  //   readonly: boolean;
+  // };
 };
 
 type FormData = {
@@ -119,31 +119,31 @@ const DebtPositionCreateWizard = () => {
       fullName: {
         value: '',
         readonly: false
-      },
-      address: {
-        value: '',
-        readonly: false
-      },
-      civicNumber: {
-        value: '',
-        readonly: false
-      },
-      zipCode: {
-        value: '',
-        readonly: false
-      },
-      country: {
-        value: '',
-        readonly: false
-      },
-      province: {
-        value: '',
-        readonly: false
-      },
-      city: {
-        value: '',
-        readonly: false
       }
+      // address: {
+      //   value: '',
+      //   readonly: false
+      // },
+      // civicNumber: {
+      //   value: '',
+      //   readonly: false
+      // },
+      // zipCode: {
+      //   value: '',
+      //   readonly: false
+      // },
+      // country: {
+      //   value: '',
+      //   readonly: false
+      // },
+      // province: {
+      //   value: '',
+      //   readonly: false
+      // },
+      // city: {
+      //   value: '',
+      //   readonly: false
+      // }
     }
   });
 
