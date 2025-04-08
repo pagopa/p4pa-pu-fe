@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import TitleComponent from '../TitleComponent/TitleComponent';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
-} from '../FilterContainer/FilterContainer';
-import CustomDataGrid from '../DataGrid/CustomDataGrid';
+} from '../../components/FilterContainer/FilterContainer';
+import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../App';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
