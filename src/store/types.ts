@@ -28,3 +28,10 @@ export enum STATE {
   FILTER_VALUES = 'filterValues',
   OPERATOR_ROLE = 'operatorRole'
 }
+
+// Enum per i codici di errore
+export enum ValidationErrorCode {
+  REQUIRED = 'commons.required',
+  INVALID_CF = 'debtPositionCreateWizard.step2.taxCode.invalid',
+  INVALID_VAT = 'debtPositionCreateWizard.step2.taxCode.invalidVAT'
+}
