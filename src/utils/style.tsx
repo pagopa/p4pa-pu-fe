@@ -21,16 +21,6 @@ const customTheme = createTheme({
         })
       }
     },
-    MuiChip: {
-      ...theme?.components?.MuiChip,
-      styleOverrides: {
-        root: ({ ownerState, theme }) => ({
-          ...(ownerState.color === 'success' && {
-            backgroundColor: theme.palette.success.extraLight
-          })
-        })
-      }
-    },
     MuiInputLabel: {
       styleOverrides: {
         asterisk: { color: theme.palette.error.dark }
