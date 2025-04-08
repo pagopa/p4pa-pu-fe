@@ -26,7 +26,7 @@ describe('isValidCodiceFiscale', () => {
     });
 
     it('rejects null value', () => {
-      expect(isValidCodiceFiscale(null as any)).toBe(false);
+      expect(isValidCodiceFiscale(null as unknown as string)).toBe(false);
     });
 
     it('rejects codice fiscale with wrong length', () => {
@@ -60,7 +60,7 @@ describe('isValidPartitaIVA', () => {
     });
 
     it('rejects null value', () => {
-      expect(isValidPartitaIVA(null as any)).toBe(false);
+      expect(isValidPartitaIVA(null as unknown as string)).toBe(false);
     });
 
     it('rejects partita IVA with wrong length', () => {
