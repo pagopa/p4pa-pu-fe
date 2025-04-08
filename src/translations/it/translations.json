@@ -324,6 +324,10 @@
       "title": "Aggiungi debitore",
       "subtitle": "Aggiungi i dati del destinatario principale della posizione debitoria."
     },
+    "configurationAlert": {
+      "title": "Configurazione avviso",
+      "subtitle": "Indica la opzione di pagamento a disposizione del cittadino e aggiunge l'importo dovuto."
+    },
 
     "step1": {
       "title": "Descrizione",
@@ -395,6 +399,9 @@
       "city": {
         "label": "Località"
       }
+    },
+    "step3": {
+      "title": "Avviso"
     },
     "wizardStepper": {
       "step1": "Configurazione Generale",

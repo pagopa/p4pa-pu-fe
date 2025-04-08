@@ -59,7 +59,19 @@ type Step2Data = {
 };
 
 type Step3Data = {
-  field1: {
+  paymentObject: {
+    value: string;
+    readonly: boolean;
+  };
+  paymentOption: {
+    value: string;
+    readonly: boolean;
+  };
+  amount: {
+    value: string;
+    readonly: boolean;
+  };
+  dueDate: {
     value: string;
     readonly: boolean;
   };
@@ -168,7 +180,19 @@ const DebtPositionCreateWizard = () => {
       // }
     },
     step3: {
-      field1: {
+      paymentObject: {
+        value: '',
+        readonly: false
+      },
+      paymentOption: {
+        value: '',
+        readonly: false
+      },
+      amount: {
+        value: '',
+        readonly: false
+      },
+      dueDate: {
         value: '',
         readonly: false
       }
@@ -194,8 +218,8 @@ const DebtPositionCreateWizard = () => {
     {
       key: 'step3',
       Component: Step3 as React.ComponentType<Step3ComponentProps>,
-      title: t('debtPositionCreateWizard.step3.title'),
-      subtitle: t('debtPositionCreateWizard.step3.subtitle')
+      title: t('debtPositionCreateWizard.configurationAlert.title'),
+      subtitle: t('debtPositionCreateWizard.configurationAlert.subtitle')
     }
   ];
 
