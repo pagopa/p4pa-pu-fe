@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import {
+  FileOrigin,
   IngestionFlowFileType,
   RequestParams
 } from '../../generated/fileshare/fileshareClient';
@@ -8,12 +9,6 @@ import {
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum
 } from '../../generated/apiClient';
-
-export enum FileOrigin {
-  PORTAL = 'PORTAL',
-  SIL = 'SIL',
-  PAGOPA = 'PAGOPA'
-}
 
 export const getIngestionFlowFiles = (
   organizationId: number,
