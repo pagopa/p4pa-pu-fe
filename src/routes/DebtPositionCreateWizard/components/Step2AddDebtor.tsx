@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, MenuItem, TextField, Typography, Paper } from '@mui/material';
+import { Box, MenuItem, TextField, Typography } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../components/Wizard/SectionBox';
+import PaperContent from '../../../components/Wizard/PaperContent';
 import { validateTaxCode } from '../../../utils/fieldValidation';
 import { ValidationErrorCode } from '../../../store/types';
 
@@ -160,14 +161,10 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     <Box>
       <SectionBox hideHeader>
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <Paper variant="outlined" sx={{ p: 3, mt: 2 }}>
-            <Box display="flex" alignItems="center" mb={2}>
-              <PersonIcon sx={{ mr: 1 }} />
-              <Typography variant="h6">
-                {t('debtPositionCreateWizard.step2.title')}
-              </Typography>
-            </Box>
-
+          <PaperContent
+            title={t('debtPositionCreateWizard.step2.title')}
+            icon={<PersonIcon sx={{ mr: 1 }} />}
+          >
             <Typography variant="subtitle1" gutterBottom>
               {t('debtPositionCreateWizard.step2.fiscalData')}
             </Typography>
@@ -465,7 +462,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                 />
               </Grid>
             </Grid> */}
-          </Paper>
+          </PaperContent>
 
           {/* Pulsanti per navigare nel wizard */}
           <WizardStepButtons
