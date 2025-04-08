@@ -219,7 +219,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
               control={control}
               rules={{
                 validate: (value) => {
-                  // Se il campo è vuoto, restituisci il messaggio appropriato in base al tipo di soggetto
+                  // Se il campo è vuoto, restituisce il messaggio appropriato in base al tipo di soggetto
                   if (!value) {
                     // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
                     if (!subjectTypeValue) {
@@ -227,17 +227,15 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                         'debtPositionCreateWizard.step2.taxCodeOrVat.required'
                       );
                     }
-                    // Altrimenti mostra il messaggio specifico in base al tipo di soggetto
+                    // Altrimenti mostrare il messaggio specifico in base al tipo di soggetto
                     return subjectTypeValue !== 'giuridica'
                       ? t('debtPositionCreateWizard.step2.taxCode.required')
                       : t('debtPositionCreateWizard.step2.vat.required');
                   }
-
                   // Altrimenti, valida il formato
                   const result = validateTaxCode(value, subjectTypeValue);
 
-                  // Se il risultato è 'commons.required', sostituiscilo con il messaggio appropriato
-                  if (result === 'commons.required') {
+                  if (result == 'commons.required') {
                     // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
                     if (!subjectTypeValue) {
                       return t(
@@ -250,7 +248,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                       : t('debtPositionCreateWizard.step2.vat.required');
                   }
 
-                  // Restituisci il risultato della validazione
+                  // Restituisce il risultato della validazione
                   return result === true ? true : t(result as string);
                 }
               }}
@@ -467,9 +465,8 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
 
           {/* Pulsanti per navigare nel wizard */}
           <WizardStepButtons
-            onBack={onBack} // Torna allo step precedente
+            onBack={onBack}
             onNext={handleSubmit(onSubmit)} // Procedi se la validazione passa
-            // isableNext={!allRequiredFieldsFilled()} // Disabilita se mancano campi obbligatori
             disableNext={false}
           />
         </form>

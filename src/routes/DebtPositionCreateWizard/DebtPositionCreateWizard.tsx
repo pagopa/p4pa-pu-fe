@@ -6,6 +6,7 @@ import WizardStepWrapper from '../../components/Wizard/WizardStepWrapper';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { useTranslation } from 'react-i18next';
 import Step2AddDebtor from './components/Step2AddDebtor';
+import Step3 from './components/Step3';
 
 type Step1Data = {
   debtPositionType: {
@@ -57,9 +58,17 @@ type Step2Data = {
   // };
 };
 
+type Step3Data = {
+  field1: {
+    value: string;
+    readonly: boolean;
+  };
+};
+
 type FormData = {
   step1: Step1Data;
   step2: Step2Data;
+  step3: Step3Data;
 };
 
 // Definizione di tipi specifici per i componenti
@@ -76,6 +85,12 @@ type Step2ComponentProps = {
   onNext: () => void;
   onBack?: () => void;
 };
+type Step3ComponentProps = {
+  data: Step3Data;
+  setData: (data: Step3Data) => void;
+  onNext: () => void;
+  onBack?: () => void;
+};
 
 // Definizione di tipi specifici per i componenti
 type Step1Config = {
@@ -88,6 +103,13 @@ type Step1Config = {
 type Step2Config = {
   key: 'step2';
   Component: React.ComponentType<Step2ComponentProps>;
+  title: string;
+  subtitle: string;
+};
+
+type Step3Config = {
+  key: 'step3';
+  Component: React.ComponentType<Step3ComponentProps>;
   title: string;
   subtitle: string;
 };
@@ -144,12 +166,18 @@ const DebtPositionCreateWizard = () => {
       //   value: '',
       //   readonly: false
       // }
+    },
+    step3: {
+      field1: {
+        value: '',
+        readonly: false
+      }
     }
   });
 
-  console.log('formData', formData);
+  // console.log('formData', formData);
 
-  const allSteps: [Step1Config, Step2Config] = [
+  const allSteps: [Step1Config, Step2Config, Step3Config] = [
     {
       key: 'step1',
       Component:
@@ -162,6 +190,12 @@ const DebtPositionCreateWizard = () => {
       Component: Step2AddDebtor as React.ComponentType<Step2ComponentProps>,
       title: t('debtPositionCreateWizard.addDebtor.title'),
       subtitle: t('debtPositionCreateWizard.addDebtor.subtitle')
+    },
+    {
+      key: 'step3',
+      Component: Step3 as React.ComponentType<Step3ComponentProps>,
+      title: t('debtPositionCreateWizard.step3.title'),
+      subtitle: t('debtPositionCreateWizard.step3.subtitle')
     }
   ];
 
@@ -175,7 +209,7 @@ const DebtPositionCreateWizard = () => {
           onNext={() => setStep(index + 1)}
         />
       );
-    } else {
+    } else if (key === 'step2') {
       return (
         <Component
           key={`step-${key}`}
@@ -185,7 +219,18 @@ const DebtPositionCreateWizard = () => {
           onBack={() => setStep(index - 1)}
         />
       );
+    } else if (key === 'step3') {
+      return (
+        <Component
+          key={`step-${key}`}
+          data={formData.step3}
+          setData={(data) => setFormData((prev) => ({ ...prev, step3: data }))}
+          onNext={() => setStep(index + 1)}
+          onBack={() => setStep(index - 1)}
+        />
+      );
     }
+    return null; // Valore di ritorno di default
   });
 
   return (
