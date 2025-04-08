@@ -1,5 +1,7 @@
 // Funzioni di validazione per codice fiscale e partita IVA
 
+import { ValidationErrorCode } from '../store/types';
+
 /**
  * Verifica se un codice fiscale italiano è valido
  * @param cf - Codice fiscale da validare
@@ -60,9 +62,9 @@ export const isValidPartitaIVA = (piva: string): boolean => {
 export const validateTaxCode = (
   value: string,
   subjectType: string
-): boolean | string => {
+): ValidationErrorCode | boolean => {
   // Se il valore è vuoto o null, restituisce un codice di errore di campo obbligatorio
-  if (!value) return 'commons.required';
+  if (!value) return ValidationErrorCode.REQUIRED;
 
   // Normalizza il valore: rimuove gli spazi e converte in maiuscolo
   const normalizedValue = value.replace(/\s/g, '').toUpperCase();
@@ -72,7 +74,7 @@ export const validateTaxCode = (
     // Per le persone fisiche deve essere un codice fiscale valido
     if (!isValidCodiceFiscale(normalizedValue)) {
       // Se non è valido, restituisce un codice di errore specifico
-      return 'debtPositionCreateWizard.step2.taxCode.invalid';
+      return ValidationErrorCode.INVALID_CF;
     }
   }
   // CASO 2: Persona giuridica (azienda/ente)
@@ -81,11 +83,11 @@ export const validateTaxCode = (
     if (normalizedValue.length === 11) {
       // Se ha 11 caratteri, verifica che sia una P.IVA valida
       if (!isValidPartitaIVA(normalizedValue)) {
-        return 'debtPositionCreateWizard.step2.taxCode.invalidVAT';
+        return ValidationErrorCode.INVALID_VAT;
       }
     } else {
       // Se non ha 11 caratteri, restituisce un errore di P.IVA non valida
-      return 'debtPositionCreateWizard.step2.taxCode.invalidVAT';
+      return ValidationErrorCode.INVALID_VAT;
     }
   }
 
