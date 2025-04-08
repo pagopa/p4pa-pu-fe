@@ -293,17 +293,6 @@ describe('Step2AddDebtor', () => {
 
       expect(setValue).toHaveBeenCalledWith(fieldName, value);
     }
-
-    // 5. Testa useEffect per la rivalidazione dopo cambio tipo soggetto (coprendo le linee 174-180)
-    // Nota: nel componente modificato, non c'è più un useEffect che rivalida taxCode.value
-    // quindi non possiamo aspettarci che getValues e triggerWithSubjectType vengano chiamati
-    // con 'taxCode.value' dopo il cambio del tipo di soggetto
-    // Rimuoviamo queste aspettative
-    // expect(getValues).toHaveBeenCalledWith('taxCode.value');
-    // expect(triggerWithSubjectType).toHaveBeenCalledWith('taxCode.value');
-
-    // 6. Testa allRequiredFieldsFilled e getTaxCodeLabel (coprendo le linee 286-325)
-    // Queste funzioni sono testate indirettamente tramite il watch simulato
   });
 
   // Test per i campi in sola lettura

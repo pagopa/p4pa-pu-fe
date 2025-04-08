@@ -153,10 +153,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     }
   };
 
-  {
-    console.log('subjectTypeValue', subjectTypeValue);
-  }
-
   // Rendering del componente
   return (
     <Box>
