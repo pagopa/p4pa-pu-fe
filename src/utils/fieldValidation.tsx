@@ -10,7 +10,6 @@ import { ValidationErrorCode } from '../store/types';
 export const isValidCodiceFiscale = (cf: string): boolean => {
   // Se il codice fiscale è vuoto o null, restituisce falso immediatamente
   if (!cf) return false;
-
   // Normalizza il codice fiscale:
   // - Rimuove tutti gli spazi usando un'espressione regolare (/\s/g)
   // - Converte tutto in maiuscolo per uniformità
@@ -48,49 +47,32 @@ export const isValidPartitaIVA = (piva: string): boolean => {
   // Verifica che:
   // 1. La lunghezza sia esattamente 11 caratteri (standard P.IVA italiana)
   // 2. Sia composta solo da cifre numeriche (0-9)
-  // Nota: questa validazione controlla solo il formato, non implementa
-  // l'algoritmo di checksum per la verifica completa
+  // Nota: questa validazione controlla solo il formato
   return piva.length === 11 && /^\d{11}$/.test(piva);
 };
 
-/**
- * Valida un codice fiscale o una partita IVA in base al tipo di soggetto
- * @param value - Codice fiscale/P.IVA da validare
- * @param subjectType - Tipo di soggetto ('fisica' per persone fisiche o 'giuridica' per aziende/enti)
- * @returns true se il codice è valido per il tipo specificato, altrimenti una stringa con il codice errore
- */
 export const validateTaxCode = (
   value: string,
   subjectType: string
-): ValidationErrorCode | boolean => {
-  // Se il valore è vuoto o null, restituisce un codice di errore di campo obbligatorio
+): ValidationErrorCode => {
   if (!value) return ValidationErrorCode.REQUIRED;
 
-  // Normalizza il valore: rimuove gli spazi e converte in maiuscolo
   const normalizedValue = value.replace(/\s/g, '').toUpperCase();
 
-  // CASO 1: Persona fisica
-  if (subjectType === 'fisica') {
-    // Per le persone fisiche deve essere un codice fiscale valido
-    if (!isValidCodiceFiscale(normalizedValue)) {
-      // Se non è valido, restituisce un codice di errore specifico
-      return ValidationErrorCode.INVALID_CF;
-    }
-  }
-  // CASO 2: Persona giuridica (azienda/ente)
-  else if (subjectType === 'giuridica') {
-    // Per le persone giuridiche verifica il formato della partita IVA
-    if (normalizedValue.length === 11) {
-      // Se ha 11 caratteri, verifica che sia una P.IVA valida
+  switch (subjectType) {
+    case 'fisica':
+      if (!isValidCodiceFiscale(normalizedValue)) {
+        return ValidationErrorCode.INVALID_CF;
+      }
+      break;
+    case 'giuridica':
       if (!isValidPartitaIVA(normalizedValue)) {
         return ValidationErrorCode.INVALID_VAT;
       }
-    } else {
-      // Se non ha 11 caratteri, restituisce un errore di P.IVA non valida
-      return ValidationErrorCode.INVALID_VAT;
-    }
+      break;
+    default:
+      return ValidationErrorCode.INVALID_CF;
   }
 
-  // Se tutte le verifiche sono passate, restituisce true (validazione superata)
-  return true;
+  return ValidationErrorCode.VALID;
 };

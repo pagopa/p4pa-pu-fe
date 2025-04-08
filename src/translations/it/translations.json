@@ -332,9 +332,10 @@
         "required": "Il campo tipo di dovuto è obbligatorio"
       },
       "description": {
-        "label": "Descrizione Posizione Debitoria"
+        "label": "Descrizione Posizione Debitoria",
+        "required": "Il campo descrizione è obbligatorio"
       },
-      "minWords": "Inserire almeno 5 parole nella descrizione"
+      "minWords": "Inserire almeno 3 parole nella descrizione"
     },
     "step2": {
       "title": "Debitore",

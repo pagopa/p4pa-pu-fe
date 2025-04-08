@@ -4,6 +4,7 @@ import {
   isValidPartitaIVA,
   validateTaxCode
 } from '../fieldValidation';
+import { ValidationErrorCode } from '../../store/types';
 
 describe('isValidCodiceFiscale', () => {
   describe('Valid Cases', () => {
@@ -76,16 +77,24 @@ describe('isValidPartitaIVA', () => {
 describe('validateTaxCode', () => {
   describe('Valid Cases', () => {
     it('validates codice fiscale for persona fisica', () => {
-      expect(validateTaxCode('RSSMRA80A01H501U', 'fisica')).toBe(true);
+      expect(validateTaxCode('RSSMRA80A01H501U', 'fisica')).toBe(
+        ValidationErrorCode.VALID
+      );
     });
 
     it('validates partita IVA for persona giuridica', () => {
-      expect(validateTaxCode('12345678901', 'giuridica')).toBe(true);
+      expect(validateTaxCode('12345678901', 'giuridica')).toBe(
+        ValidationErrorCode.VALID
+      );
     });
 
     it('validates with spaces in the code', () => {
-      expect(validateTaxCode('RSS MRA 80A01 H501 U', 'fisica')).toBe(true);
-      expect(validateTaxCode('123 456 789 01', 'giuridica')).toBe(true);
+      expect(validateTaxCode('RSS MRA 80A01 H501 U', 'fisica')).toBe(
+        ValidationErrorCode.VALID
+      );
+      expect(validateTaxCode('123 456 789 01', 'giuridica')).toBe(
+        ValidationErrorCode.VALID
+      );
     });
   });
 

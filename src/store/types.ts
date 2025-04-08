@@ -33,5 +33,6 @@ export enum STATE {
 export enum ValidationErrorCode {
   REQUIRED = 'commons.required',
   INVALID_CF = 'debtPositionCreateWizard.step2.taxCode.invalid',
-  INVALID_VAT = 'debtPositionCreateWizard.step2.taxCode.invalidVAT'
+  INVALID_VAT = 'debtPositionCreateWizard.step2.taxCode.invalidVAT',
+  VALID = 'commons.valid'
 }

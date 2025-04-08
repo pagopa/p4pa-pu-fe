@@ -47,7 +47,6 @@ const Step1GeneralConfiguration = ({
 
   // Inizializzazione del form con react-hook-form
   const {
-    register, // per collegare i campi
     handleSubmit, // per gestire l'invio del form
     control, // per controllare i valori
     formState: { errors } // contiene gli errori di validazione
@@ -108,23 +107,36 @@ const Step1GeneralConfiguration = ({
             )}
           />
           {/* Input - Descrizione posizione debitoria */}
-          <TextField
-            label={t('debtPositionCreateWizard.step1.description.label')}
-            fullWidth
-            margin="normal"
-            disabled={data.description.readonly}
-            error={!!errors.description}
-            helperText={errors.description?.message}
-            {...register('description', {
+          <Controller
+            name="description"
+            control={control}
+            rules={{
+              required: t(
+                'debtPositionCreateWizard.step1.description.required'
+              ),
               validate: (value) => {
-                if (value.trim() === '') return true; // campo vuoto = ok
-                const wordCount = value.trim().split(/\s+/).length;
+                const trimmed = value.trim();
+                // if (trimmed === '') return true;
+                const wordCount = trimmed.split(/\s+/).length;
                 return (
-                  wordCount >= 5 || t('debtPositionCreateWizard.step1.minWords')
+                  wordCount >= 3 || t('debtPositionCreateWizard.step1.minWords')
                 );
               }
-            })}
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label={t('debtPositionCreateWizard.step1.description.label')}
+                fullWidth
+                margin="normal"
+                required
+                disabled={data.description.readonly}
+                error={!!errors.description}
+                helperText={errors.description?.message}
+              />
+            )}
           />
+
           <WizardStepButtons
             onBack={onBack}
             disableBack={true}

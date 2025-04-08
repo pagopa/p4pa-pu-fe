@@ -6,6 +6,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../components/Wizard/SectionBox';
 import { validateTaxCode } from '../../../utils/fieldValidation';
+import { ValidationErrorCode } from '../../../store/types';
 
 /**
  * Tipo che definisce la struttura dati dello Step 2 del wizard.
@@ -134,26 +135,27 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   // };
 
   const getTaxCodeLabel = () => {
-    if (subjectTypeValue === 'fisica') {
-      return t('debtPositionCreateWizard.step2.taxCode.label'); // Codice Fiscale
-    } else if (subjectTypeValue === 'giuridica') {
-      return t('debtPositionCreateWizard.step2.vat.label'); // Partita IVA
-    } else {
-      return t('commons.fiscalCodeorVat'); // CF / Partita IVA
+    switch (subjectTypeValue) {
+      case 'fisica':
+        return t('debtPositionCreateWizard.step2.taxCode.label');
+      case 'giuridica':
+        return t('debtPositionCreateWizard.step2.vat.label');
+      default:
+        return t('commons.fiscalCodeorVat');
     }
   };
 
   const getTaxCodePlaceholder = () => {
-    if (subjectTypeValue === 'fisica') {
-      return t('debtPositionCreateWizard.step2.taxCode.placeholder');
-    } else if (subjectTypeValue === 'giuridica') {
-      return t('debtPositionCreateWizard.step2.vat.placeholder');
-    } else {
-      return t('debtPositionCreateWizard.step2.taxCodeOrVat.placeholder');
+    switch (subjectTypeValue) {
+      case 'fisica':
+        return t('debtPositionCreateWizard.step2.taxCode.placeholder');
+      case 'giuridica':
+        return t('debtPositionCreateWizard.step2.vat.placeholder');
+      default:
+        return t('debtPositionCreateWizard.step2.taxCodeOrVat.placeholder');
     }
   };
 
-  // Rendering del componente
   return (
     <Box>
       <SectionBox hideHeader>
@@ -249,7 +251,9 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   }
 
                   // Restituisce il risultato della validazione
-                  return result === true ? true : t(result as string);
+                  return result === ValidationErrorCode.VALID
+                    ? true
+                    : t(result);
                 }
               }}
               render={({ field }) => (
