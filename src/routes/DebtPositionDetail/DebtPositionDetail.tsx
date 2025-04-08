@@ -48,6 +48,7 @@ type InstallmentRow = {
   amount: number;
   expirationDate: string;
   status: string;
+  chip: { label: string; color: ChipOwnProps['color'] } | undefined;
 };
 
 const DebtPositionDetail = () => {
@@ -143,9 +144,8 @@ const DebtPositionDetail = () => {
       expirationDate: installment.dueDate
         ? format(parseISO(installment.dueDate), 'dd/MM/yyyy')
         : 'N/A',
-      status: installment.status
-        ? getStatusChipProps(installment.status).label
-        : 'N/A'
+      status: installment.status || '',
+      chip: installment.status ? getStatusChipProps(installment.status) : undefined
     };
   };
 
@@ -244,7 +244,8 @@ const DebtPositionDetail = () => {
             />
           )}
         </Box>
-      ))}
+      )
+      )}
 
       <Timeline.Drawer
         title={t('debtPositionDetail.timeline.title')}

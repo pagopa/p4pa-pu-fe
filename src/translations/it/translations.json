@@ -119,6 +119,7 @@
       "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
     },
     "from": "Dal",
+    "goOut": "Esci",
     "importFlowButton": "Importa flusso",
     "internalCode": "Codice Interno",
     "iud": "IUD",
@@ -319,15 +320,81 @@
       "title": "Configurazione Generale",
       "subtitle": "Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento."
     },
+    "addDebtor": {
+      "title": "Aggiungi debitore",
+      "subtitle": "Aggiungi i dati del destinatario principale della posizione debitoria."
+    },
+
     "step1": {
       "title": "Descrizione",
       "debtPositionType": {
-        "label": "Tipo di dovuto"
+        "label": "Tipo di dovuto",
+        "required": "Il campo tipo di dovuto è obbligatorio"
       },
       "description": {
-        "label": "Descrizione Posizione Debitoria"
+        "label": "Descrizione Posizione Debitoria",
+        "required": "Il campo descrizione è obbligatorio"
       },
-      "minWords": "Inserire almeno 5 parole nella descrizione"
+      "minWords": "Inserire almeno 3 parole nella descrizione"
+    },
+    "step2": {
+      "title": "Debitore",
+      "fiscalData": "DATI FISCALI",
+      "personalData": "DATI PERSONALI",
+      "taxCodeOrVat": {
+        "placeholder": "Inserisci il codice fiscale o la partita IVA",
+        "required": "Il campo codice fiscale o partita IVA è obbligatorio"
+      },
+      "subjectType": {
+        "label": "Tipo di soggetto",
+        "options": {
+          "fisica": "Persone fisiche",
+          "giuridica": "Persone giuridiche"
+        },
+        "required": "Il campo tipo di soggetto è obbligatorio"
+      },
+      "taxCode": {
+        "label": "Codice Fiscale",
+        "invalid": "Codice fiscale non valido",
+        "placeholder": "Inserisci il codice fiscale (16 caratteri)",
+        "invalidVAT": "Partita IVA non valida",
+        "required": "Il campo codice fiscale è obbligatorio"
+      },
+      "vat": {
+        "label": "Partita IVA",
+        "invalid": "Partita IVA non valida",
+        "placeholder": "Inserisci la partita IVA (11 cifre)",
+        "required": "Il campo partita IVA è obbligatorio"
+      },
+
+      "fullName": {
+        "label": "Nome e cognome",
+        "required": "Il campo nome e cognome è obbligatorio",
+        "minTwoWords": "Inserire almeno 2 parole nel nome e cognome"
+      },
+      "address": {
+        "label": "Indirizzo",
+        "required": "Il campo indirizzo è obbligatorio"
+      },
+      "civicNumber": {
+        "label": "Civico",
+        "required": "Il campo civico è obbligatorio"
+      },
+      "zipCode": {
+        "label": "CAP",
+        "invalid": "CAP non valido",
+        "error": "Il CAP deve essere di 5 cifre numeriche",
+        "required": "Il campo CAP è obbligatorio"
+      },
+      "country": {
+        "label": "Nazione"
+      },
+      "province": {
+        "label": "Provincia"
+      },
+      "city": {
+        "label": "Località"
+      }
     },
     "wizardStepper": {
       "step1": "Configurazione Generale",
