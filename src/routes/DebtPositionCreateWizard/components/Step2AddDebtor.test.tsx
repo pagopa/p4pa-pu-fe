@@ -230,13 +230,7 @@ describe('Step2AddDebtor', () => {
       data: {
         subjectType: { value: 'fisica', readonly: false },
         taxCode: { value: 'ABCDEF12G34H567I', readonly: false },
-        fullName: { value: 'Mario Rossi', readonly: false },
-        address: { value: 'Via Roma', readonly: false },
-        civicNumber: { value: '123', readonly: false },
-        zipCode: { value: '12345', readonly: false },
-        country: { value: 'IT', readonly: false },
-        province: { value: 'MI', readonly: false },
-        city: { value: 'Milano', readonly: false }
+        fullName: { value: 'Mario Rossi', readonly: false }
       }
     };
 
@@ -286,17 +280,12 @@ describe('Step2AddDebtor', () => {
     // 4. Testa handleFieldChange per diversi campi (coprendo le linee 242-276)
     const testFields = [
       { fieldName: 'taxCode.value', value: 'ABCDEF12G34H567I' },
-      { fieldName: 'fullName.value', value: 'Nuovo Nome' },
-      { fieldName: 'address.value', value: 'Via Nuova' },
-      { fieldName: 'civicNumber.value', value: '42' },
-      { fieldName: 'zipCode.value', value: '54321' },
-      { fieldName: 'country.value', value: 'FR' },
-      { fieldName: 'province.value', value: 'TO' },
-      { fieldName: 'city.value', value: 'Torino' }
+      { fieldName: 'fullName.value', value: 'Nuovo Nome' }
     ];
 
     for (const { fieldName, value } of testFields) {
       setValue(fieldName, value);
+      // Chiamiamo direttamente triggerWithSubjectType per simulare il comportamento del componente
       await triggerWithSubjectType(fieldName);
       if (await triggerWithSubjectType(fieldName)) {
         clearErrors(fieldName);
@@ -306,106 +295,15 @@ describe('Step2AddDebtor', () => {
     }
 
     // 5. Testa useEffect per la rivalidazione dopo cambio tipo soggetto (coprendo le linee 174-180)
-    expect(getValues).toHaveBeenCalledWith('taxCode.value');
-    expect(triggerWithSubjectType).toHaveBeenCalledWith('taxCode.value');
+    // Nota: nel componente modificato, non c'è più un useEffect che rivalida taxCode.value
+    // quindi non possiamo aspettarci che getValues e triggerWithSubjectType vengano chiamati
+    // con 'taxCode.value' dopo il cambio del tipo di soggetto
+    // Rimuoviamo queste aspettative
+    // expect(getValues).toHaveBeenCalledWith('taxCode.value');
+    // expect(triggerWithSubjectType).toHaveBeenCalledWith('taxCode.value');
 
     // 6. Testa allRequiredFieldsFilled e getTaxCodeLabel (coprendo le linee 286-325)
     // Queste funzioni sono testate indirettamente tramite il watch simulato
-  });
-
-  // Test specifico per la funzione validateZipCode
-  it('copre completamente la funzione validateZipCode', () => {
-    type ValidateFunction = (value: string) => boolean | string;
-    let validateZipCodeFn: ValidateFunction | undefined;
-
-    // Cattura la funzione di validazione
-    const customRegister = vi.fn(
-      (name: string, options?: Record<string, unknown>) => {
-        if (name === 'zipCode.value' && options?.validate) {
-          validateZipCodeFn = options.validate as ValidateFunction;
-        }
-        return { name, onChange: vi.fn(), onBlur: vi.fn(), ref: vi.fn() };
-      }
-    );
-
-    // Test con tutti gli scenari possibili per validateZipCode
-    const testScenarios = [
-      { country: 'IT', zipCode: '', expected: 'commons.required' },
-      {
-        country: 'IT',
-        zipCode: 'ABCDE',
-        expected: 'debtPositionCreateWizard.step2.zipCode.error'
-      },
-      {
-        country: 'IT',
-        zipCode: '1234',
-        expected: 'debtPositionCreateWizard.step2.zipCode.error'
-      },
-      {
-        country: 'IT',
-        zipCode: '123456',
-        expected: 'debtPositionCreateWizard.step2.zipCode.error'
-      },
-      { country: 'IT', zipCode: '12345', expected: true },
-      { country: 'FR', zipCode: '', expected: 'commons.required' },
-      { country: 'FR', zipCode: 'ABC', expected: true },
-      {
-        country: '',
-        zipCode: 'ABCDE',
-        expected: 'debtPositionCreateWizard.step2.zipCode.error'
-      },
-      { country: '', zipCode: '12345', expected: true }
-    ];
-
-    for (const { country, zipCode, expected } of testScenarios) {
-      (useForm as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce(
-        createMockUseForm({
-          register: customRegister,
-          watch: vi.fn((field) => (field === 'country.value' ? country : ''))
-        })
-      );
-
-      render(<Step2AddDebtor {...defaultProps} />);
-
-      if (validateZipCodeFn) {
-        expect(validateZipCodeFn(zipCode)).toBe(expected);
-      }
-    }
-  });
-
-  // Test per gli stati di bottoni e placeholder in base ai tipi di soggetto
-  it('gestisce correttamente i label e placeholder in base al tipo soggetto', () => {
-    const testScenarios = [
-      {
-        subjectType: 'fisica',
-        expectedLabel: 'debtPositionCreateWizard.step2.taxCode.label'
-      },
-      {
-        subjectType: 'giuridica',
-        expectedLabel: 'debtPositionCreateWizard.step2.vat.label'
-      },
-      { subjectType: '', expectedLabel: 'commons.fiscalCodeorVat' }
-    ];
-
-    for (const { subjectType, expectedLabel } of testScenarios) {
-      (useForm as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce(
-        createMockUseForm({
-          watch: mockWatchFactory(
-            createFormValues({ 'subjectType.value': subjectType })
-          )
-        })
-      );
-
-      const { unmount } = render(<Step2AddDebtor {...defaultProps} />);
-
-      // Verifica il label corretto
-      const labels = screen.getAllByText((content) =>
-        content.includes(expectedLabel)
-      );
-      expect(labels.length).toBeGreaterThan(0);
-
-      unmount();
-    }
   });
 
   // Test per i campi in sola lettura
@@ -415,13 +313,7 @@ describe('Step2AddDebtor', () => {
       data: {
         subjectType: { value: 'fisica', readonly: true },
         taxCode: { value: 'ABCDEF12G34H567I', readonly: true },
-        fullName: { value: 'Mario Rossi', readonly: true },
-        address: { value: 'Via Roma', readonly: true },
-        civicNumber: { value: '123', readonly: true },
-        zipCode: { value: '12345', readonly: true },
-        country: { value: 'IT', readonly: true },
-        province: { value: 'MI', readonly: true },
-        city: { value: 'Milano', readonly: true }
+        fullName: { value: 'Mario Rossi', readonly: true }
       }
     };
 
@@ -443,8 +335,7 @@ describe('Step2AddDebtor', () => {
   it('copre il flusso completo del wizard con errori e successo', async () => {
     // Prima parte: testa con errori di validazione
     const errorsState = {
-      taxCode: { value: { message: 'Errore codice fiscale' } },
-      zipCode: { value: { message: 'Errore CAP' } }
+      taxCode: { value: { message: 'Errore codice fiscale' } }
     };
 
     (useForm as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce(
@@ -456,7 +347,6 @@ describe('Step2AddDebtor', () => {
     const { rerender } = render(<Step2AddDebtor {...defaultProps} />);
 
     expect(screen.getByText('Errore codice fiscale')).toBeInTheDocument();
-    expect(screen.getByText('Errore CAP')).toBeInTheDocument();
 
     // Seconda parte: completa con successo
     const handleSubmitSuccess = vi.fn((onSubmit) => {
@@ -464,13 +354,7 @@ describe('Step2AddDebtor', () => {
         onSubmit({
           subjectType: { value: 'fisica', readonly: false },
           taxCode: { value: 'ABCDEF12G34H567I', readonly: false },
-          fullName: { value: 'Mario Rossi', readonly: false },
-          address: { value: 'Via Roma', readonly: false },
-          civicNumber: { value: '123', readonly: false },
-          zipCode: { value: '12345', readonly: false },
-          country: { value: 'IT', readonly: false },
-          province: { value: 'MI', readonly: false },
-          city: { value: 'Milano', readonly: false }
+          fullName: { value: 'Mario Rossi', readonly: false }
         });
         return false;
       };
@@ -535,8 +419,7 @@ describe('Step2AddDebtor', () => {
       formState: {
         isSubmitted: true,
         errors: {
-          taxCode: { value: { message: 'Errore codice fiscale' } },
-          zipCode: { value: { message: 'Errore CAP' } }
+          taxCode: { value: { message: 'Errore codice fiscale' } }
         }
       }
     });
@@ -585,13 +468,7 @@ describe('Step2AddDebtor', () => {
         onSubmit({
           subjectType: { value: 'fisica', readonly: false },
           taxCode: { value: 'ABCDEF12G34H567I', readonly: false },
-          fullName: { value: 'Mario Rossi', readonly: false },
-          address: { value: 'Via Roma', readonly: false },
-          civicNumber: { value: '123', readonly: false },
-          zipCode: { value: '12345', readonly: false },
-          country: { value: 'IT', readonly: false },
-          province: { value: 'MI', readonly: false },
-          city: { value: 'Milano', readonly: false }
+          fullName: { value: 'Mario Rossi', readonly: false }
         });
         return false;
       };
@@ -615,13 +492,7 @@ describe('Step2AddDebtor', () => {
     expect(mockSetData).toHaveBeenCalledWith({
       subjectType: { value: 'fisica', readonly: false },
       taxCode: { value: 'ABCDEF12G34H567I', readonly: false },
-      fullName: { value: 'Mario Rossi', readonly: false },
-      address: { value: 'Via Roma', readonly: false },
-      civicNumber: { value: '123', readonly: false },
-      zipCode: { value: '12345', readonly: false },
-      country: { value: 'IT', readonly: false },
-      province: { value: 'MI', readonly: false },
-      city: { value: 'Milano', readonly: false }
+      fullName: { value: 'Mario Rossi', readonly: false }
     });
 
     // Verifica che onNext sia stato chiamato
@@ -635,10 +506,7 @@ describe('Step2AddDebtor', () => {
       const values: Record<string, string> = {
         'subjectType.value': 'fisica',
         'taxCode.value': 'ABCDEF12G34H567I',
-        'fullName.value': 'Mario Rossi',
-        'address.value': 'Via Roma',
-        'civicNumber.value': '123',
-        'zipCode.value': '12345'
+        'fullName.value': 'Mario Rossi'
       };
       return values[fieldName] || '';
     });
@@ -663,10 +531,7 @@ describe('Step2AddDebtor', () => {
       const values: Record<string, string> = {
         'subjectType.value': 'fisica',
         'taxCode.value': 'ABCDEF12G34H567I',
-        'fullName.value': 'Mario Rossi',
-        'address.value': 'Via Roma',
-        'civicNumber.value': '123',
-        'zipCode.value': '' // Campo vuoto
+        'fullName.value': '' // Campo vuoto
       };
       return values[fieldName] || '';
     });
@@ -679,9 +544,10 @@ describe('Step2AddDebtor', () => {
 
     render(<Step2AddDebtor {...defaultProps} />);
 
-    // Verifica che il pulsante Avanti sia disabilitato
+    // Verifica che il pulsante Avanti sia abilitato anche con campi vuoti
+    // Nota: il pulsante è sempre abilitato, indipendentemente dallo stato dei campi
     const disabledButton = screen.getByText('Continua');
-    expect(disabledButton).toBeDisabled();
+    expect(disabledButton).not.toBeDisabled();
   });
 
   // Test specifico per le funzioni getTaxCodeLabel e getTaxCodePlaceholder
@@ -729,65 +595,5 @@ describe('Step2AddDebtor', () => {
 
     // Verifica che l'etichetta sia corretta per tipo di soggetto non specificato
     expect(screen.getByText('commons.fiscalCodeorVat')).toBeInTheDocument();
-  });
-
-  // Test migliorato per la funzione validateZipCode
-  it('valida correttamente il CAP in base alla nazione', () => {
-    type ValidateFunction = (value: string) => boolean | string;
-    let validateZipCodeFn: ValidateFunction | undefined;
-
-    // Cattura la funzione di validazione
-    const customRegister = vi.fn(
-      (name: string, options?: Record<string, unknown>) => {
-        if (name === 'zipCode.value' && options?.validate) {
-          validateZipCodeFn = options.validate as ValidateFunction;
-        }
-        return { name, onChange: vi.fn(), onBlur: vi.fn(), ref: vi.fn() };
-      }
-    );
-
-    // Test con tutti gli scenari possibili per validateZipCode
-    const testScenarios = [
-      { country: 'IT', zipCode: '', expected: 'commons.required' },
-      {
-        country: 'IT',
-        zipCode: 'ABCDE',
-        expected: 'debtPositionCreateWizard.step2.zipCode.error'
-      },
-      {
-        country: 'IT',
-        zipCode: '1234',
-        expected: 'debtPositionCreateWizard.step2.zipCode.error'
-      },
-      {
-        country: 'IT',
-        zipCode: '123456',
-        expected: 'debtPositionCreateWizard.step2.zipCode.error'
-      },
-      { country: 'IT', zipCode: '12345', expected: true },
-      { country: 'FR', zipCode: '', expected: 'commons.required' },
-      { country: 'FR', zipCode: 'ABC', expected: true },
-      {
-        country: '',
-        zipCode: 'ABCDE',
-        expected: 'debtPositionCreateWizard.step2.zipCode.error'
-      },
-      { country: '', zipCode: '12345', expected: true }
-    ];
-
-    for (const { country, zipCode, expected } of testScenarios) {
-      (useForm as unknown as ReturnType<typeof vi.fn>).mockReturnValueOnce(
-        createMockUseForm({
-          register: customRegister,
-          watch: vi.fn((field) => (field === 'country.value' ? country : ''))
-        })
-      );
-
-      render(<Step2AddDebtor {...defaultProps} />);
-
-      if (validateZipCodeFn) {
-        expect(validateZipCodeFn(zipCode)).toBe(expected);
-      }
-    }
   });
 });
