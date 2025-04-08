@@ -62,13 +62,13 @@ export const Reporting = () => {
                 {
                   type: COMPONENT_TYPE.textField,
                   label: t('reporting.searchReportingId'),
-                  icon: <Search />,
+                  adornment: <Search />,
                   id: FilterFieldIds.IUF
                 },
                 {
                   type: COMPONENT_TYPE.textField,
                   label: t('reporting.searchRegulationId'),
-                  icon: <Search />,
+                  adornment: <Search />,
                   id: FilterFieldIds.REGULATION_UNIQUE_IDENTIFIER
                 },
                 {

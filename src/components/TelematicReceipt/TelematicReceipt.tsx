@@ -72,7 +72,7 @@ export const TelematicReceipt = () => {
                 {
                   type: COMPONENT_TYPE.textField,
                   label: t('commons.iuv'),
-                  icon: <Search />,
+                  adornment: <Search />,
                   id: FilterFieldIds.IUV_CODE
                 },
                 {

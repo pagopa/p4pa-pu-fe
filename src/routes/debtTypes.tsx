@@ -3,8 +3,8 @@ import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
 import DebtTypes from './DebtTypes/DebtTypes';
 import DebtTypeDetailView from './DebtTypeCatalogDetailView/DebtTypeCatalogDetailView';
-import DebtPositionCreateWizard from './DebtPositionCreateWizard/DebtPositionCreateWizard';
-import DebtPositionCreateWizardCompleted from './DebtPositionCreateWizard/DebtPositionCreateWizardCompleted';
+import { DebtTypeCreate } from './DebtTypeCreate';
+import { DebtTypeCreateSuccess } from './DebtTypeCreate/DebtTypeCreateSuccess';
 
 const deployPath = config.deployPath;
 
@@ -36,9 +36,9 @@ export const debtTypesRoutes = [
         } as RouteHandleObject
       },
       {
-        id: 'DEBT_POSITION_CREATE_WIZARD',
-        path: 'create-wizard',
-        element: <DebtPositionCreateWizard />,
+        id: 'DEBT_TYPE_CREATE',
+        path: 'new',
+        element: <DebtTypeCreate />,
         handle: {
           backButton: true,
           backButtonText: 'commons.exit',
@@ -49,9 +49,9 @@ export const debtTypesRoutes = [
         } as RouteHandleObject
       },
       {
-        id: 'DEBT_POSITION_CREATE_WIZARD_COMPLETED',
-        path: 'create-wizard/completed',
-        element: <DebtPositionCreateWizardCompleted />,
+        id: 'DEBT_TYPE_CREATE_SUCCESS',
+        path: 'new/ok',
+        element: <DebtTypeCreateSuccess />,
         handle: {
           backButton: false,
           hideBreadcrumbs: true,

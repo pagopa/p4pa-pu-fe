@@ -1,0 +1,238 @@
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { vi } from 'vitest';
+import { Step2Settings } from './Step2Settings';
+
+describe('Step2Settings', () => {
+  const mockSetData = vi.fn();
+  const mockOnNext = vi.fn();
+  const mockOnBack = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders the form with all sections', () => {
+    render(
+      <Step2Settings
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    // Check if main titles are rendered
+    expect(
+      screen.getByText('debtTypeCreate.settings.title')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('debtTypeCreate.settings.behaviour')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('debtTypeCreate.settings.template.title')
+    ).toBeInTheDocument();
+
+    // Check if options are rendered
+    expect(
+      screen.getByText('debtTypeCreate.settings.option1.description')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('debtTypeCreate.settings.option2.description')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('debtTypeCreate.settings.option3.description')
+    ).toBeInTheDocument();
+
+    // Check if form controls are rendered
+    expect(
+      screen.getByText('debtTypeCreate.settings.template.checkbox')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('debtTypeCreate.settings.template.subject.label')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByLabelText('debtTypeCreate.settings.template.message.label')
+    ).toBeInTheDocument();
+  });
+
+  it('submits form with default values when no input is provided', async () => {
+    render(
+      <Step2Settings
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    // Click submit button
+    fireEvent.click(screen.getByText('commons.create'));
+
+    await waitFor(() => {
+      expect(mockSetData).toHaveBeenCalledWith({
+        option1: false,
+        option2: false,
+        option3: false,
+        checkbox2: false,
+        textField: '',
+        textArea: ''
+      });
+      expect(mockOnNext).toHaveBeenCalled();
+    });
+  });
+
+  it('shows validation errors when checkbox2 is checked but text fields are empty', async () => {
+    render(
+      <Step2Settings
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    // Check the checkbox2
+    const checkbox = screen.getByLabelText(
+      'debtTypeCreate.settings.template.checkbox'
+    );
+    fireEvent.click(checkbox);
+
+    // Submit the form
+    fireEvent.click(screen.getByText('commons.create'));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('form.errors.textFieldRequired')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('form.errors.textAreaRequired')
+      ).toBeInTheDocument();
+    });
+
+    expect(mockSetData).not.toHaveBeenCalled();
+    expect(mockOnNext).not.toHaveBeenCalled();
+  });
+
+  it('successfully submits form with all fields filled when checkbox2 is checked', async () => {
+    render(
+      <Step2Settings
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    // Check all options
+    const option1 = screen.getByText(
+      'debtTypeCreate.settings.option1.description'
+    );
+    const option2 = screen.getByText(
+      'debtTypeCreate.settings.option2.description'
+    );
+    const option3 = screen.getByText(
+      'debtTypeCreate.settings.option3.description'
+    );
+    fireEvent.click(option1);
+    fireEvent.click(option2);
+    fireEvent.click(option3);
+
+    // Check checkbox2 and fill text fields
+    const checkbox2 = screen.getByText(
+      'debtTypeCreate.settings.template.checkbox'
+    );
+    fireEvent.click(checkbox2);
+
+    const textField = screen.getByRole('textbox', {
+      name: 'debtTypeCreate.settings.template.subject.label'
+    });
+    fireEvent.change(textField, { target: { value: 'Subject text' } });
+
+    const textArea = screen.getByRole('textbox', {
+      name: 'debtTypeCreate.settings.template.message.label'
+    });
+    fireEvent.change(textArea, { target: { value: 'Message content' } });
+
+    // Submit the form
+    fireEvent.click(screen.getByText('commons.create'));
+
+    await waitFor(() => {
+      expect(mockSetData).toHaveBeenCalledWith({
+        option1: true,
+        option2: true,
+        option3: true,
+        checkbox2: true,
+        textField: 'Subject text',
+        textArea: 'Message content'
+      });
+      expect(mockOnNext).toHaveBeenCalled();
+    });
+  });
+
+  it('does not apply validation to text fields when checkbox2 is unchecked', async () => {
+    render(
+      <Step2Settings
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    // Text fields should not be required when checkbox2 is unchecked
+    const checkbox2 = screen.getByLabelText(
+      'debtTypeCreate.settings.template.checkbox'
+    );
+    expect(checkbox2).not.toBeChecked();
+
+    // Submit the form
+    fireEvent.click(screen.getByText('commons.create'));
+
+    await waitFor(() => {
+      expect(mockSetData).toHaveBeenCalledWith({
+        option1: false,
+        option2: false,
+        option3: false,
+        checkbox2: false,
+        textField: '',
+        textArea: ''
+      });
+      expect(mockOnNext).toHaveBeenCalled();
+    });
+
+    // No validation errors should be shown
+    expect(
+      screen.queryByText('form.errors.textFieldRequired')
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText('form.errors.textAreaRequired')
+    ).not.toBeInTheDocument();
+  });
+
+  it('calls onBack when back button is clicked', () => {
+    render(
+      <Step2Settings
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    // Find and click the back button
+    const backButton = screen.getByRole('button', { name: 'commons.back' });
+    fireEvent.click(backButton);
+
+    expect(mockOnBack).toHaveBeenCalled();
+    expect(mockSetData).not.toHaveBeenCalled();
+    expect(mockOnNext).not.toHaveBeenCalled();
+  });
+
+  it('displays preview link', () => {
+    render(
+      <Step2Settings
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    expect(
+      screen.getByText('debtTypeCreate.settings.preview')
+    ).toBeInTheDocument();
+  });
+});

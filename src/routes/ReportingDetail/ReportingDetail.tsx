@@ -151,7 +151,7 @@ export const ReportingDetail = () => {
               {
                 type: COMPONENT_TYPE.textField,
                 label: t('commons.searchIUV'),
-                icon: <Search />,
+                adornment: <Search />,
                 gridWidth: 5,
                 value: draftFilters.iuv || '',
                 onChange: (e) => updateDraftFilters({ iuv: e.target.value })

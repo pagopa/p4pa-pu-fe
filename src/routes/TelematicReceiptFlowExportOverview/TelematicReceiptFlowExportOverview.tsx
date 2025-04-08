@@ -130,7 +130,7 @@ const TelematicReceiptFlowExportOverview = () => {
             {
               type: COMPONENT_TYPE.textField,
               label: t('commons.searchName'),
-              icon: <Search />,
+              adornment: <Search />,
               gridWidth: 6,
               value: draftFilters.fileName || '',
               onChange: (e) => updateDraftFilters({ fileName: e.target.value })

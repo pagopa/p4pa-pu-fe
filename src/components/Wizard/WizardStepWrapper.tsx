@@ -5,17 +5,19 @@ import { PropsWithChildren } from 'react';
 type Props = {
   title: string;
   subtitle: string;
+  alertMessage?: string;
 };
 
 const WizardStepWrapper = ({
   title,
   subtitle,
+  alertMessage,
   children
 }: PropsWithChildren<Props>) => {
   return (
     <Box
       bgcolor={theme.palette.common.white}
-      borderRadius={0.5}
+      borderRadius={1}
       p={3}
       gap={3}
       width="100%"
@@ -27,6 +29,11 @@ const WizardStepWrapper = ({
         <Typography variant="body1" gutterBottom>
           {subtitle}
         </Typography>
+        {alertMessage && (
+          <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
+            {alertMessage}
+          </Typography>
+        )}
       </Grid>
       {children}
     </Box>

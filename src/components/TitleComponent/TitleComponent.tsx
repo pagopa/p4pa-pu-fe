@@ -1,6 +1,7 @@
 import {
   Box,
   Typography,
+  TypographyOwnProps,
   Button,
   ButtonProps,
   ChipOwnProps,
@@ -9,8 +10,8 @@ import {
 } from '@mui/material';
 
 type TitleComponentProps = {
-  isSubtitle?: boolean;
   title: string;
+  variant?: TypographyOwnProps['variant'];
   description?: string;
   chip?: {
     label: string;
@@ -33,8 +34,8 @@ type TitleComponentProps = {
 };
 
 const TitleComponent = ({
-  isSubtitle,
   title,
+  variant = 'h3',
   description,
   chip,
   callToAction
@@ -51,7 +52,7 @@ const TitleComponent = ({
         }}
       >
         <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
-          <Typography variant={isSubtitle ? 'h6' : 'h3'}>{title}</Typography>
+          <Typography variant={variant}>{title}</Typography>
 
           {chip && (
             <Chip label={chip.label} color={chip.color} sx={{ ml: 2 }} />
