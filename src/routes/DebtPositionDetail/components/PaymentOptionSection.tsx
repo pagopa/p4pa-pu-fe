@@ -59,7 +59,7 @@ export const PaymentOptionSection = ({
     {
       field: 'status',
       headerName: 'Stato',
-      flex: 0.5,
+      flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams) => {
         return <Chip label={params.row.chip.label} color={params.row.chip.color} variant="outlined" />;
