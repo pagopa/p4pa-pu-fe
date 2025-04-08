@@ -72,7 +72,11 @@ type Step3Data = {
     readonly: boolean;
   };
   dueDate: {
-    value: string;
+    value: string | null;
+    readonly: boolean;
+  };
+  isMultibeneficiary: {
+    value: boolean;
     readonly: boolean;
   };
 };
@@ -194,6 +198,10 @@ const DebtPositionCreateWizard = () => {
       },
       dueDate: {
         value: '',
+        readonly: false
+      },
+      isMultibeneficiary: {
+        value: false,
         readonly: false
       }
     }

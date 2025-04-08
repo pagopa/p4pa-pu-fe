@@ -22,6 +22,8 @@
     "close": "Chiudi",
     "collectionReason": "Motivo Riscossione",
     "copied": "Copiato!",
+    "continue": "Continua",
+    "create": "Crea",
     "debtor": "Debitore",
     "debtTypeCode": "Codice Tipo dovuto",
     "debtTypeName": "Nome del Tipo dovuto",
@@ -401,7 +403,30 @@
       }
     },
     "step3": {
-      "title": "Avviso"
+      "title": "Avviso",
+      "paymentObject": {
+        "label": "Oggetto pagamento",
+        "required": "Il campo oggetto pagamento è obbligatorio"
+      },
+      "paymentOption": {
+        "label": "Opzione pagamento",
+        "required": "Il campo opzione pagamento è obbligatorio",
+        "single": "Pagamento unico",
+        "installments": "Pagamento rateale"
+      },
+      "amount": {
+        "label": "Importo",
+        "required": "Il campo importo è obbligatorio",
+        "positive": "Il campo importo deve essere maggiore di 0",
+        "validNumber": "Il campo importo deve essere un numero valido"
+      },
+      "dueDate": {
+        "label": "Data scadenza",
+        "required": "Il campo data scadenza è obbligatorio"
+      },
+      "isMultibeneficiary": {
+        "label": "Multibeneficiario"
+      }
     },
     "wizardStepper": {
       "step1": "Configurazione Generale",
