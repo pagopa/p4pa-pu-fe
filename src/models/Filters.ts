@@ -21,13 +21,6 @@ export type FilterValues = {
   VALUE_DATE_TO: Date | null;
 };
 
-export const FLOW_STATUS_VALUES = [
-  'UPLOADED',
-  'PROCESSING',
-  'COMPLETED',
-  'ERROR'
-] as const;
-
 export type FlowFilters = {
   ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
   fileName?: string;
