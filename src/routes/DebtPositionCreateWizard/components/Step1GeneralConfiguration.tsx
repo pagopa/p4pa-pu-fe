@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { Controller, useForm } from 'react-hook-form';
 import { useStore } from '../../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
 import { Box, MenuItem, TextField } from '@mui/material';
@@ -49,7 +49,7 @@ const Step1GeneralConfiguration = ({
   const {
     register, // per collegare i campi
     handleSubmit, // per gestire l'invio del form
-    watch, // per osservare i valori in tempo reale
+    control, // per controllare i valori
     formState: { errors } // contiene gli errori di validazione
   } = useForm<FormValues>({
     defaultValues: {
@@ -72,34 +72,41 @@ const Step1GeneralConfiguration = ({
     onNext();
   };
 
-  // Recupera in tempo reale il valore della select per abilitare/disabilitare il bottone
-  const debtPositionTypeSelected = watch('debtPositionType') || '';
-
   return (
     <Box>
       <SectionBox title={t('debtPositionCreateWizard.step1.title')}>
         <form onSubmit={handleSubmit(onSubmit)}>
           {/* Select - Tipo di dovuto */}
-          <TextField
-            label={t('debtPositionCreateWizard.step1.debtPositionType.label')}
-            select
-            required
-            fullWidth
-            margin="normal"
-            disabled={data.debtPositionType.readonly}
-            error={!!errors.debtPositionType}
-            helperText={errors.debtPositionType?.message}
-            {...register('debtPositionType', {
-              // required: t('commons.required')
-            })}
-            value={debtPositionTypeSelected} // Assicura un valore predefinito, evita warning MUI
-          >
-            {debtPositionsTypes.map((option) => (
-              <MenuItem key={option.value} value={option.value.toString()}>
-                {option.label}
-              </MenuItem>
-            ))}
-          </TextField>
+          <Controller
+            name="debtPositionType"
+            control={control}
+            rules={{
+              required: t(
+                'debtPositionCreateWizard.step1.debtPositionType.required'
+              )
+            }}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label={t(
+                  'debtPositionCreateWizard.step1.debtPositionType.label'
+                )}
+                select
+                required
+                fullWidth
+                margin="normal"
+                disabled={data.debtPositionType.readonly}
+                error={!!errors.debtPositionType}
+                helperText={errors.debtPositionType?.message}
+              >
+                {debtPositionsTypes.map((option) => (
+                  <MenuItem key={option.value} value={option.value.toString()}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </TextField>
+            )}
+          />
           {/* Input - Descrizione posizione debitoria */}
           <TextField
             label={t('debtPositionCreateWizard.step1.description.label')}
@@ -121,11 +128,7 @@ const Step1GeneralConfiguration = ({
           <WizardStepButtons
             onBack={onBack}
             disableBack={true}
-            disableNext={
-              data.debtPositionType.readonly
-                ? false
-                : debtPositionTypeSelected === ''
-            }
+            disableNext={false}
             onNext={handleSubmit(onSubmit)}
           />
         </form>
