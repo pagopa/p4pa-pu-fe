@@ -14,8 +14,10 @@ import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../App';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { ExportFileTypeEnum } from '../../../generated/apiClient';
-import { EXPORT_DOWNLOAD_STATES } from '../../models/Filters';
+import {
+  ExportFileStatus,
+  ExportFileTypeEnum
+} from '../../../generated/apiClient';
 import { getExportFiles } from '../../api/exportFiles';
 import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
 
@@ -47,7 +49,7 @@ const TelematicReceiptFlowExportOverview = () => {
   const renderActionCell = (params: GridRenderCellParams) => {
     const { exportFileId, status } = params.row;
 
-    if (EXPORT_DOWNLOAD_STATES.includes(status)) {
+    if (status === ExportFileStatus.COMPLETED) {
       return (
         <IconButton
           color="primary"

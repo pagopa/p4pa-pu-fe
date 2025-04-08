@@ -1,11 +1,10 @@
 import {
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum,
-  ExportFileStatus as ApiExportFileStatus,
-  ExportFileTypeEnum
+  ExportFileTypeEnum,
+  ExportFileStatus
 } from '../../generated/apiClient';
 export type FlowStatus = IngestionFlowFileStatus;
-export type ExportFileStatus = ApiExportFileStatus;
 
 export type FilterValues = {
   ACCOUNTING_DATE_FROM: Date | null;
@@ -73,7 +72,7 @@ export const EXPORT_STATE_COLORS: Record<
 
 export const MENU_STATES = ['COMPLETED', 'ERROR'] as const;
 export const DOWNLOAD_STATES = ['UPLOADED'] as const;
-export const EXPORT_DOWNLOAD_STATES = ['COMPLETED'] as const;
+export const EXPORT_DOWNLOAD_STATES = [ExportFileStatus.COMPLETED];
 
 export type DateRangeValue = {
   from: Date | null;
