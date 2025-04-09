@@ -415,8 +415,8 @@
       "paymentOption": {
         "label": "Opzione pagamento",
         "required": "Il campo opzione pagamento è obbligatorio",
-        "single": "Pagamento unico",
-        "installments": "Pagamento rateale"
+        "single": "Soluzione unica",
+        "installments": "Soluzione rateale"
       },
       "amount": {
         "label": "Importo",
