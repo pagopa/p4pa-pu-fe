@@ -7,7 +7,7 @@ export const getTreasuryDetail = (
   options = {}
 ) => {
   return useQuery({
-    queryKey: ['treasurydetail'],
+    queryKey: ['treasurydetail', organizationId, treasuryId],
     queryFn: async () => {
       const { data: treasurydetail } =
         await utils.apiClient.bff.getTreasuryDetail(organizationId, treasuryId);
