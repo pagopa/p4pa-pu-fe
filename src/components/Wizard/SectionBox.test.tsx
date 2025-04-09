@@ -68,8 +68,8 @@ describe('SectionBox', () => {
       </SectionBox>
     );
 
-    // Verifica che l'icona sia renderizzata
-    expect(screen.getByTestId('book-icon')).toBeInTheDocument();
+    // Verifica che l'icona NON sia renderizzata quando il titolo è vuoto
+    expect(screen.queryByTestId('book-icon')).toBeNull();
 
     // Verifica che il contenuto figlio sia renderizzato
     expect(screen.getByTestId('child-content')).toBeInTheDocument();
