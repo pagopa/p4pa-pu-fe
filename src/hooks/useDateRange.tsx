@@ -9,11 +9,11 @@ type DateRangeState = {
   toError: DateValidationError | null;
 };
 
-export const useDateRange = (tabIndex: number) => {
+export const useDateRange = (tabIndex: number, prefilled = true) => {
   const [state, setState] = useState<Array<DateRangeState>>([
     {
-      from: startOfDay(subMonths(new Date(), 1)),
-      to: endOfDay(new Date()),
+      from: prefilled ? startOfDay(subMonths(new Date(), 1)) : null,
+      to: prefilled ? endOfDay(new Date()) : null,
       fromError: null,
       toError: null
     },
