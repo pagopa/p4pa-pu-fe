@@ -83,7 +83,7 @@ export const createValidators = (
   subjectTypeValue: string
 ) => {
   // Funzione di validazione per il codice fiscale / partita IVA
-  const validateTaxCodeField = (value: string): string | boolean => {
+  const validateTaxCodeField = (value: string): string => {
     // Se il campo è vuoto, restituisce il messaggio appropriato in base al tipo di soggetto
     if (!value) {
       // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
@@ -110,11 +110,11 @@ export const createValidators = (
     }
 
     // Restituisce il risultato della validazione
-    return result === ValidationErrorCode.VALID ? true : t(result);
+    return result === ValidationErrorCode.VALID ? 'true' : t(result);
   };
 
   //Funzione di validazione per il nome completo / ragione sociale
-  const validateFullNameField = (value: string): string | boolean => {
+  const validateFullNameField = (value: string): string => {
     // Se il campo è vuoto, restituisce il messaggio appropriato in base al tipo di soggetto
     if (!value) {
       // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
@@ -133,7 +133,7 @@ export const createValidators = (
       return t('debtPositionCreateWizard.step2.fullName.minTwoWords');
     }
 
-    return true;
+    return 'true';
   };
 
   // Factory per le regole di validazione per React Hook Form

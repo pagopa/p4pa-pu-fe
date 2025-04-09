@@ -153,12 +153,12 @@ describe('createValidators', () => {
 
     it('restituisce true quando il codice fiscale è valido per persona fisica', () => {
       const { validateTaxCodeField } = createValidators(mockT, 'fisica');
-      expect(validateTaxCodeField('RSSMRA80A01H501U')).toBe(true);
+      expect(validateTaxCodeField('RSSMRA80A01H501U')).toBe('true');
     });
 
     it('restituisce true quando la partita IVA è valida per persona giuridica', () => {
       const { validateTaxCodeField } = createValidators(mockT, 'giuridica');
-      expect(validateTaxCodeField('12345678901')).toBe(true);
+      expect(validateTaxCodeField('12345678901')).toBe('true');
     });
 
     it('restituisce il messaggio di errore quando il codice fiscale non è valido per persona fisica', () => {
@@ -200,7 +200,7 @@ describe('createValidators', () => {
 
     it('restituisce true quando il nome completo è valido (almeno due parole)', () => {
       const { validateFullNameField } = createValidators(mockT, 'fisica');
-      expect(validateFullNameField('Mario Rossi')).toBe(true);
+      expect(validateFullNameField('Mario Rossi')).toBe('true');
     });
 
     it('restituisce il messaggio di errore quando il nome completo ha meno di due parole', () => {
