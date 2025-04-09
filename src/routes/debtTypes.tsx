@@ -4,6 +4,7 @@ import config from '../utils/config';
 import DebtTypes from './DebtTypes/DebtTypes';
 import DebtTypeDetailView from './DebtTypeCatalogDetailView/DebtTypeCatalogDetailView';
 import DebtPositionCreateWizard from './DebtPositionCreateWizard/DebtPositionCreateWizard';
+import DebtPositionCreateWizardCompleted from './DebtPositionCreateWizard/DebtPositionCreateWizardCompleted';
 
 const deployPath = config.deployPath;
 
@@ -41,6 +42,18 @@ export const debtTypesRoutes = [
         handle: {
           backButton: true,
           backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject
+      },
+      {
+        id: 'DEBT_POSITION_CREATE_WIZARD_COMPLETED',
+        path: 'create-wizard/completed',
+        element: <DebtPositionCreateWizardCompleted />,
+        handle: {
+          backButton: false,
           hideBreadcrumbs: true,
           sidebar: {
             visible: false
