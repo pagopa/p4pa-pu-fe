@@ -65,7 +65,8 @@ describe('Step1GeneralConfiguration', () => {
     data: {
       debtPositionType: {
         value: '',
-        readonly: false
+        readonly: false,
+        flagMandatoryDueDate: false
       },
       description: {
         value: '',
@@ -161,7 +162,8 @@ describe('Step1GeneralConfiguration', () => {
       data: {
         debtPositionType: {
           value: '1',
-          readonly: false
+          readonly: false,
+          flagMandatoryDueDate: false
         },
         description: {
           value: 'Test description',
@@ -189,7 +191,8 @@ describe('Step1GeneralConfiguration', () => {
       data: {
         debtPositionType: {
           value: '1',
-          readonly: true
+          readonly: true,
+          flagMandatoryDueDate: false
         },
         description: {
           value: 'Test description',
@@ -251,7 +254,8 @@ describe('Step1GeneralConfiguration', () => {
       data: {
         debtPositionType: {
           value: '',
-          readonly: true
+          readonly: true,
+          flagMandatoryDueDate: false
         },
         description: {
           value: '',
@@ -275,7 +279,8 @@ describe('Step1GeneralConfiguration', () => {
         mockSetData({
           debtPositionType: {
             value: '1',
-            readonly: false
+            readonly: false,
+            flagMandatoryDueDate: false
           },
           description: {
             value: 'Test descrizione',
@@ -308,7 +313,8 @@ describe('Step1GeneralConfiguration', () => {
     expect(mockSetData).toHaveBeenCalledWith({
       debtPositionType: {
         value: '1',
-        readonly: false
+        readonly: false,
+        flagMandatoryDueDate: false
       },
       description: {
         value: 'Test descrizione',
@@ -482,7 +488,8 @@ describe('Step1GeneralConfiguration', () => {
     expect(mockSetData).toHaveBeenCalledWith({
       debtPositionType: {
         value: '1',
-        readonly: false
+        readonly: false,
+        flagMandatoryDueDate: false
       },
       description: {
         value: 'Test descrizione con tre parole',

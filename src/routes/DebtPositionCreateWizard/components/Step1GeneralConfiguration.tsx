@@ -12,6 +12,7 @@ import BookIcon from '@mui/icons-material/MenuBook';
 type Step1Data = {
   debtPositionType: {
     value: string;
+    flagMandatoryDueDate: boolean;
     readonly: boolean;
   };
   description: {
@@ -63,6 +64,7 @@ const Step1GeneralConfiguration = ({
     setData({
       debtPositionType: {
         value: values.debtPositionType,
+        flagMandatoryDueDate: data.debtPositionType.flagMandatoryDueDate,
         readonly: data.debtPositionType.readonly
       },
       description: {

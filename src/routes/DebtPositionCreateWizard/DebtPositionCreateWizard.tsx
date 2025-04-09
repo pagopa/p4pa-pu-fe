@@ -11,6 +11,7 @@ import Step3 from './components/Step3';
 type Step1Data = {
   debtPositionType: {
     value: string;
+    flagMandatoryDueDate: boolean;
     readonly: boolean;
   };
   description: {
@@ -79,6 +80,7 @@ type Step3Data = {
     value: boolean;
     readonly: boolean;
   };
+  flagMandatoryDueDate: boolean;
 };
 
 type FormData = {
@@ -138,6 +140,7 @@ const DebtPositionCreateWizard = () => {
     step1: {
       debtPositionType: {
         value: '',
+        flagMandatoryDueDate: false,
         readonly: false
       },
       description: {
@@ -203,7 +206,8 @@ const DebtPositionCreateWizard = () => {
       isMultibeneficiary: {
         value: false,
         readonly: false
-      }
+      },
+      flagMandatoryDueDate: false
     }
   });
 
@@ -255,9 +259,15 @@ const DebtPositionCreateWizard = () => {
       return (
         <Component
           key={`step-${key}`}
-          data={formData.step3}
+          data={{
+            ...formData.step3,
+            flagMandatoryDueDate:
+              formData.step1.debtPositionType.flagMandatoryDueDate
+          }}
           setData={(data) => setFormData((prev) => ({ ...prev, step3: data }))}
-          onNext={() => setStep(index + 1)}
+          onNext={() => {
+            setStep(index + 1);
+          }}
           onBack={() => setStep(index - 1)}
         />
       );

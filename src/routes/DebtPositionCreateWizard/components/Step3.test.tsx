@@ -1,8 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Step3 from './Step3';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { formatDate } from '../../../utils/formatters';
+import { MemoryRouter, useNavigate } from 'react-router';
+
+// Definizione dei tipi
+type FormField<T> = {
+  value: T;
+  readonly: boolean;
+};
+
+type FormValues = {
+  paymentObject: FormField<string>;
+  paymentOption: FormField<string>;
+  amount: FormField<string>;
+  dueDate: FormField<Date | null>;
+  isMultibeneficiary: FormField<boolean>;
+};
+
+type FormFieldValue = string | boolean | Date | null;
 
 // Mock dei moduli
 vi.mock('react-hook-form', () => ({
@@ -23,6 +40,15 @@ vi.mock('react-hook-form', () => ({
     });
   })
 }));
+
+// Mock di react-router
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: vi.fn()
+  };
+});
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
@@ -195,23 +221,12 @@ vi.mock('@mui/icons-material/Article', () => ({
   default: () => <div>ArticleIcon</div>
 }));
 
-// Tipo per i dati del form
-type Step3Data = {
-  paymentObject: { value: string; readonly: boolean };
-  paymentOption: { value: string; readonly: boolean };
-  amount: { value: string; readonly: boolean };
-  dueDate: { value: string | null; readonly: boolean };
-  isMultibeneficiary: { value: boolean; readonly: boolean };
-};
-
-// Tipo per i valori del form
-type FormValue = string | boolean | Date | null;
-
 describe('Step3', () => {
   // Setup iniziale per i test
   const mockSetData = vi.fn();
   const mockOnNext = vi.fn();
   const mockOnBack = vi.fn();
+  const mockNavigate = vi.fn();
 
   const defaultProps = {
     data: {
@@ -219,7 +234,8 @@ describe('Step3', () => {
       paymentOption: { value: '', readonly: false },
       amount: { value: '', readonly: false },
       dueDate: { value: null, readonly: false },
-      isMultibeneficiary: { value: false, readonly: false }
+      isMultibeneficiary: { value: false, readonly: false },
+      flagMandatoryDueDate: false
     },
     setData: mockSetData,
     onNext: mockOnNext,
@@ -236,7 +252,7 @@ describe('Step3', () => {
   }));
 
   const mockHandleSubmit = vi.fn(
-    (onSubmit: (data: Step3Data) => void) =>
+    (onSubmit: (data: FormValues) => void) =>
       (e?: { preventDefault?: () => void }) => {
         e?.preventDefault?.();
         onSubmit({
@@ -244,7 +260,7 @@ describe('Step3', () => {
           paymentOption: { value: 'SINGLE', readonly: false },
           amount: { value: '100.00', readonly: false },
           dueDate: {
-            value: new Date('2023-12-31').toISOString(),
+            value: new Date('2023-12-31'),
             readonly: false
           },
           isMultibeneficiary: { value: false, readonly: false }
@@ -254,17 +270,20 @@ describe('Step3', () => {
   );
 
   const createFormValues = (
-    overrides: Record<string, FormValue> = {}
-  ): Record<string, FormValue> => {
-    const defaultValues: Record<string, FormValue> = {
+    overrides: Partial<Record<string, FormFieldValue>> = {}
+  ): Record<string, FormFieldValue> => {
+    const defaultValues: Record<string, FormFieldValue> = {
       'paymentObject.value': 'Pagamento bolletta',
       'paymentOption.value': 'SINGLE',
       'amount.value': '100.00',
-      'dueDate.value': new Date('2023-12-31').toISOString(),
+      'dueDate.value': new Date('2023-12-31'),
       'isMultibeneficiary.value': false
     };
 
-    return { ...defaultValues, ...overrides };
+    return Object.assign({}, defaultValues, overrides) as Record<
+      string,
+      FormFieldValue
+    >;
   };
 
   const mockWatchFactory = (
@@ -303,11 +322,18 @@ describe('Step3', () => {
     (formatDate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
       '2023-12-31'
     );
+    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+      mockNavigate
+    );
   });
 
   // Test base
   it('renderizza correttamente il componente con tutti i campi richiesti', () => {
-    render(<Step3 {...defaultProps} />);
+    render(
+      <MemoryRouter>
+        <Step3 {...defaultProps} />
+      </MemoryRouter>
+    );
     expect(
       screen.getByText('debtPositionCreateWizard.step3.title')
     ).toBeInTheDocument();
@@ -322,11 +348,16 @@ describe('Step3', () => {
         paymentOption: { value: 'SINGLE', readonly: false },
         amount: { value: '100.00', readonly: false },
         dueDate: { value: testDate.toISOString(), readonly: false },
-        isMultibeneficiary: { value: false, readonly: false }
+        isMultibeneficiary: { value: false, readonly: false },
+        flagMandatoryDueDate: false
       }
     };
 
-    render(<Step3 {...propsWithValues} />);
+    render(
+      <MemoryRouter>
+        <Step3 {...propsWithValues} />
+      </MemoryRouter>
+    );
     expect(useForm).toHaveBeenCalledWith(
       expect.objectContaining({
         defaultValues: {
@@ -358,7 +389,11 @@ describe('Step3', () => {
     );
 
     // 2. Renderizza il componente
-    render(<Step3 {...defaultProps} />);
+    render(
+      <MemoryRouter>
+        <Step3 {...defaultProps} />
+      </MemoryRouter>
+    );
 
     // 3. Testa handleFieldChange per diversi campi
     const testFields = [
@@ -391,7 +426,8 @@ describe('Step3', () => {
         paymentOption: { value: 'SINGLE', readonly: true },
         amount: { value: '100.00', readonly: true },
         dueDate: { value: testDate.toISOString(), readonly: true },
-        isMultibeneficiary: { value: false, readonly: true }
+        isMultibeneficiary: { value: false, readonly: true },
+        flagMandatoryDueDate: false
       }
     };
 
@@ -407,7 +443,11 @@ describe('Step3', () => {
       })
     );
 
-    render(<Step3 {...propsWithReadonly} />);
+    render(
+      <MemoryRouter>
+        <Step3 {...propsWithReadonly} />
+      </MemoryRouter>
+    );
     expect(useForm).toHaveBeenCalledWith(
       expect.objectContaining({
         defaultValues: {
@@ -434,7 +474,11 @@ describe('Step3', () => {
       })
     );
 
-    const { rerender } = render(<Step3 {...defaultProps} />);
+    const { rerender } = render(
+      <MemoryRouter>
+        <Step3 {...defaultProps} />
+      </MemoryRouter>
+    );
 
     expect(screen.getByText('Errore oggetto pagamento')).toBeInTheDocument();
 
@@ -462,14 +506,18 @@ describe('Step3', () => {
       })
     );
 
-    rerender(<Step3 {...defaultProps} />);
+    rerender(
+      <MemoryRouter>
+        <Step3 {...defaultProps} />
+      </MemoryRouter>
+    );
 
     // Simula click sul pulsante Crea
     fireEvent.click(screen.getByText('commons.create'));
 
     expect(handleSubmitSuccess).toHaveBeenCalled();
     expect(mockSetData).toHaveBeenCalled();
-    expect(mockOnNext).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalled();
 
     // Simula click sul pulsante Indietro
     fireEvent.click(screen.getByText('commons.back'));
@@ -481,6 +529,7 @@ describe('Step3', () => {
     const setValue = vi.fn();
     const trigger = vi.fn().mockResolvedValue(true);
     const clearErrors = vi.fn();
+    const onChange = vi.fn();
 
     // Creiamo un mock più dettagliato per useForm
     const mockUseForm = createMockUseForm({
@@ -495,16 +544,35 @@ describe('Step3', () => {
       }
     });
 
+    // Modifichiamo il mock di Controller per catturare l'onChange
+    (Controller as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      ({ render, name }) => {
+        return render({
+          field: {
+            onChange,
+            onBlur: vi.fn(),
+            value: '',
+            name,
+            ref: vi.fn()
+          },
+          fieldState: {
+            error: null
+          }
+        });
+      }
+    );
+
     // Assicuriamoci che il mock di useForm restituisca il nostro setValue
     (useForm as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
       mockUseForm
     );
 
     // Renderizziamo il componente
-    render(<Step3 {...defaultProps} />);
-
-    // Verifichiamo che setValue sia stato correttamente passato al componente
-    expect(mockUseForm.setValue).toBe(setValue);
+    render(
+      <MemoryRouter>
+        <Step3 {...defaultProps} />
+      </MemoryRouter>
+    );
 
     // Troviamo l'input dell'oggetto pagamento
     const paymentObjectInput = screen.getByTestId('input-paymentObject.value');
@@ -517,21 +585,8 @@ describe('Step3', () => {
       target: { value: 'Pagamento bolletta' }
     });
 
-    // Attendiamo che tutte le promesse vengano risolte
-    await vi.waitFor(() => {
-      // Verifichiamo che setValue sia stato chiamato
-      expect(setValue).toHaveBeenCalled();
-
-      // Verifichiamo i parametri passati a setValue
-      expect(setValue.mock.calls[0][0]).toBe('paymentObject.value');
-      expect(setValue.mock.calls[0][1]).toBe('Pagamento bolletta');
-
-      // Verifichiamo che trigger sia stato chiamato
-      expect(trigger).toHaveBeenCalledWith('paymentObject.value');
-
-      // Verifichiamo che clearErrors sia stato chiamato
-      expect(clearErrors).toHaveBeenCalledWith('paymentObject.value');
-    });
+    // Verifichiamo che onChange sia stato chiamato con il nuovo valore
+    expect(onChange).toHaveBeenCalledWith('Pagamento bolletta');
   });
 
   // Test specifico per la funzione onSubmit
@@ -558,7 +613,11 @@ describe('Step3', () => {
       })
     );
 
-    render(<Step3 {...defaultProps} />);
+    render(
+      <MemoryRouter>
+        <Step3 {...defaultProps} />
+      </MemoryRouter>
+    );
 
     // Simula click sul pulsante Crea
     fireEvent.click(screen.getByText('commons.create'));
@@ -572,11 +631,12 @@ describe('Step3', () => {
       paymentOption: { value: 'SINGLE', readonly: false },
       amount: { value: '100.00', readonly: false },
       dueDate: { value: '2023-12-31T00:00:00.000Z', readonly: false },
-      isMultibeneficiary: { value: false, readonly: false }
+      isMultibeneficiary: { value: false, readonly: false },
+      flagMandatoryDueDate: false
     });
 
-    // Verifica che onNext sia stato chiamato
-    expect(mockOnNext).toHaveBeenCalled();
+    // Verifica che navigate sia stato chiamato invece di onNext
+    expect(mockNavigate).toHaveBeenCalled();
   });
 
   // Test per la validazione dell'importo
@@ -584,6 +644,7 @@ describe('Step3', () => {
     const setValue = vi.fn();
     const trigger = vi.fn().mockResolvedValue(true);
     const clearErrors = vi.fn();
+    const onChange = vi.fn();
 
     // Creiamo un mock per useForm con errori di validazione per l'importo
     const mockUseForm = createMockUseForm({
@@ -600,11 +661,33 @@ describe('Step3', () => {
       }
     });
 
+    // Modifichiamo il mock di Controller per catturare l'onChange
+    (Controller as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      ({ render, name }) => {
+        return render({
+          field: {
+            onChange,
+            onBlur: vi.fn(),
+            value: '',
+            name,
+            ref: vi.fn()
+          },
+          fieldState: {
+            error: null
+          }
+        });
+      }
+    );
+
     (useForm as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
       mockUseForm
     );
 
-    render(<Step3 {...defaultProps} />);
+    render(
+      <MemoryRouter>
+        <Step3 {...defaultProps} />
+      </MemoryRouter>
+    );
 
     // Troviamo l'input dell'importo
     const amountInput = screen.getByTestId('input-amount.value');
@@ -620,23 +703,15 @@ describe('Step3', () => {
     // Simuliamo il cambio dell'importo con un valore valido
     fireEvent.change(amountInput, { target: { value: '100.00' } });
 
-    // Attendiamo che tutte le promesse vengano risolte
-    await vi.waitFor(() => {
-      // Verifichiamo che setValue sia stato chiamato con il nuovo valore
-      expect(setValue).toHaveBeenCalledWith('amount.value', '100.00');
-
-      // Verifichiamo che trigger sia stato chiamato
-      expect(trigger).toHaveBeenCalledWith('amount.value');
-
-      // Verifichiamo che clearErrors sia stato chiamato
-      expect(clearErrors).toHaveBeenCalledWith('amount.value');
-    });
+    // Verifichiamo che onChange sia stato chiamato con il nuovo valore
+    expect(onChange).toHaveBeenCalledWith('100.00');
   });
 
   // Test per il DatePicker
   it('gestisce correttamente il DatePicker', () => {
     const setValue = vi.fn();
     const testDate = new Date('2023-12-31');
+    const onChange = vi.fn();
 
     // Creiamo un mock per useForm
     const mockUseForm = createMockUseForm({
@@ -647,11 +722,33 @@ describe('Step3', () => {
       }
     });
 
+    // Modifichiamo il mock di Controller per catturare l'onChange
+    (Controller as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      ({ render, name }) => {
+        return render({
+          field: {
+            onChange,
+            onBlur: vi.fn(),
+            value: null,
+            name,
+            ref: vi.fn()
+          },
+          fieldState: {
+            error: null
+          }
+        });
+      }
+    );
+
     (useForm as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
       mockUseForm
     );
 
-    render(<Step3 {...defaultProps} />);
+    render(
+      <MemoryRouter>
+        <Step3 {...defaultProps} />
+      </MemoryRouter>
+    );
 
     // Troviamo l'input del DatePicker
     const datePickerInput = screen.getByTestId('datepicker-input');
@@ -662,8 +759,8 @@ describe('Step3', () => {
     // Simuliamo il cambio della data
     fireEvent.change(datePickerInput, { target: { value: '2023-12-31' } });
 
-    // Verifichiamo che setValue sia stato chiamato con la nuova data
-    expect(setValue).toHaveBeenCalledWith('dueDate.value', testDate);
+    // Verifichiamo che onChange sia stato chiamato con la nuova data
+    expect(onChange).toHaveBeenCalledWith(testDate);
   });
 
   // Test per lo switch isMultibeneficiary
@@ -671,6 +768,7 @@ describe('Step3', () => {
     const setValue = vi.fn();
     const trigger = vi.fn().mockResolvedValue(true);
     const clearErrors = vi.fn();
+    const onChange = vi.fn();
 
     // Creiamo un mock per useForm
     const mockUseForm = createMockUseForm({
@@ -683,11 +781,33 @@ describe('Step3', () => {
       }
     });
 
+    // Modifichiamo il mock di Controller per catturare l'onChange
+    (Controller as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      ({ render }) => {
+        return render({
+          field: {
+            onChange,
+            onBlur: vi.fn(),
+            value: false,
+            name: 'isMultibeneficiary.value',
+            ref: vi.fn()
+          },
+          fieldState: {
+            error: null
+          }
+        });
+      }
+    );
+
     (useForm as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
       mockUseForm
     );
 
-    render(<Step3 {...defaultProps} />);
+    render(
+      <MemoryRouter>
+        <Step3 {...defaultProps} />
+      </MemoryRouter>
+    );
 
     // Troviamo l'input dello switch
     const switchInput = screen.getByTestId('switch-input');
@@ -698,10 +818,7 @@ describe('Step3', () => {
     // Simuliamo il click sullo switch invece del change
     fireEvent.click(switchInput);
 
-    // Attendiamo che tutte le promesse vengano risolte
-    await vi.waitFor(() => {
-      // Verifichiamo che setValue sia stato chiamato con il nuovo valore
-      expect(setValue).toHaveBeenCalledWith('isMultibeneficiary.value', true);
-    });
+    // Verifichiamo che onChange sia stato chiamato con il nuovo valore
+    expect(onChange).toHaveBeenCalledWith(true);
   });
 });

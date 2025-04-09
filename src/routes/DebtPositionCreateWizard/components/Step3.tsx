@@ -15,12 +15,15 @@ import PaperContent from '../../../components/Wizard/PaperContent';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../../utils/formatters';
+import { useNavigate } from 'react-router';
+import config from '../../../utils/config';
 
 type Step3Data = {
   paymentObject: { value: string; readonly: boolean };
   paymentOption: { value: string; readonly: boolean };
   amount: { value: string; readonly: boolean };
   dueDate: { value: string | null; readonly: boolean };
+  flagMandatoryDueDate: boolean;
   isMultibeneficiary: { value: boolean; readonly: boolean };
 };
 
@@ -39,8 +42,10 @@ type FormValues = {
   isMultibeneficiary: { value: boolean; readonly: boolean };
 };
 
-const Step3 = ({ data, setData, onNext, onBack }: Props) => {
+const Step3 = ({ data, setData, onBack }: Props) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const deployPath = config.deployPath;
 
   // Converti il valore stringa della data in oggetto Date per il DatePicker
   const initialData: FormValues = {
@@ -54,10 +59,7 @@ const Step3 = ({ data, setData, onNext, onBack }: Props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors, isSubmitted },
-    trigger,
-    clearErrors,
-    setValue
+    formState: { errors, isSubmitted }
   } = useForm<FormValues>({
     defaultValues: initialData,
     mode: 'onChange'
@@ -73,36 +75,39 @@ const Step3 = ({ data, setData, onNext, onBack }: Props) => {
           values.dueDate.value instanceof Date
             ? formatDate(values.dueDate.value.toISOString())
             : values.dueDate.value
-      }
+      },
+      flagMandatoryDueDate: data.flagMandatoryDueDate
     };
     setData(formattedValues);
-    onNext();
+    // va alla pagina finale, passando il valore aggiornato
+    navigate(`${deployPath}/debt-types/create-wizard/completed`, {
+      state: {
+        paymentObject: formattedValues.paymentObject.value
+      },
+      replace: true // sovrascrive la rotta step3 nello stack del browser si ritorna a ${deployPath}/debt-positions/
+    });
   };
 
-  // Funzione per gestire il cambiamento di un qualsiasi campo del form
-  const handleFieldChange = async (
-    fieldName: keyof FormValues,
-    value: string | boolean | Date | null
-  ) => {
-    // Se il campo è dueDate e il valore è una stringa, convertilo in Date
-    if (fieldName === 'dueDate' && typeof value === 'string') {
-      value = new Date(value);
-    }
-
-    // Imposta il nuovo valore nel form
-    if (fieldName === 'dueDate') {
-      setValue(`${fieldName}.value`, value as Date | null);
-    } else if (fieldName === 'isMultibeneficiary') {
-      setValue(`${fieldName}.value`, value as boolean);
-    } else {
-      setValue(`${fieldName}.value`, value as string);
-    }
-
-    // Se il form è già stato inviato, verifica il campo e pulisce eventuali errori
-    if (isSubmitted) {
-      const isFieldValid = await trigger(`${fieldName}.value`);
-      if (isFieldValid) {
-        clearErrors(`${fieldName}.value`);
+  // Validazione importo - estratta per leggibilità
+  const validateAmount = {
+    required: {
+      value: true,
+      message: t('debtPositionCreateWizard.step3.amount.required')
+    },
+    validate: {
+      positive: (value: string) => {
+        if (!value) return true;
+        const numValue = parseFloat(value);
+        return (
+          numValue > 0 || t('debtPositionCreateWizard.step3.amount.positive')
+        );
+      },
+      validNumber: (value: string) => {
+        if (!value) return true;
+        return (
+          !isNaN(parseFloat(value)) ||
+          t('debtPositionCreateWizard.step3.amount.validNumber')
+        );
       }
     }
   };
@@ -141,7 +146,7 @@ const Step3 = ({ data, setData, onNext, onBack }: Props) => {
                       onChange={(e) => {
                         const value = e.target.value;
                         field.onChange(value);
-                        handleFieldChange('paymentObject', value);
+                        // handleFieldChange('paymentObject', value);
                       }}
                     />
                   )}
@@ -174,7 +179,7 @@ const Step3 = ({ data, setData, onNext, onBack }: Props) => {
                       onChange={(e) => {
                         const value = e.target.value;
                         field.onChange(value);
-                        handleFieldChange('paymentOption', value);
+                        // handleFieldChange('paymentOption', value);
                       }}
                     >
                       <MenuItem value="SINGLE">
@@ -196,31 +201,7 @@ const Step3 = ({ data, setData, onNext, onBack }: Props) => {
                 <Controller
                   name="amount.value"
                   control={control}
-                  rules={{
-                    required: {
-                      value: true,
-                      message: t(
-                        'debtPositionCreateWizard.step3.amount.required'
-                      )
-                    },
-                    validate: {
-                      positive: (value) => {
-                        if (!value) return true; // La validazione required gestisce il caso vuoto
-                        const numValue = parseFloat(value);
-                        return (
-                          numValue > 0 ||
-                          t('debtPositionCreateWizard.step3.amount.positive')
-                        );
-                      },
-                      validNumber: (value) => {
-                        if (!value) return true; // La validazione required gestisce il caso vuoto
-                        return (
-                          !isNaN(parseFloat(value)) ||
-                          t('debtPositionCreateWizard.step3.amount.validNumber')
-                        );
-                      }
-                    }
-                  }}
+                  rules={validateAmount}
                   render={({ field }) => (
                     <TextField
                       {...field}
@@ -243,7 +224,7 @@ const Step3 = ({ data, setData, onNext, onBack }: Props) => {
                       onChange={(e) => {
                         const value = e.target.value;
                         field.onChange(value);
-                        handleFieldChange('amount', value);
+                        // handleFieldChange('amount', value);
                       }}
                     />
                   )}
@@ -255,9 +236,9 @@ const Step3 = ({ data, setData, onNext, onBack }: Props) => {
                   name="dueDate.value"
                   control={control}
                   rules={{
-                    required: t(
-                      'debtPositionCreateWizard.step3.dueDate.required'
-                    )
+                    required: data.flagMandatoryDueDate
+                      ? t('debtPositionCreateWizard.step3.dueDate.required')
+                      : false
                   }}
                   render={({ field: { onChange, value, ...field } }) => (
                     <DatePicker
@@ -265,11 +246,12 @@ const Step3 = ({ data, setData, onNext, onBack }: Props) => {
                       value={value}
                       label={t('debtPositionCreateWizard.step3.dueDate.label')}
                       disabled={data.dueDate?.readonly}
+                      minDate={new Date()}
                       format="dd/MM/yyyy"
                       slotProps={{
                         textField: {
                           fullWidth: true,
-                          required: true,
+                          required: data.flagMandatoryDueDate,
                           error: isSubmitted && !!errors.dueDate?.value,
                           helperText:
                             isSubmitted && errors.dueDate?.value?.message
@@ -277,8 +259,6 @@ const Step3 = ({ data, setData, onNext, onBack }: Props) => {
                       }}
                       onChange={(date) => {
                         onChange(date);
-                        // Non convertire la data in stringa qui, mantieni l'oggetto Date
-                        handleFieldChange('dueDate', date);
                       }}
                     />
                   )}
@@ -299,7 +279,7 @@ const Step3 = ({ data, setData, onNext, onBack }: Props) => {
                           onChange={(e) => {
                             const value = e.target.checked;
                             field.onChange(value);
-                            handleFieldChange('isMultibeneficiary', value);
+                            // handleFieldChange('isMultibeneficiary', value);
                           }}
                         />
                       }
