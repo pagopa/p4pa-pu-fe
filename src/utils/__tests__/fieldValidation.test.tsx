@@ -1,8 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import {
   isValidCodiceFiscale,
   isValidPartitaIVA,
-  validateTaxCode
+  validateTaxCode,
+  createValidators
 } from '../fieldValidation';
 import { ValidationErrorCode } from '../../store/types';
 
@@ -119,6 +120,112 @@ describe('validateTaxCode', () => {
     it('rejects partita IVA with wrong length for persona giuridica', () => {
       expect(validateTaxCode('123456789', 'giuridica')).toBe(
         'debtPositionCreateWizard.step2.taxCode.invalidVAT'
+      );
+    });
+  });
+});
+
+describe('createValidators', () => {
+  // Mock della funzione di traduzione
+  const mockT = vi.fn((key: string) => key);
+
+  describe('validateTaxCodeField', () => {
+    it('restituisce il messaggio generico quando il campo è vuoto e non è selezionato il tipo di soggetto', () => {
+      const { validateTaxCodeField } = createValidators(mockT, '');
+      expect(validateTaxCodeField('')).toBe(
+        'debtPositionCreateWizard.step2.taxCodeOrVat.required'
+      );
+    });
+
+    it('restituisce il messaggio specifico per persona fisica quando il campo è vuoto', () => {
+      const { validateTaxCodeField } = createValidators(mockT, 'fisica');
+      expect(validateTaxCodeField('')).toBe(
+        'debtPositionCreateWizard.step2.taxCode.required'
+      );
+    });
+
+    it('restituisce il messaggio specifico per persona giuridica quando il campo è vuoto', () => {
+      const { validateTaxCodeField } = createValidators(mockT, 'giuridica');
+      expect(validateTaxCodeField('')).toBe(
+        'debtPositionCreateWizard.step2.vat.required'
+      );
+    });
+
+    it('restituisce true quando il codice fiscale è valido per persona fisica', () => {
+      const { validateTaxCodeField } = createValidators(mockT, 'fisica');
+      expect(validateTaxCodeField('RSSMRA80A01H501U')).toBe(true);
+    });
+
+    it('restituisce true quando la partita IVA è valida per persona giuridica', () => {
+      const { validateTaxCodeField } = createValidators(mockT, 'giuridica');
+      expect(validateTaxCodeField('12345678901')).toBe(true);
+    });
+
+    it('restituisce il messaggio di errore quando il codice fiscale non è valido per persona fisica', () => {
+      const { validateTaxCodeField } = createValidators(mockT, 'fisica');
+      expect(validateTaxCodeField('12345678901')).toBe(
+        'debtPositionCreateWizard.step2.taxCode.invalid'
+      );
+    });
+
+    it('restituisce il messaggio di errore quando la partita IVA non è valida per persona giuridica', () => {
+      const { validateTaxCodeField } = createValidators(mockT, 'giuridica');
+      expect(validateTaxCodeField('RSSMRA80A01H501U')).toBe(
+        'debtPositionCreateWizard.step2.taxCode.invalidVAT'
+      );
+    });
+  });
+
+  describe('validateFullNameField', () => {
+    it('restituisce il messaggio generico quando il campo è vuoto e non è selezionato il tipo di soggetto', () => {
+      const { validateFullNameField } = createValidators(mockT, '');
+      expect(validateFullNameField('')).toBe(
+        'debtPositionCreateWizard.step2.fullName.required'
+      );
+    });
+
+    it('restituisce il messaggio specifico per persona fisica quando il campo è vuoto', () => {
+      const { validateFullNameField } = createValidators(mockT, 'fisica');
+      expect(validateFullNameField('')).toBe(
+        'debtPositionCreateWizard.step2.fullName.required'
+      );
+    });
+
+    it('restituisce il messaggio specifico per persona giuridica quando il campo è vuoto', () => {
+      const { validateFullNameField } = createValidators(mockT, 'giuridica');
+      expect(validateFullNameField('')).toBe(
+        'debtPositionCreateWizard.step2.companyName.required'
+      );
+    });
+
+    it('restituisce true quando il nome completo è valido (almeno due parole)', () => {
+      const { validateFullNameField } = createValidators(mockT, 'fisica');
+      expect(validateFullNameField('Mario Rossi')).toBe(true);
+    });
+
+    it('restituisce il messaggio di errore quando il nome completo ha meno di due parole', () => {
+      const { validateFullNameField } = createValidators(mockT, 'fisica');
+      expect(validateFullNameField('Mario')).toBe(
+        'debtPositionCreateWizard.step2.fullName.minTwoWords'
+      );
+    });
+  });
+
+  describe('getValidationRules', () => {
+    it('restituisce le regole di validazione corrette', () => {
+      const { getValidationRules } = createValidators(mockT, 'fisica');
+      const rules = getValidationRules();
+
+      expect(rules).toHaveProperty('taxCode');
+      expect(rules).toHaveProperty('fullName');
+      expect(rules).toHaveProperty('subjectType');
+
+      expect(rules.taxCode).toHaveProperty('validate');
+      expect(rules.fullName).toHaveProperty('validate');
+      expect(rules.subjectType).toHaveProperty('required');
+
+      expect(rules.subjectType.required).toBe(
+        'debtPositionCreateWizard.step2.subjectType.required'
       );
     });
   });

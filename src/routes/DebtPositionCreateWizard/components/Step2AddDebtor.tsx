@@ -6,12 +6,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../components/Wizard/SectionBox';
 import PaperContent from '../../../components/Wizard/PaperContent';
-import { validateTaxCode } from '../../../utils/fieldValidation';
-import { ValidationErrorCode } from '../../../store/types';
+import { createValidators } from '../../../utils/fieldValidation';
 
-/**
- * Tipo che definisce la struttura dati dello Step 2 del wizard.
- */
+// Tipo che definisce la struttura dati dello Step 2 del wizard.
 type Step2Data = {
   subjectType: { value: string; readonly: boolean }; // Tipo soggetto (fisica/giuridica)
   taxCode: { value: string; readonly: boolean }; // Codice fiscale o partita IVA
@@ -26,10 +23,8 @@ type Step2Data = {
 
 type Step2DataField = keyof Step2Data;
 
-/**
- * Tipo che rappresenta il percorso completo al valore di un campo.
- * Esempio: 'subjectType.value', 'taxCode.value'
- */
+//Tipo che rappresenta il percorso completo al valore di un campo.
+//Esempio: 'subjectType.value', 'taxCode.value'
 type NestedFieldName = `${Step2DataField}.value`;
 
 type Props = {
@@ -40,6 +35,7 @@ type Props = {
 };
 
 const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
+  const { t } = useTranslation();
   const {
     handleSubmit, // Funzione per gestire la sottomissione del form
     watch, // Funzione per osservare i valori dei campi
@@ -53,19 +49,23 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     mode: 'onChange' // Modalità di validazione: alla modifica del campo
   });
 
-  const { t } = useTranslation();
-
   // Osservazione di campi specifici per reagire ai loro cambiamenti
   const subjectTypeValue = watch('subjectType.value') || '';
   // const countryValue = watch('country.value') || '';
   // const provinceValue = watch('province.value') || '';
 
-  // Effetto che rivalida il codice fiscale/partita IVA quando cambia il tipo di soggetto
+  // Effetto che rivalida il codice fiscale/partita IVA e fullName e ragione socialequando cambia il tipo di soggetto
   useEffect(() => {
     if (isSubmitted) {
       trigger('taxCode.value');
+      trigger('fullName.value');
     }
   }, [subjectTypeValue, trigger, isSubmitted]);
+
+  // Creazione delle utility di validazione e label
+  const { getValidationRules } = createValidators(t, subjectTypeValue);
+  // Ottiene le regole di validazione per tutti i campi
+  const validationRules = getValidationRules();
 
   // Funzione per validare il CAP.
   // Per l'Italia deve essere un numero di 5 cifre.
@@ -157,6 +157,17 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     }
   };
 
+  const getCompanyNameLabel = () => {
+    switch (subjectTypeValue) {
+      case 'fisica':
+        return t('debtPositionCreateWizard.step2.fullName.label');
+      case 'giuridica':
+        return t('debtPositionCreateWizard.step2.companyName.label');
+      default:
+        return t('debtPositionCreateWizard.step2.fullName.label');
+    }
+  };
+
   return (
     <Box>
       <SectionBox hideHeader>
@@ -173,11 +184,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             <Controller
               name="subjectType.value"
               control={control}
-              rules={{
-                required: t(
-                  'debtPositionCreateWizard.step2.subjectType.required'
-                )
-              }}
+              rules={validationRules.subjectType}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -216,43 +223,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             <Controller
               name="taxCode.value"
               control={control}
-              rules={{
-                validate: (value) => {
-                  // Se il campo è vuoto, restituisce il messaggio appropriato in base al tipo di soggetto
-                  if (!value) {
-                    // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
-                    if (!subjectTypeValue) {
-                      return t(
-                        'debtPositionCreateWizard.step2.taxCodeOrVat.required'
-                      );
-                    }
-                    // Altrimenti mostrare il messaggio specifico in base al tipo di soggetto
-                    return subjectTypeValue !== 'giuridica'
-                      ? t('debtPositionCreateWizard.step2.taxCode.required')
-                      : t('debtPositionCreateWizard.step2.vat.required');
-                  }
-                  // Altrimenti, valida il formato
-                  const result = validateTaxCode(value, subjectTypeValue);
-
-                  if (result == 'commons.required') {
-                    // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
-                    if (!subjectTypeValue) {
-                      return t(
-                        'debtPositionCreateWizard.step2.taxCodeOrVat.required'
-                      );
-                    }
-                    // Altrimenti mostra il messaggio specifico in base al tipo di soggetto
-                    return subjectTypeValue !== 'giuridica'
-                      ? t('debtPositionCreateWizard.step2.taxCode.required')
-                      : t('debtPositionCreateWizard.step2.vat.required');
-                  }
-
-                  // Restituisce il risultato della validazione
-                  return result === ValidationErrorCode.VALID
-                    ? true
-                    : t(result);
-                }
-              }}
+              rules={validationRules.taxCode}
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -285,22 +256,11 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             <Controller
               name="fullName.value"
               control={control}
-              rules={{
-                required: t('debtPositionCreateWizard.step2.fullName.required'),
-                validate: (value) => {
-                  const trimmed = value.trim();
-                  if (trimmed.split(' ').length < 2) {
-                    return t(
-                      'debtPositionCreateWizard.step2.fullName.minTwoWords'
-                    );
-                  }
-                  return true;
-                }
-              }}
+              rules={validationRules.fullName}
               render={({ field }) => (
                 <TextField
                   {...field}
-                  label={t('debtPositionCreateWizard.step2.fullName.label')}
+                  label={getCompanyNameLabel()}
                   fullWidth
                   margin="normal"
                   required
