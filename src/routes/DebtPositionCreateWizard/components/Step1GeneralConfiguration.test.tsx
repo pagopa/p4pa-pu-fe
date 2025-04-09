@@ -41,7 +41,12 @@ vi.mock('react-hook-form', () => ({
 
 // Mock di react-i18next
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key })
+  useTranslation: () => ({
+    t: (key: string) => {
+      if (key === 'commons.continue') return 'Continua';
+      return key;
+    }
+  })
 }));
 
 // Tipi per i mocks
@@ -60,7 +65,8 @@ describe('Step1GeneralConfiguration', () => {
     data: {
       debtPositionType: {
         value: '',
-        readonly: false
+        readonly: false,
+        flagMandatoryDueDate: false
       },
       description: {
         value: '',
@@ -156,7 +162,8 @@ describe('Step1GeneralConfiguration', () => {
       data: {
         debtPositionType: {
           value: '1',
-          readonly: false
+          readonly: false,
+          flagMandatoryDueDate: false
         },
         description: {
           value: 'Test description',
@@ -184,7 +191,8 @@ describe('Step1GeneralConfiguration', () => {
       data: {
         debtPositionType: {
           value: '1',
-          readonly: true
+          readonly: true,
+          flagMandatoryDueDate: false
         },
         description: {
           value: 'Test description',
@@ -246,7 +254,8 @@ describe('Step1GeneralConfiguration', () => {
       data: {
         debtPositionType: {
           value: '',
-          readonly: true
+          readonly: true,
+          flagMandatoryDueDate: false
         },
         description: {
           value: '',
@@ -270,7 +279,8 @@ describe('Step1GeneralConfiguration', () => {
         mockSetData({
           debtPositionType: {
             value: '1',
-            readonly: false
+            readonly: false,
+            flagMandatoryDueDate: false
           },
           description: {
             value: 'Test descrizione',
@@ -303,7 +313,8 @@ describe('Step1GeneralConfiguration', () => {
     expect(mockSetData).toHaveBeenCalledWith({
       debtPositionType: {
         value: '1',
-        readonly: false
+        readonly: false,
+        flagMandatoryDueDate: false
       },
       description: {
         value: 'Test descrizione',
@@ -477,7 +488,8 @@ describe('Step1GeneralConfiguration', () => {
     expect(mockSetData).toHaveBeenCalledWith({
       debtPositionType: {
         value: '1',
-        readonly: false
+        readonly: false,
+        flagMandatoryDueDate: false
       },
       description: {
         value: 'Test descrizione con tre parole',

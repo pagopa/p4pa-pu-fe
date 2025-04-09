@@ -2,6 +2,12 @@
 
 import { ValidationErrorCode } from '../store/types';
 
+// enum per il tipo di soggetto
+export enum SubjectType {
+  INDIVIDUAL = 'fisica',
+  BUSINESS = 'giuridica'
+}
+
 /**
  * Verifica se un codice fiscale italiano è valido
  * @param cf - Codice fiscale da validare
@@ -60,12 +66,12 @@ export const validateTaxCode = (
   const normalizedValue = value.replace(/\s/g, '').toUpperCase();
 
   switch (subjectType) {
-    case 'fisica':
+    case SubjectType.INDIVIDUAL:
       if (!isValidCodiceFiscale(normalizedValue)) {
         return ValidationErrorCode.INVALID_CF;
       }
       break;
-    case 'giuridica':
+    case SubjectType.BUSINESS:
       if (!isValidPartitaIVA(normalizedValue)) {
         return ValidationErrorCode.INVALID_VAT;
       }
@@ -75,4 +81,83 @@ export const validateTaxCode = (
   }
 
   return ValidationErrorCode.VALID;
+};
+
+// functions per la validazione dei campi
+export const createValidators = (
+  t: (key: string) => string,
+  subjectTypeValue: string
+) => {
+  // Funzione di validazione per il codice fiscale / partita IVA
+  const validateTaxCodeField = (value: string): string | undefined => {
+    // Se il campo è vuoto, restituisce il messaggio appropriato in base al tipo di soggetto
+    if (!value) {
+      // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
+      if (!subjectTypeValue) {
+        return t('debtPositionCreateWizard.step2.taxCodeOrVat.required');
+      }
+      // Altrimenti mostrare il messaggio specifico in base al tipo di soggetto
+      return subjectTypeValue !== SubjectType.BUSINESS
+        ? t('debtPositionCreateWizard.step2.taxCode.required')
+        : t('debtPositionCreateWizard.step2.vat.required');
+    }
+    // Altrimenti, valida il formato
+    const result = validateTaxCode(value, subjectTypeValue);
+
+    if (result == 'commons.required') {
+      // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
+      if (!subjectTypeValue) {
+        return t('debtPositionCreateWizard.step2.taxCodeOrVat.required');
+      }
+      // Altrimenti mostra il messaggio specifico in base al tipo di soggetto
+      return subjectTypeValue !== SubjectType.BUSINESS
+        ? t('debtPositionCreateWizard.step2.taxCode.required')
+        : t('debtPositionCreateWizard.step2.vat.required');
+    }
+
+    // Restituisce il risultato della validazione
+    return result === ValidationErrorCode.VALID ? undefined : t(result);
+  };
+
+  //Funzione di validazione per il nome completo / ragione sociale
+  const validateFullNameField = (value: string): string | undefined => {
+    // Se il campo è vuoto, restituisce il messaggio appropriato in base al tipo di soggetto
+    if (!value) {
+      // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
+      if (!subjectTypeValue) {
+        return t('debtPositionCreateWizard.step2.fullName.required');
+      }
+      // Altrimenti mostrare il messaggio specifico in base al tipo di soggetto
+      return subjectTypeValue !== SubjectType.BUSINESS
+        ? t('debtPositionCreateWizard.step2.fullName.required')
+        : t('debtPositionCreateWizard.step2.companyName.required');
+    }
+
+    // Validazione per il formato del nome (almeno due parole)
+    const trimmed = value.trim();
+    if (trimmed.split(' ').length < 2) {
+      return t('debtPositionCreateWizard.step2.fullName.minTwoWords');
+    }
+
+    return undefined;
+  };
+
+  // Factory per le regole di validazione per React Hook Form
+  const getValidationRules = () => ({
+    taxCode: {
+      validate: validateTaxCodeField
+    },
+    fullName: {
+      validate: validateFullNameField
+    },
+    subjectType: {
+      required: t('debtPositionCreateWizard.step2.subjectType.required')
+    }
+  });
+
+  return {
+    validateTaxCodeField,
+    validateFullNameField,
+    getValidationRules
+  };
 };

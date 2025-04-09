@@ -29,7 +29,16 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('../../../utils/fieldValidation', () => ({
-  validateTaxCode: vi.fn()
+  validateTaxCode: vi.fn(),
+  createValidators: vi.fn().mockReturnValue({
+    getValidationRules: vi.fn().mockReturnValue({
+      taxCode: { validate: vi.fn() },
+      fullName: { validate: vi.fn() },
+      subjectType: {
+        required: 'debtPositionCreateWizard.step2.subjectType.required'
+      }
+    })
+  })
 }));
 
 // Mock dei componenti Material-UI
