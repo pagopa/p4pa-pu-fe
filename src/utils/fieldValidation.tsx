@@ -2,6 +2,12 @@
 
 import { ValidationErrorCode } from '../store/types';
 
+// enum per il tipo di soggetto
+export enum SubjectType {
+  INDIVIDUAL = 'fisica',
+  BUSINESS = 'giuridica'
+}
+
 /**
  * Verifica se un codice fiscale italiano è valido
  * @param cf - Codice fiscale da validare
@@ -60,12 +66,12 @@ export const validateTaxCode = (
   const normalizedValue = value.replace(/\s/g, '').toUpperCase();
 
   switch (subjectType) {
-    case 'fisica':
+    case SubjectType.INDIVIDUAL:
       if (!isValidCodiceFiscale(normalizedValue)) {
         return ValidationErrorCode.INVALID_CF;
       }
       break;
-    case 'giuridica':
+    case SubjectType.BUSINESS:
       if (!isValidPartitaIVA(normalizedValue)) {
         return ValidationErrorCode.INVALID_VAT;
       }
@@ -91,7 +97,7 @@ export const createValidators = (
         return t('debtPositionCreateWizard.step2.taxCodeOrVat.required');
       }
       // Altrimenti mostrare il messaggio specifico in base al tipo di soggetto
-      return subjectTypeValue !== 'giuridica'
+      return subjectTypeValue !== SubjectType.BUSINESS
         ? t('debtPositionCreateWizard.step2.taxCode.required')
         : t('debtPositionCreateWizard.step2.vat.required');
     }
@@ -104,7 +110,7 @@ export const createValidators = (
         return t('debtPositionCreateWizard.step2.taxCodeOrVat.required');
       }
       // Altrimenti mostra il messaggio specifico in base al tipo di soggetto
-      return subjectTypeValue !== 'giuridica'
+      return subjectTypeValue !== SubjectType.BUSINESS
         ? t('debtPositionCreateWizard.step2.taxCode.required')
         : t('debtPositionCreateWizard.step2.vat.required');
     }
@@ -122,7 +128,7 @@ export const createValidators = (
         return t('debtPositionCreateWizard.step2.fullName.required');
       }
       // Altrimenti mostrare il messaggio specifico in base al tipo di soggetto
-      return subjectTypeValue !== 'giuridica'
+      return subjectTypeValue !== SubjectType.BUSINESS
         ? t('debtPositionCreateWizard.step2.fullName.required')
         : t('debtPositionCreateWizard.step2.companyName.required');
     }
