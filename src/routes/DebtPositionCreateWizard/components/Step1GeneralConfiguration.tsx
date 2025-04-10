@@ -4,12 +4,15 @@ import { useTranslation } from 'react-i18next';
 import { Box, MenuItem, TextField } from '@mui/material';
 import { useDebtPositionsTypeOrg } from '../../../hooks/useDebtPositionsTypeOrg';
 import SectionBox from '../../../components/Wizard/SectionBox';
+import PaperContent from '../../../components/Wizard/PaperContent';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
+import BookIcon from '@mui/icons-material/MenuBook';
 
 // Tipizzazione per lo stato dello step 1
 type Step1Data = {
   debtPositionType: {
     value: string;
+    flagMandatoryDueDate: boolean;
     readonly: boolean;
   };
   description: {
@@ -61,6 +64,7 @@ const Step1GeneralConfiguration = ({
     setData({
       debtPositionType: {
         value: values.debtPositionType,
+        flagMandatoryDueDate: data.debtPositionType.flagMandatoryDueDate,
         readonly: data.debtPositionType.readonly
       },
       description: {
@@ -73,76 +77,84 @@ const Step1GeneralConfiguration = ({
 
   return (
     <Box>
-      <SectionBox title={t('debtPositionCreateWizard.step1.title')}>
+      <SectionBox hideHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Select - Tipo di dovuto */}
-          <Controller
-            name="debtPositionType"
-            control={control}
-            rules={{
-              required: t(
-                'debtPositionCreateWizard.step1.debtPositionType.required'
-              )
-            }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label={t(
-                  'debtPositionCreateWizard.step1.debtPositionType.label'
-                )}
-                select
-                required
-                fullWidth
-                margin="normal"
-                disabled={data.debtPositionType.readonly}
-                error={!!errors.debtPositionType}
-                helperText={errors.debtPositionType?.message}
-              >
-                {debtPositionsTypes.map((option) => (
-                  <MenuItem key={option.value} value={option.value.toString()}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </TextField>
-            )}
-          />
-          {/* Input - Descrizione posizione debitoria */}
-          <Controller
-            name="description"
-            control={control}
-            rules={{
-              required: t(
-                'debtPositionCreateWizard.step1.description.required'
-              ),
-              validate: (value) => {
-                const trimmed = value.trim();
-                // if (trimmed === '') return true;
-                const wordCount = trimmed.split(/\s+/).length;
-                return (
-                  wordCount >= 3 || t('debtPositionCreateWizard.step1.minWords')
-                );
-              }
-            }}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                label={t('debtPositionCreateWizard.step1.description.label')}
-                fullWidth
-                margin="normal"
-                required
-                disabled={data.description.readonly}
-                error={!!errors.description}
-                helperText={errors.description?.message}
-              />
-            )}
-          />
-
-          <WizardStepButtons
-            onBack={onBack}
-            disableBack={true}
-            disableNext={false}
-            onNext={handleSubmit(onSubmit)}
-          />
+          <PaperContent
+            title={t('debtPositionCreateWizard.step1.title')}
+            icon={<BookIcon color="action" sx={{ mr: 1 }} />}
+          >
+            {/* Select - Tipo di dovuto */}
+            <Controller
+              name="debtPositionType"
+              control={control}
+              rules={{
+                required: t(
+                  'debtPositionCreateWizard.step1.debtPositionType.required'
+                )
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label={t(
+                    'debtPositionCreateWizard.step1.debtPositionType.label'
+                  )}
+                  select
+                  required
+                  fullWidth
+                  margin="normal"
+                  disabled={data.debtPositionType.readonly}
+                  error={!!errors.debtPositionType}
+                  helperText={errors.debtPositionType?.message}
+                >
+                  {debtPositionsTypes.map((option) => (
+                    <MenuItem
+                      key={option.value}
+                      value={option.value.toString()}
+                    >
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              )}
+            />
+            {/* Input - Descrizione posizione debitoria */}
+            <Controller
+              name="description"
+              control={control}
+              rules={{
+                required: t(
+                  'debtPositionCreateWizard.step1.description.required'
+                ),
+                validate: (value) => {
+                  const trimmed = value.trim();
+                  // if (trimmed === '') return true;
+                  const wordCount = trimmed.split(/\s+/).length;
+                  return (
+                    wordCount >= 3 ||
+                    t('debtPositionCreateWizard.step1.minWords')
+                  );
+                }
+              }}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label={t('debtPositionCreateWizard.step1.description.label')}
+                  fullWidth
+                  margin="normal"
+                  required
+                  disabled={data.description.readonly}
+                  error={!!errors.description}
+                  helperText={errors.description?.message}
+                />
+              )}
+            />
+            <WizardStepButtons
+              onBack={onBack}
+              disableBack={true}
+              disableNext={false}
+              onNext={handleSubmit(onSubmit)}
+            />
+          </PaperContent>
         </form>
       </SectionBox>
     </Box>

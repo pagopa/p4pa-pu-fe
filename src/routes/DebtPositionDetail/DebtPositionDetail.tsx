@@ -145,7 +145,9 @@ const DebtPositionDetail = () => {
         ? format(parseISO(installment.dueDate), 'dd/MM/yyyy')
         : 'N/A',
       status: installment.status || '',
-      chip: installment.status ? getStatusChipProps(installment.status) : undefined
+      chip: installment.status
+        ? getStatusChipProps(installment.status)
+        : undefined
     };
   };
 
@@ -244,8 +246,7 @@ const DebtPositionDetail = () => {
             />
           )}
         </Box>
-      )
-      )}
+      ))}
 
       <Timeline.Drawer
         title={t('debtPositionDetail.timeline.title')}
