@@ -1,7 +1,6 @@
 // Funzioni di validazione per codice fiscale e partita IVA
 
 import { ValidationErrorCode } from '../store/types';
-import { BeneficiaryData } from '../routes/DebtPositionCreateWizard/components/BeneficiaryField';
 
 // enum per il tipo di soggetto
 export enum SubjectType {
@@ -121,7 +120,7 @@ export const createAmountValidator = (t: (key: string) => string) => {
  * @returns true se la somma è inferiore all'importo totale, false altrimenti
  */
 export const isBeneficiariesTotalValid = (
-  beneficiaries: Array<BeneficiaryData>,
+  beneficiaries: Array<any>,
   totalAmount: string
 ): boolean => {
   if (!totalAmount || beneficiaries.length === 0) return true;
@@ -152,7 +151,7 @@ export const isBeneficiariesTotalValid = (
  */
 export const createBeneficiaryValidators = (
   t: (key: string) => string,
-  getValues: (fieldName: string) => unknown,
+  getValues: any,
   fieldNamePrefix: string,
   totalAmount: string
 ) => {
@@ -160,11 +159,10 @@ export const createBeneficiaryValidators = (
   const isValidTotalAmount = () => {
     if (!totalAmount) return true;
 
-    const beneficiaries =
-      (getValues(fieldNamePrefix) as Array<BeneficiaryData>) || [];
+    const beneficiaries = getValues(fieldNamePrefix) || [];
     if (beneficiaries.length === 0) return true;
 
-    const sum = beneficiaries.reduce((acc: number, curr: BeneficiaryData) => {
+    const sum = beneficiaries.reduce((acc: number, curr: any) => {
       const amount = parseFloat(curr.amount) || 0;
       return acc + amount;
     }, 0);
@@ -176,8 +174,7 @@ export const createBeneficiaryValidators = (
   const isSingleBeneficiaryAmountValid = (hasSingleBeneficiary: boolean) => {
     if (!hasSingleBeneficiary || !totalAmount) return true;
 
-    const beneficiaries = getValues(fieldNamePrefix) as Array<BeneficiaryData>;
-    const beneficiary = beneficiaries?.[0];
+    const beneficiary = getValues(fieldNamePrefix)?.[0];
     if (!beneficiary) return true;
 
     const beneficiaryAmount = parseFloat(beneficiary.amount) || 0;
@@ -190,11 +187,10 @@ export const createBeneficiaryValidators = (
   const validateTotalAmount = () => {
     if (!totalAmount) return true;
 
-    const beneficiaries =
-      (getValues(fieldNamePrefix) as Array<BeneficiaryData>) || [];
+    const beneficiaries = getValues(fieldNamePrefix) || [];
     if (beneficiaries.length === 0) return true;
 
-    const sum = beneficiaries.reduce((acc: number, curr: BeneficiaryData) => {
+    const sum = beneficiaries.reduce((acc: number, curr: any) => {
       const amount = parseFloat(curr.amount) || 0;
       return acc + amount;
     }, 0);
@@ -225,8 +221,7 @@ export const createBeneficiaryValidators = (
     index: number,
     hasSingleBeneficiary: boolean
   ) => {
-    const beneficiaries =
-      (getValues(fieldNamePrefix) as Array<BeneficiaryData>) || [];
+    const beneficiaries = getValues(fieldNamePrefix) || [];
     const beneficiary = beneficiaries[index];
 
     if (!beneficiary || !beneficiary.amount) return true;

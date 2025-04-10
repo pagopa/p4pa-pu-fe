@@ -443,7 +443,8 @@
         },
         "taxCode": {
           "label": "Codice Fiscale",
-          "required": "Il campo codice fiscale è obbligatorio"
+          "required": "Il campo codice fiscale è obbligatorio",
+          "invalid": "Codice fiscale non valido"
         },
         "iban": {
           "label": "IBAN",

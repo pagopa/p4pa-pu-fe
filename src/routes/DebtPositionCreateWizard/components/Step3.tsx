@@ -18,10 +18,7 @@ import { formatDate } from '../../../utils/formatters';
 import { useNavigate } from 'react-router';
 import config from '../../../utils/config';
 import { useEffect } from 'react';
-import BeneficiaryField, {
-  BeneficiaryData,
-  FormDataWithBeneficiaries
-} from './BeneficiaryField';
+import BeneficiaryField, { BeneficiaryData } from './BeneficiaryField';
 import {
   createAmountValidator,
   isBeneficiariesTotalValid
@@ -44,15 +41,14 @@ type Props = {
   onBack: () => void;
 };
 
-// Tipo che descrive i valori del form con beneficiari tipizzati correttamente
 type FormValues = {
   paymentObject: { value: string; readonly: boolean };
   paymentOption: { value: string; readonly: boolean };
   amount: { value: string; readonly: boolean };
   dueDate: { value: Date | null; readonly: boolean };
   isMultibeneficiary: { value: boolean; readonly: boolean };
-  beneficiaries: Array<BeneficiaryData>; // Array di beneficiari correttamente tipizzato
-} & FormDataWithBeneficiaries;
+  beneficiaries?: Array<BeneficiaryData>; // Array di beneficiari
+};
 
 const Step3 = ({ data, setData, onBack }: Props) => {
   const { t } = useTranslation();
@@ -331,7 +327,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
               {/* Componente Enti Beneficiari - visibile solo quando isMultibeneficiary è true */}
               {isMultibeneficiary && (
                 <Grid item xs={12} mt={2}>
-                  <BeneficiaryField<FormValues>
+                  <BeneficiaryField
                     control={control}
                     errors={errors}
                     isSubmitted={isSubmitted}
