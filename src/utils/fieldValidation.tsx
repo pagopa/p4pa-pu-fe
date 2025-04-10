@@ -1,6 +1,7 @@
 // Funzioni di validazione per codice fiscale e partita IVA
 
 import { ValidationErrorCode } from '../store/types';
+import { BeneficiaryData } from '../routes/DebtPositionCreateWizard/components/BeneficiaryField';
 
 // enum per il tipo di soggetto
 export enum SubjectType {
@@ -83,6 +84,169 @@ export const validateTaxCode = (
   return ValidationErrorCode.VALID;
 };
 
+/**
+ * Crea le regole di validazione per un campo importo
+ * @param t - Funzione di traduzione
+ * @returns Oggetto con regole di validazione per react-hook-form
+ */
+export const createAmountValidator = (t: (key: string) => string) => {
+  return {
+    required: {
+      value: true,
+      message: t('debtPositionCreateWizard.step3.amount.required')
+    },
+    validate: {
+      positive: (value: string) => {
+        if (!value) return true;
+        const numValue = parseFloat(value);
+        return (
+          numValue > 0 || t('debtPositionCreateWizard.step3.amount.positive')
+        );
+      },
+      validNumber: (value: string) => {
+        if (!value) return true;
+        return (
+          !isNaN(parseFloat(value)) ||
+          t('debtPositionCreateWizard.step3.amount.validNumber')
+        );
+      }
+    }
+  };
+};
+
+/**
+ * Verifica se la somma degli importi è inferiore all'importo totale
+ * @param beneficiaries - Array di beneficiari
+ * @param totalAmount - Importo totale
+ * @returns true se la somma è inferiore all'importo totale, false altrimenti
+ */
+export const isBeneficiariesTotalValid = (
+  beneficiaries: Array<BeneficiaryData>,
+  totalAmount: string
+): boolean => {
+  if (!totalAmount || beneficiaries.length === 0) return true;
+
+  const total = parseFloat(totalAmount);
+
+  // Se c'è un solo beneficiario, il suo importo deve essere inferiore all'importo totale
+  if (beneficiaries.length === 1) {
+    const beneficiaryAmount = parseFloat(beneficiaries[0].amount) || 0;
+    return beneficiaryAmount < total;
+  }
+
+  // Per più beneficiari, verifica che la somma sia inferiore all'importo totale
+  const sum = beneficiaries.reduce((acc, curr) => {
+    return acc + (parseFloat(curr.amount) || 0);
+  }, 0);
+
+  return sum < total;
+};
+
+/**
+ * Crea le funzioni di validazione per gli importi dei beneficiari
+ * @param t - Funzione di traduzione
+ * @param getValues - Funzione per ottenere i valori dai campi del form
+ * @param fieldNamePrefix - Prefisso del nome del campo
+ * @param totalAmount - Importo totale
+ * @returns Oggetto con funzioni di validazione
+ */
+export const createBeneficiaryValidators = (
+  t: (key: string) => string,
+  getValues: (fieldName: string) => unknown,
+  fieldNamePrefix: string,
+  totalAmount: string
+) => {
+  // Verifica se la somma degli importi è inferiore all'importo totale
+  const isValidTotalAmount = () => {
+    if (!totalAmount) return true;
+
+    const beneficiaries =
+      (getValues(fieldNamePrefix) as Array<BeneficiaryData>) || [];
+    if (beneficiaries.length === 0) return true;
+
+    const sum = beneficiaries.reduce((acc: number, curr: BeneficiaryData) => {
+      const amount = parseFloat(curr.amount) || 0;
+      return acc + amount;
+    }, 0);
+
+    return sum < parseFloat(totalAmount);
+  };
+
+  // Verifica se l'importo del beneficiario singolo è valido
+  const isSingleBeneficiaryAmountValid = (hasSingleBeneficiary: boolean) => {
+    if (!hasSingleBeneficiary || !totalAmount) return true;
+
+    const beneficiaries = getValues(fieldNamePrefix) as Array<BeneficiaryData>;
+    const beneficiary = beneficiaries?.[0];
+    if (!beneficiary) return true;
+
+    const beneficiaryAmount = parseFloat(beneficiary.amount) || 0;
+    const total = parseFloat(totalAmount);
+
+    return beneficiaryAmount < total;
+  };
+
+  // Validazione per verificare che la somma degli importi sia inferiore all'importo totale
+  const validateTotalAmount = () => {
+    if (!totalAmount) return true;
+
+    const beneficiaries =
+      (getValues(fieldNamePrefix) as Array<BeneficiaryData>) || [];
+    if (beneficiaries.length === 0) return true;
+
+    const sum = beneficiaries.reduce((acc: number, curr: BeneficiaryData) => {
+      const amount = parseFloat(curr.amount) || 0;
+      return acc + amount;
+    }, 0);
+
+    return (
+      sum < parseFloat(totalAmount) ||
+      t('debtPositionCreateWizard.step3.beneficiary.sumMustBeLessThanTotal')
+    );
+  };
+
+  // Validazione per un singolo beneficiario
+  const validateSingleBeneficiary = (amount: string, fieldsLength: number) => {
+    if (fieldsLength === 1 && totalAmount) {
+      const beneficiaryAmount = parseFloat(amount) || 0;
+      const total = parseFloat(totalAmount);
+      return (
+        beneficiaryAmount < total ||
+        t(
+          'debtPositionCreateWizard.step3.beneficiary.amountMustBeLessThanTotal'
+        )
+      );
+    }
+    return true;
+  };
+
+  // Verifica se un singolo beneficiario ha un importo valido
+  const isBeneficiaryAmountValid = (
+    index: number,
+    hasSingleBeneficiary: boolean
+  ) => {
+    const beneficiaries =
+      (getValues(fieldNamePrefix) as Array<BeneficiaryData>) || [];
+    const beneficiary = beneficiaries[index];
+
+    if (!beneficiary || !beneficiary.amount) return true;
+
+    if (hasSingleBeneficiary) {
+      return isSingleBeneficiaryAmountValid(hasSingleBeneficiary);
+    }
+
+    return parseFloat(beneficiary.amount) > 0 && isValidTotalAmount();
+  };
+
+  return {
+    isValidTotalAmount,
+    isSingleBeneficiaryAmountValid,
+    validateTotalAmount,
+    validateSingleBeneficiary,
+    isBeneficiaryAmountValid
+  };
+};
+
 // functions per la validazione dei campi
 export const createValidators = (
   t: (key: string) => string,
@@ -159,5 +323,118 @@ export const createValidators = (
     validateTaxCodeField,
     validateFullNameField,
     getValidationRules
+  };
+};
+
+/**
+ * Verifica se un IBAN è valido
+ * @param iban - IBAN da validare
+ * @returns true se l'IBAN è valido, false altrimenti
+ */
+export const isValidIBAN = (iban: string): boolean => {
+  if (!iban) return false;
+
+  // Normalizza l'IBAN rimuovendo spazi e convertendo in maiuscolo
+  iban = iban.replace(/\s/g, '').toUpperCase();
+
+  // Controllo di base sulla lunghezza (tra 15 e 34 caratteri secondo lo standard ISO 13616)
+  if (iban.length < 15 || iban.length > 34) return false;
+
+  // Formato base per IBAN: due lettere per il codice paese, due cifre di controllo,
+  // e poi il BBAN (Basic Bank Account Number)
+  const regex = /^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/;
+
+  // Verifica con espressione regolare
+  return regex.test(iban);
+};
+
+/**
+ * Verifica se un numero di conto corrente postale italiano è valido
+ * @param postalAccount - Numero di conto corrente postale da validare
+ * @returns true se il numero è valido, false altrimenti
+ */
+export const isValidPostalAccount = (postalAccount: string): boolean => {
+  if (!postalAccount) return false;
+
+  // Normalizza il numero di conto corrente rimuovendo spazi
+  postalAccount = postalAccount.replace(/\s/g, '');
+
+  // I conti correnti postali italiani sono composti da 12 cifre numeriche
+  // oppure da numeri più brevi (minimo 6 cifre)
+  return /^\d{6,12}$/.test(postalAccount);
+};
+
+/**
+ * Crea funzioni di validazione per i campi del beneficiario
+ * @param t - Funzione di traduzione
+ * @returns Oggetto con funzioni di validazione
+ */
+export const createBeneficiaryFieldValidators = (
+  t: (key: string) => string
+) => {
+  // Validazione per il campo del codice fiscale
+  const validateBeneficiaryTaxCode = (value: string): string | undefined => {
+    if (!value) return undefined; // Il campo non è richiesto
+
+    // Verifica sia codice fiscale che partita IVA
+    const normalizedValue = value.replace(/\s/g, '').toUpperCase();
+    if (
+      isValidCodiceFiscale(normalizedValue) ||
+      isValidPartitaIVA(normalizedValue)
+    ) {
+      return undefined;
+    }
+
+    return t('debtPositionCreateWizard.step3.beneficiary.taxCode.invalid');
+  };
+
+  // Validazione per il campo IBAN
+  const validateIBAN = (value: string): string | undefined => {
+    if (!value) return undefined; // Il campo non è richiesto
+
+    if (!isValidIBAN(value)) {
+      return t('debtPositionCreateWizard.step3.beneficiary.iban.invalid');
+    }
+
+    return undefined;
+  };
+
+  // Validazione per il campo del conto corrente postale
+  const validatePostalAccount = (value: string): string | undefined => {
+    if (!value)
+      return t(
+        'debtPositionCreateWizard.step3.beneficiary.postalAccount.required'
+      );
+
+    if (!isValidPostalAccount(value)) {
+      return t(
+        'debtPositionCreateWizard.step3.beneficiary.postalAccount.invalid'
+      );
+    }
+
+    return undefined;
+  };
+
+  // Validazione per almeno un metodo di pagamento presente (o IBAN o conto postale)
+  const validatePaymentMethod = (
+    iban: string,
+    postalAccount: string
+  ): string | undefined => {
+    // Se entrambi sono vuoti, restituiamo un errore
+    if (
+      (!iban || iban.trim() === '') &&
+      (!postalAccount || postalAccount.trim() === '')
+    ) {
+      return t('debtPositionCreateWizard.step3.beneficiary.iban.required');
+    }
+
+    return undefined;
+  };
+
+  return {
+    validateBeneficiaryTaxCode,
+    validateIBAN,
+    validatePostalAccount,
+    validatePaymentMethod
   };
 };

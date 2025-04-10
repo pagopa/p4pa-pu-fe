@@ -7,6 +7,7 @@ import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { useTranslation } from 'react-i18next';
 import Step2AddDebtor from './components/Step2AddDebtor';
 import Step3 from './components/Step3';
+import { BeneficiaryData } from './components/BeneficiaryField';
 
 type Step1Data = {
   debtPositionType: {
@@ -81,6 +82,7 @@ type Step3Data = {
     readonly: boolean;
   };
   flagMandatoryDueDate: boolean;
+  beneficiaries?: Array<BeneficiaryData>; // Array di beneficiari
 };
 
 type FormData = {
@@ -207,7 +209,8 @@ const DebtPositionCreateWizard = () => {
         value: false,
         readonly: false
       },
-      flagMandatoryDueDate: false
+      flagMandatoryDueDate: false,
+      beneficiaries: [] // Inizializzato come array vuoto
     }
   });
 
