@@ -9,8 +9,6 @@ describe('ExportFlowContainer', () => {
   beforeEach(() => {
     mockOnSelectChange = vi.fn();
     formData = {
-      from: '',
-      to: '',
       fileVersion: ''
     };
   });
@@ -91,7 +89,9 @@ describe('ExportFlowContainer', () => {
     expect(mockOnSelectChange).toHaveBeenCalledWith('fileVersion', 'version1');
   });
 
-  it('calls onSelectChange when an input field is modified', () => {
+  it('renders dateRange', () => {
+    const DateRangeMock = () => <div data-testid="date-range-component" />;
+
     render(
       <ExportFlowContainer
         section={[
@@ -101,31 +101,15 @@ describe('ExportFlowContainer', () => {
               icon: <span data-testid="icon" />,
               label: 'commons.paymentDate'
             },
-            inputFields: [
-              {
-                label: 'commons.from',
-                fieldKey: 'from',
-                required: true
-              },
-              {
-                label: 'commons.to',
-                fieldKey: 'to',
-                required: true
-              }
-            ]
+            inputFields: [{ fieldKey: 'dateRange', label: '' }],
+            dateRange: <DateRangeMock />
           }
         ]}
-        formData={formData}
-        onSelectChange={mockOnSelectChange}
+        formData={{}}
+        onSelectChange={vi.fn()}
       />
     );
 
-    const inputsDate = screen.getAllByRole('textbox');
-
-    fireEvent.change(inputsDate[0], { target: { value: '10/10/2025' } });
-    fireEvent.change(inputsDate[1], { target: { value: '20/10/2025' } });
-
-    expect(mockOnSelectChange).toHaveBeenCalledWith('from', '10/10/2025');
-    expect(mockOnSelectChange).toHaveBeenCalledWith('to', '20/10/2025');
+    expect(screen.getByTestId('date-range-component')).toBeDefined();
   });
 });

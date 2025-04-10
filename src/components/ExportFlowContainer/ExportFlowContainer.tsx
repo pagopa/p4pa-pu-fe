@@ -34,6 +34,7 @@ type ExportFlowContainerProps = {
       label: string;
       value: string | number;
     }>;
+    dateRange?: React.ReactNode;
   }>;
   formData: Record<string, string>;
   onSelectChange: (field: string, value: string) => void;
@@ -46,6 +47,74 @@ const ExportFlowContainer = ({
 }: ExportFlowContainerProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
+
+  type SectionItem = ExportFlowContainerProps['section'][number];
+
+  const renderFields = (item: SectionItem): JSX.Element => {
+    if (item.dateRange) {
+      return <React.Fragment>{item.dateRange}</React.Fragment>;
+    }
+
+    if (item.selectOptions) {
+      return (
+        <React.Fragment>
+          {item.inputFields.map((field, index) => (
+            <FormControl key={index} fullWidth size="small">
+              <InputLabel
+                required={field?.required}
+                id={`select-label-${index}`}
+              >
+                {field.label}
+              </InputLabel>
+              <Select
+                fullWidth
+                required={field?.required}
+                labelId={`select-label-${index}`}
+                value={formData[field?.fieldKey || ''] ?? ''}
+                onChange={(event) =>
+                  onSelectChange(field?.fieldKey ?? '', event.target.value)
+                }
+                label={field.label}
+              >
+                {item?.selectOptions?.map((option, index) => (
+                  <MenuItem key={index} value={option.value}>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          ))}
+        </React.Fragment>
+      );
+    }
+
+    return (
+      <React.Fragment>
+        <Grid container direction="row" spacing={2}>
+          {item.inputFields.map((field, index) => (
+            <Grid item lg={field.gridWidth} key={index}>
+              <TextField
+                required={field?.required}
+                sx={{ bgcolor: theme.palette.common.white }}
+                fullWidth
+                size="small"
+                InputProps={{
+                  endAdornment: field.icon ? (
+                    <InputAdornment position="end">{field.icon}</InputAdornment>
+                  ) : undefined
+                }}
+                label={field.label}
+                value={formData[field?.fieldKey || ''] ?? ''}
+                onChange={(event) =>
+                  onSelectChange(field?.fieldKey ?? '', event.target.value)
+                }
+              />
+            </Grid>
+          ))}
+        </Grid>
+      </React.Fragment>
+    );
+  };
 
   return (
     <Box
@@ -95,66 +164,7 @@ const ExportFlowContainer = ({
             </Grid>
             <Grid container spacing={2}>
               <Grid item lg={12}>
-                {item.selectOptions ? (
-                  item.inputFields.map((field, index) => (
-                    <FormControl key={index} fullWidth size="small">
-                      <InputLabel
-                        required={field?.required}
-                        id={`select-label-${index}`}
-                      >
-                        {field.label}
-                      </InputLabel>
-                      <Select
-                        fullWidth
-                        required={field?.required}
-                        labelId={`select-label-${index}`}
-                        value={formData[field?.fieldKey || ''] ?? ''}
-                        onChange={(event) =>
-                          onSelectChange(
-                            field?.fieldKey ?? '',
-                            event.target.value
-                          )
-                        }
-                        label={field.label}
-                      >
-                        {item.selectOptions &&
-                          item.selectOptions.map((option, index) => (
-                            <MenuItem key={index} value={option.value}>
-                              {option.label}
-                            </MenuItem>
-                          ))}
-                      </Select>
-                    </FormControl>
-                  ))
-                ) : (
-                  <Grid container direction={'row'} spacing={2}>
-                    {item.inputFields.map((field, index) => (
-                      <Grid item lg={field.gridWidth} key={index}>
-                        <TextField
-                          required={field?.required}
-                          sx={{ bgcolor: theme.palette.common.white }}
-                          fullWidth
-                          size="small"
-                          InputProps={{
-                            endAdornment: field.icon ? (
-                              <InputAdornment position="end">
-                                {field.icon}
-                              </InputAdornment>
-                            ) : undefined
-                          }}
-                          label={field.label}
-                          value={formData[field?.fieldKey || ''] ?? ''}
-                          onChange={(event) =>
-                            onSelectChange(
-                              field?.fieldKey ?? '',
-                              event.target.value
-                            )
-                          }
-                        />
-                      </Grid>
-                    ))}
-                  </Grid>
-                )}
+                {renderFields(item)}
               </Grid>
             </Grid>
           </Grid>
