@@ -35,7 +35,7 @@ const mockOptionData: PaymentOptionDisplayData = {
       status: 'UNPAID',
       chip: {
         label: 'Unpaid',
-        color: 'info',
+        color: 'info'
       }
     },
     {
@@ -47,7 +47,7 @@ const mockOptionData: PaymentOptionDisplayData = {
       status: 'REPORTED',
       chip: {
         label: 'Reported',
-        color: 'success',
+        color: 'success'
       }
     }
   ]
@@ -155,7 +155,7 @@ describe('PaymentOptionSection Component', () => {
           status: 'PAID',
           chip: {
             label: 'Paid',
-            color: 'success',
+            color: 'success'
           }
         },
         {
@@ -167,7 +167,7 @@ describe('PaymentOptionSection Component', () => {
           status: 'UNPAID',
           chip: {
             label: 'Unpaid',
-            color: 'info',
+            color: 'info'
           }
         },
         {
@@ -179,7 +179,7 @@ describe('PaymentOptionSection Component', () => {
           status: 'OTHER',
           chip: {
             label: 'Other Status',
-            color: 'default',
+            color: 'default'
           }
         }
       ]
