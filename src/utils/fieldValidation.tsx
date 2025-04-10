@@ -379,7 +379,8 @@ export const createBeneficiaryFieldValidators = (
 ) => {
   // Validazione per il campo del codice fiscale
   const validateBeneficiaryTaxCode = (value: string): string | undefined => {
-    if (!value) return undefined; // Il campo non è richiesto
+    if (!value)
+      return t('debtPositionCreateWizard.step3.beneficiary.taxCode.required');
 
     // Verifica sia codice fiscale che partita IVA
     const normalizedValue = value.replace(/\s/g, '').toUpperCase();
@@ -406,10 +407,7 @@ export const createBeneficiaryFieldValidators = (
 
   // Validazione per il campo del conto corrente postale
   const validatePostalAccount = (value: string): string | undefined => {
-    if (!value)
-      return t(
-        'debtPositionCreateWizard.step3.beneficiary.postalAccount.required'
-      );
+    if (!value) return undefined; // Non è obbligatorio se è presente l'IBAN
 
     if (!isValidPostalAccount(value)) {
       return t(
@@ -430,7 +428,9 @@ export const createBeneficiaryFieldValidators = (
       (!iban || iban.trim() === '') &&
       (!postalAccount || postalAccount.trim() === '')
     ) {
-      return t('debtPositionCreateWizard.step3.beneficiary.iban.required');
+      return t(
+        'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
+      );
     }
 
     return undefined;

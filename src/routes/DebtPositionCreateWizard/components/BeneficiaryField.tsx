@@ -382,6 +382,9 @@ function BeneficiaryField<T extends FieldValues>({
                 name={getFieldPath(index, 'taxCode')}
                 control={control}
                 rules={{
+                  required: t(
+                    'debtPositionCreateWizard.step3.beneficiary.taxCode.required'
+                  ),
                   validate: {
                     taxCodeFormat: fieldValidators.validateBeneficiaryTaxCode
                   }
@@ -393,6 +396,7 @@ function BeneficiaryField<T extends FieldValues>({
                     label={t(
                       'debtPositionCreateWizard.step3.beneficiary.taxCode.label'
                     )}
+                    required
                     disabled={disabled}
                     error={hasTaxCodeError(index)}
                     helperText={getTaxCodeErrorMessage(index)}

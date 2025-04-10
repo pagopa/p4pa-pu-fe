@@ -462,7 +462,10 @@
         },
         "addBeneficiary": "Aggiungi beneficiario",
         "amountMustBeLessThanTotal": "L'importo del beneficiario deve essere minore dell'importo totale",
-        "sumMustBeLessThanTotal": "La somma degli importi dei beneficiari deve essere minore dell'importo totale"
+        "sumMustBeLessThanTotal": "La somma degli importi dei beneficiari deve essere minore dell'importo totale",
+        "paymentMethod": {
+          "required": "Uno tra i campi IBAN o conto corrente postale è obbligatorio"
+        }
       }
     },
     "wizardStepper": {
