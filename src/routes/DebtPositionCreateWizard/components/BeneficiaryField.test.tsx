@@ -183,27 +183,27 @@ vi.mock('@mui/material', () => ({
     onClick?: () => void;
     startIcon?: React.ReactNode;
     disabled?: boolean;
-  }) => (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      data-testid="add-beneficiary-button"
-    >
-      {startIcon && <span>{startIcon}</span>}
-      {children}
-    </button>
-  ),
-  IconButton: ({
-    children,
-    onClick
-  }: {
-    children: React.ReactNode;
-    onClick?: () => void;
-  }) => (
-    <button onClick={onClick} data-testid="delete-beneficiary-button">
-      {children}
-    </button>
-  ),
+  }) => {
+    // Determina quale data-testid usare in base al contenuto del bottone
+    let testId = 'button';
+
+    // Controllo se è un pulsante di eliminazione o di aggiunta
+    if (children === 'commons.delete') {
+      testId = 'delete-beneficiary-button';
+    } else if (
+      typeof children === 'string' &&
+      children.includes('addBeneficiary')
+    ) {
+      testId = 'add-beneficiary-button';
+    }
+
+    return (
+      <button onClick={onClick} disabled={disabled} data-testid={testId}>
+        {startIcon && <span>{startIcon}</span>}
+        {children}
+      </button>
+    );
+  },
   Divider: () => <hr data-testid="divider" />,
   InputAdornment: ({
     children,

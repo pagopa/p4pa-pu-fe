@@ -21,7 +21,6 @@ import {
   Paper,
   Box,
   Button,
-  IconButton,
   Divider
 } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
@@ -355,13 +354,20 @@ function BeneficiaryField<T extends FieldValues>({
                 {t('debtPositionCreateWizard.step3.beneficiary.title')}
               </Typography>
             </Box>
-            <IconButton
+            <Button
               onClick={() => removeBeneficiary(index)}
-              size="small"
-              sx={{ position: 'absolute', top: 8, right: 8 }}
+              startIcon={<DeleteOutlineIcon />}
+              color="error"
+              variant="text"
+              sx={{
+                position: 'absolute',
+                top: 8,
+                right: 8,
+                minWidth: 'auto'
+              }}
             >
-              <DeleteOutlineIcon color="error" />
-            </IconButton>
+              {t('commons.delete')}
+            </Button>
           </Box>
 
           <Grid container spacing={2}>
