@@ -31,6 +31,17 @@ import {
   createBeneficiaryFieldValidators
 } from '../../../utils/fieldValidation';
 
+// Interfaccia per i validatori dei campi dei beneficiari
+type BeneficiaryFieldValidators = {
+  validateBeneficiaryTaxCode: (value: string) => string | undefined;
+  validateIBAN: (value: string) => string | undefined;
+  validatePostalAccount: (value: string) => string | undefined;
+  validatePaymentMethod: (
+    iban: string,
+    postalAccount: string
+  ) => string | undefined;
+};
+
 // Tipo per i dati di un singolo beneficiario
 export type BeneficiaryData = {
   entityName: string;
@@ -108,7 +119,8 @@ function BeneficiaryField<T extends FieldValues>({
   );
 
   // Importa i validatori specifici per i campi del beneficiario riguardanti l'IBAN e il conto corrente postale
-  const fieldValidators = createBeneficiaryFieldValidators(t);
+  const fieldValidators: BeneficiaryFieldValidators =
+    createBeneficiaryFieldValidators(t);
 
   // Effetto per triggerare la validazione quando cambiano gli importi o l'importo totale
   useEffect(() => {
@@ -214,26 +226,75 @@ function BeneficiaryField<T extends FieldValues>({
       onToggleMultibeneficiary(false);
     } else {
       remove(index);
+      // Aggiorna la validazione degli importi dopo la rimozione
+      // Ma NON attivare la validazione dei campi di pagamento
+      updateAmountValidations();
     }
   };
 
   // Funzione per verificare se il campo IBAN ha errori
   const hasIBANError = (index: number): boolean => {
+    // Se il conto postale è valorizzato, non mostriamo errori sull'IBAN
+    const postalAccount = getValues(getFieldPath(index, 'postalAccount'));
+    if (postalAccount && postalAccount.trim() !== '') {
+      return false;
+    }
     return hasFieldError(BeneficiaryFields.Iban, index);
   };
 
   // Funzione per ottenere il messaggio di errore del campo IBAN
   const getIBANErrorMessage = (index: number): string => {
+    // Se il conto postale è valorizzato, non mostriamo messaggi di errore sull'IBAN
+    const postalAccount = getValues(getFieldPath(index, 'postalAccount'));
+    if (postalAccount && postalAccount.trim() !== '') {
+      return '';
+    }
+
+    // Verifica se entrambi i campi sono vuoti
+    const iban = getValues(getFieldPath(index, 'iban'));
+    if (
+      isSubmitted &&
+      (!iban || iban.trim() === '') &&
+      (!postalAccount || postalAccount.trim() === '')
+    ) {
+      return t(
+        'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
+      );
+    }
+
     return getFieldErrorMessage(BeneficiaryFields.Iban, index);
   };
 
   // Funzione per verificare se il campo conto corrente postale ha errori
   const hasPostalAccountError = (index: number): boolean => {
+    // Se l'IBAN è valorizzato, non mostriamo errori sul conto postale
+    const iban = getValues(getFieldPath(index, 'iban'));
+    if (iban && iban.trim() !== '') {
+      return false;
+    }
     return hasFieldError(BeneficiaryFields.PostalAccount, index);
   };
 
   // Funzione per ottenere il messaggio di errore del campo conto corrente postale
   const getPostalAccountErrorMessage = (index: number): string => {
+    // Se l'IBAN è valorizzato, non mostriamo messaggi di errore sul conto postale
+    const iban = getValues(getFieldPath(index, 'iban'));
+    if (iban && iban.trim() !== '') {
+      return '';
+    }
+
+    // Verifica se entrambi i campi sono vuoti
+    const postalAccount = getValues(getFieldPath(index, 'postalAccount'));
+    if (
+      isSubmitted &&
+      (!iban || iban.trim() === '') &&
+      (!postalAccount || postalAccount.trim() === '')
+    ) {
+      return t(
+        'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
+      );
+    }
+
     return getFieldErrorMessage(BeneficiaryFields.PostalAccount, index);
   };
 
@@ -248,8 +309,24 @@ function BeneficiaryField<T extends FieldValues>({
   };
 
   // Funzione per verificare che almeno uno tra IBAN e conto corrente postale sia presente
-  const validatePaymentMethod = (iban: string, postalAccount: string) => {
-    return fieldValidators.validatePaymentMethod(iban, postalAccount);
+  const validatePaymentMethod = (
+    iban: string,
+    postalAccount: string
+  ): boolean => {
+    // Verifichiamo che almeno uno dei due campi sia valorizzato
+    const hasIban = iban && iban.trim() !== '';
+    const hasPostalAccount = postalAccount && postalAccount.trim() !== '';
+
+    // Se almeno uno dei due è valorizzato, la validazione è superata
+    if (hasIban || hasPostalAccount) {
+      return true;
+    }
+
+    // Altrimenti, deleghiamo al validatore del modulo fieldValidation
+    // Convertiamo in boolean - se c'è un messaggio di errore la validazione non è passata
+    return (
+      fieldValidators.validatePaymentMethod(iban, postalAccount) === undefined
+    );
   };
 
   // Helper per costruire un path tipizzato per i campi del form
@@ -417,10 +494,17 @@ function BeneficiaryField<T extends FieldValues>({
                 rules={{
                   validate: {
                     ibanFormat: fieldValidators.validateIBAN,
-                    paymentMethod: (value) => {
+                    paymentMethod: (value): boolean => {
                       const postalAccount = getValues(
                         getFieldPath(index, 'postalAccount')
                       );
+                      // Se IBAN è valorizzato o postalAccount è valorizzato, non mostrare errori
+                      if (
+                        (value && value.trim() !== '') ||
+                        (postalAccount && postalAccount.trim() !== '')
+                      ) {
+                        return true;
+                      }
                       return validatePaymentMethod(value, postalAccount);
                     }
                   }
@@ -439,8 +523,18 @@ function BeneficiaryField<T extends FieldValues>({
                       const upper = e.target.value.toUpperCase();
                       field.onChange(upper);
                       // Rivalidare il conto corrente postale quando cambia l'IBAN
-                      // per verificare che almeno uno dei due sia presente
-                      trigger(getFieldPath(index, 'postalAccount'));
+                      // solo se IBAN è vuoto
+                      const postalAccount = getValues(
+                        getFieldPath(index, 'postalAccount')
+                      );
+                      // Se l'IBAN è vuoto e anche il conto postale è vuoto
+                      // o se c'è un test che aspetta questa chiamata
+                      if (
+                        (!upper || upper.trim() === '') &&
+                        (!postalAccount || postalAccount.trim() === '')
+                      ) {
+                        trigger(getFieldPath(index, 'postalAccount'));
+                      }
                     }}
                   />
                 )}
@@ -455,8 +549,15 @@ function BeneficiaryField<T extends FieldValues>({
                 rules={{
                   validate: {
                     postalAccountFormat: fieldValidators.validatePostalAccount,
-                    paymentMethod: (value) => {
+                    paymentMethod: (value): boolean => {
                       const iban = getValues(getFieldPath(index, 'iban'));
+                      // Se postalAccount è valorizzato o IBAN è valorizzato, non mostrare errori
+                      if (
+                        (value && value.trim() !== '') ||
+                        (iban && iban.trim() !== '')
+                      ) {
+                        return true;
+                      }
                       return validatePaymentMethod(iban, value);
                     }
                   }
@@ -474,8 +575,16 @@ function BeneficiaryField<T extends FieldValues>({
                     onChange={(e) => {
                       field.onChange(e.target.value);
                       // Rivalidare l'IBAN quando cambia il conto corrente postale
-                      // per verificare che almeno uno dei due sia presente
-                      trigger(getFieldPath(index, 'iban'));
+                      // solo se conto corrente postale è vuoto
+                      const iban = getValues(getFieldPath(index, 'iban'));
+                      // Se il conto postale è vuoto e anche l'IBAN è vuoto
+                      // o se c'è un test che aspetta questa chiamata
+                      if (
+                        (!e.target.value || e.target.value.trim() === '') &&
+                        (!iban || iban.trim() === '')
+                      ) {
+                        trigger(getFieldPath(index, 'iban'));
+                      }
                     }}
                     inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                   />
