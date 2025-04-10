@@ -98,4 +98,52 @@ describe('useDateRange', () => {
       startOfDay(new Date('2025-01-01'))
     );
   });
+
+  it('should validate correctly with setFromDateToday and setToDateToday using valid dates', () => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    const { result } = renderHook(() => useDateRange(0));
+
+    act(() => {
+      result.current.setFromDateToday(yesterday);
+      result.current.setToDateToday(today);
+    });
+
+    expect(result.current.fromDate).toEqual(endOfDay(yesterday));
+    expect(result.current.toDate).toEqual(endOfDay(today));
+    expect(result.current.isButtonDisabled).toBe(false);
+  });
+
+  it('should set error if fromDateToday is after toDate', () => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const { result } = renderHook(() => useDateRange(0));
+
+    act(() => {
+      result.current.setToDateToday(today);
+      result.current.setFromDateToday(tomorrow);
+    });
+
+    expect(result.current.fromDate).toEqual(endOfDay(tomorrow));
+    expect(result.current.isButtonDisabled).toBe(true);
+  });
+  it('should set error if toDateToday is after today', () => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const { result } = renderHook(() => useDateRange(0));
+
+    act(() => {
+      result.current.setFromDateToday(today);
+      result.current.setToDateToday(tomorrow);
+    });
+
+    expect(result.current.toDate).toEqual(endOfDay(tomorrow));
+    expect(result.current.isButtonDisabled).toBe(true);
+  });
 });

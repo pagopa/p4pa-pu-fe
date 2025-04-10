@@ -1,39 +1,42 @@
 import utils from '../utils';
 import { act, renderHook } from '../__tests__/renderers';
-import { createExportFile } from './createExportFile';
 import { describe, expect, it, vi } from 'vitest';
 import {
-  ExportFileRequestDTO,
-  ExportFileTypeEnum
+  ExportFileTypeEnum,
+  PaidExportFileRequestDTO
 } from '../../generated/apiClient';
+import { createPaidExportFile } from './createExportFile';
 
 vi.mock('../utils', () => ({
   default: {
     apiClient: {
       bff: {
-        createExportFile: vi.fn()
+        createPaidExportFile: vi.fn()
       }
     }
   }
 }));
 
-const mockCreateExportFile = vi.mocked(utils.apiClient.bff.createExportFile);
+const mockCreateExportFile = vi.mocked(
+  utils.apiClient.bff.createPaidExportFile
+);
 
-describe('createExportFile', () => {
-  it('calls createExportFile with correct parameters', async () => {
-    const mockRequestData: ExportFileRequestDTO = {
+describe('createPaidExportFile', () => {
+  it('calls createPaidExportFile with correct parameters', async () => {
+    const mockRequestData: PaidExportFileRequestDTO = {
       organizationId: 123,
       exportFileType: ExportFileTypeEnum.PAID,
-      fileVersion: '1.0',
+      fileVersion: 'v1.0',
       filterFields: {
         paymentDate: {
           from: '2024-01-01',
           to: '2024-12-31'
-        }
+        },
+        debtPositionTypeOrgId: 1
       }
     };
 
-    const { result } = renderHook(() => createExportFile());
+    const { result } = renderHook(() => createPaidExportFile());
 
     await act(async () => {
       await result.current.mutateAsync({ data: mockRequestData });
@@ -46,20 +49,20 @@ describe('createExportFile', () => {
   });
 
   it('handles error correctly', async () => {
-    const mockError = new Error('Create export failed');
+    const mockError = new Error('Create paid export failed');
     mockCreateExportFile.mockRejectedValueOnce(mockError);
 
-    const requestData: ExportFileRequestDTO = {
+    const requestData: PaidExportFileRequestDTO = {
       organizationId: 123,
       exportFileType: ExportFileTypeEnum.PAID,
-      fileVersion: '1.0',
+      fileVersion: 'v1.0',
       filterFields: {}
     };
 
-    const { result } = renderHook(() => createExportFile());
+    const { result } = renderHook(() => createPaidExportFile());
 
     await expect(
       result.current.mutateAsync({ data: requestData })
-    ).rejects.toThrow('Create export failed');
+    ).rejects.toThrow('Create paid export failed');
   });
 });
