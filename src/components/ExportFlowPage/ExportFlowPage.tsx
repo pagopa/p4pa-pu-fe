@@ -11,10 +11,10 @@ import { useStore } from '../../store/GlobalStore';
 import { useDateRange } from '../../hooks/useDateRange';
 import { FormComponent } from '../FormComponent';
 import {
-  ExportFileRequestDTO,
-  ExportFileTypeEnum
+  ExportFileTypeEnum,
+  PaidExportFileRequestDTO
 } from '../../../generated/apiClient';
-import { createExportFile } from '../../api/createExportFile';
+import { createPaidExportFile } from '../../api/createExportFile';
 
 export const ExportFlowPage = () => {
   const { t } = useTranslation();
@@ -35,8 +35,8 @@ export const ExportFlowPage = () => {
   const {
     fromDate,
     toDate,
-    setFromDate,
-    setToDate,
+    setFromDateToday,
+    setToDateToday,
     setFromError,
     setToError,
     isButtonDisabled
@@ -53,17 +53,15 @@ export const ExportFlowPage = () => {
 
   const selectOptionsFileVersion =
     category === 'conservation'
-      ? [{ label: '1.0', value: '1.0' }]
+      ? [{ label: '1.0', value: 'v1.0' }]
       : [
-          { label: '1.0', value: '1.0' },
-          { label: '1.1', value: '1.1' },
-          { label: '1.2', value: '1.2' },
-          { label: '1.3', value: '1.3' }
+          { label: '1.0', value: 'v1.0' },
+          { label: '1.1', value: 'v1.1' },
+          { label: '1.2', value: 'v1.2' },
+          { label: '1.3', value: 'v1.3' }
         ];
 
-  //TODO add API
-  const createExportReceipt = createExportFile();
-  const createExportConservation = createExportFile();
+  const createExportReceipt = createPaidExportFile();
 
   const handleExportClick = () => {
     if (!formData.fileVersion || !fromDate || !toDate) return;
@@ -72,7 +70,7 @@ export const ExportFlowPage = () => {
     const formattedTo = new Date(toDate).toISOString().split('T')[0];
 
     if (category === 'receipt') {
-      const exportRequest: ExportFileRequestDTO = {
+      const exportRequest: PaidExportFileRequestDTO = {
         organizationId,
         exportFileType: ExportFileTypeEnum.PAID,
         fileVersion: formData.fileVersion,
@@ -81,7 +79,9 @@ export const ExportFlowPage = () => {
             from: formattedFrom,
             to: formattedTo
           },
-          ...(formData.dueType && { debtPositionTypeCode: formData.dueType })
+          ...(formData.dueType && {
+            debtPositionTypeOrgId: Number(formData.dueType)
+          })
         }
       };
 
@@ -97,34 +97,6 @@ export const ExportFlowPage = () => {
           },
           onError: (error) => {
             console.error('Errore export receipt:', error);
-          }
-        }
-      );
-    } else if (category === 'conservation') {
-      const exportRequest: ExportFileRequestDTO = {
-        organizationId,
-        exportFileType: ExportFileTypeEnum.PAYMENTS_REPORTING,
-        fileVersion: formData.fileVersion,
-        filterFields: {
-          paymentDate: {
-            from: formattedFrom,
-            to: formattedTo
-          }
-        }
-      };
-
-      createExportConservation.mutate(
-        { data: exportRequest },
-        {
-          onSuccess: () => {
-            navigate(
-              generatePath(PageRoutes.RESPONSES_THANKYOU, {
-                category: 'conservation'
-              })
-            );
-          },
-          onError: (error) => {
-            console.error('Errore export conservation:', error);
           }
         }
       );
@@ -151,12 +123,14 @@ export const ExportFlowPage = () => {
                 required
                 from={{
                   value: fromDate,
-                  onChange: setFromDate,
+                  todayValue: new Date(),
+                  onChange: setFromDateToday,
                   errorMessage: t('dates.validations.from')
                 }}
                 to={{
                   value: toDate,
-                  onChange: setToDate,
+                  todayValue: new Date(),
+                  onChange: setToDateToday,
                   errorMessage: t('dates.validations.to')
                 }}
                 onFromErrorChange={setFromError}
