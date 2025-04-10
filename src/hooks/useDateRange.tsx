@@ -42,10 +42,12 @@ export const useDateRange = (tabIndex: number, prefilled = true) => {
     updateField('from', value);
 
     const currentTo = state[tabIndex].to;
-    const error: DateValidationError | null =
-      value && currentTo && value > currentTo ? 'invalidDate' : null;
+    const isFromAfterTo = value && currentTo && value > currentTo;
 
-    updateField('toError', error);
+    const error: DateValidationError | null =
+      value === null || isFromAfterTo ? 'invalidDate' : null;
+
+    updateField('fromError', error);
   };
 
   const setToDate = (d: Date | null) => {
@@ -55,8 +57,44 @@ export const useDateRange = (tabIndex: number, prefilled = true) => {
     updateField('to', value);
 
     const currentFrom = state[tabIndex].from;
+    const isToBeforeFrom = currentFrom && value && currentFrom > value;
+
     const error: DateValidationError | null =
-      currentFrom && value && currentFrom > value ? 'invalidDate' : null;
+      value === null || isToBeforeFrom ? 'invalidDate' : null;
+
+    updateField('toError', error);
+  };
+
+  const setFromDateToday = (d: Date | null) => {
+    const value = d
+      ? endOfDay(new Date(d.getFullYear(), d.getMonth(), d.getDate()))
+      : null;
+    updateField('from', value);
+
+    const currentTo = state[tabIndex].to;
+    const isFromAfterTo = value && currentTo && value > currentTo;
+    const isFromAfterToday = value && value > endOfDay(new Date());
+
+    const error: DateValidationError | null =
+      value === null || isFromAfterTo || isFromAfterToday
+        ? 'invalidDate'
+        : null;
+
+    updateField('fromError', error);
+  };
+
+  const setToDateToday = (d: Date | null) => {
+    const value = d
+      ? endOfDay(new Date(d.getFullYear(), d.getMonth(), d.getDate()))
+      : null;
+    updateField('to', value);
+
+    const currentFrom = state[tabIndex].from;
+    const isToBeforeFrom = currentFrom && value && currentFrom > value;
+    const isToAfterToday = value && value > endOfDay(new Date());
+
+    const error: DateValidationError | null =
+      value === null || isToBeforeFrom || isToAfterToday ? 'invalidDate' : null;
 
     updateField('toError', error);
   };
@@ -76,7 +114,9 @@ export const useDateRange = (tabIndex: number, prefilled = true) => {
     fromDate: state[tabIndex].from,
     toDate: state[tabIndex].to,
     setFromDate,
+    setFromDateToday,
     setToDate,
+    setToDateToday,
     setFromError: (err: DateValidationError | null) =>
       updateField('fromError', err),
     setToError: (err: DateValidationError | null) =>
