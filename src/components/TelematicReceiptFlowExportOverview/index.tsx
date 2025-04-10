@@ -1,2 +1,0 @@
-import TelematicReceiptFlowExportOverview from './TelematicReceiptFlowExportOverview';
-export default TelematicReceiptFlowExportOverview;
