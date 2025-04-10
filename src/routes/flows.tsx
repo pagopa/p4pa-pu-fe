@@ -7,7 +7,6 @@ import Reporting from './Reporting';
 import ReportingImportFlowOverview from './ReportingImportFlowOverview';
 import ReportingSearchResults from './ReportingSearchResults';
 import TelematicReceipt from './TelematicReceipt';
-import TelematicReceiptFlowExportOverview from './TelematicReceiptFlowExportOverview';
 import TelematicReceiptImportFlowOverview from './TelematicReceiptImportFlowOverview';
 import TelematicReceiptSearchResults from './TelematicReceiptSearchResults';
 import Treasury from './Treasury';
@@ -17,6 +16,7 @@ import TelematicReceiptDetail from './TelematicReceiptDetail';
 import TreasuryDetail from './TreasuryDetail';
 import ReportingDetail from './ReportingDetail/ReportingDetail';
 import ReportingPaymentDetail from './ReportingPaymentDetail';
+import TelematicReceiptFlowExportOverview from './TelematicReceiptFlowExportOverview/TelematicReceiptFlowExportOverview';
 
 const deployPath = config.deployPath;
 

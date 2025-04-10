@@ -18,56 +18,46 @@ describe('useDateRange', () => {
 
   it('should initialize with default range (1 month ago to today)', () => {
     const { result } = renderHook(() => useDateRange(0));
-
     expect(result.current.fromDate).toEqual(startOfDay(oneMonthAgo));
     expect(result.current.toDate).toEqual(endOfDay(today));
     expect(result.current.isButtonDisabled).toBe(false);
   });
 
+  it('should initialize with null date if prefilled is false', () => {
+    const { result } = renderHook(() => useDateRange(0, false));
+    expect(result.current.fromDate).toBeNull();
+    expect(result.current.toDate).toBeNull();
+    expect(result.current.isButtonDisabled).toBe(true);
+  });
+
   it('should update fromDate and validate correctly', () => {
     const { result } = renderHook(() => useDateRange(0));
-
     const newFrom = new Date('2025-03-01');
-
-    act(() => {
-      result.current.setFromDate(newFrom);
-    });
-
+    act(() => result.current.setFromDate(newFrom));
     expect(result.current.fromDate).toEqual(startOfDay(newFrom));
     expect(result.current.isButtonDisabled).toBe(false);
   });
 
   it('should update toDate and validate correctly', () => {
     const { result } = renderHook(() => useDateRange(0));
-
     const newTo = new Date('2025-03-10');
-
-    act(() => {
-      result.current.setToDate(newTo);
-    });
-
+    act(() => result.current.setToDate(newTo));
     expect(result.current.toDate).toEqual(endOfDay(newTo));
     expect(result.current.isButtonDisabled).toBe(false);
   });
 
   it('should set toError if from > to', () => {
     const { result } = renderHook(() => useDateRange(0));
-
-    act(() => {
-      result.current.setFromDate(new Date('2025-03-25'));
-    });
-
+    act(() => result.current.setFromDate(new Date('2025-03-25')));
     expect(result.current.isButtonDisabled).toBe(true);
   });
 
   it('should handle null values', () => {
     const { result } = renderHook(() => useDateRange(0));
-
     act(() => {
       result.current.setFromDate(null);
       result.current.setToDate(null);
     });
-
     expect(result.current.fromDate).toBeNull();
     expect(result.current.toDate).toBeNull();
     expect(result.current.isButtonDisabled).toBe(true);
@@ -75,7 +65,6 @@ describe('useDateRange', () => {
 
   it('should reset to default dates and clear errors', () => {
     const { result } = renderHook(() => useDateRange(0));
-
     act(() => {
       result.current.setFromDate(new Date('2025-01-01'));
       result.current.setToDate(new Date('2025-01-10'));
@@ -97,11 +86,9 @@ describe('useDateRange', () => {
   it('should keep separate state tab index', () => {
     const { result } = renderHook(() => useDateRange(0));
     const { result: result2 } = renderHook(() => useDateRange(1));
-
     act(() => {
       result.current.setFromDate(new Date('2025-02-01'));
     });
-
     act(() => {
       result2.current.setFromDate(new Date('2025-01-01'));
     });
@@ -110,5 +97,53 @@ describe('useDateRange', () => {
     expect(result2.current.fromDate).toEqual(
       startOfDay(new Date('2025-01-01'))
     );
+  });
+
+  it('should validate correctly with setFromDateToday and setToDateToday using valid dates', () => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    const { result } = renderHook(() => useDateRange(0));
+
+    act(() => {
+      result.current.setFromDateToday(yesterday);
+      result.current.setToDateToday(today);
+    });
+
+    expect(result.current.fromDate).toEqual(endOfDay(yesterday));
+    expect(result.current.toDate).toEqual(endOfDay(today));
+    expect(result.current.isButtonDisabled).toBe(false);
+  });
+
+  it('should set error if fromDateToday is after toDate', () => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const { result } = renderHook(() => useDateRange(0));
+
+    act(() => {
+      result.current.setToDateToday(today);
+      result.current.setFromDateToday(tomorrow);
+    });
+
+    expect(result.current.fromDate).toEqual(endOfDay(tomorrow));
+    expect(result.current.isButtonDisabled).toBe(true);
+  });
+  it('should set error if toDateToday is after today', () => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+
+    const { result } = renderHook(() => useDateRange(0));
+
+    act(() => {
+      result.current.setFromDateToday(today);
+      result.current.setToDateToday(tomorrow);
+    });
+
+    expect(result.current.toDate).toEqual(endOfDay(tomorrow));
+    expect(result.current.isButtonDisabled).toBe(true);
   });
 });
