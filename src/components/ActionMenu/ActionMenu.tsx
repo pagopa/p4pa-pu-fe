@@ -39,6 +39,7 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
         aria-controls={open ? `menu-${rowId}` : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
+        data-testid={`action-menu-${rowId}`}
       >
         <MoreVert />
       </IconButton>

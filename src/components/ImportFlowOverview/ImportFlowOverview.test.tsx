@@ -1,6 +1,9 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useNavigate, generatePath } from 'react-router-dom';
-import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
+import {
+  downloadIngestionFlowFile,
+  getIngestionFlowFiles
+} from '../../api/ingestionFlowFiles';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../App';
@@ -25,7 +28,8 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
     TREASURY_XLS: 'TREASURY_XLS',
     TREASURY_POSTE: 'TREASURY_POSTE',
     DP_INSTALLMENTS: 'DP_INSTALLMENTS'
-  }
+  },
+  downloadIngestionFlowFile: vi.fn()
 }));
 
 describe('TelematicReceiptImportFlowOverview', () => {
@@ -828,5 +832,108 @@ describe('TelematicReceiptImportFlowOverview', () => {
         'No rows'
       );
     });
+  });
+
+  it('calls downloadIngestionFlowFile when download button is clicked', async () => {
+    const mockDownloadIngestionFlowFile = vi.fn();
+
+    // Override the mock implementation
+    (downloadIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
+      mockDownloadIngestionFlowFile
+    );
+
+    const { container } = render(
+      <FlowOverview
+        routingCategory={'test'}
+        title={'test title'}
+        description={'test description'}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
+      />
+    );
+
+    await waitFor(() => {
+      // Find a row with UPLOADED status (which should have download button)
+      const uploadedRow = mockData.content.find(
+        (row) => row.status === 'UPLOADED'
+      );
+      expect(uploadedRow).toBeDefined();
+
+      if (uploadedRow) {
+        // Find the download button
+        const downloadButton = container.querySelector(
+          '[data-testid="download-button"]'
+        );
+        expect(downloadButton).toBeDefined();
+
+        // Click the download button
+        fireEvent.click(downloadButton!);
+
+        // Verify the download function was called with correct params
+        expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
+          123, // organizationId set in beforeEach
+          uploadedRow.ingestionFlowFileId
+        );
+      }
+    });
+  });
+
+  it('calls downloadIngestionFlowFile when menu download option is clicked', async () => {
+    const mockDownloadIngestionFlowFile = vi.fn();
+
+    // Override the mock implementation
+    (downloadIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
+      mockDownloadIngestionFlowFile
+    );
+
+    render(
+      <FlowOverview
+        routingCategory={'test'}
+        title={'test title'}
+        description={'test description'}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
+      />
+    );
+
+    // Wait for the grid to load
+    await waitFor(() => {
+      expect(screen.getByText('test title')).toBeDefined();
+    });
+
+    // Find a row with COMPLETED status (which should have action menu)
+    const completedRow = mockData.content.find(
+      (row) => row.status === 'COMPLETED'
+    );
+    expect(completedRow).toBeDefined();
+
+    if (completedRow) {
+      // Wait for grid to be fully rendered with data
+      await waitFor(() => {
+        // Find and click the action menu button
+        const actionMenuButton = screen.getByTestId(
+          `action-menu-${completedRow.ingestionFlowFileId}`
+        );
+        expect(actionMenuButton).toBeDefined();
+        fireEvent.click(actionMenuButton);
+      });
+
+      // Now that the menu is open, find and click the "Imported Files" menu item
+      await waitFor(() => {
+        const menuItems = screen.getAllByRole('menuitem');
+        expect(menuItems.length).toBeGreaterThan(0);
+
+        // Get the first menu item (which should be the "commons.files.imported" option)
+        const downloadMenuItem = menuItems[0];
+        expect(downloadMenuItem).toBeDefined();
+
+        // Click the menu item
+        fireEvent.click(downloadMenuItem);
+      });
+
+      // Verify the download function was called with correct params
+      expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
+        123, // organizationId set in beforeEach
+        completedRow.ingestionFlowFileId
+      );
+    }
   });
 });

@@ -73,3 +73,36 @@ export const uploadIngestionFlowFile = ({
       return response;
     }
   });
+
+export const downloadIngestionFlowFile = async (
+  organizationId: number,
+  ingestionFlowFileId: number
+) => {
+  const response =
+    await utils.fileshareClient.organization.downloadIngestionFlowFile(
+      organizationId,
+      ingestionFlowFileId
+    );
+
+  // Create a blob URL for the file
+  const blob = new Blob([response.data]);
+  const url = window.URL.createObjectURL(blob);
+
+  // Try to get filename from response headers or use a default
+  const contentDisposition = response.headers['content-disposition'];
+  const fileName = contentDisposition
+    ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
+    : `downloaded-file-${ingestionFlowFileId}`;
+
+  // Create an invisible link element and simulate a click to start the download
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', fileName);
+  link.style.display = 'none';
+  link.click();
+
+  // Cleanup
+  setTimeout(() => {
+    window.URL.revokeObjectURL(url);
+  }, 100);
+};
