@@ -1,17 +1,24 @@
 import { useMutation } from '@tanstack/react-query';
-import { ExportFileRequestDTO, RequestParams } from '../../generated/apiClient';
+import {
+  PaidExportFileRequestDTO,
+  RequestParams
+} from '../../generated/apiClient';
 import utils from '../utils';
 
-export const createExportFile = () =>
+export const createPaidExportFile = () =>
   useMutation({
-    mutationKey: ['createExportFile'],
+    mutationKey: ['createPaidExportFile'],
     mutationFn: async ({
       data,
       params
     }: {
-      data: ExportFileRequestDTO;
+      data: PaidExportFileRequestDTO;
       params?: RequestParams;
     }) => {
-      await utils.apiClient.bff.createExportFile(data, params);
+      const response = await utils.apiClient.bff.createPaidExportFile(
+        data,
+        params
+      );
+      return response;
     }
   });
