@@ -528,7 +528,6 @@ function BeneficiaryField<T extends FieldValues>({
                         getFieldPath(index, 'postalAccount')
                       );
                       // Se l'IBAN è vuoto e anche il conto postale è vuoto
-                      // o se c'è un test che aspetta questa chiamata
                       if (
                         (!upper || upper.trim() === '') &&
                         (!postalAccount || postalAccount.trim() === '')
@@ -578,7 +577,6 @@ function BeneficiaryField<T extends FieldValues>({
                       // solo se conto corrente postale è vuoto
                       const iban = getValues(getFieldPath(index, 'iban'));
                       // Se il conto postale è vuoto e anche l'IBAN è vuoto
-                      // o se c'è un test che aspetta questa chiamata
                       if (
                         (!e.target.value || e.target.value.trim() === '') &&
                         (!iban || iban.trim() === '')
