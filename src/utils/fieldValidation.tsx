@@ -120,7 +120,7 @@ export const createAmountValidator = (t: (key: string) => string) => {
  * @returns true se la somma è inferiore all'importo totale, false altrimenti
  */
 export const isBeneficiariesTotalValid = (
-  beneficiaries: Array<any>,
+  beneficiaries: Array<{ amount: string }>,
   totalAmount: string
 ): boolean => {
   if (!totalAmount || beneficiaries.length === 0) return true;
@@ -151,7 +151,7 @@ export const isBeneficiariesTotalValid = (
  */
 export const createBeneficiaryValidators = (
   t: (key: string) => string,
-  getValues: any,
+  getValues: <T>(fieldName: string) => T,
   fieldNamePrefix: string,
   totalAmount: string
 ) => {
@@ -159,13 +159,17 @@ export const createBeneficiaryValidators = (
   const isValidTotalAmount = () => {
     if (!totalAmount) return true;
 
-    const beneficiaries = getValues(fieldNamePrefix) || [];
+    const beneficiaries =
+      getValues<Array<{ amount: string }>>(fieldNamePrefix) || [];
     if (beneficiaries.length === 0) return true;
 
-    const sum = beneficiaries.reduce((acc: number, curr: any) => {
-      const amount = parseFloat(curr.amount) || 0;
-      return acc + amount;
-    }, 0);
+    const sum = beneficiaries.reduce(
+      (acc: number, curr: { amount: string }) => {
+        const amount = parseFloat(curr.amount) || 0;
+        return acc + amount;
+      },
+      0
+    );
 
     return sum < parseFloat(totalAmount);
   };
@@ -174,7 +178,8 @@ export const createBeneficiaryValidators = (
   const isSingleBeneficiaryAmountValid = (hasSingleBeneficiary: boolean) => {
     if (!hasSingleBeneficiary || !totalAmount) return true;
 
-    const beneficiary = getValues(fieldNamePrefix)?.[0];
+    const beneficiary =
+      getValues<Array<{ amount: string }>>(fieldNamePrefix)?.[0];
     if (!beneficiary) return true;
 
     const beneficiaryAmount = parseFloat(beneficiary.amount) || 0;
@@ -187,13 +192,17 @@ export const createBeneficiaryValidators = (
   const validateTotalAmount = () => {
     if (!totalAmount) return true;
 
-    const beneficiaries = getValues(fieldNamePrefix) || [];
+    const beneficiaries =
+      getValues<Array<{ amount: string }>>(fieldNamePrefix) || [];
     if (beneficiaries.length === 0) return true;
 
-    const sum = beneficiaries.reduce((acc: number, curr: any) => {
-      const amount = parseFloat(curr.amount) || 0;
-      return acc + amount;
-    }, 0);
+    const sum = beneficiaries.reduce(
+      (acc: number, curr: { amount: string }) => {
+        const amount = parseFloat(curr.amount) || 0;
+        return acc + amount;
+      },
+      0
+    );
 
     return (
       sum < parseFloat(totalAmount) ||
@@ -221,7 +230,8 @@ export const createBeneficiaryValidators = (
     index: number,
     hasSingleBeneficiary: boolean
   ) => {
-    const beneficiaries = getValues(fieldNamePrefix) || [];
+    const beneficiaries =
+      getValues<Array<{ amount: string }>>(fieldNamePrefix) || [];
     const beneficiary = beneficiaries[index];
 
     if (!beneficiary || !beneficiary.amount) return true;

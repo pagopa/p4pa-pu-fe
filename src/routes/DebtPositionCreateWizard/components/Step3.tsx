@@ -18,7 +18,10 @@ import { formatDate } from '../../../utils/formatters';
 import { useNavigate } from 'react-router';
 import config from '../../../utils/config';
 import { useEffect } from 'react';
-import BeneficiaryField, { BeneficiaryData } from './BeneficiaryField';
+import BeneficiaryField, {
+  BeneficiaryData,
+  BeneficiaryFormValues
+} from './BeneficiaryField';
 import {
   createAmountValidator,
   isBeneficiariesTotalValid
@@ -41,13 +44,12 @@ type Props = {
   onBack: () => void;
 };
 
-type FormValues = {
+type FormValues = BeneficiaryFormValues & {
   paymentObject: { value: string; readonly: boolean };
   paymentOption: { value: string; readonly: boolean };
   amount: { value: string; readonly: boolean };
   dueDate: { value: Date | null; readonly: boolean };
   isMultibeneficiary: { value: boolean; readonly: boolean };
-  beneficiaries?: Array<BeneficiaryData>; // Array di beneficiari
 };
 
 const Step3 = ({ data, setData, onBack }: Props) => {
@@ -327,11 +329,12 @@ const Step3 = ({ data, setData, onBack }: Props) => {
               {/* Componente Enti Beneficiari - visibile solo quando isMultibeneficiary è true */}
               {isMultibeneficiary && (
                 <Grid item xs={12} mt={2}>
-                  <BeneficiaryField
+                  <BeneficiaryField<FormValues>
                     control={control}
                     errors={errors}
                     isSubmitted={isSubmitted}
                     totalAmount={totalAmount}
+                    fieldNamePrefix="beneficiaries"
                     disabled={false}
                     setValue={setValue}
                     getValues={getValues}

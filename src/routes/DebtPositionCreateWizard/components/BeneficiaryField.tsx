@@ -1,5 +1,17 @@
 import { useEffect } from 'react';
-import { Control, Controller, useFieldArray } from 'react-hook-form';
+import {
+  Control,
+  Controller,
+  useFieldArray,
+  UseFormGetValues,
+  UseFormSetValue,
+  UseFormTrigger,
+  FieldErrors,
+  Path,
+  FieldValues,
+  FieldArrayPath,
+  PathValue
+} from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import {
   Grid,
@@ -29,31 +41,40 @@ export type BeneficiaryData = {
   taxonomyCode: string;
 };
 
-type BeneficiaryFieldProps = {
-  control: Control<any>;
-  isSubmitted: boolean;
-  errors: any;
-  totalAmount: string;
-  fieldNamePrefix?: string;
-  disabled?: boolean;
-  setValue: any;
-  getValues: any;
-  trigger: any;
-  onToggleMultibeneficiary?: (value: boolean) => void;
+// Tipo base per il form che contiene almeno i beneficiari
+export type BeneficiaryFormValues = {
+  beneficiaries: Array<BeneficiaryData>;
+};
+
+// Helper type per accedere ai campi dei beneficiari in modo tipizzato
+type BeneficiaryFieldPath<T extends FieldValues> = FieldArrayPath<T>;
+
+// Tipo generico per props che può estendere BeneficiaryFormValues con altri campi
+type BeneficiaryFieldProps<T extends FieldValues> = {
+  readonly control: Control<T>;
+  readonly isSubmitted: boolean;
+  readonly errors: FieldErrors<T>;
+  readonly totalAmount: string;
+  readonly fieldNamePrefix: BeneficiaryFieldPath<T>;
+  readonly disabled?: boolean;
+  readonly setValue: UseFormSetValue<T>;
+  readonly getValues: UseFormGetValues<T>;
+  readonly trigger: UseFormTrigger<T>;
+  readonly onToggleMultibeneficiary?: (value: boolean) => void;
 };
 
 // Componente per la gestione dei dati di un ente beneficiario
-const BeneficiaryField = ({
+function BeneficiaryField<T extends FieldValues>({
   control,
   isSubmitted,
   errors,
   totalAmount,
-  fieldNamePrefix = 'beneficiaries',
+  fieldNamePrefix,
   disabled = false,
   getValues,
   trigger,
   onToggleMultibeneficiary
-}: BeneficiaryFieldProps) => {
+}: BeneficiaryFieldProps<T>) {
   const { t } = useTranslation();
   const MAX_BENEFICIARIES = 4;
 
@@ -79,23 +100,52 @@ const BeneficiaryField = ({
 
   // Effetto per triggerare la validazione quando cambiano gli importi o l'importo totale
   useEffect(() => {
-    // Triggeriamo la validazione quando cambiano gli importi o l'importo totale
-    trigger(fieldNamePrefix);
-  }, [trigger, fieldNamePrefix, getValues(fieldNamePrefix), totalAmount]);
+    // Aggiorna la validazione dei campi esistenti
+    fields.forEach((_, index) => {
+      trigger(`${fieldNamePrefix}.${index}` as Path<T>);
+    });
+  }, [trigger, fieldNamePrefix, fields, totalAmount]);
 
   // Funzione per aggiornare la validazione di tutti i campi
   const updateAllValidations = () => {
-    trigger(fieldNamePrefix);
+    fields.forEach((_, index) => {
+      trigger(`${fieldNamePrefix}.${index}` as Path<T>);
+    });
   };
 
-  // Funzione per verificare se un campo ha errori
-  const hasFieldError = (fieldName: string, index: number): boolean => {
-    return isSubmitted && !!errors?.beneficiaries?.[index]?.[fieldName];
+  // Funzione per verificare se un campo ha errori in modo type-safe
+  const hasFieldError = (
+    fieldName: keyof BeneficiaryData,
+    index: number
+  ): boolean => {
+    // Accediamo in modo sicuro agli errori del form con la struttura corretta
+    return (
+      isSubmitted &&
+      !!(
+        errors[fieldNamePrefix] as unknown as Record<
+          number,
+          FieldErrors<BeneficiaryData>
+        >
+      )?.[index]?.[fieldName]
+    );
   };
 
-  // Funzione per ottenere il messaggio di errore di un campo
-  const getFieldErrorMessage = (fieldName: string, index: number): string => {
-    return isSubmitted && errors?.beneficiaries?.[index]?.[fieldName]?.message;
+  // Funzione per ottenere il messaggio di errore di un campo in modo type-safe
+  const getFieldErrorMessage = (
+    fieldName: keyof BeneficiaryData,
+    index: number
+  ): string => {
+    // Accediamo in modo sicuro ai messaggi di errore con la struttura corretta
+    return (
+      (isSubmitted &&
+        ((
+          errors[fieldNamePrefix] as unknown as Record<
+            number,
+            FieldErrors<BeneficiaryData>
+          >
+        )?.[index]?.[fieldName]?.message as string)) ||
+      ''
+    );
   };
 
   // Funzione per verificare se il campo amount ha errori
@@ -125,18 +175,21 @@ const BeneficiaryField = ({
     return '';
   };
 
-  // Aggiungi un nuovo beneficiario
+  // Aggiungi un nuovo beneficiario con tipizzazione sicura
   const addBeneficiary = () => {
     if (fields.length < MAX_BENEFICIARIES) {
       // Aggiungi il nuovo beneficiario con importo vuoto
-      append({
+      const newBeneficiary: BeneficiaryData = {
         entityName: '',
         amount: '',
         taxCode: '',
         iban: '',
         postalAccount: '',
         taxonomyCode: ''
-      });
+      };
+      append(
+        newBeneficiary as unknown as PathValue<T, BeneficiaryFieldPath<T>>
+      );
     }
   };
 
@@ -191,6 +244,14 @@ const BeneficiaryField = ({
     return fieldValidators.validatePaymentMethod(iban, postalAccount);
   };
 
+  // Helper per costruire un path tipizzato per i campi del form
+  const getFieldPath = <K extends keyof BeneficiaryData>(
+    index: number,
+    field: K
+  ): Path<T> => {
+    return `${fieldNamePrefix}.${index}.${field}` as Path<T>;
+  };
+
   return (
     <Box>
       {fields.map((field, index) => (
@@ -222,7 +283,7 @@ const BeneficiaryField = ({
             {/* Nome ente */}
             <Grid item xs={12}>
               <Controller
-                name={`${fieldNamePrefix}.${index}.entityName`}
+                name={getFieldPath(index, 'entityName')}
                 control={control}
                 rules={{
                   required: t(
@@ -248,7 +309,7 @@ const BeneficiaryField = ({
             {/* Importo */}
             <Grid item xs={12}>
               <Controller
-                name={`${fieldNamePrefix}.${index}.amount`}
+                name={getFieldPath(index, 'amount')}
                 control={control}
                 rules={{
                   required: t(
@@ -307,7 +368,7 @@ const BeneficiaryField = ({
             {/* Codice Fiscale */}
             <Grid item xs={12}>
               <Controller
-                name={`${fieldNamePrefix}.${index}.taxCode`}
+                name={getFieldPath(index, 'taxCode')}
                 control={control}
                 rules={{
                   validate: {
@@ -336,14 +397,14 @@ const BeneficiaryField = ({
             {/* IBAN */}
             <Grid item xs={12}>
               <Controller
-                name={`${fieldNamePrefix}.${index}.iban`}
+                name={getFieldPath(index, 'iban')}
                 control={control}
                 rules={{
                   validate: {
                     ibanFormat: fieldValidators.validateIBAN,
                     paymentMethod: (value) => {
                       const postalAccount = getValues(
-                        `${fieldNamePrefix}.${index}.postalAccount`
+                        getFieldPath(index, 'postalAccount')
                       );
                       return validatePaymentMethod(index, value, postalAccount);
                     }
@@ -364,7 +425,7 @@ const BeneficiaryField = ({
                       field.onChange(upper);
                       // Rivalidare il conto corrente postale quando cambia l'IBAN
                       // per verificare che almeno uno dei due sia presente
-                      trigger(`${fieldNamePrefix}.${index}.postalAccount`);
+                      trigger(getFieldPath(index, 'postalAccount'));
                     }}
                   />
                 )}
@@ -374,15 +435,13 @@ const BeneficiaryField = ({
             {/* Conto Corrente Postale */}
             <Grid item xs={12}>
               <Controller
-                name={`${fieldNamePrefix}.${index}.postalAccount`}
+                name={getFieldPath(index, 'postalAccount')}
                 control={control}
                 rules={{
                   validate: {
                     postalAccountFormat: fieldValidators.validatePostalAccount,
                     paymentMethod: (value) => {
-                      const iban = getValues(
-                        `${fieldNamePrefix}.${index}.iban`
-                      );
+                      const iban = getValues(getFieldPath(index, 'iban'));
                       return validatePaymentMethod(index, iban, value);
                     }
                   }
@@ -401,7 +460,7 @@ const BeneficiaryField = ({
                       field.onChange(e.target.value);
                       // Rivalidare l'IBAN quando cambia il conto corrente postale
                       // per verificare che almeno uno dei due sia presente
-                      trigger(`${fieldNamePrefix}.${index}.iban`);
+                      trigger(getFieldPath(index, 'iban'));
                     }}
                     inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                   />
@@ -412,7 +471,7 @@ const BeneficiaryField = ({
             {/* Codice Tassonomico */}
             <Grid item xs={12}>
               <Controller
-                name={`${fieldNamePrefix}.${index}.taxonomyCode`}
+                name={getFieldPath(index, 'taxonomyCode')}
                 control={control}
                 rules={{
                   required: t(
@@ -460,6 +519,6 @@ const BeneficiaryField = ({
       ))}
     </Box>
   );
-};
+}
 
 export default BeneficiaryField;
