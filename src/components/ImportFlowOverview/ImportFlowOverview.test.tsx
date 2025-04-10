@@ -4,6 +4,7 @@ import {
   downloadIngestionFlowFile,
   getIngestionFlowFiles
 } from '../../api/ingestionFlowFiles';
+import { downloadBlob } from '../../utils/download';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../App';
@@ -30,6 +31,10 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
     DP_INSTALLMENTS: 'DP_INSTALLMENTS'
   },
   downloadIngestionFlowFile: vi.fn()
+}));
+
+vi.mock('../../utils/download', () => ({
+  downloadBlob: vi.fn()
 }));
 
 describe('TelematicReceiptImportFlowOverview', () => {
@@ -834,12 +839,18 @@ describe('TelematicReceiptImportFlowOverview', () => {
     });
   });
 
-  it('calls downloadIngestionFlowFile when download button is clicked', async () => {
-    const mockDownloadIngestionFlowFile = vi.fn();
+  it('calls downloadIngestionFlowFile and downloadBlob when download button is clicked', async () => {
+    const mockDownloadIngestionFlowFile = vi.fn().mockResolvedValue({
+      data: new Blob(['test content']),
+      fileName: 'test-file.csv'
+    });
+    const mockDownloadBlob = vi.fn();
 
-    // Override the mock implementation
     (downloadIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
       mockDownloadIngestionFlowFile
+    );
+    (downloadBlob as ReturnType<typeof vi.fn>).mockImplementation(
+      mockDownloadBlob
     );
 
     const { container } = render(
@@ -851,38 +862,52 @@ describe('TelematicReceiptImportFlowOverview', () => {
       />
     );
 
+    const uploadedRow = mockData.content.find(
+      (row) => row.status === 'UPLOADED'
+    );
+
+    expect(uploadedRow).toBeDefined();
+
     await waitFor(() => {
-      // Find a row with UPLOADED status (which should have download button)
-      const uploadedRow = mockData.content.find(
-        (row) => row.status === 'UPLOADED'
+      const downloadButton = container.querySelector(
+        '[data-testid="download-button"]'
       );
-      expect(uploadedRow).toBeDefined();
+      expect(downloadButton).toBeDefined();
+      return true;
+    });
 
-      if (uploadedRow) {
-        // Find the download button
-        const downloadButton = container.querySelector(
-          '[data-testid="download-button"]'
-        );
-        expect(downloadButton).toBeDefined();
+    const downloadButton = container.querySelector(
+      '[data-testid="download-button"]'
+    );
 
-        // Click the download button
-        fireEvent.click(downloadButton!);
+    fireEvent.click(downloadButton!);
 
-        // Verify the download function was called with correct params
-        expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
-          123, // organizationId set in beforeEach
-          uploadedRow.ingestionFlowFileId
-        );
-      }
+    expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
+      123,
+      uploadedRow!.ingestionFlowFileId
+    );
+
+    await waitFor(() => {
+      expect(mockDownloadBlob).toHaveBeenCalledWith(
+        expect.any(Blob),
+        'test-file.csv'
+      );
+      return true;
     });
   });
 
-  it('calls downloadIngestionFlowFile when menu download option is clicked', async () => {
-    const mockDownloadIngestionFlowFile = vi.fn();
+  it('calls downloadIngestionFlowFile and downloadBlob when menu download option is clicked', async () => {
+    const mockDownloadIngestionFlowFile = vi.fn().mockResolvedValue({
+      data: new Blob(['test content']),
+      fileName: 'test-file.csv'
+    });
+    const mockDownloadBlob = vi.fn();
 
-    // Override the mock implementation
     (downloadIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
       mockDownloadIngestionFlowFile
+    );
+    (downloadBlob as ReturnType<typeof vi.fn>).mockImplementation(
+      mockDownloadBlob
     );
 
     render(
@@ -894,21 +919,17 @@ describe('TelematicReceiptImportFlowOverview', () => {
       />
     );
 
-    // Wait for the grid to load
     await waitFor(() => {
       expect(screen.getByText('test title')).toBeDefined();
     });
 
-    // Find a row with COMPLETED status (which should have action menu)
     const completedRow = mockData.content.find(
       (row) => row.status === 'COMPLETED'
     );
     expect(completedRow).toBeDefined();
 
     if (completedRow) {
-      // Wait for grid to be fully rendered with data
       await waitFor(() => {
-        // Find and click the action menu button
         const actionMenuButton = screen.getByTestId(
           `action-menu-${completedRow.ingestionFlowFileId}`
         );
@@ -916,24 +937,27 @@ describe('TelematicReceiptImportFlowOverview', () => {
         fireEvent.click(actionMenuButton);
       });
 
-      // Now that the menu is open, find and click the "Imported Files" menu item
       await waitFor(() => {
         const menuItems = screen.getAllByRole('menuitem');
         expect(menuItems.length).toBeGreaterThan(0);
 
-        // Get the first menu item (which should be the "commons.files.imported" option)
         const downloadMenuItem = menuItems[0];
         expect(downloadMenuItem).toBeDefined();
 
-        // Click the menu item
         fireEvent.click(downloadMenuItem);
       });
 
-      // Verify the download function was called with correct params
       expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
-        123, // organizationId set in beforeEach
+        123,
         completedRow.ingestionFlowFileId
       );
+
+      await waitFor(() => {
+        expect(mockDownloadBlob).toHaveBeenCalledWith(
+          expect.any(Blob),
+          'test-file.csv'
+        );
+      });
     }
   });
 });

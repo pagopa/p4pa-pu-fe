@@ -10,6 +10,7 @@ import {
 } from '../../generated/fileshare/fileshareClient';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
+import * as formatters from '../utils/formatters';
 
 vi.mock('../utils', () => ({
   default: {
@@ -22,6 +23,10 @@ vi.mock('../utils', () => ({
   }
 }));
 
+vi.mock('../utils/formatters', () => ({
+  extractFilename: vi.fn()
+}));
+
 const mockUploadIngestionFlowFile = vi.mocked(
   utils.fileshareClient.organization.uploadIngestionFlowFile
 );
@@ -29,6 +34,8 @@ const mockUploadIngestionFlowFile = vi.mocked(
 const mockDownloadIngestionFlowFile = vi.mocked(
   utils.fileshareClient.organization.downloadIngestionFlowFile
 );
+
+const mockExtractFilename = vi.mocked(formatters.extractFilename);
 
 describe('uploadIngestionFlowFile', () => {
   it('uploads file with correct parameters', async () => {
@@ -87,35 +94,18 @@ describe('uploadIngestionFlowFile', () => {
 });
 
 describe('downloadIngestionFlowFile', () => {
-  const originalCreateElement = document.createElement;
-  const mockAnchorElement = {
-    href: '',
-    setAttribute: vi.fn(),
-    style: { display: '' },
-    click: vi.fn()
-  };
-
   beforeEach(() => {
-    vi.useFakeTimers();
-
-    document.createElement = vi.fn(
-      () => mockAnchorElement
-    ) as unknown as typeof document.createElement;
-
-    window.URL.createObjectURL = vi.fn(() => 'blob:mock-url');
-    window.URL.revokeObjectURL = vi.fn();
-
     vi.clearAllMocks();
+    mockExtractFilename.mockImplementation((header) => {
+      if (header.includes('test-file.csv')) {
+        return 'test-file.csv';
+      }
+      return null;
+    });
   });
 
-  afterEach(() => {
-    document.createElement = originalCreateElement;
-
-    vi.useRealTimers();
-  });
-
-  it('downloads file with correct parameters and handles file name from header', async () => {
-    const mockFileData = new Uint8Array([1, 2, 3]).buffer;
+  it('returns blob and filename from response with content-disposition header', async () => {
+    const mockFileData = new Blob(['test data'], { type: 'text/plain' });
     const mockFileName = 'test-file.csv';
 
     mockDownloadIngestionFlowFile.mockResolvedValueOnce({
@@ -125,33 +115,36 @@ describe('downloadIngestionFlowFile', () => {
       }
     } as unknown as AxiosResponse);
 
-    await downloadIngestionFlowFile(123, 456);
+    const result = await downloadIngestionFlowFile(123, 456);
 
-    expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(123, 456);
-
-    expect(document.createElement).toHaveBeenCalledWith('a');
-    expect(mockAnchorElement.href).toBe('blob:mock-url');
-    expect(mockAnchorElement.setAttribute).toHaveBeenCalledWith(
-      'download',
-      mockFileName
+    expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(123, 456, {
+      format: 'blob'
+    });
+    expect(mockExtractFilename).toHaveBeenCalledWith(
+      `attachment; filename="${mockFileName}"`
     );
-    expect(mockAnchorElement.click).toHaveBeenCalled();
-
-    vi.advanceTimersByTime(100);
-    expect(window.URL.revokeObjectURL).toHaveBeenCalledWith('blob:mock-url');
+    expect(result).toEqual({
+      data: mockFileData,
+      fileName: mockFileName
+    });
   });
 
   it('uses default filename when content-disposition header is missing', async () => {
+    const mockFileData = new Blob(['test data'], { type: 'text/plain' });
+
     mockDownloadIngestionFlowFile.mockResolvedValueOnce({
-      data: new ArrayBuffer(10),
+      data: mockFileData,
       headers: {}
-    } as AxiosResponse);
+    } as unknown as AxiosResponse);
 
-    await downloadIngestionFlowFile(123, 456);
+    mockExtractFilename.mockReturnValueOnce(null);
 
-    expect(mockAnchorElement.setAttribute).toHaveBeenCalledWith(
-      'download',
-      'downloaded-file-456'
-    );
+    const result = await downloadIngestionFlowFile(123, 456);
+
+    expect(mockExtractFilename).toHaveBeenCalledWith('');
+    expect(result).toEqual({
+      data: mockFileData,
+      fileName: 'file-456'
+    });
   });
 });

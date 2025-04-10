@@ -9,6 +9,7 @@ import {
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum
 } from '../../generated/apiClient';
+import { extractFilename } from '../utils/formatters';
 
 export const getIngestionFlowFiles = (
   organizationId: number,
@@ -77,32 +78,17 @@ export const uploadIngestionFlowFile = ({
 export const downloadIngestionFlowFile = async (
   organizationId: number,
   ingestionFlowFileId: number
-) => {
+): Promise<{ data: Blob; fileName: string }> => {
   const response =
     await utils.fileshareClient.organization.downloadIngestionFlowFile(
       organizationId,
-      ingestionFlowFileId
+      ingestionFlowFileId,
+      { format: 'blob' }
     );
 
-  // Create a blob URL for the file
-  const blob = new Blob([response.data]);
-  const url = window.URL.createObjectURL(blob);
+  const contentDisposition = response.headers['content-disposition'] || '';
+  const fileName =
+    extractFilename(contentDisposition) || `file-${ingestionFlowFileId}`;
 
-  // Try to get filename from response headers or use a default
-  const contentDisposition = response.headers['content-disposition'];
-  const fileName = contentDisposition
-    ? contentDisposition.split('filename=')[1]?.replace(/"/g, '')
-    : `downloaded-file-${ingestionFlowFileId}`;
-
-  // Create an invisible link element and simulate a click to start the download
-  const link = document.createElement('a');
-  link.href = url;
-  link.setAttribute('download', fileName);
-  link.style.display = 'none';
-  link.click();
-
-  // Cleanup
-  setTimeout(() => {
-    window.URL.revokeObjectURL(url);
-  }, 100);
+  return { data: response.data, fileName };
 };

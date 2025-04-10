@@ -28,6 +28,7 @@ import {
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum
 } from '../../../generated/apiClient';
+import { downloadBlob } from '../../utils/download';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
@@ -66,9 +67,13 @@ const ImportFlowOverview = ({
 
   const { data } = getIngestionFlowFiles(organizationId, appliedFilters);
 
-  const handleDownloadFile = (ingestionFlowFileId: number) => {
+  const handleDownloadFile = async (ingestionFlowFileId: number) => {
     //TODO: handle error
-    downloadIngestionFlowFile(organizationId, ingestionFlowFileId);
+    const { data, fileName } = await downloadIngestionFlowFile(
+      organizationId,
+      ingestionFlowFileId
+    );
+    downloadBlob(data, fileName);
   };
 
   const renderActionCell = (params: GridRenderCellParams) => {
