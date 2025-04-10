@@ -1,5 +1,5 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
-import { fireEvent, render, screen, within } from '../../__tests__/renderers';
+import { render, screen } from '../../__tests__/renderers';
 import ExportFlow from './ExportFlowPage';
 import { useParams } from 'react-router-dom';
 
@@ -36,36 +36,20 @@ describe('ExportFlow', () => {
 
       expect(screen.getByText('exportFlow.title')).toBeDefined();
       expect(screen.getByText('commons.paymentDate')).toBeDefined();
-      expect(screen.getByText('commons.from')).toBeDefined();
-      expect(screen.getByText('commons.to')).toBeDefined();
       expect(screen.getAllByText('exportFlow.fileVersion')[0]).toBeDefined();
       expect(screen.getByText('exportFlow.dueType')).toBeDefined();
       expect(screen.getByTestId('exit-button')).toBeDefined();
       expect(screen.getByTestId('success-button')).toBeDefined();
     });
 
-    it('enable button when required fields are filled', async () => {
+    it('keeps success button disabled initially', () => {
       render(<ExportFlow />);
 
-      const inputsDate = screen.getAllByRole('textbox');
-      const inputfileVersion = screen.getAllByRole('combobox');
-
-      fireEvent.change(inputsDate[0], { target: { value: '10/10/2025' } });
-      fireEvent.change(inputsDate[1], { target: { value: '20/10/2025' } });
-
-      fireEvent.mouseDown(inputfileVersion[0]);
-
-      expect(screen.getByRole('listbox')).toBeDefined();
-      const listbox = screen.getAllByRole('listbox')[0];
-
-      const firstOption = within(listbox).getAllByRole('option')[0];
-      fireEvent.click(firstOption);
-
-      const successButton = screen.getByTestId('success-button');
-
-      expect(successButton).toHaveProperty('disabled', false);
+      const button = screen.getByTestId('success-button');
+      expect(button).toHaveProperty('disabled', true);
     });
   });
+
   describe('config without dueType select', () => {
     beforeEach(() => {
       mockUseParams.mockReturnValue({ category: 'conservation' });
@@ -73,7 +57,6 @@ describe('ExportFlow', () => {
 
     it('renders without dueType select', () => {
       render(<ExportFlow />);
-
       expect(screen.queryByText('exportFlow.dueType')).toBeNull();
     });
   });

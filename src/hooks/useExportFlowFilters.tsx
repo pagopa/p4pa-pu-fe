@@ -1,32 +1,32 @@
-import { useState, useCallback } from 'react';
 import { GridSortModel } from '@mui/x-data-grid';
-import { FlowFileFilters, PaginationParams } from '../models/Filters';
-import { IngestionFlowFileTypeEnum } from '../../generated/apiClient';
+import { useState, useCallback } from 'react';
+import { ExportFileTypeEnum } from '../../generated/apiClient';
+import { ExportFileFilters, PaginationParams } from '../models/Filters';
 
-type UseFlowFiltersProps = {
-  initialFilters?: Partial<FlowFileFilters>;
-  ingestionFlowFileTypes?: Array<IngestionFlowFileTypeEnum>;
-  onFiltersChange?: (filters: FlowFileFilters) => void;
+type UseExportFlowFiltersProps = {
+  initialFilters?: Partial<ExportFileFilters>;
+  exportFileType: ExportFileTypeEnum;
+  onFiltersChange?: (filters: ExportFileFilters) => void;
 };
 
 const DEFAULT_PAGE_SIZE = 10;
 
-export const useFlowFilters = ({
-  ingestionFlowFileTypes,
+export const useExportFlowFilters = ({
+  exportFileType,
   initialFilters,
   onFiltersChange
-}: UseFlowFiltersProps) => {
-  const flowTypes = ingestionFlowFileTypes || [];
-
-  const [appliedFilters, setAppliedFilters] = useState<FlowFileFilters>(() => ({
-    ingestionFlowFileTypes: flowTypes,
-    size: initialFilters?.size || DEFAULT_PAGE_SIZE,
-    page: initialFilters?.page || 0,
-    ...initialFilters
-  }));
+}: UseExportFlowFiltersProps) => {
+  const [appliedFilters, setAppliedFilters] = useState<ExportFileFilters>(
+    () => ({
+      exportFileType,
+      size: initialFilters?.size || DEFAULT_PAGE_SIZE,
+      page: initialFilters?.page || 0,
+      ...initialFilters
+    })
+  );
 
   const [draftFilters, setDraftFilters] =
-    useState<FlowFileFilters>(appliedFilters);
+    useState<ExportFileFilters>(appliedFilters);
 
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
@@ -57,7 +57,7 @@ export const useFlowFilters = ({
   ]);
 
   const updateDraftFilters = useCallback(
-    (updates: Partial<FlowFileFilters>) => {
+    (updates: Partial<ExportFileFilters>) => {
       setDraftFilters((prev) => ({
         ...prev,
         ...updates
