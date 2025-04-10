@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
   Control,
   Controller,
@@ -12,7 +13,6 @@ import {
   FieldArrayPath,
   PathValue
 } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 import {
   Grid,
   TextField,
@@ -63,6 +63,15 @@ type BeneficiaryFieldProps<T extends FieldValues> = {
   readonly onToggleMultibeneficiary?: (value: boolean) => void;
 };
 
+enum BeneficiaryFields {
+  EntityName = 'entityName',
+  Amount = 'amount',
+  TaxCode = 'taxCode',
+  Iban = 'iban',
+  PostalAccount = 'postalAccount',
+  TaxonomyCode = 'taxonomyCode'
+}
+
 // Componente per la gestione dei dati di un ente beneficiario
 function BeneficiaryField<T extends FieldValues>({
   control,
@@ -78,7 +87,10 @@ function BeneficiaryField<T extends FieldValues>({
   const { t } = useTranslation();
   const MAX_BENEFICIARIES = 4;
 
-  // Utilizzo di useFieldArray per gestire un array di beneficiari
+  // Utilizzo di useFieldArray per gestire un array di beneficiari -
+  // fields: l'array dei campi
+  // append: funzione per aggiungere un nuovo elemento
+  // remove: funzione per rimuovere un elemento
   const { fields, append, remove } = useFieldArray({
     control,
     name: fieldNamePrefix
@@ -87,7 +99,7 @@ function BeneficiaryField<T extends FieldValues>({
   // Verifica se c'è un solo beneficiario
   const hasSingleBeneficiary = fields.length === 1;
 
-  // Importa le funzioni di validazione dal modulo fieldValidation
+  // Importa le funzioni di validazione dal modulo fieldValidation riguardanti l'importo dei beneficiari
   const validators = createBeneficiaryValidators(
     t,
     getValues,
@@ -95,7 +107,7 @@ function BeneficiaryField<T extends FieldValues>({
     totalAmount
   );
 
-  // Importa i validatori specifici per i campi del beneficiario
+  // Importa i validatori specifici per i campi del beneficiario riguardanti l'IBAN e il conto corrente postale
   const fieldValidators = createBeneficiaryFieldValidators(t);
 
   // Effetto per triggerare la validazione quando cambiano gli importi o l'importo totale
@@ -106,19 +118,19 @@ function BeneficiaryField<T extends FieldValues>({
     });
   }, [trigger, fieldNamePrefix, fields, totalAmount]);
 
-  // Funzione per aggiornare la validazione di tutti i campi
-  const updateAllValidations = () => {
+  //  Funzione per aggiornare la validazione di tutti i campi importo
+  const updateAmountValidations = () => {
     fields.forEach((_, index) => {
-      trigger(`${fieldNamePrefix}.${index}` as Path<T>);
+      trigger(`${fieldNamePrefix}.${index}.amount` as Path<T>);
     });
   };
 
-  // Funzione per verificare se un campo ha errori in modo type-safe
+  // Funzione per verificare se un campo ha errori
   const hasFieldError = (
-    fieldName: keyof BeneficiaryData,
+    fieldName: BeneficiaryFields,
     index: number
   ): boolean => {
-    // Accediamo in modo sicuro agli errori del form con la struttura corretta
+    // Accediamo agli errori del form
     return (
       isSubmitted &&
       !!(
@@ -130,12 +142,12 @@ function BeneficiaryField<T extends FieldValues>({
     );
   };
 
-  // Funzione per ottenere il messaggio di errore di un campo in modo type-safe
+  // Funzione per ottenere il messaggio di errore di un campo
   const getFieldErrorMessage = (
-    fieldName: keyof BeneficiaryData,
+    fieldName: BeneficiaryFields,
     index: number
   ): string => {
-    // Accediamo in modo sicuro ai messaggi di errore con la struttura corretta
+    // Accediamo ai messaggi di errore
     return (
       (isSubmitted &&
         ((
@@ -151,7 +163,7 @@ function BeneficiaryField<T extends FieldValues>({
   // Funzione per verificare se il campo amount ha errori
   const hasAmountError = (index: number): boolean => {
     return (
-      hasFieldError('amount', index) ||
+      hasFieldError(BeneficiaryFields.Amount, index) ||
       !validators.isBeneficiaryAmountValid(index, hasSingleBeneficiary)
     );
   };
@@ -160,7 +172,7 @@ function BeneficiaryField<T extends FieldValues>({
   const getAmountErrorMessage = (index: number): string => {
     if (!isSubmitted) return '';
     // Errori di validazione standard
-    const standardError = getFieldErrorMessage('amount', index);
+    const standardError = getFieldErrorMessage(BeneficiaryFields.Amount, index);
     if (standardError) return standardError;
     // Errori di validazione personalizzati
     if (!validators.isBeneficiaryAmountValid(index, hasSingleBeneficiary)) {
@@ -175,7 +187,7 @@ function BeneficiaryField<T extends FieldValues>({
     return '';
   };
 
-  // Aggiungi un nuovo beneficiario con tipizzazione sicura
+  // Aggiungi un nuovo beneficiario
   const addBeneficiary = () => {
     if (fields.length < MAX_BENEFICIARIES) {
       // Aggiungi il nuovo beneficiario con importo vuoto
@@ -207,40 +219,36 @@ function BeneficiaryField<T extends FieldValues>({
 
   // Funzione per verificare se il campo IBAN ha errori
   const hasIBANError = (index: number): boolean => {
-    return hasFieldError('iban', index);
+    return hasFieldError(BeneficiaryFields.Iban, index);
   };
 
   // Funzione per ottenere il messaggio di errore del campo IBAN
   const getIBANErrorMessage = (index: number): string => {
-    return getFieldErrorMessage('iban', index);
+    return getFieldErrorMessage(BeneficiaryFields.Iban, index);
   };
 
   // Funzione per verificare se il campo conto corrente postale ha errori
   const hasPostalAccountError = (index: number): boolean => {
-    return hasFieldError('postalAccount', index);
+    return hasFieldError(BeneficiaryFields.PostalAccount, index);
   };
 
   // Funzione per ottenere il messaggio di errore del campo conto corrente postale
   const getPostalAccountErrorMessage = (index: number): string => {
-    return getFieldErrorMessage('postalAccount', index);
+    return getFieldErrorMessage(BeneficiaryFields.PostalAccount, index);
   };
 
   // Funzione per verificare se il campo codice fiscale ha errori
   const hasTaxCodeError = (index: number): boolean => {
-    return hasFieldError('taxCode', index);
+    return hasFieldError(BeneficiaryFields.TaxCode, index);
   };
 
   // Funzione per ottenere il messaggio di errore del campo codice fiscale
   const getTaxCodeErrorMessage = (index: number): string => {
-    return getFieldErrorMessage('taxCode', index);
+    return getFieldErrorMessage(BeneficiaryFields.TaxCode, index);
   };
 
   // Funzione per verificare che almeno uno tra IBAN e conto corrente postale sia presente
-  const validatePaymentMethod = (
-    index: number,
-    iban: string,
-    postalAccount: string
-  ) => {
+  const validatePaymentMethod = (iban: string, postalAccount: string) => {
     return fieldValidators.validatePaymentMethod(iban, postalAccount);
   };
 
@@ -299,8 +307,11 @@ function BeneficiaryField<T extends FieldValues>({
                     )}
                     required
                     disabled={disabled}
-                    error={hasFieldError('entityName', index)}
-                    helperText={getFieldErrorMessage('entityName', index)}
+                    error={hasFieldError(BeneficiaryFields.EntityName, index)}
+                    helperText={getFieldErrorMessage(
+                      BeneficiaryFields.EntityName,
+                      index
+                    )}
                   />
                 )}
               />
@@ -358,7 +369,7 @@ function BeneficiaryField<T extends FieldValues>({
                       const value = e.target.value;
                       field.onChange(value);
                       // Aggiorniamo la validazione di tutti i campi quando cambia un singolo importo
-                      updateAllValidations();
+                      updateAmountValidations();
                     }}
                   />
                 )}
@@ -406,7 +417,7 @@ function BeneficiaryField<T extends FieldValues>({
                       const postalAccount = getValues(
                         getFieldPath(index, 'postalAccount')
                       );
-                      return validatePaymentMethod(index, value, postalAccount);
+                      return validatePaymentMethod(value, postalAccount);
                     }
                   }
                 }}
@@ -442,7 +453,7 @@ function BeneficiaryField<T extends FieldValues>({
                     postalAccountFormat: fieldValidators.validatePostalAccount,
                     paymentMethod: (value) => {
                       const iban = getValues(getFieldPath(index, 'iban'));
-                      return validatePaymentMethod(index, iban, value);
+                      return validatePaymentMethod(iban, value);
                     }
                   }
                 }}
@@ -487,8 +498,11 @@ function BeneficiaryField<T extends FieldValues>({
                     )}
                     required
                     disabled={disabled}
-                    error={hasFieldError('taxonomyCode', index)}
-                    helperText={getFieldErrorMessage('taxonomyCode', index)}
+                    error={hasFieldError(BeneficiaryFields.TaxonomyCode, index)}
+                    helperText={getFieldErrorMessage(
+                      BeneficiaryFields.TaxonomyCode,
+                      index
+                    )}
                   />
                 )}
               />
