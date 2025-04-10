@@ -11,6 +11,7 @@ import Step3 from './components/Step3';
 type Step1Data = {
   debtPositionType: {
     value: string;
+    flagMandatoryDueDate: boolean;
     readonly: boolean;
   };
   description: {
@@ -59,10 +60,27 @@ type Step2Data = {
 };
 
 type Step3Data = {
-  field1: {
+  paymentObject: {
     value: string;
     readonly: boolean;
   };
+  paymentOption: {
+    value: string;
+    readonly: boolean;
+  };
+  amount: {
+    value: string;
+    readonly: boolean;
+  };
+  dueDate: {
+    value: string | null;
+    readonly: boolean;
+  };
+  isMultibeneficiary: {
+    value: boolean;
+    readonly: boolean;
+  };
+  flagMandatoryDueDate: boolean;
 };
 
 type FormData = {
@@ -122,6 +140,7 @@ const DebtPositionCreateWizard = () => {
     step1: {
       debtPositionType: {
         value: '',
+        flagMandatoryDueDate: false,
         readonly: false
       },
       description: {
@@ -168,10 +187,27 @@ const DebtPositionCreateWizard = () => {
       // }
     },
     step3: {
-      field1: {
+      paymentObject: {
         value: '',
         readonly: false
-      }
+      },
+      paymentOption: {
+        value: '',
+        readonly: false
+      },
+      amount: {
+        value: '',
+        readonly: false
+      },
+      dueDate: {
+        value: '',
+        readonly: false
+      },
+      isMultibeneficiary: {
+        value: false,
+        readonly: false
+      },
+      flagMandatoryDueDate: false
     }
   });
 
@@ -194,8 +230,8 @@ const DebtPositionCreateWizard = () => {
     {
       key: 'step3',
       Component: Step3 as React.ComponentType<Step3ComponentProps>,
-      title: t('debtPositionCreateWizard.step3.title'),
-      subtitle: t('debtPositionCreateWizard.step3.subtitle')
+      title: t('debtPositionCreateWizard.configurationAlert.title'),
+      subtitle: t('debtPositionCreateWizard.configurationAlert.subtitle')
     }
   ];
 
@@ -223,9 +259,15 @@ const DebtPositionCreateWizard = () => {
       return (
         <Component
           key={`step-${key}`}
-          data={formData.step3}
+          data={{
+            ...formData.step3,
+            flagMandatoryDueDate:
+              formData.step1.debtPositionType.flagMandatoryDueDate
+          }}
           setData={(data) => setFormData((prev) => ({ ...prev, step3: data }))}
-          onNext={() => setStep(index + 1)}
+          onNext={() => {
+            setStep(index + 1);
+          }}
           onBack={() => setStep(index - 1)}
         />
       );

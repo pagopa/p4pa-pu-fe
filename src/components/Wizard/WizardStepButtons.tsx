@@ -8,6 +8,7 @@ type Props = {
   disableNext?: boolean;
   disableBack?: boolean;
   nextLabel?: string;
+  backLabel?: string;
 };
 
 const WizardStepButtons = ({
@@ -15,9 +16,11 @@ const WizardStepButtons = ({
   onNext,
   disableNext,
   disableBack = false,
-  nextLabel = 'Continua'
+  nextLabel = 'commons.continue',
+  backLabel = 'commons.back'
 }: Props) => {
   const { t } = useTranslation();
+
   return (
     <Box mt={4} display="flex" justifyContent="space-between">
       <Button
@@ -26,10 +29,10 @@ const WizardStepButtons = ({
         disabled={disableBack}
         startIcon={<ArrowBack />}
       >
-        {t('commons.back')}
+        {t(backLabel)}
       </Button>
       <Button variant="contained" onClick={onNext} disabled={disableNext}>
-        {nextLabel}
+        {t(nextLabel)}
       </Button>
     </Box>
   );

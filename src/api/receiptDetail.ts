@@ -7,7 +7,7 @@ export const getReceiptDetail = (
   options = {}
 ) => {
   return useQuery({
-    queryKey: ['receiptdetail'],
+    queryKey: ['receiptDetail', organizationId, receiptId],
     queryFn: async () => {
       const { data: receiptdetail } =
         await utils.apiClient.bff.getReceiptDetail(organizationId, receiptId);
