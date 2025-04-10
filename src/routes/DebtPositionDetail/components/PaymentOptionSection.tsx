@@ -62,7 +62,13 @@ export const PaymentOptionSection = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams) => {
-        return <Chip label={params.row.chip.label} color={params.row.chip.color} variant="outlined" />;
+        return (
+          <Chip
+            label={params.row.chip.label}
+            color={params.row.chip.color}
+            variant="outlined"
+          />
+        );
       }
     },
     {

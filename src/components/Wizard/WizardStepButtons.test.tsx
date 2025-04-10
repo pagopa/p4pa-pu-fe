@@ -7,6 +7,7 @@ vi.mock('react-i18next', () => ({
   useTranslation: vi.fn(() => ({
     t: (key: string) => {
       if (key === 'commons.back') return 'Indietro';
+      if (key === 'commons.continue') return 'Continua';
       return key;
     }
   }))

@@ -9,7 +9,7 @@ export const getDebtPositionTypeDetail = ({
   debtPositionTypeId: number;
 }) =>
   useQuery({
-    queryKey: ['getDebtPositionTypeDetail'],
+    queryKey: ['getDebtPositionTypeDetail', organizationId, debtPositionTypeId],
     queryFn: async () => {
       const { data: response } =
         await utils.apiClient.bff.getDebtPositionTypeDetail(
