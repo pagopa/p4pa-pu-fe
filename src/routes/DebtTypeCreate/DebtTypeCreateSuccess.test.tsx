@@ -7,14 +7,13 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, string>) => {
       if (key === 'debtTypeCreateSuccess.title' && options?.paymentObject) {
-        return `Success creating ${options.paymentObject}`;
+        return `${key} ${options.paymentObject}`;
       }
       return key;
     }
   })
 }));
 
-// Mock react-router
 const mockNavigate = vi.fn();
 vi.mock('react-router', () => ({
   useNavigate: () => mockNavigate,
@@ -29,7 +28,6 @@ vi.mock('react-router', () => ({
   })
 }));
 
-// Mock MUI theme
 vi.mock('@pagopa/mui-italia', () => ({
   theme: {
     palette: {
@@ -41,7 +39,6 @@ vi.mock('@pagopa/mui-italia', () => ({
   }
 }));
 
-// Mock PageRoutes from App
 vi.mock('../../App', () => ({
   PageRoutes: {
     DEBT_TYPES_CATALOG: '/debt-types-catalog'
@@ -61,7 +58,7 @@ describe('DebtTypeCreateSuccess', () => {
 
     // Verify the title includes the debt type name from location state
     expect(
-      screen.getByText('Success creating Test Debt Type')
+      screen.getByText('debtTypeCreateSuccess.title Test Debt Type')
     ).toBeInTheDocument();
 
     // Verify the description is displayed

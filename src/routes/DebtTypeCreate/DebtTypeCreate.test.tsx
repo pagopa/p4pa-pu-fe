@@ -5,14 +5,6 @@ import { Step1Props } from './components/Step1Configuration';
 import { Step2Props } from './components/Step2Settings';
 import { StepperContainerProps } from '../../components/Stepper';
 
-// Mock dependencies
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (key: string) => key
-  })
-}));
-
-// Mock components
 vi.mock('./components/Step1Configuration', () => ({
   Step1Configuration: ({ setData, onNext }: Step1Props) => (
     <div data-testid="step1-configuration">
@@ -54,7 +46,6 @@ vi.mock('./components/Step2Settings', () => ({
   )
 }));
 
-// Mock StepperContainer
 vi.mock('../../components/Stepper', () => ({
   StepperContainer: ({ steps, activeStep }: StepperContainerProps) => (
     <div data-testid="stepper-container">
@@ -64,13 +55,11 @@ vi.mock('../../components/Stepper', () => ({
   )
 }));
 
-// Mock react-router
 const mockNavigate = vi.fn();
 vi.mock('react-router', () => ({
   useNavigate: () => mockNavigate
 }));
 
-// Mock PageRoutes
 vi.mock('../../App', () => ({
   PageRoutes: {
     DEBT_TYPE_CREATE_SUCCESS: '/debt-type-create-success'
