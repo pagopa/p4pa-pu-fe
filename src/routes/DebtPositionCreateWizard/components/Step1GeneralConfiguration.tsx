@@ -150,7 +150,7 @@ const Step1GeneralConfiguration = ({
             />
             <WizardStepButtons
               onBack={onBack}
-              disableBack={true}
+              disableBack={false}
               disableNext={false}
               onNext={handleSubmit(onSubmit)}
             />

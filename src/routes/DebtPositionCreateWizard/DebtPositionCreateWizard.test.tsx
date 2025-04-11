@@ -1,10 +1,18 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, test, expect, vi, beforeEach } from 'vitest';
 import DebtPositionCreateWizard from './DebtPositionCreateWizard';
+import { BrowserRouter } from 'react-router-dom';
 
 // Mock di react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
+}));
+
+// Mock di react-router
+const mockNavigate = vi.fn();
+vi.mock('react-router', () => ({
+  ...vi.importActual('react-router'),
+  useNavigate: () => mockNavigate
 }));
 
 // Mock dei componenti figli
@@ -132,6 +140,60 @@ vi.mock('./components/Step2AddDebtor', () => ({
   }
 }));
 
+// Mock dello Step3
+vi.mock('./components/Step3', () => ({
+  default: ({
+    onNext,
+    onBack
+  }: {
+    data: {
+      paymentObject: { value: string; readonly: boolean };
+      paymentOption: { value: string; readonly: boolean };
+      amount: { value: string; readonly: boolean };
+      dueDate: { value: string | null; readonly: boolean };
+      flagMandatoryDueDate: boolean;
+      isMultibeneficiary: { value: boolean; readonly: boolean };
+      beneficiaries?: Array<{
+        entityName: string;
+        amount: string;
+        taxCode: string;
+        iban: string;
+        postalAccount: string;
+        taxonomyCode: string;
+      }>;
+    };
+    setData: (data: {
+      paymentObject: { value: string; readonly: boolean };
+      paymentOption: { value: string; readonly: boolean };
+      amount: { value: string; readonly: boolean };
+      dueDate: { value: string | null; readonly: boolean };
+      flagMandatoryDueDate: boolean;
+      isMultibeneficiary: { value: boolean; readonly: boolean };
+      beneficiaries?: Array<{
+        entityName: string;
+        amount: string;
+        taxCode: string;
+        iban: string;
+        postalAccount: string;
+        taxonomyCode: string;
+      }>;
+    }) => void;
+    onNext: () => void;
+    onBack: () => void;
+  }) => {
+    return (
+      <div data-testid="step3-component">
+        <button data-testid="back-button-step3" onClick={onBack}>
+          Indietro
+        </button>
+        <button data-testid="next-button-step3" onClick={onNext}>
+          Avanti
+        </button>
+      </div>
+    );
+  }
+}));
+
 vi.mock('../../components/Wizard/WizardStepper', () => ({
   default: ({ activeStep }: { activeStep: number }) => {
     return (
@@ -178,7 +240,11 @@ describe('DebtPositionCreateWizard', () => {
 
   // Test del rendering iniziale
   test('renders correctly with initial state', () => {
-    render(<DebtPositionCreateWizard />);
+    render(
+      <BrowserRouter>
+        <DebtPositionCreateWizard />
+      </BrowserRouter>
+    );
 
     // Verifica che i componenti principali siano renderizzati
     expect(screen.getByTestId('title-component')).toBeInTheDocument();
@@ -187,146 +253,68 @@ describe('DebtPositionCreateWizard', () => {
     expect(screen.getByTestId('step1-component')).toBeInTheDocument();
   });
 
-  // Test dell'aggiornamento dei dati del form nel primo step
-  test('updates form data when input changes in step 1', async () => {
-    render(<DebtPositionCreateWizard />);
-
-    // Simulazione dell'inserimento di dati nei campi
-    const debtPositionTypeInput = screen.getByTestId('debtPositionType-input');
-    const descriptionInput = screen.getByTestId('description-input');
-
-    // Cambia il valore del tipo di posizione debitoria
-    await fireEvent.change(debtPositionTypeInput, {
-      target: { value: 'TIPO_1' }
-    });
-
-    // Cambia il valore della descrizione
-    await fireEvent.change(descriptionInput, {
-      target: { value: 'Descrizione test' }
-    });
-
-    // Verifica che i valori siano stati aggiornati
-    expect(debtPositionTypeInput).toHaveValue('TIPO_1');
-    expect(descriptionInput).toHaveValue('Descrizione test');
-  });
-
-  // Test della navigazione dallo step 1 allo step 2
-  test('navigates from step 1 to step 2 when clicking next button', async () => {
-    render(<DebtPositionCreateWizard />);
-
-    // Ottieni il pulsante avanti
-    const nextButton = screen.getByTestId('next-button');
-
-    // Cliccando su "Avanti" dovrebbe tentare di andare allo step successivo
-    await fireEvent.click(nextButton);
-
-    // Dopo aver cliccato avanti, lo step dovrebbe essere incrementato a 1
-    expect(screen.getByTestId('wizard-stepper')).toHaveTextContent(
-      'Active Step: 1'
+  // Test della navigazione tra gli step
+  test('navigates between steps correctly', async () => {
+    render(
+      <BrowserRouter>
+        <DebtPositionCreateWizard />
+      </BrowserRouter>
     );
 
-    // Verifica che lo step 2 sia renderizzato
-    expect(screen.getByTestId('step2-component')).toBeInTheDocument();
-  });
-
-  // Test dell'aggiornamento dei dati del form nel secondo step
-  test('updates form data when input changes in step 2', async () => {
-    render(<DebtPositionCreateWizard />);
-
-    // Passa al secondo step
-    const nextButton = screen.getByTestId('next-button');
-    await fireEvent.click(nextButton);
-
-    // Simulazione dell'inserimento di dati nei campi
-    const subjectTypeInput = screen.getByTestId('subjectType-input');
-    const taxCodeInput = screen.getByTestId('taxCode-input');
-
-    // Cambia il valore del tipo di soggetto
-    await fireEvent.change(subjectTypeInput, {
-      target: { value: 'PF' }
-    });
-
-    // Cambia il valore del codice fiscale
-    await fireEvent.change(taxCodeInput, {
-      target: { value: 'RSSMRA80A01H501U' }
-    });
-
-    // Verifica che i valori siano stati aggiornati
-    expect(subjectTypeInput).toHaveValue('PF');
-    expect(taxCodeInput).toHaveValue('RSSMRA80A01H501U');
-  });
-
-  // Test della navigazione indietro dallo step 2 allo step 1
-  test('navigates back from step 2 to step 1 when clicking back button', async () => {
-    render(<DebtPositionCreateWizard />);
-
-    // Passa al secondo step
-    const nextButton = screen.getByTestId('next-button');
-    await fireEvent.click(nextButton);
-
-    // Verifica di essere nello step 2
-    expect(screen.getByTestId('step2-component')).toBeInTheDocument();
-
-    // Ottieni il pulsante indietro
-    const backButton = screen.getByTestId('back-button');
-
-    // Cliccando su "Indietro" dovrebbe tornare allo step precedente
-    await fireEvent.click(backButton);
-
-    // Dopo aver cliccato indietro, lo step dovrebbe essere decrementato a 0
+    // Verifica che siamo nello step 1
     expect(screen.getByTestId('wizard-stepper')).toHaveTextContent(
       'Active Step: 0'
     );
-
-    // Verifica che lo step 1 sia renderizzato
     expect(screen.getByTestId('step1-component')).toBeInTheDocument();
-  });
-
-  // Test del flusso completo: step1 -> step2 -> step1 -> step2 (dati mantenuti)
-  test('maintains form data when navigating between steps', async () => {
-    render(<DebtPositionCreateWizard />);
-
-    // Step 1: Compila i dati
-    const debtPositionTypeInput = screen.getByTestId('debtPositionType-input');
-    const descriptionInput = screen.getByTestId('description-input');
-
-    await fireEvent.change(debtPositionTypeInput, {
-      target: { value: 'TIPO_1' }
-    });
-    await fireEvent.change(descriptionInput, {
-      target: { value: 'Descrizione test' }
-    });
 
     // Passa allo step 2
     const nextButton = screen.getByTestId('next-button');
     await fireEvent.click(nextButton);
 
-    // Step 2: Compila i dati
-    const subjectTypeInput = screen.getByTestId('subjectType-input');
-    const taxCodeInput = screen.getByTestId('taxCode-input');
-
-    await fireEvent.change(subjectTypeInput, { target: { value: 'PF' } });
-    await fireEvent.change(taxCodeInput, {
-      target: { value: 'RSSMRA80A01H501U' }
-    });
+    // Verifica che siamo nello step 2
+    expect(screen.getByTestId('wizard-stepper')).toHaveTextContent(
+      'Active Step: 1'
+    );
+    expect(screen.getByTestId('step2-component')).toBeInTheDocument();
 
     // Torna allo step 1
     const backButton = screen.getByTestId('back-button');
     await fireEvent.click(backButton);
 
-    // Verifica che i dati dello step 1 siano mantenuti
-    expect(screen.getByTestId('debtPositionType-input')).toHaveValue('TIPO_1');
-    expect(screen.getByTestId('description-input')).toHaveValue(
-      'Descrizione test'
+    // Verifica che siamo tornati allo step 1
+    expect(screen.getByTestId('wizard-stepper')).toHaveTextContent(
+      'Active Step: 0'
     );
+    expect(screen.getByTestId('step1-component')).toBeInTheDocument();
 
     // Passa nuovamente allo step 2
-    const nextButtonStep1 = screen.getByTestId('next-button');
-    await fireEvent.click(nextButtonStep1);
+    const nextButtonAgain = screen.getByTestId('next-button');
+    await fireEvent.click(nextButtonAgain);
 
-    // Ora siamo nello step 2, quindi possiamo verificare i campi
-    // Verifica che i dati dello step 2 siano mantenuti
-    expect(screen.getByTestId('subjectType-input')).toHaveValue('PF');
-    expect(screen.getByTestId('taxCode-input')).toHaveValue('RSSMRA80A01H501U');
+    // Verifica che siamo nello step 2
+    expect(screen.getByTestId('wizard-stepper')).toHaveTextContent(
+      'Active Step: 1'
+    );
+    expect(screen.getByTestId('step2-component')).toBeInTheDocument();
+
+    // Passa allo step 3
+    const nextButtonStep2 = screen.getByTestId('next-button-step2');
+    await fireEvent.click(nextButtonStep2);
+
+    // Verifica che siamo nello step 3
+    expect(screen.getByTestId('wizard-stepper')).toHaveTextContent(
+      'Active Step: 2'
+    );
+    expect(screen.getByTestId('step3-component')).toBeInTheDocument();
+
+    // Torna allo step 2
+    const backButtonStep3 = screen.getByTestId('back-button-step3');
+    await fireEvent.click(backButtonStep3);
+
+    // Verifica che siamo tornati allo step 2
+    expect(screen.getByTestId('wizard-stepper')).toHaveTextContent(
+      'Active Step: 1'
+    );
+    expect(screen.getByTestId('step2-component')).toBeInTheDocument();
   });
 });

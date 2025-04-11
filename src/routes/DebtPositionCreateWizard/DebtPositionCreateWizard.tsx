@@ -8,6 +8,8 @@ import { useTranslation } from 'react-i18next';
 import Step2AddDebtor from './components/Step2AddDebtor';
 import Step3 from './components/Step3';
 import { BeneficiaryData } from './components/BeneficiaryField';
+import { useNavigate } from 'react-router';
+import config from '../../utils/config';
 
 type Step1Data = {
   debtPositionType: {
@@ -137,6 +139,8 @@ type Step3Config = {
 const DebtPositionCreateWizard = () => {
   const { t } = useTranslation();
   const [step, setStep] = useState(0); // numero di step attivo
+  const navigate = useNavigate();
+  const deployPath = config.deployPath;
   // dati del form in base allo step
   const [formData, setFormData] = useState<FormData>({
     step1: {
@@ -246,6 +250,7 @@ const DebtPositionCreateWizard = () => {
           data={formData.step1}
           setData={(data) => setFormData((prev) => ({ ...prev, step1: data }))}
           onNext={() => setStep(index + 1)}
+          onBack={() => navigate(`${deployPath}/debt-positions/`)}
         />
       );
     } else if (key === 'step2') {
