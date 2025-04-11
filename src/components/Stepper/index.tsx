@@ -24,7 +24,6 @@ export const StepperContainer = ({
             key={step.label}
             display={activeStep === index ? 'flex' : 'none'}
             visibility={activeStep === index ? 'visible' : 'hidden'}
-            aria-hidden={activeStep !== index}
           >
             {step.content}
           </Stack>
