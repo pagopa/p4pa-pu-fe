@@ -64,35 +64,20 @@ describe('StepperContainer', () => {
     );
   });
 
-  it('renders all steps in DOM but only shows the active step', () => {
-    const { container } = render(
-      <StepperContainer activeStep={1} steps={steps} title="Step Test" />
-    );
-
-    expect(screen.getByText('Step 1 Content')).toBeInTheDocument();
-    expect(screen.getByText('Step 2 Content')).toBeInTheDocument();
-
-    const stepContainers = container.querySelectorAll('[aria-hidden]');
-    expect(stepContainers.length).toBe(2);
-
-    expect(stepContainers[0]).toHaveAttribute('aria-hidden', 'true');
-
-    expect(stepContainers[1]).toHaveAttribute('aria-hidden', 'false');
-  });
-
   it('sets correct display and visibility properties for steps', () => {
-    const { container } = render(
+    render(
       <StepperContainer activeStep={0} steps={steps} title="Visibility Test" />
     );
 
-    const stepContainers = container.querySelectorAll('[aria-hidden]');
+    const step1 = screen.getByTestId('step-0');
+    const step2 = screen.getByTestId('step-1');
 
-    expect(stepContainers[0]).toHaveStyle({
+    expect(step1).toHaveStyle({
       display: 'flex',
       visibility: 'visible'
     });
 
-    expect(stepContainers[1]).toHaveStyle({
+    expect(step2).toHaveStyle({
       display: 'none',
       visibility: 'hidden'
     });

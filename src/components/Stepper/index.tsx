@@ -21,6 +21,7 @@ export const StepperContainer = ({
         <StepBar activeStep={activeStep} steps={steps} />
         {steps.map((step, index) => (
           <Stack
+            data-testid={`step-${index}`}
             key={step.label}
             display={activeStep === index ? 'flex' : 'none'}
             visibility={activeStep === index ? 'visible' : 'hidden'}

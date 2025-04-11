@@ -47,11 +47,11 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
       textField: z.string().optional(),
       textArea: z.string().optional()
     })
-    .refine((data) => !data.checkbox2 || (data.checkbox2 && data.textField), {
+    .refine((data) => !data.checkbox2 || data.textField, {
       message: t('debtTypeCreate.settings.subject.required'),
       path: ['textField'] // Targets the textField property
     })
-    .refine((data) => !data.checkbox2 || (data.checkbox2 && data.textArea), {
+    .refine((data) => !data.checkbox2 || data.textArea, {
       message: t('debtTypeCreate.settings.message.required'),
       path: ['textArea']
     });
