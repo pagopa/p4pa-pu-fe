@@ -37,10 +37,10 @@ export const Header = (props: HeaderProps) => {
 
   const jwtUser: JwtUser | undefined = userInfo
     ? {
-      id: userInfo.userId,
-      name: userInfo.name,
-      surname: userInfo.familyName
-    }
+        id: userInfo.userId,
+        name: userInfo.name,
+        surname: userInfo.familyName
+      }
     : undefined;
 
   const organizationsToMenuItems: Array<PartySwitchItem> =

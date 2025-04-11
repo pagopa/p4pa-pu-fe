@@ -67,7 +67,7 @@ const routesDef = [
       {
         id: 'LOGGED_OUT',
         path: `${deployPath}/loggedout`,
-        element: <LoggedOut />,
+        element: <LoggedOut />
       },
       ...flowsRoutes,
       ...importRoutes,

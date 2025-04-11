@@ -3,27 +3,32 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 
 export const LoggedOut = () => {
-    const { t } = useTranslation();
+  const { t } = useTranslation();
 
-    return (
-        <>
-            <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                height="100vh"
-                flexDirection={'column'}
-            >
-                <Typography component="h1" variant="h3" color="textPrimary" gutterBottom>
-                    {t('utilityPages.loggedout.title')}
-                </Typography>
-                <Typography variant="h6" color="textSecondary" gutterBottom>
-                    {t('utilityPages.loggedout.subtitle')}
-                </Typography>
-                <Link to={'/login'}>Login</Link>
-            </Box>
-        </>
-    );
+  return (
+    <>
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+        flexDirection={'column'}
+      >
+        <Typography
+          component="h1"
+          variant="h3"
+          color="textPrimary"
+          gutterBottom
+        >
+          {t('utilityPages.loggedout.title')}
+        </Typography>
+        <Typography variant="h6" color="textSecondary" gutterBottom>
+          {t('utilityPages.loggedout.subtitle')}
+        </Typography>
+        <Link to={'/login'}>Login</Link>
+      </Box>
+    </>
+  );
 };
 
 export default LoggedOut;

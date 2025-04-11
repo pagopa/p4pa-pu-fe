@@ -1,5 +1,5 @@
-import LoggedOut from "./loggedout";
+import LoggedOut from './loggedout';
 
 export default {
-    LoggedOut
+  LoggedOut
 };
