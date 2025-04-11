@@ -4,6 +4,7 @@ import { FilterValues } from '../models/Filters';
 import { OperatoRole } from '../models/OperatorRole';
 import { OrganizationIdMemo } from '../models/Organization';
 import { UserInfo } from '../../generated/data-contracts';
+import { IdTokenPayload } from '../models/IdTokenPayload';
 
 export type State = {
   [STATE.USER_INFO]: UserInfo | undefined;
@@ -13,6 +14,7 @@ export type State = {
   [STATE.SELECTED_FILTERS]: Array<string>;
   [STATE.FILTER_VALUES]: FilterValues;
   [STATE.OPERATOR_ROLE]: OperatoRole | undefined;
+  [STATE.ID_TOKEN]: IdTokenPayload | undefined;
 };
 
 export type StoreContextProps = {
@@ -26,7 +28,8 @@ export enum STATE {
   ORGANIZATION_ID = 'organizationId',
   SELECTED_FILTERS = 'selectedFilters',
   FILTER_VALUES = 'filterValues',
-  OPERATOR_ROLE = 'operatorRole'
+  OPERATOR_ROLE = 'operatorRole',
+  ID_TOKEN = 'idToken'
 }
 
 // Enum per i codici di errore

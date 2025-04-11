@@ -6,14 +6,20 @@ import { setOrganizationId } from '../store/OrganizationIdStore';
 
 export const useOrganizations = () => {
   const {
-    state: { organizationId }
+    state: { organizationId, idToken }
   } = useStore();
 
   const { data, ...query } = utils.loaders.getOrganizations();
 
   useEffect(() => {
     if (!organizationId && data) {
-      const firstOrganization = data[0];
+      const initOrganization = data.find(
+        (org) =>
+          org.orgFiscalCode === idToken?.organization.fiscal_code &&
+          org.ipaCode === idToken.organization.ipaCode
+      );
+
+      const firstOrganization = initOrganization || data[0];
       setOrganizationId(firstOrganization.organizationId);
       setOperatorRole(firstOrganization.operatorRole);
 
