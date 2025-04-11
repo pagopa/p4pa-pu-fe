@@ -26,13 +26,13 @@ export const useTabsConfig = (): Array<TabsConfig> => {
         {
           type: COMPONENT_TYPE.textField,
           label: t('debtPositions.searchIUVDescription'),
-          icon: <Search />,
+          adornment: <Search />,
           id: FilterFieldIds.IUV_CODE
         },
         {
           type: COMPONENT_TYPE.textField,
           label: t('debtPositions.searchFiscalCodeDescription'),
-          icon: <Search />,
+          adornment: <Search />,
           id: FilterFieldIds.FISCAL_CODE
         },
         {
@@ -58,7 +58,7 @@ export const useTabsConfig = (): Array<TabsConfig> => {
         {
           type: COMPONENT_TYPE.textField,
           label: t('debtPositions.searchFiscalCodeDescription'),
-          icon: <Search />,
+          adornment: <Search />,
           id: FilterFieldIds.FISCAL_CODE
         },
         {

@@ -4,6 +4,7 @@ import { ChangeEvent, useState } from 'react';
 
 export type _SelectProps = Omit<TextFieldProps, 'select' | 'type'> & {
   options?: Array<MenuItemProps & { label: string }>;
+  forwardRef?: React.Ref<HTMLInputElement>;
 };
 
 export const _Select = (props: _SelectProps) => {
@@ -21,6 +22,7 @@ export const _Select = (props: _SelectProps) => {
       value={value}
       onChange={onChange}
       {...props}
+      ref={props.forwardRef}
       select
     >
       {props.options?.map((option, optionIndex) => (

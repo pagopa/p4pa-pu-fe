@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import Step3 from './Step3';
 import { useForm, Controller } from 'react-hook-form';
 import { formatDate } from '../../../utils/formatters';

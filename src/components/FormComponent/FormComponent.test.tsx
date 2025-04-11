@@ -16,7 +16,7 @@ describe('TextField Component', () => {
       <FormComponent.TextField
         id="test-input"
         label="With Icon"
-        icon={<CustomIcon />}
+        adornment={<CustomIcon />}
       />
     );
     expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
