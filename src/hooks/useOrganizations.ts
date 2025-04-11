@@ -20,15 +20,24 @@ export const useOrganizations = () => {
       );
 
       const firstOrganization = initOrganization || data[0];
-      setOrganizationId(firstOrganization.organizationId);
-      setOperatorRole(firstOrganization.operatorRole);
+      if (firstOrganization) {
+        setOrganizationId(firstOrganization.organizationId);
+        setOperatorRole(firstOrganization.operatorRole);
+      }
 
       if (query.isError) {
         // TODO: Handle error (e.g., show a toast)
         console.error('Failed to fetch fe config', query.error);
       }
     }
-  }, [data, query.isLoading, query.isError, query.isSuccess]);
+  }, [
+    data,
+    query.isLoading,
+    query.isError,
+    query.isSuccess,
+    organizationId,
+    idToken
+  ]);
 
   return { data, ...query };
 };
