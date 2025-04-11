@@ -2,15 +2,28 @@ import { setupInterceptors } from '../interceptors';
 import { useNavigate } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { Client } from '../../models/Client';
+import { AxiosError } from 'axios';
+import utils from '..';
+import { PageRoutes } from '../../App';
+
+vi.mock('../App', () => ({
+  PageRoutes: { LOGGED_OUT: '/loggedout' },
+}));
+
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  Navigate: vi.fn(() => null),
+  useNavigate: vi.fn(),
+}));
+
 
 vi.mock('./utils', () => ({
   config: {
     tokenHeaderExcludePaths: ['/path1', '/path2']
-  }
-}));
-
-vi.mock('react-router-dom', () => ({
-  useNavigate: vi.fn()
+  },
+  storage: {
+    clear: vi.fn(),
+  },
 }));
 
 describe('setupInterceptors', () => {
@@ -28,6 +41,7 @@ describe('setupInterceptors', () => {
   } as unknown as Client;
 
   const navigate = vi.fn();
+  const mockReplace = vi.fn();
 
   beforeEach(() => {
     window.localStorage.clear();
@@ -69,4 +83,22 @@ describe('setupInterceptors', () => {
     const result = requestInterceptor(request);
     expect(result.headers['Authorization']).toBeUndefined();
   });
+
+  it('should clear storage and redirect on 401', async () => {
+    const errorResponse = {
+      response: { status: 401 },
+      config: {},
+      isAxiosError: true,
+      toJSON: () => ({}),
+    } as AxiosError;
+
+    const responseInterceptor = client.instance.interceptors.response;
+    const onRejected = (responseInterceptor as any).handlers[0].rejected;
+
+    await expect(onRejected(errorResponse)).resolves.toBeUndefined();
+
+    expect(utils.storage.clear).toHaveBeenCalled();
+    expect(mockReplace).toHaveBeenCalledWith(PageRoutes.LOGGED_OUT);
+  });
+
 });

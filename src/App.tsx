@@ -28,6 +28,7 @@ import { responsesRoutes } from './routes/responses';
 import { debtPositionsRoutes } from './routes/debtPositions';
 import AuthCallback from './routes/AuthCallback';
 import { postToken } from './api/token';
+import LoggedOut from './routes/UtilityPages/loggedout';
 
 const deployPath = config.deployPath;
 
@@ -62,6 +63,11 @@ const routesDef = [
         path: `${deployPath}/auth-callback`,
         element: <AuthCallback />,
         loader: postToken
+      },
+      {
+        id: 'LOGGED_OUT',
+        path: `${deployPath}/loggedout`,
+        element: <LoggedOut />,
       },
       ...flowsRoutes,
       ...importRoutes,
