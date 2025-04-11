@@ -157,6 +157,17 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     }
   };
 
+  const getCompanyNameLabel = () => {
+    switch (subjectTypeValue) {
+      case 'fisica':
+        return t('debtPositionCreateWizard.step2.fullName.label');
+      case 'giuridica':
+        return t('debtPositionCreateWizard.step2.companyName.label');
+      default:
+        return t('debtPositionCreateWizard.step2.fullName.label');
+    }
+  };
+
   return (
     <form>
       <WizardStepWrapper
@@ -251,7 +262,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             render={({ field }) => (
               <TextField
                 {...field}
-                label={t('debtPositionCreateWizard.step2.fullName.label')}
+                label={getCompanyNameLabel()}
                 fullWidth
                 margin="normal"
                 required
