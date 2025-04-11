@@ -1,7 +1,6 @@
 import { Controller, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
-import * as yup from 'yup';
 import LocalOffer from '@mui/icons-material/LocalOffer';
 import BookIcon from '@mui/icons-material/MenuBook';
 import SectionBox from '../../../components/Wizard/SectionBox';
@@ -10,6 +9,7 @@ import { FormComponent } from '../../../components/FormComponent';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import Typography from '@mui/material/Typography';
 import { TFunction } from 'i18next';
+import { z } from 'zod';
 
 export type Step1Data = {
   debtPositionType: string;
@@ -22,14 +22,14 @@ export type Step1Props = {
 };
 
 const validationSchema = (t: TFunction) =>
-  yup.object({
-    debtPositionType: yup
+  z.object({
+    debtPositionType: z
       .string()
-      .required(t('debtTypeCreate.configuration.debtType.required'))
-      .max(100, t('debtTypeCreate.configuration.debtType.maxCharacters')),
-    taxonomy: yup
+      .max(100, t('debtTypeCreate.configuration.debtType.maxCharacters'))
+      .nonempty(t('debtTypeCreate.configuration.debtType.required')),
+    taxonomy: z
       .string()
-      .required(t('debtTypeCreate.configuration.taxonomy.required'))
+      .nonempty(t('debtTypeCreate.configuration.taxonomy.required'))
   });
 
 export const Step1Configuration = ({ setData, onNext }: Step1Props) => {
@@ -41,7 +41,7 @@ export const Step1Configuration = ({ setData, onNext }: Step1Props) => {
     control,
     formState: { errors }
   } = useForm({
-    resolver: yupResolver(schema),
+    resolver: zodResolver(schema),
     mode: 'onTouched'
   });
 
@@ -69,7 +69,6 @@ export const Step1Configuration = ({ setData, onNext }: Step1Props) => {
               <FormComponent.TextField
                 {...field}
                 ref={null}
-                autoFocus
                 required
                 label={t('debtTypeCreate.configuration.debtType.label')}
                 id="debtPositionType"

@@ -1,7 +1,7 @@
 import { Controller, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
+import { zodResolver } from '@hookform/resolvers/zod';
 import PreviewIcon from '@mui/icons-material/Preview';
-import * as yup from 'yup';
+import { z } from 'zod';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   Box,
@@ -21,12 +21,12 @@ import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import { FormComponent } from '../../../components/FormComponent';
 
 export type Step2Data = {
-  option1: boolean;
-  option2: boolean;
-  option3: boolean;
-  checkbox2: boolean;
-  textField: string;
-  textArea: string;
+  option1?: boolean;
+  option2?: boolean;
+  option3?: boolean;
+  checkbox2?: boolean;
+  textField?: string;
+  textArea?: string;
 };
 
 export type Step2Props = {
@@ -38,32 +38,23 @@ export type Step2Props = {
 export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
   const { t } = useTranslation();
 
-  const schema = yup.object({
-    option1: yup.boolean().default(false).defined(),
-    option2: yup.boolean().default(false).defined(),
-    option3: yup.boolean().default(false).defined(),
-    checkbox2: yup.boolean().default(false).defined(),
-
-    textField: yup
-      .string()
-      .default('')
-      .when('checkbox2', {
-        is: true,
-        then: (schema) =>
-          schema.required(t('debtTypeCreate.settings.subject.required')),
-        otherwise: (schema) => schema.notRequired()
-      }),
-
-    textArea: yup
-      .string()
-      .default('')
-      .when('checkbox2', {
-        is: true,
-        then: (schema) =>
-          schema.required(t('debtTypeCreate.settings.message.required')),
-        otherwise: (schema) => schema.notRequired()
-      })
-  });
+  const schema = z
+    .object({
+      option1: z.boolean().optional(),
+      option2: z.boolean().optional(),
+      option3: z.boolean().optional(),
+      checkbox2: z.boolean().optional(),
+      textField: z.string().optional(),
+      textArea: z.string().optional()
+    })
+    .refine((data) => !data.checkbox2 || (data.checkbox2 && data.textField), {
+      message: t('debtTypeCreate.settings.subject.required'),
+      path: ['textField'] // Targets the textField property
+    })
+    .refine((data) => !data.checkbox2 || (data.checkbox2 && data.textArea), {
+      message: t('debtTypeCreate.settings.message.required'),
+      path: ['textArea']
+    });
 
   const {
     control,
@@ -71,7 +62,7 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
     watch,
     formState: { errors }
   } = useForm<Step2Data>({
-    resolver: yupResolver(schema),
+    resolver: zodResolver(schema),
     mode: 'onTouched'
   });
 
@@ -103,7 +94,6 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                 render={({ field }) => (
                   <FormControlLabel
                     control={<Checkbox {...field} checked={!!field.value} />}
-                    autoFocus={optionKey === 'option1'}
                     label={
                       <Box>
                         <Typography variant="body1">
@@ -144,7 +134,6 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
               <Controller
                 name="textField"
                 control={control}
-                defaultValue=""
                 render={({ field }) => (
                   <FormComponent.TextField
                     {...field}
@@ -154,8 +143,8 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                     placeholder={t(
                       'debtTypeCreate.settings.subject.placeholder'
                     )}
-                    error={!!errors.textField && checkbox2}
-                    helperText={errors.textField?.message}
+                    error={checkbox2 && !!errors.textField}
+                    helperText={checkbox2 && errors.textField?.message}
                     fullWidth
                     sx={{ my: 2 }}
                   />
@@ -188,8 +177,8 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                     required={checkbox2}
                     label={t('debtTypeCreate.settings.message.label')}
                     InputLabelProps={{ shrink: true }}
-                    error={!!errors.textArea && checkbox2}
-                    helperText={errors.textArea?.message}
+                    error={checkbox2 && !!errors.textArea}
+                    helperText={checkbox2 && errors.textArea?.message}
                     defaultValue=""
                     fullWidth
                     multiline

@@ -71,9 +71,9 @@ describe('Step2Settings', () => {
         option1: false,
         option2: false,
         option3: false,
-        checkbox2: false,
-        textField: '',
-        textArea: ''
+        checkbox2: undefined,
+        textField: undefined,
+        textArea: undefined
       });
       expect(mockOnNext).toHaveBeenCalled();
     });
@@ -188,9 +188,9 @@ describe('Step2Settings', () => {
         option1: false,
         option2: false,
         option3: false,
-        checkbox2: false,
-        textField: '',
-        textArea: ''
+        checkbox2: undefined,
+        textField: undefined,
+        textArea: undefined
       });
       expect(mockOnNext).toHaveBeenCalled();
     });
