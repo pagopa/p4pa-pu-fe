@@ -49,7 +49,8 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
       .default('')
       .when('checkbox2', {
         is: true,
-        then: (schema) => schema.required(t('form.errors.textFieldRequired')),
+        then: (schema) =>
+          schema.required(t('debtTypeCreate.settings.subject.required')),
         otherwise: (schema) => schema.notRequired()
       }),
 
@@ -58,7 +59,8 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
       .default('')
       .when('checkbox2', {
         is: true,
-        then: (schema) => schema.required(t('form.errors.textAreaRequired')),
+        then: (schema) =>
+          schema.required(t('debtTypeCreate.settings.message.required')),
         otherwise: (schema) => schema.notRequired()
       })
   });
@@ -146,12 +148,12 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                   <FormComponent.TextField
                     {...field}
                     ref={null}
-                    required={!!checkbox2}
-                    label={t('debtTypeCreate.settings.template.subject.label')}
+                    required={checkbox2}
+                    label={t('debtTypeCreate.settings.subject.label')}
                     placeholder={t(
-                      'debtTypeCreate.settings.template.subject.placeholder'
+                      'debtTypeCreate.settings.subject.placeholder'
                     )}
-                    error={!!errors.textField}
+                    error={!!errors.textField && checkbox2}
                     helperText={errors.textField?.message}
                     fullWidth
                     sx={{ my: 2 }}
@@ -164,7 +166,7 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                 component="span"
               >
                 <Trans
-                  i18nKey="debtTypeCreate.settings.template.subject.guide"
+                  i18nKey="debtTypeCreate.settings.subject.guide"
                   components={[
                     <Link
                       key="link"
@@ -182,10 +184,10 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                 control={control}
                 render={({ field }) => (
                   <TextField
-                    required={!!checkbox2}
-                    label={t('debtTypeCreate.settings.template.message.label')}
+                    required={checkbox2}
+                    label={t('debtTypeCreate.settings.message.label')}
                     InputLabelProps={{ shrink: true }}
-                    error={!!errors.textArea}
+                    error={!!errors.textArea && checkbox2}
                     helperText={errors.textArea?.message}
                     defaultValue=""
                     fullWidth
@@ -203,7 +205,7 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                 component="span"
               >
                 <Trans
-                  i18nKey="debtTypeCreate.settings.template.message.guide"
+                  i18nKey="debtTypeCreate.settings.message.guide"
                   components={[
                     <Link
                       key="link"

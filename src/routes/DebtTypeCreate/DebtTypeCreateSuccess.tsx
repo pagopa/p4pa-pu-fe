@@ -10,8 +10,8 @@ export const DebtTypeCreateSuccess = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // TODO: error if no formData is provided
   const formData = location.state?.formData || '';
-  console.debug('success', formData);
 
   return (
     <Box

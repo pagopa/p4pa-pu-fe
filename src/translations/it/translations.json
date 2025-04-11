@@ -461,12 +461,15 @@
         "title": "Descrizione",
         "label": "Nome del Tipo dovuto",
         "helper": "Inserisce il nome attribuito al servizio di incasso",
-        "placeholder": "Inserisce il nome attribuito al servizio di incasso"
+        "placeholder": "Inserisce il nome attribuito al servizio di incasso",
+        "required": "Il nome del Tipo dovuto è obbligatorio",
+        "maxCharacters": "Il nome del Tipo dovuto deve avere al massimo 100 caratteri"
       },
       "taxonomy": {
         "title": "Tassonomia",
         "label": "Tipo Ente",
-        "placeholder": "Tipo Ente"
+        "placeholder": "Tipo Ente",
+        "required": "Il campo tassonomia è obbligatorio"
       }
     },
     "settings": {
@@ -490,16 +493,18 @@
         "title": "Messaggi",
         "helper": "Predefinisce template di messaggi per il Tipo dovuto da dove i Enti Gestiti possono cominciare.",
         "label": "Predefinisce template di messaggi per il Tipo dovuto da dove i Enti Gestiti possono cominciare.",
-        "checkbox": "Template Messaggio su app IO",
-        "subject": {
-          "label": "Oggetto del messaggio",
-          "placeholder": "Il servizio ti invia comunicazioni in merito alla Tassa sui rifiuti (TARI).",
-          "guide": "Leggi come scrivere correttamente il <0>nome di un servizio</0>"
-        },
-        "message": {
-          "label": "Messaggio",
-          "guide": "Leggi come <0>scrivere i messaggi su app IO</0> o ad usare correttamente il <1>linguaggio markdown</1>"
-        }
+        "checkbox": "Template Messaggio su app IO"
+      },
+      "subject": {
+        "label": "Oggetto del messaggio",
+        "placeholder": "Il servizio ti invia comunicazioni in merito alla Tassa sui rifiuti (TARI).",
+        "guide": "Leggi come scrivere correttamente il <0>nome di un servizio</0>",
+        "required": "l'oggetto del messaggio é obbligatorio"
+      },
+      "message": {
+        "label": "Messaggio",
+        "guide": "Leggi come <0>scrivere i messaggi su app IO</0> o ad usare correttamente il <1>linguaggio markdown</1>",
+        "required": "il messaggio é obbligatorio"
       }
     }
   },

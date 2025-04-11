@@ -47,10 +47,10 @@ describe('Step2Settings', () => {
       screen.getByText('debtTypeCreate.settings.template.checkbox')
     ).toBeInTheDocument();
     expect(
-      screen.getByLabelText('debtTypeCreate.settings.template.subject.label')
+      screen.getByLabelText('debtTypeCreate.settings.subject.label')
     ).toBeInTheDocument();
     expect(
-      screen.getByLabelText('debtTypeCreate.settings.template.message.label')
+      screen.getByLabelText('debtTypeCreate.settings.message.label')
     ).toBeInTheDocument();
   });
 
@@ -99,10 +99,10 @@ describe('Step2Settings', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('form.errors.textFieldRequired')
+        screen.getByText('debtTypeCreate.settings.subject.required')
       ).toBeInTheDocument();
       expect(
-        screen.getByText('form.errors.textAreaRequired')
+        screen.getByText('debtTypeCreate.settings.message.required')
       ).toBeInTheDocument();
     });
 
@@ -140,12 +140,12 @@ describe('Step2Settings', () => {
     fireEvent.click(checkbox2);
 
     const textField = screen.getByRole('textbox', {
-      name: 'debtTypeCreate.settings.template.subject.label'
+      name: 'debtTypeCreate.settings.subject.label'
     });
     fireEvent.change(textField, { target: { value: 'Subject text' } });
 
     const textArea = screen.getByRole('textbox', {
-      name: 'debtTypeCreate.settings.template.message.label'
+      name: 'debtTypeCreate.settings.message.label'
     });
     fireEvent.change(textArea, { target: { value: 'Message content' } });
 
@@ -197,10 +197,10 @@ describe('Step2Settings', () => {
 
     // No validation errors should be shown
     expect(
-      screen.queryByText('form.errors.textFieldRequired')
+      screen.queryByText('debtTypeCreate.settings.subject.required')
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByText('form.errors.textAreaRequired')
+      screen.queryByText('debtTypeCreate.settings.message.required')
     ).not.toBeInTheDocument();
   });
 

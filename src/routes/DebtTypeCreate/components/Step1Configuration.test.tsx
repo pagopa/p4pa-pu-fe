@@ -17,9 +17,11 @@ describe('Step1Configuration', () => {
     fireEvent.click(screen.getByRole('button', { name: 'commons.continue' }));
 
     await waitFor(() => {
-      expect(screen.getByText('form.errors.titleRequired')).toBeInTheDocument();
       expect(
-        screen.getByText('form.errors.categoryRequired')
+        screen.getByText('debtTypeCreate.configuration.debtType.required')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('debtTypeCreate.configuration.taxonomy.required')
       ).toBeInTheDocument();
     });
 

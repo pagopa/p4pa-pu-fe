@@ -25,9 +25,11 @@ const validationSchema = (t: TFunction) =>
   yup.object({
     debtPositionType: yup
       .string()
-      .required(t('form.errors.titleRequired'))
-      .max(100, t('form.errors.titleTooLong')),
-    taxonomy: yup.string().required(t('form.errors.categoryRequired'))
+      .required(t('debtTypeCreate.configuration.debtType.required'))
+      .max(100, t('debtTypeCreate.configuration.debtType.maxCharacters')),
+    taxonomy: yup
+      .string()
+      .required(t('debtTypeCreate.configuration.taxonomy.required'))
   });
 
 export const Step1Configuration = ({ setData, onNext }: Step1Props) => {
