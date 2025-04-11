@@ -18,14 +18,14 @@ export const useReportingFilters = ({ onFilter }: UseReportingFiltersProps) => {
       {
         type: COMPONENT_TYPE.textField,
         label: t('commons.searchIUF'),
-        icon: <SearchIcon />,
+        adornment: <SearchIcon />,
         gridWidth: 3,
         id: 'iuf'
       },
       {
         type: COMPONENT_TYPE.textField,
         label: t('commons.searchRegulationUniqueIdentifier'),
-        icon: <SearchIcon />,
+        adornment: <SearchIcon />,
         gridWidth: 3,
         id: 'regulationUniqueIdentifier'
       },

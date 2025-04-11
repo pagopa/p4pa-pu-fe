@@ -35,7 +35,7 @@ export const useDebtPositionFilters = ({
         {
           type: COMPONENT_TYPE.textField,
           label: t('commons.searchCF'),
-          icon: <SearchIcon />,
+          adornment: <SearchIcon />,
           gridWidth: 2,
           id: 'fiscalCode'
         },
@@ -78,14 +78,14 @@ export const useDebtPositionFilters = ({
       {
         type: COMPONENT_TYPE.textField,
         label: t('commons.searchIUV'),
-        icon: <SearchIcon />,
+        adornment: <SearchIcon />,
         gridWidth: 2,
         id: 'iuv'
       },
       {
         type: COMPONENT_TYPE.textField,
         label: t('commons.searchCF'),
-        icon: <SearchIcon />,
+        adornment: <SearchIcon />,
         gridWidth: 2,
         id: 'fiscalCode'
       },

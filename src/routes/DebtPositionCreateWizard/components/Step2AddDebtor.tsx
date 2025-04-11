@@ -1,15 +1,15 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
-import { Box, MenuItem, TextField, Typography } from '@mui/material';
+import { MenuItem, TextField, Typography } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../components/Wizard/SectionBox';
-import PaperContent from '../../../components/Wizard/PaperContent';
+import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { createValidators } from '../../../utils/fieldValidation';
 
 // Tipo che definisce la struttura dati dello Step 2 del wizard.
-type Step2Data = {
+export type Step2Data = {
   subjectType: { value: string; readonly: boolean }; // Tipo soggetto (fisica/giuridica)
   taxCode: { value: string; readonly: boolean }; // Codice fiscale o partita IVA
   fullName: { value: string; readonly: boolean }; // Nome completo
@@ -31,7 +31,7 @@ type Props = {
   data: Step2Data; // Dati attuali dello step
   setData: (data: Step2Data) => void; // Funzione per aggiornare i dati
   onNext: () => void; // Funzione per passare allo step successivo
-  onBack: () => void; // Funzione per tornare allo step precedente
+  onBack?: () => void; // Funzione per tornare allo step precedente
 };
 
 const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
@@ -169,117 +169,119 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   };
 
   return (
-    <Box>
-      <SectionBox hideHeader>
-        <form onSubmit={handleSubmit(onSubmit)} noValidate>
-          <PaperContent
-            title={t('debtPositionCreateWizard.step2.title')}
-            icon={<PersonIcon sx={{ mr: 1 }} />}
-          >
-            <Typography variant="subtitle1" gutterBottom>
-              {t('debtPositionCreateWizard.step2.fiscalData')}
-            </Typography>
+    <form>
+      <WizardStepWrapper
+        title={t('debtPositionCreateWizard.addDebtor.title')}
+        subtitle={t('debtPositionCreateWizard.addDebtor.subtitle')}
+      >
+        <SectionBox
+          title={t('debtPositionCreateWizard.step2.title')}
+          adornment={<PersonIcon />}
+        >
+          <Typography variant="subtitle1" gutterBottom>
+            {t('debtPositionCreateWizard.step2.fiscalData')}
+          </Typography>
 
-            {/* Campo per selezionare il tipo di soggetto (persona fisica o giuridica) */}
-            <Controller
-              name="subjectType.value"
-              control={control}
-              rules={validationRules.subjectType}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label={t('debtPositionCreateWizard.step2.subjectType.label')}
-                  required
-                  select
-                  fullWidth
-                  margin="normal"
-                  disabled={data.subjectType.readonly}
-                  error={isSubmitted && !!errors.subjectType?.value}
-                  helperText={isSubmitted && errors.subjectType?.value?.message}
-                  onChange={(e) => {
-                    field.onChange(e);
-                    handleSubjectTypeChange(e);
-                    // Forza la rivalidazione del campo taxCode solo se il form è già stato inviato
-                    if (isSubmitted) {
-                      trigger('taxCode.value');
-                    }
-                  }}
-                >
-                  <MenuItem value="fisica">
-                    {t(
-                      'debtPositionCreateWizard.step2.subjectType.options.fisica'
-                    )}
-                  </MenuItem>
-                  <MenuItem value="giuridica">
-                    {t(
-                      'debtPositionCreateWizard.step2.subjectType.options.giuridica'
-                    )}
-                  </MenuItem>
-                </TextField>
-              )}
-            />
+          {/* Campo per selezionare il tipo di soggetto (persona fisica o giuridica) */}
+          <Controller
+            name="subjectType.value"
+            control={control}
+            rules={validationRules.subjectType}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label={t('debtPositionCreateWizard.step2.subjectType.label')}
+                required
+                select
+                fullWidth
+                margin="normal"
+                disabled={data.subjectType.readonly}
+                error={isSubmitted && !!errors.subjectType?.value}
+                helperText={isSubmitted && errors.subjectType?.value?.message}
+                onChange={(e) => {
+                  field.onChange(e);
+                  handleSubjectTypeChange(e);
+                  // Forza la rivalidazione del campo taxCode solo se il form è già stato inviato
+                  if (isSubmitted) {
+                    trigger('taxCode.value');
+                  }
+                }}
+              >
+                <MenuItem value="fisica">
+                  {t(
+                    'debtPositionCreateWizard.step2.subjectType.options.fisica'
+                  )}
+                </MenuItem>
+                <MenuItem value="giuridica">
+                  {t(
+                    'debtPositionCreateWizard.step2.subjectType.options.giuridica'
+                  )}
+                </MenuItem>
+              </TextField>
+            )}
+          />
 
-            {/* Campo per il codice fiscale o partita IVA */}
-            <Controller
-              name="taxCode.value"
-              control={control}
-              rules={validationRules.taxCode}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label={getTaxCodeLabel()}
-                  placeholder={getTaxCodePlaceholder()}
-                  required
-                  fullWidth
-                  margin="normal"
-                  disabled={data.taxCode.readonly}
-                  error={isSubmitted && !!errors.taxCode?.value}
-                  helperText={isSubmitted && errors.taxCode?.value?.message}
-                  onChange={(e) => {
-                    const upper = e.target.value.toUpperCase();
-                    field.onChange(upper);
-                    handleFieldChange('taxCode.value', upper);
-                    if (isSubmitted) {
-                      trigger('taxCode.value');
-                    }
-                  }}
-                  inputProps={{ maxLength: 16 }}
-                />
-              )}
-            />
+          {/* Campo per il codice fiscale o partita IVA */}
+          <Controller
+            name="taxCode.value"
+            control={control}
+            rules={validationRules.taxCode}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label={getTaxCodeLabel()}
+                placeholder={getTaxCodePlaceholder()}
+                required
+                fullWidth
+                margin="normal"
+                disabled={data.taxCode.readonly}
+                error={isSubmitted && !!errors.taxCode?.value}
+                helperText={isSubmitted && errors.taxCode?.value?.message}
+                onChange={(e) => {
+                  const upper = e.target.value.toUpperCase();
+                  field.onChange(upper);
+                  handleFieldChange('taxCode.value', upper);
+                  if (isSubmitted) {
+                    trigger('taxCode.value');
+                  }
+                }}
+                inputProps={{ maxLength: 16 }}
+              />
+            )}
+          />
 
-            <Typography variant="subtitle1" sx={{ mt: 3 }} gutterBottom>
-              {t('debtPositionCreateWizard.step2.personalData')}
-            </Typography>
+          <Typography variant="subtitle1" sx={{ mt: 3 }} gutterBottom>
+            {t('debtPositionCreateWizard.step2.personalData')}
+          </Typography>
 
-            {/* Campo per il nome completo */}
-            <Controller
-              name="fullName.value"
-              control={control}
-              rules={validationRules.fullName}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label={getCompanyNameLabel()}
-                  fullWidth
-                  margin="normal"
-                  required
-                  disabled={data.fullName.readonly}
-                  error={isSubmitted && !!errors.fullName?.value}
-                  helperText={isSubmitted && errors.fullName?.value?.message}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    field.onChange(value); // RHF
-                    handleFieldChange('fullName.value', value); // aggiorna stato wizard
-                  }}
-                />
-              )}
-            />
+          {/* Campo per il nome completo */}
+          <Controller
+            name="fullName.value"
+            control={control}
+            rules={validationRules.fullName}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                label={getCompanyNameLabel()}
+                fullWidth
+                margin="normal"
+                required
+                disabled={data.fullName.readonly}
+                error={isSubmitted && !!errors.fullName?.value}
+                helperText={isSubmitted && errors.fullName?.value?.message}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  field.onChange(value); // RHF
+                  handleFieldChange('fullName.value', value); // aggiorna stato wizard
+                }}
+              />
+            )}
+          />
 
-            {/* Grid per indirizzo, numero civico e CAP */}
-            {/* <Grid container spacing={2} mt={1}> */}
-            {/* Campo per l'indirizzo */}
-            {/* <Grid item xs={12} sm={6} md={6}>
+          {/* Grid per indirizzo, numero civico e CAP */}
+          {/* <Grid container spacing={2} mt={1}> */}
+          {/* Campo per l'indirizzo */}
+          {/* <Grid item xs={12} sm={6} md={6}>
                 <Controller
                   name="address.value"
                   control={control}
@@ -307,8 +309,8 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                 />
               </Grid> */}
 
-            {/* Campo per il numero civico */}
-            {/* <Grid item xs={6} sm={3} md={3}>
+          {/* Campo per il numero civico */}
+          {/* <Grid item xs={6} sm={3} md={3}>
                 <Controller
                   name="civicNumber.value"
                   control={control}
@@ -340,8 +342,8 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                 />
               </Grid> */}
 
-            {/* Campo per il CAP con validazione specifica */}
-            {/* <Grid item xs={6} sm={3} md={3}>
+          {/* Campo per il CAP con validazione specifica */}
+          {/* <Grid item xs={6} sm={3} md={3}>
                 <Controller
                   name="zipCode.value"
                   control={control}
@@ -370,10 +372,10 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   )}
                 />
               </Grid> */}
-            {/* </Grid> */}
+          {/* </Grid> */}
 
-            {/* Grid per nazione, provincia e città */}
-            {/* <Grid container spacing={2} mt={1}>
+          {/* Grid per nazione, provincia e città */}
+          {/* <Grid container spacing={2} mt={1}>
               <Grid item xs={12} sm={4}>
                 <TextField
                   label={t('debtPositionCreateWizard.step2.country.label')}
@@ -422,17 +424,16 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                 />
               </Grid>
             </Grid> */}
-          </PaperContent>
 
           {/* Pulsanti per navigare nel wizard */}
-          <WizardStepButtons
-            onBack={onBack}
-            onNext={handleSubmit(onSubmit)} // Procedi se la validazione passa
-            disableNext={false}
-          />
-        </form>
-      </SectionBox>
-    </Box>
+        </SectionBox>
+      </WizardStepWrapper>
+      <WizardStepButtons
+        onBack={onBack}
+        onNext={handleSubmit(onSubmit)} // Procedi se la validazione passa
+        disableNext={false}
+      />
+    </form>
   );
 };
 
