@@ -171,21 +171,18 @@ function BeneficiaryField<T extends FieldValues>({
     );
   };
 
-  // Funzione per verificare se il campo amount ha errori
-  const hasAmountError = (index: number): boolean => {
-    return (
-      hasFieldError(BeneficiaryFields.Amount, index) ||
-      !validators.isBeneficiaryAmountValid(index, hasSingleBeneficiary)
-    );
-  };
-
   // Funzione per ottenere il messaggio di errore del campo amount
   const getAmountErrorMessage = (index: number): string => {
-    if (!isSubmitted) return '';
-    // Errori di validazione standard
-    const standardError = getFieldErrorMessage(BeneficiaryFields.Amount, index);
-    if (standardError) return standardError;
-    // Errori di validazione personalizzati
+    // Errori di validazione standard solo se il form è stato sottomesso
+    if (isSubmitted) {
+      const standardError = getFieldErrorMessage(
+        BeneficiaryFields.Amount,
+        index
+      );
+      if (standardError) return standardError;
+    }
+
+    // Errori di validazione personalizzati - mostra sempre, anche senza submit
     if (!validators.isBeneficiaryAmountValid(index, hasSingleBeneficiary)) {
       return hasSingleBeneficiary
         ? t(
@@ -196,6 +193,15 @@ function BeneficiaryField<T extends FieldValues>({
           );
     }
     return '';
+  };
+
+  // Funzione per verificare se il campo amount ha errori
+  const hasAmountError = (index: number): boolean => {
+    // Controlla sia gli errori standard (solo se submitted) sia gli errori personalizzati (sempre)
+    return (
+      (isSubmitted && hasFieldError(BeneficiaryFields.Amount, index)) ||
+      !validators.isBeneficiaryAmountValid(index, hasSingleBeneficiary)
+    );
   };
 
   // Aggiungi un nuovo beneficiario
