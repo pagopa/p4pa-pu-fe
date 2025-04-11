@@ -44,8 +44,8 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
       option2: z.boolean().optional(),
       option3: z.boolean().optional(),
       checkbox2: z.boolean().optional(),
-      textField: z.string().optional(),
-      textArea: z.string().optional()
+      textField: z.string().optional().default(''),
+      textArea: z.string().optional().default('')
     })
     .refine((data) => !data.checkbox2 || data.textField, {
       message: t('debtTypeCreate.settings.subject.required'),
@@ -134,6 +134,7 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
               <Controller
                 name="textField"
                 control={control}
+                defaultValue=""
                 render={({ field }) => (
                   <FormComponent.TextField
                     {...field}
