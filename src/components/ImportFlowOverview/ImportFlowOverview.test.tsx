@@ -1,6 +1,10 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useNavigate, generatePath } from 'react-router-dom';
-import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
+import {
+  downloadIngestionFlowFile,
+  getIngestionFlowFiles
+} from '../../api/ingestionFlowFiles';
+import { downloadBlob } from '../../utils/download';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../App';
@@ -25,7 +29,12 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
     TREASURY_XLS: 'TREASURY_XLS',
     TREASURY_POSTE: 'TREASURY_POSTE',
     DP_INSTALLMENTS: 'DP_INSTALLMENTS'
-  }
+  },
+  downloadIngestionFlowFile: vi.fn()
+}));
+
+vi.mock('../../utils/download', () => ({
+  downloadBlob: vi.fn()
 }));
 
 describe('TelematicReceiptImportFlowOverview', () => {
@@ -828,5 +837,127 @@ describe('TelematicReceiptImportFlowOverview', () => {
         'No rows'
       );
     });
+  });
+
+  it('calls downloadIngestionFlowFile and downloadBlob when download button is clicked', async () => {
+    const mockDownloadIngestionFlowFile = vi.fn().mockResolvedValue({
+      data: new Blob(['test content']),
+      fileName: 'test-file.csv'
+    });
+    const mockDownloadBlob = vi.fn();
+
+    (downloadIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
+      mockDownloadIngestionFlowFile
+    );
+    (downloadBlob as ReturnType<typeof vi.fn>).mockImplementation(
+      mockDownloadBlob
+    );
+
+    const { container } = render(
+      <FlowOverview
+        routingCategory={'test'}
+        title={'test title'}
+        description={'test description'}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
+      />
+    );
+
+    const uploadedRow = mockData.content.find(
+      (row) => row.status === 'UPLOADED'
+    );
+
+    expect(uploadedRow).toBeDefined();
+
+    await waitFor(() => {
+      const downloadButton = container.querySelector(
+        '[data-testid="download-button"]'
+      );
+      expect(downloadButton).toBeDefined();
+      return true;
+    });
+
+    const downloadButton = container.querySelector(
+      '[data-testid="download-button"]'
+    );
+
+    fireEvent.click(downloadButton!);
+
+    expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
+      123,
+      uploadedRow!.ingestionFlowFileId
+    );
+
+    await waitFor(() => {
+      expect(mockDownloadBlob).toHaveBeenCalledWith(
+        expect.any(Blob),
+        'test-file.csv'
+      );
+      return true;
+    });
+  });
+
+  it('calls downloadIngestionFlowFile and downloadBlob when menu download option is clicked', async () => {
+    const mockDownloadIngestionFlowFile = vi.fn().mockResolvedValue({
+      data: new Blob(['test content']),
+      fileName: 'test-file.csv'
+    });
+    const mockDownloadBlob = vi.fn();
+
+    (downloadIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
+      mockDownloadIngestionFlowFile
+    );
+    (downloadBlob as ReturnType<typeof vi.fn>).mockImplementation(
+      mockDownloadBlob
+    );
+
+    render(
+      <FlowOverview
+        routingCategory={'test'}
+        title={'test title'}
+        description={'test description'}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
+      />
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('test title')).toBeDefined();
+    });
+
+    const completedRow = mockData.content.find(
+      (row) => row.status === 'COMPLETED'
+    );
+    expect(completedRow).toBeDefined();
+
+    if (completedRow) {
+      await waitFor(() => {
+        const actionMenuButton = screen.getByTestId(
+          `action-menu-${completedRow.ingestionFlowFileId}`
+        );
+        expect(actionMenuButton).toBeDefined();
+        fireEvent.click(actionMenuButton);
+      });
+
+      await waitFor(() => {
+        const menuItems = screen.getAllByRole('menuitem');
+        expect(menuItems.length).toBeGreaterThan(0);
+
+        const downloadMenuItem = menuItems[0];
+        expect(downloadMenuItem).toBeDefined();
+
+        fireEvent.click(downloadMenuItem);
+      });
+
+      expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
+        123,
+        completedRow.ingestionFlowFileId
+      );
+
+      await waitFor(() => {
+        expect(mockDownloadBlob).toHaveBeenCalledWith(
+          expect.any(Blob),
+          'test-file.csv'
+        );
+      });
+    }
   });
 });

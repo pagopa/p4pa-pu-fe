@@ -18,13 +18,17 @@ import {
   MENU_STATES,
   STATE_COLORS
 } from '../../models/Filters';
-import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
+import {
+  downloadIngestionFlowFile,
+  getIngestionFlowFiles
+} from '../../api/ingestionFlowFiles';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { STATE } from '../../store/types';
 import {
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum
 } from '../../../generated/apiClient';
+import { downloadBlob } from '../../utils/download';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
@@ -63,6 +67,15 @@ const ImportFlowOverview = ({
 
   const { data } = getIngestionFlowFiles(organizationId, appliedFilters);
 
+  const handleDownloadFile = async (ingestionFlowFileId: number) => {
+    //TODO: handle error
+    const { data, fileName } = await downloadIngestionFlowFile(
+      organizationId,
+      ingestionFlowFileId
+    );
+    downloadBlob(data, fileName);
+  };
+
   const renderActionCell = (params: GridRenderCellParams) => {
     const { ingestionFlowFileId, status } = params.row;
 
@@ -74,7 +87,7 @@ const ImportFlowOverview = ({
             {
               icon: <DownloadIcon fontSize="small" color="primary" />,
               label: t('commons.files.imported'),
-              action: () => console.log('Download file:', ingestionFlowFileId)
+              action: () => handleDownloadFile(ingestionFlowFileId)
             },
             {
               icon: <DownloadIcon fontSize="small" color="primary" />,
@@ -91,7 +104,7 @@ const ImportFlowOverview = ({
         <IconButton
           color="primary"
           size="small"
-          onClick={() => console.log(`Download: ${ingestionFlowFileId}`)}
+          onClick={() => handleDownloadFile(ingestionFlowFileId)}
           data-testid="download-button"
         >
           <DownloadIcon />

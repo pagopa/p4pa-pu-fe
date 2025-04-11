@@ -9,6 +9,7 @@ import {
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum
 } from '../../generated/apiClient';
+import { extractFilename } from '../utils/formatters';
 
 export const getIngestionFlowFiles = (
   organizationId: number,
@@ -73,3 +74,21 @@ export const uploadIngestionFlowFile = ({
       return response;
     }
   });
+
+export const downloadIngestionFlowFile = async (
+  organizationId: number,
+  ingestionFlowFileId: number
+): Promise<{ data: Blob; fileName: string }> => {
+  const response =
+    await utils.fileshareClient.organization.downloadIngestionFlowFile(
+      organizationId,
+      ingestionFlowFileId,
+      { format: 'blob' }
+    );
+
+  const contentDisposition = response.headers['content-disposition'] || '';
+  const fileName =
+    extractFilename(contentDisposition) || `file-${ingestionFlowFileId}`;
+
+  return { data: response.data, fileName };
+};

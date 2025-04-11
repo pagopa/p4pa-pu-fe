@@ -64,3 +64,8 @@ export function toStartOfDay(date?: Date | null) {
 export function toEndOfDay(date?: Date | null) {
   return date ? endOfDay(date) : null;
 }
+
+export function extractFilename(header: string): string | null {
+  const filenameMatch = /filename=["']?([^"';]+)["']?/i.exec(header);
+  return filenameMatch ? filenameMatch[1].trim() : null;
+}
