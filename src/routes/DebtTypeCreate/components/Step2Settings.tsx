@@ -103,6 +103,7 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                 render={({ field }) => (
                   <FormControlLabel
                     control={<Checkbox {...field} checked={!!field.value} />}
+                    autoFocus={optionKey === 'option1'}
                     label={
                       <Box>
                         <Typography variant="body1">

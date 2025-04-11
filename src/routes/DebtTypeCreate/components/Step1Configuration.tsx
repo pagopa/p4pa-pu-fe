@@ -69,6 +69,7 @@ export const Step1Configuration = ({ setData, onNext }: Step1Props) => {
               <FormComponent.TextField
                 {...field}
                 ref={null}
+                autoFocus
                 required
                 label={t('debtTypeCreate.configuration.debtType.label')}
                 id="debtPositionType"
