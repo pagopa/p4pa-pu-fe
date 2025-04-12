@@ -6,7 +6,7 @@ import {
   Switch,
   FormControlLabel
 } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, Path } from 'react-hook-form';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../components/Wizard/SectionBox';
@@ -15,7 +15,8 @@ import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../../utils/formatters';
 import { useNavigate } from 'react-router';
 import { useEffect } from 'react';
-import BeneficiaryField, {
+import BeneficiaryField from './BeneficiaryField';
+import type {
   BeneficiaryData,
   BeneficiaryFormValues
 } from './BeneficiaryField';
@@ -241,15 +242,18 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     fullWidth
                     label={t('debtPositionCreateWizard.step3.amount.label')}
                     required
-                    type="number"
                     disabled={data.amount?.readonly}
+                    value={
+                      field.value
+                        ? field.value.toString().replace('.', ',')
+                        : ''
+                    }
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">€</InputAdornment>
                       ),
                       inputProps: {
-                        min: 0.01,
-                        step: 0.01,
+                        style: { textAlign: 'left' },
                         onWheel: (e) =>
                           e.target instanceof HTMLElement && e.target.blur() // Rimuove il focus dall'input quando si ruota la rotellina del mouse
                       }
@@ -257,8 +261,41 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     error={isSubmitted && !!errors.amount?.value}
                     helperText={isSubmitted && errors.amount?.value?.message}
                     onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value);
+                      // Accetta solo numeri, punto e virgola
+                      const filteredValue = e.target.value.replace(
+                        /[^0-9.,]/g,
+                        ''
+                      );
+                      // Converti virgola in punto per la gestione numerica
+                      const normalizedValue = filteredValue.replace(',', '.');
+
+                      // Aggiorna il valore nel form
+                      field.onChange(normalizedValue);
+
+                      // Per risolvere il problema di aggiornamento dello stato,
+                      // è necessario usare setTimeout per assicurarsi che
+                      // il valore sia effettivamente aggiornato prima di triggerare la validazione
+                      if (isMultibeneficiary && beneficiaries.length > 0) {
+                        setTimeout(() => {
+                          beneficiaries.forEach((_, index) => {
+                            trigger(
+                              `beneficiaries.${index}.amount` as Path<FormValues>
+                            );
+                          });
+                          console.log(
+                            '🔄 Validazione importi beneficiari triggerata dopo aggiornamento importo totale'
+                          );
+                        }, 0);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      // Formatta il valore con due decimali quando il campo perde il focus
+                      const value = e.target.value.replace(',', '.');
+                      if (value && !isNaN(parseFloat(value))) {
+                        const formatted = parseFloat(value).toFixed(2);
+                        field.onChange(formatted);
+                      }
+                      field.onBlur();
                     }}
                   />
                 )}

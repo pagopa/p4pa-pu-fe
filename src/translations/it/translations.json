@@ -427,7 +427,7 @@
         "required": "Il campo data scadenza è obbligatorio"
       },
       "isMultibeneficiary": {
-        "label": "Multibeneficiario"
+        "label": "Altri beneficiari"
       },
       "beneficiary": {
         "title": "ENTE BENEFICIARIO",
