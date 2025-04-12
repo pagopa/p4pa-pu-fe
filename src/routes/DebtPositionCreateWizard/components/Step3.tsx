@@ -6,7 +6,13 @@ import {
   Switch,
   FormControlLabel
 } from '@mui/material';
-import { Controller, useForm, Path } from 'react-hook-form';
+import {
+  Controller,
+  useForm,
+  Path,
+  UseFormTrigger,
+  FieldValues
+} from 'react-hook-form';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../components/Wizard/SectionBox';
@@ -51,6 +57,16 @@ type FormValues = BeneficiaryFormValues & {
   dueDate: { value: Date | null; readonly: boolean };
   isMultibeneficiary: { value: boolean; readonly: boolean };
 };
+
+// Funzione estratta dal nesting eccessivo
+function triggerValidationForAllBeneficiaries<T extends FieldValues>(
+  beneficiaries: Array<Record<string, unknown>>,
+  trigger: UseFormTrigger<T>
+) {
+  beneficiaries.forEach((_, index) => {
+    trigger(`beneficiaries.${index}.amount` as Path<T>);
+  });
+}
 
 const Step3 = ({ data, setData, onBack }: Props) => {
   const { t } = useTranslation();
@@ -277,13 +293,9 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                       // il valore sia effettivamente aggiornato prima di triggerare la validazione
                       if (isMultibeneficiary && beneficiaries.length > 0) {
                         setTimeout(() => {
-                          beneficiaries.forEach((_, index) => {
-                            trigger(
-                              `beneficiaries.${index}.amount` as Path<FormValues>
-                            );
-                          });
-                          console.log(
-                            '🔄 Validazione importi beneficiari triggerata dopo aggiornamento importo totale'
+                          triggerValidationForAllBeneficiaries(
+                            beneficiaries,
+                            trigger
                           );
                         }, 0);
                       }
@@ -381,141 +393,6 @@ const Step3 = ({ data, setData, onBack }: Props) => {
               </Grid>
             )}
           </Grid>
-
-          {/* <Grid item xs={12}>
-            <Controller
-              name="paymentOption.value"
-              control={control}
-              rules={{
-                required: t(
-                  'debtPositionCreateWizard.step3.paymentOption.required'
-                )
-              }}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  select
-                  fullWidth
-                  label={t(
-                    'debtPositionCreateWizard.step3.paymentOption.label'
-                  )}
-                  required
-                  disabled={data.paymentOption?.readonly}
-                  error={isSubmitted && !!errors.paymentOption?.value}
-                  helperText={
-                    isSubmitted && errors.paymentOption?.value?.message
-                  }
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    field.onChange(value);
-                    // handleFieldChange('paymentOption', value);
-                  }}
-                >
-                  <MenuItem value="SINGLE">
-                    {t('debtPositionCreateWizard.step3.paymentOption.single')}
-                  </MenuItem>
-                  <MenuItem value="INSTALLMENTS">
-                    {t(
-                      'debtPositionCreateWizard.step3.paymentOption.installments'
-                    )}
-                  </MenuItem>
-                </TextField>
-              )}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Controller
-              name="amount.value"
-              control={control}
-              rules={validateAmount}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  label={t('debtPositionCreateWizard.step3.amount.label')}
-                  required
-                  type="number"
-                  disabled={data.amount?.readonly}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">€</InputAdornment>
-                    ),
-                    inputProps: {
-                      min: 0.01,
-                      step: 0.01
-                    }
-                  }}
-                  error={isSubmitted && !!errors.amount?.value}
-                  helperText={isSubmitted && errors.amount?.value?.message}
-                  onChange={(e) => {
-                    const value = e.target.value;
-                    field.onChange(value);
-                    // handleFieldChange('amount', value);
-                  }}
-                />
-              )}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Controller
-              name="dueDate.value"
-              control={control}
-              rules={{
-                required: data.flagMandatoryDueDate
-                  ? t('debtPositionCreateWizard.step3.dueDate.required')
-                  : false
-              }}
-              render={({ field: { onChange, value, ...field } }) => (
-                <DatePicker
-                  {...field}
-                  value={value}
-                  label={t('debtPositionCreateWizard.step3.dueDate.label')}
-                  disabled={data.dueDate?.readonly}
-                  minDate={new Date()}
-                  format="dd/MM/yyyy"
-                  slotProps={{
-                    textField: {
-                      fullWidth: true,
-                      required: data.flagMandatoryDueDate,
-                      error: isSubmitted && !!errors.dueDate?.value,
-                      helperText: isSubmitted && errors.dueDate?.value?.message
-                    }
-                  }}
-                  onChange={(date) => {
-                    onChange(date);
-                  }}
-                />
-              )}
-            />
-          </Grid>
-
-          <Grid item xs={12}>
-            <Controller
-              name="isMultibeneficiary.value"
-              control={control}
-              render={({ field }) => (
-                <FormControlLabel
-                  control={
-                    <Switch
-                      {...field}
-                      checked={field.value}
-                      disabled={data.isMultibeneficiary?.readonly}
-                      onChange={(e) => {
-                        const value = e.target.checked;
-                        field.onChange(value);
-                        // handleFieldChange('isMultibeneficiary', value);
-                      }}
-                    />
-                  }
-                  label={t(
-                    'debtPositionCreateWizard.step3.isMultibeneficiary.label'
-                  )}
-                />
-              )}
-            />
-          </Grid> */}
         </SectionBox>
       </WizardStepWrapper>
       <WizardStepButtons
