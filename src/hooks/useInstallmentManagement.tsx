@@ -67,7 +67,6 @@ export function useInstallmentManagement<T extends FieldValues>({
   fieldNamePrefix,
   isSubmitted,
   getValues,
-  setValue,
   trigger,
   flagMandatoryDueDate = true,
   onInstallmentsChange

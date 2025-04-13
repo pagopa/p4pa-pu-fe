@@ -10,7 +10,7 @@ import {
   Switch
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import {
   Controller,
   Control,
@@ -32,24 +32,21 @@ type FieldErrorValue = {
 };
 
 // Tipo per gli errori di un array di campi per l'indice specificato
-type IndexedFieldErrors<T extends FieldValues> = Record<
-  string,
-  FieldErrorValue
->;
+type IndexedFieldErrors = Record<string, FieldErrorValue>;
 
 type InstallmentItemProps<T extends FieldValues> = {
-  index: number;
-  field: Record<string, unknown>;
-  control: Control<T>;
-  errors: FieldErrors<T>;
-  isSubmitted: boolean;
-  validators: InstallmentValidators;
-  fieldNamePrefix: string;
-  disabled?: boolean;
-  trigger: UseFormTrigger<T>;
-  getValues: UseFormGetValues<T>;
-  setValue: UseFormSetValue<T>;
-  onRemove?: (index: number) => void;
+  readonly index: number;
+  readonly field: Record<string, unknown>;
+  readonly control: Control<T>;
+  readonly errors: FieldErrors<T>;
+  readonly isSubmitted: boolean;
+  readonly validators: InstallmentValidators;
+  readonly fieldNamePrefix: string;
+  readonly disabled?: boolean;
+  readonly trigger: UseFormTrigger<T>;
+  readonly getValues: UseFormGetValues<T>;
+  readonly setValue: UseFormSetValue<T>;
+  readonly onRemove?: (index: number) => void;
 };
 
 // Funzione per gestire la modifica del campo importo
@@ -97,7 +94,6 @@ function handleAmountBlur(
  */
 function InstallmentItem<T extends FieldValues>({
   index,
-  field,
   control,
   errors,
   isSubmitted,
@@ -105,8 +101,6 @@ function InstallmentItem<T extends FieldValues>({
   fieldNamePrefix,
   disabled = false,
   trigger,
-  getValues,
-  setValue,
   onRemove
 }: InstallmentItemProps<T>) {
   const { t } = useTranslation();
@@ -122,7 +116,7 @@ function InstallmentItem<T extends FieldValues>({
     // Ottieni gli errori per l'indice specifico, se esistono
     const indexErrors = prefixErrors as unknown as Record<
       number,
-      IndexedFieldErrors<T>
+      IndexedFieldErrors
     >;
     if (!indexErrors || !indexErrors[index]) return false;
 
@@ -141,7 +135,7 @@ function InstallmentItem<T extends FieldValues>({
     // Ottieni gli errori per l'indice specifico, se esistono
     const indexErrors = prefixErrors as unknown as Record<
       number,
-      IndexedFieldErrors<T>
+      IndexedFieldErrors
     >;
     if (!indexErrors || !indexErrors[index]) return '';
 
@@ -163,7 +157,7 @@ function InstallmentItem<T extends FieldValues>({
             mt: 2
           }}
         >
-          <RemoveCircleIcon />
+          <RemoveCircleOutlineIcon />
         </IconButton>
       )}
 

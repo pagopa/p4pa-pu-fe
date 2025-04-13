@@ -19,7 +19,7 @@ import SectionBox from '../../../components/Wizard/SectionBox';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../../utils/formatters';
-import { useNavigate, Navigate } from 'react-router';
+import { Navigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import BeneficiaryField from './BeneficiaryField';
 import InstallmentField from './InstallmentField';
@@ -110,7 +110,6 @@ const Step3 = ({ data, setData, onBack }: Props) => {
   const totalAmount = watch('amount.value');
   const beneficiaries = watch('beneficiaries') || [];
   const paymentOption = watch('paymentOption.value');
-  const installments = watch('installments') || [];
 
   // Verifica se il paymentOption è rateale
   const isInstallment = paymentOption === 'INSTALLMENTS';
@@ -181,7 +180,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
     });
   };
 
-  // Se redirectToCompleted.shouldRedirect è true, renderizza il componente Navigate
+  // Se redirectToCompleted.shouldRedirect è true, renderizza il componente Navigate. Soluzione momentanea perchè poi verranno agganciata l'api per la creazione della posizione di debito
   if (redirectToCompleted.shouldRedirect) {
     return (
       <Navigate

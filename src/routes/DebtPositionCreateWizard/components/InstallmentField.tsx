@@ -1,5 +1,5 @@
 import { Box, Button, Typography, Grid, Paper } from '@mui/material';
-import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import { Add } from '@mui/icons-material';
 import {
   Control,
   FieldErrors,
@@ -14,16 +14,16 @@ import { useInstallmentManagement } from '../../../hooks/useInstallmentManagemen
 import InstallmentItem from './InstallmentItem';
 
 type InstallmentFieldProps<T extends FieldValues> = {
-  control: Control<T>;
-  errors: FieldErrors<T>;
-  isSubmitted: boolean;
-  setValue: UseFormSetValue<T>;
-  getValues: UseFormGetValues<T>;
-  trigger: UseFormTrigger<T>;
-  fieldNamePrefix: string;
-  disabled?: boolean;
-  flagMandatoryDueDate?: boolean;
-  onInstallmentsChange?: (totalAmount: string) => void;
+  readonly control: Control<T>;
+  readonly errors: FieldErrors<T>;
+  readonly isSubmitted: boolean;
+  readonly setValue: UseFormSetValue<T>;
+  readonly getValues: UseFormGetValues<T>;
+  readonly trigger: UseFormTrigger<T>;
+  readonly fieldNamePrefix: string;
+  readonly disabled?: boolean;
+  readonly flagMandatoryDueDate?: boolean;
+  readonly onInstallmentsChange?: (totalAmount: string) => void;
 };
 
 /**
@@ -50,8 +50,7 @@ function InstallmentField<T extends FieldValues>({
     MIN_INSTALLMENTS,
     MAX_INSTALLMENTS,
     addInstallment,
-    removeInstallment,
-    calculateTotalAmount
+    removeInstallment
   } = useInstallmentManagement<T>({
     control,
     fieldNamePrefix: fieldNamePrefix as FieldArrayPath<T>,
@@ -60,7 +59,7 @@ function InstallmentField<T extends FieldValues>({
     setValue,
     trigger,
     flagMandatoryDueDate,
-    onInstallmentsChange: (installments, totalAmount) => {
+    onInstallmentsChange: (_installments, totalAmount) => {
       // Aggiorna il campo amount solo se c'è un handler esterno
       if (onInstallmentsChange) {
         onInstallmentsChange(totalAmount);
@@ -106,7 +105,7 @@ function InstallmentField<T extends FieldValues>({
 
       <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-start' }}>
         <Button
-          startIcon={<AddCircleOutlineIcon />}
+          startIcon={<Add />}
           onClick={addInstallment}
           disabled={isMaxInstallments || disabled}
           color="primary"
