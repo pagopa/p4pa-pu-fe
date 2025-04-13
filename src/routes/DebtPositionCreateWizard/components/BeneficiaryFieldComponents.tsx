@@ -7,7 +7,12 @@ import {
   Button
 } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import { FieldErrors, FieldValues, UseFormTrigger } from 'react-hook-form';
+import {
+  FieldErrors,
+  FieldValues,
+  Path,
+  UseFormTrigger
+} from 'react-hook-form';
 import {
   ValidationContext,
   hasFieldError,
@@ -80,7 +85,6 @@ export function handleIBANChange<T extends FieldValues>(
       )
     );
   } else {
-    // Nell'app reale, usa il debounce
     ibanValidationTimer = debounceValidation(() => {
       trigger(
         buildFieldPath<T, 'postalAccount'>(
@@ -190,6 +194,10 @@ export function EntityNameField<T extends FieldValues>(
 ) {
   const { field, t, disabled = false, context } = props;
 
+  // Recuperiamo il valore direttamente dal context per assicurarci di avere sempre il valore aggiornato
+  const actualValue =
+    context.getValues(field.name as Path<T>) ?? field.value ?? '';
+
   return (
     <TextField
       {...field}
@@ -199,6 +207,10 @@ export function EntityNameField<T extends FieldValues>(
       disabled={disabled}
       error={hasFieldError('entityName', context)}
       helperText={getFieldErrorMessage('entityName', context)}
+      value={actualValue}
+      onChange={(e) => {
+        field.onChange(e.target.value);
+      }}
     />
   );
 }
@@ -233,6 +245,13 @@ export function AmountField<T extends FieldValues>(
     fieldNamePrefix
   } = props;
 
+  // Recuperiamo il valore direttamente dal context per assicurarci di avere sempre il valore aggiornato
+  const actualValue =
+    context.getValues(field.name as Path<T>) ?? field.value ?? '';
+  // Cast a string e poi formattazione
+  const valueAsString = String(actualValue);
+  const displayValue = valueAsString ? valueAsString.replace('.', ',') : '';
+
   return (
     <TextField
       {...field}
@@ -240,7 +259,7 @@ export function AmountField<T extends FieldValues>(
       label={t('debtPositionCreateWizard.step3.beneficiary.amount.label')}
       required
       disabled={disabled}
-      value={field.value ? field.value.toString().replace('.', ',') : ''}
+      value={displayValue}
       error={hasFieldError('amount', context)}
       helperText={getFieldErrorMessage('amount', context)}
       onChange={(e) =>
@@ -282,6 +301,10 @@ export function TaxCodeField<T extends FieldValues>(
 ) {
   const { field, t, disabled = false, context } = props;
 
+  // Recuperiamo il valore direttamente dal context per assicurarci di avere sempre il valore aggiornato
+  const actualValue =
+    context.getValues(field.name as Path<T>) ?? field.value ?? '';
+
   return (
     <TextField
       {...field}
@@ -291,7 +314,10 @@ export function TaxCodeField<T extends FieldValues>(
       disabled={disabled}
       error={hasFieldError('taxCode', context)}
       helperText={getFieldErrorMessage('taxCode', context)}
-      onChange={(e) => field.onChange(e.target.value.toUpperCase())}
+      value={actualValue}
+      onChange={(e) => {
+        field.onChange(e.target.value.toUpperCase());
+      }}
     />
   );
 }
@@ -416,6 +442,10 @@ export function IBANField<T extends FieldValues>(
     errors
   } = props;
 
+  // Recuperiamo il valore direttamente dal context per assicurarci di avere sempre il valore aggiornato
+  const actualValue =
+    context.getValues(field.name as Path<T>) ?? field.value ?? '';
+
   return (
     <TextField
       {...field}
@@ -428,9 +458,10 @@ export function IBANField<T extends FieldValues>(
           ? getIBANErrorMessage(context, errors)
           : undefined
       }
-      onChange={(e) =>
-        handleIBANChange(e, field.onChange, index, trigger, fieldNamePrefix)
-      }
+      value={actualValue}
+      onChange={(e) => {
+        handleIBANChange(e, field.onChange, index, trigger, fieldNamePrefix);
+      }}
     />
   );
 }
@@ -555,6 +586,10 @@ export function PostalAccountField<T extends FieldValues>(
     errors
   } = props;
 
+  // Recuperiamo il valore direttamente dal context per assicurarci di avere sempre il valore aggiornato
+  const actualValue =
+    context.getValues(field.name as Path<T>) ?? field.value ?? '';
+
   return (
     <TextField
       {...field}
@@ -570,15 +605,16 @@ export function PostalAccountField<T extends FieldValues>(
           : undefined
       }
       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
-      onChange={(e) =>
+      value={actualValue}
+      onChange={(e) => {
         handlePostalAccountChange(
           e,
           field.onChange,
           index,
           trigger,
           fieldNamePrefix
-        )
-      }
+        );
+      }}
     />
   );
 }
@@ -600,6 +636,10 @@ export function TaxonomyCodeField<T extends FieldValues>(
 ) {
   const { field, t, disabled = false, context } = props;
 
+  // Recuperiamo il valore direttamente dal context per assicurarci di avere sempre il valore aggiornato
+  const actualValue =
+    context.getValues(field.name as Path<T>) ?? field.value ?? '';
+
   return (
     <TextField
       {...field}
@@ -609,6 +649,10 @@ export function TaxonomyCodeField<T extends FieldValues>(
       disabled={disabled}
       error={hasFieldError('taxonomyCode', context)}
       helperText={getFieldErrorMessage('taxonomyCode', context)}
+      value={actualValue}
+      onChange={(e) => {
+        field.onChange(e.target.value);
+      }}
     />
   );
 }

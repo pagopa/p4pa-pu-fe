@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { useEffect, useState, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useFieldArray,
@@ -99,32 +99,42 @@ export function useBeneficiaryManagement<T extends FieldValues>({
   // ===== UTILITY FUNCTIONS =====
   //Ottiene un riepilogo dei beneficiari attuali con informazioni aggiuntive
   //Usato per notificare il componente padre dei cambiamenti
-  const getBeneficiariesSummary = useCallback(() => {
+  const getBeneficiariesSummary = () => {
     return fields.map((field, index) => {
+      // Un beneficiario è nuovo se è stato aggiunto dopo il submit iniziale
       const isNew =
         !!wasSubmittedRef.current && !existingBeneficiaries[field.id];
+
+      // Otteniamo tutti i dati correnti dal form
+      const dati = getValues(`${fieldNamePrefix}.${index}` as Path<T>) || {};
+
+      // Ci assicuriamo che l'ID sia corretto
+      if (dati && typeof dati === 'object' && 'id' in dati) {
+        (dati as Record<string, unknown>).id = field.id;
+      }
+
       return {
         id: field.id,
         index,
         isNew,
-        dati: getValues(`${fieldNamePrefix}.${index}` as Path<T>),
+        dati,
         validazioneApplicata: wasSubmittedRef.current && !isNew
       };
     });
-  }, [fields, existingBeneficiaries, getValues, fieldNamePrefix]);
+  };
 
   //Aggiorna la validazione di tutti i campi importo quando viene rimosso un beneficiario
   //Necessario per ricalcolare la validazione dell'importo totale
-  const updateAmountValidations = useCallback(() => {
+  const updateAmountValidations = () => {
     fields.forEach((_, index) => {
       trigger(`${fieldNamePrefix}.${index}.amount` as Path<T>);
     });
-  }, [fields, trigger, fieldNamePrefix]);
+  };
 
   // ===== BENEFICIARY MANAGEMENT =====
 
   //Aggiunge un nuovo beneficiario se il limite massimo non è stato raggiunto
-  const addBeneficiary = useCallback(() => {
+  const addBeneficiary = () => {
     if (fields.length < MAX_BENEFICIARIES) {
       const newBeneficiary: BeneficiaryData = {
         entityName: '',
@@ -139,22 +149,28 @@ export function useBeneficiaryManagement<T extends FieldValues>({
         newBeneficiary as unknown as PathValue<T, BeneficiaryFieldPath<T>>
       );
     }
-  }, [fields.length, append]);
+  };
 
   // Rimuove un beneficiario all'indice specificato
-  // Se rimane un solo beneficiario, notifica al componente padre di disattivare la modalità   multibeneficiario
-  const removeBeneficiary = useCallback(
-    (index: number) => {
-      const remainingBeneficiaries = fields.length - 1;
-      if (remainingBeneficiaries === 0 && onToggleMultibeneficiary) {
-        onToggleMultibeneficiary(false);
-      } else {
-        remove(index);
-        updateAmountValidations();
-      }
-    },
-    [fields.length, remove, onToggleMultibeneficiary, updateAmountValidations]
-  );
+  const removeBeneficiary = (index: number) => {
+    // Se rimane un solo beneficiario, disattiva multibeneficiario
+    const remainingBeneficiaries = fields.length - 1;
+    if (remainingBeneficiaries === 0 && onToggleMultibeneficiary) {
+      onToggleMultibeneficiary(false);
+      return;
+    }
+
+    // rimuoviamo il beneficiario e basta
+    remove(index);
+
+    // Notifichiamo i cambiamenti immediatamente se necessario
+    if (onBeneficiariesChange) {
+      onBeneficiariesChange(getBeneficiariesSummary());
+    }
+
+    // Aggiorniamo le validazioni dell'importo
+    updateAmountValidations();
+  };
 
   // ===== EFFECT HOOKS =====
   // Registra i beneficiari esistenti al primo submit
@@ -192,14 +208,14 @@ export function useBeneficiaryManagement<T extends FieldValues>({
       addBeneficiary();
       isInitializingRef.current = false;
     }
-  }, [fields.length, addBeneficiary]);
+  }, [fields.length]);
 
   // Notifica cambiamenti ai beneficiari
   useEffect(() => {
     if (onBeneficiariesChange && fields.length > 0) {
       onBeneficiariesChange(getBeneficiariesSummary());
     }
-  }, [fields, onBeneficiariesChange, getBeneficiariesSummary]);
+  }, [fields, onBeneficiariesChange]);
 
   return {
     fields,

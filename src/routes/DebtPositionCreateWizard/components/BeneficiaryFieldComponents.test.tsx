@@ -747,7 +747,9 @@ describe('IBANField', () => {
       existingBeneficiaries: {},
       errors: {},
       fieldNamePrefix: 'beneficiaries',
-      getValues: vi.fn().mockImplementation(() => ''),
+      getValues: vi
+        .fn()
+        .mockImplementation(() => 'IT60X0542811101000000123456'),
       t: mockT
     } as ValidationContext<Record<string, unknown>>;
 
@@ -855,7 +857,7 @@ describe('PostalAccountField', () => {
       existingBeneficiaries: {},
       errors: {},
       fieldNamePrefix: 'beneficiaries',
-      getValues: vi.fn().mockImplementation(() => ''),
+      getValues: vi.fn().mockImplementation(() => '123456789012'),
       t: mockT
     } as ValidationContext<Record<string, unknown>>;
 
