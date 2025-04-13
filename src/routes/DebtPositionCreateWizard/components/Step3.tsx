@@ -25,7 +25,7 @@ import BeneficiaryField from './BeneficiaryField';
 import type {
   BeneficiaryData,
   BeneficiaryFormValues
-} from './BeneficiaryField';
+} from '../../../hooks/useBeneficiaryManagement';
 import {
   createAmountValidator,
   isBeneficiariesTotalValid

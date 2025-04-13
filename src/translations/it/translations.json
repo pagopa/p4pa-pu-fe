@@ -432,7 +432,7 @@
       "beneficiary": {
         "title": "ENTE BENEFICIARIO",
         "entityName": {
-          "label": "Ente beneficiario",
+          "label": "Nome ente",
           "required": "Il campo ente beneficiario è obbligatorio"
         },
         "amount": {
