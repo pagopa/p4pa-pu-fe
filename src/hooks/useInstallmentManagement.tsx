@@ -111,10 +111,10 @@ export function useInstallmentManagement<T extends FieldValues>({
         `${fieldNamePrefix}.${index}` as Path<T>
       );
       // Se la data è un oggetto Date, formattala prima di restituirla
-      const dueDate = installmentData.dueDate;
+      const dueDate = installmentData?.dueDate;
 
       // Ottieni l'importo e formattalo se presente
-      const amount = installmentData.amount;
+      const amount = installmentData?.amount;
       const formattedAmount = amount
         ? moneyFormat(parseFloat(amount) * 100)
             .replace('€', '')
@@ -138,9 +138,10 @@ export function useInstallmentManagement<T extends FieldValues>({
   function calculateTotalAmount(): string {
     return fields
       .reduce((total, _, index) => {
-        const amount = getValues(
-          `${fieldNamePrefix}.${index}.amount` as Path<T>
-        ) as string;
+        const installmentData = getValues(
+          `${fieldNamePrefix}.${index}` as Path<T>
+        );
+        const amount = installmentData?.amount as string | undefined;
         const amountValue = amount ? parseFloat(amount.replace(',', '.')) : 0;
         return total + amountValue;
       }, 0)
@@ -164,6 +165,7 @@ export function useInstallmentManagement<T extends FieldValues>({
 
       // Aggiorna gli importi e notifica i cambiamenti
       setTimeout(() => {
+        console.log('addInstallment setTimeout');
         const newTotalAmount = calculateTotalAmount();
         if (onInstallmentsChange) {
           const currentInstallments = getInstallmentsData();
@@ -184,6 +186,7 @@ export function useInstallmentManagement<T extends FieldValues>({
 
     // Aggiorna gli importi e notifica i cambiamenti
     setTimeout(() => {
+      console.log('removeInstallment setTimeout');
       const newTotalAmount = calculateTotalAmount();
       if (onInstallmentsChange) {
         const currentInstallments = getInstallmentsData();

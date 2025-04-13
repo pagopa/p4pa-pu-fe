@@ -68,6 +68,7 @@ function handleAmountChange<T extends FieldValues>(
 
   // Triggerare la validazione per aggiornare il totale
   setTimeout(() => {
+    console.log('handleAmountChange setTimeout');
     trigger(`${fieldNamePrefix}.${index}.amount` as Path<T>);
   }, 0);
 }
@@ -150,155 +151,166 @@ function InstallmentItem<T extends FieldValues>({
   };
 
   return (
-    <Box
-      sx={{
-        p: 2,
-        border: '1px solid',
-        borderColor: 'divider',
-        borderRadius: 1,
-        position: 'relative'
-      }}
-    >
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          <Box display="flex" alignItems="center">
-            <Typography variant="subtitle1" fontWeight="bold">
-              {t('debtPositionCreateWizard.step3.installments.installment')}{' '}
-              {index + 1}
-            </Typography>
-            {onRemove && (
-              <IconButton
-                size="small"
-                onClick={() => onRemove(index)}
-                sx={{
-                  position: 'absolute',
-                  top: 8,
-                  right: 8,
-                  color: 'error.main'
-                }}
-              >
-                <RemoveCircleIcon />
-              </IconButton>
-            )}
-          </Box>
-        </Grid>
+    <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+      {/* Pulsante di rimozione posizionato a sinistra del box */}
+      {onRemove && (
+        <IconButton
+          size="small"
+          onClick={() => onRemove(index)}
+          sx={{
+            color: 'error.main',
+            mr: 1,
+            mt: 2
+          }}
+        >
+          <RemoveCircleIcon />
+        </IconButton>
+      )}
 
-        {/* Campo Importo */}
-        <Grid item xs={12}>
-          <Controller
-            name={`${fieldNamePrefix}.${index}.amount` as Path<T>}
-            control={control}
-            rules={validators.amount}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                fullWidth
-                size="small"
-                label={t(
-                  'debtPositionCreateWizard.step3.installments.amount.label'
-                )}
-                required
-                disabled={disabled}
-                value={field.value || ''}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">€</InputAdornment>
-                  ),
-                  inputProps: {
-                    style: { textAlign: 'left' }
-                  }
-                }}
-                error={hasError('amount')}
-                helperText={getErrorMessage('amount')}
-                onChange={(e) =>
-                  handleAmountChange(
-                    e,
-                    field.onChange,
-                    trigger,
-                    fieldNamePrefix,
-                    index
-                  )
-                }
-                onBlur={(e) =>
-                  handleAmountBlur(e, field.onChange, field.onBlur)
-                }
-              />
-            )}
-          />
-        </Grid>
+      <Box
+        sx={{
+          p: 2,
+          border: '1px solid',
+          borderColor: 'divider',
+          borderRadius: 1,
+          position: 'relative',
+          flexGrow: 1
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <Box display="flex" alignItems="center">
+              <Typography variant="subtitle1" fontWeight="bold">
+                {t('debtPositionCreateWizard.step3.installments.installment')}{' '}
+                {index + 1}
+              </Typography>
+            </Box>
+          </Grid>
 
-        {/* Campo Data Scadenza */}
-        <Grid item xs={12}>
-          <Controller
-            name={`${fieldNamePrefix}.${index}.dueDate` as Path<T>}
-            control={control}
-            rules={validators.dueDate}
-            render={({ field: { onChange, value, ...field } }) => {
-              // Determina se il campo è obbligatorio dai validators
-              const isRequired = !!validators.dueDate.required;
-
-              return (
-                <DatePicker
+          {/* Campo Importo */}
+          <Grid item xs={12}>
+            <Controller
+              name={`${fieldNamePrefix}.${index}.amount` as Path<T>}
+              control={control}
+              rules={validators.amount}
+              render={({ field }) => (
+                <TextField
                   {...field}
-                  value={value}
+                  fullWidth
+                  size="small"
                   label={t(
-                    'debtPositionCreateWizard.step3.installments.dueDate.label'
+                    'debtPositionCreateWizard.step3.installments.amount.label'
                   )}
+                  required
                   disabled={disabled}
-                  minDate={new Date()}
-                  format="dd/MM/yyyy"
-                  slotProps={{
-                    textField: {
-                      fullWidth: true,
-                      size: 'small',
-                      required: isRequired,
-                      error: hasError('dueDate'),
-                      helperText: getErrorMessage('dueDate')
+                  value={field.value || ''}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">€</InputAdornment>
+                    ),
+                    inputProps: {
+                      style: { textAlign: 'left' }
                     }
                   }}
-                  onChange={(date) => {
-                    onChange(date);
-                  }}
+                  error={hasError('amount')}
+                  helperText={getErrorMessage('amount')}
+                  onChange={(e) =>
+                    handleAmountChange(
+                      e,
+                      field.onChange,
+                      trigger,
+                      fieldNamePrefix,
+                      index
+                    )
+                  }
+                  onBlur={(e) =>
+                    handleAmountBlur(e, field.onChange, field.onBlur)
+                  }
                 />
-              );
-            }}
-          />
-        </Grid>
+              )}
+            />
+          </Grid>
 
-        {/* Switch per altri beneficiari */}
-        <Grid item xs={12}>
-          <Controller
-            name={`${fieldNamePrefix}.${index}.isMultibeneficiary` as Path<T>}
-            control={control}
-            render={({ field }) => (
-              <FormControlLabel
-                control={
-                  <Switch
+          {/* Campo Data Scadenza */}
+          <Grid item xs={12}>
+            <Controller
+              name={`${fieldNamePrefix}.${index}.dueDate` as Path<T>}
+              control={control}
+              rules={validators.dueDate}
+              render={({ field: { onChange, value, ...field } }) => {
+                // Determina se il campo è obbligatorio dai validators
+                const isRequired = !!validators.dueDate.required;
+
+                return (
+                  <DatePicker
                     {...field}
-                    checked={!!field.value}
+                    value={value || null}
+                    label={t(
+                      'debtPositionCreateWizard.step3.installments.dueDate.label'
+                    )}
                     disabled={disabled}
-                    onChange={(e) => {
-                      const value = e.target.checked;
-                      field.onChange(value);
+                    minDate={new Date()}
+                    format="dd/MM/yyyy"
+                    slotProps={{
+                      textField: {
+                        fullWidth: true,
+                        required: isRequired,
+                        error: hasError('dueDate'),
+                        helperText: getErrorMessage('dueDate'),
+                        size: 'small'
+                      },
+                      actionBar: {
+                        actions: ['clear']
+                      },
+                      field: {
+                        clearable: true,
+                        onClear: () => onChange(null)
+                      }
+                    }}
+                    onChange={(date) => {
+                      onChange(date);
                     }}
                   />
-                }
-                label={
-                  <Box display="flex" alignItems="center">
-                    <Typography variant="body2">
-                      {t(
-                        'debtPositionCreateWizard.step3.installments.otherBeneficiaries'
-                      )}
-                    </Typography>
-                  </Box>
-                }
-              />
-            )}
-          />
-        </Grid>
+                );
+              }}
+            />
+          </Grid>
 
-        {/* Qui in futuro verrà inserito il componente dei beneficiari per questa rata */}
-      </Grid>
+          {/* Switch per altri beneficiari */}
+          <Grid item xs={12}>
+            <Controller
+              name={`${fieldNamePrefix}.${index}.isMultibeneficiary` as Path<T>}
+              control={control}
+              render={({ field }) => (
+                <FormControlLabel
+                  control={
+                    <Switch
+                      {...field}
+                      checked={!!field.value}
+                      disabled={disabled}
+                      onChange={(e) => {
+                        const value = e.target.checked;
+                        field.onChange(value);
+                      }}
+                    />
+                  }
+                  label={
+                    <Box display="flex" alignItems="center">
+                      <Typography variant="body2">
+                        {t(
+                          'debtPositionCreateWizard.step3.installments.otherBeneficiaries'
+                        )}
+                      </Typography>
+                    </Box>
+                  }
+                />
+              )}
+            />
+          </Grid>
+
+          {/* Qui in futuro verrà inserito il componente dei beneficiari per questa rata */}
+        </Grid>
+      </Box>
     </Box>
   );
 }

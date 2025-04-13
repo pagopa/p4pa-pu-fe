@@ -19,8 +19,8 @@ import SectionBox from '../../../components/Wizard/SectionBox';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../../utils/formatters';
-import { useNavigate } from 'react-router';
-import { useEffect } from 'react';
+import { useNavigate, Navigate } from 'react-router';
+import { useEffect, useState } from 'react';
 import BeneficiaryField from './BeneficiaryField';
 import InstallmentField from './InstallmentField';
 import type {
@@ -73,7 +73,11 @@ function triggerValidationForAllBeneficiaries<T extends FieldValues>(
 
 const Step3 = ({ data, setData, onBack }: Props) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  // Stato per gestire il reindirizzamento
+  const [redirectToCompleted, setRedirectToCompleted] = useState<{
+    shouldRedirect: boolean;
+    paymentObject: string;
+  }>({ shouldRedirect: false, paymentObject: '' });
 
   // Converti il valore stringa della data in oggetto Date per il DatePicker
   const initialData: FormValues = {
@@ -165,15 +169,28 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       // Includi l'array di rate solo se è un pagamento rateale
       ...(isInstallment ? { installments: values.installments } : {})
     };
+    console.log('formattedValues', formattedValues);
+
+    // Salva i dati
     setData(formattedValues);
-    // va alla pagina finale, passando il valore aggiornato
-    navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
-      state: {
-        paymentObject: formattedValues.paymentObject.value
-      },
-      replace: true // sovrascrive la rotta step3 nello stack del browser si ritorna a ${deployPath}/debt-positions/
+
+    // Imposta lo stato di reindirizzamento invece di navigare direttamente
+    setRedirectToCompleted({
+      shouldRedirect: true,
+      paymentObject: formattedValues.paymentObject.value
     });
   };
+
+  // Se redirectToCompleted.shouldRedirect è true, renderizza il componente Navigate
+  if (redirectToCompleted.shouldRedirect) {
+    return (
+      <Navigate
+        to={PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED}
+        state={{ paymentObject: redirectToCompleted.paymentObject }}
+        replace
+      />
+    );
+  }
 
   // Utilizzo della funzione di validazione importo importata da fieldValidation.tsx
   const validateAmount = createAmountValidator(t);
@@ -368,6 +385,9 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                           error: isSubmitted && !!errors.dueDate?.value,
                           helperText:
                             isSubmitted && errors.dueDate?.value?.message
+                        },
+                        actionBar: {
+                          actions: ['clear']
                         }
                       }}
                       onChange={(date) => {

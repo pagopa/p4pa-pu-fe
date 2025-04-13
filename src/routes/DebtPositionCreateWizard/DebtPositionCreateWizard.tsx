@@ -76,6 +76,8 @@ const DebtPositionCreateWizard = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>(initialData);
 
+  console.log('formData', formData);
+
   const steps: Stepper['steps'] = [
     {
       label: t('debtPositionCreateWizard.wizardStepper.step1'),
