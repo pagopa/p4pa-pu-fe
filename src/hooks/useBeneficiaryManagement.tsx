@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useFieldArray,
@@ -84,23 +84,20 @@ export function useBeneficiaryManagement<T extends FieldValues>({
   });
 
   // ===== VALIDATORS =====
-  // Memorizziamo i validators per evitare ricreazioni ad ogni render
-  const validators = useMemo(
-    () =>
-      createBeneficiaryValidators(t, getValues, fieldNamePrefix, totalAmount),
-    [t, getValues, fieldNamePrefix, totalAmount]
+  const validators = createBeneficiaryValidators(
+    t,
+    getValues,
+    fieldNamePrefix,
+    totalAmount
   );
 
-  const fieldValidators = useMemo(
-    () => createBeneficiaryFieldValidators(t),
-    [t]
-  );
+  const fieldValidators = createBeneficiaryFieldValidators(t);
 
   // ===== UTILITY FUNCTIONS =====
   //Ottiene un riepilogo dei beneficiari attuali con informazioni aggiuntive
   //Usato per notificare il componente padre dei cambiamenti
   const getBeneficiariesSummary = () => {
-    return fields.map((field, index) => {
+    const summary = fields.map((field, index) => {
       // Un beneficiario è nuovo se è stato aggiunto dopo il submit iniziale
       const isNew =
         !!wasSubmittedRef.current && !existingBeneficiaries[field.id];
@@ -121,6 +118,8 @@ export function useBeneficiaryManagement<T extends FieldValues>({
         validazioneApplicata: wasSubmittedRef.current && !isNew
       };
     });
+
+    return summary;
   };
 
   //Aggiorna la validazione di tutti i campi importo quando viene rimosso un beneficiario
@@ -165,11 +164,15 @@ export function useBeneficiaryManagement<T extends FieldValues>({
 
     // Notifichiamo i cambiamenti immediatamente se necessario
     if (onBeneficiariesChange) {
-      onBeneficiariesChange(getBeneficiariesSummary());
+      const summary = getBeneficiariesSummary();
+      onBeneficiariesChange(summary);
     }
 
-    // Aggiorniamo le validazioni dell'importo
-    updateAmountValidations();
+    // Utilizziamo setTimeout per assicurarci che lo stato di fields sia aggiornato
+    // prima di eseguire le validazioni
+    setTimeout(() => {
+      updateAmountValidations();
+    }, 0);
   };
 
   // ===== EFFECT HOOKS =====

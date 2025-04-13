@@ -200,6 +200,9 @@ describe('useBeneficiaryManagement', () => {
   });
 
   it('dovrebbe aggiornare la validazione degli importi dopo la rimozione di un beneficiario', () => {
+    // Utilizziamo i timer fake per controllare setTimeout
+    vi.useFakeTimers();
+
     mockHelpers.mockFieldsValue.push({ id: 'id-1' }, { id: 'id-2' });
 
     const props = getBaseProps();
@@ -210,8 +213,21 @@ describe('useBeneficiaryManagement', () => {
       result.current.removeBeneficiary(1);
     });
 
-    // Dovrebbe validare gli importi degli altri beneficiari
+    // In questo momento il trigger non dovrebbe essere stato chiamato
+    // perché l'esecuzione è in attesa del setTimeout
+    expect(props.trigger).not.toHaveBeenCalled();
+
+    // Avanziamo i timer per far scattare il setTimeout
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    // Ora dovrebbe aver chiamato trigger per validare gli importi
     expect(props.trigger).toHaveBeenCalled();
+    expect(props.trigger).toHaveBeenCalledWith('beneficiaries.0.amount');
+
+    // Ripristiniamo i timer reali
+    vi.useRealTimers();
   });
 
   it('dovrebbe registrare i beneficiari esistenti al primo submit', () => {

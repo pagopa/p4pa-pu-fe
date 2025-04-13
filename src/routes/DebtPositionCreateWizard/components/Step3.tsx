@@ -101,14 +101,6 @@ const Step3 = ({ data, setData, onBack }: Props) => {
   const totalAmount = watch('amount.value');
   const beneficiaries = watch('beneficiaries') || [];
 
-  // Verifica se la somma degli importi dei beneficiari è valida
-  const isBeneficiariesValid = () => {
-    if (!isMultibeneficiary || !totalAmount || beneficiaries.length === 0)
-      return true;
-
-    return isBeneficiariesTotalValid(beneficiaries, totalAmount);
-  };
-
   // Effetto per gestire l'inizializzazione dei beneficiari
   useEffect(() => {
     if (isMultibeneficiary && beneficiaries.length === 0) {
@@ -128,8 +120,14 @@ const Step3 = ({ data, setData, onBack }: Props) => {
   }, [isMultibeneficiary, setValue]);
 
   const onSubmit = async (values: FormValues) => {
+    // Utilizziamo i valori attuali per la validazione
+    const currentBeneficiaries = getValues('beneficiaries') || [];
+
     // Verifica se la somma degli importi dei beneficiari è valida altrimenti attiva la validazione e interrompe il submit
-    if (isMultibeneficiary && !isBeneficiariesValid()) {
+    if (
+      isMultibeneficiary &&
+      !isBeneficiariesTotalValid(currentBeneficiaries, totalAmount)
+    ) {
       trigger('beneficiaries');
       return;
     }
@@ -150,7 +148,6 @@ const Step3 = ({ data, setData, onBack }: Props) => {
         ? { beneficiaries: values.beneficiaries }
         : {})
     };
-
     setData(formattedValues);
     // va alla pagina finale, passando il valore aggiornato
     navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
@@ -284,11 +281,9 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                       );
                       // Converti virgola in punto per la gestione numerica
                       const normalizedValue = filteredValue.replace(',', '.');
-
                       // Aggiorna il valore nel form
                       field.onChange(normalizedValue);
-
-                      // Per risolvere il problema di aggiornamento dello stato,
+                      // Per risolvere il problema di aggiornamento dello stato
                       // è necessario usare setTimeout per assicurarsi che
                       // il valore sia effettivamente aggiornato prima di triggerare la validazione
                       if (isMultibeneficiary && beneficiaries.length > 0) {
