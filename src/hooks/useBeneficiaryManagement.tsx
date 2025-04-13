@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   useFieldArray,
@@ -84,17 +84,14 @@ export function useBeneficiaryManagement<T extends FieldValues>({
   });
 
   // ===== VALIDATORS =====
-  // Memorizziamo i validators per evitare ricreazioni ad ogni render
-  const validators = useMemo(
-    () =>
-      createBeneficiaryValidators(t, getValues, fieldNamePrefix, totalAmount),
-    [t, getValues, fieldNamePrefix, totalAmount]
+  // Creazione diretta dei validators senza useMemo
+  const validators = createBeneficiaryValidators(
+    t,
+    getValues,
+    fieldNamePrefix,
+    totalAmount
   );
-
-  const fieldValidators = useMemo(
-    () => createBeneficiaryFieldValidators(t),
-    [t]
-  );
+  const fieldValidators = createBeneficiaryFieldValidators(t);
 
   // ===== UTILITY FUNCTIONS =====
   //Ottiene un riepilogo dei beneficiari attuali con informazioni aggiuntive
