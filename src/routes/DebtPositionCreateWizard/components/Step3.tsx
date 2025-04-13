@@ -34,7 +34,6 @@ import {
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { PageRoutes } from '../../../App';
 import { InstallmentData } from '../../../hooks/useInstallmentManagement';
-
 export type Step3Data = {
   paymentObject: { value: string; readonly: boolean };
   paymentOption: { value: string; readonly: boolean };
@@ -145,7 +144,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
 
   const onSubmit = async (values: FormValues) => {
     // Verifica se la somma degli importi dei beneficiari è valida altrimenti attiva la validazione e interrompe il submit
-    if (!isInstallment && isMultibeneficiary && !isBeneficiariesValid()) {
+    if (isMultibeneficiary && !isBeneficiariesValid()) {
       trigger('beneficiaries');
       return;
     }
@@ -250,7 +249,6 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(value);
-
                       // Se viene selezionata l'opzione rateale
                       if (value === 'INSTALLMENTS') {
                         // Disattiva la modalità multi-beneficiario
@@ -436,7 +434,6 @@ const Step3 = ({ data, setData, onBack }: Props) => {
           </Grid>
         </SectionBox>
       </WizardStepWrapper>
-
       {/* Componente Rate - visibile solo quando è selezionata l'opzione rateale */}
       {isInstallment && (
         <InstallmentField<FormValues>
