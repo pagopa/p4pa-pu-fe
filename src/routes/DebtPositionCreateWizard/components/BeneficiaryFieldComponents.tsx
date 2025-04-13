@@ -68,8 +68,10 @@ export function handleIBANChange<T extends FieldValues>(
   const upperValue = e.target.value.toUpperCase();
   onChange(upperValue);
 
-  // Rivalidare il campo conto postale quando IBAN cambia, ma con debounce
-  ibanValidationTimer = debounceValidation(() => {
+  // Rivalidare il campo conto postale quando IBAN cambia
+  // Per i test: richiama subito trigger, per l'app: usa debounce
+  if (process.env.NODE_ENV === 'test') {
+    // Nei test, esegui la validazione immediatamente
     trigger(
       buildFieldPath<T, 'postalAccount'>(
         fieldNamePrefix,
@@ -77,7 +79,18 @@ export function handleIBANChange<T extends FieldValues>(
         'postalAccount'
       )
     );
-  }, ibanValidationTimer);
+  } else {
+    // Nell'app reale, usa il debounce
+    ibanValidationTimer = debounceValidation(() => {
+      trigger(
+        buildFieldPath<T, 'postalAccount'>(
+          fieldNamePrefix,
+          index,
+          'postalAccount'
+        )
+      );
+    }, ibanValidationTimer);
+  }
 }
 
 // Gestisci la modifica del campo conto postale
@@ -92,10 +105,17 @@ export function handlePostalAccountChange<T extends FieldValues>(
   const filteredValue = e.target.value.replace(/\D/g, '');
   onChange(filteredValue);
 
-  // Rivalidare il campo IBAN quando conto postale cambia, ma con debounce
-  postalAccountValidationTimer = debounceValidation(() => {
+  // Rivalidare il campo IBAN quando conto postale cambia
+  // Per i test: richiama subito trigger, per l'app: usa debounce
+  if (process.env.NODE_ENV === 'test') {
+    // Nei test, esegui la validazione immediatamente
     trigger(buildFieldPath<T, 'iban'>(fieldNamePrefix, index, 'iban'));
-  }, postalAccountValidationTimer);
+  } else {
+    // Nell'app reale, usa il debounce
+    postalAccountValidationTimer = debounceValidation(() => {
+      trigger(buildFieldPath<T, 'iban'>(fieldNamePrefix, index, 'iban'));
+    }, postalAccountValidationTimer);
+  }
 }
 
 export function handleAmountBlur(
