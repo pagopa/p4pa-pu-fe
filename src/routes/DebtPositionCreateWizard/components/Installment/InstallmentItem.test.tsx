@@ -257,20 +257,18 @@ describe('InstallmentItem Component', () => {
 
     mockTrigger = vi.fn() as unknown as UseFormTrigger<TestFormValues>;
 
-    mockGetValues = vi.fn(
-      (path: Path<TestFormValues>): string | null | boolean | undefined => {
-        if (path === `${mockFieldNamePrefix}.${mockIndex}.amount`) {
-          return '100';
-        }
-        if (path === `${mockFieldNamePrefix}.${mockIndex}.dueDate`) {
-          return null;
-        }
-        if (path === `${mockFieldNamePrefix}.${mockIndex}.isMultibeneficiary`) {
-          return false;
-        }
-        return undefined;
+    mockGetValues = vi.fn((path: Path<TestFormValues>): unknown => {
+      if (path === `${mockFieldNamePrefix}.${mockIndex}.amount`) {
+        return '100';
       }
-    ) as unknown as UseFormGetValues<TestFormValues>;
+      if (path === `${mockFieldNamePrefix}.${mockIndex}.dueDate`) {
+        return null;
+      }
+      if (path === `${mockFieldNamePrefix}.${mockIndex}.isMultibeneficiary`) {
+        return false;
+      }
+      return undefined;
+    }) as unknown as UseFormGetValues<TestFormValues>;
 
     mockSetValue = vi.fn() as unknown as UseFormSetValue<TestFormValues>;
 
