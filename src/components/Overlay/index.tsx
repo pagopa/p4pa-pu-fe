@@ -19,12 +19,12 @@ export const Overlay = (props: OverlayProps): React.ReactElement => {
   const isFetching = useIsFetching();
   const isMutating = useIsMutating();
   const [loading, setLoading] = React.useState(false);
-  const [id, setId] = React.useState<NodeJS.Timeout | null>(null);
+  const [timeoutId, setTimeoutId] = React.useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     /** this means that that pending state ended */
     if (isFetching + isMutating === 0) {
-      if (id) clearTimeout(id);
+      if (timeoutId) clearTimeout(timeoutId);
       endTime = Date.now();
       if (endTime - startTime < min) {
         setTimeout(() => setLoading(false), atLeast);
@@ -35,10 +35,10 @@ export const Overlay = (props: OverlayProps): React.ReactElement => {
     /** this means that that pending has started */
     if (isFetching + isMutating > 0) {
       /** this clear is necessary because the pending state can start multiple times */
-      if (id) clearTimeout(id);
+      if (timeoutId) clearTimeout(timeoutId);
       startTime = Date.now();
       /** do not show the spinner if the loading time is less than min value */
-      setId(setTimeout(() => setLoading(true), min));
+      setTimeoutId(setTimeout(() => setLoading(true), min));
     }
   }, [isFetching, isMutating]);
 

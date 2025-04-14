@@ -4,7 +4,6 @@ import user from '../api/user';
 import { StoreProvider } from '../store/GlobalStore';
 import { UserInfo } from '../../generated/apiClient';
 import { act } from 'react';
-import { appState } from '../store/AppStateStore';
 import { renderHook } from '../__tests__/renderers';
 import { userInfoState } from '../store/UserInfoStore';
 

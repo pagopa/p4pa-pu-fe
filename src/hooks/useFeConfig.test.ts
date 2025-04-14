@@ -5,7 +5,6 @@ import { StoreProvider } from '../store/GlobalStore';
 import { configFeState } from '../store/ConfigFeStore';
 import { ConfigFE } from '../../generated/apiClient';
 import { act } from 'react';
-import { appState } from '../store/AppStateStore';
 import { renderHook } from '../__tests__/renderers';
 
 vi.mock('../api/brokers', () => ({
