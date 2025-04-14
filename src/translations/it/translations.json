@@ -395,13 +395,16 @@
         "required": "Il campo CAP è obbligatorio"
       },
       "country": {
-        "label": "Nazione"
+        "label": "Nazione",
+        "required": "Il campo nazione è obbligatorio"
       },
       "province": {
-        "label": "Provincia"
+        "label": "Provincia",
+        "required": "Il campo provincia è obbligatorio"
       },
       "city": {
-        "label": "Località"
+        "label": "Località",
+        "required": "Il campo località è obbligatorio"
       }
     },
     "step3": {

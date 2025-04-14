@@ -42,6 +42,30 @@ const initialData: FormData = {
     fullName: {
       value: '',
       readonly: false
+    },
+    address: {
+      value: '',
+      readonly: false
+    },
+    civicNumber: {
+      value: '',
+      readonly: false
+    },
+    zipCode: {
+      value: '',
+      readonly: false
+    },
+    country: {
+      value: '',
+      readonly: false
+    },
+    province: {
+      value: '',
+      readonly: false
+    },
+    city: {
+      value: '',
+      readonly: false
     }
   },
   step3: {

@@ -15,8 +15,7 @@ import { ReactNode } from 'react';
 // Mock delle dipendenze e utility
 vi.mock('../../../utils/formatters', () => ({
   moneyFormat: vi.fn(
-    (value, minDecimals, maxDecimals) =>
-      `€ ${(value / 100).toFixed(maxDecimals || 2)}`
+    (value, maxDecimals) => `€ ${(value / 100).toFixed(maxDecimals || 2)}`
   )
 }));
 
