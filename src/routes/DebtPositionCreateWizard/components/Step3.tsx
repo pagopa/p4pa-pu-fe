@@ -19,9 +19,10 @@ import SectionBox from '../../../components/Wizard/SectionBox';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../../utils/formatters';
-import { useNavigate } from 'react-router';
-import { useEffect } from 'react';
+import { Navigate } from 'react-router';
+import { useEffect, useState } from 'react';
 import BeneficiaryField from './BeneficiaryField';
+import InstallmentField from './InstallmentField';
 import type {
   BeneficiaryData,
   BeneficiaryFormValues
@@ -32,7 +33,7 @@ import {
 } from '../../../utils/fieldValidation';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { PageRoutes } from '../../../App';
-
+import { InstallmentData } from '../../../hooks/useInstallmentManagement';
 export type Step3Data = {
   paymentObject: { value: string; readonly: boolean };
   paymentOption: { value: string; readonly: boolean };
@@ -41,6 +42,7 @@ export type Step3Data = {
   flagMandatoryDueDate: boolean;
   isMultibeneficiary: { value: boolean; readonly: boolean };
   beneficiaries?: Array<BeneficiaryData>; // Array di beneficiari
+  installments?: Array<InstallmentData>; // Array di rate
 };
 
 type Props = {
@@ -56,6 +58,7 @@ type FormValues = BeneficiaryFormValues & {
   amount: { value: string; readonly: boolean };
   dueDate: { value: Date | null; readonly: boolean };
   isMultibeneficiary: { value: boolean; readonly: boolean };
+  installments?: Array<InstallmentData>;
 };
 
 // Funzione estratta dal nesting eccessivo
@@ -70,7 +73,11 @@ function triggerValidationForAllBeneficiaries<T extends FieldValues>(
 
 const Step3 = ({ data, setData, onBack }: Props) => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  // Stato per gestire il reindirizzamento
+  const [redirectToCompleted, setRedirectToCompleted] = useState<{
+    shouldRedirect: boolean;
+    paymentObject: string;
+  }>({ shouldRedirect: false, paymentObject: '' });
 
   // Converti il valore stringa della data in oggetto Date per il DatePicker
   const initialData: FormValues = {
@@ -80,7 +87,9 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       value: data.dueDate?.value ? new Date(data.dueDate.value) : null
     },
     // Inizializza l'array di beneficiari se è definito o crea un array vuoto
-    beneficiaries: data.beneficiaries || []
+    beneficiaries: data.beneficiaries || [],
+    // Inizializza l'array di rate se è definito o crea un array vuoto
+    installments: data.installments || []
   };
 
   const {
@@ -100,6 +109,10 @@ const Step3 = ({ data, setData, onBack }: Props) => {
   const isMultibeneficiary = watch('isMultibeneficiary.value');
   const totalAmount = watch('amount.value');
   const beneficiaries = watch('beneficiaries') || [];
+  const paymentOption = watch('paymentOption.value');
+
+  // Verifica se il paymentOption è rateale
+  const isInstallment = paymentOption === 'INSTALLMENTS';
 
   // Effetto per gestire l'inizializzazione dei beneficiari
   useEffect(() => {
@@ -118,6 +131,11 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       setValue('beneficiaries', []);
     }
   }, [isMultibeneficiary, setValue]);
+
+  // Gestisce l'aggiornamento dell'importo totale quando cambiano le rate
+  const handleInstallmentsChange = (totalAmount: string) => {
+    setValue('amount.value', totalAmount);
+  };
 
   const onSubmit = async (values: FormValues) => {
     // Utilizziamo i valori attuali per la validazione
@@ -143,20 +161,35 @@ const Step3 = ({ data, setData, onBack }: Props) => {
             : values.dueDate.value
       },
       flagMandatoryDueDate: data.flagMandatoryDueDate,
-      // Includi l'array di beneficiari solo se isMultibeneficiary è true
-      ...(values.isMultibeneficiary.value
+      // Includi l'array di beneficiari solo se isMultibeneficiary è true e non è un pagamento rateale
+      ...(!isInstallment && values.isMultibeneficiary.value
         ? { beneficiaries: values.beneficiaries }
-        : {})
+        : {}),
+      // Includi l'array di rate solo se è un pagamento rateale
+      ...(isInstallment ? { installments: values.installments } : {})
     };
+    console.log('formattedValues', formattedValues);
+
+    // Salva i dati
     setData(formattedValues);
-    // va alla pagina finale, passando il valore aggiornato
-    navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
-      state: {
-        paymentObject: formattedValues.paymentObject.value
-      },
-      replace: true // sovrascrive la rotta step3 nello stack del browser si ritorna a ${deployPath}/debt-positions/
+
+    // Imposta lo stato di reindirizzamento invece di navigare direttamente
+    setRedirectToCompleted({
+      shouldRedirect: true,
+      paymentObject: formattedValues.paymentObject.value
     });
   };
+
+  // Se redirectToCompleted.shouldRedirect è true, renderizza il componente Navigate. Soluzione momentanea perchè poi verranno agganciata l'api per la creazione della posizione di debito
+  if (redirectToCompleted.shouldRedirect) {
+    return (
+      <Navigate
+        to={PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED}
+        state={{ paymentObject: redirectToCompleted.paymentObject }}
+        replace
+      />
+    );
+  }
 
   // Utilizzo della funzione di validazione importo importata da fieldValidation.tsx
   const validateAmount = createAmountValidator(t);
@@ -229,6 +262,14 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(value);
+                      // Se viene selezionata l'opzione rateale
+                      if (value === 'INSTALLMENTS') {
+                        // Disattiva la modalità multi-beneficiario
+                        setValue('isMultibeneficiary.value', false);
+
+                        // Azzera il valore del campo amount
+                        setValue('amount.value', '');
+                      }
                     }}
                   >
                     <MenuItem value="SINGLE">
@@ -255,7 +296,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     fullWidth
                     label={t('debtPositionCreateWizard.step3.amount.label')}
                     required
-                    disabled={data.amount?.readonly}
+                    disabled={data.amount?.readonly || isInstallment}
                     value={
                       field.value
                         ? field.value.toString().replace('.', ',')
@@ -271,8 +312,16 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                           e.target instanceof HTMLElement && e.target.blur() // Rimuove il focus dall'input quando si ruota la rotellina del mouse
                       }
                     }}
-                    error={isSubmitted && !!errors.amount?.value}
-                    helperText={isSubmitted && errors.amount?.value?.message}
+                    error={
+                      isSubmitted && !!errors.amount?.value && !isInstallment
+                    }
+                    helperText={
+                      isInstallment
+                        ? t(
+                            'debtPositionCreateWizard.step3.amount.installmentHelperText'
+                          )
+                        : isSubmitted && errors.amount?.value?.message
+                    }
                     onChange={(e) => {
                       // Accetta solo numeri, punto e virgola
                       const filteredValue = e.target.value.replace(
@@ -309,67 +358,76 @@ const Step3 = ({ data, setData, onBack }: Props) => {
               />
             </Grid>
 
-            <Grid item xs={12}>
-              <Controller
-                name="dueDate.value"
-                control={control}
-                rules={{
-                  required: data.flagMandatoryDueDate
-                    ? t('debtPositionCreateWizard.step3.dueDate.required')
-                    : false
-                }}
-                render={({ field: { onChange, value, ...field } }) => (
-                  <DatePicker
-                    {...field}
-                    value={value}
-                    label={t('debtPositionCreateWizard.step3.dueDate.label')}
-                    disabled={data.dueDate?.readonly}
-                    minDate={new Date()}
-                    format="dd/MM/yyyy"
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                        required: data.flagMandatoryDueDate,
-                        error: isSubmitted && !!errors.dueDate?.value,
-                        helperText:
-                          isSubmitted && errors.dueDate?.value?.message
+            {/* Visualizza il campo data scadenza solo se NON è selezionata l'opzione rateale */}
+            {!isInstallment && (
+              <Grid item xs={12}>
+                <Controller
+                  name="dueDate.value"
+                  control={control}
+                  rules={{
+                    required: data.flagMandatoryDueDate
+                      ? t('debtPositionCreateWizard.step3.dueDate.required')
+                      : false
+                  }}
+                  render={({ field: { onChange, value, ...field } }) => (
+                    <DatePicker
+                      {...field}
+                      value={value}
+                      label={t('debtPositionCreateWizard.step3.dueDate.label')}
+                      disabled={data.dueDate?.readonly}
+                      minDate={new Date()}
+                      format="dd/MM/yyyy"
+                      slotProps={{
+                        textField: {
+                          fullWidth: true,
+                          required: data.flagMandatoryDueDate,
+                          error: isSubmitted && !!errors.dueDate?.value,
+                          helperText:
+                            isSubmitted && errors.dueDate?.value?.message
+                        },
+                        actionBar: {
+                          actions: ['clear']
+                        }
+                      }}
+                      onChange={(date) => {
+                        onChange(date);
+                      }}
+                    />
+                  )}
+                />
+              </Grid>
+            )}
+
+            {/* Mostra lo switch per i beneficiari multipli solo se NON è selezionata l'opzione rateale */}
+            {!isInstallment && (
+              <Grid item xs={12}>
+                <Controller
+                  name="isMultibeneficiary.value"
+                  control={control}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={
+                        <Switch
+                          {...field}
+                          checked={field.value}
+                          disabled={data.isMultibeneficiary?.readonly}
+                          onChange={(e) => {
+                            const value = e.target.checked;
+                            field.onChange(value);
+                          }}
+                        />
                       }
-                    }}
-                    onChange={(date) => {
-                      onChange(date);
-                    }}
-                  />
-                )}
-              />
-            </Grid>
+                      label={t(
+                        'debtPositionCreateWizard.step3.isMultibeneficiary.label'
+                      )}
+                    />
+                  )}
+                />
+              </Grid>
+            )}
 
-            <Grid item xs={12}>
-              <Controller
-                name="isMultibeneficiary.value"
-                control={control}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={
-                      <Switch
-                        {...field}
-                        checked={field.value}
-                        disabled={data.isMultibeneficiary?.readonly}
-                        onChange={(e) => {
-                          const value = e.target.checked;
-                          field.onChange(value);
-                        }}
-                      />
-                    }
-                    label={t(
-                      'debtPositionCreateWizard.step3.isMultibeneficiary.label'
-                    )}
-                  />
-                )}
-              />
-            </Grid>
-
-            {/* Componente Enti Beneficiari - visibile solo quando isMultibeneficiary è true */}
-            {isMultibeneficiary && (
+            {/* Componente Enti Beneficiari - visibile solo quando isMultibeneficiary è true E non è selezionata l'opzione rateale */}
+            {isMultibeneficiary && !isInstallment && (
               <Grid item xs={12} mt={2}>
                 <BeneficiaryField<FormValues>
                   control={control}
@@ -390,6 +448,21 @@ const Step3 = ({ data, setData, onBack }: Props) => {
           </Grid>
         </SectionBox>
       </WizardStepWrapper>
+      {/* Componente Rate - visibile solo quando è selezionata l'opzione rateale */}
+      {isInstallment && (
+        <InstallmentField<FormValues>
+          control={control}
+          errors={errors}
+          isSubmitted={isSubmitted}
+          fieldNamePrefix="installments"
+          disabled={false}
+          flagMandatoryDueDate={data.flagMandatoryDueDate}
+          setValue={setValue}
+          getValues={getValues}
+          trigger={trigger}
+          onInstallmentsChange={handleInstallmentsChange}
+        />
+      )}
       <WizardStepButtons
         onBack={onBack}
         onNext={handleSubmit(onSubmit)}

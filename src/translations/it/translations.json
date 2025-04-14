@@ -420,7 +420,8 @@
         "label": "Importo",
         "required": "Il campo importo è obbligatorio",
         "positive": "Il campo importo deve essere maggiore di 0",
-        "validNumber": "Il campo importo deve essere un numero valido"
+        "validNumber": "Il campo importo deve essere un numero valido",
+        "installmentHelperText": "Calcolato sulla base delle rate"
       },
       "dueDate": {
         "label": "Data scadenza",
@@ -464,6 +465,22 @@
         "paymentMethod": {
           "required": "Uno tra i campi IBAN o conto corrente postale è obbligatorio"
         }
+      },
+      "installments": {
+        "title": "Configurazione rate",
+        "installment": "RATA",
+        "amount": {
+          "label": "Importo",
+          "required": "Il campo importo è obbligatorio"
+        },
+        "dueDate": {
+          "label": "Data scadenza",
+          "required": "Il campo data scadenza è obbligatorio"
+        },
+        "otherBeneficiaries": "Altri beneficiari",
+        "addInstallment": "Aggiungi rata",
+        "maxInstallmentsReached": "Hai raggiunto il numero massimo di rate (12)",
+        "minInstallmentsRequired": "Sono richieste almeno 2 rate"
       }
     },
     "wizardStepper": {
@@ -478,7 +495,7 @@
     "backToStart": "Torna al'inizio"
   },
   "debtTypeCreateSuccess": {
-    "title": "Il tipo dovuto ‘{{paymentObject}}’ è stato creato!",
+    "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!",
     "description": "La trovi nella sezione Catalogo Tipi dovuti, dove puoi modificarlo in qualsiasi momento.",
     "backToStart": "Torna alla sezione"
   },
