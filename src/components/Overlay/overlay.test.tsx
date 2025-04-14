@@ -48,10 +48,10 @@ describe('Overlay Component', () => {
     expect(getComputedStyle(document.body).overflow).toBe('auto');
   });
 
-  it('should clean up body overflow when unmounted', () => {
-    const { unmount } = render(<Overlay />);
+  it('should clean up body overflow when unmounted', async () => {
+    const { unmount, rerender } = render(<Overlay visible={true} />);
+    rerender(<Overlay visible={false} />);
     unmount();
-
     expect(getComputedStyle(document.body).overflow).toBe('auto');
   });
 });
