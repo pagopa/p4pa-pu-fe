@@ -1,7 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import InstallmentField from './InstallmentField';
-import { useInstallmentManagement } from '../../../../hooks/useInstallmentManagement';
 import { Control, FieldValues } from 'react-hook-form';
 import { ReactNode } from 'react';
 
@@ -12,8 +11,43 @@ vi.mock('react-i18next', () => ({
   })
 }));
 
-vi.mock('../../../hooks/useInstallmentManagement', () => ({
-  useInstallmentManagement: vi.fn()
+// Type per i campi
+type MockField = { id: string; amount: string; dueDate: null };
+
+// Type per i parametri dell'hook
+type HookProps = {
+  control: Control<FieldValues>;
+  fieldNamePrefix: string;
+  isSubmitted: boolean;
+  getValues: unknown;
+  setValue: unknown;
+  trigger: unknown;
+  flagMandatoryDueDate?: boolean;
+  onInstallmentsChange?: (installments: unknown, totalAmount: string) => void;
+};
+
+// Mock useInstallmentManagement
+// Salviamo i parametri passati all'hook per poterli testare nei test
+let lastHookProps: HookProps | null = null;
+
+const mockUseInstallmentManagementReturn = {
+  fields: [] as Array<MockField>,
+  validators: {
+    amount: { required: 'Campo obbligatorio' },
+    dueDate: { required: 'Campo obbligatorio' }
+  },
+  MIN_INSTALLMENTS: 2,
+  MAX_INSTALLMENTS: 12,
+  addInstallment: vi.fn(),
+  removeInstallment: vi.fn()
+};
+
+vi.mock('../../../../hooks/useInstallmentManagement', () => ({
+  useInstallmentManagement: vi.fn().mockImplementation((props) => {
+    // Salva i parametri passati all'hook
+    lastHookProps = props;
+    return mockUseInstallmentManagementReturn;
+  })
 }));
 
 // Mock di InstallmentItem
@@ -83,7 +117,11 @@ vi.mock('@mui/material', () => {
       item?: boolean;
       xs?: number;
       spacing?: number;
-    }) => <div data-testid="mui-grid">{children}</div>
+    }) => <div data-testid="mui-grid">{children}</div>,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    Divider: (_props: { sx?: Record<string, unknown> }) => (
+      <hr data-testid="mui-divider" />
+    )
   };
 });
 
@@ -99,13 +137,6 @@ describe('InstallmentField', () => {
     { id: 'field2', amount: '200', dueDate: null }
   ];
 
-  const mockValidators = {
-    amount: { required: 'Campo obbligatorio' },
-    dueDate: { required: 'Campo obbligatorio' }
-  };
-
-  const mockAddInstallment = vi.fn();
-  const mockRemoveInstallment = vi.fn();
   const mockControl = {} as Control<FieldValues>;
   const mockErrors = {};
   const mockSetValue = vi.fn();
@@ -116,16 +147,10 @@ describe('InstallmentField', () => {
   // Setup del mock per useInstallmentManagement
   beforeEach(() => {
     vi.clearAllMocks();
-    (
-      useInstallmentManagement as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
-      fields: mockFields,
-      validators: mockValidators,
-      MIN_INSTALLMENTS: 2,
-      MAX_INSTALLMENTS: 12,
-      addInstallment: mockAddInstallment,
-      removeInstallment: mockRemoveInstallment
-    });
+    mockUseInstallmentManagementReturn.fields = mockFields;
+    mockUseInstallmentManagementReturn.addInstallment = vi.fn();
+    mockUseInstallmentManagementReturn.removeInstallment = vi.fn();
+    lastHookProps = null;
   });
 
   it('renderizza il componente correttamente', () => {
@@ -177,23 +202,16 @@ describe('InstallmentField', () => {
     );
     fireEvent.click(addButton);
 
-    expect(mockAddInstallment).toHaveBeenCalledTimes(1);
+    expect(
+      mockUseInstallmentManagementReturn.addInstallment
+    ).toHaveBeenCalledTimes(1);
   });
 
   it('disabilita il pulsante quando si raggiunge il numero massimo di rate', () => {
     // Modifica il mock per simulare il raggiungimento del numero massimo di rate
-    (
-      useInstallmentManagement as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
-      fields: Array(12)
-        .fill({})
-        .map((_, i) => ({ id: `field${i}`, amount: '100', dueDate: null })),
-      validators: mockValidators,
-      MIN_INSTALLMENTS: 2,
-      MAX_INSTALLMENTS: 12,
-      addInstallment: mockAddInstallment,
-      removeInstallment: mockRemoveInstallment
-    });
+    mockUseInstallmentManagementReturn.fields = Array(12)
+      .fill({})
+      .map((_, i) => ({ id: `field${i}`, amount: '100', dueDate: null }));
 
     render(
       <InstallmentField
@@ -233,7 +251,7 @@ describe('InstallmentField', () => {
       />
     );
 
-    expect(useInstallmentManagement).toHaveBeenCalledWith(
+    expect(lastHookProps).toEqual(
       expect.objectContaining({
         flagMandatoryDueDate: false
       })
@@ -254,7 +272,7 @@ describe('InstallmentField', () => {
       />
     );
 
-    expect(useInstallmentManagement).toHaveBeenCalledWith(
+    expect(lastHookProps).toEqual(
       expect.objectContaining({
         onInstallmentsChange: expect.any(Function)
       })
@@ -302,18 +320,9 @@ describe('InstallmentField', () => {
 
   it('abilita removeInstallment solo per rate oltre il minimo richiesto', () => {
     // Modifica il mock per simulare 4 rate
-    (
-      useInstallmentManagement as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
-      fields: Array(4)
-        .fill({})
-        .map((_, i) => ({ id: `field${i}`, amount: '100', dueDate: null })),
-      validators: mockValidators,
-      MIN_INSTALLMENTS: 2,
-      MAX_INSTALLMENTS: 12,
-      addInstallment: mockAddInstallment,
-      removeInstallment: mockRemoveInstallment
-    });
+    mockUseInstallmentManagementReturn.fields = Array(4)
+      .fill({})
+      .map((_, i) => ({ id: `field${i}`, amount: '100', dueDate: null }));
 
     render(
       <InstallmentField

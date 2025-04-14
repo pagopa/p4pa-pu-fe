@@ -285,7 +285,7 @@ export function useInstallmentManagement<T extends FieldValues>({
         isUpdatingRef.current = false;
       }
     }
-  }, [fields.length, onInstallmentsChange]); // Manteniamo dipendenze limitate
+  }, [fields.length, onInstallmentsChange]);
 
   return {
     fields,
