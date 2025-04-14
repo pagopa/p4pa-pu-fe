@@ -58,7 +58,7 @@ export const Header = (props: HeaderProps) => {
       console.warn(e);
     } finally {
       utils.storage.clear();
-      navigate(PageRoutes.HOME);
+      navigate(PageRoutes.LOGGED_OUT);
     }
   }
 
@@ -103,12 +103,16 @@ export const Header = (props: HeaderProps) => {
         loggedUser={jwtUser}
         userActions={userActions}
       />
-      <HeaderProduct
-        onSelectedParty={onSelectedParty}
-        partyId={state?.organizationId?.toString()}
-        partyList={organizationsToMenuItems}
-        productsList={[product]}
-      />
+      {state?.organizationId ? (
+        <HeaderProduct
+          onSelectedParty={onSelectedParty}
+          partyId={state?.organizationId?.toString()}
+          partyList={organizationsToMenuItems}
+          productsList={[product]}
+        />
+      ) : (
+        ''
+      )}
     </>
   ) : null;
 };

@@ -86,7 +86,7 @@ describe('Header component', () => {
 
     await waitFor(() => {
       expect(mockStorage).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.HOME);
+      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.LOGGED_OUT);
     });
 
     mockStorage.mockRestore();
