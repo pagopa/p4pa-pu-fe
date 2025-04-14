@@ -48,11 +48,15 @@ const TelematicReceiptFlowExportOverview = () => {
   const { data, isLoading } = getExportFiles(organizationId, appliedFilters);
 
   const handleDownloadFile = async (exportFileId: number) => {
+    const result = await downloadExportFile(organizationId, exportFileId);
+
     //TODO: handle error
-    const { data, fileName } = await downloadExportFile(
-      organizationId,
-      exportFileId
-    );
+    if (!result) {
+      console.error('Failed to download file');
+      return;
+    }
+
+    const { data, fileName } = result;
     downloadBlob(data, fileName);
   };
 

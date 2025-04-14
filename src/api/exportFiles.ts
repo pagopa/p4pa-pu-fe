@@ -50,16 +50,22 @@ export const getExportFiles = (
 export const downloadExportFile = async (
   organizationId: number,
   exportFileId: number
-): Promise<{ data: Blob; fileName: string }> => {
-  const response = await utils.fileshareClient.organization.downloadExportFile(
-    organizationId,
-    exportFileId,
-    { format: 'blob' }
-  );
+): Promise<{ data: Blob; fileName: string } | null> => {
+  try {
+    const response =
+      await utils.fileshareClient.organization.downloadExportFile(
+        organizationId,
+        exportFileId,
+        { format: 'blob' }
+      );
 
-  const contentDisposition = response.headers['content-disposition'] || '';
-  const fileName =
-    extractFilename(contentDisposition) || `file-${exportFileId}`;
+    const contentDisposition = response.headers['content-disposition'] || '';
+    const fileName =
+      extractFilename(contentDisposition) || `file-${exportFileId}`;
 
-  return { data: response.data, fileName };
+    return { data: response.data, fileName };
+  } catch (error) {
+    console.error('Error downloading export file:', error);
+    return null;
+  }
 };
