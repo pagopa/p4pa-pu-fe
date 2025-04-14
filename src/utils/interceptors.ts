@@ -1,4 +1,5 @@
 import utils from '.';
+import { PageRoutes } from '../App';
 import { Client } from '../models/Client';
 import { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
@@ -21,8 +22,9 @@ export const setupInterceptors = (client: Client) => {
   client.instance.interceptors.response.use(
     (response) => response,
     (error) => {
-      if (error.response.status === 401) {
-        console.log('401');
+      if (error.response.status === 401 || error.response.status === 403) {
+        utils.storage.clear();
+        window.location.replace(PageRoutes.LOGGED_OUT);
       }
     }
   );
