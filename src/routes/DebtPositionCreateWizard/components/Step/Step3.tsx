@@ -19,8 +19,8 @@ import SectionBox from '../../../../components/Wizard/SectionBox';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../../../utils/formatters';
-import { Navigate } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';
 import type {
@@ -74,11 +74,7 @@ function triggerValidationForAllBeneficiaries<T extends FieldValues>(
 
 const Step3 = ({ data, setData, onBack }: Props) => {
   const { t } = useTranslation();
-  // Stato per gestire il reindirizzamento
-  const [redirectToCompleted, setRedirectToCompleted] = useState<{
-    shouldRedirect: boolean;
-    paymentObject: string;
-  }>({ shouldRedirect: false, paymentObject: '' });
+  const navigate = useNavigate();
 
   // Converti il valore stringa della data in oggetto Date per il DatePicker
   const initialData: FormValues = {
@@ -169,32 +165,16 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       // Includi l'array di rate solo se è un pagamento rateale
       ...(isInstallment ? { installments: values.installments } : {})
     };
-    console.log('formattedValues', formattedValues);
-
     // Salva i dati
     setData(formattedValues);
-
-    // Imposta lo stato di reindirizzamento invece di navigare direttamente
-    setRedirectToCompleted({
-      shouldRedirect: true,
-      paymentObject: formattedValues.paymentObject.value
+    // Naviga direttamente alla pagina di completamento usando useNavigate
+    navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
+      state: { paymentObject: formattedValues.paymentObject.value },
+      replace: true
     });
   };
-
-  // Se redirectToCompleted.shouldRedirect è true, renderizza il componente Navigate. Soluzione momentanea perchè poi verranno agganciata l'api per la creazione della posizione di debito
-  if (redirectToCompleted.shouldRedirect) {
-    return (
-      <Navigate
-        to={PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED}
-        state={{ paymentObject: redirectToCompleted.paymentObject }}
-        replace
-      />
-    );
-  }
-
   // Utilizzo della funzione di validazione importo importata da fieldValidation.tsx
   const validateAmount = createAmountValidator(t);
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <WizardStepWrapper
@@ -263,13 +243,20 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(value);
-                      // Se viene selezionata l'opzione rateale
-                      if (value === 'INSTALLMENTS') {
-                        // Disattiva la modalità multi-beneficiario
-                        setValue('isMultibeneficiary.value', false);
-
-                        // Azzera il valore del campo amount
-                        setValue('amount.value', '');
+                      switch (value) {
+                        case 'INSTALLMENTS':
+                          // Se viene selezionata l'opzione rateale
+                          // Disattiva la modalità multi-beneficiario
+                          setValue('isMultibeneficiary.value', false);
+                          // Azzera il valore del campo amount
+                          setValue('amount.value', '');
+                          break;
+                        case 'SINGLE':
+                          // Se si passa da rateale a unica, azzera il campo amount
+                          if (paymentOption === 'INSTALLMENTS') {
+                            setValue('amount.value', '');
+                          }
+                          break;
                       }
                     }}
                   >

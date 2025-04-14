@@ -76,7 +76,7 @@ const DebtPositionCreateWizard = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>(initialData);
 
-  console.log('formData', formData);
+  // console.log('formData', formData);
 
   const steps: Stepper['steps'] = [
     {
@@ -114,6 +114,7 @@ const DebtPositionCreateWizard = () => {
           }}
           setData={(data) => setFormData((prev) => ({ ...prev, step3: data }))}
           onNext={() => {
+            console.log('onNext');
             setStep(3);
           }}
           onBack={() => setStep(1)}

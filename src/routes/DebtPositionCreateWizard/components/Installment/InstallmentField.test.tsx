@@ -37,9 +37,7 @@ vi.mock('./InstallmentItem', () => ({
 vi.mock('@mui/material', () => {
   return {
     Box: ({
-      children,
-      component,
-      sx
+      children
     }: {
       children: ReactNode;
       component?: unknown;
@@ -52,9 +50,7 @@ vi.mock('@mui/material', () => {
       children,
       onClick,
       disabled,
-      startIcon,
-      color,
-      sx
+      startIcon
     }: {
       children: ReactNode;
       onClick?: () => void;
@@ -69,11 +65,7 @@ vi.mock('@mui/material', () => {
       </button>
     ),
     Typography: ({
-      children,
-      variant,
-      component,
-      color,
-      sx
+      children
     }: {
       children: ReactNode;
       variant?: string;
@@ -84,11 +76,7 @@ vi.mock('@mui/material', () => {
       mb?: number;
     }) => <div data-testid="mui-typography">{children}</div>,
     Grid: ({
-      children,
-      container,
-      item,
-      xs,
-      spacing
+      children
     }: {
       children: ReactNode;
       container?: boolean;

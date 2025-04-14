@@ -83,6 +83,10 @@ export function useInstallmentManagement<T extends FieldValues>({
   const wasSubmittedRef = useRef(false);
   const isInitializingRef = useRef(false);
   const hasInitializedRef = useRef(false);
+  // Aggiungiamo un ref per memorizzare l'ultimo totale
+  const lastTotalAmountRef = useRef('');
+  // Ref per evitare aggiornamenti ripetuti
+  const isUpdatingRef = useRef(false);
 
   // ===== FIELD ARRAY =====
   const { fields, append, remove } = useFieldArray({
@@ -166,7 +170,6 @@ export function useInstallmentManagement<T extends FieldValues>({
 
       // Aggiorna gli importi e notifica i cambiamenti
       setTimeout(() => {
-        console.log('addInstallment setTimeout');
         const newTotalAmount = calculateTotalAmount();
         if (onInstallmentsChange) {
           const currentInstallments = getInstallmentsData();
@@ -187,7 +190,6 @@ export function useInstallmentManagement<T extends FieldValues>({
 
     // Aggiorna gli importi e notifica i cambiamenti
     setTimeout(() => {
-      console.log('removeInstallment setTimeout');
       const newTotalAmount = calculateTotalAmount();
       if (onInstallmentsChange) {
         const currentInstallments = getInstallmentsData();
@@ -257,16 +259,33 @@ export function useInstallmentManagement<T extends FieldValues>({
 
   // Notifica le modifiche alle rate e calcola il totale
   useEffect(() => {
+    // Verifichiamo se siamo già in fase di aggiornamento per evitare cicli
+    if (isUpdatingRef.current) {
+      return;
+    }
+
     if (
       onInstallmentsChange &&
       fields.length > 0 &&
       !isInitializingRef.current
     ) {
+      // Calcola il nuovo totale
       const totalAmount = calculateTotalAmount();
-      const currentInstallments = getInstallmentsData();
-      onInstallmentsChange(currentInstallments, totalAmount);
+
+      // Confronta con l'ultimo totale memorizzato per evitare aggiornamenti inutili
+      if (totalAmount !== lastTotalAmountRef.current) {
+        // Imposta il flag di aggiornamento per evitare chiamate ricorsive
+        isUpdatingRef.current = true;
+        // Aggiorna il valore di riferimento
+        lastTotalAmountRef.current = totalAmount;
+        // Esegui la callback
+        const currentInstallments = getInstallmentsData();
+        onInstallmentsChange(currentInstallments, totalAmount);
+        // Reimposta il flag dopo il completamento
+        isUpdatingRef.current = false;
+      }
     }
-  }, [fields, onInstallmentsChange]);
+  }, [fields.length, onInstallmentsChange]); // Manteniamo dipendenze limitate
 
   return {
     fields,

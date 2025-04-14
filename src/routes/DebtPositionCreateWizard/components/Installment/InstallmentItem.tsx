@@ -66,7 +66,6 @@ function handleAmountChange<T extends FieldValues>(
 
   // Triggerare la validazione per aggiornare il totale
   setTimeout(() => {
-    console.log('handleAmountChange setTimeout');
     trigger(`${fieldNamePrefix}.${index}.amount` as Path<T>);
   }, 0);
 }
