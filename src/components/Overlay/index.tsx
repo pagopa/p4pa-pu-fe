@@ -12,7 +12,7 @@ let endTime = 0;
 
 type OverlayProps = {
   /** if used the internal visibility logics is ignored  and the prop's value needs to be switched properly */
-  visible: boolean;
+  visible?: boolean;
 };
 
 export const Overlay = (props: OverlayProps): React.ReactElement => {
@@ -21,7 +21,6 @@ export const Overlay = (props: OverlayProps): React.ReactElement => {
   const [loading, setLoading] = React.useState(false);
   const [id, setId] = React.useState<NodeJS.Timeout | null>(null);
 
-  console.log(props.visible);
   useEffect(() => {
     /** this means that that pending state ended */
     if (isFetching + isMutating === 0) {
