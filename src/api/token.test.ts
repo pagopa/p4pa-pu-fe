@@ -33,10 +33,10 @@ describe('get Token API ', () => {
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'postToken')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
-    const token = await postToken();
+    const result = await postToken();
 
     expect(apiMock).toHaveBeenCalledWith({ idToken: fakeSelfCareToken });
-    expect(token).toEqual(dataMock);
+    expect(result).toEqual({ token: dataMock, idToken: fakeSelfCareToken });
   });
 
   it('should return null on failure', async () => {

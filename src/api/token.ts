@@ -10,7 +10,7 @@ export const postToken = async () => {
     const { data: token } = await utils.apiClient.bff.postToken({ idToken });
 
     parseAndLog(accessTokenSchema, token);
-    return token;
+    return { token, idToken };
   } catch {
     return null;
   }

@@ -6,7 +6,13 @@ import {
   Switch,
   FormControlLabel
 } from '@mui/material';
-import { Controller, useForm } from 'react-hook-form';
+import {
+  Controller,
+  useForm,
+  Path,
+  UseFormTrigger,
+  FieldValues
+} from 'react-hook-form';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../components/Wizard/SectionBox';
@@ -14,6 +20,16 @@ import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../../utils/formatters';
 import { useNavigate } from 'react-router';
+import { useEffect } from 'react';
+import BeneficiaryField from './BeneficiaryField';
+import type {
+  BeneficiaryData,
+  BeneficiaryFormValues
+} from '../../../hooks/useBeneficiaryManagement';
+import {
+  createAmountValidator,
+  isBeneficiariesTotalValid
+} from '../../../utils/fieldValidation';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { PageRoutes } from '../../../App';
 
@@ -24,6 +40,7 @@ export type Step3Data = {
   dueDate: { value: string | null; readonly: boolean };
   flagMandatoryDueDate: boolean;
   isMultibeneficiary: { value: boolean; readonly: boolean };
+  beneficiaries?: Array<BeneficiaryData>; // Array di beneficiari
 };
 
 type Props = {
@@ -33,13 +50,23 @@ type Props = {
   onBack: () => void;
 };
 
-type FormValues = {
+type FormValues = BeneficiaryFormValues & {
   paymentObject: { value: string; readonly: boolean };
   paymentOption: { value: string; readonly: boolean };
   amount: { value: string; readonly: boolean };
   dueDate: { value: Date | null; readonly: boolean };
   isMultibeneficiary: { value: boolean; readonly: boolean };
 };
+
+// Funzione estratta dal nesting eccessivo
+function triggerValidationForAllBeneficiaries<T extends FieldValues>(
+  beneficiaries: Array<Record<string, unknown>>,
+  trigger: UseFormTrigger<T>
+) {
+  beneficiaries.forEach((_, index) => {
+    trigger(`beneficiaries.${index}.amount` as Path<T>);
+  });
+}
 
 const Step3 = ({ data, setData, onBack }: Props) => {
   const { t } = useTranslation();
@@ -51,19 +78,60 @@ const Step3 = ({ data, setData, onBack }: Props) => {
     dueDate: {
       ...data.dueDate,
       value: data.dueDate?.value ? new Date(data.dueDate.value) : null
-    }
+    },
+    // Inizializza l'array di beneficiari se è definito o crea un array vuoto
+    beneficiaries: data.beneficiaries || []
   };
 
   const {
-    handleSubmit,
-    control,
-    formState: { errors, isSubmitted }
+    handleSubmit, // Funzione per gestire il submit del form
+    control, // oggetto per controllare i campi del form
+    formState: { errors, isSubmitted }, // oggetto contenente gli errori di validazione e lo stato del form
+    watch, // funzione per osservare i cambiamenti dei campi
+    setValue, // funzione per impostare i valori dei campi del form
+    trigger, // funzione per triggerare la validazione dei campi del form
+    getValues // funzione per ottenere i valori dei campi del form
   } = useForm<FormValues>({
     defaultValues: initialData,
     mode: 'onChange'
   });
 
+  // Osserva i campi rilevanti per la validazione
+  const isMultibeneficiary = watch('isMultibeneficiary.value');
+  const totalAmount = watch('amount.value');
+  const beneficiaries = watch('beneficiaries') || [];
+
+  // Effetto per gestire l'inizializzazione dei beneficiari
+  useEffect(() => {
+    if (isMultibeneficiary && beneficiaries.length === 0) {
+      setValue('beneficiaries', [
+        {
+          entityName: '',
+          amount: '',
+          taxCode: '',
+          iban: '',
+          postalAccount: '',
+          taxonomyCode: ''
+        }
+      ]);
+    } else if (!isMultibeneficiary) {
+      setValue('beneficiaries', []);
+    }
+  }, [isMultibeneficiary, setValue]);
+
   const onSubmit = async (values: FormValues) => {
+    // Utilizziamo i valori attuali per la validazione
+    const currentBeneficiaries = getValues('beneficiaries') || [];
+
+    // Verifica se la somma degli importi dei beneficiari è valida altrimenti attiva la validazione e interrompe il submit
+    if (
+      isMultibeneficiary &&
+      !isBeneficiariesTotalValid(currentBeneficiaries, totalAmount)
+    ) {
+      trigger('beneficiaries');
+      return;
+    }
+
     // Converti la data in stringa prima di salvare
     const formattedValues: Step3Data = {
       ...values,
@@ -74,7 +142,11 @@ const Step3 = ({ data, setData, onBack }: Props) => {
             ? formatDate(values.dueDate.value.toISOString())
             : values.dueDate.value
       },
-      flagMandatoryDueDate: data.flagMandatoryDueDate
+      flagMandatoryDueDate: data.flagMandatoryDueDate,
+      // Includi l'array di beneficiari solo se isMultibeneficiary è true
+      ...(values.isMultibeneficiary.value
+        ? { beneficiaries: values.beneficiaries }
+        : {})
     };
     setData(formattedValues);
     // va alla pagina finale, passando il valore aggiornato
@@ -86,32 +158,11 @@ const Step3 = ({ data, setData, onBack }: Props) => {
     });
   };
 
-  // Validazione importo - estratta per leggibilità
-  const validateAmount = {
-    required: {
-      value: true,
-      message: t('debtPositionCreateWizard.step3.amount.required')
-    },
-    validate: {
-      positive: (value: string) => {
-        if (!value) return true;
-        const numValue = parseFloat(value);
-        return (
-          numValue > 0 || t('debtPositionCreateWizard.step3.amount.positive')
-        );
-      },
-      validNumber: (value: string) => {
-        if (!value) return true;
-        return (
-          !isNaN(parseFloat(value)) ||
-          t('debtPositionCreateWizard.step3.amount.validNumber')
-        );
-      }
-    }
-  };
+  // Utilizzo della funzione di validazione importo importata da fieldValidation.tsx
+  const validateAmount = createAmountValidator(t);
 
   return (
-    <form>
+    <form onSubmit={handleSubmit(onSubmit)}>
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.configurationAlert.title')}
         subtitle={t('debtPositionCreateWizard.configurationAlert.subtitle')}
@@ -146,7 +197,6 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(value);
-                      // handleFieldChange('paymentObject', value);
                     }}
                   />
                 )}
@@ -179,7 +229,6 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(value);
-                      // handleFieldChange('paymentOption', value);
                     }}
                   >
                     <MenuItem value="SINGLE">
@@ -206,23 +255,54 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     fullWidth
                     label={t('debtPositionCreateWizard.step3.amount.label')}
                     required
-                    type="number"
                     disabled={data.amount?.readonly}
+                    value={
+                      field.value
+                        ? field.value.toString().replace('.', ',')
+                        : ''
+                    }
                     InputProps={{
                       startAdornment: (
                         <InputAdornment position="start">€</InputAdornment>
                       ),
                       inputProps: {
-                        min: 0.01,
-                        step: 0.01
+                        style: { textAlign: 'left' },
+                        onWheel: (e) =>
+                          e.target instanceof HTMLElement && e.target.blur() // Rimuove il focus dall'input quando si ruota la rotellina del mouse
                       }
                     }}
                     error={isSubmitted && !!errors.amount?.value}
                     helperText={isSubmitted && errors.amount?.value?.message}
                     onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value);
-                      // handleFieldChange('amount', value);
+                      // Accetta solo numeri, punto e virgola
+                      const filteredValue = e.target.value.replace(
+                        /[^0-9.,]/g,
+                        ''
+                      );
+                      // Converti virgola in punto per la gestione numerica
+                      const normalizedValue = filteredValue.replace(',', '.');
+                      // Aggiorna il valore nel form
+                      field.onChange(normalizedValue);
+                      // Per risolvere il problema di aggiornamento dello stato
+                      // è necessario usare setTimeout per assicurarsi che
+                      // il valore sia effettivamente aggiornato prima di triggerare la validazione
+                      if (isMultibeneficiary && beneficiaries.length > 0) {
+                        setTimeout(() => {
+                          triggerValidationForAllBeneficiaries(
+                            beneficiaries,
+                            trigger
+                          );
+                        }, 0);
+                      }
+                    }}
+                    onBlur={(e) => {
+                      // Formatta il valore con due decimali quando il campo perde il focus
+                      const value = e.target.value.replace(',', '.');
+                      if (value && !isNaN(parseFloat(value))) {
+                        const formatted = parseFloat(value).toFixed(2);
+                        field.onChange(formatted);
+                      }
+                      field.onBlur();
                     }}
                   />
                 )}
@@ -277,7 +357,6 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                         onChange={(e) => {
                           const value = e.target.checked;
                           field.onChange(value);
-                          // handleFieldChange('isMultibeneficiary', value);
                         }}
                       />
                     }
@@ -288,6 +367,26 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                 )}
               />
             </Grid>
+
+            {/* Componente Enti Beneficiari - visibile solo quando isMultibeneficiary è true */}
+            {isMultibeneficiary && (
+              <Grid item xs={12} mt={2}>
+                <BeneficiaryField<FormValues>
+                  control={control}
+                  errors={errors}
+                  isSubmitted={isSubmitted}
+                  totalAmount={totalAmount}
+                  fieldNamePrefix="beneficiaries"
+                  disabled={false}
+                  setValue={setValue}
+                  getValues={getValues}
+                  trigger={trigger}
+                  onToggleMultibeneficiary={(value) => {
+                    setValue('isMultibeneficiary.value', value);
+                  }}
+                />
+              </Grid>
+            )}
           </Grid>
         </SectionBox>
       </WizardStepWrapper>
