@@ -150,8 +150,8 @@ const Step1GeneralConfiguration = ({
       </WizardStepWrapper>
       <WizardStepButtons
         onBack={onBack}
-        disableBack={true}
-        disableNext={false}
+        // disableBack={false}
+        // disableNext={false}
         onNext={handleSubmit(onSubmit)}
       />
     </form>

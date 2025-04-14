@@ -427,7 +427,43 @@
         "required": "Il campo data scadenza è obbligatorio"
       },
       "isMultibeneficiary": {
-        "label": "Multibeneficiario"
+        "label": "Altri beneficiari"
+      },
+      "beneficiary": {
+        "title": "ENTE BENEFICIARIO",
+        "entityName": {
+          "label": "Nome ente",
+          "required": "Il campo ente beneficiario è obbligatorio"
+        },
+        "amount": {
+          "label": "Importo",
+          "required": "Il campo importo è obbligatorio"
+        },
+        "taxCode": {
+          "label": "Codice Fiscale",
+          "required": "Il campo codice fiscale è obbligatorio",
+          "invalid": "Codice fiscale non valido"
+        },
+        "iban": {
+          "label": "IBAN",
+          "required": "Il campo iban è obbligatorio",
+          "invalid": "Il formato dell'IBAN non è valido"
+        },
+        "postalAccount": {
+          "label": "Conto Corrente postale",
+          "required": "Il campo conto corrente postale è obbligatorio",
+          "invalid": "Il formato del conto corrente postale non è valido"
+        },
+        "taxonomyCode": {
+          "label": "Codice Tassonomico",
+          "required": "Il campo codice tassonomico è obbligatorio"
+        },
+        "addBeneficiary": "Aggiungi beneficiario",
+        "amountMustBeLessThanTotal": "L'importo del beneficiario deve essere minore dell'importo totale",
+        "sumMustBeLessThanTotal": "La somma degli importi dei beneficiari deve essere minore dell'importo totale",
+        "paymentMethod": {
+          "required": "Uno tra i campi IBAN o conto corrente postale è obbligatorio"
+        }
       }
     },
     "wizardStepper": {
@@ -437,7 +473,7 @@
     }
   },
   "debtPositionCreateWizardCompleted": {
-    "title": "La posizione debitoria ‘{{paymentObject}}’ è stata creata!",
+    "title": "La posizione debitoria '{{paymentObject}}' è stata creata!",
     "description": "La trovi nella sezione Dovuti, dove puoi tenere traccia dell'andamento.",
     "backToStart": "Torna al'inizio"
   },
