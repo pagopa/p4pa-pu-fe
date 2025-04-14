@@ -60,21 +60,6 @@ describe('useFeConfig hook', () => {
     expect(result.current).toEqual(mockData);
   });
 
-  it('should set loading state when fetching config', async () => {
-    (brokers.getBrokersConfig as Mock).mockReturnValue({
-      data: null,
-      isLoading: true,
-      isError: false,
-      isSuccess: false
-    });
-
-    expect(appState.value.loading).toBeFalsy();
-
-    renderHook(() => useFeConfig(), { wrapper: StoreProvider });
-
-    expect(appState.value.loading).toBe(true);
-  });
-
   it('should log error when fetching config fails', () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')

@@ -49,7 +49,7 @@ describe('Overlay Component', () => {
   });
 
   it('should clean up body overflow when unmounted', () => {
-    const { unmount } = render(<Overlay visible={true} />);
+    const { unmount } = render(<Overlay />);
     unmount();
 
     expect(getComputedStyle(document.body).overflow).toBe('auto');

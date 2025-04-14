@@ -42,6 +42,17 @@ export const Overlay = (props: OverlayProps): React.ReactElement => {
     }
   }, [isFetching, isMutating]);
 
+  useEffect(() => {
+    if (props.visible || loading) {
+      document.body.style.overflow = 'hidden';
+      return;
+    }
+    document.body.style.overflow = 'auto';
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [props.visible, loading]);
+
   return loading || props.visible ? (
     <Portal>
       <Grid sx={style.overlay} data-testid="overlay-background" />

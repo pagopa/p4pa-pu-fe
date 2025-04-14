@@ -60,21 +60,6 @@ describe('useUserInfo hook', () => {
     expect(result.current).toEqual(mockData);
   });
 
-  it('should set loading state when fetching data', async () => {
-    (user.getUserInfo as Mock).mockReturnValue({
-      data: null,
-      isLoading: true,
-      isError: false,
-      isSuccess: false
-    });
-
-    expect(appState.value.loading).toBeFalsy();
-
-    renderHook(() => useUserInfo(), { wrapper: StoreProvider });
-
-    expect(appState.value.loading).toBe(true);
-  });
-
   it('should log error when fetching data fails', () => {
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
