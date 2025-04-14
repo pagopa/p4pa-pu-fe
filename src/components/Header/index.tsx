@@ -58,7 +58,7 @@ export const Header = (props: HeaderProps) => {
       console.warn(e);
     } finally {
       utils.storage.clear();
-      navigate(PageRoutes.HOME);
+      navigate(PageRoutes.LOGGED_OUT);
     }
   }
 
