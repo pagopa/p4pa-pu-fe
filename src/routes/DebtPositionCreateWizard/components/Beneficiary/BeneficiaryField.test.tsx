@@ -10,7 +10,7 @@ import {
   UseFormTrigger
 } from 'react-hook-form';
 import BeneficiaryField from './BeneficiaryField';
-import { useBeneficiaryManagement } from '../../../../hooks/useBeneficiaryManagement';
+import * as beneficiaryManagementHooks from '../../../../hooks/useBeneficiaryManagement';
 
 // Mock delle dipendenze
 vi.mock('react-i18next', () => ({
@@ -82,7 +82,9 @@ vi.mock('./BeneficiaryFieldGroup', () => ({
   )
 }));
 
-vi.mock('../../../hooks/useBeneficiaryManagement', () => ({
+// Non moccare l'importazione dell'hook ma sostituire direttamente l'implementazione della funzione
+vi.mock('../../../../hooks/useBeneficiaryManagement', () => ({
+  __esModule: true,
   useBeneficiaryManagement: vi.fn()
 }));
 
@@ -133,12 +135,17 @@ describe('BeneficiaryField', () => {
     vi.clearAllMocks();
 
     // Setup del mock per useBeneficiaryManagement
-    (
-      useBeneficiaryManagement as unknown as ReturnType<typeof vi.fn>
+    vi.spyOn(
+      beneficiaryManagementHooks,
+      'useBeneficiaryManagement'
     ).mockReturnValue({
       fields: mockFields,
       validators: {
-        validateAmount: vi.fn()
+        validateTotalAmount: vi.fn(),
+        isValidTotalAmount: vi.fn().mockReturnValue(true),
+        isSingleBeneficiaryAmountValid: vi.fn().mockReturnValue(true),
+        validateSingleBeneficiary: vi.fn(),
+        isBeneficiaryAmountValid: vi.fn().mockReturnValue(true)
       },
       fieldValidators: {
         validateBeneficiaryTaxCode: vi.fn(),
@@ -149,6 +156,8 @@ describe('BeneficiaryField', () => {
       MAX_BENEFICIARIES: 4,
       existingBeneficiaries: {},
       wasSubmittedRef: { current: false },
+      isInitializingRef: { current: false },
+      updateAmountValidations: vi.fn(),
       addBeneficiary: mockAddBeneficiary,
       removeBeneficiary: mockRemoveBeneficiary
     });
@@ -225,8 +234,9 @@ describe('BeneficiaryField', () => {
 
   it('non mostra il pulsante "aggiungi beneficiario" se è stato raggiunto il numero massimo', () => {
     // Modifichiamo il mock per simulare il raggiungimento del numero massimo di beneficiari
-    (
-      useBeneficiaryManagement as unknown as ReturnType<typeof vi.fn>
+    vi.spyOn(
+      beneficiaryManagementHooks,
+      'useBeneficiaryManagement'
     ).mockReturnValue({
       fields: [
         { id: 'beneficiary-1' },
@@ -234,7 +244,13 @@ describe('BeneficiaryField', () => {
         { id: 'beneficiary-3' },
         { id: 'beneficiary-4' }
       ],
-      validators: { validateAmount: vi.fn() },
+      validators: {
+        validateTotalAmount: vi.fn(),
+        isValidTotalAmount: vi.fn().mockReturnValue(true),
+        isSingleBeneficiaryAmountValid: vi.fn().mockReturnValue(true),
+        validateSingleBeneficiary: vi.fn(),
+        isBeneficiaryAmountValid: vi.fn().mockReturnValue(true)
+      },
       fieldValidators: {
         validateBeneficiaryTaxCode: vi.fn(),
         validateIBAN: vi.fn(),
@@ -244,6 +260,8 @@ describe('BeneficiaryField', () => {
       MAX_BENEFICIARIES: 4,
       existingBeneficiaries: {},
       wasSubmittedRef: { current: false },
+      isInitializingRef: { current: false },
+      updateAmountValidations: vi.fn(),
       addBeneficiary: mockAddBeneficiary,
       removeBeneficiary: mockRemoveBeneficiary
     });
@@ -309,7 +327,9 @@ describe('BeneficiaryField', () => {
     );
 
     // Verifichiamo che l'hook sia stato chiamato con i parametri corretti
-    expect(useBeneficiaryManagement).toHaveBeenCalledWith(
+    expect(
+      beneficiaryManagementHooks.useBeneficiaryManagement
+    ).toHaveBeenCalledWith(
       expect.objectContaining({
         control: mockControl,
         isSubmitted,
