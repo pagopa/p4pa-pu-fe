@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { useStore } from '../../../store/GlobalStore';
+import { useStore } from '../../../../store/GlobalStore';
 import { useForm } from 'react-hook-form';
 import Step1GeneralConfiguration from './Step1GeneralConfiguration';
-import { useDebtPositionsTypeOrg } from '../../../hooks/useDebtPositionsTypeOrg';
+import { useDebtPositionsTypeOrg } from '../../../../hooks/useDebtPositionsTypeOrg';
 
 // Mock dei moduli
 vi.mock('../../../store/GlobalStore', () => ({

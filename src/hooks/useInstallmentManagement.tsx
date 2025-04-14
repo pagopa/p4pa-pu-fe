@@ -122,9 +122,11 @@ export function useInstallmentManagement<T extends FieldValues>({
 
       return {
         ...installmentData,
-        // Formatta la data solo se è un oggetto Date
+        // Formatta la data solo se è un oggetto Date e se è valida
         dueDate:
-          dueDate instanceof Date ? formatDate(dueDate.toISOString()) : dueDate,
+          dueDate instanceof Date && !isNaN(dueDate.getTime())
+            ? formatDate(dueDate.toISOString())
+            : dueDate,
         // Usa il valore formattato per l'importo
         amount: formattedAmount,
         id: field.id,

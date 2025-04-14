@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
-import { formatDate } from '../../../utils/formatters';
-import { PageRoutes } from '../../../App';
-import { isBeneficiariesTotalValid } from '../../../utils/fieldValidation';
+import { formatDate } from '../../../../utils/formatters';
+import { PageRoutes } from '../../../../App';
+import { isBeneficiariesTotalValid } from '../../../../utils/fieldValidation';
 import { render, screen, fireEvent } from '@testing-library/react';
 import Step3, { Step3Data } from './Step3';
-import { createAmountValidator } from '../../../utils/fieldValidation';
+import { createAmountValidator } from '../../../../utils/fieldValidation';
 
 // Definizione dei tipi per il test
 type BeneficiaryData = {

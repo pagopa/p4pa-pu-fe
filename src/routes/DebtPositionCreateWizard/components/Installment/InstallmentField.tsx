@@ -1,4 +1,4 @@
-import { Box, Button, Typography, Grid, Paper } from '@mui/material';
+import { Box, Button, Typography, Grid, Paper, Divider } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import {
   Control,
@@ -10,7 +10,7 @@ import {
   FieldArrayPath
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useInstallmentManagement } from '../../../hooks/useInstallmentManagement';
+import { useInstallmentManagement } from '../../../../hooks/useInstallmentManagement';
 import InstallmentItem from './InstallmentItem';
 
 type InstallmentFieldProps<T extends FieldValues> = {
@@ -71,11 +71,7 @@ function InstallmentField<T extends FieldValues>({
   const isMaxInstallments = fields.length >= MAX_INSTALLMENTS;
 
   return (
-    <Box
-      component={Paper}
-      variant="outlined"
-      sx={{ p: 3, mt: 4, borderRadius: 1 }}
-    >
+    <Box component={Paper} sx={{ p: 3, mt: 4, borderRadius: 1 }}>
       <Typography variant="h4" component="h3" fontWeight="bold" mb={3}>
         {t('debtPositionCreateWizard.step3.installments.title')}
       </Typography>
@@ -103,7 +99,9 @@ function InstallmentField<T extends FieldValues>({
         ))}
       </Grid>
 
-      <Box sx={{ mt: 3, display: 'flex', justifyContent: 'flex-start' }}>
+      <Divider sx={{ my: 3 }} />
+
+      <Box sx={{ display: 'flex', justifyContent: 'flex-start' }}>
         <Button
           startIcon={<Add />}
           onClick={addInstallment}

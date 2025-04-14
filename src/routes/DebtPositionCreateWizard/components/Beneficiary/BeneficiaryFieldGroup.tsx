@@ -8,8 +8,8 @@ import {
   PostalAccountField,
   TaxonomyCodeField
 } from './BeneficiaryFieldComponents';
-import { buildBeneficiaryFieldPath } from '../../../utils/BeneficiaryFieldHelpers';
-import { BeneficiaryFieldsProps } from '../../../models/BeneficiaryFieldTypes';
+import { buildBeneficiaryFieldPath } from '../../../../utils/BeneficiaryFieldHelpers';
+import { BeneficiaryFieldsProps } from '../../../../models/BeneficiaryFieldTypes';
 
 /**
  * Componente per il gruppo di informazioni anagrafiche del beneficiario
@@ -72,7 +72,7 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
             ),
             validate: {
               taxCodeFormat: (value) =>
-                import('../../../utils/fieldValidation')
+                import('../../../../utils/fieldValidation')
                   .then((module) => module.createBeneficiaryFieldValidators(t))
                   .then((validators) =>
                     validators.validateBeneficiaryTaxCode(value)

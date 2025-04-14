@@ -425,7 +425,8 @@
       },
       "dueDate": {
         "label": "Data scadenza",
-        "required": "Il campo data scadenza è obbligatorio"
+        "required": "Il campo data scadenza è obbligatorio",
+        "invalid": "La data di scadenza non è valida o è incompleta"
       },
       "isMultibeneficiary": {
         "label": "Altri beneficiari"

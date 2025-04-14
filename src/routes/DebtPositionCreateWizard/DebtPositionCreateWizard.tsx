@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Step1GeneralConfiguration, {
   Step1Data
-} from './components/Step1GeneralConfiguration';
-import Step2AddDebtor, { Step2Data } from './components/Step2AddDebtor';
-import Step3, { Step3Data } from './components/Step3';
+} from './components/Step/Step1GeneralConfiguration';
+import Step2AddDebtor, { Step2Data } from './components/Step/Step2AddDebtor';
+import Step3, { Step3Data } from './components/Step/Step3';
 import { StepperContainer } from '../../components/Stepper';
 import { Stepper } from '../../components/Stepper/types';
 // import { BeneficiaryData } from './components/BeneficiaryField';

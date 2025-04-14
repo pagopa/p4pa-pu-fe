@@ -9,7 +9,7 @@ import {
   Path
 } from 'react-hook-form';
 import InstallmentItem from './InstallmentItem';
-import { InstallmentValidators } from '../../../hooks/useInstallmentManagement';
+import { InstallmentValidators } from '../../../../hooks/useInstallmentManagement';
 import { ReactNode } from 'react';
 
 // Mock delle dipendenze e utility

@@ -22,8 +22,9 @@ import {
   Path
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { InstallmentValidators } from '../../../hooks/useInstallmentManagement';
-import { moneyFormat } from '../../../utils/formatters';
+import { InstallmentValidators } from '../../../../hooks/useInstallmentManagement';
+import { moneyFormat } from '../../../../utils/formatters';
+import { createDateValidator } from '../../../../utils/fieldValidation';
 
 // Tipo per rappresentare gli errori di un campo specifico
 type FieldErrorValue = {
@@ -230,7 +231,11 @@ function InstallmentItem<T extends FieldValues>({
             <Controller
               name={`${fieldNamePrefix}.${index}.dueDate` as Path<T>}
               control={control}
-              rules={validators.dueDate}
+              rules={createDateValidator(
+                t,
+                !!validators.dueDate.required,
+                validators.dueDate.required as string
+              )}
               render={({ field: { onChange, value, ...field } }) => {
                 // Determina se il campo è obbligatorio dai validators
                 const isRequired = !!validators.dueDate.required;

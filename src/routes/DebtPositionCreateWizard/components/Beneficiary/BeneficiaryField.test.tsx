@@ -10,7 +10,7 @@ import {
   UseFormTrigger
 } from 'react-hook-form';
 import BeneficiaryField from './BeneficiaryField';
-import { useBeneficiaryManagement } from '../../../hooks/useBeneficiaryManagement';
+import { useBeneficiaryManagement } from '../../../../hooks/useBeneficiaryManagement';
 
 // Mock delle dipendenze
 vi.mock('react-i18next', () => ({

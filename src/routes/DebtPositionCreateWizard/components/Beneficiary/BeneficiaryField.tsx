@@ -11,14 +11,14 @@ import {
 import { Grid, Paper, Box, Button, Divider } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { BeneficiaryHeader } from './BeneficiaryFieldComponents';
-import { BeneficiaryValidationContext } from '../../../utils/BeneficiaryFieldHelpers';
+import { BeneficiaryValidationContext } from '../../../../utils/BeneficiaryFieldHelpers';
 import {
   BeneficiaryIdentityFields,
   BeneficiaryAmountFields,
   BeneficiaryPaymentFields,
   BeneficiaryClassificationFields
 } from './BeneficiaryFieldGroup';
-import { useBeneficiaryManagement } from '../../../hooks/useBeneficiaryManagement';
+import { useBeneficiaryManagement } from '../../../../hooks/useBeneficiaryManagement';
 
 // ===== TYPES =====
 type BeneficiaryFieldPath<T extends FieldValues> = FieldArrayPath<T>;

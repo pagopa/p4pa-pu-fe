@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
 import { MenuItem, TextField, Typography } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
-import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
-import SectionBox from '../../../components/Wizard/SectionBox';
-import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
-import { createValidators } from '../../../utils/fieldValidation';
+import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
+import SectionBox from '../../../../components/Wizard/SectionBox';
+import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
+import { createValidators } from '../../../../utils/fieldValidation';
 
 // Tipo che definisce la struttura dati dello Step 2 del wizard.
 export type Step2Data = {

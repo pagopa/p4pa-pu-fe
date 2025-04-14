@@ -14,26 +14,27 @@ import {
   FieldValues
 } from 'react-hook-form';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
-import SectionBox from '../../../components/Wizard/SectionBox';
+import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
+import SectionBox from '../../../../components/Wizard/SectionBox';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
-import { formatDate } from '../../../utils/formatters';
+import { formatDate } from '../../../../utils/formatters';
 import { Navigate } from 'react-router';
 import { useEffect, useState } from 'react';
-import BeneficiaryField from './BeneficiaryField';
-import InstallmentField from './InstallmentField';
+import BeneficiaryField from '../Beneficiary/BeneficiaryField';
+import InstallmentField from '../Installment/InstallmentField';
 import type {
   BeneficiaryData,
   BeneficiaryFormValues
-} from '../../../hooks/useBeneficiaryManagement';
+} from '../../../../hooks/useBeneficiaryManagement';
 import {
   createAmountValidator,
-  isBeneficiariesTotalValid
-} from '../../../utils/fieldValidation';
-import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
-import { PageRoutes } from '../../../App';
-import { InstallmentData } from '../../../hooks/useInstallmentManagement';
+  isBeneficiariesTotalValid,
+  createDateValidator
+} from '../../../../utils/fieldValidation';
+import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
+import { PageRoutes } from '../../../../App';
+import { InstallmentData } from '../../../../hooks/useInstallmentManagement';
 export type Step3Data = {
   paymentObject: { value: string; readonly: boolean };
   paymentOption: { value: string; readonly: boolean };
@@ -364,11 +365,11 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                 <Controller
                   name="dueDate.value"
                   control={control}
-                  rules={{
-                    required: data.flagMandatoryDueDate
-                      ? t('debtPositionCreateWizard.step3.dueDate.required')
-                      : false
-                  }}
+                  rules={createDateValidator(
+                    t,
+                    data.flagMandatoryDueDate,
+                    t('debtPositionCreateWizard.step3.dueDate.required')
+                  )}
                   render={({ field: { onChange, value, ...field } }) => (
                     <DatePicker
                       {...field}
