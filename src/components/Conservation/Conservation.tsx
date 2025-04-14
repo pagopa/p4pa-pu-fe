@@ -132,7 +132,7 @@ export const Conservation = () => {
             {
               type: COMPONENT_TYPE.textField,
               label: t('commons.searchName'),
-              icon: <Search />,
+              adornment: <Search />,
               gridWidth: 6
             },
             {

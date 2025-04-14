@@ -181,6 +181,7 @@
     "messages": "Messaggi",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
     "operator": "Operatore",
+    "optional": "opzionale",
     "organizationType": "Tipo ente",
     "payer": "Pagatore",
     "payerDetails": "Anagrafica Pagatore",
@@ -315,7 +316,7 @@
     "description": "Compila i campi e crea una Posizione Debitoria",
     "generalConfiguration": {
       "subtitle": "Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento.",
-      "title": "Configurazione Generale"
+      "title": "Configurazione generale"
     },
     "step1": {
       "debtPositionType": {
@@ -398,12 +399,48 @@
         "required": "Il campo importo è obbligatorio",
         "validNumber": "Il campo importo deve essere un numero valido"
       },
+      "beneficiary": {
+        "addBeneficiary": "Aggiungi beneficiario",
+        "amount": {
+          "label": "Importo",
+          "required": "Il campo importo è obbligatorio"
+        },
+        "amountMustBeLessThanTotal": "L'importo del beneficiario deve essere minore dell'importo totale",
+        "entityName": {
+          "label": "Nome ente",
+          "required": "Il campo ente beneficiario è obbligatorio"
+        },
+        "iban": {
+          "invalid": "Il formato dell'IBAN non è valido",
+          "label": "IBAN",
+          "required": "Il campo iban è obbligatorio"
+        },
+        "paymentMethod": {
+          "required": "Uno tra i campi IBAN o conto corrente postale è obbligatorio"
+        },
+        "postalAccount": {
+          "invalid": "Il formato del conto corrente postale non è valido",
+          "label": "Conto Corrente postale",
+          "required": "Il campo conto corrente postale è obbligatorio"
+        },
+        "sumMustBeLessThanTotal": "La somma degli importi dei beneficiari deve essere minore dell'importo totale",
+        "taxCode": {
+          "invalid": "Codice fiscale non valido",
+          "label": "Codice Fiscale",
+          "required": "Il campo codice fiscale è obbligatorio"
+        },
+        "taxonomyCode": {
+          "label": "Codice Tassonomico",
+          "required": "Il campo codice tassonomico è obbligatorio"
+        },
+        "title": "ENTE BENEFICIARIO"
+      },
       "dueDate": {
         "label": "Data scadenza",
         "required": "Il campo data scadenza è obbligatorio"
       },
       "isMultibeneficiary": {
-        "label": "Multibeneficiario"
+        "label": "Altri beneficiari"
       },
       "paymentObject": {
         "label": "Oggetto pagamento",
@@ -419,7 +456,7 @@
     },
     "title": "Crea una nuova Posizione Debitoria",
     "wizardStepper": {
-      "step1": "Configurazione Generale",
+      "step1": "Configurazione generale",
       "step2": "Aggiungi debitore",
       "step3": "Configurazione avviso"
     }
@@ -427,7 +464,7 @@
   "debtPositionCreateWizardCompleted": {
     "backToStart": "Torna al'inizio",
     "description": "La trovi nella sezione Dovuti, dove puoi tenere traccia dell'andamento.",
-    "title": "La posizione debitoria ‘{{paymentObject}}’ è stata creata!"
+    "title": "La posizione debitoria '{{paymentObject}}' è stata creata!"
   },
   "debtPositionDetail": {
     "debtPositionInfo": "Informazioni sulla posizione debitoria",
@@ -490,6 +527,73 @@
       "genericErrorDescription": "Siamo spiacenti, al momento non è possibile eliminare questo tipo di dovuto.",
       "title": "Il tipo dovuto non può essere eliminato"
     }
+  },
+  "debtTypeCreate": {
+    "configuration": {
+      "alertMessage": "* Indica una domanda obbligatoria",
+      "debtType": {
+        "helper": "Inserisce il nome attribuito al servizio di incasso",
+        "label": "Nome del Tipo dovuto",
+        "maxCharacters": "Il nome del Tipo dovuto deve avere al massimo 100 caratteri",
+        "placeholder": "Inserisce il nome attribuito al servizio di incasso",
+        "required": "Il nome del Tipo dovuto è obbligatorio",
+        "title": "Descrizione"
+      },
+      "subtitle": "Definisce il nome e tassonomia del nuovo Tipo dovuto.",
+      "taxonomy": {
+        "label": "Tipo Ente",
+        "placeholder": "Tipo Ente",
+        "required": "Il campo tassonomia è obbligatorio",
+        "title": "Tassonomia"
+      },
+      "title": "Configurazione Tipo dovuto"
+    },
+    "description": "Compila i campi e crea un nuovo Tipo dovuto nel propio catalogo.",
+    "settings": {
+      "behaviour": "Comportamento",
+      "message": {
+        "guide": "Leggi come <0>scrivere i messaggi su app IO</0> o ad usare correttamente il <1>linguaggio markdown</1>",
+        "label": "Messaggio",
+        "required": "il messaggio é obbligatorio"
+      },
+      "option1": {
+        "description": "Data di Scadenza Obbligatoria",
+        "subtitle": "Imposta la Data di Scadenza un campo obbligatorio nella creazione."
+      },
+      "option2": {
+        "description": "Codice Fiscale Anonimo",
+        "subtitle": "Permette di creare dovuti senza segnalare un Codice Fiscale nel caso di assenza."
+      },
+      "option3": {
+        "description": "Pagamento Spontaneo",
+        "subtitle": "Il tipo dovuto può essere utilizzato per pagamenti spontanei"
+      },
+      "preview": "Vedi anteprima",
+      "subject": {
+        "guide": "Leggi come scrivere correttamente il <0>nome di un servizio</0>",
+        "label": "Oggetto del messaggio",
+        "placeholder": "Il servizio ti invia comunicazioni in merito alla Tassa sui rifiuti (TARI).",
+        "required": "l'oggetto del messaggio é obbligatorio"
+      },
+      "subtitle": "Definisci altre caratteristiche del tipo dovuto.",
+      "template": {
+        "checkbox": "Template Messaggio su app IO",
+        "helper": "Predefinisce template di messaggi per il Tipo dovuto da dove i Enti Gestiti possono cominciare.",
+        "label": "Predefinisce template di messaggi per il Tipo dovuto da dove i Enti Gestiti possono cominciare.",
+        "title": "Messaggi"
+      },
+      "title": "Ulteriori impostazioni "
+    },
+    "stepper": {
+      "step1": "Configurazione Tipo dovuto",
+      "step2": "Ulteriori impostazioni "
+    },
+    "title": "Crea un nuovo Tipo dovuto"
+  },
+  "debtTypeCreateSuccess": {
+    "backToStart": "Torna alla sezione",
+    "description": "La trovi nella sezione Catalogo Tipi dovuti, dove puoi modificarlo in qualsiasi momento.",
+    "title": "Il tipo dovuto ‘{{paymentObject}}’ è stato creato!"
   },
   "debtTypes": {
     "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",

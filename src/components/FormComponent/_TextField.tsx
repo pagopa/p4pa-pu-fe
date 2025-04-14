@@ -3,7 +3,8 @@ import TextField, { TextFieldProps } from '@mui/material/TextField';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 
 export type _TextFieldProps = Omit<TextFieldProps, 'type'> & {
-  icon?: React.ReactNode;
+  adornment?: React.ReactNode;
+  forwardRef?: React.Ref<HTMLInputElement>;
 };
 
 export const _TextField = (props: _TextFieldProps) => (
@@ -18,13 +19,12 @@ export const _TextField = (props: _TextFieldProps) => (
     InputProps={{
       endAdornment: (
         <InputAdornment position="end">
-          {props?.icon ?? <SearchRoundedIcon />}
+          {props?.adornment ?? <SearchRoundedIcon />}
         </InputAdornment>
       )
     }}
-    label={props.label}
     size="small"
-    placeholder={props.placeholder || ''}
     {...props}
+    ref={props.forwardRef}
   />
 );

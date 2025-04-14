@@ -4,7 +4,7 @@ import { ArrowBack } from '@mui/icons-material';
 
 type Props = {
   onBack?: () => void;
-  onNext: () => void;
+  onNext?: () => void;
   disableNext?: boolean;
   disableBack?: boolean;
   nextLabel?: string;
@@ -31,7 +31,12 @@ const WizardStepButtons = ({
       >
         {t(backLabel)}
       </Button>
-      <Button variant="contained" onClick={onNext} disabled={disableNext}>
+      <Button
+        variant="contained"
+        onClick={onNext}
+        type="submit"
+        disabled={disableNext}
+      >
         {t(nextLabel)}
       </Button>
     </Box>

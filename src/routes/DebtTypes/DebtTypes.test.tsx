@@ -4,6 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
 import DebtTypes from './DebtTypes';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
+import { PageRoutes } from '../../App';
 
 i18nTestSetup({
   'commons.routes.DEBT_TYPES_CATALOG': 'Debt Types Catalog',
@@ -120,7 +121,7 @@ describe('DebtTypes Page', () => {
     const createButton = screen.getByText('Create New');
     fireEvent.click(createButton);
 
-    expect(navigateMock).toHaveBeenCalledWith('/debt-types/new');
+    expect(navigateMock).toHaveBeenCalledWith(PageRoutes.DEBT_TYPE_CREATE);
   });
 
   it('handles pagination changes', async () => {

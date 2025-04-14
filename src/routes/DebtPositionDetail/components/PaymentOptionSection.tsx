@@ -115,7 +115,7 @@ export const PaymentOptionSection = ({
     <Box mb={4}>
       <Box mb={3}>
         <TitleComponent
-          isSubtitle
+          variant="h6"
           title={optionData.title}
           chip={optionData.chip}
         />

@@ -12,6 +12,7 @@ import useDebtTypesFilters from '../../hooks/useDebtTypesFilters';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { setLoading } from '../../store/AppStateStore';
+import { PageRoutes } from '../../App';
 
 export const DebtTypes = () => {
   const theme = useTheme();
@@ -62,7 +63,7 @@ export const DebtTypes = () => {
           {
             icon: <Add />,
             buttonText: t('commons.createNew'),
-            onActionClick: () => navigate('/debt-types/new')
+            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_CREATE)
           }
         ]}
         description={t('debtTypes.description')}
@@ -82,7 +83,7 @@ export const DebtTypes = () => {
               value: draftFilters.description || '',
               onChange: (e) =>
                 updateDraftFilters({ description: e.target.value }),
-              icon: <Search />,
+              adornment: <Search />,
               gridWidth: 10.5
             },
             {
