@@ -6,6 +6,7 @@ import {
 } from '../../generated/apiClient';
 import { parseAndLog } from '../utils/loaders';
 import { pagedExportFileSchema } from '../../generated/zod-schema';
+import { extractFilename } from '../utils/formatters';
 
 export const getExportFiles = (
   organizationId: number,
@@ -44,4 +45,21 @@ export const getExportFiles = (
     enabled: !!organizationId,
     ...options
   });
+};
+
+export const downloadExportFile = async (
+  organizationId: number,
+  exportFileId: number
+): Promise<{ data: Blob; fileName: string }> => {
+  const response = await utils.fileshareClient.organization.downloadExportFile(
+    organizationId,
+    exportFileId,
+    { format: 'blob' }
+  );
+
+  const contentDisposition = response.headers['content-disposition'] || '';
+  const fileName =
+    extractFilename(contentDisposition) || `file-${exportFileId}`;
+
+  return { data: response.data, fileName };
 };
