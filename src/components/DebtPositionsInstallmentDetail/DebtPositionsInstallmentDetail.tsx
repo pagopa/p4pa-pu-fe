@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react';
 import { BredcrumbItem } from '../Breadcrumbs/Breadcrumbs';
 import { InstallmentDetailDrawer } from './InstallmentDetailDrawer';
 import { Timeline } from '../Timeline';
-import { setAppState, setLoading } from '../../store/AppStateStore';
+import { setAppState } from '../../store/AppStateStore';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
@@ -47,12 +47,10 @@ export const DebtPositionsInstallmentDetail = () => {
     console.error('ID is not a number');
   }
 
-  const { data: installment, isLoading } = debtPositions.getInstallmentDetail(
+  const { data: installment } = debtPositions.getInstallmentDetail(
     organizationId,
     installmentId
   );
-
-  setLoading(isLoading);
 
   const getFiscalCodeValue = (
     fiscalCode?: string,
@@ -167,7 +165,7 @@ export const DebtPositionsInstallmentDetail = () => {
     }
   }, [installment]);
 
-  return !isLoading ? (
+  return (
     <>
       <TitleComponent
         title={t('commons.routes.DEBT_POSITION_INSTALLMENT_DETAIL')}
@@ -285,7 +283,7 @@ export const DebtPositionsInstallmentDetail = () => {
         />
       </Timeline.Drawer>
     </>
-  ) : null;
+  );
 };
 
 export default DebtPositionsInstallmentDetail;
