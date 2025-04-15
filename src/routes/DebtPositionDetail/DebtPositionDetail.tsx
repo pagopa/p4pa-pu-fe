@@ -27,10 +27,7 @@ import { STATE } from '../../store/types';
 import { generatePath, useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { PageRoutes } from '../../App';
-import {
-  setCustomBreadcrumbsItems,
-  setLoading
-} from '../../store/AppStateStore';
+import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';
 import { Timeline } from '../../components/Timeline';
 
 export type PaymentOptionDisplayData = {
@@ -74,10 +71,10 @@ const DebtPositionDetail = () => {
 
   const [timelineOpen, setTimelineOpen] = useState(false);
 
-  const { data: debtPositionDetail, isLoading } =
-    debtPositions.getDebtPositionDetail(organizationId, debtPositionId);
-
-  setLoading(isLoading);
+  const { data: debtPositionDetail } = debtPositions.getDebtPositionDetail(
+    organizationId,
+    debtPositionId
+  );
 
   useEffect(() => {
     if (debtPositionDetail?.paymentOptions?.length) {

@@ -1,5 +1,5 @@
 import { Download } from '@mui/icons-material';
-import { CircularProgress, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLoaderData } from 'react-router-dom';
 import { getReceiptDetail } from '../../api/receiptDetail';
@@ -23,7 +23,7 @@ export const TelematicReceiptDetail = () => {
     console.error('ID is not a number');
   }
 
-  const { data, isLoading } = getReceiptDetail(organizationId, Number(id));
+  const { data } = getReceiptDetail(organizationId, Number(id));
   const debtorType: string =
     data?.debtor.entityType == 'F' ? `(${t('commons.person')})` : '';
 
@@ -77,53 +77,47 @@ export const TelematicReceiptDetail = () => {
 
   return (
     <>
-      {!isLoading && (
-        <>
-          <TitleComponent
-            title={t('telematicReceiptDetail.title')}
-            callToAction={[
-              {
-                icon: <Download />,
-                variant: 'contained',
-                buttonText: t('commons.files.download'),
-                onActionClick: () => console.log('download')
-              }
-            ]}
-          />
+      <TitleComponent
+        title={t('telematicReceiptDetail.title')}
+        callToAction={[
           {
-            <Grid container spacing={3}>
-              <Grid item md={6}>
-                <DetailContainer
-                  sections={[
-                    {
-                      title: {
-                        label: t('commons.summary'),
-                        variant: 'overline'
-                      },
-                      data: summaryData
-                    }
-                  ]}
-                />
-              </Grid>
-              <Grid item md={6}>
-                <DetailContainer
-                  sections={[
-                    {
-                      title: {
-                        label: t('commons.payment'),
-                        variant: 'overline'
-                      },
-                      data: paymentData
-                    }
-                  ]}
-                />
-              </Grid>
-            </Grid>
+            icon: <Download />,
+            variant: 'contained',
+            buttonText: t('commons.files.download'),
+            onActionClick: () => console.log('download')
           }
-        </>
-      )}
-
-      {isLoading && <CircularProgress></CircularProgress>}
+        ]}
+      />
+      {
+        <Grid container spacing={3}>
+          <Grid item md={6}>
+            <DetailContainer
+              sections={[
+                {
+                  title: {
+                    label: t('commons.summary'),
+                    variant: 'overline'
+                  },
+                  data: summaryData
+                }
+              ]}
+            />
+          </Grid>
+          <Grid item md={6}>
+            <DetailContainer
+              sections={[
+                {
+                  title: {
+                    label: t('commons.payment'),
+                    variant: 'overline'
+                  },
+                  data: paymentData
+                }
+              ]}
+            />
+          </Grid>
+        </Grid>
+      }
     </>
   );
 };
