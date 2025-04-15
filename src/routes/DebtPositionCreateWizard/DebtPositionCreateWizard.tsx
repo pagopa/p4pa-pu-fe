@@ -2,9 +2,9 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import Step1GeneralConfiguration, {
   Step1Data
-} from './components/Step1GeneralConfiguration';
-import Step2AddDebtor, { Step2Data } from './components/Step2AddDebtor';
-import Step3, { Step3Data } from './components/Step3';
+} from './components/Step/Step1GeneralConfiguration';
+import Step2AddDebtor, { Step2Data } from './components/Step/Step2AddDebtor';
+import Step3, { Step3Data } from './components/Step/Step3';
 import { StepperContainer } from '../../components/Stepper';
 import { Stepper } from '../../components/Stepper/types';
 // import { BeneficiaryData } from './components/BeneficiaryField';
@@ -42,6 +42,30 @@ const initialData: FormData = {
     fullName: {
       value: '',
       readonly: false
+    },
+    address: {
+      value: '',
+      readonly: false
+    },
+    civicNumber: {
+      value: '',
+      readonly: false
+    },
+    zipCode: {
+      value: '',
+      readonly: false
+    },
+    country: {
+      value: '',
+      readonly: false
+    },
+    province: {
+      value: '',
+      readonly: false
+    },
+    city: {
+      value: '',
+      readonly: false
     }
   },
   step3: {
@@ -75,6 +99,8 @@ const DebtPositionCreateWizard = () => {
   const [step, setStep] = useState(0);
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>(initialData);
+
+  // console.log('formData', formData);
 
   const steps: Stepper['steps'] = [
     {
@@ -112,6 +138,7 @@ const DebtPositionCreateWizard = () => {
           }}
           setData={(data) => setFormData((prev) => ({ ...prev, step3: data }))}
           onNext={() => {
+            console.log('onNext');
             setStep(3);
           }}
           onBack={() => setStep(1)}

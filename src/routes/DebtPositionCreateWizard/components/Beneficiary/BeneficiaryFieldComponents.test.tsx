@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { UseFormTrigger } from 'react-hook-form';
-import { ValidationContext } from '../../../utils/beneficiaryValidation';
+import { ValidationContext } from '../../../../utils/beneficiaryValidation';
 import {
   handleAmountChange,
   handleIBANChange,
