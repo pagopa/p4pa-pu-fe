@@ -20,46 +20,34 @@ vi.mock('../../components/Stepper', () => ({
   )
 }));
 
-vi.mock('./components/Step1GeneralConfiguration', () => {
-  return {
-    default: ({ onNext }: { onNext: () => void }) => (
-      <button onClick={onNext} data-testid="step1-next">
-        Step 1 Next
-      </button>
-    )
-  };
-});
+vi.mock('./components/Step/Step1GeneralConfiguration', () => ({
+  default: ({ onNext }: { onNext: () => void }) => (
+    <button onClick={onNext} data-testid="step1-next">
+      Step 1 Next
+    </button>
+  )
+}));
 
-vi.mock('./components/Step2AddDebtor', () => {
-  return {
-    default: ({
-      onNext,
-      onBack
-    }: {
-      onNext: () => void;
-      onBack: () => void;
-    }) => (
-      <div>
-        <button onClick={onBack} data-testid="step2-back">
-          Step 2 Back
-        </button>
-        <button onClick={onNext} data-testid="step2-next">
-          Step 2 Next
-        </button>
-      </div>
-    )
-  };
-});
-
-vi.mock('./components/Step3', () => {
-  return {
-    default: ({ onBack }: { onBack: () => void }) => (
-      <button onClick={onBack} data-testid="step3-back">
-        Step 3 Back
+vi.mock('./components/Step/Step2AddDebtor', () => ({
+  default: ({ onNext, onBack }: { onNext: () => void; onBack: () => void }) => (
+    <div>
+      <button onClick={onBack} data-testid="step2-back">
+        Step 2 Back
       </button>
-    )
-  };
-});
+      <button onClick={onNext} data-testid="step2-next">
+        Step 2 Next
+      </button>
+    </div>
+  )
+}));
+
+vi.mock('./components/Step/Step3', () => ({
+  default: ({ onBack }: { onBack: () => void }) => (
+    <button onClick={onBack} data-testid="step3-back">
+      Step 3 Back
+    </button>
+  )
+}));
 
 describe('DebtPositionCreateWizard', () => {
   it('renders step 1 by default', () => {

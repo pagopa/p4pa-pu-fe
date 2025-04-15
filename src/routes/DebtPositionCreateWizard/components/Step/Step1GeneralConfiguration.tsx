@@ -1,11 +1,11 @@
 import { Controller, useForm } from 'react-hook-form';
-import { useStore } from '../../../store/GlobalStore';
+import { useStore } from '../../../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
 import { MenuItem, TextField } from '@mui/material';
-import { useDebtPositionsTypeOrg } from '../../../hooks/useDebtPositionsTypeOrg';
-import SectionBox from '../../../components/Wizard/SectionBox';
-import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
-import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
+import { useDebtPositionsTypeOrg } from '../../../../hooks/useDebtPositionsTypeOrg';
+import SectionBox from '../../../../components/Wizard/SectionBox';
+import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
+import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import BookIcon from '@mui/icons-material/MenuBook';
 
 // Tipizzazione per lo stato dello step 1
