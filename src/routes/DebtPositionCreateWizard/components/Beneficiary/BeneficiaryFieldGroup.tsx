@@ -134,23 +134,35 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
             'debtPositionCreateWizard.step3.beneficiary.amount.required'
           ),
           validate: {
-            isValidAmount: (value) =>
-              validators.validateSingleBeneficiary(value, fields.length),
-            totalAmount: () => validators.validateTotalAmount()
+            isValidAmount: (value) => {
+              return validators.validateSingleBeneficiary(value, fields.length);
+            },
+            totalAmount: () => {
+              return validators.validateTotalAmount();
+            }
           }
         }}
-        render={({ field }) => (
-          <AmountField
-            field={field}
-            t={t}
-            disabled={disabled}
-            context={validationContext}
-            index={index}
-            fields={fields}
-            trigger={trigger}
-            fieldNamePrefix={fieldNamePrefix}
-          />
-        )}
+        render={({ field, fieldState }) => {
+          // Se c'è un errore nel campo, prendiamo nota
+          const hasAmountError = !!fieldState.error;
+
+          return (
+            <AmountField
+              field={field}
+              t={t}
+              disabled={disabled}
+              context={{
+                ...validationContext,
+                // Forziamo isSubmitted a true se c'è un errore, anche se il form non è stato sottomesso
+                isSubmitted: validationContext.isSubmitted || hasAmountError
+              }}
+              index={index}
+              fields={fields}
+              trigger={trigger}
+              fieldNamePrefix={fieldNamePrefix}
+            />
+          );
+        }}
       />
     </Grid>
   );
@@ -207,6 +219,11 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
                   )
                 );
 
+                const result = fieldValidators.validatePaymentMethod(
+                  value,
+                  postalAccount
+                );
+
                 // Se uno dei due è valorizzato, non mostrare errori
                 if (
                   (value && value.trim() !== '') ||
@@ -215,10 +232,7 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
                   return undefined;
                 }
 
-                return fieldValidators.validatePaymentMethod(
-                  value,
-                  postalAccount
-                );
+                return result;
               }
             }
           }}
@@ -257,6 +271,11 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
                   )
                 );
 
+                const result = fieldValidators.validatePaymentMethod(
+                  iban,
+                  value
+                );
+
                 // Se uno dei due è valorizzato, non mostrare errori
                 if (
                   (value && value.trim() !== '') ||
@@ -265,7 +284,7 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
                   return undefined;
                 }
 
-                return fieldValidators.validatePaymentMethod(iban, value);
+                return result;
               }
             }
           }}

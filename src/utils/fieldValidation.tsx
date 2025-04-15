@@ -123,7 +123,9 @@ export const isBeneficiariesTotalValid = (
   beneficiaries: Array<{ amount: string }>,
   totalAmount: string
 ): boolean => {
-  if (!totalAmount || beneficiaries.length === 0) return true;
+  if (!totalAmount || beneficiaries.length === 0) {
+    return true;
+  }
 
   const total = parseFloat(totalAmount);
 

@@ -20,7 +20,7 @@ import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../../../utils/formatters';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';
 import type {
@@ -35,6 +35,8 @@ import {
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { PageRoutes } from '../../../../App';
 import { InstallmentData } from '../../../../hooks/useInstallmentManagement';
+import { BeneficiaryFieldRef } from '../Beneficiary/BeneficiaryField';
+
 export type Step3Data = {
   paymentObject: { value: string; readonly: boolean };
   paymentOption: { value: string; readonly: boolean };
@@ -69,6 +71,54 @@ function triggerValidationForAllBeneficiaries<T extends FieldValues>(
 ) {
   beneficiaries.forEach((_, index) => {
     trigger(`beneficiaries.${index}.amount` as Path<T>);
+  });
+}
+
+// Funzione per attivare la validazione per tutti i beneficiari di tutte le rate
+function triggerValidationForAllInstallmentBeneficiaries<T extends FieldValues>(
+  installments: Array<Record<string, unknown>>,
+  trigger: UseFormTrigger<T>
+) {
+  installments.forEach((installment, installmentIndex) => {
+    if (installment.isMultibeneficiary) {
+      const installmentBeneficiaries =
+        (installment.beneficiaries as Array<Record<string, unknown>>) || [];
+
+      installmentBeneficiaries.forEach(
+        (_: Record<string, unknown>, beneficiaryIndex: number) => {
+          const path =
+            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.amount` as Path<T>;
+          trigger(path);
+        }
+      );
+    }
+  });
+}
+
+// Funzione per attivare la validazione dei campi di pagamento (IBAN e postalAccount)
+function triggerPaymentFieldsValidation<T extends FieldValues>(
+  installments: Array<Record<string, unknown>>,
+  trigger: UseFormTrigger<T>
+) {
+  installments.forEach((installment, installmentIndex) => {
+    if (installment.isMultibeneficiary) {
+      const installmentBeneficiaries =
+        (installment.beneficiaries as Array<Record<string, unknown>>) || [];
+
+      installmentBeneficiaries.forEach(
+        (_: Record<string, unknown>, beneficiaryIndex: number) => {
+          // Validazione del campo IBAN
+          const ibanPath =
+            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.iban` as Path<T>;
+          trigger(ibanPath);
+
+          // Validazione del campo postalAccount
+          const postalAccountPath =
+            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.postalAccount` as Path<T>;
+          trigger(postalAccountPath);
+        }
+      );
+    }
   });
 }
 
@@ -134,6 +184,23 @@ const Step3 = ({ data, setData, onBack }: Props) => {
     setValue('amount.value', totalAmount);
   };
 
+  // Riferimento al componente BeneficiaryField per accedere ai suoi metodi
+  const beneficiaryFieldRef = useRef<BeneficiaryFieldRef>({});
+
+  // Funzione per gestire il cambio dello switch multibeneficiario
+  const handleMultibeneficiaryToggle = (value: boolean) => {
+    setValue('isMultibeneficiary.value', value);
+
+    // Se stiamo disattivando il multibeneficiario, resettiamo i beneficiari
+    if (
+      !value &&
+      beneficiaryFieldRef.current &&
+      beneficiaryFieldRef.current.resetAllBeneficiaries
+    ) {
+      beneficiaryFieldRef.current.resetAllBeneficiaries();
+    }
+  };
+
   const onSubmit = async (values: FormValues) => {
     // Utilizziamo i valori attuali per la validazione
     const currentBeneficiaries = getValues('beneficiaries') || [];
@@ -145,6 +212,79 @@ const Step3 = ({ data, setData, onBack }: Props) => {
     ) {
       trigger('beneficiaries');
       return;
+    }
+
+    // Verifica la validità dei beneficiari per ogni rata se è un pagamento rateale
+    if (isInstallment) {
+      const installments = getValues('installments') || [];
+      let hasInvalidBeneficiaries = false;
+      let hasInvalidPaymentFields = false;
+
+      // Verifica ogni rata con beneficiari multipli
+      for (let i = 0; i < installments.length; i++) {
+        const installment = installments[i];
+
+        if (installment.isMultibeneficiary) {
+          // Verifica se il campo beneficiaries esiste e ha la struttura attesa
+          const beneficiaries = installment.beneficiaries || [];
+
+          // Verifica la struttura dei beneficiari
+          beneficiaries.forEach((b, idx) => {
+            // Se non è nel formato atteso, proviamo a intervenire
+            if (
+              typeof b.amount !== 'string' &&
+              b.amount !== null &&
+              b.amount !== undefined
+            ) {
+              beneficiaries[idx].amount = String(b.amount);
+            }
+
+            // Verifica dei campi di pagamento (IBAN e postalAccount)
+            const iban = b.iban || '';
+            const postalAccount = b.postalAccount || '';
+
+            // Almeno uno dei due campi deve essere valorizzato
+            if (
+              (!iban || iban.trim() === '') &&
+              (!postalAccount || postalAccount.trim() === '')
+            ) {
+              hasInvalidPaymentFields = true;
+            }
+          });
+
+          // Verifica se la validazione fallisce
+          try {
+            const isValid = isBeneficiariesTotalValid(
+              beneficiaries,
+              installment.amount
+            );
+
+            if (!isValid) {
+              hasInvalidBeneficiaries = true;
+            }
+          } catch (error) {
+            hasInvalidBeneficiaries = true;
+          }
+        }
+      }
+
+      // Se c'è almeno una rata con beneficiari non validi, interrompi il submit
+      if (hasInvalidBeneficiaries || hasInvalidPaymentFields) {
+        // Prima di attivare la validazione, aggiorniamo in modo esplicito gli errori
+        try {
+          // Attiva la validazione per i beneficiari di tutte le rate
+          triggerValidationForAllInstallmentBeneficiaries(
+            installments,
+            trigger
+          );
+
+          // Attiva la validazione specifica per i campi di pagamento
+          triggerPaymentFieldsValidation(installments, trigger);
+        } catch (error) {
+          // L'errore viene catturato ma non viene più loggato
+        }
+        return;
+      }
     }
 
     // Converti la data in stringa prima di salvare
@@ -401,7 +541,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                           disabled={data.isMultibeneficiary?.readonly}
                           onChange={(e) => {
                             const value = e.target.checked;
-                            field.onChange(value);
+                            handleMultibeneficiaryToggle(value);
                           }}
                         />
                       }
@@ -417,7 +557,8 @@ const Step3 = ({ data, setData, onBack }: Props) => {
             {/* Componente Enti Beneficiari - visibile solo quando isMultibeneficiary è true E non è selezionata l'opzione rateale */}
             {isMultibeneficiary && !isInstallment && (
               <Grid item xs={12} mt={2}>
-                <BeneficiaryField<FormValues>
+                <BeneficiaryField
+                  ref={beneficiaryFieldRef}
                   control={control}
                   errors={errors}
                   isSubmitted={isSubmitted}
@@ -427,9 +568,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                   setValue={setValue}
                   getValues={getValues}
                   trigger={trigger}
-                  onToggleMultibeneficiary={(value) => {
-                    setValue('isMultibeneficiary.value', value);
-                  }}
+                  onToggleMultibeneficiary={handleMultibeneficiaryToggle}
                 />
               </Grid>
             )}

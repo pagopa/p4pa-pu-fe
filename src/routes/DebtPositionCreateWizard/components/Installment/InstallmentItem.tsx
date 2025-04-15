@@ -1,4 +1,3 @@
-import React from 'react';
 import {
   Box,
   Typography,
@@ -25,6 +24,8 @@ import { useTranslation } from 'react-i18next';
 import { InstallmentValidators } from '../../../../hooks/useInstallmentManagement';
 import { moneyFormat } from '../../../../utils/formatters';
 import { createDateValidator } from '../../../../utils/fieldValidation';
+import BeneficiaryField from '../Beneficiary/BeneficiaryField';
+import { useInstallmentBeneficiaryManagement } from '../../../../hooks/useInstallmentBeneficiaryManagement';
 
 // Tipo per rappresentare gli errori di un campo specifico
 type FieldErrorValue = {
@@ -50,45 +51,6 @@ type InstallmentItemProps<T extends FieldValues> = {
   readonly onRemove?: (index: number) => void;
 };
 
-// Funzione per gestire la modifica del campo importo
-function handleAmountChange<T extends FieldValues>(
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  onChange: (...event: Array<unknown>) => void,
-  trigger: UseFormTrigger<T>,
-  fieldNamePrefix: string,
-  index: number
-) {
-  // Accetta solo numeri, punto e virgola
-  const filteredValue = e.target.value.replace(/[^0-9.,]/g, '');
-  // Converti virgola in punto per la gestione numerica interna
-  const normalizedValue = filteredValue.replace(',', '.');
-  onChange(normalizedValue);
-
-  // Triggerare la validazione per aggiornare il totale
-  setTimeout(() => {
-    trigger(`${fieldNamePrefix}.${index}.amount` as Path<T>);
-  }, 0);
-}
-
-// Funzione per gestire l'evento blur dell'importo
-function handleAmountBlur(
-  e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-  onChange: (...event: Array<unknown>) => void,
-  onBlur: () => void
-) {
-  // Formatta il valore con due decimali quando il campo perde il focus
-  const value = e.target.value.replace(',', '.');
-  if (value && !isNaN(parseFloat(value))) {
-    const amountValue = parseFloat(value);
-    // Formatta l'importo usando moneyFormat e rimuovi il simbolo € per avere solo il numero
-    const formattedValue = moneyFormat(amountValue * 100, 2, 2)
-      .replace('€', '')
-      .trim();
-    onChange(formattedValue);
-  }
-  onBlur();
-}
-
 /**
  * Componente che rappresenta una singola rata
  */
@@ -101,9 +63,26 @@ function InstallmentItem<T extends FieldValues>({
   fieldNamePrefix,
   disabled = false,
   trigger,
+  setValue,
+  getValues,
   onRemove
 }: InstallmentItemProps<T>) {
   const { t } = useTranslation();
+
+  // Utilizziamo il nuovo hook specializzato per le rate
+  const {
+    isMultibeneficiary,
+    toggleMultibeneficiary,
+    handleInstallmentAmountChange
+  } = useInstallmentBeneficiaryManagement<T>({
+    control,
+    index,
+    installmentsFieldNamePrefix: fieldNamePrefix,
+    isSubmitted,
+    getValues,
+    setValue,
+    trigger
+  });
 
   // Verifica se ci sono errori per questo campo
   const hasError = (fieldName: string): boolean => {
@@ -121,7 +100,9 @@ function InstallmentItem<T extends FieldValues>({
     if (!indexErrors || !indexErrors[index]) return false;
 
     // Verifica se esiste un errore per il campo specifico
-    return !!indexErrors[index][fieldName];
+    const hasErr = !!indexErrors[index][fieldName];
+
+    return hasErr;
   };
 
   // Ottiene il messaggio di errore per questo campo
@@ -141,7 +122,9 @@ function InstallmentItem<T extends FieldValues>({
 
     // Ottieni l'errore per il campo specifico
     const error = indexErrors[index][fieldName];
-    return error?.message || '';
+    const message = error?.message || '';
+
+    return message;
   };
 
   return (
@@ -208,18 +191,34 @@ function InstallmentItem<T extends FieldValues>({
                   }}
                   error={hasError('amount')}
                   helperText={getErrorMessage('amount')}
-                  onChange={(e) =>
-                    handleAmountChange(
-                      e,
-                      field.onChange,
-                      trigger,
-                      fieldNamePrefix,
-                      index
-                    )
-                  }
-                  onBlur={(e) =>
-                    handleAmountBlur(e, field.onChange, field.onBlur)
-                  }
+                  onChange={(e) => {
+                    // Accetta solo numeri, punto e virgola
+                    const filteredValue = e.target.value.replace(
+                      /[^0-9.,]/g,
+                      ''
+                    );
+                    // Converti virgola in punto per la gestione numerica interna
+                    const normalizedValue = filteredValue.replace(',', '.');
+                    // Usa il nuovo handler che gestisce la validazione
+                    handleInstallmentAmountChange(normalizedValue);
+                  }}
+                  onBlur={(e) => {
+                    // Formatta il valore con due decimali quando il campo perde il focus
+                    const value = e.target.value.replace(',', '.');
+                    if (value && !isNaN(parseFloat(value))) {
+                      const amountValue = parseFloat(value);
+                      // Formatta l'importo usando moneyFormat e rimuovi il simbolo € per avere solo il numero
+                      const formattedValue = moneyFormat(
+                        amountValue * 100,
+                        2,
+                        2
+                      )
+                        .replace('€', '')
+                        .trim();
+                      handleInstallmentAmountChange(formattedValue);
+                    }
+                    field.onBlur();
+                  }}
                 />
               )}
             />
@@ -288,7 +287,8 @@ function InstallmentItem<T extends FieldValues>({
                       disabled={disabled}
                       onChange={(e) => {
                         const value = e.target.checked;
-                        field.onChange(value);
+                        // Usiamo il nostro handler specializzato
+                        toggleMultibeneficiary(value);
                       }}
                     />
                   }
@@ -306,7 +306,28 @@ function InstallmentItem<T extends FieldValues>({
             />
           </Grid>
 
-          {/* Qui in futuro verrà inserito il componente dei beneficiari per questa rata */}
+          {/* Componente BeneficiaryField - visibile solo quando isMultibeneficiary è true */}
+          {isMultibeneficiary && (
+            <Grid item xs={12} mt={1}>
+              <BeneficiaryField
+                control={control}
+                errors={errors}
+                isSubmitted={isSubmitted}
+                totalAmount={
+                  getValues(`${fieldNamePrefix}.${index}.amount` as Path<T>) ||
+                  ''
+                }
+                fieldNamePrefix={
+                  `${fieldNamePrefix}.${index}.beneficiaries` as any
+                }
+                disabled={disabled}
+                setValue={setValue}
+                getValues={getValues}
+                trigger={trigger}
+                onToggleMultibeneficiary={toggleMultibeneficiary}
+              />
+            </Grid>
+          )}
         </Grid>
       </Box>
     </Box>

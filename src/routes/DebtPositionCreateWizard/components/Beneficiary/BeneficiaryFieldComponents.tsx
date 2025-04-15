@@ -25,6 +25,9 @@ import {
 let ibanValidationTimer: ReturnType<typeof setTimeout> | null = null;
 let postalAccountValidationTimer: ReturnType<typeof setTimeout> | null = null;
 
+// Variabile per il timer di debounce dell'importo
+let amountValidationTimer: ReturnType<typeof setTimeout> | null = null;
+
 // Funzione per eseguire la validazione con debounce
 function debounceValidation(
   callback: () => void,
@@ -49,16 +52,31 @@ export function handleAmountChange<T extends FieldValues>(
   const filteredValue = e.target.value.replace(/[^0-9.,]/g, '');
   // Converti virgola in punto per la gestione numerica interna
   const normalizedValue = filteredValue.replace(',', '.');
+
+  // Aggiorna immediatamente il valore del campo senza validazione per migliorare l'interazione
   onChange(normalizedValue);
 
-  // Aggiorna la validazione degli altri importi
-  if (fields.length > 1) {
-    fields.forEach((_, i) => {
-      if (i !== index) {
-        trigger(buildFieldPath<T, 'amount'>(fieldNamePrefix, i, 'amount'));
-      }
-    });
+  // Utilizziamo setTimeout per posticipare la validazione
+  // In questo modo l'utente può digitare senza essere interrotto dalla validazione
+  if (amountValidationTimer) {
+    clearTimeout(amountValidationTimer);
   }
+
+  amountValidationTimer = setTimeout(() => {
+    // La validazione viene eseguita dopo che l'utente ha smesso di digitare per 300ms
+
+    // Aggiorna la validazione solo dopo il debounce
+    if (fields.length > 1) {
+      fields.forEach((_, i) => {
+        if (i !== index) {
+          trigger(buildFieldPath<T, 'amount'>(fieldNamePrefix, i, 'amount'));
+        }
+      });
+    }
+
+    // Validiamo il campo corrente per ultimo
+    trigger(buildFieldPath<T, 'amount'>(fieldNamePrefix, index, 'amount'));
+  }, 300); // Aspetta 300ms prima di validare
 }
 
 // Gestisci la modifica del campo IBAN
@@ -252,6 +270,10 @@ export function AmountField<T extends FieldValues>(
   const valueAsString = String(actualValue);
   const displayValue = valueAsString ? valueAsString.replace('.', ',') : '';
 
+  // Verifica errori specificamente per questo campo
+  const hasError = hasFieldError('amount', context);
+  const errorMessage = getFieldErrorMessage('amount', context);
+
   return (
     <TextField
       {...field}
@@ -260,8 +282,8 @@ export function AmountField<T extends FieldValues>(
       required
       disabled={disabled}
       value={displayValue}
-      error={hasFieldError('amount', context)}
-      helperText={getFieldErrorMessage('amount', context)}
+      error={hasError}
+      helperText={errorMessage}
       onChange={(e) =>
         handleAmountChange(
           e,
@@ -352,6 +374,24 @@ export function hasIBANError<T extends FieldValues>(
     return false;
   }
 
+  // Verifichiamo se c'è un errore nelle rate
+  if (context.fieldNamePrefix.includes('installments')) {
+    try {
+      const parts = context.fieldNamePrefix.split('.');
+      const installmentIndex = parseInt(parts[1], 10);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const installmentErrors = (errors as any)?.installments?.[
+        installmentIndex
+      ];
+
+      if (installmentErrors?.beneficiaries?.[context.index]?.iban) {
+        return true;
+      }
+    } catch (error) {
+      // Error checking installment errors
+    }
+  }
+
   const fieldErrors = (
     errors[context.fieldNamePrefix] as unknown as Record<
       number,
@@ -385,7 +425,7 @@ export function getIBANErrorMessage<T extends FieldValues>(
     (!iban || iban.trim() === '') &&
     (!postalAccount || postalAccount.trim() === '');
 
-  // Se l'IBAN è vuoto e il conto postale è valorizzato, non mostriamo messaggi di errore sull'IBAN
+  // Se l'IBAN è vuoto e il conto postale è valorizzato, non mostriamo messaggi di errore
   if (
     (!iban || iban.trim() === '') &&
     postalAccount &&
@@ -399,6 +439,26 @@ export function getIBANErrorMessage<T extends FieldValues>(
     return context.t(
       'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
     );
+  }
+
+  // Verifichiamo se c'è un errore nelle rate
+  if (context.fieldNamePrefix.includes('installments')) {
+    try {
+      const parts = context.fieldNamePrefix.split('.');
+      const installmentIndex = parseInt(parts[1], 10);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const installmentErrors = (errors as any)?.installments?.[
+        installmentIndex
+      ];
+
+      if (installmentErrors?.beneficiaries?.[context.index]?.iban) {
+        return (
+          installmentErrors?.beneficiaries?.[context.index]?.iban?.message || ''
+        );
+      }
+    } catch (error) {
+      // Error checking installment errors
+    }
   }
 
   // Errore specifico IBAN
@@ -496,6 +556,24 @@ export function hasPostalAccountError<T extends FieldValues>(
     return false;
   }
 
+  // Verifichiamo se c'è un errore nelle rate
+  if (context.fieldNamePrefix.includes('installments')) {
+    try {
+      const parts = context.fieldNamePrefix.split('.');
+      const installmentIndex = parseInt(parts[1], 10);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const installmentErrors = (errors as any)?.installments?.[
+        installmentIndex
+      ];
+
+      if (installmentErrors?.beneficiaries?.[context.index]?.postalAccount) {
+        return true;
+      }
+    } catch (error) {
+      // Error checking installment errors
+    }
+  }
+
   const fieldErrors = (
     errors[context.fieldNamePrefix] as unknown as Record<
       number,
@@ -543,6 +621,27 @@ export function getPostalAccountErrorMessage<T extends FieldValues>(
     return context.t(
       'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
     );
+  }
+
+  // Verifichiamo se c'è un errore nelle rate
+  if (context.fieldNamePrefix.includes('installments')) {
+    try {
+      const parts = context.fieldNamePrefix.split('.');
+      const installmentIndex = parseInt(parts[1], 10);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const installmentErrors = (errors as any)?.installments?.[
+        installmentIndex
+      ];
+
+      if (installmentErrors?.beneficiaries?.[context.index]?.postalAccount) {
+        return (
+          installmentErrors?.beneficiaries?.[context.index]?.postalAccount
+            ?.message || ''
+        );
+      }
+    } catch (error) {
+      // Error checking installment errors
+    }
   }
 
   // Errore specifico conto postale

@@ -44,17 +44,63 @@ export function getErrorData<T extends FieldValues>(
   index: number,
   fieldName: string
 ) {
-  const fieldErrors = (
-    errors[fieldNamePrefix] as unknown as Record<
-      number,
-      FieldErrors<Record<string, unknown>>
-    >
-  )?.[index];
+  // Gestione del caso speciale per beneficiari all'interno di rate
+  // Il percorso potrebbe essere qualcosa come 'installments.0.beneficiaries'
+  if (fieldNamePrefix.includes('installments')) {
+    try {
+      // Dividiamo il prefisso in parti per navigare nella struttura
+      const parts = fieldNamePrefix.split('.');
 
-  return {
-    hasError: !!fieldErrors?.[fieldName],
-    errorMessage: (fieldErrors?.[fieldName]?.message as string) || ''
-  };
+      // Navighiamo l'oggetto errors fino agli errori della rata specifica
+      const installmentIndex = parseInt(parts[1], 10);
+
+      // Accediamo all'installment specifico - usiamo tipo any per evitare errori di TypeScript
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const installmentErrors = (errors as any)?.installments?.[
+        installmentIndex
+      ];
+
+      if (
+        installmentErrors &&
+        installmentErrors.beneficiaries &&
+        installmentErrors.beneficiaries[index]
+      ) {
+        // Accediamo direttamente agli errori del beneficiario
+        const beneficiaryErrors = installmentErrors.beneficiaries[index];
+
+        // Verifichiamo se c'è un errore per il campo specifico
+        const hasError = !!beneficiaryErrors?.[fieldName];
+        const errorMessage = beneficiaryErrors?.[fieldName]?.message || '';
+
+        return { hasError, errorMessage };
+      }
+    } catch (error) {
+      // Gestione silenziosa dell'errore
+    }
+  }
+
+  // Caso standard - mantenuto per compatibilità
+  try {
+    const fieldErrors = (
+      errors[fieldNamePrefix] as unknown as Record<
+        number,
+        FieldErrors<Record<string, unknown>>
+      >
+    )?.[index];
+
+    const hasError = !!fieldErrors?.[fieldName];
+    const errorMessage = (fieldErrors?.[fieldName]?.message as string) || '';
+
+    return {
+      hasError,
+      errorMessage
+    };
+  } catch (error) {
+    return {
+      hasError: false,
+      errorMessage: ''
+    };
+  }
 }
 
 // ===== VALIDATION FUNCTIONS =====
@@ -125,6 +171,21 @@ export function hasFieldError<T extends FieldValues>(
     return false;
   }
 
+  // Per questi campi, mostra sempre gli errori, anche se il form non è stato inviato
+  if (
+    fieldName === 'amount' ||
+    fieldName === 'iban' ||
+    fieldName === 'postalAccount'
+  ) {
+    return getErrorData(
+      context.errors,
+      context.fieldNamePrefix,
+      context.index,
+      fieldName
+    ).hasError;
+  }
+
+  // Per gli altri campi, segui la logica standard
   return (
     context.isSubmitted &&
     getErrorData(
@@ -145,6 +206,21 @@ export function getFieldErrorMessage<T extends FieldValues>(
     return '';
   }
 
+  // Per questi campi, mostra sempre i messaggi di errore, anche se il form non è stato inviato
+  if (
+    fieldName === 'amount' ||
+    fieldName === 'iban' ||
+    fieldName === 'postalAccount'
+  ) {
+    return getErrorData(
+      context.errors,
+      context.fieldNamePrefix,
+      context.index,
+      fieldName
+    ).errorMessage;
+  }
+
+  // Per gli altri campi, segui la logica standard
   return context.isSubmitted
     ? getErrorData(
         context.errors,
