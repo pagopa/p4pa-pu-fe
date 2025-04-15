@@ -11,7 +11,7 @@ import {
   BeneficiaryAmountFields,
   BeneficiaryPaymentFields,
   BeneficiaryClassificationFields
-} from './BeneficiaryFieldGroup';
+} from './BeneficiaryFieldControls';
 import { BeneficiaryValidationContext } from '../../../../utils/BeneficiaryFieldHelpers';
 
 // Mock delle dipendenze

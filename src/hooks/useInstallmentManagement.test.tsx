@@ -1,13 +1,11 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, expect, it, vi, beforeEach, afterEach } from 'vitest';
-import {
-  useInstallmentManagement,
-  InstallmentData
-} from './useInstallmentManagement';
+import { useInstallmentManagement } from './useInstallmentManagement';
 import { useForm } from 'react-hook-form';
 import * as formattersModule from '../utils/formatters';
 import * as fieldValidationModule from '../utils/fieldValidation';
 import React from 'react';
+import { Installment } from '../models/paymentTypes';
 
 // Preparazione dei mock
 const mockFields = [{ id: 'field1' }, { id: 'field2' }];
@@ -71,7 +69,7 @@ vi.mock('../utils/fieldValidation', async () => {
 
 // Tipo di base per i test
 type TestFormValues = {
-  testInstallments: Array<InstallmentData>;
+  testInstallments: Array<Installment>;
 };
 
 // Wrapper per fornire il contesto React necessario

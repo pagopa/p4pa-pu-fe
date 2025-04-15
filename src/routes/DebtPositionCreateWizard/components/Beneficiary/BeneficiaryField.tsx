@@ -18,7 +18,7 @@ import {
   BeneficiaryAmountFields,
   BeneficiaryPaymentFields,
   BeneficiaryClassificationFields
-} from './BeneficiaryFieldGroup';
+} from './BeneficiaryFieldControls';
 import { useBeneficiaryManagement } from '../../../../hooks/useBeneficiaryManagement';
 import { useInstallmentBeneficiaryManagement } from '../../../../hooks/useInstallmentBeneficiaryManagement';
 

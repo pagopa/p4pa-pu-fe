@@ -1,10 +1,8 @@
 import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import {
-  useBeneficiaryManagement,
-  BeneficiaryData
-} from './useBeneficiaryManagement';
+import { useBeneficiaryManagement } from './useBeneficiaryManagement';
 import { UseFormGetValues, UseFormTrigger, Control } from 'react-hook-form';
+import { Beneficiary } from '../models/paymentTypes';
 
 // Mock delle dipendenze
 vi.mock('react-i18next', () => ({
@@ -15,7 +13,7 @@ vi.mock('react-i18next', () => ({
 
 // Tipi per i mock
 type TestFormValues = {
-  beneficiaries: Array<BeneficiaryData>;
+  beneficiaries: Array<Beneficiary>;
 };
 
 // Tipo per i riepilogo dei beneficiari
