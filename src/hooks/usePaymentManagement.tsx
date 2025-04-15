@@ -11,8 +11,8 @@ import {
   PaymentFormValues,
   Beneficiary
 } from '../models/paymentTypes';
-import { useBeneficiaryManagementV2 } from './useBeneficiaryManagementV2';
-import { useInstallmentManagementV2 } from './useInstallmentManagementV2';
+import { useBeneficiaryManagement } from './useBeneficiaryManagement';
+import { useInstallmentManagement } from './useInstallmentManagement';
 import { formatDate } from '../utils/formatters';
 
 /**
@@ -84,7 +84,7 @@ export function usePaymentManagement(
   const initializedRef = useRef(false);
 
   // ===== HOOK DI GESTIONE BENEFICIARI (PAGAMENTO UNICO) =====
-  const beneficiaryManagement = useBeneficiaryManagementV2({
+  const beneficiaryManagement = useBeneficiaryManagement({
     control,
     fieldNamePrefix: 'beneficiaries',
     isSubmitted,
@@ -97,7 +97,7 @@ export function usePaymentManagement(
   });
 
   // ===== HOOK DI GESTIONE RATE (PAGAMENTO RATEALE) =====
-  const installmentManagement = useInstallmentManagementV2({
+  const installmentManagement = useInstallmentManagement({
     control,
     fieldNamePrefix: 'installments',
     isSubmitted,

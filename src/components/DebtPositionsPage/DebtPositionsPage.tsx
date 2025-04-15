@@ -121,12 +121,6 @@ export const DebtPositionsPage = () => {
             buttonText: t('commons.createNew'),
             onActionClick: () =>
               navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD)
-          },
-          {
-            variant: 'contained',
-            buttonText: t('commons.createNew') + ' V2',
-            onActionClick: () =>
-              navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_V2)
           }
         ]}
       />

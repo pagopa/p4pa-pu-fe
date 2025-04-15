@@ -437,8 +437,7 @@
           "label": "Codice Tassonomico",
           "required": "Il campo codice tassonomico è obbligatorio"
         },
-        "title": "ENTE BENEFICIARIO",
-        "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?"
+        "title": "ENTE BENEFICIARIO"
       },
       "dueDate": {
         "label": "Data scadenza",
@@ -462,6 +461,7 @@
         "maxInstallmentsReached": "Hai raggiunto il numero massimo di rate (12)",
         "minInstallmentsRequired": "Sono richieste almeno 2 rate",
         "otherBeneficiaries": "Altri beneficiari",
+        "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?",
         "title": "Configurazione rate"
       },
       "paymentObject": {

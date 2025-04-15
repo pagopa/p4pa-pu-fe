@@ -1,94 +1,63 @@
-import { useEffect, useState, useRef } from 'react';
+/**
+ * Simplified beneficiary management hook
+ * Facilitates the addition, removal and validation of beneficiaries for payments with multiple recipients
+ */
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  useFieldArray,
-  UseFormGetValues,
-  UseFormTrigger,
-  Path,
-  FieldValues,
-  FieldArrayPath,
-  PathValue,
-  Control
-} from 'react-hook-form';
+import { useFieldArray, Path, FieldValues, PathValue } from 'react-hook-form';
 import {
   createBeneficiaryValidators,
   createBeneficiaryFieldValidators
 } from '../utils/fieldValidation';
-
-export type BeneficiaryData = {
-  entityName: string;
-  amount: string;
-  taxCode: string;
-  iban: string;
-  postalAccount: string;
-  taxonomyCode: string;
-  id?: string;
-  isNew?: boolean;
-};
-
-export type BeneficiaryFormValues = {
-  beneficiaries: Array<BeneficiaryData>;
-};
-
-type BeneficiaryFieldPath<T extends FieldValues> = FieldArrayPath<T>;
-
-type UseBeneficiaryManagementProps<T extends FieldValues> = {
-  readonly control: Control<T>;
-  readonly fieldNamePrefix: BeneficiaryFieldPath<T>;
-  readonly isSubmitted: boolean;
-  readonly getValues: UseFormGetValues<T>;
-  readonly trigger: UseFormTrigger<T>;
-  readonly totalAmount: string;
-  readonly onToggleMultibeneficiary?: (value: boolean) => void;
-  readonly onBeneficiariesChange?: (
-    summary: Array<{
-      id: string;
-      index: number;
-      isNew: boolean;
-      dati: Record<string, unknown>;
-    }>
-  ) => void;
-  readonly isInsideInstallment?: boolean;
-  readonly installmentIndex?: number;
-};
+import {
+  Beneficiary,
+  BeneficiaryManagementProps,
+  BeneficiaryManagementResult
+} from '../models/paymentTypes';
 
 /**
- * Hook personalizzato per la gestione dei beneficiari
- * Gestisce l'aggiunta, rimozione e validazione dei beneficiari
- * Mantiene anche lo stato di tracking per determinare quali beneficiari sono stati aggiunti dopo il submit
- * Supporta beneficiari sia nella soluzione unica che nelle rate
+ * Simplified version of the beneficiary management hook
+ * Uses a more declarative approach and minimizes states
  */
-export function useBeneficiaryManagement<T extends FieldValues>({
-  control,
-  fieldNamePrefix,
-  isSubmitted,
-  getValues,
-  trigger,
-  totalAmount,
-  onToggleMultibeneficiary,
-  onBeneficiariesChange,
-  isInsideInstallment = false,
-  installmentIndex
-}: UseBeneficiaryManagementProps<T>) {
-  // ===== CONSTANTS =====
+export function useBeneficiaryManagement<T extends FieldValues>(
+  props: BeneficiaryManagementProps<T>
+): BeneficiaryManagementResult {
+  const {
+    control,
+    fieldNamePrefix,
+    isSubmitted,
+    getValues,
+    trigger,
+    totalAmount,
+    onToggleMultibeneficiary,
+    onBeneficiariesChange,
+    isInsideInstallment = false,
+    installmentIndex,
+    setValue
+  } = props;
+
+  // ==== CONSTANTS ====
   const MAX_BENEFICIARIES = 4;
   const { t } = useTranslation();
 
-  // ===== STATE & REFS =====
+  // ==== STATE & REFS ====
   const [existingBeneficiaries, setExistingBeneficiaries] = useState<
     Record<string, boolean>
   >({});
+  const [initialized, setInitialized] = useState(false);
+
   const wasSubmittedRef = useRef(false);
   const isInitializingRef = useRef(false);
-  const hasInitializedRef = useRef(false);
 
-  // ===== FIELD ARRAY =====
-  const { fields, append, remove } = useFieldArray({
+  // ==== FIELD ARRAY ====
+  const fieldArray = useFieldArray({
     control,
     name: fieldNamePrefix
   });
 
-  // ===== VALIDATORS =====
+  const { fields, append, remove } = fieldArray;
+
+  // ==== VALIDATORS ====
   const validators = createBeneficiaryValidators(
     t,
     getValues,
@@ -98,31 +67,33 @@ export function useBeneficiaryManagement<T extends FieldValues>({
 
   const fieldValidators = createBeneficiaryFieldValidators(t);
 
-  // ===== UTILITY FUNCTIONS =====
+  // ==== UTILITY FUNCTIONS ====
 
   /**
-   * Funzione per ottenere il percorso completo di un campo, gestendo sia la modalità
-   * singola che quella all'interno di una rata
+   * Gets the complete path of a field
    */
-  const getBeneficiaryPath = (index: number, field?: string): Path<T> => {
-    if (field) {
-      return `${fieldNamePrefix}.${index}.${field}` as Path<T>;
-    }
-    return `${fieldNamePrefix}.${index}` as Path<T>;
-  };
+  const getBeneficiaryPath = useCallback(
+    <U extends FieldValues>(index: number, field?: string): Path<U> => {
+      const path = field
+        ? `${fieldNamePrefix}.${index}.${field}`
+        : `${fieldNamePrefix}.${index}`;
+      return path as unknown as Path<U>;
+    },
+    [fieldNamePrefix]
+  );
 
-  //Ottiene un riepilogo dei beneficiari attuali con informazioni aggiuntive
-  //Usato per notificare il componente padre dei cambiamenti
-  const getBeneficiariesSummary = () => {
-    const summary = fields.map((field, index) => {
-      // Un beneficiario è nuovo se è stato aggiunto dopo il submit iniziale
+  /**
+   * Gets a summary of beneficiaries with additional information
+   */
+  const getBeneficiariesSummary = useCallback(() => {
+    return fields.map((field, index) => {
+      const dati = getValues(getBeneficiaryPath<T>(index)) || {};
+
+      // A beneficiary is new if added after initial submit OR has isNew=true flag
       const isNew =
-        !!wasSubmittedRef.current && !existingBeneficiaries[field.id];
+        (wasSubmittedRef.current && !existingBeneficiaries[field.id]) ||
+        (dati as Record<string, unknown>)?.isNew === true;
 
-      // Otteniamo tutti i dati correnti dal form
-      const dati = getValues(getBeneficiaryPath(index)) || {};
-
-      // Ci assicuriamo che l'ID sia corretto
       if (dati && typeof dati === 'object' && 'id' in dati) {
         (dati as Record<string, unknown>).id = field.id;
       }
@@ -135,31 +106,44 @@ export function useBeneficiaryManagement<T extends FieldValues>({
         validazioneApplicata: wasSubmittedRef.current && !isNew
       };
     });
+  }, [
+    fields,
+    getValues,
+    getBeneficiaryPath,
+    existingBeneficiaries,
+    wasSubmittedRef
+  ]);
 
-    return summary;
-  };
-
-  //Aggiorna la validazione di tutti i campi importo quando viene rimosso un beneficiario
-  //Necessario per ricalcolare la validazione dell'importo totale
-  const updateAmountValidations = () => {
+  /**
+   * Updates validation for all amount fields
+   */
+  const updateAmountValidations = useCallback(() => {
     fields.forEach((_, index) => {
-      trigger(getBeneficiaryPath(index, 'amount'));
+      trigger(getBeneficiaryPath<T>(index, 'amount'));
     });
 
-    // Se siamo in una rata, trigger anche la validazione della rata stessa
+    // If inside an installment, also trigger validation for the installment itself
     if (isInsideInstallment && installmentIndex !== undefined) {
-      // Estrai il percorso base della rata
       const installmentPath = fieldNamePrefix.split('.').slice(0, 2).join('.');
       trigger(`${installmentPath}.amount` as Path<T>);
     }
-  };
+  }, [
+    fields,
+    trigger,
+    getBeneficiaryPath,
+    isInsideInstallment,
+    installmentIndex,
+    fieldNamePrefix
+  ]);
 
-  // ===== BENEFICIARY MANAGEMENT =====
+  // ==== BENEFICIARY MANAGEMENT ====
 
-  //Aggiunge un nuovo beneficiario se il limite massimo non è stato raggiunto
-  const addBeneficiary = () => {
+  /**
+   * Adds a new beneficiary
+   */
+  const addBeneficiary = useCallback(() => {
     if (fields.length < MAX_BENEFICIARIES) {
-      const newBeneficiary: BeneficiaryData = {
+      const newBeneficiary: Beneficiary = {
         entityName: '',
         amount: '',
         taxCode: '',
@@ -168,66 +152,112 @@ export function useBeneficiaryManagement<T extends FieldValues>({
         taxonomyCode: '',
         isNew: true
       };
-      append(
-        newBeneficiary as unknown as PathValue<T, BeneficiaryFieldPath<T>>
-      );
-    }
-  };
 
-  // Rimuove tutti i beneficiari e resetta le validazioni
-  const resetAllBeneficiaries = () => {
-    // Rimuoviamo tutti i beneficiari dalla field array
+      append(newBeneficiary as unknown as PathValue<T, typeof fieldNamePrefix>);
+
+      setTimeout(() => {
+        if (onBeneficiariesChange) {
+          onBeneficiariesChange(getBeneficiariesSummary());
+        }
+      }, 0);
+    }
+  }, [
+    fields.length,
+    append,
+    fieldNamePrefix,
+    onBeneficiariesChange,
+    getBeneficiariesSummary
+  ]);
+
+  /**
+   * Removes all beneficiaries
+   */
+  const resetAllBeneficiaries = useCallback(() => {
     const fieldsLength = fields.length;
     for (let i = fieldsLength - 1; i >= 0; i--) {
       remove(i);
     }
 
-    // Reset delle validazioni se necessario
     setExistingBeneficiaries({});
 
-    // Notifichiamo i cambiamenti
     if (onBeneficiariesChange) {
       onBeneficiariesChange([]);
     }
-  };
+  }, [fields, remove, onBeneficiariesChange]);
 
-  // Rimuove un beneficiario all'indice specificato
-  const removeBeneficiary = (index: number) => {
-    // Se rimane un solo beneficiario, disattiva multibeneficiario
-    const remainingBeneficiaries = fields.length - 1;
-    const shouldDisableMultibeneficiary =
-      remainingBeneficiaries === 0 && onToggleMultibeneficiary;
+  /**
+   * Removes a specific beneficiary
+   * Simplified version with cleaner removal handling
+   */
+  const removeBeneficiary = useCallback(
+    (index: number) => {
+      // If only one beneficiary remains, disable multi-beneficiary
+      const remainingBeneficiaries = fields.length - 1;
+      const shouldDisableMultibeneficiary =
+        remainingBeneficiaries === 0 && onToggleMultibeneficiary;
 
-    // Se era l'ultimo beneficiario, dobbiamo resettare tutto
-    if (shouldDisableMultibeneficiary) {
-      // Prima di disattivare lo switch, rimuoviamo tutti i beneficiari
-      resetAllBeneficiaries();
-      // Disattiviamo lo switch multibeneficiario
-      onToggleMultibeneficiary(false);
-      return;
-    }
+      if (shouldDisableMultibeneficiary) {
+        resetAllBeneficiaries();
+        onToggleMultibeneficiary(false);
+        return;
+      }
 
-    // Se non era l'ultimo, rimuoviamo solo questo beneficiario
-    remove(index);
+      // If setValue is available, use the more reliable approach
+      if (setValue) {
+        const currentValues = getValues(`${fieldNamePrefix}` as Path<T>);
 
-    // Notifichiamo i cambiamenti immediatamente se necessario
-    if (onBeneficiariesChange) {
-      const summary = getBeneficiariesSummary();
-      onBeneficiariesChange(summary);
-    }
+        if (Array.isArray(currentValues)) {
+          const updatedValues = [...currentValues];
+          updatedValues.splice(index, 1);
 
-    // Utilizziamo setTimeout per assicurarci che lo stato di fields sia aggiornato
-    // prima di eseguire le validazioni
-    setTimeout(() => {
-      updateAmountValidations();
-    }, 0);
-  };
+          setValue(
+            fieldNamePrefix as unknown as Path<T>,
+            updatedValues as unknown as PathValue<T, Path<T>>,
+            { shouldDirty: true, shouldTouch: true, shouldValidate: true }
+          );
 
-  // ===== EFFECT HOOKS =====
-  // Registra i beneficiari esistenti al primo submit
+          setTimeout(() => {
+            updateAmountValidations();
+
+            if (onBeneficiariesChange) {
+              onBeneficiariesChange(getBeneficiariesSummary());
+            }
+          }, 50);
+
+          return;
+        }
+      }
+
+      // Fallback to standard method if setValue isn't available
+      remove(index);
+
+      setTimeout(() => {
+        updateAmountValidations();
+
+        if (onBeneficiariesChange) {
+          onBeneficiariesChange(getBeneficiariesSummary());
+        }
+      }, 50);
+    },
+    [
+      fields,
+      onToggleMultibeneficiary,
+      resetAllBeneficiaries,
+      setValue,
+      getValues,
+      fieldNamePrefix,
+      updateAmountValidations,
+      onBeneficiariesChange,
+      getBeneficiariesSummary,
+      remove
+    ]
+  );
+
+  // ==== EFFECTS ====
+
+  // Register existing beneficiaries on first submit
   useEffect(() => {
     if (isSubmitted && !wasSubmittedRef.current) {
-      // Prima volta che viene fatto submit - memorizziamo lo stato attuale dei beneficiari
       const currentBeneficiaries = fields.reduce<Record<string, boolean>>(
         (acc, field) => {
           acc[field.id] = true;
@@ -235,38 +265,64 @@ export function useBeneficiaryManagement<T extends FieldValues>({
         },
         {}
       );
+
       setExistingBeneficiaries(currentBeneficiaries);
       wasSubmittedRef.current = true;
     }
   }, [isSubmitted, fields]);
 
-  // Aggiorna validazione quando cambiano gli importi o l'importo totale
+  // Update validation when amounts or beneficiaries change
   useEffect(() => {
     if (wasSubmittedRef.current) {
       fields.forEach((field, index) => {
-        if (existingBeneficiaries[field.id]) {
-          trigger(getBeneficiaryPath(index));
+        const beneficiaryData = getValues(getBeneficiaryPath<T>(index));
+        const isNewBeneficiary = beneficiaryData?.isNew === true;
+
+        // Apply validation only to existing beneficiaries and not to new ones
+        if (existingBeneficiaries[field.id] && !isNewBeneficiary) {
+          trigger(getBeneficiaryPath<T>(index));
         }
       });
     }
-  }, [trigger, fieldNamePrefix, fields, totalAmount, existingBeneficiaries]);
+  }, [
+    trigger,
+    fields,
+    totalAmount,
+    existingBeneficiaries,
+    getBeneficiaryPath,
+    getValues
+  ]);
 
-  // Inizializza il primo beneficiario se non ce ne sono
+  // Initialize first beneficiary if none exists
   useEffect(() => {
-    if (fields.length === 0 && !hasInitializedRef.current) {
-      hasInitializedRef.current = true;
+    if (fields.length === 0 && !initialized && !isInitializingRef.current) {
+      try {
+        const currentValue = getValues(fieldNamePrefix as unknown as Path<T>);
+        if (Array.isArray(currentValue) && currentValue.length > 0) {
+          setInitialized(true);
+          return;
+        }
+      } catch (error) {
+        // Ignore typing errors
+      }
+
+      setInitialized(true);
       isInitializingRef.current = true;
       addBeneficiary();
       isInitializingRef.current = false;
     }
-  }, [fields.length]);
+  }, [fields.length, initialized, addBeneficiary, getValues, fieldNamePrefix]);
 
-  // Notifica cambiamenti ai beneficiari
+  // Notify beneficiary changes
   useEffect(() => {
-    if (onBeneficiariesChange && fields.length > 0) {
+    if (
+      onBeneficiariesChange &&
+      fields.length > 0 &&
+      !isInitializingRef.current
+    ) {
       onBeneficiariesChange(getBeneficiariesSummary());
     }
-  }, [fields, onBeneficiariesChange]);
+  }, [fields, onBeneficiariesChange, getBeneficiariesSummary]);
 
   return {
     fields,

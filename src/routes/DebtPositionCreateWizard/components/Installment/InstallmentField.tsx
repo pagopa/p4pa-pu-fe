@@ -7,11 +7,25 @@ import {
   UseFormGetValues,
   UseFormSetValue,
   UseFormTrigger,
-  FieldArrayPath
+  FieldArrayPath,
+  FieldArrayWithId,
+  Path
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useInstallmentManagement } from '../../../../hooks/useInstallmentManagement';
 import InstallmentItem from './InstallmentItem';
+
+// Update the type to match what is actually provided
+export type ValidationFunctions = {
+  validateInstallmentAmount: <T extends FieldValues>(
+    index: number,
+    trigger: UseFormTrigger<T>
+  ) => void;
+  validateDueDate: <T extends FieldValues>(
+    index: number,
+    trigger: UseFormTrigger<T>
+  ) => void;
+};
 
 type InstallmentFieldProps<T extends FieldValues> = {
   readonly control: Control<T>;
@@ -26,6 +40,10 @@ type InstallmentFieldProps<T extends FieldValues> = {
   readonly onInstallmentsChange?: (totalAmount: string) => void;
 };
 
+/**
+ * Component for payment installment management - Improved version
+ * Maintains the same UI but uses hooks with reducer for better state management
+ */
 function InstallmentField<T extends FieldValues>({
   control,
   errors,
@@ -42,7 +60,6 @@ function InstallmentField<T extends FieldValues>({
 
   const {
     fields,
-    validators,
     MIN_INSTALLMENTS,
     MAX_INSTALLMENTS,
     addInstallment,
@@ -64,6 +81,25 @@ function InstallmentField<T extends FieldValues>({
 
   const isMaxInstallments = fields.length >= MAX_INSTALLMENTS;
 
+  const createValidationFunctions = () => {
+    return {
+      validateInstallmentAmount: <U extends FieldValues>(
+        index: number,
+        triggerFn: UseFormTrigger<U>
+      ) => {
+        triggerFn(`${fieldNamePrefix}.${index}.amount` as Path<U>);
+      },
+      validateDueDate: <U extends FieldValues>(
+        index: number,
+        triggerFn: UseFormTrigger<U>
+      ) => {
+        triggerFn(`${fieldNamePrefix}.${index}.dueDate` as Path<U>);
+      }
+    };
+  };
+
+  const validationFunctions = createValidationFunctions();
+
   return (
     <Box component={Paper} sx={{ p: 3, mt: 4, borderRadius: 1 }}>
       <Typography variant="h4" component="h3" fontWeight="bold" mb={3}>
@@ -72,14 +108,16 @@ function InstallmentField<T extends FieldValues>({
 
       <Grid container spacing={3}>
         {fields.map((field, index) => (
-          <Grid item xs={12} key={field.id}>
+          <Grid item xs={12} key={String(field.id)}>
             <InstallmentItem
               index={index}
-              field={field}
+              field={
+                field as unknown as FieldArrayWithId<T, FieldArrayPath<T>, 'id'>
+              }
               control={control}
               errors={errors}
               isSubmitted={isSubmitted}
-              validators={validators}
+              validators={validationFunctions}
               fieldNamePrefix={fieldNamePrefix}
               disabled={disabled}
               trigger={trigger}
@@ -88,6 +126,7 @@ function InstallmentField<T extends FieldValues>({
               onRemove={
                 index >= MIN_INSTALLMENTS ? removeInstallment : undefined
               }
+              flagMandatoryDueDate={flagMandatoryDueDate}
             />
           </Grid>
         ))}

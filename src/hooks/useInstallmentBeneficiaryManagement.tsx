@@ -1,129 +1,79 @@
-import { useCallback, useEffect } from 'react';
-import {
-  Control,
-  FieldValues,
-  UseFormGetValues,
-  UseFormSetValue,
-  UseFormTrigger,
-  Path,
-  PathValue
-} from 'react-hook-form';
+/**
+ * Specialized hook for managing beneficiaries within installments
+ * Improved version using reducer pattern based on useBeneficiaryManagement
+ */
+import { useCallback, useEffect, useRef } from 'react';
+import { FieldValues, Path, FieldArrayPath, PathValue } from 'react-hook-form';
 import { useBeneficiaryManagement } from './useBeneficiaryManagement';
-
-type UseInstallmentBeneficiaryManagementProps<T extends FieldValues> = {
-  readonly control: Control<T>;
-  readonly index: number; // Indice dell'installment
-  readonly installmentsFieldNamePrefix: string; // Prefisso del campo per le rate
-  readonly isSubmitted: boolean;
-  readonly getValues: UseFormGetValues<T>;
-  readonly setValue: UseFormSetValue<T>;
-  readonly trigger: UseFormTrigger<T>;
-  readonly onToggleMultibeneficiary?: (value: boolean) => void;
-};
+import {
+  InstallmentBeneficiaryManagementProps,
+  InstallmentBeneficiaryManagementResult
+} from '../models/paymentTypes';
 
 /**
- * Hook specializzato per gestire i beneficiari all'interno di una rata
- * Estende useBeneficiaryManagement con funzionalità specifiche per le rate
+ * Hook for managing beneficiaries within an installment
+ * Extends useBeneficiaryManagement with installment-specific functionality
+ *
+ * @param props Properties for the beneficiary management hook in an installment
+ * @returns Methods and properties for managing beneficiaries in an installment
  */
-export function useInstallmentBeneficiaryManagement<T extends FieldValues>({
-  control,
-  index,
-  installmentsFieldNamePrefix,
-  isSubmitted,
-  getValues,
-  setValue,
-  trigger,
-  onToggleMultibeneficiary
-}: UseInstallmentBeneficiaryManagementProps<T>) {
-  // Costruisci il path per i beneficiari di questa rata
-  const beneficiariesPrefix =
-    `${installmentsFieldNamePrefix}.${index}.beneficiaries` as any;
+export function useInstallmentBeneficiaryManagement<T extends FieldValues>(
+  props: InstallmentBeneficiaryManagementProps<T>
+): InstallmentBeneficiaryManagementResult {
+  const {
+    control,
+    index,
+    installmentsFieldNamePrefix,
+    isSubmitted,
+    getValues,
+    setValue,
+    trigger,
+    onToggleMultibeneficiary
+  } = props;
 
-  // Ottieni l'importo della rata per la validazione dei beneficiari
-  const installmentAmount =
-    getValues(`${installmentsFieldNamePrefix}.${index}.amount` as Path<T>) ||
-    '';
+  const lastAmountRef = useRef<string>('');
 
-  // Verifica se è visibile lo switch per i beneficiari multipli
-  const isMultibeneficiary = !!getValues(
-    `${installmentsFieldNamePrefix}.${index}.isMultibeneficiary` as Path<T>
-  );
+  const beneficiariesFieldNamePrefix =
+    `${installmentsFieldNamePrefix}.${index}.beneficiaries` as FieldArrayPath<T>;
 
-  // Utilizziamo l'hook base per la gestione dei beneficiari
+  const installmentAmountPath =
+    `${installmentsFieldNamePrefix}.${index}.amount` as Path<T>;
+  const installmentAmount = getValues(installmentAmountPath) || '';
+
+  const isMultibeneficiaryPath =
+    `${installmentsFieldNamePrefix}.${index}.isMultibeneficiary` as Path<T>;
+  const isMultibeneficiary = !!getValues(isMultibeneficiaryPath);
+
   const beneficiaryManagement = useBeneficiaryManagement<T>({
     control,
-    fieldNamePrefix: beneficiariesPrefix,
+    fieldNamePrefix: beneficiariesFieldNamePrefix,
     isSubmitted,
     getValues,
     trigger,
     totalAmount: installmentAmount,
     onToggleMultibeneficiary,
     isInsideInstallment: true,
-    installmentIndex: index
+    installmentIndex: index,
+    setValue
   });
 
-  // Funzione per validare i campi di pagamento (IBAN e conto postale)
-  const validatePaymentFields = useCallback(() => {
-    const currentBeneficiaries = getValues(beneficiariesPrefix);
-
-    if (
-      Array.isArray(currentBeneficiaries) &&
-      currentBeneficiaries.length > 0
-    ) {
-      currentBeneficiaries.forEach((_: unknown, beneficiaryIndex: number) => {
-        // Trigger validazione IBAN
-        trigger(`${beneficiariesPrefix}.${beneficiaryIndex}.iban` as Path<T>);
-
-        // Trigger validazione conto postale
-        trigger(
-          `${beneficiariesPrefix}.${beneficiaryIndex}.postalAccount` as Path<T>
-        );
-      });
-    }
-  }, [trigger, beneficiariesPrefix, getValues]);
-
-  // Funzione per validare l'importo totale dei beneficiari rispetto all'importo della rata
-  const validateBeneficiaryAmounts = useCallback(() => {
-    // Assicuriamo che l'importo della rata sia validato
-    trigger(`${installmentsFieldNamePrefix}.${index}.amount` as Path<T>);
-
-    // Validare tutti gli importi dei beneficiari
-    beneficiaryManagement.updateAmountValidations();
-  }, [trigger, installmentsFieldNamePrefix, index, beneficiaryManagement]);
-
-  // Handler per quando cambia l'importo della rata
-  const handleInstallmentAmountChange = useCallback(
-    (value: string) => {
-      setValue(
-        `${installmentsFieldNamePrefix}.${index}.amount` as Path<T>,
-        value as any
-      );
-
-      // Validare tutti gli importi dei beneficiari quando cambia l'importo della rata
-      setTimeout(() => {
-        validateBeneficiaryAmounts();
-      }, 0);
-    },
-    [setValue, installmentsFieldNamePrefix, index, validateBeneficiaryAmounts]
-  );
-
-  // Wrapper per sincronizzare lo stato dello switch con il campo del form
+  /**
+   * Toggles multi-beneficiary mode for this installment
+   */
   const toggleMultibeneficiary = useCallback(
     (value: boolean) => {
-      // Impostiamo il valore nel form
-      setValue(
-        `${installmentsFieldNamePrefix}.${index}.isMultibeneficiary` as Path<T>,
-        value as any
-      );
+      setValue(isMultibeneficiaryPath, value as PathValue<T, Path<T>>);
 
-      // Se stiamo disattivando lo switch, resettiamo tutti i beneficiari
       if (!value) {
-        // Pulisci tutti i beneficiari quando si disattiva il multibeneficiario
-        if (beneficiaryManagement.resetAllBeneficiaries) {
-          beneficiaryManagement.resetAllBeneficiaries();
-        }
-      } else if (value) {
-        // Se stiamo attivando lo switch, assicuriamoci che ci sia almeno un beneficiario
+        beneficiaryManagement.resetAllBeneficiaries();
+      } else {
+        const beneficiariesPath =
+          `${installmentsFieldNamePrefix}.${index}.beneficiaries` as Path<T>;
+
+        setValue(beneficiariesPath, [] as unknown as PathValue<T, Path<T>>, {
+          shouldDirty: true
+        });
+
         const newBeneficiary = {
           entityName: '',
           amount: '',
@@ -134,17 +84,30 @@ export function useInstallmentBeneficiaryManagement<T extends FieldValues>({
           isNew: true
         };
 
-        // Utilizziamo setValue direttamente con un array contenente un beneficiario
-        setValue(beneficiariesPrefix, [newBeneficiary] as any);
+        setValue(
+          beneficiariesPath,
+          [newBeneficiary] as unknown as PathValue<T, Path<T>>,
+          { shouldDirty: true }
+        );
 
-        // Validazione dei campi di pagamento dopo un breve ritardo
         setTimeout(() => {
-          // Prima validiamo i campi importo
-          validateBeneficiaryAmounts();
-
-          // Poi validiamo i campi di pagamento
-          validatePaymentFields();
-        }, 100);
+          if (beneficiaryManagement.wasSubmittedRef.current) {
+            const currentBeneficiari = getValues(beneficiariesPath);
+            if (
+              Array.isArray(currentBeneficiari) &&
+              currentBeneficiari.length > 0
+            ) {
+              setValue(
+                beneficiariesPath,
+                currentBeneficiari.map((b: Record<string, any>) => ({
+                  ...b,
+                  isNew: true
+                })) as unknown as PathValue<T, Path<T>>,
+                { shouldDirty: true }
+              );
+            }
+          }
+        }, 0);
       }
 
       if (onToggleMultibeneficiary) {
@@ -153,57 +116,75 @@ export function useInstallmentBeneficiaryManagement<T extends FieldValues>({
     },
     [
       setValue,
+      isMultibeneficiaryPath,
+      beneficiaryManagement,
+      onToggleMultibeneficiary,
       installmentsFieldNamePrefix,
       index,
-      onToggleMultibeneficiary,
-      beneficiariesPrefix,
-      validatePaymentFields,
-      validateBeneficiaryAmounts,
-      beneficiaryManagement
+      getValues
     ]
   );
 
-  // Effetto per inizializzare un beneficiario quando isMultibeneficiary diventa true
-  useEffect(() => {
-    if (isMultibeneficiary) {
-      const currentBeneficiaries = getValues(beneficiariesPrefix);
-      if (
-        !currentBeneficiaries ||
-        !Array.isArray(currentBeneficiaries) ||
-        currentBeneficiaries.length === 0
-      ) {
-        const newBeneficiary = {
-          entityName: '',
-          amount: '',
-          taxCode: '',
-          iban: '',
-          postalAccount: '',
-          taxonomyCode: '',
-          isNew: true
-        };
+  /**
+   * Validates beneficiary amounts for this installment
+   */
+  const validateBeneficiaryAmounts = useCallback(() => {
+    const currentAmount = getValues(installmentAmountPath) || '';
 
-        // Impostiamo direttamente un array con un beneficiario
-        setValue(beneficiariesPrefix, [newBeneficiary] as any);
+    if (currentAmount !== lastAmountRef.current) {
+      lastAmountRef.current = currentAmount;
+      beneficiaryManagement.updateAmountValidations();
+    }
+  }, [getValues, installmentAmountPath, beneficiaryManagement]);
 
-        // Validazione dei campi dopo un breve ritardo
-        // per assicurarci che i campi siano stati correttamente inizializzati
-        setTimeout(() => {
-          // Prima validiamo i campi importo
-          validateBeneficiaryAmounts();
+  /**
+   * Handles installment amount changes
+   */
+  const handleInstallmentAmountChange = useCallback(
+    (value: string) => {
+      setValue(installmentAmountPath, value as PathValue<T, Path<T>>);
+      validateBeneficiaryAmounts();
+    },
+    [setValue, installmentAmountPath, validateBeneficiaryAmounts]
+  );
 
-          // Poi validiamo i campi di pagamento
-          validatePaymentFields();
-        }, 100);
-      }
+  /**
+   * Validates payment fields (IBAN and postal account)
+   */
+  const validatePaymentFields = useCallback(() => {
+    if (!isMultibeneficiary) return;
+
+    const beneficiariesPath =
+      `${installmentsFieldNamePrefix}.${index}.beneficiaries` as Path<T>;
+    const currentBeneficiaries = getValues(beneficiariesPath) as unknown[];
+
+    if (
+      Array.isArray(currentBeneficiaries) &&
+      currentBeneficiaries.length > 0
+    ) {
+      currentBeneficiaries.forEach((_: unknown, beneficiaryIndex: number) => {
+        trigger(
+          `${beneficiariesFieldNamePrefix}.${beneficiaryIndex}.iban` as Path<T>
+        );
+        trigger(
+          `${beneficiariesFieldNamePrefix}.${beneficiaryIndex}.postalAccount` as Path<T>
+        );
+      });
     }
   }, [
-    isMultibeneficiary,
+    trigger,
+    installmentsFieldNamePrefix,
+    index,
+    beneficiariesFieldNamePrefix,
     getValues,
-    setValue,
-    beneficiariesPrefix,
-    validatePaymentFields,
-    validateBeneficiaryAmounts
+    isMultibeneficiary
   ]);
+
+  useEffect(() => {
+    if (isMultibeneficiary && installmentAmount) {
+      validateBeneficiaryAmounts();
+    }
+  }, [isMultibeneficiary, installmentAmount, validateBeneficiaryAmounts]);
 
   return {
     ...beneficiaryManagement,

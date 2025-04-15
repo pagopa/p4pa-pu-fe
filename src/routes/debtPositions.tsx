@@ -8,7 +8,6 @@ import { RouteHandleObject } from '../models/Routes';
 import DebtPositionDetail from './DebtPositionDetail/DebtPositionDetail';
 import DebtPositionCreateWizard from './DebtPositionCreateWizard/DebtPositionCreateWizard';
 import DebtPositionCreateWizardCompleted from './DebtPositionCreateWizard/DebtPositionCreateWizardCompleted';
-import DebtPositionCreateWizardV2 from './DebtPositionCreateWizard/DebtPositionCreateWizardV2';
 
 const deployPath = config.deployPath;
 
@@ -65,19 +64,6 @@ export const debtPositionsRoutes = [
         id: 'DEBT_POSITION_CREATE_WIZARD',
         path: 'create-wizard',
         element: <DebtPositionCreateWizard />,
-        handle: {
-          backButton: true,
-          backButtonText: 'commons.exit',
-          hideBreadcrumbs: true,
-          sidebar: {
-            visible: false
-          }
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_POSITION_CREATE_WIZARD_V2',
-        path: 'create-wizard-v2',
-        element: <DebtPositionCreateWizardV2 />,
         handle: {
           backButton: true,
           backButtonText: 'commons.exit',
