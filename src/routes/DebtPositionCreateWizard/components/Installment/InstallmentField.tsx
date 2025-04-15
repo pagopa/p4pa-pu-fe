@@ -26,9 +26,6 @@ type InstallmentFieldProps<T extends FieldValues> = {
   readonly onInstallmentsChange?: (totalAmount: string) => void;
 };
 
-/**
- * Componente per la gestione delle rate di pagamento
- */
 function InstallmentField<T extends FieldValues>({
   control,
   errors,
@@ -43,7 +40,6 @@ function InstallmentField<T extends FieldValues>({
 }: InstallmentFieldProps<T>) {
   const { t } = useTranslation();
 
-  // Usa il hook personalizzato per la gestione delle rate
   const {
     fields,
     validators,
@@ -60,14 +56,12 @@ function InstallmentField<T extends FieldValues>({
     trigger,
     flagMandatoryDueDate,
     onInstallmentsChange: (_installments, totalAmount) => {
-      // Aggiorna il campo amount solo se c'è un handler esterno
       if (onInstallmentsChange) {
         onInstallmentsChange(totalAmount);
       }
     }
   });
 
-  // Verifica se è stato raggiunto il numero massimo di rate
   const isMaxInstallments = fields.length >= MAX_INSTALLMENTS;
 
   return (

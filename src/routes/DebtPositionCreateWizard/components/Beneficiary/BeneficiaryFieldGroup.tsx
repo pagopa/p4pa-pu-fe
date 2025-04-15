@@ -12,7 +12,7 @@ import { buildBeneficiaryFieldPath } from '../../../../utils/BeneficiaryFieldHel
 import { BeneficiaryFieldsProps } from '../../../../models/BeneficiaryFieldTypes';
 
 /**
- * Componente per il gruppo di informazioni anagrafiche del beneficiario
+ * Component for the beneficiary's identity information group
  */
 export function BeneficiaryIdentityFields<T extends FieldValues>({
   control,
@@ -94,7 +94,7 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
 }
 
 /**
- * Componente per il gruppo di informazioni economiche del beneficiario
+ * Component for the beneficiary's financial information group
  */
 export function BeneficiaryAmountFields<T extends FieldValues>({
   control,
@@ -143,7 +143,7 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
           }
         }}
         render={({ field, fieldState }) => {
-          // Se c'è un errore nel campo, prendiamo nota
+          // If there's an error in the field, we take note
           const hasAmountError = !!fieldState.error;
 
           return (
@@ -153,7 +153,7 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
               disabled={disabled}
               context={{
                 ...validationContext,
-                // Forziamo isSubmitted a true se c'è un errore, anche se il form non è stato sottomesso
+                // Force isSubmitted to true if there's an error, even if the form hasn't been submitted
                 isSubmitted: validationContext.isSubmitted || hasAmountError
               }}
               index={index}
@@ -169,7 +169,7 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
 }
 
 /**
- * Componente per il gruppo di informazioni di pagamento del beneficiario
+ * Component for the beneficiary's payment information group
  */
 export function BeneficiaryPaymentFields<T extends FieldValues>({
   control,
@@ -224,7 +224,7 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
                   postalAccount
                 );
 
-                // Se uno dei due è valorizzato, non mostrare errori
+                // If one of the two fields has a value, don't show errors
                 if (
                   (value && value.trim() !== '') ||
                   (postalAccount && postalAccount.trim() !== '')
@@ -276,7 +276,7 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
                   value
                 );
 
-                // Se uno dei due è valorizzato, non mostrare errori
+                // If one of the two fields has a value, don't show errors
                 if (
                   (value && value.trim() !== '') ||
                   (iban && iban.trim() !== '')
@@ -307,7 +307,7 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
 }
 
 /**
- * Componente per il gruppo di informazioni di classificazione del beneficiario
+ * Component for the beneficiary's classification information group
  */
 export function BeneficiaryClassificationFields<T extends FieldValues>({
   control,

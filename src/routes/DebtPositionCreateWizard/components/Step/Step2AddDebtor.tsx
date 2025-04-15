@@ -130,37 +130,15 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const newValue = e.target.value;
-    // Aggiorna il valore del tipo di soggetto
     setValue('subjectType.value', newValue);
   };
 
   // Funzione chiamata alla submission valida del form.
   // Salva i dati e passa allo step successivo.
   const onSubmit = async (values: Step2Data) => {
-    setData(values); // Salva i dati nel contesto del wizard
-    onNext(); // Passa allo step successivo
+    setData(values);
+    onNext();
   };
-
-  // const allRequiredFieldsFilled = (): boolean => {
-  //   // Lista dei campi obbligatori
-  //   const requiredFields: Array<NestedFieldName> = [
-  //     'subjectType.value',
-  //     'taxCode.value',
-  //     'fullName.value',
-  //     'address.value',
-  //     'civicNumber.value',
-  //     'zipCode.value',
-  //     'country.value',
-  //     'province.value',
-  //     'city.value'
-  //   ];
-
-  //   // Verifica che tutti i campi obbligatori abbiano un valore
-  //   return requiredFields.every((field) => {
-  //     const value = watch(field);
-  //     return typeof value === 'string' && value.trim() !== '';
-  //   });
-  // };
 
   const getTaxCodeLabel = () => {
     switch (subjectTypeValue) {

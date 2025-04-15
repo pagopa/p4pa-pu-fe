@@ -22,10 +22,8 @@ import {
 import { useBeneficiaryManagement } from '../../../../hooks/useBeneficiaryManagement';
 import { useInstallmentBeneficiaryManagement } from '../../../../hooks/useInstallmentBeneficiaryManagement';
 
-// ===== TYPES =====
 type BeneficiaryFieldPath = FieldArrayPath<FieldValues>;
 
-// Tipo per le funzioni esposte dal ref
 export type BeneficiaryFieldRef = {
   resetAllBeneficiaries?: () => void;
 };
@@ -55,11 +53,14 @@ type BeneficiaryFieldProps<T extends FieldValues> = {
 };
 
 /**
- * Componente principale per la gestione dei beneficiari
- * Permette l'aggiunta, rimozione e validazione di fino a 4 beneficiari
+ * Main component for beneficiary management
+ * Allows adding, removing and validating up to 4 beneficiaries
  */
 const BeneficiaryField = forwardRef(
-  (props: any, ref: React.ForwardedRef<BeneficiaryFieldRef>) => {
+  (
+    props: BeneficiaryFieldProps<FieldValues>,
+    ref: React.ForwardedRef<BeneficiaryFieldRef>
+  ) => {
     const {
       control,
       isSubmitted,
@@ -79,7 +80,6 @@ const BeneficiaryField = forwardRef(
 
     const { t } = useTranslation();
 
-    // Utilizziamo il nostro hook personalizzato in base al contesto
     const beneficiaryManager =
       isInsideInstallment &&
       installmentIndex !== undefined &&
@@ -117,15 +117,10 @@ const BeneficiaryField = forwardRef(
       resetAllBeneficiaries
     } = beneficiaryManager;
 
-    // Esponiamo il metodo resetAllBeneficiaries tramite il ref
     useImperativeHandle(ref, () => ({
       resetAllBeneficiaries
     }));
 
-    /**
-     * Renderizza il pulsante per aggiungere un nuovo beneficiario
-     * Visibile solo sull'ultimo beneficiario e se non è stato raggiunto il limite massimo
-     */
     const renderAddBeneficiaryButton = (index: number): JSX.Element | null => {
       if (index === fields.length - 1 && fields.length < MAX_BENEFICIARIES) {
         return (
@@ -149,9 +144,6 @@ const BeneficiaryField = forwardRef(
       return null;
     };
 
-    /**
-     * Crea il contesto di validazione per un beneficiario
-     */
     const createValidationContext = (
       field: Record<'id', string>,
       index: number
@@ -169,9 +161,6 @@ const BeneficiaryField = forwardRef(
       };
     };
 
-    /**
-     * Renderizza un singolo beneficiario con i suoi gruppi di campi
-     */
     const renderBeneficiary = (field: Record<'id', string>, index: number) => {
       const validationContext = createValidationContext(field, index);
 
@@ -187,7 +176,6 @@ const BeneficiaryField = forwardRef(
           <BeneficiaryHeader index={index} t={t} onRemove={removeBeneficiary} />
 
           <Grid container spacing={2}>
-            {/* Sezione dati anagrafici */}
             <BeneficiaryIdentityFields
               control={control}
               index={index}
@@ -197,7 +185,6 @@ const BeneficiaryField = forwardRef(
               t={t}
             />
 
-            {/* Sezione importo */}
             <BeneficiaryAmountFields
               control={control}
               index={index}
@@ -210,7 +197,6 @@ const BeneficiaryField = forwardRef(
               t={t}
             />
 
-            {/* Sezione dati di pagamento */}
             <BeneficiaryPaymentFields
               control={control}
               index={index}
@@ -224,7 +210,6 @@ const BeneficiaryField = forwardRef(
               t={t}
             />
 
-            {/* Sezione dati di classificazione */}
             <BeneficiaryClassificationFields
               control={control}
               index={index}
@@ -240,7 +225,6 @@ const BeneficiaryField = forwardRef(
       );
     };
 
-    // ===== MAIN RENDER =====
     return (
       <Box>
         {fields.map((field: Record<'id', string>, index: number) =>

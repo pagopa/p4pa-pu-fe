@@ -437,7 +437,8 @@
           "label": "Codice Tassonomico",
           "required": "Il campo codice tassonomico è obbligatorio"
         },
-        "title": "ENTE BENEFICIARIO"
+        "title": "ENTE BENEFICIARIO",
+        "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?"
       },
       "dueDate": {
         "label": "Data scadenza",

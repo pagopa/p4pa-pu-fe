@@ -15,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useInstallmentManagementV2 } from '../../../../hooks/useInstallmentManagementV2';
 import InstallmentItemV2 from './InstallmentItemV2';
 
-// Aggiorna il tipo per corrispondere a quanto effettivamente fornito
+// Update the type to match what is actually provided
 export type ValidationFunctions = {
   validateInstallmentAmount: <T extends FieldValues>(
     index: number,
@@ -41,8 +41,8 @@ type InstallmentFieldProps<T extends FieldValues> = {
 };
 
 /**
- * Componente per la gestione delle rate di pagamento - Versione migliorata
- * Mantiene la stessa UI ma utilizza gli hook con reducer per una gestione dello stato migliore
+ * Component for payment installment management - Improved version
+ * Maintains the same UI but uses hooks with reducer for better state management
  */
 function InstallmentFieldV2<T extends FieldValues>({
   control,
@@ -58,12 +58,6 @@ function InstallmentFieldV2<T extends FieldValues>({
 }: InstallmentFieldProps<T>) {
   const { t } = useTranslation();
 
-  console.log(
-    '[FIELD-DEBUG] InstallmentFieldV2 rendering, fieldNamePrefix:',
-    fieldNamePrefix
-  );
-
-  // Usa il hook migliorato per la gestione delle rate
   const {
     fields,
     MIN_INSTALLMENTS,
@@ -79,57 +73,37 @@ function InstallmentFieldV2<T extends FieldValues>({
     trigger,
     flagMandatoryDueDate,
     onInstallmentsChange: (_installments, totalAmount) => {
-      // Aggiorna il campo amount solo se c'è un handler esterno
       if (onInstallmentsChange) {
-        console.log(
-          '[FIELD-DEBUG] onInstallmentsChange chiamato, totalAmount:',
-          totalAmount
-        );
         onInstallmentsChange(totalAmount);
       }
     }
   });
 
-  console.log(
-    '[FIELD-DEBUG] fields ricevuti da useInstallmentManagementV2:',
-    fields.length
-  );
-
-  // Verifica se è stato raggiunto il numero massimo di rate
   const isMaxInstallments = fields.length >= MAX_INSTALLMENTS;
 
-  // Crea un adattatore per i validatori
   const createValidationFunctions = () => {
     return {
       validateInstallmentAmount: <U extends FieldValues>(
         index: number,
         triggerFn: UseFormTrigger<U>
       ) => {
-        // Triggera la validazione dell'importo usando il percorso completo
         triggerFn(`${fieldNamePrefix}.${index}.amount` as Path<U>);
       },
       validateDueDate: <U extends FieldValues>(
         index: number,
         triggerFn: UseFormTrigger<U>
       ) => {
-        // Triggera la validazione della data usando il percorso completo
         triggerFn(`${fieldNamePrefix}.${index}.dueDate` as Path<U>);
       }
     };
   };
 
-  // Crea le funzioni di validazione una sola volta
   const validationFunctions = createValidationFunctions();
 
   return (
     <Box component={Paper} sx={{ p: 3, mt: 4, borderRadius: 1 }}>
       <Typography variant="h4" component="h3" fontWeight="bold" mb={3}>
         {t('debtPositionCreateWizard.step3.installments.title')}
-      </Typography>
-
-      {/* Debug: Mostra il numero di rate */}
-      <Typography variant="caption" color="textSecondary">
-        DEBUG: {fields.length} rate
       </Typography>
 
       <Grid container spacing={3}>

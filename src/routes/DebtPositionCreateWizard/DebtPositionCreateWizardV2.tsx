@@ -88,7 +88,7 @@ const initialData: FormData = {
       readonly: false
     },
     flagMandatoryDueDate: false,
-    beneficiaries: [] // Inizializzato come array vuoto
+    beneficiaries: []
   }
 };
 
@@ -134,7 +134,6 @@ const DebtPositionCreateWizardV2 = () => {
           }}
           setData={(data) => setFormData((prev) => ({ ...prev, step3: data }))}
           onNext={() => {
-            console.log('onNext');
             setStep(3);
           }}
           onBack={() => setStep(1)}

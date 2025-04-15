@@ -25,7 +25,7 @@ import { useInstallmentBeneficiaryManagementV2 } from '../../../../hooks/useInst
 // ===== TYPES =====
 type BeneficiaryField = Record<string, unknown> & { id: string };
 
-// Tipo per le funzioni esposte dal ref
+// Type for functions exposed by ref
 export type BeneficiaryFieldRef = {
   resetAllBeneficiaries?: () => void;
 };
@@ -55,11 +55,10 @@ type BeneficiaryFieldProps<T extends FieldValues = FieldValues> = {
 };
 
 /**
- * Componente principale per la gestione dei beneficiari - Versione migliorata con useReducer
- * Permette l'aggiunta, rimozione e validazione di fino a 4 beneficiari
- * Mantiene la stessa UI ma utilizza gli hook con reducer per una gestione dello stato migliore
+ * Main component for beneficiary management - Improved version with useReducer
+ * Allows adding, removing and validating up to 4 beneficiaries
+ * Maintains the same UI but uses reducer hooks for better state management
  */
-// Utilizziamo una definizione di tipo esplicita per risolvere i problemi di inferenza dei tipi
 interface BeneficiaryFieldComponent {
   <T extends FieldValues>(
     props: BeneficiaryFieldProps<T> & {
@@ -69,7 +68,6 @@ interface BeneficiaryFieldComponent {
   displayName?: string;
 }
 
-// Definiamo il componente interno senza tipi generici
 const InternalBeneficiaryField = <T extends FieldValues>(
   props: BeneficiaryFieldProps<T>,
   ref: React.ForwardedRef<BeneficiaryFieldRef>
@@ -93,7 +91,6 @@ const InternalBeneficiaryField = <T extends FieldValues>(
 
   const { t } = useTranslation();
 
-  // Utilizziamo gli hook migliorati in base al contesto
   const beneficiaryManager =
     isInsideInstallment &&
     installmentIndex !== undefined &&
@@ -131,14 +128,13 @@ const InternalBeneficiaryField = <T extends FieldValues>(
     resetAllBeneficiaries
   } = beneficiaryManager;
 
-  // Esponiamo il metodo resetAllBeneficiaries tramite il ref
   useImperativeHandle(ref, () => ({
     resetAllBeneficiaries
   }));
 
   /**
-   * Renderizza il pulsante per aggiungere un nuovo beneficiario
-   * Visibile solo sull'ultimo beneficiario e se non è stato raggiunto il limite massimo
+   * Renders the button to add a new beneficiary
+   * Only visible on the last beneficiary and if the maximum limit hasn't been reached
    */
   const renderAddBeneficiaryButton = (index: number): JSX.Element | null => {
     if (index === fields.length - 1 && fields.length < MAX_BENEFICIARIES) {
@@ -164,7 +160,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
   };
 
   /**
-   * Crea il contesto di validazione per un beneficiario
+   * Creates validation context for a beneficiary
    */
   const createValidationContext = (
     field: BeneficiaryField,
@@ -184,7 +180,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
   };
 
   /**
-   * Renderizza un singolo beneficiario con i suoi gruppi di campi
+   * Renders a single beneficiary with its field groups
    */
   const renderBeneficiary = (field: BeneficiaryField, index: number) => {
     const validationContext = createValidationContext(field, index);
@@ -201,7 +197,6 @@ const InternalBeneficiaryField = <T extends FieldValues>(
         <BeneficiaryHeader index={index} t={t} onRemove={removeBeneficiary} />
 
         <Grid container spacing={2}>
-          {/* Sezione dati anagrafici */}
           <BeneficiaryIdentityFields
             control={control}
             index={index}
@@ -211,7 +206,6 @@ const InternalBeneficiaryField = <T extends FieldValues>(
             t={t}
           />
 
-          {/* Sezione importo */}
           <BeneficiaryAmountFields
             control={control}
             index={index}
@@ -240,7 +234,6 @@ const InternalBeneficiaryField = <T extends FieldValues>(
             t={t}
           />
 
-          {/* Sezione dati di pagamento */}
           <BeneficiaryPaymentFields
             control={control}
             index={index}
@@ -266,7 +259,6 @@ const InternalBeneficiaryField = <T extends FieldValues>(
             t={t}
           />
 
-          {/* Sezione dati di classificazione */}
           <BeneficiaryClassificationFields
             control={control}
             index={index}
@@ -282,7 +274,6 @@ const InternalBeneficiaryField = <T extends FieldValues>(
     );
   };
 
-  // ===== MAIN RENDER =====
   return (
     <Box>
       {fields.map((field, index) =>
@@ -292,7 +283,6 @@ const InternalBeneficiaryField = <T extends FieldValues>(
   );
 };
 
-// Utilizziamo forwardRef con il tipo generico definito sopra
 const BeneficiaryFieldV2 = React.forwardRef(
   InternalBeneficiaryField
 ) as unknown as BeneficiaryFieldComponent;
