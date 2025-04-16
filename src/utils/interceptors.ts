@@ -1,7 +1,7 @@
 import utils from '.';
-import { PageRoutes } from '../App';
 import { Client } from '../models/Client';
 import { AxiosError, InternalAxiosRequestConfig } from 'axios';
+import navigation from './navigation';
 
 export const setupInterceptors = (client: Client) => {
   client.instance.interceptors.request.use(
@@ -19,13 +19,24 @@ export const setupInterceptors = (client: Client) => {
       return Promise.reject(error);
     }
   );
+
   client.instance.interceptors.response.use(
     (response) => response,
     (error) => {
-      if (error.response.status === 401 || error.response.status === 403) {
+      if (
+        error.response &&
+        (error.response.status === 401 || error.response.status === 403)
+      ) {
+        navigation.setAuthErrorState(true);
+
         utils.storage.clear();
-        window.location.replace(PageRoutes.LOGGED_OUT);
+        console.log('storage pulito');
+        navigation.navigateToLoggedOut();
+
+        return Promise.resolve();
       }
+
+      return Promise.reject(error);
     }
   );
 };

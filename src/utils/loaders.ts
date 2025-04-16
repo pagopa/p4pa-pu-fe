@@ -2,6 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { ZodSchema } from 'zod';
 import * as zodSchema from '../../generated/zod-schema';
 import utils from '.';
+import navigation from './navigation';
+import { AxiosError } from 'axios';
 
 export function parseAndLog<T>(
   schema: ZodSchema,
@@ -29,10 +31,14 @@ const getOrganizations = () => {
       } catch (error) {
         console.error('Failed to fetch organizations:', error);
 
-        // Reindirizza alla pagina di errore senza importare PageRoutes
-        if (typeof window !== 'undefined' && window.location) {
-          const deployPath = utils.config.deployPath || '';
-          window.location.replace(`${deployPath}/error`);
+        const axiosError = error as AxiosError;
+
+        const isAuthError =
+          axiosError.response?.status === 401 ||
+          axiosError.response?.status === 403;
+
+        if (!isAuthError) {
+          navigation.navigateToError();
         }
 
         return null;
