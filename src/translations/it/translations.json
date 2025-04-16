@@ -428,6 +428,7 @@
           "required": "Il campo conto corrente postale è obbligatorio"
         },
         "sumMustBeLessThanTotal": "La somma degli importi dei beneficiari deve essere minore dell'importo totale",
+        "sumMustBeLessThanTotalInstallments": "La somma degli importi dei beneficiari deve essere minore dell'importo totale, clicca su No per modificare",
         "taxCode": {
           "invalid": "Codice fiscale non valido",
           "label": "Codice Fiscale",

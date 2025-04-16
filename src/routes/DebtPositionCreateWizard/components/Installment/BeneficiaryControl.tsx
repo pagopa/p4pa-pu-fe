@@ -147,7 +147,9 @@ const BeneficiaryControl = <T extends FieldValues>({
 
     if (totalBeneficiaryAmount >= currentAmountValue) {
       setBeneficiaryAmountError(
-        t('debtPositionCreateWizard.step3.beneficiary.sumMustBeLessThanTotal')
+        t(
+          'debtPositionCreateWizard.step3.beneficiary.sumMustBeLessThanTotalInstallments'
+        )
       );
     } else {
       setBeneficiaryAmountError(null);
