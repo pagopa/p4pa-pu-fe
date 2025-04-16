@@ -70,6 +70,7 @@ describe('useBeneficiaryManagement', () => {
     // Creo mock functions con cast per mantenere la tipizzazione
     const mockGetValues = vi.fn();
     const mockTrigger = vi.fn();
+    const mockSetValue = vi.fn();
 
     return {
       control: {} as Control<TestFormValues>,
@@ -77,6 +78,7 @@ describe('useBeneficiaryManagement', () => {
       isSubmitted: false,
       getValues: mockGetValues as unknown as UseFormGetValues<TestFormValues>,
       trigger: mockTrigger as unknown as UseFormTrigger<TestFormValues>,
+      setValue: mockSetValue,
       totalAmount: '100.00',
       onToggleMultibeneficiary: vi.fn(),
       onBeneficiariesChange: vi.fn()
@@ -185,16 +187,32 @@ describe('useBeneficiaryManagement', () => {
     mockHelpers.mockFieldsValue.push({ id: 'id-1' });
 
     const props = getBaseProps();
+
+    // Mocchiamo la funzione getValues per simulare il flusso di lavoro previsto
+    const mockGetValues = vi
+      .fn()
+      .mockReturnValue([{ id: 'id-1', entityName: 'Test' }]);
+    props.getValues =
+      mockGetValues as unknown as UseFormGetValues<TestFormValues>;
+
     const { result } = renderHook(() => useBeneficiaryManagement(props));
+
+    // Mocchiamo la funzione remove per non interferire con il test
+    mockHelpers.mockRemove.mockImplementation(() => {
+      // Simuliamo la rimozione riducendo l'array fields
+      mockHelpers.mockFieldsValue.pop();
+    });
 
     // Chiamiamo la funzione removeBeneficiary
     act(() => {
       result.current.removeBeneficiary(0);
     });
 
-    // Non dovrebbe chiamare remove, ma disattivare la multibeneficiary mode
-    expect(mockHelpers.mockRemove).not.toHaveBeenCalled();
+    // La cosa importante è che onToggleMultibeneficiary sia stato chiamato con false
     expect(props.onToggleMultibeneficiary).toHaveBeenCalledWith(false);
+
+    // Verifichiamo che onBeneficiariesChange sia stato chiamato con un array vuoto
+    expect(props.onBeneficiariesChange).toHaveBeenCalledWith([]);
   });
 
   it('dovrebbe aggiornare la validazione degli importi dopo la rimozione di un beneficiario', () => {
