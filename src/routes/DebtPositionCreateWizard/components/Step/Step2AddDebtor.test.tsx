@@ -85,21 +85,18 @@ describe('Step2AddDebtor', () => {
       <Step2AddDebtor data={defaultData} setData={setData} onNext={onNext} />
     );
 
-    // Test indirizzo
     const addressInput = screen.getByRole('textbox', {
       name: 'debtPositionCreateWizard.step2.address.label'
     }) as HTMLInputElement;
     fireEvent.change(addressInput, { target: { value: 'Via Roma 123' } });
     expect(addressInput.value).toBe('Via Roma 123');
 
-    // Test numero civico
     const civicNumberInput = screen.getByRole('textbox', {
       name: 'debtPositionCreateWizard.step2.civicNumber.label'
     }) as HTMLInputElement;
     fireEvent.change(civicNumberInput, { target: { value: '42' } });
     expect(civicNumberInput.value).toBe('42');
 
-    // Test CAP
     const zipCodeInput = screen.getByRole('textbox', {
       name: 'debtPositionCreateWizard.step2.zipCode.label'
     }) as HTMLInputElement;
@@ -115,15 +112,20 @@ describe('Step2AddDebtor', () => {
       <Step2AddDebtor data={defaultData} setData={setData} onNext={onNext} />
     );
 
-    // Test selezione nazione
     const countrySelect = screen.getByRole('combobox', {
       name: 'debtPositionCreateWizard.step2.country.label'
     }) as HTMLSelectElement;
     fireEvent.mouseDown(countrySelect);
-    const italyOption = await screen.findByText('Italia');
-    fireEvent.click(italyOption);
 
-    // Test selezione provincia
+    const italyOptions = await screen.findAllByText('Italia');
+    const italyOptionToClick = italyOptions.find(
+      (option) => option.closest('[role="option"]') !== null
+    );
+
+    if (italyOptionToClick) {
+      fireEvent.click(italyOptionToClick);
+    }
+
     const provinceSelect = screen.getByRole('combobox', {
       name: 'debtPositionCreateWizard.step2.province.label'
     }) as HTMLSelectElement;
@@ -131,7 +133,6 @@ describe('Step2AddDebtor', () => {
     const milanOption = await screen.findByText('MI');
     fireEvent.click(milanOption);
 
-    // Test inserimento città
     const cityInput = screen.getByRole('textbox', {
       name: 'debtPositionCreateWizard.step2.city.label'
     }) as HTMLInputElement;
@@ -140,9 +141,6 @@ describe('Step2AddDebtor', () => {
   });
 
   it('tests onNext button is present', () => {
-    // Sostituire i test problematici con uno semplice che verifica che
-    // i pulsanti siano presenti nella form
-
     const setData = vi.fn();
     const onNext = vi.fn();
 
@@ -150,7 +148,6 @@ describe('Step2AddDebtor', () => {
       <Step2AddDebtor data={defaultData} setData={setData} onNext={onNext} />
     );
 
-    // Verifichiamo che il pulsante Continua esista
     const continueButton = screen.getByRole('button', {
       name: 'commons.continue'
     });
