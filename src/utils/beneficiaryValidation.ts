@@ -44,67 +44,68 @@ export function getErrorData<T extends FieldValues>(
   index: number,
   fieldName: string
 ) {
-  // Gestione del caso speciale per beneficiari all'interno di rate
-  // Il percorso potrebbe essere qualcosa come 'installments.0.beneficiaries'
-  if (fieldNamePrefix.includes('installments')) {
-    try {
-      // Dividiamo il prefisso in parti per navigare nella struttura
-      const parts = fieldNamePrefix.split('.');
+  // Type for beneficiary errors
+  type BeneficiaryError = {
+    message?: string;
+  };
 
-      // Navighiamo l'oggetto errors fino agli errori della rata specifica
+  // Type for the complete error structure
+  type InstallmentsErrors = Record<
+    string,
+    Record<
+      number,
+      {
+        beneficiaries?: Record<number, Record<string, BeneficiaryError>>;
+      }
+    >
+  >;
+
+  // Special case handling for beneficiaries within installments
+  // The path might be something like 'installments.0.beneficiaries'
+  if (fieldNamePrefix.includes('installments')) {
+    // Split the prefix into parts to navigate the structure
+    const parts = fieldNamePrefix.split('.');
+
+    if (parts.length >= 2) {
+      // Navigate the errors object to the specific installment errors
       const installmentIndex = parseInt(parts[1], 10);
 
-      // Accediamo all'installment specifico - usiamo tipo any per evitare errori di TypeScript
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const installmentErrors = (errors as any)?.installments?.[
-        installmentIndex
-      ];
+      // Use optional chaining to safely navigate the structure
+      const installmentsErrors = errors as unknown as InstallmentsErrors;
+      const beneficiaryErrors =
+        installmentsErrors?.installments?.[installmentIndex]?.beneficiaries?.[
+          index
+        ];
 
-      if (
-        installmentErrors &&
-        installmentErrors.beneficiaries &&
-        installmentErrors.beneficiaries[index]
-      ) {
-        // Accediamo direttamente agli errori del beneficiario
-        const beneficiaryErrors = installmentErrors.beneficiaries[index];
-
-        // Verifichiamo se c'è un errore per il campo specifico
-        const hasError = !!beneficiaryErrors?.[fieldName];
-        const errorMessage = beneficiaryErrors?.[fieldName]?.message || '';
+      if (beneficiaryErrors) {
+        // Check if there's an error for the specific field
+        const hasError = !!beneficiaryErrors[fieldName];
+        const errorMessage = beneficiaryErrors[fieldName]?.message || '';
 
         return { hasError, errorMessage };
       }
-    } catch (error) {
-      // Gestione silenziosa dell'errore
     }
   }
 
-  // Caso standard - mantenuto per compatibilità
-  try {
-    const fieldErrors = (
-      errors[fieldNamePrefix] as unknown as Record<
-        number,
-        FieldErrors<Record<string, unknown>>
-      >
-    )?.[index];
+  // Standard case - using optional chaining to avoid errors
+  const fieldErrors = (
+    errors[fieldNamePrefix] as unknown as Record<
+      number,
+      FieldErrors<Record<string, unknown>>
+    >
+  )?.[index];
 
-    const hasError = !!fieldErrors?.[fieldName];
-    const errorMessage = (fieldErrors?.[fieldName]?.message as string) || '';
+  const hasError = !!fieldErrors?.[fieldName];
+  const errorMessage = (fieldErrors?.[fieldName]?.message as string) || '';
 
-    return {
-      hasError,
-      errorMessage
-    };
-  } catch (error) {
-    return {
-      hasError: false,
-      errorMessage: ''
-    };
-  }
+  return {
+    hasError,
+    errorMessage
+  };
 }
 
 // ===== VALIDATION FUNCTIONS =====
-// Verifica se un beneficiario è nuovo (aggiunto dopo il submit)
+// Checks if a beneficiary is new (added after submit)
 export function isBeneficiaryNew(
   id: string,
   wasSubmittedRef: React.RefObject<boolean>,
@@ -113,7 +114,7 @@ export function isBeneficiaryNew(
   return !!wasSubmittedRef.current && !existingBeneficiaries[id];
 }
 
-// Verifica se un beneficiario è appena creato (nuovo)
+// Checks if a beneficiary has been recently created (new)
 export function isRecentlyCreated(
   id: string,
   wasSubmittedRef: React.RefObject<boolean>,
@@ -125,7 +126,7 @@ export function isRecentlyCreated(
   return !existingBeneficiaries[id];
 }
 
-// Determina se mostrare errori di validazione per un beneficiario
+// Determines whether to show validation errors for a beneficiary
 export function shouldShowValidationErrors(
   id: string,
   isSubmitted: boolean,
@@ -141,7 +142,7 @@ export function shouldShowValidationErrors(
   );
 }
 
-// Controlla se è necessario mostrare errori di validazione
+// Checks if validation should be skipped
 export function shouldSkipValidation<T extends FieldValues>(
   context: ValidationContext<T>
 ): boolean {
@@ -153,7 +154,7 @@ export function shouldSkipValidation<T extends FieldValues>(
   );
 }
 
-// Helper per costruire un path tipizzato per i campi del form
+// Helper to build a typed path for form fields
 export function buildFieldPath<T extends FieldValues, K extends string>(
   fieldNamePrefix: string,
   index: number,
@@ -162,7 +163,7 @@ export function buildFieldPath<T extends FieldValues, K extends string>(
   return `${fieldNamePrefix}.${index}.${field}` as Path<T>;
 }
 
-// Verifica se un campo ha errori
+// Checks if a field has errors
 export function hasFieldError<T extends FieldValues>(
   fieldName: string,
   context: ValidationContext<T>
@@ -171,7 +172,7 @@ export function hasFieldError<T extends FieldValues>(
     return false;
   }
 
-  // Per questi campi, mostra sempre gli errori, anche se il form non è stato inviato
+  // For these fields, always show errors, even if the form hasn't been submitted
   if (
     fieldName === 'amount' ||
     fieldName === 'iban' ||
@@ -185,7 +186,7 @@ export function hasFieldError<T extends FieldValues>(
     ).hasError;
   }
 
-  // Per gli altri campi, segui la logica standard
+  // For other fields, follow the standard logic
   return (
     context.isSubmitted &&
     getErrorData(
@@ -197,7 +198,7 @@ export function hasFieldError<T extends FieldValues>(
   );
 }
 
-// Ottiene il messaggio di errore di un campo
+// Gets the error message for a field
 export function getFieldErrorMessage<T extends FieldValues>(
   fieldName: string,
   context: ValidationContext<T>
@@ -206,7 +207,7 @@ export function getFieldErrorMessage<T extends FieldValues>(
     return '';
   }
 
-  // Per questi campi, mostra sempre i messaggi di errore, anche se il form non è stato inviato
+  // For these fields, always show error messages, even if the form hasn't been submitted
   if (
     fieldName === 'amount' ||
     fieldName === 'iban' ||
@@ -220,7 +221,7 @@ export function getFieldErrorMessage<T extends FieldValues>(
     ).errorMessage;
   }
 
-  // Per gli altri campi, segui la logica standard
+  // For other fields, follow the standard logic
   return context.isSubmitted
     ? getErrorData(
         context.errors,
@@ -231,7 +232,7 @@ export function getFieldErrorMessage<T extends FieldValues>(
     : '';
 }
 
-// Ottiene un campo dal form
+// Gets a field value from the form
 export function getFieldValue<T extends FieldValues, K extends string>(
   context: ValidationContext<T>,
   field: K
@@ -241,7 +242,7 @@ export function getFieldValue<T extends FieldValues, K extends string>(
   );
 }
 
-// Verifica i pagamenti (IBAN e conto postale)
+// Checks payment fields (IBAN and postal account)
 export function checkPaymentFields<T extends FieldValues>(
   context: ValidationContext<T>
 ): { iban: string; postalAccount: string; bothEmpty: boolean } {
@@ -252,7 +253,7 @@ export function checkPaymentFields<T extends FieldValues>(
   return { iban, postalAccount, bothEmpty };
 }
 
-// Valida un singolo importo
+// Validates a single amount
 export function validateSingleAmount<T extends FieldValues>(
   value: string,
   context: ValidationContext<T>
@@ -276,13 +277,13 @@ export function validateSingleAmount<T extends FieldValues>(
   return undefined;
 }
 
-// Crea regole di validazione base per i campi
+// Creates base validation rules for fields
 export function createBaseValidationRule(
   wasSubmittedRef: React.RefObject<boolean>,
   validator: (value: string) => string | undefined
 ) {
   return (value: string): string | undefined => {
-    // Non validare se non è stato fatto submit
+    // Don't validate if no submit has been made
     if (wasSubmittedRef.current === false) {
       return undefined;
     }
@@ -290,14 +291,14 @@ export function createBaseValidationRule(
   };
 }
 
-// Regole per la validazione dei metodi di pagamento
+// Rules for payment method validation
 export function createPaymentMethodValidator(
   getOtherFieldValue: () => string,
   validator: (value1: string, value2: string) => string | undefined
 ) {
   return (value: string): string | undefined => {
     const otherValue = getOtherFieldValue();
-    // Se uno dei due è valorizzato, non mostrare errori
+    // If one of the two is filled, don't show errors
     if (!isEmpty(value) || !isEmpty(otherValue)) {
       return undefined;
     }

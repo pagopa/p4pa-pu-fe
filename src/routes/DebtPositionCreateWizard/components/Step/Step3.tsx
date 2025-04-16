@@ -224,8 +224,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       let hasInvalidPaymentFields = false;
       let hasInvalidAmounts = false;
       // Check each installment
-      for (let i = 0; i < installments.length; i++) {
-        const installment = installments[i];
+      for (const installment of installments) {
         // Validate installment amount
         if (!installment.amount || parseFloat(installment.amount) <= 0) {
           hasInvalidAmounts = true;
@@ -264,7 +263,11 @@ const Step3 = ({ data, setData, onBack }: Props) => {
             if (!isValid) {
               hasInvalidBeneficiaries = true;
             }
-          } catch (error) {
+          } catch (validationError) {
+            console.error(
+              'Error validating beneficiaries total:',
+              validationError
+            );
             hasInvalidBeneficiaries = true;
           }
         }
@@ -290,8 +293,11 @@ const Step3 = ({ data, setData, onBack }: Props) => {
 
           // Trigger payment fields validation
           triggerPaymentFieldsValidation(installments, trigger);
-        } catch (error) {
-          // Error caught but not logged
+        } catch (validationError) {
+          console.error(
+            'Error during installment validation:',
+            validationError
+          );
         }
         return;
       }

@@ -5,9 +5,6 @@ import { buildBeneficiaryFieldPath } from '../../../../../utils/BeneficiaryField
 import { BeneficiaryFieldsProps } from '../../../../../models/BeneficiaryFieldTypes';
 import { BeneficiaryControlledField } from './BeneficiaryControlledField';
 
-/**
- * Componente per il gruppo di campi relativi alla classificazione del beneficiario
- */
 export function BeneficiaryClassificationFields<T extends FieldValues>({
   control,
   index,

@@ -8,6 +8,10 @@ import {
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { createAmountValidator } from '../../../../utils/fieldValidation';
+import {
+  handleAmountInputChange,
+  handleAmountInputBlur
+} from '../../../../utils/paymentUtility';
 
 type AmountFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -60,15 +64,15 @@ const AmountField = <T extends FieldValues>({
           error={!!error}
           helperText={error?.message || ''}
           onChange={(e) => {
-            // Accept only numbers, dot and comma
-            const filteredValue = e.target.value.replace(/[^0-9.,]/g, '');
-            // Convert comma to dot for internal numeric handling
-            const normalizedValue = filteredValue.replace(',', '.');
-            // Use the special handler for change events
+            const normalizedValue = handleAmountInputChange(e.target.value);
             onAmountChange(normalizedValue);
           }}
-          onBlur={() => {
-            // Trigger validation after losing focus
+          onBlur={(e) => {
+            const value = handleAmountInputBlur(e.target.value);
+            if (value !== e.target.value) {
+              onAmountChange(value);
+            }
+
             setTimeout(() => {
               validateInstallmentAmount(index, trigger);
             }, 100);

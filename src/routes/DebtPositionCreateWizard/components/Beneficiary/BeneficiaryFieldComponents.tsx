@@ -11,8 +11,7 @@ import {
   FieldErrors,
   FieldValues,
   Path,
-  UseFormTrigger,
-  FieldError
+  UseFormTrigger
 } from 'react-hook-form';
 import {
   ValidationContext,
@@ -21,29 +20,19 @@ import {
   shouldSkipValidation,
   buildFieldPath
 } from '../../../../utils/beneficiaryValidation';
+import {
+  handleAmountInputBlur,
+  handleAmountInputChange,
+  formatAmountForDisplay
+} from '../../../../utils/paymentUtility';
 
-// Validation debounce timers
 let ibanValidationTimer: ReturnType<typeof setTimeout> | null = null;
 let postalAccountValidationTimer: ReturnType<typeof setTimeout> | null = null;
 let amountValidationTimer: ReturnType<typeof setTimeout> | null = null;
 
-// Type for beneficiary error structure
-interface BeneficiaryError {
-  iban?: { message?: string };
-  postalAccount?: { message?: string };
-}
-
-// Type for installment error structure
-interface InstallmentError {
-  beneficiaries?: Array<BeneficiaryError>;
-}
-
-// Type for form errors with installments
-type FormErrorsWithInstallments = FieldErrors<{
-  installments?: Array<InstallmentError>;
-}>;
-
-// Function to execute validation with debounce
+/**
+ * Implements debounce mechanism for validation triggers
+ */
 function debounceValidation(
   callback: () => void,
   timer: ReturnType<typeof setTimeout> | null,
@@ -53,7 +42,8 @@ function debounceValidation(
   return setTimeout(callback, delay);
 }
 
-// ===== EVENT HANDLERS =====
+/** EVENT HANDLERS */
+
 export function handleAmountChange<T extends FieldValues>(
   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   onChange: (...event: Array<unknown>) => void,
@@ -62,12 +52,8 @@ export function handleAmountChange<T extends FieldValues>(
   trigger: UseFormTrigger<T>,
   fieldNamePrefix: string
 ) {
-  // Accept only numbers, dot and comma
-  const filteredValue = e.target.value.replace(/[^0-9.,]/g, '');
-  // Convert comma to dot for internal numeric handling
-  const normalizedValue = filteredValue.replace(',', '.');
+  const normalizedValue = handleAmountInputChange(e.target.value);
 
-  // Update field value immediately to improve UX
   onChange(normalizedValue);
 
   if (amountValidationTimer) {
@@ -75,8 +61,6 @@ export function handleAmountChange<T extends FieldValues>(
   }
 
   amountValidationTimer = setTimeout(() => {
-    // Validate after user stops typing for 300ms
-
     if (fields.length > 1) {
       fields.forEach((_, i) => {
         if (i !== index) {
@@ -84,8 +68,6 @@ export function handleAmountChange<T extends FieldValues>(
         }
       });
     }
-
-    // Validate current field last
     trigger(buildFieldPath<T, 'amount'>(fieldNamePrefix, index, 'amount'));
   }, 300);
 }
@@ -97,13 +79,11 @@ export function handleIBANChange<T extends FieldValues>(
   trigger: UseFormTrigger<T>,
   fieldNamePrefix: string
 ) {
-  // Convert to uppercase
   const upperValue = e.target.value.toUpperCase();
   onChange(upperValue);
 
-  // Revalidate postal account field when IBAN changes
-  // For tests: call trigger immediately, for app: use debounce
-  if (process.env.NODE_ENV === 'test') {
+  // Revalidate postal account when IBAN changes
+  ibanValidationTimer = debounceValidation(() => {
     trigger(
       buildFieldPath<T, 'postalAccount'>(
         fieldNamePrefix,
@@ -111,17 +91,7 @@ export function handleIBANChange<T extends FieldValues>(
         'postalAccount'
       )
     );
-  } else {
-    ibanValidationTimer = debounceValidation(() => {
-      trigger(
-        buildFieldPath<T, 'postalAccount'>(
-          fieldNamePrefix,
-          index,
-          'postalAccount'
-        )
-      );
-    }, ibanValidationTimer);
-  }
+  }, ibanValidationTimer);
 }
 
 export function handlePostalAccountChange<T extends FieldValues>(
@@ -135,15 +105,10 @@ export function handlePostalAccountChange<T extends FieldValues>(
   const filteredValue = e.target.value.replace(/\D/g, '');
   onChange(filteredValue);
 
-  // Revalidate IBAN field when postal account changes
-  // For tests: call trigger immediately, for app: use debounce
-  if (process.env.NODE_ENV === 'test') {
+  // Revalidate IBAN when postal account changes
+  postalAccountValidationTimer = debounceValidation(() => {
     trigger(buildFieldPath<T, 'iban'>(fieldNamePrefix, index, 'iban'));
-  } else {
-    postalAccountValidationTimer = debounceValidation(() => {
-      trigger(buildFieldPath<T, 'iban'>(fieldNamePrefix, index, 'iban'));
-    }, postalAccountValidationTimer);
-  }
+  }, postalAccountValidationTimer);
 }
 
 export function handleAmountBlur(
@@ -151,15 +116,15 @@ export function handleAmountBlur(
   onChange: (...event: Array<unknown>) => void,
   onBlur: () => void
 ) {
-  // Format value with two decimals when field loses focus
-  const value = e.target.value.replace(',', '.');
-  if (value && !isNaN(parseFloat(value))) {
-    onChange(parseFloat(value).toFixed(2));
+  const formattedValue = handleAmountInputBlur(e.target.value);
+  if (formattedValue !== e.target.value) {
+    onChange(formattedValue);
   }
   onBlur();
 }
 
-// ===== RENDER FUNCTIONS =====
+/** RENDER FUNCTIONS */
+
 export function BeneficiaryHeader(
   props: Readonly<{
     index: number;
@@ -201,7 +166,6 @@ export function BeneficiaryHeader(
   );
 }
 
-// Entity Name Field component
 export function EntityNameField<T extends FieldValues>(
   props: Readonly<{
     field: {
@@ -218,7 +182,6 @@ export function EntityNameField<T extends FieldValues>(
 ) {
   const { field, t, disabled = false, context } = props;
 
-  // Get value directly from context to ensure we always have the updated value
   const actualValue =
     context.getValues(field.name as Path<T>) ?? field.value ?? '';
 
@@ -239,7 +202,6 @@ export function EntityNameField<T extends FieldValues>(
   );
 }
 
-// Amount Field component
 export function AmountField<T extends FieldValues>(
   props: Readonly<{
     field: {
@@ -269,14 +231,9 @@ export function AmountField<T extends FieldValues>(
     fieldNamePrefix
   } = props;
 
-  // Get value directly from context to ensure we always have the updated value
   const actualValue =
     context.getValues(field.name as Path<T>) ?? field.value ?? '';
-  // Cast to string and format
-  const valueAsString = String(actualValue);
-  const displayValue = valueAsString ? valueAsString.replace('.', ',') : '';
-
-  // Check errors specifically for this field
+  const displayValue = formatAmountForDisplay(String(actualValue));
   const hasError = hasFieldError('amount', context);
   const errorMessage = getFieldErrorMessage('amount', context);
 
@@ -312,7 +269,6 @@ export function AmountField<T extends FieldValues>(
   );
 }
 
-// Tax Code Field component
 export function TaxCodeField<T extends FieldValues>(
   props: Readonly<{
     field: {
@@ -329,7 +285,6 @@ export function TaxCodeField<T extends FieldValues>(
 ) {
   const { field, t, disabled = false, context } = props;
 
-  // Get value directly from context to ensure we always have the updated value
   const actualValue =
     context.getValues(field.name as Path<T>) ?? field.value ?? '';
 
@@ -350,7 +305,6 @@ export function TaxCodeField<T extends FieldValues>(
   );
 }
 
-// Check for IBAN field errors
 export function hasIBANError<T extends FieldValues>(
   context: ValidationContext<T>,
   errors: FieldErrors<T>
@@ -389,17 +343,17 @@ export function hasIBANError<T extends FieldValues>(
       type BeneficiaryErrorStructure = Record<string, { message?: string }>;
 
       const installmentsErrors = errors.installments as
-        | InstallmentErrorStructure[]
+        | Array<InstallmentErrorStructure>
         | undefined;
       if (installmentsErrors && installmentsErrors[installmentIndex]) {
         const beneficiaries = (installmentsErrors[installmentIndex]
-          ?.beneficiaries || []) as BeneficiaryErrorStructure[];
+          ?.beneficiaries || []) as Array<BeneficiaryErrorStructure>;
         if (beneficiaries[context.index]?.iban) {
           return true;
         }
       }
     } catch (error) {
-      // Error checking installment errors
+      console.error('Error checking IBAN errors in installments:', error);
     }
   }
 
@@ -413,7 +367,6 @@ export function hasIBANError<T extends FieldValues>(
   return !!fieldErrors?.iban;
 }
 
-// Get IBAN field error message
 export function getIBANErrorMessage<T extends FieldValues>(
   context: ValidationContext<T>,
   errors: FieldErrors<T>
@@ -461,21 +414,23 @@ export function getIBANErrorMessage<T extends FieldValues>(
       type BeneficiaryErrorStructure = Record<string, { message?: string }>;
 
       const installmentsErrors = errors.installments as
-        | InstallmentErrorStructure[]
+        | Array<InstallmentErrorStructure>
         | undefined;
       if (installmentsErrors && installmentsErrors[installmentIndex]) {
         const beneficiaries = (installmentsErrors[installmentIndex]
-          ?.beneficiaries || []) as BeneficiaryErrorStructure[];
+          ?.beneficiaries || []) as Array<BeneficiaryErrorStructure>;
         if (beneficiaries[context.index]?.iban) {
           return beneficiaries[context.index]?.iban?.message || '';
         }
       }
     } catch (error) {
-      // Error checking installment errors
+      console.error(
+        'Error retrieving IBAN error message from installments:',
+        error
+      );
     }
   }
 
-  // Specific IBAN error
   const fieldErrors = (
     errors[context.fieldNamePrefix] as unknown as Record<
       number,
@@ -486,7 +441,6 @@ export function getIBANErrorMessage<T extends FieldValues>(
   return (fieldErrors?.iban?.message as string) || '';
 }
 
-// IBAN Field component
 export function IBANField<T extends FieldValues>(
   props: Readonly<{
     field: {
@@ -516,7 +470,6 @@ export function IBANField<T extends FieldValues>(
     errors
   } = props;
 
-  // Get value directly from context to ensure we always have the updated value
   const actualValue =
     context.getValues(field.name as Path<T>) ?? field.value ?? '';
 
@@ -540,7 +493,6 @@ export function IBANField<T extends FieldValues>(
   );
 }
 
-// Check for postal account field errors
 export function hasPostalAccountError<T extends FieldValues>(
   context: ValidationContext<T>,
   errors: FieldErrors<T>
@@ -579,17 +531,20 @@ export function hasPostalAccountError<T extends FieldValues>(
       type BeneficiaryErrorStructure = Record<string, { message?: string }>;
 
       const installmentsErrors = errors.installments as
-        | InstallmentErrorStructure[]
+        | Array<InstallmentErrorStructure>
         | undefined;
       if (installmentsErrors && installmentsErrors[installmentIndex]) {
         const beneficiaries = (installmentsErrors[installmentIndex]
-          ?.beneficiaries || []) as BeneficiaryErrorStructure[];
+          ?.beneficiaries || []) as Array<BeneficiaryErrorStructure>;
         if (beneficiaries[context.index]?.postalAccount) {
           return true;
         }
       }
     } catch (error) {
-      // Error checking installment errors
+      console.error(
+        'Error checking postal account errors in installments:',
+        error
+      );
     }
   }
 
@@ -603,7 +558,6 @@ export function hasPostalAccountError<T extends FieldValues>(
   return !!fieldErrors?.postalAccount;
 }
 
-// Get postal account field error message
 export function getPostalAccountErrorMessage<T extends FieldValues>(
   context: ValidationContext<T>,
   errors: FieldErrors<T>
@@ -651,21 +605,23 @@ export function getPostalAccountErrorMessage<T extends FieldValues>(
       type BeneficiaryErrorStructure = Record<string, { message?: string }>;
 
       const installmentsErrors = errors.installments as
-        | InstallmentErrorStructure[]
+        | Array<InstallmentErrorStructure>
         | undefined;
       if (installmentsErrors && installmentsErrors[installmentIndex]) {
         const beneficiaries = (installmentsErrors[installmentIndex]
-          ?.beneficiaries || []) as BeneficiaryErrorStructure[];
+          ?.beneficiaries || []) as Array<BeneficiaryErrorStructure>;
         if (beneficiaries[context.index]?.postalAccount) {
           return beneficiaries[context.index]?.postalAccount?.message || '';
         }
       }
     } catch (error) {
-      // Error checking installment errors
+      console.error(
+        'Error retrieving postal account error message from installments:',
+        error
+      );
     }
   }
 
-  // Specific postal account error
   const fieldErrors = (
     errors[context.fieldNamePrefix] as unknown as Record<
       number,
@@ -676,7 +632,6 @@ export function getPostalAccountErrorMessage<T extends FieldValues>(
   return (fieldErrors?.postalAccount?.message as string) || '';
 }
 
-// Postal Account Field component
 export function PostalAccountField<T extends FieldValues>(
   props: Readonly<{
     field: {
@@ -706,7 +661,6 @@ export function PostalAccountField<T extends FieldValues>(
     errors
   } = props;
 
-  // Get value directly from context to ensure we always have the updated value
   const actualValue =
     context.getValues(field.name as Path<T>) ?? field.value ?? '';
 
@@ -739,7 +693,6 @@ export function PostalAccountField<T extends FieldValues>(
   );
 }
 
-// Taxonomy Code Field component
 export function TaxonomyCodeField<T extends FieldValues>(
   props: Readonly<{
     field: {
@@ -756,7 +709,6 @@ export function TaxonomyCodeField<T extends FieldValues>(
 ) {
   const { field, t, disabled = false, context } = props;
 
-  // Get value directly from context to ensure we always have the updated value
   const actualValue =
     context.getValues(field.name as Path<T>) ?? field.value ?? '';
 

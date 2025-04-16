@@ -59,14 +59,14 @@ type BeneficiaryFieldProps<T extends FieldValues = FieldValues> = {
  * Allows adding, removing and validating up to 4 beneficiaries
  * Maintains the same UI but uses reducer hooks for better state management
  */
-interface BeneficiaryFieldComponent {
+type BeneficiaryFieldComponent = {
   <T extends FieldValues>(
     props: BeneficiaryFieldProps<T> & {
       ref?: React.ForwardedRef<BeneficiaryFieldRef>;
     }
   ): React.ReactElement;
   displayName?: string;
-}
+};
 
 const InternalBeneficiaryField = <T extends FieldValues>(
   props: BeneficiaryFieldProps<T>,

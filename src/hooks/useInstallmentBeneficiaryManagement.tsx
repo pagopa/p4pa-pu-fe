@@ -99,7 +99,7 @@ export function useInstallmentBeneficiaryManagement<T extends FieldValues>(
             ) {
               setValue(
                 beneficiariesPath,
-                currentBeneficiari.map((b: Record<string, any>) => ({
+                currentBeneficiari.map((b: Record<string, unknown>) => ({
                   ...b,
                   isNew: true
                 })) as unknown as PathValue<T, Path<T>>,
@@ -156,7 +156,7 @@ export function useInstallmentBeneficiaryManagement<T extends FieldValues>(
 
     const beneficiariesPath =
       `${installmentsFieldNamePrefix}.${index}.beneficiaries` as Path<T>;
-    const currentBeneficiaries = getValues(beneficiariesPath) as unknown[];
+    const currentBeneficiaries = getValues(beneficiariesPath) as Array<unknown>;
 
     if (
       Array.isArray(currentBeneficiaries) &&

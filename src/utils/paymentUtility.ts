@@ -1,14 +1,17 @@
 /**
- * File di utility per la gestione dei pagamenti
- * Contiene funzioni helper riutilizzabili
+ * @fileoverview Utility file for payment management.
+ * This module provides reusable functions for payment processing and validation.
+ * @module paymentUtility
  */
 import { FieldErrors, FieldValues, Path } from 'react-hook-form';
 import { BeneficiaryValidationContext } from '../models/paymentTypes';
 
 /**
- * Verifica se un valore di stringa è vuoto
- * @param value Valore da verificare
- * @returns True se il valore è vuoto o non è una stringa
+ * Checks if a string value is empty.
+ *
+ * @function isEmpty
+ * @param {string|unknown} [value] - Value to check.
+ * @returns {boolean} - Returns true if the value is empty or not a string.
  */
 export function isEmpty(value?: string | unknown): boolean {
   if (typeof value !== 'string') {
@@ -18,11 +21,15 @@ export function isEmpty(value?: string | unknown): boolean {
 }
 
 /**
- * Helper per costruire un path tipizzato per i campi del form
- * @param fieldNamePrefix Prefisso del campo (es. 'beneficiaries')
- * @param index Indice dell'elemento
- * @param field Nome del campo
- * @returns Path tipizzato per react-hook-form
+ * Helper function to build a typed path for form fields.
+ *
+ * @function buildFieldPath
+ * @template T - Type of field values.
+ * @template K - Type of field key.
+ * @param {string} fieldNamePrefix - Field prefix (e.g. 'beneficiaries').
+ * @param {number} index - Array element index.
+ * @param {K} field - Field name.
+ * @returns {Path<T>} - Typed path for react-hook-form.
  */
 export function buildFieldPath<T extends FieldValues, K extends string>(
   fieldNamePrefix: string,
@@ -33,12 +40,15 @@ export function buildFieldPath<T extends FieldValues, K extends string>(
 }
 
 /**
- * Ottiene i dati di errore dal form
- * @param errors Oggetto errori del form
- * @param fieldNamePrefix Prefisso del campo
- * @param index Indice dell'elemento
- * @param fieldName Nome del campo
- * @returns Oggetto con hasError e errorMessage
+ * Gets error data from the form.
+ *
+ * @function getErrorData
+ * @template T - Type of field values.
+ * @param {FieldErrors<T>} errors - Form errors object.
+ * @param {string} fieldNamePrefix - Field prefix.
+ * @param {number} index - Element index.
+ * @param {string} fieldName - Field name.
+ * @returns {{hasError: boolean, errorMessage: string}} - Object with error status and message.
  */
 export function getErrorData<T extends FieldValues>(
   errors: FieldErrors<T>,
@@ -46,59 +56,52 @@ export function getErrorData<T extends FieldValues>(
   index: number,
   fieldName: string
 ): { hasError: boolean; errorMessage: string } {
-  // Gestione del caso speciale per beneficiari all'interno di rate
+  // Handling the special case for beneficiaries within installments
   if (fieldNamePrefix.includes('installments')) {
-    try {
-      const parts = fieldNamePrefix.split('.');
-      const installmentIndex = parseInt(parts[1], 10);
+    const parts = fieldNamePrefix.split('.');
+    const installmentIndex = parts.length > 1 ? parseInt(parts[1], 10) : -1;
 
+    if (!isNaN(installmentIndex) && installmentIndex >= 0) {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const installmentErrors = (errors as any)?.installments?.[
         installmentIndex
       ];
 
-      if (
-        installmentErrors &&
-        installmentErrors.beneficiaries &&
-        installmentErrors.beneficiaries[index]
-      ) {
-        const beneficiaryErrors = installmentErrors.beneficiaries[index];
+      const beneficiaryErrors = installmentErrors?.beneficiaries?.[index];
+      if (beneficiaryErrors) {
         const hasError = !!beneficiaryErrors?.[fieldName];
         const errorMessage = beneficiaryErrors?.[fieldName]?.message || '';
 
         return { hasError, errorMessage };
       }
-    } catch (error) {
-      // Gestione silenziosa dell'errore
     }
   }
 
-  // Caso standard
-  try {
-    const fieldErrors = (
-      errors[fieldNamePrefix] as unknown as Record<
-        number,
-        FieldErrors<Record<string, unknown>>
-      >
-    )?.[index];
+  // Standard case
+  const fieldErrors = (
+    errors[fieldNamePrefix] as unknown as Record<
+      number,
+      FieldErrors<Record<string, unknown>>
+    >
+  )?.[index];
 
-    const hasError = !!fieldErrors?.[fieldName];
-    const errorMessage = (fieldErrors?.[fieldName]?.message as string) || '';
+  const hasError = !!fieldErrors?.[fieldName];
+  const errorMessage = (fieldErrors?.[fieldName]?.message as string) || '';
 
-    return {
-      hasError,
-      errorMessage
-    };
-  } catch (error) {
-    return {
-      hasError: false,
-      errorMessage: ''
-    };
-  }
+  return {
+    hasError,
+    errorMessage
+  };
 }
 
 /**
- * Verifica se un beneficiario è nuovo (aggiunto dopo il submit)
+ * Checks if a beneficiary is new (added after form submission).
+ *
+ * @function isBeneficiaryNew
+ * @param {string} id - Beneficiary unique identifier.
+ * @param {React.RefObject<boolean>} wasSubmittedRef - Reference to submission state.
+ * @param {Record<string, boolean>} existingBeneficiaries - Map of existing beneficiaries.
+ * @returns {boolean} - True if the beneficiary is newly added.
  */
 export function isBeneficiaryNew(
   id: string,
@@ -109,13 +112,19 @@ export function isBeneficiaryNew(
 }
 
 /**
- * Determina se mostrare errori di validazione per un campo
+ * Determines whether to show validation errors for a form field.
+ *
+ * @function hasFieldError
+ * @template T - Type of field values.
+ * @param {string} fieldName - Name of the field to check.
+ * @param {BeneficiaryValidationContext<T>} context - Validation context.
+ * @returns {boolean} - True if the field has an error that should be displayed.
  */
 export function hasFieldError<T extends FieldValues>(
   fieldName: string,
   context: BeneficiaryValidationContext<T>
 ): boolean {
-  // Determina se è necessario saltare la validazione
+  // Determines if validation should be skipped
   const shouldSkip =
     !context.isSubmitted ||
     (isBeneficiaryNew(
@@ -129,7 +138,7 @@ export function hasFieldError<T extends FieldValues>(
     return false;
   }
 
-  // Per questi campi, mostra sempre gli errori, anche se il form non è stato inviato
+  // For these fields, always show errors, even if the form hasn't been submitted
   if (
     fieldName === 'amount' ||
     fieldName === 'iban' ||
@@ -143,7 +152,7 @@ export function hasFieldError<T extends FieldValues>(
     ).hasError;
   }
 
-  // Per gli altri campi, segui la logica standard
+  // For other fields, follow the standard logic
   return (
     context.isSubmitted &&
     getErrorData(
@@ -156,13 +165,19 @@ export function hasFieldError<T extends FieldValues>(
 }
 
 /**
- * Ottiene il messaggio di errore di un campo
+ * Gets the error message for a form field.
+ *
+ * @function getFieldErrorMessage
+ * @template T - Type of field values.
+ * @param {string} fieldName - Name of the field.
+ * @param {BeneficiaryValidationContext<T>} context - Validation context.
+ * @returns {string} - Error message if available, empty string otherwise.
  */
 export function getFieldErrorMessage<T extends FieldValues>(
   fieldName: string,
   context: BeneficiaryValidationContext<T>
 ): string {
-  // Determina se è necessario saltare la validazione
+  // Determines if validation should be skipped
   const shouldSkip =
     !context.isSubmitted ||
     (isBeneficiaryNew(
@@ -176,7 +191,7 @@ export function getFieldErrorMessage<T extends FieldValues>(
     return '';
   }
 
-  // Per questi campi, mostra sempre i messaggi di errore, anche se il form non è stato inviato
+  // For these fields, always show error messages, even if the form hasn't been submitted
   if (
     fieldName === 'amount' ||
     fieldName === 'iban' ||
@@ -190,7 +205,7 @@ export function getFieldErrorMessage<T extends FieldValues>(
     ).errorMessage;
   }
 
-  // Per gli altri campi, segui la logica standard
+  // For other fields, follow the standard logic
   return context.isSubmitted
     ? getErrorData(
         context.errors,
@@ -202,7 +217,14 @@ export function getFieldErrorMessage<T extends FieldValues>(
 }
 
 /**
- * Ottiene un campo dal form
+ * Gets a field value from the form.
+ *
+ * @function getFieldValue
+ * @template T - Type of field values.
+ * @template K - Type of field key.
+ * @param {BeneficiaryValidationContext<T>} context - Validation context.
+ * @param {K} field - Field name.
+ * @returns {string} - The field value.
  */
 export function getFieldValue<T extends FieldValues, K extends string>(
   context: BeneficiaryValidationContext<T>,
@@ -214,9 +236,11 @@ export function getFieldValue<T extends FieldValues, K extends string>(
 }
 
 /**
- * Formatta un importo come stringa in formato valuta
- * @param amount Importo da formattare
- * @returns Importo formattato
+ * Formats an amount as a currency string with comma as decimal separator.
+ *
+ * @function formatAmount
+ * @param {string|number} amount - Amount to format.
+ * @returns {string} - Formatted amount string.
  */
 export function formatAmount(amount: string | number): string {
   if (typeof amount === 'string') {
@@ -231,10 +255,12 @@ export function formatAmount(amount: string | number): string {
 }
 
 /**
- * Verifica se la somma degli importi dei beneficiari è uguale all'importo totale
- * @param beneficiaries Lista dei beneficiari
- * @param totalAmount Importo totale
- * @returns True se la somma è valida
+ * Verifies if the sum of beneficiary amounts equals the total amount.
+ *
+ * @function validateBeneficiariesTotal
+ * @param {Array<{amount: string}>} beneficiaries - List of beneficiaries with amounts.
+ * @param {string} totalAmount - Total amount to compare against.
+ * @returns {boolean} - True if the sum is equal to the total amount.
  */
 export function validateBeneficiariesTotal(
   beneficiaries: Array<{ amount: string }>,
@@ -244,18 +270,80 @@ export function validateBeneficiariesTotal(
     return false;
   }
 
-  // Normalizza le cifre (converte virgole in punti)
+  // Normalize figures (convert commas to dots)
   const total = parseFloat(totalAmount.replace(',', '.'));
 
-  // Calcola la somma degli importi
+  // Calculate the sum of amounts
   const sum = beneficiaries.reduce((acc, ben) => {
     const amount = ben.amount ? parseFloat(ben.amount.replace(',', '.')) : 0;
     return acc + (isNaN(amount) ? 0 : amount);
   }, 0);
 
-  // Arrotonda a 2 decimali per evitare problemi di precisione
+  // Round to 2 decimals to avoid precision issues
   const roundedSum = Math.round(sum * 100) / 100;
   const roundedTotal = Math.round(total * 100) / 100;
 
   return roundedSum === roundedTotal;
+}
+
+/**
+ * Formats an amount to always have two decimal places.
+ *
+ * @function formatAmountWithTwoDecimals
+ * @param {string} value - The value to format.
+ * @returns {string} - The value formatted with two decimal places.
+ */
+export function formatAmountWithTwoDecimals(value: string): string {
+  const normalizedValue = value.replace(',', '.');
+  if (normalizedValue && !isNaN(parseFloat(normalizedValue))) {
+    return parseFloat(normalizedValue).toFixed(2);
+  }
+  return value;
+}
+
+/**
+ * Filters an amount input field accepting only numbers, dot and comma.
+ *
+ * @function filterAmountInput
+ * @param {string} value - The value to filter.
+ * @returns {string} - The filtered value.
+ */
+export function filterAmountInput(value: string): string {
+  // Accept only numbers, dot and comma
+  const filteredValue = value.replace(/[^0-9.,]/g, '');
+  // Convert comma to dot for internal numeric handling
+  return filteredValue.replace(',', '.');
+}
+
+/**
+ * Handles the value change of an amount field.
+ *
+ * @function handleAmountInputChange
+ * @param {string} inputValue - The input value.
+ * @returns {string} - The filtered and normalized value.
+ */
+export function handleAmountInputChange(inputValue: string): string {
+  return filterAmountInput(inputValue);
+}
+
+/**
+ * Handles the blur event of an amount field.
+ *
+ * @function handleAmountInputBlur
+ * @param {string} value - The field value.
+ * @returns {string} - The value formatted with two decimal places.
+ */
+export function handleAmountInputBlur(value: string): string {
+  return formatAmountWithTwoDecimals(value);
+}
+
+/**
+ * Converts a numeric value for display, replacing dot with comma.
+ *
+ * @function formatAmountForDisplay
+ * @param {string} value - The numeric value.
+ * @returns {string} - The value formatted for display.
+ */
+export function formatAmountForDisplay(value: string): string {
+  return value ? value.replace('.', ',') : '';
 }

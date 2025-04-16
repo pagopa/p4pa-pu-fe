@@ -108,7 +108,7 @@ export type UnwrapReadonlyProperties<T> = {
  * Converte tutti i valori semplici in ReadonlyProperty
  */
 export type WrapAsReadonlyProperties<T> = {
-  [K in keyof T]: T[K] extends ReadonlyProperty<any>
+  [K in keyof T]: T[K] extends ReadonlyProperty<unknown>
     ? T[K]
     : ReadonlyProperty<T[K]>;
 };
