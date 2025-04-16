@@ -1,4 +1,4 @@
-import { Box, Stack, useTheme } from '@mui/material';
+import { Box, Stack, Typography, useTheme } from '@mui/material';
 import { Downloading, Search } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
@@ -6,11 +6,11 @@ import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 
-import TitleComponent from '../../components/TitleComponent/TitleComponent';
+import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
-} from '../../components/FilterContainer/FilterContainer';
-import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
+} from '../FilterContainer/FilterContainer';
+import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../App';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
@@ -22,7 +22,21 @@ import { downloadExportFile, getExportFiles } from '../../api/exportFiles';
 import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
 import { downloadBlob } from '../../utils/download';
 
-const TelematicReceiptFlowExportOverview = () => {
+export type ExportFlowOverviewProps = {
+  routingCategory: string;
+  title: string;
+  description?: string;
+  sectionTitle?: string;
+  exportFileTypes: ExportFileTypeEnum;
+};
+
+const ExportFlowOverview = ({
+  routingCategory,
+  title,
+  description,
+  sectionTitle,
+  exportFileTypes
+}: ExportFlowOverviewProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -42,7 +56,7 @@ const TelematicReceiptFlowExportOverview = () => {
     sortModel,
     handleSortModelChange
   } = useExportFlowFilters({
-    exportFileType: ExportFileTypeEnum.PAID
+    exportFileType: exportFileTypes
   });
 
   const { data, isLoading } = getExportFiles(organizationId, appliedFilters);
@@ -122,23 +136,28 @@ const TelematicReceiptFlowExportOverview = () => {
   return (
     <>
       <TitleComponent
-        title={t('commons.routes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW')}
+        title={title}
         callToAction={[
           {
             icon: <Downloading />,
             variant: 'outlined',
-            buttonText: t(
-              'telematicReceiptFlowExportOverview.buttonReservationExport'
-            ),
+            buttonText: t('exportFlow.buttonReservationExport'),
             onActionClick: () =>
               navigate(
-                generatePath(PageRoutes.EXPORT_FLOWS, { category: 'receipt' })
+                generatePath(PageRoutes.EXPORT_FLOWS, {
+                  category: routingCategory
+                })
               )
           }
         ]}
-        description={t('telematicReceiptFlowExportOverview.description')}
+        description={description}
       />
       <Stack gap={3}>
+        {sectionTitle && (
+          <Box mt={2}>
+            <Typography variant="h4">{sectionTitle}</Typography>
+          </Box>
+        )}
         <FilterContainer
           items={[
             {
@@ -154,7 +173,7 @@ const TelematicReceiptFlowExportOverview = () => {
               label: 'dateRange',
               gridWidth: 5,
               from: {
-                label: t('telematicReceiptFlowExportOverview.exportFrom'),
+                label: t('dates.from'),
                 errorMessage: t('dates.validations.from'),
                 value: draftFilters.creationDateFrom
                   ? new Date(draftFilters.creationDateFrom)
@@ -210,4 +229,4 @@ const TelematicReceiptFlowExportOverview = () => {
   );
 };
 
-export default TelematicReceiptFlowExportOverview;
+export default ExportFlowOverview;
