@@ -11,7 +11,7 @@ import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
 import useDebtTypesFilters from '../../hooks/useDebtTypesFilters';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { setLoading } from '../../store/AppStateStore';
+import { PageRoutes } from '../../App';
 
 export const DebtTypes = () => {
   const theme = useTheme();
@@ -47,12 +47,7 @@ export const DebtTypes = () => {
     }
   });
 
-  const { data, isLoading } = getDebtPositionTypeWithCount(
-    organizationId,
-    appliedFilters
-  );
-
-  setLoading(isLoading);
+  const { data } = getDebtPositionTypeWithCount(organizationId, appliedFilters);
 
   return (
     <>
@@ -62,7 +57,7 @@ export const DebtTypes = () => {
           {
             icon: <Add />,
             buttonText: t('commons.createNew'),
-            onActionClick: () => navigate('/debt-types/new')
+            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_CREATE)
           }
         ]}
         description={t('debtTypes.description')}
@@ -82,7 +77,7 @@ export const DebtTypes = () => {
               value: draftFilters.description || '',
               onChange: (e) =>
                 updateDraftFilters({ description: e.target.value }),
-              icon: <Search />,
+              adornment: <Search />,
               gridWidth: 10.5
             },
             {
@@ -122,7 +117,6 @@ export const DebtTypes = () => {
             totalPages: data?.totalPages || 0,
             size: appliedFilters.size
           }}
-          isLoading={isLoading}
         />
       </Box>
     </>

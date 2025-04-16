@@ -32,7 +32,11 @@ const mockOptionData: PaymentOptionDisplayData = {
       subject: 'Test Installment',
       amount: 2500,
       expirationDate: '2025-12-31',
-      status: 'Unpaid'
+      status: 'UNPAID',
+      chip: {
+        label: 'Unpaid',
+        color: 'info'
+      }
     },
     {
       id: 2,
@@ -40,7 +44,11 @@ const mockOptionData: PaymentOptionDisplayData = {
       subject: 'Test Installment 2',
       amount: 2500,
       expirationDate: '2026-01-31',
-      status: 'Reported'
+      status: 'REPORTED',
+      chip: {
+        label: 'Reported',
+        color: 'success'
+      }
     }
   ]
 };
@@ -144,7 +152,11 @@ describe('PaymentOptionSection Component', () => {
           subject: 'Test Paid',
           amount: 2500,
           expirationDate: '2025-12-31',
-          status: 'Paid'
+          status: 'PAID',
+          chip: {
+            label: 'Paid',
+            color: 'success'
+          }
         },
         {
           id: 2,
@@ -152,7 +164,11 @@ describe('PaymentOptionSection Component', () => {
           subject: 'Test Unpaid',
           amount: 2500,
           expirationDate: '2026-01-31',
-          status: 'Unpaid'
+          status: 'UNPAID',
+          chip: {
+            label: 'Unpaid',
+            color: 'info'
+          }
         },
         {
           id: 3,
@@ -160,7 +176,11 @@ describe('PaymentOptionSection Component', () => {
           subject: 'Test Other Status',
           amount: 2500,
           expirationDate: '2026-02-28',
-          status: 'Other Status'
+          status: 'OTHER',
+          chip: {
+            label: 'Other Status',
+            color: 'default'
+          }
         }
       ]
     };
@@ -177,12 +197,12 @@ describe('PaymentOptionSection Component', () => {
     expect(paidChip).toHaveClass('MuiChip-colorSuccess');
 
     const unpaidChip = screen.getByText('Unpaid').closest('.MuiChip-root');
-    expect(unpaidChip).toHaveClass('MuiChip-colorError');
+    expect(unpaidChip).toHaveClass('MuiChip-colorInfo');
 
     const otherStatusChip = screen
       .getByText('Other Status')
       .closest('.MuiChip-root');
-    expect(otherStatusChip).toHaveClass('MuiChip-colorInfo');
+    expect(otherStatusChip).toHaveClass('MuiChip-colorDefault');
   });
 
   it('hides footer when installments length is 5 or less', () => {
@@ -203,7 +223,11 @@ describe('PaymentOptionSection Component', () => {
           subject: `Test Installment ${index + 1}`,
           amount: 1000,
           expirationDate: '2025-12-31',
-          status: 'Unpaid'
+          status: 'UNPAID',
+          chip: {
+            label: 'Unpaid',
+            color: 'info'
+          }
         }))
     };
 

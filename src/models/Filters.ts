@@ -1,13 +1,15 @@
 import {
   IngestionFlowFileStatus,
-  IngestionFlowFileTypeEnum
+  IngestionFlowFileTypeEnum,
+  ExportFileTypeEnum,
+  ExportFileStatus
 } from '../../generated/apiClient';
 export type FlowStatus = IngestionFlowFileStatus;
 
 export type FilterValues = {
   ACCOUNTING_DATE_FROM: Date | null;
   ACCOUNTING_DATE_TO: Date | null;
-  AMOUNT: string;
+  AMOUNT: number | null;
   BILL_CODE: string;
   BILL_FROM: Date | null;
   DOCUMENT_CODE: string;
@@ -21,17 +23,19 @@ export type FilterValues = {
   VALUE_DATE_TO: Date | null;
 };
 
-export const FLOW_STATUS_VALUES = [
-  'UPLOADED',
-  'PROCESSING',
-  'COMPLETED',
-  'ERROR'
-] as const;
-
 export type FlowFilters = {
   ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
   fileName?: string;
   status?: IngestionFlowFileStatus;
+  creationDateFrom?: string;
+  creationDateTo?: string;
+  sort?: Array<string>;
+};
+
+export type ExportFlowFilters = {
+  exportFileType: ExportFileTypeEnum;
+  fileName?: string;
+  status?: ExportFileStatus;
   creationDateFrom?: string;
   creationDateTo?: string;
   sort?: Array<string>;
@@ -43,6 +47,7 @@ export type PaginationParams = {
 };
 
 export type FlowFileFilters = FlowFilters & PaginationParams;
+export type ExportFileFilters = ExportFlowFilters & PaginationParams;
 
 export const STATE_COLORS: Record<
   FlowStatus,
@@ -54,8 +59,20 @@ export const STATE_COLORS: Record<
   ERROR: 'error'
 };
 
+export const EXPORT_STATE_COLORS: Record<
+  ExportFileStatus,
+  'success' | 'info' | 'secondary' | 'error'
+> = {
+  COMPLETED: 'success',
+  REQUESTED: 'info',
+  PROCESSING: 'info',
+  EXPIRED: 'error',
+  ERROR: 'error'
+};
+
 export const MENU_STATES = ['COMPLETED', 'ERROR'] as const;
 export const DOWNLOAD_STATES = ['UPLOADED'] as const;
+export const EXPORT_DOWNLOAD_STATES = [ExportFileStatus.COMPLETED];
 
 export type DateRangeValue = {
   from: Date | null;

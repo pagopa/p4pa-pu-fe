@@ -10,6 +10,7 @@ export type DateRange = {
   errorMessage?: string;
   onChange?: (date: Date | null) => void;
   value?: Date | null;
+  todayValue?: Date;
 };
 
 export type _DateRangeProps = {
@@ -72,6 +73,7 @@ export const _DateRange = ({
         views={isYear ? ['year'] : undefined}
         format={isYear ? 'yyyy' : 'dd/MM/yyyy'}
         openTo={isYear ? 'year' : 'day'}
+        maxDate={from?.todayValue || undefined}
         sx={{ width: '100%' }}
         label={t('dates.from')}
         value={from?.value && startOfDay(from?.value)}
@@ -103,6 +105,7 @@ export const _DateRange = ({
             setEndDateError(err);
             onToErrorChange?.(err);
           }}
+          maxDate={to?.todayValue || undefined}
           minDate={from?.value || undefined}
           slotProps={{
             textField: {

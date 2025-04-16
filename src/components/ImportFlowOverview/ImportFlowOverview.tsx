@@ -14,15 +14,21 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import { useStore } from '../../store/GlobalStore';
 import {
   DOWNLOAD_STATES,
-  FLOW_STATUS_VALUES,
   FlowStatus,
   MENU_STATES,
   STATE_COLORS
 } from '../../models/Filters';
-import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
+import {
+  downloadIngestionFlowFile,
+  getIngestionFlowFiles
+} from '../../api/ingestionFlowFiles';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { STATE } from '../../store/types';
-import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
+import {
+  IngestionFlowFileStatus,
+  IngestionFlowFileTypeEnum
+} from '../../../generated/apiClient';
+import { downloadBlob } from '../../utils/download';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
@@ -61,6 +67,22 @@ const ImportFlowOverview = ({
 
   const { data } = getIngestionFlowFiles(organizationId, appliedFilters);
 
+  const handleDownloadFile = async (ingestionFlowFileId: number) => {
+    const result = await downloadIngestionFlowFile(
+      organizationId,
+      ingestionFlowFileId
+    );
+
+    //TODO: handle error
+    if (!result) {
+      console.error('Failed to download ingestion flow file');
+      return;
+    }
+
+    const { data, fileName } = result;
+    downloadBlob(data, fileName);
+  };
+
   const renderActionCell = (params: GridRenderCellParams) => {
     const { ingestionFlowFileId, status } = params.row;
 
@@ -72,7 +94,7 @@ const ImportFlowOverview = ({
             {
               icon: <DownloadIcon fontSize="small" color="primary" />,
               label: t('commons.files.imported'),
-              action: () => console.log('Download file:', ingestionFlowFileId)
+              action: () => handleDownloadFile(ingestionFlowFileId)
             },
             {
               icon: <DownloadIcon fontSize="small" color="primary" />,
@@ -89,7 +111,7 @@ const ImportFlowOverview = ({
         <IconButton
           color="primary"
           size="small"
-          onClick={() => console.log(`Download: ${ingestionFlowFileId}`)}
+          onClick={() => handleDownloadFile(ingestionFlowFileId)}
           data-testid="download-button"
         >
           <DownloadIcon />
@@ -196,7 +218,7 @@ const ImportFlowOverview = ({
             {
               type: COMPONENT_TYPE.textField,
               label: t('commons.searchName'),
-              icon: <Search />,
+              adornment: <Search />,
               gridWidth: 5,
               value: draftFilters.fileName || '',
               onChange: (e) => updateDraftFilters({ fileName: e.target.value })
@@ -207,7 +229,7 @@ const ImportFlowOverview = ({
               gridWidth: 2,
               options: [
                 { label: t('commons.status.ALL'), value: 'ALL' },
-                ...FLOW_STATUS_VALUES.map((status) => ({
+                ...Object.values(IngestionFlowFileStatus).map((status) => ({
                   label: t(`commons.status.${status}`),
                   value: status
                 }))

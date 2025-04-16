@@ -1,0 +1,68 @@
+import utils from '../utils';
+import { act, renderHook } from '../__tests__/renderers';
+import { describe, expect, it, vi } from 'vitest';
+import {
+  ExportFileTypeEnum,
+  PaidExportFileRequestDTO
+} from '../../generated/apiClient';
+import { createPaidExportFile } from './createExportFile';
+
+vi.mock('../utils', () => ({
+  default: {
+    apiClient: {
+      bff: {
+        createPaidExportFile: vi.fn()
+      }
+    }
+  }
+}));
+
+const mockCreateExportFile = vi.mocked(
+  utils.apiClient.bff.createPaidExportFile
+);
+
+describe('createPaidExportFile', () => {
+  it('calls createPaidExportFile with correct parameters', async () => {
+    const mockRequestData: PaidExportFileRequestDTO = {
+      organizationId: 123,
+      exportFileType: ExportFileTypeEnum.PAID,
+      fileVersion: 'v1.0',
+      filterFields: {
+        paymentDate: {
+          from: '2024-01-01',
+          to: '2024-12-31'
+        },
+        debtPositionTypeOrgId: 1
+      }
+    };
+
+    const { result } = renderHook(() => createPaidExportFile());
+
+    await act(async () => {
+      await result.current.mutateAsync({ data: mockRequestData });
+    });
+
+    expect(mockCreateExportFile).toHaveBeenCalledWith(
+      mockRequestData,
+      undefined
+    );
+  });
+
+  it('handles error correctly', async () => {
+    const mockError = new Error('Create paid export failed');
+    mockCreateExportFile.mockRejectedValueOnce(mockError);
+
+    const requestData: PaidExportFileRequestDTO = {
+      organizationId: 123,
+      exportFileType: ExportFileTypeEnum.PAID,
+      fileVersion: 'v1.0',
+      filterFields: {}
+    };
+
+    const { result } = renderHook(() => createPaidExportFile());
+
+    await expect(
+      result.current.mutateAsync({ data: requestData })
+    ).rejects.toThrow('Create paid export failed');
+  });
+});

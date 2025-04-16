@@ -5,7 +5,7 @@ import { IngestionFlowFileTypeEnum } from '../../generated/apiClient';
 
 type UseFlowFiltersProps = {
   initialFilters?: Partial<FlowFileFilters>;
-  ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
+  ingestionFlowFileTypes?: Array<IngestionFlowFileTypeEnum>;
   onFiltersChange?: (filters: FlowFileFilters) => void;
 };
 
@@ -16,8 +16,10 @@ export const useFlowFilters = ({
   initialFilters,
   onFiltersChange
 }: UseFlowFiltersProps) => {
+  const flowTypes = ingestionFlowFileTypes || [];
+
   const [appliedFilters, setAppliedFilters] = useState<FlowFileFilters>(() => ({
-    ingestionFlowFileTypes,
+    ingestionFlowFileTypes: flowTypes,
     size: initialFilters?.size || DEFAULT_PAGE_SIZE,
     page: initialFilters?.page || 0,
     ...initialFilters

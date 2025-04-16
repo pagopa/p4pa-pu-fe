@@ -5,6 +5,7 @@ import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
 import { useOrganizations } from '../../hooks/useOrganizations';
 import { OperatorRoleEnum } from '../../../generated/apiClient';
 import { PageRoutes } from '../../App';
+import { setUserInfo } from '../../store/UserInfoStore';
 
 // Mock dependencies
 vi.mock('react-router-dom', async () => {
@@ -31,7 +32,7 @@ describe('Header component', () => {
   beforeEach(() => {
     // @ts-expect-error mock success
     mockUseOrganizations.mockReturnValue({
-      organizations: [
+      data: [
         {
           organizationId: 1,
           orgLogo: 'logo.png',
@@ -42,6 +43,13 @@ describe('Header component', () => {
         }
       ],
       isSuccess: true
+    });
+
+    // @ts-expect-error mocking user for header info
+    setUserInfo({
+      userId: 'userId',
+      familyName: 'Polo',
+      name: 'Marco'
     });
   });
 
@@ -78,7 +86,7 @@ describe('Header component', () => {
 
     await waitFor(() => {
       expect(mockStorage).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.HOME);
+      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.LOGGED_OUT);
     });
 
     mockStorage.mockRestore();

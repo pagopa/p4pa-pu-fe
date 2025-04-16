@@ -6,23 +6,38 @@ import { setOrganizationId } from '../store/OrganizationIdStore';
 
 export const useOrganizations = () => {
   const {
-    state: { organizationId }
+    state: { organizationId, idToken }
   } = useStore();
 
   const { data, ...query } = utils.loaders.getOrganizations();
 
   useEffect(() => {
     if (!organizationId && data) {
-      const firstOrganization = data[0];
-      setOrganizationId(firstOrganization.organizationId);
-      setOperatorRole(firstOrganization.operatorRole);
+      const initOrganization = data.find(
+        (org) =>
+          org.orgFiscalCode === idToken?.organization.fiscal_code &&
+          org.ipaCode === idToken.organization.ipaCode
+      );
+
+      const firstOrganization = initOrganization || data[0];
+      if (firstOrganization) {
+        setOrganizationId(firstOrganization.organizationId);
+        setOperatorRole(firstOrganization.operatorRole);
+      }
 
       if (query.isError) {
         // TODO: Handle error (e.g., show a toast)
         console.error('Failed to fetch fe config', query.error);
       }
     }
-  }, [data, query.isLoading, query.isError, query.isSuccess]);
+  }, [
+    data,
+    query.isLoading,
+    query.isError,
+    query.isSuccess,
+    organizationId,
+    idToken
+  ]);
 
-  return { organizations: data, ...query };
+  return { data, ...query };
 };

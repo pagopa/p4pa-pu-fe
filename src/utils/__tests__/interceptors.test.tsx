@@ -9,7 +9,8 @@ vi.mock('./utils', () => ({
   }
 }));
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
   useNavigate: vi.fn()
 }));
 

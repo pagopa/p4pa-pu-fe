@@ -3,6 +3,8 @@ import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
 import DebtTypes from './DebtTypes/DebtTypes';
 import DebtTypeDetailView from './DebtTypeCatalogDetailView/DebtTypeCatalogDetailView';
+import { DebtTypeCreate } from './DebtTypeCreate';
+import { DebtTypeCreateSuccess } from './DebtTypeCreate/DebtTypeCreateSuccess';
 
 const deployPath = config.deployPath;
 
@@ -27,6 +29,31 @@ export const debtTypesRoutes = [
         element: <DebtTypeDetailView />,
         handle: {
           backButton: true,
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject
+      },
+      {
+        id: 'DEBT_TYPE_CREATE',
+        path: 'new',
+        element: <DebtTypeCreate />,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject
+      },
+      {
+        id: 'DEBT_TYPE_CREATE_SUCCESS',
+        path: 'new/ok',
+        element: <DebtTypeCreateSuccess />,
+        handle: {
+          backButton: false,
           hideBreadcrumbs: true,
           sidebar: {
             visible: false

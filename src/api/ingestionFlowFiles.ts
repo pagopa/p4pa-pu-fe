@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import {
+  FileOrigin,
   IngestionFlowFileType,
   RequestParams
 } from '../../generated/fileshare/fileshareClient';
@@ -8,12 +9,7 @@ import {
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum
 } from '../../generated/apiClient';
-
-export enum FileOrigin {
-  PORTAL = 'PORTAL',
-  SIL = 'SIL',
-  PAGOPA = 'PAGOPA'
-}
+import { extractFilename } from '../utils/formatters';
 
 export const getIngestionFlowFiles = (
   organizationId: number,
@@ -78,3 +74,26 @@ export const uploadIngestionFlowFile = ({
       return response;
     }
   });
+
+export const downloadIngestionFlowFile = async (
+  organizationId: number,
+  ingestionFlowFileId: number
+): Promise<{ data: Blob; fileName: string } | null> => {
+  try {
+    const response =
+      await utils.fileshareClient.organization.downloadIngestionFlowFile(
+        organizationId,
+        ingestionFlowFileId,
+        { format: 'blob' }
+      );
+
+    const contentDisposition = response.headers['content-disposition'] || '';
+    const fileName =
+      extractFilename(contentDisposition) || `file-${ingestionFlowFileId}`;
+
+    return { data: response.data, fileName };
+  } catch (error) {
+    console.error('Error downloading ingestion flow file:', error);
+    return null;
+  }
+};

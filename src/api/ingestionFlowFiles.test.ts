@@ -1,26 +1,41 @@
 import utils from '../utils';
 import { act, renderHook } from '../__tests__/renderers';
-import { uploadIngestionFlowFile } from './ingestionFlowFiles';
+import {
+  downloadIngestionFlowFile,
+  uploadIngestionFlowFile
+} from './ingestionFlowFiles';
 import {
   IngestionFlowFileType,
   UploadIngestionFlowFileResponseDTO
 } from '../../generated/fileshare/fileshareClient';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
+import * as formatters from '../utils/formatters';
 
 vi.mock('../utils', () => ({
   default: {
     fileshareClient: {
       organization: {
-        uploadIngestionFlowFile: vi.fn()
+        uploadIngestionFlowFile: vi.fn(),
+        downloadIngestionFlowFile: vi.fn()
       }
     }
   }
 }));
 
+vi.mock('../utils/formatters', () => ({
+  extractFilename: vi.fn()
+}));
+
 const mockUploadIngestionFlowFile = vi.mocked(
   utils.fileshareClient.organization.uploadIngestionFlowFile
 );
+
+const mockDownloadIngestionFlowFile = vi.mocked(
+  utils.fileshareClient.organization.downloadIngestionFlowFile
+);
+
+const mockExtractFilename = vi.mocked(formatters.extractFilename);
 
 describe('uploadIngestionFlowFile', () => {
   it('uploads file with correct parameters', async () => {
@@ -75,5 +90,61 @@ describe('uploadIngestionFlowFile', () => {
     });
 
     expect(mockUploadIngestionFlowFile).toHaveBeenCalled();
+  });
+});
+
+describe('downloadIngestionFlowFile', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockExtractFilename.mockImplementation((header) => {
+      if (header.includes('test-file.csv')) {
+        return 'test-file.csv';
+      }
+      return null;
+    });
+  });
+
+  it('returns blob and filename from response with content-disposition header', async () => {
+    const mockFileData = new Blob(['test data'], { type: 'text/plain' });
+    const mockFileName = 'test-file.csv';
+
+    mockDownloadIngestionFlowFile.mockResolvedValueOnce({
+      data: mockFileData,
+      headers: {
+        'content-disposition': `attachment; filename="${mockFileName}"`
+      }
+    } as unknown as AxiosResponse);
+
+    const result = await downloadIngestionFlowFile(123, 456);
+
+    expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(123, 456, {
+      format: 'blob'
+    });
+    expect(mockExtractFilename).toHaveBeenCalledWith(
+      `attachment; filename="${mockFileName}"`
+    );
+    expect(result).toEqual({
+      data: mockFileData,
+      fileName: mockFileName
+    });
+  });
+
+  it('uses default filename when content-disposition header is missing', async () => {
+    const mockFileData = new Blob(['test data'], { type: 'text/plain' });
+
+    mockDownloadIngestionFlowFile.mockResolvedValueOnce({
+      data: mockFileData,
+      headers: {}
+    } as unknown as AxiosResponse);
+
+    mockExtractFilename.mockReturnValueOnce(null);
+
+    const result = await downloadIngestionFlowFile(123, 456);
+
+    expect(mockExtractFilename).toHaveBeenCalledWith('');
+    expect(result).toEqual({
+      data: mockFileData,
+      fileName: 'file-456'
+    });
   });
 });

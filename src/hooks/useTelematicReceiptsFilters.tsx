@@ -27,7 +27,7 @@ export const useTelematicReceiptsFilters = ({
       {
         type: COMPONENT_TYPE.textField,
         label: t('commons.searchIUV'),
-        icon: <SearchIcon />,
+        adornment: <SearchIcon />,
         gridWidth: 3,
         id: 'iuv'
       },
