@@ -1,7 +1,7 @@
 import { FieldValues, Path } from 'react-hook-form';
 import { BeneficiaryValidationContext as BaseValidationContext } from '../models/paymentTypes';
 
-// Helper per costruire un path tipizzato per i campi del form
+// Helper to build a typed path for form fields
 export function buildBeneficiaryFieldPath<
   T extends FieldValues,
   K extends string
@@ -9,6 +9,6 @@ export function buildBeneficiaryFieldPath<
   return `${fieldNamePrefix}.${index}.${field}` as Path<T>;
 }
 
-// Tipo personalizzato per la validazione dei beneficiari, ora basato sul tipo in paymentTypes
+// Custom type for beneficiary validation, now based on the type in paymentTypes
 export type BeneficiaryValidationContext<T extends FieldValues> =
   BaseValidationContext<T>;
