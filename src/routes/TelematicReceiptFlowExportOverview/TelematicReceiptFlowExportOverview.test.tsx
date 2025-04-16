@@ -1,11 +1,12 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useNavigate, generatePath } from 'react-router-dom';
-import { getExportFiles } from '../../api/exportFiles';
+import { downloadExportFile, getExportFiles } from '../../api/exportFiles';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../App';
 import TelematicReceiptFlowExportOverview from './TelematicReceiptFlowExportOverview';
 import { ExportFileTypeEnum } from '../../../generated/apiClient';
+import { downloadBlob } from '../../utils/download';
 
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal()),
@@ -17,6 +18,20 @@ vi.mock('../../api/exportFiles', () => ({
   getExportFiles: vi
     .fn()
     .mockReturnValue({ data: { content: [] }, isLoading: false })
+}));
+
+vi.mock('../../api/exportFiles', () => ({
+  getExportFiles: vi
+    .fn()
+    .mockReturnValue({ data: { content: [] }, isLoading: false }),
+  downloadExportFile: vi.fn().mockResolvedValue({
+    data: new Blob(['test data']),
+    fileName: 'test_file.zip'
+  })
+}));
+
+vi.mock('../../utils/download', () => ({
+  downloadBlob: vi.fn()
 }));
 
 describe('TelematicReceiptFlowExportOverview', () => {
@@ -363,6 +378,60 @@ describe('TelematicReceiptFlowExportOverview', () => {
       expect(container.querySelector('.MuiDataGrid-overlay')).toHaveTextContent(
         'No rows'
       );
+    });
+  });
+
+  it('calls downloadExportFile and downloadBlob when download button is clicked', async () => {
+    render(<TelematicReceiptFlowExportOverview />);
+
+    const downloadButtons = await screen.findAllByTestId('download-button');
+    expect(downloadButtons.length).toBeGreaterThan(0);
+
+    fireEvent.click(downloadButtons[0]);
+
+    await waitFor(() => {
+      expect(downloadExportFile).toHaveBeenCalledWith(123, expect.any(Number));
+    });
+
+    await waitFor(() => {
+      expect(downloadBlob).toHaveBeenCalledWith(
+        expect.any(Blob),
+        expect.any(String)
+      );
+    });
+  });
+
+  it('only shows download button for COMPLETED status', async () => {
+    render(<TelematicReceiptFlowExportOverview />);
+
+    await waitFor(() => {
+      const rows = screen.getAllByRole('row');
+
+      const completedRow = mockData.content.find(
+        (row) => row.status === 'COMPLETED'
+      );
+      expect(completedRow).toBeDefined();
+
+      const completedRowElement = Array.from(rows).find((row) =>
+        row.textContent?.includes(completedRow!.fileName)
+      );
+
+      expect(
+        completedRowElement?.querySelector('[data-testid="download-button"]')
+      ).toBeDefined();
+
+      const nonCompletedRow = mockData.content.find(
+        (row) => row.status !== 'COMPLETED'
+      );
+      expect(nonCompletedRow).toBeDefined();
+
+      const nonCompletedRowElement = Array.from(rows).find((row) =>
+        row.textContent?.includes(nonCompletedRow!.fileName)
+      );
+
+      expect(
+        nonCompletedRowElement?.querySelector('[data-testid="download-button"]')
+      ).toBeNull();
     });
   });
 });

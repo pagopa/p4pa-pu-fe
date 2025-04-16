@@ -78,17 +78,22 @@ export const uploadIngestionFlowFile = ({
 export const downloadIngestionFlowFile = async (
   organizationId: number,
   ingestionFlowFileId: number
-): Promise<{ data: Blob; fileName: string }> => {
-  const response =
-    await utils.fileshareClient.organization.downloadIngestionFlowFile(
-      organizationId,
-      ingestionFlowFileId,
-      { format: 'blob' }
-    );
+): Promise<{ data: Blob; fileName: string } | null> => {
+  try {
+    const response =
+      await utils.fileshareClient.organization.downloadIngestionFlowFile(
+        organizationId,
+        ingestionFlowFileId,
+        { format: 'blob' }
+      );
 
-  const contentDisposition = response.headers['content-disposition'] || '';
-  const fileName =
-    extractFilename(contentDisposition) || `file-${ingestionFlowFileId}`;
+    const contentDisposition = response.headers['content-disposition'] || '';
+    const fileName =
+      extractFilename(contentDisposition) || `file-${ingestionFlowFileId}`;
 
-  return { data: response.data, fileName };
+    return { data: response.data, fileName };
+  } catch (error) {
+    console.error('Error downloading ingestion flow file:', error);
+    return null;
+  }
 };

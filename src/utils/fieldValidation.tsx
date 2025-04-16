@@ -252,6 +252,37 @@ export const createBeneficiaryValidators = (
   };
 };
 
+/**
+ * Crea le regole di validazione per un campo data
+ * @param t - Funzione di traduzione
+ * @param isRequired - Flag che indica se il campo è obbligatorio
+ * @param requiredMessage - Messaggio di errore per il campo obbligatorio
+ * @returns Oggetto con regole di validazione per react-hook-form
+ */
+export const createDateValidator = (
+  t: (key: string) => string,
+  isRequired: boolean,
+  requiredMessage?: string
+) => {
+  return {
+    required: isRequired ? requiredMessage || t('commons.required') : false,
+    validate: (value: unknown) => {
+      // Se la data non è obbligatoria e non è specificata, passa la validazione
+      if (!isRequired && !value) {
+        return true;
+      }
+
+      // Verifica che il valore sia un oggetto Date valido
+      const timestamp = value ? new Date(value as Date).getTime() : NaN;
+      if (!isNaN(timestamp)) {
+        return true;
+      }
+
+      return t('debtPositionCreateWizard.step3.dueDate.invalid');
+    }
+  };
+};
+
 // functions per la validazione dei campi
 export const createValidators = (
   t: (key: string) => string,

@@ -11,7 +11,6 @@ import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
 import useDebtTypesFilters from '../../hooks/useDebtTypesFilters';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { setLoading } from '../../store/AppStateStore';
 import { PageRoutes } from '../../App';
 
 export const DebtTypes = () => {
@@ -48,12 +47,7 @@ export const DebtTypes = () => {
     }
   });
 
-  const { data, isLoading } = getDebtPositionTypeWithCount(
-    organizationId,
-    appliedFilters
-  );
-
-  setLoading(isLoading);
+  const { data } = getDebtPositionTypeWithCount(organizationId, appliedFilters);
 
   return (
     <>
@@ -123,7 +117,6 @@ export const DebtTypes = () => {
             totalPages: data?.totalPages || 0,
             size: appliedFilters.size
           }}
-          isLoading={isLoading}
         />
       </Box>
     </>

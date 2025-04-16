@@ -12,7 +12,7 @@ import {
   BeneficiaryPaymentFields,
   BeneficiaryClassificationFields
 } from './BeneficiaryFieldGroup';
-import { BeneficiaryValidationContext } from '../../../utils/BeneficiaryFieldHelpers';
+import { BeneficiaryValidationContext } from '../../../../utils/BeneficiaryFieldHelpers';
 
 // Mock delle dipendenze
 vi.mock('./BeneficiaryFieldComponents', () => ({

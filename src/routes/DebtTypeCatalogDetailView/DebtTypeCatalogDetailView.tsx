@@ -1,4 +1,4 @@
-import { Box, Button, CircularProgress, Stack } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
@@ -31,17 +31,17 @@ export const DebtTypeCatalogDetailView = () => {
     console.error('debtPositionTypeId is not a number');
   }
 
-  const { data, isLoading } = getDebtPositionTypeDetail({
+  const { data } = getDebtPositionTypeDetail({
     organizationId,
     debtPositionTypeId: Number(debtPositionTypeId)
   });
 
   useEffect(() => {
-    if (!isLoading && data) {
+    if (data) {
       const sections = getAccordionSectionsConfig(data, t) || [];
       setAccordionSections(sections);
     }
-  }, [data, isLoading]);
+  }, [data]);
 
   const actionButtons = [
     {
@@ -75,45 +75,42 @@ export const DebtTypeCatalogDetailView = () => {
 
   return (
     <>
-      {!isLoading && (
-        <>
-          <TitleComponent
-            title={data?.description ?? '-'}
-            description={t('debtTypeCatalogDetail.description')}
-            callToAction={actionButtons}
-          />
-          <Box mt={3}>
-            <Stack spacing={2}>
-              {accordionSections?.map((section, index) => (
-                <DetailAccordion
-                  key={section.configType}
-                  idTitle={++index}
-                  title={section.title}
-                  description={section.description}
-                  sections={section.sections}
-                />
-              ))}
-            </Stack>
-          </Box>
-          <Box mt={3} display="flex" justifyContent="flex-end">
-            <Stack spacing={2} direction="row">
-              {actionButtons.map((button, index) => (
-                <Button
-                  size="large"
-                  key={index}
-                  startIcon={button.icon}
-                  color={button.color}
-                  variant={button.variant}
-                  onClick={button.onActionClick}
-                >
-                  {button.buttonText}
-                </Button>
-              ))}
-            </Stack>
-          </Box>
-        </>
-      )}
-      {isLoading && <CircularProgress />}
+      <>
+        <TitleComponent
+          title={data?.description ?? '-'}
+          description={t('debtTypeCatalogDetail.description')}
+          callToAction={actionButtons}
+        />
+        <Box mt={3}>
+          <Stack spacing={2}>
+            {accordionSections?.map((section, index) => (
+              <DetailAccordion
+                key={section.configType}
+                idTitle={++index}
+                title={section.title}
+                description={section.description}
+                sections={section.sections}
+              />
+            ))}
+          </Stack>
+        </Box>
+        <Box mt={3} display="flex" justifyContent="flex-end">
+          <Stack spacing={2} direction="row">
+            {actionButtons.map((button, index) => (
+              <Button
+                size="large"
+                key={index}
+                startIcon={button.icon}
+                color={button.color}
+                variant={button.variant}
+                onClick={button.onActionClick}
+              >
+                {button.buttonText}
+              </Button>
+            ))}
+          </Stack>
+        </Box>
+      </>
 
       <GenericDialog
         data-testid="confirm-dialog"

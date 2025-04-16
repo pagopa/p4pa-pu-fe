@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import user from '../api/user';
 import { useStore } from '../store/GlobalStore';
-import { setLoading } from '../store/AppStateStore';
 import { setUserInfo } from '../store/UserInfoStore';
 
 export const useUserInfo = () => {
@@ -9,14 +8,12 @@ export const useUserInfo = () => {
     state: { userInfo }
   } = useStore();
 
-  const { data, isLoading, isError, isSuccess, error } = user.getUserInfo({
+  const { data, isError, isSuccess, error } = user.getUserInfo({
     enabled: !userInfo
   });
 
   useEffect(() => {
     if (!userInfo) {
-      setLoading(isLoading);
-
       if (isSuccess && data) {
         setUserInfo(data);
       }
@@ -26,7 +23,7 @@ export const useUserInfo = () => {
         console.error('Failed to fetch user info', error);
       }
     }
-  }, [data, isLoading, isError, isSuccess]);
+  }, [data, isError, isSuccess]);
 
   return userInfo;
 };

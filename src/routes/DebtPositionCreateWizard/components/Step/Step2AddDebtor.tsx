@@ -1,24 +1,24 @@
 import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller } from 'react-hook-form';
-import { MenuItem, TextField, Typography } from '@mui/material';
+import { Grid, MenuItem, TextField, Typography } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
-import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
-import SectionBox from '../../../components/Wizard/SectionBox';
-import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
-import { createValidators } from '../../../utils/fieldValidation';
+import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
+import SectionBox from '../../../../components/Wizard/SectionBox';
+import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
+import { createValidators } from '../../../../utils/fieldValidation';
 
 // Tipo che definisce la struttura dati dello Step 2 del wizard.
 export type Step2Data = {
   subjectType: { value: string; readonly: boolean }; // Tipo soggetto (fisica/giuridica)
   taxCode: { value: string; readonly: boolean }; // Codice fiscale o partita IVA
   fullName: { value: string; readonly: boolean }; // Nome completo
-  // address: { value: string; readonly: boolean }; // Indirizzo
-  // civicNumber: { value: string; readonly: boolean }; // Numero civico
-  // zipCode: { value: string; readonly: boolean }; // CAP
-  // country: { value: string; readonly: boolean }; // Nazione
-  // province: { value: string; readonly: boolean }; // Provincia
-  // city: { value: string; readonly: boolean }; // Città
+  address: { value: string; readonly: boolean }; // Indirizzo
+  civicNumber: { value: string; readonly: boolean }; // Numero civico
+  zipCode: { value: string; readonly: boolean }; // CAP
+  country: { value: string; readonly: boolean }; // Nazione
+  province: { value: string; readonly: boolean }; // Provincia
+  city: { value: string; readonly: boolean }; // Città
 };
 
 type Step2DataField = keyof Step2Data;
@@ -36,6 +36,33 @@ type Props = {
 
 const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   const { t } = useTranslation();
+
+  // Inizializza i campi mancanti nei dati
+  useEffect(() => {
+    const fieldsToInitialize: Array<Step2DataField> = [
+      'address',
+      'civicNumber',
+      'zipCode',
+      'country',
+      'province',
+      'city'
+    ];
+
+    let hasUpdates = false;
+    const updatedData = { ...data };
+
+    fieldsToInitialize.forEach((field) => {
+      if (!updatedData[field]) {
+        updatedData[field] = { value: '', readonly: false };
+        hasUpdates = true;
+      }
+    });
+
+    if (hasUpdates) {
+      setData(updatedData);
+    }
+  }, [data, setData]);
+
   const {
     handleSubmit, // Funzione per gestire la sottomissione del form
     watch, // Funzione per osservare i valori dei campi
@@ -51,8 +78,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
 
   // Osservazione di campi specifici per reagire ai loro cambiamenti
   const subjectTypeValue = watch('subjectType.value') || '';
-  // const countryValue = watch('country.value') || '';
-  // const provinceValue = watch('province.value') || '';
+  const countryValue = watch('country.value') || '';
 
   // Effetto che rivalida il codice fiscale/partita IVA e fullName e ragione socialequando cambia il tipo di soggetto
   useEffect(() => {
@@ -70,16 +96,16 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   // Funzione per validare il CAP.
   // Per l'Italia deve essere un numero di 5 cifre.
   // Per altri paesi è accettato qualsiasi valore non vuoto.
-  // const validateZipCode = (zipCode: string) => {
-  //   if (!zipCode) return t('commons.required');
-  //   if (countryValue === 'IT' || !countryValue) {
-  //     return (
-  //       /^\d{5}$/.test(zipCode) ||
-  //       t('debtPositionCreateWizard.step2.zipCode.error')
-  //     );
-  //   }
-  //   return true;
-  // };
+  const validateZipCode = (zipCode: string) => {
+    if (!zipCode) return t('commons.required');
+    if (countryValue === 'IT' || !countryValue) {
+      return (
+        /^\d{5}$/.test(zipCode) ||
+        t('debtPositionCreateWizard.step2.zipCode.error')
+      );
+    }
+    return true;
+  };
 
   // Funzione per gestire il cambiamento di un qualsiasi campo del form.
   // Aggiorna il valore e attiva la validazione se il form è già stato inviato.
@@ -115,8 +141,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     onNext(); // Passa allo step successivo
   };
 
-  // Verifica se tutti i campi obbligatori sono compilati.
-  // Usata per abilitare/disabilitare il pulsante "Avanti".
   // const allRequiredFieldsFilled = (): boolean => {
   //   // Lista dei campi obbligatori
   //   const requiredFields: Array<NestedFieldName> = [
@@ -125,7 +149,10 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   //     'fullName.value',
   //     'address.value',
   //     'civicNumber.value',
-  //     'zipCode.value'
+  //     'zipCode.value',
+  //     'country.value',
+  //     'province.value',
+  //     'city.value'
   //   ];
 
   //   // Verifica che tutti i campi obbligatori abbiano un valore
@@ -279,151 +306,191 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
           />
 
           {/* Grid per indirizzo, numero civico e CAP */}
-          {/* <Grid container spacing={2} mt={1}> */}
-          {/* Campo per l'indirizzo */}
-          {/* <Grid item xs={12} sm={6} md={6}>
-                <Controller
-                  name="address.value"
-                  control={control}
-                  rules={{
-                    required: t(
-                      'debtPositionCreateWizard.step2.address.required'
-                    )
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label={t('debtPositionCreateWizard.step2.address.label')}
-                      fullWidth
-                      required
-                      disabled={data.address.readonly}
-                      error={isSubmitted && !!errors.address?.value}
-                      helperText={isSubmitted && errors.address?.value?.message}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(value); // sincronizza RHF
-                        handleFieldChange('address.value', value); // aggiorna stato wizard
-                      }}
-                    />
-                  )}
-                />
-              </Grid> */}
+          <Grid container spacing={2} mt={1}>
+            {/* Campo per l'indirizzo */}
+            <Grid item xs={12} sm={6} md={6}>
+              <Controller
+                name="address.value"
+                control={control}
+                rules={{
+                  required: t('debtPositionCreateWizard.step2.address.required')
+                }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label={t('debtPositionCreateWizard.step2.address.label')}
+                    fullWidth
+                    required
+                    disabled={data.address?.readonly || false}
+                    error={isSubmitted && !!errors.address?.value}
+                    helperText={isSubmitted && errors.address?.value?.message}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value); // sincronizza RHF
+                      handleFieldChange('address.value', value); // aggiorna stato wizard
+                    }}
+                  />
+                )}
+              />
+            </Grid>
 
-          {/* Campo per il numero civico */}
-          {/* <Grid item xs={6} sm={3} md={3}>
-                <Controller
-                  name="civicNumber.value"
-                  control={control}
-                  rules={{
-                    required: t(
-                      'debtPositionCreateWizard.step2.civicNumber.required'
-                    )
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label={t(
-                        'debtPositionCreateWizard.step2.civicNumber.label'
-                      )}
-                      fullWidth
-                      required
-                      disabled={data.civicNumber.readonly}
-                      error={isSubmitted && !!errors.civicNumber?.value}
-                      helperText={
-                        isSubmitted && errors.civicNumber?.value?.message
-                      }
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(value); // sincronizza RHF
-                        handleFieldChange('civicNumber.value', value); // aggiorna stato wizard
-                      }}
-                    />
-                  )}
-                />
-              </Grid> */}
+            {/* Campo per il numero civico */}
+            <Grid item xs={6} sm={3} md={3}>
+              <Controller
+                name="civicNumber.value"
+                control={control}
+                rules={{
+                  required: t(
+                    'debtPositionCreateWizard.step2.civicNumber.required'
+                  )
+                }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label={t(
+                      'debtPositionCreateWizard.step2.civicNumber.label'
+                    )}
+                    fullWidth
+                    required
+                    disabled={data.civicNumber?.readonly || false}
+                    error={isSubmitted && !!errors.civicNumber?.value}
+                    helperText={
+                      isSubmitted && errors.civicNumber?.value?.message
+                    }
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value); // sincronizza RHF
+                      handleFieldChange('civicNumber.value', value); // aggiorna stato wizard
+                    }}
+                  />
+                )}
+              />
+            </Grid>
 
-          {/* Campo per il CAP con validazione specifica */}
-          {/* <Grid item xs={6} sm={3} md={3}>
-                <Controller
-                  name="zipCode.value"
-                  control={control}
-                  rules={{
-                    required: t(
-                      'debtPositionCreateWizard.step2.zipCode.required'
-                    ),
-                    validate: validateZipCode
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label={t('debtPositionCreateWizard.step2.zipCode.label')}
-                      fullWidth
-                      required
-                      disabled={data.zipCode.readonly}
-                      error={isSubmitted && !!errors.zipCode?.value}
-                      helperText={isSubmitted && errors.zipCode?.value?.message}
-                      onChange={(e) => {
-                        const value = e.target.value;
-                        field.onChange(value); // sincronizza RHF
-                        handleFieldChange('zipCode.value', value); // aggiorna stato wizard
-                      }}
-                      inputProps={{ maxLength: 5 }} // Limita a 5 caratteri (lunghezza CAP italiano)
-                    />
-                  )}
-                />
-              </Grid> */}
-          {/* </Grid> */}
+            {/* Campo per il CAP con validazione specifica */}
+            <Grid item xs={6} sm={3} md={3}>
+              <Controller
+                name="zipCode.value"
+                control={control}
+                rules={{
+                  required: t(
+                    'debtPositionCreateWizard.step2.zipCode.required'
+                  ),
+                  validate: validateZipCode
+                }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label={t('debtPositionCreateWizard.step2.zipCode.label')}
+                    fullWidth
+                    required
+                    disabled={data.zipCode?.readonly || false}
+                    error={isSubmitted && !!errors.zipCode?.value}
+                    helperText={isSubmitted && errors.zipCode?.value?.message}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value); // sincronizza RHF
+                      handleFieldChange('zipCode.value', value); // aggiorna stato wizard
+                    }}
+                    inputProps={{ maxLength: 5 }} // Limita a 5 caratteri (lunghezza CAP italiano)
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
 
           {/* Grid per nazione, provincia e città */}
-          {/* <Grid container spacing={2} mt={1}>
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  label={t('debtPositionCreateWizard.step2.country.label')}
-                  select
-                  fullWidth
-                  disabled={data.country.readonly}
-                  {...register('country.value')}
-                  value={countryValue} // Usa il valore osservato
-                  onChange={(e) => {
-                    handleFieldChange('country.value', e.target.value);
-                  }}
-                >
-                  <MenuItem value="IT">Italia</MenuItem>
-                  <MenuItem value="FR">Francia</MenuItem>
-                  <MenuItem value="DE">Germania</MenuItem>
-                </TextField>
-              </Grid>
+          <Grid container spacing={2} mt={1}>
+            <Grid item xs={12} sm={4}>
+              <Controller
+                name="country.value"
+                control={control}
+                rules={{
+                  required: t('debtPositionCreateWizard.step2.country.required')
+                }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label={t('debtPositionCreateWizard.step2.country.label')}
+                    select
+                    fullWidth
+                    required
+                    disabled={data.country?.readonly || false}
+                    error={isSubmitted && !!errors.country?.value}
+                    helperText={isSubmitted && errors.country?.value?.message}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value);
+                      handleFieldChange('country.value', value);
+                    }}
+                  >
+                    <MenuItem value="IT">Italia</MenuItem>
+                    <MenuItem value="FR">Francia</MenuItem>
+                    <MenuItem value="DE">Germania</MenuItem>
+                  </TextField>
+                )}
+              />
+            </Grid>
 
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  label={t('debtPositionCreateWizard.step2.province.label')}
-                  select
-                  fullWidth
-                  disabled={data.province.readonly}
-                  {...register('province.value')}
-                  value={provinceValue} // Usa il valore osservato
-                  onChange={(e) => {
-                    handleFieldChange('province.value', e.target.value);
-                  }}
-                >
-                  <MenuItem value="MI">MI</MenuItem>
-                  <MenuItem value="RM">RM</MenuItem>
-                  <MenuItem value="TO">TO</MenuItem>
-                </TextField>
-              </Grid>
+            <Grid item xs={12} sm={4}>
+              <Controller
+                name="province.value"
+                control={control}
+                rules={{
+                  required: t(
+                    'debtPositionCreateWizard.step2.province.required'
+                  )
+                }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label={t('debtPositionCreateWizard.step2.province.label')}
+                    select
+                    fullWidth
+                    required
+                    disabled={data.province?.readonly || false}
+                    error={isSubmitted && !!errors.province?.value}
+                    helperText={isSubmitted && errors.province?.value?.message}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value);
+                      handleFieldChange('province.value', value);
+                    }}
+                  >
+                    <MenuItem value="MI">MI</MenuItem>
+                    <MenuItem value="RM">RM</MenuItem>
+                    <MenuItem value="TO">TO</MenuItem>
+                  </TextField>
+                )}
+              />
+            </Grid>
 
-              <Grid item xs={12} sm={4}>
-                <TextField
-                  label={t('debtPositionCreateWizard.step2.city.label')}
-                  fullWidth
-                  disabled={data.city.readonly}
-                  {...register('city.value')}
-                  onChange={(e) => {
-                    handleFieldChange('city.value', e.target.value);
-                  }}
-                />
-              </Grid>
-            </Grid> */}
+            <Grid item xs={12} sm={4}>
+              <Controller
+                name="city.value"
+                control={control}
+                rules={{
+                  required: t('debtPositionCreateWizard.step2.city.required')
+                }}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    label={t('debtPositionCreateWizard.step2.city.label')}
+                    fullWidth
+                    required
+                    disabled={data.city?.readonly || false}
+                    error={isSubmitted && !!errors.city?.value}
+                    helperText={isSubmitted && errors.city?.value?.message}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      field.onChange(value);
+                      handleFieldChange('city.value', value);
+                    }}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
 
           {/* Pulsanti per navigare nel wizard */}
         </SectionBox>

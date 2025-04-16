@@ -68,11 +68,18 @@ const ImportFlowOverview = ({
   const { data } = getIngestionFlowFiles(organizationId, appliedFilters);
 
   const handleDownloadFile = async (ingestionFlowFileId: number) => {
-    //TODO: handle error
-    const { data, fileName } = await downloadIngestionFlowFile(
+    const result = await downloadIngestionFlowFile(
       organizationId,
       ingestionFlowFileId
     );
+
+    //TODO: handle error
+    if (!result) {
+      console.error('Failed to download ingestion flow file');
+      return;
+    }
+
+    const { data, fileName } = result;
     downloadBlob(data, fileName);
   };
 

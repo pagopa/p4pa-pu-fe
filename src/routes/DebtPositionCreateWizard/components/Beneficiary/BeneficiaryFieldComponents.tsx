@@ -19,7 +19,7 @@ import {
   getFieldErrorMessage,
   shouldSkipValidation,
   buildFieldPath
-} from '../../../utils/beneficiaryValidation';
+} from '../../../../utils/beneficiaryValidation';
 
 // Timer per debounce della validazione
 let ibanValidationTimer: ReturnType<typeof setTimeout> | null = null;

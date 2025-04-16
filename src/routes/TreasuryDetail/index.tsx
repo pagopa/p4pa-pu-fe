@@ -1,5 +1,5 @@
 import { Download } from '@mui/icons-material';
-import { CircularProgress, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useLoaderData } from 'react-router-dom';
 import { useStore } from '../../store/GlobalStore';
@@ -17,7 +17,7 @@ export const TreasuryDetail = () => {
   const id = useLoaderData();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  const { data, isLoading } = getTreasuryDetail(organizationId, id);
+  const { data } = getTreasuryDetail(organizationId, id);
 
   const summaryData: Array<DetailData> = [
     {
@@ -80,40 +80,34 @@ export const TreasuryDetail = () => {
 
   return (
     <>
-      {!isLoading && (
-        <>
-          <TitleComponent
-            title={t('treasury.billDetail')}
-            callToAction={[
-              {
-                icon: <Download />,
-                variant: 'contained',
-                buttonText: t('commons.files.download'),
-                onActionClick: () => console.log('download')
-              }
-            ]}
-          />
+      <TitleComponent
+        title={t('treasury.billDetail')}
+        callToAction={[
           {
-            <Grid container spacing={3}>
-              <Grid item md={12}>
-                <DetailContainer
-                  sections={[
-                    {
-                      title: {
-                        label: t('commons.summary'),
-                        variant: 'overline'
-                      },
-                      data: summaryData
-                    }
-                  ]}
-                />
-              </Grid>
-            </Grid>
+            icon: <Download />,
+            variant: 'contained',
+            buttonText: t('commons.files.download'),
+            onActionClick: () => console.log('download')
           }
-        </>
-      )}
-
-      {isLoading && <CircularProgress></CircularProgress>}
+        ]}
+      />
+      {
+        <Grid container spacing={3}>
+          <Grid item md={12}>
+            <DetailContainer
+              sections={[
+                {
+                  title: {
+                    label: t('commons.summary'),
+                    variant: 'overline'
+                  },
+                  data: summaryData
+                }
+              ]}
+            />
+          </Grid>
+        </Grid>
+      }
     </>
   );
 };

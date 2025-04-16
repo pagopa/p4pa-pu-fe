@@ -336,7 +336,8 @@
         "required": "Il campo indirizzo è obbligatorio"
       },
       "city": {
-        "label": "Località"
+        "label": "Località",
+        "required": "Il campo località è obbligatorio"
       },
       "civicNumber": {
         "label": "Civico",
@@ -347,7 +348,8 @@
         "required": "Il campo ragione sociale è obbligatorio"
       },
       "country": {
-        "label": "Nazione"
+        "label": "Nazione",
+        "required": "Il campo nazione è obbligatorio"
       },
       "fiscalData": "DATI FISCALI",
       "fullName": {
@@ -357,7 +359,8 @@
       },
       "personalData": "DATI PERSONALI",
       "province": {
-        "label": "Provincia"
+        "label": "Provincia",
+        "required": "Il campo provincia è obbligatorio"
       },
       "subjectType": {
         "label": "Tipo di soggetto",
@@ -394,6 +397,7 @@
     },
     "step3": {
       "amount": {
+        "installmentHelperText": "Calcolato sulla base delle rate",
         "label": "Importo",
         "positive": "Il campo importo deve essere maggiore di 0",
         "required": "Il campo importo è obbligatorio",
@@ -437,10 +441,27 @@
       },
       "dueDate": {
         "label": "Data scadenza",
-        "required": "Il campo data scadenza è obbligatorio"
+        "required": "Il campo data scadenza è obbligatorio",
+        "invalid": "La data di scadenza non è valida o è incompleta"
       },
       "isMultibeneficiary": {
         "label": "Altri beneficiari"
+      },
+      "installments": {
+        "addInstallment": "Aggiungi rata",
+        "amount": {
+          "label": "Importo",
+          "required": "Il campo importo è obbligatorio"
+        },
+        "dueDate": {
+          "label": "Data scadenza",
+          "required": "Il campo data scadenza è obbligatorio"
+        },
+        "installment": "RATA",
+        "maxInstallmentsReached": "Hai raggiunto il numero massimo di rate (12)",
+        "minInstallmentsRequired": "Sono richieste almeno 2 rate",
+        "otherBeneficiaries": "Altri beneficiari",
+        "title": "Configurazione rate"
       },
       "paymentObject": {
         "label": "Oggetto pagamento",
@@ -593,7 +614,7 @@
   "debtTypeCreateSuccess": {
     "backToStart": "Torna alla sezione",
     "description": "La trovi nella sezione Catalogo Tipi dovuti, dove puoi modificarlo in qualsiasi momento.",
-    "title": "Il tipo dovuto ‘{{paymentObject}}’ è stato creato!"
+    "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
   "debtTypes": {
     "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",

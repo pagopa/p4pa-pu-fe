@@ -18,8 +18,9 @@ import {
   ExportFileStatus,
   ExportFileTypeEnum
 } from '../../../generated/apiClient';
-import { getExportFiles } from '../../api/exportFiles';
+import { downloadExportFile, getExportFiles } from '../../api/exportFiles';
 import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
+import { downloadBlob } from '../../utils/download';
 
 const TelematicReceiptFlowExportOverview = () => {
   const theme = useTheme();
@@ -46,6 +47,19 @@ const TelematicReceiptFlowExportOverview = () => {
 
   const { data, isLoading } = getExportFiles(organizationId, appliedFilters);
 
+  const handleDownloadFile = async (exportFileId: number) => {
+    const result = await downloadExportFile(organizationId, exportFileId);
+
+    //TODO: handle error
+    if (!result) {
+      console.error('Failed to download file');
+      return;
+    }
+
+    const { data, fileName } = result;
+    downloadBlob(data, fileName);
+  };
+
   const renderActionCell = (params: GridRenderCellParams) => {
     const { exportFileId, status } = params.row;
 
@@ -54,7 +68,7 @@ const TelematicReceiptFlowExportOverview = () => {
         <IconButton
           color="primary"
           size="small"
-          onClick={() => console.log(`Download: ${exportFileId}`)}
+          onClick={() => handleDownloadFile(exportFileId)}
           data-testid="download-button"
         >
           <DownloadIcon />
