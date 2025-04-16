@@ -30,7 +30,6 @@ export const setupInterceptors = (client: Client) => {
         navigation.setAuthErrorState(true);
 
         utils.storage.clear();
-        console.log('storage pulito');
         navigation.navigateToLoggedOut();
 
         return Promise.resolve();
