@@ -1,9 +1,11 @@
 import { Box, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
+import config from '../../utils/config';
 
 export const LoggedOut = () => {
   const { t } = useTranslation();
+  const loginUrl = config.loginUrl;
 
   return (
     <>
@@ -25,7 +27,9 @@ export const LoggedOut = () => {
         <Typography variant="h6" color="textSecondary" gutterBottom>
           {t('utilityPages.loggedout.subtitle')}
         </Typography>
-        <Link to={'/login'}>Login</Link>
+        <Link to={loginUrl || '/login'} replace>
+          Login
+        </Link>
       </Box>
     </>
   );
