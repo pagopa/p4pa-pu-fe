@@ -19,13 +19,26 @@ const getOrganizations = () => {
   return useQuery({
     queryKey: ['organizations'],
     queryFn: async () => {
-      const { data: organizations } =
-        await utils.apiClient.bff.getOrganizations();
-      if (organizations) {
-        parseAndLog(zodSchema.organizationDTOSchema, organizations[0]);
+      try {
+        const { data: organizations } =
+          await utils.apiClient.bff.getOrganizations();
+        if (organizations) {
+          parseAndLog(zodSchema.organizationDTOSchema, organizations[0]);
+        }
+        return organizations;
+      } catch (error) {
+        console.error('Failed to fetch organizations:', error);
+
+        // Reindirizza alla pagina di errore senza importare PageRoutes
+        if (typeof window !== 'undefined' && window.location) {
+          const deployPath = utils.config.deployPath || '';
+          window.location.replace(`${deployPath}/error`);
+        }
+
+        return null;
       }
-      return organizations;
-    }
+    },
+    retry: false
   });
 };
 

@@ -1,44 +1,74 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { createMock } from 'zodock';
-import * as schemas from '../../../generated/zod-schema';
-import utils from '..';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import {
+  OperatorRoleEnum,
+  OrganizationDTO
+} from '../../../generated/data-contracts';
 import { AxiosResponse } from 'axios';
-import loaders from '../loaders';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactNode } from 'react';
 import { renderHook, waitFor } from '../../__tests__/renderers';
+import utils from '../index';
+import loaders from '../loaders';
 
-const queryClient = new QueryClient();
-const wrapper = ({ children }: { children: ReactNode }) => (
-  <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
-);
+const getOrganizationsMock = vi.fn();
 
-describe('api loaders', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    queryClient.clear();
+beforeEach(() => {
+  vi.resetAllMocks();
+
+  vi.spyOn(utils.apiClient.bff, 'getOrganizations').mockImplementation(
+    getOrganizationsMock
+  );
+
+  Object.defineProperty(window, 'location', {
+    configurable: true,
+    value: { replace: vi.fn() }
   });
 
-  describe('Organizations API', () => {
-    it('should call getOrganizations obtaining a formal response', async () => {
-      const dataMock = [createMock(schemas.organizationDTOSchema.required())];
+  vi.spyOn(utils.config, 'deployPath', 'get').mockReturnValue(
+    '/piattaformaunitaria'
+  );
+});
 
-      const apiMock = vi
-        .spyOn(utils.apiClient.bff, 'getOrganizations')
-        .mockResolvedValue({
-          data: dataMock,
-          headers: {}
-        } as AxiosResponse);
+afterEach(() => {
+  vi.restoreAllMocks();
+});
 
-      const { result } = renderHook(() => loaders.getOrganizations(), {
-        wrapper
-      });
+describe('loaders', () => {
+  describe('getOrganizations', () => {
+    it('should fetch organizations successfully', async () => {
+      const mockOrganizations: Array<OrganizationDTO> = [
+        {
+          organizationId: 1,
+          ipaCode: 'IPA01',
+          orgName: 'Test Org',
+          operatorRole: OperatorRoleEnum.ROLE_ADMIN,
+          orgFiscalCode: '123456789'
+        }
+      ];
+
+      getOrganizationsMock.mockResolvedValueOnce({
+        data: mockOrganizations
+      } as AxiosResponse<Array<OrganizationDTO>>);
+
+      const { result } = renderHook(() => loaders.getOrganizations());
+
+      await waitFor(() => expect(result.current.isLoading).toBe(false));
+
+      expect(getOrganizationsMock).toHaveBeenCalledTimes(1);
+      expect(result.current.data).toEqual(mockOrganizations);
+      expect(window.location.replace).not.toHaveBeenCalled();
+    });
+
+    it('should redirect to error page when API call fails', async () => {
+      getOrganizationsMock.mockRejectedValueOnce(new Error('API Error'));
+
+      renderHook(() => loaders.getOrganizations());
 
       await waitFor(() => {
-        expect(apiMock).toHaveBeenCalled();
-        expect(result.current.isSuccess).toBeTruthy();
-        expect(result.current.data).toEqual(dataMock);
+        expect(window.location.replace).toHaveBeenCalledWith(
+          '/piattaformaunitaria/error'
+        );
       });
+
+      expect(getOrganizationsMock).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -731,6 +731,10 @@
     "valueDate": "Data Valuta"
   },
   "utilityPages": {
+    "error": {
+      "subtitle": "Ti preghiamo di riprovare più tardi",
+      "title": "Si è verificato un errore durante l'accesso a Piattaforma Unitaria"
+    },
     "loggedout": {
       "subtitle": "Grazie per aver utilizzato Piattaforma Unitaria",
       "title": "Sei stato disconnesso dal sistema"
