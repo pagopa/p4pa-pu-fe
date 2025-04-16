@@ -5,11 +5,11 @@ import { FieldValues, Path } from 'react-hook-form';
 describe('BeneficiaryFieldHelpers', () => {
   describe('buildBeneficiaryFieldPath', () => {
     type TestFormValues = {
-      beneficiaries: {
+      beneficiaries: Array<{
         name: string;
         amount: number;
         fiscalCode: string;
-      }[];
+      }>;
     } & FieldValues;
 
     it('dovrebbe costruire correttamente il path per un campo', () => {
