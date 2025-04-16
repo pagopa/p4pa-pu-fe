@@ -10,8 +10,6 @@ function DebtPositionCreateWizardCompleted() {
   const navigate = useNavigate();
   const location = useLocation();
   const deployPath = config.deployPath;
-
-  // Recupera il titolo dinamico (tipo soggetto) passato come stato
   const paymentObject = location.state?.paymentObject || '';
 
   return (
