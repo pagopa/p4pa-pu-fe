@@ -83,6 +83,7 @@
     "enabled": "Abilitato",
     "executedBy": "Eseguito da",
     "exit": "Esci",
+    "exportedFlows": "Flussi esportati",
     "files": {
       "download": "Scarica",
       "downloadFlow": "Scarica flusso",
@@ -291,7 +292,6 @@
     "view": "Visualizza"
   },
   "conservation": {
-    "buttonReservationExport": "Prenota export",
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "exportFrom": "Esportati dal"
   },
@@ -621,6 +621,7 @@
     "searchDescription": "Codice per Descrizione"
   },
   "exportFlow": {
+    "buttonReservationExport": "Prenota export",
     "buttonConfirmReservation": "Prenota",
     "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
     "dueType": "Tipo di dovuto",
@@ -687,7 +688,6 @@
     "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
   },
   "telematicReceiptFlowExportOverview": {
-    "buttonReservationExport": "Prenota export",
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "exportFrom": "Esportati dal"
   },
