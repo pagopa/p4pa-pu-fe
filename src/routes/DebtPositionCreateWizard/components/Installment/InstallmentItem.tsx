@@ -1,98 +1,66 @@
-import React from 'react';
-import {
-  Box,
-  Typography,
-  TextField,
-  Grid,
-  IconButton,
-  InputAdornment,
-  FormControlLabel,
-  Switch
-} from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { Box, Grid, IconButton, Typography } from '@mui/material';
 import RemoveCircleOutlineIcon from '@mui/icons-material/RemoveCircleOutline';
 import {
-  Controller,
   Control,
+  FieldArrayWithId,
   FieldErrors,
   FieldValues,
   UseFormGetValues,
   UseFormSetValue,
   UseFormTrigger,
-  Path
+  Path,
+  FieldArrayPath
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { InstallmentValidators } from '../../../../hooks/useInstallmentManagement';
-import { moneyFormat } from '../../../../utils/formatters';
-import { createDateValidator } from '../../../../utils/fieldValidation';
+import { useInstallmentBeneficiaryManagement } from '../../../../hooks/useInstallmentBeneficiaryManagement';
+import AmountField from './AmountField';
+import DateField from './DateField';
+import BeneficiaryControl from './BeneficiaryControl';
 
-// Tipo per rappresentare gli errori di un campo specifico
-type FieldErrorValue = {
-  message?: string;
-  type?: string;
+/**
+ * Interface that defines the validation functions used in installments
+ * @typedef {Object} ValidationFunctions
+ * @property {Function} validateInstallmentAmount - Function to validate installment amount
+ * @property {Function} validateDueDate - Function to validate due date
+ */
+export type ValidationFunctions = {
+  validateInstallmentAmount: <T extends FieldValues>(
+    index: number,
+    trigger: UseFormTrigger<T>
+  ) => void;
+  validateDueDate: <T extends FieldValues>(
+    index: number,
+    trigger: UseFormTrigger<T>
+  ) => void;
 };
 
-// Tipo per gli errori di un array di campi per l'indice specificato
-type IndexedFieldErrors = Record<string, FieldErrorValue>;
-
+/**
+ * Props for the InstallmentItem component
+ * @typedef {Object} InstallmentItemProps
+ * @template T - Generic type extending FieldValues
+ */
 type InstallmentItemProps<T extends FieldValues> = {
   readonly index: number;
-  readonly field: Record<string, unknown>;
+  readonly field: FieldArrayWithId<T, FieldArrayPath<T>, 'id'>;
   readonly control: Control<T>;
   readonly errors: FieldErrors<T>;
   readonly isSubmitted: boolean;
-  readonly validators: InstallmentValidators;
+  readonly validators: ValidationFunctions;
   readonly fieldNamePrefix: string;
   readonly disabled?: boolean;
   readonly trigger: UseFormTrigger<T>;
   readonly getValues: UseFormGetValues<T>;
   readonly setValue: UseFormSetValue<T>;
   readonly onRemove?: (index: number) => void;
+  readonly flagMandatoryDueDate?: boolean;
 };
 
-// Funzione per gestire la modifica del campo importo
-function handleAmountChange<T extends FieldValues>(
-  e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  onChange: (...event: Array<unknown>) => void,
-  trigger: UseFormTrigger<T>,
-  fieldNamePrefix: string,
-  index: number
-) {
-  // Accetta solo numeri, punto e virgola
-  const filteredValue = e.target.value.replace(/[^0-9.,]/g, '');
-  // Converti virgola in punto per la gestione numerica interna
-  const normalizedValue = filteredValue.replace(',', '.');
-  onChange(normalizedValue);
-
-  // Triggerare la validazione per aggiornare il totale
-  setTimeout(() => {
-    trigger(`${fieldNamePrefix}.${index}.amount` as Path<T>);
-  }, 0);
-}
-
-// Funzione per gestire l'evento blur dell'importo
-function handleAmountBlur(
-  e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
-  onChange: (...event: Array<unknown>) => void,
-  onBlur: () => void
-) {
-  // Formatta il valore con due decimali quando il campo perde il focus
-  const value = e.target.value.replace(',', '.');
-  if (value && !isNaN(parseFloat(value))) {
-    const amountValue = parseFloat(value);
-    // Formatta l'importo usando moneyFormat e rimuovi il simbolo € per avere solo il numero
-    const formattedValue = moneyFormat(amountValue * 100, 2, 2)
-      .replace('€', '')
-      .trim();
-    onChange(formattedValue);
-  }
-  onBlur();
-}
-
 /**
- * Componente che rappresenta una singola rata
+ * Component to display and edit a single installment.
+ * Manages amount, due date and associated beneficiaries,
+ * with support for multi-beneficiary mode and reuse of beneficiaries from previous installments.
  */
-function InstallmentItem<T extends FieldValues>({
+const InstallmentItem = <T extends FieldValues>({
   index,
   control,
   errors,
@@ -101,56 +69,77 @@ function InstallmentItem<T extends FieldValues>({
   fieldNamePrefix,
   disabled = false,
   trigger,
-  onRemove
-}: InstallmentItemProps<T>) {
+  setValue,
+  getValues,
+  onRemove,
+  flagMandatoryDueDate = true
+}: InstallmentItemProps<T>) => {
   const { t } = useTranslation();
 
-  // Verifica se ci sono errori per questo campo
-  const hasError = (fieldName: string): boolean => {
-    if (!isSubmitted) return false;
+  // Use specialized hook for installments
+  const {
+    isMultibeneficiary,
+    toggleMultibeneficiary,
+    handleInstallmentAmountChange
+  } = useInstallmentBeneficiaryManagement<T>({
+    control,
+    index,
+    installmentsFieldNamePrefix: fieldNamePrefix,
+    isSubmitted,
+    getValues,
+    setValue,
+    trigger
+  });
 
-    // Ottieni gli errori per il fieldNamePrefix
-    const prefixErrors = errors[fieldNamePrefix as keyof typeof errors];
-    if (!prefixErrors) return false;
+  // Define paths for field names
+  const amountPath = `${fieldNamePrefix}.${index}.amount` as Path<T>;
+  const dueDatePath = `${fieldNamePrefix}.${index}.dueDate` as Path<T>;
 
-    // Ottieni gli errori per l'indice specifico, se esistono
-    const indexErrors = prefixErrors as unknown as Record<
-      number,
-      IndexedFieldErrors
-    >;
-    if (!indexErrors || !indexErrors[index]) return false;
+  // Typed access to errors
+  const fieldErrors = errors[fieldNamePrefix as keyof typeof errors];
+  const amountErrors =
+    fieldErrors && index in fieldErrors
+      ? (
+          fieldErrors as Record<
+            number,
+            Record<
+              string,
+              {
+                message?: string;
+                type?: string;
+              }
+            >
+          >
+        )[index]?.amount
+      : undefined;
+  const dueDateErrors =
+    fieldErrors && index in fieldErrors
+      ? (
+          fieldErrors as Record<
+            number,
+            Record<
+              string,
+              {
+                message?: string;
+                type?: string;
+              }
+            >
+          >
+        )[index]?.dueDate
+      : undefined;
 
-    // Verifica se esiste un errore per il campo specifico
-    return !!indexErrors[index][fieldName];
-  };
-
-  // Ottiene il messaggio di errore per questo campo
-  const getErrorMessage = (fieldName: string): string => {
-    if (!isSubmitted) return '';
-
-    // Ottieni gli errori per il fieldNamePrefix
-    const prefixErrors = errors[fieldNamePrefix as keyof typeof errors];
-    if (!prefixErrors) return '';
-
-    // Ottieni gli errori per l'indice specifico, se esistono
-    const indexErrors = prefixErrors as unknown as Record<
-      number,
-      IndexedFieldErrors
-    >;
-    if (!indexErrors || !indexErrors[index]) return '';
-
-    // Ottieni l'errore per il campo specifico
-    const error = indexErrors[index][fieldName];
-    return error?.message || '';
+  const handleRemove = () => {
+    if (onRemove) {
+      onRemove(index);
+    }
   };
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-      {/* Pulsante di rimozione posizionato a sinistra del box */}
       {onRemove && (
         <IconButton
           size="small"
-          onClick={() => onRemove(index)}
+          onClick={handleRemove}
           sx={{
             color: 'error.main',
             mr: 1,
@@ -181,136 +170,52 @@ function InstallmentItem<T extends FieldValues>({
             </Box>
           </Grid>
 
-          {/* Campo Importo */}
+          {/* Amount Field - Using extracted component */}
           <Grid item xs={12}>
-            <Controller
-              name={`${fieldNamePrefix}.${index}.amount` as Path<T>}
+            <AmountField<T>
               control={control}
-              rules={validators.amount}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  fullWidth
-                  size="small"
-                  label={t(
-                    'debtPositionCreateWizard.step3.installments.amount.label'
-                  )}
-                  required
-                  disabled={disabled}
-                  value={field.value || ''}
-                  InputProps={{
-                    startAdornment: (
-                      <InputAdornment position="start">€</InputAdornment>
-                    ),
-                    inputProps: {
-                      style: { textAlign: 'left' }
-                    }
-                  }}
-                  error={hasError('amount')}
-                  helperText={getErrorMessage('amount')}
-                  onChange={(e) =>
-                    handleAmountChange(
-                      e,
-                      field.onChange,
-                      trigger,
-                      fieldNamePrefix,
-                      index
-                    )
-                  }
-                  onBlur={(e) =>
-                    handleAmountBlur(e, field.onChange, field.onBlur)
-                  }
-                />
-              )}
+              amountPath={amountPath}
+              index={index}
+              disabled={disabled}
+              error={amountErrors}
+              validateInstallmentAmount={validators.validateInstallmentAmount}
+              trigger={trigger}
+              onAmountChange={handleInstallmentAmountChange}
             />
           </Grid>
 
-          {/* Campo Data Scadenza */}
+          {/* Due Date Field - Using extracted component */}
           <Grid item xs={12}>
-            <Controller
-              name={`${fieldNamePrefix}.${index}.dueDate` as Path<T>}
+            <DateField<T>
               control={control}
-              rules={createDateValidator(
-                t,
-                !!validators.dueDate.required,
-                validators.dueDate.required as string
-              )}
-              render={({ field: { onChange, value, ...field } }) => {
-                // Determina se il campo è obbligatorio dai validators
-                const isRequired = !!validators.dueDate.required;
-
-                return (
-                  <DatePicker
-                    {...field}
-                    value={value || null}
-                    label={t(
-                      'debtPositionCreateWizard.step3.installments.dueDate.label'
-                    )}
-                    disabled={disabled}
-                    minDate={new Date()}
-                    format="dd/MM/yyyy"
-                    slotProps={{
-                      textField: {
-                        fullWidth: true,
-                        required: isRequired,
-                        error: hasError('dueDate'),
-                        helperText: getErrorMessage('dueDate'),
-                        size: 'small'
-                      },
-                      actionBar: {
-                        actions: ['clear']
-                      },
-                      field: {
-                        clearable: true,
-                        onClear: () => onChange(null)
-                      }
-                    }}
-                    onChange={(date) => {
-                      onChange(date);
-                    }}
-                  />
-                );
-              }}
+              dueDatePath={dueDatePath}
+              index={index}
+              disabled={disabled}
+              error={dueDateErrors}
+              validateDueDate={validators.validateDueDate}
+              trigger={trigger}
+              flagMandatoryDueDate={flagMandatoryDueDate}
             />
           </Grid>
 
-          {/* Switch per altri beneficiari */}
-          <Grid item xs={12}>
-            <Controller
-              name={`${fieldNamePrefix}.${index}.isMultibeneficiary` as Path<T>}
-              control={control}
-              render={({ field }) => (
-                <FormControlLabel
-                  control={
-                    <Switch
-                      {...field}
-                      checked={!!field.value}
-                      disabled={disabled}
-                      onChange={(e) => {
-                        const value = e.target.checked;
-                        field.onChange(value);
-                      }}
-                    />
-                  }
-                  label={
-                    <Box display="flex" alignItems="center">
-                      <Typography variant="body2">
-                        {t(
-                          'debtPositionCreateWizard.step3.installments.otherBeneficiaries'
-                        )}
-                      </Typography>
-                    </Box>
-                  }
-                />
-              )}
-            />
-          </Grid>
-
-          {/* Qui in futuro verrà inserito il componente dei beneficiari per questa rata */}
+          {/* Beneficiary Controls - Using extracted component */}
+          <BeneficiaryControl<T>
+            index={index}
+            control={control}
+            errors={errors}
+            isSubmitted={isSubmitted}
+            fieldNamePrefix={fieldNamePrefix}
+            disabled={disabled}
+            getValues={getValues}
+            setValue={setValue}
+            trigger={trigger}
+            isMultibeneficiary={isMultibeneficiary}
+            toggleMultibeneficiary={toggleMultibeneficiary}
+          />
         </Grid>
       </Box>
     </Box>
   );
-}
+};
 
 export default InstallmentItem;

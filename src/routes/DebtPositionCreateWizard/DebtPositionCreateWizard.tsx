@@ -6,11 +6,9 @@ import Step1GeneralConfiguration, {
 import Step2AddDebtor, { Step2Data } from './components/Step/Step2AddDebtor';
 import Step3, { Step3Data } from './components/Step/Step3';
 import { StepperContainer } from '../../components/Stepper';
-import { Stepper } from '../../components/Stepper/types';
-// import { BeneficiaryData } from './components/BeneficiaryField';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
-// import config from '../../utils/config';
+import { PaymentOption } from '../../models/paymentTypes';
 
 type FormData = {
   step1: Step1Data;
@@ -74,7 +72,7 @@ const initialData: FormData = {
       readonly: false
     },
     paymentOption: {
-      value: '',
+      value: '' as PaymentOption,
       readonly: false
     },
     amount: {
@@ -100,58 +98,63 @@ const DebtPositionCreateWizard = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>(initialData);
 
-  // console.log('formData', formData);
-
-  const steps: Stepper['steps'] = [
-    {
-      label: t('debtPositionCreateWizard.wizardStepper.step1'),
-      content: (
-        <Step1GeneralConfiguration
-          key="step1"
-          data={formData.step1}
-          setData={(data) => setFormData((prev) => ({ ...prev, step1: data }))}
-          onNext={() => setStep(1)}
-          onBack={() => navigate(PageRoutes.DEBT_POSITIONS)}
-        />
-      )
-    },
-    {
-      label: t('debtPositionCreateWizard.wizardStepper.step2'),
-      content: (
-        <Step2AddDebtor
-          key="step2"
-          data={formData.step2}
-          setData={(data) => setFormData((prev) => ({ ...prev, step2: data }))}
-          onNext={() => setStep(2)}
-          onBack={() => setStep(0)}
-        />
-      )
-    },
-    {
-      label: t('debtPositionCreateWizard.wizardStepper.step3'),
-      content: (
-        <Step3
-          data={{
-            ...formData.step3,
-            flagMandatoryDueDate:
-              formData.step1.debtPositionType.flagMandatoryDueDate
-          }}
-          setData={(data) => setFormData((prev) => ({ ...prev, step3: data }))}
-          onNext={() => {
-            console.log('onNext');
-            setStep(3);
-          }}
-          onBack={() => setStep(1)}
-        />
-      )
-    }
-  ];
-
   return (
     <StepperContainer
       title={t('debtPositionCreateWizard.title')}
       description={t('debtPositionCreateWizard.description')}
-      steps={steps}
+      steps={[
+        {
+          label: t('debtPositionCreateWizard.wizardStepper.step1'),
+          content: (
+            <Step1GeneralConfiguration
+              key="step1"
+              data={formData.step1}
+              setData={(data) =>
+                setFormData((prev) => ({ ...prev, step1: data }))
+              }
+              onNext={() => setStep(1)}
+              onBack={() => navigate(PageRoutes.DEBT_POSITIONS)}
+            />
+          )
+        },
+        {
+          label: t('debtPositionCreateWizard.wizardStepper.step2'),
+          content: (
+            <Step2AddDebtor
+              key="step2"
+              data={formData.step2}
+              setData={(data) =>
+                setFormData((prev) => ({ ...prev, step2: data }))
+              }
+              onNext={() => setStep(2)}
+              onBack={() => setStep(0)}
+            />
+          )
+        },
+        {
+          label: t('debtPositionCreateWizard.wizardStepper.step3'),
+          content: (
+            <Step3
+              data={{
+                ...formData.step3,
+                flagMandatoryDueDate:
+                  formData.step1.debtPositionType.flagMandatoryDueDate
+              }}
+              setData={(data) =>
+                setFormData((prev) => ({ ...prev, step3: data }))
+              }
+              onNext={() => {
+                console.log(
+                  'Dati completi del form al completamento:',
+                  formData
+                );
+                setStep(3);
+              }}
+              onBack={() => setStep(1)}
+            />
+          )
+        }
+      ]}
       activeStep={step}
     />
   );

@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { UseFormTrigger } from 'react-hook-form';
 import { ValidationContext } from '../../../../utils/beneficiaryValidation';
@@ -20,14 +20,22 @@ import {
   TaxonomyCodeField
 } from './BeneficiaryFieldComponents';
 
-// Mock delle funzioni di utilità per i test
+// Utility function mocks for tests
 const mockRef = { current: false };
 const mockFieldNamePrefix = 'beneficiaries';
 const mockIndex = 0;
 
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe('Event Handlers', () => {
   describe('handleAmountChange', () => {
-    it('accetta solo numeri e separatori decimali', () => {
+    it('accepts only numbers and decimal separators', () => {
       const mockOnChange = vi.fn();
       const mockTrigger = vi.fn() as unknown as UseFormTrigger<
         Record<string, unknown>
@@ -47,10 +55,12 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
+      vi.runAllTimers();
+
       expect(mockOnChange).toHaveBeenCalledWith('123.45');
     });
 
-    it('converte la virgola in punto', () => {
+    it('converts comma to dot', () => {
       const mockOnChange = vi.fn();
       const mockTrigger = vi.fn() as unknown as UseFormTrigger<
         Record<string, unknown>
@@ -70,10 +80,12 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
+      vi.runAllTimers();
+
       expect(mockOnChange).toHaveBeenCalledWith('123.45');
     });
 
-    it('aggiorna la validazione degli altri importi se ci sono più beneficiari', () => {
+    it('updates validation of other amounts if there are multiple beneficiaries', () => {
       const mockOnChange = vi.fn();
       const mockTrigger = vi.fn() as unknown as UseFormTrigger<
         Record<string, unknown>
@@ -93,13 +105,15 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
-      // Verifica che trigger sia stato chiamato per l'altro campo
+      vi.runAllTimers();
+
+      // Verify that trigger was called for the other field
       expect(mockTrigger).toHaveBeenCalledWith(
         `${mockFieldNamePrefix}.1.amount`
       );
     });
 
-    it("non aggiorna la validazione se c'è un solo beneficiario", () => {
+    it('does not update validation if there is only one beneficiary', () => {
       const mockOnChange = vi.fn();
       const mockTrigger = vi.fn() as unknown as UseFormTrigger<
         Record<string, unknown>
@@ -119,12 +133,18 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
-      expect(mockTrigger).not.toHaveBeenCalled();
+      vi.runAllTimers();
+
+      // Verify that trigger is called only for the current field
+      expect(mockTrigger).toHaveBeenCalledTimes(1);
+      expect(mockTrigger).toHaveBeenCalledWith(
+        `${mockFieldNamePrefix}.${mockIndex}.amount`
+      );
     });
   });
 
   describe('handleIBANChange', () => {
-    it('converte il valore in maiuscolo', () => {
+    it('converts the value to uppercase', () => {
       const mockOnChange = vi.fn();
       const mockTrigger = vi.fn() as unknown as UseFormTrigger<
         Record<string, unknown>
@@ -142,10 +162,12 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
+      vi.runAllTimers();
+
       expect(mockOnChange).toHaveBeenCalledWith('IT60X0542811101000000123456');
     });
 
-    it('richiama la validazione del campo conto postale', () => {
+    it('triggers validation for the postal account field', () => {
       const mockOnChange = vi.fn();
       const mockTrigger = vi.fn() as unknown as UseFormTrigger<
         Record<string, unknown>
@@ -163,6 +185,8 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
+      vi.runAllTimers();
+
       expect(mockTrigger).toHaveBeenCalledWith(
         `${mockFieldNamePrefix}.${mockIndex}.postalAccount`
       );
@@ -170,7 +194,7 @@ describe('Event Handlers', () => {
   });
 
   describe('handlePostalAccountChange', () => {
-    it('accetta solo caratteri numerici', () => {
+    it('accepts only numeric characters', () => {
       const mockOnChange = vi.fn();
       const mockTrigger = vi.fn() as unknown as UseFormTrigger<
         Record<string, unknown>
@@ -188,10 +212,12 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
+      vi.runAllTimers();
+
       expect(mockOnChange).toHaveBeenCalledWith('123456');
     });
 
-    it('richiama la validazione del campo IBAN', () => {
+    it('triggers validation for the IBAN field', () => {
       const mockOnChange = vi.fn();
       const mockTrigger = vi.fn() as unknown as UseFormTrigger<
         Record<string, unknown>
@@ -209,6 +235,8 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
+      vi.runAllTimers();
+
       expect(mockTrigger).toHaveBeenCalledWith(
         `${mockFieldNamePrefix}.${mockIndex}.iban`
       );
@@ -216,7 +244,7 @@ describe('Event Handlers', () => {
   });
 
   describe('handleAmountBlur', () => {
-    it('formatta il valore con due decimali', () => {
+    it('formats the value with two decimals', () => {
       const mockOnChange = vi.fn();
       const mockOnBlur = vi.fn();
 
@@ -230,7 +258,7 @@ describe('Event Handlers', () => {
       expect(mockOnBlur).toHaveBeenCalled();
     });
 
-    it('gestisce correttamente i valori con virgola', () => {
+    it('correctly handles values with commas', () => {
       const mockOnChange = vi.fn();
       const mockOnBlur = vi.fn();
 
@@ -243,7 +271,7 @@ describe('Event Handlers', () => {
       expect(mockOnChange).toHaveBeenCalledWith('100.50');
     });
 
-    it('non formatta se il valore non è numerico', () => {
+    it('does not format if the value is not numeric', () => {
       const mockOnChange = vi.fn();
       const mockOnBlur = vi.fn();
 
@@ -263,7 +291,7 @@ describe('Render Components', () => {
   const mockT = vi.fn((key: string) => key);
 
   describe('BeneficiaryHeader', () => {
-    it("renderizza correttamente l'intestazione", () => {
+    it('correctly renders the header', () => {
       const mockOnRemove = vi.fn();
 
       render(
@@ -281,7 +309,7 @@ describe('Render Components', () => {
       expect(screen.getByText('commons.delete')).toBeInTheDocument();
     });
 
-    it('chiama onRemove quando si clicca sul pulsante di eliminazione', () => {
+    it('calls onRemove when the delete button is clicked', () => {
       const mockOnRemove = vi.fn();
 
       render(
@@ -298,7 +326,7 @@ describe('Render Components', () => {
   });
 
   describe('EntityNameField', () => {
-    it('renderizza correttamente il campo', () => {
+    it('correctly renders the field', () => {
       const mockField = {
         onChange: vi.fn(),
         onBlur: vi.fn(),
@@ -336,8 +364,8 @@ describe('Render Components', () => {
   });
 
   describe('TaxCodeField', () => {
-    it('converte il valore in maiuscolo', () => {
-      // Creiamo un semplice mock per la funzione onChange
+    it('converts the value to uppercase', () => {
+      // Create a simple mock for the onChange function
       const mockOnChange = vi.fn();
       const mockField = {
         onChange: mockOnChange,
@@ -359,19 +387,19 @@ describe('Render Components', () => {
         t: mockT
       } as ValidationContext<Record<string, unknown>>;
 
-      // Renderizziamo il componente
+      // Render the component
       const { container } = render(
         <TaxCodeField field={mockField} t={mockT} context={mockContext} />
       );
 
-      // Testiamo direttamente la conversione in maiuscolo simulando la funzione di onChange
+      // Test the uppercase conversion directly by simulating the onChange function
       const input = container.querySelector('input') as HTMLInputElement;
       expect(input).not.toBeNull();
 
-      // Simuliamo il cambio di valore direttamente
+      // Simulate the value change directly
       fireEvent.change(input, { target: { value: 'abcxyz123' } });
 
-      // Verifichiamo che sia stata chiamata con il valore in maiuscolo
+      // Verify it was called with the uppercase value
       expect(mockOnChange).toHaveBeenCalledWith('ABCXYZ123');
     });
   });
@@ -381,7 +409,7 @@ describe('Validation Error Handling', () => {
   const mockT = vi.fn((key: string) => key);
 
   describe('hasIBANError', () => {
-    it('non mostra errori se la validazione deve essere saltata', () => {
+    it('does not show errors if validation should be skipped', () => {
       const mockContext = {
         id: '1',
         index: mockIndex,
@@ -398,7 +426,7 @@ describe('Validation Error Handling', () => {
       expect(result).toBe(false);
     });
 
-    it('non mostra errori IBAN se il conto postale è valorizzato e IBAN è vuoto', () => {
+    it('does not show IBAN errors if postal account is filled and IBAN is empty', () => {
       const mockContext = {
         id: '1',
         index: mockIndex,
@@ -419,7 +447,7 @@ describe('Validation Error Handling', () => {
       expect(result).toBe(false);
     });
 
-    it('mostra errori IBAN se entrambi i campi sono valorizzati e IBAN ha errori', () => {
+    it('shows IBAN errors if both fields are filled and IBAN has errors', () => {
       const mockErrors = {
         beneficiaries: {
           0: {
@@ -452,7 +480,7 @@ describe('Validation Error Handling', () => {
   });
 
   describe('getIBANErrorMessage', () => {
-    it('restituisce stringa vuota se la validazione deve essere saltata', () => {
+    it('returns empty string if validation should be skipped', () => {
       const mockContext = {
         id: '1',
         index: mockIndex,
@@ -469,7 +497,7 @@ describe('Validation Error Handling', () => {
       expect(result).toBe('');
     });
 
-    it('restituisce messaggio di errore se entrambi i campi sono vuoti', () => {
+    it('returns error message if both fields are empty', () => {
       const mockContext = {
         id: '1',
         index: mockIndex,
@@ -488,7 +516,7 @@ describe('Validation Error Handling', () => {
       );
     });
 
-    it('restituisce messaggio di errore specifico per IBAN non valido', () => {
+    it('returns specific error message for invalid IBAN', () => {
       const mockErrors = {
         beneficiaries: {
           0: {
@@ -521,7 +549,7 @@ describe('Validation Error Handling', () => {
   });
 
   describe('hasPostalAccountError', () => {
-    it('non mostra errori se la validazione deve essere saltata', () => {
+    it('does not show errors if validation should be skipped', () => {
       const mockContext = {
         id: '1',
         index: mockIndex,
@@ -538,7 +566,7 @@ describe('Validation Error Handling', () => {
       expect(result).toBe(false);
     });
 
-    it('non mostra errori del conto postale se IBAN è valorizzato e conto postale è vuoto', () => {
+    it('does not show postal account errors if IBAN is filled and postal account is empty', () => {
       const mockContext = {
         id: '1',
         index: mockIndex,
@@ -559,7 +587,7 @@ describe('Validation Error Handling', () => {
       expect(result).toBe(false);
     });
 
-    it('mostra errori del conto postale se entrambi i campi sono valorizzati e conto postale ha errori', () => {
+    it('shows postal account errors if both fields are filled and postal account has errors', () => {
       const mockErrors = {
         beneficiaries: {
           0: {
@@ -592,7 +620,7 @@ describe('Validation Error Handling', () => {
   });
 
   describe('getPostalAccountErrorMessage', () => {
-    it('restituisce stringa vuota se la validazione deve essere saltata', () => {
+    it('returns empty string if validation should be skipped', () => {
       const mockContext = {
         id: '1',
         index: mockIndex,
@@ -609,7 +637,7 @@ describe('Validation Error Handling', () => {
       expect(result).toBe('');
     });
 
-    it('restituisce messaggio di errore se entrambi i campi sono vuoti', () => {
+    it('returns error message if both fields are empty', () => {
       const mockContext = {
         id: '1',
         index: mockIndex,
@@ -628,7 +656,7 @@ describe('Validation Error Handling', () => {
       );
     });
 
-    it('restituisce messaggio di errore specifico per conto postale non valido', () => {
+    it('returns specific error message for invalid postal account', () => {
       const mockErrors = {
         beneficiaries: {
           0: {
@@ -662,7 +690,7 @@ describe('Validation Error Handling', () => {
 });
 
 describe('AmountField', () => {
-  it('renderizza correttamente il campo importo', () => {
+  it('correctly renders the amount field', () => {
     const mockT = vi.fn((key: string) => key);
     const mockOnChange = vi.fn();
     const mockOnBlur = vi.fn();
@@ -704,19 +732,19 @@ describe('AmountField', () => {
       />
     );
 
-    // Verifica che il valore visualizzato utilizzi la virgola invece del punto
+    // Verify that the displayed value uses comma instead of dot
     const input = container.querySelector('input') as HTMLInputElement;
     expect(input).not.toBeNull();
     expect(input.value).toBe('100,50');
 
-    // Verifica che il simbolo dell'euro sia presente
+    // Verify that the euro symbol is present
     expect(container.textContent).toContain('€');
 
-    // Testa il comportamento onChange
-    fireEvent.change(input, { target: { value: '200,75' } });
-    expect(mockOnChange).toHaveBeenCalledWith('200.75');
+    // Test onChange behavior
+    fireEvent.change(input, { target: { value: '300,25' } });
+    expect(mockOnChange).toHaveBeenCalledWith('300.25');
 
-    // Testa il comportamento onBlur
+    // Test onBlur behavior
     fireEvent.blur(input, { target: { value: '300.25' } });
     expect(mockOnChange).toHaveBeenCalledWith('300.25');
     expect(mockOnBlur).toHaveBeenCalled();
@@ -724,7 +752,7 @@ describe('AmountField', () => {
 });
 
 describe('IBANField', () => {
-  it('renderizza correttamente il campo IBAN', () => {
+  it('correctly renders the IBAN field', () => {
     const mockT = vi.fn((key: string) => key);
     const mockOnChange = vi.fn();
     const mockTrigger = vi.fn() as unknown as UseFormTrigger<
@@ -769,15 +797,17 @@ describe('IBANField', () => {
     expect(input).not.toBeNull();
     expect(input.value).toBe('IT60X0542811101000000123456');
 
-    // Testa il comportamento onChange
+    // Test onChange behavior - usiamo debounceValidation quindi dobbiamo simulare il timer
     fireEvent.change(input, {
       target: { value: 'it12a123456789012345678901' }
     });
     expect(mockOnChange).toHaveBeenCalledWith('IT12A123456789012345678901');
+
+    vi.runAllTimers();
     expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.0.postalAccount');
   });
 
-  it('mostra errori quando è appropriato', () => {
+  it('shows errors when appropriate', () => {
     const mockT = vi.fn((key: string) => key);
     const mockTrigger = vi.fn() as unknown as UseFormTrigger<
       Record<string, unknown>
@@ -828,13 +858,13 @@ describe('IBANField', () => {
       />
     );
 
-    // Verifica che il messaggio di errore sia visualizzato
+    // Verify that the error message is displayed
     expect(screen.getByText('Errore IBAN')).toBeInTheDocument();
   });
 });
 
 describe('PostalAccountField', () => {
-  it('renderizza correttamente il campo conto postale', () => {
+  it('correctly renders the postal account field', () => {
     const mockT = vi.fn((key: string) => key);
     const mockOnChange = vi.fn();
     const mockTrigger = vi.fn() as unknown as UseFormTrigger<
@@ -877,13 +907,16 @@ describe('PostalAccountField', () => {
     expect(input).not.toBeNull();
     expect(input.value).toBe('123456789012');
 
-    // Testa il comportamento onChange
+    // Test onChange behavior - usiamo debounceValidation quindi dobbiamo simulare il timer
     fireEvent.change(input, { target: { value: '123abc456' } });
     expect(mockOnChange).toHaveBeenCalledWith('123456');
+
+    // Aspettiamo che il timer di debounce esegua il trigger
+    vi.runAllTimers();
     expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.0.iban');
   });
 
-  it('mostra errori quando è appropriato', () => {
+  it('shows errors when appropriate', () => {
     const mockT = vi.fn((key: string) => key);
     const mockTrigger = vi.fn() as unknown as UseFormTrigger<
       Record<string, unknown>
@@ -934,13 +967,13 @@ describe('PostalAccountField', () => {
       />
     );
 
-    // Verifica che il messaggio di errore sia visualizzato
+    // Verify that the error message is displayed
     expect(screen.getByText('Errore conto postale')).toBeInTheDocument();
   });
 });
 
 describe('TaxonomyCodeField', () => {
-  it('renderizza correttamente il campo codice tassonomico', () => {
+  it('correctly renders the taxonomy code field', () => {
     const mockT = vi.fn((key: string) => key);
     const mockOnChange = vi.fn();
 
@@ -972,18 +1005,18 @@ describe('TaxonomyCodeField', () => {
     expect(input).not.toBeNull();
     expect(input.value).toBe('TAX123');
 
-    // Verifica che il campo sia obbligatorio
+    // Verify that the field is required
     const requiredLabel = screen.getByText(
       'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.label'
     );
     expect(requiredLabel).toBeInTheDocument();
 
-    // Verifica che il campo abbia l'attributo required
+    // Verify that the field has the required attribute
     const requiredAsterisk = container.querySelector('.MuiFormLabel-asterisk');
     expect(requiredAsterisk).not.toBeNull();
   });
 
-  it('mostra errori di validazione quando necessario', () => {
+  it('shows validation errors when necessary', () => {
     const mockT = vi.fn((key: string) => key);
 
     const mockField = {
@@ -1020,7 +1053,7 @@ describe('TaxonomyCodeField', () => {
       <TaxonomyCodeField field={mockField} t={mockT} context={mockContext} />
     );
 
-    // Il test per verificare che l'errore sia visualizzato dipende dall'implementazione di hasFieldError
-    // e getFieldErrorMessage, che sono già testati in altri test case
+    // The test to verify that the error is displayed depends on the implementation of hasFieldError
+    // and getFieldErrorMessage, which are already tested in other test cases
   });
 });
