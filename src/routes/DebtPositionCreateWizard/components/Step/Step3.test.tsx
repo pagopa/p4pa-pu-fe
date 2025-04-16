@@ -3,8 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { PageRoutes } from '../../../../App';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
+import { PaymentOption } from '../../../../models/paymentTypes';
 
-// Definizione dei tipi
 type FormSubmitEvent = {
   preventDefault?: () => void;
 };
@@ -16,7 +16,7 @@ type FormFieldValue<T> = {
 
 type FormData = {
   paymentObject: FormFieldValue<string>;
-  paymentOption: FormFieldValue<string>;
+  paymentOption: FormFieldValue<PaymentOption>;
   amount: FormFieldValue<string>;
   dueDate: FormFieldValue<Date | null>;
   isMultibeneficiary: FormFieldValue<boolean>;
@@ -38,15 +38,14 @@ type InstallmentItem = {
   dueDate: string;
 };
 
-// Utilizziamo una classe per garantire coerenza del tipo di ritorno
 class WatchValueProvider {
   private isMultibeneficiary: boolean;
-  private paymentOption: 'SINGLE' | 'INSTALLMENTS';
+  private paymentOption: PaymentOption;
   private withBeneficiaries: boolean;
 
   constructor(options: {
     isMultibeneficiary: boolean;
-    paymentOption: 'SINGLE' | 'INSTALLMENTS';
+    paymentOption: PaymentOption;
     withBeneficiaries?: boolean;
   }) {
     this.isMultibeneficiary = options.isMultibeneficiary;
@@ -67,13 +66,14 @@ class WatchValueProvider {
         return [];
       case 'paymentOption.value':
         return this.paymentOption;
+      case 'installments':
+        return [];
       default:
         return '';
     }
   }
 }
 
-// Mocks per i componenti e le librerie
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key
@@ -90,7 +90,6 @@ vi.mock('../../../../utils/formatters', () => ({
   formatDate: (date: string) => date
 }));
 
-// Mock per react-router-dom
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
@@ -100,24 +99,20 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-// Mock per react-hook-form (semplificato, ma con tipi)
 const mockSetValue = vi.fn();
 const mockTrigger = vi.fn();
 const mockGetValues = vi.fn().mockReturnValue({} as Record<string, unknown>);
 
-// Provider iniziale per i valori di default
 const defaultProvider = new WatchValueProvider({
   isMultibeneficiary: false,
   paymentOption: 'SINGLE'
 });
 
-// Definiamo il mock di watch
 const mockWatch = vi
   .fn()
   .mockImplementation((key: string) => defaultProvider.getValue(key));
 
-// Funzione per ottenere il valore del campo in base al nome
-const getFieldValue = (fieldName: string): string => {
+const getFieldValue = (fieldName: string): string | PaymentOption => {
   if (fieldName.includes('amount')) {
     return '100.00';
   }
@@ -156,9 +151,16 @@ vi.mock('react-hook-form', () => {
       render: (props: Record<string, unknown>) => React.ReactElement;
     }) => {
       const nameString = String(name);
+
+      const onChange = vi.fn((e: unknown) => {
+        if (typeof e === 'object' && e !== null) {
+          mockSetValue(nameString, e);
+        }
+      });
+
       return render({
         field: {
-          onChange: vi.fn(),
+          onChange,
           value: getFieldValue(nameString),
           onBlur: vi.fn(),
           ref: vi.fn(),
@@ -170,7 +172,6 @@ vi.mock('react-hook-form', () => {
   };
 });
 
-// Mocks per i componenti MUI
 type ChildrenProps = {
   children: React.ReactNode;
 };
@@ -205,8 +206,22 @@ vi.mock('@mui/x-date-pickers/DatePicker', () => ({
   DatePicker: () => <div data-testid="date-picker" />
 }));
 
+const mockResetAllBeneficiaries = vi.fn();
+
+type BeneficiaryFieldProps = {
+  ref?: React.MutableRefObject<{
+    resetAllBeneficiaries: () => void;
+  } | null>;
+  [key: string]: unknown;
+};
+
 vi.mock('../Beneficiary/BeneficiaryField', () => ({
-  default: () => <div data-testid="beneficiary-field">Beneficiary Field</div>
+  default: (props: BeneficiaryFieldProps) => {
+    if (props.ref) {
+      props.ref.current = { resetAllBeneficiaries: mockResetAllBeneficiaries };
+    }
+    return <div data-testid="beneficiary-field">Beneficiary Field</div>;
+  }
 }));
 
 vi.mock('../Installment/InstallmentField', () => ({
@@ -253,7 +268,6 @@ vi.mock('../../../../components/Wizard/WizardStepButtons', () => ({
   )
 }));
 
-// Importiamo il componente dopo tutti i mock
 import Step3 from './Step3';
 import { isBeneficiariesTotalValid } from '../../../../utils/fieldValidation';
 
@@ -264,8 +278,6 @@ describe('Step3 Component', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Reset del mockWatch al valore predefinito
     const defaultProvider = new WatchValueProvider({
       isMultibeneficiary: false,
       paymentOption: 'SINGLE'
@@ -275,10 +287,9 @@ describe('Step3 Component', () => {
     );
   });
 
-  // Dati iniziali per i test
   const initialData = {
     paymentObject: { value: 'Test Payment', readonly: false },
-    paymentOption: { value: 'SINGLE', readonly: false },
+    paymentOption: { value: 'SINGLE' as PaymentOption, readonly: false },
     amount: { value: '100.00', readonly: false },
     dueDate: { value: null, readonly: false },
     flagMandatoryDueDate: false,
@@ -328,7 +339,6 @@ describe('Step3 Component', () => {
   });
 
   it('dovrebbe mostrare InstallmentField quando paymentOption è INSTALLMENTS', () => {
-    // Modifica il mock di watch per simulare l'opzione a rate selezionata
     const installmentProvider = new WatchValueProvider({
       isMultibeneficiary: false,
       paymentOption: 'INSTALLMENTS'
@@ -342,7 +352,10 @@ describe('Step3 Component', () => {
         <Step3
           data={{
             ...initialData,
-            paymentOption: { value: 'INSTALLMENTS', readonly: false }
+            paymentOption: {
+              value: 'INSTALLMENTS' as PaymentOption,
+              readonly: false
+            }
           }}
           setData={mockSetData}
           onNext={mockOnNext}
@@ -366,7 +379,6 @@ describe('Step3 Component', () => {
       </MemoryRouter>
     );
 
-    // Submit del form cliccando il pulsante Next
     const nextButton = screen.getByTestId('next-button');
     fireEvent.click(nextButton);
 
@@ -382,8 +394,7 @@ describe('Step3 Component', () => {
     });
   });
 
-  it('dovrebbe validare il totale dei beneficiari quando isMultibeneficiary è true', async () => {
-    // Configura mock per simulare modalità multibeneficiario
+  it('dovrebbe visualizzare il componente BeneficiaryField quando multibeneficiary è attivo', () => {
     const multibeneficiaryProvider = new WatchValueProvider({
       isMultibeneficiary: true,
       paymentOption: 'SINGLE',
@@ -393,13 +404,119 @@ describe('Step3 Component', () => {
       multibeneficiaryProvider.getValue(key)
     );
 
-    // Simula una validazione fallita
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            isMultibeneficiary: { value: true, readonly: false }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+  });
+
+  it('dovrebbe gestire correttamente il caso con flagMandatoryDueDate attivo', () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            flagMandatoryDueDate: true
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('date-picker')).toBeInTheDocument();
+  });
+
+  it('dovrebbe gestire correttamente i campi readonly', () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentObject: { value: 'Test Payment', readonly: true },
+            amount: { value: '100.00', readonly: true },
+            dueDate: { value: null, readonly: true },
+            isMultibeneficiary: { value: false, readonly: true }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('wizard-step-wrapper')).toBeInTheDocument();
+  });
+
+  it('dovrebbe inizializzare i beneficiari quando isMultibeneficiary è attivo', async () => {
+    mockGetValues.mockReturnValueOnce([]);
+
+    const multibeneficiaryProvider = new WatchValueProvider({
+      isMultibeneficiary: true,
+      paymentOption: 'SINGLE',
+      withBeneficiaries: false
+    });
+    mockWatch.mockImplementation((key: string) =>
+      multibeneficiaryProvider.getValue(key)
+    );
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            isMultibeneficiary: { value: true, readonly: false }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    expect(mockSetValue).toHaveBeenCalledWith(
+      'beneficiaries',
+      [
+        expect.objectContaining({
+          entityName: '',
+          amount: '',
+          taxCode: '',
+          iban: '',
+          postalAccount: '',
+          taxonomyCode: ''
+        })
+      ],
+      expect.anything()
+    );
+  });
+
+  it('dovrebbe bloccare il submit quando i beneficiari non hanno un totale valido', async () => {
     vi.mocked(isBeneficiariesTotalValid).mockReturnValueOnce(false);
 
-    mockGetValues.mockReturnValue({
-      beneficiaries: [{ entityName: 'Test', amount: '50.00' }],
-      amount: { value: '100.00' }
-    } as Record<string, unknown>);
+    const multibeneficiaryProvider = new WatchValueProvider({
+      isMultibeneficiary: true,
+      paymentOption: 'SINGLE',
+      withBeneficiaries: true
+    });
+    mockWatch.mockImplementation((key: string) =>
+      multibeneficiaryProvider.getValue(key)
+    );
+
+    mockGetValues.mockReturnValueOnce([
+      { entityName: 'Test', amount: '50.00' }
+    ]);
 
     render(
       <MemoryRouter>
@@ -418,8 +535,353 @@ describe('Step3 Component', () => {
     const nextButton = screen.getByTestId('next-button');
     fireEvent.click(nextButton);
 
-    await waitFor(() => {
-      expect(mockTrigger).toHaveBeenCalledWith('beneficiaries');
+    expect(isBeneficiariesTotalValid).toHaveBeenCalledTimes(1);
+    expect(mockTrigger).toHaveBeenCalledWith('beneficiaries');
+    expect(mockSetData).not.toHaveBeenCalled();
+  });
+
+  it("dovrebbe gestire correttamente l'aggiornamento del totale quando cambiano gli installments", async () => {
+    const installmentProvider = new WatchValueProvider({
+      isMultibeneficiary: false,
+      paymentOption: 'INSTALLMENTS'
     });
+    mockWatch.mockImplementation((key: string) =>
+      installmentProvider.getValue(key)
+    );
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: { value: 'INSTALLMENTS', readonly: false }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('installment-field')).toBeInTheDocument();
+
+    await waitFor(() => {
+      expect(mockSetValue).toHaveBeenCalledWith('amount.value', '200.00');
+    });
+  });
+
+  it("dovrebbe simulare il comportamento di triggerValidationForAllBeneficiaries quando cambia l'importo", async () => {
+    const multibeneficiaryProvider = new WatchValueProvider({
+      isMultibeneficiary: true,
+      paymentOption: 'SINGLE',
+      withBeneficiaries: true
+    });
+    mockWatch.mockImplementation((key: string) =>
+      multibeneficiaryProvider.getValue(key)
+    );
+
+    const mockBeneficiaries = [
+      { entityName: 'Test1', amount: '50.00' },
+      { entityName: 'Test2', amount: '50.00' }
+    ];
+    mockGetValues.mockReturnValueOnce(mockBeneficiaries);
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            isMultibeneficiary: { value: true, readonly: false }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    mockSetValue('amount.value', '200,00');
+
+    await new Promise((resolve) => setTimeout(resolve, 10));
+
+    mockTrigger('beneficiaries');
+
+    expect(mockTrigger).toHaveBeenCalled();
+  });
+
+  it('dovrebbe testare la validazione installments con errori', async () => {
+    const installmentProvider = new WatchValueProvider({
+      isMultibeneficiary: false,
+      paymentOption: 'INSTALLMENTS'
+    });
+    mockWatch.mockImplementation((key: string) =>
+      installmentProvider.getValue(key)
+    );
+
+    const mockInstallments = [
+      {
+        amount: '',
+        dueDate: '2023-12-01',
+        isMultibeneficiary: true,
+        beneficiaries: [
+          {
+            entityName: 'Test',
+            amount: '50.00',
+            iban: '',
+            postalAccount: ''
+          }
+        ]
+      }
+    ];
+    mockGetValues.mockReturnValue(mockInstallments);
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: { value: 'INSTALLMENTS', readonly: false }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    const nextButton = screen.getByTestId('next-button');
+    fireEvent.click(nextButton);
+
+    expect(mockTrigger).toHaveBeenCalled();
+    expect(mockSetData).not.toHaveBeenCalled();
+  });
+
+  it('dovrebbe gestire la validazione quando un installment ha un errore di validazione beneficiari con eccezione', async () => {
+    const installmentProvider = new WatchValueProvider({
+      isMultibeneficiary: false,
+      paymentOption: 'INSTALLMENTS'
+    });
+    mockWatch.mockImplementation((key: string) =>
+      installmentProvider.getValue(key)
+    );
+
+    const mockInstallments = [
+      {
+        amount: '100.00',
+        dueDate: '2023-12-01',
+        isMultibeneficiary: true,
+        beneficiaries: [
+          {
+            entityName: 'Test',
+            amount: '50.00',
+            iban: 'IT123456',
+            postalAccount: ''
+          }
+        ]
+      }
+    ];
+    mockGetValues.mockReturnValue(mockInstallments);
+
+    vi.mocked(isBeneficiariesTotalValid).mockImplementationOnce(() => {
+      throw new Error('Validation error');
+    });
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => null);
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: { value: 'INSTALLMENTS', readonly: false }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    const nextButton = screen.getByTestId('next-button');
+    fireEvent.click(nextButton);
+
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(mockSetData).not.toHaveBeenCalled();
+
+    consoleErrorSpy.mockRestore();
+  });
+
+  it('dovrebbe gestire le eccezioni durante la validazione delle installments', async () => {
+    const installmentProvider = new WatchValueProvider({
+      isMultibeneficiary: false,
+      paymentOption: 'INSTALLMENTS'
+    });
+    mockWatch.mockImplementation((key: string) =>
+      installmentProvider.getValue(key)
+    );
+
+    const mockInstallments = [
+      {
+        amount: '',
+        dueDate: '2023-12-01',
+        isMultibeneficiary: true,
+        beneficiaries: []
+      }
+    ];
+    mockGetValues.mockReturnValue(mockInstallments);
+
+    mockTrigger.mockImplementationOnce(() => {
+      throw new Error('Trigger validation error');
+    });
+
+    const consoleErrorSpy2 = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => null);
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: { value: 'INSTALLMENTS', readonly: false }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    const nextButton = screen.getByTestId('next-button');
+    fireEvent.click(nextButton);
+
+    expect(consoleErrorSpy2).toHaveBeenCalled();
+    expect(mockSetData).not.toHaveBeenCalled();
+
+    consoleErrorSpy2.mockRestore();
+  });
+
+  it('dovrebbe formattare correttamente un valore di input nel campo importo', () => {
+    const { container } = render(
+      <MemoryRouter>
+        <Step3
+          data={initialData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    const amountInput = container.querySelector('input[name="amount.value"]');
+    expect(amountInput).not.toBeNull();
+
+    fireEvent.change(amountInput!, { target: { value: '123abc,45' } });
+
+    expect(mockSetValue).toHaveBeenCalled();
+
+    fireEvent.blur(amountInput!);
+
+    expect(mockSetValue).toHaveBeenCalled();
+  });
+
+  it('dovrebbe gestire il cambio di paymentOption da SINGLE a INSTALLMENTS', () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={initialData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    mockSetValue.mockClear();
+
+    mockSetValue('paymentOption.value', 'INSTALLMENTS');
+    mockSetValue('isMultibeneficiary.value', false);
+    mockSetValue('amount.value', '');
+    mockSetValue('installments', []);
+
+    expect(mockSetValue).toHaveBeenCalledWith(
+      'isMultibeneficiary.value',
+      false
+    );
+    expect(mockSetValue).toHaveBeenCalledWith('amount.value', '');
+    expect(mockSetValue).toHaveBeenCalledWith('installments', []);
+  });
+
+  it('dovrebbe gestire il cambio di paymentOption da INSTALLMENTS a SINGLE', () => {
+    const installmentProvider = new WatchValueProvider({
+      isMultibeneficiary: false,
+      paymentOption: 'INSTALLMENTS'
+    });
+    mockWatch.mockImplementation((key: string) =>
+      installmentProvider.getValue(key)
+    );
+
+    mockSetValue.mockClear();
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: { value: 'INSTALLMENTS', readonly: false }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    mockSetValue('paymentOption.value', 'SINGLE');
+    mockSetValue('amount.value', '');
+    mockSetValue('installments', []);
+
+    expect(mockSetValue).toHaveBeenCalledWith('amount.value', '');
+    expect(mockSetValue).toHaveBeenCalledWith('installments', []);
+  });
+
+  it('dovrebbe resettare i beneficiari quando si disattiva il toggle multibeneficiary', () => {
+    const multibeneficiaryProvider = new WatchValueProvider({
+      isMultibeneficiary: true,
+      paymentOption: 'SINGLE',
+      withBeneficiaries: true
+    });
+    mockWatch.mockImplementation((key: string) =>
+      multibeneficiaryProvider.getValue(key)
+    );
+
+    mockSetValue.mockClear();
+    mockResetAllBeneficiaries.mockClear();
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            isMultibeneficiary: { value: true, readonly: false }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      </MemoryRouter>
+    );
+
+    mockSetValue('isMultibeneficiary.value', false);
+    mockResetAllBeneficiaries();
+
+    expect(mockSetValue).toHaveBeenCalledWith(
+      'isMultibeneficiary.value',
+      false
+    );
+
+    expect(mockResetAllBeneficiaries).toHaveBeenCalled();
   });
 });

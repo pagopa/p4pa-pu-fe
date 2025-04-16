@@ -1,6 +1,6 @@
 /**
- * File contenente tutti i tipi relativi al sistema di pagamento
- * Centralizza le definizioni di tipi per migliorare la manutenibilità e consistenza
+ * File containing all types related to the payment system
+ * Centralizes type definitions to improve maintainability and consistency
  */
 import {
   Control,
@@ -14,52 +14,52 @@ import {
 } from 'react-hook-form';
 
 /**
- * Tipo che rappresenta un beneficiario del pagamento
+ * Type representing a payment beneficiary
  */
 export type Beneficiary = {
-  /** Nome dell'ente beneficiario */
+  /** Name of the beneficiary entity */
   entityName: string;
-  /** Importo assegnato al beneficiario */
+  /** Amount assigned to the beneficiary */
   amount: string;
-  /** Codice fiscale del beneficiario */
+  /** Tax code of the beneficiary */
   taxCode: string;
-  /** IBAN del beneficiario */
+  /** IBAN of the beneficiary */
   iban: string;
-  /** Conto postale del beneficiario */
+  /** Postal account of the beneficiary */
   postalAccount: string;
-  /** Codice tassonomico */
+  /** Taxonomy code */
   taxonomyCode: string;
-  /** Id univoco del beneficiario */
+  /** Unique ID of the beneficiary */
   id?: string;
-  /** Flag che indica se il beneficiario è stato aggiunto dopo il submit */
+  /** Flag indicating if the beneficiary was added after submit */
   isNew?: boolean;
 };
 
 /**
- * Tipo che rappresenta una singola rata di pagamento
+ * Type representing a single payment installment
  */
 export type Installment = {
-  /** Importo della rata */
+  /** Installment amount */
   amount: string;
-  /** Data di scadenza della rata */
+  /** Installment due date */
   dueDate: string | null;
-  /** Flag che indica se la rata ha beneficiari multipli */
+  /** Flag indicating if the installment has multiple beneficiaries */
   isMultibeneficiary?: boolean;
-  /** Lista dei beneficiari della rata */
+  /** List of installment beneficiaries */
   beneficiaries?: Array<Beneficiary>;
-  /** Id univoco della rata */
+  /** Unique ID of the installment */
   id?: string;
-  /** Flag che indica se la rata è stata aggiunta dopo il submit */
+  /** Flag indicating if the installment was added after submit */
   isNew?: boolean;
 };
 
 /**
- * Enumeration che rappresenta le opzioni di pagamento disponibili
+ * Enumeration representing available payment options
  */
 export type PaymentOption = 'SINGLE' | 'INSTALLMENTS';
 
 /**
- * Tipo che rappresenta una proprietà con valore e flag di sola lettura
+ * Type representing a property with value and readonly flag
  */
 export type ReadonlyProperty<T> = {
   value: T;
@@ -67,45 +67,37 @@ export type ReadonlyProperty<T> = {
 };
 
 /**
- * Configurazione completa del pagamento
+ * Complete payment configuration
  */
 export type PaymentConfiguration = {
-  /** Oggetto del pagamento */
   paymentObject: ReadonlyProperty<string>;
-  /** Modalità di pagamento (unica o rateale) */
   paymentOption: ReadonlyProperty<PaymentOption>;
-  /** Importo totale del pagamento */
   amount: ReadonlyProperty<string>;
-  /** Data di scadenza (solo per pagamento unico) */
   dueDate: ReadonlyProperty<string | null>;
-  /** Flag che indica se la data di scadenza è obbligatoria */
   flagMandatoryDueDate: boolean;
-  /** Flag che indica se il pagamento ha beneficiari multipli */
   isMultibeneficiary: ReadonlyProperty<boolean>;
-  /** Lista dei beneficiari (solo per pagamento unico con multi-beneficiario) */
   beneficiaries?: Array<Beneficiary>;
-  /** Lista delle rate (solo per pagamento rateale) */
   installments?: Array<Installment>;
 };
 
 /**
- * Utility types per semplificare la manipolazione degli oggetti di pagamento
+ * Utility types to simplify manipulation of payment objects
  */
 
 /**
- * Estrae il valore effettivo da una proprietà di sola lettura
+ * Extracts the actual value from a readonly property
  */
 export type ExtractValue<T> = T extends ReadonlyProperty<infer U> ? U : never;
 
 /**
- * Converte tutte le ReadonlyProperty in valori semplici
+ * Converts all ReadonlyProperty into simple values
  */
 export type UnwrapReadonlyProperties<T> = {
   [K in keyof T]: T[K] extends ReadonlyProperty<infer U> ? U : T[K];
 };
 
 /**
- * Converte tutti i valori semplici in ReadonlyProperty
+ * Converts all simple values into ReadonlyProperty
  */
 export type WrapAsReadonlyProperties<T> = {
   [K in keyof T]: T[K] extends ReadonlyProperty<unknown>
@@ -114,12 +106,12 @@ export type WrapAsReadonlyProperties<T> = {
 };
 
 /**
- * Tipo per validatori di campo
+ * Type for field validators
  */
 export type FieldValidator = Record<string, unknown>;
 
 /**
- * Tipo per validatori delle rate
+ * Type for installment validators
  */
 export type InstallmentValidators = {
   amount: FieldValidator;
@@ -129,7 +121,7 @@ export type InstallmentValidators = {
 };
 
 /**
- * Tipo per i valori del form
+ * Type for form values
  */
 export type PaymentFormValues = {
   paymentObject: ReadonlyProperty<string>;
@@ -142,101 +134,101 @@ export type PaymentFormValues = {
 };
 
 /**
- * TIPI PER VALIDAZIONE
+ * VALIDATION TYPES
  */
 
 /**
- * Tipo per le regole di validazione dell'importo
+ * Type for amount validation rules
  */
 export type AmountValidationRules = {
-  /** Se il campo è richiesto */
+  /** If the field is required */
   required: string;
-  /** Messaggio di errore se il valore non è valido */
+  /** Error message if the value is invalid */
   invalidValue: string;
-  /** Messaggio di errore se il valore è negativo */
+  /** Error message if the value is negative */
   negative: string;
-  /** Messaggio di errore se il valore è zero */
+  /** Error message if the value is zero */
   zero: string;
-  /** Messaggio di errore se il totale beneficiari non corrisponde */
+  /** Error message if the beneficiaries total doesn't match */
   totalMismatch: string;
 };
 
 /**
- * Tipo per le regole di validazione della data
+ * Type for date validation rules
  */
 export type DateValidationRules = {
-  /** Se il campo è richiesto */
+  /** If the field is required */
   required: string | boolean;
-  /** Messaggio di errore se la data è nel passato */
+  /** Error message if the date is in the past */
   pastDate: string;
 };
 
 /**
- * Tipo per le regole di validazione del beneficiario
+ * Type for beneficiary validation rules
  */
 export type BeneficiaryValidationRules = {
-  /** Regole per l'importo */
+  /** Rules for amount */
   amount: AmountValidationRules;
-  /** Regole per il nome entità */
+  /** Rules for entity name */
   entityName: {
     required: string;
   };
-  /** Regole per il codice fiscale */
+  /** Rules for tax code */
   taxCode: {
     required: string;
     invalid: string;
   };
-  /** Regole per i campi di pagamento */
+  /** Rules for payment fields */
   paymentFields: {
     required: string;
   };
-  /** Regole per il codice tassonomico */
+  /** Rules for taxonomy code */
   taxonomyCode: {
     required: string;
   };
 };
 
 /**
- * Tipo per i risultati di validazione
+ * Type for validation results
  */
 export type ValidationResult = {
-  /** Se la validazione è passata */
+  /** Whether validation passed */
   isValid: boolean;
-  /** Messaggio di errore, se presente */
+  /** Error message, if present */
   errorMessage?: string;
 };
 
 /**
- * Tipo che estende la funzione validator da react-hook-form
- * per aggiungere il tipo di ritorno
+ * Type that extends the validator function from react-hook-form
+ * to add the return type
  */
 export type TypedValidator = FieldValidator & {
   isValid?: (value: string) => ValidationResult;
 };
 
 /**
- * Tipo per il contesto di validazione
+ * Type for validation context
  */
 export type ValidationContext = {
-  /** Importo totale del pagamento o della rata */
+  /** Total amount of payment or installment */
   totalAmount?: string;
-  /** Flag che indica se la data è obbligatoria */
+  /** Flag indicating if the date is required */
   isDateRequired?: boolean;
-  /** Messaggio personalizzato per date obbligatorie */
+  /** Custom message for required dates */
   requiredDateMessage?: string;
 };
 
 /**
- * Tipo per validatori di campo del beneficiario
+ * Type for beneficiary field validators
  */
 export type BeneficiaryFieldValidators = {
-  /** Validatore per il codice fiscale del beneficiario */
+  /** Validator for beneficiary tax code */
   validateBeneficiaryTaxCode: (value: string) => string | undefined;
-  /** Validatore per l'IBAN */
+  /** Validator for IBAN */
   validateIBAN: (value: string) => string | undefined;
-  /** Validatore per il conto postale */
+  /** Validator for postal account */
   validatePostalAccount: (value: string) => string | undefined;
-  /** Validatore per il metodo di pagamento (richiede almeno uno tra IBAN e conto postale) */
+  /** Validator for payment method (requires at least one between IBAN and postal account) */
   validatePaymentMethod: (
     iban: string,
     postalAccount: string
@@ -244,61 +236,61 @@ export type BeneficiaryFieldValidators = {
 };
 
 /**
- * Contesto di validazione per beneficiari
+ * Validation context for beneficiaries
  */
 export type BeneficiaryValidationContext<T extends FieldValues> = {
-  /** ID del beneficiario */
+  /** Beneficiary ID */
   id: string;
-  /** Indice del beneficiario nella lista */
+  /** Index of the beneficiary in the list */
   index: number;
-  /** Se il form è stato inviato */
+  /** Whether the form has been submitted */
   isSubmitted: boolean;
-  /** Riferimento che indica se il form è stato inviato */
+  /** Reference indicating if the form has been submitted */
   wasSubmittedRef: React.RefObject<boolean>;
-  /** Registro dei beneficiari esistenti (pre-submit) */
+  /** Registry of existing beneficiaries (pre-submit) */
   existingBeneficiaries: Record<string, boolean>;
-  /** Errori del form */
+  /** Form errors */
   errors: FieldErrors<T>;
-  /** Prefisso per i campi del beneficiario */
+  /** Prefix for beneficiary fields */
   fieldNamePrefix: string;
-  /** Funzione per ottenere i valori dal form */
+  /** Function to get values from the form */
   getValues: UseFormGetValues<T>;
-  /** Funzione per la traduzione */
+  /** Translation function */
   t: (key: string) => string;
 };
 
 /**
- * TIPI PER GLI HOOK DI GESTIONE PAGAMENTI
+ * TYPES FOR PAYMENT MANAGEMENT HOOKS
  */
 
 /**
- * Tipo base per gli hook di gestione
+ * Base type for management hooks
  */
 export type BaseHookProps<T extends FieldValues> = {
-  /** Control del form */
+  /** Form control */
   readonly control: Control<T>;
-  /** Flag che indica se il form è stato inviato */
+  /** Flag indicating if the form has been submitted */
   readonly isSubmitted: boolean;
-  /** Funzione per ottenere i valori del form */
+  /** Function to get form values */
   readonly getValues: UseFormGetValues<T>;
-  /** Funzione per attivare la validazione */
+  /** Function to trigger validation */
   readonly trigger: UseFormTrigger<T>;
 };
 
 /**
- * Proprietà per hook di gestione beneficiari
+ * Properties for beneficiary management hook
  */
 export type BeneficiaryManagementProps<T extends FieldValues> =
   BaseHookProps<T> & {
-    /** Prefisso per accedere ai campi dei beneficiari nel form */
+    /** Prefix to access beneficiary fields in the form */
     readonly fieldNamePrefix: FieldArrayPath<T>;
-    /** Importo totale del pagamento o della rata */
+    /** Total payment or installment amount */
     readonly totalAmount: string;
-    /** Funzione per impostare i valori nel form */
+    /** Function to set values in the form */
     readonly setValue?: UseFormSetValue<T>;
-    /** Callback invocata quando cambia lo stato del multibeneficiario */
+    /** Callback invoked when multi-beneficiary state changes */
     readonly onToggleMultibeneficiary?: (value: boolean) => void;
-    /** Callback invocata quando cambiano i beneficiari */
+    /** Callback invoked when beneficiaries change */
     readonly onBeneficiariesChange?: (
       summary: Array<{
         id: string;
@@ -307,24 +299,24 @@ export type BeneficiaryManagementProps<T extends FieldValues> =
         dati: Record<string, unknown>;
       }>
     ) => void;
-    /** Flag che indica se i beneficiari sono dentro una rata */
+    /** Flag indicating if beneficiaries are within an installment */
     readonly isInsideInstallment?: boolean;
-    /** Indice della rata (se dentro una rata) */
+    /** Installment index (if inside an installment) */
     readonly installmentIndex?: number;
   };
 
 /**
- * Proprietà per hook di gestione rate
+ * Properties for installment management hook
  */
 export type InstallmentManagementProps<T extends FieldValues> =
   BaseHookProps<T> & {
-    /** Prefisso per accedere ai campi delle rate nel form */
+    /** Prefix to access installment fields in the form */
     readonly fieldNamePrefix: FieldArrayPath<T>;
-    /** Funzione per impostare i valori nel form */
+    /** Function to set values in the form */
     readonly setValue: UseFormSetValue<T>;
-    /** Flag che indica se la data di scadenza è obbligatoria */
+    /** Flag indicating if the due date is mandatory */
     readonly flagMandatoryDueDate?: boolean;
-    /** Callback invocata quando cambiano le rate */
+    /** Callback invoked when installments change */
     readonly onInstallmentsChange?: (
       installments: Array<Installment>,
       totalAmount: string
@@ -332,47 +324,47 @@ export type InstallmentManagementProps<T extends FieldValues> =
   };
 
 /**
- * Proprietà per hook di gestione beneficiari nelle rate
+ * Properties for installment beneficiary management hook
  */
 export type InstallmentBeneficiaryManagementProps<T extends FieldValues> =
   BaseHookProps<T> & {
-    /** Indice della rata */
+    /** Installment index */
     readonly index: number;
-    /** Prefisso per accedere ai campi delle rate nel form */
+    /** Prefix to access installment fields in the form */
     readonly installmentsFieldNamePrefix: string;
-    /** Funzione per impostare i valori nel form */
+    /** Function to set values in the form */
     readonly setValue: UseFormSetValue<T>;
-    /** Callback invocata quando cambia lo stato del multibeneficiario */
+    /** Callback invoked when multi-beneficiary state changes */
     readonly onToggleMultibeneficiary?: (value: boolean) => void;
   };
 
 /**
- * Risultato dell'hook di gestione beneficiari
+ * Result of the beneficiary management hook
  */
 export type BeneficiaryManagementResult = {
-  /** Campi dei beneficiari */
+  /** Beneficiary fields */
   fields: Array<Record<string, unknown>>;
-  /** Validatori */
+  /** Validators */
   validators: Record<string, unknown>;
-  /** Validatori di campo */
+  /** Field validators */
   fieldValidators: Record<string, unknown>;
-  /** Numero massimo di beneficiari */
+  /** Maximum number of beneficiaries */
   MAX_BENEFICIARIES: number;
-  /** Registro dei beneficiari esistenti */
+  /** Registry of existing beneficiaries */
   existingBeneficiaries: Record<string, boolean>;
-  /** Ref che indica se il form è stato inviato */
+  /** Ref indicating if the form has been submitted */
   wasSubmittedRef: { current: boolean };
-  /** Ref che indica se l'inizializzazione è in corso */
+  /** Ref indicating if initialization is in progress */
   isInitializingRef: { current: boolean };
-  /** Funzione per aggiungere un beneficiario */
+  /** Function to add a beneficiary */
   addBeneficiary: () => void;
-  /** Funzione per rimuovere un beneficiario */
+  /** Function to remove a beneficiary */
   removeBeneficiary: (index: number) => void;
-  /** Funzione per reset di tutti i beneficiari */
+  /** Function to reset all beneficiaries */
   resetAllBeneficiaries: () => void;
-  /** Funzione per aggiornare le validazioni degli importi */
+  /** Function to update amount validations */
   updateAmountValidations: () => void;
-  /** Funzione per ottenere il path di un campo beneficiario */
+  /** Function to get the path of a beneficiary field */
   getBeneficiaryPath: <U extends FieldValues>(
     index: number,
     field?: string
@@ -380,46 +372,46 @@ export type BeneficiaryManagementResult = {
 };
 
 /**
- * Risultato dell'hook di gestione rate
+ * Result of the installment management hook
  */
 export type InstallmentManagementResult = {
-  /** Campi delle rate */
+  /** Installment fields */
   fields: Array<Record<string, unknown>>;
-  /** Validatori */
+  /** Validators */
   validators: InstallmentValidators;
-  /** Registro delle rate esistenti */
+  /** Registry of existing installments */
   existingInstallments: Record<string, boolean>;
-  /** Numero minimo di rate */
+  /** Minimum number of installments */
   MIN_INSTALLMENTS: number;
-  /** Numero massimo di rate */
+  /** Maximum number of installments */
   MAX_INSTALLMENTS: number;
-  /** Ref che indica se il form è stato inviato */
+  /** Ref indicating if the form has been submitted */
   wasSubmittedRef: { current: boolean };
-  /** Ref che indica se l'inizializzazione è in corso */
+  /** Ref indicating if initialization is in progress */
   isInitializingRef: { current: boolean };
-  /** Funzione per aggiungere una rata */
+  /** Function to add an installment */
   addInstallment: () => void;
-  /** Funzione per rimuovere una rata */
+  /** Function to remove an installment */
   removeInstallment: (index: number) => void;
-  /** Funzione per calcolare l'importo totale */
+  /** Function to calculate total amount */
   calculateTotalAmount: () => string;
-  /** Funzione per ottenere i dati delle rate */
+  /** Function to get installment data */
   getInstallmentsData: () => Array<Installment>;
 };
 
 /**
- * Risultato dell'hook di gestione beneficiari nelle rate
+ * Result of the installment beneficiary management hook
  */
 export type InstallmentBeneficiaryManagementResult =
   BeneficiaryManagementResult & {
-    /** Flag che indica se la rata ha beneficiari multipli */
+    /** Flag indicating if the installment has multiple beneficiaries */
     isMultibeneficiary: boolean;
-    /** Funzione per attivare/disattivare i beneficiari multipli */
+    /** Function to enable/disable multiple beneficiaries */
     toggleMultibeneficiary: (value: boolean) => void;
-    /** Funzione per validare gli importi dei beneficiari */
+    /** Function to validate beneficiary amounts */
     validateBeneficiaryAmounts: () => void;
-    /** Funzione per gestire il cambio dell'importo della rata */
+    /** Function to handle installment amount change */
     handleInstallmentAmountChange: (value: string) => void;
-    /** Funzione per validare i campi di pagamento */
+    /** Function to validate payment fields */
     validatePaymentFields: () => void;
   };

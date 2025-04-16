@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { UseFormTrigger } from 'react-hook-form';
 import { ValidationContext } from '../../../../utils/beneficiaryValidation';
@@ -25,6 +25,14 @@ const mockRef = { current: false };
 const mockFieldNamePrefix = 'beneficiaries';
 const mockIndex = 0;
 
+beforeEach(() => {
+  vi.useFakeTimers();
+});
+
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe('Event Handlers', () => {
   describe('handleAmountChange', () => {
     it('accepts only numbers and decimal separators', () => {
@@ -46,6 +54,8 @@ describe('Event Handlers', () => {
         mockTrigger,
         mockFieldNamePrefix
       );
+
+      vi.runAllTimers();
 
       expect(mockOnChange).toHaveBeenCalledWith('123.45');
     });
@@ -70,6 +80,8 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
+      vi.runAllTimers();
+
       expect(mockOnChange).toHaveBeenCalledWith('123.45');
     });
 
@@ -80,9 +92,6 @@ describe('Event Handlers', () => {
       >;
       const mockFields: Array<Record<string, unknown>> = [{}, {}];
 
-      // Mock setTimeout to immediately execute the callback
-      vi.useFakeTimers();
-
       const event = {
         target: { value: '100' }
       } as React.ChangeEvent<HTMLInputElement>;
@@ -96,15 +105,12 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
-      // Execute mocked timers
       vi.runAllTimers();
 
       // Verify that trigger was called for the other field
       expect(mockTrigger).toHaveBeenCalledWith(
         `${mockFieldNamePrefix}.1.amount`
       );
-
-      vi.useRealTimers();
     });
 
     it('does not update validation if there is only one beneficiary', () => {
@@ -114,9 +120,6 @@ describe('Event Handlers', () => {
       >;
       const mockFields: Array<Record<string, unknown>> = [{}];
 
-      // Mock setTimeout to immediately execute the callback
-      vi.useFakeTimers();
-
       const event = {
         target: { value: '100' }
       } as React.ChangeEvent<HTMLInputElement>;
@@ -130,7 +133,6 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
-      // Execute mocked timers
       vi.runAllTimers();
 
       // Verify that trigger is called only for the current field
@@ -138,8 +140,6 @@ describe('Event Handlers', () => {
       expect(mockTrigger).toHaveBeenCalledWith(
         `${mockFieldNamePrefix}.${mockIndex}.amount`
       );
-
-      vi.useRealTimers();
     });
   });
 
@@ -162,6 +162,8 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
+      vi.runAllTimers();
+
       expect(mockOnChange).toHaveBeenCalledWith('IT60X0542811101000000123456');
     });
 
@@ -182,6 +184,8 @@ describe('Event Handlers', () => {
         mockTrigger,
         mockFieldNamePrefix
       );
+
+      vi.runAllTimers();
 
       expect(mockTrigger).toHaveBeenCalledWith(
         `${mockFieldNamePrefix}.${mockIndex}.postalAccount`
@@ -208,6 +212,8 @@ describe('Event Handlers', () => {
         mockFieldNamePrefix
       );
 
+      vi.runAllTimers();
+
       expect(mockOnChange).toHaveBeenCalledWith('123456');
     });
 
@@ -228,6 +234,8 @@ describe('Event Handlers', () => {
         mockTrigger,
         mockFieldNamePrefix
       );
+
+      vi.runAllTimers();
 
       expect(mockTrigger).toHaveBeenCalledWith(
         `${mockFieldNamePrefix}.${mockIndex}.iban`
@@ -733,8 +741,8 @@ describe('AmountField', () => {
     expect(container.textContent).toContain('€');
 
     // Test onChange behavior
-    fireEvent.change(input, { target: { value: '200,75' } });
-    expect(mockOnChange).toHaveBeenCalledWith('200.75');
+    fireEvent.change(input, { target: { value: '300,25' } });
+    expect(mockOnChange).toHaveBeenCalledWith('300.25');
 
     // Test onBlur behavior
     fireEvent.blur(input, { target: { value: '300.25' } });
@@ -789,11 +797,13 @@ describe('IBANField', () => {
     expect(input).not.toBeNull();
     expect(input.value).toBe('IT60X0542811101000000123456');
 
-    // Test onChange behavior
+    // Test onChange behavior - usiamo debounceValidation quindi dobbiamo simulare il timer
     fireEvent.change(input, {
       target: { value: 'it12a123456789012345678901' }
     });
     expect(mockOnChange).toHaveBeenCalledWith('IT12A123456789012345678901');
+
+    vi.runAllTimers();
     expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.0.postalAccount');
   });
 
@@ -897,9 +907,12 @@ describe('PostalAccountField', () => {
     expect(input).not.toBeNull();
     expect(input.value).toBe('123456789012');
 
-    // Test onChange behavior
+    // Test onChange behavior - usiamo debounceValidation quindi dobbiamo simulare il timer
     fireEvent.change(input, { target: { value: '123abc456' } });
     expect(mockOnChange).toHaveBeenCalledWith('123456');
+
+    // Aspettiamo che il timer di debounce esegua il trigger
+    vi.runAllTimers();
     expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.0.iban');
   });
 
