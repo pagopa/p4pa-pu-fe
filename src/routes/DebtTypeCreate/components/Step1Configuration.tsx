@@ -10,10 +10,10 @@ import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import Typography from '@mui/material/Typography';
 import { TFunction } from 'i18next';
 import { z } from 'zod';
+import { useTaxonomyForm } from '../../../hooks/useTaxonomyForm';
 
 export type Step1Data = {
   debtPositionType: string;
-  taxonomy: string;
 };
 
 export type Step1Props = {
@@ -26,15 +26,13 @@ const validationSchema = (t: TFunction) =>
     debtPositionType: z
       .string()
       .max(100, t('debtTypeCreate.configuration.debtType.maxCharacters'))
-      .nonempty(t('debtTypeCreate.configuration.debtType.required')),
-    taxonomy: z
-      .string()
-      .nonempty(t('debtTypeCreate.configuration.taxonomy.required'))
+      .nonempty(t('debtTypeCreate.configuration.debtType.required'))
   });
 
 export const Step1Configuration = ({ setData, onNext }: Step1Props) => {
   const { t } = useTranslation();
   const schema = validationSchema(t);
+  const { renderTaxonomySelects } = useTaxonomyForm();
 
   const {
     handleSubmit,
@@ -90,27 +88,7 @@ export const Step1Configuration = ({ setData, onNext }: Step1Props) => {
           title={t('debtTypeCreate.configuration.taxonomy.title')}
           adornment={<LocalOffer />}
         >
-          <Controller
-            control={control}
-            name="taxonomy"
-            defaultValue=""
-            render={({ field }) => (
-              <FormComponent.Select
-                {...field}
-                ref={null}
-                required
-                label={t('debtTypeCreate.configuration.taxonomy.label')}
-                id="taxonomy"
-                options={[
-                  { value: 'option0', label: t('form.option0') },
-                  { value: 'option1', label: t('form.option1') },
-                  { value: 'option2', label: t('form.option2') }
-                ]}
-                error={!!errors.taxonomy}
-                helperText={errors.taxonomy?.message}
-              />
-            )}
-          />
+          {renderTaxonomySelects()}
         </SectionBox>
       </WizardStepWrapper>
       <WizardStepButtons disableBack onNext={handleSubmit(onSubmit)} />

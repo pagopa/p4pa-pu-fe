@@ -15,8 +15,7 @@ type FormData = {
 
 const initialData: FormData = {
   step1: {
-    debtPositionType: '',
-    taxonomy: ''
+    debtPositionType: ''
   },
   step2: {
     option1: false,
