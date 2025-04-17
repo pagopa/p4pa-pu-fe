@@ -18,6 +18,7 @@ describe('ErrorPage', () => {
     i18nTestSetup({
       utilityPages: {
         error: {
+          retry: 'Riprova',
           title: 'Errore',
           subtitle: 'Si è verificato un errore'
         }

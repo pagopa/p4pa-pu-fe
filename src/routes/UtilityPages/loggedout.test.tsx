@@ -18,6 +18,7 @@ describe('LoggedOut', () => {
     i18nTestSetup({
       utilityPages: {
         loggedout: {
+          login: 'Riconnettiti ora',
           title: 'Sessione terminata',
           subtitle: 'La tua sessione è terminata'
         }
