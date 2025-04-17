@@ -5,6 +5,7 @@ import {
   debtPositionDetailDTOSchema,
   installmentDetailDTOSchema
 } from '../../generated/zod-schema';
+import { AxiosError } from 'axios';
 
 type DebtPositionViewParams = Parameters<
   typeof utils.apiClient.bff.getDebtPositionViews
@@ -124,7 +125,7 @@ const getDebtPositionDetail = (
 const deleteDebtPositionType = (
   debtPositionTypeId: number,
   onSuccess?: () => void,
-  onError?: (error: Error) => void
+  onError?: (error: AxiosError) => void
 ) =>
   useMutation({
     mutationFn: () =>

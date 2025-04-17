@@ -19,6 +19,9 @@ import { PageRoutes } from '../../App';
 export const DebtTypeCatalogDetailView = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [ErrorDescription, setErrorDescription] = useState<
+    'genericErrorDescription' | 'alreadyUsedDescription'
+  >('genericErrorDescription');
   const [accordionSections, setAccordionSections] = useState<
     Array<AccordionSectionConfig>
   >([]);
@@ -32,8 +35,11 @@ export const DebtTypeCatalogDetailView = () => {
     Number(debtPositionTypeId),
     () => navigate(PageRoutes.DEBT_TYPES_CATALOG),
     (error) => {
-      console.error(error);
       setOpenErrorDialog(true);
+      if (error.response?.status === 409) {
+        return setErrorDescription('alreadyUsedDescription');
+      }
+      setErrorDescription('genericErrorDescription');
     }
   );
 
@@ -134,7 +140,7 @@ export const DebtTypeCatalogDetailView = () => {
         data-testid="error-dialog"
         open={openErrorDialog}
         title={t('debtTypeCatalogDetail.errorDialog.title')}
-        message={t('debtTypeCatalogDetail.errorDialog.genericErrorDescription')}
+        message={t(`debtTypeCatalogDetail.errorDialog.${ErrorDescription}`)}
         confirmLabel={t('commons.close')}
         onConfirm={handleErrorConfirm}
         onClose={() => setOpenErrorDialog(false)}
