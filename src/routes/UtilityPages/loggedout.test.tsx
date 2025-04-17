@@ -31,7 +31,10 @@ describe('LoggedOut', () => {
 
     expect(screen.getByText('Sessione terminata')).toBeInTheDocument();
     expect(screen.getByText('La tua sessione è terminata')).toBeInTheDocument();
-    expect(screen.getByText('Login')).toBeInTheDocument();
-    expect(screen.getByRole('link')).toHaveAttribute('href', '/login');
+    expect(screen.getByText('Riconnettiti ora')).toBeInTheDocument();
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'href',
+      'https://dev.selfcare.pagopa.it/auth/login'
+    );
   });
 });
