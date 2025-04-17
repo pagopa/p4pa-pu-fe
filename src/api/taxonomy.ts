@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import {
@@ -10,88 +10,84 @@ import {
 } from '../../generated/zod-schema';
 
 export const getOrganizationsTypes = () =>
-  useMutation({
-    mutationKey: ['getOrganizations'],
-    mutationFn: async () => {
-      const { data: organizations } =
-        await utils.apiClient.bff.getOrganizationTypes();
-      if (organizations) {
-        parseAndLog(taxonomyOrganizationTypeDTOSchema.array(), organizations);
-      }
-      return organizations;
+  useQuery({
+    queryKey: ['getOrganizations'],
+    placeholderData: keepPreviousData,
+    queryFn: utils.apiClient.bff.getOrganizationTypes,
+    select: ({ data }) => {
+      parseAndLog(taxonomyOrganizationTypeDTOSchema.array(), data);
+      return data.map((org) => ({
+        value: org.organizationType,
+        label: org.organizationTypeDescription
+      }));
     }
   });
 
-type GetMacroAreaParams = Parameters<typeof utils.apiClient.bff.getMacroArea>;
-export type GetMacroAreaQuery = NonNullable<GetMacroAreaParams[0]>;
-export const getMacroArea = () =>
-  useMutation({
-    mutationKey: ['getMacroArea'],
-    mutationFn: async (query: GetMacroAreaQuery) => {
-      const { data: macroAreas } =
-        await utils.apiClient.bff.getMacroArea(query);
-      if (macroAreas) {
-        parseAndLog(taxonomyMacroAreaCodeDTOSchema.array(), macroAreas);
-      }
-      return macroAreas;
+export const getMacroAreas = (organizationType: string) =>
+  useQuery({
+    queryKey: ['getMacroArea', organizationType],
+    placeholderData: keepPreviousData,
+    queryFn: async () =>
+      await utils.apiClient.bff.getMacroArea({
+        organizationType
+      }),
+    select: ({ data }) => {
+      parseAndLog(taxonomyMacroAreaCodeDTOSchema.array(), data);
+      return data.map((macroArea) => ({
+        value: macroArea.macroAreaCode,
+        label: macroArea.macroAreaName
+      }));
     }
   });
 
-type GetServiceTypeParams = Parameters<
+type ServiceTypeQuery = Parameters<
   typeof utils.apiClient.bff.getServiceType
->;
-export type GetServiceTypeQuery = NonNullable<GetServiceTypeParams[0]>;
-export const getServiceType = () => {
-  return useMutation({
-    mutationKey: ['getServiceType'],
-    mutationFn: async (query: GetServiceTypeQuery) => {
-      const { data: serviceTypes } =
-        await utils.apiClient.bff.getServiceType(query);
-      if (serviceTypes) {
-        parseAndLog(taxonomyServiceTypeCodeDTOSchema.array(), serviceTypes);
-      }
-      return serviceTypes;
+>[0];
+export const getServiceTypes = (query: ServiceTypeQuery) =>
+  useQuery({
+    queryKey: ['getServiceType', ...Object.values(query)],
+    placeholderData: keepPreviousData,
+    queryFn: async () => await utils.apiClient.bff.getServiceType(query),
+    select: ({ data }) => {
+      parseAndLog(taxonomyServiceTypeCodeDTOSchema.array(), data);
+      return data.map((serviceType) => ({
+        value: serviceType.serviceTypeCode,
+        label: serviceType.serviceTypeDescription
+      }));
     }
   });
-};
 
-type GetCollectionReasonParams = Parameters<
+type CollectionReasonQuery = Parameters<
   typeof utils.apiClient.bff.getCollectionReason
->;
-export type GetCollectionReasonQuery = NonNullable<
-  GetCollectionReasonParams[0]
->;
-export const getCollectionReason = () => {
-  return useMutation({
-    mutationKey: ['getCollectionReason'],
-    mutationFn: async (query: GetCollectionReasonQuery) => {
-      const { data: collectionReasons } =
-        await utils.apiClient.bff.getCollectionReason(query);
-      if (collectionReasons) {
-        parseAndLog(
-          taxonomyCollectionReasonDTOSchema.array(),
-          collectionReasons
-        );
-      }
-      return collectionReasons;
+>[0];
+export const getCollectionReasons = (query: CollectionReasonQuery) =>
+  useQuery({
+    queryKey: ['getCollectionReason', ...Object.values(query)],
+    placeholderData: keepPreviousData,
+    queryFn: async () => await utils.apiClient.bff.getCollectionReason(query),
+    select: ({ data }) => {
+      parseAndLog(taxonomyCollectionReasonDTOSchema.array(), data);
+      return data.map(({ collectionReason }) => ({
+        value: collectionReason,
+        label: collectionReason
+      }));
     }
   });
-};
 
-type GetTaxonomyCodeParams = Parameters<
+export type TaxonomyCodeQuery = Parameters<
   typeof utils.apiClient.bff.getTaxonomyCode
->;
-export type GetTaxonomyCodeQuery = NonNullable<GetTaxonomyCodeParams[0]>;
-export const getTaxonomyCode = () => {
-  return useMutation({
-    mutationKey: ['getTaxonomyCode'],
-    mutationFn: async (query: GetTaxonomyCodeQuery) => {
-      const { data: taxonomyCodes } =
-        await utils.apiClient.bff.getTaxonomyCode(query);
-      if (taxonomyCodes) {
-        parseAndLog(taxonomyCodeDTOSchema.array(), taxonomyCodes);
-      }
-      return taxonomyCodes;
+>[0];
+
+export const getTaxonomyCode = (query: TaxonomyCodeQuery) =>
+  useQuery({
+    queryKey: ['getTaxonomyCode', ...Object.values(query)],
+    placeholderData: keepPreviousData,
+    queryFn: async () => await utils.apiClient.bff.getTaxonomyCode(query),
+    select: ({ data }) => {
+      parseAndLog(taxonomyCodeDTOSchema.array(), data);
+      return data.map(({ taxonomyCode }) => ({
+        value: taxonomyCode,
+        label: taxonomyCode
+      }));
     }
   });
-};
