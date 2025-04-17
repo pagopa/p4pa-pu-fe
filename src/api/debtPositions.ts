@@ -120,9 +120,23 @@ const getDebtPositionDetail = (
   });
 };
 
+/** delete a debt position type by its debtPositionTypeId, if allowed */
+const deleteDebtPositionType = (
+  debtPositionTypeId: number,
+  onSuccess?: () => void,
+  onError?: (error: Error) => void
+) =>
+  useMutation({
+    mutationFn: () =>
+      utils.apiClient.bff.deleteDebtPositionType(debtPositionTypeId),
+    onSuccess,
+    onError
+  });
+
 export default {
   getDebtPositionViews,
   getInstallments,
   getInstallmentDetail,
-  getDebtPositionDetail
+  getDebtPositionDetail,
+  deleteDebtPositionType
 };

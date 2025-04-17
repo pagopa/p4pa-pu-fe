@@ -2,7 +2,7 @@ import { Box, Button, Stack } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DetailAccordion } from '../../components/DetailAccordion/DetailAccordion';
 import {
   AccordionSectionConfig,
@@ -13,17 +13,29 @@ import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { STATE } from '../../store/types';
 import { useStore } from '../../store/GlobalStore';
 import { getDebtPositionTypeDetail } from '../../api/debtPositionTypeDetail';
+import debtPositions from '../../api/debtPositions';
+import { PageRoutes } from '../../App';
 
 export const DebtTypeCatalogDetailView = () => {
-  const { t } = useTranslation();
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
   const [accordionSections, setAccordionSections] = useState<
     Array<AccordionSectionConfig>
   >([]);
-
-  const { debtPositionTypeId } = useParams<{ debtPositionTypeId: string }>();
   const { state } = useStore();
-
+  const { t } = useTranslation();
+  const { debtPositionTypeId } = useParams<{ debtPositionTypeId: string }>();
+  const navigate = useNavigate();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
+  const deleteDebtPositionType = debtPositions.deleteDebtPositionType(
+    Number(debtPositionTypeId),
+    () => navigate(PageRoutes.DEBT_TYPES_CATALOG),
+    (error) => {
+      console.error(error);
+      setOpenErrorDialog(true);
+    }
+  );
 
   if (isNaN(Number(debtPositionTypeId))) {
     // TODO
@@ -60,13 +72,9 @@ export const DebtTypeCatalogDetailView = () => {
     }
   ];
 
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [openErrorDialog, setOpenErrorDialog] = useState(false);
-
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     setOpenDeleteDialog(false);
-    //TODO add error handling
-    setOpenErrorDialog(true);
+    deleteDebtPositionType.mutate();
   };
 
   const handleErrorConfirm = () => {
