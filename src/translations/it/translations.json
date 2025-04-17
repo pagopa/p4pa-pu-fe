@@ -755,6 +755,7 @@
   },
   "utilityPages": {
     "error": {
+      "retry": "Riprova",
       "subtitle": "Ti preghiamo di riprovare più tardi",
       "title": "Si è verificato un errore durante l'accesso a Piattaforma Unitaria"
     },

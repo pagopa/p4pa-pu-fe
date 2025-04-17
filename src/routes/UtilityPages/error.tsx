@@ -25,7 +25,7 @@ export const ErrorPage = () => {
         <Typography variant="h6" color="textSecondary" gutterBottom>
           {t('utilityPages.error.subtitle')}
         </Typography>
-        <Link to={'/home'}>Riprova</Link>
+        <Link to={'/home'}>{t('utilityPages.error.retry')}</Link>
       </Box>
     </>
   );
