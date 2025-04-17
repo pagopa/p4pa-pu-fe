@@ -28,7 +28,7 @@ export const LoggedOut = () => {
           {t('utilityPages.loggedout.subtitle')}
         </Typography>
         <Link to={loginUrl || '/login'} replace>
-          Login
+          {t('utilityPages.loggedout.login')}
         </Link>
       </Box>
     </>

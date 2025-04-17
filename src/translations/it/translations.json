@@ -754,7 +754,8 @@
   "utilityPages": {
     "loggedout": {
       "subtitle": "Grazie per aver utilizzato Piattaforma Unitaria",
-      "title": "Sei stato disconnesso dal sistema"
+      "title": "Sei stato disconnesso dal sistema",
+      "login": "Riconnettiti ora"
     }
   }
 }
