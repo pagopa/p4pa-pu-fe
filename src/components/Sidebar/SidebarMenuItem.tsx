@@ -8,7 +8,8 @@ import {
   useMediaQuery,
   type Theme,
   useTheme,
-  Box
+  Box,
+  SxProps
 } from '@mui/material';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { alpha } from '@mui/material';
@@ -21,22 +22,56 @@ type Props = {
   collapsed: boolean;
   item: ISidebarMenuItem;
   onClick: React.MouseEventHandler<HTMLAnchorElement> | undefined;
-  selectedTarget: string;
-  setSelectedTarget: React.Dispatch<React.SetStateAction<string>>;
 };
 
 function renderIcon(Icon: React.ElementType) {
   return <Icon />;
 }
 
-export const SidebarMenuItem = ({
-  collapsed,
-  item,
-  onClick,
-  selectedTarget,
-  setSelectedTarget
-}: Props) => {
+type listItemProps = {
+  component: React.ElementType;
+  to?: string;
+  onClick?: (() => void) | React.MouseEventHandler<HTMLAnchorElement>;
+  item: ISidebarMenuItem;
+  children?: React.ReactNode;
+  sx?: SxProps<Theme>;
+};
+
+const ListItem = (props: listItemProps) => {
+  const { component, to = '', onClick, item, children, sx } = props;
   const theme = useTheme();
+  return (
+    <ListItemButton
+      component={component}
+      to={to}
+      onClick={onClick}
+      sx={{
+        px: 3,
+        '&.hover': {
+          backgroundColor: 'none'
+        },
+        '&.active': {
+          fontWeight: item.route && !item.items ? 'bold' : 'normal',
+          backgroundColor: alpha(theme.palette.primary.main, 0.08),
+          borderRight: '2px solid',
+          borderColor: theme.palette.primary.dark,
+          '.MuiTypography-root': {
+            fontWeight: 600,
+            color: theme.palette.primary.dark
+          },
+          '.MuiListItemIcon-root': {
+            color: theme.palette.primary.dark
+          }
+        },
+        ...sx
+      }}
+    >
+      {children}
+    </ListItemButton>
+  );
+};
+
+export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const lg = useMediaQuery((theme: Theme) => theme.breakpoints.up('lg'));
@@ -55,9 +90,7 @@ export const SidebarMenuItem = ({
     setOpen(!open);
   };
 
-  const handleListItemClick = (target: string, route?: string) => {
-    setSelectedTarget(target);
-
+  const handleListItemClick = (route?: string) => {
     if (route) {
       navigate(route);
       if (!lg) {
@@ -68,29 +101,11 @@ export const SidebarMenuItem = ({
 
   return (
     <Box sx={{ flexDirection: 'column', alignItems: 'stretch', width: '100%' }}>
-      <ListItemButton
+      <ListItem
+        item={item}
+        to={item.route}
         component={item.route && !item.items ? NavLink : 'div'}
-        to={item.route ?? ''}
         onClick={item.items ? handleCollapseClick : onClick}
-        sx={{
-          px: 3,
-          '&.hover': {
-            backgroundColor: 'none'
-          },
-          '&.active': {
-            fontWeight: item.route && !item.items ? 'bold' : 'normal',
-            backgroundColor: alpha(theme.palette.primary.main, 0.08),
-            borderRight: '2px solid',
-            borderColor: theme.palette.primary.dark,
-            '.MuiTypography-root': {
-              fontWeight: 600,
-              color: theme.palette.primary.dark
-            },
-            '.MuiListItemIcon-root': {
-              color: theme.palette.primary.dark
-            }
-          }
-        }}
       >
         {item.icon && (
           <ListItemIcon aria-hidden="true">
@@ -111,23 +126,23 @@ export const SidebarMenuItem = ({
           ) : (
             <ExpandMoreRoundedIcon color="action" />
           ))}
-      </ListItemButton>
+      </ListItem>
 
       {item.items && (
         <Collapse in={open && !collapsed} timeout="auto" unmountOnExit>
           <Box sx={{ pl: 1 }}>
             <List component="div" disablePadding>
-              {item.items.map((subitem, subindex) => (
-                <ListItemButton
+              {item.items.map((subitem) => (
+                <ListItem
+                  key={subitem.route}
+                  component={NavLink}
+                  to={subitem.route}
+                  item={subitem}
                   sx={{ pl: 8 }}
-                  selected={selectedTarget === `subitem-${subindex}`}
-                  onClick={() =>
-                    handleListItemClick(`subitem-${subindex}`, subitem.route)
-                  }
-                  key={subindex}
+                  onClick={() => handleListItemClick(subitem.route)}
                 >
-                  <ListItemText primary={subitem.label} key={subindex} />
-                </ListItemButton>
+                  <ListItemText primary={subitem.label} />
+                </ListItem>
               ))}
             </List>
           </Box>
