@@ -90,7 +90,7 @@ export const IUVDataGrid = ({
       type: 'string',
       renderCell: (params: GridRenderCellParams<InstallmentView>) => (
         <Chip
-          label={t(`DebtPositions.Results.status.${params.value}`)}
+          label={t(`commons.status.${params.value}`)}
           title={t(params.value)}
           color={stateColors[params.value]}
           size="small"

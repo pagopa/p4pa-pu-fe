@@ -61,7 +61,7 @@ const DetailContainer = ({
         <React.Fragment>
           <Chip
             color={item.chipConfig?.color ?? stateColors[item.value]}
-            label={t(`commons.chipStaus.${item.value}`)}
+            label={t(`commons.status.${item.value}`)}
             variant={item.chipConfig?.variant}
           />
         </React.Fragment>

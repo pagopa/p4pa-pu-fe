@@ -4,20 +4,8 @@
       "filters": {
         "from": "Creazione dal"
       },
-      "status": {
-        "CANCELLED": "Cancellato",
-        "DRAFT": "Bozza",
-        "EXPIRED": "Scaduto",
-        "INVALID": "Non valido",
-        "PAID": "Pagato",
-        "PARTIALLY_PAID": "Pagamento iniziato",
-        "REPORTED": "Rendicontato",
-        "TO_SYNC": "Da sincronizzare",
-        "UNPAID": "Da pagare"
-      },
       "table": {
         "creationDate": "Data creazione",
-        "debtType": "Tipo dovuto",
         "description": "Descrizione",
         "status": "Stato"
       },
@@ -51,17 +39,6 @@
     "breadcrumbs": "Elementi di navigazione breadcrumbs",
     "breadcrumbsElement": "Elemento breadcrumb",
     "breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
-    "chipStaus": {
-      "CANCELLED": "Cancellato",
-      "DRAFT": "Bozza",
-      "EXPIRED": "Scaduto",
-      "INVALID": "Non valido",
-      "PAID": "Pagato",
-      "PARTIALLY_PAID": "Pagamento iniziato",
-      "REPORTED": "Rendicontato",
-      "TO_SYNC": "Da sincronizzare",
-      "UNPAID": "Da pagare"
-    },
     "close": "Chiudi",
     "collectionReason": "Motivo Riscossione",
     "continue": "Continua",
@@ -69,7 +46,9 @@
     "create": "Crea",
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
+    "creationFrom": "Creazione dal",
     "debtFlow": "Flussi dovuti",
+    "debtType": "Tipo dovuto",
     "debtTypeCode": "Codice Tipo dovuto",
     "debtTypeName": "Nome del Tipo dovuto",
     "debtor": "Debitore",
@@ -168,9 +147,7 @@
       "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
     },
     "from": "Dal",
-    "goOut": "Esci",
     "importFlow": "Importa flusso",
-    "importFlowButton": "Importa flusso",
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
     "iud": "IUD",
@@ -277,7 +254,15 @@
       "ERROR": "Errore",
       "EXPIRED": "Scaduto",
       "PROCESSING": "In elaborazione",
-      "UPLOADED": "Caricato"
+      "UPLOADED": "Caricato",
+      "CANCELLED": "Cancellato",
+      "DRAFT": "Bozza",
+      "INVALID": "Non valido",
+      "PAID": "Pagato",
+      "PARTIALLY_PAID": "Pagamento iniziato",
+      "REPORTED": "Rendicontato",
+      "TO_SYNC": "Da sincronizzare",
+      "UNPAID": "Da pagare"
     },
     "subject": "Oggetto",
     "successExport": "Abbiamo ricevuto la tua richiesta!",
@@ -516,7 +501,6 @@
     "subject": "Oggetto del pagamento"
   },
   "debtPositions": {
-    "creationFrom": "Creazione dal",
     "expirationFrom": "Scadenza dal",
     "importDebtFlow": "Importa flussi di dovuti",
     "importDebtFlowDescription": "Carica un file .zip con l'informazione necessaria di dovuti mancanti.",
@@ -556,7 +540,6 @@
       "alertMessage": "* Indica una domanda obbligatoria",
       "debtType": {
         "helper": "Inserisce il nome attribuito al servizio di incasso",
-        "label": "Nome del Tipo dovuto",
         "maxCharacters": "Il nome del Tipo dovuto deve avere al massimo 100 caratteri",
         "placeholder": "Inserisce il nome attribuito al servizio di incasso",
         "required": "Il nome del Tipo dovuto è obbligatorio",

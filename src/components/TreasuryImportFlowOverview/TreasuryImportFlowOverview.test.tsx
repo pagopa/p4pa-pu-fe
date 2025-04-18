@@ -32,7 +32,7 @@ describe('TreasuryImportFlowOverview', () => {
     i18nTestSetup({
       'commons.routes.TREASURY_IMPORT_FLOW_OVERVIEW': 'Treasury Import',
       'treasuryImportFlowOverview.description': 'Import your Treasury',
-      'commons.importFlowButton': 'Import Flow'
+      'commons.importFlow': 'Import Flow'
     });
   });
 

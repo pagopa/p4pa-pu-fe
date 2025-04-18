@@ -250,7 +250,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
       />
     );
 
-    const importButton = screen.getByText('commons.importFlowButton');
+    const importButton = screen.getByText('commons.importFlow');
     fireEvent.click(importButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/mock-path');

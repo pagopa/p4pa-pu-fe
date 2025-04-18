@@ -237,7 +237,7 @@ const FileUploader = ({
             </Typography>
           </Box>
           <IconButton
-            aria-label={t('commons.removeFile')}
+            aria-label={t('commons.files.remove')}
             onClick={handleRemoveFile}
             sx={{ color: theme.palette.primary.main }}
           >
