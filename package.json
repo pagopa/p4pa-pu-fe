@@ -19,7 +19,8 @@
 		"lint:fix": "eslint --fix",
 		"lint:lines": "eslint -f unix",
 		"lint": "eslint",
-		"prettify": "prettier --write \"./**/*.{ts,tsx}\""
+		"prettify": "prettier --write \"./**/*.{ts,tsx}\"",
+		"sort-translations": "node scripts/sort-translations.js"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.13.5",
@@ -69,6 +70,7 @@
 		"eslint-plugin-react-refresh": "^0.4.14",
 		"eslint-plugin-sonarjs": "^3.0.2",
 		"globals": "^15.11.0",
+		"husky": "^9.1.7",
 		"jsdom": "^25.0.1",
 		"prettier": "^3.5.3",
 		"process": "^0.11.10",

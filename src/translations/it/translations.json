@@ -441,12 +441,9 @@
         "title": "ENTE BENEFICIARIO"
       },
       "dueDate": {
+        "invalid": "La data di scadenza non è valida o è incompleta",
         "label": "Data scadenza",
-        "required": "Il campo data scadenza è obbligatorio",
-        "invalid": "La data di scadenza non è valida o è incompleta"
-      },
-      "isMultibeneficiary": {
-        "label": "Altri beneficiari"
+        "required": "Il campo data scadenza è obbligatorio"
       },
       "installments": {
         "addInstallment": "Aggiungi rata",
@@ -464,6 +461,9 @@
         "otherBeneficiaries": "Altri beneficiari",
         "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?",
         "title": "Configurazione rate"
+      },
+      "isMultibeneficiary": {
+        "label": "Altri beneficiari"
       },
       "paymentObject": {
         "label": "Oggetto pagamento",
@@ -623,8 +623,8 @@
     "searchDescription": "Codice per Descrizione"
   },
   "exportFlow": {
-    "buttonReservationExport": "Prenota export",
     "buttonConfirmReservation": "Prenota",
+    "buttonReservationExport": "Prenota export",
     "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
     "dueType": "Tipo di dovuto",
     "dueTypePlaceHolder": "Tipo di dovuto da prenotare",
@@ -760,9 +760,9 @@
       "title": "Si è verificato un errore durante l'accesso a Piattaforma Unitaria"
     },
     "loggedout": {
+      "login": "Riconnettiti ora",
       "subtitle": "Grazie per aver utilizzato Piattaforma Unitaria",
-      "title": "Sei stato disconnesso dal sistema",
-      "login": "Riconnettiti ora"
+      "title": "Sei stato disconnesso dal sistema"
     }
   }
 }
