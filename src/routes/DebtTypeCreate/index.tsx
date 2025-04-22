@@ -15,7 +15,13 @@ type FormData = {
 
 const initialData: FormData = {
   step1: {
-    debtPositionType: ''
+    debtPositionType: '',
+    debtPositionTypeCode: '',
+    organizationType: '',
+    macroAreaCode: '',
+    serviceTypeCode: '',
+    collectionReason: '',
+    taxonomyCode: ''
   },
   step2: {
     option1: false,
@@ -53,6 +59,7 @@ export const DebtTypeCreate = () => {
             formData.value = { ...formData.value, step1: data };
           }}
           onNext={() => setStep(1)}
+          onBack={() => navigate(PageRoutes.DEBT_TYPES_CATALOG)}
         />
       )
     },
@@ -74,8 +81,8 @@ export const DebtTypeCreate = () => {
 
   return (
     <StepperContainer
-      title={t('debtPositionCreateWizard.title')}
-      description={t('debtPositionCreateWizard.description')}
+      title={t('debtTypeCreate.title')}
+      description={t('debtTypeCreate.description')}
       steps={steps}
       activeStep={step}
     />

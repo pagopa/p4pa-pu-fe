@@ -23,10 +23,15 @@ export const getOrganizationsTypes = () =>
     }
   });
 
-export const getMacroAreas = (organizationType: string) =>
+export const getMacroAreas = ({
+  organizationType
+}: {
+  organizationType: string;
+}) =>
   useQuery({
-    queryKey: ['getMacroArea', organizationType],
+    queryKey: ['getMacroArea', organizationType ?? 'none'],
     placeholderData: keepPreviousData,
+    enabled: !!organizationType,
     queryFn: async () =>
       await utils.apiClient.bff.getMacroArea({
         organizationType
@@ -45,8 +50,9 @@ type ServiceTypeQuery = Parameters<
 >[0];
 export const getServiceTypes = (query: ServiceTypeQuery) =>
   useQuery({
-    queryKey: ['getServiceType', ...Object.values(query)],
+    queryKey: ['getServiceType', query.macroAreaCode ?? 'none'],
     placeholderData: keepPreviousData,
+    enabled: Object.values(query).every(Boolean),
     queryFn: async () => await utils.apiClient.bff.getServiceType(query),
     select: ({ data }) => {
       parseAndLog(taxonomyServiceTypeCodeDTOSchema.array(), data);
@@ -62,8 +68,9 @@ type CollectionReasonQuery = Parameters<
 >[0];
 export const getCollectionReasons = (query: CollectionReasonQuery) =>
   useQuery({
-    queryKey: ['getCollectionReason', ...Object.values(query)],
+    queryKey: ['getCollectionReason', query.serviceTypeCode ?? 'none'],
     placeholderData: keepPreviousData,
+    enabled: Object.values(query).every(Boolean),
     queryFn: async () => await utils.apiClient.bff.getCollectionReason(query),
     select: ({ data }) => {
       parseAndLog(taxonomyCollectionReasonDTOSchema.array(), data);
@@ -80,8 +87,9 @@ export type TaxonomyCodeQuery = Parameters<
 
 export const getTaxonomyCode = (query: TaxonomyCodeQuery) =>
   useQuery({
-    queryKey: ['getTaxonomyCode', ...Object.values(query)],
+    queryKey: ['getTaxonomyCode', query.collectionReason ?? 'none'],
     placeholderData: keepPreviousData,
+    enabled: Object.values(query).every(Boolean),
     queryFn: async () => await utils.apiClient.bff.getTaxonomyCode(query),
     select: ({ data }) => {
       parseAndLog(taxonomyCodeDTOSchema.array(), data);

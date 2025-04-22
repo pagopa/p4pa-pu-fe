@@ -27,14 +27,14 @@ export const _Select = ({ forwardRef, ...props }: _SelectProps) => {
       {...props}
       select
     >
-      {props.options?.map((option, optionIndex) => (
+      {props?.options?.map((option, optionIndex) => (
         <MenuItem
           key={`${props.label}-${option.value}-${optionIndex}`}
           {...option}
         >
           {option.label}
         </MenuItem>
-      ))}
+      )) || []}
     </TextField>
   );
 };
