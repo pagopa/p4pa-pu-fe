@@ -39,7 +39,10 @@ describe('Header component', () => {
           orgName: 'Org 1',
           operatorRole: OperatorRoleEnum.ROLE_ADMIN,
           ipaCode: 'ipaCode',
-          orgFiscalCode: 'XXXXXXX'
+          orgFiscalCode: 'XXXXXXX',
+          flagNotifyIo: false,
+          flagNotifyOutcomePush: false,
+          flagPaymentNotification: false,
         }
       ],
       isSuccess: true
