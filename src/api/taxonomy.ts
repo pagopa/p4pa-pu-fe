@@ -11,7 +11,7 @@ import {
 
 export const getOrganizationsTypes = () =>
   useQuery({
-    queryKey: ['getOrganizations'],
+    queryKey: ['getOrganizationsTypes'],
     placeholderData: keepPreviousData,
     queryFn: utils.apiClient.bff.getOrganizationTypes,
     select: ({ data }) => {
