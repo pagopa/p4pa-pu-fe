@@ -18,7 +18,7 @@
 		"coverage": "vitest --coverage",
 		"lint:fix": "eslint --fix",
 		"lint:lines": "eslint -f unix",
-		"lint": "eslint",
+		"lint": "eslint --ignore-pattern 'scripts/*'",
 		"prettify": "prettier --write \"./**/*.{ts,tsx}\"",
 		"sort-translations": "node scripts/sort-translations.js"
 	},
