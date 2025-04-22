@@ -20,13 +20,14 @@ import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
 import { formatDate } from '../../../../utils/formatters';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';
 import type {
-  BeneficiaryData,
-  BeneficiaryFormValues
-} from '../../../../hooks/useBeneficiaryManagement';
+  Beneficiary,
+  Installment,
+  PaymentOption
+} from '../../../../models/paymentTypes';
 import {
   createAmountValidator,
   isBeneficiariesTotalValid,
@@ -34,16 +35,17 @@ import {
 } from '../../../../utils/fieldValidation';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { PageRoutes } from '../../../../App';
-import { InstallmentData } from '../../../../hooks/useInstallmentManagement';
+import { BeneficiaryFieldRef } from '../Beneficiary/BeneficiaryField';
+
 export type Step3Data = {
   paymentObject: { value: string; readonly: boolean };
-  paymentOption: { value: string; readonly: boolean };
+  paymentOption: { value: PaymentOption; readonly: boolean };
   amount: { value: string; readonly: boolean };
   dueDate: { value: string | null; readonly: boolean };
   flagMandatoryDueDate: boolean;
   isMultibeneficiary: { value: boolean; readonly: boolean };
-  beneficiaries?: Array<BeneficiaryData>; // Array di beneficiari
-  installments?: Array<InstallmentData>; // Array di rate
+  beneficiaries?: Array<Beneficiary>;
+  installments?: Array<Installment>;
 };
 
 type Props = {
@@ -53,16 +55,17 @@ type Props = {
   onBack: () => void;
 };
 
-type FormValues = BeneficiaryFormValues & {
+type FormValues = {
   paymentObject: { value: string; readonly: boolean };
-  paymentOption: { value: string; readonly: boolean };
+  paymentOption: { value: PaymentOption; readonly: boolean };
   amount: { value: string; readonly: boolean };
   dueDate: { value: Date | null; readonly: boolean };
   isMultibeneficiary: { value: boolean; readonly: boolean };
-  installments?: Array<InstallmentData>;
+  beneficiaries?: Array<Beneficiary>;
+  installments?: Array<Installment>;
 };
 
-// Funzione estratta dal nesting eccessivo
+// Function extracted to reduce nesting
 function triggerValidationForAllBeneficiaries<T extends FieldValues>(
   beneficiaries: Array<Record<string, unknown>>,
   trigger: UseFormTrigger<T>
@@ -72,73 +75,141 @@ function triggerValidationForAllBeneficiaries<T extends FieldValues>(
   });
 }
 
+// Function to trigger validation for all beneficiaries across all installments
+function triggerValidationForAllInstallmentBeneficiaries<T extends FieldValues>(
+  installments: Array<Record<string, unknown>>,
+  trigger: UseFormTrigger<T>
+) {
+  installments.forEach((installment, installmentIndex) => {
+    if (installment.isMultibeneficiary) {
+      const installmentBeneficiaries =
+        (installment.beneficiaries as Array<Record<string, unknown>>) || [];
+
+      installmentBeneficiaries.forEach(
+        (_: Record<string, unknown>, beneficiaryIndex: number) => {
+          const path =
+            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.amount` as Path<T>;
+          trigger(path);
+        }
+      );
+    }
+  });
+}
+
+// Function to validate payment fields (IBAN and postalAccount)
+function triggerPaymentFieldsValidation<T extends FieldValues>(
+  installments: Array<Record<string, unknown>>,
+  trigger: UseFormTrigger<T>
+) {
+  installments.forEach((installment, installmentIndex) => {
+    if (installment.isMultibeneficiary) {
+      const installmentBeneficiaries =
+        (installment.beneficiaries as Array<Record<string, unknown>>) || [];
+
+      installmentBeneficiaries.forEach(
+        (_: Record<string, unknown>, beneficiaryIndex: number) => {
+          // IBAN validation
+          const ibanPath =
+            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.iban` as Path<T>;
+          trigger(ibanPath);
+
+          // Postal account validation
+          const postalAccountPath =
+            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.postalAccount` as Path<T>;
+          trigger(postalAccountPath);
+        }
+      );
+    }
+  });
+}
+
 const Step3 = ({ data, setData, onBack }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  // Converti il valore stringa della data in oggetto Date per il DatePicker
+  // Convert date string value to Date object for DatePicker
   const initialData: FormValues = {
     ...data,
     dueDate: {
       ...data.dueDate,
       value: data.dueDate?.value ? new Date(data.dueDate.value) : null
     },
-    // Inizializza l'array di beneficiari se è definito o crea un array vuoto
+    paymentOption: {
+      ...data.paymentOption,
+      value: data.paymentOption.value as PaymentOption
+    },
     beneficiaries: data.beneficiaries || [],
-    // Inizializza l'array di rate se è definito o crea un array vuoto
     installments: data.installments || []
   };
 
   const {
-    handleSubmit, // Funzione per gestire il submit del form
-    control, // oggetto per controllare i campi del form
-    formState: { errors, isSubmitted }, // oggetto contenente gli errori di validazione e lo stato del form
-    watch, // funzione per osservare i cambiamenti dei campi
-    setValue, // funzione per impostare i valori dei campi del form
-    trigger, // funzione per triggerare la validazione dei campi del form
-    getValues // funzione per ottenere i valori dei campi del form
+    handleSubmit,
+    control,
+    formState: { errors, isSubmitted },
+    watch,
+    setValue,
+    trigger,
+    getValues
   } = useForm<FormValues>({
     defaultValues: initialData,
     mode: 'onChange'
   });
-
-  // Osserva i campi rilevanti per la validazione
   const isMultibeneficiary = watch('isMultibeneficiary.value');
   const totalAmount = watch('amount.value');
   const beneficiaries = watch('beneficiaries') || [];
   const paymentOption = watch('paymentOption.value');
 
-  // Verifica se il paymentOption è rateale
   const isInstallment = paymentOption === 'INSTALLMENTS';
 
-  // Effetto per gestire l'inizializzazione dei beneficiari
+  // Effect to handle beneficiaries initialization
   useEffect(() => {
-    if (isMultibeneficiary && beneficiaries.length === 0) {
-      setValue('beneficiaries', [
-        {
-          entityName: '',
-          amount: '',
-          taxCode: '',
-          iban: '',
-          postalAccount: '',
-          taxonomyCode: ''
-        }
-      ]);
+    const currentBeneficiaries = getValues('beneficiaries') || [];
+    // Initialize beneficiaries only if switch is active and there are no beneficiaries yet
+    if (isMultibeneficiary && currentBeneficiaries.length === 0) {
+      setValue(
+        'beneficiaries',
+        [
+          {
+            entityName: '',
+            amount: '',
+            taxCode: '',
+            iban: '',
+            postalAccount: '',
+            taxonomyCode: ''
+          }
+        ],
+        { shouldDirty: true }
+      );
     } else if (!isMultibeneficiary) {
       setValue('beneficiaries', []);
     }
-  }, [isMultibeneficiary, setValue]);
+  }, [isMultibeneficiary, setValue, getValues]);
 
-  // Gestisce l'aggiornamento dell'importo totale quando cambiano le rate
+  // Handle total amount update when installments change
   const handleInstallmentsChange = (totalAmount: string) => {
     setValue('amount.value', totalAmount);
   };
 
-  const onSubmit = async (values: FormValues) => {
-    // Utilizziamo i valori attuali per la validazione
-    const currentBeneficiaries = getValues('beneficiaries') || [];
+  // Reference to BeneficiaryField component to access its methods
+  const beneficiaryFieldRef = useRef<BeneficiaryFieldRef>({});
 
-    // Verifica se la somma degli importi dei beneficiari è valida altrimenti attiva la validazione e interrompe il submit
+  // Handle multi-beneficiary toggle switch
+  const handleMultibeneficiaryToggle = (value: boolean) => {
+    setValue('isMultibeneficiary.value', value);
+
+    // If disabling multi-beneficiary, reset beneficiaries
+    if (
+      !value &&
+      beneficiaryFieldRef.current &&
+      beneficiaryFieldRef.current.resetAllBeneficiaries
+    ) {
+      beneficiaryFieldRef.current.resetAllBeneficiaries();
+    }
+  };
+
+  const onSubmit = async (values: FormValues) => {
+    const currentBeneficiaries = getValues('beneficiaries') || [];
+    // Validate beneficiaries total amount
     if (
       isMultibeneficiary &&
       !isBeneficiariesTotalValid(currentBeneficiaries, totalAmount)
@@ -146,8 +217,93 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       trigger('beneficiaries');
       return;
     }
+    // Validate beneficiaries for each installment if payment is installment
+    if (isInstallment) {
+      const installments = getValues('installments') || [];
+      let hasInvalidBeneficiaries = false;
+      let hasInvalidPaymentFields = false;
+      let hasInvalidAmounts = false;
+      // Check each installment
+      for (const installment of installments) {
+        // Validate installment amount
+        if (!installment.amount || parseFloat(installment.amount) <= 0) {
+          hasInvalidAmounts = true;
+        }
+        if (installment.isMultibeneficiary) {
+          const beneficiaries = installment.beneficiaries || [];
+          // Check beneficiaries structure
+          beneficiaries.forEach((b: Record<string, unknown>, idx: number) => {
+            // Fix format if needed
+            if (
+              typeof b.amount !== 'string' &&
+              b.amount !== null &&
+              b.amount !== undefined
+            ) {
+              beneficiaries[idx].amount = String(b.amount);
+            }
+            // Validate payment fields (IBAN or postalAccount required)
+            const iban = typeof b.iban === 'string' ? b.iban : '';
+            const postalAccount =
+              typeof b.postalAccount === 'string' ? b.postalAccount : '';
+            if (
+              (!iban || iban.trim() === '') &&
+              (!postalAccount || postalAccount.trim() === '')
+            ) {
+              hasInvalidPaymentFields = true;
+            }
+          });
 
-    // Converti la data in stringa prima di salvare
+          // Validate beneficiaries total matches installment amount
+          try {
+            const isValid = isBeneficiariesTotalValid(
+              beneficiaries,
+              installment.amount
+            );
+
+            if (!isValid) {
+              hasInvalidBeneficiaries = true;
+            }
+          } catch (validationError) {
+            console.error(
+              'Error validating beneficiaries total:',
+              validationError
+            );
+            hasInvalidBeneficiaries = true;
+          }
+        }
+      }
+
+      // If any validation fails, trigger form validation and stop submission
+      if (
+        hasInvalidAmounts ||
+        hasInvalidBeneficiaries ||
+        hasInvalidPaymentFields
+      ) {
+        try {
+          // Trigger installment amounts validation
+          installments.forEach((_: Record<string, unknown>, index: number) => {
+            trigger(`installments.${index}.amount` as Path<FormValues>);
+          });
+
+          // Trigger validation for all beneficiaries in all installments
+          triggerValidationForAllInstallmentBeneficiaries(
+            installments,
+            trigger
+          );
+
+          // Trigger payment fields validation
+          triggerPaymentFieldsValidation(installments, trigger);
+        } catch (validationError) {
+          console.error(
+            'Error during installment validation:',
+            validationError
+          );
+        }
+        return;
+      }
+    }
+
+    // Format values for saving
     const formattedValues: Step3Data = {
       ...values,
       dueDate: {
@@ -158,22 +314,22 @@ const Step3 = ({ data, setData, onBack }: Props) => {
             : values.dueDate.value
       },
       flagMandatoryDueDate: data.flagMandatoryDueDate,
-      // Includi l'array di beneficiari solo se isMultibeneficiary è true e non è un pagamento rateale
+      // Include beneficiaries only if multi-beneficiary is true and not installment
       ...(!isInstallment && values.isMultibeneficiary.value
         ? { beneficiaries: values.beneficiaries }
         : {}),
-      // Includi l'array di rate solo se è un pagamento rateale
+      // Include installments only if payment option is installment
       ...(isInstallment ? { installments: values.installments } : {})
     };
-    // Salva i dati
+    // Save data
     setData(formattedValues);
-    // Naviga direttamente alla pagina di completamento usando useNavigate
+    // Navigate to completion page
     navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
       state: { paymentObject: formattedValues.paymentObject.value },
       replace: true
     });
   };
-  // Utilizzo della funzione di validazione importo importata da fieldValidation.tsx
+
   const validateAmount = createAmountValidator(t);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
@@ -243,18 +399,21 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     onChange={(e) => {
                       const value = e.target.value;
                       field.onChange(value);
+
                       switch (value) {
                         case 'INSTALLMENTS':
-                          // Se viene selezionata l'opzione rateale
-                          // Disattiva la modalità multi-beneficiario
+                          // When installment option is selected
+                          // Disable multi-beneficiary mode
                           setValue('isMultibeneficiary.value', false);
-                          // Azzera il valore del campo amount
+                          // Reset amount field
                           setValue('amount.value', '');
+                          // Reset installments array for proper initialization
+                          setValue('installments', []);
                           break;
                         case 'SINGLE':
-                          // Se si passa da rateale a unica, azzera il campo amount
                           if (paymentOption === 'INSTALLMENTS') {
                             setValue('amount.value', '');
+                            setValue('installments', []);
                           }
                           break;
                       }
@@ -297,7 +456,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                       inputProps: {
                         style: { textAlign: 'left' },
                         onWheel: (e) =>
-                          e.target instanceof HTMLElement && e.target.blur() // Rimuove il focus dall'input quando si ruota la rotellina del mouse
+                          e.target instanceof HTMLElement && e.target.blur() // Remove focus when mouse wheel is used
                       }
                     }}
                     error={
@@ -311,18 +470,17 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                         : isSubmitted && errors.amount?.value?.message
                     }
                     onChange={(e) => {
-                      // Accetta solo numeri, punto e virgola
+                      // Accept only numbers, dot and comma
                       const filteredValue = e.target.value.replace(
                         /[^0-9.,]/g,
                         ''
                       );
-                      // Converti virgola in punto per la gestione numerica
+                      // Convert comma to dot for numeric handling
                       const normalizedValue = filteredValue.replace(',', '.');
-                      // Aggiorna il valore nel form
+                      // Update form value
                       field.onChange(normalizedValue);
-                      // Per risolvere il problema di aggiornamento dello stato
-                      // è necessario usare setTimeout per assicurarsi che
-                      // il valore sia effettivamente aggiornato prima di triggerare la validazione
+
+                      // Use setTimeout to ensure value is updated before validation
                       if (isMultibeneficiary && beneficiaries.length > 0) {
                         setTimeout(() => {
                           triggerValidationForAllBeneficiaries(
@@ -333,7 +491,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                       }
                     }}
                     onBlur={(e) => {
-                      // Formatta il valore con due decimali quando il campo perde il focus
+                      // Format value with two decimals when field loses focus
                       const value = e.target.value.replace(',', '.');
                       if (value && !isNaN(parseFloat(value))) {
                         const formatted = parseFloat(value).toFixed(2);
@@ -346,7 +504,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
               />
             </Grid>
 
-            {/* Visualizza il campo data scadenza solo se NON è selezionata l'opzione rateale */}
+            {/* Show due date field only if NOT in installment mode */}
             {!isInstallment && (
               <Grid item xs={12}>
                 <Controller
@@ -386,7 +544,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
               </Grid>
             )}
 
-            {/* Mostra lo switch per i beneficiari multipli solo se NON è selezionata l'opzione rateale */}
+            {/* Show multi-beneficiary switch only if NOT in installment mode */}
             {!isInstallment && (
               <Grid item xs={12}>
                 <Controller
@@ -401,7 +559,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                           disabled={data.isMultibeneficiary?.readonly}
                           onChange={(e) => {
                             const value = e.target.checked;
-                            field.onChange(value);
+                            handleMultibeneficiaryToggle(value);
                           }}
                         />
                       }
@@ -414,10 +572,11 @@ const Step3 = ({ data, setData, onBack }: Props) => {
               </Grid>
             )}
 
-            {/* Componente Enti Beneficiari - visibile solo quando isMultibeneficiary è true E non è selezionata l'opzione rateale */}
+            {/* Beneficiary component - visible only when multi-beneficiary is true AND not in installment mode */}
             {isMultibeneficiary && !isInstallment && (
               <Grid item xs={12} mt={2}>
                 <BeneficiaryField<FormValues>
+                  ref={beneficiaryFieldRef}
                   control={control}
                   errors={errors}
                   isSubmitted={isSubmitted}
@@ -427,16 +586,14 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                   setValue={setValue}
                   getValues={getValues}
                   trigger={trigger}
-                  onToggleMultibeneficiary={(value) => {
-                    setValue('isMultibeneficiary.value', value);
-                  }}
+                  onToggleMultibeneficiary={handleMultibeneficiaryToggle}
                 />
               </Grid>
             )}
           </Grid>
         </SectionBox>
       </WizardStepWrapper>
-      {/* Componente Rate - visibile solo quando è selezionata l'opzione rateale */}
+      {/* Installments component - visible only when installment option is selected */}
       {isInstallment && (
         <InstallmentField<FormValues>
           control={control}

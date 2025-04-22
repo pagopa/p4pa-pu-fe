@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import React, { useImperativeHandle } from 'react';
 import {
   Control,
   UseFormGetValues,
@@ -17,18 +18,24 @@ import {
   BeneficiaryAmountFields,
   BeneficiaryPaymentFields,
   BeneficiaryClassificationFields
-} from './BeneficiaryFieldGroup';
+} from './BeneficiaryFieldControls';
 import { useBeneficiaryManagement } from '../../../../hooks/useBeneficiaryManagement';
+import { useInstallmentBeneficiaryManagement } from '../../../../hooks/useInstallmentBeneficiaryManagement';
 
 // ===== TYPES =====
-type BeneficiaryFieldPath<T extends FieldValues> = FieldArrayPath<T>;
+type BeneficiaryField = Record<string, unknown> & { id: string };
 
-type BeneficiaryFieldProps<T extends FieldValues> = {
+// Type for functions exposed by ref
+export type BeneficiaryFieldRef = {
+  resetAllBeneficiaries?: () => void;
+};
+
+type BeneficiaryFieldProps<T extends FieldValues = FieldValues> = {
   readonly control: Control<T>;
   readonly isSubmitted: boolean;
   readonly errors: FieldErrors<T>;
   readonly totalAmount: string;
-  readonly fieldNamePrefix: BeneficiaryFieldPath<T>;
+  readonly fieldNamePrefix: string;
   readonly disabled?: boolean;
   readonly setValue: UseFormSetValue<T>;
   readonly getValues: UseFormGetValues<T>;
@@ -42,27 +49,73 @@ type BeneficiaryFieldProps<T extends FieldValues> = {
       dati: Record<string, unknown>;
     }>
   ) => void;
+  readonly isInsideInstallment?: boolean;
+  readonly installmentIndex?: number;
+  readonly installmentsFieldNamePrefix?: string;
 };
 
 /**
- * Componente principale per la gestione dei beneficiari
- * Permette l'aggiunta, rimozione e validazione di fino a 4 beneficiari
+ * Main component for beneficiary management - Improved version with useReducer
+ * Allows adding, removing and validating up to 4 beneficiaries
+ * Maintains the same UI but uses reducer hooks for better state management
  */
-function BeneficiaryField<T extends FieldValues>({
-  control,
-  isSubmitted,
-  errors,
-  totalAmount,
-  fieldNamePrefix,
-  disabled = false,
-  getValues,
-  trigger,
-  onToggleMultibeneficiary,
-  onBeneficiariesChange
-}: BeneficiaryFieldProps<T>) {
+type BeneficiaryFieldComponent = {
+  <T extends FieldValues>(
+    props: BeneficiaryFieldProps<T> & {
+      ref?: React.ForwardedRef<BeneficiaryFieldRef>;
+    }
+  ): React.ReactElement;
+  displayName?: string;
+};
+
+const InternalBeneficiaryField = <T extends FieldValues>(
+  props: BeneficiaryFieldProps<T>,
+  ref: React.ForwardedRef<BeneficiaryFieldRef>
+) => {
+  const {
+    control,
+    isSubmitted,
+    errors,
+    totalAmount,
+    fieldNamePrefix,
+    disabled = false,
+    setValue,
+    getValues,
+    trigger,
+    onToggleMultibeneficiary,
+    onBeneficiariesChange,
+    isInsideInstallment = false,
+    installmentIndex,
+    installmentsFieldNamePrefix
+  } = props;
+
   const { t } = useTranslation();
 
-  // Utilizziamo il nostro hook personalizzato per separare la logica dall'UI
+  const beneficiaryManager =
+    isInsideInstallment &&
+    installmentIndex !== undefined &&
+    installmentsFieldNamePrefix
+      ? useInstallmentBeneficiaryManagement<T>({
+          control,
+          index: installmentIndex,
+          installmentsFieldNamePrefix,
+          isSubmitted,
+          getValues,
+          setValue,
+          trigger,
+          onToggleMultibeneficiary
+        })
+      : useBeneficiaryManagement<T>({
+          control,
+          fieldNamePrefix: fieldNamePrefix as FieldArrayPath<T>,
+          isSubmitted,
+          getValues,
+          trigger,
+          totalAmount,
+          onToggleMultibeneficiary,
+          onBeneficiariesChange
+        });
+
   const {
     fields,
     validators,
@@ -71,21 +124,17 @@ function BeneficiaryField<T extends FieldValues>({
     existingBeneficiaries,
     wasSubmittedRef,
     addBeneficiary,
-    removeBeneficiary
-  } = useBeneficiaryManagement<T>({
-    control,
-    fieldNamePrefix,
-    isSubmitted,
-    getValues,
-    trigger,
-    totalAmount,
-    onToggleMultibeneficiary,
-    onBeneficiariesChange
-  });
+    removeBeneficiary,
+    resetAllBeneficiaries
+  } = beneficiaryManager;
+
+  useImperativeHandle(ref, () => ({
+    resetAllBeneficiaries
+  }));
 
   /**
-   * Renderizza il pulsante per aggiungere un nuovo beneficiario
-   * Visibile solo sull'ultimo beneficiario e se non è stato raggiunto il limite massimo
+   * Renders the button to add a new beneficiary
+   * Only visible on the last beneficiary and if the maximum limit hasn't been reached
    */
   const renderAddBeneficiaryButton = (index: number): JSX.Element | null => {
     if (index === fields.length - 1 && fields.length < MAX_BENEFICIARIES) {
@@ -111,10 +160,10 @@ function BeneficiaryField<T extends FieldValues>({
   };
 
   /**
-   * Crea il contesto di validazione per un beneficiario
+   * Creates validation context for a beneficiary
    */
   const createValidationContext = (
-    field: Record<'id', string>,
+    field: BeneficiaryField,
     index: number
   ): BeneficiaryValidationContext<T> => {
     return {
@@ -131,9 +180,9 @@ function BeneficiaryField<T extends FieldValues>({
   };
 
   /**
-   * Renderizza un singolo beneficiario con i suoi gruppi di campi
+   * Renders a single beneficiary with its field groups
    */
-  const renderBeneficiary = (field: Record<'id', string>, index: number) => {
+  const renderBeneficiary = (field: BeneficiaryField, index: number) => {
     const validationContext = createValidationContext(field, index);
 
     return (
@@ -148,7 +197,6 @@ function BeneficiaryField<T extends FieldValues>({
         <BeneficiaryHeader index={index} t={t} onRemove={removeBeneficiary} />
 
         <Grid container spacing={2}>
-          {/* Sezione dati anagrafici */}
           <BeneficiaryIdentityFields
             control={control}
             index={index}
@@ -158,20 +206,34 @@ function BeneficiaryField<T extends FieldValues>({
             t={t}
           />
 
-          {/* Sezione importo */}
           <BeneficiaryAmountFields
             control={control}
             index={index}
             fieldNamePrefix={fieldNamePrefix}
             validationContext={validationContext}
             disabled={disabled}
-            fields={fields}
-            validators={validators}
+            fields={fields as Array<Record<'id', string>>}
+            validators={
+              validators as unknown as {
+                isValidTotalAmount: () => boolean;
+                isSingleBeneficiaryAmountValid: (
+                  hasSingleBeneficiary: boolean
+                ) => boolean;
+                validateTotalAmount: () => string | true;
+                validateSingleBeneficiary: (
+                  amount: string,
+                  fieldsLength: number
+                ) => string | true;
+                isBeneficiaryAmountValid: (
+                  index: number,
+                  hasSingleBeneficiary: boolean
+                ) => boolean;
+              }
+            }
             trigger={trigger}
             t={t}
           />
 
-          {/* Sezione dati di pagamento */}
           <BeneficiaryPaymentFields
             control={control}
             index={index}
@@ -181,11 +243,22 @@ function BeneficiaryField<T extends FieldValues>({
             getValues={getValues}
             trigger={trigger}
             errors={errors}
-            fieldValidators={fieldValidators}
+            fieldValidators={
+              fieldValidators as unknown as {
+                validateBeneficiaryTaxCode: (
+                  value: string
+                ) => string | undefined;
+                validateIBAN: (value: string) => string | undefined;
+                validatePostalAccount: (value: string) => string | undefined;
+                validatePaymentMethod: (
+                  iban: string,
+                  postalAccount: string
+                ) => string | undefined;
+              }
+            }
             t={t}
           />
 
-          {/* Sezione dati di classificazione */}
           <BeneficiaryClassificationFields
             control={control}
             index={index}
@@ -201,10 +274,19 @@ function BeneficiaryField<T extends FieldValues>({
     );
   };
 
-  // ===== MAIN RENDER =====
   return (
-    <Box>{fields.map((field, index) => renderBeneficiary(field, index))}</Box>
+    <Box>
+      {fields.map((field, index) =>
+        renderBeneficiary(field as BeneficiaryField, index)
+      )}
+    </Box>
   );
-}
+};
+
+const BeneficiaryField = React.forwardRef(
+  InternalBeneficiaryField
+) as unknown as BeneficiaryFieldComponent;
+
+BeneficiaryField.displayName = 'BeneficiaryField';
 
 export default BeneficiaryField;

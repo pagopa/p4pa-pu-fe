@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import {
   Box,
   Divider,
@@ -36,8 +36,6 @@ export const Sidebar: React.FC = () => {
 
   const { collapsed, changeMenuState, setCollapsed, setOverlay, overlay } =
     useCollapseMenu(!lg);
-
-  const [selectedTarget, setSelectedTarget] = useState('');
 
   useEffect(() => {
     setOverlay(!(lg || collapsed));
@@ -199,11 +197,7 @@ export const Sidebar: React.FC = () => {
           >
             {menuItems.map((item, index) => (
               <SidebarMenuItem
-                onClick={() =>
-                  !lg && setCollapsed(true) && setSelectedTarget('')
-                }
-                selectedTarget={selectedTarget}
-                setSelectedTarget={setSelectedTarget}
+                onClick={() => !lg && setCollapsed(true)}
                 collapsed={collapsed}
                 item={item}
                 key={index}
@@ -223,11 +217,7 @@ export const Sidebar: React.FC = () => {
           >
             {additionalItems.map((item, index) => (
               <SidebarMenuItem
-                onClick={() =>
-                  !lg && setCollapsed(true) && setSelectedTarget('')
-                }
-                selectedTarget={selectedTarget}
-                setSelectedTarget={setSelectedTarget}
+                onClick={() => !lg && setCollapsed(true)}
                 collapsed={collapsed}
                 item={item}
                 key={index}

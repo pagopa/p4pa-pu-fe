@@ -83,6 +83,7 @@
     "enabled": "Abilitato",
     "executedBy": "Eseguito da",
     "exit": "Esci",
+    "exportedFlows": "Flussi esportati",
     "files": {
       "download": "Scarica",
       "downloadFlow": "Scarica flusso",
@@ -291,7 +292,6 @@
     "view": "Visualizza"
   },
   "conservation": {
-    "buttonReservationExport": "Prenota export",
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "exportFrom": "Esportati dal"
   },
@@ -428,6 +428,7 @@
           "required": "Il campo conto corrente postale è obbligatorio"
         },
         "sumMustBeLessThanTotal": "La somma degli importi dei beneficiari deve essere minore dell'importo totale",
+        "sumMustBeLessThanTotalInstallments": "La somma degli importi dei beneficiari deve essere minore dell'importo totale, clicca su No per modificare",
         "taxCode": {
           "invalid": "Codice fiscale non valido",
           "label": "Codice Fiscale",
@@ -461,6 +462,7 @@
         "maxInstallmentsReached": "Hai raggiunto il numero massimo di rate (12)",
         "minInstallmentsRequired": "Sono richieste almeno 2 rate",
         "otherBeneficiaries": "Altri beneficiari",
+        "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?",
         "title": "Configurazione rate"
       },
       "paymentObject": {
@@ -621,6 +623,7 @@
     "searchDescription": "Codice per Descrizione"
   },
   "exportFlow": {
+    "buttonReservationExport": "Prenota export",
     "buttonConfirmReservation": "Prenota",
     "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
     "dueType": "Tipo di dovuto",
@@ -687,7 +690,6 @@
     "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
   },
   "telematicReceiptFlowExportOverview": {
-    "buttonReservationExport": "Prenota export",
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "exportFrom": "Esportati dal"
   },
@@ -752,9 +754,15 @@
     "valueDate": "Data Valuta"
   },
   "utilityPages": {
+    "error": {
+      "retry": "Riprova",
+      "subtitle": "Ti preghiamo di riprovare più tardi",
+      "title": "Si è verificato un errore durante l'accesso a Piattaforma Unitaria"
+    },
     "loggedout": {
       "subtitle": "Grazie per aver utilizzato Piattaforma Unitaria",
-      "title": "Sei stato disconnesso dal sistema"
+      "title": "Sei stato disconnesso dal sistema",
+      "login": "Riconnettiti ora"
     }
   }
 }

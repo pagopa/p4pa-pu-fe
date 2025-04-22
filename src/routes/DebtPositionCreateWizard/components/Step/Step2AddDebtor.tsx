@@ -8,36 +8,35 @@ import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { createValidators } from '../../../../utils/fieldValidation';
 
-// Tipo che definisce la struttura dati dello Step 2 del wizard.
 export type Step2Data = {
-  subjectType: { value: string; readonly: boolean }; // Tipo soggetto (fisica/giuridica)
-  taxCode: { value: string; readonly: boolean }; // Codice fiscale o partita IVA
-  fullName: { value: string; readonly: boolean }; // Nome completo
-  address: { value: string; readonly: boolean }; // Indirizzo
-  civicNumber: { value: string; readonly: boolean }; // Numero civico
-  zipCode: { value: string; readonly: boolean }; // CAP
-  country: { value: string; readonly: boolean }; // Nazione
-  province: { value: string; readonly: boolean }; // Provincia
-  city: { value: string; readonly: boolean }; // Città
+  subjectType: { value: string; readonly: boolean }; // Subject type (individual/legal entity)
+  taxCode: { value: string; readonly: boolean }; // Tax code or VAT number
+  fullName: { value: string; readonly: boolean }; // Full name
+  address: { value: string; readonly: boolean }; // Address
+  civicNumber: { value: string; readonly: boolean }; // Civic number
+  zipCode: { value: string; readonly: boolean }; // Zip code
+  country: { value: string; readonly: boolean }; // Country
+  province: { value: string; readonly: boolean }; // Province
+  city: { value: string; readonly: boolean }; // City
 };
 
 type Step2DataField = keyof Step2Data;
 
-//Tipo che rappresenta il percorso completo al valore di un campo.
-//Esempio: 'subjectType.value', 'taxCode.value'
+// Type representing the complete path to a field value.
+// Example: 'subjectType.value', 'taxCode.value'
 type NestedFieldName = `${Step2DataField}.value`;
 
 type Props = {
-  data: Step2Data; // Dati attuali dello step
-  setData: (data: Step2Data) => void; // Funzione per aggiornare i dati
-  onNext: () => void; // Funzione per passare allo step successivo
-  onBack?: () => void; // Funzione per tornare allo step precedente
+  data: Step2Data; // Current step data
+  setData: (data: Step2Data) => void; // Function to update data
+  onNext: () => void; // Function to proceed to next step
+  onBack?: () => void; // Function to go back to previous step
 };
 
 const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   const { t } = useTranslation();
 
-  // Inizializza i campi mancanti nei dati
+  // Initialize missing fields in data
   useEffect(() => {
     const fieldsToInitialize: Array<Step2DataField> = [
       'address',
@@ -53,10 +52,21 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
 
     fieldsToInitialize.forEach((field) => {
       if (!updatedData[field]) {
-        updatedData[field] = { value: '', readonly: false };
+        // Set "IT" as default value for country field
+        if (field === 'country') {
+          updatedData[field] = { value: 'IT', readonly: false };
+        } else {
+          updatedData[field] = { value: '', readonly: false };
+        }
         hasUpdates = true;
       }
     });
+
+    // If country is empty, set "IT" as default value
+    if (updatedData.country && updatedData.country.value === '') {
+      updatedData.country.value = 'IT';
+      hasUpdates = true;
+    }
 
     if (hasUpdates) {
       setData(updatedData);
@@ -64,23 +74,28 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   }, [data, setData]);
 
   const {
-    handleSubmit, // Funzione per gestire la sottomissione del form
-    watch, // Funzione per osservare i valori dei campi
-    control, // Oggetto di controllo per Controller
-    formState: { errors, isSubmitted }, // Stato del form: errori e flag di sottomissione
-    trigger, // Funzione per attivare la validazione manualmente
-    clearErrors, // Funzione per ripulire gli errori
-    setValue // Funzione per impostare valori nei campi
+    handleSubmit, // Function to handle form submission
+    watch, // Function to watch field values
+    control, // Control object for Controller
+    formState: { errors, isSubmitted }, // Form state: errors and submission flag
+    trigger, // Function to manually trigger validation
+    clearErrors, // Function to clear errors
+    setValue // Function to set field values
   } = useForm<Step2Data>({
-    defaultValues: data, // Inizializza il form con i dati esistenti
-    mode: 'onChange' // Modalità di validazione: alla modifica del campo
+    defaultValues: {
+      ...data,
+      country: {
+        ...data.country,
+        value: data.country?.value || 'IT'
+      }
+    },
+    mode: 'onChange' // Validation mode: on field change
   });
 
-  // Osservazione di campi specifici per reagire ai loro cambiamenti
   const subjectTypeValue = watch('subjectType.value') || '';
   const countryValue = watch('country.value') || '';
 
-  // Effetto che rivalida il codice fiscale/partita IVA e fullName e ragione socialequando cambia il tipo di soggetto
+  // Effect that revalidates tax code/VAT and fullName/company name when subject type changes
   useEffect(() => {
     if (isSubmitted) {
       trigger('taxCode.value');
@@ -88,14 +103,14 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     }
   }, [subjectTypeValue, trigger, isSubmitted]);
 
-  // Creazione delle utility di validazione e label
+  // Creation of validation utilities and labels
   const { getValidationRules } = createValidators(t, subjectTypeValue);
-  // Ottiene le regole di validazione per tutti i campi
+  // Get validation rules for all fields
   const validationRules = getValidationRules();
 
-  // Funzione per validare il CAP.
-  // Per l'Italia deve essere un numero di 5 cifre.
-  // Per altri paesi è accettato qualsiasi valore non vuoto.
+  // Function to validate zip code.
+  // For Italy, it must be a 5-digit number.
+  // For other countries, any non-empty value is accepted.
   const validateZipCode = (zipCode: string) => {
     if (!zipCode) return t('commons.required');
     if (countryValue === 'IT' || !countryValue) {
@@ -107,15 +122,14 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     return true;
   };
 
-  // Funzione per gestire il cambiamento di un qualsiasi campo del form.
-  // Aggiorna il valore e attiva la validazione se il form è già stato inviato.
+  // Function to handle changes to any form field.
+  // Updates the value and triggers validation if the form has already been submitted.
   const handleFieldChange = async (
     fieldName: NestedFieldName,
     value: string
   ) => {
-    // Imposta il nuovo valore nel form
     setValue(fieldName, value);
-    // Se il form è già stato inviato, verifica il campo e pulisce eventuali errori
+    // If the form has already been submitted, validate the field and clear any errors
     if (isSubmitted) {
       const isFieldValid = await trigger(fieldName);
       if (isFieldValid) {
@@ -124,43 +138,21 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     }
   };
 
-  // Funzione specifica per gestire il cambiamento del tipo di soggetto.
-  // Questo campo influenza il comportamento di altri campi, come il codice fiscale.
+  // Specific function to handle subject type changes.
+  // This field affects the behavior of other fields, such as tax code.
   const handleSubjectTypeChange = async (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const newValue = e.target.value;
-    // Aggiorna il valore del tipo di soggetto
     setValue('subjectType.value', newValue);
   };
 
-  // Funzione chiamata alla submission valida del form.
-  // Salva i dati e passa allo step successivo.
+  // Function called on valid form submission.
+  // Saves the data and proceeds to the next step.
   const onSubmit = async (values: Step2Data) => {
-    setData(values); // Salva i dati nel contesto del wizard
-    onNext(); // Passa allo step successivo
+    setData(values);
+    onNext();
   };
-
-  // const allRequiredFieldsFilled = (): boolean => {
-  //   // Lista dei campi obbligatori
-  //   const requiredFields: Array<NestedFieldName> = [
-  //     'subjectType.value',
-  //     'taxCode.value',
-  //     'fullName.value',
-  //     'address.value',
-  //     'civicNumber.value',
-  //     'zipCode.value',
-  //     'country.value',
-  //     'province.value',
-  //     'city.value'
-  //   ];
-
-  //   // Verifica che tutti i campi obbligatori abbiano un valore
-  //   return requiredFields.every((field) => {
-  //     const value = watch(field);
-  //     return typeof value === 'string' && value.trim() !== '';
-  //   });
-  // };
 
   const getTaxCodeLabel = () => {
     switch (subjectTypeValue) {
@@ -209,7 +201,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             {t('debtPositionCreateWizard.step2.fiscalData')}
           </Typography>
 
-          {/* Campo per selezionare il tipo di soggetto (persona fisica o giuridica) */}
+          {/* Field to select subject type (individual or legal entity) */}
           <Controller
             name="subjectType.value"
             control={control}
@@ -228,7 +220,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                 onChange={(e) => {
                   field.onChange(e);
                   handleSubjectTypeChange(e);
-                  // Forza la rivalidazione del campo taxCode solo se il form è già stato inviato
+                  // Force revalidation of taxCode field only if form was already submitted
                   if (isSubmitted) {
                     trigger('taxCode.value');
                   }
@@ -248,7 +240,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             )}
           />
 
-          {/* Campo per il codice fiscale o partita IVA */}
+          {/* Field for tax code or VAT number */}
           <Controller
             name="taxCode.value"
             control={control}
@@ -281,7 +273,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             {t('debtPositionCreateWizard.step2.personalData')}
           </Typography>
 
-          {/* Campo per il nome completo */}
+          {/* Field for full name */}
           <Controller
             name="fullName.value"
             control={control}
@@ -299,15 +291,15 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                 onChange={(e) => {
                   const value = e.target.value;
                   field.onChange(value); // RHF
-                  handleFieldChange('fullName.value', value); // aggiorna stato wizard
+                  handleFieldChange('fullName.value', value); // update wizard state
                 }}
               />
             )}
           />
 
-          {/* Grid per indirizzo, numero civico e CAP */}
+          {/* Grid for address, civic number and zip code */}
           <Grid container spacing={2} mt={1}>
-            {/* Campo per l'indirizzo */}
+            {/* Field for address */}
             <Grid item xs={12} sm={6} md={6}>
               <Controller
                 name="address.value"
@@ -326,15 +318,15 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                     helperText={isSubmitted && errors.address?.value?.message}
                     onChange={(e) => {
                       const value = e.target.value;
-                      field.onChange(value); // sincronizza RHF
-                      handleFieldChange('address.value', value); // aggiorna stato wizard
+                      field.onChange(value); // synchronize RHF
+                      handleFieldChange('address.value', value); // update wizard state
                     }}
                   />
                 )}
               />
             </Grid>
 
-            {/* Campo per il numero civico */}
+            {/* Field for civic number */}
             <Grid item xs={6} sm={3} md={3}>
               <Controller
                 name="civicNumber.value"
@@ -359,15 +351,15 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                     }
                     onChange={(e) => {
                       const value = e.target.value;
-                      field.onChange(value); // sincronizza RHF
-                      handleFieldChange('civicNumber.value', value); // aggiorna stato wizard
+                      field.onChange(value); // synchronize RHF
+                      handleFieldChange('civicNumber.value', value); // update wizard state
                     }}
                   />
                 )}
               />
             </Grid>
 
-            {/* Campo per il CAP con validazione specifica */}
+            {/* Field for zip code with specific validation */}
             <Grid item xs={6} sm={3} md={3}>
               <Controller
                 name="zipCode.value"
@@ -389,17 +381,17 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                     helperText={isSubmitted && errors.zipCode?.value?.message}
                     onChange={(e) => {
                       const value = e.target.value;
-                      field.onChange(value); // sincronizza RHF
-                      handleFieldChange('zipCode.value', value); // aggiorna stato wizard
+                      field.onChange(value); // synchronize RHF
+                      handleFieldChange('zipCode.value', value);
                     }}
-                    inputProps={{ maxLength: 5 }} // Limita a 5 caratteri (lunghezza CAP italiano)
+                    inputProps={{ maxLength: 5 }} // Limit to 5 characters (Italian zip code length)
                   />
                 )}
               />
             </Grid>
           </Grid>
 
-          {/* Grid per nazione, provincia e città */}
+          {/* Grid for country, province and city */}
           <Grid container spacing={2} mt={1}>
             <Grid item xs={12} sm={4}>
               <Controller
@@ -492,12 +484,12 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             </Grid>
           </Grid>
 
-          {/* Pulsanti per navigare nel wizard */}
+          {/* Buttons to navigate through the wizard */}
         </SectionBox>
       </WizardStepWrapper>
       <WizardStepButtons
         onBack={onBack}
-        onNext={handleSubmit(onSubmit)} // Procedi se la validazione passa
+        onNext={handleSubmit(onSubmit)} // Proceed if validation passes
         disableNext={false}
       />
     </form>

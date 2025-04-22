@@ -29,6 +29,7 @@ import { debtPositionsRoutes } from './routes/debtPositions';
 import AuthCallback from './routes/AuthCallback';
 import { postToken } from './api/token';
 import LoggedOut from './routes/UtilityPages/loggedout';
+import ErrorPage from './routes/UtilityPages/error';
 
 const deployPath = config.deployPath;
 
@@ -68,6 +69,11 @@ const routesDef = [
         id: 'LOGGED_OUT',
         path: `${deployPath}/loggedout`,
         element: <LoggedOut />
+      },
+      {
+        id: 'ERROR',
+        path: `${deployPath}/error`,
+        element: <ErrorPage />
       },
       ...flowsRoutes,
       ...importRoutes,

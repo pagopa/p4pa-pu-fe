@@ -8,7 +8,6 @@ import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import BookIcon from '@mui/icons-material/MenuBook';
 
-// Tipizzazione per lo stato dello step 1
 export type Step1Data = {
   debtPositionType: {
     value: string;
@@ -20,7 +19,7 @@ export type Step1Data = {
     readonly: boolean;
   };
 };
-// Tipi per react-hook-form
+// Types for react-hook-form
 type FormValues = {
   debtPositionType: string;
   description: string;
@@ -43,23 +42,23 @@ const Step1GeneralConfiguration = ({
     state: { organizationId }
   } = useStore();
   const { t } = useTranslation();
-  // Hook custom per recuperare i tipi di dovuto disponibili
+  // Custom hook to retrieve available debt position types
   const { optionsMap: debtPositionsTypes } = useDebtPositionsTypeOrg({
     organizationId
   });
 
-  // Inizializzazione del form con react-hook-form
+  // Form initialization with react-hook-form
   const {
-    handleSubmit, // per gestire l'invio del form
-    control, // per controllare i valori
-    formState: { errors } // contiene gli errori di validazione
+    handleSubmit, // to handle form submission
+    control, // to control values
+    formState: { errors } // contains validation errors
   } = useForm<FormValues>({
     defaultValues: {
       debtPositionType: data?.debtPositionType?.value || '',
       description: data?.description?.value || ''
     }
   });
-  // Funzione chiamata al submit valido del form
+  // Function called on valid form submission
   const onSubmit = (values: FormValues) => {
     setData({
       debtPositionType: {
@@ -85,7 +84,7 @@ const Step1GeneralConfiguration = ({
           title={t('debtPositionCreateWizard.step1.title')}
           adornment={<BookIcon />}
         >
-          {/* Select - Tipo di dovuto */}
+          {/* Select - Debt position type */}
           <Controller
             name="debtPositionType"
             control={control}
@@ -116,7 +115,7 @@ const Step1GeneralConfiguration = ({
               </TextField>
             )}
           />
-          {/* Input - Descrizione posizione debitoria */}
+          {/* Input - Debt position description */}
           <Controller
             name="description"
             control={control}
@@ -126,7 +125,6 @@ const Step1GeneralConfiguration = ({
               ),
               validate: (value) => {
                 const trimmed = value.trim();
-                // if (trimmed === '') return true;
                 const wordCount = trimmed.split(/\s+/).length;
                 return (
                   wordCount >= 3 || t('debtPositionCreateWizard.step1.minWords')
@@ -148,12 +146,7 @@ const Step1GeneralConfiguration = ({
           />
         </SectionBox>
       </WizardStepWrapper>
-      <WizardStepButtons
-        onBack={onBack}
-        // disableBack={false}
-        // disableNext={false}
-        onNext={handleSubmit(onSubmit)}
-      />
+      <WizardStepButtons onBack={onBack} onNext={handleSubmit(onSubmit)} />
     </form>
   );
 };

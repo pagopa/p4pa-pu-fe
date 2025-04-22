@@ -19,6 +19,7 @@ vi.mock('react-i18next', () => ({
   })
 }));
 
+// Mock completo di tutti i componenti necessari in BeneficiaryFieldComponents
 vi.mock('./BeneficiaryFieldComponents', () => ({
   BeneficiaryHeader: ({
     index,
@@ -38,11 +39,149 @@ vi.mock('./BeneficiaryFieldComponents', () => ({
         {t('commons.delete')}
       </button>
     </div>
+  ),
+  EntityNameField: ({
+    field,
+    disabled
+  }: {
+    field: {
+      onChange: (...event: Array<unknown>) => void;
+      onBlur: () => void;
+      value: string;
+      name: string;
+      ref: React.Ref<HTMLInputElement>;
+    };
+    t?: (key: string) => string;
+    disabled?: boolean;
+    context: Record<string, unknown>;
+  }) => (
+    <div data-testid="entity-name-field">
+      <input
+        {...field}
+        disabled={disabled}
+        data-testid={`entity-name-input-${field.name}`}
+      />
+    </div>
+  ),
+  TaxCodeField: ({
+    field,
+    disabled
+  }: {
+    field: {
+      onChange: (...event: Array<unknown>) => void;
+      onBlur: () => void;
+      value: string;
+      name: string;
+      ref: React.Ref<HTMLInputElement>;
+    };
+    t?: (key: string) => string;
+    disabled?: boolean;
+    context: Record<string, unknown>;
+  }) => (
+    <div data-testid="tax-code-field">
+      <input
+        {...field}
+        disabled={disabled}
+        data-testid={`tax-code-input-${field.name}`}
+      />
+    </div>
+  ),
+  AmountField: ({
+    field,
+    disabled
+  }: {
+    field: {
+      onChange: (...event: Array<unknown>) => void;
+      onBlur: () => void;
+      value: string;
+      name: string;
+      ref: React.Ref<HTMLInputElement>;
+    };
+    t?: (key: string) => string;
+    disabled?: boolean;
+    context: Record<string, unknown>;
+  }) => (
+    <div data-testid="amount-field">
+      <input
+        {...field}
+        disabled={disabled}
+        data-testid={`amount-input-${field.name}`}
+      />
+    </div>
+  ),
+  IBANField: ({
+    field,
+    disabled
+  }: {
+    field: {
+      onChange: (...event: Array<unknown>) => void;
+      onBlur: () => void;
+      value: string;
+      name: string;
+      ref: React.Ref<HTMLInputElement>;
+    };
+    t?: (key: string) => string;
+    disabled?: boolean;
+    context: Record<string, unknown>;
+  }) => (
+    <div data-testid="iban-field">
+      <input
+        {...field}
+        disabled={disabled}
+        data-testid={`iban-input-${field.name}`}
+      />
+    </div>
+  ),
+  PostalAccountField: ({
+    field,
+    disabled
+  }: {
+    field: {
+      onChange: (...event: Array<unknown>) => void;
+      onBlur: () => void;
+      value: string;
+      name: string;
+      ref: React.Ref<HTMLInputElement>;
+    };
+    t?: (key: string) => string;
+    disabled?: boolean;
+    context: Record<string, unknown>;
+  }) => (
+    <div data-testid="postal-account-field">
+      <input
+        {...field}
+        disabled={disabled}
+        data-testid={`postal-account-input-${field.name}`}
+      />
+    </div>
+  ),
+  TaxonomyCodeField: ({
+    field,
+    disabled
+  }: {
+    field: {
+      onChange: (...event: Array<unknown>) => void;
+      onBlur: () => void;
+      value: string;
+      name: string;
+      ref: React.Ref<HTMLInputElement>;
+    };
+    t?: (key: string) => string;
+    disabled?: boolean;
+    context: Record<string, unknown>;
+  }) => (
+    <div data-testid="taxonomy-code-field">
+      <input
+        {...field}
+        disabled={disabled}
+        data-testid={`taxonomy-code-input-${field.name}`}
+      />
+    </div>
   )
 }));
 
 // Mock dei componenti del gruppo di campi con props per testare disabled
-vi.mock('./BeneficiaryFieldGroup', () => ({
+vi.mock('./BeneficiaryFieldControls', () => ({
   BeneficiaryIdentityFields: ({
     index,
     disabled
@@ -94,13 +233,42 @@ vi.mock('react-hook-form', async (importOriginal) => {
   return {
     ...actual,
     useForm: vi.fn().mockImplementation(() => ({
-      control: { _formValues: {} },
-      formState: { errors: {} },
+      control: {
+        _formValues: {},
+        _fields: {},
+        _names: {
+          array: new Set(),
+          mount: new Set(),
+          unMount: new Set(),
+          watch: new Set(),
+          focus: '',
+          watchAll: false
+        },
+        _getWatch: vi.fn().mockReturnValue({}),
+        _subjects: {
+          watch: { next: vi.fn() },
+          array: { next: vi.fn() },
+          state: { next: vi.fn() }
+        },
+        register: vi.fn(),
+        unregister: vi.fn(),
+        getFieldState: vi.fn(),
+        _updateValid: vi.fn(),
+        _removeUnmounted: vi.fn(),
+        _getDirty: vi.fn(),
+        _updateFieldArray: vi.fn()
+      },
+      formState: { errors: {}, isDirty: false, isSubmitted: false },
       setValue: vi.fn(),
-      getValues: vi.fn(),
-      trigger: vi.fn(),
-      register: vi.fn(),
-      handleSubmit: vi.fn()
+      getValues: vi.fn().mockReturnValue({}),
+      trigger: vi.fn().mockResolvedValue(true),
+      register: vi.fn().mockReturnValue({}),
+      handleSubmit: vi.fn(),
+      watch: vi.fn(),
+      reset: vi.fn(),
+      clearErrors: vi.fn(),
+      unregister: vi.fn(),
+      setError: vi.fn()
     }))
   };
 });
@@ -159,7 +327,13 @@ describe('BeneficiaryField', () => {
       isInitializingRef: { current: false },
       updateAmountValidations: vi.fn(),
       addBeneficiary: mockAddBeneficiary,
-      removeBeneficiary: mockRemoveBeneficiary
+      removeBeneficiary: mockRemoveBeneficiary,
+      resetAllBeneficiaries: vi.fn(),
+      getBeneficiaryPath: vi
+        .fn()
+        .mockImplementation((index, field) =>
+          field ? `beneficiaries.${index}.${field}` : `beneficiaries.${index}`
+        )
     });
   });
 
@@ -263,7 +437,13 @@ describe('BeneficiaryField', () => {
       isInitializingRef: { current: false },
       updateAmountValidations: vi.fn(),
       addBeneficiary: mockAddBeneficiary,
-      removeBeneficiary: mockRemoveBeneficiary
+      removeBeneficiary: mockRemoveBeneficiary,
+      resetAllBeneficiaries: vi.fn(),
+      getBeneficiaryPath: vi
+        .fn()
+        .mockImplementation((index, field) =>
+          field ? `beneficiaries.${index}.${field}` : `beneficiaries.${index}`
+        )
     });
 
     render(<TestComponent />);
@@ -302,13 +482,39 @@ describe('BeneficiaryField', () => {
 
     // Creiamo oggetti di mock con tipi appropriati
     const mockControl = {
-      _formValues: {}
+      _formValues: {},
+      _fields: {},
+      _names: {
+        array: new Set(),
+        mount: new Set(),
+        unMount: new Set(),
+        watch: new Set(),
+        focus: '',
+        watchAll: false
+      },
+      _getWatch: vi.fn().mockReturnValue({}),
+      _subjects: {
+        watch: { next: vi.fn() },
+        array: { next: vi.fn() },
+        state: { next: vi.fn() }
+      },
+      register: vi.fn(),
+      unregister: vi.fn(),
+      getFieldState: vi.fn(),
+      _updateValid: vi.fn(),
+      _removeUnmounted: vi.fn(),
+      _getDirty: vi.fn(),
+      _updateFieldArray: vi.fn()
     } as unknown as Control<TestFormValues>;
+
     const mockErrors = {} as FieldErrors<TestFormValues>;
     const mockSetValue = vi.fn() as unknown as UseFormSetValue<TestFormValues>;
-    const mockGetValues =
-      vi.fn() as unknown as UseFormGetValues<TestFormValues>;
-    const mockTrigger = vi.fn() as unknown as UseFormTrigger<TestFormValues>;
+    const mockGetValues = vi
+      .fn()
+      .mockReturnValue({}) as unknown as UseFormGetValues<TestFormValues>;
+    const mockTrigger = vi
+      .fn()
+      .mockResolvedValue(true) as unknown as UseFormTrigger<TestFormValues>;
 
     render(
       <BeneficiaryField

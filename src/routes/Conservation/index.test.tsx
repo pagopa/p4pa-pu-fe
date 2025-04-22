@@ -1,5 +1,5 @@
 import { describe, it, vi } from 'vitest';
-import Conservation from './Index';
+import Conservation from '.';
 import { render } from '../../__tests__/renderers';
 
 vi.mock('react-router-dom', async (importOriginal) => ({

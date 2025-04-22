@@ -7,7 +7,8 @@ const {
   VITE_DEPLOY_PATH = '/piattaformaunitaria',
   VITE_APIHOST = 'http://localhost',
   VITE_FILESHARE_APIHOST = 'http://localhost',
-  VITE_API_TIMEOUT = '10000'
+  VITE_API_TIMEOUT = '10000',
+  VITE_LOGIN_URL = '/login'
 } = import.meta.env;
 const PARSED_API_TIMEOUT = Number.parseInt(VITE_API_TIMEOUT, 10);
 
@@ -34,6 +35,7 @@ type Config = {
   baseURL: string;
   fileshareURL: string;
   apiTimeout: number;
+  loginUrl: string;
 };
 
 const pagopaLink: RootLinkType = {
@@ -63,6 +65,7 @@ const config: Config = {
   baseURL: VITE_APIHOST,
   fileshareURL: VITE_FILESHARE_APIHOST,
   deployPath: VITE_DEPLOY_PATH,
+  loginUrl: VITE_LOGIN_URL,
   /** This array is populated by paths that don't need a auth token */
   tokenHeaderExcludePaths: ['/auth-callback']
 };
