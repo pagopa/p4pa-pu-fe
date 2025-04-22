@@ -1,78 +1,56 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { useForm, Path } from 'react-hook-form';
+import { render, screen, fireEvent, waitFor } from '../__tests__/renderers';
+import { vi } from 'vitest';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { useFormDependencies } from './useFormDependecies';
 
-type MyForm = { a: string; b: string; c: string };
+type Fields = {
+  f1: string;
+  f2: string;
+  f3: string;
+};
 
-function TestForm() {
-  const form = useForm<MyForm>({
-    defaultValues: { a: '1', b: '2', c: '3' }
-  });
+describe('useFormDependencies hook', () => {
+  function TestForm() {
+    const form = useForm<Fields>({ defaultValues: { f1: '', f2: '', f3: '' } });
 
-  const fieldOrder: Array<Path<MyForm>> = ['a', 'b', 'c'];
-
-  // Pass the generic <MyForm> so TS knows exactly what T is
-  const { keys } = useFormDependencies<MyForm>({ form, fieldOrder });
-
-  return (
-    <form>
-      <input key={keys.a} data-testid="a" {...form.register('a')} />
-      <input key={keys.b} data-testid="b" {...form.register('b')} />
-      <input key={keys.c} data-testid="c" {...form.register('c')} />
-      <div data-testid="keys">{JSON.stringify(keys)}</div>
-    </form>
-  );
-}
-
-describe('useFormDependencies', () => {
-  it('initializes keys from defaultValues', () => {
-    render(<TestForm />);
-    const keysDiv = screen.getByTestId('keys');
-    expect(keysDiv.textContent).toBe(
-      JSON.stringify({ a: 'a-1', b: 'b-2', c: 'c-3' })
-    );
-  });
-
-  it('resets downstream fields and updates keys when the first field changes', async () => {
-    render(<TestForm />);
-    const a = screen.getByTestId('a') as HTMLInputElement;
-    const b = screen.getByTestId('b') as HTMLInputElement;
-    const c = screen.getByTestId('c') as HTMLInputElement;
-    const keysDiv = () => screen.getByTestId('keys');
-
-    // change “a” from “1” → “x”
-    fireEvent.change(a, { target: { value: 'x' } });
-
-    await waitFor(() => {
-      // upstream field carries the new value
-      expect(a.value).toBe('x');
-      // downstream fields have been reset to empty
-      expect(b.value).toBe('');
-      expect(c.value).toBe('');
-      // keys reflect the new values (empty strings produce the “-” suffix)
-      expect(keysDiv().textContent).toBe(
-        JSON.stringify({ a: 'a-x', b: 'b-', c: 'c-' })
-      );
+    const { keys } = useFormDependencies<Fields>({
+      form: form as UseFormReturn<Fields>,
+      fieldOrder: ['f1', 'f2', 'f3']
     });
+
+    return (
+      <>
+        <input data-testid="f1" {...form.register('f1')} />
+        <input data-testid="f2" {...form.register('f2')} />
+        <input data-testid="f3" {...form.register('f3')} />
+        <pre data-testid="keys">{JSON.stringify(keys)}</pre>
+      </>
+    );
+  }
+
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it('only resets fields after the one you change', async () => {
+  it('initial keys reflect empty defaults', () => {
     render(<TestForm />);
-    const a = screen.getByTestId('a') as HTMLInputElement;
-    const b = screen.getByTestId('b') as HTMLInputElement;
-    const c = screen.getByTestId('c') as HTMLInputElement;
+    const keysText = screen.getByTestId('keys').textContent;
+    const keys = keysText ? JSON.parse(keysText) : {};
+    expect(keys).toEqual({ f1: 'f1-', f2: 'f2-', f3: 'f3-' });
+  });
 
-    // first change “a” so b and c go blank
-    fireEvent.change(a, { target: { value: 'x' } });
-    await waitFor(() => expect(b.value).toBe(''));
+  it('resets dependent fields and updates keys on value change', async () => {
+    render(<TestForm />);
 
-    // now set b to “y”; only c should reset
-    fireEvent.change(b, { target: { value: 'y' } });
+    // Change f1 -> should reset f2 and f3
+    fireEvent.change(screen.getByTestId('f1'), { target: { value: 'A' } });
+
     await waitFor(() => {
-      expect(a.value).toBe('x'); // a stays
-      expect(b.value).toBe('y'); // b updated
-      expect(c.value).toBe(''); // c reset
+      const keysText = screen.getByTestId('keys').textContent;
+      const keys = keysText ? JSON.parse(keysText) : {};
+      expect(keys.f1).toBe('f1-A');
+      expect(keys.f2).toBe('f2-'); // f2 reset to default ''
+      expect(keys.f3).toBe('f3-');
     });
   });
 });

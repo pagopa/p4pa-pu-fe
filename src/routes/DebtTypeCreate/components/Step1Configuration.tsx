@@ -129,8 +129,8 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
                   required
                   label={t('debtTypeCreate.configuration.debtTypeCode.label')}
                   id="debtPositionTypeCode"
-                  error={!!errors.debtPositionType}
-                  helperText={errors.debtPositionType?.message}
+                  error={!!errors.debtPositionTypeCode}
+                  helperText={errors.debtPositionTypeCode?.message}
                   adornment={''}
                 />
               )}
