@@ -536,8 +536,14 @@
     }
   },
   "debtTypeCreate": {
+    "title": "Crea un nuovo Tipo dovuto",
+    "description": "Compila i campi e crea un nuovo Tipo dovuto nel propio catalogo.",
     "configuration": {
       "alertMessage": "* Indica una domanda obbligatoria",
+      "collectionReason": {
+        "label": "Motivo Riscossione",
+        "required": "Il Motivo Riscossione é obbligatorio"
+      },
       "debtType": {
         "helper": "Inserisce il nome attribuito al servizio di incasso",
         "maxCharacters": "Il nome del Tipo dovuto deve avere al massimo 100 caratteri",
@@ -545,16 +551,31 @@
         "required": "Il nome del Tipo dovuto è obbligatorio",
         "title": "Descrizione"
       },
+      "debtTypeCode": {
+        "label": "Codice Tipo dovuto",
+        "required": "Il codice del Tipo dovuto è obbligatorio"
+      },
+      "macroArea": {
+        "label": "Macroarea",
+        "required": "Il campo macroarea é obbligatorio"
+      },
+      "organizationType": {
+        "label": "Tipo ente",
+        "required": "Il campo Tipo ente è obbligatorio",
+        "title": "Ente"
+      },
+      "serviceType": {
+        "label": "Tipo Servizio",
+        "required": "Il campo Tipo Servizio é obbligatorio"
+      },
       "subtitle": "Definisce il nome e tassonomia del nuovo Tipo dovuto.",
-      "taxonomy": {
-        "label": "Tipo Ente",
-        "placeholder": "Tipo Ente",
-        "required": "Il campo tassonomia è obbligatorio",
+      "taxonomyCode": {
+        "label": "Codice Tassonomico",
+        "required": "Il Codice Tassonomico é obbligatorio",
         "title": "Tassonomia"
       },
       "title": "Configurazione Tipo dovuto"
     },
-    "description": "Compila i campi e crea un nuovo Tipo dovuto nel propio catalogo.",
     "settings": {
       "behaviour": "Comportamento",
       "message": {
@@ -593,8 +614,7 @@
     "stepper": {
       "step1": "Configurazione Tipo dovuto",
       "step2": "Ulteriori impostazioni "
-    },
-    "title": "Crea un nuovo Tipo dovuto"
+    }
   },
   "debtTypeCreateSuccess": {
     "backToStart": "Torna alla sezione",
