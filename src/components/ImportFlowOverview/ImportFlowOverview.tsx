@@ -192,7 +192,7 @@ const ImportFlowOverview = ({
           {
             icon: <Upload />,
             variant: 'outlined',
-            buttonText: t('commons.importFlowButton'),
+            buttonText: t('commons.importFlow'),
             onActionClick: () =>
               navigate(
                 generatePath(PageRoutes.IMPORT_FLOWS, {

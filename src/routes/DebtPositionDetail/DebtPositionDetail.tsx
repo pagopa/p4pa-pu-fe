@@ -105,7 +105,7 @@ const DebtPositionDetail = () => {
 
     const statusKey = status as StateKey;
     return {
-      label: t(`DebtPositions.Results.status.${statusKey}`) || status,
+      label: t(`commons.status.${statusKey}`) || status,
       color: stateColors[statusKey]
     };
   };

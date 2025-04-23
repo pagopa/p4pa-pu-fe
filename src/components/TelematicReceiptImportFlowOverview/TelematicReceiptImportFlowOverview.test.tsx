@@ -34,7 +34,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
         'Telematic Receipt Import',
       'telematicReceiptImportFlowOverview.description':
         'Import your telematic receipts',
-      'commons.importFlowButton': 'Import Flow'
+      'commons.importFlow': 'Import Flow'
     });
   });
 
