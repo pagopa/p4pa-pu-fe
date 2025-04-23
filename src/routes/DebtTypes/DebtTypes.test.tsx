@@ -8,7 +8,7 @@ import { PageRoutes } from '../../App';
 
 i18nTestSetup({
   'commons.routes.DEBT_TYPES_CATALOG': 'Debt Types Catalog',
-  'commons.createNew': 'Create New',
+  'commons.createNewOne': 'Create New',
   'debtTypes.description': 'Manage your debt types',
   'commons.searchForDescription': 'Search by description',
   'commons.search': 'Search',

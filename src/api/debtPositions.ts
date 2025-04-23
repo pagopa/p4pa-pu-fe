@@ -5,6 +5,7 @@ import {
   debtPositionDetailDTOSchema,
   installmentDetailDTOSchema
 } from '../../generated/zod-schema';
+import { AxiosError } from 'axios';
 
 type DebtPositionViewParams = Parameters<
   typeof utils.apiClient.bff.getDebtPositionViews
@@ -120,9 +121,23 @@ const getDebtPositionDetail = (
   });
 };
 
+/** delete a debt position type by its debtPositionTypeId, if allowed */
+const deleteDebtPositionType = (
+  debtPositionTypeId: number,
+  onSuccess?: () => void,
+  onError?: (error: AxiosError) => void
+) =>
+  useMutation({
+    mutationFn: () =>
+      utils.apiClient.bff.deleteDebtPositionType(debtPositionTypeId),
+    onSuccess,
+    onError
+  });
+
 export default {
   getDebtPositionViews,
   getInstallments,
   getInstallmentDetail,
-  getDebtPositionDetail
+  getDebtPositionDetail,
+  deleteDebtPositionType
 };

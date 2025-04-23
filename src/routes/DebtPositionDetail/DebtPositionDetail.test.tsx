@@ -126,10 +126,10 @@ beforeEach(() => {
     'debtPositionDetail.debtPositionInfo': 'Debt Position Info',
     'debtPositionDetail.paymentOptions': 'Payment Options',
     'debtPositionDetail.solutionDetail': 'Solution Detail',
-    'DebtPositions.Results.status.PAID': 'Paid',
-    'DebtPositions.Results.status.UNPAID': 'Unpaid',
-    'DebtPositions.Results.status.REPORTED': 'Reported',
-    'DebtPositions.Results.status.TO_SYNC': 'To Sync'
+    'commons.status.PAID': 'Paid',
+    'commons.status.UNPAID': 'Unpaid',
+    'commons.status.REPORTED': 'Reported',
+    'commons.status.TO_SYNC': 'To Sync'
   });
 
   vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({

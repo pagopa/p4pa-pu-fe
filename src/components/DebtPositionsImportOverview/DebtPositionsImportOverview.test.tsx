@@ -49,7 +49,7 @@ describe('DebtPositionsImportOverview', () => {
   it('renders import button that matches routing category', () => {
     render(<DebtPositionsImportOverview />);
 
-    const importButton = screen.getByLabelText('commons.importFlowButton');
+    const importButton = screen.getByLabelText('commons.importFlow');
     expect(importButton).toBeDefined();
 
     expect(importButton.closest('button')).not.toBeDisabled();

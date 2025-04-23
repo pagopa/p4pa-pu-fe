@@ -32,7 +32,7 @@ describe('ReportingImportFlowOverview', () => {
     i18nTestSetup({
       'commons.routes.REPORTING_IMPORT_FLOW_OVERVIEW': 'Reporting Import',
       'reportingImportFlowOverview.description': 'Import your Reporting',
-      'commons.importFlowButton': 'Import Flow'
+      'commons.importFlow': 'Import Flow'
     });
   });
 

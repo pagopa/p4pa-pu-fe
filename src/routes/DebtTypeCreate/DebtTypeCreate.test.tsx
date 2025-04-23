@@ -12,7 +12,12 @@ vi.mock('./components/Step1Configuration', () => ({
         onClick={() => {
           setData({
             debtPositionType: 'Test Debt Type',
-            taxonomy: 'category1'
+            debtPositionTypeCode: 'CODE1',
+            organizationType: 'ORG1',
+            macroAreaCode: 'MACRO1',
+            serviceTypeCode: 'SERVICE1',
+            collectionReason: 'REASON1',
+            taxonomyCode: 'TAX1'
           });
           onNext();
         }}
@@ -133,7 +138,12 @@ describe('DebtTypeCreate', () => {
           formData: {
             step1: {
               debtPositionType: 'Test Debt Type',
-              taxonomy: 'category1'
+              debtPositionTypeCode: 'CODE1',
+              organizationType: 'ORG1',
+              macroAreaCode: 'MACRO1',
+              serviceTypeCode: 'SERVICE1',
+              collectionReason: 'REASON1',
+              taxonomyCode: 'TAX1'
             },
             step2: {
               option1: true,

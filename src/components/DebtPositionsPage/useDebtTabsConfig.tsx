@@ -65,7 +65,7 @@ export const useTabsConfig = (): Array<TabsConfig> => {
           type: COMPONENT_TYPE.dateRange,
           label: 'dateRange',
           required: true,
-          from: { label: t('debtPositions.creationFrom') },
+          from: { label: t('commons.creationFrom') },
           to: { label: t('dates.to') },
           id: FilterFieldIds.DATE_RANGE
         },
