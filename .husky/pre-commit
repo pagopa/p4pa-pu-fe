@@ -1,3 +1,1 @@
-yarn sort-translations
-
-git add .
+yarn lint-staged
