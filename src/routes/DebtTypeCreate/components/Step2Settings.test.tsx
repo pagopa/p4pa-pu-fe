@@ -1,6 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import { Step2Settings } from './Step2Settings';
+import { DebtPositionTypeRequestBody } from '../../../../generated/data-contracts';
 
 describe('Step2Settings', () => {
   const mockSetData = vi.fn();
@@ -33,13 +34,14 @@ describe('Step2Settings', () => {
 
     // Check if options are rendered
     expect(
-      screen.getByText('debtTypeCreate.settings.option1.description')
+      screen.getByText(
+        'debtTypeCreate.settings.flagMandatoryDueDate.description'
+      )
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreate.settings.option2.description')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('debtTypeCreate.settings.option3.description')
+      screen.getByText(
+        'debtTypeCreate.settings.flagAnonymousFiscalCode.description'
+      )
     ).toBeInTheDocument();
 
     // Check if form controls are rendered
@@ -68,13 +70,12 @@ describe('Step2Settings', () => {
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        option1: false,
-        option2: false,
-        option3: false,
-        checkbox2: undefined,
-        textField: '',
-        textArea: ''
-      });
+        flagMandatoryDueDate: false,
+        flagAnonymousFiscalCode: false,
+        flagNotifyIo: undefined,
+        ioTemplateSubject: '',
+        ioTemplateMessage: ''
+      } as DebtPositionTypeRequestBody);
       expect(mockOnNext).toHaveBeenCalled();
     });
   });
@@ -120,18 +121,14 @@ describe('Step2Settings', () => {
     );
 
     // Check all options
-    const option1 = screen.getByText(
-      'debtTypeCreate.settings.option1.description'
+    const flagMandatoryDueDate = screen.getByText(
+      'debtTypeCreate.settings.flagMandatoryDueDate.description'
     );
-    const option2 = screen.getByText(
-      'debtTypeCreate.settings.option2.description'
+    const flagAnonymousFiscalCode = screen.getByText(
+      'debtTypeCreate.settings.flagAnonymousFiscalCode.description'
     );
-    const option3 = screen.getByText(
-      'debtTypeCreate.settings.option3.description'
-    );
-    fireEvent.click(option1);
-    fireEvent.click(option2);
-    fireEvent.click(option3);
+    fireEvent.click(flagMandatoryDueDate);
+    fireEvent.click(flagAnonymousFiscalCode);
 
     // Check checkbox2 and fill text fields
     const checkbox2 = screen.getByText(
@@ -154,13 +151,12 @@ describe('Step2Settings', () => {
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        option1: true,
-        option2: true,
-        option3: true,
-        checkbox2: true,
-        textField: 'Subject text',
-        textArea: 'Message content'
-      });
+        flagMandatoryDueDate: true,
+        flagAnonymousFiscalCode: true,
+        flagNotifyIo: true,
+        ioTemplateSubject: 'Subject text',
+        ioTemplateMessage: 'Message content'
+      } as DebtPositionTypeRequestBody);
       expect(mockOnNext).toHaveBeenCalled();
     });
   });
@@ -185,13 +181,12 @@ describe('Step2Settings', () => {
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        option1: false,
-        option2: false,
-        option3: false,
-        checkbox2: undefined,
-        textField: '',
-        textArea: ''
-      });
+        flagMandatoryDueDate: false,
+        flagAnonymousFiscalCode: false,
+        flagNotifyIo: undefined,
+        ioTemplateSubject: '',
+        ioTemplateMessage: ''
+      } as DebtPositionTypeRequestBody);
       expect(mockOnNext).toHaveBeenCalled();
     });
 

@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import { DebtTypeCreateSuccess } from './DebtTypeCreateSuccess';
 
@@ -20,9 +20,7 @@ vi.mock('react-router', () => ({
   useLocation: () => ({
     state: {
       formData: {
-        step1: {
-          debtPositionType: 'Test Debt Type'
-        }
+        description: 'Test Debt Type'
       }
     }
   })
@@ -50,16 +48,18 @@ describe('DebtTypeCreateSuccess', () => {
     vi.clearAllMocks();
   });
 
-  it('renders success message with correct debt type name', () => {
+  it('renders success message with correct debt type name', async () => {
     render(<DebtTypeCreateSuccess />);
 
     // Verify the success icon is displayed
     expect(screen.getByTestId('CheckCircleOutlineIcon')).toBeInTheDocument();
 
     // Verify the title includes the debt type name from location state
-    expect(
-      screen.getByText('debtTypeCreateSuccess.title Test Debt Type')
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText('debtTypeCreateSuccess.title Test Debt Type')
+      ).toBeInTheDocument();
+    });
 
     // Verify the description is displayed
     expect(
