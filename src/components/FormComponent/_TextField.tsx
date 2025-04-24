@@ -5,9 +5,15 @@ import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
 export type _TextFieldProps = Omit<TextFieldProps, 'type'> & {
   adornment?: React.ReactNode;
   forwardRef?: React.Ref<HTMLInputElement>;
+  noAdornment?: boolean;
 };
 
-export const _TextField = (props: _TextFieldProps) => (
+export const _TextField = ({
+  forwardRef,
+  noAdornment,
+  adornment,
+  ...props
+}: _TextFieldProps) => (
   <TextField
     data-testid={props.id}
     fullWidth
@@ -17,14 +23,14 @@ export const _TextField = (props: _TextFieldProps) => (
       }
     }}
     InputProps={{
-      endAdornment: (
+      endAdornment: noAdornment ? undefined : (
         <InputAdornment position="end">
-          {props?.adornment ?? <SearchRoundedIcon />}
+          {adornment ?? <SearchRoundedIcon />}
         </InputAdornment>
       )
     }}
     size="small"
     {...props}
-    ref={props.forwardRef}
+    ref={forwardRef}
   />
 );

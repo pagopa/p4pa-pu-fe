@@ -20,16 +20,19 @@ import {
   getTaxonomyCode
 } from '../../../api/taxonomy';
 import { useFormDependencies } from '../../../hooks/useFormDependecies';
+import { DebtPositionTypeRequestBody } from '../../../../generated/data-contracts';
 
-export type Step1Data = {
-  debtPositionType: string;
-  debtPositionTypeCode: string;
-  organizationType: string;
-  macroAreaCode: string;
-  serviceTypeCode: string;
-  collectionReason: string;
-  taxonomyCode: string;
-};
+export type Step1Data = Partial<DebtPositionTypeRequestBody> &
+  Pick<
+    DebtPositionTypeRequestBody,
+    | 'description'
+    | 'code'
+    | 'orgType'
+    | 'macroArea'
+    | 'serviceType'
+    | 'collectingReason'
+    | 'taxonomyCode'
+  >;
 
 export type Step1Props = {
   setData: (data: Step1Data) => void;
@@ -39,25 +42,25 @@ export type Step1Props = {
 
 const validationSchema = (t: TFunction) =>
   z.object({
-    debtPositionType: z
+    code: z
+      .string()
+      .nonempty(t('debtTypeCreate.configuration.debtTypeCode.required')),
+    description: z
       .string()
       .nonempty(t('debtTypeCreate.configuration.debtType.required'))
       .max(100, t('debtTypeCreate.configuration.debtType.maxCharacters')),
-    debtPositionTypeCode: z
-      .string()
-      .nonempty(t('debtTypeCreate.configuration.debtTypeCode.required')),
-    organizationType: z.string({
+    orgType: z.string({
       required_error: t(
         'debtTypeCreate.configuration.organizationType.required'
       )
     }),
-    macroAreaCode: z.string({
+    macroArea: z.string({
       required_error: t('debtTypeCreate.configuration.macroArea.required')
     }),
-    serviceTypeCode: z.string({
+    serviceType: z.string({
       required_error: t('debtTypeCreate.configuration.serviceType.required')
     }),
-    collectionReason: z.string({
+    collectingReason: z.string({
       required_error: t(
         'debtTypeCreate.configuration.collectionReason.required'
       )
@@ -84,19 +87,19 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
   } = form;
 
   const fieldOrder: Array<keyof Step1Data> = [
-    'organizationType',
-    'macroAreaCode',
-    'serviceTypeCode',
-    'collectionReason',
+    'orgType',
+    'macroArea',
+    'serviceType',
+    'collectingReason',
     'taxonomyCode'
   ];
 
   const { keys } = useFormDependencies({ form, fieldOrder });
 
-  const organizationType = watch('organizationType');
-  const macroAreaCode = watch('macroAreaCode');
-  const serviceTypeCode = watch('serviceTypeCode');
-  const collectionReason = watch('collectionReason');
+  const organizationType = watch('orgType');
+  const macroAreaCode = watch('macroArea');
+  const serviceTypeCode = watch('serviceType');
+  const collectionReason = watch('collectingReason');
 
   const isVisible = !!organizationType;
 
@@ -118,7 +121,7 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
         >
           <Stack direction="row" spacing={3}>
             <Controller
-              name="debtPositionTypeCode"
+              name="code"
               control={control}
               defaultValue=""
               render={({ field }) => (
@@ -128,16 +131,16 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
                   ref={null}
                   required
                   label={t('debtTypeCreate.configuration.debtTypeCode.label')}
-                  id="debtPositionTypeCode"
-                  error={!!errors.debtPositionTypeCode}
-                  helperText={errors.debtPositionTypeCode?.message}
-                  adornment={''}
+                  id="code"
+                  error={!!errors.code}
+                  helperText={errors.code?.message}
+                  noAdornment
                 />
               )}
             />
             <Stack flex={3}>
               <Controller
-                name="debtPositionType"
+                name="description"
                 control={control}
                 defaultValue=""
                 render={({ field }) => (
@@ -146,12 +149,12 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
                     ref={null}
                     required
                     label={t('debtTypeCreate.configuration.debtType.label')}
-                    id="debtPositionType"
+                    id="description"
                     placeholder={t(
                       'debtTypeCreate.configuration.debtType.placeholder'
                     )}
-                    error={!!errors.debtPositionType}
-                    helperText={errors.debtPositionType?.message}
+                    error={!!errors.description}
+                    helperText={errors.description?.message}
                     adornment={`${field.value?.length}/100`}
                   />
                 )}
@@ -170,9 +173,9 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
           <FormComponent.ControlledSelect
             control={control}
             label={t('debtTypeCreate.configuration.organizationType.label')}
-            name="organizationType"
+            name="orgType"
             fetchFn={getOrganizationsTypes}
-            key={keys.organizationType}
+            key={keys.orgType}
           />
 
           <Stack
@@ -183,9 +186,9 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
             <FormComponent.ControlledSelect
               control={control}
               label={t('debtTypeCreate.configuration.macroArea.label')}
-              name="macroAreaCode"
+              name="macroArea"
               fetchFn={() => getMacroAreas({ organizationType })}
-              key={keys.macroAreaCode}
+              key={keys.macroArea}
               disabled={!organizationType}
             />
 
@@ -193,18 +196,18 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
               <FormComponent.ControlledSelect
                 control={control}
                 label={t('debtTypeCreate.configuration.serviceType.label')}
-                name="serviceTypeCode"
+                name="serviceType"
                 fetchFn={() =>
                   getServiceTypes({ organizationType, macroAreaCode })
                 }
-                key={keys.serviceTypeCode}
+                key={keys.serviceType}
                 disabled={!macroAreaCode || !organizationType}
               />
 
               <FormComponent.ControlledSelect
                 control={control}
                 label={t('debtTypeCreate.configuration.collectionReason.label')}
-                name="collectionReason"
+                name="collectingReason"
                 fetchFn={() =>
                   getCollectionReasons({
                     organizationType,
@@ -212,7 +215,7 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
                     macroAreaCode
                   })
                 }
-                key={keys.collectionReason}
+                key={keys.collectingReason}
                 disabled={
                   !serviceTypeCode || !macroAreaCode || !organizationType
                 }
