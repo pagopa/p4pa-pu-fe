@@ -419,6 +419,10 @@
           "label": "Codice Fiscale",
           "required": "Il campo codice fiscale è obbligatorio"
         },
+        "remittance": {
+          "label": "Causale",
+          "required": "Il campo causale è obbligatorio"
+        },
         "taxonomyCode": {
           "label": "Codice Tassonomico",
           "required": "Il campo codice tassonomico è obbligatorio"

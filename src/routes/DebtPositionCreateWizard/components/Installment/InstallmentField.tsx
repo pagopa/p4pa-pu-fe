@@ -25,6 +25,10 @@ export type ValidationFunctions = {
     index: number,
     trigger: UseFormTrigger<T>
   ) => void;
+  validateRemittance: <T extends FieldValues>(
+    index: number,
+    trigger: UseFormTrigger<T>
+  ) => void;
 };
 
 type InstallmentFieldProps<T extends FieldValues> = {
@@ -94,6 +98,12 @@ function InstallmentField<T extends FieldValues>({
         triggerFn: UseFormTrigger<U>
       ) => {
         triggerFn(`${fieldNamePrefix}.${index}.dueDate` as Path<U>);
+      },
+      validateRemittance: <U extends FieldValues>(
+        index: number,
+        triggerFn: UseFormTrigger<U>
+      ) => {
+        triggerFn(`${fieldNamePrefix}.${index}.remittance` as Path<U>);
       }
     };
   };

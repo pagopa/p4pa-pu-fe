@@ -173,6 +173,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
             entityName: '',
             amount: '',
             taxCode: '',
+            remittance: '',
             iban: '',
             postalAccount: '',
             taxonomyCode: ''
@@ -217,18 +218,44 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       trigger('beneficiaries');
       return;
     }
+
+    // Assicuriamoci che il campo remittance sia compilato per tutti i beneficiari
+    if (isMultibeneficiary && !isInstallment) {
+      let hasEmptyRemittance = false;
+
+      currentBeneficiaries.forEach((b, idx) => {
+        if (!b.remittance || b.remittance.trim() === '') {
+          hasEmptyRemittance = true;
+          trigger(`beneficiaries.${idx}.remittance` as Path<FormValues>);
+        }
+      });
+
+      if (hasEmptyRemittance) {
+        return;
+      }
+    }
+
     // Validate beneficiaries for each installment if payment is installment
     if (isInstallment) {
       const installments = getValues('installments') || [];
       let hasInvalidBeneficiaries = false;
       let hasInvalidPaymentFields = false;
       let hasInvalidAmounts = false;
+      let hasEmptyRemittance = false;
+
       // Check each installment
-      for (const installment of installments) {
+      for (const [idx, installment] of installments.entries()) {
         // Validate installment amount
         if (!installment.amount || parseFloat(installment.amount) <= 0) {
           hasInvalidAmounts = true;
         }
+
+        // Validate installment remittance (causale)
+        if (!installment.remittance || installment.remittance.trim() === '') {
+          hasEmptyRemittance = true;
+          trigger(`installments.${idx}.remittance` as Path<FormValues>);
+        }
+
         if (installment.isMultibeneficiary) {
           const beneficiaries = installment.beneficiaries || [];
           // Check beneficiaries structure
@@ -277,7 +304,8 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       if (
         hasInvalidAmounts ||
         hasInvalidBeneficiaries ||
-        hasInvalidPaymentFields
+        hasInvalidPaymentFields ||
+        hasEmptyRemittance
       ) {
         try {
           // Trigger installment amounts validation
@@ -347,9 +375,9 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                 name="paymentObject.value"
                 control={control}
                 rules={{
-                  required: t(
-                    'debtPositionCreateWizard.step3.paymentObject.required'
-                  )
+                  required: isInstallment
+                    ? false
+                    : t('debtPositionCreateWizard.step3.paymentObject.required')
                 }}
                 render={({ field }) => (
                   <TextField
@@ -358,11 +386,19 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                     label={t(
                       'debtPositionCreateWizard.step3.paymentObject.label'
                     )}
-                    required
-                    disabled={data.paymentObject?.readonly}
-                    error={isSubmitted && !!errors.paymentObject?.value}
+                    required={!isInstallment}
+                    disabled={data.paymentObject?.readonly || isInstallment}
+                    error={
+                      isSubmitted &&
+                      !!errors.paymentObject?.value &&
+                      !isInstallment
+                    }
                     helperText={
-                      isSubmitted && errors.paymentObject?.value?.message
+                      isSubmitted &&
+                      errors.paymentObject?.value?.message &&
+                      !isInstallment
+                        ? errors.paymentObject?.value?.message
+                        : ''
                     }
                     onChange={(e) => {
                       const value = e.target.value;

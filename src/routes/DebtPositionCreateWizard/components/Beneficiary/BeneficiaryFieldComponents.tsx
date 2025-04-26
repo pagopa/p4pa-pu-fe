@@ -305,6 +305,42 @@ export function TaxCodeField<T extends FieldValues>(
   );
 }
 
+export function RemittanceField<T extends FieldValues>(
+  props: Readonly<{
+    field: {
+      onChange: (...event: Array<unknown>) => void;
+      onBlur: () => void;
+      value: string;
+      name: string;
+      ref: React.Ref<HTMLInputElement>;
+    };
+    t: (key: string) => string;
+    disabled?: boolean;
+    context: ValidationContext<T>;
+  }>
+) {
+  const { field, t, disabled = false, context } = props;
+
+  const actualValue =
+    context.getValues(field.name as Path<T>) ?? field.value ?? '';
+
+  return (
+    <TextField
+      {...field}
+      fullWidth
+      label={t('debtPositionCreateWizard.step3.beneficiary.remittance.label')}
+      required
+      disabled={disabled}
+      error={hasFieldError('remittance', context)}
+      helperText={getFieldErrorMessage('remittance', context)}
+      value={actualValue}
+      onChange={(e) => {
+        field.onChange(e.target.value);
+      }}
+    />
+  );
+}
+
 export function hasIBANError<T extends FieldValues>(
   context: ValidationContext<T>,
   errors: FieldErrors<T>

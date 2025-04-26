@@ -1,59 +1,59 @@
-// Funzioni di validazione per codice fiscale e partita IVA
+// Validation functions for tax code and VAT number
 
 import { ValidationErrorCode } from '../store/types';
 
-// enum per il tipo di soggetto
+// enum for subject type
 export enum SubjectType {
   INDIVIDUAL = 'fisica',
   BUSINESS = 'giuridica'
 }
 
 /**
- * Verifica se un codice fiscale italiano è valido
- * @param cf - Codice fiscale da validare
- * @returns true se il codice fiscale è valido, false altrimenti
+ * Checks if an Italian tax code is valid
+ * @param cf - Tax code to validate
+ * @returns true if the tax code is valid, false otherwise
  */
 export const isValidCodiceFiscale = (cf: string): boolean => {
-  // Se il codice fiscale è vuoto o null, restituisce falso immediatamente
+  // If the tax code is empty or null, immediately returns false
   if (!cf) return false;
-  // Normalizza il codice fiscale:
-  // - Rimuove tutti gli spazi usando un'espressione regolare (/\s/g)
-  // - Converte tutto in maiuscolo per uniformità
+  // Normalizes the tax code:
+  // - Removes all spaces using a regular expression (/\s/g)
+  // - Converts everything to uppercase for uniformity
   cf = cf.replace(/\s/g, '').toUpperCase();
 
-  // Verifica che la lunghezza sia esattamente 16 caratteri (standard CF italiano)
+  // Checks that the length is exactly 16 characters (Italian tax code standard)
   if (cf.length !== 16) return false;
 
-  // Controlla che il formato rispetti lo schema del codice fiscale italiano:
-  // - Prime 6 posizioni: lettere (cognome e nome)
-  // - Posizioni 7-8: numeri (anno di nascita)
-  // - Posizione 9: lettera (mese di nascita)
-  // - Posizioni 10-11: numeri (giorno di nascita + codice genere)
-  // - Posizione 12: lettera (codice catastale comune/stato estero)
-  // - Posizioni 13-15: numeri (codice individuale)
-  // - Posizione 16: lettera (carattere di controllo)
+  // Checks that the format respects the Italian tax code schema:
+  // - First 6 positions: letters (surname and name)
+  // - Positions 7-8: numbers (year of birth)
+  // - Position 9: letter (month of birth)
+  // - Positions 10-11: numbers (day of birth + gender code)
+  // - Position 12: letter (cadastral code of municipality/foreign country)
+  // - Positions 13-15: numbers (individual code)
+  // - Position 16: letter (control character)
   const regex = /^[A-Z]{6}\d{2}[A-Z]\d{2}[A-Z]\d{3}[A-Z]$/;
 
-  // Verifica il formato usando l'espressione regolare e restituisce il risultato
+  // Verifies the format using the regular expression and returns the result
   return regex.test(cf);
 };
 
 /**
- * Verifica se una partita IVA italiana è valida
- * @param piva - Partita IVA da validare
- * @returns true se la partita IVA è valida, false altrimenti
+ * Checks if an Italian VAT number is valid
+ * @param piva - VAT number to validate
+ * @returns true if the VAT number is valid, false otherwise
  */
 export const isValidPartitaIVA = (piva: string): boolean => {
-  // Se la partita IVA è vuota o null, restituisce falso immediatamente
+  // If the VAT number is empty or null, immediately returns false
   if (!piva) return false;
 
-  // Normalizza la partita IVA rimuovendo tutti gli spazi
+  // Normalizes the VAT number by removing all spaces
   piva = piva.replace(/\s/g, '');
 
-  // Verifica che:
-  // 1. La lunghezza sia esattamente 11 caratteri (standard P.IVA italiana)
-  // 2. Sia composta solo da cifre numeriche (0-9)
-  // Nota: questa validazione controlla solo il formato
+  // Checks that:
+  // 1. The length is exactly 11 characters (Italian VAT number standard)
+  // 2. It consists only of numerical digits (0-9)
+  // Note: this validation only checks the format
   return piva.length === 11 && /^\d{11}$/.test(piva);
 };
 
@@ -84,9 +84,9 @@ export const validateTaxCode = (
 };
 
 /**
- * Crea le regole di validazione per un campo importo
- * @param t - Funzione di traduzione
- * @returns Oggetto con regole di validazione per react-hook-form
+ * Creates validation rules for an amount field
+ * @param t - Translation function
+ * @returns Object with validation rules for react-hook-form
  */
 export const createAmountValidator = (t: (key: string) => string) => {
   return {
@@ -114,10 +114,10 @@ export const createAmountValidator = (t: (key: string) => string) => {
 };
 
 /**
- * Verifica se la somma degli importi è inferiore all'importo totale
- * @param beneficiaries - Array di beneficiari
- * @param totalAmount - Importo totale
- * @returns true se la somma è inferiore all'importo totale, false altrimenti
+ * Checks if the sum of amounts is less than the total amount
+ * @param beneficiaries - Array of beneficiaries
+ * @param totalAmount - Total amount
+ * @returns true if the sum is less than the total amount, false otherwise
  */
 export const isBeneficiariesTotalValid = (
   beneficiaries: Array<{ amount: string }>,
@@ -129,13 +129,13 @@ export const isBeneficiariesTotalValid = (
 
   const total = parseFloat(totalAmount);
 
-  // Se c'è un solo beneficiario, il suo importo deve essere inferiore all'importo totale
+  // If there is only one beneficiary, its amount must be less than the total amount
   if (beneficiaries.length === 1) {
     const beneficiaryAmount = parseFloat(beneficiaries[0].amount) || 0;
     return beneficiaryAmount < total;
   }
 
-  // Per più beneficiari, verifica che la somma sia inferiore all'importo totale
+  // For multiple beneficiaries, check that the sum is less than the total amount
   const sum = beneficiaries.reduce((acc, curr) => {
     return acc + (parseFloat(curr.amount) || 0);
   }, 0);
@@ -144,12 +144,12 @@ export const isBeneficiariesTotalValid = (
 };
 
 /**
- * Crea le funzioni di validazione per gli importi dei beneficiari
- * @param t - Funzione di traduzione
- * @param getValues - Funzione per ottenere i valori dai campi del form
- * @param fieldNamePrefix - Prefisso del nome del campo
- * @param totalAmount - Importo totale
- * @returns Oggetto con funzioni di validazione
+ * Creates validation functions for beneficiary amounts
+ * @param t - Translation function
+ * @param getValues - Function to get values from form fields
+ * @param fieldNamePrefix - Field name prefix
+ * @param totalAmount - Total amount
+ * @returns Object with validation functions
  */
 export const createBeneficiaryValidators = (
   t: (key: string) => string,
@@ -157,7 +157,7 @@ export const createBeneficiaryValidators = (
   fieldNamePrefix: string,
   totalAmount: string
 ) => {
-  // Verifica se la somma degli importi è inferiore all'importo totale
+  // Checks if the sum of amounts is less than the total amount
   const isValidTotalAmount = () => {
     if (!totalAmount) return true;
 
@@ -176,7 +176,7 @@ export const createBeneficiaryValidators = (
     return sum < parseFloat(totalAmount);
   };
 
-  // Verifica se l'importo del beneficiario singolo è valido
+  // Checks if the single beneficiary amount is valid
   const isSingleBeneficiaryAmountValid = (hasSingleBeneficiary: boolean) => {
     if (!hasSingleBeneficiary || !totalAmount) return true;
 
@@ -190,7 +190,7 @@ export const createBeneficiaryValidators = (
     return beneficiaryAmount < total;
   };
 
-  // Validazione per verificare che la somma degli importi sia inferiore all'importo totale
+  // Validation to check that the sum of amounts is less than the total amount
   const validateTotalAmount = () => {
     if (!totalAmount) return true;
 
@@ -212,7 +212,7 @@ export const createBeneficiaryValidators = (
     );
   };
 
-  // Validazione per un singolo beneficiario
+  // Validation for a single beneficiary
   const validateSingleBeneficiary = (amount: string, fieldsLength: number) => {
     if (fieldsLength === 1 && totalAmount) {
       const beneficiaryAmount = parseFloat(amount) || 0;
@@ -227,7 +227,7 @@ export const createBeneficiaryValidators = (
     return true;
   };
 
-  // Verifica se un singolo beneficiario ha un importo valido
+  // Checks if a single beneficiary has a valid amount
   const isBeneficiaryAmountValid = (
     index: number,
     hasSingleBeneficiary: boolean
@@ -255,11 +255,11 @@ export const createBeneficiaryValidators = (
 };
 
 /**
- * Crea le regole di validazione per un campo data
- * @param t - Funzione di traduzione
- * @param isRequired - Flag che indica se il campo è obbligatorio
- * @param requiredMessage - Messaggio di errore per il campo obbligatorio
- * @returns Oggetto con regole di validazione per react-hook-form
+ * Creates validation rules for a date field
+ * @param t - Translation function
+ * @param isRequired - Flag indicating if the field is required
+ * @param requiredMessage - Error message for required field
+ * @returns Object with validation rules for react-hook-form
  */
 export const createDateValidator = (
   t: (key: string) => string,
@@ -269,12 +269,12 @@ export const createDateValidator = (
   return {
     required: isRequired ? requiredMessage || t('commons.required') : false,
     validate: (value: unknown) => {
-      // Se la data non è obbligatoria e non è specificata, passa la validazione
+      // If the date is not required and not specified, passes validation
       if (!isRequired && !value) {
         return true;
       }
 
-      // Verifica che il valore sia un oggetto Date valido
+      // Checks that the value is a valid Date object
       const timestamp = value ? new Date(value as Date).getTime() : NaN;
       if (!isNaN(timestamp)) {
         return true;
@@ -285,57 +285,57 @@ export const createDateValidator = (
   };
 };
 
-// functions per la validazione dei campi
+// Functions for field validation
 export const createValidators = (
   t: (key: string) => string,
   subjectTypeValue: string
 ) => {
-  // Funzione di validazione per il codice fiscale / partita IVA
+  // Validation function for tax code / VAT number
   const validateTaxCodeField = (value: string): string | undefined => {
-    // Se il campo è vuoto, restituisce il messaggio appropriato in base al tipo di soggetto
+    // If the field is empty, returns the appropriate message based on subject type
     if (!value) {
-      // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
+      // If subject type is not selected, shows generic message
       if (!subjectTypeValue) {
         return t('debtPositionCreateWizard.step2.taxCodeOrVat.required');
       }
-      // Altrimenti mostrare il messaggio specifico in base al tipo di soggetto
+      // Otherwise shows specific message based on subject type
       return subjectTypeValue !== SubjectType.BUSINESS
         ? t('debtPositionCreateWizard.step2.taxCode.required')
         : t('debtPositionCreateWizard.step2.vat.required');
     }
-    // Altrimenti, valida il formato
+    // Otherwise, validates the format
     const result = validateTaxCode(value, subjectTypeValue);
 
     if (result == 'commons.required') {
-      // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
+      // If subject type is not selected, shows generic message
       if (!subjectTypeValue) {
         return t('debtPositionCreateWizard.step2.taxCodeOrVat.required');
       }
-      // Altrimenti mostra il messaggio specifico in base al tipo di soggetto
+      // Otherwise shows specific message based on subject type
       return subjectTypeValue !== SubjectType.BUSINESS
         ? t('debtPositionCreateWizard.step2.taxCode.required')
         : t('debtPositionCreateWizard.step2.vat.required');
     }
 
-    // Restituisce il risultato della validazione
+    // Returns the validation result
     return result === ValidationErrorCode.VALID ? undefined : t(result);
   };
 
-  //Funzione di validazione per il nome completo / ragione sociale
+  // Validation function for full name / company name
   const validateFullNameField = (value: string): string | undefined => {
-    // Se il campo è vuoto, restituisce il messaggio appropriato in base al tipo di soggetto
+    // If the field is empty, returns the appropriate message based on subject type
     if (!value) {
-      // Se non è stato selezionato il tipo di soggetto, mostra il messaggio generico
+      // If subject type is not selected, shows generic message
       if (!subjectTypeValue) {
         return t('debtPositionCreateWizard.step2.fullName.required');
       }
-      // Altrimenti mostrare il messaggio specifico in base al tipo di soggetto
+      // Otherwise shows specific message based on subject type
       return subjectTypeValue !== SubjectType.BUSINESS
         ? t('debtPositionCreateWizard.step2.fullName.required')
         : t('debtPositionCreateWizard.step2.companyName.required');
     }
 
-    // Validazione per il formato del nome (almeno due parole)
+    // Validation for name format (at least two words)
     const trimmed = value.trim();
     if (trimmed.split(' ').length < 2) {
       return t('debtPositionCreateWizard.step2.fullName.minTwoWords');
@@ -344,7 +344,7 @@ export const createValidators = (
     return undefined;
   };
 
-  // Factory per le regole di validazione per React Hook Form
+  // Factory for validation rules for React Hook Form
   const getValidationRules = () => ({
     taxCode: {
       validate: validateTaxCodeField
@@ -365,57 +365,57 @@ export const createValidators = (
 };
 
 /**
- * Verifica se un IBAN è valido
- * @param iban - IBAN da validare
- * @returns true se l'IBAN è valido, false altrimenti
+ * Checks if an IBAN is valid
+ * @param iban - IBAN to validate
+ * @returns true if the IBAN is valid, false otherwise
  */
 export const isValidIBAN = (iban: string): boolean => {
   if (!iban) return false;
 
-  // Normalizza l'IBAN rimuovendo spazi e convertendo in maiuscolo
+  // Normalizes the IBAN by removing spaces and converting to uppercase
   iban = iban.replace(/\s/g, '').toUpperCase();
 
-  // Controllo di base sulla lunghezza (tra 15 e 34 caratteri secondo lo standard ISO 13616)
+  // Basic length check (between 15 and 34 characters according to ISO 13616 standard)
   if (iban.length < 15 || iban.length > 34) return false;
 
-  // Formato base per IBAN: due lettere per il codice paese, due cifre di controllo,
-  // e poi il BBAN (Basic Bank Account Number)
+  // Basic format for IBAN: two letters for country code, two check digits,
+  // and then the BBAN (Basic Bank Account Number)
   const regex = /^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/;
 
-  // Verifica con espressione regolare
+  // Verification with regular expression
   return regex.test(iban);
 };
 
 /**
- * Verifica se un numero di conto corrente postale italiano è valido
- * @param postalAccount - Numero di conto corrente postale da validare
- * @returns true se il numero è valido, false altrimenti
+ * Checks if an Italian postal account number is valid
+ * @param postalAccount - Postal account number to validate
+ * @returns true if the number is valid, false otherwise
  */
 export const isValidPostalAccount = (postalAccount: string): boolean => {
   if (!postalAccount) return false;
 
-  // Normalizza il numero di conto corrente rimuovendo spazi
+  // Normalizes the postal account number by removing spaces
   postalAccount = postalAccount.replace(/\s/g, '');
 
-  // I conti correnti postali italiani sono composti da 12 cifre numeriche
-  // oppure da numeri più brevi (minimo 6 cifre)
+  // Italian postal accounts consist of 12 numerical digits
+  // or shorter numbers (minimum 6 digits)
   return /^\d{6,12}$/.test(postalAccount);
 };
 
 /**
- * Crea funzioni di validazione per i campi del beneficiario
- * @param t - Funzione di traduzione
- * @returns Oggetto con funzioni di validazione
+ * Creates validation functions for beneficiary fields
+ * @param t - Translation function
+ * @returns Object with validation functions
  */
 export const createBeneficiaryFieldValidators = (
   t: (key: string) => string
 ) => {
-  // Validazione per il campo del codice fiscale
+  // Validation for tax code field
   const validateBeneficiaryTaxCode = (value: string): string | undefined => {
     if (!value)
       return t('debtPositionCreateWizard.step3.beneficiary.taxCode.required');
 
-    // Verifica sia codice fiscale che partita IVA
+    // Checks both tax code and VAT number
     const normalizedValue = value.replace(/\s/g, '').toUpperCase();
     if (
       isValidCodiceFiscale(normalizedValue) ||
@@ -427,9 +427,9 @@ export const createBeneficiaryFieldValidators = (
     return t('debtPositionCreateWizard.step3.beneficiary.taxCode.invalid');
   };
 
-  // Validazione per il campo IBAN
+  // Validation for IBAN field
   const validateIBAN = (value: string): string | undefined => {
-    if (!value) return undefined; // Il campo non è richiesto
+    if (!value) return undefined; // The field is not required
 
     if (!isValidIBAN(value)) {
       return t('debtPositionCreateWizard.step3.beneficiary.iban.invalid');
@@ -438,9 +438,9 @@ export const createBeneficiaryFieldValidators = (
     return undefined;
   };
 
-  // Validazione per il campo del conto corrente postale
+  // Validation for postal account field
   const validatePostalAccount = (value: string): string | undefined => {
-    if (!value) return undefined; // Non è obbligatorio se è presente l'IBAN
+    if (!value) return undefined; // Not mandatory if IBAN is present
 
     if (!isValidPostalAccount(value)) {
       return t(
@@ -451,12 +451,12 @@ export const createBeneficiaryFieldValidators = (
     return undefined;
   };
 
-  // Validazione per almeno un metodo di pagamento presente (o IBAN o conto postale)
+  // Validation for at least one payment method present (either IBAN or postal account)
   const validatePaymentMethod = (
     iban: string,
     postalAccount: string
   ): string | undefined => {
-    // Se entrambi sono vuoti, restituiamo un errore
+    // If both are empty, return an error
     if (
       (!iban || iban.trim() === '') &&
       (!postalAccount || postalAccount.trim() === '')
@@ -469,10 +469,22 @@ export const createBeneficiaryFieldValidators = (
     return undefined;
   };
 
+  // Validation for remittance field
+  const validateRemittance = (value: string): string | undefined => {
+    if (!value || value.trim() === '') {
+      return t(
+        'debtPositionCreateWizard.step3.beneficiary.remittance.required'
+      );
+    }
+
+    return undefined;
+  };
+
   return {
     validateBeneficiaryTaxCode,
     validateIBAN,
     validatePostalAccount,
-    validatePaymentMethod
+    validatePaymentMethod,
+    validateRemittance
   };
 };

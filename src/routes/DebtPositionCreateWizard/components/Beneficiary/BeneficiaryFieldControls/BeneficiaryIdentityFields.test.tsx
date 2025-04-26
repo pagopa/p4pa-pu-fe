@@ -73,6 +73,23 @@ vi.mock('../BeneficiaryFieldComponents', () => ({
         onChange={field.onChange as () => void}
       />
     </div>
+  ),
+  RemittanceField: ({
+    field
+  }: {
+    field: Record<string, unknown>;
+    t: (key: string) => string;
+    disabled?: boolean;
+    context: Record<string, unknown>;
+  }) => (
+    <div data-testid="remittance-field">
+      RemittanceField
+      <input
+        data-testid="remittance-input"
+        name={field.name as string}
+        onChange={field.onChange as () => void}
+      />
+    </div>
   )
 }));
 
@@ -97,7 +114,7 @@ describe('BeneficiaryIdentityFields', () => {
     vi.clearAllMocks();
   });
 
-  it('dovrebbe renderizzare correttamente i campi EntityName e TaxCode', () => {
+  it('dovrebbe renderizzare correttamente i campi EntityName, TaxCode e Remittance', () => {
     render(
       <BeneficiaryIdentityFields
         control={mockControl}
@@ -109,9 +126,10 @@ describe('BeneficiaryIdentityFields', () => {
       />
     );
 
-    // Verifica che entrambi i campi siano renderizzati
+    // Verifica che tutti i campi siano renderizzati
     expect(screen.getByTestId('entity-name-field')).toBeInTheDocument();
     expect(screen.getByTestId('tax-code-field')).toBeInTheDocument();
+    expect(screen.getByTestId('remittance-field')).toBeInTheDocument();
   });
 
   it('dovrebbe utilizzare buildBeneficiaryFieldPath con i parametri corretti', () => {
@@ -134,6 +152,10 @@ describe('BeneficiaryIdentityFields', () => {
     expect(
       BeneficiaryFieldHelpers.buildBeneficiaryFieldPath
     ).toHaveBeenCalledWith(mockFieldNamePrefix, mockIndex, 'taxCode');
+
+    expect(
+      BeneficiaryFieldHelpers.buildBeneficiaryFieldPath
+    ).toHaveBeenCalledWith(mockFieldNamePrefix, mockIndex, 'remittance');
   });
 
   it('dovrebbe passare le proprietà corrette ai campi', () => {
@@ -154,6 +176,9 @@ describe('BeneficiaryIdentityFields', () => {
     ).toBeInTheDocument();
     expect(
       screen.getByTestId('controlled-field-beneficiaries.0.taxCode')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId('controlled-field-beneficiaries.0.remittance')
     ).toBeInTheDocument();
   });
 
@@ -176,6 +201,10 @@ describe('BeneficiaryIdentityFields', () => {
 
     expect(mockT).toHaveBeenCalledWith(
       'debtPositionCreateWizard.step3.beneficiary.taxCode.required'
+    );
+
+    expect(mockT).toHaveBeenCalledWith(
+      'debtPositionCreateWizard.step3.beneficiary.remittance.required'
     );
   });
 });
