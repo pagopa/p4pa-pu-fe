@@ -125,7 +125,8 @@ describe('BeneficiaryPaymentFields', () => {
       validateIBAN: vi.fn().mockReturnValue(undefined),
       validatePostalAccount: vi.fn().mockReturnValue(undefined),
       validatePaymentMethod: vi.fn().mockReturnValue(undefined),
-      validateBeneficiaryTaxCode: vi.fn().mockReturnValue(undefined)
+      validateBeneficiaryTaxCode: vi.fn().mockReturnValue(undefined),
+      validateRemittance: vi.fn().mockReturnValue(undefined)
     },
     t: (key: string) => key
   };
