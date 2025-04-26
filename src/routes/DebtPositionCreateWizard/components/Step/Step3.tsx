@@ -123,6 +123,136 @@ function triggerPaymentFieldsValidation<T extends FieldValues>(
   });
 }
 
+/**
+ * Synchronizes beneficiaries between installments when sameBeneficiariesAsBefore is set to true
+ * Function extracted to reduce the cyclomatic complexity of onSubmit
+ */
+function syncInstallmentBeneficiaries(installments: Array<Installment>): {
+  installments: Array<Installment>;
+  modified: boolean;
+} {
+  let installmentsModified = false;
+
+  for (let i = 1; i < installments.length; i++) {
+    const currentInstallment = installments[i] as unknown as Record<
+      string,
+      unknown
+    >;
+    const previousInstallment = installments[i - 1];
+
+    // If installment is set to copy beneficiaries from previous installment
+    if (
+      currentInstallment.sameBeneficiariesAsBefore === 'true' ||
+      currentInstallment.sameBeneficiariesAsBefore === true
+    ) {
+      // Copy beneficiaries from previous installment
+      if (
+        previousInstallment.beneficiaries &&
+        Array.isArray(previousInstallment.beneficiaries) &&
+        previousInstallment.beneficiaries.length > 0
+      ) {
+        currentInstallment.beneficiaries = [
+          ...previousInstallment.beneficiaries
+        ];
+        installmentsModified = true;
+      }
+    }
+  }
+
+  return { installments, modified: installmentsModified };
+}
+
+/**
+ * Validates installment data and returns errors
+ * Function extracted to reduce the cyclomatic complexity of onSubmit
+ */
+function validateInstallments<T extends FieldValues>(
+  installments: Array<Installment>,
+  trigger: UseFormTrigger<T>
+): {
+  hasInvalidBeneficiaries: boolean;
+  hasInvalidPaymentFields: boolean;
+  hasInvalidAmounts: boolean;
+  hasEmptyRemittance: boolean;
+} {
+  let hasInvalidBeneficiaries = false;
+  let hasInvalidPaymentFields = false;
+  let hasInvalidAmounts = false;
+  let hasEmptyRemittance = false;
+
+  // Check each installment
+  for (const [idx, installment] of installments.entries()) {
+    // Validate installment amount
+    if (!installment.amount || parseFloat(String(installment.amount)) <= 0) {
+      hasInvalidAmounts = true;
+    }
+
+    // Validate installment remittance (payment reason)
+    if (
+      !installment.remittance ||
+      String(installment.remittance).trim() === ''
+    ) {
+      hasEmptyRemittance = true;
+      trigger(`installments.${idx}.remittance` as Path<T>);
+    }
+
+    if (installment.isMultibeneficiary) {
+      const beneficiaries = installment.beneficiaries || [];
+
+      // Check beneficiaries structure
+      if (Array.isArray(beneficiaries)) {
+        beneficiaries.forEach(
+          (b: Record<string, unknown>, beneficiaryIdx: number) => {
+            // Fix format if needed
+            if (
+              typeof b.amount !== 'string' &&
+              b.amount !== null &&
+              b.amount !== undefined
+            ) {
+              beneficiaries[beneficiaryIdx].amount = String(b.amount);
+            }
+            // Validate payment fields (IBAN or postalAccount required)
+            const iban = typeof b.iban === 'string' ? b.iban : '';
+            const postalAccount =
+              typeof b.postalAccount === 'string' ? b.postalAccount : '';
+            if (
+              (!iban || iban.trim() === '') &&
+              (!postalAccount || postalAccount.trim() === '')
+            ) {
+              hasInvalidPaymentFields = true;
+            }
+          }
+        );
+
+        // Validate beneficiaries total matches installment amount
+        try {
+          const isValid = isBeneficiariesTotalValid(
+            beneficiaries as Array<Beneficiary>,
+            installment.amount
+          );
+
+          if (!isValid) {
+            hasInvalidBeneficiaries = true;
+          }
+        } catch (validationError) {
+          console.error(
+            'Error validating beneficiaries total:',
+            validationError
+          );
+          hasInvalidBeneficiaries = true;
+        }
+      }
+    }
+  }
+
+  return {
+    hasInvalidBeneficiaries,
+    hasInvalidPaymentFields,
+    hasInvalidAmounts,
+    hasEmptyRemittance
+  };
+}
+
 const Step3 = ({ data, setData, onBack }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -208,19 +338,24 @@ const Step3 = ({ data, setData, onBack }: Props) => {
     }
   };
 
-  const onSubmit = async (values: FormValues) => {
+  /**
+   * Validates fields in the multi-beneficiary case
+   * Function extracted to reduce the cyclomatic complexity of onSubmit
+   */
+  const validateMultiBeneficiary = (): boolean => {
     const currentBeneficiaries = getValues('beneficiaries') || [];
+
     // Validate beneficiaries total amount
     if (
       isMultibeneficiary &&
       !isBeneficiariesTotalValid(currentBeneficiaries, totalAmount)
     ) {
       trigger('beneficiaries');
-      return;
+      return false;
     }
 
     // Ensure the remittance field is filled for all beneficiaries
-    if (isMultibeneficiary && !isInstallment) {
+    if (isMultibeneficiary) {
       let hasEmptyRemittance = false;
 
       currentBeneficiaries.forEach((b, idx) => {
@@ -231,6 +366,60 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       });
 
       if (hasEmptyRemittance) {
+        return false;
+      }
+    }
+
+    return true;
+  };
+
+  /**
+   * Handles the installment validation failure
+   * Function extracted to reduce the cyclomatic complexity of onSubmit
+   */
+  const handleInstallmentValidationFailure = (
+    installments: Array<Installment>,
+    validationResults: ReturnType<typeof validateInstallments>
+  ): void => {
+    // We only check if there are errors, but don't use individual variables
+    // This is because all validations are triggered anyway
+    const hasErrors = Object.values(validationResults).some(Boolean);
+
+    if (!hasErrors) {
+      return;
+    }
+
+    try {
+      // Trigger installment amounts validation
+      installments.forEach((_: Installment, index: number) => {
+        trigger(`installments.${index}.amount` as Path<FormValues>);
+      });
+
+      // Trigger validation for all beneficiaries in all installments
+      triggerValidationForAllInstallmentBeneficiaries(
+        installments as Array<Record<string, unknown>>,
+        trigger
+      );
+
+      // Trigger payment fields validation
+      triggerPaymentFieldsValidation(
+        installments as Array<Record<string, unknown>>,
+        trigger
+      );
+    } catch (validationError) {
+      console.error('Error during installment validation:', validationError);
+    }
+  };
+
+  /**
+   * Handles form submission
+   * Refactored to reduce cyclomatic complexity
+   * by extracting logic into separate functions
+   */
+  const onSubmit = async (values: FormValues) => {
+    // For non-installment case, validate beneficiaries
+    if (!isInstallment) {
+      if (!validateMultiBeneficiary()) {
         return;
       }
     }
@@ -238,95 +427,31 @@ const Step3 = ({ data, setData, onBack }: Props) => {
     // Validate beneficiaries for each installment if payment is installment
     if (isInstallment) {
       const installments = getValues('installments') || [];
-      let hasInvalidBeneficiaries = false;
-      let hasInvalidPaymentFields = false;
-      let hasInvalidAmounts = false;
-      let hasEmptyRemittance = false;
 
-      // Check each installment
-      for (const [idx, installment] of installments.entries()) {
-        // Validate installment amount
-        if (!installment.amount || parseFloat(installment.amount) <= 0) {
-          hasInvalidAmounts = true;
-        }
+      // Synchronize beneficiaries for installments with sameBeneficiariesAsBefore="true"
+      const { installments: syncedInstallments, modified } =
+        syncInstallmentBeneficiaries(installments as Array<Installment>);
 
-        // Validate installment remittance (causale)
-        if (!installment.remittance || installment.remittance.trim() === '') {
-          hasEmptyRemittance = true;
-          trigger(`installments.${idx}.remittance` as Path<FormValues>);
-        }
-
-        if (installment.isMultibeneficiary) {
-          const beneficiaries = installment.beneficiaries || [];
-          // Check beneficiaries structure
-          beneficiaries.forEach((b: Record<string, unknown>, idx: number) => {
-            // Fix format if needed
-            if (
-              typeof b.amount !== 'string' &&
-              b.amount !== null &&
-              b.amount !== undefined
-            ) {
-              beneficiaries[idx].amount = String(b.amount);
-            }
-            // Validate payment fields (IBAN or postalAccount required)
-            const iban = typeof b.iban === 'string' ? b.iban : '';
-            const postalAccount =
-              typeof b.postalAccount === 'string' ? b.postalAccount : '';
-            if (
-              (!iban || iban.trim() === '') &&
-              (!postalAccount || postalAccount.trim() === '')
-            ) {
-              hasInvalidPaymentFields = true;
-            }
-          });
-
-          // Validate beneficiaries total matches installment amount
-          try {
-            const isValid = isBeneficiariesTotalValid(
-              beneficiaries,
-              installment.amount
-            );
-
-            if (!isValid) {
-              hasInvalidBeneficiaries = true;
-            }
-          } catch (validationError) {
-            console.error(
-              'Error validating beneficiaries total:',
-              validationError
-            );
-            hasInvalidBeneficiaries = true;
-          }
-        }
+      // If we modified installments, update the form
+      if (modified) {
+        setValue('installments', syncedInstallments);
       }
 
+      // Validate installments
+      const validationResults = validateInstallments(
+        syncedInstallments,
+        trigger
+      );
+      const hasValidationFailure = Object.values(validationResults).some(
+        (value) => value
+      );
+
       // If any validation fails, trigger form validation and stop submission
-      if (
-        hasInvalidAmounts ||
-        hasInvalidBeneficiaries ||
-        hasInvalidPaymentFields ||
-        hasEmptyRemittance
-      ) {
-        try {
-          // Trigger installment amounts validation
-          installments.forEach((_: Record<string, unknown>, index: number) => {
-            trigger(`installments.${index}.amount` as Path<FormValues>);
-          });
-
-          // Trigger validation for all beneficiaries in all installments
-          triggerValidationForAllInstallmentBeneficiaries(
-            installments,
-            trigger
-          );
-
-          // Trigger payment fields validation
-          triggerPaymentFieldsValidation(installments, trigger);
-        } catch (validationError) {
-          console.error(
-            'Error during installment validation:',
-            validationError
-          );
-        }
+      if (hasValidationFailure) {
+        handleInstallmentValidationFailure(
+          syncedInstallments,
+          validationResults
+        );
         return;
       }
     }
@@ -349,6 +474,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       // Include installments only if payment option is installment
       ...(isInstallment ? { installments: values.installments } : {})
     };
+
     // Save data
     setData(formattedValues);
     // Navigate to completion page
