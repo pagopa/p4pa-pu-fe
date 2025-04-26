@@ -42,7 +42,7 @@ describe('Header component', () => {
           orgFiscalCode: 'XXXXXXX',
           flagNotifyIo: false,
           flagNotifyOutcomePush: false,
-          flagPaymentNotification: false,
+          flagPaymentNotification: false
         }
       ],
       isSuccess: true

@@ -219,7 +219,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       return;
     }
 
-    // Assicuriamoci che il campo remittance sia compilato per tutti i beneficiari
+    // Ensure the remittance field is filled for all beneficiaries
     if (isMultibeneficiary && !isInstallment) {
       let hasEmptyRemittance = false;
 

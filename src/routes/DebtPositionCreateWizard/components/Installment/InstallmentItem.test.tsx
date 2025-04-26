@@ -51,6 +51,18 @@ vi.mock('./DateField', () => ({
   ))
 }));
 
+// Mock per RemittanceField
+vi.mock('./RemittanceField', () => ({
+  default: vi.fn().mockImplementation(({ index, disabled }) => (
+    <div
+      data-testid={`remittance-field-${index}`}
+      data-disabled={String(!!disabled)}
+    >
+      RemittanceField Mock
+    </div>
+  ))
+}));
+
 vi.mock('./BeneficiaryControl', () => ({
   default: vi.fn().mockImplementation(({ index, disabled }) => (
     <div
@@ -75,6 +87,7 @@ describe('InstallmentItem', () => {
     installments: Array<{
       amount: number;
       dueDate: Date | null;
+      remittance: string;
       beneficiaries: Array<{ id: string; amount: number }>;
     }>;
   };
@@ -136,7 +149,8 @@ describe('InstallmentItem', () => {
 
     const validators: ValidationFunctions = {
       validateInstallmentAmount: vi.fn(),
-      validateDueDate: vi.fn()
+      validateDueDate: vi.fn(),
+      validateRemittance: vi.fn()
     };
 
     return {
@@ -170,6 +184,7 @@ describe('InstallmentItem', () => {
     // Verifica che i componenti figli siano stati renderizzati
     expect(screen.getByTestId('amount-field')).toBeInTheDocument();
     expect(screen.getByTestId('date-field-0')).toBeInTheDocument();
+    expect(screen.getByTestId('remittance-field-0')).toBeInTheDocument();
     expect(screen.getByTestId('beneficiary-control-0')).toBeInTheDocument();
   });
 
@@ -233,8 +248,11 @@ describe('InstallmentItem', () => {
       <InstallmentItem<TestFormValues> {...getMockProps()} disabled={true} />
     );
 
-    // Verifica che il controllo beneficiario contenga l'attributo data-disabled="true"
+    // Verifica che i componenti figli siano disabilitati
     const beneficiaryControl = screen.getByTestId('beneficiary-control-0');
     expect(beneficiaryControl).toHaveAttribute('data-disabled', 'true');
+
+    const remittanceField = screen.getByTestId('remittance-field-0');
+    expect(remittanceField).toHaveAttribute('data-disabled', 'true');
   });
 });

@@ -762,11 +762,7 @@ describe('Step3 Component', () => {
 
     const nextButton = screen.getByTestId('next-button');
 
-    try {
-      fireEvent.click(nextButton);
-    } catch (error) {
-      // L'errore è atteso, non facciamo nulla
-    }
+    fireEvent.click(nextButton);
 
     expect(errorHandled).toBe(true);
     expect(consoleErrorSpy2).toHaveBeenCalled();

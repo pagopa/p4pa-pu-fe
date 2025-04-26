@@ -9,7 +9,8 @@ import {
   createBeneficiaryFieldValidators,
   createAmountValidator,
   isBeneficiariesTotalValid,
-  createBeneficiaryValidators
+  createBeneficiaryValidators,
+  createDateValidator
 } from '../fieldValidation';
 import { ValidationErrorCode } from '../../store/types';
 
@@ -644,6 +645,62 @@ describe('createBeneficiaryFieldValidators', () => {
     it('restituisce messaggio di errore se entrambi i campi contengono solo spazi', () => {
       expect(validators.validatePaymentMethod(' ', '  ')).toBe(
         'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
+      );
+    });
+  });
+});
+
+describe('createDateValidator', () => {
+  const mockT = vi.fn((key: string) => key);
+
+  describe('when field is required', () => {
+    const validator = createDateValidator(mockT, true);
+
+    it('restituisce il messaggio di errore predefinito se il campo è richiesto ma vuoto', () => {
+      expect(validator.required).toBe('commons.required');
+    });
+
+    it('restituisce un messaggio personalizzato se fornito', () => {
+      const customValidator = createDateValidator(
+        mockT,
+        true,
+        'custom.message'
+      );
+      expect(customValidator.required).toBe('custom.message');
+    });
+
+    it('restituisce true se il valore è una data valida', () => {
+      const value = new Date();
+      expect(validator.validate(value)).toBe(true);
+    });
+
+    it('restituisce messaggio di errore se il valore non è una data valida', () => {
+      expect(validator.validate('invalid-date')).toBe(
+        'debtPositionCreateWizard.step3.dueDate.invalid'
+      );
+    });
+  });
+
+  describe('when field is not required', () => {
+    const validator = createDateValidator(mockT, false);
+
+    it('restituisce false se il campo non è richiesto', () => {
+      expect(validator.required).toBe(false);
+    });
+
+    it('restituisce true se il campo è vuoto e non è richiesto', () => {
+      expect(validator.validate(null)).toBe(true);
+      expect(validator.validate(undefined)).toBe(true);
+    });
+
+    it('restituisce true se il valore è una data valida', () => {
+      const value = new Date();
+      expect(validator.validate(value)).toBe(true);
+    });
+
+    it('restituisce messaggio di errore se il valore è presente ma non è una data valida', () => {
+      expect(validator.validate('invalid-date')).toBe(
+        'debtPositionCreateWizard.step3.dueDate.invalid'
       );
     });
   });

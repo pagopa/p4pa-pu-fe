@@ -7,12 +7,12 @@ import * as fieldValidationModule from '../utils/fieldValidation';
 import React from 'react';
 import { Installment } from '../models/paymentTypes';
 
-// Preparazione dei mock
+// Mock preparation
 const mockFields = [{ id: 'field1' }, { id: 'field2' }];
 const mockAppend = vi.fn();
 const mockRemove = vi.fn();
 
-// Mock delle dipendenze esterne
+// Mocking external dependencies
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key
@@ -67,12 +67,12 @@ vi.mock('../utils/fieldValidation', async () => {
   };
 });
 
-// Tipo di base per i test
+// Base type for tests
 type TestFormValues = {
   testInstallments: Array<Installment>;
 };
 
-// Wrapper per fornire il contesto React necessario
+// Wrapper to provide the necessary React context
 const wrapper = ({ children }: { children: React.ReactNode }) => {
   return <React.Fragment>{children}</React.Fragment>;
 };
@@ -81,7 +81,7 @@ describe('useInstallmentManagement', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Reset dei timer per i setTimeout
+    // Reset timers for setTimeout
     vi.useFakeTimers();
   });
 
@@ -91,7 +91,7 @@ describe('useInstallmentManagement', () => {
   });
 
   it('dovrebbe inizializzare con due rate vuote', () => {
-    // Inizializziamo formMethods all'interno del test per assicurarci che venga creato nel contesto di React
+    // Initialize formMethods inside the test to ensure it's created in the React context
     const { result: formResult } = renderHook(
       () =>
         useForm<TestFormValues>({
@@ -123,7 +123,7 @@ describe('useInstallmentManagement', () => {
   });
 
   it('dovrebbe creare validatori corretti', () => {
-    // Inizializziamo formMethods all'interno del test
+    // Initialize formMethods inside the test
     const { result: formResult } = renderHook(
       () =>
         useForm<TestFormValues>({
@@ -155,7 +155,7 @@ describe('useInstallmentManagement', () => {
     ).toHaveBeenCalled();
     expect(result.current.validators.dueDate.required).toBeTruthy();
 
-    // Test con flagMandatoryDueDate a false
+    // Test with flagMandatoryDueDate set to false
     const { result: resultWithNonMandatoryDueDate } = renderHook(
       () =>
         useInstallmentManagement<TestFormValues>({
@@ -176,7 +176,7 @@ describe('useInstallmentManagement', () => {
   });
 
   it('dovrebbe aggiungere una nuova rata', async () => {
-    // Inizializziamo formMethods all'interno del test
+    // Initialize formMethods inside the test
     const { result: formResult } = renderHook(
       () =>
         useForm<TestFormValues>({
@@ -205,23 +205,34 @@ describe('useInstallmentManagement', () => {
       { wrapper }
     );
 
-    // Aggiungi una nuova rata (ora dovrebbero essere 3)
+    // Add a new installment (there should now be 3)
     act(() => {
       result.current.addInstallment();
     });
 
-    // Esegui i timer per far scattare il setTimeout
+    // Run timers to trigger the setTimeout
     act(() => {
       vi.runAllTimers();
     });
 
-    expect(result.current.fields.length).toBe(2); // Il mock restituisce sempre 2 fields
-    expect(mockAppend).toHaveBeenCalled(); // Verifichiamo che append sia stato chiamato
+    expect(result.current.fields.length).toBe(2); // The mock always returns 2 fields
+    expect(mockAppend).toHaveBeenCalled(); // Verify that append was called
+
+    // Verify that append was called with an object containing the remittance field
+    expect(mockAppend).toHaveBeenCalledWith(
+      expect.objectContaining({
+        amount: '',
+        dueDate: null,
+        remittance: '',
+        isMultibeneficiary: false
+      })
+    );
+
     expect(mockOnInstallmentsChange).toHaveBeenCalled();
   });
 
   it('non dovrebbe aggiungere una rata oltre il limite massimo', () => {
-    // Inizializziamo formMethods all'interno del test
+    // Initialize formMethods inside the test
     const { result: formResult } = renderHook(
       () =>
         useForm<TestFormValues>({
@@ -234,8 +245,8 @@ describe('useInstallmentManagement', () => {
 
     const formMethods = formResult.current;
 
-    // Modifica il mock per questo test specifico per simulare il raggiungimento del limite massimo
-    mockFields.length = 12; // Impostiamo il numero massimo di rate
+    // Modify the mock for this specific test to simulate reaching the maximum limit
+    mockFields.length = 12; // Set the maximum number of installments
 
     const { result } = renderHook(
       () =>
@@ -250,17 +261,17 @@ describe('useInstallmentManagement', () => {
       { wrapper }
     );
 
-    // Prova ad aggiungere un'altra rata oltre il limite
+    // Try to add another installment beyond the limit
     act(() => {
       result.current.addInstallment();
     });
 
-    // Verifichiamo che append non sia stato chiamato dato che siamo al limite
+    // Verify that append was not called since we're at the limit
     expect(mockAppend).not.toHaveBeenCalled();
   });
 
   it('dovrebbe rimuovere una rata', () => {
-    // Inizializziamo formMethods all'interno del test
+    // Initialize formMethods inside the test
     const { result: formResult } = renderHook(
       () =>
         useForm<TestFormValues>({
@@ -271,8 +282,8 @@ describe('useInstallmentManagement', () => {
       { wrapper }
     );
 
-    // Reset del mock per questo test
-    mockFields.length = 4; // Impostiamo un numero di rate maggiore del minimo
+    // Reset the mock for this test
+    mockFields.length = 4; // Set a number of installments greater than the minimum
 
     const formMethods = formResult.current;
 
@@ -292,22 +303,22 @@ describe('useInstallmentManagement', () => {
       { wrapper }
     );
 
-    // Rimuovi una rata
+    // Remove an installment
     act(() => {
       result.current.removeInstallment(1);
     });
 
-    // Esegui i timer per far scattare il setTimeout
+    // Run timers to trigger the setTimeout
     act(() => {
       vi.runAllTimers();
     });
 
-    expect(mockRemove).toHaveBeenCalled(); // Verifichiamo che remove sia stato chiamato
+    expect(mockRemove).toHaveBeenCalled(); // Verify that remove was called
     expect(mockOnInstallmentsChange).toHaveBeenCalled();
   });
 
   it('non dovrebbe rimuovere rate sotto il minimo consentito', () => {
-    // Inizializziamo formMethods all'interno del test
+    // Initialize formMethods inside the test
     const { result: formResult } = renderHook(
       () =>
         useForm<TestFormValues>({
@@ -318,8 +329,8 @@ describe('useInstallmentManagement', () => {
       { wrapper }
     );
 
-    // Reset del mock per questo test
-    mockFields.length = 2; // Impostiamo il numero minimo di rate
+    // Reset the mock for this test
+    mockFields.length = 2; // Set the minimum number of installments
 
     const formMethods = formResult.current;
 
@@ -336,22 +347,22 @@ describe('useInstallmentManagement', () => {
       { wrapper }
     );
 
-    // Prova a rimuovere una rata quando ce ne sono solo 2
+    // Try to remove an installment when there are only 2
     act(() => {
       result.current.removeInstallment(0);
     });
 
-    // Verifichiamo che remove non sia stato chiamato dato che siamo al minimo
+    // Verify that remove was not called since we're at the minimum
     expect(mockRemove).not.toHaveBeenCalled();
   });
 
   it("dovrebbe calcolare correttamente l'importo totale", () => {
-    // Inizializziamo formMethods all'interno del test
+    // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
     });
 
-    // Configura il valore restituito da getValues per simulare rate con importi
+    // Configure the value returned by getValues to simulate installments with amounts
     const mockGetValues = vi.fn();
     mockGetValues.mockImplementation((path: string) => {
       if (path === 'testInstallments.0') {
@@ -380,12 +391,12 @@ describe('useInstallmentManagement', () => {
   });
 
   it('dovrebbe gestire correttamente il formato dei numeri con virgola', () => {
-    // Inizializziamo formMethods all'interno del test
+    // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
     });
 
-    // Configura il valore restituito da getValues per simulare rate con importi decimali
+    // Configure the value returned by getValues to simulate installments with decimal amounts
     const mockGetValues = vi.fn();
     mockGetValues.mockImplementation((path: string) => {
       if (path === 'testInstallments.0') {
@@ -414,15 +425,15 @@ describe('useInstallmentManagement', () => {
   });
 
   it('dovrebbe formattare correttamente i dati delle rate', () => {
-    // Inizializziamo formMethods all'interno del test
+    // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
     });
 
-    // Reset del mock per questo test
+    // Reset the mock for this test
     mockFields.length = 2;
 
-    // Mock dei valori
+    // Mock the values
     const mockGetValues = vi.fn();
     const mockDate = new Date('2023-01-01');
     mockGetValues.mockImplementation((path: string) => {
@@ -430,12 +441,14 @@ describe('useInstallmentManagement', () => {
         return {
           amount: '100',
           dueDate: mockDate,
+          remittance: 'Rata 1',
           isMultibeneficiary: false
         };
       } else if (path === 'testInstallments.1') {
         return {
           amount: '200',
           dueDate: null,
+          remittance: 'Rata 2',
           isMultibeneficiary: true
         };
       }
@@ -455,7 +468,7 @@ describe('useInstallmentManagement', () => {
       { wrapper }
     );
 
-    // Imposta le rate esistenti
+    // Set the existing installments
     act(() => {
       result.current.wasSubmittedRef.current = true;
     });
@@ -465,21 +478,23 @@ describe('useInstallmentManagement', () => {
     expect(installmentsData.length).toBe(2);
     expect(installmentsData[0].amount).toBe('100.00');
     expect(installmentsData[0].dueDate).toBe('01/01/2023');
+    expect(installmentsData[0].remittance).toBe('Rata 1');
     expect(installmentsData[0].isMultibeneficiary).toBe(false);
     expect(installmentsData[1].dueDate).toBeNull();
+    expect(installmentsData[1].remittance).toBe('Rata 2');
     expect(installmentsData[1].isMultibeneficiary).toBe(true);
 
-    // Verifica che moneyFormat sia stato chiamato
+    // Verify that moneyFormat was called
     expect(vi.mocked(formattersModule.moneyFormat)).toHaveBeenCalled();
   });
 
   it('dovrebbe memorizzare le rate esistenti dopo il submit', () => {
-    // Inizializziamo formMethods all'interno del test
+    // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
     });
 
-    // Reset del mock per questo test
+    // Reset the mock for this test
     mockFields.length = 2;
 
     const { result, rerender } = renderHook(
@@ -497,10 +512,10 @@ describe('useInstallmentManagement', () => {
       }
     );
 
-    // All'inizio wasSubmittedRef.current dovrebbe essere false
+    // Initially wasSubmittedRef.current should be false
     expect(result.current.wasSubmittedRef.current).toBe(false);
 
-    // Rerender con isSubmitted = true
+    // Rerender with isSubmitted = true
     rerender({
       control: formResult.current.control,
       fieldNamePrefix: 'testInstallments' as const,
@@ -510,27 +525,27 @@ describe('useInstallmentManagement', () => {
       trigger: formResult.current.trigger
     });
 
-    // Eseguiamo l'effetto manualmente
+    // Execute the effect manually
     act(() => {
-      // Simuliamo l'effetto che aggiorna wasSubmittedRef quando isSubmitted è true
+      // Simulate the effect that updates wasSubmittedRef when isSubmitted is true
       if (!result.current.wasSubmittedRef.current) {
         result.current.wasSubmittedRef.current = true;
       }
     });
 
-    // Dopo il submit, wasSubmittedRef.current dovrebbe essere true
+    // After submit, wasSubmittedRef.current should be true
     expect(result.current.wasSubmittedRef.current).toBe(true);
   });
 
   it('dovrebbe chiamare onInstallmentsChange quando cambiano le rate', async () => {
-    // Inizializziamo formMethods all'interno del test
+    // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
     });
 
     const mockOnInstallmentsChange = vi.fn();
 
-    // Mock getValues per il calcolo dell'importo totale
+    // Mock getValues for total amount calculation
     const mockGetValues = vi.fn().mockReturnValue({ amount: '100' });
 
     renderHook(
@@ -547,10 +562,61 @@ describe('useInstallmentManagement', () => {
       { wrapper }
     );
 
-    // Lascia che l'effetto che chiama onInstallmentsChange venga eseguito
+    // Let the effect that calls onInstallmentsChange run
     await vi.runAllTimersAsync();
 
-    // Verifica che onInstallmentsChange sia stato chiamato
+    // Verify that onInstallmentsChange was called
     expect(mockOnInstallmentsChange).toHaveBeenCalled();
+  });
+
+  it('dovrebbe gestire correttamente il campo remittance', () => {
+    // Initialize formMethods inside the test
+    const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
+      wrapper
+    });
+
+    // Mock values for getValues that includes the remittance field
+    const mockGetValues = vi.fn();
+    mockGetValues.mockImplementation((path: string) => {
+      if (path === 'testInstallments.0') {
+        return {
+          amount: '100',
+          dueDate: new Date('2023-01-01'),
+          remittance: 'Causale rata 1',
+          isMultibeneficiary: false
+        };
+      }
+      return null;
+    });
+
+    // Call the hook
+    const { result } = renderHook(
+      () =>
+        useInstallmentManagement<TestFormValues>({
+          control: formResult.current.control,
+          fieldNamePrefix: 'testInstallments' as const,
+          isSubmitted: false,
+          getValues: mockGetValues,
+          setValue: formResult.current.setValue,
+          trigger: formResult.current.trigger
+        }),
+      { wrapper }
+    );
+
+    // Verify that the getInstallmentsData method returns the remittance field
+    const installmentsData = result.current.getInstallmentsData();
+    expect(installmentsData[0]).toHaveProperty('remittance', 'Causale rata 1');
+
+    // Simulate adding an installment by directly calling the method
+    act(() => {
+      result.current.addInstallment();
+    });
+
+    // Verify that append was called with an object that includes the empty remittance field
+    expect(mockAppend).toHaveBeenCalledWith(
+      expect.objectContaining({
+        remittance: ''
+      })
+    );
   });
 });
