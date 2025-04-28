@@ -7,10 +7,9 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
-        'debtPositionCreateWizard.step3.beneficiary.remittance.label':
-          'Causale',
+        'debtPositionCreateWizard.step3.beneficiary.remittance.label': 'Reason',
         'debtPositionCreateWizard.step3.beneficiary.remittance.required':
-          'La causale è obbligatoria'
+          'Reason is required'
       };
       return translations[key] || key;
     }
@@ -61,16 +60,16 @@ describe('RemittanceField', () => {
     validateRemittanceMock = vi.fn();
   });
 
-  test('dovrebbe renderizzare correttamente il campo', () => {
+  test('should render the field correctly', () => {
     render(<TestWrapper validateRemittanceMock={validateRemittanceMock} />);
 
-    const inputElement = screen.getByLabelText(/Causale/i);
+    const inputElement = screen.getByLabelText(/Reason/i);
     expect(inputElement).toBeInTheDocument();
     expect(inputElement).toBeRequired();
   });
 
-  test('dovrebbe mostrare il valore default se fornito', () => {
-    const defaultValue = 'Causale di test';
+  test('should show the default value if provided', () => {
+    const defaultValue = 'Test reason';
     render(
       <TestWrapper
         defaultValue={defaultValue}
@@ -78,11 +77,11 @@ describe('RemittanceField', () => {
       />
     );
 
-    const inputElement = screen.getByLabelText(/Causale/i) as HTMLInputElement;
+    const inputElement = screen.getByLabelText(/Reason/i) as HTMLInputElement;
     expect(inputElement.value).toBe(defaultValue);
   });
 
-  test('dovrebbe essere disabilitato quando la prop disabled è true', () => {
+  test('should be disabled when the disabled prop is true', () => {
     render(
       <TestWrapper
         disabled={true}
@@ -90,12 +89,12 @@ describe('RemittanceField', () => {
       />
     );
 
-    const inputElement = screen.getByLabelText(/Causale/i) as HTMLInputElement;
+    const inputElement = screen.getByLabelText(/Reason/i) as HTMLInputElement;
     expect(inputElement).toBeDisabled();
   });
 
-  test('dovrebbe mostrare un messaggio di errore quando fornito', () => {
-    const errorMessage = 'Errore di test';
+  test('should show an error message when provided', () => {
+    const errorMessage = 'Test error';
     render(
       <TestWrapper
         error={{ message: errorMessage }}
@@ -104,25 +103,25 @@ describe('RemittanceField', () => {
     );
 
     expect(screen.getByText(errorMessage)).toBeInTheDocument();
-    const inputElement = screen.getByLabelText(/Causale/i);
+    const inputElement = screen.getByLabelText(/Reason/i);
     expect(inputElement).toHaveAttribute('aria-invalid', 'true');
   });
 
-  test('dovrebbe aggiornare il valore quando viene modificato', () => {
+  test('should update the value when changed', () => {
     render(<TestWrapper validateRemittanceMock={validateRemittanceMock} />);
 
-    const inputElement = screen.getByLabelText(/Causale/i);
-    const testValue = 'Nuova causale';
+    const inputElement = screen.getByLabelText(/Reason/i);
+    const testValue = 'New reason';
 
     fireEvent.change(inputElement, { target: { value: testValue } });
 
     expect((inputElement as HTMLInputElement).value).toBe(testValue);
   });
 
-  test('dovrebbe chiamare validateRemittance al blur', async () => {
+  test('should call validateRemittance on blur', async () => {
     render(<TestWrapper validateRemittanceMock={validateRemittanceMock} />);
 
-    const inputElement = screen.getByLabelText(/Causale/i);
+    const inputElement = screen.getByLabelText(/Reason/i);
     fireEvent.blur(inputElement);
 
     // Verify that validateRemittance is called after the timeout
@@ -137,10 +136,10 @@ describe('RemittanceField', () => {
     );
   });
 
-  test('non dovrebbe chiamare validateRemittance se non è fornito', async () => {
+  test('should not call validateRemittance if not provided', async () => {
     render(<TestWrapper validateRemittanceMock={undefined} />);
 
-    const inputElement = screen.getByLabelText(/Causale/i);
+    const inputElement = screen.getByLabelText(/Reason/i);
     fireEvent.blur(inputElement);
 
     // Wait for the timeout to pass to verify that it is not called

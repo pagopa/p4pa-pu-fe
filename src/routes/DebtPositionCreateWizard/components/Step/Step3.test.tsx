@@ -298,7 +298,7 @@ describe('Step3 Component', () => {
     isMultibeneficiary: { value: false, readonly: false }
   };
 
-  it('dovrebbe renderizzare correttamente con i dati iniziali', () => {
+  it('should render correctly with initial data', () => {
     render(
       <MemoryRouter>
         <Step3
@@ -322,7 +322,7 @@ describe('Step3 Component', () => {
     );
   });
 
-  it('dovrebbe chiamare onBack quando si clicca sul pulsante indietro', () => {
+  it('should call onBack when clicking the back button', () => {
     render(
       <MemoryRouter>
         <Step3
@@ -340,7 +340,7 @@ describe('Step3 Component', () => {
     expect(mockOnBack).toHaveBeenCalledTimes(1);
   });
 
-  it('dovrebbe mostrare InstallmentField quando paymentOption è INSTALLMENTS', () => {
+  it('should show InstallmentField when paymentOption is INSTALLMENTS', () => {
     const installmentProvider = new WatchValueProvider({
       isMultibeneficiary: false,
       paymentOption: 'INSTALLMENTS'
@@ -369,7 +369,7 @@ describe('Step3 Component', () => {
     expect(screen.getByTestId('installment-field')).toBeInTheDocument();
   });
 
-  it('dovrebbe navigare alla pagina di completamento dopo il submit con successo', async () => {
+  it('should navigate to completion page after successful submit', async () => {
     render(
       <MemoryRouter>
         <Step3
@@ -396,7 +396,7 @@ describe('Step3 Component', () => {
     });
   });
 
-  it('dovrebbe visualizzare il componente BeneficiaryField quando multibeneficiary è attivo', () => {
+  it('should display BeneficiaryField component when multibeneficiary is active', () => {
     const multibeneficiaryProvider = new WatchValueProvider({
       isMultibeneficiary: true,
       paymentOption: 'SINGLE',
@@ -423,7 +423,7 @@ describe('Step3 Component', () => {
     expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
   });
 
-  it('dovrebbe gestire correttamente il caso con flagMandatoryDueDate attivo', () => {
+  it('should handle correctly the case with flagMandatoryDueDate active', () => {
     render(
       <MemoryRouter>
         <Step3
@@ -441,7 +441,7 @@ describe('Step3 Component', () => {
     expect(screen.getByTestId('date-picker')).toBeInTheDocument();
   });
 
-  it('dovrebbe gestire correttamente i campi readonly', () => {
+  it('should handle readonly fields correctly', () => {
     render(
       <MemoryRouter>
         <Step3
@@ -462,7 +462,7 @@ describe('Step3 Component', () => {
     expect(screen.getByTestId('wizard-step-wrapper')).toBeInTheDocument();
   });
 
-  it('dovrebbe inizializzare i beneficiari quando isMultibeneficiary è attivo', async () => {
+  it('should initialize beneficiaries when isMultibeneficiary is active', async () => {
     mockGetValues.mockReturnValueOnce([]);
 
     const multibeneficiaryProvider = new WatchValueProvider({
@@ -504,7 +504,7 @@ describe('Step3 Component', () => {
     );
   });
 
-  it('dovrebbe bloccare il submit quando i beneficiari non hanno un totale valido', async () => {
+  it('should block submit when beneficiaries do not have a valid total', async () => {
     vi.mocked(isBeneficiariesTotalValid).mockReturnValueOnce(false);
 
     const multibeneficiaryProvider = new WatchValueProvider({
@@ -542,7 +542,7 @@ describe('Step3 Component', () => {
     expect(mockSetData).not.toHaveBeenCalled();
   });
 
-  it("dovrebbe gestire correttamente l'aggiornamento del totale quando cambiano gli installments", async () => {
+  it('should handle correctly the update of total when installments change', async () => {
     const installmentProvider = new WatchValueProvider({
       isMultibeneficiary: false,
       paymentOption: 'INSTALLMENTS'
@@ -572,7 +572,7 @@ describe('Step3 Component', () => {
     });
   });
 
-  it("dovrebbe simulare il comportamento di triggerValidationForAllBeneficiaries quando cambia l'importo", async () => {
+  it('should simulate triggerValidationForAllBeneficiaries behavior when amount changes', async () => {
     const multibeneficiaryProvider = new WatchValueProvider({
       isMultibeneficiary: true,
       paymentOption: 'SINGLE',
@@ -611,7 +611,7 @@ describe('Step3 Component', () => {
     expect(mockTrigger).toHaveBeenCalled();
   });
 
-  it('dovrebbe testare la validazione installments con errori', async () => {
+  it('should test installments validation with errors', async () => {
     const installmentProvider = new WatchValueProvider({
       isMultibeneficiary: false,
       paymentOption: 'INSTALLMENTS'
@@ -658,7 +658,7 @@ describe('Step3 Component', () => {
     expect(mockSetData).not.toHaveBeenCalled();
   });
 
-  it('dovrebbe gestire la validazione quando un installment ha un errore di validazione beneficiari con eccezione', async () => {
+  it('should handle validation when an installment has a beneficiary validation error with exception', async () => {
     const installmentProvider = new WatchValueProvider({
       isMultibeneficiary: false,
       paymentOption: 'INSTALLMENTS'
@@ -715,7 +715,7 @@ describe('Step3 Component', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it('dovrebbe gestire le eccezioni durante la validazione delle installments', async () => {
+  it('should handle exceptions during installments validation', async () => {
     const installmentProvider = new WatchValueProvider({
       isMultibeneficiary: false,
       paymentOption: 'INSTALLMENTS'
@@ -771,7 +771,7 @@ describe('Step3 Component', () => {
     consoleErrorSpy2.mockRestore();
   });
 
-  it('dovrebbe formattare correttamente un valore di input nel campo importo', () => {
+  it('should format correctly an input value in the amount field', () => {
     const { container } = render(
       <MemoryRouter>
         <Step3
@@ -795,7 +795,7 @@ describe('Step3 Component', () => {
     expect(mockSetValue).toHaveBeenCalled();
   });
 
-  it('dovrebbe gestire il cambio di paymentOption da SINGLE a INSTALLMENTS', () => {
+  it('should handle paymentOption change from SINGLE to INSTALLMENTS', () => {
     render(
       <MemoryRouter>
         <Step3
@@ -822,7 +822,7 @@ describe('Step3 Component', () => {
     expect(mockSetValue).toHaveBeenCalledWith('installments', []);
   });
 
-  it('dovrebbe gestire il cambio di paymentOption da INSTALLMENTS a SINGLE', () => {
+  it('should handle paymentOption change from INSTALLMENTS to SINGLE', () => {
     const installmentProvider = new WatchValueProvider({
       isMultibeneficiary: false,
       paymentOption: 'INSTALLMENTS'
@@ -855,7 +855,7 @@ describe('Step3 Component', () => {
     expect(mockSetValue).toHaveBeenCalledWith('installments', []);
   });
 
-  it('dovrebbe resettare i beneficiari quando si disattiva il toggle multibeneficiary', () => {
+  it('should reset beneficiaries when multibeneficiary toggle is deactivated', () => {
     const multibeneficiaryProvider = new WatchValueProvider({
       isMultibeneficiary: true,
       paymentOption: 'SINGLE',
@@ -893,7 +893,7 @@ describe('Step3 Component', () => {
     expect(mockResetAllBeneficiaries).toHaveBeenCalled();
   });
 
-  it('dovrebbe bloccare il submit quando ci sono beneficiari con remittance vuota', async () => {
+  it('should block submit when there are beneficiaries with empty remittance', async () => {
     const multibeneficiaryProvider = new WatchValueProvider({
       isMultibeneficiary: true,
       paymentOption: 'SINGLE',
@@ -907,7 +907,7 @@ describe('Step3 Component', () => {
       {
         entityName: 'Test1',
         amount: '50.00',
-        remittance: '' // Campo remittance vuoto
+        remittance: '' // Empty remittance field
       },
       {
         entityName: 'Test2',
@@ -938,7 +938,7 @@ describe('Step3 Component', () => {
     expect(mockSetData).not.toHaveBeenCalled();
   });
 
-  it('dovrebbe bloccare il submit quando ci sono installments con remittance vuota', async () => {
+  it('should block submit when there are installments with empty remittance', async () => {
     const installmentProvider = new WatchValueProvider({
       isMultibeneficiary: false,
       paymentOption: 'INSTALLMENTS'
@@ -951,7 +951,7 @@ describe('Step3 Component', () => {
       {
         amount: '100.00',
         dueDate: '2023-12-01',
-        remittance: '', // Campo remittance vuoto
+        remittance: '', // Empty remittance field
         isMultibeneficiary: false
       }
     ];
@@ -978,7 +978,7 @@ describe('Step3 Component', () => {
     expect(mockSetData).not.toHaveBeenCalled();
   });
 
-  it('dovrebbe procedere con il submit quando tutti i beneficiari hanno remittance valida', async () => {
+  it('should proceed with submit when all beneficiaries have valid remittance', async () => {
     const multibeneficiaryProvider = new WatchValueProvider({
       isMultibeneficiary: true,
       paymentOption: 'SINGLE',

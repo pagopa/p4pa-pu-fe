@@ -5,7 +5,7 @@ import { Control, FieldValues } from 'react-hook-form';
 import { BeneficiaryValidationContext } from '../../../../../utils/BeneficiaryFieldHelpers';
 import * as BeneficiaryFieldHelpers from '../../../../../utils/BeneficiaryFieldHelpers';
 
-// Mock delle dipendenze
+// Mock dependencies
 vi.mock('./BeneficiaryControlledField', () => ({
   BeneficiaryControlledField: ({
     name,
@@ -16,7 +16,7 @@ vi.mock('./BeneficiaryControlledField', () => ({
     rules?: Record<string, unknown>;
     renderField: (props: { field: Record<string, unknown> }) => JSX.Element;
   }) => {
-    // Simula un campo di input per i test
+    // Simulate an input field for tests
     const field = {
       name,
       value: '',
@@ -114,7 +114,7 @@ describe('BeneficiaryIdentityFields', () => {
     vi.clearAllMocks();
   });
 
-  it('dovrebbe renderizzare correttamente i campi EntityName, TaxCode e Remittance', () => {
+  it('should correctly render EntityName, TaxCode and Remittance fields', () => {
     render(
       <BeneficiaryIdentityFields
         control={mockControl}
@@ -126,13 +126,13 @@ describe('BeneficiaryIdentityFields', () => {
       />
     );
 
-    // Verifica che tutti i campi siano renderizzati
+    // Verify that all fields are rendered
     expect(screen.getByTestId('entity-name-field')).toBeInTheDocument();
     expect(screen.getByTestId('tax-code-field')).toBeInTheDocument();
     expect(screen.getByTestId('remittance-field')).toBeInTheDocument();
   });
 
-  it('dovrebbe utilizzare buildBeneficiaryFieldPath con i parametri corretti', () => {
+  it('should use buildBeneficiaryFieldPath with correct parameters', () => {
     render(
       <BeneficiaryIdentityFields
         control={mockControl}
@@ -144,7 +144,7 @@ describe('BeneficiaryIdentityFields', () => {
       />
     );
 
-    // Verifica che buildBeneficiaryFieldPath sia chiamato con i parametri corretti
+    // Verify that buildBeneficiaryFieldPath is called with correct parameters
     expect(
       BeneficiaryFieldHelpers.buildBeneficiaryFieldPath
     ).toHaveBeenCalledWith(mockFieldNamePrefix, mockIndex, 'entityName');
@@ -158,7 +158,7 @@ describe('BeneficiaryIdentityFields', () => {
     ).toHaveBeenCalledWith(mockFieldNamePrefix, mockIndex, 'remittance');
   });
 
-  it('dovrebbe passare le proprietà corrette ai campi', () => {
+  it('should pass correct properties to fields', () => {
     render(
       <BeneficiaryIdentityFields
         control={mockControl}
@@ -170,7 +170,7 @@ describe('BeneficiaryIdentityFields', () => {
       />
     );
 
-    // Verifica che i campi controllati siano renderizzati con i nomi corretti
+    // Verify that controlled fields are rendered with correct names
     expect(
       screen.getByTestId('controlled-field-beneficiaries.0.entityName')
     ).toBeInTheDocument();
@@ -182,7 +182,7 @@ describe('BeneficiaryIdentityFields', () => {
     ).toBeInTheDocument();
   });
 
-  it('dovrebbe passare le regole di validazione correttamente', () => {
+  it('should pass validation rules correctly', () => {
     render(
       <BeneficiaryIdentityFields
         control={mockControl}
@@ -194,7 +194,7 @@ describe('BeneficiaryIdentityFields', () => {
       />
     );
 
-    // Verifica che la funzione di traduzione sia chiamata con le chiavi corrette
+    // Verify that the translation function is called with correct keys
     expect(mockT).toHaveBeenCalledWith(
       'debtPositionCreateWizard.step3.beneficiary.entityName.required'
     );

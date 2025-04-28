@@ -34,7 +34,7 @@ vi.mock('./AmountField', () => ({
         data-testid={`amount-change-trigger-${index}`}
         onClick={() => onAmountChange(100)}
       >
-        Cambia importo
+        Change amount
       </button>
     </div>
   ))
@@ -171,24 +171,24 @@ describe('InstallmentItem', () => {
     vi.clearAllMocks();
   });
 
-  it('dovrebbe renderizzare correttamente il componente', () => {
+  it('should render the component correctly', () => {
     render(<InstallmentItem<TestFormValues> {...getMockProps()} />);
 
-    // Verifica che l'elemento principale sia presente
+    // Verify that the main element is present
     expect(
       screen.getByText(
         'debtPositionCreateWizard.step3.installments.installment 1'
       )
     ).toBeInTheDocument();
 
-    // Verifica che i componenti figli siano stati renderizzati
+    // Verify that child components have been rendered
     expect(screen.getByTestId('amount-field')).toBeInTheDocument();
     expect(screen.getByTestId('date-field-0')).toBeInTheDocument();
     expect(screen.getByTestId('remittance-field-0')).toBeInTheDocument();
     expect(screen.getByTestId('beneficiary-control-0')).toBeInTheDocument();
   });
 
-  it('dovrebbe mostrare il pulsante di rimozione quando onRemove è fornito', () => {
+  it('should show the remove button when onRemove is provided', () => {
     const onRemoveMock = vi.fn();
 
     render(
@@ -198,11 +198,11 @@ describe('InstallmentItem', () => {
       />
     );
 
-    // Trova l'icona di rimozione
+    // Find the remove icon
     const removeIcon = screen.getByTestId('RemoveCircleOutlineIcon');
     expect(removeIcon).toBeInTheDocument();
 
-    // Trova il pulsante di rimozione (parent dell'icona) e fai click
+    // Find the remove button (parent of the icon) and click
     const removeButton = removeIcon.closest('button');
     expect(removeButton).toBeInTheDocument();
 
@@ -212,25 +212,25 @@ describe('InstallmentItem', () => {
     }
   });
 
-  it('non dovrebbe mostrare il pulsante di rimozione quando onRemove non è fornito', () => {
+  it('should not show the remove button when onRemove is not provided', () => {
     render(<InstallmentItem<TestFormValues> {...getMockProps()} />);
 
-    // Non dovrebbero esserci icone di rimozione
+    // There should be no remove icons
     const removeIcon = screen.queryByTestId('RemoveCircleOutlineIcon');
     expect(removeIcon).not.toBeInTheDocument();
   });
 
-  it('dovrebbe gestire il cambio di importo', () => {
+  it('should handle amount change', () => {
     render(<InstallmentItem<TestFormValues> {...getMockProps()} />);
 
     const amountChangeButton = screen.getByTestId('amount-change-trigger-0');
     fireEvent.click(amountChangeButton);
 
-    // Verifica che la funzione mockHandleInstallmentAmountChange sia stata chiamata
+    // Verify that the mockHandleInstallmentAmountChange function was called
     expect(mockHandleInstallmentAmountChange).toHaveBeenCalled();
   });
 
-  it('dovrebbe applicare il flag flagMandatoryDueDate correttamente', () => {
+  it('should apply the flagMandatoryDueDate flag correctly', () => {
     render(
       <InstallmentItem<TestFormValues>
         {...getMockProps()}
@@ -238,17 +238,17 @@ describe('InstallmentItem', () => {
       />
     );
 
-    // Verifica che il campo data contenga l'attributo data-mandatory="false"
+    // Verify that the date field contains the data-mandatory="false" attribute
     const dateField = screen.getByTestId('date-field-0');
     expect(dateField).toHaveAttribute('data-mandatory', 'false');
   });
 
-  it('dovrebbe gestire correttamente lo stato disabilitato', () => {
+  it('should handle disabled state correctly', () => {
     render(
       <InstallmentItem<TestFormValues> {...getMockProps()} disabled={true} />
     );
 
-    // Verifica che i componenti figli siano disabilitati
+    // Verify that child components are disabled
     const beneficiaryControl = screen.getByTestId('beneficiary-control-0');
     expect(beneficiaryControl).toHaveAttribute('data-disabled', 'true');
 

@@ -133,49 +133,49 @@ describe('validateTaxCode', () => {
 });
 
 describe('createValidators', () => {
-  // Mock della funzione di traduzione
+  // Mock translation function
   const mockT = vi.fn((key: string) => key);
 
   describe('validateTaxCodeField', () => {
-    it('restituisce il messaggio generico quando il campo è vuoto e non è selezionato il tipo di soggetto', () => {
+    it('returns generic message when field is empty and subject type is not selected', () => {
       const { validateTaxCodeField } = createValidators(mockT, '');
       expect(validateTaxCodeField('')).toBe(
         'debtPositionCreateWizard.step2.taxCodeOrVat.required'
       );
     });
 
-    it('restituisce il messaggio specifico per persona fisica quando il campo è vuoto', () => {
+    it('returns specific message for natural person when field is empty', () => {
       const { validateTaxCodeField } = createValidators(mockT, 'fisica');
       expect(validateTaxCodeField('')).toBe(
         'debtPositionCreateWizard.step2.taxCode.required'
       );
     });
 
-    it('restituisce il messaggio specifico per persona giuridica quando il campo è vuoto', () => {
+    it('returns specific message for legal entity when field is empty', () => {
       const { validateTaxCodeField } = createValidators(mockT, 'giuridica');
       expect(validateTaxCodeField('')).toBe(
         'debtPositionCreateWizard.step2.vat.required'
       );
     });
 
-    it('restituisce undefined quando il codice fiscale è valido per persona fisica', () => {
+    it('returns undefined when tax code is valid for natural person', () => {
       const { validateTaxCodeField } = createValidators(mockT, 'fisica');
       expect(validateTaxCodeField('RSSMRA80A01H501U')).toBeUndefined();
     });
 
-    it('restituisce undefined quando la partita IVA è valida per persona giuridica', () => {
+    it('returns undefined when VAT number is valid for legal entity', () => {
       const { validateTaxCodeField } = createValidators(mockT, 'giuridica');
       expect(validateTaxCodeField('12345678901')).toBeUndefined();
     });
 
-    it('restituisce il messaggio di errore quando il codice fiscale non è valido per persona fisica', () => {
+    it('returns error message when tax code is invalid for natural person', () => {
       const { validateTaxCodeField } = createValidators(mockT, 'fisica');
       expect(validateTaxCodeField('12345678901')).toBe(
         'debtPositionCreateWizard.step2.taxCode.invalid'
       );
     });
 
-    it('restituisce il messaggio di errore quando la partita IVA non è valida per persona giuridica', () => {
+    it('returns error message when VAT number is invalid for legal entity', () => {
       const { validateTaxCodeField } = createValidators(mockT, 'giuridica');
       expect(validateTaxCodeField('RSSMRA80A01H501U')).toBe(
         'debtPositionCreateWizard.step2.taxCode.invalidVAT'
@@ -184,33 +184,33 @@ describe('createValidators', () => {
   });
 
   describe('validateFullNameField', () => {
-    it('restituisce il messaggio generico quando il campo è vuoto e non è selezionato il tipo di soggetto', () => {
+    it('returns generic message when field is empty and subject type is not selected', () => {
       const { validateFullNameField } = createValidators(mockT, '');
       expect(validateFullNameField('')).toBe(
         'debtPositionCreateWizard.step2.fullName.required'
       );
     });
 
-    it('restituisce il messaggio specifico per persona fisica quando il campo è vuoto', () => {
+    it('returns specific message for natural person when field is empty', () => {
       const { validateFullNameField } = createValidators(mockT, 'fisica');
       expect(validateFullNameField('')).toBe(
         'debtPositionCreateWizard.step2.fullName.required'
       );
     });
 
-    it('restituisce il messaggio specifico per persona giuridica quando il campo è vuoto', () => {
+    it('returns specific message for legal entity when field is empty', () => {
       const { validateFullNameField } = createValidators(mockT, 'giuridica');
       expect(validateFullNameField('')).toBe(
         'debtPositionCreateWizard.step2.companyName.required'
       );
     });
 
-    it('restituisce undefined quando il nome completo è valido (almeno due parole)', () => {
+    it('returns undefined when full name is valid (at least two words)', () => {
       const { validateFullNameField } = createValidators(mockT, 'fisica');
       expect(validateFullNameField('Mario Rossi')).toBeUndefined();
     });
 
-    it('restituisce il messaggio di errore quando il nome completo ha meno di due parole', () => {
+    it('returns error message when full name has less than two words', () => {
       const { validateFullNameField } = createValidators(mockT, 'fisica');
       expect(validateFullNameField('Mario')).toBe(
         'debtPositionCreateWizard.step2.fullName.minTwoWords'
@@ -219,7 +219,7 @@ describe('createValidators', () => {
   });
 
   describe('getValidationRules', () => {
-    it('restituisce le regole di validazione corrette', () => {
+    it('returns correct validation rules', () => {
       const { getValidationRules } = createValidators(mockT, 'fisica');
       const rules = getValidationRules();
 
@@ -422,7 +422,7 @@ describe('createBeneficiaryValidators', () => {
   });
 
   describe('validateTotalAmount', () => {
-    it('restituisce true se totalAmount è vuoto', () => {
+    it('returns true if totalAmount is empty', () => {
       const validators = createBeneficiaryValidators(
         mockT,
         mockGetValues,
@@ -432,7 +432,7 @@ describe('createBeneficiaryValidators', () => {
       expect(validators.validateTotalAmount()).toBe(true);
     });
 
-    it('restituisce true se non ci sono beneficiari', () => {
+    it('returns true if there are no beneficiaries', () => {
       mockGetValues.mockReturnValue([]);
       const validators = createBeneficiaryValidators(
         mockT,
@@ -443,7 +443,7 @@ describe('createBeneficiaryValidators', () => {
       expect(validators.validateTotalAmount()).toBe(true);
     });
 
-    it('restituisce true se la somma è inferiore al totale', () => {
+    it('returns true if sum is less than total', () => {
       mockGetValues.mockReturnValue([{ amount: '40' }, { amount: '50' }]);
       const validators = createBeneficiaryValidators(
         mockT,
@@ -454,7 +454,7 @@ describe('createBeneficiaryValidators', () => {
       expect(validators.validateTotalAmount()).toBe(true);
     });
 
-    it('restituisce messaggio di errore se la somma è uguale o superiore al totale', () => {
+    it('returns error message if sum is equal to or greater than total', () => {
       mockGetValues.mockReturnValue([{ amount: '50' }, { amount: '50' }]);
       const validators = createBeneficiaryValidators(
         mockT,
@@ -469,7 +469,7 @@ describe('createBeneficiaryValidators', () => {
   });
 
   describe('validateSingleBeneficiary', () => {
-    it('restituisce true se ci sono più beneficiari', () => {
+    it('returns true if there are multiple beneficiaries', () => {
       const validators = createBeneficiaryValidators(
         mockT,
         mockGetValues,
@@ -479,7 +479,7 @@ describe('createBeneficiaryValidators', () => {
       expect(validators.validateSingleBeneficiary('50', 2)).toBe(true);
     });
 
-    it("restituisce true se l'importo è inferiore al totale con un singolo beneficiario", () => {
+    it('returns true if amount is less than total with single beneficiary', () => {
       const validators = createBeneficiaryValidators(
         mockT,
         mockGetValues,
@@ -489,7 +489,7 @@ describe('createBeneficiaryValidators', () => {
       expect(validators.validateSingleBeneficiary('50', 1)).toBe(true);
     });
 
-    it("restituisce messaggio di errore se l'importo è uguale o superiore al totale con un singolo beneficiario", () => {
+    it('returns error message if amount is equal to or greater than total with single beneficiary', () => {
       const validators = createBeneficiaryValidators(
         mockT,
         mockGetValues,
@@ -502,9 +502,9 @@ describe('createBeneficiaryValidators', () => {
     });
   });
 
-  // Aggiunta di altri test per le funzioni rimanenti
+  // Adding other tests for remaining functions
   describe('isSingleBeneficiaryAmountValid', () => {
-    it('restituisce true se hasSingleBeneficiary è false', () => {
+    it('returns true if hasSingleBeneficiary is false', () => {
       const validators = createBeneficiaryValidators(
         mockT,
         mockGetValues,
@@ -514,7 +514,7 @@ describe('createBeneficiaryValidators', () => {
       expect(validators.isSingleBeneficiaryAmountValid(false)).toBe(true);
     });
 
-    it('restituisce true se totalAmount è vuoto', () => {
+    it('returns true if totalAmount is empty', () => {
       const validators = createBeneficiaryValidators(
         mockT,
         mockGetValues,
@@ -526,7 +526,7 @@ describe('createBeneficiaryValidators', () => {
   });
 
   describe('isBeneficiaryAmountValid', () => {
-    it('restituisce true se il beneficiario non esiste', () => {
+    it('returns true if beneficiary does not exist', () => {
       mockGetValues.mockReturnValue([]);
       const validators = createBeneficiaryValidators(
         mockT,
@@ -537,7 +537,7 @@ describe('createBeneficiaryValidators', () => {
       expect(validators.isBeneficiaryAmountValid(0, false)).toBe(true);
     });
 
-    it("restituisce true se l'importo del beneficiario è vuoto", () => {
+    it('returns true if beneficiary amount is empty', () => {
       mockGetValues.mockReturnValue([{ amount: '' }]);
       const validators = createBeneficiaryValidators(
         mockT,
@@ -656,11 +656,11 @@ describe('createDateValidator', () => {
   describe('when field is required', () => {
     const validator = createDateValidator(mockT, true);
 
-    it('restituisce il messaggio di errore predefinito se il campo è richiesto ma vuoto', () => {
+    it('returns default error message if field is required but empty', () => {
       expect(validator.required).toBe('commons.required');
     });
 
-    it('restituisce un messaggio personalizzato se fornito', () => {
+    it('returns custom message if provided', () => {
       const customValidator = createDateValidator(
         mockT,
         true,
@@ -669,12 +669,12 @@ describe('createDateValidator', () => {
       expect(customValidator.required).toBe('custom.message');
     });
 
-    it('restituisce true se il valore è una data valida', () => {
+    it('returns true if value is a valid date', () => {
       const value = new Date();
       expect(validator.validate(value)).toBe(true);
     });
 
-    it('restituisce messaggio di errore se il valore non è una data valida', () => {
+    it('returns error message if value is not a valid date', () => {
       expect(validator.validate('invalid-date')).toBe(
         'debtPositionCreateWizard.step3.dueDate.invalid'
       );
@@ -684,21 +684,21 @@ describe('createDateValidator', () => {
   describe('when field is not required', () => {
     const validator = createDateValidator(mockT, false);
 
-    it('restituisce false se il campo non è richiesto', () => {
+    it('returns false if field is not required', () => {
       expect(validator.required).toBe(false);
     });
 
-    it('restituisce true se il campo è vuoto e non è richiesto', () => {
+    it('returns true if field is empty and not required', () => {
       expect(validator.validate(null)).toBe(true);
       expect(validator.validate(undefined)).toBe(true);
     });
 
-    it('restituisce true se il valore è una data valida', () => {
+    it('returns true if value is a valid date', () => {
       const value = new Date();
       expect(validator.validate(value)).toBe(true);
     });
 
-    it('restituisce messaggio di errore se il valore è presente ma non è una data valida', () => {
+    it('returns error message if value is present but not a valid date', () => {
       expect(validator.validate('invalid-date')).toBe(
         'debtPositionCreateWizard.step3.dueDate.invalid'
       );

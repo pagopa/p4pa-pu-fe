@@ -55,13 +55,13 @@ vi.mock('../utils/fieldValidation', async () => {
     createAmountValidator: vi.fn(() => ({
       required: {
         value: true,
-        message: 'Campo obbligatorio'
+        message: 'Required field'
       },
       validate: {
         positive: (value: string) =>
-          (value && parseFloat(value) > 0) || "L'importo deve essere positivo",
+          (value && parseFloat(value) > 0) || 'Amount must be positive',
         validNumber: (value: string) =>
-          (value && !isNaN(parseFloat(value))) || 'Inserire un numero valido'
+          (value && !isNaN(parseFloat(value))) || 'Enter a valid number'
       }
     }))
   };
@@ -90,7 +90,7 @@ describe('useInstallmentManagement', () => {
     vi.useRealTimers();
   });
 
-  it('dovrebbe inizializzare con due rate vuote', () => {
+  it('should initialize with two empty installments', () => {
     // Initialize formMethods inside the test to ensure it's created in the React context
     const { result: formResult } = renderHook(
       () =>
@@ -122,7 +122,7 @@ describe('useInstallmentManagement', () => {
     expect(result.current.MAX_INSTALLMENTS).toBe(12);
   });
 
-  it('dovrebbe creare validatori corretti', () => {
+  it('should create correct validators', () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(
       () =>
@@ -175,7 +175,7 @@ describe('useInstallmentManagement', () => {
     ).toBe(false);
   });
 
-  it('dovrebbe aggiungere una nuova rata', async () => {
+  it('should add a new installment', async () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(
       () =>
@@ -231,7 +231,7 @@ describe('useInstallmentManagement', () => {
     expect(mockOnInstallmentsChange).toHaveBeenCalled();
   });
 
-  it('non dovrebbe aggiungere una rata oltre il limite massimo', () => {
+  it('should not add an installment beyond the maximum limit', () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(
       () =>
@@ -270,7 +270,7 @@ describe('useInstallmentManagement', () => {
     expect(mockAppend).not.toHaveBeenCalled();
   });
 
-  it('dovrebbe rimuovere una rata', () => {
+  it('should remove an installment', () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(
       () =>
@@ -317,7 +317,7 @@ describe('useInstallmentManagement', () => {
     expect(mockOnInstallmentsChange).toHaveBeenCalled();
   });
 
-  it('non dovrebbe rimuovere rate sotto il minimo consentito', () => {
+  it('should not remove installments below the minimum allowed', () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(
       () =>
@@ -356,7 +356,7 @@ describe('useInstallmentManagement', () => {
     expect(mockRemove).not.toHaveBeenCalled();
   });
 
-  it("dovrebbe calcolare correttamente l'importo totale", () => {
+  it('should correctly calculate the total amount', () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
@@ -390,7 +390,7 @@ describe('useInstallmentManagement', () => {
     expect(totalAmount).toBe('300.00');
   });
 
-  it('dovrebbe gestire correttamente il formato dei numeri con virgola', () => {
+  it('should correctly handle decimal number format', () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
@@ -424,7 +424,7 @@ describe('useInstallmentManagement', () => {
     expect(totalAmount).toBe('300.75');
   });
 
-  it('dovrebbe formattare correttamente i dati delle rate', () => {
+  it('should correctly format installment data', () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
@@ -488,7 +488,7 @@ describe('useInstallmentManagement', () => {
     expect(vi.mocked(formattersModule.moneyFormat)).toHaveBeenCalled();
   });
 
-  it('dovrebbe memorizzare le rate esistenti dopo il submit', () => {
+  it('should store existing installments after submit', () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
@@ -537,7 +537,7 @@ describe('useInstallmentManagement', () => {
     expect(result.current.wasSubmittedRef.current).toBe(true);
   });
 
-  it('dovrebbe chiamare onInstallmentsChange quando cambiano le rate', async () => {
+  it('should call onInstallmentsChange when installments change', async () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
@@ -569,7 +569,7 @@ describe('useInstallmentManagement', () => {
     expect(mockOnInstallmentsChange).toHaveBeenCalled();
   });
 
-  it('dovrebbe gestire correttamente il campo remittance', () => {
+  it('should correctly handle the remittance field', () => {
     // Initialize formMethods inside the test
     const { result: formResult } = renderHook(() => useForm<TestFormValues>(), {
       wrapper
