@@ -12,22 +12,35 @@ export const useOrganizations = () => {
   const { data, ...query } = utils.loaders.getOrganizations();
 
   useEffect(() => {
-    if (!organizationId && data) {
-      const initOrganization = data.find(
-        (org) =>
-          org.orgFiscalCode === idToken?.organization.fiscal_code &&
-          org.ipaCode === idToken.organization.ipaCode
-      );
+    if (data && data.length > 0) {
+      const currentOrgExists =
+        organizationId &&
+        data.some((org) => org.organizationId === organizationId);
 
-      const firstOrganization = initOrganization || data[0];
-      if (firstOrganization) {
-        setOrganizationId(firstOrganization.organizationId);
-        setOperatorRole(firstOrganization.operatorRole);
+      if (!currentOrgExists) {
+        const savedOrg = organizationId
+          ? data.find((org) => org.organizationId === organizationId)
+          : null;
+
+        const idTokenMatchedOrg =
+          !savedOrg && idToken
+            ? data.find(
+                (org) =>
+                  org.orgFiscalCode === idToken.organization.fiscal_code &&
+                  org.ipaCode === idToken.organization.ipaCode
+              )
+            : null;
+
+        const orgToSelect = savedOrg || idTokenMatchedOrg || data[0];
+
+        if (orgToSelect) {
+          setOrganizationId(orgToSelect.organizationId);
+          setOperatorRole(orgToSelect.operatorRole);
+        }
       }
 
       if (query.isError) {
-        // TODO: Handle error (e.g., show a toast)
-        console.error('Failed to fetch fe config', query.error);
+        console.error('Failed to fetch organizations', query.error);
       }
     }
   }, [
