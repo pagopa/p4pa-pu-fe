@@ -571,6 +571,8 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                           setValue('amount.value', '');
                           // Reset installments array for proper initialization
                           setValue('installments', []);
+                          // Reset payment object field
+                          setValue('paymentObject.value', '');
                           break;
                         case 'SINGLE':
                           if (paymentOption === 'INSTALLMENTS') {
