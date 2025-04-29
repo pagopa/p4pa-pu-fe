@@ -5,13 +5,19 @@ import { QueryObserverPendingResult } from '@tanstack/react-query';
 import { DebtPositionTypeOrg } from '../../generated/apiClient';
 import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 
+const mockT = vi.fn((key: string) => key);
+
 vi.mock('../api/debtPositionsTypes', () => ({
   getDebtPositionsTypes: vi.fn()
 }));
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key
+    t: mockT,
+    i18n: {
+      language: 'it',
+      changeLanguage: vi.fn()
+    }
   })
 }));
 
@@ -26,12 +32,17 @@ describe('useDebtPositionsTypeOrg', () => {
     isLoading: false,
     isError: false,
     isSuccess: false,
-    error: null,
-    mutate: vi.fn()
+    error: null
   } as unknown as MockQueryType;
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockT.mockClear();
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    mockT.mockClear();
   });
 
   it('should initialize with an empty options list', () => {
@@ -61,9 +72,9 @@ describe('useDebtPositionsTypeOrg', () => {
     );
 
     expect(result.current.optionsMap).toEqual([
-      { label: 'commons.all', value: 0 },
-      { label: 'Type A', value: 1 },
-      { label: 'Type B', value: 2 }
+      { label: 'commons.all', value: 0, flagMandatoryDueDate: false },
+      { label: 'Type A', value: 1, flagMandatoryDueDate: undefined },
+      { label: 'Type B', value: 2, flagMandatoryDueDate: undefined }
     ]);
   });
 
@@ -79,7 +90,7 @@ describe('useDebtPositionsTypeOrg', () => {
     );
 
     expect(result.current.optionsMap).toEqual([
-      { label: 'commons.all', value: 0 }
+      { label: 'commons.all', value: 0, flagMandatoryDueDate: false }
     ]);
   });
 
