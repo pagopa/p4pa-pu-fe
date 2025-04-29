@@ -45,7 +45,8 @@ const Step1GeneralConfiguration = ({
   const { t } = useTranslation();
   // Custom hook to retrieve available debt position types
   const { optionsMap: debtPositionsTypes } = useDebtPositionsTypeOrg({
-    organizationId
+    organizationId,
+    includeAllOption: false
   }) as { optionsMap: Array<DebtPositionType> };
 
   // Form initialization with react-hook-form

@@ -5,9 +5,11 @@ import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 import { DebtPositionType } from '../models/DebtPositionType';
 
 export const useDebtPositionsTypeOrg = ({
-  organizationId
+  organizationId,
+  includeAllOption = true
 }: {
   organizationId: number;
+  includeAllOption?: boolean;
 }) => {
   const [debtPositionsTypes, setDebtPositionsTypes] = useState<
     Array<DebtPositionType>
@@ -35,21 +37,25 @@ export const useDebtPositionsTypeOrg = ({
           flagMandatoryDueDate: type.flagMandatoryDueDate
         }));
 
-      setDebtPositionsTypes([
-        {
-          label: t('commons.all'),
-          value: 0,
-          flagMandatoryDueDate: false
-        },
-        ...dueTypesMap
-      ]);
+      setDebtPositionsTypes(
+        includeAllOption
+          ? [
+              {
+                label: t('commons.all'),
+                value: 0,
+                flagMandatoryDueDate: false
+              },
+              ...dueTypesMap
+            ]
+          : dueTypesMap
+      );
     }
 
     if (isError) {
       // TODO: Handle error (e.g., show a toast)
       console.error('Failed to fetch fe config', error);
     }
-  }, [data, isLoading, isError, isSuccess, t]);
+  }, [data, isLoading, isError, isSuccess, t, includeAllOption]);
 
   return { optionsMap: debtPositionsTypes, ...debtPositionsTypesQuery };
 };

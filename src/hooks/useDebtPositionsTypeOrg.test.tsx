@@ -55,7 +55,7 @@ describe('useDebtPositionsTypeOrg', () => {
     expect(result.current.optionsMap).toEqual([]);
   });
 
-  it('should set options correctly on successful response', () => {
+  it('should set options correctly on successful response with all option', () => {
     const mockData = [
       { description: 'Type A', debtPositionTypeOrgId: 1 },
       { description: 'Type B', debtPositionTypeOrgId: 2 }
@@ -78,7 +78,29 @@ describe('useDebtPositionsTypeOrg', () => {
     ]);
   });
 
-  it('should handle empty or invalid response', () => {
+  it('should set options correctly on successful response without all option', () => {
+    const mockData = [
+      { description: 'Type A', debtPositionTypeOrgId: 1 },
+      { description: 'Type B', debtPositionTypeOrgId: 2 }
+    ];
+
+    vi.mocked(getDebtPositionsTypes).mockReturnValue({
+      ...mockQueryResult,
+      data: mockData,
+      isSuccess: true
+    } as unknown as MockQueryType);
+
+    const { result } = renderHook(() =>
+      useDebtPositionsTypeOrg({ organizationId: 1, includeAllOption: false })
+    );
+
+    expect(result.current.optionsMap).toEqual([
+      { label: 'Type A', value: 1, flagMandatoryDueDate: undefined },
+      { label: 'Type B', value: 2, flagMandatoryDueDate: undefined }
+    ]);
+  });
+
+  it('should handle empty or invalid response with all option', () => {
     vi.mocked(getDebtPositionsTypes).mockReturnValue({
       ...mockQueryResult,
       data: [],
@@ -92,6 +114,20 @@ describe('useDebtPositionsTypeOrg', () => {
     expect(result.current.optionsMap).toEqual([
       { label: 'commons.all', value: 0, flagMandatoryDueDate: false }
     ]);
+  });
+
+  it('should handle empty or invalid response without all option', () => {
+    vi.mocked(getDebtPositionsTypes).mockReturnValue({
+      ...mockQueryResult,
+      data: [],
+      isSuccess: true
+    } as unknown as MockQueryType);
+
+    const { result } = renderHook(() =>
+      useDebtPositionsTypeOrg({ organizationId: 1, includeAllOption: false })
+    );
+
+    expect(result.current.optionsMap).toEqual([]);
   });
 
   it('should handle API error', () => {
