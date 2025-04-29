@@ -94,4 +94,45 @@ describe('Header component', () => {
 
     mockStorage.mockRestore();
   });
+
+  it('should not render anything when organizations.isSuccess is false', () => {
+    // @ts-expect-error mock not success
+    mockUseOrganizations.mockReturnValue({
+      data: null,
+      isSuccess: false
+    });
+
+    const { container } = render(<Header />);
+    expect(container.innerHTML).toBe('');
+  });
+
+  it('should not render HeaderProduct when organizations data is empty', () => {
+    // @ts-expect-error mock empty data
+    mockUseOrganizations.mockReturnValue({
+      data: [],
+      isSuccess: true
+    });
+
+    const { container } = render(<Header />);
+
+    expect(container.innerHTML).not.toBe('');
+    expect(screen.queryByText('Piattaforma Unitaria')).not.toBeInTheDocument();
+  });
+
+  it('should call onDocumentationClick when documentation button is clicked', () => {
+    const onDocumentationClick = vi.fn();
+    render(<Header onDocumentationClick={onDocumentationClick} />);
+
+    fireEvent.click(screen.getByText('Manuale operativo'));
+    expect(onDocumentationClick).toHaveBeenCalledTimes(1);
+  });
+
+  it('should navigate to home page when clicking on user data menu item', () => {
+    render(<Header />);
+
+    fireEvent.click(screen.getByText('Marco Polo'));
+    fireEvent.click(screen.getByText('I tuoi dati'));
+
+    expect(mockNavigate).toHaveBeenCalledWith('/');
+  });
 });
