@@ -17,7 +17,8 @@ import {
   AmountField,
   IBANField,
   PostalAccountField,
-  TaxonomyCodeField
+  TaxonomyCodeField,
+  RemittanceField
 } from './BeneficiaryFieldComponents';
 
 // Utility function mocks for tests
@@ -1055,5 +1056,96 @@ describe('TaxonomyCodeField', () => {
 
     // The test to verify that the error is displayed depends on the implementation of hasFieldError
     // and getFieldErrorMessage, which are already tested in other test cases
+  });
+});
+
+describe('RemittanceField', () => {
+  it('correctly renders the remittance field', () => {
+    const mockT = vi.fn((key: string) => key);
+    const mockOnChange = vi.fn();
+
+    const mockField = {
+      onChange: mockOnChange,
+      onBlur: vi.fn(),
+      value: 'Causale di esempio',
+      name: 'remittance',
+      ref: { current: null }
+    };
+
+    const mockContext = {
+      id: '1',
+      index: 0,
+      isSubmitted: false,
+      wasSubmittedRef: { current: false },
+      existingBeneficiaries: {},
+      errors: {},
+      fieldNamePrefix: 'beneficiaries',
+      getValues: vi.fn(),
+      t: mockT
+    } as ValidationContext<Record<string, unknown>>;
+
+    const { container } = render(
+      <RemittanceField field={mockField} t={mockT} context={mockContext} />
+    );
+
+    const input = container.querySelector('input') as HTMLInputElement;
+    expect(input).not.toBeNull();
+    expect(input.value).toBe('Causale di esempio');
+
+    // Verify that the field is required
+    const requiredLabel = screen.getByText(
+      'debtPositionCreateWizard.step3.beneficiary.remittance.label'
+    );
+    expect(requiredLabel).toBeInTheDocument();
+
+    // Verify that the field has the required attribute
+    const requiredAsterisk = container.querySelector('.MuiFormLabel-asterisk');
+    expect(requiredAsterisk).not.toBeNull();
+
+    // Test onChange behavior
+    fireEvent.change(input, { target: { value: 'Nuova causale' } });
+    expect(mockOnChange).toHaveBeenCalledWith('Nuova causale');
+  });
+
+  it('shows validation errors when necessary', () => {
+    const mockT = vi.fn((key: string) => key);
+    const errorMessage = 'Campo obbligatorio';
+
+    const mockField = {
+      onChange: vi.fn(),
+      onBlur: vi.fn(),
+      value: '',
+      name: 'remittance',
+      ref: { current: null }
+    };
+
+    const mockErrors = {
+      beneficiaries: {
+        0: {
+          remittance: {
+            message: errorMessage
+          }
+        }
+      }
+    };
+
+    const mockContext = {
+      id: '1',
+      index: 0,
+      isSubmitted: true,
+      wasSubmittedRef: { current: true },
+      existingBeneficiaries: {},
+      errors: mockErrors,
+      fieldNamePrefix: 'beneficiaries',
+      getValues: vi.fn().mockReturnValue(''),
+      t: mockT
+    } as unknown as ValidationContext<Record<string, unknown>>;
+
+    render(
+      <RemittanceField field={mockField} t={mockT} context={mockContext} />
+    );
+
+    // Verify that the error message is displayed
+    expect(screen.getByText(errorMessage)).toBeInTheDocument();
   });
 });

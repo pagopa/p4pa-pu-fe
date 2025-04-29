@@ -149,8 +149,9 @@ export function useBeneficiaryManagement<T extends FieldValues>(
     if (fields.length < MAX_BENEFICIARIES) {
       const newBeneficiary: Beneficiary = {
         entityName: '',
-        amount: '',
         taxCode: '',
+        remittance: '',
+        amount: '',
         iban: '',
         postalAccount: '',
         taxonomyCode: '',
