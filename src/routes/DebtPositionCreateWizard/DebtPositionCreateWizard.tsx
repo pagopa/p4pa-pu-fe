@@ -109,9 +109,9 @@ const DebtPositionCreateWizard = () => {
             <Step1GeneralConfiguration
               key="step1"
               data={formData.step1}
-              setData={(data) =>
-                setFormData((prev) => ({ ...prev, step1: data }))
-              }
+              setData={(data) => {
+                setFormData((prev) => ({ ...prev, step1: data }));
+              }}
               onNext={() => setStep(1)}
               onBack={() => navigate(PageRoutes.DEBT_POSITIONS)}
             />
@@ -140,14 +140,10 @@ const DebtPositionCreateWizard = () => {
                 flagMandatoryDueDate:
                   formData.step1.debtPositionType.flagMandatoryDueDate
               }}
-              setData={(data) =>
-                setFormData((prev) => ({ ...prev, step3: data }))
-              }
+              setData={(data) => {
+                setFormData((prev) => ({ ...prev, step3: data }));
+              }}
               onNext={() => {
-                console.log(
-                  'Dati completi del form al completamento:',
-                  formData
-                );
                 setStep(3);
               }}
               onBack={() => setStep(1)}

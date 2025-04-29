@@ -121,6 +121,7 @@ export type InstallmentValidators = {
   amount: FieldValidator;
   dueDate: {
     required: string | boolean;
+    validate?: (value: unknown) => boolean | string;
   };
 };
 

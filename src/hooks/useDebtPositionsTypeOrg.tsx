@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { DebtPositionTypeOrg } from '../../generated/apiClient';
 import { useTranslation } from 'react-i18next';
 import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
+import { DebtPositionType } from '../models/DebtPositionType';
 
 export const useDebtPositionsTypeOrg = ({
   organizationId
@@ -9,7 +10,7 @@ export const useDebtPositionsTypeOrg = ({
   organizationId: number;
 }) => {
   const [debtPositionsTypes, setDebtPositionsTypes] = useState<
-    Array<{ label: string; value: number }>
+    Array<DebtPositionType>
   >([]);
   const { t } = useTranslation();
 
@@ -25,16 +26,21 @@ export const useDebtPositionsTypeOrg = ({
       const dueTypesMap = data
         .filter(
           (type: DebtPositionTypeOrg) =>
-            type?.description && type?.debtPositionTypeOrgId
+            type?.description && type?.debtPositionTypeOrgId !== undefined
         )
-        .map((type) => ({
-          label: type?.description ?? '',
-          value: type?.debtPositionTypeOrgId ?? 0
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label));
+        .sort((a, b) => a.description.localeCompare(b.description))
+        .map((type: DebtPositionTypeOrg) => ({
+          label: type.description,
+          value: type.debtPositionTypeOrgId as number,
+          flagMandatoryDueDate: type.flagMandatoryDueDate
+        }));
 
       setDebtPositionsTypes([
-        { label: t('commons.all'), value: 0 },
+        {
+          label: t('commons.all'),
+          value: 0,
+          flagMandatoryDueDate: false
+        },
         ...dueTypesMap
       ]);
     }
@@ -43,7 +49,7 @@ export const useDebtPositionsTypeOrg = ({
       // TODO: Handle error (e.g., show a toast)
       console.error('Failed to fetch fe config', error);
     }
-  }, [data, isLoading, isError, isSuccess]);
+  }, [data, isLoading, isError, isSuccess, t]);
 
   return { optionsMap: debtPositionsTypes, ...debtPositionsTypesQuery };
 };

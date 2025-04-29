@@ -5,15 +5,20 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
 import { useForm } from 'react-hook-form';
 import DateField from './DateField';
 
-// Disabilitiamo la regola react/prop-types poiché stiamo utilizzando TypeScript
+// Disable react/prop-types rule since we're using TypeScript
 /* eslint-disable react/prop-types */
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) =>
-      key === 'debtPositionCreateWizard.step3.installments.dueDate.label'
-        ? 'Data Scadenza'
-        : key
+    t: (key: string) => {
+      if (key === 'debtPositionCreateWizard.step3.installments.dueDate.label') {
+        return 'Data Scadenza';
+      }
+      if (key === 'debtPositionCreateWizard.step3.dueDate.invalid') {
+        return 'Data non valida';
+      }
+      return key;
+    }
   })
 }));
 
@@ -33,17 +38,25 @@ describe('DateField', () => {
   const renderDateField = (
     props: {
       disabled?: boolean;
-      error?: { message?: string };
       flagMandatoryDueDate?: boolean;
-      value?: Date | null;
+      defaultValue?: Date | null;
+      shouldTriggerError?: boolean;
     } = {}
   ) => {
     const TestComponent = () => {
-      const { control, trigger } = useForm<TestFormValues>({
+      const { control, trigger, setError } = useForm<TestFormValues>({
         defaultValues: {
-          installments: [{ dueDate: null }]
+          installments: [{ dueDate: props.defaultValue || null }]
         }
       });
+
+      // If shouldTriggerError is true, set the error state
+      if (props.shouldTriggerError) {
+        setError('installments.0.dueDate', {
+          type: 'manual',
+          message: 'Data non valida'
+        });
+      }
 
       return (
         <DateField<TestFormValues>
@@ -53,7 +66,6 @@ describe('DateField', () => {
           trigger={trigger}
           validateDueDate={mockValidateDueDate}
           disabled={props.disabled}
-          error={props.error}
           flagMandatoryDueDate={props.flagMandatoryDueDate}
         />
       );
@@ -66,71 +78,46 @@ describe('DateField', () => {
     );
   };
 
-  it('dovrebbe renderizzare correttamente il componente DatePicker', () => {
+  it('should correctly render the DatePicker component', () => {
     renderDateField();
     expect(screen.getByText('Data Scadenza')).toBeInTheDocument();
   });
 
-  it('dovrebbe mostrare il campo come obbligatorio quando flagMandatoryDueDate è true', () => {
+  it('should show the field as required when flagMandatoryDueDate is true', () => {
     renderDateField({ flagMandatoryDueDate: true });
     const input = screen.getByPlaceholderText('DD/MM/YYYY');
     expect(input).toBeRequired();
   });
 
-  it('dovrebbe mostrare il campo come non obbligatorio quando flagMandatoryDueDate è false', () => {
+  it('should show the field as not required when flagMandatoryDueDate is false', () => {
     renderDateField({ flagMandatoryDueDate: false });
     const input = screen.getByPlaceholderText('DD/MM/YYYY');
     expect(input).not.toBeRequired();
   });
 
-  it('dovrebbe disabilitare il campo quando disabled è true', () => {
+  it('should disable the field when disabled is true', () => {
     renderDateField({ disabled: true });
     const input = screen.getByPlaceholderText('DD/MM/YYYY');
     expect(input).toBeDisabled();
   });
 
-  it('dovrebbe mostrare un messaggio di errore quando viene fornito un errore', () => {
-    const errorMessage = 'Data non valida';
-    renderDateField({ error: { message: errorMessage } });
-    expect(screen.getByText(errorMessage)).toBeInTheDocument();
+  it('should show an error message when the field is invalid', async () => {
+    renderDateField({ shouldTriggerError: true });
+
+    await waitFor(() => {
+      expect(screen.getByText('Data non valida')).toBeInTheDocument();
+    });
   });
 
-  it('dovrebbe chiamare validateDueDate quando la data cambia', async () => {
-    const TestComponent = () => {
-      const { control, trigger } = useForm<TestFormValues>({
-        defaultValues: {
-          installments: [{ dueDate: null }]
-        }
-      });
-
-      return (
-        <DateField<TestFormValues>
-          control={control}
-          dueDatePath="installments.0.dueDate"
-          index={0}
-          trigger={trigger}
-          validateDueDate={mockValidateDueDate}
-        />
-      );
-    };
-
-    render(
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <TestComponent />
-      </LocalizationProvider>
-    );
-
+  it('should call validateDueDate when the date changes', async () => {
+    renderDateField();
     const input = screen.getByPlaceholderText('DD/MM/YYYY');
 
     fireEvent.change(input, { target: { value: '10/12/2024' } });
-
     fireEvent.blur(input);
 
-    await waitFor(
-      () => {
-        expect(mockValidateDueDate).toHaveBeenCalled();
-      },
-      { timeout: 1000 }
-    );
+    await waitFor(() => {
+      expect(mockValidateDueDate).toHaveBeenCalled();
+    });
   });
 });

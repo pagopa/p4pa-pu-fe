@@ -7,6 +7,7 @@ import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import BookIcon from '@mui/icons-material/MenuBook';
+import { DebtPositionType } from '../../../../models/DebtPositionType';
 
 export type Step1Data = {
   debtPositionType: {
@@ -45,7 +46,7 @@ const Step1GeneralConfiguration = ({
   // Custom hook to retrieve available debt position types
   const { optionsMap: debtPositionsTypes } = useDebtPositionsTypeOrg({
     organizationId
-  });
+  }) as { optionsMap: Array<DebtPositionType> };
 
   // Form initialization with react-hook-form
   const {
@@ -60,17 +61,25 @@ const Step1GeneralConfiguration = ({
   });
   // Function called on valid form submission
   const onSubmit = (values: FormValues) => {
-    setData({
+    // Trova il tipo di dovuto selezionato
+    const selectedType = debtPositionsTypes.find(
+      (type: DebtPositionType) =>
+        type.value.toString() === values.debtPositionType
+    );
+
+    const updatedData = {
       debtPositionType: {
         value: values.debtPositionType,
-        flagMandatoryDueDate: data.debtPositionType.flagMandatoryDueDate,
+        flagMandatoryDueDate: selectedType?.flagMandatoryDueDate ?? false,
         readonly: data.debtPositionType.readonly
       },
       description: {
         value: values.description,
         readonly: data.description.readonly
       }
-    });
+    };
+
+    setData(updatedData);
     onNext();
   };
 

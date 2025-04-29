@@ -26,7 +26,6 @@ const DateField = <T extends FieldValues>({
   dueDatePath,
   index,
   disabled = false,
-  error,
   validateDueDate,
   trigger,
   flagMandatoryDueDate = true
@@ -37,7 +36,25 @@ const DateField = <T extends FieldValues>({
     <Controller
       name={dueDatePath}
       control={control}
-      render={({ field: { onChange, value, ...field } }) => (
+      rules={{
+        required: flagMandatoryDueDate
+          ? t('debtPositionCreateWizard.step3.installments.dueDate.required')
+          : false,
+        validate: (value: unknown) => {
+          if (!flagMandatoryDueDate && !value) {
+            return true;
+          }
+          const timestamp = value ? new Date(value as Date).getTime() : NaN;
+          if (!isNaN(timestamp)) {
+            return true;
+          }
+          return t('debtPositionCreateWizard.step3.dueDate.invalid');
+        }
+      }}
+      render={({
+        field: { onChange, value, ...field },
+        fieldState: { error }
+      }) => (
         <DatePicker
           {...field}
           value={value || null}
