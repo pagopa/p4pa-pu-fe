@@ -12,7 +12,7 @@ describe('Step2Settings', () => {
     vi.clearAllMocks();
   });
 
-  it('renders the form with all sections', () => {
+  it('renders the form with the correct sections', () => {
     render(
       <Step2Settings
         setData={mockSetData}
@@ -47,12 +47,6 @@ describe('Step2Settings', () => {
     // Check if form controls are rendered
     expect(
       screen.getByText('debtTypeCreate.settings.template.checkbox')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByLabelText('debtTypeCreate.settings.subject.label')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByLabelText('debtTypeCreate.settings.message.label')
     ).toBeInTheDocument();
   });
 
@@ -217,7 +211,7 @@ describe('Step2Settings', () => {
     expect(mockOnNext).not.toHaveBeenCalled();
   });
 
-  it('displays preview link', () => {
+  it('displays template elements when template checkbox is checked', async () => {
     render(
       <Step2Settings
         setData={mockSetData}
@@ -226,8 +220,22 @@ describe('Step2Settings', () => {
       />
     );
 
-    expect(
-      screen.getByText('debtTypeCreate.settings.preview')
-    ).toBeInTheDocument();
+    const checkbox2 = screen.getByText(
+      'debtTypeCreate.settings.template.checkbox'
+    );
+    fireEvent.click(checkbox2);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText('debtTypeCreate.settings.subject.label')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('debtTypeCreate.settings.message.label')
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByText('debtTypeCreate.settings.preview')
+      ).toBeInTheDocument();
+    });
   });
 });
