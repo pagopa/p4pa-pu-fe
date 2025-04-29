@@ -40,7 +40,7 @@ export const useOrganizations = () => {
       }
 
       if (query.isError) {
-        console.error('Failed to fetch organizations', query.error);
+        console.error('Failed to fetch fe config', query.error);
       }
     }
   }, [
