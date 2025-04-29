@@ -23,6 +23,8 @@ export type Beneficiary = {
   amount: string;
   /** Tax code of the beneficiary */
   taxCode: string;
+  /** Remittance information (payment reason) */
+  remittance: string;
   /** IBAN of the beneficiary */
   iban: string;
   /** Postal account of the beneficiary */
@@ -43,6 +45,8 @@ export type Installment = {
   amount: string;
   /** Installment due date */
   dueDate: string | null;
+  /** Remittance information (payment reason) */
+  remittance: string;
   /** Flag indicating if the installment has multiple beneficiaries */
   isMultibeneficiary?: boolean;
   /** List of installment beneficiaries */
@@ -178,6 +182,10 @@ export type BeneficiaryValidationRules = {
     required: string;
     invalid: string;
   };
+  /** Rules for remittance information */
+  remittance: {
+    required: string;
+  };
   /** Rules for payment fields */
   paymentFields: {
     required: string;
@@ -224,6 +232,8 @@ export type ValidationContext = {
 export type BeneficiaryFieldValidators = {
   /** Validator for beneficiary tax code */
   validateBeneficiaryTaxCode: (value: string) => string | undefined;
+  /** Validator for remittance information */
+  validateRemittance: (value: string) => string | undefined;
   /** Validator for IBAN */
   validateIBAN: (value: string) => string | undefined;
   /** Validator for postal account */

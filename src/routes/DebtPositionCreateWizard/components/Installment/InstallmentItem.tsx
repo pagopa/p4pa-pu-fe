@@ -15,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useInstallmentBeneficiaryManagement } from '../../../../hooks/useInstallmentBeneficiaryManagement';
 import AmountField from './AmountField';
 import DateField from './DateField';
+import RemittanceField from './RemittanceField';
 import BeneficiaryControl from './BeneficiaryControl';
 
 /**
@@ -22,6 +23,7 @@ import BeneficiaryControl from './BeneficiaryControl';
  * @typedef {Object} ValidationFunctions
  * @property {Function} validateInstallmentAmount - Function to validate installment amount
  * @property {Function} validateDueDate - Function to validate due date
+ * @property {Function} validateRemittance - Function to validate remittance
  */
 export type ValidationFunctions = {
   validateInstallmentAmount: <T extends FieldValues>(
@@ -29,6 +31,10 @@ export type ValidationFunctions = {
     trigger: UseFormTrigger<T>
   ) => void;
   validateDueDate: <T extends FieldValues>(
+    index: number,
+    trigger: UseFormTrigger<T>
+  ) => void;
+  validateRemittance: <T extends FieldValues>(
     index: number,
     trigger: UseFormTrigger<T>
   ) => void;
@@ -94,6 +100,7 @@ const InstallmentItem = <T extends FieldValues>({
   // Define paths for field names
   const amountPath = `${fieldNamePrefix}.${index}.amount` as Path<T>;
   const dueDatePath = `${fieldNamePrefix}.${index}.dueDate` as Path<T>;
+  const remittancePath = `${fieldNamePrefix}.${index}.remittance` as Path<T>;
 
   // Typed access to errors
   const fieldErrors = errors[fieldNamePrefix as keyof typeof errors];
@@ -126,6 +133,21 @@ const InstallmentItem = <T extends FieldValues>({
             >
           >
         )[index]?.dueDate
+      : undefined;
+  const remittanceErrors =
+    fieldErrors && index in fieldErrors
+      ? (
+          fieldErrors as Record<
+            number,
+            Record<
+              string,
+              {
+                message?: string;
+                type?: string;
+              }
+            >
+          >
+        )[index]?.remittance
       : undefined;
 
   const handleRemove = () => {
@@ -195,6 +217,19 @@ const InstallmentItem = <T extends FieldValues>({
               validateDueDate={validators.validateDueDate}
               trigger={trigger}
               flagMandatoryDueDate={flagMandatoryDueDate}
+            />
+          </Grid>
+
+          {/* Remittance Field - Campo causale */}
+          <Grid item xs={12}>
+            <RemittanceField<T>
+              control={control}
+              remittancePath={remittancePath}
+              index={index}
+              disabled={disabled}
+              error={remittanceErrors}
+              validateRemittance={validators.validateRemittance}
+              trigger={trigger}
             />
           </Grid>
 
