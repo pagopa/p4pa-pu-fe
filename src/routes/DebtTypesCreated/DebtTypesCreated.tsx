@@ -8,7 +8,6 @@ import { PageRoutes } from '../../App';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';
-import Home from '../Home';
 import ManagedOrgs from './ManagedOrgs/ManagedOrgs';
 
 export const DebtTypesCreated = () => {
@@ -118,7 +117,7 @@ export const DebtTypesCreated = () => {
         direction="row"
         alignItems={'center'}
         justifyContent={'space-between'}
-        sx={{ mt: 3, mb: 2 }}
+        sx={{ mt: 6, mb: 4 }}
       >
         {renderFilters()}
       </Grid>
@@ -152,7 +151,7 @@ export const DebtTypesCreated = () => {
 
       <Box>
         {tabValue === 0 ? (
-          <Home /> // placeholder
+          <div>Tab il mio ente</div> // placeholder
         ) : (
           <ManagedOrgs IPACodeFilter={IPACodeFilter} />
         )}

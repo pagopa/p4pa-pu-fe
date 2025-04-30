@@ -25,15 +25,6 @@ export const debtTypesRoutes = [
         } as RouteHandleObject
       },
       {
-        id: 'DEBT_TYPES_CREATED',
-        path: 'catalog-created',
-        element: <DebtTypes />,
-        handle: {
-          backButton: false,
-          hideBreadcrumbs: true
-        } as RouteHandleObject
-      },
-      {
         id: 'DEBT_TYPE_CATALOG_DETAIL',
         path: 'catalog/detail/:debtPositionTypeId',
         element: <DebtTypeDetailView />,
