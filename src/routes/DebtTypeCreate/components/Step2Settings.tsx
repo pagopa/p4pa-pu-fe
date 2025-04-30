@@ -11,7 +11,8 @@ import {
   Link,
   Stack,
   TextField,
-  Typography
+  Typography,
+  useTheme
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import MessageIcon from '@mui/icons-material/Message';
@@ -19,6 +20,10 @@ import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import { FormComponent } from '../../../components/FormComponent';
+import ReactMarkdown from 'react-markdown';
+import remarkBreaks from 'remark-breaks';
+import rehypeRaw from 'rehype-raw';
+import './markdownpreview.css';
 
 export type Step2Data = {
   option1?: boolean;
@@ -35,8 +40,11 @@ export type Step2Props = {
   onBack?: () => void;
 };
 
+
 export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
   const { t } = useTranslation();
+  const theme = useTheme();
+  const secondaryColor = theme.palette.text.secondary;
 
   const schema = z
     .object({
@@ -73,6 +81,33 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
 
   const options: Array<keyof Step2Data> = ['option1', 'option2', 'option3'];
   const checkbox2 = watch('checkbox2');
+  const textAreaValue = watch("textArea");
+
+  const placeholders: Record<string, string> = {
+    '%posizioneDebitoria_descrizione%': 'Pagamento TARI',
+    '%debitore_nomeCompleto%': 'Mario Rossi',
+    '%debitore_codiceFiscale%': 'RSSMRA80R11A123H',
+    '%importoTotale%': '120 €',
+    '%IUV%': '82000000000',
+    '%NAV%': '0000 0000 0000 0000 00',
+    '%causale%': 'Causale del pagamento',
+    '%dataScadenza%': '12/04/2099'
+
+  }
+
+  const renderTextWithPlaceholders = (inputText: string) => {
+    let modifiedText = inputText;
+    Object.keys(placeholders).forEach((placeholder: string) => {
+      const regex = new RegExp(placeholder, 'g');
+      modifiedText = modifiedText.replace(
+        regex,
+        `<span class="highlighted" style="color: ${secondaryColor} ">${placeholders[placeholder]}</span>`
+      );
+    });
+
+    return modifiedText;
+  };
+
 
   return (
     <form>
@@ -118,7 +153,7 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
           subtitle={t('debtTypeCreate.settings.template.helper')}
           adornment={<MessageIcon />}
         >
-          <Stack direction="row" gap={2} alignItems="center" width="100%">
+          <Stack direction="column" gap={2} alignItems="left" width="100%">
             <Stack>
               <Controller
                 name="checkbox2"
@@ -130,100 +165,107 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                   />
                 )}
               />
-
-              <Controller
-                name="textField"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <FormComponent.TextField
-                    {...field}
-                    ref={null}
-                    required={checkbox2}
-                    label={t('debtTypeCreate.settings.subject.label')}
-                    placeholder={t(
-                      'debtTypeCreate.settings.subject.placeholder'
-                    )}
-                    error={checkbox2 && !!errors.textField}
-                    helperText={checkbox2 && errors.textField?.message}
-                    fullWidth
-                    sx={{ my: 2 }}
-                  />
-                )}
-              />
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="span"
-              >
-                <Trans
-                  i18nKey="debtTypeCreate.settings.subject.guide"
-                  components={[
-                    <Link
-                      key="link"
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      underline="none"
+              <Box display={checkbox2 ? 'block' : 'none'}>
+                <Controller
+                  name="textField"
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => (
+                    <FormComponent.TextField
+                      {...field}
+                      ref={null}
+                      required={checkbox2}
+                      label={t('debtTypeCreate.settings.subject.label')}
+                      placeholder={t(
+                        'debtTypeCreate.settings.subject.placeholder'
+                      )}
+                      error={checkbox2 && !!errors.textField}
+                      helperText={checkbox2 && errors.textField?.message}
+                      fullWidth
+                      sx={{ my: 2 }}
                     />
-                  ]}
+                  )}
                 />
-              </Typography>
 
-              <Controller
-                name="textArea"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    required={checkbox2}
-                    label={t('debtTypeCreate.settings.message.label')}
-                    InputLabelProps={{ shrink: true }}
-                    error={checkbox2 && !!errors.textArea}
-                    helperText={checkbox2 && errors.textArea?.message}
-                    defaultValue=""
-                    fullWidth
-                    multiline
-                    rows={7}
-                    sx={{ my: 2 }}
-                    {...field}
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  component="span"
+                >
+                  <Trans
+                    i18nKey="debtTypeCreate.settings.subject.guide"
+                    components={[
+                      <Link
+                        key="link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        underline="none"
+                      />
+                    ]}
                   />
-                )}
-              />
-
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="span"
-              >
-                <Trans
-                  i18nKey="debtTypeCreate.settings.message.guide"
-                  components={[
-                    <Link
-                      key="link"
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      underline="none"
-                    />,
-                    <Link
-                      key="link"
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      underline="none"
+                </Typography>
+                <Controller
+                  name="textArea"
+                  control={control}
+                  render={({ field }) => (
+                    <TextField
+                      required={checkbox2}
+                      label={t('debtTypeCreate.settings.message.label')}
+                      InputLabelProps={{ shrink: true }}
+                      error={checkbox2 && !!errors.textArea}
+                      helperText={checkbox2 && errors.textArea?.message}
+                      defaultValue=""
+                      fullWidth
+                      multiline
+                      rows={7}
+                      sx={{ my: 2 }}
+                      {...field}
                     />
-                  ]}
+                  )}
                 />
-              </Typography>
-            </Stack>
-            <Stack
-              sx={{ whiteSpace: 'nowrap' }}
-              direction="row"
-              gap={1}
-              color="primary.main"
-            >
-              <PreviewIcon />
-              <Link>{t('debtTypeCreate.settings.preview')}</Link>
+                <Box component={'div'}>
+                  <ReactMarkdown
+                    children={renderTextWithPlaceholders(textAreaValue || "")}
+                    rehypePlugins={[rehypeRaw]}
+                    remarkPlugins={[remarkBreaks]}
+                    components={{
+                      span: ({ node, ...props }) => {
+                        return <span {...props} />;
+                      },
+                    }}
+                  />
+                </Box>
+
+                <Typography
+                  variant="body2"
+                  color="textSecondary"
+                  component="span"
+                >
+                  <Trans
+                    i18nKey="debtTypeCreate.settings.message.guide"
+                    components={[
+                      <Link
+                        key="link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        underline="none"
+                      />,
+                      <Link
+                        key="link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        underline="none"
+                      />
+                    ]}
+                  />
+                </Typography>
+                <Stack alignItems={'center'} direction={'row'} my={2} gap={1}><PreviewIcon color={'primary'} />
+                  <Link>{t('debtTypeCreate.settings.preview')}</Link></Stack>
+
+              </Box>
             </Stack>
           </Stack>
         </SectionBox>
