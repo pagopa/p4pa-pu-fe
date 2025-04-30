@@ -542,7 +542,7 @@
   },
   "debtTypeCreate": {
     "title": "Crea un nuovo Tipo dovuto",
-    "description": "Compila i campi e crea un nuovo Tipo dovuto nel propio catalogo.",
+    "description": "Compila i campi e crea un nuovo Tipo dovuto nel proprio catalogo.",
     "configuration": {
       "alertMessage": "* Indica una domanda obbligatoria",
       "collectionReason": {
