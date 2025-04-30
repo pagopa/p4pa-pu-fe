@@ -27,7 +27,6 @@ import {
   createDateValidator
 } from '../../../../utils/fieldValidation';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
-import { PageRoutes } from '../../../../App';
 import { BeneficiaryFieldRef } from '../Beneficiary/BeneficiaryField';
 import { useStore } from '../../../../store/GlobalStore';
 import {
@@ -36,9 +35,6 @@ import {
   Step1Data
 } from '../../../../models/DebtPositionType';
 import {
-  DEBT_POSITION_STATUS,
-  DEBT_POSITION_ORIGIN,
-  PAYMENT_OPTION_TYPE,
   DEFAULT_VALUES,
   createInstallmentObject,
   createSingleInstallmentObject,
@@ -48,6 +44,14 @@ import {
   validateMultiBeneficiary,
   handleInstallmentValidationFailure
 } from '../../../../utils/paymentUtility';
+import debtPositionsApi from '../../../../api/debtPositions';
+import {
+  DebtPositionDTO,
+  DebtPositionStatus,
+  DebtPositionOrigin,
+  PaymentOptionTypeEnum
+} from '../../../../../generated/data-contracts';
+import { PageRoutes } from '../../../../App';
 
 type Props = {
   data: Step3Data;
@@ -74,6 +78,25 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
   const {
     state: { organizationId }
   } = useStore();
+
+  const { mutate: createDebtPosition } = debtPositionsApi.createDebtPosition(
+    (response, paymentObject) => {
+      console.log('=== Risposta API ===');
+      console.log('Response:', response);
+      console.log('Payment Object:', paymentObject);
+      console.log('=== Navigazione ===');
+      console.log('Route:', PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED);
+      console.log('State:', paymentObject);
+
+      navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
+        state: paymentObject,
+        replace: true
+      });
+    },
+    (error) => {
+      console.error('Errore nella creazione della posizione debitoria:', error);
+    }
+  );
 
   // Convert date string value to Date object for DatePicker
   const initialData: FormValues = {
@@ -107,7 +130,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
   const beneficiaries = watch('beneficiaries') || [];
   const paymentOption = watch('paymentOption.value');
 
-  const isInstallment = paymentOption === PAYMENT_OPTION_TYPE.INSTALLMENTS;
+  const isInstallment = paymentOption === PaymentOptionTypeEnum.INSTALLMENTS;
 
   // Effect to handle beneficiaries initialization
   useEffect(() => {
@@ -231,14 +254,15 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     };
 
     // Preparazione del body per la POST API
-    const postBody = {
+    const postBody: DebtPositionDTO = {
       description: formattedValues.step1Data?.description.value || '',
-      status: DEBT_POSITION_STATUS.UNPAID,
+      status: DebtPositionStatus.UNPAID,
       organizationId: organizationId,
-      debtPositionTypeOrgId:
-        formattedValues.step1Data?.debtPositionType.value || '',
+      debtPositionTypeOrgId: Number(
+        formattedValues.step1Data?.debtPositionType.value || 0
+      ),
       flagIuvVolatile: DEFAULT_VALUES.FLAG_IUV_VOLATILE,
-      debtPositionOrigin: DEBT_POSITION_ORIGIN.ORDINARY,
+      debtPositionOrigin: DebtPositionOrigin.ORDINARY,
       multiDebtor: DEFAULT_VALUES.MULTI_DEBTOR,
       flagPagoPaPayment: DEFAULT_VALUES.FLAG_PAGO_PA_PAYMENT,
       paymentOptions: [
@@ -248,13 +272,13 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
           ),
           description: formattedValues.paymentObject.value || '',
           paymentOptionType: isInstallment
-            ? PAYMENT_OPTION_TYPE.INSTALLMENTS
-            : PAYMENT_OPTION_TYPE.SINGLE_INSTALLMENTS,
+            ? PaymentOptionTypeEnum.INSTALLMENTS
+            : PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
           paymentOptionIndex: DEFAULT_VALUES.PAYMENT_OPTION_INDEX,
           installments: isInstallment
             ? formattedValues.installments?.map((installment) =>
                 createInstallmentObject(installment, step2Data, formattedValues)
-              )
+              ) || []
             : [createSingleInstallmentObject(formattedValues, step2Data)]
         }
       ]
@@ -303,10 +327,11 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
 
     // Save data
     setData(formattedValues);
-    // Navigate to completion page
-    navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
-      state: { paymentObject: formattedValues.paymentObject.value },
-      replace: true
+
+    // Chiamata API per creare la posizione debitoria
+    createDebtPosition({
+      body: postBody,
+      paymentObject: formattedValues.paymentObject.value
     });
   };
 
@@ -389,7 +414,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
                       field.onChange(value);
 
                       switch (value) {
-                        case PAYMENT_OPTION_TYPE.INSTALLMENTS:
+                        case PaymentOptionTypeEnum.INSTALLMENTS:
                           // When installment option is selected
                           // Disable multi-beneficiary mode
                           setValue('isMultibeneficiary.value', false);
@@ -400,9 +425,9 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
                           // Reset payment object field
                           setValue('paymentObject.value', '');
                           break;
-                        case PAYMENT_OPTION_TYPE.SINGLE_INSTALLMENTS:
+                        case PaymentOptionTypeEnum.SINGLE_INSTALLMENT:
                           if (
-                            paymentOption === PAYMENT_OPTION_TYPE.INSTALLMENTS
+                            paymentOption === PaymentOptionTypeEnum.INSTALLMENTS
                           ) {
                             setValue('amount.value', '');
                             setValue('installments', []);

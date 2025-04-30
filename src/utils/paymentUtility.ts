@@ -13,6 +13,7 @@ import { format } from 'date-fns';
 import { Step2Data, Step3Data } from '../models/DebtPositionType';
 import { UseFormTrigger } from 'react-hook-form';
 import { isBeneficiariesTotalValid } from './fieldValidation';
+import { EntityTypeEnum } from '../../generated/data-contracts';
 
 /**
  * Checks if a string value is empty.
@@ -356,23 +357,7 @@ export function formatAmountForDisplay(value: string): string {
   return value ? value.replace('.', ',') : '';
 }
 
-// Costanti per lo stato della posizione debitoria
-export const DEBT_POSITION_STATUS = {
-  UNPAID: 'UNPAID'
-} as const;
-
-// Costanti per l'origine della posizione debitoria
-export const DEBT_POSITION_ORIGIN = {
-  ORDINARY: 'ORDINARY'
-} as const;
-
-// Costanti per le opzioni di pagamento
-export const PAYMENT_OPTION_TYPE = {
-  INSTALLMENTS: 'INSTALLMENTS',
-  SINGLE_INSTALLMENTS: 'SINGLE_INSTALLMENTS'
-} as const;
-
-// Valori di default
+// Default values
 export const DEFAULT_VALUES = {
   FLAG_IUV_VOLATILE: false,
   MULTI_DEBTOR: false,
@@ -380,17 +365,17 @@ export const DEFAULT_VALUES = {
   PAYMENT_OPTION_INDEX: 1
 } as const;
 
-// Funzioni helper per la creazione degli oggetti debt position
+// Helper functions for creating debt position objects
 export const createDebtorObject = (step2Data: Step2Data) => ({
-  entityType: step2Data.subjectType.value,
+  entityType: step2Data.subjectType.value as EntityTypeEnum,
   fiscalCode: step2Data.taxCode.value,
   fullName: step2Data.fullName.value,
   address: step2Data.address.value,
-  civicNumber: step2Data.civicNumber.value,
-  zipCode: step2Data.zipCode.value,
-  city: step2Data.city.value,
+  civic: step2Data.civicNumber.value,
+  postalCode: step2Data.zipCode.value,
+  location: step2Data.city.value,
   province: step2Data.province.value,
-  country: step2Data.country.value
+  nation: step2Data.country.value
 });
 
 export const createTransferObject = (
@@ -407,11 +392,30 @@ export const createTransferObject = (
   transferIndex: index + 2
 });
 
+/**
+ * Formats a date for API consumption.
+ *
+ * @function formatDateForApi
+ * @param {string|Date|null|undefined} date - The date to format.
+ * @returns {string|undefined} - The formatted date or undefined if invalid.
+ */
 export const formatDateForApi = (date: string | Date | null | undefined) => {
-  if (!date || new Date(date).toString() === 'Invalid Date') {
+  if (!date) {
     return undefined;
   }
-  return format(new Date(date), 'yyyy-MM-dd');
+
+  // If it's a string in DD/MM/YYYY format, convert it to the correct format
+  if (typeof date === 'string' && date.includes('/')) {
+    const [day, month, year] = date.split('/');
+    return `${year}-${month}-${day}`;
+  }
+
+  // If it's a Date object or ISO string
+  const parsedDate = new Date(date);
+  if (parsedDate.toString() === 'Invalid Date') {
+    return undefined;
+  }
+  return format(parsedDate, 'yyyy-MM-dd');
 };
 
 export const getPreviousInstallmentTransfers = (
@@ -470,10 +474,12 @@ export const createSingleInstallmentObject = (
 });
 
 /**
- * Attiva la validazione per tutti i beneficiari
- * @template T - Tipo dei valori del form
- * @param beneficiaries - Array di beneficiari
- * @param trigger - Funzione di trigger per la validazione
+ * Triggers validation for all beneficiaries.
+ *
+ * @function triggerValidationForAllBeneficiaries
+ * @template T - Type of field values.
+ * @param {Array<Record<string, unknown>>} beneficiaries - Array of beneficiaries.
+ * @param {UseFormTrigger<T>} trigger - Form trigger function.
  */
 export function triggerValidationForAllBeneficiaries<T extends FieldValues>(
   beneficiaries: Array<Record<string, unknown>>,
@@ -485,10 +491,12 @@ export function triggerValidationForAllBeneficiaries<T extends FieldValues>(
 }
 
 /**
- * Attiva la validazione per tutti i beneficiari in tutte le rate
- * @template T - Tipo dei valori del form
- * @param installments - Array di rate
- * @param trigger - Funzione di trigger per la validazione
+ * Triggers validation for all beneficiaries in all installments.
+ *
+ * @function triggerValidationForAllInstallmentBeneficiaries
+ * @template T - Type of field values.
+ * @param {Array<Record<string, unknown>>} installments - Array of installments.
+ * @param {UseFormTrigger<T>} trigger - Form trigger function.
  */
 export function triggerValidationForAllInstallmentBeneficiaries<
   T extends FieldValues
@@ -510,10 +518,12 @@ export function triggerValidationForAllInstallmentBeneficiaries<
 }
 
 /**
- * Attiva la validazione dei campi di pagamento (IBAN e conto postale)
- * @template T - Tipo dei valori del form
- * @param installments - Array di rate
- * @param trigger - Funzione di trigger per la validazione
+ * Triggers validation for payment fields (IBAN and postal account).
+ *
+ * @function triggerPaymentFieldsValidation
+ * @template T - Type of field values.
+ * @param {Array<Record<string, unknown>>} installments - Array of installments.
+ * @param {UseFormTrigger<T>} trigger - Form trigger function.
  */
 export function triggerPaymentFieldsValidation<T extends FieldValues>(
   installments: Array<Record<string, unknown>>,
@@ -542,9 +552,11 @@ export function triggerPaymentFieldsValidation<T extends FieldValues>(
 }
 
 /**
- * Sincronizza i beneficiari tra le rate quando sameBeneficiariesAsBefore è impostato a true
- * @param installments - Array di rate
- * @returns Oggetto con le rate sincronizzate e flag di modifica
+ * Synchronizes beneficiaries between installments when sameBeneficiariesAsBefore is set to true.
+ *
+ * @function syncInstallmentBeneficiaries
+ * @param {Array<Installment>} installments - Array of installments.
+ * @returns {Object} - Object with synchronized installments and modification flag.
  */
 export function syncInstallmentBeneficiaries(
   installments: Array<Installment>
@@ -584,11 +596,13 @@ export function syncInstallmentBeneficiaries(
 }
 
 /**
- * Valida i dati delle rate
- * @template T - Tipo dei valori del form
- * @param installments - Array di rate
- * @param trigger - Funzione di trigger per la validazione
- * @returns Oggetto con i risultati della validazione
+ * Validates installment data.
+ *
+ * @function validateInstallments
+ * @template T - Type of field values.
+ * @param {Array<Installment>} installments - Array of installments.
+ * @param {UseFormTrigger<T>} trigger - Form trigger function.
+ * @returns {Object} - Object with validation results.
  */
 export function validateInstallments<T extends FieldValues>(
   installments: Array<Installment>,
@@ -678,13 +692,15 @@ export function validateInstallments<T extends FieldValues>(
 }
 
 /**
- * Valida i campi nel caso di multi-beneficiario
- * @template T - Tipo dei valori del form
- * @param getValues - Funzione per ottenere i valori del form
- * @param isMultibeneficiary - Flag multi-beneficiario
- * @param totalAmount - Importo totale
- * @param trigger - Funzione di trigger per la validazione
- * @returns True se la validazione è passata
+ * Validates fields in case of multi-beneficiary.
+ *
+ * @function validateMultiBeneficiary
+ * @template T - Type of field values.
+ * @param {Function} getValues - Function to get form values.
+ * @param {boolean} isMultibeneficiary - Multi-beneficiary flag.
+ * @param {string} totalAmount - Total amount.
+ * @param {UseFormTrigger<T>} trigger - Form trigger function.
+ * @returns {boolean} - True if validation passed.
  */
 export function validateMultiBeneficiary<T extends FieldValues>(
   getValues: () => T,
@@ -723,11 +739,13 @@ export function validateMultiBeneficiary<T extends FieldValues>(
 }
 
 /**
- * Gestisce il fallimento della validazione delle rate
- * @template T - Tipo dei valori del form
- * @param installments - Array di rate
- * @param validationResults - Risultati della validazione
- * @param trigger - Funzione di trigger per la validazione
+ * Handles installment validation failure.
+ *
+ * @function handleInstallmentValidationFailure
+ * @template T - Type of field values.
+ * @param {Array<Installment>} installments - Array of installments.
+ * @param {Object} validationResults - Validation results.
+ * @param {UseFormTrigger<T>} trigger - Form trigger function.
  */
 export function handleInstallmentValidationFailure<T extends FieldValues>(
   installments: Array<Installment>,

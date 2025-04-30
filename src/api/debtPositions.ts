@@ -3,9 +3,11 @@ import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import {
   debtPositionDetailDTOSchema,
+  debtPositionDTOSchema,
   installmentDetailDTOSchema
 } from '../../generated/zod-schema';
 import { AxiosError } from 'axios';
+import { DebtPositionDTO } from '../../generated/data-contracts';
 
 type DebtPositionViewParams = Parameters<
   typeof utils.apiClient.bff.getDebtPositionViews
@@ -134,10 +136,38 @@ const deleteDebtPositionType = (
     onError
   });
 
+/** create a new debt position */
+const createDebtPosition = (
+  onSuccess?: (response: DebtPositionDTO, paymentObject?: string) => void,
+  onError?: (error: AxiosError) => void
+) =>
+  useMutation({
+    mutationKey: ['createDebtPosition'],
+    mutationFn: async (params: {
+      body: DebtPositionDTO;
+      paymentObject?: string;
+    }) => {
+      const response = await utils.apiClient.bff.createDebtPosition(
+        params.body
+      );
+      if (response.data) {
+        parseAndLog(debtPositionDTOSchema, response.data);
+      }
+      return { response: response.data, paymentObject: params.paymentObject };
+    },
+    onSuccess: (data) => {
+      console.log('=== Mutation Success ===');
+      console.log('Data:', data);
+      onSuccess?.(data.response, data.paymentObject);
+    },
+    onError
+  });
+
 export default {
   getDebtPositionViews,
   getInstallments,
   getInstallmentDetail,
   getDebtPositionDetail,
-  deleteDebtPositionType
+  deleteDebtPositionType,
+  createDebtPosition
 };
