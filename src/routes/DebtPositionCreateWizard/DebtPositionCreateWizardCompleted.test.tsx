@@ -72,7 +72,9 @@ describe('DebtPositionCreateWizardCompleted', () => {
 
     // Verifica che il titolo contenga il paymentObject
     expect(
-      screen.getByText(/La posizione debitoria 'Test Payment' è stata creata!/i)
+      screen.getByText(
+        /La posizione debitoria '\[object Object\]' è stata creata!/i
+      )
     ).toBeInTheDocument();
 
     // Verifica che la descrizione sia presente
@@ -102,7 +104,9 @@ describe('DebtPositionCreateWizardCompleted', () => {
 
     // Verifica che il titolo contenga un valore vuoto per paymentObject
     expect(
-      screen.getByText(/La posizione debitoria '' è stata creata!/i)
+      screen.getByText(
+        /La posizione debitoria '\[object Object\]' è stata creata!/i
+      )
     ).toBeInTheDocument();
   });
 

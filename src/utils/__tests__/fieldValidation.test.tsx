@@ -10,7 +10,8 @@ import {
   createAmountValidator,
   isBeneficiariesTotalValid,
   createBeneficiaryValidators,
-  createDateValidator
+  createDateValidator,
+  SubjectType
 } from '../fieldValidation';
 import { ValidationErrorCode } from '../../store/types';
 
@@ -85,22 +86,22 @@ describe('isValidPartitaIVA', () => {
 describe('validateTaxCode', () => {
   describe('Valid Cases', () => {
     it('validates codice fiscale for persona fisica', () => {
-      expect(validateTaxCode('RSSMRA80A01H501U', 'fisica')).toBe(
+      expect(validateTaxCode('RSSMRA80A01H501U', SubjectType.INDIVIDUAL)).toBe(
         ValidationErrorCode.VALID
       );
     });
 
     it('validates partita IVA for persona giuridica', () => {
-      expect(validateTaxCode('12345678901', 'giuridica')).toBe(
+      expect(validateTaxCode('12345678901', SubjectType.BUSINESS)).toBe(
         ValidationErrorCode.VALID
       );
     });
 
     it('validates with spaces in the code', () => {
-      expect(validateTaxCode('RSS MRA 80A01 H501 U', 'fisica')).toBe(
-        ValidationErrorCode.VALID
-      );
-      expect(validateTaxCode('123 456 789 01', 'giuridica')).toBe(
+      expect(
+        validateTaxCode('RSS MRA 80A01 H501 U', SubjectType.INDIVIDUAL)
+      ).toBe(ValidationErrorCode.VALID);
+      expect(validateTaxCode('123 456 789 01', SubjectType.BUSINESS)).toBe(
         ValidationErrorCode.VALID
       );
     });
@@ -108,25 +109,29 @@ describe('validateTaxCode', () => {
 
   describe('Invalid Cases', () => {
     it('rejects empty value', () => {
-      expect(validateTaxCode('', 'fisica')).toBe('commons.required');
-      expect(validateTaxCode('', 'giuridica')).toBe('commons.required');
+      expect(validateTaxCode('', SubjectType.INDIVIDUAL)).toBe(
+        ValidationErrorCode.REQUIRED
+      );
+      expect(validateTaxCode('', SubjectType.BUSINESS)).toBe(
+        ValidationErrorCode.REQUIRED
+      );
     });
 
     it('rejects invalid codice fiscale for persona fisica', () => {
-      expect(validateTaxCode('12345678901', 'fisica')).toBe(
-        'debtPositionCreateWizard.step2.taxCode.invalid'
+      expect(validateTaxCode('12345678901', SubjectType.INDIVIDUAL)).toBe(
+        ValidationErrorCode.INVALID_CF
       );
     });
 
     it('rejects invalid partita IVA for persona giuridica', () => {
-      expect(validateTaxCode('RSSMRA80A01H501U', 'giuridica')).toBe(
-        'debtPositionCreateWizard.step2.taxCode.invalidVAT'
+      expect(validateTaxCode('RSSMRA80A01H501U', SubjectType.BUSINESS)).toBe(
+        ValidationErrorCode.INVALID_VAT
       );
     });
 
     it('rejects partita IVA with wrong length for persona giuridica', () => {
-      expect(validateTaxCode('123456789', 'giuridica')).toBe(
-        'debtPositionCreateWizard.step2.taxCode.invalidVAT'
+      expect(validateTaxCode('123456789', SubjectType.BUSINESS)).toBe(
+        ValidationErrorCode.INVALID_VAT
       );
     });
   });
@@ -145,38 +150,56 @@ describe('createValidators', () => {
     });
 
     it('returns specific message for natural person when field is empty', () => {
-      const { validateTaxCodeField } = createValidators(mockT, 'fisica');
+      const { validateTaxCodeField } = createValidators(
+        mockT,
+        SubjectType.INDIVIDUAL
+      );
       expect(validateTaxCodeField('')).toBe(
         'debtPositionCreateWizard.step2.taxCode.required'
       );
     });
 
     it('returns specific message for legal entity when field is empty', () => {
-      const { validateTaxCodeField } = createValidators(mockT, 'giuridica');
+      const { validateTaxCodeField } = createValidators(
+        mockT,
+        SubjectType.BUSINESS
+      );
       expect(validateTaxCodeField('')).toBe(
         'debtPositionCreateWizard.step2.vat.required'
       );
     });
 
     it('returns undefined when tax code is valid for natural person', () => {
-      const { validateTaxCodeField } = createValidators(mockT, 'fisica');
+      const { validateTaxCodeField } = createValidators(
+        mockT,
+        SubjectType.INDIVIDUAL
+      );
       expect(validateTaxCodeField('RSSMRA80A01H501U')).toBeUndefined();
     });
 
     it('returns undefined when VAT number is valid for legal entity', () => {
-      const { validateTaxCodeField } = createValidators(mockT, 'giuridica');
+      const { validateTaxCodeField } = createValidators(
+        mockT,
+        SubjectType.BUSINESS
+      );
       expect(validateTaxCodeField('12345678901')).toBeUndefined();
     });
 
     it('returns error message when tax code is invalid for natural person', () => {
-      const { validateTaxCodeField } = createValidators(mockT, 'fisica');
+      const { validateTaxCodeField } = createValidators(
+        mockT,
+        SubjectType.INDIVIDUAL
+      );
       expect(validateTaxCodeField('12345678901')).toBe(
         'debtPositionCreateWizard.step2.taxCode.invalid'
       );
     });
 
     it('returns error message when VAT number is invalid for legal entity', () => {
-      const { validateTaxCodeField } = createValidators(mockT, 'giuridica');
+      const { validateTaxCodeField } = createValidators(
+        mockT,
+        SubjectType.BUSINESS
+      );
       expect(validateTaxCodeField('RSSMRA80A01H501U')).toBe(
         'debtPositionCreateWizard.step2.taxCode.invalidVAT'
       );
@@ -192,26 +215,38 @@ describe('createValidators', () => {
     });
 
     it('returns specific message for natural person when field is empty', () => {
-      const { validateFullNameField } = createValidators(mockT, 'fisica');
+      const { validateFullNameField } = createValidators(
+        mockT,
+        SubjectType.INDIVIDUAL
+      );
       expect(validateFullNameField('')).toBe(
         'debtPositionCreateWizard.step2.fullName.required'
       );
     });
 
     it('returns specific message for legal entity when field is empty', () => {
-      const { validateFullNameField } = createValidators(mockT, 'giuridica');
+      const { validateFullNameField } = createValidators(
+        mockT,
+        SubjectType.BUSINESS
+      );
       expect(validateFullNameField('')).toBe(
         'debtPositionCreateWizard.step2.companyName.required'
       );
     });
 
     it('returns undefined when full name is valid (at least two words)', () => {
-      const { validateFullNameField } = createValidators(mockT, 'fisica');
+      const { validateFullNameField } = createValidators(
+        mockT,
+        SubjectType.INDIVIDUAL
+      );
       expect(validateFullNameField('Mario Rossi')).toBeUndefined();
     });
 
     it('returns error message when full name has less than two words', () => {
-      const { validateFullNameField } = createValidators(mockT, 'fisica');
+      const { validateFullNameField } = createValidators(
+        mockT,
+        SubjectType.INDIVIDUAL
+      );
       expect(validateFullNameField('Mario')).toBe(
         'debtPositionCreateWizard.step2.fullName.minTwoWords'
       );
@@ -220,7 +255,10 @@ describe('createValidators', () => {
 
   describe('getValidationRules', () => {
     it('returns correct validation rules', () => {
-      const { getValidationRules } = createValidators(mockT, 'fisica');
+      const { getValidationRules } = createValidators(
+        mockT,
+        SubjectType.INDIVIDUAL
+      );
       const rules = getValidationRules();
 
       expect(rules).toHaveProperty('taxCode');
