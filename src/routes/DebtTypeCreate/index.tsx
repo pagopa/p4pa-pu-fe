@@ -7,30 +7,22 @@ import { Step2Data, Step2Settings } from './components/Step2Settings';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 import { useSignal } from '@preact/signals-react';
+import { postDebtPositionType } from '../../api/debtPositionsTypes';
+import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
 
-type FormData = {
-  step1: Step1Data;
-  step2: Step2Data;
-};
-
-const initialData: FormData = {
-  step1: {
-    debtPositionType: '',
-    debtPositionTypeCode: '',
-    organizationType: '',
-    macroAreaCode: '',
-    serviceTypeCode: '',
-    collectionReason: '',
-    taxonomyCode: ''
-  },
-  step2: {
-    option1: false,
-    option2: false,
-    option3: false,
-    checkbox2: false,
-    textField: '',
-    textArea: ''
-  }
+const initialData: DebtPositionTypeRequestBody = {
+  code: '',
+  description: '',
+  orgType: '',
+  macroArea: '',
+  serviceType: '',
+  collectingReason: '',
+  taxonomyCode: '',
+  flagMandatoryDueDate: false,
+  flagAnonymousFiscalCode: false,
+  flagNotifyIo: false,
+  ioTemplateSubject: '',
+  ioTemplateMessage: ''
 };
 
 export const DebtTypeCreate = () => {
@@ -38,14 +30,20 @@ export const DebtTypeCreate = () => {
   const navigate = useNavigate();
 
   const [step, setStep] = useState(0);
-  const formData = useSignal<FormData>(initialData);
+  const formData = useSignal<DebtPositionTypeRequestBody>(initialData);
+  const debtTypeCreate = postDebtPositionType();
 
   const submit = () => {
-    navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
-      replace: true,
-      state: {
-        formData: formData.value
-      }
+    debtTypeCreate.mutate(formData.value, {
+      onSuccess: (formData) => {
+        navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
+          replace: true,
+          state: {
+            formData
+          }
+        });
+      },
+      onError: console.error
     });
   };
 
@@ -56,7 +54,7 @@ export const DebtTypeCreate = () => {
         <Step1Configuration
           key="step1"
           setData={(data: Step1Data) => {
-            formData.value = { ...formData.value, step1: data };
+            formData.value = { ...formData.value, ...data };
           }}
           onNext={() => setStep(1)}
           onBack={() => navigate(PageRoutes.DEBT_TYPES_CATALOG)}
@@ -70,7 +68,7 @@ export const DebtTypeCreate = () => {
         <Step2Settings
           key="step2"
           setData={(data: Step2Data) => {
-            formData.value = { ...formData.value, step2: data };
+            formData.value = { ...formData.value, ...data };
           }}
           onBack={() => setStep(0)}
           onNext={submit}

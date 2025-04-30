@@ -1,7 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { pagedDebtPositionTypeWithCountSchema } from '../../generated/zod-schema';
+import {
+  debtPositionTypeSchema,
+  pagedDebtPositionTypeWithCountSchema
+} from '../../generated/zod-schema';
+import { DebtPositionTypeRequestBody } from '../../generated/data-contracts';
 
 export const getDebtPositionsTypes = ({
   organizationId
@@ -56,5 +60,15 @@ export const getDebtPositionTypeWithCount = (
       }
 
       return response;
+    }
+  });
+
+export const postDebtPositionType = () =>
+  useMutation({
+    mutationKey: ['postDebtPositionType'],
+    mutationFn: async (query: DebtPositionTypeRequestBody) => {
+      const response = await utils.apiClient.bff.createDebtPositionType(query);
+      parseAndLog(debtPositionTypeSchema, response.data);
+      return response.data;
     }
   });
