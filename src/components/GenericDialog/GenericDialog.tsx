@@ -6,13 +6,16 @@ import {
   DialogActions,
   Button
 } from '@mui/material';
+import { ReactNode } from 'react';
 
 type GenericDialogProps = {
   open: boolean;
   title: string;
-  message: string;
+  message?: string;
   confirmLabel?: string;
   cancelLabel?: string;
+  children?: ReactNode;
+  fullWidth?: boolean;
   onConfirm?: () => void;
   onClose?: () => void;
 };
@@ -23,14 +26,17 @@ const GenericDialog = ({
   message,
   confirmLabel,
   cancelLabel,
+  children,
+  fullWidth = false,
   onConfirm,
   onClose
 }: GenericDialogProps) => {
   return (
-    <Dialog open={open} onClose={onClose}>
+    <Dialog open={open} onClose={onClose} fullWidth={fullWidth}>
       <DialogTitle sx={{ px: 4, pt: 4 }}>{title}</DialogTitle>
       <DialogContent sx={{ px: 4 }}>
-        <DialogContentText>{message}</DialogContentText>
+        {message && <DialogContentText>{message}</DialogContentText>}
+        {children}
       </DialogContent>
       <DialogActions sx={{ px: 4, pb: 3 }}>
         {cancelLabel && (

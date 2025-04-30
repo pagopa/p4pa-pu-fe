@@ -5,14 +5,14 @@ import { z } from 'zod';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
   Link,
   Stack,
   TextField,
-  Typography,
-  useTheme
+  Typography
 } from '@mui/material';
 import TuneIcon from '@mui/icons-material/Tune';
 import MessageIcon from '@mui/icons-material/Message';
@@ -20,11 +20,9 @@ import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import { FormComponent } from '../../../components/FormComponent';
-import ReactMarkdown from 'react-markdown';
-import remarkBreaks from 'remark-breaks';
-import rehypeRaw from 'rehype-raw';
-import './markdownpreview.css';
 import { DebtPositionTypeRequestBody } from '../../../../generated/data-contracts';
+import { useState } from 'react';
+import { MarkdownPreview } from './MarkdownPreview';
 
 export type Step2Data = Partial<DebtPositionTypeRequestBody> &
   Pick<
@@ -42,11 +40,9 @@ export type Step2Props = {
   onBack?: () => void;
 };
 
-
 export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
   const { t } = useTranslation();
-  const theme = useTheme();
-  const secondaryColor = theme.palette.text.secondary;
+  const [open, setOpen] = useState(false);
 
   const schema = z
     .object({
@@ -80,39 +76,13 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
     onNext();
   };
 
-  const ioTemplateMessage = watch("ioTemplateMessage");
-
-  const placeholders: Record<string, string> = {
-    '%posizioneDebitoria_descrizione%': 'Pagamento TARI',
-    '%debitore_nomeCompleto%': 'Mario Rossi',
-    '%debitore_codiceFiscale%': 'RSSMRA80R11A123H',
-    '%importoTotale%': '120 €',
-    '%IUV%': '82000000000',
-    '%NAV%': '0000 0000 0000 0000 00',
-    '%causale%': 'Causale del pagamento',
-    '%dataScadenza%': '12/04/2099'
-
-  }
-
-  const renderTextWithPlaceholders = (inputText: string) => {
-    let modifiedText = inputText;
-    Object.keys(placeholders).forEach((placeholder: string) => {
-      const regex = new RegExp(placeholder, 'g');
-      modifiedText = modifiedText.replace(
-        regex,
-        `<span class="highlighted" style="color: ${secondaryColor} ">${placeholders[placeholder]}</span>`
-      );
-    });
-
-    return modifiedText;
-  };
-
   const options: Array<keyof Step2Data> = [
     'flagMandatoryDueDate',
     'flagAnonymousFiscalCode'
   ];
   const flagNotifyIo = watch('flagNotifyIo');
-  const ioTemplateMessage = watch("ioTemplateMessage");
+  const ioTemplateMessage = watch('ioTemplateMessage');
+  const ioTemplateSubject = watch('ioTemplateSubject');
 
   return (
     <form>
@@ -236,15 +206,11 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                       />
                     )}
                   />
-                  <ReactMarkdown
-                    children={renderTextWithPlaceholders(ioTemplateMessage || "")}
-                    rehypePlugins={[rehypeRaw]}
-                    remarkPlugins={[remarkBreaks]}
-                    components={{
-                      span: ({ node, ...props }) => {
-                        return <span {...props} />;
-                      },
-                    }}
+                  <MarkdownPreview
+                    title={ioTemplateSubject || ''}
+                    message={ioTemplateMessage || ''}
+                    open={open}
+                    onClose={() => setOpen(false)}
                   />
 
                   <Typography
@@ -279,11 +245,17 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
               <Stack
                 sx={{ whiteSpace: 'nowrap' }}
                 direction="row"
-                gap={1}
                 color="primary.main"
               >
-                <PreviewIcon />
-                <Link>{t('debtTypeCreate.settings.preview')}</Link>
+                <Button
+                  variant="text"
+                  onClick={() => setOpen(true)}
+                  sx={{ px: 0 }}
+                  disabled={!(ioTemplateMessage && ioTemplateSubject)}
+                >
+                  <PreviewIcon sx={{ mr: 1 }} />
+                  {t('debtTypeCreate.settings.preview')}
+                </Button>
               </Stack>
             )}
           </Stack>
