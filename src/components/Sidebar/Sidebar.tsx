@@ -125,7 +125,7 @@ export const Sidebar: React.FC = () => {
 
     debtypes.push({
       label: t('commons.routes.DEBT_TYPES_CREATED'),
-      route: PageRoutes.DEBT_TYPES_CREATED,
+      route: PageRoutes.DEBT_TYPES_CREATED_SUPERADMIN,
       end: true
     });
 

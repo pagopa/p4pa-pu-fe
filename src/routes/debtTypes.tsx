@@ -62,8 +62,8 @@ export const debtTypesRoutes = [
         } as RouteHandleObject
       },
       {
-        id: 'DEBT_TYPES_CREATED',
-        path: 'created',
+        id: 'DEBT_TYPES_CREATED_SUPERADMIN',
+        path: 'dashboard',
         element: <DebtTypesCreated />,
         handle: {
           backButton: false,

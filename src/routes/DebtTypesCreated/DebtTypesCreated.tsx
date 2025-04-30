@@ -31,14 +31,9 @@ export const DebtTypesCreated = () => {
 
   const handleSearch = () => {
     if (tabValue === 0) {
-      console.log(
-        'Cerca per codice:',
-        codeFilter,
-        'e descrizione:',
-        descriptionFilter
-      );
+      console.log('code:', codeFilter, 'description:', descriptionFilter);
     } else {
-      console.log('Cerca per codice IPA:', IPACodeFilter);
+      console.log('IPA Code:', IPACodeFilter);
     }
   };
 
@@ -49,7 +44,7 @@ export const DebtTypesCreated = () => {
           items={[
             {
               type: COMPONENT_TYPE.textField,
-              label: t('mioEnte.searchCodice', 'Cerca per codice'),
+              label: t('commons.searchForCode'),
               value: codeFilter,
               adornment: <Search />,
               onChange: (e) => setCodeFilter(e.target.value),
@@ -57,7 +52,7 @@ export const DebtTypesCreated = () => {
             },
             {
               type: COMPONENT_TYPE.textField,
-              label: t('mioEnte.searchDescrizione', 'Cerca per descrizione'),
+              label: t('commons.searchForDescription'),
               value: descriptionFilter,
               adornment: <Search />,
               onChange: (e) => setDescriptionFilter(e.target.value),
@@ -65,7 +60,7 @@ export const DebtTypesCreated = () => {
             },
             {
               type: COMPONENT_TYPE.button,
-              label: t('commons.search', 'Cerca'),
+              label: t('commons.search'),
               onClick: handleSearch,
               disabled: !isMyOrgFilterActive(),
               gridWidth: 2
