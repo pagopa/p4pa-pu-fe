@@ -9,6 +9,7 @@ import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';
 import ManagedOrgs from './ManagedOrgs/ManagedOrgs';
+import MyOrg from './MyOrg/MyOrg';
 
 export const DebtTypesCreated = () => {
   const { t } = useTranslation();
@@ -146,7 +147,10 @@ export const DebtTypesCreated = () => {
 
       <Box>
         {tabValue === 0 ? (
-          <div>Tab il mio ente</div> // placeholder
+          <MyOrg
+            codeFilter={codeFilter}
+            descriptionFilter={descriptionFilter}
+          />
         ) : (
           <ManagedOrgs IPACodeFilter={IPACodeFilter} />
         )}

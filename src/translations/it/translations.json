@@ -634,6 +634,13 @@
       "IPACode": "Cod. IPA",
       "managedOrg": "Ente gestito",
       "debtTypesSet": "Tipi dovuti impostati"
+    },
+    "myOrganizationDataGrid": {
+      "code": "Cod. Gestionale",
+      "debtType": "Tipo dovuto",
+      "description": "Descrizione",
+      "lastUpdateDate": "Ultima modifica",
+      "enabledOperators": "Operatori abilitati"
     }
   },
   "debtTypes": {
