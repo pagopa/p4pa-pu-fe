@@ -1,9 +1,10 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
 import { vi } from 'vitest';
 import { DebtTypeCreate } from '../DebtTypeCreate';
 import { Step1Props } from './components/Step1Configuration';
 import { Step2Props } from './components/Step2Settings';
 import { StepperContainerProps } from '../../components/Stepper';
+import { DebtPositionTypeRequestBody } from '../../../generated/apiClient';
 
 vi.mock('./components/Step1Configuration', () => ({
   Step1Configuration: ({ setData, onNext }: Step1Props) => (
@@ -11,12 +12,12 @@ vi.mock('./components/Step1Configuration', () => ({
       <button
         onClick={() => {
           setData({
-            debtPositionType: 'Test Debt Type',
-            debtPositionTypeCode: 'CODE1',
-            organizationType: 'ORG1',
-            macroAreaCode: 'MACRO1',
-            serviceTypeCode: 'SERVICE1',
-            collectionReason: 'REASON1',
+            description: 'Test Debt Type',
+            code: 'CODE1',
+            orgType: 'ORG1',
+            macroArea: 'MACRO1',
+            serviceType: 'SERVICE1',
+            collectingReason: 'REASON1',
             taxonomyCode: 'TAX1'
           });
           onNext();
@@ -35,12 +36,11 @@ vi.mock('./components/Step2Settings', () => ({
       <button
         onClick={() => {
           setData({
-            option1: true,
-            option2: false,
-            option3: true,
-            checkbox2: true,
-            textField: 'Test Subject',
-            textArea: 'Test Message'
+            flagMandatoryDueDate: true,
+            flagAnonymousFiscalCode: false,
+            flagNotifyIo: true,
+            ioTemplateSubject: 'Test Subject',
+            ioTemplateMessage: 'Test Message'
           });
           onNext();
         }}
@@ -60,10 +60,38 @@ vi.mock('../../components/Stepper', () => ({
   )
 }));
 
-const mockNavigate = vi.fn();
-vi.mock('react-router', () => ({
-  useNavigate: () => mockNavigate
+vi.mock('../../api/debtPositionsTypes', () => ({
+  postDebtPositionType: vi.fn(() => ({
+    mutate: (
+      _formData: DebtPositionTypeRequestBody,
+      { onSuccess }: { onSuccess: (data: DebtPositionTypeRequestBody) => void }
+    ) => {
+      onSuccess({
+        description: 'Test Debt Type',
+        code: 'CODE1',
+        orgType: 'ORG1',
+        macroArea: 'MACRO1',
+        serviceType: 'SERVICE1',
+        collectingReason: 'REASON1',
+        taxonomyCode: 'TAX1',
+        flagMandatoryDueDate: true,
+        flagAnonymousFiscalCode: false,
+        flagNotifyIo: true,
+        ioTemplateSubject: 'Test Subject',
+        ioTemplateMessage: 'Test Message'
+      });
+    }
+  }))
 }));
+
+const mockNavigate = vi.fn();
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate
+  };
+});
 
 vi.mock('../../App', () => ({
   PageRoutes: {
@@ -136,24 +164,19 @@ describe('DebtTypeCreate', () => {
         replace: true,
         state: {
           formData: {
-            step1: {
-              debtPositionType: 'Test Debt Type',
-              debtPositionTypeCode: 'CODE1',
-              organizationType: 'ORG1',
-              macroAreaCode: 'MACRO1',
-              serviceTypeCode: 'SERVICE1',
-              collectionReason: 'REASON1',
-              taxonomyCode: 'TAX1'
-            },
-            step2: {
-              option1: true,
-              option2: false,
-              option3: true,
-              checkbox2: true,
-              textField: 'Test Subject',
-              textArea: 'Test Message'
-            }
-          }
+            description: 'Test Debt Type',
+            code: 'CODE1',
+            orgType: 'ORG1',
+            macroArea: 'MACRO1',
+            serviceType: 'SERVICE1',
+            collectingReason: 'REASON1',
+            taxonomyCode: 'TAX1',
+            flagMandatoryDueDate: true,
+            flagAnonymousFiscalCode: false,
+            flagNotifyIo: true,
+            ioTemplateSubject: 'Test Subject',
+            ioTemplateMessage: 'Test Message'
+          } as DebtPositionTypeRequestBody
         }
       });
     });

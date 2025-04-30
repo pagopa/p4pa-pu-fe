@@ -550,6 +550,7 @@
         "required": "Il Motivo Riscossione é obbligatorio"
       },
       "debtType": {
+        "label": "Nome del Tipo dovuto",
         "helper": "Inserisce il nome attribuito al servizio di incasso",
         "maxCharacters": "Il nome del Tipo dovuto deve avere al massimo 100 caratteri",
         "placeholder": "Inserisce il nome attribuito al servizio di incasso",
@@ -588,17 +589,13 @@
         "label": "Messaggio",
         "required": "il messaggio é obbligatorio"
       },
-      "option1": {
+      "flagMandatoryDueDate": {
         "description": "Data di Scadenza Obbligatoria",
         "subtitle": "Imposta la Data di Scadenza un campo obbligatorio nella creazione."
       },
-      "option2": {
+      "flagAnonymousFiscalCode": {
         "description": "Codice Fiscale Anonimo",
         "subtitle": "Permette di creare dovuti senza segnalare un Codice Fiscale nel caso di assenza."
-      },
-      "option3": {
-        "description": "Pagamento Spontaneo",
-        "subtitle": "Il tipo dovuto può essere utilizzato per pagamenti spontanei"
       },
       "preview": "Vedi anteprima",
       "subject": {

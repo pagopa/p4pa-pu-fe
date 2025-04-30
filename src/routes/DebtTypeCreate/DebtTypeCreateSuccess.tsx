@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { theme } from '@pagopa/mui-italia';
 import { PageRoutes } from '../../App';
+import { DebtPositionType } from '../../../generated/data-contracts';
 
 export const DebtTypeCreateSuccess = () => {
   const { t } = useTranslation();
@@ -11,7 +12,7 @@ export const DebtTypeCreateSuccess = () => {
   const location = useLocation();
 
   // TODO: error if no formData is provided
-  const formData = location.state?.formData || '';
+  const formData = location.state?.formData as DebtPositionType;
 
   return (
     <Box
@@ -44,20 +45,22 @@ export const DebtTypeCreateSuccess = () => {
           }}
         />
 
-        <Typography
-          variant="h4"
-          component="h1"
-          fontSize={24}
-          sx={{
-            fontWeight: 700,
-            textAlign: 'center',
-            maxWidth: (theme) => theme.spacing(50)
-          }}
-        >
-          {t('debtTypeCreateSuccess.title', {
-            paymentObject: formData.step1.debtPositionType
-          })}
-        </Typography>
+        {formData?.description && (
+          <Typography
+            variant="h4"
+            component="h1"
+            fontSize={24}
+            sx={{
+              fontWeight: 700,
+              textAlign: 'center',
+              maxWidth: (theme) => theme.spacing(50)
+            }}
+          >
+            {t('debtTypeCreateSuccess.title', {
+              paymentObject: formData.description
+            })}
+          </Typography>
+        )}
 
         <Typography
           fontSize={16}

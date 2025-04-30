@@ -199,7 +199,7 @@ export const Sidebar: React.FC = () => {
                 onClick={() => !lg && setCollapsed(true)}
                 collapsed={collapsed}
                 item={item}
-                key={index}
+                key={`${item.label}-${index}`}
               />
             ))}
           </List>
@@ -219,7 +219,7 @@ export const Sidebar: React.FC = () => {
                 onClick={() => !lg && setCollapsed(true)}
                 collapsed={collapsed}
                 item={item}
-                key={index}
+                key={`${item.label}-${index}`}
               />
             ))}
           </List>
