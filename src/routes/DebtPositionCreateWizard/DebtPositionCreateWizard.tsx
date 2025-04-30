@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import Step1GeneralConfiguration, {
-  Step1Data
-} from './components/Step/Step1GeneralConfiguration';
-import Step2AddDebtor, { Step2Data } from './components/Step/Step2AddDebtor';
-import Step3, { Step3Data } from './components/Step/Step3';
+import Step1GeneralConfiguration from './components/Step/Step1GeneralConfiguration';
+import Step2AddDebtor from './components/Step/Step2AddDebtor';
+import Step3 from './components/Step/Step3';
 import { StepperContainer } from '../../components/Stepper';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 import { PaymentOption } from '../../models/paymentTypes';
+import { Step3Data, Step2Data, Step1Data } from '../../models/DebtPositionType';
 
 type FormData = {
   step1: Step1Data;
@@ -88,7 +87,7 @@ const initialData: FormData = {
       readonly: false
     },
     flagMandatoryDueDate: false,
-    beneficiaries: [] // Inizializzato come array vuoto
+    beneficiaries: []
   }
 };
 
@@ -147,6 +146,8 @@ const DebtPositionCreateWizard = () => {
                 setStep(3);
               }}
               onBack={() => setStep(1)}
+              step1Data={formData.step1}
+              step2Data={formData.step2}
             />
           )
         }

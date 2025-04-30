@@ -4,7 +4,15 @@
  * @module paymentUtility
  */
 import { FieldErrors, FieldValues, Path } from 'react-hook-form';
-import { BeneficiaryValidationContext } from '../models/paymentTypes';
+import {
+  BeneficiaryValidationContext,
+  Beneficiary,
+  Installment
+} from '../models/paymentTypes';
+import { format } from 'date-fns';
+import { Step2Data, Step3Data } from '../models/DebtPositionType';
+import { UseFormTrigger } from 'react-hook-form';
+import { isBeneficiariesTotalValid } from './fieldValidation';
 
 /**
  * Checks if a string value is empty.
@@ -346,4 +354,412 @@ export function handleAmountInputBlur(value: string): string {
  */
 export function formatAmountForDisplay(value: string): string {
   return value ? value.replace('.', ',') : '';
+}
+
+// Costanti per lo stato della posizione debitoria
+export const DEBT_POSITION_STATUS = {
+  UNPAID: 'UNPAID'
+} as const;
+
+// Costanti per l'origine della posizione debitoria
+export const DEBT_POSITION_ORIGIN = {
+  ORDINARY: 'ORDINARY'
+} as const;
+
+// Costanti per le opzioni di pagamento
+export const PAYMENT_OPTION_TYPE = {
+  INSTALLMENTS: 'INSTALLMENTS',
+  SINGLE_INSTALLMENTS: 'SINGLE_INSTALLMENTS'
+} as const;
+
+// Valori di default
+export const DEFAULT_VALUES = {
+  FLAG_IUV_VOLATILE: false,
+  MULTI_DEBTOR: false,
+  FLAG_PAGO_PA_PAYMENT: true,
+  PAYMENT_OPTION_INDEX: 1
+} as const;
+
+// Funzioni helper per la creazione degli oggetti debt position
+export const createDebtorObject = (step2Data: Step2Data) => ({
+  entityType: step2Data.subjectType.value,
+  fiscalCode: step2Data.taxCode.value,
+  fullName: step2Data.fullName.value,
+  address: step2Data.address.value,
+  civicNumber: step2Data.civicNumber.value,
+  zipCode: step2Data.zipCode.value,
+  city: step2Data.city.value,
+  province: step2Data.province.value,
+  country: step2Data.country.value
+});
+
+export const createTransferObject = (
+  beneficiary: Beneficiary,
+  index: number
+) => ({
+  orgFiscalCode: beneficiary.taxCode,
+  orgName: beneficiary.entityName,
+  amountCents: Math.round(parseFloat(beneficiary.amount || '0') * 100),
+  remittanceInformation: beneficiary.remittance,
+  ...(beneficiary.iban && { iban: beneficiary.iban }),
+  ...(beneficiary.postalAccount && { postalIban: beneficiary.postalAccount }),
+  category: beneficiary.taxonomyCode,
+  transferIndex: index + 2
+});
+
+export const formatDateForApi = (date: string | Date | null | undefined) => {
+  if (!date || new Date(date).toString() === 'Invalid Date') {
+    return undefined;
+  }
+  return format(new Date(date), 'yyyy-MM-dd');
+};
+
+export const getPreviousInstallmentTransfers = (
+  currentInstallment: Installment,
+  formattedValues: Step3Data
+) => {
+  if (!formattedValues.installments) return [];
+  const currentIndex = formattedValues.installments.indexOf(currentInstallment);
+  if (currentIndex === -1) return [];
+
+  const prevInstallment = formattedValues.installments
+    .slice(0, currentIndex)
+    .reverse()
+    .find((prev) => prev.beneficiaries && prev.beneficiaries.length > 0);
+
+  if (!prevInstallment?.beneficiaries) return [];
+  return prevInstallment.beneficiaries.map(createTransferObject);
+};
+
+export const createInstallmentObject = (
+  installment: Installment,
+  step2Data: Step2Data,
+  formattedValues: Step3Data
+) => ({
+  dueDate: formatDateForApi(installment.dueDate),
+  amountCents: Math.round(parseFloat(installment.amount || '0') * 100),
+  remittanceInformation: installment.remittance || '',
+  debtor: createDebtorObject(step2Data),
+  ...(installment.isMultibeneficiary &&
+    installment.beneficiaries &&
+    installment.beneficiaries.length > 0 && {
+      transfers: installment.beneficiaries.map(createTransferObject)
+    }),
+  ...(installment.sameBeneficiariesAsBefore &&
+    installment.beneficiaries &&
+    installment.beneficiaries.length > 0 && {
+      transfers: getPreviousInstallmentTransfers(installment, formattedValues)
+    })
+});
+
+export const createSingleInstallmentObject = (
+  formattedValues: Step3Data,
+  step2Data: Step2Data
+) => ({
+  dueDate: formatDateForApi(formattedValues.dueDate?.value),
+  amountCents: Math.round(
+    parseFloat(formattedValues.amount.value || '0') * 100
+  ),
+  remittanceInformation: formattedValues.paymentObject.value || '',
+  debtor: createDebtorObject(step2Data),
+  ...(formattedValues.isMultibeneficiary.value &&
+    formattedValues.beneficiaries &&
+    formattedValues.beneficiaries.length > 0 && {
+      transfers: formattedValues.beneficiaries.map(createTransferObject)
+    })
+});
+
+/**
+ * Attiva la validazione per tutti i beneficiari
+ * @template T - Tipo dei valori del form
+ * @param beneficiaries - Array di beneficiari
+ * @param trigger - Funzione di trigger per la validazione
+ */
+export function triggerValidationForAllBeneficiaries<T extends FieldValues>(
+  beneficiaries: Array<Record<string, unknown>>,
+  trigger: UseFormTrigger<T>
+) {
+  beneficiaries.forEach((_, index) => {
+    trigger(`beneficiaries.${index}.amount` as Path<T>);
+  });
+}
+
+/**
+ * Attiva la validazione per tutti i beneficiari in tutte le rate
+ * @template T - Tipo dei valori del form
+ * @param installments - Array di rate
+ * @param trigger - Funzione di trigger per la validazione
+ */
+export function triggerValidationForAllInstallmentBeneficiaries<
+  T extends FieldValues
+>(installments: Array<Record<string, unknown>>, trigger: UseFormTrigger<T>) {
+  installments.forEach((installment, installmentIndex) => {
+    if (installment.isMultibeneficiary) {
+      const installmentBeneficiaries =
+        (installment.beneficiaries as Array<Record<string, unknown>>) || [];
+
+      installmentBeneficiaries.forEach(
+        (_: Record<string, unknown>, beneficiaryIndex: number) => {
+          const path =
+            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.amount` as Path<T>;
+          trigger(path);
+        }
+      );
+    }
+  });
+}
+
+/**
+ * Attiva la validazione dei campi di pagamento (IBAN e conto postale)
+ * @template T - Tipo dei valori del form
+ * @param installments - Array di rate
+ * @param trigger - Funzione di trigger per la validazione
+ */
+export function triggerPaymentFieldsValidation<T extends FieldValues>(
+  installments: Array<Record<string, unknown>>,
+  trigger: UseFormTrigger<T>
+) {
+  installments.forEach((installment, installmentIndex) => {
+    if (installment.isMultibeneficiary) {
+      const installmentBeneficiaries =
+        (installment.beneficiaries as Array<Record<string, unknown>>) || [];
+
+      installmentBeneficiaries.forEach(
+        (_: Record<string, unknown>, beneficiaryIndex: number) => {
+          // IBAN validation
+          const ibanPath =
+            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.iban` as Path<T>;
+          trigger(ibanPath);
+
+          // Postal account validation
+          const postalAccountPath =
+            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.postalAccount` as Path<T>;
+          trigger(postalAccountPath);
+        }
+      );
+    }
+  });
+}
+
+/**
+ * Sincronizza i beneficiari tra le rate quando sameBeneficiariesAsBefore è impostato a true
+ * @param installments - Array di rate
+ * @returns Oggetto con le rate sincronizzate e flag di modifica
+ */
+export function syncInstallmentBeneficiaries(
+  installments: Array<Installment>
+): {
+  installments: Array<Installment>;
+  modified: boolean;
+} {
+  let installmentsModified = false;
+
+  for (let i = 1; i < installments.length; i++) {
+    const currentInstallment = installments[i] as unknown as Record<
+      string,
+      unknown
+    >;
+    const previousInstallment = installments[i - 1];
+
+    // If installment is set to copy beneficiaries from previous installment
+    if (
+      currentInstallment.sameBeneficiariesAsBefore === 'true' ||
+      currentInstallment.sameBeneficiariesAsBefore === true
+    ) {
+      // Copy beneficiaries from previous installment
+      if (
+        previousInstallment.beneficiaries &&
+        Array.isArray(previousInstallment.beneficiaries) &&
+        previousInstallment.beneficiaries.length > 0
+      ) {
+        currentInstallment.beneficiaries = [
+          ...previousInstallment.beneficiaries
+        ];
+        installmentsModified = true;
+      }
+    }
+  }
+
+  return { installments, modified: installmentsModified };
+}
+
+/**
+ * Valida i dati delle rate
+ * @template T - Tipo dei valori del form
+ * @param installments - Array di rate
+ * @param trigger - Funzione di trigger per la validazione
+ * @returns Oggetto con i risultati della validazione
+ */
+export function validateInstallments<T extends FieldValues>(
+  installments: Array<Installment>,
+  trigger: UseFormTrigger<T>
+): {
+  hasInvalidBeneficiaries: boolean;
+  hasInvalidPaymentFields: boolean;
+  hasInvalidAmounts: boolean;
+  hasEmptyRemittance: boolean;
+} {
+  let hasInvalidBeneficiaries = false;
+  let hasInvalidPaymentFields = false;
+  let hasInvalidAmounts = false;
+  let hasEmptyRemittance = false;
+
+  // Check each installment
+  for (const [idx, installment] of installments.entries()) {
+    // Validate installment amount
+    if (!installment.amount || parseFloat(String(installment.amount)) <= 0) {
+      hasInvalidAmounts = true;
+    }
+
+    // Validate installment remittance (payment reason)
+    if (
+      !installment.remittance ||
+      String(installment.remittance).trim() === ''
+    ) {
+      hasEmptyRemittance = true;
+      trigger(`installments.${idx}.remittance` as Path<T>);
+    }
+
+    if (installment.isMultibeneficiary) {
+      const beneficiaries = installment.beneficiaries || [];
+
+      // Check beneficiaries structure
+      if (Array.isArray(beneficiaries)) {
+        beneficiaries.forEach(
+          (b: Record<string, unknown>, beneficiaryIdx: number) => {
+            // Fix format if needed
+            if (
+              typeof b.amount !== 'string' &&
+              b.amount !== null &&
+              b.amount !== undefined
+            ) {
+              beneficiaries[beneficiaryIdx].amount = String(b.amount);
+            }
+            // Validate payment fields (IBAN or postalAccount required)
+            const iban = typeof b.iban === 'string' ? b.iban : '';
+            const postalAccount =
+              typeof b.postalAccount === 'string' ? b.postalAccount : '';
+            if (
+              (!iban || iban.trim() === '') &&
+              (!postalAccount || postalAccount.trim() === '')
+            ) {
+              hasInvalidPaymentFields = true;
+            }
+          }
+        );
+
+        // Validate beneficiaries total matches installment amount
+        try {
+          const isValid = isBeneficiariesTotalValid(
+            beneficiaries as Array<Beneficiary>,
+            installment.amount
+          );
+
+          if (!isValid) {
+            hasInvalidBeneficiaries = true;
+          }
+        } catch (validationError) {
+          console.error(
+            'Error validating beneficiaries total:',
+            validationError
+          );
+          hasInvalidBeneficiaries = true;
+        }
+      }
+    }
+  }
+
+  return {
+    hasInvalidBeneficiaries,
+    hasInvalidPaymentFields,
+    hasInvalidAmounts,
+    hasEmptyRemittance
+  };
+}
+
+/**
+ * Valida i campi nel caso di multi-beneficiario
+ * @template T - Tipo dei valori del form
+ * @param getValues - Funzione per ottenere i valori del form
+ * @param isMultibeneficiary - Flag multi-beneficiario
+ * @param totalAmount - Importo totale
+ * @param trigger - Funzione di trigger per la validazione
+ * @returns True se la validazione è passata
+ */
+export function validateMultiBeneficiary<T extends FieldValues>(
+  getValues: () => T,
+  isMultibeneficiary: boolean,
+  totalAmount: string,
+  trigger: UseFormTrigger<T>
+): boolean {
+  const currentBeneficiaries = getValues().beneficiaries || [];
+
+  // Validate beneficiaries total amount
+  if (
+    isMultibeneficiary &&
+    !isBeneficiariesTotalValid(currentBeneficiaries, totalAmount)
+  ) {
+    trigger('beneficiaries' as Path<T>);
+    return false;
+  }
+
+  // Ensure the remittance field is filled for all beneficiaries
+  if (isMultibeneficiary) {
+    let hasEmptyRemittance = false;
+
+    currentBeneficiaries.forEach((b: Beneficiary, idx: number) => {
+      if (!b.remittance || b.remittance.trim() === '') {
+        hasEmptyRemittance = true;
+        trigger(`beneficiaries.${idx}.remittance` as Path<T>);
+      }
+    });
+
+    if (hasEmptyRemittance) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+/**
+ * Gestisce il fallimento della validazione delle rate
+ * @template T - Tipo dei valori del form
+ * @param installments - Array di rate
+ * @param validationResults - Risultati della validazione
+ * @param trigger - Funzione di trigger per la validazione
+ */
+export function handleInstallmentValidationFailure<T extends FieldValues>(
+  installments: Array<Installment>,
+  validationResults: ReturnType<typeof validateInstallments>,
+  trigger: UseFormTrigger<T>
+): void {
+  // We only check if there are errors, but don't use individual variables
+  // This is because all validations are triggered anyway
+  const hasErrors = Object.values(validationResults).some(Boolean);
+
+  if (!hasErrors) {
+    return;
+  }
+
+  try {
+    // Trigger installment amounts validation
+    installments.forEach((_: Installment, index: number) => {
+      trigger(`installments.${index}.amount` as Path<T>);
+    });
+
+    // Trigger validation for all beneficiaries in all installments
+    triggerValidationForAllInstallmentBeneficiaries(
+      installments as Array<Record<string, unknown>>,
+      trigger
+    );
+
+    // Trigger payment fields validation
+    triggerPaymentFieldsValidation(
+      installments as Array<Record<string, unknown>>,
+      trigger
+    );
+  } catch (validationError) {
+    console.error('Error during installment validation:', validationError);
+  }
 }

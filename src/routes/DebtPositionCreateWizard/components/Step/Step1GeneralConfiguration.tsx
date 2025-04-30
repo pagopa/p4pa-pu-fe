@@ -7,19 +7,11 @@ import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import BookIcon from '@mui/icons-material/MenuBook';
-import { DebtPositionType } from '../../../../models/DebtPositionType';
+import {
+  DebtPositionType,
+  Step1Data
+} from '../../../../models/DebtPositionType';
 
-export type Step1Data = {
-  debtPositionType: {
-    value: string;
-    flagMandatoryDueDate: boolean;
-    readonly: boolean;
-  };
-  description: {
-    value: string;
-    readonly: boolean;
-  };
-};
 // Types for react-hook-form
 type FormValues = {
   debtPositionType: string;

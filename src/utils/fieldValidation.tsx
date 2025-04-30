@@ -4,8 +4,8 @@ import { ValidationErrorCode } from '../store/types';
 
 // enum for subject type
 export enum SubjectType {
-  INDIVIDUAL = 'fisica',
-  BUSINESS = 'giuridica'
+  INDIVIDUAL = 'F',
+  BUSINESS = 'G'
 }
 
 /**

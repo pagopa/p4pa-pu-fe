@@ -7,18 +7,7 @@ import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { createValidators } from '../../../../utils/fieldValidation';
-
-export type Step2Data = {
-  subjectType: { value: string; readonly: boolean }; // Subject type (individual/legal entity)
-  taxCode: { value: string; readonly: boolean }; // Tax code or VAT number
-  fullName: { value: string; readonly: boolean }; // Full name
-  address: { value: string; readonly: boolean }; // Address
-  civicNumber: { value: string; readonly: boolean }; // Civic number
-  zipCode: { value: string; readonly: boolean }; // Zip code
-  country: { value: string; readonly: boolean }; // Country
-  province: { value: string; readonly: boolean }; // Province
-  city: { value: string; readonly: boolean }; // City
-};
+import { Step2Data } from '../../../../models/DebtPositionType';
 
 type Step2DataField = keyof Step2Data;
 
@@ -156,9 +145,9 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
 
   const getTaxCodeLabel = () => {
     switch (subjectTypeValue) {
-      case 'fisica':
+      case 'F':
         return t('debtPositionCreateWizard.step2.taxCode.label');
-      case 'giuridica':
+      case 'G':
         return t('debtPositionCreateWizard.step2.vat.label');
       default:
         return t('commons.fiscalCodeorVat');
@@ -167,9 +156,9 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
 
   const getTaxCodePlaceholder = () => {
     switch (subjectTypeValue) {
-      case 'fisica':
+      case 'F':
         return t('debtPositionCreateWizard.step2.taxCode.placeholder');
-      case 'giuridica':
+      case 'G':
         return t('debtPositionCreateWizard.step2.vat.placeholder');
       default:
         return t('debtPositionCreateWizard.step2.taxCodeOrVat.placeholder');
@@ -178,9 +167,9 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
 
   const getCompanyNameLabel = () => {
     switch (subjectTypeValue) {
-      case 'fisica':
+      case 'F':
         return t('debtPositionCreateWizard.step2.fullName.label');
-      case 'giuridica':
+      case 'G':
         return t('debtPositionCreateWizard.step2.companyName.label');
       default:
         return t('debtPositionCreateWizard.step2.fullName.label');
@@ -226,12 +215,12 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                   }
                 }}
               >
-                <MenuItem value="fisica">
+                <MenuItem value="F">
                   {t(
                     'debtPositionCreateWizard.step2.subjectType.options.fisica'
                   )}
                 </MenuItem>
-                <MenuItem value="giuridica">
+                <MenuItem value="G">
                   {t(
                     'debtPositionCreateWizard.step2.subjectType.options.giuridica'
                   )}

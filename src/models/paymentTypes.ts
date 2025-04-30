@@ -48,7 +48,9 @@ export type Installment = {
   /** Remittance information (payment reason) */
   remittance: string;
   /** Flag indicating if the installment has multiple beneficiaries */
-  isMultibeneficiary?: boolean;
+  isMultibeneficiary: boolean;
+  /** Flag indicating if beneficiaries are the same as the previous installment */
+  sameBeneficiariesAsBefore?: boolean;
   /** List of installment beneficiaries */
   beneficiaries?: Array<Beneficiary>;
   /** Unique ID of the installment */
