@@ -145,12 +145,12 @@ describe('Step1Configuration', () => {
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        debtPositionTypeCode: 'DPT001',
-        debtPositionType: 'Debt Position Title',
-        organizationType: 'org1',
-        macroAreaCode: 'macro1',
-        serviceTypeCode: 'service1',
-        collectionReason: 'reason1',
+        code: 'DPT001',
+        collectingReason: 'reason1',
+        description: 'Debt Position Title',
+        macroArea: 'macro1',
+        orgType: 'org1',
+        serviceType: 'service1',
         taxonomyCode: 'tax1'
       });
       expect(mockOnNext).toHaveBeenCalled();

@@ -43,7 +43,7 @@ describe('loaders', () => {
           orgFiscalCode: '123456789',
           flagNotifyIo: false,
           flagNotifyOutcomePush: false,
-          flagPaymentNotification: false,
+          flagPaymentNotification: false
         }
       ];
 
