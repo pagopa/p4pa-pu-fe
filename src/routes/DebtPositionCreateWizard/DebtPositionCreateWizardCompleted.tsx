@@ -10,7 +10,7 @@ function DebtPositionCreateWizardCompleted() {
   const navigate = useNavigate();
   const location = useLocation();
   const deployPath = config.deployPath;
-  const paymentObject = location.state?.paymentObject || '';
+  const paymentObject = location.state || '';
 
   return (
     <Box
