@@ -66,7 +66,7 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
           control={control}
           rules={{
             required: t(
-              'debtPositionCreateWizard.step3.beneficiary.taxCode.required'
+              'debtPositionCreateWizard.step3.beneficiary.taxCodeOrVat.required'
             ),
             validate: {
               taxCodeFormat: (value: string) =>

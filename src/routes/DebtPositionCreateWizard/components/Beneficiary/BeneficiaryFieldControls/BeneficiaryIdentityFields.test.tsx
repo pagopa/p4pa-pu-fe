@@ -200,7 +200,7 @@ describe('BeneficiaryIdentityFields', () => {
     );
 
     expect(mockT).toHaveBeenCalledWith(
-      'debtPositionCreateWizard.step3.beneficiary.taxCode.required'
+      'debtPositionCreateWizard.step3.beneficiary.taxCodeOrVat.required'
     );
 
     expect(mockT).toHaveBeenCalledWith(

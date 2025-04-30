@@ -331,7 +331,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     // Chiamata API per creare la posizione debitoria
     createDebtPosition({
       body: postBody,
-      paymentObject: formattedValues.paymentObject.value
+      paymentObject: postBody.description
     });
   };
 
