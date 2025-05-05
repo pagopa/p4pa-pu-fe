@@ -252,7 +252,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
                 validatePostalAccount: (value: string) => string | undefined;
                 validatePaymentMethod: (
                   iban: string,
-                  postalAccount: string
+                  postalAccount?: string
                 ) => string | undefined;
                 validateRemittance: (value: string) => string | undefined;
               }
