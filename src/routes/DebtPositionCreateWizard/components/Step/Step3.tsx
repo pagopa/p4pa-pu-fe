@@ -270,7 +270,9 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
           totalAmountCents: Math.round(
             parseFloat(formattedValues.amount.value || '0') * 100
           ),
-          description: formattedValues.paymentObject.value || '',
+          description: isInstallment
+            ? t('debtPositionCreateWizard.step3.paymentOption.installments')
+            : t('debtPositionCreateWizard.step3.paymentOption.single'),
           paymentOptionType: isInstallment
             ? PaymentOptionTypeEnum.INSTALLMENTS
             : PaymentOptionTypeEnum.SINGLE_INSTALLMENT,

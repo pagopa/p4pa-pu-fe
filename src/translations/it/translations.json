@@ -29,7 +29,7 @@
     },
     "error": {
       "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
-      "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file" 
+      "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
     }
   },
   "commons": {
@@ -418,6 +418,12 @@
           "invalid": "Codice fiscale o partita IVA non validi",
           "label": "Codice Fiscale o Partita IVA",
           "required": "Il campo codice fiscale o partita IVA è obbligatorio"
+        },
+        "vat": {
+          "invalid": "Partita IVA non valida",
+          "label": "Partita IVA",
+          "placeholder": "Inserisci la partita IVA (11 cifre)",
+          "required": "Il campo partita IVA è obbligatorio"
         },
         "remittance": {
           "label": "Causale",

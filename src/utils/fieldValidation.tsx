@@ -412,19 +412,15 @@ export const createBeneficiaryFieldValidators = (
 ) => {
   // Validation for tax code field
   const validateBeneficiaryTaxCode = (value: string): string | undefined => {
-    if (!value)
-      return t('debtPositionCreateWizard.step3.beneficiary.taxCode.required');
-
-    // Checks both tax code and VAT number
-    const normalizedValue = value.replace(/\s/g, '').toUpperCase();
-    if (
-      isValidCodiceFiscale(normalizedValue) ||
-      isValidPartitaIVA(normalizedValue)
-    ) {
-      return undefined;
+    if (!value) {
+      return t('debtPositionCreateWizard.step3.beneficiary.vat.required');
     }
 
-    return t('debtPositionCreateWizard.step3.beneficiary.taxCode.invalid');
+    if (!isValidPartitaIVA(value)) {
+      return t('debtPositionCreateWizard.step3.beneficiary.vat.invalid');
+    }
+
+    return undefined;
   };
 
   // Validation for IBAN field

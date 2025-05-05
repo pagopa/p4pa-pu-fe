@@ -292,7 +292,7 @@ export function TaxCodeField<T extends FieldValues>(
     <TextField
       {...field}
       fullWidth
-      label={t('debtPositionCreateWizard.step3.beneficiary.taxCodeOrVat.label')}
+      label={t('debtPositionCreateWizard.step3.beneficiary.vat.label')}
       required
       disabled={disabled}
       error={hasFieldError('taxCode', context)}

@@ -161,7 +161,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
       case 'G':
         return t('debtPositionCreateWizard.step2.vat.placeholder');
       default:
-        return t('debtPositionCreateWizard.step2.taxCodeOrVat.placeholder');
+        return t('debtPositionCreateWizard.step2.taxCode.placeholder');
     }
   };
 
