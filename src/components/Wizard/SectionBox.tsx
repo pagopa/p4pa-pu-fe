@@ -21,14 +21,14 @@ const SectionBox = ({
     mt={3}
     gap={2}
   >
-    <Stack>
+    <Stack gap={1}>
       <Stack direction="row" alignItems="center" gap={1} color="text.primary">
         {adornment}
         <Typography variant="subtitle1" fontWeight={600}>
           {title}
         </Typography>
       </Stack>
-      <Typography>{subtitle}</Typography>
+      <Typography color="text.secondary">{subtitle}</Typography>
     </Stack>
     {children}
   </Stack>

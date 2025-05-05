@@ -8,6 +8,7 @@ import { DebtTypeCreateSuccess } from './DebtTypeCreate/DebtTypeCreateSuccess';
 import { DebtTypeCatalogEdit } from './DebtTypeCatalogEdit';
 import { DebtTypeCatalogEditSuccess } from './DebtTypeCatalogEdit/DebtTypeCatalogEditSuccess';
 import DebtTypesCreated from './DebtTypesCreated/DebtTypesCreated';
+import { DebtTypeCreateEC } from './DebtTypeCreateEC';
 
 const deployPath = config.deployPath;
 
@@ -20,6 +21,15 @@ export const debtTypesRoutes = [
       {
         id: 'DEBT_TYPES_CATALOG',
         path: 'catalog',
+        element: <DebtTypes />,
+        handle: {
+          backButton: false,
+          hideBreadcrumbs: true
+        } as RouteHandleObject
+      },
+      {
+        id: 'DEBT_TYPES_EC',
+        path: 'ec/catalog',
         element: <DebtTypes />,
         handle: {
           backButton: false,
@@ -42,6 +52,19 @@ export const debtTypesRoutes = [
         id: 'DEBT_TYPE_CREATE',
         path: 'new',
         element: <DebtTypeCreate />,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject
+      },
+      {
+        id: 'DEBT_TYPE_CREATE_EC',
+        path: 'ec/new',
+        element: <DebtTypeCreateEC />,
         handle: {
           backButton: true,
           backButtonText: 'commons.exit',
