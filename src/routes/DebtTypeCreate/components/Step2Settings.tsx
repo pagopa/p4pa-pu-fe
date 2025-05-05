@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
@@ -20,6 +21,8 @@ import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import { FormComponent } from '../../../components/FormComponent';
 import { DebtPositionTypeRequestBody } from '../../../../generated/data-contracts';
+import { useState } from 'react';
+import { MarkdownPreview } from './MarkdownPreview';
 
 export type Step2Data = Partial<DebtPositionTypeRequestBody> &
   Pick<
@@ -39,6 +42,7 @@ export type Step2Props = {
 
 export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
   const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
 
   const schema = z
     .object({
@@ -77,6 +81,8 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
     'flagAnonymousFiscalCode'
   ];
   const flagNotifyIo = watch('flagNotifyIo');
+  const ioTemplateMessage = watch('ioTemplateMessage');
+  const ioTemplateSubject = watch('ioTemplateSubject');
 
   return (
     <form>
@@ -122,7 +128,7 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
           subtitle={t('debtTypeCreate.settings.template.helper')}
           adornment={<MessageIcon />}
         >
-          <Stack direction="row" gap={2} alignItems="center" width="100%">
+          <Stack direction="column" gap={2} alignItems="left" width="100%">
             <Stack>
               <Controller
                 name="flagNotifyIo"
@@ -200,6 +206,12 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                       />
                     )}
                   />
+                  <MarkdownPreview
+                    title={ioTemplateSubject || ''}
+                    message={ioTemplateMessage || ''}
+                    open={open}
+                    onClose={() => setOpen(false)}
+                  />
 
                   <Typography
                     variant="body2"
@@ -233,11 +245,17 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
               <Stack
                 sx={{ whiteSpace: 'nowrap' }}
                 direction="row"
-                gap={1}
                 color="primary.main"
               >
-                <PreviewIcon />
-                <Link>{t('debtTypeCreate.settings.preview')}</Link>
+                <Button
+                  variant="text"
+                  onClick={() => setOpen(true)}
+                  sx={{ px: 0 }}
+                  disabled={!(ioTemplateMessage && ioTemplateSubject)}
+                >
+                  <PreviewIcon sx={{ mr: 1 }} />
+                  {t('debtTypeCreate.settings.preview')}
+                </Button>
               </Stack>
             )}
           </Stack>

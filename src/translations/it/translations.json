@@ -26,6 +26,10 @@
     },
     "treasury": {
       "description": "Carica qui il file .zip con i giornali di cassa"
+    },
+    "error": {
+      "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
+      "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file" 
     }
   },
   "commons": {
