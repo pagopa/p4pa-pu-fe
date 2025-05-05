@@ -392,6 +392,9 @@ export const isValidIBAN = (iban: string): boolean => {
  * @returns true if the number is valid, false otherwise
  */
 export const isValidPostalAccount = (postalAccount: string): boolean => {
+  // Temporarily disabled
+  return true;
+  /*
   if (!postalAccount) return false;
 
   // Normalizes the postal account number by removing spaces
@@ -400,6 +403,7 @@ export const isValidPostalAccount = (postalAccount: string): boolean => {
   // Italian postal accounts consist of 12 numerical digits
   // or shorter numbers (minimum 6 digits)
   return /^\d{6,12}$/.test(postalAccount);
+  */
 };
 
 /**
@@ -434,24 +438,35 @@ export const createBeneficiaryFieldValidators = (
     return undefined;
   };
 
-  // Validation for postal account field
-  const validatePostalAccount = (value: string): string | undefined => {
-    if (!value) return undefined; // Not mandatory if IBAN is present
+  // Validation for postal account field - Temporarily disabled
+  // const validatePostalAccount = (value: string): string | undefined => {
+  //   return undefined;
+  //   /*
+  //   if (!value) return undefined; // Not mandatory if IBAN is present
 
-    if (!isValidPostalAccount(value)) {
-      return t(
-        'debtPositionCreateWizard.step3.beneficiary.postalAccount.invalid'
-      );
-    }
+  //   if (!isValidPostalAccount(value)) {
+  //     return t(
+  //       'debtPositionCreateWizard.step3.beneficiary.postalAccount.invalid'
+  //     );
+  //   }
 
-    return undefined;
-  };
+  //   return undefined;
+  //   */
+  // };
 
   // Validation for at least one payment method present (either IBAN or postal account)
   const validatePaymentMethod = (
-    iban: string,
-    postalAccount: string
+    iban: string
+    // postalAccount: string
   ): string | undefined => {
+    // Temporarily modified to only check IBAN
+    if (!iban || iban.trim() === '') {
+      return t(
+        'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
+      );
+    }
+    return undefined;
+    /*
     // If both are empty, return an error
     if (
       (!iban || iban.trim() === '') &&
@@ -463,6 +478,7 @@ export const createBeneficiaryFieldValidators = (
     }
 
     return undefined;
+    */
   };
 
   // Validation for remittance field
@@ -479,7 +495,7 @@ export const createBeneficiaryFieldValidators = (
   return {
     validateBeneficiaryTaxCode,
     validateIBAN,
-    validatePostalAccount,
+    // validatePostalAccount,
     validatePaymentMethod,
     validateRemittance
   };

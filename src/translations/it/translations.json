@@ -405,7 +405,7 @@
           "required": "Il campo iban è obbligatorio"
         },
         "paymentMethod": {
-          "required": "Uno tra i campi IBAN o conto corrente postale è obbligatorio"
+          "required": "Il campo IBAN è obbligatorio"
         },
         "postalAccount": {
           "invalid": "Il formato del conto corrente postale non è valido",

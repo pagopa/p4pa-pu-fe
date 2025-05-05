@@ -515,6 +515,7 @@ export function IBANField<T extends FieldValues>(
       fullWidth
       label={t('debtPositionCreateWizard.step3.beneficiary.iban.label')}
       disabled={disabled}
+      required
       error={hasIBANError(context, errors)}
       helperText={
         hasIBANError(context, errors)

@@ -387,7 +387,6 @@ export const createTransferObject = (
   amountCents: Math.round(parseFloat(beneficiary.amount || '0') * 100),
   remittanceInformation: beneficiary.remittance,
   ...(beneficiary.iban && { iban: beneficiary.iban }),
-  ...(beneficiary.postalAccount && { postalIban: beneficiary.postalAccount }),
   category: beneficiary.taxonomyCode,
   transferIndex: index + 2
 });
