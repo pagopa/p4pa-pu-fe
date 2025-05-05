@@ -97,3 +97,23 @@ export const downloadIngestionFlowFile = async (
     return null;
   }
 };
+
+/** return a mutation to get the ingestion flow error blob file */
+export const getIngestionFlowFileError = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['downloadIngestionFlowFileError', organizationId],
+    mutationFn: async (ingestionFlowFileId: number) => {
+      const response =
+        await utils.fileshareClient.organization.downloadIngestionFlowErrorsFile(
+          organizationId,
+          ingestionFlowFileId,
+          { format: 'blob' }
+        );
+
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const fileName =
+        extractFilename(contentDisposition) || `file-${ingestionFlowFileId}`;
+
+      return { data: response.data, fileName };
+    }
+  });
