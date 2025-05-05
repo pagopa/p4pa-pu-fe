@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
-import Step2AddDebtor, { Step2Data } from './Step2AddDebtor';
+import Step2AddDebtor from './Step2AddDebtor';
+import { Step2Data } from '../../../../models/DebtPositionType';
 
 const defaultData: Step2Data = {
   subjectType: { value: '', readonly: false },
