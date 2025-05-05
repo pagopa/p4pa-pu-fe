@@ -29,25 +29,25 @@ const mockData: Array<MyOrgData> = [
   },
   {
     id: '2',
-    managedCode: '00000',
+    managedCode: '00001',
     debtType: 'test 2',
-    description: 'a',
+    description: 'ab',
     lastUpdate: '15/10/2024 12:42:09',
     enabledOperators: 100
   },
   {
     id: '3',
-    managedCode: '00000',
+    managedCode: '00002',
     debtType: 'test 3',
-    description: 'a',
+    description: 'abc',
     lastUpdate: '15/10/2024 12:42:09',
     enabledOperators: 23
   },
   {
     id: '4',
-    managedCode: '00000',
+    managedCode: '00003',
     debtType: 'test 4',
-    description: 'a',
+    description: 'abcd',
     lastUpdate: '15/10/2024 12:42:09',
     enabledOperators: 1000
   }
