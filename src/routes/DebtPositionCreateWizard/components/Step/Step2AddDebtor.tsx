@@ -6,7 +6,10 @@ import PersonIcon from '@mui/icons-material/Person';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
-import { createValidators } from '../../../../utils/fieldValidation';
+import {
+  createValidators,
+  SubjectType
+} from '../../../../utils/fieldValidation';
 import { Step2Data } from '../../../../models/DebtPositionType';
 
 type Step2DataField = keyof Step2Data;
@@ -145,20 +148,20 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
 
   const getTaxCodeLabel = () => {
     switch (subjectTypeValue) {
-      case 'F':
+      case SubjectType.INDIVIDUAL:
         return t('debtPositionCreateWizard.step2.taxCode.label');
-      case 'G':
+      case SubjectType.BUSINESS:
         return t('debtPositionCreateWizard.step2.vat.label');
       default:
-        return t('commons.fiscalCodeorVat');
+        return t('debtPositionCreateWizard.step2.taxCode.label');
     }
   };
 
   const getTaxCodePlaceholder = () => {
     switch (subjectTypeValue) {
-      case 'F':
+      case SubjectType.INDIVIDUAL:
         return t('debtPositionCreateWizard.step2.taxCode.placeholder');
-      case 'G':
+      case SubjectType.BUSINESS:
         return t('debtPositionCreateWizard.step2.vat.placeholder');
       default:
         return t('debtPositionCreateWizard.step2.taxCode.placeholder');
@@ -167,9 +170,9 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
 
   const getCompanyNameLabel = () => {
     switch (subjectTypeValue) {
-      case 'F':
+      case SubjectType.INDIVIDUAL:
         return t('debtPositionCreateWizard.step2.fullName.label');
-      case 'G':
+      case SubjectType.BUSINESS:
         return t('debtPositionCreateWizard.step2.companyName.label');
       default:
         return t('debtPositionCreateWizard.step2.fullName.label');

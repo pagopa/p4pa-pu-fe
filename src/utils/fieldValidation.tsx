@@ -67,7 +67,10 @@ export const validateTaxCode = (
 
   switch (subjectType) {
     case SubjectType.INDIVIDUAL:
-      if (!isValidCodiceFiscale(normalizedValue)) {
+      if (
+        !isValidCodiceFiscale(normalizedValue) &&
+        !isValidPartitaIVA(normalizedValue)
+      ) {
         return ValidationErrorCode.INVALID_CF;
       }
       break;
@@ -296,7 +299,7 @@ export const createValidators = (
     if (!value) {
       // If subject type is not selected, shows generic message
       if (!subjectTypeValue) {
-        return t('debtPositionCreateWizard.step2.taxCodeOrVat.required');
+        return t('debtPositionCreateWizard.step2.taxCode.required');
       }
       // Otherwise shows specific message based on subject type
       return subjectTypeValue !== SubjectType.BUSINESS
@@ -309,7 +312,7 @@ export const createValidators = (
     if (result == 'commons.required') {
       // If subject type is not selected, shows generic message
       if (!subjectTypeValue) {
-        return t('debtPositionCreateWizard.step2.taxCodeOrVat.required');
+        return t('debtPositionCreateWizard.step2.taxCode.required');
       }
       // Otherwise shows specific message based on subject type
       return subjectTypeValue !== SubjectType.BUSINESS
