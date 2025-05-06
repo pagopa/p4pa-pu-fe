@@ -74,7 +74,6 @@ export const Sidebar: React.FC = () => {
     {
       label: t('commons.routes.FLOWS'),
       icon: RotatedAltRouteIcon,
-      // route: '/flows',
       end: false,
       items: [
         {
@@ -126,7 +125,7 @@ export const Sidebar: React.FC = () => {
 
     debtypes.push({
       label: t('commons.routes.DEBT_TYPES_CREATED'),
-      route: PageRoutes.DEBT_TYPES_CREATED,
+      route: PageRoutes.DEBT_TYPES_CREATED_SUPERADMIN,
       end: true
     });
 

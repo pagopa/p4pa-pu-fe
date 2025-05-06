@@ -230,7 +230,9 @@
     "search": "Cerca",
     "searchCF": "Cerca CF",
     "searchFor": "Cerca per",
+    "searchForCode": "Cerca per codice",
     "searchForDescription": "Cerca per descrizione",
+    "searchForIPACode": "Cerca per codice IPA",
     "searchIUF": "ID Rendicontazione",
     "searchIUV": "Cerca IUV",
     "searchName": "Cerca Nome",
@@ -547,7 +549,7 @@
   },
   "debtTypeCreate": {
     "title": "Crea un nuovo Tipo dovuto",
-    "description": "Compila i campi e crea un nuovo Tipo dovuto nel propio catalogo.",
+    "description": "Compila i campi e crea un nuovo Tipo dovuto nel proprio catalogo.",
     "configuration": {
       "alertMessage": "* Indica una domanda obbligatoria",
       "collectionReason": {
@@ -627,6 +629,25 @@
     "backToStart": "Torna alla sezione",
     "description": "La trovi nella sezione Catalogo Tipi dovuti, dove puoi modificarlo in qualsiasi momento.",
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
+  },
+  "debtTypesCreated": {
+    "callToAction": "Imposta nuovo",
+    "description": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente o negli enti gestiti.",
+    "tabManagedOrganizations": "Enti gestiti",
+    "tabMyOrganization": "Il mio ente",
+    "title": "Tipi dovuti impostati",
+    "managedOrganizationsDataGrid": {
+      "IPACode": "Cod. IPA",
+      "managedOrg": "Ente gestito",
+      "debtTypesSet": "Tipi dovuti impostati"
+    },
+    "myOrganizationDataGrid": {
+      "code": "Cod. Gestionale",
+      "debtType": "Tipo dovuto",
+      "description": "Descrizione",
+      "lastUpdateDate": "Ultima modifica",
+      "enabledOperators": "Operatori abilitati"
+    }
   },
   "debtTypes": {
     "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
