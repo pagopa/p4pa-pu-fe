@@ -4,7 +4,7 @@ import { MemoryRouter, useLocation, useNavigate } from 'react-router';
 import DebtPositionCreateWizardCompleted from './DebtPositionCreateWizardCompleted';
 import config from '../../utils/config';
 
-// Mock dei moduli
+// Module mocks
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
@@ -14,19 +14,19 @@ vi.mock('react-router', async () => {
   };
 });
 
-// Mock di react-i18next
+// react-i18next mock
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, string>) => {
-      // Implementazione semplice per le traduzioni utilizzate nei test
+      // Simple implementation for translations used in tests
       if (key === 'debtPositionCreateWizardCompleted.title') {
-        return `La posizione debitoria '${options?.paymentObject || ''}' è stata creata!`;
+        return `The debt position '${options?.paymentObject || ''}' has been created!`;
       }
       if (key === 'debtPositionCreateWizardCompleted.description') {
-        return "La trovi nella sezione Dovuti, dove puoi tenere traccia dell'andamento.";
+        return 'You can find it in the Debts section, where you can track its progress.';
       }
       if (key === 'debtPositionCreateWizardCompleted.backToStart') {
-        return "Torna all'inizio";
+        return 'Back to start';
       }
       return key;
     }
@@ -43,25 +43,25 @@ describe('DebtPositionCreateWizardCompleted', () => {
       mockNavigate
     );
 
-    // Imposta la variabile d'ambiente per i test
+    // Set environment variable for tests
     vi.stubEnv('VITE_DEPLOY_PATH', '/test-path');
 
-    // Aggiorna direttamente il valore di config.deployPath
+    // Directly update the config.deployPath value
     config.deployPath = '/test-path';
   });
 
   afterEach(() => {
-    // Ripristina le variabili d'ambiente originali dopo ogni test
+    // Restore original environment variables after each test
     vi.unstubAllEnvs();
 
-    // Ripristina il valore originale di config.deployPath
+    // Restore original config.deployPath value
     config.deployPath = originalDeployPath;
   });
 
-  it('renderizza correttamente il componente con il titolo e la descrizione', () => {
-    // Configura il mock di useLocation per fornire un paymentObject
+  it('correctly renders the component with title and description', () => {
+    // Configure useLocation mock to provide a description
     (useLocation as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      state: { paymentObject: 'Test Payment' }
+      state: { description: 'Test Payment' }
     });
 
     render(
@@ -70,28 +70,26 @@ describe('DebtPositionCreateWizardCompleted', () => {
       </MemoryRouter>
     );
 
-    // Verifica che il titolo contenga il paymentObject
+    // Verify that title contains the description
+    expect(
+      screen.getByText(/The debt position 'Test Payment' has been created!/i)
+    ).toBeInTheDocument();
+
+    // Verify that description is present
     expect(
       screen.getByText(
-        /La posizione debitoria '\[object Object\]' è stata creata!/i
+        /You can find it in the Debts section, where you can track its progress./i
       )
     ).toBeInTheDocument();
 
-    // Verifica che la descrizione sia presente
+    // Verify that "Back to start" button is present
     expect(
-      screen.getByText(
-        /La trovi nella sezione Dovuti, dove puoi tenere traccia dell'andamento./i
-      )
-    ).toBeInTheDocument();
-
-    // Verifica che il pulsante "Torna all'inizio" sia presente
-    expect(
-      screen.getByRole('button', { name: /Torna all'inizio/i })
+      screen.getByRole('button', { name: /Back to start/i })
     ).toBeInTheDocument();
   });
 
-  it('gestisce correttamente il caso in cui paymentObject non è fornito', () => {
-    // Configura il mock di useLocation senza paymentObject
+  it('correctly handles the case when description is not provided', () => {
+    // Configure useLocation mock without description
     (useLocation as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       state: {}
     });
@@ -102,18 +100,16 @@ describe('DebtPositionCreateWizardCompleted', () => {
       </MemoryRouter>
     );
 
-    // Verifica che il titolo contenga un valore vuoto per paymentObject
+    // Verify that title contains an empty value for description
     expect(
-      screen.getByText(
-        /La posizione debitoria '\[object Object\]' è stata creata!/i
-      )
+      screen.getByText(/The debt position '' has been created!/i)
     ).toBeInTheDocument();
   });
 
-  it('naviga correttamente quando si clicca sul pulsante "Torna all\'inizio"', () => {
-    // Configura il mock di useLocation
+  it('navigates correctly when clicking the "Back to start" button', () => {
+    // Configure useLocation mock
     (useLocation as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      state: { paymentObject: 'Test Payment' }
+      state: { description: 'Test Payment' }
     });
 
     render(
@@ -122,13 +118,13 @@ describe('DebtPositionCreateWizardCompleted', () => {
       </MemoryRouter>
     );
 
-    // Trova e clicca sul pulsante
+    // Find and click the button
     const backButton = screen.getByRole('button', {
-      name: /Torna all'inizio/i
+      name: /Back to start/i
     });
     fireEvent.click(backButton);
 
-    // Verifica che navigate sia stato chiamato con il percorso corretto
+    // Verify that navigate was called with the correct path
     expect(mockNavigate).toHaveBeenCalledWith('/test-path/debt-positions/');
   });
 });

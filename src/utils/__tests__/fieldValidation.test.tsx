@@ -116,8 +116,8 @@ describe('validateTaxCode', () => {
       );
     });
 
-    it('rejects invalid codice fiscale for persona fisica', () => {
-      expect(validateTaxCode('12345678901', SubjectType.INDIVIDUAL)).toBe(
+    it('rejects invalid codice fiscale and partita IVA for persona fisica', () => {
+      expect(validateTaxCode('123456', SubjectType.INDIVIDUAL)).toBe(
         ValidationErrorCode.INVALID_CF
       );
     });
@@ -137,14 +137,13 @@ describe('validateTaxCode', () => {
 });
 
 describe('createValidators', () => {
-  // Mock translation function
   const mockT = vi.fn((key: string) => key);
 
   describe('validateTaxCodeField', () => {
     it('returns generic message when field is empty and subject type is not selected', () => {
       const { validateTaxCodeField } = createValidators(mockT, '');
       expect(validateTaxCodeField('')).toBe(
-        'debtPositionCreateWizard.step2.taxCodeOrVat.required'
+        'debtPositionCreateWizard.step2.taxCode.required'
       );
     });
 
@@ -176,6 +175,14 @@ describe('createValidators', () => {
       expect(validateTaxCodeField('RSSMRA80A01H501U')).toBeUndefined();
     });
 
+    it('returns undefined when partita IVA is valid for natural person', () => {
+      const { validateTaxCodeField } = createValidators(
+        mockT,
+        SubjectType.INDIVIDUAL
+      );
+      expect(validateTaxCodeField('12345678901')).toBeUndefined();
+    });
+
     it('returns undefined when VAT number is valid for legal entity', () => {
       const { validateTaxCodeField } = createValidators(
         mockT,
@@ -184,12 +191,12 @@ describe('createValidators', () => {
       expect(validateTaxCodeField('12345678901')).toBeUndefined();
     });
 
-    it('returns error message when tax code is invalid for natural person', () => {
+    it('returns error message when both tax code and partita IVA are invalid for natural person', () => {
       const { validateTaxCodeField } = createValidators(
         mockT,
         SubjectType.INDIVIDUAL
       );
-      expect(validateTaxCodeField('12345678901')).toBe(
+      expect(validateTaxCodeField('123456')).toBe(
         'debtPositionCreateWizard.step2.taxCode.invalid'
       );
     });
@@ -201,6 +208,37 @@ describe('createValidators', () => {
       );
       expect(validateTaxCodeField('RSSMRA80A01H501U')).toBe(
         'debtPositionCreateWizard.step2.taxCode.invalidVAT'
+      );
+    });
+  });
+
+  describe('validateTaxCodeField handling commons.required', () => {
+    it('handles different scenarios when field is empty', () => {
+      // Test for no subject type
+      const { validateTaxCodeField: validateWithNoSubject } = createValidators(
+        mockT,
+        ''
+      );
+      expect(validateWithNoSubject('')).toBe(
+        'debtPositionCreateWizard.step2.taxCode.required'
+      );
+
+      // Test for individual
+      const { validateTaxCodeField: validateWithIndividual } = createValidators(
+        mockT,
+        SubjectType.INDIVIDUAL
+      );
+      expect(validateWithIndividual('')).toBe(
+        'debtPositionCreateWizard.step2.taxCode.required'
+      );
+
+      // Test for business
+      const { validateTaxCodeField: validateWithBusiness } = createValidators(
+        mockT,
+        SubjectType.BUSINESS
+      );
+      expect(validateWithBusiness('')).toBe(
+        'debtPositionCreateWizard.step2.vat.required'
       );
     });
   });
@@ -501,7 +539,6 @@ describe('createBeneficiaryValidators', () => {
     });
   });
 
-  // Adding other tests for remaining functions
   describe('isSingleBeneficiaryAmountValid', () => {
     it('returns true if hasSingleBeneficiary is false', () => {
       const validators = createBeneficiaryValidators(
@@ -519,6 +556,28 @@ describe('createBeneficiaryValidators', () => {
         mockGetValues,
         'beneficiaries',
         ''
+      );
+      expect(validators.isSingleBeneficiaryAmountValid(true)).toBe(true);
+    });
+
+    it('returns true when beneficiary is null', () => {
+      mockGetValues.mockReturnValue(null);
+      const validators = createBeneficiaryValidators(
+        mockT,
+        mockGetValues,
+        'beneficiaries',
+        '100'
+      );
+      expect(validators.isSingleBeneficiaryAmountValid(true)).toBe(true);
+    });
+
+    it('returns true when beneficiary amount is null or undefined', () => {
+      mockGetValues.mockReturnValue([{ amount: null }]);
+      const validators = createBeneficiaryValidators(
+        mockT,
+        mockGetValues,
+        'beneficiaries',
+        '100'
       );
       expect(validators.isSingleBeneficiaryAmountValid(true)).toBe(true);
     });
@@ -545,6 +604,32 @@ describe('createBeneficiaryValidators', () => {
         '100'
       );
       expect(validators.isBeneficiaryAmountValid(0, false)).toBe(true);
+    });
+
+    it('returns result of isSingleBeneficiaryAmountValid when hasSingleBeneficiary is true', () => {
+      // Setup a beneficiary with amount
+      mockGetValues.mockReturnValue([{ amount: '50' }]);
+
+      const validators = createBeneficiaryValidators(
+        mockT,
+        mockGetValues,
+        'beneficiaries',
+        '100'
+      );
+
+      expect(validators.isBeneficiaryAmountValid(0, true)).toBe(true);
+
+      // Now setup for a failing case by making the amount equal to the total
+      mockGetValues.mockReturnValue([{ amount: '100' }]);
+
+      const validators2 = createBeneficiaryValidators(
+        mockT,
+        mockGetValues,
+        'beneficiaries',
+        '100'
+      );
+
+      expect(validators2.isBeneficiaryAmountValid(0, true)).toBe(false);
     });
   });
 });
@@ -598,22 +683,47 @@ describe('createBeneficiaryFieldValidators', () => {
   });
 
   describe('validatePaymentMethod', () => {
-    it('returns undefined if IBAN is present', () => {
+    it('returns error message if both IBAN and postal account are empty', () => {
+      expect(validators.validatePaymentMethod('', '')).toBe(
+        'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
+      );
+      expect(validators.validatePaymentMethod('', '')).toBe(
+        'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
+      );
+    });
+
+    it('returns error message if IBAN is invalid', () => {
+      expect(validators.validatePaymentMethod('INVALID_IBAN')).toBe(
+        'debtPositionCreateWizard.step3.beneficiary.iban.invalid'
+      );
+    });
+
+    it('returns undefined when IBAN is valid', () => {
       expect(
         validators.validatePaymentMethod('IT60X0542811101000000123456')
       ).toBeUndefined();
     });
 
-    it('returns error message if field is empty', () => {
-      expect(validators.validatePaymentMethod('')).toBe(
-        'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
+    it('returns undefined when postal account is present even if IBAN is missing', () => {
+      expect(validators.validatePaymentMethod('', '123456')).toBeUndefined();
+    });
+  });
+
+  describe('validateRemittance', () => {
+    it('returns error message if remittance is empty', () => {
+      expect(validators.validateRemittance('')).toBe(
+        'debtPositionCreateWizard.step3.beneficiary.remittance.required'
       );
     });
 
-    it('returns error message if field contains only spaces', () => {
-      expect(validators.validatePaymentMethod(' ')).toBe(
-        'debtPositionCreateWizard.step3.beneficiary.iban.invalid'
+    it('returns error message if remittance contains only spaces', () => {
+      expect(validators.validateRemittance('   ')).toBe(
+        'debtPositionCreateWizard.step3.beneficiary.remittance.required'
       );
+    });
+
+    it('returns undefined if remittance is valid', () => {
+      expect(validators.validateRemittance('Valid remittance')).toBeUndefined();
     });
   });
 });

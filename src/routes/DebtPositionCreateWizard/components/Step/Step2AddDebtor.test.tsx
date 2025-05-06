@@ -39,7 +39,9 @@ describe('Step2AddDebtor', () => {
     expect(
       screen.getByText('debtPositionCreateWizard.step2.subjectType.label')
     ).toBeInTheDocument();
-    expect(screen.getByText('commons.fiscalCodeo')).toBeInTheDocument();
+    expect(
+      screen.getByText('debtPositionCreateWizard.step2.fiscalData')
+    ).toBeInTheDocument();
     expect(
       screen.getByText('debtPositionCreateWizard.step2.fullName.label')
     ).toBeInTheDocument();
