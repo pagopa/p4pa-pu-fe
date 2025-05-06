@@ -20,6 +20,7 @@ import {
 } from '../../models/Filters';
 import {
   downloadIngestionFlowFile,
+  getIngestionFlowFileError,
   getIngestionFlowFiles
 } from '../../api/ingestionFlowFiles';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
@@ -29,6 +30,7 @@ import {
   IngestionFlowFileTypeEnum
 } from '../../../generated/apiClient';
 import { downloadBlob } from '../../utils/download';
+import utils from '../../utils';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
@@ -67,20 +69,33 @@ const ImportFlowOverview = ({
 
   const { data } = getIngestionFlowFiles(organizationId, appliedFilters);
 
+  const getIngestionFlowFileErrorMutation =
+    getIngestionFlowFileError(organizationId);
+
   const handleDownloadFile = async (ingestionFlowFileId: number) => {
     const result = await downloadIngestionFlowFile(
       organizationId,
       ingestionFlowFileId
     );
 
-    //TODO: handle error
-    if (!result) {
-      console.error('Failed to download ingestion flow file');
-      return;
-    }
+    if (!result)
+      return utils.notify.emit(t('FileUploaderFlowImport.error.flowFile'));
 
     const { data, fileName } = result;
     downloadBlob(data, fileName);
+  };
+
+  const handleDownloadFileError = async (ingestionFlowFileId: number) => {
+    try {
+      const { data, fileName } =
+        await getIngestionFlowFileErrorMutation.mutateAsync(
+          ingestionFlowFileId
+        );
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('FileUploaderFlowImport.error.errorFlowFile'));
+    }
   };
 
   const renderActionCell = (params: GridRenderCellParams) => {
@@ -99,7 +114,7 @@ const ImportFlowOverview = ({
             {
               icon: <DownloadIcon fontSize="small" color="primary" />,
               label: t('commons.files.importedResult'),
-              action: () => console.log('Download result:', ingestionFlowFileId)
+              action: () => handleDownloadFileError(ingestionFlowFileId)
             }
           ]}
         />
@@ -192,7 +207,7 @@ const ImportFlowOverview = ({
           {
             icon: <Upload />,
             variant: 'outlined',
-            buttonText: t('commons.importFlowButton'),
+            buttonText: t('commons.importFlow'),
             onActionClick: () =>
               navigate(
                 generatePath(PageRoutes.IMPORT_FLOWS, {

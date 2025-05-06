@@ -8,7 +8,7 @@ vi.mock('react-i18next', () => ({
       const translations: Record<string, string> = {
         'commons.state': 'Stato',
         'commons.amount': 'Importo',
-        'commons.chipStaus.PAID': 'commons.chipStaus.PAID'
+        'commons.status.PAID': 'commons.status.PAID'
       };
       return translations[key] || key;
     }
@@ -63,7 +63,7 @@ describe('DetailContainer', () => {
   it('renders with Chip', () => {
     render(<DetailContainer {...mockProps} />);
 
-    const statusChip = screen.getByText('commons.chipStaus.PAID');
+    const statusChip = screen.getByText('commons.status.PAID');
     expect(statusChip).toBeDefined();
     expect(statusChip).toHaveClass('MuiChip-label');
   });

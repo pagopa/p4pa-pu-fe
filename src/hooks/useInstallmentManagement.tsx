@@ -212,6 +212,7 @@ export function useInstallmentManagement<T extends FieldValues>(
       const newInstallment: Installment = {
         amount: '',
         dueDate: null, // Due date always empty by default
+        remittance: '', // Empty remittance by default
         isMultibeneficiary: false
       };
 
@@ -326,12 +327,14 @@ export function useInstallmentManagement<T extends FieldValues>(
         // Create two initial simple installments with empty due dates
         const firstInstallment: Installment = {
           amount: '',
-          dueDate: null, // Empty due date
+          dueDate: null,
+          remittance: '',
           isMultibeneficiary: false
         };
         const secondInstallment: Installment = {
           amount: '',
-          dueDate: null, // Empty due date
+          dueDate: null,
+          remittance: '',
           isMultibeneficiary: false
         };
         // Use append sequentially and synchronously

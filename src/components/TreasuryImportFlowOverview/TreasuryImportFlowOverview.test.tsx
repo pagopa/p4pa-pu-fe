@@ -12,6 +12,7 @@ vi.mock('react-router-dom', async (importOriginal) => ({
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
+  getIngestionFlowFileError: vi.fn(),
   IngestionFlowFileType: {
     RECEIPT: 'RECEIPT',
     RECEIPT_PAGOPA: 'RECEIPT_PAGOPA',
@@ -32,7 +33,7 @@ describe('TreasuryImportFlowOverview', () => {
     i18nTestSetup({
       'commons.routes.TREASURY_IMPORT_FLOW_OVERVIEW': 'Treasury Import',
       'treasuryImportFlowOverview.description': 'Import your Treasury',
-      'commons.importFlowButton': 'Import Flow'
+      'commons.importFlow': 'Import Flow'
     });
   });
 

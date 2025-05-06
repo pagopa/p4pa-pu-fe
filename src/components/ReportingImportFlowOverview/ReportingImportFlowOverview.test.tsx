@@ -12,6 +12,7 @@ vi.mock('react-router-dom', async (importOriginal) => ({
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
+  getIngestionFlowFileError: vi.fn(),
   IngestionFlowFileType: {
     RECEIPT: 'RECEIPT',
     RECEIPT_PAGOPA: 'RECEIPT_PAGOPA',
@@ -32,7 +33,7 @@ describe('ReportingImportFlowOverview', () => {
     i18nTestSetup({
       'commons.routes.REPORTING_IMPORT_FLOW_OVERVIEW': 'Reporting Import',
       'reportingImportFlowOverview.description': 'Import your Reporting',
-      'commons.importFlowButton': 'Import Flow'
+      'commons.importFlow': 'Import Flow'
     });
   });
 

@@ -26,12 +26,12 @@ describe('ExportFlow', () => {
     vi.clearAllMocks();
   });
 
-  describe('complete config', () => {
+  describe('ExportFlow receipt', () => {
     beforeEach(() => {
       mockUseParams.mockReturnValue({ category: 'receipt' });
     });
 
-    it('renders with dueType select', () => {
+    it('renders all fields', () => {
       render(<ExportFlow />);
 
       expect(screen.getByText('exportFlow.title')).toBeDefined();
@@ -44,20 +44,31 @@ describe('ExportFlow', () => {
 
     it('keeps success button disabled initially', () => {
       render(<ExportFlow />);
-
-      const button = screen.getByTestId('success-button');
-      expect(button).toHaveProperty('disabled', true);
+      expect(screen.getByTestId('success-button')).toHaveProperty(
+        'disabled',
+        true
+      );
     });
   });
 
-  describe('config without dueType select', () => {
+  describe('ExportFlow conservation', () => {
     beforeEach(() => {
       mockUseParams.mockReturnValue({ category: 'conservation' });
     });
 
-    it('renders without dueType select', () => {
+    it('renders without dueType and fileVersion select', () => {
       render(<ExportFlow />);
+
+      expect(screen.queryByText('exportFlow.fileVersion')).toBeNull();
       expect(screen.queryByText('exportFlow.dueType')).toBeNull();
+    });
+
+    it('success button is initially disabled', () => {
+      render(<ExportFlow />);
+      expect(screen.getByTestId('success-button')).toHaveProperty(
+        'disabled',
+        true
+      );
     });
   });
 });

@@ -85,7 +85,54 @@ describe('useOrganizations', () => {
     expect(mockSetOpRole).toHaveBeenCalledWith('ROLE_ADMIN');
   });
 
-  it('should use the first organization if no match is found', () => {
+  it('should handle empty organizations data', () => {
+    (utils.loaders.getOrganizations as Mock).mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: false,
+      isSuccess: true
+    });
+
+    mockSetOrgId.mockClear();
+    mockSetOpRole.mockClear();
+
+    renderHook(() => useOrganizations());
+
+    expect(mockSetOrgId).not.toHaveBeenCalled();
+    expect(mockSetOpRole).not.toHaveBeenCalled();
+  });
+
+  it('should handle loading state', () => {
+    (utils.loaders.getOrganizations as Mock).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+      isSuccess: false
+    });
+
+    mockSetOrgId.mockClear();
+    mockSetOpRole.mockClear();
+
+    renderHook(() => useOrganizations());
+
+    expect(mockSetOrgId).not.toHaveBeenCalled();
+    expect(mockSetOpRole).not.toHaveBeenCalled();
+  });
+
+  it('should handle case when idToken has no organization info', () => {
+    vi.mock('../store/GlobalStore', async () => {
+      const actual = await vi.importActual('../store/GlobalStore');
+      return {
+        ...actual,
+        useStore: () => ({
+          state: {
+            organizationId: undefined,
+            idToken: null
+          }
+        })
+      };
+    });
+
     const mockData = [
       {
         orgFiscalCode: '99999999999',
@@ -102,9 +149,10 @@ describe('useOrganizations', () => {
       isSuccess: true
     });
 
-    renderHook(() => useOrganizations(), {
-      wrapper: StoreProvider
-    });
+    mockSetOrgId.mockClear();
+    mockSetOpRole.mockClear();
+
+    renderHook(() => useOrganizations());
 
     expect(mockSetOrgId).toHaveBeenCalledWith(3);
     expect(mockSetOpRole).toHaveBeenCalledWith('ROLE_OPER');

@@ -40,7 +40,10 @@ describe('loaders', () => {
           ipaCode: 'IPA01',
           orgName: 'Test Org',
           operatorRole: OperatorRoleEnum.ROLE_ADMIN,
-          orgFiscalCode: '123456789'
+          orgFiscalCode: '123456789',
+          flagNotifyIo: false,
+          flagNotifyOutcomePush: false,
+          flagPaymentNotification: false
         }
       ];
 

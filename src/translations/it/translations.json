@@ -4,20 +4,8 @@
       "filters": {
         "from": "Creazione dal"
       },
-      "status": {
-        "CANCELLED": "Cancellato",
-        "DRAFT": "Bozza",
-        "EXPIRED": "Scaduto",
-        "INVALID": "Non valido",
-        "PAID": "Pagato",
-        "PARTIALLY_PAID": "Pagamento iniziato",
-        "REPORTED": "Rendicontato",
-        "TO_SYNC": "Da sincronizzare",
-        "UNPAID": "Da pagare"
-      },
       "table": {
         "creationDate": "Data creazione",
-        "debtType": "Tipo dovuto",
         "description": "Descrizione",
         "status": "Stato"
       },
@@ -38,6 +26,10 @@
     },
     "treasury": {
       "description": "Carica qui il file .zip con i giornali di cassa"
+    },
+    "error": {
+      "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
+      "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file" 
     }
   },
   "commons": {
@@ -51,17 +43,6 @@
     "breadcrumbs": "Elementi di navigazione breadcrumbs",
     "breadcrumbsElement": "Elemento breadcrumb",
     "breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
-    "chipStaus": {
-      "CANCELLED": "Cancellato",
-      "DRAFT": "Bozza",
-      "EXPIRED": "Scaduto",
-      "INVALID": "Non valido",
-      "PAID": "Pagato",
-      "PARTIALLY_PAID": "Pagamento iniziato",
-      "REPORTED": "Rendicontato",
-      "TO_SYNC": "Da sincronizzare",
-      "UNPAID": "Da pagare"
-    },
     "close": "Chiudi",
     "collectionReason": "Motivo Riscossione",
     "continue": "Continua",
@@ -69,7 +50,9 @@
     "create": "Crea",
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
+    "creationFrom": "Creazione dal",
     "debtFlow": "Flussi dovuti",
+    "debtType": "Tipo dovuto",
     "debtTypeCode": "Codice Tipo dovuto",
     "debtTypeName": "Nome del Tipo dovuto",
     "debtor": "Debitore",
@@ -168,9 +151,7 @@
       "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
     },
     "from": "Dal",
-    "goOut": "Esci",
     "importFlow": "Importa flusso",
-    "importFlowButton": "Importa flusso",
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
     "iud": "IUD",
@@ -249,7 +230,9 @@
     "search": "Cerca",
     "searchCF": "Cerca CF",
     "searchFor": "Cerca per",
+    "searchForCode": "Cerca per codice",
     "searchForDescription": "Cerca per descrizione",
+    "searchForIPACode": "Cerca per codice IPA",
     "searchIUF": "ID Rendicontazione",
     "searchIUV": "Cerca IUV",
     "searchName": "Cerca Nome",
@@ -277,10 +260,19 @@
       "ERROR": "Errore",
       "EXPIRED": "Scaduto",
       "PROCESSING": "In elaborazione",
-      "UPLOADED": "Caricato"
+      "UPLOADED": "Caricato",
+      "CANCELLED": "Cancellato",
+      "DRAFT": "Bozza",
+      "INVALID": "Non valido",
+      "PAID": "Pagato",
+      "PARTIALLY_PAID": "Pagamento iniziato",
+      "REPORTED": "Rendicontato",
+      "TO_SYNC": "Da sincronizzare",
+      "UNPAID": "Da pagare"
     },
     "subject": "Oggetto",
     "successExport": "Abbiamo ricevuto la tua richiesta!",
+    "successExportDescription": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
     "successImport": "Flusso caricato con successo",
     "summary": "riepilogo",
     "taxCode": "Codice Tassonomico",
@@ -434,6 +426,10 @@
           "label": "Codice Fiscale",
           "required": "Il campo codice fiscale è obbligatorio"
         },
+        "remittance": {
+          "label": "Causale",
+          "required": "Il campo causale è obbligatorio"
+        },
         "taxonomyCode": {
           "label": "Codice Tassonomico",
           "required": "Il campo codice tassonomico è obbligatorio"
@@ -441,12 +437,9 @@
         "title": "ENTE BENEFICIARIO"
       },
       "dueDate": {
+        "invalid": "La data di scadenza non è valida o è incompleta",
         "label": "Data scadenza",
-        "required": "Il campo data scadenza è obbligatorio",
-        "invalid": "La data di scadenza non è valida o è incompleta"
-      },
-      "isMultibeneficiary": {
-        "label": "Altri beneficiari"
+        "required": "Il campo data scadenza è obbligatorio"
       },
       "installments": {
         "addInstallment": "Aggiungi rata",
@@ -464,6 +457,9 @@
         "otherBeneficiaries": "Altri beneficiari",
         "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?",
         "title": "Configurazione rate"
+      },
+      "isMultibeneficiary": {
+        "label": "Altri beneficiari"
       },
       "paymentObject": {
         "label": "Oggetto pagamento",
@@ -516,7 +512,6 @@
     "subject": "Oggetto del pagamento"
   },
   "debtPositions": {
-    "creationFrom": "Creazione dal",
     "expirationFrom": "Scadenza dal",
     "importDebtFlow": "Importa flussi di dovuti",
     "importDebtFlowDescription": "Carica un file .zip con l'informazione necessaria di dovuti mancanti.",
@@ -552,26 +547,47 @@
     }
   },
   "debtTypeCreate": {
+    "title": "Crea un nuovo Tipo dovuto",
+    "description": "Compila i campi e crea un nuovo Tipo dovuto nel proprio catalogo.",
     "configuration": {
       "alertMessage": "* Indica una domanda obbligatoria",
+      "collectionReason": {
+        "label": "Motivo Riscossione",
+        "required": "Il Motivo Riscossione é obbligatorio"
+      },
       "debtType": {
-        "helper": "Inserisce il nome attribuito al servizio di incasso",
         "label": "Nome del Tipo dovuto",
+        "helper": "Inserisce il nome attribuito al servizio di incasso",
         "maxCharacters": "Il nome del Tipo dovuto deve avere al massimo 100 caratteri",
         "placeholder": "Inserisce il nome attribuito al servizio di incasso",
         "required": "Il nome del Tipo dovuto è obbligatorio",
         "title": "Descrizione"
       },
+      "debtTypeCode": {
+        "label": "Codice Tipo dovuto",
+        "required": "Il codice del Tipo dovuto è obbligatorio"
+      },
+      "macroArea": {
+        "label": "Macroarea",
+        "required": "Il campo macroarea é obbligatorio"
+      },
+      "organizationType": {
+        "label": "Tipo ente",
+        "required": "Il campo Tipo ente è obbligatorio",
+        "title": "Ente"
+      },
+      "serviceType": {
+        "label": "Tipo Servizio",
+        "required": "Il campo Tipo Servizio é obbligatorio"
+      },
       "subtitle": "Definisce il nome e tassonomia del nuovo Tipo dovuto.",
-      "taxonomy": {
-        "label": "Tipo Ente",
-        "placeholder": "Tipo Ente",
-        "required": "Il campo tassonomia è obbligatorio",
+      "taxonomyCode": {
+        "label": "Codice Tassonomico",
+        "required": "Il Codice Tassonomico é obbligatorio",
         "title": "Tassonomia"
       },
       "title": "Configurazione Tipo dovuto"
     },
-    "description": "Compila i campi e crea un nuovo Tipo dovuto nel propio catalogo.",
     "settings": {
       "behaviour": "Comportamento",
       "message": {
@@ -579,17 +595,13 @@
         "label": "Messaggio",
         "required": "il messaggio é obbligatorio"
       },
-      "option1": {
+      "flagMandatoryDueDate": {
         "description": "Data di Scadenza Obbligatoria",
         "subtitle": "Imposta la Data di Scadenza un campo obbligatorio nella creazione."
       },
-      "option2": {
+      "flagAnonymousFiscalCode": {
         "description": "Codice Fiscale Anonimo",
         "subtitle": "Permette di creare dovuti senza segnalare un Codice Fiscale nel caso di assenza."
-      },
-      "option3": {
-        "description": "Pagamento Spontaneo",
-        "subtitle": "Il tipo dovuto può essere utilizzato per pagamenti spontanei"
       },
       "preview": "Vedi anteprima",
       "subject": {
@@ -610,28 +622,48 @@
     "stepper": {
       "step1": "Configurazione Tipo dovuto",
       "step2": "Ulteriori impostazioni "
-    },
-    "title": "Crea un nuovo Tipo dovuto"
+    }
   },
   "debtTypeCreateSuccess": {
     "backToStart": "Torna alla sezione",
     "description": "La trovi nella sezione Catalogo Tipi dovuti, dove puoi modificarlo in qualsiasi momento.",
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
+  "debtTypesCreated": {
+    "callToAction": "Imposta nuovo",
+    "descriptionFull": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente o negli enti gestiti.",
+    "description": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente.",
+    "tabManagedOrganizations": "Enti gestiti",
+    "tabMyOrganization": "Il mio ente",
+    "title": "Tipi dovuti impostati",
+    "managedOrganizationsDataGrid": {
+      "IPACode": "Cod. IPA",
+      "managedOrg": "Ente gestito",
+      "debtTypesSet": "Tipi dovuti impostati"
+    },
+    "myOrganizationDataGrid": {
+      "code": "Cod. Gestionale",
+      "debtType": "Tipo dovuto",
+      "description": "Descrizione",
+      "lastUpdateDate": "Ultima modifica",
+      "enabledOperators": "Operatori abilitati"
+    }
+  },
   "debtTypes": {
     "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
     "searchDescription": "Codice per Descrizione"
   },
   "exportFlow": {
-    "buttonReservationExport": "Prenota export",
     "buttonConfirmReservation": "Prenota",
+    "buttonReservationExport": "Prenota export",
     "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
     "dueType": "Tipo di dovuto",
     "dueTypePlaceHolder": "Tipo di dovuto da prenotare",
     "fileVersion": "Versione tracciato",
     "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
     "formTitle": "Configurazione della esportazione",
-    "title": "Prenota export di un flusso"
+    "title": "Prenota export di un flusso",
+    "errorMessage": "Si è verificato un errore durante la creazione dell'Export"
   },
   "flowDataGrid": {
     "authorizedOrganizations": "Enti abilitati",
@@ -685,9 +717,6 @@
   },
   "telematicReceiptDetail": {
     "title": "Dettaglio Ricevuta Telematica"
-  },
-  "telematicReceiptExportFlowThankYouPage": {
-    "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
   },
   "telematicReceiptFlowExportOverview": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
@@ -760,9 +789,9 @@
       "title": "Si è verificato un errore durante l'accesso a Piattaforma Unitaria"
     },
     "loggedout": {
+      "login": "Riconnettiti ora",
       "subtitle": "Grazie per aver utilizzato Piattaforma Unitaria",
-      "title": "Sei stato disconnesso dal sistema",
-      "login": "Riconnettiti ora"
+      "title": "Sei stato disconnesso dal sistema"
     }
   }
 }

@@ -1,4 +1,12 @@
-import { Container, Grid, Stack, Theme, useMediaQuery } from '@mui/material';
+import {
+  Alert,
+  Container,
+  Grid,
+  Snackbar,
+  Stack,
+  Theme,
+  useMediaQuery
+} from '@mui/material';
 import { grey } from '@mui/material/colors';
 import { Outlet, ScrollRestoration, useMatches } from 'react-router-dom';
 import { BackButton } from '../BackButton';
@@ -55,6 +63,19 @@ export function Layout() {
 
   return (
     <>
+      <Snackbar
+        autoHideDuration={6000}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        onClose={utils.notify.dismiss}
+        open={utils.notify.status.isVisible.value}
+      >
+        <Alert
+          severity={utils.notify.status.payload.value?.severity}
+          variant="outlined"
+        >
+          {utils.notify.status.payload.value?.text}
+        </Alert>
+      </Snackbar>
       <Container maxWidth={false} disableGutters>
         <Grid
           container

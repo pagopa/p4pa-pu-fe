@@ -56,7 +56,7 @@ export const DebtTypes = () => {
         callToAction={[
           {
             icon: <Add />,
-            buttonText: t('commons.createNew'),
+            buttonText: t('commons.createNewOne'),
             onActionClick: () => navigate(PageRoutes.DEBT_TYPE_CREATE)
           }
         ]}

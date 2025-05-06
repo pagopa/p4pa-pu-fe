@@ -144,7 +144,7 @@ describe('FileUploader Component', () => {
       });
       renderWithTheme(<FileUploader {...defaultProps} file={file} />);
 
-      const removeButton = screen.getByLabelText('commons.removeFile');
+      const removeButton = screen.getByLabelText('commons.files.remove');
       fireEvent.click(removeButton);
 
       expect(mockSetFile).toHaveBeenCalledWith(null);

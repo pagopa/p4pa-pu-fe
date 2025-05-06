@@ -63,7 +63,7 @@ export const DebtPositionsDataGrid = ({
     },
     {
       field: 'debtPositionTypeOrgDescription',
-      headerName: t('DebtPositions.Results.table.debtType'),
+      headerName: t('commons.debtType'),
       flex: 1,
       type: 'string'
     },
@@ -82,7 +82,7 @@ export const DebtPositionsDataGrid = ({
       type: 'string',
       renderCell: (params: GridRenderCellParams<ResultDataRow>) => (
         <Chip
-          label={t(`DebtPositions.Results.status.${params.value}`)}
+          label={t(`commons.status.${params.value}`)}
           title={t(params.value)}
           color={stateColors[params.value]}
           size="small"

@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { Trans, useTranslation } from 'react-i18next';
 import {
   Box,
+  Button,
   Checkbox,
   FormControlLabel,
   FormGroup,
@@ -19,15 +20,19 @@ import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import { FormComponent } from '../../../components/FormComponent';
+import { DebtPositionTypeRequestBody } from '../../../../generated/data-contracts';
+import { useState } from 'react';
+import { MarkdownPreview } from './MarkdownPreview';
 
-export type Step2Data = {
-  option1?: boolean;
-  option2?: boolean;
-  option3?: boolean;
-  checkbox2?: boolean;
-  textField?: string;
-  textArea?: string;
-};
+export type Step2Data = Partial<DebtPositionTypeRequestBody> &
+  Pick<
+    DebtPositionTypeRequestBody,
+    | 'flagMandatoryDueDate'
+    | 'flagAnonymousFiscalCode'
+    | 'flagNotifyIo'
+    | 'ioTemplateSubject'
+    | 'ioTemplateMessage'
+  >;
 
 export type Step2Props = {
   setData: (data: Step2Data) => void;
@@ -37,23 +42,23 @@ export type Step2Props = {
 
 export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
   const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
 
   const schema = z
     .object({
-      option1: z.boolean().optional(),
-      option2: z.boolean().optional(),
-      option3: z.boolean().optional(),
-      checkbox2: z.boolean().optional(),
-      textField: z.string().optional().default(''),
-      textArea: z.string().optional().default('')
+      flagMandatoryDueDate: z.boolean().optional(),
+      flagAnonymousFiscalCode: z.boolean().optional(),
+      flagNotifyIo: z.boolean().optional(),
+      ioTemplateSubject: z.string().optional().default(''),
+      ioTemplateMessage: z.string().optional().default('')
     })
-    .refine((data) => !data.checkbox2 || data.textField, {
+    .refine((data) => !data.flagNotifyIo || data.ioTemplateSubject, {
       message: t('debtTypeCreate.settings.subject.required'),
-      path: ['textField'] // Targets the textField property
+      path: ['ioTemplateSubject'] // Targets the ioTemplateSubject property
     })
-    .refine((data) => !data.checkbox2 || data.textArea, {
+    .refine((data) => !data.flagNotifyIo || data.ioTemplateMessage, {
       message: t('debtTypeCreate.settings.message.required'),
-      path: ['textArea']
+      path: ['ioTemplateMessage']
     });
 
   const {
@@ -71,8 +76,13 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
     onNext();
   };
 
-  const options: Array<keyof Step2Data> = ['option1', 'option2', 'option3'];
-  const checkbox2 = watch('checkbox2');
+  const options: Array<keyof Step2Data> = [
+    'flagMandatoryDueDate',
+    'flagAnonymousFiscalCode'
+  ];
+  const flagNotifyIo = watch('flagNotifyIo');
+  const ioTemplateMessage = watch('ioTemplateMessage');
+  const ioTemplateSubject = watch('ioTemplateSubject');
 
   return (
     <form>
@@ -118,10 +128,10 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
           subtitle={t('debtTypeCreate.settings.template.helper')}
           adornment={<MessageIcon />}
         >
-          <Stack direction="row" gap={2} alignItems="center" width="100%">
+          <Stack direction="column" gap={2} alignItems="left" width="100%">
             <Stack>
               <Controller
-                name="checkbox2"
+                name="flagNotifyIo"
                 control={control}
                 render={({ field }) => (
                   <FormControlLabel
@@ -131,100 +141,123 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                 )}
               />
 
-              <Controller
-                name="textField"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <FormComponent.TextField
-                    {...field}
-                    ref={null}
-                    required={checkbox2}
-                    label={t('debtTypeCreate.settings.subject.label')}
-                    placeholder={t(
-                      'debtTypeCreate.settings.subject.placeholder'
-                    )}
-                    error={checkbox2 && !!errors.textField}
-                    helperText={checkbox2 && errors.textField?.message}
-                    fullWidth
-                    sx={{ my: 2 }}
-                  />
-                )}
-              />
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="span"
-              >
-                <Trans
-                  i18nKey="debtTypeCreate.settings.subject.guide"
-                  components={[
-                    <Link
-                      key="link"
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      underline="none"
-                    />
-                  ]}
-                />
-              </Typography>
-
-              <Controller
-                name="textArea"
-                control={control}
-                render={({ field }) => (
-                  <TextField
-                    required={checkbox2}
-                    label={t('debtTypeCreate.settings.message.label')}
-                    InputLabelProps={{ shrink: true }}
-                    error={checkbox2 && !!errors.textArea}
-                    helperText={checkbox2 && errors.textArea?.message}
+              {flagNotifyIo && (
+                <Stack>
+                  <Controller
+                    name="ioTemplateSubject"
+                    control={control}
                     defaultValue=""
-                    fullWidth
-                    multiline
-                    rows={7}
-                    sx={{ my: 2 }}
-                    {...field}
+                    render={({ field }) => (
+                      <FormComponent.TextField
+                        {...field}
+                        ref={null}
+                        noAdornment
+                        required={flagNotifyIo}
+                        label={t('debtTypeCreate.settings.subject.label')}
+                        placeholder={t(
+                          'debtTypeCreate.settings.subject.placeholder'
+                        )}
+                        error={flagNotifyIo && !!errors.ioTemplateSubject}
+                        helperText={
+                          flagNotifyIo && errors.ioTemplateSubject?.message
+                        }
+                        fullWidth
+                        sx={{ my: 2 }}
+                      />
+                    )}
                   />
-                )}
-              />
-
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                component="span"
-              >
-                <Trans
-                  i18nKey="debtTypeCreate.settings.message.guide"
-                  components={[
-                    <Link
-                      key="link"
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      underline="none"
-                    />,
-                    <Link
-                      key="link"
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      underline="none"
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="span"
+                  >
+                    <Trans
+                      i18nKey="debtTypeCreate.settings.subject.guide"
+                      components={[
+                        <Link
+                          key="link"
+                          href="#"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          underline="none"
+                        />
+                      ]}
                     />
-                  ]}
-                />
-              </Typography>
+                  </Typography>
+
+                  <Controller
+                    name="ioTemplateMessage"
+                    control={control}
+                    render={({ field }) => (
+                      <TextField
+                        required={flagNotifyIo}
+                        label={t('debtTypeCreate.settings.message.label')}
+                        InputLabelProps={{ shrink: true }}
+                        error={flagNotifyIo && !!errors.ioTemplateMessage}
+                        helperText={
+                          flagNotifyIo && errors.ioTemplateMessage?.message
+                        }
+                        defaultValue=""
+                        fullWidth
+                        multiline
+                        rows={7}
+                        sx={{ my: 2 }}
+                        {...field}
+                      />
+                    )}
+                  />
+                  <MarkdownPreview
+                    title={ioTemplateSubject || ''}
+                    message={ioTemplateMessage || ''}
+                    open={open}
+                    onClose={() => setOpen(false)}
+                  />
+
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    component="span"
+                  >
+                    <Trans
+                      i18nKey="debtTypeCreate.settings.message.guide"
+                      components={[
+                        <Link
+                          key="link"
+                          href="#"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          underline="none"
+                        />,
+                        <Link
+                          key="link"
+                          href="#"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          underline="none"
+                        />
+                      ]}
+                    />
+                  </Typography>
+                </Stack>
+              )}
             </Stack>
-            <Stack
-              sx={{ whiteSpace: 'nowrap' }}
-              direction="row"
-              gap={1}
-              color="primary.main"
-            >
-              <PreviewIcon />
-              <Link>{t('debtTypeCreate.settings.preview')}</Link>
-            </Stack>
+            {flagNotifyIo && (
+              <Stack
+                sx={{ whiteSpace: 'nowrap' }}
+                direction="row"
+                color="primary.main"
+              >
+                <Button
+                  variant="text"
+                  onClick={() => setOpen(true)}
+                  sx={{ px: 0 }}
+                  disabled={!(ioTemplateMessage && ioTemplateSubject)}
+                >
+                  <PreviewIcon sx={{ mr: 1 }} />
+                  {t('debtTypeCreate.settings.preview')}
+                </Button>
+              </Stack>
+            )}
           </Stack>
         </SectionBox>
       </WizardStepWrapper>

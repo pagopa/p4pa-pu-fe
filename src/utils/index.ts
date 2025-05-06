@@ -5,6 +5,8 @@ import loaders from './loaders';
 import { Api } from '../../generated/apiClient';
 import { FileshareApi } from '../../generated/fileshare/fileshareClient';
 import storage from './storage';
+import notify from './notify';
+import roles from './roles';
 
 export default {
   apiClient: new Api({ baseURL: config.baseURL, timeout: config.apiTimeout }),
@@ -16,5 +18,7 @@ export default {
   loaders,
   sidemenu,
   style,
-  storage
+  storage,
+  notify,
+  roles
 };

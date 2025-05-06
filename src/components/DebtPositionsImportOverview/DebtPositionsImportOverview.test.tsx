@@ -11,6 +11,7 @@ vi.mock('react-router-dom', async (importOriginal) => ({
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
+  getIngestionFlowFileError: vi.fn(),
   IngestionFlowFileType: {
     RECEIPT: 'RECEIPT',
     RECEIPT_PAGOPA: 'RECEIPT_PAGOPA',
@@ -49,7 +50,7 @@ describe('DebtPositionsImportOverview', () => {
   it('renders import button that matches routing category', () => {
     render(<DebtPositionsImportOverview />);
 
-    const importButton = screen.getByLabelText('commons.importFlowButton');
+    const importButton = screen.getByLabelText('commons.importFlow');
     expect(importButton).toBeDefined();
 
     expect(importButton.closest('button')).not.toBeDisabled();

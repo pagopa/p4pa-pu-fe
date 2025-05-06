@@ -19,6 +19,7 @@ vi.mock('react-router-dom', async (importOriginal) => ({
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
+  getIngestionFlowFileError: vi.fn(),
   IngestionFlowFileType: {
     RECEIPT: 'RECEIPT',
     RECEIPT_PAGOPA: 'RECEIPT_PAGOPA',
@@ -250,7 +251,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
       />
     );
 
-    const importButton = screen.getByText('commons.importFlowButton');
+    const importButton = screen.getByText('commons.importFlow');
     fireEvent.click(importButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/mock-path');

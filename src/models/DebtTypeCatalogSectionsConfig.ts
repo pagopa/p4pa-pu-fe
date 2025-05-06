@@ -59,11 +59,11 @@ export const getAccordionSectionsConfig = (
           data: [
             {
               label: t('commons.organizationType'),
-              value: checkStringValue(data?.organizationTypeDescription)
+              value: checkStringValue(data?.description)
             },
             {
               label: t('commons.macroarea'),
-              value: checkStringValue(data?.macroAreaName)
+              value: checkStringValue(data?.macroArea)
             },
             {
               label: t('commons.serviceType'),
@@ -71,7 +71,7 @@ export const getAccordionSectionsConfig = (
             },
             {
               label: t('commons.collectionReason'),
-              value: checkStringValue(data?.collectionReason)
+              value: checkStringValue(data?.collectingReason)
             },
             {
               label: t('commons.taxCode'),

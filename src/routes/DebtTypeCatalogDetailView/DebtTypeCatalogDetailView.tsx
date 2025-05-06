@@ -2,7 +2,7 @@ import { Box, Button, Stack } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DetailAccordion } from '../../components/DetailAccordion/DetailAccordion';
 import {
   AccordionSectionConfig,
@@ -13,17 +13,35 @@ import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { STATE } from '../../store/types';
 import { useStore } from '../../store/GlobalStore';
 import { getDebtPositionTypeDetail } from '../../api/debtPositionTypeDetail';
+import debtPositions from '../../api/debtPositions';
+import { PageRoutes } from '../../App';
 
 export const DebtTypeCatalogDetailView = () => {
-  const { t } = useTranslation();
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [ErrorDescription, setErrorDescription] = useState<
+    'genericErrorDescription' | 'alreadyUsedDescription'
+  >('genericErrorDescription');
   const [accordionSections, setAccordionSections] = useState<
     Array<AccordionSectionConfig>
   >([]);
-
-  const { debtPositionTypeId } = useParams<{ debtPositionTypeId: string }>();
   const { state } = useStore();
-
+  const { t } = useTranslation();
+  const { debtPositionTypeId } = useParams<{ debtPositionTypeId: string }>();
+  const navigate = useNavigate();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
+  const deleteDebtPositionType = debtPositions.deleteDebtPositionType(
+    Number(debtPositionTypeId),
+    () => navigate(PageRoutes.DEBT_TYPES_CATALOG),
+    (error) => {
+      setOpenErrorDialog(true);
+      if (error.response?.status === 409) {
+        return setErrorDescription('alreadyUsedDescription');
+      }
+      setErrorDescription('genericErrorDescription');
+    }
+  );
 
   if (isNaN(Number(debtPositionTypeId))) {
     // TODO
@@ -60,13 +78,9 @@ export const DebtTypeCatalogDetailView = () => {
     }
   ];
 
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [openErrorDialog, setOpenErrorDialog] = useState(false);
-
-  const handleDeleteConfirm = () => {
+  const handleDeleteConfirm = async () => {
     setOpenDeleteDialog(false);
-    //TODO add error handling
-    setOpenErrorDialog(true);
+    deleteDebtPositionType.mutate();
   };
 
   const handleErrorConfirm = () => {
@@ -126,7 +140,7 @@ export const DebtTypeCatalogDetailView = () => {
         data-testid="error-dialog"
         open={openErrorDialog}
         title={t('debtTypeCatalogDetail.errorDialog.title')}
-        message={t('debtTypeCatalogDetail.errorDialog.genericErrorDescription')}
+        message={t(`debtTypeCatalogDetail.errorDialog.${ErrorDescription}`)}
         confirmLabel={t('commons.close')}
         onConfirm={handleErrorConfirm}
         onClose={() => setOpenErrorDialog(false)}
