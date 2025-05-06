@@ -13,6 +13,10 @@
       "titleIUV": "Avvisi (IUV)"
     }
   },
+  "errors": {
+    "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
+    "generic": "Si è verificato un errore. Riprova più tardi."
+  },
   "FileUploaderFlowImport": {
     "debt-positions": {
       "description": "Carica qui il file .zip con i Dovuti"

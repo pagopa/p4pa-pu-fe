@@ -4,11 +4,20 @@ import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 import { QueryObserverPendingResult } from '@tanstack/react-query';
 import { DebtPositionTypeOrg } from '../../generated/apiClient';
 import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
+import utils from '../utils';
 
 const mockT = vi.fn((key: string) => key);
 
 vi.mock('../api/debtPositionsTypes', () => ({
   getDebtPositionsTypes: vi.fn()
+}));
+
+vi.mock('../utils', () => ({
+  default: {
+    notify: {
+      emit: vi.fn()
+    }
+  }
 }));
 
 vi.mock('react-i18next', () => ({
@@ -130,11 +139,7 @@ describe('useDebtPositionsTypeOrg', () => {
     expect(result.current.optionsMap).toEqual([]);
   });
 
-  it('should handle API error', () => {
-    const consoleErrorSpy = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => null);
-
+  it('should handle API error and show notification', () => {
     vi.mocked(getDebtPositionsTypes).mockReturnValue({
       ...mockQueryResult,
       isError: true,
@@ -143,11 +148,10 @@ describe('useDebtPositionsTypeOrg', () => {
 
     renderHook(() => useDebtPositionsTypeOrg({ organizationId: 1 }));
 
-    expect(consoleErrorSpy).toHaveBeenCalledWith(
-      'Failed to fetch fe config',
-      new Error('API error')
+    expect(mockT).toHaveBeenCalledWith('errors.fetchDebtPositionsTypes');
+    expect(utils.notify.emit).toHaveBeenCalledWith(
+      'errors.fetchDebtPositionsTypes',
+      'error'
     );
-
-    consoleErrorSpy.mockRestore();
   });
 });

@@ -3,6 +3,7 @@ import { DebtPositionTypeOrg } from '../../generated/apiClient';
 import { useTranslation } from 'react-i18next';
 import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 import { DebtPositionType } from '../models/DebtPositionType';
+import utils from '../utils';
 
 export const useDebtPositionsTypeOrg = ({
   organizationId,
@@ -20,8 +21,7 @@ export const useDebtPositionsTypeOrg = ({
     organizationId
   });
 
-  const { data, isLoading, isError, isSuccess, error } =
-    debtPositionsTypesQuery;
+  const { data, isLoading, isError, isSuccess } = debtPositionsTypesQuery;
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -52,8 +52,7 @@ export const useDebtPositionsTypeOrg = ({
     }
 
     if (isError) {
-      // TODO: Handle error (e.g., show a toast)
-      console.error('Failed to fetch fe config', error);
+      utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
     }
   }, [data, isLoading, isError, isSuccess, t, includeAllOption]);
 
