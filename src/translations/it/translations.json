@@ -631,7 +631,8 @@
   },
   "debtTypesCreated": {
     "callToAction": "Imposta nuovo",
-    "description": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente o negli enti gestiti.",
+    "descriptionFull": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente o negli enti gestiti.",
+    "description": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente.",
     "tabManagedOrganizations": "Enti gestiti",
     "tabMyOrganization": "Il mio ente",
     "title": "Tipi dovuti impostati",
