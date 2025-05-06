@@ -272,6 +272,7 @@
     },
     "subject": "Oggetto",
     "successExport": "Abbiamo ricevuto la tua richiesta!",
+    "successExportDescription": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
     "successImport": "Flusso caricato con successo",
     "summary": "riepilogo",
     "taxCode": "Codice Tassonomico",
@@ -714,9 +715,6 @@
   },
   "telematicReceiptDetail": {
     "title": "Dettaglio Ricevuta Telematica"
-  },
-  "telematicReceiptExportFlowThankYouPage": {
-    "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
   },
   "telematicReceiptFlowExportOverview": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
