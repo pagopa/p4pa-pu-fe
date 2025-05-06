@@ -62,7 +62,7 @@ export const debtTypesRoutes = [
         } as RouteHandleObject
       },
       {
-        id: 'DEBT_TYPES_CREATED_SUPERADMIN',
+        id: 'DEBT_TYPES_CREATED',
         path: 'dashboard',
         element: <DebtTypesCreated />,
         handle: {
