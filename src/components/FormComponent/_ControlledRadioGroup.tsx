@@ -11,7 +11,8 @@ import {
   FormHelperText,
   FormLabel,
   Radio,
-  RadioGroup
+  RadioGroup,
+  RadioGroupProps
 } from '@mui/material';
 
 export type RadioOption<T extends FieldValues> = {
@@ -19,14 +20,15 @@ export type RadioOption<T extends FieldValues> = {
   label: string;
 };
 
-export type _ControlledRadioGroupProps<T extends FieldValues> = {
-  name: Path<T>;
-  control: Control<T>;
-  label: string;
-  options: Array<RadioOption<T>>;
-  disabled?: boolean;
-  required?: boolean;
-};
+export type _ControlledRadioGroupProps<T extends FieldValues> =
+  RadioGroupProps & {
+    name: Path<T>;
+    control: Control<T>;
+    label: string;
+    options: Array<RadioOption<T>>;
+    disabled?: boolean;
+    required?: boolean;
+  };
 
 export const _ControlledRadioGroup = <T extends FieldValues>({
   name,
@@ -34,7 +36,8 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
   label,
   options,
   disabled,
-  required
+  required,
+  ...props
 }: _ControlledRadioGroupProps<T>) => {
   return (
     <Controller
@@ -55,7 +58,7 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
           >
             {label}
           </FormLabel>
-          <RadioGroup {...field} aria-labelledby={`${name}-label`}>
+          <RadioGroup {...field} {...props} aria-labelledby={`${name}-label`}>
             {options.map(({ value, label }) => (
               <FormControlLabel
                 key={value}

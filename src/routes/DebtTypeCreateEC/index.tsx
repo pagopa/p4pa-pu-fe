@@ -2,14 +2,14 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
-import { Step1Configuration, Step1Data } from './components/Step1Configuration';
-import { Step2Data, Step2Settings } from './components/Step2Settings';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 import { useSignal } from '@preact/signals-react';
 import { postDebtPositionType } from '../../api/debtPositionsTypes';
 import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
 import React from 'react';
+import { Step1Configuration, Step1Data } from './steps/Step1Configuration';
+import { Step2Behaviour } from './steps/Step2Behaviour';
 
 const initialData: DebtPositionTypeRequestBody = {
   code: '',
@@ -64,7 +64,16 @@ export const DebtTypeCreateEC = () => {
     },
     {
       label: t('debtTypeCreateEC.stepper.step2'),
-      content: <React.Fragment key="step2" />
+      content: (
+        <Step2Behaviour
+          key="step2"
+          setData={(data: Step1Data) => {
+            formData.value = { ...formData.value, ...data };
+          }}
+          onNext={() => setStep(2)}
+          onBack={() => setStep(0)}
+        />
+      )
     },
     {
       label: t('debtTypeCreateEC.stepper.step3'),

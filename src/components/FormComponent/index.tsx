@@ -12,13 +12,20 @@ import {
   _ControlledRadioGroup,
   _ControlledRadioGroupProps
 } from './_ControlledRadioGroup';
+import { _ControlledSwitch, _ControlledSwitchProps } from './_ControlledSwitch';
+import {
+  _ControlledCheckbox,
+  _ControlledCheckboxProps
+} from './_ControlledCheckbox';
 
 export const FormComponent = {
   AmountField: _AmountField,
   Button: _Button,
-  ControlledSelect: _ControlledSelect,
-  ControlledTextField: _ControlledTextField,
+  ControlledCheckbox: _ControlledCheckbox,
   ControlledRadioGroup: _ControlledRadioGroup,
+  ControlledSelect: _ControlledSelect,
+  ControlledSwitch: _ControlledSwitch,
+  ControlledTextField: _ControlledTextField,
   DateRange: _DateRange,
   Select: _Select,
   TextField: _TextField
@@ -26,9 +33,11 @@ export const FormComponent = {
 
 export type {
   _ButtonProps as ButtonProps,
-  _ControlledSelectProps as ControlledSelectProps,
-  _ControlledTextFieldProps as ControlledTextFieldProps,
+  _ControlledCheckboxProps as ControlledCheckboxProps,
   _ControlledRadioGroupProps as ControlledRadioGroupProps,
+  _ControlledSelectProps as ControlledSelectProps,
+  _ControlledSwitchProps as ControlledSwitchProps,
+  _ControlledTextFieldProps as ControlledTextFieldProps,
   _DateRangeProps as DateRangeProps,
   _SelectProps as SelectProps,
   _TextFieldProps as TextFieldProps
