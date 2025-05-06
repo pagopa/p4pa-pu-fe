@@ -19,6 +19,7 @@ import {
   createPaidExportFile,
   createReceiptsArchivingExportFile
 } from '../../api/createExportFile';
+import utils from '../../utils';
 
 export const ExportFlowPage = () => {
   const { t } = useTranslation();
@@ -98,7 +99,8 @@ export const ExportFlowPage = () => {
             );
           },
           onError: (error) => {
-            console.error('Errore export paid:', error);
+            console.error(error);
+            utils.notify.emit(t('exportFlow.errorMessage'));
           }
         }
       );
@@ -126,7 +128,8 @@ export const ExportFlowPage = () => {
             );
           },
           onError: (error) => {
-            console.error('Errore export receipt archiving:', error);
+            console.error(error);
+            utils.notify.emit(t('exportFlow.errorMessage'));
           }
         }
       );

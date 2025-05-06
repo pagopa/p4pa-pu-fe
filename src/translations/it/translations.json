@@ -662,7 +662,8 @@
     "fileVersion": "Versione tracciato",
     "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
     "formTitle": "Configurazione della esportazione",
-    "title": "Prenota export di un flusso"
+    "title": "Prenota export di un flusso",
+    "errorMessage": "Si è verificato un errore durante la creazione dell'Export"
   },
   "flowDataGrid": {
     "authorizedOrganizations": "Enti abilitati",
