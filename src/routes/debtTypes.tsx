@@ -5,6 +5,7 @@ import DebtTypes from './DebtTypes/DebtTypes';
 import DebtTypeDetailView from './DebtTypeCatalogDetailView/DebtTypeCatalogDetailView';
 import { DebtTypeCreate } from './DebtTypeCreate';
 import { DebtTypeCreateSuccess } from './DebtTypeCreate/DebtTypeCreateSuccess';
+import DebtTypesCreated from './DebtTypesCreated/DebtTypesCreated';
 
 const deployPath = config.deployPath;
 
@@ -17,15 +18,6 @@ export const debtTypesRoutes = [
       {
         id: 'DEBT_TYPES_CATALOG',
         path: 'catalog',
-        element: <DebtTypes />,
-        handle: {
-          backButton: false,
-          hideBreadcrumbs: true
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_TYPES_CREATED',
-        path: 'catalog-created',
         element: <DebtTypes />,
         handle: {
           backButton: false,
@@ -67,6 +59,15 @@ export const debtTypesRoutes = [
           sidebar: {
             visible: false
           }
+        } as RouteHandleObject
+      },
+      {
+        id: 'DEBT_TYPES_CREATED_SUPERADMIN',
+        path: 'dashboard',
+        element: <DebtTypesCreated />,
+        handle: {
+          backButton: false,
+          hideBreadcrumbs: true
         } as RouteHandleObject
       }
     ]
