@@ -10,8 +10,10 @@ import FilterContainer, {
 } from '../../components/FilterContainer/FilterContainer';
 import ManagedOrgs from './ManagedOrgs/ManagedOrgs';
 import MyOrg from './MyOrg/MyOrg';
+import utils from '../../utils';
 
 export const DebtTypesCreated = () => {
+  const isSuperAdmin = utils.roles.useIsSuperAdmin();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [tabValue, setTabValue] = useState(0);
@@ -94,6 +96,35 @@ export const DebtTypesCreated = () => {
     }
   };
 
+  const renderTabs = () => {
+    <Box
+      sx={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center'
+      }}
+    >
+      <Box
+        sx={{
+          borderBottom: 1,
+          borderColor: 'divider',
+          width: '100%'
+        }}
+      >
+        <Tabs
+          value={tabValue}
+          onChange={handleTabChange}
+          aria-label="debt types tabs"
+          centered
+          variant="fullWidth"
+        >
+          <Tab label={t('debtTypesCreated.tabMyOrganization')} />
+          <Tab label={t('debtTypesCreated.tabManagedOrganizations')} />
+        </Tabs>
+      </Box>
+    </Box>;
+  };
+
   return (
     <>
       <TitleComponent
@@ -105,7 +136,9 @@ export const DebtTypesCreated = () => {
             onActionClick: () => navigate(PageRoutes.DEBT_TYPE_CREATE)
           }
         ]}
-        description={t('debtTypesCreated.description')}
+        description={t(
+          `debtTypesCreated.description${isSuperAdmin ? 'Full' : ''}`
+        )}
       />
 
       <Grid
@@ -118,32 +151,7 @@ export const DebtTypesCreated = () => {
         {renderFilters()}
       </Grid>
 
-      <Box
-        sx={{
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center'
-        }}
-      >
-        <Box
-          sx={{
-            borderBottom: 1,
-            borderColor: 'divider',
-            width: '100%'
-          }}
-        >
-          <Tabs
-            value={tabValue}
-            onChange={handleTabChange}
-            aria-label="debt types tabs"
-            centered
-            variant="fullWidth"
-          >
-            <Tab label={t('debtTypesCreated.tabMyOrganization')} />
-            <Tab label={t('debtTypesCreated.tabManagedOrganizations')} />
-          </Tabs>
-        </Box>
-      </Box>
+      {isSuperAdmin ? renderTabs() : null}
 
       <Box>
         {tabValue === 0 ? (
