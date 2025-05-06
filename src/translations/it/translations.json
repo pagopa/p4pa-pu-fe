@@ -272,6 +272,7 @@
     },
     "subject": "Oggetto",
     "successExport": "Abbiamo ricevuto la tua richiesta!",
+    "successExportDescription": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
     "successImport": "Flusso caricato con successo",
     "summary": "riepilogo",
     "taxCode": "Codice Tassonomico",
@@ -661,7 +662,8 @@
     "fileVersion": "Versione tracciato",
     "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
     "formTitle": "Configurazione della esportazione",
-    "title": "Prenota export di un flusso"
+    "title": "Prenota export di un flusso",
+    "errorMessage": "Si è verificato un errore durante la creazione dell'Export"
   },
   "flowDataGrid": {
     "authorizedOrganizations": "Enti abilitati",
@@ -715,9 +717,6 @@
   },
   "telematicReceiptDetail": {
     "title": "Dettaglio Ricevuta Telematica"
-  },
-  "telematicReceiptExportFlowThankYouPage": {
-    "description": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile."
   },
   "telematicReceiptFlowExportOverview": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",

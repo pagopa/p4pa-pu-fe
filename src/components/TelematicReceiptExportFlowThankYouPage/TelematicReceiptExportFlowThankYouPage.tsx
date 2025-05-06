@@ -23,7 +23,7 @@ export const TelematicReceiptExportFlowThankYouPage = () => {
           />
         }
         title={t('commons.successExport')}
-        description={t('telematicReceiptExportFlowThankYouPage.description')}
+        description={t('commons.successExportDescription')}
         buttonLabel={t('commons.close')}
         onButtonClick={handleButtonClick}
       />
