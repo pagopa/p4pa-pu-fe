@@ -66,7 +66,7 @@ describe('Step2Settings', () => {
       expect(mockSetData).toHaveBeenCalledWith({
         flagMandatoryDueDate: false,
         flagAnonymousFiscalCode: false,
-        flagNotifyIo: undefined,
+        flagNotifyIo: false,
         ioTemplateSubject: '',
         ioTemplateMessage: ''
       } as DebtPositionTypeRequestBody);
@@ -177,7 +177,7 @@ describe('Step2Settings', () => {
       expect(mockSetData).toHaveBeenCalledWith({
         flagMandatoryDueDate: false,
         flagAnonymousFiscalCode: false,
-        flagNotifyIo: undefined,
+        flagNotifyIo: false,
         ioTemplateSubject: '',
         ioTemplateMessage: ''
       } as DebtPositionTypeRequestBody);

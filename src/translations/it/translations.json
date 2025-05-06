@@ -29,7 +29,7 @@
     },
     "error": {
       "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
-      "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file" 
+      "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
     }
   },
   "commons": {
@@ -542,6 +542,15 @@
       "genericErrorDescription": "Siamo spiacenti, al momento non è possibile eliminare questo tipo di dovuto.",
       "title": "Il tipo dovuto non può essere eliminato"
     }
+  },
+  "debtTypeCatalogEdit": {
+    "title": "Modifica il Tipo dovuto",
+    "description": "Compila i campi e modifica il Tipo dovuto nel propio catalogo."
+  },
+  "debtTypeCatalogEditSuccess": {
+    "backToStart": "Torna alla sezione",
+    "description": "",
+    "title": "Il tipo dovuto '{{paymentObject}}' è stato modificato!"
   },
   "debtTypeCreate": {
     "title": "Crea un nuovo Tipo dovuto",

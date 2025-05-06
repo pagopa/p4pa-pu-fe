@@ -20,7 +20,10 @@ import {
   getTaxonomyCode
 } from '../../../api/taxonomy';
 import { useFormDependencies } from '../../../hooks/useFormDependecies';
-import { DebtPositionTypeRequestBody } from '../../../../generated/data-contracts';
+import {
+  DebtPositionTypeDetailDTO,
+  DebtPositionTypeRequestBody
+} from '../../../../generated/data-contracts';
 
 export type Step1Data = Partial<DebtPositionTypeRequestBody> &
   Pick<
@@ -35,9 +38,11 @@ export type Step1Data = Partial<DebtPositionTypeRequestBody> &
   >;
 
 export type Step1Props = {
-  setData: (data: Step1Data) => void;
+  setData?: (data: Step1Data) => void;
   onNext: () => void;
   onBack: () => void;
+  editmode?: boolean;
+  prefilledData?: DebtPositionTypeDetailDTO;
 };
 
 const validationSchema = (t: TFunction) =>
@@ -70,7 +75,13 @@ const validationSchema = (t: TFunction) =>
     })
   });
 
-export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
+export const Step1Configuration = ({
+  setData,
+  onNext,
+  onBack,
+  editmode = false,
+  prefilledData = undefined
+}: Step1Props) => {
   const { t } = useTranslation();
   const schema = validationSchema(t);
 
@@ -104,7 +115,9 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
   const isVisible = !!organizationType;
 
   const onSubmit = async (values: Step1Data) => {
-    setData(values);
+    if (setData) {
+      setData(values);
+    }
     onNext();
   };
 
@@ -113,7 +126,9 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
       <WizardStepWrapper
         title={t('debtTypeCreate.configuration.title')}
         subtitle={t('debtTypeCreate.configuration.subtitle')}
-        alertMessage={t('debtTypeCreate.configuration.alertMessage')}
+        alertMessage={
+          (!editmode && t('debtTypeCreate.configuration.alertMessage')) || ''
+        }
       >
         <SectionBox
           title={t('debtTypeCreate.configuration.debtType.title')}
@@ -123,7 +138,8 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
             <Controller
               name="code"
               control={control}
-              defaultValue=""
+              disabled={editmode}
+              defaultValue={editmode ? prefilledData?.code : ''}
               render={({ field }) => (
                 <FormComponent.TextField
                   {...field}
@@ -142,7 +158,8 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
               <Controller
                 name="description"
                 control={control}
-                defaultValue=""
+                disabled={editmode}
+                defaultValue={editmode ? prefilledData?.description : ''}
                 render={({ field }) => (
                   <FormComponent.TextField
                     {...field}
@@ -165,83 +182,194 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
             </Stack>
           </Stack>
         </SectionBox>
-
         <SectionBox
           title={t('debtTypeCreate.configuration.taxonomyCode.title')}
           adornment={<LocalOffer />}
         >
-          <FormComponent.ControlledSelect
-            control={control}
-            label={t('debtTypeCreate.configuration.organizationType.label')}
-            name="orgType"
-            fetchFn={getOrganizationsTypes}
-            key={keys.orgType}
-          />
-
+          <Stack>
+            {!editmode && (
+              <FormComponent.ControlledSelect
+                control={control}
+                label={t('debtTypeCreate.configuration.organizationType.label')}
+                name="orgType"
+                fetchFn={getOrganizationsTypes}
+                key={keys.orgType}
+              />
+            )}
+            {editmode && (
+              <Controller
+                name="orgType"
+                control={control}
+                disabled={editmode}
+                defaultValue={editmode ? prefilledData?.orgType : ''}
+                render={({ field }) => (
+                  <FormComponent.TextField
+                    {...field}
+                    ref={null}
+                    required
+                    label={t('debtTypeCreate.configuration.debtType.label')}
+                    id="orgType"
+                    placeholder={t(
+                      'debtTypeCreate.configuration.debtType.placeholder'
+                    )}
+                    noAdornment
+                  />
+                )}
+              />
+            )}
+          </Stack>
           <Stack
             visibility={isVisible ? 'visible' : 'hidden'}
             display={isVisible ? 'flex' : 'none'}
             gap={2}
           >
-            <FormComponent.ControlledSelect
-              control={control}
-              label={t('debtTypeCreate.configuration.macroArea.label')}
-              name="macroArea"
-              fetchFn={() => getMacroAreas({ organizationType })}
-              key={keys.macroArea}
-              disabled={!organizationType}
-            />
-
-            <Stack direction="row" gap={2}>
+            {!editmode && (
               <FormComponent.ControlledSelect
                 control={control}
-                label={t('debtTypeCreate.configuration.serviceType.label')}
-                name="serviceType"
-                fetchFn={() =>
-                  getServiceTypes({ organizationType, macroAreaCode })
-                }
-                key={keys.serviceType}
-                disabled={!macroAreaCode || !organizationType}
+                label={t('debtTypeCreate.configuration.macroArea.label')}
+                name="macroArea"
+                fetchFn={() => getMacroAreas({ organizationType })}
+                key={keys.macroArea}
+                disabled={!organizationType}
               />
-
-              <FormComponent.ControlledSelect
+            )}
+            {editmode && (
+              <Controller
+                name="macroArea"
                 control={control}
-                label={t('debtTypeCreate.configuration.collectionReason.label')}
-                name="collectingReason"
-                fetchFn={() =>
-                  getCollectionReasons({
-                    organizationType,
-                    serviceTypeCode,
-                    macroAreaCode
-                  })
-                }
-                key={keys.collectingReason}
-                disabled={
-                  !serviceTypeCode || !macroAreaCode || !organizationType
-                }
+                disabled={editmode}
+                defaultValue={editmode ? prefilledData?.macroArea : ''}
+                render={({ field }) => (
+                  <FormComponent.TextField
+                    {...field}
+                    ref={null}
+                    required
+                    label={t('debtTypeCreate.configuration.debtType.label')}
+                    id="macroArea"
+                    placeholder={t(
+                      'debtTypeCreate.configuration.debtType.placeholder'
+                    )}
+                    noAdornment
+                  />
+                )}
               />
+            )}
 
-              <FormComponent.ControlledSelect
-                control={control}
-                label={t('debtTypeCreate.configuration.taxonomyCode.label')}
-                name="taxonomyCode"
-                disabled={
-                  !collectionReason ||
-                  !serviceTypeCode ||
-                  !macroAreaCode ||
-                  !organizationType
-                }
-                fetchFn={() =>
-                  getTaxonomyCode({
-                    organizationType,
-                    macroAreaCode,
-                    serviceTypeCode,
-                    collectionReason
-                  })
-                }
-                key={keys.taxonomyCode}
-              />
-            </Stack>
+            {!editmode && (
+              <Stack direction="row" gap={2}>
+                <FormComponent.ControlledSelect
+                  control={control}
+                  label={t('debtTypeCreate.configuration.serviceType.label')}
+                  name="serviceType"
+                  fetchFn={() =>
+                    getServiceTypes({ organizationType, macroAreaCode })
+                  }
+                  key={keys.serviceType}
+                  disabled={!macroAreaCode || !organizationType}
+                />
+
+                <FormComponent.ControlledSelect
+                  control={control}
+                  label={t(
+                    'debtTypeCreate.configuration.collectionReason.label'
+                  )}
+                  name="collectingReason"
+                  fetchFn={() =>
+                    getCollectionReasons({
+                      organizationType,
+                      serviceTypeCode,
+                      macroAreaCode
+                    })
+                  }
+                  key={keys.collectingReason}
+                  disabled={
+                    !serviceTypeCode || !macroAreaCode || !organizationType
+                  }
+                />
+
+                <FormComponent.ControlledSelect
+                  control={control}
+                  label={t('debtTypeCreate.configuration.taxonomyCode.label')}
+                  name="taxonomyCode"
+                  disabled={
+                    !collectionReason ||
+                    !serviceTypeCode ||
+                    !macroAreaCode ||
+                    !organizationType
+                  }
+                  fetchFn={() =>
+                    getTaxonomyCode({
+                      organizationType,
+                      macroAreaCode,
+                      serviceTypeCode,
+                      collectionReason
+                    })
+                  }
+                  key={keys.taxonomyCode}
+                />
+              </Stack>
+            )}
+            {editmode && (
+              <Stack direction="row" gap={2}>
+                <Controller
+                  name="serviceType"
+                  control={control}
+                  disabled={editmode}
+                  defaultValue={editmode ? prefilledData?.serviceType : ''}
+                  render={({ field }) => (
+                    <FormComponent.TextField
+                      {...field}
+                      ref={null}
+                      required
+                      label={t('debtTypeCreate.configuration.debtType.label')}
+                      id="serviceType"
+                      placeholder={t(
+                        'debtTypeCreate.configuration.debtType.placeholder'
+                      )}
+                      noAdornment
+                    />
+                  )}
+                />
+                <Controller
+                  name="collectingReason"
+                  control={control}
+                  disabled={editmode}
+                  defaultValue={editmode ? prefilledData?.collectingReason : ''}
+                  render={({ field }) => (
+                    <FormComponent.TextField
+                      {...field}
+                      ref={null}
+                      required
+                      label={t('debtTypeCreate.configuration.debtType.label')}
+                      id="collectingReason"
+                      placeholder={t(
+                        'debtTypeCreate.configuration.debtType.placeholder'
+                      )}
+                      noAdornment
+                    />
+                  )}
+                />
+                <Controller
+                  name="taxonomyCode"
+                  control={control}
+                  disabled={editmode}
+                  defaultValue={editmode ? prefilledData?.taxonomyCode : ''}
+                  render={({ field }) => (
+                    <FormComponent.TextField
+                      {...field}
+                      ref={null}
+                      required
+                      label={t('debtTypeCreate.configuration.debtType.label')}
+                      id="taxonomyCode"
+                      placeholder={t(
+                        'debtTypeCreate.configuration.debtType.placeholder'
+                      )}
+                      noAdornment
+                    />
+                  )}
+                />
+              </Stack>
+            )}
           </Stack>
         </SectionBox>
       </WizardStepWrapper>

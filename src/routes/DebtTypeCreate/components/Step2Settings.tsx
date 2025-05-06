@@ -20,7 +20,10 @@ import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import { FormComponent } from '../../../components/FormComponent';
-import { DebtPositionTypeRequestBody } from '../../../../generated/data-contracts';
+import {
+  DebtPositionTypeDetailDTO,
+  DebtPositionTypeRequestBody
+} from '../../../../generated/data-contracts';
 import { useState } from 'react';
 import { MarkdownPreview } from './MarkdownPreview';
 
@@ -38,9 +41,17 @@ export type Step2Props = {
   setData: (data: Step2Data) => void;
   onNext: () => void;
   onBack?: () => void;
+  editmode?: boolean;
+  prefilledData?: DebtPositionTypeDetailDTO;
 };
 
-export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
+export const Step2Settings = ({
+  onBack,
+  setData,
+  onNext,
+  editmode = false,
+  prefilledData = undefined
+}: Step2Props) => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
 
@@ -95,31 +106,39 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
           adornment={<TuneIcon />}
         >
           <FormGroup>
-            {options.map((optionKey) => (
-              <Controller
-                key={optionKey}
-                name={optionKey}
-                control={control}
-                defaultValue={false}
-                render={({ field }) => (
-                  <FormControlLabel
-                    control={<Checkbox {...field} checked={!!field.value} />}
-                    label={
-                      <Box>
-                        <Typography variant="body1">
-                          {t(
-                            `debtTypeCreate.settings.${optionKey}.description`
-                          )}
-                        </Typography>
-                        <Typography variant="caption" color="textSecondary">
-                          {t(`debtTypeCreate.settings.${optionKey}.subtitle`)}
-                        </Typography>
-                      </Box>
-                    }
-                  />
-                )}
-              />
-            ))}
+            {options.map((optionKey) => {
+              const defaultValue: boolean | undefined =
+                prefilledData &&
+                (prefilledData[
+                  optionKey as keyof DebtPositionTypeDetailDTO
+                ] as boolean);
+
+              return (
+                <Controller
+                  key={optionKey}
+                  name={optionKey}
+                  control={control}
+                  defaultValue={(editmode && defaultValue) || false}
+                  render={({ field }) => (
+                    <FormControlLabel
+                      control={<Checkbox {...field} checked={!!field.value} />}
+                      label={
+                        <Box>
+                          <Typography variant="body1">
+                            {t(
+                              `debtTypeCreate.settings.${optionKey}.description`
+                            )}
+                          </Typography>
+                          <Typography variant="caption" color="textSecondary">
+                            {t(`debtTypeCreate.settings.${optionKey}.subtitle`)}
+                          </Typography>
+                        </Box>
+                      }
+                    />
+                  )}
+                />
+              );
+            })}
           </FormGroup>
         </SectionBox>
 
@@ -133,6 +152,7 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
               <Controller
                 name="flagNotifyIo"
                 control={control}
+                defaultValue={editmode ? prefilledData?.flagNotifyIo : false}
                 render={({ field }) => (
                   <FormControlLabel
                     control={<Checkbox {...field} checked={!!field.value} />}
@@ -146,7 +166,9 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                   <Controller
                     name="ioTemplateSubject"
                     control={control}
-                    defaultValue=""
+                    defaultValue={
+                      editmode ? prefilledData?.ioTemplateSubject : ''
+                    }
                     render={({ field }) => (
                       <FormComponent.TextField
                         {...field}
@@ -188,6 +210,9 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                   <Controller
                     name="ioTemplateMessage"
                     control={control}
+                    defaultValue={
+                      editmode ? prefilledData?.ioTemplateMessage : ''
+                    }
                     render={({ field }) => (
                       <TextField
                         required={flagNotifyIo}
@@ -197,7 +222,6 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
                         helperText={
                           flagNotifyIo && errors.ioTemplateMessage?.message
                         }
-                        defaultValue=""
                         fullWidth
                         multiline
                         rows={7}
@@ -263,7 +287,7 @@ export const Step2Settings = ({ onBack, setData, onNext }: Step2Props) => {
       </WizardStepWrapper>
       <WizardStepButtons
         onBack={onBack}
-        nextLabel={t('commons.create')}
+        nextLabel={editmode ? t('commons.edit') : t('commons.create')}
         onNext={handleSubmit(onSubmit)}
       />
     </form>
