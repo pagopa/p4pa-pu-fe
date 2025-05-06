@@ -250,7 +250,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
       step2Data: step2Data
     };
 
-    // Preparazione del body per la POST API
+    // Preparation of the body for the POST API
     const postBody: DebtPositionDTO = {
       description: formattedValues.step1Data?.description.value || '',
       status: DebtPositionStatus.UNPAID,
@@ -286,7 +286,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     // Save data
     setData(formattedValues);
 
-    // Chiamata API per creare la posizione debitoria
+    // API call to create the debt position
     createDebtPosition({
       body: postBody,
       paymentObject: postBody.description

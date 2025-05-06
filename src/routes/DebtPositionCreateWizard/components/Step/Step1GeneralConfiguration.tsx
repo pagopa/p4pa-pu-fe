@@ -54,7 +54,6 @@ const Step1GeneralConfiguration = ({
   });
   // Function called on valid form submission
   const onSubmit = (values: FormValues) => {
-    // Trova il tipo di dovuto selezionato
     const selectedType = debtPositionsTypes.find(
       (type: DebtPositionType) =>
         type.value.toString() === values.debtPositionType
