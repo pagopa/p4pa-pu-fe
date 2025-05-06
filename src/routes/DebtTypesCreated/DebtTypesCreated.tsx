@@ -96,7 +96,7 @@ export const DebtTypesCreated = () => {
     }
   };
 
-  const renderTabs = () => {
+  const renderTabs = () => (
     <Box
       sx={{
         width: '100%',
@@ -122,8 +122,8 @@ export const DebtTypesCreated = () => {
           <Tab label={t('debtTypesCreated.tabManagedOrganizations')} />
         </Tabs>
       </Box>
-    </Box>;
-  };
+    </Box>
+  );
 
   return (
     <>
