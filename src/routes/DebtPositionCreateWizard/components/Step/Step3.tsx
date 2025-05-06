@@ -176,11 +176,6 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     }
   };
 
-  /**
-   * Handles form submission
-   * Refactored to reduce cyclomatic complexity
-   * by extracting logic into separate functions
-   */
   const onSubmit = async (values: FormValues) => {
     // For non-installment case, validate beneficiaries
     if (!isInstallment) {
