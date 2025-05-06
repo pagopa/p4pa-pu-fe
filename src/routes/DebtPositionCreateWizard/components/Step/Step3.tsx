@@ -17,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';
+import utils from '../../../../utils';
 import type {
   Beneficiary,
   Installment,
@@ -80,21 +81,17 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
   } = useStore();
 
   const { mutate: createDebtPosition } = debtPositionsApi.createDebtPosition(
-    (response, paymentObject) => {
-      console.log('=== Risposta API ===');
-      console.log('Response:', response);
-      console.log('Payment Object:', paymentObject);
-      console.log('=== Navigazione ===');
-      console.log('Route:', PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED);
-      console.log('State:', paymentObject);
-
+    (paymentObject) => {
       navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
         state: paymentObject,
         replace: true
       });
     },
-    (error) => {
-      console.error('Errore nella creazione della posizione debitoria:', error);
+    () => {
+      utils.notify.emit(
+        t('debtPositionCreateWizard.step3.error.subtitle'),
+        'error'
+      );
     }
   );
 
@@ -285,47 +282,6 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
         }
       ]
     };
-
-    // Log dei dati per debug
-    console.log('=== Dati del form al submit ===');
-    console.log('=== Organization ID ===');
-    console.log('ID:', organizationId);
-    console.log('=== Dati Step1 ===');
-    console.log(
-      'Tipo Posizione Debitore:',
-      formattedValues.step1Data?.debtPositionType
-    );
-    console.log('Descrizione:', formattedValues.step1Data?.description);
-    console.log('=== Dati Step2 ===');
-    console.log('Tipo Soggetto:', formattedValues.step2Data?.subjectType);
-    console.log('Codice Fiscale:', formattedValues.step2Data?.taxCode);
-    console.log('Nome Completo:', formattedValues.step2Data?.fullName);
-    console.log('Indirizzo:', formattedValues.step2Data?.address);
-    console.log('Numero Civico:', formattedValues.step2Data?.civicNumber);
-    console.log('CAP:', formattedValues.step2Data?.zipCode);
-    console.log('Paese:', formattedValues.step2Data?.country);
-    console.log('Provincia:', formattedValues.step2Data?.province);
-    console.log('Città:', formattedValues.step2Data?.city);
-    console.log('=== Dati Step3 ===');
-    console.log('Payment Object:', formattedValues.paymentObject);
-    console.log('Payment Option:', formattedValues.paymentOption);
-    console.log('Amount:', formattedValues.amount);
-    console.log('Due Date:', formattedValues.dueDate);
-    console.log(
-      'Flag Mandatory Due Date:',
-      formattedValues.flagMandatoryDueDate
-    );
-    console.log('Is Multibeneficiary:', formattedValues.isMultibeneficiary);
-    console.log('=== Body per la POST API ===');
-    console.log('Body:', JSON.stringify(postBody, null, 2));
-
-    if (formattedValues.beneficiaries) {
-      console.log('Beneficiari:', formattedValues.beneficiaries);
-    }
-
-    if (formattedValues.installments) {
-      console.log('Rate:', formattedValues.installments);
-    }
 
     // Save data
     setData(formattedValues);

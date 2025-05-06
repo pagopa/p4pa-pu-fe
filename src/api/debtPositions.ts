@@ -156,8 +156,6 @@ const createDebtPosition = (
       return { response: response.data, paymentObject: params.paymentObject };
     },
     onSuccess: (data) => {
-      console.log('=== Mutation Success ===');
-      console.log('Data:', data);
       onSuccess?.(data.response, data.paymentObject);
     },
     onError

@@ -401,6 +401,9 @@
           "label": "Nome ente",
           "required": "Il campo ente beneficiario è obbligatorio"
         },
+        "error": {
+          "subtitle": "Qualcosa è andato storto. Per favore, riprova più tardi."
+        },
         "iban": {
           "invalid": "Il formato dell'IBAN non è valido",
           "label": "IBAN",
