@@ -59,7 +59,7 @@ export const getAccordionSectionsConfig = (
           data: [
             {
               label: t('commons.organizationType'),
-              value: checkStringValue(data?.description)
+              value: checkStringValue(data?.orgType)
             },
             {
               label: t('commons.macroarea'),

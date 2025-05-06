@@ -4,8 +4,8 @@ import { ValidationErrorCode } from '../store/types';
 
 // enum for subject type
 export enum SubjectType {
-  INDIVIDUAL = 'fisica',
-  BUSINESS = 'giuridica'
+  INDIVIDUAL = 'F',
+  BUSINESS = 'G'
 }
 
 /**
@@ -67,7 +67,10 @@ export const validateTaxCode = (
 
   switch (subjectType) {
     case SubjectType.INDIVIDUAL:
-      if (!isValidCodiceFiscale(normalizedValue)) {
+      if (
+        !isValidCodiceFiscale(normalizedValue) &&
+        !isValidPartitaIVA(normalizedValue)
+      ) {
         return ValidationErrorCode.INVALID_CF;
       }
       break;
@@ -296,7 +299,7 @@ export const createValidators = (
     if (!value) {
       // If subject type is not selected, shows generic message
       if (!subjectTypeValue) {
-        return t('debtPositionCreateWizard.step2.taxCodeOrVat.required');
+        return t('debtPositionCreateWizard.step2.taxCode.required');
       }
       // Otherwise shows specific message based on subject type
       return subjectTypeValue !== SubjectType.BUSINESS
@@ -309,7 +312,7 @@ export const createValidators = (
     if (result == 'commons.required') {
       // If subject type is not selected, shows generic message
       if (!subjectTypeValue) {
-        return t('debtPositionCreateWizard.step2.taxCodeOrVat.required');
+        return t('debtPositionCreateWizard.step2.taxCode.required');
       }
       // Otherwise shows specific message based on subject type
       return subjectTypeValue !== SubjectType.BUSINESS
@@ -391,16 +394,20 @@ export const isValidIBAN = (iban: string): boolean => {
  * @param postalAccount - Postal account number to validate
  * @returns true if the number is valid, false otherwise
  */
-export const isValidPostalAccount = (postalAccount: string): boolean => {
-  if (!postalAccount) return false;
+// export const isValidPostalAccount = (postalAccount: string): boolean => {
+//   // Temporarily disabled
+//   return true;
+//   /*
+//   if (!postalAccount) return false;
 
-  // Normalizes the postal account number by removing spaces
-  postalAccount = postalAccount.replace(/\s/g, '');
+//   // Normalizes the postal account number by removing spaces
+//   postalAccount = postalAccount.replace(/\s/g, '');
 
-  // Italian postal accounts consist of 12 numerical digits
-  // or shorter numbers (minimum 6 digits)
-  return /^\d{6,12}$/.test(postalAccount);
-};
+//   // Italian postal accounts consist of 12 numerical digits
+//   // or shorter numbers (minimum 6 digits)
+//   return /^\d{6,12}$/.test(postalAccount);
+//   */
+// };
 
 /**
  * Creates validation functions for beneficiary fields
@@ -412,19 +419,15 @@ export const createBeneficiaryFieldValidators = (
 ) => {
   // Validation for tax code field
   const validateBeneficiaryTaxCode = (value: string): string | undefined => {
-    if (!value)
-      return t('debtPositionCreateWizard.step3.beneficiary.taxCode.required');
-
-    // Checks both tax code and VAT number
-    const normalizedValue = value.replace(/\s/g, '').toUpperCase();
-    if (
-      isValidCodiceFiscale(normalizedValue) ||
-      isValidPartitaIVA(normalizedValue)
-    ) {
-      return undefined;
+    if (!value) {
+      return t('debtPositionCreateWizard.step3.beneficiary.vat.required');
     }
 
-    return t('debtPositionCreateWizard.step3.beneficiary.taxCode.invalid');
+    if (!isValidPartitaIVA(value)) {
+      return t('debtPositionCreateWizard.step3.beneficiary.vat.invalid');
+    }
+
+    return undefined;
   };
 
   // Validation for IBAN field
@@ -438,34 +441,31 @@ export const createBeneficiaryFieldValidators = (
     return undefined;
   };
 
-  // Validation for postal account field
-  const validatePostalAccount = (value: string): string | undefined => {
-    if (!value) return undefined; // Not mandatory if IBAN is present
+  // const validatePostalAccount = (value: string): string | undefined => {
+  //   if (!value) return undefined; // Not mandatory if IBAN is present
 
-    if (!isValidPostalAccount(value)) {
-      return t(
-        'debtPositionCreateWizard.step3.beneficiary.postalAccount.invalid'
-      );
-    }
-
-    return undefined;
-  };
+  //   if (!isValidPostalAccount(value)) {
+  //     return t(
+  //       'debtPositionCreateWizard.step3.beneficiary.postalAccount.invalid'
+  //     );
+  //   }
+  //   return undefined;
+  //   */
+  // };
 
   // Validation for at least one payment method present (either IBAN or postal account)
   const validatePaymentMethod = (
     iban: string,
-    postalAccount: string
+    postalAccount?: string
   ): string | undefined => {
-    // If both are empty, return an error
-    if (
-      (!iban || iban.trim() === '') &&
-      (!postalAccount || postalAccount.trim() === '')
-    ) {
+    if (!iban && !postalAccount) {
       return t(
         'debtPositionCreateWizard.step3.beneficiary.paymentMethod.required'
       );
     }
-
+    if (iban && !isValidIBAN(iban)) {
+      return t('debtPositionCreateWizard.step3.beneficiary.iban.invalid');
+    }
     return undefined;
   };
 
@@ -483,7 +483,7 @@ export const createBeneficiaryFieldValidators = (
   return {
     validateBeneficiaryTaxCode,
     validateIBAN,
-    validatePostalAccount,
+    // validatePostalAccount,
     validatePaymentMethod,
     validateRemittance
   };

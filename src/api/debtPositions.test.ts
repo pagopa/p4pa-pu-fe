@@ -9,7 +9,10 @@ import {
 import { createMock } from 'zodock';
 import debtPositions, { DebtPositionViewQuery } from './debtPositions';
 import { renderHook, waitFor } from '../__tests__/renderers';
-import { DebtPositionStatus } from '../../generated/apiClient';
+import {
+  DebtPositionStatus,
+  DebtPositionOrigin
+} from '../../generated/apiClient';
 
 vi.mock('../utils', () => {
   return {
@@ -19,7 +22,9 @@ vi.mock('../utils', () => {
           getDebtPositionViews: vi.fn(),
           getInstallments: vi.fn(),
           getInstallmentDetail: vi.fn(),
-          getDebtPositionDetail: vi.fn()
+          getDebtPositionDetail: vi.fn(),
+          deleteDebtPositionType: vi.fn(),
+          createDebtPosition: vi.fn()
         }
       }
     }
@@ -61,6 +66,35 @@ describe('getDebtPositionViews', () => {
       }
     });
   });
+
+  it('handles errors correctly', async () => {
+    const params = { organizationId: 10 };
+    const query: DebtPositionViewQuery = {
+      status: DebtPositionStatus.PAID,
+      creationDateFrom: '',
+      creationDateTo: '',
+      fiscalCode: '',
+      debtPositionTypeOrgId: undefined,
+      page: undefined,
+      size: undefined,
+      sort: undefined
+    };
+
+    const error = new Error('API Error');
+    vi.spyOn(utils.apiClient.bff, 'getDebtPositionViews').mockRejectedValue(
+      error
+    );
+
+    const { result } = renderHook(() =>
+      debtPositions.getDebtPositionViews(params)
+    );
+
+    result.current.mutate(query);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+  });
 });
 
 describe('getInstallments', () => {
@@ -95,6 +129,32 @@ describe('getInstallments', () => {
       paramsSerializer: {
         indexes: null
       }
+    });
+  });
+
+  it('handles errors correctly', async () => {
+    const params = { organizationId: 101 };
+    const query = {
+      debtPositionId: 555,
+      dueDateFrom: '',
+      dueDateTo: '',
+      iuv: '',
+      fiscalCode: '',
+      debtPositionTypeOrgId: undefined,
+      page: undefined,
+      size: undefined,
+      sort: undefined
+    };
+
+    const error = new Error('API Error');
+    vi.spyOn(utils.apiClient.bff, 'getInstallments').mockRejectedValue(error);
+
+    const { result } = renderHook(() => debtPositions.getInstallments(params));
+
+    result.current.mutate(query);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
     });
   });
 });
@@ -174,6 +234,117 @@ describe('getInstallmentDetail', () => {
       renderHook(() => debtPositions.getDebtPositionDetail(0, 0));
 
       expect(apiMock).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe('deleteDebtPositionType', () => {
+  it('calls the API correctly', async () => {
+    const debtPositionTypeId = 123;
+    const onSuccess = vi.fn();
+    const onError = vi.fn();
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteDebtPositionType')
+      .mockResolvedValue({ data: {} } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.deleteDebtPositionType(
+        debtPositionTypeId,
+        onSuccess,
+        onError
+      )
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(debtPositionTypeId);
+      expect(onSuccess).toHaveBeenCalled();
+    });
+  });
+
+  it('handles errors correctly', async () => {
+    const debtPositionTypeId = 123;
+    const onSuccess = vi.fn();
+    const onError = vi.fn();
+
+    const error = new Error('API Error');
+    vi.spyOn(utils.apiClient.bff, 'deleteDebtPositionType').mockRejectedValue(
+      error
+    );
+
+    const { result } = renderHook(() =>
+      debtPositions.deleteDebtPositionType(
+        debtPositionTypeId,
+        onSuccess,
+        onError
+      )
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalled();
+      expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);
+    });
+  });
+});
+
+describe('createDebtPosition', () => {
+  it('creates a debt position successfully', async () => {
+    const onSuccess = vi.fn();
+    const onError = vi.fn();
+    const mockDebtPosition = {
+      ...createMock(debtPositionDetailDTOSchema),
+      debtPositionOrigin: DebtPositionOrigin.ORDINARY,
+      organizationId: 123,
+      debtPositionTypeOrgId: 456,
+      flagPagoPaPayment: true
+    };
+    const paymentObject = 'test-payment';
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createDebtPosition')
+      .mockResolvedValue({ data: mockDebtPosition } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.createDebtPosition(onSuccess, onError)
+    );
+
+    result.current.mutate({ body: mockDebtPosition, paymentObject });
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(mockDebtPosition);
+      expect(onSuccess).toHaveBeenCalledWith(mockDebtPosition, paymentObject);
+    });
+  });
+
+  it('handles errors correctly', async () => {
+    const onSuccess = vi.fn();
+    const onError = vi.fn();
+    const mockDebtPosition = {
+      ...createMock(debtPositionDetailDTOSchema),
+      debtPositionOrigin: DebtPositionOrigin.ORDINARY,
+      organizationId: 123,
+      debtPositionTypeOrgId: 456,
+      flagPagoPaPayment: true
+    };
+    const error = new Error('API Error');
+
+    vi.spyOn(utils.apiClient.bff, 'createDebtPosition').mockRejectedValue(
+      error
+    );
+
+    const { result } = renderHook(() =>
+      debtPositions.createDebtPosition(onSuccess, onError)
+    );
+
+    result.current.mutate({ body: mockDebtPosition });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalled();
+      expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);
     });
   });
 });

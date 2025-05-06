@@ -4,6 +4,9 @@ import { PageRoutes } from '../../../../App';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { PaymentOption } from '../../../../models/paymentTypes';
+import { StoreProvider } from '../../../../store/GlobalStore';
+import { Step1Data, Step2Data } from '../../../../models/DebtPositionType';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 type FormSubmitEvent = {
   preventDefault?: () => void;
@@ -12,6 +15,7 @@ type FormSubmitEvent = {
 type FormFieldValue<T> = {
   value: T;
   readonly: boolean;
+  flagMandatoryDueDate?: boolean;
 };
 
 type FormData = {
@@ -273,10 +277,57 @@ vi.mock('../../../../components/Wizard/WizardStepButtons', () => ({
 import Step3 from './Step3';
 import { isBeneficiariesTotalValid } from '../../../../utils/fieldValidation';
 
+const mockStep1Data: Step1Data = {
+  description: { value: 'Test Description', readonly: false },
+  debtPositionType: { value: '1', flagMandatoryDueDate: false, readonly: false }
+};
+
+const mockStep2Data: Step2Data = {
+  subjectType: { value: 'PF', readonly: false },
+  taxCode: { value: 'RSSMRA80A01H501U', readonly: false },
+  fullName: { value: 'Mario Rossi', readonly: false },
+  address: { value: 'Via Roma 1', readonly: false },
+  civicNumber: { value: '1', readonly: false },
+  zipCode: { value: '00100', readonly: false },
+  country: { value: 'IT', readonly: false },
+  province: { value: 'RM', readonly: false },
+  city: { value: 'Roma', readonly: false }
+};
+
+const mockMutate = vi.fn().mockImplementation((params) => {
+  // Simula il successo della mutation
+  setTimeout(() => {
+    mockNavigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
+      state: params.paymentObject,
+      replace: true
+    });
+  }, 0);
+});
+
+vi.mock('../../../../api/debtPositions', () => ({
+  default: {
+    createDebtPosition: (
+      onSuccess: (response: unknown, paymentObject?: string) => void
+    ) => ({
+      mutate: (params: { body: unknown; paymentObject?: string }) => {
+        mockMutate(params);
+        onSuccess({}, params.paymentObject);
+      }
+    })
+  }
+}));
+
 describe('Step3 Component', () => {
   const mockSetData = vi.fn();
   const mockOnBack = vi.fn();
   const mockOnNext = vi.fn();
+  const queryClient = new QueryClient({
+    defaultOptions: {
+      queries: {
+        retry: false
+      }
+    }
+  });
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -287,6 +338,11 @@ describe('Step3 Component', () => {
     mockWatch.mockImplementation((key: string) =>
       defaultProvider.getValue(key)
     );
+    mockMutate.mockClear();
+  });
+
+  afterEach(() => {
+    queryClient.clear();
   });
 
   const initialData = {
@@ -298,17 +354,28 @@ describe('Step3 Component', () => {
     isMultibeneficiary: { value: false, readonly: false }
   };
 
-  it('should render correctly with initial data', () => {
-    render(
-      <MemoryRouter>
-        <Step3
-          data={initialData}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
+  const renderStep3 = (props = {}) => {
+    return render(
+      <QueryClientProvider client={queryClient}>
+        <MemoryRouter>
+          <StoreProvider>
+            <Step3
+              data={initialData}
+              setData={mockSetData}
+              onNext={mockOnNext}
+              onBack={mockOnBack}
+              step1Data={mockStep1Data}
+              step2Data={mockStep2Data}
+              {...props}
+            />
+          </StoreProvider>
+        </MemoryRouter>
+      </QueryClientProvider>
     );
+  };
+
+  it('should render correctly with initial data', () => {
+    renderStep3();
 
     expect(screen.getByTestId('wizard-step-wrapper')).toBeInTheDocument();
     expect(screen.getByTestId('section-box')).toBeInTheDocument();
@@ -323,16 +390,7 @@ describe('Step3 Component', () => {
   });
 
   it('should call onBack when clicking the back button', () => {
-    render(
-      <MemoryRouter>
-        <Step3
-          data={initialData}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3();
 
     const backButton = screen.getByTestId('back-button');
     fireEvent.click(backButton);
@@ -349,47 +407,38 @@ describe('Step3 Component', () => {
       installmentProvider.getValue(key)
     );
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            paymentOption: {
-              value: 'INSTALLMENTS' as PaymentOption,
-              readonly: false
-            }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        paymentOption: {
+          value: 'INSTALLMENTS' as PaymentOption,
+          readonly: false
+        }
+      }
+    });
 
     expect(screen.getByTestId('installment-field')).toBeInTheDocument();
   });
 
   it('should navigate to completion page after successful submit', async () => {
-    render(
-      <MemoryRouter>
-        <Step3
-          data={initialData}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3();
+
+    // Fill in required fields
+    const paymentObjectInput = screen.getByRole('textbox', {
+      name: /paymentObject/i
+    });
+    fireEvent.change(paymentObjectInput, { target: { value: 'Test Payment' } });
 
     const nextButton = screen.getByTestId('next-button');
     fireEvent.click(nextButton);
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledTimes(1);
+      expect(mockMutate).toHaveBeenCalled();
       expect(mockNavigate).toHaveBeenCalledWith(
         PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED,
         expect.objectContaining({
-          state: expect.any(Object),
+          state: expect.any(String),
           replace: true
         })
       );
@@ -406,58 +455,37 @@ describe('Step3 Component', () => {
       multibeneficiaryProvider.getValue(key)
     );
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            isMultibeneficiary: { value: true, readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        isMultibeneficiary: { value: true, readonly: false }
+      }
+    });
 
     expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
   });
 
   it('should handle correctly the case with flagMandatoryDueDate active', () => {
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            flagMandatoryDueDate: true
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        flagMandatoryDueDate: true
+      }
+    });
 
     expect(screen.getByTestId('date-picker')).toBeInTheDocument();
   });
 
   it('should handle readonly fields correctly', () => {
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            paymentObject: { value: 'Test Payment', readonly: true },
-            amount: { value: '100.00', readonly: true },
-            dueDate: { value: null, readonly: true },
-            isMultibeneficiary: { value: false, readonly: true }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        paymentObject: { value: 'Test Payment', readonly: true },
+        amount: { value: '100.00', readonly: true },
+        dueDate: { value: null, readonly: true },
+        isMultibeneficiary: { value: false, readonly: true }
+      }
+    });
 
     expect(screen.getByTestId('wizard-step-wrapper')).toBeInTheDocument();
   });
@@ -474,19 +502,12 @@ describe('Step3 Component', () => {
       multibeneficiaryProvider.getValue(key)
     );
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            isMultibeneficiary: { value: true, readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        isMultibeneficiary: { value: true, readonly: false }
+      }
+    });
 
     expect(mockSetValue).toHaveBeenCalledWith(
       'beneficiaries',
@@ -516,29 +537,20 @@ describe('Step3 Component', () => {
       multibeneficiaryProvider.getValue(key)
     );
 
-    mockGetValues.mockReturnValueOnce([
-      { entityName: 'Test', amount: '50.00' }
-    ]);
+    mockGetValues.mockReturnValue([{ entityName: 'Test', amount: '50.00' }]);
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            isMultibeneficiary: { value: true, readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        isMultibeneficiary: { value: true, readonly: false }
+      }
+    });
 
     const nextButton = screen.getByTestId('next-button');
     fireEvent.click(nextButton);
 
     expect(isBeneficiariesTotalValid).toHaveBeenCalledTimes(1);
-    expect(mockTrigger).toHaveBeenCalledWith('beneficiaries');
+    expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.beneficiaries');
     expect(mockSetData).not.toHaveBeenCalled();
   });
 
@@ -551,19 +563,12 @@ describe('Step3 Component', () => {
       installmentProvider.getValue(key)
     );
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            paymentOption: { value: 'INSTALLMENTS', readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        paymentOption: { value: 'INSTALLMENTS', readonly: false }
+      }
+    });
 
     expect(screen.getByTestId('installment-field')).toBeInTheDocument();
 
@@ -588,19 +593,12 @@ describe('Step3 Component', () => {
     ];
     mockGetValues.mockReturnValueOnce(mockBeneficiaries);
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            isMultibeneficiary: { value: true, readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        isMultibeneficiary: { value: true, readonly: false }
+      }
+    });
 
     mockSetValue('amount.value', '200,00');
 
@@ -637,19 +635,12 @@ describe('Step3 Component', () => {
     ];
     mockGetValues.mockReturnValue(mockInstallments);
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            paymentOption: { value: 'INSTALLMENTS', readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        paymentOption: { value: 'INSTALLMENTS', readonly: false }
+      }
+    });
 
     const nextButton = screen.getByTestId('next-button');
     fireEvent.click(nextButton);
@@ -692,19 +683,12 @@ describe('Step3 Component', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => null);
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            paymentOption: { value: 'INSTALLMENTS', readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        paymentOption: { value: 'INSTALLMENTS', readonly: false }
+      }
+    });
 
     const nextButton = screen.getByTestId('next-button');
     fireEvent.click(nextButton);
@@ -746,19 +730,12 @@ describe('Step3 Component', () => {
       .spyOn(console, 'error')
       .mockImplementation(() => null);
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            paymentOption: { value: 'INSTALLMENTS', readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        paymentOption: { value: 'INSTALLMENTS', readonly: false }
+      }
+    });
 
     const nextButton = screen.getByTestId('next-button');
 
@@ -772,16 +749,7 @@ describe('Step3 Component', () => {
   });
 
   it('should format correctly an input value in the amount field', () => {
-    const { container } = render(
-      <MemoryRouter>
-        <Step3
-          data={initialData}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    const { container } = renderStep3();
 
     const amountInput = container.querySelector('input[name="amount.value"]');
     expect(amountInput).not.toBeNull();
@@ -796,16 +764,7 @@ describe('Step3 Component', () => {
   });
 
   it('should handle paymentOption change from SINGLE to INSTALLMENTS', () => {
-    render(
-      <MemoryRouter>
-        <Step3
-          data={initialData}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3();
 
     mockSetValue.mockClear();
 
@@ -833,19 +792,12 @@ describe('Step3 Component', () => {
 
     mockSetValue.mockClear();
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            paymentOption: { value: 'INSTALLMENTS', readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        paymentOption: { value: 'INSTALLMENTS', readonly: false }
+      }
+    });
 
     mockSetValue('paymentOption.value', 'SINGLE');
     mockSetValue('amount.value', '');
@@ -868,19 +820,12 @@ describe('Step3 Component', () => {
     mockSetValue.mockClear();
     mockResetAllBeneficiaries.mockClear();
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            isMultibeneficiary: { value: true, readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        isMultibeneficiary: { value: true, readonly: false }
+      }
+    });
 
     mockSetValue('isMultibeneficiary.value', false);
     mockResetAllBeneficiaries();
@@ -907,35 +852,36 @@ describe('Step3 Component', () => {
       {
         entityName: 'Test1',
         amount: '50.00',
-        remittance: '' // Empty remittance field
-      },
-      {
-        entityName: 'Test2',
-        amount: '50.00',
-        remittance: 'Test remittance'
+        remittance: '', // Empty remittance field
+        iban: 'IT60X0542811101000000123456'
       }
     ];
-    mockGetValues.mockReturnValue(mockBeneficiaries);
+    mockGetValues.mockReturnValue({
+      beneficiaries: mockBeneficiaries,
+      paymentObject: { value: 'Test Payment' }
+    });
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            isMultibeneficiary: { value: true, readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        isMultibeneficiary: { value: true, readonly: false }
+      }
+    });
+
+    // Compilo i campi obbligatori
+    const paymentObjectInput = screen.getByRole('textbox', {
+      name: /paymentObject/i
+    });
+    fireEvent.change(paymentObjectInput, { target: { value: 'Test Payment' } });
 
     const nextButton = screen.getByTestId('next-button');
     fireEvent.click(nextButton);
 
-    expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.0.remittance');
+    expect(mockTrigger).toHaveBeenCalledWith(
+      'beneficiaries.beneficiaries.0.remittance'
+    );
     expect(mockSetData).not.toHaveBeenCalled();
+    expect(mockMutate).not.toHaveBeenCalled();
   });
 
   it('should block submit when there are installments with empty remittance', async () => {
@@ -957,19 +903,12 @@ describe('Step3 Component', () => {
     ];
     mockGetValues.mockReturnValue(mockInstallments);
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            paymentOption: { value: 'INSTALLMENTS', readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        paymentOption: { value: 'INSTALLMENTS', readonly: false }
+      }
+    });
 
     const nextButton = screen.getByTestId('next-button');
     fireEvent.click(nextButton);
@@ -1002,28 +941,37 @@ describe('Step3 Component', () => {
         iban: 'IT60X0542811101000000789012'
       }
     ];
-    mockGetValues.mockReturnValue(mockBeneficiaries);
+    mockGetValues.mockReturnValue({
+      beneficiaries: mockBeneficiaries,
+      paymentObject: { value: 'Test Payment' }
+    });
 
-    render(
-      <MemoryRouter>
-        <Step3
-          data={{
-            ...initialData,
-            isMultibeneficiary: { value: true, readonly: false }
-          }}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      </MemoryRouter>
-    );
+    renderStep3({
+      data: {
+        ...initialData,
+        isMultibeneficiary: { value: true, readonly: false }
+      }
+    });
+
+    // Compilo i campi obbligatori
+    const paymentObjectInput = screen.getByRole('textbox', {
+      name: /paymentObject/i
+    });
+    fireEvent.change(paymentObjectInput, { target: { value: 'Test Payment' } });
 
     const nextButton = screen.getByTestId('next-button');
     fireEvent.click(nextButton);
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalled();
+      expect(mockMutate).toHaveBeenCalled();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED,
+        expect.objectContaining({
+          state: expect.any(String),
+          replace: true
+        })
+      );
     });
   });
 });

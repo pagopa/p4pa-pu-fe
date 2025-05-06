@@ -11,15 +11,7 @@ const mockRulesForIban = {
   }
 };
 
-const mockRulesForPostalAccount = {
-  validate: {
-    postalAccountFormat: vi.fn(),
-    paymentMethod: vi.fn()
-  }
-};
-
 let ibanRules = { ...mockRulesForIban };
-let postalAccountRules = { ...mockRulesForPostalAccount };
 
 vi.mock('./BeneficiaryControlledField', () => ({
   BeneficiaryControlledField: ({
@@ -34,9 +26,6 @@ vi.mock('./BeneficiaryControlledField', () => ({
   }) => {
     if (name && name.includes('.iban')) {
       ibanRules = rules as typeof mockRulesForIban;
-    }
-    if (name && name.includes('.postalAccount')) {
-      postalAccountRules = rules as typeof mockRulesForPostalAccount;
     }
     return (
       <div data-testid="controlled-field" data-name={name}>
@@ -134,7 +123,6 @@ describe('BeneficiaryPaymentFields', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     ibanRules = { ...mockRulesForIban };
-    postalAccountRules = { ...mockRulesForPostalAccount };
 
     mockProps.getValues.mockImplementation((path: string) => {
       if (path === 'beneficiaries.0.iban') return '';
@@ -145,11 +133,10 @@ describe('BeneficiaryPaymentFields', () => {
     });
   });
 
-  it('should render both IBAN and postal account fields', () => {
+  it('should render IBAN field', () => {
     render(<BeneficiaryPaymentFields {...mockProps} />);
 
     expect(screen.getByTestId('iban-field')).toBeInTheDocument();
-    expect(screen.getByTestId('postal-account-field')).toBeInTheDocument();
   });
 
   it('should set proper validation rules for IBAN field', () => {
@@ -163,31 +150,12 @@ describe('BeneficiaryPaymentFields', () => {
     );
   });
 
-  it('should set proper validation rules for postal account field', () => {
-    render(<BeneficiaryPaymentFields {...mockProps} />);
-
-    expect(postalAccountRules.validate).toHaveProperty('postalAccountFormat');
-    expect(postalAccountRules.validate).toHaveProperty('paymentMethod');
-
-    expect(postalAccountRules.validate.postalAccountFormat).toBe(
-      mockProps.fieldValidators.validatePostalAccount
-    );
-  });
-
   it('should pass correct props to IBANField', () => {
     render(<BeneficiaryPaymentFields {...mockProps} />);
 
     const ibanField = screen.getByTestId('iban-field');
     expect(ibanField).toHaveAttribute('data-disabled', 'false');
     expect(ibanField).toHaveAttribute('data-index', '0');
-  });
-
-  it('should pass correct props to PostalAccountField', () => {
-    render(<BeneficiaryPaymentFields {...mockProps} />);
-
-    const postalAccountField = screen.getByTestId('postal-account-field');
-    expect(postalAccountField).toHaveAttribute('data-disabled', 'false');
-    expect(postalAccountField).toHaveAttribute('data-index', '0');
   });
 
   it('should handle disabled state correctly', () => {
@@ -197,21 +165,14 @@ describe('BeneficiaryPaymentFields', () => {
       'data-disabled',
       'true'
     );
-    expect(screen.getByTestId('postal-account-field')).toHaveAttribute(
-      'data-disabled',
-      'true'
-    );
   });
 
   it('should validate payment method when IBAN has a value', () => {
     const ibanValue = 'IT12A1234567890123456789012';
-    const postalValue = '';
 
     mockProps.getValues.mockImplementation((path: string) => {
       if (path === 'beneficiaries.0.iban') return ibanValue;
-      if (path === 'beneficiaries.0.postalAccount') return postalValue;
       if (path.includes('iban')) return ibanValue;
-      if (path.includes('postalAccount')) return postalValue;
       return undefined;
     });
 
@@ -225,6 +186,6 @@ describe('BeneficiaryPaymentFields', () => {
 
     expect(
       mockProps.fieldValidators.validatePaymentMethod
-    ).toHaveBeenCalledWith(ibanValue, postalValue);
+    ).toHaveBeenCalledWith(ibanValue);
   });
 });

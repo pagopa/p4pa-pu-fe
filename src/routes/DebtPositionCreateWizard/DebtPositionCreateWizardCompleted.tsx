@@ -10,7 +10,7 @@ function DebtPositionCreateWizardCompleted() {
   const navigate = useNavigate();
   const location = useLocation();
   const deployPath = config.deployPath;
-  const paymentObject = location.state?.paymentObject || '';
+  const description = location.state?.description || '';
 
   return (
     <Box
@@ -54,7 +54,7 @@ function DebtPositionCreateWizardCompleted() {
           }}
         >
           {t('debtPositionCreateWizardCompleted.title', {
-            paymentObject
+            paymentObject: description
           })}
         </Typography>
 

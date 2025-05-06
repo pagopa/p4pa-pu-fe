@@ -13,6 +13,10 @@
       "titleIUV": "Avvisi (IUV)"
     }
   },
+  "errors": {
+    "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
+    "generic": "Si è verificato un errore. Riprova più tardi."
+  },
   "FileUploaderFlowImport": {
     "debt-positions": {
       "description": "Carica qui il file .zip con i Dovuti"
@@ -29,7 +33,7 @@
     },
     "error": {
       "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
-      "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file" 
+      "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
     }
   },
   "commons": {
@@ -369,10 +373,6 @@
         "placeholder": "Inserisci il codice fiscale (16 caratteri)",
         "required": "Il campo codice fiscale è obbligatorio"
       },
-      "taxCodeOrVat": {
-        "placeholder": "Inserisci il codice fiscale o la partita IVA",
-        "required": "Il campo codice fiscale o partita IVA è obbligatorio"
-      },
       "title": "Debitore",
       "vat": {
         "invalid": "Partita IVA non valida",
@@ -406,13 +406,16 @@
           "label": "Nome ente",
           "required": "Il campo ente beneficiario è obbligatorio"
         },
+        "error": {
+          "subtitle": "Qualcosa è andato storto. Per favore, riprova più tardi."
+        },
         "iban": {
           "invalid": "Il formato dell'IBAN non è valido",
           "label": "IBAN",
           "required": "Il campo iban è obbligatorio"
         },
         "paymentMethod": {
-          "required": "Uno tra i campi IBAN o conto corrente postale è obbligatorio"
+          "required": "Il campo IBAN è obbligatorio"
         },
         "postalAccount": {
           "invalid": "Il formato del conto corrente postale non è valido",
@@ -421,10 +424,16 @@
         },
         "sumMustBeLessThanTotal": "La somma degli importi dei beneficiari deve essere minore dell'importo totale",
         "sumMustBeLessThanTotalInstallments": "La somma degli importi dei beneficiari deve essere minore dell'importo totale, clicca su No per modificare",
-        "taxCode": {
-          "invalid": "Codice fiscale non valido",
-          "label": "Codice Fiscale",
-          "required": "Il campo codice fiscale è obbligatorio"
+        "taxCodeOrVat": {
+          "invalid": "Codice fiscale o partita IVA non validi",
+          "label": "Codice Fiscale o Partita IVA",
+          "required": "Il campo codice fiscale o partita IVA è obbligatorio"
+        },
+        "vat": {
+          "invalid": "Partita IVA non valida",
+          "label": "Partita IVA",
+          "placeholder": "Inserisci la partita IVA (11 cifre)",
+          "required": "Il campo partita IVA è obbligatorio"
         },
         "remittance": {
           "label": "Causale",
