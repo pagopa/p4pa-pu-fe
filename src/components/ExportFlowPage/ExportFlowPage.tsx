@@ -12,9 +12,13 @@ import { useDateRange } from '../../hooks/useDateRange';
 import { FormComponent } from '../FormComponent';
 import {
   ExportFileTypeEnum,
-  PaidExportFileRequestDTO
+  PaidExportFileRequestDTO,
+  ReceiptsArchivingExportFileRequestDTO
 } from '../../../generated/apiClient';
-import { createPaidExportFile } from '../../api/createExportFile';
+import {
+  createPaidExportFile,
+  createReceiptsArchivingExportFile
+} from '../../api/createExportFile';
 
 export const ExportFlowPage = () => {
   const { t } = useTranslation();
@@ -51,20 +55,18 @@ export const ExportFlowPage = () => {
 
   const types = useDebtPositionsTypeOrg({ organizationId });
 
-  const selectOptionsFileVersion =
-    category === 'conservation'
-      ? [{ label: '1.0', value: 'v1.0' }]
-      : [
-          { label: '1.0', value: 'v1.0' },
-          { label: '1.1', value: 'v1.1' },
-          { label: '1.2', value: 'v1.2' },
-          { label: '1.3', value: 'v1.3' }
-        ];
+  const selectOptionsFileVersion = [
+    { label: '1.0', value: 'v1.0' },
+    { label: '1.1', value: 'v1.1' },
+    { label: '1.2', value: 'v1.2' },
+    { label: '1.3', value: 'v1.3' }
+  ];
 
-  const createExportReceipt = createPaidExportFile();
+  const createPaidExport = createPaidExportFile();
+  const createReceiptsArchivingExport = createReceiptsArchivingExportFile();
 
   const handleExportClick = () => {
-    if (!formData.fileVersion || !fromDate || !toDate) return;
+    if (!fromDate || !toDate) return;
 
     const formattedFrom = new Date(fromDate).toISOString().split('T')[0];
     const formattedTo = new Date(toDate).toISOString().split('T')[0];
@@ -85,7 +87,7 @@ export const ExportFlowPage = () => {
         }
       };
 
-      createExportReceipt.mutate(
+      createPaidExport.mutate(
         { data: exportRequest },
         {
           onSuccess: () => {
@@ -96,10 +98,46 @@ export const ExportFlowPage = () => {
             );
           },
           onError: (error) => {
-            console.error('Errore export receipt:', error);
+            console.error('Errore export paid:', error);
           }
         }
       );
+    } else if (category === 'conservation') {
+      const exportRequest: ReceiptsArchivingExportFileRequestDTO = {
+        organizationId,
+        exportFileType: ExportFileTypeEnum.RECEIPTS_ARCHIVING,
+        fileVersion: 'v1.0',
+        filterFields: {
+          paymentDate: {
+            from: formattedFrom,
+            to: formattedTo
+          }
+        }
+      };
+
+      createReceiptsArchivingExport.mutate(
+        { data: exportRequest },
+        {
+          onSuccess: () => {
+            navigate(
+              generatePath(PageRoutes.RESPONSES_THANKYOU, {
+                category: 'conservation-export'
+              })
+            );
+          },
+          onError: (error) => {
+            console.error('Errore export receipt archiving:', error);
+          }
+        }
+      );
+    }
+  };
+
+  const handleExitButton = () => {
+    if (category === 'receipt') {
+      navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW);
+    } else if (category === 'conservation') {
+      navigate(PageRoutes.CONSERVATION);
     }
   };
 
@@ -138,24 +176,24 @@ export const ExportFlowPage = () => {
               />
             )
           },
-          {
-            direction: 'column',
-            title: {
-              icon: <InsertDriveFile sx={{ marginRight: 1 }} />,
-              label: t('exportFlow.fileVersion')
-            },
-            inputFields: [
-              {
-                required: true,
-                label: t('exportFlow.fileVersion'),
-                gridWidth: 12,
-                fieldKey: 'fileVersion'
-              }
-            ],
-            selectOptions: selectOptionsFileVersion
-          },
           ...(category !== 'conservation'
             ? [
+                {
+                  direction: 'column' as GridDirection,
+                  title: {
+                    icon: <InsertDriveFile sx={{ marginRight: 1 }} />,
+                    label: t('exportFlow.fileVersion')
+                  },
+                  inputFields: [
+                    {
+                      required: true,
+                      label: t('exportFlow.fileVersion'),
+                      gridWidth: 12,
+                      fieldKey: 'fileVersion'
+                    }
+                  ],
+                  selectOptions: selectOptionsFileVersion
+                },
                 {
                   direction: 'column' as GridDirection,
                   title: {
@@ -186,9 +224,7 @@ export const ExportFlowPage = () => {
             variant="outlined"
             fullWidth
             startIcon={<ArrowBack />}
-            onClick={() =>
-              navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW)
-            }
+            onClick={handleExitButton}
           >
             {t('commons.exit')}
           </Button>
@@ -196,7 +232,7 @@ export const ExportFlowPage = () => {
         <Grid item>
           <Button
             data-testid="success-button"
-            disabled={isButtonDisabled || !formData.fileVersion}
+            disabled={isButtonDisabled}
             size="large"
             variant="contained"
             fullWidth
