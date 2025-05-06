@@ -45,12 +45,9 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
               ibanFormat: fieldValidators.validateIBAN,
               paymentMethod: (value: string) => {
                 const result = fieldValidators.validatePaymentMethod(value);
-
-                // Se l'IBAN ha un valore, non mostrare errori
                 if (value && value.trim() !== '') {
                   return undefined;
                 }
-
                 return result;
               }
             }
