@@ -4,6 +4,7 @@ import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { PageRoutes } from '../../App';
 import DebtTypesCreated from './DebtTypesCreated';
 import { render, screen } from '../../__tests__/renderers';
+import utils from '../../utils';
 
 const mockNavigate = vi.fn();
 vi.mock('react-router-dom', async () => {
@@ -18,6 +19,8 @@ const translations = {
   'commons.routes.DEBT_TYPES_CREATED': 'Debt Types Created',
   'debtTypesCreated.callToAction': 'Create New Debt Type',
   'debtTypesCreated.description': 'Manage your debt types',
+  'debtTypesCreated.descriptionFull':
+    'Manage your debt types or of your managed organizations',
   'commons.searchForCode': 'Search by code',
   'commons.searchForDescription': 'Search by description',
   'commons.search': 'Search',
@@ -57,7 +60,15 @@ describe('DebtTypesCreated', () => {
     expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.DEBT_TYPE_CREATE);
   });
 
-  it('renders the correct tabs', () => {
+  it('does not render tabs', () => {
+    render(<DebtTypesCreated />);
+
+    expect(screen.queryByText('My Organization')).not.toBeInTheDocument();
+    expect(screen.queryByText('Managed Organizations')).not.toBeInTheDocument();
+  });
+
+  it('renders the correct tabs when the user is a superAdmin', () => {
+    vi.spyOn(utils.roles, 'useIsSuperAdmin').mockImplementation(() => true);
     render(<DebtTypesCreated />);
 
     expect(screen.getByText('My Organization')).toBeInTheDocument();
