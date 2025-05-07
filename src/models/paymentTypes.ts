@@ -27,8 +27,6 @@ export type Beneficiary = {
   remittance: string;
   /** IBAN of the beneficiary */
   iban: string;
-  /** Postal account of the beneficiary */
-  postalAccount: string;
   /** Taxonomy code */
   taxonomyCode: string;
   /** Unique ID of the beneficiary */

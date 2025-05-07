@@ -143,7 +143,6 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
             taxCode: '',
             remittance: '',
             iban: '',
-            postalAccount: '',
             taxonomyCode: ''
           }
         ],
