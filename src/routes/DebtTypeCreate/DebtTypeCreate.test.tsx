@@ -11,15 +11,17 @@ vi.mock('./components/Step1Configuration', () => ({
     <div data-testid="step1-configuration">
       <button
         onClick={() => {
-          setData && setData({
-            description: 'Test Debt Type',
-            code: 'CODE1',
-            orgType: 'ORG1',
-            macroArea: 'MACRO1',
-            serviceType: 'SERVICE1',
-            collectingReason: 'REASON1',
-            taxonomyCode: 'TAX1'
-          });
+          if (setData) {
+            setData({
+              description: 'Test Debt Type',
+              code: 'CODE1',
+              orgType: 'ORG1',
+              macroArea: 'MACRO1',
+              serviceType: 'SERVICE1',
+              collectingReason: 'REASON1',
+              taxonomyCode: 'TAX1'
+            });
+          }
           onNext();
         }}
       >

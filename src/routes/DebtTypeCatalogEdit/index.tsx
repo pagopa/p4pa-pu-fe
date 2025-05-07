@@ -91,13 +91,11 @@ export const DebtTypeCatalogEdit = () => {
   ];
 
   return (
-
     <StepperContainer
       title={t('debtTypeCatalogEdit.title')}
       description={t('debtTypeCatalogEdit.description')}
       steps={steps}
       activeStep={step}
     />
-
   );
 };
