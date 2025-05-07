@@ -15,6 +15,7 @@ import {
 import { useStore } from '../../store/GlobalStore';
 import { getDebtPositionTypeDetail } from '../../api/debtPositionTypeDetail';
 import { STATE } from '../../store/types';
+import utils from '../../utils';
 
 const initialData: DebtPositionTypeRequestBody = {
   code: '',
@@ -37,26 +38,28 @@ export const DebtTypeCatalogEdit = () => {
   const { state } = useStore();
   const { debtPositionTypeId } = useParams<{ debtPositionTypeId: string }>();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-  const { data } = getDebtPositionTypeDetail({
-    organizationId,
-    debtPositionTypeId: Number(debtPositionTypeId)
-  });
   const [step, setStep] = useState(0);
   const formData = useSignal<DebtPositionTypeRequestBody>(initialData);
   const debtTypeEdit = patchDebtPositionType(Number(debtPositionTypeId));
 
-  const submit = () => {
-    debtTypeEdit.mutate(formData.value, {
-      onSuccess: (formData) => {
-        navigate(PageRoutes.DEBT_TYPE_CATALOG_EDIT_SUCCESS, {
-          replace: true,
-          state: {
-            formData
-          }
-        });
-      },
-      onError: console.error
-    });
+  const { data, isSuccess } = getDebtPositionTypeDetail({
+    organizationId,
+    debtPositionTypeId: Number(debtPositionTypeId)
+  });
+
+  const submit = async () => {
+    try {
+      const response = await debtTypeEdit.mutateAsync(formData.value);
+      navigate(PageRoutes.DEBT_TYPE_CATALOG_EDIT_SUCCESS, {
+        replace: true,
+        state: {
+          formData: response
+        }
+      });
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit('an error message feedback');
+    }
   };
 
   const steps: Stepper['steps'] = [
@@ -91,11 +94,13 @@ export const DebtTypeCatalogEdit = () => {
   ];
 
   return (
-    <StepperContainer
-      title={t('debtTypeCatalogEdit.title')}
-      description={t('debtTypeCatalogEdit.description')}
-      steps={steps}
-      activeStep={step}
-    />
+    (isSuccess && (
+      <StepperContainer
+        title={t('debtTypeCatalogEdit.title')}
+        description={t('debtTypeCatalogEdit.description')}
+        steps={steps}
+        activeStep={step}
+      />
+    )) || <></>
   );
 };
