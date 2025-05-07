@@ -6,13 +6,7 @@ import {
   Switch,
   FormControlLabel
 } from '@mui/material';
-import {
-  Controller,
-  useForm,
-  Path,
-  UseFormTrigger,
-  FieldValues
-} from 'react-hook-form';
+import { Controller, useForm, Path } from 'react-hook-form';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../../components/Wizard/SectionBox';
@@ -23,6 +17,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';
+import utils from '../../../../utils';
 import type {
   Beneficiary,
   Installment,
@@ -30,29 +25,42 @@ import type {
 } from '../../../../models/paymentTypes';
 import {
   createAmountValidator,
-  isBeneficiariesTotalValid,
   createDateValidator
 } from '../../../../utils/fieldValidation';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
-import { PageRoutes } from '../../../../App';
 import { BeneficiaryFieldRef } from '../Beneficiary/BeneficiaryField';
-
-export type Step3Data = {
-  paymentObject: { value: string; readonly: boolean };
-  paymentOption: { value: PaymentOption; readonly: boolean };
-  amount: { value: string; readonly: boolean };
-  dueDate: { value: string | null; readonly: boolean };
-  flagMandatoryDueDate: boolean;
-  isMultibeneficiary: { value: boolean; readonly: boolean };
-  beneficiaries?: Array<Beneficiary>;
-  installments?: Array<Installment>;
-};
+import { useStore } from '../../../../store/GlobalStore';
+import {
+  Step2Data,
+  Step3Data,
+  Step1Data
+} from '../../../../models/DebtPositionType';
+import {
+  DEFAULT_VALUES,
+  createInstallmentObject,
+  createSingleInstallmentObject,
+  triggerValidationForAllBeneficiaries,
+  syncInstallmentBeneficiaries,
+  validateInstallments,
+  validateMultiBeneficiary,
+  handleInstallmentValidationFailure
+} from '../../../../utils/paymentUtility';
+import debtPositionsApi from '../../../../api/debtPositions';
+import {
+  DebtPositionDTO,
+  DebtPositionStatus,
+  DebtPositionOrigin,
+  PaymentOptionTypeEnum
+} from '../../../../../generated/data-contracts';
+import { PageRoutes } from '../../../../App';
 
 type Props = {
   data: Step3Data;
   setData: (data: Step3Data) => void;
   onNext: () => void;
   onBack: () => void;
+  step1Data: Step1Data;
+  step2Data: Step2Data;
 };
 
 type FormValues = {
@@ -65,197 +73,27 @@ type FormValues = {
   installments?: Array<Installment>;
 };
 
-// Function extracted to reduce nesting
-function triggerValidationForAllBeneficiaries<T extends FieldValues>(
-  beneficiaries: Array<Record<string, unknown>>,
-  trigger: UseFormTrigger<T>
-) {
-  beneficiaries.forEach((_, index) => {
-    trigger(`beneficiaries.${index}.amount` as Path<T>);
-  });
-}
-
-// Function to trigger validation for all beneficiaries across all installments
-function triggerValidationForAllInstallmentBeneficiaries<T extends FieldValues>(
-  installments: Array<Record<string, unknown>>,
-  trigger: UseFormTrigger<T>
-) {
-  installments.forEach((installment, installmentIndex) => {
-    if (installment.isMultibeneficiary) {
-      const installmentBeneficiaries =
-        (installment.beneficiaries as Array<Record<string, unknown>>) || [];
-
-      installmentBeneficiaries.forEach(
-        (_: Record<string, unknown>, beneficiaryIndex: number) => {
-          const path =
-            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.amount` as Path<T>;
-          trigger(path);
-        }
-      );
-    }
-  });
-}
-
-// Function to validate payment fields (IBAN and postalAccount)
-function triggerPaymentFieldsValidation<T extends FieldValues>(
-  installments: Array<Record<string, unknown>>,
-  trigger: UseFormTrigger<T>
-) {
-  installments.forEach((installment, installmentIndex) => {
-    if (installment.isMultibeneficiary) {
-      const installmentBeneficiaries =
-        (installment.beneficiaries as Array<Record<string, unknown>>) || [];
-
-      installmentBeneficiaries.forEach(
-        (_: Record<string, unknown>, beneficiaryIndex: number) => {
-          // IBAN validation
-          const ibanPath =
-            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.iban` as Path<T>;
-          trigger(ibanPath);
-
-          // Postal account validation
-          const postalAccountPath =
-            `installments.${installmentIndex}.beneficiaries.${beneficiaryIndex}.postalAccount` as Path<T>;
-          trigger(postalAccountPath);
-        }
-      );
-    }
-  });
-}
-
-/**
- * Synchronizes beneficiaries between installments when sameBeneficiariesAsBefore is set to true
- * Function extracted to reduce the cyclomatic complexity of onSubmit
- */
-function syncInstallmentBeneficiaries(installments: Array<Installment>): {
-  installments: Array<Installment>;
-  modified: boolean;
-} {
-  let installmentsModified = false;
-
-  for (let i = 1; i < installments.length; i++) {
-    const currentInstallment = installments[i] as unknown as Record<
-      string,
-      unknown
-    >;
-    const previousInstallment = installments[i - 1];
-
-    // If installment is set to copy beneficiaries from previous installment
-    if (
-      currentInstallment.sameBeneficiariesAsBefore === 'true' ||
-      currentInstallment.sameBeneficiariesAsBefore === true
-    ) {
-      // Copy beneficiaries from previous installment
-      if (
-        previousInstallment.beneficiaries &&
-        Array.isArray(previousInstallment.beneficiaries) &&
-        previousInstallment.beneficiaries.length > 0
-      ) {
-        currentInstallment.beneficiaries = [
-          ...previousInstallment.beneficiaries
-        ];
-        installmentsModified = true;
-      }
-    }
-  }
-
-  return { installments, modified: installmentsModified };
-}
-
-/**
- * Validates installment data and returns errors
- * Function extracted to reduce the cyclomatic complexity of onSubmit
- */
-function validateInstallments<T extends FieldValues>(
-  installments: Array<Installment>,
-  trigger: UseFormTrigger<T>
-): {
-  hasInvalidBeneficiaries: boolean;
-  hasInvalidPaymentFields: boolean;
-  hasInvalidAmounts: boolean;
-  hasEmptyRemittance: boolean;
-} {
-  let hasInvalidBeneficiaries = false;
-  let hasInvalidPaymentFields = false;
-  let hasInvalidAmounts = false;
-  let hasEmptyRemittance = false;
-
-  // Check each installment
-  for (const [idx, installment] of installments.entries()) {
-    // Validate installment amount
-    if (!installment.amount || parseFloat(String(installment.amount)) <= 0) {
-      hasInvalidAmounts = true;
-    }
-
-    // Validate installment remittance (payment reason)
-    if (
-      !installment.remittance ||
-      String(installment.remittance).trim() === ''
-    ) {
-      hasEmptyRemittance = true;
-      trigger(`installments.${idx}.remittance` as Path<T>);
-    }
-
-    if (installment.isMultibeneficiary) {
-      const beneficiaries = installment.beneficiaries || [];
-
-      // Check beneficiaries structure
-      if (Array.isArray(beneficiaries)) {
-        beneficiaries.forEach(
-          (b: Record<string, unknown>, beneficiaryIdx: number) => {
-            // Fix format if needed
-            if (
-              typeof b.amount !== 'string' &&
-              b.amount !== null &&
-              b.amount !== undefined
-            ) {
-              beneficiaries[beneficiaryIdx].amount = String(b.amount);
-            }
-            // Validate payment fields (IBAN or postalAccount required)
-            const iban = typeof b.iban === 'string' ? b.iban : '';
-            const postalAccount =
-              typeof b.postalAccount === 'string' ? b.postalAccount : '';
-            if (
-              (!iban || iban.trim() === '') &&
-              (!postalAccount || postalAccount.trim() === '')
-            ) {
-              hasInvalidPaymentFields = true;
-            }
-          }
-        );
-
-        // Validate beneficiaries total matches installment amount
-        try {
-          const isValid = isBeneficiariesTotalValid(
-            beneficiaries as Array<Beneficiary>,
-            installment.amount
-          );
-
-          if (!isValid) {
-            hasInvalidBeneficiaries = true;
-          }
-        } catch (validationError) {
-          console.error(
-            'Error validating beneficiaries total:',
-            validationError
-          );
-          hasInvalidBeneficiaries = true;
-        }
-      }
-    }
-  }
-
-  return {
-    hasInvalidBeneficiaries,
-    hasInvalidPaymentFields,
-    hasInvalidAmounts,
-    hasEmptyRemittance
-  };
-}
-
-const Step3 = ({ data, setData, onBack }: Props) => {
+const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const {
+    state: { organizationId }
+  } = useStore();
+
+  const { mutate: createDebtPosition } = debtPositionsApi.createDebtPosition(
+    (paymentObject) => {
+      navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
+        state: paymentObject,
+        replace: true
+      });
+    },
+    () => {
+      utils.notify.emit(
+        t('debtPositionCreateWizard.step3.error.subtitle'),
+        'error'
+      );
+    }
+  );
 
   // Convert date string value to Date object for DatePicker
   const initialData: FormValues = {
@@ -289,7 +127,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
   const beneficiaries = watch('beneficiaries') || [];
   const paymentOption = watch('paymentOption.value');
 
-  const isInstallment = paymentOption === 'INSTALLMENTS';
+  const isInstallment = paymentOption === PaymentOptionTypeEnum.INSTALLMENTS;
 
   // Effect to handle beneficiaries initialization
   useEffect(() => {
@@ -338,88 +176,17 @@ const Step3 = ({ data, setData, onBack }: Props) => {
     }
   };
 
-  /**
-   * Validates fields in the multi-beneficiary case
-   * Function extracted to reduce the cyclomatic complexity of onSubmit
-   */
-  const validateMultiBeneficiary = (): boolean => {
-    const currentBeneficiaries = getValues('beneficiaries') || [];
-
-    // Validate beneficiaries total amount
-    if (
-      isMultibeneficiary &&
-      !isBeneficiariesTotalValid(currentBeneficiaries, totalAmount)
-    ) {
-      trigger('beneficiaries');
-      return false;
-    }
-
-    // Ensure the remittance field is filled for all beneficiaries
-    if (isMultibeneficiary) {
-      let hasEmptyRemittance = false;
-
-      currentBeneficiaries.forEach((b, idx) => {
-        if (!b.remittance || b.remittance.trim() === '') {
-          hasEmptyRemittance = true;
-          trigger(`beneficiaries.${idx}.remittance` as Path<FormValues>);
-        }
-      });
-
-      if (hasEmptyRemittance) {
-        return false;
-      }
-    }
-
-    return true;
-  };
-
-  /**
-   * Handles the installment validation failure
-   * Function extracted to reduce the cyclomatic complexity of onSubmit
-   */
-  const handleInstallmentValidationFailure = (
-    installments: Array<Installment>,
-    validationResults: ReturnType<typeof validateInstallments>
-  ): void => {
-    // We only check if there are errors, but don't use individual variables
-    // This is because all validations are triggered anyway
-    const hasErrors = Object.values(validationResults).some(Boolean);
-
-    if (!hasErrors) {
-      return;
-    }
-
-    try {
-      // Trigger installment amounts validation
-      installments.forEach((_: Installment, index: number) => {
-        trigger(`installments.${index}.amount` as Path<FormValues>);
-      });
-
-      // Trigger validation for all beneficiaries in all installments
-      triggerValidationForAllInstallmentBeneficiaries(
-        installments as Array<Record<string, unknown>>,
-        trigger
-      );
-
-      // Trigger payment fields validation
-      triggerPaymentFieldsValidation(
-        installments as Array<Record<string, unknown>>,
-        trigger
-      );
-    } catch (validationError) {
-      console.error('Error during installment validation:', validationError);
-    }
-  };
-
-  /**
-   * Handles form submission
-   * Refactored to reduce cyclomatic complexity
-   * by extracting logic into separate functions
-   */
   const onSubmit = async (values: FormValues) => {
     // For non-installment case, validate beneficiaries
     if (!isInstallment) {
-      if (!validateMultiBeneficiary()) {
+      if (
+        !validateMultiBeneficiary(
+          () => getValues('beneficiaries') || [],
+          isMultibeneficiary,
+          totalAmount,
+          (name) => trigger(`beneficiaries.${name}` as Path<FormValues>)
+        )
+      ) {
         return;
       }
     }
@@ -450,7 +217,8 @@ const Step3 = ({ data, setData, onBack }: Props) => {
       if (hasValidationFailure) {
         handleInstallmentValidationFailure(
           syncedInstallments,
-          validationResults
+          validationResults,
+          trigger
         );
         return;
       }
@@ -472,15 +240,51 @@ const Step3 = ({ data, setData, onBack }: Props) => {
         ? { beneficiaries: values.beneficiaries }
         : {}),
       // Include installments only if payment option is installment
-      ...(isInstallment ? { installments: values.installments } : {})
+      ...(isInstallment ? { installments: values.installments } : {}),
+      step1Data: step1Data,
+      step2Data: step2Data
+    };
+
+    // Preparation of the body for the POST API
+    const postBody: DebtPositionDTO = {
+      description: formattedValues.step1Data?.description.value || '',
+      status: DebtPositionStatus.UNPAID,
+      organizationId: organizationId,
+      debtPositionTypeOrgId: Number(
+        formattedValues.step1Data?.debtPositionType.value || 0
+      ),
+      flagIuvVolatile: DEFAULT_VALUES.FLAG_IUV_VOLATILE,
+      debtPositionOrigin: DebtPositionOrigin.ORDINARY,
+      multiDebtor: DEFAULT_VALUES.MULTI_DEBTOR,
+      flagPagoPaPayment: DEFAULT_VALUES.FLAG_PAGO_PA_PAYMENT,
+      paymentOptions: [
+        {
+          totalAmountCents: Math.round(
+            parseFloat(formattedValues.amount.value || '0') * 100
+          ),
+          description: isInstallment
+            ? t('debtPositionCreateWizard.step3.paymentOption.installments')
+            : t('debtPositionCreateWizard.step3.paymentOption.single'),
+          paymentOptionType: isInstallment
+            ? PaymentOptionTypeEnum.INSTALLMENTS
+            : PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+          paymentOptionIndex: DEFAULT_VALUES.PAYMENT_OPTION_INDEX,
+          installments: isInstallment
+            ? formattedValues.installments?.map((installment) =>
+                createInstallmentObject(installment, step2Data, formattedValues)
+              ) || []
+            : [createSingleInstallmentObject(formattedValues, step2Data)]
+        }
+      ]
     };
 
     // Save data
     setData(formattedValues);
-    // Navigate to completion page
-    navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
-      state: { paymentObject: formattedValues.paymentObject.value },
-      replace: true
+
+    // API call to create the debt position
+    createDebtPosition({
+      body: postBody,
+      paymentObject: postBody.description
     });
   };
 
@@ -563,7 +367,7 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                       field.onChange(value);
 
                       switch (value) {
-                        case 'INSTALLMENTS':
+                        case PaymentOptionTypeEnum.INSTALLMENTS:
                           // When installment option is selected
                           // Disable multi-beneficiary mode
                           setValue('isMultibeneficiary.value', false);
@@ -574,8 +378,10 @@ const Step3 = ({ data, setData, onBack }: Props) => {
                           // Reset payment object field
                           setValue('paymentObject.value', '');
                           break;
-                        case 'SINGLE':
-                          if (paymentOption === 'INSTALLMENTS') {
+                        case PaymentOptionTypeEnum.SINGLE_INSTALLMENT:
+                          if (
+                            paymentOption === PaymentOptionTypeEnum.INSTALLMENTS
+                          ) {
                             setValue('amount.value', '');
                             setValue('installments', []);
                           }

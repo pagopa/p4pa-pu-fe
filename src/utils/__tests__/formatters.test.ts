@@ -1,5 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
-import { moneyFormat, formatDate, formatDateTime } from '../formatters';
+import {
+  moneyFormat,
+  formatDate,
+  formatDateTime,
+  toStartOfDay,
+  toEndOfDay,
+  extractFilename,
+  euroToCents,
+  optionMapsConverter
+} from '../formatters';
 
 describe('moneyFormat', () => {
   it('should format the amount with default parameters', () => {
@@ -83,5 +92,133 @@ describe('formatDateTime', () => {
 
     const dateWithTZ = '2023-05-10T12:30:45+02:00';
     expect(formatDateTime(dateWithTZ)).toBe('10/05/2023 10:30:45');
+  });
+});
+
+describe('toStartOfDay', () => {
+  it('should return start of day for a valid date', () => {
+    const date = new Date('2023-10-15T14:30:45Z');
+    const result = toStartOfDay(date);
+    expect(result).toBeInstanceOf(Date);
+    expect(result?.getHours()).toBe(0);
+    expect(result?.getMinutes()).toBe(0);
+    expect(result?.getSeconds()).toBe(0);
+    expect(result?.getMilliseconds()).toBe(0);
+  });
+
+  it('should return null for undefined input', () => {
+    expect(toStartOfDay()).toBeNull();
+  });
+
+  it('should return null for null input', () => {
+    expect(toStartOfDay(null)).toBeNull();
+  });
+});
+
+describe('toEndOfDay', () => {
+  it('should return end of day for a valid date', () => {
+    const date = new Date('2023-10-15T14:30:45Z');
+    const result = toEndOfDay(date);
+    expect(result).toBeInstanceOf(Date);
+    expect(result?.getHours()).toBe(23);
+    expect(result?.getMinutes()).toBe(59);
+    expect(result?.getSeconds()).toBe(59);
+    expect(result?.getMilliseconds()).toBe(999);
+  });
+
+  it('should return null for undefined input', () => {
+    expect(toEndOfDay()).toBeNull();
+  });
+
+  it('should return null for null input', () => {
+    expect(toEndOfDay(null)).toBeNull();
+  });
+});
+
+describe('extractFilename', () => {
+  it('should extract filename from content-disposition header', () => {
+    const header = 'attachment; filename="documento.pdf"';
+    expect(extractFilename(header)).toBe('documento.pdf');
+  });
+
+  it('should extract filename with spaces', () => {
+    const header = 'attachment; filename="il mio documento.pdf"';
+    expect(extractFilename(header)).toBe('il mio documento.pdf');
+  });
+
+  it('should handle single quotes', () => {
+    const header = "attachment; filename='documento.pdf'";
+    expect(extractFilename(header)).toBe('documento.pdf');
+  });
+
+  it('should handle no quotes', () => {
+    const header = 'attachment; filename=documento.pdf';
+    expect(extractFilename(header)).toBe('documento.pdf');
+  });
+
+  it('should return null for invalid header', () => {
+    expect(extractFilename('invalid header')).toBeNull();
+  });
+
+  it('should return null for empty header', () => {
+    expect(extractFilename('')).toBeNull();
+  });
+});
+
+describe('euroToCents', () => {
+  it('should convert string euro amount to cents', () => {
+    expect(euroToCents('10,50')).toBe(1050);
+    expect(euroToCents('100,00')).toBe(10000);
+    expect(euroToCents('0,99')).toBe(99);
+  });
+
+  it('should convert number euro amount to cents', () => {
+    expect(euroToCents(10.5)).toBe(1050);
+    expect(euroToCents(100.0)).toBe(10000);
+    expect(euroToCents(0.99)).toBe(99);
+  });
+
+  it('should handle negative values', () => {
+    expect(euroToCents('-10,50')).toBe(-1050);
+    expect(euroToCents(-10.5)).toBe(-1050);
+  });
+
+  it('should handle zero values', () => {
+    expect(euroToCents('0,00')).toBe(0);
+    expect(euroToCents(0)).toBe(0);
+  });
+});
+
+describe('optionMapsConverter', () => {
+  it('should convert array of strings to option map items', () => {
+    const items = ['B', 'A', 'C'];
+    const expected = [
+      { label: 'A', value: 'A' },
+      { label: 'B', value: 'B' },
+      { label: 'C', value: 'C' }
+    ];
+    expect(optionMapsConverter(items)).toEqual(expected);
+  });
+
+  it('should handle empty array', () => {
+    expect(optionMapsConverter([])).toEqual([]);
+  });
+
+  it('should handle array with one item', () => {
+    const items = ['A'];
+    const expected = [{ label: 'A', value: 'A' }];
+    expect(optionMapsConverter(items)).toEqual(expected);
+  });
+
+  it('should handle array with duplicate items', () => {
+    const items = ['B', 'A', 'B', 'C', 'A'];
+    const expected = [
+      { label: 'A', value: 'A' },
+      { label: 'A', value: 'A' },
+      { label: 'B', value: 'B' },
+      { label: 'B', value: 'B' },
+      { label: 'C', value: 'C' }
+    ];
+    expect(optionMapsConverter(items)).toEqual(expected);
   });
 });

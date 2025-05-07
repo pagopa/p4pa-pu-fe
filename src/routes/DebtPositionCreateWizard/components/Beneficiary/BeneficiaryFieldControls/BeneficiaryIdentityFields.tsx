@@ -66,10 +66,10 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
           control={control}
           rules={{
             required: t(
-              'debtPositionCreateWizard.step3.beneficiary.taxCode.required'
+              'debtPositionCreateWizard.step3.beneficiary.vat.required'
             ),
             validate: {
-              taxCodeFormat: (value: string) =>
+              vatFormat: (value: string) =>
                 import('../../../../../utils/fieldValidation')
                   .then((module) => module.createBeneficiaryFieldValidators(t))
                   .then((validators) =>

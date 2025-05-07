@@ -25,6 +25,12 @@ export function moneyFormat(
   }).format(amount ? amount / Math.pow(10, decimalDigits) : 0);
 }
 
+export function euroToCents(amount: string | number): number {
+  const numericAmount =
+    typeof amount === 'string' ? parseFloat(amount.replace(',', '.')) : amount;
+  return Math.round(numericAmount * 100);
+}
+
 export function optionMapsConverter(
   items: Array<string>
 ): Array<optionMapItem> {

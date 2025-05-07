@@ -26,8 +26,7 @@ import { PageRoutes } from '../../App';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useStore } from '../../store/GlobalStore';
-import { useFeConfig } from '../../hooks/useFeConfig';
-import { useOrganizations } from '../../hooks/useOrganizations';
+import utils from '../../utils';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -48,15 +47,7 @@ export const Sidebar: React.FC = () => {
     return <AltRouteIcon sx={{ transform: 'rotate(90deg)' }} />;
   };
   const { state } = useStore();
-  const configFe = useFeConfig();
-  const organizations = useOrganizations();
-  const containsBrokerCF = organizations.data?.some(
-    (item) => item.orgFiscalCode === configFe?.brokerFiscalCode
-  );
-  const adminAtLeast = organizations.data?.some(
-    (item) => item.operatorRole === 'ROLE_ADMIN'
-  );
-  const superAdmin = containsBrokerCF && adminAtLeast;
+  const isSuperAdmin = utils.roles.useIsSuperAdmin();
 
   const menuItems: Array<ISidebarMenuItem> = [
     {
@@ -74,7 +65,6 @@ export const Sidebar: React.FC = () => {
     {
       label: t('commons.routes.FLOWS'),
       icon: RotatedAltRouteIcon,
-      // route: '/flows',
       end: false,
       items: [
         {
@@ -103,7 +93,7 @@ export const Sidebar: React.FC = () => {
 
   const additionalItems = [];
 
-  if (superAdmin) {
+  if (isSuperAdmin) {
     additionalItems.push({
       label: t('commons.routes.ORGANIZATIONS'),
       icon: DnsIcon,
@@ -112,11 +102,11 @@ export const Sidebar: React.FC = () => {
     });
   }
 
-  if (superAdmin || state.operatorRole == 'ROLE_ADMIN') {
+  if (isSuperAdmin || state.operatorRole == 'ROLE_ADMIN') {
     const debtypes = [];
 
     // Debtypes catalog only for superAdmin
-    if (superAdmin) {
+    if (isSuperAdmin) {
       debtypes.push({
         label: t('commons.routes.DEBT_TYPES_CATALOG'),
         route: PageRoutes.DEBT_TYPES_CATALOG,

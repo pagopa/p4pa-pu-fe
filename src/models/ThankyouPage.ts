@@ -19,7 +19,7 @@ export const ThankyouPageConfig: ThankyouOpts = {
   },
   'telematic-receipt-export': {
     title: 'commons.successExport',
-    description: 'telematicReceiptExportFlowThankYouPage.description',
+    description: 'commons.successExportDescription',
     routeID: 'TELEMATIC_RECEIPT_EXPORT_OVERVIEW'
   },
   'telematic-receipt-import': {
@@ -36,5 +36,10 @@ export const ThankyouPageConfig: ThankyouOpts = {
     title: 'commons.successImport',
     description: 'debtPositionsImportThankYouPage.description',
     routeID: 'DEBT_POSITIONS'
+  },
+  'conservation-export': {
+    title: 'commons.successExport',
+    description: 'commons.successExportDescription',
+    routeID: 'CONSERVATION'
   }
 };
