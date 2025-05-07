@@ -13,10 +13,6 @@
       "titleIUV": "Avvisi (IUV)"
     }
   },
-  "errors": {
-    "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
-    "generic": "Si è verificato un errore. Riprova più tardi."
-  },
   "FileUploaderFlowImport": {
     "debt-positions": {
       "description": "Carica qui il file .zip con i Dovuti"
@@ -556,6 +552,15 @@
       "title": "Il tipo dovuto non può essere eliminato"
     }
   },
+  "debtTypeCatalogEdit": {
+    "title": "Modifica il Tipo dovuto",
+    "description": "Compila i campi e modifica il Tipo dovuto nel propio catalogo."
+  },
+  "debtTypeCatalogEditSuccess": {
+    "backToStart": "Torna alla sezione",
+    "description": "",
+    "title": "Il tipo dovuto '{{paymentObject}}' è stato modificato!"
+  },
   "debtTypeCreate": {
     "title": "Crea un nuovo Tipo dovuto",
     "description": "Compila i campi e crea un nuovo Tipo dovuto nel proprio catalogo.",
@@ -639,6 +644,10 @@
     "description": "La trovi nella sezione Catalogo Tipi dovuti, dove puoi modificarlo in qualsiasi momento.",
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
+  "debtTypes": {
+    "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
+    "searchDescription": "Codice per Descrizione"
+  },
   "debtTypesCreated": {
     "callToAction": "Imposta nuovo",
     "descriptionFull": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente o negli enti gestiti.",
@@ -659,9 +668,9 @@
       "enabledOperators": "Operatori abilitati"
     }
   },
-  "debtTypes": {
-    "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
-    "searchDescription": "Codice per Descrizione"
+  "errors": {
+    "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
+    "generic": "Si è verificato un errore. Riprova più tardi."
   },
   "exportFlow": {
     "buttonConfirmReservation": "Prenota",
