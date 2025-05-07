@@ -108,7 +108,7 @@ export const getAccordionSectionsConfig = (
             },
             {
               label: t('commons.subject'),
-              value: '-'
+              value: checkStringValue(data?.ioTemplateSubject)
             },
             {
               label: t('commons.message'),
