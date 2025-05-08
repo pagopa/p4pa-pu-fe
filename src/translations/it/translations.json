@@ -32,6 +32,14 @@
       "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
     }
   },
+  "classifications": {
+    "description": "Ricerca o visualizza classificazioni",
+    "search": "Cerca classificazioni",
+    "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
+    "exportTitle": "Esporta Classificazioni",
+    "exportDescription": "Richiede l'esportazione di una classificazione.",
+    "showAllResults": "Vedi classificazioni esportate"
+  },
   "commons": {
     "addfilter": "Aggiunge filtro",
     "all": "Tutti",
@@ -174,7 +182,8 @@
     "paymentOptions": {
       "DOWN_PAYMENT": "Anticipo",
       "INSTALLMENTS": "Soluzione a Rate",
-      "SINGLE_INSTALLMENT": "Soluzione Unica"
+      "SINGLE_INSTALLMENT": "Soluzione Unica",
+      "REDUCED_SINGLE_INSTALLMENT": "Pagamento scontato"
     },
     "paymentdate": "Data Esito",
     "payments": "Pagamenti",
@@ -185,6 +194,7 @@
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
+      "CLASSIFICATIONS": "Classificazioni",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
       "DEBT_POSITIONS": "Dovuti",
@@ -269,7 +279,8 @@
       "PARTIALLY_PAID": "Pagamento iniziato",
       "REPORTED": "Rendicontato",
       "TO_SYNC": "Da sincronizzare",
-      "UNPAID": "Da pagare"
+      "UNPAID": "Da pagare",
+      "UNPAYABLE": "Non pagabile"
     },
     "subject": "Oggetto",
     "successExport": "Abbiamo ricevuto la tua richiesta!",

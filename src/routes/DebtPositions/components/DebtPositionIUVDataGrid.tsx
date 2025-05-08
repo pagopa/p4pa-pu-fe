@@ -10,6 +10,7 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../../App';
 import { generatePath, useNavigate } from 'react-router';
 import {
+  InstallmentStatus,
   InstallmentView,
   PagedInstallmentView
 } from '../../../../generated/data-contracts';
@@ -38,15 +39,16 @@ export const IUVDataGrid = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const stateColors: Record<string, ChipProps['color']> = {
+  const stateColors: Record<InstallmentStatus, ChipProps['color']> = {
     CANCELLED: 'error',
     DRAFT: 'default',
     EXPIRED: 'error',
     PAID: 'success',
-    PARTIALLY_PAID: 'info',
     REPORTED: 'success',
     TO_SYNC: 'default',
-    UNPAID: 'info'
+    UNPAID: 'info',
+    INVALID: 'error',
+    UNPAYABLE: 'error'
   };
 
   const columns: Array<GridColDef<InstallmentView>> = [
@@ -92,7 +94,7 @@ export const IUVDataGrid = ({
         <Chip
           label={t(`commons.status.${params.value}`)}
           title={t(params.value)}
-          color={stateColors[params.value]}
+          color={stateColors[params.value as InstallmentStatus]}
           size="small"
         />
       )
