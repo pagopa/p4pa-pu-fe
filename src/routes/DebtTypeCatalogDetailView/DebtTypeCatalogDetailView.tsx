@@ -2,7 +2,7 @@ import { Box, Button, Stack } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { DetailAccordion } from '../../components/DetailAccordion/DetailAccordion';
 import {
   AccordionSectionConfig,
@@ -74,7 +74,12 @@ export const DebtTypeCatalogDetailView = () => {
       buttonText: t('commons.edit'),
       color: 'primary' as const,
       variant: 'contained' as const,
-      onActionClick: () => console.log('edit')
+      onActionClick: () =>
+        navigate(
+          generatePath(PageRoutes.DEBT_TYPE_CATALOG_EDIT, {
+            debtPositionTypeId: debtPositionTypeId
+          })
+        )
     }
   ];
 

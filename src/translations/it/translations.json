@@ -13,10 +13,6 @@
       "titleIUV": "Avvisi (IUV)"
     }
   },
-  "errors": {
-    "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
-    "generic": "Si è verificato un errore. Riprova più tardi."
-  },
   "FileUploaderFlowImport": {
     "debt-positions": {
       "description": "Carica qui il file .zip con i Dovuti"
@@ -35,6 +31,14 @@
       "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
       "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
     }
+  },
+  "classifications": {
+    "description": "Ricerca o visualizza classificazioni",
+    "search": "Cerca classificazioni",
+    "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
+    "exportTitle": "Esporta Classificazioni",
+    "exportDescription": "Richiede l'esportazione di una classificazione.",
+    "showAllResults": "Vedi classificazioni esportate"
   },
   "commons": {
     "addfilter": "Aggiunge filtro",
@@ -178,7 +182,8 @@
     "paymentOptions": {
       "DOWN_PAYMENT": "Anticipo",
       "INSTALLMENTS": "Soluzione a Rate",
-      "SINGLE_INSTALLMENT": "Soluzione Unica"
+      "SINGLE_INSTALLMENT": "Soluzione Unica",
+      "REDUCED_SINGLE_INSTALLMENT": "Pagamento scontato"
     },
     "paymentdate": "Data Esito",
     "payments": "Pagamenti",
@@ -189,6 +194,7 @@
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
+      "CLASSIFICATIONS": "Classificazioni",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
       "DEBT_POSITIONS": "Dovuti",
@@ -272,7 +278,8 @@
       "PARTIALLY_PAID": "Pagamento iniziato",
       "REPORTED": "Rendicontato",
       "TO_SYNC": "Da sincronizzare",
-      "UNPAID": "Da pagare"
+      "UNPAID": "Da pagare",
+      "UNPAYABLE": "Non pagabile"
     },
     "subject": "Oggetto",
     "successExport": "Abbiamo ricevuto la tua richiesta!",
@@ -555,6 +562,15 @@
       "title": "Il tipo dovuto non può essere eliminato"
     }
   },
+  "debtTypeCatalogEdit": {
+    "title": "Modifica il Tipo dovuto",
+    "description": "Compila i campi e modifica il Tipo dovuto nel propio catalogo."
+  },
+  "debtTypeCatalogEditSuccess": {
+    "backToStart": "Torna alla sezione",
+    "description": "",
+    "title": "Il tipo dovuto '{{paymentObject}}' è stato modificato!"
+  },
   "debtTypeCreate": {
     "title": "Crea un nuovo Tipo dovuto",
     "description": "Compila i campi e crea un nuovo Tipo dovuto nel proprio catalogo.",
@@ -638,6 +654,10 @@
     "description": "La trovi nella sezione Catalogo Tipi dovuti, dove puoi modificarlo in qualsiasi momento.",
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
+  "debtTypes": {
+    "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
+    "searchDescription": "Codice per Descrizione"
+  },
   "debtTypesCreated": {
     "callToAction": "Imposta nuovo",
     "descriptionFull": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente o negli enti gestiti.",
@@ -658,9 +678,9 @@
       "enabledOperators": "Operatori abilitati"
     }
   },
-  "debtTypes": {
-    "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
-    "searchDescription": "Codice per Descrizione"
+  "errors": {
+    "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
+    "generic": "Si è verificato un errore. Riprova più tardi."
   },
   "exportFlow": {
     "buttonConfirmReservation": "Prenota",

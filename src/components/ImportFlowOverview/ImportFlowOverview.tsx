@@ -26,6 +26,7 @@ import {
 import { useFlowFilters } from '../../hooks/useFlowFilters';
 import { STATE } from '../../store/types';
 import {
+  IngestionFlowFile,
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum
 } from '../../../generated/apiClient';
@@ -167,12 +168,17 @@ const ImportFlowOverview = ({
       type: 'string'
     },
     {
-      field: 'discardedRows',
+      field: 'loadedDiscarded',
       headerName: t('flowDataGrid.loadedDiscarded'),
       flex: 1,
-      type: 'number',
+      type: 'string',
       headerAlign: 'left',
-      align: 'left'
+      align: 'left',
+      renderCell: ({ row }: { row: IngestionFlowFile }) => {
+        const loaded = row.correctlyImportedRows ?? '-';
+        const discarded = row.discardedRows ?? '-';
+        return <>{`${loaded}/${discarded}`}</>;
+      }
     },
     {
       field: 'status',

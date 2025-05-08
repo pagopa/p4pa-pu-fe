@@ -685,9 +685,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
           ?.textContent
       ).toBe('');
       expect(
-        undefinedValuesRow?.querySelector('[data-field="discardedRows"]')
+        undefinedValuesRow?.querySelector('[data-field="loadedDiscarded"]')
           ?.textContent
-      ).toBe('');
+      ).toBe('-/-');
     });
   });
 
