@@ -5,9 +5,12 @@ import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useMultiFilters } from '../../hooks/useMultiFilters';
+import { PageRoutes } from '../../App';
+import { useNavigate } from 'react-router-dom';
 
 export const Classifications = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { filterMap, removeAllFilters } = useMultiFilters({
     clearOnMount: true
   });
@@ -34,7 +37,8 @@ export const Classifications = () => {
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: () => console.log('go to results')
+                  onClick: () =>
+                    navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS)
                 }
               ]}
             />
