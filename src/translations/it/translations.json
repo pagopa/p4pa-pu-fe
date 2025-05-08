@@ -38,6 +38,7 @@
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
     "exportTitle": "Esporta Classificazioni",
     "exportDescription": "Richiede l'esportazione di una classificazione.",
+    "sectionTitle": "Classificazioni esportati",
     "showAllResults": "Vedi classificazioni esportate"
   },
   "commons": {
@@ -195,6 +196,7 @@
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
       "CLASSIFICATIONS": "Classificazioni",
+      "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
       "DEBT_POSITIONS": "Dovuti",
