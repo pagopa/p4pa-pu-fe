@@ -32,6 +32,14 @@
       "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
     }
   },
+  "classifications": {
+    "description": "Ricerca o visualizza classificazioni",
+    "search": "Cerca classificazioni",
+    "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
+    "exportTitle": "Esporta Classificazioni",
+    "exportDescription": "Richiede l'esportazione di una classificazione.",
+    "showAllResults": "Vedi classificazioni esportate"
+  },
   "commons": {
     "addfilter": "Aggiunge filtro",
     "all": "Tutti",
@@ -186,6 +194,7 @@
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
+      "CLASSIFICATIONS": "Classificazioni",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
       "DEBT_POSITIONS": "Dovuti",
