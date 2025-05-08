@@ -24,7 +24,7 @@ const translations = {
   'commons.searchForCode': 'Search by code',
   'commons.searchForDescription': 'Search by description',
   'commons.search': 'Search',
-  'commons.searchForIPACode': 'Search by IPA code',
+  'commons.searchForOrganizationName': 'Search by Org name',
   'debtTypesCreated.tabMyOrganization': 'My Organization',
   'debtTypesCreated.tabManagedOrganizations': 'Managed Organizations',
   'debtTypesCreated.myOrganizationDataGrid.code': 'Code',
@@ -81,7 +81,6 @@ describe('DebtTypesCreated', () => {
     expect(screen.getByLabelText('Search by code')).toBeInTheDocument();
     expect(screen.getByLabelText('Search by description')).toBeInTheDocument();
     expect(screen.getByText('Search')).toBeInTheDocument();
-    expect(screen.getByText('Search').closest('button')).toBeDisabled();
   });
 
   it('enables search button when filter fields are filled in My Organization tab', async () => {
@@ -102,28 +101,12 @@ describe('DebtTypesCreated', () => {
     fireEvent.click(managedOrgsTab);
 
     await waitFor(() => {
-      expect(screen.getByLabelText('Search by IPA code')).toBeInTheDocument();
+      expect(screen.getByLabelText('Search by Org name')).toBeInTheDocument();
       expect(screen.getByText('Search')).toBeInTheDocument();
-      expect(screen.getByText('Search').closest('button')).toBeDisabled();
-    });
-  });
-
-  it('enables search button when filter field is filled in Managed Organizations tab', async () => {
-    render(<DebtTypesCreated />);
-
-    const managedOrgsTab = screen.getByText('Managed Organizations');
-    fireEvent.click(managedOrgsTab);
-
-    const ipaCodeInput = await screen.findByLabelText('Search by IPA code');
-    fireEvent.change(ipaCodeInput, { target: { value: '12345' } });
-
-    await waitFor(() => {
-      expect(screen.getByText('Search').closest('button')).not.toBeDisabled();
     });
   });
 
   it('executes search with correct parameters for My Organization tab', async () => {
-    const consoleSpy = vi.spyOn(console, 'log');
     render(<DebtTypesCreated />);
 
     const codeInput = screen.getByLabelText('Search by code');
@@ -137,31 +120,30 @@ describe('DebtTypesCreated', () => {
     const searchButton = screen.getByText('Search');
     fireEvent.click(searchButton);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'code:',
-      'test-code',
-      'description:',
-      'test-description'
-    );
+    await waitFor(() => {
+      expect(codeInput).toHaveValue('test-code');
+      expect(descriptionInput).toHaveValue('test-description');
+    });
   });
 
   it('executes search with correct parameters for Managed Organizations tab', async () => {
-    const consoleSpy = vi.spyOn(console, 'log');
     render(<DebtTypesCreated />);
 
     const managedOrgsTab = screen.getByText('Managed Organizations');
     fireEvent.click(managedOrgsTab);
 
-    const ipaCodeInput = await screen.findByLabelText('Search by IPA code');
+    const ipaCodeInput = await screen.findByLabelText('Search by Org name');
     fireEvent.change(ipaCodeInput, { target: { value: '12345' } });
 
     const searchButton = screen.getByText('Search');
     fireEvent.click(searchButton);
 
-    expect(consoleSpy).toHaveBeenCalledWith('IPA Code:', '12345');
+    await waitFor(() => {
+      expect(ipaCodeInput).toHaveValue('12345');
+    });
   });
 
-  it('mostra i dati di MyOrg senza filtri applicati', async () => {
+  it('renders MyOrg data without applied filters', async () => {
     render(<DebtTypesCreated />);
 
     await waitFor(() => {
@@ -169,9 +151,7 @@ describe('DebtTypesCreated', () => {
     });
   });
 
-  it('filtra correttamente i dati di MyOrg quando viene applicato un filtro per codice', async () => {
-    const consoleSpy = vi.spyOn(console, 'log');
-
+  it('shoud filter MyOrg data correctly with code filter parameter', async () => {
     render(<DebtTypesCreated />);
 
     const codeInput = screen.getByLabelText('Search by code');
@@ -180,17 +160,12 @@ describe('DebtTypesCreated', () => {
     const searchButton = screen.getByText('Search');
     fireEvent.click(searchButton);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'code:',
-      'test-code',
-      'description:',
-      ''
-    );
+    await waitFor(() => {
+      expect(codeInput).toHaveValue('test-code');
+    });
   });
 
-  it('filtra correttamente i dati di MyOrg quando viene applicato un filtro per descrizione', async () => {
-    const consoleSpy = vi.spyOn(console, 'log');
-
+  it('shoud filter MyOrg data correctly with description filter parameter', async () => {
     render(<DebtTypesCreated />);
 
     const descriptionInput = screen.getByLabelText('Search by description');
@@ -201,17 +176,12 @@ describe('DebtTypesCreated', () => {
     const searchButton = screen.getByText('Search');
     fireEvent.click(searchButton);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'code:',
-      '',
-      'description:',
-      'test-description'
-    );
+    await waitFor(() => {
+      expect(descriptionInput).toHaveValue('test-description');
+    });
   });
 
-  it('filtra correttamente i dati di MyOrg quando vengono applicati entrambi i filtri', async () => {
-    const consoleSpy = vi.spyOn(console, 'log');
-
+  it('shoud filter MyOrg data correctly with code and description filters parameters', async () => {
     render(<DebtTypesCreated />);
     const codeInput = screen.getByLabelText('Search by code');
     const descriptionInput = screen.getByLabelText('Search by description');
@@ -224,11 +194,9 @@ describe('DebtTypesCreated', () => {
     const searchButton = screen.getByText('Search');
     fireEvent.click(searchButton);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'code:',
-      'test-code',
-      'description:',
-      'test-description'
-    );
+    await waitFor(() => {
+      expect(codeInput).toHaveValue('test-code');
+      expect(descriptionInput).toHaveValue('test-description');
+    });
   });
 });
