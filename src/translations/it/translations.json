@@ -174,7 +174,8 @@
     "paymentOptions": {
       "DOWN_PAYMENT": "Anticipo",
       "INSTALLMENTS": "Soluzione a Rate",
-      "SINGLE_INSTALLMENT": "Soluzione Unica"
+      "SINGLE_INSTALLMENT": "Soluzione Unica",
+      "REDUCED_SINGLE_INSTALLMENT": "Pagamento scontato"
     },
     "paymentdate": "Data Esito",
     "payments": "Pagamenti",
@@ -268,7 +269,8 @@
       "PARTIALLY_PAID": "Pagamento iniziato",
       "REPORTED": "Rendicontato",
       "TO_SYNC": "Da sincronizzare",
-      "UNPAID": "Da pagare"
+      "UNPAID": "Da pagare",
+      "UNPAYABLE": "Non pagabile"
     },
     "subject": "Oggetto",
     "successExport": "Abbiamo ricevuto la tua richiesta!",

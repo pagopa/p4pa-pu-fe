@@ -19,8 +19,11 @@ import { format, parseISO } from 'date-fns';
 import {
   PaymentOptionDTO,
   InstallmentDTO,
-  PaymentOptionTypeEnum
-} from '../../../generated/apiClient';
+  PaymentOptionTypeEnum,
+  PaymentOptionStatus,
+  DebtPositionStatus,
+  InstallmentStatus
+} from '../../../generated/data-contracts';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
@@ -53,7 +56,10 @@ const DebtPositionDetail = () => {
   const { state } = useStore();
   const { id } = useParams<{ id: string }>();
 
-  const stateColors: Record<string, ChipProps['color']> = {
+  const stateColors: Record<
+    InstallmentStatus | DebtPositionStatus | PaymentOptionStatus,
+    ChipProps['color']
+  > = {
     CANCELLED: 'error',
     DRAFT: 'default',
     EXPIRED: 'error',
@@ -62,7 +68,8 @@ const DebtPositionDetail = () => {
     REPORTED: 'success',
     TO_SYNC: 'default',
     UNPAID: 'info',
-    INVALID: 'error'
+    INVALID: 'error',
+    UNPAYABLE: 'error'
   };
 
   type StateKey = keyof typeof stateColors;
