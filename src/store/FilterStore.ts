@@ -18,25 +18,28 @@ export const initialFilterValues: FilterValues = {
   VALUE_DATE_TO: null
 };
 
-export const selectedFilters = signal<Array<string>>(['']);
+type KeyofFilterValues = keyof FilterValues;
 
-export function setSelectedFilters(newState: Array<string>) {
+export const selectedFilters = signal<Array<KeyofFilterValues>>([]);
+
+export function setSelectedFilters(newState: Array<KeyofFilterValues>) {
   selectedFilters.value = newState;
 }
 
-export const addFilterRow = (nextId?: string) => {
+export const addFilterRow = (nextId: KeyofFilterValues) => {
   const filters = selectedFilters.value;
-  setSelectedFilters([...filters, nextId ?? '']);
+  setSelectedFilters([...filters, nextId]);
 };
 
-export const removeFilterRow = (id: string) => {
+export const removeFilterRow = (id: KeyofFilterValues) => {
   const filters = selectedFilters.value;
   if (filters.length > 1) {
     setSelectedFilters(filters.filter((filterId) => filterId !== id));
+    setFilterValue(id);
   }
 };
 
-export const updateFilter = (id: string, index: number) => {
+export const updateFilter = (id: KeyofFilterValues, index: number) => {
   const filters = [...selectedFilters.value];
   filters[index] = id;
   setSelectedFilters(filters);
@@ -52,7 +55,14 @@ export const setFilterValues = (newState: FilterValues) => {
   filterValues.value = newState;
 };
 
+export const setFilterValue = (id: KeyofFilterValues) => {
+  filterValues.value = {
+    ...filterValues.value,
+    [id]: initialFilterValues[id]
+  };
+};
+
 export const removeAllFilters = () => {
-  setSelectedFilters(['']);
+  setSelectedFilters([]);
   setFilterValues(initialFilterValues);
 };
