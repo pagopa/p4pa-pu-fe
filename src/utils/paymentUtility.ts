@@ -264,35 +264,35 @@ export function formatAmount(amount: string | number): string {
 }
 
 /**
- * Verifies if the sum of beneficiary amounts equals the total amount.
+ * Validates that the sum of beneficiary amounts is less than the total amount.
  *
  * @function validateBeneficiariesTotal
- * @param {Array<{amount: string}>} beneficiaries - List of beneficiaries with amounts.
- * @param {string} totalAmount - Total amount to compare against.
- * @returns {boolean} - True if the sum is equal to the total amount.
+ * @param {Array<{amount: string}>} beneficiaries - Array of beneficiaries with amount property.
+ * @param {string} totalAmount - Total amount as a string.
+ * @returns {boolean} - Returns true if the sum of beneficiaries is less than total.
  */
 export function validateBeneficiariesTotal(
   beneficiaries: Array<{ amount: string }>,
   totalAmount: string
 ): boolean {
-  if (!beneficiaries || beneficiaries.length === 0) {
-    return false;
+  if (!totalAmount || beneficiaries.length === 0) {
+    return true;
   }
 
-  // Normalize figures (convert commas to dots)
-  const total = parseFloat(totalAmount.replace(',', '.'));
+  // Normalize total amount
+  const normalizedTotal = parseFloat(totalAmount.replace(',', '.')) || 0;
 
-  // Calculate the sum of amounts
-  const sum = beneficiaries.reduce((acc, ben) => {
-    const amount = ben.amount ? parseFloat(ben.amount.replace(',', '.')) : 0;
-    return acc + (isNaN(amount) ? 0 : amount);
-  }, 0);
+  // Calculate sum of beneficiary amounts
+  let sum = 0;
+  for (const beneficiary of beneficiaries) {
+    if (beneficiary && beneficiary.amount) {
+      const amount = parseFloat(beneficiary.amount.replace(',', '.')) || 0;
+      sum += amount;
+    }
+  }
 
-  // Round to 2 decimals to avoid precision issues
-  const roundedSum = Math.round(sum * 100) / 100;
-  const roundedTotal = Math.round(total * 100) / 100;
-
-  return roundedSum === roundedTotal;
+  // Sum must be less than total
+  return sum < normalizedTotal;
 }
 
 /**
