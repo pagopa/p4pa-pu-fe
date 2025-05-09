@@ -24,7 +24,7 @@ export type _ControlledRadioGroupProps<T extends FieldValues> =
   RadioGroupProps & {
     name: Path<T>;
     control: Control<T>;
-    label: string;
+    label?: string;
     options: Array<RadioOption<T>>;
     disabled?: boolean;
     required?: boolean;

@@ -18,9 +18,9 @@ export const _ControlledTextField = <T extends FieldValues>({
     render={({ field: { ref, ...field }, fieldState }) => (
       <FormComponent.TextField
         forwardRef={ref}
-        defaultValue=""
         id={name}
         required
+        noAdornment={!props?.adornment}
         error={!!fieldState.error}
         helperText={fieldState.error?.message}
         {...field}

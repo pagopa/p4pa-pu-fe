@@ -29,7 +29,6 @@ export const _ControlledSelect = <T extends FieldValues>({
       render={({ field: { ref, ...field }, fieldState }) => (
         <FormComponent.Select
           forwardRef={ref}
-          defaultValue=""
           id={name}
           required
           disabled={

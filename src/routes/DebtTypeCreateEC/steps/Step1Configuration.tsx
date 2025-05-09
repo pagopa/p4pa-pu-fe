@@ -46,17 +46,18 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
   const { t } = useTranslation();
   const schema = validationSchema(t);
 
-  const form = useForm<Step1Data>({
-    resolver: zodResolver(schema),
-    mode: 'onTouched'
-  });
-
   const {
     state: { organizationId }
   } = useStore();
-  const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
+  const { optionsMap } = useDebtPositionsTypeOrg({
+    organizationId,
+    includeAllOption: false
+  });
 
-  const { control, handleSubmit, watch } = form;
+  const { control, handleSubmit, watch } = useForm<Step1Data>({
+    resolver: zodResolver(schema),
+    mode: 'onTouched'
+  });
 
   const onSubmit = async (values: Step1Data) => {
     setData(values);
@@ -80,7 +81,8 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
             control={control}
             label={t('debtTypeCreateEC.configuration.debtType.label')}
             name="debtType"
-            options={debtPositionsTypes.optionsMap}
+            disabled={!optionsMap?.length}
+            options={optionsMap}
           />
         </SectionBox>
 

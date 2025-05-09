@@ -28,15 +28,6 @@ export const debtTypesRoutes = [
         } as RouteHandleObject
       },
       {
-        id: 'DEBT_TYPES_EC',
-        path: 'ec/catalog',
-        element: <DebtTypes />,
-        handle: {
-          backButton: false,
-          hideBreadcrumbs: true
-        } as RouteHandleObject
-      },
-      {
         id: 'DEBT_TYPE_CATALOG_DETAIL',
         path: 'catalog/detail/:debtPositionTypeId',
         element: <DebtTypeDetailView />,
@@ -52,19 +43,6 @@ export const debtTypesRoutes = [
         id: 'DEBT_TYPE_CREATE',
         path: 'new',
         element: <DebtTypeCreate />,
-        handle: {
-          backButton: true,
-          backButtonText: 'commons.exit',
-          hideBreadcrumbs: true,
-          sidebar: {
-            visible: false
-          }
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_TYPE_CREATE_EC',
-        path: 'ec/new',
-        element: <DebtTypeCreateEC />,
         handle: {
           backButton: true,
           backButtonText: 'commons.exit',
@@ -93,6 +71,19 @@ export const debtTypesRoutes = [
         handle: {
           backButton: false,
           hideBreadcrumbs: true
+        } as RouteHandleObject
+      },
+      {
+        id: 'DEBT_TYPE_CREATE_EC',
+        path: 'dashboard/new',
+        element: <DebtTypeCreateEC />,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
         } as RouteHandleObject
       },
       {

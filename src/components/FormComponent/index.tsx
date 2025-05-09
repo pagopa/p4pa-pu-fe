@@ -17,6 +17,10 @@ import {
   _ControlledCheckbox,
   _ControlledCheckboxProps
 } from './_ControlledCheckbox';
+import {
+  _ControlledFileUploader,
+  _ControlledFileUploaderProps
+} from './_ControlledFileUploader';
 
 export const FormComponent = {
   AmountField: _AmountField,
@@ -26,6 +30,7 @@ export const FormComponent = {
   ControlledSelect: _ControlledSelect,
   ControlledSwitch: _ControlledSwitch,
   ControlledTextField: _ControlledTextField,
+  ControlledFileUploader: _ControlledFileUploader,
   DateRange: _DateRange,
   Select: _Select,
   TextField: _TextField
@@ -38,6 +43,7 @@ export type {
   _ControlledSelectProps as ControlledSelectProps,
   _ControlledSwitchProps as ControlledSwitchProps,
   _ControlledTextFieldProps as ControlledTextFieldProps,
+  _ControlledFileUploaderProps as ControlledFileUploaderProps,
   _DateRangeProps as DateRangeProps,
   _SelectProps as SelectProps,
   _TextFieldProps as TextFieldProps

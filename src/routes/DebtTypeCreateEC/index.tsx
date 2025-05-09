@@ -5,25 +5,23 @@ import { StepperContainer } from '../../components/Stepper';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 import { useSignal } from '@preact/signals-react';
-import { postDebtPositionType } from '../../api/debtPositionsTypes';
-import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
-import React from 'react';
 import { Step1Configuration, Step1Data } from './steps/Step1Configuration';
-import { Step2Behaviour } from './steps/Step2Behaviour';
+import { Step2Behaviour, Step2Data } from './steps/Step2Behaviour';
+import { Step3Accounting, Step3Data } from './steps/Step3Accounting';
+import { Step4Data, Step4Notifications } from './steps/Step4Notifications';
+import {
+  OperatorSelection,
+  Step5Data,
+  Step5Operators
+} from './steps/Step5Operators';
+import { PaymentMethodOption } from './steps/Step2Behaviour/components/PaymentMethodSelector';
 
-const initialData: DebtPositionTypeRequestBody = {
-  code: '',
-  description: '',
-  orgType: '',
-  macroArea: '',
-  serviceType: '',
-  collectingReason: '',
-  taxonomyCode: '',
-  flagMandatoryDueDate: false,
-  flagAnonymousFiscalCode: false,
-  flagNotifyIo: false,
-  ioTemplateSubject: '',
-  ioTemplateMessage: ''
+type FormData = Step1Data & Step2Data & Step3Data & Step4Data & Step5Data;
+const initialData: FormData = {
+  debtType: 0,
+  selection: '',
+  operatorSelection: OperatorSelection.ALL,
+  paymentMethod: PaymentMethodOption.FREE
 };
 
 export const DebtTypeCreateEC = () => {
@@ -31,20 +29,14 @@ export const DebtTypeCreateEC = () => {
   const navigate = useNavigate();
 
   const [step, setStep] = useState(0);
-  const formData = useSignal<DebtPositionTypeRequestBody>(initialData);
-  const debtTypeCreateEC = postDebtPositionType();
+  const formData = useSignal<FormData>(initialData);
 
   const submit = () => {
-    debtTypeCreateEC.mutate(formData.value, {
-      onSuccess: (formData) => {
-        navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
-          replace: true,
-          state: {
-            formData
-          }
-        });
-      },
-      onError: console.error
+    navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
+      replace: true,
+      state: {
+        formData
+      }
     });
   };
 
@@ -67,7 +59,7 @@ export const DebtTypeCreateEC = () => {
       content: (
         <Step2Behaviour
           key="step2"
-          setData={(data: Step1Data) => {
+          setData={(data: Step2Data) => {
             formData.value = { ...formData.value, ...data };
           }}
           onNext={() => setStep(2)}
@@ -77,16 +69,43 @@ export const DebtTypeCreateEC = () => {
     },
     {
       label: t('debtTypeCreateEC.stepper.step3'),
-      content: <React.Fragment key="step3" />
+      content: (
+        <Step3Accounting
+          key="step3"
+          setData={(data: Step3Data) => {
+            formData.value = { ...formData.value, ...data };
+          }}
+          onNext={() => setStep(3)}
+          onBack={() => setStep(1)}
+        />
+      )
     },
     {
       label: t('debtTypeCreateEC.stepper.step4'),
       optional: true,
-      content: <React.Fragment key="step4" />
+      content: (
+        <Step4Notifications
+          key="step4"
+          setData={(data: Step4Data) => {
+            formData.value = { ...formData.value, ...data };
+          }}
+          onNext={() => setStep(4)}
+          onBack={() => setStep(2)}
+        />
+      )
     },
     {
       label: t('debtTypeCreateEC.stepper.step5'),
-      content: <React.Fragment key="step5" />
+      content: (
+        <Step5Operators
+          key="step5"
+          setData={(data: Step5Data) => {
+            formData.value = { ...formData.value, ...data };
+          }}
+          onNext={submit}
+          onBack={() => setStep(3)}
+        />
+      )
     }
   ];
 

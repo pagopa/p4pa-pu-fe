@@ -295,7 +295,15 @@
     "transactionManager": "Gestore della transazione (PSP)",
     "unknownOrganization": "Ente senza nome",
     "uploadedFrom": "Caricati dal",
-    "view": "Visualizza"
+    "view": "Visualizza",
+    "validation": {
+      "selectAtLeastOneOption": "Seleziona almeno un'opzione",
+      "amountRequired": "L'importo è obbligatorio",
+      "urlRequired": "L'URL è obbligatorio",
+      "invalidUrl": "Formato URL non valido",
+      "fieldRequired": "Campo obbligatorio",
+      "checkboxRequired": "Questa conferma è obbligatoria"
+    }
   },
   "conservation": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
@@ -671,7 +679,7 @@
       },
       "debtTypeVersion": {
         "title": "Versione Tipo dovuto",
-        "subtitle": "Aggiungi i dati che caratterizzano questo Tipo dovuto all’interno del tuo ente."
+        "subtitle": "Aggiungi i dati che caratterizzano questo Tipo dovuto all'interno del tuo ente."
       },
       "code": {
         "label": "Codice Sistema Gestionale"
@@ -688,9 +696,125 @@
         "option2": "Altri intermediari  (esterni)"
       }
     },
+    "behaviour": {
+      "title": "Configurazione dovuto",
+      "subtitle": "Configura le caratteristiche di questo Tipo dovuto",
+      "alertMessage": "* Indica una domanda obbligatoria",
+      "postalAccount": "Pagamento Spontaneo",
+      "section": {
+        "spontaneousPaymentTitle": "Modalità di pagamento spontaneo",
+        "behaviourTitle": "Comportamento"
+      },
+      "spontaneous": {
+        "label": "Modalità",
+        "free": "Compilazione libera",
+        "amount": "Importo predefinito",
+        "custom": "Campi personalizzati",
+        "external": "Pagamento esterno",
+        "amountValue": {
+          "label": "Importo"
+        },
+        "file": {
+          "description": "Trascina qui il documento oppure selezionalo dal tuo computer",
+          "header": "Allega XSD con i campi richiesti",
+          "required": "Campo obbligatorio. Carica un file .XSD"
+        },
+        "externalUrl": {
+          "label": "URL Pagamento Dovuto"
+        }
+      },
+      "optionA": {
+        "label": "Data di Scadenza Obbligatoria",
+        "description": "Imposta la Data di Scadenza un campo obbligatorio nella creazione."
+      },
+      "optionB": {
+        "label": "Codice Fiscale Anonimo",
+        "description": "Permette di creare dovuti senza segnalare un Codice Fiscale nel caso di assenza."
+      },
+      "notifications": {
+        "title": "Notifiche Esito Pagamento",
+        "radioLabel": "Desideri di ricevere notifiche di che il dovuto è stato pagato?",
+        "options": {
+          "no": "No",
+          "yes": "Si"
+        },
+        "fields": {
+          "retries": "Massimo Tentativi inoltro esito pagamento",
+          "retriesDescription": "Numero di tentativi eseguiti da Piattaforma Unitaria per informare al Sistema Gestionale dell'esito del pagamento.",
+          "appName": "Nome applicativo",
+          "endpoint": "URL inoltro RT",
+          "jwt": "JWT",
+          "clientId": "Client ID",
+          "clientEmail": "Client mail",
+          "secretKeyId": "Secret key ID",
+          "secretKey": "Secret key"
+        }
+      },
+      "updateAmount": {
+        "title": "Attualizzazione importo",
+        "subtitle": "Configura l'attualizzazione importo e costi agguntivi.",
+        "notesLabel": "User attualizzazione importo",
+        "amountLabel": "Password attualizzazione importo",
+        "authUrlLabel": "Url Notifica Autenticazione",
+        "updateUrlLabel": "Url Notifica Attualizzazione"
+      }
+    },
+    "accounting": {
+      "title": "Contabilità",
+      "subtitle": "Definisce i parametri per la gestione delle entrate.",
+      "alertMessage": "* Indica una domanda obbligatoria",
+      "section": {
+        "creditInfo": "Informazione di accredito",
+        "budgetInfo": "Informazione di bilancio"
+      },
+      "postalIban": "IBAN Accredito Poste",
+      "pspIban": "IBAN Accredito PSP",
+      "postalAccount": "Conto Corrente Postale",
+      "postalAccountHolder": "Intestatario CC Poste",
+      "defaultBudgetStructure": "Struttura Bilancio Default",
+      "entitySector": "Settore Ente"
+    },
+    "notifications": {
+      "title": "Messaggi",
+      "subtitle": "Crea un messaggio per notificare digitalmente ai cittadini la disponibilità degli avvisi e aggiornamenti.",
+      "alertMessage": "* Indica una domanda obbligatoria",
+      "enableNotifications": "Abilita notifiche",
+      "section": {
+        "message": "Messaggio"
+      },
+      "serviceApiKey": {
+        "label": "API Key servizio",
+        "caption": "Incolla la chiave del sevizio da cui inviare il messaggio.",
+        "required": "API Key servizio è obbligatorio"
+      },
+      "messageSubject": {
+        "label": "Oggetto del messaggio",
+        "caption": "Leggi come scrivere correttamente il <0>nome di un servizio</0>",
+        "required": "Oggetto del messaggio è obbligatorio"
+      },
+      "messageBody": {
+        "label": "Corpo del messaggio",
+        "caption": "Leggi come usare correttamente il <0>linguaggio markdown</0>",
+        "required": "Corpo del messaggio è obbligatorio"
+      }
+    },
+    "operators": {
+      "title": "Operatori associati",
+      "subtitle": "Seleziona quali saranno gli operatori abilitati a questo Tipo Dovuto.",
+      "section": {
+        "operatorEntities": "Enti operatori"
+      },
+      "options": {
+        "all": "Tutti gli operatori",
+        "none": "Senza operatori associati"
+      }
+    },
     "stepper": {
       "step1": "Configurazione Generale",
-      "step2": "Ulteriori impostazioni "
+      "step2": "Ulteriori impostazioni ",
+      "step3": "Contabilità",
+      "step4": "Messaggi",
+      "step5": "Operatori abilitati"
     }
   },
   "debtTypes": {
