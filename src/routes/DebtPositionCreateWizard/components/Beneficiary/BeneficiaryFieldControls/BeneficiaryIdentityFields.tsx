@@ -9,9 +9,6 @@ import { buildBeneficiaryFieldPath } from '../../../../../utils/BeneficiaryField
 import { BeneficiaryFieldsProps } from '../../../../../models/BeneficiaryFieldTypes';
 import { BeneficiaryControlledField } from './BeneficiaryControlledField';
 
-/**
- * Component for the group of fields related to the beneficiary's identity
- */
 export function BeneficiaryIdentityFields<T extends FieldValues>({
   control,
   index,
@@ -96,17 +93,6 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
             'remittance'
           )}
           control={control}
-          rules={{
-            required: t(
-              'debtPositionCreateWizard.step3.beneficiary.remittance.required'
-            ),
-            validate: {
-              remittanceFormat: (value: string) =>
-                import('../../../../../utils/fieldValidation')
-                  .then((module) => module.createBeneficiaryFieldValidators(t))
-                  .then((validators) => validators.validateRemittance(value))
-            }
-          }}
           renderField={({ field }) => (
             <RemittanceField
               field={field}

@@ -14,6 +14,7 @@ import { Step2Data, Step3Data } from '../models/DebtPositionType';
 import { UseFormTrigger } from 'react-hook-form';
 import { isBeneficiariesTotalValid } from './fieldValidation';
 import { EntityTypeEnum } from '../../generated/data-contracts';
+import { isSameBeneficiariesAsBeforeEnabled } from '../models/Step3Schema';
 
 /**
  * Checks if a string value is empty.
@@ -574,10 +575,11 @@ export function syncInstallmentBeneficiaries(
 
     // If installment is set to copy beneficiaries from previous installment
     if (
-      currentInstallment.sameBeneficiariesAsBefore === 'true' ||
-      currentInstallment.sameBeneficiariesAsBefore === true
+      isSameBeneficiariesAsBeforeEnabled(
+        currentInstallment.sameBeneficiariesAsBefore
+      )
     ) {
-      // Copy beneficiaries from previous installment
+      // Copy beneficiaries from previous installment if they exist
       if (
         previousInstallment.beneficiaries &&
         Array.isArray(previousInstallment.beneficiaries) &&
@@ -671,23 +673,22 @@ export function validateInstallments<T extends FieldValues>(
           if (!isValid) {
             hasInvalidBeneficiaries = true;
           }
-        } catch (validationError) {
-          console.error(
-            'Error validating beneficiaries total:',
-            validationError
-          );
+        } catch (error) {
+          console.error('Error validating beneficiaries total:', error);
           hasInvalidBeneficiaries = true;
         }
       }
     }
   }
 
-  return {
+  const validationResults = {
     hasInvalidBeneficiaries,
     hasInvalidPaymentFields,
     hasInvalidAmounts,
     hasEmptyRemittance
   };
+
+  return validationResults;
 }
 
 /**
