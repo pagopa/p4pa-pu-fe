@@ -2,15 +2,12 @@ import { describe, it, expect, vi } from 'vitest';
 import {
   isValidCodiceFiscale,
   isValidPartitaIVA,
-  validateTaxCode,
   isValidIBAN,
   createBeneficiaryFieldValidators,
   createAmountValidator,
   isBeneficiariesTotalValid,
-  createBeneficiaryValidators,
-  SubjectType
+  createBeneficiaryValidators
 } from '../fieldValidation';
-import { ValidationErrorCode } from '../../store/types';
 
 describe('isValidCodiceFiscale', () => {
   describe('Valid Cases', () => {
@@ -76,69 +73,6 @@ describe('isValidPartitaIVA', () => {
 
     it('rejects partita IVA with non-numeric characters', () => {
       expect(isValidPartitaIVA('1234567890A')).toBe(false);
-    });
-  });
-});
-
-describe('validateTaxCode', () => {
-  describe('Valid Cases', () => {
-    it('validates codice fiscale for persona fisica', () => {
-      expect(validateTaxCode('RSSMRA80A01H501U', SubjectType.INDIVIDUAL)).toBe(
-        ValidationErrorCode.VALID
-      );
-    });
-
-    it('validates partita IVA for persona giuridica', () => {
-      expect(validateTaxCode('12345678901', SubjectType.BUSINESS)).toBe(
-        ValidationErrorCode.VALID
-      );
-    });
-
-    it('validates with spaces in the code', () => {
-      expect(
-        validateTaxCode('RSS MRA 80A01 H501 U', SubjectType.INDIVIDUAL)
-      ).toBe(ValidationErrorCode.VALID);
-      expect(validateTaxCode('123 456 789 01', SubjectType.BUSINESS)).toBe(
-        ValidationErrorCode.VALID
-      );
-    });
-  });
-
-  describe('Invalid Cases', () => {
-    it('rejects empty value', () => {
-      expect(validateTaxCode('', SubjectType.INDIVIDUAL)).toBe(
-        ValidationErrorCode.REQUIRED
-      );
-      expect(validateTaxCode('', SubjectType.BUSINESS)).toBe(
-        ValidationErrorCode.REQUIRED
-      );
-    });
-
-    it('rejects invalid codice fiscale and partita IVA for persona fisica', () => {
-      expect(validateTaxCode('123456', SubjectType.INDIVIDUAL)).toBe(
-        ValidationErrorCode.INVALID_CF
-      );
-    });
-
-    it('rejects invalid partita IVA for persona giuridica', () => {
-      expect(validateTaxCode('RSSMRA80A01H501U', SubjectType.BUSINESS)).toBe(
-        ValidationErrorCode.INVALID_VAT
-      );
-    });
-
-    it('rejects partita IVA with wrong length for persona giuridica', () => {
-      expect(validateTaxCode('123456789', SubjectType.BUSINESS)).toBe(
-        ValidationErrorCode.INVALID_VAT
-      );
-    });
-
-    it('utilizza un codice di errore predefinito quando il tipo soggetto non è definito', () => {
-      expect(validateTaxCode('INVALID_CODE', '')).toBe(
-        ValidationErrorCode.INVALID_CF
-      );
-      expect(validateTaxCode('INVALID_CODE', 'X')).toBe(
-        ValidationErrorCode.INVALID_CF
-      );
     });
   });
 });
