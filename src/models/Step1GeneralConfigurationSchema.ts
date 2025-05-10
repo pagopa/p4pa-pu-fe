@@ -2,9 +2,9 @@ import { z } from 'zod';
 import { TFunction } from 'i18next';
 
 /**
- * Schema di validazione Zod per il Step1GeneralConfiguration
- * @param t - Funzione di traduzione per i messaggi di errore
- * @returns Schema Zod per la validazione del form
+ * Zod validation schema for Step1GeneralConfiguration
+ * @param t - Translation function for error messages
+ * @returns Zod schema for form validation
  */
 export const createStep1GeneralConfigurationSchema = (t: TFunction) =>
   z.object({
@@ -28,7 +28,7 @@ export const createStep1GeneralConfigurationSchema = (t: TFunction) =>
   });
 
 /**
- * Tipo derivato dallo schema Zod
+ * Type derived from the Zod schema
  */
 export type Step1GeneralConfigurationFormValues = z.infer<
   ReturnType<typeof createStep1GeneralConfigurationSchema>
