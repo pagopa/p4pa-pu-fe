@@ -1,8 +1,4 @@
-// Validation functions for tax code and VAT number
-
-import { ValidationErrorCode } from '../store/types';
-
-// enum for subject type
+// Definition of the SubjectType enum
 export enum SubjectType {
   INDIVIDUAL = 'F',
   BUSINESS = 'G'
@@ -55,35 +51,6 @@ export const isValidPartitaIVA = (piva: string): boolean => {
   // 2. It consists only of numerical digits (0-9)
   // Note: this validation only checks the format
   return piva.length === 11 && /^\d{11}$/.test(piva);
-};
-
-export const validateTaxCode = (
-  value: string,
-  subjectType: string
-): ValidationErrorCode => {
-  if (!value) return ValidationErrorCode.REQUIRED;
-
-  const normalizedValue = value.replace(/\s/g, '').toUpperCase();
-
-  switch (subjectType) {
-    case SubjectType.INDIVIDUAL:
-      if (
-        !isValidCodiceFiscale(normalizedValue) &&
-        !isValidPartitaIVA(normalizedValue)
-      ) {
-        return ValidationErrorCode.INVALID_CF;
-      }
-      break;
-    case SubjectType.BUSINESS:
-      if (!isValidPartitaIVA(normalizedValue)) {
-        return ValidationErrorCode.INVALID_VAT;
-      }
-      break;
-    default:
-      return ValidationErrorCode.INVALID_CF;
-  }
-
-  return ValidationErrorCode.VALID;
 };
 
 /**
