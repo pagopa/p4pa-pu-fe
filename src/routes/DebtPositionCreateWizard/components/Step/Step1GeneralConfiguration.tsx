@@ -92,7 +92,7 @@ const Step1GeneralConfiguration = ({
           title={t('debtPositionCreateWizard.step1.title')}
           adornment={<BookIcon />}
         >
-          {/* Select - Debt position type */}
+          {/* Debt position type selection */}
           <Controller
             name="debtPositionType"
             control={control}
@@ -118,7 +118,7 @@ const Step1GeneralConfiguration = ({
               </TextField>
             )}
           />
-          {/* Input - Debt position description */}
+          {/* Debt position description */}
           <Controller
             name="description"
             control={control}

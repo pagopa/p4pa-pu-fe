@@ -443,9 +443,9 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             </Grid>
           </Grid>
 
-          {/* Grid per paese, provincia e città */}
+          {/* Grid for country, province and city */}
           <Grid container spacing={2} mt={1}>
-            {/* Campo paese */}
+            {/* Country field */}
             <Grid item xs={12} sm={4}>
               <Controller
                 name="country.value"
@@ -525,8 +525,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
               />
             </Grid>
           </Grid>
-
-          {/* Buttons to navigate through the wizard */}
         </SectionBox>
       </WizardStepWrapper>
       <WizardStepButtons
