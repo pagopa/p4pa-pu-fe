@@ -12,28 +12,23 @@ import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
-import { formatDate } from '../../../../utils/formatters';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';
 import utils from '../../../../utils';
 import type {
-  Beneficiary,
   Installment,
   PaymentOption
 } from '../../../../models/paymentTypes';
-import {
-  createAmountValidator,
-  createDateValidator
-} from '../../../../utils/fieldValidation';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { BeneficiaryFieldRef } from '../Beneficiary/BeneficiaryField';
 import { useStore } from '../../../../store/GlobalStore';
 import {
   Step2Data,
   Step3Data,
-  Step1Data
+  Step1Data,
+  DebtPositionTypeEnum
 } from '../../../../models/DebtPositionType';
 import {
   DEFAULT_VALUES,
@@ -53,6 +48,11 @@ import {
   PaymentOptionTypeEnum
 } from '../../../../../generated/data-contracts';
 import { PageRoutes } from '../../../../App';
+import {
+  createStep3Resolver,
+  convertFormValuesToStep3Data,
+  Step3FormValues
+} from '../../../../models/Step3Schema';
 
 type Props = {
   data: Step3Data;
@@ -61,16 +61,6 @@ type Props = {
   onBack: () => void;
   step1Data: Step1Data;
   step2Data: Step2Data;
-};
-
-type FormValues = {
-  paymentObject: { value: string; readonly: boolean };
-  paymentOption: { value: PaymentOption; readonly: boolean };
-  amount: { value: string; readonly: boolean };
-  dueDate: { value: Date | null; readonly: boolean };
-  isMultibeneficiary: { value: boolean; readonly: boolean };
-  beneficiaries?: Array<Beneficiary>;
-  installments?: Array<Installment>;
 };
 
 const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
@@ -96,7 +86,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
   );
 
   // Convert date string value to Date object for DatePicker
-  const initialData: FormValues = {
+  const initialData: Step3FormValues = {
     ...data,
     dueDate: {
       ...data.dueDate,
@@ -107,7 +97,8 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
       value: data.paymentOption.value as PaymentOption
     },
     beneficiaries: data.beneficiaries || [],
-    installments: data.installments || []
+    installments: data.installments || [],
+    flagMandatoryDueDate: data.flagMandatoryDueDate
   };
 
   const {
@@ -117,23 +108,30 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     watch,
     setValue,
     trigger,
-    getValues
-  } = useForm<FormValues>({
+    getValues,
+    reset
+  } = useForm<Step3FormValues>({
     defaultValues: initialData,
-    mode: 'onChange'
+    resolver: createStep3Resolver(t),
+    mode: 'all',
+    reValidateMode: 'onChange',
+    criteriaMode: 'all',
+    context: { flagMandatoryDueDate: data.flagMandatoryDueDate }
   });
   const isMultibeneficiary = watch('isMultibeneficiary.value');
   const totalAmount = watch('amount.value');
   const beneficiaries = watch('beneficiaries') || [];
   const paymentOption = watch('paymentOption.value');
 
-  const isInstallment = paymentOption === PaymentOptionTypeEnum.INSTALLMENTS;
+  const isInstallment = paymentOption === DebtPositionTypeEnum.INSTALLMENTS;
 
   // Effect to handle beneficiaries initialization
   useEffect(() => {
     const currentBeneficiaries = getValues('beneficiaries') || [];
     // Initialize beneficiaries only if switch is active and there are no beneficiaries yet
     if (isMultibeneficiary && currentBeneficiaries.length === 0) {
+      // Reset any persistent errors first
+      setValue('beneficiaries', [], { shouldValidate: false });
       setValue(
         'beneficiaries',
         [
@@ -143,14 +141,13 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
             taxCode: '',
             remittance: '',
             iban: '',
-            postalAccount: '',
             taxonomyCode: ''
           }
         ],
-        { shouldDirty: true }
+        { shouldDirty: true, shouldValidate: false }
       );
     } else if (!isMultibeneficiary) {
-      setValue('beneficiaries', []);
+      setValue('beneficiaries', [], { shouldValidate: false });
     }
   }, [isMultibeneficiary, setValue, getValues]);
 
@@ -164,7 +161,17 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
 
   // Handle multi-beneficiary toggle switch
   const handleMultibeneficiaryToggle = (value: boolean) => {
-    setValue('isMultibeneficiary.value', value);
+    // First reset the previous validation state
+    if (
+      value &&
+      beneficiaryFieldRef.current &&
+      beneficiaryFieldRef.current.resetAllBeneficiaries
+    ) {
+      beneficiaryFieldRef.current.resetAllBeneficiaries();
+    }
+
+    // Then set the new value
+    setValue('isMultibeneficiary.value', value, { shouldValidate: false });
 
     // If disabling multi-beneficiary, reset beneficiaries
     if (
@@ -176,76 +183,201 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     }
   };
 
-  const onSubmit = async (values: FormValues) => {
-    // For non-installment case, validate beneficiaries
-    if (!isInstallment) {
-      if (
-        !validateMultiBeneficiary(
-          () => getValues('beneficiaries') || [],
-          isMultibeneficiary,
-          totalAmount,
-          (name) => trigger(`beneficiaries.${name}` as Path<FormValues>)
-        )
-      ) {
-        return;
-      }
+  /**
+   * Handles the amount field change
+   * Normalizes the value and triggers validation for beneficiaries if needed
+   */
+  const handleAmountChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    onChange: (...event: Array<unknown>) => void
+  ) => {
+    const filteredValue = e.target.value.replace(/[^0-9.,]/g, '');
+    const normalizedValue = filteredValue.replace(',', '.');
+    onChange(normalizedValue);
+
+    if (isMultibeneficiary && beneficiaries.length > 0) {
+      setTimeout(() => {
+        triggerValidationForAllBeneficiaries(beneficiaries, trigger);
+      }, 0);
+    }
+  };
+
+  /**
+   * Handles amount field blur event
+   * Formats the value with two decimals when the field loses focus
+   */
+  const handleAmountBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: { onChange: (...event: Array<unknown>) => void; onBlur: () => void }
+  ) => {
+    const value = e.target.value.replace(',', '.');
+    if (value && !isNaN(parseFloat(value))) {
+      const formatted = parseFloat(value).toFixed(2);
+      field.onChange(formatted);
+    }
+    field.onBlur();
+  };
+
+  /**
+   * Handles payment option changes
+   * Resets fields when changing from one payment mode to another
+   */
+  const handlePaymentOptionChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+    field: { onChange: (...event: Array<unknown>) => void }
+  ) => {
+    const value = e.target.value;
+    field.onChange(value);
+
+    switch (value) {
+      case DebtPositionTypeEnum.INSTALLMENTS:
+        reset({
+          ...initialData,
+          paymentOption: {
+            ...initialData.paymentOption,
+            value: DebtPositionTypeEnum.INSTALLMENTS as PaymentOption
+          },
+          isMultibeneficiary: {
+            ...initialData.isMultibeneficiary,
+            value: false
+          },
+          beneficiaries: [],
+          installments: []
+        });
+        break;
+      case PaymentOptionTypeEnum.SINGLE_INSTALLMENT:
+        if (paymentOption === DebtPositionTypeEnum.INSTALLMENTS) {
+          reset({
+            ...initialData,
+            paymentOption: {
+              ...initialData.paymentOption,
+              value: DebtPositionTypeEnum.SINGLE as PaymentOption
+            },
+            isMultibeneficiary: {
+              ...initialData.isMultibeneficiary,
+              value: false
+            },
+            beneficiaries: [],
+            installments: []
+          });
+        }
+        break;
     }
 
-    // Validate beneficiaries for each installment if payment is installment
-    if (isInstallment) {
-      const installments = getValues('installments') || [];
-
-      // Synchronize beneficiaries for installments with sameBeneficiariesAsBefore="true"
-      const { installments: syncedInstallments, modified } =
-        syncInstallmentBeneficiaries(installments as Array<Installment>);
-
-      // If we modified installments, update the form
-      if (modified) {
-        setValue('installments', syncedInstallments);
+    setTimeout(() => {
+      if (
+        beneficiaryFieldRef.current &&
+        beneficiaryFieldRef.current.resetAllBeneficiaries
+      ) {
+        beneficiaryFieldRef.current.resetAllBeneficiaries();
       }
+    }, 0);
+  };
 
-      // Validate installments
-      const validationResults = validateInstallments(
+  /**
+   * Validates installments and their beneficiaries
+   * @returns An object with the validation result and synchronized installments
+   */
+  const validateInstallmentsData = async (): Promise<{
+    isValid: boolean;
+    syncedInstallments?: Array<Installment>;
+  }> => {
+    const installments = getValues('installments') || [];
+
+    const cleanedInstallments = installments.map((installment) => {
+      if (!installment.isMultibeneficiary) {
+        return {
+          ...installment,
+          beneficiaries: []
+        };
+      }
+      return installment;
+    });
+
+    const { installments: syncedInstallments, modified } =
+      syncInstallmentBeneficiaries(cleanedInstallments as Array<Installment>);
+
+    if (modified) {
+      setValue('installments', syncedInstallments);
+    }
+
+    const validationResults = validateInstallments(syncedInstallments, trigger);
+
+    const hasValidationFailure = Object.values(validationResults).some(
+      (value) => value
+    );
+
+    if (hasValidationFailure) {
+      handleInstallmentValidationFailure(
         syncedInstallments,
+        validationResults,
         trigger
       );
-      const hasValidationFailure = Object.values(validationResults).some(
-        (value) => value
-      );
+      return { isValid: false };
+    }
 
-      // If any validation fails, trigger form validation and stop submission
-      if (hasValidationFailure) {
-        handleInstallmentValidationFailure(
-          syncedInstallments,
-          validationResults,
-          trigger
-        );
+    return { isValid: true, syncedInstallments };
+  };
+
+  const onSubmit = async (values: Step3FormValues) => {
+    // Check due date field if mandatory
+    if (!isInstallment && values.flagMandatoryDueDate) {
+      if (!values.dueDate.value) {
+        setValue('dueDate.value', null, { shouldValidate: true });
+        await trigger('dueDate.value');
         return;
       }
     }
 
-    // Format values for saving
-    const formattedValues: Step3Data = {
-      ...values,
-      dueDate: {
-        ...values.dueDate,
-        value:
-          values.dueDate.value instanceof Date
-            ? formatDate(values.dueDate.value.toISOString())
-            : values.dueDate.value
-      },
-      flagMandatoryDueDate: data.flagMandatoryDueDate,
-      // Include beneficiaries only if multi-beneficiary is true and not installment
-      ...(!isInstallment && values.isMultibeneficiary.value
-        ? { beneficiaries: values.beneficiaries }
-        : {}),
-      // Include installments only if payment option is installment
-      ...(isInstallment ? { installments: values.installments } : {}),
-      step1Data: step1Data,
-      step2Data: step2Data
-    };
+    // Validate all fields before proceeding
+    const isValid = await trigger();
 
-    // Preparation of the body for the POST API
+    if (!isValid) {
+      return;
+    }
+
+    // For single payment, validate beneficiaries
+    if (!isInstallment) {
+      const beneficiariesValid = validateMultiBeneficiary(
+        () => getValues('beneficiaries') || [],
+        isMultibeneficiary,
+        totalAmount,
+        (name) => trigger(`beneficiaries.${name}` as Path<Step3FormValues>)
+      );
+
+      if (!beneficiariesValid) {
+        return;
+      }
+    }
+
+    // Validate beneficiaries for each installment if payment is installment-based
+    if (isInstallment) {
+      const { isValid, syncedInstallments } = await validateInstallmentsData();
+
+      if (!isValid || !syncedInstallments) {
+        return;
+      }
+
+      if (
+        JSON.stringify(getValues('installments')) !==
+        JSON.stringify(syncedInstallments)
+      ) {
+        setValue('installments', syncedInstallments);
+      }
+    }
+
+    // Transform form values using conversion function
+    const formattedValues: Step3Data = convertFormValuesToStep3Data({
+      ...values,
+      flagMandatoryDueDate: values.flagMandatoryDueDate,
+      step1Data,
+      step2Data
+    });
+
+    // Save data
+    setData(formattedValues);
+
+    // Prepare API POST body
     const postBody: DebtPositionDTO = {
       description: formattedValues.step1Data?.description.value || '',
       status: DebtPositionStatus.UNPAID,
@@ -278,17 +410,13 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
       ]
     };
 
-    // Save data
-    setData(formattedValues);
-
-    // API call to create the debt position
+    // Create debt position API call
     createDebtPosition({
       body: postBody,
       paymentObject: postBody.description
     });
   };
 
-  const validateAmount = createAmountValidator(t);
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <WizardStepWrapper
@@ -304,11 +432,6 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
               <Controller
                 name="paymentObject.value"
                 control={control}
-                rules={{
-                  required: isInstallment
-                    ? false
-                    : t('debtPositionCreateWizard.step3.paymentObject.required')
-                }}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -343,11 +466,6 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
               <Controller
                 name="paymentOption.value"
                 control={control}
-                rules={{
-                  required: t(
-                    'debtPositionCreateWizard.step3.paymentOption.required'
-                  )
-                }}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -358,36 +476,9 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
                     )}
                     required
                     disabled={data.paymentOption?.readonly}
-                    error={isSubmitted && !!errors.paymentOption?.value}
-                    helperText={
-                      isSubmitted && errors.paymentOption?.value?.message
-                    }
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value);
-
-                      switch (value) {
-                        case PaymentOptionTypeEnum.INSTALLMENTS:
-                          // When installment option is selected
-                          // Disable multi-beneficiary mode
-                          setValue('isMultibeneficiary.value', false);
-                          // Reset amount field
-                          setValue('amount.value', '');
-                          // Reset installments array for proper initialization
-                          setValue('installments', []);
-                          // Reset payment object field
-                          setValue('paymentObject.value', '');
-                          break;
-                        case PaymentOptionTypeEnum.SINGLE_INSTALLMENT:
-                          if (
-                            paymentOption === PaymentOptionTypeEnum.INSTALLMENTS
-                          ) {
-                            setValue('amount.value', '');
-                            setValue('installments', []);
-                          }
-                          break;
-                      }
-                    }}
+                    error={!!errors.paymentOption?.value}
+                    helperText={errors.paymentOption?.value?.message || ''}
+                    onChange={(e) => handlePaymentOptionChange(e, field)}
                   >
                     <MenuItem value="SINGLE">
                       {t('debtPositionCreateWizard.step3.paymentOption.single')}
@@ -406,7 +497,6 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
               <Controller
                 name="amount.value"
                 control={control}
-                rules={validateAmount}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -439,36 +529,8 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
                           )
                         : isSubmitted && errors.amount?.value?.message
                     }
-                    onChange={(e) => {
-                      // Accept only numbers, dot and comma
-                      const filteredValue = e.target.value.replace(
-                        /[^0-9.,]/g,
-                        ''
-                      );
-                      // Convert comma to dot for numeric handling
-                      const normalizedValue = filteredValue.replace(',', '.');
-                      // Update form value
-                      field.onChange(normalizedValue);
-
-                      // Use setTimeout to ensure value is updated before validation
-                      if (isMultibeneficiary && beneficiaries.length > 0) {
-                        setTimeout(() => {
-                          triggerValidationForAllBeneficiaries(
-                            beneficiaries,
-                            trigger
-                          );
-                        }, 0);
-                      }
-                    }}
-                    onBlur={(e) => {
-                      // Format value with two decimals when field loses focus
-                      const value = e.target.value.replace(',', '.');
-                      if (value && !isNaN(parseFloat(value))) {
-                        const formatted = parseFloat(value).toFixed(2);
-                        field.onChange(formatted);
-                      }
-                      field.onBlur();
-                    }}
+                    onChange={(e) => handleAmountChange(e, field.onChange)}
+                    onBlur={(e) => handleAmountBlur(e, field)}
                   />
                 )}
               />
@@ -480,11 +542,6 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
                 <Controller
                   name="dueDate.value"
                   control={control}
-                  rules={createDateValidator(
-                    t,
-                    data.flagMandatoryDueDate,
-                    t('debtPositionCreateWizard.step3.dueDate.required')
-                  )}
                   render={({ field: { onChange, value, ...field } }) => (
                     <DatePicker
                       {...field}
@@ -497,9 +554,17 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
                         textField: {
                           fullWidth: true,
                           required: data.flagMandatoryDueDate,
-                          error: isSubmitted && !!errors.dueDate?.value,
+                          error: data.flagMandatoryDueDate
+                            ? isSubmitted && (!value || !!errors.dueDate?.value)
+                            : isSubmitted && !!errors.dueDate?.value,
                           helperText:
-                            isSubmitted && errors.dueDate?.value?.message
+                            isSubmitted && data.flagMandatoryDueDate && !value
+                              ? t(
+                                  'debtPositionCreateWizard.step3.dueDate.required'
+                                )
+                              : (isSubmitted &&
+                                  errors.dueDate?.value?.message) ||
+                                ''
                         },
                         actionBar: {
                           actions: ['clear']
@@ -507,6 +572,18 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
                       }}
                       onChange={(date) => {
                         onChange(date);
+                        // Force validation when date changes if it's mandatory
+                        if (data.flagMandatoryDueDate) {
+                          setTimeout(() => {
+                            trigger('dueDate.value');
+                          }, 0);
+                        }
+                      }}
+                      onClose={() => {
+                        // Force validation when picker closes
+                        if (data.flagMandatoryDueDate) {
+                          trigger('dueDate.value');
+                        }
                       }}
                     />
                   )}
@@ -545,7 +622,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
             {/* Beneficiary component - visible only when multi-beneficiary is true AND not in installment mode */}
             {isMultibeneficiary && !isInstallment && (
               <Grid item xs={12} mt={2}>
-                <BeneficiaryField<FormValues>
+                <BeneficiaryField<Step3FormValues>
                   ref={beneficiaryFieldRef}
                   control={control}
                   errors={errors}
@@ -565,7 +642,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
       </WizardStepWrapper>
       {/* Installments component - visible only when installment option is selected */}
       {isInstallment && (
-        <InstallmentField<FormValues>
+        <InstallmentField<Step3FormValues>
           control={control}
           errors={errors}
           isSubmitted={isSubmitted}

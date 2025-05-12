@@ -44,3 +44,8 @@ export type Step1Data = {
     readonly: boolean;
   };
 };
+
+export enum DebtPositionTypeEnum {
+  SINGLE = 'SINGLE',
+  INSTALLMENTS = 'INSTALLMENTS'
+}

@@ -13,6 +13,8 @@ import {
   UseFormTrigger
 } from 'react-hook-form';
 
+import { DebtPositionTypeEnum } from './DebtPositionType';
+
 /**
  * Type representing a payment beneficiary
  */
@@ -27,8 +29,6 @@ export type Beneficiary = {
   remittance: string;
   /** IBAN of the beneficiary */
   iban: string;
-  /** Postal account of the beneficiary */
-  postalAccount: string;
   /** Taxonomy code */
   taxonomyCode: string;
   /** Unique ID of the beneficiary */
@@ -60,9 +60,10 @@ export type Installment = {
 };
 
 /**
- * Enumeration representing available payment options
+ * Type representing available payment options
+ * Uses DebtPositionTypeEnum to avoid duplication
  */
-export type PaymentOption = 'SINGLE' | 'INSTALLMENTS';
+export type PaymentOption = DebtPositionTypeEnum;
 
 /**
  * Type representing a property with value and readonly flag

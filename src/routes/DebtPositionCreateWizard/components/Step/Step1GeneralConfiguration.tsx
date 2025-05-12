@@ -1,4 +1,5 @@
 import { Controller, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useStore } from '../../../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
 import { MenuItem, TextField } from '@mui/material';
@@ -11,12 +12,13 @@ import {
   DebtPositionType,
   Step1Data
 } from '../../../../models/DebtPositionType';
+import {
+  createStep1GeneralConfigurationSchema,
+  Step1GeneralConfigurationFormValues
+} from '../../../../models/Step1GeneralConfigurationSchema';
 
 // Types for react-hook-form
-type FormValues = {
-  debtPositionType: string;
-  description: string;
-};
+type FormValues = Step1GeneralConfigurationFormValues;
 
 type Props = {
   data: Step1Data;
@@ -41,6 +43,9 @@ const Step1GeneralConfiguration = ({
     includeAllOption: false
   }) as { optionsMap: Array<DebtPositionType> };
 
+  // Create the Zod schema with translation function
+  const schema = createStep1GeneralConfigurationSchema(t);
+
   // Form initialization with react-hook-form
   const {
     handleSubmit, // to handle form submission
@@ -50,7 +55,9 @@ const Step1GeneralConfiguration = ({
     defaultValues: {
       debtPositionType: data?.debtPositionType?.value || '',
       description: data?.description?.value || ''
-    }
+    },
+    resolver: zodResolver(schema),
+    mode: 'onTouched'
   });
   // Function called on valid form submission
   const onSubmit = (values: FormValues) => {
@@ -85,15 +92,10 @@ const Step1GeneralConfiguration = ({
           title={t('debtPositionCreateWizard.step1.title')}
           adornment={<BookIcon />}
         >
-          {/* Select - Debt position type */}
+          {/* Debt position type selection */}
           <Controller
             name="debtPositionType"
             control={control}
-            rules={{
-              required: t(
-                'debtPositionCreateWizard.step1.debtPositionType.required'
-              )
-            }}
             render={({ field }) => (
               <TextField
                 {...field}
@@ -116,22 +118,10 @@ const Step1GeneralConfiguration = ({
               </TextField>
             )}
           />
-          {/* Input - Debt position description */}
+          {/* Debt position description */}
           <Controller
             name="description"
             control={control}
-            rules={{
-              required: t(
-                'debtPositionCreateWizard.step1.description.required'
-              ),
-              validate: (value) => {
-                const trimmed = value.trim();
-                const wordCount = trimmed.split(/\s+/).length;
-                return (
-                  wordCount >= 3 || t('debtPositionCreateWizard.step1.minWords')
-                );
-              }
-            }}
             render={({ field }) => (
               <TextField
                 {...field}

@@ -202,9 +202,5 @@ describe('BeneficiaryIdentityFields', () => {
     expect(mockT).toHaveBeenCalledWith(
       'debtPositionCreateWizard.step3.beneficiary.vat.required'
     );
-
-    expect(mockT).toHaveBeenCalledWith(
-      'debtPositionCreateWizard.step3.beneficiary.remittance.required'
-    );
   });
 });

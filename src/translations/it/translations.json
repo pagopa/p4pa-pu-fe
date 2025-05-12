@@ -416,9 +416,6 @@
           "label": "Nome ente",
           "required": "Il campo ente beneficiario è obbligatorio"
         },
-        "error": {
-          "subtitle": "Qualcosa è andato storto. Per favore, riprova più tardi."
-        },
         "iban": {
           "invalid": "Il formato dell'IBAN non è valido",
           "label": "IBAN",
@@ -458,7 +455,11 @@
       "dueDate": {
         "invalid": "La data di scadenza non è valida o è incompleta",
         "label": "Data scadenza",
-        "required": "Il campo data scadenza è obbligatorio"
+        "required": "Il campo data scadenza è obbligatorio",
+        "futureDate": "La data di scadenza non può essere nel passato"
+      },
+      "error": {
+        "subtitle": "Si è verificato un errore durante la creazione della posizione debitoria. Verifica i dati e riprova."
       },
       "installments": {
         "addInstallment": "Aggiungi rata",
@@ -473,9 +474,15 @@
         "installment": "RATA",
         "maxInstallmentsReached": "Hai raggiunto il numero massimo di rate (12)",
         "minInstallmentsRequired": "Sono richieste almeno 2 rate",
+        "remittance": {
+          "label": "Causale",
+          "required": "Il campo causale è obbligatorio"
+        },
         "otherBeneficiaries": "Altri beneficiari",
         "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?",
-        "title": "Configurazione rate"
+        "title": "Configurazione rate",
+        "yes": "Sì",
+        "no": "No"
       },
       "isMultibeneficiary": {
         "label": "Altri beneficiari"
