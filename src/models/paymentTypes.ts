@@ -154,7 +154,7 @@ export type AmountValidationRules = {
   /** Error message if the value is invalid */
   invalidValue: string;
   /** Error message if the value is negative */
-  negative: string;
+  positive: string;
   /** Error message if the value is zero */
   zero: string;
   /** Error message if the beneficiaries total doesn't match */

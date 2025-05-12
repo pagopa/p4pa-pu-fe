@@ -94,7 +94,7 @@ export const createAmountSchema = (t: TFunction) =>
         )
         .refine(
           (val) => parseFloat(val.replace(',', '.')) > 0,
-          t('debtPositionCreateWizard.step3.amount.negative')
+          t('debtPositionCreateWizard.step3.amount.positive')
         )
         .refine((val) => {
           const parts = val.replace(',', '.').split('.');
@@ -201,7 +201,7 @@ function validateSinglePayment(
   if (numericAmount <= 0) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: t('debtPositionCreateWizard.step3.amount.negative'),
+      message: t('debtPositionCreateWizard.step3.amount.positive'),
       path: ['amount', 'value']
     });
   }
