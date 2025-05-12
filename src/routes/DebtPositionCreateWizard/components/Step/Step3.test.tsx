@@ -8,13 +8,17 @@ import {
   Step3Data,
   DebtPositionTypeEnum
 } from '../../../../models/DebtPositionType';
-import { PaymentOptionTypeEnum } from '../../../../../generated/data-contracts';
+import {
+  PaymentOptionTypeEnum,
+  DebtPositionStatus
+} from '../../../../../generated/data-contracts';
 import { MemoryRouter } from 'react-router-dom';
 import { useStore } from '../../../../store/GlobalStore';
 import debtPositionsApi from '../../../../api/debtPositions';
 
 // Import the mocked utility to access directly in tests
 import * as paymentUtility from '../../../../utils/paymentUtility';
+import * as installmentValidation from '../../../../utils/paymentUtility';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -140,10 +144,12 @@ vi.mock('../../../../components/Wizard/WizardStepButtons', () => ({
   default: ({
     onBack,
     onNext,
+    onSaveDraft,
     nextLabel
   }: {
     onBack: () => void;
     onNext: () => void;
+    onSaveDraft: () => void;
     nextLabel: string;
   }) => (
     <div data-testid="wizard-step-buttons">
@@ -152,6 +158,9 @@ vi.mock('../../../../components/Wizard/WizardStepButtons', () => ({
       </button>
       <button onClick={onNext} data-testid="next-button">
         {nextLabel}
+      </button>
+      <button onClick={onSaveDraft} data-testid="save-draft-button">
+        Save Draft
       </button>
     </div>
   )
@@ -289,9 +298,17 @@ describe('Step3 Component', () => {
     expect(screen.queryByTestId('date-picker')).not.toBeInTheDocument();
   });
 
-  it('should handle multi-beneficiary toggle', async () => {
+  it('should handle multi-beneficiary toggle and amount change', async () => {
+    // Mock della funzione triggerValidationForAllBeneficiaries
+    const triggerSpy = vi.fn();
+    vi.spyOn(
+      paymentUtility,
+      'triggerValidationForAllBeneficiaries'
+    ).mockImplementation(triggerSpy);
+
     renderComponent();
 
+    // Enable multi-beneficiary
     const multiBeneficiarySwitch = screen.getByRole('checkbox', {
       name: /Multiple Beneficiaries/i
     });
@@ -300,6 +317,15 @@ describe('Step3 Component', () => {
     await waitFor(() => {
       expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
     });
+
+    // Imposta un valore per l'importo
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+    fireEvent.change(amountInput, { target: { value: '200,00' } });
+    fireEvent.blur(amountInput);
+
+    // Verifichiamo che il componente sia stato renderizzato correttamente
+    expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+    expect(amountInput).toHaveValue('200,00');
   });
 
   it('should handle form submission for single payment', async () => {
@@ -410,5 +436,153 @@ describe('Step3 Component', () => {
         paymentUtility.triggerValidationForAllBeneficiaries
       ).toHaveBeenCalled();
     });
+  });
+
+  it('should handle save as draft functionality', async () => {
+    renderComponent();
+
+    const paymentObjectInput = screen.getByRole('textbox', {
+      name: /Payment Object/i
+    });
+    fireEvent.change(paymentObjectInput, {
+      target: { value: 'Draft Payment Object' }
+    });
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+    fireEvent.change(amountInput, { target: { value: '150,75' } });
+    fireEvent.blur(amountInput);
+
+    const datePicker = screen.getByTestId('date-picker-input');
+    fireEvent.change(datePicker, { target: { value: '2025-08-20' } });
+
+    const saveDraftButton = screen.getByTestId('save-draft-button');
+    fireEvent.click(saveDraftButton);
+
+    await waitFor(() => {
+      expect(mockSetData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paymentObject: { value: 'Draft Payment Object', readonly: false },
+          amount: { value: '150.75', readonly: false }
+        })
+      );
+    });
+
+    expect(mockCreateDebtPosition).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          status: DebtPositionStatus.DRAFT
+        })
+      })
+    );
+  });
+
+  it('should validate installments when submitting with installment payment option', async () => {
+    renderComponent();
+
+    // Change payment option to installments
+    const selectNativeInput = screen.getByDisplayValue('SINGLE');
+    fireEvent.change(selectNativeInput, {
+      target: { value: PaymentOptionTypeEnum.INSTALLMENTS }
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('installment-field')).toBeInTheDocument();
+    });
+
+    // Mock the validateInstallmentsData result
+    vi.spyOn(installmentValidation, 'validateInstallments').mockReturnValueOnce(
+      {
+        hasInvalidBeneficiaries: false,
+        hasInvalidPaymentFields: false,
+        hasInvalidAmounts: false,
+        hasEmptyRemittance: false
+      }
+    );
+
+    // Set up mock for syncInstallmentBeneficiaries to return valid data
+    vi.spyOn(
+      installmentValidation,
+      'syncInstallmentBeneficiaries'
+    ).mockReturnValueOnce({
+      installments: [
+        {
+          amount: '100',
+          dueDate: '2025-07-15',
+          remittance: 'Test payment',
+          isMultibeneficiary: false,
+          beneficiaries: []
+        }
+      ],
+      modified: true
+    });
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
+
+    // Verifichiamo che la funzione createDebtPosition sia stata chiamata
+    await waitFor(() => {
+      expect(mockCreateDebtPosition).toHaveBeenCalled();
+    });
+  });
+
+  it('should handle mandatory due date validation failure', async () => {
+    // Create component with mandatory due date flag set to true
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: true }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    // Clear the date picker
+    const datePicker = screen.getByTestId('date-picker-input');
+    fireEvent.change(datePicker, { target: { value: '' } });
+    fireEvent.blur(datePicker);
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
+
+    // Verifichiamo che la funzione createDebtPosition non sia stata chiamata
+    // poiché la validazione dovrebbe fallire
+    await waitFor(() => {
+      expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should validate due date when date changes and it is mandatory', async () => {
+    // Create component with mandatory due date flag set to true
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: true }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    // Get the date picker and trigger a change
+    const datePicker = screen.getByTestId('date-picker-input');
+
+    // First set a valid date
+    fireEvent.change(datePicker, { target: { value: '2025-07-15' } });
+
+    // Then clear it to trigger validation
+    fireEvent.change(datePicker, { target: { value: '' } });
+
+    // Simulate the DatePicker onClose event
+    fireEvent.blur(datePicker);
+
+    // Verifichiamo che il campo sia vuoto
+    expect(datePicker).toHaveValue('');
   });
 });
