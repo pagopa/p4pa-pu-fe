@@ -299,7 +299,6 @@ describe('Step3 Component', () => {
   });
 
   it('should handle multi-beneficiary toggle and amount change', async () => {
-    // Mock della funzione triggerValidationForAllBeneficiaries
     const triggerSpy = vi.fn();
     vi.spyOn(
       paymentUtility,
@@ -318,12 +317,10 @@ describe('Step3 Component', () => {
       expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
     });
 
-    // Imposta un valore per l'importo
     const amountInput = screen.getByRole('textbox', { name: /Amount/i });
     fireEvent.change(amountInput, { target: { value: '200,00' } });
     fireEvent.blur(amountInput);
 
-    // Verifichiamo che il componente sia stato renderizzato correttamente
     expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
     expect(amountInput).toHaveValue('200,00');
   });
@@ -518,8 +515,6 @@ describe('Step3 Component', () => {
 
     const submitButton = screen.getByTestId('next-button');
     fireEvent.click(submitButton);
-
-    // Verifichiamo che la funzione createDebtPosition sia stata chiamata
     await waitFor(() => {
       expect(mockCreateDebtPosition).toHaveBeenCalled();
     });
@@ -547,9 +542,6 @@ describe('Step3 Component', () => {
 
     const submitButton = screen.getByTestId('next-button');
     fireEvent.click(submitButton);
-
-    // Verifichiamo che la funzione createDebtPosition non sia stata chiamata
-    // poiché la validazione dovrebbe fallire
     await waitFor(() => {
       expect(mockCreateDebtPosition).not.toHaveBeenCalled();
     });
@@ -582,7 +574,6 @@ describe('Step3 Component', () => {
     // Simulate the DatePicker onClose event
     fireEvent.blur(datePicker);
 
-    // Verifichiamo che il campo sia vuoto
     expect(datePicker).toHaveValue('');
   });
 });
