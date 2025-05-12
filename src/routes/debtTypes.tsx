@@ -8,6 +8,7 @@ import { DebtTypeCreateSuccess } from './DebtTypeCreate/DebtTypeCreateSuccess';
 import { DebtTypeCatalogEdit } from './DebtTypeCatalogEdit';
 import { DebtTypeCatalogEditSuccess } from './DebtTypeCatalogEdit/DebtTypeCatalogEditSuccess';
 import DebtTypesCreated from './DebtTypesCreated/DebtTypesCreated';
+import { DebtTypeCreateEC } from './DebtTypeCreateEC';
 
 const deployPath = config.deployPath;
 
@@ -70,6 +71,19 @@ export const debtTypesRoutes = [
         handle: {
           backButton: false,
           hideBreadcrumbs: true
+        } as RouteHandleObject
+      },
+      {
+        id: 'DEBT_TYPE_CREATE_EC',
+        path: 'dashboard/new',
+        element: <DebtTypeCreateEC />,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
         } as RouteHandleObject
       },
       {
