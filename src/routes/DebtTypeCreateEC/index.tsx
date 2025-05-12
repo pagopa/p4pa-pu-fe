@@ -35,7 +35,7 @@ export const DebtTypeCreateEC = () => {
     navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
       replace: true,
       state: {
-        formData
+        formData: formData.value
       }
     });
   };

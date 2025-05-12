@@ -21,17 +21,17 @@ import { PaymentNotificationFields } from './components/PaymentNotificationField
 export type Step2Data = {
   isSpontaneousPaymentEnabled?: boolean;
   paymentMethod: PaymentMethodOption;
-  enablePaymentNotifications?: string;
+  enablePaymentNotifications?: 'true' | 'false';
   authenticateUsername?: string;
   authenticatePassword?: string;
   authCallbackUrl?: string;
   updateCallbackUrl?: string;
   isDueDateRequired?: boolean;
   isAnonymousFiscalCode?: boolean;
-  fixedAmount?: string;
+  fixedAmount?: number;
   customFieldsSchema?: File;
   externalPaymentUrl?: string;
-  notificationRetries?: string;
+  notificationRetries?: number;
   notificationAppName?: string;
   notificationEndpoint?: string;
   enableJwtAuth?: boolean;
