@@ -79,22 +79,6 @@ describe('PaymentMethodSelector', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders externalPaymentUrl text field with https:// adornment when EXTERNAL is selected', () => {
-    renderWithForm(PaymentMethodOption.EXTERNAL);
-
-    const urlInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.behaviour.spontaneous.externalUrl.label'
-    });
-    expect(urlInput).toBeInTheDocument();
-
-    // Check for https:// start adornment text
-    const adornment = urlInput.parentElement?.querySelector(
-      '.MuiInputAdornment-root'
-    );
-    expect(adornment).toBeInTheDocument();
-    expect(adornment?.textContent).toBe('https://');
-  });
-
   it('changes selected option and updates rendered field accordingly', () => {
     const Wrapper = () => {
       const { control, watch, setValue } = useForm<Step2Data>({

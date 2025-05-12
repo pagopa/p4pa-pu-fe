@@ -69,11 +69,7 @@ export const SelectedField = ({
           name="externalPaymentUrl"
           control={control}
           label={t('debtTypeCreateEC.behaviour.spontaneous.externalUrl.label')}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">https://</InputAdornment>
-            )
-          }}
+          defaultValue="https://"
         />
       );
 
