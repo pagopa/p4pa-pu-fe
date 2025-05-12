@@ -120,6 +120,14 @@ export const Step1Configuration = ({
     }
     onNext();
   };
+  /** This function test if in editmode. If true the validation is skipped
+   * cause the first step contains not-required field when call the PATCH service
+   */
+  const onInvalid = async () => {
+    if (editmode) {
+      onNext();
+    }
+  }
 
   return (
     <form aria-label="form">
@@ -374,7 +382,7 @@ export const Step1Configuration = ({
         </SectionBox>
       </WizardStepWrapper>
 
-      <WizardStepButtons onBack={onBack} onNext={handleSubmit(onSubmit)} />
+      <WizardStepButtons onBack={onBack} onNext={handleSubmit(onSubmit, onInvalid)} />
     </form>
   );
 };
