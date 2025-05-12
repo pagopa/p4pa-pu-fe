@@ -57,7 +57,7 @@ export const DebtTypes = () => {
           {
             icon: <Add />,
             buttonText: t('commons.createNewOne'),
-            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_CREATE_EC)
+            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_CREATE)
           }
         ]}
         description={t('debtTypes.description')}
