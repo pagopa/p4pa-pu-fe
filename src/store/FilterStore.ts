@@ -18,7 +18,7 @@ export const initialFilterValues: FilterValues = {
   VALUE_DATE_TO: null
 };
 
-type KeyofFilterValues = keyof FilterValues;
+export type KeyofFilterValues = keyof FilterValues;
 
 export const selectedFilters = signal<Array<KeyofFilterValues>>([]);
 

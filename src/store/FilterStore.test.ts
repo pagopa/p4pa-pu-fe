@@ -11,49 +11,50 @@ import {
 describe('FilterStore', () => {
   beforeEach(() => {
     // Reset selectedFilters to its initial value before each test
-    selectedFilters.value = [''];
+    selectedFilters.value = [];
   });
 
-  it('should initialize selectedFilters with an empty string', () => {
-    expect(selectedFilters.value).toEqual(['']);
+  it('should initialize selectedFilters with an empty array', () => {
+    expect(selectedFilters.value).toEqual([]);
   });
 
   it('should set selectedFilters to a new state', () => {
-    setSelectedFilters(['search', 'name']);
-    expect(selectedFilters.value).toEqual(['search', 'name']);
+    setSelectedFilters(['ACCOUNTING_DATE_FROM', 'ACCOUNTING_DATE_TO']);
+    expect(selectedFilters.value).toEqual([
+      'ACCOUNTING_DATE_FROM',
+      'ACCOUNTING_DATE_TO'
+    ]);
   });
 
   it('should add a new filter row', () => {
-    addFilterRow('search');
-    expect(selectedFilters.value).toEqual(['', 'search']);
+    addFilterRow('ACCOUNTING_DATE_FROM');
+    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE_FROM']);
   });
 
-  it('should add an empty filter row if no nextId is provided', () => {
-    addFilterRow();
-    expect(selectedFilters.value).toEqual(['', '']);
-  });
-
-  it('should remove a filter row by ID', () => {
-    setSelectedFilters(['search', 'name']);
-    removeFilterRow('search');
-    expect(selectedFilters.value).toEqual(['name']);
+  it('should remove a filter row by its ID', () => {
+    setSelectedFilters(['ACCOUNTING_DATE_FROM', 'ACCOUNTING_DATE_TO']);
+    removeFilterRow('ACCOUNTING_DATE_TO');
+    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE_FROM']);
   });
 
   it('should not remove the last filter row', () => {
-    setSelectedFilters(['search']);
-    removeFilterRow('search');
-    expect(selectedFilters.value).toEqual(['search']);
+    setSelectedFilters(['ACCOUNTING_DATE_FROM']);
+    removeFilterRow('ACCOUNTING_DATE_FROM');
+    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE_FROM']);
   });
 
   it('should update a filter by index', () => {
-    setSelectedFilters(['search', 'name']);
-    updateFilter('date', 1);
-    expect(selectedFilters.value).toEqual(['search', 'date']);
+    setSelectedFilters(['ACCOUNTING_DATE_FROM', 'ACCOUNTING_DATE_TO']);
+    updateFilter('ACCOUNTING_DATE_TO', 1);
+    expect(selectedFilters.value).toEqual([
+      'ACCOUNTING_DATE_FROM',
+      'ACCOUNTING_DATE_TO'
+    ]);
   });
 
   it('should remove all filters and reset to initial state', () => {
-    setSelectedFilters(['search', 'name', 'date']);
+    setSelectedFilters(['ACCOUNTING_DATE_FROM', 'ACCOUNTING_DATE_TO']);
     removeAllFilters();
-    expect(selectedFilters.value).toEqual(['']);
+    expect(selectedFilters.value).toEqual([]);
   });
 });

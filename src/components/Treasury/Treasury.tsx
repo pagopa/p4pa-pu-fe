@@ -15,6 +15,7 @@ export const Treasury = () => {
   });
   const navigate = useNavigate();
 
+  console.log('filterMap', filterMap);
   return (
     <>
       <TitleComponent

@@ -7,7 +7,8 @@ import { useStore } from '../../store/GlobalStore';
 import {
   addFilterRow,
   removeFilterRow,
-  updateFilter
+  updateFilter,
+  KeyofFilterValues
 } from '../../store/FilterStore';
 import { ChangeEvent } from 'react';
 
@@ -24,14 +25,16 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
   } = useStore();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    updateFilter(e.target.value, index);
+    updateFilter(e.target.value as KeyofFilterValues, index);
   };
 
   // Add the next not already selected filter
-  const addNextFilterRow = () =>
-    addFilterRow(
-      Object.keys(filterMap).find((id: string) => !selectedFilters.includes(id))
-    );
+  const addNextFilterRow = () => {
+    const next: KeyofFilterValues | undefined = Object.keys(filterMap).find(
+      (id) => !selectedFilters.includes(id as KeyofFilterValues)
+    ) as KeyofFilterValues | undefined;
+    if (next) addFilterRow(next);
+  };
 
   return (
     <Stack gap={3}>
@@ -45,7 +48,7 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
           {selectedFilters.length > 1 && (
             <IconButton
               sx={{ color: theme.palette.error.dark, alignSelf: 'flex-start' }}
-              onClick={() => removeFilterRow(filterId)}
+              onClick={() => removeFilterRow(filterId as KeyofFilterValues)}
               aria-label="remove"
             >
               <RemoveCircleOutline fontSize="small" />
