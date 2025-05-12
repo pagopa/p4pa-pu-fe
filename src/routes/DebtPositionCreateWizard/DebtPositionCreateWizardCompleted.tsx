@@ -95,14 +95,16 @@ function DebtPositionCreateWizardCompleted() {
           )}
         </Typography>
 
-        <Button
-          role="button"
-          variant="contained"
-          onClick={handleViewDebtPosition}
-        >
-          {t(translationKeys.viewDebtPosition)}
-        </Button>
-      </Box>{' '}
+        {isDraft && (
+          <Button
+            role="button"
+            variant="contained"
+            onClick={handleViewDebtPosition}
+          >
+            {t(translationKeys.viewDebtPosition)}
+          </Button>
+        )}
+      </Box>
       <Button
         role="button"
         variant="naked"
