@@ -319,7 +319,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     return { isValid: true, syncedInstallments };
   };
 
-  const onSubmit = async (values: Step3FormValues) => {
+  const onSubmit = async (values: Step3FormValues, isDraft = false) => {
     // Check due date field if mandatory
     if (!isInstallment && values.flagMandatoryDueDate) {
       if (!values.dueDate.value) {
@@ -380,7 +380,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     // Prepare API POST body
     const postBody: DebtPositionDTO = {
       description: formattedValues.step1Data?.description.value || '',
-      status: DebtPositionStatus.UNPAID,
+      status: isDraft ? DebtPositionStatus.DRAFT : DebtPositionStatus.UNPAID,
       organizationId: organizationId,
       debtPositionTypeOrgId: Number(
         formattedValues.step1Data?.debtPositionType.value || 0
@@ -418,7 +418,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit((values) => onSubmit(values, false))}>
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.configurationAlert.title')}
         subtitle={t('debtPositionCreateWizard.configurationAlert.subtitle')}
@@ -657,9 +657,12 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
       )}
       <WizardStepButtons
         onBack={onBack}
-        onNext={handleSubmit(onSubmit)}
+        onNext={handleSubmit((values) => onSubmit(values, false))}
+        onSaveDraft={() => handleSubmit((values) => onSubmit(values, true))()}
         disableNext={false}
         nextLabel="commons.create"
+        showSaveDraft={true}
+        saveDraftLabel="commons.saveDraft"
       />
     </form>
   );

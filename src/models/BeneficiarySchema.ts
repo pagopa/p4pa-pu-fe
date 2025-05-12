@@ -36,7 +36,7 @@ export const createAmountFieldSchema = (t: TFunction) => {
       if (numValue <= 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: t('debtPositionCreateWizard.step3.amount.negative')
+          message: t('debtPositionCreateWizard.step3.amount.positive')
         });
         return;
       }
