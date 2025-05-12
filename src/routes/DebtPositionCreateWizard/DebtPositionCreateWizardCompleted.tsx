@@ -4,13 +4,39 @@ import { useLocation, useNavigate } from 'react-router';
 import config from '../../utils/config';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { theme } from '@pagopa/mui-italia';
+import { DebtPositionStatus } from '../../../generated/data-contracts';
 
 function DebtPositionCreateWizardCompleted() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const deployPath = config.deployPath;
-  const description = location.state?.description || '';
+
+  const { description = '', status, debtPositionId } = location.state || {};
+  const isDraft = status === DebtPositionStatus.DRAFT;
+
+  const translationKeys = {
+    title: isDraft
+      ? 'debtPositionCreateWizardCompleted.draft'
+      : 'debtPositionCreateWizardCompleted.title',
+    description: isDraft
+      ? 'debtPositionCreateWizardCompleted.descriptionDraft'
+      : 'debtPositionCreateWizardCompleted.description',
+    viewDebtPosition: 'debtPositionCreateWizardCompleted.viewDebtPosition',
+    backToStart: 'debtPositionCreateWizardCompleted.backToStart'
+  };
+
+  const translationParams = {
+    paymentObject: description
+  };
+
+  function handleViewDebtPosition() {
+    if (isDraft) {
+      navigate(`${deployPath}/debt-positions/${debtPositionId}`);
+    } else {
+      navigate(`${deployPath}/debt-positions/`);
+    }
+  }
 
   return (
     <Box
@@ -53,9 +79,7 @@ function DebtPositionCreateWizardCompleted() {
             maxWidth: (theme) => theme.spacing(50)
           }}
         >
-          {t('debtPositionCreateWizardCompleted.title', {
-            paymentObject: description
-          })}
+          {t(translationKeys.title, translationParams)}
         </Typography>
 
         <Typography
@@ -65,17 +89,27 @@ function DebtPositionCreateWizardCompleted() {
             fontWeight: 400
           }}
         >
-          {t('debtPositionCreateWizardCompleted.description')}
+          {t(
+            translationKeys.description,
+            isDraft ? translationParams : undefined
+          )}
         </Typography>
 
         <Button
           role="button"
           variant="contained"
-          onClick={() => navigate(`${deployPath}/debt-positions/`)}
+          onClick={handleViewDebtPosition}
         >
-          {t('debtPositionCreateWizardCompleted.backToStart')}
+          {t(translationKeys.viewDebtPosition)}
         </Button>
-      </Box>
+      </Box>{' '}
+      <Button
+        role="button"
+        variant="naked"
+        onClick={() => navigate(`${deployPath}/debt-positions/`)}
+      >
+        {t(translationKeys.backToStart)}
+      </Button>
     </Box>
   );
 }
