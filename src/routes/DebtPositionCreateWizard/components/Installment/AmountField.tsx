@@ -10,7 +10,8 @@ import { useTranslation } from 'react-i18next';
 import { createAmountValidator } from '../../../../utils/fieldValidation';
 import {
   handleAmountInputChange,
-  handleAmountInputBlur
+  handleAmountInputBlur,
+  formatAmountForDisplay
 } from '../../../../utils/paymentUtility';
 
 type AmountFieldProps<T extends FieldValues> = {
@@ -54,7 +55,7 @@ const AmountField = <T extends FieldValues>({
           label={t('debtPositionCreateWizard.step3.installments.amount.label')}
           required
           disabled={disabled}
-          value={field.value || ''}
+          value={formatAmountForDisplay(String(field.value))}
           InputProps={{
             startAdornment: <InputAdornment position="start">€</InputAdornment>,
             inputProps: {
