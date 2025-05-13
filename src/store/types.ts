@@ -5,14 +5,14 @@ import { OperatoRole } from '../models/OperatorRole';
 import { OrganizationIdMemo } from '../models/Organization';
 import { UserInfo } from '../../generated/data-contracts';
 import { IdTokenPayload } from '../models/IdTokenPayload';
-import { KeyofFilterValues } from './FilterStore';
+import { FilterMap } from '../hooks/useMultiFilters';
 
 export type State = {
   [STATE.USER_INFO]: UserInfo | undefined;
   [STATE.ORGANIZATION_ID]: OrganizationIdMemo;
   [STATE.CONFIG_FE]: ConfigFE | undefined;
   [STATE.APP_STATE]: AppState;
-  [STATE.SELECTED_FILTERS]: Array<KeyofFilterValues>;
+  [STATE.SELECTED_FILTERS]: Array<keyof FilterMap>;
   [STATE.FILTER_VALUES]: FilterValues;
   [STATE.OPERATOR_ROLE]: OperatoRole | undefined;
   [STATE.ID_TOKEN]: IdTokenPayload | undefined;

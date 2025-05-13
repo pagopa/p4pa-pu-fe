@@ -19,41 +19,35 @@ describe('FilterStore', () => {
   });
 
   it('should set selectedFilters to a new state', () => {
-    setSelectedFilters(['ACCOUNTING_DATE_FROM', 'ACCOUNTING_DATE_TO']);
-    expect(selectedFilters.value).toEqual([
-      'ACCOUNTING_DATE_FROM',
-      'ACCOUNTING_DATE_TO'
-    ]);
+    setSelectedFilters(['ACCOUNTING_DATE', 'AMOUNT']);
+    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE', 'AMOUNT']);
   });
 
   it('should add a new filter row', () => {
-    addFilterRow('ACCOUNTING_DATE_FROM');
-    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE_FROM']);
+    addFilterRow('ACCOUNTING_DATE');
+    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE']);
   });
 
   it('should remove a filter row by its ID', () => {
-    setSelectedFilters(['ACCOUNTING_DATE_FROM', 'ACCOUNTING_DATE_TO']);
-    removeFilterRow('ACCOUNTING_DATE_TO');
-    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE_FROM']);
+    setSelectedFilters(['ACCOUNTING_DATE', 'AMOUNT']);
+    removeFilterRow('AMOUNT');
+    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE']);
   });
 
-  it('should not remove the last filter row', () => {
-    setSelectedFilters(['ACCOUNTING_DATE_FROM']);
-    removeFilterRow('ACCOUNTING_DATE_FROM');
-    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE_FROM']);
+  it('should remove the last filter row', () => {
+    setSelectedFilters(['ACCOUNTING_DATE']);
+    removeFilterRow('ACCOUNTING_DATE');
+    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE']);
   });
 
   it('should update a filter by index', () => {
-    setSelectedFilters(['ACCOUNTING_DATE_FROM', 'ACCOUNTING_DATE_TO']);
-    updateFilter('ACCOUNTING_DATE_TO', 1);
-    expect(selectedFilters.value).toEqual([
-      'ACCOUNTING_DATE_FROM',
-      'ACCOUNTING_DATE_TO'
-    ]);
+    setSelectedFilters(['ACCOUNTING_DATE', 'AMOUNT']);
+    updateFilter('AMOUNT', 1);
+    expect(selectedFilters.value).toEqual(['ACCOUNTING_DATE', 'AMOUNT']);
   });
 
   it('should remove all filters and reset to initial state', () => {
-    setSelectedFilters(['ACCOUNTING_DATE_FROM', 'ACCOUNTING_DATE_TO']);
+    setSelectedFilters(['ACCOUNTING_DATE', 'AMOUNT']);
     removeAllFilters();
     expect(selectedFilters.value).toEqual([]);
   });

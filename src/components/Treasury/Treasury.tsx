@@ -10,12 +10,20 @@ import { useMultiFilters } from '../../hooks/useMultiFilters';
 
 export const Treasury = () => {
   const { t } = useTranslation();
-  const { filterMap, removeAllFilters, noFilterIsSelected } = useMultiFilters({
+  const {
+    filterMap,
+    removeAllFilters,
+    noFilterIsSelected,
+    filterValues,
+    selectedFilters
+  } = useMultiFilters({
     clearOnMount: true
   });
   const navigate = useNavigate();
 
   console.log('filterMap', filterMap);
+  console.log('filterValues', filterValues);
+  console.log('selectedFilters', selectedFilters);
   return (
     <>
       <TitleComponent

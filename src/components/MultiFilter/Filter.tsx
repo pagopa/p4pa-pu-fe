@@ -4,12 +4,13 @@ import { FormComponent } from '../FormComponent';
 import FilterContainer from '../FilterContainer/FilterContainer';
 import { FilterMap } from '../../hooks/useMultiFilters';
 import { useTranslation } from 'react-i18next';
+import { KeyofFilterMap } from '../../store/FilterStore';
 
 export type FilterProps = {
   filterMap: FilterMap;
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  value: string;
-  selectedFilters: Array<string>;
+  value: keyof FilterMap;
+  selectedFilters: Array<KeyofFilterMap>;
 };
 
 export const Filter = ({
@@ -24,7 +25,7 @@ export const Filter = ({
   const sortedOptions = Object.entries(filterMap).map(([key, value]) => ({
     label: value.label,
     value: key,
-    disabled: selectedFilters.includes(key)
+    disabled: selectedFilters.includes(key as KeyofFilterMap)
   }));
 
   return (

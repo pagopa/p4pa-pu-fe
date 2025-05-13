@@ -8,7 +8,7 @@ import {
   addFilterRow,
   removeFilterRow,
   updateFilter,
-  KeyofFilterValues
+  KeyofFilterMap
 } from '../../store/FilterStore';
 import { ChangeEvent } from 'react';
 
@@ -25,14 +25,14 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
   } = useStore();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    updateFilter(e.target.value as KeyofFilterValues, index);
+    updateFilter(e.target.value as KeyofFilterMap, index);
   };
 
   // Add the next not already selected filter
   const addNextFilterRow = () => {
-    const next: KeyofFilterValues | undefined = Object.keys(filterMap).find(
-      (id) => !selectedFilters.includes(id as KeyofFilterValues)
-    ) as KeyofFilterValues | undefined;
+    const next: KeyofFilterMap | undefined = Object.keys(filterMap).find(
+      (id) => !selectedFilters.includes(id as KeyofFilterMap)
+    ) as KeyofFilterMap;
     if (next) addFilterRow(next);
   };
 
@@ -48,7 +48,7 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
           {selectedFilters.length > 1 && (
             <IconButton
               sx={{ color: theme.palette.error.dark, alignSelf: 'flex-start' }}
-              onClick={() => removeFilterRow(filterId as KeyofFilterValues)}
+              onClick={() => removeFilterRow(filterId)}
               aria-label="remove"
             >
               <RemoveCircleOutline fontSize="small" />

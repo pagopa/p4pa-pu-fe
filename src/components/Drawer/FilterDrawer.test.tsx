@@ -6,8 +6,8 @@ import { useMultiFilters } from '../../hooks/useMultiFilters';
 
 vi.mock('../../hooks/useFilters', () => ({
   useFilters: () => ({
-    FILTER_TYPE_1: {
-      label: 'Filtro 1',
+    AMOUNT: {
+      label: 'AMOUNT',
       fields: [{ type: COMPONENT_TYPE.textField, label: 'commons.searchFor' }]
     }
   })
@@ -31,7 +31,7 @@ describe('Drawer Component', () => {
       />
     );
 
-    const selectLabels = screen.getAllByText('commons.searchFor');
+    const selectLabels = screen.getAllByText('commons.addfilter');
     expect(selectLabels[0]).toBeTruthy();
   });
 });
