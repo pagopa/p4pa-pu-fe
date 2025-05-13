@@ -1,8 +1,4 @@
-// Validation functions for tax code and VAT number
-
-import { ValidationErrorCode } from '../store/types';
-
-// enum for subject type
+// Definition of the SubjectType enum
 export enum SubjectType {
   INDIVIDUAL = 'F',
   BUSINESS = 'G'
@@ -55,35 +51,6 @@ export const isValidPartitaIVA = (piva: string): boolean => {
   // 2. It consists only of numerical digits (0-9)
   // Note: this validation only checks the format
   return piva.length === 11 && /^\d{11}$/.test(piva);
-};
-
-export const validateTaxCode = (
-  value: string,
-  subjectType: string
-): ValidationErrorCode => {
-  if (!value) return ValidationErrorCode.REQUIRED;
-
-  const normalizedValue = value.replace(/\s/g, '').toUpperCase();
-
-  switch (subjectType) {
-    case SubjectType.INDIVIDUAL:
-      if (
-        !isValidCodiceFiscale(normalizedValue) &&
-        !isValidPartitaIVA(normalizedValue)
-      ) {
-        return ValidationErrorCode.INVALID_CF;
-      }
-      break;
-    case SubjectType.BUSINESS:
-      if (!isValidPartitaIVA(normalizedValue)) {
-        return ValidationErrorCode.INVALID_VAT;
-      }
-      break;
-    default:
-      return ValidationErrorCode.INVALID_CF;
-  }
-
-  return ValidationErrorCode.VALID;
 };
 
 /**
@@ -139,9 +106,11 @@ export const isBeneficiariesTotalValid = (
   }
 
   // For multiple beneficiaries, check that the sum is less than the total amount
-  const sum = beneficiaries.reduce((acc, curr) => {
-    return acc + (parseFloat(curr.amount) || 0);
-  }, 0);
+  let sum = 0;
+  beneficiaries.forEach((beneficiary) => {
+    const amount = parseFloat(beneficiary.amount) || 0;
+    sum += amount;
+  });
 
   return sum < total;
 };
@@ -220,12 +189,14 @@ export const createBeneficiaryValidators = (
     if (fieldsLength === 1 && totalAmount) {
       const beneficiaryAmount = parseFloat(amount) || 0;
       const total = parseFloat(totalAmount);
-      return (
+
+      const result =
         beneficiaryAmount < total ||
         t(
           'debtPositionCreateWizard.step3.beneficiary.amountMustBeLessThanTotal'
-        )
-      );
+        );
+
+      return result;
     }
     return true;
   };
@@ -258,116 +229,6 @@ export const createBeneficiaryValidators = (
 };
 
 /**
- * Creates validation rules for a date field
- * @param t - Translation function
- * @param isRequired - Flag indicating if the field is required
- * @param requiredMessage - Error message for required field
- * @returns Object with validation rules for react-hook-form
- */
-export const createDateValidator = (
-  t: (key: string) => string,
-  isRequired: boolean,
-  requiredMessage?: string
-) => {
-  return {
-    required: isRequired ? requiredMessage || t('commons.required') : false,
-    validate: (value: unknown) => {
-      // If the date is not required and not specified, passes validation
-      if (!isRequired && !value) {
-        return true;
-      }
-
-      // Checks that the value is a valid Date object
-      const timestamp = value ? new Date(value as Date).getTime() : NaN;
-      if (!isNaN(timestamp)) {
-        return true;
-      }
-
-      return t('debtPositionCreateWizard.step3.dueDate.invalid');
-    }
-  };
-};
-
-// Functions for field validation
-export const createValidators = (
-  t: (key: string) => string,
-  subjectTypeValue: string
-) => {
-  // Validation function for tax code / VAT number
-  const validateTaxCodeField = (value: string): string | undefined => {
-    // If the field is empty, returns the appropriate message based on subject type
-    if (!value) {
-      // If subject type is not selected, shows generic message
-      if (!subjectTypeValue) {
-        return t('debtPositionCreateWizard.step2.taxCode.required');
-      }
-      // Otherwise shows specific message based on subject type
-      return subjectTypeValue !== SubjectType.BUSINESS
-        ? t('debtPositionCreateWizard.step2.taxCode.required')
-        : t('debtPositionCreateWizard.step2.vat.required');
-    }
-    // Otherwise, validates the format
-    const result = validateTaxCode(value, subjectTypeValue);
-
-    if (result == 'commons.required') {
-      // If subject type is not selected, shows generic message
-      if (!subjectTypeValue) {
-        return t('debtPositionCreateWizard.step2.taxCode.required');
-      }
-      // Otherwise shows specific message based on subject type
-      return subjectTypeValue !== SubjectType.BUSINESS
-        ? t('debtPositionCreateWizard.step2.taxCode.required')
-        : t('debtPositionCreateWizard.step2.vat.required');
-    }
-
-    // Returns the validation result
-    return result === ValidationErrorCode.VALID ? undefined : t(result);
-  };
-
-  // Validation function for full name / company name
-  const validateFullNameField = (value: string): string | undefined => {
-    // If the field is empty, returns the appropriate message based on subject type
-    if (!value) {
-      // If subject type is not selected, shows generic message
-      if (!subjectTypeValue) {
-        return t('debtPositionCreateWizard.step2.fullName.required');
-      }
-      // Otherwise shows specific message based on subject type
-      return subjectTypeValue !== SubjectType.BUSINESS
-        ? t('debtPositionCreateWizard.step2.fullName.required')
-        : t('debtPositionCreateWizard.step2.companyName.required');
-    }
-
-    // Validation for name format (at least two words)
-    const trimmed = value.trim();
-    if (trimmed.split(' ').length < 2) {
-      return t('debtPositionCreateWizard.step2.fullName.minTwoWords');
-    }
-
-    return undefined;
-  };
-
-  // Factory for validation rules for React Hook Form
-  const getValidationRules = () => ({
-    taxCode: {
-      validate: validateTaxCodeField
-    },
-    fullName: {
-      validate: validateFullNameField
-    },
-    subjectType: {
-      required: t('debtPositionCreateWizard.step2.subjectType.required')
-    }
-  });
-
-  return {
-    validateTaxCodeField,
-    validateFullNameField,
-    getValidationRules
-  };
-};
-
-/**
  * Checks if an IBAN is valid
  * @param iban - IBAN to validate
  * @returns true if the IBAN is valid, false otherwise
@@ -388,26 +249,6 @@ export const isValidIBAN = (iban: string): boolean => {
   // Verification with regular expression
   return regex.test(iban);
 };
-
-/**
- * Checks if an Italian postal account number is valid
- * @param postalAccount - Postal account number to validate
- * @returns true if the number is valid, false otherwise
- */
-// export const isValidPostalAccount = (postalAccount: string): boolean => {
-//   // Temporarily disabled
-//   return true;
-//   /*
-//   if (!postalAccount) return false;
-
-//   // Normalizes the postal account number by removing spaces
-//   postalAccount = postalAccount.replace(/\s/g, '');
-
-//   // Italian postal accounts consist of 12 numerical digits
-//   // or shorter numbers (minimum 6 digits)
-//   return /^\d{6,12}$/.test(postalAccount);
-//   */
-// };
 
 /**
  * Creates validation functions for beneficiary fields
@@ -441,18 +282,6 @@ export const createBeneficiaryFieldValidators = (
     return undefined;
   };
 
-  // const validatePostalAccount = (value: string): string | undefined => {
-  //   if (!value) return undefined; // Not mandatory if IBAN is present
-
-  //   if (!isValidPostalAccount(value)) {
-  //     return t(
-  //       'debtPositionCreateWizard.step3.beneficiary.postalAccount.invalid'
-  //     );
-  //   }
-  //   return undefined;
-  //   */
-  // };
-
   // Validation for at least one payment method present (either IBAN or postal account)
   const validatePaymentMethod = (
     iban: string,
@@ -483,7 +312,6 @@ export const createBeneficiaryFieldValidators = (
   return {
     validateBeneficiaryTaxCode,
     validateIBAN,
-    // validatePostalAccount,
     validatePaymentMethod,
     validateRemittance
   };

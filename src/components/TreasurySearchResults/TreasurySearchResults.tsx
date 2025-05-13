@@ -69,7 +69,7 @@ const TreasurySearchResults = () => {
           startIcon={<FilterAlt />}
           onClick={toggleDrawer}
         >
-          {`${t('commons.filters.filtersField')} (${selectedFilters[0] === '' ? 0 : selectedFilters.length})`}
+          {`${t('commons.filters.filtersField')} (${selectedFilters.length})`}
         </ButtonNaked>
       </Grid>
 

@@ -7,7 +7,8 @@ import { useStore } from '../../store/GlobalStore';
 import {
   addFilterRow,
   removeFilterRow,
-  updateFilter
+  updateFilter,
+  KeyofFilterMap
 } from '../../store/FilterStore';
 import { ChangeEvent } from 'react';
 
@@ -24,14 +25,16 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
   } = useStore();
 
   const onChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    updateFilter(e.target.value, index);
+    updateFilter(e.target.value as KeyofFilterMap, index);
   };
 
   // Add the next not already selected filter
-  const addNextFilterRow = () =>
-    addFilterRow(
-      Object.keys(filterMap).find((id: string) => !selectedFilters.includes(id))
-    );
+  const addNextFilterRow = () => {
+    const next: KeyofFilterMap | undefined = Object.keys(filterMap).find(
+      (id) => !selectedFilters.includes(id as KeyofFilterMap)
+    ) as KeyofFilterMap;
+    if (next) addFilterRow(next);
+  };
 
   return (
     <Stack gap={3}>

@@ -153,7 +153,6 @@ export function useBeneficiaryManagement<T extends FieldValues>(
         remittance: '',
         amount: '',
         iban: '',
-        postalAccount: '',
         taxonomyCode: '',
         isNew: true
       };

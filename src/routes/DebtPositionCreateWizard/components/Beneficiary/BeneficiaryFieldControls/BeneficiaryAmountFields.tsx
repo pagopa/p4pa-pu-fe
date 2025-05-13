@@ -6,7 +6,7 @@ import { BeneficiaryFieldsProps } from '../../../../../models/BeneficiaryFieldTy
 import { BeneficiaryControlledField } from './BeneficiaryControlledField';
 
 /**
- * Componente per il gruppo di campi relativi all'importo del beneficiario
+ * Component for the beneficiary amount fields group
  */
 export function BeneficiaryAmountFields<T extends FieldValues>({
   control,
@@ -15,7 +15,6 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
   validationContext,
   disabled,
   fields,
-  validators,
   trigger,
   t
 }: Readonly<
@@ -41,23 +40,8 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
           'amount'
         )}
         control={control}
-        rules={{
-          required: t(
-            'debtPositionCreateWizard.step3.beneficiary.amount.required'
-          ),
-          validate: {
-            isValidAmount: (value: string) => {
-              return validators.validateSingleBeneficiary(value, fields.length);
-            },
-            totalAmount: () => {
-              return validators.validateTotalAmount();
-            }
-          }
-        }}
         renderField={({ field, fieldState }) => {
-          // Se c'è un errore nel campo, lo segnaliamo
           const hasAmountError = fieldState?.error ? true : false;
-
           return (
             <AmountField
               field={field}
@@ -65,7 +49,6 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
               disabled={disabled}
               context={{
                 ...validationContext,
-                // Forza isSubmitted a true se c'è un errore, anche se il form non è stato inviato
                 isSubmitted: validationContext.isSubmitted || hasAmountError
               }}
               index={index}

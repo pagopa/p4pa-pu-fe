@@ -2,132 +2,210 @@ import { describe, it, expect, vi } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import WizardStepButtons from './WizardStepButtons';
 
-// Mock della funzione di traduzione
 vi.mock('react-i18next', () => ({
   useTranslation: vi.fn(() => ({
     t: (key: string) => {
       if (key === 'commons.back') return 'Indietro';
       if (key === 'commons.continue') return 'Continua';
+      if (key === 'commons.saveDraft') return 'Salva bozza';
       return key;
     }
   }))
 }));
 
 describe('WizardStepButtons', () => {
-  it('renderizza correttamente i pulsanti con le etichette predefinite', () => {
+  it('renders the buttons correctly with default labels', () => {
     const onNext = vi.fn();
     const onBack = vi.fn();
-
     render(<WizardStepButtons onNext={onNext} onBack={onBack} />);
-
-    // Verifica che i pulsanti siano presenti con le etichette predefinite
     expect(screen.getByText('Indietro')).toBeInTheDocument();
     expect(screen.getByText('Continua')).toBeInTheDocument();
   });
 
-  it("utilizza l'etichetta personalizzata per il pulsante Next quando fornita", () => {
+  it('renders the next button with the custom label', () => {
     const onNext = vi.fn();
     const onBack = vi.fn();
-
     render(
       <WizardStepButtons onNext={onNext} onBack={onBack} nextLabel="Avanti" />
     );
-
-    // Verifica che il pulsante Next abbia l'etichetta personalizzata
     expect(screen.getByText('Avanti')).toBeInTheDocument();
   });
 
-  it('chiama onNext quando il pulsante Next viene cliccato', () => {
+  it('renders the back button with the custom label', () => {
     const onNext = vi.fn();
     const onBack = vi.fn();
+    render(
+      <WizardStepButtons onNext={onNext} onBack={onBack} backLabel="Torna" />
+    );
 
+    expect(screen.getByText('Torna')).toBeInTheDocument();
+  });
+
+  it('calls onNext when the Next button is clicked', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
     render(<WizardStepButtons onNext={onNext} onBack={onBack} />);
-
-    // Clicca sul pulsante Next
     fireEvent.click(screen.getByText('Continua'));
-
-    // Verifica che onNext sia stato chiamato
     expect(onNext).toHaveBeenCalledTimes(1);
   });
 
-  it('chiama onBack quando il pulsante Back viene cliccato', () => {
+  it('calls onBack when the Back button is clicked', () => {
     const onNext = vi.fn();
     const onBack = vi.fn();
-
     render(<WizardStepButtons onNext={onNext} onBack={onBack} />);
-
-    // Clicca sul pulsante Back
     fireEvent.click(screen.getByText('Indietro'));
-
-    // Verifica che onBack sia stato chiamato
     expect(onBack).toHaveBeenCalledTimes(1);
   });
 
-  it('disabilita il pulsante Next quando disableNext è true', () => {
+  it('disables the Next button when disableNext is true', () => {
     const onNext = vi.fn();
     const onBack = vi.fn();
-
     render(
       <WizardStepButtons onNext={onNext} onBack={onBack} disableNext={true} />
     );
-
-    // Verifica che il pulsante Next sia disabilitato
     expect(screen.getByText('Continua')).toBeDisabled();
   });
 
-  it('disabilita il pulsante Back quando disableBack è true', () => {
+  it('disables the Back button when disableBack is true', () => {
     const onNext = vi.fn();
     const onBack = vi.fn();
-
     render(
       <WizardStepButtons onNext={onNext} onBack={onBack} disableBack={true} />
     );
-
-    // Verifica che il pulsante Back sia disabilitato
     expect(screen.getByText('Indietro')).toBeDisabled();
   });
 
-  it('non chiama onBack quando il pulsante Back è disabilitato e viene cliccato', () => {
+  it('does not call onBack when the Back button is disabled and clicked', () => {
     const onNext = vi.fn();
     const onBack = vi.fn();
-
     render(
       <WizardStepButtons onNext={onNext} onBack={onBack} disableBack={true} />
     );
-
-    // Clicca sul pulsante Back disabilitato
     fireEvent.click(screen.getByText('Indietro'));
-
-    // Verifica che onBack non sia stato chiamato
     expect(onBack).not.toHaveBeenCalled();
   });
 
-  it('non chiama onNext quando il pulsante Next è disabilitato e viene cliccato', () => {
+  it('does not call onNext when the Next button is disabled and clicked', () => {
     const onNext = vi.fn();
     const onBack = vi.fn();
-
     render(
       <WizardStepButtons onNext={onNext} onBack={onBack} disableNext={true} />
     );
-
-    // Clicca sul pulsante Next disabilitato
     fireEvent.click(screen.getByText('Continua'));
-
-    // Verifica che onNext non sia stato chiamato
     expect(onNext).not.toHaveBeenCalled();
   });
 
-  it('funziona correttamente quando onBack non è fornito', () => {
+  it('works correctly when onBack is not provided', () => {
     const onNext = vi.fn();
-
     render(<WizardStepButtons onNext={onNext} />);
-
-    // Verifica che il pulsante Back sia presente
     expect(screen.getByText('Indietro')).toBeInTheDocument();
-
-    // Clicca sul pulsante Back
     fireEvent.click(screen.getByText('Indietro'));
+  });
 
-    // Non dovrebbe generare errori
+  it('works correctly when onNext is not provided', () => {
+    const onBack = vi.fn();
+    render(<WizardStepButtons onBack={onBack} />);
+    expect(screen.getByText('Continua')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Continua'));
+  });
+
+  it('does not show the Save Draft button by default', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
+    render(<WizardStepButtons onNext={onNext} onBack={onBack} />);
+    expect(screen.queryByText('Salva bozza')).not.toBeInTheDocument();
+  });
+
+  it('shows the Save Draft button when showSaveDraft is true', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
+    const onSaveDraft = vi.fn();
+
+    render(
+      <WizardStepButtons
+        onNext={onNext}
+        onBack={onBack}
+        onSaveDraft={onSaveDraft}
+        showSaveDraft={true}
+      />
+    );
+    expect(screen.getByText('Salva bozza')).toBeInTheDocument();
+  });
+
+  it('calls onSaveDraft when the Save Draft button is clicked', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
+    const onSaveDraft = vi.fn();
+    render(
+      <WizardStepButtons
+        onNext={onNext}
+        onBack={onBack}
+        onSaveDraft={onSaveDraft}
+        showSaveDraft={true}
+      />
+    );
+    fireEvent.click(screen.getByText('Salva bozza'));
+    expect(onSaveDraft).toHaveBeenCalledTimes(1);
+  });
+
+  it('uses the custom label for the Save Draft button when provided', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
+    const onSaveDraft = vi.fn();
+
+    render(
+      <WizardStepButtons
+        onNext={onNext}
+        onBack={onBack}
+        onSaveDraft={onSaveDraft}
+        showSaveDraft={true}
+        saveDraftLabel="Salva come bozza"
+      />
+    );
+    expect(screen.getByText('Salva come bozza')).toBeInTheDocument();
+  });
+
+  it('disables the Save Draft button when disableSaveDraft is true', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
+    const onSaveDraft = vi.fn();
+
+    render(
+      <WizardStepButtons
+        onNext={onNext}
+        onBack={onBack}
+        onSaveDraft={onSaveDraft}
+        showSaveDraft={true}
+        disableSaveDraft={true}
+      />
+    );
+    expect(screen.getByText('Salva bozza')).toBeDisabled();
+  });
+
+  it('does not call onSaveDraft when the Save Draft button is disabled and clicked', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
+    const onSaveDraft = vi.fn();
+    render(
+      <WizardStepButtons
+        onNext={onNext}
+        onBack={onBack}
+        onSaveDraft={onSaveDraft}
+        showSaveDraft={true}
+        disableSaveDraft={true}
+      />
+    );
+    fireEvent.click(screen.getByText('Salva bozza'));
+    expect(onSaveDraft).not.toHaveBeenCalled();
+  });
+
+  it('works correctly when onSaveDraft is not provided but showSaveDraft is true', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
+    render(
+      <WizardStepButtons onNext={onNext} onBack={onBack} showSaveDraft={true} />
+    );
+    expect(screen.getByText('Salva bozza')).toBeInTheDocument();
+    fireEvent.click(screen.getByText('Salva bozza'));
   });
 });

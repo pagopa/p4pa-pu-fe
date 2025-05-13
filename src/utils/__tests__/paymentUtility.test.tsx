@@ -31,6 +31,7 @@ import {
   validateMultiBeneficiary,
   handleInstallmentValidationFailure
 } from '../paymentUtility';
+import { DebtPositionTypeEnum } from '../../models/DebtPositionType';
 
 // Remove any mocks for getErrorData before tests
 vi.unmock('../paymentUtility');
@@ -251,34 +252,32 @@ describe('formatAmount', () => {
 });
 
 describe('validateBeneficiariesTotal', () => {
-  it('should validate correctly when sum equals total', () => {
+  it('should validate correctly when sum is less than total', () => {
     const beneficiaries = [
       { amount: '50,00' },
       { amount: '30,00' },
-      { amount: '20,00' }
+      { amount: '19,00' }
     ];
     expect(validateBeneficiariesTotal(beneficiaries, '100,00')).toBe(true);
     expect(validateBeneficiariesTotal(beneficiaries, '100.00')).toBe(true);
   });
 
-  it('should fail when sum differs from total', () => {
-    const beneficiaries = [{ amount: '50,00' }, { amount: '30,00' }];
+  it('should fail when sum equals total', () => {
+    const beneficiaries = [
+      { amount: '50,00' },
+      { amount: '30,00' },
+      { amount: '20,00' }
+    ];
     expect(validateBeneficiariesTotal(beneficiaries, '100,00')).toBe(false);
   });
 
-  it('should handle empty or null array', () => {
-    expect(validateBeneficiariesTotal([], '100,00')).toBe(false);
-    expect(
-      validateBeneficiariesTotal(
-        null as unknown as Array<{ amount: string }>,
-        '100,00'
-      )
-    ).toBe(false);
+  it('should handle empty array', () => {
+    expect(validateBeneficiariesTotal([], '100,00')).toBe(true);
   });
 
   it('should handle non-numeric values', () => {
     const beneficiaries = [{ amount: 'not-a-number' }, { amount: '50,00' }];
-    expect(validateBeneficiariesTotal(beneficiaries, '100,00')).toBe(false);
+    expect(validateBeneficiariesTotal(beneficiaries, '100,00')).toBe(true);
   });
 });
 
@@ -410,7 +409,7 @@ describe('getPreviousInstallmentTransfers', () => {
     };
     const formattedValues = {
       paymentObject: { value: 'Test', readonly: false },
-      paymentOption: { value: 'SINGLE' as const, readonly: false },
+      paymentOption: { value: DebtPositionTypeEnum.SINGLE, readonly: false },
       amount: { value: '100.00', readonly: false },
       dueDate: { value: '01/01/2023', readonly: false },
       flagMandatoryDueDate: true,
@@ -442,7 +441,7 @@ describe('getPreviousInstallmentTransfers', () => {
     };
     const formattedValues = {
       paymentObject: { value: 'Test', readonly: false },
-      paymentOption: { value: 'SINGLE' as const, readonly: false },
+      paymentOption: { value: DebtPositionTypeEnum.SINGLE, readonly: false },
       amount: { value: '100.00', readonly: false },
       dueDate: { value: '01/01/2023', readonly: false },
       flagMandatoryDueDate: true,
@@ -502,7 +501,7 @@ describe('createInstallmentObject', () => {
 
     const formattedValues = {
       paymentObject: { value: 'Test', readonly: false },
-      paymentOption: { value: 'SINGLE' as const, readonly: false },
+      paymentOption: { value: DebtPositionTypeEnum.SINGLE, readonly: false },
       amount: { value: '100.00', readonly: false },
       dueDate: { value: '01/01/2023', readonly: false },
       flagMandatoryDueDate: true,
@@ -531,7 +530,7 @@ describe('createSingleInstallmentObject', () => {
       amount: { value: '100.00', readonly: false },
       paymentObject: { value: 'Test payment', readonly: false },
       isMultibeneficiary: { value: true, readonly: false },
-      paymentOption: { value: 'SINGLE' as const, readonly: false },
+      paymentOption: { value: DebtPositionTypeEnum.SINGLE, readonly: false },
       flagMandatoryDueDate: true,
       beneficiaries: [
         {

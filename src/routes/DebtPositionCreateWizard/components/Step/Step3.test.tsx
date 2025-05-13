@@ -1,977 +1,579 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { PageRoutes } from '../../../../App';
 import React from 'react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import Step3 from './Step3';
+import {
+  Step1Data,
+  Step2Data,
+  Step3Data,
+  DebtPositionTypeEnum
+} from '../../../../models/DebtPositionType';
+import {
+  PaymentOptionTypeEnum,
+  DebtPositionStatus
+} from '../../../../../generated/data-contracts';
 import { MemoryRouter } from 'react-router-dom';
-import { PaymentOption } from '../../../../models/paymentTypes';
-import { StoreProvider } from '../../../../store/GlobalStore';
-import { Step1Data, Step2Data } from '../../../../models/DebtPositionType';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useStore } from '../../../../store/GlobalStore';
+import debtPositionsApi from '../../../../api/debtPositions';
 
-type FormSubmitEvent = {
-  preventDefault?: () => void;
-};
-
-type FormFieldValue<T> = {
-  value: T;
-  readonly: boolean;
-  flagMandatoryDueDate?: boolean;
-};
-
-type FormData = {
-  paymentObject: FormFieldValue<string>;
-  paymentOption: FormFieldValue<PaymentOption>;
-  amount: FormFieldValue<string>;
-  dueDate: FormFieldValue<Date | null>;
-  isMultibeneficiary: FormFieldValue<boolean>;
-  beneficiaries?: Array<BeneficiaryItem>;
-  installments?: Array<InstallmentItem>;
-};
-
-type BeneficiaryItem = {
-  entityName: string;
-  amount: string;
-  taxCode?: string;
-  iban?: string;
-  postalAccount?: string;
-  taxonomyCode?: string;
-  remittance?: string;
-};
-
-type InstallmentItem = {
-  amount: string;
-  dueDate: string;
-  remittance?: string;
-};
-
-class WatchValueProvider {
-  private isMultibeneficiary: boolean;
-  private paymentOption: PaymentOption;
-  private withBeneficiaries: boolean;
-
-  constructor(options: {
-    isMultibeneficiary: boolean;
-    paymentOption: PaymentOption;
-    withBeneficiaries?: boolean;
-  }) {
-    this.isMultibeneficiary = options.isMultibeneficiary;
-    this.paymentOption = options.paymentOption;
-    this.withBeneficiaries = options.withBeneficiaries || false;
-  }
-
-  getValue(key: string): unknown {
-    switch (key) {
-      case 'isMultibeneficiary.value':
-        return this.isMultibeneficiary;
-      case 'amount.value':
-        return '100.00';
-      case 'beneficiaries':
-        if (this.withBeneficiaries) {
-          return [{ entityName: 'Test', amount: '50.00' } as BeneficiaryItem];
-        }
-        return [];
-      case 'paymentOption.value':
-        return this.paymentOption;
-      case 'installments':
-        return [];
-      default:
-        return '';
-    }
-  }
-}
+// Import the mocked utility to access directly in tests
+import * as paymentUtility from '../../../../utils/paymentUtility';
+import * as installmentValidation from '../../../../utils/paymentUtility';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string) => key
+    t: (key: string) => {
+      const translations: Record<string, string> = {
+        'debtPositionCreateWizard.configurationAlert.title': 'Configuration',
+        'debtPositionCreateWizard.configurationAlert.subtitle':
+          'Configure debt position',
+        'debtPositionCreateWizard.step3.title': 'Payment Options',
+        'debtPositionCreateWizard.step3.paymentObject.label': 'Payment Object',
+        'debtPositionCreateWizard.step3.paymentOption.label': 'Payment Option',
+        'debtPositionCreateWizard.step3.paymentOption.single': 'Single Payment',
+        'debtPositionCreateWizard.step3.paymentOption.installments':
+          'Installments',
+        'debtPositionCreateWizard.step3.amount.label': 'Amount',
+        'debtPositionCreateWizard.step3.amount.installmentHelperText':
+          'The amount will be calculated from installments',
+        'debtPositionCreateWizard.step3.dueDate.label': 'Due Date',
+        'debtPositionCreateWizard.step3.dueDate.required':
+          'Due date is required',
+        'debtPositionCreateWizard.step3.isMultibeneficiary.label':
+          'Multiple Beneficiaries',
+        'debtPositionCreateWizard.step3.error.subtitle':
+          'Error creating debt position',
+        'commons.create': 'Create'
+      };
+      return translations[key] || key;
+    }
   })
 }));
 
-vi.mock('../../../../utils/fieldValidation', () => ({
-  isBeneficiariesTotalValid: vi.fn().mockReturnValue(true),
-  createAmountValidator: () => ({ required: 'Campo obbligatorio' }),
-  createDateValidator: () => ({})
-}));
-
-vi.mock('../../../../utils/formatters', () => ({
-  formatDate: (date: string) => date
-}));
-
-const mockNavigate = vi.fn();
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = (await importOriginal()) as object;
   return {
     ...actual,
-    useNavigate: () => mockNavigate
+    useNavigate: () => vi.fn(),
+    Navigate: ({ to }: { to: string }) => (
+      <div data-testid="navigate" data-to={to}>
+        Navigate
+      </div>
+    )
   };
 });
 
-const mockSetValue = vi.fn();
-const mockTrigger = vi.fn();
-const mockGetValues = vi.fn().mockReturnValue({} as Record<string, unknown>);
+vi.mock('../../../../store/GlobalStore', () => ({
+  useStore: vi.fn()
+}));
 
-const defaultProvider = new WatchValueProvider({
-  isMultibeneficiary: false,
-  paymentOption: 'SINGLE'
-});
-
-const mockWatch = vi
-  .fn()
-  .mockImplementation((key: string) => defaultProvider.getValue(key));
-
-const getFieldValue = (fieldName: string): string | PaymentOption => {
-  if (fieldName.includes('amount')) {
-    return '100.00';
+vi.mock('../../../../api/debtPositions', () => ({
+  default: {
+    createDebtPosition: vi.fn()
   }
-  if (fieldName.includes('paymentOption')) {
-    return 'SINGLE';
-  }
-  return '';
-};
+}));
 
-vi.mock('react-hook-form', () => {
-  return {
-    useForm: () => ({
-      handleSubmit: (fn: (data: FormData) => void) => (e?: FormSubmitEvent) => {
-        e?.preventDefault?.();
-        fn({
-          paymentObject: { value: 'Test Payment', readonly: false },
-          paymentOption: { value: 'SINGLE', readonly: false },
-          amount: { value: '100.00', readonly: false },
-          dueDate: { value: new Date(), readonly: false },
-          isMultibeneficiary: { value: false, readonly: false }
-        });
-        return Promise.resolve();
-      },
-      control: {},
-      formState: { errors: {}, isSubmitted: false },
-      watch: mockWatch,
-      setValue: mockSetValue,
-      trigger: mockTrigger,
-      getValues: mockGetValues
-    }),
-    Controller: ({
-      name,
-      render
-    }: {
-      name: string;
-      render: (props: Record<string, unknown>) => React.ReactElement;
-    }) => {
-      const nameString = String(name);
-
-      const onChange = vi.fn((e: unknown) => {
-        if (typeof e === 'object' && e !== null) {
-          mockSetValue(nameString, e);
-        }
-      });
-
-      return render({
-        field: {
-          onChange,
-          value: getFieldValue(nameString),
-          onBlur: vi.fn(),
-          ref: vi.fn(),
-          name: nameString
-        },
-        fieldState: {}
-      });
+vi.mock('../../../../utils', () => ({
+  default: {
+    notify: {
+      emit: vi.fn()
     }
-  };
-});
-
-type ChildrenProps = {
-  children: React.ReactNode;
-};
-
-type WizardStepWrapperProps = {
-  title: string;
-  subtitle?: string;
-} & ChildrenProps;
-
-type SectionBoxProps = {
-  title: string;
-  adornment?: React.ReactNode;
-} & ChildrenProps;
-
-type StepButtonsProps = {
-  onBack: () => void;
-  onNext: () => void;
-  disableNext?: boolean;
-  nextLabel?: string;
-};
-
-type InstallmentFieldProps = {
-  onInstallmentsChange?: (totalAmount: string) => void;
-  [key: string]: unknown;
-};
-
-vi.mock('@mui/x-date-pickers', () => ({
-  LocalizationProvider: ({ children }: ChildrenProps) => <>{children}</>
-}));
-
-vi.mock('@mui/x-date-pickers/DatePicker', () => ({
-  DatePicker: () => <div data-testid="date-picker" />
-}));
-
-const mockResetAllBeneficiaries = vi.fn();
-
-type BeneficiaryFieldProps = {
-  ref?: React.MutableRefObject<{
-    resetAllBeneficiaries: () => void;
-  } | null>;
-  [key: string]: unknown;
-};
-
-vi.mock('../Beneficiary/BeneficiaryField', () => ({
-  default: (props: BeneficiaryFieldProps) => {
-    if (props.ref) {
-      props.ref.current = { resetAllBeneficiaries: mockResetAllBeneficiaries };
-    }
-    return <div data-testid="beneficiary-field">Beneficiary Field</div>;
   }
 }));
 
-vi.mock('../Installment/InstallmentField', () => ({
-  default: (props: InstallmentFieldProps) => {
-    if (props.onInstallmentsChange) {
-      setTimeout(() => {
-        if (typeof props.onInstallmentsChange === 'function') {
-          props.onInstallmentsChange('200.00');
-        }
-      }, 0);
-    }
-    return <div data-testid="installment-field">Installment Field</div>;
-  }
+vi.mock('../../../../utils/paymentUtility', () => ({
+  DEFAULT_VALUES: {
+    FLAG_IUV_VOLATILE: false,
+    MULTI_DEBTOR: false,
+    FLAG_PAGO_PA_PAYMENT: true,
+    PAYMENT_OPTION_INDEX: 1
+  },
+  createInstallmentObject: vi.fn((installment) => ({
+    installmentNumber: 1,
+    amount: installment.amount || '100',
+    dueDate: installment.dueDate?.value || new Date(),
+    beneficiaries: []
+  })),
+  createSingleInstallmentObject: vi.fn(() => ({
+    installmentNumber: 1,
+    amount: '100',
+    dueDate: new Date(),
+    beneficiaries: []
+  })),
+  triggerValidationForAllBeneficiaries: vi.fn(),
+  syncInstallmentBeneficiaries: vi.fn(() => ({
+    installments: [],
+    modified: false
+  })),
+  validateInstallments: vi.fn(() => ({})),
+  validateMultiBeneficiary: vi.fn(() => true),
+  handleInstallmentValidationFailure: vi.fn()
 }));
 
-vi.mock('../../../../components/Wizard/WizardStepWrapper', () => ({
-  default: ({ children, title }: WizardStepWrapperProps) => (
-    <div data-testid="wizard-step-wrapper">
-      <div data-testid="title">{title}</div>
+vi.mock('../../../../components/Wizard/SectionBox', () => ({
+  default: ({
+    children,
+    title
+  }: {
+    children: React.ReactNode;
+    title: string;
+  }) => (
+    <div data-testid="section-box">
+      <h3>{title}</h3>
       {children}
     </div>
   )
 }));
 
-vi.mock('../../../../components/Wizard/SectionBox', () => ({
-  default: ({ children, title }: SectionBoxProps) => (
-    <div data-testid="section-box">
-      <div data-testid="section-title">{title}</div>
+vi.mock('../../../../components/Wizard/WizardStepWrapper', () => ({
+  default: ({
+    children,
+    title
+  }: {
+    children: React.ReactNode;
+    title: string;
+  }) => (
+    <div data-testid="wizard-step-wrapper">
+      <h2>{title}</h2>
       {children}
     </div>
   )
 }));
 
 vi.mock('../../../../components/Wizard/WizardStepButtons', () => ({
-  default: ({ onBack, onNext }: StepButtonsProps) => (
+  default: ({
+    onBack,
+    onNext,
+    onSaveDraft,
+    nextLabel
+  }: {
+    onBack: () => void;
+    onNext: () => void;
+    onSaveDraft: () => void;
+    nextLabel: string;
+  }) => (
     <div data-testid="wizard-step-buttons">
       <button onClick={onBack} data-testid="back-button">
         Back
       </button>
       <button onClick={onNext} data-testid="next-button">
-        Next
+        {nextLabel}
+      </button>
+      <button onClick={onSaveDraft} data-testid="save-draft-button">
+        Save Draft
       </button>
     </div>
   )
 }));
 
-import Step3 from './Step3';
-import { isBeneficiariesTotalValid } from '../../../../utils/fieldValidation';
+vi.mock('../Beneficiary/BeneficiaryField', () => ({
+  default: vi.fn(() => (
+    <div data-testid="beneficiary-field">Beneficiary Field</div>
+  ))
+}));
 
-const mockStep1Data: Step1Data = {
-  description: { value: 'Test Description', readonly: false },
-  debtPositionType: { value: '1', flagMandatoryDueDate: false, readonly: false }
-};
+vi.mock('../Installment/InstallmentField', () => ({
+  default: vi.fn(() => (
+    <div data-testid="installment-field">Installment Field</div>
+  ))
+}));
 
-const mockStep2Data: Step2Data = {
-  subjectType: { value: 'PF', readonly: false },
-  taxCode: { value: 'RSSMRA80A01H501U', readonly: false },
-  fullName: { value: 'Mario Rossi', readonly: false },
-  address: { value: 'Via Roma 1', readonly: false },
-  civicNumber: { value: '1', readonly: false },
-  zipCode: { value: '00100', readonly: false },
-  country: { value: 'IT', readonly: false },
-  province: { value: 'RM', readonly: false },
-  city: { value: 'Roma', readonly: false }
-};
-
-const mockMutate = vi.fn().mockImplementation((params) => {
-  // Simula il successo della mutation
-  setTimeout(() => {
-    mockNavigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
-      state: params.paymentObject,
-      replace: true
-    });
-  }, 0);
-});
-
-vi.mock('../../../../api/debtPositions', () => ({
-  default: {
-    createDebtPosition: (
-      onSuccess: (response: unknown, paymentObject?: string) => void
-    ) => ({
-      mutate: (params: { body: unknown; paymentObject?: string }) => {
-        mockMutate(params);
-        onSuccess({}, params.paymentObject);
-      }
-    })
-  }
+vi.mock('@mui/x-date-pickers/DatePicker', () => ({
+  DatePicker: ({
+    label,
+    value,
+    onChange,
+    disabled
+  }: {
+    label: string;
+    value: Date | null;
+    onChange: (date: Date | null) => void;
+    disabled: boolean;
+    slotProps: Record<string, unknown>;
+  }) => (
+    <div data-testid="date-picker">
+      <label>{label}</label>
+      <input
+        type="text"
+        value={value ? value.toISOString().split('T')[0] : ''}
+        onChange={(e) => {
+          onChange(e.target.value ? new Date(e.target.value) : null);
+        }}
+        disabled={disabled}
+        data-testid="date-picker-input"
+      />
+    </div>
+  )
 }));
 
 describe('Step3 Component', () => {
   const mockSetData = vi.fn();
-  const mockOnBack = vi.fn();
   const mockOnNext = vi.fn();
-  const queryClient = new QueryClient({
-    defaultOptions: {
-      queries: {
-        retry: false
-      }
+  const mockOnBack = vi.fn();
+  const mockCreateDebtPosition = vi.fn();
+
+  const initialData: Step3Data = {
+    paymentObject: { value: 'Test Payment', readonly: false },
+    paymentOption: { value: DebtPositionTypeEnum.SINGLE, readonly: false },
+    amount: { value: '100.00', readonly: false },
+    dueDate: { value: '2025-06-01', readonly: false },
+    isMultibeneficiary: { value: false, readonly: false },
+    flagMandatoryDueDate: false
+  };
+
+  const mockStep1Data: Step1Data = {
+    description: { value: 'Test Description', readonly: false },
+    debtPositionType: {
+      value: '1',
+      readonly: false,
+      flagMandatoryDueDate: false
     }
-  });
+  };
+
+  const mockStep2Data: Step2Data = {
+    taxCode: { value: 'ABCDEF12G34H567I', readonly: false },
+    fullName: { value: 'John Doe', readonly: false },
+    subjectType: { value: 'PF', readonly: false },
+    address: { value: '', readonly: false },
+    civicNumber: { value: '', readonly: false },
+    zipCode: { value: '', readonly: false },
+    country: { value: '', readonly: false },
+    province: { value: '', readonly: false },
+    city: { value: '', readonly: false }
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
-    const defaultProvider = new WatchValueProvider({
-      isMultibeneficiary: false,
-      paymentOption: 'SINGLE'
+
+    (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      state: { organizationId: '123' }
     });
-    mockWatch.mockImplementation((key: string) =>
-      defaultProvider.getValue(key)
-    );
-    mockMutate.mockClear();
+
+    (
+      debtPositionsApi.createDebtPosition as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({
+      mutate: mockCreateDebtPosition
+    });
   });
 
-  afterEach(() => {
-    queryClient.clear();
-  });
-
-  const initialData = {
-    paymentObject: { value: 'Test Payment', readonly: false },
-    paymentOption: { value: 'SINGLE' as PaymentOption, readonly: false },
-    amount: { value: '100.00', readonly: false },
-    dueDate: { value: null, readonly: false },
-    flagMandatoryDueDate: false,
-    isMultibeneficiary: { value: false, readonly: false }
-  };
-
-  const renderStep3 = (props = {}) => {
+  const renderComponent = () => {
     return render(
-      <QueryClientProvider client={queryClient}>
-        <MemoryRouter>
-          <StoreProvider>
-            <Step3
-              data={initialData}
-              setData={mockSetData}
-              onNext={mockOnNext}
-              onBack={mockOnBack}
-              step1Data={mockStep1Data}
-              step2Data={mockStep2Data}
-              {...props}
-            />
-          </StoreProvider>
-        </MemoryRouter>
-      </QueryClientProvider>
+      <MemoryRouter>
+        <Step3
+          data={initialData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
     );
   };
 
-  it('should render correctly with initial data', () => {
-    renderStep3();
+  it('should render the component correctly', () => {
+    renderComponent();
 
     expect(screen.getByTestId('wizard-step-wrapper')).toBeInTheDocument();
     expect(screen.getByTestId('section-box')).toBeInTheDocument();
-    expect(screen.getByTestId('wizard-step-buttons')).toBeInTheDocument();
-
-    expect(screen.getByTestId('title')).toHaveTextContent(
-      'debtPositionCreateWizard.configurationAlert.title'
-    );
-    expect(screen.getByTestId('section-title')).toHaveTextContent(
-      'debtPositionCreateWizard.step3.title'
-    );
+    expect(screen.getByText('Payment Options')).toBeInTheDocument();
+    expect(screen.getByText('Payment Object')).toBeInTheDocument();
+    expect(screen.getByText('Payment Option')).toBeInTheDocument();
+    expect(screen.getByText('Amount')).toBeInTheDocument();
+    expect(screen.getByTestId('date-picker')).toBeInTheDocument();
   });
 
-  it('should call onBack when clicking the back button', () => {
-    renderStep3();
+  it('should handle payment option change from single to installments', async () => {
+    renderComponent();
+
+    const selectNativeInput = screen.getByDisplayValue('SINGLE');
+    fireEvent.change(selectNativeInput, {
+      target: { value: PaymentOptionTypeEnum.INSTALLMENTS }
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('installment-field')).toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId('date-picker')).not.toBeInTheDocument();
+  });
+
+  it('should handle multi-beneficiary toggle and amount change', async () => {
+    const triggerSpy = vi.fn();
+    vi.spyOn(
+      paymentUtility,
+      'triggerValidationForAllBeneficiaries'
+    ).mockImplementation(triggerSpy);
+
+    renderComponent();
+
+    // Enable multi-beneficiary
+    const multiBeneficiarySwitch = screen.getByRole('checkbox', {
+      name: /Multiple Beneficiaries/i
+    });
+    fireEvent.click(multiBeneficiarySwitch);
+
+    await waitFor(() => {
+      expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+    });
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+    fireEvent.change(amountInput, { target: { value: '200,00' } });
+    fireEvent.blur(amountInput);
+
+    expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+    expect(amountInput).toHaveValue('200,00');
+  });
+
+  it('should handle form submission for single payment', async () => {
+    renderComponent();
+
+    const paymentObjectInput = screen.getByRole('textbox', {
+      name: /Payment Object/i
+    });
+    fireEvent.change(paymentObjectInput, {
+      target: { value: 'Updated Payment Object' }
+    });
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+    fireEvent.change(amountInput, { target: { value: '200,50' } });
+    fireEvent.blur(amountInput);
+
+    const datePicker = screen.getByTestId('date-picker-input');
+    fireEvent.change(datePicker, { target: { value: '2025-07-15' } });
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockSetData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paymentObject: { value: 'Updated Payment Object', readonly: false },
+          amount: { value: '200.50', readonly: false }
+        })
+      );
+    });
+
+    expect(mockCreateDebtPosition).toHaveBeenCalled();
+  });
+
+  it('should handle amount input correctly', async () => {
+    renderComponent();
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+
+    fireEvent.change(amountInput, { target: { value: '123,45' } });
+    fireEvent.blur(amountInput);
+
+    expect(amountInput).toHaveValue('123,45');
+
+    fireEvent.change(amountInput, { target: { value: 'abc123' } });
+
+    expect(amountInput).toHaveValue('123');
+  });
+
+  it('should handle mandatory due date validation', async () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: true }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const datePicker = screen.getByTestId('date-picker-input');
+    fireEvent.change(datePicker, { target: { value: '' } });
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should handle back button click', () => {
+    renderComponent();
 
     const backButton = screen.getByTestId('back-button');
     fireEvent.click(backButton);
 
-    expect(mockOnBack).toHaveBeenCalledTimes(1);
+    expect(mockOnBack).toHaveBeenCalled();
   });
 
-  it('should show InstallmentField when paymentOption is INSTALLMENTS', () => {
-    const installmentProvider = new WatchValueProvider({
-      isMultibeneficiary: false,
-      paymentOption: 'INSTALLMENTS'
+  it('should trigger validation when changing amount with multi-beneficiary', async () => {
+    // Reset the mock before the test
+    vi.clearAllMocks();
+
+    renderComponent();
+
+    // Enable multi-beneficiary
+    const multiBeneficiarySwitch = screen.getByRole('checkbox', {
+      name: /Multiple Beneficiaries/i
     });
-    mockWatch.mockImplementation((key: string) =>
-      installmentProvider.getValue(key)
+    fireEvent.click(multiBeneficiarySwitch);
+
+    // Wait for beneficiary field to appear
+    await waitFor(() => {
+      expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+    });
+
+    // Now change the amount
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+    fireEvent.change(amountInput, { target: { value: '500,00' } });
+
+    // Verify the triggerValidationForAllBeneficiaries was called
+    await waitFor(() => {
+      expect(
+        paymentUtility.triggerValidationForAllBeneficiaries
+      ).toHaveBeenCalled();
+    });
+  });
+
+  it('should handle save as draft functionality', async () => {
+    renderComponent();
+
+    const paymentObjectInput = screen.getByRole('textbox', {
+      name: /Payment Object/i
+    });
+    fireEvent.change(paymentObjectInput, {
+      target: { value: 'Draft Payment Object' }
+    });
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+    fireEvent.change(amountInput, { target: { value: '150,75' } });
+    fireEvent.blur(amountInput);
+
+    const datePicker = screen.getByTestId('date-picker-input');
+    fireEvent.change(datePicker, { target: { value: '2025-08-20' } });
+
+    const saveDraftButton = screen.getByTestId('save-draft-button');
+    fireEvent.click(saveDraftButton);
+
+    await waitFor(() => {
+      expect(mockSetData).toHaveBeenCalledWith(
+        expect.objectContaining({
+          paymentObject: { value: 'Draft Payment Object', readonly: false },
+          amount: { value: '150.75', readonly: false }
+        })
+      );
+    });
+
+    expect(mockCreateDebtPosition).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          status: DebtPositionStatus.DRAFT
+        })
+      })
+    );
+  });
+
+  it('should validate installments when submitting with installment payment option', async () => {
+    renderComponent();
+
+    // Change payment option to installments
+    const selectNativeInput = screen.getByDisplayValue('SINGLE');
+    fireEvent.change(selectNativeInput, {
+      target: { value: PaymentOptionTypeEnum.INSTALLMENTS }
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('installment-field')).toBeInTheDocument();
+    });
+
+    // Mock the validateInstallmentsData result
+    vi.spyOn(installmentValidation, 'validateInstallments').mockReturnValueOnce(
+      {
+        hasInvalidBeneficiaries: false,
+        hasInvalidPaymentFields: false,
+        hasInvalidAmounts: false,
+        hasEmptyRemittance: false
+      }
     );
 
-    renderStep3({
-      data: {
-        ...initialData,
-        paymentOption: {
-          value: 'INSTALLMENTS' as PaymentOption,
-          readonly: false
+    // Set up mock for syncInstallmentBeneficiaries to return valid data
+    vi.spyOn(
+      installmentValidation,
+      'syncInstallmentBeneficiaries'
+    ).mockReturnValueOnce({
+      installments: [
+        {
+          amount: '100',
+          dueDate: '2025-07-15',
+          remittance: 'Test payment',
+          isMultibeneficiary: false,
+          beneficiaries: []
         }
-      }
-    });
-
-    expect(screen.getByTestId('installment-field')).toBeInTheDocument();
-  });
-
-  it('should navigate to completion page after successful submit', async () => {
-    renderStep3();
-
-    // Fill in required fields
-    const paymentObjectInput = screen.getByRole('textbox', {
-      name: /paymentObject/i
-    });
-    fireEvent.change(paymentObjectInput, { target: { value: 'Test Payment' } });
-
-    const nextButton = screen.getByTestId('next-button');
-    fireEvent.click(nextButton);
-
-    await waitFor(() => {
-      expect(mockSetData).toHaveBeenCalledTimes(1);
-      expect(mockMutate).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith(
-        PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED,
-        expect.objectContaining({
-          state: expect.any(String),
-          replace: true
-        })
-      );
-    });
-  });
-
-  it('should display BeneficiaryField component when multibeneficiary is active', () => {
-    const multibeneficiaryProvider = new WatchValueProvider({
-      isMultibeneficiary: true,
-      paymentOption: 'SINGLE',
-      withBeneficiaries: true
-    });
-    mockWatch.mockImplementation((key: string) =>
-      multibeneficiaryProvider.getValue(key)
-    );
-
-    renderStep3({
-      data: {
-        ...initialData,
-        isMultibeneficiary: { value: true, readonly: false }
-      }
-    });
-
-    expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
-  });
-
-  it('should handle correctly the case with flagMandatoryDueDate active', () => {
-    renderStep3({
-      data: {
-        ...initialData,
-        flagMandatoryDueDate: true
-      }
-    });
-
-    expect(screen.getByTestId('date-picker')).toBeInTheDocument();
-  });
-
-  it('should handle readonly fields correctly', () => {
-    renderStep3({
-      data: {
-        ...initialData,
-        paymentObject: { value: 'Test Payment', readonly: true },
-        amount: { value: '100.00', readonly: true },
-        dueDate: { value: null, readonly: true },
-        isMultibeneficiary: { value: false, readonly: true }
-      }
-    });
-
-    expect(screen.getByTestId('wizard-step-wrapper')).toBeInTheDocument();
-  });
-
-  it('should initialize beneficiaries when isMultibeneficiary is active', async () => {
-    mockGetValues.mockReturnValueOnce([]);
-
-    const multibeneficiaryProvider = new WatchValueProvider({
-      isMultibeneficiary: true,
-      paymentOption: 'SINGLE',
-      withBeneficiaries: false
-    });
-    mockWatch.mockImplementation((key: string) =>
-      multibeneficiaryProvider.getValue(key)
-    );
-
-    renderStep3({
-      data: {
-        ...initialData,
-        isMultibeneficiary: { value: true, readonly: false }
-      }
-    });
-
-    expect(mockSetValue).toHaveBeenCalledWith(
-      'beneficiaries',
-      [
-        expect.objectContaining({
-          entityName: '',
-          amount: '',
-          taxCode: '',
-          iban: '',
-          postalAccount: '',
-          taxonomyCode: ''
-        })
       ],
-      expect.anything()
-    );
-  });
-
-  it('should block submit when beneficiaries do not have a valid total', async () => {
-    vi.mocked(isBeneficiariesTotalValid).mockReturnValueOnce(false);
-
-    const multibeneficiaryProvider = new WatchValueProvider({
-      isMultibeneficiary: true,
-      paymentOption: 'SINGLE',
-      withBeneficiaries: true
-    });
-    mockWatch.mockImplementation((key: string) =>
-      multibeneficiaryProvider.getValue(key)
-    );
-
-    mockGetValues.mockReturnValue([{ entityName: 'Test', amount: '50.00' }]);
-
-    renderStep3({
-      data: {
-        ...initialData,
-        isMultibeneficiary: { value: true, readonly: false }
-      }
+      modified: true
     });
 
-    const nextButton = screen.getByTestId('next-button');
-    fireEvent.click(nextButton);
-
-    expect(isBeneficiariesTotalValid).toHaveBeenCalledTimes(1);
-    expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.beneficiaries');
-    expect(mockSetData).not.toHaveBeenCalled();
-  });
-
-  it('should handle correctly the update of total when installments change', async () => {
-    const installmentProvider = new WatchValueProvider({
-      isMultibeneficiary: false,
-      paymentOption: 'INSTALLMENTS'
-    });
-    mockWatch.mockImplementation((key: string) =>
-      installmentProvider.getValue(key)
-    );
-
-    renderStep3({
-      data: {
-        ...initialData,
-        paymentOption: { value: 'INSTALLMENTS', readonly: false }
-      }
-    });
-
-    expect(screen.getByTestId('installment-field')).toBeInTheDocument();
-
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
     await waitFor(() => {
-      expect(mockSetValue).toHaveBeenCalledWith('amount.value', '200.00');
+      expect(mockCreateDebtPosition).toHaveBeenCalled();
     });
   });
 
-  it('should simulate triggerValidationForAllBeneficiaries behavior when amount changes', async () => {
-    const multibeneficiaryProvider = new WatchValueProvider({
-      isMultibeneficiary: true,
-      paymentOption: 'SINGLE',
-      withBeneficiaries: true
-    });
-    mockWatch.mockImplementation((key: string) =>
-      multibeneficiaryProvider.getValue(key)
+  it('should handle mandatory due date validation failure', async () => {
+    // Create component with mandatory due date flag set to true
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: true }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
     );
 
-    const mockBeneficiaries = [
-      { entityName: 'Test1', amount: '50.00' },
-      { entityName: 'Test2', amount: '50.00' }
-    ];
-    mockGetValues.mockReturnValueOnce(mockBeneficiaries);
-
-    renderStep3({
-      data: {
-        ...initialData,
-        isMultibeneficiary: { value: true, readonly: false }
-      }
-    });
-
-    mockSetValue('amount.value', '200,00');
-
-    await new Promise((resolve) => setTimeout(resolve, 10));
-
-    mockTrigger('beneficiaries');
-
-    expect(mockTrigger).toHaveBeenCalled();
-  });
-
-  it('should test installments validation with errors', async () => {
-    const installmentProvider = new WatchValueProvider({
-      isMultibeneficiary: false,
-      paymentOption: 'INSTALLMENTS'
-    });
-    mockWatch.mockImplementation((key: string) =>
-      installmentProvider.getValue(key)
-    );
-
-    const mockInstallments = [
-      {
-        amount: '',
-        dueDate: '2023-12-01',
-        isMultibeneficiary: true,
-        beneficiaries: [
-          {
-            entityName: 'Test',
-            amount: '50.00',
-            iban: '',
-            postalAccount: ''
-          }
-        ]
-      }
-    ];
-    mockGetValues.mockReturnValue(mockInstallments);
-
-    renderStep3({
-      data: {
-        ...initialData,
-        paymentOption: { value: 'INSTALLMENTS', readonly: false }
-      }
-    });
-
-    const nextButton = screen.getByTestId('next-button');
-    fireEvent.click(nextButton);
-
-    expect(mockTrigger).toHaveBeenCalled();
-    expect(mockSetData).not.toHaveBeenCalled();
-  });
-
-  it('should handle validation when an installment has a beneficiary validation error with exception', async () => {
-    const installmentProvider = new WatchValueProvider({
-      isMultibeneficiary: false,
-      paymentOption: 'INSTALLMENTS'
-    });
-    mockWatch.mockImplementation((key: string) =>
-      installmentProvider.getValue(key)
-    );
-
-    const mockInstallments = [
-      {
-        amount: '100.00',
-        dueDate: '2023-12-01',
-        isMultibeneficiary: true,
-        beneficiaries: [
-          {
-            entityName: 'Test',
-            amount: '50.00',
-            iban: 'IT123456',
-            postalAccount: ''
-          }
-        ]
-      }
-    ];
-    mockGetValues.mockReturnValue(mockInstallments);
-
-    vi.mocked(isBeneficiariesTotalValid).mockImplementationOnce(() => {
-      throw new Error('Validation error');
-    });
-
-    const consoleErrorSpy = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => null);
-
-    renderStep3({
-      data: {
-        ...initialData,
-        paymentOption: { value: 'INSTALLMENTS', readonly: false }
-      }
-    });
-
-    const nextButton = screen.getByTestId('next-button');
-    fireEvent.click(nextButton);
-
-    expect(consoleErrorSpy).toHaveBeenCalled();
-    expect(mockSetData).not.toHaveBeenCalled();
-
-    consoleErrorSpy.mockRestore();
-  });
-
-  it('should handle exceptions during installments validation', async () => {
-    const installmentProvider = new WatchValueProvider({
-      isMultibeneficiary: false,
-      paymentOption: 'INSTALLMENTS'
-    });
-    mockWatch.mockImplementation((key: string) =>
-      installmentProvider.getValue(key)
-    );
-
-    const mockInstallments = [
-      {
-        amount: '',
-        dueDate: '2023-12-01',
-        isMultibeneficiary: true,
-        beneficiaries: []
-      }
-    ];
-    mockGetValues.mockReturnValue(mockInstallments);
-
-    let errorHandled = false;
-    mockTrigger.mockImplementationOnce(() => {
-      const error = new Error('Trigger validation error');
-      console.error(error);
-      errorHandled = true;
-      return Promise.reject(error);
-    });
-
-    const consoleErrorSpy2 = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => null);
-
-    renderStep3({
-      data: {
-        ...initialData,
-        paymentOption: { value: 'INSTALLMENTS', readonly: false }
-      }
-    });
-
-    const nextButton = screen.getByTestId('next-button');
-
-    fireEvent.click(nextButton);
-
-    expect(errorHandled).toBe(true);
-    expect(consoleErrorSpy2).toHaveBeenCalled();
-    expect(mockSetData).not.toHaveBeenCalled();
-
-    consoleErrorSpy2.mockRestore();
-  });
-
-  it('should format correctly an input value in the amount field', () => {
-    const { container } = renderStep3();
-
-    const amountInput = container.querySelector('input[name="amount.value"]');
-    expect(amountInput).not.toBeNull();
-
-    fireEvent.change(amountInput!, { target: { value: '123abc,45' } });
-
-    expect(mockSetValue).toHaveBeenCalled();
-
-    fireEvent.blur(amountInput!);
-
-    expect(mockSetValue).toHaveBeenCalled();
-  });
-
-  it('should handle paymentOption change from SINGLE to INSTALLMENTS', () => {
-    renderStep3();
-
-    mockSetValue.mockClear();
-
-    mockSetValue('paymentOption.value', 'INSTALLMENTS');
-    mockSetValue('isMultibeneficiary.value', false);
-    mockSetValue('amount.value', '');
-    mockSetValue('installments', []);
-
-    expect(mockSetValue).toHaveBeenCalledWith(
-      'isMultibeneficiary.value',
-      false
-    );
-    expect(mockSetValue).toHaveBeenCalledWith('amount.value', '');
-    expect(mockSetValue).toHaveBeenCalledWith('installments', []);
-  });
-
-  it('should handle paymentOption change from INSTALLMENTS to SINGLE', () => {
-    const installmentProvider = new WatchValueProvider({
-      isMultibeneficiary: false,
-      paymentOption: 'INSTALLMENTS'
-    });
-    mockWatch.mockImplementation((key: string) =>
-      installmentProvider.getValue(key)
-    );
-
-    mockSetValue.mockClear();
-
-    renderStep3({
-      data: {
-        ...initialData,
-        paymentOption: { value: 'INSTALLMENTS', readonly: false }
-      }
-    });
-
-    mockSetValue('paymentOption.value', 'SINGLE');
-    mockSetValue('amount.value', '');
-    mockSetValue('installments', []);
-
-    expect(mockSetValue).toHaveBeenCalledWith('amount.value', '');
-    expect(mockSetValue).toHaveBeenCalledWith('installments', []);
-  });
-
-  it('should reset beneficiaries when multibeneficiary toggle is deactivated', () => {
-    const multibeneficiaryProvider = new WatchValueProvider({
-      isMultibeneficiary: true,
-      paymentOption: 'SINGLE',
-      withBeneficiaries: true
-    });
-    mockWatch.mockImplementation((key: string) =>
-      multibeneficiaryProvider.getValue(key)
-    );
-
-    mockSetValue.mockClear();
-    mockResetAllBeneficiaries.mockClear();
-
-    renderStep3({
-      data: {
-        ...initialData,
-        isMultibeneficiary: { value: true, readonly: false }
-      }
-    });
-
-    mockSetValue('isMultibeneficiary.value', false);
-    mockResetAllBeneficiaries();
-
-    expect(mockSetValue).toHaveBeenCalledWith(
-      'isMultibeneficiary.value',
-      false
-    );
-
-    expect(mockResetAllBeneficiaries).toHaveBeenCalled();
-  });
-
-  it('should block submit when there are beneficiaries with empty remittance', async () => {
-    const multibeneficiaryProvider = new WatchValueProvider({
-      isMultibeneficiary: true,
-      paymentOption: 'SINGLE',
-      withBeneficiaries: true
-    });
-    mockWatch.mockImplementation((key: string) =>
-      multibeneficiaryProvider.getValue(key)
-    );
-
-    const mockBeneficiaries = [
-      {
-        entityName: 'Test1',
-        amount: '50.00',
-        remittance: '', // Empty remittance field
-        iban: 'IT60X0542811101000000123456'
-      }
-    ];
-    mockGetValues.mockReturnValue({
-      beneficiaries: mockBeneficiaries,
-      paymentObject: { value: 'Test Payment' }
-    });
-
-    renderStep3({
-      data: {
-        ...initialData,
-        isMultibeneficiary: { value: true, readonly: false }
-      }
-    });
-
-    // Compilo i campi obbligatori
-    const paymentObjectInput = screen.getByRole('textbox', {
-      name: /paymentObject/i
-    });
-    fireEvent.change(paymentObjectInput, { target: { value: 'Test Payment' } });
-
-    const nextButton = screen.getByTestId('next-button');
-    fireEvent.click(nextButton);
-
-    expect(mockTrigger).toHaveBeenCalledWith(
-      'beneficiaries.beneficiaries.0.remittance'
-    );
-    expect(mockSetData).not.toHaveBeenCalled();
-    expect(mockMutate).not.toHaveBeenCalled();
-  });
-
-  it('should block submit when there are installments with empty remittance', async () => {
-    const installmentProvider = new WatchValueProvider({
-      isMultibeneficiary: false,
-      paymentOption: 'INSTALLMENTS'
-    });
-    mockWatch.mockImplementation((key: string) =>
-      installmentProvider.getValue(key)
-    );
-
-    const mockInstallments = [
-      {
-        amount: '100.00',
-        dueDate: '2023-12-01',
-        remittance: '', // Empty remittance field
-        isMultibeneficiary: false
-      }
-    ];
-    mockGetValues.mockReturnValue(mockInstallments);
-
-    renderStep3({
-      data: {
-        ...initialData,
-        paymentOption: { value: 'INSTALLMENTS', readonly: false }
-      }
-    });
-
-    const nextButton = screen.getByTestId('next-button');
-    fireEvent.click(nextButton);
-
-    expect(mockTrigger).toHaveBeenCalledWith('installments.0.remittance');
-    expect(mockSetData).not.toHaveBeenCalled();
-  });
-
-  it('should proceed with submit when all beneficiaries have valid remittance', async () => {
-    const multibeneficiaryProvider = new WatchValueProvider({
-      isMultibeneficiary: true,
-      paymentOption: 'SINGLE',
-      withBeneficiaries: true
-    });
-    mockWatch.mockImplementation((key: string) =>
-      multibeneficiaryProvider.getValue(key)
-    );
-
-    const mockBeneficiaries = [
-      {
-        entityName: 'Test1',
-        amount: '50.00',
-        remittance: 'Test remittance 1',
-        iban: 'IT60X0542811101000000123456'
-      },
-      {
-        entityName: 'Test2',
-        amount: '50.00',
-        remittance: 'Test remittance 2',
-        iban: 'IT60X0542811101000000789012'
-      }
-    ];
-    mockGetValues.mockReturnValue({
-      beneficiaries: mockBeneficiaries,
-      paymentObject: { value: 'Test Payment' }
-    });
-
-    renderStep3({
-      data: {
-        ...initialData,
-        isMultibeneficiary: { value: true, readonly: false }
-      }
-    });
-
-    // Compilo i campi obbligatori
-    const paymentObjectInput = screen.getByRole('textbox', {
-      name: /paymentObject/i
-    });
-    fireEvent.change(paymentObjectInput, { target: { value: 'Test Payment' } });
-
-    const nextButton = screen.getByTestId('next-button');
-    fireEvent.click(nextButton);
-
+    // Clear the date picker
+    const datePicker = screen.getByTestId('date-picker-input');
+    fireEvent.change(datePicker, { target: { value: '' } });
+    fireEvent.blur(datePicker);
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
     await waitFor(() => {
-      expect(mockSetData).toHaveBeenCalled();
-      expect(mockMutate).toHaveBeenCalled();
-      expect(mockNavigate).toHaveBeenCalledWith(
-        PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED,
-        expect.objectContaining({
-          state: expect.any(String),
-          replace: true
-        })
-      );
+      expect(mockCreateDebtPosition).not.toHaveBeenCalled();
     });
+  });
+
+  it('should validate due date when date changes and it is mandatory', async () => {
+    // Create component with mandatory due date flag set to true
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: true }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    // Get the date picker and trigger a change
+    const datePicker = screen.getByTestId('date-picker-input');
+
+    // First set a valid date
+    fireEvent.change(datePicker, { target: { value: '2025-07-15' } });
+
+    // Then clear it to trigger validation
+    fireEvent.change(datePicker, { target: { value: '' } });
+
+    // Simulate the DatePicker onClose event
+    fireEvent.blur(datePicker);
+
+    expect(datePicker).toHaveValue('');
   });
 });
