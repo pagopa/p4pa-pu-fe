@@ -940,7 +940,6 @@ describe('TelematicReceiptImportFlowOverview', () => {
   });
 
   it('renders empty state message when data is empty', async () => {
-    // Modifica il mock per simulare una risposta vuota
     (
       getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({
@@ -962,31 +961,25 @@ describe('TelematicReceiptImportFlowOverview', () => {
       />
     );
 
-    // Verifica che il titolo sia ancora visibile
     expect(screen.getByText('test title')).toBeDefined();
 
-    // Verifica che il messaggio di stato vuoto sia visibile
     await waitFor(() => {
       expect(screen.getByText('commons.noFlows')).toBeDefined();
       expect(screen.getByText('commons.importFlows')).toBeDefined();
     });
 
-    // Verifica che la DataGrid NON sia presente
     await waitFor(() => {
       expect(screen.queryByRole('grid')).toBeNull();
     });
 
-    // Verifica che i filtri NON siano presenti
     await waitFor(() => {
       expect(screen.queryByLabelText('commons.searchName')).toBeNull();
       expect(screen.queryByLabelText('commons.state')).toBeNull();
     });
 
-    // Verifica che il pulsante "Importa flussi" funzioni correttamente
     const importButton = screen.getByText('commons.importFlows');
     fireEvent.click(importButton);
 
-    // Verifica che la navigazione sia stata chiamata con il percorso corretto
     expect(mockNavigate).toHaveBeenCalledWith('/mock-path');
     expect(generatePath).toHaveBeenCalledWith(PageRoutes.IMPORT_FLOWS, {
       category: 'test'
