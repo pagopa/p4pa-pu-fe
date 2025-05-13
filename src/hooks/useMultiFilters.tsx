@@ -10,9 +10,21 @@ import {
   removeAllFilters,
   setFilterValues
 } from '../store/FilterStore';
+import { FilterValues } from '../models/Filters';
 
 export type FilterMap = Record<
-  string,
+  | keyof Omit<
+      FilterValues,
+      | 'ACCOUNTING_DATE_FROM'
+      | 'ACCOUNTING_DATE_TO'
+      | 'BILL_FROM'
+      | 'DOCUMENT_CODE_FROM'
+      | 'TEMPORARY_CODE_FROM'
+      | 'VALUE_DATE_FROM'
+      | 'VALUE_DATE_TO'
+    >
+  | 'ACCOUNTING_DATE'
+  | 'VALUE_DATE',
   { label: string; fields: Array<FilterItem> }
 >;
 
@@ -68,7 +80,7 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
         }
       ]
     },
-    BILL: {
+    BILL_CODE: {
       label: t('commons.filters.bill.label'),
       fields: [
         {
