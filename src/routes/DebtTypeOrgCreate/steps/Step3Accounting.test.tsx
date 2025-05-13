@@ -28,31 +28,31 @@ describe('Step3Accounting', () => {
 
     // Check main titles and subtitles
     expect(
-      screen.getByText('debtTypeCreateEC.accounting.title')
+      screen.getByText('debtTypeOrgCreate.accounting.title')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.accounting.subtitle')
+      screen.getByText('debtTypeOrgCreate.accounting.subtitle')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.accounting.alertMessage')
+      screen.getByText('debtTypeOrgCreate.accounting.alertMessage')
     ).toBeInTheDocument();
 
     // Check for section titles
     expect(
-      screen.getByText('debtTypeCreateEC.accounting.section.creditInfo')
+      screen.getByText('debtTypeOrgCreate.accounting.section.creditInfo')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.accounting.section.budgetInfo')
+      screen.getByText('debtTypeOrgCreate.accounting.section.budgetInfo')
     ).toBeInTheDocument();
 
     // Check for all input fields by label
     [
-      'debtTypeCreateEC.accounting.postalIban',
-      'debtTypeCreateEC.accounting.pspIban',
-      'debtTypeCreateEC.accounting.postalAccount',
-      'debtTypeCreateEC.accounting.postalAccountHolder',
-      'debtTypeCreateEC.accounting.defaultBudgetStructure',
-      'debtTypeCreateEC.accounting.entitySector'
+      'debtTypeOrgCreate.accounting.postalIban',
+      'debtTypeOrgCreate.accounting.pspIban',
+      'debtTypeOrgCreate.accounting.postalAccount',
+      'debtTypeOrgCreate.accounting.postalAccountHolder',
+      'debtTypeOrgCreate.accounting.defaultBudgetStructure',
+      'debtTypeOrgCreate.accounting.entitySector'
     ].forEach((label) => {
       expect(screen.getByRole('textbox', { name: label })).toBeInTheDocument();
     });
@@ -85,17 +85,17 @@ describe('Step3Accounting', () => {
     );
 
     fillField(
-      'debtTypeCreateEC.accounting.postalIban',
+      'debtTypeOrgCreate.accounting.postalIban',
       'CH9300762011623852957'
     );
-    fillField('debtTypeCreateEC.accounting.pspIban', 'CH9300762011623852958');
-    fillField('debtTypeCreateEC.accounting.postalAccount', '123456789');
-    fillField('debtTypeCreateEC.accounting.postalAccountHolder', 'John Doe');
+    fillField('debtTypeOrgCreate.accounting.pspIban', 'CH9300762011623852958');
+    fillField('debtTypeOrgCreate.accounting.postalAccount', '123456789');
+    fillField('debtTypeOrgCreate.accounting.postalAccountHolder', 'John Doe');
     fillField(
-      'debtTypeCreateEC.accounting.defaultBudgetStructure',
+      'debtTypeOrgCreate.accounting.defaultBudgetStructure',
       'Budget structure text'
     );
-    fillField('debtTypeCreateEC.accounting.entitySector', 'Public Sector');
+    fillField('debtTypeOrgCreate.accounting.entitySector', 'Public Sector');
 
     const nextButton = screen.getByRole('button', { name: 'commons.continue' });
     fireEvent.click(nextButton);

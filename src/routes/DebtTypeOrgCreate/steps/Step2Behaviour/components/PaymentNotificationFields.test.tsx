@@ -33,18 +33,18 @@ describe('PaymentNotificationFields', () => {
     // Select field
     expect(
       screen.getByRole('combobox', {
-        name: 'debtTypeCreateEC.behaviour.notifications.fields.retries'
+        name: 'debtTypeOrgCreate.behaviour.notifications.fields.retries'
       })
     ).toBeInTheDocument();
 
     // Text fields
     [
-      'debtTypeCreateEC.behaviour.notifications.fields.appName',
-      'debtTypeCreateEC.behaviour.notifications.fields.endpoint',
-      'debtTypeCreateEC.behaviour.notifications.fields.clientId',
-      'debtTypeCreateEC.behaviour.notifications.fields.clientEmail',
-      'debtTypeCreateEC.behaviour.notifications.fields.secretKeyId',
-      'debtTypeCreateEC.behaviour.notifications.fields.secretKey'
+      'debtTypeOrgCreate.behaviour.notifications.fields.appName',
+      'debtTypeOrgCreate.behaviour.notifications.fields.endpoint',
+      'debtTypeOrgCreate.behaviour.notifications.fields.clientId',
+      'debtTypeOrgCreate.behaviour.notifications.fields.clientEmail',
+      'debtTypeOrgCreate.behaviour.notifications.fields.secretKeyId',
+      'debtTypeOrgCreate.behaviour.notifications.fields.secretKey'
     ].forEach((label) => {
       expect(screen.getByRole('textbox', { name: label })).toBeInTheDocument();
     });
@@ -52,14 +52,14 @@ describe('PaymentNotificationFields', () => {
     // Checkbox
     expect(
       screen.getByRole('checkbox', {
-        name: 'debtTypeCreateEC.behaviour.notifications.fields.jwt'
+        name: 'debtTypeOrgCreate.behaviour.notifications.fields.jwt'
       })
     ).toBeInTheDocument();
 
     // Caption text for retries description
     expect(
       screen.getByText(
-        'debtTypeCreateEC.behaviour.notifications.fields.retriesDescription'
+        'debtTypeOrgCreate.behaviour.notifications.fields.retriesDescription'
       )
     ).toBeInTheDocument();
   });
@@ -68,20 +68,20 @@ describe('PaymentNotificationFields', () => {
     renderWithForm();
 
     await pickSelect(
-      'debtTypeCreateEC.behaviour.notifications.fields.retries',
+      'debtTypeOrgCreate.behaviour.notifications.fields.retries',
       '5'
     );
     expect(screen.getByDisplayValue('5')).toBeInTheDocument();
 
     // Type into text fields
     const appNameInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.behaviour.notifications.fields.appName'
+      name: 'debtTypeOrgCreate.behaviour.notifications.fields.appName'
     });
     fireEvent.change(appNameInput, { target: { value: 'My App' } });
     expect(appNameInput).toHaveValue('My App');
 
     const endpointInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.behaviour.notifications.fields.endpoint'
+      name: 'debtTypeOrgCreate.behaviour.notifications.fields.endpoint'
     });
     fireEvent.change(endpointInput, {
       target: { value: 'https://api.example.com' }
@@ -90,7 +90,7 @@ describe('PaymentNotificationFields', () => {
 
     // Toggle checkbox
     const jwtCheckbox = screen.getByRole('checkbox', {
-      name: 'debtTypeCreateEC.behaviour.notifications.fields.jwt'
+      name: 'debtTypeOrgCreate.behaviour.notifications.fields.jwt'
     });
     expect(jwtCheckbox).not.toBeChecked();
     fireEvent.click(jwtCheckbox);
@@ -98,14 +98,14 @@ describe('PaymentNotificationFields', () => {
 
     // Fill clientId
     const clientIdInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.behaviour.notifications.fields.clientId'
+      name: 'debtTypeOrgCreate.behaviour.notifications.fields.clientId'
     });
     fireEvent.change(clientIdInput, { target: { value: 'client-123' } });
     expect(clientIdInput).toHaveValue('client-123');
 
     // Fill clientEmail
     const clientEmailInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.behaviour.notifications.fields.clientEmail'
+      name: 'debtTypeOrgCreate.behaviour.notifications.fields.clientEmail'
     });
     fireEvent.change(clientEmailInput, {
       target: { value: 'client@example.com' }
@@ -114,14 +114,14 @@ describe('PaymentNotificationFields', () => {
 
     // Fill secretKeyId
     const secretKeyIdInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.behaviour.notifications.fields.secretKeyId'
+      name: 'debtTypeOrgCreate.behaviour.notifications.fields.secretKeyId'
     });
     fireEvent.change(secretKeyIdInput, { target: { value: 'secret-key-id' } });
     expect(secretKeyIdInput).toHaveValue('secret-key-id');
 
     // Fill secretKey
     const secretKeyInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.behaviour.notifications.fields.secretKey'
+      name: 'debtTypeOrgCreate.behaviour.notifications.fields.secretKey'
     });
     fireEvent.change(secretKeyInput, { target: { value: 'secret-key' } });
     expect(secretKeyInput).toHaveValue('secret-key');

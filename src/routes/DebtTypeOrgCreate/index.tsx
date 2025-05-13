@@ -9,40 +9,78 @@ import { Step1Configuration, Step1Data } from './steps/Step1Configuration';
 import { Step2Behaviour, Step2Data } from './steps/Step2Behaviour';
 import { Step3Accounting, Step3Data } from './steps/Step3Accounting';
 import { Step4Data, Step4Notifications } from './steps/Step4Notifications';
-import {
-  OperatorSelection,
-  Step5Data,
-  Step5Operators
-} from './steps/Step5Operators';
+import { Step5Data, Step5Operators } from './steps/Step5Operators';
 import { PaymentMethodOption } from './steps/Step2Behaviour/components/PaymentMethodSelector';
+import { OperatorsSelection } from '../../../generated/data-contracts';
+import {
+  CreateDebtPositionTypeOrg,
+  createDebtPositionTypeOrg
+} from '../../api/debtPositionsTypeOrg';
+import { useStore } from '../../store/GlobalStore';
 
 type FormData = Step1Data & Step2Data & Step3Data & Step4Data & Step5Data;
+
 const initialData: FormData = {
-  debtType: 0,
-  selection: '',
-  operatorSelection: OperatorSelection.ALL,
+  debtPositionTypeId: 0,
+
+  code: '',
+  description: '',
+  iban: '',
+
+  operatorsSelection: OperatorsSelection.ALL,
   paymentMethod: PaymentMethodOption.FREE
 };
 
-export const DebtTypeCreateEC = () => {
+export const DebtTypeOrgCreate = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [step, setStep] = useState(0);
   const formData = useSignal<FormData>(initialData);
+  const debtTypeCreate = createDebtPositionTypeOrg();
 
-  const submit = () => {
-    navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
-      replace: true,
-      state: {
-        formData: formData.value
+  const {
+    state: { organizationId }
+  } = useStore();
+
+  const requestMap = async (
+    data: FormData
+  ): Promise<CreateDebtPositionTypeOrg> => {
+    return {
+      organizationId,
+      data: {
+        debtPositionTypeOrg: {
+          ...data,
+          organizationId,
+          flagNotifyOutcomePush: data.flagNotifyOutcomePush === 'true',
+          xsdDefinitionRef:
+            data.paymentMethod === PaymentMethodOption.CUSTOM
+              ? await data.xsdDefinitionRef?.text()
+              : undefined
+        },
+        operatorsSelection: data.operatorsSelection
       }
+    };
+  };
+
+  const submit = async () => {
+    const request = await requestMap(formData.value);
+    debtTypeCreate.mutate(request, {
+      onSuccess: (formData) => {
+        navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
+          replace: true,
+          state: {
+            formData
+          }
+        });
+      },
+      onError: console.error
     });
   };
 
   const steps: Stepper['steps'] = [
     {
-      label: t('debtTypeCreateEC.stepper.step1'),
+      label: t('debtTypeOrgCreate.stepper.step1'),
       content: (
         <Step1Configuration
           key="step1"
@@ -55,7 +93,7 @@ export const DebtTypeCreateEC = () => {
       )
     },
     {
-      label: t('debtTypeCreateEC.stepper.step2'),
+      label: t('debtTypeOrgCreate.stepper.step2'),
       content: (
         <Step2Behaviour
           key="step2"
@@ -68,7 +106,7 @@ export const DebtTypeCreateEC = () => {
       )
     },
     {
-      label: t('debtTypeCreateEC.stepper.step3'),
+      label: t('debtTypeOrgCreate.stepper.step3'),
       content: (
         <Step3Accounting
           key="step3"
@@ -81,7 +119,7 @@ export const DebtTypeCreateEC = () => {
       )
     },
     {
-      label: t('debtTypeCreateEC.stepper.step4'),
+      label: t('debtTypeOrgCreate.stepper.step4'),
       optional: true,
       content: (
         <Step4Notifications
@@ -95,7 +133,7 @@ export const DebtTypeCreateEC = () => {
       )
     },
     {
-      label: t('debtTypeCreateEC.stepper.step5'),
+      label: t('debtTypeOrgCreate.stepper.step5'),
       content: (
         <Step5Operators
           key="step5"
@@ -111,8 +149,8 @@ export const DebtTypeCreateEC = () => {
 
   return (
     <StepperContainer
-      title={t('debtTypeCreateEC.title')}
-      description={t('debtTypeCreateEC.description')}
+      title={t('debtTypeOrgCreate.title')}
+      description={t('debtTypeOrgCreate.description')}
       steps={steps}
       activeStep={step}
     />

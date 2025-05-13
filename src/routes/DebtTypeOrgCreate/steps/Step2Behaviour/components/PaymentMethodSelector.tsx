@@ -30,9 +30,9 @@ export const SelectedField = ({
     case PaymentMethodOption.AMOUNT:
       return (
         <FormComponent.ControlledTextField
-          name="fixedAmount"
+          name="amountCents"
           control={control}
-          label={t('debtTypeCreateEC.behaviour.spontaneous.amountValue.label')}
+          label={t('debtTypeOrgCreate.behaviour.spontaneous.amountValue.label')}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">
@@ -46,15 +46,15 @@ export const SelectedField = ({
     case PaymentMethodOption.CUSTOM:
       return (
         <FormComponent.ControlledFileUploader
-          name="customFieldsSchema"
+          name="xsdDefinitionRef"
           control={control}
           description={t(
-            'debtTypeCreateEC.behaviour.spontaneous.file.description'
+            'debtTypeOrgCreate.behaviour.spontaneous.file.description'
           )}
           fileExtensionsAllowed={['xsd']}
           header={
             <Typography fontWeight="bold">
-              {t('debtTypeCreateEC.behaviour.spontaneous.file.header')}
+              {t('debtTypeOrgCreate.behaviour.spontaneous.file.header')}
               <Typography component="span" color="error">
                 *
               </Typography>
@@ -68,7 +68,7 @@ export const SelectedField = ({
         <FormComponent.ControlledTextField
           name="externalPaymentUrl"
           control={control}
-          label={t('debtTypeCreateEC.behaviour.spontaneous.externalUrl.label')}
+          label={t('debtTypeOrgCreate.behaviour.spontaneous.externalUrl.label')}
           defaultValue="https://"
         />
       );
@@ -90,24 +90,24 @@ export const PaymentMethodSelector = ({
       <FormComponent.ControlledSelect
         name={name}
         control={control}
-        label={t('debtTypeCreateEC.behaviour.spontaneous.label')}
+        label={t('debtTypeOrgCreate.behaviour.spontaneous.label')}
         required
         fullWidth
         options={[
           {
-            label: t('debtTypeCreateEC.behaviour.spontaneous.free'),
+            label: t('debtTypeOrgCreate.behaviour.spontaneous.free'),
             value: PaymentMethodOption.FREE
           },
           {
-            label: t('debtTypeCreateEC.behaviour.spontaneous.amount'),
+            label: t('debtTypeOrgCreate.behaviour.spontaneous.amount'),
             value: PaymentMethodOption.AMOUNT
           },
           {
-            label: t('debtTypeCreateEC.behaviour.spontaneous.custom'),
+            label: t('debtTypeOrgCreate.behaviour.spontaneous.custom'),
             value: PaymentMethodOption.CUSTOM
           },
           {
-            label: t('debtTypeCreateEC.behaviour.spontaneous.external'),
+            label: t('debtTypeOrgCreate.behaviour.spontaneous.external'),
             value: PaymentMethodOption.EXTERNAL
           }
         ]}

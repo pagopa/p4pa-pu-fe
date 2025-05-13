@@ -6,16 +6,16 @@ import { requireField, validateUrl } from '../../../../utils/schema';
 // Main schema
 export const step2Schema = (t: TFunction) => {
   const baseSchema = z.object({
-    isSpontaneousPaymentEnabled: z.boolean().default(false),
-    isDueDateRequired: z.boolean().optional().default(false),
+    flagSpontaneous: z.boolean().default(false),
+    flagMandatoryDueDate: z.boolean().optional().default(false),
     isAnonymousFiscalCode: z.boolean().optional().default(false),
 
     paymentMethod: z.nativeEnum(PaymentMethodOption),
-    fixedAmount: z.coerce.number().optional(),
-    customFieldsSchema: z.any().optional(),
+    amountCents: z.coerce.number().optional(),
+    xsdDefinitionRef: z.any().optional(),
     externalPaymentUrl: z.string().optional(),
 
-    enablePaymentNotifications: z.enum(['true', 'false']).default('false'),
+    flagNotifyOutcomePush: z.enum(['true', 'false']).default('false'),
 
     notificationRetries: z.coerce.number().optional(),
     notificationAppName: z.string().optional(),
@@ -44,25 +44,25 @@ const validateSpontaneousPayment = (
   ctx: z.RefinementCtx,
   t: TFunction
 ) => {
-  if (!data.isSpontaneousPaymentEnabled) return;
+  if (!data.flagSpontaneous) return;
 
   switch (data.paymentMethod) {
     case PaymentMethodOption.AMOUNT:
-      if (!data.fixedAmount) {
+      if (!data.amountCents) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: t('commons.validation.amountRequired'),
-          path: ['fixedAmount']
+          path: ['amountCents']
         });
       }
       break;
 
     case PaymentMethodOption.CUSTOM:
-      if (!data.customFieldsSchema) {
+      if (!data.xsdDefinitionRef) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: t('debtTypeCreateEC.behaviour.spontaneous.file.required'),
-          path: ['customFieldsSchema']
+          message: t('debtTypeOrgCreate.behaviour.spontaneous.file.required'),
+          path: ['xsdDefinitionRef']
         });
       }
       break;
@@ -81,7 +81,7 @@ const validateNotifications = (
   ctx: z.RefinementCtx,
   t: TFunction
 ) => {
-  if (data.enablePaymentNotifications !== 'true') return;
+  if (data.flagNotifyOutcomePush !== 'true') return;
 
   // Validate required fields
   const requiredFields = [

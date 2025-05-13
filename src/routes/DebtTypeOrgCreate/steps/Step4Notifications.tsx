@@ -17,10 +17,10 @@ import { MarkdownPreview } from '../../DebtTypeCreate/components/MarkdownPreview
 import Link from '@mui/material/Link';
 
 export type Step4Data = {
-  enableNotifications?: boolean;
-  serviceApiKey?: string;
-  messageSubject?: string;
-  messageBody?: string;
+  flagNotifyIo?: boolean;
+  serviceId?: string;
+  ioTemplateSubject?: string;
+  ioTemplateMessage?: string;
 };
 
 export type Step4Props = {
@@ -32,22 +32,22 @@ export type Step4Props = {
 const validationSchema = (t: TFunction) =>
   z
     .object({
-      enableNotifications: z.boolean().optional().default(false),
+      flagNotifyIo: z.boolean().optional().default(false),
       serviceApiKey: z.string().optional(),
-      messageSubject: z.string().optional(),
-      messageBody: z.string().optional()
+      ioTemplateSubject: z.string().optional(),
+      ioTemplateMessage: z.string().optional()
     })
-    .refine((data) => !data.enableNotifications || data.serviceApiKey, {
-      message: t('debtTypeCreateEC.notifications.serviceApiKey.required'),
+    .refine((data) => !data.flagNotifyIo || data.serviceApiKey, {
+      message: t('debtTypeOrgCreate.notifications.serviceApiKey.required'),
       path: ['serviceApiKey']
     })
-    .refine((data) => !data.enableNotifications || data.messageSubject, {
-      message: t('debtTypeCreateEC.notifications.messageSubject.required'),
-      path: ['messageSubject']
+    .refine((data) => !data.flagNotifyIo || data.ioTemplateSubject, {
+      message: t('debtTypeOrgCreate.notifications.messageSubject.required'),
+      path: ['ioTemplateSubject']
     })
-    .refine((data) => !data.enableNotifications || data.messageBody, {
-      message: t('debtTypeCreateEC.notifications.messageBody.required'),
-      path: ['messageBody']
+    .refine((data) => !data.flagNotifyIo || data.ioTemplateMessage, {
+      message: t('debtTypeOrgCreate.notifications.messageBody.required'),
+      path: ['ioTemplateMessage']
     });
 
 export const Step4Notifications = ({ setData, onNext, onBack }: Step4Props) => {
@@ -57,17 +57,17 @@ export const Step4Notifications = ({ setData, onNext, onBack }: Step4Props) => {
   const form = useForm<Step4Data>({
     resolver: zodResolver(schema),
     defaultValues: {
-      enableNotifications: false,
-      serviceApiKey: '',
-      messageSubject: '',
-      messageBody: ''
+      flagNotifyIo: false,
+      serviceId: '',
+      ioTemplateSubject: '',
+      ioTemplateMessage: ''
     },
     mode: 'onTouched'
   });
   const { control, handleSubmit, watch } = form;
-  const enableNotifications = watch('enableNotifications');
-  const messageSubject = watch('messageSubject');
-  const messageBody = watch('messageBody');
+  const flagNotifyIo = watch('flagNotifyIo');
+  const ioTemplateSubject = watch('ioTemplateSubject');
+  const ioTemplateMessage = watch('ioTemplateMessage');
 
   const onSubmit = async (values: Step4Data) => {
     setData(values);
@@ -77,46 +77,46 @@ export const Step4Notifications = ({ setData, onNext, onBack }: Step4Props) => {
   return (
     <form aria-label="form">
       <WizardStepWrapper
-        title={t('debtTypeCreateEC.notifications.title')}
-        subtitle={t('debtTypeCreateEC.notifications.subtitle')}
-        alertMessage={t('debtTypeCreateEC.notifications.alertMessage')}
+        title={t('debtTypeOrgCreate.notifications.title')}
+        subtitle={t('debtTypeOrgCreate.notifications.subtitle')}
+        alertMessage={t('debtTypeOrgCreate.notifications.alertMessage')}
       >
         <FormComponent.ControlledSwitch
-          label={t('debtTypeCreateEC.notifications.enableNotifications')}
-          name="enableNotifications"
+          label={t('debtTypeOrgCreate.notifications.enableNotifications')}
+          name="flagNotifyIo"
           control={control}
         />
-        {enableNotifications && (
+        {flagNotifyIo && (
           <SectionBox
-            title={t('debtTypeCreateEC.notifications.section.message')}
+            title={t('debtTypeOrgCreate.notifications.section.message')}
             adornment={<MessageIcon />}
           >
             <Stack gap={3}>
               <Stack gap={0.5}>
                 <FormComponent.ControlledTextField
-                  name="serviceApiKey"
+                  name="serviceId"
                   control={control}
                   label={t(
-                    'debtTypeCreateEC.notifications.serviceApiKey.label'
+                    'debtTypeOrgCreate.notifications.serviceApiKey.label'
                   )}
                   required
                 />
                 <Typography variant="caption" ml={2}>
-                  {t('debtTypeCreateEC.notifications.serviceApiKey.caption')}
+                  {t('debtTypeOrgCreate.notifications.serviceApiKey.caption')}
                 </Typography>
               </Stack>
               <Stack gap={0.5}>
                 <FormComponent.ControlledTextField
-                  name="messageSubject"
+                  name="ioTemplateSubject"
                   control={control}
                   label={t(
-                    'debtTypeCreateEC.notifications.messageSubject.label'
+                    'debtTypeOrgCreate.notifications.messageSubject.label'
                   )}
                   required
                 />
                 <Typography variant="caption" component="span" ml={2}>
                   <Trans
-                    i18nKey="debtTypeCreateEC.notifications.messageSubject.caption"
+                    i18nKey="debtTypeOrgCreate.notifications.messageSubject.caption"
                     components={[
                       <Link
                         key="link"
@@ -131,16 +131,16 @@ export const Step4Notifications = ({ setData, onNext, onBack }: Step4Props) => {
               </Stack>
               <Stack gap={0.5}>
                 <FormComponent.ControlledTextField
-                  name="messageBody"
+                  name="ioTemplateMessage"
                   control={control}
-                  label={t('debtTypeCreateEC.notifications.messageBody.label')}
+                  label={t('debtTypeOrgCreate.notifications.messageBody.label')}
                   multiline
                   rows={4}
                   required
                 />
                 <Typography variant="caption" component="span" ml={2}>
                   <Trans
-                    i18nKey="debtTypeCreateEC.notifications.messageBody.caption"
+                    i18nKey="debtTypeOrgCreate.notifications.messageBody.caption"
                     components={[
                       <Link
                         key="link"
@@ -162,7 +162,7 @@ export const Step4Notifications = ({ setData, onNext, onBack }: Step4Props) => {
               <Button
                 variant="text"
                 onClick={() => setOpen(true)}
-                disabled={!messageSubject || !messageBody}
+                disabled={!ioTemplateSubject || !ioTemplateMessage}
                 sx={{ px: 0 }}
               >
                 <PreviewIcon sx={{ mr: 1 }} />
@@ -174,8 +174,8 @@ export const Step4Notifications = ({ setData, onNext, onBack }: Step4Props) => {
       </WizardStepWrapper>
       <WizardStepButtons onBack={onBack} onNext={handleSubmit(onSubmit)} />
       <MarkdownPreview
-        title={messageSubject || ''}
-        message={messageBody || ''}
+        title={ioTemplateSubject || ''}
+        message={ioTemplateMessage || ''}
         open={open}
         onClose={() => setOpen(false)}
       />

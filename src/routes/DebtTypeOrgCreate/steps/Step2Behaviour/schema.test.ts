@@ -40,7 +40,7 @@ describe('step2Schema', () => {
       expect(result.success).toBe(false);
       expect(result.error?.issues[0]).toMatchObject({
         path: ['customFieldsSchema'],
-        message: 'debtTypeCreateEC.behaviour.spontaneous.file.required'
+        message: 'debtTypeOrgCreate.behaviour.spontaneous.file.required'
       });
     });
 

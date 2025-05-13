@@ -41,13 +41,13 @@ describe('PaymentMethodSelector', () => {
     renderWithForm();
 
     const select = screen.getByRole('combobox', {
-      name: 'debtTypeCreateEC.behaviour.spontaneous.label'
+      name: 'debtTypeOrgCreate.behaviour.spontaneous.label'
     });
     expect(select).toBeInTheDocument();
 
     // Check options labels are rendered
     expect(
-      screen.getByText('debtTypeCreateEC.behaviour.spontaneous.free')
+      screen.getByText('debtTypeOrgCreate.behaviour.spontaneous.free')
     ).toBeInTheDocument();
   });
 
@@ -63,7 +63,7 @@ describe('PaymentMethodSelector', () => {
     ).not.toBeInTheDocument();
     expect(
       screen.queryByText(
-        'debtTypeCreateEC.behaviour.spontaneous.file.description'
+        'debtTypeOrgCreate.behaviour.spontaneous.file.description'
       )
     ).not.toBeInTheDocument();
   });
@@ -74,7 +74,7 @@ describe('PaymentMethodSelector', () => {
     // The description text should be present
     expect(
       screen.getByText(
-        'debtTypeCreateEC.behaviour.spontaneous.file.description'
+        'debtTypeOrgCreate.behaviour.spontaneous.file.description'
       )
     ).toBeInTheDocument();
   });
@@ -144,7 +144,7 @@ describe('PaymentMethodSelector', () => {
     fireEvent.click(screen.getByTestId('set-amount'));
     expect(
       screen.getByRole('textbox', {
-        name: 'debtTypeCreateEC.behaviour.spontaneous.amountValue.label'
+        name: 'debtTypeOrgCreate.behaviour.spontaneous.amountValue.label'
       })
     ).toBeInTheDocument();
 
@@ -152,7 +152,7 @@ describe('PaymentMethodSelector', () => {
     fireEvent.click(screen.getByTestId('set-custom'));
     expect(
       screen.getByText(
-        'debtTypeCreateEC.behaviour.spontaneous.file.description'
+        'debtTypeOrgCreate.behaviour.spontaneous.file.description'
       )
     ).toBeInTheDocument();
 
@@ -160,7 +160,7 @@ describe('PaymentMethodSelector', () => {
     fireEvent.click(screen.getByTestId('set-external'));
     expect(
       screen.getByRole('textbox', {
-        name: 'debtTypeCreateEC.behaviour.spontaneous.externalUrl.label'
+        name: 'debtTypeOrgCreate.behaviour.spontaneous.externalUrl.label'
       })
     ).toBeInTheDocument();
 

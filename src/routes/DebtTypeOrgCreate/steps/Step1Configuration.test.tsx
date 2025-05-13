@@ -40,44 +40,44 @@ describe('Step1Configuration', () => {
 
     // Check if main titles are rendered
     expect(
-      screen.getByText('debtTypeCreateEC.configuration.title')
+      screen.getByText('debtTypeOrgCreate.configuration.title')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.configuration.debtType.title')
+      screen.getByText('debtTypeOrgCreate.configuration.debtType.title')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.configuration.debtTypeVersion.title')
+      screen.getByText('debtTypeOrgCreate.configuration.debtTypeVersion.title')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.configuration.selection.title')
+      screen.getByText('debtTypeOrgCreate.configuration.selection.title')
     ).toBeInTheDocument();
 
     // Check for form elements
     expect(
       screen.getByRole('combobox', {
-        name: 'debtTypeCreateEC.configuration.debtType.label'
+        name: 'debtTypeOrgCreate.configuration.debtType.label'
       })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('textbox', {
-        name: 'debtTypeCreateEC.configuration.code.label'
+        name: 'debtTypeOrgCreate.configuration.code.label'
       })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('textbox', {
-        name: 'debtTypeCreateEC.configuration.description.label'
+        name: 'debtTypeOrgCreate.configuration.description.label'
       })
     ).toBeInTheDocument();
 
     // Check for radio buttons
     expect(
       screen.getByRole('radio', {
-        name: 'debtTypeCreateEC.configuration.selection.option1'
+        name: 'debtTypeOrgCreate.configuration.selection.option1'
       })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('radio', {
-        name: 'debtTypeCreateEC.configuration.selection.option2'
+        name: 'debtTypeOrgCreate.configuration.selection.option2'
       })
     ).toBeInTheDocument();
   });
@@ -110,16 +110,19 @@ describe('Step1Configuration', () => {
     );
 
     // Select a debt type
-    await pickSelect('debtTypeCreateEC.configuration.debtType.label', 'Type 2');
+    await pickSelect(
+      'debtTypeOrgCreate.configuration.debtType.label',
+      'Type 2'
+    );
 
     // Enter values for text fields
     const codeInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.configuration.code.label'
+      name: 'debtTypeOrgCreate.configuration.code.label'
     });
     fireEvent.change(codeInput, { target: { value: 'CODE123' } });
 
     const descriptionInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.configuration.description.label'
+      name: 'debtTypeOrgCreate.configuration.description.label'
     });
     fireEvent.change(descriptionInput, {
       target: { value: 'Test description' }
@@ -127,7 +130,7 @@ describe('Step1Configuration', () => {
 
     // Select the second radio option
     const radioOption2 = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.configuration.selection.option2'
+      name: 'debtTypeOrgCreate.configuration.selection.option2'
     });
     fireEvent.click(radioOption2);
 
@@ -160,7 +163,7 @@ describe('Step1Configuration', () => {
 
     // Type in the description field
     const descriptionInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.configuration.description.label'
+      name: 'debtTypeOrgCreate.configuration.description.label'
     });
     fireEvent.change(descriptionInput, {
       target: { value: 'Test description' }
@@ -180,10 +183,10 @@ describe('Step1Configuration', () => {
     );
 
     const radioOption1 = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.configuration.selection.option1'
+      name: 'debtTypeOrgCreate.configuration.selection.option1'
     });
     const radioOption2 = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.configuration.selection.option2'
+      name: 'debtTypeOrgCreate.configuration.selection.option2'
     });
 
     // Check that first option is selected by default
@@ -201,10 +204,10 @@ describe('Step1Configuration', () => {
     );
 
     const radioOption1 = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.configuration.selection.option1'
+      name: 'debtTypeOrgCreate.configuration.selection.option1'
     });
     const radioOption2 = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.configuration.selection.option2'
+      name: 'debtTypeOrgCreate.configuration.selection.option2'
     });
 
     // Initially first option is selected
@@ -238,7 +241,10 @@ describe('Step1Configuration', () => {
     expect(mockOnNext).not.toHaveBeenCalled();
 
     // Now select a debt type
-    await pickSelect('debtTypeCreateEC.configuration.debtType.label', 'Type 1');
+    await pickSelect(
+      'debtTypeOrgCreate.configuration.debtType.label',
+      'Type 1'
+    );
 
     // Try submitting again
     fireEvent.click(nextButton);
@@ -260,7 +266,10 @@ describe('Step1Configuration', () => {
     );
 
     // Only select a debt type, leave optional fields empty
-    await pickSelect('debtTypeCreateEC.configuration.debtType.label', 'Type 3');
+    await pickSelect(
+      'debtTypeOrgCreate.configuration.debtType.label',
+      'Type 3'
+    );
 
     // Submit the form
     const nextButton = screen.getByRole('button', { name: 'commons.continue' });

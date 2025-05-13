@@ -27,26 +27,26 @@ describe('Step5Operators', () => {
 
     // Main titles
     expect(
-      screen.getByText('debtTypeCreateEC.operators.title')
+      screen.getByText('debtTypeOrgCreate.operators.title')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.operators.subtitle')
+      screen.getByText('debtTypeOrgCreate.operators.subtitle')
     ).toBeInTheDocument();
 
     // Section title
     expect(
-      screen.getByText('debtTypeCreateEC.operators.section.operatorEntities')
+      screen.getByText('debtTypeOrgCreate.operators.section.operatorEntities')
     ).toBeInTheDocument();
 
     // Radio options
     expect(
       screen.getByRole('radio', {
-        name: 'debtTypeCreateEC.operators.options.all'
+        name: 'debtTypeOrgCreate.operators.options.all'
       })
     ).toBeInTheDocument();
     expect(
       screen.getByRole('radio', {
-        name: 'debtTypeCreateEC.operators.options.none'
+        name: 'debtTypeOrgCreate.operators.options.none'
       })
     ).toBeInTheDocument();
   });
@@ -61,10 +61,10 @@ describe('Step5Operators', () => {
     );
 
     const radioAll = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.operators.options.all'
+      name: 'debtTypeOrgCreate.operators.options.all'
     });
     const radioNone = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.operators.options.none'
+      name: 'debtTypeOrgCreate.operators.options.none'
     });
 
     expect(radioAll).toBeChecked();
@@ -81,10 +81,10 @@ describe('Step5Operators', () => {
     );
 
     const radioAll = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.operators.options.all'
+      name: 'debtTypeOrgCreate.operators.options.all'
     });
     const radioNone = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.operators.options.none'
+      name: 'debtTypeOrgCreate.operators.options.none'
     });
 
     // Select NONE
@@ -141,7 +141,7 @@ describe('Step5Operators', () => {
     );
 
     const radioNone = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.operators.options.none'
+      name: 'debtTypeOrgCreate.operators.options.none'
     });
     fireEvent.click(radioNone);
 
@@ -170,7 +170,7 @@ describe('Step5Operators', () => {
 
     // Uncheck both radios (simulate no selection)
     const radioAll = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.operators.options.all'
+      name: 'debtTypeOrgCreate.operators.options.all'
     });
     fireEvent.click(radioAll); // Already checked, so this might not uncheck
     // In actual HTML, one radio is always checked, so this is just for completeness
