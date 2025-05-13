@@ -817,29 +817,6 @@ describe('TelematicReceiptImportFlowOverview', () => {
     });
   });
 
-  it('renders empty grid when data is undefined', async () => {
-    (
-      getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
-      data: undefined
-    });
-
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    await waitFor(() => {
-      expect(container.querySelector('.MuiDataGrid-overlay')).toHaveTextContent(
-        'No rows'
-      );
-    });
-  });
-
   it('calls downloadIngestionFlowFile and downloadBlob when download button is clicked', async () => {
     const mockDownloadIngestionFlowFile = vi.fn().mockResolvedValue({
       data: new Blob(['test content']),
@@ -960,5 +937,52 @@ describe('TelematicReceiptImportFlowOverview', () => {
         );
       });
     }
+  });
+
+  it('renders empty state message when data is empty', async () => {
+    (
+      getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({
+      data: {
+        content: [],
+        totalPages: 0,
+        totalElements: 0,
+        number: 0,
+        size: 10
+      }
+    });
+
+    render(
+      <FlowOverview
+        routingCategory={'test'}
+        title={'test title'}
+        description={'test description'}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
+      />
+    );
+
+    expect(screen.getByText('test title')).toBeDefined();
+
+    await waitFor(() => {
+      expect(screen.getByText('commons.noFlows')).toBeDefined();
+      expect(screen.getByText('commons.importFlows')).toBeDefined();
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByRole('grid')).toBeNull();
+    });
+
+    await waitFor(() => {
+      expect(screen.queryByLabelText('commons.searchName')).toBeNull();
+      expect(screen.queryByLabelText('commons.state')).toBeNull();
+    });
+
+    const importButton = screen.getByText('commons.importFlows');
+    fireEvent.click(importButton);
+
+    expect(mockNavigate).toHaveBeenCalledWith('/mock-path');
+    expect(generatePath).toHaveBeenCalledWith(PageRoutes.IMPORT_FLOWS, {
+      category: 'test'
+    });
   });
 });
