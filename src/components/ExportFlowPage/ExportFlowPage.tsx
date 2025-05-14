@@ -78,7 +78,7 @@ export const ExportFlowPage = () => {
         exportFileType: ExportFileTypeEnum.PAID,
         fileVersion: formData.fileVersion,
         filterFields: {
-          paymentDate: {
+          paymentDateTime: {
             from: formattedFrom,
             to: formattedTo
           },
@@ -110,7 +110,7 @@ export const ExportFlowPage = () => {
         exportFileType: ExportFileTypeEnum.RECEIPTS_ARCHIVING,
         fileVersion: 'v1.0',
         filterFields: {
-          paymentDate: {
+          paymentDateTime: {
             from: formattedFrom,
             to: formattedTo
           }
