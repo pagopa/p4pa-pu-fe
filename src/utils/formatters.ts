@@ -2,6 +2,7 @@ import { format, parseISO } from 'date-fns';
 import { endOfDay } from 'date-fns/endOfDay';
 import { startOfDay } from 'date-fns/startOfDay';
 import { it } from 'date-fns/locale';
+import i18n from '../translations/i18n';
 
 type optionMapItem = {
   label: string;
@@ -36,7 +37,7 @@ export function optionMapsConverter(
 ): Array<optionMapItem> {
   const sortedItems = sortItems(items);
   return sortedItems.map((item) => ({
-    label: item,
+    label: i18n.t(`commons.status.${item}`),
     value: item
   }));
 }
