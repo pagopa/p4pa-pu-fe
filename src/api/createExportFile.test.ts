@@ -36,7 +36,7 @@ describe('createPaidExportFile', () => {
       exportFileType: ExportFileTypeEnum.PAID,
       fileVersion: 'v1.0',
       filterFields: {
-        paymentDate: {
+        paymentDateTime: {
           from: '2024-01-01',
           to: '2024-12-31'
         },
@@ -82,7 +82,7 @@ describe('createReceiptsArchivingExportFile', () => {
       exportFileType: ExportFileTypeEnum.RECEIPTS_ARCHIVING,
       fileVersion: 'v1.0',
       filterFields: {
-        paymentDate: {
+        paymentDateTime: {
           from: '2023-01-01',
           to: '2023-12-31'
         }

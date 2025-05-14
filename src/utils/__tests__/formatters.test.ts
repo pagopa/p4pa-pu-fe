@@ -221,4 +221,16 @@ describe('optionMapsConverter', () => {
     ];
     expect(optionMapsConverter(items)).toEqual(expected);
   });
+
+  it('should translated labels', () => {
+    const items = ['B', 'A', 'B', 'C', 'A'];
+    const expected = [
+      { label: 'commons.status.A', value: 'A' },
+      { label: 'commons.status.A', value: 'A' },
+      { label: 'commons.status.B', value: 'B' },
+      { label: 'commons.status.B', value: 'B' },
+      { label: 'commons.status.C', value: 'C' }
+    ];
+    expect(optionMapsConverter(items, 'commons.status')).toEqual(expected);
+  });
 });
