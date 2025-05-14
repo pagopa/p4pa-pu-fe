@@ -33,11 +33,13 @@ export function euroToCents(amount: string | number): number {
 }
 
 export function optionMapsConverter(
-  items: Array<string>
+  items: Array<string>,
+  uniqueTranslationPath?: string
 ): Array<optionMapItem> {
   const sortedItems = sortItems(items);
+  const label = uniqueTranslationPath ? `${uniqueTranslationPath}.` : '';
   return sortedItems.map((item) => ({
-    label: i18n.t(`commons.status.${item}`),
+    label: i18n.t(`${label}${item}`),
     value: item
   }));
 }
