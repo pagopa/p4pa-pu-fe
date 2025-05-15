@@ -127,7 +127,7 @@ export const Step1Configuration = ({
     if (editmode) {
       onNext();
     }
-  }
+  };
 
   return (
     <form aria-label="form">
@@ -382,7 +382,10 @@ export const Step1Configuration = ({
         </SectionBox>
       </WizardStepWrapper>
 
-      <WizardStepButtons onBack={onBack} onNext={handleSubmit(onSubmit, onInvalid)} />
+      <WizardStepButtons
+        onBack={onBack}
+        onNext={handleSubmit(onSubmit, onInvalid)}
+      />
     </form>
   );
 };

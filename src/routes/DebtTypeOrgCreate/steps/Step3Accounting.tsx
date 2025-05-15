@@ -8,14 +8,16 @@ import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
+import { isValidIBAN } from '../../../utils/fieldValidation';
+import { TFunction } from 'i18next';
 
 export type Step3Data = {
   postalIban?: string;
-  pspIban?: string;
-  postalAccount?: string;
-  postalAccountHolder?: string;
-  defaultBudgetStructure?: string;
-  entitySector?: string;
+  iban?: string;
+  postalAccountCode?: string;
+  holderPostalCc?: string;
+  balance?: string;
+  orgSector?: string;
 };
 
 export type Step3Props = {
@@ -24,24 +26,33 @@ export type Step3Props = {
   onBack: () => void;
 };
 
-const validationSchema = () =>
+const validationSchema = (t: TFunction) =>
   z.object({
-    postalIban: z.string().optional(),
-    pspIban: z.string().optional(),
-    postalAccount: z.string().optional(),
-    postalAccountHolder: z.string().optional(),
-    defaultBudgetStructure: z.string().optional(),
-    entitySector: z.string().optional()
+    postalIban: z
+      .literal(undefined)
+      .or(z.literal(''))
+      .or(z.string().refine(isValidIBAN, t('commons.validation.invalidIban'))),
+    iban: z
+      .literal(undefined)
+      .or(z.literal(''))
+      .or(z.string().refine(isValidIBAN, t('commons.validation.invalidIban'))),
+
+    postalAccountCode: z.string().optional(),
+    holderPostalCc: z.string().optional(),
+    balance: z.string().optional(),
+    orgSector: z.string().optional()
   });
 
 export const Step3Accounting = ({ setData, onNext, onBack }: Step3Props) => {
   const { t } = useTranslation();
-  const schema = validationSchema();
-  const form = useForm<Step3Data>({
+  const schema = validationSchema(t);
+  const { control, handleSubmit, watch } = useForm<Step3Data>({
     resolver: zodResolver(schema),
     mode: 'onTouched'
   });
-  const { control, handleSubmit } = form;
+
+  const postalIban = watch('postalIban');
+  const iban = watch('iban');
 
   const onSubmit = async (values: Step3Data) => {
     setData(values);
@@ -51,56 +62,58 @@ export const Step3Accounting = ({ setData, onNext, onBack }: Step3Props) => {
   return (
     <form aria-label="form">
       <WizardStepWrapper
-        title={t('debtTypeCreateEC.accounting.title')}
-        subtitle={t('debtTypeCreateEC.accounting.subtitle')}
-        alertMessage={t('debtTypeCreateEC.accounting.alertMessage')}
+        title={t('debtTypeOrgCreate.accounting.title')}
+        subtitle={t('debtTypeOrgCreate.accounting.subtitle')}
+        alertMessage={t('debtTypeOrgCreate.accounting.alertMessage')}
       >
         <SectionBox
-          title={t('debtTypeCreateEC.accounting.section.creditInfo')}
+          title={t('debtTypeOrgCreate.accounting.section.creditInfo')}
           adornment={<AccountBalanceIcon />}
         >
           <FormComponent.ControlledTextField
             name="postalIban"
             control={control}
-            label={t('debtTypeCreateEC.accounting.postalIban')}
+            label={t('debtTypeOrgCreate.accounting.postalIban')}
+            disabled={!!iban}
             required={false}
           />
           <FormComponent.ControlledTextField
-            name="pspIban"
+            name="iban"
             control={control}
-            label={t('debtTypeCreateEC.accounting.pspIban')}
+            label={t('debtTypeOrgCreate.accounting.pspIban')}
+            disabled={!!postalIban}
             required={false}
           />
           <FormComponent.ControlledTextField
-            name="postalAccount"
+            name="postalAccountCode"
             control={control}
-            label={t('debtTypeCreateEC.accounting.postalAccount')}
+            label={t('debtTypeOrgCreate.accounting.postalAccount')}
             required={false}
           />
           <FormComponent.ControlledTextField
-            name="postalAccountHolder"
+            name="holderPostalCc"
             control={control}
-            label={t('debtTypeCreateEC.accounting.postalAccountHolder')}
+            label={t('debtTypeOrgCreate.accounting.postalAccountHolder')}
             required={false}
           />
         </SectionBox>
         <SectionBox
-          title={t('debtTypeCreateEC.accounting.section.budgetInfo')}
+          title={t('debtTypeOrgCreate.accounting.section.budgetInfo')}
           adornment={<BookIcon />}
         >
           <FormComponent.ControlledTextField
-            name="defaultBudgetStructure"
+            name="balance"
             control={control}
-            label={t('debtTypeCreateEC.accounting.defaultBudgetStructure')}
+            label={t('debtTypeOrgCreate.accounting.defaultBudgetStructure')}
             multiline
             InputLabelProps={{ shrink: true }}
             rows={4}
             required={false}
           />
           <FormComponent.ControlledTextField
-            name="entitySector"
+            name="orgSector"
             control={control}
-            label={t('debtTypeCreateEC.accounting.entitySector')}
+            label={t('debtTypeOrgCreate.accounting.entitySector')}
             required={false}
           />
         </SectionBox>

@@ -136,7 +136,7 @@ export const DebtTypesCreated = () => {
           {
             icon: <Add />,
             buttonText: t('debtTypesCreated.callToAction'),
-            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_CREATE_EC)
+            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_ORG_CREATE)
           }
         ]}
         description={t(
