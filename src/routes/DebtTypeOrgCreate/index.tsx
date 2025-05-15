@@ -17,6 +17,7 @@ import {
   createDebtPositionTypeOrg
 } from '../../api/debtPositionsTypeOrg';
 import { useStore } from '../../store/GlobalStore';
+import utils from '../../utils';
 
 type FormData = Step1Data & Step2Data & Step3Data & Step4Data & Step5Data;
 
@@ -64,18 +65,19 @@ export const DebtTypeOrgCreate = () => {
   };
 
   const submit = async () => {
-    const request = await requestMap(formData.value);
-    debtTypeCreate.mutate(request, {
-      onSuccess: (formData) => {
-        navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
-          replace: true,
-          state: {
-            formData
-          }
-        });
-      },
-      onError: console.error
-    });
+    try {
+      const request = await requestMap(formData.value);
+      const response = await debtTypeCreate.mutateAsync(request);
+      navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
+        replace: true,
+        state: {
+          formData: response
+        }
+      });
+    } catch (error) {
+      utils.notify.emit(t('errors.generic'));
+      console.error(error);
+    }
   };
 
   const steps: Stepper['steps'] = [
