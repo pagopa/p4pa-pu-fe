@@ -76,6 +76,7 @@
     "executedBy": "Eseguito da",
     "exit": "Esci",
     "exportedFlows": "Flussi esportati",
+    "exportFlows": "Esporta flussi",
     "files": {
       "download": "Scarica",
       "downloadFlow": "Scarica flusso",
