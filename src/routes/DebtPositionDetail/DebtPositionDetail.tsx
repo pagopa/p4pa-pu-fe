@@ -200,7 +200,10 @@ const DebtPositionDetail = () => {
   return debtPositionDetail ? (
     <>
       <TitleComponent
-        title={debtPositionDetail.debtPositionTypeOrgDescription}
+        title={
+          debtPositionDetail.description ||
+          debtPositionDetail.debtPositionTypeOrgDescription
+        }
         chip={statusChip}
         callToAction={[
           {
