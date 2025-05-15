@@ -136,6 +136,20 @@ const deleteDebtPositionType = (
     onError
   });
 
+/** delete a debt position by its organizationId and debtPositionId, if allowed */
+const deleteDebtPosition = (
+  organizationId: number,
+  debtPositionId: number,
+  onSuccess?: () => void,
+  onError?: (error: AxiosError) => void
+) =>
+  useMutation({
+    mutationFn: () =>
+      utils.apiClient.bff.deleteDebtPosition(organizationId, debtPositionId),
+    onSuccess,
+    onError
+  });
+
 /** create a new debt position */
 const createDebtPosition = (
   onSuccess?: (response: DebtPositionDTO, paymentObject?: string) => void,
@@ -167,5 +181,6 @@ export default {
   getInstallmentDetail,
   getDebtPositionDetail,
   deleteDebtPositionType,
+  deleteDebtPosition,
   createDebtPosition
 };
