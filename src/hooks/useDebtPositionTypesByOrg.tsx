@@ -19,7 +19,7 @@ export const useDebtPositionTypesByOrg = ({
     organizationId
   });
 
-  const { data, isLoading, isError, isSuccess } = debtPositionsTypesQuery;
+  const { data, isError, isSuccess } = debtPositionsTypesQuery;
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -36,7 +36,7 @@ export const useDebtPositionTypesByOrg = ({
     if (isError) {
       utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
     }
-  }, [data, isLoading, isError, isSuccess, t]);
+  }, [data, isError, isSuccess, t]);
 
   return { optionsMap: debtPositionsTypes, ...debtPositionsTypesQuery };
 };
