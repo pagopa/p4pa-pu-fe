@@ -166,7 +166,7 @@ describe('Step4Notifications', () => {
     expect(mockSetData).not.toHaveBeenCalled();
     expect(mockOnNext).not.toHaveBeenCalled();
 
-    // Fill serviceApiKey only
+    // Fill serviceId only
     const apiKeyInput = screen.getByRole('textbox', {
       name: 'debtTypeOrgCreate.notifications.serviceApiKey.label'
     });
@@ -193,10 +193,10 @@ describe('Step4Notifications', () => {
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        enableNotifications: true,
-        serviceApiKey: 'apikey123',
-        messageSubject: 'Subject',
-        messageBody: 'Body text'
+        flagNotifyIo: true,
+        serviceId: 'apikey123',
+        ioTemplateSubject: 'Subject',
+        ioTemplateMessage: 'Body text'
       });
       expect(mockOnNext).toHaveBeenCalledTimes(1);
     });
@@ -217,10 +217,10 @@ describe('Step4Notifications', () => {
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        enableNotifications: false,
-        serviceApiKey: '',
-        messageSubject: '',
-        messageBody: ''
+        flagNotifyIo: false,
+        serviceId: '',
+        ioTemplateSubject: '',
+        ioTemplateMessage: ''
       });
       expect(mockOnNext).toHaveBeenCalledTimes(1);
     });

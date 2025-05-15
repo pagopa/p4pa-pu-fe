@@ -8,8 +8,8 @@ import {
 } from '../../../__tests__/renderers';
 import { pickSelect } from '../../../__tests__/utils';
 
-vi.mock('../../../hooks/useDebtPositionsTypeOrg', () => ({
-  useDebtPositionsTypeOrg: () => ({
+vi.mock('../../../hooks/useDebtPositionTypesByOrg', () => ({
+  useDebtPositionTypesByOrg: () => ({
     optionsMap: [
       { value: 1, label: 'Type 1' },
       { value: 2, label: 'Type 2' },
@@ -38,7 +38,7 @@ describe('Step1Configuration', () => {
       />
     );
 
-    // Check if main titles are rendered
+    // Check main titles
     expect(
       screen.getByText('debtTypeOrgCreate.configuration.title')
     ).toBeInTheDocument();
@@ -48,36 +48,23 @@ describe('Step1Configuration', () => {
     expect(
       screen.getByText('debtTypeOrgCreate.configuration.debtTypeVersion.title')
     ).toBeInTheDocument();
-    expect(
-      screen.getByText('debtTypeOrgCreate.configuration.selection.title')
-    ).toBeInTheDocument();
 
-    // Check for form elements
+    // Check form controls
     expect(
       screen.getByRole('combobox', {
         name: 'debtTypeOrgCreate.configuration.debtType.label'
       })
     ).toBeInTheDocument();
+
     expect(
       screen.getByRole('textbox', {
         name: 'debtTypeOrgCreate.configuration.code.label'
       })
     ).toBeInTheDocument();
+
     expect(
       screen.getByRole('textbox', {
         name: 'debtTypeOrgCreate.configuration.description.label'
-      })
-    ).toBeInTheDocument();
-
-    // Check for radio buttons
-    expect(
-      screen.getByRole('radio', {
-        name: 'debtTypeOrgCreate.configuration.selection.option1'
-      })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('radio', {
-        name: 'debtTypeOrgCreate.configuration.selection.option2'
       })
     ).toBeInTheDocument();
   });
@@ -91,7 +78,6 @@ describe('Step1Configuration', () => {
       />
     );
 
-    // Find and click the back button
     const backButton = screen.getByRole('button', { name: 'commons.back' });
     fireEvent.click(backButton);
 
@@ -128,22 +114,15 @@ describe('Step1Configuration', () => {
       target: { value: 'Test description' }
     });
 
-    // Select the second radio option
-    const radioOption2 = screen.getByRole('radio', {
-      name: 'debtTypeOrgCreate.configuration.selection.option2'
-    });
-    fireEvent.click(radioOption2);
-
     // Submit the form
     const nextButton = screen.getByRole('button', { name: 'commons.continue' });
     fireEvent.click(nextButton);
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        debtType: 2,
+        debtPositionTypeId: 2,
         code: 'CODE123',
-        description: 'Test description',
-        selection: 'option2'
+        description: 'Test description'
       });
       expect(mockOnNext).toHaveBeenCalledTimes(1);
     });
@@ -158,10 +137,8 @@ describe('Step1Configuration', () => {
       />
     );
 
-    // Initially should be 0/100
     expect(screen.getByText('0/100')).toBeInTheDocument();
 
-    // Type in the description field
     const descriptionInput = screen.getByRole('textbox', {
       name: 'debtTypeOrgCreate.configuration.description.label'
     });
@@ -169,56 +146,7 @@ describe('Step1Configuration', () => {
       target: { value: 'Test description' }
     });
 
-    // Should now show the correct count
     expect(screen.getByText('16/100')).toBeInTheDocument();
-  });
-
-  it('defaults to first radio option', () => {
-    render(
-      <Step1Configuration
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
-
-    const radioOption1 = screen.getByRole('radio', {
-      name: 'debtTypeOrgCreate.configuration.selection.option1'
-    });
-    const radioOption2 = screen.getByRole('radio', {
-      name: 'debtTypeOrgCreate.configuration.selection.option2'
-    });
-
-    // Check that first option is selected by default
-    expect(radioOption1).toBeChecked();
-    expect(radioOption2).not.toBeChecked();
-  });
-
-  it('allows selecting a different radio option', () => {
-    render(
-      <Step1Configuration
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
-
-    const radioOption1 = screen.getByRole('radio', {
-      name: 'debtTypeOrgCreate.configuration.selection.option1'
-    });
-    const radioOption2 = screen.getByRole('radio', {
-      name: 'debtTypeOrgCreate.configuration.selection.option2'
-    });
-
-    // Initially first option is selected
-    expect(radioOption1).toBeChecked();
-
-    // Click the second option
-    fireEvent.click(radioOption2);
-
-    // Now second option should be checked
-    expect(radioOption1).not.toBeChecked();
-    expect(radioOption2).toBeChecked();
   });
 
   it('validates required fields before submission', async () => {
@@ -230,33 +158,39 @@ describe('Step1Configuration', () => {
       />
     );
 
-    // Don't select a debt type (it's required)
-
-    // Submit the form
+    // Submit without selecting debtPositionTypeId (required)
     const nextButton = screen.getByRole('button', { name: 'commons.continue' });
     fireEvent.click(nextButton);
 
-    // Validation should prevent submission
     expect(mockSetData).not.toHaveBeenCalled();
     expect(mockOnNext).not.toHaveBeenCalled();
 
-    // Now select a debt type
+    // Now select a debt type and submit again
     await pickSelect(
       'debtTypeOrgCreate.configuration.debtType.label',
       'Type 1'
     );
 
-    // Try submitting again
+    // Fill code and description (both required)
+    const codeInput = screen.getByRole('textbox', {
+      name: 'debtTypeOrgCreate.configuration.code.label'
+    });
+    fireEvent.change(codeInput, { target: { value: 'CODE1' } });
+
+    const descriptionInput = screen.getByRole('textbox', {
+      name: 'debtTypeOrgCreate.configuration.description.label'
+    });
+    fireEvent.change(descriptionInput, { target: { value: 'Desc' } });
+
     fireEvent.click(nextButton);
 
-    // Now submission should work
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalled();
       expect(mockOnNext).toHaveBeenCalled();
     });
   });
 
-  it('submits form with only required fields filled', async () => {
+  it('does not submit if required fields are missing', async () => {
     render(
       <Step1Configuration
         setData={mockSetData}
@@ -265,24 +199,17 @@ describe('Step1Configuration', () => {
       />
     );
 
-    // Only select a debt type, leave optional fields empty
+    // Select debt type only, but no code or description
     await pickSelect(
       'debtTypeOrgCreate.configuration.debtType.label',
       'Type 3'
     );
 
-    // Submit the form
     const nextButton = screen.getByRole('button', { name: 'commons.continue' });
     fireEvent.click(nextButton);
 
-    await waitFor(() => {
-      expect(mockSetData).toHaveBeenCalledWith({
-        debtType: 3,
-        code: undefined,
-        description: undefined,
-        selection: 'option1' // Default selection
-      });
-      expect(mockOnNext).toHaveBeenCalled();
-    });
+    // Should not submit because code and description are required
+    expect(mockSetData).not.toHaveBeenCalled();
+    expect(mockOnNext).not.toHaveBeenCalled();
   });
 });

@@ -30,21 +30,18 @@ describe('Step2Behaviour', () => {
       screen.getByText('debtTypeOrgCreate.behaviour.alertMessage')
     ).toBeInTheDocument();
 
-    // Spontaneous payment switch
     expect(
       screen.getByRole('checkbox', {
         name: 'debtTypeOrgCreate.behaviour.postalAccount'
       })
     ).toBeInTheDocument();
 
-    // Notification radio group
     expect(
       screen.getByRole('radiogroup', {
         name: 'debtTypeOrgCreate.behaviour.notifications.radioLabel'
       })
     ).toBeInTheDocument();
 
-    // Wizard step buttons
     expect(
       screen.getByRole('button', { name: 'commons.back' })
     ).toBeInTheDocument();
@@ -62,7 +59,7 @@ describe('Step2Behaviour', () => {
       />
     );
 
-    // Initially, spontaneous payment disabled: behaviour section visible
+    // Initially spontaneous payment disabled: behaviour section visible
     expect(
       screen.getByText('debtTypeOrgCreate.behaviour.section.behaviourTitle')
     ).toBeInTheDocument();
@@ -177,9 +174,6 @@ describe('Step2Behaviour', () => {
       name: 'debtTypeOrgCreate.behaviour.postalAccount'
     });
     fireEvent.click(spontaneousSwitch);
-
-    // Select payment method (default is FREE, so no extra input required)
-    // Enable notifications "No" (default)
 
     // Submit form
     fireEvent.click(screen.getByRole('button', { name: 'commons.continue' }));

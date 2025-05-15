@@ -14,8 +14,8 @@ const renderWithForm = (
     const { control, watch } = useForm<Step2Data>({
       defaultValues: {
         paymentMethod: defaultValue,
-        fixedAmount: 0,
-        customFieldsSchema: undefined,
+        amountCents: 0,
+        xsdDefinitionRef: undefined,
         externalPaymentUrl: ''
       }
     });
@@ -84,8 +84,8 @@ describe('PaymentMethodSelector', () => {
       const { control, watch, setValue } = useForm<Step2Data>({
         defaultValues: {
           paymentMethod: PaymentMethodOption.FREE,
-          fixedAmount: 0,
-          customFieldsSchema: undefined,
+          amountCents: 0,
+          xsdDefinitionRef: undefined,
           externalPaymentUrl: ''
         }
       });

@@ -30,7 +30,7 @@ describe('PaymentNotificationFields', () => {
   it('renders all select and input fields with correct labels', () => {
     renderWithForm();
 
-    // Select field
+    // Select field for retries
     expect(
       screen.getByRole('combobox', {
         name: 'debtTypeOrgCreate.behaviour.notifications.fields.retries'
@@ -49,7 +49,7 @@ describe('PaymentNotificationFields', () => {
       expect(screen.getByRole('textbox', { name: label })).toBeInTheDocument();
     });
 
-    // Checkbox
+    // Checkbox for JWT auth
     expect(
       screen.getByRole('checkbox', {
         name: 'debtTypeOrgCreate.behaviour.notifications.fields.jwt'
@@ -67,6 +67,7 @@ describe('PaymentNotificationFields', () => {
   it('allows user to interact with fields', async () => {
     renderWithForm();
 
+    // Select a different retries value
     await pickSelect(
       'debtTypeOrgCreate.behaviour.notifications.fields.retries',
       '5'

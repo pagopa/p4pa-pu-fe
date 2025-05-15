@@ -3,7 +3,6 @@ import { TFunction } from 'i18next';
 import { PaymentMethodOption } from './components/PaymentMethodSelector';
 import { requireField, validateUrl } from '../../../../utils/schema';
 
-// Main schema
 export const step2Schema = (t: TFunction) => {
   const baseSchema = z.object({
     flagSpontaneous: z.boolean().default(false),

@@ -103,11 +103,11 @@ describe('Step3Accounting', () => {
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
         postalIban: 'CH9300762011623852957',
-        pspIban: 'CH9300762011623852958',
-        postalAccount: '123456789',
-        postalAccountHolder: 'John Doe',
-        defaultBudgetStructure: 'Budget structure text',
-        entitySector: 'Public Sector'
+        iban: 'CH9300762011623852958',
+        postalAccountCode: '123456789',
+        holderPostalCc: 'John Doe',
+        balance: 'Budget structure text',
+        orgSector: 'Public Sector'
       });
       expect(mockOnNext).toHaveBeenCalledTimes(1);
     });
@@ -129,13 +129,145 @@ describe('Step3Accounting', () => {
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
         postalIban: undefined,
-        pspIban: undefined,
-        postalAccount: undefined,
-        postalAccountHolder: undefined,
-        defaultBudgetStructure: undefined,
-        entitySector: undefined
+        iban: undefined,
+        postalAccountCode: undefined,
+        holderPostalCc: undefined,
+        balance: undefined,
+        orgSector: undefined
       });
       expect(mockOnNext).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  it('shows validation error for invalid postalIban and prevents submission', async () => {
+    render(
+      <Step3Accounting
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    // Enter invalid postalIban
+    fillField('debtTypeOrgCreate.accounting.postalIban', 'INVALID_IBAN');
+
+    // Submit form
+    const nextButton = screen.getByRole('button', { name: 'commons.continue' });
+    fireEvent.click(nextButton);
+
+    // Wait for validation error message to appear
+    await waitFor(() => {
+      expect(
+        screen.getByText('commons.validation.invalidIban')
+      ).toBeInTheDocument();
+    });
+
+    // Submission should not happen
+    expect(mockSetData).not.toHaveBeenCalled();
+    expect(mockOnNext).not.toHaveBeenCalled();
+  });
+
+  it('shows validation error for invalid iban and prevents submission', async () => {
+    render(
+      <Step3Accounting
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    // Enter invalid iban
+    fillField('debtTypeOrgCreate.accounting.pspIban', '123');
+
+    // Submit form
+    const nextButton = screen.getByRole('button', { name: 'commons.continue' });
+    fireEvent.click(nextButton);
+
+    // Wait for validation error message to appear
+    await waitFor(() => {
+      expect(
+        screen.getByText('commons.validation.invalidIban')
+      ).toBeInTheDocument();
+    });
+
+    // Submission should not happen
+    expect(mockSetData).not.toHaveBeenCalled();
+    expect(mockOnNext).not.toHaveBeenCalled();
+  });
+
+  it('disables iban field when postalIban is filled', async () => {
+    render(
+      <Step3Accounting
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    const postalIbanInput = screen.getByRole('textbox', {
+      name: 'debtTypeOrgCreate.accounting.postalIban'
+    });
+    const ibanInput = screen.getByRole('textbox', {
+      name: 'debtTypeOrgCreate.accounting.pspIban'
+    });
+
+    // Initially both enabled
+    expect(postalIbanInput).toBeEnabled();
+    expect(ibanInput).toBeEnabled();
+
+    // Fill postalIban
+    fireEvent.change(postalIbanInput, {
+      target: { value: 'CH9300762011623852957' }
+    });
+
+    // iban input should become disabled
+    await waitFor(() => {
+      expect(ibanInput).toBeDisabled();
+    });
+
+    // Clear postalIban
+    fireEvent.change(postalIbanInput, { target: { value: '' } });
+
+    // iban input should become enabled again
+    await waitFor(() => {
+      expect(ibanInput).toBeEnabled();
+    });
+  });
+
+  it('disables postalIban field when iban is filled', async () => {
+    render(
+      <Step3Accounting
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    const postalIbanInput = screen.getByRole('textbox', {
+      name: 'debtTypeOrgCreate.accounting.postalIban'
+    });
+    const ibanInput = screen.getByRole('textbox', {
+      name: 'debtTypeOrgCreate.accounting.pspIban'
+    });
+
+    // Initially both enabled
+    expect(postalIbanInput).toBeEnabled();
+    expect(ibanInput).toBeEnabled();
+
+    // Fill iban
+    fireEvent.change(ibanInput, { target: { value: 'CH9300762011623852957' } });
+
+    // postalIban input should become disabled
+    await waitFor(() => {
+      expect(postalIbanInput).toBeDisabled();
+    });
+
+    // Clear iban
+    fireEvent.change(ibanInput, { target: { value: '' } });
+
+    // postalIban input should become enabled again
+    await waitFor(() => {
+      expect(postalIbanInput).toBeEnabled();
     });
   });
 });

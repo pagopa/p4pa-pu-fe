@@ -33,13 +33,13 @@ const validationSchema = (t: TFunction) =>
   z
     .object({
       flagNotifyIo: z.boolean().optional().default(false),
-      serviceApiKey: z.string().optional(),
+      serviceId: z.string().optional(),
       ioTemplateSubject: z.string().optional(),
       ioTemplateMessage: z.string().optional()
     })
-    .refine((data) => !data.flagNotifyIo || data.serviceApiKey, {
+    .refine((data) => !data.flagNotifyIo || data.serviceId, {
       message: t('debtTypeOrgCreate.notifications.serviceApiKey.required'),
-      path: ['serviceApiKey']
+      path: ['serviceId']
     })
     .refine((data) => !data.flagNotifyIo || data.ioTemplateSubject, {
       message: t('debtTypeOrgCreate.notifications.messageSubject.required'),
