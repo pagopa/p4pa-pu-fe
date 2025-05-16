@@ -53,7 +53,7 @@ export const useDebtPositionFilters = ({
           type: COMPONENT_TYPE.select,
           label: t('commons.state'),
           gridWidth: 2,
-          options: optionMapsConverter(debtPositionsStatus),
+          options: optionMapsConverter(debtPositionsStatus, 'commons.status'),
           id: 'status'
         },
         {

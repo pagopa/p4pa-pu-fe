@@ -2,10 +2,10 @@ import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook } from '../__tests__/renderers';
 import useTelematicReceiptsFilters from './useTelematicReceiptsFilters';
 import { ButtonField } from '../components/FilterContainer/FilterContainer';
-import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
+import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
 
-vi.mock('../api/debtPositionsTypes', () => ({
-  getDebtPositionsTypes: vi.fn()
+vi.mock('../api/debtPositionsTypeOrg', () => ({
+  getDebtPositionTypeOrgs: vi.fn()
 }));
 
 vi.mock('./useDebtPositionsTypeOrg', () => ({
@@ -25,7 +25,7 @@ describe('useTelematicReceiptsFilters', () => {
   });
 
   it('should return correct filters ', () => {
-    (getDebtPositionsTypes as unknown as Mock).mockReturnValue({
+    (getDebtPositionTypeOrgs as unknown as Mock).mockReturnValue({
       isSuccess: true,
       data: {
         data: {
@@ -53,7 +53,7 @@ describe('useTelematicReceiptsFilters', () => {
   });
 
   it('should call onFilter when the apply button is triggered', () => {
-    (getDebtPositionsTypes as unknown as Mock).mockReturnValue({
+    (getDebtPositionTypeOrgs as unknown as Mock).mockReturnValue({
       isSuccess: true,
       data: {
         data: {

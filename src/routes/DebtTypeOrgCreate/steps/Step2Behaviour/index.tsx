@@ -19,18 +19,21 @@ import {
 import { PaymentNotificationFields } from './components/PaymentNotificationFields';
 
 export type Step2Data = {
-  isSpontaneousPaymentEnabled?: boolean;
+  flagSpontaneous?: boolean;
+
+  flagMandatoryDueDate?: boolean;
+  flagAnonymousFiscalCode?: boolean;
+
+  // FREE if nothing is passed
   paymentMethod: PaymentMethodOption;
-  enablePaymentNotifications?: 'true' | 'false';
-  authenticateUsername?: string;
-  authenticatePassword?: string;
-  authCallbackUrl?: string;
-  updateCallbackUrl?: string;
-  isDueDateRequired?: boolean;
-  isAnonymousFiscalCode?: boolean;
-  fixedAmount?: number;
-  customFieldsSchema?: File;
+
+  amountCents?: number;
   externalPaymentUrl?: string;
+  xsdDefinitionRef?: File;
+
+  flagNotifyOutcomePush?: 'true' | 'false';
+
+  // TODO Missing in api
   notificationRetries?: number;
   notificationAppName?: string;
   notificationEndpoint?: string;
@@ -39,6 +42,12 @@ export type Step2Data = {
   clientEmail?: string;
   secretKeyId?: string;
   secretKey?: string;
+
+  // TODO Missing in api
+  authenticateUsername?: string;
+  authenticatePassword?: string;
+  authCallbackUrl?: string;
+  updateCallbackUrl?: string;
 };
 
 export type Step2Props = {
@@ -59,8 +68,8 @@ export const Step2Behaviour = ({ setData, onNext, onBack }: Step2Props) => {
     }
   });
 
-  const isSpontaneous = watch('isSpontaneousPaymentEnabled');
-  const enableNotifications = watch('enablePaymentNotifications');
+  const isSpontaneous = watch('flagSpontaneous');
+  const enableNotifications = watch('flagNotifyOutcomePush');
 
   const onSubmit = (values: Step2Data) => {
     setData(values);
@@ -70,20 +79,20 @@ export const Step2Behaviour = ({ setData, onNext, onBack }: Step2Props) => {
   return (
     <form aria-label="form" onSubmit={handleSubmit(onSubmit)}>
       <WizardStepWrapper
-        title={t('debtTypeCreateEC.behaviour.title')}
-        subtitle={t('debtTypeCreateEC.behaviour.subtitle')}
-        alertMessage={t('debtTypeCreateEC.behaviour.alertMessage')}
+        title={t('debtTypeOrgCreate.behaviour.title')}
+        subtitle={t('debtTypeOrgCreate.behaviour.subtitle')}
+        alertMessage={t('debtTypeOrgCreate.behaviour.alertMessage')}
       >
         <FormComponent.ControlledSwitch
           control={control}
-          name="isSpontaneousPaymentEnabled"
-          label={t('debtTypeCreateEC.behaviour.postalAccount')}
+          name="flagSpontaneous"
+          label={t('debtTypeOrgCreate.behaviour.postalAccount')}
         />
 
         {isSpontaneous ? (
           <SectionBox
             title={t(
-              'debtTypeCreateEC.behaviour.section.spontaneousPaymentTitle'
+              'debtTypeOrgCreate.behaviour.section.spontaneousPaymentTitle'
             )}
             adornment={<OfflineBoltIcon />}
           >
@@ -95,41 +104,43 @@ export const Step2Behaviour = ({ setData, onNext, onBack }: Step2Props) => {
           </SectionBox>
         ) : (
           <SectionBox
-            title={t('debtTypeCreateEC.behaviour.section.behaviourTitle')}
+            title={t('debtTypeOrgCreate.behaviour.section.behaviourTitle')}
             adornment={<TuneIcon />}
           >
             <FormComponent.ControlledCheckbox
               control={control}
-              name="isDueDateRequired"
-              label={t('debtTypeCreateEC.behaviour.optionA.label')}
-              description={t('debtTypeCreateEC.behaviour.optionA.description')}
+              name="flagMandatoryDueDate"
+              label={t('debtTypeOrgCreate.behaviour.optionA.label')}
+              description={t('debtTypeOrgCreate.behaviour.optionA.description')}
             />
             <FormComponent.ControlledCheckbox
               control={control}
-              name="isAnonymousFiscalCode"
-              label={t('debtTypeCreateEC.behaviour.optionB.label')}
-              description={t('debtTypeCreateEC.behaviour.optionB.description')}
+              name="flagAnonymousFiscalCode"
+              label={t('debtTypeOrgCreate.behaviour.optionB.label')}
+              description={t('debtTypeOrgCreate.behaviour.optionB.description')}
             />
           </SectionBox>
         )}
 
         <SectionBox
-          title={t('debtTypeCreateEC.behaviour.notifications.title')}
+          title={t('debtTypeOrgCreate.behaviour.notifications.title')}
           adornment={<NotificationsIcon />}
         >
           <FormComponent.ControlledRadioGroup
-            name="enablePaymentNotifications"
+            name="flagNotifyOutcomePush"
             control={control}
-            label={t('debtTypeCreateEC.behaviour.notifications.radioLabel')}
+            label={t('debtTypeOrgCreate.behaviour.notifications.radioLabel')}
             sx={{ flexDirection: 'row' }}
             options={[
               {
                 value: 'false',
-                label: t('debtTypeCreateEC.behaviour.notifications.options.no')
+                label: t('debtTypeOrgCreate.behaviour.notifications.options.no')
               },
               {
                 value: 'true',
-                label: t('debtTypeCreateEC.behaviour.notifications.options.yes')
+                label: t(
+                  'debtTypeOrgCreate.behaviour.notifications.options.yes'
+                )
               }
             ]}
           />
@@ -139,21 +150,21 @@ export const Step2Behaviour = ({ setData, onNext, onBack }: Step2Props) => {
         </SectionBox>
 
         <SectionBox
-          title={t('debtTypeCreateEC.behaviour.updateAmount.title')}
-          subtitle={t('debtTypeCreateEC.behaviour.updateAmount.subtitle')}
+          title={t('debtTypeOrgCreate.behaviour.updateAmount.title')}
+          subtitle={t('debtTypeOrgCreate.behaviour.updateAmount.subtitle')}
           adornment={<MonetizationOnIcon />}
         >
           <Stack direction="row" spacing={2}>
             <FormComponent.ControlledTextField
               name="authenticateUsername"
               control={control}
-              label={t('debtTypeCreateEC.behaviour.updateAmount.notesLabel')}
+              label={t('debtTypeOrgCreate.behaviour.updateAmount.notesLabel')}
               required={false}
             />
             <FormComponent.ControlledTextField
               name="authenticatePassword"
               control={control}
-              label={t('debtTypeCreateEC.behaviour.updateAmount.amountLabel')}
+              label={t('debtTypeOrgCreate.behaviour.updateAmount.amountLabel')}
               required={false}
             />
           </Stack>
@@ -161,14 +172,14 @@ export const Step2Behaviour = ({ setData, onNext, onBack }: Step2Props) => {
             <FormComponent.ControlledTextField
               name="authCallbackUrl"
               control={control}
-              label={t('debtTypeCreateEC.behaviour.updateAmount.authUrlLabel')}
+              label={t('debtTypeOrgCreate.behaviour.updateAmount.authUrlLabel')}
               required={false}
             />
             <FormComponent.ControlledTextField
               name="updateCallbackUrl"
               control={control}
               label={t(
-                'debtTypeCreateEC.behaviour.updateAmount.updateUrlLabel'
+                'debtTypeOrgCreate.behaviour.updateAmount.updateUrlLabel'
               )}
               required={false}
             />

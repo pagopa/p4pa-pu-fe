@@ -8,14 +8,10 @@ import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
-
-export enum OperatorSelection {
-  ALL = 'ALL',
-  NONE = 'NONE'
-}
+import { OperatorsSelection } from '../../../../generated/data-contracts';
 
 export type Step5Data = {
-  operatorSelection: OperatorSelection;
+  operatorsSelection: OperatorsSelection;
 };
 
 export type Step5Props = {
@@ -26,8 +22,10 @@ export type Step5Props = {
 
 const validationSchema = (t: TFunction) =>
   z.object({
-    operatorSelection: z.nativeEnum(OperatorSelection, {
-      required_error: t('debtTypeCreateEC.operators.operatorSelection.required')
+    operatorsSelection: z.nativeEnum(OperatorsSelection, {
+      required_error: t(
+        'debtTypeOrgCreate.operators.operatorSelection.required'
+      )
     })
   });
 
@@ -37,7 +35,7 @@ export const Step5Operators = ({ setData, onNext, onBack }: Step5Props) => {
   const form = useForm<Step5Data>({
     resolver: zodResolver(schema),
     defaultValues: {
-      operatorSelection: OperatorSelection.ALL
+      operatorsSelection: OperatorsSelection.ALL
     },
     mode: 'onTouched'
   });
@@ -51,24 +49,24 @@ export const Step5Operators = ({ setData, onNext, onBack }: Step5Props) => {
   return (
     <form aria-label="form">
       <WizardStepWrapper
-        title={t('debtTypeCreateEC.operators.title')}
-        subtitle={t('debtTypeCreateEC.operators.subtitle')}
+        title={t('debtTypeOrgCreate.operators.title')}
+        subtitle={t('debtTypeOrgCreate.operators.subtitle')}
       >
         <SectionBox
-          title={t('debtTypeCreateEC.operators.section.operatorEntities')}
+          title={t('debtTypeOrgCreate.operators.section.operatorEntities')}
           adornment={<PeopleIcon />}
         >
           <FormComponent.ControlledRadioGroup
-            name="operatorSelection"
+            name="operatorsSelection"
             control={control}
             options={[
               {
-                value: OperatorSelection.ALL,
-                label: t('debtTypeCreateEC.operators.options.all')
+                value: OperatorsSelection.ALL,
+                label: t('debtTypeOrgCreate.operators.options.all')
               },
               {
-                value: OperatorSelection.NONE,
-                label: t('debtTypeCreateEC.operators.options.none')
+                value: OperatorsSelection.NONE,
+                label: t('debtTypeOrgCreate.operators.options.none')
               }
             ]}
           />

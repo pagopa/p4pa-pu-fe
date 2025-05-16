@@ -27,25 +27,25 @@ describe('Step4Notifications', () => {
 
     // Check for main titles and alert message (translation keys)
     expect(
-      screen.getByText('debtTypeCreateEC.notifications.title')
+      screen.getByText('debtTypeOrgCreate.notifications.title')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.notifications.subtitle')
+      screen.getByText('debtTypeOrgCreate.notifications.subtitle')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.notifications.alertMessage')
+      screen.getByText('debtTypeOrgCreate.notifications.alertMessage')
     ).toBeInTheDocument();
 
     // Check for enableNotifications switch
     expect(
       screen.getByRole('checkbox', {
-        name: 'debtTypeCreateEC.notifications.enableNotifications'
+        name: 'debtTypeOrgCreate.notifications.enableNotifications'
       })
     ).toBeInTheDocument();
 
     // The notification section should NOT be visible initially
     expect(
-      screen.queryByText('debtTypeCreateEC.notifications.section.message')
+      screen.queryByText('debtTypeOrgCreate.notifications.section.message')
     ).not.toBeInTheDocument();
   });
 
@@ -59,7 +59,7 @@ describe('Step4Notifications', () => {
     );
 
     const switchInput = screen.getByRole('checkbox', {
-      name: 'debtTypeCreateEC.notifications.enableNotifications'
+      name: 'debtTypeOrgCreate.notifications.enableNotifications'
     });
 
     // Toggle switch on
@@ -67,14 +67,14 @@ describe('Step4Notifications', () => {
 
     // The notification section should appear
     expect(
-      screen.getByText('debtTypeCreateEC.notifications.section.message')
+      screen.getByText('debtTypeOrgCreate.notifications.section.message')
     ).toBeInTheDocument();
 
     // Check presence of required fields
     [
-      'debtTypeCreateEC.notifications.serviceApiKey.label',
-      'debtTypeCreateEC.notifications.messageSubject.label',
-      'debtTypeCreateEC.notifications.messageBody.label'
+      'debtTypeOrgCreate.notifications.serviceApiKey.label',
+      'debtTypeOrgCreate.notifications.messageSubject.label',
+      'debtTypeOrgCreate.notifications.messageBody.label'
     ].forEach((label) => {
       expect(screen.getByRole('textbox', { name: label })).toBeInTheDocument();
     });
@@ -96,15 +96,15 @@ describe('Step4Notifications', () => {
     );
 
     const switchInput = screen.getByRole('checkbox', {
-      name: 'debtTypeCreateEC.notifications.enableNotifications'
+      name: 'debtTypeOrgCreate.notifications.enableNotifications'
     });
     fireEvent.click(switchInput);
 
     const subjectInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.notifications.messageSubject.label'
+      name: 'debtTypeOrgCreate.notifications.messageSubject.label'
     });
     const bodyInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.notifications.messageBody.label'
+      name: 'debtTypeOrgCreate.notifications.messageBody.label'
     });
     const previewButton = screen.getByRole('button', {
       name: 'debtTypeCreate.settings.preview'
@@ -154,7 +154,7 @@ describe('Step4Notifications', () => {
 
     // Enable notifications
     const switchInput = screen.getByRole('checkbox', {
-      name: 'debtTypeCreateEC.notifications.enableNotifications'
+      name: 'debtTypeOrgCreate.notifications.enableNotifications'
     });
     fireEvent.click(switchInput);
 
@@ -166,9 +166,9 @@ describe('Step4Notifications', () => {
     expect(mockSetData).not.toHaveBeenCalled();
     expect(mockOnNext).not.toHaveBeenCalled();
 
-    // Fill serviceApiKey only
+    // Fill serviceId only
     const apiKeyInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.notifications.serviceApiKey.label'
+      name: 'debtTypeOrgCreate.notifications.serviceApiKey.label'
     });
     fireEvent.change(apiKeyInput, { target: { value: 'apikey123' } });
 
@@ -180,10 +180,10 @@ describe('Step4Notifications', () => {
 
     // Fill subject and body
     const subjectInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.notifications.messageSubject.label'
+      name: 'debtTypeOrgCreate.notifications.messageSubject.label'
     });
     const bodyInput = screen.getByRole('textbox', {
-      name: 'debtTypeCreateEC.notifications.messageBody.label'
+      name: 'debtTypeOrgCreate.notifications.messageBody.label'
     });
     fireEvent.change(subjectInput, { target: { value: 'Subject' } });
     fireEvent.change(bodyInput, { target: { value: 'Body text' } });
@@ -193,10 +193,10 @@ describe('Step4Notifications', () => {
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        enableNotifications: true,
-        serviceApiKey: 'apikey123',
-        messageSubject: 'Subject',
-        messageBody: 'Body text'
+        flagNotifyIo: true,
+        serviceId: 'apikey123',
+        ioTemplateSubject: 'Subject',
+        ioTemplateMessage: 'Body text'
       });
       expect(mockOnNext).toHaveBeenCalledTimes(1);
     });
@@ -217,10 +217,10 @@ describe('Step4Notifications', () => {
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        enableNotifications: false,
-        serviceApiKey: '',
-        messageSubject: '',
-        messageBody: ''
+        flagNotifyIo: false,
+        serviceId: '',
+        ioTemplateSubject: '',
+        ioTemplateMessage: ''
       });
       expect(mockOnNext).toHaveBeenCalledTimes(1);
     });

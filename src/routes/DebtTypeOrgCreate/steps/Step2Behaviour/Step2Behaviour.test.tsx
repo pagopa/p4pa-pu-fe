@@ -21,30 +21,27 @@ describe('Step2Behaviour', () => {
     );
 
     expect(
-      screen.getByText('debtTypeCreateEC.behaviour.title')
+      screen.getByText('debtTypeOrgCreate.behaviour.title')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.behaviour.subtitle')
+      screen.getByText('debtTypeOrgCreate.behaviour.subtitle')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.behaviour.alertMessage')
+      screen.getByText('debtTypeOrgCreate.behaviour.alertMessage')
     ).toBeInTheDocument();
 
-    // Spontaneous payment switch
     expect(
       screen.getByRole('checkbox', {
-        name: 'debtTypeCreateEC.behaviour.postalAccount'
+        name: 'debtTypeOrgCreate.behaviour.postalAccount'
       })
     ).toBeInTheDocument();
 
-    // Notification radio group
     expect(
       screen.getByRole('radiogroup', {
-        name: 'debtTypeCreateEC.behaviour.notifications.radioLabel'
+        name: 'debtTypeOrgCreate.behaviour.notifications.radioLabel'
       })
     ).toBeInTheDocument();
 
-    // Wizard step buttons
     expect(
       screen.getByRole('button', { name: 'commons.back' })
     ).toBeInTheDocument();
@@ -62,30 +59,30 @@ describe('Step2Behaviour', () => {
       />
     );
 
-    // Initially, spontaneous payment disabled: behaviour section visible
+    // Initially spontaneous payment disabled: behaviour section visible
     expect(
-      screen.getByText('debtTypeCreateEC.behaviour.section.behaviourTitle')
+      screen.getByText('debtTypeOrgCreate.behaviour.section.behaviourTitle')
     ).toBeInTheDocument();
     expect(
       screen.queryByText(
-        'debtTypeCreateEC.behaviour.section.spontaneousPaymentTitle'
+        'debtTypeOrgCreate.behaviour.section.spontaneousPaymentTitle'
       )
     ).not.toBeInTheDocument();
 
     // Enable spontaneous payment
     const spontaneousSwitch = screen.getByRole('checkbox', {
-      name: 'debtTypeCreateEC.behaviour.postalAccount'
+      name: 'debtTypeOrgCreate.behaviour.postalAccount'
     });
     fireEvent.click(spontaneousSwitch);
 
     // Now spontaneous payment section visible
     expect(
       screen.getByText(
-        'debtTypeCreateEC.behaviour.section.spontaneousPaymentTitle'
+        'debtTypeOrgCreate.behaviour.section.spontaneousPaymentTitle'
       )
     ).toBeInTheDocument();
     expect(
-      screen.queryByText('debtTypeCreateEC.behaviour.section.behaviourTitle')
+      screen.queryByText('debtTypeOrgCreate.behaviour.section.behaviourTitle')
     ).not.toBeInTheDocument();
   });
 
@@ -101,25 +98,25 @@ describe('Step2Behaviour', () => {
     // Initially notifications disabled: fields hidden
     expect(
       screen.queryByText(
-        'debtTypeCreateEC.behaviour.notifications.fields.retries'
+        'debtTypeOrgCreate.behaviour.notifications.fields.retries'
       )
     ).not.toBeInTheDocument();
 
     // Select "Yes" for enablePaymentNotifications
     const yesRadio = screen.getByRole('radio', {
-      name: 'debtTypeCreateEC.behaviour.notifications.options.yes'
+      name: 'debtTypeOrgCreate.behaviour.notifications.options.yes'
     });
     fireEvent.click(yesRadio);
 
     // Now notification fields rendered
     expect(
       screen.getByText(
-        'debtTypeCreateEC.behaviour.notifications.fields.retries'
+        'debtTypeOrgCreate.behaviour.notifications.fields.retries'
       )
     ).toBeInTheDocument();
     expect(
       screen.getByRole('combobox', {
-        name: 'debtTypeCreateEC.behaviour.notifications.fields.retries'
+        name: 'debtTypeOrgCreate.behaviour.notifications.fields.retries'
       })
     ).toBeInTheDocument();
   });
@@ -134,17 +131,17 @@ describe('Step2Behaviour', () => {
     );
 
     expect(
-      screen.getByText('debtTypeCreateEC.behaviour.updateAmount.title')
+      screen.getByText('debtTypeOrgCreate.behaviour.updateAmount.title')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeCreateEC.behaviour.updateAmount.subtitle')
+      screen.getByText('debtTypeOrgCreate.behaviour.updateAmount.subtitle')
     ).toBeInTheDocument();
 
     [
-      'debtTypeCreateEC.behaviour.updateAmount.notesLabel',
-      'debtTypeCreateEC.behaviour.updateAmount.amountLabel',
-      'debtTypeCreateEC.behaviour.updateAmount.authUrlLabel',
-      'debtTypeCreateEC.behaviour.updateAmount.updateUrlLabel'
+      'debtTypeOrgCreate.behaviour.updateAmount.notesLabel',
+      'debtTypeOrgCreate.behaviour.updateAmount.amountLabel',
+      'debtTypeOrgCreate.behaviour.updateAmount.authUrlLabel',
+      'debtTypeOrgCreate.behaviour.updateAmount.updateUrlLabel'
     ].forEach((label) => {
       expect(screen.getByRole('textbox', { name: label })).toBeInTheDocument();
     });
@@ -174,12 +171,9 @@ describe('Step2Behaviour', () => {
 
     // Enable spontaneous payment to show PaymentMethodSelector
     const spontaneousSwitch = screen.getByRole('checkbox', {
-      name: 'debtTypeCreateEC.behaviour.postalAccount'
+      name: 'debtTypeOrgCreate.behaviour.postalAccount'
     });
     fireEvent.click(spontaneousSwitch);
-
-    // Select payment method (default is FREE, so no extra input required)
-    // Enable notifications "No" (default)
 
     // Submit form
     fireEvent.click(screen.getByRole('button', { name: 'commons.continue' }));

@@ -8,44 +8,46 @@ const t = ((key: string) => key) as TFunction; // Simple mock for translation
 describe('step2Schema', () => {
   describe('Spontaneous Payment Validation', () => {
     const baseSpontaneousData = {
-      isSpontaneousPaymentEnabled: true,
-      isDueDateRequired: false,
+      flagSpontaneous: true,
+      flagMandatoryDueDate: false,
       isAnonymousFiscalCode: false,
-      enablePaymentNotifications: 'false'
+      flagNotifyOutcomePush: 'false',
+      paymentMethod: PaymentMethodOption.FREE
     };
 
-    it('should require fixedAmount for AMOUNT method', () => {
+    it('should require amountCents for AMOUNT method', () => {
       const data = {
         ...baseSpontaneousData,
         paymentMethod: PaymentMethodOption.AMOUNT,
-        fixedAmount: undefined
+        amountCents: undefined
       };
 
       const result = step2Schema(t).safeParse(data);
       expect(result.success).toBe(false);
       expect(result.error?.issues[0]).toMatchObject({
-        path: ['fixedAmount'],
+        path: ['amountCents'],
         message: 'commons.validation.amountRequired'
       });
     });
 
-    it('should require customFieldsSchema for CUSTOM method', () => {
+    it('should require xsdDefinitionRef for CUSTOM method', () => {
       const data = {
         ...baseSpontaneousData,
         paymentMethod: PaymentMethodOption.CUSTOM,
-        customFieldsSchema: null
+        xsdDefinitionRef: undefined
       };
 
       const result = step2Schema(t).safeParse(data);
       expect(result.success).toBe(false);
       expect(result.error?.issues[0]).toMatchObject({
-        path: ['customFieldsSchema'],
-        message: 'debtTypeCreateEC.behaviour.spontaneous.file.required'
+        path: ['xsdDefinitionRef'],
+        message: 'debtTypeOrgCreate.behaviour.spontaneous.file.required'
       });
     });
 
     it('should validate externalPaymentUrl for EXTERNAL method', () => {
       const testCases = [
+        { url: undefined, expectedError: 'fieldRequired' },
         { url: '', expectedError: 'fieldRequired' },
         { url: 'invalid-url', expectedError: 'invalidUrl' },
         { url: 'https://valid.com', expectedError: null }
@@ -71,9 +73,9 @@ describe('step2Schema', () => {
 
   describe('Payment Notifications Validation', () => {
     const baseNotificationData = {
-      isSpontaneousPaymentEnabled: false,
+      flagSpontaneous: false,
       paymentMethod: PaymentMethodOption.FREE,
-      enablePaymentNotifications: 'true',
+      flagNotifyOutcomePush: 'true',
       notificationRetries: 3,
       notificationAppName: 'Test App',
       notificationEndpoint: 'https://api.example.com',
@@ -84,7 +86,7 @@ describe('step2Schema', () => {
       secretKey: 'secret-123'
     };
 
-    it('should require all notification fields', () => {
+    it('should require all notification fields when flagNotifyOutcomePush is true', () => {
       const requiredFields = [
         'notificationRetries',
         'notificationAppName',
@@ -103,7 +105,7 @@ describe('step2Schema', () => {
       });
     });
 
-    it('should require JWT auth checkbox', () => {
+    it('should require enableJwtAuth checkbox when flagNotifyOutcomePush is true', () => {
       const data = { ...baseNotificationData, enableJwtAuth: false };
       const result = step2Schema(t).safeParse(data);
       expect(result.success).toBe(false);
@@ -124,9 +126,9 @@ describe('step2Schema', () => {
   describe('Edge Cases', () => {
     it('should pass validation when notifications are disabled', () => {
       const data = {
-        isSpontaneousPaymentEnabled: false,
-        paymentMethod: PaymentMethodOption.FREE, // <-- add this required field
-        enablePaymentNotifications: 'false'
+        flagSpontaneous: false,
+        paymentMethod: PaymentMethodOption.FREE,
+        flagNotifyOutcomePush: 'false'
         // no notification fields needed
       };
 
@@ -136,9 +138,9 @@ describe('step2Schema', () => {
 
     it('should ignore payment method validation when spontaneous payment disabled', () => {
       const data = {
-        isSpontaneousPaymentEnabled: false,
+        flagSpontaneous: false,
         paymentMethod: PaymentMethodOption.AMOUNT
-        // Missing fixedAmount
+        // Missing amountCents but should pass because flagSpontaneous is false
       };
 
       const result = step2Schema(t).safeParse(data);

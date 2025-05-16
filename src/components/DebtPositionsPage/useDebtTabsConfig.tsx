@@ -17,7 +17,10 @@ export const useTabsConfig = (): Array<TabsConfig> => {
   const types = useDebtPositionsTypeOrg({ organizationId });
 
   const debtPositionsStatus = Object.values(DebtPositionStatus);
-  const debtPositionList = optionMapsConverter(debtPositionsStatus);
+  const debtPositionList = optionMapsConverter(
+    debtPositionsStatus,
+    'commons.status'
+  );
 
   return [
     {
