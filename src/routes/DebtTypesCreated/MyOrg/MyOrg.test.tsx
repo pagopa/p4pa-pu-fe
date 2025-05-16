@@ -3,6 +3,13 @@ import { render, screen, waitFor } from '../../../__tests__/renderers';
 import { MyOrg } from './MyOrg';
 import { useDebtPositionTypeOrgSearch } from '../../../api/debtTypesCreated';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
+import { useNavigate, generatePath } from 'react-router-dom';
+
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: vi.fn(),
+  generatePath: vi.fn()
+}));
 
 vi.mock('../../../api/debtTypesCreated', () => ({
   useDebtPositionTypeOrgSearch: vi.fn()
@@ -22,6 +29,7 @@ vi.mock('../../store/GlobalStore', () => ({
 describe('MyOrg', () => {
   const mutateMock = vi.fn();
   const onSearchMock = vi.fn();
+  const mockNavigate = vi.fn();
 
   beforeEach(() => {
     i18nTestSetup({
@@ -33,6 +41,12 @@ describe('MyOrg', () => {
     });
 
     vi.resetAllMocks();
+    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+      mockNavigate
+    );
+    (generatePath as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      () => '/mock-path'
+    );
     (
       useDebtPositionTypeOrgSearch as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({
