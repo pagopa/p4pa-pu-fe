@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import {
-  PaidExportFileRequestDTO,
-  ReceiptsArchivingExportFileRequestDTO,
+  PaidExportFileRequest,
+  ReceiptsArchivingExportFileRequest,
   RequestParams
 } from '../../generated/apiClient';
 import utils from '../utils';
@@ -13,7 +13,7 @@ export const createPaidExportFile = () =>
       data,
       params
     }: {
-      data: PaidExportFileRequestDTO;
+      data: PaidExportFileRequest;
       params?: RequestParams;
     }) => {
       const response = await utils.apiClient.bff.createPaidExportFile(
@@ -31,7 +31,7 @@ export const createReceiptsArchivingExportFile = () =>
       data,
       params
     }: {
-      data: ReceiptsArchivingExportFileRequestDTO;
+      data: ReceiptsArchivingExportFileRequest;
       params?: RequestParams;
     }) => {
       const response =

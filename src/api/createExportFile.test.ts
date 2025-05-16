@@ -3,8 +3,8 @@ import { act, renderHook } from '../__tests__/renderers';
 import { describe, expect, it, vi } from 'vitest';
 import {
   ExportFileTypeEnum,
-  PaidExportFileRequestDTO,
-  ReceiptsArchivingExportFileRequestDTO
+  PaidExportFileRequest,
+  ReceiptsArchivingExportFileRequest
 } from '../../generated/apiClient';
 import {
   createPaidExportFile,
@@ -31,12 +31,12 @@ const mockCreateReceiptsExportFile = vi.mocked(
 
 describe('createPaidExportFile', () => {
   it('calls createPaidExportFile with correct parameters', async () => {
-    const mockRequestData: PaidExportFileRequestDTO = {
+    const mockRequestData: PaidExportFileRequest = {
       organizationId: 123,
       exportFileType: ExportFileTypeEnum.PAID,
       fileVersion: 'v1.0',
       filterFields: {
-        paymentDateTime: {
+        paymentDate: {
           from: '2024-01-01',
           to: '2024-12-31'
         },
@@ -60,7 +60,7 @@ describe('createPaidExportFile', () => {
     const mockError = new Error('Create paid export failed');
     mockCreatePaidExportFile.mockRejectedValueOnce(mockError);
 
-    const requestData: PaidExportFileRequestDTO = {
+    const requestData: PaidExportFileRequest = {
       organizationId: 123,
       exportFileType: ExportFileTypeEnum.PAID,
       fileVersion: 'v1.0',
@@ -77,12 +77,12 @@ describe('createPaidExportFile', () => {
 
 describe('createReceiptsArchivingExportFile', () => {
   it('calls createReceiptsArchivingExportFile with correct parameters', async () => {
-    const mockRequestData: ReceiptsArchivingExportFileRequestDTO = {
+    const mockRequestData: ReceiptsArchivingExportFileRequest = {
       organizationId: 456,
       exportFileType: ExportFileTypeEnum.RECEIPTS_ARCHIVING,
       fileVersion: 'v1.0',
       filterFields: {
-        paymentDateTime: {
+        paymentDate: {
           from: '2023-01-01',
           to: '2023-12-31'
         }
@@ -105,7 +105,7 @@ describe('createReceiptsArchivingExportFile', () => {
     const mockError = new Error('Create receipts export failed');
     mockCreateReceiptsExportFile.mockRejectedValueOnce(mockError);
 
-    const requestData: ReceiptsArchivingExportFileRequestDTO = {
+    const requestData: ReceiptsArchivingExportFileRequest = {
       organizationId: 456,
       exportFileType: ExportFileTypeEnum.RECEIPTS_ARCHIVING,
       fileVersion: 'v2.0',
