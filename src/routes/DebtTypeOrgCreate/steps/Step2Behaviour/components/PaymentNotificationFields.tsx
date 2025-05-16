@@ -20,7 +20,7 @@ export const PaymentNotificationFields = ({
         <FormComponent.ControlledSelect
           name="notificationRetries"
           control={control}
-          label={t('debtTypeCreateEC.behaviour.notifications.fields.retries')}
+          label={t('debtTypeOrgCreate.behaviour.notifications.fields.retries')}
           options={[
             { label: '1', value: 1 },
             { label: '2', value: 2 },
@@ -30,7 +30,7 @@ export const PaymentNotificationFields = ({
         />
         <Typography variant="caption" ml={2}>
           {t(
-            'debtTypeCreateEC.behaviour.notifications.fields.retriesDescription'
+            'debtTypeOrgCreate.behaviour.notifications.fields.retriesDescription'
           )}
         </Typography>
       </Stack>
@@ -38,30 +38,30 @@ export const PaymentNotificationFields = ({
         <FormComponent.ControlledTextField
           name="notificationAppName"
           control={control}
-          label={t('debtTypeCreateEC.behaviour.notifications.fields.appName')}
+          label={t('debtTypeOrgCreate.behaviour.notifications.fields.appName')}
         />
         <FormComponent.ControlledTextField
           name="notificationEndpoint"
           control={control}
-          label={t('debtTypeCreateEC.behaviour.notifications.fields.endpoint')}
+          label={t('debtTypeOrgCreate.behaviour.notifications.fields.endpoint')}
         />
         <FormComponent.ControlledCheckbox
           name="enableJwtAuth"
           control={control}
-          label={t('debtTypeCreateEC.behaviour.notifications.fields.jwt')}
+          label={t('debtTypeOrgCreate.behaviour.notifications.fields.jwt')}
         />
       </Stack>
       <Stack direction="row" spacing={2}>
         <FormComponent.ControlledTextField
           name="clientId"
           control={control}
-          label={t('debtTypeCreateEC.behaviour.notifications.fields.clientId')}
+          label={t('debtTypeOrgCreate.behaviour.notifications.fields.clientId')}
         />
         <FormComponent.ControlledTextField
           name="clientEmail"
           control={control}
           label={t(
-            'debtTypeCreateEC.behaviour.notifications.fields.clientEmail'
+            'debtTypeOrgCreate.behaviour.notifications.fields.clientEmail'
           )}
         />
       </Stack>
@@ -70,13 +70,15 @@ export const PaymentNotificationFields = ({
           name="secretKeyId"
           control={control}
           label={t(
-            'debtTypeCreateEC.behaviour.notifications.fields.secretKeyId'
+            'debtTypeOrgCreate.behaviour.notifications.fields.secretKeyId'
           )}
         />
         <FormComponent.ControlledTextField
           name="secretKey"
           control={control}
-          label={t('debtTypeCreateEC.behaviour.notifications.fields.secretKey')}
+          label={t(
+            'debtTypeOrgCreate.behaviour.notifications.fields.secretKey'
+          )}
         />
       </Stack>
     </Stack>

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { DebtPositionTypeOrg } from '../../generated/apiClient';
 import { useTranslation } from 'react-i18next';
-import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 import { DebtPositionType } from '../models/DebtPositionType';
 import utils from '../utils';
+import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
 
 export const useDebtPositionsTypeOrg = ({
   organizationId,
@@ -17,7 +17,7 @@ export const useDebtPositionsTypeOrg = ({
   >([]);
   const { t } = useTranslation();
 
-  const debtPositionsTypesQuery = getDebtPositionsTypes({
+  const debtPositionsTypesQuery = getDebtPositionTypeOrgs({
     organizationId
   });
 

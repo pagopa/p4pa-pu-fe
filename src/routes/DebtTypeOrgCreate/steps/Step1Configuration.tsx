@@ -3,7 +3,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import BookIcon from '@mui/icons-material/MenuBook';
-import PaymentIcon from '@mui/icons-material/Payment';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { TFunction } from 'i18next';
@@ -14,13 +13,12 @@ import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import { useStore } from '../../../store/GlobalStore';
-import { useDebtPositionsTypeOrg } from '../../../hooks/useDebtPositionsTypeOrg';
+import { useDebtPositionTypesByOrg } from '../../../hooks/useDebtPositionTypesByOrg';
 
 export type Step1Data = {
-  debtType: number;
-  description?: string;
-  code?: string;
-  selection: string;
+  debtPositionTypeId: number;
+  description: string;
+  code: string;
 };
 
 export type Step1Props = {
@@ -31,15 +29,19 @@ export type Step1Props = {
 
 const validationSchema = (t: TFunction) =>
   z.object({
-    debtType: z.number({
-      required_error: t('debtTypeCreateEC.configuration.debtType.required')
+    debtPositionTypeId: z.number({
+      required_error: t('debtTypeOrgCreate.configuration.debtType.required')
     }),
-    code: z.string().optional(),
+    code: z.string({
+      required_error: t('debtTypeOrgCreate.configuration.code.required')
+    }),
     description: z
-      .string()
-      .max(100, t('debtTypeCreateEC.configuration.description.maxCharacters'))
-      .optional(),
-    selection: z.string()
+      .string({
+        required_error: t(
+          'debtTypeOrgCreate.configuration.description.required'
+        )
+      })
+      .max(100, t('debtTypeOrgCreate.configuration.description.maxCharacters'))
   });
 
 export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
@@ -49,9 +51,8 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
   const {
     state: { organizationId }
   } = useStore();
-  const { optionsMap } = useDebtPositionsTypeOrg({
-    organizationId,
-    includeAllOption: false
+  const { optionsMap } = useDebtPositionTypesByOrg({
+    organizationId
   });
 
   const { control, handleSubmit, watch } = useForm<Step1Data>({
@@ -69,27 +70,27 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
   return (
     <form aria-label="form">
       <WizardStepWrapper
-        title={t('debtTypeCreateEC.configuration.title')}
-        subtitle={t('debtTypeCreateEC.configuration.subtitle')}
-        alertMessage={t('debtTypeCreateEC.configuration.alertMessage')}
+        title={t('debtTypeOrgCreate.configuration.title')}
+        subtitle={t('debtTypeOrgCreate.configuration.subtitle')}
+        alertMessage={t('debtTypeOrgCreate.configuration.alertMessage')}
       >
         <SectionBox
-          title={t('debtTypeCreateEC.configuration.debtType.title')}
+          title={t('debtTypeOrgCreate.configuration.debtType.title')}
           adornment={<BookIcon />}
         >
           <FormComponent.ControlledSelect
             control={control}
-            label={t('debtTypeCreateEC.configuration.debtType.label')}
-            name="debtType"
+            label={t('debtTypeOrgCreate.configuration.debtType.label')}
+            name="debtPositionTypeId"
             disabled={!optionsMap?.length}
             options={optionsMap}
           />
         </SectionBox>
 
         <SectionBox
-          title={t('debtTypeCreateEC.configuration.debtTypeVersion.title')}
+          title={t('debtTypeOrgCreate.configuration.debtTypeVersion.title')}
           subtitle={t(
-            'debtTypeCreateEC.configuration.debtTypeVersion.subtitle'
+            'debtTypeOrgCreate.configuration.debtTypeVersion.subtitle'
           )}
           adornment={<PostAddIcon />}
         >
@@ -98,43 +99,21 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
               name="code"
               sx={{ flex: 1 }}
               control={control}
-              label={t('debtTypeCreateEC.configuration.code.label')}
+              label={t('debtTypeOrgCreate.configuration.code.label')}
               noAdornment
-              required={false}
             />
             <Stack flex={3}>
               <FormComponent.ControlledTextField
                 name="description"
                 control={control}
-                label={t('debtTypeCreateEC.configuration.description.label')}
+                label={t('debtTypeOrgCreate.configuration.description.label')}
                 adornment={`${description?.length || 0}/100`}
-                required={false}
               />
               <Typography variant="caption" px={1.5}>
-                {t('debtTypeCreateEC.configuration.description.caption')}
+                {t('debtTypeOrgCreate.configuration.description.caption')}
               </Typography>
             </Stack>
           </Stack>
-        </SectionBox>
-        <SectionBox
-          title={t('debtTypeCreateEC.configuration.selection.title')}
-          adornment={<PaymentIcon />}
-        >
-          <FormComponent.ControlledRadioGroup
-            name="selection"
-            control={control}
-            label={t('debtTypeCreateEC.configuration.selection.label')}
-            options={[
-              {
-                value: 'option1',
-                label: t('debtTypeCreateEC.configuration.selection.option1')
-              },
-              {
-                value: 'option2',
-                label: t('debtTypeCreateEC.configuration.selection.option2')
-              }
-            ]}
-          />
         </SectionBox>
       </WizardStepWrapper>
 

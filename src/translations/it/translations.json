@@ -306,7 +306,8 @@
       "urlRequired": "L'URL è obbligatorio",
       "invalidUrl": "Formato URL non valido",
       "fieldRequired": "Campo obbligatorio",
-      "checkboxRequired": "Questa conferma è obbligatoria"
+      "checkboxRequired": "Questa conferma è obbligatoria",
+      "invalidIban": "Formato IBAN non valido"
     }
   },
   "conservation": {
@@ -679,7 +680,7 @@
     "description": "La trovi nella sezione Catalogo Tipi dovuti, dove puoi modificarlo in qualsiasi momento.",
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
-  "debtTypeCreateEC": {
+  "debtTypeOrgCreate": {
     "title": "Imposta nuovo Tipo dovuto",
     "description": "Compila i campi e configura un nuovo Tipo dovuto per il tuo ente.",
     "configuration": {
@@ -696,12 +697,14 @@
         "subtitle": "Aggiungi i dati che caratterizzano questo Tipo dovuto all'interno del tuo ente."
       },
       "code": {
-        "label": "Codice Sistema Gestionale"
+        "label": "Codice Sistema Gestionale",
+        "required": "Il Codice Sistema Gestionale é obbligatorio"
       },
       "description": {
         "label": "Descrizione",
         "maxCharacters": "La descrizione del Tipo dovuto deve avere al massimo 100 caratteri",
-        "caption": "Ti aiuterà a riconoscere velocemente il dovuto nel caso in cui esistano due versioni dello stesso tipo dovuto."
+        "caption": "Ti aiuterà a riconoscere velocemente il dovuto nel caso in cui esistano due versioni dello stesso tipo dovuto.",
+        "required": "La descrizione del Tipo dovuto é obbligatorio"
       },
       "selection": {
         "title": "Intermediario del Pagamento",

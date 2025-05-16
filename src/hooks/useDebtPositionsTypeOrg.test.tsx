@@ -3,13 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 import { QueryObserverPendingResult } from '@tanstack/react-query';
 import { DebtPositionTypeOrg } from '../../generated/apiClient';
-import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
 import utils from '../utils';
+import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
 
 const mockT = vi.fn((key: string) => key);
 
-vi.mock('../api/debtPositionsTypes', () => ({
-  getDebtPositionsTypes: vi.fn()
+vi.mock('../api/debtPositionsTypeOrg', () => ({
+  getDebtPositionTypeOrgs: vi.fn()
 }));
 
 vi.mock('../utils', () => ({
@@ -55,7 +55,7 @@ describe('useDebtPositionsTypeOrg', () => {
   });
 
   it('should initialize with an empty options list', () => {
-    vi.mocked(getDebtPositionsTypes).mockReturnValue(mockQueryResult);
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue(mockQueryResult);
 
     const { result } = renderHook(() =>
       useDebtPositionsTypeOrg({ organizationId: 1 })
@@ -70,7 +70,7 @@ describe('useDebtPositionsTypeOrg', () => {
       { description: 'Type B', debtPositionTypeOrgId: 2 }
     ];
 
-    vi.mocked(getDebtPositionsTypes).mockReturnValue({
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue({
       ...mockQueryResult,
       data: mockData,
       isSuccess: true
@@ -93,7 +93,7 @@ describe('useDebtPositionsTypeOrg', () => {
       { description: 'Type B', debtPositionTypeOrgId: 2 }
     ];
 
-    vi.mocked(getDebtPositionsTypes).mockReturnValue({
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue({
       ...mockQueryResult,
       data: mockData,
       isSuccess: true
@@ -110,7 +110,7 @@ describe('useDebtPositionsTypeOrg', () => {
   });
 
   it('should handle empty or invalid response with all option', () => {
-    vi.mocked(getDebtPositionsTypes).mockReturnValue({
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue({
       ...mockQueryResult,
       data: [],
       isSuccess: true
@@ -126,7 +126,7 @@ describe('useDebtPositionsTypeOrg', () => {
   });
 
   it('should handle empty or invalid response without all option', () => {
-    vi.mocked(getDebtPositionsTypes).mockReturnValue({
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue({
       ...mockQueryResult,
       data: [],
       isSuccess: true
@@ -140,7 +140,7 @@ describe('useDebtPositionsTypeOrg', () => {
   });
 
   it('should handle API error and show notification', () => {
-    vi.mocked(getDebtPositionsTypes).mockReturnValue({
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue({
       ...mockQueryResult,
       isError: true,
       error: new Error('API error')

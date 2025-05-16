@@ -57,7 +57,7 @@ describe('DebtTypesCreated', () => {
     const createButton = screen.getByText('Create New Debt Type');
     fireEvent.click(createButton);
 
-    expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.DEBT_TYPE_CREATE_EC);
+    expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.DEBT_TYPE_ORG_CREATE);
   });
 
   it('does not render tabs', () => {
