@@ -5,10 +5,19 @@ import {
   AccordionSummary,
   ChipOwnProps,
   ChipProps,
-  Divider
+  Divider,
+  Menu,
+  MenuItem
 } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { History, KeyboardArrowDown } from '@mui/icons-material';
+import {
+  Delete,
+  Edit,
+  GetApp,
+  History,
+  KeyboardArrowDown,
+  MoreVert
+} from '@mui/icons-material';
 import { theme } from '@pagopa/mui-italia';
 import DetailContainer, {
   DetailData
@@ -22,16 +31,20 @@ import {
   PaymentOptionTypeEnum,
   PaymentOptionStatus,
   DebtPositionStatus,
-  InstallmentStatus
+  InstallmentStatus,
+  DebtPositionOrigin
 } from '../../../generated/data-contracts';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { generatePath, useParams } from 'react-router-dom';
+import { generatePath, useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { PageRoutes } from '../../App';
 import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';
 import { Timeline } from '../../components/Timeline';
+import GenericDialog from '../../components/GenericDialog/GenericDialog';
+import { useQueryClient } from '@tanstack/react-query';
+import utils from '../../utils';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -55,6 +68,8 @@ const DebtPositionDetail = () => {
   const { t } = useTranslation();
   const { state } = useStore();
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   const stateColors: Record<
     InstallmentStatus | DebtPositionStatus | PaymentOptionStatus,
@@ -72,16 +87,94 @@ const DebtPositionDetail = () => {
     UNPAYABLE: 'error'
   };
 
+  const genericDialogTitel = () => {
+    return canBeDeleted
+      ? t('debtPositionDetail.confirmDialog.title')
+      : t('debtPositionDetail.errorDialog.title');
+  };
+
+  const getDraftConfirmationMessage = () => {
+    if (debtPositionDetail?.status === DebtPositionStatus.DRAFT) {
+      return t('debtPositionDetail.confirmDialog.descriptionDraft');
+    } else {
+      return t('debtPositionDetail.confirmDialog.description');
+    }
+  };
+
+  const genericDialogDescription = () => {
+    if (canBeDeleted) {
+      return getDraftConfirmationMessage();
+    } else {
+      return t('debtPositionDetail.errorDialog.description');
+    }
+  };
+
   type StateKey = keyof typeof stateColors;
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const debtPositionId = Number(id);
 
   const [timelineOpen, setTimelineOpen] = useState(false);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const { data: debtPositionDetail } = debtPositions.getDebtPositionDetail(
     organizationId,
     debtPositionId
   );
+
+  const deleteDebtPositionMutation = debtPositions.deleteDebtPosition(
+    organizationId,
+    debtPositionId,
+    () => {
+      setOpenDeleteDialog(false);
+      if (debtPositionDetail?.status === DebtPositionStatus.DRAFT) {
+        navigate(generatePath(PageRoutes.DEBT_POSITIONS_INDEX));
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ['getDebtPositionDetail', organizationId, debtPositionId]
+        });
+      }
+    },
+    (error) => {
+      console.error('Error while deleting the debt position:', error);
+      setOpenDeleteDialog(false);
+      utils.notify.emit(t('debtPositionDetail.deleteError'), 'error');
+    }
+  );
+
+  // Variable to determine if the debt position can be deleted
+  const canBeDeleted =
+    debtPositionDetail?.status !== DebtPositionStatus.PAID &&
+    debtPositionDetail?.status !== DebtPositionStatus.PARTIALLY_PAID;
+
+  // Variable to determine if the delete option should be shown in the menu
+  const showDeleteOption =
+    debtPositionDetail?.status !== DebtPositionStatus.CANCELLED;
+  const showEditOption =
+    debtPositionDetail?.debtPositionOrigin === DebtPositionOrigin.ORDINARY;
+
+  const menuOpen = Boolean(menuAnchorEl);
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+  };
+
+  const handleDelete = () => {
+    setOpenDeleteDialog(true);
+    handleMenuClose();
+  };
+
+  const handleDeleteConfirm = () => {
+    if (canBeDeleted) {
+      deleteDebtPositionMutation.mutate();
+    }
+    setOpenDeleteDialog(false);
+  };
+
+  const handleDownloadNotices = () => {
+    console.log('Download notices clicked');
+    //  download logic here
+  };
 
   useEffect(() => {
     if (debtPositionDetail?.paymentOptions?.length) {
@@ -125,7 +218,7 @@ const DebtPositionDetail = () => {
       { label: t('commons.debtor'), value: debtPositionDetail.debtor.fullName },
       {
         label: t('commons.fiscalCodeorVat'),
-        value: `${debtPositionDetail.debtor.fiscalCode} (${debtPositionDetail.debtor.entityType === 'F' ? t('commons.person') : t('commons.personLegal')})`
+        value: `${debtPositionDetail.debtor.fiscalCode} (${(debtPositionDetail.debtor.entityType as string) === 'F' ? t('commons.person') : t('commons.personLegal')})`
       },
       {
         label: t('commons.duetype'),
@@ -207,12 +300,66 @@ const DebtPositionDetail = () => {
         chip={statusChip}
         callToAction={[
           {
+            icon: <GetApp data-testid="DownloadButton" />,
+            variant: 'contained',
+            buttonText: t('debtPositionDetail.downloadNotices'),
+            onActionClick: handleDownloadNotices
+          },
+          {
             icon: <History data-testid="HistoryButton" />,
             variant: 'text',
             onActionClick: () => setTimelineOpen(true)
-          }
+          },
+          ...(showDeleteOption
+            ? [
+                {
+                  icon: <MoreVert />,
+                  variant: 'text' as const,
+                  onActionClick: () => {
+                    const button = document.activeElement as HTMLElement;
+                    setMenuAnchorEl(button);
+                  }
+                }
+              ]
+            : [])
         ]}
       />
+
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={menuOpen}
+        onClose={handleMenuClose}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiMenuItem-root': {
+                px: 2,
+                py: 1
+              }
+            }
+          }
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <>
+          <MenuItem onClick={handleDelete}>
+            <Delete fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
+            {t('commons.delete')}
+          </MenuItem>
+          {showEditOption && (
+            <MenuItem onClick={() => console.log('edit')}>
+              <Edit fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
+              {t('debtPositionDetail.edit')}
+            </MenuItem>
+          )}
+        </>
+      </Menu>
+
       <Box mt={4} mb={3}>
         <Accordion
           disableGutters
@@ -287,6 +434,17 @@ const DebtPositionDetail = () => {
           last
         />
       </Timeline.Drawer>
+
+      <GenericDialog
+        data-testid="confirm-delete-dialog"
+        open={openDeleteDialog}
+        title={genericDialogTitel()}
+        message={genericDialogDescription()}
+        confirmLabel={canBeDeleted ? t('commons.delete') : t('commons.close')}
+        cancelLabel={canBeDeleted ? t('commons.close') : undefined}
+        onConfirm={handleDeleteConfirm}
+        onClose={() => setOpenDeleteDialog(false)}
+      />
     </>
   ) : null;
 };

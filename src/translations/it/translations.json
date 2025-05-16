@@ -535,6 +535,18 @@
     "debtPositionInfo": "Informazioni sulla posizione debitoria",
     "paymentOptions": "Opzioni di pagamento",
     "solutionDetail": "Dettaglio soluzione",
+    "downloadNotices": "Scarica avvisi",
+    "edit": "Modifica",
+    "confirmDialog": {
+      "title": "Sei sicuro di voler eliminare la posizione debitoria?",
+      "description": "Una volta eliminata, la posizione debitoria non sarà più possibile pagarla ne modificarla.",
+      "descriptionDraft": "Una volta eliminata, tutti i dati saranno cancellati e non potranno essere recuperati."
+    },
+    "deleteError": "Si è verificato un errore durante l'eliminazione della posizione debitoria. Vi preghiamo di riprovare più tardi.",
+    "errorDialog": {
+      "title": "La posizione debitoria non può essere eliminata",
+      "description": "Siamo spiacenti, al momento non è possibile eliminare questa posizione debitoria."
+    },
     "timeline": {
       "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio",
       "title": "Storico Posizione Debitoria"
