@@ -102,9 +102,17 @@ vi.mock('../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
+const mockMutate = vi.fn();
+
 vi.mock('../../api/debtPositions', () => ({
   default: {
-    getDebtPositionDetail: vi.fn()
+    getDebtPositionDetail: vi.fn(),
+    deleteDebtPosition: vi.fn().mockImplementation(() => ({
+      mutate: mockMutate,
+      isLoading: false,
+      isError: false,
+      isSuccess: false
+    }))
   }
 }));
 
@@ -129,7 +137,19 @@ beforeEach(() => {
     'commons.status.PAID': 'Paid',
     'commons.status.UNPAID': 'Unpaid',
     'commons.status.REPORTED': 'Reported',
-    'commons.status.TO_SYNC': 'To Sync'
+    'commons.status.TO_SYNC': 'To Sync',
+    'commons.delete': 'Delete',
+    'commons.close': 'Close',
+    'debtPositionDetail.confirmDialog.title': 'Confirm Delete',
+    'debtPositionDetail.confirmDialog.description':
+      'Are you sure you want to delete this debt position?',
+    'debtPositionDetail.errorDialog.title': 'Cannot Delete',
+    'debtPositionDetail.errorDialog.description':
+      'This debt position cannot be deleted',
+    'debtPositionDetail.edit': 'Edit',
+    'debtPositionDetail.downloadNotices': 'Download Notices',
+    'debtPositionDetail.timeline.title': 'Timeline',
+    'debtPositionDetail.timeline.message': 'Message'
   });
 
   vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
@@ -267,7 +287,7 @@ describe('DebtPositionDetail Component', () => {
 
     if (historyButton) {
       fireEvent.click(historyButton);
-      const drawerTitle = screen.getByText('debtPositionDetail.timeline.title');
+      const drawerTitle = screen.getByText('Timeline');
       expect(drawerTitle).toBeVisible();
     }
   });

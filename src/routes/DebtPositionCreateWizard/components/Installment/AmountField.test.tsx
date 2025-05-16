@@ -102,7 +102,7 @@ describe('AmountField', () => {
     );
 
     const inputElement = screen.getByLabelText(/Importo/i) as HTMLInputElement;
-    expect(inputElement.value).toBe('100.50');
+    expect(inputElement.value).toBe('100,50');
   });
 
   test('dovrebbe essere disabilitato quando la prop disabled è true', () => {
