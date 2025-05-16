@@ -16,6 +16,8 @@ import { DebtPositionTypeOrgWithCount } from '../../../../generated/data-contrac
 import { useStore } from '../../../store/GlobalStore';
 import { STATE } from '../../../store/types';
 import { formatDateTime } from '../../../utils/formatters';
+import { generatePath, useNavigate } from 'react-router-dom';
+import { PageRoutes } from '../../../App';
 
 type MyOrgProps = {
   codeFilter: string;
@@ -30,6 +32,7 @@ export const MyOrg = ({
 }: MyOrgProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
@@ -126,8 +129,11 @@ export const MyOrg = ({
 
   const handleRowClick = (row: DebtPositionTypeOrgWithCount | undefined) => {
     if (!row) return;
-    //TODO: redirect to organization detail
-    console.log('DebtType:', row);
+    navigate(
+      generatePath(PageRoutes.DEBT_TYPE_DETAIL, {
+        debtPositionTypeOrgId: row.debtPositionTypeOrgId
+      })
+    );
   };
 
   const handlePaginationChange = (page: number, size: number) => {

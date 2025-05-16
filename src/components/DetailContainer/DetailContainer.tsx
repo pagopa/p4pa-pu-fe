@@ -21,6 +21,7 @@ export type DetailData = {
     color?: ChipOwnProps['color'];
     variant?: ChipOwnProps['variant'];
   };
+  childrenComponent?: React.ReactNode;
 };
 export type titleConfig = {
   label: string;
@@ -81,6 +82,10 @@ const DetailContainer = ({
           </Typography>
         </React.Fragment>
       );
+    }
+
+    if (item.childrenComponent) {
+      return <>{item.childrenComponent}</>;
     }
 
     return (
