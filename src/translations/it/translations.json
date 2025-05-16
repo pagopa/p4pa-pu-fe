@@ -171,8 +171,10 @@
     "mandatoryDueDate": "Data di Scadenza Obbligatoria",
     "message": "Messaggio",
     "messages": "Messaggi",
+    "no": "No",
     "noFlows": "Non ci sono flussi.",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+    "notifications": "Notifiche",
     "operator": "Operatore",
     "optional": "opzionale",
     "organizationType": "Tipo ente",
@@ -182,6 +184,7 @@
     "paymentDate": "Data pagamento",
     "paymentExecutor": "Versante",
     "paymentInformation": "Informazione sul pagamento",
+    "paymentManager": "Gestore di pagamenti",
     "paymentOptions": {
       "DOWN_PAYMENT": "Anticipo",
       "INSTALLMENTS": "Soluzione a Rate",
@@ -306,7 +309,8 @@
       "invalidUrl": "Formato URL non valido",
       "fieldRequired": "Campo obbligatorio",
       "checkboxRequired": "Questa conferma è obbligatoria"
-    }
+    },
+    "yes": "Si"
   },
   "conservation": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
@@ -564,6 +568,29 @@
   },
   "debtPositionsImportThankYouPage": {
     "description": "Troverai il flusso caricato nella sezione Flussi importati"
+  },
+   "debtTypeDetail": {
+    "description": "Ecco i dettagli del Tipo dovuto",
+    "debtMainConfiguration": {
+      "title": "Configurazione generale",
+      "description": "Definizione del Tipo dovuto"
+    },
+    "accounting": {
+      "description": "Parametri per la gestione delle entrate."
+    }, 
+    "messages": {
+      "description": "Notifiche digitale ai cittadini.",
+      "IOApp": "App IO",
+      "sendMessage": "Invia messaggio",
+      "APIKey": "API Key"
+    },
+    "enabledOperators": {
+      "title": "Abilitazione agli operatori",
+      "description": "Operatori abilitati a questo Tipo Dovuto.",
+      "allOperatorsSelected": "Tutti gli operatori",
+      "selectedOperators": "Operatori selezionati",
+      "noSelectedOperators": "Senza operatori associati"
+    }
   },
   "debtTypeCatalogDetail": {
     "IOAppMessageTemplate": "Template Messaggio su app IO",
