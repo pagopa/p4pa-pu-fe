@@ -22,6 +22,9 @@ import { BredcrumbItem } from '../Breadcrumbs/Breadcrumbs';
 import { InstallmentDetailDrawer } from './InstallmentDetailDrawer';
 import { Timeline } from '../Timeline';
 import { setAppState } from '../../store/AppStateStore';
+import { downloadBlob } from '../../utils/download';
+import utils from '../../utils';
+import GenericDialog from '../GenericDialog/GenericDialog';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
@@ -34,6 +37,7 @@ export const DebtPositionsInstallmentDetail = () => {
   } = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
   const toggleDrawer = () => {
     setDrawerOpen((prev) => !prev);
@@ -51,6 +55,38 @@ export const DebtPositionsInstallmentDetail = () => {
     organizationId,
     installmentId
   );
+  const statusInstallment = installment?.status;
+
+  const handleDownloadInstallment = async () => {
+    if (!installment?.iuv || !installment.debtPositionId) {
+      utils.notify.emit(t('commons.files.missingIuv'), 'error');
+      return;
+    }
+
+    if (statusInstallment !== InstallmentStatus.UNPAID) {
+      setOpenDeleteDialog(true);
+      return;
+    }
+
+    try {
+      const result = await debtPositions.downloadPaymentNotice(
+        organizationId,
+        installment.debtPositionId,
+        installment.iuv
+      );
+
+      if (!result) {
+        utils.notify.emit(t('commons.files.downloadFailed'), 'error');
+        return;
+      }
+
+      const { data, fileName } = result;
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(t('commons.files.downloadFailed'), error);
+      utils.notify.emit(t('commons.files.downloadFailed'), 'error');
+    }
+  };
 
   const getFiscalCodeValue = (
     fiscalCode?: string,
@@ -179,7 +215,7 @@ export const DebtPositionsInstallmentDetail = () => {
             icon: <Download />,
             variant: 'contained',
             buttonText: t('commons.downloadInstallment'),
-            onActionClick: () => console.log('download')
+            onActionClick: handleDownloadInstallment
           }
         ]}
       />
@@ -282,6 +318,14 @@ export const DebtPositionsInstallmentDetail = () => {
           last
         />
       </Timeline.Drawer>
+      <GenericDialog
+        data-testid="confirm-delete-dialog"
+        open={openDeleteDialog}
+        title={t('debtPositionInstallmentDetail.dialogDownload.title')}
+        message={t('debtPositionInstallmentDetail.dialogDownload.message')}
+        cancelLabel={t('commons.close')}
+        onClose={() => setOpenDeleteDialog(false)}
+      />
     </>
   );
 };
