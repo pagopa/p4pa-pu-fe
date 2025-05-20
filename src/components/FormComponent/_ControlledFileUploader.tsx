@@ -3,6 +3,7 @@ import { Control, Controller, FieldValues, Path } from 'react-hook-form';
 import FileUploader, { FileUploaderProps } from '../FileUploader/FileUploader';
 import Typography from '@mui/material/Typography';
 import Stack from '@mui/material/Stack';
+import { ErrorMessage } from './ErrorMessage';
 
 export type _ControlledFileUploaderProps<T extends FieldValues> = {
   name: Path<T>;
@@ -50,7 +51,7 @@ export const _ControlledFileUploader = <T extends FieldValues>({
             {...fileUploaderProps}
           />
           <Typography variant="body2" color="error">
-            {error?.message}
+            <ErrorMessage messageKey={error?.message} />
           </Typography>
         </Stack>
       )}

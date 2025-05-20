@@ -2,12 +2,12 @@ import { Controller, Control, Path, FieldValues } from 'react-hook-form';
 import { FormComponent, SelectProps } from '../FormComponent';
 import { SelectOptions } from './_Select';
 import { UseQueryResult } from '@tanstack/react-query';
+import { ErrorMessage } from './ErrorMessage';
 
 export type _ControlledSelectProps<T extends FieldValues> = SelectProps & {
   name: Path<T>;
   control: Control<T>;
   label: string;
-  onChange?: (value: string) => void;
   fetchFn?: () => UseQueryResult<SelectOptions>;
   disabled?: boolean;
 };
@@ -36,7 +36,7 @@ export const _ControlledSelect = <T extends FieldValues>({
           }
           options={options?.data}
           error={!!fieldState.error}
-          helperText={fieldState.error?.message}
+          helperText={<ErrorMessage messageKey={fieldState.error?.message} />}
           {...field}
           {...props}
         />

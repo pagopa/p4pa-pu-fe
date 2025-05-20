@@ -1,31 +1,62 @@
+import React from 'react';
 import { vi } from 'vitest';
-import { Step4Notifications } from './Step4Notifications';
 import {
   render,
   screen,
   fireEvent,
   waitFor
-} from '../../../__tests__/renderers';
+} from '../../../../__tests__/renderers';
+import { Step4Notifications } from '.';
+import { StoreProvider } from '../../../../store/GlobalStore';
+import { FormProvider, useForm, FieldValues } from 'react-hook-form';
+import { setOrganizationId } from '../../../../store/OrganizationIdStore';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { step4Schema } from './schema'; // adjust path accordingly
+
+// Helper to render component with fresh form context per test
+const renderWithForm = (
+  ui: React.ReactElement,
+  onSubmit?: (data: FieldValues) => void
+) => {
+  const Wrapper: React.FC = () => {
+    const methods = useForm<FieldValues>({
+      resolver: zodResolver(step4Schema),
+      defaultValues: {
+        flagNotifyIo: false,
+        serviceId: '',
+        ioTemplateSubject: '',
+        ioTemplateMessage: ''
+      }
+    });
+
+    return (
+      <StoreProvider>
+        <FormProvider {...methods}>
+          {onSubmit ? (
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
+              {ui}
+              <button type="submit">Submit</button>
+            </form>
+          ) : (
+            ui
+          )}
+        </FormProvider>
+      </StoreProvider>
+    );
+  };
+
+  return render(<Wrapper />);
+};
 
 describe('Step4Notifications', () => {
-  const mockSetData = vi.fn();
-  const mockOnNext = vi.fn();
-  const mockOnBack = vi.fn();
-
   beforeEach(() => {
+    setOrganizationId(123);
     vi.clearAllMocks();
   });
 
   it('renders form with main titles and switch', () => {
-    render(
-      <Step4Notifications
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
+    renderWithForm(<Step4Notifications />);
 
-    // Check for main titles and alert message (translation keys)
     expect(
       screen.getByText('debtTypeOrgCreate.notifications.title')
     ).toBeInTheDocument();
@@ -36,41 +67,30 @@ describe('Step4Notifications', () => {
       screen.getByText('debtTypeOrgCreate.notifications.alertMessage')
     ).toBeInTheDocument();
 
-    // Check for enableNotifications switch
     expect(
       screen.getByRole('checkbox', {
         name: 'debtTypeOrgCreate.notifications.enableNotifications'
       })
     ).toBeInTheDocument();
 
-    // The notification section should NOT be visible initially
+    // Notification section should NOT be visible initially
     expect(
       screen.queryByText('debtTypeOrgCreate.notifications.section.message')
     ).not.toBeInTheDocument();
   });
 
   it('shows notification fields when enableNotifications is toggled on', () => {
-    render(
-      <Step4Notifications
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
+    renderWithForm(<Step4Notifications />);
 
     const switchInput = screen.getByRole('checkbox', {
       name: 'debtTypeOrgCreate.notifications.enableNotifications'
     });
-
-    // Toggle switch on
     fireEvent.click(switchInput);
 
-    // The notification section should appear
     expect(
       screen.getByText('debtTypeOrgCreate.notifications.section.message')
     ).toBeInTheDocument();
 
-    // Check presence of required fields
     [
       'debtTypeOrgCreate.notifications.serviceApiKey.label',
       'debtTypeOrgCreate.notifications.messageSubject.label',
@@ -79,21 +99,14 @@ describe('Step4Notifications', () => {
       expect(screen.getByRole('textbox', { name: label })).toBeInTheDocument();
     });
 
-    // Preview button should be disabled initially (empty subject/body)
     const previewButton = screen.getByRole('button', {
       name: 'debtTypeCreate.settings.preview'
     });
     expect(previewButton).toBeDisabled();
   });
 
-  it('enables preview button only when messageSubject and messageBody have values', () => {
-    render(
-      <Step4Notifications
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
+  it('enables preview button only when subject and body have values', () => {
+    renderWithForm(<Step4Notifications />);
 
     const switchInput = screen.getByRole('checkbox', {
       name: 'debtTypeOrgCreate.notifications.enableNotifications'
@@ -110,61 +123,34 @@ describe('Step4Notifications', () => {
       name: 'debtTypeCreate.settings.preview'
     });
 
-    // Initially disabled
     expect(previewButton).toBeDisabled();
 
-    // Fill only subject
     fireEvent.change(subjectInput, { target: { value: 'Subject' } });
     expect(previewButton).toBeDisabled();
 
-    // Fill body as well
     fireEvent.change(bodyInput, { target: { value: 'Body text' } });
     expect(previewButton).toBeEnabled();
 
-    // Clear subject again disables preview
     fireEvent.change(subjectInput, { target: { value: '' } });
     expect(previewButton).toBeDisabled();
   });
 
-  it('calls onBack when back button is clicked', () => {
-    render(
-      <Step4Notifications
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
+  it('validates required fields when enableNotifications is true and prevents submission', async () => {
+    const onSubmit = vi.fn();
 
-    const backButton = screen.getByRole('button', { name: 'commons.back' });
-    fireEvent.click(backButton);
+    renderWithForm(<Step4Notifications />, onSubmit);
 
-    expect(mockOnBack).toHaveBeenCalledTimes(1);
-    expect(mockSetData).not.toHaveBeenCalled();
-    expect(mockOnNext).not.toHaveBeenCalled();
-  });
-
-  it('validates required fields when enableNotifications is true', async () => {
-    render(
-      <Step4Notifications
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
-
-    // Enable notifications
     const switchInput = screen.getByRole('checkbox', {
       name: 'debtTypeOrgCreate.notifications.enableNotifications'
     });
     fireEvent.click(switchInput);
 
-    // Submit without filling required fields
-    const nextButton = screen.getByRole('button', { name: 'commons.continue' });
+    const nextButton = screen.getByRole('button', { name: /submit/i });
     fireEvent.click(nextButton);
 
-    // Expect validation errors - the form should not submit
-    expect(mockSetData).not.toHaveBeenCalled();
-    expect(mockOnNext).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
 
     // Fill serviceId only
     const apiKeyInput = screen.getByRole('textbox', {
@@ -174,9 +160,9 @@ describe('Step4Notifications', () => {
 
     fireEvent.click(nextButton);
 
-    // Still missing subject and body, no submit
-    expect(mockSetData).not.toHaveBeenCalled();
-    expect(mockOnNext).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(onSubmit).not.toHaveBeenCalled();
+    });
 
     // Fill subject and body
     const subjectInput = screen.getByRole('textbox', {
@@ -188,41 +174,39 @@ describe('Step4Notifications', () => {
     fireEvent.change(subjectInput, { target: { value: 'Subject' } });
     fireEvent.change(bodyInput, { target: { value: 'Body text' } });
 
-    // Submit again
     fireEvent.click(nextButton);
 
     await waitFor(() => {
-      expect(mockSetData).toHaveBeenCalledWith({
-        flagNotifyIo: true,
-        serviceId: 'apikey123',
-        ioTemplateSubject: 'Subject',
-        ioTemplateMessage: 'Body text'
-      });
-      expect(mockOnNext).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledWith(
+        {
+          flagNotifyIo: true,
+          serviceId: 'apikey123',
+          ioTemplateSubject: 'Subject',
+          ioTemplateMessage: 'Body text'
+        },
+        expect.anything()
+      );
     });
   });
 
   it('submits form with enableNotifications false without required fields', async () => {
-    render(
-      <Step4Notifications
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
+    const onSubmit = vi.fn();
 
-    // By default enableNotifications is false, so required fields are not needed
-    const nextButton = screen.getByRole('button', { name: 'commons.continue' });
+    renderWithForm(<Step4Notifications />, onSubmit);
+
+    const nextButton = screen.getByRole('button', { name: /submit/i });
     fireEvent.click(nextButton);
 
     await waitFor(() => {
-      expect(mockSetData).toHaveBeenCalledWith({
-        flagNotifyIo: false,
-        serviceId: '',
-        ioTemplateSubject: '',
-        ioTemplateMessage: ''
-      });
-      expect(mockOnNext).toHaveBeenCalledTimes(1);
+      expect(onSubmit).toHaveBeenCalledWith(
+        {
+          flagNotifyIo: false,
+          serviceId: '',
+          ioTemplateSubject: '',
+          ioTemplateMessage: ''
+        },
+        expect.anything()
+      );
     });
   });
 });

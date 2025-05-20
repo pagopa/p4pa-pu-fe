@@ -1,5 +1,4 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import BookIcon from '@mui/icons-material/MenuBook';
@@ -8,67 +7,65 @@ import Typography from '@mui/material/Typography';
 import { TFunction } from 'i18next';
 import { z } from 'zod';
 
-import SectionBox from '../../../components/Wizard/SectionBox';
-import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
-import { FormComponent } from '../../../components/FormComponent';
-import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
-import { useStore } from '../../../store/GlobalStore';
-import { useDebtPositionTypesByOrg } from '../../../hooks/useDebtPositionTypesByOrg';
-
-export type Step1Data = {
-  debtPositionTypeId: number;
-  description: string;
-  code: string;
-};
+import SectionBox from '../../../../components/Wizard/SectionBox';
+import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
+import { FormComponent } from '../../../../components/FormComponent';
+import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
+import { useStore } from '../../../../store/GlobalStore';
+import { useDebtPositionTypesByOrg } from '../../../../hooks/useDebtPositionTypesByOrg';
+import { DebtTypeOrgForm } from '../..';
+import { useEffect } from 'react';
 
 export type Step1Props = {
-  setData: (data: Step1Data) => void;
   onNext: () => void;
   onBack: () => void;
 };
 
-const validationSchema = (t: TFunction) =>
+export const step1Schema = (t: TFunction) =>
   z.object({
     debtPositionTypeId: z.number({
       required_error: t('debtTypeOrgCreate.configuration.debtType.required')
     }),
-    code: z.string({
-      required_error: t('debtTypeOrgCreate.configuration.code.required')
-    }),
+    code: z
+      .string()
+      .nonempty(t('debtTypeOrgCreate.configuration.code.required')),
     description: z
-      .string({
-        required_error: t(
-          'debtTypeOrgCreate.configuration.description.required'
-        )
-      })
+      .string()
+      .nonempty(t('debtTypeOrgCreate.configuration.description.required'))
       .max(100, t('debtTypeOrgCreate.configuration.description.maxCharacters'))
   });
 
-export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
+export const Step1Configuration = ({ onNext, onBack }: Step1Props) => {
   const { t } = useTranslation();
-  const schema = validationSchema(t);
 
   const {
     state: { organizationId }
   } = useStore();
-  const { optionsMap } = useDebtPositionTypesByOrg({
+  const { optionsMap, data } = useDebtPositionTypesByOrg({
     organizationId
   });
 
-  const { control, handleSubmit, watch } = useForm<Step1Data>({
-    resolver: zodResolver(schema),
-    mode: 'onTouched'
-  });
-
-  const onSubmit = async (values: Step1Data) => {
-    setData(values);
-    onNext();
-  };
+  const { control, watch, setValue } = useFormContext<DebtTypeOrgForm>();
 
   const description = watch('description');
 
+  // Watch the selected debtPositionTypeId
+  const selectedId = watch('debtPositionTypeId');
+
+  // Auto-fill other fields when selection changes
+  useEffect(() => {
+    const selectedType = data?.find(
+      (d) => d.debtPositionTypeId === Number(selectedId)
+    );
+    if (selectedType) {
+      Object.entries(selectedType).forEach(([key, val]) => {
+        setValue(key as keyof DebtTypeOrgForm, val);
+      });
+    }
+  }, [selectedId, data, setValue]);
+
   return (
-    <form aria-label="form">
+    <>
       <WizardStepWrapper
         title={t('debtTypeOrgCreate.configuration.title')}
         subtitle={t('debtTypeOrgCreate.configuration.subtitle')}
@@ -117,7 +114,7 @@ export const Step1Configuration = ({ setData, onNext, onBack }: Step1Props) => {
         </SectionBox>
       </WizardStepWrapper>
 
-      <WizardStepButtons onBack={onBack} onNext={handleSubmit(onSubmit)} />
-    </form>
+      <WizardStepButtons onBack={onBack} onNext={onNext} />
+    </>
   );
 };

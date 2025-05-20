@@ -3,9 +3,9 @@ import { useTranslation } from 'react-i18next';
 import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import { FormComponent } from '../../../../../components/FormComponent';
-import { Step2Data } from '..';
 import Typography from '@mui/material/Typography';
 import EuroIcon from '@mui/icons-material/Euro';
+import { DebtTypeOrgForm } from '../../../types';
 
 export enum PaymentMethodOption {
   FREE = 'free',
@@ -15,8 +15,8 @@ export enum PaymentMethodOption {
 }
 
 export type PaymentMethodProps = {
-  control: Control<Step2Data>;
-  name: Path<Step2Data>;
+  control: Control<DebtTypeOrgForm>;
+  name: Path<DebtTypeOrgForm>;
   selectedValue: PaymentMethodOption;
 };
 

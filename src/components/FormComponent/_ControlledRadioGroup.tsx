@@ -14,6 +14,7 @@ import {
   RadioGroup,
   RadioGroupProps
 } from '@mui/material';
+import { ErrorMessage } from './ErrorMessage';
 
 export type RadioOption<T extends FieldValues> = {
   value: PathValue<T, Path<T>>;
@@ -68,7 +69,10 @@ export const _ControlledRadioGroup = <T extends FieldValues>({
               />
             ))}
           </RadioGroup>
-          <FormHelperText>{fieldState.error?.message}</FormHelperText>
+
+          <FormHelperText>
+            <ErrorMessage messageKey={fieldState.error?.message} />
+          </FormHelperText>
         </FormControl>
       )}
     />

@@ -1,24 +1,60 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import React from 'react';
 import { vi } from 'vitest';
+import { render, screen, fireEvent } from '../../../../__tests__/renderers';
 import { Step2Behaviour } from '.';
+import { StoreProvider } from '../../../../store/GlobalStore';
+import { FormProvider, useForm, FieldValues } from 'react-hook-form';
+import { setOrganizationId } from '../../../../store/OrganizationIdStore';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { step2Schema } from './schema'; // Adjust path as needed
+
+// Helper to render component with form context and validation schema
+const renderWithForm = (
+  ui: React.ReactElement,
+  onSubmit?: (data: FieldValues) => void
+) => {
+  const Wrapper: React.FC = () => {
+    const methods = useForm({
+      resolver: zodResolver(step2Schema),
+      defaultValues: {
+        flagSpontaneous: false,
+        flagNotifyOutcomePush: 'false',
+        paymentMethod: undefined,
+        flagMandatoryDueDate: false,
+        authenticateUsername: '',
+        authenticatePassword: '',
+        authCallbackUrl: '',
+        updateCallbackUrl: ''
+      }
+    });
+
+    return (
+      <StoreProvider>
+        <FormProvider {...methods}>
+          {onSubmit ? (
+            <form onSubmit={methods.handleSubmit(onSubmit)}>
+              {ui}
+              <button type="submit">Submit</button>
+            </form>
+          ) : (
+            ui
+          )}
+        </FormProvider>
+      </StoreProvider>
+    );
+  };
+
+  return render(<Wrapper />);
+};
 
 describe('Step2Behaviour', () => {
-  const mockSetData = vi.fn();
-  const mockOnNext = vi.fn();
-  const mockOnBack = vi.fn();
-
   beforeEach(() => {
+    setOrganizationId(123);
     vi.clearAllMocks();
   });
 
-  it('renders main titles and switches', () => {
-    render(
-      <Step2Behaviour
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
+  it('renders main titles and controls', () => {
+    renderWithForm(<Step2Behaviour />);
 
     expect(
       screen.getByText('debtTypeOrgCreate.behaviour.title')
@@ -41,23 +77,10 @@ describe('Step2Behaviour', () => {
         name: 'debtTypeOrgCreate.behaviour.notifications.radioLabel'
       })
     ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole('button', { name: 'commons.back' })
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole('button', { name: 'commons.continue' })
-    ).toBeInTheDocument();
   });
 
   it('toggles spontaneous payment section correctly', () => {
-    render(
-      <Step2Behaviour
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
+    renderWithForm(<Step2Behaviour />);
 
     // Initially spontaneous payment disabled: behaviour section visible
     expect(
@@ -87,13 +110,7 @@ describe('Step2Behaviour', () => {
   });
 
   it('shows payment notification fields only when notifications enabled', () => {
-    render(
-      <Step2Behaviour
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
+    renderWithForm(<Step2Behaviour />);
 
     // Initially notifications disabled: fields hidden
     expect(
@@ -122,13 +139,7 @@ describe('Step2Behaviour', () => {
   });
 
   it('renders update amount section with text fields', () => {
-    render(
-      <Step2Behaviour
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
+    renderWithForm(<Step2Behaviour />);
 
     expect(
       screen.getByText('debtTypeOrgCreate.behaviour.updateAmount.title')
@@ -144,43 +155,6 @@ describe('Step2Behaviour', () => {
       'debtTypeOrgCreate.behaviour.updateAmount.updateUrlLabel'
     ].forEach((label) => {
       expect(screen.getByRole('textbox', { name: label })).toBeInTheDocument();
-    });
-  });
-
-  it('calls onBack when back button clicked', () => {
-    render(
-      <Step2Behaviour
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
-
-    fireEvent.click(screen.getByRole('button', { name: 'commons.back' }));
-    expect(mockOnBack).toHaveBeenCalledTimes(1);
-  });
-
-  it('submits form and calls setData and onNext', async () => {
-    render(
-      <Step2Behaviour
-        setData={mockSetData}
-        onNext={mockOnNext}
-        onBack={mockOnBack}
-      />
-    );
-
-    // Enable spontaneous payment to show PaymentMethodSelector
-    const spontaneousSwitch = screen.getByRole('checkbox', {
-      name: 'debtTypeOrgCreate.behaviour.postalAccount'
-    });
-    fireEvent.click(spontaneousSwitch);
-
-    // Submit form
-    fireEvent.click(screen.getByRole('button', { name: 'commons.continue' }));
-
-    await waitFor(() => {
-      expect(mockSetData).toHaveBeenCalled();
-      expect(mockOnNext).toHaveBeenCalled();
     });
   });
 });

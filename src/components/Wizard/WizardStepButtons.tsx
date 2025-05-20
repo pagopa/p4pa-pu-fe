@@ -52,12 +52,7 @@ const WizardStepButtons = ({
             {t(saveDraftLabel)}
           </Button>
         )}
-        <Button
-          variant="contained"
-          onClick={onNext}
-          type="submit"
-          disabled={disableNext}
-        >
+        <Button variant="contained" onClick={onNext} disabled={disableNext}>
           {t(nextLabel)}
         </Button>
       </Box>

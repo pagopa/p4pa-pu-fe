@@ -1,10 +1,9 @@
 import { z } from 'zod';
-import { TFunction } from 'i18next';
 import { PaymentMethodOption } from './components/PaymentMethodSelector';
 import { requireField, validateUrl } from '../../../../utils/schema';
 
-export const step2Schema = (t: TFunction) => {
-  const baseSchema = z.object({
+export const step2Schema = z
+  .object({
     flagSpontaneous: z.boolean().default(false),
     flagMandatoryDueDate: z.boolean().optional().default(false),
     isAnonymousFiscalCode: z.boolean().optional().default(false),
@@ -29,19 +28,16 @@ export const step2Schema = (t: TFunction) => {
     authenticatePassword: z.string().optional(),
     authCallbackUrl: z.string().optional(),
     updateCallbackUrl: z.string().optional()
+  })
+  .superRefine((data, ctx) => {
+    validateSpontaneousPayment(data, ctx);
+    validateNotifications(data, ctx);
   });
-
-  return baseSchema.superRefine((data, ctx) => {
-    validateSpontaneousPayment(data, ctx, t);
-    validateNotifications(data, ctx, t);
-  });
-};
 
 // Validation logic split into focused functions
 const validateSpontaneousPayment = (
-  data: z.infer<ReturnType<typeof step2Schema>>,
-  ctx: z.RefinementCtx,
-  t: TFunction
+  data: z.infer<typeof step2Schema>,
+  ctx: z.RefinementCtx
 ) => {
   if (!data.flagSpontaneous) return;
 
@@ -50,7 +46,7 @@ const validateSpontaneousPayment = (
       if (!data.amountCents) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: t('commons.validation.amountRequired'),
+          message: 'commons.validation.amountRequired',
           path: ['amountCents']
         });
       }
@@ -60,25 +56,24 @@ const validateSpontaneousPayment = (
       if (!data.xsdDefinitionRef) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          message: t('debtTypeOrgCreate.behaviour.spontaneous.file.required'),
+          message: 'debtTypeOrgCreate.behaviour.spontaneous.file.required',
           path: ['xsdDefinitionRef']
         });
       }
       break;
 
     case PaymentMethodOption.EXTERNAL:
-      requireField(data, 'externalPaymentUrl', t, ctx);
+      requireField(data, 'externalPaymentUrl', ctx);
       if (data.externalPaymentUrl) {
-        validateUrl(data.externalPaymentUrl, 'externalPaymentUrl', t, ctx);
+        validateUrl(data.externalPaymentUrl, 'externalPaymentUrl', ctx);
       }
       break;
   }
 };
 
 const validateNotifications = (
-  data: z.infer<ReturnType<typeof step2Schema>>,
-  ctx: z.RefinementCtx,
-  t: TFunction
+  data: z.infer<typeof step2Schema>,
+  ctx: z.RefinementCtx
 ) => {
   if (data.flagNotifyOutcomePush !== 'true') return;
 
@@ -93,13 +88,13 @@ const validateNotifications = (
     'secretKey'
   ] as const;
 
-  requiredFields.forEach((field) => requireField(data, field, t, ctx));
+  requiredFields.forEach((field) => requireField(data, field, ctx));
 
   // Validate checkbox
   if (!data.enableJwtAuth) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: t('commons.validation.checkboxRequired'),
+      message: 'commons.validation.checkboxRequired',
       path: ['enableJwtAuth']
     });
   }
