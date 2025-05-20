@@ -3,8 +3,9 @@ import {
   titleConfig
 } from '../components/DetailContainer/DetailContainer';
 import PreviewIcon from '@mui/icons-material/Preview';
-import { DebtPositionTypeOrg } from '../../generated/apiClient';
+import { DebtPositionTypeOrgDTO } from '../../generated/apiClient';
 import Button from '@mui/material/Button';
+import { moneyFormat } from '../utils/formatters';
 
 export enum AccordionSectionsEnum {
   MAIN_CONFIGURATION = 'MAIN_CONFIGURATION',
@@ -35,9 +36,72 @@ const checkStringValue = (value: string | undefined): string => {
 };
 
 export const getAccordionSectionsConfig = (
-  data: DebtPositionTypeOrg,
+  data: DebtPositionTypeOrgDTO,
   t: (key: string) => string
 ): Array<AccordionSectionConfig> => {
+  const getSpontaneousConfig = (
+    data: DebtPositionTypeOrgDTO
+  ): AccordionSectionConfig['sections'][number] => {
+    const details: Array<DetailData> = [];
+
+    if (
+      !data?.amountCents &&
+      !data?.externalPaymentUrl &&
+      !data?.xsdDefinitionRef
+    ) {
+      details.push({
+        label: t('debtTypeOrgCreate.behaviour.spontaneous.label'),
+        value: t('debtTypeOrgCreate.behaviour.spontaneous.free')
+      });
+    }
+
+    if (data?.amountCents) {
+      details.push(
+        {
+          label: t('debtTypeOrgCreate.behaviour.spontaneous.label'),
+          value: t('debtTypeOrgCreate.behaviour.spontaneous.amount')
+        },
+        {
+          label: t('debtTypeOrgCreate.behaviour.spontaneous.amountValue.label'),
+          value: moneyFormat(data?.amountCents)
+        }
+      );
+    }
+
+    if (data?.externalPaymentUrl) {
+      details.push(
+        {
+          label: t('debtTypeOrgCreate.behaviour.spontaneous.label'),
+          value: t('debtTypeOrgCreate.behaviour.spontaneous.external')
+        },
+        {
+          label: t('debtTypeDetail.debtConfiguration.externalPaymentUrl'),
+          value: checkStringValue(data?.externalPaymentUrl)
+        }
+      );
+    }
+
+    if (data?.xsdDefinitionRef) {
+      details.push(
+        {
+          label: t('debtTypeOrgCreate.behaviour.spontaneous.label'),
+          value: t('debtTypeOrgCreate.behaviour.spontaneous.custom')
+        },
+        {
+          label: t('debtTypeDetail.debtConfiguration.xsdAttachment'),
+          value: checkStringValue(data?.xsdDefinitionRef)
+        }
+      );
+    }
+
+    return {
+      title: {
+        label: t('debtTypeOrgCreate.behaviour.section.spontaneousPaymentTitle'),
+        variant: 'subtitle1'
+      },
+      data: details
+    };
+  };
   return [
     {
       configType: AccordionSectionsEnum.MAIN_CONFIGURATION,
@@ -55,12 +119,12 @@ export const getAccordionSectionsConfig = (
         },
         {
           title: {
-            label: t('debtTypeCreateEC.configuration.debtTypeVersion.title'),
+            label: t('debtTypeOrgCreate.configuration.debtTypeVersion.title'),
             variant: 'subtitle1'
           },
           data: [
             {
-              label: t('debtTypeCreateEC.configuration.code.label'),
+              label: t('debtTypeOrgCreate.configuration.code.label'),
               value: checkStringValue(data?.code)
             },
             {
@@ -68,30 +132,18 @@ export const getAccordionSectionsConfig = (
               value: checkStringValue(data?.description)
             }
           ]
-        },
-        {
-          title: {
-            label: t('debtTypeCreateEC.configuration.selection.title'),
-            variant: 'subtitle1'
-          },
-          data: [
-            {
-              label: t('commons.paymentManager'),
-              value: checkStringValue(data?.orgSector)
-            }
-          ]
         }
       ]
     },
     {
       configType: AccordionSectionsEnum.DEBT_CONFIGURATION,
-      title: t('debtTypeCreateEC.behaviour.title'),
-      description: t('debtTypeCreateEC.behaviour.subtitle'),
+      title: t('debtTypeOrgCreate.behaviour.title'),
+      description: t('debtTypeOrgCreate.behaviour.subtitle'),
       sections: [
         {
           data: [
             {
-              label: t('debtTypeCreateEC.behaviour.postalAccount'),
+              label: t('debtTypeOrgCreate.behaviour.postalAccount'),
               value: data?.flagSpontaneous ? t('commons.yes') : t('commons.no')
             }
           ]
@@ -112,9 +164,10 @@ export const getAccordionSectionsConfig = (
             }
           ]
         },
+        ...(data?.flagSpontaneous ? [getSpontaneousConfig(data)] : []),
         {
           title: {
-            label: t('debtTypeCreateEC.behaviour.notifications.title'),
+            label: t('debtTypeOrgCreate.behaviour.notifications.title'),
             variant: 'subtitle1'
           },
           data: [
@@ -126,25 +179,25 @@ export const getAccordionSectionsConfig = (
         },
         {
           title: {
-            label: t('debtTypeCreateEC.behaviour.updateAmount.title'),
+            label: t('debtTypeOrgCreate.behaviour.updateAmount.title'),
             variant: 'subtitle1'
           },
           data: [
             {
-              label: t('debtTypeCreateEC.behaviour.updateAmount.notesLabel'),
+              label: t('debtTypeOrgCreate.behaviour.updateAmount.notesLabel'),
               value: '-'
             },
             {
-              label: t('debtTypeCreateEC.behaviour.updateAmount.amountLabel'),
+              label: t('debtTypeOrgCreate.behaviour.updateAmount.amountLabel'),
               value: '-'
             },
             {
-              label: t('debtTypeCreateEC.behaviour.updateAmount.authUrlLabel'),
+              label: t('debtTypeOrgCreate.behaviour.updateAmount.authUrlLabel'),
               value: '-'
             },
             {
               label: t(
-                'debtTypeCreateEC.behaviour.updateAmount.updateUrlLabel'
+                'debtTypeOrgCreate.behaviour.updateAmount.updateUrlLabel'
               ),
               value: '-'
             }
@@ -154,45 +207,45 @@ export const getAccordionSectionsConfig = (
     },
     {
       configType: AccordionSectionsEnum.ACCOUNTING,
-      title: t('debtTypeCreateEC.accounting.title'),
+      title: t('debtTypeOrgCreate.accounting.title'),
       description: t('debtTypeDetail.accounting.description'),
       sections: [
         {
           title: {
-            label: t('debtTypeCreateEC.accounting.section.creditInfo'),
+            label: t('debtTypeOrgCreate.accounting.section.creditInfo'),
             variant: 'subtitle1'
           },
           data: [
             {
-              label: t('debtTypeCreateEC.accounting.postalIban'),
-              value: t(checkStringValue(data?.postalIban))
+              label: t('debtTypeOrgCreate.accounting.postalIban'),
+              value: checkStringValue(data?.postalIban)
             },
             {
-              label: t('debtTypeCreateEC.accounting.pspIban'),
-              value: t(checkStringValue(data?.iban))
+              label: t('debtTypeOrgCreate.accounting.pspIban'),
+              value: checkStringValue(data?.iban)
             },
             {
-              label: t('debtTypeCreateEC.accounting.postalAccount'),
-              value: t(checkStringValue(data?.postalAccountCode))
+              label: t('debtTypeOrgCreate.accounting.postalAccount'),
+              value: checkStringValue(data?.postalAccountCode)
             },
             {
-              label: t('debtTypeCreateEC.accounting.postalAccountHolder'),
-              value: t(checkStringValue(data?.holderPostalCc))
+              label: t('debtTypeOrgCreate.accounting.postalAccountHolder'),
+              value: checkStringValue(data?.holderPostalCc)
             }
           ]
         },
         {
           title: {
-            label: t('debtTypeCreateEC.accounting.section.budgetInfo'),
+            label: t('debtTypeOrgCreate.accounting.section.budgetInfo'),
             variant: 'subtitle1'
           },
           data: [
             {
-              label: t('debtTypeCreateEC.accounting.defaultBudgetStructure'),
-              value: '-'
+              label: t('debtTypeOrgCreate.accounting.defaultBudgetStructure'),
+              value: checkStringValue(data?.balance)
             },
             {
-              label: t('debtTypeCreateEC.accounting.entitySector'),
+              label: t('debtTypeOrgCreate.accounting.entitySector'),
               value: checkStringValue(data?.orgSector)
             }
           ]
@@ -201,7 +254,7 @@ export const getAccordionSectionsConfig = (
     },
     {
       configType: AccordionSectionsEnum.MESSAGES,
-      title: t('debtTypeCreateEC.notifications.title'),
+      title: t('debtTypeOrgCreate.notifications.title'),
       description: t('debtTypeDetail.messages.description'),
       sections: [
         {
@@ -216,11 +269,11 @@ export const getAccordionSectionsConfig = (
             },
             {
               label: t('debtTypeDetail.messages.APIKey'),
-              value: t(checkStringValue(data?.serviceId))
+              value: checkStringValue(data?.serviceId)
             },
             {
-              label: t('debtTypeCreateEC.notifications.messageSubject.label'),
-              value: t(checkStringValue(data?.ioTemplateSubject))
+              label: t('debtTypeOrgCreate.notifications.messageSubject.label'),
+              value: checkStringValue(data?.ioTemplateSubject)
             },
             {
               label: t('commons.message'),
