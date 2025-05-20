@@ -94,7 +94,22 @@ function DebtPositionCreateWizardCompleted() {
             isDraft ? translationParams : undefined
           )}
         </Typography>
+      </Box>
 
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 2
+        }}
+      >
+        <Button
+          role="button"
+          variant="outlined"
+          onClick={() => navigate(`${deployPath}/debt-positions/`)}
+        >
+          {t(translationKeys.backToStart)}
+        </Button>
         {isDraft && (
           <Button
             role="button"
@@ -105,13 +120,6 @@ function DebtPositionCreateWizardCompleted() {
           </Button>
         )}
       </Box>
-      <Button
-        role="button"
-        variant="naked"
-        onClick={() => navigate(`${deployPath}/debt-positions/`)}
-      >
-        {t(translationKeys.backToStart)}
-      </Button>
     </Box>
   );
 }

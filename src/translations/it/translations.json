@@ -88,7 +88,9 @@
       "size": "Dimensione File",
       "upload": "Carica il file",
       "uploadDate": "Data Caricamento",
-      "uploadInProgress": "Caricamento in corso..."
+      "uploadInProgress": "Caricamento in corso...",
+      "downloadFailed": "Errore durante il download.",
+      "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria"
     },
     "filters": {
       "accountingDate": {
@@ -553,6 +555,10 @@
     }
   },
   "debtPositionInstallmentDetail": {
+    "dialogDownload": {
+      "title": "L'avviso non può essere scaricato.",
+      "message": "Siamo spiacenti, questo file non può essere scaricato. Possono essere scaricati solo gli avvisi non pagati."
+    },
     "drawer": {
       "info": "Ci sono presenti altri beneficiari diversi al tuo ente.",
       "title": "Beneficiari"
@@ -583,7 +589,7 @@
   "debtPositionsImportThankYouPage": {
     "description": "Troverai il flusso caricato nella sezione Flussi importati"
   },
-   "debtTypeDetail": {
+  "debtTypeDetail": {
     "description": "Ecco i dettagli del Tipo dovuto",
     "debtMainConfiguration": {
       "title": "Configurazione generale",
@@ -595,7 +601,7 @@
     },
     "accounting": {
       "description": "Parametri per la gestione delle entrate."
-    }, 
+    },
     "messages": {
       "description": "Notifiche digitale ai cittadini.",
       "IOApp": "App IO",

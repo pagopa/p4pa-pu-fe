@@ -8,6 +8,7 @@ import {
 } from '../../generated/zod-schema';
 import { AxiosError } from 'axios';
 import { DebtPositionDTO } from '../../generated/data-contracts';
+import { extractFilename } from '../utils/formatters';
 
 type DebtPositionViewParams = Parameters<
   typeof utils.apiClient.bff.getDebtPositionViews
@@ -175,6 +176,36 @@ const createDebtPosition = (
     onError
   });
 
+/**
+ * Downloads the payment notice for a specific installment
+ * @param organizationId Organization ID
+ * @param debtPositionId Debt position ID
+ * @param iuv IUV code of the installment
+ * @returns Promise with file data and filename or null in case of error
+ */
+const downloadPaymentNotice = async (
+  organizationId: number,
+  debtPositionId: number,
+  iuv: string
+): Promise<{ data: Blob; fileName: string } | null> => {
+  try {
+    const response = await utils.apiClient.bff.getPaymentNotice(
+      organizationId,
+      debtPositionId,
+      { iuv },
+      { format: 'blob' }
+    );
+
+    const contentDisposition = response.headers['content-disposition'] || '';
+    const fileName = extractFilename(contentDisposition) || `notice-${iuv}.pdf`;
+
+    return { data: response.data, fileName };
+  } catch (error) {
+    console.error('Error downloading payment notice:', error);
+    return null;
+  }
+};
+
 export default {
   getDebtPositionViews,
   getInstallments,
@@ -182,5 +213,6 @@ export default {
   getDebtPositionDetail,
   deleteDebtPositionType,
   deleteDebtPosition,
-  createDebtPosition
+  createDebtPosition,
+  downloadPaymentNotice
 };

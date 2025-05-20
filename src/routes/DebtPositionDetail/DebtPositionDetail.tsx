@@ -347,16 +347,16 @@ const DebtPositionDetail = () => {
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
         <>
-          <MenuItem onClick={handleDelete}>
-            <Delete fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
-            {t('commons.delete')}
-          </MenuItem>
           {showEditOption && (
             <MenuItem onClick={() => console.log('edit')}>
               <Edit fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
               {t('debtPositionDetail.edit')}
             </MenuItem>
           )}
+          <MenuItem onClick={handleDelete}>
+            <Delete fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
+            {t('commons.delete')}
+          </MenuItem>
         </>
       </Menu>
 
