@@ -589,6 +589,10 @@
       "title": "Configurazione generale",
       "description": "Definizione del Tipo dovuto"
     },
+    "debtConfiguration": {
+      "externalPaymentUrl": "URL pagamento esterno",
+      "xsdAttachment": "Allegato XSD"
+    },
     "accounting": {
       "description": "Parametri per la gestione delle entrate."
     }, 
