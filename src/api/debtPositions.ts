@@ -124,16 +124,23 @@ const getDebtPositionDetail = (
 };
 
 /** delete a debt position type by its debtPositionTypeId, if allowed */
-const deleteDebtPositionType = (
-  debtPositionTypeId: number,
-  onSuccess?: () => void,
-  onError?: (error: AxiosError) => void
+const deleteDebtPositionType = (debtPositionTypeId: number) =>
+  useMutation({
+    mutationFn: () =>
+      utils.apiClient.bff.deleteDebtPositionType(debtPositionTypeId)
+  });
+
+/** delete a debt position type org by its organizationId and debtPositionTypeOrgId, if allowed */
+const deleteDebtPositionTypeOrgs = (
+  organizationId: number,
+  debtPositionTypeOrgId: number
 ) =>
   useMutation({
     mutationFn: () =>
-      utils.apiClient.bff.deleteDebtPositionType(debtPositionTypeId),
-    onSuccess,
-    onError
+      utils.apiClient.bff.deleteDebtPositionTypeOrg(
+        organizationId,
+        debtPositionTypeOrgId
+      )
   });
 
 /** delete a debt position by its organizationId and debtPositionId, if allowed */
@@ -181,6 +188,7 @@ export default {
   getInstallmentDetail,
   getDebtPositionDetail,
   deleteDebtPositionType,
+  deleteDebtPositionTypeOrgs,
   deleteDebtPosition,
   createDebtPosition
 };
