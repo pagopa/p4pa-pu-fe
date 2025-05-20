@@ -2,7 +2,7 @@ import { Box, Button, Stack } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { DetailAccordion } from '../../components/DetailAccordion/DetailAccordion';
 import {
   AccordionSectionConfig,
@@ -10,20 +10,52 @@ import {
 } from '../../models/DebtTypeSectionsConfig';
 import { useEffect, useState } from 'react';
 import { STATE } from '../../store/types';
-import { useStore } from '../../store/GlobalStore';
 import { getDebtPositionTypeOrgById } from '../../api/debtPositionsTypeOrg';
 import utils from '../../utils';
+import debtPositions from '../../api/debtPositions';
+import { PageRoutes } from '../../App';
+import GenericDialog from '../../components/GenericDialog/GenericDialog';
+import { isAxiosError } from 'axios';
+import { useStore } from '../../store/GlobalStore';
 
 export const DebtTypeDetailView = () => {
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openErrorDialog, setOpenErrorDialog] = useState(false);
+  const [ErrorDescription, setErrorDescription] = useState<
+    'genericErrorDescription' | 'alreadyUsedDescription'
+  >('genericErrorDescription');
+  const navigate = useNavigate();
+  const [accordionSections, setAccordionSections] = useState<
+    Array<AccordionSectionConfig>
+  >([]);
   const { state } = useStore();
   const { t } = useTranslation();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const { debtPositionTypeOrgId } = useParams<{
     debtPositionTypeOrgId: string;
   }>();
-  const [accordionSections, setAccordionSections] = useState<
-    Array<AccordionSectionConfig>
-  >([]);
+
+  const deleteDebtPositionTypeOrgs = debtPositions.deleteDebtPositionTypeOrgs(
+    organizationId,
+    Number(debtPositionTypeOrgId)
+  );
+  const handleDeleteConfirm = async () => {
+    setOpenDeleteDialog(false);
+    try {
+      await deleteDebtPositionTypeOrgs.mutateAsync();
+      navigate(PageRoutes.DEBT_TYPES);
+    } catch (error: unknown) {
+      setOpenErrorDialog(true);
+      if (isAxiosError(error) && error.response?.status === 409) {
+        return setErrorDescription('alreadyUsedDescription');
+      }
+      setErrorDescription('genericErrorDescription');
+    }
+  };
+
+  const handleErrorConfirm = () => {
+    setOpenErrorDialog(false);
+  };
 
   if (isNaN(Number(debtPositionTypeOrgId))) {
     // TODO
@@ -52,7 +84,7 @@ export const DebtTypeDetailView = () => {
       buttonText: t('commons.delete'),
       color: 'error' as const,
       variant: 'outlined' as const,
-      onActionClick: () => console.log('onActionClick delete')
+      onActionClick: () => setOpenDeleteDialog(true)
     },
     {
       icon: <Edit />,
@@ -101,6 +133,25 @@ export const DebtTypeDetailView = () => {
           </Stack>
         </Box>
       </>
+      <GenericDialog
+        data-testid="confirm-dialog"
+        open={openDeleteDialog}
+        title={t('debtTypeCatalogDetail.confirmDialog.title')}
+        message={t('debtTypeCatalogDetail.confirmDialog.description')}
+        confirmLabel={t('commons.delete')}
+        cancelLabel={t('commons.close')}
+        onConfirm={handleDeleteConfirm}
+        onClose={() => setOpenDeleteDialog(false)}
+      />
+      <GenericDialog
+        data-testid="error-dialog"
+        open={openErrorDialog}
+        title={t('debtTypeCatalogDetail.errorDialog.title')}
+        message={t(`debtTypeCatalogDetail.errorDialog.${ErrorDescription}`)}
+        confirmLabel={t('commons.close')}
+        onConfirm={handleErrorConfirm}
+        onClose={() => setOpenErrorDialog(false)}
+      />
     </>
   );
 };

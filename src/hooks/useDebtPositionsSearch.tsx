@@ -6,13 +6,14 @@ import debtPositions, {
 } from '../api/debtPositions';
 import { FilterFieldValue } from '../models/Filters';
 import { useDataGridPagination } from './useDatagridPagination';
+import { DebtPositionStatus } from '../../generated/apiClient';
 
 export type DebtPositionFilters = {
   dateRange?: {
     from: Date;
     to: Date;
   };
-  status?: DebtPositionViewQuery['status'];
+  status?: DebtPositionStatus;
   fiscalCode?: string;
   iuv?: string;
   typeOrgId?: number;
