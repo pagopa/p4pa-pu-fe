@@ -66,6 +66,7 @@
     "debtTypeName": "Nome del Tipo dovuto",
     "debtor": "Debitore",
     "delete": "Elimina",
+    "deleteSelection": "Cancella la selezione",
     "description": "Descrizione",
     "detail": "Dettaglio",
     "disabled": "Disabilitato",
@@ -258,7 +259,9 @@
     "searchIUF": "ID Rendicontazione",
     "searchIUV": "Cerca IUV",
     "searchName": "Cerca Nome",
+    "searchOperator": "Cerca operatore",
     "searchRegulationUniqueIdentifier": "ID Regolamento",
+    "selectedOperator": "Operatore selezionato",
     "serviceType": "Tipo Servizio",
     "showAllFlows": "Vedi tutti i flussi",
     "showDebtPositions": "Vedi Posizione debitoria",
@@ -872,7 +875,8 @@
       },
       "options": {
         "all": "Tutti gli operatori",
-        "none": "Senza operatori associati"
+        "none": "Senza operatori associati",
+        "selected": "Operatori selezionati"
       }
     },
     "stepper": {

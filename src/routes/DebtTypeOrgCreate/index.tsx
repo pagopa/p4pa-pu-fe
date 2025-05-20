@@ -59,7 +59,12 @@ export const DebtTypeOrgCreate = () => {
               ? await data.xsdDefinitionRef?.text()
               : undefined
         },
-        operatorsSelection: data.operatorsSelection
+        operatorsSelection: data.operatorsSelection,
+        ...(data.operatorsSelection === OperatorsSelection.SELECTED &&
+          data.enabledOperators &&
+          data.enabledOperators.length > 0 && {
+            enabledOperators: data.enabledOperators
+          })
       }
     };
   };
