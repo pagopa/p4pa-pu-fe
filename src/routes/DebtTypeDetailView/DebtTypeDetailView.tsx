@@ -13,6 +13,7 @@ import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../App';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { isAxiosError } from 'axios';
+import { useStore } from '../../store/GlobalStore';
 
 export const DebtTypeDetailView = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -28,9 +29,12 @@ export const DebtTypeDetailView = () => {
   const [accordionSections, setAccordionSections] = useState<
     Array<AccordionSectionConfig>
   >([]);
+  const {
+    state: { organizationId }
+  } = useStore();
 
   const deleteDebtPositionTypeOrgs = debtPositions.deleteDebtPositionTypeOrgs(
-    1, // use real organizationId
+    organizationId,
     Number(debtPositionTypeOrgId)
   );
   const handleDeleteConfirm = async () => {
