@@ -89,13 +89,4 @@ const validateNotifications = (
   ] as const;
 
   requiredFields.forEach((field) => requireField(data, field, ctx));
-
-  // Validate checkbox
-  if (!data.enableJwtAuth) {
-    ctx.addIssue({
-      code: z.ZodIssueCode.custom,
-      message: 'commons.validation.checkboxRequired',
-      path: ['enableJwtAuth']
-    });
-  }
 };

@@ -135,21 +135,6 @@ describe('step2Schema', () => {
       }
     });
 
-    it('should require enableJwtAuth checkbox when flagNotifyOutcomePush is true', () => {
-      const data = { ...baseNotificationData, enableJwtAuth: false };
-      const result = step2Schema.safeParse(data);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(
-          result.error.issues.some(
-            (issue) =>
-              issue.path[0] === 'enableJwtAuth' &&
-              issue.message === 'commons.validation.checkboxRequired'
-          )
-        ).toBe(true);
-      }
-    });
-
     it('should validate clientEmail format', () => {
       const data = { ...baseNotificationData, clientEmail: 'invalid-email' };
       const result = step2Schema.safeParse(data);
