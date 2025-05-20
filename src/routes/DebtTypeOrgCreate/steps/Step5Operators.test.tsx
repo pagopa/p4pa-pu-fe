@@ -8,6 +8,36 @@ import {
 } from '../../../__tests__/renderers';
 import { OperatorsSelection } from '../../../../generated/data-contracts';
 
+const mockApiResponse = {
+  content: [
+    {
+      operatorId: 'op1',
+      mappedExternalUserId: 'ext1',
+      firstName: 'John',
+      lastName: 'Doe',
+      enabled: true
+    },
+    {
+      operatorId: 'op2',
+      mappedExternalUserId: 'ext2',
+      firstName: 'Jane',
+      lastName: 'Smith',
+      enabled: false
+    }
+  ],
+  totalPages: 1,
+  number: 0,
+  size: 10
+};
+
+vi.mock('../../../api/debtPositionTypeOrgOperators', () => ({
+  getDebtPositionTypeOrgOperators: vi.fn(() => ({
+    data: mockApiResponse,
+    isLoading: false,
+    error: null
+  }))
+}));
+
 describe('Step5Operators', () => {
   const mockSetData = vi.fn();
   const mockOnNext = vi.fn();
@@ -26,7 +56,6 @@ describe('Step5Operators', () => {
       />
     );
 
-    // Main titles
     expect(
       screen.getByText('debtTypeOrgCreate.operators.title')
     ).toBeInTheDocument();
@@ -34,15 +63,18 @@ describe('Step5Operators', () => {
       screen.getByText('debtTypeOrgCreate.operators.subtitle')
     ).toBeInTheDocument();
 
-    // Section title
     expect(
       screen.getByText('debtTypeOrgCreate.operators.section.operatorEntities')
     ).toBeInTheDocument();
 
-    // Radio options
     expect(
       screen.getByRole('radio', {
         name: 'debtTypeOrgCreate.operators.options.all'
+      })
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('radio', {
+        name: 'debtTypeOrgCreate.operators.options.selected'
       })
     ).toBeInTheDocument();
     expect(
@@ -121,7 +153,8 @@ describe('Step5Operators', () => {
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        operatorsSelection: OperatorsSelection.ALL
+        operatorsSelection: OperatorsSelection.ALL,
+        enabledOperators: []
       });
       expect(mockOnNext).toHaveBeenCalledTimes(1);
     });
@@ -146,21 +179,14 @@ describe('Step5Operators', () => {
 
     await waitFor(() => {
       expect(mockSetData).toHaveBeenCalledWith({
-        operatorsSelection: OperatorsSelection.NONE
+        operatorsSelection: OperatorsSelection.NONE,
+        enabledOperators: []
       });
       expect(mockOnNext).toHaveBeenCalledTimes(1);
     });
   });
 
-  // Optional: Edge case test for validation error if no selection (usually not possible with radios)
-  it('does not submit if operatorsSelection is unset (edge case)', async () => {
-    // This is a theoretical case because radios always have a selection,
-    // but you can simulate by rendering with no default value if needed.
-
-    // For demonstration, assume you can render with no default and clear selection:
-    // You would need to modify the component to allow this for testing.
-
-    // Here, just check that submission without selection doesn't call onNext:
+  it('displays OperatorSelector when SELECTED option is chosen', async () => {
     render(
       <Step5Operators
         setData={mockSetData}
@@ -169,13 +195,47 @@ describe('Step5Operators', () => {
       />
     );
 
-    // Attempt to submit without changing selection (default is ALL)
+    const radioSelected = screen.getByRole('radio', {
+      name: 'debtTypeOrgCreate.operators.options.selected'
+    });
+    fireEvent.click(radioSelected);
+
+    await waitFor(() => {
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+    });
+  });
+
+  it('submits form with selected operators when SELECTED option is chosen', async () => {
+    render(
+      <Step5Operators
+        setData={mockSetData}
+        onNext={mockOnNext}
+        onBack={mockOnBack}
+      />
+    );
+
+    const radioSelected = screen.getByRole('radio', {
+      name: 'debtTypeOrgCreate.operators.options.selected'
+    });
+    fireEvent.click(radioSelected);
+
+    await waitFor(() => {
+      expect(screen.getByText('John Doe')).toBeInTheDocument();
+    });
+
+    const checkboxes = screen.getAllByRole('checkbox');
+    fireEvent.click(checkboxes[1]);
+
     const nextButton = screen.getByRole('button', { name: 'commons.continue' });
     fireEvent.click(nextButton);
 
     await waitFor(() => {
-      expect(mockSetData).toHaveBeenCalled();
-      expect(mockOnNext).toHaveBeenCalled();
+      expect(mockSetData).toHaveBeenCalledWith({
+        operatorsSelection: OperatorsSelection.SELECTED,
+        enabledOperators: ['ext1']
+      });
+      expect(mockOnNext).toHaveBeenCalledTimes(1);
     });
   });
 });
