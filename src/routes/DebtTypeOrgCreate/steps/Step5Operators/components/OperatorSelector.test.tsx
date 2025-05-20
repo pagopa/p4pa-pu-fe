@@ -5,9 +5,9 @@ import {
   screen,
   fireEvent,
   waitFor
-} from '../../../../__tests__/renderers';
-import { i18nTestSetup } from '../../../../__tests__/i18nTestSetup';
-import * as api from '../../../../api/debtPositionTypeOrgOperators';
+} from '../../../../../__tests__/renderers';
+import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
+import * as api from '../../../../../api/debtPositionTypeOrgOperators';
 
 i18nTestSetup({
   'commons.operator': 'Operatore',
@@ -45,7 +45,7 @@ const mockApiResponse = {
 };
 
 describe('OperatorSelector', () => {
-  vi.mock('../../../../api/debtPositionTypeOrgOperators', () => ({
+  vi.mock('../../../../../api/debtPositionTypeOrgOperators', () => ({
     getDebtPositionTypeOrgOperators: vi.fn(() => ({
       data: mockApiResponse,
       isLoading: false,

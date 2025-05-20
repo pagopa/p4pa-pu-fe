@@ -102,7 +102,7 @@ export const DebtTypeOrgCreate = () => {
       try {
         const request = await requestMap(formData);
         const response = await debtTypeCreate.mutateAsync(request);
-        navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
+        navigate(PageRoutes.DEBT_TYPE_ORG_CREATE_SUCCESS, {
           replace: true,
           state: { formData: response }
         });

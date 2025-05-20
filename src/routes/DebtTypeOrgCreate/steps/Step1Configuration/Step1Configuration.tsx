@@ -13,8 +13,8 @@ import { FormComponent } from '../../../../components/FormComponent';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import { useStore } from '../../../../store/GlobalStore';
 import { useDebtPositionTypesByOrg } from '../../../../hooks/useDebtPositionTypesByOrg';
-import { DebtTypeOrgForm } from '../..';
 import { useEffect } from 'react';
+import { DebtTypeOrgForm } from '../../types';
 
 export type Step1Props = {
   onNext: () => void;

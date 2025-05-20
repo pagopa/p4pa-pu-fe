@@ -222,14 +222,17 @@ describe('Step5Operators', () => {
     const checkboxes = screen.getAllByRole('checkbox');
     fireEvent.click(checkboxes[1]);
 
-    const nextButton = screen.getByRole('button', { name: 'commons.continue' });
-    fireEvent.click(nextButton);
+    const submitButton = screen.getByRole('button', { name: /submit/i });
+    await userEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(onSubmit).toHaveBeenCalledWith({
-        operatorsSelection: OperatorsSelection.SELECTED,
-        enabledOperators: ['ext1']
-      });
+      expect(onSubmit).toHaveBeenCalledWith(
+        {
+          operatorsSelection: OperatorsSelection.SELECTED,
+          enabledOperators: ['ext1']
+        },
+        expect.anything()
+      );
     });
   });
 });

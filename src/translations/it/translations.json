@@ -59,6 +59,7 @@
     "create": "Crea",
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
+    "backToStart": "Torna alla sezione",
     "creationFrom": "Creazione dal",
     "debtFlow": "Flussi dovuti",
     "debtType": "Tipo dovuto",
@@ -735,6 +736,10 @@
   "debtTypeOrgCreate": {
     "title": "Imposta nuovo Tipo dovuto",
     "description": "Compila i campi e configura un nuovo Tipo dovuto per il tuo ente.",
+    "success": {
+      "title": "Il Tipo dovuto ‘{{paymentObject}}’ è stato impostato!",
+      "description": "La trovi nella sezione I tuoi Tipi Dovuti, dove puoi modificarlo in qualsiasi momento."
+    },
     "configuration": {
       "title": "Configurazione generale",
       "subtitle": "Definisce quale sarà il Tipo Dovuto.",
