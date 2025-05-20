@@ -3,6 +3,7 @@ import { renderHook, waitFor, act } from '../__tests__/renderers';
 import utils from '../utils';
 import {
   getDebtPositionTypeOrgs,
+  getDebtPositionTypeOrgById,
   createDebtPositionTypeOrg,
   CreateDebtPositionTypeOrg
 } from './debtPositionsTypeOrg';
@@ -13,6 +14,7 @@ vi.mock('../utils', () => ({
     apiClient: {
       bff: {
         getDebtPositionTypeOrgs: vi.fn(),
+        getDebtPositionTypeOrgById: vi.fn(),
         createDebtPositionTypeOrg: vi.fn()
       }
     }
@@ -49,6 +51,37 @@ describe('getDebtPositionTypeOrgs', () => {
     expect(result.current.data).toEqual(mockData);
     expect(utils.apiClient.bff.getDebtPositionTypeOrgs).toHaveBeenCalledWith(
       123
+    );
+  });
+});
+
+describe('getDebtPositionTypeOrgById', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should fetch and return a specific debt position type by ID', async () => {
+    const mockData = { id: 456, description: 'description' };
+
+    (utils.apiClient.bff.getDebtPositionTypeOrgById as Mock).mockResolvedValue({
+      data: mockData
+    });
+
+    const { result } = renderHook(() =>
+      getDebtPositionTypeOrgById({
+        organizationId: 123,
+        debtPositionTypeOrgId: 456
+      })
+    );
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockData);
+    expect(utils.apiClient.bff.getDebtPositionTypeOrgById).toHaveBeenCalledWith(
+      123,
+      456
     );
   });
 });
