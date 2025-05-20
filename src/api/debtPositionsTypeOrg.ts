@@ -18,6 +18,29 @@ export const getDebtPositionTypeOrgs = ({
     }
   });
 
+export const getDebtPositionTypeOrgById = ({
+  organizationId,
+  debtPositionTypeOrgId
+}: {
+  organizationId: number;
+  debtPositionTypeOrgId: number;
+}) =>
+  useQuery({
+    queryKey: [
+      'getDebtPositionTypeOrgs',
+      organizationId,
+      debtPositionTypeOrgId
+    ],
+    queryFn: async () => {
+      const { data: response } =
+        await utils.apiClient.bff.getDebtPositionTypeOrgById(
+          organizationId,
+          debtPositionTypeOrgId
+        );
+      return response;
+    }
+  });
+
 export type CreateDebtPositionTypeOrg = {
   organizationId: number;
   data: SaveDebtPositionTypeOrgDTO;

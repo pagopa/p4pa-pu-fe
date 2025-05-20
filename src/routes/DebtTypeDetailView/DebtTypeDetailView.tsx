@@ -9,12 +9,18 @@ import {
   getAccordionSectionsConfig
 } from '../../models/DebtTypeSectionsConfig';
 import { useEffect, useState } from 'react';
+import { STATE } from '../../store/types';
+import { useStore } from '../../store/GlobalStore';
+import { getDebtPositionTypeOrgById } from '../../api/debtPositionsTypeOrg';
+import utils from '../../utils';
 
 export const DebtTypeDetailView = () => {
+  const { state } = useStore();
+  const { t } = useTranslation();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const { debtPositionTypeOrgId } = useParams<{
     debtPositionTypeOrgId: string;
   }>();
-  const { t } = useTranslation();
   const [accordionSections, setAccordionSections] = useState<
     Array<AccordionSectionConfig>
   >([]);
@@ -25,45 +31,20 @@ export const DebtTypeDetailView = () => {
     console.error('debtPositionTypeOrgId is not a number');
   }
 
-  // TODO add API
-  const data = {
-    creationDate: '2025-01-20T14:58:02.800181',
-    updateDate: '2025-01-20T14:58:02.800181',
-    updateOperatorExternalId: 'EUqKiD1psLrGNuLxCGzriy-royPlBvuyeJMc0dxaxNs=',
-    updateTraceId: '-',
-    debtPositionTypeOrgId: 1,
-    debtPositionTypeId: 1,
-    organizationId: 1,
-    balance:
-      '<bilancio xmlns="http://www.regione.veneto.it/schemas/2012/Pagamenti/Ente/">\n\t<capitolo>\n\t\t<codCapitolo>102083</codCapitolo>\n\t\t<accertamento>\n\t\t\t<importo>6.00</importo>\n\t\t</accertamento>\n\t</capitolo>\n</bilancio>',
-    code: 'CODE011',
-    description: 'TARI',
-    iban: 'IT60X0542811101000000123456',
-    postalIban: 'IT60X0542811101000000123457',
-    postalAccountCode: '1234567890',
-    holderPostalCc: 'Holder Postal CC',
-    orgSector: 'Public Sector',
-    xsdDefinitionRef: 'definitionRef123',
-    externalPaymentUrl: 'https://example.com/payment',
-    flagAnonymousFiscalCode: false,
-    flagMandatoryDueDate: false,
-    flagSpontaneous: false,
-    flagNotifyIo: true,
-    serviceId: '01J1F178BDBCGWE8HEN13WMK6N',
-    ioTemplateSubject:
-      '[TEST] Notifica inviata con successo! Sì, funziona davvero',
-    ioTemplateMessage:
-      'Descrizione posizione debitoria: %posizioneDebitoria_descrizione%. Nome completo debitore: %debitore_nomeCompleto%. Codice Fiscale debitore: %debitore_codiceFiscale%. Importo totale: %importoTotale% euro. Codice IUV: %IUV%. NAV: %NAV%. Causale: %causale%. Data di esecuzione pagamento: %dataScadenza%.',
-    flagActive: true,
-    flagNotifyOutcomePush: false,
-    flagAmountActualization: false,
-    flagExternal: false
-  };
+  const { data, isLoading, isError, isSuccess } = getDebtPositionTypeOrgById({
+    organizationId,
+    debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
+  });
 
   useEffect(() => {
-    const sections = getAccordionSectionsConfig(data, t) || [];
-    setAccordionSections(sections);
-  }, []);
+    if (isSuccess && data) {
+      const sections = getAccordionSectionsConfig(data, t) || [];
+      setAccordionSections(sections);
+    }
+    if (isError) {
+      utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
+    }
+  }, [data, isLoading, isError, isSuccess]);
 
   const actionButtons = [
     {
