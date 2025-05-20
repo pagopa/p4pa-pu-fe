@@ -13,9 +13,7 @@ type DebtPositionViewParams = Parameters<
   typeof utils.apiClient.bff.getDebtPositionViews
 >;
 
-export type DebtPositionViewQuery = DebtPositionViewParams[1] & {
-  status?: DebtPositionViewParams[1]['status'];
-};
+export type DebtPositionViewQuery = DebtPositionViewParams[1];
 
 export type DebtPositionViewRequest = {
   organizationId: DebtPositionViewParams[0];
