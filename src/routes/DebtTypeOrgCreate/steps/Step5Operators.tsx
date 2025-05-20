@@ -8,10 +8,12 @@ import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
+import OperatorSelector from './Step5OperatorSelector/OperatorSelector';
 import { OperatorsSelection } from '../../../../generated/data-contracts';
 
 export type Step5Data = {
   operatorsSelection: OperatorsSelection;
+  enabledOperators?: Array<string>;
 };
 
 export type Step5Props = {
@@ -23,10 +25,9 @@ export type Step5Props = {
 const validationSchema = (t: TFunction) =>
   z.object({
     operatorsSelection: z.nativeEnum(OperatorsSelection, {
-      required_error: t(
-        'debtTypeOrgCreate.operators.operatorSelection.required'
-      )
-    })
+      required_error: t('debtTypeCreateEC.operators.operatorSelection.required')
+    }),
+    enabledOperators: z.array(z.string()).optional()
   });
 
 export const Step5Operators = ({ setData, onNext, onBack }: Step5Props) => {
@@ -35,15 +36,22 @@ export const Step5Operators = ({ setData, onNext, onBack }: Step5Props) => {
   const form = useForm<Step5Data>({
     resolver: zodResolver(schema),
     defaultValues: {
-      operatorsSelection: OperatorsSelection.ALL
+      operatorsSelection: OperatorsSelection.ALL,
+      enabledOperators: []
     },
     mode: 'onTouched'
   });
-  const { control, handleSubmit } = form;
+  const { control, handleSubmit, watch, setValue } = form;
+
+  const operatorSelection = watch('operatorsSelection');
 
   const onSubmit = async (values: Step5Data) => {
     setData(values);
     onNext();
+  };
+
+  const handleOperatorSelectionChange = (enabledOperators: Array<string>) => {
+    setValue('enabledOperators', enabledOperators);
   };
 
   return (
@@ -65,11 +73,22 @@ export const Step5Operators = ({ setData, onNext, onBack }: Step5Props) => {
                 label: t('debtTypeOrgCreate.operators.options.all')
               },
               {
+                value: OperatorsSelection.SELECTED,
+                label: t('debtTypeOrgCreate.operators.options.selected')
+              },
+              {
                 value: OperatorsSelection.NONE,
                 label: t('debtTypeOrgCreate.operators.options.none')
               }
             ]}
           />
+          {operatorSelection === OperatorsSelection.SELECTED && (
+            <OperatorSelector
+              onSelectionChange={handleOperatorSelectionChange}
+              enabledOperators={watch('enabledOperators') || []}
+              organizationId={3}
+            />
+          )}
         </SectionBox>
       </WizardStepWrapper>
       <WizardStepButtons onBack={onBack} onNext={handleSubmit(onSubmit)} />
