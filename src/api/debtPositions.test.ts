@@ -241,52 +241,39 @@ describe('getInstallmentDetail', () => {
 describe('deleteDebtPositionType', () => {
   it('calls the API correctly', async () => {
     const debtPositionTypeId = 123;
-    const onSuccess = vi.fn();
-    const onError = vi.fn();
 
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'deleteDebtPositionType')
       .mockResolvedValue({ data: {} } as AxiosResponse);
 
     const { result } = renderHook(() =>
-      debtPositions.deleteDebtPositionType(
-        debtPositionTypeId,
-        onSuccess,
-        onError
-      )
+      debtPositions.deleteDebtPositionType(debtPositionTypeId)
     );
 
     result.current.mutate();
 
     await waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith(debtPositionTypeId);
-      expect(onSuccess).toHaveBeenCalled();
     });
   });
 
   it('handles errors correctly', async () => {
-    const debtPositionTypeId = 123;
-    const onSuccess = vi.fn();
     const onError = vi.fn();
+    const debtPositionTypeId = 123;
 
-    const error = new Error('API Error');
-    vi.spyOn(utils.apiClient.bff, 'deleteDebtPositionType').mockRejectedValue(
-      error
-    );
+    vi.spyOn(
+      utils.apiClient.bff,
+      'deleteDebtPositionType'
+    ).mockImplementationOnce(() => Promise.reject('API Error'));
 
     const { result } = renderHook(() =>
-      debtPositions.deleteDebtPositionType(
-        debtPositionTypeId,
-        onSuccess,
-        onError
-      )
+      debtPositions.deleteDebtPositionType(debtPositionTypeId)
     );
 
-    result.current.mutate();
+    result.current.mutate(undefined, { onError });
 
     await waitFor(() => {
       expect(onError).toHaveBeenCalled();
-      expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);
     });
   });
 });
