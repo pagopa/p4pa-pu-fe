@@ -323,8 +323,8 @@ export const DebtPositionsInstallmentDetail = () => {
         open={openDeleteDialog}
         title={t('debtPositionInstallmentDetail.dialogDownload.title')}
         message={t('debtPositionInstallmentDetail.dialogDownload.message')}
-        cancelLabel={t('commons.close')}
-        onClose={() => setOpenDeleteDialog(false)}
+        confirmLabel={t('commons.close')}
+        onConfirm={() => setOpenDeleteDialog(false)}
       />
     </>
   );
