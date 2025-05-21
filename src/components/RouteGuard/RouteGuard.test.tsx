@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { RouteGuard, RouteGuardProps } from './RouteGuard';
-import { MemoryRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 
-const FakeGuardedRouter = (props: Pick<RouteGuardProps, 'evaluation'>) => (
-  <MemoryRouter>
+const TestRouter = (props: Pick<RouteGuardProps, 'evaluation'>) => (
+  <BrowserRouter>
     <Routes>
       <Route path="/recovery-route" element={<p>recovery</p>} />
       <Route
@@ -18,17 +18,19 @@ const FakeGuardedRouter = (props: Pick<RouteGuardProps, 'evaluation'>) => (
         }
       />
     </Routes>
-  </MemoryRouter>
+  </BrowserRouter>
 );
 
 describe('RouteGuard component', () => {
-  it('should redirect to /recovery-route when the evaluation function return false', () => {
-    render(<FakeGuardedRouter evaluation={() => false} />);
-    expect(screen.queryByText('recovery')).toBeInTheDocument();
+  it('should render children when the evaluation function returns true', () => {
+    render(<TestRouter evaluation={() => true} />);
+    expect(window.location.pathname).toEqual('/');
+    expect(screen.getByText('protected content')).toBeInTheDocument();
   });
 
-  it('should render children when the evaluation function return false', () => {
-    render(<FakeGuardedRouter evaluation={() => true} />);
-    expect(screen.getByText('protected content')).toBeInTheDocument();
+  it('should redirect to /recovery-route when the evaluation function returns false', () => {
+    render(<TestRouter evaluation={() => false} />);
+    expect(window.location.pathname).toEqual('/recovery-route');
+    expect(screen.queryByText('recovery')).toBeInTheDocument();
   });
 });
