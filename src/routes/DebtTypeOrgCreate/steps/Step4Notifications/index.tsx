@@ -1,81 +1,29 @@
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { useFormContext } from 'react-hook-form';
 import PreviewIcon from '@mui/icons-material/Preview';
 import { Trans, useTranslation } from 'react-i18next';
 import MessageIcon from '@mui/icons-material/Message';
 import Typography from '@mui/material/Typography';
-import { TFunction } from 'i18next';
-import { z } from 'zod';
-import SectionBox from '../../../components/Wizard/SectionBox';
-import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
-import { FormComponent } from '../../../components/FormComponent';
-import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
+import SectionBox from '../../../../components/Wizard/SectionBox';
+import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
+import { FormComponent } from '../../../../components/FormComponent';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
-import { MarkdownPreview } from '../../DebtTypeCreate/components/MarkdownPreview';
+import { MarkdownPreview } from '../../../DebtTypeCreate/components/MarkdownPreview';
 import Link from '@mui/material/Link';
+import { DebtTypeOrgForm } from '../../types';
 
-export type Step4Data = {
-  flagNotifyIo?: boolean;
-  serviceId?: string;
-  ioTemplateSubject?: string;
-  ioTemplateMessage?: string;
-};
-
-export type Step4Props = {
-  setData: (data: Step4Data) => void;
-  onNext: () => void;
-  onBack: () => void;
-};
-
-const validationSchema = (t: TFunction) =>
-  z
-    .object({
-      flagNotifyIo: z.boolean().optional().default(false),
-      serviceId: z.string().optional(),
-      ioTemplateSubject: z.string().optional(),
-      ioTemplateMessage: z.string().optional()
-    })
-    .refine((data) => !data.flagNotifyIo || data.serviceId, {
-      message: t('debtTypeOrgCreate.notifications.serviceApiKey.required'),
-      path: ['serviceId']
-    })
-    .refine((data) => !data.flagNotifyIo || data.ioTemplateSubject, {
-      message: t('debtTypeOrgCreate.notifications.messageSubject.required'),
-      path: ['ioTemplateSubject']
-    })
-    .refine((data) => !data.flagNotifyIo || data.ioTemplateMessage, {
-      message: t('debtTypeOrgCreate.notifications.messageBody.required'),
-      path: ['ioTemplateMessage']
-    });
-
-export const Step4Notifications = ({ setData, onNext, onBack }: Step4Props) => {
+export const Step4Notifications = () => {
   const { t } = useTranslation();
-  const schema = validationSchema(t);
   const [open, setOpen] = useState(false);
-  const form = useForm<Step4Data>({
-    resolver: zodResolver(schema),
-    defaultValues: {
-      flagNotifyIo: false,
-      serviceId: '',
-      ioTemplateSubject: '',
-      ioTemplateMessage: ''
-    },
-    mode: 'onTouched'
-  });
-  const { control, handleSubmit, watch } = form;
+  const { control, watch } = useFormContext<DebtTypeOrgForm>();
+
   const flagNotifyIo = watch('flagNotifyIo');
   const ioTemplateSubject = watch('ioTemplateSubject');
   const ioTemplateMessage = watch('ioTemplateMessage');
 
-  const onSubmit = async (values: Step4Data) => {
-    setData(values);
-    onNext();
-  };
-
   return (
-    <form aria-label="form">
+    <>
       <WizardStepWrapper
         title={t('debtTypeOrgCreate.notifications.title')}
         subtitle={t('debtTypeOrgCreate.notifications.subtitle')}
@@ -172,13 +120,12 @@ export const Step4Notifications = ({ setData, onNext, onBack }: Step4Props) => {
           </SectionBox>
         )}
       </WizardStepWrapper>
-      <WizardStepButtons onBack={onBack} onNext={handleSubmit(onSubmit)} />
       <MarkdownPreview
         title={ioTemplateSubject || ''}
         message={ioTemplateMessage || ''}
         open={open}
         onClose={() => setOpen(false)}
       />
-    </form>
+    </>
   );
 };

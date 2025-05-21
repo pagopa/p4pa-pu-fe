@@ -1,13 +1,13 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { useForm } from 'react-hook-form';
 import { PaymentNotificationFields } from './PaymentNotificationFields';
-import { Step2Data } from '../../Step2Behaviour';
 import { pickSelect } from '../../../../../__tests__/utils';
+import { DebtTypeOrgForm } from '../../../types';
 
 describe('PaymentNotificationFields', () => {
-  const renderWithForm = (defaultValues?: Partial<Step2Data>) => {
+  const renderWithForm = (defaultValues?: Partial<DebtTypeOrgForm>) => {
     const Wrapper = () => {
-      const { control } = useForm<Step2Data>({
+      const { control } = useForm<DebtTypeOrgForm>({
         defaultValues: {
           notificationRetries: 1,
           notificationAppName: '',

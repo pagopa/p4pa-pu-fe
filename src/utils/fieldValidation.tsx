@@ -251,6 +251,22 @@ export const isValidIBAN = (iban: string): boolean => {
 };
 
 /**
+ * Checks if an Italian postal account number is valid
+ * @param postalAccount - Postal account number to validate
+ * @returns true if the number is valid, false otherwise
+ */
+export const isValidPostalAccount = (postalAccount: string): boolean => {
+  if (!postalAccount) return false;
+
+  // Normalizes the postal account number by removing spaces
+  postalAccount = postalAccount.replace(/\s/g, '');
+
+  // Italian postal accounts consist of 12 numerical digits
+  // or shorter numbers (minimum 6 digits)
+  return /^\d{6,12}$/.test(postalAccount);
+};
+
+/**
  * Creates validation functions for beneficiary fields
  * @param t - Translation function
  * @returns Object with validation functions

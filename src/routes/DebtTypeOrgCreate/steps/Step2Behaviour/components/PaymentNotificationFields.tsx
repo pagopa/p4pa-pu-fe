@@ -3,10 +3,10 @@ import Stack from '@mui/material/Stack';
 import { Control } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import Typography from '@mui/material/Typography';
-import { Step2Data } from '../../Step2Behaviour';
+import { DebtTypeOrgForm } from '../../../types';
 
 type PaymentNotificationFieldsProps = {
-  control: Control<Step2Data>;
+  control: Control<DebtTypeOrgForm>;
 };
 
 export const PaymentNotificationFields = ({

@@ -4,14 +4,14 @@ import {
   PaymentMethodSelector,
   PaymentMethodOption
 } from './PaymentMethodSelector';
-import { Step2Data } from '..';
+import { DebtTypeOrgForm } from '../../../types';
 
 // Helper wrapper to test PaymentMethodSelector with react-hook-form
 const renderWithForm = (
   defaultValue: PaymentMethodOption = PaymentMethodOption.FREE
 ) => {
   const Wrapper = () => {
-    const { control, watch } = useForm<Step2Data>({
+    const { control, watch } = useForm<DebtTypeOrgForm>({
       defaultValues: {
         paymentMethod: defaultValue,
         amountCents: 0,
@@ -81,7 +81,7 @@ describe('PaymentMethodSelector', () => {
 
   it('changes selected option and updates rendered field accordingly', () => {
     const Wrapper = () => {
-      const { control, watch, setValue } = useForm<Step2Data>({
+      const { control, watch, setValue } = useForm<DebtTypeOrgForm>({
         defaultValues: {
           paymentMethod: PaymentMethodOption.FREE,
           amountCents: 0,

@@ -1,6 +1,5 @@
 import { Box, Button, Alert } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
-import CustomDataGrid from '../../../../components/DataGrid/CustomDataGrid';
 import {
   GridColDef,
   GridRowSelectionModel,
@@ -9,8 +8,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import { CopyAll } from '@mui/icons-material';
 import { useState, useEffect, useMemo } from 'react';
-import { getDebtPositionTypeOrgOperators } from '../../../../api/debtPositionTypeOrgOperators';
-import { DebtPositionTypeOrgOperatorDTO } from '../../../../../generated/data-contracts';
+import { DebtPositionTypeOrgOperatorDTO } from '../../../../../../generated/apiClient';
+import { getDebtPositionTypeOrgOperators } from '../../../../../api/debtPositionTypeOrgOperators';
+import CustomDataGrid from '../../../../../components/DataGrid/CustomDataGrid';
 
 type OperatorData = {
   id: string;
