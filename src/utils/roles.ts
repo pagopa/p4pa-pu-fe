@@ -16,7 +16,9 @@ const useIsSuperAdmin = () => {
   return superAdmin;
 };
 
-//** this hook returns the exact role of the logged user */
+/** this hook returns the exact role of the logged user
+ *  @returns 'ROLE_ADMIN' | 'ROLE_OPER' | undefined
+ */
 const useWhichRole = () => {
   const { state } = useStore();
   return state.operatorRole;
