@@ -11,20 +11,21 @@ import { DebtTypeCatalogEditSuccess } from './DebtTypeCatalogEdit/DebtTypeCatalo
 import DebtTypesCreated from './DebtTypesCreated/DebtTypesCreated';
 import { DebtTypeOrgCreate } from './DebtTypeOrgCreate';
 import { DebtTypeOrgCreateSuccess } from './DebtTypeOrgCreate/DebtTypeOrgCreateSuccess';
-import { RouteGuard } from '../components/RouteGuard';
+import { RouteGuard } from '../components/RouteGuard/RouteGuard';
 import utils from '../utils';
 
 const deployPath = config.deployPath;
 
-const superAdminGuard = () => utils.roles.useIsSuperAdmin() || false;
-const adminGaurd = () => utils.roles.useWhichRole() == 'ROLE_ADMIN' || false;
+const superAdminGuardCondition = () => utils.roles.useIsSuperAdmin() || false;
+const adminGuardCondition = () =>
+  utils.roles.useWhichRole() == 'ROLE_ADMIN' || false;
 
 export const debtTypesRoutes = [
   {
     id: 'DEBT_TYPES',
     path: `${deployPath}/debt-types/`,
     element: (
-      <RouteGuard evaluation={adminGaurd}>
+      <RouteGuard evaluation={adminGuardCondition}>
         <Layout />
       </RouteGuard>
     ),
@@ -45,7 +46,7 @@ export const debtTypesRoutes = [
         id: 'DEBT_TYPES_CATALOG',
         path: 'catalog',
         element: (
-          <RouteGuard evaluation={superAdminGuard}>
+          <RouteGuard evaluation={superAdminGuardCondition}>
             <DebtTypes />
           </RouteGuard>
         ),
@@ -58,7 +59,7 @@ export const debtTypesRoutes = [
         id: 'DEBT_TYPE_CATALOG_DETAIL',
         path: 'catalog/detail/:debtPositionTypeId',
         element: (
-          <RouteGuard evaluation={superAdminGuard}>
+          <RouteGuard evaluation={superAdminGuardCondition}>
             <DebtTypeCatalogDetailView />
           </RouteGuard>
         ),

@@ -1,8 +1,13 @@
 /* eslint-disable sonarjs/function-return-type */
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { PageRoutes } from '../../App';
 
 export type RouteGuardProps = {
+  /**
+   * Where to redirect if the user is not authorized
+   * @default 'PageRoutes.HOME'
+   */
   redirectTo?: string;
   children: React.ReactNode;
   /**
@@ -12,7 +17,7 @@ export type RouteGuardProps = {
 };
 
 export const RouteGuard = ({
-  redirectTo = '/piattaformaunitaria',
+  redirectTo = PageRoutes.HOME,
   children,
   evaluation
 }: RouteGuardProps) => {
