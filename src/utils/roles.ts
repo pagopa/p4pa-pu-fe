@@ -1,5 +1,6 @@
 import { useFeConfig } from '../hooks/useFeConfig';
 import { useOrganizations } from '../hooks/useOrganizations';
+import { useStore } from '../store/GlobalStore';
 
 /** this hook returns true if the logged user is a super admin */
 const useIsSuperAdmin = () => {
@@ -15,6 +16,13 @@ const useIsSuperAdmin = () => {
   return superAdmin;
 };
 
+//** this hook returns the exact role of the logged user */
+const useWhichRole = () => {
+  const { state } = useStore();
+  return state.operatorRole;
+};
+
 export default {
-  useIsSuperAdmin
+  useIsSuperAdmin,
+  useWhichRole
 };
