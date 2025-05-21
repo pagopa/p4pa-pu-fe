@@ -316,7 +316,8 @@
       "invalidUrl": "Formato URL non valido",
       "fieldRequired": "Campo obbligatorio",
       "checkboxRequired": "Questa conferma è obbligatoria",
-      "invalidIban": "Formato IBAN non valido"
+      "invalidIban": "Formato IBAN non valido",
+      "invalidPostalIban": "Formato conto poste non valido"
     },
     "yes": "Si"
   },

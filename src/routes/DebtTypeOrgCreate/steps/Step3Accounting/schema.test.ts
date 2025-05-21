@@ -17,7 +17,7 @@ describe('step3Schema validation', () => {
 
   it('accepts valid IBANs', () => {
     const validData = {
-      postalIban: 'CH9300762011623852957', // example valid IBAN
+      postalIban: '123456',
       iban: 'DE89370400440532013000'
     };
     const result = step3Schema.safeParse(validData);
@@ -33,7 +33,7 @@ describe('step3Schema validation', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.formErrors.fieldErrors.postalIban).toContain(
-        'commons.validation.invalidIban'
+        'commons.validation.invalidPostalIban'
       );
       expect(result.error.formErrors.fieldErrors.iban).toContain(
         'commons.validation.invalidIban'
