@@ -109,7 +109,7 @@ describe('Step3Accounting', () => {
 
     // Fill postalIban disables iban
     fireEvent.change(postalIbanInput, {
-      target: { value: 'CH9300762011623852957' }
+      target: { value: '123456' }
     });
     await waitFor(() => expect(ibanInput).toBeDisabled());
 
@@ -131,10 +131,7 @@ describe('Step3Accounting', () => {
 
     renderWithForm(<Step3Accounting />, onSubmit);
 
-    fillField(
-      'debtTypeOrgCreate.accounting.postalIban',
-      'CH9300762011623852957'
-    );
+    fillField('debtTypeOrgCreate.accounting.postalIban', '123456');
     fillField('debtTypeOrgCreate.accounting.pspIban', 'CH9300762011623852958');
     fillField('debtTypeOrgCreate.accounting.postalAccount', '123456789');
     fillField('debtTypeOrgCreate.accounting.postalAccountHolder', 'John Doe');
@@ -150,7 +147,7 @@ describe('Step3Accounting', () => {
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith(
         {
-          postalIban: 'CH9300762011623852957',
+          postalIban: '123456',
           iban: 'CH9300762011623852958',
           postalAccountCode: '123456789',
           holderPostalCc: 'John Doe',
@@ -197,7 +194,7 @@ describe('Step3Accounting', () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText('commons.validation.invalidIban')
+        screen.getByText('commons.validation.invalidPostalIban')
       ).toBeInTheDocument();
     });
 
