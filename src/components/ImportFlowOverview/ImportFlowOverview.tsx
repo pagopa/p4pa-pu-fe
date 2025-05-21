@@ -286,7 +286,7 @@ const ImportFlowOverview = ({
                   label: 'dateRange',
                   gridWidth: 4,
                   from: {
-                    label: t('dates.from'),
+                    label: t('commons.importFrom'),
                     errorMessage: t('dates.validations.from'),
                     onChange: handleDateFromChange
                   },
