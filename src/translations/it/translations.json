@@ -93,7 +93,8 @@
       "uploadDate": "Data Caricamento",
       "uploadInProgress": "Caricamento in corso...",
       "downloadFailed": "Errore durante il download.",
-      "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria"
+      "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria",
+      "missingDebtPositionId": "Manca l'ID della posizione debitoria"
     },
     "filters": {
       "accountingDate": {
@@ -551,6 +552,10 @@
       "title": "Sei sicuro di voler eliminare la posizione debitoria?",
       "description": "Una volta eliminata, la posizione debitoria non sarà più possibile pagarla ne modificarla.",
       "descriptionDraft": "Una volta eliminata, tutti i dati saranno cancellati e non potranno essere recuperati."
+    },
+    "dialogDownload": {
+      "title": "L'avviso non può essere scaricato.",
+      "message": "Siamo spiacenti, questo file non può essere scaricato. Possono essere scaricati solo gli avvisi non pagati o con pagamento iniziato."
     },
     "deleteError": "Si è verificato un errore durante l'eliminazione della posizione debitoria. Vi preghiamo di riprovare più tardi.",
     "errorDialog": {
