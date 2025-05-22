@@ -25,7 +25,8 @@ vi.mock('react-router-dom', () => ({
   Navigate: vi.fn(({ to }) => ({
     type: 'div',
     props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
-  }))
+  })),
+  Outlet: vi.fn()
 }));
 
 vi.mock('../../api/debtPositions', () => ({
