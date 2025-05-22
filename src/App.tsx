@@ -21,6 +21,7 @@ import { useStore } from './store/GlobalStore';
 import config from './utils/config';
 import { flowsRoutes } from './routes/flows';
 import { importRoutes } from './routes/import';
+import { classificationsRoutes } from './routes/classifications';
 import { detailRoutes } from './routes/detail';
 import { exportRoutes } from './routes/export';
 import { debtTypesRoutes } from './routes/debtTypes';
@@ -81,7 +82,8 @@ const routesDef = [
       ...exportRoutes,
       ...debtTypesRoutes,
       ...responsesRoutes,
-      ...debtPositionsRoutes
+      ...debtPositionsRoutes,
+      ...classificationsRoutes
     ]
   }
 ];

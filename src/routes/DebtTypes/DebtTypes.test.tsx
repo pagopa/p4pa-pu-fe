@@ -121,7 +121,9 @@ describe('DebtTypes Page', () => {
     const createButton = screen.getByText('Create New');
     fireEvent.click(createButton);
 
-    expect(navigateMock).toHaveBeenCalledWith(PageRoutes.DEBT_TYPE_CREATE);
+    expect(navigateMock).toHaveBeenCalledWith(
+      PageRoutes.DEBT_TYPE_CATALOG_CREATE
+    );
   });
 
   it('handles pagination changes', async () => {

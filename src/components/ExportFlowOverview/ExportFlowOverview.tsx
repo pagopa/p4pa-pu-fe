@@ -21,6 +21,8 @@ import {
 import { downloadExportFile, getExportFiles } from '../../api/exportFiles';
 import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
 import { downloadBlob } from '../../utils/download';
+import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
+import { formatDateTime } from '../../utils/formatters';
 
 export type ExportFlowOverviewProps = {
   routingCategory: string;
@@ -60,6 +62,7 @@ const ExportFlowOverview = ({
   });
 
   const { data, isLoading } = getExportFiles(organizationId, appliedFilters);
+  const isEmptyData = !data?.content || data.content.length === 0;
 
   const handleDownloadFile = async (exportFileId: number) => {
     const result = await downloadExportFile(organizationId, exportFileId);
@@ -72,6 +75,14 @@ const ExportFlowOverview = ({
 
     const { data, fileName } = result;
     downloadBlob(data, fileName);
+  };
+
+  const handleExportFlow = () => {
+    navigate(
+      generatePath(PageRoutes.EXPORT_FLOWS, {
+        category: routingCategory
+      })
+    );
   };
 
   const renderActionCell = (params: GridRenderCellParams) => {
@@ -106,7 +117,7 @@ const ExportFlowOverview = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams) =>
-        params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
+        formatDateTime(params.value as string)
     },
     {
       field: 'operator',
@@ -158,72 +169,89 @@ const ExportFlowOverview = ({
             <Typography variant="h4">{sectionTitle}</Typography>
           </Box>
         )}
-        <FilterContainer
-          items={[
-            {
-              type: COMPONENT_TYPE.textField,
-              label: t('commons.searchName'),
-              adornment: <Search />,
-              gridWidth: 6,
-              value: draftFilters.fileName || '',
-              onChange: (e) => updateDraftFilters({ fileName: e.target.value })
-            },
-            {
-              type: COMPONENT_TYPE.dateRange,
-              label: 'dateRange',
-              gridWidth: 5,
-              from: {
-                label: t('dates.from'),
-                errorMessage: t('dates.validations.from'),
-                value: draftFilters.creationDateFrom
-                  ? new Date(draftFilters.creationDateFrom)
-                  : null,
-                onChange: handleDateFromChange
-              },
-              to: {
-                label: t('dates.to'),
-                errorMessage: t('dates.validations.to'),
-                value: draftFilters.creationDateTo
-                  ? new Date(draftFilters.creationDateTo)
-                  : null,
-                onChange: handleDateToChange
-              }
-            },
-            {
-              type: COMPONENT_TYPE.button,
-              label: t('commons.filters.filterResults'),
-              gridWidth: 1,
-              onClick: applyFilters,
-              disabled: !hasActiveFilters()
-            }
-          ]}
-        />
-        <Box
-          sx={{
-            bgcolor: theme.palette.grey[200],
-            padding: 2
-          }}
-        >
-          <CustomDataGrid
-            rows={data?.content || []}
-            columns={columns}
-            getRowId={(row) => row.exportFileId}
-            disableColumnMenu
-            disableColumnResize
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
-            loading={isLoading}
-            customPagination={{
-              totalPages: data?.totalPages || 1,
-              defaultPageOption: appliedFilters.size,
-              sizePageOptions: [5, 10, 15, 20],
-              onPageChange: (page) =>
-                updatePagination({ page: page - 1, size: appliedFilters.size }),
-              onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
-              currentPage: appliedFilters.page + 1
+        {isEmptyData ? (
+          <EmptyDataGrid
+            title={t('commons.noFlows')}
+            action={{
+              label: t('commons.exportFlows'),
+              onClick: handleExportFlow
             }}
           />
-        </Box>
+        ) : (
+          <>
+            <FilterContainer
+              items={[
+                {
+                  type: COMPONENT_TYPE.textField,
+                  label: t('commons.searchName'),
+                  adornment: <Search />,
+                  gridWidth: 6,
+                  value: draftFilters.fileName || '',
+                  onChange: (e) =>
+                    updateDraftFilters({ fileName: e.target.value })
+                },
+                {
+                  type: COMPONENT_TYPE.dateRange,
+                  label: 'dateRange',
+                  gridWidth: 5,
+                  from: {
+                    label: t('commons.exportFrom'),
+                    errorMessage: t('dates.validations.from'),
+                    value: draftFilters.creationDateFrom
+                      ? new Date(draftFilters.creationDateFrom)
+                      : null,
+                    onChange: handleDateFromChange
+                  },
+                  to: {
+                    label: t('dates.to'),
+                    errorMessage: t('dates.validations.to'),
+                    value: draftFilters.creationDateTo
+                      ? new Date(draftFilters.creationDateTo)
+                      : null,
+                    onChange: handleDateToChange
+                  }
+                },
+                {
+                  type: COMPONENT_TYPE.button,
+                  label: t('commons.filters.filterResults'),
+                  gridWidth: 1,
+                  onClick: applyFilters,
+                  disabled: !hasActiveFilters()
+                }
+              ]}
+            />
+            <Box
+              sx={{
+                bgcolor: theme.palette.grey[200],
+                padding: 2
+              }}
+            >
+              <CustomDataGrid
+                rows={data?.content || []}
+                columns={columns}
+                getRowId={(row) => row.exportFileId}
+                disableColumnMenu
+                disableColumnResize
+                sortModel={sortModel}
+                onSortModelChange={handleSortModelChange}
+                loading={isLoading}
+                customPagination={{
+                  totalPages: data?.totalPages || 1,
+                  defaultPageOption: appliedFilters.size,
+                  sizePageOptions: [5, 10, 15, 20],
+                  onPageChange: (page) =>
+                    updatePagination({
+                      page: page - 1,
+                      size: appliedFilters.size
+                    }),
+                  onPageSizeChange: (size) =>
+                    updatePagination({ size, page: 0 }),
+                  currentPage: appliedFilters.page + 1
+                }}
+              />
+            </Box>
+          </>
+        )}
       </Stack>
     </>
   );

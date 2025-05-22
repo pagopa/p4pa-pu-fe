@@ -13,6 +13,7 @@ import {
 import { useBeneficiaryManagement } from './useBeneficiaryManagement';
 import { useInstallmentManagement } from './useInstallmentManagement';
 import { formatDate } from '../utils/formatters';
+import { DebtPositionTypeEnum } from '../models/DebtPositionType';
 
 /**
  * Type per i risultati dell'hook
@@ -104,7 +105,7 @@ export function usePaymentManagement(
       return;
     }
 
-    if (paymentOption === 'INSTALLMENTS') {
+    if (paymentOption === DebtPositionTypeEnum.INSTALLMENTS) {
       if (isMultibeneficiary) {
         setValue('isMultibeneficiary.value', false);
 
@@ -114,7 +115,7 @@ export function usePaymentManagement(
       }
 
       setValue('amount.value', '');
-    } else if (paymentOption === 'SINGLE') {
+    } else if (paymentOption === DebtPositionTypeEnum.SINGLE) {
       if (installmentManagement.fields.length > 0) {
         setValue('amount.value', '');
       }
@@ -134,7 +135,7 @@ export function usePaymentManagement(
   const validatePaymentData = useCallback((): boolean => {
     trigger(['paymentObject.value', 'paymentOption.value', 'amount.value']);
 
-    if (paymentOption === 'SINGLE') {
+    if (paymentOption === DebtPositionTypeEnum.SINGLE) {
       if (initialData.flagMandatoryDueDate) {
         trigger('dueDate.value');
       }
@@ -142,7 +143,7 @@ export function usePaymentManagement(
       if (isMultibeneficiary) {
         beneficiaryManagement.updateAmountValidations();
       }
-    } else if (paymentOption === 'INSTALLMENTS') {
+    } else if (paymentOption === DebtPositionTypeEnum.INSTALLMENTS) {
       installmentManagement.fields.forEach((_, index) => {
         trigger(`installments.${index}.amount`);
         trigger(`installments.${index}.dueDate`);
@@ -178,7 +179,7 @@ export function usePaymentManagement(
       flagMandatoryDueDate: initialData.flagMandatoryDueDate
     };
 
-    if (paymentOption === 'SINGLE' && isMultibeneficiary) {
+    if (paymentOption === DebtPositionTypeEnum.SINGLE && isMultibeneficiary) {
       const currentBeneficiaries = beneficiaryManagement.fields.map(
         (_, index) => {
           return getValues(`beneficiaries.${index}`) as Beneficiary;
@@ -188,7 +189,7 @@ export function usePaymentManagement(
       formattedValues.beneficiaries = currentBeneficiaries;
     }
 
-    if (paymentOption === 'INSTALLMENTS') {
+    if (paymentOption === DebtPositionTypeEnum.INSTALLMENTS) {
       formattedValues.installments =
         installmentManagement.getInstallmentsData();
     }
@@ -210,7 +211,7 @@ export function usePaymentManagement(
     isMultibeneficiary,
     totalAmount,
 
-    ...(paymentOption === 'SINGLE' && isMultibeneficiary
+    ...(paymentOption === DebtPositionTypeEnum.SINGLE && isMultibeneficiary
       ? {
           beneficiaries: {
             fields: beneficiaryManagement.fields,
@@ -221,7 +222,7 @@ export function usePaymentManagement(
         }
       : {}),
 
-    ...(paymentOption === 'INSTALLMENTS'
+    ...(paymentOption === DebtPositionTypeEnum.INSTALLMENTS
       ? {
           installments: {
             fields: installmentManagement.fields,

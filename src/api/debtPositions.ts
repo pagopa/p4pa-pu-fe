@@ -3,17 +3,18 @@ import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import {
   debtPositionDetailDTOSchema,
+  debtPositionDTOSchema,
   installmentDetailDTOSchema
 } from '../../generated/zod-schema';
 import { AxiosError } from 'axios';
+import { DebtPositionDTO } from '../../generated/data-contracts';
+import { extractFilename } from '../utils/formatters';
 
 type DebtPositionViewParams = Parameters<
   typeof utils.apiClient.bff.getDebtPositionViews
 >;
 
-export type DebtPositionViewQuery = DebtPositionViewParams[1] & {
-  status?: DebtPositionViewParams[1]['status'];
-};
+export type DebtPositionViewQuery = DebtPositionViewParams[1];
 
 export type DebtPositionViewRequest = {
   organizationId: DebtPositionViewParams[0];
@@ -122,22 +123,102 @@ const getDebtPositionDetail = (
 };
 
 /** delete a debt position type by its debtPositionTypeId, if allowed */
-const deleteDebtPositionType = (
-  debtPositionTypeId: number,
+const deleteDebtPositionType = (debtPositionTypeId: number) =>
+  useMutation({
+    mutationFn: () =>
+      utils.apiClient.bff.deleteDebtPositionType(debtPositionTypeId)
+  });
+
+/** delete a debt position type org by its organizationId and debtPositionTypeOrgId, if allowed */
+const deleteDebtPositionTypeOrgs = (
+  organizationId: number,
+  debtPositionTypeOrgId: number
+) =>
+  useMutation({
+    mutationFn: () =>
+      utils.apiClient.bff.deleteDebtPositionTypeOrg(
+        organizationId,
+        debtPositionTypeOrgId
+      )
+  });
+
+/** delete a debt position by its organizationId and debtPositionId, if allowed */
+const deleteDebtPosition = (
+  organizationId: number,
+  debtPositionId: number,
   onSuccess?: () => void,
   onError?: (error: AxiosError) => void
 ) =>
   useMutation({
     mutationFn: () =>
-      utils.apiClient.bff.deleteDebtPositionType(debtPositionTypeId),
+      utils.apiClient.bff.deleteDebtPosition(organizationId, debtPositionId),
     onSuccess,
     onError
   });
+
+/** create a new debt position */
+const createDebtPosition = (
+  onSuccess?: (response: DebtPositionDTO, paymentObject?: string) => void,
+  onError?: (error: AxiosError) => void
+) =>
+  useMutation({
+    mutationKey: ['createDebtPosition'],
+    mutationFn: async (params: {
+      body: DebtPositionDTO;
+      paymentObject?: string;
+    }) => {
+      const response = await utils.apiClient.bff.createDebtPosition(
+        params.body
+      );
+      if (response.data) {
+        parseAndLog(debtPositionDTOSchema, response.data);
+      }
+      return { response: response.data, paymentObject: params.paymentObject };
+    },
+    onSuccess: (data) => {
+      onSuccess?.(data.response, data.paymentObject);
+    },
+    onError
+  });
+
+/**
+ * Downloads the payment notice for a specific installment
+ * @param organizationId Organization ID
+ * @param debtPositionId Debt position ID
+ * @param iuv IUV code of the installment
+ * @returns Promise with file data and filename or null in case of error
+ */
+const downloadPaymentNotice = async (
+  organizationId: number,
+  debtPositionId: number,
+  iuv: string
+): Promise<{ data: Blob; fileName: string } | null> => {
+  try {
+    const response = await utils.apiClient.bff.getPaymentNotice(
+      organizationId,
+      debtPositionId,
+      { iuv },
+      { format: 'blob' }
+    );
+
+    const contentDisposition = response.headers['content-disposition'] || '';
+    const fileName = extractFilename(contentDisposition) || `notice-${iuv}.pdf`;
+
+    return { data: response.data, fileName };
+  } catch (error) {
+    console.error('Error downloading payment notice:', error);
+    return null;
+  }
+};
 
 export default {
   getDebtPositionViews,
   getInstallments,
   getInstallmentDetail,
   getDebtPositionDetail,
-  deleteDebtPositionType
+  deleteDebtPositionType,
+  deleteDebtPositionTypeOrgs,
+  deleteDebtPosition,
+  createDebtPosition,
+  downloadPaymentNotice
 };

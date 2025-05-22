@@ -17,18 +17,90 @@ describe('SearchCard', () => {
     ],
     button: [
       {
-        text: 'Search',
+        text: 'Filter',
         variant: 'contained' as const,
         onClick: vi.fn()
       }
     ],
     multiFilterConfig: {
-      searchTest: {
-        label: 'Test Search',
+      AMOUNT: {
+        label: 'Amount',
         fields: [
           {
             type: COMPONENT_TYPE.textField,
-            label: 'Test Field'
+            label: 'Amount Field'
+          }
+        ]
+      },
+      BILL_CODE: {
+        label: 'Bill Code',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'Bill Code Field'
+          }
+        ]
+      },
+      DOCUMENT_CODE: {
+        label: 'Document Code',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'Document Code Field'
+          }
+        ]
+      },
+      IUV: {
+        label: 'IUV',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'IUV Field'
+          }
+        ]
+      },
+      PAYER: {
+        label: 'PAYER',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'PAYER Field'
+          }
+        ]
+      },
+      REPORT_ID: {
+        label: 'REPORT_ID',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'REPORT_ID Field'
+          }
+        ]
+      },
+      TEMPORARY_CODE: {
+        label: 'TEMPORARY_CODE',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'TEMPORARY_CODE Field'
+          }
+        ]
+      },
+      ACCOUNTING_DATE: {
+        label: 'ACCOUNTING_DATE',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'ACCOUNTING_DATE Field'
+          }
+        ]
+      },
+      VALUE_DATE: {
+        label: 'VALUE_DATE',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'VALUE_DATE Field'
           }
         ]
       }
@@ -52,7 +124,7 @@ describe('SearchCard', () => {
   it('renders select field with options', () => {
     render(<SearchCard {...defaultProps} />);
 
-    const select = screen.getByLabelText('commons.searchFor');
+    const select = screen.getByLabelText('Search Field');
     expect(select).toBeInTheDocument();
   });
 
@@ -60,7 +132,7 @@ describe('SearchCard', () => {
     render(<SearchCard {...defaultProps} />);
 
     const button = screen.getByRole('button', { name: '' });
-    expect(button).toHaveAttribute('text', 'Search');
+    expect(button).toHaveAttribute('text', 'Filter');
 
     fireEvent.click(button);
     expect(defaultProps.button[0].onClick).toHaveBeenCalled();
@@ -69,7 +141,7 @@ describe('SearchCard', () => {
   it('renders MultiFilter when enabled', () => {
     render(<SearchCard {...defaultProps} />);
 
-    expect(screen.getByLabelText('commons.searchFor')).toBeInTheDocument();
+    expect(screen.getByLabelText('Search Field')).toBeInTheDocument();
   });
 
   it('does not render MultiFilter when disabled', () => {

@@ -4,6 +4,17 @@ import { DebtPositionsInstallmentDetail } from './DebtPositionsInstallmentDetail
 import debtPositions from '../../api/debtPositions';
 import { useLocation, useParams } from 'react-router-dom';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
+import { downloadBlob } from '../../utils/download';
+import utils from '../../utils';
+import { STATE } from '../../store/types';
+import { InstallmentStatus } from '../../../generated/apiClient';
+import React from 'react';
+
+global.ResizeObserver = vi.fn().mockImplementation(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn()
+}));
 
 vi.mock('react-router-dom', () => ({
   useNavigate: vi.fn(),
@@ -14,27 +25,47 @@ vi.mock('react-router-dom', () => ({
   Navigate: vi.fn(({ to }) => ({
     type: 'div',
     props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
-  }))
+  })),
+  Outlet: vi.fn()
 }));
 
 vi.mock('../../api/debtPositions', () => ({
-  default: { getInstallmentDetail: vi.fn() }
+  default: {
+    getInstallmentDetail: vi.fn(),
+    downloadPaymentNotice: vi.fn()
+  }
 }));
+
+vi.mock('../../utils/download', () => ({
+  downloadBlob: vi.fn()
+}));
+
+vi.mock('../../utils', () => ({
+  default: {
+    notify: {
+      emit: vi.fn()
+    }
+  }
+}));
+
+const mockOrganizationId = 123;
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn(() => ({
-    state: { ORGANIZATION_ID: 3, customBreadcrumbsItems: [] }
+    state: {
+      [STATE.ORGANIZATION_ID]: mockOrganizationId,
+      customBreadcrumbsItems: []
+    }
   })),
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
 describe('DebtPositionsInstallmentDetail', () => {
-  const mockOrganizationId = 123;
   const mockUseParams = vi.mocked(useParams);
   const mockPaidInstallment = {
     installmentId: 288,
     paymentOptionId: 301,
-    status: 'PAID',
+    status: InstallmentStatus.PAID,
     debtor: {
       entityType: 'F',
       fiscalCode: 'RSSMRA92A12B123A',
@@ -50,12 +81,13 @@ describe('DebtPositionsInstallmentDetail', () => {
     iur: '987654321098765',
     debtPositionTypeOrgDescription: 'Test for Create Debt Position',
     debtPositionDescription: 'Debt Position Description',
-    debtPositionId: 239
+    debtPositionId: 239,
+    iuv: '302000000000000001'
   };
 
   const mockUnpaidInstallment = {
     ...mockPaidInstallment,
-    status: 'UNPAID',
+    status: InstallmentStatus.UNPAID,
     paymentDateTime: undefined,
     payer: undefined,
     pspCompanyName: undefined,
@@ -131,5 +163,137 @@ describe('DebtPositionsInstallmentDetail', () => {
 
     fireEvent.click(showMore);
     expect(drawerTitle).toBeVisible();
+  });
+
+  it('downloads PDF when download button is clicked for UNPAID installment', async () => {
+    const mockBlob = new Blob(['test content'], { type: 'application/pdf' });
+    const mockFileName = 'notice-302000000000000001.pdf';
+
+    (
+      debtPositions.downloadPaymentNotice as unknown as ReturnType<typeof vi.fn>
+    ).mockResolvedValue({
+      data: mockBlob,
+      fileName: mockFileName
+    });
+
+    (
+      debtPositions.getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({ data: mockUnpaidInstallment });
+
+    render(<DebtPositionsInstallmentDetail />);
+
+    const downloadButton = screen.getByText('commons.downloadInstallment');
+    expect(downloadButton).toBeInTheDocument();
+
+    fireEvent.click(downloadButton);
+
+    expect(debtPositions.downloadPaymentNotice).toHaveBeenCalledWith(
+      mockOrganizationId,
+      mockUnpaidInstallment.debtPositionId,
+      mockUnpaidInstallment.iuv
+    );
+
+    await vi.waitFor(() => {
+      expect(downloadBlob).toHaveBeenCalledWith(mockBlob, mockFileName);
+    });
+  });
+
+  it('shows dialog when trying to download PAID installment', async () => {
+    render(<DebtPositionsInstallmentDetail />);
+
+    const downloadButton = screen.getByText('commons.downloadInstallment');
+    expect(downloadButton).toBeInTheDocument();
+
+    fireEvent.click(downloadButton);
+
+    expect(
+      screen.getByText('debtPositionInstallmentDetail.dialogDownload.title')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('debtPositionInstallmentDetail.dialogDownload.message')
+    ).toBeInTheDocument();
+
+    expect(debtPositions.downloadPaymentNotice).not.toHaveBeenCalled();
+  });
+
+  it('closes dialog when clicking cancel button', async () => {
+    vi.mock('../GenericDialog/GenericDialog', () => ({
+      default: ({
+        onConfirm,
+        open,
+        title,
+        message,
+        confirmLabel
+      }: {
+        onConfirm?: () => void;
+        open: boolean;
+        title: string;
+        message?: string;
+        confirmLabel?: string;
+      }) => {
+        if (open) {
+          return (
+            <div role="dialog">
+              <div>{title}</div>
+              {message && <div>{message}</div>}
+              <button onClick={onConfirm}>{confirmLabel}</button>
+            </div>
+          );
+        }
+        return null;
+      }
+    }));
+
+    render(<DebtPositionsInstallmentDetail />);
+
+    const downloadButton = screen.getByText('commons.downloadInstallment');
+    fireEvent.click(downloadButton);
+
+    expect(
+      screen.getByText('debtPositionInstallmentDetail.dialogDownload.title')
+    ).toBeInTheDocument();
+
+    const closeButton = screen.getByText('commons.close');
+    fireEvent.click(closeButton);
+  });
+
+  it('shows error notification when download fails', async () => {
+    (
+      debtPositions.getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({ data: mockUnpaidInstallment });
+
+    (
+      debtPositions.downloadPaymentNotice as unknown as ReturnType<typeof vi.fn>
+    ).mockResolvedValue(null);
+
+    render(<DebtPositionsInstallmentDetail />);
+
+    const downloadButton = screen.getByText('commons.downloadInstallment');
+    fireEvent.click(downloadButton);
+
+    await vi.waitFor(() => {
+      expect(utils.notify.emit).toHaveBeenCalledWith(
+        'commons.files.downloadFailed',
+        'error'
+      );
+    });
+  });
+
+  it('shows error notification when IUV is missing', async () => {
+    const installmentWithoutIuv = { ...mockPaidInstallment, iuv: undefined };
+    (
+      debtPositions.getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({ data: installmentWithoutIuv });
+
+    render(<DebtPositionsInstallmentDetail />);
+
+    const downloadButton = screen.getByText('commons.downloadInstallment');
+    fireEvent.click(downloadButton);
+
+    expect(utils.notify.emit).toHaveBeenCalledWith(
+      'commons.files.missingIuv',
+      'error'
+    );
+    expect(debtPositions.downloadPaymentNotice).not.toHaveBeenCalled();
   });
 });

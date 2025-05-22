@@ -13,6 +13,8 @@ import {
   UseFormTrigger
 } from 'react-hook-form';
 
+import { DebtPositionTypeEnum } from './DebtPositionType';
+
 /**
  * Type representing a payment beneficiary
  */
@@ -27,8 +29,6 @@ export type Beneficiary = {
   remittance: string;
   /** IBAN of the beneficiary */
   iban: string;
-  /** Postal account of the beneficiary */
-  postalAccount: string;
   /** Taxonomy code */
   taxonomyCode: string;
   /** Unique ID of the beneficiary */
@@ -48,7 +48,9 @@ export type Installment = {
   /** Remittance information (payment reason) */
   remittance: string;
   /** Flag indicating if the installment has multiple beneficiaries */
-  isMultibeneficiary?: boolean;
+  isMultibeneficiary: boolean;
+  /** Flag indicating if beneficiaries are the same as the previous installment */
+  sameBeneficiariesAsBefore?: boolean;
   /** List of installment beneficiaries */
   beneficiaries?: Array<Beneficiary>;
   /** Unique ID of the installment */
@@ -58,9 +60,10 @@ export type Installment = {
 };
 
 /**
- * Enumeration representing available payment options
+ * Type representing available payment options
+ * Uses DebtPositionTypeEnum to avoid duplication
  */
-export type PaymentOption = 'SINGLE' | 'INSTALLMENTS';
+export type PaymentOption = DebtPositionTypeEnum;
 
 /**
  * Type representing a property with value and readonly flag
@@ -121,6 +124,7 @@ export type InstallmentValidators = {
   amount: FieldValidator;
   dueDate: {
     required: string | boolean;
+    validate?: (value: unknown) => boolean | string;
   };
 };
 
@@ -150,7 +154,7 @@ export type AmountValidationRules = {
   /** Error message if the value is invalid */
   invalidValue: string;
   /** Error message if the value is negative */
-  negative: string;
+  positive: string;
   /** Error message if the value is zero */
   zero: string;
   /** Error message if the beneficiaries total doesn't match */

@@ -1,8 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import Step1GeneralConfiguration, {
-  Step1Data
-} from './Step1GeneralConfiguration';
+import Step1GeneralConfiguration from './Step1GeneralConfiguration';
+import { Step1Data } from '../../../../models/DebtPositionType';
 import { useStore } from '../../../../store/GlobalStore';
 import { useDebtPositionsTypeOrg } from '../../../../hooks/useDebtPositionsTypeOrg';
 import { useTranslation } from 'react-i18next';

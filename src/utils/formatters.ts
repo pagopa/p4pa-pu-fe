@@ -2,6 +2,7 @@ import { format, parseISO } from 'date-fns';
 import { endOfDay } from 'date-fns/endOfDay';
 import { startOfDay } from 'date-fns/startOfDay';
 import { it } from 'date-fns/locale';
+import i18n from '../translations/i18n';
 
 type optionMapItem = {
   label: string;
@@ -25,12 +26,20 @@ export function moneyFormat(
   }).format(amount ? amount / Math.pow(10, decimalDigits) : 0);
 }
 
+export function euroToCents(amount: string | number): number {
+  const numericAmount =
+    typeof amount === 'string' ? parseFloat(amount.replace(',', '.')) : amount;
+  return Math.round(numericAmount * 100);
+}
+
 export function optionMapsConverter(
-  items: Array<string>
+  items: Array<string>,
+  uniqueTranslationPath?: string
 ): Array<optionMapItem> {
   const sortedItems = sortItems(items);
+  const label = uniqueTranslationPath ? `${uniqueTranslationPath}.` : '';
   return sortedItems.map((item) => ({
-    label: item,
+    label: i18n.t(`${label}${item}`),
     value: item
   }));
 }

@@ -1,49 +1,60 @@
 import { useEffect, useState } from 'react';
 import { DebtPositionTypeOrg } from '../../generated/apiClient';
 import { useTranslation } from 'react-i18next';
-import { getDebtPositionsTypes } from '../api/debtPositionsTypes';
+import { DebtPositionType } from '../models/DebtPositionType';
+import utils from '../utils';
+import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
 
 export const useDebtPositionsTypeOrg = ({
-  organizationId
+  organizationId,
+  includeAllOption = true
 }: {
   organizationId: number;
+  includeAllOption?: boolean;
 }) => {
   const [debtPositionsTypes, setDebtPositionsTypes] = useState<
-    Array<{ label: string; value: number }>
+    Array<DebtPositionType>
   >([]);
   const { t } = useTranslation();
 
-  const debtPositionsTypesQuery = getDebtPositionsTypes({
+  const debtPositionsTypesQuery = getDebtPositionTypeOrgs({
     organizationId
   });
 
-  const { data, isLoading, isError, isSuccess, error } =
-    debtPositionsTypesQuery;
+  const { data, isLoading, isError, isSuccess } = debtPositionsTypesQuery;
 
   useEffect(() => {
     if (isSuccess && data) {
       const dueTypesMap = data
         .filter(
           (type: DebtPositionTypeOrg) =>
-            type?.description && type?.debtPositionTypeOrgId
+            type?.description && type?.debtPositionTypeOrgId !== undefined
         )
-        .map((type) => ({
-          label: type?.description ?? '',
-          value: type?.debtPositionTypeOrgId ?? 0
-        }))
-        .sort((a, b) => a.label.localeCompare(b.label));
+        .sort((a, b) => a.description.localeCompare(b.description))
+        .map((type: DebtPositionTypeOrg) => ({
+          label: type.description,
+          value: type.debtPositionTypeOrgId as number,
+          flagMandatoryDueDate: type.flagMandatoryDueDate
+        }));
 
-      setDebtPositionsTypes([
-        { label: t('commons.all'), value: 0 },
-        ...dueTypesMap
-      ]);
+      setDebtPositionsTypes(
+        includeAllOption
+          ? [
+              {
+                label: t('commons.all'),
+                value: 0,
+                flagMandatoryDueDate: false
+              },
+              ...dueTypesMap
+            ]
+          : dueTypesMap
+      );
     }
 
     if (isError) {
-      // TODO: Handle error (e.g., show a toast)
-      console.error('Failed to fetch fe config', error);
+      utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
     }
-  }, [data, isLoading, isError, isSuccess]);
+  }, [data, isLoading, isError, isSuccess, t, includeAllOption]);
 
   return { optionsMap: debtPositionsTypes, ...debtPositionsTypesQuery };
 };

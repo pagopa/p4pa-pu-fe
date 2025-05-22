@@ -12,8 +12,8 @@ import { useDateRange } from '../../hooks/useDateRange';
 import { FormComponent } from '../FormComponent';
 import {
   ExportFileTypeEnum,
-  PaidExportFileRequestDTO,
-  ReceiptsArchivingExportFileRequestDTO
+  PaidExportFileRequest,
+  ReceiptsArchivingExportFileRequest
 } from '../../../generated/apiClient';
 import {
   createPaidExportFile,
@@ -73,7 +73,7 @@ export const ExportFlowPage = () => {
     const formattedTo = new Date(toDate).toISOString().split('T')[0];
 
     if (category === 'receipt') {
-      const exportRequest: PaidExportFileRequestDTO = {
+      const exportRequest: PaidExportFileRequest = {
         organizationId,
         exportFileType: ExportFileTypeEnum.PAID,
         fileVersion: formData.fileVersion,
@@ -93,7 +93,7 @@ export const ExportFlowPage = () => {
         {
           onSuccess: () => {
             navigate(
-              generatePath(PageRoutes.RESPONSES_THANKYOU, {
+              generatePath(PageRoutes.RESPONSES_SUCCESS, {
                 category: 'telematic-receipt-export'
               })
             );
@@ -105,7 +105,7 @@ export const ExportFlowPage = () => {
         }
       );
     } else if (category === 'conservation') {
-      const exportRequest: ReceiptsArchivingExportFileRequestDTO = {
+      const exportRequest: ReceiptsArchivingExportFileRequest = {
         organizationId,
         exportFileType: ExportFileTypeEnum.RECEIPTS_ARCHIVING,
         fileVersion: 'v1.0',
@@ -122,7 +122,7 @@ export const ExportFlowPage = () => {
         {
           onSuccess: () => {
             navigate(
-              generatePath(PageRoutes.RESPONSES_THANKYOU, {
+              generatePath(PageRoutes.RESPONSES_SUCCESS, {
                 category: 'conservation-export'
               })
             );

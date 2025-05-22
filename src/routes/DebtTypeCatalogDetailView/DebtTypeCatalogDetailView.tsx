@@ -2,7 +2,7 @@ import { Box, Button, Stack } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { DetailAccordion } from '../../components/DetailAccordion/DetailAccordion';
 import {
   AccordionSectionConfig,
@@ -15,6 +15,7 @@ import { useStore } from '../../store/GlobalStore';
 import { getDebtPositionTypeDetail } from '../../api/debtPositionTypeDetail';
 import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../App';
+import { isAxiosError } from 'axios';
 
 export const DebtTypeCatalogDetailView = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -30,18 +31,6 @@ export const DebtTypeCatalogDetailView = () => {
   const { debtPositionTypeId } = useParams<{ debtPositionTypeId: string }>();
   const navigate = useNavigate();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-
-  const deleteDebtPositionType = debtPositions.deleteDebtPositionType(
-    Number(debtPositionTypeId),
-    () => navigate(PageRoutes.DEBT_TYPES_CATALOG),
-    (error) => {
-      setOpenErrorDialog(true);
-      if (error.response?.status === 409) {
-        return setErrorDescription('alreadyUsedDescription');
-      }
-      setErrorDescription('genericErrorDescription');
-    }
-  );
 
   if (isNaN(Number(debtPositionTypeId))) {
     // TODO
@@ -74,13 +63,31 @@ export const DebtTypeCatalogDetailView = () => {
       buttonText: t('commons.edit'),
       color: 'primary' as const,
       variant: 'contained' as const,
-      onActionClick: () => console.log('edit')
+      onActionClick: () =>
+        navigate(
+          generatePath(PageRoutes.DEBT_TYPE_CATALOG_EDIT, {
+            debtPositionTypeId: debtPositionTypeId
+          })
+        )
     }
   ];
 
+  const deleteDebtPositionType = debtPositions.deleteDebtPositionType(
+    Number(debtPositionTypeId)
+  );
+
   const handleDeleteConfirm = async () => {
     setOpenDeleteDialog(false);
-    deleteDebtPositionType.mutate();
+    try {
+      await deleteDebtPositionType.mutateAsync();
+      navigate(PageRoutes.DEBT_TYPES_CATALOG);
+    } catch (error: unknown) {
+      setOpenErrorDialog(true);
+      if (isAxiosError(error) && error.response?.status === 409) {
+        return setErrorDescription('alreadyUsedDescription');
+      }
+      setErrorDescription('genericErrorDescription');
+    }
   };
 
   const handleErrorConfirm = () => {

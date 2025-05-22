@@ -1,6 +1,6 @@
 import { Add, Search } from '@mui/icons-material';
 import { Box, Tab, Tabs, Grid } from '@mui/material';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
@@ -20,24 +20,29 @@ export const DebtTypesCreated = () => {
 
   const [codeFilter, setCodeFilter] = useState('');
   const [descriptionFilter, setDescriptionFilter] = useState('');
-
   const [IPACodeFilter, setIPACodeFilter] = useState('');
+
+  const myOrgSearchRef = useRef<(() => void) | null>(null);
+  const managedOrgsSearchRef = useRef<(() => void) | null>(null);
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
 
-  const isMyOrgFilterActive = () =>
-    codeFilter !== '' || descriptionFilter !== '';
-
-  const isManagedOrgsFilterActive = () => IPACodeFilter !== '';
-
   const handleSearch = () => {
-    if (tabValue === 0) {
-      console.log('code:', codeFilter, 'description:', descriptionFilter);
-    } else {
-      console.log('IPA Code:', IPACodeFilter);
+    if (tabValue === 0 && myOrgSearchRef.current) {
+      myOrgSearchRef.current();
+    } else if (tabValue === 1 && managedOrgsSearchRef.current) {
+      managedOrgsSearchRef.current();
     }
+  };
+
+  const registerMyOrgSearch = (searchFn: () => void) => {
+    myOrgSearchRef.current = searchFn;
+  };
+
+  const registerManagedOrgsSearch = (searchFn: () => void) => {
+    managedOrgsSearchRef.current = searchFn;
   };
 
   const renderFilters = () => {
@@ -65,7 +70,6 @@ export const DebtTypesCreated = () => {
               type: COMPONENT_TYPE.button,
               label: t('commons.search'),
               onClick: handleSearch,
-              disabled: !isMyOrgFilterActive(),
               gridWidth: 2
             }
           ]}
@@ -77,7 +81,7 @@ export const DebtTypesCreated = () => {
           items={[
             {
               type: COMPONENT_TYPE.textField,
-              label: t('commons.searchForIPACode'),
+              label: t('commons.searchForOrganizationName'),
               value: IPACodeFilter,
               adornment: <Search />,
               onChange: (e) => setIPACodeFilter(e.target.value),
@@ -87,7 +91,6 @@ export const DebtTypesCreated = () => {
               type: COMPONENT_TYPE.button,
               label: t('commons.search'),
               onClick: handleSearch,
-              disabled: !isManagedOrgsFilterActive(),
               gridWidth: 1.5
             }
           ]}
@@ -133,7 +136,7 @@ export const DebtTypesCreated = () => {
           {
             icon: <Add />,
             buttonText: t('debtTypesCreated.callToAction'),
-            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_CREATE)
+            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_ORG_CREATE)
           }
         ]}
         description={t(
@@ -158,9 +161,13 @@ export const DebtTypesCreated = () => {
           <MyOrg
             codeFilter={codeFilter}
             descriptionFilter={descriptionFilter}
+            onSearch={registerMyOrgSearch}
           />
         ) : (
-          <ManagedOrgs IPACodeFilter={IPACodeFilter} />
+          <ManagedOrgs
+            IPACodeFilter={IPACodeFilter}
+            onSearch={registerManagedOrgsSearch}
+          />
         )}
       </Box>
     </>

@@ -31,7 +31,7 @@ const ImportFlow = () => {
   } = useStore();
 
   const config = importFlowConfig[category as keyof typeof importFlowConfig];
-  const thankyouPage = generatePath(PageRoutes.RESPONSES_THANKYOU, {
+  const thankyouPage = generatePath(PageRoutes.RESPONSES_SUCCESS, {
     category: config.category
   });
 

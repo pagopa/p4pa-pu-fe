@@ -5,108 +5,86 @@ import {
   GridRenderCellParams,
   GridSortModel
 } from '@mui/x-data-grid';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { ArrowForwardIos } from '@mui/icons-material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-
-type MyOrgData = {
-  id: string;
-  managedCode: string;
-  debtType: string;
-  description: string;
-  lastUpdate: string;
-  enabledOperators: number;
-};
-
-const mockData: Array<MyOrgData> = [
-  {
-    id: '1',
-    managedCode: '00000',
-    debtType: 'test 1',
-    description: 'a',
-    lastUpdate: '15/10/2024 12:42:09',
-    enabledOperators: 50
-  },
-  {
-    id: '2',
-    managedCode: '00001',
-    debtType: 'test 2',
-    description: 'ab',
-    lastUpdate: '15/10/2024 12:42:09',
-    enabledOperators: 100
-  },
-  {
-    id: '3',
-    managedCode: '00002',
-    debtType: 'test 3',
-    description: 'abc',
-    lastUpdate: '15/10/2024 12:42:09',
-    enabledOperators: 23
-  },
-  {
-    id: '4',
-    managedCode: '00003',
-    debtType: 'test 4',
-    description: 'abcd',
-    lastUpdate: '15/10/2024 12:42:09',
-    enabledOperators: 1000
-  }
-];
+import useDebtTypesCreatedFilters, {
+  FilterParams
+} from '../../../hooks/useDebtTypesCreatedFilters';
+import { useDebtPositionTypeOrgSearch } from '../../../api/debtTypesCreated';
+import { DebtPositionTypeOrgWithCount } from '../../../../generated/data-contracts';
+import { useStore } from '../../../store/GlobalStore';
+import { STATE } from '../../../store/types';
+import { formatDateTime } from '../../../utils/formatters';
+import { generatePath, useNavigate } from 'react-router-dom';
+import { PageRoutes } from '../../../App';
 
 type MyOrgProps = {
   codeFilter: string;
   descriptionFilter: string;
+  onSearch: (searchFn: () => void) => void;
 };
 
-export const MyOrg = ({ codeFilter, descriptionFilter }: MyOrgProps) => {
+export const MyOrg = ({
+  codeFilter,
+  descriptionFilter,
+  onSearch
+}: MyOrgProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const [data, setData] = useState<Array<MyOrgData>>([]);
+  const { state } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  const [pagination, setPagination] = useState({
-    page: 0,
-    size: 10
+  const { mutate, data } = useDebtPositionTypeOrgSearch();
+
+  const {
+    appliedFilters,
+    updateDraftFilters,
+    applyFilters,
+    updatePagination,
+    sortModel,
+    handleSortModelChange
+  } = useDebtTypesCreatedFilters({
+    initialFilters: {
+      code: codeFilter,
+      description: descriptionFilter
+    }
   });
 
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  useEffect(() => {
+    updateDraftFilters({
+      code: codeFilter,
+      description: descriptionFilter
+    });
+  }, [codeFilter, descriptionFilter, updateDraftFilters]);
 
   useEffect(() => {
-    let filteredData = [...mockData];
+    const initialFilters: FilterParams = {
+      page: 0,
+      size: 10
+    };
 
-    if (codeFilter) {
-      filteredData = filteredData.filter((item) =>
-        item.managedCode.toLowerCase().includes(codeFilter.toLowerCase())
-      );
-    }
+    if (codeFilter) initialFilters.code = codeFilter;
+    if (descriptionFilter) initialFilters.description = descriptionFilter;
 
-    if (descriptionFilter) {
-      filteredData = filteredData.filter((item) =>
-        item.description.toLowerCase().includes(descriptionFilter.toLowerCase())
-      );
-    }
+    mutate({ organizationId, filters: initialFilters });
+  }, []);
 
-    setData(filteredData);
-  }, [codeFilter, descriptionFilter, pagination, sortModel]);
+  useEffect(() => {
+    const performSearch = () => {
+      const filters = applyFilters();
+      mutate({ organizationId, filters });
+    };
 
-  const updatePagination = (newPagination: Partial<typeof pagination>) => {
-    setPagination((prev) => ({ ...prev, ...newPagination }));
-  };
-
-  const handleSortModelChange = (model: GridSortModel) => {
-    setSortModel(model);
-  };
+    onSearch(performSearch);
+  }, [onSearch, applyFilters, mutate, organizationId]);
 
   const columns: Array<GridColDef> = [
     {
-      field: 'managedCode',
+      field: 'code',
       headerName: t('debtTypesCreated.myOrganizationDataGrid.code'),
-      flex: 1,
-      minWidth: 100
-    },
-    {
-      field: 'debtType',
-      headerName: t('debtTypesCreated.myOrganizationDataGrid.debtType'),
       flex: 1,
       minWidth: 100
     },
@@ -117,10 +95,12 @@ export const MyOrg = ({ codeFilter, descriptionFilter }: MyOrgProps) => {
       minWidth: 200
     },
     {
-      field: 'lastUpdate',
+      field: 'updateDate',
       headerName: t('debtTypesCreated.myOrganizationDataGrid.lastUpdateDate'),
       flex: 1,
-      minWidth: 150
+      minWidth: 150,
+      renderCell: (params: GridRenderCellParams) =>
+        formatDateTime(params.value as string)
     },
     {
       field: 'enabledOperators',
@@ -135,7 +115,9 @@ export const MyOrg = ({ codeFilter, descriptionFilter }: MyOrgProps) => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams) => (
+      renderCell: (
+        params: GridRenderCellParams<DebtPositionTypeOrgWithCount>
+      ) => (
         <ArrowForwardIos
           fontSize="small"
           sx={{ color: theme.palette.primary.main, cursor: 'pointer' }}
@@ -145,29 +127,45 @@ export const MyOrg = ({ codeFilter, descriptionFilter }: MyOrgProps) => {
     }
   ];
 
-  const handleRowClick = (row: MyOrgData) => {
-    //TODO: redirect to organization detail
-    console.log('DebtType:', row);
+  const handleRowClick = (row: DebtPositionTypeOrgWithCount | undefined) => {
+    if (!row) return;
+    navigate(
+      generatePath(PageRoutes.DEBT_TYPE_DETAIL, {
+        debtPositionTypeOrgId: row.debtPositionTypeOrgId
+      })
+    );
+  };
+
+  const handlePaginationChange = (page: number, size: number) => {
+    const filters = updatePagination({ page: page - 1, size });
+    mutate({ organizationId, filters });
+  };
+
+  const handleSortChange = (newSortModel: GridSortModel) => {
+    const filters = handleSortModelChange(newSortModel);
+    mutate({ organizationId, filters });
   };
 
   return (
     <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
       <CustomDataGrid
-        rows={data}
+        rows={data?.content || []}
         columns={columns}
-        getRowId={(row) => row.id}
+        getRowId={(row: DebtPositionTypeOrgWithCount) =>
+          row.debtPositionTypeOrgId?.toString() || ''
+        }
         disableColumnMenu
         disableColumnResize
         sortModel={sortModel}
-        onSortModelChange={handleSortModelChange}
+        onSortModelChange={handleSortChange}
         customPagination={{
-          totalPages: 1,
-          defaultPageOption: pagination.size,
+          totalPages: data?.totalPages || 0,
+          defaultPageOption: appliedFilters.size as number,
           sizePageOptions: [5, 10, 15, 20],
           onPageChange: (page) =>
-            updatePagination({ page: page - 1, size: pagination.size }),
-          onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
-          currentPage: pagination.page + 1
+            handlePaginationChange(page, appliedFilters.size as number),
+          onPageSizeChange: (size) => handlePaginationChange(1, size),
+          currentPage: ((appliedFilters.page as number) || 0) + 1
         }}
       />
     </Box>

@@ -5,28 +5,15 @@ import {
   debtPositionTypeSchema,
   pagedDebtPositionTypeWithCountSchema
 } from '../../generated/zod-schema';
-import { DebtPositionTypeRequestBody } from '../../generated/data-contracts';
-
-export const getDebtPositionsTypes = ({
-  organizationId
-}: {
-  organizationId: number;
-}) =>
-  useQuery({
-    queryKey: ['getDebtPositionsTypes', organizationId],
-    queryFn: async () => {
-      const { data: response } =
-        await utils.apiClient.bff.getDebtPositionTypeOrgs(organizationId);
-      return response;
-    }
-  });
+import {
+  DebtPositionTypePatchRequestBody,
+  DebtPositionTypeRequestBody
+} from '../../generated/data-contracts';
 
 type DebtPositionTypeWithCountParams = Parameters<
   typeof utils.apiClient.bff.getDebtPositionTypeWithCount
 >;
-
 export type DebtPositionTypeWithCountQuery = DebtPositionTypeWithCountParams[1];
-
 export type DebtPositionTypeWithCountRequest = {
   organizationId: DebtPositionTypeWithCountParams[0];
   query: DebtPositionTypeWithCountQuery;
@@ -70,5 +57,33 @@ export const postDebtPositionType = () =>
       const response = await utils.apiClient.bff.createDebtPositionType(query);
       parseAndLog(debtPositionTypeSchema, response.data);
       return response.data;
+    }
+  });
+
+export const patchDebtPositionType = (debtPositionTypeId: number) =>
+  useMutation({
+    mutationKey: ['patchDebtPositionType'],
+    mutationFn: async (data: DebtPositionTypePatchRequestBody) => {
+      const response = await utils.apiClient.bff.patchDebtPositionType(
+        debtPositionTypeId,
+        data
+      );
+      return response.data;
+    }
+  });
+
+export const getDebtPositionTypesByOrganizationId = ({
+  organizationId
+}: {
+  organizationId: number;
+}) =>
+  useQuery({
+    queryKey: ['getDebtPositionTypesByOrganizationId', organizationId],
+    queryFn: async () => {
+      const { data: response } =
+        await utils.apiClient.bff.getDebtPositionTypesByOrganizationId(
+          organizationId
+        );
+      return response;
     }
   });

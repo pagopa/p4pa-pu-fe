@@ -1,44 +1,61 @@
 import { Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ArrowBack } from '@mui/icons-material';
+import { ArrowBack, Save } from '@mui/icons-material';
 
 type Props = {
   onBack?: () => void;
   onNext?: () => void;
+  onSaveDraft?: () => void;
   disableNext?: boolean;
   disableBack?: boolean;
+  disableSaveDraft?: boolean;
   nextLabel?: string;
   backLabel?: string;
+  showSaveDraft?: boolean;
+  saveDraftLabel?: string;
 };
 
 const WizardStepButtons = ({
   onBack,
   onNext,
+  onSaveDraft,
   disableNext,
   disableBack = false,
+  disableSaveDraft = false,
   nextLabel = 'commons.continue',
-  backLabel = 'commons.back'
+  backLabel = 'commons.back',
+  showSaveDraft = false,
+  saveDraftLabel = 'commons.saveDraft'
 }: Props) => {
   const { t } = useTranslation();
 
   return (
     <Box mt={4} display="flex" justifyContent="space-between">
-      <Button
-        variant="outlined"
-        onClick={onBack}
-        disabled={disableBack}
-        startIcon={<ArrowBack />}
-      >
-        {t(backLabel)}
-      </Button>
-      <Button
-        variant="contained"
-        onClick={onNext}
-        type="submit"
-        disabled={disableNext}
-      >
-        {t(nextLabel)}
-      </Button>
+      <Box>
+        <Button
+          variant="outlined"
+          onClick={onBack}
+          disabled={disableBack}
+          startIcon={<ArrowBack />}
+        >
+          {t(backLabel)}
+        </Button>
+      </Box>
+      <Box display="flex" gap={4}>
+        {showSaveDraft && (
+          <Button
+            variant="naked"
+            onClick={onSaveDraft}
+            disabled={disableSaveDraft}
+            startIcon={<Save />}
+          >
+            {t(saveDraftLabel)}
+          </Button>
+        )}
+        <Button variant="contained" onClick={onNext} disabled={disableNext}>
+          {t(nextLabel)}
+        </Button>
+      </Box>
     </Box>
   );
 };

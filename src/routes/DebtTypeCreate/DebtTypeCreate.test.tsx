@@ -11,15 +11,17 @@ vi.mock('./components/Step1Configuration', () => ({
     <div data-testid="step1-configuration">
       <button
         onClick={() => {
-          setData({
-            description: 'Test Debt Type',
-            code: 'CODE1',
-            orgType: 'ORG1',
-            macroArea: 'MACRO1',
-            serviceType: 'SERVICE1',
-            collectingReason: 'REASON1',
-            taxonomyCode: 'TAX1'
-          });
+          if (setData) {
+            setData({
+              description: 'Test Debt Type',
+              code: 'CODE1',
+              orgType: 'ORG1',
+              macroArea: 'MACRO1',
+              serviceType: 'SERVICE1',
+              collectingReason: 'REASON1',
+              taxonomyCode: 'TAX1'
+            });
+          }
           onNext();
         }}
       >
@@ -95,7 +97,7 @@ vi.mock('react-router', async () => {
 
 vi.mock('../../App', () => ({
   PageRoutes: {
-    DEBT_TYPE_CREATE_SUCCESS: '/debt-type-create-success'
+    RESPONSES_SUCCESS: '/success/debt-type-catalog-create'
   }
 }));
 
@@ -160,25 +162,19 @@ describe('DebtTypeCreate', () => {
 
     // Should navigate to success page
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/debt-type-create-success', {
-        replace: true,
-        state: {
-          formData: {
-            description: 'Test Debt Type',
-            code: 'CODE1',
-            orgType: 'ORG1',
-            macroArea: 'MACRO1',
-            serviceType: 'SERVICE1',
-            collectingReason: 'REASON1',
-            taxonomyCode: 'TAX1',
-            flagMandatoryDueDate: true,
-            flagAnonymousFiscalCode: false,
-            flagNotifyIo: true,
-            ioTemplateSubject: 'Test Subject',
-            ioTemplateMessage: 'Test Message'
-          } as DebtPositionTypeRequestBody
+      expect(mockNavigate).toHaveBeenCalledWith(
+        {
+          pathname: '/success/debt-type-catalog-create'
+        },
+        {
+          replace: true,
+          state: {
+            i18nParams: {
+              paymentObject: 'Test Debt Type'
+            }
+          }
         }
-      });
+      );
     });
   });
 

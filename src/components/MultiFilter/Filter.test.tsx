@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { Filter } from './Filter';
 import { FilterItem, COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
+import { FilterMap } from '../../hooks/useMultiFilters';
+import { KeyofFilterMap } from '../../store/FilterStore';
 
 vi.mock('../FilterContainer/FilterContainer', () => ({
   default: vi.fn(({ items }) => (
@@ -20,22 +22,85 @@ vi.mock('../FilterContainer/FilterContainer', () => ({
   }
 }));
 
-const mockFilterMap = {
-  search: {
-    label: 'Search',
+const mockFilterMap: FilterMap = {
+  AMOUNT: {
+    label: 'AMOUNT',
     fields: [
       {
         type: COMPONENT_TYPE.textField,
-        label: 'Search Field'
+        label: 'AMOUNT Field'
       }
     ]
   },
-  name: {
-    label: 'Name',
+  BILL_CODE: {
+    label: 'BILL_CODE',
     fields: [
       {
         type: COMPONENT_TYPE.textField,
-        label: 'Name Field'
+        label: 'BILL_CODE Field'
+      }
+    ]
+  },
+  IUV: {
+    label: 'IUV',
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'IUV Field'
+      }
+    ]
+  },
+  DOCUMENT_CODE: {
+    label: 'DOCUMENT_CODE',
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'DOCUMENT_CODE Field'
+      }
+    ]
+  },
+  PAYER: {
+    label: 'PAYER',
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'PAYER Field'
+      }
+    ]
+  },
+  REPORT_ID: {
+    label: 'REPORT_ID',
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'REPORT_ID Field'
+      }
+    ]
+  },
+  TEMPORARY_CODE: {
+    label: 'TEMPORARY_CODE',
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'TEMPORARY_CODE Field'
+      }
+    ]
+  },
+  ACCOUNTING_DATE: {
+    label: 'ACCOUNTING_DATE',
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'ACCOUNTING_DATE Field'
+      }
+    ]
+  },
+  VALUE_DATE: {
+    label: 'VALUE_DATE',
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'VALUE_DATE Field'
       }
     ]
   }
@@ -43,8 +108,8 @@ const mockFilterMap = {
 
 describe('Filter Component', () => {
   const onChange = vi.fn();
-  const value = 'search';
-  const selectedFilters = ['name'];
+  const value = 'AMOUNT';
+  const selectedFilters: Array<KeyofFilterMap> = ['AMOUNT'];
 
   it('renders select with options from filterMap', () => {
     render(
@@ -62,12 +127,12 @@ describe('Filter Component', () => {
 
     // Verify that the options are rendered correctly
     const options = screen.getAllByRole('option');
-    expect(options).toHaveLength(2);
-    expect(options[0]).toHaveTextContent('Search');
-    expect(options[1]).toHaveTextContent('Name');
+    expect(options).toHaveLength(9);
+    expect(options[0]).toHaveTextContent('AMOUNT');
+    expect(options[1]).toHaveTextContent('BILL_CODE');
 
     // Verify that the selectedFilters disable the correct option
-    expect(options[1]).toHaveAttribute('aria-disabled', 'true');
+    expect(options[0]).toHaveAttribute('aria-disabled', 'true');
   });
 
   it('renders fields from the selected filter', () => {
@@ -85,7 +150,7 @@ describe('Filter Component', () => {
     expect(filterContainer).toBeInTheDocument();
 
     // Verify that the fields for the selected value are rendered
-    const searchField = screen.getByText('Search Field');
+    const searchField = screen.getByText('AMOUNT Field');
     expect(searchField).toBeInTheDocument();
   });
 });

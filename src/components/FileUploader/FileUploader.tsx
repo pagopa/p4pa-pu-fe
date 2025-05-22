@@ -19,7 +19,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isExtensionAllowed } from '../../utils/filevalidation';
 
-type FileUploaderProps = {
+export type FileUploaderProps = {
   uploading: boolean;
   setUploading: React.Dispatch<React.SetStateAction<boolean>>;
   progress: number;
@@ -27,8 +27,9 @@ type FileUploaderProps = {
   file: File | null;
   setFile: React.Dispatch<React.SetStateAction<File | null>>;
   description: string;
-  requiredFileText: string;
+  requiredFileText?: string;
   fileExtensionsAllowed: Array<string>;
+  header?: React.ReactNode;
 };
 
 const FileUploader = ({
@@ -40,7 +41,8 @@ const FileUploader = ({
   setFile,
   description,
   requiredFileText,
-  fileExtensionsAllowed
+  fileExtensionsAllowed,
+  header
 }: FileUploaderProps) => {
   const { t } = useTranslation();
 
@@ -123,10 +125,14 @@ const FileUploader = ({
   return (
     <>
       <Grid container direction={'row'} mb={3}>
-        <InsertDriveFile />
-        <Typography fontWeight={600} ml={1}>
-          {t('commons.files.file')}
-        </Typography>
+        {header ?? (
+          <>
+            <InsertDriveFile />
+            <Typography fontWeight={600} ml={1}>
+              {t('commons.files.file')}
+            </Typography>
+          </>
+        )}
       </Grid>
 
       {error && (

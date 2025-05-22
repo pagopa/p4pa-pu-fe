@@ -78,7 +78,7 @@ export const TelematicReceipt = () => {
                 {
                   type: COMPONENT_TYPE.dateRange,
                   label: 'daterange',
-                  from: { label: t('dates.from') },
+                  from: { label: t('commons.outcomeFrom') },
                   to: { label: t('dates.to') },
                   id: FilterFieldIds.DATE_RANGE
                 },

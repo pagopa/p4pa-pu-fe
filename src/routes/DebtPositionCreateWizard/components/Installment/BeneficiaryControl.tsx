@@ -26,6 +26,10 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useState, useEffect, useCallback } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
+import {
+  isSameBeneficiariesAsBeforeEnabled,
+  hasValidBeneficiaries
+} from '../../../../models/Step3Schema';
 
 /**
  * Component that handles the beneficiary control for installments
@@ -119,9 +123,10 @@ const BeneficiaryControl = <T extends FieldValues>({
     const currentSameBeneficiariesValue = getValues(
       sameBeneficiariesAsBeforePath
     );
-    const useSameBeneficiaries =
-      currentSameBeneficiariesValue === true ||
-      String(currentSameBeneficiariesValue) === 'true';
+
+    const useSameBeneficiaries = isSameBeneficiariesAsBeforeEnabled(
+      currentSameBeneficiariesValue
+    );
 
     if (!useSameBeneficiaries) {
       setBeneficiaryAmountError(null);
@@ -131,6 +136,7 @@ const BeneficiaryControl = <T extends FieldValues>({
     const currentAmountStr = getValues(amountPath) || '0';
     const currentAmountValue =
       parseFloat(currentAmountStr.replace(',', '.')) || 0;
+
     const prevBeneficiariesPath =
       `${fieldNamePrefix}.${index - 1}.beneficiaries` as Path<T>;
     const prevBeneficiaries = getValues(prevBeneficiariesPath) || [];
@@ -165,10 +171,9 @@ const BeneficiaryControl = <T extends FieldValues>({
   ]);
 
   /**
-   * Copies beneficiaries from the previous installment to the current one
-   * Looks for the most recent installment with custom beneficiaries first,
-   * falling back to the first installment with any beneficiaries if none found
-   * @returns {void}
+   * Copies beneficiaries from the previous installment to the current one.
+   * First looks for the most recent installment with custom beneficiaries,
+   * falling back to the first installment with any beneficiaries if none found.
    */
   const copyBeneficiariesFromPreviousInstallment = useCallback(() => {
     if (!hasPreviousBeneficiaries || index === 0) return;
@@ -189,17 +194,15 @@ const BeneficiaryControl = <T extends FieldValues>({
       const hasOwnBeneficiaries =
         installment &&
         installment.isMultibeneficiary &&
-        installment.beneficiaries &&
-        Array.isArray(installment.beneficiaries) &&
-        installment.beneficiaries.length > 0 &&
+        hasValidBeneficiaries(installment) &&
         (i === 0 ||
-          installment.sameBeneficiariesAsBefore === false ||
-          installment.sameBeneficiariesAsBefore === 'false');
+          !isSameBeneficiariesAsBeforeEnabled(
+            installment.sameBeneficiariesAsBefore
+          ));
 
       if (hasOwnBeneficiaries) {
         lastBeneficiariesFound = true;
         lastInstallmentWithBeneficiaries = i;
-        // As soon as we find an installment with custom beneficiaries, use it immediately
         break;
       }
     }
@@ -219,9 +222,7 @@ const BeneficiaryControl = <T extends FieldValues>({
         if (
           installment &&
           installment.isMultibeneficiary &&
-          installment.beneficiaries &&
-          Array.isArray(installment.beneficiaries) &&
-          installment.beneficiaries.length > 0
+          hasValidBeneficiaries(installment)
         ) {
           sourceIndex = i;
           break;
@@ -236,12 +237,45 @@ const BeneficiaryControl = <T extends FieldValues>({
     const currentBeneficiariesPath =
       `${fieldNamePrefix}.${index}.beneficiaries` as Path<T>;
 
-    // Create a deep copy of all beneficiaries to avoid shared references
-    const deepCopyOfBeneficiaries = Array.isArray(previousBeneficiaries)
+    // Get current and previous installment for amount ratio calculation
+    const currentInstallmentPath = `${fieldNamePrefix}.${index}` as Path<T>;
+    const sourceInstallmentPath =
+      `${fieldNamePrefix}.${sourceIndex}` as Path<T>;
+    const currentInstallment = getValues(currentInstallmentPath);
+    const sourceInstallment = getValues(sourceInstallmentPath);
+
+    // Calculate the ratio between the installment amounts
+    const currentAmount = parseFloat(currentInstallment.amount);
+    const sourceAmount = parseFloat(sourceInstallment.amount);
+    const ratio = currentAmount / sourceAmount;
+
+    // Create a deep copy of all beneficiaries and adjust amounts based on ratio
+    let deepCopyOfBeneficiaries = Array.isArray(previousBeneficiaries)
       ? previousBeneficiaries.map((beneficiary: Record<string, unknown>) => ({
           ...beneficiary
         }))
       : [];
+
+    // If we have valid amounts, adjust beneficiary amounts proportionally
+    if (
+      !isNaN(ratio) &&
+      ratio > 0 &&
+      !isNaN(currentAmount) &&
+      !isNaN(sourceAmount)
+    ) {
+      deepCopyOfBeneficiaries = deepCopyOfBeneficiaries.map(
+        (beneficiary: Record<string, unknown>) => {
+          const beneficiaryAmount = parseFloat(beneficiary.amount as string);
+          if (!isNaN(beneficiaryAmount)) {
+            return {
+              ...beneficiary,
+              amount: (beneficiaryAmount * ratio).toFixed(2)
+            };
+          }
+          return beneficiary;
+        }
+      );
+    }
 
     setValue(
       currentBeneficiariesPath,
@@ -262,7 +296,6 @@ const BeneficiaryControl = <T extends FieldValues>({
   /**
    * Checks if the previous installment has beneficiaries and manages the interface
    * and beneficiary copying based on configuration
-   * @returns {void}
    */
   useEffect(() => {
     if (index === 0) {
@@ -275,12 +308,11 @@ const BeneficiaryControl = <T extends FieldValues>({
         `${fieldNamePrefix}.${index - 1}` as Path<T>;
       const previousInstallment = getValues(previousInstallmentPath);
 
+      // Use hasValidBeneficiaries function to check for valid beneficiaries
       const previousHasBeneficiaries = !!(
         previousInstallment &&
         previousInstallment.isMultibeneficiary &&
-        previousInstallment.beneficiaries &&
-        Array.isArray(previousInstallment.beneficiaries) &&
-        previousInstallment.beneficiaries.length > 0
+        hasValidBeneficiaries(previousInstallment)
       );
 
       setHasPreviousBeneficiaries(previousHasBeneficiaries);
@@ -288,7 +320,7 @@ const BeneficiaryControl = <T extends FieldValues>({
       if (!previousHasBeneficiaries && isMultibeneficiary) {
         const currentValue = getValues(sameBeneficiariesAsBeforePath);
 
-        if (currentValue === true || String(currentValue) === 'true') {
+        if (isSameBeneficiariesAsBeforeEnabled(currentValue)) {
           setValue(
             sameBeneficiariesAsBeforePath,
             false as unknown as PathValue<T, Path<T>>,
@@ -301,7 +333,7 @@ const BeneficiaryControl = <T extends FieldValues>({
       if (previousHasBeneficiaries && isMultibeneficiary) {
         const currentValue = getValues(sameBeneficiariesAsBeforePath);
         const shouldCopyBeneficiaries =
-          currentValue === true || String(currentValue) === 'true';
+          isSameBeneficiariesAsBeforeEnabled(currentValue);
 
         const currentBeneficiariesPath =
           `${fieldNamePrefix}.${index}.beneficiaries` as Path<T>;
@@ -334,14 +366,12 @@ const BeneficiaryControl = <T extends FieldValues>({
   /**
    * Handles changes to the "same beneficiaries as before" value
    * Updates the UI and copies beneficiaries when appropriate
-   * @returns {void}
    */
   useEffect(() => {
     if (index === 0) return;
 
     const currentValue = getValues(sameBeneficiariesAsBeforePath);
-    const valueAsBool =
-      currentValue === true || String(currentValue) === 'true';
+    const valueAsBool = isSameBeneficiariesAsBeforeEnabled(currentValue);
 
     setShowBeneficiaryForm(!valueAsBool);
 
@@ -360,7 +390,6 @@ const BeneficiaryControl = <T extends FieldValues>({
 
   /**
    * Validates beneficiary amounts when relevant form values change
-   * @returns {void}
    */
   useEffect(() => {
     validateBeneficiaryAmounts();
@@ -406,7 +435,6 @@ const BeneficiaryControl = <T extends FieldValues>({
         />
       </Grid>
 
-      {/* Question "Are beneficiaries the same as previous installment?" - only for installments from second onwards */}
       {isMultibeneficiary && index > 0 && (
         <Grid item xs={12}>
           <FormControl component="fieldset" error={!!beneficiaryAmountError}>
@@ -441,19 +469,63 @@ const BeneficiaryControl = <T extends FieldValues>({
                       }, 100);
                     } else {
                       setBeneficiaryAmountError(null);
+
+                      // If we're switching from "yes" to "no", make sure we reset the beneficiaries
+                      if (!isYes) {
+                        const currentBeneficiariesPath =
+                          `${fieldNamePrefix}.${index}.beneficiaries` as Path<T>;
+
+                        // Reset beneficiaries to empty array
+                        setValue(
+                          currentBeneficiariesPath,
+                          [] as unknown as PathValue<T, Path<T>>,
+                          { shouldDirty: true, shouldValidate: true }
+                        );
+
+                        // After removing beneficiaries, trigger validation of the entire form
+                        // to remove any residual errors
+                        setTimeout(() => {
+                          trigger();
+                        }, 50);
+
+                        // Add a default empty beneficiary only if we'll show the beneficiary form
+                        // (in this specific case we don't want to create beneficiaries that will be empty and trigger errors)
+                        if (showBeneficiaryForm) {
+                          setTimeout(() => {
+                            const defaultBeneficiary = {
+                              entityName: '',
+                              amount: '',
+                              taxCode: '',
+                              remittance: '',
+                              iban: '',
+                              taxonomyCode: '',
+                              isNew: true
+                            };
+
+                            setValue(
+                              currentBeneficiariesPath,
+                              [defaultBeneficiary] as unknown as PathValue<
+                                T,
+                                Path<T>
+                              >,
+                              { shouldDirty: true, shouldValidate: true }
+                            );
+                          }, 100);
+                        }
+                      }
                     }
                   }}
                 >
                   <FormControlLabel
                     value="true"
                     control={<Radio />}
-                    label="Sì"
+                    label={t('debtPositionCreateWizard.step3.installments.yes')}
                     disabled={!hasPreviousBeneficiaries}
                   />
                   <FormControlLabel
                     value="false"
                     control={<Radio />}
-                    label="No"
+                    label={t('debtPositionCreateWizard.step3.installments.no')}
                     disabled={!hasPreviousBeneficiaries}
                   />
                 </RadioGroup>
@@ -466,7 +538,6 @@ const BeneficiaryControl = <T extends FieldValues>({
         </Grid>
       )}
 
-      {/* BeneficiaryField component - visible only when conditions are met */}
       {isMultibeneficiary && showBeneficiaryForm && (
         <Grid item xs={12} mt={1}>
           <BeneficiaryField
@@ -488,28 +559,6 @@ const BeneficiaryControl = <T extends FieldValues>({
           />
         </Grid>
       )}
-
-      {/* Informative message when beneficiaries are copied from the previous installment */}
-      {/* {isMultibeneficiary &&
-        index > 0 &&
-        !showBeneficiaryForm &&
-        hasPreviousBeneficiaries && (
-          <Grid item xs={12} mt={1}>
-            <Box
-              sx={{
-                p: 2,
-                bgcolor: 'background.default',
-                borderRadius: 1,
-                border: '1px dashed',
-                borderColor: 'divider'
-              }}
-            >
-              <Typography variant="body2" color="text.secondary">
-                Beneficiaries have been copied from the previous installment.
-              </Typography>
-            </Box>
-          </Grid>
-        )} */}
     </>
   );
 };

@@ -101,7 +101,7 @@ describe('useBeneficiaryManagement', () => {
         amount: '',
         taxCode: '',
         iban: '',
-        postalAccount: '',
+        remittance: '',
         taxonomyCode: '',
         isNew: true
       })
@@ -138,7 +138,7 @@ describe('useBeneficiaryManagement', () => {
         amount: '',
         taxCode: '',
         iban: '',
-        postalAccount: '',
+        remittance: '',
         taxonomyCode: '',
         isNew: true
       })

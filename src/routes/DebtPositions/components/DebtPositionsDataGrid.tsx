@@ -10,7 +10,10 @@ import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../../App';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import Chip, { ChipProps } from '@mui/material/Chip';
-import { PagedDebtPositionView } from '../../../../generated/data-contracts';
+import {
+  DebtPositionStatus,
+  PagedDebtPositionView
+} from '../../../../generated/data-contracts';
 import { format } from 'date-fns';
 
 type ResultDataRow = {
@@ -43,7 +46,7 @@ export const DebtPositionsDataGrid = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const stateColors: Record<string, ChipProps['color']> = {
+  const stateColors: Record<DebtPositionStatus, ChipProps['color']> = {
     CANCELLED: 'error',
     DRAFT: 'default',
     EXPIRED: 'error',
@@ -84,7 +87,7 @@ export const DebtPositionsDataGrid = ({
         <Chip
           label={t(`commons.status.${params.value}`)}
           title={t(params.value)}
-          color={stateColors[params.value]}
+          color={stateColors[params.value as DebtPositionStatus]}
           size="small"
         />
       )

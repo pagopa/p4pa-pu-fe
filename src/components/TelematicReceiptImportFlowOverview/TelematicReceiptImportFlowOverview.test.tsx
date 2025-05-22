@@ -27,6 +27,23 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
 }));
 
 describe('TelematicReceiptImportFlowOverview', () => {
+  const mockDataWithContent = {
+    content: [
+      {
+        ingestionFlowFileId: 63,
+        fileName: 'test-file.zip',
+        creationDate: '2025-02-05T16:24:49.148144',
+        operator: 'demo demo',
+        discardedRows: 0,
+        status: 'UPLOADED'
+      }
+    ],
+    totalPages: 1,
+    totalElements: 1,
+    number: 0,
+    size: 10
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -35,7 +52,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
         'Telematic Receipt Import',
       'telematicReceiptImportFlowOverview.description':
         'Import your telematic receipts',
-      'commons.importFlow': 'Import Flow'
+      'commons.importFlow': 'Import Flow',
+      'commons.importFlows': 'Import Flows',
+      'commons.noFlows': 'No flows available'
     });
   });
 
@@ -70,31 +89,37 @@ describe('TelematicReceiptImportFlowOverview', () => {
     );
   });
 
-  it('renders import button that matches routing category', () => {
+  it('renders empty state when data is empty', () => {
+    (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: {
+        content: [],
+        totalPages: 0,
+        totalElements: 0,
+        number: 0,
+        size: 10
+      }
+    });
+
+    render(<TelematicReceiptImportFlowOverview />);
+
+    expect(screen.getByText('No flows available')).toBeDefined();
+    expect(screen.getByText('Import Flows')).toBeDefined();
+  });
+
+  it('renders grid and filters when data is available', () => {
+    (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: mockDataWithContent
+    });
+
     render(<TelematicReceiptImportFlowOverview />);
 
     const importButton = screen.getByText('Import Flow');
     expect(importButton).toBeDefined();
-
     expect(importButton.closest('button')).not.toBeDisabled();
-  });
 
-  it('integrates with the date picker for filtering', () => {
-    render(<TelematicReceiptImportFlowOverview />);
-
-    expect(screen.getByLabelText('dates.from')).toBeDefined();
+    expect(screen.getByLabelText('commons.importFrom')).toBeDefined();
     expect(screen.getByLabelText('dates.to')).toBeDefined();
-  });
-
-  it('integrates with search functionality', () => {
-    render(<TelematicReceiptImportFlowOverview />);
-
     expect(screen.getByLabelText('commons.searchName')).toBeDefined();
-  });
-
-  it('shows filter button for applying filters', () => {
-    render(<TelematicReceiptImportFlowOverview />);
-
     expect(screen.getByText('commons.filters.filterResults')).toBeDefined();
   });
 });
