@@ -5,6 +5,7 @@ import config from '../../utils/config';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { theme } from '@pagopa/mui-italia';
 import { DebtPositionStatus } from '../../../generated/data-contracts';
+import { Download } from '@mui/icons-material';
 
 function DebtPositionCreateWizardCompleted() {
   const { t } = useTranslation();
@@ -23,7 +24,9 @@ function DebtPositionCreateWizardCompleted() {
       ? 'debtPositionCreateWizardCompleted.descriptionDraft'
       : 'debtPositionCreateWizardCompleted.description',
     viewDebtPosition: 'debtPositionCreateWizardCompleted.viewDebtPosition',
-    backToStart: 'debtPositionCreateWizardCompleted.backToStart'
+    backToStart: 'debtPositionCreateWizardCompleted.backToStart',
+    downloadDebtPosition:
+      'debtPositionCreateWizardCompleted.downloadDebtPosition'
   };
 
   const translationParams = {
@@ -37,6 +40,10 @@ function DebtPositionCreateWizardCompleted() {
       navigate(`${deployPath}/debt-positions/`);
     }
   }
+
+  const handleDownloadDebtPosition = () => {
+    console.log('handleDownloadDebtPosition');
+  };
 
   return (
     <Box
@@ -110,13 +117,22 @@ function DebtPositionCreateWizardCompleted() {
         >
           {t(translationKeys.backToStart)}
         </Button>
-        {isDraft && (
+        {isDraft ? (
           <Button
             role="button"
             variant="contained"
             onClick={handleViewDebtPosition}
           >
             {t(translationKeys.viewDebtPosition)}
+          </Button>
+        ) : (
+          <Button
+            role="button"
+            variant="contained"
+            startIcon={<Download />}
+            onClick={handleDownloadDebtPosition}
+          >
+            {t(translationKeys.downloadDebtPosition)}
           </Button>
         )}
       </Box>
