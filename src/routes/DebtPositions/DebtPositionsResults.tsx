@@ -1,7 +1,7 @@
 import { Grid, Stack, useTheme } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { BaseFilterValues } from '../../models/Filters';
@@ -15,6 +15,7 @@ import {
   PagedDebtPositionView
 } from '../../../generated/apiClient';
 import debtPositions from '../../api/debtPositions';
+import { PageRoutes } from '../../App';
 
 export type LocationState = {
   searchType: SearchType;
@@ -28,6 +29,7 @@ export type DebtResultsProps = {
 export const DebtPositionResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const {
     state: { filters: initialFilters, searchType }
   }: { state: LocationState } = useLocation();
@@ -63,7 +65,8 @@ export const DebtPositionResults = () => {
               searchType === SearchType.IUV
                 ? t('commons.createNewOne')
                 : t('commons.createNew'),
-            onActionClick: () => console.log('create button clicked')
+            onActionClick: () =>
+              navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD)
           }
         ]}
       />
