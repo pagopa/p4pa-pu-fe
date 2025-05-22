@@ -97,7 +97,7 @@ vi.mock('react-router', async () => {
 
 vi.mock('../../App', () => ({
   PageRoutes: {
-    DEBT_TYPE_CREATE_SUCCESS: '/debt-type-create-success'
+    DEBT_TYPE_CATALOG_CREATE_SUCCESS: '/debt-type-create-success'
   }
 }));
 

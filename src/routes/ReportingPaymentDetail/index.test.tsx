@@ -21,12 +21,14 @@ vi.mock('react-router-dom', () => ({
   Navigate: vi.fn(({ to }) => ({
     type: 'div',
     props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
-  }))
+  })),
+  Outlet: vi.fn()
 }));
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()
 }));
+
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key

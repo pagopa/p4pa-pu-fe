@@ -36,7 +36,7 @@ export const DebtTypeCreate = () => {
   const submit = () => {
     debtTypeCreate.mutate(formData.value, {
       onSuccess: (formData) => {
-        navigate(PageRoutes.DEBT_TYPE_CREATE_SUCCESS, {
+        navigate(PageRoutes.DEBT_TYPE_CATALOG_CREATE_SUCCESS, {
           replace: true,
           state: {
             formData
