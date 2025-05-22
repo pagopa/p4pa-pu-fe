@@ -79,6 +79,7 @@
     "exit": "Esci",
     "exportedFlows": "Flussi esportati",
     "exportFlows": "Esporta flussi",
+    "exportFrom": "Esportati dal",
     "files": {
       "download": "Scarica",
       "downloadFlow": "Scarica flusso",
@@ -167,6 +168,7 @@
     "from": "Dal",
     "importFlow": "Importa flusso",
     "importFlows": "Importa flussi",
+    "importFrom": "Caricati dal",
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
     "iud": "IUD",
@@ -183,6 +185,7 @@
     "operator": "Operatore",
     "optional": "opzionale",
     "organizationType": "Tipo ente",
+    "outcomeFrom": "Esito dal",
     "payer": "Pagatore",
     "payerDetails": "Anagrafica Pagatore",
     "payment": "Pagamento",
@@ -322,8 +325,7 @@
     "yes": "Si"
   },
   "conservation": {
-    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
-    "exportFrom": "Esportati dal"
+    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni."
   },
   "dates": {
     "from": "Dal",

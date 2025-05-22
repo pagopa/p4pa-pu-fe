@@ -120,7 +120,7 @@ describe('ReportingImportFlowOverview', () => {
 
     expect(screen.getByLabelText('commons.searchName')).toBeDefined();
     expect(screen.getByLabelText('commons.state')).toBeDefined();
-    expect(screen.getByLabelText('dates.from')).toBeDefined();
+    expect(screen.getByLabelText('commons.importFrom')).toBeDefined();
     expect(screen.getByLabelText('dates.to')).toBeDefined();
     expect(screen.getByText('commons.filters.filterResults')).toBeDefined();
   });
