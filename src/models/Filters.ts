@@ -56,6 +56,7 @@ export const STATE_COLORS: Record<
   COMPLETED: 'success',
   UPLOADED: 'info',
   PROCESSING: 'info',
+  WAITING_FILE: 'info',
   ERROR: 'error'
 };
 
