@@ -12,7 +12,8 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
 }));
 
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
   useLocation: vi.fn(),
   useNavigate: vi.fn(() => vi.fn()),
   Navigate: vi.fn(),
