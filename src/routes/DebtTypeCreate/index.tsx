@@ -4,7 +4,7 @@ import { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
 import { Step1Configuration, Step1Data } from './components/Step1Configuration';
 import { Step2Data, Step2Settings } from './components/Step2Settings';
-import { useNavigate } from 'react-router';
+import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 import { useSignal } from '@preact/signals-react';
 import { postDebtPositionType } from '../../api/debtPositionsTypes';
@@ -36,12 +36,21 @@ export const DebtTypeCreate = () => {
   const submit = () => {
     debtTypeCreate.mutate(formData.value, {
       onSuccess: (formData) => {
-        navigate(PageRoutes.DEBT_TYPE_CATALOG_CREATE_SUCCESS, {
-          replace: true,
-          state: {
-            formData
+        navigate(
+          {
+            pathname: generatePath(PageRoutes.RESPONSES_SUCCESS, {
+              category: 'debt-type-catalog-create'
+            })
+          },
+          {
+            replace: true,
+            state: {
+              i18nParams: {
+                paymentObject: formData.description
+              }
+            }
           }
-        });
+        );
       },
       onError: console.error
     });

@@ -1,45 +1,120 @@
+import { ButtonConfig } from '../components/ThankYouPage/ThankYouPage';
+
 type ThankyouPage = {
   title: string;
   description: string;
-  routeID: string;
+  buttonConfig?: Array<ButtonConfig>;
 };
 
 type ThankyouOpts = Record<string, ThankyouPage>;
 
 export const ThankyouPageConfig: ThankyouOpts = {
-  default: {
-    title: 'commons.successImport',
-    description: 'reportingImportThankYouPage.description',
-    routeID: 'TREASURY_IMPORT_OVERVIEW'
-  },
   'reporting-import': {
     title: 'commons.successImport',
     description: 'reportingImportThankYouPage.description',
-    routeID: 'REPORTING_IMPORT_OVERVIEW'
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'commons.close',
+        actionID: 'REPORTING_IMPORT_OVERVIEW'
+      }
+    ]
   },
   'telematic-receipt-export': {
     title: 'commons.successExport',
     description: 'commons.successExportDescription',
-    routeID: 'TELEMATIC_RECEIPT_EXPORT_OVERVIEW'
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'commons.close',
+        actionID: 'TELEMATIC_RECEIPT_EXPORT_OVERVIEW'
+      }
+    ]
   },
   'telematic-receipt-import': {
     title: 'commons.successImport',
     description: 'telematicReceiptFlowImportThankYouPage.description',
-    routeID: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW'
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'commons.close',
+        actionID: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW'
+      }
+    ]
   },
   'treasury-import': {
     title: 'commons.successImport',
     description: 'reportingImportThankYouPage.description',
-    routeID: 'TREASURY_IMPORT_OVERVIEW'
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'commons.close',
+        actionID: 'TREASURY_IMPORT_OVERVIEW'
+      }
+    ]
   },
   'debt-positions': {
     title: 'commons.successImport',
     description: 'debtPositionsImportThankYouPage.description',
-    routeID: 'DEBT_POSITIONS'
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'commons.close',
+        actionID: 'DEBT_POSITIONS'
+      }
+    ]
   },
   'conservation-export': {
     title: 'commons.successExport',
     description: 'commons.successExportDescription',
-    routeID: 'CONSERVATION'
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'commons.close',
+        actionID: 'CONSERVATION'
+      }
+    ]
+  },
+  'debt-type-catalog-edit': {
+    title: 'debtTypeCatalogEditSuccess.title',
+    description: 'debtTypeCatalogEditSuccess.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'debtTypeCatalogEditSuccess.backToStart',
+        actionID: 'DEBT_TYPES_CATALOG'
+      }
+    ]
+  },
+  'debt-type-catalog-create': {
+    title: 'debtTypeCreateSuccess.title',
+    description: 'debtTypeCreateSuccess.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'debtTypeCreateSuccess.backToStart',
+        actionID: 'DEBT_TYPES_CATALOG'
+      }
+    ]
+  },
+  'debt-type-org-create': {
+    title: 'debtTypeOrgCreate.success.title',
+    description: 'debtTypeOrgCreate.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'commons.backToStart',
+        actionID: 'DEBT_TYPES_CREATED'
+      }
+    ]
   }
 };

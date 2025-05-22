@@ -651,7 +651,7 @@
   },
   "debtTypeCatalogEditSuccess": {
     "backToStart": "Torna alla sezione",
-    "description": "",
+    "description": "La trovi nella sezione Catalogo Tipi Dovuti.",
     "title": "Il tipo dovuto '{{paymentObject}}' è stato modificato!"
   },
   "debtTypeCreate": {
