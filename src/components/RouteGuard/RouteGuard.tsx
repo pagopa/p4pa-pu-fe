@@ -2,6 +2,7 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { PageRoutes } from '../../App';
+import utils from '../../utils';
 
 export type RouteGuardProps = {
   /**
@@ -26,4 +27,22 @@ export const RouteGuard = ({
     console.warn('user not authorized to access this route');
   }
   return isAuthorized ? children : <Navigate to={redirectTo} />;
+};
+
+export const AdminRouteGuard = (props: Pick<RouteGuardProps, 'children'>) => {
+  const adminGuardCondition = () => utils.roles.useWhichRole() == 'ROLE_ADMIN';
+  return (
+    <RouteGuard evaluation={adminGuardCondition}>{props.children}</RouteGuard>
+  );
+};
+
+export const SuperAdminRouteGuard = (
+  props: Pick<RouteGuardProps, 'children'>
+) => {
+  const superAdminGuardCondition = () => utils.roles.useIsSuperAdmin() || false;
+  return (
+    <RouteGuard evaluation={superAdminGuardCondition}>
+      {props.children}
+    </RouteGuard>
+  );
 };

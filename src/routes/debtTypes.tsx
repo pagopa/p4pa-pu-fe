@@ -11,25 +11,114 @@ import { DebtTypeCatalogEditSuccess } from './DebtTypeCatalogEdit/DebtTypeCatalo
 import DebtTypesCreated from './DebtTypesCreated/DebtTypesCreated';
 import { DebtTypeOrgCreate } from './DebtTypeOrgCreate';
 import { DebtTypeOrgCreateSuccess } from './DebtTypeOrgCreate/DebtTypeOrgCreateSuccess';
-import { RouteGuard } from '../components/RouteGuard/RouteGuard';
-import utils from '../utils';
+import {
+  AdminRouteGuard,
+  SuperAdminRouteGuard
+} from '../components/RouteGuard/RouteGuard';
+import { Outlet } from 'react-router-dom';
 
 const deployPath = config.deployPath;
-
-const superAdminGuardCondition = () => utils.roles.useIsSuperAdmin() || false;
-const adminGuardCondition = () =>
-  utils.roles.useWhichRole() == 'ROLE_ADMIN' || false;
 
 export const debtTypesRoutes = [
   {
     id: 'DEBT_TYPES',
     path: `${deployPath}/debt-types/`,
     element: (
-      <RouteGuard evaluation={adminGuardCondition}>
+      <AdminRouteGuard>
         <Layout />
-      </RouteGuard>
+      </AdminRouteGuard>
     ),
     children: [
+      {
+        path: `catalog/`,
+        element: (
+          <SuperAdminRouteGuard>
+            <Outlet />
+          </SuperAdminRouteGuard>
+        ),
+        children: [
+          {
+            id: 'DEBT_TYPES_CATALOG',
+            index: true,
+            element: <DebtTypes />,
+            handle: {
+              backButton: false,
+              hideBreadcrumbs: true
+            } as RouteHandleObject
+          },
+          {
+            id: 'DEBT_TYPE_CATALOG_DETAIL',
+            path: 'detail/:debtPositionTypeId',
+            element: <DebtTypeCatalogDetailView />,
+            handle: {
+              backButton: true,
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            } as RouteHandleObject
+          },
+          {
+            id: 'DEBT_TYPE_CATALOG_EDIT',
+            path: 'edit/:debtPositionTypeId',
+            element: <DebtTypeCatalogEdit />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            } as RouteHandleObject
+          },
+          {
+            id: 'DEBT_TYPE_CATALOG_EDIT_SUCCESS',
+            path: 'edit/ok',
+            element: <DebtTypeCatalogEditSuccess />,
+            handle: {
+              backButton: false,
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            } as RouteHandleObject
+          },
+          {
+            id: 'DEBT_TYPE_CATALOG_CREATE',
+            path: 'new',
+            element: <DebtTypeCreate />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            } as RouteHandleObject
+          },
+          {
+            id: 'DEBT_TYPE_CATALOG_CREATE_SUCCESS',
+            path: 'new/ok',
+            element: <DebtTypeCreateSuccess />,
+            handle: {
+              backButton: false,
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            } as RouteHandleObject
+          }
+        ]
+      },
+      {
+        id: 'DEBT_TYPES_CREATED',
+        path: 'dashboard',
+        element: <DebtTypesCreated />,
+        handle: {
+          backButton: false,
+          hideBreadcrumbs: true
+        } as RouteHandleObject
+      },
       {
         id: 'DEBT_TYPE_DETAIL',
         path: 'detail/:debtPositionTypeOrgId',
@@ -40,69 +129,6 @@ export const debtTypesRoutes = [
           sidebar: {
             visible: false
           }
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_TYPES_CATALOG',
-        path: 'catalog',
-        element: (
-          <RouteGuard evaluation={superAdminGuardCondition}>
-            <DebtTypes />
-          </RouteGuard>
-        ),
-        handle: {
-          backButton: false,
-          hideBreadcrumbs: true
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_TYPE_CATALOG_DETAIL',
-        path: 'catalog/detail/:debtPositionTypeId',
-        element: (
-          <RouteGuard evaluation={superAdminGuardCondition}>
-            <DebtTypeCatalogDetailView />
-          </RouteGuard>
-        ),
-        handle: {
-          backButton: true,
-          hideBreadcrumbs: true,
-          sidebar: {
-            visible: false
-          }
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_TYPE_CREATE',
-        path: 'new',
-        element: <DebtTypeCreate />,
-        handle: {
-          backButton: true,
-          backButtonText: 'commons.exit',
-          hideBreadcrumbs: true,
-          sidebar: {
-            visible: false
-          }
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_TYPE_CREATE_SUCCESS',
-        path: 'new/ok',
-        element: <DebtTypeCreateSuccess />,
-        handle: {
-          backButton: false,
-          hideBreadcrumbs: true,
-          sidebar: {
-            visible: false
-          }
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_TYPES_CREATED',
-        path: 'dashboard',
-        element: <DebtTypesCreated />,
-        handle: {
-          backButton: false,
-          hideBreadcrumbs: true
         } as RouteHandleObject
       },
       {
@@ -124,31 +150,6 @@ export const debtTypesRoutes = [
         element: <DebtTypeOrgCreateSuccess />,
         handle: {
           backButton: false,
-          hideBreadcrumbs: true,
-          sidebar: {
-            visible: false
-          }
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_TYPE_CATALOG_EDIT_SUCCESS',
-        path: 'edit/ok',
-        element: <DebtTypeCatalogEditSuccess />,
-        handle: {
-          backButton: false,
-          hideBreadcrumbs: true,
-          sidebar: {
-            visible: false
-          }
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_TYPE_CATALOG_EDIT',
-        path: 'catalog/edit/:debtPositionTypeId',
-        element: <DebtTypeCatalogEdit />,
-        handle: {
-          backButton: true,
-          backButtonText: 'commons.exit',
           hideBreadcrumbs: true,
           sidebar: {
             visible: false
