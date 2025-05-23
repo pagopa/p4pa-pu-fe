@@ -113,7 +113,7 @@ export const SuccessPageConfig: SuccessOpts = {
         variant: 'contained',
         size: 'large',
         buttonLabel: 'commons.backToStart',
-        actionID: 'DEBT_TYPES_CREATED'
+        actionID: 'DEBT_TYPES_DASHBOARD'
       }
     ]
   }

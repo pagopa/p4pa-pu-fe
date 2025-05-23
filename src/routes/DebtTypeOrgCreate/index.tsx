@@ -157,7 +157,7 @@ export const DebtTypeOrgCreate = () => {
 
   const onBack = useCallback(() => {
     if (step === 0) {
-      navigate(PageRoutes.DEBT_TYPES_CREATED);
+      navigate(PageRoutes.DEBT_TYPES_DASHBOARD);
     } else {
       setStep(step - 1);
     }
