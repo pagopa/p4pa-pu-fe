@@ -79,11 +79,20 @@ export const getDebtPositionTypesByOrganizationId = ({
 }) =>
   useQuery({
     queryKey: ['getDebtPositionTypesByOrganizationId', organizationId],
-    queryFn: async () => {
-      const { data: response } =
-        await utils.apiClient.bff.getDebtPositionTypesByOrganizationId(
-          organizationId
-        );
-      return response;
+    queryFn: async () =>
+      await utils.apiClient.bff.getDebtPositionTypesByOrganizationId(
+        organizationId
+      ),
+    select: ({ data }) => {
+      parseAndLog(debtPositionTypeSchema.array(), data);
+      const optionsMap = data
+        .slice()
+        .sort((a, b) => a.description.localeCompare(b.description))
+        .map((type) => ({
+          label: type.description,
+          value: type.debtPositionTypeId
+        }));
+
+      return { response: data, optionsMap };
     }
   });

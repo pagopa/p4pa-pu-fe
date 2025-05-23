@@ -8,7 +8,7 @@ describe('step2Schema', () => {
       flagSpontaneous: true,
       flagMandatoryDueDate: false,
       isAnonymousFiscalCode: false,
-      flagNotifyOutcomePush: 'false',
+      flagNotifyOutcomePush: 'disabled',
       paymentMethod: PaymentMethodOption.AMOUNT
     };
 
@@ -101,7 +101,7 @@ describe('step2Schema', () => {
     const baseNotificationData = {
       flagSpontaneous: false,
       paymentMethod: PaymentMethodOption.FREE,
-      flagNotifyOutcomePush: 'true',
+      flagNotifyOutcomePush: 'enabled',
       notificationRetries: 3,
       notificationAppName: 'Test App',
       notificationEndpoint: 'https://api.example.com',
@@ -161,7 +161,7 @@ describe('step2Schema', () => {
       const data = {
         flagSpontaneous: false,
         paymentMethod: PaymentMethodOption.FREE,
-        flagNotifyOutcomePush: 'false'
+        flagNotifyOutcomePush: 'disabled'
         // no notification fields required
       };
       const result = step2Schema.safeParse(data);

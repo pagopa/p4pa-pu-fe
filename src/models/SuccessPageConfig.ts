@@ -116,5 +116,17 @@ export const SuccessPageConfig: SuccessOpts = {
         actionID: 'DEBT_TYPES_DASHBOARD'
       }
     ]
+  },
+  'debt-type-org-update': {
+    title: 'debtTypeOrgCreate.edit.success.title',
+    description: 'debtTypeOrgCreate.edit.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'commons.backToStart',
+        actionID: 'DEBT_TYPES_DASHBOARD'
+      }
+    ]
   }
 };

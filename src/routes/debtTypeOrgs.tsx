@@ -51,6 +51,19 @@ export const debtTypeOrgsRoutes: Array<RouteObject> = [
             visible: false
           }
         } as RouteHandleObject
+      },
+      {
+        id: 'DEBT_TYPE_ORG_EDIT',
+        path: 'edit/:debtPositionTypeOrgId',
+        element: <DebtTypeOrgCreate edit />,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject
       }
     ]
   }

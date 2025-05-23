@@ -751,6 +751,12 @@
     }
   },
   "debtTypeOrgCreate": {
+    "edit": {
+      "success": {
+        "title": "Il Tipo dovuto ‘{{paymentObject}}’ è stato modificato!",
+        "description": "La trovi nella sezione I tuoi Tipi Dovuti."
+      }
+    },
     "title": "Imposta nuovo Tipo dovuto",
     "description": "Compila i campi e configura un nuovo Tipo dovuto per il tuo ente.",
     "success": {

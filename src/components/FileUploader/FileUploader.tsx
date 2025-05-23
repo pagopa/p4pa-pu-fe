@@ -30,6 +30,7 @@ export type FileUploaderProps = {
   requiredFileText?: string;
   fileExtensionsAllowed: Array<string>;
   header?: React.ReactNode;
+  disabled?: boolean;
 };
 
 const FileUploader = ({
@@ -42,7 +43,8 @@ const FileUploader = ({
   description,
   requiredFileText,
   fileExtensionsAllowed,
-  header
+  header,
+  disabled
 }: FileUploaderProps) => {
   const { t } = useTranslation();
 
@@ -113,6 +115,9 @@ const FileUploader = ({
   };
 
   const formatFileSize = (size: number) => {
+    if (!size) {
+      return '0 Bytes';
+    }
     if (size >= 1024 * 1024) {
       return `${(size / (1024 * 1024)).toFixed(2)} MB`;
     } else if (size >= 1024) {
@@ -128,7 +133,11 @@ const FileUploader = ({
         {header ?? (
           <>
             <InsertDriveFile />
-            <Typography fontWeight={600} ml={1}>
+            <Typography
+              fontWeight={600}
+              ml={1}
+              color={disabled ? 'gray' : 'textPrimary'}
+            >
               {t('commons.files.file')}
             </Typography>
           </>
@@ -139,6 +148,7 @@ const FileUploader = ({
         <Alert
           action={
             <IconButton
+              disabled={disabled}
               size="small"
               onClick={() => setError(null)}
               sx={{ color: theme.palette.primary.dark }}
@@ -169,12 +179,21 @@ const FileUploader = ({
             data-testid="drop-zone"
           >
             <CloudUpload
-              sx={{ fontSize: 40, color: theme.palette.primary.main }}
+              sx={{
+                fontSize: 40,
+                color: disabled ? 'gray' : theme.palette.primary.main
+              }}
             />
-            <Typography variant="body1" mt={2} mb={3}>
+            <Typography
+              variant="body1"
+              mt={2}
+              mb={3}
+              color={disabled ? 'gray' : 'textPrimary'}
+            >
               {description}
             </Typography>
             <Button
+              disabled={disabled}
               variant="contained"
               component="label"
               sx={{
@@ -183,6 +202,7 @@ const FileUploader = ({
             >
               {t('commons.files.upload')}
               <input
+                disabled={disabled}
                 type="file"
                 hidden
                 data-testid="input-file"
@@ -191,7 +211,11 @@ const FileUploader = ({
               />
             </Button>
           </Box>
-          <Typography variant="body2" mt={2} color="textSecondary">
+          <Typography
+            variant="body2"
+            mt={2}
+            color={disabled ? 'gray' : 'textSecondary'}
+          >
             {requiredFileText}
           </Typography>
         </>
@@ -223,29 +247,42 @@ const FileUploader = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
-            border: `1px solid ${theme.palette.primary.main}`,
+            border: `1px solid ${disabled ? 'gray' : theme.palette.primary.main}`,
             borderRadius: 2,
             p: 2,
             mt: 2
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <AttachFile sx={{ color: theme.palette.primary.main, mr: 1 }} />
+            <AttachFile
+              sx={{
+                color: disabled ? 'gray' : theme.palette.primary.main,
+                mr: 1
+              }}
+            />
             <Typography
               variant="body1"
               sx={{ fontWeight: 400 }}
-              color={theme.palette.primary.main}
+              color={disabled ? 'gray' : theme.palette.primary.main}
             >
-              {file.name}
+              {file?.name || ''}
             </Typography>
-            <Typography variant="body2" fontWeight={700} sx={{ marginLeft: 2 }}>
-              {formatFileSize(file.size)}
+            <Typography
+              variant="body2"
+              fontWeight={700}
+              sx={{
+                marginLeft: 2,
+                color: disabled ? 'gray' : theme.palette.primary.main
+              }}
+            >
+              {formatFileSize(file.size) || ''}
             </Typography>
           </Box>
           <IconButton
+            disabled={disabled}
             aria-label={t('commons.files.remove')}
             onClick={handleRemoveFile}
-            sx={{ color: theme.palette.primary.main }}
+            sx={{ color: disabled ? 'gray' : theme.palette.primary.main }}
           >
             <Close />
           </IconButton>

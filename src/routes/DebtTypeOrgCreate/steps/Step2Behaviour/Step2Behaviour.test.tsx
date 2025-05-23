@@ -18,7 +18,7 @@ const renderWithForm = (
       resolver: zodResolver(step2Schema),
       defaultValues: {
         flagSpontaneous: false,
-        flagNotifyOutcomePush: 'false',
+        flagNotifyOutcomePush: 'disable',
         paymentMethod: undefined,
         flagMandatoryDueDate: false,
         authenticateUsername: '',
