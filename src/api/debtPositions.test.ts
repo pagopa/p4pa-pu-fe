@@ -287,7 +287,7 @@ describe('createDebtPosition', () => {
       debtPositionOrigin: DebtPositionOrigin.ORDINARY,
       organizationId: 123,
       debtPositionTypeOrgId: 456,
-      flagPagoPaPayment: true
+      flagPuPagoPaPayment: true
     };
     const paymentObject = 'test-payment';
 
@@ -315,7 +315,7 @@ describe('createDebtPosition', () => {
       debtPositionOrigin: DebtPositionOrigin.ORDINARY,
       organizationId: 123,
       debtPositionTypeOrgId: 456,
-      flagPagoPaPayment: true
+      flagPuPagoPaPayment: true
     };
     const error = new Error('API Error');
 
