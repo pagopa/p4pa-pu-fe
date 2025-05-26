@@ -388,7 +388,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
       flagIuvVolatile: DEFAULT_VALUES.FLAG_IUV_VOLATILE,
       debtPositionOrigin: DebtPositionOrigin.ORDINARY,
       multiDebtor: DEFAULT_VALUES.MULTI_DEBTOR,
-      flagPagoPaPayment: DEFAULT_VALUES.FLAG_PAGO_PA_PAYMENT,
+      flagPuPagoPaPayment: DEFAULT_VALUES.FLAG_PU_PAGO_PA_PAYMENT,
       paymentOptions: [
         {
           totalAmountCents: Math.round(

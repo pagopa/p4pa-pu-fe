@@ -347,6 +347,7 @@
       "title": "Configurazione avviso"
     },
     "description": "Compila i campi e crea una Posizione Debitoria",
+    "editDescription": "Compila i campi e modifica una Posizione Debitoria.",
     "generalConfiguration": {
       "subtitle": "Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento.",
       "title": "Configurazione generale"
@@ -527,6 +528,7 @@
       "title": "Avviso"
     },
     "title": "Crea una nuova Posizione Debitoria",
+    "editTitle": "Modifica una Posizione Debitoria",
     "wizardStepper": {
       "step1": "Configurazione generale",
       "step2": "Aggiungi debitore",

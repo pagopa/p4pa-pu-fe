@@ -362,7 +362,7 @@ export function formatAmountForDisplay(value: string): string {
 export const DEFAULT_VALUES = {
   FLAG_IUV_VOLATILE: false,
   MULTI_DEBTOR: false,
-  FLAG_PAGO_PA_PAYMENT: true,
+  FLAG_PU_PAGO_PA_PAYMENT: true,
   PAYMENT_OPTION_INDEX: 1
 } as const;
 

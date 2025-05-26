@@ -24,13 +24,13 @@ type Props = {
   onBack?: () => void;
 };
 
-// Type per i messaggi di errore
+// Type for the error message
 type FieldErrorValue = {
   type: string;
   message: string;
 };
 
-// Type per i campi di errore nidificati
+// Type for the nested field errors
 type NestedFieldErrors<T> = {
   [K in keyof T]?: {
     value?: FieldErrorValue;
@@ -191,6 +191,48 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     mode: 'onChange'
   });
 
+  // UseEffect for populating form fields when data is available
+  useEffect(() => {
+    if (data?.subjectType?.value) {
+      setValue('subjectType.value', data.subjectType.value);
+    }
+    if (data?.taxCode?.value) {
+      setValue('taxCode.value', data.taxCode.value);
+    }
+    if (data?.fullName?.value) {
+      setValue('fullName.value', data.fullName.value);
+    }
+    if (data?.address?.value) {
+      setValue('address.value', data.address.value);
+    }
+    if (data?.civicNumber?.value) {
+      setValue('civicNumber.value', data.civicNumber.value);
+    }
+    if (data?.zipCode?.value) {
+      setValue('zipCode.value', data.zipCode.value);
+    }
+    if (data?.country?.value) {
+      setValue('country.value', data.country.value);
+    }
+    if (data?.province?.value) {
+      setValue('province.value', data.province.value);
+    }
+    if (data?.city?.value) {
+      setValue('city.value', data.city.value);
+    }
+  }, [
+    data?.subjectType?.value,
+    data?.taxCode?.value,
+    data?.fullName?.value,
+    data?.address?.value,
+    data?.civicNumber?.value,
+    data?.zipCode?.value,
+    data?.country?.value,
+    data?.province?.value,
+    data?.city?.value,
+    setValue
+  ]);
+
   const subjectTypeValue = watch('subjectType.value') || '';
 
   useEffect(() => {
@@ -201,7 +243,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   }, [subjectTypeValue, trigger, isSubmitted]);
 
   /**
-   * Gestisce il cambiamento di qualsiasi campo del form
+   * Handles the change of any field in the form
    */
   const handleFieldChange = async (
     fieldName: NestedFieldName,
@@ -217,7 +259,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
   };
 
   /**
-   * Gestisce il cambiamento del tipo di soggetto
+   * Handles the change of the subject type
    */
   const handleSubjectTypeChange = async (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -228,35 +270,23 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     await trigger('fullName.value');
   };
 
-  /**
-   * Gestisce la sottomissione del form
-   */
   const onSubmit = async (values: Step2Data) => {
     setData(values);
     onNext();
   };
 
-  /**
-   * Ottiene l'etichetta appropriata per il codice fiscale/partita IVA
-   */
   const getTaxCodeLabel = () => {
     return subjectTypeValue === SubjectType.BUSINESS
       ? t('debtPositionCreateWizard.step2.vat.label')
       : t('debtPositionCreateWizard.step2.taxCode.label');
   };
 
-  /**
-   * Ottiene il placeholder appropriato per il codice fiscale/partita IVA
-   */
   const getTaxCodePlaceholder = () => {
     return subjectTypeValue === SubjectType.BUSINESS
       ? t('debtPositionCreateWizard.step2.vat.placeholder')
       : t('debtPositionCreateWizard.step2.taxCode.placeholder');
   };
 
-  /**
-   * Ottiene l'etichetta appropriata per il nome/ragione sociale
-   */
   const getCompanyNameLabel = () => {
     return subjectTypeValue === SubjectType.BUSINESS
       ? t('debtPositionCreateWizard.step2.companyName.label')

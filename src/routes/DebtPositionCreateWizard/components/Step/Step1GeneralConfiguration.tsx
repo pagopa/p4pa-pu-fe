@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useStore } from '../../../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
 import { MenuItem, TextField } from '@mui/material';
-import { useDebtPositionsTypeOrg } from '../../../../hooks/useDebtPositionsTypeOrg';
+import { getDebtPositionTypeOrgs } from '../../../../api/debtPositionsTypeOrg';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
@@ -16,6 +16,7 @@ import {
   createStep1GeneralConfigurationSchema,
   Step1GeneralConfigurationFormValues
 } from '../../../../models/Step1GeneralConfigurationSchema';
+import { useEffect, useRef, useMemo } from 'react';
 
 // Types for react-hook-form
 type FormValues = Step1GeneralConfigurationFormValues;
@@ -25,40 +26,168 @@ type Props = {
   setData: (data: Step1Data) => void;
   onNext: () => void;
   onBack?: () => void;
+  isEditing?: boolean;
+  debtPositionTypeOrgCode?: string;
 };
 
 const Step1GeneralConfiguration = ({
   data,
   setData,
   onNext,
-  onBack
+  onBack,
+  isEditing = false,
+  debtPositionTypeOrgCode
 }: Props) => {
   const {
     state: { organizationId }
   } = useStore();
   const { t } = useTranslation();
-  // Custom hook to retrieve available debt position types
-  const { optionsMap: debtPositionsTypes } = useDebtPositionsTypeOrg({
-    organizationId,
-    includeAllOption: false
-  }) as { optionsMap: Array<DebtPositionType> };
+
+  // Ref to avoid executing the setup logic more than once
+  const hasSetupDebtPositionType = useRef(false);
+
+  const {
+    data: debtPositionTypeOrgsData,
+    isLoading: isLoadingDebtPositionTypes
+  } = getDebtPositionTypeOrgs({
+    organizationId
+  });
+
+  // Create the array of options for the select from the complete data
+  const debtPositionsTypes: Array<DebtPositionType> = useMemo(() => {
+    if (!debtPositionTypeOrgsData) return [];
+
+    return debtPositionTypeOrgsData
+      .filter(
+        (type) => type?.description && type?.debtPositionTypeOrgId !== undefined
+      )
+      .sort((a, b) => a.description.localeCompare(b.description))
+      .map((type) => ({
+        label: type.description,
+        value: type.debtPositionTypeOrgId as number,
+        flagMandatoryDueDate: type.flagMandatoryDueDate || false
+      }));
+  }, [debtPositionTypeOrgsData]);
 
   // Create the Zod schema with translation function
   const schema = createStep1GeneralConfigurationSchema(t);
 
+  // Determinare se i dati sono pronti per il rendering
+  const isDataReady = () => {
+    if (!isEditing) {
+      // In creation mode, the data is always ready if not loading
+      return !isLoadingDebtPositionTypes;
+    }
+
+    // In edit mode, wait for all necessary data to be available
+    return (
+      !isLoadingDebtPositionTypes &&
+      debtPositionTypeOrgCode &&
+      debtPositionTypeOrgsData &&
+      debtPositionsTypes.length > 0 &&
+      data?.description?.value !== undefined
+    );
+  };
+
+  const getInitialValues = () => {
+    if (!isEditing || !isDataReady()) {
+      return {
+        debtPositionType: data?.debtPositionType?.value || '',
+        description: data?.description?.value || ''
+      };
+    }
+
+    // In edit mode, find the debt position type corresponding to the code
+    const matchingTypeOrg = debtPositionTypeOrgsData?.find(
+      (typeOrg) => typeOrg.code === debtPositionTypeOrgCode
+    );
+
+    if (matchingTypeOrg) {
+      const matchingSelectOption = debtPositionsTypes.find(
+        (type) => type.value === matchingTypeOrg.debtPositionTypeOrgId
+      );
+
+      if (matchingSelectOption) {
+        return {
+          debtPositionType: matchingSelectOption.value.toString(),
+          description: data?.description?.value || ''
+        };
+      }
+    }
+
+    return {
+      debtPositionType: '',
+      description: data?.description?.value || ''
+    };
+  };
+
   // Form initialization with react-hook-form
   const {
-    handleSubmit, // to handle form submission
-    control, // to control values
-    formState: { errors } // contains validation errors
+    handleSubmit,
+    control,
+    formState: { errors },
+    setValue
   } = useForm<FormValues>({
-    defaultValues: {
-      debtPositionType: data?.debtPositionType?.value || '',
-      description: data?.description?.value || ''
-    },
+    defaultValues: getInitialValues(),
     resolver: zodResolver(schema),
     mode: 'onTouched'
   });
+
+  // Effect to repopulate the form fields when the data becomes available
+  useEffect(() => {
+    if (
+      isEditing &&
+      isDataReady() &&
+      debtPositionTypeOrgCode &&
+      debtPositionTypeOrgsData
+    ) {
+      const matchingTypeOrg = debtPositionTypeOrgsData.find(
+        (typeOrg) => typeOrg.code === debtPositionTypeOrgCode
+      );
+
+      if (matchingTypeOrg) {
+        const matchingSelectOption = debtPositionsTypes.find(
+          (type) => type.value === matchingTypeOrg.debtPositionTypeOrgId
+        );
+
+        if (matchingSelectOption) {
+          // Update form values
+          setValue('debtPositionType', matchingSelectOption.value.toString());
+
+          // Update parent component data (only once)
+          if (!hasSetupDebtPositionType.current) {
+            const updatedData = {
+              ...data,
+              debtPositionType: {
+                ...data.debtPositionType,
+                value: matchingSelectOption.value.toString(),
+                flagMandatoryDueDate:
+                  matchingSelectOption.flagMandatoryDueDate || false
+              }
+            };
+            setData(updatedData);
+            hasSetupDebtPositionType.current = true;
+          }
+        }
+      }
+
+      // Update description if available
+      if (data?.description?.value) {
+        setValue('description', data.description.value);
+      }
+    }
+  }, [
+    isEditing,
+    isDataReady(),
+    debtPositionTypeOrgCode,
+    debtPositionTypeOrgsData,
+    debtPositionsTypes,
+    data?.description?.value,
+    setValue,
+    setData,
+    data
+  ]);
+
   // Function called on valid form submission
   const onSubmit = (values: FormValues) => {
     const selectedType = debtPositionsTypes.find(
@@ -81,6 +210,12 @@ const Step1GeneralConfiguration = ({
     setData(updatedData);
     onNext();
   };
+
+  // Non renderizzare il form fino a quando i dati non sono pronti
+  if (!isDataReady()) {
+    // Il loading sarà gestito automaticamente dal sistema centralizzato di react-query
+    return null;
+  }
 
   return (
     <form>
