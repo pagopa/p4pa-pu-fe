@@ -549,6 +549,7 @@
     "paymentOptions": "Opzioni di pagamento",
     "solutionDetail": "Dettaglio soluzione",
     "downloadNotices": "Scarica avvisi",
+    "activePayment": "Attiva pagamento",
     "edit": "Modifica",
     "confirmDialog": {
       "title": "Sei sicuro di voler eliminare la posizione debitoria?",

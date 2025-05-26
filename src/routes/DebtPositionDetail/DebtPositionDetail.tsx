@@ -410,10 +410,18 @@ const DebtPositionDetail = () => {
         chip={statusChip}
         callToAction={[
           {
-            icon: <GetApp data-testid="DownloadButton" />,
+            icon: debtPositionDetail.status !== DebtPositionStatus.DRAFT && (
+              <GetApp data-testid="DownloadButton" />
+            ),
             variant: 'contained',
-            buttonText: t('debtPositionDetail.downloadNotices'),
-            onActionClick: handleDownloadNotices
+            buttonText:
+              debtPositionDetail.status !== DebtPositionStatus.DRAFT
+                ? t('debtPositionDetail.downloadNotices')
+                : t('debtPositionDetail.activePayment'),
+            onActionClick:
+              debtPositionDetail.status !== DebtPositionStatus.DRAFT
+                ? handleDownloadNotices
+                : () => console.log('active payment')
           },
           {
             icon: <History data-testid="HistoryButton" />,
