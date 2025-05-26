@@ -211,12 +211,16 @@ export const DebtPositionsInstallmentDetail = () => {
             variant: 'text',
             onActionClick: () => setTimelineOpen(true)
           },
-          {
-            icon: <Download />,
-            variant: 'contained',
-            buttonText: t('commons.downloadInstallment'),
-            onActionClick: handleDownloadInstallment
-          }
+          ...(statusInstallment !== InstallmentStatus.DRAFT
+            ? [
+                {
+                  icon: <Download />,
+                  variant: 'contained' as const,
+                  buttonText: t('commons.downloadInstallment'),
+                  onActionClick: handleDownloadInstallment
+                }
+              ]
+            : [])
         ]}
       />
       <Grid container spacing={3}>
