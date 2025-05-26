@@ -5,12 +5,9 @@ import DebtTypes from './DebtTypes/DebtTypes';
 import DebtTypeDetailView from './DebtTypeDetailView/DebtTypeDetailView';
 import DebtTypeCatalogDetailView from './DebtTypeCatalogDetailView/DebtTypeCatalogDetailView';
 import { DebtTypeCreate } from './DebtTypeCreate';
-import { DebtTypeCreateSuccess } from './DebtTypeCreate/DebtTypeCreateSuccess';
 import { DebtTypeCatalogEdit } from './DebtTypeCatalogEdit';
-import { DebtTypeCatalogEditSuccess } from './DebtTypeCatalogEdit/DebtTypeCatalogEditSuccess';
 import DebtTypesCreated from './DebtTypesCreated/DebtTypesCreated';
 import { DebtTypeOrgCreate } from './DebtTypeOrgCreate';
-import { DebtTypeOrgCreateSuccess } from './DebtTypeOrgCreate/DebtTypeOrgCreateSuccess';
 import {
   AdminRouteGuard,
   SuperAdminRouteGuard
@@ -72,36 +69,12 @@ export const debtTypesRoutes = [
             } as RouteHandleObject
           },
           {
-            id: 'DEBT_TYPE_CATALOG_EDIT_SUCCESS',
-            path: 'edit/ok',
-            element: <DebtTypeCatalogEditSuccess />,
-            handle: {
-              backButton: false,
-              hideBreadcrumbs: true,
-              sidebar: {
-                visible: false
-              }
-            } as RouteHandleObject
-          },
-          {
             id: 'DEBT_TYPE_CATALOG_CREATE',
             path: 'new',
             element: <DebtTypeCreate />,
             handle: {
               backButton: true,
               backButtonText: 'commons.exit',
-              hideBreadcrumbs: true,
-              sidebar: {
-                visible: false
-              }
-            } as RouteHandleObject
-          },
-          {
-            id: 'DEBT_TYPE_CATALOG_CREATE_SUCCESS',
-            path: 'new/ok',
-            element: <DebtTypeCreateSuccess />,
-            handle: {
-              backButton: false,
               hideBreadcrumbs: true,
               sidebar: {
                 visible: false
@@ -138,18 +111,6 @@ export const debtTypesRoutes = [
         handle: {
           backButton: true,
           backButtonText: 'commons.exit',
-          hideBreadcrumbs: true,
-          sidebar: {
-            visible: false
-          }
-        } as RouteHandleObject
-      },
-      {
-        id: 'DEBT_TYPE_ORG_CREATE_SUCCESS',
-        path: 'dashboard/new/ok',
-        element: <DebtTypeOrgCreateSuccess />,
-        handle: {
-          backButton: false,
           hideBreadcrumbs: true,
           sidebar: {
             visible: false

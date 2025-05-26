@@ -1,8 +1,8 @@
 import { screen, fireEvent } from '@testing-library/react';
+import { render } from '../../__tests__/renderers';
 import DebtPositionDetail from './DebtPositionDetail';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
-import { render } from '../../__tests__/renderers';
 import {
   debtPositionDetailDTOSchema,
   personDTOSchema
@@ -14,8 +14,10 @@ import { UseQueryResult } from '@tanstack/react-query';
 import {
   InstallmentStatus,
   PaymentOptionTypeEnum,
-  PaymentOptionStatus
+  PaymentOptionStatus,
+  DebtPositionStatus
 } from '../../../generated/data-contracts';
+import * as utils from '../../utils/download';
 
 const mockDebtPositionDetail = createMock(debtPositionDetailDTOSchema);
 
@@ -95,7 +97,7 @@ vi.mock('react-router-dom', async () => {
 vi.mock('../../store/GlobalStore', () => ({
   useStore: () => ({
     state: {
-      ORGANIZATION_ID: 3,
+      ORGANIZATION_ID: '3',
       APP_STATE: { loading: false, customBreadcrumbsItems: [] }
     }
   }),
@@ -112,7 +114,20 @@ vi.mock('../../api/debtPositions', () => ({
       isLoading: false,
       isError: false,
       isSuccess: false
-    }))
+    })),
+    downloadDebtPositionZip: vi.fn()
+  }
+}));
+
+vi.mock('../../utils/download', () => ({
+  downloadBlob: vi.fn()
+}));
+
+vi.mock('../../utils', () => ({
+  default: {
+    notify: {
+      emit: vi.fn()
+    }
   }
 }));
 
@@ -149,8 +164,15 @@ beforeEach(() => {
     'debtPositionDetail.edit': 'Edit',
     'debtPositionDetail.downloadNotices': 'Download Notices',
     'debtPositionDetail.timeline.title': 'Timeline',
-    'debtPositionDetail.timeline.message': 'Message'
+    'debtPositionDetail.timeline.message': 'Message',
+    'debtPositionDetail.dialogDownload.title': 'Cannot Download Notices',
+    'debtPositionDetail.dialogDownload.message':
+      'Notices can only be downloaded for unpaid or partially paid debt positions',
+    'commons.files.downloadFailed': 'Download failed',
+    'commons.files.missingDebtPositionId': 'Missing debt position ID'
   });
+
+  mockDebtPositionDetail.status = DebtPositionStatus.UNPAID;
 
   vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
     data: mockDebtPositionDetail,
@@ -171,6 +193,7 @@ beforeEach(() => {
 describe('DebtPositionDetail Component', () => {
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
@@ -289,6 +312,328 @@ describe('DebtPositionDetail Component', () => {
       fireEvent.click(historyButton);
       const drawerTitle = screen.getByText('Timeline');
       expect(drawerTitle).toBeVisible();
+    }
+  });
+
+  it('calls downloadDebtPositionZip when download button is clicked and status is UNPAID', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.UNPAID;
+    const mockResult = {
+      data: new Blob(['test data'], { type: 'application/zip' }),
+      fileName: 'test-file.zip'
+    };
+
+    vi.mocked(debtPositions.downloadDebtPositionZip).mockResolvedValue(
+      mockResult
+    );
+
+    render(<DebtPositionDetail />);
+
+    const downloadButton = screen
+      .getByTestId('DownloadButton')
+      .closest('button');
+    expect(downloadButton).not.toBeNull();
+
+    if (downloadButton) {
+      fireEvent.click(downloadButton);
+
+      await vi.waitFor(() => {
+        const firstCall = vi.mocked(debtPositions.downloadDebtPositionZip).mock
+          .calls[0];
+        expect(firstCall).toBeTruthy();
+        expect(firstCall[1]).toBe(10);
+        expect(utils.downloadBlob).toHaveBeenCalledWith(
+          mockResult.data,
+          mockResult.fileName
+        );
+      });
+    }
+  });
+
+  it('calls downloadDebtPositionZip when download button is clicked and status is PARTIALLY_PAID', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.PARTIALLY_PAID;
+    const mockResult = {
+      data: new Blob(['test data'], { type: 'application/zip' }),
+      fileName: 'test-file.zip'
+    };
+
+    vi.mocked(debtPositions.downloadDebtPositionZip).mockResolvedValue(
+      mockResult
+    );
+
+    render(<DebtPositionDetail />);
+
+    const downloadButton = screen
+      .getByTestId('DownloadButton')
+      .closest('button');
+    expect(downloadButton).not.toBeNull();
+
+    if (downloadButton) {
+      fireEvent.click(downloadButton);
+
+      await vi.waitFor(() => {
+        const firstCall = vi.mocked(debtPositions.downloadDebtPositionZip).mock
+          .calls[0];
+        expect(firstCall).toBeTruthy();
+        expect(firstCall[1]).toBe(10);
+        expect(utils.downloadBlob).toHaveBeenCalledWith(
+          mockResult.data,
+          mockResult.fileName
+        );
+      });
+    }
+  });
+
+  it('shows dialog when download button is clicked and status is not UNPAID or PARTIALLY_PAID', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.PAID;
+
+    render(<DebtPositionDetail />);
+
+    const downloadButton = screen
+      .getByTestId('DownloadButton')
+      .closest('button');
+    expect(downloadButton).not.toBeNull();
+
+    if (downloadButton) {
+      fireEvent.click(downloadButton);
+
+      await vi.waitFor(() => {
+        expect(screen.getByText('Cannot Download Notices')).toBeVisible();
+        expect(
+          screen.getByText(
+            'Notices can only be downloaded for unpaid or partially paid debt positions'
+          )
+        ).toBeVisible();
+        expect(debtPositions.downloadDebtPositionZip).not.toHaveBeenCalled();
+      });
+    }
+  });
+
+  it('handles error when downloadDebtPositionZip fails', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.UNPAID;
+
+    vi.mocked(debtPositions.downloadDebtPositionZip).mockRejectedValue(
+      new Error('Download failed')
+    );
+
+    render(<DebtPositionDetail />);
+
+    const downloadButton = screen
+      .getByTestId('DownloadButton')
+      .closest('button');
+    expect(downloadButton).not.toBeNull();
+
+    if (downloadButton) {
+      fireEvent.click(downloadButton);
+
+      await vi.waitFor(() => {
+        const firstCall = vi.mocked(debtPositions.downloadDebtPositionZip).mock
+          .calls[0];
+        expect(firstCall).toBeTruthy();
+        expect(firstCall[1]).toBe(10);
+        expect(utils.downloadBlob).not.toHaveBeenCalled();
+        expect(console.error).toHaveBeenCalled();
+      });
+    }
+  });
+
+  it('closes dialog when confirm button is clicked', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.PAID;
+
+    render(<DebtPositionDetail />);
+
+    const downloadButton = screen
+      .getByTestId('DownloadButton')
+      .closest('button');
+    expect(downloadButton).not.toBeNull();
+
+    if (downloadButton) {
+      fireEvent.click(downloadButton);
+
+      await vi.waitFor(() => {
+        expect(screen.getByText('Cannot Download Notices')).toBeVisible();
+      });
+
+      const closeButton = screen.getByText('Close');
+      fireEvent.click(closeButton);
+
+      await vi.waitFor(() => {
+        expect(
+          screen.queryByText('Cannot Download Notices')
+        ).not.toBeInTheDocument();
+      });
+    }
+  });
+
+  it('shows delete confirmation dialog when delete option is clicked', async () => {
+    // Imposta lo stato della debt position per renderla eliminabile
+    mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
+
+    render(<DebtPositionDetail />);
+
+    // Clicca sul pulsante del menu
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      // Attendi che il menu sia visibile
+      await vi.waitFor(() => {
+        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+        expect(deleteOption).toBeVisible();
+
+        // Clicca sull'opzione di eliminazione
+        if (deleteOption) {
+          fireEvent.click(deleteOption);
+        }
+      });
+
+      // Verifica che il dialog di conferma sia visualizzato
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Confirm Delete');
+        expect(dialogTitle).toBeVisible();
+
+        // Verifica che ci siano i pulsanti di conferma e annullamento
+        const deleteButton = screen.getByRole('button', { name: 'Delete' });
+        expect(deleteButton).toBeVisible();
+
+        const closeButton = screen.getByRole('button', { name: 'Close' });
+        expect(closeButton).toBeVisible();
+      });
+    }
+  });
+
+  it('calls deleteDebtPosition when delete is confirmed', async () => {
+    // Imposta lo stato della debt position per renderla eliminabile
+    mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
+
+    render(<DebtPositionDetail />);
+
+    // Clicca sul pulsante del menu
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      // Attendi che il menu sia visibile e clicca su Delete
+      await vi.waitFor(() => {
+        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+        if (deleteOption) {
+          fireEvent.click(deleteOption);
+        }
+      });
+
+      // Verifica che il dialog di conferma sia visualizzato
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Confirm Delete');
+        expect(dialogTitle).toBeVisible();
+      });
+
+      // Trova direttamente il pulsante Delete nel dialogo
+      const deleteButton = screen.getByRole('button', { name: 'Delete' });
+      expect(deleteButton).toBeVisible();
+
+      // Clicca sul pulsante di conferma
+      fireEvent.click(deleteButton);
+
+      // Verifica che la funzione di eliminazione sia stata chiamata
+      await vi.waitFor(() => {
+        expect(mockMutate).toHaveBeenCalled();
+      });
+    }
+  });
+
+  it('closes dialog without deleting when cancel is clicked', async () => {
+    // Imposta lo stato della debt position per renderla eliminabile
+    mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
+
+    render(<DebtPositionDetail />);
+
+    // Clicca sul pulsante del menu
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      // Attendi che il menu sia visibile e clicca su Delete
+      await vi.waitFor(() => {
+        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+        if (deleteOption) {
+          fireEvent.click(deleteOption);
+        }
+      });
+
+      // Verifica che il dialog di conferma sia visualizzato
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Confirm Delete');
+        expect(dialogTitle).toBeVisible();
+      });
+
+      // Trova direttamente il pulsante Close nel dialogo
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      expect(closeButton).toBeVisible();
+
+      // Clicca sul pulsante Close
+      fireEvent.click(closeButton);
+
+      // Verifica che il dialog sia stato chiuso
+      await vi.waitFor(() => {
+        expect(screen.queryByText('Confirm Delete')).not.toBeInTheDocument();
+      });
+
+      // Verifica che la funzione di eliminazione NON sia stata chiamata
+      expect(mockMutate).not.toHaveBeenCalled();
+    }
+  });
+
+  it('shows error dialog when trying to delete a debt position that cannot be deleted', async () => {
+    // Imposta lo stato della debt position per renderla non eliminabile
+    mockDebtPositionDetail.status = DebtPositionStatus.PAID;
+
+    render(<DebtPositionDetail />);
+
+    // Clicca sul pulsante del menu
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      // Attendi che il menu sia visibile e clicca su Delete
+      await vi.waitFor(() => {
+        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+        if (deleteOption) {
+          fireEvent.click(deleteOption);
+        }
+      });
+
+      // Verifica che il dialog di errore sia visualizzato
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Cannot Delete');
+        expect(dialogTitle).toBeVisible();
+
+        const dialogMessage = screen.getByText(
+          'This debt position cannot be deleted'
+        );
+        expect(dialogMessage).toBeVisible();
+      });
+
+      // Trova direttamente il pulsante Close nel dialogo
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      expect(closeButton).toBeVisible();
+
+      // Clicca sul pulsante Close
+      fireEvent.click(closeButton);
+
+      // Verifica che il dialog sia stato chiuso
+      await vi.waitFor(() => {
+        expect(screen.queryByText('Cannot Delete')).not.toBeInTheDocument();
+      });
+
+      // Verifica che la funzione di eliminazione NON sia stata chiamata
+      expect(mockMutate).not.toHaveBeenCalled();
     }
   });
 });

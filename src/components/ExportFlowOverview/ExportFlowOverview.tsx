@@ -22,6 +22,7 @@ import { downloadExportFile, getExportFiles } from '../../api/exportFiles';
 import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
 import { downloadBlob } from '../../utils/download';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
+import { formatDateTime } from '../../utils/formatters';
 
 export type ExportFlowOverviewProps = {
   routingCategory: string;
@@ -116,7 +117,7 @@ const ExportFlowOverview = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams) =>
-        params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
+        formatDateTime(params.value as string)
     },
     {
       field: 'operator',
@@ -194,7 +195,7 @@ const ExportFlowOverview = ({
                   label: 'dateRange',
                   gridWidth: 5,
                   from: {
-                    label: t('dates.from'),
+                    label: t('commons.exportFrom'),
                     errorMessage: t('dates.validations.from'),
                     value: draftFilters.creationDateFrom
                       ? new Date(draftFilters.creationDateFrom)

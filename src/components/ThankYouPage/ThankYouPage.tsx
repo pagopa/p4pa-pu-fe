@@ -1,20 +1,26 @@
 import React from 'react';
-import { Button, Grid, Typography } from '@mui/material';
+import { Button, ButtonOwnProps, Grid, Typography } from '@mui/material';
+
+export type ButtonConfig = {
+  variant?: ButtonOwnProps['variant'];
+  size?: ButtonOwnProps['size'];
+  buttonLabel?: string;
+  actionID?: string;
+  onButtonClick?: () => void;
+};
 
 type ThankYouPageProps = {
   icon: React.ReactNode;
   title: string;
   description: string;
-  buttonLabel?: string;
-  onButtonClick: () => void;
+  buttonConfig?: Array<ButtonConfig>;
 };
 
 const ThankYouPage = ({
   icon,
   title,
   description,
-  buttonLabel,
-  onButtonClick
+  buttonConfig
 }: ThankYouPageProps) => {
   return (
     <>
@@ -36,11 +42,18 @@ const ThankYouPage = ({
             </Typography>
           </Grid>
         }
-        {buttonLabel && onButtonClick && (
-          <Button size="large" variant="contained" onClick={onButtonClick}>
-            {buttonLabel}
-          </Button>
-        )}
+        {buttonConfig &&
+          buttonConfig.map((btn, index) => (
+            <Grid item key={`${btn.buttonLabel}-${index}`} marginTop={1}>
+              <Button
+                size={btn.size}
+                variant={btn.variant}
+                onClick={btn.onButtonClick}
+              >
+                {btn.buttonLabel}
+              </Button>
+            </Grid>
+          ))}
       </Grid>
     </>
   );

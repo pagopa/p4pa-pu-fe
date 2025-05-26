@@ -1,18 +1,24 @@
 import { describe, expect, it, Mock, vi } from 'vitest';
-import { render, screen } from '../../__tests__/renderers';
-import { useLocation } from 'react-router-dom';
+import { render, screen, fireEvent } from '../../__tests__/renderers';
+import { useLocation, useNavigate } from 'react-router-dom';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import { SearchType } from '../../models/DebtPositions';
 import DebtPositionResults from './DebtPositionsResults';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
+import { PageRoutes } from '../../App';
 
 // Mock dependencies
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
 }));
 
-vi.mock('react-router-dom', () => ({
-  useLocation: vi.fn()
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useLocation: vi.fn(),
+  useNavigate: vi.fn(() => vi.fn()),
+  Navigate: vi.fn(),
+  generatePath: vi.fn((path) => path),
+  createBrowserRouter: vi.fn()
 }));
 
 vi.mock('../../hooks/useDebtPositionsSearch', () => ({
@@ -34,8 +40,34 @@ vi.mock('../../hooks/useDebtPositionsFilters', () => ({
   }))
 }));
 
+type ActionType = {
+  buttonText?: string;
+  onActionClick: () => void;
+};
+
 vi.mock('../../components/TitleComponent/TitleComponent', () => ({
-  default: vi.fn(({ title }) => <div>{title}</div>)
+  default: vi.fn(
+    ({
+      title,
+      callToAction
+    }: {
+      title: string;
+      callToAction?: Array<ActionType>;
+    }) => (
+      <div>
+        <div>{title}</div>
+        {callToAction?.map((action: ActionType, index: number) => (
+          <button
+            key={index}
+            onClick={action.onActionClick}
+            data-testid="action-button"
+          >
+            {action.buttonText}
+          </button>
+        ))}
+      </div>
+    )
+  )
 }));
 
 vi.mock('../../components/FilterContainer/FilterContainer', () => ({
@@ -114,6 +146,23 @@ describe('DebtPositionResults', () => {
         })
       }),
       expect.anything()
+    );
+  });
+
+  it('should navigate to create wizard when action button is clicked', () => {
+    const navigateMock = vi.fn();
+    (useLocation as Mock).mockReturnValue(
+      mockLocationState(SearchType.DEBT_POSITION)
+    );
+    (useNavigate as Mock).mockReturnValue(navigateMock);
+
+    render(<DebtPositionResults />);
+
+    const actionButton = screen.getByTestId('action-button');
+    fireEvent.click(actionButton);
+
+    expect(navigateMock).toHaveBeenCalledWith(
+      PageRoutes.DEBT_POSITION_CREATE_WIZARD
     );
   });
 });

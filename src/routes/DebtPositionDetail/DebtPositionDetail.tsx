@@ -45,6 +45,7 @@ import { Timeline } from '../../components/Timeline';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { useQueryClient } from '@tanstack/react-query';
 import utils from '../../utils';
+import { downloadBlob } from '../../utils/download';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -62,6 +63,17 @@ type InstallmentRow = {
   expirationDate: string;
   status: string;
   chip: { label: string; color: ChipOwnProps['color'] } | undefined;
+};
+
+type DialogConfig = {
+  open: boolean;
+  title: string;
+  message: string;
+  confirmLabel: string;
+  cancelLabel?: string;
+  onConfirm: () => void;
+  onClose: () => void;
+  testId: string;
 };
 
 const DebtPositionDetail = () => {
@@ -87,7 +99,7 @@ const DebtPositionDetail = () => {
     UNPAYABLE: 'error'
   };
 
-  const genericDialogTitel = () => {
+  const genericDialogTitle = () => {
     return canBeDeleted
       ? t('debtPositionDetail.confirmDialog.title')
       : t('debtPositionDetail.errorDialog.title');
@@ -115,7 +127,7 @@ const DebtPositionDetail = () => {
 
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
 
   const { data: debtPositionDetail } = debtPositions.getDebtPositionDetail(
     organizationId,
@@ -126,7 +138,7 @@ const DebtPositionDetail = () => {
     organizationId,
     debtPositionId,
     () => {
-      setOpenDeleteDialog(false);
+      setDialogConfig(null);
       if (debtPositionDetail?.status === DebtPositionStatus.DRAFT) {
         navigate(generatePath(PageRoutes.DEBT_POSITIONS_INDEX));
       } else {
@@ -137,7 +149,7 @@ const DebtPositionDetail = () => {
     },
     (error) => {
       console.error('Error while deleting the debt position:', error);
-      setOpenDeleteDialog(false);
+      setDialogConfig(null);
       utils.notify.emit(t('debtPositionDetail.deleteError'), 'error');
     }
   );
@@ -160,20 +172,79 @@ const DebtPositionDetail = () => {
   };
 
   const handleDelete = () => {
-    setOpenDeleteDialog(true);
     handleMenuClose();
+    showDeleteDialog();
   };
 
   const handleDeleteConfirm = () => {
     if (canBeDeleted) {
       deleteDebtPositionMutation.mutate();
+    } else {
+      setDialogConfig(null);
     }
-    setOpenDeleteDialog(false);
   };
 
-  const handleDownloadNotices = () => {
-    console.log('Download notices clicked');
-    //  download logic here
+  const showDeleteDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: genericDialogTitle(),
+      message: genericDialogDescription(),
+      confirmLabel: canBeDeleted ? t('commons.delete') : t('commons.close'),
+      cancelLabel: canBeDeleted ? t('commons.close') : undefined,
+      onConfirm: handleDeleteConfirm,
+      onClose: () => setDialogConfig(null),
+      testId: 'confirm-delete-dialog'
+    });
+  };
+
+  const showDownloadDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: t('debtPositionDetail.dialogDownload.title'),
+      message: t('debtPositionDetail.dialogDownload.message'),
+      confirmLabel: t('commons.close'),
+      onConfirm: () => setDialogConfig(null),
+      onClose: () => setDialogConfig(null),
+      testId: 'download-dialog'
+    });
+  };
+
+  const handleDownloadNotices = async () => {
+    if (!debtPositionId) {
+      utils.notify.emit(t('commons.files.missingDebtPositionId'), 'error');
+      return;
+    }
+
+    const DOWNLOADABLE_STATES = [
+      DebtPositionStatus.UNPAID,
+      DebtPositionStatus.PARTIALLY_PAID
+    ];
+
+    if (
+      !debtPositionDetail?.status ||
+      !DOWNLOADABLE_STATES.includes(debtPositionDetail.status)
+    ) {
+      showDownloadDialog();
+      return;
+    }
+
+    try {
+      const result = await debtPositions.downloadDebtPositionZip(
+        organizationId,
+        debtPositionId
+      );
+
+      if (!result) {
+        utils.notify.emit(t('commons.files.downloadFailed'), 'error');
+        return;
+      }
+
+      const { data, fileName } = result;
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(t('commons.files.downloadFailed'), error);
+      utils.notify.emit(t('commons.files.downloadFailed'), 'error');
+    }
   };
 
   useEffect(() => {
@@ -300,10 +371,18 @@ const DebtPositionDetail = () => {
         chip={statusChip}
         callToAction={[
           {
-            icon: <GetApp data-testid="DownloadButton" />,
+            icon: debtPositionDetail.status !== DebtPositionStatus.DRAFT && (
+              <GetApp data-testid="DownloadButton" />
+            ),
             variant: 'contained',
-            buttonText: t('debtPositionDetail.downloadNotices'),
-            onActionClick: handleDownloadNotices
+            buttonText:
+              debtPositionDetail.status !== DebtPositionStatus.DRAFT
+                ? t('debtPositionDetail.downloadNotices')
+                : t('debtPositionDetail.activePayment'),
+            onActionClick:
+              debtPositionDetail.status !== DebtPositionStatus.DRAFT
+                ? handleDownloadNotices
+                : () => console.log('active payment')
           },
           {
             icon: <History data-testid="HistoryButton" />,
@@ -435,16 +514,18 @@ const DebtPositionDetail = () => {
         />
       </Timeline.Drawer>
 
-      <GenericDialog
-        data-testid="confirm-delete-dialog"
-        open={openDeleteDialog}
-        title={genericDialogTitel()}
-        message={genericDialogDescription()}
-        confirmLabel={canBeDeleted ? t('commons.delete') : t('commons.close')}
-        cancelLabel={canBeDeleted ? t('commons.close') : undefined}
-        onConfirm={handleDeleteConfirm}
-        onClose={() => setOpenDeleteDialog(false)}
-      />
+      {dialogConfig && (
+        <GenericDialog
+          data-testid={dialogConfig.testId}
+          open={dialogConfig.open}
+          title={dialogConfig.title}
+          message={dialogConfig.message}
+          confirmLabel={dialogConfig.confirmLabel}
+          cancelLabel={dialogConfig.cancelLabel}
+          onConfirm={dialogConfig.onConfirm}
+          onClose={dialogConfig.onClose}
+        />
+      )}
     </>
   ) : null;
 };

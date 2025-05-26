@@ -93,7 +93,7 @@ export const ExportFlowPage = () => {
         {
           onSuccess: () => {
             navigate(
-              generatePath(PageRoutes.RESPONSES_THANKYOU, {
+              generatePath(PageRoutes.RESPONSES_SUCCESS, {
                 category: 'telematic-receipt-export'
               })
             );
@@ -122,7 +122,7 @@ export const ExportFlowPage = () => {
         {
           onSuccess: () => {
             navigate(
-              generatePath(PageRoutes.RESPONSES_THANKYOU, {
+              generatePath(PageRoutes.RESPONSES_SUCCESS, {
                 category: 'conservation-export'
               })
             );

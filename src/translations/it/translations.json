@@ -79,6 +79,7 @@
     "exit": "Esci",
     "exportedFlows": "Flussi esportati",
     "exportFlows": "Esporta flussi",
+    "exportFrom": "Esportati dal",
     "files": {
       "download": "Scarica",
       "downloadFlow": "Scarica flusso",
@@ -92,7 +93,8 @@
       "uploadDate": "Data Caricamento",
       "uploadInProgress": "Caricamento in corso...",
       "downloadFailed": "Errore durante il download.",
-      "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria"
+      "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria",
+      "missingDebtPositionId": "Manca l'ID della posizione debitoria"
     },
     "filters": {
       "accountingDate": {
@@ -167,6 +169,7 @@
     "from": "Dal",
     "importFlow": "Importa flusso",
     "importFlows": "Importa flussi",
+    "importFrom": "Caricati dal",
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
     "iud": "IUD",
@@ -183,6 +186,7 @@
     "operator": "Operatore",
     "optional": "opzionale",
     "organizationType": "Tipo ente",
+    "outcomeFrom": "Esito dal",
     "payer": "Pagatore",
     "payerDetails": "Anagrafica Pagatore",
     "payment": "Pagamento",
@@ -209,7 +213,7 @@
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
-      "DEBT_POSITIONS": "Dovuti",
+      "DEBT_POSITIONS": "Posizioni debitorie",
       "DEBT_POSITIONS_IMPORT_OVERVIEW": "Flussi",
       "DEBT_POSITIONS_RESULTS": "Posizioni debitorie",
       "DEBT_POSITION_INSTALLMENT_DETAIL": "Dettaglio Avviso",
@@ -322,8 +326,7 @@
     "yes": "Si"
   },
   "conservation": {
-    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
-    "exportFrom": "Esportati dal"
+    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni."
   },
   "dates": {
     "from": "Dal",
@@ -533,8 +536,9 @@
   "debtPositionCreateWizardCompleted": {
     "backToStart": "Torna al'inizio",
     "viewDebtPosition": "Vedi la posizione debitoria",
-    "description": "La trovi nella sezione Dovuti, dove puoi tenere traccia dell'andamento.",
-    "descriptionDraft": "La trovi nella sezione Dovuti, dove puoi vederla e modificarla.",
+    "downloadDebtPosition": "Scarica Posizione Debitoria",
+    "description": "La trovi nella sezione Posizioni debitorie, dove puoi tenere traccia dell'andamento.",
+    "descriptionDraft": "La trovi nella sezione Posizioni debitorie, dove puoi vederla e modificarla.",
     "title": "La posizione debitoria '{{paymentObject}}' è stata creata!",
     "draft": "La posizione debitoria '{{paymentObject}}' è stata salvata in bozza."
   },
@@ -543,11 +547,16 @@
     "paymentOptions": "Opzioni di pagamento",
     "solutionDetail": "Dettaglio soluzione",
     "downloadNotices": "Scarica avvisi",
+    "activePayment": "Attiva pagamento",
     "edit": "Modifica",
     "confirmDialog": {
       "title": "Sei sicuro di voler eliminare la posizione debitoria?",
       "description": "Una volta eliminata, la posizione debitoria non sarà più possibile pagarla ne modificarla.",
       "descriptionDraft": "Una volta eliminata, tutti i dati saranno cancellati e non potranno essere recuperati."
+    },
+    "dialogDownload": {
+      "title": "L'avviso non può essere scaricato.",
+      "message": "Siamo spiacenti, questo file non può essere scaricato. Possono essere scaricati solo gli avvisi non pagati o con pagamento iniziato."
     },
     "deleteError": "Si è verificato un errore durante l'eliminazione della posizione debitoria. Vi preghiamo di riprovare più tardi.",
     "errorDialog": {
@@ -648,7 +657,7 @@
   },
   "debtTypeCatalogEditSuccess": {
     "backToStart": "Torna alla sezione",
-    "description": "",
+    "description": "La trovi nella sezione Catalogo Tipi Dovuti.",
     "title": "Il tipo dovuto '{{paymentObject}}' è stato modificato!"
   },
   "debtTypeCreate": {

@@ -211,6 +211,35 @@ const downloadPaymentNotice = async (
   }
 };
 
+/**
+ * Downloads a ZIP file containing all unpaid/unpayable installment notices for a debt position
+ * @param organizationId Organization ID
+ * @param debtPositionId Debt position ID
+ * @returns Promise with file data and filename or null in case of error
+ */
+const downloadDebtPositionZip = async (
+  organizationId: number,
+  debtPositionId: number
+): Promise<{ data: Blob; fileName: string } | null> => {
+  try {
+    const response = await utils.apiClient.bff.getUnpaidPaymentNoticeZip(
+      organizationId,
+      debtPositionId,
+      { format: 'blob' }
+    );
+
+    const contentDisposition = response.headers['content-disposition'] || '';
+    const fileName =
+      extractFilename(contentDisposition) ||
+      `debt-position-${debtPositionId}.zip`;
+
+    return { data: response.data, fileName };
+  } catch (error) {
+    console.error('Error downloading debt position ZIP:', error);
+    return null;
+  }
+};
+
 export default {
   getDebtPositionViews,
   getInstallments,
@@ -220,5 +249,6 @@ export default {
   deleteDebtPositionTypeOrgs,
   deleteDebtPosition,
   createDebtPosition,
-  downloadPaymentNotice
+  downloadPaymentNotice,
+  downloadDebtPositionZip
 };
