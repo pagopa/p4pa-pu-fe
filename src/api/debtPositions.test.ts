@@ -26,6 +26,9 @@ vi.mock('../utils', () => {
           deleteDebtPositionType: vi.fn(),
           createDebtPosition: vi.fn()
         }
+      },
+      notify: {
+        emit: vi.fn()
       }
     }
   };
