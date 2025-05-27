@@ -1065,6 +1065,10 @@
       "subtitle": "Ti preghiamo di riprovare più tardi",
       "title": "Si è verificato un errore durante l'accesso a Piattaforma Unitaria"
     },
+    "genericError": {
+      "title": "Spiacenti, qualcosa è andato storto.",
+      "description": "Si è verificato un errore. Riprova più tardi."
+    },
     "loggedout": {
       "login": "Riconnettiti ora",
       "subtitle": "Grazie per aver utilizzato Piattaforma Unitaria",
