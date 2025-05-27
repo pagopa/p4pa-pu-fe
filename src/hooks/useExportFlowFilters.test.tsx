@@ -28,13 +28,17 @@ describe('useExportFlowFilters', () => {
     expect(result.current.appliedFilters).toEqual({
       exportFileType: ExportFileTypeEnum.PAID,
       size: 10,
-      page: 0
+      page: 0,
+      creationDateFrom: '2023-01-01T00:00:00.000Z',
+      creationDateTo: '2024-01-01T23:59:59.999Z'
     });
 
     expect(result.current.draftFilters).toEqual({
       exportFileType: ExportFileTypeEnum.PAID,
       size: 10,
-      page: 0
+      page: 0,
+      creationDateFrom: '2023-01-01T00:00:00.000Z',
+      creationDateTo: '2024-01-01T23:59:59.999Z'
     });
   });
 

@@ -18,7 +18,7 @@ describe('useFlowFilters', () => {
     vi.useRealTimers();
   });
 
-  it('should initialize with default values', () => {
+  it('should initialize with default values including date range', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
         ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.RECEIPT]
@@ -28,13 +28,17 @@ describe('useFlowFilters', () => {
     expect(result.current.appliedFilters).toEqual({
       ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.RECEIPT],
       size: 10,
-      page: 0
+      page: 0,
+      creationDateFrom: '2023-01-01T00:00:00.000Z',
+      creationDateTo: '2024-01-01T23:59:59.999Z'
     });
 
     expect(result.current.draftFilters).toEqual({
       ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.RECEIPT],
       size: 10,
-      page: 0
+      page: 0,
+      creationDateFrom: '2023-01-01T00:00:00.000Z',
+      creationDateTo: '2024-01-01T23:59:59.999Z'
     });
   });
 

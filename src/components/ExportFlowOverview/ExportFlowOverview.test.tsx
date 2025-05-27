@@ -153,7 +153,9 @@ describe('ExportFlowOverview', () => {
     expect(getExportFiles).toHaveBeenCalledWith(expect.any(Number), {
       exportFileType: ExportFileTypeEnum.PAID,
       page: 0,
-      size: 10
+      size: 10,
+      creationDateFrom: expect.any(String),
+      creationDateTo: expect.any(String)
     });
   });
 
