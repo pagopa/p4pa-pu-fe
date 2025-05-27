@@ -311,6 +311,7 @@
     "taxonomy": "Tassonomia",
     "to": "Al",
     "transactionManager": "Gestore della transazione (PSP)",
+    "unauthorized": "Non sei autorizzato ad accedere alla sezione, contatta il gestore dei permessi",
     "unknownOrganization": "Ente senza nome",
     "uploadedFrom": "Caricati dal",
     "view": "Visualizza",

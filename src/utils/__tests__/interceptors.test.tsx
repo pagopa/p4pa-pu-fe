@@ -24,8 +24,14 @@ vi.mock('..', () => ({
 
 vi.mock('../navigation', () => ({
   default: {
+    routes: {
+      HOME: '/home',
+      LOGGED_OUT: '/loggedout',
+      ERROR: '/error'
+    },
     setAuthErrorState: vi.fn(),
-    navigateToLoggedOut: vi.fn()
+    navigateToLoggedOut: vi.fn(),
+    navigateTo: vi.fn()
   }
 }));
 
@@ -286,9 +292,7 @@ describe('Response interceptor auth error handling', () => {
 
     const result = await responseErrorHandler(error);
 
-    expect(navigation.setAuthErrorState).toHaveBeenCalledWith(true);
-    expect(utils.storage.clear).toHaveBeenCalled();
-    expect(navigation.navigateToLoggedOut).toHaveBeenCalled();
+    expect(navigation.navigateTo).toHaveBeenCalledWith(navigation.routes.HOME);
     expect(result).toBeUndefined();
   });
 });

@@ -28,10 +28,22 @@ export const setupInterceptors = (client: Client) => {
     (error: AxiosError) => {
       const status = error.response?.status;
 
-      if (status === 401 || status === 403) {
+      if (status === 401) {
         navigation.setAuthErrorState(true);
         utils.storage.clear();
         navigation.navigateToLoggedOut();
+        return Promise.resolve();
+      }
+
+      if (status === 403) {
+        sessionStorage.setItem(
+          'pendingNotification',
+          JSON.stringify({
+            message: t('commons.unauthorized'),
+            type: 'error'
+          })
+        );
+        navigation.navigateTo(navigation.routes.HOME);
         return Promise.resolve();
       }
 
