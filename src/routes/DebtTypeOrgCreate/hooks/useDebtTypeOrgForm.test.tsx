@@ -18,7 +18,7 @@ vi.mock('./useApiOperations', () => ({
         ...data,
         debtPositionTypeId: Number(data.debtPositionTypeId),
         organizationId: 123,
-        flagNotifyOutcomePush: data.flagNotifyOutcomePush === 'enable',
+        flagNotifyOutcomePush: data.flagNotifyOutcomePush === 'enabled',
         xsdDefinitionRef: undefined
       }
     }))

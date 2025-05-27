@@ -1,10 +1,6 @@
 import { useCallback } from 'react';
 import { OperatorsSelection } from '../../../../generated/apiClient';
-import {
-  createDebtPositionTypeOrg,
-  updateDebtPositionTypeOrg,
-  CreateDebtPositionTypeOrg
-} from '../../../api/debtPositionsTypeOrg';
+import { CreateDebtPositionTypeOrg } from '../../../api/debtPositionsTypeOrg';
 import { PaymentMethodOption } from '../steps/Step2Behaviour/components/PaymentMethodSelector';
 import { DebtTypeOrgForm } from '../types';
 
@@ -24,7 +20,7 @@ export const useApiOperations = (organizationId: number) => {
             ...data,
             debtPositionTypeId: Number(data.debtPositionTypeId),
             organizationId,
-            flagNotifyOutcomePush: data.flagNotifyOutcomePush === 'enable',
+            flagNotifyOutcomePush: data.flagNotifyOutcomePush === 'enabled',
             xsdDefinitionRef
           },
           operatorsSelection: data.operatorsSelection,

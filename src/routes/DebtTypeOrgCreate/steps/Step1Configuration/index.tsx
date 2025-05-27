@@ -73,7 +73,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
       });
       setValue(
         'flagNotifyOutcomePush',
-        response.flagNotifyOutcomePush ? 'enable' : 'disable'
+        response.flagNotifyOutcomePush ? 'enabled' : 'disabled'
       );
       trigger();
     }
