@@ -22,6 +22,7 @@ import AltRouteIcon from '@mui/icons-material/AltRoute';
 import DnsIcon from '@mui/icons-material/Dns';
 import PeopleIcon from '@mui/icons-material/People';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { sidebarStyles } from './sidebar.styles';
 import { PageRoutes } from '../../App';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
@@ -106,6 +107,18 @@ export const Sidebar: React.FC = () => {
       icon: DnsIcon,
       route: '/debtpositions',
       end: true
+    });
+    additionalItems.push({
+      label: t('commons.routes.BACKOFFICE'),
+      icon: SettingsIcon,
+      end: false,
+      items: [
+        {
+          label: t('commons.routes.BACKOFFICE_TAXONOMY'),
+          route: PageRoutes.BACKOFFICE_TAXONOMY,
+          end: true
+        }
+      ]
     });
   }
 
