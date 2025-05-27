@@ -43,7 +43,9 @@ describe('DebtTypeDetailView', () => {
       getDebtPositionTypeOrgById as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({
       data: {
-        description: 'Test debt position ID'
+        response: {
+          description: 'Test debt position ID'
+        }
       },
       isLoading: false
     });
