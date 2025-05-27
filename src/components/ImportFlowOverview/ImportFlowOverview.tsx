@@ -286,13 +286,19 @@ const ImportFlowOverview = ({
                   label: 'dateRange',
                   gridWidth: 4,
                   from: {
-                    label: t('commons.importFrom'),
+                    label: t('commons.exportFrom'),
                     errorMessage: t('dates.validations.from'),
+                    value: draftFilters.creationDateFrom
+                      ? new Date(draftFilters.creationDateFrom)
+                      : null,
                     onChange: handleDateFromChange
                   },
                   to: {
                     label: t('dates.to'),
                     errorMessage: t('dates.validations.to'),
+                    value: draftFilters.creationDateTo
+                      ? new Date(draftFilters.creationDateTo)
+                      : null,
                     onChange: handleDateToChange
                   }
                 },
