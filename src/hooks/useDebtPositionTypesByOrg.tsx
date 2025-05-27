@@ -4,6 +4,7 @@ import utils from '../utils';
 import { getDebtPositionTypesByOrganizationId } from '../api/debtPositionsTypes';
 import { DebtPositionType } from '../../generated/data-contracts';
 import { SelectOptions } from '../components/FormComponent/_Select';
+import { AxiosError } from 'axios';
 
 export const useDebtPositionTypesByOrg = ({
   organizationId
@@ -34,9 +35,15 @@ export const useDebtPositionTypesByOrg = ({
     }
 
     if (isError) {
-      utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
+      const error = debtPositionsTypesQuery.error as AxiosError;
+      const isServerError =
+        error?.response?.status && error.response.status >= 500;
+
+      if (!isServerError) {
+        utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
+      }
     }
-  }, [data, isError, isSuccess, t]);
+  }, [data, isError, isSuccess, t, debtPositionsTypesQuery.error]);
 
   return { optionsMap: debtPositionsTypes, ...debtPositionsTypesQuery };
 };

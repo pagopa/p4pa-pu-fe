@@ -15,7 +15,7 @@ import utils from '../../utils';
 import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../App';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
-import { isAxiosError } from 'axios';
+import { AxiosError, isAxiosError } from 'axios';
 import { useStore } from '../../store/GlobalStore';
 
 export const DebtTypeDetailView = () => {
@@ -63,20 +63,27 @@ export const DebtTypeDetailView = () => {
     console.error('debtPositionTypeOrgId is not a number');
   }
 
-  const { data, isLoading, isError, isSuccess } = getDebtPositionTypeOrgById({
-    organizationId,
-    debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
-  });
+  const { data, isLoading, isError, isSuccess, error } =
+    getDebtPositionTypeOrgById({
+      organizationId,
+      debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
+    });
 
   useEffect(() => {
     if (isSuccess && data) {
       const sections = getAccordionSectionsConfig(data, t) || [];
       setAccordionSections(sections);
     }
-    if (isError) {
-      utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
+    if (isError && error) {
+      const axiosError = error as AxiosError;
+      const isServerError =
+        axiosError?.response?.status && axiosError.response.status >= 500;
+
+      if (!isServerError) {
+        utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
+      }
     }
-  }, [data, isLoading, isError, isSuccess]);
+  }, [data, isLoading, isError, isSuccess, error]);
 
   const actionButtons = [
     {

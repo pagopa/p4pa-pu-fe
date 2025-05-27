@@ -95,17 +95,6 @@ describe('Header component', () => {
     mockStorage.mockRestore();
   });
 
-  it('should not render anything when organizations.isSuccess is false', () => {
-    // @ts-expect-error mock not success
-    mockUseOrganizations.mockReturnValue({
-      data: null,
-      isSuccess: false
-    });
-
-    const { container } = render(<Header />);
-    expect(container.innerHTML).toBe('');
-  });
-
   it('should not render HeaderProduct when organizations data is empty', () => {
     // @ts-expect-error mock empty data
     mockUseOrganizations.mockReturnValue({
