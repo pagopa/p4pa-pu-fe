@@ -51,6 +51,10 @@ function DebtPositionCreateWizardCompleted() {
     debtPositions.getDebtPositionZipFile(organizationId);
 
   const handleDownloadDebtPosition = async () => {
+    if (!debtPositionId) {
+      return utils.notify.emit(t('commons.files.missingDebtPositionId'));
+    }
+
     try {
       const result = await getDebtPositionZipFileMutation.mutateAsync(
         Number(debtPositionId)
