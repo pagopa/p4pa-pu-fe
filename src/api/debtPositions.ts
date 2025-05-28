@@ -181,13 +181,7 @@ const createDebtPosition = (
     onError
   });
 
-/**
- * returns a File and a filename for the payment notice of a specific installment
- * @param organizationId Organization ID
- * @param debtPositionId Debt position ID
- * @param iuv IUV code of the installment
- * @returns a mutation to download the payment notice file
- */
+/** returns a mutation to download the payment notice file */
 const getPaymentNoticeFile = (
   organizationId: number,
   debtPositionId: number,
@@ -210,34 +204,24 @@ const getPaymentNoticeFile = (
     }
   });
 
-/**
- * Downloads a ZIP file containing all unpaid/unpayable installment notices for a debt position
- * @param organizationId Organization ID
- * @param debtPositionId Debt position ID
- * @returns Promise with file data and filename or null in case of error
- */
-const downloadDebtPositionZip = async (
-  organizationId: number,
-  debtPositionId: number
-): Promise<{ data: Blob; fileName: string } | null> => {
-  try {
-    const response = await utils.apiClient.bff.getUnpaidPaymentNoticeZip(
-      organizationId,
-      debtPositionId,
-      { format: 'blob' }
-    );
+/** returns a mutation to get export blob file of unpaid/unpayable installment notices for a debt position */
+const getDebtPositionZipFile = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['getDebtPositionZipFile', organizationId],
+    mutationFn: async (debtPositionId: number) => {
+      const response = await utils.apiClient.bff.getUnpaidPaymentNoticeZip(
+        organizationId,
+        debtPositionId,
+        { format: 'blob' }
+      );
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const fileName =
+        extractFilename(contentDisposition) ||
+        `debt-position-${debtPositionId}.zip`;
 
-    const contentDisposition = response.headers['content-disposition'] || '';
-    const fileName =
-      extractFilename(contentDisposition) ||
-      `debt-position-${debtPositionId}.zip`;
-
-    return { data: response.data, fileName };
-  } catch (error) {
-    console.error('Error downloading debt position ZIP:', error);
-    return null;
-  }
-};
+      return { data: response.data, fileName };
+    }
+  });
 
 export default {
   getDebtPositionViews,
@@ -249,5 +233,5 @@ export default {
   deleteDebtPosition,
   createDebtPosition,
   getPaymentNoticeFile,
-  downloadDebtPositionZip
+  getDebtPositionZipFile
 };

@@ -47,11 +47,7 @@ export const getExportFiles = (
   });
 };
 
-/**
- * returns File and filename for a given export file ID.
- * @param organizationId ID of the organization to which the export file belongs
- * @returns a mutation
- */
+/** returns a mutation to get export blob file */
 export const getExportFile = (organizationId: number) =>
   useMutation({
     mutationKey: ['downloadExportFile', organizationId],
