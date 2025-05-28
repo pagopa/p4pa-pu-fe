@@ -73,7 +73,7 @@ const routesDef = [
       },
       {
         id: 'ERROR',
-        path: `${deployPath}/error`,
+        path: `${deployPath}/blockingError`,
         element: <ErrorPage />
       },
       ...flowsRoutes,

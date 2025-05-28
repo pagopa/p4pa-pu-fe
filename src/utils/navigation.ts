@@ -4,7 +4,7 @@ const deployPath = config.deployPath || '';
 
 const routes = {
   LOGGED_OUT: `${deployPath}/loggedout`,
-  ERROR: `${deployPath}/error`,
+  ERROR: `${deployPath}/blockingError`,
   HOME: `${deployPath}/`
 };
 
