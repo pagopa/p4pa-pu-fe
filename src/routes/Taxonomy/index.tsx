@@ -3,9 +3,26 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import ActionCard from '../../components/ActionCard/ActionCard';
 import utils from '../../utils';
+import { synchronizeTaxonomy } from '../../api/taxonomy';
 
 export const TaxonomyPage = () => {
   const { t } = useTranslation();
+
+
+  const syncMutation = synchronizeTaxonomy();
+
+  const handleUpdateCTA = async () => {
+
+    try {
+      const result = await syncMutation.mutateAsync();
+      if (result) utils.notify.emit(t('taxonomyPage.APIUpdateOK'), 'info');
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('taxonomyPage.APIUpdateKO'), 'error');
+    }
+  }
+
+
 
   return (
     <>
@@ -23,9 +40,7 @@ export const TaxonomyPage = () => {
               actionLabel={t('taxonomyPage.APIUpdateCTA')}
               footerText={t('commons.lastUpdate')}
               actionButtonVariant="contained"
-              onActionClick={() =>
-                utils.notify.emit(t('taxonomyPage.APIUpdateOK'), 'info')
-              }
+              onActionClick={handleUpdateCTA}
             />
           </Grid>
         </Grid>

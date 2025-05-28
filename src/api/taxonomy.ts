@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import {
@@ -113,3 +113,15 @@ export const getTaxonomyDetail = (taxonomyId: number) =>
       return taxonomydetail;
     }
   });
+
+
+export const synchronizeTaxonomy = () =>
+  useMutation({
+    mutationKey: ['sync'],
+    mutationFn: async () => {
+      const { data } = await utils.apiClient.bff.synchronizeTaxonomy();
+      return data;
+    }
+  });
+
+
