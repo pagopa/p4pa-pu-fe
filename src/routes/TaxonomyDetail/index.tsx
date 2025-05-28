@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { getTaxonomyDetail } from '../../api/taxonomy';
 import DetailContainer, {
@@ -8,20 +8,24 @@ import DetailContainer, {
 } from '../../components/DetailContainer/DetailContainer';
 import { useEffect } from 'react';
 import { formatDate } from '../../utils/formatters';
+import { PageRoutes } from '../../App';
 
 export const TaxonomyDetailPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { taxonomyId } = useParams<{ taxonomyId: string }>();
   const taxonomyInfo: Array<DetailData> = [];
   const dateInfo: Array<DetailData> = [];
 
   if (isNaN(Number(taxonomyId))) {
-    // TODO
-    // raise error
-    console.error('taxonomyId is not a number');
+    navigate(PageRoutes.RESPONSES_ERROR);
   }
 
-  const { data } = getTaxonomyDetail(Number(taxonomyId));
+  const { data, isError } = getTaxonomyDetail(Number(taxonomyId));
+
+  if (isError) {
+    navigate(PageRoutes.RESPONSES_ERROR);
+  }
 
   useEffect(() => {
     if (data) {
