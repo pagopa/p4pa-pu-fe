@@ -407,7 +407,9 @@ describe('TelematicReceiptImportFlowOverview', () => {
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(expect.any(Number), {
       ingestionFlowFileTypes: ['RECEIPT'],
       page: 0,
-      size: 10
+      size: 10,
+      creationDateFrom: expect.any(String),
+      creationDateTo: expect.any(String)
     });
   });
 

@@ -11,17 +11,33 @@ type UseFlowFiltersProps = {
 
 const DEFAULT_PAGE_SIZE = 10;
 
+const getDefaultDateRange = () => {
+  const today = new Date();
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+  return {
+    creationDateFrom: new Date(oneYearAgo.setHours(0, 0, 0, 0)).toISOString(),
+    creationDateTo: new Date(today.setHours(23, 59, 59, 999)).toISOString()
+  };
+};
+
 export const useFlowFilters = ({
   ingestionFlowFileTypes,
   initialFilters,
   onFiltersChange
 }: UseFlowFiltersProps) => {
   const flowTypes = ingestionFlowFileTypes || [];
+  const defaultDateRange = getDefaultDateRange();
 
   const [appliedFilters, setAppliedFilters] = useState<FlowFileFilters>(() => ({
     ingestionFlowFileTypes: flowTypes,
     size: initialFilters?.size || DEFAULT_PAGE_SIZE,
     page: initialFilters?.page || 0,
+    creationDateFrom:
+      initialFilters?.creationDateFrom || defaultDateRange.creationDateFrom,
+    creationDateTo:
+      initialFilters?.creationDateTo || defaultDateRange.creationDateTo,
     ...initialFilters
   }));
 

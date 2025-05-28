@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { DebtPositionType } from '../models/DebtPositionType';
 import utils from '../utils';
 import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
+import { AxiosError } from 'axios';
 
 export const useDebtPositionsTypeOrg = ({
   organizationId,
@@ -21,7 +22,7 @@ export const useDebtPositionsTypeOrg = ({
     organizationId
   });
 
-  const { data, isLoading, isError, isSuccess } = debtPositionsTypesQuery;
+  const { data, isError, isSuccess } = debtPositionsTypesQuery;
 
   useEffect(() => {
     if (isSuccess && data) {
@@ -52,9 +53,15 @@ export const useDebtPositionsTypeOrg = ({
     }
 
     if (isError) {
-      utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
+      const error = debtPositionsTypesQuery.error as AxiosError;
+      const isServerError =
+        error?.response?.status && error.response.status >= 500;
+
+      if (!isServerError) {
+        utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
+      }
     }
-  }, [data, isLoading, isError, isSuccess, t, includeAllOption]);
+  }, [data, isError, isSuccess, t, debtPositionsTypesQuery.error]);
 
   return { optionsMap: debtPositionsTypes, ...debtPositionsTypesQuery };
 };

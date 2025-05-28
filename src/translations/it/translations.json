@@ -93,7 +93,8 @@
       "uploadDate": "Data Caricamento",
       "uploadInProgress": "Caricamento in corso...",
       "downloadFailed": "Errore durante il download.",
-      "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria"
+      "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria",
+      "missingDebtPositionId": "Manca l'ID della posizione debitoria"
     },
     "filters": {
       "accountingDate": {
@@ -217,7 +218,7 @@
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
-      "DEBT_POSITIONS": "Dovuti",
+      "DEBT_POSITIONS": "Posizioni debitorie",
       "DEBT_POSITIONS_IMPORT_OVERVIEW": "Flussi",
       "DEBT_POSITIONS_RESULTS": "Posizioni debitorie",
       "DEBT_POSITION_INSTALLMENT_DETAIL": "Dettaglio Avviso",
@@ -272,6 +273,7 @@
     "searchRegulationUniqueIdentifier": "ID Regolamento",
     "selectedOperator": "Operatore selezionato",
     "serviceType": "Tipo Servizio",
+    "serviceUnavailable": "Il servizio è temporaneamente non disponibile, vi preghiamo di riprovare più tardi.",
     "showAllFlows": "Vedi tutti i flussi",
     "showDebtPositions": "Vedi Posizione debitoria",
     "showOtherBeneficiaries": "Vedi altri beneficiari",
@@ -314,6 +316,7 @@
     "taxonomy": "Tassonomia",
     "to": "Al",
     "transactionManager": "Gestore della transazione (PSP)",
+    "unauthorized": "Non sei autorizzato ad accedere alla sezione, contatta il gestore dei permessi",
     "unknownOrganization": "Ente senza nome",
     "uploadedFrom": "Caricati dal",
     "view": "Visualizza",
@@ -540,8 +543,9 @@
   "debtPositionCreateWizardCompleted": {
     "backToStart": "Torna al'inizio",
     "viewDebtPosition": "Vedi la posizione debitoria",
-    "description": "La trovi nella sezione Dovuti, dove puoi tenere traccia dell'andamento.",
-    "descriptionDraft": "La trovi nella sezione Dovuti, dove puoi vederla e modificarla.",
+    "downloadDebtPosition": "Scarica Posizione Debitoria",
+    "description": "La trovi nella sezione Posizioni debitorie, dove puoi tenere traccia dell'andamento.",
+    "descriptionDraft": "La trovi nella sezione Posizioni debitorie, dove puoi vederla e modificarla.",
     "title": "La posizione debitoria '{{paymentObject}}' è stata creata!",
     "draft": "La posizione debitoria '{{paymentObject}}' è stata salvata in bozza."
   },
@@ -550,11 +554,16 @@
     "paymentOptions": "Opzioni di pagamento",
     "solutionDetail": "Dettaglio soluzione",
     "downloadNotices": "Scarica avvisi",
+    "activePayment": "Attiva pagamento",
     "edit": "Modifica",
     "confirmDialog": {
       "title": "Sei sicuro di voler eliminare la posizione debitoria?",
       "description": "Una volta eliminata, la posizione debitoria non sarà più possibile pagarla ne modificarla.",
       "descriptionDraft": "Una volta eliminata, tutti i dati saranno cancellati e non potranno essere recuperati."
+    },
+    "dialogDownload": {
+      "title": "L'avviso non può essere scaricato.",
+      "message": "Siamo spiacenti, questo file non può essere scaricato. Possono essere scaricati solo gli avvisi non pagati o con pagamento iniziato."
     },
     "deleteError": "Si è verificato un errore durante l'eliminazione della posizione debitoria. Vi preghiamo di riprovare più tardi.",
     "errorDialog": {
@@ -1082,6 +1091,10 @@
       "retry": "Riprova",
       "subtitle": "Ti preghiamo di riprovare più tardi",
       "title": "Si è verificato un errore durante l'accesso a Piattaforma Unitaria"
+    },
+    "genericError": {
+      "title": "Spiacenti, qualcosa è andato storto.",
+      "description": "Si è verificato un errore. Riprova più tardi."
     },
     "loggedout": {
       "login": "Riconnettiti ora",

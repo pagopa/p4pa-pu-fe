@@ -5,13 +5,20 @@ import config from '../../utils/config';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { theme } from '@pagopa/mui-italia';
 import { DebtPositionStatus } from '../../../generated/data-contracts';
+import { Download } from '@mui/icons-material';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
+import debtPositions from '../../api/debtPositions';
+import utils from '../../utils';
+import { downloadBlob } from '../../utils/download';
 
 function DebtPositionCreateWizardCompleted() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const deployPath = config.deployPath;
-
+  const { state } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const { description = '', status, debtPositionId } = location.state || {};
   const isDraft = status === DebtPositionStatus.DRAFT;
 
@@ -23,7 +30,9 @@ function DebtPositionCreateWizardCompleted() {
       ? 'debtPositionCreateWizardCompleted.descriptionDraft'
       : 'debtPositionCreateWizardCompleted.description',
     viewDebtPosition: 'debtPositionCreateWizardCompleted.viewDebtPosition',
-    backToStart: 'debtPositionCreateWizardCompleted.backToStart'
+    backToStart: 'debtPositionCreateWizardCompleted.backToStart',
+    downloadDebtPosition:
+      'debtPositionCreateWizardCompleted.downloadDebtPosition'
   };
 
   const translationParams = {
@@ -37,6 +46,31 @@ function DebtPositionCreateWizardCompleted() {
       navigate(`${deployPath}/debt-positions/`);
     }
   }
+
+  const handleDownloadDebtPosition = async () => {
+    if (!debtPositionId) {
+      utils.notify.emit(t('commons.files.missingDebtPositionId'), 'error');
+      return;
+    }
+
+    try {
+      const result = await debtPositions.downloadDebtPositionZip(
+        organizationId,
+        Number(debtPositionId)
+      );
+
+      if (!result) {
+        utils.notify.emit(t('commons.files.downloadFailed'), 'error');
+        return;
+      }
+
+      const { data, fileName } = result;
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(t('commons.files.downloadFailed'), error);
+      utils.notify.emit(t('commons.files.downloadFailed'), 'error');
+    }
+  };
 
   return (
     <Box
@@ -110,13 +144,22 @@ function DebtPositionCreateWizardCompleted() {
         >
           {t(translationKeys.backToStart)}
         </Button>
-        {isDraft && (
+        {isDraft ? (
           <Button
             role="button"
             variant="contained"
             onClick={handleViewDebtPosition}
           >
             {t(translationKeys.viewDebtPosition)}
+          </Button>
+        ) : (
+          <Button
+            role="button"
+            variant="contained"
+            startIcon={<Download />}
+            onClick={handleDownloadDebtPosition}
+          >
+            {t(translationKeys.downloadDebtPosition)}
           </Button>
         )}
       </Box>

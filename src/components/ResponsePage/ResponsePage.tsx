@@ -9,19 +9,19 @@ export type ButtonConfig = {
   onButtonClick?: () => void;
 };
 
-type ThankYouPageProps = {
+type ResponsePageProps = {
   icon: React.ReactNode;
   title: string;
   description: string;
   buttonConfig?: Array<ButtonConfig>;
 };
 
-const ThankYouPage = ({
+const ResponsePage = ({
   icon,
   title,
   description,
   buttonConfig
-}: ThankYouPageProps) => {
+}: ResponsePageProps) => {
   return (
     <>
       <Grid container direction="column" alignItems="center" marginTop={8}>
@@ -59,4 +59,4 @@ const ThankYouPage = ({
   );
 };
 
-export default ThankYouPage;
+export default ResponsePage;

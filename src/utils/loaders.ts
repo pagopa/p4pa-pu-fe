@@ -41,7 +41,7 @@ const getOrganizations = () => {
           navigation.navigateToError();
         }
 
-        return null;
+        throw error;
       }
     },
     retry: false
