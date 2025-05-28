@@ -1,8 +1,9 @@
 import utils from '../utils';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
-import { getTaxonomyDetail } from './taxonomy';
+import { getTaxonomyDetail, synchronizeTaxonomy } from './taxonomy';
 import { renderHook, waitFor } from '../__tests__/renderers';
+import { Taxonomy, WorkflowCreatedDTO } from '../../generated/data-contracts';
 
 vi.mock('./utils', () => {
   const originalModule = vi.importActual('utils');
@@ -10,7 +11,8 @@ vi.mock('./utils', () => {
     ...originalModule,
     apiClient: {
       bff: {
-        getTaxonomyDetail: vi.fn()
+        getTaxonomyDetail: vi.fn(),
+        synchronizeTaxonomy: vi.fn()
       }
     }
   };
@@ -18,7 +20,7 @@ vi.mock('./utils', () => {
 
 describe('get Taxonomy Detail ', () => {
   it('returns data correctly', async () => {
-    const dataMock = {
+    const dataMock: Taxonomy = {
       creationDate: '2025-02-20T09:23:17.977642',
       updateDate: '2025-05-27T17:23:33.402746',
       updateOperatorExternalId: 'WS_USER',
@@ -60,3 +62,27 @@ describe('get Taxonomy Detail ', () => {
     });
   });
 });
+
+describe('synchronizeTaxonomy', () => {
+  it('should call synchronizeTaxonomy and return data', async () => {
+
+    const dataMock: WorkflowCreatedDTO = {
+      workflowId: "SynchronizeTaxonomyPagoPaFetchWF-ON-DEMAND",
+      runId: "01971768-1993-7287-8993-4218439ea77a"
+    };
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'synchronizeTaxonomy')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const { result } = renderHook(() => synchronizeTaxonomy());
+
+    await result.current.mutateAsync();
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(dataMock);
+    });
+
+    expect(result.current.data).toEqual(dataMock);
+    expect(apiMock).toHaveBeenCalled();
+  })
+})
