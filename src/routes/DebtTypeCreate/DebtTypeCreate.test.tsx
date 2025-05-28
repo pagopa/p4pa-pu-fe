@@ -97,7 +97,7 @@ vi.mock('react-router', async () => {
 
 vi.mock('../../App', () => ({
   PageRoutes: {
-    RESPONSES_SUCCESS: '/success/debt-type-catalog-create'
+    RESPONSES_SUCCESS: '/success'
   }
 }));
 
@@ -162,19 +162,15 @@ describe('DebtTypeCreate', () => {
 
     // Should navigate to success page
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith(
-        {
-          pathname: '/success/debt-type-catalog-create'
-        },
-        {
-          replace: true,
-          state: {
-            i18nParams: {
-              paymentObject: 'Test Debt Type'
-            }
+      expect(mockNavigate).toHaveBeenCalledWith('/success', {
+        replace: true,
+        state: {
+          category: 'debt-type-catalog-create',
+          i18nParams: {
+            paymentObject: 'Test Debt Type'
           }
         }
-      );
+      });
     });
   });
 

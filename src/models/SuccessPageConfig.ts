@@ -1,14 +1,14 @@
-import { ButtonConfig } from '../components/ThankYouPage/ThankYouPage';
+import { ButtonConfig } from '../components/ResponsePage/ResponsePage';
 
-type ThankyouPage = {
+type SuccessPage = {
   title: string;
   description: string;
   buttonConfig?: Array<ButtonConfig>;
 };
 
-type ThankyouOpts = Record<string, ThankyouPage>;
+type SuccessOpts = Record<string, SuccessPage>;
 
-export const ThankyouPageConfig: ThankyouOpts = {
+export const SuccessPageConfig: SuccessOpts = {
   'reporting-import': {
     title: 'commons.successImport',
     description: 'reportingImportThankYouPage.description',

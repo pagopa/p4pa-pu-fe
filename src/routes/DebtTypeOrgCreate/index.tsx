@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Stepper } from '../../components/Stepper/types';
 import { ZodError } from 'zod';
 import { StepperContainer } from '../../components/Stepper';
-import { generatePath, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
 import { Step1Configuration } from './steps/Step1Configuration';
 import { Step2Behaviour } from './steps/Step2Behaviour';
@@ -102,21 +102,15 @@ export const DebtTypeOrgCreate = () => {
       try {
         const request = await requestMap(formData);
         const response = await debtTypeCreate.mutateAsync(request);
-        navigate(
-          {
-            pathname: generatePath(PageRoutes.RESPONSES_SUCCESS, {
-              category: 'debt-type-org-create'
-            })
-          },
-          {
-            replace: true,
-            state: {
-              i18nParams: {
-                paymentObject: response.description
-              }
+        navigate(PageRoutes.RESPONSES_SUCCESS, {
+          replace: true,
+          state: {
+            category: 'debt-type-org-create',
+            i18nParams: {
+              paymentObject: response.description
             }
           }
-        );
+        });
       } catch (error) {
         utils.notify.emit(t('errors.generic'));
         console.error(error);

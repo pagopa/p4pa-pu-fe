@@ -1,21 +1,22 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { PageRoutes } from '../../App';
-import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { theme } from '@pagopa/mui-italia';
-import { SuccessPageConfig } from '../../models/SuccessPageConfig';
 import { useEffect } from 'react';
 import ResponsePage from '../../components/ResponsePage/ResponsePage';
+import { ErrorPageConfig } from '../../models/ErrorPageConfig';
 
-export const SuccessPage = () => {
+export const GenericErrorPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { category } = location?.state || {};
+  const { errorType } = location?.state || {};
   const { i18nParams } = location?.state || {};
 
   const pageConfig =
-    SuccessPageConfig[category as keyof typeof SuccessPageConfig];
+    ErrorPageConfig[errorType as keyof typeof ErrorPageConfig] ||
+    ErrorPageConfig['default'];
 
   useEffect(() => {
     if (!pageConfig) {
@@ -39,8 +40,8 @@ export const SuccessPage = () => {
     <>
       <ResponsePage
         icon={
-          <CheckCircleOutlineOutlinedIcon
-            sx={{ fontSize: 60, color: theme.palette.secondary.main }}
+          <ErrorOutlineOutlinedIcon
+            sx={{ fontSize: 60, color: theme.palette.error.dark }}
           />
         }
         title={String(t(pageConfig?.title, i18nParams))}
@@ -51,4 +52,4 @@ export const SuccessPage = () => {
   );
 };
 
-export default SuccessPage;
+export default GenericErrorPage;

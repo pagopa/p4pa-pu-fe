@@ -13,7 +13,7 @@ import FileUploader from '../FileUploader/FileUploader';
 import { useTranslation } from 'react-i18next';
 import { AltRoute, ArrowBack } from '@mui/icons-material';
 import { useState } from 'react';
-import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { importFlowConfig } from '../../models/ImportDetails';
 import { PageRoutes } from '../../App';
@@ -31,9 +31,6 @@ const ImportFlow = () => {
   } = useStore();
 
   const config = importFlowConfig[category as keyof typeof importFlowConfig];
-  const thankyouPage = generatePath(PageRoutes.RESPONSES_SUCCESS, {
-    category: config.category
-  });
 
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -50,7 +47,12 @@ const ImportFlow = () => {
   const handleFileUpload = () => {
     if (file) {
       ingestionFlowFile.mutate(file, {
-        onSuccess: () => navigate(thankyouPage)
+        onSuccess: () =>
+          navigate(PageRoutes.RESPONSES_SUCCESS, {
+            state: {
+              category: config.category
+            }
+          })
       });
     }
   };
