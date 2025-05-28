@@ -182,34 +182,33 @@ const createDebtPosition = (
   });
 
 /**
- * Downloads the payment notice for a specific installment
+ * returns a File and a filename for the payment notice of a specific installment
  * @param organizationId Organization ID
  * @param debtPositionId Debt position ID
  * @param iuv IUV code of the installment
  * @returns Promise with file data and filename or null in case of error
  */
-const downloadPaymentNotice = async (
+const downloadPaymentNotice = (
   organizationId: number,
   debtPositionId: number,
   iuv: string
-): Promise<{ data: Blob; fileName: string } | null> => {
-  try {
-    const response = await utils.apiClient.bff.getPaymentNotice(
-      organizationId,
-      debtPositionId,
-      { iuv },
-      { format: 'blob' }
-    );
+) =>
+  useMutation({
+    mutationKey: ['downloadPaymentNotice', organizationId, debtPositionId, iuv],
+    mutationFn: async () => {
+      const response = await utils.apiClient.bff.getPaymentNotice(
+        organizationId,
+        debtPositionId,
+        { iuv },
+        { format: 'blob' }
+      );
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const fileName =
+        extractFilename(contentDisposition) || `notice-${iuv}.pdf`;
 
-    const contentDisposition = response.headers['content-disposition'] || '';
-    const fileName = extractFilename(contentDisposition) || `notice-${iuv}.pdf`;
-
-    return { data: response.data, fileName };
-  } catch (error) {
-    console.error('Error downloading payment notice:', error);
-    return null;
-  }
-};
+      return { data: response.data, fileName };
+    }
+  });
 
 /**
  * Downloads a ZIP file containing all unpaid/unpayable installment notices for a debt position

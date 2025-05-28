@@ -57,33 +57,25 @@ export const DebtPositionsInstallmentDetail = () => {
   );
   const statusInstallment = installment?.status;
 
+  const downloadMutation = debtPositions.downloadPaymentNotice(
+    organizationId,
+    installment?.debtPositionId || 0,
+    installment?.iuv || ''
+  );
+
   const handleDownloadInstallment = async () => {
-    if (!installment?.iuv || !installment.debtPositionId) {
-      utils.notify.emit(t('commons.files.missingIuv'), 'error');
-      return;
-    }
-
-    if (statusInstallment !== InstallmentStatus.UNPAID) {
-      setOpenDeleteDialog(true);
-      return;
-    }
-
     try {
-      const result = await debtPositions.downloadPaymentNotice(
-        organizationId,
-        installment.debtPositionId,
-        installment.iuv
-      );
-
-      if (!result) {
-        utils.notify.emit(t('commons.files.downloadFailed'), 'error');
-        return;
+      if (!installment?.iuv || !installment.debtPositionId) {
+        return utils.notify.emit(t('commons.files.missingIuv'), 'error');
       }
-
+      if (statusInstallment !== InstallmentStatus.UNPAID) {
+        return setOpenDeleteDialog(true);
+      }
+      const result = await downloadMutation.mutateAsync();
       const { data, fileName } = result;
       downloadBlob(data, fileName);
     } catch (error) {
-      console.error(t('commons.files.downloadFailed'), error);
+      console.error(error);
       utils.notify.emit(t('commons.files.downloadFailed'), 'error');
     }
   };
