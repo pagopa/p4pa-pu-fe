@@ -186,15 +186,15 @@ const createDebtPosition = (
  * @param organizationId Organization ID
  * @param debtPositionId Debt position ID
  * @param iuv IUV code of the installment
- * @returns Promise with file data and filename or null in case of error
+ * @returns a mutation to download the payment notice file
  */
-const downloadPaymentNotice = (
+const getPaymentNoticeFile = (
   organizationId: number,
   debtPositionId: number,
   iuv: string
 ) =>
   useMutation({
-    mutationKey: ['downloadPaymentNotice', organizationId, debtPositionId, iuv],
+    mutationKey: ['getPaymentNoticeFile', organizationId, debtPositionId, iuv],
     mutationFn: async () => {
       const response = await utils.apiClient.bff.getPaymentNotice(
         organizationId,
@@ -248,6 +248,6 @@ export default {
   deleteDebtPositionTypeOrgs,
   deleteDebtPosition,
   createDebtPosition,
-  downloadPaymentNotice,
+  getPaymentNoticeFile,
   downloadDebtPositionZip
 };

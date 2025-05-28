@@ -57,7 +57,7 @@ export const DebtPositionsInstallmentDetail = () => {
   );
   const statusInstallment = installment?.status;
 
-  const downloadMutation = debtPositions.downloadPaymentNotice(
+  const downloadMutation = debtPositions.getPaymentNoticeFile(
     organizationId,
     installment?.debtPositionId || 0,
     installment?.iuv || ''
