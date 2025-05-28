@@ -4,7 +4,6 @@ import { DebtTypeCreate } from '../DebtTypeCreate';
 import { Step1Props } from './components/Step1Configuration';
 import { Step2Props } from './components/Step2Settings';
 import { StepperContainerProps } from '../../components/Stepper';
-import { DebtPositionTypeRequestBody } from '../../../generated/apiClient';
 
 vi.mock('./components/Step1Configuration', () => ({
   Step1Configuration: ({ setData, onNext }: Step1Props) => (
