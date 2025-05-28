@@ -4,6 +4,7 @@ import TaxonomyPage from './Taxonomy';
 import { RouteHandleObject } from '../models/Routes';
 import TaxonomyDetailPage from './TaxonomyDetail';
 import { Navigate } from 'react-router-dom';
+import { SuperAdminRouteGuard } from '../components/RouteGuard/RouteGuard';
 
 const deployPath = config.deployPath;
 
@@ -19,7 +20,7 @@ export const backofficeRoutes = [
       {
         id: 'BACKOFFICE_TAXONOMY',
         path: 'taxonomy/',
-        element: <Layout />,
+        element: <SuperAdminRouteGuard><Layout /></SuperAdminRouteGuard>,
         children: [
           {
             id: 'BACKOFFICE_TAXONOMY_INDEX',
