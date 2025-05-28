@@ -104,18 +104,22 @@ vi.mock('../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
-const mockMutate = vi.fn();
+const mockResult = {
+  data: new Blob(['test data'], { type: 'application/zip' }),
+  fileName: 'test-file.zip'
+};
+const mockMutate = vi.fn().mockReturnValue(mockResult);
+const deleteMockMutate = vi.fn();
 
 vi.mock('../../api/debtPositions', () => ({
   default: {
     getDebtPositionDetail: vi.fn(),
     deleteDebtPosition: vi.fn().mockImplementation(() => ({
-      mutate: mockMutate,
-      isLoading: false,
-      isError: false,
-      isSuccess: false
+      mutate: deleteMockMutate
     })),
-    downloadDebtPositionZip: vi.fn()
+    getDebtPositionZipFile: vi.fn().mockImplementation(() => ({
+      mutateAsync: mockMutate
+    }))
   }
 }));
 
@@ -315,16 +319,8 @@ describe('DebtPositionDetail Component', () => {
     }
   });
 
-  it('calls downloadDebtPositionZip when download button is clicked and status is UNPAID', async () => {
+  it('calls getDebtPositionZipFile mutation when download button is clicked and status is UNPAID', async () => {
     mockDebtPositionDetail.status = DebtPositionStatus.UNPAID;
-    const mockResult = {
-      data: new Blob(['test data'], { type: 'application/zip' }),
-      fileName: 'test-file.zip'
-    };
-
-    vi.mocked(debtPositions.downloadDebtPositionZip).mockResolvedValue(
-      mockResult
-    );
 
     render(<DebtPositionDetail />);
 
@@ -337,10 +333,7 @@ describe('DebtPositionDetail Component', () => {
       fireEvent.click(downloadButton);
 
       await vi.waitFor(() => {
-        const firstCall = vi.mocked(debtPositions.downloadDebtPositionZip).mock
-          .calls[0];
-        expect(firstCall).toBeTruthy();
-        expect(firstCall[1]).toBe(10);
+        expect(mockMutate).toHaveBeenCalledWith(10);
         expect(utils.downloadBlob).toHaveBeenCalledWith(
           mockResult.data,
           mockResult.fileName
@@ -349,16 +342,8 @@ describe('DebtPositionDetail Component', () => {
     }
   });
 
-  it('calls downloadDebtPositionZip when download button is clicked and status is PARTIALLY_PAID', async () => {
+  it('calls getDebtPositionZipFile mutation function when download button is clicked and status is PARTIALLY_PAID', async () => {
     mockDebtPositionDetail.status = DebtPositionStatus.PARTIALLY_PAID;
-    const mockResult = {
-      data: new Blob(['test data'], { type: 'application/zip' }),
-      fileName: 'test-file.zip'
-    };
-
-    vi.mocked(debtPositions.downloadDebtPositionZip).mockResolvedValue(
-      mockResult
-    );
 
     render(<DebtPositionDetail />);
 
@@ -371,10 +356,7 @@ describe('DebtPositionDetail Component', () => {
       fireEvent.click(downloadButton);
 
       await vi.waitFor(() => {
-        const firstCall = vi.mocked(debtPositions.downloadDebtPositionZip).mock
-          .calls[0];
-        expect(firstCall).toBeTruthy();
-        expect(firstCall[1]).toBe(10);
+        expect(mockMutate).toHaveBeenCalledWith(10);
         expect(utils.downloadBlob).toHaveBeenCalledWith(
           mockResult.data,
           mockResult.fileName
@@ -403,7 +385,7 @@ describe('DebtPositionDetail Component', () => {
             'Notices can only be downloaded for unpaid or partially paid debt positions'
           )
         ).toBeVisible();
-        expect(debtPositions.downloadDebtPositionZip).not.toHaveBeenCalled();
+        expect(mockMutate).not.toHaveBeenCalled();
       });
     }
   });
@@ -411,9 +393,9 @@ describe('DebtPositionDetail Component', () => {
   it('handles error when downloadDebtPositionZip fails', async () => {
     mockDebtPositionDetail.status = DebtPositionStatus.UNPAID;
 
-    vi.mocked(debtPositions.downloadDebtPositionZip).mockRejectedValue(
-      new Error('Download failed')
-    );
+    vi.mocked(debtPositions.getDebtPositionZipFile).mockReturnValue({
+      mutateAsync: mockMutate.mockRejectedValue(new Error('Download failed'))
+    } as any);
 
     render(<DebtPositionDetail />);
 
@@ -426,10 +408,7 @@ describe('DebtPositionDetail Component', () => {
       fireEvent.click(downloadButton);
 
       await vi.waitFor(() => {
-        const firstCall = vi.mocked(debtPositions.downloadDebtPositionZip).mock
-          .calls[0];
-        expect(firstCall).toBeTruthy();
-        expect(firstCall[1]).toBe(10);
+        expect(mockMutate).toHaveBeenCalledWith(10);
         expect(utils.downloadBlob).not.toHaveBeenCalled();
         expect(console.error).toHaveBeenCalled();
       });
@@ -539,7 +518,7 @@ describe('DebtPositionDetail Component', () => {
 
       // Verifica che la funzione di eliminazione sia stata chiamata
       await vi.waitFor(() => {
-        expect(mockMutate).toHaveBeenCalled();
+        expect(deleteMockMutate).toHaveBeenCalled();
       });
     }
   });
@@ -584,7 +563,7 @@ describe('DebtPositionDetail Component', () => {
       });
 
       // Verifica che la funzione di eliminazione NON sia stata chiamata
-      expect(mockMutate).not.toHaveBeenCalled();
+      expect(deleteMockMutate).not.toHaveBeenCalled();
     }
   });
 
@@ -633,7 +612,7 @@ describe('DebtPositionDetail Component', () => {
       });
 
       // Verifica che la funzione di eliminazione NON sia stata chiamata
-      expect(mockMutate).not.toHaveBeenCalled();
+      expect(deleteMockMutate).not.toHaveBeenCalled();
     }
   });
 });
