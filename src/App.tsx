@@ -31,6 +31,7 @@ import AuthCallback from './routes/AuthCallback';
 import { postToken } from './api/token';
 import LoggedOut from './routes/UtilityPages/loggedout';
 import ErrorPage from './routes/UtilityPages/error';
+import { backofficeRoutes } from './routes/backoffice';
 
 const deployPath = config.deployPath;
 
@@ -73,7 +74,7 @@ const routesDef = [
       },
       {
         id: 'ERROR',
-        path: `${deployPath}/error`,
+        path: `${deployPath}/blockingError`,
         element: <ErrorPage />
       },
       ...flowsRoutes,
@@ -83,7 +84,8 @@ const routesDef = [
       ...debtTypesRoutes,
       ...responsesRoutes,
       ...debtPositionsRoutes,
-      ...classificationsRoutes
+      ...classificationsRoutes,
+      ...backofficeRoutes
     ]
   }
 ];

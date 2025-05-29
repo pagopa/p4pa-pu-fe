@@ -27,7 +27,7 @@ vi.mock('../navigation', () => ({
     routes: {
       HOME: '/home',
       LOGGED_OUT: '/loggedout',
-      ERROR: '/error'
+      ERROR: '/blockingError'
     },
     setAuthErrorState: vi.fn(),
     navigateToLoggedOut: vi.fn(),
