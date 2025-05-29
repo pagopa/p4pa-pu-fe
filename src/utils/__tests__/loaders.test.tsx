@@ -67,7 +67,7 @@ describe('loaders', () => {
 
       await waitFor(() => {
         expect(window.location.replace).toHaveBeenCalledWith(
-          '/piattaformaunitaria/error'
+          '/piattaformaunitaria/blockingError'
         );
       });
 
