@@ -19,6 +19,7 @@ vi.mock('react-router-dom', async () => {
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
   getIngestionFlowFileError: vi.fn(),
+  getIngestionFlowFile: vi.fn(),
   IngestionFlowFileType: {
     RECEIPT: 'RECEIPT',
     RECEIPT_PAGOPA: 'RECEIPT_PAGOPA',

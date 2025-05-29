@@ -185,6 +185,7 @@
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
     "notifications": "Notifiche",
     "operator": "Operatore",
+    "operators": "Operatori",
     "optional": "opzionale",
     "organizationType": "Tipo ente",
     "outcomeFrom": "Esito dal",
@@ -941,6 +942,8 @@
   },
   "errors": {
     "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
+    "fetchOperators": "Impossibile caricare la lista di tutti gli operatori. Riprova più tardi.",
+    "fetchOperatorsEnabled": "Impossibile caricare la lista degli operatori abilitati. Riprova più tardi.",
     "generic": "Si è verificato un errore. Riprova più tardi."
   },
   "exportFlow": {

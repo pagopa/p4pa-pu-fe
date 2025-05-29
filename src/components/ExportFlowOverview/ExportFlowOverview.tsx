@@ -18,12 +18,13 @@ import {
   ExportFileStatus,
   ExportFileTypeEnum
 } from '../../../generated/apiClient';
-import { downloadExportFile, getExportFiles } from '../../api/exportFiles';
+import { getExportFile, getExportFiles } from '../../api/exportFiles';
 import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
 import { useDataGridPaginationWithUrl } from '../../hooks/useDataGridPaginationWithUrl';
 import { downloadBlob } from '../../utils/download';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
 import { formatDateTime } from '../../utils/formatters';
+import utils from '../../utils';
 
 export type ExportFlowOverviewProps = {
   routingCategory: string;
@@ -96,6 +97,7 @@ const ExportFlowOverview = ({
   const { data, isLoading } = getExportFiles(organizationId, appliedFilters);
   const isEmptyData = !data?.content || data.content.length === 0;
 
+  // Sincronizzazione paginazione con backend data
   useEffect(() => {
     if (data) {
       const currentPage = urlPagination.pagination.page;
@@ -114,16 +116,17 @@ const ExportFlowOverview = ({
     }
   }, [data?.number, data?.size, data?.totalElements, data?.totalPages]);
 
+  const getFile = getExportFile(organizationId);
+
   const handleDownloadFile = async (exportFileId: number) => {
-    const result = await downloadExportFile(organizationId, exportFileId);
-
-    if (!result) {
-      console.error('Failed to download file');
-      return;
+    try {
+      const result = await getFile.mutateAsync(exportFileId);
+      const { data, fileName } = result;
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('commons.files.downloadFailed'));
     }
-
-    const { data, fileName } = result;
-    downloadBlob(data, fileName);
   };
 
   const handleExportFlow = () => {

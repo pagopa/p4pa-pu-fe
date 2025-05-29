@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { useNavigate, generatePath, useSearchParams } from 'react-router-dom';
-import { downloadExportFile, getExportFiles } from '../../api/exportFiles';
+import { useNavigate, generatePath } from 'react-router-dom';
+import { getExportFiles, getExportFile } from '../../api/exportFiles';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../App';
@@ -8,24 +9,27 @@ import ExportFlowOverview from './ExportFlowOverview';
 import { ExportFileTypeEnum } from '../../../generated/apiClient';
 import { downloadBlob } from '../../utils/download';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
     useNavigate: vi.fn(),
     generatePath: vi.fn(),
-    useSearchParams: vi.fn()
+    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
   };
 });
 
+const mutateAsyncMock = vi.fn();
 vi.mock('../../api/exportFiles', () => ({
   getExportFiles: vi
     .fn()
     .mockReturnValue({ data: { content: [] }, isLoading: false }),
-  downloadExportFile: vi.fn().mockResolvedValue({
-    data: new Blob(['test data']),
-    fileName: 'test_file.zip'
-  })
+  getExportFile: vi.fn().mockImplementation(() => ({
+    mutateAsync: mutateAsyncMock.mockReturnValue({
+      data: new Blob(['test data']),
+      fileName: 'test_file.zip'
+    })
+  }))
 }));
 
 vi.mock('../../utils/download', () => ({
@@ -34,7 +38,6 @@ vi.mock('../../utils/download', () => ({
 
 describe('ExportFlowOverview', () => {
   const mockNavigate = vi.fn();
-  const mockSetSearchParams = vi.fn();
 
   const mockData = {
     content: [
@@ -71,12 +74,6 @@ describe('ExportFlowOverview', () => {
     (generatePath as ReturnType<typeof vi.fn>).mockImplementation(
       () => '/mock-path'
     );
-
-    // Mock useSearchParams
-    (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue([
-      new URLSearchParams(),
-      mockSetSearchParams
-    ]);
 
     // Mock API calls
     (getExportFiles as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -182,7 +179,7 @@ describe('ExportFlowOverview', () => {
     fireEvent.click(downloadButtons[0]);
 
     await waitFor(() => {
-      expect(downloadExportFile).toHaveBeenCalledWith(123, expect.any(Number));
+      expect(mutateAsyncMock).toHaveBeenCalledWith(expect.any(Number));
     });
 
     await waitFor(() => {
@@ -351,14 +348,14 @@ describe('ExportFlowOverview', () => {
     expect(screen.queryByText('commons.noFlows')).toBeNull();
   });
 
-  it('handles null/undefined download result', async () => {
-    (
-      downloadExportFile as unknown as ReturnType<typeof vi.fn>
-    ).mockResolvedValueOnce(null);
+  it('handles error download result', async () => {
+    vi.mocked(getExportFile).mockReturnValue({
+      mutateAsync: mutateAsyncMock.mockRejectedValue(
+        new Error('Download failed')
+      )
+    } as any);
 
-    const consoleSpy = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
+    const consoleSpy = vi.spyOn(console, 'error');
 
     render(
       <ExportFlowOverview
@@ -372,7 +369,8 @@ describe('ExportFlowOverview', () => {
     fireEvent.click(downloadButtons[0]);
 
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to download file');
+      expect(console.error).toHaveBeenCalled();
+      expect(downloadBlob).not.toHaveBeenCalled();
     });
 
     consoleSpy.mockRestore();

@@ -1,7 +1,7 @@
 import utils from '../utils';
 import { act, renderHook } from '../__tests__/renderers';
 import {
-  downloadIngestionFlowFile,
+  getIngestionFlowFile,
   uploadIngestionFlowFile
 } from './ingestionFlowFiles';
 import {
@@ -115,18 +115,20 @@ describe('downloadIngestionFlowFile', () => {
       }
     } as unknown as AxiosResponse);
 
-    const result = await downloadIngestionFlowFile(123, 456);
+    const { result } = renderHook(() => getIngestionFlowFile(123));
+
+    await act(async () => {
+      const response = await result.current.mutateAsync(456);
+      expect(response).toEqual({ data: mockFileData, fileName: mockFileName });
+    });
 
     expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(123, 456, {
       format: 'blob'
     });
+
     expect(mockExtractFilename).toHaveBeenCalledWith(
       `attachment; filename="${mockFileName}"`
     );
-    expect(result).toEqual({
-      data: mockFileData,
-      fileName: mockFileName
-    });
   });
 
   it('uses default filename when content-disposition header is missing', async () => {
@@ -138,13 +140,13 @@ describe('downloadIngestionFlowFile', () => {
     } as unknown as AxiosResponse);
 
     mockExtractFilename.mockReturnValueOnce(null);
+    const { result } = renderHook(() => getIngestionFlowFile(123));
 
-    const result = await downloadIngestionFlowFile(123, 456);
+    await act(async () => {
+      const response = await result.current.mutateAsync(456);
+      expect(response).toEqual({ data: mockFileData, fileName: 'file-456' });
+    });
 
     expect(mockExtractFilename).toHaveBeenCalledWith('');
-    expect(result).toEqual({
-      data: mockFileData,
-      fileName: 'file-456'
-    });
   });
 });

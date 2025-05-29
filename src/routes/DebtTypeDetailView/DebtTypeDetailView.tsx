@@ -6,7 +6,8 @@ import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { DetailAccordion } from '../../components/DetailAccordion/DetailAccordion';
 import {
   AccordionSectionConfig,
-  getAccordionSectionsConfig
+  getAccordionSectionsConfig,
+  OperatorsData
 } from '../../models/DebtTypeSectionsConfig';
 import { useEffect, useState } from 'react';
 import { STATE } from '../../store/types';
@@ -17,6 +18,8 @@ import { PageRoutes } from '../../App';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { AxiosError, isAxiosError } from 'axios';
 import { useStore } from '../../store/GlobalStore';
+import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';
+import { useDebtPositionTypeOrgSearch } from '../../api/debtTypesCreated';
 
 export const DebtTypeDetailView = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -63,19 +66,57 @@ export const DebtTypeDetailView = () => {
     console.error('debtPositionTypeOrgId is not a number');
   }
 
-  const { data, isLoading, isError, isSuccess, error } =
-    getDebtPositionTypeOrgById({
-      organizationId,
-      debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
-    });
+  const {
+    data,
+    isLoading,
+    isError: isDebtTypeError,
+    isSuccess,
+    error: debtTypeError
+  } = getDebtPositionTypeOrgById({
+    organizationId,
+    debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
+  });
+
+  const {
+    data: operatorsData,
+    isError: isOperatorsError,
+    error: operatorsError
+  } = getDebtPositionTypeOrgOperators(organizationId, {
+    debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
+  });
+
+  const {
+    data: operatorsEnabledData,
+    mutate,
+    isError: isOperatorsEnabledError,
+    error: operatorsEnabledError
+  } = useDebtPositionTypeOrgSearch();
+
+  const buildOperatorsData = (): OperatorsData | null => {
+    if (!operatorsData || !operatorsEnabledData?.content?.[0]) {
+      return null;
+    }
+
+    const totalOperators = operatorsData.totalElements;
+    const enabledOperators =
+      operatorsEnabledData.content[0].enabledOperators || 0;
+
+    return {
+      totalOperators,
+      enabledOperators
+    };
+  };
 
   useEffect(() => {
     if (isSuccess && data?.response) {
-      const sections = getAccordionSectionsConfig(data?.response, t) || [];
+      const operatorsInfo = buildOperatorsData();
+      const sections =
+        getAccordionSectionsConfig(data?.response, operatorsInfo, t) || [];
       setAccordionSections(sections);
     }
-    if (isError && error) {
-      const axiosError = error as AxiosError;
+
+    if (isDebtTypeError && debtTypeError) {
+      const axiosError = debtTypeError as AxiosError;
       const isServerError =
         axiosError?.response?.status && axiosError.response.status >= 500;
 
@@ -83,7 +124,44 @@ export const DebtTypeDetailView = () => {
         utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
       }
     }
-  }, [data?.response, isLoading, isError, isSuccess, error]);
+
+    if (isOperatorsError && operatorsError) {
+      utils.notify.emit(t('errors.fetchOperators'), 'error');
+    }
+
+    if (isOperatorsEnabledError && operatorsEnabledError) {
+      utils.notify.emit(t('errors.fetchOperatorsEnabled'), 'error');
+    }
+  }, [
+    data,
+    isLoading,
+    isSuccess,
+    operatorsData,
+    operatorsEnabledData,
+    isDebtTypeError,
+    debtTypeError,
+    isOperatorsError,
+    operatorsError,
+    isOperatorsEnabledError,
+    operatorsEnabledError
+  ]);
+
+  useEffect(() => {
+    if (
+      !isLoading &&
+      isSuccess &&
+      data?.response?.code &&
+      !operatorsEnabledData
+    ) {
+      mutate({
+        organizationId,
+        filters: {
+          code: data.response.code,
+          description: data.response.description
+        }
+      });
+    }
+  }, [isLoading, isSuccess, data, operatorsEnabledData, mutate]);
 
   const actionButtons = [
     {

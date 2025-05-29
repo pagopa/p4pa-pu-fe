@@ -16,6 +16,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
 
 vi.mock('../../api/exportFiles', () => ({
   getExportFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
+  getExportFile: vi.fn(),
   ExportFileStatus: {
     COMPLETED: 'COMPLETED'
   },

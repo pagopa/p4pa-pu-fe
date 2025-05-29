@@ -1,8 +1,8 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useNavigate, generatePath, useSearchParams } from 'react-router-dom';
 import {
-  downloadIngestionFlowFile,
-  getIngestionFlowFiles
+  getIngestionFlowFiles,
+  getIngestionFlowFile
 } from '../../api/ingestionFlowFiles';
 import { downloadBlob } from '../../utils/download';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
@@ -24,6 +24,7 @@ vi.mock('react-router-dom', async () => {
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
   getIngestionFlowFileError: vi.fn(),
+  getIngestionFlowFile: vi.fn(),
   IngestionFlowFileType: {
     RECEIPT: 'RECEIPT',
     RECEIPT_PAGOPA: 'RECEIPT_PAGOPA',
@@ -34,8 +35,7 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
     TREASURY_XLS: 'TREASURY_XLS',
     TREASURY_POSTE: 'TREASURY_POSTE',
     DP_INSTALLMENTS: 'DP_INSTALLMENTS'
-  },
-  downloadIngestionFlowFile: vi.fn()
+  }
 }));
 
 vi.mock('../../utils/download', () => ({
@@ -849,17 +849,15 @@ describe('TelematicReceiptImportFlowOverview', () => {
   });
 
   it('calls downloadIngestionFlowFile and downloadBlob when download button is clicked', async () => {
-    const mockDownloadIngestionFlowFile = vi.fn().mockResolvedValue({
-      data: new Blob(['test content']),
-      fileName: 'test-file.csv'
-    });
-    const mockDownloadBlob = vi.fn();
+    const mockMutateAsync = vi.fn();
 
-    (downloadIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
-      mockDownloadIngestionFlowFile
-    );
-    (downloadBlob as ReturnType<typeof vi.fn>).mockImplementation(
-      mockDownloadBlob
+    (getIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
+      () => ({
+        mutateAsync: mockMutateAsync.mockResolvedValue({
+          data: new Blob(['test content']),
+          fileName: 'test-file.csv'
+        })
+      })
     );
 
     const { container } = render(
@@ -891,13 +889,12 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
     fireEvent.click(downloadButton!);
 
-    expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
-      123,
+    expect(mockMutateAsync).toHaveBeenCalledWith(
       uploadedRow!.ingestionFlowFileId
     );
 
     await waitFor(() => {
-      expect(mockDownloadBlob).toHaveBeenCalledWith(
+      expect(downloadBlob).toHaveBeenCalledWith(
         expect.any(Blob),
         'test-file.csv'
       );
@@ -906,17 +903,15 @@ describe('TelematicReceiptImportFlowOverview', () => {
   });
 
   it('calls downloadIngestionFlowFile and downloadBlob when menu download option is clicked', async () => {
-    const mockDownloadIngestionFlowFile = vi.fn().mockResolvedValue({
-      data: new Blob(['test content']),
-      fileName: 'test-file.csv'
-    });
-    const mockDownloadBlob = vi.fn();
+    const mockMutateAsync = vi.fn();
 
-    (downloadIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
-      mockDownloadIngestionFlowFile
-    );
-    (downloadBlob as ReturnType<typeof vi.fn>).mockImplementation(
-      mockDownloadBlob
+    (getIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
+      () => ({
+        mutateAsync: mockMutateAsync.mockResolvedValue({
+          data: new Blob(['test content']),
+          fileName: 'test-file.csv'
+        })
+      })
     );
 
     render(
@@ -956,13 +951,12 @@ describe('TelematicReceiptImportFlowOverview', () => {
         fireEvent.click(downloadMenuItem);
       });
 
-      expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
-        123,
+      expect(mockMutateAsync).toHaveBeenCalledWith(
         completedRow.ingestionFlowFileId
       );
 
       await waitFor(() => {
-        expect(mockDownloadBlob).toHaveBeenCalledWith(
+        expect(downloadBlob).toHaveBeenCalledWith(
           expect.any(Blob),
           'test-file.csv'
         );
