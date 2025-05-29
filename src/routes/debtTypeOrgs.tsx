@@ -1,37 +1,36 @@
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
-import DebtTypes from './DebtTypes/DebtTypes';
-import DebtTypeCatalogDetailView from './DebtTypeCatalogDetailView/DebtTypeCatalogDetailView';
-import { DebtTypeCreate } from './DebtTypeCreate';
-import { DebtTypeCatalogEdit } from './DebtTypeCatalogEdit';
+import DebtTypeDetailView from './DebtTypeDetailView/DebtTypeDetailView';
+import DebtTypesCreated from './DebtTypesCreated/DebtTypesCreated';
+import { DebtTypeOrgCreate } from './DebtTypeOrgCreate';
 import { RouteObject } from 'react-router';
-import { SuperAdminRouteGuard } from '../components/RouteGuard/RouteGuard';
+import { AdminRouteGuard } from '../components/RouteGuard/RouteGuard';
 
 const deployPath = config.deployPath;
 
-export const debtTypesRoutes: Array<RouteObject> = [
+export const debtTypeOrgsRoutes: Array<RouteObject> = [
   {
-    id: 'DEBT_TYPES_CATALOG',
-    path: `${deployPath}/debt-types/catalog/`,
+    id: 'DEBT_TYPES_DASHBOARD',
+    path: `${deployPath}/debt-types/dashboard/`,
     element: (
-      <SuperAdminRouteGuard>
+      <AdminRouteGuard>
         <Layout />
-      </SuperAdminRouteGuard>
+      </AdminRouteGuard>
     ),
     children: [
       {
         index: true,
+        element: <DebtTypesCreated />,
         handle: {
           backButton: false,
           hideBreadcrumbs: true
-        } as RouteHandleObject,
-        element: <DebtTypes />
+        } as RouteHandleObject
       },
       {
-        id: 'DEBT_TYPE_CATALOG_DETAIL',
-        path: 'detail/:debtPositionTypeId',
-        element: <DebtTypeCatalogDetailView />,
+        id: 'DEBT_TYPE_ORG_DETAIL',
+        path: 'detail/:debtPositionTypeOrgId',
+        element: <DebtTypeDetailView />,
         handle: {
           backButton: true,
           hideBreadcrumbs: true,
@@ -41,9 +40,9 @@ export const debtTypesRoutes: Array<RouteObject> = [
         } as RouteHandleObject
       },
       {
-        id: 'DEBT_TYPE_CATALOG_CREATE',
+        id: 'DEBT_TYPE_ORG_CREATE',
         path: 'new',
-        element: <DebtTypeCreate />,
+        element: <DebtTypeOrgCreate />,
         handle: {
           backButton: true,
           backButtonText: 'commons.exit',
@@ -54,9 +53,9 @@ export const debtTypesRoutes: Array<RouteObject> = [
         } as RouteHandleObject
       },
       {
-        id: 'DEBT_TYPE_CATALOG_EDIT',
-        path: 'edit/:debtPositionTypeId',
-        element: <DebtTypeCatalogEdit />,
+        id: 'DEBT_TYPE_ORG_EDIT',
+        path: 'edit/:debtPositionTypeOrgId',
+        element: <DebtTypeOrgCreate edit />,
         handle: {
           backButton: true,
           backButtonText: 'commons.exit',

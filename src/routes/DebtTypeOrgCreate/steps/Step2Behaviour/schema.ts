@@ -13,7 +13,7 @@ export const step2Schema = z
     xsdDefinitionRef: z.any().optional(),
     externalPaymentUrl: z.string().optional(),
 
-    flagNotifyOutcomePush: z.enum(['true', 'false']).default('false'),
+    flagNotifyOutcomePush: z.enum(['enabled', 'disabled']).default('disabled'),
 
     notificationRetries: z.coerce.number().optional(),
     notificationAppName: z.string().optional(),
@@ -75,7 +75,7 @@ const validateNotifications = (
   data: z.infer<typeof step2Schema>,
   ctx: z.RefinementCtx
 ) => {
-  if (data.flagNotifyOutcomePush !== 'true') return;
+  if (data.flagNotifyOutcomePush !== 'enabled') return;
 
   // Validate required fields
   const requiredFields = [

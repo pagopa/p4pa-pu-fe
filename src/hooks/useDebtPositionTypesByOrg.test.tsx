@@ -1,17 +1,16 @@
-import { renderHook } from '../__tests__/renderers';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDebtPositionTypesByOrg } from './useDebtPositionTypesByOrg';
-import utils from '../utils';
 import { getDebtPositionTypesByOrganizationId } from '../api/debtPositionsTypes';
-import { QueryObserverPendingResult } from '@tanstack/react-query';
-import { DebtPositionType } from '../../generated/data-contracts';
+import utils from '../utils';
+import { AxiosError } from 'axios';
+import { Mock } from 'vitest';
+import { renderHook, waitFor } from '../__tests__/renderers';
 
-const mockT = vi.fn((key: string) => key);
-
+// Mock API call module
 vi.mock('../api/debtPositionsTypes', () => ({
   getDebtPositionTypesByOrganizationId: vi.fn()
 }));
 
+// Mock utils.notify.emit
 vi.mock('../utils', () => ({
   default: {
     notify: {
@@ -20,96 +19,66 @@ vi.mock('../utils', () => ({
   }
 }));
 
-type MockQueryType = QueryObserverPendingResult<Array<DebtPositionType>, Error>;
-
 describe('useDebtPositionTypesByOrg', () => {
-  const mockQueryResult = {
-    data: null,
-    isLoading: false,
-    isError: false,
-    isSuccess: false,
-    error: null
-  } as unknown as MockQueryType;
+  const orgId = 1;
 
-  beforeEach(() => {
+  afterEach(() => {
     vi.clearAllMocks();
-    mockT.mockClear();
   });
 
-  it('should initialize with an empty options list', () => {
-    vi.mocked(getDebtPositionTypesByOrganizationId).mockReturnValue(
-      mockQueryResult
-    );
-
-    const { result } = renderHook(() =>
-      useDebtPositionTypesByOrg({ organizationId: 1 })
-    );
-
-    expect(result.current.optionsMap).toEqual([]);
-  });
-
-  it('should set options correctly on successful response', () => {
-    const mockData = [
-      { description: 'Type B', debtPositionTypeId: 2 },
-      { description: 'Type A', debtPositionTypeId: 1 }
-    ];
-
-    vi.mocked(getDebtPositionTypesByOrganizationId).mockReturnValue({
-      ...mockQueryResult,
-      data: mockData,
-      isSuccess: true
-    } as unknown as MockQueryType);
-
-    const { result } = renderHook(() =>
-      useDebtPositionTypesByOrg({ organizationId: 1 })
-    );
-
-    // Should be sorted alphabetically by description
-    expect(result.current.optionsMap).toEqual([
-      { label: 'Type A', value: 1 },
-      { label: 'Type B', value: 2 }
-    ]);
-  });
-
-  it('should handle empty or invalid response', () => {
-    vi.mocked(getDebtPositionTypesByOrganizationId).mockReturnValue({
-      ...mockQueryResult,
-      data: [],
-      isSuccess: true
-    } as unknown as MockQueryType);
-
-    const { result } = renderHook(() =>
-      useDebtPositionTypesByOrg({ organizationId: 1 })
-    );
-
-    expect(result.current.optionsMap).toEqual([]);
-  });
-
-  it('should handle API error and show notification', () => {
-    vi.mocked(getDebtPositionTypesByOrganizationId).mockReturnValue({
-      ...mockQueryResult,
-      isError: true,
-      error: new Error('API error')
-    } as unknown as MockQueryType);
-
-    renderHook(() => useDebtPositionTypesByOrg({ organizationId: 1 }));
-
-    expect(utils.notify.emit).toHaveBeenCalledWith(
-      'errors.fetchDebtPositionsTypes',
-      'error'
-    );
-  });
-
-  it('should keep options empty while loading', () => {
-    vi.mocked(getDebtPositionTypesByOrganizationId).mockReturnValue({
-      ...mockQueryResult,
-      isLoading: true
+  it('should call API with organizationId', () => {
+    (getDebtPositionTypesByOrganizationId as Mock).mockReturnValue({
+      isError: false,
+      error: null,
+      data: []
     });
 
     const { result } = renderHook(() =>
-      useDebtPositionTypesByOrg({ organizationId: 1 })
+      useDebtPositionTypesByOrg({ organizationId: orgId })
     );
 
-    expect(result.current.optionsMap).toEqual([]);
+    expect(getDebtPositionTypesByOrganizationId).toHaveBeenCalledWith({
+      organizationId: orgId
+    });
+    expect(result.current.isError).toBe(false);
+  });
+
+  it('should emit notification on non-server error', async () => {
+    const error = {
+      response: { status: 400 }
+    } as AxiosError;
+
+    (getDebtPositionTypesByOrganizationId as Mock).mockReturnValue({
+      isError: true,
+      error,
+      data: null
+    });
+
+    renderHook(() => useDebtPositionTypesByOrg({ organizationId: orgId }));
+
+    await waitFor(() => {
+      expect(utils.notify.emit).toHaveBeenCalledWith(
+        'errors.fetchDebtPositionsTypes',
+        'error'
+      );
+    });
+  });
+
+  it('should NOT emit notification on server error (status >= 500)', async () => {
+    const error = {
+      response: { status: 500 }
+    } as AxiosError;
+
+    (getDebtPositionTypesByOrganizationId as Mock).mockReturnValue({
+      isError: true,
+      error,
+      data: null
+    });
+
+    renderHook(() => useDebtPositionTypesByOrg({ organizationId: orgId }));
+
+    await waitFor(() => {
+      expect(utils.notify.emit).not.toHaveBeenCalled();
+    });
   });
 });

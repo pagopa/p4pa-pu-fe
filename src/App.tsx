@@ -32,6 +32,7 @@ import { postToken } from './api/token';
 import LoggedOut from './routes/UtilityPages/loggedout';
 import ErrorPage from './routes/UtilityPages/error';
 import { backofficeRoutes } from './routes/backoffice';
+import { debtTypeOrgsRoutes } from './routes/debtTypeOrgs';
 
 const deployPath = config.deployPath;
 
@@ -82,6 +83,7 @@ const routesDef = [
       ...detailRoutes,
       ...exportRoutes,
       ...debtTypesRoutes,
+      ...debtTypeOrgsRoutes,
       ...responsesRoutes,
       ...debtPositionsRoutes,
       ...classificationsRoutes,
