@@ -43,7 +43,7 @@ export const DebtTypeDetailView = () => {
     setOpenDeleteDialog(false);
     try {
       await deleteDebtPositionTypeOrgs.mutateAsync();
-      navigate(PageRoutes.DEBT_TYPES);
+      navigate(PageRoutes.DEBT_TYPES_DASHBOARD);
     } catch (error: unknown) {
       setOpenErrorDialog(true);
       if (isAxiosError(error) && error.response?.status === 409) {
