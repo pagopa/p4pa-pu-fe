@@ -44,7 +44,12 @@ export const GenericErrorPage = () => {
             sx={{ fontSize: 60, color: theme.palette.error.dark }}
           />
         }
-        title={String(t(pageConfig?.title, i18nParams))}
+        title={String(
+          t(pageConfig?.title, {
+            ...i18nParams,
+            interpolation: { escapeValue: false }
+          })
+        )}
         description={t(pageConfig?.description)}
         buttonConfig={buttonConfig}
       />
