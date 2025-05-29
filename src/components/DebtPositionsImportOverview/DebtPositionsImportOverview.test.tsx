@@ -3,11 +3,15 @@ import { render, screen } from '../../__tests__/renderers';
 import DebtPositionsImportOverview from './DebtPositionsImportOverview';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useNavigate: vi.fn(),
-  generatePath: vi.fn()
-}));
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+    generatePath: vi.fn()
+  };
+});
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),

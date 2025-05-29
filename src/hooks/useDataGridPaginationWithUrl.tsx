@@ -26,8 +26,6 @@ type UseDataGridPaginationWithUrlReturn = {
     size: number;
     currentPage: number;
   };
-
-  // Pagination handlers
   handlePageChange: (newPage: number) => void;
   handlePageSizeChange: (newSize: number) => void;
   setTotalElements: (total: number) => void;

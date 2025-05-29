@@ -1,14 +1,20 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { useNavigate, generatePath, useSearchParams } from 'react-router-dom';
 import { render, screen } from '../../__tests__/renderers';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import TreasuryImportFlowOverview from './TreasuryImportFlowOverview';
+import { setOrganizationId } from '../../store/OrganizationIdStore';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useNavigate: vi.fn(),
-  generatePath: vi.fn()
-}));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    generatePath: vi.fn(),
+    useSearchParams: vi.fn()
+  };
+});
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
@@ -44,6 +50,9 @@ describe('TreasuryImportFlowOverview', () => {
     size: 10
   };
 
+  const mockNavigate = vi.fn();
+  const mockSetSearchParams = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -54,6 +63,21 @@ describe('TreasuryImportFlowOverview', () => {
       'commons.importFlows': 'Import Flows',
       'commons.noFlows': 'No flows available'
     });
+
+    (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
+    (generatePath as ReturnType<typeof vi.fn>).mockImplementation(
+      () => '/mock-path'
+    );
+    (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue([
+      new URLSearchParams(),
+      mockSetSearchParams
+    ]);
+
+    (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: { content: [] }
+    });
+
+    setOrganizationId(123);
   });
 
   it('renders with correct translations', () => {
