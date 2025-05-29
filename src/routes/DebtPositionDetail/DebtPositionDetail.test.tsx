@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { screen, fireEvent } from '@testing-library/react';
 import { render } from '../../__tests__/renderers';
 import DebtPositionDetail from './DebtPositionDetail';
