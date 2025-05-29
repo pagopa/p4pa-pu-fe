@@ -6,7 +6,6 @@ import { setConfigFe } from './store/ConfigFeStore';
 import { setupOrganizations } from './hooks/useOrganizations';
 import { useStore } from './store/GlobalStore';
 import { setUserInfo } from './store/UserInfoStore';
-import { tr } from 'date-fns/locale';
 
 const useSetup = () => {
   const [ready, setReady] = useState(false);

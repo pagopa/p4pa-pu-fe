@@ -34,6 +34,7 @@ import { backofficeRoutes } from './routes/backoffice';
 import { debtTypeOrgsRoutes } from './routes/debtTypeOrgs';
 import useSetup from './setup';
 import { setupInterceptors } from './utils/interceptors';
+import { CircularProgress, Container } from '@mui/material';
 
 setupInterceptors(utils.apiClient);
 setupInterceptors(utils.fileshareClient);
@@ -122,7 +123,6 @@ export const PageRoutes = extractPathsWithIds(routesDef);
 export const App = () => {
   const { state } = useStore();
   const ready = useSetup();
-  console.log('App state:', state);
   return ready ? (
     <ErrorBoundary
       fallback={<ErrorFallback onReset={() => window.location.replace('/')} />}
@@ -133,7 +133,16 @@ export const App = () => {
       </Theme>
     </ErrorBoundary>
   ) : (
-    <>wait...</>
+    <Container
+      sx={{
+        height: '90vh',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    >
+      <CircularProgress size={40} />
+    </Container>
   );
 };
 
