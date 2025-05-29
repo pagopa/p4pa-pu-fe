@@ -53,8 +53,10 @@ describe('DebtTypeDetailView', () => {
 
     (getDebtPositionTypeOrgById as ReturnType<typeof vi.fn>).mockReturnValue({
       data: {
-        description: 'Test debt position ID',
-        code: 'test'
+        response: {
+          description: 'Test debt position ID',
+          code: 'test'
+        }
       },
       isLoading: false,
       isError: false,
@@ -65,10 +67,7 @@ describe('DebtTypeDetailView', () => {
       getDebtPositionTypeOrgOperators as ReturnType<typeof vi.fn>
     ).mockReturnValue({
       data: {
-        response: {
-          totalElements: 5,
-          description: 'Test debt position ID'
-        }
+        totalElements: 5
       },
       isError: false
     });
@@ -88,7 +87,8 @@ describe('DebtTypeDetailView', () => {
 
   it('renders title and description', () => {
     render(<DebtTypeDetailView />);
-    expect(screen.getAllByText('Test debt position ID')).toBeTruthy();
+    const description = screen.queryAllByText('Test debt position ID');
+    expect(description.length).toBe(3);
     expect(screen.getByText('description')).toBeInTheDocument();
     expect(screen.getByText('selected operators')).toBeInTheDocument();
     expect(screen.getByText('3 operators')).toBeInTheDocument();
