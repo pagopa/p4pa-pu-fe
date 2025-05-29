@@ -1,7 +1,8 @@
 import { Add, Search } from '@mui/icons-material';
 import { Box, Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState, useCallback } from 'react';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
@@ -9,45 +10,74 @@ import FilterContainer, {
 import DebtTypesDataGrid from './components/DebtTypesDataGrid';
 import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
 import useDebtTypesFilters from '../../hooks/useDebtTypesFilters';
+import { useDataGridPaginationWithUrl } from '../../hooks/useDataGridPaginationWithUrl';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { PageRoutes } from '../../App';
+
+type DebtTypesFilters = {
+  description?: string;
+};
 
 export const DebtTypes = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const pageFromUrl = parseInt(searchParams.get('page') || '1') - 1;
-  const sizeFromUrl = parseInt(searchParams.get('size') || '10');
 
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  const {
-    appliedFilters,
-    draftFilters,
-    updateDraftFilters,
-    applyFilters,
-    updatePagination,
-    handleSortModelChange,
-    sortModel,
-    isSearchEnabled
-  } = useDebtTypesFilters({
+  const [filterValues, setFilterValues] = useState<DebtTypesFilters>({});
+  const [draftFilters, setDraftFilters] = useState<DebtTypesFilters>({});
+
+  const { handleSortModelChange, sortModel } = useDebtTypesFilters({
     initialFilters: {
-      page: pageFromUrl,
-      size: sizeFromUrl
-    },
-    onFiltersChange: (filters) => {
-      const params = new URLSearchParams(searchParams);
-      params.set('page', (filters.page + 1).toString());
-      params.set('size', filters.size.toString());
-      setSearchParams(params, { replace: true });
+      page: 0,
+      size: 10
     }
   });
 
-  const { data } = getDebtPositionTypeWithCount(organizationId, appliedFilters);
+  const {
+    pagination,
+    handlePageChange,
+    handlePageSizeChange,
+    syncWithBackendData
+  } = useDataGridPaginationWithUrl({
+    initialPage: 0,
+    initialSize: 10,
+    totalElements: 0
+  });
+
+  const combinedFilters = {
+    page: pagination.page,
+    size: pagination.size,
+    ...(filterValues.description && { description: filterValues.description })
+  };
+
+  const { data } = getDebtPositionTypeWithCount(
+    organizationId,
+    combinedFilters
+  );
+
+  useEffect(() => {
+    if (data) {
+      syncWithBackendData(data);
+    }
+  }, [data, syncWithBackendData]);
+
+  const updateDraftFilters = useCallback(
+    (updates: Partial<DebtTypesFilters>) => {
+      setDraftFilters((prev) => ({ ...prev, ...updates }));
+    },
+    []
+  );
+
+  const applyFilters = useCallback(() => {
+    setFilterValues(draftFilters);
+    handlePageChange(1);
+  }, [draftFilters, handlePageChange]);
+
+  const isSearchEnabled = draftFilters.description !== filterValues.description;
 
   return (
     <>
@@ -106,16 +136,14 @@ export const DebtTypes = () => {
               number: 0
             }
           }
-          onPageChange={(page) =>
-            updatePagination({ page: page - 1, size: appliedFilters.size })
-          }
-          onPageSizeChange={(size) => updatePagination({ size, page: 0 })}
+          onPageChange={handlePageChange}
+          onPageSizeChange={handlePageSizeChange}
           sortModel={sortModel}
           onSortChange={handleSortModelChange}
           pagination={{
-            currentPage: appliedFilters.page + 1,
+            currentPage: pagination.page + 1,
             totalPages: data?.totalPages || 0,
-            size: appliedFilters.size
+            size: pagination.size
           }}
         />
       </Box>

@@ -1,16 +1,22 @@
 import { useState, useEffect } from 'react';
 import { useStore } from '../store/GlobalStore';
 import { FilterValues } from '../models/Filters';
-import { useDataGridPagination } from './useDatagridPagination';
+import { useDataGridPaginationWithUrl } from './useDataGridPaginationWithUrl';
 import { getTreasuries, TreasuriesQuery } from '../api/treasuries';
 import { format } from 'date-fns/format';
 
 export type UseTreasurySearchProps = {
   initialFilters: FilterValues;
+  initialPage?: number;
+  initialSize?: number;
+  totalElements?: number;
 };
 
 export const UseTreasurySearch = ({
-  initialFilters
+  initialFilters,
+  initialPage,
+  initialSize,
+  totalElements
 }: UseTreasurySearchProps) => {
   const [filterValues, setFilterValues] =
     useState<FilterValues>(initialFilters);
@@ -22,16 +28,30 @@ export const UseTreasurySearch = ({
 
   const query = getTreasuries(organizationId);
 
-  const { pagination, handlePageChange, handlePageSizeChange } =
-    useDataGridPagination({
-      initialPage: 0,
-      initialSize: 10,
-      onPaginationChange: () => query.mutate(filterToRequest())
-    });
+  const {
+    pagination,
+    handlePageChange,
+    handlePageSizeChange,
+    syncWithBackendData
+  } = useDataGridPaginationWithUrl({
+    initialPage: initialPage ?? 0,
+    initialSize: initialSize ?? 10,
+    onPaginationChange: () => {
+      query.mutate(filterToRequest());
+    },
+    totalElements
+  });
 
   useEffect(() => {
     query.mutate(filterToRequest());
   }, [organizationId, pagination.page, pagination.size, sort]);
+
+  // Synchronize pagination with backend data when URL sync is enabled
+  useEffect(() => {
+    if (query.data) {
+      syncWithBackendData(query.data);
+    }
+  }, [query.data, syncWithBackendData]);
 
   const filterToRequest = (
     filterValuesRequest: FilterValues = filterValues
@@ -93,6 +113,7 @@ export const UseTreasurySearch = ({
   const applyFilters = (filterValues: FilterValues) => {
     query.mutate(filterToRequest(filterValues));
     setFilterValues(filterValues);
+    // Note: We don't reset the page here because Treasury handles filters separately from pagination
   };
 
   return {
@@ -103,7 +124,8 @@ export const UseTreasurySearch = ({
     handlePageSizeChange,
     pagination,
     setFilterValues,
-    setSort
+    setSort,
+    syncWithBackendData
   };
 };
 

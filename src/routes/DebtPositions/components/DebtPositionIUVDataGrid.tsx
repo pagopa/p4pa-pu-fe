@@ -39,6 +39,9 @@ export const IUVDataGrid = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const safeRows =
+    data?.content?.filter((row) => row.installmentId != null) || [];
+
   const stateColors: Record<InstallmentStatus, ChipProps['color']> = {
     CANCELLED: 'error',
     DRAFT: 'default',
@@ -140,7 +143,7 @@ export const IUVDataGrid = ({
 
   return (
     <CustomDataGrid
-      rows={data?.content ?? []}
+      rows={safeRows}
       getRowId={(row) => row.installmentId}
       columns={columns}
       disableColumnMenu

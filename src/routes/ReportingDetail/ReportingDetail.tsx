@@ -19,6 +19,7 @@ import {
   moneyFormat
 } from '../../utils/formatters';
 import { useReportingDetailFilters } from '../../hooks/useReportingDetailFilters';
+import { useDataGridPaginationWithUrl } from '../../hooks/useDataGridPaginationWithUrl';
 import { PaymentsReporting } from '../../../generated/apiClient';
 import { Variant } from '@mui/material/styles/createTypography';
 
@@ -61,11 +62,47 @@ export const ReportingDetail = () => {
     { enabled: !!organizationId && !!iuf }
   );
 
+  const urlPagination = useDataGridPaginationWithUrl({
+    initialPage: 0,
+    initialSize: 10,
+    totalElements: data?.totalElements || 0
+  });
+
+  const handlePageChangeSync = (page: number) => {
+    urlPagination.handlePageChange(page - 1); // DataGrid uses 1-based, hook uses 0-based
+  };
+
+  const handlePageSizeChangeSync = (size: number) => {
+    urlPagination.handlePageSizeChange(size);
+  };
+
+  useEffect(() => {
+    const newPage = urlPagination.pagination.page;
+    const newSize = urlPagination.pagination.size;
+
+    // Only if different from applied filters to avoid loop
+    if (newPage !== appliedFilters.page || newSize !== appliedFilters.size) {
+      updatePagination({ page: newPage, size: newSize });
+    }
+  }, [
+    urlPagination.pagination.page,
+    urlPagination.pagination.size,
+    appliedFilters.page,
+    appliedFilters.size,
+    updatePagination
+  ]);
+
   useEffect(() => {
     if (data?.content?.[0] && !detailItem) {
       setDetailItem(data.content[0]);
     }
   }, [data, detailItem]);
+
+  useEffect(() => {
+    if (data?.totalElements !== undefined) {
+      urlPagination.setTotalElements(data.totalElements);
+    }
+  }, [data?.totalElements, urlPagination]);
 
   const detailSections = useMemo(() => {
     const firstReportItem = detailItem;
@@ -201,12 +238,8 @@ export const ReportingDetail = () => {
               totalElements: data?.totalElements || 0,
               defaultPageOption: appliedFilters.size,
               sizePageOptions: [5, 10, 15, 20],
-              onPageChange: (page) =>
-                updatePagination({
-                  page: page - 1,
-                  size: appliedFilters.size
-                }),
-              onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
+              onPageChange: handlePageChangeSync,
+              onPageSizeChange: handlePageSizeChangeSync,
               currentPage: appliedFilters.page + 1
             }}
           />

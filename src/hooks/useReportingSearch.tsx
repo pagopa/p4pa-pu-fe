@@ -1,13 +1,12 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useStore } from '../store/GlobalStore';
 import { FilterFieldValue } from '../models/Filters';
-import { useDataGridPagination } from './useDatagridPagination';
+import { useDataGridPaginationWithUrl } from './useDataGridPaginationWithUrl';
 import {
   getPaymentsReporting,
   PaymentsReportingQuery
 } from '../api/getPaymentsReporting';
 
-// Definizione dei filtri per la ricerca
 export type ReportingFilters = {
   dateRange?: {
     from: Date;
@@ -41,19 +40,30 @@ export const useReportingSearch = ({
 
   const query = getPaymentsReporting(organizationId);
 
-  const { pagination, handlePageChange, handlePageSizeChange } =
-    useDataGridPagination({
-      initialPage: initialPage ?? 0,
-      initialSize: initialSize ?? 10,
-      onPaginationChange: () => {
-        query.mutate(filterToRequest());
-      },
-      totalElements
-    });
+  const {
+    pagination,
+    handlePageChange,
+    handlePageSizeChange,
+    syncWithBackendData
+  } = useDataGridPaginationWithUrl({
+    initialPage: initialPage ?? 0,
+    initialSize: initialSize ?? 10,
+    onPaginationChange: () => {
+      query.mutate(filterToRequest());
+    },
+    totalElements
+  });
 
   useEffect(() => {
     query.mutate(filterToRequest());
   }, [organizationId, pagination.page, pagination.size, sort]);
+
+  // Synchronize pagination with backend data when URL sync is enabled
+  useEffect(() => {
+    if (query.data) {
+      syncWithBackendData(query.data);
+    }
+  }, [query.data, syncWithBackendData]);
 
   const filterToRequest = (): PaymentsReportingQuery => ({
     regulationDateFrom:
@@ -92,7 +102,8 @@ export const useReportingSearch = ({
     handlePageSizeChange,
     pagination,
     setFilterValues,
-    setSort
+    setSort,
+    syncWithBackendData
   };
 };
 

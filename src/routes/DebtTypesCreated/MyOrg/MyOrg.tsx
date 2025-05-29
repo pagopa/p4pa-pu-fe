@@ -11,6 +11,7 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import useDebtTypesCreatedFilters, {
   FilterParams
 } from '../../../hooks/useDebtTypesCreatedFilters';
+import { useDataGridPaginationWithUrl } from '../../../hooks/useDataGridPaginationWithUrl';
 import { useDebtPositionTypeOrgSearch } from '../../../api/debtTypesCreated';
 import { DebtPositionTypeOrgWithCount } from '../../../../generated/data-contracts';
 import { useStore } from '../../../store/GlobalStore';
@@ -40,18 +41,25 @@ export const MyOrg = ({
   const { mutate, data } = useDebtPositionTypeOrgSearch();
 
   const {
-    appliedFilters,
-    updateDraftFilters,
-    applyFilters,
-    updatePagination,
-    sortModel,
-    handleSortModelChange
-  } = useDebtTypesCreatedFilters({
-    initialFilters: {
-      code: codeFilter,
-      description: descriptionFilter
-    }
+    pagination,
+    handlePageChange,
+    handlePageSizeChange,
+    syncWithBackendData
+  } = useDataGridPaginationWithUrl({
+    initialPage: 0,
+    initialSize: 10,
+    totalElements: data?.totalElements || 0
   });
+
+  const { updateDraftFilters, applyFilters, sortModel, handleSortModelChange } =
+    useDebtTypesCreatedFilters({
+      initialFilters: {
+        code: codeFilter,
+        description: descriptionFilter,
+        page: pagination.page,
+        size: pagination.size
+      }
+    });
 
   useEffect(() => {
     updateDraftFilters({
@@ -60,17 +68,37 @@ export const MyOrg = ({
     });
   }, [codeFilter, descriptionFilter, updateDraftFilters]);
 
+  // Synchronize pagination with backend when new data arrives
   useEffect(() => {
-    const initialFilters: FilterParams = {
-      page: 0,
-      size: 10
+    if (
+      data &&
+      typeof data.number === 'number' &&
+      typeof data.size === 'number'
+    ) {
+      const currentPage = pagination.page;
+      const currentSize = pagination.size;
+      const backendPage = data.number;
+      const backendSize = data.size;
+
+      // Only sync if backend data is actually different from current state
+      if (currentPage !== backendPage || currentSize !== backendSize) {
+        syncWithBackendData(data);
+      }
+    }
+  }, [data?.number, data?.size, data?.totalElements, data?.totalPages]);
+
+  // Make API call when filters or pagination change
+  useEffect(() => {
+    const filters: FilterParams = {
+      page: pagination.page,
+      size: pagination.size
     };
 
-    if (codeFilter) initialFilters.code = codeFilter;
-    if (descriptionFilter) initialFilters.description = descriptionFilter;
+    if (codeFilter) filters.code = codeFilter;
+    if (descriptionFilter) filters.description = descriptionFilter;
 
-    mutate({ organizationId, filters: initialFilters });
-  }, []);
+    mutate({ organizationId, filters });
+  }, [organizationId, pagination.page, pagination.size, mutate]);
 
   useEffect(() => {
     const performSearch = () => {
@@ -137,8 +165,12 @@ export const MyOrg = ({
   };
 
   const handlePaginationChange = (page: number, size: number) => {
-    const filters = updatePagination({ page: page - 1, size });
-    mutate({ organizationId, filters });
+    // Use centralized hook to manage pagination
+    if (size !== pagination.size) {
+      handlePageSizeChange(size);
+    } else {
+      handlePageChange(page);
+    }
   };
 
   const handleSortChange = (newSortModel: GridSortModel) => {
@@ -160,12 +192,13 @@ export const MyOrg = ({
         onSortModelChange={handleSortChange}
         customPagination={{
           totalPages: data?.totalPages || 0,
-          defaultPageOption: appliedFilters.size as number,
+          defaultPageOption: pagination.size,
           sizePageOptions: [5, 10, 15, 20],
-          onPageChange: (page) =>
-            handlePaginationChange(page, appliedFilters.size as number),
-          onPageSizeChange: (size) => handlePaginationChange(1, size),
-          currentPage: ((appliedFilters.page as number) || 0) + 1
+          onPageChange: (page) => handlePaginationChange(page, pagination.size),
+          onPageSizeChange: (size) => {
+            handlePageSizeChange(size);
+          },
+          currentPage: pagination.page + 1
         }}
       />
     </Box>

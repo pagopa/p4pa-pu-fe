@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useStore } from '../store/GlobalStore';
 import { FilterFieldValue } from '../models/Filters';
-import { useDataGridPagination } from './useDatagridPagination';
+import { useDataGridPaginationWithUrl } from './useDataGridPaginationWithUrl';
 import { getReceipts, TelematicReceiptsQuery } from '../api/receipts';
 import { ReceiptOriginType } from '../../generated/apiClient';
 
@@ -14,13 +14,19 @@ export type TelematicReceiptFilters = {
   typeOrgId?: number;
 };
 
-export type UseTelematicReceiptSearchProps = {
+export type UseTelematicReceiptsSearchProps = {
   initialFilters: TelematicReceiptFilters;
+  initialPage?: number;
+  initialSize?: number;
+  totalElements?: number;
 };
 
 export const useTelematicReceiptSearch = ({
-  initialFilters
-}: UseTelematicReceiptSearchProps) => {
+  initialFilters,
+  initialPage,
+  initialSize,
+  totalElements
+}: UseTelematicReceiptsSearchProps) => {
   const [filterValues, setFilterValues] =
     useState<TelematicReceiptFilters>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
@@ -31,16 +37,30 @@ export const useTelematicReceiptSearch = ({
 
   const query = getReceipts(organizationId);
 
-  const { pagination, handlePageChange, handlePageSizeChange } =
-    useDataGridPagination({
-      initialPage: 0,
-      initialSize: 10,
-      onPaginationChange: () => query.mutate(filterToRequest())
-    });
+  const {
+    pagination,
+    handlePageChange,
+    handlePageSizeChange,
+    syncWithBackendData
+  } = useDataGridPaginationWithUrl({
+    initialPage: initialPage ?? 0,
+    initialSize: initialSize ?? 10,
+    onPaginationChange: () => {
+      query.mutate(filterToRequest());
+    },
+    totalElements
+  });
 
   useEffect(() => {
     query.mutate(filterToRequest());
   }, [organizationId, pagination.page, pagination.size, sort]);
+
+  // Synchronize pagination with backend data when URL sync is enabled
+  useEffect(() => {
+    if (query.data) {
+      syncWithBackendData(query.data);
+    }
+  }, [query.data, syncWithBackendData]);
 
   const filterToRequest = (): TelematicReceiptsQuery => ({
     paymentDateTimeFrom:
@@ -78,7 +98,8 @@ export const useTelematicReceiptSearch = ({
     handlePageSizeChange,
     pagination,
     setFilterValues,
-    setSort
+    setSort,
+    syncWithBackendData
   };
 };
 

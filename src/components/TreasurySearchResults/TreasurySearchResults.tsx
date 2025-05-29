@@ -37,10 +37,12 @@ const TreasurySearchResults = () => {
     setDrawerOpen((prev) => !prev);
   };
 
-  const treasuries = UseTreasurySearch({ initialFilters: filterValues });
+  const treasury = UseTreasurySearch({
+    initialFilters: filterValues
+  });
 
   const applyFilters = () => {
-    treasuries.applyFilters(filterValues);
+    treasury.applyFilters(filterValues);
     setDrawerOpen(false);
   };
 
@@ -80,11 +82,11 @@ const TreasurySearchResults = () => {
         aria-label="results-table"
       >
         <SearchResultsDataGrid
-          data={treasuries.query.data as PagedTreasuryView}
-          onPageChange={treasuries.handlePageChange}
-          onPageSizeChange={treasuries.handlePageSizeChange}
-          onSortChange={treasuries.setSort}
-          pagination={treasuries.pagination}
+          data={treasury.query.data as PagedTreasuryView}
+          onPageChange={treasury.handlePageChange}
+          onPageSizeChange={treasury.handlePageSizeChange}
+          onSortChange={treasury.setSort}
+          pagination={treasury.pagination}
         />
       </Grid>
 

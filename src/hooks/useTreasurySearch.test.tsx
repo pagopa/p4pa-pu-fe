@@ -1,8 +1,13 @@
 import { act } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderHook } from '../__tests__/renderers';
 import useTreasurySearch from './useTreasurySearch';
 import { FilterValues } from '../models/Filters';
+
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
+}));
 
 describe('useTreasurySearch', () => {
   const initialFilters: FilterValues = {

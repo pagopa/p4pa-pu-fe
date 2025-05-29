@@ -5,7 +5,7 @@ import debtPositions, {
   DebtPositionViewQuery
 } from '../api/debtPositions';
 import { FilterFieldValue } from '../models/Filters';
-import { useDataGridPagination } from './useDatagridPagination';
+import { useDataGridPaginationWithUrl } from './useDataGridPaginationWithUrl';
 import { DebtPositionStatus } from '../../generated/apiClient';
 
 export type DebtPositionFilters = {
@@ -24,11 +24,17 @@ export type UseDebtPositionFiltersProps = {
   requestFn:
     | typeof debtPositions.getDebtPositionViews
     | typeof debtPositions.getInstallments; // Allow passing the request function
+  initialPage?: number;
+  initialSize?: number;
+  totalElements?: number;
 };
 
 export const useDebtPositionSearch = ({
   initialFilters,
-  requestFn
+  requestFn,
+  initialPage,
+  initialSize,
+  totalElements
 }: UseDebtPositionFiltersProps) => {
   const [filterValues, setFilterValues] =
     useState<DebtPositionFilters>(initialFilters);
@@ -40,16 +46,30 @@ export const useDebtPositionSearch = ({
 
   const query = requestFn({ organizationId });
 
-  const { pagination, handlePageChange, handlePageSizeChange } =
-    useDataGridPagination({
-      initialPage: 0,
-      initialSize: 10,
-      onPaginationChange: () => query.mutate(filterToRequest())
-    });
+  const {
+    pagination,
+    handlePageChange,
+    handlePageSizeChange,
+    syncWithBackendData
+  } = useDataGridPaginationWithUrl({
+    initialPage: initialPage ?? 0,
+    initialSize: initialSize ?? 10,
+    onPaginationChange: () => {
+      query.mutate(filterToRequest());
+    },
+    totalElements
+  });
 
   useEffect(() => {
     query.mutate(filterToRequest());
   }, [organizationId, pagination.page, pagination.size, sort]);
+
+  // Synchronize pagination with backend data when URL sync is enabled
+  useEffect(() => {
+    if (query.data) {
+      syncWithBackendData(query.data);
+    }
+  }, [query.data, syncWithBackendData]);
 
   const filterToRequest = (): DebtPositionViewQuery &
     DebtPositionInstallmentsQuery => ({
@@ -93,7 +113,8 @@ export const useDebtPositionSearch = ({
     handlePageSizeChange,
     pagination,
     setFilterValues,
-    setSort
+    setSort,
+    syncWithBackendData
   };
 };
 

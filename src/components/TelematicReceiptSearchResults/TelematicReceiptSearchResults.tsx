@@ -3,7 +3,9 @@ import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { BaseFilterValues } from '../../models/Filters';
-import useTelematicReceiptSearch from '../../hooks/useTelematicReceiptsSearch';
+import useTelematicReceiptSearch, {
+  TelematicReceiptFilters
+} from '../../hooks/useTelematicReceiptsSearch';
 import { useLocation } from 'react-router-dom';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
 import FilterContainer from '../FilterContainer/FilterContainer';
@@ -17,16 +19,16 @@ const TelematicReceiptSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
 
-  const {
-    state: { filters: initialFilters }
-  }: { state: LocationState } = useLocation();
+  const location = useLocation();
 
-  const telematicReceipts = useTelematicReceiptSearch({
-    initialFilters
+  const initialFilters = (location.state?.filters || {}) as BaseFilterValues;
+
+  const telematicReceipt = useTelematicReceiptSearch({
+    initialFilters: initialFilters as TelematicReceiptFilters
   });
 
   const { filters } = useTelematicReceiptsFilters({
-    onFilter: telematicReceipts.applyFilters
+    onFilter: telematicReceipt.applyFilters
   });
 
   return (
@@ -39,8 +41,8 @@ const TelematicReceiptSearchResults = () => {
       <Stack gap={3}>
         <FilterContainer
           items={filters}
-          values={telematicReceipts.filterValues}
-          onChange={telematicReceipts.handleFilterChange}
+          values={telematicReceipt.filterValues}
+          onChange={telematicReceipt.handleFilterChange}
         />
         <Grid
           container
@@ -53,11 +55,11 @@ const TelematicReceiptSearchResults = () => {
           aria-label="results-table"
         >
           <SearchResultsDataGrid
-            data={telematicReceipts.query.data as PagedReceiptView}
-            onPageChange={telematicReceipts.handlePageChange}
-            onPageSizeChange={telematicReceipts.handlePageSizeChange}
-            onSortChange={telematicReceipts.setSort}
-            pagination={telematicReceipts.pagination}
+            data={telematicReceipt.query.data as PagedReceiptView}
+            onPageChange={telematicReceipt.handlePageChange}
+            onPageSizeChange={telematicReceipt.handlePageSizeChange}
+            onSortChange={telematicReceipt.setSort}
+            pagination={telematicReceipt.pagination}
           />
         </Grid>
       </Stack>

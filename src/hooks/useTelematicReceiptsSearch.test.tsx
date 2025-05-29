@@ -1,9 +1,14 @@
 import { act } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { renderHook } from '../__tests__/renderers';
 import useTelematicReceiptSearch, {
   TelematicReceiptFilters
 } from './useTelematicReceiptsSearch';
+
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
+}));
 
 describe('useTelematicReceiptSearch', () => {
   const initialFilters: TelematicReceiptFilters = {

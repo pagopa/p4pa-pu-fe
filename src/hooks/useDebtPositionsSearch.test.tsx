@@ -6,6 +6,11 @@ import useDebtPositionSearch, {
 } from './useDebtPositionsSearch';
 import { DebtPositionStatus } from '../../generated/apiClient';
 
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
+}));
+
 const mockRequest = vi.fn().mockReturnValue({
   mutate: vi.fn(),
   data: [],
