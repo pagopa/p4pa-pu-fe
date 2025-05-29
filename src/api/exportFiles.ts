@@ -50,7 +50,7 @@ export const getExportFiles = (
 /** returns a mutation to get export blob file */
 export const getExportFile = (organizationId: number) =>
   useMutation({
-    mutationKey: ['downloadExportFile', organizationId],
+    mutationKey: ['getExportFile', organizationId],
     mutationFn: async (exportFileId: number) => {
       const response =
         await utils.fileshareClient.organization.downloadExportFile(
