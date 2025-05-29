@@ -75,30 +75,26 @@ export const uploadIngestionFlowFile = ({
     }
   });
 
-export const downloadIngestionFlowFile = async (
-  organizationId: number,
-  ingestionFlowFileId: number
-): Promise<{ data: Blob; fileName: string } | null> => {
-  try {
-    const response =
-      await utils.fileshareClient.organization.downloadIngestionFlowFile(
-        organizationId,
-        ingestionFlowFileId,
-        { format: 'blob' }
-      );
+/** returns a mutation to get the ingestion flow blob file */
+export const getIngestionFlowFile = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['getIngestionFlowFile', organizationId],
+    mutationFn: async (ingestionFlowFileId: number) => {
+      const response =
+        await utils.fileshareClient.organization.downloadIngestionFlowFile(
+          organizationId,
+          ingestionFlowFileId,
+          { format: 'blob' }
+        );
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const fileName =
+        extractFilename(contentDisposition) || `file-${ingestionFlowFileId}`;
 
-    const contentDisposition = response.headers['content-disposition'] || '';
-    const fileName =
-      extractFilename(contentDisposition) || `file-${ingestionFlowFileId}`;
+      return { data: response.data, fileName };
+    }
+  });
 
-    return { data: response.data, fileName };
-  } catch (error) {
-    console.error('Error downloading ingestion flow file:', error);
-    return null;
-  }
-};
-
-/** return a mutation to get the ingestion flow error blob file */
+/** returns a mutation to get the ingestion flow error blob file */
 export const getIngestionFlowFileError = (organizationId: number) =>
   useMutation({
     mutationKey: ['downloadIngestionFlowFileError', organizationId],

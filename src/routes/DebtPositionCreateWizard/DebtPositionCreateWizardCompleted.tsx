@@ -47,28 +47,23 @@ function DebtPositionCreateWizardCompleted() {
     }
   }
 
+  const getDebtPositionZipFileMutation =
+    debtPositions.getDebtPositionZipFile(organizationId);
+
   const handleDownloadDebtPosition = async () => {
     if (!debtPositionId) {
-      utils.notify.emit(t('commons.files.missingDebtPositionId'), 'error');
-      return;
+      return utils.notify.emit(t('commons.files.missingDebtPositionId'));
     }
 
     try {
-      const result = await debtPositions.downloadDebtPositionZip(
-        organizationId,
+      const result = await getDebtPositionZipFileMutation.mutateAsync(
         Number(debtPositionId)
       );
-
-      if (!result) {
-        utils.notify.emit(t('commons.files.downloadFailed'), 'error');
-        return;
-      }
-
       const { data, fileName } = result;
       downloadBlob(data, fileName);
     } catch (error) {
       console.error(t('commons.files.downloadFailed'), error);
-      utils.notify.emit(t('commons.files.downloadFailed'), 'error');
+      utils.notify.emit(t('commons.files.downloadFailed'));
     }
   };
 
