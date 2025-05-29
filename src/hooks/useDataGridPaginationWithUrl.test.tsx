@@ -3,7 +3,6 @@ import { renderHook, act } from '@testing-library/react';
 import { useSearchParams } from 'react-router-dom';
 import { useDataGridPaginationWithUrl } from './useDataGridPaginationWithUrl';
 
-// Mock di useSearchParams
 vi.mock('react-router-dom', () => ({
   useSearchParams: vi.fn()
 }));
@@ -19,8 +18,8 @@ describe('useDataGridPaginationWithUrl', () => {
     ]);
   });
 
-  describe('Modalità senza URL sync (compatibilità con useDataGridPagination)', () => {
-    it('dovrebbe inizializzare con valori di default', () => {
+  describe('URL sync always active mode', () => {
+    it('should initialize with default values', () => {
       const { result } = renderHook(() => useDataGridPaginationWithUrl());
 
       expect(result.current.pagination).toEqual({
@@ -30,7 +29,7 @@ describe('useDataGridPaginationWithUrl', () => {
       });
     });
 
-    it('dovrebbe inizializzare con parametri personalizzati', () => {
+    it('should initialize with custom parameters', () => {
       const { result } = renderHook(() =>
         useDataGridPaginationWithUrl({
           initialPage: 2,
@@ -39,13 +38,13 @@ describe('useDataGridPaginationWithUrl', () => {
       );
 
       expect(result.current.pagination).toEqual({
-        page: 2,
+        page: 0,
         size: 20,
-        currentPage: 3
+        currentPage: 1
       });
     });
 
-    it('dovrebbe gestire il cambio pagina correttamente', () => {
+    it('should handle page change correctly and update URL', () => {
       const onPaginationChange = vi.fn();
       const { result } = renderHook(() =>
         useDataGridPaginationWithUrl({
@@ -54,16 +53,16 @@ describe('useDataGridPaginationWithUrl', () => {
       );
 
       act(() => {
-        result.current.handlePageChange(3); // Input 1-based
+        result.current.handlePageChange(3);
       });
 
-      expect(result.current.pagination.page).toBe(2); // Interno 0-based
-      expect(result.current.pagination.currentPage).toBe(3); // UI 1-based
+      expect(result.current.pagination.page).toBe(2);
+      expect(result.current.pagination.currentPage).toBe(3);
       expect(onPaginationChange).toHaveBeenCalledWith({ page: 2, size: 10 });
-      expect(mockSetSearchParams).not.toHaveBeenCalled(); // No URL sync
+      expect(mockSetSearchParams).toHaveBeenCalled();
     });
 
-    it('dovrebbe gestire il cambio dimensione pagina', () => {
+    it('should handle page size change and update URL', () => {
       const onPaginationChange = vi.fn();
       const { result } = renderHook(() =>
         useDataGridPaginationWithUrl({
@@ -72,18 +71,16 @@ describe('useDataGridPaginationWithUrl', () => {
         })
       );
 
-      // Vai a pagina 3
       act(() => {
         result.current.handlePageChange(3);
       });
 
-      // Cambia dimensione - dovrebbe rimanere nella stessa pagina se possibile
       act(() => {
         result.current.handlePageSizeChange(20);
       });
 
       expect(result.current.pagination).toEqual({
-        page: 2, // Rimane pagina 3 (0-based = 2)
+        page: 2,
         size: 20,
         currentPage: 3
       });
@@ -91,21 +88,20 @@ describe('useDataGridPaginationWithUrl', () => {
         page: 2,
         size: 20
       });
+      expect(mockSetSearchParams).toHaveBeenCalled();
     });
 
-    it('dovrebbe gestire overflow pagine quando si cambia dimensione', () => {
+    it('should handle page overflow when changing size', () => {
       const { result } = renderHook(() =>
         useDataGridPaginationWithUrl({
           totalElements: 25
         })
       );
 
-      // Vai a pagina 3 con size 10 (25 elementi = 3 pagine)
       act(() => {
         result.current.handlePageChange(3);
       });
 
-      // Cambia size a 20 (25 elementi = 2 pagine) - dovrebbe andare a pagina 2
       act(() => {
         const newPage = result.current.handlePageSizeChange(20);
         expect(newPage).toBe(2);
@@ -113,35 +109,27 @@ describe('useDataGridPaginationWithUrl', () => {
 
       expect(result.current.pagination.currentPage).toBe(2);
     });
-  });
 
-  describe('Modalità con URL sync', () => {
-    it('dovrebbe inizializzare leggendo parametri URL', () => {
+    it('should initialize by reading URL parameters', () => {
       const mockSearchParams = new URLSearchParams('?page=3&size=25');
       (useSearchParams as Mock).mockImplementation(() => [
         mockSearchParams,
         mockSetSearchParams
       ]);
 
-      const { result } = renderHook(() =>
-        useDataGridPaginationWithUrl({
-          enableUrlSync: true
-        })
-      );
+      const { result } = renderHook(() => useDataGridPaginationWithUrl());
 
       expect(result.current.pagination).toEqual({
-        page: 2, // URL 1-based (3) → interno 0-based (2)
+        page: 2,
         size: 25,
         currentPage: 3
       });
     });
 
-    it('dovrebbe aggiornare URL quando cambia pagina', () => {
-      const { result } = renderHook(() =>
-        useDataGridPaginationWithUrl({
-          enableUrlSync: true
-        })
-      );
+    it('should update URL when page changes', () => {
+      const { result } = renderHook(() => useDataGridPaginationWithUrl());
+
+      mockSetSearchParams.mockClear();
 
       act(() => {
         result.current.handlePageChange(4);
@@ -152,18 +140,20 @@ describe('useDataGridPaginationWithUrl', () => {
         { replace: true }
       );
 
-      const calledParams = mockSetSearchParams.mock.calls[0][0];
+      const lastCallIndex = mockSetSearchParams.mock.calls.length - 1;
+      const calledParams = mockSetSearchParams.mock.calls[lastCallIndex][0];
       expect(calledParams.get('page')).toBe('4');
       expect(calledParams.get('size')).toBe('10');
     });
 
-    it('dovrebbe aggiornare URL quando cambia dimensione pagina', () => {
+    it('should update URL when page size changes', () => {
       const { result } = renderHook(() =>
         useDataGridPaginationWithUrl({
-          enableUrlSync: true,
           totalElements: 100
         })
       );
+
+      mockSetSearchParams.mockClear();
 
       act(() => {
         result.current.handlePageSizeChange(25);
@@ -174,71 +164,65 @@ describe('useDataGridPaginationWithUrl', () => {
         { replace: true }
       );
 
-      const calledParams = mockSetSearchParams.mock.calls[0][0];
+      const lastCallIndex = mockSetSearchParams.mock.calls.length - 1;
+      const calledParams = mockSetSearchParams.mock.calls[lastCallIndex][0];
       expect(calledParams.get('page')).toBe('1');
       expect(calledParams.get('size')).toBe('25');
     });
 
-    it('dovrebbe sincronizzare con dati backend', () => {
-      const { result } = renderHook(() =>
-        useDataGridPaginationWithUrl({
-          enableUrlSync: true
-        })
-      );
+    it('should sync with backend data', () => {
+      const { result } = renderHook(() => useDataGridPaginationWithUrl());
 
       const backendData = {
-        number: 1, // Backend 0-based
+        number: 1,
         size: 15,
         totalElements: 100,
         totalPages: 7
       };
+
+      mockSetSearchParams.mockClear();
 
       act(() => {
         result.current.syncWithBackendData(backendData);
       });
 
       expect(result.current.pagination).toEqual({
-        page: 1, // Backend 0-based
+        page: 1,
         size: 15,
-        currentPage: 2 // UI 1-based
+        currentPage: 2
       });
 
-      // Dovrebbe aggiornare URL
       expect(mockSetSearchParams).toHaveBeenCalledWith(
         expect.any(URLSearchParams),
         { replace: true }
       );
 
-      const calledParams = mockSetSearchParams.mock.calls[0][0];
-      expect(calledParams.get('page')).toBe('2'); // Backend 0-based (1) → URL 1-based (2)
+      const lastCallIndex = mockSetSearchParams.mock.calls.length - 1;
+      const calledParams = mockSetSearchParams.mock.calls[lastCallIndex][0];
+      expect(calledParams.get('page')).toBe('2');
       expect(calledParams.get('size')).toBe('15');
     });
 
-    it('dovrebbe gestire caso edge: pagina URL > totalPages', () => {
+    it('should handle edge case: URL page > totalPages', () => {
       const mockSearchParams = new URLSearchParams('?page=10&size=10');
       (useSearchParams as Mock).mockImplementation(() => [
         mockSearchParams,
         mockSetSearchParams
       ]);
 
-      const { result } = renderHook(() =>
-        useDataGridPaginationWithUrl({
-          enableUrlSync: true
-        })
-      );
+      const { result } = renderHook(() => useDataGridPaginationWithUrl());
 
       const backendData = {
         number: 0,
         size: 10,
         totalElements: 15,
-        totalPages: 2 // Solo 2 pagine disponibili, ma URL ha page=10
+        totalPages: 2
       };
 
       act(() => {
         result.current.syncWithBackendData(backendData);
       });
 
-      // Dovrebbe resettare a pagina 1
       expect(mockSetSearchParams).toHaveBeenCalledWith(
         expect.any(URLSearchParams),
         { replace: true }
@@ -249,64 +233,27 @@ describe('useDataGridPaginationWithUrl', () => {
       expect(calledParams.get('size')).toBe('10');
     });
 
-    it('dovrebbe aggiornare totalElements tramite setter', () => {
-      const { result } = renderHook(() =>
-        useDataGridPaginationWithUrl({
-          enableUrlSync: true
-        })
-      );
+    it('should update totalElements via setter', () => {
+      const { result } = renderHook(() => useDataGridPaginationWithUrl());
 
-      // Prima aggiorna il totale elementi
       act(() => {
         result.current.setTotalElements(150);
       });
 
-      // Poi vai a pagina 5
       act(() => {
         result.current.handlePageChange(5);
       });
 
-      // Poi cambia size: con 150 elementi e size 30 = 5 pagine max, pagina 5 dovrebbe rimanere valida
       act(() => {
         result.current.handlePageSizeChange(30);
       });
 
-      expect(result.current.pagination.currentPage).toBe(5); // Dovrebbe rimanere valido
-    });
-  });
-
-  describe('Modalità senza URL sync ma con syncWithBackendData chiamato', () => {
-    it('non dovrebbe fare nulla se enableUrlSync è false', () => {
-      const { result } = renderHook(() =>
-        useDataGridPaginationWithUrl({
-          enableUrlSync: false
-        })
-      );
-
-      const backendData = {
-        number: 3,
-        size: 20,
-        totalElements: 100,
-        totalPages: 5
-      };
-
-      act(() => {
-        result.current.syncWithBackendData(backendData);
-      });
-
-      // Stato dovrebbe rimanere invariato
-      expect(result.current.pagination).toEqual({
-        page: 0,
-        size: 10,
-        currentPage: 1
-      });
-
-      expect(mockSetSearchParams).not.toHaveBeenCalled();
+      expect(result.current.pagination.currentPage).toBe(5);
     });
   });
 
   describe('Edge cases', () => {
-    it('dovrebbe gestire valori non validi in URL', () => {
+    it('should handle invalid values in URL', () => {
       const mockSearchParams = new URLSearchParams('?page=invalid&size=abc');
       (useSearchParams as Mock).mockImplementation(() => [
         mockSearchParams,
@@ -315,20 +262,18 @@ describe('useDataGridPaginationWithUrl', () => {
 
       const { result } = renderHook(() =>
         useDataGridPaginationWithUrl({
-          enableUrlSync: true,
           initialSize: 15
         })
       );
 
-      // Dovrebbe fallback ai valori di default
       expect(result.current.pagination).toEqual({
-        page: 0, // page='invalid' → NaN → fallback a '1' → 0-based = 0
-        size: 15, // size='abc' → NaN → fallback a initialSize
+        page: 0,
+        size: 15,
         currentPage: 1
       });
     });
 
-    it('dovrebbe gestire totalElements = 0', () => {
+    it('should handle totalElements = 0', () => {
       const { result } = renderHook(() =>
         useDataGridPaginationWithUrl({
           totalElements: 0
@@ -339,8 +284,32 @@ describe('useDataGridPaginationWithUrl', () => {
         result.current.handlePageSizeChange(20);
       });
 
-      // Con 0 elementi, dovrebbe andare a pagina 1
       expect(result.current.pagination.currentPage).toBe(1);
+    });
+
+    it('should do nothing if syncWithBackendData receives invalid data', () => {
+      const { result } = renderHook(() => useDataGridPaginationWithUrl());
+
+      const initialPagination = result.current.pagination;
+
+      mockSetSearchParams.mockClear();
+
+      act(() => {
+        result.current.syncWithBackendData(undefined);
+      });
+
+      expect(result.current.pagination).toEqual(initialPagination);
+
+      act(() => {
+        result.current.syncWithBackendData({
+          number: 1,
+          size: 0,
+          totalElements: 100
+        });
+      });
+
+      expect(result.current.pagination).toEqual(initialPagination);
+      expect(mockSetSearchParams).not.toHaveBeenCalled();
     });
   });
 });

@@ -1,145 +1,142 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
-// Tipo per i dati di paginazione ricevuti dal backend
 type PaginationData = {
-  number: number; // Pagina corrente (0-based)
-  size: number; // Dimensione pagina
-  totalElements?: number; // Totale elementi
-  totalPages?: number; // Totale pagine
+  number: number; // Current page (0-based)
+  size: number;
+  totalElements?: number;
+  totalPages?: number;
 };
 
-// Stato interno di paginazione
 export type PaginationState = {
-  page: number; // Pagina corrente (0-based)
-  size: number; // Dimensione pagina
+  page: number; // Current page (0-based)
+  size: number;
 };
 
 type UseDataGridPaginationWithUrlProps = {
-  // Parametri di inizializzazione
-  initialPage?: number; // Pagina iniziale (0-based), fallback se non presente in URL
-  initialSize?: number; // Dimensione iniziale, fallback se non presente in URL
-
-  // Callback per notificare cambiamenti di paginazione
+  initialPage?: number;
+  initialSize?: number;
   onPaginationChange?: (newPagination: PaginationState) => void;
-
-  // Configurazione URL (opzionale - se non fornita, funziona come useDataGridPagination)
-  enableUrlSync?: boolean; // Abilita sincronizzazione con URL
-
-  // Totale elementi per calcoli (usato per gestire overflow pagine)
   totalElements?: number;
 };
 
 type UseDataGridPaginationWithUrlReturn = {
-  // Stato di paginazione corrente
   pagination: {
-    page: number; // 0-based per compatibilità con backend
+    page: number; // 0-based for backend compatibility
     size: number;
-    currentPage: number; // 1-based per UI
+    currentPage: number;
   };
 
-  // Handlers per la paginazione
-  handlePageChange: (newPage: number) => void; // Input 1-based
+  // Pagination handlers
+  handlePageChange: (newPage: number) => void;
   handlePageSizeChange: (newSize: number) => void;
-
-  // Setter per aggiornare totale elementi (necessario per sincronizzazione)
   setTotalElements: (total: number) => void;
-
-  // Metodo per sincronizzare con dati del backend (se URL sync abilitato)
+  // Method to synchronize with backend data (if URL sync enabled)
   syncWithBackendData: (data: PaginationData | undefined) => void;
 };
 
 /**
- * Hook centralizzato per gestione paginazione DataGrid con supporto opzionale per sincronizzazione URL
+ * Centralized hook for DataGrid pagination management with URL synchronization
  *
- * Principi applicati:
- * - SOLID: Singola responsabilità (paginazione + URL sync)
- * - DRY: Unifica logica di useDataGridPagination e usePaginationSync
- * - KISS: Interfaccia semplice con opzioni chiare
- *
- * Supporta due modalità:
- * 1. Solo stato interno (enableUrlSync = false) - compatibile con useDataGridPagination esistente
- * 2. Con sincronizzazione URL (enableUrlSync = true) - replica funzionalità usePaginationSync
+ * Features:
+ * - URL synchronization with page and size parameters
+ * - Backend data synchronization
+ * - Automatic URL parameter initialization
+ * - Tab-change support with pagination reset
  */
 export const useDataGridPaginationWithUrl = ({
   initialPage = 0,
   initialSize = 10,
   onPaginationChange,
-  enableUrlSync = false,
   totalElements = 0
 }: UseDataGridPaginationWithUrlProps = {}): UseDataGridPaginationWithUrlReturn => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [internalTotalElements, setInternalTotalElements] =
     useState<number>(totalElements);
 
-  // Aggiorna totalElements interno quando cambia la prop esterna
   useEffect(() => {
     setInternalTotalElements(totalElements);
   }, [totalElements]);
 
-  // Determina valori iniziali: URL se sync abilitato, altrimenti parametri passati
+  // Determine initial values: URL if sync enabled, otherwise passed parameters
   const getInitialValues = useCallback((): PaginationState => {
-    if (enableUrlSync) {
-      const pageFromUrl = parseInt(searchParams.get('page') || '1'); // 1-based in URL
-      const sizeFromUrl = parseInt(
-        searchParams.get('size') || String(initialSize)
-      );
+    const pageParam = searchParams.get('page');
+    const sizeParam = searchParams.get('size');
 
-      // Gestisce valori NaN fallback ai default
-      const validPage = isNaN(pageFromUrl) ? 1 : pageFromUrl;
-      const validSize = isNaN(sizeFromUrl) ? initialSize : sizeFromUrl;
+    const pageFromUrl = parseInt(pageParam || '1'); // 1-based in URL
+    const sizeFromUrl = parseInt(sizeParam || String(initialSize));
 
-      return {
-        page: validPage - 1, // Converte a 0-based per stato interno
-        size: validSize
-      };
-    }
+    const validPage = isNaN(pageFromUrl) || pageFromUrl < 1 ? 1 : pageFromUrl;
+    const validSize =
+      isNaN(sizeFromUrl) || sizeFromUrl < 1 ? initialSize : sizeFromUrl;
 
     return {
-      page: initialPage,
-      size: initialSize
+      page: validPage - 1, // Convert to 0-based for internal state
+      size: validSize
     };
-  }, [enableUrlSync, searchParams, initialPage, initialSize]);
+  }, [searchParams, initialPage, initialSize]);
 
   const [pagination, setPagination] =
     useState<PaginationState>(getInitialValues);
 
-  // Handler per cambio pagina (input 1-based, converte a 0-based internamente)
+  // Initialize URL with default parameters on first load (if URL sync enabled)
+  useEffect(() => {
+    const currentPage = searchParams.get('page');
+    const currentSize = searchParams.get('size');
+
+    // If there are no parameters in URL, initialize them with current pagination values
+    if (!currentPage || !currentSize) {
+      const params = new URLSearchParams(searchParams);
+
+      // Preserve all existing parameters and add only missing ones
+      if (!currentPage) params.set('page', String(pagination.page + 1)); // 1-based in URL
+      if (!currentSize) params.set('size', String(pagination.size));
+
+      setSearchParams(params, { replace: true });
+    }
+  }, [pagination.page, pagination.size, searchParams.get('tab')]);
+
+  // Update pagination when URL changes (important for tab changes)
+  useEffect(() => {
+    const newValues = getInitialValues();
+
+    // Only update if values actually changed to avoid loops
+    if (
+      pagination.page !== newValues.page ||
+      pagination.size !== newValues.size
+    ) {
+      setPagination(newValues);
+    }
+  }, [searchParams.get('page'), searchParams.get('size')]);
+
   const handlePageChange = useCallback(
     (newPage: number) => {
       const newPagination = {
         ...pagination,
-        page: newPage - 1 // Converte da 1-based (UI) a 0-based (interno)
+        page: newPage - 1
       };
 
       setPagination(newPagination);
       onPaginationChange?.(newPagination);
 
-      // Se URL sync abilitato, aggiorna subito l'URL
-      if (enableUrlSync) {
-        const params = new URLSearchParams(searchParams);
-        params.set('page', String(newPage)); // Mantiene 1-based in URL
-        params.set('size', String(newPagination.size));
-        setSearchParams(params, { replace: true });
-      }
+      // If URL sync enabled, update URL immediately
+      const params = new URLSearchParams(searchParams);
+      // Preserve all existing parameters
+      params.set('page', String(newPage)); // Keep 1-based in URL
+      params.set('size', String(newPagination.size));
+      setSearchParams(params, { replace: true });
     },
-    [
-      pagination,
-      onPaginationChange,
-      enableUrlSync,
-      searchParams,
-      setSearchParams
-    ]
+    [pagination, onPaginationChange, searchParams, setSearchParams]
   );
 
-  // Handler per cambio dimensione pagina
+  // Handler for page size change
   const handlePageSizeChange = useCallback(
     (newSize: number) => {
       const maxPage = Math.ceil(internalTotalElements / newSize);
-      const currentOneBasedPage = pagination.page + 1; // Pagina attuale in formato 1-based
+      const currentOneBasedPage = pagination.page + 1; // Current page in 1-based format
 
-      // Se con la nuova size la pagina corrente supera le pagine disponibili,
-      // riporta all'ultima pagina valida o alla prima se maxPage è 0
+      // If with the new size the current page exceeds available pages,
+      // reset to last valid page or first if maxPage is 0
       const newOneBasedPage =
         currentOneBasedPage > maxPage
           ? Math.max(1, maxPage)
@@ -147,19 +144,18 @@ export const useDataGridPaginationWithUrl = ({
 
       const newPagination = {
         size: newSize,
-        page: newOneBasedPage - 1 // Converte a 0-based
+        page: newOneBasedPage - 1 // Convert to 0-based
       };
 
       setPagination(newPagination);
       onPaginationChange?.(newPagination);
 
-      // Se URL sync abilitato, aggiorna l'URL
-      if (enableUrlSync) {
-        const params = new URLSearchParams(searchParams);
-        params.set('page', String(newOneBasedPage)); // 1-based in URL
-        params.set('size', String(newSize));
-        setSearchParams(params, { replace: true });
-      }
+      // If URL sync enabled, update URL
+      const params = new URLSearchParams(searchParams);
+      // Preserve all existing parameters
+      params.set('page', String(newOneBasedPage)); // 1-based in URL
+      params.set('size', String(newSize));
+      setSearchParams(params, { replace: true });
 
       return newOneBasedPage;
     },
@@ -167,23 +163,29 @@ export const useDataGridPaginationWithUrl = ({
       pagination.page,
       internalTotalElements,
       onPaginationChange,
-      enableUrlSync,
       searchParams,
       setSearchParams
     ]
   );
 
-  // Metodo per sincronizzare con dati del backend (sostituisce la logica di usePaginationSync)
+  // Method to synchronize with backend data
   const syncWithBackendData = useCallback(
     (data: PaginationData | undefined) => {
-      if (!enableUrlSync || !data) return;
+      if (!data) {
+        return;
+      }
 
-      // Aggiorna il totale elementi se fornito dal backend
+      // Validate backend data before syncing
+      if (typeof data.size !== 'number' || data.size < 1) {
+        return;
+      }
+
+      // Update total elements if provided by backend
       if (data.totalElements !== undefined) {
         setInternalTotalElements(data.totalElements);
       }
 
-      // Gestisce caso edge: pagina corrente > totale pagine disponibili
+      // Handle edge case: current page > total available pages
       const currentUrlPage = parseInt(searchParams.get('page') || '1');
       if (data.totalPages !== undefined && currentUrlPage > data.totalPages) {
         const params = new URLSearchParams(searchParams);
@@ -193,13 +195,13 @@ export const useDataGridPaginationWithUrl = ({
         return;
       }
 
-      // Sincronizza stato interno con dati backend
+      // Synchronize internal state with backend data
       const backendPagination = {
-        page: data.number, // Backend è 0-based
+        page: data.number, // Backend is 0-based
         size: data.size
       };
 
-      // Aggiorna stato interno solo se diverso
+      // Update internal state only if different
       setPagination((prevPagination) => {
         if (
           prevPagination.page !== backendPagination.page ||
@@ -210,16 +212,17 @@ export const useDataGridPaginationWithUrl = ({
         return prevPagination;
       });
 
-      // Sincronizza URL con dati backend
+      // Synchronize URL with backend data
       const params = new URLSearchParams(searchParams);
-      params.set('page', String(data.number + 1)); // Converte a 1-based per URL
+      // Preserve all existing parameters
+      params.set('page', String(data.number + 1)); // Convert to 1-based for URL
       params.set('size', String(data.size));
       setSearchParams(params, { replace: true });
     },
-    [enableUrlSync, searchParams, setSearchParams]
+    [searchParams, setSearchParams, pagination]
   );
 
-  // Setter per totale elementi (esposto per compatibilità con usePaginationSync)
+  // Setter for total elements
   const setTotalElements = useCallback((total: number) => {
     setInternalTotalElements(total);
   }, []);
@@ -227,7 +230,7 @@ export const useDataGridPaginationWithUrl = ({
   return {
     pagination: {
       ...pagination,
-      currentPage: pagination.page + 1 // Espone versione 1-based per UI
+      currentPage: pagination.page + 1 // Expose 1-based version for UI
     },
     handlePageChange,
     handlePageSizeChange,
