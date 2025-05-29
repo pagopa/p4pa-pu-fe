@@ -3,7 +3,6 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook } from '../__tests__/renderers';
 import { useReportingSearch, ReportingFilters } from './useReportingSearch';
 
-// Mock delle dipendenze
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
@@ -77,7 +76,6 @@ describe('useReportingSearch', () => {
       })
     );
 
-    // Note: la pagina potrebbe essere 0 a causa del URL sync che parte sempre da pagina 1 (0-based è 0)
     expect(result.current.pagination.page).toBe(0);
     expect(result.current.pagination.size).toBe(25);
   });
@@ -139,7 +137,6 @@ describe('useReportingSearch', () => {
     );
 
     act(() => {
-      // handlePageChange accetta valori 1-based, quindi passiamo 3 per ottenere page = 2 (0-based)
       result.current.handlePageChange(3);
     });
 
@@ -173,7 +170,6 @@ describe('useReportingSearch', () => {
       result.current.setSort(sortValues);
     });
 
-    // Verifichiamo che sia stata chiamata la query dopo il cambio di ordinamento
     expect(mockQuery.mutate).toHaveBeenCalled();
   });
 
@@ -198,7 +194,6 @@ describe('useReportingSearch', () => {
       })
     );
 
-    // Verifichiamo che tutti i valori di ritorno siano presenti
     expect(result.current).toHaveProperty('applyFilters');
     expect(result.current).toHaveProperty('query');
     expect(result.current).toHaveProperty('filterValues');
@@ -210,7 +205,6 @@ describe('useReportingSearch', () => {
     expect(result.current).toHaveProperty('setSort');
     expect(result.current).toHaveProperty('syncWithBackendData');
 
-    // Verifichiamo i tipi delle funzioni
     expect(typeof result.current.applyFilters).toBe('function');
     expect(typeof result.current.handleFilterChange).toBe('function');
     expect(typeof result.current.handlePageChange).toBe('function');

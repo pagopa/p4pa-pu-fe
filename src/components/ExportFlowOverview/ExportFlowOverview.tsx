@@ -97,7 +97,6 @@ const ExportFlowOverview = ({
   const { data, isLoading } = getExportFiles(organizationId, appliedFilters);
   const isEmptyData = !data?.content || data.content.length === 0;
 
-  // Sincronizzazione paginazione con backend data
   useEffect(() => {
     if (data) {
       const currentPage = urlPagination.pagination.page;
