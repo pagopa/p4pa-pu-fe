@@ -114,7 +114,6 @@ export const getTaxonomyDetail = (taxonomyId: number) =>
     }
   });
 
-
 export const synchronizeTaxonomy = () =>
   useMutation({
     mutationKey: ['sync'],
@@ -123,5 +122,3 @@ export const synchronizeTaxonomy = () =>
       return data;
     }
   });
-
-

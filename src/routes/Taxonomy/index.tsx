@@ -8,11 +8,9 @@ import { synchronizeTaxonomy } from '../../api/taxonomy';
 export const TaxonomyPage = () => {
   const { t } = useTranslation();
 
-
   const syncMutation = synchronizeTaxonomy();
 
   const handleUpdateCTA = async () => {
-
     try {
       const result = await syncMutation.mutateAsync();
       if (result) utils.notify.emit(t('taxonomyPage.APIUpdateOK'), 'info');
@@ -20,9 +18,7 @@ export const TaxonomyPage = () => {
       console.error(error);
       utils.notify.emit(t('taxonomyPage.APIUpdateKO'), 'error');
     }
-  }
-
-
+  };
 
   return (
     <>

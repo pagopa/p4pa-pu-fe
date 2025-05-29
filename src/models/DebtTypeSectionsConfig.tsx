@@ -15,6 +15,11 @@ export enum AccordionSectionsEnum {
   ENABLED_OPERATORS = 'ENABLED_OPERATORS'
 }
 
+export type OperatorsData = {
+  totalOperators: number;
+  enabledOperators: number;
+};
+
 export type AccordionSectionConfig = {
   configType: AccordionSectionsEnum;
   title: string;
@@ -35,8 +40,39 @@ const checkStringValue = (value: string | undefined): string => {
   return value ?? '-';
 };
 
+const getEnabledOperatorsLabelAndValue = (
+  operators: OperatorsData,
+  t: (key: string) => string
+): { label: string; value: string } => {
+  const { totalOperators, enabledOperators } = operators;
+
+  if (enabledOperators === 0) {
+    return {
+      label: t('debtTypeDetail.enabledOperators.noSelectedOperators'),
+      value: '-'
+    };
+  }
+
+  if (totalOperators === enabledOperators) {
+    return {
+      label: t('debtTypeDetail.enabledOperators.allOperatorsSelected'),
+      value: `${enabledOperators} ${enabledOperators === 1 ? t('commons.operator') : t('commons.operators')}`
+    };
+  }
+
+  if (totalOperators > enabledOperators) {
+    return {
+      label: t('debtTypeDetail.enabledOperators.selectedOperators'),
+      value: `${enabledOperators} ${enabledOperators === 1 ? t('commons.operator') : t('commons.operators')}`
+    };
+  }
+
+  return { label: '', value: '' };
+};
+
 export const getAccordionSectionsConfig = (
   data: DebtPositionTypeOrgDTO,
+  operators: OperatorsData | null,
   t: (key: string) => string
 ): Array<AccordionSectionConfig> => {
   const getSpontaneousConfig = (
@@ -102,7 +138,8 @@ export const getAccordionSectionsConfig = (
       data: details
     };
   };
-  return [
+
+  const sections: Array<AccordionSectionConfig> = [
     {
       configType: AccordionSectionsEnum.MAIN_CONFIGURATION,
       title: t('debtTypeDetail.debtMainConfiguration.title'),
@@ -297,11 +334,16 @@ export const getAccordionSectionsConfig = (
           ]
         }
       ]
-    },
-    {
+    }
+  ];
+
+  if (operators) {
+    const operatorInfo = getEnabledOperatorsLabelAndValue(operators, t);
+
+    sections.push({
       configType: AccordionSectionsEnum.ENABLED_OPERATORS,
-      title: t('debtTypesCreated.myOrganizationDataGrid.enabledOperators'),
-      description: t('debtTypeDetail.enabledOperators.title'),
+      title: t('debtTypeDetail.enabledOperators.title'),
+      description: t('debtTypeDetail.enabledOperators.description'),
       sections: [
         {
           title: {
@@ -312,12 +354,14 @@ export const getAccordionSectionsConfig = (
           },
           data: [
             {
-              label: t('debtTypeDetail.enabledOperators.noSelectedOperators'),
-              value: '-'
+              label: operatorInfo.label,
+              value: operatorInfo.value
             }
           ]
         }
       ]
-    }
-  ];
+    });
+  }
+
+  return sections;
 };

@@ -20,7 +20,11 @@ export const backofficeRoutes = [
       {
         id: 'BACKOFFICE_TAXONOMY',
         path: 'taxonomy/',
-        element: <SuperAdminRouteGuard><Layout /></SuperAdminRouteGuard>,
+        element: (
+          <SuperAdminRouteGuard>
+            <Layout />
+          </SuperAdminRouteGuard>
+        ),
         children: [
           {
             id: 'BACKOFFICE_TAXONOMY_INDEX',
