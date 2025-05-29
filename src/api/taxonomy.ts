@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import {
@@ -6,7 +6,8 @@ import {
   taxonomyServiceTypeCodeDTOSchema,
   taxonomyCollectionReasonDTOSchema,
   taxonomyCodeDTOSchema,
-  taxonomyOrganizationTypeDTOSchema
+  taxonomyOrganizationTypeDTOSchema,
+  taxonomySchema
 } from '../../generated/zod-schema';
 
 export const getOrganizationsTypes = () =>
@@ -99,3 +100,28 @@ export const getTaxonomyCode = (query: TaxonomyCodeQuery) =>
       }));
     }
   });
+
+export const getTaxonomyDetail = (taxonomyId: number) =>
+  useQuery({
+    queryKey: ['taxonomyId', taxonomyId],
+    queryFn: async () => {
+      const { data: taxonomydetail } =
+        await utils.apiClient.bff.getTaxonomyDetail(taxonomyId);
+      if (taxonomydetail) {
+        parseAndLog(taxonomySchema, taxonomydetail);
+      }
+      return taxonomydetail;
+    }
+  });
+
+
+export const synchronizeTaxonomy = () =>
+  useMutation({
+    mutationKey: ['sync'],
+    mutationFn: async () => {
+      const { data } = await utils.apiClient.bff.synchronizeTaxonomy();
+      return data;
+    }
+  });
+
+
