@@ -4,6 +4,8 @@ import { DebtTypeDetailView } from './DebtTypeDetailView';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { useParams } from 'react-router-dom';
 import { getDebtPositionTypeOrgById } from '../../api/debtPositionsTypeOrg';
+import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';
+import { useDebtPositionTypeOrgSearch } from '../../api/debtTypesCreated';
 
 vi.mock('react-router-dom', async () => {
   const actual = await vi.importActual('react-router-dom');
@@ -25,6 +27,14 @@ vi.mock('../../api/debtPositionsTypeOrg', () => ({
   getDebtPositionTypeOrgById: vi.fn()
 }));
 
+vi.mock('../../api/debtPositionTypeOrgOperators', () => ({
+  getDebtPositionTypeOrgOperators: vi.fn()
+}));
+
+vi.mock('../../api/debtTypesCreated', () => ({
+  useDebtPositionTypeOrgSearch: vi.fn()
+}));
+
 describe('DebtTypeDetailView', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -32,20 +42,44 @@ describe('DebtTypeDetailView', () => {
     i18nTestSetup({
       'debtTypeDetail.description': 'description',
       'commons.delete': 'delete',
-      'commons.edit': 'edit'
+      'commons.edit': 'edit',
+      'debtTypeDetail.enabledOperators.selectedOperators': 'selected operators',
+      'commons.operators': 'operators'
     });
 
     (useParams as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       debtPositionTypeOrgId: '1'
     });
 
+    (getDebtPositionTypeOrgById as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: {
+        description: 'Test debt position ID',
+        code: 'test'
+      },
+      isLoading: false,
+      isError: false,
+      isSuccess: true
+    });
+
     (
-      getDebtPositionTypeOrgById as unknown as ReturnType<typeof vi.fn>
+      getDebtPositionTypeOrgOperators as ReturnType<typeof vi.fn>
     ).mockReturnValue({
       data: {
-        description: 'Test debt position ID'
+        totalElements: 5
       },
-      isLoading: false
+      isError: false
+    });
+
+    (useDebtPositionTypeOrgSearch as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: {
+        content: [
+          {
+            enabledOperators: 3
+          }
+        ]
+      },
+      mutate: vi.fn(),
+      isError: false
     });
   });
 
@@ -53,6 +87,8 @@ describe('DebtTypeDetailView', () => {
     render(<DebtTypeDetailView />);
     expect(screen.getAllByText('Test debt position ID')).toBeTruthy();
     expect(screen.getByText('description')).toBeInTheDocument();
+    expect(screen.getByText('selected operators')).toBeInTheDocument();
+    expect(screen.getByText('3 operators')).toBeInTheDocument();
   });
 
   it('renders delete and edit buttons', () => {
