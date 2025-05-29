@@ -65,10 +65,9 @@ describe('get Taxonomy Detail ', () => {
 
 describe('synchronizeTaxonomy', () => {
   it('should call synchronizeTaxonomy and return data', async () => {
-
     const dataMock: WorkflowCreatedDTO = {
-      workflowId: "SynchronizeTaxonomyPagoPaFetchWF-ON-DEMAND",
-      runId: "01971768-1993-7287-8993-4218439ea77a"
+      workflowId: 'SynchronizeTaxonomyPagoPaFetchWF-ON-DEMAND',
+      runId: '01971768-1993-7287-8993-4218439ea77a'
     };
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'synchronizeTaxonomy')
@@ -84,5 +83,5 @@ describe('synchronizeTaxonomy', () => {
 
     expect(result.current.data).toEqual(dataMock);
     expect(apiMock).toHaveBeenCalled();
-  })
-})
+  });
+});
