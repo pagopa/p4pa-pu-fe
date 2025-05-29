@@ -130,7 +130,7 @@ export const MyOrg = ({
   const handleRowClick = (row: DebtPositionTypeOrgWithCount | undefined) => {
     if (!row) return;
     navigate(
-      generatePath(PageRoutes.DEBT_TYPE_DETAIL, {
+      generatePath(PageRoutes.DEBT_TYPE_ORG_DETAIL, {
         debtPositionTypeOrgId: row.debtPositionTypeOrgId
       })
     );

@@ -9,6 +9,7 @@ import { PageRoutes } from '../../App';
 import { useSignal } from '@preact/signals-react';
 import { postDebtPositionType } from '../../api/debtPositionsTypes';
 import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
+import utils from '../../utils';
 
 const initialData: DebtPositionTypeRequestBody = {
   code: '',
@@ -33,21 +34,22 @@ export const DebtTypeCreate = () => {
   const formData = useSignal<DebtPositionTypeRequestBody>(initialData);
   const debtTypeCreate = postDebtPositionType();
 
-  const submit = () => {
-    debtTypeCreate.mutate(formData.value, {
-      onSuccess: (formData) => {
-        navigate(PageRoutes.RESPONSES_SUCCESS, {
-          replace: true,
-          state: {
-            category: 'debt-type-catalog-create',
-            i18nParams: {
-              paymentObject: formData.description
-            }
+  const submit = async () => {
+    try {
+      const response = await debtTypeCreate.mutateAsync(formData.value);
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'debt-type-catalog-create',
+          i18nParams: {
+            paymentObject: response.description
           }
-        });
-      },
-      onError: console.error
-    });
+        }
+      });
+    } catch (error) {
+      utils.notify.emit(t('errors.generic'));
+      console.error(error);
+    }
   };
 
   const steps: Stepper['steps'] = [

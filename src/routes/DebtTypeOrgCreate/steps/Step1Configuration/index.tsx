@@ -12,6 +12,8 @@ import { useStore } from '../../../../store/GlobalStore';
 import { useDebtPositionTypesByOrg } from '../../../../hooks/useDebtPositionTypesByOrg';
 import { useEffect } from 'react';
 import { DebtTypeOrgForm } from '../../types';
+import { useParams } from 'react-router';
+import { getDebtPositionTypeOrgById } from '../../../../api/debtPositionsTypeOrg';
 
 export type Step1Data = {
   debtPositionTypeId: string;
@@ -19,13 +21,23 @@ export type Step1Data = {
   code: string;
 };
 
-export const Step1Configuration = () => {
+export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
 
   const {
     state: { organizationId }
   } = useStore();
-  const { optionsMap, data } = useDebtPositionTypesByOrg({
+
+  const { debtPositionTypeOrgId } = useParams<{
+    debtPositionTypeOrgId: string;
+  }>();
+
+  const detailQuery = getDebtPositionTypeOrgById({
+    organizationId,
+    debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
+  });
+
+  const selectionQuery = useDebtPositionTypesByOrg({
     organizationId
   });
 
@@ -38,16 +50,34 @@ export const Step1Configuration = () => {
 
   // Auto-fill other fields when selection changes
   useEffect(() => {
-    const selectedType = data?.find(
-      (d) => d.debtPositionTypeId === Number(selectedId)
-    );
-    if (selectedType) {
-      Object.entries(selectedType).forEach(([key, val]) => {
+    const response = selectionQuery.data?.response;
+    if (selectedId) {
+      const selectedType = response?.find(
+        (d) => d.debtPositionTypeId === Number(selectedId)
+      );
+
+      if (selectedType && !edit) {
+        Object.entries(selectedType).forEach(([key, val]) => {
+          setValue(key as keyof DebtTypeOrgForm, val);
+        });
+        trigger();
+      }
+    }
+  }, [edit, selectedId, selectionQuery.data, setValue, trigger]);
+
+  useEffect(() => {
+    const response = detailQuery.data?.response;
+    if (edit && response) {
+      Object.entries(response).forEach(([key, val]) => {
         setValue(key as keyof DebtTypeOrgForm, val);
       });
+      setValue(
+        'flagNotifyOutcomePush',
+        response.flagNotifyOutcomePush ? 'enabled' : 'disabled'
+      );
       trigger();
     }
-  }, [selectedId, data, setValue]);
+  }, [edit, detailQuery.data, setValue, trigger]);
 
   return (
     <WizardStepWrapper
@@ -63,8 +93,8 @@ export const Step1Configuration = () => {
           control={control}
           label={t('debtTypeOrgCreate.configuration.debtType.label')}
           name="debtPositionTypeId"
-          disabled={!optionsMap?.length}
-          options={optionsMap}
+          disabled={!selectionQuery?.data?.optionsMap?.length || edit}
+          options={selectionQuery?.data?.optionsMap}
         />
       </SectionBox>
 
@@ -79,12 +109,14 @@ export const Step1Configuration = () => {
             sx={{ flex: 1 }}
             control={control}
             label={t('debtTypeOrgCreate.configuration.code.label')}
+            disabled={edit}
             noAdornment
           />
           <Stack flex={3}>
             <FormComponent.ControlledTextField
               name="description"
               control={control}
+              disabled={edit}
               label={t('debtTypeOrgCreate.configuration.description.label')}
               adornment={`${description?.length || 0}/100`}
             />
