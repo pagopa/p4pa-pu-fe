@@ -6,13 +6,12 @@ import Home from './routes/Home';
 import { Theme } from './utils/theme';
 import {
   Navigate,
+  Outlet,
   RouteObject,
   RouterProvider,
   createBrowserRouter,
   useRouteError
 } from 'react-router-dom';
-import { ApiClient } from './components/ApiClient';
-
 import './translations/i18n';
 import utils from './utils';
 
@@ -33,12 +32,16 @@ import LoggedOut from './routes/UtilityPages/loggedout';
 import ErrorPage from './routes/UtilityPages/error';
 import { backofficeRoutes } from './routes/backoffice';
 import { debtTypeOrgsRoutes } from './routes/debtTypeOrgs';
+import useSetup from './setup';
+import { setupInterceptors } from './utils/interceptors';
+
+setupInterceptors(utils.apiClient);
+setupInterceptors(utils.fileshareClient);
 
 const deployPath = config.deployPath;
-
 const routesDef = [
   {
-    element: <ApiClient clients={[utils.apiClient, utils.fileshareClient]} />,
+    element: <Outlet />,
     children: [
       {
         path: '*',
@@ -117,18 +120,20 @@ const extractPathsWithIds = (
 export const PageRoutes = extractPathsWithIds(routesDef);
 
 export const App = () => {
-  const {
-    state: { appState }
-  } = useStore();
-  return (
+  const { state } = useStore();
+  const ready = useSetup();
+  console.log('App state:', state);
+  return ready ? (
     <ErrorBoundary
       fallback={<ErrorFallback onReset={() => window.location.replace('/')} />}
     >
       <Theme>
-        <Overlay visible={appState.loading} />
+        <Overlay visible={state.appState.loading} />
         <RouterProvider router={router} />
       </Theme>
     </ErrorBoundary>
+  ) : (
+    <>wait...</>
   );
 };
 

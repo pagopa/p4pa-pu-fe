@@ -3,6 +3,47 @@ import { useStore } from '../store/GlobalStore';
 import utils from '../utils';
 import { setOperatorRole } from '../store/OperatorRoleStore';
 import { setOrganizationId } from '../store/OrganizationIdStore';
+import { OrganizationDTO } from '../../generated/apiClient';
+import { IdTokenPayload } from '../models/IdTokenPayload';
+
+export const setupOrganizations = (
+  orgs: Array<OrganizationDTO>,
+  organizationId: number,
+  idToken?: IdTokenPayload
+) => {
+  const currentOrgExists =
+    organizationId && orgs.some((org) => org.organizationId === organizationId);
+
+  if (currentOrgExists) {
+    setOrganizationId(organizationId);
+    const matchedOrg = orgs.find(
+      (org) => org.organizationId === organizationId
+    );
+    if (matchedOrg) {
+      setOperatorRole(matchedOrg.operatorRole);
+    }
+  }
+  if (!currentOrgExists) {
+    const savedOrg = organizationId
+      ? orgs.find((org) => org.organizationId === organizationId)
+      : null;
+
+    const idTokenMatchedOrg =
+      !savedOrg && idToken
+        ? orgs.find(
+            (org) =>
+              org.orgFiscalCode === idToken.organization.fiscal_code &&
+              org.ipaCode === idToken.organization.ipaCode
+          )
+        : null;
+
+    const orgToSelect = savedOrg || idTokenMatchedOrg || orgs[0];
+    if (orgToSelect) {
+      setOrganizationId(orgToSelect.organizationId);
+      setOperatorRole(orgToSelect.operatorRole);
+    }
+  }
+};
 
 export const useOrganizations = () => {
   const {
@@ -13,32 +54,7 @@ export const useOrganizations = () => {
 
   useEffect(() => {
     if (data && data.length > 0) {
-      const currentOrgExists =
-        organizationId &&
-        data.some((org) => org.organizationId === organizationId);
-
-      if (!currentOrgExists) {
-        const savedOrg = organizationId
-          ? data.find((org) => org.organizationId === organizationId)
-          : null;
-
-        const idTokenMatchedOrg =
-          !savedOrg && idToken
-            ? data.find(
-                (org) =>
-                  org.orgFiscalCode === idToken.organization.fiscal_code &&
-                  org.ipaCode === idToken.organization.ipaCode
-              )
-            : null;
-
-        const orgToSelect = savedOrg || idTokenMatchedOrg || data[0];
-
-        if (orgToSelect) {
-          setOrganizationId(orgToSelect.organizationId);
-          setOperatorRole(orgToSelect.operatorRole);
-        }
-      }
-
+      setupOrganizations(data, organizationId, idToken);
       if (query.isError) {
         console.error('Failed to fetch fe config', query.error);
       }
