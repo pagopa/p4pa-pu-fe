@@ -65,7 +65,10 @@ describe('DebtTypeDetailView', () => {
       getDebtPositionTypeOrgOperators as ReturnType<typeof vi.fn>
     ).mockReturnValue({
       data: {
-        totalElements: 5
+        response: {
+          totalElements: 5,
+          description: 'Test debt position ID'
+        }
       },
       isError: false
     });

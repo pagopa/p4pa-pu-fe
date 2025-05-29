@@ -18,11 +18,13 @@ export type PaymentMethodProps = {
   control: Control<DebtTypeOrgForm>;
   name: Path<DebtTypeOrgForm>;
   selectedValue: PaymentMethodOption;
+  edit?: boolean;
 };
 
 export const SelectedField = ({
   selectedValue,
-  control
+  control,
+  edit
 }: Omit<PaymentMethodProps, 'name'>) => {
   const { t } = useTranslation();
 
@@ -46,6 +48,7 @@ export const SelectedField = ({
     case PaymentMethodOption.CUSTOM:
       return (
         <FormComponent.ControlledFileUploader
+          disabled={edit}
           name="xsdDefinitionRef"
           control={control}
           description={t(
@@ -53,7 +56,7 @@ export const SelectedField = ({
           )}
           fileExtensionsAllowed={['xsd']}
           header={
-            <Typography fontWeight="bold">
+            <Typography fontWeight="bold" color={edit ? 'gray' : 'textPrimary'}>
               {t('debtTypeOrgCreate.behaviour.spontaneous.file.header')}
               <Typography component="span" color="error">
                 *
@@ -67,6 +70,7 @@ export const SelectedField = ({
       return (
         <FormComponent.ControlledTextField
           name="externalPaymentUrl"
+          disabled={edit}
           control={control}
           label={t('debtTypeOrgCreate.behaviour.spontaneous.externalUrl.label')}
           defaultValue="https://"
@@ -81,7 +85,8 @@ export const SelectedField = ({
 export const PaymentMethodSelector = ({
   control,
   name,
-  selectedValue
+  selectedValue,
+  edit
 }: PaymentMethodProps) => {
   const { t } = useTranslation();
 
@@ -92,6 +97,7 @@ export const PaymentMethodSelector = ({
         control={control}
         label={t('debtTypeOrgCreate.behaviour.spontaneous.label')}
         required
+        disabled={edit}
         fullWidth
         options={[
           {
@@ -113,7 +119,11 @@ export const PaymentMethodSelector = ({
         ]}
       />
 
-      <SelectedField selectedValue={selectedValue} control={control} />
+      <SelectedField
+        selectedValue={selectedValue}
+        control={control}
+        edit={edit}
+      />
     </Stack>
   );
 };

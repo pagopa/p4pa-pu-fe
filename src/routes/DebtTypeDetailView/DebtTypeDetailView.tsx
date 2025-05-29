@@ -2,7 +2,7 @@ import { Box, Button, Stack } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { DetailAccordion } from '../../components/DetailAccordion/DetailAccordion';
 import {
   AccordionSectionConfig,
@@ -108,9 +108,10 @@ export const DebtTypeDetailView = () => {
   };
 
   useEffect(() => {
-    if (isSuccess && data) {
+    if (isSuccess && data?.response) {
       const operatorsInfo = buildOperatorsData();
-      const sections = getAccordionSectionsConfig(data, operatorsInfo, t) || [];
+      const sections =
+        getAccordionSectionsConfig(data?.response, operatorsInfo, t) || [];
       setAccordionSections(sections);
     }
 
@@ -146,12 +147,17 @@ export const DebtTypeDetailView = () => {
   ]);
 
   useEffect(() => {
-    if (!isLoading && isSuccess && data?.code && !operatorsEnabledData) {
+    if (
+      !isLoading &&
+      isSuccess &&
+      data?.response?.code &&
+      !operatorsEnabledData
+    ) {
       mutate({
         organizationId,
         filters: {
-          code: data.code,
-          description: data.description
+          code: data.response.code,
+          description: data.response.description
         }
       });
     }
@@ -170,7 +176,12 @@ export const DebtTypeDetailView = () => {
       buttonText: t('commons.edit'),
       color: 'primary' as const,
       variant: 'contained' as const,
-      onActionClick: () => console.log('onActionClick edit')
+      onActionClick: () =>
+        navigate(
+          generatePath(PageRoutes.DEBT_TYPE_ORG_EDIT, {
+            debtPositionTypeOrgId
+          })
+        )
     }
   ];
 
@@ -178,7 +189,7 @@ export const DebtTypeDetailView = () => {
     <>
       <>
         <TitleComponent
-          title={data?.description ?? '-'}
+          title={data?.response?.description ?? '-'}
           description={t('debtTypeDetail.description')}
           callToAction={actionButtons}
         />
