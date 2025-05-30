@@ -7,6 +7,7 @@ import { appState } from './AppStateStore';
 import { operatorRoleState } from './OperatorRoleStore';
 import { filterValues, selectedFilters } from './FilterStore';
 import { idTokenPayloadState } from './IdTokenStore';
+import { organizationsState } from './OrganizationsStore';
 
 const StoreContext = createContext<StoreContextProps | undefined>(undefined);
 
@@ -16,6 +17,7 @@ export const StoreProvider: React.FC<{ children: ReactNode }> = ({
   const combinedState: State = {
     [STATE.APP_STATE]: appState?.value,
     [STATE.CONFIG_FE]: configFeState?.value,
+    [STATE.ORGANIZATIONS]: organizationsState.value,
     [STATE.ORGANIZATION_ID]: organizationIdState.state?.value,
     [STATE.USER_INFO]: userInfoState?.value,
     [STATE.SELECTED_FILTERS]: selectedFilters?.value,

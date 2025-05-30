@@ -5,7 +5,7 @@ import {
   RouteObject
 } from 'react-router';
 import utils from '../utils';
-import { setup } from '../setup';
+import { setup, setupFallback } from '../setup';
 import { Layout } from '../components/layout/Layout';
 import Home from './Home';
 import { RouteHandleObject } from '../models/Routes';
@@ -23,14 +23,14 @@ import { responsesRoutes } from '../routes/responses';
 import { debtPositionsRoutes } from '../routes/debtPositions';
 import { backofficeRoutes } from '../routes/backoffice';
 import { debtTypeOrgsRoutes } from '../routes/debtTypeOrgs';
-
 const deployPath = utils.config.deployPath;
 
 const routesDef = [
   {
-    path: '/',
     element: <Outlet />,
     loader: setup,
+    HydrateFallback: setupFallback,
+    shouldRevalidate: () => false,
     children: [
       {
         path: '*',

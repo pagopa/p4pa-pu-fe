@@ -1,11 +1,11 @@
 import { useTranslation } from 'react-i18next';
-import { useFeConfig } from './useFeConfig';
 import { useLanguage } from './useLanguage';
 import { Markdown } from '../components/Markdown';
 import lang from '../translations/lang';
 import { FooterLinksType } from '@pagopa/mui-italia';
 import { CompanyLinkType } from '../components/Footer';
 import { useEffect, useState } from 'react';
+import { useStore } from '../store/GlobalStore';
 
 const isValidImage = (imgSrc: string): Promise<boolean> => {
   return new Promise((resolve) => {
@@ -19,7 +19,9 @@ const isValidImage = (imgSrc: string): Promise<boolean> => {
 export const useFooterData = () => {
   const { language, changeLanguage } = useLanguage();
 
-  const configFe = useFeConfig();
+  const {
+    state: { configFe }
+  } = useStore();
   const { t } = useTranslation();
 
   const [validLogoImg, setValidLogoImg] = useState<string | null>(null);

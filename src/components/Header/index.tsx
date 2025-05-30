@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import {
   HeaderAccount,
   HeaderProduct,
@@ -10,7 +9,6 @@ import utils from '../../utils';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router-dom';
-import { useOrganizations } from '../../hooks/useOrganizations';
 import { useStore } from '../../store/GlobalStore';
 import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
@@ -18,7 +16,6 @@ import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
 import { OperatorRoleEnum } from '../../../generated/apiClient';
 import { PageRoutes } from '../../routes';
-import { useUserInfo } from '../../hooks/useUserInfo';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;
@@ -28,43 +25,12 @@ export type HeaderProps = {
 export const Header = (props: HeaderProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { state } = useStore();
-  const organizations = useOrganizations();
-  const userInfo = useUserInfo();
-  const [isInitialized, setIsInitialized] = useState(false);
+  const {
+    state: { userInfo, organizations, organizationId }
+  } = useStore();
 
   const { onAssistanceClick = () => null } = props;
   const { onDocumentationClick = () => null } = props;
-
-  // this useEffect initializes the selected organization based on saved state when data is loaded
-  useEffect(() => {
-    if (organizations.isSuccess && organizations.data && !isInitialized) {
-      const savedOrgId = state?.organizationId;
-
-      if (savedOrgId) {
-        const orgExists = organizations.data.some(
-          (org) => org.organizationId === savedOrgId
-        );
-
-        if (orgExists) {
-          setOrganizationId(savedOrgId);
-          const matchedOrg = organizations.data.find(
-            (org) => org.organizationId === savedOrgId
-          );
-          if (matchedOrg) {
-            setOperatorRole(matchedOrg.operatorRole);
-          }
-        }
-      }
-
-      setIsInitialized(true);
-    }
-  }, [
-    organizations.isSuccess,
-    organizations.data,
-    isInitialized,
-    state?.organizationId
-  ]);
 
   const jwtUser: JwtUser | undefined = userInfo
     ? {
@@ -75,23 +41,21 @@ export const Header = (props: HeaderProps) => {
     : undefined;
 
   const organizationsToMenuItems: Array<PartySwitchItem> =
-    organizations.data?.map((item) => ({
-      id: item.organizationId.toString(),
-      logoUrl: item.orgLogo,
-      name: item.orgName || t('commons.unknownOrganization'),
-      productRole: item.operatorRole
+    organizations?.map((org) => ({
+      id: org.organizationId.toString(),
+      logoUrl: org.orgLogo,
+      name: org.orgName || t('commons.unknownOrganization'),
+      productRole: org.operatorRole
     })) || [];
 
   const currentOrgExists =
-    state?.organizationId &&
-    organizationsToMenuItems.some(
-      (item) => Number(item.id) === state.organizationId
-    );
+    organizationId &&
+    organizationsToMenuItems.some((item) => Number(item.id) === organizationId);
 
   let partyIdToUse: string | undefined;
 
-  if (currentOrgExists && state?.organizationId) {
-    partyIdToUse = state.organizationId.toString();
+  if (currentOrgExists && organizationId) {
+    partyIdToUse = organizationId.toString();
   } else if (organizationsToMenuItems.length > 0) {
     partyIdToUse = organizationsToMenuItems[0].id;
   }
@@ -138,7 +102,7 @@ export const Header = (props: HeaderProps) => {
     navigate(0);
   };
 
-  return organizations.isSuccess && isInitialized ? (
+  return (
     <>
       <HeaderAccount
         rootLink={utils.config.pagopaLink}
@@ -157,5 +121,5 @@ export const Header = (props: HeaderProps) => {
         />
       ) : null}
     </>
-  ) : null;
+  );
 };

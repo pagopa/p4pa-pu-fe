@@ -4,10 +4,10 @@ import { useStore } from '../store/GlobalStore';
 const useIsSuperAdmin = () => {
   const { state } = useStore();
   const role = useWhichRole();
-  const organizations = state.userInfo?.organizations;
+  const organizations = state.organizations;
   const configFe = state.configFe;
   const containsBrokerCF = organizations?.some(
-    (item) => item.organizationFiscalCode === configFe?.brokerFiscalCode
+    (org) => org.orgFiscalCode === configFe?.brokerFiscalCode
   );
   const superAdmin = containsBrokerCF && role == 'ROLE_ADMIN';
   return superAdmin;

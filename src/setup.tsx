@@ -1,39 +1,59 @@
-import { useEffect, useState } from 'react';
 import brokers from './api/brokers';
 import user from './api/user';
 import loader from './utils/loaders';
 import { setConfigFe } from './store/ConfigFeStore';
-import { setupOrganizations } from './hooks/useOrganizations';
-import { useStore } from './store/GlobalStore';
 import { setUserInfo } from './store/UserInfoStore';
-import { organizationIdState } from './store/OrganizationIdStore';
 import { idTokenPayloadState } from './store/IdTokenStore';
 import { setupInterceptors } from './utils/interceptors';
+import { CircularProgress, Stack } from '@mui/material';
 import utils from './utils';
+import { setOperatorRole } from './store/OperatorRoleStore';
+import { OrganizationDTO } from '../generated/apiClient';
+import { IdTokenPayload } from './models/IdTokenPayload';
+import { setOrganizations } from './store/OrganizationsStore';
+import {
+  organizationIdState,
+  setOrganizationId
+} from './store/OrganizationIdStore';
 
-const useSetup = () => {
-  const [ready, setReady] = useState(false);
-  const {
-    state: { organizationId, idToken }
-  } = useStore();
-  useEffect(() => {
-    (async () => {
-      try {
-        const orgs = await loader.getOrganizationsPlain();
-        const brokersConfigPlain = await brokers.getBrokersConfigPlain();
-        const userInfo = await user.getUserInfoPlain();
+const setupOrganizations = (
+  orgs: Array<OrganizationDTO>,
+  organizationId: number,
+  idToken?: IdTokenPayload
+) => {
+  setOrganizations(orgs);
+  const currentOrgExists =
+    organizationId && orgs.some((org) => org.organizationId === organizationId);
 
-        setUserInfo(userInfo);
-        setConfigFe(brokersConfigPlain);
-        setupOrganizations(orgs, organizationId, idToken);
-        setReady(true);
-      } catch (error) {
-        console.error('Setup failed:', error);
-      }
-    })();
-  }, []);
+  if (currentOrgExists) {
+    setOrganizationId(organizationId);
+    const matchedOrg = orgs.find(
+      (org) => org.organizationId === organizationId
+    );
+    if (matchedOrg) {
+      setOperatorRole(matchedOrg.operatorRole);
+    }
+  }
+  if (!currentOrgExists) {
+    const savedOrg = organizationId
+      ? orgs.find((org) => org.organizationId === organizationId)
+      : null;
 
-  return ready;
+    const idTokenMatchedOrg =
+      !savedOrg && idToken
+        ? orgs.find(
+            (org) =>
+              org.orgFiscalCode === idToken.organization.fiscal_code &&
+              org.ipaCode === idToken.organization.ipaCode
+          )
+        : null;
+
+    const orgToSelect = savedOrg || idTokenMatchedOrg || orgs[0];
+    if (orgToSelect) {
+      setOrganizationId(orgToSelect.organizationId);
+      setOperatorRole(orgToSelect.operatorRole);
+    }
+  }
 };
 
 /** Initial setup function to prepare the application state and necessary config */
@@ -45,22 +65,19 @@ const setup = async () => {
   // store critical data
   const organizationId = organizationIdState.state.value;
   const idToken = idTokenPayloadState.value;
-  console.log(
-    'Setting up with organizationId:',
-    organizationId,
-    'and idToken:',
-    idToken
-  );
   const orgs = await loader.getOrganizationsPlain();
   const brokersConfigPlain = await brokers.getBrokersConfigPlain();
   const userInfo = await user.getUserInfoPlain();
-  await (() => new Promise((resolve) => setTimeout(resolve, 10000)))(); // Simulate delay
 
   setUserInfo(userInfo);
   setConfigFe(brokersConfigPlain);
   setupOrganizations(orgs, organizationId, idToken);
 };
 
-const fakeSetup = () => new Promise((_resolve) => setTimeout(_resolve, 10000)); // Simulate delay
-
-export { useSetup, setup, fakeSetup };
+/** Fallback component to show while setup is in progress */
+const setupFallback = () => (
+  <Stack justifyContent={'center'} alignItems={'center'} height={'100vh'}>
+    <CircularProgress size={40} />
+  </Stack>
+);
+export { setup, setupFallback };
