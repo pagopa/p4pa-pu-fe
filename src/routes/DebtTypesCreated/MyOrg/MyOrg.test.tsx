@@ -133,18 +133,18 @@ describe('MyOrg', () => {
       />
     );
 
-    expect(mutateMock).not.toHaveBeenCalledWith(
-      expect.objectContaining({
-        filters: expect.objectContaining({
-          code: 'new-code',
-          description: 'new-desc'
+    await waitFor(() => {
+      expect(mutateMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: expect.objectContaining({
+            code: 'new-code',
+            description: 'new-desc',
+            page: 0,
+            size: 10
+          }),
+          organizationId: expect.any(Number)
         })
-      })
-    );
-
-    const searchFn = onSearchMock.mock.calls[0][0];
-    searchFn();
-
-    expect(mutateMock).toHaveBeenCalled();
+      );
+    });
   });
 });

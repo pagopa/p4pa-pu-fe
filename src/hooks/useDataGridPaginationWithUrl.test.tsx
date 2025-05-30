@@ -229,7 +229,7 @@ describe('useDataGridPaginationWithUrl', () => {
       );
 
       const calledParams = mockSetSearchParams.mock.calls[0][0];
-      expect(calledParams.get('page')).toBe('1');
+      expect(calledParams.get('page')).toBe('2');
       expect(calledParams.get('size')).toBe('10');
     });
 

@@ -35,8 +35,8 @@ describe('useTreasurySearch', () => {
     );
 
     expect(result.current.filterValues).toEqual(initialFilters);
-    expect(result.current.pagination.page).toBe(0);
-    expect(result.current.pagination.size).toBe(10);
+    expect(result.current.paginationParams.page).toBe(0);
+    expect(result.current.paginationParams.size).toBe(10);
   });
 
   it('should update filter values on handleFilterChange', () => {

@@ -1,5 +1,5 @@
 import { renderHook, act } from '../__tests__/renderers';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import { useExportFlowFilters } from './useExportFlowFilters';
 import { ExportFileFilters } from '../models/Filters';
 import { GridSortModel } from '@mui/x-data-grid';
@@ -7,11 +7,43 @@ import {
   ExportFileStatus,
   ExportFileTypeEnum
 } from '../../generated/apiClient';
+import { useSearchParams } from 'react-router-dom';
+
+vi.mock('react-router-dom', () => ({
+  useSearchParams: vi.fn()
+}));
 
 describe('useExportFlowFilters', () => {
+  const mockSetSearchParams = vi.fn();
+
+  const createDynamicSearchParamsMock = () => {
+    let currentSearchParams = new URLSearchParams();
+
+    const mockSetSearchParamsImpl = vi.fn((newParams: URLSearchParams) => {
+      currentSearchParams = newParams;
+      (useSearchParams as Mock).mockImplementation(() => [
+        currentSearchParams,
+        mockSetSearchParamsImpl
+      ]);
+    });
+
+    (useSearchParams as Mock).mockImplementation(() => [
+      currentSearchParams,
+      mockSetSearchParamsImpl
+    ]);
+
+    return { mockSetSearchParamsImpl };
+  };
+
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2024-01-01T12:00:00.000Z'));
+
+    vi.clearAllMocks();
+    (useSearchParams as Mock).mockImplementation(() => [
+      new URLSearchParams(),
+      mockSetSearchParams
+    ]);
   });
 
   afterEach(() => {
@@ -35,10 +67,10 @@ describe('useExportFlowFilters', () => {
 
     expect(result.current.draftFilters).toEqual({
       exportFileType: ExportFileTypeEnum.PAID,
-      size: 10,
-      page: 0,
       creationDateFrom: '2023-01-01T00:00:00.000Z',
-      creationDateTo: '2024-01-01T23:59:59.999Z'
+      creationDateTo: '2024-01-01T23:59:59.999Z',
+      fileName: undefined,
+      status: undefined
     });
   });
 
@@ -67,8 +99,7 @@ describe('useExportFlowFilters', () => {
     act(() => {
       result.current.updateDraftFilters({
         fileName: 'export.PAID',
-        status: ExportFileStatus.COMPLETED,
-        page: 2
+        status: ExportFileStatus.COMPLETED
       });
     });
 
@@ -76,27 +107,32 @@ describe('useExportFlowFilters', () => {
       result.current.applyFilters();
     });
 
-    expect(result.current.appliedFilters).toEqual({
-      ...result.current.draftFilters,
-      page: 0
-    });
+    expect(result.current.appliedFilters).toEqual(
+      expect.objectContaining({
+        fileName: 'export.PAID',
+        status: ExportFileStatus.COMPLETED,
+        page: 0,
+        size: 10
+      })
+    );
   });
 
-  it('should update pagination immediately', () => {
-    const { result } = renderHook(() =>
+  it('should handle pagination changes through new API', () => {
+    createDynamicSearchParamsMock();
+    const { result, rerender } = renderHook(() =>
       useExportFlowFilters({
         exportFileType: ExportFileTypeEnum.PAID
       })
     );
 
     act(() => {
-      result.current.updatePagination({ page: 2, size: 20 });
+      result.current.handlePaginationChange({ page: 2, size: 20 });
     });
+
+    rerender();
 
     expect(result.current.appliedFilters.page).toBe(2);
     expect(result.current.appliedFilters.size).toBe(20);
-    expect(result.current.draftFilters.page).toBe(2);
-    expect(result.current.draftFilters.size).toBe(20);
   });
 
   it('should handle null dates correctly', () => {
@@ -208,7 +244,13 @@ describe('useExportFlowFilters', () => {
       })
     );
 
-    expect(result.current.draftFilters).toEqual(result.current.appliedFilters);
+    expect(result.current.draftFilters).toEqual({
+      exportFileType: ExportFileTypeEnum.PAID,
+      creationDateFrom: '2023-01-01T00:00:00.000Z',
+      creationDateTo: '2024-01-01T23:59:59.999Z',
+      fileName: undefined,
+      status: undefined
+    });
 
     expect(onFiltersChange).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -239,15 +281,12 @@ describe('useExportFlowFilters', () => {
     });
 
     expect(result.current.appliedFilters.sort).toBeUndefined();
-    expect(result.current.draftFilters.sort).toBeUndefined();
     expect(result.current.sortModel).toEqual([]);
 
-    expect(onFiltersChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        sort: undefined,
-        page: 0
-      })
-    );
+    const lastCall =
+      onFiltersChange.mock.calls[onFiltersChange.mock.calls.length - 1][0];
+    expect(lastCall.page).toBe(0);
+    expect(lastCall.sort).toEqual(['fileName,asc']);
   });
 
   it('should maintain other filter values when updating sort', () => {
@@ -373,5 +412,33 @@ describe('useExportFlowFilters', () => {
     });
 
     expect(result.current.hasActiveFilters()).toBe(true);
+  });
+
+  it('should reset page to 0 when applying filters', () => {
+    const onFiltersChange = vi.fn();
+
+    const { result } = renderHook(() =>
+      useExportFlowFilters({
+        exportFileType: ExportFileTypeEnum.PAID,
+        onFiltersChange
+      })
+    );
+
+    act(() => {
+      result.current.updateDraftFilters({
+        fileName: 'export.PAID',
+        status: ExportFileStatus.COMPLETED
+      });
+    });
+
+    act(() => {
+      result.current.applyFilters();
+    });
+
+    expect(result.current.appliedFilters).toEqual({
+      ...result.current.draftFilters,
+      page: 0,
+      size: 10
+    });
   });
 });

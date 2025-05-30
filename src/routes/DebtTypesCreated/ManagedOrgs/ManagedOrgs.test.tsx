@@ -129,17 +129,17 @@ describe('ManagedOrgs', () => {
 
     rerender(<ManagedOrgs IPACodeFilter="new-ipa" onSearch={onSearchMock} />);
 
-    expect(mutateMock).not.toHaveBeenCalledWith(
-      expect.objectContaining({
-        filters: expect.objectContaining({
-          organizationName: 'new-ipa'
+    await waitFor(() => {
+      expect(mutateMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: expect.objectContaining({
+            organizationName: 'new-ipa',
+            page: 0,
+            size: 10
+          }),
+          organizationId: expect.any(Number)
         })
-      })
-    );
-
-    const searchFn = onSearchMock.mock.calls[0][0];
-    searchFn();
-
-    expect(mutateMock).toHaveBeenCalled();
+      );
+    });
   });
 });

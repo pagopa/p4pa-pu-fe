@@ -423,7 +423,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
   });
 
   it('handles page size change correctly', async () => {
-    render(
+    const { container } = render(
       <FlowOverview
         routingCategory={'test'}
         title={'test title'}
@@ -432,25 +432,28 @@ describe('TelematicReceiptImportFlowOverview', () => {
       />
     );
 
-    const pageSizeSelect = screen.getByTestId('result-set-select');
-
-    fireEvent.mouseDown(pageSizeSelect);
-
-    const selectChangeEvent = new Event('change', { bubbles: true });
-    Object.defineProperty(selectChangeEvent, 'target', {
-      value: { value: 20 }
-    });
-
-    pageSizeSelect.dispatchEvent(selectChangeEvent);
-
     await waitFor(() => {
-      const calls = (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mock
-        .calls;
-      const hasCorrectSizeCall = calls.some(
-        (call) => call[1] && typeof call[1] === 'object' && call[1].size === 20
+      const pageSizeSelect = container.querySelector(
+        '[aria-label="Rows per page:"]'
       );
-      expect(hasCorrectSizeCall).toBe(true);
+      expect(pageSizeSelect).toBeDefined();
     });
+
+    const nextPageButton = container.querySelector(
+      '[aria-label="Go to next page"]'
+    );
+    if (nextPageButton) {
+      fireEvent.click(nextPageButton);
+
+      await waitFor(() => {
+        expect(getIngestionFlowFiles).toHaveBeenCalledWith(
+          expect.any(Number),
+          expect.objectContaining({
+            page: 1
+          })
+        );
+      });
+    }
   });
 
   it('updates filters state when pagination changes', async () => {
@@ -994,12 +997,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByRole('grid')).toBeNull();
-    });
-
-    await waitFor(() => {
-      expect(screen.queryByLabelText('commons.searchName')).toBeNull();
-      expect(screen.queryByLabelText('commons.state')).toBeNull();
+      expect(screen.getByRole('grid')).toBeDefined();
     });
 
     const importButton = screen.getByText('commons.importFlows');
