@@ -4,6 +4,7 @@ import { parseAndLog } from '../utils/loaders';
 import {
   debtPositionDetailDTOSchema,
   debtPositionDTOSchema,
+  debtPositionRegistrySchema,
   installmentDetailDTOSchema
 } from '../../generated/zod-schema';
 import { AxiosError } from 'axios';
@@ -240,6 +241,31 @@ const downloadDebtPositionZip = async (
   }
 };
 
+const getDebtPositionRegistriesMutation = () => {
+  return useMutation({
+    mutationKey: ['getDebtPositionRegistriesMutation'],
+    mutationFn: async ({
+      organizationId,
+      debtPositionId
+    }: {
+      organizationId: number;
+      debtPositionId: number;
+    }) => {
+      const { data: registries } =
+        await utils.apiClient.bff.getDebtPositionRegistries(
+          organizationId,
+          debtPositionId
+        );
+      if (registries && Array.isArray(registries)) {
+        registries.forEach((registry) => {
+          parseAndLog(debtPositionRegistrySchema, registry);
+        });
+      }
+      return registries || [];
+    }
+  });
+};
+
 export default {
   getDebtPositionViews,
   getInstallments,
@@ -250,5 +276,6 @@ export default {
   deleteDebtPosition,
   createDebtPosition,
   downloadPaymentNotice,
-  downloadDebtPositionZip
+  downloadDebtPositionZip,
+  getDebtPositionRegistriesMutation
 };
