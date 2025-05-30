@@ -24,7 +24,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { sidebarStyles } from './sidebar.styles';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useStore } from '../../store/GlobalStore';

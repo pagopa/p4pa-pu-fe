@@ -1,148 +1,24 @@
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { ErrorFallback } from './components/ErrorFallback';
-import { Layout } from './components/layout/Layout';
-import { RouteHandleObject } from './models/Routes';
-import Home from './routes/Home';
 import { Theme } from './utils/theme';
-import {
-  Navigate,
-  Outlet,
-  RouteObject,
-  RouterProvider,
-  createBrowserRouter,
-  useRouteError
-} from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import './translations/i18n';
-import utils from './utils';
-
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
-import config from './utils/config';
-import { flowsRoutes } from './routes/flows';
-import { importRoutes } from './routes/import';
-import { classificationsRoutes } from './routes/classifications';
-import { detailRoutes } from './routes/detail';
-import { exportRoutes } from './routes/export';
-import { debtTypesRoutes } from './routes/debtTypes';
-import { responsesRoutes } from './routes/responses';
-import { debtPositionsRoutes } from './routes/debtPositions';
-import AuthCallback from './routes/AuthCallback';
-import { postToken } from './api/token';
-import LoggedOut from './routes/UtilityPages/loggedout';
-import ErrorPage from './routes/UtilityPages/error';
-import { backofficeRoutes } from './routes/backoffice';
-import { debtTypeOrgsRoutes } from './routes/debtTypeOrgs';
-import useSetup from './setup';
-import { setupInterceptors } from './utils/interceptors';
-import { CircularProgress, Container } from '@mui/material';
-
-setupInterceptors(utils.apiClient);
-setupInterceptors(utils.fileshareClient);
-
-const deployPath = config.deployPath;
-const routesDef = [
-  {
-    element: <Outlet />,
-    children: [
-      {
-        path: '*',
-        element: <Navigate replace to={`${deployPath}/`} />,
-        ErrorBoundary: () => {
-          throw useRouteError();
-        }
-      },
-      {
-        path: `${deployPath}/`,
-        element: <Layout />,
-        children: [
-          {
-            path: `${deployPath}/`,
-            element: <Home />,
-            id: 'HOME',
-            index: true,
-            handle: {
-              backButton: false,
-              hideBreadcrumbs: true
-            } as RouteHandleObject
-          }
-        ]
-      },
-      {
-        path: `${deployPath}/auth-callback`,
-        element: <AuthCallback />,
-        loader: postToken
-      },
-      {
-        id: 'LOGGED_OUT',
-        path: `${deployPath}/loggedout`,
-        element: <LoggedOut />
-      },
-      {
-        id: 'ERROR',
-        path: `${deployPath}/blockingError`,
-        element: <ErrorPage />
-      },
-      ...flowsRoutes,
-      ...importRoutes,
-      ...detailRoutes,
-      ...exportRoutes,
-      ...debtTypesRoutes,
-      ...debtTypeOrgsRoutes,
-      ...responsesRoutes,
-      ...debtPositionsRoutes,
-      ...classificationsRoutes,
-      ...backofficeRoutes
-    ]
-  }
-];
-
-const router = createBrowserRouter(routesDef);
-
-const extractPathsWithIds = (
-  routes: Array<RouteObject>,
-  basePath = ''
-): Record<string, string> => {
-  let paths: Record<string, string> = {};
-
-  routes.forEach((route) => {
-    const fullPath = `${basePath}${route.path || ''}`;
-
-    paths[route.id || 'none'] = fullPath;
-
-    if (route.children) {
-      const childPaths = extractPathsWithIds(route.children, fullPath);
-      paths = { ...paths, ...childPaths };
-    }
-  });
-
-  return paths;
-};
-
-export const PageRoutes = extractPathsWithIds(routesDef);
+import { CircularProgress } from '@mui/material';
+import router from './routes';
 
 export const App = () => {
   const { state } = useStore();
-  const ready = useSetup();
-  return ready ? (
+  return (
     <ErrorBoundary
       fallback={<ErrorFallback onReset={() => window.location.replace('/')} />}
     >
       <Theme>
         <Overlay visible={state.appState.loading} />
-        <RouterProvider router={router} />
+        <RouterProvider router={router} fallback={<CircularProgress />} />
       </Theme>
     </ErrorBoundary>
-  ) : (
-    <Container
-      sx={{
-        height: '90vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-    >
-      <CircularProgress size={40} />
-    </Container>
   );
 };
 

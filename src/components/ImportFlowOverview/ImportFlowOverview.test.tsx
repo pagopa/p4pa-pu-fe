@@ -7,7 +7,7 @@ import {
 import { downloadBlob } from '../../utils/download';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import FlowOverview from './ImportFlowOverview';
 import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
 

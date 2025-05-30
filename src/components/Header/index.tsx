@@ -17,7 +17,7 @@ import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
 import { OperatorRoleEnum } from '../../../generated/apiClient';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { useUserInfo } from '../../hooks/useUserInfo';
 
 export type HeaderProps = {

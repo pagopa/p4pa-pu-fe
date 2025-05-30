@@ -12,7 +12,7 @@ import { setAppState } from '../../store/AppStateStore';
 import { formatDate } from '../../utils/formatters';
 import { useEffect } from 'react';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { generatePath } from 'react-router-dom';
 
 function ReportingPaymentDetail() {

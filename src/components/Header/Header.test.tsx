@@ -4,7 +4,7 @@ import { Mock } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
 import { useOrganizations } from '../../hooks/useOrganizations';
 import { OperatorRoleEnum } from '../../../generated/apiClient';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { setUserInfo } from '../../store/UserInfoStore';
 
 // Mock dependencies

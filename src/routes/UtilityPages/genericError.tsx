@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
 import { theme } from '@pagopa/mui-italia';
 import { useEffect } from 'react';

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
 import { useNavigate, useParams } from 'react-router';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { useSignal } from '@preact/signals-react';
 import { patchDebtPositionType } from '../../api/debtPositionsTypes';
 import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';

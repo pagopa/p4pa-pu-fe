@@ -9,7 +9,7 @@ import FilterContainer, {
 } from '../FilterContainer/FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
 import { generatePath, useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import {
   DOWNLOAD_STATES,
