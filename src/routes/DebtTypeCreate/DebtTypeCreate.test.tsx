@@ -4,7 +4,6 @@ import { DebtTypeCreate } from '../DebtTypeCreate';
 import { Step1Props } from './components/Step1Configuration';
 import { Step2Props } from './components/Step2Settings';
 import { StepperContainerProps } from '../../components/Stepper';
-import { DebtPositionTypeRequestBody } from '../../../generated/apiClient';
 
 vi.mock('./components/Step1Configuration', () => ({
   Step1Configuration: ({ setData, onNext }: Step1Props) => (
@@ -64,25 +63,20 @@ vi.mock('../../components/Stepper', () => ({
 
 vi.mock('../../api/debtPositionsTypes', () => ({
   postDebtPositionType: vi.fn(() => ({
-    mutate: (
-      _formData: DebtPositionTypeRequestBody,
-      { onSuccess }: { onSuccess: (data: DebtPositionTypeRequestBody) => void }
-    ) => {
-      onSuccess({
-        description: 'Test Debt Type',
-        code: 'CODE1',
-        orgType: 'ORG1',
-        macroArea: 'MACRO1',
-        serviceType: 'SERVICE1',
-        collectingReason: 'REASON1',
-        taxonomyCode: 'TAX1',
-        flagMandatoryDueDate: true,
-        flagAnonymousFiscalCode: false,
-        flagNotifyIo: true,
-        ioTemplateSubject: 'Test Subject',
-        ioTemplateMessage: 'Test Message'
-      });
-    }
+    mutateAsync: vi.fn().mockResolvedValue({
+      description: 'Test Debt Type',
+      code: 'CODE1',
+      orgType: 'ORG1',
+      macroArea: 'MACRO1',
+      serviceType: 'SERVICE1',
+      collectingReason: 'REASON1',
+      taxonomyCode: 'TAX1',
+      flagMandatoryDueDate: true,
+      flagAnonymousFiscalCode: false,
+      flagNotifyIo: true,
+      ioTemplateSubject: 'Test Subject',
+      ioTemplateMessage: 'Test Message'
+    })
   }))
 }));
 

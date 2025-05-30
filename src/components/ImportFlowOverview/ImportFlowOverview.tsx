@@ -19,7 +19,7 @@ import {
   STATE_COLORS
 } from '../../models/Filters';
 import {
-  downloadIngestionFlowFile,
+  getIngestionFlowFile,
   getIngestionFlowFileError,
   getIngestionFlowFiles
 } from '../../api/ingestionFlowFiles';
@@ -76,17 +76,17 @@ const ImportFlowOverview = ({
   const getIngestionFlowFileErrorMutation =
     getIngestionFlowFileError(organizationId);
 
+  const getIngestionFlowFileMutation = getIngestionFlowFile(organizationId);
+
   const handleDownloadFile = async (ingestionFlowFileId: number) => {
-    const result = await downloadIngestionFlowFile(
-      organizationId,
-      ingestionFlowFileId
-    );
-
-    if (!result)
-      return utils.notify.emit(t('FileUploaderFlowImport.error.flowFile'));
-
-    const { data, fileName } = result;
-    downloadBlob(data, fileName);
+    try {
+      const { data, fileName } =
+        await getIngestionFlowFileMutation.mutateAsync(ingestionFlowFileId);
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('FileUploaderFlowImport.error.errorFlowFile'));
+    }
   };
 
   const handleDownloadFileError = async (ingestionFlowFileId: number) => {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   screen,
@@ -62,7 +63,7 @@ vi.mock('react-router', async () => {
 // Mock debtPositions API
 vi.mock('../../api/debtPositions', () => ({
   default: {
-    downloadDebtPositionZip: vi.fn()
+    getDebtPositionZipFile: vi.fn()
   }
 }));
 
@@ -210,14 +211,15 @@ describe('DebtPositionCreateWizardCompleted', () => {
       state: { description: 'Test Payment', debtPositionId: 123 }
     });
 
-    // Setup mock for downloadDebtPositionZip
-    const mockResult = {
-      data: new Blob(['test data'], { type: 'application/zip' }),
-      fileName: 'test-file.zip'
-    };
-    vi.mocked(debtPositions.downloadDebtPositionZip).mockResolvedValue(
-      mockResult
-    );
+    const mutateMock = vi.fn();
+
+    vi.mocked(debtPositions.getDebtPositionZipFile).mockReturnValue({
+      mutateAsync: mutateMock.mockReturnValue({
+        data: new Blob(['test data'], { type: 'application/zip' }),
+        fileName: 'test-file.zip'
+      })
+    } as any);
+    // Mock the downloadBlob functio
 
     customRender(<DebtPositionCreateWizardCompleted />);
 
@@ -228,10 +230,8 @@ describe('DebtPositionCreateWizardCompleted', () => {
     // Wait for the async function to complete
     await vi.waitFor(() => {
       // Verify that downloadDebtPositionZip was called with the correct arguments
-      expect(debtPositions.downloadDebtPositionZip).toHaveBeenCalledWith(
-        3,
-        123
-      );
+      expect(debtPositions.getDebtPositionZipFile).toHaveBeenCalledWith(3);
+      expect(mutateMock).toHaveBeenCalledWith(123);
     });
   });
 
@@ -241,10 +241,11 @@ describe('DebtPositionCreateWizardCompleted', () => {
       state: { description: 'Test Payment', debtPositionId: 123 }
     });
 
+    const mutateMock = vi.fn();
     // Setup mock for downloadDebtPositionZip to throw an error
-    vi.mocked(debtPositions.downloadDebtPositionZip).mockRejectedValue(
-      new Error('Download failed')
-    );
+    vi.mocked(debtPositions.getDebtPositionZipFile).mockReturnValue({
+      mutateAsync: mutateMock.mockRejectedValue(new Error('Download failed'))
+    } as any);
 
     customRender(<DebtPositionCreateWizardCompleted />);
 
@@ -255,10 +256,7 @@ describe('DebtPositionCreateWizardCompleted', () => {
     // Wait for the async function to complete
     await vi.waitFor(() => {
       // Verify that the error notification was emitted
-      expect(utils.notify.emit).toHaveBeenCalledWith(
-        'Download failed',
-        'error'
-      );
+      expect(utils.notify.emit).toHaveBeenCalledWith('Download failed');
     });
   });
 
@@ -300,10 +298,7 @@ describe('DebtPositionCreateWizardCompleted', () => {
     fireEvent.click(downloadButton);
 
     // Verify error notification was shown
-    expect(utils.notify.emit).toHaveBeenCalledWith(
-      'Missing debt position ID',
-      'error'
-    );
+    expect(utils.notify.emit).toHaveBeenCalledWith('Missing debt position ID');
   });
 
   it('handles case when download result is null', async () => {
@@ -313,7 +308,9 @@ describe('DebtPositionCreateWizardCompleted', () => {
     });
 
     // Setup mock for downloadDebtPositionZip to return null
-    vi.mocked(debtPositions.downloadDebtPositionZip).mockResolvedValue(null);
+    vi.mocked(debtPositions.getDebtPositionZipFile).mockReturnValue({
+      mutateAsync: vi.fn().mockReturnValue(null)
+    } as any);
 
     customRender(<DebtPositionCreateWizardCompleted />);
 
@@ -324,10 +321,7 @@ describe('DebtPositionCreateWizardCompleted', () => {
     // Wait for the async function to complete
     await vi.waitFor(() => {
       // Verify error notification was shown
-      expect(utils.notify.emit).toHaveBeenCalledWith(
-        'Download failed',
-        'error'
-      );
+      expect(utils.notify.emit).toHaveBeenCalledWith('Download failed');
     });
   });
 });

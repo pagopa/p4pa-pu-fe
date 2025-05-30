@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { fireEvent, render, screen } from '../../__tests__/renderers';
 import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
 import { DebtPositionsInstallmentDetail } from './DebtPositionsInstallmentDetail';
@@ -32,7 +33,7 @@ vi.mock('react-router-dom', () => ({
 vi.mock('../../api/debtPositions', () => ({
   default: {
     getInstallmentDetail: vi.fn(),
-    downloadPaymentNotice: vi.fn()
+    getPaymentNoticeFile: vi.fn()
   }
 }));
 
@@ -62,6 +63,9 @@ vi.mock('../../store/GlobalStore', () => ({
 
 describe('DebtPositionsInstallmentDetail', () => {
   const mockUseParams = vi.mocked(useParams);
+  const mockBlob = new Blob(['test content'], { type: 'application/pdf' });
+  const mockFileName = 'notice-302000000000000001.pdf';
+  const mutateMock = vi.fn();
   const mockPaidInstallment = {
     installmentId: 288,
     paymentOptionId: 301,
@@ -166,19 +170,16 @@ describe('DebtPositionsInstallmentDetail', () => {
   });
 
   it('downloads PDF when download button is clicked for UNPAID installment', async () => {
-    const mockBlob = new Blob(['test content'], { type: 'application/pdf' });
-    const mockFileName = 'notice-302000000000000001.pdf';
+    vi.mocked(debtPositions.getPaymentNoticeFile).mockReturnValue({
+      mutateAsync: mutateMock.mockReturnValue({
+        data: mockBlob,
+        fileName: mockFileName
+      })
+    } as any);
 
-    (
-      debtPositions.downloadPaymentNotice as unknown as ReturnType<typeof vi.fn>
-    ).mockResolvedValue({
-      data: mockBlob,
-      fileName: mockFileName
-    });
-
-    (
-      debtPositions.getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({ data: mockUnpaidInstallment });
+    vi.mocked(debtPositions.getInstallmentDetail).mockReturnValue({
+      data: mockUnpaidInstallment
+    } as any);
 
     render(<DebtPositionsInstallmentDetail />);
 
@@ -187,7 +188,7 @@ describe('DebtPositionsInstallmentDetail', () => {
 
     fireEvent.click(downloadButton);
 
-    expect(debtPositions.downloadPaymentNotice).toHaveBeenCalledWith(
+    expect(debtPositions.getPaymentNoticeFile).toHaveBeenCalledWith(
       mockOrganizationId,
       mockUnpaidInstallment.debtPositionId,
       mockUnpaidInstallment.iuv
@@ -201,6 +202,13 @@ describe('DebtPositionsInstallmentDetail', () => {
   it('shows dialog when trying to download PAID installment', async () => {
     render(<DebtPositionsInstallmentDetail />);
 
+    vi.mocked(debtPositions.getPaymentNoticeFile).mockReturnValue({
+      mutateAsync: mutateMock.mockReturnValue({
+        data: mockBlob,
+        fileName: mockFileName
+      })
+    } as any);
+
     const downloadButton = screen.getByText('commons.downloadInstallment');
     expect(downloadButton).toBeInTheDocument();
 
@@ -213,7 +221,7 @@ describe('DebtPositionsInstallmentDetail', () => {
       screen.getByText('debtPositionInstallmentDetail.dialogDownload.message')
     ).toBeInTheDocument();
 
-    expect(debtPositions.downloadPaymentNotice).not.toHaveBeenCalled();
+    expect(mutateMock).not.toHaveBeenCalled();
   });
 
   it('closes dialog when clicking cancel button', async () => {
@@ -263,7 +271,7 @@ describe('DebtPositionsInstallmentDetail', () => {
     ).mockReturnValue({ data: mockUnpaidInstallment });
 
     (
-      debtPositions.downloadPaymentNotice as unknown as ReturnType<typeof vi.fn>
+      debtPositions.getPaymentNoticeFile as unknown as ReturnType<typeof vi.fn>
     ).mockResolvedValue(null);
 
     render(<DebtPositionsInstallmentDetail />);
@@ -285,6 +293,13 @@ describe('DebtPositionsInstallmentDetail', () => {
       debtPositions.getInstallmentDetail as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({ data: installmentWithoutIuv });
 
+    vi.mocked(debtPositions.getPaymentNoticeFile).mockReturnValue({
+      mutateAsync: mutateMock.mockReturnValue({
+        data: mockBlob,
+        fileName: mockFileName
+      })
+    } as any);
+
     render(<DebtPositionsInstallmentDetail />);
 
     const downloadButton = screen.getByText('commons.downloadInstallment');
@@ -294,6 +309,6 @@ describe('DebtPositionsInstallmentDetail', () => {
       'commons.files.missingIuv',
       'error'
     );
-    expect(debtPositions.downloadPaymentNotice).not.toHaveBeenCalled();
+    expect(mutateMock).not.toHaveBeenCalled();
   });
 });

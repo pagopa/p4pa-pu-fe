@@ -131,7 +131,7 @@ export const DebtTypesCreated = () => {
   return (
     <>
       <TitleComponent
-        title={t('commons.routes.DEBT_TYPES_CREATED')}
+        title={t('commons.routes.DEBT_TYPES_DASHBOARD')}
         callToAction={[
           {
             icon: <Add />,

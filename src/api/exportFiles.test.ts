@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '../__tests__/renderers';
-import { downloadExportFile, getExportFiles } from './exportFiles';
+import { act, renderHook, waitFor } from '../__tests__/renderers';
+import { getExportFile, getExportFiles } from './exportFiles';
 import utils from '../utils';
 import { AxiosResponse } from 'axios';
 import {
@@ -142,7 +142,12 @@ describe('downloadExportFile', () => {
       }
     } as unknown as AxiosResponse);
 
-    const result = await downloadExportFile(123, 456);
+    const { result } = renderHook(() => getExportFile(123));
+
+    await act(async () => {
+      const response = await result.current.mutateAsync(456);
+      expect(response).toEqual({ data: mockFileData, fileName: mockFileName });
+    });
 
     expect(mockDownloadExportFile).toHaveBeenCalledWith(123, 456, {
       format: 'blob'
@@ -150,10 +155,6 @@ describe('downloadExportFile', () => {
     expect(mockExtractFilename).toHaveBeenCalledWith(
       `attachment; filename="${mockFileName}"`
     );
-    expect(result).toEqual({
-      data: mockFileData,
-      fileName: mockFileName
-    });
   });
 
   it('uses default filename when content-disposition header is missing', async () => {
@@ -166,12 +167,12 @@ describe('downloadExportFile', () => {
 
     mockExtractFilename.mockReturnValueOnce(null);
 
-    const result = await downloadExportFile(123, 456);
+    const { result } = renderHook(() => getExportFile(123));
 
-    expect(mockExtractFilename).toHaveBeenCalledWith('');
-    expect(result).toEqual({
-      data: mockFileData,
-      fileName: 'file-456'
+    await act(async () => {
+      const response = await result.current.mutateAsync(456);
+      expect(response).toEqual({ data: mockFileData, fileName: 'file-456' });
     });
+    expect(mockExtractFilename).toHaveBeenCalledWith('');
   });
 });

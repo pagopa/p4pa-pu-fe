@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import {
   ExportFileStatus,
@@ -47,25 +47,20 @@ export const getExportFiles = (
   });
 };
 
-export const downloadExportFile = async (
-  organizationId: number,
-  exportFileId: number
-): Promise<{ data: Blob; fileName: string } | null> => {
-  try {
-    const response =
-      await utils.fileshareClient.organization.downloadExportFile(
-        organizationId,
-        exportFileId,
-        { format: 'blob' }
-      );
-
-    const contentDisposition = response.headers['content-disposition'] || '';
-    const fileName =
-      extractFilename(contentDisposition) || `file-${exportFileId}`;
-
-    return { data: response.data, fileName };
-  } catch (error) {
-    console.error('Error downloading export file:', error);
-    return null;
-  }
-};
+/** returns a mutation to get export blob file */
+export const getExportFile = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['getExportFile', organizationId],
+    mutationFn: async (exportFileId: number) => {
+      const response =
+        await utils.fileshareClient.organization.downloadExportFile(
+          organizationId,
+          exportFileId,
+          { format: 'blob' }
+        );
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const fileName =
+        extractFilename(contentDisposition) || `file-${exportFileId}`;
+      return { data: response.data, fileName };
+    }
+  });

@@ -16,7 +16,7 @@ vi.mock('react-router-dom', async () => {
 });
 
 const translations = {
-  'commons.routes.DEBT_TYPES_CREATED': 'Debt Types Created',
+  'commons.routes.DEBT_TYPES_DASHBOARD': 'Debt Types Created',
   'debtTypesCreated.callToAction': 'Create New Debt Type',
   'debtTypesCreated.description': 'Manage your debt types',
   'debtTypesCreated.descriptionFull':

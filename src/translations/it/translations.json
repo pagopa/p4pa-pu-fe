@@ -201,6 +201,7 @@
     "iur": "IUR",
     "iuv": "IUV",
     "loading": "caricamento",
+    "lastUpdate": "Ultimo aggiornamento",
     "macroarea": "Macroarea",
     "mandatoryDueDate": "Data di Scadenza Obbligatoria",
     "message": "Messaggio",
@@ -211,6 +212,7 @@
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
     "notifications": "Notifiche",
     "operator": "Operatore",
+    "operators": "Operatori",
     "optional": "opzionale",
     "organizationType": "Tipo ente",
     "outcomeFrom": "Esito dal",
@@ -236,6 +238,10 @@
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
+      "BACKOFFICE": "Backoffice",
+      "BACKOFFICE_TAXONOMY": "Tassonomia",
+      "BACKOFFICE_TAXONOMY_INDEX": "Tassonomia",
+      "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
       "CLASSIFICATIONS": "Classificazioni",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
@@ -247,7 +253,7 @@
       "DEBT_POSITION_SEARCH_RESULTS": "Avvisi (IUV)",
       "DEBT_TYPES": "Tipi dovuti",
       "DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
-      "DEBT_TYPES_CREATED": "Tipi dovuti impostati",
+      "DEBT_TYPES_DASHBOARD": "Tipi dovuti impostati",
       "DETAIL": "Dettagli",
       "DETAIL_FLOWS": "Dettaglio flusso",
       "EXPORT": "Export",
@@ -632,33 +638,6 @@
   "debtPositionsImportThankYouPage": {
     "description": "Troverai il flusso caricato nella sezione Flussi importati"
   },
-  "debtTypeDetail": {
-    "description": "Ecco i dettagli del Tipo dovuto",
-    "debtMainConfiguration": {
-      "title": "Configurazione generale",
-      "description": "Definizione del Tipo dovuto"
-    },
-    "debtConfiguration": {
-      "externalPaymentUrl": "URL pagamento esterno",
-      "xsdAttachment": "Allegato XSD"
-    },
-    "accounting": {
-      "description": "Parametri per la gestione delle entrate."
-    },
-    "messages": {
-      "description": "Notifiche digitale ai cittadini.",
-      "IOApp": "App IO",
-      "sendMessage": "Invia messaggio",
-      "APIKey": "API Key"
-    },
-    "enabledOperators": {
-      "title": "Abilitazione agli operatori",
-      "description": "Operatori abilitati a questo Tipo Dovuto.",
-      "allOperatorsSelected": "Tutti gli operatori",
-      "selectedOperators": "Operatori selezionati",
-      "noSelectedOperators": "Senza operatori associati"
-    }
-  },
   "debtTypeCatalogDetail": {
     "IOAppMessageTemplate": "Template Messaggio su app IO",
     "additionalSettings": {
@@ -772,7 +751,40 @@
     "description": "La trovi nella sezione Catalogo Tipi dovuti, dove puoi modificarlo in qualsiasi momento.",
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
+  "debtTypeDetail": {
+    "description": "Ecco i dettagli del Tipo dovuto",
+    "debtMainConfiguration": {
+      "title": "Configurazione generale",
+      "description": "Definizione del Tipo dovuto"
+    },
+    "debtConfiguration": {
+      "externalPaymentUrl": "URL pagamento esterno",
+      "xsdAttachment": "Allegato XSD"
+    },
+    "accounting": {
+      "description": "Parametri per la gestione delle entrate."
+    },
+    "messages": {
+      "description": "Notifiche digitale ai cittadini.",
+      "IOApp": "App IO",
+      "sendMessage": "Invia messaggio",
+      "APIKey": "API Key"
+    },
+    "enabledOperators": {
+      "title": "Abilitazione agli operatori",
+      "description": "Operatori abilitati a questo Tipo Dovuto.",
+      "allOperatorsSelected": "Tutti gli operatori",
+      "selectedOperators": "Operatori selezionati",
+      "noSelectedOperators": "Senza operatori associati"
+    }
+  },
   "debtTypeOrgCreate": {
+    "edit": {
+      "success": {
+        "title": "Il Tipo dovuto ‘{{paymentObject}}’ è stato modificato!",
+        "description": "La trovi nella sezione I tuoi Tipi Dovuti."
+      }
+    },
     "title": "Imposta nuovo Tipo dovuto",
     "description": "Compila i campi e configura un nuovo Tipo dovuto per il tuo ente.",
     "success": {
@@ -957,6 +969,8 @@
   },
   "errors": {
     "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
+    "fetchOperators": "Impossibile caricare la lista di tutti gli operatori. Riprova più tardi.",
+    "fetchOperatorsEnabled": "Impossibile caricare la lista degli operatori abilitati. Riprova più tardi.",
     "generic": "Si è verificato un errore. Riprova più tardi."
   },
   "exportFlow": {
@@ -1020,6 +1034,27 @@
     "searchRegulationId": "ID Regolamento",
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"
+  },
+  "taxonomyPage": {
+    "APIUpdate": "Aggiornamento API",
+    "APIUpdateText": "Aggiorna per verificare la presenza di nuove API di PagoPA.",
+    "APIUpdateCTA": "Aggiorna",
+    "APIUpdateOK": "Aggiornamento pianificato. Abbiamo ricevuto la richiesta è stata pianificata correttamente, sarà eseguita a breve dal sistema.",
+    "APIUpdateKO": "Aggiornamento non riuscito. Il sistema non è stato in grado di pianificare l’aggiornamento.",
+    "taxonomyInfo": "Informazioni sulla tassonomia",
+    "dateInfo": "Validità",
+    "fields": {
+      "organizationType": "Codice tipo organizzazione",
+      "organizationTypeDescription": "Tipo organizzazione",
+      "macroAreaCode": "Codice macroarea",
+      "macroAreaName": "Macroarea",
+      "serviceTypeCode": "Codice tipo servizio",
+      "collectionReason": "Motivo riscossione",
+      "startDateValidity": "Data inizio validità",
+      "endDateOfValidity": "Data fine validità",
+      "serviceType": "Tipo Servizio",
+      "serviceTypeDescription": "Descrizione tipo servizio"
+    }
   },
   "telematicReceiptDetail": {
     "title": "Dettaglio Ricevuta Telematica"
