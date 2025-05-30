@@ -1,6 +1,53 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 
+/**
+ * Centralized DataGrid Pagination Hook with URL Sync
+ *
+ * This hook centralizes the pagination management with URL synchronization
+ * and includes intelligent logic to handle invalid pages.
+ *
+ * FEATURES:
+ * - URL synchronization with internal state
+ * - Intelligent page validation (redirects to last available page)
+ * - Intelligent size change handling (maintains approximate position)
+ * - Support for tab changes with pagination reset
+ *
+ * USAGE THROUGH CUSTOMDATAGRID:
+ *
+ * ```typescript
+ * // In the component
+ * const { data, isLoading } = useApiCall(organizationId, appliedFilters);
+ *
+ * // In the CustomDataGrid with smartPagination
+ * <CustomDataGrid
+ *   rows={data?.content || []}
+ *   columns={columns}
+ *   loading={isLoading}
+ *   smartPagination={{
+ *     initialPage: 0,
+ *     initialSize: 10,
+ *     sizeOptions: [5, 10, 20],
+ *     backendData: {
+ *       totalElements: data?.totalElements,
+ *       totalPages: data?.totalPages,
+ *       number: data?.number,
+ *       size: data?.size
+ *     },
+ *     onPaginationChange: handlePaginationChange // Optional callback
+ *   }}
+ * />
+ * ```
+ *
+ * AUTOMATIC VALIDATION:
+ * - If the user manually enters page=110 but there are only 55 total pages
+ * - The system automatically redirects to page 55 (last available)
+ * - This prevents showing empty or error pages
+ *
+ * NOTE: This hook is used internally by CustomDataGrid.
+ * For normal use, use the smartPagination interface of CustomDataGrid.
+ */
+
 type PaginationData = {
   number: number; // Current page (0-based)
   size: number;
@@ -68,10 +115,12 @@ export const useDataGridPaginationWithUrl = ({
     const validSize =
       isNaN(sizeFromUrl) || sizeFromUrl < 1 ? initialSize : sizeFromUrl;
 
-    return {
+    const result = {
       page: validPage - 1, // Convert to 0-based for internal state
       size: validSize
     };
+
+    return result;
   }, [searchParams, initialPage, initialSize]);
 
   const [pagination, setPagination] =
@@ -183,13 +232,34 @@ export const useDataGridPaginationWithUrl = ({
         setInternalTotalElements(data.totalElements);
       }
 
-      // Handle edge case: current page > total available pages
+      // Improvement: Intelligent logic for invalid pages
       const currentUrlPage = parseInt(searchParams.get('page') || '1');
-      if (data.totalPages !== undefined && currentUrlPage > data.totalPages) {
+
+      if (
+        data.totalPages !== undefined &&
+        currentUrlPage > data.totalPages &&
+        data.totalPages > 0
+      ) {
         const params = new URLSearchParams(searchParams);
-        params.set('page', '1');
+        // Improvement: Go to the last available page instead of always to page 1
+        params.set('page', String(data.totalPages));
         params.set('size', String(data.size));
+
         setSearchParams(params, { replace: true });
+
+        // Update the internal state to be consistent
+        const newPagination = {
+          page: data.totalPages - 1, // Convert to 0-based
+          size: data.size
+        };
+
+        setPagination(newPagination);
+
+        // Notify the pagination change if there is a callback
+        if (onPaginationChange) {
+          onPaginationChange(newPagination);
+        }
+
         return;
       }
 
@@ -212,12 +282,25 @@ export const useDataGridPaginationWithUrl = ({
 
       // Synchronize URL with backend data
       const params = new URLSearchParams(searchParams);
-      // Preserve all existing parameters
-      params.set('page', String(data.number + 1)); // Convert to 1-based for URL
-      params.set('size', String(data.size));
-      setSearchParams(params, { replace: true });
+      const urlShouldUpdate =
+        params.get('page') !== String(data.number + 1) ||
+        params.get('size') !== String(data.size);
+
+      if (urlShouldUpdate) {
+        // Preserve all existing parameters
+        params.set('page', String(data.number + 1)); // Convert to 1-based for URL
+        params.set('size', String(data.size));
+
+        setSearchParams(params, { replace: true });
+      }
     },
-    [searchParams, setSearchParams, pagination]
+    [
+      searchParams,
+      setSearchParams,
+      onPaginationChange,
+      pagination,
+      internalTotalElements
+    ]
   );
 
   // Setter for total elements

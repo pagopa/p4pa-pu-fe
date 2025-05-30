@@ -1,12 +1,15 @@
 import { GridSortModel } from '@mui/x-data-grid';
 import { useState, useCallback } from 'react';
 import { ExportFileTypeEnum } from '../../generated/apiClient';
-import { ExportFileFilters, PaginationParams } from '../models/Filters';
+import { ExportFileFilters } from '../models/Filters';
+import { usePaginationState } from './usePaginationState';
 
 type UseExportFlowFiltersProps = {
   initialFilters?: Partial<ExportFileFilters>;
   exportFileType: ExportFileTypeEnum;
   onFiltersChange?: (filters: ExportFileFilters) => void;
+  initialPage?: number;
+  initialSize?: number;
 };
 
 const DEFAULT_PAGE_SIZE = 10;
@@ -25,27 +28,48 @@ const getDefaultDateRange = () => {
 export const useExportFlowFilters = ({
   exportFileType,
   initialFilters,
-  onFiltersChange
+  onFiltersChange,
+  initialPage = 0,
+  initialSize = DEFAULT_PAGE_SIZE
 }: UseExportFlowFiltersProps) => {
   const defaultDateRange = getDefaultDateRange();
 
-  const [appliedFilters, setAppliedFilters] = useState<ExportFileFilters>(
-    () => ({
-      exportFileType,
-      size: initialFilters?.size || DEFAULT_PAGE_SIZE,
-      page: initialFilters?.page || 0,
-      creationDateFrom:
-        initialFilters?.creationDateFrom || defaultDateRange.creationDateFrom,
-      creationDateTo:
-        initialFilters?.creationDateTo || defaultDateRange.creationDateTo,
-      ...initialFilters
-    })
-  );
+  const {
+    paginationParams,
+    handlePaginationChange: updatePaginationState,
+    setPaginationParams
+  } = usePaginationState({
+    initialPage: initialFilters?.page ?? initialPage,
+    initialSize: initialFilters?.size ?? initialSize
+  });
+
+  const [appliedFilters, setAppliedFilters] = useState<
+    Omit<ExportFileFilters, 'page' | 'size'>
+  >(() => ({
+    exportFileType,
+    creationDateFrom:
+      initialFilters?.creationDateFrom || defaultDateRange.creationDateFrom,
+    creationDateTo:
+      initialFilters?.creationDateTo || defaultDateRange.creationDateTo,
+    fileName: initialFilters?.fileName,
+    status: initialFilters?.status
+  }));
 
   const [draftFilters, setDraftFilters] =
-    useState<ExportFileFilters>(appliedFilters);
-
+    useState<Omit<ExportFileFilters, 'page' | 'size'>>(appliedFilters);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
+
+  const getCompleteFilters = useCallback(
+    (): ExportFileFilters => ({
+      ...appliedFilters,
+      page: paginationParams.page,
+      size: paginationParams.size,
+      ...(sortModel.length > 0 && {
+        sort: [`${sortModel[0].field},${sortModel[0].sort}`]
+      })
+    }),
+    [appliedFilters, paginationParams, sortModel]
+  );
 
   const hasActiveFilters = useCallback(() => {
     const isFileNameChanged =
@@ -74,7 +98,7 @@ export const useExportFlowFilters = ({
   ]);
 
   const updateDraftFilters = useCallback(
-    (updates: Partial<ExportFileFilters>) => {
+    (updates: Partial<Omit<ExportFileFilters, 'page' | 'size'>>) => {
       setDraftFilters((prev) => ({
         ...prev,
         ...updates
@@ -85,25 +109,24 @@ export const useExportFlowFilters = ({
 
   const applyFilters = useCallback(() => {
     const filtersToApply = {
-      ...draftFilters,
-      page: 0
+      ...draftFilters
     };
     setAppliedFilters(filtersToApply);
-    onFiltersChange?.(filtersToApply);
-  }, [draftFilters, onFiltersChange]);
 
-  const updatePagination = useCallback(
-    (paginationUpdate: PaginationParams) => {
-      const newFilters = {
-        ...appliedFilters,
-        ...paginationUpdate
-      };
-      setAppliedFilters(newFilters);
-      setDraftFilters(newFilters);
-      onFiltersChange?.(newFilters);
-    },
-    [appliedFilters, onFiltersChange]
-  );
+    setPaginationParams((prev) => ({ ...prev, page: 0 }));
+
+    const completeFilters = {
+      ...filtersToApply,
+      page: 0,
+      size: paginationParams.size
+    };
+    onFiltersChange?.(completeFilters);
+  }, [
+    draftFilters,
+    paginationParams.size,
+    setPaginationParams,
+    onFiltersChange
+  ]);
 
   const handleDateFromChange = useCallback(
     (date: Date | null) => {
@@ -131,32 +154,48 @@ export const useExportFlowFilters = ({
     (newModel: GridSortModel) => {
       setSortModel(newModel);
 
-      const [firstSort] = newModel;
-      const sortValue = firstSort && `${firstSort.field},${firstSort.sort}`;
+      setPaginationParams((prev) => ({ ...prev, page: 0 }));
 
-      const newFilters = {
-        ...appliedFilters,
+      const completeFilters = getCompleteFilters();
+      onFiltersChange?.({
+        ...completeFilters,
         page: 0,
-        sort: sortValue ? [sortValue] : undefined
-      };
-
-      setAppliedFilters(newFilters);
-      setDraftFilters(newFilters);
-      onFiltersChange?.(newFilters);
+        ...(newModel.length > 0 && {
+          sort: [`${newModel[0].field},${newModel[0].sort}`]
+        })
+      });
     },
-    [appliedFilters, onFiltersChange]
+    [getCompleteFilters, setPaginationParams, onFiltersChange]
+  );
+
+  const handlePaginationChange = useCallback(
+    (pagination: { page: number; size: number }) => {
+      updatePaginationState(pagination);
+
+      const completeFilters = {
+        ...appliedFilters,
+        ...pagination,
+        ...(sortModel.length > 0 && {
+          sort: [`${sortModel[0].field},${sortModel[0].sort}`]
+        })
+      };
+      onFiltersChange?.(completeFilters);
+    },
+    [appliedFilters, sortModel, onFiltersChange, updatePaginationState]
   );
 
   return {
-    appliedFilters,
+    appliedFilters: getCompleteFilters(),
     draftFilters,
     updateDraftFilters,
     applyFilters,
-    updatePagination,
     handleDateFromChange,
     handleDateToChange,
     hasActiveFilters,
     sortModel,
-    handleSortModelChange
+    handleSortModelChange,
+    paginationParams,
+    handlePaginationChange,
+    getCompleteFilters
   };
 };

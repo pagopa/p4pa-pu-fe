@@ -19,22 +19,14 @@ import { moneyFormat } from '../../../utils/formatters';
 
 export type DataGridProps = {
   data?: PagedInstallmentView;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (page: number) => void;
   onSortChange: (model: Array<string>) => void;
-  pagination: {
-    currentPage: number;
-    page: number;
-    size: number;
-  };
+  onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
 export const IUVDataGrid = ({
   data,
-  onPageChange,
-  onPageSizeChange,
   onSortChange,
-  pagination
+  onPaginationChange
 }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -136,7 +128,6 @@ export const IUVDataGrid = ({
       const sort = model.map((item) =>
         item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
       );
-      onPageChange(1);
       onSortChange(sort);
     }
   };
@@ -149,13 +140,17 @@ export const IUVDataGrid = ({
       disableColumnMenu
       disableColumnResize
       onSortModelChange={onSort}
-      customPagination={{
-        defaultPageOption: pagination.size,
-        sizePageOptions: [5, 10, 20],
-        totalPages: data?.totalPages,
-        currentPage: pagination.currentPage,
-        onPageChange,
-        onPageSizeChange
+      smartPagination={{
+        initialPage: 0,
+        initialSize: 10,
+        sizeOptions: [5, 10, 20],
+        backendData: {
+          totalElements: data?.totalElements,
+          totalPages: data?.totalPages,
+          number: data?.number,
+          size: data?.size
+        },
+        onPaginationChange: onPaginationChange
       }}
     />
   );

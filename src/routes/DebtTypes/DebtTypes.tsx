@@ -2,7 +2,7 @@ import { Add, Search } from '@mui/icons-material';
 import { Box, Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
@@ -10,7 +10,6 @@ import FilterContainer, {
 import DebtTypesDataGrid from './components/DebtTypesDataGrid';
 import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
 import useDebtTypesFilters from '../../hooks/useDebtTypesFilters';
-import { useDataGridPaginationWithUrl } from '../../hooks/useDataGridPaginationWithUrl';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { PageRoutes } from '../../App';
@@ -29,28 +28,21 @@ export const DebtTypes = () => {
 
   const [filterValues, setFilterValues] = useState<DebtTypesFilters>({});
   const [draftFilters, setDraftFilters] = useState<DebtTypesFilters>({});
+  const [paginationParams, setPaginationParams] = useState({
+    page: 0,
+    size: 10
+  });
 
   const { handleSortModelChange, sortModel } = useDebtTypesFilters({
     initialFilters: {
-      page: 0,
-      size: 10
+      page: paginationParams.page,
+      size: paginationParams.size
     }
   });
 
-  const {
-    pagination,
-    handlePageChange,
-    handlePageSizeChange,
-    syncWithBackendData
-  } = useDataGridPaginationWithUrl({
-    initialPage: 0,
-    initialSize: 10,
-    totalElements: 0
-  });
-
   const combinedFilters = {
-    page: pagination.page,
-    size: pagination.size,
+    page: paginationParams.page,
+    size: paginationParams.size,
     ...(filterValues.description && { description: filterValues.description })
   };
 
@@ -59,11 +51,17 @@ export const DebtTypes = () => {
     combinedFilters
   );
 
-  useEffect(() => {
-    if (data) {
-      syncWithBackendData(data);
-    }
-  }, [data, syncWithBackendData]);
+  const handlePaginationChange = (pagination: {
+    page: number;
+    size: number;
+  }) => {
+    setPaginationParams(pagination);
+  };
+
+  const handleFiltersApplied = () => {
+    setFilterValues(draftFilters);
+    setPaginationParams((prev) => ({ ...prev, page: 0 }));
+  };
 
   const updateDraftFilters = useCallback(
     (updates: Partial<DebtTypesFilters>) => {
@@ -73,9 +71,8 @@ export const DebtTypes = () => {
   );
 
   const applyFilters = useCallback(() => {
-    setFilterValues(draftFilters);
-    handlePageChange(1);
-  }, [draftFilters, handlePageChange]);
+    handleFiltersApplied();
+  }, [draftFilters]);
 
   const isSearchEnabled = draftFilters.description !== filterValues.description;
 
@@ -136,15 +133,10 @@ export const DebtTypes = () => {
               number: 0
             }
           }
-          onPageChange={handlePageChange}
-          onPageSizeChange={handlePageSizeChange}
           sortModel={sortModel}
           onSortChange={handleSortModelChange}
-          pagination={{
-            currentPage: pagination.page + 1,
-            totalPages: data?.totalPages || 0,
-            size: pagination.size
-          }}
+          onFiltersApplied={handleFiltersApplied}
+          onPaginationChange={handlePaginationChange}
         />
       </Box>
     </>

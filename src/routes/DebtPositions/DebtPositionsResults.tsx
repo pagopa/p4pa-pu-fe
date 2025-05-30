@@ -140,10 +140,8 @@ export const DebtPositionResults = () => {
                 debtPosition.query.data as PagedInstallmentView &
                   PagedDebtPositionView
               }
-              onPageChange={debtPosition.handlePageChange}
-              onPageSizeChange={debtPosition.handlePageSizeChange}
               onSortChange={debtPosition.setSort}
-              pagination={debtPosition.pagination}
+              onPaginationChange={debtPosition.handlePaginationChange}
             />
           )}
         </Grid>

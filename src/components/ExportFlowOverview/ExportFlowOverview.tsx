@@ -5,7 +5,6 @@ import IconButton from '@mui/material/IconButton';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useEffect } from 'react';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
@@ -20,7 +19,6 @@ import {
 } from '../../../generated/apiClient';
 import { getExportFile, getExportFiles } from '../../api/exportFiles';
 import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
-import { useDataGridPaginationWithUrl } from '../../hooks/useDataGridPaginationWithUrl';
 import { downloadBlob } from '../../utils/download';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
 import { formatDateTime } from '../../utils/formatters';
@@ -49,71 +47,22 @@ const ExportFlowOverview = ({
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
   const {
-    appliedFilters: baseFilters,
+    appliedFilters,
     draftFilters,
     updateDraftFilters,
-    applyFilters: baseApplyFilters,
+    applyFilters,
     handleDateFromChange,
     handleDateToChange,
     hasActiveFilters,
     sortModel,
-    handleSortModelChange
+    handleSortModelChange,
+    handlePaginationChange
   } = useExportFlowFilters({
     exportFileType: exportFileTypes
   });
 
-  const { data: initialData } = getExportFiles(organizationId, baseFilters);
-
-  const urlPagination = useDataGridPaginationWithUrl({
-    initialPage: 0,
-    initialSize: 10,
-    totalElements: initialData?.totalElements || 0
-  });
-
-  const appliedFilters = {
-    ...baseFilters,
-    page: urlPagination.pagination.page,
-    size: urlPagination.pagination.size
-  };
-
-  const updatePagination = ({ page, size }: { page: number; size: number }) => {
-    const currentPage = urlPagination.pagination.page;
-    const currentSize = urlPagination.pagination.size;
-
-    if (size !== currentSize) {
-      urlPagination.handlePageSizeChange(size);
-    } else if (page !== currentPage) {
-      urlPagination.handlePageChange(page + 1); // Convert to 1-based
-    }
-  };
-
-  const applyFilters = () => {
-    // Reset pagination when applying filters
-    urlPagination.handlePageChange(1);
-    baseApplyFilters();
-  };
-
-  // Second call with applied filters (including pagination)
   const { data, isLoading } = getExportFiles(organizationId, appliedFilters);
   const isEmptyData = !data?.content || data.content.length === 0;
-
-  useEffect(() => {
-    if (data) {
-      const currentPage = urlPagination.pagination.page;
-      const currentSize = urlPagination.pagination.size;
-      const backendPage = data.number || 0;
-      const backendSize = data.size || 10;
-
-      if (currentPage !== backendPage || currentSize !== backendSize) {
-        urlPagination.syncWithBackendData({
-          number: backendPage,
-          size: backendSize,
-          totalElements: data.totalElements,
-          totalPages: data.totalPages
-        });
-      }
-    }
-  }, [data?.number, data?.size, data?.totalElements, data?.totalPages]);
 
   const getFile = getExportFile(organizationId);
 
@@ -220,94 +169,87 @@ const ExportFlowOverview = ({
             <Typography variant="h4">{sectionTitle}</Typography>
           </Box>
         )}
-        {isEmptyData ? (
-          <EmptyDataGrid
-            title={t('commons.noFlows')}
-            action={{
-              label: t('commons.exportFlows'),
-              onClick: handleExportFlow
+
+        <FilterContainer
+          items={[
+            {
+              type: COMPONENT_TYPE.textField,
+              label: t('commons.searchName'),
+              adornment: <Search />,
+              gridWidth: 6,
+              value: draftFilters.fileName || '',
+              onChange: (e) => updateDraftFilters({ fileName: e.target.value })
+            },
+            {
+              type: COMPONENT_TYPE.dateRange,
+              label: 'dateRange',
+              gridWidth: 5,
+              from: {
+                label: t('commons.exportFrom'),
+                errorMessage: t('dates.validations.from'),
+                value: draftFilters.creationDateFrom
+                  ? new Date(draftFilters.creationDateFrom)
+                  : null,
+                onChange: handleDateFromChange
+              },
+              to: {
+                label: t('dates.to'),
+                errorMessage: t('dates.validations.to'),
+                value: draftFilters.creationDateTo
+                  ? new Date(draftFilters.creationDateTo)
+                  : null,
+                onChange: handleDateToChange
+              }
+            },
+            {
+              type: COMPONENT_TYPE.button,
+              label: t('commons.filters.filterResults'),
+              gridWidth: 1,
+              onClick: applyFilters,
+              disabled: !hasActiveFilters()
+            }
+          ]}
+        />
+
+        <Box
+          sx={{
+            bgcolor: theme.palette.grey[200],
+            padding: 2
+          }}
+        >
+          {isEmptyData && data && data.totalElements === 0 && (
+            <EmptyDataGrid
+              title={t('commons.noFlows')}
+              action={{
+                label: t('commons.exportFlows'),
+                onClick: handleExportFlow
+              }}
+            />
+          )}
+
+          <CustomDataGrid
+            rows={data?.content || []}
+            columns={columns}
+            getRowId={(row) => row.exportFileId}
+            disableColumnMenu
+            disableColumnResize
+            sortModel={sortModel}
+            onSortModelChange={handleSortModelChange}
+            loading={isLoading}
+            smartPagination={{
+              initialPage: 0,
+              initialSize: 10,
+              sizeOptions: [5, 10, 20],
+              backendData: {
+                totalElements: data?.totalElements || 0,
+                totalPages: data?.totalPages || 0,
+                number: data?.number || 0,
+                size: data?.size || 10
+              },
+              onPaginationChange: handlePaginationChange
             }}
           />
-        ) : (
-          <>
-            <FilterContainer
-              items={[
-                {
-                  type: COMPONENT_TYPE.textField,
-                  label: t('commons.searchName'),
-                  adornment: <Search />,
-                  gridWidth: 6,
-                  value: draftFilters.fileName || '',
-                  onChange: (e) =>
-                    updateDraftFilters({ fileName: e.target.value })
-                },
-                {
-                  type: COMPONENT_TYPE.dateRange,
-                  label: 'dateRange',
-                  gridWidth: 5,
-                  from: {
-                    label: t('commons.exportFrom'),
-                    errorMessage: t('dates.validations.from'),
-                    value: draftFilters.creationDateFrom
-                      ? new Date(draftFilters.creationDateFrom)
-                      : null,
-                    onChange: handleDateFromChange
-                  },
-                  to: {
-                    label: t('dates.to'),
-                    errorMessage: t('dates.validations.to'),
-                    value: draftFilters.creationDateTo
-                      ? new Date(draftFilters.creationDateTo)
-                      : null,
-                    onChange: handleDateToChange
-                  }
-                },
-                {
-                  type: COMPONENT_TYPE.button,
-                  label: t('commons.filters.filterResults'),
-                  gridWidth: 1,
-                  onClick: applyFilters,
-                  disabled: !hasActiveFilters()
-                }
-              ]}
-            />
-            <Box
-              sx={{
-                bgcolor: theme.palette.grey[200],
-                padding: 2
-              }}
-            >
-              <CustomDataGrid
-                rows={data?.content || []}
-                columns={columns}
-                getRowId={(row) => row.exportFileId}
-                disableColumnMenu
-                disableColumnResize
-                sortModel={sortModel}
-                onSortModelChange={handleSortModelChange}
-                loading={isLoading}
-                customPagination={{
-                  totalPages: data?.totalPages || 1,
-                  defaultPageOption: appliedFilters.size,
-                  sizePageOptions: [5, 10, 15, 20],
-                  onPageChange: (page) => {
-                    return updatePagination({
-                      page: page - 1,
-                      size: appliedFilters.size
-                    });
-                  },
-                  onPageSizeChange: (size) => {
-                    return updatePagination({
-                      size,
-                      page: appliedFilters.page
-                    });
-                  },
-                  currentPage: urlPagination.pagination.currentPage
-                }}
-              />
-            </Box>
-          </>
-        )}
+        </Box>
       </Stack>
     </>
   );

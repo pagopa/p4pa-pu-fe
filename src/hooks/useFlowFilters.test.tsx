@@ -67,8 +67,7 @@ describe('useFlowFilters', () => {
     act(() => {
       result.current.updateDraftFilters({
         fileName: 'test.pdf',
-        status: IngestionFlowFileStatus.COMPLETED,
-        page: 2
+        status: IngestionFlowFileStatus.COMPLETED
       });
     });
 
@@ -78,7 +77,8 @@ describe('useFlowFilters', () => {
 
     expect(result.current.appliedFilters).toEqual({
       ...result.current.draftFilters,
-      page: 0
+      page: 0,
+      size: 10
     });
   });
 
@@ -95,8 +95,7 @@ describe('useFlowFilters', () => {
 
     expect(result.current.appliedFilters.page).toBe(2);
     expect(result.current.appliedFilters.size).toBe(20);
-    expect(result.current.draftFilters.page).toBe(2);
-    expect(result.current.draftFilters.size).toBe(20);
+    // draftFilters non contiene più page e size, sono in paginationParams
   });
 
   it('should handle null dates correctly', () => {

@@ -56,10 +56,8 @@ const TelematicReceiptSearchResults = () => {
         >
           <SearchResultsDataGrid
             data={telematicReceipt.query.data as PagedReceiptView}
-            onPageChange={telematicReceipt.handlePageChange}
-            onPageSizeChange={telematicReceipt.handlePageSizeChange}
             onSortChange={telematicReceipt.setSort}
-            pagination={telematicReceipt.pagination}
+            onPaginationChange={telematicReceipt.handlePaginationChange}
           />
         </Grid>
       </Stack>

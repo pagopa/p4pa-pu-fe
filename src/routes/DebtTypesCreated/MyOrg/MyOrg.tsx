@@ -11,7 +11,6 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import useDebtTypesCreatedFilters, {
   FilterParams
 } from '../../../hooks/useDebtTypesCreatedFilters';
-import { useDataGridPaginationWithUrl } from '../../../hooks/useDataGridPaginationWithUrl';
 import { useDebtPositionTypeOrgSearch } from '../../../api/debtTypesCreated';
 import { DebtPositionTypeOrgWithCount } from '../../../../generated/data-contracts';
 import { useStore } from '../../../store/GlobalStore';
@@ -40,24 +39,13 @@ export const MyOrg = ({
 
   const { mutate, data } = useDebtPositionTypeOrgSearch();
 
-  const {
-    pagination,
-    handlePageChange,
-    handlePageSizeChange,
-    syncWithBackendData
-  } = useDataGridPaginationWithUrl({
-    initialPage: 0,
-    initialSize: 10,
-    totalElements: data?.totalElements || 0
-  });
-
   const { updateDraftFilters, applyFilters, sortModel, handleSortModelChange } =
     useDebtTypesCreatedFilters({
       initialFilters: {
         code: codeFilter,
         description: descriptionFilter,
-        page: pagination.page,
-        size: pagination.size
+        page: 0,
+        size: 10
       }
     });
 
@@ -68,27 +56,22 @@ export const MyOrg = ({
     });
   }, [codeFilter, descriptionFilter, updateDraftFilters]);
 
-  // Synchronize pagination with backend when new data arrives
   useEffect(() => {
-    if (
-      data &&
-      typeof data.number === 'number' &&
-      typeof data.size === 'number'
-    ) {
-      const currentPage = pagination.page;
-      const currentSize = pagination.size;
-      const backendPage = data.number;
-      const backendSize = data.size;
+    const filters: FilterParams = {
+      page: 0,
+      size: 10
+    };
 
-      // Only sync if backend data is actually different from current state
-      if (currentPage !== backendPage || currentSize !== backendSize) {
-        syncWithBackendData(data);
-      }
-    }
-  }, [data?.number, data?.size, data?.totalElements, data?.totalPages]);
+    if (codeFilter) filters.code = codeFilter;
+    if (descriptionFilter) filters.description = descriptionFilter;
 
-  // Make API call when filters or pagination change
-  useEffect(() => {
+    mutate({ organizationId, filters });
+  }, [organizationId, codeFilter, descriptionFilter, mutate]);
+
+  const handlePaginationChange = (pagination: {
+    page: number;
+    size: number;
+  }) => {
     const filters: FilterParams = {
       page: pagination.page,
       size: pagination.size
@@ -98,7 +81,7 @@ export const MyOrg = ({
     if (descriptionFilter) filters.description = descriptionFilter;
 
     mutate({ organizationId, filters });
-  }, [organizationId, pagination.page, pagination.size, mutate]);
+  };
 
   useEffect(() => {
     const performSearch = () => {
@@ -164,15 +147,6 @@ export const MyOrg = ({
     );
   };
 
-  const handlePaginationChange = (page: number, size: number) => {
-    // Use centralized hook to manage pagination
-    if (size !== pagination.size) {
-      handlePageSizeChange(size);
-    } else {
-      handlePageChange(page);
-    }
-  };
-
   const handleSortChange = (newSortModel: GridSortModel) => {
     const filters = handleSortModelChange(newSortModel);
     mutate({ organizationId, filters });
@@ -190,15 +164,17 @@ export const MyOrg = ({
         disableColumnResize
         sortModel={sortModel}
         onSortModelChange={handleSortChange}
-        customPagination={{
-          totalPages: data?.totalPages || 0,
-          defaultPageOption: pagination.size,
-          sizePageOptions: [5, 10, 15, 20],
-          onPageChange: (page) => handlePaginationChange(page, pagination.size),
-          onPageSizeChange: (size) => {
-            handlePageSizeChange(size);
+        smartPagination={{
+          initialPage: 0,
+          initialSize: 10,
+          sizeOptions: [5, 10, 20],
+          backendData: {
+            totalElements: data?.totalElements,
+            totalPages: data?.totalPages,
+            number: data?.number,
+            size: data?.size
           },
-          currentPage: pagination.page + 1
+          onPaginationChange: handlePaginationChange
         }}
       />
     </Box>

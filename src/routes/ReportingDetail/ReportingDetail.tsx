@@ -19,7 +19,6 @@ import {
   moneyFormat
 } from '../../utils/formatters';
 import { useReportingDetailFilters } from '../../hooks/useReportingDetailFilters';
-import { useDataGridPaginationWithUrl } from '../../hooks/useDataGridPaginationWithUrl';
 import { PaymentsReporting } from '../../../generated/apiClient';
 import { Variant } from '@mui/material/styles/createTypography';
 
@@ -27,8 +26,7 @@ export const ReportingDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const { id } = useParams<{ id: string }>();
-  const iuf = id ?? '';
-
+  const iuf = id;
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
@@ -39,58 +37,24 @@ export const ReportingDetail = () => {
     draftFilters,
     updateDraftFilters,
     applyFilters,
-    updatePagination,
-    handleDateFromChange,
-    handleDateToChange,
     hasActiveFilters,
     sortModel,
-    handleSortModelChange
-  } = useReportingDetailFilters();
-
-  const cleanedFilters = useMemo(() => {
-    const cleaned = { ...appliedFilters };
-    if (cleaned.iuv === '') {
-      cleaned.iuv = undefined;
+    handleSortModelChange,
+    handleDateFromChange,
+    handleDateToChange
+  } = useReportingDetailFilters({
+    initialFilters: {
+      page: 0,
+      size: 10
     }
-    return cleaned;
-  }, [appliedFilters]);
+  });
 
   const { data, isLoading } = getPaymentsReportingRows(
     organizationId,
-    iuf,
-    cleanedFilters,
+    iuf || '',
+    appliedFilters,
     { enabled: !!organizationId && !!iuf }
   );
-
-  const urlPagination = useDataGridPaginationWithUrl({
-    initialPage: 0,
-    initialSize: 10,
-    totalElements: data?.totalElements || 0
-  });
-
-  const handlePageChangeSync = (page: number) => {
-    urlPagination.handlePageChange(page - 1); // DataGrid uses 1-based, hook uses 0-based
-  };
-
-  const handlePageSizeChangeSync = (size: number) => {
-    urlPagination.handlePageSizeChange(size);
-  };
-
-  useEffect(() => {
-    const newPage = urlPagination.pagination.page;
-    const newSize = urlPagination.pagination.size;
-
-    // Only if different from applied filters to avoid loop
-    if (newPage !== appliedFilters.page || newSize !== appliedFilters.size) {
-      updatePagination({ page: newPage, size: newSize });
-    }
-  }, [
-    urlPagination.pagination.page,
-    urlPagination.pagination.size,
-    appliedFilters.page,
-    appliedFilters.size,
-    updatePagination
-  ]);
 
   useEffect(() => {
     if (data?.content?.[0] && !detailItem) {
@@ -98,11 +62,9 @@ export const ReportingDetail = () => {
     }
   }, [data, detailItem]);
 
-  useEffect(() => {
-    if (data?.totalElements !== undefined) {
-      urlPagination.setTotalElements(data.totalElements);
-    }
-  }, [data?.totalElements, urlPagination]);
+  const handleFiltersApplied = () => {
+    applyFilters();
+  };
 
   const detailSections = useMemo(() => {
     const firstReportItem = detailItem;
@@ -110,7 +72,7 @@ export const ReportingDetail = () => {
     const summaryData = [
       {
         label: t('reportingDetail.reportingIdOrIUF'),
-        value: firstReportItem?.iuf || iuf
+        value: firstReportItem?.iuf || iuf || ''
       },
       {
         label: t('reportingDetail.regulationId'),
@@ -118,11 +80,11 @@ export const ReportingDetail = () => {
       },
       {
         label: t('reportingDetail.hourAndDate'),
-        value: formatDateTime(firstReportItem?.flowDateTime)
+        value: formatDateTime(firstReportItem?.flowDateTime) || ''
       },
       {
         label: t('reportingDetail.regulationDate'),
-        value: formatDate(firstReportItem?.regulationDate)
+        value: formatDate(firstReportItem?.regulationDate) || ''
       }
     ];
 
@@ -156,7 +118,7 @@ export const ReportingDetail = () => {
   return (
     <>
       <TitleComponent
-        title={iuf}
+        title={iuf || ''}
         callToAction={[
           {
             icon: <DownloadIcon fontSize="small" />,
@@ -212,7 +174,7 @@ export const ReportingDetail = () => {
                 type: COMPONENT_TYPE.button,
                 label: t('commons.filters.filterResults'),
                 gridWidth: 1,
-                onClick: applyFilters,
+                onClick: handleFiltersApplied,
                 disabled: !hasActiveFilters()
               }
             ]}
@@ -233,14 +195,17 @@ export const ReportingDetail = () => {
             sortModel={sortModel}
             onSortModelChange={handleSortModelChange}
             isLoading={isLoading}
-            customPagination={{
-              totalPages: data?.totalPages || 0,
-              totalElements: data?.totalElements || 0,
-              defaultPageOption: appliedFilters.size,
-              sizePageOptions: [5, 10, 15, 20],
-              onPageChange: handlePageChangeSync,
-              onPageSizeChange: handlePageSizeChangeSync,
-              currentPage: appliedFilters.page + 1
+            smartPagination={{
+              initialPage: 0,
+              initialSize: 10,
+              sizeOptions: [5, 10, 20],
+              backendData: {
+                totalElements: data?.totalElements,
+                totalPages: data?.totalPages,
+                number: data?.number,
+                size: data?.size
+              },
+              onFiltersApplied: handleFiltersApplied
             }}
           />
         </Grid>

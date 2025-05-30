@@ -1,11 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useStore } from '../store/GlobalStore';
 import { FilterFieldValue } from '../models/Filters';
-import { useDataGridPaginationWithUrl } from './useDataGridPaginationWithUrl';
 import {
   getPaymentsReporting,
   PaymentsReportingQuery
 } from '../api/getPaymentsReporting';
+import { usePaginationState } from './usePaginationState';
 
 export type ReportingFilters = {
   dateRange?: {
@@ -21,18 +21,22 @@ export type UseReportingSearchProps = {
   initialFilters: ReportingFilters;
   initialPage?: number;
   initialSize?: number;
-  totalElements?: number;
 };
 
 export const useReportingSearch = ({
   initialFilters,
   initialPage,
-  initialSize,
-  totalElements
+  initialSize
 }: UseReportingSearchProps) => {
   const [filterValues, setFilterValues] =
     useState<ReportingFilters>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
+
+  const { paginationParams, handlePaginationChange, setPaginationParams } =
+    usePaginationState({
+      initialPage,
+      initialSize
+    });
 
   const {
     state: { organizationId }
@@ -40,30 +44,9 @@ export const useReportingSearch = ({
 
   const query = getPaymentsReporting(organizationId);
 
-  const {
-    pagination,
-    handlePageChange,
-    handlePageSizeChange,
-    syncWithBackendData
-  } = useDataGridPaginationWithUrl({
-    initialPage: initialPage ?? 0,
-    initialSize: initialSize ?? 10,
-    onPaginationChange: () => {
-      query.mutate(filterToRequest());
-    },
-    totalElements
-  });
-
   useEffect(() => {
     query.mutate(filterToRequest());
-  }, [organizationId, pagination.page, pagination.size, sort]);
-
-  // Synchronize pagination with backend data when URL sync is enabled
-  useEffect(() => {
-    if (query.data) {
-      syncWithBackendData(query.data);
-    }
-  }, [query.data, syncWithBackendData]);
+  }, [organizationId, paginationParams.page, paginationParams.size, sort]);
 
   const filterToRequest = (): PaymentsReportingQuery => ({
     regulationDateFrom:
@@ -72,8 +55,8 @@ export const useReportingSearch = ({
     regulationDateTo:
       filterValues?.dateRange?.to?.toISOString().slice(0, 10) ??
       new Date().toISOString().slice(0, 10),
-    page: pagination.page,
-    size: pagination.size,
+    page: paginationParams.page,
+    size: paginationParams.size,
     ...(filterValues?.regulationUniqueIdentifier && {
       regulationUniqueIdentifier: filterValues.regulationUniqueIdentifier
     }),
@@ -90,7 +73,7 @@ export const useReportingSearch = ({
 
   const applyFilters = useCallback(() => {
     query.mutate(filterToRequest());
-    handlePageChange(1);
+    setPaginationParams((prev) => ({ ...prev, page: 0 }));
   }, [filterToRequest, query]);
 
   return {
@@ -98,12 +81,10 @@ export const useReportingSearch = ({
     query,
     filterValues,
     handleFilterChange,
-    handlePageChange,
-    handlePageSizeChange,
-    pagination,
+    handlePaginationChange,
+    paginationParams,
     setFilterValues,
-    setSort,
-    syncWithBackendData
+    setSort
   };
 };
 

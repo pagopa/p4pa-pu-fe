@@ -11,7 +11,6 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import useDebtTypesCreatedFilters, {
   FilterParams
 } from '../../../hooks/useDebtTypesCreatedFilters';
-import { useDataGridPaginationWithUrl } from '../../../hooks/useDataGridPaginationWithUrl';
 import { useManagedOrgsSearch } from '../../../api/debtTypesCreated';
 import { OrganizationWithDebtPositionTypeOrgCount } from '../../../../generated/data-contracts';
 import { useStore } from '../../../store/GlobalStore';
@@ -31,23 +30,12 @@ export const ManagedOrgs = ({ IPACodeFilter, onSearch }: ManagedOrgsProps) => {
 
   const { mutate, data } = useManagedOrgsSearch();
 
-  const {
-    pagination,
-    handlePageChange,
-    handlePageSizeChange,
-    syncWithBackendData
-  } = useDataGridPaginationWithUrl({
-    initialPage: 0,
-    initialSize: 10,
-    totalElements: data?.totalElements || 0
-  });
-
   const { updateDraftFilters, applyFilters, sortModel, handleSortModelChange } =
     useDebtTypesCreatedFilters({
       initialFilters: {
         organizationName: IPACodeFilter,
-        page: pagination.page,
-        size: pagination.size
+        page: 0,
+        size: 10
       }
     });
 
@@ -56,28 +44,21 @@ export const ManagedOrgs = ({ IPACodeFilter, onSearch }: ManagedOrgsProps) => {
       organizationName: IPACodeFilter
     });
   }, [IPACodeFilter, updateDraftFilters]);
-
-  // Synchronize pagination with backend when new data arrives
   useEffect(() => {
-    if (
-      data &&
-      typeof data.number === 'number' &&
-      typeof data.size === 'number'
-    ) {
-      const currentPage = pagination.page;
-      const currentSize = pagination.size;
-      const backendPage = data.number;
-      const backendSize = data.size;
+    const filters: FilterParams = {
+      page: 0,
+      size: 10
+    };
 
-      // Only sync if backend data is actually different from current state
-      if (currentPage !== backendPage || currentSize !== backendSize) {
-        syncWithBackendData(data);
-      }
-    }
-  }, [data?.number, data?.size, data?.totalElements, data?.totalPages]);
+    if (IPACodeFilter) filters.organizationName = IPACodeFilter;
 
-  // Make API call when pagination changes
-  useEffect(() => {
+    mutate({ organizationId, filters });
+  }, [organizationId, IPACodeFilter, mutate]);
+
+  const handlePaginationChange = (pagination: {
+    page: number;
+    size: number;
+  }) => {
     const filters: FilterParams = {
       page: pagination.page,
       size: pagination.size
@@ -86,7 +67,7 @@ export const ManagedOrgs = ({ IPACodeFilter, onSearch }: ManagedOrgsProps) => {
     if (IPACodeFilter) filters.organizationName = IPACodeFilter;
 
     mutate({ organizationId, filters });
-  }, [organizationId, pagination.page, pagination.size, mutate]);
+  };
 
   useEffect(() => {
     const performSearch = () => {
@@ -145,15 +126,6 @@ export const ManagedOrgs = ({ IPACodeFilter, onSearch }: ManagedOrgsProps) => {
     console.log('Organization:', row);
   };
 
-  const handlePaginationChange = (page: number, size: number) => {
-    // Use centralized hook to manage pagination
-    if (size !== pagination.size) {
-      handlePageSizeChange(size);
-    } else {
-      handlePageChange(page);
-    }
-  };
-
   const handleSortChange = (newSortModel: GridSortModel) => {
     const filters = handleSortModelChange(newSortModel);
     mutate({ organizationId, filters });
@@ -171,15 +143,17 @@ export const ManagedOrgs = ({ IPACodeFilter, onSearch }: ManagedOrgsProps) => {
         disableColumnResize
         sortModel={sortModel}
         onSortModelChange={handleSortChange}
-        customPagination={{
-          totalPages: data?.totalPages || 0,
-          defaultPageOption: pagination.size,
-          sizePageOptions: [5, 10, 15, 20],
-          onPageChange: (page) => handlePaginationChange(page, pagination.size),
-          onPageSizeChange: (size) => {
-            handlePageSizeChange(size);
+        smartPagination={{
+          initialPage: 0,
+          initialSize: 10,
+          sizeOptions: [5, 10, 20],
+          backendData: {
+            totalElements: data?.totalElements,
+            totalPages: data?.totalPages,
+            number: data?.number,
+            size: data?.size
           },
-          currentPage: pagination.page + 1
+          onPaginationChange: handlePaginationChange
         }}
       />
     </Box>

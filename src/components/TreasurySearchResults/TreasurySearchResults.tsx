@@ -83,10 +83,8 @@ const TreasurySearchResults = () => {
       >
         <SearchResultsDataGrid
           data={treasury.query.data as PagedTreasuryView}
-          onPageChange={treasury.handlePageChange}
-          onPageSizeChange={treasury.handlePageSizeChange}
           onSortChange={treasury.setSort}
-          pagination={treasury.pagination}
+          onPaginationChange={treasury.handlePaginationChange}
         />
       </Grid>
 

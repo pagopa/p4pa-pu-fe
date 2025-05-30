@@ -57,10 +57,8 @@ const ReportingSearchResults = () => {
         >
           <SearchResultsDataGrid
             data={reporting.query.data as PagedPaymentsReportingView}
-            onPageChange={reporting.handlePageChange}
-            onPageSizeChange={reporting.handlePageSizeChange}
             onSortChange={reporting.setSort}
-            pagination={reporting.pagination}
+            onPaginationChange={reporting.handlePaginationChange}
           />
         </Grid>
       </Stack>
