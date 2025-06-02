@@ -5,15 +5,22 @@ import { useDebtPositionTypeOrgSearch } from '../../../api/debtTypesCreated';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import { useNavigate, generatePath } from 'react-router-dom';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useNavigate: vi.fn(),
-  generatePath: vi.fn()
-}));
-
 vi.mock('../../../api/debtTypesCreated', () => ({
   useDebtPositionTypeOrgSearch: vi.fn()
 }));
+
+vi.mock('react-router-dom', async () => {
+  const actual = (await vi.importActual('react-router-dom')) as Record<
+    string,
+    unknown
+  >;
+  return {
+    ...actual,
+    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+    useNavigate: vi.fn(),
+    generatePath: vi.fn()
+  };
+});
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: () => ({
@@ -126,18 +133,18 @@ describe('MyOrg', () => {
       />
     );
 
-    expect(mutateMock).not.toHaveBeenCalledWith(
-      expect.objectContaining({
-        filters: expect.objectContaining({
-          code: 'new-code',
-          description: 'new-desc'
+    await waitFor(() => {
+      expect(mutateMock).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: expect.objectContaining({
+            code: 'new-code',
+            description: 'new-desc',
+            page: 0,
+            size: 10
+          }),
+          organizationId: expect.any(Number)
         })
-      })
-    );
-
-    const searchFn = onSearchMock.mock.calls[0][0];
-    searchFn();
-
-    expect(mutateMock).toHaveBeenCalled();
+      );
+    });
   });
 });

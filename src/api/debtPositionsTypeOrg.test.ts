@@ -61,7 +61,7 @@ describe('getDebtPositionTypeOrgById', () => {
   });
 
   it('should fetch and return a specific debt position type by ID', async () => {
-    const mockData = { id: 456, description: 'description' };
+    const mockData = { debtPositionTypeOrgId: 456, description: 'description' };
 
     (utils.apiClient.bff.getDebtPositionTypeOrgById as Mock).mockResolvedValue({
       data: mockData
@@ -78,7 +78,15 @@ describe('getDebtPositionTypeOrgById', () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(result.current.data).toEqual(mockData);
+    expect(result.current.data).toEqual({
+      optionsMap: [
+        {
+          label: 'description',
+          value: 456
+        }
+      ],
+      response: { debtPositionTypeOrgId: 456, description: 'description' }
+    });
     expect(utils.apiClient.bff.getDebtPositionTypeOrgById).toHaveBeenCalledWith(
       123,
       456

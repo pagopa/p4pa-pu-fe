@@ -4,7 +4,9 @@ import {
   GridSortModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
+import CustomDataGrid, {
+  SmartPaginationConfig
+} from '../../../components/DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { PageRoutes } from '../../../App';
@@ -13,21 +15,11 @@ import { generatePath } from 'react-router-dom';
 import { moneyFormat } from '../../../utils/formatters';
 import { PaymentsReporting } from '../../../../generated/apiClient';
 
-type CustomPaginationProps = {
-  totalPages?: number;
-  totalElements?: number;
-  defaultPageOption?: number;
-  sizePageOptions?: Array<number>;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (size: number) => void;
-  currentPage?: number;
-};
-
 type ReportingDetailDataGridProps = {
   rows: Array<PaymentsReporting>;
   sortModel: GridSortModel;
   onSortModelChange: (model: GridSortModel) => void;
-  customPagination: CustomPaginationProps;
+  smartPagination?: SmartPaginationConfig;
   isLoading?: boolean;
 };
 
@@ -35,7 +27,7 @@ const ReportingDetailDataGrid = ({
   rows,
   sortModel,
   onSortModelChange,
-  customPagination,
+  smartPagination,
   isLoading = false
 }: ReportingDetailDataGridProps) => {
   const { t } = useTranslation();
@@ -103,7 +95,7 @@ const ReportingDetailDataGrid = ({
         disableColumnResize
         sortModel={sortModel}
         onSortModelChange={onSortModelChange}
-        customPagination={customPagination}
+        smartPagination={smartPagination}
         loading={isLoading}
       />
     </>

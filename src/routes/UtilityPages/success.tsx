@@ -1,21 +1,21 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { PageRoutes } from '../../App';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import { theme } from '@pagopa/mui-italia';
-import ThankYouPage from '../../components/ThankYouPage/ThankYouPage';
-import { ThankyouPageConfig } from '../../models/ThankyouPage';
+import { SuccessPageConfig } from '../../models/SuccessPageConfig';
 import { useEffect } from 'react';
+import ResponsePage from '../../components/ResponsePage/ResponsePage';
 
 export const SuccessPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { category } = useParams<{ category: string }>();
   const location = useLocation();
+  const { category } = location?.state || {};
   const { i18nParams } = location?.state || {};
 
   const pageConfig =
-    ThankyouPageConfig[category as keyof typeof ThankyouPageConfig];
+    SuccessPageConfig[category as keyof typeof SuccessPageConfig];
 
   useEffect(() => {
     if (!pageConfig) {
@@ -37,13 +37,18 @@ export const SuccessPage = () => {
 
   return (
     <>
-      <ThankYouPage
+      <ResponsePage
         icon={
           <CheckCircleOutlineOutlinedIcon
             sx={{ fontSize: 60, color: theme.palette.secondary.main }}
           />
         }
-        title={String(t(pageConfig?.title, i18nParams))}
+        title={String(
+          t(pageConfig?.title, {
+            ...i18nParams,
+            interpolation: { escapeValue: false }
+          })
+        )}
         description={t(pageConfig?.description)}
         buttonConfig={buttonConfig}
       />

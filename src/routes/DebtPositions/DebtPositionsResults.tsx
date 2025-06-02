@@ -2,6 +2,7 @@ import { Grid, Stack, useTheme } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { BaseFilterValues } from '../../models/Filters';
@@ -12,7 +13,9 @@ import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
 import useDebtPositionFilters from '../../hooks/useDebtPositionsFilters';
 import {
   PagedInstallmentView,
-  PagedDebtPositionView
+  PagedDebtPositionView,
+  InstallmentView,
+  DebtPositionView
 } from '../../../generated/apiClient';
 import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../App';
@@ -30,9 +33,22 @@ export const DebtPositionResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const {
-    state: { filters: initialFilters, searchType }
-  }: { state: LocationState } = useLocation();
+  const location = useLocation();
+
+  const searchType = useMemo((): SearchType => {
+    if (location.state?.searchType) {
+      return location.state.searchType;
+    }
+
+    const pathname = location.pathname;
+    if (pathname.includes('results-IUV')) {
+      return SearchType.IUV;
+    }
+
+    return SearchType.DEBT_POSITION;
+  }, [location.state?.searchType, location.pathname]);
+
+  const initialFilters = (location.state?.filters || {}) as BaseFilterValues;
 
   const debtPosition = useDebtPositionsSearch({
     initialFilters,
@@ -49,6 +65,38 @@ export const DebtPositionResults = () => {
 
   const DataGrid =
     searchType === SearchType.IUV ? IUVDataGrid : DebtPositionsDataGrid;
+
+  const shouldRenderDataGrid = () => {
+    if (!debtPosition.query.data) return false;
+
+    if (searchType === SearchType.IUV) {
+      const hasValidInstallmentIds = debtPosition.query.data.content?.every(
+        (item: DebtPositionView | InstallmentView) =>
+          'installmentId' in item && item.installmentId != null
+      );
+      if (!hasValidInstallmentIds) {
+        console.warn(
+          'DebtPositionResults - Data IUV without installmentId, skip rendering'
+        );
+        return false;
+      }
+    }
+
+    if (searchType === SearchType.DEBT_POSITION) {
+      const hasValidDebtPositionIds = debtPosition.query.data.content?.every(
+        (item: DebtPositionView | InstallmentView) =>
+          'debtPositionId' in item && item.debtPositionId != null
+      );
+      if (!hasValidDebtPositionIds) {
+        console.warn(
+          'DebtPositionResults - Data DEBT_POSITION without debtPositionId, skip rendering'
+        );
+        return false;
+      }
+    }
+
+    return true;
+  };
 
   return (
     <Stack gap={5}>
@@ -86,16 +134,16 @@ export const DebtPositionResults = () => {
           }}
           aria-label="results-table"
         >
-          <DataGrid
-            data={
-              debtPosition.query.data as PagedInstallmentView &
-                PagedDebtPositionView
-            }
-            onPageChange={debtPosition.handlePageChange}
-            onPageSizeChange={debtPosition.handlePageSizeChange}
-            onSortChange={debtPosition.setSort}
-            pagination={debtPosition.pagination}
-          />
+          {shouldRenderDataGrid() && (
+            <DataGrid
+              data={
+                debtPosition.query.data as PagedInstallmentView &
+                  PagedDebtPositionView
+              }
+              onSortChange={debtPosition.setSort}
+              onPaginationChange={debtPosition.handlePaginationChange}
+            />
+          )}
         </Grid>
       </Stack>
     </Stack>

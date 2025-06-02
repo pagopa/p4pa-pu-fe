@@ -1,7 +1,7 @@
 import { ArrowBack, Dashboard, InsertDriveFile } from '@mui/icons-material';
 import { Button, Grid, GridDirection } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { generatePath, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import ExportFlowContainer from '../ExportFlowContainer/ExportFlowContainer';
 import { useState } from 'react';
@@ -92,11 +92,11 @@ export const ExportFlowPage = () => {
         { data: exportRequest },
         {
           onSuccess: () => {
-            navigate(
-              generatePath(PageRoutes.RESPONSES_SUCCESS, {
+            navigate(PageRoutes.RESPONSES_SUCCESS, {
+              state: {
                 category: 'telematic-receipt-export'
-              })
-            );
+              }
+            });
           },
           onError: (error) => {
             console.error(error);
@@ -121,11 +121,11 @@ export const ExportFlowPage = () => {
         { data: exportRequest },
         {
           onSuccess: () => {
-            navigate(
-              generatePath(PageRoutes.RESPONSES_SUCCESS, {
+            navigate(PageRoutes.RESPONSES_SUCCESS, {
+              state: {
                 category: 'conservation-export'
-              })
-            );
+              }
+            });
           },
           onError: (error) => {
             console.error(error);

@@ -2,11 +2,12 @@ import { Box, Button, Stack } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useNavigate, useParams } from 'react-router-dom';
+import { generatePath, useNavigate, useParams } from 'react-router-dom';
 import { DetailAccordion } from '../../components/DetailAccordion/DetailAccordion';
 import {
   AccordionSectionConfig,
-  getAccordionSectionsConfig
+  getAccordionSectionsConfig,
+  OperatorsData
 } from '../../models/DebtTypeSectionsConfig';
 import { useEffect, useState } from 'react';
 import { STATE } from '../../store/types';
@@ -15,8 +16,10 @@ import utils from '../../utils';
 import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../App';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
-import { isAxiosError } from 'axios';
+import { AxiosError, isAxiosError } from 'axios';
 import { useStore } from '../../store/GlobalStore';
+import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';
+import { useDebtPositionTypeOrgSearch } from '../../api/debtTypesCreated';
 
 export const DebtTypeDetailView = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -43,7 +46,7 @@ export const DebtTypeDetailView = () => {
     setOpenDeleteDialog(false);
     try {
       await deleteDebtPositionTypeOrgs.mutateAsync();
-      navigate(PageRoutes.DEBT_TYPES);
+      navigate(PageRoutes.DEBT_TYPES_DASHBOARD);
     } catch (error: unknown) {
       setOpenErrorDialog(true);
       if (isAxiosError(error) && error.response?.status === 409) {
@@ -63,20 +66,102 @@ export const DebtTypeDetailView = () => {
     console.error('debtPositionTypeOrgId is not a number');
   }
 
-  const { data, isLoading, isError, isSuccess } = getDebtPositionTypeOrgById({
+  const {
+    data,
+    isLoading,
+    isError: isDebtTypeError,
+    isSuccess,
+    error: debtTypeError
+  } = getDebtPositionTypeOrgById({
     organizationId,
     debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
   });
 
+  const {
+    data: operatorsData,
+    isError: isOperatorsError,
+    error: operatorsError
+  } = getDebtPositionTypeOrgOperators(organizationId, {
+    debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
+  });
+
+  const {
+    data: operatorsEnabledData,
+    mutate,
+    isError: isOperatorsEnabledError,
+    error: operatorsEnabledError
+  } = useDebtPositionTypeOrgSearch();
+
+  const buildOperatorsData = (): OperatorsData | null => {
+    if (!operatorsData || !operatorsEnabledData?.content?.[0]) {
+      return null;
+    }
+
+    const totalOperators = operatorsData.totalElements;
+    const enabledOperators =
+      operatorsEnabledData.content[0].enabledOperators || 0;
+
+    return {
+      totalOperators,
+      enabledOperators
+    };
+  };
+
   useEffect(() => {
-    if (isSuccess && data) {
-      const sections = getAccordionSectionsConfig(data, t) || [];
+    if (isSuccess && data?.response) {
+      const operatorsInfo = buildOperatorsData();
+      const sections =
+        getAccordionSectionsConfig(data?.response, operatorsInfo, t) || [];
       setAccordionSections(sections);
     }
-    if (isError) {
-      utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
+
+    if (isDebtTypeError && debtTypeError) {
+      const axiosError = debtTypeError as AxiosError;
+      const isServerError =
+        axiosError?.response?.status && axiosError.response.status >= 500;
+
+      if (!isServerError) {
+        utils.notify.emit(t('errors.fetchDebtPositionsTypes'), 'error');
+      }
     }
-  }, [data, isLoading, isError, isSuccess]);
+
+    if (isOperatorsError && operatorsError) {
+      utils.notify.emit(t('errors.fetchOperators'), 'error');
+    }
+
+    if (isOperatorsEnabledError && operatorsEnabledError) {
+      utils.notify.emit(t('errors.fetchOperatorsEnabled'), 'error');
+    }
+  }, [
+    data,
+    isLoading,
+    isSuccess,
+    operatorsData,
+    operatorsEnabledData,
+    isDebtTypeError,
+    debtTypeError,
+    isOperatorsError,
+    operatorsError,
+    isOperatorsEnabledError,
+    operatorsEnabledError
+  ]);
+
+  useEffect(() => {
+    if (
+      !isLoading &&
+      isSuccess &&
+      data?.response?.code &&
+      !operatorsEnabledData
+    ) {
+      mutate({
+        organizationId,
+        filters: {
+          code: data.response.code,
+          description: data.response.description
+        }
+      });
+    }
+  }, [isLoading, isSuccess, data, operatorsEnabledData, mutate]);
 
   const actionButtons = [
     {
@@ -91,7 +176,12 @@ export const DebtTypeDetailView = () => {
       buttonText: t('commons.edit'),
       color: 'primary' as const,
       variant: 'contained' as const,
-      onActionClick: () => console.log('onActionClick edit')
+      onActionClick: () =>
+        navigate(
+          generatePath(PageRoutes.DEBT_TYPE_ORG_EDIT, {
+            debtPositionTypeOrgId
+          })
+        )
     }
   ];
 
@@ -99,7 +189,7 @@ export const DebtTypeDetailView = () => {
     <>
       <>
         <TitleComponent
-          title={data?.description ?? '-'}
+          title={data?.response?.description ?? '-'}
           description={t('debtTypeDetail.description')}
           callToAction={actionButtons}
         />

@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { GridSortModel } from '@mui/x-data-grid';
 import { FlowFileFilters, PaginationParams } from '../models/Filters';
 import { IngestionFlowFileTypeEnum } from '../../generated/apiClient';
+import { usePaginationState } from './usePaginationState';
 
 type UseFlowFiltersProps = {
   initialFilters?: Partial<FlowFileFilters>;
@@ -11,24 +12,62 @@ type UseFlowFiltersProps = {
 
 const DEFAULT_PAGE_SIZE = 10;
 
+const getDefaultDateRange = () => {
+  const today = new Date();
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+  return {
+    creationDateFrom: new Date(oneYearAgo.setHours(0, 0, 0, 0)).toISOString(),
+    creationDateTo: new Date(today.setHours(23, 59, 59, 999)).toISOString()
+  };
+};
+
 export const useFlowFilters = ({
   ingestionFlowFileTypes,
   initialFilters,
   onFiltersChange
 }: UseFlowFiltersProps) => {
   const flowTypes = ingestionFlowFileTypes || [];
+  const defaultDateRange = getDefaultDateRange();
 
-  const [appliedFilters, setAppliedFilters] = useState<FlowFileFilters>(() => ({
+  const {
+    paginationParams,
+    handlePaginationChange: updatePaginationState,
+    setPaginationParams
+  } = usePaginationState({
+    initialPage: initialFilters?.page ?? 0,
+    initialSize: initialFilters?.size ?? DEFAULT_PAGE_SIZE
+  });
+
+  const [appliedFilters, setAppliedFilters] = useState<
+    Omit<FlowFileFilters, 'page' | 'size'>
+  >(() => ({
     ingestionFlowFileTypes: flowTypes,
-    size: initialFilters?.size || DEFAULT_PAGE_SIZE,
-    page: initialFilters?.page || 0,
-    ...initialFilters
+    creationDateFrom:
+      initialFilters?.creationDateFrom || defaultDateRange.creationDateFrom,
+    creationDateTo:
+      initialFilters?.creationDateTo || defaultDateRange.creationDateTo,
+    fileName: initialFilters?.fileName,
+    status: initialFilters?.status
   }));
 
   const [draftFilters, setDraftFilters] =
-    useState<FlowFileFilters>(appliedFilters);
+    useState<Omit<FlowFileFilters, 'page' | 'size'>>(appliedFilters);
 
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
+
+  const getCompleteFilters = useCallback(
+    (): FlowFileFilters => ({
+      ...appliedFilters,
+      page: paginationParams.page,
+      size: paginationParams.size,
+      ...(sortModel.length > 0 && {
+        sort: [`${sortModel[0].field},${sortModel[0].sort}`]
+      })
+    }),
+    [appliedFilters, paginationParams, sortModel]
+  );
 
   const hasActiveFilters = useCallback(() => {
     const isFileNameChanged =
@@ -57,7 +96,7 @@ export const useFlowFilters = ({
   ]);
 
   const updateDraftFilters = useCallback(
-    (updates: Partial<FlowFileFilters>) => {
+    (updates: Partial<Omit<FlowFileFilters, 'page' | 'size'>>) => {
       setDraftFilters((prev) => ({
         ...prev,
         ...updates
@@ -68,24 +107,39 @@ export const useFlowFilters = ({
 
   const applyFilters = useCallback(() => {
     const filtersToApply = {
-      ...draftFilters,
-      page: 0
+      ...draftFilters
     };
     setAppliedFilters(filtersToApply);
-    onFiltersChange?.(filtersToApply);
-  }, [draftFilters, onFiltersChange]);
+
+    setPaginationParams((prev) => ({ ...prev, page: 0 }));
+
+    const completeFilters = {
+      ...filtersToApply,
+      page: 0,
+      size: paginationParams.size
+    };
+    onFiltersChange?.(completeFilters);
+  }, [
+    draftFilters,
+    paginationParams.size,
+    setPaginationParams,
+    onFiltersChange
+  ]);
 
   const updatePagination = useCallback(
-    (paginationUpdate: PaginationParams) => {
-      const newFilters = {
+    (pagination: PaginationParams) => {
+      updatePaginationState(pagination);
+
+      const completeFilters = {
         ...appliedFilters,
-        ...paginationUpdate
+        ...pagination,
+        ...(sortModel.length > 0 && {
+          sort: [`${sortModel[0].field},${sortModel[0].sort}`]
+        })
       };
-      setAppliedFilters(newFilters);
-      setDraftFilters(newFilters);
-      onFiltersChange?.(newFilters);
+      onFiltersChange?.(completeFilters);
     },
-    [appliedFilters, onFiltersChange]
+    [appliedFilters, sortModel, onFiltersChange, updatePaginationState]
   );
 
   const handleDateFromChange = useCallback(
@@ -114,24 +168,22 @@ export const useFlowFilters = ({
     (newModel: GridSortModel) => {
       setSortModel(newModel);
 
-      const [firstSort] = newModel;
-      const sortValue = firstSort && `${firstSort.field},${firstSort.sort}`;
+      setPaginationParams((prev) => ({ ...prev, page: 0 }));
 
-      const newFilters = {
-        ...appliedFilters,
+      const completeFilters = getCompleteFilters();
+      onFiltersChange?.({
+        ...completeFilters,
         page: 0,
-        sort: sortValue ? [sortValue] : undefined
-      };
-
-      setAppliedFilters(newFilters);
-      setDraftFilters(newFilters);
-      onFiltersChange?.(newFilters);
+        ...(newModel.length > 0 && {
+          sort: [`${newModel[0].field},${newModel[0].sort}`]
+        })
+      });
     },
-    [appliedFilters, onFiltersChange]
+    [getCompleteFilters, setPaginationParams, onFiltersChange]
   );
 
   return {
-    appliedFilters,
+    appliedFilters: getCompleteFilters(),
     draftFilters,
     updateDraftFilters,
     applyFilters,

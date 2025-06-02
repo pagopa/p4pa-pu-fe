@@ -12,7 +12,8 @@ vi.mock('react-i18next', () => ({
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal()),
   useLocation: vi.fn(),
-  useNavigate: vi.fn()
+  useNavigate: vi.fn(),
+  useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
 }));
 
 vi.mock('../../hooks/useTelematicReceiptSearch', () => ({

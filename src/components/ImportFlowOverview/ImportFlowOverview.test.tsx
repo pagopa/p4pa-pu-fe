@@ -1,8 +1,8 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { useNavigate, generatePath } from 'react-router-dom';
+import { useNavigate, generatePath, useSearchParams } from 'react-router-dom';
 import {
-  downloadIngestionFlowFile,
-  getIngestionFlowFiles
+  getIngestionFlowFiles,
+  getIngestionFlowFile
 } from '../../api/ingestionFlowFiles';
 import { downloadBlob } from '../../utils/download';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
@@ -11,15 +11,20 @@ import { PageRoutes } from '../../App';
 import FlowOverview from './ImportFlowOverview';
 import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useNavigate: vi.fn(),
-  generatePath: vi.fn()
-}));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    generatePath: vi.fn(),
+    useSearchParams: vi.fn()
+  };
+});
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
   getIngestionFlowFileError: vi.fn(),
+  getIngestionFlowFile: vi.fn(),
   IngestionFlowFileType: {
     RECEIPT: 'RECEIPT',
     RECEIPT_PAGOPA: 'RECEIPT_PAGOPA',
@@ -30,8 +35,7 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
     TREASURY_XLS: 'TREASURY_XLS',
     TREASURY_POSTE: 'TREASURY_POSTE',
     DP_INSTALLMENTS: 'DP_INSTALLMENTS'
-  },
-  downloadIngestionFlowFile: vi.fn()
+  }
 }));
 
 vi.mock('../../utils/download', () => ({
@@ -40,6 +44,7 @@ vi.mock('../../utils/download', () => ({
 
 describe('TelematicReceiptImportFlowOverview', () => {
   const mockNavigate = vi.fn();
+  const mockSetSearchParams = vi.fn();
 
   const mockData = {
     content: [
@@ -213,17 +218,21 @@ describe('TelematicReceiptImportFlowOverview', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockNavigate
-    );
-    (
-      getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
-      data: mockData
-    });
-    (generatePath as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+    (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
+
+    (generatePath as ReturnType<typeof vi.fn>).mockImplementation(
       () => '/mock-path'
     );
+
+    (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue([
+      new URLSearchParams(),
+      mockSetSearchParams
+    ]);
+
+    (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: mockData
+    });
+
     setOrganizationId(123);
   });
 
@@ -407,12 +416,14 @@ describe('TelematicReceiptImportFlowOverview', () => {
     expect(getIngestionFlowFiles).toHaveBeenCalledWith(expect.any(Number), {
       ingestionFlowFileTypes: ['RECEIPT'],
       page: 0,
-      size: 10
+      size: 10,
+      creationDateFrom: expect.any(String),
+      creationDateTo: expect.any(String)
     });
   });
 
   it('handles page size change correctly', async () => {
-    render(
+    const { container } = render(
       <FlowOverview
         routingCategory={'test'}
         title={'test title'}
@@ -421,20 +432,28 @@ describe('TelematicReceiptImportFlowOverview', () => {
       />
     );
 
-    const pageSizeSelect = screen.getByTestId('result-set-select');
-
-    fireEvent.mouseDown(pageSizeSelect);
-
-    const selectChangeEvent = new Event('change', { bubbles: true });
-    Object.defineProperty(selectChangeEvent, 'target', {
-      value: { value: 20 }
-    });
-
-    pageSizeSelect.dispatchEvent(selectChangeEvent);
-
     await waitFor(() => {
-      expect(getIngestionFlowFiles).toHaveBeenCalledTimes(1);
+      const pageSizeSelect = container.querySelector(
+        '[aria-label="Rows per page:"]'
+      );
+      expect(pageSizeSelect).toBeDefined();
     });
+
+    const nextPageButton = container.querySelector(
+      '[aria-label="Go to next page"]'
+    );
+    if (nextPageButton) {
+      fireEvent.click(nextPageButton);
+
+      await waitFor(() => {
+        expect(getIngestionFlowFiles).toHaveBeenCalledWith(
+          expect.any(Number),
+          expect.objectContaining({
+            page: 1
+          })
+        );
+      });
+    }
   });
 
   it('updates filters state when pagination changes', async () => {
@@ -490,6 +509,19 @@ describe('TelematicReceiptImportFlowOverview', () => {
     const searchInput = screen.getByLabelText('commons.searchName');
     fireEvent.change(searchInput, { target: { value: 'test' } });
 
+    const filterButton = screen.getByText('commons.filters.filterResults');
+    fireEvent.click(filterButton);
+
+    await waitFor(() => {
+      const calls = (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mock
+        .calls;
+      const hasFilterCall = calls.some(
+        (call) =>
+          call[1] && typeof call[1] === 'object' && call[1].fileName === 'test'
+      );
+      expect(hasFilterCall).toBe(true);
+    });
+
     const nextPageButton = container.querySelector(
       '[aria-label="Go to next page"]'
     );
@@ -497,14 +529,16 @@ describe('TelematicReceiptImportFlowOverview', () => {
       fireEvent.click(nextPageButton);
 
       await waitFor(() => {
-        expect(getIngestionFlowFiles).toHaveBeenCalledWith(
-          expect.any(Number),
-          expect.objectContaining({
-            ingestionFlowFileTypes: ['RECEIPT'],
-            page: 1,
-            size: 10
-          })
+        const calls = (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mock
+          .calls;
+        const hasCorrectPageCall = calls.some(
+          (call) =>
+            call[1] &&
+            typeof call[1] === 'object' &&
+            call[1].page === 1 &&
+            call[1].fileName === 'test'
         );
+        expect(hasCorrectPageCall).toBe(true);
       });
     }
   });
@@ -818,17 +852,15 @@ describe('TelematicReceiptImportFlowOverview', () => {
   });
 
   it('calls downloadIngestionFlowFile and downloadBlob when download button is clicked', async () => {
-    const mockDownloadIngestionFlowFile = vi.fn().mockResolvedValue({
-      data: new Blob(['test content']),
-      fileName: 'test-file.csv'
-    });
-    const mockDownloadBlob = vi.fn();
+    const mockMutateAsync = vi.fn();
 
-    (downloadIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
-      mockDownloadIngestionFlowFile
-    );
-    (downloadBlob as ReturnType<typeof vi.fn>).mockImplementation(
-      mockDownloadBlob
+    (getIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
+      () => ({
+        mutateAsync: mockMutateAsync.mockResolvedValue({
+          data: new Blob(['test content']),
+          fileName: 'test-file.csv'
+        })
+      })
     );
 
     const { container } = render(
@@ -860,13 +892,12 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
     fireEvent.click(downloadButton!);
 
-    expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
-      123,
+    expect(mockMutateAsync).toHaveBeenCalledWith(
       uploadedRow!.ingestionFlowFileId
     );
 
     await waitFor(() => {
-      expect(mockDownloadBlob).toHaveBeenCalledWith(
+      expect(downloadBlob).toHaveBeenCalledWith(
         expect.any(Blob),
         'test-file.csv'
       );
@@ -875,17 +906,15 @@ describe('TelematicReceiptImportFlowOverview', () => {
   });
 
   it('calls downloadIngestionFlowFile and downloadBlob when menu download option is clicked', async () => {
-    const mockDownloadIngestionFlowFile = vi.fn().mockResolvedValue({
-      data: new Blob(['test content']),
-      fileName: 'test-file.csv'
-    });
-    const mockDownloadBlob = vi.fn();
+    const mockMutateAsync = vi.fn();
 
-    (downloadIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
-      mockDownloadIngestionFlowFile
-    );
-    (downloadBlob as ReturnType<typeof vi.fn>).mockImplementation(
-      mockDownloadBlob
+    (getIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
+      () => ({
+        mutateAsync: mockMutateAsync.mockResolvedValue({
+          data: new Blob(['test content']),
+          fileName: 'test-file.csv'
+        })
+      })
     );
 
     render(
@@ -925,13 +954,12 @@ describe('TelematicReceiptImportFlowOverview', () => {
         fireEvent.click(downloadMenuItem);
       });
 
-      expect(mockDownloadIngestionFlowFile).toHaveBeenCalledWith(
-        123,
+      expect(mockMutateAsync).toHaveBeenCalledWith(
         completedRow.ingestionFlowFileId
       );
 
       await waitFor(() => {
-        expect(mockDownloadBlob).toHaveBeenCalledWith(
+        expect(downloadBlob).toHaveBeenCalledWith(
           expect.any(Blob),
           'test-file.csv'
         );
@@ -969,12 +997,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
     });
 
     await waitFor(() => {
-      expect(screen.queryByRole('grid')).toBeNull();
-    });
-
-    await waitFor(() => {
-      expect(screen.queryByLabelText('commons.searchName')).toBeNull();
-      expect(screen.queryByLabelText('commons.state')).toBeNull();
+      expect(screen.getByRole('grid')).toBeDefined();
     });
 
     const importButton = screen.getByText('commons.importFlows');

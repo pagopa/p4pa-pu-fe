@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useNavigate, generatePath } from 'react-router-dom';
-import { downloadExportFile, getExportFiles } from '../../api/exportFiles';
+import { getExportFiles, getExportFile } from '../../api/exportFiles';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../App';
@@ -8,26 +9,27 @@ import ExportFlowOverview from './ExportFlowOverview';
 import { ExportFileTypeEnum } from '../../../generated/apiClient';
 import { downloadBlob } from '../../utils/download';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useNavigate: vi.fn(),
-  generatePath: vi.fn()
-}));
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    generatePath: vi.fn(),
+    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
+  };
+});
 
-vi.mock('../../api/exportFiles', () => ({
-  getExportFiles: vi
-    .fn()
-    .mockReturnValue({ data: { content: [] }, isLoading: false })
-}));
-
+const mutateAsyncMock = vi.fn();
 vi.mock('../../api/exportFiles', () => ({
   getExportFiles: vi
     .fn()
     .mockReturnValue({ data: { content: [] }, isLoading: false }),
-  downloadExportFile: vi.fn().mockResolvedValue({
-    data: new Blob(['test data']),
-    fileName: 'test_file.zip'
-  })
+  getExportFile: vi.fn().mockImplementation(() => ({
+    mutateAsync: mutateAsyncMock.mockReturnValue({
+      data: new Blob(['test data']),
+      fileName: 'test_file.zip'
+    })
+  }))
 }));
 
 vi.mock('../../utils/download', () => ({
@@ -65,13 +67,16 @@ describe('ExportFlowOverview', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockNavigate
-    );
-    (generatePath as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+    // Mock useNavigate
+    (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
+
+    // Mock generatePath
+    (generatePath as ReturnType<typeof vi.fn>).mockImplementation(
       () => '/mock-path'
     );
-    (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+
+    // Mock API calls
+    (getExportFiles as ReturnType<typeof vi.fn>).mockReturnValue({
       data: mockData,
       isLoading: false
     });
@@ -153,7 +158,9 @@ describe('ExportFlowOverview', () => {
     expect(getExportFiles).toHaveBeenCalledWith(expect.any(Number), {
       exportFileType: ExportFileTypeEnum.PAID,
       page: 0,
-      size: 10
+      size: 10,
+      creationDateFrom: expect.any(String),
+      creationDateTo: expect.any(String)
     });
   });
 
@@ -172,7 +179,7 @@ describe('ExportFlowOverview', () => {
     fireEvent.click(downloadButtons[0]);
 
     await waitFor(() => {
-      expect(downloadExportFile).toHaveBeenCalledWith(123, expect.any(Number));
+      expect(mutateAsyncMock).toHaveBeenCalledWith(expect.any(Number));
     });
 
     await waitFor(() => {
@@ -248,8 +255,7 @@ describe('ExportFlowOverview', () => {
       screen.getByRole('button', { name: 'commons.exportFlows' })
     ).toBeDefined();
 
-    expect(screen.queryByText('commons.searchName')).toBeNull();
-    expect(screen.queryByRole('grid')).toBeNull();
+    expect(screen.getByRole('grid')).toBeDefined();
   });
 
   it('shows EmptyDataGrid when data.content is undefined', () => {
@@ -280,7 +286,13 @@ describe('ExportFlowOverview', () => {
 
   it('shows EmptyDataGrid when entire data object is undefined', () => {
     (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: undefined,
+      data: {
+        content: [],
+        totalPages: 0,
+        totalElements: 0,
+        size: 10,
+        number: 0
+      },
       isLoading: false
     });
 
@@ -300,7 +312,13 @@ describe('ExportFlowOverview', () => {
 
   it('calls navigate when EmptyDataGrid action button is clicked', () => {
     (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: { content: [] },
+      data: {
+        content: [],
+        totalPages: 0,
+        totalElements: 0,
+        size: 10,
+        number: 0
+      },
       isLoading: false
     });
 
@@ -341,14 +359,14 @@ describe('ExportFlowOverview', () => {
     expect(screen.queryByText('commons.noFlows')).toBeNull();
   });
 
-  it('handles null/undefined download result', async () => {
-    (
-      downloadExportFile as unknown as ReturnType<typeof vi.fn>
-    ).mockResolvedValueOnce(null);
+  it('handles error download result', async () => {
+    vi.mocked(getExportFile).mockReturnValue({
+      mutateAsync: mutateAsyncMock.mockRejectedValue(
+        new Error('Download failed')
+      )
+    } as any);
 
-    const consoleSpy = vi
-      .spyOn(console, 'error')
-      .mockImplementation(() => undefined);
+    const consoleSpy = vi.spyOn(console, 'error');
 
     render(
       <ExportFlowOverview
@@ -362,7 +380,8 @@ describe('ExportFlowOverview', () => {
     fireEvent.click(downloadButtons[0]);
 
     await waitFor(() => {
-      expect(consoleSpy).toHaveBeenCalledWith('Failed to download file');
+      expect(console.error).toHaveBeenCalled();
+      expect(downloadBlob).not.toHaveBeenCalled();
     });
 
     consoleSpy.mockRestore();

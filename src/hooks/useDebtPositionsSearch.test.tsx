@@ -2,9 +2,14 @@ import { act } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { renderHook } from '../__tests__/renderers';
 import useDebtPositionSearch, {
-  DebtPositionFilters
+  DebtPositionsFilters
 } from './useDebtPositionsSearch';
 import { DebtPositionStatus } from '../../generated/apiClient';
+
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
+}));
 
 const mockRequest = vi.fn().mockReturnValue({
   mutate: vi.fn(),
@@ -14,7 +19,7 @@ const mockRequest = vi.fn().mockReturnValue({
 });
 
 describe('useDebtPositionSearch', () => {
-  const initialFilters: DebtPositionFilters = {
+  const initialFilters: DebtPositionsFilters = {
     dateRange: {
       from: new Date('2024-01-01'),
       to: new Date('2024-12-31')
@@ -31,8 +36,8 @@ describe('useDebtPositionSearch', () => {
     );
 
     expect(result.current.filterValues).toEqual(initialFilters);
-    expect(result.current.pagination.page).toBe(0);
-    expect(result.current.pagination.size).toBe(10);
+    expect(result.current.paginationParams.page).toBe(0);
+    expect(result.current.paginationParams.size).toBe(10);
   });
 
   it('should fetch data when applyFilters is called', () => {

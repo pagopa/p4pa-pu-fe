@@ -28,6 +28,7 @@ vi.mock('../../hooks/useDebtPositionsSearch', () => ({
     handleFilterChange: vi.fn(),
     handlePageChange: vi.fn(),
     handlePageSizeChange: vi.fn(),
+    handlePaginationChange: vi.fn(),
     setSort: vi.fn(),
     pagination: { page: 0, size: 10 },
     filterValues: {}
@@ -131,7 +132,7 @@ describe('DebtPositionResults', () => {
     );
   });
 
-  it('should pass pagination to DataGrid', () => {
+  it('should pass correct props to DataGrid', () => {
     (useLocation as Mock).mockReturnValue(
       mockLocationState(SearchType.DEBT_POSITION)
     );
@@ -140,10 +141,12 @@ describe('DebtPositionResults', () => {
 
     expect(DebtPositionsDataGrid).toHaveBeenCalledWith(
       expect.objectContaining({
-        pagination: expect.objectContaining({
-          page: 0,
-          size: 10
-        })
+        data: expect.objectContaining({
+          content: expect.any(Array),
+          totalElements: expect.any(Number)
+        }),
+        onSortChange: expect.any(Function),
+        onPaginationChange: expect.any(Function)
       }),
       expect.anything()
     );

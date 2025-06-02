@@ -47,6 +47,7 @@ vi.mock('react-router-dom', async (importOriginal) => {
   return {
     ...actual,
     useParams: vi.fn().mockReturnValue({ id: 'TEST-IUF-123' }),
+    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
     Link: ({ children }: { children: React.ReactNode }) => children,
     generatePath: vi.fn().mockReturnValue('/mock-path')
   };

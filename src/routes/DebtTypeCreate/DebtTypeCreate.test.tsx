@@ -4,7 +4,6 @@ import { DebtTypeCreate } from '../DebtTypeCreate';
 import { Step1Props } from './components/Step1Configuration';
 import { Step2Props } from './components/Step2Settings';
 import { StepperContainerProps } from '../../components/Stepper';
-import { DebtPositionTypeRequestBody } from '../../../generated/apiClient';
 
 vi.mock('./components/Step1Configuration', () => ({
   Step1Configuration: ({ setData, onNext }: Step1Props) => (
@@ -64,25 +63,20 @@ vi.mock('../../components/Stepper', () => ({
 
 vi.mock('../../api/debtPositionsTypes', () => ({
   postDebtPositionType: vi.fn(() => ({
-    mutate: (
-      _formData: DebtPositionTypeRequestBody,
-      { onSuccess }: { onSuccess: (data: DebtPositionTypeRequestBody) => void }
-    ) => {
-      onSuccess({
-        description: 'Test Debt Type',
-        code: 'CODE1',
-        orgType: 'ORG1',
-        macroArea: 'MACRO1',
-        serviceType: 'SERVICE1',
-        collectingReason: 'REASON1',
-        taxonomyCode: 'TAX1',
-        flagMandatoryDueDate: true,
-        flagAnonymousFiscalCode: false,
-        flagNotifyIo: true,
-        ioTemplateSubject: 'Test Subject',
-        ioTemplateMessage: 'Test Message'
-      });
-    }
+    mutateAsync: vi.fn().mockResolvedValue({
+      description: 'Test Debt Type',
+      code: 'CODE1',
+      orgType: 'ORG1',
+      macroArea: 'MACRO1',
+      serviceType: 'SERVICE1',
+      collectingReason: 'REASON1',
+      taxonomyCode: 'TAX1',
+      flagMandatoryDueDate: true,
+      flagAnonymousFiscalCode: false,
+      flagNotifyIo: true,
+      ioTemplateSubject: 'Test Subject',
+      ioTemplateMessage: 'Test Message'
+    })
   }))
 }));
 
@@ -97,7 +91,7 @@ vi.mock('react-router', async () => {
 
 vi.mock('../../App', () => ({
   PageRoutes: {
-    RESPONSES_SUCCESS: '/success/debt-type-catalog-create'
+    RESPONSES_SUCCESS: '/success'
   }
 }));
 
@@ -162,19 +156,15 @@ describe('DebtTypeCreate', () => {
 
     // Should navigate to success page
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith(
-        {
-          pathname: '/success/debt-type-catalog-create'
-        },
-        {
-          replace: true,
-          state: {
-            i18nParams: {
-              paymentObject: 'Test Debt Type'
-            }
+      expect(mockNavigate).toHaveBeenCalledWith('/success', {
+        replace: true,
+        state: {
+          category: 'debt-type-catalog-create',
+          i18nParams: {
+            paymentObject: 'Test Debt Type'
           }
         }
-      );
+      });
     });
   });
 

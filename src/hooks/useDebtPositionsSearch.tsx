@@ -5,10 +5,10 @@ import debtPositions, {
   DebtPositionViewQuery
 } from '../api/debtPositions';
 import { FilterFieldValue } from '../models/Filters';
-import { useDataGridPagination } from './useDatagridPagination';
 import { DebtPositionStatus } from '../../generated/apiClient';
+import { usePaginationState } from './usePaginationState';
 
-export type DebtPositionFilters = {
+export type DebtPositionsFilters = {
   dateRange?: {
     from: Date;
     to: Date;
@@ -20,19 +20,29 @@ export type DebtPositionFilters = {
 };
 
 export type UseDebtPositionFiltersProps = {
-  initialFilters: DebtPositionFilters;
+  initialFilters: DebtPositionsFilters;
   requestFn:
     | typeof debtPositions.getDebtPositionViews
     | typeof debtPositions.getInstallments; // Allow passing the request function
+  initialPage?: number;
+  initialSize?: number;
+  totalElements?: number;
 };
 
 export const useDebtPositionSearch = ({
   initialFilters,
-  requestFn
+  requestFn,
+  initialPage,
+  initialSize
 }: UseDebtPositionFiltersProps) => {
   const [filterValues, setFilterValues] =
-    useState<DebtPositionFilters>(initialFilters);
+    useState<DebtPositionsFilters>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
+
+  const { paginationParams, handlePaginationChange } = usePaginationState({
+    initialPage,
+    initialSize
+  });
 
   const {
     state: { organizationId }
@@ -40,37 +50,49 @@ export const useDebtPositionSearch = ({
 
   const query = requestFn({ organizationId });
 
-  const { pagination, handlePageChange, handlePageSizeChange } =
-    useDataGridPagination({
-      initialPage: 0,
-      initialSize: 10,
-      onPaginationChange: () => query.mutate(filterToRequest())
-    });
+  const [appliedFilters, setAppliedFilters] =
+    useState<DebtPositionsFilters>(filterValues);
+
+  const applyFilters = useCallback(() => {
+    setAppliedFilters({ ...filterValues });
+    handlePaginationChange({ page: 0, size: paginationParams.size });
+  }, [filterValues, handlePaginationChange, paginationParams.size]);
 
   useEffect(() => {
-    query.mutate(filterToRequest());
-  }, [organizationId, pagination.page, pagination.size, sort]);
+    const payload = filterToRequest();
+    query.mutate(payload);
+  }, [organizationId, paginationParams.page, paginationParams.size, sort]);
 
-  const filterToRequest = (): DebtPositionViewQuery &
-    DebtPositionInstallmentsQuery => ({
-    dueDateFrom:
-      filterValues?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
-    dueDateTo:
-      filterValues?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
-    creationDateFrom:
-      filterValues?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
-    creationDateTo:
-      filterValues?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
-    page: pagination.page,
-    size: pagination.size,
-    ...(filterValues?.typeOrgId && {
-      debtPositionTypeOrgId: filterValues.typeOrgId
-    }),
-    ...(filterValues?.iuv && { iuv: filterValues.iuv }),
-    ...(filterValues?.fiscalCode && { fiscalCode: filterValues.fiscalCode }),
-    ...(filterValues?.status && { status: filterValues.status }),
-    ...(sort.length && { sort })
-  });
+  const filterToRequest = useCallback((): DebtPositionViewQuery &
+    DebtPositionInstallmentsQuery => {
+    const payload = {
+      dueDateFrom:
+        appliedFilters?.dateRange?.from?.toISOString() ??
+        new Date(0).toISOString(),
+      dueDateTo:
+        appliedFilters?.dateRange?.to?.toISOString() ??
+        new Date().toISOString(),
+      creationDateFrom:
+        appliedFilters?.dateRange?.from?.toISOString() ??
+        new Date(0).toISOString(),
+      creationDateTo:
+        appliedFilters?.dateRange?.to?.toISOString() ??
+        new Date().toISOString(),
+      page: paginationParams.page,
+      size: paginationParams.size,
+      ...(appliedFilters?.typeOrgId && {
+        debtPositionTypeOrgId: appliedFilters.typeOrgId
+      }),
+      ...(appliedFilters?.iuv && { iuv: appliedFilters.iuv }),
+      ...(appliedFilters?.fiscalCode && {
+        fiscalCode: appliedFilters.fiscalCode
+      }),
+      ...(appliedFilters?.status && { status: appliedFilters.status }),
+      ...(sort.length && { sort })
+    };
+
+    return payload;
+  }, [appliedFilters, paginationParams, sort]);
 
   const handleFilterChange = useCallback(
     (id: string, value: FilterFieldValue): void => {
@@ -79,21 +101,32 @@ export const useDebtPositionSearch = ({
     []
   );
 
-  const applyFilters = useCallback(() => {
-    query.mutate(filterToRequest());
-    handlePageChange(1);
-  }, [filterToRequest, query]);
+  const updateDraftFilters = useCallback(
+    (updates: Partial<DebtPositionsFilters>) => {
+      setFilterValues((prev) => ({ ...prev, ...updates }));
+    },
+    []
+  );
+
+  const updateSingleDraftFilter = useCallback(
+    (id: keyof DebtPositionsFilters, value: string) => {
+      updateDraftFilters({ [id]: value });
+    },
+    [updateDraftFilters]
+  );
 
   return {
     applyFilters,
     query,
     filterValues,
     handleFilterChange,
-    handlePageChange,
-    handlePageSizeChange,
-    pagination,
+    // REFACTOR: Utilizzo del callback centralizzato
+    handlePaginationChange,
+    paginationParams,
     setFilterValues,
-    setSort
+    setSort,
+    updateDraftFilters,
+    updateSingleDraftFilter
   };
 };
 

@@ -1,22 +1,33 @@
-import { Box, Button, Divider, Grid, Typography } from '@mui/material';
+import {
+  Box,
+  Button,
+  ButtonProps,
+  Divider,
+  Grid,
+  Typography
+} from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 
 type ActionCardProps = {
-  title: string;
-  description: string;
+  actionButtonVariant?: ButtonProps['variant'];
   actionLabel: string;
-  actionIcon: React.ReactNode;
-  linkLabel: string;
+  actionIcon?: React.ReactNode;
+  description: string;
+  footerText?: string;
+  linkLabel?: string;
+  title: string;
   onActionClick: () => void;
-  onLinkClick: () => void;
+  onLinkClick?: () => void;
 };
 
 const ActionCard = ({
-  title,
-  description,
   actionLabel,
   actionIcon,
+  actionButtonVariant = 'outlined',
+  description,
+  footerText,
   linkLabel,
+  title,
   onActionClick,
   onLinkClick
 }: ActionCardProps) => {
@@ -30,7 +41,7 @@ const ActionCard = ({
         width="100%"
         borderRadius={0.5}
         padding={3}
-        sx={{ backgroundColor: 'background.paper', mb: 3 }}
+        sx={{ backgroundColor: 'background.paper' }}
       >
         <Typography id="action-card-title" variant="h6" sx={{ mb: 1 }}>
           {title}
@@ -43,11 +54,11 @@ const ActionCard = ({
           {description}
         </Typography>
         <Grid container direction="column" justifyContent={'start'}>
-          <Grid item lg={12} mb={4}>
+          <Grid item lg={12}>
             <Button
               size="large"
               startIcon={actionIcon}
-              variant="outlined"
+              variant={actionButtonVariant}
               fullWidth={false}
               onClick={onActionClick}
             >
@@ -55,23 +66,38 @@ const ActionCard = ({
             </Button>
           </Grid>
 
-          <Divider
-            orientation="horizontal"
-            flexItem
-            sx={{ display: 'block' }}
-          />
+          {(footerText || linkLabel) && (
+            <Divider
+              orientation="horizontal"
+              flexItem
+              sx={{ display: 'block', my: 3 }}
+            />
+          )}
 
-          <Grid item lg={12} mt={2}>
-            <Button
-              size="large"
-              endIcon={<ArrowForward />}
-              variant="text"
-              fullWidth={false}
-              onClick={onLinkClick}
-            >
-              {linkLabel}
-            </Button>
-          </Grid>
+          {linkLabel && (
+            <Grid item lg={12}>
+              <Button
+                size="large"
+                endIcon={<ArrowForward />}
+                variant="text"
+                fullWidth={false}
+                onClick={onLinkClick}
+                sx={{ py: 1 }}
+              >
+                {linkLabel}
+              </Button>
+            </Grid>
+          )}
+          {footerText && (
+            <Grid item lg={12}>
+              <Typography
+                variant="body2"
+                sx={{ color: 'text.secondary', mb: 2 }}
+              >
+                {footerText}
+              </Typography>
+            </Grid>
+          )}
         </Grid>
       </Box>
     </section>

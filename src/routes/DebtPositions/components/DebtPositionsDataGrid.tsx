@@ -26,22 +26,14 @@ type ResultDataRow = {
 
 export type DataGridProps = {
   data: PagedDebtPositionView;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (page: number) => void;
   onSortChange: (model: Array<string>) => void;
-  pagination: {
-    currentPage: number;
-    page: number;
-    size: number;
-  };
+  onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
 export const DebtPositionsDataGrid = ({
   data,
-  onPageChange,
-  onPageSizeChange,
   onSortChange,
-  pagination
+  onPaginationChange
 }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -129,7 +121,6 @@ export const DebtPositionsDataGrid = ({
       const sort = model.map((item) =>
         item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
       );
-      onPageChange(1);
       onSortChange(sort);
     }
   };
@@ -142,13 +133,17 @@ export const DebtPositionsDataGrid = ({
       disableColumnMenu
       disableColumnResize
       onSortModelChange={onSort}
-      customPagination={{
-        defaultPageOption: pagination.size,
-        sizePageOptions: [5, 10, 20],
-        totalPages: data?.totalPages,
-        currentPage: pagination.currentPage,
-        onPageChange,
-        onPageSizeChange
+      smartPagination={{
+        initialPage: 0,
+        initialSize: 10,
+        sizeOptions: [5, 10, 20],
+        backendData: {
+          totalElements: data?.totalElements,
+          totalPages: data?.totalPages,
+          number: data?.number,
+          size: data?.size
+        },
+        onPaginationChange: onPaginationChange
       }}
     />
   );

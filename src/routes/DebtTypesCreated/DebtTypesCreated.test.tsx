@@ -7,16 +7,22 @@ import { render, screen } from '../../__tests__/renderers';
 import utils from '../../utils';
 
 const mockNavigate = vi.fn();
+const mockSetSearchParams = vi.fn();
+
 vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+  const actual = (await vi.importActual('react-router-dom')) as Record<
+    string,
+    unknown
+  >;
   return {
     ...actual,
-    useNavigate: () => mockNavigate
+    useNavigate: () => mockNavigate,
+    useSearchParams: () => [new URLSearchParams(), mockSetSearchParams]
   };
 });
 
 const translations = {
-  'commons.routes.DEBT_TYPES_CREATED': 'Debt Types Created',
+  'commons.routes.DEBT_TYPES_DASHBOARD': 'Debt Types Created',
   'debtTypesCreated.callToAction': 'Create New Debt Type',
   'debtTypesCreated.description': 'Manage your debt types',
   'debtTypesCreated.descriptionFull':

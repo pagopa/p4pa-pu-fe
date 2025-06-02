@@ -226,12 +226,10 @@ const DebtPositionDetail = () => {
     });
   };
 
-  const handleDownloadNotices = async () => {
-    if (!debtPositionId) {
-      utils.notify.emit(t('commons.files.missingDebtPositionId'), 'error');
-      return;
-    }
+  const getDebtPositionZipFileMutation =
+    debtPositions.getDebtPositionZipFile(organizationId);
 
+  const handleDownloadNotices = async () => {
     const DOWNLOADABLE_STATES = [
       DebtPositionStatus.UNPAID,
       DebtPositionStatus.PARTIALLY_PAID
@@ -246,21 +244,14 @@ const DebtPositionDetail = () => {
     }
 
     try {
-      const result = await debtPositions.downloadDebtPositionZip(
-        organizationId,
-        debtPositionId
-      );
-
-      if (!result) {
-        utils.notify.emit(t('commons.files.downloadFailed'), 'error');
-        return;
-      }
+      const result =
+        await getDebtPositionZipFileMutation.mutateAsync(debtPositionId);
 
       const { data, fileName } = result;
       downloadBlob(data, fileName);
     } catch (error) {
       console.error(t('commons.files.downloadFailed'), error);
-      utils.notify.emit(t('commons.files.downloadFailed'), 'error');
+      utils.notify.emit(t('commons.files.downloadFailed'));
     }
   };
 
