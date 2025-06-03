@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
+import { GridSortModel } from '@mui/x-data-grid';
 import { useStore } from '../store/GlobalStore';
 import debtPositions, {
   DebtPositionInstallmentsQuery,
@@ -38,6 +39,7 @@ export const useDebtPositionSearch = ({
   const [filterValues, setFilterValues] =
     useState<DebtPositionsFilters>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
+  const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
   const { paginationParams, handlePaginationChange } = usePaginationState({
     initialPage,
@@ -115,16 +117,27 @@ export const useDebtPositionSearch = ({
     [updateDraftFilters]
   );
 
+  const handleSortModelChange = useCallback((model: GridSortModel) => {
+    setSortModel(model);
+
+    const apiSort = model.map(
+      (item) => `${item.field},${item.sort === 'desc' ? 'DESC' : 'ASC'}`
+    );
+
+    setSort(apiSort.length > 0 ? apiSort : []);
+  }, []);
+
   return {
     applyFilters,
     query,
     filterValues,
     handleFilterChange,
-    // REFACTOR: Utilizzo del callback centralizzato
     handlePaginationChange,
     paginationParams,
     setFilterValues,
     setSort,
+    sortModel,
+    handleSortModelChange,
     updateDraftFilters,
     updateSingleDraftFilter
   };

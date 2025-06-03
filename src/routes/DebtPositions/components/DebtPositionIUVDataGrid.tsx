@@ -19,13 +19,15 @@ import { moneyFormat } from '../../../utils/formatters';
 
 export type DataGridProps = {
   data?: PagedInstallmentView;
-  onSortChange: (model: Array<string>) => void;
+  onSortChange: (model: GridSortModel) => void;
+  sortModel: GridSortModel;
   onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
 export const IUVDataGrid = ({
   data,
   onSortChange,
+  sortModel,
   onPaginationChange
 }: DataGridProps) => {
   const { t } = useTranslation();
@@ -123,15 +125,6 @@ export const IUVDataGrid = ({
     }
   ];
 
-  const onSort = (model: GridSortModel) => {
-    if (model?.length) {
-      const sort = model.map((item) =>
-        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
-      );
-      onSortChange(sort);
-    }
-  };
-
   return (
     <CustomDataGrid
       rows={safeRows}
@@ -139,7 +132,8 @@ export const IUVDataGrid = ({
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      onSortModelChange={onSort}
+      sortModel={sortModel}
+      onSortModelChange={onSortChange}
       smartPagination={{
         initialPage: 0,
         initialSize: 10,
