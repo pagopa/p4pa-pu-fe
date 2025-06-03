@@ -89,11 +89,9 @@
       "SYNC_ERROR": "Errore di sincronizzazione"
     },
     "DP_STATUS": {
-      "DPI_ADDED": "Creato",
       "DPI_CANCELLED": "Cancellato",
       "DPI_EXPIRED": "Scaduto",
       "DPI_REPORTED": "Rendicontato",
-      "DPI_UPDATED": "Aggiornato",
       "RT_RECEIVED": "Pagato",
       "UNKNOWN": "Stato sconosciuto"
     },
