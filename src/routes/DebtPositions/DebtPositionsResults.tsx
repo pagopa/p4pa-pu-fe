@@ -140,7 +140,8 @@ export const DebtPositionResults = () => {
                 debtPosition.query.data as PagedInstallmentView &
                   PagedDebtPositionView
               }
-              onSortChange={debtPosition.setSort}
+              onSortChange={debtPosition.handleSortModelChange}
+              sortModel={debtPosition.sortModel}
               onPaginationChange={debtPosition.handlePaginationChange}
             />
           )}

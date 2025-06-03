@@ -30,6 +30,8 @@ vi.mock('../../hooks/useDebtPositionsSearch', () => ({
     handlePageSizeChange: vi.fn(),
     handlePaginationChange: vi.fn(),
     setSort: vi.fn(),
+    sortModel: [],
+    handleSortModelChange: vi.fn(),
     pagination: { page: 0, size: 10 },
     filterValues: {}
   }))
@@ -146,6 +148,7 @@ describe('DebtPositionResults', () => {
           totalElements: expect.any(Number)
         }),
         onSortChange: expect.any(Function),
+        sortModel: expect.any(Array),
         onPaginationChange: expect.any(Function)
       }),
       expect.anything()
