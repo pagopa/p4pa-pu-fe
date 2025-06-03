@@ -10,19 +10,26 @@ import Typography from '@mui/material/Typography';
 import { format } from 'date-fns';
 import { ReactNode } from 'react';
 import { it } from 'date-fns/locale';
+import { Chip, ChipOwnProps } from '@mui/material';
 
 export type TimelineNode = {
   date: Date;
   element: ReactNode;
   last?: boolean;
   first?: boolean;
+  statusChip?: {
+    label: string;
+    color: ChipOwnProps['color'];
+    variant?: ChipOwnProps['variant'];
+  };
 };
 
 export const _TimelineElement = ({
   date,
   element,
   last,
-  first
+  first,
+  statusChip
 }: TimelineNode) => {
   const { day, month, time } = {
     day: format(date, 'dd', { locale: it }),
@@ -56,6 +63,20 @@ export const _TimelineElement = ({
         <Typography variant="caption" color="text.secondary">
           {time}
         </Typography>
+        {statusChip && (
+          <Chip
+            label={statusChip.label}
+            color={statusChip.color}
+            variant={statusChip.variant ?? 'filled'}
+            size="small"
+            sx={{
+              mb: 1,
+              display: 'block',
+              width: 'fit-content',
+              fontSize: '0.75rem'
+            }}
+          />
+        )}
         {element}
       </TimelineContent>
     </TimelineItem>

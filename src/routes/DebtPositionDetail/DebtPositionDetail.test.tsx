@@ -120,7 +120,15 @@ vi.mock('../../api/debtPositions', () => ({
     })),
     getDebtPositionZipFile: vi.fn().mockImplementation(() => ({
       mutateAsync: mockMutate
-    }))
+    })),
+    downloadDebtPositionZip: vi.fn(),
+    getDebtPositionRegistriesMutation: vi.fn().mockReturnValue({
+      mutate: vi.fn(),
+      data: [],
+      isLoading: false,
+      isError: false,
+      isSuccess: false
+    })
   }
 }));
 
