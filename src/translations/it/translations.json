@@ -297,7 +297,8 @@
     "searchName": "Cerca Nome",
     "searchOperator": "Cerca operatore",
     "searchRegulationUniqueIdentifier": "ID Regolamento",
-    "selectedOperator": "Operatore selezionato",
+    "selectedOperator_one": "Operatore selezionato",
+    "selectedOperator_other": "Operatori selezionati",
     "serviceType": "Tipo Servizio",
     "serviceUnavailable": "Il servizio è temporaneamente non disponibile, vi preghiamo di riprovare più tardi.",
     "showAllFlows": "Vedi tutti i flussi",
@@ -778,6 +779,7 @@
   },
   "debtTypeOrgCreate": {
     "edit": {
+      "title": "Modifica Tipo dovuto",
       "success": {
         "title": "Il Tipo dovuto ‘{{paymentObject}}’ è stato modificato!",
         "description": "La trovi nella sezione I tuoi Tipi Dovuti."
