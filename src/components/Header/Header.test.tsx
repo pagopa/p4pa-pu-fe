@@ -2,10 +2,39 @@ import { useNavigate } from 'react-router-dom';
 import { Header } from './index';
 import { Mock } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
-import { useOrganizations } from '../../hooks/useOrganizations';
-import { OperatorRoleEnum } from '../../../generated/apiClient';
 import { PageRoutes } from '../../routes';
 import { setUserInfo } from '../../store/UserInfoStore';
+
+//   state: {
+//     userInfo: {
+//       userId: 'userId',
+//       familyName: 'Polo',
+//       name: 'Marco'
+//     },
+//     organizations: [
+//       {
+//         organizationId: 1,
+//         orgLogo: 'logo.png',
+//         orgName: 'Org 1',
+//         operatorRole: OperatorRoleEnum.ROLE_ADMIN,
+//         ipaCode: 'ipaCode',
+//         orgFiscalCode: 'XXXXXXX',
+//         flagNotifyIo: false,
+//         flagNotifyOutcomePush: false,
+//         flagPaymentNotification: false
+//       }
+//     ]
+//   }
+// }));
+
+// // Mock dependencies
+// vi.mock('../../store/GlobalStore', async (importOriginal) => {
+//   const actual = await importOriginal();
+//   return {
+//     ...(actual as any),
+//     useStore: mockStore
+//   };
+// });
 
 // Mock dependencies
 vi.mock('react-router-dom', async () => {
@@ -16,43 +45,21 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-vi.mock('../../hooks/useOrganizations', () => ({
-  useOrganizations: vi.fn()
-}));
-
 describe('Header component', () => {
   const mockNavigate = vi.fn();
   const mockOnAssistanceClick = vi.fn();
-  const mockUseOrganizations = vi.mocked(useOrganizations);
 
   beforeAll(() => {
     (useNavigate as Mock).mockReturnValue(mockNavigate);
-  });
-
-  beforeEach(() => {
-    // @ts-expect-error mock success
-    mockUseOrganizations.mockReturnValue({
-      data: [
-        {
-          organizationId: 1,
-          orgLogo: 'logo.png',
-          orgName: 'Org 1',
-          operatorRole: OperatorRoleEnum.ROLE_ADMIN,
-          ipaCode: 'ipaCode',
-          orgFiscalCode: 'XXXXXXX',
-          flagNotifyIo: false,
-          flagNotifyOutcomePush: false,
-          flagPaymentNotification: false
-        }
-      ],
-      isSuccess: true
-    });
-
-    // @ts-expect-error mocking user for header info
     setUserInfo({
       userId: 'userId',
       familyName: 'Polo',
-      name: 'Marco'
+      name: 'Marco',
+      fiscalCode: 'XXXXXXX',
+      canManageUsers: false,
+      issuer: 'Issuer',
+      organizations: [],
+      mappedExternalUserId: 'mappedExternalUserId'
     });
   });
 
@@ -96,12 +103,6 @@ describe('Header component', () => {
   });
 
   it('should not render HeaderProduct when organizations data is empty', () => {
-    // @ts-expect-error mock empty data
-    mockUseOrganizations.mockReturnValue({
-      data: [],
-      isSuccess: true
-    });
-
     const { container } = render(<Header />);
 
     expect(container.innerHTML).not.toBe('');

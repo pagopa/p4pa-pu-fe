@@ -41,7 +41,7 @@ export const setupInterceptors = (client: Client) => {
             type: 'error'
           })
         );
-        // navigation.navigateTo(navigation.routes.HOME);
+        navigation.navigateTo(navigation.routes.HOME);
         return Promise.resolve();
       }
 

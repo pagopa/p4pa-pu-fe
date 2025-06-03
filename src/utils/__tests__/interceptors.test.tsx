@@ -35,15 +35,15 @@ vi.mock('../navigation', () => ({
   }
 }));
 
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({
+vi.mock('../../translations/i18n', () => ({
+  default: {
     t: (key: string) => {
       const translations: Record<string, string> = {
         'commons.serviceUnavailable': 'Servizio temporaneamente non disponibile'
       };
       return translations[key] || key;
     }
-  })
+  }
 }));
 
 import utils from '..';

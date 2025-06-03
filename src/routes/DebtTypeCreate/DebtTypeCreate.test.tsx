@@ -4,6 +4,7 @@ import { DebtTypeCreate } from '../DebtTypeCreate';
 import { Step1Props } from './components/Step1Configuration';
 import { Step2Props } from './components/Step2Settings';
 import { StepperContainerProps } from '../../components/Stepper';
+import { PageRoutes } from '..';
 
 vi.mock('./components/Step1Configuration', () => ({
   Step1Configuration: ({ setData, onNext }: Step1Props) => (
@@ -156,7 +157,7 @@ describe('DebtTypeCreate', () => {
 
     // Should navigate to success page
     await waitFor(() => {
-      expect(mockNavigate).toHaveBeenCalledWith('/success', {
+      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
         state: {
           category: 'debt-type-catalog-create',
