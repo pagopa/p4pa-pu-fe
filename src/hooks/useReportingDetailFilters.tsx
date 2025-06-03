@@ -10,11 +10,6 @@ export type ReportingDetailFilters = {
   sort?: Array<string>;
 };
 
-type PaginationParams = {
-  page?: number;
-  size?: number;
-};
-
 type UseReportingFiltersProps = {
   initialFilters?: Partial<ReportingDetailFilters>;
   onFiltersChange?: (filters: ReportingDetailFilters) => void;
@@ -81,24 +76,12 @@ export const useReportingDetailFilters = ({
     const filtersToApply = {
       ...draftFilters,
       iuv: draftFilters.iuv?.trim() || undefined,
-      page: 0
+      page: 0,
+      size: appliedFilters.size
     };
     setAppliedFilters(filtersToApply);
     onFiltersChange?.(filtersToApply);
-  }, [draftFilters, onFiltersChange]);
-
-  const updatePagination = useCallback(
-    (paginationUpdate: PaginationParams) => {
-      const newFilters = {
-        ...appliedFilters,
-        ...paginationUpdate
-      };
-      setAppliedFilters(newFilters);
-      setDraftFilters(newFilters);
-      onFiltersChange?.(newFilters);
-    },
-    [appliedFilters, onFiltersChange]
-  );
+  }, [draftFilters, appliedFilters.size, onFiltersChange]);
 
   const handleDateFromChange = useCallback(
     (date: Date | null) => {
@@ -147,7 +130,6 @@ export const useReportingDetailFilters = ({
     draftFilters,
     updateDraftFilters,
     applyFilters,
-    updatePagination,
     handleDateFromChange,
     handleDateToChange,
     hasActiveFilters,

@@ -1,7 +1,8 @@
 import { Add, Search } from '@mui/icons-material';
 import { Box, Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useState, useCallback } from 'react';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
@@ -13,41 +14,67 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { PageRoutes } from '../../App';
 
+type DebtTypesFilters = {
+  description?: string;
+};
+
 export const DebtTypes = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const pageFromUrl = parseInt(searchParams.get('page') || '1') - 1;
-  const sizeFromUrl = parseInt(searchParams.get('size') || '10');
 
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  const {
-    appliedFilters,
-    draftFilters,
-    updateDraftFilters,
-    applyFilters,
-    updatePagination,
-    handleSortModelChange,
-    sortModel,
-    isSearchEnabled
-  } = useDebtTypesFilters({
+  const [filterValues, setFilterValues] = useState<DebtTypesFilters>({});
+  const [draftFilters, setDraftFilters] = useState<DebtTypesFilters>({});
+  const [paginationParams, setPaginationParams] = useState({
+    page: 0,
+    size: 10
+  });
+
+  const { handleSortModelChange, sortModel } = useDebtTypesFilters({
     initialFilters: {
-      page: pageFromUrl,
-      size: sizeFromUrl
-    },
-    onFiltersChange: (filters) => {
-      const params = new URLSearchParams(searchParams);
-      params.set('page', (filters.page + 1).toString());
-      params.set('size', filters.size.toString());
-      setSearchParams(params, { replace: true });
+      page: paginationParams.page,
+      size: paginationParams.size
     }
   });
 
-  const { data } = getDebtPositionTypeWithCount(organizationId, appliedFilters);
+  const combinedFilters = {
+    page: paginationParams.page,
+    size: paginationParams.size,
+    ...(filterValues.description && { description: filterValues.description })
+  };
+
+  const { data } = getDebtPositionTypeWithCount(
+    organizationId,
+    combinedFilters
+  );
+
+  const handlePaginationChange = (pagination: {
+    page: number;
+    size: number;
+  }) => {
+    setPaginationParams(pagination);
+  };
+
+  const handleFiltersApplied = () => {
+    setFilterValues(draftFilters);
+    setPaginationParams((prev) => ({ ...prev, page: 0 }));
+  };
+
+  const updateDraftFilters = useCallback(
+    (updates: Partial<DebtTypesFilters>) => {
+      setDraftFilters((prev) => ({ ...prev, ...updates }));
+    },
+    []
+  );
+
+  const applyFilters = useCallback(() => {
+    handleFiltersApplied();
+  }, [draftFilters]);
+
+  const isSearchEnabled = draftFilters.description !== filterValues.description;
 
   return (
     <>
@@ -106,17 +133,10 @@ export const DebtTypes = () => {
               number: 0
             }
           }
-          onPageChange={(page) =>
-            updatePagination({ page: page - 1, size: appliedFilters.size })
-          }
-          onPageSizeChange={(size) => updatePagination({ size, page: 0 })}
           sortModel={sortModel}
           onSortChange={handleSortModelChange}
-          pagination={{
-            currentPage: appliedFilters.page + 1,
-            totalPages: data?.totalPages || 0,
-            size: appliedFilters.size
-          }}
+          onFiltersApplied={handleFiltersApplied}
+          onPaginationChange={handlePaginationChange}
         />
       </Box>
     </>

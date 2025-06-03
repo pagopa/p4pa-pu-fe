@@ -4,11 +4,15 @@ import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { getExportFiles } from '../../api/exportFiles';
 import ClassificationsOverview from './ClassificationsOverview';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useNavigate: vi.fn(),
-  generatePath: vi.fn()
-}));
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+    generatePath: vi.fn()
+  };
+});
 
 vi.mock('../../api/exportFiles', () => ({
   getExportFiles: vi.fn().mockReturnValue({ data: { content: [] } }),

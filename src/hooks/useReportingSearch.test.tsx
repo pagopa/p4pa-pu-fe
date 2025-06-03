@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, act } from '../__tests__/renderers';
-import { useTelematicReceiptSearch } from './useTelematicReceiptsSearch';
+import { useReportingSearch } from './useReportingSearch';
 import { useSearchParams } from 'react-router-dom';
 
 vi.mock('react-router-dom', () => ({
   useSearchParams: vi.fn()
 }));
 
-vi.mock('../api/receipts', () => ({
-  getReceipts: vi.fn(() => ({
+vi.mock('../api/getPaymentsReporting', () => ({
+  getPaymentsReporting: vi.fn(() => ({
     mutate: vi.fn(),
     data: null,
     isLoading: false,
@@ -23,7 +23,7 @@ vi.mock('../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
-describe('useTelematicReceiptSearch', () => {
+describe('useReportingSearch', () => {
   const mockSetSearchParams = vi.fn();
 
   beforeEach(() => {
@@ -60,9 +60,7 @@ describe('useTelematicReceiptSearch', () => {
   };
 
   it('should initialize with default values', () => {
-    const { result } = renderHook(() =>
-      useTelematicReceiptSearch(defaultProps)
-    );
+    const { result } = renderHook(() => useReportingSearch(defaultProps));
 
     expect(result.current.paginationParams.page).toBe(0);
     expect(result.current.paginationParams.size).toBe(10);
@@ -71,34 +69,32 @@ describe('useTelematicReceiptSearch', () => {
 
   it('should initialize with custom values', () => {
     const customProps = {
-      initialFilters: { iuv: 'test-iuv' },
+      initialFilters: { iuf: 'test-iuf' },
       initialPage: 2,
       initialSize: 25
     };
 
-    const { result } = renderHook(() => useTelematicReceiptSearch(customProps));
+    const { result } = renderHook(() => useReportingSearch(customProps));
 
     expect(result.current.paginationParams.page).toBe(0);
     expect(result.current.paginationParams.size).toBe(25);
-    expect(result.current.filterValues).toEqual({ iuv: 'test-iuv' });
+    expect(result.current.filterValues).toEqual({ iuf: 'test-iuf' });
   });
 
   it('should handle filter changes', () => {
-    const { result } = renderHook(() =>
-      useTelematicReceiptSearch(defaultProps)
-    );
+    const { result } = renderHook(() => useReportingSearch(defaultProps));
 
     act(() => {
-      result.current.handleFilterChange('iuv', 'new-iuv');
+      result.current.handleFilterChange('iuf', 'new-iuf');
     });
 
-    expect(result.current.filterValues.iuv).toBe('new-iuv');
+    expect(result.current.filterValues.iuf).toBe('new-iuf');
   });
 
   it('should handle pagination changes', () => {
     createDynamicSearchParamsMock();
     const { result, rerender } = renderHook(() =>
-      useTelematicReceiptSearch(defaultProps)
+      useReportingSearch(defaultProps)
     );
 
     act(() => {
@@ -114,7 +110,7 @@ describe('useTelematicReceiptSearch', () => {
   it('should reset page when applying filters', () => {
     createDynamicSearchParamsMock();
     const { result, rerender } = renderHook(() =>
-      useTelematicReceiptSearch(defaultProps)
+      useReportingSearch(defaultProps)
     );
 
     act(() => {
@@ -133,9 +129,7 @@ describe('useTelematicReceiptSearch', () => {
   });
 
   it('should expose required functions', () => {
-    const { result } = renderHook(() =>
-      useTelematicReceiptSearch(defaultProps)
-    );
+    const { result } = renderHook(() => useReportingSearch(defaultProps));
 
     expect(typeof result.current.applyFilters).toBe('function');
     expect(typeof result.current.handleFilterChange).toBe('function');

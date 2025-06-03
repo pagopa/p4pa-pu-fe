@@ -11,6 +11,7 @@ vi.mock('react-router-dom', async () => {
   return {
     ...actual,
     useNavigate: vi.fn(),
+    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
     Link: ({ to, children }: { to: string; children: React.ReactNode }) =>
       React.createElement('a', { href: to }, children)
   };
