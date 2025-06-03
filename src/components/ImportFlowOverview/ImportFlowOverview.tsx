@@ -11,7 +11,6 @@ import ActionMenu from '../ActionMenu/ActionMenu';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../App';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { useStore } from '../../store/GlobalStore';
 import {
   DOWNLOAD_STATES,
   FlowStatus,
@@ -24,7 +23,6 @@ import {
   getIngestionFlowFiles
 } from '../../api/ingestionFlowFiles';
 import { useFlowFilters } from '../../hooks/useFlowFilters';
-import { STATE } from '../../store/types';
 import {
   IngestionFlowFile,
   IngestionFlowFileStatus,
@@ -33,6 +31,8 @@ import {
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
@@ -59,18 +59,20 @@ const ImportFlowOverview = ({
     draftFilters,
     updateDraftFilters,
     applyFilters,
-    updatePagination,
     handleDateFromChange,
     handleDateToChange,
     hasActiveFilters,
     sortModel,
-    handleSortModelChange
+    handleSortModelChange,
+    updatePagination
   } = useFlowFilters({
     ingestionFlowFileTypes: ingestionFlowFileTypes
   });
 
-  const { data } = getIngestionFlowFiles(organizationId, appliedFilters);
-
+  const { data, isLoading } = getIngestionFlowFiles(
+    organizationId,
+    appliedFilters
+  );
   const isEmptyData = !data?.content || data.content.length === 0;
 
   const getIngestionFlowFileErrorMutation =
@@ -231,113 +233,110 @@ const ImportFlowOverview = ({
         description={description}
       />
 
-      {isEmptyData ? (
-        <EmptyDataGrid
-          title={t('commons.noFlows')}
-          action={{
-            label: t('commons.importFlows'),
-            onClick: handleImportFlow
+      <Grid
+        container
+        direction="row"
+        sx={{
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 2
+        }}
+      >
+        <FilterContainer
+          items={[
+            {
+              type: COMPONENT_TYPE.textField,
+              label: t('commons.searchName'),
+              adornment: <Search />,
+              gridWidth: 5,
+              value: draftFilters.fileName || '',
+              onChange: (e) => updateDraftFilters({ fileName: e.target.value })
+            },
+            {
+              type: COMPONENT_TYPE.select,
+              label: t('commons.state'),
+              gridWidth: 2,
+              options: [
+                { label: t('commons.status.ALL'), value: 'ALL' },
+                ...Object.values(IngestionFlowFileStatus).map((status) => ({
+                  label: t(`commons.status.${status}`),
+                  value: status
+                }))
+              ],
+              value: draftFilters.status || 'ALL',
+              onChange: (e) => {
+                const value = e.target.value;
+                updateDraftFilters({
+                  status: value === 'ALL' ? undefined : (value as FlowStatus)
+                });
+              }
+            },
+            {
+              type: COMPONENT_TYPE.dateRange,
+              label: 'dateRange',
+              gridWidth: 4,
+              from: {
+                label: t('commons.exportFrom'),
+                errorMessage: t('dates.validations.from'),
+                value: draftFilters.creationDateFrom
+                  ? new Date(draftFilters.creationDateFrom)
+                  : null,
+                onChange: handleDateFromChange
+              },
+              to: {
+                label: t('dates.to'),
+                errorMessage: t('dates.validations.to'),
+                value: draftFilters.creationDateTo
+                  ? new Date(draftFilters.creationDateTo)
+                  : null,
+                onChange: handleDateToChange
+              }
+            },
+            {
+              type: COMPONENT_TYPE.button,
+              label: t('commons.filters.filterResults'),
+              gridWidth: 1,
+              onClick: applyFilters,
+              disabled: !hasActiveFilters()
+            }
+          ]}
+        />
+      </Grid>
+
+      <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
+        {isEmptyData && data && data.totalElements === 0 && (
+          <EmptyDataGrid
+            title={t('commons.noFlows')}
+            action={{
+              label: t('commons.importFlows'),
+              onClick: handleImportFlow
+            }}
+          />
+        )}
+
+        <CustomDataGrid
+          rows={data?.content || []}
+          columns={columns}
+          getRowId={(row) => row.ingestionFlowFileId}
+          disableColumnMenu
+          disableColumnResize
+          sortModel={sortModel}
+          onSortModelChange={handleSortModelChange}
+          loading={isLoading}
+          smartPagination={{
+            initialPage: 0,
+            initialSize: 10,
+            sizeOptions: [5, 10, 20],
+            backendData: {
+              totalElements: data?.totalElements || 0,
+              totalPages: data?.totalPages || 0,
+              number: data?.number || 0,
+              size: data?.size || 10
+            },
+            onPaginationChange: updatePagination
           }}
         />
-      ) : (
-        <>
-          <Grid
-            container
-            direction="row"
-            sx={{
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: 2
-            }}
-          >
-            <FilterContainer
-              items={[
-                {
-                  type: COMPONENT_TYPE.textField,
-                  label: t('commons.searchName'),
-                  adornment: <Search />,
-                  gridWidth: 5,
-                  value: draftFilters.fileName || '',
-                  onChange: (e) =>
-                    updateDraftFilters({ fileName: e.target.value })
-                },
-                {
-                  type: COMPONENT_TYPE.select,
-                  label: t('commons.state'),
-                  gridWidth: 2,
-                  options: [
-                    { label: t('commons.status.ALL'), value: 'ALL' },
-                    ...Object.values(IngestionFlowFileStatus).map((status) => ({
-                      label: t(`commons.status.${status}`),
-                      value: status
-                    }))
-                  ],
-                  value: draftFilters.status || 'ALL',
-                  onChange: (e) => {
-                    const value = e.target.value;
-                    updateDraftFilters({
-                      status:
-                        value === 'ALL' ? undefined : (value as FlowStatus)
-                    });
-                  }
-                },
-                {
-                  type: COMPONENT_TYPE.dateRange,
-                  label: 'dateRange',
-                  gridWidth: 4,
-                  from: {
-                    label: t('commons.exportFrom'),
-                    errorMessage: t('dates.validations.from'),
-                    value: draftFilters.creationDateFrom
-                      ? new Date(draftFilters.creationDateFrom)
-                      : null,
-                    onChange: handleDateFromChange
-                  },
-                  to: {
-                    label: t('dates.to'),
-                    errorMessage: t('dates.validations.to'),
-                    value: draftFilters.creationDateTo
-                      ? new Date(draftFilters.creationDateTo)
-                      : null,
-                    onChange: handleDateToChange
-                  }
-                },
-                {
-                  type: COMPONENT_TYPE.button,
-                  label: t('commons.filters.filterResults'),
-                  gridWidth: 1,
-                  onClick: applyFilters,
-                  disabled: !hasActiveFilters()
-                }
-              ]}
-            />
-          </Grid>
-
-          <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
-            <CustomDataGrid
-              rows={data?.content || []}
-              columns={columns}
-              getRowId={(row) => row.ingestionFlowFileId}
-              disableColumnMenu
-              disableColumnResize
-              sortModel={sortModel}
-              onSortModelChange={handleSortModelChange}
-              customPagination={{
-                totalPages: data?.totalPages,
-                defaultPageOption: appliedFilters.size,
-                sizePageOptions: [5, 10, 15, 20],
-                onPageChange: (page) =>
-                  updatePagination({
-                    page: page - 1,
-                    size: appliedFilters.size
-                  }),
-                onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
-                currentPage: appliedFilters.page + 1
-              }}
-            />
-          </Box>
-        </>
-      )}
+      </Box>
     </>
   );
 };

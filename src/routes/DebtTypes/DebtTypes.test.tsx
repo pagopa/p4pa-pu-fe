@@ -150,7 +150,7 @@ describe('DebtTypes Page', () => {
 
     expect(getDebtPositionTypeWithCount).toHaveBeenCalledWith(
       expect.any(Number),
-      expect.objectContaining({ page: 1, size: 20 })
+      expect.objectContaining({ page: 0, size: 10 })
     );
   });
 });

@@ -1,14 +1,20 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { useNavigate, generatePath, useSearchParams } from 'react-router-dom';
 import { render, screen } from '../../__tests__/renderers';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import ReportingImportFlowOverview from './ReportingImportFlowOverview';
+import { setOrganizationId } from '../../store/OrganizationIdStore';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useNavigate: vi.fn(),
-  generatePath: vi.fn()
-}));
+vi.mock('react-router-dom', async () => {
+  const actual = await vi.importActual('react-router-dom');
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    generatePath: vi.fn(),
+    useSearchParams: vi.fn()
+  };
+});
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
@@ -28,6 +34,9 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
 }));
 
 describe('ReportingImportFlowOverview', () => {
+  const mockNavigate = vi.fn();
+  const mockSetSearchParams = vi.fn();
+
   const mockDataWithContent = {
     content: [
       {
@@ -50,18 +59,33 @@ describe('ReportingImportFlowOverview', () => {
 
     i18nTestSetup({
       'commons.routes.REPORTING_IMPORT_FLOW_OVERVIEW': 'Reporting Import',
-      'reportingImportFlowOverview.description': 'Import your Reporting',
+      'reportingImportFlowOverview.description': 'Import your reporting files',
       'commons.importFlow': 'Import Flow',
       'commons.importFlows': 'Import Flows',
       'commons.noFlows': 'No flows available'
     });
+
+    (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
+    (generatePath as ReturnType<typeof vi.fn>).mockImplementation(
+      () => '/mock-path'
+    );
+    (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue([
+      new URLSearchParams(),
+      mockSetSearchParams
+    ]);
+
+    (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: { content: [] }
+    });
+
+    setOrganizationId(123);
   });
 
   it('renders with correct translations', () => {
     render(<ReportingImportFlowOverview />);
 
     expect(screen.getByText('Reporting Import')).toBeDefined();
-    expect(screen.getByText('Import your Reporting')).toBeDefined();
+    expect(screen.getByText('Import your reporting files')).toBeDefined();
   });
 
   it('handles missing translations by using keys as fallback', () => {

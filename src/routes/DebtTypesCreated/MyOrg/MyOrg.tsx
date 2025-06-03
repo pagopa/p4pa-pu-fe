@@ -39,19 +39,15 @@ export const MyOrg = ({
 
   const { mutate, data } = useDebtPositionTypeOrgSearch();
 
-  const {
-    appliedFilters,
-    updateDraftFilters,
-    applyFilters,
-    updatePagination,
-    sortModel,
-    handleSortModelChange
-  } = useDebtTypesCreatedFilters({
-    initialFilters: {
-      code: codeFilter,
-      description: descriptionFilter
-    }
-  });
+  const { updateDraftFilters, applyFilters, sortModel, handleSortModelChange } =
+    useDebtTypesCreatedFilters({
+      initialFilters: {
+        code: codeFilter,
+        description: descriptionFilter,
+        page: 0,
+        size: 10
+      }
+    });
 
   useEffect(() => {
     updateDraftFilters({
@@ -61,16 +57,31 @@ export const MyOrg = ({
   }, [codeFilter, descriptionFilter, updateDraftFilters]);
 
   useEffect(() => {
-    const initialFilters: FilterParams = {
+    const filters: FilterParams = {
       page: 0,
       size: 10
     };
 
-    if (codeFilter) initialFilters.code = codeFilter;
-    if (descriptionFilter) initialFilters.description = descriptionFilter;
+    if (codeFilter) filters.code = codeFilter;
+    if (descriptionFilter) filters.description = descriptionFilter;
 
-    mutate({ organizationId, filters: initialFilters });
-  }, []);
+    mutate({ organizationId, filters });
+  }, [organizationId, codeFilter, descriptionFilter, mutate]);
+
+  const handlePaginationChange = (pagination: {
+    page: number;
+    size: number;
+  }) => {
+    const filters: FilterParams = {
+      page: pagination.page,
+      size: pagination.size
+    };
+
+    if (codeFilter) filters.code = codeFilter;
+    if (descriptionFilter) filters.description = descriptionFilter;
+
+    mutate({ organizationId, filters });
+  };
 
   useEffect(() => {
     const performSearch = () => {
@@ -136,11 +147,6 @@ export const MyOrg = ({
     );
   };
 
-  const handlePaginationChange = (page: number, size: number) => {
-    const filters = updatePagination({ page: page - 1, size });
-    mutate({ organizationId, filters });
-  };
-
   const handleSortChange = (newSortModel: GridSortModel) => {
     const filters = handleSortModelChange(newSortModel);
     mutate({ organizationId, filters });
@@ -158,14 +164,17 @@ export const MyOrg = ({
         disableColumnResize
         sortModel={sortModel}
         onSortModelChange={handleSortChange}
-        customPagination={{
-          totalPages: data?.totalPages || 0,
-          defaultPageOption: appliedFilters.size as number,
-          sizePageOptions: [5, 10, 15, 20],
-          onPageChange: (page) =>
-            handlePaginationChange(page, appliedFilters.size as number),
-          onPageSizeChange: (size) => handlePaginationChange(1, size),
-          currentPage: ((appliedFilters.page as number) || 0) + 1
+        smartPagination={{
+          initialPage: 0,
+          initialSize: 10,
+          sizeOptions: [5, 10, 20],
+          backendData: {
+            totalElements: data?.totalElements,
+            totalPages: data?.totalPages,
+            number: data?.number,
+            size: data?.size
+          },
+          onPaginationChange: handlePaginationChange
         }}
       />
     </Box>

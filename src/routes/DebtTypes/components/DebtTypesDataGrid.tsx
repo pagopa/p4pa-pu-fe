@@ -17,25 +17,18 @@ import { PageRoutes } from '../../../App';
 
 export type DebtTypesDataGridProps = {
   data: PagedDebtPositionTypeWithCount;
-  onPageChange: (page: number) => void;
-  onPageSizeChange: (page: number) => void;
   onSortChange: (model: GridSortModel) => void;
   sortModel: GridSortModel;
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    size: number;
-  };
+  onFiltersApplied?: () => void;
+  onPaginationChange?: (pagination: { page: number; size: number }) => void;
   isLoading?: boolean;
 };
 
 const DebtTypesDataGrid = ({
   data,
-  onPageChange,
-  onPageSizeChange,
   onSortChange,
   sortModel,
-  pagination,
+  onPaginationChange,
   isLoading = false
 }: DebtTypesDataGridProps) => {
   const { t } = useTranslation();
@@ -98,13 +91,17 @@ const DebtTypesDataGrid = ({
       disableColumnResize
       sortModel={sortModel}
       onSortModelChange={onSortChange}
-      customPagination={{
-        defaultPageOption: pagination.size,
-        sizePageOptions: [5, 10, 20],
-        totalPages: pagination.totalPages,
-        currentPage: pagination.currentPage,
-        onPageChange,
-        onPageSizeChange
+      smartPagination={{
+        initialPage: 0,
+        initialSize: 10,
+        sizeOptions: [5, 10, 20],
+        backendData: {
+          totalElements: data?.totalElements,
+          totalPages: data?.totalPages,
+          number: data?.number,
+          size: data?.size
+        },
+        onPaginationChange: onPaginationChange
       }}
       localeText={{ noRowsLabel: t('flowDataGrid.noDataRows') }}
       loading={isLoading}

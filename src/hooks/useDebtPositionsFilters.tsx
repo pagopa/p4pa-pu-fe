@@ -6,14 +6,14 @@ import {
 } from '../components/FilterContainer/FilterContainer';
 import { SearchType } from '../models/DebtPositions';
 import { useStore } from '../store/GlobalStore';
-import { DebtPositionFilters } from './useDebtPositionsSearch';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 import { DebtPositionStatus } from '../../generated/data-contracts';
 import { optionMapsConverter } from '../utils/formatters';
+import { DebtPositionsFilters } from './useDebtPositionsSearch';
 
 type UseDebtPositionSearchProps = {
   searchType: SearchType;
-  onFilter: (filters: DebtPositionFilters) => void;
+  onFilter: (filters: DebtPositionsFilters) => void;
 };
 
 export const useDebtPositionFilters = ({

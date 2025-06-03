@@ -86,10 +86,10 @@ describe('ReportingSearchResults', () => {
     render(<ReportingSearchResults />);
 
     // Verifica che useReportingSearch sia stato chiamato con i parametri corretti
+    // Ora l'hook riceve solo initialFilters, la paginazione è gestita internamente
     expect(vi.mocked(useReportingSearch)).toHaveBeenCalledWith(
       expect.objectContaining({
-        initialPage: 1, // page-1 perché è 0-based internamente
-        initialSize: 20
+        initialFilters: expect.any(Object)
       })
     );
   });

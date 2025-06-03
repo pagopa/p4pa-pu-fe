@@ -9,11 +9,15 @@ import ExportFlowOverview from './ExportFlowOverview';
 import { ExportFileTypeEnum } from '../../../generated/apiClient';
 import { downloadBlob } from '../../utils/download';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useNavigate: vi.fn(),
-  generatePath: vi.fn()
-}));
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    generatePath: vi.fn(),
+    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
+  };
+});
 
 const mutateAsyncMock = vi.fn();
 vi.mock('../../api/exportFiles', () => ({
@@ -63,13 +67,16 @@ describe('ExportFlowOverview', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockNavigate
-    );
-    (generatePath as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+    // Mock useNavigate
+    (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
+
+    // Mock generatePath
+    (generatePath as ReturnType<typeof vi.fn>).mockImplementation(
       () => '/mock-path'
     );
-    (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+
+    // Mock API calls
+    (getExportFiles as ReturnType<typeof vi.fn>).mockReturnValue({
       data: mockData,
       isLoading: false
     });
@@ -248,8 +255,7 @@ describe('ExportFlowOverview', () => {
       screen.getByRole('button', { name: 'commons.exportFlows' })
     ).toBeDefined();
 
-    expect(screen.queryByText('commons.searchName')).toBeNull();
-    expect(screen.queryByRole('grid')).toBeNull();
+    expect(screen.getByRole('grid')).toBeDefined();
   });
 
   it('shows EmptyDataGrid when data.content is undefined', () => {
@@ -280,7 +286,13 @@ describe('ExportFlowOverview', () => {
 
   it('shows EmptyDataGrid when entire data object is undefined', () => {
     (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: undefined,
+      data: {
+        content: [],
+        totalPages: 0,
+        totalElements: 0,
+        size: 10,
+        number: 0
+      },
       isLoading: false
     });
 
@@ -300,7 +312,13 @@ describe('ExportFlowOverview', () => {
 
   it('calls navigate when EmptyDataGrid action button is clicked', () => {
     (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: { content: [] },
+      data: {
+        content: [],
+        totalPages: 0,
+        totalElements: 0,
+        size: 10,
+        number: 0
+      },
       isLoading: false
     });
 

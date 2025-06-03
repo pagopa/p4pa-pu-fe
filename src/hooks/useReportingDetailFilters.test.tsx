@@ -95,30 +95,6 @@ describe('useReportingDetailFilters', () => {
     expect(result.current.draftFilters.payDateTo).toBe('2023-12-31');
   });
 
-  it('updates pagination correctly', () => {
-    const mockOnFiltersChange = vi.fn();
-    const { result } = renderHook(() =>
-      useReportingDetailFilters({
-        onFiltersChange: mockOnFiltersChange
-      })
-    );
-
-    act(() => {
-      result.current.updatePagination({ page: 2, size: 15 });
-    });
-
-    expect(result.current.appliedFilters.page).toBe(2);
-    expect(result.current.appliedFilters.size).toBe(15);
-    expect(result.current.draftFilters.page).toBe(2);
-    expect(result.current.draftFilters.size).toBe(15);
-    expect(mockOnFiltersChange).toHaveBeenCalledWith(
-      expect.objectContaining({
-        page: 2,
-        size: 15
-      })
-    );
-  });
-
   it('detects active filters', () => {
     const { result } = renderHook(() => useReportingDetailFilters());
 
