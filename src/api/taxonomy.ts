@@ -122,3 +122,23 @@ export const synchronizeTaxonomy = () =>
       return data;
     }
   });
+
+type TaxonomiesParams = Parameters<typeof utils.apiClient.bff.getTaxonomies>;
+export type TaxonomiesQuery = TaxonomiesParams[0];
+
+export const getTaxonomies = () =>
+  useMutation({
+    mutationKey: ['getTaxonomies'],
+    mutationFn: async (query: TaxonomiesQuery) => {
+      const { data: taxonomies } = await utils.apiClient.bff.getTaxonomies(
+        query,
+        {
+          paramsSerializer: {
+            // repeat array params as query string
+            indexes: null
+          }
+        }
+      );
+      return taxonomies;
+    }
+  });
