@@ -18,7 +18,6 @@ import {
 } from '../../../../models/Step1GeneralConfigurationSchema';
 import { useEffect, useRef, useMemo } from 'react';
 
-// Types for react-hook-form
 type FormValues = Step1GeneralConfigurationFormValues;
 
 type Props = {
@@ -43,7 +42,6 @@ const Step1GeneralConfiguration = ({
   } = useStore();
   const { t } = useTranslation();
 
-  // Ref to avoid executing the setup logic more than once
   const hasSetupDebtPositionType = useRef(false);
 
   const {
@@ -53,7 +51,6 @@ const Step1GeneralConfiguration = ({
     organizationId
   });
 
-  // Create the array of options for the select from the complete data
   const debtPositionsTypes: Array<DebtPositionType> = useMemo(() => {
     if (!debtPositionTypeOrgsData) return [];
 
@@ -69,24 +66,21 @@ const Step1GeneralConfiguration = ({
       }));
   }, [debtPositionTypeOrgsData]);
 
-  // Create the Zod schema with translation function
   const schema = createStep1GeneralConfigurationSchema(t);
 
-  // Determinare se i dati sono pronti per il rendering
-  const isDataReady = () => {
+  const isDataReady = (): boolean => {
     if (!isEditing) {
-      // In creation mode, the data is always ready if not loading
       return !isLoadingDebtPositionTypes;
     }
 
-    // In edit mode, wait for all necessary data to be available
-    return (
+    const hasRequiredData =
       !isLoadingDebtPositionTypes &&
-      debtPositionTypeOrgCode &&
-      debtPositionTypeOrgsData &&
+      Boolean(debtPositionTypeOrgCode) &&
+      Boolean(debtPositionTypeOrgsData) &&
       debtPositionsTypes.length > 0 &&
-      data?.description?.value !== undefined
-    );
+      Boolean(data?.description?.value);
+
+    return hasRequiredData;
   };
 
   const getInitialValues = () => {
@@ -97,7 +91,6 @@ const Step1GeneralConfiguration = ({
       };
     }
 
-    // In edit mode, find the debt position type corresponding to the code
     const matchingTypeOrg = debtPositionTypeOrgsData?.find(
       (typeOrg) => typeOrg.code === debtPositionTypeOrgCode
     );
@@ -121,7 +114,6 @@ const Step1GeneralConfiguration = ({
     };
   };
 
-  // Form initialization with react-hook-form
   const {
     handleSubmit,
     control,
@@ -133,7 +125,6 @@ const Step1GeneralConfiguration = ({
     mode: 'onTouched'
   });
 
-  // Effect to repopulate the form fields when the data becomes available
   useEffect(() => {
     if (
       isEditing &&
@@ -151,10 +142,8 @@ const Step1GeneralConfiguration = ({
         );
 
         if (matchingSelectOption) {
-          // Update form values
           setValue('debtPositionType', matchingSelectOption.value.toString());
 
-          // Update parent component data (only once)
           if (!hasSetupDebtPositionType.current) {
             const updatedData = {
               ...data,
@@ -171,7 +160,6 @@ const Step1GeneralConfiguration = ({
         }
       }
 
-      // Update description if available
       if (data?.description?.value) {
         setValue('description', data.description.value);
       }
@@ -188,7 +176,6 @@ const Step1GeneralConfiguration = ({
     data
   ]);
 
-  // Function called on valid form submission
   const onSubmit = (values: FormValues) => {
     const selectedType = debtPositionsTypes.find(
       (type: DebtPositionType) =>
@@ -211,9 +198,7 @@ const Step1GeneralConfiguration = ({
     onNext();
   };
 
-  // Non renderizzare il form fino a quando i dati non sono pronti
   if (!isDataReady()) {
-    // Il loading sarà gestito automaticamente dal sistema centralizzato di react-query
     return null;
   }
 
@@ -227,7 +212,6 @@ const Step1GeneralConfiguration = ({
           title={t('debtPositionCreateWizard.step1.title')}
           adornment={<BookIcon />}
         >
-          {/* Debt position type selection */}
           <Controller
             name="debtPositionType"
             control={control}
@@ -253,7 +237,6 @@ const Step1GeneralConfiguration = ({
               </TextField>
             )}
           />
-          {/* Debt position description */}
           <Controller
             name="description"
             control={control}
