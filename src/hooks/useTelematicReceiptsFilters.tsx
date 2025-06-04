@@ -7,13 +7,16 @@ import {
 import { useStore } from '../store/GlobalStore';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 import { TelematicReceiptFilters } from './useTelematicReceiptsSearch';
+import { FilterFieldIds } from '../models/SearchCardFields';
 
 type UseTelematicReceiptsProps = {
   onFilter: (filters: TelematicReceiptFilters) => void;
+  layout?: 'inline' | 'grid';
 };
 
 export const useTelematicReceiptsFilters = ({
-  onFilter
+  onFilter,
+  layout = 'inline'
 }: UseTelematicReceiptsProps) => {
   const { t } = useTranslation();
   const {
@@ -23,21 +26,23 @@ export const useTelematicReceiptsFilters = ({
   const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
 
   const getFilterItems = (): Array<FilterItem> => {
-    return [
+    const items: Array<FilterItem> = [
       {
         type: COMPONENT_TYPE.textField,
         label: t('commons.searchIUV'),
         adornment: <SearchIcon />,
         gridWidth: 3,
-        id: 'iuv'
+        id: FilterFieldIds.IUV_CODE,
+        ...(layout === 'grid' ? { gridWidth: 12 } : {})
       },
       {
         type: COMPONENT_TYPE.select,
         label: t('commons.duetype'),
         gridWidth: 3,
         options: debtPositionsTypes.optionsMap,
-        id: 'typeOrgId',
-        defaultValue: 0
+        id: FilterFieldIds.TYPE_ORG,
+        defaultValue: 0,
+        ...(layout === 'grid' ? { gridWidth: 12 } : {})
       },
       {
         type: COMPONENT_TYPE.dateRange,
@@ -46,16 +51,22 @@ export const useTelematicReceiptsFilters = ({
         gridWidth: 5,
         from: { label: t('commons.outcomeFrom') },
         to: { label: t('commons.to') },
-        id: 'dateRange'
-      },
-      {
+        id: FilterFieldIds.DATE_RANGE,
+        ...(layout === 'grid' ? { gridWidth: 12 } : {})
+      }
+    ];
+
+    if (layout === 'inline') {
+      items.push({
         type: COMPONENT_TYPE.button,
         label: t('commons.filters.filterResults'),
         gridWidth: 1,
         id: 'applyFilters',
         onClick: onFilter
-      }
-    ];
+      });
+    }
+
+    return items;
   };
 
   return { filters: getFilterItems() };
