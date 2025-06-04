@@ -1,13 +1,11 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
-import { FileUpload, Search } from '@mui/icons-material';
+import { FileUpload } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../App';
-import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
-import { FilterFieldIds } from '../../models/SearchCardFields';
 import { useCallback, useState } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 
@@ -56,29 +54,9 @@ export const Reporting = () => {
             <SearchCard
               title={t('reporting.searchTitleContainer')}
               description={t('reporting.searchDescriptionContainer')}
+              filterContext="REPORTING"
               filterValues={filters[0]}
               onFilterChange={handleFilterChange}
-              fields={[
-                {
-                  type: COMPONENT_TYPE.textField,
-                  label: t('reporting.searchReportingId'),
-                  adornment: <Search />,
-                  id: FilterFieldIds.IUF
-                },
-                {
-                  type: COMPONENT_TYPE.textField,
-                  label: t('reporting.searchRegulationId'),
-                  adornment: <Search />,
-                  id: FilterFieldIds.REGULATION_UNIQUE_IDENTIFIER
-                },
-                {
-                  type: COMPONENT_TYPE.dateRange,
-                  label: 'reporting.searchDateRange',
-                  from: { label: t('dates.from') },
-                  to: { label: t('dates.to') },
-                  id: FilterFieldIds.DATE_RANGE
-                }
-              ]}
               button={[
                 {
                   label: t('commons.filters.remove'),
