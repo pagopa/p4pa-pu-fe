@@ -7,6 +7,8 @@ import { FilterMap } from '../../hooks/useMultiFilters';
 import { ButtonProps, FormComponent } from '../FormComponent';
 import { useState, useEffect } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
+import { useTelematicReceiptsFilters } from '../../hooks/useTelematicReceiptsFilters';
+import { useReportingFilters } from '../../hooks/useReportingFilters';
 
 export type TabsConfig = {
   label: string;
@@ -19,6 +21,7 @@ type SearchCardProps = {
   tabsConfig?: Array<TabsConfig>;
   fields?: Array<FilterItem>;
   button?: Array<ButtonProps>;
+  filterContext?: 'TELEMATIC' | 'REPORTING';
   multiFilterConfig?: FilterMap;
   activeTabIndex?: number;
   onTabChange?: (index: number) => void;
@@ -33,6 +36,7 @@ const SearchCard = ({
   tabsConfig,
   fields,
   button,
+  filterContext,
   multiFilterConfig,
   activeTabIndex = 0,
   onTabChange,
@@ -44,11 +48,6 @@ const SearchCard = ({
 
   const isControlled = onTabChange !== undefined;
   const currentTabIndex = isControlled ? activeTabIndex : localActiveTab;
-
-  const activeFields =
-    tabsConfig && tabsConfig.length > 0
-      ? tabsConfig[currentTabIndex].fields
-      : fields || [];
 
   const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
     if (isControlled) {
@@ -69,6 +68,31 @@ const SearchCard = ({
       onReset();
     }
   }, [onReset]);
+
+  const getHookFilters = (): Array<FilterItem> => {
+    if (filterContext === 'TELEMATIC') {
+      return useTelematicReceiptsFilters({
+        onFilter: () => {
+          //required by hook
+        },
+        layout: 'grid'
+      }).filters;
+    }
+    if (filterContext === 'REPORTING') {
+      return useReportingFilters({
+        onFilter: () => {
+          //required by hook
+        },
+        layout: 'grid'
+      }).filters;
+    }
+    return [];
+  };
+
+  const activeFields =
+    tabsConfig && tabsConfig.length > 0
+      ? tabsConfig[currentTabIndex].fields
+      : (fields ?? getHookFilters());
 
   const getButtonLenght = (length: number, index: number) => {
     if (length === 1) return 12;
