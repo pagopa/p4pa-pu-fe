@@ -78,3 +78,20 @@ export function extractFilename(header: string): string | null {
   const filenameMatch = /filename=["']?([^"';]+)["']?/i.exec(header);
   return filenameMatch ? filenameMatch[1].trim() : null;
 }
+
+/**
+ * Converts an unknown value to an appropriate Date object for input components
+ * @param value - The value to convert (can be string, Date or null/undefined)
+ * @returns Date object or null if the value is not valid
+ */
+export function convertToDateValue(value: unknown): Date | null {
+  if (!value) {
+    return null;
+  }
+
+  if (typeof value === 'string') {
+    return new Date(value);
+  }
+
+  return value as Date;
+}
