@@ -5,7 +5,7 @@ import {
   RouteObject
 } from 'react-router';
 import utils from '../utils';
-import { setup, setupFallback } from '../setup';
+import { setup, setupFallback } from '../utils/setup';
 import { Layout } from '../components/layout/Layout';
 import Home from './Home';
 import { RouteHandleObject } from '../models/Routes';

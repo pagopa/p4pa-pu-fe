@@ -48,6 +48,8 @@ vi.mock('../../translations/i18n', () => ({
 
 import utils from '..';
 import navigation from '../navigation';
+import { setAppState } from '../../store/AppStateStore';
+import router, { PageRoutes } from '../../routes';
 
 describe('setupInterceptors', () => {
   const client = {
@@ -275,6 +277,7 @@ describe('Response interceptor auth error handling', () => {
   });
 
   it('should handle 403 error (Forbidden)', async () => {
+    setAppState({ ready: true });
     const error: AxiosError = {
       name: 'AxiosError',
       message: 'Request failed with status code 403',
@@ -289,10 +292,11 @@ describe('Response interceptor auth error handling', () => {
       isAxiosError: true,
       toJSON: () => ({})
     };
+    const getApplesSpy = vi.spyOn(router, 'navigate');
 
     const result = await responseErrorHandler(error);
 
-    expect(navigation.navigateTo).toHaveBeenCalledWith(navigation.routes.HOME);
+    expect(getApplesSpy).toHaveBeenCalledWith(PageRoutes.HOME);
     expect(result).toBeUndefined();
   });
 });

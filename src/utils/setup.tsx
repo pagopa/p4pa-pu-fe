@@ -1,20 +1,21 @@
-import brokers from './api/brokers';
-import user from './api/user';
-import loader from './utils/loaders';
-import { setConfigFe } from './store/ConfigFeStore';
-import { setUserInfo } from './store/UserInfoStore';
-import { idTokenPayloadState } from './store/IdTokenStore';
-import { setupInterceptors } from './utils/interceptors';
+import brokers from '../api/brokers';
+import user from '../api/user';
+import loader from '../utils/loaders';
+import { setConfigFe } from '../store/ConfigFeStore';
+import { setUserInfo } from '../store/UserInfoStore';
+import { idTokenPayloadState } from '../store/IdTokenStore';
+import { setupInterceptors } from '../utils/interceptors';
 import { CircularProgress, Stack } from '@mui/material';
-import utils from './utils';
-import { setOperatorRole } from './store/OperatorRoleStore';
-import { OrganizationDTO } from '../generated/apiClient';
-import { IdTokenPayload } from './models/IdTokenPayload';
-import { setOrganizations } from './store/OrganizationsStore';
+import utils from '../utils';
+import { setOperatorRole } from '../store/OperatorRoleStore';
+import { OrganizationDTO } from '../../generated/apiClient';
+import { IdTokenPayload } from '../models/IdTokenPayload';
+import { setOrganizations } from '../store/OrganizationsStore';
 import {
   organizationIdState,
   setOrganizationId
-} from './store/OrganizationIdStore';
+} from '../store/OrganizationIdStore';
+import { setAppState } from '../store/AppStateStore';
 
 const setupOrganizations = (
   orgs: Array<OrganizationDTO>,
@@ -72,6 +73,7 @@ const setup = async () => {
   setUserInfo(userInfo);
   setConfigFe(brokersConfigPlain);
   setupOrganizations(orgs, organizationId, idToken);
+  setAppState({ ready: true });
 };
 
 /** Fallback component to show while setup is in progress */
