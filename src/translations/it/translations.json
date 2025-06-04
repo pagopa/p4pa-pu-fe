@@ -260,6 +260,7 @@
       "USERS": "Utenti"
     },
     "saveDraft": "Salva bozza",
+    "save": "Salva modifiche",
     "search": "Cerca",
     "searchCF": "Cerca CF",
     "searchFor": "Cerca per",
@@ -356,6 +357,8 @@
     },
     "description": "Compila i campi e crea una Posizione Debitoria",
     "editDescription": "Compila i campi e modifica una Posizione Debitoria.",
+    "errorLoadingData": "Si è verificato un errore durante il caricamento dei dati della posizione debitoria. Verifica i dati e riprova.",
+    "errorMissingId": "Si è verificato un errore durante il caricamento dei dati della posizione debitoria. Verifica i dati e riprova.",
     "generalConfiguration": {
       "subtitle": "Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento.",
       "title": "Configurazione generale"
@@ -550,7 +553,9 @@
     "description": "La trovi nella sezione Posizioni debitorie, dove puoi tenere traccia dell'andamento.",
     "descriptionDraft": "La trovi nella sezione Posizioni debitorie, dove puoi vederla e modificarla.",
     "title": "La posizione debitoria '{{paymentObject}}' è stata creata!",
-    "draft": "La posizione debitoria '{{paymentObject}}' è stata salvata in bozza."
+    "draft": "La posizione debitoria '{{paymentObject}}' è stata salvata in bozza.",
+    "edit": "La posizione debitoria '{{paymentObject}}' è stata modificata con successo!",
+    "editDraft": "La bozza della posizione debitoria '{{paymentObject}}' è stata modificata con successo!"
   },
   "debtPositionDetail": {
     "debtPositionInfo": "Informazioni sulla posizione debitoria",
@@ -756,14 +761,14 @@
   "debtTypeOrgCreate": {
     "edit": {
       "success": {
-        "title": "Il Tipo dovuto ‘{{paymentObject}}’ è stato modificato!",
+        "title": "Il Tipo dovuto '{{paymentObject}}' è stato modificato!",
         "description": "La trovi nella sezione I tuoi Tipi Dovuti."
       }
     },
     "title": "Imposta nuovo Tipo dovuto",
     "description": "Compila i campi e configura un nuovo Tipo dovuto per il tuo ente.",
     "success": {
-      "title": "Il Tipo dovuto ‘{{paymentObject}}’ è stato impostato!",
+      "title": "Il Tipo dovuto '{{paymentObject}}' è stato impostato!",
       "description": "La trovi nella sezione I tuoi Tipi Dovuti, dove puoi modificarlo in qualsiasi momento."
     },
     "configuration": {
@@ -1015,7 +1020,7 @@
     "APIUpdateText": "Aggiorna per verificare la presenza di nuove API di PagoPA.",
     "APIUpdateCTA": "Aggiorna",
     "APIUpdateOK": "Aggiornamento pianificato. Abbiamo ricevuto la richiesta è stata pianificata correttamente, sarà eseguita a breve dal sistema.",
-    "APIUpdateKO": "Aggiornamento non riuscito. Il sistema non è stato in grado di pianificare l’aggiornamento.",
+    "APIUpdateKO": "Aggiornamento non riuscito. Il sistema non è stato in grado di pianificare l'aggiornamento.",
     "taxonomyInfo": "Informazioni sulla tassonomia",
     "dateInfo": "Validità",
     "fields": {
