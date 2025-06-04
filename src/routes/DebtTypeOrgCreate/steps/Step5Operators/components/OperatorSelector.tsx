@@ -2,15 +2,21 @@ import { Box, Button, Alert } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import {
   GridColDef,
+  GridRowParams,
   GridRowSelectionModel,
   GridSortModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { CopyAll } from '@mui/icons-material';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { DebtPositionTypeOrgOperatorDTO } from '../../../../../../generated/apiClient';
 import { getDebtPositionTypeOrgOperators } from '../../../../../api/debtPositionTypeOrgOperators';
 import CustomDataGrid from '../../../../../components/DataGrid/CustomDataGrid';
+import { useFormContext } from 'react-hook-form';
+import { DebtTypeOrgForm } from '../../../types';
+import { OperatorsSelection } from '../../../../../../generated/data-contracts';
+import { useStore } from '../../../../../store/GlobalStore';
+import { useDebtTypeOrgId } from '../../../../../hooks/useDebtTypeOrgId';
 
 type OperatorData = {
   id: string;
@@ -21,22 +27,47 @@ type OperatorData = {
   mappedExternalUserId?: string;
 };
 
-type OperatorSelectorProps = {
-  organizationId: number;
-  debtPositionTypeOrgId?: number;
-  onSelectionChange: (enabledOperators: Array<string>) => void;
-  enabledOperators: Array<string>;
-};
-
-const OperatorSelector = ({
-  organizationId,
-  debtPositionTypeOrgId,
-  onSelectionChange,
-  enabledOperators
-}: OperatorSelectorProps) => {
+export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
-  const [rowSelectionModel, setRowSelectionModel] =
-    useState<GridRowSelectionModel>(enabledOperators);
+
+  const {
+    state: { organizationId, userInfo }
+  } = useStore();
+
+  const defaultOperator = userInfo?.mappedExternalUserId;
+
+  const debtPositionTypeOrgId = useDebtTypeOrgId();
+
+  const { watch, setValue } = useFormContext<DebtTypeOrgForm>();
+
+  const enabledOperators = watch('enabledOperators');
+  const disabledOperators = watch('disabledOperators');
+  const operatorsSelection = watch('operatorsSelection');
+
+  const onSelectionChange = (selection: Array<string>) => {
+    // Default to empty arrays if undefined
+    const currentEnabled = enabledOperators ?? [];
+    const currentDisabled = disabledOperators ?? [];
+
+    // Find newly enabled (added) and newly disabled (removed) operators
+    const added = selection.filter((op) => !currentEnabled.includes(op));
+    const removed = currentEnabled.filter((op) => !selection.includes(op));
+
+    // Update enabledOperators: Add new, remove removed
+    const newEnabled = [
+      ...currentEnabled.filter((op) => !removed.includes(op)),
+      ...added
+    ];
+
+    // Update disabledOperators: Add removed, remove added
+    const newDisabled = [
+      ...currentDisabled.filter((op) => !added.includes(op)),
+      ...removed
+    ];
+
+    setValue('enabledOperators', newEnabled);
+    setValue('disabledOperators', newDisabled);
+  };
 
   const [appliedFilters, setAppliedFilters] = useState({
     page: 0,
@@ -59,37 +90,46 @@ const OperatorSelector = ({
     }
   );
 
+  const isRowSelectable = (params: GridRowParams) => {
+    // Coerce id to string for comparison, since defaultOperator is string
+    return String(params.id) !== defaultOperator;
+  };
+
+  useEffect(() => {
+    if (apiResponse) {
+      onSelectionChange(
+        operators.filter((op) => op.enabled).map((op) => op.id)
+      );
+
+      if (edit) {
+        setValue('operatorsSelection', OperatorsSelection.SELECTED);
+      } else if (defaultOperator) {
+        setValue('enabledOperators', [defaultOperator]);
+      }
+    }
+  }, [apiResponse]);
+
   const operators: Array<OperatorData> = useMemo(() => {
     if (!apiResponse?.content) return [];
 
     return apiResponse.content.map(
       (operator: DebtPositionTypeOrgOperatorDTO) => ({
+        ...operator,
         id: operator.mappedExternalUserId || operator.operatorId || '',
         operator:
           `${operator.firstName || ''} ${operator.lastName || ''}`.trim() ||
           operator.mappedExternalUserId ||
           operator.operatorId ||
-          'N/A',
-        firstName: operator.firstName,
-        lastName: operator.lastName,
-        enabled: operator.enabled,
-        mappedExternalUserId: operator.mappedExternalUserId,
-        operatorId: operator.operatorId
+          'N/A'
       })
     );
   }, [apiResponse]);
 
-  useEffect(() => {
-    setRowSelectionModel(enabledOperators);
-  }, [enabledOperators]);
-
   const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
-    setRowSelectionModel(newSelection);
     onSelectionChange(newSelection as Array<string>);
   };
 
   const handleClearSelection = () => {
-    setRowSelectionModel([]);
     onSelectionChange([]);
   };
 
@@ -114,11 +154,11 @@ const OperatorSelector = ({
     }
   ];
 
-  const selectedCount = rowSelectionModel.length;
+  const selectedCount = enabledOperators?.length;
 
-  return (
+  return operatorsSelection == OperatorsSelection.SELECTED ? (
     <Box sx={{ mt: 2 }}>
-      {selectedCount > 0 && (
+      {selectedCount ? (
         <Alert
           severity="info"
           variant="outlined"
@@ -130,19 +170,21 @@ const OperatorSelector = ({
             </Button>
           }
         >
-          ({selectedCount}) {t('commons.selectedOperator')}
+          ({selectedCount}){' '}
+          {t('commons.selectedOperator', { count: selectedCount })}
         </Alert>
-      )}
+      ) : null}
 
       <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
         <CustomDataGrid
+          isRowSelectable={isRowSelectable}
           rows={operators}
           columns={columns}
-          getRowId={(row) => row.id}
+          getRowId={(row: OperatorData) => row.id}
           disableColumnMenu
           disableColumnResize
           checkboxSelection
-          rowSelectionModel={rowSelectionModel}
+          rowSelectionModel={enabledOperators}
           hideFooterSelectedRowCount
           onRowSelectionModelChange={handleSelectionChange}
           sortModel={sortModel}
@@ -162,7 +204,5 @@ const OperatorSelector = ({
         />
       </Box>
     </Box>
-  );
+  ) : null;
 };
-
-export default OperatorSelector;

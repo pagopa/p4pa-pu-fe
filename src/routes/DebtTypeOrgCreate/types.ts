@@ -55,4 +55,5 @@ export type DebtTypeOrgForm = {
   // Step 5
   operatorsSelection: OperatorsSelection;
   enabledOperators?: Array<string>;
+  disabledOperators?: Array<string>;
 };

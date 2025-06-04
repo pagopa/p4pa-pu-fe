@@ -32,13 +32,13 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     debtPositionTypeOrgId: string;
   }>();
 
+  const selectionQuery = useDebtPositionTypesByOrg({
+    organizationId
+  });
+
   const detailQuery = getDebtPositionTypeOrgById({
     organizationId,
     debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
-  });
-
-  const selectionQuery = useDebtPositionTypesByOrg({
-    organizationId
   });
 
   const { control, watch, setValue, trigger } =
@@ -56,6 +56,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
         (d) => d.debtPositionTypeId === Number(selectedId)
       );
 
+      // If not editing, auto-fill fields with the selected debt type
       if (selectedType && !edit) {
         Object.entries(selectedType).forEach(([key, val]) => {
           setValue(key as keyof DebtTypeOrgForm, val);
@@ -65,12 +66,14 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     }
   }, [edit, selectedId, selectionQuery.data, setValue, trigger]);
 
+  // If editing, auto-fill fields with the GET detail
   useEffect(() => {
     const response = detailQuery.data?.response;
     if (edit && response) {
       Object.entries(response).forEach(([key, val]) => {
         setValue(key as keyof DebtTypeOrgForm, val);
       });
+      // map boolean to 'enabled' or 'disabled'
       setValue(
         'flagNotifyOutcomePush',
         response.flagNotifyOutcomePush ? 'enabled' : 'disabled'
