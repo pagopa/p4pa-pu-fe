@@ -19,16 +19,42 @@ function DebtPositionCreateWizardCompleted() {
   const deployPath = config.deployPath;
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-  const { description = '', status, debtPositionId } = location.state || {};
+  const {
+    description = '',
+    status,
+    debtPositionId,
+    isEditing = false
+  } = location.state || {};
   const isDraft = status === DebtPositionStatus.DRAFT;
 
-  const translationKeys = {
-    title: isDraft
+  /**
+   * Determina la chiave di traduzione per il titolo basandosi su isEditing e isDraft
+   * @returns la chiave di traduzione appropriata per il titolo
+   */
+  const getTitleTranslationKey = (): string => {
+    if (isEditing) {
+      return isDraft
+        ? 'debtPositionCreateWizardCompleted.editDraft'
+        : 'debtPositionCreateWizardCompleted.edit';
+    }
+    return isDraft
       ? 'debtPositionCreateWizardCompleted.draft'
-      : 'debtPositionCreateWizardCompleted.title',
-    description: isDraft
+      : 'debtPositionCreateWizardCompleted.title';
+  };
+
+  /**
+   * Determina la chiave di traduzione per la descrizione basandosi su isDraft
+   * @returns la chiave di traduzione appropriata per la descrizione
+   */
+  const getDescriptionTranslationKey = (): string => {
+    return isDraft
       ? 'debtPositionCreateWizardCompleted.descriptionDraft'
-      : 'debtPositionCreateWizardCompleted.description',
+      : 'debtPositionCreateWizardCompleted.description';
+  };
+
+  const translationKeys = {
+    title: getTitleTranslationKey(),
+    description: getDescriptionTranslationKey(),
     viewDebtPosition: 'debtPositionCreateWizardCompleted.viewDebtPosition',
     backToStart: 'debtPositionCreateWizardCompleted.backToStart',
     downloadDebtPosition:
