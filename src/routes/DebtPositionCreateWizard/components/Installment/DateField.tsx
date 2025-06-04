@@ -7,6 +7,7 @@ import {
 } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { convertToDateValue } from '../../../../utils/formatters';
 
 type DateFieldProps<T extends FieldValues> = {
   control: Control<T>;
@@ -54,39 +55,45 @@ const DateField = <T extends FieldValues>({
       render={({
         field: { onChange, value, ...field },
         fieldState: { error }
-      }) => (
-        <DatePicker
-          {...field}
-          value={value || null}
-          label={t('debtPositionCreateWizard.step3.installments.dueDate.label')}
-          disabled={disabled}
-          minDate={new Date()}
-          format="dd/MM/yyyy"
-          slotProps={{
-            textField: {
-              fullWidth: true,
-              required: flagMandatoryDueDate,
-              error: !!error,
-              helperText: error?.message || '',
-              size: 'small'
-            },
-            actionBar: {
-              actions: ['clear']
-            },
-            field: {
-              clearable: true,
-              onClear: () => onChange(null)
-            }
-          }}
-          onChange={(date) => {
-            onChange(date);
-            // Trigger validation after change
-            setTimeout(() => {
-              validateDueDate(index, trigger);
-            }, 0);
-          }}
-        />
-      )}
+      }) => {
+        const dateValue = convertToDateValue(value);
+
+        return (
+          <DatePicker
+            {...field}
+            value={dateValue}
+            label={t(
+              'debtPositionCreateWizard.step3.installments.dueDate.label'
+            )}
+            disabled={disabled}
+            minDate={new Date()}
+            format="dd/MM/yyyy"
+            slotProps={{
+              textField: {
+                fullWidth: true,
+                required: flagMandatoryDueDate,
+                error: !!error,
+                helperText: error?.message || '',
+                size: 'small'
+              },
+              actionBar: {
+                actions: ['clear']
+              },
+              field: {
+                clearable: true,
+                onClear: () => onChange(null)
+              }
+            }}
+            onChange={(date) => {
+              onChange(date);
+              // Trigger validation after change
+              setTimeout(() => {
+                validateDueDate(index, trigger);
+              }, 0);
+            }}
+          />
+        );
+      }}
     />
   );
 };

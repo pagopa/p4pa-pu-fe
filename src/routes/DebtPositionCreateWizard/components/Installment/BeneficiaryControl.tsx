@@ -46,7 +46,8 @@ const BeneficiaryControl = <T extends FieldValues>({
   setValue,
   trigger,
   isMultibeneficiary,
-  toggleMultibeneficiary
+  toggleMultibeneficiary,
+  isEditing = false
 }: {
   index: number;
   control: Control<T>;
@@ -59,6 +60,7 @@ const BeneficiaryControl = <T extends FieldValues>({
   trigger: UseFormTrigger<T>;
   isMultibeneficiary: boolean;
   toggleMultibeneficiary: (value: boolean) => void;
+  isEditing?: boolean;
 }) => {
   const { t } = useTranslation();
 
@@ -364,11 +366,16 @@ const BeneficiaryControl = <T extends FieldValues>({
   ]);
 
   /**
-   * Handles changes to the "same beneficiaries as before" value
    * Updates the UI and copies beneficiaries when appropriate
    */
   useEffect(() => {
     if (index === 0) return;
+
+    // In editing mode, always show beneficiary form and don't use radio logic
+    if (isEditing) {
+      setShowBeneficiaryForm(true);
+      return;
+    }
 
     const currentValue = getValues(sameBeneficiariesAsBeforePath);
     const valueAsBool = isSameBeneficiariesAsBeforeEnabled(currentValue);
@@ -385,7 +392,8 @@ const BeneficiaryControl = <T extends FieldValues>({
     getValues,
     hasPreviousBeneficiaries,
     sameBeneficiariesAsBeforePath,
-    copyBeneficiariesFromPreviousInstallment
+    copyBeneficiariesFromPreviousInstallment,
+    isEditing
   ]);
 
   /**
@@ -435,24 +443,28 @@ const BeneficiaryControl = <T extends FieldValues>({
         />
       </Grid>
 
-      {isMultibeneficiary && index > 0 && (
+      {/* Radio buttons for beneficiary reuse - hidden in edit mode */}
+      {isMultibeneficiary && hasPreviousBeneficiaries && !isEditing && (
         <Grid item xs={12}>
-          <FormControl component="fieldset" error={!!beneficiaryAmountError}>
-            <FormLabel component="legend">
-              <Typography variant="body2">
-                {t(
-                  'debtPositionCreateWizard.step3.installments.sameBeneficiaries'
-                )}
-              </Typography>
-            </FormLabel>
-            <Controller
-              name={sameBeneficiariesAsBeforePath}
-              control={control}
-              defaultValue={'true' as unknown as PathValue<T, Path<T>>}
-              render={({ field }) => (
+          <Controller
+            name={sameBeneficiariesAsBeforePath}
+            control={control}
+            render={({ field }) => (
+              <FormControl
+                component="fieldset"
+                error={!!beneficiaryAmountError}
+              >
+                <FormLabel component="legend">
+                  <Typography variant="body2" color="text.primary">
+                    {t(
+                      'debtPositionCreateWizard.step3.installments.sameBeneficiaries'
+                    )}
+                  </Typography>
+                </FormLabel>
                 <RadioGroup
                   {...field}
                   row
+                  value={String(field.value)}
                   onChange={(e) => {
                     const isYes = e.target.value === 'true';
                     field.onChange(isYes as unknown as PathValue<T, Path<T>>);
@@ -461,9 +473,7 @@ const BeneficiaryControl = <T extends FieldValues>({
 
                     if (isYes && hasPreviousBeneficiaries) {
                       copyBeneficiariesFromPreviousInstallment();
-
                       validateBeneficiaryAmounts();
-
                       setTimeout(() => {
                         validateBeneficiaryAmounts();
                       }, 100);
@@ -529,12 +539,14 @@ const BeneficiaryControl = <T extends FieldValues>({
                     disabled={!hasPreviousBeneficiaries}
                   />
                 </RadioGroup>
-              )}
-            />
-            {beneficiaryAmountError && (
-              <FormHelperText error>{beneficiaryAmountError}</FormHelperText>
+                {beneficiaryAmountError && (
+                  <FormHelperText error>
+                    {beneficiaryAmountError}
+                  </FormHelperText>
+                )}
+              </FormControl>
             )}
-          </FormControl>
+          />
         </Grid>
       )}
 
@@ -548,7 +560,7 @@ const BeneficiaryControl = <T extends FieldValues>({
             fieldNamePrefix={
               `${fieldNamePrefix}.${index}.beneficiaries` as FieldArrayPath<T>
             }
-            disabled={disabled}
+            disabled={false}
             setValue={setValue}
             getValues={getValues}
             trigger={trigger}
@@ -556,6 +568,7 @@ const BeneficiaryControl = <T extends FieldValues>({
             isInsideInstallment={true}
             installmentIndex={index}
             installmentsFieldNamePrefix={fieldNamePrefix}
+            isEditing={isEditing}
           />
         </Grid>
       )}
