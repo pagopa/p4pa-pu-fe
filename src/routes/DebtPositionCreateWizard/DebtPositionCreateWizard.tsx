@@ -6,7 +6,11 @@ import Step2AddDebtor from './components/Step/Step2AddDebtor';
 import Step3 from './components/Step/Step3';
 import { StepperContainer } from '../../components/Stepper';
 import { PageRoutes } from '../../App';
-import { PaymentOption } from '../../models/paymentTypes';
+import {
+  PaymentOption,
+  Beneficiary,
+  Installment
+} from '../../models/paymentTypes';
 import { Step3Data, Step2Data, Step1Data } from '../../models/DebtPositionType';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
@@ -106,15 +110,12 @@ const DebtPositionCreateWizard = () => {
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  // Recuperare i dati dallo stato di navigazione
   const isEditing = location.state?.isEditing === true;
   const debtPositionId = location.state?.debtPositionId;
 
-  // Utilizzare l'hook useQuery per caricare i dati se siamo in modalità modifica
   const { data: debtPositionDetail, error } =
     debtPositions.getDebtPositionDetail(organizationId, debtPositionId || 0);
 
-  // Validazione e gestione errori
   useEffect(() => {
     if (isEditing && !debtPositionId) {
       console.error('Missing debtPositionId in edit mode');
@@ -133,16 +134,12 @@ const DebtPositionCreateWizard = () => {
       return;
     }
 
-    // Trasformare e impostare i dati quando sono disponibili
     if (isEditing && debtPositionDetail) {
       const transformedData = transformApiDataToFormData(debtPositionDetail);
       setFormData(transformedData);
     }
   }, [isEditing, debtPositionId, debtPositionDetail, error, navigate, t]);
 
-  /**
-   * Transform the API data to the format required by the form
-   */
   const transformApiDataToFormData = (
     debtPositionDetail: DebtPositionDetailDTO
   ): FormData => {
@@ -201,34 +198,136 @@ const DebtPositionCreateWizard = () => {
     };
 
     const firstPaymentOption = debtPositionDetail.paymentOptions?.[0];
+    const firstInstallment = firstPaymentOption?.installments?.[0];
+    const isInstallmentPayment =
+      firstPaymentOption?.paymentOptionType === 'INSTALLMENTS';
+
+    let beneficiaries: Array<Beneficiary> = [];
+    let installments: Array<Installment> = [];
+    let hasMultipleBeneficiaries = false;
+
+    if (isInstallmentPayment && firstPaymentOption?.installments) {
+      const sortedInstallments = [...firstPaymentOption.installments].sort(
+        (a, b) => {
+          const aDueDate = a.dueDate ? new Date(a.dueDate).getTime() : 0;
+          const bDueDate = b.dueDate ? new Date(b.dueDate).getTime() : 0;
+          return aDueDate - bDueDate;
+        }
+      );
+
+      installments = sortedInstallments.map((installment, index) => {
+        const beneficiaryTransfers =
+          installment.transfers?.filter(
+            (transfer) => transfer.transferIndex && transfer.transferIndex > 1
+          ) || [];
+
+        const installmentBeneficiaries = beneficiaryTransfers.map(
+          (transfer) => ({
+            entityName: transfer.orgName || '',
+            amount: transfer.amountCents
+              ? (transfer.amountCents / 100).toFixed(2)
+              : '0.00',
+            taxCode: transfer.orgFiscalCode || '',
+            remittance: transfer.remittanceInformation || '',
+            iban: transfer.iban || '',
+            postalAccount: transfer.postalIban || '',
+            taxonomyCode: transfer.category || '',
+            readonly: isEditing
+              ? {
+                  entityName: true,
+                  taxCode: true,
+                  iban: true,
+                  postalAccount: true,
+                  taxonomyCode: true,
+                  amount: false,
+                  remittance: false
+                }
+              : undefined
+          })
+        );
+
+        return {
+          amount: installment.amountCents
+            ? (installment.amountCents / 100).toFixed(2)
+            : '0.00',
+          dueDate: installment.dueDate || null,
+          remittance: installment.remittanceInformation || '',
+          isMultibeneficiary: installmentBeneficiaries.length > 0,
+          beneficiaries: installmentBeneficiaries,
+          id: `installment-${index}`,
+          isNew: false,
+          readonly: isEditing
+            ? {
+                isMultibeneficiary: true,
+                amount: false,
+                dueDate: false,
+                remittance: false
+              }
+            : undefined
+        };
+      });
+    } else {
+      const beneficiaryTransfers =
+        firstInstallment?.transfers?.filter(
+          (transfer) => transfer.transferIndex && transfer.transferIndex > 1
+        ) || [];
+
+      beneficiaries = beneficiaryTransfers.map((transfer) => ({
+        entityName: transfer.orgName || '',
+        amount: transfer.amountCents
+          ? (transfer.amountCents / 100).toFixed(2)
+          : '0.00',
+        taxCode: transfer.orgFiscalCode || '',
+        remittance: transfer.remittanceInformation || '',
+        iban: transfer.iban || '',
+        postalAccount: transfer.postalIban || '',
+        taxonomyCode: transfer.category || '',
+        readonly: isEditing
+          ? {
+              entityName: true,
+              taxCode: true,
+              iban: true,
+              postalAccount: true,
+              taxonomyCode: true,
+              amount: false,
+              remittance: false
+            }
+          : undefined
+      }));
+
+      hasMultipleBeneficiaries = beneficiaries.length > 0;
+    }
+
     const step3: Step3Data = {
       paymentObject: {
-        value: firstPaymentOption?.description || '',
+        value: isInstallmentPayment
+          ? ''
+          : firstInstallment?.remittanceInformation || '',
         readonly: false
       },
       paymentOption: {
         value: (firstPaymentOption?.paymentOptionType === 'INSTALLMENTS'
           ? 'INSTALLMENTS'
           : 'SINGLE') as PaymentOption,
-        readonly: false
+        readonly: isEditing
       },
       amount: {
         value: firstPaymentOption?.totalAmountCents
           ? (firstPaymentOption.totalAmountCents / 100).toFixed(2)
           : '',
-        readonly: false
+        readonly: isInstallmentPayment
       },
       dueDate: {
-        value: firstPaymentOption?.installments?.[0]?.dueDate || '',
+        value: isInstallmentPayment ? '' : firstInstallment?.dueDate || '',
         readonly: false
       },
       isMultibeneficiary: {
-        value: false, // TODO: determinare in base ai beneficiari
-        readonly: false
+        value: hasMultipleBeneficiaries,
+        readonly: isEditing
       },
-      flagMandatoryDueDate: false, // TODO: determinare in base al tipo
-      beneficiaries: [], // TODO: mappare i beneficiari
-      installments: [] // TODO: mappare le rate
+      flagMandatoryDueDate: false,
+      beneficiaries: beneficiaries,
+      installments: installments
     };
 
     return {
@@ -280,6 +379,7 @@ const DebtPositionCreateWizard = () => {
               }
               onNext={() => setStep(2)}
               onBack={() => setStep(0)}
+              isEditing={isEditing}
             />
           )
         },
@@ -301,6 +401,7 @@ const DebtPositionCreateWizard = () => {
               onBack={() => setStep(1)}
               step1Data={formData.step1}
               step2Data={formData.step2}
+              isEditing={isEditing}
             />
           )
         }
