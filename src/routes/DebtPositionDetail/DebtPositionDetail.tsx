@@ -32,14 +32,13 @@ import {
   PaymentOptionStatus,
   DebtPositionStatus,
   InstallmentStatus,
-  DebtPositionOrigin,
-  PaymentEventType
+  DebtPositionOrigin
 } from '../../../generated/data-contracts';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { generatePath, useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState } from 'react';
 import { PageRoutes } from '../../App';
 import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';
 import { Timeline } from '../../components/Timeline';
@@ -47,6 +46,7 @@ import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { useQueryClient } from '@tanstack/react-query';
 import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
+import { useTimelineData } from '../../hooks/useTimelineData';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -75,75 +75,6 @@ type DialogConfig = {
   onConfirm: () => void;
   onClose: () => void;
   testId: string;
-};
-
-type TranslationFunction = (key: string) => string;
-
-type TimelineElement = {
-  date: Date;
-  content: JSX.Element;
-  isFirst: boolean;
-  isLast: boolean;
-  statusChip?: {
-    label: string;
-    color: ChipOwnProps['color'];
-    variant?: ChipOwnProps['variant'];
-  };
-};
-
-const getEventStatusColor = (
-  eventType: PaymentEventType
-): ChipOwnProps['color'] => {
-  const colorMap: Record<PaymentEventType, ChipOwnProps['color']> = {
-    [PaymentEventType.DP_CREATED]: 'info',
-    [PaymentEventType.DP_UPDATED]: 'primary',
-    [PaymentEventType.DP_CANCELLED]: 'error',
-    [PaymentEventType.DPI_ADDED]: 'success',
-    [PaymentEventType.DPI_UPDATED]: 'info',
-    [PaymentEventType.DPI_CANCELLED]: 'error',
-    [PaymentEventType.DPI_EXPIRED]: 'error',
-    [PaymentEventType.DPI_REPORTED]: 'success',
-    [PaymentEventType.RT_RECEIVED]: 'success',
-    [PaymentEventType.SYNC_ERROR]: 'error',
-    [PaymentEventType.IO_NOTIFIED]: 'info',
-    [PaymentEventType.SEND_NOTIFICATION_CREATED]: 'info',
-    [PaymentEventType.SEND_NOTIFICATION_ERROR]: 'error',
-    [PaymentEventType.SEND_NOTIFICATION_DATE]: 'success'
-  };
-
-  return colorMap[eventType] || 'default';
-};
-
-const getEventDisplayInfo = (
-  eventType: PaymentEventType,
-  t: TranslationFunction
-): {
-  hasDescription: boolean;
-  hasStatus: boolean;
-  description?: string;
-  statusChip?: { label: string; color: ChipOwnProps['color'] };
-} => {
-  const descriptionKey = `commons.DP_DESCRIPTION.${eventType}`;
-  const description = t(descriptionKey);
-  const hasDescription = description !== descriptionKey;
-
-  const statusKey = `commons.DP_STATUS.${eventType}`;
-  const statusLabel = t(statusKey);
-  const hasStatus = statusLabel !== statusKey;
-
-  const statusChip = hasStatus
-    ? {
-        label: statusLabel,
-        color: getEventStatusColor(eventType)
-      }
-    : undefined;
-
-  return {
-    hasDescription,
-    hasStatus,
-    description: hasDescription ? description : undefined,
-    statusChip
-  };
 };
 
 const DebtPositionDetail = () => {
@@ -206,6 +137,8 @@ const DebtPositionDetail = () => {
 
   const { mutate: fetchRegistries, data: registries = [] } =
     debtPositions.getDebtPositionRegistriesMutation();
+
+  const timelineElements = useTimelineData(registries);
 
   const deleteDebtPositionMutation = debtPositions.deleteDebtPosition(
     organizationId,
@@ -319,73 +252,6 @@ const DebtPositionDetail = () => {
       utils.notify.emit(t('commons.files.downloadFailed'));
     }
   };
-
-  const timelineElements: Array<TimelineElement> = useMemo(() => {
-    if (!registries || registries.length === 0) {
-      return [];
-    }
-
-    const sortedRegistries = [...registries].sort((a, b) => {
-      const dateA = a.eventDateTime ? new Date(a.eventDateTime).getTime() : 0;
-      const dateB = b.eventDateTime ? new Date(b.eventDateTime).getTime() : 0;
-      return dateB - dateA;
-    });
-
-    return sortedRegistries.map((registry, index) => {
-      const isFirstElement = index === 0;
-      const isLastElement = index === sortedRegistries.length - 1;
-
-      if (!registry.eventType) {
-        return {
-          date: registry.eventDateTime
-            ? new Date(registry.eventDateTime)
-            : new Date(),
-          content: (
-            <Typography
-              variant="caption-semibold"
-              color="text.primary"
-              component="div"
-            >
-              {registry.eventDescription}
-            </Typography>
-          ),
-          isFirst: isFirstElement,
-          isLast: isLastElement,
-          statusChip: undefined
-        };
-      }
-
-      const displayInfo = getEventDisplayInfo(registry.eventType, t);
-
-      let content: JSX.Element;
-
-      const displayText = displayInfo.hasDescription
-        ? displayInfo.description
-        : registry.eventDescription;
-
-      if (displayInfo.hasStatus && !displayInfo.hasDescription) {
-        content = <Typography></Typography>;
-      } else if (displayText) {
-        content = (
-          <Typography color="text.primary" variant="caption" component="div">
-            {displayText}
-          </Typography>
-        );
-      } else {
-        content = <Typography></Typography>;
-      }
-
-      return {
-        date: registry.eventDateTime
-          ? new Date(registry.eventDateTime)
-          : new Date(),
-        content,
-        isFirst: isFirstElement,
-        isLast: isLastElement,
-        statusChip: displayInfo.statusChip
-      };
-    });
-  }, [registries, t]);
 
   useEffect(() => {
     if (debtPositionDetail?.paymentOptions?.length) {
