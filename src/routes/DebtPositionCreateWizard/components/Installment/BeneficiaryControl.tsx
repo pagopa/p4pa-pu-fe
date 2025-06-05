@@ -334,6 +334,18 @@ const BeneficiaryControl = <T extends FieldValues>({
 
       if (previousHasBeneficiaries && isMultibeneficiary) {
         const currentValue = getValues(sameBeneficiariesAsBeforePath);
+
+        // If the value is undefined (never set) and we're not in editing mode,
+        // automatically set the default to true to copy beneficiaries
+        if (currentValue === undefined && !isEditing) {
+          setValue(
+            sameBeneficiariesAsBeforePath,
+            true as unknown as PathValue<T, Path<T>>,
+            { shouldDirty: true }
+          );
+          return;
+        }
+
         const shouldCopyBeneficiaries =
           isSameBeneficiariesAsBeforeEnabled(currentValue);
 
@@ -362,7 +374,8 @@ const BeneficiaryControl = <T extends FieldValues>({
     isMultibeneficiary,
     setValue,
     sameBeneficiariesAsBeforePath,
-    copyBeneficiariesFromPreviousInstallment
+    copyBeneficiariesFromPreviousInstallment,
+    isEditing
   ]);
 
   /**
@@ -464,7 +477,9 @@ const BeneficiaryControl = <T extends FieldValues>({
                 <RadioGroup
                   {...field}
                   row
-                  value={String(field.value)}
+                  value={String(
+                    field.value === undefined ? 'true' : field.value
+                  )}
                   onChange={(e) => {
                     const isYes = e.target.value === 'true';
                     field.onChange(isYes as unknown as PathValue<T, Path<T>>);
