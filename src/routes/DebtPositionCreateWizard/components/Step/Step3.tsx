@@ -47,7 +47,7 @@ import {
   DebtPositionOrigin,
   PaymentOptionTypeEnum
 } from '../../../../../generated/data-contracts';
-import { PageRoutes } from '../../../../App';
+import { PageRoutes } from '../../../../routes';
 import {
   createStep3Resolver,
   convertFormValuesToStep3Data,

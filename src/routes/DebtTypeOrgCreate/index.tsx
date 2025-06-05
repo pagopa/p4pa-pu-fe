@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
 import { useNavigate } from 'react-router';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { Step1Configuration } from './steps/Step1Configuration';
 import { Step2Behaviour } from './steps/Step2Behaviour';
 import { Step3Accounting } from './steps/Step3Accounting';
@@ -115,7 +115,7 @@ export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
       },
       {
         label: t('debtTypeOrgCreate.stepper.step5'),
-        content: <Step5Operators key="step5" />
+        content: <Step5Operators key="step5" edit={edit} />
       }
     ],
     [t, edit]
@@ -129,7 +129,9 @@ export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
         noValidate
       >
         <StepperContainer
-          title={t('debtTypeOrgCreate.title')}
+          title={t(
+            edit ? 'debtTypeOrgCreate.edit.title' : 'debtTypeOrgCreate.title'
+          )}
           steps={stepperSteps}
           activeStep={currentStep}
         />

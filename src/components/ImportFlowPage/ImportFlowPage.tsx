@@ -16,7 +16,7 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { importFlowConfig } from '../../models/ImportDetails';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { uploadIngestionFlowFile } from '../../api/ingestionFlowFiles';
 import { useStore } from '../../store/GlobalStore';
 import { IngestionFlowFileType } from '../../../generated/fileshare/fileshareClient';

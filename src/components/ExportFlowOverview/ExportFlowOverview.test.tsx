@@ -4,7 +4,7 @@ import { useNavigate, generatePath } from 'react-router-dom';
 import { getExportFiles, getExportFile } from '../../api/exportFiles';
 import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import ExportFlowOverview from './ExportFlowOverview';
 import { ExportFileTypeEnum } from '../../../generated/apiClient';
 import { downloadBlob } from '../../utils/download';

@@ -5,7 +5,7 @@ import Step2AddDebtor from './components/Step/Step2AddDebtor';
 import Step3 from './components/Step/Step3';
 import { StepperContainer } from '../../components/Stepper';
 import { useNavigate } from 'react-router';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { PaymentOption } from '../../models/paymentTypes';
 import { Step3Data, Step2Data, Step1Data } from '../../models/DebtPositionType';
 

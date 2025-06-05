@@ -5,7 +5,7 @@ import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import { SearchType } from '../../models/DebtPositions';
 import DebtPositionResults from './DebtPositionsResults';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 
 // Mock dependencies
 vi.mock('react-i18next', () => ({

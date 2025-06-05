@@ -14,7 +14,7 @@ import { STATE } from '../../store/types';
 import { useStore } from '../../store/GlobalStore';
 import { getDebtPositionTypeDetail } from '../../api/debtPositionTypeDetail';
 import debtPositions from '../../api/debtPositions';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { isAxiosError } from 'axios';
 
 export const DebtTypeCatalogDetailView = () => {

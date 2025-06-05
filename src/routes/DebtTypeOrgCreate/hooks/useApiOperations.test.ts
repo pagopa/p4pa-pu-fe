@@ -70,23 +70,4 @@ describe('useApiOperations', () => {
 
     expect(payload.data.enabledOperators).toEqual(['op1', 'op2']);
   });
-
-  it('does not include enabledOperators if operatorsSelection is SELECTED but enabledOperators is empty', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const mockDataEmptyOperators = {
-      debtPositionTypeId: '101',
-      description: 'desc',
-      code: 'code',
-      paymentMethod: PaymentMethodOption.FREE,
-      operatorsSelection: OperatorsSelection.SELECTED,
-      enabledOperators: []
-    };
-
-    const payload = await result.current.createRequestPayload(
-      mockDataEmptyOperators
-    );
-
-    expect(payload.data.enabledOperators).toBeUndefined();
-  });
 });

@@ -6,17 +6,11 @@ import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../../components/FormComponent';
 import { OperatorsSelection } from '../../../../../generated/data-contracts';
 import { DebtTypeOrgForm } from '../../types';
-import OperatorSelector from './components/OperatorSelector';
+import { OperatorSelector } from './components/OperatorSelector';
 
-export const Step5Operators = () => {
+export const Step5Operators = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
-  const { control, watch, setValue } = useFormContext<DebtTypeOrgForm>();
-
-  const operatorSelection = watch('operatorsSelection');
-
-  const handleOperatorSelectionChange = (enabledOperators: Array<string>) => {
-    setValue('enabledOperators', enabledOperators);
-  };
+  const { control } = useFormContext<DebtTypeOrgForm>();
 
   return (
     <WizardStepWrapper
@@ -45,13 +39,7 @@ export const Step5Operators = () => {
             }
           ]}
         />
-        {operatorSelection === OperatorsSelection.SELECTED && (
-          <OperatorSelector
-            onSelectionChange={handleOperatorSelectionChange}
-            enabledOperators={watch('enabledOperators') || []}
-            organizationId={3}
-          />
-        )}
+        <OperatorSelector edit={edit} />
       </SectionBox>
     </WizardStepWrapper>
   );

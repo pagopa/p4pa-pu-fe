@@ -5,7 +5,7 @@ import { StepperContainer } from '../../components/Stepper';
 import { Step1Configuration, Step1Data } from './components/Step1Configuration';
 import { Step2Data, Step2Settings } from './components/Step2Settings';
 import { useNavigate } from 'react-router';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { useSignal } from '@preact/signals-react';
 import { postDebtPositionType } from '../../api/debtPositionsTypes';
 import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';

@@ -14,7 +14,7 @@ import { STATE } from '../../store/types';
 import { getDebtPositionTypeOrgById } from '../../api/debtPositionsTypeOrg';
 import utils from '../../utils';
 import debtPositions from '../../api/debtPositions';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { AxiosError, isAxiosError } from 'axios';
 import { useStore } from '../../store/GlobalStore';

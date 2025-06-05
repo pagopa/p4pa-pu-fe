@@ -3,11 +3,12 @@ import { AppState } from '../models/AppState';
 
 export const appState = signal<AppState>({
   loading: false,
-  customBreadcrumbsItems: []
+  customBreadcrumbsItems: [],
+  ready: false
 });
 
-export function setAppState(newState: AppState) {
-  appState.value = newState;
+export function setAppState(newState: Partial<AppState>) {
+  appState.value = { ...appState.value, ...newState };
 }
 
 export function setLoading(newState: AppState['loading']) {

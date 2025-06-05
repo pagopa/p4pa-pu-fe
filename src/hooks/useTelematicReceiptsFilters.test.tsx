@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook } from '../__tests__/renderers';
 import useTelematicReceiptsFilters from './useTelematicReceiptsFilters';
-import { ButtonField } from '../components/FilterContainer/FilterContainer';
 import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
 
 vi.mock('../api/debtPositionsTypeOrg', () => ({
@@ -52,33 +51,16 @@ describe('useTelematicReceiptsFilters', () => {
     ]);
   });
 
-  it('should call onFilter when the apply button is triggered', () => {
-    (getDebtPositionTypeOrgs as unknown as Mock).mockReturnValue({
-      isSuccess: true,
-      data: {
-        data: {
-          content: [
-            { description: 'Type A', debtPositionTypeId: 1 },
-            { description: 'Type B', debtPositionTypeId: 2 }
-          ]
-        }
-      }
-    });
-
+  it('should not include apply button in "grid" layout', () => {
     const { result } = renderHook(() =>
       useTelematicReceiptsFilters({
-        onFilter: mockOnFilter
+        onFilter: mockOnFilter,
+        layout: 'grid'
       })
     );
-    const applyButton = result.current.filters.find(
-      (f) => f.id === 'applyFilters'
-    ) as ButtonField;
-    expect(applyButton?.onClick).toBeDefined();
 
-    if (applyButton?.onClick) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      applyButton.onClick({} as any);
-      expect(mockOnFilter).toHaveBeenCalled();
-    }
+    const filterIds = result.current.filters.map((f) => f.id);
+    expect(filterIds).toEqual(['iuv', 'typeOrgId', 'dateRange']);
+    expect(filterIds.includes('applyFilters')).toBe(false);
   });
 });

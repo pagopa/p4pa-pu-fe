@@ -16,7 +16,7 @@ import {
   useNavigate,
   generatePath
 } from 'react-router-dom';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { useEffect, useState } from 'react';
 import { BredcrumbItem } from '../Breadcrumbs/Breadcrumbs';
 import { InstallmentDetailDrawer } from './InstallmentDetailDrawer';

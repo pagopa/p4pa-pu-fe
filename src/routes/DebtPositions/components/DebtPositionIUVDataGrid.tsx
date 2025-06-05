@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
 import { Chip, ChipProps, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import { PageRoutes } from '../../../App';
+import { PageRoutes } from '../../../routes';
 import { generatePath, useNavigate } from 'react-router';
 import {
   InstallmentStatus,
