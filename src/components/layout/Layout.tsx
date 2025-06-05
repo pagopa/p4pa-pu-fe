@@ -65,7 +65,6 @@ export function Layout() {
     <>
       <Snackbar
         autoHideDuration={6000}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
         onClose={utils.notify.dismiss}
         open={utils.notify.status.isVisible.value}
       >

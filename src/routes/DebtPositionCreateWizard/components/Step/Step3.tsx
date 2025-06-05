@@ -6,13 +6,13 @@ import {
   Switch,
   FormControlLabel
 } from '@mui/material';
-import { Controller, useForm, Path } from 'react-hook-form';
+import { Controller, useForm, Path, UseFormSetValue } from 'react-hook-form';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect, useRef } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';
@@ -47,11 +47,12 @@ import {
   DebtPositionOrigin,
   PaymentOptionTypeEnum
 } from '../../../../../generated/data-contracts';
-import { PageRoutes } from '../../../../App';
+import { PageRoutes } from '../../../../routes';
 import {
   createStep3Resolver,
   convertFormValuesToStep3Data,
-  Step3FormValues
+  Step3FormValues,
+  convertFormDataToManageDebtPositionDTO
 } from '../../../../models/Step3Schema';
 
 type Props = {
@@ -61,14 +62,130 @@ type Props = {
   onBack: () => void;
   step1Data: Step1Data;
   step2Data: Step2Data;
+  isEditing?: boolean;
 };
 
-const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
+/**
+ * Checks if there's actual data to populate in the form (not just empty strings)
+ */
+const hasActualDataToPopulate = (data: Step3Data): boolean => {
+  return Boolean(
+    (data.paymentObject?.value && data.paymentObject.value.trim() !== '') ||
+      (data.paymentOption?.value && data.paymentOption.value.trim() !== '') ||
+      (data.amount?.value && data.amount.value.trim() !== '') ||
+      (data.dueDate?.value && data.dueDate.value.trim() !== '') ||
+      (data.beneficiaries && data.beneficiaries.length > 0) ||
+      (data.installments && data.installments.length > 0)
+  );
+};
+
+/**
+ * Populates the basic form fields with available data
+ */
+const populateBasicFields = (
+  data: Step3Data,
+  setValue: UseFormSetValue<Step3FormValues>
+): boolean => {
+  let hasPopulatedSomething = false;
+
+  if (data.paymentObject?.value && data.paymentObject.value.trim() !== '') {
+    setValue('paymentObject.value', data.paymentObject.value);
+    hasPopulatedSomething = true;
+  }
+
+  if (data.paymentOption?.value && data.paymentOption.value.trim() !== '') {
+    setValue('paymentOption.value', data.paymentOption.value);
+    hasPopulatedSomething = true;
+  }
+
+  if (data.amount?.value && data.amount.value.trim() !== '') {
+    setValue('amount.value', data.amount.value);
+    hasPopulatedSomething = true;
+  }
+
+  return hasPopulatedSomething;
+};
+
+/**
+ * Populates the due date field converting from string to Date if necessary
+ */
+const populateDueDateField = (
+  data: Step3Data,
+  setValue: UseFormSetValue<Step3FormValues>
+): boolean => {
+  if (data.dueDate?.value && data.dueDate.value.trim() !== '') {
+    const dateValue =
+      typeof data.dueDate.value === 'string'
+        ? new Date(data.dueDate.value)
+        : data.dueDate.value;
+    setValue('dueDate.value', dateValue);
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Populates the multi-beneficiary field
+ */
+const populateMultiBeneficiaryField = (
+  data: Step3Data,
+  setValue: UseFormSetValue<Step3FormValues>
+): boolean => {
+  if (data.isMultibeneficiary?.value != null) {
+    setValue('isMultibeneficiary.value', data.isMultibeneficiary.value);
+    return true;
+  }
+  return false;
+};
+
+/**
+ * Populates the beneficiaries and installments fields
+ */
+const populateComplexFields = (
+  data: Step3Data,
+  setValue: UseFormSetValue<Step3FormValues>
+): boolean => {
+  let hasPopulatedSomething = false;
+
+  if (data.beneficiaries && data.beneficiaries.length > 0) {
+    setValue('beneficiaries', data.beneficiaries);
+    hasPopulatedSomething = true;
+  }
+
+  if (data.installments && data.installments.length > 0) {
+    setValue('installments', data.installments);
+    hasPopulatedSomething = true;
+  }
+
+  return hasPopulatedSomething;
+};
+
+const Step3 = ({
+  data,
+  setData,
+  onBack,
+  step1Data,
+  step2Data,
+  isEditing = false
+}: Props) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const location = useLocation();
   const {
     state: { organizationId }
   } = useStore();
+
+  // Extract debtPositionId for edit mode
+  const debtPositionId = location.state?.debtPositionId;
+
+  // Query to get debt position details for edit mode (to access paymentOptionId)
+  const { data: debtPositionDetail } =
+    isEditing && debtPositionId
+      ? debtPositionsApi.getDebtPositionDetail(organizationId, debtPositionId)
+      : { data: null };
+
+  // Ref to avoid executing the setup logic more than once
+  const hasSetupStep3Data = useRef(false);
 
   const { mutate: createDebtPosition } = debtPositionsApi.createDebtPosition(
     (paymentObject) => {
@@ -84,6 +201,26 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
       );
     }
   );
+
+  // Mutation for manage installments in edit mode
+  const { mutate: manageInstallments } =
+    debtPositionsApi.manageDebtPositionInstallments(
+      (response) => {
+        navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
+          state: {
+            ...response,
+            isEditing: true
+          },
+          replace: true
+        });
+      },
+      () => {
+        utils.notify.emit(
+          t('debtPositionCreateWizard.step3.error.subtitle'),
+          'error'
+        );
+      }
+    );
 
   // Convert date string value to Date object for DatePicker
   const initialData: Step3FormValues = {
@@ -118,18 +255,63 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     criteriaMode: 'all',
     context: { flagMandatoryDueDate: data.flagMandatoryDueDate }
   });
+
+  // Effect to populate form fields when data is available in edit mode
+  useEffect(() => {
+    if (!isEditing) {
+      return;
+    }
+
+    const hasActualData = hasActualDataToPopulate(data);
+
+    if (hasActualData && !hasSetupStep3Data.current) {
+      const basicFieldsPopulated = populateBasicFields(data, setValue);
+      const dueDatePopulated = populateDueDateField(data, setValue);
+      const multiBeneficiaryPopulated = populateMultiBeneficiaryField(
+        data,
+        setValue
+      );
+      const complexFieldsPopulated = populateComplexFields(data, setValue);
+
+      const hasPopulatedSomething =
+        basicFieldsPopulated ||
+        dueDatePopulated ||
+        multiBeneficiaryPopulated ||
+        complexFieldsPopulated;
+
+      if (hasPopulatedSomething) {
+        hasSetupStep3Data.current = true;
+      }
+    }
+  }, [
+    isEditing,
+    data.paymentObject?.value,
+    data.paymentOption?.value,
+    data.amount?.value,
+    data.dueDate?.value,
+    data.isMultibeneficiary?.value,
+    data.beneficiaries,
+    data.installments,
+    setValue
+  ]);
+
   const isMultibeneficiary = watch('isMultibeneficiary.value');
   const totalAmount = watch('amount.value');
   const beneficiaries = watch('beneficiaries') || [];
   const paymentOption = watch('paymentOption.value');
-
   const isInstallment = paymentOption === DebtPositionTypeEnum.INSTALLMENTS;
 
   // Effect to handle beneficiaries initialization
   useEffect(() => {
     const currentBeneficiaries = getValues('beneficiaries') || [];
+
     // Initialize beneficiaries only if switch is active and there are no beneficiaries yet
-    if (isMultibeneficiary && currentBeneficiaries.length === 0) {
+    // BUT not if we're in editing mode and have already set up the data from API
+    if (
+      isMultibeneficiary &&
+      currentBeneficiaries.length === 0 &&
+      !(isEditing && hasSetupStep3Data.current)
+    ) {
       // Reset any persistent errors first
       setValue('beneficiaries', [], { shouldValidate: false });
       setValue(
@@ -149,7 +331,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     } else if (!isMultibeneficiary) {
       setValue('beneficiaries', [], { shouldValidate: false });
     }
-  }, [isMultibeneficiary, setValue, getValues]);
+  }, [isMultibeneficiary, setValue, getValues, isEditing, hasSetupStep3Data]);
 
   // Handle total amount update when installments change
   const handleInstallmentsChange = (totalAmount: string) => {
@@ -377,7 +559,51 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
     // Save data
     setData(formattedValues);
 
-    // Prepare API POST body
+    // In edit mode, call manage installments API
+    if (isEditing && debtPositionId && debtPositionDetail) {
+      const firstPaymentOption = debtPositionDetail.paymentOptions?.[0];
+      if (!firstPaymentOption?.paymentOptionId) {
+        utils.notify.emit(
+          t('debtPositionCreateWizard.step3.error.missingPaymentOption'),
+          'error'
+        );
+        return;
+      }
+
+      // Validate debtPositionId
+      if (!debtPositionId || isNaN(Number(debtPositionId))) {
+        console.error('Invalid debtPositionId:', debtPositionId);
+        utils.notify.emit(
+          t('debtPositionCreateWizard.errorMissingId'),
+          'error'
+        );
+        return;
+      }
+
+      try {
+        const manageBody = convertFormDataToManageDebtPositionDTO(
+          values,
+          step2Data,
+          firstPaymentOption.paymentOptionId,
+          debtPositionDetail,
+          step1Data
+        );
+
+        manageInstallments({
+          organizationId,
+          debtPositionId: Number(debtPositionId),
+          body: manageBody
+        });
+      } catch (error) {
+        console.error('Error converting form data:', error);
+        utils.notify.emit(
+          t('debtPositionCreateWizard.step3.error.conversionError'),
+          'error'
+        );
+      }
+      return;
+    }
+
     const postBody: DebtPositionDTO = {
       description: formattedValues.step1Data?.description.value || '',
       status: isDraft ? DebtPositionStatus.DRAFT : DebtPositionStatus.UNPAID,
@@ -388,7 +614,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
       flagIuvVolatile: DEFAULT_VALUES.FLAG_IUV_VOLATILE,
       debtPositionOrigin: DebtPositionOrigin.ORDINARY,
       multiDebtor: DEFAULT_VALUES.MULTI_DEBTOR,
-      flagPagoPaPayment: DEFAULT_VALUES.FLAG_PAGO_PA_PAYMENT,
+      flagPuPagoPaPayment: DEFAULT_VALUES.FLAG_PAGO_PA_PU_PAYMENT,
       paymentOptions: [
         {
           totalAmountCents: Math.round(
@@ -409,8 +635,6 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
         }
       ]
     };
-
-    // Create debt position API call
     createDebtPosition({
       body: postBody,
       paymentObject: postBody.description
@@ -634,6 +858,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
                   getValues={getValues}
                   trigger={trigger}
                   onToggleMultibeneficiary={handleMultibeneficiaryToggle}
+                  isEditing={isEditing}
                 />
               </Grid>
             )}
@@ -653,6 +878,7 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
           getValues={getValues}
           trigger={trigger}
           onInstallmentsChange={handleInstallmentsChange}
+          isEditing={isEditing}
         />
       )}
       <WizardStepButtons
@@ -660,8 +886,8 @@ const Step3 = ({ data, setData, onBack, step1Data, step2Data }: Props) => {
         onNext={handleSubmit((values) => onSubmit(values, false))}
         onSaveDraft={() => handleSubmit((values) => onSubmit(values, true))()}
         disableNext={false}
-        nextLabel="commons.create"
-        showSaveDraft={true}
+        nextLabel={isEditing ? 'commons.save' : 'commons.create'}
+        showSaveDraft={!isEditing}
         saveDraftLabel="commons.saveDraft"
       />
     </form>

@@ -1,14 +1,14 @@
-import { ButtonConfig } from '../components/ThankYouPage/ThankYouPage';
+import { ButtonConfig } from '../components/ResponsePage/ResponsePage';
 
-type ThankyouPage = {
+type SuccessPage = {
   title: string;
   description: string;
   buttonConfig?: Array<ButtonConfig>;
 };
 
-type ThankyouOpts = Record<string, ThankyouPage>;
+type SuccessOpts = Record<string, SuccessPage>;
 
-export const ThankyouPageConfig: ThankyouOpts = {
+export const SuccessPageConfig: SuccessOpts = {
   'reporting-import': {
     title: 'commons.successImport',
     description: 'reportingImportThankYouPage.description',
@@ -113,7 +113,19 @@ export const ThankyouPageConfig: ThankyouOpts = {
         variant: 'contained',
         size: 'large',
         buttonLabel: 'commons.backToStart',
-        actionID: 'DEBT_TYPES_CREATED'
+        actionID: 'DEBT_TYPES_DASHBOARD'
+      }
+    ]
+  },
+  'debt-type-org-update': {
+    title: 'debtTypeOrgCreate.edit.success.title',
+    description: 'debtTypeOrgCreate.edit.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'commons.backToStart',
+        actionID: 'DEBT_TYPES_DASHBOARD'
       }
     ]
   }

@@ -4,10 +4,15 @@ import { parseAndLog } from '../utils/loaders';
 import {
   debtPositionDetailDTOSchema,
   debtPositionDTOSchema,
-  installmentDetailDTOSchema
+  debtPositionRegistrySchema,
+  installmentDetailDTOSchema,
+  installmentRegistrySchema
 } from '../../generated/zod-schema';
 import { AxiosError } from 'axios';
-import { DebtPositionDTO } from '../../generated/data-contracts';
+import {
+  DebtPositionDTO,
+  ManageDebtPositionDTO
+} from '../../generated/data-contracts';
 import { extractFilename } from '../utils/formatters';
 
 type DebtPositionViewParams = Parameters<
@@ -181,34 +186,124 @@ const createDebtPosition = (
     onError
   });
 
-/**
- * Downloads the payment notice for a specific installment
- * @param organizationId Organization ID
- * @param debtPositionId Debt position ID
- * @param iuv IUV code of the installment
- * @returns Promise with file data and filename or null in case of error
- */
-const downloadPaymentNotice = async (
+/** manage debt position installments (edit mode) */
+const manageDebtPositionInstallments = (
+  onSuccess?: (response: DebtPositionDTO) => void,
+  onError?: (error: AxiosError) => void
+) =>
+  useMutation({
+    mutationKey: ['manageDebtPositionInstallments'],
+    mutationFn: async (params: {
+      organizationId: number;
+      debtPositionId: number;
+      body: ManageDebtPositionDTO;
+      publish?: boolean;
+    }) => {
+      const response = await utils.apiClient.bff.manageDebtPositionInstallments(
+        params.organizationId,
+        params.debtPositionId,
+        params.body,
+        params.publish ? { publish: params.publish } : undefined
+      );
+      if (response.data) {
+        parseAndLog(debtPositionDTOSchema, response.data);
+      }
+      return response.data;
+    },
+    onSuccess,
+    onError
+  });
+
+/** returns a mutation to download the payment notice file */
+const getPaymentNoticeFile = (
   organizationId: number,
   debtPositionId: number,
   iuv: string
-): Promise<{ data: Blob; fileName: string } | null> => {
-  try {
-    const response = await utils.apiClient.bff.getPaymentNotice(
+) =>
+  useMutation({
+    mutationKey: ['getPaymentNoticeFile', organizationId, debtPositionId, iuv],
+    mutationFn: async () => {
+      const response = await utils.apiClient.bff.getPaymentNotice(
+        organizationId,
+        debtPositionId,
+        { iuv },
+        { format: 'blob' }
+      );
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const fileName =
+        extractFilename(contentDisposition) || `notice-${iuv}.pdf`;
+
+      return { data: response.data, fileName };
+    }
+  });
+
+/** returns a mutation to get export blob file of unpaid/unpayable installment notices for a debt position */
+const getDebtPositionZipFile = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['getDebtPositionZipFile', organizationId],
+    mutationFn: async (debtPositionId: number) => {
+      const response = await utils.apiClient.bff.getUnpaidPaymentNoticeZip(
+        organizationId,
+        debtPositionId,
+        { format: 'blob' }
+      );
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const fileName =
+        extractFilename(contentDisposition) ||
+        `debt-position-${debtPositionId}.zip`;
+
+      return { data: response.data, fileName };
+    }
+  });
+
+const getDebtPositionRegistriesMutation = () => {
+  return useMutation({
+    mutationKey: ['getDebtPositionRegistriesMutation'],
+    mutationFn: async ({
       organizationId,
-      debtPositionId,
-      { iuv },
-      { format: 'blob' }
-    );
+      debtPositionId
+    }: {
+      organizationId: number;
+      debtPositionId: number;
+    }) => {
+      const { data: registries } =
+        await utils.apiClient.bff.getDebtPositionRegistries(
+          organizationId,
+          debtPositionId
+        );
+      if (registries && Array.isArray(registries)) {
+        registries.forEach((registry) => {
+          parseAndLog(debtPositionRegistrySchema, registry);
+        });
+      }
+      return registries || [];
+    }
+  });
+};
 
-    const contentDisposition = response.headers['content-disposition'] || '';
-    const fileName = extractFilename(contentDisposition) || `notice-${iuv}.pdf`;
-
-    return { data: response.data, fileName };
-  } catch (error) {
-    console.error('Error downloading payment notice:', error);
-    return null;
-  }
+const getInstallmentRegistriesMutation = () => {
+  return useMutation({
+    mutationKey: ['getInstallmentRegistriesMutation'],
+    mutationFn: async ({
+      organizationId,
+      debtPositionId
+    }: {
+      organizationId: number;
+      debtPositionId: number;
+    }) => {
+      const { data: registries } =
+        await utils.apiClient.bff.getInstallmentRegistries(
+          organizationId,
+          debtPositionId
+        );
+      if (registries && Array.isArray(registries)) {
+        registries.forEach((registry) => {
+          parseAndLog(installmentRegistrySchema, registry);
+        });
+      }
+      return registries || [];
+    }
+  });
 };
 
 export default {
@@ -220,5 +315,9 @@ export default {
   deleteDebtPositionTypeOrgs,
   deleteDebtPosition,
   createDebtPosition,
-  downloadPaymentNotice
+  manageDebtPositionInstallments,
+  getDebtPositionRegistriesMutation,
+  getInstallmentRegistriesMutation,
+  getPaymentNoticeFile,
+  getDebtPositionZipFile
 };

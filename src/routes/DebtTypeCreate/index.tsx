@@ -4,11 +4,12 @@ import { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
 import { Step1Configuration, Step1Data } from './components/Step1Configuration';
 import { Step2Data, Step2Settings } from './components/Step2Settings';
-import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../App';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '../../routes';
 import { useSignal } from '@preact/signals-react';
 import { postDebtPositionType } from '../../api/debtPositionsTypes';
 import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
+import utils from '../../utils';
 
 const initialData: DebtPositionTypeRequestBody = {
   code: '',
@@ -33,27 +34,22 @@ export const DebtTypeCreate = () => {
   const formData = useSignal<DebtPositionTypeRequestBody>(initialData);
   const debtTypeCreate = postDebtPositionType();
 
-  const submit = () => {
-    debtTypeCreate.mutate(formData.value, {
-      onSuccess: (formData) => {
-        navigate(
-          {
-            pathname: generatePath(PageRoutes.RESPONSES_SUCCESS, {
-              category: 'debt-type-catalog-create'
-            })
-          },
-          {
-            replace: true,
-            state: {
-              i18nParams: {
-                paymentObject: formData.description
-              }
-            }
+  const submit = async () => {
+    try {
+      const response = await debtTypeCreate.mutateAsync(formData.value);
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'debt-type-catalog-create',
+          i18nParams: {
+            paymentObject: response.description
           }
-        );
-      },
-      onError: console.error
-    });
+        }
+      });
+    } catch (error) {
+      utils.notify.emit(t('errors.generic'));
+      console.error(error);
+    }
   };
 
   const steps: Stepper['steps'] = [

@@ -1,183 +1,108 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stepper } from '../../components/Stepper/types';
-import { ZodError } from 'zod';
 import { StepperContainer } from '../../components/Stepper';
-import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../App';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '../../routes';
 import { Step1Configuration } from './steps/Step1Configuration';
 import { Step2Behaviour } from './steps/Step2Behaviour';
 import { Step3Accounting } from './steps/Step3Accounting';
 import { Step4Notifications } from './steps/Step4Notifications';
-import { PaymentMethodOption } from './steps/Step2Behaviour/components/PaymentMethodSelector';
-import { OperatorsSelection } from '../../../generated/data-contracts';
-import {
-  CreateDebtPositionTypeOrg,
-  createDebtPositionTypeOrg
-} from '../../api/debtPositionsTypeOrg';
-import { useStore } from '../../store/GlobalStore';
-import utils from '../../utils';
-import { FormProvider, useForm } from 'react-hook-form';
-import { step2Schema } from './steps/Step2Behaviour/schema';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { step1Schema } from './steps/Step1Configuration/schema';
-import { step3Schema } from './steps/Step3Accounting/schema';
-import { step4Schema } from './steps/Step4Notifications/schema';
-import { step5Schema } from './steps/Step5Operators/schema';
+import { Step5Operators } from './steps/Step5Operators';
+import { FormProvider } from 'react-hook-form';
 import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
 import { DebtTypeOrgForm } from './types';
-import { Step5Operators } from './steps/Step5Operators';
+import { useStepperLogic } from '../../hooks/useStepperLogic';
+import { useDebtTypeOrgForm } from './hooks/useDebtTypeOrgForm';
 
-const initialData: DebtTypeOrgForm = {
-  debtPositionTypeId: '',
-  code: '',
-  description: '',
-  iban: '',
-  operatorsSelection: OperatorsSelection.ALL,
-  paymentMethod: PaymentMethodOption.FREE,
-  enabledOperators: []
+export type DebtTypeOrgCreateProps = {
+  edit?: boolean;
 };
 
-export const DebtTypeOrgCreate = () => {
+export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
   const {
-    state: { organizationId }
-  } = useStore();
+    currentStep,
+    goToNextStep,
+    goToPreviousStep,
+    isFirstStep,
+    isLastStep
+  } = useStepperLogic({ initialStep: 0, totalSteps: 5 });
 
-  const [step, setStep] = useState(0);
+  // Navigation helpers
+  const onSuccess = (paymentObject: string) => {
+    const category = edit ? 'debt-type-org-update' : 'debt-type-org-create';
 
-  const debtTypeCreate = createDebtPositionTypeOrg();
+    navigate(PageRoutes.RESPONSES_SUCCESS, {
+      replace: true,
+      state: {
+        category,
+        i18nParams: {
+          paymentObject
+        }
+      }
+    });
+  };
 
-  const combinedSchema = useMemo(
-    () =>
-      step1Schema
-        .and(step2Schema)
-        .and(step3Schema)
-        .and(step4Schema)
-        .and(step5Schema),
-    []
-  );
-
-  const stepSchemas = useMemo(
-    () => [step1Schema, step2Schema, step3Schema, step4Schema, step5Schema],
-    []
-  );
-
-  const methods = useForm<DebtTypeOrgForm>({
-    defaultValues: initialData,
-    resolver: zodResolver(combinedSchema),
-    mode: 'onTouched'
+  const { methods, validateStep, handleSubmit } = useDebtTypeOrgForm({
+    edit,
+    onSuccess
   });
 
   const { getValues, setError, clearErrors } = methods;
 
-  const requestMap = useCallback(
-    async (data: DebtTypeOrgForm): Promise<CreateDebtPositionTypeOrg> => ({
-      organizationId,
-      data: {
-        debtPositionTypeOrg: {
-          ...data,
-          debtPositionTypeId: Number(data.debtPositionTypeId),
-          organizationId,
-          flagNotifyOutcomePush: data.flagNotifyOutcomePush === 'true',
-          xsdDefinitionRef:
-            data.paymentMethod === PaymentMethodOption.CUSTOM
-              ? await data.xsdDefinitionRef?.text()
-              : undefined
-        },
-        operatorsSelection: data.operatorsSelection,
-        ...(data.operatorsSelection === OperatorsSelection.SELECTED &&
-          data.enabledOperators &&
-          data.enabledOperators.length > 0 && {
-            enabledOperators: data.enabledOperators
-          })
-      }
-    }),
-    [organizationId]
-  );
-
-  const onSubmit = useCallback(
-    async (formData: DebtTypeOrgForm) => {
-      try {
-        const request = await requestMap(formData);
-        const response = await debtTypeCreate.mutateAsync(request);
-        navigate(
-          {
-            pathname: generatePath(PageRoutes.RESPONSES_SUCCESS, {
-              category: 'debt-type-org-create'
-            })
-          },
-          {
-            replace: true,
-            state: {
-              i18nParams: {
-                paymentObject: response.description
-              }
-            }
-          }
-        );
-      } catch (error) {
-        utils.notify.emit(t('errors.generic'));
-        console.error(error);
-      }
-    },
-    [debtTypeCreate, navigate, requestMap, t]
-  );
-
-  const onNext = useCallback(async () => {
-    if (debtTypeCreate.isPending) return;
-
+  const handleNext = useCallback(async () => {
     clearErrors();
-    const currentSchema = stepSchemas[step];
     const values = getValues();
+    const { isValid, errors } = validateStep(currentStep, values);
 
-    try {
-      currentSchema.parse(values);
-      if (step === stepSchemas.length - 1) {
-        await onSubmit(values);
-      } else {
-        setStep(step + 1);
-      }
-    } catch (error) {
-      if (error instanceof ZodError) {
-        error.errors.forEach(({ path, message }) => {
-          if (path.length > 0) {
-            setError(path[0] as keyof DebtTypeOrgForm, {
-              type: 'manual',
-              message
-            });
-          }
-        });
-      }
+    if (!isValid) {
+      errors.forEach(({ path, message }) => {
+        if (path.length > 0) {
+          setError(path[0] as keyof DebtTypeOrgForm, {
+            type: 'manual',
+            message
+          });
+        }
+      });
+      return;
+    }
+
+    if (isLastStep) {
+      await handleSubmit(values);
+    } else {
+      goToNextStep();
     }
   }, [
     clearErrors,
     getValues,
-    onSubmit,
+    validateStep,
     setError,
-    step,
-    stepSchemas,
-    debtTypeCreate.isPending
+    isLastStep,
+    handleSubmit,
+    goToNextStep
   ]);
 
-  const onBack = useCallback(() => {
-    if (step === 0) {
-      navigate(PageRoutes.DEBT_TYPES_CREATED);
+  const handleBack = () => {
+    if (isFirstStep) {
+      navigate(-1);
     } else {
-      setStep(step - 1);
+      goToPreviousStep();
     }
-  }, [navigate, step]);
+  };
 
-  const steps: Stepper['steps'] = useMemo(
+  // Stepper configuration
+  const stepperSteps: Stepper['steps'] = useMemo(
     () => [
       {
         label: t('debtTypeOrgCreate.stepper.step1'),
-        content: <Step1Configuration key="step1" />
+        content: <Step1Configuration key="step1" edit={edit} />
       },
       {
         label: t('debtTypeOrgCreate.stepper.step2'),
-        content: <Step2Behaviour key="step2" />
+        content: <Step2Behaviour key="step2" edit={edit} />
       },
       {
         label: t('debtTypeOrgCreate.stepper.step3'),
@@ -190,27 +115,28 @@ export const DebtTypeOrgCreate = () => {
       },
       {
         label: t('debtTypeOrgCreate.stepper.step5'),
-        content: <Step5Operators key="step5" />
+        content: <Step5Operators key="step5" edit={edit} />
       }
     ],
-    [t]
+    [t, edit]
   );
 
   return (
     <FormProvider {...methods}>
-      <form aria-label={t('debtTypeOrgCreate.formLabel')}>
+      <form
+        aria-label={t('debtTypeOrgCreate.formLabel')}
+        role="form"
+        noValidate
+      >
         <StepperContainer
-          title={t('debtTypeOrgCreate.title')}
-          steps={steps}
-          activeStep={step}
+          title={t(
+            edit ? 'debtTypeOrgCreate.edit.title' : 'debtTypeOrgCreate.title'
+          )}
+          steps={stepperSteps}
+          activeStep={currentStep}
         />
 
-        <WizardStepButtons
-          onBack={onBack}
-          onNext={onNext}
-          disableNext={debtTypeCreate.isPending}
-          aria-disabled={debtTypeCreate.isPending}
-        />
+        <WizardStepButtons onBack={handleBack} onNext={handleNext} />
       </form>
     </FormProvider>
   );

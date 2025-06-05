@@ -37,9 +37,17 @@ export const _ControlledCheckbox = <T extends FieldValues>(
             }
             label={
               <Stack spacing={0.5}>
-                <Typography variant="body1">{label}</Typography>
+                <Typography
+                  variant="body1"
+                  color={checkboxProps.disabled ? 'gray' : 'textPrimary'}
+                >
+                  {label}
+                </Typography>
                 {description && (
-                  <Typography variant="caption" color="textSecondary">
+                  <Typography
+                    variant="caption"
+                    color={checkboxProps.disabled ? 'gray' : 'textSecondary'}
+                  >
                     {description}
                   </Typography>
                 )}

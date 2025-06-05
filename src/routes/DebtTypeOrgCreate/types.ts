@@ -20,7 +20,7 @@ export type DebtTypeOrgForm = {
   externalPaymentUrl?: string;
   xsdDefinitionRef?: File;
 
-  flagNotifyOutcomePush?: 'true' | 'false';
+  flagNotifyOutcomePush?: 'enabled' | 'disabled';
 
   // TODO Missing in api
   notificationRetries?: number;
@@ -55,4 +55,5 @@ export type DebtTypeOrgForm = {
   // Step 5
   operatorsSelection: OperatorsSelection;
   enabledOperators?: Array<string>;
+  disabledOperators?: Array<string>;
 };

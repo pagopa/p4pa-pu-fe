@@ -15,7 +15,8 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
   fieldNamePrefix,
   validationContext,
   disabled,
-  t
+  t,
+  beneficiaryReadonly
 }: Readonly<
   Pick<
     BeneficiaryFieldsProps<T>,
@@ -25,7 +26,16 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
     | 'validationContext'
     | 'disabled'
     | 't'
-  >
+  > & {
+    beneficiaryReadonly?: {
+      entityName?: boolean;
+      amount?: boolean;
+      taxCode?: boolean;
+      remittance?: boolean;
+      iban?: boolean;
+      taxonomyCode?: boolean;
+    };
+  }
 >) {
   return (
     <>
@@ -46,7 +56,7 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
             <EntityNameField
               field={field}
               t={t}
-              disabled={disabled}
+              disabled={disabled || beneficiaryReadonly?.entityName}
               context={validationContext}
             />
           )}
@@ -78,7 +88,7 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
             <TaxCodeField
               field={field}
               t={t}
-              disabled={disabled}
+              disabled={disabled || beneficiaryReadonly?.taxCode}
               context={validationContext}
             />
           )}
@@ -97,7 +107,7 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
             <RemittanceField
               field={field}
               t={t}
-              disabled={disabled}
+              disabled={disabled || beneficiaryReadonly?.remittance}
               context={validationContext}
             />
           )}

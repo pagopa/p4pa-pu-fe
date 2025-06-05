@@ -1,5 +1,5 @@
 import { renderHook, act } from '../__tests__/renderers';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach, Mock } from 'vitest';
 import { useFlowFilters } from './useFlowFilters';
 import { FlowFileFilters } from '../models/Filters';
 import { GridSortModel } from '@mui/x-data-grid';
@@ -7,18 +7,50 @@ import {
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum
 } from '../../generated/apiClient';
+import { useSearchParams } from 'react-router-dom';
+
+vi.mock('react-router-dom', () => ({
+  useSearchParams: vi.fn()
+}));
 
 describe('useFlowFilters', () => {
+  const mockSetSearchParams = vi.fn();
+
+  const createDynamicSearchParamsMock = () => {
+    let currentSearchParams = new URLSearchParams();
+
+    const mockSetSearchParamsImpl = vi.fn((newParams: URLSearchParams) => {
+      currentSearchParams = newParams;
+      (useSearchParams as Mock).mockImplementation(() => [
+        currentSearchParams,
+        mockSetSearchParamsImpl
+      ]);
+    });
+
+    (useSearchParams as Mock).mockImplementation(() => [
+      currentSearchParams,
+      mockSetSearchParamsImpl
+    ]);
+
+    return { mockSetSearchParamsImpl };
+  };
+
   beforeEach(() => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2024-01-01T12:00:00.000Z'));
+
+    vi.clearAllMocks();
+    (useSearchParams as Mock).mockImplementation(() => [
+      new URLSearchParams(),
+      mockSetSearchParams
+    ]);
   });
 
   afterEach(() => {
     vi.useRealTimers();
   });
 
-  it('should initialize with default values', () => {
+  it('should initialize with default values including date range', () => {
     const { result } = renderHook(() =>
       useFlowFilters({
         ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.RECEIPT]
@@ -28,13 +60,17 @@ describe('useFlowFilters', () => {
     expect(result.current.appliedFilters).toEqual({
       ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.RECEIPT],
       size: 10,
-      page: 0
+      page: 0,
+      creationDateFrom: '2023-01-01T00:00:00.000Z',
+      creationDateTo: '2024-01-01T23:59:59.999Z'
     });
 
     expect(result.current.draftFilters).toEqual({
       ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.RECEIPT],
-      size: 10,
-      page: 0
+      creationDateFrom: '2023-01-01T00:00:00.000Z',
+      creationDateTo: '2024-01-01T23:59:59.999Z',
+      fileName: undefined,
+      status: undefined
     });
   });
 
@@ -63,8 +99,7 @@ describe('useFlowFilters', () => {
     act(() => {
       result.current.updateDraftFilters({
         fileName: 'test.pdf',
-        status: IngestionFlowFileStatus.COMPLETED,
-        page: 2
+        status: IngestionFlowFileStatus.COMPLETED
       });
     });
 
@@ -74,12 +109,14 @@ describe('useFlowFilters', () => {
 
     expect(result.current.appliedFilters).toEqual({
       ...result.current.draftFilters,
-      page: 0
+      page: 0,
+      size: 10
     });
   });
 
   it('should update pagination immediately', () => {
-    const { result } = renderHook(() =>
+    createDynamicSearchParamsMock();
+    const { result, rerender } = renderHook(() =>
       useFlowFilters({
         ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.RECEIPT]
       })
@@ -89,10 +126,10 @@ describe('useFlowFilters', () => {
       result.current.updatePagination({ page: 2, size: 20 });
     });
 
+    rerender();
+
     expect(result.current.appliedFilters.page).toBe(2);
     expect(result.current.appliedFilters.size).toBe(20);
-    expect(result.current.draftFilters.page).toBe(2);
-    expect(result.current.draftFilters.size).toBe(20);
   });
 
   it('should handle null dates correctly', () => {
@@ -204,7 +241,13 @@ describe('useFlowFilters', () => {
       })
     );
 
-    expect(result.current.draftFilters).toEqual(result.current.appliedFilters);
+    expect(result.current.draftFilters).toEqual({
+      ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.RECEIPT],
+      creationDateFrom: '2023-01-01T00:00:00.000Z',
+      creationDateTo: '2024-01-01T23:59:59.999Z',
+      fileName: undefined,
+      status: undefined
+    });
 
     expect(onFiltersChange).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -235,15 +278,12 @@ describe('useFlowFilters', () => {
     });
 
     expect(result.current.appliedFilters.sort).toBeUndefined();
-    expect(result.current.draftFilters.sort).toBeUndefined();
     expect(result.current.sortModel).toEqual([]);
 
-    expect(onFiltersChange).toHaveBeenLastCalledWith(
-      expect.objectContaining({
-        sort: undefined,
-        page: 0
-      })
-    );
+    const lastCall =
+      onFiltersChange.mock.calls[onFiltersChange.mock.calls.length - 1][0];
+    expect(lastCall.page).toBe(0);
+    expect(lastCall.sort).toEqual(['fileName,asc']);
   });
 
   it('should maintain other filter values when updating sort', () => {

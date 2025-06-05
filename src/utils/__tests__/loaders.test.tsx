@@ -57,21 +57,14 @@ describe('loaders', () => {
 
       expect(getOrganizationsMock).toHaveBeenCalledTimes(1);
       expect(result.current.data).toEqual(mockOrganizations);
-      expect(window.location.replace).not.toHaveBeenCalled();
     });
 
-    it('should redirect to error page when API call fails', async () => {
+    it('should have isError to true when API call fails', async () => {
       getOrganizationsMock.mockRejectedValueOnce(new Error('API Error'));
 
-      renderHook(() => loaders.getOrganizations());
+      const { result } = renderHook(() => loaders.getOrganizations());
 
-      await waitFor(() => {
-        expect(window.location.replace).toHaveBeenCalledWith(
-          '/piattaformaunitaria/error'
-        );
-      });
-
-      expect(getOrganizationsMock).toHaveBeenCalledTimes(1);
+      await waitFor(() => expect(result.current.isError).toBe(true));
     });
   });
 });

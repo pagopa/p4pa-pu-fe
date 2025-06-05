@@ -1,26 +1,18 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
-import { Download, Search, Upload } from '@mui/icons-material';
+import { Download, Upload } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 import { useCallback, useState } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
-import { FilterFieldIds } from '../../models/SearchCardFields';
-import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
-import { useStore } from '../../store/GlobalStore';
 
 export const TelematicReceipt = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}]);
-  const {
-    state: { organizationId }
-  } = useStore();
-  const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
 
   const navigateToResults = useCallback(() => {
     navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS, {
@@ -57,39 +49,14 @@ export const TelematicReceipt = () => {
         description={t('telematicReceipts.description')}
       />
       <Grid container direction="row">
-        <Grid
-          container
-          spacing={2}
-          // width={900}
-        >
+        <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <SearchCard
               title={t('telematicReceipts.search')}
               description={t('telematicReceipts.searchdescription')}
+              filterContext="TELEMATIC"
               filterValues={filters[0]}
               onFilterChange={handleFilterChange}
-              fields={[
-                {
-                  type: COMPONENT_TYPE.textField,
-                  label: t('commons.iuv'),
-                  adornment: <Search />,
-                  id: FilterFieldIds.IUV_CODE
-                },
-                {
-                  type: COMPONENT_TYPE.dateRange,
-                  label: 'daterange',
-                  from: { label: t('commons.outcomeFrom') },
-                  to: { label: t('dates.to') },
-                  id: FilterFieldIds.DATE_RANGE
-                },
-                {
-                  type: COMPONENT_TYPE.select,
-                  label: t('commons.duetype'),
-                  id: FilterFieldIds.TYPE_ORG,
-                  options: debtPositionsTypes.optionsMap,
-                  defaultValue: 0
-                }
-              ]}
               button={[
                 {
                   label: t('commons.filters.remove'),

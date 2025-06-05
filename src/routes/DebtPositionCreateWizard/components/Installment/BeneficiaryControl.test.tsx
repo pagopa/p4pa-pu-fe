@@ -39,26 +39,17 @@ vi.mock('../Beneficiary/BeneficiaryField', () => ({
 vi.mock('react-hook-form', async () => {
   const actual = await vi.importActual('react-hook-form');
 
-  // Internal function with result casting
   const mockUseWatch = ({
     name
   }: {
     name: string | Array<string>;
   }): unknown => {
-    if (name === 'installments.0.amount') {
-      return '100,00';
-    }
-    if (name === 'installments.1.amount') {
-      return '200,00';
-    }
-    if (name === 'installments.0.isMultibeneficiary') {
-      return 'true';
-    }
-    if (name === 'installments.1.sameBeneficiariesAsBefore') {
-      return 'true';
-    }
-    if (name === 'installments.0.beneficiaries') {
-      return [
+    const watchValueMap: Record<string, unknown> = {
+      'installments.0.amount': '100,00',
+      'installments.1.amount': '200,00',
+      'installments.0.isMultibeneficiary': 'true',
+      'installments.1.sameBeneficiariesAsBefore': 'true',
+      'installments.0.beneficiaries': [
         {
           amount: '60,00',
           denomination: 'A',
@@ -69,9 +60,10 @@ vi.mock('react-hook-form', async () => {
           denomination: 'B',
           iban: 'IT987654321'
         }
-      ];
-    }
-    return null;
+      ]
+    };
+
+    return watchValueMap[name as string] ?? null;
   };
 
   return {
@@ -99,7 +91,6 @@ vi.mock('react-hook-form', async () => {
       name: string;
       defaultValue?: unknown;
     }): React.ReactElement => {
-      // Simplified controller that only manages state and propagates onChange
       const [value, setValueState] = React.useState<string | boolean>(
         (defaultValue as string | boolean) ||
           (name.includes('sameBeneficiariesAsBefore') ? 'true' : false)
@@ -112,13 +103,11 @@ vi.mock('react-hook-form', async () => {
               value,
               onChange: (newValue: string | boolean) => {
                 setValueState(newValue);
-                // Key point: trigger the change event
                 if (
                   name.includes('sameBeneficiariesAsBefore') &&
                   typeof newValue === 'string' &&
                   newValue === 'true'
                 ) {
-                  // If "Yes" is selected, simulate the beneficiary copy action
                   setTimeout(() => {
                     document.dispatchEvent(new Event('copyBeneficiaries'));
                   }, 50);
@@ -272,6 +261,18 @@ describe('BeneficiaryControl', () => {
   });
 
   test('should show radio buttons for subsequent installments when isMultibeneficiary is true', () => {
+    const mockGetValuesForTest = createMockGetValuesWithConsistentReturn({
+      installment0: {
+        isMultibeneficiary: true,
+        beneficiaries: [
+          { amount: '60,00', denomination: 'A', iban: 'IT123456789' },
+          { amount: '40,00', denomination: 'B', iban: 'IT987654321' }
+        ]
+      },
+      installment1Amount: '200,00',
+      sameBeneficiariesAsBefore: false
+    });
+
     render(
       <BeneficiaryControl<TestFormData>
         index={1}
@@ -279,7 +280,9 @@ describe('BeneficiaryControl', () => {
         errors={mockErrors}
         isSubmitted={false}
         fieldNamePrefix="installments"
-        getValues={mockGetValues}
+        getValues={
+          mockGetValuesForTest as unknown as UseFormGetValues<TestFormData>
+        }
         setValue={mockSetValue}
         trigger={mockTrigger}
         isMultibeneficiary={true}
@@ -317,7 +320,6 @@ describe('BeneficiaryControl', () => {
   });
 
   test('should call setValue to copy beneficiaries when "Yes" is selected for a subsequent installment', async () => {
-    // Configure getValues mock to provide the needed data
     const getValuesMock = createMockGetValuesWithConsistentReturn({
       installment0: {
         isMultibeneficiary: true,
@@ -335,7 +337,6 @@ describe('BeneficiaryControl', () => {
 
     const mockSetValue = vi.fn();
 
-    // Add event listener to simulate beneficiary copy action
     document.addEventListener('copyBeneficiaries', () => {
       mockSetValue(
         'installments.1.beneficiaries',
@@ -366,10 +367,8 @@ describe('BeneficiaryControl', () => {
     fireEvent.click(radioYes);
 
     await waitFor(() => {
-      // Verify that setValue was called at least once
       expect(mockSetValue).toHaveBeenCalled();
 
-      // Find call with beneficiaries
       const setBeneficiariesCall = vi
         .mocked(mockSetValue)
         .mock.calls.find(
@@ -404,7 +403,6 @@ describe('BeneficiaryControl', () => {
 
     const mockSetValue = vi.fn();
 
-    // Add event listener to simulate beneficiary copy action
     document.addEventListener('copyBeneficiaries', () => {
       mockSetValue(
         'installments.1.beneficiaries',
@@ -485,7 +483,6 @@ describe('BeneficiaryControl', () => {
         toggleMultibeneficiary={mockToggleMultibeneficiary}
       />
     );
-    // Error message about sum should not be present
     expect(
       screen.queryByText(
         'The sum of beneficiary amounts must be less than or equal to the total installment amount'
@@ -494,7 +491,6 @@ describe('BeneficiaryControl', () => {
   });
 
   test('should not show beneficiary sum error when there are no beneficiaries in the previous installment', () => {
-    // Create a getValues function that simulates no beneficiaries in the previous installment
     const getValuesNoPrevBeneficiaries =
       createMockGetValuesWithConsistentReturn({
         installment0: {
@@ -521,7 +517,6 @@ describe('BeneficiaryControl', () => {
         toggleMultibeneficiary={mockToggleMultibeneficiary}
       />
     );
-    // Error message about sum should not be present
     expect(
       screen.queryByText(
         'The sum of beneficiary amounts must be less than or equal to the total installment amount'
@@ -562,18 +557,15 @@ describe('BeneficiaryControl', () => {
       />
     );
 
-    // Change from "Yes" to "No"
     const radioNo = screen.getByText('No');
     fireEvent.click(radioNo);
 
-    // Verify that beneficiaries were reset
     expect(mockSetValue).toHaveBeenCalledWith(
       'installments.1.beneficiaries',
       [],
       expect.objectContaining({ shouldDirty: true })
     );
 
-    // Verify that a new empty beneficiary was created
     await waitFor(() => {
       expect(mockSetValue).toHaveBeenCalledWith(
         'installments.1.beneficiaries',
@@ -584,8 +576,6 @@ describe('BeneficiaryControl', () => {
   });
 
   test('should create an empty beneficiary after reset if the form is visible', async () => {
-    // Simulate that after reset the form is visible (showBeneficiaryForm true)
-    // To force the condition, we mock getValues and setValue
     const getValuesWithShowForm = createMockGetValuesWithConsistentReturn({
       installment0: {
         isMultibeneficiary: true,
@@ -601,8 +591,6 @@ describe('BeneficiaryControl', () => {
     });
 
     const mockSetValue = vi.fn(() => {
-      // Simulate that after reset it's called a second time to create the empty beneficiary
-      // First call resets to [], second call creates empty beneficiary
       return undefined;
     });
 
@@ -623,11 +611,9 @@ describe('BeneficiaryControl', () => {
       />
     );
 
-    // Change from "Yes" to "No"
     const radioNo = screen.getByText('No');
     fireEvent.click(radioNo);
 
-    // Verify that setValue was called for reset (empty array)
     await waitFor(() => {
       expect(mockSetValue).toHaveBeenCalledWith(
         'installments.1.beneficiaries',
@@ -638,7 +624,6 @@ describe('BeneficiaryControl', () => {
   });
 
   test('should copy beneficiaries from the previous installment with recalculated amounts', async () => {
-    // Mock of getValues providing the data needed for the test
     const getValuesFn = createMockGetValuesWithConsistentReturn({
       installment0: {
         isMultibeneficiary: true,
@@ -662,7 +647,6 @@ describe('BeneficiaryControl', () => {
 
     const mockSetValue = vi.fn();
 
-    // Render the component with modified mocks
     render(
       <BeneficiaryControl<TestFormData>
         index={1}
@@ -680,11 +664,9 @@ describe('BeneficiaryControl', () => {
       />
     );
 
-    // Select the "Yes" radio button
     const radioYes = screen.getByText('Yes');
     fireEvent.click(radioYes);
 
-    // Verify that setValue is called with beneficiaries, without worrying about specific amounts
     await waitFor(() => {
       expect(mockSetValue).toHaveBeenCalledWith(
         'installments.1.beneficiaries',
@@ -700,9 +682,388 @@ describe('BeneficiaryControl', () => {
       );
     });
   });
+
+  test('should automatically set sameBeneficiariesAsBefore to true when switch is activated and previous beneficiaries exist', async () => {
+    const mockGetValuesAutoDefault = createMockGetValuesWithConsistentReturn({
+      installment0: {
+        isMultibeneficiary: true,
+        beneficiaries: [
+          { amount: '50,00', denomination: 'Entity A', iban: 'IT123456789' },
+          { amount: '30,00', denomination: 'Entity B', iban: 'IT987654321' }
+        ]
+      },
+      installment1Amount: '100,00',
+      sameBeneficiariesAsBefore: undefined
+    });
+
+    const mockSetValueAutoDefault = vi.fn();
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        isSubmitted={false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesAutoDefault as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValueAutoDefault}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        isEditing={false}
+      />
+    );
+
+    expect(screen.getByText('Other beneficiaries')).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        'Are the beneficiaries the same as the previous installment?'
+      )
+    ).toBeInTheDocument();
+
+    const yesRadio = screen.getByRole('radio', { name: 'Yes' });
+    expect(yesRadio).toBeChecked();
+
+    await waitFor(() => {
+      expect(mockSetValueAutoDefault).toHaveBeenCalled();
+    });
+  });
+
+  test('should not auto-set sameBeneficiariesAsBefore in editing mode', async () => {
+    const mockGetValuesEditing = createMockGetValuesWithConsistentReturn({
+      installment0: {
+        isMultibeneficiary: true,
+        beneficiaries: [
+          { amount: '50,00', denomination: 'Entity A', iban: 'IT123456789' }
+        ]
+      },
+      installment1Amount: '100,00',
+      sameBeneficiariesAsBefore: undefined
+    });
+
+    const mockSetValueEditing = vi.fn();
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        isSubmitted={false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesEditing as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValueEditing}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        isEditing={true}
+      />
+    );
+
+    await waitFor(() => {
+      expect(mockSetValueEditing).not.toHaveBeenCalledWith(
+        'installments.1.sameBeneficiariesAsBefore',
+        true,
+        expect.any(Object)
+      );
+    });
+  });
+
+  test('should set sameBeneficiariesAsBefore to false when no previous beneficiaries exist', async () => {
+    const mockGetValuesNoPrev = createMockGetValuesWithConsistentReturn({
+      installment0: {
+        isMultibeneficiary: false,
+        beneficiaries: []
+      },
+      installment1Amount: '100,00',
+      sameBeneficiariesAsBefore: true
+    });
+
+    const mockSetValueNoPrev = vi.fn();
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        isSubmitted={false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesNoPrev as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValueNoPrev}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        isEditing={false}
+      />
+    );
+
+    await waitFor(() => {
+      expect(mockSetValueNoPrev).toHaveBeenCalledWith(
+        'installments.1.sameBeneficiariesAsBefore',
+        false,
+        { shouldDirty: true }
+      );
+    });
+  });
+
+  test('should show BeneficiaryField in editing mode regardless of radio value', () => {
+    const mockGetValuesEditingForm = createMockGetValuesWithConsistentReturn({
+      installment0: {
+        isMultibeneficiary: true,
+        beneficiaries: [
+          { amount: '50,00', denomination: 'Entity A', iban: 'IT123456789' }
+        ]
+      },
+      installment1Amount: '100,00',
+      sameBeneficiariesAsBefore: true
+    });
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        isSubmitted={false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesEditingForm as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        isEditing={true}
+      />
+    );
+
+    expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+  });
+
+  test('should handle RadioGroup value correctly when field.value is undefined', () => {
+    const MockRadioController = ({
+      field
+    }: {
+      field: { value: undefined };
+    }) => (
+      <div data-testid="radio-group-mock">
+        <span data-testid="radio-value">
+          {String(field.value === undefined ? 'true' : field.value)}
+        </span>
+      </div>
+    );
+
+    render(<MockRadioController field={{ value: undefined }} />);
+
+    expect(screen.getByTestId('radio-value')).toHaveTextContent('true');
+  });
+
+  test('should handle first installment (index 0) correctly', () => {
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={0}
+        control={mockControl}
+        errors={mockErrors}
+        isSubmitted={false}
+        fieldNamePrefix="installments"
+        getValues={mockGetValues}
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        isEditing={false}
+      />
+    );
+
+    expect(
+      screen.queryByText(
+        'Are the beneficiaries the same as the previous installment?'
+      )
+    ).not.toBeInTheDocument();
+
+    expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+  });
+
+  test('should handle switch disabled state correctly', () => {
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        isSubmitted={false}
+        fieldNamePrefix="installments"
+        getValues={mockGetValues}
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={false}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        disabled={true}
+      />
+    );
+
+    const switchElement = screen.getByRole('checkbox');
+    expect(switchElement).toBeDisabled();
+  });
+
+  test('should not show radio buttons when hasPreviousBeneficiaries is false', () => {
+    const mockGetValuesNoValidBeneficiaries =
+      createMockGetValuesWithConsistentReturn({
+        installment0: {
+          isMultibeneficiary: true,
+          beneficiaries: []
+        },
+        installment1Amount: '100,00'
+      });
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        isSubmitted={false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesNoValidBeneficiaries as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        isEditing={false}
+      />
+    );
+
+    expect(
+      screen.queryByText(
+        'Are the beneficiaries the same as the previous installment?'
+      )
+    ).not.toBeInTheDocument();
+  });
+
+  test('should handle null/undefined previous installment', () => {
+    const mockGetValuesNull = vi.fn().mockImplementation((path: string) => {
+      if (path === 'installments.0') {
+        return null;
+      }
+      if (path === 'installments.1.amount') {
+        return '100,00';
+      }
+      return undefined;
+    });
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        isSubmitted={false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesNull as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        isEditing={false}
+      />
+    );
+
+    expect(
+      screen.queryByText(
+        'Are the beneficiaries the same as the previous installment?'
+      )
+    ).not.toBeInTheDocument();
+  });
+
+  test('should default radio button to "Yes" when value is undefined and previous beneficiaries exist', () => {
+    const mockGetValuesForDefault = createMockGetValuesWithConsistentReturn({
+      installment0: {
+        isMultibeneficiary: true,
+        beneficiaries: [
+          { amount: '60,00', denomination: 'Entity A', iban: 'IT123456789' }
+        ]
+      },
+      installment1Amount: '100,00',
+      sameBeneficiariesAsBefore: undefined
+    });
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        isSubmitted={false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesForDefault as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        isEditing={false}
+      />
+    );
+
+    expect(
+      screen.getByText(
+        'Are the beneficiaries the same as the previous installment?'
+      )
+    ).toBeInTheDocument();
+
+    const yesRadio = screen.getByRole('radio', { name: 'Yes' });
+    const noRadio = screen.getByRole('radio', { name: 'No' });
+
+    expect(yesRadio).toBeChecked();
+    expect(noRadio).not.toBeChecked();
+  });
+
+  test('should handle beneficiary copying when radio is already set to true', async () => {
+    const mockGetValuesCopyTest = createMockGetValuesWithConsistentReturn({
+      installment0: {
+        isMultibeneficiary: true,
+        beneficiaries: [
+          { amount: '40,00', denomination: 'Entity A', iban: 'IT123456789' }
+        ]
+      },
+      installment1Amount: '80,00',
+      sameBeneficiariesAsBefore: true
+    });
+
+    const mockSetValueCopy = vi.fn();
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        isSubmitted={false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesCopyTest as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValueCopy}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        isEditing={false}
+      />
+    );
+
+    const yesRadio = screen.getByRole('radio', { name: 'Yes' });
+    expect(yesRadio).toBeChecked();
+
+    await waitFor(() => {
+      expect(mockSetValueCopy).toHaveBeenCalled();
+    });
+  });
 });
 
-// Reusable helper function for getValues mocks
 type BeneficiaryType = {
   amount: string;
   denomination: string;
@@ -716,9 +1077,6 @@ type InstallmentType = {
   sameBeneficiariesAsBefore?: string | boolean;
 };
 
-/**
- * Creates a getValues mock that returns a consistent value
- */
 const createMockGetValuesWithConsistentReturn = (
   config: {
     installment0?: InstallmentType;
@@ -730,56 +1088,33 @@ const createMockGetValuesWithConsistentReturn = (
     sameBeneficiariesAsBefore?: string | boolean;
   } = {}
 ): ((path?: string | Array<string>) => unknown) => {
-  // Internal function that handles all possible cases
-  const getValueImplementation = (path?: string | Array<string>): unknown => {
-    if (!path || Array.isArray(path)) {
-      return '';
+  const getDefaultValueForPath = (path: string): unknown => {
+    const pathValueMap: Record<string, unknown> = {
+      'installments.0': config.installment0 || {
+        isMultibeneficiary: true,
+        beneficiaries: []
+      },
+      'installments.1': config.installment1 || {
+        isMultibeneficiary: true,
+        beneficiaries: []
+      },
+      'installments.0.amount': config.installment0Amount || '100,00',
+      'installments.1.amount': config.installment1Amount || '150,00',
+      'installments.0.beneficiaries': config.installment0Beneficiaries || [],
+      'installments.1.beneficiaries': config.installment1Beneficiaries || [],
+      'installments.0.isMultibeneficiary': true,
+      'installments.1.isMultibeneficiary': false,
+      'installments.0.sameBeneficiariesAsBefore': false,
+      'installments.1.sameBeneficiariesAsBefore':
+        config.sameBeneficiariesAsBefore === undefined
+          ? 'true'
+          : config.sameBeneficiariesAsBefore
+    };
+
+    if (pathValueMap[path] !== undefined) {
+      return pathValueMap[path];
     }
 
-    if (path === 'installments.0') {
-      return (
-        config.installment0 || {
-          isMultibeneficiary: true,
-          beneficiaries: []
-        }
-      );
-    }
-    if (path === 'installments.1') {
-      return (
-        config.installment1 || {
-          isMultibeneficiary: true,
-          beneficiaries: []
-        }
-      );
-    }
-    if (path === 'installments.0.amount') {
-      return config.installment0Amount || '100,00';
-    }
-    if (path === 'installments.1.amount') {
-      return config.installment1Amount || '150,00';
-    }
-    if (path === 'installments.0.beneficiaries') {
-      return config.installment0Beneficiaries || [];
-    }
-    if (path === 'installments.1.beneficiaries') {
-      return config.installment1Beneficiaries || [];
-    }
-    if (path === 'installments.0.isMultibeneficiary') {
-      return true;
-    }
-    if (path === 'installments.1.isMultibeneficiary') {
-      return false;
-    }
-    if (path === 'installments.0.sameBeneficiariesAsBefore') {
-      return false;
-    }
-    if (path === 'installments.1.sameBeneficiariesAsBefore') {
-      return config.sameBeneficiariesAsBefore === undefined
-        ? 'true'
-        : config.sameBeneficiariesAsBefore;
-    }
-
-    // Generic handling for unknown paths
     if (path.includes('amount')) return '';
     if (path.includes('isMultibeneficiary')) return false;
     if (path.includes('sameBeneficiariesAsBefore')) return false;
@@ -788,8 +1123,11 @@ const createMockGetValuesWithConsistentReturn = (
     return '';
   };
 
-  // Return a wrapper function that always has the same return type: unknown
   return (path?: string | Array<string>): unknown => {
-    return getValueImplementation(path);
+    if (!path || Array.isArray(path)) {
+      return '';
+    }
+
+    return getDefaultValueForPath(path);
   };
 };

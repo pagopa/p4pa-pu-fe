@@ -1,7 +1,10 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { SaveDebtPositionTypeOrgDTO } from '../../generated/data-contracts';
-import { debtPositionTypeOrgSchema } from '../../generated/zod-schema';
+import {
+  debtPositionTypeOrgSchema,
+  saveDebtPositionTypeOrgDTOSchema
+} from '../../generated/zod-schema';
 import { parseAndLog } from '../utils/loaders';
 
 export const getDebtPositionTypeOrgs = ({
@@ -31,14 +34,23 @@ export const getDebtPositionTypeOrgById = ({
       organizationId,
       debtPositionTypeOrgId
     ],
-    queryFn: async () => {
-      const { data: response } =
-        await utils.apiClient.bff.getDebtPositionTypeOrgById(
-          organizationId,
-          debtPositionTypeOrgId
-        );
-      return response;
-    }
+    queryFn: async () =>
+      await utils.apiClient.bff.getDebtPositionTypeOrgById(
+        organizationId,
+        debtPositionTypeOrgId
+      ),
+    select: ({ data }) => {
+      parseAndLog(debtPositionTypeOrgSchema, data);
+      const optionsMap = [
+        {
+          value: data.debtPositionTypeOrgId,
+          label: data.description
+        }
+      ];
+
+      return { response: data, optionsMap };
+    },
+    enabled: !!debtPositionTypeOrgId && !!organizationId
   });
 
 export type CreateDebtPositionTypeOrg = {
@@ -50,8 +62,30 @@ export const createDebtPositionTypeOrg = () =>
   useMutation({
     mutationKey: ['postDebtPositionTypeOrg'],
     mutationFn: async (query: CreateDebtPositionTypeOrg) => {
+      parseAndLog(saveDebtPositionTypeOrgDTOSchema, query.data);
       const { data } = await utils.apiClient.bff.createDebtPositionTypeOrg(
         query.organizationId,
+        query.data
+      );
+      parseAndLog(debtPositionTypeOrgSchema, data);
+      return data;
+    }
+  });
+
+export type UpdateDebtPositionTypeOrg = {
+  organizationId: number;
+  debtPositionTypeOrgId: number;
+  data: SaveDebtPositionTypeOrgDTO;
+};
+
+export const updateDebtPositionTypeOrg = () =>
+  useMutation({
+    mutationKey: ['updateDebtPositionTypeOrg'],
+    mutationFn: async (query: UpdateDebtPositionTypeOrg) => {
+      parseAndLog(saveDebtPositionTypeOrgDTOSchema, query.data);
+      const { data } = await utils.apiClient.bff.updateDebtPositionTypeOrg(
+        query.organizationId,
+        query.debtPositionTypeOrgId,
         query.data
       );
       parseAndLog(debtPositionTypeOrgSchema, data);

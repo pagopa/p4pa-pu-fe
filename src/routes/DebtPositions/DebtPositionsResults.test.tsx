@@ -5,7 +5,7 @@ import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import { SearchType } from '../../models/DebtPositions';
 import DebtPositionResults from './DebtPositionsResults';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 
 // Mock dependencies
 vi.mock('react-i18next', () => ({
@@ -28,7 +28,10 @@ vi.mock('../../hooks/useDebtPositionsSearch', () => ({
     handleFilterChange: vi.fn(),
     handlePageChange: vi.fn(),
     handlePageSizeChange: vi.fn(),
+    handlePaginationChange: vi.fn(),
     setSort: vi.fn(),
+    sortModel: [],
+    handleSortModelChange: vi.fn(),
     pagination: { page: 0, size: 10 },
     filterValues: {}
   }))
@@ -131,7 +134,7 @@ describe('DebtPositionResults', () => {
     );
   });
 
-  it('should pass pagination to DataGrid', () => {
+  it('should pass correct props to DataGrid', () => {
     (useLocation as Mock).mockReturnValue(
       mockLocationState(SearchType.DEBT_POSITION)
     );
@@ -140,10 +143,13 @@ describe('DebtPositionResults', () => {
 
     expect(DebtPositionsDataGrid).toHaveBeenCalledWith(
       expect.objectContaining({
-        pagination: expect.objectContaining({
-          page: 0,
-          size: 10
-        })
+        data: expect.objectContaining({
+          content: expect.any(Array),
+          totalElements: expect.any(Number)
+        }),
+        onSortChange: expect.any(Function),
+        sortModel: expect.any(Array),
+        onPaginationChange: expect.any(Function)
       }),
       expect.anything()
     );

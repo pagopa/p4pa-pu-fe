@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
-import { generatePath, useNavigate, useParams } from 'react-router';
-import { PageRoutes } from '../../App';
+import { useNavigate, useParams } from 'react-router';
+import { PageRoutes } from '../../routes';
 import { useSignal } from '@preact/signals-react';
 import { patchDebtPositionType } from '../../api/debtPositionsTypes';
 import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
@@ -50,21 +50,15 @@ export const DebtTypeCatalogEdit = () => {
   const submit = async () => {
     try {
       const response = await debtTypeEdit.mutateAsync(formData.value);
-      navigate(
-        {
-          pathname: generatePath(PageRoutes.RESPONSES_SUCCESS, {
-            category: 'debt-type-catalog-edit'
-          })
-        },
-        {
-          replace: true,
-          state: {
-            i18nParams: {
-              paymentObject: response.description
-            }
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'debt-type-catalog-edit',
+          i18nParams: {
+            paymentObject: response.description
           }
         }
-      );
+      });
     } catch (error) {
       console.error(error);
       utils.notify.emit('an error message feedback');

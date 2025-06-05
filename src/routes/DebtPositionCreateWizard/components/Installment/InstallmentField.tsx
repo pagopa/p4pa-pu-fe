@@ -14,6 +14,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import { useInstallmentManagement } from '../../../../hooks/useInstallmentManagement';
 import InstallmentItem from './InstallmentItem';
+import { Installment } from '../../../../models/paymentTypes';
 
 // Update the type to match what is actually provided
 export type ValidationFunctions = {
@@ -42,10 +43,11 @@ type InstallmentFieldProps<T extends FieldValues> = {
   readonly disabled?: boolean;
   readonly flagMandatoryDueDate?: boolean;
   readonly onInstallmentsChange?: (totalAmount: string) => void;
+  readonly isEditing?: boolean;
 };
 
 /**
- * Component for payment installment management - Improved version
+ * Component for payment installment management
  * Maintains the same UI but uses hooks with reducer for better state management
  */
 function InstallmentField<T extends FieldValues>({
@@ -58,7 +60,8 @@ function InstallmentField<T extends FieldValues>({
   fieldNamePrefix,
   disabled = false,
   flagMandatoryDueDate = true,
-  onInstallmentsChange
+  onInstallmentsChange,
+  isEditing = false
 }: InstallmentFieldProps<T>) {
   const { t } = useTranslation();
 
@@ -110,6 +113,14 @@ function InstallmentField<T extends FieldValues>({
 
   const validationFunctions = createValidationFunctions();
 
+  // Get readonly properties for each installment from form data
+  const getInstallmentReadonlyProps = (index: number) => {
+    const installments = getValues(fieldNamePrefix as Path<T>) as
+      | Array<Installment>
+      | undefined;
+    return installments?.[index]?.readonly;
+  };
+
   return (
     <Box component={Paper} sx={{ p: 3, mt: 4, borderRadius: 1 }}>
       <Typography variant="h4" component="h3" fontWeight="bold" mb={3}>
@@ -117,29 +128,41 @@ function InstallmentField<T extends FieldValues>({
       </Typography>
 
       <Grid container spacing={3}>
-        {fields.map((field, index) => (
-          <Grid item xs={12} key={String(field.id)}>
-            <InstallmentItem
-              index={index}
-              field={
-                field as unknown as FieldArrayWithId<T, FieldArrayPath<T>, 'id'>
-              }
-              control={control}
-              errors={errors}
-              isSubmitted={isSubmitted}
-              validators={validationFunctions}
-              fieldNamePrefix={fieldNamePrefix}
-              disabled={disabled}
-              trigger={trigger}
-              getValues={getValues}
-              setValue={setValue}
-              onRemove={
-                index >= MIN_INSTALLMENTS ? removeInstallment : undefined
-              }
-              flagMandatoryDueDate={flagMandatoryDueDate}
-            />
-          </Grid>
-        ))}
+        {fields.map((field, index) => {
+          const readonlyProps = getInstallmentReadonlyProps(index);
+
+          return (
+            <Grid item xs={12} key={String(field.id)}>
+              <InstallmentItem
+                index={index}
+                field={
+                  field as unknown as FieldArrayWithId<
+                    T,
+                    FieldArrayPath<T>,
+                    'id'
+                  >
+                }
+                control={control}
+                errors={errors}
+                isSubmitted={isSubmitted}
+                validators={validationFunctions}
+                fieldNamePrefix={fieldNamePrefix}
+                disabled={disabled}
+                trigger={trigger}
+                getValues={getValues}
+                setValue={setValue}
+                onRemove={
+                  index >= MIN_INSTALLMENTS && !isEditing
+                    ? removeInstallment
+                    : undefined
+                }
+                flagMandatoryDueDate={flagMandatoryDueDate}
+                isEditing={isEditing}
+                readonlyProps={readonlyProps}
+              />
+            </Grid>
+          );
+        })}
       </Grid>
 
       <Divider sx={{ my: 3 }} />
@@ -148,7 +171,7 @@ function InstallmentField<T extends FieldValues>({
         <Button
           startIcon={<Add />}
           onClick={addInstallment}
-          disabled={isMaxInstallments || disabled}
+          disabled={isMaxInstallments || disabled || isEditing}
           color="primary"
           sx={{ textTransform: 'none' }}
         >

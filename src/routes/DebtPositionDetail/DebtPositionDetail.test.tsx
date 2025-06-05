@@ -1,8 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { screen, fireEvent } from '@testing-library/react';
+import { render } from '../../__tests__/renderers';
 import DebtPositionDetail from './DebtPositionDetail';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
-import { render } from '../../__tests__/renderers';
 import {
   debtPositionDetailDTOSchema,
   personDTOSchema
@@ -14,8 +15,11 @@ import { UseQueryResult } from '@tanstack/react-query';
 import {
   InstallmentStatus,
   PaymentOptionTypeEnum,
-  PaymentOptionStatus
+  PaymentOptionStatus,
+  DebtPositionStatus,
+  DebtPositionOrigin
 } from '../../../generated/data-contracts';
+import * as utils from '../../utils/download';
 
 const mockDebtPositionDetail = createMock(debtPositionDetailDTOSchema);
 
@@ -95,24 +99,52 @@ vi.mock('react-router-dom', async () => {
 vi.mock('../../store/GlobalStore', () => ({
   useStore: () => ({
     state: {
-      ORGANIZATION_ID: 3,
+      ORGANIZATION_ID: '3',
       APP_STATE: { loading: false, customBreadcrumbsItems: [] }
     }
   }),
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
-const mockMutate = vi.fn();
+const mockResult = {
+  data: new Blob(['test data'], { type: 'application/zip' }),
+  fileName: 'test-file.zip'
+};
+const mockMutate = vi.fn().mockReturnValue(mockResult);
+const deleteMockMutate = vi.fn();
 
 vi.mock('../../api/debtPositions', () => ({
   default: {
     getDebtPositionDetail: vi.fn(),
     deleteDebtPosition: vi.fn().mockImplementation(() => ({
-      mutate: mockMutate,
+      mutate: deleteMockMutate
+    })),
+    getDebtPositionZipFile: vi.fn().mockImplementation(() => ({
+      mutateAsync: mockMutate
+    })),
+    downloadDebtPositionZip: vi.fn(),
+    getDebtPositionRegistriesMutation: vi.fn().mockReturnValue({
+      mutate: vi.fn(),
+      data: [],
       isLoading: false,
       isError: false,
       isSuccess: false
-    }))
+    })
+  }
+}));
+
+vi.mock('../../utils/download', () => ({
+  downloadBlob: vi.fn()
+}));
+
+vi.mock('../../utils', () => ({
+  default: {
+    notify: {
+      emit: vi.fn()
+    },
+    config: {
+      deployPath: '/piattaformaunitaria'
+    }
   }
 }));
 
@@ -138,19 +170,45 @@ beforeEach(() => {
     'commons.status.UNPAID': 'Unpaid',
     'commons.status.REPORTED': 'Reported',
     'commons.status.TO_SYNC': 'To Sync',
+    'commons.status.DRAFT': 'Draft',
+    'commons.status.CANCELLED': 'Cancelled',
+    'commons.status.EXPIRED': 'Expired',
+    'commons.status.INVALID': 'Invalid',
+    'commons.status.UNPAYABLE': 'Unpayable',
+    'commons.status.PARTIALLY_PAID': 'Partially Paid',
+    'commons.DP_STATUS.UNKNOWN': 'Unknown',
     'commons.delete': 'Delete',
     'commons.close': 'Close',
+    'commons.NO_EVENTS': 'No events available',
     'debtPositionDetail.confirmDialog.title': 'Confirm Delete',
     'debtPositionDetail.confirmDialog.description':
       'Are you sure you want to delete this debt position?',
+    'debtPositionDetail.confirmDialog.descriptionDraft':
+      'This debt position is in draft state',
     'debtPositionDetail.errorDialog.title': 'Cannot Delete',
     'debtPositionDetail.errorDialog.description':
       'This debt position cannot be deleted',
     'debtPositionDetail.edit': 'Edit',
+    'debtPositionDetail.editErrorDialog.title': 'Cannot Edit',
+    'debtPositionDetail.editErrorDialog.description':
+      'This debt position cannot be edited',
     'debtPositionDetail.downloadNotices': 'Download Notices',
+    'debtPositionDetail.activePayment': 'Active Payment',
     'debtPositionDetail.timeline.title': 'Timeline',
-    'debtPositionDetail.timeline.message': 'Message'
+    'debtPositionDetail.timeline.message': 'Message',
+    'debtPositionDetail.dialogDownload.title': 'Cannot Download Notices',
+    'debtPositionDetail.dialogDownload.message':
+      'Notices can only be downloaded for unpaid or partially paid debt positions',
+    'debtPositionDetail.deleteError': 'Error deleting debt position',
+    'commons.files.downloadFailed': 'Download failed',
+    'commons.files.missingDebtPositionId': 'Missing debt position ID',
+    'commons.DP_DESCRIPTION.DP_CREATED': 'Debt position created',
+    'commons.DP_DESCRIPTION.DP_UPDATED': 'Debt position updated',
+    'commons.DP_STATUS.DP_CREATED': 'Created',
+    'commons.DP_STATUS.DP_UPDATED': 'Updated'
   });
+
+  mockDebtPositionDetail.status = DebtPositionStatus.UNPAID;
 
   vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
     data: mockDebtPositionDetail,
@@ -171,6 +229,7 @@ beforeEach(() => {
 describe('DebtPositionDetail Component', () => {
   beforeEach(() => {
     vi.spyOn(console, 'log').mockImplementation(() => undefined);
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
   });
 
   afterEach(() => {
@@ -289,6 +348,520 @@ describe('DebtPositionDetail Component', () => {
       fireEvent.click(historyButton);
       const drawerTitle = screen.getByText('Timeline');
       expect(drawerTitle).toBeVisible();
+    }
+  });
+
+  it('calls getDebtPositionZipFile mutation when download button is clicked and status is UNPAID', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.UNPAID;
+
+    render(<DebtPositionDetail />);
+
+    const downloadButton = screen
+      .getByTestId('DownloadButton')
+      .closest('button');
+    expect(downloadButton).not.toBeNull();
+
+    if (downloadButton) {
+      fireEvent.click(downloadButton);
+
+      await vi.waitFor(() => {
+        expect(mockMutate).toHaveBeenCalledWith(10);
+        expect(utils.downloadBlob).toHaveBeenCalledWith(
+          mockResult.data,
+          mockResult.fileName
+        );
+      });
+    }
+  });
+
+  it('calls getDebtPositionZipFile mutation function when download button is clicked and status is PARTIALLY_PAID', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.PARTIALLY_PAID;
+
+    render(<DebtPositionDetail />);
+
+    const downloadButton = screen
+      .getByTestId('DownloadButton')
+      .closest('button');
+    expect(downloadButton).not.toBeNull();
+
+    if (downloadButton) {
+      fireEvent.click(downloadButton);
+
+      await vi.waitFor(() => {
+        expect(mockMutate).toHaveBeenCalledWith(10);
+        expect(utils.downloadBlob).toHaveBeenCalledWith(
+          mockResult.data,
+          mockResult.fileName
+        );
+      });
+    }
+  });
+
+  it('shows dialog when download button is clicked and status is not UNPAID or PARTIALLY_PAID', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.PAID;
+
+    render(<DebtPositionDetail />);
+
+    const downloadButton = screen
+      .getByTestId('DownloadButton')
+      .closest('button');
+    expect(downloadButton).not.toBeNull();
+
+    if (downloadButton) {
+      fireEvent.click(downloadButton);
+
+      await vi.waitFor(() => {
+        expect(screen.getByText('Cannot Download Notices')).toBeVisible();
+        expect(
+          screen.getByText(
+            'Notices can only be downloaded for unpaid or partially paid debt positions'
+          )
+        ).toBeVisible();
+        expect(mockMutate).not.toHaveBeenCalled();
+      });
+    }
+  });
+
+  it('handles error when downloadDebtPositionZip fails', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.UNPAID;
+
+    vi.mocked(debtPositions.getDebtPositionZipFile).mockReturnValue({
+      mutateAsync: mockMutate.mockRejectedValue(new Error('Download failed'))
+    } as any);
+
+    render(<DebtPositionDetail />);
+
+    const downloadButton = screen
+      .getByTestId('DownloadButton')
+      .closest('button');
+    expect(downloadButton).not.toBeNull();
+
+    if (downloadButton) {
+      fireEvent.click(downloadButton);
+
+      await vi.waitFor(() => {
+        expect(mockMutate).toHaveBeenCalledWith(10);
+        expect(utils.downloadBlob).not.toHaveBeenCalled();
+        expect(console.error).toHaveBeenCalled();
+      });
+    }
+  });
+
+  it('closes dialog when confirm button is clicked', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.PAID;
+
+    render(<DebtPositionDetail />);
+
+    const downloadButton = screen
+      .getByTestId('DownloadButton')
+      .closest('button');
+    expect(downloadButton).not.toBeNull();
+
+    if (downloadButton) {
+      fireEvent.click(downloadButton);
+
+      await vi.waitFor(() => {
+        expect(screen.getByText('Cannot Download Notices')).toBeVisible();
+      });
+
+      const closeButton = screen.getByText('Close');
+      fireEvent.click(closeButton);
+
+      await vi.waitFor(() => {
+        expect(
+          screen.queryByText('Cannot Download Notices')
+        ).not.toBeInTheDocument();
+      });
+    }
+  });
+
+  it('shows delete confirmation dialog when delete option is clicked', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
+
+    render(<DebtPositionDetail />);
+
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      await vi.waitFor(() => {
+        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+        expect(deleteOption).toBeVisible();
+
+        if (deleteOption) {
+          fireEvent.click(deleteOption);
+        }
+      });
+
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Confirm Delete');
+        expect(dialogTitle).toBeVisible();
+
+        const deleteButton = screen.getByRole('button', { name: 'Delete' });
+        expect(deleteButton).toBeVisible();
+
+        const closeButton = screen.getByRole('button', { name: 'Close' });
+        expect(closeButton).toBeVisible();
+      });
+    }
+  });
+
+  it('calls deleteDebtPosition when delete is confirmed', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
+
+    render(<DebtPositionDetail />);
+
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      await vi.waitFor(() => {
+        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+        if (deleteOption) {
+          fireEvent.click(deleteOption);
+        }
+      });
+
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Confirm Delete');
+        expect(dialogTitle).toBeVisible();
+      });
+
+      const deleteButton = screen.getByRole('button', { name: 'Delete' });
+      expect(deleteButton).toBeVisible();
+
+      fireEvent.click(deleteButton);
+
+      await vi.waitFor(() => {
+        expect(deleteMockMutate).toHaveBeenCalled();
+      });
+    }
+  });
+
+  it('closes dialog without deleting when cancel is clicked', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
+
+    render(<DebtPositionDetail />);
+
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      await vi.waitFor(() => {
+        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+        if (deleteOption) {
+          fireEvent.click(deleteOption);
+        }
+      });
+
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Confirm Delete');
+        expect(dialogTitle).toBeVisible();
+      });
+
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      expect(closeButton).toBeVisible();
+
+      fireEvent.click(closeButton);
+
+      await vi.waitFor(() => {
+        expect(screen.queryByText('Confirm Delete')).not.toBeInTheDocument();
+      });
+
+      expect(deleteMockMutate).not.toHaveBeenCalled();
+    }
+  });
+
+  it('shows error dialog when trying to delete a debt position that cannot be deleted', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.PAID;
+
+    render(<DebtPositionDetail />);
+
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      await vi.waitFor(() => {
+        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+        if (deleteOption) {
+          fireEvent.click(deleteOption);
+        }
+      });
+
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Cannot Delete');
+        expect(dialogTitle).toBeVisible();
+
+        const dialogMessage = screen.getByText(
+          'This debt position cannot be deleted'
+        );
+        expect(dialogMessage).toBeVisible();
+      });
+
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      expect(closeButton).toBeVisible();
+
+      fireEvent.click(closeButton);
+
+      await vi.waitFor(() => {
+        expect(screen.queryByText('Cannot Delete')).not.toBeInTheDocument();
+      });
+
+      expect(deleteMockMutate).not.toHaveBeenCalled();
+    }
+  });
+
+  it('handles debt position in DRAFT status when clicking action button', () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
+
+    render(<DebtPositionDetail />);
+
+    const actionButton = screen.getByText('Active Payment').closest('button');
+    expect(actionButton).not.toBeNull();
+  });
+
+  it('hides menu when debt position is CANCELLED', () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.CANCELLED;
+
+    render(<DebtPositionDetail />);
+
+    expect(screen.queryByTestId('MoreVertIcon')).not.toBeInTheDocument();
+  });
+
+  it('returns null when debtPositionDetail is not available', () => {
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    const { container } = render(<DebtPositionDetail />);
+
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('handles unknown status', () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.status = 'UNKNOWN_STATUS' as DebtPositionStatus;
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    expect(screen.getByText('Unknown')).toBeDefined();
+  });
+
+  it('uses debt position description as title when available', () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.description = 'Custom Description';
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    expect(screen.getByText('Custom Description')).toBeDefined();
+  });
+
+  it('handles installment with undefined status creating undefined chip', () => {
+    const mockData = { ...mockDebtPositionDetail };
+
+    mockData.paymentOptions = [
+      {
+        paymentOptionId: 999,
+        debtPositionId: 10,
+        totalAmountCents: 1000,
+        status: PaymentOptionStatus.REPORTED,
+        paymentOptionType: PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+        paymentOptionIndex: 1,
+        installments: []
+      }
+    ];
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    expect(() => render(<DebtPositionDetail />)).not.toThrow();
+  });
+
+  it('handles payment option with undefined status', () => {
+    const mockData = { ...mockDebtPositionDetail };
+    const paymentOptionWithoutStatus = {
+      ...mockData.paymentOptions![0]
+    };
+    delete (
+      paymentOptionWithoutStatus as Partial<typeof paymentOptionWithoutStatus>
+    ).status;
+
+    mockData.paymentOptions = [paymentOptionWithoutStatus];
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    expect(screen.getAllByText('N/A').length).toBeGreaterThan(0);
+  });
+
+  it('handles edit action for editable debt position', () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.status = DebtPositionStatus.DRAFT;
+    mockData.debtPositionOrigin = DebtPositionOrigin.ORDINARY;
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      expect(screen.getByText('Edit')).toBeDefined();
+    }
+  });
+
+  it('shows menu without edit option when showEditOption is false', () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.debtPositionOrigin = DebtPositionOrigin.RECEIPT_FILE;
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      expect(screen.queryByText('Edit')).not.toBeInTheDocument();
+
+      expect(screen.getByText('Delete')).toBeDefined();
+    }
+  });
+
+  it('shows timeline with no events message when registries are empty', () => {
+    vi.mocked(debtPositions.getDebtPositionRegistriesMutation).mockReturnValue({
+      mutate: vi.fn(),
+      data: [],
+      error: null,
+      variables: undefined,
+      isError: false,
+      isIdle: false,
+      isPending: false,
+      isSuccess: true,
+      status: 'success',
+      reset: vi.fn(),
+      mutateAsync: vi.fn(),
+      isPaused: false,
+      failureCount: 0,
+      failureReason: null,
+      submittedAt: 0
+    } as any);
+
+    render(<DebtPositionDetail />);
+
+    const historyButton = screen.getByTestId('HistoryButton').closest('button');
+    expect(historyButton).not.toBeNull();
+
+    if (historyButton) {
+      fireEvent.click(historyButton);
+
+      expect(screen.getByText('No events available')).toBeDefined();
     }
   });
 });

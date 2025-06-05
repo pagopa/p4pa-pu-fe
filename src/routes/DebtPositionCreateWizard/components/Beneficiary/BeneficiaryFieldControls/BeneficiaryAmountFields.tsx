@@ -16,7 +16,8 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
   disabled,
   fields,
   trigger,
-  t
+  t,
+  beneficiaryReadonly
 }: Readonly<
   Pick<
     BeneficiaryFieldsProps<T>,
@@ -29,7 +30,16 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
     | 'validators'
     | 'trigger'
     | 't'
-  >
+  > & {
+    beneficiaryReadonly?: {
+      entityName?: boolean;
+      amount?: boolean;
+      taxCode?: boolean;
+      remittance?: boolean;
+      iban?: boolean;
+      taxonomyCode?: boolean;
+    };
+  }
 >) {
   return (
     <Grid item xs={12}>
@@ -46,7 +56,7 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
             <AmountField
               field={field}
               t={t}
-              disabled={disabled}
+              disabled={disabled || beneficiaryReadonly?.amount}
               context={{
                 ...validationContext,
                 isSubmitted: validationContext.isSubmitted || hasAmountError

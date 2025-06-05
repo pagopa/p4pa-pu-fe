@@ -3,15 +3,20 @@ import { render, screen } from '../../__tests__/renderers';
 import DebtPositionsImportOverview from './DebtPositionsImportOverview';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
-  ...(await importOriginal()),
-  useNavigate: vi.fn(),
-  generatePath: vi.fn()
-}));
+vi.mock('react-router-dom', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+    generatePath: vi.fn()
+  };
+});
 
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
   getIngestionFlowFileError: vi.fn(),
+  getIngestionFlowFile: vi.fn(),
   IngestionFlowFileType: {
     RECEIPT: 'RECEIPT',
     RECEIPT_PAGOPA: 'RECEIPT_PAGOPA',
@@ -90,8 +95,7 @@ describe('DebtPositionsImportOverview', () => {
 
     expect(screen.getByLabelText('commons.searchName')).toBeDefined();
     expect(screen.getByLabelText('commons.state')).toBeDefined();
-    expect(screen.getByLabelText('commons.importFrom')).toBeDefined();
-    expect(screen.getByLabelText('dates.to')).toBeDefined();
+    expect(screen.getByTestId('filter-container')).toBeDefined();
     expect(screen.getByText('commons.filters.filterResults')).toBeDefined();
   });
 });

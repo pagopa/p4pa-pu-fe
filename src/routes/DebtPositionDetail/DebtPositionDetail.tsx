@@ -39,12 +39,14 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { generatePath, useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';
 import { Timeline } from '../../components/Timeline';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { useQueryClient } from '@tanstack/react-query';
 import utils from '../../utils';
+import { downloadBlob } from '../../utils/download';
+import { useTimelineData } from '../../hooks/useTimelineData';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -62,6 +64,17 @@ type InstallmentRow = {
   expirationDate: string;
   status: string;
   chip: { label: string; color: ChipOwnProps['color'] } | undefined;
+};
+
+type DialogConfig = {
+  open: boolean;
+  title: string;
+  message: string;
+  confirmLabel: string;
+  cancelLabel?: string;
+  onConfirm: () => void;
+  onClose: () => void;
+  testId: string;
 };
 
 const DebtPositionDetail = () => {
@@ -87,7 +100,7 @@ const DebtPositionDetail = () => {
     UNPAYABLE: 'error'
   };
 
-  const genericDialogTitel = () => {
+  const genericDialogTitle = () => {
     return canBeDeleted
       ? t('debtPositionDetail.confirmDialog.title')
       : t('debtPositionDetail.errorDialog.title');
@@ -115,18 +128,23 @@ const DebtPositionDetail = () => {
 
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
 
   const { data: debtPositionDetail } = debtPositions.getDebtPositionDetail(
     organizationId,
     debtPositionId
   );
 
+  const { mutate: fetchRegistries, data: registries = [] } =
+    debtPositions.getDebtPositionRegistriesMutation();
+
+  const timelineElements = useTimelineData(registries);
+
   const deleteDebtPositionMutation = debtPositions.deleteDebtPosition(
     organizationId,
     debtPositionId,
     () => {
-      setOpenDeleteDialog(false);
+      setDialogConfig(null);
       if (debtPositionDetail?.status === DebtPositionStatus.DRAFT) {
         navigate(generatePath(PageRoutes.DEBT_POSITIONS_INDEX));
       } else {
@@ -137,17 +155,20 @@ const DebtPositionDetail = () => {
     },
     (error) => {
       console.error('Error while deleting the debt position:', error);
-      setOpenDeleteDialog(false);
+      setDialogConfig(null);
       utils.notify.emit(t('debtPositionDetail.deleteError'), 'error');
     }
   );
 
-  // Variable to determine if the debt position can be deleted
   const canBeDeleted =
     debtPositionDetail?.status !== DebtPositionStatus.PAID &&
     debtPositionDetail?.status !== DebtPositionStatus.PARTIALLY_PAID;
 
-  // Variable to determine if the delete option should be shown in the menu
+  const canBeEdited =
+    debtPositionDetail?.status === DebtPositionStatus.DRAFT ||
+    debtPositionDetail?.status === DebtPositionStatus.UNPAID ||
+    debtPositionDetail?.status === DebtPositionStatus.EXPIRED;
+
   const showDeleteOption =
     debtPositionDetail?.status !== DebtPositionStatus.CANCELLED;
   const showEditOption =
@@ -155,25 +176,96 @@ const DebtPositionDetail = () => {
 
   const menuOpen = Boolean(menuAnchorEl);
 
+  const handleTimelineOpen = () => {
+    setTimelineOpen(true);
+
+    fetchRegistries({
+      organizationId,
+      debtPositionId
+    });
+  };
+
   const handleMenuClose = () => {
     setMenuAnchorEl(null);
   };
 
   const handleDelete = () => {
-    setOpenDeleteDialog(true);
     handleMenuClose();
+    showDeleteDialog();
   };
 
   const handleDeleteConfirm = () => {
     if (canBeDeleted) {
       deleteDebtPositionMutation.mutate();
+    } else {
+      setDialogConfig(null);
     }
-    setOpenDeleteDialog(false);
   };
 
-  const handleDownloadNotices = () => {
-    console.log('Download notices clicked');
-    //  download logic here
+  const showDeleteDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: genericDialogTitle(),
+      message: genericDialogDescription(),
+      confirmLabel: canBeDeleted ? t('commons.delete') : t('commons.close'),
+      cancelLabel: canBeDeleted ? t('commons.close') : undefined,
+      onConfirm: handleDeleteConfirm,
+      onClose: () => setDialogConfig(null),
+      testId: 'confirm-delete-dialog'
+    });
+  };
+
+  const showDownloadDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: t('debtPositionDetail.dialogDownload.title'),
+      message: t('debtPositionDetail.dialogDownload.message'),
+      confirmLabel: t('commons.close'),
+      onConfirm: () => setDialogConfig(null),
+      onClose: () => setDialogConfig(null),
+      testId: 'download-dialog'
+    });
+  };
+
+  const showEditErrorDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: t('debtPositionDetail.editErrorDialog.title'),
+      message: t('debtPositionDetail.editErrorDialog.description'),
+      confirmLabel: t('commons.close'),
+      onConfirm: () => setDialogConfig(null),
+      onClose: () => setDialogConfig(null),
+      testId: 'edit-error-dialog'
+    });
+  };
+
+  const getDebtPositionZipFileMutation =
+    debtPositions.getDebtPositionZipFile(organizationId);
+
+  const handleDownloadNotices = async () => {
+    const DOWNLOADABLE_STATES = [
+      DebtPositionStatus.UNPAID,
+      DebtPositionStatus.PARTIALLY_PAID
+    ];
+
+    if (
+      !debtPositionDetail?.status ||
+      !DOWNLOADABLE_STATES.includes(debtPositionDetail.status)
+    ) {
+      showDownloadDialog();
+      return;
+    }
+
+    try {
+      const result =
+        await getDebtPositionZipFileMutation.mutateAsync(debtPositionId);
+
+      const { data, fileName } = result;
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(t('commons.files.downloadFailed'), error);
+      utils.notify.emit(t('commons.files.downloadFailed'));
+    }
   };
 
   useEffect(() => {
@@ -198,7 +290,7 @@ const DebtPositionDetail = () => {
 
     if (!isValidStatus) {
       return {
-        label: 'STATO SCONOSCIUTO',
+        label: t('commons.DP_STATUS.UNKNOWN'),
         color: 'default'
       };
     }
@@ -215,7 +307,10 @@ const DebtPositionDetail = () => {
 
   const debtorSection = debtPositionDetail && {
     data: [
-      { label: t('commons.debtor'), value: debtPositionDetail.debtor.fullName },
+      {
+        label: t('commons.debtor'),
+        value: debtPositionDetail.debtor.fullName
+      },
       {
         label: t('commons.fiscalCodeorVat'),
         value: `${debtPositionDetail.debtor.fiscalCode} (${(debtPositionDetail.debtor.entityType as string) === 'F' ? t('commons.person') : t('commons.personLegal')})`
@@ -290,6 +385,25 @@ const DebtPositionDetail = () => {
     )
     .map(createPaymentOptionDisplayData);
 
+  const handleEdit = () => {
+    handleMenuClose();
+    if (canBeEdited && showEditOption) {
+      navigate(
+        generatePath(PageRoutes.DEBT_POSITION_CREATE_WIZARD, {
+          id: debtPositionId.toString()
+        }),
+        {
+          state: {
+            isEditing: true,
+            debtPositionId: debtPositionId
+          }
+        }
+      );
+    } else {
+      showEditErrorDialog();
+    }
+  };
+
   return debtPositionDetail ? (
     <>
       <TitleComponent
@@ -300,15 +414,23 @@ const DebtPositionDetail = () => {
         chip={statusChip}
         callToAction={[
           {
-            icon: <GetApp data-testid="DownloadButton" />,
+            icon: debtPositionDetail.status !== DebtPositionStatus.DRAFT && (
+              <GetApp data-testid="DownloadButton" />
+            ),
             variant: 'contained',
-            buttonText: t('debtPositionDetail.downloadNotices'),
-            onActionClick: handleDownloadNotices
+            buttonText:
+              debtPositionDetail.status !== DebtPositionStatus.DRAFT
+                ? t('debtPositionDetail.downloadNotices')
+                : t('debtPositionDetail.activePayment'),
+            onActionClick:
+              debtPositionDetail.status !== DebtPositionStatus.DRAFT
+                ? handleDownloadNotices
+                : () => console.log('active payment')
           },
           {
             icon: <History data-testid="HistoryButton" />,
             variant: 'text',
-            onActionClick: () => setTimelineOpen(true)
+            onActionClick: handleTimelineOpen
           },
           ...(showDeleteOption
             ? [
@@ -348,7 +470,7 @@ const DebtPositionDetail = () => {
       >
         <>
           {showEditOption && (
-            <MenuItem onClick={() => console.log('edit')}>
+            <MenuItem onClick={handleEdit}>
               <Edit fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
               {t('debtPositionDetail.edit')}
             </MenuItem>
@@ -407,44 +529,41 @@ const DebtPositionDetail = () => {
         open={timelineOpen}
         onClose={() => setTimelineOpen(false)}
       >
-        <Timeline.Element
-          date={new Date(2025, 2, 1, 14)}
-          element={
-            <Typography>
-              {t('debtPositionDetail.timeline.message')} <b>XXXXXXXXXXX</b>
-            </Typography>
-          }
-          first
-        />
-        <Timeline.Element
-          date={new Date(2025, 3, 3, 9)}
-          element={
-            <Typography>
-              {t('debtPositionDetail.timeline.message')} <b>XXXXXXXXXXX</b>
-            </Typography>
-          }
-        />
-        <Timeline.Element
-          date={new Date()}
-          element={
-            <Typography>
-              {t('debtPositionDetail.timeline.message')} <b>XXXXXXXXXXX</b>
-            </Typography>
-          }
-          last
-        />
+        <>
+          {timelineElements.length > 0 ? (
+            timelineElements.map((element, index) => (
+              <Timeline.Element
+                key={index}
+                date={element.date}
+                element={element.content}
+                first={element.isFirst}
+                last={element.isLast}
+                statusChip={element.statusChip}
+              />
+            ))
+          ) : (
+            <Timeline.Element
+              date={new Date()}
+              element={<Typography>{t('commons.NO_EVENTS')}</Typography>}
+              first={true}
+              last={true}
+            />
+          )}
+        </>
       </Timeline.Drawer>
 
-      <GenericDialog
-        data-testid="confirm-delete-dialog"
-        open={openDeleteDialog}
-        title={genericDialogTitel()}
-        message={genericDialogDescription()}
-        confirmLabel={canBeDeleted ? t('commons.delete') : t('commons.close')}
-        cancelLabel={canBeDeleted ? t('commons.close') : undefined}
-        onConfirm={handleDeleteConfirm}
-        onClose={() => setOpenDeleteDialog(false)}
-      />
+      {dialogConfig && (
+        <GenericDialog
+          data-testid={dialogConfig.testId}
+          open={dialogConfig.open}
+          title={dialogConfig.title}
+          message={dialogConfig.message}
+          confirmLabel={dialogConfig.confirmLabel}
+          cancelLabel={dialogConfig.cancelLabel}
+          onConfirm={dialogConfig.onConfirm}
+          onClose={dialogConfig.onClose}
+        />
+      )}
     </>
   ) : null;
 };

@@ -6,7 +6,7 @@ import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
 import { useState } from 'react';
 import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { FilterMap, useMultiFilters } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
@@ -37,10 +37,12 @@ const TreasurySearchResults = () => {
     setDrawerOpen((prev) => !prev);
   };
 
-  const treasuries = UseTreasurySearch({ initialFilters: filterValues });
+  const treasury = UseTreasurySearch({
+    initialFilters: filterValues
+  });
 
   const applyFilters = () => {
-    treasuries.applyFilters(filterValues);
+    treasury.applyFilters(filterValues);
     setDrawerOpen(false);
   };
 
@@ -80,11 +82,9 @@ const TreasurySearchResults = () => {
         aria-label="results-table"
       >
         <SearchResultsDataGrid
-          data={treasuries.query.data as PagedTreasuryView}
-          onPageChange={treasuries.handlePageChange}
-          onPageSizeChange={treasuries.handlePageSizeChange}
-          onSortChange={treasuries.setSort}
-          pagination={treasuries.pagination}
+          data={treasury.query.data as PagedTreasuryView}
+          onSortChange={treasury.setSort}
+          onPaginationChange={treasury.handlePaginationChange}
         />
       </Grid>
 

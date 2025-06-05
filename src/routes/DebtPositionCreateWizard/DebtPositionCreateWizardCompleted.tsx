@@ -5,25 +5,52 @@ import config from '../../utils/config';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { theme } from '@pagopa/mui-italia';
 import { DebtPositionStatus } from '../../../generated/data-contracts';
+import { Download } from '@mui/icons-material';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
+import debtPositions from '../../api/debtPositions';
+import utils from '../../utils';
+import { downloadBlob } from '../../utils/download';
 
 function DebtPositionCreateWizardCompleted() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const deployPath = config.deployPath;
-
-  const { description = '', status, debtPositionId } = location.state || {};
+  const { state } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+  const {
+    description = '',
+    status,
+    debtPositionId,
+    isEditing = false
+  } = location.state || {};
   const isDraft = status === DebtPositionStatus.DRAFT;
 
-  const translationKeys = {
-    title: isDraft
+  const getTitleTranslationKey = (): string => {
+    if (isEditing) {
+      return isDraft
+        ? 'debtPositionCreateWizardCompleted.editDraft'
+        : 'debtPositionCreateWizardCompleted.edit';
+    }
+    return isDraft
       ? 'debtPositionCreateWizardCompleted.draft'
-      : 'debtPositionCreateWizardCompleted.title',
-    description: isDraft
+      : 'debtPositionCreateWizardCompleted.title';
+  };
+
+  const getDescriptionTranslationKey = (): string => {
+    return isDraft
       ? 'debtPositionCreateWizardCompleted.descriptionDraft'
-      : 'debtPositionCreateWizardCompleted.description',
+      : 'debtPositionCreateWizardCompleted.description';
+  };
+
+  const translationKeys = {
+    title: getTitleTranslationKey(),
+    description: getDescriptionTranslationKey(),
     viewDebtPosition: 'debtPositionCreateWizardCompleted.viewDebtPosition',
-    backToStart: 'debtPositionCreateWizardCompleted.backToStart'
+    backToStart: 'debtPositionCreateWizardCompleted.backToStart',
+    downloadDebtPosition:
+      'debtPositionCreateWizardCompleted.downloadDebtPosition'
   };
 
   const translationParams = {
@@ -37,6 +64,26 @@ function DebtPositionCreateWizardCompleted() {
       navigate(`${deployPath}/debt-positions/`);
     }
   }
+
+  const getDebtPositionZipFileMutation =
+    debtPositions.getDebtPositionZipFile(organizationId);
+
+  const handleDownloadDebtPosition = async () => {
+    if (!debtPositionId) {
+      return utils.notify.emit(t('commons.files.missingDebtPositionId'));
+    }
+
+    try {
+      const result = await getDebtPositionZipFileMutation.mutateAsync(
+        Number(debtPositionId)
+      );
+      const { data, fileName } = result;
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(t('commons.files.downloadFailed'), error);
+      utils.notify.emit(t('commons.files.downloadFailed'));
+    }
+  };
 
   return (
     <Box
@@ -110,13 +157,22 @@ function DebtPositionCreateWizardCompleted() {
         >
           {t(translationKeys.backToStart)}
         </Button>
-        {isDraft && (
+        {isDraft ? (
           <Button
             role="button"
             variant="contained"
             onClick={handleViewDebtPosition}
           >
             {t(translationKeys.viewDebtPosition)}
+          </Button>
+        ) : (
+          <Button
+            role="button"
+            variant="contained"
+            startIcon={<Download />}
+            onClick={handleDownloadDebtPosition}
+          >
+            {t(translationKeys.downloadDebtPosition)}
           </Button>
         )}
       </Box>

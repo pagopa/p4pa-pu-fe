@@ -7,7 +7,7 @@ import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useTabsConfig } from './useDebtTabsConfig';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { SearchType } from '../../models/DebtPositions';
 import { useDateRange } from '../../hooks/useDateRange';

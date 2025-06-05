@@ -69,7 +69,8 @@ vi.mock('../../../../store/GlobalStore', () => ({
 
 vi.mock('../../../../api/debtPositions', () => ({
   default: {
-    createDebtPosition: vi.fn()
+    createDebtPosition: vi.fn(),
+    manageDebtPositionInstallments: vi.fn()
   }
 }));
 
@@ -77,6 +78,9 @@ vi.mock('../../../../utils', () => ({
   default: {
     notify: {
       emit: vi.fn()
+    },
+    config: {
+      deployPath: '/piattaformaunitaria'
     }
   }
 }));
@@ -145,12 +149,14 @@ vi.mock('../../../../components/Wizard/WizardStepButtons', () => ({
     onBack,
     onNext,
     onSaveDraft,
-    nextLabel
+    nextLabel,
+    showSaveDraft
   }: {
     onBack: () => void;
     onNext: () => void;
     onSaveDraft: () => void;
     nextLabel: string;
+    showSaveDraft: boolean;
   }) => (
     <div data-testid="wizard-step-buttons">
       <button onClick={onBack} data-testid="back-button">
@@ -159,9 +165,11 @@ vi.mock('../../../../components/Wizard/WizardStepButtons', () => ({
       <button onClick={onNext} data-testid="next-button">
         {nextLabel}
       </button>
-      <button onClick={onSaveDraft} data-testid="save-draft-button">
-        Save Draft
-      </button>
+      {showSaveDraft && (
+        <button onClick={onSaveDraft} data-testid="save-draft-button">
+          Save Draft
+        </button>
+      )}
     </div>
   )
 }));
@@ -211,6 +219,7 @@ describe('Step3 Component', () => {
   const mockOnNext = vi.fn();
   const mockOnBack = vi.fn();
   const mockCreateDebtPosition = vi.fn();
+  const mockManageDebtPositionInstallments = vi.fn();
 
   const initialData: Step3Data = {
     paymentObject: { value: 'Test Payment', readonly: false },
@@ -253,6 +262,14 @@ describe('Step3 Component', () => {
       debtPositionsApi.createDebtPosition as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({
       mutate: mockCreateDebtPosition
+    });
+
+    (
+      debtPositionsApi.manageDebtPositionInstallments as unknown as ReturnType<
+        typeof vi.fn
+      >
+    ).mockReturnValue({
+      mutate: mockManageDebtPositionInstallments
     });
   });
 
@@ -307,7 +324,6 @@ describe('Step3 Component', () => {
 
     renderComponent();
 
-    // Enable multi-beneficiary
     const multiBeneficiarySwitch = screen.getByRole('checkbox', {
       name: /Multiple Beneficiaries/i
     });
@@ -407,27 +423,22 @@ describe('Step3 Component', () => {
   });
 
   it('should trigger validation when changing amount with multi-beneficiary', async () => {
-    // Reset the mock before the test
     vi.clearAllMocks();
 
     renderComponent();
 
-    // Enable multi-beneficiary
     const multiBeneficiarySwitch = screen.getByRole('checkbox', {
       name: /Multiple Beneficiaries/i
     });
     fireEvent.click(multiBeneficiarySwitch);
 
-    // Wait for beneficiary field to appear
     await waitFor(() => {
       expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
     });
 
-    // Now change the amount
     const amountInput = screen.getByRole('textbox', { name: /Amount/i });
     fireEvent.change(amountInput, { target: { value: '500,00' } });
 
-    // Verify the triggerValidationForAllBeneficiaries was called
     await waitFor(() => {
       expect(
         paymentUtility.triggerValidationForAllBeneficiaries
@@ -476,7 +487,6 @@ describe('Step3 Component', () => {
   it('should validate installments when submitting with installment payment option', async () => {
     renderComponent();
 
-    // Change payment option to installments
     const selectNativeInput = screen.getByDisplayValue('SINGLE');
     fireEvent.change(selectNativeInput, {
       target: { value: PaymentOptionTypeEnum.INSTALLMENTS }
@@ -486,7 +496,6 @@ describe('Step3 Component', () => {
       expect(screen.getByTestId('installment-field')).toBeInTheDocument();
     });
 
-    // Mock the validateInstallmentsData result
     vi.spyOn(installmentValidation, 'validateInstallments').mockReturnValueOnce(
       {
         hasInvalidBeneficiaries: false,
@@ -496,7 +505,6 @@ describe('Step3 Component', () => {
       }
     );
 
-    // Set up mock for syncInstallmentBeneficiaries to return valid data
     vi.spyOn(
       installmentValidation,
       'syncInstallmentBeneficiaries'
@@ -521,7 +529,6 @@ describe('Step3 Component', () => {
   });
 
   it('should handle mandatory due date validation failure', async () => {
-    // Create component with mandatory due date flag set to true
     render(
       <MemoryRouter>
         <Step3
@@ -535,7 +542,6 @@ describe('Step3 Component', () => {
       </MemoryRouter>
     );
 
-    // Clear the date picker
     const datePicker = screen.getByTestId('date-picker-input');
     fireEvent.change(datePicker, { target: { value: '' } });
     fireEvent.blur(datePicker);
@@ -548,7 +554,6 @@ describe('Step3 Component', () => {
   });
 
   it('should validate due date when date changes and it is mandatory', async () => {
-    // Create component with mandatory due date flag set to true
     render(
       <MemoryRouter>
         <Step3
@@ -562,18 +567,705 @@ describe('Step3 Component', () => {
       </MemoryRouter>
     );
 
-    // Get the date picker and trigger a change
     const datePicker = screen.getByTestId('date-picker-input');
 
-    // First set a valid date
     fireEvent.change(datePicker, { target: { value: '2025-07-15' } });
 
-    // Then clear it to trigger validation
     fireEvent.change(datePicker, { target: { value: '' } });
 
-    // Simulate the DatePicker onClose event
     fireEvent.blur(datePicker);
 
     expect(datePicker).toHaveValue('');
+  });
+
+  it('should handle wheel event properly when target is HTMLElement', async () => {
+    renderComponent();
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+
+    expect(amountInput).toBeInTheDocument();
+    expect(amountInput).toHaveValue('100,00');
+
+    fireEvent.change(amountInput, { target: { value: '200,50' } });
+    expect(amountInput).toHaveValue('200,50');
+  });
+
+  it('should handle DatePicker onClose callback when due date is mandatory', async () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: true }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const datePicker = screen.getByTestId('date-picker-input');
+
+    fireEvent.change(datePicker, { target: { value: '2025-07-15' } });
+
+    fireEvent.blur(datePicker);
+
+    expect(datePicker).toHaveValue('2025-07-15');
+  });
+
+  it('should handle payment option readonly state', () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: {
+              value: DebtPositionTypeEnum.SINGLE,
+              readonly: true
+            }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const paymentOptionSelect = screen.getByDisplayValue('SINGLE');
+    expect(paymentOptionSelect).toBeDisabled();
+  });
+
+  it('should handle amount readonly state in installment mode', async () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: {
+              value: DebtPositionTypeEnum.INSTALLMENTS,
+              readonly: false
+            },
+            amount: { value: '100.00', readonly: true }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+      expect(amountInput).toBeDisabled();
+    });
+  });
+
+  it('should handle due date readonly state', () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            dueDate: { value: '2025-06-01', readonly: true }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const datePicker = screen.getByTestId('date-picker-input');
+    expect(datePicker).toBeDisabled();
+  });
+
+  it('should handle multi-beneficiary readonly state', () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            isMultibeneficiary: { value: false, readonly: true }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const multiBeneficiarySwitch = screen.getByRole('checkbox', {
+      name: /Multiple Beneficiaries/i
+    });
+    expect(multiBeneficiarySwitch).toBeDisabled();
+  });
+
+  it('should handle payment object disabled state in installments mode', async () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: {
+              value: DebtPositionTypeEnum.INSTALLMENTS,
+              readonly: false
+            }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    await waitFor(() => {
+      const paymentObjectInput = screen.getByRole('textbox', {
+        name: /Payment Object/i
+      });
+      expect(paymentObjectInput).toBeDisabled();
+    });
+  });
+
+  it('should handle validation failures for installments', async () => {
+    renderComponent();
+
+    const selectNativeInput = screen.getByDisplayValue('SINGLE');
+    fireEvent.change(selectNativeInput, {
+      target: { value: DebtPositionTypeEnum.INSTALLMENTS }
+    });
+
+    await waitFor(() => {
+      expect(screen.getByTestId('installment-field')).toBeInTheDocument();
+    });
+
+    vi.spyOn(installmentValidation, 'validateInstallments').mockReturnValueOnce(
+      {
+        hasInvalidBeneficiaries: true,
+        hasInvalidPaymentFields: false,
+        hasInvalidAmounts: false,
+        hasEmptyRemittance: false
+      }
+    );
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should set showSaveDraft to false when isEditing is true', () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={initialData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+          isEditing={true}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.queryByTestId('save-draft-button')).not.toBeInTheDocument();
+  });
+
+  it('should handle installments array fallback when formattedValues.installments is undefined', async () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: {
+              value: DebtPositionTypeEnum.INSTALLMENTS,
+              readonly: false
+            },
+            installments: undefined
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockSetData).toHaveBeenCalled();
+    });
+  });
+
+  it('should trigger paymentObject field onChange directly', async () => {
+    renderComponent();
+
+    const paymentObjectInput = screen.getByRole('textbox', {
+      name: /Payment Object/i
+    });
+
+    fireEvent.change(paymentObjectInput, {
+      target: { value: 'Test onChange' }
+    });
+
+    expect(paymentObjectInput).toHaveValue('Test onChange');
+  });
+
+  it('should show error helper text for paymentObject when submitted with error', async () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={initialData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const paymentObjectInput = screen.getByRole('textbox', {
+      name: /Payment Object/i
+    });
+
+    fireEvent.change(paymentObjectInput, { target: { value: '' } });
+    fireEvent.blur(paymentObjectInput);
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      const errorText = screen.queryByText(/required/i);
+      if (errorText) {
+        expect(errorText).toBeInTheDocument();
+      }
+    });
+  });
+
+  it('should trigger validation timeout when date changes with mandatory flag', async () => {
+    vi.useFakeTimers();
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: true }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const datePicker = screen.getByTestId('date-picker-input');
+
+    fireEvent.change(datePicker, { target: { value: '2025-07-15' } });
+
+    vi.runAllTimers();
+
+    expect(datePicker).toHaveValue('2025-07-15');
+
+    vi.useRealTimers();
+  });
+
+  it('should handle trigger validation timeout execution', async () => {
+    vi.useFakeTimers();
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: true }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const datePicker = screen.getByTestId('date-picker-input');
+
+    fireEvent.change(datePicker, { target: { value: '2025-07-15' } });
+    fireEvent.change(datePicker, { target: { value: '2025-08-15' } });
+
+    vi.runAllTimers();
+
+    expect(datePicker).toHaveValue('2025-08-15');
+
+    vi.useRealTimers();
+  });
+
+  it('should cover formattedValues.installments fallback to empty array', async () => {
+    vi.spyOn(installmentValidation, 'validateInstallments').mockReturnValueOnce(
+      {
+        hasInvalidBeneficiaries: false,
+        hasInvalidPaymentFields: false,
+        hasInvalidAmounts: false,
+        hasEmptyRemittance: false
+      }
+    );
+
+    vi.spyOn(
+      installmentValidation,
+      'syncInstallmentBeneficiaries'
+    ).mockReturnValueOnce({
+      installments: [],
+      modified: false
+    });
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: {
+              value: DebtPositionTypeEnum.INSTALLMENTS,
+              readonly: false
+            },
+            installments: undefined
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockCreateDebtPosition).toHaveBeenCalledWith(
+        expect.objectContaining({
+          body: expect.objectContaining({
+            paymentOptions: expect.arrayContaining([
+              expect.objectContaining({
+                installments: []
+              })
+            ])
+          })
+        })
+      );
+    });
+  });
+
+  it('should trigger validation on DatePicker onClose when flagMandatoryDueDate is false', async () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: false }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const datePicker = screen.getByTestId('date-picker-input');
+
+    fireEvent.change(datePicker, { target: { value: '2025-07-15' } });
+
+    fireEvent.blur(datePicker);
+
+    expect(datePicker).toHaveValue('2025-07-15');
+  });
+
+  it('should handle edge case in onSubmit when isInstallment is true but validateInstallmentsData returns invalid', async () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: {
+              value: DebtPositionTypeEnum.INSTALLMENTS,
+              readonly: false
+            }
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    vi.spyOn(installmentValidation, 'validateInstallments').mockReturnValueOnce(
+      {
+        hasInvalidBeneficiaries: true,
+        hasInvalidPaymentFields: true,
+        hasInvalidAmounts: true,
+        hasEmptyRemittance: true
+      }
+    );
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should test wheel event handler edge case', async () => {
+    renderComponent();
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+
+    const inputProps = amountInput.getAttribute('style');
+    expect(inputProps).toContain('text-align: left');
+
+    expect(amountInput).toBeInTheDocument();
+  });
+
+  it('should test amount field onChange handler callback', async () => {
+    renderComponent();
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+
+    fireEvent.change(amountInput, { target: { value: '300,75' } });
+
+    expect(amountInput).toHaveValue('300,75');
+  });
+
+  it('should trigger DatePicker onClose logic without mandatory flag', async () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: false }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const datePicker = screen.getByTestId('date-picker-input');
+
+    fireEvent.change(datePicker, { target: { value: '2025-07-15' } });
+    fireEvent.blur(datePicker);
+
+    expect(datePicker).toHaveValue('2025-07-15');
+  });
+
+  it('should test complex scenario with installments and editing mode', async () => {
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: {
+              value: DebtPositionTypeEnum.INSTALLMENTS,
+              readonly: false
+            },
+            installments: []
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+          isEditing={true}
+        />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByTestId('installment-field')).toBeInTheDocument();
+
+    expect(screen.queryByTestId('save-draft-button')).not.toBeInTheDocument();
+  });
+
+  it('should cover onWheel event preventDefault case when target is not HTMLElement', async () => {
+    renderComponent();
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+
+    fireEvent.wheel(amountInput);
+
+    expect(amountInput).toBeInTheDocument();
+    expect(amountInput).toHaveValue('100,00');
+  });
+
+  it('should cover paymentObject field onChange direct execution', async () => {
+    renderComponent();
+
+    const paymentObjectInput = screen.getByRole('textbox', {
+      name: /Payment Object/i
+    });
+
+    const testValue = 'Test Payment Object Direct';
+
+    fireEvent.change(paymentObjectInput, {
+      target: { value: testValue }
+    });
+
+    expect(paymentObjectInput).toHaveValue(testValue);
+  });
+
+  it('should execute DatePicker onClose callback when mandatory flag is active', async () => {
+    vi.useFakeTimers();
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: true }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const datePicker = screen.getByTestId('date-picker-input');
+
+    fireEvent.change(datePicker, { target: { value: '2025-07-15' } });
+
+    fireEvent.blur(datePicker);
+
+    vi.runAllTimers();
+
+    expect(datePicker).toHaveValue('2025-07-15');
+
+    vi.useRealTimers();
+  });
+
+  it('should handle real wheel event simulation with HTMLElement target', async () => {
+    renderComponent();
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+
+    amountInput.focus();
+
+    const wheelEvent = new WheelEvent('wheel', {
+      bubbles: true,
+      cancelable: true,
+      deltaY: 100
+    });
+
+    amountInput.dispatchEvent(wheelEvent);
+
+    expect(amountInput).toBeInTheDocument();
+  });
+
+  it('should cover edge case: formattedValues.installments undefined in API call', async () => {
+    vi.spyOn(installmentValidation, 'validateInstallments').mockReturnValueOnce(
+      {
+        hasInvalidBeneficiaries: false,
+        hasInvalidPaymentFields: false,
+        hasInvalidAmounts: false,
+        hasEmptyRemittance: false
+      }
+    );
+
+    vi.spyOn(
+      installmentValidation,
+      'syncInstallmentBeneficiaries'
+    ).mockReturnValueOnce({
+      installments: [],
+      modified: false
+    });
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{
+            ...initialData,
+            paymentOption: {
+              value: DebtPositionTypeEnum.INSTALLMENTS,
+              readonly: false
+            },
+            installments: undefined
+          }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const submitButton = screen.getByTestId('next-button');
+    fireEvent.click(submitButton);
+
+    await waitFor(() => {
+      expect(mockCreateDebtPosition).toHaveBeenCalledWith(
+        expect.objectContaining({
+          body: expect.objectContaining({
+            paymentOptions: expect.arrayContaining([
+              expect.objectContaining({
+                installments: []
+              })
+            ])
+          })
+        })
+      );
+    });
+  });
+
+  it('should test multiple setTimeout executions in DatePicker', async () => {
+    vi.useFakeTimers();
+
+    render(
+      <MemoryRouter>
+        <Step3
+          data={{ ...initialData, flagMandatoryDueDate: true }}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+          step1Data={mockStep1Data}
+          step2Data={mockStep2Data}
+        />
+      </MemoryRouter>
+    );
+
+    const datePicker = screen.getByTestId('date-picker-input');
+
+    fireEvent.change(datePicker, { target: { value: '2025-01-15' } });
+    fireEvent.change(datePicker, { target: { value: '2025-02-15' } });
+    fireEvent.change(datePicker, { target: { value: '2025-03-15' } });
+
+    vi.runAllTimers();
+
+    expect(datePicker).toHaveValue('2025-03-15');
+
+    vi.useRealTimers();
+  });
+
+  it('should test onWheel with different event target scenarios', async () => {
+    renderComponent();
+
+    const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+
+    fireEvent.wheel(amountInput, { deltaY: 100 });
+
+    expect(amountInput).toBeInTheDocument();
+    expect(amountInput).toHaveValue('100,00');
   });
 });

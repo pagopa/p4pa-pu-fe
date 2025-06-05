@@ -4,7 +4,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
 import DebtTypes from './DebtTypes';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 
 i18nTestSetup({
   'commons.routes.DEBT_TYPES_CATALOG': 'Debt Types Catalog',
@@ -150,7 +150,7 @@ describe('DebtTypes Page', () => {
 
     expect(getDebtPositionTypeWithCount).toHaveBeenCalledWith(
       expect.any(Number),
-      expect.objectContaining({ page: 1, size: 20 })
+      expect.objectContaining({ page: 0, size: 10 })
     );
   });
 });

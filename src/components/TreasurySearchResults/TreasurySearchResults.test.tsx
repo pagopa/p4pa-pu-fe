@@ -2,6 +2,11 @@ import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import TreasurySearchResults from './TreasurySearchResults';
 
+vi.mock('react-router-dom', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
+}));
+
 vi.mock('../Drawer/CustomDrawer', () => ({
   default: ({ open, onClose }: { open: boolean; onClose: () => void }) => (
     <div

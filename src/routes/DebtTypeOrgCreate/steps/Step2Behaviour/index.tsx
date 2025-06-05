@@ -13,13 +13,13 @@ import { PaymentMethodSelector } from './components/PaymentMethodSelector';
 import { PaymentNotificationFields } from './components/PaymentNotificationFields';
 import { DebtTypeOrgForm } from '../../types';
 
-export const Step2Behaviour = () => {
+export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
 
   const { control, watch } = useFormContext<DebtTypeOrgForm>();
 
   const isSpontaneous = watch('flagSpontaneous');
-  const enableNotifications = watch('flagNotifyOutcomePush');
+  const flagNotifyOutcomePush = watch('flagNotifyOutcomePush');
 
   return (
     <WizardStepWrapper
@@ -31,6 +31,7 @@ export const Step2Behaviour = () => {
         control={control}
         name="flagSpontaneous"
         label={t('debtTypeOrgCreate.behaviour.postalAccount')}
+        disabled={edit}
       />
 
       {isSpontaneous ? (
@@ -44,6 +45,7 @@ export const Step2Behaviour = () => {
             control={control}
             name="paymentMethod"
             selectedValue={watch('paymentMethod')}
+            edit={edit}
           />
         </SectionBox>
       ) : (
@@ -56,12 +58,14 @@ export const Step2Behaviour = () => {
             name="flagMandatoryDueDate"
             label={t('debtTypeOrgCreate.behaviour.optionA.label')}
             description={t('debtTypeOrgCreate.behaviour.optionA.description')}
+            disabled={edit}
           />
           <FormComponent.ControlledCheckbox
             control={control}
             name="flagAnonymousFiscalCode"
             label={t('debtTypeOrgCreate.behaviour.optionB.label')}
             description={t('debtTypeOrgCreate.behaviour.optionB.description')}
+            disabled={edit}
           />
         </SectionBox>
       )}
@@ -77,16 +81,16 @@ export const Step2Behaviour = () => {
           sx={{ flexDirection: 'row' }}
           options={[
             {
-              value: 'false',
+              value: 'disabled',
               label: t('debtTypeOrgCreate.behaviour.notifications.options.no')
             },
             {
-              value: 'true',
+              value: 'enabled',
               label: t('debtTypeOrgCreate.behaviour.notifications.options.yes')
             }
           ]}
         />
-        {enableNotifications === 'true' && (
+        {flagNotifyOutcomePush === 'enabled' && (
           <PaymentNotificationFields control={control} />
         )}
       </SectionBox>

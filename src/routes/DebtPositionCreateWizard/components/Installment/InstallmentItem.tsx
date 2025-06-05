@@ -59,6 +59,13 @@ type InstallmentItemProps<T extends FieldValues> = {
   readonly setValue: UseFormSetValue<T>;
   readonly onRemove?: (index: number) => void;
   readonly flagMandatoryDueDate?: boolean;
+  readonly isEditing?: boolean;
+  readonly readonlyProps?: {
+    amount?: boolean;
+    dueDate?: boolean;
+    remittance?: boolean;
+    isMultibeneficiary?: boolean;
+  };
 };
 
 /**
@@ -78,7 +85,9 @@ const InstallmentItem = <T extends FieldValues>({
   setValue,
   getValues,
   onRemove,
-  flagMandatoryDueDate = true
+  flagMandatoryDueDate = true,
+  isEditing,
+  readonlyProps
 }: InstallmentItemProps<T>) => {
   const { t } = useTranslation();
 
@@ -158,19 +167,18 @@ const InstallmentItem = <T extends FieldValues>({
 
   return (
     <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
-      {onRemove && (
-        <IconButton
-          size="small"
-          onClick={handleRemove}
-          sx={{
-            color: 'error.main',
-            mr: 1,
-            mt: 2
-          }}
-        >
-          <RemoveCircleOutlineIcon />
-        </IconButton>
-      )}
+      <IconButton
+        size="small"
+        onClick={handleRemove}
+        disabled={!onRemove || isEditing}
+        sx={{
+          color: 'error.main',
+          mr: 1,
+          mt: 2
+        }}
+      >
+        <RemoveCircleOutlineIcon />
+      </IconButton>
 
       <Box
         sx={{
@@ -198,7 +206,7 @@ const InstallmentItem = <T extends FieldValues>({
               control={control}
               amountPath={amountPath}
               index={index}
-              disabled={disabled}
+              disabled={disabled || readonlyProps?.amount}
               error={amountErrors}
               validateInstallmentAmount={validators.validateInstallmentAmount}
               trigger={trigger}
@@ -212,7 +220,7 @@ const InstallmentItem = <T extends FieldValues>({
               control={control}
               dueDatePath={dueDatePath}
               index={index}
-              disabled={disabled}
+              disabled={disabled || readonlyProps?.dueDate}
               error={dueDateErrors}
               validateDueDate={validators.validateDueDate}
               trigger={trigger}
@@ -226,7 +234,7 @@ const InstallmentItem = <T extends FieldValues>({
               control={control}
               remittancePath={remittancePath}
               index={index}
-              disabled={disabled}
+              disabled={disabled || readonlyProps?.remittance}
               error={remittanceErrors}
               validateRemittance={validators.validateRemittance}
               trigger={trigger}
@@ -240,12 +248,13 @@ const InstallmentItem = <T extends FieldValues>({
             errors={errors}
             isSubmitted={isSubmitted}
             fieldNamePrefix={fieldNamePrefix}
-            disabled={disabled}
+            disabled={disabled || readonlyProps?.isMultibeneficiary}
             getValues={getValues}
             setValue={setValue}
             trigger={trigger}
             isMultibeneficiary={isMultibeneficiary}
             toggleMultibeneficiary={toggleMultibeneficiary}
+            isEditing={isEditing}
           />
         </Grid>
       </Box>

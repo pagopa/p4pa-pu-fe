@@ -26,6 +26,7 @@ export const _ControlledFileUploader = <T extends FieldValues>({
   description,
   fileExtensionsAllowed,
   control,
+  disabled,
   ...fileUploaderProps
 }: _ControlledFileUploaderProps<T>) => {
   const [uploading, setUploading] = useState(false);
@@ -38,6 +39,7 @@ export const _ControlledFileUploader = <T extends FieldValues>({
       render={({ field: { onChange, value }, fieldState: { error } }) => (
         <Stack>
           <FileUploader
+            disabled={disabled}
             uploading={uploading}
             setUploading={setUploading}
             progress={progress}
