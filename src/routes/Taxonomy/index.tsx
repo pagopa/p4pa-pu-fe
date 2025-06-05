@@ -1,4 +1,4 @@
-import { Button, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import ActionCard from '../../components/ActionCard/ActionCard';
@@ -6,10 +6,21 @@ import utils from '../../utils';
 import { synchronizeTaxonomy } from '../../api/taxonomy';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
+import { TaxonomyFilter } from '../../components/TaxonomyFilter';
+import { FormProvider, useForm } from 'react-hook-form';
+import SearchCard from '../../components/SearchCard/SearchCard';
+import { taxonomySchema } from '../../components/TaxonomyFilter/schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { TaxonomyFields } from '../../models/Taxonomy';
 
 export const TaxonomyPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const form = useForm({
+    resolver: zodResolver(taxonomySchema),
+    mode: 'onTouched'
+  });
 
   const syncMutation = synchronizeTaxonomy();
 
@@ -23,22 +34,40 @@ export const TaxonomyPage = () => {
     }
   };
 
+  const onSubmit = async (values: TaxonomyFields) => {
+    //TODO navigate to results page with filters
+    console.debug(values);
+    navigate(PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS);
+  };
+
   return (
-    <>
-      <TitleComponent title={t('commons.routes.BACKOFFICE_TAXONOMY_INDEX')} />
-      <Grid container direction="row">
+    <FormProvider {...form}>
+      <form>
+        <TitleComponent title={t('commons.routes.BACKOFFICE_TAXONOMY_INDEX')} />
+
         <Grid container spacing={2}>
-          <Grid item xs={12} md={7}>
-            <Button
-              onClick={() =>
-                navigate(PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS)
-              }
-            >
-              Ricerca
-            </Button>
+          <Grid item xs={12} lg={6}>
+            <SearchCard
+              title={t('Cerca tassonomia')}
+              render={<TaxonomyFilter />}
+              description={t(
+                'Inserisci al meno un filtro per avviare la ricerca.'
+              )}
+              button={[
+                {
+                  label: t('commons.filters.remove'),
+                  variant: 'outlined'
+                },
+                {
+                  label: t('commons.filters.filterResults'),
+                  onClick: form.handleSubmit(onSubmit),
+                  variant: 'contained'
+                }
+              ]}
+            />
           </Grid>
 
-          <Grid item xs={12} md={5}>
+          <Grid item xs={12} lg={6}>
             <ActionCard
               title={t('taxonomyPage.APIUpdate')}
               description={t('taxonomyPage.APIUpdateText')}
@@ -49,8 +78,8 @@ export const TaxonomyPage = () => {
             />
           </Grid>
         </Grid>
-      </Grid>
-    </>
+      </form>
+    </FormProvider>
   );
 };
 
