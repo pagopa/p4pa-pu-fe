@@ -15,6 +15,7 @@ import {
 } from '../../generated/apiClient';
 import {
   DebtPositionRegistry,
+  InstallmentRegistry,
   PaymentEventType
 } from '../../generated/data-contracts';
 
@@ -29,7 +30,8 @@ vi.mock('../utils', () => {
           getDebtPositionDetail: vi.fn(),
           deleteDebtPositionType: vi.fn(),
           createDebtPosition: vi.fn(),
-          getDebtPositionRegistries: vi.fn()
+          getDebtPositionRegistries: vi.fn(),
+          getInstallmentRegistries: vi.fn()
         }
       },
       notify: {
@@ -489,6 +491,227 @@ describe('createDebtPosition', () => {
         expect(result.current.data).toHaveLength(3);
         expect(result.current.isSuccess).toBe(true);
       });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+    });
+  });
+
+  describe('getInstallmentRegistriesMutation', () => {
+    it('returns installment registries data correctly', async () => {
+      const mockInstallmentRegistriesData: Array<InstallmentRegistry> = [
+        {
+          eventDateTime: '2025-05-16T10:45:30.987654Z',
+          eventType: PaymentEventType.DPI_ADDED,
+          eventDescription: 'Aggiunta prima rata di pagamento',
+          organizationId: 3,
+          debtPositionId: 1536
+        },
+        {
+          eventDateTime: '2025-05-17T14:22:45.567890Z',
+          eventType: PaymentEventType.IO_NOTIFIED,
+          eventDescription: 'Notifica inviata tramite IO app',
+          organizationId: 3,
+          debtPositionId: 1536
+        }
+      ];
+
+      const organizationId = 3;
+      const debtPositionId = 1536;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getInstallmentRegistries')
+        .mockResolvedValue({
+          data: mockInstallmentRegistriesData
+        } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getInstallmentRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual(mockInstallmentRegistriesData);
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+    });
+
+    it('handles empty installment registries array correctly', async () => {
+      const mockEmptyData: Array<InstallmentRegistry> = [];
+      const organizationId = 3;
+      const debtPositionId = 1536;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getInstallmentRegistries')
+        .mockResolvedValue({ data: mockEmptyData } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getInstallmentRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual([]);
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+    });
+
+    it('handles null/undefined installment registries data gracefully', async () => {
+      const organizationId = 3;
+      const debtPositionId = 1536;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getInstallmentRegistries')
+        .mockResolvedValue({ data: null } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getInstallmentRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual([]);
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+    });
+
+    it('handles API errors correctly for installment registries', async () => {
+      const organizationId = 3;
+      const debtPositionId = 1536;
+      const error = new Error(
+        'API Error: Failed to fetch installment registries'
+      );
+
+      vi.spyOn(
+        utils.apiClient.bff,
+        'getInstallmentRegistries'
+      ).mockRejectedValue(error);
+
+      const { result } = renderHook(() =>
+        debtPositions.getInstallmentRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+        expect(result.current.error).toEqual(error);
+      });
+    });
+
+    it('processes multiple installment registries with different event types', async () => {
+      const mockComplexInstallmentRegistriesData: Array<InstallmentRegistry> = [
+        {
+          eventDateTime: '2025-05-16T10:45:30.987654Z',
+          eventType: PaymentEventType.DPI_ADDED,
+          eventDescription: 'Aggiunta prima rata di pagamento'
+        },
+        {
+          eventDateTime: '2025-05-20T11:47:38.345678Z',
+          eventType: PaymentEventType.DPI_UPDATED,
+          eventDescription: 'Modifica scadenza rata di pagamento'
+        },
+        {
+          eventDateTime: '2025-05-22T15:28:17.789012Z',
+          eventType: PaymentEventType.RT_RECEIVED,
+          eventDescription: 'Ricevuta telematica acquisita dal sistema'
+        },
+        {
+          eventDateTime: '2025-05-26T19:33:41.654987Z',
+          eventType: PaymentEventType.DPI_EXPIRED,
+          eventDescription: 'Rata scaduta senza pagamento'
+        },
+        {
+          eventDateTime: '2025-05-27T14:07:26.321654Z',
+          eventType: PaymentEventType.DPI_CANCELLED,
+          eventDescription: 'Cancellazione rata per storno operazione'
+        }
+      ];
+
+      const organizationId = 3;
+      const debtPositionId = 1536;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getInstallmentRegistries')
+        .mockResolvedValue({
+          data: mockComplexInstallmentRegistriesData
+        } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getInstallmentRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual(
+          mockComplexInstallmentRegistriesData
+        );
+        expect(result.current.data).toHaveLength(5);
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+    });
+
+    it('handles installment-specific event types correctly', async () => {
+      const mockInstallmentSpecificData: Array<InstallmentRegistry> = [
+        {
+          eventDateTime: '2025-05-16T10:45:30.987654Z',
+          eventType: PaymentEventType.DPI_ADDED,
+          eventDescription: 'Aggiunta rata di pagamento',
+          organizationId: 3,
+          debtPositionId: 1536
+        },
+        {
+          eventDateTime: '2025-05-17T14:22:45.567890Z',
+          eventType: PaymentEventType.IO_NOTIFIED,
+          eventDescription: 'Notifica IO inviata per la rata',
+          organizationId: 3,
+          debtPositionId: 1536
+        },
+        {
+          eventDateTime: '2025-05-18T09:15:20.234567Z',
+          eventType: PaymentEventType.SEND_NOTIFICATION_CREATED,
+          eventDescription: 'Creata richiesta di invio notifica per rata',
+          organizationId: 3,
+          debtPositionId: 1536
+        }
+      ];
+
+      const organizationId = 3;
+      const debtPositionId = 1536;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getInstallmentRegistries')
+        .mockResolvedValue({
+          data: mockInstallmentSpecificData
+        } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getInstallmentRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual(mockInstallmentSpecificData);
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      const eventTypes =
+        result.current.data?.map((registry) => registry.eventType) || [];
+      expect(eventTypes).toContain(PaymentEventType.DPI_ADDED);
+      expect(eventTypes).toContain(PaymentEventType.IO_NOTIFIED);
+      expect(eventTypes).toContain(PaymentEventType.SEND_NOTIFICATION_CREATED);
 
       expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
     });
