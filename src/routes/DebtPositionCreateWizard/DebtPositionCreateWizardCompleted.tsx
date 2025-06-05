@@ -27,10 +27,6 @@ function DebtPositionCreateWizardCompleted() {
   } = location.state || {};
   const isDraft = status === DebtPositionStatus.DRAFT;
 
-  /**
-   * Determina la chiave di traduzione per il titolo basandosi su isEditing e isDraft
-   * @returns la chiave di traduzione appropriata per il titolo
-   */
   const getTitleTranslationKey = (): string => {
     if (isEditing) {
       return isDraft
@@ -42,10 +38,6 @@ function DebtPositionCreateWizardCompleted() {
       : 'debtPositionCreateWizardCompleted.title';
   };
 
-  /**
-   * Determina la chiave di traduzione per la descrizione basandosi su isDraft
-   * @returns la chiave di traduzione appropriata per la descrizione
-   */
   const getDescriptionTranslationKey = (): string => {
     return isDraft
       ? 'debtPositionCreateWizardCompleted.descriptionDraft'

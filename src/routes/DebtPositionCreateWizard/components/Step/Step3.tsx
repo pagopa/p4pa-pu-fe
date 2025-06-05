@@ -604,7 +604,6 @@ const Step3 = ({
       return;
     }
 
-    // Prepare API POST body for creation mode
     const postBody: DebtPositionDTO = {
       description: formattedValues.step1Data?.description.value || '',
       status: isDraft ? DebtPositionStatus.DRAFT : DebtPositionStatus.UNPAID,

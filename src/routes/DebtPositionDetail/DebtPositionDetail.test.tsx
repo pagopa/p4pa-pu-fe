@@ -476,35 +476,29 @@ describe('DebtPositionDetail Component', () => {
   });
 
   it('shows delete confirmation dialog when delete option is clicked', async () => {
-    // Imposta lo stato della debt position per renderla eliminabile
     mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
 
     render(<DebtPositionDetail />);
 
-    // Clicca sul pulsante del menu
     const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
     expect(menuButton).not.toBeNull();
 
     if (menuButton) {
       fireEvent.click(menuButton);
 
-      // Attendi che il menu sia visibile
       await vi.waitFor(() => {
         const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
         expect(deleteOption).toBeVisible();
 
-        // Clicca sull'opzione di eliminazione
         if (deleteOption) {
           fireEvent.click(deleteOption);
         }
       });
 
-      // Verifica che il dialog di conferma sia visualizzato
       await vi.waitFor(() => {
         const dialogTitle = screen.getByText('Confirm Delete');
         expect(dialogTitle).toBeVisible();
 
-        // Verifica che ci siano i pulsanti di conferma e annullamento
         const deleteButton = screen.getByRole('button', { name: 'Delete' });
         expect(deleteButton).toBeVisible();
 
@@ -515,19 +509,16 @@ describe('DebtPositionDetail Component', () => {
   });
 
   it('calls deleteDebtPosition when delete is confirmed', async () => {
-    // Imposta lo stato della debt position per renderla eliminabile
     mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
 
     render(<DebtPositionDetail />);
 
-    // Clicca sul pulsante del menu
     const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
     expect(menuButton).not.toBeNull();
 
     if (menuButton) {
       fireEvent.click(menuButton);
 
-      // Attendi che il menu sia visibile e clicca su Delete
       await vi.waitFor(() => {
         const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
         if (deleteOption) {
@@ -535,20 +526,16 @@ describe('DebtPositionDetail Component', () => {
         }
       });
 
-      // Verifica che il dialog di conferma sia visualizzato
       await vi.waitFor(() => {
         const dialogTitle = screen.getByText('Confirm Delete');
         expect(dialogTitle).toBeVisible();
       });
 
-      // Trova direttamente il pulsante Delete nel dialogo
       const deleteButton = screen.getByRole('button', { name: 'Delete' });
       expect(deleteButton).toBeVisible();
 
-      // Clicca sul pulsante di conferma
       fireEvent.click(deleteButton);
 
-      // Verifica che la funzione di eliminazione sia stata chiamata
       await vi.waitFor(() => {
         expect(deleteMockMutate).toHaveBeenCalled();
       });
@@ -556,19 +543,16 @@ describe('DebtPositionDetail Component', () => {
   });
 
   it('closes dialog without deleting when cancel is clicked', async () => {
-    // Imposta lo stato della debt position per renderla eliminabile
     mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
 
     render(<DebtPositionDetail />);
 
-    // Clicca sul pulsante del menu
     const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
     expect(menuButton).not.toBeNull();
 
     if (menuButton) {
       fireEvent.click(menuButton);
 
-      // Attendi che il menu sia visibile e clicca su Delete
       await vi.waitFor(() => {
         const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
         if (deleteOption) {
@@ -576,43 +560,35 @@ describe('DebtPositionDetail Component', () => {
         }
       });
 
-      // Verifica che il dialog di conferma sia visualizzato
       await vi.waitFor(() => {
         const dialogTitle = screen.getByText('Confirm Delete');
         expect(dialogTitle).toBeVisible();
       });
 
-      // Trova direttamente il pulsante Close nel dialogo
       const closeButton = screen.getByRole('button', { name: 'Close' });
       expect(closeButton).toBeVisible();
 
-      // Clicca sul pulsante Close
       fireEvent.click(closeButton);
 
-      // Verifica che il dialog sia stato chiuso
       await vi.waitFor(() => {
         expect(screen.queryByText('Confirm Delete')).not.toBeInTheDocument();
       });
 
-      // Verifica che la funzione di eliminazione NON sia stata chiamata
       expect(deleteMockMutate).not.toHaveBeenCalled();
     }
   });
 
   it('shows error dialog when trying to delete a debt position that cannot be deleted', async () => {
-    // Imposta lo stato della debt position per renderla non eliminabile
     mockDebtPositionDetail.status = DebtPositionStatus.PAID;
 
     render(<DebtPositionDetail />);
 
-    // Clicca sul pulsante del menu
     const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
     expect(menuButton).not.toBeNull();
 
     if (menuButton) {
       fireEvent.click(menuButton);
 
-      // Attendi che il menu sia visibile e clicca su Delete
       await vi.waitFor(() => {
         const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
         if (deleteOption) {
@@ -620,7 +596,6 @@ describe('DebtPositionDetail Component', () => {
         }
       });
 
-      // Verifica che il dialog di errore sia visualizzato
       await vi.waitFor(() => {
         const dialogTitle = screen.getByText('Cannot Delete');
         expect(dialogTitle).toBeVisible();
@@ -631,24 +606,18 @@ describe('DebtPositionDetail Component', () => {
         expect(dialogMessage).toBeVisible();
       });
 
-      // Trova direttamente il pulsante Close nel dialogo
       const closeButton = screen.getByRole('button', { name: 'Close' });
       expect(closeButton).toBeVisible();
 
-      // Clicca sul pulsante Close
       fireEvent.click(closeButton);
 
-      // Verifica che il dialog sia stato chiuso
       await vi.waitFor(() => {
         expect(screen.queryByText('Cannot Delete')).not.toBeInTheDocument();
       });
 
-      // Verifica che la funzione di eliminazione NON sia stata chiamata
       expect(deleteMockMutate).not.toHaveBeenCalled();
     }
   });
-
-  // Test aggiuntivi per aumentare la coverage
 
   it('handles debt position in DRAFT status when clicking action button', () => {
     mockDebtPositionDetail.status = DebtPositionStatus.DRAFT;
