@@ -14,7 +14,8 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
   trigger,
   errors,
   fieldValidators,
-  t
+  t,
+  beneficiaryReadonly
 }: Readonly<
   Pick<
     BeneficiaryFieldsProps<T>,
@@ -28,7 +29,16 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
     | 'errors'
     | 'fieldValidators'
     | 't'
-  >
+  > & {
+    beneficiaryReadonly?: {
+      entityName?: boolean;
+      amount?: boolean;
+      taxCode?: boolean;
+      remittance?: boolean;
+      iban?: boolean;
+      taxonomyCode?: boolean;
+    };
+  }
 >) {
   return (
     <>
@@ -56,7 +66,7 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
             <IBANField
               field={field}
               t={t}
-              disabled={disabled}
+              disabled={disabled || beneficiaryReadonly?.iban}
               context={validationContext}
               index={index}
               trigger={trigger}

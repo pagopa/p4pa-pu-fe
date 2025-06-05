@@ -7,7 +7,8 @@ import {
   UseFormTrigger,
   FieldErrors,
   FieldValues,
-  FieldArrayPath
+  FieldArrayPath,
+  Path
 } from 'react-hook-form';
 import { Grid, Paper, Box, Button, Divider } from '@mui/material';
 import { Add } from '@mui/icons-material';
@@ -52,6 +53,7 @@ type BeneficiaryFieldProps<T extends FieldValues = FieldValues> = {
   readonly isInsideInstallment?: boolean;
   readonly installmentIndex?: number;
   readonly installmentsFieldNamePrefix?: string;
+  readonly isEditing?: boolean;
 };
 
 /**
@@ -86,7 +88,8 @@ const InternalBeneficiaryField = <T extends FieldValues>(
     onBeneficiariesChange,
     isInsideInstallment = false,
     installmentIndex,
-    installmentsFieldNamePrefix
+    installmentsFieldNamePrefix,
+    isEditing
   } = props;
 
   const { t } = useTranslation();
@@ -137,7 +140,11 @@ const InternalBeneficiaryField = <T extends FieldValues>(
    * Only visible on the last beneficiary and if the maximum limit hasn't been reached
    */
   const renderAddBeneficiaryButton = (index: number): JSX.Element | null => {
-    if (index === fields.length - 1 && fields.length < MAX_BENEFICIARIES) {
+    if (
+      index === fields.length - 1 &&
+      fields.length < MAX_BENEFICIARIES &&
+      !isEditing
+    ) {
       return (
         <>
           <Divider sx={{ mt: 2, mb: 1 }} />
@@ -185,6 +192,10 @@ const InternalBeneficiaryField = <T extends FieldValues>(
   const renderBeneficiary = (field: BeneficiaryField, index: number) => {
     const validationContext = createValidationContext(field, index);
 
+    // Get readonly properties for this beneficiary from form data
+    const beneficiaryData = getValues(`${fieldNamePrefix}.${index}` as Path<T>);
+    const beneficiaryReadonly = beneficiaryData?.readonly;
+
     return (
       <Paper
         key={field.id}
@@ -194,7 +205,12 @@ const InternalBeneficiaryField = <T extends FieldValues>(
           position: 'relative'
         }}
       >
-        <BeneficiaryHeader index={index} t={t} onRemove={removeBeneficiary} />
+        <BeneficiaryHeader
+          index={index}
+          t={t}
+          onRemove={removeBeneficiary}
+          isEditing={isEditing}
+        />
 
         <Grid container spacing={2}>
           <BeneficiaryIdentityFields
@@ -204,6 +220,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
             validationContext={validationContext}
             disabled={disabled}
             t={t}
+            beneficiaryReadonly={beneficiaryReadonly}
           />
 
           <BeneficiaryAmountFields
@@ -232,6 +249,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
             }
             trigger={trigger}
             t={t}
+            beneficiaryReadonly={beneficiaryReadonly}
           />
 
           <BeneficiaryPaymentFields
@@ -258,6 +276,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
               }
             }
             t={t}
+            beneficiaryReadonly={beneficiaryReadonly}
           />
 
           <BeneficiaryClassificationFields
@@ -267,6 +286,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
             validationContext={validationContext}
             disabled={disabled}
             t={t}
+            beneficiaryReadonly={beneficiaryReadonly}
           />
         </Grid>
 

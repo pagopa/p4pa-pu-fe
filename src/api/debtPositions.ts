@@ -9,7 +9,10 @@ import {
   installmentRegistrySchema
 } from '../../generated/zod-schema';
 import { AxiosError } from 'axios';
-import { DebtPositionDTO } from '../../generated/data-contracts';
+import {
+  DebtPositionDTO,
+  ManageDebtPositionDTO
+} from '../../generated/data-contracts';
 import { extractFilename } from '../utils/formatters';
 
 type DebtPositionViewParams = Parameters<
@@ -183,6 +186,34 @@ const createDebtPosition = (
     onError
   });
 
+/** manage debt position installments (edit mode) */
+const manageDebtPositionInstallments = (
+  onSuccess?: (response: DebtPositionDTO) => void,
+  onError?: (error: AxiosError) => void
+) =>
+  useMutation({
+    mutationKey: ['manageDebtPositionInstallments'],
+    mutationFn: async (params: {
+      organizationId: number;
+      debtPositionId: number;
+      body: ManageDebtPositionDTO;
+      publish?: boolean;
+    }) => {
+      const response = await utils.apiClient.bff.manageDebtPositionInstallments(
+        params.organizationId,
+        params.debtPositionId,
+        params.body,
+        params.publish ? { publish: params.publish } : undefined
+      );
+      if (response.data) {
+        parseAndLog(debtPositionDTOSchema, response.data);
+      }
+      return response.data;
+    },
+    onSuccess,
+    onError
+  });
+
 /** returns a mutation to download the payment notice file */
 const getPaymentNoticeFile = (
   organizationId: number,
@@ -284,6 +315,7 @@ export default {
   deleteDebtPositionTypeOrgs,
   deleteDebtPosition,
   createDebtPosition,
+  manageDebtPositionInstallments,
   getDebtPositionRegistriesMutation,
   getInstallmentRegistriesMutation,
   getPaymentNoticeFile,

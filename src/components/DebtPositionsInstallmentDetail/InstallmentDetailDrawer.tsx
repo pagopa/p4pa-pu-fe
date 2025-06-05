@@ -22,7 +22,11 @@ export const InstallmentDetailDrawer = ({
     installmentId
   );
 
-  const Details = ({ transfer }: { transfer: TransferDTO }) => {
+  const Details = ({
+    transfer
+  }: {
+    transfer: TransferDTO;
+  }): JSX.Element | null => {
     // TODO: handle missing value
     if (
       !transfer?.amountCents ||
@@ -45,6 +49,12 @@ export const InstallmentDetailDrawer = ({
           label="importo"
           variant="sidenav"
           value={moneyFormat(transfer.amountCents)}
+        />
+        <Drawer.Field
+          id="remittanceInformation"
+          label="Causale"
+          variant="sidenav"
+          value={transfer?.remittanceInformation ?? ' _ '}
         />
         <Drawer.Field
           id="fiscalCode"

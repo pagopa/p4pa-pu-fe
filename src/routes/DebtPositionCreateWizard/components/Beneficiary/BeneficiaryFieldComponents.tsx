@@ -130,9 +130,10 @@ export function BeneficiaryHeader(
     index: number;
     t: (key: string) => string;
     onRemove: (index: number) => void;
+    isEditing?: boolean;
   }>
 ) {
-  const { index, t, onRemove } = props;
+  const { index, t, onRemove, isEditing = false } = props;
 
   return (
     <Box
@@ -158,6 +159,7 @@ export function BeneficiaryHeader(
         startIcon={<DeleteOutlineIcon />}
         color="error"
         variant="text"
+        disabled={isEditing}
         sx={{ position: 'absolute', top: 8, right: 8, minWidth: 'auto' }}
       >
         {t('commons.delete')}

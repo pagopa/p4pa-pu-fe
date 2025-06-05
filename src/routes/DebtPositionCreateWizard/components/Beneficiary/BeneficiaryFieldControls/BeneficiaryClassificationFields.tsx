@@ -11,7 +11,8 @@ export function BeneficiaryClassificationFields<T extends FieldValues>({
   fieldNamePrefix,
   validationContext,
   disabled,
-  t
+  t,
+  beneficiaryReadonly
 }: Readonly<
   Pick<
     BeneficiaryFieldsProps<T>,
@@ -21,7 +22,16 @@ export function BeneficiaryClassificationFields<T extends FieldValues>({
     | 'validationContext'
     | 'disabled'
     | 't'
-  >
+  > & {
+    beneficiaryReadonly?: {
+      entityName?: boolean;
+      amount?: boolean;
+      taxCode?: boolean;
+      remittance?: boolean;
+      iban?: boolean;
+      taxonomyCode?: boolean;
+    };
+  }
 >) {
   return (
     <Grid item xs={12}>
@@ -41,7 +51,7 @@ export function BeneficiaryClassificationFields<T extends FieldValues>({
           <TaxonomyCodeField
             field={field}
             t={t}
-            disabled={disabled}
+            disabled={disabled || beneficiaryReadonly?.taxonomyCode}
             context={validationContext}
           />
         )}

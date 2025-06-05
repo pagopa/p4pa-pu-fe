@@ -19,16 +19,34 @@ function DebtPositionCreateWizardCompleted() {
   const deployPath = config.deployPath;
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-  const { description = '', status, debtPositionId } = location.state || {};
+  const {
+    description = '',
+    status,
+    debtPositionId,
+    isEditing = false
+  } = location.state || {};
   const isDraft = status === DebtPositionStatus.DRAFT;
 
-  const translationKeys = {
-    title: isDraft
+  const getTitleTranslationKey = (): string => {
+    if (isEditing) {
+      return isDraft
+        ? 'debtPositionCreateWizardCompleted.editDraft'
+        : 'debtPositionCreateWizardCompleted.edit';
+    }
+    return isDraft
       ? 'debtPositionCreateWizardCompleted.draft'
-      : 'debtPositionCreateWizardCompleted.title',
-    description: isDraft
+      : 'debtPositionCreateWizardCompleted.title';
+  };
+
+  const getDescriptionTranslationKey = (): string => {
+    return isDraft
       ? 'debtPositionCreateWizardCompleted.descriptionDraft'
-      : 'debtPositionCreateWizardCompleted.description',
+      : 'debtPositionCreateWizardCompleted.description';
+  };
+
+  const translationKeys = {
+    title: getTitleTranslationKey(),
+    description: getDescriptionTranslationKey(),
     viewDebtPosition: 'debtPositionCreateWizardCompleted.viewDebtPosition',
     backToStart: 'debtPositionCreateWizardCompleted.backToStart',
     downloadDebtPosition:

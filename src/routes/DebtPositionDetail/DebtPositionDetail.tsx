@@ -160,12 +160,15 @@ const DebtPositionDetail = () => {
     }
   );
 
-  // Variable to determine if the debt position can be deleted
   const canBeDeleted =
     debtPositionDetail?.status !== DebtPositionStatus.PAID &&
     debtPositionDetail?.status !== DebtPositionStatus.PARTIALLY_PAID;
 
-  // Variable to determine if the delete option should be shown in the menu
+  const canBeEdited =
+    debtPositionDetail?.status === DebtPositionStatus.DRAFT ||
+    debtPositionDetail?.status === DebtPositionStatus.UNPAID ||
+    debtPositionDetail?.status === DebtPositionStatus.EXPIRED;
+
   const showDeleteOption =
     debtPositionDetail?.status !== DebtPositionStatus.CANCELLED;
   const showEditOption =
@@ -221,6 +224,18 @@ const DebtPositionDetail = () => {
       onConfirm: () => setDialogConfig(null),
       onClose: () => setDialogConfig(null),
       testId: 'download-dialog'
+    });
+  };
+
+  const showEditErrorDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: t('debtPositionDetail.editErrorDialog.title'),
+      message: t('debtPositionDetail.editErrorDialog.description'),
+      confirmLabel: t('commons.close'),
+      onConfirm: () => setDialogConfig(null),
+      onClose: () => setDialogConfig(null),
+      testId: 'edit-error-dialog'
     });
   };
 
@@ -292,7 +307,10 @@ const DebtPositionDetail = () => {
 
   const debtorSection = debtPositionDetail && {
     data: [
-      { label: t('commons.debtor'), value: debtPositionDetail.debtor.fullName },
+      {
+        label: t('commons.debtor'),
+        value: debtPositionDetail.debtor.fullName
+      },
       {
         label: t('commons.fiscalCodeorVat'),
         value: `${debtPositionDetail.debtor.fiscalCode} (${(debtPositionDetail.debtor.entityType as string) === 'F' ? t('commons.person') : t('commons.personLegal')})`
@@ -367,6 +385,25 @@ const DebtPositionDetail = () => {
     )
     .map(createPaymentOptionDisplayData);
 
+  const handleEdit = () => {
+    handleMenuClose();
+    if (canBeEdited && showEditOption) {
+      navigate(
+        generatePath(PageRoutes.DEBT_POSITION_CREATE_WIZARD, {
+          id: debtPositionId.toString()
+        }),
+        {
+          state: {
+            isEditing: true,
+            debtPositionId: debtPositionId
+          }
+        }
+      );
+    } else {
+      showEditErrorDialog();
+    }
+  };
+
   return debtPositionDetail ? (
     <>
       <TitleComponent
@@ -433,7 +470,7 @@ const DebtPositionDetail = () => {
       >
         <>
           {showEditOption && (
-            <MenuItem onClick={() => console.log('edit')}>
+            <MenuItem onClick={handleEdit}>
               <Edit fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
               {t('debtPositionDetail.edit')}
             </MenuItem>

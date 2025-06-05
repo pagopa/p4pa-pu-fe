@@ -241,16 +241,23 @@ export const useDataGridPaginationWithUrl = ({
         data.totalPages > 0
       ) {
         const params = new URLSearchParams(searchParams);
+        const currentUrlSize = parseInt(
+          searchParams.get('size') || String(data.size)
+        );
+
         // Improvement: Go to the last available page instead of always to page 1
         params.set('page', String(data.totalPages));
-        params.set('size', String(data.size));
+
+        // Preserve the user's size preference from URL if valid, otherwise use backend size
+        const validSize = currentUrlSize > 0 ? currentUrlSize : data.size;
+        params.set('size', String(validSize));
 
         setSearchParams(params, { replace: true });
 
         // Update the internal state to be consistent
         const newPagination = {
           page: data.totalPages - 1, // Convert to 0-based
-          size: data.size
+          size: validSize
         };
 
         setPagination(newPagination);

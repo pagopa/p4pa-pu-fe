@@ -15,6 +15,9 @@ import {
 } from '../../generated/apiClient';
 import {
   DebtPositionRegistry,
+  ManageDebtPositionDTO,
+  ActionEnum,
+  EntityTypeEnum,
   InstallmentRegistry,
   PaymentEventType
 } from '../../generated/data-contracts';
@@ -29,7 +32,12 @@ vi.mock('../utils', () => {
           getInstallmentDetail: vi.fn(),
           getDebtPositionDetail: vi.fn(),
           deleteDebtPositionType: vi.fn(),
+          deleteDebtPositionTypeOrg: vi.fn(),
+          deleteDebtPosition: vi.fn(),
           createDebtPosition: vi.fn(),
+          manageDebtPositionInstallments: vi.fn(),
+          getPaymentNotice: vi.fn(),
+          getUnpaidPaymentNoticeZip: vi.fn(),
           getDebtPositionRegistries: vi.fn(),
           getInstallmentRegistries: vi.fn()
         }
@@ -714,6 +722,432 @@ describe('createDebtPosition', () => {
       expect(eventTypes).toContain(PaymentEventType.SEND_NOTIFICATION_CREATED);
 
       expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+    });
+  });
+});
+
+describe('deleteDebtPositionTypeOrgs', () => {
+  it('calls the API correctly', async () => {
+    const organizationId = 123;
+    const debtPositionTypeOrgId = 456;
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteDebtPositionTypeOrg')
+      .mockResolvedValue({ data: {} } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.deleteDebtPositionTypeOrgs(
+        organizationId,
+        debtPositionTypeOrgId
+      )
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        organizationId,
+        debtPositionTypeOrgId
+      );
+    });
+  });
+
+  it('handles errors correctly', async () => {
+    const onError = vi.fn();
+    const organizationId = 123;
+    const debtPositionTypeOrgId = 456;
+
+    vi.spyOn(
+      utils.apiClient.bff,
+      'deleteDebtPositionTypeOrg'
+    ).mockImplementationOnce(() => Promise.reject('API Error'));
+
+    const { result } = renderHook(() =>
+      debtPositions.deleteDebtPositionTypeOrgs(
+        organizationId,
+        debtPositionTypeOrgId
+      )
+    );
+
+    result.current.mutate(undefined, { onError });
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalled();
+    });
+  });
+});
+
+describe('deleteDebtPosition', () => {
+  it('calls the API correctly with success callback', async () => {
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const onSuccess = vi.fn();
+    const onError = vi.fn();
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteDebtPosition')
+      .mockResolvedValue({ data: {} } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.deleteDebtPosition(
+        organizationId,
+        debtPositionId,
+        onSuccess,
+        onError
+      )
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(onSuccess).toHaveBeenCalled();
+    });
+  });
+
+  it('handles errors correctly with error callback', async () => {
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const onSuccess = vi.fn();
+    const onError = vi.fn();
+    const error = new Error('API Error');
+
+    vi.spyOn(utils.apiClient.bff, 'deleteDebtPosition').mockRejectedValue(
+      error
+    );
+
+    const { result } = renderHook(() =>
+      debtPositions.deleteDebtPosition(
+        organizationId,
+        debtPositionId,
+        onSuccess,
+        onError
+      )
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(onError).toHaveBeenCalledWith(error, undefined, undefined);
+      expect(onSuccess).not.toHaveBeenCalled();
+    });
+  });
+});
+
+describe('manageDebtPositionInstallments', () => {
+  it('manages installments successfully with publish flag', async () => {
+    const mockResponse = createMock(debtPositionDetailDTOSchema);
+    const params = {
+      organizationId: 123,
+      debtPositionId: 456,
+      body: {
+        paymentOptionId: 1001,
+        installments: [
+          {
+            action: ActionEnum.I,
+            installment: {
+              installmentId: 1,
+              amountCents: 10000,
+              dueDate: '2025-12-31',
+              remittanceInformation: 'Test payment',
+              debtor: {
+                entityType: EntityTypeEnum.F,
+                fiscalCode: 'ABCDEF12G34H567I',
+                fullName: 'Test User'
+              }
+            }
+          }
+        ]
+      } as ManageDebtPositionDTO,
+      publish: true
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'manageDebtPositionInstallments')
+      .mockResolvedValue({ data: mockResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.manageDebtPositionInstallments()
+    );
+
+    result.current.mutate(params);
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        params.organizationId,
+        params.debtPositionId,
+        params.body,
+        { publish: params.publish }
+      );
+    });
+  });
+
+  it('manages installments successfully without publish flag', async () => {
+    const mockResponse = createMock(debtPositionDetailDTOSchema);
+    const params = {
+      organizationId: 123,
+      debtPositionId: 456,
+      body: {
+        paymentOptionId: 1001,
+        installments: [
+          {
+            action: ActionEnum.M,
+            installment: {
+              installmentId: 1,
+              amountCents: 10000,
+              dueDate: '2025-12-31',
+              remittanceInformation: 'Test payment',
+              debtor: {
+                entityType: EntityTypeEnum.F,
+                fiscalCode: 'ABCDEF12G34H567I',
+                fullName: 'Test User'
+              }
+            }
+          }
+        ]
+      } as ManageDebtPositionDTO
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'manageDebtPositionInstallments')
+      .mockResolvedValue({ data: mockResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.manageDebtPositionInstallments()
+    );
+
+    result.current.mutate(params);
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        params.organizationId,
+        params.debtPositionId,
+        params.body,
+        undefined
+      );
+    });
+  });
+
+  it('handles errors correctly', async () => {
+    const error = new Error('API Error');
+    const params = {
+      organizationId: 123,
+      debtPositionId: 456,
+      body: {
+        paymentOptionId: 1001,
+        installments: []
+      } as ManageDebtPositionDTO
+    };
+
+    vi.spyOn(
+      utils.apiClient.bff,
+      'manageDebtPositionInstallments'
+    ).mockRejectedValue(error);
+
+    const { result } = renderHook(() =>
+      debtPositions.manageDebtPositionInstallments()
+    );
+
+    result.current.mutate(params);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+  });
+});
+
+describe('getPaymentNoticeFile', () => {
+  it('downloads payment notice file successfully with custom filename', async () => {
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const iuv = '123456789012345678';
+    const mockBlob = new Blob(['mock pdf content'], {
+      type: 'application/pdf'
+    });
+    const expectedFileName = 'avviso_123456789012345678.pdf';
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getPaymentNotice')
+      .mockResolvedValue({
+        data: mockBlob,
+        headers: {
+          'content-disposition': `attachment; filename="${expectedFileName}"`
+        },
+        status: 200,
+        statusText: 'OK',
+        config: { headers: {} }
+      } as unknown as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.getPaymentNoticeFile(organizationId, debtPositionId, iuv)
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        organizationId,
+        debtPositionId,
+        { iuv },
+        { format: 'blob' }
+      );
+      expect(result.current.data).toEqual({
+        data: mockBlob,
+        fileName: expectedFileName
+      });
+    });
+  });
+
+  it('downloads payment notice file with default filename when header is missing', async () => {
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const iuv = '123456789012345678';
+    const mockBlob = new Blob(['mock pdf content'], {
+      type: 'application/pdf'
+    });
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getPaymentNotice')
+      .mockResolvedValue({
+        data: mockBlob,
+        headers: {},
+        status: 200,
+        statusText: 'OK',
+        config: { headers: {} }
+      } as unknown as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.getPaymentNoticeFile(organizationId, debtPositionId, iuv)
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        organizationId,
+        debtPositionId,
+        { iuv },
+        { format: 'blob' }
+      );
+      expect(result.current.data).toEqual({
+        data: mockBlob,
+        fileName: `notice-${iuv}.pdf`
+      });
+    });
+  });
+
+  it('handles API errors correctly', async () => {
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const iuv = '123456789012345678';
+    const error = new Error('API Error');
+
+    vi.spyOn(utils.apiClient.bff, 'getPaymentNotice').mockRejectedValue(error);
+
+    const { result } = renderHook(() =>
+      debtPositions.getPaymentNoticeFile(organizationId, debtPositionId, iuv)
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(error);
+    });
+  });
+});
+
+describe('getDebtPositionZipFile', () => {
+  it('downloads zip file successfully with custom filename', async () => {
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const mockBlob = new Blob(['mock zip content'], {
+      type: 'application/zip'
+    });
+    const expectedFileName = 'posizioni_debitorie_456.zip';
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getUnpaidPaymentNoticeZip')
+      .mockResolvedValue({
+        data: mockBlob,
+        headers: {
+          'content-disposition': `attachment; filename="${expectedFileName}"`
+        },
+        status: 200,
+        statusText: 'OK',
+        config: { headers: {} }
+      } as unknown as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.getDebtPositionZipFile(organizationId)
+    );
+
+    result.current.mutate(debtPositionId);
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        format: 'blob'
+      });
+      expect(result.current.data).toEqual({
+        data: mockBlob,
+        fileName: expectedFileName
+      });
+    });
+  });
+
+  it('downloads zip file with default filename when header is missing', async () => {
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const mockBlob = new Blob(['mock zip content'], {
+      type: 'application/zip'
+    });
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getUnpaidPaymentNoticeZip')
+      .mockResolvedValue({
+        data: mockBlob,
+        headers: {},
+        status: 200,
+        statusText: 'OK',
+        config: { headers: {} }
+      } as unknown as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.getDebtPositionZipFile(organizationId)
+    );
+
+    result.current.mutate(debtPositionId);
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        format: 'blob'
+      });
+      expect(result.current.data).toEqual({
+        data: mockBlob,
+        fileName: `debt-position-${debtPositionId}.zip`
+      });
+    });
+  });
+
+  it('handles API errors correctly', async () => {
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const error = new Error('Zip download failed');
+
+    vi.spyOn(
+      utils.apiClient.bff,
+      'getUnpaidPaymentNoticeZip'
+    ).mockRejectedValue(error);
+
+    const { result } = renderHook(() =>
+      debtPositions.getDebtPositionZipFile(organizationId)
+    );
+
+    result.current.mutate(debtPositionId);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(error);
     });
   });
 });

@@ -23,6 +23,16 @@ import {
   createInstallmentRemittanceFieldSchema,
   createInstallmentDueDateFieldSchema
 } from './InstallmentSchema';
+import { formatDateForApi } from '../utils/paymentUtility';
+import {
+  ManageDebtPositionDTO,
+  ManageInstallmentDTO,
+  ActionEnum,
+  InstallmentDTO,
+  TransferDTO,
+  DebtPositionDetailDTO,
+  PersonDTO
+} from '../../generated/data-contracts';
 
 /**
  * Base type for the installment structure in the form
@@ -832,3 +842,192 @@ export const createStep3Resolver = (
     );
   };
 };
+
+/**
+ * Converts Step3 form data to ManageDebtPositionDTO for the manage installments API
+ * Uses the original installment structure and modifies only editable fields
+ * Maintains the same structure returned by the GET request
+ */
+export function convertFormDataToManageDebtPositionDTO(
+  step3Data: Step3FormValues,
+  step2Data: Step2Data,
+  paymentOptionId: number,
+  originalDebtPositionDetail?: DebtPositionDetailDTO,
+  step1Data?: Step1Data
+): ManageDebtPositionDTO {
+  if (!originalDebtPositionDetail?.paymentOptions?.[0]?.installments?.length) {
+    throw new Error('No original installments found for modification');
+  }
+
+  const originalInstallments =
+    originalDebtPositionDetail.paymentOptions[0].installments;
+  const originalPaymentOption = originalDebtPositionDetail.paymentOptions[0];
+  let installments: Array<ManageInstallmentDTO> = [];
+
+  // Handle installment payments (with installments in the form)
+  if (step3Data.installments && step3Data.installments.length > 0) {
+    installments = step3Data.installments.map((formInstallment, index) => {
+      const originalInstallment = originalInstallments[index];
+
+      if (!originalInstallment) {
+        throw new Error(`Original installment not found for index ${index}`);
+      }
+
+      // Update existing transfers with beneficiary data from the form
+      const updatedTransfers: Array<TransferDTO> = [
+        ...(originalInstallment.transfers || [])
+      ];
+
+      // If there are beneficiaries in the form, update corresponding transfers (transferIndex >= 2)
+      if (
+        formInstallment.beneficiaries &&
+        formInstallment.beneficiaries.length > 0
+      ) {
+        formInstallment.beneficiaries.forEach(
+          (beneficiary, beneficiaryIndex) => {
+            const transferIndex = beneficiaryIndex + 2; // Beneficiaries start from transferIndex = 2
+            const existingTransferIndex = updatedTransfers.findIndex(
+              (t) => t.transferIndex === transferIndex
+            );
+
+            const updatedTransfer: TransferDTO = {
+              ...updatedTransfers[existingTransferIndex],
+              amountCents: Math.round(
+                parseFloat(beneficiary.amount.replace(',', '.')) * 100
+              ),
+              remittanceInformation: beneficiary.remittance
+            };
+
+            if (existingTransferIndex >= 0) {
+              updatedTransfers[existingTransferIndex] = updatedTransfer;
+            }
+          }
+        );
+      }
+
+      // Update debtor while maintaining non-modifiable fields
+      const updatedDebtor: PersonDTO = {
+        ...originalInstallment.debtor,
+        fiscalCode: step2Data.taxCode.value,
+        fullName: step2Data.fullName.value,
+        ...(step2Data.address.value && { address: step2Data.address.value }),
+        ...(step2Data.civicNumber.value && {
+          civic: step2Data.civicNumber.value
+        }),
+        ...(step2Data.zipCode.value && { postalCode: step2Data.zipCode.value }),
+        ...(step2Data.city.value && { location: step2Data.city.value }),
+        ...(step2Data.province.value && { province: step2Data.province.value }),
+        nation:
+          step2Data.country.value || originalInstallment.debtor.nation || 'IT'
+      };
+
+      // Create installment maintaining the complete original structure
+      const updatedInstallment: InstallmentDTO = {
+        ...originalInstallment,
+        amountCents: Math.round(
+          parseFloat(formInstallment.amount.replace(',', '.')) * 100
+        ),
+        ...(formInstallment.dueDate && {
+          dueDate: formatDateForApi(formInstallment.dueDate)
+        }),
+        remittanceInformation: formInstallment.remittance,
+        debtor: updatedDebtor,
+        transfers: updatedTransfers
+      };
+
+      // Determine action: 'M' for existing installments, 'I' for new ones
+      const action: ActionEnum = formInstallment.isNew
+        ? ActionEnum.I
+        : ActionEnum.M;
+
+      return {
+        action,
+        installment: updatedInstallment
+      };
+    });
+  }
+  // Handle single payments
+  else {
+    const originalInstallment = originalInstallments[0];
+    if (!originalInstallment) {
+      throw new Error('No original installment found for single payment');
+    }
+
+    // Update transfers for beneficiaries if present
+    const updatedTransfers: Array<TransferDTO> = [
+      ...(originalInstallment.transfers || [])
+    ];
+
+    if (step3Data.beneficiaries && step3Data.beneficiaries.length > 0) {
+      step3Data.beneficiaries.forEach((beneficiary, beneficiaryIndex) => {
+        const transferIndex = beneficiaryIndex + 2;
+        const existingTransferIndex = updatedTransfers.findIndex(
+          (t) => t.transferIndex === transferIndex
+        );
+
+        const updatedTransfer: TransferDTO = {
+          ...updatedTransfers[existingTransferIndex],
+          amountCents: Math.round(
+            parseFloat(beneficiary.amount.replace(',', '.')) * 100
+          ),
+          remittanceInformation: beneficiary.remittance
+        };
+
+        if (existingTransferIndex >= 0) {
+          updatedTransfers[existingTransferIndex] = updatedTransfer;
+        }
+      });
+    }
+
+    // Update debtor
+    const updatedDebtor: PersonDTO = {
+      ...originalInstallment.debtor,
+      fiscalCode: step2Data.taxCode.value,
+      fullName: step2Data.fullName.value,
+      ...(step2Data.address.value && { address: step2Data.address.value }),
+      ...(step2Data.civicNumber.value && {
+        civic: step2Data.civicNumber.value
+      }),
+      ...(step2Data.zipCode.value && { postalCode: step2Data.zipCode.value }),
+      ...(step2Data.city.value && { location: step2Data.city.value }),
+      ...(step2Data.province.value && { province: step2Data.province.value }),
+      nation:
+        step2Data.country.value || originalInstallment.debtor.nation || 'IT'
+    };
+
+    // Create updated installment maintaining the complete structure
+    const updatedInstallment: InstallmentDTO = {
+      ...originalInstallment,
+      amountCents: Math.round(
+        parseFloat(step3Data.amount.value.replace(',', '.')) * 100
+      ),
+      ...(step3Data.dueDate?.value && {
+        dueDate: formatDateForApi(step3Data.dueDate.value)
+      }),
+      remittanceInformation: step3Data.paymentObject.value,
+      debtor: updatedDebtor,
+      transfers: updatedTransfers
+    };
+
+    installments = [
+      {
+        action: ActionEnum.M,
+        installment: updatedInstallment
+      }
+    ];
+  }
+
+  // Create final DTO including descriptions
+  const manageDTO: ManageDebtPositionDTO = {
+    paymentOptionId,
+    installments,
+    ...(step1Data?.description?.value && {
+      debtPositionDescription: step1Data.description.value
+    }),
+    ...(originalPaymentOption?.description && {
+      paymentOptionDescription: originalPaymentOption.description
+    })
+  };
+
+  return manageDTO;
+}

@@ -215,9 +215,12 @@ describe('InstallmentItem', () => {
   it('should not show the remove button when onRemove is not provided', () => {
     render(<InstallmentItem<TestFormValues> {...getMockProps()} />);
 
-    // There should be no remove icons
-    const removeIcon = screen.queryByTestId('RemoveCircleOutlineIcon');
-    expect(removeIcon).not.toBeInTheDocument();
+    const removeIcon = screen.getByTestId('RemoveCircleOutlineIcon');
+    expect(removeIcon).toBeInTheDocument();
+
+    const removeButton = removeIcon.closest('button');
+    expect(removeButton).toBeInTheDocument();
+    expect(removeButton).toBeDisabled();
   });
 
   it('should handle amount change', () => {

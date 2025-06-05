@@ -60,11 +60,6 @@ export const useDebtPositionSearch = ({
     handlePaginationChange({ page: 0, size: paginationParams.size });
   }, [filterValues, handlePaginationChange, paginationParams.size]);
 
-  useEffect(() => {
-    const payload = filterToRequest();
-    query.mutate(payload);
-  }, [organizationId, paginationParams.page, paginationParams.size, sort]);
-
   const filterToRequest = useCallback((): DebtPositionViewQuery &
     DebtPositionInstallmentsQuery => {
     const payload = {
@@ -95,6 +90,18 @@ export const useDebtPositionSearch = ({
 
     return payload;
   }, [appliedFilters, paginationParams, sort]);
+
+  useEffect(() => {
+    const payload = filterToRequest();
+    query.mutate(payload);
+  }, [
+    organizationId,
+    paginationParams.page,
+    paginationParams.size,
+    sort,
+    appliedFilters,
+    filterToRequest
+  ]);
 
   const handleFilterChange = useCallback(
     (id: string, value: FilterFieldValue): void => {

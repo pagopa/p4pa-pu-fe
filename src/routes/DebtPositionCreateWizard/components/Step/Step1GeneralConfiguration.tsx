@@ -3,7 +3,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useStore } from '../../../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
 import { MenuItem, TextField } from '@mui/material';
-import { useDebtPositionsTypeOrg } from '../../../../hooks/useDebtPositionsTypeOrg';
+import { getDebtPositionTypeOrgs } from '../../../../api/debtPositionsTypeOrg';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
@@ -16,8 +16,8 @@ import {
   createStep1GeneralConfigurationSchema,
   Step1GeneralConfigurationFormValues
 } from '../../../../models/Step1GeneralConfigurationSchema';
+import { useEffect, useRef, useMemo } from 'react';
 
-// Types for react-hook-form
 type FormValues = Step1GeneralConfigurationFormValues;
 
 type Props = {
@@ -25,41 +25,157 @@ type Props = {
   setData: (data: Step1Data) => void;
   onNext: () => void;
   onBack?: () => void;
+  isEditing?: boolean;
+  debtPositionTypeOrgCode?: string;
 };
 
 const Step1GeneralConfiguration = ({
   data,
   setData,
   onNext,
-  onBack
+  onBack,
+  isEditing = false,
+  debtPositionTypeOrgCode
 }: Props) => {
   const {
     state: { organizationId }
   } = useStore();
   const { t } = useTranslation();
-  // Custom hook to retrieve available debt position types
-  const { optionsMap: debtPositionsTypes } = useDebtPositionsTypeOrg({
-    organizationId,
-    includeAllOption: false
-  }) as { optionsMap: Array<DebtPositionType> };
 
-  // Create the Zod schema with translation function
+  const hasSetupDebtPositionType = useRef(false);
+
+  const {
+    data: debtPositionTypeOrgsData,
+    isLoading: isLoadingDebtPositionTypes
+  } = getDebtPositionTypeOrgs({
+    organizationId
+  });
+
+  const debtPositionsTypes: Array<DebtPositionType> = useMemo(() => {
+    if (!debtPositionTypeOrgsData) return [];
+
+    return debtPositionTypeOrgsData
+      .filter(
+        (type) => type?.description && type?.debtPositionTypeOrgId !== undefined
+      )
+      .sort((a, b) => a.description.localeCompare(b.description))
+      .map((type) => ({
+        label: type.description,
+        value: type.debtPositionTypeOrgId as number,
+        flagMandatoryDueDate: type.flagMandatoryDueDate || false
+      }));
+  }, [debtPositionTypeOrgsData]);
+
   const schema = createStep1GeneralConfigurationSchema(t);
 
-  // Form initialization with react-hook-form
-  const {
-    handleSubmit, // to handle form submission
-    control, // to control values
-    formState: { errors } // contains validation errors
-  } = useForm<FormValues>({
-    defaultValues: {
-      debtPositionType: data?.debtPositionType?.value || '',
+  const isDataReady = (): boolean => {
+    if (!isEditing) {
+      return !isLoadingDebtPositionTypes;
+    }
+
+    const hasRequiredData =
+      !isLoadingDebtPositionTypes &&
+      Boolean(debtPositionTypeOrgCode) &&
+      Boolean(debtPositionTypeOrgsData) &&
+      debtPositionsTypes.length > 0 &&
+      Boolean(data?.description?.value);
+
+    return hasRequiredData;
+  };
+
+  const getInitialValues = () => {
+    if (!isEditing || !isDataReady()) {
+      return {
+        debtPositionType: data?.debtPositionType?.value || '',
+        description: data?.description?.value || ''
+      };
+    }
+
+    const matchingTypeOrg = debtPositionTypeOrgsData?.find(
+      (typeOrg) => typeOrg.code === debtPositionTypeOrgCode
+    );
+
+    if (matchingTypeOrg) {
+      const matchingSelectOption = debtPositionsTypes.find(
+        (type) => type.value === matchingTypeOrg.debtPositionTypeOrgId
+      );
+
+      if (matchingSelectOption) {
+        return {
+          debtPositionType: matchingSelectOption.value.toString(),
+          description: data?.description?.value || ''
+        };
+      }
+    }
+
+    return {
+      debtPositionType: '',
       description: data?.description?.value || ''
-    },
+    };
+  };
+
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    setValue
+  } = useForm<FormValues>({
+    defaultValues: getInitialValues(),
     resolver: zodResolver(schema),
     mode: 'onTouched'
   });
-  // Function called on valid form submission
+
+  useEffect(() => {
+    if (
+      isEditing &&
+      isDataReady() &&
+      debtPositionTypeOrgCode &&
+      debtPositionTypeOrgsData
+    ) {
+      const matchingTypeOrg = debtPositionTypeOrgsData.find(
+        (typeOrg) => typeOrg.code === debtPositionTypeOrgCode
+      );
+
+      if (matchingTypeOrg) {
+        const matchingSelectOption = debtPositionsTypes.find(
+          (type) => type.value === matchingTypeOrg.debtPositionTypeOrgId
+        );
+
+        if (matchingSelectOption) {
+          setValue('debtPositionType', matchingSelectOption.value.toString());
+
+          if (!hasSetupDebtPositionType.current) {
+            const updatedData = {
+              ...data,
+              debtPositionType: {
+                ...data.debtPositionType,
+                value: matchingSelectOption.value.toString(),
+                flagMandatoryDueDate:
+                  matchingSelectOption.flagMandatoryDueDate || false
+              }
+            };
+            setData(updatedData);
+            hasSetupDebtPositionType.current = true;
+          }
+        }
+      }
+
+      if (data?.description?.value) {
+        setValue('description', data.description.value);
+      }
+    }
+  }, [
+    isEditing,
+    isDataReady(),
+    debtPositionTypeOrgCode,
+    debtPositionTypeOrgsData,
+    debtPositionsTypes,
+    data?.description?.value,
+    setValue,
+    setData,
+    data
+  ]);
+
   const onSubmit = (values: FormValues) => {
     const selectedType = debtPositionsTypes.find(
       (type: DebtPositionType) =>
@@ -82,6 +198,10 @@ const Step1GeneralConfiguration = ({
     onNext();
   };
 
+  if (!isDataReady()) {
+    return null;
+  }
+
   return (
     <form>
       <WizardStepWrapper
@@ -92,7 +212,6 @@ const Step1GeneralConfiguration = ({
           title={t('debtPositionCreateWizard.step1.title')}
           adornment={<BookIcon />}
         >
-          {/* Debt position type selection */}
           <Controller
             name="debtPositionType"
             control={control}
@@ -118,7 +237,6 @@ const Step1GeneralConfiguration = ({
               </TextField>
             )}
           />
-          {/* Debt position description */}
           <Controller
             name="description"
             control={control}

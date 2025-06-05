@@ -9,6 +9,7 @@ import {
   InstallmentBeneficiaryManagementProps,
   InstallmentBeneficiaryManagementResult
 } from '../models/paymentTypes';
+import { hasValidBeneficiaries } from '../models/Step3Schema';
 
 /**
  * Hook for managing beneficiaries within an installment
@@ -66,7 +67,43 @@ export function useInstallmentBeneficiaryManagement<T extends FieldValues>(
 
       if (!value) {
         beneficiaryManagement.resetAllBeneficiaries();
+
+        // Reset sameBeneficiariesAsBefore when the switch is disabled
+        const sameBeneficiariesAsBeforePath =
+          `${installmentsFieldNamePrefix}.${index}.sameBeneficiariesAsBefore` as Path<T>;
+        setValue(
+          sameBeneficiariesAsBeforePath,
+          false as unknown as PathValue<T, Path<T>>,
+          { shouldDirty: true }
+        );
       } else {
+        // When the switch is activated, check if there are beneficiaries in the previous installment
+        if (index > 0) {
+          const previousInstallmentPath =
+            `${installmentsFieldNamePrefix}.${index - 1}` as Path<T>;
+          const previousInstallment = getValues(previousInstallmentPath);
+
+          // Check if the previous installment has valid beneficiaries
+          const hasPreviousBeneficiaries = !!(
+            previousInstallment &&
+            previousInstallment.isMultibeneficiary &&
+            hasValidBeneficiaries(previousInstallment)
+          );
+
+          if (hasPreviousBeneficiaries) {
+            // Automatically set sameBeneficiariesAsBefore=true
+            const sameBeneficiariesAsBeforePath =
+              `${installmentsFieldNamePrefix}.${index}.sameBeneficiariesAsBefore` as Path<T>;
+            setValue(
+              sameBeneficiariesAsBeforePath,
+              true as unknown as PathValue<T, Path<T>>,
+              { shouldDirty: true }
+            );
+
+            return;
+          }
+        }
+
         const beneficiariesPath =
           `${installmentsFieldNamePrefix}.${index}.beneficiaries` as Path<T>;
 

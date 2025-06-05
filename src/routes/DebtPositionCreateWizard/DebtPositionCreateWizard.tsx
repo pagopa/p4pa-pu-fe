@@ -1,13 +1,23 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useLocation } from 'react-router';
 import Step1GeneralConfiguration from './components/Step/Step1GeneralConfiguration';
 import Step2AddDebtor from './components/Step/Step2AddDebtor';
 import Step3 from './components/Step/Step3';
 import { StepperContainer } from '../../components/Stepper';
-import { useNavigate } from 'react-router';
+import {
+  PaymentOption,
+  Beneficiary,
+  Installment
+} from '../../models/paymentTypes';
 import { PageRoutes } from '../../routes';
-import { PaymentOption } from '../../models/paymentTypes';
 import { Step3Data, Step2Data, Step1Data } from '../../models/DebtPositionType';
+import debtPositions from '../../api/debtPositions';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
+import utils from '../../utils';
+import { DebtPositionDetailDTO } from '../../../generated/data-contracts';
+import { SubjectType } from '../../utils/fieldValidation';
 
 type FormData = {
   step1: Step1Data;
@@ -92,15 +102,253 @@ const initialData: FormData = {
 };
 
 const DebtPositionCreateWizard = () => {
-  const { t } = useTranslation();
-  const [step, setStep] = useState(0);
-  const navigate = useNavigate();
   const [formData, setFormData] = useState<FormData>(initialData);
+  const [step, setStep] = useState(0);
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { state } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
+  const isEditing = location.state?.isEditing === true;
+  const debtPositionId = location.state?.debtPositionId;
+
+  const { data: debtPositionDetail, error } =
+    debtPositions.getDebtPositionDetail(organizationId, debtPositionId || 0);
+
+  useEffect(() => {
+    if (isEditing && !debtPositionId) {
+      console.error('Missing debtPositionId in edit mode');
+      utils.notify.emit(t('debtPositionCreateWizard.errorMissingId'), 'error');
+      navigate(PageRoutes.DEBT_POSITIONS_INDEX);
+      return;
+    }
+
+    if (error) {
+      console.error('Error loading debt position data:', error);
+      utils.notify.emit(
+        t('debtPositionCreateWizard.errorLoadingData'),
+        'error'
+      );
+      navigate(PageRoutes.DEBT_POSITIONS_INDEX);
+      return;
+    }
+
+    if (isEditing && debtPositionDetail) {
+      const transformedData = transformApiDataToFormData(debtPositionDetail);
+      setFormData(transformedData);
+    }
+  }, [isEditing, debtPositionId, debtPositionDetail, error, navigate, t]);
+
+  const transformApiDataToFormData = (
+    debtPositionDetail: DebtPositionDetailDTO
+  ): FormData => {
+    const step1: Step1Data = {
+      debtPositionType: {
+        value: '',
+        readonly: isEditing,
+        flagMandatoryDueDate: false
+      },
+      description: {
+        value: debtPositionDetail.description || '',
+        readonly: false
+      }
+    };
+
+    const step2: Step2Data = {
+      subjectType: {
+        value:
+          debtPositionDetail.debtor?.entityType === 'F'
+            ? SubjectType.INDIVIDUAL
+            : SubjectType.BUSINESS,
+        readonly: isEditing
+      },
+      taxCode: {
+        value: debtPositionDetail.debtor?.fiscalCode || '',
+        readonly: isEditing
+      },
+      fullName: {
+        value: debtPositionDetail.debtor?.fullName || '',
+        readonly: isEditing
+      },
+      address: {
+        value: debtPositionDetail.debtor?.address || '',
+        readonly: isEditing
+      },
+      civicNumber: {
+        value: debtPositionDetail.debtor?.civic || '',
+        readonly: isEditing
+      },
+      zipCode: {
+        value: debtPositionDetail.debtor?.postalCode || '',
+        readonly: isEditing
+      },
+      country: {
+        value: debtPositionDetail.debtor?.nation || 'IT',
+        readonly: isEditing
+      },
+      province: {
+        value: debtPositionDetail.debtor?.province || '',
+        readonly: isEditing
+      },
+      city: {
+        value: debtPositionDetail.debtor?.location || '',
+        readonly: isEditing
+      }
+    };
+
+    const firstPaymentOption = debtPositionDetail.paymentOptions?.[0];
+    const firstInstallment = firstPaymentOption?.installments?.[0];
+    const isInstallmentPayment =
+      firstPaymentOption?.paymentOptionType === 'INSTALLMENTS';
+
+    let beneficiaries: Array<Beneficiary> = [];
+    let installments: Array<Installment> = [];
+    let hasMultipleBeneficiaries = false;
+
+    if (isInstallmentPayment && firstPaymentOption?.installments) {
+      const sortedInstallments = [...firstPaymentOption.installments].sort(
+        (a, b) => {
+          const aDueDate = a.dueDate ? new Date(a.dueDate).getTime() : 0;
+          const bDueDate = b.dueDate ? new Date(b.dueDate).getTime() : 0;
+          return aDueDate - bDueDate;
+        }
+      );
+
+      installments = sortedInstallments.map((installment, index) => {
+        const beneficiaryTransfers =
+          installment.transfers?.filter(
+            (transfer) => transfer.transferIndex && transfer.transferIndex > 1
+          ) || [];
+
+        const installmentBeneficiaries = beneficiaryTransfers.map(
+          (transfer) => ({
+            entityName: transfer.orgName || '',
+            amount: transfer.amountCents
+              ? (transfer.amountCents / 100).toFixed(2)
+              : '0.00',
+            taxCode: transfer.orgFiscalCode || '',
+            remittance: transfer.remittanceInformation || '',
+            iban: transfer.iban || '',
+            postalAccount: transfer.postalIban || '',
+            taxonomyCode: transfer.category || '',
+            readonly: isEditing
+              ? {
+                  entityName: true,
+                  taxCode: true,
+                  iban: true,
+                  postalAccount: true,
+                  taxonomyCode: true,
+                  amount: false,
+                  remittance: false
+                }
+              : undefined
+          })
+        );
+
+        return {
+          amount: installment.amountCents
+            ? (installment.amountCents / 100).toFixed(2)
+            : '0.00',
+          dueDate: installment.dueDate || null,
+          remittance: installment.remittanceInformation || '',
+          isMultibeneficiary: installmentBeneficiaries.length > 0,
+          beneficiaries: installmentBeneficiaries,
+          id: `installment-${index}`,
+          isNew: false,
+          readonly: isEditing
+            ? {
+                isMultibeneficiary: true,
+                amount: false,
+                dueDate: false,
+                remittance: false
+              }
+            : undefined
+        };
+      });
+    } else {
+      const beneficiaryTransfers =
+        firstInstallment?.transfers?.filter(
+          (transfer) => transfer.transferIndex && transfer.transferIndex > 1
+        ) || [];
+
+      beneficiaries = beneficiaryTransfers.map((transfer) => ({
+        entityName: transfer.orgName || '',
+        amount: transfer.amountCents
+          ? (transfer.amountCents / 100).toFixed(2)
+          : '0.00',
+        taxCode: transfer.orgFiscalCode || '',
+        remittance: transfer.remittanceInformation || '',
+        iban: transfer.iban || '',
+        postalAccount: transfer.postalIban || '',
+        taxonomyCode: transfer.category || '',
+        readonly: isEditing
+          ? {
+              entityName: true,
+              taxCode: true,
+              iban: true,
+              postalAccount: true,
+              taxonomyCode: true,
+              amount: false,
+              remittance: false
+            }
+          : undefined
+      }));
+
+      hasMultipleBeneficiaries = beneficiaries.length > 0;
+    }
+
+    const step3: Step3Data = {
+      paymentObject: {
+        value: isInstallmentPayment
+          ? ''
+          : firstInstallment?.remittanceInformation || '',
+        readonly: false
+      },
+      paymentOption: {
+        value: (firstPaymentOption?.paymentOptionType === 'INSTALLMENTS'
+          ? 'INSTALLMENTS'
+          : 'SINGLE') as PaymentOption,
+        readonly: isEditing
+      },
+      amount: {
+        value: firstPaymentOption?.totalAmountCents
+          ? (firstPaymentOption.totalAmountCents / 100).toFixed(2)
+          : '',
+        readonly: isInstallmentPayment
+      },
+      dueDate: {
+        value: isInstallmentPayment ? '' : firstInstallment?.dueDate || '',
+        readonly: false
+      },
+      isMultibeneficiary: {
+        value: hasMultipleBeneficiaries,
+        readonly: isEditing
+      },
+      flagMandatoryDueDate: false,
+      beneficiaries: beneficiaries,
+      installments: installments
+    };
+
+    return {
+      step1,
+      step2,
+      step3
+    };
+  };
 
   return (
     <StepperContainer
-      title={t('debtPositionCreateWizard.title')}
-      description={t('debtPositionCreateWizard.description')}
+      title={
+        isEditing
+          ? t('debtPositionCreateWizard.editTitle')
+          : t('debtPositionCreateWizard.title')
+      }
+      description={
+        isEditing
+          ? t('debtPositionCreateWizard.editDescription')
+          : t('debtPositionCreateWizard.description')
+      }
       steps={[
         {
           label: t('debtPositionCreateWizard.wizardStepper.step1'),
@@ -112,7 +360,11 @@ const DebtPositionCreateWizard = () => {
                 setFormData((prev) => ({ ...prev, step1: data }));
               }}
               onNext={() => setStep(1)}
-              onBack={() => navigate(PageRoutes.DEBT_POSITIONS)}
+              onBack={() => navigate(PageRoutes.DEBT_POSITIONS_INDEX)}
+              isEditing={isEditing}
+              debtPositionTypeOrgCode={
+                debtPositionDetail?.debtPositionTypeOrgCode
+              }
             />
           )
         },
@@ -127,6 +379,7 @@ const DebtPositionCreateWizard = () => {
               }
               onNext={() => setStep(2)}
               onBack={() => setStep(0)}
+              isEditing={isEditing}
             />
           )
         },
@@ -148,6 +401,7 @@ const DebtPositionCreateWizard = () => {
               onBack={() => setStep(1)}
               step1Data={formData.step1}
               step2Data={formData.step2}
+              isEditing={isEditing}
             />
           )
         }

@@ -12,9 +12,6 @@ import { Step2Data } from '../../../../models/DebtPositionType';
 import { createNestedStep2AddDebtorSchema } from '../../../../models/Step2AddDebtorSchema';
 
 type Step2DataField = keyof Step2Data;
-
-// Type representing the complete path to a field value.
-// Example: 'subjectType.value', 'taxCode.value'
 type NestedFieldName = `${Step2DataField}.value`;
 
 type Props = {
@@ -22,22 +19,27 @@ type Props = {
   setData: (data: Step2Data) => void;
   onNext: () => void;
   onBack?: () => void;
+  isEditing?: boolean;
 };
 
-// Type per i messaggi di errore
 type FieldErrorValue = {
   type: string;
   message: string;
 };
 
-// Type per i campi di errore nidificati
 type NestedFieldErrors<T> = {
   [K in keyof T]?: {
     value?: FieldErrorValue;
   };
 };
 
-const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
+const Step2AddDebtor = ({
+  data,
+  setData,
+  onNext,
+  onBack,
+  isEditing
+}: Props) => {
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -59,7 +61,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
 
     fieldsToInitialize.forEach((field) => {
       if (!updatedData[field]) {
-        // Set "IT" as default value for country field
         if (field === 'country') {
           updatedData[field] = { value: 'IT', readonly: false };
         } else {
@@ -69,7 +70,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
       }
     });
 
-    // If country is empty, set "IT" as default value
     if (updatedData.country && updatedData.country.value === '') {
       updatedData.country.value = 'IT';
       hasUpdates = true;
@@ -80,36 +80,25 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     }
   };
 
-  // Utilizziamo il nuovo schema nidificato che corrisponde alla struttura di Step2Data
   const schema = createNestedStep2AddDebtorSchema(t);
 
-  /**
-   * Maps an error from Zod to a react-hook-form error
-   */
   const createFieldError = (message: string): FieldErrorValue => ({
     type: 'validation',
     message
   });
 
-  /**
-   * Trasforma gli errori Zod nel formato atteso da react-hook-form
-   * La struttura degli errori ora rispecchia quella del nostro oggetto Step2Data
-   */
   const transformZodErrors = (zodError: z.ZodError, values: Step2Data) => {
-    // Funzione per personalizzare messaggi di errore specifici
     const customizeErrorMessage = (
       fieldName: Step2DataField,
       message: string,
       subjectType?: string
     ): string => {
-      // Per i messaggi relativi a taxCode, personalizza in base al tipo di soggetto
       if (fieldName === 'taxCode' && subjectType === SubjectType.BUSINESS) {
         if (message === t('debtPositionCreateWizard.step2.taxCode.required')) {
           return t('debtPositionCreateWizard.step2.vat.required');
         }
       }
 
-      // Per i messaggi relativi a fullName, personalizza in base al tipo di soggetto
       if (fieldName === 'fullName' && subjectType === SubjectType.BUSINESS) {
         if (message === t('debtPositionCreateWizard.step2.fullName.required')) {
           return t('debtPositionCreateWizard.step2.companyName.required');
@@ -121,27 +110,22 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
         }
       }
 
-      // Restituisci il messaggio originale per tutti gli altri casi
       return message;
     };
 
-    // Usa reduce per costruire l'oggetto degli errori in modo più funzionale
     return zodError.errors.reduce(
       (formErrors: NestedFieldErrors<Step2Data>, error) => {
         const path = error.path;
 
-        // Solo gli errori con path di almeno 2 elementi e secondo elemento 'value' ci interessano
         if (path.length >= 2 && path[1] === 'value') {
           const fieldName = path[0] as Step2DataField;
 
-          // Personalizza il messaggio di errore in base al campo e al tipo di soggetto
           const customMessage = customizeErrorMessage(
             fieldName,
             error.message,
             values.subjectType?.value
           );
 
-          // Aggiungi l'errore al campo appropriato
           formErrors[fieldName] = {
             value: createFieldError(customMessage)
           };
@@ -153,18 +137,13 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     );
   };
 
-  /**
-   * Resolver personalizzato per la validazione con Zod
-   */
   const zodFormResolver: Resolver<Step2Data> = async (values) => {
-    // Validazione con Zod direttamente sulla struttura nidificata
     const result = schema.safeParse(values);
 
     if (result.success) {
       return { values, errors: {} };
     }
 
-    // Trasforma gli errori Zod per react-hook-form
     return {
       values: {},
       errors: transformZodErrors(result.error, values) as FieldErrors<Step2Data>
@@ -191,6 +170,47 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     mode: 'onChange'
   });
 
+  useEffect(() => {
+    if (data?.subjectType?.value) {
+      setValue('subjectType.value', data.subjectType.value);
+    }
+    if (data?.taxCode?.value) {
+      setValue('taxCode.value', data.taxCode.value);
+    }
+    if (data?.fullName?.value) {
+      setValue('fullName.value', data.fullName.value);
+    }
+    if (data?.address?.value) {
+      setValue('address.value', data.address.value);
+    }
+    if (data?.civicNumber?.value) {
+      setValue('civicNumber.value', data.civicNumber.value);
+    }
+    if (data?.zipCode?.value) {
+      setValue('zipCode.value', data.zipCode.value);
+    }
+    if (data?.country?.value) {
+      setValue('country.value', data.country.value);
+    }
+    if (data?.province?.value) {
+      setValue('province.value', data.province.value);
+    }
+    if (data?.city?.value) {
+      setValue('city.value', data.city.value);
+    }
+  }, [
+    data?.subjectType?.value,
+    data?.taxCode?.value,
+    data?.fullName?.value,
+    data?.address?.value,
+    data?.civicNumber?.value,
+    data?.zipCode?.value,
+    data?.country?.value,
+    data?.province?.value,
+    data?.city?.value,
+    setValue
+  ]);
+
   const subjectTypeValue = watch('subjectType.value') || '';
 
   useEffect(() => {
@@ -200,9 +220,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     }
   }, [subjectTypeValue, trigger, isSubmitted]);
 
-  /**
-   * Gestisce il cambiamento di qualsiasi campo del form
-   */
   const handleFieldChange = async (
     fieldName: NestedFieldName,
     value: string
@@ -216,9 +233,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     }
   };
 
-  /**
-   * Gestisce il cambiamento del tipo di soggetto
-   */
   const handleSubjectTypeChange = async (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -228,35 +242,23 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
     await trigger('fullName.value');
   };
 
-  /**
-   * Gestisce la sottomissione del form
-   */
   const onSubmit = async (values: Step2Data) => {
     setData(values);
     onNext();
   };
 
-  /**
-   * Ottiene l'etichetta appropriata per il codice fiscale/partita IVA
-   */
   const getTaxCodeLabel = () => {
     return subjectTypeValue === SubjectType.BUSINESS
       ? t('debtPositionCreateWizard.step2.vat.label')
       : t('debtPositionCreateWizard.step2.taxCode.label');
   };
 
-  /**
-   * Ottiene il placeholder appropriato per il codice fiscale/partita IVA
-   */
   const getTaxCodePlaceholder = () => {
     return subjectTypeValue === SubjectType.BUSINESS
       ? t('debtPositionCreateWizard.step2.vat.placeholder')
       : t('debtPositionCreateWizard.step2.taxCode.placeholder');
   };
 
-  /**
-   * Ottiene l'etichetta appropriata per il nome/ragione sociale
-   */
   const getCompanyNameLabel = () => {
     return subjectTypeValue === SubjectType.BUSINESS
       ? t('debtPositionCreateWizard.step2.companyName.label')
@@ -277,7 +279,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             {t('debtPositionCreateWizard.step2.fiscalData')}
           </Typography>
 
-          {/* Field to select subject type (individual or legal entity) */}
           <Controller
             name="subjectType.value"
             control={control}
@@ -289,7 +290,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                 select
                 fullWidth
                 margin="normal"
-                disabled={data.subjectType.readonly}
+                disabled={isEditing}
                 error={isSubmitted && !!errors.subjectType?.value}
                 helperText={isSubmitted && errors.subjectType?.value?.message}
                 onChange={(e) => {
@@ -311,7 +312,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             )}
           />
 
-          {/* Field for tax code or VAT number */}
           <Controller
             name="taxCode.value"
             control={control}
@@ -323,7 +323,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                 required
                 fullWidth
                 margin="normal"
-                disabled={data.taxCode.readonly}
+                disabled={isEditing}
                 error={isSubmitted && !!errors.taxCode?.value}
                 helperText={isSubmitted && errors.taxCode?.value?.message}
                 onChange={(e) => {
@@ -340,7 +340,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             {t('debtPositionCreateWizard.step2.personalData')}
           </Typography>
 
-          {/* Field for full name */}
           <Controller
             name="fullName.value"
             control={control}
@@ -351,7 +350,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                 fullWidth
                 margin="normal"
                 required
-                disabled={data.fullName.readonly}
+                disabled={isEditing}
                 error={isSubmitted && !!errors.fullName?.value}
                 helperText={isSubmitted && errors.fullName?.value?.message}
                 onChange={(e) => {
@@ -363,9 +362,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             )}
           />
 
-          {/* Grid for address, civic number and zip code */}
           <Grid container spacing={2} mt={1}>
-            {/* Field for address */}
             <Grid item xs={12} sm={6} md={6}>
               <Controller
                 name="address.value"
@@ -376,7 +373,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                     label={t('debtPositionCreateWizard.step2.address.label')}
                     fullWidth
                     required
-                    disabled={data.address?.readonly || false}
+                    disabled={isEditing}
                     error={isSubmitted && !!errors.address?.value}
                     helperText={isSubmitted && errors.address?.value?.message}
                     onChange={(e) => {
@@ -389,7 +386,6 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
               />
             </Grid>
 
-            {/* Field for civic number */}
             <Grid item xs={6} sm={3} md={3}>
               <Controller
                 name="civicNumber.value"
@@ -402,22 +398,21 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                     )}
                     fullWidth
                     required
-                    disabled={data.civicNumber?.readonly || false}
+                    disabled={isEditing}
                     error={isSubmitted && !!errors.civicNumber?.value}
                     helperText={
                       isSubmitted && errors.civicNumber?.value?.message
                     }
                     onChange={(e) => {
                       const value = e.target.value;
-                      field.onChange(value); // synchronize RHF
-                      handleFieldChange('civicNumber.value', value); // update wizard state
+                      field.onChange(value);
+                      handleFieldChange('civicNumber.value', value);
                     }}
                   />
                 )}
               />
             </Grid>
 
-            {/* Field for zip code with specific validation */}
             <Grid item xs={6} sm={3} md={3}>
               <Controller
                 name="zipCode.value"
@@ -428,7 +423,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                     label={t('debtPositionCreateWizard.step2.zipCode.label')}
                     fullWidth
                     required
-                    disabled={data.zipCode?.readonly || false}
+                    disabled={isEditing}
                     error={isSubmitted && !!errors.zipCode?.value}
                     helperText={isSubmitted && errors.zipCode?.value?.message}
                     onChange={(e) => {
@@ -443,9 +438,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
             </Grid>
           </Grid>
 
-          {/* Grid for country, province and city */}
           <Grid container spacing={2} mt={1}>
-            {/* Country field */}
             <Grid item xs={12} sm={4}>
               <Controller
                 name="country.value"
@@ -457,7 +450,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                     select
                     fullWidth
                     required
-                    disabled={data.country?.readonly || false}
+                    disabled={isEditing}
                     error={isSubmitted && !!errors.country?.value}
                     helperText={isSubmitted && errors.country?.value?.message}
                     onChange={(e) => {
@@ -485,7 +478,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                     select
                     fullWidth
                     required
-                    disabled={data.province?.readonly || false}
+                    disabled={isEditing}
                     error={isSubmitted && !!errors.province?.value}
                     helperText={isSubmitted && errors.province?.value?.message}
                     onChange={(e) => {
@@ -512,7 +505,7 @@ const Step2AddDebtor = ({ data, setData, onNext, onBack }: Props) => {
                     label={t('debtPositionCreateWizard.step2.city.label')}
                     fullWidth
                     required
-                    disabled={data.city?.readonly || false}
+                    disabled={isEditing}
                     error={isSubmitted && !!errors.city?.value}
                     helperText={isSubmitted && errors.city?.value?.message}
                     onChange={(e) => {
