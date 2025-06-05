@@ -4,8 +4,8 @@ import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import ActionCard from '../../components/ActionCard/ActionCard';
 import utils from '../../utils';
 import { synchronizeTaxonomy } from '../../api/taxonomy';
-import { PageRoutes } from '../../App';
 import { useNavigate } from 'react-router';
+import { PageRoutes } from '..';
 
 export const TaxonomyPage = () => {
   const { t } = useTranslation();

@@ -37,8 +37,6 @@ export const useTaxonomySearch = ({
   }, [paginationParams.page, paginationParams.size, sort]);
 
   const filterToRequest = (): TaxonomiesQuery => ({
-    page: paginationParams.page,
-    size: paginationParams.size,
     ...(filterValues?.organizationType && {
       organizationType: filterValues.organizationType
     }),
@@ -51,7 +49,9 @@ export const useTaxonomySearch = ({
     ...(filterValues?.collectionReason && {
       collectionReason: filterValues.collectionReason
     }),
-    ...(sort.length && { sort })
+    ...(sort.length && { sort }),
+    page: paginationParams.page,
+    size: paginationParams.size
   });
 
   const handleFilterChange = useCallback(
