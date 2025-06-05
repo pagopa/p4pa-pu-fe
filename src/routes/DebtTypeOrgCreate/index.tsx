@@ -115,7 +115,7 @@ export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
       },
       {
         label: t('debtTypeOrgCreate.stepper.step5'),
-        content: <Step5Operators key="step5" />
+        content: <Step5Operators key="step5" edit={edit} />
       }
     ],
     [t, edit]
@@ -129,7 +129,9 @@ export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
         noValidate
       >
         <StepperContainer
-          title={t('debtTypeOrgCreate.title')}
+          title={t(
+            edit ? 'debtTypeOrgCreate.edit.title' : 'debtTypeOrgCreate.title'
+          )}
           steps={stepperSteps}
           activeStep={currentStep}
         />

@@ -72,6 +72,29 @@
     "detail": "Dettaglio",
     "disabled": "Disabilitato",
     "downloadInstallment": "Scarica avviso",
+    "DP_DESCRIPTION": {
+      "DP_CREATED": "Posizione Debitoria Creata",
+      "DP_CANCELLED": "Posizione Debitoria Cancellata",
+      "DP_UPDATED": "Posizione Debitoria Aggiornata",
+      "DPI_ADDED": "Avviso Aggiunto",
+      "DPI_CANCELLED": "Avviso Cancellato",
+      "DPI_EXPIRED": "Avviso Scaduto",
+      "DPI_REPORTED": "Avviso Rendicontato",
+      "DPI_UPDATED": "Avviso Aggiornato",
+      "IO_NOTIFIED": "È stato inviato un messaggio al cittadino su IO. ID messaggio '{{idMessage}}'",
+      "RT_RECEIVED": "Avviso Pagato",
+      "SEND_NOTIFICATION_CREATED": "Notifica SEND creata",
+      "SEND_NOTIFICATION_DATE": "La notifica è stata letta dal destinatario",
+      "SEND_NOTIFICATION_ERROR": "Errore notifica SEND",
+      "SYNC_ERROR": "Errore di sincronizzazione"
+    },
+    "DP_STATUS": {
+      "DPI_CANCELLED": "Cancellato",
+      "DPI_EXPIRED": "Scaduto",
+      "DPI_REPORTED": "Rendicontato",
+      "RT_RECEIVED": "Pagato",
+      "UNKNOWN": "Stato sconosciuto"
+    },
     "duetype": "Tipo dovuto",
     "edit": "Modifica",
     "enabled": "Abilitato",
@@ -175,12 +198,14 @@
     "iud": "IUD",
     "iur": "IUR",
     "iuv": "IUV",
+    "loading": "caricamento",
     "lastUpdate": "Ultimo aggiornamento",
     "macroarea": "Macroarea",
     "mandatoryDueDate": "Data di Scadenza Obbligatoria",
     "message": "Messaggio",
     "messages": "Messaggi",
     "no": "No",
+    "NO_EVENTS": "Nessun evento",
     "noFlows": "Non ci sono flussi.",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
     "notifications": "Notifiche",
@@ -273,7 +298,8 @@
     "searchName": "Cerca Nome",
     "searchOperator": "Cerca operatore",
     "searchRegulationUniqueIdentifier": "ID Regolamento",
-    "selectedOperator": "Operatore selezionato",
+    "selectedOperator_one": "Operatore selezionato",
+    "selectedOperator_other": "Operatori selezionati",
     "serviceType": "Tipo Servizio",
     "serviceUnavailable": "Il servizio è temporaneamente non disponibile, vi preghiamo di riprovare più tardi.",
     "showAllFlows": "Vedi tutti i flussi",
@@ -754,6 +780,7 @@
   },
   "debtTypeOrgCreate": {
     "edit": {
+      "title": "Modifica Tipo dovuto",
       "success": {
         "title": "Il Tipo dovuto ‘{{paymentObject}}’ è stato modificato!",
         "description": "La trovi nella sezione I tuoi Tipi Dovuti."

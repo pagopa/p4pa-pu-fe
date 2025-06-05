@@ -13,6 +13,10 @@ import {
   DebtPositionStatus,
   DebtPositionOrigin
 } from '../../generated/apiClient';
+import {
+  DebtPositionRegistry,
+  PaymentEventType
+} from '../../generated/data-contracts';
 
 vi.mock('../utils', () => {
   return {
@@ -24,7 +28,8 @@ vi.mock('../utils', () => {
           getInstallmentDetail: vi.fn(),
           getDebtPositionDetail: vi.fn(),
           deleteDebtPositionType: vi.fn(),
-          createDebtPosition: vi.fn()
+          createDebtPosition: vi.fn(),
+          getDebtPositionRegistries: vi.fn()
         }
       },
       notify: {
@@ -335,6 +340,157 @@ describe('createDebtPosition', () => {
     await waitFor(() => {
       expect(onError).toHaveBeenCalled();
       expect(onError.mock.calls[0][0]).toBeInstanceOf(Error);
+    });
+  });
+
+  describe('getDebtPositionRegistriesMutation', () => {
+    it('returns registries data correctly', async () => {
+      const mockRegistriesData: Array<DebtPositionRegistry> = [
+        {
+          eventDateTime: '2025-01-15T10:30:00Z',
+          eventType: PaymentEventType.DP_CREATED,
+          eventDescription: 'Debt position created',
+          organizationId: 123,
+          debtPositionId: 456
+        },
+        {
+          eventDateTime: '2025-01-16T14:45:00Z',
+          eventType: PaymentEventType.DPI_REPORTED,
+          eventDescription: 'Installment reported',
+          organizationId: 123,
+          debtPositionId: 456
+        }
+      ];
+
+      const organizationId = 123;
+      const debtPositionId = 456;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getDebtPositionRegistries')
+        .mockResolvedValue({ data: mockRegistriesData } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getDebtPositionRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual(mockRegistriesData);
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+    });
+
+    it('handles empty registries array correctly', async () => {
+      const mockEmptyData: Array<DebtPositionRegistry> = [];
+      const organizationId = 123;
+      const debtPositionId = 456;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getDebtPositionRegistries')
+        .mockResolvedValue({ data: mockEmptyData } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getDebtPositionRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual([]);
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+    });
+
+    it('handles null/undefined registries data gracefully', async () => {
+      const organizationId = 123;
+      const debtPositionId = 456;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getDebtPositionRegistries')
+        .mockResolvedValue({ data: null } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getDebtPositionRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual([]);
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+    });
+
+    it('handles API errors correctly', async () => {
+      const organizationId = 123;
+      const debtPositionId = 456;
+      const error = new Error('API Error: Failed to fetch registries');
+
+      vi.spyOn(
+        utils.apiClient.bff,
+        'getDebtPositionRegistries'
+      ).mockRejectedValue(error);
+
+      const { result } = renderHook(() =>
+        debtPositions.getDebtPositionRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+        expect(result.current.error).toEqual(error);
+      });
+    });
+
+    it('processes multiple registries with different event types', async () => {
+      const mockComplexRegistriesData: Array<DebtPositionRegistry> = [
+        {
+          eventDateTime: '2025-01-15T10:30:00Z',
+          eventType: PaymentEventType.DP_CREATED,
+          eventDescription: 'Debt position created'
+        },
+        {
+          eventDateTime: '2025-01-16T14:45:00Z',
+          eventType: PaymentEventType.DPI_REPORTED,
+          eventDescription: 'Installment reported'
+        },
+        {
+          eventDateTime: '2025-01-17T09:15:00Z',
+          eventType: PaymentEventType.RT_RECEIVED,
+          eventDescription: 'Payment receipt received'
+        }
+      ];
+
+      const organizationId = 999;
+      const debtPositionId = 888;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getDebtPositionRegistries')
+        .mockResolvedValue({
+          data: mockComplexRegistriesData
+        } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getDebtPositionRegistriesMutation()
+      );
+
+      result.current.mutate({ organizationId, debtPositionId });
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual(mockComplexRegistriesData);
+        expect(result.current.data).toHaveLength(3);
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
     });
   });
 });
