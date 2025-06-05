@@ -1,6 +1,7 @@
 import { describe, it, vi } from 'vitest';
 import TreasurySearchResults from '.';
 import { render } from '../../__tests__/renderers';
+import React from 'react';
 
 vi.mock('react-router-dom', async () => {
   const actual =
@@ -9,7 +10,10 @@ vi.mock('react-router-dom', async () => {
     );
   return {
     ...actual,
-    useNavigate: vi.fn()
+    useNavigate: vi.fn(),
+    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+    Link: ({ to, children }: { to: string; children: React.ReactNode }) =>
+      React.createElement('a', { href: to }, children)
   };
 });
 
