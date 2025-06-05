@@ -227,7 +227,6 @@ const DebtPositionDetail = () => {
     }
   );
 
-  // Variable to determine if the debt position can be deleted
   const canBeDeleted =
     debtPositionDetail?.status !== DebtPositionStatus.PAID &&
     debtPositionDetail?.status !== DebtPositionStatus.PARTIALLY_PAID;
@@ -237,7 +236,6 @@ const DebtPositionDetail = () => {
     debtPositionDetail?.status === DebtPositionStatus.UNPAID ||
     debtPositionDetail?.status === DebtPositionStatus.EXPIRED;
 
-  // Variable to determine if the delete option should be shown in the menu
   const showDeleteOption =
     debtPositionDetail?.status !== DebtPositionStatus.CANCELLED;
   const showEditOption =
@@ -299,8 +297,8 @@ const DebtPositionDetail = () => {
   const showEditErrorDialog = () => {
     setDialogConfig({
       open: true,
-      title: t('debtPositionDetail.editError.title'),
-      message: t('debtPositionDetail.editError.message'),
+      title: t('debtPositionDetail.editErrorDialog.title'),
+      message: t('debtPositionDetail.editErrorDialog.description'),
       confirmLabel: t('commons.close'),
       onConfirm: () => setDialogConfig(null),
       onClose: () => setDialogConfig(null),

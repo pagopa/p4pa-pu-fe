@@ -603,6 +603,10 @@
       "title": "La posizione debitoria non può essere eliminata",
       "description": "Siamo spiacenti, al momento non è possibile eliminare questa posizione debitoria."
     },
+    "editErrorDialog": {
+      "title": "La posizione debitoria non può essere modificata",
+      "description": "Siamo spiacenti, non è possibile modificare questa posizione debitoria."
+    },
     "timeline": {
       "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio",
       "title": "Storico Posizione Debitoria"
