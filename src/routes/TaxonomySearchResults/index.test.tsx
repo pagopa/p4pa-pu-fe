@@ -4,7 +4,8 @@ import TaxonomySearchResults from '.';
 
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal()),
-  useNavigate: vi.fn()
+  useNavigate: vi.fn(),
+  useLocation: vi.fn(),
 }));
 
 describe('TaxonomySearchResults Page', () => {
