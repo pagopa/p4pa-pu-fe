@@ -18,7 +18,7 @@ import {
   DebtPositionView
 } from '../../../generated/apiClient';
 import debtPositions from '../../api/debtPositions';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 
 export type LocationState = {
   searchType: SearchType;

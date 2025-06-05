@@ -46,6 +46,7 @@ describe('StoreContext', () => {
       JSON.stringify({
         [STATE.APP_STATE]: { loading: false },
         [STATE.CONFIG_FE]: null,
+        [STATE.ORGANIZATIONS]: [],
         [STATE.ORGANIZATION_ID]: null,
         [STATE.SELECTED_FILTERS]: [],
         [STATE.FILTER_VALUES]: initialFilterValues

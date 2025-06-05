@@ -1,7 +1,7 @@
 /* eslint-disable sonarjs/function-return-type */
 import React from 'react';
 import { Navigate } from 'react-router-dom';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import utils from '../../utils';
 
 export type RouteGuardProps = {

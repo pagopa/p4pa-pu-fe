@@ -9,7 +9,7 @@ import ActionMenu from '../ActionMenu/ActionMenu';
 import CustomDataGrid from './../DataGrid/CustomDataGrid';
 import { FileDownload, ReadMore } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router-dom';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { moneyFormat } from '../../utils/formatters';
 import { PagedReceiptView } from '../../../generated/data-contracts';
 

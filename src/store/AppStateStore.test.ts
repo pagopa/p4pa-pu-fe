@@ -1,27 +1,22 @@
-import { describe, it, vi, expect } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { AppState } from '../models/AppState';
 import { appState, setAppState, setLoading } from './AppStateStore';
-
-vi.mock('@preact/signals-react', async () => {
-  const actual = await vi.importActual<typeof import('@preact/signals-react')>(
-    '@preact/signals-react'
-  );
-  return {
-    ...actual,
-    signal: vi.fn(actual.signal)
-  };
-});
 
 describe('AppState Store', () => {
   it('should initialize appState with the default value', () => {
     expect(appState.value).toEqual({
       loading: false,
-      customBreadcrumbsItems: []
+      customBreadcrumbsItems: [],
+      ready: false
     });
   });
 
   it('setAppState should update the appState to the provided new state', () => {
-    const newState: AppState = { loading: true, customBreadcrumbsItems: [] };
+    const newState: AppState = {
+      loading: true,
+      customBreadcrumbsItems: [],
+      ready: false
+    };
     setAppState(newState);
 
     expect(appState.value).toEqual(newState);
@@ -30,7 +25,8 @@ describe('AppState Store', () => {
   it('setLoading should update only the loading property in appState', () => {
     const initialState: AppState = {
       loading: false,
-      customBreadcrumbsItems: []
+      customBreadcrumbsItems: [],
+      ready: false
     };
     appState.value = initialState; // Reset the state for this test
 
@@ -38,7 +34,8 @@ describe('AppState Store', () => {
 
     expect(appState.value).toEqual({
       loading: true,
-      customBreadcrumbsItems: []
+      customBreadcrumbsItems: [],
+      ready: false
     });
   });
 });

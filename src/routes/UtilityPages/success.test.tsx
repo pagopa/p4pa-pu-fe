@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen } from '../../__tests__/renderers';
 import SuccessPage from './success';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 
 const mockNavigate = vi.fn();
 const mockUseLocation = vi.fn();

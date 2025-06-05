@@ -1,7 +1,7 @@
 import { fireEvent, waitFor } from '@testing-library/dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import DebtTypesCreated from './DebtTypesCreated';
 import { render, screen } from '../../__tests__/renderers';
 import utils from '../../utils';
