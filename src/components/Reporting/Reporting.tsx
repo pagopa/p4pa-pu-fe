@@ -5,7 +5,7 @@ import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { useCallback, useState } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 

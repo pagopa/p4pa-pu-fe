@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import ExportFlowContainer from '../ExportFlowContainer/ExportFlowContainer';
 import { useState } from 'react';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
 import { useStore } from '../../store/GlobalStore';
 import { useDateRange } from '../../hooks/useDateRange';

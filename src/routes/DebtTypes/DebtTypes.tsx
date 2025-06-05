@@ -12,7 +12,7 @@ import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
 import useDebtTypesFilters from '../../hooks/useDebtTypesFilters';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 
 type DebtTypesFilters = {
   description?: string;

@@ -8,7 +8,7 @@ import DetailContainer, {
 } from '../../components/DetailContainer/DetailContainer';
 import { useEffect } from 'react';
 import { formatDate } from '../../utils/formatters';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 
 export const TaxonomyDetailPage = () => {
   const { t } = useTranslation();

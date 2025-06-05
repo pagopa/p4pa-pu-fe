@@ -10,7 +10,7 @@ import FilterContainer, {
   COMPONENT_TYPE
 } from '../FilterContainer/FilterContainer';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import {

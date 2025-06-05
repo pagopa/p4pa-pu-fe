@@ -45,6 +45,9 @@ vi.mock('../../utils', () => ({
   default: {
     notify: {
       emit: vi.fn()
+    },
+    config: {
+      deployPath: '/piattaformaunitaria'
     }
   }
 }));
