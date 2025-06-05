@@ -12,7 +12,7 @@ import {
   PaymentOptionTypeEnum,
   DebtPositionStatus
 } from '../../../generated/data-contracts';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '..';
 
 type Step1Props = {
   onNext: () => void;
