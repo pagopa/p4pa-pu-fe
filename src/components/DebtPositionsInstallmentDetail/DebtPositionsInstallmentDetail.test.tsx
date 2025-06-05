@@ -33,7 +33,14 @@ vi.mock('react-router-dom', () => ({
 vi.mock('../../api/debtPositions', () => ({
   default: {
     getInstallmentDetail: vi.fn(),
-    getPaymentNoticeFile: vi.fn()
+    getPaymentNoticeFile: vi.fn(),
+    getInstallmentRegistriesMutation: vi.fn().mockReturnValue({
+      mutate: vi.fn(),
+      data: [],
+      isLoading: false,
+      isError: false,
+      isSuccess: false
+    })
   }
 }));
 

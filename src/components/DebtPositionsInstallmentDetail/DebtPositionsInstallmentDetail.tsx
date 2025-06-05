@@ -6,7 +6,7 @@ import DetailContainer, {
   DetailData
 } from '../DetailContainer/DetailContainer';
 import EmptyDetailContainer from './EmptyDetailContainer';
-import { InstallmentStatus } from '../../../generated/apiClient';
+import { InstallmentStatus } from '../../../generated/data-contracts';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
@@ -25,6 +25,7 @@ import { setAppState } from '../../store/AppStateStore';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
 import GenericDialog from '../GenericDialog/GenericDialog';
+import { useTimelineData } from '../../hooks/useTimelineData';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
@@ -57,11 +58,29 @@ export const DebtPositionsInstallmentDetail = () => {
   );
   const statusInstallment = installment?.status;
 
+  const {
+    mutate: fetchInstallmentRegistries,
+    data: installmentRegistries = []
+  } = debtPositions.getInstallmentRegistriesMutation();
+
   const downloadMutation = debtPositions.getPaymentNoticeFile(
     organizationId,
     installment?.debtPositionId || 0,
     installment?.iuv || ''
   );
+
+  const handleTimelineOpen = () => {
+    setTimelineOpen(true);
+
+    if (installment?.debtPositionId) {
+      fetchInstallmentRegistries({
+        organizationId,
+        debtPositionId: installment.debtPositionId
+      });
+    }
+  };
+
+  const timelineElements = useTimelineData(installmentRegistries);
 
   const handleDownloadInstallment = async () => {
     try {
@@ -201,7 +220,7 @@ export const DebtPositionsInstallmentDetail = () => {
           {
             icon: <History />,
             variant: 'text',
-            onActionClick: () => setTimelineOpen(true)
+            onActionClick: handleTimelineOpen
           },
           ...(statusInstallment !== InstallmentStatus.DRAFT
             ? [
@@ -279,41 +298,35 @@ export const DebtPositionsInstallmentDetail = () => {
         installmentId={installmentId}
         organizationId={organizationId}
       />
+
       <Timeline.Drawer
         title={t('debtPositionInstallmentDetail.timeline.title')}
         open={timelineOpen}
         onClose={() => setTimelineOpen(false)}
       >
-        <Timeline.Element
-          date={new Date(2025, 2, 1, 14)}
-          element={
-            <Typography>
-              {t('debtPositionInstallmentDetail.timeline.message')}{' '}
-              <b>XXXXXXXXXXX</b>
-            </Typography>
-          }
-          first
-        />
-        <Timeline.Element
-          date={new Date(2025, 3, 3, 9)}
-          element={
-            <Typography>
-              {t('debtPositionInstallmentDetail.timeline.message')}{' '}
-              <b>XXXXXXXXXXX</b>
-            </Typography>
-          }
-        />
-        <Timeline.Element
-          date={new Date()}
-          element={
-            <Typography>
-              {t('debtPositionInstallmentDetail.timeline.message')}{' '}
-              <b>XXXXXXXXXXX</b>
-            </Typography>
-          }
-          last
-        />
+        <>
+          {timelineElements.length > 0 ? (
+            timelineElements.map((element, index) => (
+              <Timeline.Element
+                key={index}
+                date={element.date}
+                element={element.content}
+                first={element.isFirst}
+                last={element.isLast}
+                statusChip={element.statusChip}
+              />
+            ))
+          ) : (
+            <Timeline.Element
+              date={new Date()}
+              element={<Typography>{t('commons.NO_EVENTS')}</Typography>}
+              first={true}
+              last={true}
+            />
+          )}
+        </>
       </Timeline.Drawer>
+
       <GenericDialog
         data-testid="confirm-delete-dialog"
         open={openDeleteDialog}

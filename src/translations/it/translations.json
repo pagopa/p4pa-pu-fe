@@ -619,7 +619,7 @@
       "message": "Siamo spiacenti, questo file non può essere scaricato. Possono essere scaricati solo gli avvisi non pagati."
     },
     "drawer": {
-      "info": "Ci sono presenti altri beneficiari diversi al tuo ente.",
+      "info": "Sono presenti altri beneficiari diversi dal tuo ente.",
       "title": "Beneficiari"
     },
     "timeline": {
