@@ -13,7 +13,7 @@ import {
 } from '../../../../generated/data-contracts';
 import { formatDate } from '../../../utils/formatters';
 import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../../App';
+import { PageRoutes } from '../../../routes';
 
 export type DebtTypesDataGridProps = {
   data: PagedDebtPositionTypeWithCount;

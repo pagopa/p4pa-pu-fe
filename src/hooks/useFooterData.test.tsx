@@ -1,10 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFooterData } from './useFooterData';
-import { useFeConfig } from './useFeConfig';
 import { ConfigFE } from '../../generated/apiClient';
 import { render, renderHook, act } from '../__tests__/renderers';
-
-vi.mock('./useFeConfig');
+import { setConfigFe } from '../store/ConfigFeStore';
 
 const mockImage = {
   onload: vi.fn(),
@@ -24,10 +22,9 @@ describe('useFooterData', () => {
     logoFooterImg:
       'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg=='
   } as ConfigFE;
+  setConfigFe(mockConfigFe);
 
   beforeEach(() => {
-    vi.mocked(useFeConfig).mockReturnValue(mockConfigFe);
-
     global.Image = vi.fn(() => mockImage) as unknown as typeof global.Image;
   });
 

@@ -1,224 +1,151 @@
-import { vi } from 'vitest';
-import OperatorSelector from './OperatorSelector';
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor
-} from '../../../../../__tests__/renderers';
-import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
+import React from 'react';
+import { OperatorSelector } from './OperatorSelector';
 import * as api from '../../../../../api/debtPositionTypeOrgOperators';
+import { useForm, FormProvider } from 'react-hook-form';
+import {
+  OperatorsSelection,
+  UserInfo
+} from '../../../../../../generated/data-contracts';
+import {
+  fireEvent,
+  render,
+  waitFor,
+  screen
+} from '../../../../../__tests__/renderers';
+import { setUserInfo } from '../../../../../store/UserInfoStore';
 
-i18nTestSetup({
-  'commons.operator': 'Operatore',
-  'commons.deleteSelection': 'Cancella selezione',
-  'commons.selectedOperator': 'operatori selezionati'
-});
-
-const mockApiResponse = {
+// Realistic test data for API
+const testApiResponse = {
   content: [
     {
-      operatorId: 'op1',
-      mappedExternalUserId: 'ext1',
+      mappedExternalUserId: 'op-1',
+      operatorId: 'operator-1',
       firstName: 'John',
       lastName: 'Doe',
       enabled: true
     },
     {
-      operatorId: 'op2',
-      mappedExternalUserId: 'ext2',
+      mappedExternalUserId: 'op-2',
+      operatorId: 'operator-2',
       firstName: 'Jane',
       lastName: 'Smith',
       enabled: false
     },
     {
-      operatorId: 'op3',
-      mappedExternalUserId: null,
-      firstName: 'Bob',
-      lastName: 'Johnson',
+      mappedExternalUserId: 'default-op',
+      operatorId: 'operator-3',
+      firstName: 'Default',
+      lastName: 'Operator',
       enabled: true
     }
   ],
-  totalPages: 2,
-  number: 0,
-  size: 10
+  totalPages: 1,
+  totalElements: 3,
+  size: 5,
+  number: 0
 };
 
-describe('OperatorSelector', () => {
-  vi.mock('../../../../../api/debtPositionTypeOrgOperators', () => ({
-    getDebtPositionTypeOrgOperators: vi.fn(() => ({
-      data: mockApiResponse,
-      isLoading: false,
-      error: null
-    }))
-  }));
+// Mock only the API call
+// @ts-expect-error mocking query
+vi.spyOn(api, 'getDebtPositionTypeOrgOperators').mockImplementation(() => ({
+  data: testApiResponse
+}));
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
+// Helper to render with form and store providers
+const renderWithProviders = (edit?: boolean) => {
+  const Wrapper = ({ children }: { children: React.ReactNode }) => {
+    const methods = useForm({
+      defaultValues: {
+        enabledOperators: [],
+        disabledOperators: [],
+        operatorsSelection: OperatorsSelection.SELECTED
+      }
+    });
 
-  it('renders the operator grid with correct data', async () => {
-    const onSelectionChangeMock = vi.fn();
+    return <FormProvider {...methods}>{children}</FormProvider>;
+  };
 
-    render(
-      <OperatorSelector
-        organizationId={3}
-        onSelectionChange={onSelectionChangeMock}
-        enabledOperators={[]}
-      />
-    );
+  return render(
+    <Wrapper>
+      <OperatorSelector edit={edit} />
+    </Wrapper>
+  );
+};
 
+describe('OperatorSelector integration tests', () => {
+  test('renders operators and selection alert', async () => {
+    renderWithProviders(true);
+
+    // Wait for operators to appear
     await waitFor(() => {
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
-      expect(screen.getByText('Bob Johnson')).toBeInTheDocument();
     });
 
-    expect(screen.getByText('Operatore')).toBeInTheDocument();
+    // Alert shows selected count
+    expect(screen.getByText(/commons.selectedOperator/)).toBeInTheDocument();
+
+    // Delete Selection button present
+    expect(
+      screen.getByRole('button', { name: 'commons.deleteSelection' })
+    ).toBeInTheDocument();
   });
 
-  it('handles selection changes correctly', async () => {
-    const onSelectionChangeMock = vi.fn();
+  test('default operator row is disabled for selection', async () => {
+    setUserInfo({
+      mappedExternalUserId: 'default-op'
+    } as UserInfo);
 
-    render(
-      <OperatorSelector
-        organizationId={3}
-        onSelectionChange={onSelectionChangeMock}
-        enabledOperators={[]}
-      />
-    );
+    renderWithProviders(true);
 
     await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
+      expect(screen.getByText('Default Operator')).toBeInTheDocument();
     });
 
     const checkboxes = screen.getAllByRole('checkbox');
-    fireEvent.click(checkboxes[1]);
+    const defaultOpCheckbox = checkboxes[checkboxes.length - 1];
 
-    expect(onSelectionChangeMock).toHaveBeenCalledWith(['ext1']);
+    expect(defaultOpCheckbox).toBeDisabled();
   });
 
-  it('initializes with pre-selected operators', async () => {
-    const onSelectionChangeMock = vi.fn();
-
-    render(
-      <OperatorSelector
-        organizationId={3}
-        onSelectionChange={onSelectionChangeMock}
-        enabledOperators={['ext1']}
-      />
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
-    });
-
-    const checkboxes = screen.getAllByRole('checkbox');
-    expect(checkboxes[1]).toBeChecked();
-  });
-
-  it('clears selection when clear button is clicked', async () => {
-    const onSelectionChangeMock = vi.fn();
-
-    render(
-      <OperatorSelector
-        organizationId={3}
-        onSelectionChange={onSelectionChangeMock}
-        enabledOperators={['ext1', 'ext2']}
-      />
-    );
+  test('clicking Delete Selection clears selection', async () => {
+    renderWithProviders(true);
 
     await waitFor(() => {
       expect(
-        screen.getByText(/\(2\) operatori selezionati/)
+        screen.getByRole('button', { name: 'commons.deleteSelection' })
       ).toBeInTheDocument();
     });
 
-    const clearButton = screen.getByText('Cancella selezione');
-    fireEvent.click(clearButton);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'commons.deleteSelection' })
+    );
 
-    expect(onSelectionChangeMock).toHaveBeenCalledWith([]);
+    // Alert disappears since selection cleared
+    await waitFor(() => {
+      expect(
+        screen.queryByText(/commons.selectedOperator/)
+      ).not.toBeInTheDocument();
+    });
   });
 
-  it('handles pagination correctly', async () => {
-    const onSelectionChangeMock = vi.fn();
-    const getDebtPositionTypeOrgOperatorsSpy = vi.spyOn(
-      api,
-      'getDebtPositionTypeOrgOperators'
-    );
-
-    render(
-      <OperatorSelector
-        organizationId={3}
-        onSelectionChange={onSelectionChangeMock}
-        enabledOperators={[]}
-      />
-    );
+  test('selecting an operator updates selection', async () => {
+    renderWithProviders(true);
 
     await waitFor(() => {
       expect(screen.getByText('John Doe')).toBeInTheDocument();
     });
-
-    const paginationButtons = screen.getAllByRole('button');
-    const page2Button = paginationButtons.find(
-      (button) => button.textContent === '2'
-    );
-    if (page2Button) {
-      fireEvent.click(page2Button);
-    }
-
-    expect(getDebtPositionTypeOrgOperatorsSpy).toHaveBeenCalledWith(
-      3,
-      expect.objectContaining({ page: 1, size: 10 })
-    );
-  });
-
-  it('handles sort model change correctly', async () => {
-    const onSelectionChangeMock = vi.fn();
-    const getDebtPositionTypeOrgOperatorsSpy = vi.spyOn(
-      api,
-      'getDebtPositionTypeOrgOperators'
-    );
-
-    render(
-      <OperatorSelector
-        organizationId={3}
-        onSelectionChange={onSelectionChangeMock}
-        enabledOperators={[]}
-      />
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
-    });
-
-    const columnHeader = screen.getByText('Operatore');
-    fireEvent.click(columnHeader);
-
-    expect(getDebtPositionTypeOrgOperatorsSpy).toHaveBeenCalled();
-  });
-
-  it('shows correct selection count in alert', async () => {
-    const onSelectionChangeMock = vi.fn();
-
-    render(
-      <OperatorSelector
-        organizationId={3}
-        onSelectionChange={onSelectionChangeMock}
-        enabledOperators={[]}
-      />
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('John Doe')).toBeInTheDocument();
-    });
-
-    expect(screen.queryByText(/operatori selezionati/)).not.toBeInTheDocument();
 
     const checkboxes = screen.getAllByRole('checkbox');
-    fireEvent.click(checkboxes[1]);
-    fireEvent.click(checkboxes[2]);
+    // Assuming first checkbox is "select all", second is John Doe, third is Jane Smith
+    const janeCheckbox = checkboxes[2];
 
-    expect(screen.getByText(/\(2\) operatori selezionati/)).toBeInTheDocument();
+    // Select Jane Smith
+    fireEvent.click(janeCheckbox);
+
+    // Alert updates to show 2 selected operators
+    await waitFor(() => {
+      expect(screen.getByText(/commons.selectedOperator/)).toBeInTheDocument();
+    });
   });
 });

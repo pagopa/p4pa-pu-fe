@@ -9,7 +9,7 @@ import CustomDataGrid, {
 } from '../../../components/DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { PageRoutes } from '../../../App';
+import { PageRoutes } from '../../../routes';
 import { Link } from 'react-router-dom';
 import { generatePath } from 'react-router-dom';
 import { moneyFormat } from '../../../utils/formatters';

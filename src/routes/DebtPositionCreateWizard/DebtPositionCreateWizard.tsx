@@ -5,12 +5,12 @@ import Step1GeneralConfiguration from './components/Step/Step1GeneralConfigurati
 import Step2AddDebtor from './components/Step/Step2AddDebtor';
 import Step3 from './components/Step/Step3';
 import { StepperContainer } from '../../components/Stepper';
-import { PageRoutes } from '../../App';
 import {
   PaymentOption,
   Beneficiary,
   Installment
 } from '../../models/paymentTypes';
+import { PageRoutes } from '../../routes';
 import { Step3Data, Step2Data, Step1Data } from '../../models/DebtPositionType';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';

@@ -40,7 +40,7 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { generatePath, useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState, useMemo } from 'react';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';
 import { Timeline } from '../../components/Timeline';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';

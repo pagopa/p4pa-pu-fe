@@ -5,7 +5,7 @@ import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useMultiFilters } from '../../hooks/useMultiFilters';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import { useNavigate } from 'react-router-dom';
 
 export const Classifications = () => {

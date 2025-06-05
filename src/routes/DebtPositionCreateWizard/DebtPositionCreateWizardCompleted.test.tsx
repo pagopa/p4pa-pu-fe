@@ -37,9 +37,14 @@ const mockFilterValues: FilterValues = {
 const mockStoreValue = {
   state: {
     [STATE.ORGANIZATION_ID]: 3,
+    [STATE.ORGANIZATIONS]: [],
     [STATE.USER_INFO]: undefined,
     [STATE.CONFIG_FE]: undefined,
-    [STATE.APP_STATE]: { loading: false, customBreadcrumbsItems: [] },
+    [STATE.APP_STATE]: {
+      loading: false,
+      customBreadcrumbsItems: [],
+      ready: false
+    },
     [STATE.SELECTED_FILTERS]: [],
     [STATE.FILTER_VALUES]: mockFilterValues,
     [STATE.OPERATOR_ROLE]: undefined,

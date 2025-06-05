@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { PageRoutes } from '../../App';
+import { PageRoutes } from '../../routes';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';
