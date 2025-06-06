@@ -576,7 +576,7 @@
   "debtPositionCreateWizardCompleted": {
     "backToStart": "Torna al'inizio",
     "viewDebtPosition": "Vedi la posizione debitoria",
-    "downloadDebtPosition": "Scarica Posizione Debitoria",
+    "downloadDebtPosition": "Scarica avvisi",
     "description": "La trovi nella sezione Posizioni debitorie, dove puoi tenere traccia dell'andamento.",
     "descriptionDraft": "La trovi nella sezione Posizioni debitorie, dove puoi vederla e modificarla.",
     "title": "La posizione debitoria '{{paymentObject}}' è stata creata!",
