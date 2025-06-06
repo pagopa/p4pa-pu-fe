@@ -240,6 +240,7 @@
       "BACKOFFICE_TAXONOMY": "Tassonomia",
       "BACKOFFICE_TAXONOMY_INDEX": "Tassonomia",
       "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
+      "BACKOFFICE_TAXONOMY_SEARCH_RESULTS": "Risultato ricerca",
       "CLASSIFICATIONS": "Classificazioni",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
@@ -1064,7 +1065,8 @@
       "startDateValidity": "Data inizio validità",
       "endDateOfValidity": "Data fine validità",
       "serviceType": "Tipo Servizio",
-      "serviceTypeDescription": "Descrizione tipo servizio"
+      "serviceTypeDescription": "Descrizione tipo servizio",
+      "taxonomyCode": "Codice tassonomico"
     }
   },
   "telematicReceiptDetail": {

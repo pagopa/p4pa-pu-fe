@@ -1,12 +1,15 @@
-import { Grid } from '@mui/material';
+import { Button, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import ActionCard from '../../components/ActionCard/ActionCard';
 import utils from '../../utils';
 import { synchronizeTaxonomy } from '../../api/taxonomy';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '..';
 
 export const TaxonomyPage = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const syncMutation = synchronizeTaxonomy();
 
@@ -26,7 +29,13 @@ export const TaxonomyPage = () => {
       <Grid container direction="row">
         <Grid container spacing={2}>
           <Grid item xs={12} md={7}>
-            TASSONOMIA TO-DO
+            <Button
+              onClick={() =>
+                navigate(PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS)
+              }
+            >
+              Ricerca
+            </Button>
           </Grid>
 
           <Grid item xs={12} md={5}>

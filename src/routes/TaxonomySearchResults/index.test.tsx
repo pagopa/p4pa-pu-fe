@@ -1,6 +1,6 @@
 import { describe, it, vi } from 'vitest';
-import TreasurySearchResults from '.';
 import { render } from '../../__tests__/renderers';
+import TaxonomySearchResults from '.';
 import React from 'react';
 
 vi.mock('react-router-dom', async () => {
@@ -17,8 +17,8 @@ vi.mock('react-router-dom', async () => {
   };
 });
 
-describe('TreasurySearchResults Page', () => {
-  it('renders TreasurySearchResults view without crashing', () => {
-    render(<TreasurySearchResults />);
+describe('TaxonomySearchResults Page', () => {
+  it('renders TaxonomyPage without crashing', () => {
+    render(<TaxonomySearchResults />);
   });
 });
