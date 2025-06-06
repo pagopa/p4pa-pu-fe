@@ -36,6 +36,9 @@ type Config = {
   fileshareURL: string;
   apiTimeout: number;
   loginUrl: string;
+  authCallbackUrl: string;
+  erroUrl: string;
+  logOutUrl: string;
 };
 
 const pagopaLink: RootLinkType = {
@@ -66,6 +69,9 @@ const config: Config = {
   fileshareURL: VITE_FILESHARE_APIHOST,
   deployPath: VITE_DEPLOY_PATH,
   loginUrl: VITE_LOGIN_URL,
+  authCallbackUrl: 'auth-callback',
+  erroUrl: 'blockingError',
+  logOutUrl: 'loggedout',
   /** This array is populated by paths that don't need a auth token */
   tokenHeaderExcludePaths: ['/auth-callback']
 };
