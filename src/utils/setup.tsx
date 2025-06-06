@@ -61,21 +61,6 @@ const setupOrganizations = (
  * Please take note that in some circumstances this function should not be executed.
  * For example on the auth-callback route */
 const setup = async () => {
-  const pathName = window.location.pathname.replace(
-    utils.config.deployPath,
-    ''
-  );
-  const arrayOfRotutesToBeExcluded = [
-    utils.config.authCallbackUrl,
-    utils.config.erroUrl,
-    utils.config.logOutUrl
-  ];
-
-  const shouldNotExecuteSetup = arrayOfRotutesToBeExcluded.some((route) =>
-    pathName.includes(route)
-  );
-
-  if (shouldNotExecuteSetup) return;
   // configuring Interceptors
   setupInterceptors(utils.apiClient);
   setupInterceptors(utils.fileshareClient);
