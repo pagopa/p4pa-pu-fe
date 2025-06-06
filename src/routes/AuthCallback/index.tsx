@@ -1,5 +1,5 @@
 import { Box, CircularProgress } from '@mui/material';
-import { useLoaderData } from 'react-router';
+import { useLoaderData, useNavigate } from 'react-router';
 import { postToken } from '../../api/token';
 import { setIdToken } from '../../store/IdTokenStore';
 import { useEffect } from 'react';
@@ -7,12 +7,13 @@ import { PageRoutes } from '../';
 
 export default function AuthCallback() {
   const result = useLoaderData() as Awaited<ReturnType<typeof postToken>>;
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (result?.token.access_token) {
       window.localStorage.setItem('accessToken', result.token.access_token);
       setIdToken(result.idToken);
-      window.location.replace(PageRoutes.HOME);
+      navigate(PageRoutes.HOME);
     } else {
       window.location.replace(PageRoutes.ERROR);
     }

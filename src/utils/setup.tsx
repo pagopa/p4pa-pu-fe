@@ -57,9 +57,7 @@ const setupOrganizations = (
   }
 };
 
-/** Initial setup function to prepare the application state and necessary config.
- * Please take note that in some circumstances this function should not be executed.
- * For example on the auth-callback route */
+/** Initial setup function to prepare the application state and necessary config */
 const setup = async () => {
   // configuring Interceptors
   setupInterceptors(utils.apiClient);
