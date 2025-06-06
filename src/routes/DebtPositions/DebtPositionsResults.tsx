@@ -2,7 +2,7 @@ import { Grid, Stack, useTheme } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { BaseFilterValues } from '../../models/Filters';
@@ -48,14 +48,22 @@ export const DebtPositionResults = () => {
     return SearchType.DEBT_POSITION;
   }, [location.state?.searchType, location.pathname]);
 
-  const initialFilters = (location.state?.filters || {}) as BaseFilterValues;
+  const initialFilters = useMemo(
+    () => (location.state?.filters || {}) as BaseFilterValues,
+    [location.state?.filters]
+  );
+
+  const requestFn = useMemo(
+    () =>
+      searchType === SearchType.IUV
+        ? debtPositions.getInstallments
+        : debtPositions.getDebtPositionViews,
+    [searchType]
+  );
 
   const debtPosition = useDebtPositionsSearch({
     initialFilters,
-    requestFn:
-      searchType === SearchType.IUV
-        ? debtPositions.getInstallments
-        : debtPositions.getDebtPositionViews
+    requestFn
   });
 
   const { filters } = useDebtPositionFilters({
@@ -63,10 +71,12 @@ export const DebtPositionResults = () => {
     onFilter: debtPosition.applyFilters
   });
 
-  const DataGrid =
-    searchType === SearchType.IUV ? IUVDataGrid : DebtPositionsDataGrid;
+  const DataGrid = useMemo(
+    () => (searchType === SearchType.IUV ? IUVDataGrid : DebtPositionsDataGrid),
+    [searchType]
+  );
 
-  const shouldRenderDataGrid = () => {
+  const shouldRenderDataGrid = useCallback(() => {
     if (!debtPosition.query.data) return false;
 
     if (searchType === SearchType.IUV) {
@@ -96,28 +106,33 @@ export const DebtPositionResults = () => {
     }
 
     return true;
-  };
+  }, [debtPosition.query.data, searchType]);
+
+  const callToAction = useMemo(
+    () => [
+      {
+        icon: searchType === SearchType.IUV ? null : <Add />,
+        buttonText:
+          searchType === SearchType.IUV
+            ? t('commons.createNewOne')
+            : t('commons.createNew'),
+        onActionClick: () => navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD)
+      }
+    ],
+    [searchType, t, navigate]
+  );
+
+  const title = useMemo(
+    () =>
+      searchType === SearchType.IUV
+        ? t('DebtPositions.Results.titleIUV')
+        : t('DebtPositions.Results.title'),
+    [searchType, t]
+  );
 
   return (
     <Stack gap={5}>
-      <TitleComponent
-        title={
-          searchType === SearchType.IUV
-            ? t('DebtPositions.Results.titleIUV')
-            : t('DebtPositions.Results.title')
-        }
-        callToAction={[
-          {
-            icon: searchType === SearchType.IUV ? null : <Add />,
-            buttonText:
-              searchType === SearchType.IUV
-                ? t('commons.createNewOne')
-                : t('commons.createNew'),
-            onActionClick: () =>
-              navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD)
-          }
-        ]}
-      />
+      <TitleComponent title={title} callToAction={callToAction} />
       <Stack gap={3}>
         <FilterContainer
           items={filters}

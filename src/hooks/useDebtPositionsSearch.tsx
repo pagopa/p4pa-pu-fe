@@ -55,53 +55,79 @@ export const useDebtPositionSearch = ({
   const [appliedFilters, setAppliedFilters] =
     useState<DebtPositionsFilters>(filterValues);
 
+  const buildQueryParams = useCallback(
+    (
+      filters: DebtPositionsFilters,
+      pagination: { page: number; size: number },
+      sortParams: Array<string>
+    ): DebtPositionViewQuery & DebtPositionInstallmentsQuery => {
+      return {
+        dueDateFrom:
+          filters?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
+        dueDateTo:
+          filters?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
+        creationDateFrom:
+          filters?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
+        creationDateTo:
+          filters?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
+        page: pagination.page,
+        size: pagination.size,
+        ...(filters?.typeOrgId && {
+          debtPositionTypeOrgId: filters.typeOrgId
+        }),
+        ...(filters?.iuv && { iuv: filters.iuv }),
+        ...(filters?.fiscalCode && {
+          fiscalCode: filters.fiscalCode
+        }),
+        ...(filters?.status && { status: filters.status }),
+        ...(sortParams.length && { sort: sortParams })
+      };
+    },
+    []
+  );
+
+  const executeSearch = useCallback(
+    (
+      filters: DebtPositionsFilters,
+      pagination: { page: number; size: number },
+      sortParams: Array<string>
+    ) => {
+      console.log('🔍 DebtPositionsSearch - executeSearch called:', {
+        filters,
+        pagination,
+        sortParams,
+        timestamp: new Date().toISOString()
+      });
+
+      const payload = buildQueryParams(filters, pagination, sortParams);
+      query.mutate(payload);
+    },
+    [buildQueryParams, query]
+  );
+
   const applyFilters = useCallback(() => {
     setAppliedFilters({ ...filterValues });
-    handlePaginationChange({ page: 0, size: paginationParams.size });
-  }, [filterValues, handlePaginationChange, paginationParams.size]);
+    const newPagination = { page: 0, size: paginationParams.size };
+    handlePaginationChange(newPagination);
 
-  const filterToRequest = useCallback((): DebtPositionViewQuery &
-    DebtPositionInstallmentsQuery => {
-    const payload = {
-      dueDateFrom:
-        appliedFilters?.dateRange?.from?.toISOString() ??
-        new Date(0).toISOString(),
-      dueDateTo:
-        appliedFilters?.dateRange?.to?.toISOString() ??
-        new Date().toISOString(),
-      creationDateFrom:
-        appliedFilters?.dateRange?.from?.toISOString() ??
-        new Date(0).toISOString(),
-      creationDateTo:
-        appliedFilters?.dateRange?.to?.toISOString() ??
-        new Date().toISOString(),
-      page: paginationParams.page,
-      size: paginationParams.size,
-      ...(appliedFilters?.typeOrgId && {
-        debtPositionTypeOrgId: appliedFilters.typeOrgId
-      }),
-      ...(appliedFilters?.iuv && { iuv: appliedFilters.iuv }),
-      ...(appliedFilters?.fiscalCode && {
-        fiscalCode: appliedFilters.fiscalCode
-      }),
-      ...(appliedFilters?.status && { status: appliedFilters.status }),
-      ...(sort.length && { sort })
-    };
-
-    return payload;
-  }, [appliedFilters, paginationParams, sort]);
+    executeSearch(filterValues, newPagination, sort);
+  }, [
+    filterValues,
+    paginationParams.size,
+    executeSearch,
+    sort,
+    handlePaginationChange
+  ]);
 
   useEffect(() => {
-    const payload = filterToRequest();
-    query.mutate(payload);
-  }, [
-    organizationId,
-    paginationParams.page,
-    paginationParams.size,
-    sort,
-    appliedFilters,
-    filterToRequest
-  ]);
+    if (organizationId && !query.data) {
+      console.log(
+        '🚀 Initial search triggered for organizationId:',
+        organizationId
+      );
+      executeSearch(appliedFilters, paginationParams, sort);
+    }
+  }, [organizationId]);
 
   const handleFilterChange = useCallback(
     (id: string, value: FilterFieldValue): void => {
@@ -124,22 +150,40 @@ export const useDebtPositionSearch = ({
     [updateDraftFilters]
   );
 
-  const handleSortModelChange = useCallback((model: GridSortModel) => {
-    setSortModel(model);
+  const handleSortModelChange = useCallback(
+    (model: GridSortModel) => {
+      setSortModel(model);
 
-    const apiSort = model.map(
-      (item) => `${item.field},${item.sort === 'desc' ? 'DESC' : 'ASC'}`
-    );
+      const apiSort = model.map(
+        (item) => `${item.field},${item.sort === 'desc' ? 'DESC' : 'ASC'}`
+      );
 
-    setSort(apiSort.length > 0 ? apiSort : []);
-  }, []);
+      setSort(apiSort.length > 0 ? apiSort : []);
+
+      executeSearch(
+        appliedFilters,
+        paginationParams,
+        apiSort.length > 0 ? apiSort : []
+      );
+    },
+    [executeSearch, appliedFilters, paginationParams]
+  );
+
+  const handlePaginationChangeWithSearch = useCallback(
+    (newPagination: { page: number; size: number }) => {
+      handlePaginationChange(newPagination);
+
+      executeSearch(appliedFilters, newPagination, sort);
+    },
+    [handlePaginationChange, executeSearch, appliedFilters, sort]
+  );
 
   return {
     applyFilters,
     query,
     filterValues,
     handleFilterChange,
-    handlePaginationChange,
+    handlePaginationChange: handlePaginationChangeWithSearch,
     paginationParams,
     setFilterValues,
     setSort,

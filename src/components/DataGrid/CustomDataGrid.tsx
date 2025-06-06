@@ -115,7 +115,13 @@ const CustomDataGrid = forwardRef<
     }
 
     const memoizedBackendData = useMemo(() => {
-      if (!smartPagination?.backendData) return null;
+      console.log('🧠 memoizedBackendData recalculated');
+      console.log('🧠 Raw backend data:', smartPagination?.backendData);
+
+      if (!smartPagination?.backendData) {
+        console.log('🧠 No backend data, returning null');
+        return null;
+      }
 
       const { backendData } = smartPagination;
 
@@ -123,20 +129,27 @@ const CustomDataGrid = forwardRef<
         typeof backendData.number !== 'number' ||
         typeof backendData.size !== 'number'
       ) {
+        console.log('🧠 Invalid backend data types, returning null');
         return null;
       }
 
-      return {
+      const result = {
         totalElements: backendData.totalElements || 0,
         totalPages: backendData.totalPages || 0,
         number: backendData.number,
         size: backendData.size
       };
+
+      console.log('🧠 Memoized backend data result:', result);
+      return result;
     }, [
-      smartPagination?.backendData?.totalElements,
-      smartPagination?.backendData?.totalPages,
-      smartPagination?.backendData?.number,
-      smartPagination?.backendData?.size
+      // Create a stable reference by stringifying the values
+      JSON.stringify({
+        totalElements: smartPagination?.backendData?.totalElements,
+        totalPages: smartPagination?.backendData?.totalPages,
+        number: smartPagination?.backendData?.number,
+        size: smartPagination?.backendData?.size
+      })
     ]);
 
     // Hook per URL sync
@@ -149,22 +162,51 @@ const CustomDataGrid = forwardRef<
 
     // Auto-sync with backend data when available (URL sync only)
     useEffect(() => {
-      if (memoizedBackendData && urlPagination) {
-        if (!smartPagination?.onPaginationChange) {
-          // No callback - full auto-sync
-          urlPagination.syncWithBackendData(memoizedBackendData);
-        } else {
-          // With callback - validate invalid pages only
-          const currentUrlPage = parseInt(
-            new URLSearchParams(window.location.search).get('page') || '1'
-          );
+      console.log('🏭 CustomDataGrid auto-sync effect triggered');
+      console.log('🏭 memoizedBackendData:', memoizedBackendData);
+      console.log('🏭 urlPagination exists:', !!urlPagination);
+      console.log(
+        '🏭 has onPaginationChange:',
+        !!smartPagination?.onPaginationChange
+      );
 
-          if (
+      // Skip sync if backend data is empty/invalid (loading state)
+      if (
+        !memoizedBackendData ||
+        !urlPagination ||
+        memoizedBackendData.totalElements === 0 ||
+        memoizedBackendData.totalPages === 0
+      ) {
+        console.log('🏭 Skipping sync - invalid or empty backend data');
+        return;
+      }
+
+      if (!smartPagination?.onPaginationChange) {
+        console.log('🏭 No callback - calling full auto-sync');
+        // No callback - full auto-sync
+        urlPagination.syncWithBackendData(memoizedBackendData);
+      } else {
+        // With callback - validate invalid pages only
+        const currentUrlPage = parseInt(
+          new URLSearchParams(window.location.search).get('page') || '1'
+        );
+
+        console.log('🏭 With callback - checking invalid pages:', {
+          currentUrlPage,
+          totalPages: memoizedBackendData.totalPages,
+          shouldCallSync:
             currentUrlPage > memoizedBackendData.totalPages &&
             memoizedBackendData.totalPages > 0
-          ) {
-            urlPagination.syncWithBackendData(memoizedBackendData);
-          }
+        });
+
+        if (
+          currentUrlPage > memoizedBackendData.totalPages &&
+          memoizedBackendData.totalPages > 0
+        ) {
+          console.log('🏭 Calling syncWithBackendData for invalid page');
+          urlPagination.syncWithBackendData(memoizedBackendData);
+        } else {
+          console.log('🏭 Page is valid, no sync needed');
         }
       }
     }, [
