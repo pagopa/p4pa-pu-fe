@@ -61,7 +61,7 @@ export const DebtTypeCatalogEdit = () => {
       });
     } catch (error) {
       console.error(error);
-      utils.notify.emit('an error message feedback');
+      navigate(PageRoutes.RESPONSES_ERROR);
     }
   };
 

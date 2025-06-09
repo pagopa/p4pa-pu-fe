@@ -47,8 +47,8 @@ export const DebtTypeCreate = () => {
         }
       });
     } catch (error) {
-      utils.notify.emit(t('errors.generic'));
       console.error(error);
+      navigate(PageRoutes.RESPONSES_ERROR);
     }
   };
 
