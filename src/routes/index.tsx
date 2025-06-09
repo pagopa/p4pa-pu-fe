@@ -24,7 +24,7 @@ const deployPath = utils.config.deployPath;
 const routesDef = [
   {
     path: '*',
-    element: <Navigate replace to={`${deployPath}/`} />
+    element: <Navigate replace to={`${deployPath}/home`} />
   },
   {
     path: `${deployPath}/`,
@@ -40,7 +40,11 @@ const routesDef = [
     shouldRevalidate: () => false,
     children: [
       {
-        index: true,
+        element: <Navigate replace to={`${deployPath}/home`} />,
+        index: true
+      },
+      {
+        path: `home`,
         element: <Home />,
         id: 'HOME',
         handle: {
