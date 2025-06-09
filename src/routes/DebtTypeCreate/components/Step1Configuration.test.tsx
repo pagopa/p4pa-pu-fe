@@ -71,6 +71,17 @@ describe('Step1Configuration', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'commons.continue' }));
 
+    await waitFor(() => {
+      expect(
+        screen.getByText('debtTypeCreate.configuration.debtType.required')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('debtTypeCreate.configuration.debtTypeCode.required')
+      ).toBeInTheDocument();
+
+      // Note: Taxonomy validation errors are NOT expected here due to mocked schema
+    });
+
     expect(mockSetData).not.toHaveBeenCalled();
     expect(mockOnNext).not.toHaveBeenCalled();
   });

@@ -59,39 +59,43 @@ export const TaxonomyFilter = ({
   const fields: TaxonomyFilterRenderProps = {
     orgType: (
       <FormComponent.ControlledSelect
+        required={false}
         key={keys.orgType}
         name="orgType"
         control={control}
-        label={t('taxonomy.orgType')}
+        label={t('taxonomy.orgType.label')}
         fetchFn={getOrganizationsTypes}
       />
     ),
     macroAreaCode: (
       <FormComponent.ControlledSelect
+        required={false}
         key={keys.macroAreaCode}
         name="macroAreaCode"
         control={control}
-        label={t('taxonomy.macroArea')}
+        label={t('taxonomy.macroArea.label')}
         fetchFn={() => getMacroAreas({ organizationType })}
         disabled={!organizationType}
       />
     ),
     serviceTypeCode: (
       <FormComponent.ControlledSelect
+        required={false}
         key={keys.serviceTypeCode}
         name="serviceTypeCode"
         control={control}
-        label={t('taxonomy.serviceType')}
+        label={t('taxonomy.serviceType.label')}
         fetchFn={() => getServiceTypes({ organizationType, macroAreaCode })}
         disabled={!macroAreaCode}
       />
     ),
     collectingReason: (
       <FormComponent.ControlledSelect
+        required={false}
         key={keys.collectingReason}
         name="collectingReason"
         control={control}
-        label={t('taxonomy.collectingReason')}
+        label={t('taxonomy.collectingReason.label')}
         fetchFn={() =>
           getCollectionReasons({
             organizationType,
@@ -104,10 +108,11 @@ export const TaxonomyFilter = ({
     ),
     taxonomyCode: (
       <FormComponent.ControlledSelect
+        required={false}
         key={keys.taxonomyCode}
         name="taxonomyCode"
         control={control}
-        label={t('taxonomy.taxonomyCode')}
+        label={t('taxonomy.taxonomyCode.label')}
         fetchFn={() =>
           getTaxonomyCode({
             organizationType,
@@ -128,13 +133,13 @@ export const TaxonomyFilter = ({
 
   if (layout === 'singleRow') {
     return (
-      <Stack direction="row" gap={2}>
+      <>
         {fields.orgType}
         {fields.macroAreaCode}
         {fields.serviceTypeCode}
         {fields.collectingReason}
         {fields.taxonomyCode}
-      </Stack>
+      </>
     );
   }
 

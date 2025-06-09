@@ -1,4 +1,27 @@
 {
+  "taxonomy": {
+    "orgType": {
+      "label": "Tipo ente",
+      "required": "Il campo Tipo ente è obbligatorio",
+      "title": "Ente"
+    },
+    "macroArea": {
+      "label": "Macroarea",
+      "required": "Il campo macroarea é obbligatorio"
+    },
+    "serviceType": {
+      "label": "Tipo Servizio",
+      "required": "Il campo Tipo Servizio é obbligatorio"
+    },
+    "collectingReason": {
+      "label": "Motivo Riscossione",
+      "required": "Il Motivo Riscossione é obbligatorio"
+    },
+    "taxonomyCode": {
+      "label": "Codice Tassonomico",
+      "required": "Il campo codice tassonomico è obbligatorio"
+    }
+  },
   "DebtPositions": {
     "Results": {
       "filters": {
@@ -684,10 +707,6 @@
     "description": "Compila i campi e crea un nuovo Tipo dovuto nel proprio catalogo.",
     "configuration": {
       "alertMessage": "* Indica una domanda obbligatoria",
-      "collectionReason": {
-        "label": "Motivo Riscossione",
-        "required": "Il Motivo Riscossione é obbligatorio"
-      },
       "debtType": {
         "label": "Nome del Tipo dovuto",
         "helper": "Inserisce il nome attribuito al servizio di incasso",
@@ -700,25 +719,7 @@
         "label": "Codice Tipo dovuto",
         "required": "Il codice del Tipo dovuto è obbligatorio"
       },
-      "macroArea": {
-        "label": "Macroarea",
-        "required": "Il campo macroarea é obbligatorio"
-      },
-      "organizationType": {
-        "label": "Tipo ente",
-        "required": "Il campo Tipo ente è obbligatorio",
-        "title": "Ente"
-      },
-      "serviceType": {
-        "label": "Tipo Servizio",
-        "required": "Il campo Tipo Servizio é obbligatorio"
-      },
       "subtitle": "Definisce il nome e tassonomia del nuovo Tipo dovuto.",
-      "taxonomyCode": {
-        "label": "Codice Tassonomico",
-        "required": "Il Codice Tassonomico é obbligatorio",
-        "title": "Tassonomia"
-      },
       "title": "Configurazione Tipo dovuto"
     },
     "settings": {

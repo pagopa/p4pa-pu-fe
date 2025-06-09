@@ -36,7 +36,11 @@ export const _ControlledSelect = <T extends FieldValues>({
           }
           options={options?.data}
           error={!!fieldState.error}
-          helperText={<ErrorMessage messageKey={fieldState.error?.message} />}
+          helperText={
+            fieldState.error && (
+              <ErrorMessage messageKey={fieldState.error?.message} />
+            )
+          }
           {...field}
           {...props}
         />

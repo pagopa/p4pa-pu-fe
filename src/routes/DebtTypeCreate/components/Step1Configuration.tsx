@@ -32,12 +32,13 @@ export type Step1Props = {
 
 const schema = z
   .object({
-    code: z
-      .string()
-      .nonempty('debtTypeCreate.configuration.debtTypeCode.required'),
+    code: z.string({
+      required_error: 'debtTypeCreate.configuration.debtTypeCode.required'
+    }),
     description: z
-      .string()
-      .nonempty('debtTypeCreate.configuration.debtType.required')
+      .string({
+        required_error: 'debtTypeCreate.configuration.debtType.required'
+      })
       .max(100, 'debtTypeCreate.configuration.debtType.maxCharacters')
   })
   .merge(taxonomySchema);

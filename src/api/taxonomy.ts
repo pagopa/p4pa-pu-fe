@@ -19,7 +19,7 @@ export const getOrganizationsTypes = () =>
       parseAndLog(taxonomyOrganizationTypeDTOSchema.array(), data);
       return data.map((org) => ({
         value: org.organizationType,
-        label: org.organizationTypeDescription
+        label: org.organizationTypeDescription.toUpperCase()
       }));
     }
   });
@@ -41,7 +41,7 @@ export const getMacroAreas = ({
       parseAndLog(taxonomyMacroAreaCodeDTOSchema.array(), data);
       return data.map((macroArea) => ({
         value: macroArea.macroAreaCode,
-        label: macroArea.macroAreaName
+        label: macroArea.macroAreaName.toUpperCase()
       }));
     }
   });
@@ -59,7 +59,7 @@ export const getServiceTypes = (query: ServiceTypeQuery) =>
       parseAndLog(taxonomyServiceTypeCodeDTOSchema.array(), data);
       return data.map((serviceType) => ({
         value: serviceType.serviceTypeCode,
-        label: serviceType.serviceTypeDescription
+        label: serviceType.serviceTypeDescription.toUpperCase()
       }));
     }
   });
@@ -77,7 +77,7 @@ export const getCollectionReasons = (query: CollectionReasonQuery) =>
       parseAndLog(taxonomyCollectionReasonDTOSchema.array(), data);
       return data.map(({ collectionReason }) => ({
         value: collectionReason,
-        label: collectionReason
+        label: collectionReason.toUpperCase()
       }));
     }
   });
@@ -96,7 +96,7 @@ export const getTaxonomyCode = (query: TaxonomyCodeQuery) =>
       parseAndLog(taxonomyCodeDTOSchema.array(), data);
       return data.map(({ taxonomyCode }) => ({
         value: taxonomyCode,
-        label: taxonomyCode
+        label: taxonomyCode.toUpperCase()
       }));
     }
   });

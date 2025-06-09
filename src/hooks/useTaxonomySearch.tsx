@@ -1,28 +1,19 @@
 import { useState, useCallback, useEffect } from 'react';
-import { FilterFieldValue } from '../models/Filters';
 import { usePaginationState } from './usePaginationState';
 import { getTaxonomies, TaxonomiesQuery } from '../api/taxonomy';
-
-export type TaxonomyFilters = {
-  organizationType?: string;
-  macroAreaCode?: string;
-  serviceTypeCode?: string;
-  collectionReason?: string;
-};
+import { TaxonomyFields } from '../models/Taxonomy';
 
 export type UseTaxonomySearchProps = {
-  initialFilters: TaxonomyFilters;
+  filterValues: TaxonomyFields;
   initialPage?: number;
   initialSize?: number;
 };
 
 export const useTaxonomySearch = ({
-  initialFilters,
+  filterValues,
   initialPage,
   initialSize
 }: UseTaxonomySearchProps) => {
-  const [filterValues, setFilterValues] =
-    useState<TaxonomyFilters>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
   const { paginationParams, handlePaginationChange, setPaginationParams } =
     usePaginationState({
@@ -37,29 +28,10 @@ export const useTaxonomySearch = ({
   }, [paginationParams.page, paginationParams.size, sort]);
 
   const filterToRequest = (): TaxonomiesQuery => ({
-    ...(filterValues?.organizationType && {
-      organizationType: filterValues.organizationType
-    }),
-    ...(filterValues?.macroAreaCode && {
-      macroAreaCode: filterValues.macroAreaCode
-    }),
-    ...(filterValues?.serviceTypeCode && {
-      serviceTypeCode: filterValues.serviceTypeCode
-    }),
-    ...(filterValues?.collectionReason && {
-      collectionReason: filterValues.collectionReason
-    }),
+    ...filterValues,
     ...(sort.length && { sort }),
-    page: paginationParams.page,
-    size: paginationParams.size
+    ...paginationParams
   });
-
-  const handleFilterChange = useCallback(
-    (id: string, value: FilterFieldValue): void => {
-      setFilterValues((prev) => ({ ...prev, [id]: value }));
-    },
-    []
-  );
 
   const applyFilters = useCallback(() => {
     query.mutate(filterToRequest());
@@ -70,10 +42,8 @@ export const useTaxonomySearch = ({
     applyFilters,
     query,
     filterValues,
-    handleFilterChange,
     handlePaginationChange,
     paginationParams,
-    setFilterValues,
     setSort
   };
 };

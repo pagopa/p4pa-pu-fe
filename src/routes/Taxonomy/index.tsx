@@ -9,7 +9,7 @@ import { PageRoutes } from '..';
 import { TaxonomyFilter } from '../../components/TaxonomyFilter';
 import { FormProvider, useForm } from 'react-hook-form';
 import SearchCard from '../../components/SearchCard/SearchCard';
-import { taxonomySchema } from '../../components/TaxonomyFilter/schema';
+import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TaxonomyFields } from '../../models/Taxonomy';
 
@@ -18,7 +18,17 @@ export const TaxonomyPage = () => {
   const navigate = useNavigate();
 
   const form = useForm({
-    resolver: zodResolver(taxonomySchema),
+    resolver: zodResolver(
+      z.object({
+        orgType: z.string({
+          required_error: 'taxonomy.orgType.required'
+        }),
+        macroAreaCode: z.string().optional(),
+        serviceTypeCode: z.string().optional(),
+        collectingReason: z.string().optional(),
+        taxonomyCode: z.string().optional()
+      })
+    ),
     mode: 'onTouched'
   });
 
@@ -34,10 +44,10 @@ export const TaxonomyPage = () => {
     }
   };
 
-  const onSubmit = async (values: TaxonomyFields) => {
-    //TODO navigate to results page with filters
-    console.debug(values);
-    navigate(PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS);
+  const onSubmit = async (filters: Partial<TaxonomyFields>) => {
+    navigate(PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS, {
+      state: { filters }
+    });
   };
 
   return (
