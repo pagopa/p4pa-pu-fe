@@ -4,9 +4,7 @@ import loader from '../utils/loaders';
 import { setConfigFe } from '../store/ConfigFeStore';
 import { setUserInfo } from '../store/UserInfoStore';
 import { idTokenPayloadState } from '../store/IdTokenStore';
-import { setupInterceptors } from '../utils/interceptors';
 import { CircularProgress, Stack } from '@mui/material';
-import utils from '../utils';
 import { setOperatorRole } from '../store/OperatorRoleStore';
 import { OrganizationDTO } from '../../generated/apiClient';
 import { IdTokenPayload } from '../models/IdTokenPayload';
@@ -59,10 +57,6 @@ const setupOrganizations = (
 
 /** Initial setup function to prepare the application state and necessary config */
 const setup = async () => {
-  // configuring Interceptors
-  setupInterceptors(utils.apiClient);
-  setupInterceptors(utils.fileshareClient);
-
   // store critical data
   const organizationId = organizationIdState.state.value;
   const idToken = idTokenPayloadState.value;

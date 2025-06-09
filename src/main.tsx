@@ -7,8 +7,13 @@ import { StoreProvider } from './store/GlobalStore';
 import { it } from 'date-fns/locale/it';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
+import { setupInterceptors } from './utils/interceptors';
+import utils from './utils';
 
 const container = document.getElementById('root') as HTMLElement;
+// configuring Interceptors
+setupInterceptors(utils.apiClient);
+setupInterceptors(utils.fileshareClient);
 
 if (container) {
   const root = createRoot(container);
