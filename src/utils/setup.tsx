@@ -14,6 +14,10 @@ import {
   setOrganizationId
 } from '../store/OrganizationIdStore';
 import { setAppState } from '../store/AppStateStore';
+import { setupInterceptors } from './interceptors';
+import utils from '.';
+
+const deployPath = utils.config.deployPath;
 
 const setupOrganizations = (
   orgs: Array<OrganizationDTO>,
@@ -57,6 +61,9 @@ const setupOrganizations = (
 
 /** Initial setup function to prepare the application state and necessary config */
 const setup = async () => {
+  // configuring Interceptors
+  setupInterceptors(utils.apiClient);
+  setupInterceptors(utils.fileshareClient);
   // store critical data
   const organizationId = organizationIdState.state.value;
   const idToken = idTokenPayloadState.value;
@@ -70,10 +77,17 @@ const setup = async () => {
   setAppState({ ready: true });
 };
 
+const setupOrError = async () => {
+  try {
+    await setup();
+  } catch {
+    window.location.replace(`${deployPath}/errorBlocking`);
+  }
+};
 /** Fallback component to show while setup is in progress */
 const setupFallback = () => (
   <Stack justifyContent={'center'} alignItems={'center'} height={'100vh'}>
     <CircularProgress size={40} />
   </Stack>
 );
-export { setup, setupFallback };
+export { setupOrError, setupFallback };

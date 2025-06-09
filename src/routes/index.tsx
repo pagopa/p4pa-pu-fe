@@ -1,11 +1,11 @@
 import { createBrowserRouter, Navigate, RouteObject } from 'react-router';
 import utils from '../utils';
-import { setup, setupFallback } from '../utils/setup';
+import { setupOrError, setupFallback } from '../utils/setup';
 import { Layout } from '../components/layout/Layout';
 import Home from './Home';
 import { RouteHandleObject } from '../models/Routes';
 import AuthCallback from './AuthCallback';
-import { postToken } from '../api/token';
+import { postTokenOrError } from '../api/token';
 import LoggedOut from './UtilityPages/loggedout';
 import ErrorPage from './UtilityPages/error';
 import { flowsRoutes } from '../routes/flows';
@@ -29,13 +29,7 @@ const routesDef = [
   {
     path: `${deployPath}/`,
     element: <Layout />,
-    loader: async () => {
-      try {
-        await setup();
-      } catch {
-        window.location.replace(`${deployPath}/errorBlocking`);
-      }
-    },
+    loader: setupOrError,
     HydrateFallback: setupFallback,
     shouldRevalidate: () => false,
     children: [
@@ -67,7 +61,7 @@ const routesDef = [
   {
     path: `${deployPath}/auth-callback`,
     element: <AuthCallback />,
-    loader: postToken
+    loader: postTokenOrError
   },
   {
     id: 'LOGGED_OUT',
