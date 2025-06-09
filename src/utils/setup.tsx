@@ -4,9 +4,7 @@ import loader from '../utils/loaders';
 import { setConfigFe } from '../store/ConfigFeStore';
 import { setUserInfo } from '../store/UserInfoStore';
 import { idTokenPayloadState } from '../store/IdTokenStore';
-import { setupInterceptors } from '../utils/interceptors';
 import { CircularProgress, Stack } from '@mui/material';
-import utils from '../utils';
 import { setOperatorRole } from '../store/OperatorRoleStore';
 import { OrganizationDTO } from '../../generated/apiClient';
 import { IdTokenPayload } from '../models/IdTokenPayload';
@@ -16,6 +14,10 @@ import {
   setOrganizationId
 } from '../store/OrganizationIdStore';
 import { setAppState } from '../store/AppStateStore';
+import { setupInterceptors } from './interceptors';
+import utils from '.';
+
+const deployPath = utils.config.deployPath;
 
 const setupOrganizations = (
   orgs: Array<OrganizationDTO>,
@@ -62,7 +64,6 @@ const setup = async () => {
   // configuring Interceptors
   setupInterceptors(utils.apiClient);
   setupInterceptors(utils.fileshareClient);
-
   // store critical data
   const organizationId = organizationIdState.state.value;
   const idToken = idTokenPayloadState.value;
@@ -76,10 +77,17 @@ const setup = async () => {
   setAppState({ ready: true });
 };
 
+const setupOrError = async () => {
+  try {
+    await setup();
+  } catch {
+    window.location.replace(`${deployPath}/errorBlocking`);
+  }
+};
 /** Fallback component to show while setup is in progress */
 const setupFallback = () => (
   <Stack justifyContent={'center'} alignItems={'center'} height={'100vh'}>
     <CircularProgress size={40} />
   </Stack>
 );
-export { setup, setupFallback };
+export { setupOrError, setupFallback };

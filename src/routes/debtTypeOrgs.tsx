@@ -1,21 +1,17 @@
-import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
-import config from '../utils/config';
 import DebtTypeDetailView from './DebtTypeDetailView/DebtTypeDetailView';
 import DebtTypesCreated from './DebtTypesCreated/DebtTypesCreated';
 import { DebtTypeOrgCreate } from './DebtTypeOrgCreate';
-import { RouteObject } from 'react-router';
+import { Outlet, RouteObject } from 'react-router';
 import { AdminRouteGuard } from '../components/RouteGuard/RouteGuard';
-
-const deployPath = config.deployPath;
 
 export const debtTypeOrgsRoutes: Array<RouteObject> = [
   {
     id: 'DEBT_TYPES_DASHBOARD',
-    path: `${deployPath}/debt-types/dashboard/`,
+    path: `debt-types/dashboard/`,
     element: (
       <AdminRouteGuard>
-        <Layout />
+        <Outlet />
       </AdminRouteGuard>
     ),
     children: [

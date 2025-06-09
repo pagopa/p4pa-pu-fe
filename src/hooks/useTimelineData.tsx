@@ -48,7 +48,8 @@ export const getEventStatusColor = (
 
 export const getEventDisplayInfo = (
   eventType: PaymentEventType,
-  t: TranslationFunction
+  t: TranslationFunction,
+  eventDescription?: string
 ): {
   hasDescription: boolean;
   hasStatus: boolean;
@@ -56,10 +57,11 @@ export const getEventDisplayInfo = (
   statusChip?: { label: string; color: ChipOwnProps['color'] };
 } => {
   const descriptionKey = `commons.DP_DESCRIPTION.${eventType}`;
-  const description = t(descriptionKey);
-  const hasDescription = description !== descriptionKey;
-
   const statusKey = `commons.DP_STATUS.${eventType}`;
+
+  const translatedDescription = t(descriptionKey);
+  const hasTranslatedDescription = translatedDescription !== descriptionKey;
+
   const statusLabel = t(statusKey);
   const hasStatus = statusLabel !== statusKey;
 
@@ -70,10 +72,28 @@ export const getEventDisplayInfo = (
       }
     : undefined;
 
+  let finalDescription: string | undefined;
+
+  if (hasTranslatedDescription) {
+    if (eventDescription && eventDescription.trim() !== '') {
+      finalDescription = translatedDescription.replace(
+        '{{eventDescription}}',
+        eventDescription
+      );
+    } else {
+      finalDescription = translatedDescription
+        .replace(' - {{eventDescription}}', '')
+        .replace('{{eventDescription}}', '')
+        .trim();
+    }
+  } else if (eventDescription && eventDescription.trim() !== '') {
+    finalDescription = eventDescription;
+  }
+
   return {
-    hasDescription,
+    hasDescription: !!finalDescription,
     hasStatus,
-    description: hasDescription ? description : undefined,
+    description: finalDescription,
     statusChip
   };
 };
@@ -86,7 +106,7 @@ const createTimelineElementWithoutEventType = (
   date: registry.eventDateTime ? new Date(registry.eventDateTime) : new Date(),
   content: (
     <Typography variant="caption-semibold" color="text.primary" component="div">
-      {registry.eventDescription}
+      {registry.eventDescription || ''}
     </Typography>
   ),
   isFirst,
@@ -95,21 +115,12 @@ const createTimelineElementWithoutEventType = (
 });
 
 const createContentElement = (
-  displayInfo: ReturnType<typeof getEventDisplayInfo>,
-  eventDescription?: string
+  displayInfo: ReturnType<typeof getEventDisplayInfo>
 ): JSX.Element => {
-  const displayText = displayInfo.hasDescription
-    ? displayInfo.description
-    : eventDescription;
-
-  if (displayInfo.hasStatus && !displayInfo.hasDescription) {
-    return <Typography></Typography>;
-  }
-
-  if (displayText) {
+  if (displayInfo.hasDescription && displayInfo.description) {
     return (
       <Typography color="text.primary" variant="caption" component="div">
-        {displayText}
+        {displayInfo.description}
       </Typography>
     );
   }
@@ -127,8 +138,12 @@ const createTimelineElementWithEventType = (
     throw new Error('registry.eventType is required for this function');
   }
 
-  const displayInfo = getEventDisplayInfo(registry.eventType, t);
-  const content = createContentElement(displayInfo, registry.eventDescription);
+  const displayInfo = getEventDisplayInfo(
+    registry.eventType,
+    t,
+    registry.eventDescription
+  );
+  const content = createContentElement(displayInfo);
 
   return {
     date: registry.eventDateTime
