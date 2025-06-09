@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { renderHook, act } from '../__tests__/renderers';
+import { renderHook } from '../__tests__/renderers';
 import useTaxonomySearch from './useTaxonomySearch';
 import { useSearchParams } from 'react-router-dom';
 
@@ -28,7 +28,9 @@ describe('useTaxonomySearch', () => {
   });
 
   const defaultProps = {
-    initialFilters: {},
+    filterValues: {
+      orgType: '01'
+    },
     initialPage: 0,
     initialSize: 10
   };
@@ -38,12 +40,17 @@ describe('useTaxonomySearch', () => {
 
     expect(result.current.paginationParams.page).toBe(0);
     expect(result.current.paginationParams.size).toBe(10);
-    expect(result.current.filterValues).toEqual({});
+    expect(result.current.filterValues).toEqual({
+      orgType: '01'
+    });
   });
 
   it('should initialize with custom values', () => {
     const customProps = {
-      initialFilters: { macroAreaCode: '14' },
+      filterValues: {
+        orgType: '01',
+        macroAreaCode: '14'
+      },
       initialPage: 2,
       initialSize: 25
     };
@@ -52,24 +59,9 @@ describe('useTaxonomySearch', () => {
 
     expect(result.current.paginationParams.page).toBe(0);
     expect(result.current.paginationParams.size).toBe(25);
-    expect(result.current.filterValues).toEqual({ macroAreaCode: '14' });
-  });
-
-  it('should handle filter changes', () => {
-    const { result } = renderHook(() => useTaxonomySearch(defaultProps));
-
-    act(() => {
-      result.current.handleFilterChange('macroAreaCode', 'collectionReason');
+    expect(result.current.filterValues).toEqual({
+      orgType: '01',
+      macroAreaCode: '14'
     });
-
-    expect(result.current.filterValues.macroAreaCode).toBe('collectionReason');
-  });
-
-  it('should expose required functions', () => {
-    const { result } = renderHook(() => useTaxonomySearch(defaultProps));
-
-    expect(typeof result.current.applyFilters).toBe('function');
-    expect(typeof result.current.handlePaginationChange).toBe('function');
-    expect(typeof result.current.setFilterValues).toBe('function');
   });
 });

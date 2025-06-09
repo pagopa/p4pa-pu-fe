@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
 import { Stack } from '@mui/material';
-import { BaseFilterValues } from '../../models/Filters';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import TaxonomyDataGrid from './TaxonomyDataGrid';
 import useTaxonomySearch from '../../hooks/useTaxonomySearch';
@@ -9,19 +8,15 @@ import { useLocation } from 'react-router';
 import { FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TaxonomyFields } from '../../models/Taxonomy';
+import { TaxonomyFilters } from '../../models/Taxonomy';
 import { FormComponent } from '../../components/FormComponent';
-
-export type LocationState = {
-  filters: BaseFilterValues;
-};
 
 const TaxonomySearchResults = () => {
   const { t } = useTranslation();
   const location = useLocation();
-  const initialFilters = (location.state?.filters || {}) as TaxonomyFields;
+  const initialFilters = (location.state?.filters || {}) as TaxonomyFilters;
 
-  const form = useForm<TaxonomyFields>({
+  const form = useForm<TaxonomyFilters>({
     resolver: zodResolver(
       z.object({
         orgType: z.string({

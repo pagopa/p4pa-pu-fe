@@ -1,10 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import { usePaginationState } from './usePaginationState';
 import { getTaxonomies, TaxonomiesQuery } from '../api/taxonomy';
-import { TaxonomyFields } from '../models/Taxonomy';
+import { TaxonomyFilters } from '../models/Taxonomy';
 
 export type UseTaxonomySearchProps = {
-  filterValues: TaxonomyFields;
+  filterValues: TaxonomyFilters;
   initialPage?: number;
   initialSize?: number;
 };

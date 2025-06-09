@@ -2,60 +2,61 @@ import Stack from '@mui/material/Stack';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { FormComponent } from '../../../../components/FormComponent';
-import { Step1Data } from '../Step1Configuration';
+import { DebtPositionTypeDetailDTO } from '../../../../../generated/data-contracts';
 
 type TaxonomyEditProps = {
-  prefilledData?: Partial<Step1Data>;
+  prefilledData?: Partial<DebtPositionTypeDetailDTO>;
 };
 
 export const TaxonomyEdit = ({ prefilledData }: TaxonomyEditProps) => {
   const { t } = useTranslation();
-  const { control, watch } = useFormContext();
-
-  const orgType = watch('orgType');
+  const { control } = useFormContext();
 
   return (
-    <>
+    <Stack gap={2}>
       <FormComponent.ControlledTextField
         name="orgType"
+        required={false}
         control={control}
-        label={t('debtTypeCreate.configuration.orgType')}
+        label={t('taxonomy.orgType.label')}
         defaultValue={prefilledData?.orgType}
         disabled
       />
 
-      {orgType && (
-        <Stack direction="row" gap={2} mt={2}>
-          <FormComponent.ControlledTextField
-            name="macroArea"
-            control={control}
-            label={t('debtTypeCreate.configuration.macroArea')}
-            defaultValue={prefilledData?.macroAreaCode}
-            disabled
-          />
-          <FormComponent.ControlledTextField
-            name="serviceType"
-            control={control}
-            label={t('debtTypeCreate.configuration.serviceType')}
-            defaultValue={prefilledData?.serviceTypeCode}
-            disabled
-          />
-          <FormComponent.ControlledTextField
-            name="collectingReason"
-            control={control}
-            label={t('debtTypeCreate.configuration.collectingReason')}
-            defaultValue={prefilledData?.collectingReason}
-            disabled
-          />
-          <FormComponent.ControlledTextField
-            name="taxonomyCode"
-            control={control}
-            label={t('debtTypeCreate.configuration.taxonomyCode')}
-            defaultValue={prefilledData?.taxonomyCode}
-            disabled
-          />
-        </Stack>
-      )}
-    </>
+      <FormComponent.ControlledTextField
+        name="macroAreaCode"
+        required={false}
+        control={control}
+        label={t('taxonomy.macroArea.label')}
+        defaultValue={prefilledData?.macroArea}
+        disabled
+      />
+      <Stack direction="row" gap={2}>
+        <FormComponent.ControlledTextField
+          name="serviceTypeCode"
+          required={false}
+          control={control}
+          label={t('taxonomy.serviceType.label')}
+          defaultValue={prefilledData?.serviceType}
+          disabled
+        />
+        <FormComponent.ControlledTextField
+          name="collectingReason"
+          required={false}
+          control={control}
+          label={t('taxonomy.collectingReason.label')}
+          defaultValue={prefilledData?.collectingReason}
+          disabled
+        />
+      </Stack>
+      <FormComponent.ControlledTextField
+        name="taxonomyCode"
+        required={false}
+        control={control}
+        label={t('taxonomy.taxonomyCode.label')}
+        defaultValue={prefilledData?.taxonomyCode}
+        disabled
+      />
+    </Stack>
   );
 };
