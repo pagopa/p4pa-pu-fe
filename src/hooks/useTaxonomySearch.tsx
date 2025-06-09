@@ -28,9 +28,21 @@ export const useTaxonomySearch = ({
   }, [paginationParams.page, paginationParams.size, sort]);
 
   const filterToRequest = (): TaxonomiesQuery => ({
-    ...filterValues,
+    ...(filterValues?.orgType && {
+      organizationType: filterValues.orgType
+    }),
+    ...(filterValues?.macroAreaCode && {
+      macroAreaCode: filterValues.macroAreaCode
+    }),
+    ...(filterValues?.serviceTypeCode && {
+      serviceTypeCode: filterValues.serviceTypeCode
+    }),
+    ...(filterValues?.collectingReason && {
+      collectionReason: filterValues.collectingReason
+    }),
     ...(sort.length && { sort }),
-    ...paginationParams
+    page: paginationParams.page,
+    size: paginationParams.size
   });
 
   const applyFilters = useCallback(() => {
