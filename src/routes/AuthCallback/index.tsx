@@ -1,12 +1,14 @@
 import { Box, CircularProgress } from '@mui/material';
 import { useLoaderData, useNavigate } from 'react-router';
-import { postToken } from '../../api/token';
+import { postTokenOrError } from '../../api/token';
 import { setIdToken } from '../../store/IdTokenStore';
 import { useEffect } from 'react';
 import { PageRoutes } from '../';
 
 export default function AuthCallback() {
-  const result = useLoaderData() as Awaited<ReturnType<typeof postToken>>;
+  const result = useLoaderData() as Awaited<
+    ReturnType<typeof postTokenOrError>
+  >;
   const navigate = useNavigate();
 
   useEffect(() => {
