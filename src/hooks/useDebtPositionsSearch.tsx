@@ -24,7 +24,7 @@ export type UseDebtPositionFiltersProps = {
   initialFilters: DebtPositionsFilters;
   requestFn:
     | typeof debtPositions.getDebtPositionViews
-    | typeof debtPositions.getInstallments; // Allow passing the request function
+    | typeof debtPositions.getInstallments;
   initialPage?: number;
   initialSize?: number;
   totalElements?: number;
@@ -36,6 +36,10 @@ export const useDebtPositionSearch = ({
   initialPage,
   initialSize
 }: UseDebtPositionFiltersProps) => {
+  const {
+    state: { organizationId }
+  } = useStore();
+
   const [filterValues, setFilterValues] =
     useState<DebtPositionsFilters>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
@@ -45,10 +49,6 @@ export const useDebtPositionSearch = ({
     initialPage,
     initialSize
   });
-
-  const {
-    state: { organizationId }
-  } = useStore();
 
   const query = requestFn({ organizationId });
 
@@ -92,13 +92,6 @@ export const useDebtPositionSearch = ({
       pagination: { page: number; size: number },
       sortParams: Array<string>
     ) => {
-      console.log('🔍 DebtPositionsSearch - executeSearch called:', {
-        filters,
-        pagination,
-        sortParams,
-        timestamp: new Date().toISOString()
-      });
-
       const payload = buildQueryParams(filters, pagination, sortParams);
       query.mutate(payload);
     },
@@ -109,7 +102,6 @@ export const useDebtPositionSearch = ({
     setAppliedFilters({ ...filterValues });
     const newPagination = { page: 0, size: paginationParams.size };
     handlePaginationChange(newPagination);
-
     executeSearch(filterValues, newPagination, sort);
   }, [
     filterValues,
@@ -121,10 +113,6 @@ export const useDebtPositionSearch = ({
 
   useEffect(() => {
     if (organizationId && !query.data) {
-      console.log(
-        '🚀 Initial search triggered for organizationId:',
-        organizationId
-      );
       executeSearch(appliedFilters, paginationParams, sort);
     }
   }, [organizationId]);
@@ -159,7 +147,6 @@ export const useDebtPositionSearch = ({
       );
 
       setSort(apiSort.length > 0 ? apiSort : []);
-
       executeSearch(
         appliedFilters,
         paginationParams,
@@ -172,7 +159,6 @@ export const useDebtPositionSearch = ({
   const handlePaginationChangeWithSearch = useCallback(
     (newPagination: { page: number; size: number }) => {
       handlePaginationChange(newPagination);
-
       executeSearch(appliedFilters, newPagination, sort);
     },
     [handlePaginationChange, executeSearch, appliedFilters, sort]

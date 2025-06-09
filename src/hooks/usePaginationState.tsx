@@ -38,6 +38,7 @@ export type UsePaginationStateReturn = {
  * });
  * ```
  */
+
 export const usePaginationState = ({
   initialPage = 0,
   initialSize = 10,
@@ -56,10 +57,11 @@ export const usePaginationState = ({
     const urlSize = parseInt(searchParams.get('size') || String(initialSize));
 
     if (pagination.page !== urlPage - 1 || pagination.size !== urlSize) {
-      setPagination({
+      const newPagination = {
         page: urlPage - 1, // Convert to 0-based
         size: urlSize
-      });
+      };
+      setPagination(newPagination);
     }
   }, [searchParams, initialSize]);
 
@@ -71,6 +73,7 @@ export const usePaginationState = ({
       const params = new URLSearchParams(searchParams);
       params.set('page', String(newPagination.page + 1)); // Convert to 1-based for URL
       params.set('size', String(newPagination.size));
+
       setSearchParams(params, { replace: true });
 
       if (onPaginationChange) {

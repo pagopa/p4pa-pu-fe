@@ -115,11 +115,7 @@ const CustomDataGrid = forwardRef<
     }
 
     const memoizedBackendData = useMemo(() => {
-      console.log('🧠 memoizedBackendData recalculated');
-      console.log('🧠 Raw backend data:', smartPagination?.backendData);
-
       if (!smartPagination?.backendData) {
-        console.log('🧠 No backend data, returning null');
         return null;
       }
 
@@ -129,7 +125,6 @@ const CustomDataGrid = forwardRef<
         typeof backendData.number !== 'number' ||
         typeof backendData.size !== 'number'
       ) {
-        console.log('🧠 Invalid backend data types, returning null');
         return null;
       }
 
@@ -140,7 +135,6 @@ const CustomDataGrid = forwardRef<
         size: backendData.size
       };
 
-      console.log('🧠 Memoized backend data result:', result);
       return result;
     }, [
       // Create a stable reference by stringifying the values
@@ -162,14 +156,6 @@ const CustomDataGrid = forwardRef<
 
     // Auto-sync with backend data when available (URL sync only)
     useEffect(() => {
-      console.log('🏭 CustomDataGrid auto-sync effect triggered');
-      console.log('🏭 memoizedBackendData:', memoizedBackendData);
-      console.log('🏭 urlPagination exists:', !!urlPagination);
-      console.log(
-        '🏭 has onPaginationChange:',
-        !!smartPagination?.onPaginationChange
-      );
-
       // Skip sync if backend data is empty/invalid (loading state)
       if (
         !memoizedBackendData ||
@@ -177,12 +163,10 @@ const CustomDataGrid = forwardRef<
         memoizedBackendData.totalElements === 0 ||
         memoizedBackendData.totalPages === 0
       ) {
-        console.log('🏭 Skipping sync - invalid or empty backend data');
         return;
       }
 
       if (!smartPagination?.onPaginationChange) {
-        console.log('🏭 No callback - calling full auto-sync');
         // No callback - full auto-sync
         urlPagination.syncWithBackendData(memoizedBackendData);
       } else {
@@ -191,22 +175,11 @@ const CustomDataGrid = forwardRef<
           new URLSearchParams(window.location.search).get('page') || '1'
         );
 
-        console.log('🏭 With callback - checking invalid pages:', {
-          currentUrlPage,
-          totalPages: memoizedBackendData.totalPages,
-          shouldCallSync:
-            currentUrlPage > memoizedBackendData.totalPages &&
-            memoizedBackendData.totalPages > 0
-        });
-
         if (
           currentUrlPage > memoizedBackendData.totalPages &&
           memoizedBackendData.totalPages > 0
         ) {
-          console.log('🏭 Calling syncWithBackendData for invalid page');
           urlPagination.syncWithBackendData(memoizedBackendData);
-        } else {
-          console.log('🏭 Page is valid, no sync needed');
         }
       }
     }, [
@@ -215,7 +188,7 @@ const CustomDataGrid = forwardRef<
       urlPagination?.syncWithBackendData
     ]);
 
-    // Handler per reset paginazione su filtri
+    // Handler for reset pagination on filters
     const handleFiltersApplied = useCallback(() => {
       if (urlPagination) {
         urlPagination.handlePageChange(1);
