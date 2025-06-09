@@ -56,13 +56,22 @@ export const usePaginationState = ({
     const urlPage = parseInt(searchParams.get('page') || '1');
     const urlSize = parseInt(searchParams.get('size') || String(initialSize));
 
-    if (pagination.page !== urlPage - 1 || pagination.size !== urlSize) {
-      const newPagination = {
-        page: urlPage - 1, // Convert to 0-based
-        size: urlSize
-      };
-      setPagination(newPagination);
-    }
+    setPagination((currentPagination) => {
+      const shouldUpdate =
+        currentPagination.page !== urlPage - 1 ||
+        currentPagination.size !== urlSize;
+
+      if (shouldUpdate) {
+        const newPagination = {
+          page: urlPage - 1, // Convert to 0-based
+          size: urlSize
+        };
+
+        return newPagination;
+      } else {
+        return currentPagination;
+      }
+    });
   }, [searchParams, initialSize]);
 
   const handlePaginationChange = useCallback(
