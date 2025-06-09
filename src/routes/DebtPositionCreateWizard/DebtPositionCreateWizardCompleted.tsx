@@ -23,12 +23,16 @@ function DebtPositionCreateWizardCompleted() {
     description = '',
     status,
     debtPositionId,
-    isEditing = false
+    isEditing = false,
+    wasPublished = false
   } = location.state || {};
   const isDraft = status === DebtPositionStatus.DRAFT;
 
   const getTitleTranslationKey = (): string => {
     if (isEditing) {
+      if (wasPublished) {
+        return 'debtPositionCreateWizardCompleted.title';
+      }
       return isDraft
         ? 'debtPositionCreateWizardCompleted.editDraft'
         : 'debtPositionCreateWizardCompleted.edit';
@@ -39,6 +43,9 @@ function DebtPositionCreateWizardCompleted() {
   };
 
   const getDescriptionTranslationKey = (): string => {
+    if (isEditing && wasPublished) {
+      return 'debtPositionCreateWizardCompleted.description';
+    }
     return isDraft
       ? 'debtPositionCreateWizardCompleted.descriptionDraft'
       : 'debtPositionCreateWizardCompleted.description';
@@ -157,7 +164,7 @@ function DebtPositionCreateWizardCompleted() {
         >
           {t(translationKeys.backToStart)}
         </Button>
-        {isDraft ? (
+        {isDraft && !wasPublished ? (
           <Button
             role="button"
             variant="contained"
