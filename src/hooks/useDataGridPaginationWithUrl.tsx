@@ -249,11 +249,7 @@ export const useDataGridPaginationWithUrl = ({
         ? Math.ceil(data.totalElements / validSize)
         : data.totalPages || 0;
 
-      if (
-        correctTotalPages !== undefined &&
-        currentUrlPage > correctTotalPages &&
-        correctTotalPages > 0
-      ) {
+      if (currentUrlPage > correctTotalPages && correctTotalPages > 0) {
         const params = new URLSearchParams(searchParams);
 
         // Improvement: Go to the last available page instead of always to page 1
