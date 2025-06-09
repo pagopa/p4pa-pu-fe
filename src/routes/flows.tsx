@@ -1,5 +1,4 @@
 import { LoaderFunction, LoaderFunctionArgs, Navigate } from 'react-router-dom';
-import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
 import Conservation from './Conservation';
@@ -26,8 +25,7 @@ const loaderWithId: LoaderFunction = async ({ params }: LoaderFunctionArgs) => {
 
 export const flowsRoutes = [
   {
-    path: `${deployPath}/flows/`,
-    element: <Layout />,
+    path: `flows/`,
     id: 'FLOWS',
     handle: {
       backButton: false

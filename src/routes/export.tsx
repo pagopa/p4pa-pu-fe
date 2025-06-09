@@ -1,15 +1,10 @@
-import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
-import config from '../utils/config';
 import ExportFlow from './ExportFlowPage/ExportFlowPage';
-
-const deployPath = config.deployPath;
 
 export const exportRoutes = [
   {
     id: 'EXPORT',
-    path: `${deployPath}/export/`,
-    element: <Layout />,
+    path: `export/`,
     children: [
       {
         id: 'EXPORT_FLOWS',

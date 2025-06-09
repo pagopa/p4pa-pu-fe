@@ -2,20 +2,15 @@ import DebtPositionResults from './DebtPositions/DebtPositionsResults';
 import DebtPositionsImportOverview from './DebtPositionsImportOverview';
 import DebtPositionsInstallmentDetail from './DebtPositionsInstallmentDetail';
 import DebtPositionsPage from './DebtPositionsPage';
-import config from '../utils/config';
-import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
 import DebtPositionDetail from './DebtPositionDetail/DebtPositionDetail';
 import DebtPositionCreateWizard from './DebtPositionCreateWizard/DebtPositionCreateWizard';
 import DebtPositionCreateWizardCompleted from './DebtPositionCreateWizard/DebtPositionCreateWizardCompleted';
 
-const deployPath = config.deployPath;
-
 export const debtPositionsRoutes = [
   {
     id: 'DEBT_POSITIONS',
-    path: `${deployPath}/debt-positions/`,
-    element: <Layout />,
+    path: `debt-positions/`,
     children: [
       {
         index: true,
