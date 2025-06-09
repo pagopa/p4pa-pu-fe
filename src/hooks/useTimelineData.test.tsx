@@ -201,7 +201,7 @@ describe('useTimelineData', () => {
       );
     });
 
-    it('renders empty Typography when no description and only status', () => {
+    it('renders eventDescription when no description translation exists but status does', () => {
       const customTranslations = {
         'commons.DP_STATUS.DPI_ADDED': 'Rata Aggiunta'
       };
@@ -219,7 +219,37 @@ describe('useTimelineData', () => {
       );
 
       const timelineElement = result.current[0];
+      expect(timelineElement.content.props.children).toBe(
+        'Fallback description'
+      );
+      expect(timelineElement.statusChip).toEqual({
+        label: 'Rata Aggiunta',
+        color: 'success'
+      });
+    });
+
+    it('renders empty Typography when no description, no eventDescription, but has status', () => {
+      const customTranslations = {
+        'commons.DP_STATUS.DPI_ADDED': 'Rata Aggiunta'
+      };
+
+      i18nTestSetup(customTranslations);
+
+      const registryStatusOnly: RegistryItem = {
+        eventDateTime: '2025-05-16T10:45:30.987654Z',
+        eventType: PaymentEventType.DPI_ADDED
+      };
+
+      const { result } = renderHook(() =>
+        useTimelineData([registryStatusOnly])
+      );
+
+      const timelineElement = result.current[0];
       expect(timelineElement.content.props.children).toBeUndefined();
+      expect(timelineElement.statusChip).toEqual({
+        label: 'Rata Aggiunta',
+        color: 'success'
+      });
     });
 
     it('renders registry description for events without eventType', () => {
