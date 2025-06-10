@@ -1,6 +1,6 @@
 import { ButtonProps, Button } from '@mui/material';
 
-export type _ButtonProps = Omit<ButtonProps, 'type'> & {
+export type _ButtonProps = ButtonProps & {
   label?: string;
 };
 

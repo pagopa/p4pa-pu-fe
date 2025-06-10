@@ -1,6 +1,7 @@
 import MenuItem, { MenuItemProps } from '@mui/material/MenuItem';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
-import { ChangeEvent, useState } from 'react';
+import Tooltip from '@mui/material/Tooltip';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
 export type SelectOptions = Array<MenuItemProps & { label: string }>;
 
@@ -9,11 +10,60 @@ export type _SelectProps = Omit<TextFieldProps, 'select' | 'type'> & {
   forwardRef?: React.Ref<HTMLInputElement>;
 };
 
-export const _Select = ({ forwardRef, ...props }: _SelectProps) => {
+const RenderValue = ({
+  selected,
+  options
+}: {
+  selected: string;
+  options: SelectOptions;
+}) => {
+  const labelRef = useRef<HTMLSpanElement>(null);
+  const [isOverflowed, setIsOverflowed] = useState(false);
+
+  const label =
+    options.find((opt) => opt.value === selected)?.label || selected;
+
+  useEffect(() => {
+    const el = labelRef.current;
+    if (el) {
+      setIsOverflowed(el.scrollWidth > el.clientWidth);
+    }
+  }, [label]);
+
+  const labelElement = (
+    <span
+      ref={labelRef}
+      style={{
+        display: 'block',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
+        whiteSpace: 'nowrap',
+        maxWidth: '100%'
+      }}
+    >
+      {label}
+    </span>
+  );
+
+  return isOverflowed ? (
+    <Tooltip title={label} enterDelay={500} arrow placement="top">
+      {labelElement}
+    </Tooltip>
+  ) : (
+    labelElement
+  );
+};
+
+export const _Select = ({
+  forwardRef,
+  options = [],
+  ...props
+}: _SelectProps) => {
   const [value, setValue] = useState('');
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>) =>
+  const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
+  };
 
   return (
     <TextField
@@ -26,15 +76,18 @@ export const _Select = ({ forwardRef, ...props }: _SelectProps) => {
       ref={forwardRef}
       {...props}
       select
+      SelectProps={{
+        ...props.SelectProps,
+        renderValue: (selected) => (
+          <RenderValue selected={selected as string} options={options} />
+        )
+      }}
     >
-      {props?.options?.map((option, optionIndex) => (
-        <MenuItem
-          key={`${props.label}-${option.value}-${optionIndex}`}
-          {...option}
-        >
+      {options.map((option, index) => (
+        <MenuItem key={`${props.label}-${option.value}-${index}`} {...option}>
           {option.label}
         </MenuItem>
-      )) || []}
+      ))}
     </TextField>
   );
 };

@@ -1,16 +1,11 @@
-import {
-  createBrowserRouter,
-  Navigate,
-  Outlet,
-  RouteObject
-} from 'react-router';
+import { createBrowserRouter, Navigate, RouteObject } from 'react-router';
 import utils from '../utils';
-import { setup, setupFallback } from '../utils/setup';
+import { setupOrError, setupFallback } from '../utils/setup';
 import { Layout } from '../components/layout/Layout';
 import Home from './Home';
 import { RouteHandleObject } from '../models/Routes';
 import AuthCallback from './AuthCallback';
-import { postToken } from '../api/token';
+import { postTokenOrError } from '../api/token';
 import LoggedOut from './UtilityPages/loggedout';
 import ErrorPage from './UtilityPages/error';
 import { flowsRoutes } from '../routes/flows';
@@ -23,49 +18,33 @@ import { responsesRoutes } from '../routes/responses';
 import { debtPositionsRoutes } from '../routes/debtPositions';
 import { backofficeRoutes } from '../routes/backoffice';
 import { debtTypeOrgsRoutes } from '../routes/debtTypeOrgs';
+
 const deployPath = utils.config.deployPath;
 
 const routesDef = [
   {
-    element: <Outlet />,
-    loader: setup,
+    path: '*',
+    element: <Navigate replace to={`${deployPath}/home`} />
+  },
+  {
+    path: `${deployPath}/`,
+    element: <Layout />,
+    loader: setupOrError,
     HydrateFallback: setupFallback,
     shouldRevalidate: () => false,
     children: [
       {
-        path: '*',
-        element: <Navigate replace to={`${deployPath}/`} />
+        element: <Navigate replace to={`${deployPath}/home`} />,
+        index: true
       },
       {
-        path: `${deployPath}/`,
-        element: <Layout />,
-        children: [
-          {
-            path: `${deployPath}/`,
-            element: <Home />,
-            id: 'HOME',
-            index: true,
-            handle: {
-              backButton: false,
-              hideBreadcrumbs: true
-            } as RouteHandleObject
-          }
-        ]
-      },
-      {
-        path: `${deployPath}/auth-callback`,
-        element: <AuthCallback />,
-        loader: postToken
-      },
-      {
-        id: 'LOGGED_OUT',
-        path: `${deployPath}/loggedout`,
-        element: <LoggedOut />
-      },
-      {
-        id: 'ERROR',
-        path: `${deployPath}/blockingError`,
-        element: <ErrorPage />
+        path: `home`,
+        element: <Home />,
+        id: 'HOME',
+        handle: {
+          backButton: false,
+          hideBreadcrumbs: true
+        } as RouteHandleObject
       },
       ...flowsRoutes,
       ...importRoutes,
@@ -78,6 +57,21 @@ const routesDef = [
       ...classificationsRoutes,
       ...backofficeRoutes
     ]
+  },
+  {
+    path: `${deployPath}/auth-callback`,
+    element: <AuthCallback />,
+    loader: postTokenOrError
+  },
+  {
+    id: 'LOGGED_OUT',
+    path: `${deployPath}/loggedout`,
+    element: <LoggedOut />
+  },
+  {
+    id: 'ERROR',
+    path: `${deployPath}/errorBlocking`,
+    element: <ErrorPage />
   }
 ];
 

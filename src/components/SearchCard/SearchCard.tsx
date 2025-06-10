@@ -28,6 +28,7 @@ type SearchCardProps = {
   filterValues?: BaseFilterValues;
   onFilterChange?: (id: string, value: FilterFieldValue) => void;
   onReset?: () => void;
+  render?: React.ReactNode;
 };
 
 const SearchCard = ({
@@ -36,6 +37,7 @@ const SearchCard = ({
   tabsConfig,
   fields,
   button,
+  render,
   filterContext,
   multiFilterConfig,
   activeTabIndex = 0,
@@ -142,6 +144,12 @@ const SearchCard = ({
         {multiFilterConfig && (
           <Grid item lg={12}>
             <MultiFilter filterMap={multiFilterConfig} />
+          </Grid>
+        )}
+
+        {render && (
+          <Grid item lg={12}>
+            {render}
           </Grid>
         )}
       </Grid>

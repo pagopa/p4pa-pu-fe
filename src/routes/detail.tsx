@@ -1,15 +1,10 @@
-import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
-import config from '../utils/config';
 import DetailFlowPage from './DetailFlowPage';
-
-const deployPath = config.deployPath;
 
 export const detailRoutes = [
   {
     id: 'DETAIL',
-    path: `${deployPath}/detail/`,
-    element: <Layout />,
+    path: `detail/`,
     children: [
       {
         id: 'DETAIL_FLOWS',

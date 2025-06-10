@@ -1,16 +1,11 @@
-import config from '../utils/config';
-import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
 import { Classifications } from '../components/Classifications';
 import ClassificationsOverview from './ClassificationsOverview';
 
-const deployPath = config.deployPath;
-
 export const classificationsRoutes = [
   {
     id: 'CLASSIFICATIONS',
-    path: `${deployPath}/classifications/`,
-    element: <Layout />,
+    path: `classifications/`,
     children: [
       {
         index: true,
