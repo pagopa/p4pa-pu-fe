@@ -515,6 +515,19 @@ const Step3 = ({
     return { isValid: true, syncedInstallments };
   };
 
+  const getSaveDraftHandler = (): (() => void) | undefined => {
+    if (isDraftInEdit) {
+      // DRAFT in edit: save without publishing
+      return handleSubmit((values) => onSubmit(values, false, false));
+    }
+    if (!isEditing) {
+      // Creation mode: save as draft
+      return handleSubmit((values) => onSubmit(values, true));
+    }
+    // UNPAID/EXPIRED in edit: no save draft option
+    return undefined;
+  };
+
   const onSubmit = async (
     values: Step3FormValues,
     isDraft = false,
@@ -908,13 +921,7 @@ const Step3 = ({
         onNext={handleSubmit((values) =>
           onSubmit(values, false, isDraftInEdit)
         )}
-        onSaveDraft={
-          isDraftInEdit
-            ? () => handleSubmit((values) => onSubmit(values, false, false))()
-            : !isEditing
-              ? () => handleSubmit((values) => onSubmit(values, true))()
-              : undefined
-        }
+        onSaveDraft={getSaveDraftHandler()}
         disableNext={false}
         nextLabel={getNextButtonLabel()}
         showSaveDraft={isDraftInEdit || !isEditing}

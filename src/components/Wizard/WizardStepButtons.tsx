@@ -46,7 +46,7 @@ const WizardStepButtons = ({
       <Box display="flex" gap={4}>
         {showSaveDraft && (
           <Button
-            variant="outlined"
+            variant={showSaveDraftIcon ? 'text' : 'outlined'}
             onClick={onSaveDraft}
             disabled={disableSaveDraft}
             startIcon={showSaveDraftIcon ? <Save /> : undefined}
