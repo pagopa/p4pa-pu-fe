@@ -67,7 +67,7 @@ const getCompletionScenario = (
   wasPublished: boolean
 ): CompletionScenario => {
   if (isEditing) {
-    return wasPublished
+    return wasPublished || !isDraft
       ? CompletionScenario.EDIT_PUBLISHED
       : CompletionScenario.EDIT_SAVED;
   }
