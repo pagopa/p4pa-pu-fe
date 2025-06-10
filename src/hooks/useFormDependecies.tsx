@@ -1,4 +1,10 @@
-import { FieldValues, Path, UseFormReturn, useWatch } from 'react-hook-form';
+import {
+  FieldValues,
+  Path,
+  PathValue,
+  UseFormReturn,
+  useWatch
+} from 'react-hook-form';
 import { useEffect, useRef } from 'react';
 
 export type FormDependencies<T extends FieldValues> = {
@@ -19,7 +25,7 @@ export const useFormDependencies = <T extends FieldValues>({
   form,
   fieldOrder
 }: FormDependencies<T>) => {
-  const { control, resetField } = form;
+  const { control } = form;
 
   // Watch all dependent fields in order
   const values = useWatch({ control, name: fieldOrder });
@@ -32,13 +38,16 @@ export const useFormDependencies = <T extends FieldValues>({
     const changedIndex = values.findIndex((v, i) => v !== prev[i]);
 
     if (changedIndex >= 0) {
-      // Reset all fields after the changed one
-      fieldOrder
-        .slice(changedIndex + 1)
-        .forEach((fieldName) => resetField(fieldName));
+      // explicitly clear dependent fields, ignoring default values
+      fieldOrder.slice(changedIndex + 1).forEach((fieldName) => {
+        form.setValue(fieldName, '' as PathValue<T, Path<T>>, {
+          shouldDirty: false,
+          shouldValidate: true
+        });
+      });
     }
     prevValuesRef.current = values;
-  }, [values, resetField, fieldOrder]);
+  }, [values, form, fieldOrder]);
 
   const keys = fieldOrder.reduce<Record<string, string>>(
     (acc, fieldName, index) => ({
