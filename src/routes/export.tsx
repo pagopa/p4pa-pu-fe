@@ -1,3 +1,4 @@
+import ClassificationExport from './ClassificationExport/ClassificationExport';
 import { Layout } from '../components/layout/Layout';
 import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
@@ -15,6 +16,18 @@ export const exportRoutes = [
         id: 'EXPORT_FLOWS',
         path: 'flows/:category',
         element: <ExportFlow />,
+        handle: {
+          backButton: true,
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject
+      },
+      {
+        id: 'EXPORT_CLASSIFICATIONS',
+        path: 'classifications',
+        element: <ClassificationExport />,
         handle: {
           backButton: true,
           hideBreadcrumbs: true,

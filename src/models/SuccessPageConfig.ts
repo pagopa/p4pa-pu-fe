@@ -128,5 +128,17 @@ export const SuccessPageConfig: SuccessOpts = {
         actionID: 'DEBT_TYPES_DASHBOARD'
       }
     ]
+  },
+  'classification-export': {
+    title: 'commons.successExport',
+    description: 'commons.successExportDescription',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'commons.close',
+        actionID: 'CLASSIFICATIONS_EXPORT_OVERVIEW'
+      }
+    ]
   }
 };

@@ -33,13 +33,63 @@
     }
   },
   "classifications": {
-    "description": "Ricerca o visualizza classificazioni",
+    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "search": "Cerca classificazioni",
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
     "exportTitle": "Esporta Classificazioni",
     "exportDescription": "Richiede l'esportazione di una classificazione.",
     "sectionTitle": "Classificazioni esportati",
     "showAllResults": "Vedi classificazioni esportate"
+  },
+  "classificationsExport": {
+    "classificationsOptions": {
+      "DOPPI": "Pagamenti doppi",
+      "RT_NO_IUF": "Pagamenti non correttamente rendicontati", 
+      "RT_NO_IUD": "Pagamenti non correttamente notificati",
+      "IUV_NO_RT": "Rendicontazioni senza pagamenti generati",
+      "TES_NO_IUF_OR_IUV": "Riversamenti non rendicontati o di pagamenti non eseguiti",
+      "IUF_NO_TES": "Rendicontazioni non correttamente riversate",
+      "IUD_RT_IUF": "Pagamenti Notificati e Riconciliati",
+      "RT_IUF": "Pagamenti rendicontati",
+      "RT_TES": "Pagamenti con riscontro puntuale",
+      "IUD_RT_IUF_TES": "Pagamenti Notificati",
+      "RT_IUF_TES": "Pagamenti riversati cumulativamente",
+      "IUF_TES_DIV_IMP": "Rendicontazioni con riversamento ma con importo differente",
+      "IUD_NO_RT": "Notifiche di pagamenti non eseguiti",
+      "TES_NO_MATCH": "Riversamenti di tesoreria sconosciuti",
+      "UNKNOWN": "Tutti"
+    },
+    "title": "Prenota export di un flusso",
+    "description": "Imposta i filtri e Inserisci i dati per prenotare l'esportazione delle classificazioni dei pagamenti e conoscere se è stato riconciliato o ci sono delle anomalie.",
+    "subTitle": "Configurazione dell'esportazione",
+    "subDescription": "L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
+    "sections": {
+      "paymentClassification": {
+        "title": "Classificazione pagamenti",
+        "type": "Tipo classificazione"
+      },
+      "traceVersion": {
+        "title": "Versione tracciato",
+        "fileVersion":"Versione tracciato"
+      },
+      "notice": {
+        "remittanceInformation": "Oggetto del pagamento",
+        "applicant": "Attestante"
+      },
+      "reporting": {
+        "title": "Rendicontazione"
+      },
+      "treasury": {
+        "title": "Tesoreria",
+        "amount": "Importo",
+        "accountRegistryCode": "Codice conto"
+      }
+    },
+    "errorMessages": {
+      "singleInstanceBothDates": "Compila entrambe le date dell'intervallo",
+      "bothDates": "Compila entrambe le date negli intervalli che vuoi utilizzare",
+      "insufficientFields": "Seleziona la versione e almeno un altro criterio"
+    }
   },
   "commons": {
     "addfilter": "Aggiunge filtro",
@@ -196,6 +246,7 @@
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
     "iud": "IUD",
+    "iuf": "IUF",
     "iur": "IUR",
     "iuv": "IUV",
     "loading": "caricamento",
@@ -242,6 +293,7 @@
       "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
       "BACKOFFICE_TAXONOMY_SEARCH_RESULTS": "Risultato ricerca",
       "CLASSIFICATIONS": "Classificazioni",
+      "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",

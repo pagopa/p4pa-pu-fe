@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { ExportFileTypeEnum } from '../../../generated/apiClient';
 import ExportFlowOverview from '../ExportFlowOverview/ExportFlowOverview';
+import { PageRoutes } from '../../routes';
 
 const ClassificationsOverview = () => {
   const { t } = useTranslation();
@@ -8,10 +9,10 @@ const ClassificationsOverview = () => {
   return (
     <ExportFlowOverview
       routingCategory=""
-      title={t('commons.routes.CLASSIFICATIONS')}
+      title={t('commons.exportedFlows')}
       description={t('classifications.description')}
-      sectionTitle={t('classifications.sectionTitle')}
       exportFileTypes={ExportFileTypeEnum.CLASSIFICATIONS}
+      specializedExportPage={PageRoutes.EXPORT_CLASSIFICATIONS}
     />
   );
 };

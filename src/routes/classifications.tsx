@@ -22,8 +22,8 @@ export const classificationsRoutes = [
         } as RouteHandleObject
       },
       {
-        id: 'CLASSIFICATIONS_SEARCH_RESULTS',
-        path: 'search-results',
+        id: 'CLASSIFICATIONS_EXPORT_OVERVIEW',
+        path: 'export-overview',
         element: <ClassificationsOverview />,
         handle: {
           backButton: true
