@@ -12,6 +12,90 @@ import debtPositions from '../../api/debtPositions';
 import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
 
+type DebtPositionCompletionState = {
+  readonly description?: string;
+  readonly status?: DebtPositionStatus;
+  readonly debtPositionId?: number;
+  readonly isEditing?: boolean;
+  readonly wasPublished?: boolean;
+};
+
+enum CompletionScenario {
+  CREATION_DRAFT = 'CREATION_DRAFT',
+  CREATION_PUBLISHED = 'CREATION_PUBLISHED',
+  EDIT_SAVED = 'EDIT_SAVED',
+  EDIT_PUBLISHED = 'EDIT_PUBLISHED'
+}
+
+type ScenarioConfig = {
+  readonly titleKey: string;
+  readonly descriptionKey: string;
+  readonly showDownload: boolean;
+  readonly showView: boolean;
+};
+
+const SCENARIO_CONFIG: Record<CompletionScenario, ScenarioConfig> = {
+  [CompletionScenario.CREATION_DRAFT]: {
+    titleKey: 'debtPositionCreateWizardCompleted.draft',
+    descriptionKey: 'debtPositionCreateWizardCompleted.descriptionDraft',
+    showDownload: false,
+    showView: true
+  },
+  [CompletionScenario.CREATION_PUBLISHED]: {
+    titleKey: 'debtPositionCreateWizardCompleted.title',
+    descriptionKey: 'debtPositionCreateWizardCompleted.description',
+    showDownload: true,
+    showView: false
+  },
+  [CompletionScenario.EDIT_SAVED]: {
+    titleKey: 'debtPositionCreateWizardCompleted.edit',
+    descriptionKey: 'debtPositionCreateWizardCompleted.description',
+    showDownload: false,
+    showView: true
+  },
+  [CompletionScenario.EDIT_PUBLISHED]: {
+    titleKey: 'debtPositionCreateWizardCompleted.title',
+    descriptionKey: 'debtPositionCreateWizardCompleted.description',
+    showDownload: true,
+    showView: false
+  }
+} as const;
+
+const getCompletionScenario = (
+  isEditing: boolean,
+  isDraft: boolean,
+  wasPublished: boolean
+): CompletionScenario => {
+  if (isEditing) {
+    return wasPublished
+      ? CompletionScenario.EDIT_PUBLISHED
+      : CompletionScenario.EDIT_SAVED;
+  }
+  return isDraft
+    ? CompletionScenario.CREATION_DRAFT
+    : CompletionScenario.CREATION_PUBLISHED;
+};
+
+// Type guard per validazione runtime
+const isValidCompletionState = (
+  state: unknown
+): state is DebtPositionCompletionState => {
+  if (!state || typeof state !== 'object') return false;
+
+  const s = state as Record<string, unknown>;
+
+  return (
+    (s.description === undefined || typeof s.description === 'string') &&
+    (s.status === undefined ||
+      Object.values(DebtPositionStatus).includes(
+        s.status as DebtPositionStatus
+      )) &&
+    (s.debtPositionId === undefined || typeof s.debtPositionId === 'number') &&
+    (s.isEditing === undefined || typeof s.isEditing === 'boolean') &&
+    (s.wasPublished === undefined || typeof s.wasPublished === 'boolean')
+  );
+};
+
 function DebtPositionCreateWizardCompleted() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -19,41 +103,38 @@ function DebtPositionCreateWizardCompleted() {
   const deployPath = config.deployPath;
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+  const validatedState: DebtPositionCompletionState = isValidCompletionState(
+    location.state
+  )
+    ? location.state
+    : {
+        description: '',
+        status: undefined,
+        debtPositionId: undefined,
+        isEditing: false,
+        wasPublished: false
+      };
+
   const {
     description = '',
     status,
     debtPositionId,
     isEditing = false,
     wasPublished = false
-  } = location.state || {};
+  } = validatedState;
+
   const isDraft = status === DebtPositionStatus.DRAFT;
 
-  const getTitleTranslationKey = (): string => {
-    if (isEditing) {
-      if (wasPublished) {
-        return 'debtPositionCreateWizardCompleted.title';
-      }
-      return isDraft
-        ? 'debtPositionCreateWizardCompleted.editDraft'
-        : 'debtPositionCreateWizardCompleted.edit';
-    }
-    return isDraft
-      ? 'debtPositionCreateWizardCompleted.draft'
-      : 'debtPositionCreateWizardCompleted.title';
-  };
-
-  const getDescriptionTranslationKey = (): string => {
-    if (isEditing && wasPublished) {
-      return 'debtPositionCreateWizardCompleted.description';
-    }
-    return isDraft
-      ? 'debtPositionCreateWizardCompleted.descriptionDraft'
-      : 'debtPositionCreateWizardCompleted.description';
-  };
+  const currentScenario = getCompletionScenario(
+    isEditing,
+    isDraft,
+    wasPublished
+  );
+  const scenarioConfig = SCENARIO_CONFIG[currentScenario];
 
   const translationKeys = {
-    title: getTitleTranslationKey(),
-    description: getDescriptionTranslationKey(),
+    title: scenarioConfig.titleKey,
+    description: scenarioConfig.descriptionKey,
     viewDebtPosition: 'debtPositionCreateWizardCompleted.viewDebtPosition',
     backToStart: 'debtPositionCreateWizardCompleted.backToStart',
     downloadDebtPosition:
@@ -164,7 +245,7 @@ function DebtPositionCreateWizardCompleted() {
         >
           {t(translationKeys.backToStart)}
         </Button>
-        {isDraft && !wasPublished ? (
+        {scenarioConfig.showView ? (
           <Button
             role="button"
             variant="contained"
