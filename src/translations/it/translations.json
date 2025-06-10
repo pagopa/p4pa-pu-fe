@@ -706,6 +706,9 @@
     "title": "Crea un nuovo Tipo dovuto",
     "description": "Compila i campi e crea un nuovo Tipo dovuto nel proprio catalogo.",
     "configuration": {
+      "taxonomy": {
+        "title": "Tassonomia"
+      },
       "alertMessage": "* Indica una domanda obbligatoria",
       "debtType": {
         "label": "Nome del Tipo dovuto",

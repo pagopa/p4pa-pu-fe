@@ -115,7 +115,7 @@ export const Step1Configuration = ({
             </Stack>
           </SectionBox>
           <SectionBox
-            title={t('debtTypeCreate.configuration.taxonomyCode.title')}
+            title={t('debtTypeCreate.configuration.taxonomy.title')}
             adornment={<LocalOffer />}
           >
             {editmode ? (
