@@ -15,7 +15,6 @@ import {
 import { useStore } from '../../store/GlobalStore';
 import { getDebtPositionTypeDetail } from '../../api/debtPositionTypeDetail';
 import { STATE } from '../../store/types';
-import utils from '../../utils';
 
 const initialData: DebtPositionTypeRequestBody = {
   code: '',

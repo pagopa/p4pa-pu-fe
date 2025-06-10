@@ -9,7 +9,6 @@ import { PageRoutes } from '../../routes';
 import { useSignal } from '@preact/signals-react';
 import { postDebtPositionType } from '../../api/debtPositionsTypes';
 import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
-import utils from '../../utils';
 
 const initialData: DebtPositionTypeRequestBody = {
   code: '',
