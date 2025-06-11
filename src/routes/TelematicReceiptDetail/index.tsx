@@ -9,6 +9,9 @@ import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';
+import { getReceiptPdf } from '../../api/receiptPdf';
+import utils from '../../utils';
+import { downloadBlob } from '../../utils/download';
 
 export const TelematicReceiptDetail = () => {
   const { t } = useTranslation();
@@ -75,6 +78,18 @@ export const TelematicReceiptDetail = () => {
     }
   ];
 
+  const getReceiptPdfMutation = getReceiptPdf(organizationId);
+  const handleDownloadReceiptPdf = async () => {
+    try {
+      const result = await getReceiptPdfMutation.mutateAsync(id);
+      const { data, fileName } = result;
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('commons.files.downloadFailed'), 'error');
+    }
+  };
+
   return (
     <>
       <TitleComponent
@@ -84,7 +99,7 @@ export const TelematicReceiptDetail = () => {
             icon: <Download />,
             variant: 'contained',
             buttonText: t('commons.files.download'),
-            onActionClick: () => console.log('download')
+            onActionClick: handleDownloadReceiptPdf
           }
         ]}
       />
