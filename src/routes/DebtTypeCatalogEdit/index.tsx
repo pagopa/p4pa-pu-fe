@@ -15,7 +15,6 @@ import {
 import { useStore } from '../../store/GlobalStore';
 import { getDebtPositionTypeDetail } from '../../api/debtPositionTypeDetail';
 import { STATE } from '../../store/types';
-import utils from '../../utils';
 
 const initialData: DebtPositionTypeRequestBody = {
   code: '',
@@ -61,7 +60,7 @@ export const DebtTypeCatalogEdit = () => {
       });
     } catch (error) {
       console.error(error);
-      utils.notify.emit('an error message feedback');
+      navigate(PageRoutes.RESPONSES_ERROR);
     }
   };
 
