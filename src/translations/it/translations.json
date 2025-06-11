@@ -610,6 +610,12 @@
       "title": "La posizione debitoria non può essere modificata",
       "description": "Siamo spiacenti, non è possibile modificare questa posizione debitoria."
     },
+    "publishDialog": {
+      "title": "Vuoi attivare il pagamento?",
+      "description": "La posizione debitoria passerà allo stato 'Da pagare' e verranno generati degli avvisi. Una volta attivato, è possibile modificare l'oggetto di pagamento, l'importo e la data di scadenza, oppure eliminare la Posizione Debitoria.",
+      "confirmLabel": "Attiva"
+    },
+    "publishError": "Si è verificato un errore durante l'attivazione del pagamento. Vi preghiamo di riprovare più tardi.",
     "timeline": {
       "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio",
       "title": "Storico Posizione Debitoria"
