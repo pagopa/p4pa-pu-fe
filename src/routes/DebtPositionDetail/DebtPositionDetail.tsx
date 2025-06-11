@@ -160,6 +160,22 @@ const DebtPositionDetail = () => {
     }
   );
 
+  const publishDebtPositionMutation = debtPositions.publishDebtPosition(
+    organizationId,
+    debtPositionId,
+    () => {
+      setDialogConfig(null);
+      queryClient.invalidateQueries({
+        queryKey: ['getDebtPositionDetail', organizationId, debtPositionId]
+      });
+    },
+    (error) => {
+      console.error('Error while publishing the debt position:', error);
+      setDialogConfig(null);
+      utils.notify.emit(t('debtPositionDetail.publishError'), 'error');
+    }
+  );
+
   const canBeDeleted =
     debtPositionDetail?.status !== DebtPositionStatus.PAID &&
     debtPositionDetail?.status !== DebtPositionStatus.PARTIALLY_PAID;
@@ -236,6 +252,27 @@ const DebtPositionDetail = () => {
       onConfirm: () => setDialogConfig(null),
       onClose: () => setDialogConfig(null),
       testId: 'edit-error-dialog'
+    });
+  };
+
+  const handleActivePayment = () => {
+    showPublishDialog();
+  };
+
+  const handlePublishConfirm = () => {
+    publishDebtPositionMutation.mutate();
+  };
+
+  const showPublishDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: t('debtPositionDetail.publishDialog.title'),
+      message: t('debtPositionDetail.publishDialog.description'),
+      confirmLabel: t('debtPositionDetail.publishDialog.confirmLabel'),
+      cancelLabel: t('commons.close'),
+      onConfirm: handlePublishConfirm,
+      onClose: () => setDialogConfig(null),
+      testId: 'confirm-publish-dialog'
     });
   };
 
@@ -425,7 +462,7 @@ const DebtPositionDetail = () => {
             onActionClick:
               debtPositionDetail.status !== DebtPositionStatus.DRAFT
                 ? handleDownloadNotices
-                : () => console.log('active payment')
+                : handleActivePayment
           },
           {
             icon: <History data-testid="HistoryButton" />,
