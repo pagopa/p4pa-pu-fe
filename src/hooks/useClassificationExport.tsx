@@ -57,7 +57,6 @@ export const useClassificationExport = (organizationId: number) => {
       formData: ClassificationFormFields,
       dateRanges: Record<string, { from: Date | null; to: Date | null }>
     ): boolean => {
-      // fileVersion è sempre obbligatorio
       if (!formData.fileVersion) return false;
 
       const classificationRange = dateRanges.classification;
@@ -65,7 +64,6 @@ export const useClassificationExport = (organizationId: number) => {
         classificationRange.from && classificationRange.to
       );
 
-      // Controlla se ci sono altri criteri di filtro
       const hasOtherCriteria = !!(
         formData.label ||
         formData.iuv ||
@@ -81,7 +79,6 @@ export const useClassificationExport = (organizationId: number) => {
         formData.reportingIur
       );
 
-      // È valido se ha almeno un range di date completo O altri criteri
       return hasCompleteClassificationRange || hasOtherCriteria;
     },
     []
