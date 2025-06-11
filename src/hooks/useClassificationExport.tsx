@@ -21,8 +21,10 @@ export type ClassificationFormFields = {
   remittanceInformation: string;
   accountRegistryCode: string;
   billAmountCents: string;
-  applicant: string;
   reportingIur: string;
+  pspLastName: string;
+  pspCompanyName: string;
+  regulationUniqueIdentifier: string;
 };
 
 const DEFAULT_VALUES: ClassificationFormFields = {
@@ -30,13 +32,15 @@ const DEFAULT_VALUES: ClassificationFormFields = {
   label: '',
   iuv: '',
   remittanceInformation: '',
-  applicant: '',
   iur: '',
   iud: '',
   iuf: '',
   reportingIur: '',
   billAmountCents: '',
-  accountRegistryCode: ''
+  accountRegistryCode: '',
+  pspLastName: '',
+  pspCompanyName: '',
+  regulationUniqueIdentifier: ''
 };
 
 export const useClassificationExport = (organizationId: number) => {
@@ -53,24 +57,32 @@ export const useClassificationExport = (organizationId: number) => {
       formData: ClassificationFormFields,
       dateRanges: Record<string, { from: Date | null; to: Date | null }>
     ): boolean => {
+      // fileVersion è sempre obbligatorio
       if (!formData.fileVersion) return false;
 
-      const hasCompleteDateRange = Object.values(dateRanges).some(
-        (range) => range.from && range.to
+      const classificationRange = dateRanges.classification;
+      const hasCompleteClassificationRange = !!(
+        classificationRange.from && classificationRange.to
       );
 
-      const hasOtherCriteria = [
-        formData.label && isValidLabelEnum(formData.label),
-        formData.iuv,
-        formData.remittanceInformation,
-        formData.applicant,
-        formData.iur || formData.iud || formData.iuf,
-        formData.reportingIur,
-        formData.billAmountCents,
-        formData.accountRegistryCode
-      ].some(Boolean);
+      // Controlla se ci sono altri criteri di filtro
+      const hasOtherCriteria = !!(
+        formData.label ||
+        formData.iuv ||
+        formData.iur ||
+        formData.iud ||
+        formData.iuf ||
+        formData.remittanceInformation ||
+        formData.billAmountCents ||
+        formData.accountRegistryCode ||
+        formData.pspLastName ||
+        formData.pspCompanyName ||
+        formData.regulationUniqueIdentifier ||
+        formData.reportingIur
+      );
 
-      return hasCompleteDateRange || hasOtherCriteria;
+      // È valido se ha almeno un range di date completo O altri criteri
+      return hasCompleteClassificationRange || hasOtherCriteria;
     },
     []
   );
@@ -103,8 +115,18 @@ export const useClassificationExport = (organizationId: number) => {
       if (formData.accountRegistryCode) {
         filterFields.accountRegistryCode = formData.accountRegistryCode;
       }
+      if (formData.pspLastName) {
+        filterFields.pspLastName = formData.pspLastName;
+      }
+      if (formData.pspCompanyName) {
+        filterFields.pspCompanyName = formData.pspCompanyName;
+      }
+      if (formData.regulationUniqueIdentifier) {
+        filterFields.regulationUniqueIdentifier =
+          formData.regulationUniqueIdentifier;
+      }
 
-      const { classification, payment, reporting, accounting, value } =
+      const { classification, payment, reporting, accounting, value, payDate } =
         dateRanges;
 
       if (classification.from && classification.to) {
@@ -113,28 +135,39 @@ export const useClassificationExport = (organizationId: number) => {
           to: dateToIso(classification.to)
         };
       }
+
       if (payment.from && payment.to) {
         filterFields.paymentDate = {
           from: dateToIso(payment.from),
           to: dateToIso(payment.to)
         };
       }
+
       if (reporting.from && reporting.to) {
         filterFields.regulationDate = {
           from: dateToIso(reporting.from),
           to: dateToIso(reporting.to)
         };
       }
+
       if (accounting.from && accounting.to) {
         filterFields.billDate = {
           from: dateToIso(accounting.from),
           to: dateToIso(accounting.to)
         };
       }
+
       if (value.from && value.to) {
         filterFields.regionValueDate = {
           from: dateToIso(value.from),
           to: dateToIso(value.to)
+        };
+      }
+
+      if (payDate?.from && payDate?.to) {
+        filterFields.payDate = {
+          from: dateToIso(payDate.from),
+          to: dateToIso(payDate.to)
         };
       }
 

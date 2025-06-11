@@ -54,7 +54,8 @@ const ClassificationExportPage = () => {
     payment: { from: null as Date | null, to: null as Date | null },
     reporting: { from: null as Date | null, to: null as Date | null },
     accounting: { from: null as Date | null, to: null as Date | null },
-    value: { from: null as Date | null, to: null as Date | null }
+    value: { from: null as Date | null, to: null as Date | null },
+    payDate: { from: null as Date | null, to: null as Date | null }
   });
 
   const updateDateRange = useCallback(
@@ -80,11 +81,18 @@ const ClassificationExportPage = () => {
       const hasOnlyOne =
         (!!range.from && !range.to) || (!range.from && !!range.to);
 
+      if (hasOnlyOne) {
+        return {
+          hasError: true,
+          errorMessage: t(
+            'classificationsExport.errorMessages.singleInstanceBothDates'
+          )
+        };
+      }
+
       return {
-        hasError: hasOnlyOne,
-        errorMessage: hasOnlyOne
-          ? t('classificationsExport.errorMessages.singleInstanceBothDates')
-          : ''
+        hasError: false,
+        errorMessage: ''
       };
     },
     [dateRanges, t]
@@ -98,16 +106,17 @@ const ClassificationExportPage = () => {
   }, [dateRanges, getDateRangeValidation]);
 
   const handleSubmit = useCallback(() => {
-    if (!areDatePairsValid()) {
-      utils.notify.emit(t('classificationsExport.errorMessages.bothDates'));
+    const formData = formMethods.getValues();
+
+    if (!validateForm(formData, dateRanges)) {
+      utils.notify.emit(
+        t('classificationsExport.errorMessages.missingRequiredFields')
+      );
       return;
     }
 
-    const formData = formMethods.getValues();
-    if (!validateForm(formData, dateRanges)) {
-      utils.notify.emit(
-        t('classificationsExport.errorMessages.insufficientFields')
-      );
+    if (!areDatePairsValid()) {
+      utils.notify.emit(t('classificationsExport.errorMessages.bothDates'));
       return;
     }
 
@@ -163,6 +172,7 @@ const ClassificationExportPage = () => {
             title={t(
               'classificationsExport.sections.paymentClassification.title'
             )}
+            data-testid="classification-section"
           >
             <FormComponent.ControlledSelect
               name="label"
@@ -171,7 +181,7 @@ const ClassificationExportPage = () => {
               )}
               options={classificationOptions}
               control={formMethods.control}
-              required={false}
+              required={true}
               sx={{ mb: 2 }}
             />
             {(() => {
@@ -179,6 +189,10 @@ const ClassificationExportPage = () => {
               return (
                 <Box sx={{ mb: 2 }}>
                   <FormComponent.DateRange
+                    rangeLabel={t(
+                      'classificationsExport.sections.paymentClassification.lastUpdateDate'
+                    )}
+                    required={true}
                     from={{
                       value: dateRanges.classification.from,
                       onChange: (date) =>
@@ -216,6 +230,7 @@ const ClassificationExportPage = () => {
           <FormSection
             icon={<AccountTree />}
             title={t('classificationsExport.sections.traceVersion.title')}
+            data-testid="trace-section"
           >
             <FormComponent.ControlledSelect
               name="fileVersion"
@@ -229,7 +244,11 @@ const ClassificationExportPage = () => {
           </FormSection>
 
           {/* notice */}
-          <FormSection icon={<Receipt />} title="Avviso">
+          <FormSection
+            icon={<Receipt />}
+            title="Avviso"
+            data-testid="notice-section"
+          >
             <FormComponent.ControlledTextField
               name="iuv"
               label={t('commons.iuv')}
@@ -249,7 +268,7 @@ const ClassificationExportPage = () => {
               sx={{ mb: 2 }}
             />
             <FormComponent.ControlledTextField
-              name="applicant"
+              name="pspCompanyName"
               label={t('classificationsExport.sections.notice.applicant')}
               control={formMethods.control}
               required={false}
@@ -261,6 +280,9 @@ const ClassificationExportPage = () => {
               return (
                 <Box sx={{ mt: 2 }}>
                   <FormComponent.DateRange
+                    rangeLabel={t(
+                      'classificationsExport.sections.notice.paymentDate'
+                    )}
                     from={{
                       value: dateRanges.payment.from,
                       onChange: (date) =>
@@ -321,12 +343,16 @@ const ClassificationExportPage = () => {
           <FormSection
             icon={<RequestPage />}
             title={t('classificationsExport.sections.reporting.title')}
+            data-testid="reporting-section"
           >
             {(() => {
               const validation = getDateRangeValidation('reporting');
               return (
                 <Box sx={{ mb: 2 }}>
                   <FormComponent.DateRange
+                    rangeLabel={t(
+                      'classificationsExport.sections.reporting.paymentDate'
+                    )}
                     from={{
                       value: dateRanges.reporting.from,
                       onChange: (date) =>
@@ -358,13 +384,55 @@ const ClassificationExportPage = () => {
                 </Box>
               );
             })()}
+
+            {(() => {
+              const payDateValidation = getDateRangeValidation('payDate');
+              return (
+                <Box sx={{ mb: 2 }}>
+                  <FormComponent.DateRange
+                    rangeLabel={t(
+                      'classificationsExport.sections.reporting.regulationDate'
+                    )}
+                    from={{
+                      value: dateRanges.payDate.from,
+                      onChange: (date) =>
+                        updateDateRange('payDate', 'from', date),
+                      errorMessage: payDateValidation.hasError
+                        ? payDateValidation.errorMessage
+                        : undefined
+                    }}
+                    to={{
+                      value: dateRanges.payDate.to,
+                      onChange: (date) =>
+                        updateDateRange('payDate', 'to', date),
+                      errorMessage: payDateValidation.hasError
+                        ? payDateValidation.errorMessage
+                        : undefined
+                    }}
+                    onFromErrorChange={noOpErrorHandler}
+                    onToErrorChange={noOpErrorHandler}
+                  />
+                  {payDateValidation.hasError && (
+                    <Typography
+                      variant="caption"
+                      color="error.dark"
+                      sx={{ mt: 1, display: 'block' }}
+                    >
+                      {payDateValidation.errorMessage}
+                    </Typography>
+                  )}
+                </Box>
+              );
+            })()}
+
             <FormComponent.ControlledTextField
-              name="reportingIur"
-              label={t('commons.iur')}
+              name="regulationUniqueIdentifier"
+              label={t(
+                'classificationsExport.sections.reporting.regulationUniqueIdentifier'
+              )}
               control={formMethods.control}
               required={false}
               noAdornment
-              sx={{ mt: 2 }}
             />
           </FormSection>
 
@@ -372,6 +440,7 @@ const ClassificationExportPage = () => {
           <FormSection
             icon={<Inventory />}
             title={t('classificationsExport.sections.treasury.title')}
+            data-testid="treasury-section"
           >
             <FormComponent.ControlledTextField
               name="billAmountCents"
@@ -392,6 +461,9 @@ const ClassificationExportPage = () => {
               return (
                 <Box sx={{ mb: 2 }}>
                   <FormComponent.DateRange
+                    rangeLabel={t(
+                      'classificationsExport.sections.treasury.accountDate'
+                    )}
                     from={{
                       value: dateRanges.accounting.from,
                       onChange: (date) =>
@@ -428,6 +500,9 @@ const ClassificationExportPage = () => {
               return (
                 <Box sx={{ mb: 2 }}>
                   <FormComponent.DateRange
+                    rangeLabel={t(
+                      'classificationsExport.sections.treasury.valueDate'
+                    )}
                     from={{
                       value: dateRanges.value.from,
                       onChange: (date) =>

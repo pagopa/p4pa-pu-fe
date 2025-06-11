@@ -1,4 +1,4 @@
-import { Stack } from '@mui/material';
+import { Stack, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateValidationError } from '@mui/x-date-pickers/models';
 import { endOfDay, startOfDay } from 'date-fns';
@@ -20,6 +20,7 @@ export type _DateRangeProps = {
   required?: boolean;
   onFromErrorChange?: (error: DateValidationError | null) => void;
   onToErrorChange?: (error: DateValidationError | null) => void;
+  rangeLabel?: string;
 };
 
 export const _DateRange = ({
@@ -28,7 +29,8 @@ export const _DateRange = ({
   isYear,
   required,
   onFromErrorChange,
-  onToErrorChange
+  onToErrorChange,
+  rangeLabel
 }: _DateRangeProps) => {
   const { t } = useTranslation();
   const [startDateError, setStartDateError] =
@@ -68,61 +70,73 @@ export const _DateRange = ({
   };
 
   return (
-    <Stack direction={{ xs: 'row' }} justifyContent="row" gap={2} width="100%">
-      <DatePicker
-        views={isYear ? ['year'] : undefined}
-        format={isYear ? 'yyyy' : 'dd/MM/yyyy'}
-        openTo={isYear ? 'year' : 'day'}
-        maxDate={from?.todayValue || undefined}
-        sx={{ width: '100%' }}
-        label={from?.label || t('dates.from')}
-        value={from?.value && startOfDay(from?.value)}
-        onChange={handleStartDateChange}
-        onAccept={handleStartDateOnAccept}
-        onError={handleStartDateError}
-        slotProps={{
-          textField: {
-            size: 'small',
-            variant: 'outlined',
-            error: !!startDateError,
-            helperText: startDateError
-              ? (from?.errorMessage ?? t('dates.validations.from'))
-              : '',
-            required
-          }
-        }}
-      />
-
-      {to && (
+    <Stack spacing={1} width="100%">
+      {rangeLabel && (
+        <Typography variant="body2" color="text.secondary" fontWeight={500}>
+          {rangeLabel}
+        </Typography>
+      )}
+      <Stack
+        direction={{ xs: 'row' }}
+        justifyContent="row"
+        gap={2}
+        width="100%"
+      >
         <DatePicker
+          views={isYear ? ['year'] : undefined}
+          format={isYear ? 'yyyy' : 'dd/MM/yyyy'}
+          openTo={isYear ? 'year' : 'day'}
+          maxDate={from?.todayValue || undefined}
           sx={{ width: '100%' }}
-          label={t('dates.to')}
-          value={to?.value && endOfDay(to?.value)}
-          onChange={to?.onChange}
-          open={isToDialogOpen}
-          onClose={() => setIsToDialogOpen(false)}
-          onError={(err) => {
-            setEndDateError(err);
-            onToErrorChange?.(err);
-          }}
-          maxDate={to?.todayValue || undefined}
-          minDate={from?.value || undefined}
+          label={from?.label || t('dates.from')}
+          value={from?.value && startOfDay(from?.value)}
+          onChange={handleStartDateChange}
+          onAccept={handleStartDateOnAccept}
+          onError={handleStartDateError}
           slotProps={{
             textField: {
               size: 'small',
               variant: 'outlined',
-              error: !!endDateError,
-              helperText: endDateError
-                ? (to?.errorMessage ?? t('dates.validations.to'))
+              error: !!startDateError,
+              helperText: startDateError
+                ? (from?.errorMessage ?? t('dates.validations.from'))
                 : '',
               required
-            },
-            inputAdornment: {
-              onClick: () => setIsToDialogOpen(!isToDialogOpen)
             }
           }}
         />
-      )}
+
+        {to && (
+          <DatePicker
+            sx={{ width: '100%' }}
+            label={t('dates.to')}
+            value={to?.value && endOfDay(to?.value)}
+            onChange={to?.onChange}
+            open={isToDialogOpen}
+            onClose={() => setIsToDialogOpen(false)}
+            onError={(err) => {
+              setEndDateError(err);
+              onToErrorChange?.(err);
+            }}
+            maxDate={to?.todayValue || undefined}
+            minDate={from?.value || undefined}
+            slotProps={{
+              textField: {
+                size: 'small',
+                variant: 'outlined',
+                error: !!endDateError,
+                helperText: endDateError
+                  ? (to?.errorMessage ?? t('dates.validations.to'))
+                  : '',
+                required
+              },
+              inputAdornment: {
+                onClick: () => setIsToDialogOpen(!isToDialogOpen)
+              }
+            }}
+          />
+        )}
+      </Stack>
     </Stack>
   );
 };
