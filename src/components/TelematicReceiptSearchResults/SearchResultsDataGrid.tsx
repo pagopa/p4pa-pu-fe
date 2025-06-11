@@ -12,6 +12,11 @@ import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes';
 import { moneyFormat } from '../../utils/formatters';
 import { PagedReceiptView } from '../../../generated/data-contracts';
+import { getReceiptPdf } from '../../api/receiptPdf';
+import { downloadBlob } from '../../utils/download';
+import utils from '../../utils';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
 
 type SearchResultDataRow = {
   id: number;
@@ -34,6 +39,9 @@ const SearchResultsDataGrid = ({
 }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { state } = useStore();
+
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
   const onSort = (model: GridSortModel) => {
     if (model?.length) {
@@ -41,6 +49,18 @@ const SearchResultsDataGrid = ({
         item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
       );
       onSortChange(sort);
+    }
+  };
+
+  const getReceiptPdfMutation = getReceiptPdf(organizationId);
+  const handleDownloadReceiptPdf = async (id: number) => {
+    try {
+      const result = await getReceiptPdfMutation.mutateAsync(id);
+      const { data, fileName } = result;
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('commons.files.downloadFailed'), 'error');
     }
   };
 
@@ -94,7 +114,7 @@ const SearchResultsDataGrid = ({
             {
               icon: <FileDownload fontSize="small" />,
               label: t('commons.files.download'),
-              action: () => console.log('Scarica file per ID: ', params.row.id)
+              action: () => handleDownloadReceiptPdf(params.row.receiptId)
             }
           ]}
         />
