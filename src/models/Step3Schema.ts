@@ -27,12 +27,12 @@ import { formatDateForApi } from '../utils/paymentUtility';
 import {
   ManageDebtPositionDTO,
   ManageInstallmentDTO,
+  Action,
   InstallmentDTO,
   TransferDTO,
   DebtPositionDetailDTO,
   PersonDTO
 } from '../../generated/data-contracts';
-import { Action } from '../../generated/apiClient';
 
 /**
  * Base type for the installment structure in the form

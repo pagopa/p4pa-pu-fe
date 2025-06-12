@@ -12,12 +12,12 @@ import debtPositions, { DebtPositionViewQuery } from './debtPositions';
 import { renderHook, waitFor } from '../__tests__/renderers';
 import {
   DebtPositionStatus,
-  DebtPositionOrigin,
-  Action
+  DebtPositionOrigin
 } from '../../generated/apiClient';
 import {
   DebtPositionRegistry,
   ManageDebtPositionDTO,
+  Action,
   EntityTypeEnum,
   InstallmentRegistry,
   PaymentEventType
