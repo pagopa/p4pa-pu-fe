@@ -1,10 +1,10 @@
-import { Grid, useTheme } from '@mui/material';
+import { Grid, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
-import { useState } from 'react';
+import { ReactNode, useState } from 'react';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { FilterMap, useMultiFilters } from '../../hooks/useMultiFilters';
@@ -23,6 +23,7 @@ const TreasurySearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [error, setError] = useState(false);
   const {
     filterMap,
     selectedFilters,
@@ -42,9 +43,20 @@ const TreasurySearchResults = () => {
   });
 
   const applyFilters = () => {
-    treasury.applyFilters(filterValues);
-    setDrawerOpen(false);
+    if (noFilterIsSelected.peek()) {
+      treasury.applyFilters(filterValues);
+      setError(false);
+      setDrawerOpen(false);
+    } else {
+      setError(true);
+    }
   };
+
+  const errorMessage: ReactNode = (
+    <Typography variant="body2" color="error" mt={2}>
+      {t('commons.filters.atLeastOneFilter')}
+    </Typography>
+  );
 
   return (
     <>
@@ -93,12 +105,12 @@ const TreasurySearchResults = () => {
         onClose={toggleDrawer}
         title={t('commons.filters.filtersField')}
         filterMap={filterMap}
+        render={error && errorMessage}
         buttons={[
           {
             buttonText: t('commons.filters.filterResults'),
             onButtonClick: applyFilters,
-            variant: 'contained',
-            disabled: !noFilterIsSelected.peek()
+            variant: 'contained'
           },
           {
             buttonText: t('commons.filters.remove'),

@@ -129,6 +129,7 @@
         "label": "Importo",
         "value": "Importo"
       },
+      "atLeastOneFilter": "Inserire almeno un filtro",
       "bill": {
         "code": "Codice",
         "date": {
