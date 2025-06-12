@@ -44,11 +44,6 @@ const ClassificationExportPage = () => {
     { label: '1.4', value: 'v1.4' }
   ];
 
-  // Stub functions for unused callbacks
-  const noOpErrorHandler = useCallback(() => {
-    // Intentionally empty - error handling is done at component level
-  }, []);
-
   const [dateRanges, setDateRanges] = useState({
     classification: { from: null as Date | null, to: null as Date | null },
     payment: { from: null as Date | null, to: null as Date | null },
@@ -183,6 +178,7 @@ const ClassificationExportPage = () => {
               control={formMethods.control}
               required={true}
               sx={{ mb: 2 }}
+              data-testid="classification-section-type"
             />
             {(() => {
               const validation = getDateRangeValidation('classification');
@@ -209,8 +205,6 @@ const ClassificationExportPage = () => {
                         ? validation.errorMessage
                         : undefined
                     }}
-                    onFromErrorChange={noOpErrorHandler}
-                    onToErrorChange={noOpErrorHandler}
                   />
                   {validation.hasError && (
                     <Typography
@@ -240,6 +234,7 @@ const ClassificationExportPage = () => {
               options={versionOptions}
               control={formMethods.control}
               required
+              data-testid="trace-section-version"
             />
           </FormSection>
 
@@ -256,6 +251,7 @@ const ClassificationExportPage = () => {
               required={false}
               noAdornment
               sx={{ mb: 2 }}
+              data-testid="notice-section-iuv"
             />
             <FormComponent.ControlledTextField
               name="remittanceInformation"
@@ -266,6 +262,7 @@ const ClassificationExportPage = () => {
               required={false}
               noAdornment
               sx={{ mb: 2 }}
+              data-testid="notice-section-remittanceInformation"
             />
             <FormComponent.ControlledTextField
               name="pspCompanyName"
@@ -299,8 +296,6 @@ const ClassificationExportPage = () => {
                         ? validation.errorMessage
                         : undefined
                     }}
-                    onFromErrorChange={noOpErrorHandler}
-                    onToErrorChange={noOpErrorHandler}
                   />
                   {validation.hasError && (
                     <Typography
@@ -321,6 +316,7 @@ const ClassificationExportPage = () => {
               required={false}
               noAdornment
               sx={{ mb: 2, mt: 2 }}
+              data-testid="notice-section-iur"
             />
             <FormComponent.ControlledTextField
               name="iud"
@@ -329,6 +325,7 @@ const ClassificationExportPage = () => {
               required={false}
               noAdornment
               sx={{ mb: 2 }}
+              data-testid="notice-section-iud"
             />
             <FormComponent.ControlledTextField
               name="iuf"
@@ -336,6 +333,7 @@ const ClassificationExportPage = () => {
               control={formMethods.control}
               required={false}
               noAdornment
+              data-testid="notice-section-iuf"
             />
           </FormSection>
 
@@ -369,8 +367,6 @@ const ClassificationExportPage = () => {
                         ? validation.errorMessage
                         : undefined
                     }}
-                    onFromErrorChange={noOpErrorHandler}
-                    onToErrorChange={noOpErrorHandler}
                   />
                   {validation.hasError && (
                     <Typography
@@ -409,8 +405,6 @@ const ClassificationExportPage = () => {
                         ? payDateValidation.errorMessage
                         : undefined
                     }}
-                    onFromErrorChange={noOpErrorHandler}
-                    onToErrorChange={noOpErrorHandler}
                   />
                   {payDateValidation.hasError && (
                     <Typography
@@ -433,6 +427,7 @@ const ClassificationExportPage = () => {
               control={formMethods.control}
               required={false}
               noAdornment
+              data-testid="reporting-section-regulationUniqueIdentifier"
             />
           </FormSection>
 
@@ -455,6 +450,7 @@ const ClassificationExportPage = () => {
                 inputMode: 'decimal'
               }}
               sx={{ mb: 2 }}
+              data-testid="treasury-section-billAmountCents"
             />
             {(() => {
               const accountingValidation = getDateRangeValidation('accounting');
@@ -480,8 +476,6 @@ const ClassificationExportPage = () => {
                         ? accountingValidation.errorMessage
                         : undefined
                     }}
-                    onFromErrorChange={noOpErrorHandler}
-                    onToErrorChange={noOpErrorHandler}
                   />
                   {accountingValidation.hasError && (
                     <Typography
@@ -518,8 +512,6 @@ const ClassificationExportPage = () => {
                         ? valueValidation.errorMessage
                         : undefined
                     }}
-                    onFromErrorChange={noOpErrorHandler}
-                    onToErrorChange={noOpErrorHandler}
                   />
                   {valueValidation.hasError && (
                     <Typography
@@ -542,6 +534,7 @@ const ClassificationExportPage = () => {
               required={false}
               noAdornment
               sx={{ mt: 2 }}
+              data-testid="treasury-section-accountRegistryCode"
             />
           </FormSection>
         </Paper>
@@ -553,12 +546,18 @@ const ClassificationExportPage = () => {
               startIcon={<ArrowBack />}
               onClick={handleBack}
               type="button"
+              data-testid="backButton"
             >
               {t('commons.back')}
             </Button>
           </Grid>
           <Grid item>
-            <Button variant="contained" onClick={handleSubmit} type="button">
+            <Button
+              variant="contained"
+              onClick={handleSubmit}
+              type="button"
+              data-testid="confirmButton"
+            >
               {t('exportFlow.buttonConfirmReservation')}
             </Button>
           </Grid>
