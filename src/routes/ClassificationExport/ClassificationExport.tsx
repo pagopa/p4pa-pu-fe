@@ -93,6 +93,49 @@ const ClassificationExportPage = () => {
     [dateRanges, t]
   );
 
+  const renderValidatedDateRange = useCallback(
+    (
+      rangeName: keyof typeof dateRanges,
+      rangeLabel: string,
+      required = false
+    ) => {
+      const validation = getDateRangeValidation(rangeName);
+
+      return (
+        <Box sx={{ mb: 2 }}>
+          <FormComponent.DateRange
+            rangeLabel={rangeLabel}
+            required={required}
+            from={{
+              value: dateRanges[rangeName].from,
+              onChange: (date) => updateDateRange(rangeName, 'from', date),
+              errorMessage: validation.hasError
+                ? validation.errorMessage
+                : undefined
+            }}
+            to={{
+              value: dateRanges[rangeName].to,
+              onChange: (date) => updateDateRange(rangeName, 'to', date),
+              errorMessage: validation.hasError
+                ? validation.errorMessage
+                : undefined
+            }}
+          />
+          {validation.hasError && (
+            <Typography
+              variant="caption"
+              color="error.dark"
+              sx={{ mt: 1, display: 'block' }}
+            >
+              {validation.errorMessage}
+            </Typography>
+          )}
+        </Box>
+      );
+    },
+    [dateRanges, updateDateRange, getDateRangeValidation]
+  );
+
   const areDatePairsValid = useCallback((): boolean => {
     return Object.keys(dateRanges).every((key) => {
       const validation = getDateRangeValidation(key as keyof typeof dateRanges);
@@ -180,44 +223,13 @@ const ClassificationExportPage = () => {
               sx={{ mb: 2 }}
               data-testid="classification-section-type"
             />
-            {(() => {
-              const validation = getDateRangeValidation('classification');
-              return (
-                <Box sx={{ mb: 2 }}>
-                  <FormComponent.DateRange
-                    rangeLabel={t(
-                      'classificationsExport.sections.paymentClassification.lastUpdateDate'
-                    )}
-                    required={true}
-                    from={{
-                      value: dateRanges.classification.from,
-                      onChange: (date) =>
-                        updateDateRange('classification', 'from', date),
-                      errorMessage: validation.hasError
-                        ? validation.errorMessage
-                        : undefined
-                    }}
-                    to={{
-                      value: dateRanges.classification.to,
-                      onChange: (date) =>
-                        updateDateRange('classification', 'to', date),
-                      errorMessage: validation.hasError
-                        ? validation.errorMessage
-                        : undefined
-                    }}
-                  />
-                  {validation.hasError && (
-                    <Typography
-                      variant="caption"
-                      color="error.dark"
-                      sx={{ mt: 1, display: 'block' }}
-                    >
-                      {validation.errorMessage}
-                    </Typography>
-                  )}
-                </Box>
-              );
-            })()}
+            {renderValidatedDateRange(
+              'classification',
+              t(
+                'classificationsExport.sections.paymentClassification.lastUpdateDate'
+              ),
+              true
+            )}
           </FormSection>
 
           {/* trace version */}
@@ -272,43 +284,10 @@ const ClassificationExportPage = () => {
               noAdornment
               sx={{ mb: 2 }}
             />
-            {(() => {
-              const validation = getDateRangeValidation('payment');
-              return (
-                <Box sx={{ mt: 2 }}>
-                  <FormComponent.DateRange
-                    rangeLabel={t(
-                      'classificationsExport.sections.notice.paymentDate'
-                    )}
-                    from={{
-                      value: dateRanges.payment.from,
-                      onChange: (date) =>
-                        updateDateRange('payment', 'from', date),
-                      errorMessage: validation.hasError
-                        ? validation.errorMessage
-                        : undefined
-                    }}
-                    to={{
-                      value: dateRanges.payment.to,
-                      onChange: (date) =>
-                        updateDateRange('payment', 'to', date),
-                      errorMessage: validation.hasError
-                        ? validation.errorMessage
-                        : undefined
-                    }}
-                  />
-                  {validation.hasError && (
-                    <Typography
-                      variant="caption"
-                      color="error.dark"
-                      sx={{ mt: 1, display: 'block' }}
-                    >
-                      {validation.errorMessage}
-                    </Typography>
-                  )}
-                </Box>
-              );
-            })()}
+            {renderValidatedDateRange(
+              'payment',
+              t('classificationsExport.sections.notice.paymentDate')
+            )}
             <FormComponent.ControlledTextField
               name="iur"
               label={t('commons.iur')}
@@ -343,82 +322,14 @@ const ClassificationExportPage = () => {
             title={t('classificationsExport.sections.reporting.title')}
             data-testid="reporting-section"
           >
-            {(() => {
-              const validation = getDateRangeValidation('reporting');
-              return (
-                <Box sx={{ mb: 2 }}>
-                  <FormComponent.DateRange
-                    rangeLabel={t(
-                      'classificationsExport.sections.reporting.paymentDate'
-                    )}
-                    from={{
-                      value: dateRanges.reporting.from,
-                      onChange: (date) =>
-                        updateDateRange('reporting', 'from', date),
-                      errorMessage: validation.hasError
-                        ? validation.errorMessage
-                        : undefined
-                    }}
-                    to={{
-                      value: dateRanges.reporting.to,
-                      onChange: (date) =>
-                        updateDateRange('reporting', 'to', date),
-                      errorMessage: validation.hasError
-                        ? validation.errorMessage
-                        : undefined
-                    }}
-                  />
-                  {validation.hasError && (
-                    <Typography
-                      variant="caption"
-                      color="error.dark"
-                      sx={{ mt: 1, display: 'block' }}
-                    >
-                      {validation.errorMessage}
-                    </Typography>
-                  )}
-                </Box>
-              );
-            })()}
-
-            {(() => {
-              const payDateValidation = getDateRangeValidation('payDate');
-              return (
-                <Box sx={{ mb: 2 }}>
-                  <FormComponent.DateRange
-                    rangeLabel={t(
-                      'classificationsExport.sections.reporting.regulationDate'
-                    )}
-                    from={{
-                      value: dateRanges.payDate.from,
-                      onChange: (date) =>
-                        updateDateRange('payDate', 'from', date),
-                      errorMessage: payDateValidation.hasError
-                        ? payDateValidation.errorMessage
-                        : undefined
-                    }}
-                    to={{
-                      value: dateRanges.payDate.to,
-                      onChange: (date) =>
-                        updateDateRange('payDate', 'to', date),
-                      errorMessage: payDateValidation.hasError
-                        ? payDateValidation.errorMessage
-                        : undefined
-                    }}
-                  />
-                  {payDateValidation.hasError && (
-                    <Typography
-                      variant="caption"
-                      color="error.dark"
-                      sx={{ mt: 1, display: 'block' }}
-                    >
-                      {payDateValidation.errorMessage}
-                    </Typography>
-                  )}
-                </Box>
-              );
-            })()}
-
+            {renderValidatedDateRange(
+              'reporting',
+              t('classificationsExport.sections.reporting.paymentDate')
+            )}
+            {renderValidatedDateRange(
+              'payDate',
+              t('classificationsExport.sections.reporting.regulationDate')
+            )}
             <FormComponent.ControlledTextField
               name="regulationUniqueIdentifier"
               label={t(
@@ -452,79 +363,14 @@ const ClassificationExportPage = () => {
               sx={{ mb: 2 }}
               data-testid="treasury-section-billAmountCents"
             />
-            {(() => {
-              const accountingValidation = getDateRangeValidation('accounting');
-              return (
-                <Box sx={{ mb: 2 }}>
-                  <FormComponent.DateRange
-                    rangeLabel={t(
-                      'classificationsExport.sections.treasury.accountDate'
-                    )}
-                    from={{
-                      value: dateRanges.accounting.from,
-                      onChange: (date) =>
-                        updateDateRange('accounting', 'from', date),
-                      errorMessage: accountingValidation.hasError
-                        ? accountingValidation.errorMessage
-                        : undefined
-                    }}
-                    to={{
-                      value: dateRanges.accounting.to,
-                      onChange: (date) =>
-                        updateDateRange('accounting', 'to', date),
-                      errorMessage: accountingValidation.hasError
-                        ? accountingValidation.errorMessage
-                        : undefined
-                    }}
-                  />
-                  {accountingValidation.hasError && (
-                    <Typography
-                      variant="caption"
-                      color="error.dark"
-                      sx={{ mt: 1, display: 'block' }}
-                    >
-                      {accountingValidation.errorMessage}
-                    </Typography>
-                  )}
-                </Box>
-              );
-            })()}
-            {(() => {
-              const valueValidation = getDateRangeValidation('value');
-              return (
-                <Box sx={{ mb: 2 }}>
-                  <FormComponent.DateRange
-                    rangeLabel={t(
-                      'classificationsExport.sections.treasury.valueDate'
-                    )}
-                    from={{
-                      value: dateRanges.value.from,
-                      onChange: (date) =>
-                        updateDateRange('value', 'from', date),
-                      errorMessage: valueValidation.hasError
-                        ? valueValidation.errorMessage
-                        : undefined
-                    }}
-                    to={{
-                      value: dateRanges.value.to,
-                      onChange: (date) => updateDateRange('value', 'to', date),
-                      errorMessage: valueValidation.hasError
-                        ? valueValidation.errorMessage
-                        : undefined
-                    }}
-                  />
-                  {valueValidation.hasError && (
-                    <Typography
-                      variant="caption"
-                      color="error.dark"
-                      sx={{ mt: 1, display: 'block' }}
-                    >
-                      {valueValidation.errorMessage}
-                    </Typography>
-                  )}
-                </Box>
-              );
-            })()}
+            {renderValidatedDateRange(
+              'accounting',
+              t('classificationsExport.sections.treasury.accountDate')
+            )}
+            {renderValidatedDateRange(
+              'value',
+              t('classificationsExport.sections.treasury.valueDate')
+            )}
             <FormComponent.ControlledTextField
               name="accountRegistryCode"
               label={t(
