@@ -27,7 +27,7 @@ export const classificationsRoutes = [
       },
       {
         path: 'search-results',
-        id: 'CLASSIFICATIONS_SEARCH_RESULTS_INDEX',
+        id: 'CLASSIFICATIONS_SEARCH_RESULTS',
         children: [
           {
             id: 'CLASSIFICATIONS_SEARCH_RESULTS_INDEX',
@@ -35,7 +35,8 @@ export const classificationsRoutes = [
             element: <ClassificationsOverview />,
             handle: {
               backButton: true,
-              hideBreadcrumbs: false
+              hideBreadcrumbs: false,
+              hideBreadcrumbElement: true
             } as RouteHandleObject
           },
           {

@@ -50,7 +50,6 @@ const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
     </Typography>
   );
 
-  console.log('itemToList', itemsToList);
   return itemsToList?.length > 0 ? (
     <Stack direction="row" marginBottom={3} alignItems="center">
       {!mdUp && <BackButton />}
@@ -59,21 +58,23 @@ const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
         aria-label={t('commons.breadcrumbs')}
         sx={{ paddingBlock: 1 }}
       >
-        {itemsToList.map((b, i, array) => {
-          const isLastElement = i === array.length - 1;
-          return (
-            <MUILink
-              color="textSecondary"
-              fontWeight={isLastElement ? '400' : '600'}
-              component={RouterLink}
-              to={b.pathname}
-              underline={'hover'}
-              key={`breadcrumb-${i}`}
-            >
-              {b.label ? b.label : t(`commons.routes.${b.id}`)}
-            </MUILink>
-          );
-        })}
+        {itemsToList
+          .filter((item) => !item.handle?.hideBreadcrumbElement)
+          .map((b, i, array) => {
+            const isLastElement = i === array.length - 1;
+            return (
+              <MUILink
+                color="textSecondary"
+                fontWeight={isLastElement ? '400' : '600'}
+                component={RouterLink}
+                to={b.pathname}
+                underline={'hover'}
+                key={`breadcrumb-${i}`}
+              >
+                {b.label ? b.label : t(`commons.routes.${b.id}`)}
+              </MUILink>
+            );
+          })}
       </BreadcrumbsMUI>
     </Stack>
   ) : null;
