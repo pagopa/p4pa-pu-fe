@@ -10,7 +10,7 @@ const ClassificationsOverview = () => {
     <ExportFlowOverview
       routingCategory=""
       title={t('commons.exportedFlows')}
-      description={t('classifications.description')}
+      description={t('classificationsExport.descriptionOverview')}
       exportFileTypes={ExportFileTypeEnum.CLASSIFICATIONS}
       specializedExportPage={PageRoutes.EXPORT_CLASSIFICATIONS}
     />

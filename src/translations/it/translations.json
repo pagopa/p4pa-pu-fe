@@ -33,7 +33,7 @@
     }
   },
   "classifications": {
-    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+    "description": "Ricerca o visualizza classificazioni",
     "search": "Cerca classificazioni",
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
     "exportTitle": "Esporta Classificazioni",
@@ -42,6 +42,7 @@
     "showAllResults": "Vedi classificazioni esportate"
   },
   "classificationsExport": {
+    "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
       "DOPPI": "Pagamenti doppi",
       "RT_NO_IUF": "Pagamenti non correttamente rendicontati", 
