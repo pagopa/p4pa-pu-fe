@@ -31,7 +31,7 @@ describe('Classifications', () => {
 
     i18nTestSetup({
       'commons.exportedFlows': 'Classifications Title',
-      'classifications.description': 'Classifications Description'
+      'classificationsExport.descriptionOverview': 'Classifications Description'
     });
   });
 
