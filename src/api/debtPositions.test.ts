@@ -12,12 +12,12 @@ import debtPositions, { DebtPositionViewQuery } from './debtPositions';
 import { renderHook, waitFor } from '../__tests__/renderers';
 import {
   DebtPositionStatus,
-  DebtPositionOrigin
+  DebtPositionOrigin,
+  Action
 } from '../../generated/apiClient';
 import {
   DebtPositionRegistry,
   ManageDebtPositionDTO,
-  ActionEnum,
   EntityTypeEnum,
   InstallmentRegistry,
   PaymentEventType
@@ -846,7 +846,7 @@ describe('manageDebtPositionInstallments', () => {
         paymentOptionId: 1001,
         installments: [
           {
-            action: ActionEnum.I,
+            action: Action.I,
             installment: {
               installmentId: 1,
               amountCents: 10000,
@@ -893,7 +893,7 @@ describe('manageDebtPositionInstallments', () => {
         paymentOptionId: 1001,
         installments: [
           {
-            action: ActionEnum.M,
+            action: Action.M,
             installment: {
               installmentId: 1,
               amountCents: 10000,

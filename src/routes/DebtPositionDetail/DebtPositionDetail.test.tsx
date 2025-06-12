@@ -900,6 +900,8 @@ describe('DebtPositionDetail Component', () => {
 
     fireEvent.click(activePaymentButton);
 
+    const publishDialog = screen.getByTestId('confirm-publish-dialog');
+    expect(publishDialog).toBeDefined();
     expect(screen.getByText('Activate Payment?')).toBeDefined();
     expect(
       screen.getByText(
@@ -933,10 +935,48 @@ describe('DebtPositionDetail Component', () => {
     const activePaymentButton = screen.getByText('Active Payment');
     fireEvent.click(activePaymentButton);
 
-    const activateButton = screen.getByText('Activate');
+    const activateButton = screen.getByTestId(
+      'confirm-publish-dialog-confirm-button'
+    );
     fireEvent.click(activateButton);
 
     expect(publishMockMutate).toHaveBeenCalled();
+  });
+
+  it('closes publish dialog when cancel button is clicked', () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.status = DebtPositionStatus.DRAFT;
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    const activePaymentButton = screen.getByText('Active Payment');
+    fireEvent.click(activePaymentButton);
+
+    expect(screen.getByTestId('confirm-publish-dialog')).toBeDefined();
+
+    const cancelButton = screen.getByTestId(
+      'confirm-publish-dialog-cancel-button'
+    );
+    fireEvent.click(cancelButton);
+
+    expect(
+      screen.queryByTestId('confirm-publish-dialog')
+    ).not.toBeInTheDocument();
   });
 
   it('shows download notices button for non-DRAFT status', () => {
