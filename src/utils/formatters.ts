@@ -95,3 +95,27 @@ export function convertToDateValue(value: unknown): Date | null {
 
   return value as Date;
 }
+
+/**
+ * Checks if a date is in the past (relative to today's midnight)
+ * Follows the same validation pattern used in the project's form schemas
+ * @param dateToCheck - The date to check (ISO string, Date object, null or undefined)
+ * @returns true if the date is in the past, false otherwise
+ */
+export function isDateInPast(
+  dateToCheck: string | Date | null | undefined
+): boolean {
+  if (!dateToCheck) return false;
+  let date: Date;
+  if (typeof dateToCheck === 'string') {
+    date = parseISO(dateToCheck);
+  } else {
+    date = dateToCheck;
+  }
+  // If the date is not valid, do not consider it in the past
+  if (isNaN(date.getTime())) return false;
+  // Create today's midnight for comparison (same pattern as Step3Schema.ts)
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return date < today;
+}

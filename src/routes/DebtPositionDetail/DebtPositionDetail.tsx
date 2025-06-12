@@ -47,6 +47,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
 import { useTimelineData } from '../../hooks/useTimelineData';
+import { isDateInPast } from '../../utils/formatters';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -255,14 +256,6 @@ const DebtPositionDetail = () => {
     });
   };
 
-  const handleActivePayment = () => {
-    showPublishDialog();
-  };
-
-  const handlePublishConfirm = () => {
-    publishDebtPositionMutation.mutate();
-  };
-
   const showPublishDialog = () => {
     setDialogConfig({
       open: true,
@@ -274,6 +267,34 @@ const DebtPositionDetail = () => {
       onClose: () => setDialogConfig(null),
       testId: 'confirm-publish-dialog'
     });
+  };
+
+  const hasExpiredDueDates = (): boolean => {
+    if (!debtPositionDetail?.paymentOptions) return false;
+
+    return debtPositionDetail.paymentOptions.some((paymentOption) =>
+      paymentOption.installments?.some(
+        (installment) =>
+          installment.dueDate && isDateInPast(installment.dueDate)
+      )
+    );
+  };
+
+  const handleActivePayment = () => {
+    showPublishDialog();
+  };
+
+  const handlePublishConfirm = () => {
+    if (hasExpiredDueDates()) {
+      setDialogConfig(null);
+      utils.notify.emit(
+        t('debtPositionCreateWizard.step3.dueDate.futureDate'),
+        'error'
+      );
+      return;
+    }
+
+    publishDebtPositionMutation.mutate();
   };
 
   const getDebtPositionZipFileMutation =
