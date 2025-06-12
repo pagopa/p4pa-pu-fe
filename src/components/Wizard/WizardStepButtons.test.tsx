@@ -226,10 +226,6 @@ describe('WizardStepButtons', () => {
 
     const saveDraftButton = screen.getByText('Salva bozza');
     expect(saveDraftButton).toBeInTheDocument();
-<<<<<<< HEAD
-    // Verifica che abbia la classe per il variant="text" (senza bordo)
-=======
->>>>>>> develop
     expect(saveDraftButton.closest('button')).toHaveClass('MuiButton-text');
   });
 
@@ -250,10 +246,6 @@ describe('WizardStepButtons', () => {
 
     const saveDraftButton = screen.getByText('Salva bozza');
     expect(saveDraftButton).toBeInTheDocument();
-<<<<<<< HEAD
-    // Verifica che abbia la classe per il variant="outlined" (con bordo)
-=======
->>>>>>> develop
     expect(saveDraftButton.closest('button')).toHaveClass('MuiButton-outlined');
   });
 
