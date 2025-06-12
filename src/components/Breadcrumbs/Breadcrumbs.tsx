@@ -11,6 +11,7 @@ import { ArrowBack } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink, useMatches, useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/GlobalStore';
+import { RouteHandleObject } from '../../models/Routes';
 
 export type BreadcrumbsProps = {
   separator: React.ReactElement;
@@ -21,6 +22,7 @@ export type BredcrumbItem = {
   id: string;
   pathname: string;
   label?: string;
+  handle?: RouteHandleObject;
 };
 
 const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
@@ -48,6 +50,7 @@ const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
     </Typography>
   );
 
+  console.log('itemToList', itemsToList);
   return itemsToList?.length > 0 ? (
     <Stack direction="row" marginBottom={3} alignItems="center">
       {!mdUp && <BackButton />}

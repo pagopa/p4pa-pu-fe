@@ -1,0 +1,24 @@
+import { useQuery } from '@tanstack/react-query';
+import utils from '../utils';
+import { parseAndLog } from '../utils/loaders';
+import { classificationDetailViewDTOSchema } from '../../generated/zod-schema';
+
+export const getClassificationDetails = (
+  organizationId: number,
+  classificationId: number
+) => {
+  return useQuery({
+    queryKey: ['getClassificationDetails', organizationId, classificationId],
+    queryFn: async () => {
+      const { data: classificationDetail } =
+        await utils.apiClient.bff.getClassificationDetail(
+          organizationId,
+          classificationId
+        );
+      if (classificationDetail) {
+        parseAndLog(classificationDetailViewDTOSchema, classificationDetail);
+      }
+      return classificationDetail;
+    }
+  });
+};
