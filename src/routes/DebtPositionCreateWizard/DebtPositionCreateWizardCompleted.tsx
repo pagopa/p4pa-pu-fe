@@ -76,7 +76,7 @@ const getCompletionScenario = (
     : CompletionScenario.CREATION_PUBLISHED;
 };
 
-// Type guard per validazione runtime
+// Type guard for runtime validation
 const isValidCompletionState = (
   state: unknown
 ): state is DebtPositionCompletionState => {
