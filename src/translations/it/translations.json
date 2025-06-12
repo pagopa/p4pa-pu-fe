@@ -130,20 +130,20 @@
     "disabled": "Disabilitato",
     "downloadInstallment": "Scarica avviso",
     "DP_DESCRIPTION": {
-      "DP_CREATED": "Posizione Debitoria Creata",
-      "DP_CANCELLED": "Posizione Debitoria Cancellata",
-      "DP_UPDATED": "Posizione Debitoria Aggiornata",
-      "DPI_ADDED": "Avviso Aggiunto",
-      "DPI_CANCELLED": "Avviso Cancellato",
-      "DPI_EXPIRED": "Avviso Scaduto",
-      "DPI_REPORTED": "Avviso Rendicontato",
-      "DPI_UPDATED": "Avviso Aggiornato",
-      "IO_NOTIFIED": "È stato inviato un messaggio al cittadino su IO. ID messaggio '{{idMessage}}'",
-      "RT_RECEIVED": "Avviso Pagato",
-      "SEND_NOTIFICATION_CREATED": "Notifica SEND creata",
-      "SEND_NOTIFICATION_DATE": "La notifica è stata letta dal destinatario",
-      "SEND_NOTIFICATION_ERROR": "Errore notifica SEND",
-      "SYNC_ERROR": "Errore di sincronizzazione"
+      "DP_CREATED": "Posizione Debitoria Creata - {{eventDescription}}",
+      "DP_CANCELLED": "Posizione Debitoria Cancellata - {{eventDescription}}",
+      "DP_UPDATED": "Posizione Debitoria Aggiornata - {{eventDescription}}",
+      "DPI_ADDED": "Avviso Aggiunto - {{eventDescription}}",
+      "DPI_CANCELLED": "Avviso Cancellato - {{eventDescription}}",
+      "DPI_EXPIRED": "Avviso Scaduto - {{eventDescription}}",
+      "DPI_REPORTED": "Avviso Rendicontato - {{eventDescription}}",
+      "DPI_UPDATED": "Avviso Aggiornato - {{eventDescription}}",
+      "IO_NOTIFIED": "È stato inviato un messaggio al cittadino su IO. - {{eventDescription}}",
+      "RT_RECEIVED": "Avviso Pagato - {{eventDescription}}",
+      "SEND_NOTIFICATION_CREATED": "Notifica SEND creata - {{eventDescription}}",
+      "SEND_NOTIFICATION_DATE": "La notifica è stata letta dal destinatario - {{eventDescription}}",
+      "SEND_NOTIFICATION_ERROR": "Errore notifica SEND - {{eventDescription}}",
+      "SYNC_ERROR": "Errore di sincronizzazione - {{eventDescription}}"
     },
     "DP_STATUS": {
       "DPI_CANCELLED": "Cancellato",
@@ -247,6 +247,7 @@
       "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
     },
     "from": "Dal",
+    "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
     "importFlow": "Importa flusso",
     "importFlows": "Importa flussi",
     "importFrom": "Caricati dal",
@@ -742,11 +743,10 @@
     "title": "Crea un nuovo Tipo dovuto",
     "description": "Compila i campi e crea un nuovo Tipo dovuto nel proprio catalogo.",
     "configuration": {
-      "alertMessage": "* Indica una domanda obbligatoria",
-      "collectionReason": {
-        "label": "Motivo Riscossione",
-        "required": "Il Motivo Riscossione é obbligatorio"
+      "taxonomy": {
+        "title": "Tassonomia"
       },
+      "alertMessage": "* Indica una domanda obbligatoria",
       "debtType": {
         "label": "Nome del Tipo dovuto",
         "helper": "Inserisce il nome attribuito al servizio di incasso",
@@ -759,25 +759,7 @@
         "label": "Codice Tipo dovuto",
         "required": "Il codice del Tipo dovuto è obbligatorio"
       },
-      "macroArea": {
-        "label": "Macroarea",
-        "required": "Il campo macroarea é obbligatorio"
-      },
-      "organizationType": {
-        "label": "Tipo ente",
-        "required": "Il campo Tipo ente è obbligatorio",
-        "title": "Ente"
-      },
-      "serviceType": {
-        "label": "Tipo Servizio",
-        "required": "Il campo Tipo Servizio é obbligatorio"
-      },
       "subtitle": "Definisce il nome e tassonomia del nuovo Tipo dovuto.",
-      "taxonomyCode": {
-        "label": "Codice Tassonomico",
-        "required": "Il Codice Tassonomico é obbligatorio",
-        "title": "Tassonomia"
-      },
       "title": "Configurazione Tipo dovuto"
     },
     "settings": {
@@ -1105,6 +1087,29 @@
     "searchRegulationId": "ID Regolamento",
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"
+  },
+  "taxonomy": {
+    "orgType": {
+      "label": "Tipo ente",
+      "required": "Il campo Tipo ente è obbligatorio",
+      "title": "Ente"
+    },
+    "macroArea": {
+      "label": "Macroarea",
+      "required": "Il campo macroarea é obbligatorio"
+    },
+    "serviceType": {
+      "label": "Tipo Servizio",
+      "required": "Il campo Tipo Servizio é obbligatorio"
+    },
+    "collectingReason": {
+      "label": "Motivo Riscossione",
+      "required": "Il Motivo Riscossione é obbligatorio"
+    },
+    "taxonomyCode": {
+      "label": "Codice Tassonomico",
+      "required": "Il campo codice tassonomico è obbligatorio"
+    }
   },
   "taxonomyPage": {
     "APIUpdate": "Aggiornamento API",

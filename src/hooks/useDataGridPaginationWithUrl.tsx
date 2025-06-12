@@ -164,7 +164,10 @@ export const useDataGridPaginationWithUrl = ({
       };
 
       setPagination(newPagination);
-      onPaginationChange?.(newPagination);
+
+      if (onPaginationChange) {
+        onPaginationChange(newPagination);
+      }
 
       // If URL sync enabled, update URL immediately
       const params = new URLSearchParams(searchParams);
@@ -235,28 +238,31 @@ export const useDataGridPaginationWithUrl = ({
       // Improvement: Intelligent logic for invalid pages
       const currentUrlPage = parseInt(searchParams.get('page') || '1');
 
-      if (
-        data.totalPages !== undefined &&
-        currentUrlPage > data.totalPages &&
-        data.totalPages > 0
-      ) {
+      // Calculate correct total pages based on URL size, not backend size
+      const currentUrlSize = parseInt(
+        searchParams.get('size') || String(data.size)
+      );
+      const validSize = currentUrlSize > 0 ? currentUrlSize : data.size;
+
+      // Calculate total pages with the correct size (URL size, not backend size)
+      const correctTotalPages = data.totalElements
+        ? Math.ceil(data.totalElements / validSize)
+        : data.totalPages || 0;
+
+      if (currentUrlPage > correctTotalPages && correctTotalPages > 0) {
         const params = new URLSearchParams(searchParams);
-        const currentUrlSize = parseInt(
-          searchParams.get('size') || String(data.size)
-        );
 
         // Improvement: Go to the last available page instead of always to page 1
-        params.set('page', String(data.totalPages));
+        params.set('page', String(correctTotalPages));
 
         // Preserve the user's size preference from URL if valid, otherwise use backend size
-        const validSize = currentUrlSize > 0 ? currentUrlSize : data.size;
         params.set('size', String(validSize));
 
         setSearchParams(params, { replace: true });
 
         // Update the internal state to be consistent
         const newPagination = {
-          page: data.totalPages - 1, // Convert to 0-based
+          page: correctTotalPages - 1, // Convert to 0-based
           size: validSize
         };
 
@@ -266,7 +272,6 @@ export const useDataGridPaginationWithUrl = ({
         if (onPaginationChange) {
           onPaginationChange(newPagination);
         }
-
         return;
       }
 

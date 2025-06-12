@@ -52,7 +52,7 @@ export type SelectField = {
 export type ButtonField = {
   type: COMPONENT_TYPE.button;
   onClick?: (e: ButtonClickEvent) => void;
-} & ButtonProps;
+} & Omit<ButtonProps, 'type'>;
 
 export type DateRangeField = {
   type: COMPONENT_TYPE.dateRange;

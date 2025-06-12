@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { GridSortModel } from '@mui/x-data-grid';
 import { FlowFileFilters, PaginationParams } from '../models/Filters';
 import { IngestionFlowFileTypeEnum } from '../../generated/apiClient';
@@ -57,17 +57,29 @@ export const useFlowFilters = ({
 
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
-  const getCompleteFilters = useCallback(
-    (): FlowFileFilters => ({
+  const getCompleteFilters = useCallback((): FlowFileFilters => {
+    const completeFilters = {
       ...appliedFilters,
       page: paginationParams.page,
       size: paginationParams.size,
       ...(sortModel.length > 0 && {
         sort: [`${sortModel[0].field},${sortModel[0].sort}`]
       })
-    }),
-    [appliedFilters, paginationParams, sortModel]
-  );
+    };
+
+    return completeFilters;
+  }, [
+    appliedFilters.ingestionFlowFileTypes,
+    appliedFilters.creationDateFrom,
+    appliedFilters.creationDateTo,
+    appliedFilters.fileName,
+    appliedFilters.status,
+    paginationParams.page,
+    paginationParams.size,
+    sortModel.length,
+    sortModel[0]?.field,
+    sortModel[0]?.sort
+  ]);
 
   const hasActiveFilters = useCallback(() => {
     const isFileNameChanged =
@@ -137,6 +149,7 @@ export const useFlowFilters = ({
           sort: [`${sortModel[0].field},${sortModel[0].sort}`]
         })
       };
+
       onFiltersChange?.(completeFilters);
     },
     [appliedFilters, sortModel, onFiltersChange, updatePaginationState]
@@ -182,8 +195,12 @@ export const useFlowFilters = ({
     [getCompleteFilters, setPaginationParams, onFiltersChange]
   );
 
+  const memoizedCompleteFilters = useMemo(() => {
+    return getCompleteFilters();
+  }, [getCompleteFilters]);
+
   return {
-    appliedFilters: getCompleteFilters(),
+    appliedFilters: memoizedCompleteFilters,
     draftFilters,
     updateDraftFilters,
     applyFilters,

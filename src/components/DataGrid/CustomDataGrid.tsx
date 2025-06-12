@@ -115,7 +115,9 @@ const CustomDataGrid = forwardRef<
     }
 
     const memoizedBackendData = useMemo(() => {
-      if (!smartPagination?.backendData) return null;
+      if (!smartPagination?.backendData) {
+        return null;
+      }
 
       const { backendData } = smartPagination;
 
@@ -126,17 +128,22 @@ const CustomDataGrid = forwardRef<
         return null;
       }
 
-      return {
+      const result = {
         totalElements: backendData.totalElements || 0,
         totalPages: backendData.totalPages || 0,
         number: backendData.number,
         size: backendData.size
       };
+
+      return result;
     }, [
-      smartPagination?.backendData?.totalElements,
-      smartPagination?.backendData?.totalPages,
-      smartPagination?.backendData?.number,
-      smartPagination?.backendData?.size
+      // Create a stable reference by stringifying the values
+      JSON.stringify({
+        totalElements: smartPagination?.backendData?.totalElements,
+        totalPages: smartPagination?.backendData?.totalPages,
+        number: smartPagination?.backendData?.number,
+        size: smartPagination?.backendData?.size
+      })
     ]);
 
     // Hook per URL sync
@@ -149,22 +156,30 @@ const CustomDataGrid = forwardRef<
 
     // Auto-sync with backend data when available (URL sync only)
     useEffect(() => {
-      if (memoizedBackendData && urlPagination) {
-        if (!smartPagination?.onPaginationChange) {
-          // No callback - full auto-sync
-          urlPagination.syncWithBackendData(memoizedBackendData);
-        } else {
-          // With callback - validate invalid pages only
-          const currentUrlPage = parseInt(
-            new URLSearchParams(window.location.search).get('page') || '1'
-          );
+      // Skip sync if backend data is empty/invalid (loading state)
+      if (
+        !memoizedBackendData ||
+        !urlPagination ||
+        memoizedBackendData.totalElements === 0 ||
+        memoizedBackendData.totalPages === 0
+      ) {
+        return;
+      }
 
-          if (
-            currentUrlPage > memoizedBackendData.totalPages &&
-            memoizedBackendData.totalPages > 0
-          ) {
-            urlPagination.syncWithBackendData(memoizedBackendData);
-          }
+      if (!smartPagination?.onPaginationChange) {
+        // No callback - full auto-sync
+        urlPagination.syncWithBackendData(memoizedBackendData);
+      } else {
+        // With callback - validate invalid pages only
+        const currentUrlPage = parseInt(
+          new URLSearchParams(window.location.search).get('page') || '1'
+        );
+
+        if (
+          currentUrlPage > memoizedBackendData.totalPages &&
+          memoizedBackendData.totalPages > 0
+        ) {
+          urlPagination.syncWithBackendData(memoizedBackendData);
         }
       }
     }, [
@@ -173,7 +188,7 @@ const CustomDataGrid = forwardRef<
       urlPagination?.syncWithBackendData
     ]);
 
-    // Handler per reset paginazione su filtri
+    // Handler for reset pagination on filters
     const handleFiltersApplied = useCallback(() => {
       if (urlPagination) {
         urlPagination.handlePageChange(1);

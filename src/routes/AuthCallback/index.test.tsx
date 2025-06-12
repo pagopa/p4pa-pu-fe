@@ -2,6 +2,7 @@ import { afterEach, describe, it, vi, expect } from 'vitest';
 import AuthCallback from './index';
 import { render, screen, waitFor } from '../../__tests__/renderers';
 import * as IdTokenStore from '../../store/IdTokenStore';
+import { PageRoutes } from '..';
 
 vi.mock('../../store/IdTokenStore', () => ({
   setIdToken: vi.fn(),
@@ -61,7 +62,7 @@ describe('AuthCallback Page', () => {
       expect(IdTokenStore.setIdToken).toHaveBeenCalledWith(
         'header.payload.signature'
       );
-      expect(mockNavigate).toHaveBeenCalledWith('/piattaformaunitaria');
+      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.HOME);
     });
   });
 });

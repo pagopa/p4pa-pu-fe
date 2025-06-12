@@ -38,6 +38,7 @@ export type UsePaginationStateReturn = {
  * });
  * ```
  */
+
 export const usePaginationState = ({
   initialPage = 0,
   initialSize = 10,
@@ -55,12 +56,22 @@ export const usePaginationState = ({
     const urlPage = parseInt(searchParams.get('page') || '1');
     const urlSize = parseInt(searchParams.get('size') || String(initialSize));
 
-    if (pagination.page !== urlPage - 1 || pagination.size !== urlSize) {
-      setPagination({
-        page: urlPage - 1, // Convert to 0-based
-        size: urlSize
-      });
-    }
+    setPagination((currentPagination) => {
+      const shouldUpdate =
+        currentPagination.page !== urlPage - 1 ||
+        currentPagination.size !== urlSize;
+
+      if (shouldUpdate) {
+        const newPagination = {
+          page: urlPage - 1, // Convert to 0-based
+          size: urlSize
+        };
+
+        return newPagination;
+      } else {
+        return currentPagination;
+      }
+    });
   }, [searchParams, initialSize]);
 
   const handlePaginationChange = useCallback(
@@ -71,6 +82,7 @@ export const usePaginationState = ({
       const params = new URLSearchParams(searchParams);
       params.set('page', String(newPagination.page + 1)); // Convert to 1-based for URL
       params.set('size', String(newPagination.size));
+
       setSearchParams(params, { replace: true });
 
       if (onPaginationChange) {
