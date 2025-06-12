@@ -16,7 +16,7 @@ import {
 import {
   DebtPositionRegistry,
   ManageDebtPositionDTO,
-  ActionEnum,
+  Action,
   EntityTypeEnum,
   InstallmentRegistry,
   PaymentEventType
@@ -844,7 +844,7 @@ describe('manageDebtPositionInstallments', () => {
         paymentOptionId: 1001,
         installments: [
           {
-            action: ActionEnum.I,
+            action: Action.I,
             installment: {
               installmentId: 1,
               amountCents: 10000,
@@ -891,7 +891,7 @@ describe('manageDebtPositionInstallments', () => {
         paymentOptionId: 1001,
         installments: [
           {
-            action: ActionEnum.M,
+            action: Action.M,
             installment: {
               installmentId: 1,
               amountCents: 10000,
