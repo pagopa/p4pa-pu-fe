@@ -27,7 +27,7 @@ import { formatDateForApi } from '../utils/paymentUtility';
 import {
   ManageDebtPositionDTO,
   ManageInstallmentDTO,
-  ActionEnum,
+  Action,
   InstallmentDTO,
   TransferDTO,
   DebtPositionDetailDTO,
@@ -936,9 +936,9 @@ export function convertFormDataToManageDebtPositionDTO(
       };
 
       // Determine action: 'M' for existing installments, 'I' for new ones
-      const action: ActionEnum = formInstallment.isNew
-        ? ActionEnum.I
-        : ActionEnum.M;
+      const action: Action = formInstallment.isNew
+        ? Action.I
+        : Action.M;
 
       return {
         action,
@@ -1011,7 +1011,7 @@ export function convertFormDataToManageDebtPositionDTO(
 
     installments = [
       {
-        action: ActionEnum.M,
+        action: Action.M,
         installment: updatedInstallment
       }
     ];
