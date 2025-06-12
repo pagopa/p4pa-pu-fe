@@ -13,6 +13,7 @@ type Props = {
   backLabel?: string;
   showSaveDraft?: boolean;
   saveDraftLabel?: string;
+  showSaveDraftIcon?: boolean;
 };
 
 const WizardStepButtons = ({
@@ -25,7 +26,8 @@ const WizardStepButtons = ({
   nextLabel = 'commons.continue',
   backLabel = 'commons.back',
   showSaveDraft = false,
-  saveDraftLabel = 'commons.saveDraft'
+  saveDraftLabel = 'commons.saveDraft',
+  showSaveDraftIcon = true
 }: Props) => {
   const { t } = useTranslation();
 
@@ -44,10 +46,10 @@ const WizardStepButtons = ({
       <Box display="flex" gap={4}>
         {showSaveDraft && (
           <Button
-            variant="naked"
+            variant={showSaveDraftIcon ? 'text' : 'outlined'}
             onClick={onSaveDraft}
             disabled={disableSaveDraft}
-            startIcon={<Save />}
+            startIcon={showSaveDraftIcon ? <Save /> : undefined}
           >
             {t(saveDraftLabel)}
           </Button>

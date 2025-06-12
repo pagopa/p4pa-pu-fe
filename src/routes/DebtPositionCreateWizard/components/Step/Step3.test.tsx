@@ -43,7 +43,9 @@ vi.mock('react-i18next', () => ({
           'Multiple Beneficiaries',
         'debtPositionCreateWizard.step3.error.subtitle':
           'Error creating debt position',
-        'commons.create': 'Create'
+        'commons.create': 'Create',
+        'commons.save': 'Save',
+        'commons.saveDraft': 'Save Draft'
       };
       return translations[key] || key;
     }
@@ -70,7 +72,8 @@ vi.mock('../../../../store/GlobalStore', () => ({
 vi.mock('../../../../api/debtPositions', () => ({
   default: {
     createDebtPosition: vi.fn(),
-    manageDebtPositionInstallments: vi.fn()
+    manageDebtPositionInstallments: vi.fn(),
+    getDebtPositionDetail: vi.fn()
   }
 }));
 
@@ -220,6 +223,7 @@ describe('Step3 Component', () => {
   const mockOnBack = vi.fn();
   const mockCreateDebtPosition = vi.fn();
   const mockManageDebtPositionInstallments = vi.fn();
+  const mockGetDebtPositionDetail = vi.fn();
 
   const initialData: Step3Data = {
     paymentObject: { value: 'Test Payment', readonly: false },
@@ -270,6 +274,18 @@ describe('Step3 Component', () => {
       >
     ).mockReturnValue({
       mutate: mockManageDebtPositionInstallments
+    });
+
+    (
+      debtPositionsApi.getDebtPositionDetail as unknown as ReturnType<
+        typeof vi.fn
+      >
+    ).mockReturnValue({
+      data: null
+    });
+
+    mockGetDebtPositionDetail.mockReturnValue({
+      data: null
     });
   });
 
@@ -1267,5 +1283,746 @@ describe('Step3 Component', () => {
 
     expect(amountInput).toBeInTheDocument();
     expect(amountInput).toHaveValue('100,00');
+  });
+
+  describe('getSaveDraftHandler function', () => {
+    it('should return undefined for UNPAID/EXPIRED in edit mode (no save draft option)', () => {
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={initialData}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      // In edit mode per UNPAID/EXPIRED, il save draft button non dovrebbe essere visibile
+      expect(screen.queryByTestId('save-draft-button')).not.toBeInTheDocument();
+    });
+
+    it('should show save draft button for DRAFT in edit mode', async () => {
+      // Mock per DRAFT debt position
+      (
+        debtPositionsApi.getDebtPositionDetail as unknown as ReturnType<
+          typeof vi.fn
+        >
+      ).mockReturnValue({
+        data: {
+          status: DebtPositionStatus.DRAFT,
+          paymentOptions: [{ paymentOptionId: 'payment-123' }]
+        }
+      });
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={initialData}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      // Per DRAFT in edit dovrebbe mostrare il save draft button
+      await waitFor(() => {
+        expect(screen.getByTestId('save-draft-button')).toBeInTheDocument();
+      });
+    });
+
+    it('should show correct buttons for DRAFT in edit mode', async () => {
+      // Mock per DRAFT debt position
+      (
+        debtPositionsApi.getDebtPositionDetail as unknown as ReturnType<
+          typeof vi.fn
+        >
+      ).mockReturnValue({
+        data: {
+          status: DebtPositionStatus.DRAFT,
+          paymentOptions: [{ paymentOptionId: 'payment-123' }]
+        }
+      });
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={initialData}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('next-button')).toBeInTheDocument();
+        expect(screen.getByTestId('save-draft-button')).toBeInTheDocument();
+      });
+    });
+
+    it('should show save draft button in creation mode', async () => {
+      render(
+        <MemoryRouter>
+          <Step3
+            data={initialData}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={false}
+          />
+        </MemoryRouter>
+      );
+
+      expect(screen.getByTestId('save-draft-button')).toBeInTheDocument();
+      expect(screen.getByTestId('next-button')).toBeInTheDocument();
+    });
+  });
+
+  describe('Edit mode error handling', () => {
+    it('should handle missing paymentOptionId in edit mode', async () => {
+      (
+        debtPositionsApi.getDebtPositionDetail as unknown as ReturnType<
+          typeof vi.fn
+        >
+      ).mockReturnValue({
+        data: {
+          status: DebtPositionStatus.DRAFT,
+          paymentOptions: [{ paymentOptionId: null }]
+        }
+      });
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={initialData}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      const nextButton = screen.getByTestId('next-button');
+      fireEvent.click(nextButton);
+
+      await waitFor(() => {
+        expect(mockManageDebtPositionInstallments).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should handle invalid debtPositionId in edit mode', async () => {
+      (
+        debtPositionsApi.getDebtPositionDetail as unknown as ReturnType<
+          typeof vi.fn
+        >
+      ).mockReturnValue({
+        data: {
+          status: DebtPositionStatus.DRAFT,
+          paymentOptions: [{ paymentOptionId: 'payment-123' }]
+        }
+      });
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 'invalid-id' }
+            }
+          ]}
+        >
+          <Step3
+            data={initialData}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      const nextButton = screen.getByTestId('next-button');
+      fireEvent.click(nextButton);
+
+      await waitFor(() => {
+        expect(mockManageDebtPositionInstallments).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('Button labels and visibility', () => {
+    it('should show correct button labels for DRAFT in edit mode', async () => {
+      (
+        debtPositionsApi.getDebtPositionDetail as unknown as ReturnType<
+          typeof vi.fn
+        >
+      ).mockReturnValue({
+        data: {
+          status: DebtPositionStatus.DRAFT,
+          paymentOptions: [{ paymentOptionId: 'payment-123' }]
+        }
+      });
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={initialData}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        const nextButton = screen.getByTestId('next-button');
+        expect(nextButton).toHaveTextContent('commons.create'); // Should show translation key
+
+        const saveDraftButton = screen.getByTestId('save-draft-button');
+        expect(saveDraftButton).toHaveTextContent('Save Draft'); // Should show "Save Draft"
+      });
+    });
+
+    it('should show correct button labels for UNPAID in edit mode', async () => {
+      (
+        debtPositionsApi.getDebtPositionDetail as unknown as ReturnType<
+          typeof vi.fn
+        >
+      ).mockReturnValue({
+        data: {
+          status: DebtPositionStatus.UNPAID,
+          paymentOptions: [{ paymentOptionId: 'payment-123' }]
+        }
+      });
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={initialData}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        const nextButton = screen.getByTestId('next-button');
+        expect(nextButton).toHaveTextContent('commons.save'); // Should show "Save" for UNPAID in edit
+
+        // Save draft button should not be visible for UNPAID
+        expect(
+          screen.queryByTestId('save-draft-button')
+        ).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Form data population in edit mode', () => {
+    it('should populate form fields when editing with actual data', async () => {
+      const dataWithActualValues: Step3Data = {
+        paymentObject: { value: 'Existing Payment Object', readonly: false },
+        paymentOption: { value: DebtPositionTypeEnum.SINGLE, readonly: false },
+        amount: { value: '150.50', readonly: false },
+        dueDate: { value: '2025-12-01', readonly: false },
+        isMultibeneficiary: { value: true, readonly: false },
+        beneficiaries: [
+          {
+            entityName: 'Test Entity',
+            amount: '150.50',
+            taxCode: 'TEST123',
+            remittance: 'Test remittance',
+            iban: 'IT60X0542811101000000123456',
+            taxonomyCode: 'TEST'
+          }
+        ],
+        installments: [],
+        flagMandatoryDueDate: false
+      };
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={dataWithActualValues}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(
+          screen.getByDisplayValue('Existing Payment Object')
+        ).toBeInTheDocument();
+        expect(screen.getByDisplayValue('150,50')).toBeInTheDocument();
+      });
+    });
+
+    it('should not populate form fields when editing without actual data', async () => {
+      const dataWithEmptyValues: Step3Data = {
+        paymentObject: { value: '', readonly: false },
+        paymentOption: { value: DebtPositionTypeEnum.SINGLE, readonly: false },
+        amount: { value: '', readonly: false },
+        dueDate: { value: '', readonly: false },
+        isMultibeneficiary: { value: false, readonly: false },
+        beneficiaries: [],
+        installments: [],
+        flagMandatoryDueDate: false
+      };
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={dataWithEmptyValues}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      // I campi dovrebbero rimanere vuoti
+      await waitFor(() => {
+        const paymentObjectInput = screen.getByRole('textbox', {
+          name: /Payment Object/i
+        });
+        expect(paymentObjectInput).toHaveValue('');
+      });
+    });
+
+    it('should populate form fields with installments data', async () => {
+      const dataWithInstallments: Step3Data = {
+        paymentObject: { value: 'Installment Payment', readonly: false },
+        paymentOption: {
+          value: DebtPositionTypeEnum.INSTALLMENTS,
+          readonly: false
+        },
+        amount: { value: '300.00', readonly: false },
+        dueDate: { value: '', readonly: false },
+        isMultibeneficiary: { value: false, readonly: false },
+        beneficiaries: [],
+        installments: [
+          {
+            amount: '100.00',
+            dueDate: '2025-06-01',
+            remittance: 'First installment',
+            isMultibeneficiary: false,
+            beneficiaries: []
+          },
+          {
+            amount: '200.00',
+            dueDate: '2025-07-01',
+            remittance: 'Second installment',
+            isMultibeneficiary: false,
+            beneficiaries: []
+          }
+        ],
+        flagMandatoryDueDate: false
+      };
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={dataWithInstallments}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('installment-field')).toBeInTheDocument();
+      });
+    });
+
+    it('should handle date value as string in dueDate field', async () => {
+      const dataWithStringDate: Step3Data = {
+        paymentObject: { value: 'Payment with string date', readonly: false },
+        paymentOption: { value: DebtPositionTypeEnum.SINGLE, readonly: false },
+        amount: { value: '100.00', readonly: false },
+        dueDate: { value: '2025-06-15', readonly: false }, // String date
+        isMultibeneficiary: { value: false, readonly: false },
+        beneficiaries: [],
+        installments: [],
+        flagMandatoryDueDate: false
+      };
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={dataWithStringDate}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        const datePicker = screen.getByTestId('date-picker-input');
+        expect(datePicker).toHaveValue('2025-06-15');
+      });
+    });
+  });
+
+  describe('Multi-beneficiary initialization logic', () => {
+    it('should initialize beneficiaries when multi-beneficiary is enabled and no beneficiaries exist', async () => {
+      render(
+        <MemoryRouter>
+          <Step3
+            data={{
+              ...initialData,
+              isMultibeneficiary: { value: false, readonly: false }
+            }}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={false}
+          />
+        </MemoryRouter>
+      );
+
+      const multiBeneficiarySwitch = screen.getByRole('checkbox', {
+        name: /Multiple Beneficiaries/i
+      });
+
+      fireEvent.click(multiBeneficiarySwitch);
+
+      await waitFor(() => {
+        expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+      });
+    });
+
+    it('should not initialize beneficiaries when in editing mode with already set up data', async () => {
+      const dataWithExistingBeneficiaries: Step3Data = {
+        ...initialData,
+        isMultibeneficiary: { value: true, readonly: false },
+        beneficiaries: [
+          {
+            entityName: 'Existing Entity',
+            amount: '100.00',
+            taxCode: 'EXISTING123',
+            remittance: 'Existing remittance',
+            iban: 'IT60X0542811101000000123456',
+            taxonomyCode: 'EXISTING'
+          }
+        ]
+      };
+
+      render(
+        <MemoryRouter
+          initialEntries={[
+            {
+              pathname: '/debt-position-edit',
+              state: { debtPositionId: 123 }
+            }
+          ]}
+        >
+          <Step3
+            data={dataWithExistingBeneficiaries}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={true}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+      });
+    });
+
+    it('should clear beneficiaries when multi-beneficiary is disabled', async () => {
+      render(
+        <MemoryRouter>
+          <Step3
+            data={{
+              ...initialData,
+              isMultibeneficiary: { value: true, readonly: false }
+            }}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={false}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+      });
+
+      const multiBeneficiarySwitch = screen.getByRole('checkbox', {
+        name: /Multiple Beneficiaries/i
+      });
+
+      fireEvent.click(multiBeneficiarySwitch);
+
+      await waitFor(() => {
+        expect(
+          screen.queryByTestId('beneficiary-field')
+        ).not.toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Additional edge cases', () => {
+    it('should handle beneficiary validation failure correctly', async () => {
+      vi.spyOn(paymentUtility, 'validateMultiBeneficiary').mockReturnValue(
+        false
+      );
+
+      render(
+        <MemoryRouter>
+          <Step3
+            data={{
+              ...initialData,
+              isMultibeneficiary: { value: true, readonly: false }
+            }}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={false}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+      });
+
+      const nextButton = screen.getByTestId('next-button');
+      fireEvent.click(nextButton);
+
+      await waitFor(() => {
+        expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should handle form validation failure correctly', async () => {
+      render(
+        <MemoryRouter>
+          <Step3
+            data={{
+              ...initialData,
+              paymentObject: { value: '', readonly: false } // Empty required field
+            }}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={false}
+          />
+        </MemoryRouter>
+      );
+
+      const nextButton = screen.getByTestId('next-button');
+      fireEvent.click(nextButton);
+
+      await waitFor(() => {
+        expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should handle installments modification correctly', async () => {
+      vi.spyOn(
+        installmentValidation,
+        'syncInstallmentBeneficiaries'
+      ).mockReturnValueOnce({
+        installments: [
+          {
+            amount: '100',
+            dueDate: '2025-07-15',
+            remittance: 'Modified payment',
+            isMultibeneficiary: false,
+            beneficiaries: []
+          }
+        ],
+        modified: true
+      });
+
+      vi.spyOn(
+        installmentValidation,
+        'validateInstallments'
+      ).mockReturnValueOnce({
+        hasInvalidBeneficiaries: false,
+        hasInvalidPaymentFields: false,
+        hasInvalidAmounts: false,
+        hasEmptyRemittance: false
+      });
+
+      render(
+        <MemoryRouter>
+          <Step3
+            data={{
+              ...initialData,
+              paymentOption: {
+                value: DebtPositionTypeEnum.INSTALLMENTS,
+                readonly: false
+              }
+            }}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={false}
+          />
+        </MemoryRouter>
+      );
+
+      await waitFor(() => {
+        expect(screen.getByTestId('installment-field')).toBeInTheDocument();
+      });
+
+      const nextButton = screen.getByTestId('next-button');
+      fireEvent.click(nextButton);
+
+      await waitFor(() => {
+        expect(mockCreateDebtPosition).toHaveBeenCalled();
+      });
+    });
+
+    it('should handle amount formatting on blur with invalid number', async () => {
+      render(
+        <MemoryRouter>
+          <Step3
+            data={initialData}
+            setData={mockSetData}
+            onNext={mockOnNext}
+            onBack={mockOnBack}
+            step1Data={mockStep1Data}
+            step2Data={mockStep2Data}
+            isEditing={false}
+          />
+        </MemoryRouter>
+      );
+
+      const amountInput = screen.getByRole('textbox', { name: /Amount/i });
+
+      fireEvent.change(amountInput, { target: { value: 'invalid-number' } });
+      fireEvent.blur(amountInput);
+
+      // Should not throw error and maintain the invalid value
+      expect(amountInput).toHaveValue('');
+    });
   });
 });

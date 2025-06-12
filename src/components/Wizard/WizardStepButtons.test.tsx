@@ -208,4 +208,63 @@ describe('WizardStepButtons', () => {
     expect(screen.getByText('Salva bozza')).toBeInTheDocument();
     fireEvent.click(screen.getByText('Salva bozza'));
   });
+
+  it('renders Save Draft button with text variant when showSaveDraftIcon is true', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
+    const onSaveDraft = vi.fn();
+
+    render(
+      <WizardStepButtons
+        onNext={onNext}
+        onBack={onBack}
+        onSaveDraft={onSaveDraft}
+        showSaveDraft={true}
+        showSaveDraftIcon={true}
+      />
+    );
+
+    const saveDraftButton = screen.getByText('Salva bozza');
+    expect(saveDraftButton).toBeInTheDocument();
+    expect(saveDraftButton.closest('button')).toHaveClass('MuiButton-text');
+  });
+
+  it('renders Save Draft button with outlined variant when showSaveDraftIcon is false', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
+    const onSaveDraft = vi.fn();
+
+    render(
+      <WizardStepButtons
+        onNext={onNext}
+        onBack={onBack}
+        onSaveDraft={onSaveDraft}
+        showSaveDraft={true}
+        showSaveDraftIcon={false}
+      />
+    );
+
+    const saveDraftButton = screen.getByText('Salva bozza');
+    expect(saveDraftButton).toBeInTheDocument();
+    expect(saveDraftButton.closest('button')).toHaveClass('MuiButton-outlined');
+  });
+
+  it('renders Save Draft button with default text variant when showSaveDraftIcon is not specified', () => {
+    const onNext = vi.fn();
+    const onBack = vi.fn();
+    const onSaveDraft = vi.fn();
+
+    render(
+      <WizardStepButtons
+        onNext={onNext}
+        onBack={onBack}
+        onSaveDraft={onSaveDraft}
+        showSaveDraft={true}
+      />
+    );
+
+    const saveDraftButton = screen.getByText('Salva bozza');
+    expect(saveDraftButton).toBeInTheDocument();
+    expect(saveDraftButton.closest('button')).toHaveClass('MuiButton-text');
+  });
 });

@@ -187,6 +187,19 @@ const Step3 = ({
   // Ref to avoid executing the setup logic more than once
   const hasSetupStep3Data = useRef(false);
 
+  // Ref to track if the last action was publish (for correct title in completed page)
+  const lastActionWasPublish = useRef(false);
+
+  const isDraftInEdit =
+    isEditing && debtPositionDetail?.status === DebtPositionStatus.DRAFT;
+
+  const getNextButtonLabel = (): string => {
+    if (isEditing) {
+      return isDraftInEdit ? 'commons.create' : 'commons.save';
+    }
+    return 'commons.create';
+  };
+
   const { mutate: createDebtPosition } = debtPositionsApi.createDebtPosition(
     (paymentObject) => {
       navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
@@ -209,7 +222,8 @@ const Step3 = ({
         navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
           state: {
             ...response,
-            isEditing: true
+            isEditing: true,
+            wasPublished: lastActionWasPublish.current
           },
           replace: true
         });
@@ -501,7 +515,24 @@ const Step3 = ({
     return { isValid: true, syncedInstallments };
   };
 
-  const onSubmit = async (values: Step3FormValues, isDraft = false) => {
+  const getSaveDraftHandler = (): (() => void) | undefined => {
+    if (isDraftInEdit) {
+      // DRAFT in edit: save without publishing
+      return handleSubmit((values) => onSubmit(values, false, false));
+    }
+    if (!isEditing) {
+      // Creation mode: save as draft
+      return handleSubmit((values) => onSubmit(values, true));
+    }
+    // UNPAID/EXPIRED in edit: no save draft option
+    return undefined;
+  };
+
+  const onSubmit = async (
+    values: Step3FormValues,
+    isDraft = false,
+    shouldPublish = false
+  ) => {
     // Check due date field if mandatory
     if (!isInstallment && values.flagMandatoryDueDate) {
       if (!values.dueDate.value) {
@@ -589,10 +620,14 @@ const Step3 = ({
           step1Data
         );
 
+        const shouldPublishPosition = shouldPublish;
+        lastActionWasPublish.current = shouldPublishPosition && isDraftInEdit;
+
         manageInstallments({
           organizationId,
           debtPositionId: Number(debtPositionId),
-          body: manageBody
+          body: manageBody,
+          publish: shouldPublishPosition
         });
       } catch (error) {
         console.error('Error converting form data:', error);
@@ -883,12 +918,15 @@ const Step3 = ({
       )}
       <WizardStepButtons
         onBack={onBack}
-        onNext={handleSubmit((values) => onSubmit(values, false))}
-        onSaveDraft={() => handleSubmit((values) => onSubmit(values, true))()}
+        onNext={handleSubmit((values) =>
+          onSubmit(values, false, isDraftInEdit)
+        )}
+        onSaveDraft={getSaveDraftHandler()}
         disableNext={false}
-        nextLabel={isEditing ? 'commons.save' : 'commons.create'}
-        showSaveDraft={!isEditing}
-        saveDraftLabel="commons.saveDraft"
+        nextLabel={getNextButtonLabel()}
+        showSaveDraft={isDraftInEdit || !isEditing}
+        saveDraftLabel={isDraftInEdit ? 'commons.save' : 'commons.saveDraft'}
+        showSaveDraftIcon={!isDraftInEdit}
       />
     </form>
   );
