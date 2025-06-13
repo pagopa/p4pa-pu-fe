@@ -185,7 +185,7 @@ export const ClassificationDetails = () => {
   return (
     <>
       <TitleComponent title={t('commons.routes.CLASSIFICATIONS')} />
-      <TabContext value={tabIndex} data-test-id="ClassificationDetailTabs">
+      <TabContext value={tabIndex} data-testid="ClassificationDetailTabs">
         <TabList
           onChange={handleChange}
           aria-label="classification detail tabs"
@@ -193,17 +193,26 @@ export const ClassificationDetails = () => {
           variant="fullWidth"
           sx={{ backgroundColor: theme.palette.background.paper }}
         >
-          <Tab label={t(`${targetTransalationDebtTypeData}.title`)} value={0} />
+          <Tab
+            label={t(`${targetTransalationDebtTypeData}.title`)}
+            value={0}
+            data-testid="classificationDetailTabDebtType"
+          />
           <Tab
             label={t(`${targetTransalationRendicontazione}.title`)}
             value={1}
+            data-testid="classificationDetailTabRendicontazione"
           />
-          <Tab label={t(`${targetTransalationCassa}.title`)} value={2} />
+          <Tab
+            label={t(`${targetTransalationCassa}.title`)}
+            value={2}
+            data-testid="classificationDetailTabCassa"
+          />
         </TabList>
         <TabPanel
           value={0}
           sx={{ padding: 0 }}
-          data-test-id="ClassificationDetailTabNotifiedPayment"
+          data-testid="ClassificationDetailTabPanelDebtType"
         >
           <Stack spacing={3}>
             <DetailContainer
@@ -244,7 +253,7 @@ export const ClassificationDetails = () => {
         <TabPanel
           value={1}
           sx={{ padding: 0 }}
-          data-test-id="ClassificationDetailTabNotifiedRendicontazione"
+          data-testid="ClassificationDetailTabPanelRendicontazione"
         >
           <DetailContainer
             sections={[
@@ -269,7 +278,7 @@ export const ClassificationDetails = () => {
         <TabPanel
           value={2}
           sx={{ padding: 0 }}
-          data-test-id="ClassificationDetailTabCassa"
+          data-testid="ClassificationDetailTabPanelCassa"
         >
           <DetailContainer
             sections={[
