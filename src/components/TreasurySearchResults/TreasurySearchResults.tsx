@@ -53,7 +53,7 @@ const TreasurySearchResults = () => {
   };
 
   const errorMessage: ReactNode = (
-    <Typography variant="body2" color="error" mt={2}>
+    <Typography variant="body2" color="error" mt={2} data-testid="multifilters-error-text">
       {t('commons.filters.atLeastOneFilter')}
     </Typography>
   );
@@ -110,12 +110,14 @@ const TreasurySearchResults = () => {
           {
             buttonText: t('commons.filters.filterResults'),
             onButtonClick: applyFilters,
-            variant: 'contained'
+            variant: 'contained',
+            id: 'multifilter-drawer-search-btn'
           },
           {
             buttonText: t('commons.filters.remove'),
             onButtonClick: removeAllFilters,
-            variant: 'text'
+            variant: 'text',
+            id: 'multifilter-drawer-remove-btn'
           }
         ]}
       />

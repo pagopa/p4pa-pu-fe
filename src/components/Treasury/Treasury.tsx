@@ -17,7 +17,7 @@ export const Treasury = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(false);
   const errorMessage: ReactNode = (
-    <Typography variant="body2" color="error" mt={2}>
+    <Typography variant="body2" color="error" mt={2} data-testid="multifilters-error-text">
       {t('commons.filters.atLeastOneFilter')}
     </Typography>
   );
@@ -48,12 +48,14 @@ export const Treasury = () => {
                 {
                   label: t('commons.filters.remove'),
                   variant: 'outlined',
-                  onClick: removeAllFilters
+                  onClick: removeAllFilters,
+                  id: 'searchcard-remove-btn'
                 },
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: submitSearch
+                  onClick: submitSearch,
+                  id: 'searchcard-search-btn'
                 }
               ]}
             />

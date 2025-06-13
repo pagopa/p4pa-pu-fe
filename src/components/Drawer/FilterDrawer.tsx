@@ -11,6 +11,7 @@ type FilterDrawerProps = DrawerProps & {
     onButtonClick?: () => void;
     variant?: 'contained' | 'outlined' | 'text';
     disabled?: boolean;
+    id?: string;
   }>;
 };
 
@@ -30,6 +31,7 @@ export const FilterDrawer = ({
         buttons.map((btn, index) => (
           <Grid item mb={1} key={`${btn.buttonText}-${index}`}>
             <Button
+              id={btn.id}
               fullWidth
               size="large"
               variant={btn.variant}
