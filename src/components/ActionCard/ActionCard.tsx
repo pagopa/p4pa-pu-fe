@@ -61,6 +61,7 @@ const ActionCard = ({
               variant={actionButtonVariant}
               fullWidth={false}
               onClick={onActionClick}
+              id="action-card-btn"
             >
               {actionLabel}
             </Button>
@@ -77,6 +78,7 @@ const ActionCard = ({
           {linkLabel && (
             <Grid item lg={12}>
               <Button
+                id="action-card-linklabel-btn"
                 size="large"
                 endIcon={<ArrowForward />}
                 variant="text"
