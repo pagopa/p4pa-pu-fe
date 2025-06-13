@@ -84,7 +84,7 @@
           "title": "Giornale di cassa",
           "conto": "Conto",
           "ordinante": "Ordinante",
-          "codiceDoucumento": "Codice documento",
+          "codiceDocumento": "Codice documento",
           "dataValuta": "Data Valuta",
           "annoBolletta": "Anno bolletta",
           "annoProvvisorio": "Anno provvissorio",
