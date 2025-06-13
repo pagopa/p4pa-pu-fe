@@ -2,7 +2,7 @@
 import { vi, describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import ClassificationsDetail from './';
-import * as classificationService from '../../api/getClassificationsDetail';
+import * as classificationService from '../../api/getClassificationDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { createMock } from 'zodock';
 import { classificationDetailViewDTOSchema } from '../../../generated/zod-schema';
@@ -36,7 +36,7 @@ describe('Classifications Detail:', () => {
   it('passes the right parameters to the getClassificationDetails hook', () => {
     const spyGetClassificationDetails = vi.spyOn(
       classificationService,
-      'getClassificationDetails'
+      'getClassificationDetail'
     );
     render(<ClassificationsDetail />);
     expect(spyGetClassificationDetails).toBeCalledWith(2, 673);

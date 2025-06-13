@@ -1,6 +1,6 @@
 import { useStore } from '../../store/GlobalStore';
 import { useParams } from 'react-router';
-import { getClassificationDetails } from '../../api/getClassificationsDetail';
+import { getClassificationDetail } from '../../api/getClassificationDetail';
 import { Stack, Tab, useTheme } from '@mui/material';
 import { SyntheticEvent, useState } from 'react';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
@@ -17,7 +17,7 @@ export const ClassificationDetails = () => {
   const { t } = useTranslation();
   const organizationId = store.state.organizationId;
   const { classificationId } = useParams();
-  const { data } = getClassificationDetails(
+  const { data } = getClassificationDetail(
     organizationId,
     Number(classificationId)
   );

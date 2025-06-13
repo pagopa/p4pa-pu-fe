@@ -3,12 +3,12 @@ import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import { classificationDetailViewDTOSchema } from '../../generated/zod-schema';
 
-export const getClassificationDetails = (
+export const getClassificationDetail = (
   organizationId: number,
   classificationId: number
 ) => {
   return useQuery({
-    queryKey: ['getClassificationDetails', organizationId, classificationId],
+    queryKey: ['getClassificationDetail', organizationId, classificationId],
     queryFn: async () => {
       const { data: classificationDetail } =
         await utils.apiClient.bff.getClassificationDetail(
