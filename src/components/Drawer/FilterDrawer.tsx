@@ -5,11 +5,13 @@ import { Drawer, DrawerProps } from '../Drawer';
 
 type FilterDrawerProps = DrawerProps & {
   filterMap: FilterMap;
+  render?: React.ReactNode;
   buttons?: Array<{
     buttonText?: string;
     onButtonClick?: () => void;
     variant?: 'contained' | 'outlined' | 'text';
     disabled?: boolean;
+    id?: string;
   }>;
 };
 
@@ -17,16 +19,19 @@ export const FilterDrawer = ({
   filterMap,
   buttons,
   children,
+  render,
   ...props
 }: FilterDrawerProps) => (
   <Drawer {...props}>
     {children}
     <MultiFilter filterMap={filterMap} />
+    {render && <Grid container>{render}</Grid>}
     <Grid container direction={'column'} marginTop={2}>
       {buttons &&
         buttons.map((btn, index) => (
           <Grid item mb={1} key={`${btn.buttonText}-${index}`}>
             <Button
+              id={btn.id}
               fullWidth
               size="large"
               variant={btn.variant}
