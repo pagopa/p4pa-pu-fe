@@ -936,8 +936,9 @@ export function convertFormDataToManageDebtPositionDTO(
       };
 
       // Determine action: 'M' for existing installments, 'I' for new ones
-      const action: Action = formInstallment.isNew ? Action.I : Action.M;
-
+      const action: Action = formInstallment.isNew
+        ? Action.I
+        : Action.M;
       return {
         action,
         installment: updatedInstallment
