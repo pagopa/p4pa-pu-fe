@@ -11,12 +11,17 @@ import {
   TypographyOwnProps
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { moneyFormat } from '../../utils/formatters';
+import {
+  formatDate,
+  formatDateTime,
+  moneyFormat
+} from '../../utils/formatters';
 import React from 'react';
 
 export type DetailData = {
   label: string;
-  value: string | number;
+  value?: string | number;
+  valueType?: 'amount' | 'date' | 'dateTime' | 'status';
   variant?: 'body1' | 'body2' | 'h6' | 'subtitle1' | 'monospaced';
   chipConfig?: {
     color?: ChipOwnProps['color'];
@@ -47,7 +52,9 @@ export type DetailSectionProps = {
   fullWidthSections?: boolean;
 };
 
-const stateColors: Record<DetailData['value'], ChipOwnProps['color']> = {
+type Status = 'Pagato';
+
+const stateColors: Record<Status, ChipOwnProps['color']> = {
   Pagato: 'success'
 };
 
@@ -58,35 +65,20 @@ const DetailContainer = ({
   const theme = useTheme();
   const { t } = useTranslation();
   const renderItemValue = (item: DetailData): JSX.Element => {
-    if (item.label === t('commons.state')) {
+    if (item.childrenComponent) {
+      return <>{item.childrenComponent}</>;
+    }
+
+    if (item.valueType === 'status' && item.value) {
       return (
         <React.Fragment>
           <Chip
-            color={item.chipConfig?.color ?? stateColors[item.value]}
+            color={item.chipConfig?.color ?? stateColors[item.value as Status]}
             label={t(`commons.status.${item.value}`)}
             variant={item.chipConfig?.variant}
           />
         </React.Fragment>
       );
-    }
-
-    if (item.label === t('commons.amount')) {
-      return (
-        <React.Fragment>
-          <Typography
-            fontWeight={item.variant ?? 600}
-            variant={item.variant ?? 'body1'}
-          >
-            {moneyFormat(
-              typeof item.value === 'number' ? item.value : Number(item.value)
-            )}
-          </Typography>
-        </React.Fragment>
-      );
-    }
-
-    if (item.childrenComponent) {
-      return <>{item.childrenComponent}</>;
     }
 
     return (
@@ -95,7 +87,25 @@ const DetailContainer = ({
           fontWeight={item.variant ?? 600}
           variant={item.variant ?? 'body1'}
         >
-          {item.value || '-'}
+          {
+            // eslint-disable-next-line sonarjs/function-return-type
+            (() => {
+              if (item.valueType === 'amount') {
+                return moneyFormat(
+                  typeof item.value === 'number'
+                    ? item.value
+                    : Number(item.value)
+                );
+              }
+              if (item.valueType === 'date') {
+                return formatDate(`${item.value}`);
+              }
+              if (item.valueType === 'dateTime') {
+                return formatDateTime(`${item.value}`);
+              }
+              return item.value || '-';
+            })()
+          }
         </Typography>
       </React.Fragment>
     );

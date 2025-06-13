@@ -9,7 +9,7 @@ import DetailContainer, {
 } from '../DetailContainer/DetailContainer';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { useTranslation } from 'react-i18next';
-import { formatDateTime } from '../../utils/formatters';
+
 import TitleComponent from '../TitleComponent/TitleComponent';
 
 export const ClassificationDetails = () => {
@@ -32,55 +32,56 @@ export const ClassificationDetails = () => {
   const debtTypeData: Array<DetailData> = [
     {
       label: t(`${targetTransalationDebtTypeData}.debtType`),
-      value: 'test'
+      value: data?.debtPositionTypeOrgCode
     },
     {
       label: t(`${targetTransalationDebtTypeData}.paymentObject`),
-      value: data?.remittanceDescription || ''
+      value: 'toBeDefined'
     },
     {
       label: t(`${targetTransalationDebtTypeData}.amount`),
-      value: data?.receiptPaymentAmount || ''
+      value: 'toBeDefined'
     },
     {
       label: t(`${targetTransalationDebtTypeData}.dataPayment`),
-      value: formatDateTime(data?.receiptPaymentDateTime)
+      value: data?.receiptPaymentDateTime,
+      valueType: 'dateTime'
     },
     {
       label: t(`${targetTransalationDebtTypeData}.anagraficaAttestante`),
-      value: 'test'
+      value: data?.receiptDebtor?.fullName
     },
     {
       label: t(`${targetTransalationDebtTypeData}.CFAttestante`),
-      value: 'test'
+      value: data?.receiptDebtor?.fiscalCode
     },
     {
       label: t(`${targetTransalationDebtTypeData}.IUV`),
-      value: data?.iuv || ''
+      value: data?.iuv
     },
     {
       label: t(`${targetTransalationDebtTypeData}.IUD`),
-      value: data?.iud || ''
+      value: data?.iud
     },
     {
       label: t(`${targetTransalationDebtTypeData}.IUR`),
-      value: data?.iur || ''
+      value: data?.iur
     },
     {
       label: t(`${targetTransalationDebtTypeData}.anagraficaPagatore`),
-      value: data?.receiptPayer?.fullName || ''
+      value: data?.receiptPayer?.fullName
     },
     {
       label: t(`${targetTransalationDebtTypeData}.CFPagatore`),
-      value: data?.receiptPayer?.fiscalCode || ''
+      value: data?.receiptPayer?.fiscalCode
     },
     {
       label: t(`${targetTransalationDebtTypeData}.anagraficaVersante`),
-      value: data?.receiptDebtor?.fullName || ''
+      value: data?.receiptDebtor?.fullName
     },
     {
       label: t(`${targetTransalationDebtTypeData}.CFVersante`),
-      value: data?.receiptDebtor?.fiscalCode || ''
+      value: data?.receiptDebtor?.fiscalCode
     }
   ];
 
@@ -89,35 +90,35 @@ export const ClassificationDetails = () => {
   const notifiedPayment: Array<DetailData> = [
     {
       label: t(`${targetTransalationNotifiedPayment}.debtType`),
-      value: 'test'
+      value: 'toBeDefined'
     },
     {
       label: t(`classifications.detail.sections.notifiedPayment.paymentObject`),
-      value: data?.remittanceDescription || ''
+      value: 'toBeDefined'
     },
     {
       label: t(`classifications.detail.sections.notifiedPayment.amount`),
-      value: data?.receiptPaymentAmount || ''
+      value: 'toBeDefined'
     },
     {
       label: t(`${targetTransalationNotifiedPayment}.anagraficaPagatore`),
-      value: formatDateTime(data?.receiptPaymentDateTime)
+      value: 'toBeDefined'
     },
     {
       label: t(`${targetTransalationNotifiedPayment}.CFPagatore`),
-      value: 'test'
+      value: 'toBeDefined'
     },
     {
       label: t(`${targetTransalationNotifiedPayment}.esecutionDate`),
-      value: 'test'
+      valueType: 'date'
     },
     {
       label: t(`${targetTransalationNotifiedPayment}.otherdata`),
-      value: 'test'
+      value: 'toBeDefined'
     },
     {
       label: t(`${targetTransalationNotifiedPayment}.IUD`),
-      value: data?.iud || ''
+      value: 'toBeDefined'
     }
   ];
 
@@ -126,23 +127,26 @@ export const ClassificationDetails = () => {
   const rendicontazione: Array<DetailData> = [
     {
       label: t(`${targetTransalationRendicontazione}.idRendicontazione`),
-      value: 'test'
+      value: data?.iuf
     },
     {
       label: t(`${targetTransalationRendicontazione}.data`),
-      value: data?.remittanceDescription || ''
+      value: data?.flowDateTime,
+      valueType: 'dateTime'
     },
     {
       label: t(`${targetTransalationRendicontazione}.idRegolamento`),
-      value: data?.receiptPaymentAmount || ''
+      value: data?.regulationUniqueIdentifier
     },
     {
       label: t(`${targetTransalationRendicontazione}.dataRegolamento`),
-      value: data?.receiptPaymentAmount || ''
+      value: data?.regionValueDate,
+      valueType: 'dateTime'
     },
     {
       label: t(`${targetTransalationRendicontazione}.importoTotale`),
-      value: formatDateTime(data?.receiptPaymentDateTime)
+      value: data?.totalPayments,
+      valueType: 'amount'
     }
   ];
 
@@ -150,35 +154,42 @@ export const ClassificationDetails = () => {
   const cassa: Array<DetailData> = [
     {
       label: t(`${targetTransalationCassa}.conto`),
-      value: 'test'
+      value: 'toBeDefined'
     },
     {
       label: t(`${targetTransalationCassa}.ordinante`),
-      value: data?.remittanceDescription || ''
+      value: 'toBeDefined'
     },
     {
       label: t(`${targetTransalationCassa}.codiceDocumento`),
-      value: data?.receiptPaymentAmount || ''
+      value: data?.documentCode
     },
     {
       label: t(`${targetTransalationCassa}.dataValuta`),
-      value: data?.receiptPaymentAmount || ''
+      value: data?.billDate,
+      valueType: 'date'
     },
     {
       label: t(`${targetTransalationCassa}.annoBolletta`),
-      value: formatDateTime(data?.receiptPaymentDateTime)
+      value: data?.billYear,
+      valueType: 'date'
     },
     {
       label: t(`${targetTransalationCassa}.annoProvvisorio`),
-      value: data?.receiptPaymentAmount || ''
+      value: 'toBeDefined'
     },
     {
       label: t(`${targetTransalationCassa}.dataContabile`),
-      value: data?.receiptPaymentAmount || ''
+      value: data?.receptionDate,
+      valueType: 'date'
     },
     {
       label: t(`${targetTransalationCassa}.codiceBolletta`),
-      value: formatDateTime(data?.receiptPaymentDateTime)
+      value: data?.billCode
+    },
+    {
+      label: t(`${targetTransalationCassa}.codiceProvvisorio`),
+      value: 'toBeDefined'
     }
   ];
 
