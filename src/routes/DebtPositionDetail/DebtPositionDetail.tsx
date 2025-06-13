@@ -143,38 +143,12 @@ const DebtPositionDetail = () => {
 
   const deleteDebtPositionMutation = debtPositions.deleteDebtPosition(
     organizationId,
-    debtPositionId,
-    () => {
-      setDialogConfig(null);
-      if (debtPositionDetail?.status === DebtPositionStatus.DRAFT) {
-        navigate(generatePath(PageRoutes.DEBT_POSITIONS_INDEX));
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: ['getDebtPositionDetail', organizationId, debtPositionId]
-        });
-      }
-    },
-    (error) => {
-      console.error('Error while deleting the debt position:', error);
-      setDialogConfig(null);
-      utils.notify.emit(t('debtPositionDetail.deleteError'), 'error');
-    }
+    debtPositionId
   );
 
   const publishDebtPositionMutation = debtPositions.publishDebtPosition(
     organizationId,
-    debtPositionId,
-    () => {
-      setDialogConfig(null);
-      queryClient.invalidateQueries({
-        queryKey: ['getDebtPositionDetail', organizationId, debtPositionId]
-      });
-    },
-    (error) => {
-      console.error('Error while publishing the debt position:', error);
-      setDialogConfig(null);
-      utils.notify.emit(t('debtPositionDetail.publishError'), 'error');
-    }
+    debtPositionId
   );
 
   const canBeDeleted =
@@ -211,11 +185,27 @@ const DebtPositionDetail = () => {
     showDeleteDialog();
   };
 
-  const handleDeleteConfirm = () => {
-    if (canBeDeleted) {
-      deleteDebtPositionMutation.mutate();
-    } else {
+  const handleDeleteConfirm = async () => {
+    if (!canBeDeleted) {
       setDialogConfig(null);
+      return;
+    }
+
+    try {
+      await deleteDebtPositionMutation.mutateAsync();
+
+      setDialogConfig(null);
+      if (debtPositionDetail?.status === DebtPositionStatus.DRAFT) {
+        navigate(generatePath(PageRoutes.DEBT_POSITIONS_INDEX));
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ['getDebtPositionDetail', organizationId, debtPositionId]
+        });
+      }
+    } catch (error) {
+      console.error('Error while deleting the debt position:', error);
+      setDialogConfig(null);
+      utils.notify.emit(t('debtPositionDetail.deleteError'), 'error');
     }
   };
 
@@ -284,7 +274,7 @@ const DebtPositionDetail = () => {
     showPublishDialog();
   };
 
-  const handlePublishConfirm = () => {
+  const handlePublishConfirm = async () => {
     if (hasExpiredDueDates()) {
       setDialogConfig(null);
       utils.notify.emit(
@@ -294,7 +284,18 @@ const DebtPositionDetail = () => {
       return;
     }
 
-    publishDebtPositionMutation.mutate();
+    try {
+      await publishDebtPositionMutation.mutateAsync();
+
+      setDialogConfig(null);
+      queryClient.invalidateQueries({
+        queryKey: ['getDebtPositionDetail', organizationId, debtPositionId]
+      });
+    } catch (error) {
+      console.error('Error while publishing the debt position:', error);
+      setDialogConfig(null);
+      utils.notify.emit(t('debtPositionDetail.publishError'), 'error');
+    }
   };
 
   const getDebtPositionZipFileMutation =
