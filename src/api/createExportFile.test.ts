@@ -7,16 +7,22 @@ import {
   ReceiptsArchivingExportFileRequest
 } from '../../generated/apiClient';
 import {
+  createClassificationsExportFile,
   createPaidExportFile,
   createReceiptsArchivingExportFile
 } from './createExportFile';
+import {
+  ClassificationsExportFileRequestDTO,
+  LabelEnum
+} from '../../generated/data-contracts';
 
 vi.mock('../utils', () => ({
   default: {
     apiClient: {
       bff: {
         createPaidExportFile: vi.fn(),
-        createReceiptsArchivingExportFile: vi.fn()
+        createReceiptsArchivingExportFile: vi.fn(),
+        createClassificationsExportFile: vi.fn()
       }
     }
   }
@@ -27,6 +33,10 @@ const mockCreatePaidExportFile = vi.mocked(
 );
 const mockCreateReceiptsExportFile = vi.mocked(
   utils.apiClient.bff.createReceiptsArchivingExportFile
+);
+
+const mockCreateClassificationsExportFile = vi.mocked(
+  utils.apiClient.bff.createClassificationsExportFile
 );
 
 describe('createPaidExportFile', () => {
@@ -117,5 +127,52 @@ describe('createReceiptsArchivingExportFile', () => {
     await expect(
       result.current.mutateAsync({ data: requestData })
     ).rejects.toThrow('Create receipts export failed');
+  });
+});
+
+describe('createClassificationsExportFile', () => {
+  it('calls createClassificationsExportFile with correct parameters', async () => {
+    const mockRequestData: ClassificationsExportFileRequestDTO = {
+      organizationId: 789,
+      exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
+      fileVersion: 'v1.0',
+      filterFields: {
+        lastClassificationDate: {
+          from: '2024-01-01',
+          to: '2024-12-31'
+        },
+        iuf: 'IUF123456',
+        label: LabelEnum.DOPPI
+      }
+    };
+
+    const { result } = renderHook(() => createClassificationsExportFile());
+
+    await act(async () => {
+      await result.current.mutateAsync({ data: mockRequestData });
+    });
+
+    expect(mockCreateClassificationsExportFile).toHaveBeenCalledWith(
+      mockRequestData,
+      undefined
+    );
+  });
+
+  it('handles error correctly', async () => {
+    const mockError = new Error('Create classifications export failed');
+    mockCreateClassificationsExportFile.mockRejectedValueOnce(mockError);
+
+    const requestData: ClassificationsExportFileRequestDTO = {
+      organizationId: 789,
+      exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
+      fileVersion: 'v1.4',
+      filterFields: {}
+    };
+
+    const { result } = renderHook(() => createClassificationsExportFile());
+
+    await expect(
+      result.current.mutateAsync({ data: requestData })
+    ).rejects.toThrow('Create classifications export failed');
   });
 });
