@@ -14,6 +14,8 @@ import { useEffect } from 'react';
 import { DebtTypeOrgForm } from '../../types';
 import { useParams } from 'react-router';
 import { getDebtPositionTypeOrgById } from '../../../../api/debtPositionsTypeOrg';
+import { useActualizationConfigurations } from '../../hooks/useActualizationConfig';
+import { useNotificationConfigurations } from '../../hooks/useNotificationConfig';
 
 export type Step1Data = {
   debtPositionTypeId: string;
@@ -41,11 +43,13 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
   });
 
-  const { control, watch, setValue, trigger } =
+  const actualizationQuery = useActualizationConfigurations();
+  const notificationQuery = useNotificationConfigurations();
+
+  const { control, watch, setValue, trigger, reset, getValues } =
     useFormContext<DebtTypeOrgForm>();
 
   const description = watch('description');
-
   const selectedId = watch('debtPositionTypeId');
 
   // Auto-fill other fields when selection changes
@@ -66,21 +70,36 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     }
   }, [edit, selectedId, selectionQuery.data, setValue, trigger]);
 
-  // If editing, auto-fill fields with the GET detail
   useEffect(() => {
     const response = detailQuery.data?.response;
-    if (edit && response) {
+
+    const areSelectsReady =
+      !actualizationQuery.isLoading && !notificationQuery.isLoading;
+
+    if (edit && response && areSelectsReady) {
+      const formValues: Partial<DebtTypeOrgForm> = {};
+
       Object.entries(response).forEach(([key, val]) => {
-        setValue(key as keyof DebtTypeOrgForm, val);
+        formValues[key as keyof DebtTypeOrgForm] = val;
       });
-      // map boolean to 'enabled' or 'disabled'
-      setValue(
-        'flagNotifyOutcomePush',
-        response.flagNotifyOutcomePush ? 'enabled' : 'disabled'
-      );
-      trigger();
+
+      formValues.flagNotifyOutcomePush = response.flagNotifyOutcomePush
+        ? 'enabled'
+        : 'disabled';
+
+      reset({
+        ...getValues(),
+        ...formValues
+      });
     }
-  }, [edit, detailQuery.data, setValue, trigger]);
+  }, [
+    edit,
+    detailQuery.data,
+    reset,
+    getValues,
+    actualizationQuery.isLoading,
+    notificationQuery.isLoading
+  ]);
 
   return (
     <WizardStepWrapper
