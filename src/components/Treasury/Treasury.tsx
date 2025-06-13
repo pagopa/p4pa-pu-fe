@@ -17,7 +17,12 @@ export const Treasury = () => {
   const navigate = useNavigate();
   const [error, setError] = useState(false);
   const errorMessage: ReactNode = (
-    <Typography variant="body2" color="error" mt={2} data-testid="multifilters-error-text">
+    <Typography
+      variant="body2"
+      color="error"
+      mt={2}
+      data-testid="multifilters-error-text"
+    >
       {t('commons.filters.atLeastOneFilter')}
     </Typography>
   );
