@@ -1,12 +1,13 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { FileUpload } from '@mui/icons-material';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { PageRoutes } from '../../routes';
 import { generatePath, useNavigate } from 'react-router';
 import { useMultiFilters } from '../../hooks/useMultiFilters';
+import { ReactNode, useState } from 'react';
 
 export const Treasury = () => {
   const { t } = useTranslation();
@@ -14,6 +15,25 @@ export const Treasury = () => {
     clearOnMount: true
   });
   const navigate = useNavigate();
+  const [error, setError] = useState(false);
+  const errorMessage: ReactNode = (
+    <Typography
+      variant="body2"
+      color="error"
+      mt={2}
+      data-testid="multifilters-error-text"
+    >
+      {t('commons.filters.atLeastOneFilter')}
+    </Typography>
+  );
+
+  function submitSearch() {
+    if (noFilterIsSelected.peek()) {
+      navigate(PageRoutes.TREASURY_SEARCH_RESULTS);
+    } else {
+      setError(true);
+    }
+  }
 
   return (
     <>
@@ -28,17 +48,19 @@ export const Treasury = () => {
               title={t('treasury.search')}
               description={t('treasury.searchdescription')}
               multiFilterConfig={filterMap}
+              render={error && errorMessage}
               button={[
                 {
                   label: t('commons.filters.remove'),
                   variant: 'outlined',
-                  onClick: removeAllFilters
+                  onClick: removeAllFilters,
+                  id: 'searchcard-remove-btn'
                 },
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  disabled: !noFilterIsSelected.peek(),
-                  onClick: () => navigate(PageRoutes.TREASURY_SEARCH_RESULTS)
+                  onClick: submitSearch,
+                  id: 'searchcard-search-btn'
                 }
               ]}
             />

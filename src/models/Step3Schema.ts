@@ -939,7 +939,6 @@ export function convertFormDataToManageDebtPositionDTO(
       const action: Action = formInstallment.isNew
         ? Action.I
         : Action.M;
-
       return {
         action,
         installment: updatedInstallment
