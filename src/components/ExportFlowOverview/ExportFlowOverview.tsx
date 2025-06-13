@@ -30,6 +30,8 @@ export type ExportFlowOverviewProps = {
   description?: string;
   sectionTitle?: string;
   exportFileTypes: ExportFileTypeEnum;
+  specializedExportPage?: string;
+  onExportClick?: () => void;
 };
 
 const ExportFlowOverview = ({
@@ -37,7 +39,9 @@ const ExportFlowOverview = ({
   title,
   description,
   sectionTitle,
-  exportFileTypes
+  exportFileTypes,
+  specializedExportPage,
+  onExportClick
 }: ExportFlowOverviewProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -104,6 +108,17 @@ const ExportFlowOverview = ({
     return null;
   };
 
+  const defaultReservation = () =>
+    navigate(
+      generatePath(PageRoutes.EXPORT_FLOWS, { category: routingCategory })
+    );
+
+  const handleReservationClick =
+    onExportClick ??
+    (specializedExportPage
+      ? () => navigate(specializedExportPage)
+      : defaultReservation);
+
   const columns: Array<GridColDef> = [
     {
       field: 'fileName',
@@ -153,12 +168,7 @@ const ExportFlowOverview = ({
             icon: <Downloading />,
             variant: 'outlined',
             buttonText: t('exportFlow.buttonReservationExport'),
-            onActionClick: () =>
-              navigate(
-                generatePath(PageRoutes.EXPORT_FLOWS, {
-                  category: routingCategory
-                })
-              )
+            onActionClick: handleReservationClick
           }
         ]}
         description={description}
