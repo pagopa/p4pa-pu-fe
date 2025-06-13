@@ -298,6 +298,17 @@ export const createBeneficiaryFieldValidators = (
     return undefined;
   };
 
+  // Validation for postalIban field
+  const validatePostalIban = (value: string): string | undefined => {
+    if (!value) return undefined; // The field is optional
+
+    if (!isValidIBAN(value)) {
+      return t('debtPositionCreateWizard.step3.beneficiary.iban.invalid');
+    }
+
+    return undefined;
+  };
+
   // Validation for at least one payment method present (either IBAN or postal account)
   const validatePaymentMethod = (
     iban: string,
@@ -328,6 +339,7 @@ export const createBeneficiaryFieldValidators = (
   return {
     validateBeneficiaryTaxCode,
     validateIBAN,
+    validatePostalIban,
     validatePaymentMethod,
     validateRemittance
   };

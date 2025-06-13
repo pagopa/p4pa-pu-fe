@@ -5,7 +5,6 @@ import { ValidationContext } from '../../../../utils/beneficiaryValidation';
 import {
   handleAmountChange,
   handleIBANChange,
-  handlePostalAccountChange,
   handleAmountBlur,
   BeneficiaryHeader,
   EntityNameField,
@@ -190,56 +189,6 @@ describe('Event Handlers', () => {
 
       expect(mockTrigger).toHaveBeenCalledWith(
         `${mockFieldNamePrefix}.${mockIndex}.postalAccount`
-      );
-    });
-  });
-
-  describe('handlePostalAccountChange', () => {
-    it('accepts only numeric characters', () => {
-      const mockOnChange = vi.fn();
-      const mockTrigger = vi.fn() as unknown as UseFormTrigger<
-        Record<string, unknown>
-      >;
-
-      const event = {
-        target: { value: '123abc456!' }
-      } as React.ChangeEvent<HTMLInputElement>;
-
-      handlePostalAccountChange(
-        event,
-        mockOnChange,
-        mockIndex,
-        mockTrigger,
-        mockFieldNamePrefix
-      );
-
-      vi.runAllTimers();
-
-      expect(mockOnChange).toHaveBeenCalledWith('123456');
-    });
-
-    it('triggers validation for the IBAN field', () => {
-      const mockOnChange = vi.fn();
-      const mockTrigger = vi.fn() as unknown as UseFormTrigger<
-        Record<string, unknown>
-      >;
-
-      const event = {
-        target: { value: '123456789012' }
-      } as React.ChangeEvent<HTMLInputElement>;
-
-      handlePostalAccountChange(
-        event,
-        mockOnChange,
-        mockIndex,
-        mockTrigger,
-        mockFieldNamePrefix
-      );
-
-      vi.runAllTimers();
-
-      expect(mockTrigger).toHaveBeenCalledWith(
-        `${mockFieldNamePrefix}.${mockIndex}.iban`
       );
     });
   });

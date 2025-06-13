@@ -45,7 +45,7 @@
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
       "DOPPI": "Pagamenti doppi",
-      "RT_NO_IUF": "Pagamenti non correttamente rendicontati", 
+      "RT_NO_IUF": "Pagamenti non correttamente rendicontati",
       "RT_NO_IUD": "Pagamenti non correttamente notificati",
       "IUV_NO_RT": "Rendicontazioni senza pagamenti generati",
       "TES_NO_IUF_OR_IUV": "Riversamenti non rendicontati o di pagamenti non eseguiti",
@@ -72,7 +72,7 @@
       },
       "traceVersion": {
         "title": "Versione tracciato",
-        "fileVersion":"Versione tracciato"
+        "fileVersion": "Versione tracciato"
       },
       "notice": {
         "remittanceInformation": "Oggetto del pagamento",
@@ -547,6 +547,9 @@
           "invalid": "Il formato dell'IBAN non è valido",
           "label": "IBAN",
           "required": "Il campo iban è obbligatorio"
+        },
+        "postalIban": {
+          "label": "Conto corrente Postale"
         },
         "paymentMethod": {
           "required": "Il campo IBAN è obbligatorio"

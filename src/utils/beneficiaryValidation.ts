@@ -9,7 +9,7 @@ import {
 export type BeneficiaryFieldValidators = {
   validateBeneficiaryTaxCode: (value: string) => string | undefined;
   validateIBAN: (value: string) => string | undefined;
-  validatePostalAccount: (value: string) => string | undefined;
+  validatePostalIban: (value: string) => string | undefined;
   validatePaymentMethod: (
     iban: string,
     postalAccount: string
