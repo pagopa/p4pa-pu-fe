@@ -287,19 +287,8 @@ export const createBeneficiaryFieldValidators = (
     return undefined;
   };
 
-  // Validation for IBAN field
-  const validateIBAN = (value: string): string | undefined => {
-    if (!value) return undefined; // The field is not required
-
-    if (!isValidIBAN(value)) {
-      return t('debtPositionCreateWizard.step3.beneficiary.iban.invalid');
-    }
-
-    return undefined;
-  };
-
-  // Validation for postalIban field
-  const validatePostalIban = (value: string): string | undefined => {
+  // Common validation function for optional IBAN fields
+  const validateOptionalIBAN = (value: string): string | undefined => {
     if (!value) return undefined; // The field is optional
 
     if (!isValidIBAN(value)) {
@@ -308,6 +297,12 @@ export const createBeneficiaryFieldValidators = (
 
     return undefined;
   };
+
+  // Validation for IBAN field
+  const validateIBAN = validateOptionalIBAN;
+
+  // Validation for postalIban field
+  const validatePostalIban = validateOptionalIBAN;
 
   // Validation for at least one payment method present (either IBAN or postal account)
   const validatePaymentMethod = (
