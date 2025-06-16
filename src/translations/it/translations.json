@@ -45,19 +45,17 @@
       "sections": {
         "telematicReceipt": {
           "title": "Ricevuta Telematica",
-          "debtType": "Tipo dovuto",
+          "debtPositionTypeOrgCode": "Tipo dovuto",
           "paymentObject": "Oggetto del pagamento",
-          "amount": "Importo",
-          "dataPayment": "Data Esito",
-          "anagraficaAttestante": "Anagrafica attestante",
-          "CFAttestante": "Codice fiscale attestante",
-          "IUV": "IUV",
-          "IUD": "IUD",
-          "IUR": "IUR",
-          "anagraficaPagatore": "Anagrafica pagatore",
-          "CFPagatore": "Codice fiscale pagatore",
-          "anagraficaVersante": "Anagrafica versante",
-          "CFVersante": "Codice fiscale versante",
+          "receiptPaymentAmount": "Importo",
+          "receiptPaymentDateTime": "Data Esito",
+          "receiptDebtorFullName": "Anagrafica attestante",
+          "receiptDebtorFiscalCode": "Codice fiscale attestante",
+          "iuv": "IUV",
+          "iud": "IUD",
+          "iur": "IUR",
+          "receiptPayerFullName": "Anagrafica pagatore",
+          "receiptPayerFiscalCode": "Codice fiscale pagatore",
           "link": "Vedi Ricevuta Telematica"
         },
         "notifiedPayment": {
@@ -65,31 +63,32 @@
           "debtType": "Tipo dovuto",
           "paymentObject": "Oggetto del pagamento",
           "amount": "Importo",
-          "anagraficaPagatore": "Anagrafica pagatore",
-          "CFPagatore": "Codice fiscale pagatore",
+          "receiptPayerFullName": "Anagrafica pagatore",
+          "receiptPayerFiscalCode": "Codice fiscale pagatore",
           "esecutionDate": "Data esecuzione",
           "otherdata": "Dati specifici riscossione",
-          "IUD": "IUD"
+          "iud": "IUD"
         },
-        "rendicontazione": {
+        "reporting": {
           "title": "Rendicontazione pagoPA",
-          "idRendicontazione": "ID Rendicontazione",
-          "data": "Data ora flusso",
-          "idRegolamento": "ID regolamento",
-          "dataRegolamento": "Data regolamento",
-          "importoTotale": "Importo Totale",
+          "idReporting": "ID Rendicontazione",
+          "flowDateTime": "Data ora flusso",
+          "regulationUniqueIdentifier": "ID regolamento",
+          "regionValueDate": "Data regolamento",
+          "totalPayments": "Importo Totale",
           "link": "Vedi Flusso di Rendicontazione"
         },
-        "cassa": {
+        "earnings": {
           "title": "Giornale di cassa",
-          "conto": "Conto",
-          "ordinante": "Ordinante",
-          "codiceDocumento": "Codice documento",
-          "dataValuta": "Data Valuta",
-          "annoBolletta": "Anno bolletta",
-          "annoProvvisorio": "Anno provvissorio",
-          "dataContabile": "Data Contabile",
-          "codiceBolletta": "Codice Bolletta",
+          "accountCode": "Conto",
+          "pspFirstName": "Ordinante",
+          "documentCode": "Codice documento",
+          "billDate": "Data Valuta",
+          "billYear": "Anno bolletta",
+          "provisionalAe": "Anno provvissorio",
+          "receptionDate": "Data Contabile",
+          "billCode": "Codice Bolletta",
+          "provisionalCode": "Codice provvisorio",
           "link": "Vedi Bolletta" 
         }
       }
@@ -476,7 +475,8 @@
       "invalidIban": "Formato IBAN non valido",
       "invalidPostalIban": "Formato conto poste non valido"
     },
-    "yes": "Si"
+    "yes": "Si",
+    "404": "404: risorsa non disponibile"
   },
   "conservation": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni."

@@ -27,85 +27,86 @@ export const ClassificationDetails = () => {
     setTabIndex(value);
   };
 
-  const targetTransalationDebtTypeData =
+  const targetTransalationDebtType =
     'classifications.detail.sections.telematicReceipt';
   const debtTypeData: Array<DetailData> = [
     {
-      label: t(`${targetTransalationDebtTypeData}.debtType`),
+      label: t(`${targetTransalationDebtType}.debtPositionTypeOrgCode`),
       value: data?.debtPositionTypeOrgCode
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.paymentObject`),
+      label: t(`${targetTransalationDebtType}.paymentObject`),
       value: 'toBeDefined'
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.amount`),
-      value: 'toBeDefined'
+      label: t(`${targetTransalationDebtType}.receiptPaymentAmount`),
+      value: data?.receiptPaymentAmount,
+      valueType: 'amount'
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.dataPayment`),
+      label: t(`${targetTransalationDebtType}.receiptPaymentDateTime`),
       value: data?.receiptPaymentDateTime,
       valueType: 'dateTime'
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.anagraficaAttestante`),
+      label: t(`${targetTransalationDebtType}.receiptDebtorFullName`),
       value: data?.receiptDebtor?.fullName
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.CFAttestante`),
+      label: t(`${targetTransalationDebtType}.receiptDebtorFiscalCode`),
       value: data?.receiptDebtor?.fiscalCode
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.IUV`),
+      label: t(`${targetTransalationDebtType}.iuv`),
       value: data?.iuv
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.IUD`),
+      label: t(`${targetTransalationDebtType}.iuv`),
       value: data?.iud
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.IUR`),
+      label: t(`${targetTransalationDebtType}.iur`),
       value: data?.iur
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.anagraficaPagatore`),
+      label: t(`${targetTransalationDebtType}.receiptPayerFullName`),
       value: data?.receiptPayer?.fullName
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.CFPagatore`),
+      label: t(`${targetTransalationDebtType}.receiptPayerFiscalCode`),
       value: data?.receiptPayer?.fiscalCode
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.anagraficaVersante`),
+      label: t(`${targetTransalationDebtType}.receiptDebtorFullName`),
       value: data?.receiptDebtor?.fullName
     },
     {
-      label: t(`${targetTransalationDebtTypeData}.CFVersante`),
+      label: t(`${targetTransalationDebtType}.receiptDebtorFiscalCode`),
       value: data?.receiptDebtor?.fiscalCode
     }
   ];
 
   const targetTransalationNotifiedPayment =
     'classifications.detail.sections.notifiedPayment';
-  const notifiedPayment: Array<DetailData> = [
+  const notifiedPaymentData: Array<DetailData> = [
     {
       label: t(`${targetTransalationNotifiedPayment}.debtType`),
       value: 'toBeDefined'
     },
     {
-      label: t(`classifications.detail.sections.notifiedPayment.paymentObject`),
+      label: t(`${targetTransalationNotifiedPayment}.paymentObject`),
       value: 'toBeDefined'
     },
     {
-      label: t(`classifications.detail.sections.notifiedPayment.amount`),
+      label: t(`${targetTransalationNotifiedPayment}.amount`),
       value: 'toBeDefined'
     },
     {
-      label: t(`${targetTransalationNotifiedPayment}.anagraficaPagatore`),
+      label: t(`${targetTransalationNotifiedPayment}.receiptPayerFullName`),
       value: 'toBeDefined'
     },
     {
-      label: t(`${targetTransalationNotifiedPayment}.CFPagatore`),
+      label: t(`${targetTransalationNotifiedPayment}.receiptPayerFiscalCode`),
       value: 'toBeDefined'
     },
     {
@@ -117,78 +118,78 @@ export const ClassificationDetails = () => {
       value: 'toBeDefined'
     },
     {
-      label: t(`${targetTransalationNotifiedPayment}.IUD`),
+      label: t(`${targetTransalationNotifiedPayment}.iud`),
       value: 'toBeDefined'
     }
   ];
 
-  const targetTransalationRendicontazione =
-    'classifications.detail.sections.rendicontazione';
-  const rendicontazione: Array<DetailData> = [
+  const targetTransalationReporting =
+    'classifications.detail.sections.reporting';
+  const reportingData: Array<DetailData> = [
     {
-      label: t(`${targetTransalationRendicontazione}.idRendicontazione`),
+      label: t(`${targetTransalationReporting}.idReporting`),
       value: data?.iuf
     },
     {
-      label: t(`${targetTransalationRendicontazione}.data`),
+      label: t(`${targetTransalationReporting}.flowDateTime`),
       value: data?.flowDateTime,
       valueType: 'dateTime'
     },
     {
-      label: t(`${targetTransalationRendicontazione}.idRegolamento`),
+      label: t(`${targetTransalationReporting}.regulationUniqueIdentifier`),
       value: data?.regulationUniqueIdentifier
     },
     {
-      label: t(`${targetTransalationRendicontazione}.dataRegolamento`),
+      label: t(`${targetTransalationReporting}.regionValueDate`),
       value: data?.regionValueDate,
       valueType: 'dateTime'
     },
     {
-      label: t(`${targetTransalationRendicontazione}.importoTotale`),
+      label: t(`${targetTransalationReporting}.totalPayments`),
       value: data?.totalPayments,
       valueType: 'amount'
     }
   ];
 
-  const targetTransalationCassa = 'classifications.detail.sections.cassa';
-  const cassa: Array<DetailData> = [
+  const targetTransalationEarnings = 'classifications.detail.sections.earnings';
+  const earningsData: Array<DetailData> = [
     {
-      label: t(`${targetTransalationCassa}.conto`),
+      label: t(`${targetTransalationEarnings}.accountCode`),
       value: 'toBeDefined'
     },
     {
-      label: t(`${targetTransalationCassa}.ordinante`),
+      label: t(`${targetTransalationEarnings}.pspFirstName`),
       value: 'toBeDefined'
     },
     {
-      label: t(`${targetTransalationCassa}.codiceDocumento`),
+      label: t(`${targetTransalationEarnings}.documentCode`),
       value: data?.documentCode
     },
     {
-      label: t(`${targetTransalationCassa}.dataValuta`),
+      label: t(`${targetTransalationEarnings}.billDate`),
       value: data?.billDate,
       valueType: 'date'
     },
     {
-      label: t(`${targetTransalationCassa}.annoBolletta`),
+      label: t(`${targetTransalationEarnings}.billYear`),
       value: data?.billYear,
       valueType: 'date'
     },
     {
-      label: t(`${targetTransalationCassa}.annoProvvisorio`),
+      label: t(`${targetTransalationEarnings}.provisionalAe`),
       value: 'toBeDefined'
     },
     {
-      label: t(`${targetTransalationCassa}.dataContabile`),
+      label: t(`${targetTransalationEarnings}.receptionDate`),
       value: data?.receptionDate,
       valueType: 'date'
     },
     {
-      label: t(`${targetTransalationCassa}.codiceBolletta`),
+      label: t(`${targetTransalationEarnings}.billCode`),
       value: data?.billCode
     },
     {
-      label: t(`${targetTransalationCassa}.codiceProvvisorio`),
+      label: t(`${targetTransalationEarnings}.provisionalCode`),
       value: 'toBeDefined'
     }
   ];
@@ -196,122 +197,124 @@ export const ClassificationDetails = () => {
   return (
     <>
       <TitleComponent title={t('commons.routes.CLASSIFICATIONS')} />
-      <TabContext value={tabIndex} data-testid="ClassificationDetailTabs">
-        <TabList
-          onChange={handleChange}
-          aria-label="classification detail tabs"
-          centered
-          variant="fullWidth"
-          sx={{ backgroundColor: theme.palette.background.paper }}
-        >
-          <Tab
-            label={t(`${targetTransalationDebtTypeData}.title`)}
+      {data && (
+        <TabContext value={tabIndex} data-testid="ClassificationDetailTabs">
+          <TabList
+            onChange={handleChange}
+            aria-label="classification detail tabs"
+            centered
+            variant="fullWidth"
+            sx={{ backgroundColor: theme.palette.background.paper }}
+          >
+            <Tab
+              label={t(`${targetTransalationDebtType}.title`)}
+              value={0}
+              data-testid="classificationDetailTabDebtType"
+            />
+            <Tab
+              label={t(`${targetTransalationReporting}.title`)}
+              value={1}
+              data-testid="classificationDetailTabReporting"
+            />
+            <Tab
+              label={t(`${targetTransalationEarnings}.title`)}
+              value={2}
+              data-testid="classificationDetailTabEarnings"
+            />
+          </TabList>
+          <TabPanel
             value={0}
-            data-testid="classificationDetailTabDebtType"
-          />
-          <Tab
-            label={t(`${targetTransalationRendicontazione}.title`)}
+            sx={{ padding: 0 }}
+            data-testid="ClassificationDetailTabPanelDebtType"
+          >
+            <Stack spacing={3}>
+              <DetailContainer
+                sections={[
+                  {
+                    inline: true,
+                    title: {
+                      textTransform: 'uppercase',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      label: t(`${targetTransalationDebtType}.title`)
+                    },
+                    data: debtTypeData,
+                    footerLink: {
+                      label: t(`${targetTransalationDebtType}.link`),
+                      icon: <ArrowRightAltIcon />,
+                      iconPosition: 'right'
+                    }
+                  }
+                ]}
+              />
+              <DetailContainer
+                sections={[
+                  {
+                    inline: true,
+                    title: {
+                      textTransform: 'uppercase',
+                      fontWeight: 700,
+                      fontSize: '14px',
+                      label: t(`${targetTransalationNotifiedPayment}.title`)
+                    },
+                    data: notifiedPaymentData
+                  }
+                ]}
+              />
+            </Stack>
+          </TabPanel>
+          <TabPanel
             value={1}
-            data-testid="classificationDetailTabRendicontazione"
-          />
-          <Tab
-            label={t(`${targetTransalationCassa}.title`)}
-            value={2}
-            data-testid="classificationDetailTabCassa"
-          />
-        </TabList>
-        <TabPanel
-          value={0}
-          sx={{ padding: 0 }}
-          data-testid="ClassificationDetailTabPanelDebtType"
-        >
-          <Stack spacing={3}>
+            sx={{ padding: 0 }}
+            data-testid="ClassificationDetailTabPanelReporting"
+          >
             <DetailContainer
               sections={[
                 {
                   inline: true,
                   title: {
+                    label: t(`${targetTransalationReporting}.title`),
                     textTransform: 'uppercase',
                     fontWeight: 700,
-                    fontSize: '14px',
-                    label: t(`${targetTransalationDebtTypeData}.title`)
+                    fontSize: '14px'
                   },
-                  data: debtTypeData,
+                  data: reportingData,
                   footerLink: {
-                    label: t(`${targetTransalationDebtTypeData}.link`),
+                    label: t(`${targetTransalationReporting}.link`),
                     icon: <ArrowRightAltIcon />,
                     iconPosition: 'right'
                   }
                 }
               ]}
             />
+          </TabPanel>
+          <TabPanel
+            value={2}
+            sx={{ padding: 0 }}
+            data-testid="ClassificationDetailTabPanelEarnings"
+          >
             <DetailContainer
               sections={[
                 {
                   inline: true,
                   title: {
-                    textTransform: 'uppercase',
+                    label: t(`${targetTransalationEarnings}.title`),
                     fontWeight: 700,
                     fontSize: '14px',
-                    label: t(`${targetTransalationNotifiedPayment}.title`)
+                    textTransform: 'uppercase'
                   },
-                  data: notifiedPayment
+                  data: earningsData,
+                  footerLink: {
+                    label: t(`${targetTransalationEarnings}.link`),
+                    icon: <ArrowRightAltIcon />,
+                    iconPosition: 'right'
+                  }
                 }
               ]}
             />
-          </Stack>
-        </TabPanel>
-        <TabPanel
-          value={1}
-          sx={{ padding: 0 }}
-          data-testid="ClassificationDetailTabPanelRendicontazione"
-        >
-          <DetailContainer
-            sections={[
-              {
-                inline: true,
-                title: {
-                  label: t(`${targetTransalationRendicontazione}.title`),
-                  textTransform: 'uppercase',
-                  fontWeight: 700,
-                  fontSize: '14px'
-                },
-                data: rendicontazione,
-                footerLink: {
-                  label: t(`${targetTransalationRendicontazione}.link`),
-                  icon: <ArrowRightAltIcon />,
-                  iconPosition: 'right'
-                }
-              }
-            ]}
-          />
-        </TabPanel>
-        <TabPanel
-          value={2}
-          sx={{ padding: 0 }}
-          data-testid="ClassificationDetailTabPanelCassa"
-        >
-          <DetailContainer
-            sections={[
-              {
-                inline: true,
-                title: {
-                  label: t(`${targetTransalationCassa}.title`),
-                  fontWeight: 700,
-                  fontSize: '14px',
-                  textTransform: 'uppercase'
-                },
-                data: cassa,
-                footerLink: {
-                  label: t(`${targetTransalationCassa}.link`),
-                  icon: <ArrowRightAltIcon />,
-                  iconPosition: 'right'
-                }
-              }
-            ]}
-          />
-        </TabPanel>
-      </TabContext>
+          </TabPanel>
+        </TabContext>
+      )}
     </>
   );
 };

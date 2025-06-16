@@ -42,20 +42,27 @@ describe('Classifications Detail:', () => {
     expect(spyGetClassificationDetails).toBeCalledWith(2, 673);
   });
 
-  it('switching tabs works properly', () => {
+  it('switching tabs works properly', async () => {
+    vi.spyOn(
+      classificationService,
+      'getClassificationDetail'
+    ).mockImplementation(() => ({ data: mockData }) as any);
+
     render(<ClassificationsDetail />);
 
     const tab0 = screen.getByTestId('classificationDetailTabDebtType');
-    const tab1 = screen.getByTestId('classificationDetailTabRendicontazione');
-    const tab2 = screen.getByTestId('classificationDetailTabCassa');
+    const tab1 = screen.getByTestId('classificationDetailTabReporting');
+    const tab2 = screen.getByTestId('classificationDetailTabEarnings');
 
     const tabPanel0 = screen.getByTestId(
       'ClassificationDetailTabPanelDebtType'
     );
     const tabPanel1 = screen.getByTestId(
-      'ClassificationDetailTabPanelRendicontazione'
+      'ClassificationDetailTabPanelReporting'
     );
-    const tabPanel2 = screen.getByTestId('ClassificationDetailTabPanelCassa');
+    const tabPanel2 = screen.getByTestId(
+      'ClassificationDetailTabPanelEarnings'
+    );
 
     fireEvent.click(tab1);
     expect(tabPanel0).not.toBeVisible();
