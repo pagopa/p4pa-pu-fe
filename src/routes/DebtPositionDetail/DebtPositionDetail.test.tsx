@@ -113,15 +113,19 @@ const mockResult = {
 const mockMutate = vi.fn().mockReturnValue(mockResult);
 const deleteMockMutate = vi.fn();
 const publishMockMutate = vi.fn();
+const deleteMockMutateAsync = vi.fn().mockResolvedValue(undefined);
+const publishMockMutateAsync = vi.fn().mockResolvedValue(undefined);
 
 vi.mock('../../api/debtPositions', () => ({
   default: {
     getDebtPositionDetail: vi.fn(),
     deleteDebtPosition: vi.fn().mockImplementation(() => ({
-      mutate: deleteMockMutate
+      mutate: deleteMockMutate,
+      mutateAsync: deleteMockMutateAsync
     })),
     publishDebtPosition: vi.fn().mockImplementation(() => ({
-      mutate: publishMockMutate
+      mutate: publishMockMutate,
+      mutateAsync: publishMockMutateAsync
     })),
     getDebtPositionZipFile: vi.fn().mockImplementation(() => ({
       mutateAsync: mockMutate
@@ -546,7 +550,7 @@ describe('DebtPositionDetail Component', () => {
       fireEvent.click(deleteButton);
 
       await vi.waitFor(() => {
-        expect(deleteMockMutate).toHaveBeenCalled();
+        expect(deleteMockMutateAsync).toHaveBeenCalled();
       });
     }
   });
@@ -583,7 +587,7 @@ describe('DebtPositionDetail Component', () => {
         expect(screen.queryByText('Confirm Delete')).not.toBeInTheDocument();
       });
 
-      expect(deleteMockMutate).not.toHaveBeenCalled();
+      expect(deleteMockMutateAsync).not.toHaveBeenCalled();
     }
   });
 
@@ -624,7 +628,7 @@ describe('DebtPositionDetail Component', () => {
         expect(screen.queryByText('Cannot Delete')).not.toBeInTheDocument();
       });
 
-      expect(deleteMockMutate).not.toHaveBeenCalled();
+      expect(deleteMockMutateAsync).not.toHaveBeenCalled();
     }
   });
 
@@ -940,7 +944,7 @@ describe('DebtPositionDetail Component', () => {
     );
     fireEvent.click(activateButton);
 
-    expect(publishMockMutate).toHaveBeenCalled();
+    expect(publishMockMutateAsync).toHaveBeenCalled();
   });
 
   it('closes publish dialog when cancel button is clicked', () => {
