@@ -867,7 +867,8 @@
           "required": "La configurazione è obbligatoria se si sceglie di abilitare le notifiche",
           "helperText": "Seleziona una configurazione per la gestione delle notifiche",
           "editHelperText": "Seleziona una configurazione per la gestione delle notifiche",
-          "errorState": "Errore nel recupero delle configurazioni"
+          "errorState": "Errore nel recupero delle configurazioni",
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione"
         }
       },
       "actualization": {
@@ -880,7 +881,8 @@
           "noneEditHelper": "L'attualizzazione non può essere abilitata in modifica se non era precedentemente configurata",
           "errorState": "Errore nel recupero delle configurazioni",
           "helperText": "Una volta selezionata una configurazione per l'attualizzazione sarà possibile modificarla ma non rimuoverla",
-          "editHelperText": "È possibile la sola modifica della configurazione, non può essere rimossa"
+          "editHelperText": "È possibile la sola modifica della configurazione, non può essere rimossa",
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione"
         }
       },
       "errors": {
