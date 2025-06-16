@@ -37,7 +37,7 @@ const TelematicReceiptSearchResults = () => {
         title={t('commons.routes.TELEMATIC_RECEIPT_SEARCH_RESULTS')}
         description={t('telematicreceiptSearchResults.description')}
       />
-
+     
       <Stack gap={3}>
         <FilterContainer
           items={filters}

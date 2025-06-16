@@ -77,12 +77,14 @@ export const TelematicReceipt = () => {
                 {
                   label: t('commons.filters.remove'),
                   variant: 'outlined',
-                  onClick: resetCurrentFilters
+                  onClick: resetCurrentFilters,
+                  id: 'telematic-receipt-reset-btn'
                 },
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: navigateToResults
+                  onClick: navigateToResults,
+                  id: 'telematic-receipt-search-btn'
                 }
               ]}
             />
