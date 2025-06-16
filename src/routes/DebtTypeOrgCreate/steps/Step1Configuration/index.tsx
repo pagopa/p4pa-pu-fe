@@ -14,8 +14,10 @@ import { useEffect } from 'react';
 import { DebtTypeOrgForm } from '../../types';
 import { useParams } from 'react-router';
 import { getDebtPositionTypeOrgById } from '../../../../api/debtPositionsTypeOrg';
-import { useActualizationConfigurations } from '../../hooks/useActualizationConfig';
-import { useNotificationConfigurations } from '../../hooks/useNotificationConfig';
+import {
+  useActualizationServices,
+  useNotificationServices
+} from '../../hooks/useOrgSilServices';
 
 export type Step1Data = {
   debtPositionTypeId: string;
@@ -43,8 +45,8 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
   });
 
-  const actualizationQuery = useActualizationConfigurations();
-  const notificationQuery = useNotificationConfigurations();
+  const actualizationQuery = useActualizationServices();
+  const notificationQuery = useNotificationServices();
 
   const { control, watch, setValue, trigger, reset, getValues } =
     useFormContext<DebtTypeOrgForm>();

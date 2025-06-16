@@ -1,9 +1,9 @@
 import { Control, useWatch } from 'react-hook-form';
 import { ServiceSelector } from './ServiceSelector';
-import { useNotificationConfigurations } from '../../../hooks/useNotificationConfig';
 import { DebtTypeOrgForm } from '../../../types';
 import { useTranslation } from 'react-i18next';
 import { FormComponent } from '../../../../../components/FormComponent';
+import { useNotificationServices } from '../../../hooks/useOrgSilServices';
 
 type NotificationConfigSelectorProps = {
   control: Control<DebtTypeOrgForm>;
@@ -15,7 +15,7 @@ export const NotificationConfigSelector = ({
   edit = false
 }: NotificationConfigSelectorProps) => {
   const { t } = useTranslation();
-  const query = useNotificationConfigurations();
+  const query = useNotificationServices();
 
   const currentValue = useWatch({
     control,

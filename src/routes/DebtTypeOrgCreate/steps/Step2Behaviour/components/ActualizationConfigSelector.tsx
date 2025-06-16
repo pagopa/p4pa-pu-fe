@@ -1,9 +1,9 @@
 import { Control, useWatch } from 'react-hook-form';
 import { ServiceSelector } from './ServiceSelector';
-import { useActualizationConfigurations } from '../../../hooks/useActualizationConfig';
 import { DebtTypeOrgForm } from '../../../types';
 import { useTranslation } from 'react-i18next';
 import { FormComponent } from '../../../../../components/FormComponent';
+import { useActualizationServices } from '../../../hooks/useOrgSilServices';
 
 type ActualizationConfigSelectorProps = {
   control: Control<DebtTypeOrgForm>;
@@ -15,7 +15,7 @@ export const ActualizationConfigSelector = ({
   edit = false
 }: ActualizationConfigSelectorProps) => {
   const { t } = useTranslation();
-  const query = useActualizationConfigurations();
+  const query = useActualizationServices();
 
   const currentValue = useWatch({
     control,
