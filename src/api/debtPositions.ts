@@ -161,6 +161,20 @@ const deleteDebtPosition = (
     onError
   });
 
+/** publish a debt position from DRAFT to UNPAID status by its organizationId and debtPositionId */
+const publishDebtPosition = (
+  organizationId: number,
+  debtPositionId: number,
+  onSuccess?: () => void,
+  onError?: (error: AxiosError) => void
+) =>
+  useMutation({
+    mutationFn: () =>
+      utils.apiClient.bff.publishDebtPosition(organizationId, debtPositionId),
+    onSuccess,
+    onError
+  });
+
 /** create a new debt position */
 const createDebtPosition = (
   onSuccess?: (response: DebtPositionDTO, paymentObject?: string) => void,
@@ -314,6 +328,7 @@ export default {
   deleteDebtPositionType,
   deleteDebtPositionTypeOrgs,
   deleteDebtPosition,
+  publishDebtPosition,
   createDebtPosition,
   manageDebtPositionInstallments,
   getDebtPositionRegistriesMutation,
