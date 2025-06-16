@@ -23,6 +23,7 @@ export const Step5Operators = ({ edit }: { edit?: boolean }) => {
       >
         <FormComponent.ControlledRadioGroup
           name="operatorsSelection"
+          data-testId="operatorsSelection"
           control={control}
           options={[
             {

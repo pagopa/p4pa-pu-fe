@@ -26,6 +26,7 @@ export const NotificationConfigSelector = ({
     return (
       <FormComponent.ControlledTextField
         name="notifyOutcomePushOrgSilServiceId"
+        data-testId="notifyOutcomePushOrgSilServiceId"
         control={control}
         label={t(
           'debtTypeOrgCreate.behaviour.notifications.configuration.label'
@@ -45,6 +46,7 @@ export const NotificationConfigSelector = ({
     <ServiceSelector
       control={control}
       name="notifyOutcomePushOrgSilServiceId"
+      data-testId="notifyOutcomePushOrgSilServiceId"
       labelKey="debtTypeOrgCreate.behaviour.notifications.configuration.label"
       query={query}
       edit={edit}

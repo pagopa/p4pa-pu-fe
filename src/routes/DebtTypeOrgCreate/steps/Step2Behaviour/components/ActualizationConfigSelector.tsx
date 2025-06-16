@@ -29,6 +29,7 @@ export const ActualizationConfigSelector = ({
       return (
         <FormComponent.ControlledTextField
           name="amountActualizationOrgSilServiceId"
+          data-testId="amountActualizationOrgSilServiceId"
           control={control}
           label={t(
             'debtTypeOrgCreate.behaviour.actualization.configuration.label'
@@ -50,6 +51,7 @@ export const ActualizationConfigSelector = ({
         <ServiceSelector
           control={control}
           name="amountActualizationOrgSilServiceId"
+          data-testId="amountActualizationOrgSilServiceId"
           labelKey="debtTypeOrgCreate.behaviour.actualization.configuration.label"
           query={query}
           edit={edit}
@@ -65,6 +67,7 @@ export const ActualizationConfigSelector = ({
     <ServiceSelector
       control={control}
       name="amountActualizationOrgSilServiceId"
+      data-testId="amountActualizationOrgSilServiceId"
       labelKey="debtTypeOrgCreate.behaviour.actualization.configuration.label"
       query={query}
       edit={edit}
