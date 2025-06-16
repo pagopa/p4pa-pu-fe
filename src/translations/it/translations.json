@@ -746,6 +746,9 @@
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
   "debtTypeDetail": {
+    "errors": {
+      "servicesUnavailableCannotEdit": "Non è stato possibile recuperare configurazioni la modifica non è consentita al momento, riprova più tardi"
+    },
     "description": "Ecco i dettagli del Tipo dovuto",
     "debtMainConfiguration": {
       "title": "Configurazione generale",

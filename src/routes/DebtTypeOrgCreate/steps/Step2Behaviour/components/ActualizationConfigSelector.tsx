@@ -22,25 +22,6 @@ export const ActualizationConfigSelector = ({
     name: 'amountActualizationOrgSilServiceId'
   });
 
-  if (edit && query.isError) {
-    return (
-      <FormComponent.ControlledTextField
-        name="amountActualizationOrgSilServiceId"
-        control={control}
-        label={t(
-          'debtTypeOrgCreate.behaviour.actualization.configuration.label'
-        )}
-        value={t(
-          'debtTypeOrgCreate.behaviour.actualization.configuration.errorState'
-        )}
-        disabled={true}
-        InputProps={{
-          readOnly: true
-        }}
-      />
-    );
-  }
-
   if (edit) {
     const isCurrentlyDisabled = !currentValue || currentValue == undefined;
 

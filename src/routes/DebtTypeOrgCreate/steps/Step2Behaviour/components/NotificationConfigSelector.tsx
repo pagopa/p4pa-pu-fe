@@ -22,25 +22,6 @@ export const NotificationConfigSelector = ({
     name: 'notifyOutcomePushOrgSilServiceId'
   });
 
-  if (edit && query.isError) {
-    return (
-      <FormComponent.ControlledTextField
-        name="notifyOutcomePushOrgSilServiceId"
-        control={control}
-        label={t(
-          'debtTypeOrgCreate.behaviour.notifications.configuration.label'
-        )}
-        value={t(
-          'debtTypeOrgCreate.behaviour.actualization.configuration.errorState'
-        )}
-        disabled={true}
-        InputProps={{
-          readOnly: true
-        }}
-      />
-    );
-  }
-
   if (edit && currentValue === 0) {
     return (
       <FormComponent.ControlledTextField

@@ -1,4 +1,4 @@
-import { Control } from 'react-hook-form';
+import { Control, useFormState } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { FormComponent } from '../../../../../components/FormComponent';
 import { DebtTypeOrgForm } from '../../../types';
@@ -30,6 +30,7 @@ export const ServiceSelector = ({
   allowNone = false
 }: ServiceSelectorProps) => {
   const { t } = useTranslation();
+  const { errors } = useFormState({ control });
 
   const {
     options,
@@ -50,16 +51,26 @@ export const ServiceSelector = ({
       ]
     : options;
 
+  const fieldError = errors[name];
+  const hasValidationError = !!fieldError;
+
+  const translatedErrorMessage =
+    hasValidationError && fieldError?.message
+      ? t(fieldError.message as string)
+      : undefined;
+
   return (
     <FormComponent.ControlledSelect
       name={name}
       control={control}
       label={t(labelKey)}
-      helperText={t(helperTextKey)}
+      helperText={
+        hasValidationError ? translatedErrorMessage : t(helperTextKey)
+      }
       placeholder={t(placeholderKey)}
       disabled={isLoading || noOptionsAvailable}
       options={enhancedOptions}
-      error={hasError}
+      error={hasError || hasValidationError}
       required={required}
     />
   );

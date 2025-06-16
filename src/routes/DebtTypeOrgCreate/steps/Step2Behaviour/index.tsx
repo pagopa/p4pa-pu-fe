@@ -11,60 +11,15 @@ import { FormComponent } from '../../../../components/FormComponent';
 import { PaymentMethodSelector } from './components/PaymentMethodSelector';
 import { NotificationConfigSelector } from './components/NotificationConfigSelector';
 import { ActualizationConfigSelector } from './components/ActualizationConfigSelector';
-import { useNotificationConfigurations } from '../../hooks/useNotificationConfig';
 import { DebtTypeOrgForm } from '../../types';
-import React from 'react';
-import utils from '../../../../utils';
-import { useActualizationConfigurations } from '../../hooks/useActualizationConfig';
 
 export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
-  const notificationQuery = useNotificationConfigurations();
-  const actualizationQuery = useActualizationConfigurations();
 
   const { control, watch } = useFormContext<DebtTypeOrgForm>();
 
   const isSpontaneous = watch('flagSpontaneous');
   const flagNotifyOutcomePush = watch('flagNotifyOutcomePush');
-
-  // Blocca silenziosamente il radio button se c'è un errore API in edit
-  const shouldDisableNotificationRadio = edit && notificationQuery.isError;
-
-  if (edit) {
-    const hasNotificationError = notificationQuery.isError;
-    const hasActualizationError = actualizationQuery.isError;
-
-    // Usa un ref per evitare notifiche multiple
-    const notificationShown = React.useRef(false);
-
-    if (
-      !notificationShown.current &&
-      (hasNotificationError || hasActualizationError)
-    ) {
-      notificationShown.current = true;
-
-      if (hasNotificationError && hasActualizationError) {
-        utils.notify.emit(
-          t('debtTypeOrgCreate.behaviour.errors.bothServicesUnavailable'),
-          'warning'
-        );
-      } else if (hasNotificationError) {
-        utils.notify.emit(
-          t(
-            'debtTypeOrgCreate.behaviour.errors.notificationServiceUnavailable'
-          ),
-          'warning'
-        );
-      } else if (hasActualizationError) {
-        utils.notify.emit(
-          t(
-            'debtTypeOrgCreate.behaviour.errors.actualizationServiceUnavailable'
-          ),
-          'warning'
-        );
-      }
-    }
-  }
 
   return (
     <WizardStepWrapper
@@ -124,7 +79,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
           control={control}
           label={t('debtTypeOrgCreate.behaviour.notifications.radioLabel')}
           sx={{ flexDirection: 'row' }}
-          disabled={shouldDisableNotificationRadio}
+          disabled={false}
           options={[
             {
               value: 'disabled',
