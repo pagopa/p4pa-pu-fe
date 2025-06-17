@@ -157,7 +157,11 @@
       "missingRequiredFields": "Verifica di aver compilato i filtri obbligatori"
     }
   },
+  "appPreview": {
+    "messageInfo": "*Verrà mostrato il nome dell’ente e il servizio assegnati per inviare il messaggio."
+  },
   "commons": {
+    "info": "Informazioni",
     "addfilter": "Aggiunge filtro",
     "all": "Tutti",
     "amount": "Importo",
