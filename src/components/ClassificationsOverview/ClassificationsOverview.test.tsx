@@ -30,8 +30,8 @@ describe('Classifications', () => {
     vi.clearAllMocks();
 
     i18nTestSetup({
-      'commons.routes.CLASSIFICATIONS': 'Classifications Title',
-      'classifications.description': 'Classifications Description'
+      'commons.exportedFlows': 'Classifications Title',
+      'classificationsExport.descriptionOverview': 'Classifications Description'
     });
   });
 

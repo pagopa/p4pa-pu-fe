@@ -47,6 +47,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
 import { useTimelineData } from '../../hooks/useTimelineData';
+import { isDateInPast } from '../../utils/formatters';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -142,22 +143,12 @@ const DebtPositionDetail = () => {
 
   const deleteDebtPositionMutation = debtPositions.deleteDebtPosition(
     organizationId,
-    debtPositionId,
-    () => {
-      setDialogConfig(null);
-      if (debtPositionDetail?.status === DebtPositionStatus.DRAFT) {
-        navigate(generatePath(PageRoutes.DEBT_POSITIONS_INDEX));
-      } else {
-        queryClient.invalidateQueries({
-          queryKey: ['getDebtPositionDetail', organizationId, debtPositionId]
-        });
-      }
-    },
-    (error) => {
-      console.error('Error while deleting the debt position:', error);
-      setDialogConfig(null);
-      utils.notify.emit(t('debtPositionDetail.deleteError'), 'error');
-    }
+    debtPositionId
+  );
+
+  const publishDebtPositionMutation = debtPositions.publishDebtPosition(
+    organizationId,
+    debtPositionId
   );
 
   const canBeDeleted =
@@ -194,11 +185,27 @@ const DebtPositionDetail = () => {
     showDeleteDialog();
   };
 
-  const handleDeleteConfirm = () => {
-    if (canBeDeleted) {
-      deleteDebtPositionMutation.mutate();
-    } else {
+  const handleDeleteConfirm = async () => {
+    if (!canBeDeleted) {
       setDialogConfig(null);
+      return;
+    }
+
+    try {
+      await deleteDebtPositionMutation.mutateAsync();
+
+      setDialogConfig(null);
+      if (debtPositionDetail?.status === DebtPositionStatus.DRAFT) {
+        navigate(generatePath(PageRoutes.DEBT_POSITIONS_INDEX));
+      } else {
+        queryClient.invalidateQueries({
+          queryKey: ['getDebtPositionDetail', organizationId, debtPositionId]
+        });
+      }
+    } catch (error) {
+      console.error('Error while deleting the debt position:', error);
+      setDialogConfig(null);
+      utils.notify.emit(t('debtPositionDetail.deleteError'), 'error');
     }
   };
 
@@ -237,6 +244,58 @@ const DebtPositionDetail = () => {
       onClose: () => setDialogConfig(null),
       testId: 'edit-error-dialog'
     });
+  };
+
+  const showPublishDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: t('debtPositionDetail.publishDialog.title'),
+      message: t('debtPositionDetail.publishDialog.description'),
+      confirmLabel: t('debtPositionDetail.publishDialog.confirmLabel'),
+      cancelLabel: t('commons.close'),
+      onConfirm: handlePublishConfirm,
+      onClose: () => setDialogConfig(null),
+      testId: 'confirm-publish-dialog'
+    });
+  };
+
+  const hasExpiredDueDates = (): boolean => {
+    if (!debtPositionDetail?.paymentOptions) return false;
+
+    return debtPositionDetail.paymentOptions.some((paymentOption) =>
+      paymentOption.installments?.some(
+        (installment) =>
+          installment.dueDate && isDateInPast(installment.dueDate)
+      )
+    );
+  };
+
+  const handleActivePayment = () => {
+    showPublishDialog();
+  };
+
+  const handlePublishConfirm = async () => {
+    if (hasExpiredDueDates()) {
+      setDialogConfig(null);
+      utils.notify.emit(
+        t('debtPositionCreateWizard.step3.dueDate.futureDate'),
+        'error'
+      );
+      return;
+    }
+
+    try {
+      await publishDebtPositionMutation.mutateAsync();
+
+      setDialogConfig(null);
+      queryClient.invalidateQueries({
+        queryKey: ['getDebtPositionDetail', organizationId, debtPositionId]
+      });
+    } catch (error) {
+      console.error('Error while publishing the debt position:', error);
+      setDialogConfig(null);
+      utils.notify.emit(t('debtPositionDetail.publishError'), 'error');
+    }
   };
 
   const getDebtPositionZipFileMutation =
@@ -425,7 +484,7 @@ const DebtPositionDetail = () => {
             onActionClick:
               debtPositionDetail.status !== DebtPositionStatus.DRAFT
                 ? handleDownloadNotices
-                : () => console.log('active payment')
+                : handleActivePayment
           },
           {
             icon: <History data-testid="HistoryButton" />,

@@ -37,8 +37,7 @@ export const Classifications = () => {
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: () =>
-                    navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS)
+                  onClick: () => console.log('searchClick')
                 }
               ]}
             />
@@ -51,8 +50,10 @@ export const Classifications = () => {
               actionLabel={t('exportFlow.buttonReservationExport')}
               actionIcon={<DownloadIcon />}
               linkLabel={t('classifications.showAllResults')}
-              onLinkClick={() => console.log('onLinkClick')}
-              onActionClick={() => console.log('onActionClick')}
+              onLinkClick={() =>
+                navigate(PageRoutes.CLASSIFICATIONS_EXPORT_OVERVIEW)
+              }
+              onActionClick={() => navigate(PageRoutes.EXPORT_CLASSIFICATIONS)}
             />
           </Grid>
         </Grid>
