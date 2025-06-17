@@ -39,7 +39,60 @@
     "exportTitle": "Esporta Classificazioni",
     "exportDescription": "Richiede l'esportazione di una classificazione.",
     "sectionTitle": "Classificazioni esportati",
-    "showAllResults": "Vedi classificazioni esportate"
+    "showAllResults": "Vedi classificazioni esportate",
+    "detail": {
+      "title": "Dettaglio Pagamento",
+      "sections": {
+        "telematicReceipt": {
+          "title": "Ricevuta Telematica",
+          "debtPositionTypeOrgCode": "Tipo dovuto",
+          "paymentObject": "Oggetto del pagamento",
+          "receiptPaymentAmount": "Importo",
+          "receiptPaymentDateTime": "Data Esito",
+          "receiptDebtorFullName": "Anagrafica attestante",
+          "receiptDebtorFiscalCode": "Codice fiscale attestante",
+          "iuv": "IUV",
+          "iud": "IUD",
+          "iur": "IUR",
+          "receiptPayerFullName": "Anagrafica pagatore",
+          "receiptPayerFiscalCode": "Codice fiscale pagatore",
+          "link": "Vedi Ricevuta Telematica"
+        },
+        "notifiedPayment": {
+          "title": "pagamento notificato",
+          "debtType": "Tipo dovuto",
+          "paymentObject": "Oggetto del pagamento",
+          "amount": "Importo",
+          "receiptPayerFullName": "Anagrafica pagatore",
+          "receiptPayerFiscalCode": "Codice fiscale pagatore",
+          "esecutionDate": "Data esecuzione",
+          "otherdata": "Dati specifici riscossione",
+          "iud": "IUD"
+        },
+        "reporting": {
+          "title": "Rendicontazione pagoPA",
+          "idReporting": "ID Rendicontazione",
+          "flowDateTime": "Data ora flusso",
+          "regulationUniqueIdentifier": "ID regolamento",
+          "regionValueDate": "Data regolamento",
+          "totalPayments": "Importo Totale",
+          "link": "Vedi Flusso di Rendicontazione"
+        },
+        "earnings": {
+          "title": "Giornale di cassa",
+          "accountCode": "Conto",
+          "pspFirstName": "Ordinante",
+          "documentCode": "Codice documento",
+          "billDate": "Data Valuta",
+          "billYear": "Anno bolletta",
+          "provisionalAe": "Anno provvissorio",
+          "receptionDate": "Data Contabile",
+          "billCode": "Codice Bolletta",
+          "provisionalCode": "Codice provvisorio",
+          "link": "Vedi Bolletta" 
+        }
+      }
+    }
   },
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
@@ -345,7 +398,8 @@
       "TREASURY_IMPORT_OVERVIEW": "Flussi importati",
       "TREASURY_INDEX": "Pagina principale",
       "TREASURY_SEARCH_RESULTS": "Risultato ricerca",
-      "USERS": "Utenti"
+      "USERS": "Utenti",
+      "CLASSIFICATION_DETAIL": "Dettaglio Pagamento"
     },
     "saveDraft": "Salva bozza",
     "save": "Salva modifiche",
@@ -421,7 +475,8 @@
       "invalidIban": "Formato IBAN non valido",
       "invalidPostalIban": "Formato conto poste non valido"
     },
-    "yes": "Si"
+    "yes": "Si",
+    "404": "404: risorsa non disponibile"
   },
   "conservation": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni."

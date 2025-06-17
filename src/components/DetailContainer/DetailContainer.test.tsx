@@ -1,6 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
-import DetailContainer from '../DetailContainer/DetailContainer';
+import DetailContainer, {
+  DetailSectionProps
+} from '../DetailContainer/DetailContainer';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -16,7 +18,7 @@ vi.mock('react-i18next', () => ({
 }));
 
 describe('DetailContainer', () => {
-  const mockProps = {
+  const mockProps: DetailSectionProps = {
     sections: [
       {
         title: { label: 'commons.summary' },
@@ -26,7 +28,7 @@ describe('DetailContainer', () => {
             value: '03234234234324',
             variant: 'monospaced' as const
           },
-          { label: 'Importo', value: 8000 }
+          { label: 'Importo', value: 8000, valueType: 'amount' }
         ]
       },
       {
@@ -36,7 +38,7 @@ describe('DetailContainer', () => {
             label: 'Pagatore',
             value: 'Maria Bianchi [CF/PIVA: BNCMRA82B42C933X (Persona fisica)]'
           },
-          { label: 'Stato', value: 'PAID' }
+          { label: 'Stato', value: 'PAID', valueType: 'status' }
         ]
       }
     ]

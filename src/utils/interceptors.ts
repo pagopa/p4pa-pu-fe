@@ -50,6 +50,14 @@ export const setupInterceptors = (client: Client) => {
         return Promise.reject();
       }
 
+      if (status === 404) {
+        if (isApplicationReady) {
+          utils.notify.emit('commons.404');
+          return Promise.resolve();
+        }
+        return Promise.reject();
+      }
+
       if (status && status >= 500 && status < 600) {
         utils.notify.emit(i18n.t('commons.serviceUnavailable'), 'error');
 
