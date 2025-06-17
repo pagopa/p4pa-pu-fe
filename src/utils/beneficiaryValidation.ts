@@ -29,7 +29,7 @@ export type ValidationContext<T extends FieldValues> = {
 };
 
 // ===== UTILITY FUNCTIONS =====
-// Verifica se un valore di stringa è vuoto
+// Check if a string value is empty
 export function isEmpty(value?: string | unknown): boolean {
   if (typeof value !== 'string') {
     return true;
@@ -37,7 +37,7 @@ export function isEmpty(value?: string | unknown): boolean {
   return !value || value.trim() === '';
 }
 
-// Ottiene i dati di errore dal form
+// Get error data from the form
 export function getErrorData<T extends FieldValues>(
   errors: FieldErrors<T>,
   fieldNamePrefix: string,

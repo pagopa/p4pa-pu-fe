@@ -6,7 +6,6 @@ import FilterContainer from '../FilterContainer/FilterContainer';
 import useReportingSearch from '../../hooks/useReportingSearch';
 import TitleComponent from '../TitleComponent/TitleComponent';
 
-// Mock delle dipendenze
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
 }));
@@ -52,7 +51,7 @@ describe('ReportingSearchResults', () => {
     (useSearchParams as Mock).mockReturnValue([new URLSearchParams(), vi.fn()]);
   });
 
-  it('dovrebbe renderizzare correttamente', () => {
+  it('should render correctly', () => {
     render(<ReportingSearchResults />);
 
     expect(TitleComponent).toHaveBeenCalledWith(
@@ -64,7 +63,7 @@ describe('ReportingSearchResults', () => {
     );
   });
 
-  it('dovrebbe passare le props corrette a FilterContainer', () => {
+  it('should pass the correct props to FilterContainer', () => {
     render(<ReportingSearchResults />);
 
     expect(FilterContainer).toHaveBeenCalledWith(
@@ -77,7 +76,7 @@ describe('ReportingSearchResults', () => {
     );
   });
 
-  it("dovrebbe gestire correttamente i parametri di paginazione dall'URL", () => {
+  it('should handle pagination parameters from URL correctly', () => {
     (useSearchParams as Mock).mockReturnValue([
       new URLSearchParams('?page=2&size=20'),
       vi.fn()
@@ -85,8 +84,6 @@ describe('ReportingSearchResults', () => {
 
     render(<ReportingSearchResults />);
 
-    // Verifica che useReportingSearch sia stato chiamato con i parametri corretti
-    // Ora l'hook riceve solo initialFilters, la paginazione è gestita internamente
     expect(vi.mocked(useReportingSearch)).toHaveBeenCalledWith(
       expect.objectContaining({
         initialFilters: expect.any(Object)

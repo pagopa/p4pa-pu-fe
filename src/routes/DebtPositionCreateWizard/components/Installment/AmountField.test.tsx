@@ -3,7 +3,6 @@ import { describe, test, expect, vi, beforeEach } from 'vitest';
 import { useForm } from 'react-hook-form';
 import AmountField from './AmountField';
 
-// Mock dei moduli
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -28,7 +27,6 @@ vi.mock('../../../../utils/fieldValidation', () => ({
   })
 }));
 
-// Componente di test wrapper per consentire l'uso di react-hook-form
 type FormData = {
   installments: Array<{
     amount: string;
@@ -78,7 +76,7 @@ describe('AmountField', () => {
     validateInstallmentAmountMock = vi.fn();
   });
 
-  test('dovrebbe renderizzare correttamente il campo', () => {
+  test('should render the field correctly', () => {
     render(
       <TestWrapper
         onAmountChangeMock={onAmountChangeMock}
@@ -92,7 +90,7 @@ describe('AmountField', () => {
     expect(screen.getByText('€')).toBeInTheDocument();
   });
 
-  test('dovrebbe mostrare il valore default se fornito', () => {
+  test('should show the default value if provided', () => {
     render(
       <TestWrapper
         defaultValue="100.50"
@@ -105,7 +103,7 @@ describe('AmountField', () => {
     expect(inputElement.value).toBe('100,50');
   });
 
-  test('dovrebbe essere disabilitato quando la prop disabled è true', () => {
+  test('should be disabled when the disabled prop is true', () => {
     render(
       <TestWrapper
         disabled={true}
@@ -118,7 +116,7 @@ describe('AmountField', () => {
     expect(inputElement).toBeDisabled();
   });
 
-  test('dovrebbe mostrare un messaggio di errore quando fornito', () => {
+  test('should show an error message when provided', () => {
     const errorMessage = 'Errore di test';
     render(
       <TestWrapper
@@ -133,7 +131,7 @@ describe('AmountField', () => {
     expect(inputElement).toHaveAttribute('aria-invalid', 'true');
   });
 
-  test('dovrebbe filtrare i caratteri non numerici e chiamare onAmountChange', () => {
+  test('should filter non-numeric characters and call onAmountChange', () => {
     render(
       <TestWrapper
         onAmountChangeMock={onAmountChangeMock}
@@ -147,7 +145,7 @@ describe('AmountField', () => {
     expect(onAmountChangeMock).toHaveBeenCalledWith('123.45');
   });
 
-  test("dovrebbe convertire la virgola in punto durante l'input", () => {
+  test('should convert the comma to a dot during input', () => {
     render(
       <TestWrapper
         onAmountChangeMock={onAmountChangeMock}
@@ -161,7 +159,7 @@ describe('AmountField', () => {
     expect(onAmountChangeMock).toHaveBeenCalledWith('99.99');
   });
 
-  test('dovrebbe chiamare validateInstallmentAmount al blur', async () => {
+  test('should call validateInstallmentAmount on blur', async () => {
     render(
       <TestWrapper
         onAmountChangeMock={onAmountChangeMock}
@@ -172,7 +170,6 @@ describe('AmountField', () => {
     const inputElement = screen.getByLabelText(/Importo/i);
     fireEvent.blur(inputElement);
 
-    // Verifica che validateInstallmentAmount venga chiamato dopo il timeout
     await waitFor(
       () => {
         expect(validateInstallmentAmountMock).toHaveBeenCalledWith(

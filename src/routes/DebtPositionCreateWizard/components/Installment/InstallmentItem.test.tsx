@@ -11,7 +11,6 @@ import {
 } from 'react-hook-form';
 import InstallmentItem, { ValidationFunctions } from './InstallmentItem';
 
-// Mock per l'hook useInstallmentBeneficiaryManagement
 const mockHandleInstallmentAmountChange = vi.fn();
 const mockToggleMultibeneficiary = vi.fn();
 vi.mock('../../../../hooks/useInstallmentBeneficiaryManagement', () => ({
@@ -26,7 +25,6 @@ vi.mock('@mui/icons-material/RemoveCircleOutline', () => ({
   default: () => <span data-testid="RemoveCircleOutlineIcon" />
 }));
 
-// Mock per i componenti figli
 vi.mock('./AmountField', () => ({
   default: vi.fn().mockImplementation(({ onAmountChange, index }) => (
     <div data-testid="amount-field">
@@ -51,7 +49,6 @@ vi.mock('./DateField', () => ({
   ))
 }));
 
-// Mock per RemittanceField
 vi.mock('./RemittanceField', () => ({
   default: vi.fn().mockImplementation(({ index, disabled }) => (
     <div
@@ -74,7 +71,6 @@ vi.mock('./BeneficiaryControl', () => ({
   ))
 }));
 
-// Mock per react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key
@@ -82,7 +78,6 @@ vi.mock('react-i18next', () => ({
 }));
 
 describe('InstallmentItem', () => {
-  // Tipo per il form
   type TestFormValues = {
     installments: Array<{
       amount: number;
@@ -92,7 +87,6 @@ describe('InstallmentItem', () => {
     }>;
   };
 
-  // Mock delle props
   const getMockProps = () => {
     const field = { id: 'test-id' } as FieldArrayWithId<
       TestFormValues,
