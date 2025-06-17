@@ -16,7 +16,7 @@ export const step1Schema = z
     if (data.code && data.isCodeUnique === false) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
-        message: 'debtTypeOrgCreate.configuration.code.unique',
+        message: 'debtTypeOrgCreate.configuration.code.notUnique',
         path: ['code']
       });
     }
