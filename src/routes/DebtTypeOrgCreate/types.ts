@@ -6,6 +6,7 @@ export type DebtTypeOrgForm = {
   debtPositionTypeId: string;
   description: string;
   code: string;
+  isCodeUnique?: boolean;
 
   // Step 2
   flagSpontaneous?: boolean;
