@@ -4,7 +4,6 @@ import { describe, expect, it, vi, Mock, beforeEach } from 'vitest';
 import * as reactQuery from '@tanstack/react-query';
 import { getPaymentsReportingDetail } from './getPaymentsReportingDetail';
 
-// Mock di utils
 vi.mock('../utils', () => {
   return {
     default: {
@@ -17,7 +16,6 @@ vi.mock('../utils', () => {
   };
 });
 
-// Mock di useQuery
 vi.mock('@tanstack/react-query', () => ({
   useQuery: vi.fn()
 }));
@@ -55,18 +53,15 @@ describe('getPaymentsReportingDetail API', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Configura il mock per restituire i dati
     const mockApi = utils.apiClient.bff.getPaymentsReportingDetail as Mock;
     mockApi.mockResolvedValue({
       data: dataMock
     } as AxiosResponse);
 
-    // Configura il mock di useQuery
     (reactQuery.useQuery as Mock).mockReturnValue(mockUseQueryResult);
   });
 
   it('should call API with correct parameters and return data', async () => {
-    // Chiama direttamente l'API
     const response = await utils.apiClient.bff.getPaymentsReportingDetail(
       organizationId,
       iuf,
@@ -78,7 +73,6 @@ describe('getPaymentsReportingDetail API', () => {
       }
     );
 
-    // Verifica che l'API sia stata chiamata con i parametri corretti
     expect(utils.apiClient.bff.getPaymentsReportingDetail).toHaveBeenCalledWith(
       organizationId,
       iuf,
@@ -90,25 +84,20 @@ describe('getPaymentsReportingDetail API', () => {
       }
     );
 
-    // Verifica la risposta
     expect(response.data).toEqual(dataMock);
   });
 
   it('should call useQuery with correct parameters', () => {
-    // Chiama la funzione che wrap useQuery
     const result = getPaymentsReportingDetail(
       organizationId,
       iuf,
       paymentsReportingId
     );
 
-    // Verifica che useQuery sia stato chiamato
     expect(reactQuery.useQuery).toHaveBeenCalled();
 
-    // Estrai gli argomenti con cui è stato chiamato useQuery
     const useQueryArgs = (reactQuery.useQuery as Mock).mock.calls[0][0];
 
-    // Verifica che la queryKey sia corretta
     expect(useQueryArgs.queryKey).toEqual([
       'getPaymentsReportingDetail',
       organizationId,
@@ -116,25 +105,20 @@ describe('getPaymentsReportingDetail API', () => {
       paymentsReportingId
     ]);
 
-    // Verifica che result contenga i dati mockati
     expect(result).toEqual(mockUseQueryResult);
   });
 
   it('should handle API error correctly', async () => {
-    // Chiama la funzione che wrap useQuery
     getPaymentsReportingDetail(organizationId, iuf, paymentsReportingId);
 
-    // Estrai la queryFn dal mock
     const useQueryArgs = (reactQuery.useQuery as Mock).mock.calls[0][0];
     const queryFn = useQueryArgs.queryFn;
 
-    // Modifica il mock per simulare un errore
     const error = new Error('API Error');
     (utils.apiClient.bff.getPaymentsReportingDetail as Mock).mockRejectedValue(
       error
     );
 
-    // Verifica che la queryFn lanci l'errore
     await expect(queryFn()).rejects.toThrow('API Error');
   });
 });

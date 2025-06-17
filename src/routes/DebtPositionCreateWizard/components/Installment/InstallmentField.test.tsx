@@ -4,17 +4,14 @@ import InstallmentField from './InstallmentField';
 import { Control, FieldValues } from 'react-hook-form';
 import { ReactNode } from 'react';
 
-// Mock dei moduli esterni
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key
   })
 }));
 
-// Type per i campi
 type MockField = { id: string; amount: string; dueDate: null };
 
-// Type per i parametri dell'hook
 type HookProps = {
   control: Control<FieldValues>;
   fieldNamePrefix: string;
@@ -26,8 +23,6 @@ type HookProps = {
   onInstallmentsChange?: (installments: unknown, totalAmount: string) => void;
 };
 
-// Mock useInstallmentManagement
-// Salviamo i parametri passati all'hook per poterli testare nei test
 let lastHookProps: HookProps | null = null;
 
 const mockUseInstallmentManagementReturn = {
@@ -44,13 +39,11 @@ const mockUseInstallmentManagementReturn = {
 
 vi.mock('../../../../hooks/useInstallmentManagement', () => ({
   useInstallmentManagement: vi.fn().mockImplementation((props) => {
-    // Salva i parametri passati all'hook
     lastHookProps = props;
     return mockUseInstallmentManagementReturn;
   })
 }));
 
-// Mock di InstallmentItem
 vi.mock('./InstallmentItem', () => ({
   default: vi.fn(({ index, onRemove }) => (
     <div data-testid={`installment-item-${index}`}>
@@ -67,7 +60,6 @@ vi.mock('./InstallmentItem', () => ({
   ))
 }));
 
-// Mock per Material UI
 vi.mock('@mui/material', () => {
   return {
     Box: ({
@@ -125,13 +117,11 @@ vi.mock('@mui/material', () => {
   };
 });
 
-// Mock per Material UI icons
 vi.mock('@mui/icons-material', () => ({
   Add: () => <span data-testid="add-icon">AddIcon</span>
 }));
 
 describe('InstallmentField', () => {
-  // Mock dei dati e funzioni necessarie per i test
   const mockFields = [
     { id: 'field1', amount: '100', dueDate: null },
     { id: 'field2', amount: '200', dueDate: null }
@@ -144,7 +134,6 @@ describe('InstallmentField', () => {
   const mockTrigger = vi.fn();
   const mockOnInstallmentsChange = vi.fn();
 
-  // Setup del mock per useInstallmentManagement
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseInstallmentManagementReturn.fields = mockFields;
@@ -153,7 +142,7 @@ describe('InstallmentField', () => {
     lastHookProps = null;
   });
 
-  it('renderizza il componente correttamente', () => {
+  it('should render the component correctly', () => {
     render(
       <InstallmentField
         control={mockControl}
@@ -166,25 +155,21 @@ describe('InstallmentField', () => {
       />
     );
 
-    // Verifica la presenza del titolo
     expect(
       screen.getByText('debtPositionCreateWizard.step3.installments.title')
     ).toBeInTheDocument();
 
-    // Verifica che il pulsante per aggiungere rate sia presente
     expect(
       screen.getByText(
         'debtPositionCreateWizard.step3.installments.addInstallment'
       )
     ).toBeInTheDocument();
 
-    // Verifica che vengano renderizzati i componenti InstallmentItem
-    // Usiamo getAllByTestId invece di getAllByText per evitare di contare testo duplicato
     const installmentItems = screen.getAllByTestId(/^installment-item-/);
     expect(installmentItems).toHaveLength(mockFields.length);
   });
 
-  it('chiama addInstallment quando si clicca sul pulsante per aggiungere una rata', () => {
+  it('should call addInstallment when the button to add an installment is clicked', () => {
     render(
       <InstallmentField
         control={mockControl}
@@ -207,8 +192,7 @@ describe('InstallmentField', () => {
     ).toHaveBeenCalledTimes(1);
   });
 
-  it('disabilita il pulsante quando si raggiunge il numero massimo di rate', () => {
-    // Modifica il mock per simulare il raggiungimento del numero massimo di rate
+  it('should disable the button when the maximum number of installments is reached', () => {
     mockUseInstallmentManagementReturn.fields = Array(12)
       .fill({})
       .map((_, i) => ({ id: `field${i}`, amount: '100', dueDate: null }));
@@ -237,7 +221,7 @@ describe('InstallmentField', () => {
     ).toBeInTheDocument();
   });
 
-  it('passa flagMandatoryDueDate a useInstallmentManagement', () => {
+  it('should pass flagMandatoryDueDate to useInstallmentManagement', () => {
     render(
       <InstallmentField
         control={mockControl}
@@ -258,7 +242,7 @@ describe('InstallmentField', () => {
     );
   });
 
-  it('passa onInstallmentsChange al hook useInstallmentManagement', () => {
+  it('should pass onInstallmentsChange to useInstallmentManagement', () => {
     render(
       <InstallmentField
         control={mockControl}
@@ -279,7 +263,7 @@ describe('InstallmentField', () => {
     );
   });
 
-  it('disabilita tutti i componenti quando disabled è true', () => {
+  it('should disable all components when disabled is true', () => {
     render(
       <InstallmentField
         control={mockControl}
@@ -299,7 +283,7 @@ describe('InstallmentField', () => {
     expect(addButton).toBeDisabled();
   });
 
-  it('passa il controller correttamente a InstallmentItem', () => {
+  it('should pass the controller correctly to InstallmentItem', () => {
     render(
       <InstallmentField
         control={mockControl}
@@ -312,14 +296,11 @@ describe('InstallmentField', () => {
       />
     );
 
-    // Verifica che InstallmentItem sia stato renderizzato correttamente con i campi previsti
-    // Utilizziamo il testid specifico per contare i componenti InstallmentItem
     const installmentItems = screen.getAllByTestId(/^installment-item-/);
     expect(installmentItems).toHaveLength(mockFields.length);
   });
 
-  it('abilita removeInstallment solo per rate oltre il minimo richiesto', () => {
-    // Modifica il mock per simulare 4 rate
+  it('should enable removeInstallment only for installments after the minimum required', () => {
     mockUseInstallmentManagementReturn.fields = Array(4)
       .fill({})
       .map((_, i) => ({ id: `field${i}`, amount: '100', dueDate: null }));
@@ -336,7 +317,6 @@ describe('InstallmentField', () => {
       />
     );
 
-    // Le prime due rate non dovrebbero avere il pulsante di rimozione (sono sotto MIN_INSTALLMENTS)
     expect(
       screen.queryByTestId('remove-installment-0')
     ).not.toBeInTheDocument();
@@ -344,7 +324,6 @@ describe('InstallmentField', () => {
       screen.queryByTestId('remove-installment-1')
     ).not.toBeInTheDocument();
 
-    // Le rate dopo MIN_INSTALLMENTS dovrebbero avere il pulsante di rimozione
     expect(screen.queryByTestId('remove-installment-2')).toBeInTheDocument();
     expect(screen.queryByTestId('remove-installment-3')).toBeInTheDocument();
   });

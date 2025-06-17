@@ -37,20 +37,20 @@ export const useDataGridPagination = ({
 
   const handlePageSizeChange = useCallback(
     (newSize: number) => {
-      const maxPage = Math.ceil(totalElements / newSize); // quante pagine ci sono disponibili con la nuova size
-      const currentOneBasedPage = pagination.page + 1; // pagina attuale, in formato 1-based
-      // Se con la nuova size la pagina corrente (es. 5) supera le pagine disponibili (es. 3), lo riportiamo all’ultima pagina valida.
+      const maxPage = Math.ceil(totalElements / newSize); // how many pages are available with the new size
+      const currentOneBasedPage = pagination.page + 1; // current page, in 1-based format
+      // If with the new size the current page (e.g. 5) exceeds the available pages (e.g. 3), we bring it back to the last valid page.
 
       const newOneBasedPage =
         currentOneBasedPage > maxPage ? maxPage : currentOneBasedPage;
 
       const newPagination = {
         size: newSize,
-        page: newOneBasedPage - 1 // converte a zero-based
+        page: newOneBasedPage - 1 // convert to zero-based
       };
 
-      setPagination(newPagination); // aggiorna stato interno
-      onPaginationChange?.(newPagination); // notifica il cambiamento
+      setPagination(newPagination);
+      onPaginationChange?.(newPagination);
 
       return newOneBasedPage;
     },

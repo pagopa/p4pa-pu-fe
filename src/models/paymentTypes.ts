@@ -17,6 +17,7 @@ export type Beneficiary = {
   taxCode: string;
   remittance: string;
   iban: string;
+  postalIban?: string;
   taxonomyCode: string;
   id?: string;
   isNew?: boolean;
@@ -26,6 +27,7 @@ export type Beneficiary = {
     taxCode?: boolean;
     remittance?: boolean;
     iban?: boolean;
+    postalIban?: boolean;
     taxonomyCode?: boolean;
   };
 };
@@ -149,7 +151,7 @@ export type BeneficiaryFieldValidators = {
   validateBeneficiaryTaxCode: (value: string) => string | undefined;
   validateRemittance: (value: string) => string | undefined;
   validateIBAN: (value: string) => string | undefined;
-  validatePostalAccount: (value: string) => string | undefined;
+  validatePostalIban: (value: string) => string | undefined;
   validatePaymentMethod: (
     iban: string,
     postalAccount: string

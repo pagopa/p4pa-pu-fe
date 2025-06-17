@@ -1346,14 +1346,12 @@ describe('Step3 Component', () => {
         </MemoryRouter>
       );
 
-      // Per DRAFT in edit dovrebbe mostrare il save draft button
       await waitFor(() => {
         expect(screen.getByTestId('save-draft-button')).toBeInTheDocument();
       });
     });
 
     it('should show correct buttons for DRAFT in edit mode', async () => {
-      // Mock per DRAFT debt position
       (
         debtPositionsApi.getDebtPositionDetail as unknown as ReturnType<
           typeof vi.fn
@@ -1532,10 +1530,10 @@ describe('Step3 Component', () => {
 
       await waitFor(() => {
         const nextButton = screen.getByTestId('next-button');
-        expect(nextButton).toHaveTextContent('commons.create'); // Should show translation key
+        expect(nextButton).toHaveTextContent('commons.create');
 
         const saveDraftButton = screen.getByTestId('save-draft-button');
-        expect(saveDraftButton).toHaveTextContent('Save Draft'); // Should show "Save Draft"
+        expect(saveDraftButton).toHaveTextContent('Save Draft');
       });
     });
 
@@ -1574,9 +1572,8 @@ describe('Step3 Component', () => {
 
       await waitFor(() => {
         const nextButton = screen.getByTestId('next-button');
-        expect(nextButton).toHaveTextContent('commons.save'); // Should show "Save" for UNPAID in edit
+        expect(nextButton).toHaveTextContent('commons.save');
 
-        // Save draft button should not be visible for UNPAID
         expect(
           screen.queryByTestId('save-draft-button')
         ).not.toBeInTheDocument();
@@ -1668,7 +1665,6 @@ describe('Step3 Component', () => {
         </MemoryRouter>
       );
 
-      // I campi dovrebbero rimanere vuoti
       await waitFor(() => {
         const paymentObjectInput = screen.getByRole('textbox', {
           name: /Payment Object/i
@@ -1738,7 +1734,7 @@ describe('Step3 Component', () => {
         paymentObject: { value: 'Payment with string date', readonly: false },
         paymentOption: { value: DebtPositionTypeEnum.SINGLE, readonly: false },
         amount: { value: '100.00', readonly: false },
-        dueDate: { value: '2025-06-15', readonly: false }, // String date
+        dueDate: { value: '2025-06-15', readonly: false },
         isMultibeneficiary: { value: false, readonly: false },
         beneficiaries: [],
         installments: [],
@@ -1922,7 +1918,7 @@ describe('Step3 Component', () => {
           <Step3
             data={{
               ...initialData,
-              paymentObject: { value: '', readonly: false } // Empty required field
+              paymentObject: { value: '', readonly: false }
             }}
             setData={mockSetData}
             onNext={mockOnNext}
