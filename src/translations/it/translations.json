@@ -89,7 +89,7 @@
           "receptionDate": "Data Contabile",
           "billCode": "Codice Bolletta",
           "provisionalCode": "Codice provvisorio",
-          "link": "Vedi Bolletta" 
+          "link": "Vedi Bolletta"
         }
       }
     }
@@ -728,6 +728,12 @@
     "editErrorDialog": {
       "title": "La posizione debitoria non può essere modificata",
       "description": "Siamo spiacenti, non è possibile modificare questa posizione debitoria."
+    },
+    "toSyncEditErrorDialog": {
+      "description": "Le posizioni debitorie in stato \"Da sincronizzare\" non possono essere modificate. Si prega di ricaricare la pagina o riprovare più tardi."
+    },
+    "toSyncErrorDialog": {
+      "description": "Le posizioni debitorie in stato \"Da sincronizzare\" non possono essere eliminate. Si prega di ricaricare la pagina o riprovare più tardi."
     },
     "publishDialog": {
       "title": "Vuoi attivare il pagamento?",
