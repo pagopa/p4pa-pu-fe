@@ -57,13 +57,11 @@ describe('ActualizationConfigSelector', () => {
         'Edit Helper Text'
     });
 
-    // Fix: Return structure should match React Query structure
     mockUseActualizationServices.mockReturnValue({
       data: [{ orgSilServiceId: 1, applicationName: 'Test Service' }],
       isLoading: false,
       isError: false,
       error: null,
-      // Add other React Query properties that might be accessed
       status: 'success',
       isSuccess: true,
       isFetching: false
@@ -150,7 +148,6 @@ describe('ActualizationConfigSelector', () => {
       expect(screen.getByText('allowNone: false')).toBeInTheDocument();
     });
 
-    // Fix: Test that 0 is treated as "no value" and shows read-only field
     it('treats 0 as no value in edit mode (shows read-only field)', () => {
       render(
         <TestWrapper defaultValues={{ amountActualizationOrgSilServiceId: 0 }}>
@@ -158,7 +155,6 @@ describe('ActualizationConfigSelector', () => {
         </TestWrapper>
       );
 
-      // 0 should show read-only field, same as undefined/null
       expect(screen.getByDisplayValue('None Selected')).toBeInTheDocument();
       expect(screen.getByText('Edit Helper Text')).toBeInTheDocument();
       expect(screen.getByRole('textbox')).toBeDisabled();
@@ -172,7 +168,6 @@ describe('ActualizationConfigSelector', () => {
         </TestWrapper>
       );
 
-      // Positive numbers should show ServiceSelector
       const serviceSelector = screen.getByTestId('service-selector');
       expect(serviceSelector).toBeInTheDocument();
       expect(
