@@ -89,7 +89,7 @@
           "receptionDate": "Data Contabile",
           "billCode": "Codice Bolletta",
           "provisionalCode": "Codice provvisorio",
-          "link": "Vedi Bolletta" 
+          "link": "Vedi Bolletta"
         }
       }
     }
@@ -98,7 +98,7 @@
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
       "DOPPI": "Pagamenti doppi",
-      "RT_NO_IUF": "Pagamenti non correttamente rendicontati", 
+      "RT_NO_IUF": "Pagamenti non correttamente rendicontati",
       "RT_NO_IUD": "Pagamenti non correttamente notificati",
       "IUV_NO_RT": "Rendicontazioni senza pagamenti generati",
       "TES_NO_IUF_OR_IUV": "Riversamenti non rendicontati o di pagamenti non eseguiti",
@@ -125,7 +125,7 @@
       },
       "traceVersion": {
         "title": "Versione tracciato",
-        "fileVersion":"Versione tracciato"
+        "fileVersion": "Versione tracciato"
       },
       "notice": {
         "remittanceInformation": "Oggetto del pagamento",
@@ -605,6 +605,9 @@
           "label": "IBAN",
           "required": "Il campo iban è obbligatorio"
         },
+        "postalIban": {
+          "label": "Conto corrente Postale"
+        },
         "paymentMethod": {
           "required": "Il campo IBAN è obbligatorio"
         },
@@ -726,6 +729,12 @@
     "editErrorDialog": {
       "title": "La posizione debitoria non può essere modificata",
       "description": "Siamo spiacenti, non è possibile modificare questa posizione debitoria."
+    },
+    "toSyncEditErrorDialog": {
+      "description": "Le posizioni debitorie in stato \"Da sincronizzare\" non possono essere modificate. Si prega di ricaricare la pagina o riprovare più tardi."
+    },
+    "toSyncErrorDialog": {
+      "description": "Le posizioni debitorie in stato \"Da sincronizzare\" non possono essere eliminate. Si prega di ricaricare la pagina o riprovare più tardi."
     },
     "publishDialog": {
       "title": "Vuoi attivare il pagamento?",

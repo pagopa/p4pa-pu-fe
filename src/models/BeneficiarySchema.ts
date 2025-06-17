@@ -91,6 +91,20 @@ export const createIBANFieldSchema = (t: TFunction) => {
 };
 
 /**
+ * Creates a Zod schema to validate the postalIban field of the beneficiary
+ */
+export const createPostalIbanFieldSchema = (t: TFunction) => {
+  return z
+    .string()
+    .optional()
+    .transform((val) => (val ? val.toUpperCase().replace(/\s/g, '') : val))
+    .refine(
+      (val) => !val || isValidIBAN(val),
+      t('debtPositionCreateWizard.step3.beneficiary.iban.invalid')
+    );
+};
+
+/**
  * Creates a Zod schema to validate the taxonomy code field of the beneficiary
  */
 export const createTaxonomyCodeFieldSchema = (t: TFunction) => {
@@ -113,6 +127,7 @@ export const createBeneficiarySchema = (t: TFunction) => {
     taxCode: createTaxCodeFieldSchema(t),
     remittance: createRemittanceFieldSchema(t),
     iban: createIBANFieldSchema(t),
+    postalIban: createPostalIbanFieldSchema(t),
     taxonomyCode: createTaxonomyCodeFieldSchema(t)
     // ID is optional and is added by upper layers
     // isNew is optional and is managed by upper layers

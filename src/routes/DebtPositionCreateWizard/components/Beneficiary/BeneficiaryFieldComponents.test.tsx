@@ -5,17 +5,20 @@ import { ValidationContext } from '../../../../utils/beneficiaryValidation';
 import {
   handleAmountChange,
   handleIBANChange,
-  handlePostalAccountChange,
+  handlePostalIbanChange,
   handleAmountBlur,
   BeneficiaryHeader,
   EntityNameField,
   TaxCodeField,
   hasIBANError,
   getIBANErrorMessage,
+  hasPostalIbanError,
+  getPostalIbanErrorMessage,
   hasPostalAccountError,
   getPostalAccountErrorMessage,
   AmountField,
   IBANField,
+  PostalIbanField,
   PostalAccountField,
   TaxonomyCodeField,
   RemittanceField
@@ -168,7 +171,7 @@ describe('Event Handlers', () => {
       expect(mockOnChange).toHaveBeenCalledWith('IT60X0542811101000000123456');
     });
 
-    it('triggers validation for the postal account field', () => {
+    it('triggers validation for the iban field only', () => {
       const mockOnChange = vi.fn();
       const mockTrigger = vi.fn() as unknown as UseFormTrigger<
         Record<string, unknown>
@@ -179,56 +182,6 @@ describe('Event Handlers', () => {
       } as React.ChangeEvent<HTMLInputElement>;
 
       handleIBANChange(
-        event,
-        mockOnChange,
-        mockIndex,
-        mockTrigger,
-        mockFieldNamePrefix
-      );
-
-      vi.runAllTimers();
-
-      expect(mockTrigger).toHaveBeenCalledWith(
-        `${mockFieldNamePrefix}.${mockIndex}.postalAccount`
-      );
-    });
-  });
-
-  describe('handlePostalAccountChange', () => {
-    it('accepts only numeric characters', () => {
-      const mockOnChange = vi.fn();
-      const mockTrigger = vi.fn() as unknown as UseFormTrigger<
-        Record<string, unknown>
-      >;
-
-      const event = {
-        target: { value: '123abc456!' }
-      } as React.ChangeEvent<HTMLInputElement>;
-
-      handlePostalAccountChange(
-        event,
-        mockOnChange,
-        mockIndex,
-        mockTrigger,
-        mockFieldNamePrefix
-      );
-
-      vi.runAllTimers();
-
-      expect(mockOnChange).toHaveBeenCalledWith('123456');
-    });
-
-    it('triggers validation for the IBAN field', () => {
-      const mockOnChange = vi.fn();
-      const mockTrigger = vi.fn() as unknown as UseFormTrigger<
-        Record<string, unknown>
-      >;
-
-      const event = {
-        target: { value: '123456789012' }
-      } as React.ChangeEvent<HTMLInputElement>;
-
-      handlePostalAccountChange(
         event,
         mockOnChange,
         mockIndex,
@@ -805,7 +758,7 @@ describe('IBANField', () => {
     expect(mockOnChange).toHaveBeenCalledWith('IT12A123456789012345678901');
 
     vi.runAllTimers();
-    expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.0.postalAccount');
+    expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.0.iban');
   });
 
   it('shows errors when appropriate', () => {
@@ -908,13 +861,9 @@ describe('PostalAccountField', () => {
     expect(input).not.toBeNull();
     expect(input.value).toBe('123456789012');
 
-    // Test onChange behavior - usiamo debounceValidation quindi dobbiamo simulare il timer
+    // Test onChange behavior - il campo accetta qualsiasi carattere
     fireEvent.change(input, { target: { value: '123abc456' } });
-    expect(mockOnChange).toHaveBeenCalledWith('123456');
-
-    // Aspettiamo che il timer di debounce esegua il trigger
-    vi.runAllTimers();
-    expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.0.iban');
+    expect(mockOnChange).toHaveBeenCalledWith('123abc456');
   });
 
   it('shows errors when appropriate', () => {
@@ -1147,5 +1096,415 @@ describe('RemittanceField', () => {
 
     // Verify that the error message is displayed
     expect(screen.getByText(errorMessage)).toBeInTheDocument();
+  });
+});
+
+describe('PostalIban Components', () => {
+  const mockT = vi.fn((key: string) => key);
+
+  describe('handlePostalIbanChange', () => {
+    it('converts the value to uppercase', () => {
+      const mockOnChange = vi.fn();
+      const mockTrigger = vi.fn() as unknown as UseFormTrigger<
+        Record<string, unknown>
+      >;
+
+      const event = {
+        target: { value: 'it60x0542811101000000123456' }
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      handlePostalIbanChange(
+        event,
+        mockOnChange,
+        mockIndex,
+        mockTrigger,
+        mockFieldNamePrefix
+      );
+
+      expect(mockOnChange).toHaveBeenCalledWith('IT60X0542811101000000123456');
+    });
+
+    it('triggers validation for the postalIban field only', () => {
+      const mockOnChange = vi.fn();
+      const mockTrigger = vi.fn() as unknown as UseFormTrigger<
+        Record<string, unknown>
+      >;
+
+      const event = {
+        target: { value: 'IT60X0542811101000000123456' }
+      } as React.ChangeEvent<HTMLInputElement>;
+
+      handlePostalIbanChange(
+        event,
+        mockOnChange,
+        mockIndex,
+        mockTrigger,
+        mockFieldNamePrefix
+      );
+
+      vi.runAllTimers();
+
+      expect(mockTrigger).toHaveBeenCalledWith(
+        `${mockFieldNamePrefix}.${mockIndex}.postalIban`
+      );
+    });
+  });
+
+  describe('hasPostalIbanError', () => {
+    it('does not show errors if validation should be skipped', () => {
+      const mockContext = {
+        id: '1',
+        index: mockIndex,
+        isSubmitted: false,
+        wasSubmittedRef: mockRef,
+        existingBeneficiaries: {},
+        errors: {},
+        fieldNamePrefix: mockFieldNamePrefix,
+        getValues: vi.fn().mockImplementation(() => ''),
+        t: mockT
+      } as ValidationContext<Record<string, unknown>>;
+
+      const result = hasPostalIbanError(mockContext, {});
+      expect(result).toBe(false);
+    });
+
+    it('does not show errors if postalIban field is empty (optional field)', () => {
+      const mockContext = {
+        id: '1',
+        index: mockIndex,
+        isSubmitted: true,
+        wasSubmittedRef: { current: true },
+        existingBeneficiaries: {},
+        errors: {},
+        fieldNamePrefix: mockFieldNamePrefix,
+        getValues: vi.fn().mockImplementation((path) => {
+          if (path.includes('postalIban')) return '';
+          return undefined;
+        }),
+        t: mockT
+      } as ValidationContext<Record<string, unknown>>;
+
+      const result = hasPostalIbanError(mockContext, {});
+      expect(result).toBe(false);
+    });
+
+    it('shows postalIban errors if field is filled and has errors', () => {
+      const mockErrors = {
+        beneficiaries: {
+          0: {
+            postalIban: {
+              message: 'Invalid postalIban format'
+            }
+          }
+        }
+      };
+
+      const mockContext = {
+        id: '1',
+        index: mockIndex,
+        isSubmitted: true,
+        wasSubmittedRef: { current: true },
+        existingBeneficiaries: {},
+        errors: mockErrors,
+        fieldNamePrefix: mockFieldNamePrefix,
+        getValues: vi.fn().mockImplementation((path) => {
+          if (path.includes('postalIban')) return 'INVALID_IBAN';
+          return undefined;
+        }),
+        t: mockT
+      } as unknown as ValidationContext<Record<string, unknown>>;
+
+      const result = hasPostalIbanError(mockContext, mockErrors);
+      expect(result).toBe(true);
+    });
+
+    it('handles installments context correctly', () => {
+      const mockErrors = {
+        installments: [
+          {
+            beneficiaries: [
+              {
+                postalIban: {
+                  message: 'Invalid postalIban in installment'
+                }
+              }
+            ]
+          }
+        ]
+      };
+
+      const mockContext = {
+        id: '1',
+        index: 0,
+        isSubmitted: true,
+        wasSubmittedRef: { current: true },
+        existingBeneficiaries: {},
+        errors: mockErrors,
+        fieldNamePrefix: 'installments.0.beneficiaries',
+        getValues: vi.fn().mockImplementation((path) => {
+          if (path.includes('postalIban')) return 'INVALID_IBAN';
+          return undefined;
+        }),
+        t: mockT
+      } as unknown as ValidationContext<Record<string, unknown>>;
+
+      const result = hasPostalIbanError(mockContext, mockErrors);
+      expect(result).toBe(true);
+    });
+  });
+
+  describe('getPostalIbanErrorMessage', () => {
+    it('returns empty string if validation should be skipped', () => {
+      const mockContext = {
+        id: '1',
+        index: mockIndex,
+        isSubmitted: false,
+        wasSubmittedRef: mockRef,
+        existingBeneficiaries: {},
+        errors: {},
+        fieldNamePrefix: mockFieldNamePrefix,
+        getValues: vi.fn().mockImplementation(() => ''),
+        t: mockT
+      } as ValidationContext<Record<string, unknown>>;
+
+      const result = getPostalIbanErrorMessage(mockContext, {});
+      expect(result).toBe('');
+    });
+
+    it('returns empty string if postalIban field is empty (optional field)', () => {
+      const mockContext = {
+        id: '1',
+        index: mockIndex,
+        isSubmitted: true,
+        wasSubmittedRef: { current: true },
+        existingBeneficiaries: {},
+        errors: {},
+        fieldNamePrefix: mockFieldNamePrefix,
+        getValues: vi.fn().mockImplementation((path) => {
+          if (path.includes('postalIban')) return '';
+          return undefined;
+        }),
+        t: mockT
+      } as ValidationContext<Record<string, unknown>>;
+
+      const result = getPostalIbanErrorMessage(mockContext, {});
+      expect(result).toBe('');
+    });
+
+    it('returns specific error message for invalid postalIban', () => {
+      const mockErrors = {
+        beneficiaries: {
+          0: {
+            postalIban: {
+              message: 'Invalid postalIban format'
+            }
+          }
+        }
+      };
+
+      const mockContext = {
+        id: '1',
+        index: mockIndex,
+        isSubmitted: true,
+        wasSubmittedRef: { current: true },
+        existingBeneficiaries: {},
+        errors: mockErrors,
+        fieldNamePrefix: mockFieldNamePrefix,
+        getValues: vi.fn().mockImplementation((path) => {
+          if (path.includes('postalIban')) return 'INVALID_IBAN';
+          return undefined;
+        }),
+        t: mockT
+      } as unknown as ValidationContext<Record<string, unknown>>;
+
+      const result = getPostalIbanErrorMessage(mockContext, mockErrors);
+      expect(result).toBe('Invalid postalIban format');
+    });
+
+    it('handles installments context correctly for error messages', () => {
+      const mockErrors = {
+        installments: [
+          {
+            beneficiaries: [
+              {
+                postalIban: {
+                  message: 'Invalid postalIban in installment'
+                }
+              }
+            ]
+          }
+        ]
+      };
+
+      const mockContext = {
+        id: '1',
+        index: 0,
+        isSubmitted: true,
+        wasSubmittedRef: { current: true },
+        existingBeneficiaries: {},
+        errors: mockErrors,
+        fieldNamePrefix: 'installments.0.beneficiaries',
+        getValues: vi.fn().mockImplementation((path) => {
+          if (path.includes('postalIban')) return 'INVALID_IBAN';
+          return undefined;
+        }),
+        t: mockT
+      } as unknown as ValidationContext<Record<string, unknown>>;
+
+      const result = getPostalIbanErrorMessage(mockContext, mockErrors);
+      expect(result).toBe('Invalid postalIban in installment');
+    });
+  });
+
+  describe('PostalIbanField', () => {
+    it('correctly renders the postal iban field', () => {
+      const mockOnChange = vi.fn();
+      const mockTrigger = vi.fn() as unknown as UseFormTrigger<
+        Record<string, unknown>
+      >;
+
+      const mockField = {
+        onChange: mockOnChange,
+        onBlur: vi.fn(),
+        value: 'IT60X0542811101000000123456',
+        name: 'postalIban',
+        ref: { current: null }
+      };
+
+      const mockContext = {
+        id: '1',
+        index: 0,
+        isSubmitted: false,
+        wasSubmittedRef: { current: false },
+        existingBeneficiaries: {},
+        errors: {},
+        fieldNamePrefix: 'beneficiaries',
+        getValues: vi
+          .fn()
+          .mockImplementation(() => 'IT60X0542811101000000123456'),
+        t: mockT
+      } as ValidationContext<Record<string, unknown>>;
+
+      const { container } = render(
+        <PostalIbanField
+          field={mockField}
+          t={mockT}
+          context={mockContext}
+          index={0}
+          trigger={mockTrigger}
+          fieldNamePrefix="beneficiaries"
+          errors={{}}
+        />
+      );
+
+      const input = container.querySelector('input') as HTMLInputElement;
+      expect(input).not.toBeNull();
+      expect(input.value).toBe('IT60X0542811101000000123456');
+
+      // Test onChange behavior
+      fireEvent.change(input, {
+        target: { value: 'it45z0760105138290123456789' }
+      });
+      expect(mockOnChange).toHaveBeenCalledWith('IT45Z0760105138290123456789');
+
+      vi.runAllTimers();
+      expect(mockTrigger).toHaveBeenCalledWith('beneficiaries.0.postalIban');
+    });
+
+    it('shows errors when appropriate', () => {
+      const mockTrigger = vi.fn() as unknown as UseFormTrigger<
+        Record<string, unknown>
+      >;
+
+      const mockField = {
+        onChange: vi.fn(),
+        onBlur: vi.fn(),
+        value: 'INVALID',
+        name: 'postalIban',
+        ref: { current: null }
+      };
+
+      const mockErrors = {
+        beneficiaries: {
+          0: {
+            postalIban: {
+              message: 'Errore postalIban'
+            }
+          }
+        }
+      };
+
+      const mockContext = {
+        id: '1',
+        index: 0,
+        isSubmitted: true,
+        wasSubmittedRef: { current: true },
+        existingBeneficiaries: {},
+        errors: mockErrors,
+        fieldNamePrefix: 'beneficiaries',
+        getValues: vi.fn().mockImplementation((path) => {
+          if (path.includes('postalIban')) return 'INVALID';
+          return '';
+        }),
+        t: mockT
+      } as unknown as ValidationContext<Record<string, unknown>>;
+
+      render(
+        <PostalIbanField
+          field={mockField}
+          t={mockT}
+          context={mockContext}
+          index={0}
+          trigger={mockTrigger}
+          fieldNamePrefix="beneficiaries"
+          errors={mockErrors}
+        />
+      );
+
+      // Verify that the error message is displayed
+      expect(screen.getByText('Errore postalIban')).toBeInTheDocument();
+    });
+
+    it('handles disabled state correctly', () => {
+      const mockTrigger = vi.fn() as unknown as UseFormTrigger<
+        Record<string, unknown>
+      >;
+
+      const mockField = {
+        onChange: vi.fn(),
+        onBlur: vi.fn(),
+        value: '',
+        name: 'postalIban',
+        ref: { current: null }
+      };
+
+      const mockContext = {
+        id: '1',
+        index: 0,
+        isSubmitted: false,
+        wasSubmittedRef: { current: false },
+        existingBeneficiaries: {},
+        errors: {},
+        fieldNamePrefix: 'beneficiaries',
+        getValues: vi.fn().mockImplementation(() => ''),
+        t: mockT
+      } as ValidationContext<Record<string, unknown>>;
+
+      const { container } = render(
+        <PostalIbanField
+          field={mockField}
+          t={mockT}
+          context={mockContext}
+          index={0}
+          trigger={mockTrigger}
+          fieldNamePrefix="beneficiaries"
+          errors={{}}
+          disabled={true}
+        />
+      );
+
+      const input = container.querySelector('input') as HTMLInputElement;
+      expect(input).toHaveAttribute('disabled');
+    });
   });
 });

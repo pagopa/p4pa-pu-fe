@@ -119,6 +119,9 @@ const DebtPositionDetail = () => {
     if (canBeDeleted) {
       return getDraftConfirmationMessage();
     } else {
+      if (debtPositionDetail?.status === DebtPositionStatus.TO_SYNC) {
+        return t('debtPositionDetail.toSyncErrorDialog.description');
+      }
       return t('debtPositionDetail.errorDialog.description');
     }
   };
@@ -153,7 +156,8 @@ const DebtPositionDetail = () => {
 
   const canBeDeleted =
     debtPositionDetail?.status !== DebtPositionStatus.PAID &&
-    debtPositionDetail?.status !== DebtPositionStatus.PARTIALLY_PAID;
+    debtPositionDetail?.status !== DebtPositionStatus.PARTIALLY_PAID &&
+    debtPositionDetail?.status !== DebtPositionStatus.TO_SYNC;
 
   const canBeEdited =
     debtPositionDetail?.status === DebtPositionStatus.DRAFT ||
@@ -193,7 +197,6 @@ const DebtPositionDetail = () => {
 
     try {
       await deleteDebtPositionMutation.mutateAsync();
-
       setDialogConfig(null);
       if (debtPositionDetail?.status === DebtPositionStatus.DRAFT) {
         navigate(generatePath(PageRoutes.DEBT_POSITIONS_INDEX));
@@ -235,10 +238,15 @@ const DebtPositionDetail = () => {
   };
 
   const showEditErrorDialog = () => {
+    const isToSyncStatus =
+      debtPositionDetail?.status === DebtPositionStatus.TO_SYNC;
+
     setDialogConfig({
       open: true,
       title: t('debtPositionDetail.editErrorDialog.title'),
-      message: t('debtPositionDetail.editErrorDialog.description'),
+      message: isToSyncStatus
+        ? t('debtPositionDetail.toSyncEditErrorDialog.description')
+        : t('debtPositionDetail.editErrorDialog.description'),
       confirmLabel: t('commons.close'),
       onConfirm: () => setDialogConfig(null),
       onClose: () => setDialogConfig(null),

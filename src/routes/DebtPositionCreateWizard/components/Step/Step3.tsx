@@ -337,6 +337,7 @@ const Step3 = ({
             taxCode: '',
             remittance: '',
             iban: '',
+            postalIban: '',
             taxonomyCode: ''
           }
         ],

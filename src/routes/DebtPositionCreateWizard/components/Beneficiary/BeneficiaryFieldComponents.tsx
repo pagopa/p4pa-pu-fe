@@ -27,7 +27,7 @@ import {
 } from '../../../../utils/paymentUtility';
 
 let ibanValidationTimer: ReturnType<typeof setTimeout> | null = null;
-let postalAccountValidationTimer: ReturnType<typeof setTimeout> | null = null;
+let postalIbanValidationTimer: ReturnType<typeof setTimeout> | null = null;
 let amountValidationTimer: ReturnType<typeof setTimeout> | null = null;
 
 /**
@@ -82,33 +82,28 @@ export function handleIBANChange<T extends FieldValues>(
   const upperValue = e.target.value.toUpperCase();
   onChange(upperValue);
 
-  // Revalidate postal account when IBAN changes
+  // Validate IBAN
   ibanValidationTimer = debounceValidation(() => {
-    trigger(
-      buildFieldPath<T, 'postalAccount'>(
-        fieldNamePrefix,
-        index,
-        'postalAccount'
-      )
-    );
+    trigger(buildFieldPath<T, 'iban'>(fieldNamePrefix, index, 'iban'));
   }, ibanValidationTimer);
 }
 
-export function handlePostalAccountChange<T extends FieldValues>(
+export function handlePostalIbanChange<T extends FieldValues>(
   e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   onChange: (...event: Array<unknown>) => void,
   index: number,
   trigger: UseFormTrigger<T>,
   fieldNamePrefix: string
 ) {
-  // Accept only numeric characters
-  const filteredValue = e.target.value.replace(/\D/g, '');
-  onChange(filteredValue);
+  const upperValue = e.target.value.toUpperCase();
+  onChange(upperValue);
 
-  // Revalidate IBAN when postal account changes
-  postalAccountValidationTimer = debounceValidation(() => {
-    trigger(buildFieldPath<T, 'iban'>(fieldNamePrefix, index, 'iban'));
-  }, postalAccountValidationTimer);
+  // Validate postalIban
+  postalIbanValidationTimer = debounceValidation(() => {
+    trigger(
+      buildFieldPath<T, 'postalIban'>(fieldNamePrefix, index, 'postalIban')
+    );
+  }, postalIbanValidationTimer);
 }
 
 export function handleAmountBlur(
@@ -351,7 +346,6 @@ export function hasIBANError<T extends FieldValues>(
     return false;
   }
 
-  // If postal account has value and IBAN is empty, don't show IBAN errors
   const postalAccount = context.getValues(
     buildFieldPath<T, 'postalAccount'>(
       context.fieldNamePrefix,
@@ -403,6 +397,61 @@ export function hasIBANError<T extends FieldValues>(
   )?.[context.index];
 
   return !!fieldErrors?.iban;
+}
+
+export function hasPostalIbanError<T extends FieldValues>(
+  context: ValidationContext<T>,
+  errors: FieldErrors<T>
+): boolean {
+  if (shouldSkipValidation(context)) {
+    return false;
+  }
+
+  const postalIban = context.getValues(
+    buildFieldPath<T, 'postalIban'>(
+      context.fieldNamePrefix,
+      context.index,
+      'postalIban'
+    )
+  );
+
+  // if the field is empty, don't show errors (optional field)
+  if (!postalIban || postalIban.trim() === '') {
+    return false;
+  }
+
+  // Check for errors in installments
+  if (context.fieldNamePrefix.includes('installments')) {
+    try {
+      const parts = context.fieldNamePrefix.split('.');
+      const installmentIndex = parseInt(parts[1], 10);
+
+      type InstallmentErrorStructure = Record<string, unknown>;
+      type BeneficiaryErrorStructure = Record<string, { message?: string }>;
+
+      const installmentsErrors = errors.installments as
+        | Array<InstallmentErrorStructure>
+        | undefined;
+      if (installmentsErrors && installmentsErrors[installmentIndex]) {
+        const beneficiaries = (installmentsErrors[installmentIndex]
+          ?.beneficiaries || []) as Array<BeneficiaryErrorStructure>;
+        if (beneficiaries[context.index]?.postalIban) {
+          return true;
+        }
+      }
+    } catch (error) {
+      console.error('Error checking postalIban errors in installments:', error);
+    }
+  }
+
+  const fieldErrors = (
+    errors[context.fieldNamePrefix] as unknown as Record<
+      number,
+      FieldErrors<Record<string, unknown>>
+    >
+  )?.[context.index];
+
+  return !!fieldErrors?.postalIban;
 }
 
 export function getIBANErrorMessage<T extends FieldValues>(
@@ -479,6 +528,64 @@ export function getIBANErrorMessage<T extends FieldValues>(
   return (fieldErrors?.iban?.message as string) || '';
 }
 
+export function getPostalIbanErrorMessage<T extends FieldValues>(
+  context: ValidationContext<T>,
+  errors: FieldErrors<T>
+): string {
+  if (shouldSkipValidation(context)) {
+    return '';
+  }
+
+  const postalIban = context.getValues(
+    buildFieldPath<T, 'postalIban'>(
+      context.fieldNamePrefix,
+      context.index,
+      'postalIban'
+    )
+  );
+
+  // if the field is empty, don't show errors (optional field)
+  if (!postalIban || postalIban.trim() === '') {
+    return '';
+  }
+
+  // Check for errors in installments
+  if (context.fieldNamePrefix.includes('installments')) {
+    try {
+      const parts = context.fieldNamePrefix.split('.');
+      const installmentIndex = parseInt(parts[1], 10);
+
+      type InstallmentErrorStructure = Record<string, unknown>;
+      type BeneficiaryErrorStructure = Record<string, { message?: string }>;
+
+      const installmentsErrors = errors.installments as
+        | Array<InstallmentErrorStructure>
+        | undefined;
+      if (installmentsErrors && installmentsErrors[installmentIndex]) {
+        const beneficiaries = (installmentsErrors[installmentIndex]
+          ?.beneficiaries || []) as Array<BeneficiaryErrorStructure>;
+        if (beneficiaries[context.index]?.postalIban) {
+          return beneficiaries[context.index]?.postalIban?.message || '';
+        }
+      }
+    } catch (error) {
+      console.error(
+        'Error retrieving postalIban error message from installments:',
+        error
+      );
+    }
+  }
+
+  const fieldErrors = (
+    errors[context.fieldNamePrefix] as unknown as Record<
+      number,
+      FieldErrors<Record<string, unknown>>
+    >
+  )?.[context.index];
+
+  return (fieldErrors?.postalIban?.message as string) || '';
+}
+
 export function IBANField<T extends FieldValues>(
   props: Readonly<{
     field: {
@@ -527,6 +634,64 @@ export function IBANField<T extends FieldValues>(
       value={actualValue}
       onChange={(e) => {
         handleIBANChange(e, field.onChange, index, trigger, fieldNamePrefix);
+      }}
+    />
+  );
+}
+
+export function PostalIbanField<T extends FieldValues>(
+  props: Readonly<{
+    field: {
+      onChange: (...event: Array<unknown>) => void;
+      onBlur: () => void;
+      value: string;
+      name: string;
+      ref: React.Ref<HTMLInputElement>;
+    };
+    t: (key: string) => string;
+    disabled?: boolean;
+    context: ValidationContext<T>;
+    index: number;
+    trigger: UseFormTrigger<T>;
+    fieldNamePrefix: string;
+    errors: FieldErrors<T>;
+  }>
+) {
+  const {
+    field,
+    t,
+    disabled = false,
+    context,
+    index,
+    trigger,
+    fieldNamePrefix,
+    errors
+  } = props;
+
+  const actualValue =
+    context.getValues(field.name as Path<T>) ?? field.value ?? '';
+
+  return (
+    <TextField
+      {...field}
+      fullWidth
+      label={t('debtPositionCreateWizard.step3.beneficiary.postalIban.label')}
+      disabled={disabled}
+      error={hasPostalIbanError(context, errors)}
+      helperText={
+        hasPostalIbanError(context, errors)
+          ? getPostalIbanErrorMessage(context, errors)
+          : undefined
+      }
+      value={actualValue}
+      onChange={(e) => {
+        handlePostalIbanChange(
+          e,
+          field.onChange,
+          index,
+          trigger,
+          fieldNamePrefix
+        );
       }}
     />
   );
@@ -689,16 +854,7 @@ export function PostalAccountField<T extends FieldValues>(
     errors: FieldErrors<T>;
   }>
 ) {
-  const {
-    field,
-    t,
-    disabled = false,
-    context,
-    index,
-    trigger,
-    fieldNamePrefix,
-    errors
-  } = props;
+  const { field, t, disabled = false, context, errors } = props;
 
   const actualValue =
     context.getValues(field.name as Path<T>) ?? field.value ?? '';
@@ -720,13 +876,7 @@ export function PostalAccountField<T extends FieldValues>(
       inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
       value={actualValue}
       onChange={(e) => {
-        handlePostalAccountChange(
-          e,
-          field.onChange,
-          index,
-          trigger,
-          fieldNamePrefix
-        );
+        field.onChange(e.target.value);
       }}
     />
   );

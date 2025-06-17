@@ -63,7 +63,6 @@ describe('ReportingPaymentDetail Page', () => {
   it('renders Reporting Payment Detail without crashing', () => {
     render(<ReportingPaymentDetail />);
 
-    // Verifica che gli elementi principali siano presenti
     expect(
       screen.getByText('reportingPaymentDetail.title')
     ).toBeInTheDocument();
@@ -83,7 +82,6 @@ describe('ReportingPaymentDetail Page', () => {
   });
 
   it('displays payment data when available', () => {
-    // Modifica il mock per includere dati specifici che possiamo testare
     const customMockData = {
       ...mockData,
       iuv: 'IUV12345',
@@ -100,12 +98,10 @@ describe('ReportingPaymentDetail Page', () => {
 
     render(<ReportingPaymentDetail />);
 
-    // Verifica che i dati specifici vengano visualizzati
     expect(screen.getByText('IUV12345')).toBeInTheDocument();
     expect(screen.getByText('IUD67890')).toBeInTheDocument();
     expect(screen.getByText('Pagamento tassa')).toBeInTheDocument();
 
-    // Verifichiamo la presenza di elementi chiave invece di cercare il testo PAID
     expect(screen.getByText('commons.state')).toBeInTheDocument();
   });
 
@@ -119,8 +115,6 @@ describe('ReportingPaymentDetail Page', () => {
     );
   });
 
-  // Test aggiuntivi per aumentare la copertura dei branch
-
   it('handles null iuf and id parameters', () => {
     (useParams as ReturnType<typeof vi.fn>).mockReturnValue({
       iuf: null,
@@ -128,7 +122,6 @@ describe('ReportingPaymentDetail Page', () => {
     });
 
     render(<ReportingPaymentDetail />);
-
     expect(getPaymentsReportingDetail).toHaveBeenCalledWith(
       Number(mockOrganizationId),
       '',
@@ -156,18 +149,11 @@ describe('ReportingPaymentDetail Page', () => {
 
     render(<ReportingPaymentDetail />);
 
-    // Usiamo getAllByText invece di getByText per gestire elementi multipli
     const nameElements = screen.getAllByText(/Mario Rossi/);
     expect(nameElements.length).toBeGreaterThan(0);
-
-    // Usiamo getAllByText anche per il codice fiscale
     const fiscalCodeElements = screen.getAllByText(/RSSMRA80A01H501U/);
     expect(fiscalCodeElements.length).toBeGreaterThan(0);
-
-    // Verifica che sia presente la label per il pagatore
     expect(screen.getByText('commons.payer')).toBeInTheDocument();
-
-    // Verifichiamo che sia inclusa l'indicazione di persona fisica
     const personTypeElements = screen.getAllByText(/\(commons\.person\)/);
     expect(personTypeElements.length).toBeGreaterThan(0);
   });
@@ -192,18 +178,14 @@ describe('ReportingPaymentDetail Page', () => {
 
     render(<ReportingPaymentDetail />);
 
-    // Usiamo getAllByText invece di getByText per gestire elementi multipli
     const companyElements = screen.getAllByText(/Azienda SRL/);
     expect(companyElements.length).toBeGreaterThan(0);
 
-    // Usiamo getAllByText anche per la partita IVA
     const vatElements = screen.getAllByText(/12345678901/);
     expect(vatElements.length).toBeGreaterThan(0);
 
-    // Verifica che la label del pagatore sia presente
     expect(screen.getByText('commons.payer')).toBeInTheDocument();
 
-    // Verifichiamo che NON sia inclusa l'indicazione di persona fisica
     expect(screen.queryByText(/\(commons\.person\)/)).not.toBeInTheDocument();
   });
 
@@ -222,17 +204,11 @@ describe('ReportingPaymentDetail Page', () => {
 
     render(<ReportingPaymentDetail />);
 
-    // Verifica che non ci siano errori nel rendering
-    // Verifichiamo che la label sia presente
     expect(
       screen.getByText('commons.fiscalCodeorVat commons.payer')
     ).toBeInTheDocument();
 
-    // Verifichiamo che l'etichetta del pagatore sia presente
     expect(screen.getByText('commons.payer')).toBeInTheDocument();
-
-    // Non cerchiamo più "[CF/PIVA:" perché ora non viene visualizzato quando debtor è null
-    // Invece verifichiamo che le etichette esistano ma i valori associati siano vuoti
   });
 
   it('formats payment date correctly when available', () => {
@@ -250,12 +226,10 @@ describe('ReportingPaymentDetail Page', () => {
 
     render(<ReportingPaymentDetail />);
 
-    // Verifica il formato della data (it-IT format)
     expect(screen.getByText('15/04/2023')).toBeInTheDocument();
   });
 
   it('displays state label correctly', () => {
-    // Testiamo un singolo status come esempio
     const statusMockData = {
       ...mockData,
       status: 'PAID'
@@ -270,16 +244,12 @@ describe('ReportingPaymentDetail Page', () => {
 
     render(<ReportingPaymentDetail />);
 
-    // Verifica che la label dello stato sia presente
     expect(screen.getByText('commons.state')).toBeInTheDocument();
   });
 
   it('uses correct chip colors based on state type', () => {
-    // Testiamo i seguenti stati per verificare che vengano usati i colori corretti
     const testStatuses = ['PAID', 'CANCELLED', 'DRAFT'];
 
-    // Verifichiamo che il componente non abbia errori quando viene renderizzato
-    // con diversi valori di status
     for (const status of testStatuses) {
       const statusMockData = {
         ...mockData,
@@ -295,7 +265,6 @@ describe('ReportingPaymentDetail Page', () => {
 
       const { unmount } = render(<ReportingPaymentDetail />);
 
-      // Verifichiamo che la label dello stato sia sempre presente
       expect(screen.getByText('commons.state')).toBeInTheDocument();
 
       unmount();
@@ -317,15 +286,10 @@ describe('ReportingPaymentDetail Page', () => {
 
     render(<ReportingPaymentDetail />);
 
-    // Verifichiamo che la label dell'importo sia presente
     expect(screen.getByText('commons.amount')).toBeInTheDocument();
 
-    // C'è una formattazione dell'importo nel componente, quindi invece di cercare
-    // il valore esatto, controlliamo che esista un elemento sotto la label dell'importo
     const amountLabels = screen.getAllByText('commons.amount');
     expect(amountLabels.length).toBeGreaterThan(0);
-
-    // Alternativa: usare un selector più flessibile o getByTestId se possibile
   });
 
   it('handles case when amountPaidCents is not available', () => {
@@ -343,18 +307,13 @@ describe('ReportingPaymentDetail Page', () => {
 
     render(<ReportingPaymentDetail />);
 
-    // In questo caso, verifichiamo che ci sia un elemento con label "commons.amount"
-    // ma con valore vuoto o assente
     const amountLabels = screen.getAllByText('commons.amount');
     expect(amountLabels.length).toBeGreaterThan(0);
   });
 
   it('handles missing or undefined parameters', () => {
-    // Simula parametri undefined
     (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
-
     render(<ReportingPaymentDetail />);
-
     expect(getPaymentsReportingDetail).toHaveBeenCalledWith(
       Number(mockOrganizationId),
       '',

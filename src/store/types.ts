@@ -35,7 +35,7 @@ export enum STATE {
   ID_TOKEN = 'idToken'
 }
 
-// Enum per i codici di errore
+// Error codes for validation
 export enum ValidationErrorCode {
   REQUIRED = 'commons.required',
   INVALID_CF = 'debtPositionCreateWizard.step2.taxCode.invalid',
