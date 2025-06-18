@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import { z } from 'zod';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import { orgSilServiceSchema } from '../../generated/zod-schema';
@@ -20,26 +21,18 @@ const getOrgSilServices = (
   return useQuery({
     queryKey: ['org-sil-services', organizationId, serviceType],
     queryFn: async () => {
-      if (!organizationId) {
-        throw new Error('Organization ID is required');
-      }
-
       const { data: services } = await utils.apiClient.bff.getOrgSilServices(
         organizationId,
         { serviceType }
       );
 
-      if (services && Array.isArray(services)) {
-        services.forEach((service) => {
-          parseAndLog(orgSilServiceSchema, service);
-        });
-
+      try {
+        parseAndLog(z.array(orgSilServiceSchema), services, true);
         const validServices = services.filter(isValidService);
-
         return validServices;
+      } catch {
+        return [];
       }
-
-      return [];
     },
     enabled: !!organizationId,
     retry: 1
