@@ -1,7 +1,8 @@
 import { RouteHandleObject } from '../models/Routes';
 import { Classifications } from '../components/Classifications';
-import ClassificationsOverview from './ClassificationsOverview';
 import ClassificationDetails from '../components/ClassificationDetail';
+import ClassificationsExportFlowOverview from './ClassificationsExportFlowOverview';
+import ClassificationsSearchResults from '../components/ClassificationsSearchResults';
 
 export const classificationsRoutes = [
   {
@@ -20,19 +21,19 @@ export const classificationsRoutes = [
       {
         id: 'CLASSIFICATIONS_EXPORT_OVERVIEW',
         path: 'export-overview',
-        element: <ClassificationsOverview />,
+        element: <ClassificationsExportFlowOverview />,
         handle: {
           backButton: true
         } as RouteHandleObject
       },
       {
-        path: 'search-results',
+        path: 'search-results/',
         id: 'CLASSIFICATIONS_SEARCH_RESULTS',
         children: [
           {
             id: 'CLASSIFICATIONS_SEARCH_RESULTS_INDEX',
             index: true,
-            element: <ClassificationsOverview />,
+            element: <ClassificationsSearchResults />,
             handle: {
               backButton: true,
               hideBreadcrumbs: false,

@@ -15,12 +15,20 @@ export type FilterValues = {
   DOCUMENT_CODE: string;
   DOCUMENT_CODE_FROM: Date | null;
   IUV: string;
+  IUR: string;
+  IUD: string;
+  IUF: string;
   PAYER: string;
   REPORT_ID: string;
   TEMPORARY_CODE: string;
   TEMPORARY_CODE_FROM: Date | null;
   VALUE_DATE_FROM: Date | null;
   VALUE_DATE_TO: Date | null;
+  CLASSIFICATION_TYPE: string;
+  LAST_CLASSIFICATION_DATE_FROM: Date | null;
+  LAST_CLASSIFICATION_DATE_TO: Date | null;
+  REGULATION_DATE_FROM: Date | null;
+  REGULATION_DATE_TO: Date | null;
 };
 
 export type FlowFilters = {

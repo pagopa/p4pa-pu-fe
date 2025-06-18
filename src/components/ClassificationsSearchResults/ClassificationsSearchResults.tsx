@@ -5,7 +5,7 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
 import { ReactNode, useState } from 'react';
-import { generatePath, useNavigate } from 'react-router';
+import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import {
   FilterCategory,
@@ -14,8 +14,9 @@ import {
 } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
-import UseTreasurySearch from '../../hooks/useTreasurySearch';
-import { PagedTreasuryView } from '../../../generated/data-contracts';
+import UseClassificationsSearch from '../../hooks/useClassificationsSearch';
+import { PagedTreasuredClassification } from '../../../generated/data-contracts';
+import DownloadIcon from '@mui/icons-material/Download';
 
 export type LocationState = {
   category: string;
@@ -23,7 +24,7 @@ export type LocationState = {
   filterMap: FilterMap;
 };
 
-const TreasurySearchResults = () => {
+const ClassificationsSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -32,28 +33,51 @@ const TreasurySearchResults = () => {
     filterMap,
     selectedFilters,
     removeAllFilters,
-    noFilterIsSelected,
+    noFilterSelectedExcludingClassificationType,
     filterValues
-  } = useMultiFilters({ filterCategory: FilterCategory.TREASURY });
+  } = useMultiFilters({ filterCategory: FilterCategory.CLASSIFICATIONS });
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [labelError, setLabelError] = useState(false);
 
   const toggleDrawer = () => {
     setDrawerOpen((prev) => !prev);
   };
 
-  const treasury = UseTreasurySearch({
+  const classifications = UseClassificationsSearch({
     initialFilters: filterValues
   });
 
   const applyFilters = () => {
-    if (noFilterIsSelected.peek()) {
-      treasury.applyFilters(filterValues);
-      setError(false);
-      setDrawerOpen(false);
-    } else {
-      setError(true);
+    const classificationType = filterValues.CLASSIFICATION_TYPE;
+
+    if (!classificationType) {
+      setLabelError(true);
+      return;
     }
+
+    if (classificationType === 'UNKNOWN') {
+      setError(false);
+      setLabelError(false);
+      classifications.applyFilters(filterValues);
+      setDrawerOpen(false);
+      return;
+    }
+
+    if (noFilterSelectedExcludingClassificationType.peek()) {
+      setError(true);
+      return;
+    }
+
+    setError(false);
+    setLabelError(false);
+    classifications.applyFilters(filterValues);
+    setDrawerOpen(false);
+  };
+
+  const handleFilterInteraction = () => {
+    setLabelError(false);
+    setError(false);
   };
 
   const errorMessage: ReactNode = (
@@ -70,18 +94,15 @@ const TreasurySearchResults = () => {
   return (
     <>
       <TitleComponent
-        title={t('commons.routes.TREASURY')}
+        title={t('commons.routes.CLASSIFICATIONS_SEARCH_RESULTS')}
         callToAction={[
           {
             variant: 'outlined',
-            buttonText: t('treasurySearchResults.uploadFlow'),
-            onActionClick: () =>
-              navigate(
-                generatePath(PageRoutes.IMPORT_FLOWS, { category: 'treasury' })
-              )
+            buttonText: t('exportFlow.buttonReservationExport'),
+            icon: <DownloadIcon />,
+            onActionClick: () => navigate(PageRoutes.EXPORT_CLASSIFICATIONS)
           }
         ]}
-        description={t('treasurySearchResults.description')}
       />
 
       <Grid container justifyContent="flex-end" p={2}>
@@ -92,7 +113,7 @@ const TreasurySearchResults = () => {
           startIcon={<FilterAlt />}
           onClick={toggleDrawer}
         >
-          {`${t('commons.filters.filtersField')} (${selectedFilters.length})`}
+          {`${t('commons.filters.filtersField')} (${selectedFilters.length + (filterValues.CLASSIFICATION_TYPE ? 1 : 0)})`}
         </ButtonNaked>
       </Grid>
 
@@ -103,9 +124,9 @@ const TreasurySearchResults = () => {
         aria-label="results-table"
       >
         <SearchResultsDataGrid
-          data={treasury.query.data as PagedTreasuryView}
-          onSortChange={treasury.setSort}
-          onPaginationChange={treasury.handlePaginationChange}
+          data={classifications.query.data as PagedTreasuredClassification}
+          onSortChange={classifications.setSort}
+          onPaginationChange={classifications.handlePaginationChange}
         />
       </Grid>
 
@@ -114,6 +135,9 @@ const TreasurySearchResults = () => {
         onClose={toggleDrawer}
         title={t('commons.filters.filtersField')}
         filterMap={filterMap}
+        filterCategory={FilterCategory.CLASSIFICATIONS}
+        showLabelError={labelError}
+        onFilterInteraction={handleFilterInteraction}
         render={error && errorMessage}
         buttons={[
           {
@@ -124,7 +148,11 @@ const TreasurySearchResults = () => {
           },
           {
             buttonText: t('commons.filters.remove'),
-            onButtonClick: removeAllFilters,
+            onButtonClick: () => {
+              removeAllFilters();
+              setLabelError(false);
+              setError(false);
+            },
             variant: 'text',
             id: 'multifilter-drawer-remove-btn'
           }
@@ -134,4 +162,4 @@ const TreasurySearchResults = () => {
   );
 };
 
-export default TreasurySearchResults;
+export default ClassificationsSearchResults;

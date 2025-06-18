@@ -1,5 +1,5 @@
 import { describe, it, vi } from 'vitest';
-import ClassificationsOverview from '.';
+import ClassificationsExportFlowOverview from '.';
 import { render } from '../../__tests__/renderers';
 
 vi.mock('react-router-dom', async (importOriginal) => {
@@ -11,8 +11,8 @@ vi.mock('react-router-dom', async (importOriginal) => {
   };
 });
 
-describe('ClassificationsOverview Page', () => {
-  it('renders ClassificationsOverview without crashing', () => {
-    render(<ClassificationsOverview />);
+describe('ClassificationsExportFlowOverview Page', () => {
+  it('renders ClassificationsExportFlowOverview without crashing', () => {
+    render(<ClassificationsExportFlowOverview />);
   });
 });

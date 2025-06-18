@@ -2,30 +2,60 @@ import { Box, Button, IconButton, Stack, useTheme } from '@mui/material';
 import { Add, RemoveCircleOutline } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Filter } from './Filter';
-import { FilterMap } from '../../hooks/useMultiFilters';
+import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
 import { useStore } from '../../store/GlobalStore';
 import {
   addFilterRow,
   removeFilterRow,
   updateFilter,
+  setFilterValues,
   KeyofFilterMap
 } from '../../store/FilterStore';
 import { ChangeEvent } from 'react';
+import { FormComponent } from '../FormComponent';
+import { LabelEnum } from '../../../generated/apiClient';
 
 export type MultiFilterProps = {
   filterMap: FilterMap;
+  filterCategory?: FilterCategory;
+  showLabelError?: boolean;
+  onFilterInteraction?: () => void;
 };
 
-const MultiFilter = ({ filterMap }: MultiFilterProps) => {
+const MultiFilter = ({
+  filterMap,
+  filterCategory,
+  showLabelError,
+  onFilterInteraction
+}: MultiFilterProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
   const {
-    state: { selectedFilters }
+    state: { selectedFilters, filterValues }
   } = useStore();
+
+  const classificationType = filterValues.CLASSIFICATION_TYPE ?? '';
+
+  const onClassificationChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const newValue = e.target.value;
+    setFilterValues({ ...filterValues, CLASSIFICATION_TYPE: newValue });
+
+    onFilterInteraction?.();
+
+    if (newValue && newValue !== 'UNKNOWN' && selectedFilters.length === 0) {
+      const first = Object.keys(filterMap).find(
+        (key) => key !== 'CLASSIFICATION_TYPE'
+      ) as KeyofFilterMap;
+      if (first) addFilterRow(first);
+    }
+  };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     updateFilter(e.target.value as KeyofFilterMap, index);
+    onFilterInteraction?.();
   };
 
   // Add the next not already selected filter
@@ -36,43 +66,75 @@ const MultiFilter = ({ filterMap }: MultiFilterProps) => {
     if (next) addFilterRow(next);
   };
 
+  const showOtherFilters =
+    filterCategory != 'CLASSIFICATIONS' ||
+    (classificationType && classificationType !== 'UNKNOWN');
+
   return (
     <Stack gap={3}>
-      {selectedFilters.map((filterId, index) => (
-        <Stack
-          key={filterId}
-          direction="row"
-          gap={2}
-          justifyContent="space-between"
-        >
-          {selectedFilters.length > 1 && (
-            <IconButton
-              sx={{ color: theme.palette.error.dark, alignSelf: 'flex-start' }}
-              onClick={() => removeFilterRow(filterId)}
-              aria-label="remove"
-            >
-              <RemoveCircleOutline fontSize="small" />
-            </IconButton>
-          )}
-          <Filter
-            value={filterId}
-            filterMap={filterMap}
-            selectedFilters={selectedFilters}
-            onChange={(value) => onChange(value, index)}
-          />
-        </Stack>
-      ))}
+      {filterCategory == 'CLASSIFICATIONS' && (
+        <FormComponent.Select
+          id="classification-type-select"
+          name="CLASSIFICATION_TYPE"
+          label={t('classifications.filters.classificationType')}
+          options={Object.values(LabelEnum).map((value) => ({
+            label: t(`classificationsExport.classificationsOptions.${value}`),
+            value
+          }))}
+          error={showLabelError}
+          helperText={
+            showLabelError
+              ? t('classifications.filters.noOptionSelected')
+              : undefined
+          }
+          value={classificationType}
+          onChange={onClassificationChange}
+          sx={{ mb: 2 }}
+          data-testid="classification-section-type"
+        />
+      )}
 
-      <Box display="flex" justifyContent="flex-start">
-        <Button
-          variant="text"
-          onClick={addNextFilterRow}
-          startIcon={<Add />}
-          disabled={selectedFilters.length >= Object.keys(filterMap).length}
-        >
-          {t('commons.addfilter')}
-        </Button>
-      </Box>
+      {showOtherFilters &&
+        selectedFilters.map((filterId, index) => (
+          <Stack
+            key={filterId}
+            direction="row"
+            gap={2}
+            justifyContent="space-between"
+          >
+            {selectedFilters.length > 1 && (
+              <IconButton
+                sx={{
+                  color: theme.palette.error.dark,
+                  alignSelf: 'flex-start'
+                }}
+                onClick={() => removeFilterRow(filterId)}
+                aria-label="remove"
+              >
+                <RemoveCircleOutline fontSize="small" />
+              </IconButton>
+            )}
+            <Filter
+              value={filterId}
+              filterMap={filterMap}
+              selectedFilters={selectedFilters}
+              onChange={(value) => onChange(value, index)}
+            />
+          </Stack>
+        ))}
+
+      {showOtherFilters && (
+        <Box display="flex" justifyContent="flex-start">
+          <Button
+            variant="text"
+            onClick={addNextFilterRow}
+            startIcon={<Add />}
+            disabled={selectedFilters.length >= Object.keys(filterMap).length}
+          >
+            {t('commons.addfilter')}
+          </Button>
+        </Box>
+      )}
     </Stack>
   );
 };

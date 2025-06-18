@@ -11,12 +11,20 @@ export const initialFilterValues: FilterValues = {
   DOCUMENT_CODE: '',
   DOCUMENT_CODE_FROM: null,
   IUV: '',
+  IUR: '',
+  IUD: '',
+  IUF: '',
   PAYER: '',
   REPORT_ID: '',
   TEMPORARY_CODE: '',
   TEMPORARY_CODE_FROM: null,
   VALUE_DATE_FROM: null,
-  VALUE_DATE_TO: null
+  VALUE_DATE_TO: null,
+  CLASSIFICATION_TYPE: '',
+  LAST_CLASSIFICATION_DATE_FROM: null,
+  LAST_CLASSIFICATION_DATE_TO: null,
+  REGULATION_DATE_FROM: null,
+  REGULATION_DATE_TO: null
 };
 
 export const mapFilterNameToFilterValues: Record<
@@ -28,10 +36,19 @@ export const mapFilterNameToFilterValues: Record<
   BILL_CODE: ['BILL_CODE', 'BILL_FROM'],
   DOCUMENT_CODE: ['DOCUMENT_CODE', 'DOCUMENT_CODE_FROM'],
   IUV: ['IUV'],
+  IUR: ['IUR'],
+  IUD: ['IUD'],
+  IUF: ['IUF'],
   PAYER: ['PAYER'],
   REPORT_ID: ['REPORT_ID'],
   TEMPORARY_CODE: ['TEMPORARY_CODE', 'TEMPORARY_CODE_FROM'],
-  VALUE_DATE: ['VALUE_DATE_FROM', 'VALUE_DATE_TO']
+  VALUE_DATE: ['VALUE_DATE_FROM', 'VALUE_DATE_TO'],
+  CLASSIFICATION_TYPE: ['CLASSIFICATION_TYPE'],
+  LAST_CLASSIFICATION_DATE: [
+    'LAST_CLASSIFICATION_DATE_FROM',
+    'LAST_CLASSIFICATION_DATE_TO'
+  ],
+  REGULATION_DATE: ['REGULATION_DATE_FROM', 'REGULATION_DATE_TO']
 };
 
 export type KeyofFilterMap = keyof FilterMap;
@@ -69,6 +86,14 @@ export const filterValues = signal<FilterValues>(initialFilterValues);
 export const noFilterIsSelected = computed(() =>
   Object.values(filterValues.value).some((value) => !!value)
 );
+
+export const noFilterSelectedExcludingClassificationType = computed(() => {
+  const filteredEntries = Object.entries(filterValues.value).filter(
+    ([key]) => key !== 'CLASSIFICATION_TYPE'
+  );
+
+  return !filteredEntries.some(([, value]) => !!value);
+});
 
 export const setFilterValues = (newState: FilterValues) => {
   filterValues.value = newState;

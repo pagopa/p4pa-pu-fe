@@ -19,12 +19,20 @@ describe('useTreasurySearch', () => {
     DOCUMENT_CODE: '',
     DOCUMENT_CODE_FROM: null,
     IUV: '',
+    IUR: '',
+    IUD: '',
+    IUF: '',
     PAYER: '',
     REPORT_ID: '',
     TEMPORARY_CODE: '',
     TEMPORARY_CODE_FROM: null,
     VALUE_DATE_FROM: null,
-    VALUE_DATE_TO: null
+    VALUE_DATE_TO: null,
+    CLASSIFICATION_TYPE: '',
+    LAST_CLASSIFICATION_DATE_FROM: null,
+    LAST_CLASSIFICATION_DATE_TO: null,
+    REGULATION_DATE_FROM: null,
+    REGULATION_DATE_TO: null
   };
 
   it('should initialize with default values', () => {

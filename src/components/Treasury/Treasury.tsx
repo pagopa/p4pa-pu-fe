@@ -6,13 +6,14 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { PageRoutes } from '../../routes';
 import { generatePath, useNavigate } from 'react-router';
-import { useMultiFilters } from '../../hooks/useMultiFilters';
 import { ReactNode, useState } from 'react';
+import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
 
 export const Treasury = () => {
   const { t } = useTranslation();
   const { filterMap, removeAllFilters, noFilterIsSelected } = useMultiFilters({
-    clearOnMount: true
+    clearOnMount: true,
+    filterCategory: FilterCategory.TREASURY
   });
   const navigate = useNavigate();
   const [error, setError] = useState(false);
@@ -49,11 +50,17 @@ export const Treasury = () => {
               description={t('treasury.searchdescription')}
               multiFilterConfig={filterMap}
               render={error && errorMessage}
+              extraProps={{
+                onFilterInteraction: () => setError(false)
+              }}
               button={[
                 {
                   label: t('commons.filters.remove'),
                   variant: 'outlined',
-                  onClick: removeAllFilters,
+                  onClick: () => {
+                    removeAllFilters();
+                    setError(false);
+                  },
                   id: 'searchcard-remove-btn'
                 },
                 {

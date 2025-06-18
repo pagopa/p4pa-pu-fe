@@ -59,6 +59,33 @@ describe('SearchCard', () => {
           }
         ]
       },
+      IUD: {
+        label: 'IUD',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'IUD Field'
+          }
+        ]
+      },
+      IUR: {
+        label: 'IUR',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'IUR Field'
+          }
+        ]
+      },
+      IUF: {
+        label: 'IUF',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'IUF Field'
+          }
+        ]
+      },
       PAYER: {
         label: 'PAYER',
         fields: [
@@ -102,6 +129,27 @@ describe('SearchCard', () => {
             type: COMPONENT_TYPE.textField,
             label: 'VALUE_DATE Field'
           }
+        ]
+      },
+      CLASSIFICATION_TYPE: {
+        label: 'CLASSIFICATION_TYPE',
+        fields: [
+          { type: COMPONENT_TYPE.select, label: 'CLASSIFICATION_TYPE Field' }
+        ]
+      },
+      LAST_CLASSIFICATION_DATE: {
+        label: 'LAST_CLASSIFICATION_DATE',
+        fields: [
+          {
+            type: COMPONENT_TYPE.dateRange,
+            label: 'LAST_CLASSIFICATION_DATE Field'
+          }
+        ]
+      },
+      REGULATION_DATE: {
+        label: 'REGULATION_DATE',
+        fields: [
+          { type: COMPONENT_TYPE.dateRange, label: 'REGULATION_DATE Field' }
         ]
       }
     }
