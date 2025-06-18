@@ -84,4 +84,22 @@ describe('step1Schema validation', () => {
       );
     }
   });
+
+  it('fails if the code is not unique', () => {
+    const invalidData = {
+      debtPositionTypeId: '1',
+      code: 'CODE123',
+      isCodeUnique: false,
+      description: 'a description'
+    };
+
+    const result = step1Schema.safeParse(invalidData);
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const descriptionError = result.error.formErrors.fieldErrors.code;
+      expect(descriptionError).toContain(
+        'debtTypeOrgCreate.configuration.code.notUnique'
+      );
+    }
+  });
 });
