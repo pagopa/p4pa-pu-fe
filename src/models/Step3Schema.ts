@@ -16,6 +16,7 @@ import {
   createTaxCodeFieldSchema,
   createRemittanceFieldSchema,
   createIBANFieldSchema,
+  createPostalIbanFieldSchema,
   createTaxonomyCodeFieldSchema
 } from './BeneficiarySchema';
 import {
@@ -564,6 +565,7 @@ export const createStep3Schema = (t: TFunction) => {
       remittanceFieldSchema
     ),
     iban: createIBANFieldSchema(t),
+    postalIban: createPostalIbanFieldSchema(t),
     taxonomyCode: createTaxonomyCodeFieldSchema(t),
     id: z.string().optional(),
     isNew: z.boolean().optional()

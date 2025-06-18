@@ -115,8 +115,9 @@ export function useInstallmentBeneficiaryManagement<T extends FieldValues>(
           entityName: '',
           amount: '',
           taxCode: '',
+          remittance: '',
           iban: '',
-          postalAccount: '',
+          postalIban: '',
           taxonomyCode: '',
           isNew: true
         };

@@ -20,7 +20,6 @@ function ReportingPaymentDetail() {
   const { t } = useTranslation();
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-  // Definizione dei colori per gli stati
   const stateColors: Record<string, ChipProps['color']> = {
     CANCELLED: 'error',
     DRAFT: 'default',

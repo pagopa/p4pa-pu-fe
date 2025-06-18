@@ -196,10 +196,14 @@ beforeEach(() => {
     'debtPositionDetail.errorDialog.title': 'Cannot Delete',
     'debtPositionDetail.errorDialog.description':
       'This debt position cannot be deleted',
+    'debtPositionDetail.toSyncErrorDialog.description':
+      'Le posizioni debitorie in stato "Da sincronizzare" non possono essere eliminate. Si prega di ricaricare la pagina o riprovare più tardi.',
     'debtPositionDetail.edit': 'Edit',
     'debtPositionDetail.editErrorDialog.title': 'Cannot Edit',
     'debtPositionDetail.editErrorDialog.description':
       'This debt position cannot be edited',
+    'debtPositionDetail.toSyncEditErrorDialog.description':
+      'Le posizioni debitorie in stato "Da sincronizzare" non possono essere modificate. Si prega di ricaricare la pagina o riprovare più tardi.',
     'debtPositionDetail.publishDialog.title': 'Activate Payment?',
     'debtPositionDetail.publishDialog.description':
       "The debt position will change to 'Unpaid' status and payment notices will be generated.",
@@ -1006,5 +1010,109 @@ describe('DebtPositionDetail Component', () => {
 
     expect(screen.getByText('Download Notices')).toBeDefined();
     expect(screen.queryByText('Active Payment')).not.toBeInTheDocument();
+  });
+
+  it('shows specific error dialog when trying to delete a debt position with TO_SYNC status', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.TO_SYNC;
+
+    render(<DebtPositionDetail />);
+
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      await vi.waitFor(() => {
+        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+        if (deleteOption) {
+          fireEvent.click(deleteOption);
+        }
+      });
+
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Cannot Delete');
+        expect(dialogTitle).toBeVisible();
+
+        const dialogMessage = screen.getByText(
+          'Le posizioni debitorie in stato "Da sincronizzare" non possono essere eliminate. Si prega di ricaricare la pagina o riprovare più tardi.'
+        );
+        expect(dialogMessage).toBeVisible();
+
+        const closeButton = screen.getByRole('button', { name: 'Close' });
+        expect(closeButton).toBeVisible();
+
+        const deleteButton = screen.queryByRole('button', { name: 'Delete' });
+        expect(deleteButton).not.toBeInTheDocument();
+      });
+
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      fireEvent.click(closeButton);
+
+      await vi.waitFor(() => {
+        expect(screen.queryByText('Cannot Delete')).not.toBeInTheDocument();
+      });
+
+      expect(deleteMockMutateAsync).not.toHaveBeenCalled();
+    }
+  });
+
+  it('shows specific error dialog when trying to edit a debt position with TO_SYNC status', async () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.status = DebtPositionStatus.TO_SYNC;
+    mockData.debtPositionOrigin = DebtPositionOrigin.ORDINARY;
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      await vi.waitFor(() => {
+        const editOption = screen.getByTestId('EditIcon').closest('li');
+        expect(editOption).toBeVisible();
+
+        if (editOption) {
+          fireEvent.click(editOption);
+        }
+      });
+
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Cannot Edit');
+        expect(dialogTitle).toBeVisible();
+
+        const dialogMessage = screen.getByText(
+          'Le posizioni debitorie in stato "Da sincronizzare" non possono essere modificate. Si prega di ricaricare la pagina o riprovare più tardi.'
+        );
+        expect(dialogMessage).toBeVisible();
+
+        const closeButton = screen.getByRole('button', { name: 'Close' });
+        expect(closeButton).toBeVisible();
+      });
+
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      fireEvent.click(closeButton);
+
+      await vi.waitFor(() => {
+        expect(screen.queryByText('Cannot Edit')).not.toBeInTheDocument();
+      });
+    }
   });
 });

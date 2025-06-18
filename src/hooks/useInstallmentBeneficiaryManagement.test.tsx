@@ -425,8 +425,9 @@ describe('useInstallmentBeneficiaryManagement - Additional Coverage Tests', () =
           entityName: '',
           amount: '',
           taxCode: '',
+          remittance: '',
           iban: '',
-          postalAccount: '',
+          postalIban: '',
           taxonomyCode: '',
           isNew: true
         })
