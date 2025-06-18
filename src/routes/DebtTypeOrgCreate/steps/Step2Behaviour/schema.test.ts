@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { PaymentMethodOption } from './components/PaymentMethodSelector';
 import { step2Schema } from './schema';
 
@@ -8,7 +7,7 @@ describe('step2Schema', () => {
       flagSpontaneous: true,
       flagMandatoryDueDate: false,
       isAnonymousFiscalCode: false,
-      flagNotifyOutcomePush: 'disabled',
+      flagNotifyOutcomePush: 'disabled' as const,
       paymentMethod: PaymentMethodOption.AMOUNT
     };
 
@@ -101,50 +100,45 @@ describe('step2Schema', () => {
     const baseNotificationData = {
       flagSpontaneous: false,
       paymentMethod: PaymentMethodOption.FREE,
-      flagNotifyOutcomePush: 'enabled',
-      notificationRetries: 3,
-      notificationAppName: 'Test App',
-      notificationEndpoint: 'https://api.example.com',
-      enableJwtAuth: true,
-      clientId: 'client-123',
-      clientEmail: 'client@example.com',
-      secretKeyId: 'key-123',
-      secretKey: 'secret-123'
+      flagNotifyOutcomePush: 'enabled' as const,
+      notifyOutcomePushOrgSilServiceId: 123
     };
 
-    it('should require all notification fields when flagNotifyOutcomePush is true', () => {
-      const requiredFields = [
-        'notificationRetries',
-        'notificationAppName',
-        'notificationEndpoint',
-        'clientId',
-        'clientEmail',
-        'secretKeyId',
-        'secretKey'
-      ];
+    it('should require notifyOutcomePushOrgSilServiceId when flagNotifyOutcomePush is enabled', () => {
+      const dataWithoutServiceId = {
+        ...baseNotificationData,
+        notifyOutcomePushOrgSilServiceId: undefined
+      };
 
-      for (const field of requiredFields) {
-        const invalidData = { ...baseNotificationData, [field]: undefined };
-        const result = step2Schema.safeParse(invalidData);
-        expect(result.success).toBe(false);
-        if (!result.success) {
-          expect(
-            result.error.issues.some((issue) => issue.path[0] === field)
-          ).toBe(true);
-        }
-      }
-    });
-
-    it('should validate clientEmail format', () => {
-      const data = { ...baseNotificationData, clientEmail: 'invalid-email' };
-      const result = step2Schema.safeParse(data);
+      const result = step2Schema.safeParse(dataWithoutServiceId);
       expect(result.success).toBe(false);
       if (!result.success) {
         expect(
           result.error.issues.some(
             (issue) =>
-              issue.path[0] === 'clientEmail' &&
-              issue.code === z.ZodIssueCode.invalid_string
+              issue.path[0] === 'notifyOutcomePushOrgSilServiceId' &&
+              issue.message ===
+                'debtTypeOrgCreate.behaviour.notifications.configuration.required'
+          )
+        ).toBe(true);
+      }
+    });
+
+    it('should reject zero value for notifyOutcomePushOrgSilServiceId', () => {
+      const dataWithZeroServiceId = {
+        ...baseNotificationData,
+        notifyOutcomePushOrgSilServiceId: 0
+      };
+
+      const result = step2Schema.safeParse(dataWithZeroServiceId);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(
+          result.error.issues.some(
+            (issue) =>
+              issue.path[0] === 'notifyOutcomePushOrgSilServiceId' &&
+              issue.message ===
+                'debtTypeOrgCreate.behaviour.notifications.configuration.required'
           )
         ).toBe(true);
       }
@@ -161,8 +155,7 @@ describe('step2Schema', () => {
       const data = {
         flagSpontaneous: false,
         paymentMethod: PaymentMethodOption.FREE,
-        flagNotifyOutcomePush: 'disabled'
-        // no notification fields required
+        flagNotifyOutcomePush: 'disabled' as const
       };
       const result = step2Schema.safeParse(data);
       expect(result.success).toBe(true);
@@ -172,7 +165,8 @@ describe('step2Schema', () => {
       const data = {
         flagSpontaneous: false,
         paymentMethod: PaymentMethodOption.AMOUNT,
-        amountCents: undefined
+        amountCents: undefined,
+        flagNotifyOutcomePush: 'disabled' as const
       };
       const result = step2Schema.safeParse(data);
       expect(result.success).toBe(true);

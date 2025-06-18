@@ -4,13 +4,13 @@ import TuneIcon from '@mui/icons-material/Tune';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import OfflineBoltIcon from '@mui/icons-material/OfflineBolt';
-import Stack from '@mui/material/Stack';
 
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../../components/FormComponent';
 import { PaymentMethodSelector } from './components/PaymentMethodSelector';
-import { PaymentNotificationFields } from './components/PaymentNotificationFields';
+import { NotificationConfigSelector } from './components/NotificationConfigSelector';
+import { ActualizationConfigSelector } from './components/ActualizationConfigSelector';
 import { DebtTypeOrgForm } from '../../types';
 
 export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
@@ -30,6 +30,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
       <FormComponent.ControlledSwitch
         control={control}
         name="flagSpontaneous"
+        data-testId="flagSpontaneous"
         label={t('debtTypeOrgCreate.behaviour.postalAccount')}
         disabled={edit}
       />
@@ -44,6 +45,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
           <PaymentMethodSelector
             control={control}
             name="paymentMethod"
+            data-testId="paymentMethod"
             selectedValue={watch('paymentMethod')}
             edit={edit}
           />
@@ -56,6 +58,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
           <FormComponent.ControlledCheckbox
             control={control}
             name="flagMandatoryDueDate"
+            data-testId="flagMandatoryDueDate"
             label={t('debtTypeOrgCreate.behaviour.optionA.label')}
             description={t('debtTypeOrgCreate.behaviour.optionA.description')}
             disabled={edit}
@@ -63,6 +66,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
           <FormComponent.ControlledCheckbox
             control={control}
             name="flagAnonymousFiscalCode"
+            data-testId="flagAnonymousFiscalCode"
             label={t('debtTypeOrgCreate.behaviour.optionB.label')}
             description={t('debtTypeOrgCreate.behaviour.optionB.description')}
             disabled={edit}
@@ -76,9 +80,11 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
       >
         <FormComponent.ControlledRadioGroup
           name="flagNotifyOutcomePush"
+          data-testId="flagNotifyOutcomePush"
           control={control}
           label={t('debtTypeOrgCreate.behaviour.notifications.radioLabel')}
           sx={{ flexDirection: 'row' }}
+          disabled={false}
           options={[
             {
               value: 'disabled',
@@ -91,43 +97,16 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
           ]}
         />
         {flagNotifyOutcomePush === 'enabled' && (
-          <PaymentNotificationFields control={control} />
+          <NotificationConfigSelector control={control} edit={edit} />
         )}
       </SectionBox>
 
       <SectionBox
-        title={t('debtTypeOrgCreate.behaviour.updateAmount.title')}
-        subtitle={t('debtTypeOrgCreate.behaviour.updateAmount.subtitle')}
+        title={t('debtTypeOrgCreate.behaviour.actualization.title')}
+        subtitle={t('debtTypeOrgCreate.behaviour.actualization.subtitle')}
         adornment={<MonetizationOnIcon />}
       >
-        <Stack direction="row" spacing={2}>
-          <FormComponent.ControlledTextField
-            name="authenticateUsername"
-            control={control}
-            label={t('debtTypeOrgCreate.behaviour.updateAmount.notesLabel')}
-            required={false}
-          />
-          <FormComponent.ControlledTextField
-            name="authenticatePassword"
-            control={control}
-            label={t('debtTypeOrgCreate.behaviour.updateAmount.amountLabel')}
-            required={false}
-          />
-        </Stack>
-        <Stack direction="row" spacing={2} mt={2}>
-          <FormComponent.ControlledTextField
-            name="authCallbackUrl"
-            control={control}
-            label={t('debtTypeOrgCreate.behaviour.updateAmount.authUrlLabel')}
-            required={false}
-          />
-          <FormComponent.ControlledTextField
-            name="updateCallbackUrl"
-            control={control}
-            label={t('debtTypeOrgCreate.behaviour.updateAmount.updateUrlLabel')}
-            required={false}
-          />
-        </Stack>
+        <ActualizationConfigSelector control={control} edit={edit} />
       </SectionBox>
     </WizardStepWrapper>
   );

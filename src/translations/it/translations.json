@@ -323,6 +323,7 @@
     "noFlows": "Non ci sono flussi.",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
     "notifications": "Notifiche",
+    "notificationsConfig": "Configurazione",
     "operator": "Operatore",
     "operators": "Operatori",
     "optional": "opzionale",
@@ -876,6 +877,9 @@
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
   "debtTypeDetail": {
+    "errors": {
+      "servicesUnavailableCannotEdit": "Non è stato possibile recuperare configurazioni la modifica non è consentita al momento, riprova più tardi"
+    },
     "description": "Ecco i dettagli del Tipo dovuto",
     "debtMainConfiguration": {
       "title": "Configurazione generale",
@@ -989,17 +993,34 @@
           "no": "No",
           "yes": "Si"
         },
-        "fields": {
-          "retries": "Massimo Tentativi inoltro esito pagamento",
-          "retriesDescription": "Numero di tentativi eseguiti da Piattaforma Unitaria per informare al Sistema Gestionale dell'esito del pagamento.",
-          "appName": "Nome applicativo",
-          "endpoint": "URL inoltro RT",
-          "jwt": "JWT",
-          "clientId": "Client ID",
-          "clientEmail": "Client mail",
-          "secretKeyId": "Secret key ID",
-          "secretKey": "Secret key"
+        "configuration": {
+          "label": "Configurazione notifiche",
+          "none": "Nessuna notifica",
+          "required": "La configurazione è obbligatoria se si sceglie di abilitare le notifiche",
+          "helperText": "Seleziona una configurazione per la gestione delle notifiche",
+          "editHelperText": "Seleziona una configurazione per la gestione delle notifiche",
+          "errorState": "Errore nel recupero delle configurazioni",
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione"
         }
+      },
+      "actualization": {
+        "title": "Attualizzazione importo",
+        "subtitle": "Configura l'attualizzazione importo e costi agguntivi.",
+        "configuration": {
+          "label": "Configurazione attualizzazione importo",
+          "none": "Nessuna attualizzazione",
+          "noneSelected": "Attualizzazione non configurata",
+          "noneEditHelper": "L'attualizzazione non può essere abilitata in modifica se non era precedentemente configurata",
+          "errorState": "Errore nel recupero delle configurazioni",
+          "helperText": "Una volta selezionata una configurazione per l'attualizzazione sarà possibile modificarla ma non rimuoverla",
+          "editHelperText": "È possibile la sola modifica della configurazione, non può essere rimossa",
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione"
+        }
+      },
+      "errors": {
+        "notificationServiceUnavailable": "Servizio di configurazione notifiche non disponibile - alcune opzioni potrebbero essere limitate",
+        "actualizationServiceUnavailable": "Servizio di configurazione attualizzazione non disponibile - alcune opzioni potrebbero essere limitate", 
+        "bothServicesUnavailable": "Servizi di configurazione notifiche e attualizzazione non disponibili - alcune opzioni potrebbero essere limitate"
       },
       "updateAmount": {
         "title": "Attualizzazione importo",
