@@ -6,6 +6,7 @@ import {
   PaymentsReportingQuery
 } from '../api/getPaymentsReporting';
 import { usePaginationState } from './usePaginationState';
+import { noFilterSetted } from '../utils/filtersValidation';
 
 export type ReportingFilters = {
   dateRange?: {
@@ -45,7 +46,9 @@ export const useReportingSearch = ({
   const query = getPaymentsReporting(organizationId);
 
   useEffect(() => {
-    query.mutate(filterToRequest());
+    if (!noFilterSetted(filterValues)) {
+      query.mutate(filterToRequest());
+    }
   }, [organizationId, paginationParams.page, paginationParams.size, sort]);
 
   const filterToRequest = (): PaymentsReportingQuery => ({

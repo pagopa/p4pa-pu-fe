@@ -8,6 +8,7 @@ import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { ReactNode, useCallback, useState } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
+import { noFilterSetted } from '../../utils/filtersValidation';
 
 export const TelematicReceipt = () => {
   const { t } = useTranslation();
@@ -26,7 +27,7 @@ export const TelematicReceipt = () => {
   );
 
   const navigateToResults = useCallback(() => {
-    if (filters[0] && Object.keys(filters[0]).length > 0) {
+    if (!noFilterSetted(filters[0])) {
       navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS, {
         state: {
           filters: filters[0]
