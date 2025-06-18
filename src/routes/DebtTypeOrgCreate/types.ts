@@ -6,6 +6,7 @@ export type DebtTypeOrgForm = {
   debtPositionTypeId: string;
   description: string;
   code: string;
+  isCodeUnique?: boolean;
 
   // Step 2
   flagSpontaneous?: boolean;
@@ -21,22 +22,8 @@ export type DebtTypeOrgForm = {
   xsdDefinitionRef?: File;
 
   flagNotifyOutcomePush?: 'enabled' | 'disabled';
-
-  // TODO Missing in api
-  notificationRetries?: number;
-  notificationAppName?: string;
-  notificationEndpoint?: string;
-  enableJwtAuth?: boolean;
-  clientId?: string;
-  clientEmail?: string;
-  secretKeyId?: string;
-  secretKey?: string;
-
-  // TODO Missing in api
-  authenticateUsername?: string;
-  authenticatePassword?: string;
-  authCallbackUrl?: string;
-  updateCallbackUrl?: string;
+  notifyOutcomePushOrgSilServiceId?: number;
+  amountActualizationOrgSilServiceId?: number;
 
   // Step 3
   postalIban?: string;

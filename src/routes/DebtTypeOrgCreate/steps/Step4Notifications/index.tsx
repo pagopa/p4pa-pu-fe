@@ -43,6 +43,7 @@ export const Step4Notifications = () => {
               <Stack gap={0.5}>
                 <FormComponent.ControlledTextField
                   name="serviceId"
+                  data-testId="serviceId"
                   control={control}
                   label={t(
                     'debtTypeOrgCreate.notifications.serviceApiKey.label'
@@ -56,6 +57,7 @@ export const Step4Notifications = () => {
               <Stack gap={0.5}>
                 <FormComponent.ControlledTextField
                   name="ioTemplateSubject"
+                  data-testId="ioTemplateSubject"
                   control={control}
                   label={t(
                     'debtTypeOrgCreate.notifications.messageSubject.label'
@@ -80,6 +82,7 @@ export const Step4Notifications = () => {
               <Stack gap={0.5}>
                 <FormComponent.ControlledTextField
                   name="ioTemplateMessage"
+                  data-testId="ioTemplateMessage"
                   control={control}
                   label={t('debtTypeOrgCreate.notifications.messageBody.label')}
                   multiline
@@ -109,6 +112,7 @@ export const Step4Notifications = () => {
             >
               <Button
                 variant="text"
+                data-testId="open-message-preview"
                 onClick={() => setOpen(true)}
                 disabled={!ioTemplateSubject || !ioTemplateMessage}
                 sx={{ px: 0 }}

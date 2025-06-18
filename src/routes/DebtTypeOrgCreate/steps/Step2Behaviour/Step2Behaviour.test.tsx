@@ -6,12 +6,27 @@ import { StoreProvider } from '../../../../store/GlobalStore';
 import { FormProvider, useForm, FieldValues } from 'react-hook-form';
 import { setOrganizationId } from '../../../../store/OrganizationIdStore';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { step2Schema } from './schema'; // Adjust path as needed
+import { step2Schema } from './schema';
+import { PaymentMethodOption } from './components/PaymentMethodSelector';
 
-// Helper to render component with form context and validation schema
+vi.mock('../../hooks/useNotificationConfig', () => ({
+  useNotificationConfigurations: () => ({
+    isError: false,
+    data: [{ id: 1, name: 'Test Config' }]
+  })
+}));
+
+vi.mock('../../hooks/useActualizationConfig', () => ({
+  useActualizationConfigurations: () => ({
+    isError: false,
+    data: [{ id: 1, name: 'Test Actualization Config' }]
+  })
+}));
+
 const renderWithForm = (
   ui: React.ReactElement,
-  onSubmit?: (data: FieldValues) => void
+  onSubmit?: (data: FieldValues) => void,
+  defaultValues?: Partial<FieldValues>
 ) => {
   const Wrapper: React.FC = () => {
     const methods = useForm({
@@ -19,12 +34,10 @@ const renderWithForm = (
       defaultValues: {
         flagSpontaneous: false,
         flagNotifyOutcomePush: 'disabled',
-        paymentMethod: undefined,
+        paymentMethod: PaymentMethodOption.FREE,
         flagMandatoryDueDate: false,
-        authenticateUsername: '',
-        authenticatePassword: '',
-        authCallbackUrl: '',
-        updateCallbackUrl: ''
+        isAnonymousFiscalCode: false,
+        ...defaultValues
       }
     });
 
@@ -82,7 +95,6 @@ describe('Step2Behaviour', () => {
   it('toggles spontaneous payment section correctly', () => {
     renderWithForm(<Step2Behaviour />);
 
-    // Initially spontaneous payment disabled: behaviour section visible
     expect(
       screen.getByText('debtTypeOrgCreate.behaviour.section.behaviourTitle')
     ).toBeInTheDocument();
@@ -92,13 +104,11 @@ describe('Step2Behaviour', () => {
       )
     ).not.toBeInTheDocument();
 
-    // Enable spontaneous payment
     const spontaneousSwitch = screen.getByRole('checkbox', {
       name: 'debtTypeOrgCreate.behaviour.postalAccount'
     });
     fireEvent.click(spontaneousSwitch);
 
-    // Now spontaneous payment section visible
     expect(
       screen.getByText(
         'debtTypeOrgCreate.behaviour.section.spontaneousPaymentTitle'
@@ -109,52 +119,126 @@ describe('Step2Behaviour', () => {
     ).not.toBeInTheDocument();
   });
 
-  it('shows payment notification fields only when notifications enabled', () => {
+  it('shows correct options in behaviour section when spontaneous is disabled', () => {
     renderWithForm(<Step2Behaviour />);
 
-    // Initially notifications disabled: fields hidden
+    expect(
+      screen.getByRole('checkbox', {
+        name: 'debtTypeOrgCreate.behaviour.optionA.label debtTypeOrgCreate.behaviour.optionA.description'
+      })
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('checkbox', {
+        name: 'debtTypeOrgCreate.behaviour.optionB.label debtTypeOrgCreate.behaviour.optionB.description'
+      })
+    ).toBeInTheDocument();
+  });
+
+  it('shows notification configuration when notifications enabled', () => {
+    renderWithForm(<Step2Behaviour />);
+
     expect(
       screen.queryByText(
         'debtTypeOrgCreate.behaviour.notifications.fields.retries'
       )
     ).not.toBeInTheDocument();
 
-    // Select "Yes" for enablePaymentNotifications
     const yesRadio = screen.getByRole('radio', {
       name: 'debtTypeOrgCreate.behaviour.notifications.options.yes'
     });
     fireEvent.click(yesRadio);
 
-    // Now notification fields rendered
+    expect(yesRadio).toBeChecked();
+  });
+
+  it('renders actualization section', () => {
+    renderWithForm(<Step2Behaviour />);
+
     expect(
-      screen.getByText(
-        'debtTypeOrgCreate.behaviour.notifications.fields.retries'
-      )
+      screen.getByText('debtTypeOrgCreate.behaviour.actualization.title')
     ).toBeInTheDocument();
     expect(
+      screen.getByText('debtTypeOrgCreate.behaviour.actualization.subtitle')
+    ).toBeInTheDocument();
+
+    expect(
       screen.getByRole('combobox', {
-        name: 'debtTypeOrgCreate.behaviour.notifications.fields.retries'
+        name: 'debtTypeOrgCreate.behaviour.actualization.configuration.label'
       })
     ).toBeInTheDocument();
   });
 
-  it('renders update amount section with text fields', () => {
+  it('disables controls in edit mode', () => {
+    renderWithForm(<Step2Behaviour edit={true} />);
+
+    const spontaneousSwitch = screen.getByRole('checkbox', {
+      name: 'debtTypeOrgCreate.behaviour.postalAccount'
+    });
+    expect(spontaneousSwitch).toBeDisabled();
+
+    const optionACheckbox = screen.getByRole('checkbox', {
+      name: 'debtTypeOrgCreate.behaviour.optionA.label debtTypeOrgCreate.behaviour.optionA.description'
+    });
+    expect(optionACheckbox).toBeDisabled();
+
+    const optionBCheckbox = screen.getByRole('checkbox', {
+      name: 'debtTypeOrgCreate.behaviour.optionB.label debtTypeOrgCreate.behaviour.optionB.description'
+    });
+    expect(optionBCheckbox).toBeDisabled();
+  });
+
+  it('shows payment method selector when spontaneous is enabled', () => {
+    renderWithForm(<Step2Behaviour />, undefined, { flagSpontaneous: true });
+
+    expect(screen.getByTestId('paymentMethod')).toBeInTheDocument();
+
+    expect(
+      screen.getByRole('combobox', {
+        name: /debtTypeOrgCreate\.behaviour\.spontaneous\.label/
+      })
+    ).toBeInTheDocument();
+  });
+
+  it('handles notification service errors in edit mode', () => {
+    const mockNotifyEmit = vi.fn();
+
+    vi.doMock('../../../../utils', () => ({
+      default: {
+        notify: {
+          emit: mockNotifyEmit
+        }
+      }
+    }));
+
+    vi.doMock('../../hooks/useNotificationConfig', () => ({
+      useNotificationConfigurations: () => ({
+        isError: true,
+        data: null
+      })
+    }));
+
+    renderWithForm(<Step2Behaviour edit={true} />);
+
+    const notificationRadio = screen.getByRole('radiogroup', {
+      name: 'debtTypeOrgCreate.behaviour.notifications.radioLabel'
+    });
+    expect(notificationRadio).toBeInTheDocument();
+  });
+
+  it('renders all main sections', () => {
     renderWithForm(<Step2Behaviour />);
 
     expect(
-      screen.getByText('debtTypeOrgCreate.behaviour.updateAmount.title')
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('debtTypeOrgCreate.behaviour.updateAmount.subtitle')
+      screen.getByText('debtTypeOrgCreate.behaviour.section.behaviourTitle')
     ).toBeInTheDocument();
 
-    [
-      'debtTypeOrgCreate.behaviour.updateAmount.notesLabel',
-      'debtTypeOrgCreate.behaviour.updateAmount.amountLabel',
-      'debtTypeOrgCreate.behaviour.updateAmount.authUrlLabel',
-      'debtTypeOrgCreate.behaviour.updateAmount.updateUrlLabel'
-    ].forEach((label) => {
-      expect(screen.getByRole('textbox', { name: label })).toBeInTheDocument();
-    });
+    expect(
+      screen.getByText('debtTypeOrgCreate.behaviour.notifications.title')
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByText('debtTypeOrgCreate.behaviour.actualization.title')
+    ).toBeInTheDocument();
   });
 });

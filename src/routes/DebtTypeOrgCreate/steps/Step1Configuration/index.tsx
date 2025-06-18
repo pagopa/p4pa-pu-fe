@@ -14,6 +14,10 @@ import { useEffect } from 'react';
 import { DebtTypeOrgForm } from '../../types';
 import { useParams } from 'react-router';
 import { getDebtPositionTypeOrgById } from '../../../../api/debtPositionsTypeOrg';
+import {
+  useActualizationServices,
+  useNotificationServices
+} from '../../hooks/useOrgSilServices';
 
 export type Step1Data = {
   debtPositionTypeId: string;
@@ -41,11 +45,13 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
   });
 
-  const { control, watch, setValue, trigger } =
+  const actualizationQuery = useActualizationServices();
+  const notificationQuery = useNotificationServices();
+
+  const { control, watch, setValue, trigger, reset, getValues } =
     useFormContext<DebtTypeOrgForm>();
 
   const description = watch('description');
-
   const selectedId = watch('debtPositionTypeId');
 
   // Auto-fill other fields when selection changes
@@ -66,21 +72,36 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     }
   }, [edit, selectedId, selectionQuery.data, setValue, trigger]);
 
-  // If editing, auto-fill fields with the GET detail
   useEffect(() => {
     const response = detailQuery.data?.response;
-    if (edit && response) {
+
+    const areSelectsReady =
+      !actualizationQuery.isLoading && !notificationQuery.isLoading;
+
+    if (edit && response && areSelectsReady) {
+      const formValues: Partial<DebtTypeOrgForm> = {};
+
       Object.entries(response).forEach(([key, val]) => {
-        setValue(key as keyof DebtTypeOrgForm, val);
+        formValues[key as keyof DebtTypeOrgForm] = val;
       });
-      // map boolean to 'enabled' or 'disabled'
-      setValue(
-        'flagNotifyOutcomePush',
-        response.flagNotifyOutcomePush ? 'enabled' : 'disabled'
-      );
-      trigger();
+
+      formValues.flagNotifyOutcomePush = response.flagNotifyOutcomePush
+        ? 'enabled'
+        : 'disabled';
+
+      reset({
+        ...getValues(),
+        ...formValues
+      });
     }
-  }, [edit, detailQuery.data, setValue, trigger]);
+  }, [
+    edit,
+    detailQuery.data,
+    reset,
+    getValues,
+    actualizationQuery.isLoading,
+    notificationQuery.isLoading
+  ]);
 
   return (
     <WizardStepWrapper
@@ -98,6 +119,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
           name="debtPositionTypeId"
           disabled={!selectionQuery?.data?.optionsMap?.length || edit}
           options={selectionQuery?.data?.optionsMap}
+          data-testId="debtPositionTypeId"
         />
       </SectionBox>
 
@@ -109,6 +131,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
         <Stack direction="row" spacing={3}>
           <FormComponent.ControlledTextField
             name="code"
+            data-testId="code"
             sx={{ flex: 1 }}
             control={control}
             label={t('debtTypeOrgCreate.configuration.code.label')}
@@ -118,6 +141,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
           <Stack flex={3}>
             <FormComponent.ControlledTextField
               name="description"
+              data-testId="description"
               control={control}
               disabled={edit}
               label={t('debtTypeOrgCreate.configuration.description.label')}
