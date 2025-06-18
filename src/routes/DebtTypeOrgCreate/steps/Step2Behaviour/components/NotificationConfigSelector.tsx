@@ -1,0 +1,57 @@
+import { Control, useWatch } from 'react-hook-form';
+import { ServiceSelector } from './ServiceSelector';
+import { DebtTypeOrgForm } from '../../../types';
+import { useTranslation } from 'react-i18next';
+import { FormComponent } from '../../../../../components/FormComponent';
+import { useNotificationServices } from '../../../hooks/useOrgSilServices';
+
+type NotificationConfigSelectorProps = {
+  control: Control<DebtTypeOrgForm>;
+  edit?: boolean;
+};
+
+export const NotificationConfigSelector = ({
+  control,
+  edit = false
+}: NotificationConfigSelectorProps) => {
+  const { t } = useTranslation();
+  const query = useNotificationServices();
+
+  const currentValue = useWatch({
+    control,
+    name: 'notifyOutcomePushOrgSilServiceId'
+  });
+
+  if (edit && currentValue === 0) {
+    return (
+      <FormComponent.ControlledTextField
+        name="notifyOutcomePushOrgSilServiceId"
+        data-testId="notifyOutcomePushOrgSilServiceId"
+        control={control}
+        label={t(
+          'debtTypeOrgCreate.behaviour.notifications.configuration.label'
+        )}
+        value={t(
+          'debtTypeOrgCreate.behaviour.notifications.configuration.none'
+        )}
+        disabled={true}
+        InputProps={{
+          readOnly: true
+        }}
+      />
+    );
+  }
+
+  return (
+    <ServiceSelector
+      control={control}
+      name="notifyOutcomePushOrgSilServiceId"
+      data-testId="notifyOutcomePushOrgSilServiceId"
+      labelKey="debtTypeOrgCreate.behaviour.notifications.configuration.label"
+      query={query}
+      edit={edit}
+      required={true}
+      baseTranslationKey="debtTypeOrgCreate.behaviour.notifications.configuration"
+    />
+  );
+};

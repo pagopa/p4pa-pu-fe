@@ -15,19 +15,8 @@ export const step2Schema = z
 
     flagNotifyOutcomePush: z.enum(['enabled', 'disabled']).default('disabled'),
 
-    notificationRetries: z.coerce.number().optional(),
-    notificationAppName: z.string().optional(),
-    notificationEndpoint: z.string().optional(),
-    enableJwtAuth: z.boolean().optional(),
-    clientId: z.string().optional(),
-    clientEmail: z.string().email().optional(),
-    secretKeyId: z.string().optional(),
-    secretKey: z.string().optional(),
-
-    authenticateUsername: z.string().optional(),
-    authenticatePassword: z.string().optional(),
-    authCallbackUrl: z.string().optional(),
-    updateCallbackUrl: z.string().optional()
+    notifyOutcomePushOrgSilServiceId: z.coerce.number().optional(),
+    amountActualizationOrgSilServiceId: z.coerce.number().optional()
   })
   .superRefine((data, ctx) => {
     validateSpontaneousPayment(data, ctx);
@@ -77,16 +66,15 @@ const validateNotifications = (
 ) => {
   if (data.flagNotifyOutcomePush !== 'enabled') return;
 
-  // Validate required fields
-  const requiredFields = [
-    'notificationRetries',
-    'notificationAppName',
-    'notificationEndpoint',
-    'clientId',
-    'clientEmail',
-    'secretKeyId',
-    'secretKey'
-  ] as const;
-
-  requiredFields.forEach((field) => requireField(data, field, ctx));
+  if (
+    !data.notifyOutcomePushOrgSilServiceId ||
+    data.notifyOutcomePushOrgSilServiceId === 0
+  ) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message:
+        'debtTypeOrgCreate.behaviour.notifications.configuration.required',
+      path: ['notifyOutcomePushOrgSilServiceId']
+    });
+  }
 };

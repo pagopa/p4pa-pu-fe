@@ -14,6 +14,9 @@ import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
 import { DebtTypeOrgForm } from './types';
 import { useStepperLogic } from '../../hooks/useStepperLogic';
 import { useDebtTypeOrgForm } from './hooks/useDebtTypeOrgForm';
+import { useDebtPositionTypeOrgSearch } from '../../api/debtTypesCreated';
+import { useStore } from '../../store/GlobalStore';
+import utils from '../../utils';
 
 export type DebtTypeOrgCreateProps = {
   edit?: boolean;
@@ -22,7 +25,9 @@ export type DebtTypeOrgCreateProps = {
 export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
+  const {
+    state: { organizationId }
+  } = useStore();
   const {
     currentStep,
     goToNextStep,
@@ -53,27 +58,48 @@ export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
 
   const { getValues, setError, clearErrors } = methods;
 
+  const DebtPositionTypeOrgSearchMutation = useDebtPositionTypeOrgSearch();
+
   const handleNext = useCallback(async () => {
-    clearErrors();
-    const values = getValues();
-    const { isValid, errors } = validateStep(currentStep, values);
+    try {
+      clearErrors();
+      const values = getValues();
 
-    if (!isValid) {
-      errors.forEach(({ path, message }) => {
-        if (path.length > 0) {
-          setError(path[0] as keyof DebtTypeOrgForm, {
-            type: 'manual',
-            message
-          });
-        }
+      // code validation
+      let isCodeUnique: boolean | undefined;
+      if (currentStep === 0) {
+        const response = await DebtPositionTypeOrgSearchMutation.mutateAsync({
+          organizationId,
+          filters: { size: 1, code: values.code }
+        });
+        isCodeUnique = response.content.length === 0;
+      }
+
+      const { isValid, errors } = validateStep(currentStep, {
+        ...values,
+        isCodeUnique
       });
-      return;
-    }
 
-    if (isLastStep) {
-      await handleSubmit(values);
-    } else {
-      goToNextStep();
+      if (!isValid) {
+        errors.forEach(({ path, message }) => {
+          if (path.length > 0) {
+            setError(path[0] as keyof DebtTypeOrgForm, {
+              type: 'manual',
+              message
+            });
+          }
+        });
+        return;
+      }
+
+      if (isLastStep) {
+        await handleSubmit(values);
+      } else {
+        goToNextStep();
+      }
+    } catch (e) {
+      console.error(e);
+      utils.notify.emit(t('errors.generic'));
     }
   }, [
     clearErrors,
