@@ -26,7 +26,7 @@ import {
 import { AppPreview } from '../../../components/AppPreview';
 import PreviewIcon from '@mui/icons-material/Preview';
 import { useState } from 'react';
-import { MarkdownPreview } from './MarkdownPreview';
+import { NotificationPreview } from '../../../components/NotificationPreview';
 
 export type Step2Data = Partial<DebtPositionTypeRequestBody> &
   Pick<
@@ -285,12 +285,11 @@ export const Step2Settings = ({
           onNext={handleSubmit(onSubmit)}
         />
       </form>
-      <AppPreview
-        open={open}
-        title={ioTemplateSubject}
-        onClose={() => setOpen(false)}
-      >
-        <MarkdownPreview message={ioTemplateMessage} />
+      <AppPreview open={open} onClose={() => setOpen(false)}>
+        <NotificationPreview
+          title={ioTemplateSubject}
+          message={ioTemplateMessage}
+        />
       </AppPreview>
     </>
   );

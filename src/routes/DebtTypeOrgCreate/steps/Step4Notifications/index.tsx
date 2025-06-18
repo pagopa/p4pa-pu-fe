@@ -9,9 +9,10 @@ import { FormComponent } from '../../../../components/FormComponent';
 import Stack from '@mui/material/Stack';
 import Button from '@mui/material/Button';
 import { useState } from 'react';
-import { MarkdownPreview } from '../../../DebtTypeCreate/components/MarkdownPreview';
 import Link from '@mui/material/Link';
 import { DebtTypeOrgForm } from '../../types';
+import { AppPreview } from '../../../../components/AppPreview';
+import { NotificationPreview } from '../../../../components/NotificationPreview';
 
 export const Step4Notifications = () => {
   const { t } = useTranslation();
@@ -124,12 +125,12 @@ export const Step4Notifications = () => {
           </SectionBox>
         )}
       </WizardStepWrapper>
-      <MarkdownPreview
-        title={ioTemplateSubject || ''}
-        message={ioTemplateMessage || ''}
-        open={open}
-        onClose={() => setOpen(false)}
-      />
+      <AppPreview open={open} onClose={() => setOpen(false)}>
+        <NotificationPreview
+          title={ioTemplateSubject}
+          message={ioTemplateMessage}
+        />
+      </AppPreview>
     </>
   );
 };

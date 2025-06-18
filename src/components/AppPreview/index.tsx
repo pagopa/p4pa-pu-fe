@@ -13,18 +13,21 @@ import InfoIcon from '@mui/icons-material/InfoOutlined';
 import EditIcon from '@mui/icons-material/Edit';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTranslation } from 'react-i18next';
-import { GRADIENT_PLACEHOLDER, styles } from './AppPreview.styles';
+import {
+  GRADIENT_BACKGROUND,
+  GRADIENT_PLACEHOLDER,
+  styles
+} from './AppPreview.styles';
+import { MousePopup } from './MousePopup';
 
 type AppPreviewProps = {
   open: boolean;
   onClose?: () => void;
   onEdit?: () => void;
-  title?: string;
   children?: React.ReactNode;
 };
 
 export const AppPreview = ({
-  title,
   children,
   open,
   onClose,
@@ -44,7 +47,7 @@ export const AppPreview = ({
       <DialogTitle id="app-preview-dialog-title" sx={styles.dialogTitle}>
         <Stack direction="row" justifyContent="space-between">
           <Stack direction="row" alignItems="center" gap={1}>
-            <Typography variant="h6">{title}</Typography>
+            <Typography variant="h6">{t('appPreview.title')}</Typography>
             <IconButton sx={styles.infoButton} aria-label={t('commons.info')}>
               <InfoIcon fontSize="small" />
             </IconButton>
@@ -73,12 +76,13 @@ export const AppPreview = ({
         sx={styles.dialogContent}
       >
         <LazyBackground
-          src="/assets/Sfondo.jpg"
+          src={GRADIENT_BACKGROUND}
           placeholder={GRADIENT_PLACEHOLDER}
           style={styles.background}
         >
           <Stack sx={styles.border}>
             <Stack sx={styles.phone}>{children}</Stack>
+            <MousePopup />
           </Stack>
         </LazyBackground>
         <Typography variant="body2">{t('appPreview.messageInfo')}</Typography>

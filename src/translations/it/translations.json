@@ -158,7 +158,13 @@
     }
   },
   "appPreview": {
-    "messageInfo": "*Verrà mostrato il nome dell’ente e il servizio assegnati per inviare il messaggio."
+    "title": "Anteprima in App IO",
+    "messageInfo": "*Verrà mostrato il nome dell’ente e il servizio assegnati per inviare il messaggio.",
+    "mousePopup": "Scorri con il cursore per visualizzare l’anteprima completa"
+  },
+  "notificationPreview": {
+    "byOrg": "Ente mittente*",
+    "byService": "Servizio mittente*"
   },
   "commons": {
     "info": "Informazioni",
