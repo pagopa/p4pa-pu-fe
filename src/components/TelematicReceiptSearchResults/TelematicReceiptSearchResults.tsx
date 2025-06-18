@@ -1,4 +1,4 @@
-import { Grid, Stack, useTheme } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
@@ -10,6 +10,8 @@ import { useLocation } from 'react-router-dom';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
 import FilterContainer from '../FilterContainer/FilterContainer';
 import { PagedReceiptView } from '../../../generated/data-contracts';
+import { ReactNode, useState } from 'react';
+import { noFilterSetted } from '../../utils/filtersValidation';
 
 export type LocationState = {
   filters: BaseFilterValues;
@@ -18,8 +20,18 @@ export type LocationState = {
 const TelematicReceiptSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-
   const location = useLocation();
+  const [error, setError] = useState(false);
+
+  const errorMessage: ReactNode = (
+    <Typography
+      variant="body2"
+      color="error"
+      data-testid="filters-error-text"
+    >
+      {t('commons.filters.atLeastOneFilter')}
+    </Typography>
+  );
 
   const initialFilters = (location.state?.filters || {}) as BaseFilterValues;
 
@@ -27,8 +39,17 @@ const TelematicReceiptSearchResults = () => {
     initialFilters: initialFilters as TelematicReceiptFilters
   });
 
+  const runSearch = () => {
+    if (!noFilterSetted(telematicReceipt.filterValues)) {
+      telematicReceipt.applyFilters();
+      setError(false);
+    } else {
+      setError(true);
+    }
+    
+  };
   const { filters } = useTelematicReceiptsFilters({
-    onFilter: telematicReceipt.applyFilters
+    onFilter: runSearch
   });
 
   return (
@@ -37,8 +58,8 @@ const TelematicReceiptSearchResults = () => {
         title={t('commons.routes.TELEMATIC_RECEIPT_SEARCH_RESULTS')}
         description={t('telematicreceiptSearchResults.description')}
       />
-     
       <Stack gap={3}>
+        {error && errorMessage}
         <FilterContainer
           items={filters}
           values={telematicReceipt.filterValues}
