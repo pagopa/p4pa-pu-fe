@@ -3,12 +3,12 @@ import { ExportFileTypeEnum } from '../../../generated/apiClient';
 import ExportFlowOverview from '../ExportFlowOverview/ExportFlowOverview';
 import { PageRoutes } from '../../routes';
 
-const ClassificationsOverview = () => {
+const ClassificationsExportFlowOverview = () => {
   const { t } = useTranslation();
 
   return (
     <ExportFlowOverview
-      routingCategory=""
+      routingCategory="classifications"
       title={t('commons.exportedFlows')}
       description={t('classificationsExport.descriptionOverview')}
       exportFileTypes={ExportFileTypeEnum.CLASSIFICATIONS}
@@ -17,4 +17,4 @@ const ClassificationsOverview = () => {
   );
 };
 
-export default ClassificationsOverview;
+export default ClassificationsExportFlowOverview;

@@ -2,7 +2,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { getExportFiles } from '../../api/exportFiles';
-import ClassificationsOverview from './ClassificationsOverview';
+import ClassificationsExportFlowOverview from './ClassificationsExportFlowOverview';
 
 vi.mock('react-router-dom', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
@@ -36,14 +36,14 @@ describe('Classifications', () => {
   });
 
   it('renders with correct translations', () => {
-    render(<ClassificationsOverview />);
+    render(<ClassificationsExportFlowOverview />);
 
     expect(screen.getByText('Classifications Title')).toBeDefined();
     expect(screen.getByText('Classifications Description')).toBeDefined();
   });
 
   it('calls API with correct export file type', () => {
-    render(<ClassificationsOverview />);
+    render(<ClassificationsExportFlowOverview />);
 
     expect(getExportFiles).toHaveBeenCalledWith(
       expect.any(Number),
