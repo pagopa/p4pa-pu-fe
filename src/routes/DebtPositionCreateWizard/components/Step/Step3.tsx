@@ -200,41 +200,11 @@ const Step3 = ({
     return 'commons.create';
   };
 
-  const { mutate: createDebtPosition } = debtPositionsApi.createDebtPosition(
-    (paymentObject) => {
-      navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
-        state: paymentObject,
-        replace: true
-      });
-    },
-    () => {
-      utils.notify.emit(
-        t('debtPositionCreateWizard.step3.error.subtitle'),
-        'error'
-      );
-    }
-  );
+  const createDebtPositionMutation = debtPositionsApi.createDebtPosition();
 
   // Mutation for manage installments in edit mode
-  const { mutate: manageInstallments } =
-    debtPositionsApi.manageDebtPositionInstallments(
-      (response) => {
-        navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
-          state: {
-            ...response,
-            isEditing: true,
-            wasPublished: lastActionWasPublish.current
-          },
-          replace: true
-        });
-      },
-      () => {
-        utils.notify.emit(
-          t('debtPositionCreateWizard.step3.error.subtitle'),
-          'error'
-        );
-      }
-    );
+  const manageInstallmentsMutation =
+    debtPositionsApi.manageDebtPositionInstallments();
 
   // Convert date string value to Date object for DatePicker
   const initialData: Step3FormValues = {
@@ -624,12 +594,25 @@ const Step3 = ({
         const shouldPublishPosition = shouldPublish;
         lastActionWasPublish.current = shouldPublishPosition && isDraftInEdit;
 
-        manageInstallments({
-          organizationId,
-          debtPositionId: Number(debtPositionId),
-          body: manageBody,
-          publish: shouldPublishPosition
-        });
+        try {
+          const response = await manageInstallmentsMutation.mutateAsync({
+            organizationId,
+            debtPositionId: Number(debtPositionId),
+            body: manageBody,
+            publish: shouldPublishPosition
+          });
+          navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
+            state: {
+              ...response,
+              isEditing: true,
+              wasPublished: lastActionWasPublish.current
+            },
+            replace: true
+          });
+        } catch (error) {
+          console.error(error);
+          navigate(PageRoutes.RESPONSES_ERROR);
+        }
       } catch (error) {
         console.error('Error converting form data:', error);
         utils.notify.emit(
@@ -671,10 +654,25 @@ const Step3 = ({
         }
       ]
     };
-    createDebtPosition({
-      body: postBody,
-      paymentObject: postBody.description
-    });
+    try {
+      const response = await createDebtPositionMutation.mutateAsync({
+        body: postBody,
+        paymentObject: postBody.description
+      });
+      navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD_COMPLETED, {
+        state: {
+          description: response.paymentObject,
+          status: response.response?.status,
+          debtPositionId: response.response?.debtPositionId,
+          isEditing: false,
+          wasPublished: !isDraft
+        },
+        replace: true
+      });
+    } catch (error) {
+      console.error(error);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
   };
 
   return (
