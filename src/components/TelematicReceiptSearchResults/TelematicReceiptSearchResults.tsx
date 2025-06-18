@@ -24,11 +24,7 @@ const TelematicReceiptSearchResults = () => {
   const [error, setError] = useState(false);
 
   const errorMessage: ReactNode = (
-    <Typography
-      variant="body2"
-      color="error"
-      data-testid="filters-error-text"
-    >
+    <Typography variant="body2" color="error" data-testid="filters-error-text">
       {t('commons.filters.atLeastOneFilter')}
     </Typography>
   );
@@ -46,7 +42,6 @@ const TelematicReceiptSearchResults = () => {
     } else {
       setError(true);
     }
-    
   };
   const { filters } = useTelematicReceiptsFilters({
     onFilter: runSearch
