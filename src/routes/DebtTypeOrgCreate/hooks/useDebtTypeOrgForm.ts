@@ -40,7 +40,7 @@ export const useDebtTypeOrgForm = ({
   const { t } = useTranslation();
 
   const debtPositionTypeOrgId = useDebtTypeOrgId(edit);
-  const { stepSchemas, combinedSchema } = useFormSchemas();
+  const { stepSchemas, combinedSchema } = useFormSchemas(edit);
 
   const debtTypeCreate = createDebtPositionTypeOrg();
   const debtTypeUpdate = updateDebtPositionTypeOrg();
