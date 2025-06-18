@@ -7,7 +7,11 @@ import { FilterAlt } from '@mui/icons-material';
 import { ReactNode, useState } from 'react';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
-import { FilterMap, useMultiFilters } from '../../hooks/useMultiFilters';
+import {
+  FilterCategory,
+  FilterMap,
+  useMultiFilters
+} from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
 import UseTreasurySearch from '../../hooks/useTreasurySearch';
@@ -30,7 +34,7 @@ const TreasurySearchResults = () => {
     removeAllFilters,
     noFilterIsSelected,
     filterValues
-  } = useMultiFilters();
+  } = useMultiFilters({ filterCategory: FilterCategory.TREASURY });
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
