@@ -7,10 +7,17 @@ import { useStore } from '../store/GlobalStore';
 import { ChangeEvent, useEffect } from 'react';
 import {
   noFilterIsSelected,
+  noFilterSelectedExcludingClassificationType,
   removeAllFilters,
   setFilterValues
 } from '../store/FilterStore';
 import { FilterValues } from '../models/Filters';
+import { LabelEnum } from '../../generated/apiClient';
+
+export enum FilterCategory {
+  TREASURY = 'TREASURY',
+  CLASSIFICATIONS = 'CLASSIFICATIONS'
+}
 
 export type FilterMap = Record<
   | keyof Omit<
@@ -22,13 +29,22 @@ export type FilterMap = Record<
       | 'TEMPORARY_CODE_FROM'
       | 'VALUE_DATE_FROM'
       | 'VALUE_DATE_TO'
+      | 'LAST_CLASSIFICATION_DATE_FROM'
+      | 'LAST_CLASSIFICATION_DATE_TO'
+      | 'REGULATION_DATE_FROM'
+      | 'REGULATION_DATE_TO'
     >
   | 'ACCOUNTING_DATE'
-  | 'VALUE_DATE',
+  | 'VALUE_DATE'
+  | 'LAST_CLASSIFICATION_DATE'
+  | 'REGULATION_DATE',
   { label: string; fields: Array<FilterItem> }
 >;
 
-export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
+export const useMultiFilters = (props?: {
+  clearOnMount?: boolean;
+  filterCategory?: FilterCategory;
+}) => {
   const { t } = useTranslation();
   const {
     state: { filterValues, selectedFilters }
@@ -52,7 +68,7 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
       setFilterValues({ ...filterValues, [field]: date })
   });
 
-  const filterMap: FilterMap = {
+  const fullFilterMap: FilterMap = {
     ACCOUNTING_DATE: {
       label: t('commons.filters.accountingDate.label'),
       fields: [
@@ -132,6 +148,36 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
         }
       ]
     },
+    IUR: {
+      label: t('commons.filters.iur.label'),
+      fields: [
+        {
+          label: t('commons.filters.iur.code'),
+          type: COMPONENT_TYPE.textField,
+          ...fieldControl('IUR')
+        }
+      ]
+    },
+    IUD: {
+      label: t('commons.filters.iud.label'),
+      fields: [
+        {
+          label: t('commons.filters.iud.code'),
+          type: COMPONENT_TYPE.textField,
+          ...fieldControl('IUD')
+        }
+      ]
+    },
+    IUF: {
+      label: t('commons.filters.iuf.label'),
+      fields: [
+        {
+          label: t('commons.filters.iuf.code'),
+          type: COMPONENT_TYPE.textField,
+          ...fieldControl('IUF')
+        }
+      ]
+    },
     PAYER: {
       label: t('commons.filters.payer.label'),
       fields: [
@@ -189,14 +235,107 @@ export const useMultiFilters = (props?: { clearOnMount?: boolean }) => {
           }
         }
       ]
+    },
+    CLASSIFICATION_TYPE: {
+      label: t('classifications.filters.classificationType'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.select,
+          name: 'CLASSIFICATION_TYPE',
+          label: t('classifications.filters.classificationType'),
+          options: Object.values(LabelEnum).map((value) => ({
+            label: t(`classificationsExport.classificationsOptions.${value}`),
+            value
+          })),
+          required: true
+        }
+      ]
+    },
+    LAST_CLASSIFICATION_DATE: {
+      label: t(
+        'classificationsExport.sections.paymentClassification.lastUpdateDate'
+      ),
+      fields: [
+        {
+          type: COMPONENT_TYPE.dateRange,
+          label: t('commons.filters.valueDate.date'),
+          from: {
+            label: t('dates.from'),
+            ...dateControl('LAST_CLASSIFICATION_DATE_FROM')
+          },
+          to: {
+            label: t('dates.to'),
+            ...dateControl('LAST_CLASSIFICATION_DATE_TO')
+          }
+        }
+      ]
+    },
+    REGULATION_DATE: {
+      label: t('classificationsExport.sections.reporting.regulationDate'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.dateRange,
+          label: t('commons.filters.valueDate.date'),
+          from: {
+            label: t('dates.from'),
+            ...dateControl('REGULATION_DATE_FROM')
+          },
+          to: {
+            label: t('dates.to'),
+            ...dateControl('REGULATION_DATE_TO')
+          }
+        }
+      ]
     }
   };
+
+  const treasuryFilters: Array<keyof FilterMap> = [
+    'ACCOUNTING_DATE',
+    'AMOUNT',
+    'BILL_CODE',
+    'DOCUMENT_CODE',
+    'IUV',
+    'PAYER',
+    'REPORT_ID',
+    'VALUE_DATE'
+  ];
+
+  const classificationsFilters: Array<keyof FilterMap> = [
+    'IUV',
+    'IUR',
+    'IUD',
+    'IUF',
+    'LAST_CLASSIFICATION_DATE',
+    'REGULATION_DATE',
+    'AMOUNT',
+    'ACCOUNTING_DATE'
+  ];
+
+  const getFilteredMap = (): FilterMap => {
+    if (!props?.filterCategory) {
+      return fullFilterMap;
+    }
+
+    const allowedFilters =
+      props.filterCategory === FilterCategory.TREASURY
+        ? treasuryFilters
+        : classificationsFilters;
+
+    return Object.fromEntries(
+      Object.entries(fullFilterMap).filter(([key]) =>
+        allowedFilters.includes(key as keyof FilterMap)
+      )
+    ) as FilterMap;
+  };
+
+  const filterMap = getFilteredMap();
 
   return {
     filterMap,
     selectedFilters,
     removeAllFilters,
     noFilterIsSelected,
+    noFilterSelectedExcludingClassificationType,
     filterValues
   };
 };

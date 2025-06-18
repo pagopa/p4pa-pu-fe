@@ -1,26 +1,65 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import DownloadIcon from '@mui/icons-material/Download';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { useMultiFilters } from '../../hooks/useMultiFilters';
+import { FilterCategory, useMultiFilters } from '../../hooks/useMultiFilters';
 import { PageRoutes } from '../../routes';
 import { useNavigate } from 'react-router-dom';
+import { ReactNode, useState } from 'react';
+import { filterValues } from '../../store/FilterStore';
 
 export const Classifications = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { filterMap, removeAllFilters } = useMultiFilters({
-    clearOnMount: true
+  const {
+    filterMap,
+    removeAllFilters,
+    noFilterSelectedExcludingClassificationType
+  } = useMultiFilters({
+    clearOnMount: true,
+    filterCategory: FilterCategory.CLASSIFICATIONS
   });
+
+  const [error, setError] = useState(false);
+  const [labelError, setLabelError] = useState(false);
+  const errorMessage: ReactNode = (
+    <Typography
+      variant="body2"
+      color="error"
+      mt={2}
+      data-testid="multifilters-error-text"
+    >
+      {t('commons.filters.atLeastOneFilter')}
+    </Typography>
+  );
+
+  function submitSearch() {
+    const classificationType = filterValues.value.CLASSIFICATION_TYPE;
+    if (!classificationType) {
+      setLabelError(true);
+      return;
+    }
+    if (classificationType === 'UNKNOWN') {
+      setError(false);
+      setLabelError(false);
+      navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS);
+      return;
+    }
+    if (noFilterSelectedExcludingClassificationType.peek()) {
+      setError(true);
+      return;
+    }
+
+    setError(false);
+    setLabelError(false);
+    navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS);
+  }
 
   return (
     <>
-      <TitleComponent
-        title={t('commons.routes.CLASSIFICATIONS')}
-        description={t('classifications.description')}
-      />
+      <TitleComponent title={t('commons.routes.CLASSIFICATIONS')} />
       <Grid container direction="row">
         <Grid container spacing={2}>
           <Grid item xs={12} lg={6}>
@@ -28,16 +67,31 @@ export const Classifications = () => {
               title={t('classifications.search')}
               description={t('classifications.searchdescription')}
               multiFilterConfig={filterMap}
+              render={error && errorMessage}
+              extraProps={{
+                showLabelError: labelError,
+                onFilterInteraction: () => {
+                  setLabelError(false);
+                  setError(false);
+                }
+              }}
+              filterCategory={FilterCategory.CLASSIFICATIONS}
               button={[
                 {
                   label: t('commons.filters.remove'),
                   variant: 'outlined',
-                  onClick: removeAllFilters
+                  onClick: () => {
+                    removeAllFilters();
+                    setLabelError(false);
+                    setError(false);
+                  },
+                  id: 'searchcard-remove-btn'
                 },
                 {
-                  label: t('commons.filters.filterResults'),
+                  label: t('commons.search'),
                   variant: 'contained',
-                  onClick: () => console.log('searchClick')
+                  onClick: submitSearch,
+                  id: 'searchcard-search-btn'
                 }
               ]}
             />

@@ -1,10 +1,13 @@
 import MultiFilter from '../MultiFilter/MultiFilter';
-import { FilterMap } from '../../hooks/useMultiFilters';
+import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
 import { Grid, Button } from '@mui/material';
 import { Drawer, DrawerProps } from '../Drawer';
 
 type FilterDrawerProps = DrawerProps & {
   filterMap: FilterMap;
+  filterCategory?: FilterCategory;
+  showLabelError?: boolean;
+  onFilterInteraction?: () => void;
   render?: React.ReactNode;
   buttons?: Array<{
     buttonText?: string;
@@ -20,11 +23,19 @@ export const FilterDrawer = ({
   buttons,
   children,
   render,
+  filterCategory,
+  showLabelError,
+  onFilterInteraction,
   ...props
 }: FilterDrawerProps) => (
   <Drawer {...props}>
     {children}
-    <MultiFilter filterMap={filterMap} />
+    <MultiFilter
+      filterMap={filterMap}
+      filterCategory={filterCategory}
+      showLabelError={showLabelError}
+      onFilterInteraction={onFilterInteraction}
+    />
     {render && <Grid container>{render}</Grid>}
     <Grid container direction={'column'} marginTop={2}>
       {buttons &&

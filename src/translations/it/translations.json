@@ -34,12 +34,17 @@
   },
   "classifications": {
     "description": "Ricerca o visualizza classificazioni",
-    "search": "Cerca classificazioni",
-    "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
-    "exportTitle": "Esporta Classificazioni",
-    "exportDescription": "Richiede l'esportazione di una classificazione.",
+    "search": "Cerca gli stati dei pagamenti",
+    "searchdescription": "Controlla se i pagamenti sono stati debitamente notificati, rendicontati e riconciliati oppure verifica degli errori. Inserisci al meno un filtro per avviare la ricerca.",
+    "exportTitle": "Scarica Flussi",
+    "exportDescription": "Richiede l'esportazione di Classificazioni dei pagamenti un certo intervallo di tempo.",
     "sectionTitle": "Classificazioni esportati",
-    "showAllResults": "Vedi classificazioni esportate",
+    "showAllResults": "Vedi flussi esportati",
+    "exportFlowDescription": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+    "filters": {
+      "classificationType": "Tipo Classificazione",
+      "noOptionSelected": "Seleziona un'opzione"
+    },
     "detail": {
       "title": "Dettaglio Pagamento",
       "sections": {
@@ -257,6 +262,18 @@
       "iuv": {
         "code": "Codice IUV",
         "label": "IUV"
+      },
+      "iur": {
+        "code": "Codice IUR",
+        "label": "IUR"
+      },
+      "iud": {
+        "code": "Codice IUD",
+        "label": "IUD"
+      },
+      "iuf": {
+        "code": "Codice IUF",
+        "label": "IUF"
       },
       "payer": {
         "label": "Ordinante",
