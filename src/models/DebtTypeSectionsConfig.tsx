@@ -2,10 +2,9 @@ import {
   DetailData,
   titleConfig
 } from '../components/DetailContainer/DetailContainer';
-import PreviewIcon from '@mui/icons-material/Preview';
 import { DebtPositionTypeOrgDTO } from '../../generated/apiClient';
-import Button from '@mui/material/Button';
 import { moneyFormat } from '../utils/formatters';
+import { AppPreview } from '../components/AppPreview';
 
 export enum AccordionSectionsEnum {
   MAIN_CONFIGURATION = 'MAIN_CONFIGURATION',
@@ -166,7 +165,7 @@ export const getAccordionSectionsConfig = (
             },
             {
               label: t('commons.description'),
-              value: checkStringValue(data?.description)
+              value: checkStringValue(data?.debtPositionTypeDescription)
             }
           ]
         }
@@ -314,19 +313,10 @@ export const getAccordionSectionsConfig = (
               label: t('commons.message'),
               value: '',
               childrenComponent: (
-                <Button
-                  variant="text"
-                  size="small"
-                  startIcon={<PreviewIcon />}
-                  sx={{
-                    justifyContent: 'flex-start',
-                    textAlign: 'left',
-                    paddingLeft: 0,
-                    alignItems: 'center'
-                  }}
-                >
-                  {t('debtTypeCreate.settings.preview')}
-                </Button>
+                <AppPreview
+                  subject={data.ioTemplateSubject}
+                  message={data.ioTemplateMessage}
+                />
               )
             }
           ]

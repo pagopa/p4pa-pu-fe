@@ -10,7 +10,7 @@ describe('noFilterSetted', () => {
     expect(
       noFilterSetted({
         iuv: '',
-        iuf: '   ',
+        iuf: '   '
       })
     ).toBe(true);
   });
@@ -20,7 +20,7 @@ describe('noFilterSetted', () => {
       noFilterSetted({
         draft: false,
         count: 0,
-        active: null,
+        active: null
       })
     ).toBe(true);
   });
@@ -29,7 +29,7 @@ describe('noFilterSetted', () => {
     expect(
       noFilterSetted({
         name: 'Mario',
-        city: '',
+        city: ''
       })
     ).toBe(false);
   });
@@ -38,7 +38,7 @@ describe('noFilterSetted', () => {
     expect(
       noFilterSetted({
         draft: true,
-        count: 0,
+        count: 0
       })
     ).toBe(false);
   });
@@ -49,7 +49,7 @@ describe('noFilterSetted', () => {
         name: '',
         city: '  ',
         active: false,
-        count: 42,
+        count: 42
       })
     ).toBe(false);
   });

@@ -55,7 +55,9 @@ describe('DebtTypeDetailView', () => {
       data: {
         response: {
           description: 'Test debt position ID',
-          code: 'test'
+          code: 'test',
+          debtPositionTypeDescription:
+            'Test debtPositionTypeDescription description'
         }
       },
       isLoading: false,
@@ -88,7 +90,7 @@ describe('DebtTypeDetailView', () => {
   it('renders title and description', () => {
     render(<DebtTypeDetailView />);
     const description = screen.queryAllByText('Test debt position ID');
-    expect(description.length).toBe(3);
+    expect(description.length).toBe(2);
     expect(screen.getByText('description')).toBeInTheDocument();
     expect(screen.getByText('selected operators')).toBeInTheDocument();
     expect(screen.getByText('3 operators')).toBeInTheDocument();
