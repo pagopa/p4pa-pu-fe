@@ -165,7 +165,7 @@ export const getAccordionSectionsConfig = (
             },
             {
               label: t('commons.description'),
-              value: checkStringValue(data?.description)
+              value: checkStringValue(data?.debtPositionTypeDescription)
             }
           ]
         }
