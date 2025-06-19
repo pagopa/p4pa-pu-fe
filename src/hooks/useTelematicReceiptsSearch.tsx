@@ -4,6 +4,7 @@ import { FilterFieldValue } from '../models/Filters';
 import { getReceipts, TelematicReceiptsQuery } from '../api/receipts';
 import { ReceiptOriginType } from '../../generated/apiClient';
 import { usePaginationState } from './usePaginationState';
+import { noFilterSetted } from '../utils/filtersValidation';
 
 export type TelematicReceiptFilters = {
   dateRange?: {
@@ -41,7 +42,9 @@ export const useTelematicReceiptSearch = ({
   const query = getReceipts(organizationId);
 
   useEffect(() => {
-    query.mutate(filterToRequest());
+    if (!noFilterSetted(filterValues)) {
+      query.mutate(filterToRequest());
+    }
   }, [organizationId, paginationParams.page, paginationParams.size, sort]);
 
   const filterToRequest = (): TelematicReceiptsQuery => ({

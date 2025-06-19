@@ -39,7 +39,6 @@ export const useReportingFilters = ({
       {
         type: COMPONENT_TYPE.dateRange,
         label: 'dateRange',
-        required: true,
         gridWidth: 5,
         from: { label: t('commons.from') },
         to: { label: t('commons.to') },

@@ -7,6 +7,7 @@ import { FileshareApi } from '../../generated/fileshare/fileshareClient';
 import storage from './storage';
 import notify from './notify';
 import roles from './roles';
+import filtersValidation from './filtersValidation';
 
 export default {
   apiClient: new Api({ baseURL: config.baseURL, timeout: config.apiTimeout }),
@@ -20,5 +21,6 @@ export default {
   style,
   storage,
   notify,
-  roles
+  roles,
+  filtersValidation
 };

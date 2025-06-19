@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Grid, Stack, useTheme } from '@mui/material';
+import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import SearchResultsDataGrid from './ReportingDataGrid';
 import { BaseFilterValues } from '../../models/Filters';
@@ -10,6 +10,8 @@ import useReportingSearch, {
 } from '../../hooks/useReportingSearch';
 import useReportingFilters from '../../hooks/useReportingFilters';
 import FilterContainer from '../FilterContainer/FilterContainer';
+import { ReactNode, useState } from 'react';
+import { noFilterSetted } from '../../utils/filtersValidation';
 
 export type LocationState = {
   filters: BaseFilterValues;
@@ -18,6 +20,13 @@ export type LocationState = {
 const ReportingSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const [error, setError] = useState(false);
+
+  const errorMessage: ReactNode = (
+    <Typography variant="body2" color="error" data-testid="filters-error-text">
+      {t('commons.filters.atLeastOneFilter')}
+    </Typography>
+  );
 
   const { state } = useLocation() as { state?: LocationState };
 
@@ -27,10 +36,17 @@ const ReportingSearchResults = () => {
     initialFilters: initialFilters as ReportingFilters
   });
 
-  const { filters } = useReportingFilters({
-    onFilter: () => {
+  const runSearch = () => {
+    if (!noFilterSetted(reporting.filterValues)) {
       reporting.applyFilters();
+      setError(false);
+    } else {
+      setError(true);
     }
+  };
+
+  const { filters } = useReportingFilters({
+    onFilter: runSearch
   });
 
   return (
@@ -40,6 +56,7 @@ const ReportingSearchResults = () => {
         description={t('reportingSearchResults.description')}
       />
       <Stack gap={3}>
+        {error && errorMessage}
         <FilterContainer
           items={filters}
           values={reporting.filterValues}

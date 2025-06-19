@@ -47,7 +47,6 @@ export const useTelematicReceiptsFilters = ({
       {
         type: COMPONENT_TYPE.dateRange,
         label: 'dateRange',
-        required: true,
         gridWidth: 5,
         from: { label: t('commons.outcomeFrom') },
         to: { label: t('commons.to') },
