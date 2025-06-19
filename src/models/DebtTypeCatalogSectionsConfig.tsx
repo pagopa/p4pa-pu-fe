@@ -3,6 +3,7 @@ import {
   titleConfig
 } from '../components/DetailContainer/DetailContainer';
 import { DebtPositionTypeDetailDTO } from '../../generated/apiClient';
+import { AppPreview } from '../components/AppPreview';
 
 export enum AccordionSectionsEnum {
   DEBT_CATALOG_CONFIGURATION = 'DEBT_CATALOG_CONFIGURATION',
@@ -112,7 +113,13 @@ export const getAccordionSectionsConfig = (
             },
             {
               label: t('commons.message'),
-              value: checkStringValue(data?.ioTemplateMessage)
+              value: checkStringValue(data?.ioTemplateMessage),
+              childrenComponent: (
+                <AppPreview
+                  subject={data.ioTemplateSubject}
+                  message={data.ioTemplateMessage}
+                />
+              )
             }
           ]
         }
