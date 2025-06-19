@@ -2,7 +2,7 @@ import { CSSProperties } from 'react';
 
 export const GRADIENT_PLACEHOLDER =
   'linear-gradient(#788ED5, #173465, #0736A2)';
-export const GRADIENT_BACKGROUND = '/assets/gradient_bg.jpg';
+export const GRADIENT_BACKGROUND = '/assets/gradient_bg.webp';
 
 export const styles: Record<string, CSSProperties> = {
   dialogTitle: {
