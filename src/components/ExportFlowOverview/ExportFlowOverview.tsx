@@ -23,6 +23,7 @@ import { downloadBlob } from '../../utils/download';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
 import { formatDateTime } from '../../utils/formatters';
 import utils from '../../utils';
+import { ReactNode, useEffect, useState } from 'react';
 
 export type ExportFlowOverviewProps = {
   routingCategory: string;
@@ -57,7 +58,6 @@ const ExportFlowOverview = ({
     applyFilters,
     handleDateFromChange,
     handleDateToChange,
-    hasActiveFilters,
     sortModel,
     handleSortModelChange,
     handlePaginationChange
@@ -65,8 +65,19 @@ const ExportFlowOverview = ({
     exportFileType: exportFileTypes
   });
 
-  const { data, isLoading } = getExportFiles(organizationId, appliedFilters);
+  const { data, isLoading, isError } = getExportFiles(
+    organizationId,
+    appliedFilters
+  );
   const isEmptyData = !data?.content || data.content.length === 0;
+
+  useEffect(() => {
+    if (isError) {
+      setError(true);
+    } else {
+      setError(false);
+    }
+  }, [isError]);
 
   const getFile = getExportFile(organizationId);
 
@@ -159,6 +170,18 @@ const ExportFlowOverview = ({
     }
   ];
 
+  const [error, setError] = useState<boolean>(false);
+  const errorMessage: ReactNode = (
+    <Typography
+      variant="body2"
+      color="error"
+      mt={2}
+      data-testid="explort-error-text"
+    >
+      {t('commons.filters.atLeastOneFilter')}
+    </Typography>
+  );
+
   return (
     <>
       <TitleComponent
@@ -179,7 +202,7 @@ const ExportFlowOverview = ({
             <Typography variant="h4">{sectionTitle}</Typography>
           </Box>
         )}
-
+        {error && errorMessage}
         <FilterContainer
           items={[
             {
@@ -215,8 +238,7 @@ const ExportFlowOverview = ({
               type: COMPONENT_TYPE.button,
               label: t('commons.filters.filterResults'),
               gridWidth: 1,
-              onClick: applyFilters,
-              disabled: !hasActiveFilters()
+              onClick: applyFilters
             }
           ]}
         />

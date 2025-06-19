@@ -1,25 +1,41 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { FileUpload } from '@mui/icons-material';
-import { Grid } from '@mui/material';
+import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
-import { useCallback, useState } from 'react';
+import { ReactNode, useCallback, useState } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
+import { noFilterSetted } from '../../utils/filtersValidation';
 
 export const Reporting = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}]);
+  const [error, setError] = useState<boolean>(false);
+  const errorMessage: ReactNode = (
+    <Typography
+      variant="body2"
+      color="error"
+      mt={2}
+      data-testid="reporting-error-text"
+    >
+      {t('commons.filters.atLeastOneFilter')}
+    </Typography>
+  );
 
   const navigateToResults = useCallback(() => {
-    navigate(PageRoutes.REPORTING_SEARCH_RESULTS, {
-      state: {
-        filters: filters[0]
-      }
-    });
+    if (!noFilterSetted(filters[0])) {
+      navigate(PageRoutes.REPORTING_SEARCH_RESULTS, {
+        state: {
+          filters: filters[0]
+        }
+      });
+    } else {
+      setError(true);
+    }
   }, [0, filters, navigate]);
 
   const resetCurrentFilters = useCallback(() => {
@@ -57,16 +73,19 @@ export const Reporting = () => {
               filterContext="REPORTING"
               filterValues={filters[0]}
               onFilterChange={handleFilterChange}
+              render={error && errorMessage}
               button={[
                 {
                   label: t('commons.filters.remove'),
                   variant: 'outlined',
-                  onClick: resetCurrentFilters
+                  onClick: resetCurrentFilters,
+                  id: 'reporting-reset-btn'
                 },
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: navigateToResults
+                  onClick: navigateToResults,
+                  id: 'reporting-search-btn'
                 }
               ]}
             />
