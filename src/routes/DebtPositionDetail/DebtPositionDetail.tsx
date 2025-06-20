@@ -208,7 +208,7 @@ const DebtPositionDetail = () => {
     } catch (error) {
       console.error('Error while deleting the debt position:', error);
       setDialogConfig(null);
-      utils.notify.emit(t('debtPositionDetail.deleteError'), 'error');
+      navigate(PageRoutes.RESPONSES_ERROR);
     }
   };
 

@@ -224,6 +224,8 @@ describe('Step3 Component', () => {
   const mockCreateDebtPosition = vi.fn();
   const mockManageDebtPositionInstallments = vi.fn();
   const mockGetDebtPositionDetail = vi.fn();
+  const mockCreateDebtPositionAsync = vi.fn();
+  const mockManageDebtPositionInstallmentsAsync = vi.fn();
 
   const initialData: Step3Data = {
     paymentObject: { value: 'Test Payment', readonly: false },
@@ -262,10 +264,25 @@ describe('Step3 Component', () => {
       state: { organizationId: '123' }
     });
 
+    mockCreateDebtPositionAsync.mockResolvedValue({
+      paymentObject: 'Test Payment Object',
+      response: {
+        status: DebtPositionStatus.UNPAID,
+        debtPositionId: 123
+      }
+    });
+
+    mockManageDebtPositionInstallmentsAsync.mockResolvedValue({
+      description: 'Test Description',
+      status: DebtPositionStatus.UNPAID,
+      debtPositionId: 123
+    });
+
     (
       debtPositionsApi.createDebtPosition as unknown as ReturnType<typeof vi.fn>
     ).mockReturnValue({
-      mutate: mockCreateDebtPosition
+      mutate: mockCreateDebtPosition,
+      mutateAsync: mockCreateDebtPositionAsync
     });
 
     (
@@ -273,7 +290,8 @@ describe('Step3 Component', () => {
         typeof vi.fn
       >
     ).mockReturnValue({
-      mutate: mockManageDebtPositionInstallments
+      mutate: mockManageDebtPositionInstallments,
+      mutateAsync: mockManageDebtPositionInstallmentsAsync
     });
 
     (
@@ -386,7 +404,7 @@ describe('Step3 Component', () => {
       );
     });
 
-    expect(mockCreateDebtPosition).toHaveBeenCalled();
+    expect(mockCreateDebtPositionAsync).toHaveBeenCalled();
   });
 
   it('should handle amount input correctly', async () => {
@@ -425,7 +443,7 @@ describe('Step3 Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+      expect(mockCreateDebtPositionAsync).not.toHaveBeenCalled();
     });
   });
 
@@ -491,7 +509,7 @@ describe('Step3 Component', () => {
       );
     });
 
-    expect(mockCreateDebtPosition).toHaveBeenCalledWith(
+    expect(mockCreateDebtPositionAsync).toHaveBeenCalledWith(
       expect.objectContaining({
         body: expect.objectContaining({
           status: DebtPositionStatus.DRAFT
@@ -540,7 +558,7 @@ describe('Step3 Component', () => {
     const submitButton = screen.getByTestId('next-button');
     fireEvent.click(submitButton);
     await waitFor(() => {
-      expect(mockCreateDebtPosition).toHaveBeenCalled();
+      expect(mockCreateDebtPositionAsync).toHaveBeenCalled();
     });
   });
 
@@ -565,7 +583,7 @@ describe('Step3 Component', () => {
     const submitButton = screen.getByTestId('next-button');
     fireEvent.click(submitButton);
     await waitFor(() => {
-      expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+      expect(mockCreateDebtPositionAsync).not.toHaveBeenCalled();
     });
   });
 
@@ -777,7 +795,7 @@ describe('Step3 Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+      expect(mockCreateDebtPositionAsync).not.toHaveBeenCalled();
     });
   });
 
@@ -971,7 +989,7 @@ describe('Step3 Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockCreateDebtPosition).toHaveBeenCalledWith(
+      expect(mockCreateDebtPositionAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           body: expect.objectContaining({
             paymentOptions: expect.arrayContaining([
@@ -1041,7 +1059,7 @@ describe('Step3 Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+      expect(mockCreateDebtPositionAsync).not.toHaveBeenCalled();
     });
   });
 
@@ -1231,7 +1249,7 @@ describe('Step3 Component', () => {
     fireEvent.click(submitButton);
 
     await waitFor(() => {
-      expect(mockCreateDebtPosition).toHaveBeenCalledWith(
+      expect(mockCreateDebtPositionAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           body: expect.objectContaining({
             paymentOptions: expect.arrayContaining([
@@ -1448,7 +1466,7 @@ describe('Step3 Component', () => {
       fireEvent.click(nextButton);
 
       await waitFor(() => {
-        expect(mockManageDebtPositionInstallments).not.toHaveBeenCalled();
+        expect(mockManageDebtPositionInstallmentsAsync).not.toHaveBeenCalled();
       });
     });
 
@@ -1489,7 +1507,7 @@ describe('Step3 Component', () => {
       fireEvent.click(nextButton);
 
       await waitFor(() => {
-        expect(mockManageDebtPositionInstallments).not.toHaveBeenCalled();
+        expect(mockManageDebtPositionInstallmentsAsync).not.toHaveBeenCalled();
       });
     });
   });
@@ -1908,7 +1926,7 @@ describe('Step3 Component', () => {
       fireEvent.click(nextButton);
 
       await waitFor(() => {
-        expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+        expect(mockCreateDebtPositionAsync).not.toHaveBeenCalled();
       });
     });
 
@@ -1934,7 +1952,7 @@ describe('Step3 Component', () => {
       fireEvent.click(nextButton);
 
       await waitFor(() => {
-        expect(mockCreateDebtPosition).not.toHaveBeenCalled();
+        expect(mockCreateDebtPositionAsync).not.toHaveBeenCalled();
       });
     });
 
@@ -1993,7 +2011,7 @@ describe('Step3 Component', () => {
       fireEvent.click(nextButton);
 
       await waitFor(() => {
-        expect(mockCreateDebtPosition).toHaveBeenCalled();
+        expect(mockCreateDebtPositionAsync).toHaveBeenCalled();
       });
     });
 
