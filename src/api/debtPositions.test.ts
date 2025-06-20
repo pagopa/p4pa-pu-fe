@@ -1,8 +1,9 @@
 import utils from '../utils';
-import { AxiosResponse } from 'axios';
+import { AxiosResponse, AxiosError } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import {
   debtPositionDetailDTOSchema,
+  debtPositionDTOSchema,
   debtPositionViewSchema,
   installmentDTOSchema
 } from '../../generated/zod-schema';
@@ -16,7 +17,7 @@ import {
 import {
   DebtPositionRegistry,
   ManageDebtPositionDTO,
-  ActionEnum,
+  Action,
   EntityTypeEnum,
   InstallmentRegistry,
   PaymentEventType
@@ -34,6 +35,7 @@ vi.mock('../utils', () => {
           deleteDebtPositionType: vi.fn(),
           deleteDebtPositionTypeOrg: vi.fn(),
           deleteDebtPosition: vi.fn(),
+          publishDebtPosition: vi.fn(),
           createDebtPosition: vi.fn(),
           manageDebtPositionInstallments: vi.fn(),
           getPaymentNotice: vi.fn(),
@@ -844,7 +846,7 @@ describe('manageDebtPositionInstallments', () => {
         paymentOptionId: 1001,
         installments: [
           {
-            action: ActionEnum.I,
+            action: Action.I,
             installment: {
               installmentId: 1,
               amountCents: 10000,
@@ -891,7 +893,7 @@ describe('manageDebtPositionInstallments', () => {
         paymentOptionId: 1001,
         installments: [
           {
-            action: ActionEnum.M,
+            action: Action.M,
             installment: {
               installmentId: 1,
               amountCents: 10000,
@@ -1144,6 +1146,103 @@ describe('getDebtPositionZipFile', () => {
     );
 
     result.current.mutate(debtPositionId);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(error);
+    });
+  });
+});
+
+describe('publishDebtPosition', () => {
+  it('publishes debt position successfully', async () => {
+    const mockResponse = createMock(debtPositionDTOSchema);
+    const organizationId = 123;
+    const debtPositionId = 456;
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'publishDebtPosition')
+      .mockResolvedValue({ data: mockResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.publishDebtPosition(organizationId, debtPositionId)
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(result.current.isSuccess).toBe(true);
+    });
+  });
+
+  it('calls onSuccess callback when publish succeeds', async () => {
+    const mockResponse = createMock(debtPositionDTOSchema);
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const onSuccessMock = vi.fn();
+
+    vi.spyOn(utils.apiClient.bff, 'publishDebtPosition').mockResolvedValue({
+      data: mockResponse
+    } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      debtPositions.publishDebtPosition(
+        organizationId,
+        debtPositionId,
+        onSuccessMock
+      )
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(onSuccessMock).toHaveBeenCalled();
+      expect(result.current.isSuccess).toBe(true);
+    });
+  });
+
+  it('calls onError callback when publish fails', async () => {
+    const error = new AxiosError('Publish failed');
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const onErrorMock = vi.fn();
+
+    vi.spyOn(utils.apiClient.bff, 'publishDebtPosition').mockRejectedValue(
+      error
+    );
+
+    const { result } = renderHook(() =>
+      debtPositions.publishDebtPosition(
+        organizationId,
+        debtPositionId,
+        undefined,
+        onErrorMock
+      )
+    );
+
+    result.current.mutate();
+
+    await waitFor(() => {
+      expect(onErrorMock).toHaveBeenCalledWith(error, undefined, undefined);
+      expect(result.current.isError).toBe(true);
+    });
+  });
+
+  it('handles API errors correctly', async () => {
+    const organizationId = 123;
+    const debtPositionId = 456;
+    const error = new Error('API Error');
+
+    vi.spyOn(utils.apiClient.bff, 'publishDebtPosition').mockRejectedValue(
+      error
+    );
+
+    const { result } = renderHook(() =>
+      debtPositions.publishDebtPosition(organizationId, debtPositionId)
+    );
+
+    result.current.mutate();
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);

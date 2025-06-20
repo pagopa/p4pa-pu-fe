@@ -5,7 +5,8 @@ import { useForm } from 'react-hook-form';
 import {
   createDebtPositionTypeOrg,
   CreateDebtPositionTypeOrg,
-  updateDebtPositionTypeOrg
+  updateDebtPositionTypeOrg,
+  getDebtPositionTypeOrgById
 } from '../../../api/debtPositionsTypeOrg';
 import { DebtTypeOrgForm } from '../types';
 import { useApiOperations } from './useApiOperations';
@@ -39,10 +40,15 @@ export const useDebtTypeOrgForm = ({
   const { t } = useTranslation();
 
   const debtPositionTypeOrgId = useDebtTypeOrgId(edit);
-  const { stepSchemas, combinedSchema } = useFormSchemas();
+  const { stepSchemas, combinedSchema } = useFormSchemas(edit);
 
   const debtTypeCreate = createDebtPositionTypeOrg();
   const debtTypeUpdate = updateDebtPositionTypeOrg();
+
+  const { data: originalDataQuery } = getDebtPositionTypeOrgById({
+    organizationId,
+    debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
+  });
 
   const { createRequestPayload } = useApiOperations(organizationId);
 
@@ -54,7 +60,10 @@ export const useDebtTypeOrgForm = ({
       iban: '',
       operatorsSelection: OperatorsSelection.ALL,
       paymentMethod: PaymentMethodOption.FREE,
-      enabledOperators: []
+      enabledOperators: [],
+      flagNotifyOutcomePush: 'disabled',
+      notifyOutcomePushOrgSilServiceId: undefined,
+      amountActualizationOrgSilServiceId: undefined
     },
     resolver: zodResolver(combinedSchema),
     mode: 'onTouched'
@@ -77,10 +86,12 @@ export const useDebtTypeOrgForm = ({
 
   const performMutation = async (payload: CreateDebtPositionTypeOrg) => {
     if (edit && debtPositionTypeOrgId) {
-      return debtTypeUpdate.mutateAsync({
-        ...payload,
-        debtPositionTypeOrgId
-      });
+      const updatePayload = {
+        organizationId: payload.organizationId,
+        debtPositionTypeOrgId,
+        data: payload.data
+      };
+      return debtTypeUpdate.mutateAsync(updatePayload);
     }
     return debtTypeCreate.mutateAsync(payload);
   };
@@ -88,7 +99,6 @@ export const useDebtTypeOrgForm = ({
   /**
    * Handles submission of the debt type organization form.
    * @param formData - The form data to submit.
-   * @param edit - Flag indicating whether this is an edit operation.
    */
   const handleSubmit = async (formData: DebtTypeOrgForm): Promise<void> => {
     if (edit && !debtPositionTypeOrgId) {
@@ -97,7 +107,13 @@ export const useDebtTypeOrgForm = ({
     }
 
     try {
-      const requestPayload = await createRequestPayload(formData);
+      const originalData = originalDataQuery?.response;
+
+      const requestPayload = await createRequestPayload(
+        formData,
+        originalData,
+        edit
+      );
       const response = await performMutation(requestPayload);
       onSuccess(response.description);
     } catch (error) {

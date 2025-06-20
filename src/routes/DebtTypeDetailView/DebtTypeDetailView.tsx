@@ -20,6 +20,7 @@ import { AxiosError, isAxiosError } from 'axios';
 import { useStore } from '../../store/GlobalStore';
 import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';
 import { useDebtPositionTypeOrgSearch } from '../../api/debtTypesCreated';
+import { OrgSilServiceType } from '../../../generated/data-contracts';
 
 export const DebtTypeDetailView = () => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -42,6 +43,7 @@ export const DebtTypeDetailView = () => {
     organizationId,
     Number(debtPositionTypeOrgId)
   );
+
   const handleDeleteConfirm = async () => {
     setOpenDeleteDialog(false);
     try {
@@ -60,9 +62,35 @@ export const DebtTypeDetailView = () => {
     setOpenErrorDialog(false);
   };
 
+  const handleEditClick = async () => {
+    try {
+      const notificationPromise = utils.apiClient.bff.getOrgSilServices(
+        organizationId,
+        { serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME }
+      );
+      const actualizationPromise = utils.apiClient.bff.getOrgSilServices(
+        organizationId,
+        { serviceType: OrgSilServiceType.ACTUALIZATION }
+      );
+
+      await Promise.all([notificationPromise, actualizationPromise]);
+
+      navigate(
+        generatePath(PageRoutes.DEBT_TYPE_ORG_EDIT, {
+          debtPositionTypeOrgId
+        })
+      );
+    } catch (error) {
+      console.error('Services availability check failed:', error);
+
+      utils.notify.emit(
+        t('debtTypeDetail.errors.servicesUnavailableCannotEdit'),
+        'error'
+      );
+    }
+  };
+
   if (isNaN(Number(debtPositionTypeOrgId))) {
-    // TODO
-    // raise error
     console.error('debtPositionTypeOrgId is not a number');
   }
 
@@ -143,7 +171,8 @@ export const DebtTypeDetailView = () => {
     isOperatorsError,
     operatorsError,
     isOperatorsEnabledError,
-    operatorsEnabledError
+    operatorsEnabledError,
+    t
   ]);
 
   useEffect(() => {
@@ -161,7 +190,14 @@ export const DebtTypeDetailView = () => {
         }
       });
     }
-  }, [isLoading, isSuccess, data, operatorsEnabledData, mutate]);
+  }, [
+    isLoading,
+    isSuccess,
+    data,
+    operatorsEnabledData,
+    mutate,
+    organizationId
+  ]);
 
   const actionButtons = [
     {
@@ -176,12 +212,8 @@ export const DebtTypeDetailView = () => {
       buttonText: t('commons.edit'),
       color: 'primary' as const,
       variant: 'contained' as const,
-      onActionClick: () =>
-        navigate(
-          generatePath(PageRoutes.DEBT_TYPE_ORG_EDIT, {
-            debtPositionTypeOrgId
-          })
-        )
+      disabled: false,
+      onActionClick: handleEditClick
     }
   ];
 
@@ -215,6 +247,7 @@ export const DebtTypeDetailView = () => {
                 startIcon={button.icon}
                 color={button.color}
                 variant={button.variant}
+                disabled={button.disabled}
                 onClick={button.onActionClick}
               >
                 {button.buttonText}

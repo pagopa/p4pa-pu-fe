@@ -216,13 +216,11 @@ const DebtPositionCreateWizard = () => {
       );
 
       installments = sortedInstallments.map((installment, index) => {
-        const beneficiaryTransfers =
-          installment.transfers?.filter(
+        const installmentBeneficiaries = (installment.transfers || [])
+          .filter(
             (transfer) => transfer.transferIndex && transfer.transferIndex > 1
-          ) || [];
-
-        const installmentBeneficiaries = beneficiaryTransfers.map(
-          (transfer) => ({
+          )
+          .map((transfer) => ({
             entityName: transfer.orgName || '',
             amount: transfer.amountCents
               ? (transfer.amountCents / 100).toFixed(2)
@@ -230,21 +228,20 @@ const DebtPositionCreateWizard = () => {
             taxCode: transfer.orgFiscalCode || '',
             remittance: transfer.remittanceInformation || '',
             iban: transfer.iban || '',
-            postalAccount: transfer.postalIban || '',
+            postalIban: transfer.postalIban || '',
             taxonomyCode: transfer.category || '',
             readonly: isEditing
               ? {
                   entityName: true,
                   taxCode: true,
                   iban: true,
-                  postalAccount: true,
+                  postalIban: true,
                   taxonomyCode: true,
                   amount: false,
                   remittance: false
                 }
               : undefined
-          })
-        );
+          }));
 
         return {
           amount: installment.amountCents
@@ -280,14 +277,14 @@ const DebtPositionCreateWizard = () => {
         taxCode: transfer.orgFiscalCode || '',
         remittance: transfer.remittanceInformation || '',
         iban: transfer.iban || '',
-        postalAccount: transfer.postalIban || '',
+        postalIban: transfer.postalIban || '',
         taxonomyCode: transfer.category || '',
         readonly: isEditing
           ? {
               entityName: true,
               taxCode: true,
               iban: true,
-              postalAccount: true,
+              postalIban: true,
               taxonomyCode: true,
               amount: false,
               remittance: false

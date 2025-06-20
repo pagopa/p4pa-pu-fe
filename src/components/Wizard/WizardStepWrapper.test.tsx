@@ -8,14 +8,14 @@ describe('WizardStepWrapper', () => {
     subtitle: 'Test Subtitle'
   };
 
-  it('renderizza correttamente il titolo e il sottotitolo', () => {
+  it('should render the title and subtitle correctly', () => {
     render(<WizardStepWrapper {...defaultProps} />);
 
     expect(screen.getByText('Test Title')).toBeInTheDocument();
     expect(screen.getByText('Test Subtitle')).toBeInTheDocument();
   });
 
-  it('renderizza correttamente i children', () => {
+  it('should render children correctly', () => {
     render(
       <WizardStepWrapper {...defaultProps}>
         <div data-testid="test-child">Child Content</div>
@@ -26,10 +26,9 @@ describe('WizardStepWrapper', () => {
     expect(screen.getByText('Child Content')).toBeInTheDocument();
   });
 
-  it('utilizza i componenti Typography di Material-UI', () => {
+  it('should use Material-UI Typography components', () => {
     const { container } = render(<WizardStepWrapper {...defaultProps} />);
 
-    // Verifica che siano utilizzati i componenti Typography
     const headingElement = container.querySelector('.MuiTypography-h4');
     const bodyElement = container.querySelector('.MuiTypography-body1');
 
@@ -42,33 +41,29 @@ describe('WizardStepWrapper', () => {
     }
   });
 
-  it('utilizza Grid e Box di Material-UI', () => {
+  it('should use Grid and Box components from Material-UI', () => {
     const { container } = render(<WizardStepWrapper {...defaultProps} />);
 
-    // Verifica che sia utilizzato il componente Box
     const boxElement = container.querySelector('.MuiBox-root');
     expect(boxElement).not.toBeNull();
-
-    // Verifica che sia utilizzato il componente Grid
     const gridElement = container.querySelector('.MuiGrid-root');
     expect(gridElement).not.toBeNull();
   });
 
-  it('ha la proprietà gutterBottom sui Typography', () => {
+  it('should have gutterBottom property on Typography', () => {
     const { container } = render(<WizardStepWrapper {...defaultProps} />);
 
     const titleElement = container.querySelector('.MuiTypography-gutterBottom');
     expect(titleElement).not.toBeNull();
   });
 
-  it('avvolge i children con il layout corretto', () => {
+  it('should wrap children with the correct layout', () => {
     render(
       <WizardStepWrapper {...defaultProps}>
         <div data-testid="test-child">Child Content</div>
       </WizardStepWrapper>
     );
 
-    // Verifica che i children siano resi all'interno del Box
     const childElement = screen.getByTestId('test-child');
     const boxElement = childElement.closest('.MuiBox-root');
 

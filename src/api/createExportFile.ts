@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import {
+  ClassificationsExportFileRequestDTO,
   PaidExportFileRequest,
   ReceiptsArchivingExportFileRequest,
   RequestParams
@@ -39,6 +40,22 @@ export const createReceiptsArchivingExportFile = () =>
           data,
           params
         );
+      return response;
+    }
+  });
+
+export const createClassificationsExportFile = () =>
+  useMutation({
+    mutationKey: ['createClassificationsExportFile'],
+    mutationFn: async ({
+      data,
+      params
+    }: {
+      data: ClassificationsExportFileRequestDTO;
+      params?: RequestParams;
+    }) => {
+      const response =
+        await utils.apiClient.bff.createClassificationsExportFile(data, params);
       return response;
     }
   });

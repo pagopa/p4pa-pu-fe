@@ -34,14 +34,140 @@
   },
   "classifications": {
     "description": "Ricerca o visualizza classificazioni",
-    "search": "Cerca classificazioni",
-    "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
-    "exportTitle": "Esporta Classificazioni",
-    "exportDescription": "Richiede l'esportazione di una classificazione.",
+    "search": "Cerca gli stati dei pagamenti",
+    "searchdescription": "Controlla se i pagamenti sono stati debitamente notificati, rendicontati e riconciliati oppure verifica degli errori. Inserisci al meno un filtro per avviare la ricerca.",
+    "exportTitle": "Scarica Flussi",
+    "exportDescription": "Richiede l'esportazione di Classificazioni dei pagamenti un certo intervallo di tempo.",
     "sectionTitle": "Classificazioni esportati",
-    "showAllResults": "Vedi classificazioni esportate"
+    "showAllResults": "Vedi flussi esportati",
+    "exportFlowDescription": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+    "filters": {
+      "classificationType": "Tipo Classificazione",
+      "noOptionSelected": "Seleziona un'opzione"
+    },
+    "detail": {
+      "title": "Dettaglio Pagamento",
+      "sections": {
+        "telematicReceipt": {
+          "title": "Ricevuta Telematica",
+          "debtPositionTypeOrgCode": "Tipo dovuto",
+          "paymentObject": "Oggetto del pagamento",
+          "receiptPaymentAmount": "Importo",
+          "receiptPaymentDateTime": "Data Esito",
+          "receiptDebtorFullName": "Anagrafica attestante",
+          "receiptDebtorFiscalCode": "Codice fiscale attestante",
+          "iuv": "IUV",
+          "iud": "IUD",
+          "iur": "IUR",
+          "receiptPayerFullName": "Anagrafica pagatore",
+          "receiptPayerFiscalCode": "Codice fiscale pagatore",
+          "link": "Vedi Ricevuta Telematica"
+        },
+        "notifiedPayment": {
+          "title": "pagamento notificato",
+          "debtType": "Tipo dovuto",
+          "paymentObject": "Oggetto del pagamento",
+          "amount": "Importo",
+          "receiptPayerFullName": "Anagrafica pagatore",
+          "receiptPayerFiscalCode": "Codice fiscale pagatore",
+          "esecutionDate": "Data esecuzione",
+          "otherdata": "Dati specifici riscossione",
+          "iud": "IUD"
+        },
+        "reporting": {
+          "title": "Rendicontazione pagoPA",
+          "idReporting": "ID Rendicontazione",
+          "flowDateTime": "Data ora flusso",
+          "regulationUniqueIdentifier": "ID regolamento",
+          "regionValueDate": "Data regolamento",
+          "totalPayments": "Importo Totale",
+          "link": "Vedi Flusso di Rendicontazione"
+        },
+        "earnings": {
+          "title": "Giornale di cassa",
+          "accountCode": "Conto",
+          "pspFirstName": "Ordinante",
+          "documentCode": "Codice documento",
+          "billDate": "Data Valuta",
+          "billYear": "Anno bolletta",
+          "provisionalAe": "Anno provvissorio",
+          "receptionDate": "Data Contabile",
+          "billCode": "Codice Bolletta",
+          "provisionalCode": "Codice provvisorio",
+          "link": "Vedi Bolletta"
+        }
+      }
+    }
+  },
+  "classificationsExport": {
+    "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+    "classificationsOptions": {
+      "DOPPI": "Pagamenti doppi",
+      "RT_NO_IUF": "Pagamenti non correttamente rendicontati",
+      "RT_NO_IUD": "Pagamenti non correttamente notificati",
+      "IUV_NO_RT": "Rendicontazioni senza pagamenti generati",
+      "TES_NO_IUF_OR_IUV": "Riversamenti non rendicontati o di pagamenti non eseguiti",
+      "IUF_NO_TES": "Rendicontazioni non correttamente riversate",
+      "IUD_RT_IUF": "Pagamenti Notificati e Riconciliati",
+      "RT_IUF": "Pagamenti rendicontati",
+      "RT_TES": "Pagamenti con riscontro puntuale",
+      "IUD_RT_IUF_TES": "Pagamenti Notificati",
+      "RT_IUF_TES": "Pagamenti riversati cumulativamente",
+      "IUF_TES_DIV_IMP": "Rendicontazioni con riversamento ma con importo differente",
+      "IUD_NO_RT": "Notifiche di pagamenti non eseguiti",
+      "TES_NO_MATCH": "Riversamenti di tesoreria sconosciuti",
+      "UNKNOWN": "Tutti"
+    },
+    "title": "Prenota export di un flusso",
+    "description": "Imposta i filtri e Inserisci i dati per prenotare l'esportazione delle classificazioni dei pagamenti e conoscere se è stato riconciliato o ci sono delle anomalie.",
+    "subTitle": "Configurazione dell'esportazione",
+    "subDescription": "L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
+    "sections": {
+      "paymentClassification": {
+        "title": "Classificazione pagamenti",
+        "type": "Tipo classificazione",
+        "lastUpdateDate": "Data ultimo aggiornamento"
+      },
+      "traceVersion": {
+        "title": "Versione tracciato",
+        "fileVersion": "Versione tracciato"
+      },
+      "notice": {
+        "remittanceInformation": "Oggetto del pagamento",
+        "applicant": "Attestante",
+        "paymentDate": "Data pagamento"
+      },
+      "reporting": {
+        "title": "Rendicontazione",
+        "paymentDate": "Data pagamento",
+        "regulationDate": "Data regolamento",
+        "regulationUniqueIdentifier": "Identificativo univoco regolamento"
+      },
+      "treasury": {
+        "title": "Tesoreria",
+        "amount": "Importo",
+        "accountRegistryCode": "Codice conto",
+        "accountDate": "Data contabile",
+        "valueDate": "Data Valuta"
+      }
+    },
+    "errorMessages": {
+      "singleInstanceBothDates": "Compila entrambe le date dell'intervallo",
+      "bothDates": "Compila entrambe le date negli intervalli che vuoi utilizzare",
+      "missingRequiredFields": "Verifica di aver compilato i filtri obbligatori"
+    }
+  },
+  "appPreview": {
+    "title": "Anteprima in App IO",
+    "messageInfo": "*Verrà mostrato il nome dell’ente e il servizio assegnati per inviare il messaggio.",
+    "mousePopup": "Scorri con il cursore per visualizzare l’anteprima completa"
+  },
+  "notificationPreview": {
+    "byOrg": "Ente mittente*",
+    "byService": "Servizio mittente*"
   },
   "commons": {
+    "info": "Informazioni",
     "addfilter": "Aggiunge filtro",
     "all": "Tutti",
     "amount": "Importo",
@@ -129,6 +255,7 @@
         "label": "Importo",
         "value": "Importo"
       },
+      "atLeastOneFilter": "Inserire almeno un filtro",
       "bill": {
         "code": "Codice",
         "date": {
@@ -145,6 +272,18 @@
       "iuv": {
         "code": "Codice IUV",
         "label": "IUV"
+      },
+      "iur": {
+        "code": "Codice IUR",
+        "label": "IUR"
+      },
+      "iud": {
+        "code": "Codice IUD",
+        "label": "IUD"
+      },
+      "iuf": {
+        "code": "Codice IUF",
+        "label": "IUF"
       },
       "payer": {
         "label": "Ordinante",
@@ -190,12 +329,14 @@
       "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
     },
     "from": "Dal",
+    "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
     "importFlow": "Importa flusso",
     "importFlows": "Importa flussi",
     "importFrom": "Caricati dal",
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
     "iud": "IUD",
+    "iuf": "IUF",
     "iur": "IUR",
     "iuv": "IUV",
     "loading": "caricamento",
@@ -209,6 +350,7 @@
     "noFlows": "Non ci sono flussi.",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
     "notifications": "Notifiche",
+    "notificationsConfig": "Configurazione",
     "operator": "Operatore",
     "operators": "Operatori",
     "optional": "opzionale",
@@ -242,6 +384,7 @@
       "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
       "BACKOFFICE_TAXONOMY_SEARCH_RESULTS": "Risultato ricerca",
       "CLASSIFICATIONS": "Classificazioni",
+      "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
@@ -283,7 +426,8 @@
       "TREASURY_IMPORT_OVERVIEW": "Flussi importati",
       "TREASURY_INDEX": "Pagina principale",
       "TREASURY_SEARCH_RESULTS": "Risultato ricerca",
-      "USERS": "Utenti"
+      "USERS": "Utenti",
+      "CLASSIFICATION_DETAIL": "Dettaglio Pagamento"
     },
     "saveDraft": "Salva bozza",
     "save": "Salva modifiche",
@@ -359,7 +503,8 @@
       "invalidIban": "Formato IBAN non valido",
       "invalidPostalIban": "Formato conto poste non valido"
     },
-    "yes": "Si"
+    "yes": "Si",
+    "404": "404: risorsa non disponibile"
   },
   "conservation": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni."
@@ -487,6 +632,9 @@
           "label": "IBAN",
           "required": "Il campo iban è obbligatorio"
         },
+        "postalIban": {
+          "label": "Conto corrente Postale"
+        },
         "paymentMethod": {
           "required": "Il campo IBAN è obbligatorio"
         },
@@ -609,6 +757,18 @@
       "title": "La posizione debitoria non può essere modificata",
       "description": "Siamo spiacenti, non è possibile modificare questa posizione debitoria."
     },
+    "toSyncEditErrorDialog": {
+      "description": "Le posizioni debitorie in stato \"Da sincronizzare\" non possono essere modificate. Si prega di ricaricare la pagina o riprovare più tardi."
+    },
+    "toSyncErrorDialog": {
+      "description": "Le posizioni debitorie in stato \"Da sincronizzare\" non possono essere eliminate. Si prega di ricaricare la pagina o riprovare più tardi."
+    },
+    "publishDialog": {
+      "title": "Vuoi attivare il pagamento?",
+      "description": "La posizione debitoria passerà allo stato 'Da pagare' e verranno generati degli avvisi. Una volta attivato, è possibile modificare l'oggetto di pagamento, l'importo e la data di scadenza, oppure eliminare la Posizione Debitoria.",
+      "confirmLabel": "Attiva"
+    },
+    "publishError": "Si è verificato un errore durante l'attivazione del pagamento. Vi preghiamo di riprovare più tardi.",
     "timeline": {
       "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio",
       "title": "Storico Posizione Debitoria"
@@ -683,11 +843,10 @@
     "title": "Crea un nuovo Tipo dovuto",
     "description": "Compila i campi e crea un nuovo Tipo dovuto nel proprio catalogo.",
     "configuration": {
-      "alertMessage": "* Indica una domanda obbligatoria",
-      "collectionReason": {
-        "label": "Motivo Riscossione",
-        "required": "Il Motivo Riscossione é obbligatorio"
+      "taxonomy": {
+        "title": "Tassonomia"
       },
+      "alertMessage": "* Indica una domanda obbligatoria",
       "debtType": {
         "label": "Nome del Tipo dovuto",
         "helper": "Inserisce il nome attribuito al servizio di incasso",
@@ -700,25 +859,7 @@
         "label": "Codice Tipo dovuto",
         "required": "Il codice del Tipo dovuto è obbligatorio"
       },
-      "macroArea": {
-        "label": "Macroarea",
-        "required": "Il campo macroarea é obbligatorio"
-      },
-      "organizationType": {
-        "label": "Tipo ente",
-        "required": "Il campo Tipo ente è obbligatorio",
-        "title": "Ente"
-      },
-      "serviceType": {
-        "label": "Tipo Servizio",
-        "required": "Il campo Tipo Servizio é obbligatorio"
-      },
       "subtitle": "Definisce il nome e tassonomia del nuovo Tipo dovuto.",
-      "taxonomyCode": {
-        "label": "Codice Tassonomico",
-        "required": "Il Codice Tassonomico é obbligatorio",
-        "title": "Tassonomia"
-      },
       "title": "Configurazione Tipo dovuto"
     },
     "settings": {
@@ -763,6 +904,9 @@
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
   "debtTypeDetail": {
+    "errors": {
+      "servicesUnavailableCannotEdit": "Non è stato possibile recuperare configurazioni la modifica non è consentita al momento, riprova più tardi"
+    },
     "description": "Ecco i dettagli del Tipo dovuto",
     "debtMainConfiguration": {
       "title": "Configurazione generale",
@@ -818,7 +962,8 @@
       },
       "code": {
         "label": "Codice Sistema Gestionale",
-        "required": "Il Codice Sistema Gestionale é obbligatorio"
+        "required": "Il Codice Sistema Gestionale é obbligatorio",
+        "notUnique": "Il Codice Sistema Gestionale deve essere univoco. Codice inserito già esistente."
       },
       "description": {
         "label": "Descrizione",
@@ -875,17 +1020,34 @@
           "no": "No",
           "yes": "Si"
         },
-        "fields": {
-          "retries": "Massimo Tentativi inoltro esito pagamento",
-          "retriesDescription": "Numero di tentativi eseguiti da Piattaforma Unitaria per informare al Sistema Gestionale dell'esito del pagamento.",
-          "appName": "Nome applicativo",
-          "endpoint": "URL inoltro RT",
-          "jwt": "JWT",
-          "clientId": "Client ID",
-          "clientEmail": "Client mail",
-          "secretKeyId": "Secret key ID",
-          "secretKey": "Secret key"
+        "configuration": {
+          "label": "Configurazione notifiche",
+          "none": "Nessuna notifica",
+          "required": "La configurazione è obbligatoria se si sceglie di abilitare le notifiche",
+          "helperText": "Seleziona una configurazione per la gestione delle notifiche",
+          "editHelperText": "Seleziona una configurazione per la gestione delle notifiche",
+          "errorState": "Errore nel recupero delle configurazioni",
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione"
         }
+      },
+      "actualization": {
+        "title": "Attualizzazione importo",
+        "subtitle": "Configura l'attualizzazione importo e costi agguntivi.",
+        "configuration": {
+          "label": "Configurazione attualizzazione importo",
+          "none": "Nessuna attualizzazione",
+          "noneSelected": "Attualizzazione non configurata",
+          "noneEditHelper": "L'attualizzazione non può essere abilitata in modifica se non era precedentemente configurata",
+          "errorState": "Errore nel recupero delle configurazioni",
+          "helperText": "Una volta selezionata una configurazione per l'attualizzazione sarà possibile modificarla ma non rimuoverla",
+          "editHelperText": "È possibile la sola modifica della configurazione, non può essere rimossa",
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione"
+        }
+      },
+      "errors": {
+        "notificationServiceUnavailable": "Servizio di configurazione notifiche non disponibile - alcune opzioni potrebbero essere limitate",
+        "actualizationServiceUnavailable": "Servizio di configurazione attualizzazione non disponibile - alcune opzioni potrebbero essere limitate", 
+        "bothServicesUnavailable": "Servizi di configurazione notifiche e attualizzazione non disponibili - alcune opzioni potrebbero essere limitate"
       },
       "updateAmount": {
         "title": "Attualizzazione importo",
@@ -1046,6 +1208,29 @@
     "searchRegulationId": "ID Regolamento",
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"
+  },
+  "taxonomy": {
+    "orgType": {
+      "label": "Tipo ente",
+      "required": "Il campo Tipo ente è obbligatorio",
+      "title": "Ente"
+    },
+    "macroArea": {
+      "label": "Macroarea",
+      "required": "Il campo macroarea é obbligatorio"
+    },
+    "serviceType": {
+      "label": "Tipo Servizio",
+      "required": "Il campo Tipo Servizio é obbligatorio"
+    },
+    "collectingReason": {
+      "label": "Motivo Riscossione",
+      "required": "Il Motivo Riscossione é obbligatorio"
+    },
+    "taxonomyCode": {
+      "label": "Codice Tassonomico",
+      "required": "Il campo codice tassonomico è obbligatorio"
+    }
   },
   "taxonomyPage": {
     "APIUpdate": "Aggiornamento API",

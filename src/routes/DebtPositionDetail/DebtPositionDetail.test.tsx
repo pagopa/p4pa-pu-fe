@@ -112,12 +112,20 @@ const mockResult = {
 };
 const mockMutate = vi.fn().mockReturnValue(mockResult);
 const deleteMockMutate = vi.fn();
+const publishMockMutate = vi.fn();
+const deleteMockMutateAsync = vi.fn().mockResolvedValue(undefined);
+const publishMockMutateAsync = vi.fn().mockResolvedValue(undefined);
 
 vi.mock('../../api/debtPositions', () => ({
   default: {
     getDebtPositionDetail: vi.fn(),
     deleteDebtPosition: vi.fn().mockImplementation(() => ({
-      mutate: deleteMockMutate
+      mutate: deleteMockMutate,
+      mutateAsync: deleteMockMutateAsync
+    })),
+    publishDebtPosition: vi.fn().mockImplementation(() => ({
+      mutate: publishMockMutate,
+      mutateAsync: publishMockMutateAsync
     })),
     getDebtPositionZipFile: vi.fn().mockImplementation(() => ({
       mutateAsync: mockMutate
@@ -188,10 +196,19 @@ beforeEach(() => {
     'debtPositionDetail.errorDialog.title': 'Cannot Delete',
     'debtPositionDetail.errorDialog.description':
       'This debt position cannot be deleted',
+    'debtPositionDetail.toSyncErrorDialog.description':
+      'Le posizioni debitorie in stato "Da sincronizzare" non possono essere eliminate. Si prega di ricaricare la pagina o riprovare più tardi.',
     'debtPositionDetail.edit': 'Edit',
     'debtPositionDetail.editErrorDialog.title': 'Cannot Edit',
     'debtPositionDetail.editErrorDialog.description':
       'This debt position cannot be edited',
+    'debtPositionDetail.toSyncEditErrorDialog.description':
+      'Le posizioni debitorie in stato "Da sincronizzare" non possono essere modificate. Si prega di ricaricare la pagina o riprovare più tardi.',
+    'debtPositionDetail.publishDialog.title': 'Activate Payment?',
+    'debtPositionDetail.publishDialog.description':
+      "The debt position will change to 'Unpaid' status and payment notices will be generated.",
+    'debtPositionDetail.publishDialog.confirmLabel': 'Activate',
+    'debtPositionDetail.publishError': 'Error publishing debt position',
     'debtPositionDetail.downloadNotices': 'Download Notices',
     'debtPositionDetail.activePayment': 'Active Payment',
     'debtPositionDetail.timeline.title': 'Timeline',
@@ -537,7 +554,7 @@ describe('DebtPositionDetail Component', () => {
       fireEvent.click(deleteButton);
 
       await vi.waitFor(() => {
-        expect(deleteMockMutate).toHaveBeenCalled();
+        expect(deleteMockMutateAsync).toHaveBeenCalled();
       });
     }
   });
@@ -574,7 +591,7 @@ describe('DebtPositionDetail Component', () => {
         expect(screen.queryByText('Confirm Delete')).not.toBeInTheDocument();
       });
 
-      expect(deleteMockMutate).not.toHaveBeenCalled();
+      expect(deleteMockMutateAsync).not.toHaveBeenCalled();
     }
   });
 
@@ -615,7 +632,7 @@ describe('DebtPositionDetail Component', () => {
         expect(screen.queryByText('Cannot Delete')).not.toBeInTheDocument();
       });
 
-      expect(deleteMockMutate).not.toHaveBeenCalled();
+      expect(deleteMockMutateAsync).not.toHaveBeenCalled();
     }
   });
 
@@ -862,6 +879,240 @@ describe('DebtPositionDetail Component', () => {
       fireEvent.click(historyButton);
 
       expect(screen.getByText('No events available')).toBeDefined();
+    }
+  });
+
+  it('shows active payment button for DRAFT status and opens publish dialog on click', () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.status = DebtPositionStatus.DRAFT;
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    const activePaymentButton = screen.getByText('Active Payment');
+    expect(activePaymentButton).toBeDefined();
+
+    fireEvent.click(activePaymentButton);
+
+    const publishDialog = screen.getByTestId('confirm-publish-dialog');
+    expect(publishDialog).toBeDefined();
+    expect(screen.getByText('Activate Payment?')).toBeDefined();
+    expect(
+      screen.getByText(
+        "The debt position will change to 'Unpaid' status and payment notices will be generated."
+      )
+    ).toBeDefined();
+    expect(screen.getByText('Activate')).toBeDefined();
+  });
+
+  it('calls publishDebtPosition mutation when confirm button is clicked in publish dialog', () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.status = DebtPositionStatus.DRAFT;
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    const activePaymentButton = screen.getByText('Active Payment');
+    fireEvent.click(activePaymentButton);
+
+    const activateButton = screen.getByTestId(
+      'confirm-publish-dialog-confirm-button'
+    );
+    fireEvent.click(activateButton);
+
+    expect(publishMockMutateAsync).toHaveBeenCalled();
+  });
+
+  it('closes publish dialog when cancel button is clicked', () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.status = DebtPositionStatus.DRAFT;
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    const activePaymentButton = screen.getByText('Active Payment');
+    fireEvent.click(activePaymentButton);
+
+    expect(screen.getByTestId('confirm-publish-dialog')).toBeDefined();
+
+    const cancelButton = screen.getByTestId(
+      'confirm-publish-dialog-cancel-button'
+    );
+    fireEvent.click(cancelButton);
+
+    expect(
+      screen.queryByTestId('confirm-publish-dialog')
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows download notices button for non-DRAFT status', () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.status = DebtPositionStatus.UNPAID;
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    expect(screen.getByText('Download Notices')).toBeDefined();
+    expect(screen.queryByText('Active Payment')).not.toBeInTheDocument();
+  });
+
+  it('shows specific error dialog when trying to delete a debt position with TO_SYNC status', async () => {
+    mockDebtPositionDetail.status = DebtPositionStatus.TO_SYNC;
+
+    render(<DebtPositionDetail />);
+
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      await vi.waitFor(() => {
+        const deleteOption = screen.getByTestId('DeleteIcon').closest('li');
+        if (deleteOption) {
+          fireEvent.click(deleteOption);
+        }
+      });
+
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Cannot Delete');
+        expect(dialogTitle).toBeVisible();
+
+        const dialogMessage = screen.getByText(
+          'Le posizioni debitorie in stato "Da sincronizzare" non possono essere eliminate. Si prega di ricaricare la pagina o riprovare più tardi.'
+        );
+        expect(dialogMessage).toBeVisible();
+
+        const closeButton = screen.getByRole('button', { name: 'Close' });
+        expect(closeButton).toBeVisible();
+
+        const deleteButton = screen.queryByRole('button', { name: 'Delete' });
+        expect(deleteButton).not.toBeInTheDocument();
+      });
+
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      fireEvent.click(closeButton);
+
+      await vi.waitFor(() => {
+        expect(screen.queryByText('Cannot Delete')).not.toBeInTheDocument();
+      });
+
+      expect(deleteMockMutateAsync).not.toHaveBeenCalled();
+    }
+  });
+
+  it('shows specific error dialog when trying to edit a debt position with TO_SYNC status', async () => {
+    const mockData = { ...mockDebtPositionDetail };
+    mockData.status = DebtPositionStatus.TO_SYNC;
+    mockData.debtPositionOrigin = DebtPositionOrigin.ORDINARY;
+
+    vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+      data: mockData,
+      isLoading: false,
+      isError: false,
+      error: null,
+      refetch: vi.fn(),
+      isRefetching: false,
+      isSuccess: true,
+      status: 'success',
+      isFetching: false,
+      isPaused: false,
+      isPending: false,
+      fetchStatus: 'idle'
+    } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+    render(<DebtPositionDetail />);
+
+    const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+    expect(menuButton).not.toBeNull();
+
+    if (menuButton) {
+      fireEvent.click(menuButton);
+
+      await vi.waitFor(() => {
+        const editOption = screen.getByTestId('EditIcon').closest('li');
+        expect(editOption).toBeVisible();
+
+        if (editOption) {
+          fireEvent.click(editOption);
+        }
+      });
+
+      await vi.waitFor(() => {
+        const dialogTitle = screen.getByText('Cannot Edit');
+        expect(dialogTitle).toBeVisible();
+
+        const dialogMessage = screen.getByText(
+          'Le posizioni debitorie in stato "Da sincronizzare" non possono essere modificate. Si prega di ricaricare la pagina o riprovare più tardi.'
+        );
+        expect(dialogMessage).toBeVisible();
+
+        const closeButton = screen.getByRole('button', { name: 'Close' });
+        expect(closeButton).toBeVisible();
+      });
+
+      const closeButton = screen.getByRole('button', { name: 'Close' });
+      fireEvent.click(closeButton);
+
+      await vi.waitFor(() => {
+        expect(screen.queryByText('Cannot Edit')).not.toBeInTheDocument();
+      });
     }
   });
 });

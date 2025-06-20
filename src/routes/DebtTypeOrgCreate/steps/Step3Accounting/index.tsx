@@ -26,6 +26,7 @@ export const Step3Accounting = () => {
       >
         <FormComponent.ControlledTextField
           name="postalIban"
+          data-testId="postalIban"
           control={control}
           label={t('debtTypeOrgCreate.accounting.postalIban')}
           disabled={!!iban}
@@ -33,6 +34,7 @@ export const Step3Accounting = () => {
         />
         <FormComponent.ControlledTextField
           name="iban"
+          data-testId="iban"
           control={control}
           label={t('debtTypeOrgCreate.accounting.pspIban')}
           disabled={!!postalIban}
@@ -40,12 +42,14 @@ export const Step3Accounting = () => {
         />
         <FormComponent.ControlledTextField
           name="postalAccountCode"
+          data-testId="postalAccountCode"
           control={control}
           label={t('debtTypeOrgCreate.accounting.postalAccount')}
           required={false}
         />
         <FormComponent.ControlledTextField
           name="holderPostalCc"
+          data-testId="holderPostalCc"
           control={control}
           label={t('debtTypeOrgCreate.accounting.postalAccountHolder')}
           required={false}
@@ -57,6 +61,7 @@ export const Step3Accounting = () => {
       >
         <FormComponent.ControlledTextField
           name="balance"
+          data-testId="balance"
           control={control}
           label={t('debtTypeOrgCreate.accounting.defaultBudgetStructure')}
           multiline
@@ -66,6 +71,7 @@ export const Step3Accounting = () => {
         />
         <FormComponent.ControlledTextField
           name="orgSector"
+          data-testId="orgSector"
           control={control}
           label={t('debtTypeOrgCreate.accounting.entitySector')}
           required={false}

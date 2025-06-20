@@ -1,5 +1,3 @@
-import { useTranslation } from 'react-i18next';
-import GenericDialog from '../../../components/GenericDialog/GenericDialog';
 import { useTheme } from '@mui/material';
 import ReactMarkdown from 'react-markdown';
 import remarkBreaks from 'remark-breaks';
@@ -7,10 +5,7 @@ import rehypeRaw from 'rehype-raw';
 import './markdownpreview.css';
 
 type MarkdownPreviewProps = {
-  title?: string;
   message?: string;
-  open: boolean;
-  onClose: () => void;
 };
 
 const placeholders: Record<string, string> = {
@@ -25,7 +20,7 @@ const placeholders: Record<string, string> = {
 };
 
 /**
- * `MarkdownPreview` shows a content in a modal window with the content rendered by markdown.
+ * `MarkdownPreview` shows content rendered by markdown.
  *
  * This component allows you to use predefined placeholders to convert them into dynamic data.
  *
@@ -38,22 +33,15 @@ const placeholders: Record<string, string> = {
  * @component
  *
  * @param {Object} props - Component props
- * @param {string} [props.title] - Dialog title (usually the subject)
  * @param {string} [props.message] - Dialog message (usually the message)
- * @param {boolean} props.open - Flag to show/hide dialog message
- * @param {Function} props.onClose - Callback to use when the dialog windows closes.
  *
  * @returns {JSX.Element} Component `MarkdownPreview` rendered
  */
 export const MarkdownPreview = ({
-  title,
-  message,
-  open,
-  onClose
-}: MarkdownPreviewProps) => {
+  message
+}: MarkdownPreviewProps): JSX.Element => {
   const theme = useTheme();
   const secondaryColor = theme.palette.text.secondary;
-  const { t } = useTranslation();
 
   /**
    * Replaces all placeholders defined in the `placeholders` dictionary with their respective values in the provided text, highlighting them with a specific style.
@@ -64,7 +52,7 @@ export const MarkdownPreview = ({
    * @param {string} inputText - The original text which may contain placeholders
    * @returns {string} The modified text with placeholders replaced by highlighted HTML
    */
-  const renderTextWithPlaceholders = (inputText: string) => {
+  const renderTextWithPlaceholders = (inputText: string): string => {
     let modifiedText = inputText;
     Object.keys(placeholders).forEach((placeholder: string) => {
       const regex = new RegExp(placeholder, 'g');
@@ -78,25 +66,16 @@ export const MarkdownPreview = ({
   };
 
   return (
-    <GenericDialog
-      data-testid="confirm-dialog"
-      open={open}
-      title={title || ''}
-      cancelLabel={t('commons.close')}
-      onClose={onClose}
-      fullWidth={true}
+    <ReactMarkdown
+      rehypePlugins={[rehypeRaw]}
+      remarkPlugins={[remarkBreaks]}
+      components={{
+        span: ({ ...props }) => {
+          return <span {...props} />;
+        }
+      }}
     >
-      <ReactMarkdown
-        rehypePlugins={[rehypeRaw]}
-        remarkPlugins={[remarkBreaks]}
-        components={{
-          span: ({ ...props }) => {
-            return <span {...props} />;
-          }
-        }}
-      >
-        {renderTextWithPlaceholders(message || '')}
-      </ReactMarkdown>
-    </GenericDialog>
+      {renderTextWithPlaceholders(message || '')}
+    </ReactMarkdown>
   );
 };

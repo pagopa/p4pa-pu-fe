@@ -16,8 +16,8 @@ vi.mock('./components/Step1Configuration', () => ({
               description: 'Test Debt Type',
               code: 'CODE1',
               orgType: 'ORG1',
-              macroArea: 'MACRO1',
-              serviceType: 'SERVICE1',
+              macroAreaCode: 'MACRO1',
+              serviceTypeCode: 'SERVICE1',
               collectingReason: 'REASON1',
               taxonomyCode: 'TAX1'
             });

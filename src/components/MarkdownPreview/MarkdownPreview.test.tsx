@@ -1,7 +1,7 @@
-import { render } from '../../../__tests__/renderers';
+import { render } from '../../__tests__/renderers';
 import { screen } from '@testing-library/react';
 import { describe, it, vi, expect } from 'vitest';
-import { MarkdownPreview } from './MarkdownPreview';
+import { MarkdownPreview } from '.';
 
 const defaultProps = {
   title: 'Test Title',
@@ -12,10 +12,9 @@ const defaultProps = {
 };
 
 describe('MarkdownPreview', () => {
-  it('renders title and message, using a placeholder ', () => {
+  it('renders message, using a placeholder ', () => {
     render(<MarkdownPreview {...defaultProps} />);
 
-    expect(screen.getByText('Test Title')).toBeInTheDocument();
     expect(screen.getByText('Mario Rossi')).toBeInTheDocument();
   });
 });

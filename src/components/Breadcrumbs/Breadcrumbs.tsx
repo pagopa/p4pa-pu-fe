@@ -11,6 +11,7 @@ import { ArrowBack } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { Link as RouterLink, useMatches, useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/GlobalStore';
+import { RouteHandleObject } from '../../models/Routes';
 
 export type BreadcrumbsProps = {
   separator: React.ReactElement;
@@ -21,6 +22,7 @@ export type BredcrumbItem = {
   id: string;
   pathname: string;
   label?: string;
+  handle?: RouteHandleObject;
 };
 
 const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
@@ -56,21 +58,23 @@ const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
         aria-label={t('commons.breadcrumbs')}
         sx={{ paddingBlock: 1 }}
       >
-        {itemsToList.map((b, i, array) => {
-          const isLastElement = i === array.length - 1;
-          return (
-            <MUILink
-              color="textSecondary"
-              fontWeight={isLastElement ? '400' : '600'}
-              component={RouterLink}
-              to={b.pathname}
-              underline={'hover'}
-              key={`breadcrumb-${i}`}
-            >
-              {b.label ? b.label : t(`commons.routes.${b.id}`)}
-            </MUILink>
-          );
-        })}
+        {itemsToList
+          .filter((item) => !item.handle?.hideBreadcrumbElement)
+          .map((b, i, array) => {
+            const isLastElement = i === array.length - 1;
+            return (
+              <MUILink
+                color="textSecondary"
+                fontWeight={isLastElement ? '400' : '600'}
+                component={RouterLink}
+                to={b.pathname}
+                underline={'hover'}
+                key={`breadcrumb-${i}`}
+              >
+                {b.label ? b.label : t(`commons.routes.${b.id}`)}
+              </MUILink>
+            );
+          })}
       </BreadcrumbsMUI>
     </Stack>
   ) : null;

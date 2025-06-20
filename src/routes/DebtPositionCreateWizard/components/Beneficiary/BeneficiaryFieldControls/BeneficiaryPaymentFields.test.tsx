@@ -71,6 +71,16 @@ vi.mock('../BeneficiaryFieldComponents', () => ({
       {t('debtPositionCreateWizard.step3.beneficiary.iban.label')}
     </div>
   ),
+  PostalIbanField: ({ field, t, disabled, index }: FieldComponentProps) => (
+    <div
+      data-testid="postal-iban-field"
+      data-name={field.name}
+      data-disabled={disabled ? 'true' : 'false'}
+      data-index={String(index)}
+    >
+      {t('debtPositionCreateWizard.step3.beneficiary.postalIban.label')}
+    </div>
+  ),
   PostalAccountField: ({ field, t, disabled, index }: FieldComponentProps) => (
     <div
       data-testid="postal-account-field"
@@ -95,6 +105,7 @@ vi.mock('../../../../../utils/BeneficiaryFieldHelpers', () => ({
 type TestFormValues = {
   beneficiaries: Array<{
     iban: string;
+    postalIban: string;
     postalAccount: string;
     [key: string]: unknown;
   }>;
@@ -112,6 +123,7 @@ describe('BeneficiaryPaymentFields', () => {
     errors: {},
     fieldValidators: {
       validateIBAN: vi.fn().mockReturnValue(undefined),
+      validatePostalIban: vi.fn().mockReturnValue(undefined),
       validatePostalAccount: vi.fn().mockReturnValue(undefined),
       validatePaymentMethod: vi.fn().mockReturnValue(undefined),
       validateBeneficiaryTaxCode: vi.fn().mockReturnValue(undefined),
@@ -126,8 +138,10 @@ describe('BeneficiaryPaymentFields', () => {
 
     mockProps.getValues.mockImplementation((path: string) => {
       if (path === 'beneficiaries.0.iban') return '';
+      if (path === 'beneficiaries.0.postalIban') return '';
       if (path === 'beneficiaries.0.postalAccount') return '';
       if (path.includes('iban')) return '';
+      if (path.includes('postalIban')) return '';
       if (path.includes('postalAccount')) return '';
       return undefined;
     });
@@ -172,7 +186,11 @@ describe('BeneficiaryPaymentFields', () => {
 
     mockProps.getValues.mockImplementation((path: string) => {
       if (path === 'beneficiaries.0.iban') return ibanValue;
+      if (path === 'beneficiaries.0.postalIban') return '';
+      if (path === 'beneficiaries.0.postalAccount') return '';
       if (path.includes('iban')) return ibanValue;
+      if (path.includes('postalIban')) return '';
+      if (path.includes('postalAccount')) return '';
       return undefined;
     });
 
@@ -187,5 +205,28 @@ describe('BeneficiaryPaymentFields', () => {
     expect(
       mockProps.fieldValidators.validatePaymentMethod
     ).toHaveBeenCalledWith(ibanValue);
+  });
+
+  it('should render PostalIban field', () => {
+    render(<BeneficiaryPaymentFields {...mockProps} />);
+
+    expect(screen.getByTestId('postal-iban-field')).toBeInTheDocument();
+  });
+
+  it('should pass correct props to PostalIbanField', () => {
+    render(<BeneficiaryPaymentFields {...mockProps} />);
+
+    const postalIbanField = screen.getByTestId('postal-iban-field');
+    expect(postalIbanField).toHaveAttribute('data-disabled', 'false');
+    expect(postalIbanField).toHaveAttribute('data-index', '0');
+  });
+
+  it('should handle disabled state correctly for PostalIbanField', () => {
+    render(<BeneficiaryPaymentFields {...mockProps} disabled={true} />);
+
+    expect(screen.getByTestId('postal-iban-field')).toHaveAttribute(
+      'data-disabled',
+      'true'
+    );
   });
 });

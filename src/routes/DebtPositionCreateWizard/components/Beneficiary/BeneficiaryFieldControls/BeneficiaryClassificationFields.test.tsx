@@ -4,7 +4,6 @@ import { Control, FieldValues } from 'react-hook-form';
 import { BeneficiaryClassificationFields } from './BeneficiaryClassificationFields';
 import { BeneficiaryValidationContext } from '../../../../../utils/BeneficiaryFieldHelpers';
 
-// Mock dei componenti dipendenti
 vi.mock('./BeneficiaryControlledField', () => ({
   BeneficiaryControlledField: ({
     name,
@@ -87,7 +86,7 @@ describe('BeneficiaryClassificationFields', () => {
     vi.clearAllMocks();
   });
 
-  it('dovrebbe renderizzare correttamente il campo di classificazione', () => {
+  it('should render the classification field correctly', () => {
     render(
       <BeneficiaryClassificationFields<TestFormValues> {...defaultProps} />
     );
@@ -108,7 +107,7 @@ describe('BeneficiaryClassificationFields', () => {
     expect(taxonomyCodeField).toHaveAttribute('data-disabled', 'false');
   });
 
-  it('dovrebbe applicare correttamente lo stato disabled', () => {
+  it('should apply the disabled state correctly', () => {
     render(
       <BeneficiaryClassificationFields<TestFormValues>
         {...defaultProps}
@@ -120,25 +119,23 @@ describe('BeneficiaryClassificationFields', () => {
     expect(taxonomyCodeField).toHaveAttribute('data-disabled', 'true');
   });
 
-  it('dovrebbe passare i parametri corretti a BeneficiaryControlledField', () => {
+  it('should pass the correct parameters to BeneficiaryControlledField', () => {
     render(
       <BeneficiaryClassificationFields<TestFormValues> {...defaultProps} />
     );
 
     const controlledField = screen.getByTestId('controlled-field');
 
-    // Verifica che il nome del campo sia costruito correttamente
     expect(controlledField).toHaveAttribute(
       'data-name',
       'beneficiaries.0.taxonomyCode'
     );
 
-    // Verifica che il campo sia presente
     const taxonomyCodeField = screen.getByTestId('taxonomy-code-field');
     expect(taxonomyCodeField).toBeInTheDocument();
   });
 
-  it('dovrebbe utilizzare un indice diverso quando specificato', () => {
+  it('should use a different index when specified', () => {
     render(
       <BeneficiaryClassificationFields<TestFormValues>
         {...defaultProps}
@@ -153,7 +150,7 @@ describe('BeneficiaryClassificationFields', () => {
     );
   });
 
-  it('dovrebbe utilizzare un prefisso di campo diverso quando specificato', () => {
+  it('should use a different field prefix when specified', () => {
     render(
       <BeneficiaryClassificationFields<TestFormValues>
         {...defaultProps}

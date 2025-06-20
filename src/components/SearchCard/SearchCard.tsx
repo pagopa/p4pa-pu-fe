@@ -3,7 +3,7 @@ import MultiFilter from '../MultiFilter/MultiFilter';
 import FilterContainer, {
   FilterItem
 } from '../FilterContainer/FilterContainer';
-import { FilterMap } from '../../hooks/useMultiFilters';
+import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
 import { ButtonProps, FormComponent } from '../FormComponent';
 import { useState, useEffect } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
@@ -28,6 +28,9 @@ type SearchCardProps = {
   filterValues?: BaseFilterValues;
   onFilterChange?: (id: string, value: FilterFieldValue) => void;
   onReset?: () => void;
+  render?: React.ReactNode;
+  filterCategory?: FilterCategory;
+  extraProps?: Record<string, unknown>;
 };
 
 const SearchCard = ({
@@ -36,6 +39,9 @@ const SearchCard = ({
   tabsConfig,
   fields,
   button,
+  render,
+  filterCategory,
+  extraProps,
   filterContext,
   multiFilterConfig,
   activeTabIndex = 0,
@@ -141,7 +147,17 @@ const SearchCard = ({
 
         {multiFilterConfig && (
           <Grid item lg={12}>
-            <MultiFilter filterMap={multiFilterConfig} />
+            <MultiFilter
+              filterMap={multiFilterConfig}
+              filterCategory={filterCategory}
+              {...extraProps}
+            />
+          </Grid>
+        )}
+
+        {render && (
+          <Grid item lg={12}>
+            {render}
           </Grid>
         )}
       </Grid>

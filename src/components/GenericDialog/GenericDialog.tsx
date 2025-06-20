@@ -18,6 +18,7 @@ type GenericDialogProps = {
   fullWidth?: boolean;
   onConfirm?: () => void;
   onClose?: () => void;
+  'data-testid'?: string;
 };
 
 const GenericDialog = ({
@@ -29,10 +30,16 @@ const GenericDialog = ({
   children,
   fullWidth = false,
   onConfirm,
-  onClose
+  onClose,
+  'data-testid': testId
 }: GenericDialogProps) => {
   return (
-    <Dialog open={open} onClose={onClose} fullWidth={fullWidth}>
+    <Dialog
+      open={open}
+      onClose={onClose}
+      fullWidth={fullWidth}
+      data-testid={testId}
+    >
       <DialogTitle sx={{ px: 4, pt: 4 }}>{title}</DialogTitle>
       <DialogContent sx={{ px: 4 }}>
         {message && <DialogContentText>{message}</DialogContentText>}
@@ -40,12 +47,21 @@ const GenericDialog = ({
       </DialogContent>
       <DialogActions sx={{ px: 4, pb: 3 }}>
         {cancelLabel && (
-          <Button onClick={onClose} variant="outlined">
+          <Button
+            onClick={onClose}
+            variant="outlined"
+            data-testid={testId ? `${testId}-cancel-button` : undefined}
+          >
             {cancelLabel}
           </Button>
         )}
         {confirmLabel && (
-          <Button onClick={onConfirm} color="primary" variant="contained">
+          <Button
+            onClick={onConfirm}
+            color="primary"
+            variant="contained"
+            data-testid={testId ? `${testId}-confirm-button` : undefined}
+          >
             {confirmLabel}
           </Button>
         )}

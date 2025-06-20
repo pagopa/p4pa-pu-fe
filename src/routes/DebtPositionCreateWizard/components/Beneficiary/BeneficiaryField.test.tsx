@@ -12,14 +12,12 @@ import {
 import BeneficiaryField from './BeneficiaryField';
 import * as beneficiaryManagementHooks from '../../../../hooks/useBeneficiaryManagement';
 
-// Mock delle dipendenze
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key
   })
 }));
 
-// Mock completo di tutti i componenti necessari in BeneficiaryFieldComponents
 vi.mock('./BeneficiaryFieldComponents', () => ({
   BeneficiaryHeader: ({
     index,
@@ -180,7 +178,6 @@ vi.mock('./BeneficiaryFieldComponents', () => ({
   )
 }));
 
-// Mock dei componenti del gruppo di campi con props per testare disabled
 vi.mock('./BeneficiaryFieldControls', () => ({
   BeneficiaryIdentityFields: ({
     index,
@@ -221,13 +218,11 @@ vi.mock('./BeneficiaryFieldControls', () => ({
   )
 }));
 
-// Non moccare l'importazione dell'hook ma sostituire direttamente l'implementazione della funzione
 vi.mock('../../../../hooks/useBeneficiaryManagement', () => ({
   __esModule: true,
   useBeneficiaryManagement: vi.fn()
 }));
 
-// Mock di react-hook-form useForm
 vi.mock('react-hook-form', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-hook-form')>();
   return {
@@ -285,7 +280,6 @@ type TestFormValues = {
   }>;
 };
 
-// Definizione del tipo per le props del TestComponent
 type TestComponentProps = {
   isSubmitted?: boolean;
   disabled?: boolean;
@@ -302,7 +296,6 @@ describe('BeneficiaryField', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Setup del mock per useBeneficiaryManagement
     vi.spyOn(
       beneficiaryManagementHooks,
       'useBeneficiaryManagement'
@@ -337,12 +330,10 @@ describe('BeneficiaryField', () => {
     });
   });
 
-  // Aggiunti i tipi per le props del componente
   const TestComponent = ({
     isSubmitted = false,
     disabled = false
   }: TestComponentProps) => {
-    // useForm è già mockato, quindi qui non verrà eseguito il codice reale
     const methods = useForm<TestFormValues>();
 
     return (
@@ -364,10 +355,9 @@ describe('BeneficiaryField', () => {
     );
   };
 
-  it('renderizza correttamente i beneficiari', () => {
+  it('should render the beneficiaries correctly', () => {
     render(<TestComponent />);
 
-    // Verifica che tutti i componenti dei beneficiari siano renderizzati
     mockFields.forEach((_, index) => {
       expect(
         screen.getByTestId(`beneficiary-header-${index}`)
@@ -383,7 +373,7 @@ describe('BeneficiaryField', () => {
     });
   });
 
-  it('consente di rimuovere un beneficiario', async () => {
+  it('should remove a beneficiary', async () => {
     render(<TestComponent />);
 
     const removeButton = screen.getByTestId('remove-beneficiary-0');
@@ -392,22 +382,19 @@ describe('BeneficiaryField', () => {
     expect(mockRemoveBeneficiary).toHaveBeenCalledWith(0);
   });
 
-  it('mostra il pulsante "aggiungi beneficiario" solo sull\'ultimo beneficiario', () => {
+  it('should show the "add beneficiary" button only on the last beneficiary', () => {
     render(<TestComponent />);
 
-    // Cerchiamo il pulsante verificando il testo
     const addButtons = screen.getAllByText(
       'debtPositionCreateWizard.step3.beneficiary.addBeneficiary'
     );
     expect(addButtons).toHaveLength(1);
 
-    // Clicchiamo il pulsante e verifichiamo che addBeneficiary sia chiamato
     fireEvent.click(addButtons[0]);
     expect(mockAddBeneficiary).toHaveBeenCalled();
   });
 
-  it('non mostra il pulsante "aggiungi beneficiario" se è stato raggiunto il numero massimo', () => {
-    // Modifichiamo il mock per simulare il raggiungimento del numero massimo di beneficiari
+  it('should not show the "add beneficiary" button if the maximum number of beneficiaries is reached', () => {
     vi.spyOn(
       beneficiaryManagementHooks,
       'useBeneficiaryManagement'
@@ -448,7 +435,6 @@ describe('BeneficiaryField', () => {
 
     render(<TestComponent />);
 
-    // Non dovrebbe esserci un pulsante di aggiunta quando abbiamo raggiunto MAX_BENEFICIARIES
     expect(
       screen.queryAllByText(
         'debtPositionCreateWizard.step3.beneficiary.addBeneficiary'
@@ -456,10 +442,9 @@ describe('BeneficiaryField', () => {
     ).toHaveLength(0);
   });
 
-  it('gestisce correttamente lo stato disabled', () => {
+  it('should handle the disabled state correctly', () => {
     render(<TestComponent disabled={true} />);
 
-    // Verifichiamo che il componente trasmetta correttamente lo stato disabled ai componenti figli
     mockFields.forEach((_, index) => {
       const identityField = screen.getByTestId(`identity-fields-${index}`);
       const amountField = screen.getByTestId(`amount-fields-${index}`);
@@ -480,7 +465,6 @@ describe('BeneficiaryField', () => {
     const fieldNamePrefix = 'beneficiaries';
     const isSubmitted = true;
 
-    // Creiamo oggetti di mock con tipi appropriati
     const mockControl = {
       _formValues: {},
       _fields: {},
@@ -532,7 +516,6 @@ describe('BeneficiaryField', () => {
       />
     );
 
-    // Verifichiamo che l'hook sia stato chiamato con i parametri corretti
     expect(
       beneficiaryManagementHooks.useBeneficiaryManagement
     ).toHaveBeenCalledWith(

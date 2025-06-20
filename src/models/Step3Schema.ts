@@ -16,6 +16,7 @@ import {
   createTaxCodeFieldSchema,
   createRemittanceFieldSchema,
   createIBANFieldSchema,
+  createPostalIbanFieldSchema,
   createTaxonomyCodeFieldSchema
 } from './BeneficiarySchema';
 import {
@@ -27,7 +28,7 @@ import { formatDateForApi } from '../utils/paymentUtility';
 import {
   ManageDebtPositionDTO,
   ManageInstallmentDTO,
-  ActionEnum,
+  Action,
   InstallmentDTO,
   TransferDTO,
   DebtPositionDetailDTO,
@@ -564,6 +565,7 @@ export const createStep3Schema = (t: TFunction) => {
       remittanceFieldSchema
     ),
     iban: createIBANFieldSchema(t),
+    postalIban: createPostalIbanFieldSchema(t),
     taxonomyCode: createTaxonomyCodeFieldSchema(t),
     id: z.string().optional(),
     isNew: z.boolean().optional()
@@ -936,10 +938,7 @@ export function convertFormDataToManageDebtPositionDTO(
       };
 
       // Determine action: 'M' for existing installments, 'I' for new ones
-      const action: ActionEnum = formInstallment.isNew
-        ? ActionEnum.I
-        : ActionEnum.M;
-
+      const action: Action = formInstallment.isNew ? Action.I : Action.M;
       return {
         action,
         installment: updatedInstallment
@@ -1011,7 +1010,7 @@ export function convertFormDataToManageDebtPositionDTO(
 
     installments = [
       {
-        action: ActionEnum.M,
+        action: Action.M,
         installment: updatedInstallment
       }
     ];

@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import utils from '../utils';
 import {
   FileOrigin,
@@ -25,8 +26,36 @@ export const getIngestionFlowFiles = (
   },
   options = {}
 ) => {
+  const stableQueryKey = useMemo(
+    () => [
+      'ingestionFlowFiles',
+      organizationId,
+      JSON.stringify({
+        ingestionFlowFileTypes: query.ingestionFlowFileTypes,
+        creationDateFrom: query.creationDateFrom,
+        creationDateTo: query.creationDateTo,
+        status: query.status,
+        fileName: query.fileName,
+        page: query.page,
+        size: query.size,
+        sort: query.sort
+      })
+    ],
+    [
+      organizationId,
+      query.ingestionFlowFileTypes,
+      query.creationDateFrom,
+      query.creationDateTo,
+      query.status,
+      query.fileName,
+      query.page,
+      query.size,
+      query.sort
+    ]
+  );
+
   return useQuery({
-    queryKey: ['ingestionFlowFiles', organizationId, query],
+    queryKey: stableQueryKey,
     queryFn: async () => {
       const { data: files } = await utils.apiClient.bff.getIngestionFlowFiles(
         organizationId,
