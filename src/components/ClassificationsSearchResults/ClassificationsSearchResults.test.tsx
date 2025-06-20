@@ -1,6 +1,7 @@
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import ClassificationsSearchResults from './ClassificationsSearchResults';
+import { ClassificationsEnum } from '../../../generated/data-contracts';
 
 vi.mock('react-router-dom', async (importOriginal) => ({
   ...(await importOriginal()),
@@ -20,7 +21,7 @@ vi.mock('../../hooks/useMultiFilters', () => ({
       peek: () => false
     },
     filterValues: {
-      CLASSIFICATION_TYPE: 'UNKNOWN'
+      CLASSIFICATION_TYPE: ClassificationsEnum.UNKNOWN
     }
   }),
   FilterCategory: {
