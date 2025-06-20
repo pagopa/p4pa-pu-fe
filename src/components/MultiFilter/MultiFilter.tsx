@@ -14,6 +14,7 @@ import {
 import { ChangeEvent } from 'react';
 import { FormComponent } from '../FormComponent';
 import { LabelEnum } from '../../../generated/apiClient';
+import { ClassificationsEnum } from '../../../generated/data-contracts';
 
 export type MultiFilterProps = {
   filterMap: FilterMap;
@@ -45,7 +46,11 @@ const MultiFilter = ({
 
     onFilterInteraction?.();
 
-    if (newValue && newValue !== 'UNKNOWN' && selectedFilters.length === 0) {
+    if (
+      newValue &&
+      newValue !== ClassificationsEnum.UNKNOWN &&
+      selectedFilters.length === 0
+    ) {
       const first = Object.keys(filterMap).find(
         (key) => key !== 'CLASSIFICATION_TYPE'
       ) as KeyofFilterMap;
@@ -68,7 +73,7 @@ const MultiFilter = ({
 
   const showOtherFilters =
     filterCategory != 'CLASSIFICATIONS' ||
-    (classificationType && classificationType !== 'UNKNOWN');
+    (classificationType && classificationType !== ClassificationsEnum.UNKNOWN);
 
   return (
     <Stack gap={3}>
@@ -77,10 +82,12 @@ const MultiFilter = ({
           id="classification-type-select"
           name="CLASSIFICATION_TYPE"
           label={t('classifications.filters.classificationType')}
-          options={Object.values(LabelEnum).map((value) => ({
-            label: t(`classificationsExport.classificationsOptions.${value}`),
-            value
-          }))}
+          options={Object.values(LabelEnum)
+            .map((value) => ({
+              label: t(`classificationsExport.classificationsOptions.${value}`),
+              value
+            }))
+            .sort((a, b) => a.label.localeCompare(b.label))}
           error={showLabelError}
           helperText={
             showLabelError
@@ -95,33 +102,36 @@ const MultiFilter = ({
       )}
 
       {showOtherFilters &&
-        selectedFilters.map((filterId, index) => (
-          <Stack
-            key={filterId}
-            direction="row"
-            gap={2}
-            justifyContent="space-between"
-          >
-            {selectedFilters.length > 1 && (
-              <IconButton
-                sx={{
-                  color: theme.palette.error.dark,
-                  alignSelf: 'flex-start'
-                }}
-                onClick={() => removeFilterRow(filterId)}
-                aria-label="remove"
-              >
-                <RemoveCircleOutline fontSize="small" />
-              </IconButton>
-            )}
-            <Filter
-              value={filterId}
-              filterMap={filterMap}
-              selectedFilters={selectedFilters}
-              onChange={(value) => onChange(value, index)}
-            />
-          </Stack>
-        ))}
+        selectedFilters
+          .slice()
+          .sort((a, b) => a.localeCompare(b))
+          .map((filterId, index) => (
+            <Stack
+              key={filterId}
+              direction="row"
+              gap={2}
+              justifyContent="space-between"
+            >
+              {selectedFilters.length > 1 && (
+                <IconButton
+                  sx={{
+                    color: theme.palette.error.dark,
+                    alignSelf: 'flex-start'
+                  }}
+                  onClick={() => removeFilterRow(filterId)}
+                  aria-label="remove"
+                >
+                  <RemoveCircleOutline fontSize="small" />
+                </IconButton>
+              )}
+              <Filter
+                value={filterId}
+                filterMap={filterMap}
+                selectedFilters={selectedFilters}
+                onChange={(value) => onChange(value, index)}
+              />
+            </Stack>
+          ))}
 
       {showOtherFilters && (
         <Box display="flex" justifyContent="flex-start">
