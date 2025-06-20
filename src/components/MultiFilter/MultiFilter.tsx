@@ -87,7 +87,13 @@ const MultiFilter = ({
               label: t(`classificationsExport.classificationsOptions.${value}`),
               value
             }))
-            .sort((a, b) => a.label.localeCompare(b.label))}
+            .sort((a, b) => {
+              // if value UNKNOWN sort before
+              if (a.value === 'UNKNOWN' && b.value !== 'UNKNOWN') return -1; // a comes first
+              if (a.value !== 'UNKNOWN' && b.value === 'UNKNOWN') return 1; // b comes first
+              // else, sort alphabetically by label
+              return a.label.localeCompare(b.label);
+            })}
           error={showLabelError}
           helperText={
             showLabelError
