@@ -676,7 +676,11 @@ const Step3 = ({
   };
 
   return (
-    <form onSubmit={handleSubmit((values) => onSubmit(values, false))}>
+    <form
+      id="step3-configuration-form"
+      data-testid="step3-form"
+      onSubmit={handleSubmit((values) => onSubmit(values, false))}
+    >
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.configurationAlert.title')}
         subtitle={t('debtPositionCreateWizard.configurationAlert.subtitle')}
@@ -693,6 +697,8 @@ const Step3 = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    id="payment-object-input"
+                    data-testid="payment-object-field"
                     fullWidth
                     label={t(
                       'debtPositionCreateWizard.step3.paymentObject.label'
@@ -727,6 +733,8 @@ const Step3 = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    id="payment-option-select"
+                    data-testid="payment-option-field"
                     select
                     fullWidth
                     label={t(
@@ -738,10 +746,16 @@ const Step3 = ({
                     helperText={errors.paymentOption?.value?.message || ''}
                     onChange={(e) => handlePaymentOptionChange(e, field)}
                   >
-                    <MenuItem value="SINGLE">
+                    <MenuItem
+                      value="SINGLE"
+                      data-testid="payment-option-single"
+                    >
                       {t('debtPositionCreateWizard.step3.paymentOption.single')}
                     </MenuItem>
-                    <MenuItem value="INSTALLMENTS">
+                    <MenuItem
+                      value="INSTALLMENTS"
+                      data-testid="payment-option-installments"
+                    >
                       {t(
                         'debtPositionCreateWizard.step3.paymentOption.installments'
                       )}
@@ -758,6 +772,8 @@ const Step3 = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    id="amount-input"
+                    data-testid="amount-field"
                     fullWidth
                     label={t('debtPositionCreateWizard.step3.amount.label')}
                     required
@@ -803,6 +819,7 @@ const Step3 = ({
                   render={({ field: { onChange, value, ...field } }) => (
                     <DatePicker
                       {...field}
+                      data-testid="due-date-picker"
                       value={value}
                       label={t('debtPositionCreateWizard.step3.dueDate.label')}
                       disabled={data.dueDate?.readonly}
@@ -857,6 +874,7 @@ const Step3 = ({
                   control={control}
                   render={({ field }) => (
                     <FormControlLabel
+                      data-testid="multi-beneficiary-switch"
                       control={
                         <Switch
                           {...field}
@@ -879,7 +897,7 @@ const Step3 = ({
 
             {/* Beneficiary component - visible only when multi-beneficiary is true AND not in installment mode */}
             {isMultibeneficiary && !isInstallment && (
-              <Grid item xs={12} mt={2}>
+              <Grid item xs={12} mt={2} data-testid="beneficiary-section">
                 <BeneficiaryField<Step3FormValues>
                   ref={beneficiaryFieldRef}
                   control={control}
@@ -901,19 +919,21 @@ const Step3 = ({
       </WizardStepWrapper>
       {/* Installments component - visible only when installment option is selected */}
       {isInstallment && (
-        <InstallmentField<Step3FormValues>
-          control={control}
-          errors={errors}
-          isSubmitted={isSubmitted}
-          fieldNamePrefix="installments"
-          disabled={false}
-          flagMandatoryDueDate={data.flagMandatoryDueDate}
-          setValue={setValue}
-          getValues={getValues}
-          trigger={trigger}
-          onInstallmentsChange={handleInstallmentsChange}
-          isEditing={isEditing}
-        />
+        <div data-testid="installments-section">
+          <InstallmentField<Step3FormValues>
+            control={control}
+            errors={errors}
+            isSubmitted={isSubmitted}
+            fieldNamePrefix="installments"
+            disabled={false}
+            flagMandatoryDueDate={data.flagMandatoryDueDate}
+            setValue={setValue}
+            getValues={getValues}
+            trigger={trigger}
+            onInstallmentsChange={handleInstallmentsChange}
+            isEditing={isEditing}
+          />
+        </div>
       )}
       <WizardStepButtons
         onBack={onBack}
