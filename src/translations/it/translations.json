@@ -1027,7 +1027,8 @@
           "helperText": "Seleziona una configurazione per la gestione delle notifiche",
           "editHelperText": "Seleziona una configurazione per la gestione delle notifiche",
           "errorState": "Errore nel recupero delle configurazioni",
-          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione"
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione",
+          "noOptionsHelp": "Non sono presenti configurazioni di notifica"
         }
       },
       "actualization": {
@@ -1041,7 +1042,8 @@
           "errorState": "Errore nel recupero delle configurazioni",
           "helperText": "Una volta selezionata una configurazione per l'attualizzazione sarà possibile modificarla ma non rimuoverla",
           "editHelperText": "È possibile la sola modifica della configurazione, non può essere rimossa",
-          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione"
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione",
+          "noOptionsHelp": "Non sono presenti configurazioni di attualizzazione"
         }
       },
       "errors": {
