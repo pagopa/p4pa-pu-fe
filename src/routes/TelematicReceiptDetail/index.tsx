@@ -1,7 +1,7 @@
 import { Download } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { getReceiptDetail } from '../../api/receiptDetail';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
@@ -12,21 +12,31 @@ import DetailContainer, {
 import { getReceiptPdf } from '../../api/receiptPdf';
 import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
+import { useEffect } from 'react';
+import { PageRoutes } from '../../routes';
 
 export const TelematicReceiptDetail = () => {
   const { t } = useTranslation();
   const { state } = useStore();
+  const navigate = useNavigate();
 
   const id = useLoaderData();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  if (isNaN(id)) {
-    // TODO
-    // raise error
-    console.error('ID is not a number');
+  if (isNaN(Number(id))) {
+    navigate(PageRoutes.RESPONSES_ERROR);
+    return null;
   }
 
-  const { data } = getReceiptDetail(organizationId, Number(id));
+  const { data, isError, error } = getReceiptDetail(organizationId, Number(id));
+
+  useEffect(() => {
+    if (isError && error) {
+      console.error('Error loading receipt detail:', error);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [isError, error, navigate]);
+
   const debtorType: string =
     data?.debtor.entityType == 'F' ? `(${t('commons.person')})` : '';
 
