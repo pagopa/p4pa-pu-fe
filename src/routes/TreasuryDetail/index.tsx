@@ -1,7 +1,7 @@
 import { Download } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
@@ -9,15 +9,30 @@ import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';
 import { getTreasuryDetail } from '../../api/treasuryDetail';
+import { useEffect } from 'react';
+import { PageRoutes } from '../../routes';
 
 export const TreasuryDetail = () => {
   const { t } = useTranslation();
   const { state } = useStore();
+  const navigate = useNavigate();
 
   const id = useLoaderData();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  const { data } = getTreasuryDetail(organizationId, id);
+  if (!id) {
+    navigate(PageRoutes.RESPONSES_ERROR);
+    return null;
+  }
+
+  const { data, isError, error } = getTreasuryDetail(organizationId, id);
+
+  useEffect(() => {
+    if (isError && error) {
+      console.error('Error loading treasury detail:', error);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [isError, error, navigate]);
 
   const summaryData: Array<DetailData> = [
     {
