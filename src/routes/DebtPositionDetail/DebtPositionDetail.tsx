@@ -134,10 +134,11 @@ const DebtPositionDetail = () => {
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
 
-  const { data: debtPositionDetail } = debtPositions.getDebtPositionDetail(
-    organizationId,
-    debtPositionId
-  );
+  const {
+    data: debtPositionDetail,
+    isError,
+    error
+  } = debtPositions.getDebtPositionDetail(organizationId, debtPositionId);
 
   const { mutate: fetchRegistries, data: registries = [] } =
     debtPositions.getDebtPositionRegistriesMutation();
@@ -188,6 +189,13 @@ const DebtPositionDetail = () => {
     handleMenuClose();
     showDeleteDialog();
   };
+
+  useEffect(() => {
+    if (isError && error) {
+      console.error('Error loading debt position detail:', error);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [isError, error, navigate]);
 
   const handleDeleteConfirm = async () => {
     if (!canBeDeleted) {
@@ -291,10 +299,8 @@ const DebtPositionDetail = () => {
       );
       return;
     }
-
     try {
       await publishDebtPositionMutation.mutateAsync();
-
       setDialogConfig(null);
       queryClient.invalidateQueries({
         queryKey: ['getDebtPositionDetail', organizationId, debtPositionId]
@@ -322,11 +328,9 @@ const DebtPositionDetail = () => {
       showDownloadDialog();
       return;
     }
-
     try {
       const result =
         await getDebtPositionZipFileMutation.mutateAsync(debtPositionId);
-
       const { data, fileName } = result;
       downloadBlob(data, fileName);
     } catch (error) {
@@ -446,7 +450,7 @@ const DebtPositionDetail = () => {
 
   const paymentOptionsDisplayData = (debtPositionDetail?.paymentOptions ?? [])
     .sort(
-      (optionA, optionB) =>
+      (optionA: PaymentOptionDTO, optionB: PaymentOptionDTO) =>
         priorityType.indexOf(optionA.paymentOptionType) -
         priorityType.indexOf(optionB.paymentOptionType)
     )
