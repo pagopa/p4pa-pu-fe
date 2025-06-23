@@ -203,7 +203,7 @@ const Step1GeneralConfiguration = ({
   }
 
   return (
-    <form>
+    <form id="step1-general-configuration-form" data-testid="step1-form">
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.generalConfiguration.title')}
         subtitle={t('debtPositionCreateWizard.generalConfiguration.subtitle')}
@@ -218,6 +218,8 @@ const Step1GeneralConfiguration = ({
             render={({ field }) => (
               <TextField
                 {...field}
+                id="debt-position-type-select"
+                data-testid="debt-position-type-field"
                 label={t(
                   'debtPositionCreateWizard.step1.debtPositionType.label'
                 )}
@@ -230,7 +232,11 @@ const Step1GeneralConfiguration = ({
                 helperText={errors.debtPositionType?.message}
               >
                 {debtPositionsTypes.map((option) => (
-                  <MenuItem key={option.value} value={option.value.toString()}>
+                  <MenuItem
+                    key={option.value}
+                    value={option.value.toString()}
+                    data-testid={`debt-position-type-option-${option.value}`}
+                  >
                     {option.label}
                   </MenuItem>
                 ))}
@@ -243,6 +249,8 @@ const Step1GeneralConfiguration = ({
             render={({ field }) => (
               <TextField
                 {...field}
+                id="description-input"
+                data-testid="description-field"
                 label={t('debtPositionCreateWizard.step1.description.label')}
                 fullWidth
                 margin="normal"

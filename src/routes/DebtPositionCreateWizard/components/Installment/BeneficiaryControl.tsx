@@ -434,6 +434,8 @@ const BeneficiaryControl = <T extends FieldValues>({
               control={
                 <Switch
                   {...field}
+                  id={`installment-multibeneficiary-switch-${index}`}
+                  data-testid={`installment-multibeneficiary-switch-${index}`}
                   checked={!!field.value}
                   disabled={disabled}
                   onChange={(e) => {
@@ -476,6 +478,8 @@ const BeneficiaryControl = <T extends FieldValues>({
                 </FormLabel>
                 <RadioGroup
                   {...field}
+                  id={`installment-beneficiary-mode-${index}`}
+                  data-testid={`installment-beneficiary-mode-${index}`}
                   row
                   value={String(
                     field.value === undefined ? 'true' : field.value
@@ -543,13 +547,21 @@ const BeneficiaryControl = <T extends FieldValues>({
                 >
                   <FormControlLabel
                     value="true"
-                    control={<Radio />}
+                    control={
+                      <Radio
+                        data-testid={`installment-use-previous-beneficiaries-${index}`}
+                      />
+                    }
                     label={t('debtPositionCreateWizard.step3.installments.yes')}
                     disabled={!hasPreviousBeneficiaries}
                   />
                   <FormControlLabel
                     value="false"
-                    control={<Radio />}
+                    control={
+                      <Radio
+                        data-testid={`installment-create-new-beneficiaries-${index}`}
+                      />
+                    }
                     label={t('debtPositionCreateWizard.step3.installments.no')}
                     disabled={!hasPreviousBeneficiaries}
                   />

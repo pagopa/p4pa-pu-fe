@@ -15,7 +15,10 @@ import {
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
 import UseClassificationsSearch from '../../hooks/useClassificationsSearch';
-import { ClassificationsEnum, PagedTreasuredClassification } from '../../../generated/data-contracts';
+import {
+  ClassificationsEnum,
+  PagedTreasuredClassification
+} from '../../../generated/data-contracts';
 import DownloadIcon from '@mui/icons-material/Download';
 
 export type LocationState = {

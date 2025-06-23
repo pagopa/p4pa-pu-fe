@@ -266,7 +266,7 @@ const Step2AddDebtor = ({
   };
 
   return (
-    <form>
+    <form id="step2-add-debtor-form" data-testid="step2-form">
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.addDebtor.title')}
         subtitle={t('debtPositionCreateWizard.addDebtor.subtitle')}
@@ -285,6 +285,8 @@ const Step2AddDebtor = ({
             render={({ field }) => (
               <TextField
                 {...field}
+                id="subject-type-select"
+                data-testid="subject-type-field"
                 label={t('debtPositionCreateWizard.step2.subjectType.label')}
                 required
                 select
@@ -298,12 +300,18 @@ const Step2AddDebtor = ({
                   handleSubjectTypeChange(e);
                 }}
               >
-                <MenuItem value={SubjectType.INDIVIDUAL}>
+                <MenuItem
+                  value={SubjectType.INDIVIDUAL}
+                  data-testid="subject-type-option-individual"
+                >
                   {t(
                     'debtPositionCreateWizard.step2.subjectType.options.fisica'
                   )}
                 </MenuItem>
-                <MenuItem value={SubjectType.BUSINESS}>
+                <MenuItem
+                  value={SubjectType.BUSINESS}
+                  data-testid="subject-type-option-business"
+                >
                   {t(
                     'debtPositionCreateWizard.step2.subjectType.options.giuridica'
                   )}
@@ -318,6 +326,8 @@ const Step2AddDebtor = ({
             render={({ field }) => (
               <TextField
                 {...field}
+                id="tax-code-input"
+                data-testid="tax-code-field"
                 label={getTaxCodeLabel()}
                 placeholder={getTaxCodePlaceholder()}
                 required
@@ -346,6 +356,8 @@ const Step2AddDebtor = ({
             render={({ field }) => (
               <TextField
                 {...field}
+                id="full-name-input"
+                data-testid="full-name-field"
                 label={getCompanyNameLabel()}
                 fullWidth
                 margin="normal"
@@ -370,6 +382,8 @@ const Step2AddDebtor = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    id="address-input"
+                    data-testid="address-field"
                     label={t('debtPositionCreateWizard.step2.address.label')}
                     fullWidth
                     required
@@ -393,6 +407,8 @@ const Step2AddDebtor = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    id="civic-number-input"
+                    data-testid="civic-number-field"
                     label={t(
                       'debtPositionCreateWizard.step2.civicNumber.label'
                     )}
@@ -420,6 +436,8 @@ const Step2AddDebtor = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    id="zip-code-input"
+                    data-testid="zip-code-field"
                     label={t('debtPositionCreateWizard.step2.zipCode.label')}
                     fullWidth
                     required
@@ -446,6 +464,8 @@ const Step2AddDebtor = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    id="country-select"
+                    data-testid="country-field"
                     label={t('debtPositionCreateWizard.step2.country.label')}
                     select
                     fullWidth
@@ -459,9 +479,15 @@ const Step2AddDebtor = ({
                       handleFieldChange('country.value', value);
                     }}
                   >
-                    <MenuItem value="IT">Italia</MenuItem>
-                    <MenuItem value="FR">Francia</MenuItem>
-                    <MenuItem value="DE">Germania</MenuItem>
+                    <MenuItem value="IT" data-testid="country-option-IT">
+                      Italia
+                    </MenuItem>
+                    <MenuItem value="FR" data-testid="country-option-FR">
+                      Francia
+                    </MenuItem>
+                    <MenuItem value="DE" data-testid="country-option-DE">
+                      Germania
+                    </MenuItem>
                   </TextField>
                 )}
               />
@@ -474,6 +500,8 @@ const Step2AddDebtor = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    id="province-select"
+                    data-testid="province-field"
                     label={t('debtPositionCreateWizard.step2.province.label')}
                     select
                     fullWidth
@@ -487,9 +515,15 @@ const Step2AddDebtor = ({
                       handleFieldChange('province.value', value);
                     }}
                   >
-                    <MenuItem value="MI">MI</MenuItem>
-                    <MenuItem value="RM">RM</MenuItem>
-                    <MenuItem value="TO">TO</MenuItem>
+                    <MenuItem value="MI" data-testid="province-option-MI">
+                      MI
+                    </MenuItem>
+                    <MenuItem value="RM" data-testid="province-option-RM">
+                      RM
+                    </MenuItem>
+                    <MenuItem value="TO" data-testid="province-option-TO">
+                      TO
+                    </MenuItem>
                   </TextField>
                 )}
               />
@@ -502,6 +536,8 @@ const Step2AddDebtor = ({
                 render={({ field }) => (
                   <TextField
                     {...field}
+                    id="city-input"
+                    data-testid="city-field"
                     label={t('debtPositionCreateWizard.step2.city.label')}
                     fullWidth
                     required
