@@ -10,7 +10,7 @@ export const MousePopup = () => {
   const [open, setOpen] = useState(true);
 
   return open ? (
-    <Paper elevation={16} sx={styles.paper}>
+    <Paper elevation={16} sx={styles.paper} data-testid="mouse-popup">
       <Stack sx={styles.closeStack}>
         <IconButton onClick={() => setOpen(false)} sx={styles.closeButton}>
           <CloseIcon fontSize="inherit" />

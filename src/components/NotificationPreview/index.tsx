@@ -59,7 +59,7 @@ export const NotificationPreview = ({
       <Divider />
 
       {/* Message Body */}
-      <Stack mt={-2}>
+      <Stack mt={-2} data-testid="preview-body">
         <MarkdownPreview message={message} />
       </Stack>
     </Stack>

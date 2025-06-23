@@ -92,13 +92,14 @@ export const Step2Settings = ({
   const ioTemplateSubject = watch('ioTemplateSubject');
 
   return (
-    <form>
+    <form data-testid="step2-settings">
       <WizardStepWrapper
         title={t('debtTypeCreate.settings.title')}
         subtitle={t('debtTypeCreate.settings.subtitle')}
       >
         <SectionBox
           title={t('debtTypeCreate.settings.behaviour')}
+          data-testid="step2-settings-behaviour"
           adornment={<TuneIcon />}
         >
           <FormGroup>
@@ -114,6 +115,7 @@ export const Step2Settings = ({
                   key={optionKey}
                   name={optionKey}
                   control={control}
+                  data-testid={`step2-settings-${optionKey}-checkbox`}
                   defaultValue={(editmode && defaultValue) || false}
                   render={({ field }) => (
                     <FormControlLabel
@@ -141,6 +143,7 @@ export const Step2Settings = ({
         <SectionBox
           title={t('debtTypeCreate.settings.template.title')}
           subtitle={t('debtTypeCreate.settings.template.helper')}
+          data-testid="step2-settings-template"
           adornment={<MessageIcon />}
         >
           <Stack direction="column" gap={2} alignItems="left" width="100%">
@@ -148,6 +151,7 @@ export const Step2Settings = ({
               name="flagNotifyIo"
               control={control}
               defaultValue={editmode ? prefilledData?.flagNotifyIo : false}
+              data-testid="step2-settings-template-checkbox"
               render={({ field }) => (
                 <FormControlLabel
                   control={<Checkbox {...field} checked={!!field.value} />}
@@ -171,6 +175,7 @@ export const Step2Settings = ({
                       noAdornment
                       required={flagNotifyIo}
                       label={t('debtTypeCreate.settings.subject.label')}
+                      data-testid="step2-settings-template-subject"
                       placeholder={t(
                         'debtTypeCreate.settings.subject.placeholder'
                       )}
@@ -186,6 +191,7 @@ export const Step2Settings = ({
                 <Typography
                   variant="body2"
                   color="textSecondary"
+                  data-testid="step2-settings-template-subject-guide"
                   component="span"
                 >
                   <Trans
@@ -212,6 +218,7 @@ export const Step2Settings = ({
                     <TextField
                       required={flagNotifyIo}
                       label={t('debtTypeCreate.settings.message.label')}
+                      data-testid="step2-settings-template-message"
                       InputLabelProps={{ shrink: true }}
                       error={flagNotifyIo && !!errors.ioTemplateMessage}
                       helperText={
@@ -229,6 +236,7 @@ export const Step2Settings = ({
                   variant="body2"
                   color="textSecondary"
                   component="span"
+                  data-testid="step2-settings-template-message-guide"
                 >
                   <Trans
                     i18nKey="debtTypeCreate.settings.message.guide"
