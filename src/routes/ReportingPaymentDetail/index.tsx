@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import DetailContainer, {
   DetailData
@@ -19,7 +19,14 @@ function ReportingPaymentDetail() {
   const { iuf, id } = useParams();
   const { t } = useTranslation();
   const { state } = useStore();
+  const navigate = useNavigate();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
+  if (!iuf || !id) {
+    navigate(PageRoutes.RESPONSES_ERROR);
+    return null;
+  }
+
   const stateColors: Record<string, ChipProps['color']> = {
     CANCELLED: 'error',
     DRAFT: 'default',
@@ -32,11 +39,18 @@ function ReportingPaymentDetail() {
     INVALID: 'error'
   };
 
-  const { data, isLoading } = getPaymentsReportingDetail(
+  const { data, isLoading, isError, error } = getPaymentsReportingDetail(
     organizationId,
-    iuf ?? '',
-    id ?? ''
+    iuf,
+    id
   );
+
+  useEffect(() => {
+    if (isError && error) {
+      console.error('Error loading payment reporting detail:', error);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [isError, error, navigate]);
 
   useEffect(() => {
     if (data && iuf) {
