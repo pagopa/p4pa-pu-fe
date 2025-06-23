@@ -42,7 +42,7 @@ export function BeneficiaryAmountFields<T extends FieldValues>({
   }
 >) {
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} data-testid="beneficiary-render-fields">
       <BeneficiaryControlledField<T>
         name={buildBeneficiaryFieldPath<T, 'amount'>(
           fieldNamePrefix,

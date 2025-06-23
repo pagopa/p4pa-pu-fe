@@ -23,6 +23,7 @@ export function BeneficiaryControlledField<T extends FieldValues>({
 }) {
   return (
     <Controller
+      data-testid="beneficiary-controlled-field"
       name={name}
       control={control}
       rules={rules}

@@ -425,7 +425,7 @@ const BeneficiaryControl = <T extends FieldValues>({
   return (
     <>
       {/* Switch for enabling multiple beneficiaries */}
-      <Grid item xs={12}>
+      <Grid item xs={12} data-testid="multibeneficiary-switch">
         <Controller
           name={isMultibeneficiaryPath}
           control={control}
@@ -458,7 +458,7 @@ const BeneficiaryControl = <T extends FieldValues>({
 
       {/* Radio buttons for beneficiary reuse - hidden in edit mode */}
       {isMultibeneficiary && hasPreviousBeneficiaries && !isEditing && (
-        <Grid item xs={12}>
+        <Grid item xs={12} data-testid="same-beneficiaries-radio">
           <Controller
             name={sameBeneficiariesAsBeforePath}
             control={control}
@@ -566,7 +566,7 @@ const BeneficiaryControl = <T extends FieldValues>({
       )}
 
       {isMultibeneficiary && showBeneficiaryForm && (
-        <Grid item xs={12} mt={1}>
+        <Grid item xs={12} mt={1} data-testid="beneficiary-field">
           <BeneficiaryField
             control={control}
             errors={errors}

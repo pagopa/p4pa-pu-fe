@@ -43,7 +43,7 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
 >) {
   return (
     <>
-      <Grid item xs={12}>
+      <Grid item xs={12} data-testid="iban-field">
         <BeneficiaryControlledField<T>
           name={buildBeneficiaryFieldPath<T, 'iban'>(
             fieldNamePrefix,
@@ -77,7 +77,7 @@ export function BeneficiaryPaymentFields<T extends FieldValues>({
           )}
         />
       </Grid>
-      <Grid item xs={12}>
+      <Grid item xs={12} data-testid="postal-iban-field">
         <BeneficiaryControlledField<T>
           name={buildBeneficiaryFieldPath<T, 'postalIban'>(
             fieldNamePrefix,

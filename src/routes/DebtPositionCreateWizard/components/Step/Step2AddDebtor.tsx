@@ -266,7 +266,7 @@ const Step2AddDebtor = ({
   };
 
   return (
-    <form>
+    <form data-testid="step-2-add-debtor">
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.addDebtor.title')}
         subtitle={t('debtPositionCreateWizard.addDebtor.subtitle')}

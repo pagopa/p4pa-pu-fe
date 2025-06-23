@@ -37,6 +37,7 @@ const DateField = <T extends FieldValues>({
     <Controller
       name={dueDatePath}
       control={control}
+      data-testid="installment-date-field"
       rules={{
         required: flagMandatoryDueDate
           ? t('debtPositionCreateWizard.step3.installments.dueDate.required')

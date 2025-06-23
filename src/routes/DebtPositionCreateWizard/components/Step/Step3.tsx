@@ -676,7 +676,10 @@ const Step3 = ({
   };
 
   return (
-    <form onSubmit={handleSubmit((values) => onSubmit(values, false))}>
+    <form
+      data-testid="step3-form"
+      onSubmit={handleSubmit((values) => onSubmit(values, false))}
+    >
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.configurationAlert.title')}
         subtitle={t('debtPositionCreateWizard.configurationAlert.subtitle')}

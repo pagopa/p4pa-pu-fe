@@ -203,7 +203,7 @@ const Step1GeneralConfiguration = ({
   }
 
   return (
-    <form>
+    <form data-testid="step1-general-configuration">
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.generalConfiguration.title')}
         subtitle={t('debtPositionCreateWizard.generalConfiguration.subtitle')}

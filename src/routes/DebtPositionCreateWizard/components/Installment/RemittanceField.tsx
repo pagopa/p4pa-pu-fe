@@ -38,6 +38,7 @@ const RemittanceField = <T extends FieldValues>({
     <Controller
       name={remittancePath}
       control={control}
+      data-testid="remittance-controller"
       rules={{
         required: t(
           'debtPositionCreateWizard.step3.beneficiary.remittance.required'

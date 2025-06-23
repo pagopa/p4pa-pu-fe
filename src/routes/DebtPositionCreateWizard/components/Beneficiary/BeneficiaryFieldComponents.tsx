@@ -136,6 +136,7 @@ export function BeneficiaryHeader(
       display="flex"
       alignItems="center"
       justifyContent="space-between"
+      data-testId="beneficiary-header"
     >
       <Box display="flex" alignItems="center">
         <Typography variant="subtitle1" fontWeight="bold" sx={{ mr: 1 }}>
@@ -186,6 +187,7 @@ export function EntityNameField<T extends FieldValues>(
     <TextField
       {...field}
       fullWidth
+      data-testId="entityName"
       label={t('debtPositionCreateWizard.step3.beneficiary.entityName.label')}
       required
       disabled={disabled}
@@ -238,6 +240,7 @@ export function AmountField<T extends FieldValues>(
     <TextField
       {...field}
       fullWidth
+      data-testId="amount"
       label={t('debtPositionCreateWizard.step3.beneficiary.amount.label')}
       required
       disabled={disabled}
@@ -289,6 +292,7 @@ export function TaxCodeField<T extends FieldValues>(
     <TextField
       {...field}
       fullWidth
+      data-testId="taxCode"
       label={t('debtPositionCreateWizard.step3.beneficiary.vat.label')}
       required
       disabled={disabled}
@@ -325,6 +329,7 @@ export function RemittanceField<T extends FieldValues>(
     <TextField
       {...field}
       fullWidth
+      data-testId="remittance"
       label={t('debtPositionCreateWizard.step3.beneficiary.remittance.label')}
       required
       disabled={disabled}
@@ -622,6 +627,7 @@ export function IBANField<T extends FieldValues>(
     <TextField
       {...field}
       fullWidth
+      data-testId="iban"
       label={t('debtPositionCreateWizard.step3.beneficiary.iban.label')}
       disabled={disabled}
       required
@@ -677,6 +683,7 @@ export function PostalIbanField<T extends FieldValues>(
       fullWidth
       label={t('debtPositionCreateWizard.step3.beneficiary.postalIban.label')}
       disabled={disabled}
+      data-testId="postalIban"
       error={hasPostalIbanError(context, errors)}
       helperText={
         hasPostalIbanError(context, errors)
@@ -866,6 +873,7 @@ export function PostalAccountField<T extends FieldValues>(
       label={t(
         'debtPositionCreateWizard.step3.beneficiary.postalAccount.label'
       )}
+      data-testid="postal-account"
       disabled={disabled}
       error={hasPostalAccountError(context, errors)}
       helperText={
@@ -905,6 +913,7 @@ export function TaxonomyCodeField<T extends FieldValues>(
     <TextField
       {...field}
       fullWidth
+      data-testId="taxonomyCode"
       label={t('debtPositionCreateWizard.step3.beneficiary.taxonomyCode.label')}
       required
       disabled={disabled}

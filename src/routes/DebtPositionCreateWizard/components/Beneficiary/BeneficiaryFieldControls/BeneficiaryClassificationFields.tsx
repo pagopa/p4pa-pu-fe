@@ -34,7 +34,7 @@ export function BeneficiaryClassificationFields<T extends FieldValues>({
   }
 >) {
   return (
-    <Grid item xs={12}>
+    <Grid item xs={12} data-testid="beneficiary-classification-fields">
       <BeneficiaryControlledField<T>
         name={buildBeneficiaryFieldPath<T, 'taxonomyCode'>(
           fieldNamePrefix,

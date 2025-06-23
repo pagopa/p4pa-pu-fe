@@ -47,6 +47,7 @@ const AmountField = <T extends FieldValues>({
       name={amountPath}
       control={control}
       rules={createAmountValidator(t)}
+      data-testid="installment-amount-field"
       render={({ field }) => (
         <TextField
           {...field}

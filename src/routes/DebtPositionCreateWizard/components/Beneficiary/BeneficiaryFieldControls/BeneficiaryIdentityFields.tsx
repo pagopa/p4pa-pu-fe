@@ -39,7 +39,7 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
 >) {
   return (
     <>
-      <Grid item xs={12}>
+      <Grid item xs={12} data-testid="beneficiary-entity-name">
         <BeneficiaryControlledField<T>
           name={buildBeneficiaryFieldPath<T, 'entityName'>(
             fieldNamePrefix,
@@ -63,7 +63,7 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
         />
       </Grid>
 
-      <Grid item xs={12}>
+      <Grid item xs={12} data-testid="beneficiary-tax-code">
         <BeneficiaryControlledField<T>
           name={buildBeneficiaryFieldPath<T, 'taxCode'>(
             fieldNamePrefix,
@@ -95,7 +95,7 @@ export function BeneficiaryIdentityFields<T extends FieldValues>({
         />
       </Grid>
 
-      <Grid item xs={12}>
+      <Grid item xs={12} data-testid="beneficiary-remittance">
         <BeneficiaryControlledField<T>
           name={buildBeneficiaryFieldPath<T, 'remittance'>(
             fieldNamePrefix,

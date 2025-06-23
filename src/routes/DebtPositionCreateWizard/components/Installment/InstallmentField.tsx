@@ -122,7 +122,11 @@ function InstallmentField<T extends FieldValues>({
   };
 
   return (
-    <Box component={Paper} sx={{ p: 3, mt: 4, borderRadius: 1 }}>
+    <Box
+      component={Paper}
+      sx={{ p: 3, mt: 4, borderRadius: 1 }}
+      data-testid="installment-field"
+    >
       <Typography variant="h4" component="h3" fontWeight="bold" mb={3}>
         {t('debtPositionCreateWizard.step3.installments.title')}
       </Typography>
@@ -171,6 +175,7 @@ function InstallmentField<T extends FieldValues>({
         <Button
           startIcon={<Add />}
           onClick={addInstallment}
+          data-testid="add-installment-button"
           disabled={isMaxInstallments || disabled || isEditing}
           color="primary"
           sx={{ textTransform: 'none' }}
@@ -180,6 +185,7 @@ function InstallmentField<T extends FieldValues>({
         {isMaxInstallments && (
           <Typography
             variant="caption"
+            data-testid="max-installments-reached"
             color="text.secondary"
             sx={{ ml: 2, alignSelf: 'center' }}
           >

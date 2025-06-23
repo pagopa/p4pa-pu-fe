@@ -166,9 +166,13 @@ const InstallmentItem = <T extends FieldValues>({
   };
 
   return (
-    <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+    <Box
+      sx={{ display: 'flex', alignItems: 'flex-start' }}
+      data-testId="installment-item"
+    >
       <IconButton
         size="small"
+        data-testid="remove-installment"
         onClick={handleRemove}
         disabled={!onRemove || isEditing}
         sx={{
@@ -201,7 +205,7 @@ const InstallmentItem = <T extends FieldValues>({
           </Grid>
 
           {/* Amount Field - Using extracted component */}
-          <Grid item xs={12}>
+          <Grid item xs={12} data-testid="installment-amount">
             <AmountField<T>
               control={control}
               amountPath={amountPath}
@@ -215,7 +219,7 @@ const InstallmentItem = <T extends FieldValues>({
           </Grid>
 
           {/* Due Date Field - Using extracted component */}
-          <Grid item xs={12}>
+          <Grid item xs={12} data-testid="installment-due-date">
             <DateField<T>
               control={control}
               dueDatePath={dueDatePath}
@@ -229,7 +233,7 @@ const InstallmentItem = <T extends FieldValues>({
           </Grid>
 
           {/* Remittance Field - Campo causale */}
-          <Grid item xs={12}>
+          <Grid item xs={12} data-testid="installment-remittance">
             <RemittanceField<T>
               control={control}
               remittancePath={remittancePath}
