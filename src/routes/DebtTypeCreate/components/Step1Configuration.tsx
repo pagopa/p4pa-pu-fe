@@ -74,7 +74,7 @@ export const Step1Configuration = ({
   };
 
   return (
-    <FormProvider {...form}>
+    <FormProvider {...form} data-testid="step1-configuration">
       <form aria-label="form">
         <WizardStepWrapper
           title={t('debtTypeCreate.configuration.title')}
@@ -84,6 +84,7 @@ export const Step1Configuration = ({
           }
         >
           <SectionBox
+            data-testid="step1-configuration-debt-type"
             title={t('debtTypeCreate.configuration.debtType.title')}
             adornment={<BookIcon />}
           >
@@ -93,6 +94,7 @@ export const Step1Configuration = ({
                 control={control}
                 sx={{ flex: 1 }}
                 label={t('debtTypeCreate.configuration.debtTypeCode.label')}
+                data-testid="code"
                 defaultValue={editmode ? prefilledData?.code : ''}
                 disabled={editmode}
               />
@@ -101,6 +103,7 @@ export const Step1Configuration = ({
                   name="description"
                   control={control}
                   label={t('debtTypeCreate.configuration.debtType.label')}
+                  data-testid="description"
                   placeholder={t(
                     'debtTypeCreate.configuration.debtType.placeholder'
                   )}
@@ -115,6 +118,7 @@ export const Step1Configuration = ({
             </Stack>
           </SectionBox>
           <SectionBox
+            data-testid="step1-configuration-taxonomy"
             title={t('debtTypeCreate.configuration.taxonomy.title')}
             adornment={<LocalOffer />}
           >
@@ -123,7 +127,10 @@ export const Step1Configuration = ({
             ) : (
               <TaxonomyFilter
                 render={(fields) => (
-                  <Stack gap={2}>
+                  <Stack
+                    gap={2}
+                    data-testid="step1-configuration-taxonomy-fields"
+                  >
                     {/* orgType is always visible */}
                     {fields.orgType}
                     {/* Render rest only if orgType is selected */}

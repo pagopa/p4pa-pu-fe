@@ -64,6 +64,7 @@ export const TaxonomyFilter = ({
         name="orgType"
         control={control}
         label={t('taxonomy.orgType.label')}
+        data-testid="orgType"
         fetchFn={getOrganizationsTypes}
       />
     ),
@@ -74,6 +75,7 @@ export const TaxonomyFilter = ({
         name="macroAreaCode"
         control={control}
         label={t('taxonomy.macroArea.label')}
+        data-testid="macroAreaCode"
         fetchFn={() => getMacroAreas({ organizationType })}
         disabled={!organizationType}
       />
@@ -85,6 +87,7 @@ export const TaxonomyFilter = ({
         name="serviceTypeCode"
         control={control}
         label={t('taxonomy.serviceType.label')}
+        data-testid="serviceTypeCode"
         fetchFn={() => getServiceTypes({ organizationType, macroAreaCode })}
         disabled={!macroAreaCode}
       />
@@ -96,6 +99,7 @@ export const TaxonomyFilter = ({
         name="collectingReason"
         control={control}
         label={t('taxonomy.collectingReason.label')}
+        data-testid="collectingReason"
         fetchFn={() =>
           getCollectionReasons({
             organizationType,
@@ -113,6 +117,7 @@ export const TaxonomyFilter = ({
         name="taxonomyCode"
         control={control}
         label={t('taxonomy.taxonomyCode.label')}
+        data-testid="taxonomyCode"
         fetchFn={() =>
           getTaxonomyCode({
             organizationType,
@@ -145,7 +150,7 @@ export const TaxonomyFilter = ({
 
   // Otherwise use preset layouts
   return (
-    <Stack gap={2}>
+    <Stack gap={2} data-testid="taxonomy-filter-default">
       {fields.orgType}
       {fields.macroAreaCode}
       <Stack direction="row" gap={2}>

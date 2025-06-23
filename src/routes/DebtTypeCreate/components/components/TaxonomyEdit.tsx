@@ -13,7 +13,7 @@ export const TaxonomyEdit = ({ prefilledData }: TaxonomyEditProps) => {
   const { control } = useFormContext();
 
   return (
-    <Stack gap={2}>
+    <Stack gap={2} data-testid="taxonomy-edit">
       <FormComponent.ControlledTextField
         name="orgType"
         required={false}
