@@ -6,14 +6,23 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getTreasuryDetail } from '../../api/treasuryDetail';
 
+const mockNavigate = vi.fn();
+
 vi.mock('../../api/treasuryDetail', () => ({
   getTreasuryDetail: vi.fn()
 }));
 vi.mock('react-router-dom', () => ({
-  useLoaderData: vi.fn()
+  useLoaderData: vi.fn(),
+  useNavigate: () => mockNavigate
 }));
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()
+}));
+
+vi.mock('../../routes', () => ({
+  PageRoutes: {
+    RESPONSES_ERROR: 'RESPONSES_ERROR'
+  }
 }));
 
 describe('Treasury detail Page', () => {
@@ -55,10 +64,11 @@ describe('Treasury detail Page', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockClear();
 
-    (useLoaderData as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      id: mockData.treasuryId
-    });
+    (useLoaderData as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+      mockData.treasuryId
+    );
     (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       state: { [STATE.ORGANIZATION_ID]: mockOrganizationId }
     });
@@ -75,5 +85,28 @@ describe('Treasury detail Page', () => {
     expect(
       screen.getByText(mockData.remittanceDescription)
     ).toBeInTheDocument();
+  });
+
+  it('handles missing ID parameter', () => {
+    (useLoaderData as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
+      null
+    );
+
+    render(<TreasuryDetail />);
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
+  });
+
+  it('handles API errors correctly', () => {
+    (getTreasuryDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new Error('API Error')
+    });
+
+    render(<TreasuryDetail />);
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
   });
 });

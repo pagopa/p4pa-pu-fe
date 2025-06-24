@@ -8,12 +8,14 @@ import { createMock } from 'zodock';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 
+const mockNavigate = vi.fn();
+
 vi.mock('../../api/getPaymentsReportingDetail', () => ({
   getPaymentsReportingDetail: vi.fn()
 }));
 
 vi.mock('react-router-dom', () => ({
-  useNavigate: vi.fn(),
+  useNavigate: () => mockNavigate,
   generatePath: vi.fn(),
   useParams: vi.fn(),
   useLocation: vi.fn(),
@@ -35,6 +37,15 @@ vi.mock('react-i18next', () => ({
   })
 }));
 
+vi.mock('../../routes', () => ({
+  PageRoutes: {
+    RESPONSES_ERROR: 'RESPONSES_ERROR',
+    REPORTING_INDEX: 'REPORTING_INDEX',
+    REPORTING_DETAIL: 'REPORTING_DETAIL',
+    REPORTING_PAYMENT_DETAIL: 'REPORTING_PAYMENT_DETAIL'
+  }
+}));
+
 describe('ReportingPaymentDetail Page', () => {
   const mockOrganizationId = '123';
   const mockIuf = 'iuf123';
@@ -43,6 +54,7 @@ describe('ReportingPaymentDetail Page', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockClear();
 
     (useParams as ReturnType<typeof vi.fn>).mockReturnValue({
       iuf: mockIuf,
@@ -122,11 +134,23 @@ describe('ReportingPaymentDetail Page', () => {
     });
 
     render(<ReportingPaymentDetail />);
-    expect(getPaymentsReportingDetail).toHaveBeenCalledWith(
-      Number(mockOrganizationId),
-      '',
-      ''
-    );
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
+  });
+
+  it('handles API errors correctly', () => {
+    (
+      getPaymentsReportingDetail as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new Error('API Error')
+    });
+
+    render(<ReportingPaymentDetail />);
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
   });
 
   it('handles fisical person debtor type correctly', () => {
@@ -314,10 +338,7 @@ describe('ReportingPaymentDetail Page', () => {
   it('handles missing or undefined parameters', () => {
     (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
     render(<ReportingPaymentDetail />);
-    expect(getPaymentsReportingDetail).toHaveBeenCalledWith(
-      Number(mockOrganizationId),
-      '',
-      ''
-    );
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
   });
 });
