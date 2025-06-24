@@ -36,5 +36,9 @@ export default defineConfig({
       ...config({ path: './.env.test' }).parsed
     },
     include: ['**/*.test.ts?(x)']
+  },
+  build: {
+    // sourcemap generation for debugging purposes
+    sourcemap: true
   }
 });
