@@ -2,7 +2,7 @@ import { Add, Search } from '@mui/icons-material';
 import { Box, Tab, Tabs, Grid } from '@mui/material';
 import { useState, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { PageRoutes } from '../../routes';
 import FilterContainer, {

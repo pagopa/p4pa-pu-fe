@@ -1,13 +1,13 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { useNavigate, generatePath, useSearchParams } from 'react-router-dom';
+import { useNavigate, generatePath, useSearchParams } from 'react-router';
 import { render, screen } from '../../__tests__/renderers';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 import ReportingImportFlowOverview from './ReportingImportFlowOverview';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: vi.fn(),

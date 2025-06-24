@@ -12,7 +12,7 @@ import {
   PaymentOptionTypeEnum,
   DebtPositionStatus
 } from '../../../../../generated/data-contracts';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router';
 import { useStore } from '../../../../store/GlobalStore';
 import debtPositionsApi from '../../../../api/debtPositions';
 
@@ -52,7 +52,7 @@ vi.mock('react-i18next', () => ({
   })
 }));
 
-vi.mock('react-router-dom', async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = (await importOriginal()) as object;
   return {
     ...actual,

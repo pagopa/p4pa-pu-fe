@@ -13,7 +13,7 @@ import FileUploader from '../FileUploader/FileUploader';
 import { useTranslation } from 'react-i18next';
 import { AltRoute, ArrowBack } from '@mui/icons-material';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { importFlowConfig } from '../../models/ImportDetails';
 import { PageRoutes } from '../../routes';

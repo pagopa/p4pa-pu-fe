@@ -8,7 +8,7 @@ import FilterContainer, {
   COMPONENT_TYPE
 } from '../FilterContainer/FilterContainer';
 import ActionMenu from '../ActionMenu/ActionMenu';
-import { generatePath, useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import {
@@ -304,7 +304,7 @@ const ImportFlowOverview = ({
       </Grid>
 
       <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
-        {isEmptyData && data && data.totalElements === 0 && (
+        {isEmptyData && data && data.totalElements === 0 ? (
           <EmptyDataGrid
             title={t('commons.noFlows')}
             action={{
@@ -312,30 +312,30 @@ const ImportFlowOverview = ({
               onClick: handleImportFlow
             }}
           />
+        ) : (
+          <CustomDataGrid
+            rows={data?.content || []}
+            columns={columns}
+            getRowId={(row) => row.ingestionFlowFileId}
+            disableColumnMenu
+            disableColumnResize
+            sortModel={sortModel}
+            onSortModelChange={handleSortModelChange}
+            loading={isLoading}
+            smartPagination={{
+              initialPage: 0,
+              initialSize: 10,
+              sizeOptions: [5, 10, 20],
+              backendData: {
+                totalElements: data?.totalElements || 0,
+                totalPages: data?.totalPages || 0,
+                number: data?.number || 0,
+                size: data?.size || 10
+              },
+              onPaginationChange: updatePagination
+            }}
+          />
         )}
-
-        <CustomDataGrid
-          rows={data?.content || []}
-          columns={columns}
-          getRowId={(row) => row.ingestionFlowFileId}
-          disableColumnMenu
-          disableColumnResize
-          sortModel={sortModel}
-          onSortModelChange={handleSortModelChange}
-          loading={isLoading}
-          smartPagination={{
-            initialPage: 0,
-            initialSize: 10,
-            sizeOptions: [5, 10, 20],
-            backendData: {
-              totalElements: data?.totalElements || 0,
-              totalPages: data?.totalPages || 0,
-              number: data?.number || 0,
-              size: data?.size || 10
-            },
-            onPaginationChange: updatePagination
-          }}
-        />
       </Box>
     </>
   );

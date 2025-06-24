@@ -37,7 +37,7 @@ import {
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { generatePath, useParams, useNavigate } from 'react-router-dom';
+import { generatePath, useParams, useNavigate } from 'react-router';
 import { useEffect, useState } from 'react';
 import { PageRoutes } from '../../routes';
 import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';

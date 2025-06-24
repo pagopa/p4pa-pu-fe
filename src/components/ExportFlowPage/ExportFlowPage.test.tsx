@@ -2,11 +2,11 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
 import ExportFlow from './ExportFlowPage';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import * as useDateRange from '../../hooks/useDateRange';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
+vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useNavigate: vi.fn(),
   useParams: vi.fn()

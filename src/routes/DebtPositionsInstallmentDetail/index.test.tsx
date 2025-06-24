@@ -1,9 +1,9 @@
 import { describe, it, Mock, vi } from 'vitest';
 import DebtPositionsInstallmentDetail from '.';
 import { render } from '../../__tests__/renderers';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
+vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useNavigate: vi.fn(),
   useLocation: vi.fn()

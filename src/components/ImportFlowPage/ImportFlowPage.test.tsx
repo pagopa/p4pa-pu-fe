@@ -8,12 +8,12 @@ import {
   waitFor
 } from '../../__tests__/renderers';
 import ImportFlow from './ImportFlowPage';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import * as ingestionFlowFiles from '../../api/ingestionFlowFiles';
 import utils from '../../utils';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
+vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useNavigate: vi.fn(),
   useParams: vi.fn()

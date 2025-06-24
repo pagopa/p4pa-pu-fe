@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { ArrowBack } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { Link as RouterLink, useMatches, useNavigate } from 'react-router-dom';
+import { Link as RouterLink, useMatches, useNavigate } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { RouteHandleObject } from '../../models/Routes';
 

@@ -12,7 +12,7 @@ import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router';
 import { useEffect, useRef } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';

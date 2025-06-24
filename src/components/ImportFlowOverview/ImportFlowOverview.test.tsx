@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { useNavigate, generatePath, useSearchParams } from 'react-router-dom';
+import { useNavigate, generatePath, useSearchParams } from 'react-router';
 import {
   getIngestionFlowFiles,
   getIngestionFlowFile
@@ -11,8 +11,8 @@ import { PageRoutes } from '../../routes';
 import FlowOverview from './ImportFlowOverview';
 import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: vi.fn(),
@@ -996,9 +996,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
       expect(screen.getByText('commons.importFlows')).toBeDefined();
     });
 
-    await waitFor(() => {
-      expect(screen.getByRole('grid')).toBeDefined();
-    });
+    expect(screen.queryByRole('grid')).toBeNull();
 
     const importButton = screen.getByText('commons.importFlows');
     fireEvent.click(importButton);
@@ -1007,5 +1005,28 @@ describe('TelematicReceiptImportFlowOverview', () => {
     expect(generatePath).toHaveBeenCalledWith(PageRoutes.IMPORT_FLOWS, {
       category: 'test'
     });
+  });
+
+  it('shows DataGrid when content exists and hides EmptyDataGrid', () => {
+    (
+      getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({
+      data: mockData,
+      isLoading: false
+    });
+
+    render(
+      <FlowOverview
+        routingCategory={'test'}
+        title={'test title'}
+        description={'test description'}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
+      />
+    );
+
+    expect(screen.getByRole('grid')).toBeDefined();
+
+    expect(screen.queryByText('commons.noFlows')).toBeNull();
+    expect(screen.queryByText('commons.importFlows')).toBeNull();
   });
 });

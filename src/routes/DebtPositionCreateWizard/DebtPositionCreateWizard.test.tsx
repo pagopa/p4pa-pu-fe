@@ -8,7 +8,7 @@ import debtPositions from '../../api/debtPositions';
 import utils from '../../utils';
 import {
   DebtPositionDetailDTO,
-  EntityTypeEnum,
+  PersonEntityType,
   PaymentOptionTypeEnum,
   DebtPositionStatus
 } from '../../../generated/data-contracts';
@@ -145,7 +145,7 @@ const mockDebtPositionDetail: DebtPositionDetailDTO = {
   debtPositionTypeOrgDescription: 'Test Description',
   status: DebtPositionStatus.DRAFT,
   debtor: {
-    entityType: EntityTypeEnum.F,
+    entityType: PersonEntityType.F,
     fiscalCode: 'RSSMRA80A01H501U',
     fullName: 'Mario Rossi',
     address: 'Via Roma 1',
@@ -165,7 +165,7 @@ const mockDebtPositionDetail: DebtPositionDetailDTO = {
           dueDate: '2024-12-31',
           remittanceInformation: 'Test Payment',
           debtor: {
-            entityType: EntityTypeEnum.F,
+            entityType: PersonEntityType.F,
             fiscalCode: 'RSSMRA80A01H501U',
             fullName: 'Mario Rossi'
           },
@@ -202,7 +202,7 @@ const mockInstallmentDebtPositionDetail: DebtPositionDetailDTO = {
   debtPositionTypeOrgDescription: 'Test Installment Description',
   status: DebtPositionStatus.DRAFT,
   debtor: {
-    entityType: EntityTypeEnum.G,
+    entityType: PersonEntityType.G,
     fiscalCode: '12345678901',
     fullName: 'Test Company SRL',
     address: 'Via Milano 10',
@@ -222,7 +222,7 @@ const mockInstallmentDebtPositionDetail: DebtPositionDetailDTO = {
           dueDate: '2024-06-30',
           remittanceInformation: 'First installment',
           debtor: {
-            entityType: EntityTypeEnum.G,
+            entityType: PersonEntityType.G,
             fiscalCode: '12345678901',
             fullName: 'Test Company SRL'
           },
@@ -251,7 +251,7 @@ const mockInstallmentDebtPositionDetail: DebtPositionDetailDTO = {
           dueDate: '2024-12-31',
           remittanceInformation: 'Second installment',
           debtor: {
-            entityType: EntityTypeEnum.G,
+            entityType: PersonEntityType.G,
             fiscalCode: '12345678901',
             fullName: 'Test Company SRL'
           },
@@ -521,7 +521,7 @@ describe('DebtPositionCreateWizard', () => {
         debtPositionTypeOrgCode: 'MIN123',
         status: DebtPositionStatus.DRAFT,
         debtor: {
-          entityType: EntityTypeEnum.F,
+          entityType: PersonEntityType.F,
           fiscalCode: 'MINIMAL123',
           fullName: 'Minimal User'
         },
@@ -556,7 +556,7 @@ describe('DebtPositionCreateWizard', () => {
         debtPositionTypeOrgCode: 'NOT123',
         status: DebtPositionStatus.DRAFT,
         debtor: {
-          entityType: EntityTypeEnum.F,
+          entityType: PersonEntityType.F,
           fiscalCode: 'NOTRANS123',
           fullName: 'No Transfers User'
         },
@@ -570,7 +570,7 @@ describe('DebtPositionCreateWizard', () => {
                 dueDate: '2024-12-31',
                 remittanceInformation: 'No transfers payment',
                 debtor: {
-                  entityType: EntityTypeEnum.F,
+                  entityType: PersonEntityType.F,
                   fiscalCode: 'NOTRANS123',
                   fullName: 'No Transfers User'
                 },
@@ -609,7 +609,7 @@ describe('DebtPositionCreateWizard', () => {
         debtPositionTypeOrgCode: 'UNS123',
         status: DebtPositionStatus.DRAFT,
         debtor: {
-          entityType: EntityTypeEnum.F,
+          entityType: PersonEntityType.F,
           fiscalCode: 'UNSORT123',
           fullName: 'Unsorted User'
         },
@@ -623,7 +623,7 @@ describe('DebtPositionCreateWizard', () => {
                 dueDate: '2024-12-31',
                 remittanceInformation: 'Last installment',
                 debtor: {
-                  entityType: EntityTypeEnum.F,
+                  entityType: PersonEntityType.F,
                   fiscalCode: 'UNSORT123',
                   fullName: 'Unsorted User'
                 },
@@ -634,7 +634,7 @@ describe('DebtPositionCreateWizard', () => {
                 dueDate: '2024-06-30',
                 remittanceInformation: 'First installment',
                 debtor: {
-                  entityType: EntityTypeEnum.F,
+                  entityType: PersonEntityType.F,
                   fiscalCode: 'UNSORT123',
                   fullName: 'Unsorted User'
                 },
