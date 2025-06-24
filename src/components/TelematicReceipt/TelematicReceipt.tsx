@@ -1,7 +1,7 @@
 import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { Download, Upload } from '@mui/icons-material';
-import { Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router-dom';
 import { PageRoutes } from '../../routes';
@@ -92,39 +92,45 @@ export const TelematicReceipt = () => {
           </Grid>
 
           <Grid item xs={12} md={6}>
-            <ActionCard
-              title={t('telematicReceipts.downloadflowstitle')}
-              description={t('telematicReceipts.downloadflowsdescription')}
-              actionLabel={t('telematicReceipts.exportrequestbutton')}
-              actionIcon={<Download />}
-              linkLabel={t('telematicReceipts.exportedflowsviewbutton')}
-              onActionClick={() =>
-                navigate(
-                  generatePath(PageRoutes.EXPORT_FLOWS, { category: 'receipt' })
-                )
-              }
-              onLinkClick={() =>
-                navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW)
-              }
-            />
+            <Box mb={2}>
+              <ActionCard
+                title={t('telematicReceipts.downloadflowstitle')}
+                description={t('telematicReceipts.downloadflowsdescription')}
+                actionLabel={t('telematicReceipts.exportrequestbutton')}
+                actionIcon={<Download />}
+                linkLabel={t('telematicReceipts.exportedflowsviewbutton')}
+                onActionClick={() =>
+                  navigate(
+                    generatePath(PageRoutes.EXPORT_FLOWS, {
+                      category: 'receipt'
+                    })
+                  )
+                }
+                onLinkClick={() =>
+                  navigate(PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW)
+                }
+              />
+            </Box>
 
-            <ActionCard
-              title={t('telematicReceipts.importflowstitle')}
-              description={t('telematicReceipts.importflowsdescription')}
-              actionLabel={t('commons.importFlow')}
-              actionIcon={<Upload />}
-              linkLabel={t('telematicReceipts.importedflowsviewbutton')}
-              onActionClick={() =>
-                navigate(
-                  generatePath(PageRoutes.IMPORT_FLOWS, {
-                    category: 'telematic-receipt'
-                  })
-                )
-              }
-              onLinkClick={() =>
-                navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW)
-              }
-            />
+            <Box>
+              <ActionCard
+                title={t('telematicReceipts.importflowstitle')}
+                description={t('telematicReceipts.importflowsdescription')}
+                actionLabel={t('commons.importFlow')}
+                actionIcon={<Upload />}
+                linkLabel={t('telematicReceipts.importedflowsviewbutton')}
+                onActionClick={() =>
+                  navigate(
+                    generatePath(PageRoutes.IMPORT_FLOWS, {
+                      category: 'telematic-receipt'
+                    })
+                  )
+                }
+                onLinkClick={() =>
+                  navigate(PageRoutes.TELEMATIC_RECEIPT_IMPORT_OVERVIEW)
+                }
+              />
+            </Box>
           </Grid>
         </Grid>
       </Grid>
