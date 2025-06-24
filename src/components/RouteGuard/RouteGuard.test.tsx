@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { RouteGuard, RouteGuardProps } from './RouteGuard';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router';
 
 const TestRouter = (props: Pick<RouteGuardProps, 'evaluation'>) => (
   <BrowserRouter>

@@ -4,7 +4,7 @@ import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { getExportFiles } from '../../api/exportFiles';
 import Conservation from './Conservation';
 
-vi.mock('react-router-dom', async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,

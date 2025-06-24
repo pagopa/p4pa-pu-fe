@@ -9,8 +9,8 @@ import utils from '../../utils';
 const mockNavigate = vi.fn();
 const mockSetSearchParams = vi.fn();
 
-vi.mock('react-router-dom', async () => {
-  const actual = (await vi.importActual('react-router-dom')) as Record<
+vi.mock('react-router', async () => {
+  const actual = (await vi.importActual('react-router')) as Record<
     string,
     unknown
   >;

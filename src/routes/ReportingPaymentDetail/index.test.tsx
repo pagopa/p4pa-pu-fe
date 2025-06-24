@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ReportingPaymentDetail from '.';
 import { render, screen } from '@testing-library/react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { getPaymentsReportingDetail } from '../../api/getPaymentsReportingDetail';
 import { paymentsReportingDetailDTOSchema } from '../../../generated/zod-schema';
 import { createMock } from 'zodock';

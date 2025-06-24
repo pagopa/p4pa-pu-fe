@@ -1,11 +1,15 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import DetailFlowPage from '../DetailFlowPage/DetailFlowPage';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 
-vi.mock('react-router-dom', () => ({
-  useParams: vi.fn()
-}));
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as typeof importOriginal),
+    useParams: vi.fn()
+  };
+});
 
 describe('DetailFlowPage', () => {
   const mockUseParams = vi.mocked(useParams);

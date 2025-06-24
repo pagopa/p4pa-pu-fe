@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router';
 import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
 import DebtTypes from './DebtTypes';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
@@ -43,8 +43,8 @@ vi.mock('../../api/debtPositionsTypes', () => ({
   getDebtPositionTypeWithCount: vi.fn()
 }));
 
-vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router-dom')>();
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>();
   return {
     ...actual,
     useParams: vi.fn(),

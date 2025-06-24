@@ -13,7 +13,7 @@ import { formatDate } from '../../utils/formatters';
 import { useEffect } from 'react';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import { PageRoutes } from '../../routes';
-import { generatePath } from 'react-router-dom';
+import { generatePath } from 'react-router';
 
 function ReportingPaymentDetail() {
   const { iuf, id } = useParams();

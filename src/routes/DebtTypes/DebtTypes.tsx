@@ -1,7 +1,7 @@
 import { Add, Search } from '@mui/icons-material';
 import { Box, Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useState, useCallback } from 'react';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer, {

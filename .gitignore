@@ -84,6 +84,7 @@ Desktop.ini
 /bin/
 /deploy/
 /generated
+.yarn
 
 ######################
 # Logs

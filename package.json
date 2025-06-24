@@ -22,7 +22,6 @@
     "react-i18next": "^14.1.0",
     "react-markdown": "^9.0.3",
     "react-router": "^7.0.0",
-    "react-router-dom": "^7.0.0",
     "rehype-raw": "^7.0.0",
     "rehype-sanitize": "^6.0.0",
     "remark-breaks": "^4.0.0",
@@ -94,5 +93,6 @@
     "sort-translations": "node scripts/sort-translations.js"
   },
   "type": "module",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "packageManager": "yarn@4.9.2"
 }

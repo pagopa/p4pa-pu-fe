@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TreasuryDetail } from '.';
 import { render, screen } from '@testing-library/react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getTreasuryDetail } from '../../api/treasuryDetail';

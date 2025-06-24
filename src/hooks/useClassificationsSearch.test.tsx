@@ -1,11 +1,15 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook } from '../__tests__/renderers';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import UseClassificationsSearch from './useClassificationsSearch';
 
-vi.mock('react-router-dom', () => ({
-  useSearchParams: vi.fn()
-}));
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as typeof importOriginal),
+    useSearchParams: vi.fn()
+  };
+});
 
 vi.mock('../api/classifications', () => ({
   getClassifications: vi.fn(() => ({

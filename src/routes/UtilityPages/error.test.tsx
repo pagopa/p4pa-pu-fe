@@ -4,8 +4,8 @@ import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { render, screen } from '../../__tests__/renderers';
 import { PageRoutes } from '..';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     Link: ({ children, to }: { children: React.ReactNode; to: string }) => (

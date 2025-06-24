@@ -16,7 +16,7 @@ import { DebtPositionTypeOrgWithCount } from '../../../../generated/data-contrac
 import { useStore } from '../../../store/GlobalStore';
 import { STATE } from '../../../store/types';
 import { formatDateTime } from '../../../utils/formatters';
-import { generatePath, useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';
 
 type MyOrgProps = {

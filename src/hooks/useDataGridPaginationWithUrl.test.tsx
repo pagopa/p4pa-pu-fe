@@ -1,11 +1,15 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import { useDataGridPaginationWithUrl } from './useDataGridPaginationWithUrl';
 
-vi.mock('react-router-dom', () => ({
-  useSearchParams: vi.fn()
-}));
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as typeof importOriginal),
+    useSearchParams: vi.fn()
+  };
+});
 
 describe('useDataGridPaginationWithUrl', () => {
   const mockSetSearchParams = vi.fn();

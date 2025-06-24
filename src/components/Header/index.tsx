@@ -8,7 +8,7 @@ import {
 import utils from '../../utils';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
 import { setOrganizationId } from '../../store/OrganizationIdStore';

@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { generatePath, Link } from 'react-router-dom';
+import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { PagedTreasuryView } from '../../../generated/apiClient';
 import { formatDate, moneyFormat } from '../../utils/formatters';

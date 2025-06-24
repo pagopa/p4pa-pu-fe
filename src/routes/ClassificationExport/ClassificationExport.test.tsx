@@ -13,8 +13,8 @@ vi.mock('react-i18next', () => ({
 }));
 
 const mockNavigate = vi.fn();
-vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = (await importOriginal()) as typeof import('react-router-dom');
+vi.mock('react-router', async (importOriginal) => {
+  const actual = (await importOriginal()) as typeof import('react-router');
   return {
     ...actual,
     useNavigate: () => mockNavigate

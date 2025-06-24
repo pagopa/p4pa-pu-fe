@@ -14,7 +14,7 @@ import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { moneyFormat } from '../../../utils/formatters';
 import { PaymentOptionDisplayData } from '../DebtPositionDetail';
-import { generatePath, useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';
 
 export const PaymentOptionSection = ({
