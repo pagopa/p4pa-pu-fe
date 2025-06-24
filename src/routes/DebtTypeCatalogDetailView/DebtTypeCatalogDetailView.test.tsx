@@ -2,11 +2,11 @@ import { render, screen } from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { DebtTypeCatalogDetailView } from './DebtTypeCatalogDetailView';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { getDebtPositionTypeDetail } from '../../api/debtPositionTypeDetail';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useParams: vi.fn(),

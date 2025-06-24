@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TreasuryDetail } from '.';
 import { render, screen } from '@testing-library/react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getTreasuryDetail } from '../../api/treasuryDetail';
@@ -9,9 +9,15 @@ import { getTreasuryDetail } from '../../api/treasuryDetail';
 vi.mock('../../api/treasuryDetail', () => ({
   getTreasuryDetail: vi.fn()
 }));
-vi.mock('react-router-dom', () => ({
-  useLoaderData: vi.fn()
-}));
+
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as typeof importOriginal),
+    useLoaderData: vi.fn()
+  };
+});
+
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()
 }));

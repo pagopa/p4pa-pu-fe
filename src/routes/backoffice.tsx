@@ -2,7 +2,7 @@ import config from '../utils/config';
 import TaxonomyPage from './Taxonomy';
 import { RouteHandleObject } from '../models/Routes';
 import TaxonomyDetailPage from './TaxonomyDetail';
-import { Navigate, Outlet } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router';
 import { SuperAdminRouteGuard } from '../components/RouteGuard/RouteGuard';
 import TaxonomySearchResults from './TaxonomySearchResults';
 

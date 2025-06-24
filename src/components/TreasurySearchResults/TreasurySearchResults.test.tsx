@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import TreasurySearchResults from './TreasurySearchResults';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
+vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
 }));

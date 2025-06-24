@@ -3,7 +3,7 @@ import { render, screen } from '../../__tests__/renderers';
 import DebtPositionsImportOverview from './DebtPositionsImportOverview';
 import { getIngestionFlowFiles } from '../../api/ingestionFlowFiles';
 
-vi.mock('react-router-dom', async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,

@@ -7,11 +7,15 @@ import {
   ExportFileStatus,
   ExportFileTypeEnum
 } from '../../generated/apiClient';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
-vi.mock('react-router-dom', () => ({
-  useSearchParams: vi.fn()
-}));
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as typeof importOriginal),
+    useSearchParams: vi.fn()
+  };
+});
 
 describe('useExportFlowFilters', () => {
   const mockSetSearchParams = vi.fn();

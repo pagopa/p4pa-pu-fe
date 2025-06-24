@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import ReportingPaymentDetail from '.';
 import { render, screen } from '@testing-library/react';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { getPaymentsReportingDetail } from '../../api/getPaymentsReportingDetail';
 import { paymentsReportingDetailDTOSchema } from '../../../generated/zod-schema';
 import { createMock } from 'zodock';
@@ -12,18 +12,22 @@ vi.mock('../../api/getPaymentsReportingDetail', () => ({
   getPaymentsReportingDetail: vi.fn()
 }));
 
-vi.mock('react-router-dom', () => ({
-  useNavigate: vi.fn(),
-  generatePath: vi.fn(),
-  useParams: vi.fn(),
-  useLocation: vi.fn(),
-  createBrowserRouter: vi.fn(),
-  Navigate: vi.fn(({ to }) => ({
-    type: 'div',
-    props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
-  })),
-  Outlet: vi.fn()
-}));
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as typeof importOriginal),
+    useNavigate: vi.fn(),
+    generatePath: vi.fn(),
+    useParams: vi.fn(),
+    useLocation: vi.fn(),
+    createBrowserRouter: vi.fn(),
+    Outlet: vi.fn(),
+    Navigate: vi.fn(({ to }) => ({
+      type: 'div',
+      props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
+    }))
+  };
+});
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()

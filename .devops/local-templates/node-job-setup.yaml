@@ -71,6 +71,7 @@ steps:
 
 - bash: |
     echo "current folder: $(pwd)"
+    corepack enable
     yarn install --immutable
   workingDirectory: ${{ parameters.projectDir }}    
   displayName: 'Install node modules'

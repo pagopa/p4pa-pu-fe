@@ -11,7 +11,7 @@ import {
   Box,
   SxProps
 } from '@mui/material';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router';
 import { alpha } from '@mui/material';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import ExpandLessRoundedIcon from '@mui/icons-material/ExpandLessRounded';

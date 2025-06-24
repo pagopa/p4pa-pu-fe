@@ -4,7 +4,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import DetailContainer from '../../components/DetailContainer/DetailContainer';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';

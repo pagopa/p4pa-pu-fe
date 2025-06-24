@@ -6,7 +6,7 @@ import { BaseFilterValues } from '../../models/Filters';
 import useTelematicReceiptSearch, {
   TelematicReceiptFilters
 } from '../../hooks/useTelematicReceiptsSearch';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
 import FilterContainer from '../FilterContainer/FilterContainer';
 import { PagedReceiptView } from '../../../generated/data-contracts';

@@ -12,7 +12,9 @@ export default defineConfig({
     port: 1234
   },
   build: {
-    target: 'esnext'
+    target: 'esnext',
+    // sourcemap generation for debugging purposes. Please disable in production.
+    sourcemap: true
   },
   plugins: [react()],
   resolve: {

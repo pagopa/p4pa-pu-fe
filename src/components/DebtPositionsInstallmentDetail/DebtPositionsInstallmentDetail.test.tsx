@@ -3,7 +3,7 @@ import { fireEvent, render, screen } from '../../__tests__/renderers';
 import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
 import { DebtPositionsInstallmentDetail } from './DebtPositionsInstallmentDetail';
 import debtPositions from '../../api/debtPositions';
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
@@ -17,18 +17,22 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn()
 }));
 
-vi.mock('react-router-dom', () => ({
-  useNavigate: vi.fn(),
-  generatePath: vi.fn(),
-  useParams: vi.fn(),
-  useLocation: vi.fn(),
-  createBrowserRouter: vi.fn(),
-  Navigate: vi.fn(({ to }) => ({
-    type: 'div',
-    props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
-  })),
-  Outlet: vi.fn()
-}));
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as typeof importOriginal),
+    useNavigate: vi.fn(),
+    generatePath: vi.fn(),
+    useParams: vi.fn(),
+    useLocation: vi.fn(),
+    createBrowserRouter: vi.fn(),
+    Outlet: vi.fn(),
+    Navigate: vi.fn(({ to }) => ({
+      type: 'div',
+      props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
+    }))
+  };
+});
 
 vi.mock('../../api/debtPositions', () => ({
   default: {

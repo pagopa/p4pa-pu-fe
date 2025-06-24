@@ -2,7 +2,7 @@ import { describe, it, vi } from 'vitest';
 import DebtPositionsImportOverview from '.';
 import { render } from '../../__tests__/renderers';
 
-vi.mock('react-router-dom', async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,

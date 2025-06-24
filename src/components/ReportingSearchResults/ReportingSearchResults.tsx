@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Grid, Stack, Typography, useTheme } from '@mui/material';
 import TitleComponent from '../TitleComponent/TitleComponent';
