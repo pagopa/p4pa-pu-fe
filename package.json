@@ -66,10 +66,6 @@
     "vitest-dom": "^0.1.1",
     "zodock": "^0.1.0"
   },
-  "resolutions": {
-    "wrap-ansi": "7.0.0",
-    "string-width": "4.1.0"
-  },
   "lint-staged": {
     "*.json": [
       "yarn sort-translations"
@@ -97,5 +93,6 @@
     "sort-translations": "node scripts/sort-translations.js"
   },
   "type": "module",
-  "version": "0.0.0"
+  "version": "0.0.0",
+  "packageManager": "yarn@4.9.2"
 }
