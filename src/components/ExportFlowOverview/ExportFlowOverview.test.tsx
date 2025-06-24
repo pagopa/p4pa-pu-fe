@@ -255,7 +255,29 @@ describe('ExportFlowOverview', () => {
       screen.getByRole('button', { name: 'commons.exportFlows' })
     ).toBeDefined();
 
+    expect(screen.queryByRole('grid')).toBeNull();
+  });
+
+  it('shows DataGrid when content exists and hides EmptyDataGrid', () => {
+    (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: mockData,
+      isLoading: false
+    });
+
+    render(
+      <ExportFlowOverview
+        routingCategory="test"
+        title="Export title"
+        exportFileTypes={ExportFileTypeEnum.PAID}
+      />
+    );
+
     expect(screen.getByRole('grid')).toBeDefined();
+
+    expect(screen.queryByText('commons.noFlows')).toBeNull();
+    expect(
+      screen.queryByRole('button', { name: 'commons.exportFlows' })
+    ).toBeNull();
   });
 
   it('shows EmptyDataGrid when data.content is undefined', () => {

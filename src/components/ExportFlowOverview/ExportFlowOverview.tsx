@@ -249,7 +249,7 @@ const ExportFlowOverview = ({
             padding: 2
           }}
         >
-          {isEmptyData && data && data.totalElements === 0 && (
+          {isEmptyData && data && data.totalElements === 0 ? (
             <EmptyDataGrid
               title={t('commons.noFlows')}
               action={{
@@ -257,30 +257,30 @@ const ExportFlowOverview = ({
                 onClick: handleExportFlow
               }}
             />
+          ) : (
+            <CustomDataGrid
+              rows={data?.content || []}
+              columns={columns}
+              getRowId={(row) => row.exportFileId}
+              disableColumnMenu
+              disableColumnResize
+              sortModel={sortModel}
+              onSortModelChange={handleSortModelChange}
+              loading={isLoading}
+              smartPagination={{
+                initialPage: 0,
+                initialSize: 10,
+                sizeOptions: [5, 10, 20],
+                backendData: {
+                  totalElements: data?.totalElements || 0,
+                  totalPages: data?.totalPages || 0,
+                  number: data?.number || 0,
+                  size: data?.size || 10
+                },
+                onPaginationChange: handlePaginationChange
+              }}
+            />
           )}
-
-          <CustomDataGrid
-            rows={data?.content || []}
-            columns={columns}
-            getRowId={(row) => row.exportFileId}
-            disableColumnMenu
-            disableColumnResize
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
-            loading={isLoading}
-            smartPagination={{
-              initialPage: 0,
-              initialSize: 10,
-              sizeOptions: [5, 10, 20],
-              backendData: {
-                totalElements: data?.totalElements || 0,
-                totalPages: data?.totalPages || 0,
-                number: data?.number || 0,
-                size: data?.size || 10
-              },
-              onPaginationChange: handlePaginationChange
-            }}
-          />
         </Box>
       </Stack>
     </>

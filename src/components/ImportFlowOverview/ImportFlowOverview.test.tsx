@@ -996,9 +996,7 @@ describe('TelematicReceiptImportFlowOverview', () => {
       expect(screen.getByText('commons.importFlows')).toBeDefined();
     });
 
-    await waitFor(() => {
-      expect(screen.getByRole('grid')).toBeDefined();
-    });
+    expect(screen.queryByRole('grid')).toBeNull();
 
     const importButton = screen.getByText('commons.importFlows');
     fireEvent.click(importButton);
@@ -1007,5 +1005,28 @@ describe('TelematicReceiptImportFlowOverview', () => {
     expect(generatePath).toHaveBeenCalledWith(PageRoutes.IMPORT_FLOWS, {
       category: 'test'
     });
+  });
+
+  it('shows DataGrid when content exists and hides EmptyDataGrid', () => {
+    (
+      getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({
+      data: mockData,
+      isLoading: false
+    });
+
+    render(
+      <FlowOverview
+        routingCategory={'test'}
+        title={'test title'}
+        description={'test description'}
+        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
+      />
+    );
+
+    expect(screen.getByRole('grid')).toBeDefined();
+
+    expect(screen.queryByText('commons.noFlows')).toBeNull();
+    expect(screen.queryByText('commons.importFlows')).toBeNull();
   });
 });
