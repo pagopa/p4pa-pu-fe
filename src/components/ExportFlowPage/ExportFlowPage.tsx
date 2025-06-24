@@ -72,6 +72,35 @@ export const ExportFlowPage = () => {
     const formattedFrom = new Date(fromDate).toISOString().split('T')[0];
     const formattedTo = new Date(toDate).toISOString().split('T')[0];
 
+    const handleError = (error: unknown) => {
+      console.error(error);
+
+      const isAxiosError = (
+        err: unknown
+      ): err is { response?: { status?: number } } => {
+        return typeof err === 'object' && err !== null && 'response' in err;
+      };
+
+      const statusCode = isAxiosError(error)
+        ? error.response?.status
+        : undefined;
+
+      if (statusCode && statusCode >= 400 && statusCode < 500) {
+        navigate(PageRoutes.RESPONSES_ERROR, {
+          state: {
+            category:
+              category === 'receipt'
+                ? 'telematic-receipt-export'
+                : 'conservation-export',
+            errorType: '4xx',
+            statusCode
+          }
+        });
+      } else {
+        utils.notify.emit(t('exportFlow.errorMessage'));
+      }
+    };
+
     if (category === 'receipt') {
       const exportRequest: PaidExportFileRequest = {
         organizationId,
@@ -98,10 +127,7 @@ export const ExportFlowPage = () => {
               }
             });
           },
-          onError: (error) => {
-            console.error(error);
-            utils.notify.emit(t('exportFlow.errorMessage'));
-          }
+          onError: handleError
         }
       );
     } else if (category === 'conservation') {
@@ -127,10 +153,7 @@ export const ExportFlowPage = () => {
               }
             });
           },
-          onError: (error) => {
-            console.error(error);
-            utils.notify.emit(t('exportFlow.errorMessage'));
-          }
+          onError: handleError
         }
       );
     }
