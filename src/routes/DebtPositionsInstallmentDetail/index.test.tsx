@@ -1,7 +1,7 @@
 import { describe, it, Mock, vi, beforeEach } from 'vitest';
 import DebtPositionsInstallmentDetail from '.';
 import { render } from '../../__tests__/renderers';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 
 const mockNavigate = vi.fn();
 
