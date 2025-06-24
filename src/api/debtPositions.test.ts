@@ -18,7 +18,7 @@ import {
   DebtPositionRegistry,
   ManageDebtPositionDTO,
   Action,
-  EntityTypeEnum,
+  PersonEntityType,
   InstallmentRegistry,
   PaymentEventType
 } from '../../generated/data-contracts';
@@ -853,7 +853,7 @@ describe('manageDebtPositionInstallments', () => {
               dueDate: '2025-12-31',
               remittanceInformation: 'Test payment',
               debtor: {
-                entityType: EntityTypeEnum.F,
+                entityType: PersonEntityType.F,
                 fiscalCode: 'ABCDEF12G34H567I',
                 fullName: 'Test User'
               }
@@ -900,7 +900,7 @@ describe('manageDebtPositionInstallments', () => {
               dueDate: '2025-12-31',
               remittanceInformation: 'Test payment',
               debtor: {
-                entityType: EntityTypeEnum.F,
+                entityType: PersonEntityType.F,
                 fiscalCode: 'ABCDEF12G34H567I',
                 fullName: 'Test User'
               }
