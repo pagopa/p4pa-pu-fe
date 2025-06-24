@@ -3,7 +3,7 @@ import { Downloading, Search } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { useTranslation } from 'react-i18next';
-import { generatePath, useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, {

@@ -6,7 +6,7 @@ import {
 } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
 import { ChevronRight } from '@mui/icons-material';
-import { generatePath, useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router';
 import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
 import { PagedTaxonomy, Taxonomy } from '../../../generated/apiClient';
 import { PageRoutes } from '..';

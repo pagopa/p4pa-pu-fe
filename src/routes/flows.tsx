@@ -1,4 +1,4 @@
-import { LoaderFunction, LoaderFunctionArgs, Navigate } from 'react-router-dom';
+import { LoaderFunction, LoaderFunctionArgs, Navigate } from 'react-router';
 import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
 import Conservation from './Conservation';

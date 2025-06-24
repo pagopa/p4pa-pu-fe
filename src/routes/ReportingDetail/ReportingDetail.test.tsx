@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { getPaymentsReportingRows } from '../../api/reporting';
 import ReportingDetail from './ReportingDetail';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
@@ -42,8 +42,8 @@ vi.mock('../../api/reporting', () => ({
   getPaymentsReportingRows: vi.fn()
 }));
 
-vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router-dom')>();
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>();
   return {
     ...actual,
     useParams: vi.fn().mockReturnValue({ id: 'TEST-IUF-123' }),

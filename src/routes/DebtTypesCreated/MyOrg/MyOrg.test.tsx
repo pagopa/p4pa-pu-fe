@@ -3,14 +3,14 @@ import { render, screen, waitFor } from '../../../__tests__/renderers';
 import { MyOrg } from './MyOrg';
 import { useDebtPositionTypeOrgSearch } from '../../../api/debtTypesCreated';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
-import { useNavigate, generatePath } from 'react-router-dom';
+import { useNavigate, generatePath } from 'react-router';
 
 vi.mock('../../../api/debtTypesCreated', () => ({
   useDebtPositionTypeOrgSearch: vi.fn()
 }));
 
-vi.mock('react-router-dom', async () => {
-  const actual = (await vi.importActual('react-router-dom')) as Record<
+vi.mock('react-router', async () => {
+  const actual = (await vi.importActual('react-router')) as Record<
     string,
     unknown
   >;

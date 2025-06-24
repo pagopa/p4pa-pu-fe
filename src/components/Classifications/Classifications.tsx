@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { FilterCategory, useMultiFilters } from '../../hooks/useMultiFilters';
 import { PageRoutes } from '../../routes';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { ReactNode, useState } from 'react';
 import { filterValues } from '../../store/FilterStore';
 import { ClassificationsEnum } from '../../../generated/data-contracts';

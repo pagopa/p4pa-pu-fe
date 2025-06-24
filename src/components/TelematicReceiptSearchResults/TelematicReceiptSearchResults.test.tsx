@@ -1,6 +1,6 @@
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
-import { useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router';
 import TelematicReceiptSearchResults from './TelematicReceiptSearchResults';
 import FilterContainer from '../FilterContainer/FilterContainer';
 
@@ -9,7 +9,7 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
 }));
 
-vi.mock('react-router-dom', async (importOriginal) => ({
+vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useLocation: vi.fn(),
   useNavigate: vi.fn(),

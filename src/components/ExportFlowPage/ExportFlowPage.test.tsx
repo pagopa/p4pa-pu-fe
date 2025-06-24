@@ -1,9 +1,9 @@
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import ExportFlow from './ExportFlowPage';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 
-vi.mock('react-router-dom', async (importOriginal) => ({
+vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useNavigate: vi.fn(),
   useParams: vi.fn()

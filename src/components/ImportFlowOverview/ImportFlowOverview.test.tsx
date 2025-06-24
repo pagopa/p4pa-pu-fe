@@ -1,5 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import { useNavigate, generatePath, useSearchParams } from 'react-router-dom';
+import { useNavigate, generatePath, useSearchParams } from 'react-router';
 import {
   getIngestionFlowFiles,
   getIngestionFlowFile
@@ -11,8 +11,8 @@ import { PageRoutes } from '../../routes';
 import FlowOverview from './ImportFlowOverview';
 import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: vi.fn(),

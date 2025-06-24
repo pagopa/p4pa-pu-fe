@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/function-return-type */
 import React from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import utils from '../../utils';
 

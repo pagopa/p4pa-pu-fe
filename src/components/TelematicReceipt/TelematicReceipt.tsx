@@ -3,7 +3,7 @@ import ActionCard from '../ActionCard/ActionCard';
 import { Download, Upload } from '@mui/icons-material';
 import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { generatePath, useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { ReactNode, useCallback, useState } from 'react';

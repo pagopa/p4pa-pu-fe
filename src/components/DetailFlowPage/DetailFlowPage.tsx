@@ -6,7 +6,7 @@ import DetailContainer, {
   DetailData
 } from '../DetailContainer/DetailContainer';
 import { detailConfig } from '../../models/DetailFlowConfig';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 
 export const DetailFlowPage = () => {
   const { t } = useTranslation();

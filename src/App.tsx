@@ -1,7 +1,7 @@
 import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
 import { ErrorFallback } from './components/ErrorFallback';
 import { Theme } from './utils/theme';
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider } from 'react-router';
 import { Overlay } from './components/Overlay';
 import { useStore } from './store/GlobalStore';
 import router from './routes';

@@ -1,5 +1,5 @@
 import { Box, CircularProgress } from '@mui/material';
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router';
 import { postTokenOrError } from '../../api/token';
 import { setIdToken } from '../../store/IdTokenStore';
 import { useEffect } from 'react';

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TelematicReceiptDetail } from '.';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router';
 import { getReceiptDetail } from '../../api/receiptDetail';
 import { receiptDetailDTOSchema } from '../../../generated/zod-schema';
 import { createMock } from 'zodock';
@@ -13,9 +13,13 @@ vi.mock('../../api/receiptDetail', () => ({
   getReceiptDetail: vi.fn()
 }));
 
-vi.mock('react-router-dom', () => ({
-  useLoaderData: vi.fn()
-}));
+vi.mock('react-router', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    useLoaderData: vi.fn()
+  };
+});
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()

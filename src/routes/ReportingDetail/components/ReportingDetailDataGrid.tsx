@@ -10,8 +10,8 @@ import CustomDataGrid, {
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { PageRoutes } from '../../../routes';
-import { Link } from 'react-router-dom';
-import { generatePath } from 'react-router-dom';
+import { Link } from 'react-router';
+import { generatePath } from 'react-router';
 import { moneyFormat } from '../../../utils/formatters';
 import { PaymentsReporting } from '../../../../generated/apiClient';
 

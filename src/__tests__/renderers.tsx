@@ -15,7 +15,7 @@ import { StoreProvider } from '../store/GlobalStore';
 const AllTheProviders = ({ children }: { children: React.ReactNode }) => {
   const queryClient = new QueryClient();
   return (
-    <MemoryRouter>
+    <MemoryRouter initialEntries={['/']}>
       <QueryClientProvider client={queryClient}>
         <StoreProvider>
           <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
