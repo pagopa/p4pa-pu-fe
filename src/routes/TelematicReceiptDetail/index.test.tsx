@@ -15,10 +15,14 @@ vi.mock('../../api/receiptDetail', () => ({
   getReceiptDetail: vi.fn()
 }));
 
-vi.mock('react-router-dom', () => ({
-  useLoaderData: vi.fn(),
-  useNavigate: () => mockNavigate
-}));
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>();
+  return {
+    ...actual,
+    useLoaderData: vi.fn(),
+    useNavigate: () => mockNavigate
+  };
+});
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()

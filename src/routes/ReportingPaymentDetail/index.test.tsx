@@ -14,18 +14,22 @@ vi.mock('../../api/getPaymentsReportingDetail', () => ({
   getPaymentsReportingDetail: vi.fn()
 }));
 
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => mockNavigate,
-  generatePath: vi.fn(),
-  useParams: vi.fn(),
-  useLocation: vi.fn(),
-  createBrowserRouter: vi.fn(),
-  Navigate: vi.fn(({ to }) => ({
-    type: 'div',
-    props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
-  })),
-  Outlet: vi.fn()
-}));
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>();
+  return {
+    ...actual,
+    useParams: vi.fn(),
+    useNavigate: () => mockNavigate,
+    generatePath: vi.fn(),
+    useLocation: vi.fn(),
+    createBrowserRouter: vi.fn(),
+    Navigate: vi.fn(({ to }) => ({
+      type: 'div',
+      props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
+    })),
+    Outlet: vi.fn()
+  };
+});
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()
