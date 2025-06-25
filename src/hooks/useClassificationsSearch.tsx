@@ -96,10 +96,10 @@ export const UseClassificationsSearch = ({
           paymentDateTimeTo: filterValuesRequest.PAYMENT_DATE_TO.toISOString()
         }),
         ...(filterValuesRequest.PAY_DATE_FROM && {
-          payDateFrom: filterValuesRequest.PAY_DATE_FROM.toISOString()
+          payDateFrom: format(filterValuesRequest.PAY_DATE_FROM, 'yyyy-MM-dd')
         }),
         ...(filterValuesRequest.PAY_DATE_TO && {
-          payDateTo: filterValuesRequest.PAY_DATE_TO.toISOString()
+          payDateTo: format(filterValuesRequest.PAY_DATE_TO, 'yyyy-MM-dd')
         }),
         ...(filterValuesRequest.REGULATION_UNIQUE_IDENTIFIER && {
           regulationUniqueIdentifier:
