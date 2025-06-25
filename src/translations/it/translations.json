@@ -135,12 +135,14 @@
       "notice": {
         "remittanceInformation": "Oggetto del pagamento",
         "applicant": "Attestante",
-        "paymentDate": "Data pagamento"
+        "paymentDate": "Data pagamento",
+        "paymentDateNotice": "Data pagamento ricevuta"
       },
       "reporting": {
         "title": "Rendicontazione",
         "paymentDate": "Data pagamento",
         "regulationDate": "Data regolamento",
+        "payDateReporting": "Data pagamento rendicontazione",
         "regulationUniqueIdentifier": "Identificativo univoco regolamento"
       },
       "treasury": {
@@ -1048,7 +1050,7 @@
       },
       "errors": {
         "notificationServiceUnavailable": "Servizio di configurazione notifiche non disponibile - alcune opzioni potrebbero essere limitate",
-        "actualizationServiceUnavailable": "Servizio di configurazione attualizzazione non disponibile - alcune opzioni potrebbero essere limitate", 
+        "actualizationServiceUnavailable": "Servizio di configurazione attualizzazione non disponibile - alcune opzioni potrebbero essere limitate",
         "bothServicesUnavailable": "Servizi di configurazione notifiche e attualizzazione non disponibili - alcune opzioni potrebbero essere limitate"
       },
       "updateAmount": {
