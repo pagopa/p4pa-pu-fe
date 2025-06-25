@@ -441,7 +441,6 @@ export const useMultiFilters = (props?: {
     'REGION_VALUE_DATE',
     'ACCOUNT_REGISTRY_CODE',
     'AMOUNT',
-    'ACCOUNTING_DATE',
     'PAY_DATE'
   ];
 
