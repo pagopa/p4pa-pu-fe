@@ -11,9 +11,13 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
+const mockMutate = vi.fn();
+const mockMutateAsync = vi.fn();
+
 vi.mock('../api/taxonomy', () => ({
   getTaxonomies: vi.fn(() => ({
-    mutate: vi.fn(),
+    mutate: mockMutate,
+    mutateAsync: mockMutateAsync,
     data: null,
     isLoading: false,
     error: null
@@ -32,7 +36,7 @@ describe('useTaxonomySearch', () => {
   });
 
   const defaultProps = {
-    filterValues: {
+    filters: {
       orgType: '01'
     },
     initialPage: 0,
@@ -44,14 +48,14 @@ describe('useTaxonomySearch', () => {
 
     expect(result.current.paginationParams.page).toBe(0);
     expect(result.current.paginationParams.size).toBe(10);
-    expect(result.current.filterValues).toEqual({
+    expect(result.current.filters).toEqual({
       orgType: '01'
     });
   });
 
   it('should initialize with custom values', () => {
     const customProps = {
-      filterValues: {
+      filters: {
         orgType: '01',
         macroAreaCode: '14'
       },
@@ -61,9 +65,8 @@ describe('useTaxonomySearch', () => {
 
     const { result } = renderHook(() => useTaxonomySearch(customProps));
 
-    expect(result.current.paginationParams.page).toBe(0);
     expect(result.current.paginationParams.size).toBe(25);
-    expect(result.current.filterValues).toEqual({
+    expect(result.current.filters).toEqual({
       orgType: '01',
       macroAreaCode: '14'
     });

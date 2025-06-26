@@ -8,7 +8,7 @@ import {
   getServiceTypes,
   getCollectionReasons,
   getTaxonomyCode
-} from '../../api/taxonomy';
+} from '../../api/taxonomy/taxonomy';
 import { useTranslation } from 'react-i18next';
 import { useFormDependencies } from '../../hooks/useFormDependecies'; // Adjust path
 

@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { getTaxonomyDetail } from '../../api/taxonomy';
+import { getTaxonomyDetail } from '../../api/taxonomy/taxonomy';
 import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';

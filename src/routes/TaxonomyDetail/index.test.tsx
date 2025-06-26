@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import { TaxonomyDetailPage } from '.';
 import { render } from '../../__tests__/renderers';
-import { getTaxonomyDetail } from '../../api/taxonomy';
+import { getTaxonomyDetail } from '../../api/taxonomy/taxonomy';
 
 vi.mock('../../api/taxonomy', () => ({
   getTaxonomyDetail: vi.fn()

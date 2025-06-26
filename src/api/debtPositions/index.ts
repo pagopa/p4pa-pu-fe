@@ -1,40 +1,34 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import utils from '../utils';
-import { parseAndLog } from '../utils/loaders';
+import utils from '../../utils';
+import { parseAndLog } from '../../utils/loaders';
 import {
   debtPositionDetailDTOSchema,
   debtPositionDTOSchema,
   debtPositionRegistrySchema,
   installmentDetailDTOSchema,
   installmentRegistrySchema
-} from '../../generated/zod-schema';
+} from '../../../generated/zod-schema';
 import { AxiosError } from 'axios';
 import {
   DebtPositionDTO,
   ManageDebtPositionDTO
-} from '../../generated/data-contracts';
-import { extractFilename } from '../utils/formatters';
+} from '../../../generated/data-contracts';
+import { extractFilename } from '../../utils/formatters';
+import { DebtPositionsFilters } from '../../hooks/useDebtPositionsSearch';
+import { buildQueryParams } from './mapping';
 
-type DebtPositionViewParams = Parameters<
-  typeof utils.apiClient.bff.getDebtPositionViews
->;
-
-export type DebtPositionViewQuery = DebtPositionViewParams[1];
-
-export type DebtPositionViewRequest = {
-  organizationId: DebtPositionViewParams[0];
-  query: DebtPositionViewQuery;
+export type DebtPositionFilteredRequest = {
+  filters: DebtPositionsFilters;
+  pagination: { page: number; size: number };
+  sort: Array<string>;
 };
 
-const getDebtPositionViews = ({
-  organizationId
-}: {
-  organizationId: DebtPositionViewRequest['organizationId'];
-}) =>
+const getDebtPositionViews = ({ organizationId }: { organizationId: number }) =>
   useMutation({
     mutationKey: ['getDebtPositionViews', organizationId],
-    mutationFn: async (query: DebtPositionViewQuery) => {
-      const { data: response } = await utils.apiClient.bff.getDebtPositionViews(
+    mutationFn: async (args: DebtPositionFilteredRequest) => {
+      const query = buildQueryParams(args);
+      const { data } = await utils.apiClient.bff.getDebtPositionViews(
         organizationId,
         query,
         {
@@ -45,30 +39,16 @@ const getDebtPositionViews = ({
         }
       );
 
-      return response;
+      return data;
     }
   });
 
-type DebtPositionInstallmentsParams = Parameters<
-  typeof utils.apiClient.bff.getInstallments
->;
-
-export type DebtPositionInstallmentsQuery = DebtPositionInstallmentsParams[1];
-
-export type DebtPositionInstallmentsRequest = {
-  organizationId: DebtPositionInstallmentsParams[0];
-  query: DebtPositionInstallmentsQuery;
-};
-
-const getInstallments = ({
-  organizationId
-}: {
-  organizationId: DebtPositionInstallmentsRequest['organizationId'];
-}) =>
+const getInstallments = ({ organizationId }: { organizationId: number }) =>
   useMutation({
     mutationKey: ['getInstallments', organizationId],
-    mutationFn: async (query: DebtPositionInstallmentsQuery) => {
-      const { data: response } = await utils.apiClient.bff.getInstallments(
+    mutationFn: async (args: DebtPositionFilteredRequest) => {
+      const query = buildQueryParams(args);
+      const { data } = await utils.apiClient.bff.getInstallments(
         organizationId,
         query,
         {
@@ -79,7 +59,7 @@ const getInstallments = ({
         }
       );
 
-      return response;
+      return data;
     }
   });
 

@@ -5,13 +5,12 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import SearchResultsDataGrid from './ReportingDataGrid';
 import { BaseFilterValues } from '../../models/Filters';
 import { PagedPaymentsReportingView } from '../../../generated/data-contracts';
-import useReportingSearch, {
-  ReportingFilters
-} from '../../hooks/useReportingSearch';
+import useReportingSearch from '../../hooks/useReportingSearch';
 import useReportingFilters from '../../hooks/useReportingFilters';
 import FilterContainer from '../FilterContainer/FilterContainer';
 import { ReactNode, useState } from 'react';
 import { noFilterSetted } from '../../utils/filtersValidation';
+import { ReportingFilters } from '../../api/getPaymentsReporting/mappings';
 
 export type LocationState = {
   filters: BaseFilterValues;
@@ -37,7 +36,7 @@ const ReportingSearchResults = () => {
   });
 
   const runSearch = () => {
-    if (!noFilterSetted(reporting.filterValues)) {
+    if (!noFilterSetted(reporting.filters)) {
       reporting.applyFilters();
       setError(false);
     } else {
@@ -59,7 +58,7 @@ const ReportingSearchResults = () => {
         {error && errorMessage}
         <FilterContainer
           items={filters}
-          values={reporting.filterValues}
+          values={reporting.filters}
           onChange={reporting.handleFilterChange}
         />
         <Grid

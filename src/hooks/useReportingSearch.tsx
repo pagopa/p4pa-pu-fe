@@ -1,22 +1,9 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useStore } from '../store/GlobalStore';
 import { FilterFieldValue } from '../models/Filters';
-import {
-  getPaymentsReporting,
-  PaymentsReportingQuery
-} from '../api/getPaymentsReporting';
 import { usePaginationState } from './usePaginationState';
-import { noFilterSetted } from '../utils/filtersValidation';
-
-export type ReportingFilters = {
-  dateRange?: {
-    from: Date;
-    to: Date;
-  };
-  regulationUniqueIdentifier?: string;
-  organizationId?: number;
-  iuf?: string;
-};
+import { ReportingFilters } from '../api/getPaymentsReporting/mappings';
+import { getPaymentsReporting } from '../api/getPaymentsReporting';
 
 export type UseReportingSearchProps = {
   initialFilters: ReportingFilters;
@@ -26,68 +13,52 @@ export type UseReportingSearchProps = {
 
 export const useReportingSearch = ({
   initialFilters,
-  initialPage,
-  initialSize
+  initialPage = 0,
+  initialSize = 10
 }: UseReportingSearchProps) => {
-  const [filterValues, setFilterValues] =
-    useState<ReportingFilters>(initialFilters);
+  const [filters, setFilters] = useState<ReportingFilters>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
 
-  const { paginationParams, handlePaginationChange, setPaginationParams } =
-    usePaginationState({
-      initialPage,
-      initialSize
-    });
+  const {
+    paginationParams: pagination,
+    handlePaginationChange,
+    setPaginationParams
+  } = usePaginationState({
+    initialPage,
+    initialSize
+  });
 
   const {
     state: { organizationId }
   } = useStore();
 
-  const query = getPaymentsReporting(organizationId);
+  const query = getPaymentsReporting({ organizationId });
 
   useEffect(() => {
-    if (!noFilterSetted(filterValues)) {
-      query.mutate(filterToRequest());
-    }
-  }, [organizationId, paginationParams.page, paginationParams.size, sort]);
+    query.mutateAsync({ filters, pagination, sort });
+  }, []);
 
-  const filterToRequest = (): PaymentsReportingQuery => ({
-    regulationDateFrom:
-      filterValues?.dateRange?.from?.toISOString().slice(0, 10) ??
-      new Date(0).toISOString().slice(0, 10),
-    regulationDateTo:
-      filterValues?.dateRange?.to?.toISOString().slice(0, 10) ??
-      new Date().toISOString().slice(0, 10),
-    page: paginationParams.page,
-    size: paginationParams.size,
-    ...(filterValues?.regulationUniqueIdentifier && {
-      regulationUniqueIdentifier: filterValues.regulationUniqueIdentifier
-    }),
-    ...(filterValues?.iuf && { iuf: filterValues.iuf }),
-    ...(sort.length && { sort })
-  });
+  const handleFilterChange = (id: string, value: FilterFieldValue): void => {
+    setFilters((prev) => ({ ...prev, [id]: value }));
+  };
 
-  const handleFilterChange = useCallback(
-    (id: string, value: FilterFieldValue): void => {
-      setFilterValues((prev) => ({ ...prev, [id]: value }));
-    },
-    []
-  );
-
-  const applyFilters = useCallback(() => {
-    query.mutate(filterToRequest());
+  const applyFilters = () => {
     setPaginationParams((prev) => ({ ...prev, page: 0 }));
-  }, [filterToRequest, query]);
+    query.mutate({
+      filters,
+      pagination: { page: 0, size: pagination.size },
+      sort
+    });
+  };
 
   return {
     applyFilters,
     query,
-    filterValues,
+    filters,
     handleFilterChange,
     handlePaginationChange,
-    paginationParams,
-    setFilterValues,
-    setSort
+    setSort,
+    pagination
   };
 };
 

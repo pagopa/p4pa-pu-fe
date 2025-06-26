@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import ActionCard from '../../components/ActionCard/ActionCard';
 import utils from '../../utils';
-import { synchronizeTaxonomy } from '../../api/taxonomy';
+import { synchronizeTaxonomy } from '../../api/taxonomy/taxonomy';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
 import { TaxonomyFilter } from '../../components/TaxonomyFilter';
