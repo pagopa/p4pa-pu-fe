@@ -1,14 +1,10 @@
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { render } from '../../__tests__/renderers';
 import { useLocation, useSearchParams } from 'react-router';
-import ReportingSearchResults from './ReportingSearchResults';
 import FilterContainer from '../FilterContainer/FilterContainer';
 import useReportingSearch from '../../hooks/useReportingSearch';
 import TitleComponent from '../TitleComponent/TitleComponent';
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key })
-}));
+import ReportingSearchResults from '../ReportingSearchResults';
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
@@ -22,11 +18,10 @@ vi.mock('../../hooks/useReportingSearch', () => ({
     query: { data: { content: [], totalElements: 0 } },
     applyFilters: vi.fn(),
     handleFilterChange: vi.fn(),
-    handlePageChange: vi.fn(),
-    handlePageSizeChange: vi.fn(),
+    handlePaginationChange: vi.fn(),
     setSort: vi.fn(),
     pagination: { page: 0, size: 10 },
-    filterValues: {}
+    filters: {}
   }))
 }));
 

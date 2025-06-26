@@ -1,11 +1,9 @@
 import utils from '../../utils';
 import * as mappings from './mappings';
-import { createMock } from 'zodock';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { getPaymentsReporting } from '../getPaymentsReporting';
 import { renderHook, waitFor } from '../../__tests__/renderers';
-import { pagedPaymentsReportingViewSchema } from '../../../generated/zod-schema';
 
 vi.mock('../../utils', () => ({
   default: {
