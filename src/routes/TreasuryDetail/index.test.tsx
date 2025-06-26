@@ -11,7 +11,8 @@ const mockNavigate = vi.fn();
 vi.mock('../../api/treasuryDetail', () => ({
   getTreasuryDetail: vi.fn()
 }));
-vi.mock('react-router-dom', () => ({
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
   useLoaderData: vi.fn(),
   useNavigate: () => mockNavigate
 }));
@@ -27,6 +28,7 @@ vi.mock('../../routes', () => ({
 
 describe('Treasury detail Page', () => {
   const mockOrganizationId = '123';
+  const mockUseLoaderData = vi.mocked(useLoaderData);
   const mockData = {
     creationDate: '2025-02-25T14:48:30.843388',
     updateDate: '2025-03-07T10:03:58.199601',
@@ -66,9 +68,7 @@ describe('Treasury detail Page', () => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
 
-    (useLoaderData as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockData.treasuryId
-    );
+    mockUseLoaderData.mockReturnValue(mockData.treasuryId);
     (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       state: { [STATE.ORGANIZATION_ID]: mockOrganizationId }
     });
@@ -88,9 +88,7 @@ describe('Treasury detail Page', () => {
   });
 
   it('handles missing ID parameter', () => {
-    (useLoaderData as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      null
-    );
+    mockUseLoaderData.mockReturnValue(null);
 
     render(<TreasuryDetail />);
 
