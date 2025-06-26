@@ -6,8 +6,8 @@ import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import { debtPositionViewSchema } from '../../../generated/zod-schema';
-import { DebtPositionFilteredRequest } from '../debtPositions';
 import { DebtPositionStatus } from '../../../generated/data-contracts';
+import { DebtPositionFilteredRequest } from '../debtPositions/mapping';
 
 vi.mock('../../utils', () => ({
   default: {

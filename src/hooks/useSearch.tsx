@@ -1,23 +1,28 @@
 import { useState, useCallback, useEffect } from 'react';
-import { useStore } from '../store/GlobalStore';
 import { FilterFieldValue } from '../models/Filters';
-import { getReceipts } from '../api/receipts';
 import { usePaginationState } from './usePaginationState';
-import { TelematicReceiptsFilters } from '../api/receipts/mappings';
+import { UseMutationResult } from '@tanstack/react-query';
 
-export type UseTelematicReceiptsSearchProps = {
-  initialFilters: TelematicReceiptsFilters;
-  initialPage?: number;
-  initialSize?: number;
+type SearchVariables<T> = {
+  filters: T;
+  pagination: { page: number; size: number };
+  sort: Array<string>;
 };
 
-export const useTelematicReceiptSearch = ({
+export type UseSearchProps<T, TData = unknown, TError = unknown> = {
+  initialFilters: T;
+  initialPage?: number;
+  initialSize?: number;
+  query: UseMutationResult<TData, TError, SearchVariables<T>>;
+};
+
+export const useSearch = <T, TData = unknown, TError = unknown>({
   initialFilters,
   initialPage = 0,
-  initialSize = 10
-}: UseTelematicReceiptsSearchProps) => {
-  const [filters, setFilters] =
-    useState<TelematicReceiptsFilters>(initialFilters);
+  initialSize = 10,
+  query
+}: UseSearchProps<T, TData, TError>) => {
+  const [filters, setFilters] = useState<T>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
 
   const {
@@ -29,12 +34,7 @@ export const useTelematicReceiptSearch = ({
     initialSize
   });
 
-  const {
-    state: { organizationId }
-  } = useStore();
-
-  const query = getReceipts({ organizationId });
-
+  // initial search on mount
   useEffect(() => {
     query.mutateAsync({ filters, pagination, sort });
   }, []);
@@ -46,14 +46,15 @@ export const useTelematicReceiptSearch = ({
     []
   );
 
-  const applyFilters = () => {
+  const applyFilters = useCallback(() => {
+    // Reset to first page when applying new filters
     setPaginationParams((prev) => ({ ...prev, page: 0 }));
     query.mutate({
       filters,
       pagination: { page: 0, size: pagination.size },
       sort
     });
-  };
+  }, [filters, pagination.size, query, setPaginationParams, sort]);
 
   return {
     applyFilters,
@@ -66,5 +67,3 @@ export const useTelematicReceiptSearch = ({
     setSort
   };
 };
-
-export default useTelematicReceiptSearch;

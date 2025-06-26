@@ -14,14 +14,7 @@ import {
   ManageDebtPositionDTO
 } from '../../../generated/data-contracts';
 import { extractFilename } from '../../utils/formatters';
-import { DebtPositionsFilters } from '../../hooks/useDebtPositionsSearch';
-import { buildQueryParams } from './mapping';
-
-export type DebtPositionFilteredRequest = {
-  filters: DebtPositionsFilters;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
+import { buildQueryParams, DebtPositionFilteredRequest } from './mapping';
 
 const getDebtPositionViews = ({ organizationId }: { organizationId: number }) =>
   useMutation({

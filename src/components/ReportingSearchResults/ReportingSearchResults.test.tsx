@@ -2,9 +2,9 @@ import { describe, expect, it, Mock, vi } from 'vitest';
 import { render } from '../../__tests__/renderers';
 import { useLocation, useSearchParams } from 'react-router';
 import FilterContainer from '../FilterContainer/FilterContainer';
-import useReportingSearch from '../../hooks/useReportingSearch';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import ReportingSearchResults from '../ReportingSearchResults';
+import { useSearch } from '../../hooks/useSearch';
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
@@ -13,7 +13,7 @@ vi.mock('react-router', async (importOriginal) => ({
   useNavigate: vi.fn()
 }));
 
-vi.mock('../../hooks/useReportingSearch', () => ({
+vi.mock('../../hooks/useSearch', () => ({
   default: vi.fn(() => ({
     query: { data: { content: [], totalElements: 0 } },
     applyFilters: vi.fn(),
@@ -83,7 +83,7 @@ describe('ReportingSearchResults', () => {
 
     render(<ReportingSearchResults />);
 
-    expect(vi.mocked(useReportingSearch)).toHaveBeenCalledWith(
+    expect(vi.mocked(useSearch)).toHaveBeenCalledWith(
       expect.objectContaining({
         initialFilters: expect.any(Object)
       })
