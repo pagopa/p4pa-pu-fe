@@ -5,16 +5,17 @@ import { usePaginationState } from './usePaginationState';
 import { getTreasuries } from '../api/treasuries';
 
 export type UseTreasurySearchProps = {
-  filters: FilterValues;
+  initialFilters: FilterValues;
   initialPage?: number;
   initialSize?: number;
 };
 
-export const UseTreasurySearch = ({
-  filters,
-  initialPage,
-  initialSize
+const useTreasurySearch = ({
+  initialFilters,
+  initialPage = 0,
+  initialSize = 10
 }: UseTreasurySearchProps) => {
+  const [filters, setFilters] = useState<FilterValues>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
 
   const {
@@ -36,10 +37,11 @@ export const UseTreasurySearch = ({
     query.mutate({ filters, pagination, sort });
   }, []);
 
-  const applyFilters = (filters: FilterValues) => {
+  const applyFilters = (newFilters: FilterValues) => {
+    setFilters(newFilters);
     setPaginationParams((prev) => ({ ...prev, page: 0 }));
     query.mutate({
-      filters,
+      filters: newFilters,
       pagination: { page: 0, size: pagination.size },
       sort
     });
@@ -50,8 +52,9 @@ export const UseTreasurySearch = ({
     query,
     filters,
     handlePaginationChange,
-    setSort
+    setSort,
+    paginationParams: pagination
   };
 };
 
-export default UseTreasurySearch;
+export default useTreasurySearch;

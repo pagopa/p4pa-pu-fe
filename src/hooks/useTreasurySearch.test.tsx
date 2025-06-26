@@ -54,22 +54,25 @@ describe('useTreasurySearch', () => {
       })
     );
 
-    expect(result.current.filterValues).toEqual(initialFilters);
+    expect(result.current.filters).toEqual(initialFilters);
     expect(result.current.paginationParams.page).toBe(0);
     expect(result.current.paginationParams.size).toBe(10);
   });
 
-  it('should update filter values on handleFilterChange', () => {
+  it('should update filter values on applyFilters', () => {
     const { result } = renderHook(() =>
       useTreasurySearch({
         initialFilters
       })
     );
 
+    const newFilters = { ...initialFilters, AMOUNT: 123000 };
+
     act(() => {
-      result.current.applyFilters({ ...initialFilters, ...{ AMOUNT: 123000 } });
+      result.current.applyFilters(newFilters);
     });
 
-    expect(result.current.filterValues.AMOUNT).toBe(123000);
+    expect(result.current.filters.AMOUNT).toBe(123000);
+    expect(result.current.paginationParams.page).toBe(0);
   });
 });

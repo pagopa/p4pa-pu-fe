@@ -2,13 +2,13 @@ import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { getTaxonomyDetail } from '../../api/taxonomy/taxonomy';
 import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';
 import { useEffect } from 'react';
 import { formatDate } from '../../utils/formatters';
 import { PageRoutes } from '../../routes';
+import { getTaxonomyDetail } from '../../api/taxonomy';
 
 export const TaxonomyDetailPage = () => {
   const { t } = useTranslation();

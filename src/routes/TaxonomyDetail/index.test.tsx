@@ -2,11 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import { TaxonomyDetailPage } from '.';
 import { render } from '../../__tests__/renderers';
-import { getTaxonomyDetail } from '../../api/taxonomy/taxonomy';
+import { getTaxonomyDetail } from '../../api/taxonomy';
 
 vi.mock('../../api/taxonomy', () => ({
   getTaxonomyDetail: vi.fn()
 }));
+
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
