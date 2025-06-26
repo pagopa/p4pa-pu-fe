@@ -1,62 +1,52 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { usePaginationState } from './usePaginationState';
-import { getTaxonomies, TaxonomiesQuery } from '../api/taxonomy';
 import { TaxonomyFilters } from '../models/Taxonomy';
+import { getTaxonomies } from '../api/taxonomy';
 
 export type UseTaxonomySearchProps = {
-  filterValues: TaxonomyFilters;
+  filters: TaxonomyFilters;
   initialPage?: number;
   initialSize?: number;
 };
 
 export const useTaxonomySearch = ({
-  filterValues,
-  initialPage,
-  initialSize
+  filters,
+  initialPage = 0,
+  initialSize = 10
 }: UseTaxonomySearchProps) => {
   const [sort, setSort] = useState<Array<string>>([]);
-  const { paginationParams, handlePaginationChange, setPaginationParams } =
-    usePaginationState({
-      initialPage,
-      initialSize
-    });
+
+  const {
+    paginationParams: pagination,
+    handlePaginationChange,
+    setPaginationParams
+  } = usePaginationState({
+    initialPage,
+    initialSize
+  });
 
   const query = getTaxonomies();
 
   useEffect(() => {
-    query.mutate(filterToRequest());
-  }, [paginationParams.page, paginationParams.size, sort]);
+    query.mutateAsync({ filters, pagination, sort });
+  }, []);
 
-  const filterToRequest = (): TaxonomiesQuery => ({
-    ...(filterValues?.orgType && {
-      organizationType: filterValues.orgType
-    }),
-    ...(filterValues?.macroAreaCode && {
-      macroAreaCode: filterValues.macroAreaCode
-    }),
-    ...(filterValues?.serviceTypeCode && {
-      serviceTypeCode: filterValues.serviceTypeCode
-    }),
-    ...(filterValues?.collectingReason && {
-      collectionReason: filterValues.collectingReason
-    }),
-    ...(sort.length && { sort }),
-    page: paginationParams.page,
-    size: paginationParams.size
-  });
-
-  const applyFilters = useCallback(() => {
-    query.mutate(filterToRequest());
+  const applyFilters = () => {
     setPaginationParams((prev) => ({ ...prev, page: 0 }));
-  }, [filterToRequest, query]);
+    query.mutate({
+      filters,
+      pagination: { page: 0, size: pagination.size },
+      sort
+    });
+  };
 
   return {
     applyFilters,
     query,
-    filterValues,
+    filters,
     handlePaginationChange,
-    paginationParams,
-    setSort
+    setSort,
+    paginationParams: pagination
   };
 };
 

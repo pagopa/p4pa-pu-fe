@@ -33,7 +33,7 @@ const TaxonomySearchResults = () => {
   });
 
   const taxonomies = useTaxonomySearch({
-    filterValues: form.getValues()
+    filters: form.getValues()
   });
 
   const onSubmit = () => {

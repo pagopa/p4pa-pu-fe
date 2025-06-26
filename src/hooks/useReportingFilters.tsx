@@ -4,8 +4,8 @@ import {
   COMPONENT_TYPE,
   FilterItem
 } from '../components/FilterContainer/FilterContainer';
-import { ReportingFilters } from './useReportingSearch';
 import { FilterFieldIds } from '../models/SearchCardFields';
+import { ReportingFilters } from '../api/getPaymentsReporting/mappings';
 
 type UseReportingFiltersProps = {
   onFilter: (filters: ReportingFilters) => void;

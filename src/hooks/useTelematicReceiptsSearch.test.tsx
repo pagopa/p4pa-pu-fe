@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, act } from '../__tests__/renderers';
-import { useTelematicReceiptSearch } from './useTelematicReceiptsSearch';
 import { useSearchParams } from 'react-router';
+import useTelematicReceiptSearch from './useTelematicReceiptsSearch';
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal();
@@ -11,9 +11,13 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
+const mockMutate = vi.fn();
+const mockMutateAsync = vi.fn();
+
 vi.mock('../api/receipts', () => ({
   getReceipts: vi.fn(() => ({
-    mutate: vi.fn(),
+    mutate: mockMutate,
+    mutateAsync: mockMutateAsync,
     data: null,
     isLoading: false,
     error: null
@@ -70,7 +74,7 @@ describe('useTelematicReceiptSearch', () => {
 
     expect(result.current.paginationParams.page).toBe(0);
     expect(result.current.paginationParams.size).toBe(10);
-    expect(result.current.filterValues).toEqual({});
+    expect(result.current.filters).toEqual({});
   });
 
   it('should initialize with custom values', () => {
@@ -82,9 +86,8 @@ describe('useTelematicReceiptSearch', () => {
 
     const { result } = renderHook(() => useTelematicReceiptSearch(customProps));
 
-    expect(result.current.paginationParams.page).toBe(0);
     expect(result.current.paginationParams.size).toBe(25);
-    expect(result.current.filterValues).toEqual({ iuv: 'test-iuv' });
+    expect(result.current.filters).toEqual({ iuv: 'test-iuv' });
   });
 
   it('should handle filter changes', () => {
@@ -96,7 +99,7 @@ describe('useTelematicReceiptSearch', () => {
       result.current.handleFilterChange('iuv', 'new-iuv');
     });
 
-    expect(result.current.filterValues.iuv).toBe('new-iuv');
+    expect(result.current.filters.iuv).toBe('new-iuv');
   });
 
   it('should handle pagination changes', () => {
@@ -134,6 +137,11 @@ describe('useTelematicReceiptSearch', () => {
     });
 
     expect(result.current.paginationParams.page).toBe(0);
+    expect(mockMutate).toHaveBeenCalledWith({
+      filters: result.current.filters,
+      pagination: { page: 0, size: 10 },
+      sort: []
+    });
   });
 
   it('should expose required functions', () => {
@@ -144,7 +152,7 @@ describe('useTelematicReceiptSearch', () => {
     expect(typeof result.current.applyFilters).toBe('function');
     expect(typeof result.current.handleFilterChange).toBe('function');
     expect(typeof result.current.handlePaginationChange).toBe('function');
-    expect(typeof result.current.setFilterValues).toBe('function');
+    expect(typeof result.current.setFilters).toBe('function');
     expect(typeof result.current.setSort).toBe('function');
   });
 });

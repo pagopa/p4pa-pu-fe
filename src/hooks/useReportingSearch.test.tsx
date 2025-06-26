@@ -11,9 +11,13 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
+const mockMutate = vi.fn();
+const mockMutateAsync = vi.fn();
+
 vi.mock('../api/getPaymentsReporting', () => ({
   getPaymentsReporting: vi.fn(() => ({
-    mutate: vi.fn(),
+    mutate: mockMutate,
+    mutateAsync: mockMutateAsync,
     data: null,
     isLoading: false,
     error: null
@@ -66,9 +70,9 @@ describe('useReportingSearch', () => {
   it('should initialize with default values', () => {
     const { result } = renderHook(() => useReportingSearch(defaultProps));
 
-    expect(result.current.paginationParams.page).toBe(0);
-    expect(result.current.paginationParams.size).toBe(10);
-    expect(result.current.filterValues).toEqual({});
+    expect(result.current.pagination.page).toBe(0);
+    expect(result.current.pagination.size).toBe(10);
+    expect(result.current.filters).toEqual({});
   });
 
   it('should initialize with custom values', () => {
@@ -80,9 +84,8 @@ describe('useReportingSearch', () => {
 
     const { result } = renderHook(() => useReportingSearch(customProps));
 
-    expect(result.current.paginationParams.page).toBe(0);
-    expect(result.current.paginationParams.size).toBe(25);
-    expect(result.current.filterValues).toEqual({ iuf: 'test-iuf' });
+    expect(result.current.pagination.size).toBe(25);
+    expect(result.current.filters).toEqual({ iuf: 'test-iuf' });
   });
 
   it('should handle filter changes', () => {
@@ -92,7 +95,7 @@ describe('useReportingSearch', () => {
       result.current.handleFilterChange('iuf', 'new-iuf');
     });
 
-    expect(result.current.filterValues.iuf).toBe('new-iuf');
+    expect(result.current.filters.iuf).toBe('new-iuf');
   });
 
   it('should handle pagination changes', () => {
@@ -107,8 +110,8 @@ describe('useReportingSearch', () => {
 
     rerender();
 
-    expect(result.current.paginationParams.page).toBe(2);
-    expect(result.current.paginationParams.size).toBe(20);
+    expect(result.current.pagination.page).toBe(2);
+    expect(result.current.pagination.size).toBe(20);
   });
 
   it('should reset page when applying filters', () => {
@@ -123,13 +126,18 @@ describe('useReportingSearch', () => {
 
     rerender();
 
-    expect(result.current.paginationParams.page).toBe(2);
+    expect(result.current.pagination.page).toBe(2);
 
     act(() => {
       result.current.applyFilters();
     });
 
-    expect(result.current.paginationParams.page).toBe(0);
+    expect(result.current.pagination.page).toBe(0);
+    expect(mockMutate).toHaveBeenCalledWith({
+      filters: result.current.filters,
+      pagination: { page: 0, size: 10 },
+      sort: []
+    });
   });
 
   it('should expose required functions', () => {
@@ -138,7 +146,6 @@ describe('useReportingSearch', () => {
     expect(typeof result.current.applyFilters).toBe('function');
     expect(typeof result.current.handleFilterChange).toBe('function');
     expect(typeof result.current.handlePaginationChange).toBe('function');
-    expect(typeof result.current.setFilterValues).toBe('function');
     expect(typeof result.current.setSort).toBe('function');
   });
 });

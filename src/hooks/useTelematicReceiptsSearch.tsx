@@ -1,87 +1,68 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useStore } from '../store/GlobalStore';
 import { FilterFieldValue } from '../models/Filters';
-import { getReceipts, TelematicReceiptsQuery } from '../api/receipts';
-import { ReceiptOriginType } from '../../generated/apiClient';
+import { getReceipts } from '../api/receipts';
 import { usePaginationState } from './usePaginationState';
-import { noFilterSetted } from '../utils/filtersValidation';
-
-export type TelematicReceiptFilters = {
-  dateRange?: {
-    from: Date;
-    to: Date;
-  };
-  iuv?: string;
-  typeOrgId?: number;
-};
+import { TelematicReceiptsFilters } from '../api/receipts/mappings';
 
 export type UseTelematicReceiptsSearchProps = {
-  initialFilters: TelematicReceiptFilters;
+  initialFilters: TelematicReceiptsFilters;
   initialPage?: number;
   initialSize?: number;
 };
 
 export const useTelematicReceiptSearch = ({
   initialFilters,
-  initialPage,
-  initialSize
+  initialPage = 0,
+  initialSize = 10
 }: UseTelematicReceiptsSearchProps) => {
-  const [filterValues, setFilterValues] =
-    useState<TelematicReceiptFilters>(initialFilters);
+  const [filters, setFilters] =
+    useState<TelematicReceiptsFilters>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
-  const { paginationParams, handlePaginationChange, setPaginationParams } =
-    usePaginationState({
-      initialPage,
-      initialSize
-    });
+
+  const {
+    paginationParams: pagination,
+    handlePaginationChange,
+    setPaginationParams
+  } = usePaginationState({
+    initialPage,
+    initialSize
+  });
 
   const {
     state: { organizationId }
   } = useStore();
 
-  const query = getReceipts(organizationId);
+  const query = getReceipts({ organizationId });
 
   useEffect(() => {
-    if (!noFilterSetted(filterValues)) {
-      query.mutate(filterToRequest());
-    }
-  }, [organizationId, paginationParams.page, paginationParams.size, sort]);
-
-  const filterToRequest = (): TelematicReceiptsQuery => ({
-    paymentDateTimeFrom:
-      filterValues?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
-    paymentDateTimeTo:
-      filterValues?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
-    page: paginationParams.page,
-    size: paginationParams.size,
-    ...(filterValues?.typeOrgId && {
-      debtPositionTypeOrgId: filterValues.typeOrgId
-    }),
-    ...(filterValues?.iuv && { iuv: filterValues.iuv }),
-    ...(sort.length && { sort }),
-    receiptOrigin: ReceiptOriginType.RECEIPT_PAGOPA
-  });
+    query.mutateAsync({ filters, pagination, sort });
+  }, []);
 
   const handleFilterChange = useCallback(
     (id: string, value: FilterFieldValue): void => {
-      setFilterValues((prev) => ({ ...prev, [id]: value }));
+      setFilters((prev) => ({ ...prev, [id]: value }));
     },
     []
   );
 
-  const applyFilters = useCallback(() => {
-    query.mutate(filterToRequest());
+  const applyFilters = () => {
     setPaginationParams((prev) => ({ ...prev, page: 0 }));
-  }, [filterToRequest, query]);
+    query.mutate({
+      filters,
+      pagination: { page: 0, size: pagination.size },
+      sort
+    });
+  };
 
   return {
     applyFilters,
     query,
-    filterValues,
+    filters,
     handleFilterChange,
     handlePaginationChange,
-    paginationParams,
-    setFilterValues,
+    paginationParams: pagination,
+    setFilters,
     setSort
   };
 };
