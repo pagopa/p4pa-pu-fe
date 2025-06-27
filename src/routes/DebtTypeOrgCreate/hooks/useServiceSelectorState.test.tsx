@@ -2,12 +2,12 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '../../../__tests__/renderers';
 import { useServiceSelectorState } from './useServiceSelectorState';
-import { OrgSilService } from '../../../api/orgSilServices';
+import { OrgSilServiceDTO } from '../../../api/orgSilServices';
 
 describe('useServiceSelectorState', () => {
   const baseTranslationKey = 'test.service';
 
-  const mockServices: Array<OrgSilService> = [
+  const mockServices: Array<OrgSilServiceDTO> = [
     {
       orgSilServiceId: 1,
       organizationId: 123,
@@ -52,7 +52,7 @@ describe('useServiceSelectorState', () => {
   });
 
   it('filters out services with invalid IDs', () => {
-    const servicesWithInvalidIds: Array<OrgSilService> = [
+    const servicesWithInvalidIds: Array<OrgSilServiceDTO> = [
       ...mockServices,
       {
         orgSilServiceId: 0,
@@ -205,7 +205,7 @@ describe('useServiceSelectorState', () => {
   });
 
   it('handles services with missing optional fields gracefully', () => {
-    const minimalServices: Array<OrgSilService> = [
+    const minimalServices: Array<OrgSilServiceDTO> = [
       {
         orgSilServiceId: 1,
         organizationId: 123,
@@ -235,7 +235,7 @@ describe('useServiceSelectorState', () => {
   });
 
   it('handles services with additional optional fields', () => {
-    const richServices: Array<OrgSilService> = [
+    const richServices: Array<OrgSilServiceDTO> = [
       {
         orgSilServiceId: 1,
         organizationId: 123,
@@ -247,10 +247,10 @@ describe('useServiceSelectorState', () => {
         updateOperatorExternalId: 'operator123',
         updateTraceId: 'trace456',
         flagLegacy: false,
-        authConfig: {
-          clientId: 'client123',
-          secretKey: 'secret456'
-        } as any,
+        // authConfig: {
+        //   clientId: 'client123',
+        //   secretKey: 'secret456'
+        // } as any,
         _links: {
           self: { href: 'https://api.example.com/services/1' } as any
         }

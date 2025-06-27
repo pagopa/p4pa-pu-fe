@@ -308,7 +308,8 @@ const getInstallmentRegistriesMutation = () => {
       const { data: registries } =
         await utils.apiClient.bff.getInstallmentRegistries(
           organizationId,
-          debtPositionId
+          debtPositionId,
+          { nav: '' }
         );
       if (registries && Array.isArray(registries)) {
         registries.forEach((registry) => {
