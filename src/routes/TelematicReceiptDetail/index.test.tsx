@@ -15,14 +15,11 @@ vi.mock('../../api/receiptDetail', () => ({
   getReceiptDetail: vi.fn()
 }));
 
-vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router')>();
-  return {
-    ...actual,
-    useLoaderData: vi.fn(),
-    useNavigate: () => mockNavigate
-  };
-});
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useLoaderData: vi.fn(),
+  useNavigate: () => mockNavigate
+}));
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()
@@ -37,14 +34,13 @@ vi.mock('../../routes', () => ({
 describe('TelematicReceiptDetail Page', () => {
   const mockOrganizationId = 123;
   const mockData = createMock(receiptDetailDTOSchema);
+  const mockUseLoaderData = vi.mocked(useLoaderData);
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
 
-    (useLoaderData as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockData.receiptId
-    );
+    mockUseLoaderData.mockReturnValue(mockData.receiptId);
     (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       state: { [STATE.ORGANIZATION_ID]: mockOrganizationId }
     });
@@ -89,9 +85,7 @@ describe('TelematicReceiptDetail Page', () => {
   });
 
   it('handles invalid ID parameter', () => {
-    (useLoaderData as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      'invalid-id'
-    );
+    mockUseLoaderData.mockReturnValue('invalid-id');
 
     render(<TelematicReceiptDetail />);
 

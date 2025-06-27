@@ -14,22 +14,22 @@ vi.mock('../../api/getPaymentsReportingDetail', () => ({
   getPaymentsReportingDetail: vi.fn()
 }));
 
-vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router')>();
-  return {
-    ...actual,
-    useParams: vi.fn(),
-    useNavigate: () => mockNavigate,
-    generatePath: vi.fn(),
-    useLocation: vi.fn(),
-    createBrowserRouter: vi.fn(),
-    Navigate: vi.fn(({ to }) => ({
-      type: 'div',
-      props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
-    })),
-    Outlet: vi.fn()
-  };
-});
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: () => mockNavigate,
+  useParams: vi.fn()
+}));
+
+vi.mock('react-router-dom', () => ({
+  generatePath: vi.fn(),
+  useLocation: vi.fn(),
+  createBrowserRouter: vi.fn(),
+  Navigate: vi.fn(({ to }) => ({
+    type: 'div',
+    props: { 'data-testid': 'navigate', children: `Navigate to ${to}` }
+  })),
+  Outlet: vi.fn()
+}));
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()
@@ -55,12 +55,13 @@ describe('ReportingPaymentDetail Page', () => {
   const mockIuf = 'iuf123';
   const mockId = '456';
   const mockData = createMock(paymentsReportingDetailDTOSchema);
+  const mockUseParams = vi.mocked(useParams);
 
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
 
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({
+    mockUseParams.mockReturnValue({
       iuf: mockIuf,
       id: mockId
     });
@@ -132,9 +133,9 @@ describe('ReportingPaymentDetail Page', () => {
   });
 
   it('handles null iuf and id parameters', () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({
-      iuf: null,
-      id: null
+    mockUseParams.mockReturnValue({
+      iuf: undefined,
+      id: undefined
     });
 
     render(<ReportingPaymentDetail />);
@@ -340,7 +341,7 @@ describe('ReportingPaymentDetail Page', () => {
   });
 
   it('handles missing or undefined parameters', () => {
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
+    mockUseParams.mockReturnValue({});
     render(<ReportingPaymentDetail />);
 
     expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');

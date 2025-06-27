@@ -965,7 +965,7 @@
       "code": {
         "label": "Codice Sistema Gestionale",
         "required": "Il Codice Sistema Gestionale é obbligatorio",
-        "notUnique": "Il Codice Sistema Gestionale deve essere univoco. Codice inserito già esistente."
+        "notUnique": "Codice già esistente. Inserisci un altro codice"
       },
       "description": {
         "label": "Descrizione",
