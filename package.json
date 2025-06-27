@@ -74,8 +74,8 @@
   "name": "vite-project",
   "private": true,
   "scripts": {
-    "generate-api-client": "swagger-typescript-api --extract-enums -p https://raw.githubusercontent.com/pagopa/p4pa-pu-bff/refs/heads/develop/openapi/generated.openapi.json -o ./generated -n apiClient --axios",
-    "generate-api-contracts": "swagger-typescript-api --extract-enums --modular --no-client -p https://raw.githubusercontent.com/pagopa/p4pa-pu-bff/refs/heads/develop/openapi/generated.openapi.json -o ./generated",
+    "generate-api-client": "swagger-typescript-api --extract-enums -p https://raw.githubusercontent.com/pagopa/p4pa-pu-bff/c3d4bdfdfafbd0feab88b002c3b5b5b077f24df1/openapi/generated.openapi.json -o ./generated -n apiClient --axios",
+    "generate-api-contracts": "swagger-typescript-api --extract-enums --modular --no-client -p https://raw.githubusercontent.com/pagopa/p4pa-pu-bff/c3d4bdfdfafbd0feab88b002c3b5b5b077f24df1/openapi/generated.openapi.json -o ./generated",
     "generate-fileshare-client": "swagger-typescript-api --extract-enums -p https://raw.githubusercontent.com/pagopa/p4pa-fileshare/refs/heads/develop/openapi/generated.openapi.json -o ./generated/fileshare --axios -n fileshareClient --api-class-name FileshareApi",
     "generate-fileshare-contracts": "swagger-typescript-api --extract-enums --modular --no-client -p https://raw.githubusercontent.com/pagopa/p4pa-fileshare/refs/heads/develop/openapi/generated.openapi.json -o ./generated/fileshare",
     "generate-zod-schema": "yarn ts-to-zod --all",

@@ -1,7 +1,9 @@
-import { describe, it, Mock, vi } from 'vitest';
+import { describe, it, Mock, vi, beforeEach } from 'vitest';
 import DebtPositionsInstallmentDetail from '.';
 import { render } from '../../__tests__/renderers';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+
+const mockNavigate = vi.fn();
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
@@ -10,12 +12,14 @@ vi.mock('react-router', async (importOriginal) => ({
 }));
 
 beforeEach(() => {
+  (useNavigate as Mock).mockReturnValue(mockNavigate);
   (useLocation as Mock).mockReturnValue({
     state: {
       remittanceInformation: 'test remittanceInformation'
     }
   });
 });
+
 describe('Debt Positions Installment Detail Page', () => {
   it('renders Debt Positions Installmeent Detail page without crashing', () => {
     render(<DebtPositionsInstallmentDetail />);

@@ -48,6 +48,7 @@ vi.mock('react-router', async (importOriginal) => {
     ...actual,
     useParams: vi.fn().mockReturnValue({ id: 'TEST-IUF-123' }),
     useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+    useNavigate: vi.fn(),
     Link: ({ children }: { children: React.ReactNode }) => children,
     generatePath: vi.fn().mockReturnValue('/mock-path')
   };
@@ -62,6 +63,14 @@ vi.mock('../../store/GlobalStore', () => ({
     setState: vi.fn()
   }),
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
+}));
+
+vi.mock('../../routes', () => ({
+  PageRoutes: {
+    RESPONSES_ERROR: 'RESPONSES_ERROR',
+    REPORTING_INDEX: 'REPORTING_INDEX',
+    REPORTING_DETAIL: 'REPORTING_DETAIL'
+  }
 }));
 
 describe('ReportingDetail Page', () => {
