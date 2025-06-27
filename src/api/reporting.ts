@@ -12,7 +12,7 @@ export const getPaymentsReportingRows = (
   organizationId: number,
   iuf: string,
   query: PaymentsReportingRowsQuery,
-  options?: { enabled?: boolean }
+  options: { enabled?: boolean } & Record<string, unknown> = {}
 ) => {
   return useQuery({
     queryKey: ['getPaymentsReportingRows', organizationId, iuf, query],
@@ -33,6 +33,7 @@ export const getPaymentsReportingRows = (
       }
       return paymentsReportingRows;
     },
-    enabled: options?.enabled !== false && !!organizationId && !!iuf
+    enabled: options?.enabled !== false && !!organizationId && !!iuf,
+    ...options
   });
 };

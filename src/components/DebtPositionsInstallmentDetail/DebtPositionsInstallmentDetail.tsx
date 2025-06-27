@@ -48,14 +48,23 @@ export const DebtPositionsInstallmentDetail = () => {
   const installmentId = Number(id);
 
   if (isNaN(installmentId)) {
-    // TODO: raise error
-    console.error('ID is not a number');
+    navigate(PageRoutes.RESPONSES_ERROR);
+    return null;
   }
 
-  const { data: installment } = debtPositions.getInstallmentDetail(
-    organizationId,
-    installmentId
-  );
+  const {
+    data: installment,
+    isError,
+    error
+  } = debtPositions.getInstallmentDetail(organizationId, installmentId);
+
+  useEffect(() => {
+    if (isError && error) {
+      console.error('Error loading installment detail:', error);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [isError, error, navigate]);
+
   const statusInstallment = installment?.status;
 
   const {

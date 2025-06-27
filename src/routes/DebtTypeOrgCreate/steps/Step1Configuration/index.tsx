@@ -64,10 +64,12 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
 
       // If not editing, auto-fill fields with the selected debt type
       if (selectedType && !edit) {
-        Object.entries(selectedType).forEach(([key, val]) => {
-          setValue(key as keyof DebtTypeOrgForm, val);
+        Object.entries(selectedType).forEach(([key, value]) => {
+          const field = key as keyof DebtTypeOrgForm;
+          // code should not be auto-filled
+          if (field === 'code') return;
+          setValue(field, value);
         });
-        trigger();
       }
     }
   }, [edit, selectedId, selectionQuery.data, setValue, trigger]);
