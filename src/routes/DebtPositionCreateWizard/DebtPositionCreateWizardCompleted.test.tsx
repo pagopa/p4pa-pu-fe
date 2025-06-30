@@ -22,6 +22,8 @@ const mockFilterValues: FilterValues = {
   AMOUNT: null,
   BILL_CODE: '',
   BILL_FROM: null,
+  BILL_DATE_FROM: null,
+  BILL_DATE_TO: null,
   DOCUMENT_CODE: '',
   DOCUMENT_CODE_FROM: null,
   IUV: '',
@@ -29,16 +31,26 @@ const mockFilterValues: FilterValues = {
   IUD: '',
   IUF: '',
   PAYER: '',
+  PSP_COMPANY_NAME: '',
+  REGULATION_UNIQUE_IDENTIFIER: '',
+  REMITTANCE_INFORMATION: '',
   REPORT_ID: '',
   TEMPORARY_CODE: '',
   TEMPORARY_CODE_FROM: null,
   VALUE_DATE_FROM: null,
   VALUE_DATE_TO: null,
+  REGION_VALUE_DATE_FROM: null,
+  REGION_VALUE_DATE_TO: null,
+  PAY_DATE_FROM: null,
+  PAY_DATE_TO: null,
   CLASSIFICATION_TYPE: '',
   LAST_CLASSIFICATION_DATE_FROM: null,
   LAST_CLASSIFICATION_DATE_TO: null,
   REGULATION_DATE_FROM: null,
-  REGULATION_DATE_TO: null
+  REGULATION_DATE_TO: null,
+  PAYMENT_DATE_FROM: null,
+  PAYMENT_DATE_TO: null,
+  ACCOUNT_REGISTRY_CODE: ''
 };
 
 // Create mock store context

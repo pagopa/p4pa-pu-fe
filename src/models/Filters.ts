@@ -9,9 +9,12 @@ export type FlowStatus = IngestionFlowFileStatus;
 export type FilterValues = {
   ACCOUNTING_DATE_FROM: Date | null;
   ACCOUNTING_DATE_TO: Date | null;
+  ACCOUNT_REGISTRY_CODE: string;
   AMOUNT: number | null;
   BILL_CODE: string;
   BILL_FROM: Date | null;
+  BILL_DATE_FROM: Date | null;
+  BILL_DATE_TO: Date | null;
   DOCUMENT_CODE: string;
   DOCUMENT_CODE_FROM: Date | null;
   IUV: string;
@@ -19,16 +22,25 @@ export type FilterValues = {
   IUD: string;
   IUF: string;
   PAYER: string;
+  PSP_COMPANY_NAME: string;
+  REGULATION_UNIQUE_IDENTIFIER: string;
+  REMITTANCE_INFORMATION: string;
   REPORT_ID: string;
   TEMPORARY_CODE: string;
   TEMPORARY_CODE_FROM: Date | null;
   VALUE_DATE_FROM: Date | null;
   VALUE_DATE_TO: Date | null;
+  REGION_VALUE_DATE_FROM: Date | null;
+  REGION_VALUE_DATE_TO: Date | null;
+  PAY_DATE_FROM: Date | null;
+  PAY_DATE_TO: Date | null;
   CLASSIFICATION_TYPE: string;
   LAST_CLASSIFICATION_DATE_FROM: Date | null;
   LAST_CLASSIFICATION_DATE_TO: Date | null;
   REGULATION_DATE_FROM: Date | null;
   REGULATION_DATE_TO: Date | null;
+  PAYMENT_DATE_FROM: Date | null;
+  PAYMENT_DATE_TO: Date | null;
 };
 
 export type FlowFilters = {
