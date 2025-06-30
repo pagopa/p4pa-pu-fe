@@ -545,7 +545,9 @@ describe('createDebtPosition', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        nav: ''
+      });
     });
 
     it('handles empty installment registries array correctly', async () => {
@@ -568,7 +570,9 @@ describe('createDebtPosition', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        nav: ''
+      });
     });
 
     it('handles null/undefined installment registries data gracefully', async () => {
@@ -590,7 +594,9 @@ describe('createDebtPosition', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        nav: ''
+      });
     });
 
     it('handles API errors correctly for installment registries', async () => {
@@ -669,7 +675,9 @@ describe('createDebtPosition', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        nav: ''
+      });
     });
 
     it('handles installment-specific event types correctly', async () => {
@@ -723,7 +731,9 @@ describe('createDebtPosition', () => {
       expect(eventTypes).toContain(PaymentEventType.IO_NOTIFIED);
       expect(eventTypes).toContain(PaymentEventType.SEND_NOTIFICATION_CREATED);
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        nav: ''
+      });
     });
   });
 });

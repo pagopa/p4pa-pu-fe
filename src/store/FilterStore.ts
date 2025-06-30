@@ -67,18 +67,18 @@ export const addFilterRow = (nextId: KeyofFilterMap) => {
 
 export const removeFilterRow = (id: KeyofFilterMap) => {
   const filters = selectedFilters.value;
-  if (filters.length > 1) {
-    setSelectedFilters(filters.filter((filterId) => filterId !== id));
-    mapFilterNameToFilterValues[id].forEach((filter) => {
-      resetFilterValue(filter);
-    });
-  }
+  setSelectedFilters(filters.filter((filterId) => filterId !== id));
+  mapFilterNameToFilterValues[id].forEach((filter) => {
+    resetFilterValue(filter);
+  });
 };
 
 export const updateFilter = (id: KeyofFilterMap, index: number) => {
   const filters = [...selectedFilters.value];
+  const previousFilter = filters[index];
   filters[index] = id;
   setSelectedFilters(filters);
+  removeFilterRow(previousFilter);
 };
 
 export const filterValues = signal<FilterValues>(initialFilterValues);
