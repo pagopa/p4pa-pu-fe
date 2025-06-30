@@ -56,5 +56,5 @@ export default {
   getActualizationServices
 };
 
-export type { OrgSilServiceDTO };
+export type { orgSilServiceDTOSchema };
 export { isValidService };

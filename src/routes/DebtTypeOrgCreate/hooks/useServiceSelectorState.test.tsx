@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '../../../__tests__/renderers';
 import { useServiceSelectorState } from './useServiceSelectorState';
-import { OrgSilServiceDTO } from '../../../api/orgSilServices';
+import { OrgSilServiceDTO } from '../../../../generated/data-contracts';
 
 describe('useServiceSelectorState', () => {
   const baseTranslationKey = 'test.service';
@@ -247,10 +247,6 @@ describe('useServiceSelectorState', () => {
         updateOperatorExternalId: 'operator123',
         updateTraceId: 'trace456',
         flagLegacy: false,
-        // authConfig: {
-        //   clientId: 'client123',
-        //   secretKey: 'secret456'
-        // } as any,
         _links: {
           self: { href: 'https://api.example.com/services/1' } as any
         }
