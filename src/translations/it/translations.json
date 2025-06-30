@@ -345,6 +345,7 @@
     "mandatoryDueDate": "Data di Scadenza Obbligatoria",
     "message": "Messaggio",
     "messages": "Messaggi",
+    "nav": "NAV",
     "no": "No",
     "NO_EVENTS": "Nessun evento",
     "noFlows": "Non ci sono flussi.",
@@ -379,6 +380,8 @@
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
       "BACKOFFICE": "Backoffice",
+      "BACKOFFICE_REGISTRIES": "Giornale degli eventi",
+      "BACKOFFICE_REGISTRY_DETAIL": "Dettaglio evento",
       "BACKOFFICE_TAXONOMY": "Tassonomia",
       "BACKOFFICE_TAXONOMY_INDEX": "Tassonomia",
       "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
@@ -449,6 +452,8 @@
     "serviceUnavailable": "Il servizio è temporaneamente non disponibile, vi preghiamo di riprovare più tardi.",
     "showAllFlows": "Vedi tutti i flussi",
     "showDebtPositions": "Vedi Posizione debitoria",
+    "showLess": "Vedi meno",
+    "showMore": "Vedi di più",
     "showOtherBeneficiaries": "Vedi altri beneficiari",
     "sidebar": {
       "collapse": "Comprimi il menu",
@@ -1173,6 +1178,23 @@
     "paymentToDate": "Pagamento al",
     "reservationDate": "Data prenotazione",
     "uploadDate": "Data Caricamento"
+  },
+  "registry": {
+    "detail": {
+      "eventDetailTitle": "Dettaglio evento",
+      "event": "Evento",
+      "eventType": "Tipo",
+      "eventSubType": "Sottotipo",
+      "eventCategory": "Categoria",
+      "details": "Dettagli",
+      "outcome": "Esito",
+      "dateTime": "Data Ora Evento",
+      "registryId": "ID Evento",
+      "intermediateStationPA": "Stazione intermediario PA",
+      "paymentChannel": "Canale pagamento",
+      "interfaceSpecificParamsTitle": "Parametri specifici interfaccia",
+      "invalidRegistryTypeError": "Tipo evento non valido"
+    }
   },
   "reporting": {
     "description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
