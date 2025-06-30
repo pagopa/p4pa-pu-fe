@@ -300,18 +300,19 @@ const getInstallmentRegistriesMutation = () => {
     mutationKey: ['getInstallmentRegistriesMutation'],
     mutationFn: async ({
       organizationId,
-      debtPositionId
+      debtPositionId,
+      nav
     }: {
       organizationId: number;
       debtPositionId: number;
+      nav: string;
     }) => {
       const { data: registries } =
         await utils.apiClient.bff.getInstallmentRegistries(
           organizationId,
           debtPositionId,
-          // to fix the issue with the nav parameter
           {
-            nav: ''
+            nav: nav
           }
         );
       if (registries && Array.isArray(registries)) {
