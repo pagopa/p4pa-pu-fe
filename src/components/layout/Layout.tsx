@@ -42,7 +42,7 @@ export function Layout() {
   const { collapsed } = useCollapseMenu(!lg);
   const getMainColumnWidth = () => {
     if (!sidebar.visible) return 12;
-    return collapsed ? 11 : 10;
+    return collapsed ? 11 : 9;
   };
 
   const {
