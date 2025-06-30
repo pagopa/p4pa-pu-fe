@@ -9,7 +9,6 @@ import { PageRoutes } from '../../routes';
 import { useNavigate } from 'react-router';
 import { ReactNode, useState } from 'react';
 import { filterValues } from '../../store/FilterStore';
-import { ClassificationsEnum } from '../../../generated/data-contracts';
 
 export const Classifications = () => {
   const { t } = useTranslation();
@@ -42,12 +41,7 @@ export const Classifications = () => {
       setLabelError(true);
       return;
     }
-    if (classificationType === ClassificationsEnum.UNKNOWN) {
-      setError(false);
-      setLabelError(false);
-      navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS);
-      return;
-    }
+
     if (noFilterSelectedExcludingClassificationType.peek()) {
       setError(true);
       return;

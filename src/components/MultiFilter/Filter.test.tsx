@@ -89,6 +89,51 @@ const mockFilterMap: FilterMap = {
   REGULATION_DATE: {
     label: 'REGULATION_DATE',
     fields: [{ type: COMPONENT_TYPE.dateRange, label: 'REGULATION_DATE Field' }]
+  },
+  PAYMENT_DATE: {
+    label: 'PAYMENT_DATE',
+    fields: [{ type: COMPONENT_TYPE.dateRange, label: 'PAYMENT_DATE Field' }]
+  },
+  BILL_DATE: {
+    label: 'BILL_DATE',
+    fields: [{ type: COMPONENT_TYPE.dateRange, label: 'BILL_DATE Field' }]
+  },
+  REGION_VALUE_DATE: {
+    label: 'REGION_VALUE_DATE',
+    fields: [
+      { type: COMPONENT_TYPE.dateRange, label: 'REGION_VALUE_DATE Field' }
+    ]
+  },
+  PAY_DATE: {
+    label: 'PAY_DATE',
+    fields: [{ type: COMPONENT_TYPE.dateRange, label: 'PAY_DATE Field' }]
+  },
+  ACCOUNT_REGISTRY_CODE: {
+    label: 'ACCOUNT_REGISTRY_CODE',
+    fields: [
+      { type: COMPONENT_TYPE.textField, label: 'ACCOUNT_REGISTRY_CODE Field' }
+    ]
+  },
+  PSP_COMPANY_NAME: {
+    label: 'PSP_COMPANY_NAME',
+    fields: [
+      { type: COMPONENT_TYPE.textField, label: 'PSP_COMPANY_NAME Field' }
+    ]
+  },
+  REGULATION_UNIQUE_IDENTIFIER: {
+    label: 'REGULATION_UNIQUE_IDENTIFIER',
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'REGULATION_UNIQUE_IDENTIFIER Field'
+      }
+    ]
+  },
+  REMITTANCE_INFORMATION: {
+    label: 'REMITTANCE_INFORMATION',
+    fields: [
+      { type: COMPONENT_TYPE.textField, label: 'REMITTANCE_INFORMATION Field' }
+    ]
   }
 };
 
@@ -113,7 +158,7 @@ describe('Filter Component', () => {
 
     // Verify that the options are rendered correctly
     const options = screen.getAllByRole('option');
-    expect(options).toHaveLength(15);
+    expect(options).toHaveLength(Object.keys(mockFilterMap).length);
     expect(options[0]).toHaveTextContent('AMOUNT');
     expect(options[1]).toHaveTextContent('BILL_CODE');
 

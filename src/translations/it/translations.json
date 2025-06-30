@@ -135,12 +135,14 @@
       "notice": {
         "remittanceInformation": "Oggetto del pagamento",
         "applicant": "Attestante",
-        "paymentDate": "Data pagamento"
+        "paymentDate": "Data pagamento",
+        "paymentDateNotice": "Data pagamento ricevuta"
       },
       "reporting": {
         "title": "Rendicontazione",
         "paymentDate": "Data pagamento",
         "regulationDate": "Data regolamento",
+        "payDateReporting": "Data pagamento rendicontazione",
         "regulationUniqueIdentifier": "Identificativo univoco regolamento"
       },
       "treasury": {
@@ -331,6 +333,7 @@
     "from": "Dal",
     "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
     "importFlow": "Importa flusso",
+    "importFlowErrorMessage": "Non è stato possibile importare il flusso",
     "importFlows": "Importa flussi",
     "importFrom": "Caricati dal",
     "importNewFlow": "Carica un nuovo flusso",
@@ -386,7 +389,7 @@
       "BACKOFFICE_TAXONOMY_INDEX": "Tassonomia",
       "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
       "BACKOFFICE_TAXONOMY_SEARCH_RESULTS": "Risultato ricerca",
-      "CLASSIFICATIONS": "Classificazioni",
+      "CLASSIFICATIONS": "Classificazione pagamenti",
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
@@ -1053,7 +1056,7 @@
       },
       "errors": {
         "notificationServiceUnavailable": "Servizio di configurazione notifiche non disponibile - alcune opzioni potrebbero essere limitate",
-        "actualizationServiceUnavailable": "Servizio di configurazione attualizzazione non disponibile - alcune opzioni potrebbero essere limitate", 
+        "actualizationServiceUnavailable": "Servizio di configurazione attualizzazione non disponibile - alcune opzioni potrebbero essere limitate",
         "bothServicesUnavailable": "Servizi di configurazione notifiche e attualizzazione non disponibili - alcune opzioni potrebbero essere limitate"
       },
       "updateAmount": {

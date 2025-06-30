@@ -110,8 +110,15 @@ describe('useMultiFilters', () => {
         'IUF',
         'LAST_CLASSIFICATION_DATE',
         'REGULATION_DATE',
+        'REGULATION_UNIQUE_IDENTIFIER',
+        'REMITTANCE_INFORMATION',
+        'PSP_COMPANY_NAME',
+        'PAYMENT_DATE',
+        'BILL_DATE',
+        'REGION_VALUE_DATE',
+        'ACCOUNT_REGISTRY_CODE',
         'AMOUNT',
-        'ACCOUNTING_DATE'
+        'PAY_DATE'
       ])
     );
   });
