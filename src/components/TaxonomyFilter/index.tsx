@@ -24,13 +24,28 @@ type TaxonomyFilterRenderProps = {
 
 type TaxonomyFilterProps = {
   layout?: TaxonomyFilterLayout;
-
   render?: (fields: TaxonomyFilterRenderProps) => React.ReactNode;
+  /**
+   * Define if taxonomy fields are required
+   * true = all fields are required (for debt type creation/edit)
+   * false = all fields are optional (for taxonomy search)
+   * @default false
+   */
+  requiredFields?: boolean;
+  /**
+   * Disable automatic field reset
+   * true = do not reset fields when previous field changes (for creation form)
+   * false = reset dependent fields (for search)
+   * @default false
+   */
+  disableFieldReset?: boolean;
 };
 
 export const TaxonomyFilter = ({
   layout = 'default',
-  render
+  render,
+  requiredFields = false,
+  disableFieldReset = false
 }: TaxonomyFilterProps) => {
   const form = useFormContext();
   const { control, watch } = form;
@@ -47,7 +62,15 @@ export const TaxonomyFilter = ({
 
   // resets fields after changes in previous fields
   // keys are used to reset mui select
-  const { keys } = useFormDependencies({ form, fieldOrder });
+  // Only use form dependencies if reset is not disabled
+  const { keys } = disableFieldReset
+    ? {
+        keys: fieldOrder.reduce(
+          (acc, field, index) => ({ ...acc, [field]: `${field}-${index}` }),
+          {} as Record<string, string>
+        )
+      }
+    : useFormDependencies({ form, fieldOrder });
 
   // values for conditional rendering and query params
   const organizationType = watch('orgType');
@@ -59,7 +82,7 @@ export const TaxonomyFilter = ({
   const fields: TaxonomyFilterRenderProps = {
     orgType: (
       <FormComponent.ControlledSelect
-        required={false}
+        required={requiredFields}
         key={keys.orgType}
         name="orgType"
         control={control}
@@ -70,7 +93,7 @@ export const TaxonomyFilter = ({
     ),
     macroAreaCode: (
       <FormComponent.ControlledSelect
-        required={false}
+        required={requiredFields}
         key={keys.macroAreaCode}
         name="macroAreaCode"
         control={control}
@@ -82,7 +105,7 @@ export const TaxonomyFilter = ({
     ),
     serviceTypeCode: (
       <FormComponent.ControlledSelect
-        required={false}
+        required={requiredFields}
         key={keys.serviceTypeCode}
         name="serviceTypeCode"
         control={control}
@@ -94,7 +117,7 @@ export const TaxonomyFilter = ({
     ),
     collectingReason: (
       <FormComponent.ControlledSelect
-        required={false}
+        required={requiredFields}
         key={keys.collectingReason}
         name="collectingReason"
         control={control}
@@ -112,7 +135,7 @@ export const TaxonomyFilter = ({
     ),
     taxonomyCode: (
       <FormComponent.ControlledSelect
-        required={false}
+        required={requiredFields}
         key={keys.taxonomyCode}
         name="taxonomyCode"
         control={control}
