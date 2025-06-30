@@ -333,6 +333,7 @@
     "from": "Dal",
     "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
     "importFlow": "Importa flusso",
+    "importFlowErrorMessage": "Non è stato possibile importare il flusso",
     "importFlows": "Importa flussi",
     "importFrom": "Caricati dal",
     "importNewFlow": "Carica un nuovo flusso",
