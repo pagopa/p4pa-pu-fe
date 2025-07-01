@@ -1196,7 +1196,9 @@
       "intermediateStationPA": "Stazione intermediario PA",
       "paymentChannel": "Canale pagamento",
       "interfaceSpecificParamsTitle": "Parametri specifici interfaccia",
-      "invalidRegistryTypeError": "Tipo evento non valido"
+      "invalidRegistryTypeError": "Tipo evento non valido",
+      "loadError": "Impossibile caricare i dati",
+      "notFound": "Evento non trovato"
     }
   },
   "reporting": {

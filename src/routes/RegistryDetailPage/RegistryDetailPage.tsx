@@ -18,7 +18,11 @@ export const RegistryDetailPage: React.FC = () => {
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  const { data: registry, error } = useRegistry(
+  const {
+    data: registry,
+    isLoading,
+    error
+  } = useRegistry(
     registryType as 'pagopa' | 'sil',
     organizationId,
     registryId || '',
@@ -27,7 +31,7 @@ export const RegistryDetailPage: React.FC = () => {
 
   if (!registryType || !['pagopa', 'sil'].includes(registryType)) {
     return (
-      <Box m={2}>
+      <Box sx={{ padding: 2, maxWidth: '1200px', margin: '0 auto' }}>
         <Alert severity="error">
           {t('registry.detail.invalidRegistryTypeError')}
         </Alert>
@@ -35,17 +39,12 @@ export const RegistryDetailPage: React.FC = () => {
     );
   }
 
-  if (!registry) {
-    return (
-      <Box m={2}>
-        <Alert severity="error">
-          {error?.message || t('registry.detail.loadError')}
-        </Alert>
-      </Box>
-    );
-  }
+  const hasError = !!error;
+  const hasData = !!registry;
+  const showNotFound = !isLoading && !hasData && !hasError;
+  const showContent = hasData;
 
-  const sections = mapRegistryToDetailSections(registry, t);
+  const sections = hasData ? mapRegistryToDetailSections(registry, t) : null;
 
   return (
     <Box sx={{ padding: 2, maxWidth: '1200px', margin: '0 auto' }}>
@@ -60,31 +59,40 @@ export const RegistryDetailPage: React.FC = () => {
         </Typography>
       </Box>
 
-      <Grid container spacing={3}>
-        <Grid item md={6}>
-          <DetailContainer
-            sections={[sections[0]]}
-            data-testid="event-container"
-          />
-        </Grid>
-        <Grid item md={6}>
-          <Grid container spacing={3}>
-            <Grid item xs={12}>
-              <DetailContainer
-                sections={[sections[1]]}
-                data-testid="detail-container"
-              />
-            </Grid>
+      {hasError && (
+        <Alert severity="error">{t('registry.detail.loadError')}</Alert>
+      )}
 
-            <Grid item xs={12}>
-              <DetailContainer
-                sections={[sections[2]]}
-                data-testid="specific-parameters-container"
-              />
+      {showNotFound && (
+        <Alert severity="warning">{t('registry.detail.notFound')}</Alert>
+      )}
+
+      {showContent && sections && (
+        <Grid container spacing={3}>
+          <Grid item md={6}>
+            <DetailContainer
+              sections={[sections[0]]}
+              data-testid="event-container"
+            />
+          </Grid>
+          <Grid item md={6}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <DetailContainer
+                  sections={[sections[1]]}
+                  data-testid="detail-container"
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <DetailContainer
+                  sections={[sections[2]]}
+                  data-testid="specific-parameters-container"
+                />
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      )}
     </Box>
   );
 };
