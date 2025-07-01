@@ -1,79 +1,45 @@
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import SearchCard, { TabsConfig } from '../../components/SearchCard/SearchCard';
-import {
-  COMPONENT_TYPE,
-  FilterItem
-} from '../../components/FilterContainer/FilterContainer';
-import { Search } from '@mui/icons-material';
-import { RegistryPagoPaEventType } from '../../../generated/data-contracts';
+import SearchCard, {
+  ErrorMessage
+} from '../../components/SearchCard/SearchCard';
 import { useState } from 'react';
 import { useStore } from '../../store/GlobalStore';
-import {
-  BaseFilterValues,
-  DateRangeValue,
-  FilterFieldValue
-} from '../../models/Filters';
 import getPagoPaRegistries from '../../api/getPagoPaRegistry';
-
-const fields: Array<FilterItem> = [
-  {
-    type: COMPONENT_TYPE.textField,
-    label: 'debtPositions.searchIUVDescription',
-    adornment: <Search />,
-    id: 'iuv'
-  },
-  {
-    type: COMPONENT_TYPE.dateRange,
-    label: 'dateRange',
-    required: true,
-    from: { label: 'eventDateFrom' },
-    to: { label: 'eventDateTo' },
-    id: 'eventDate'
-  },
-  {
-    type: COMPONENT_TYPE.select,
-    label: 'evento',
-    options: Object.entries(RegistryPagoPaEventType).map(([key, value]) => ({
-      label: key,
-      value
-    })),
-    id: 'event'
-  }
-];
-
-const tabs: Array<TabsConfig> = [
-  {
-    label: 'events.tabs.sil',
-    fields
-  },
-  {
-    label: 'events.tabs.nodo',
-    fields
-  }
-];
-
-const DefaultFilterValues: BaseFilterValues = {};
+import getSilRegistries from '../../api/getSilRegistries';
+import {
+  tabs,
+  DefaultFilterValues,
+  NodoFilterValues,
+  SilFilterValues,
+  getQueryFromFilterValues
+} from './configs';
+import { FilterFieldValue } from '../../models/Filters';
+import utils from '../../utils';
+import { noFilterSetted } from '../../utils/filtersValidation';
 
 // Create a deep copy of filterValues to avoid mutating the state directly
 function deepCopy<T>(obj: T): T {
-  return JSON.parse(JSON.stringify(obj));
+  return structuredClone(obj);
 }
 
 const EventPage = () => {
   const { t } = useTranslation();
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+  const [error, setError] = useState(false);
+
   const {
     state: { organizationId }
   } = useStore();
 
-  const [filterValues, setFilterValues] = useState<Array<BaseFilterValues>>([
-    DefaultFilterValues,
-    DefaultFilterValues
-  ]);
+  const [filterValues, setFilterValues] = useState<
+    [SilFilterValues, NodoFilterValues]
+  >([DefaultFilterValues, DefaultFilterValues]);
 
   const handleTabChange = (newTabIndex: number) => {
     setActiveTabIndex(newTabIndex);
+    handleResetFilter();
+    setError(false);
   };
 
   const handleFilterChange = (id: string, value: FilterFieldValue) => {
@@ -91,25 +57,36 @@ const EventPage = () => {
     setFilterValues(newFilterValues);
   };
 
-  const mutation = getPagoPaRegistries(organizationId);
+  const getPagoPaRegistriesMutation = getPagoPaRegistries(organizationId);
+
+  const getSilRegistriesMutation = getSilRegistries(organizationId);
+
+  const testFilterValidity = (
+    filterValues: NodoFilterValues | SilFilterValues
+  ) => noFilterSetted(filterValues);
 
   const handleSubmit = async () => {
+    setError(false);
+    const activeFilterValues = filterValues[activeTabIndex];
+    if (testFilterValidity(activeFilterValues)) {
+      setError(true);
+      return;
+    }
     try {
-      const activeFilterValues = filterValues[activeTabIndex];
-      const query = {
-        iuv: `${activeFilterValues.iuv}`,
-        eventDateFrom: (
-          activeFilterValues.eventDate as DateRangeValue
-        )?.from?.toISOString(),
-        eventDateTo: (
-          activeFilterValues.eventDate as DateRangeValue
-        )?.to?.toISOString(),
-        eventType: activeFilterValues.event as RegistryPagoPaEventType
-      };
-      const response = await mutation.mutateAsync(query);
-      console.log('Response from API:', response);
-    } catch (error) {
-      console.error('Error submitting filter values:', error);
+      if (activeTabIndex === 0) {
+        const query = getQueryFromFilterValues(
+          activeFilterValues as SilFilterValues
+        );
+        await getSilRegistriesMutation.mutateAsync(query);
+      } else {
+        const query = getQueryFromFilterValues(
+          activeFilterValues as NodoFilterValues
+        );
+        await getPagoPaRegistriesMutation.mutateAsync(query);
+      }
+    } catch {
+      console.error(error);
+      utils.notify.emit(t('errors.generic'));
     }
   };
 
@@ -124,6 +101,7 @@ const EventPage = () => {
         activeTabIndex={activeTabIndex}
         onTabChange={handleTabChange}
         onFilterChange={handleFilterChange}
+        render={error && ErrorMessage}
         button={[
           {
             label: t('commons.filters.remove'),

@@ -433,7 +433,8 @@
       "TREASURY_INDEX": "Pagina principale",
       "TREASURY_SEARCH_RESULTS": "Risultato ricerca",
       "USERS": "Utenti",
-      "CLASSIFICATION_DETAIL": "Dettaglio Pagamento"
+      "CLASSIFICATION_DETAIL": "Dettaglio Pagamento",
+      "EVENTS": "Giornali degli eventi"
     },
     "saveDraft": "Salva bozza",
     "save": "Salva modifiche",
@@ -1336,6 +1337,18 @@
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
     "tempDocumentCode": "Codice provvisorio",
     "tempDocumentYear": "Anno codice Provvisorio"
+  },
+  "events": {
+    "searchCardTitle": "Cosa stai cercando?",
+    "searchCardDescription": "Seleziona l’evento che stai cercando e inserisci i filtri per avviare la ricerca.",
+    "tabs": {
+      "sil": "Eventi SIL",
+      "nodo": "Eventi nodo PagoPA"
+    },
+    "searchIUVDescription": "IUV",
+    "searchEventDescription": "Evento",
+    "searchDateFromDescription": "Data dal",
+    "searchDateToDescription": "Al"
   },
   "treasuryImportFlowOverview": {
     "description": "Visualizza i flussi importati in precedenza e importa nuovi."
