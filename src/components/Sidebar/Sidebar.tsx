@@ -17,7 +17,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
 import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import SummarizeIcon from '@mui/icons-material/Summarize';
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import DnsIcon from '@mui/icons-material/Dns';
 import PeopleIcon from '@mui/icons-material/People';
@@ -93,7 +93,7 @@ export const Sidebar: React.FC = () => {
     },
     {
       label: t('commons.routes.CLASSIFICATIONS'),
-      icon: SummarizeIcon,
+      icon: PlaylistAddCheckIcon,
       route: PageRoutes.CLASSIFICATIONS,
       end: true
     }
@@ -162,7 +162,7 @@ export const Sidebar: React.FC = () => {
         component={'aside'}
         item
         sx={styles.container}
-        lg={collapsed ? 'auto' : 2}
+        lg={collapsed ? 'auto' : 3}
       >
         <Box
           alignItems="normal"

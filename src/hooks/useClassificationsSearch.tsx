@@ -68,13 +68,13 @@ export const UseClassificationsSearch = ({
           )
         }),
         ...(filterValuesRequest.REGULATION_DATE_FROM && {
-          paymentDateTimeFrom: format(
+          regulationDateFrom: format(
             filterValuesRequest.REGULATION_DATE_FROM,
             'yyyy-MM-dd'
           )
         }),
         ...(filterValuesRequest.REGULATION_DATE_TO && {
-          paymentDateTimeTo: format(
+          regulationDateTo: format(
             filterValuesRequest.REGULATION_DATE_TO,
             'yyyy-MM-dd'
           )
@@ -82,15 +82,47 @@ export const UseClassificationsSearch = ({
         ...(filterValuesRequest.AMOUNT && {
           billAmountCents: filterValuesRequest.AMOUNT * 100
         }),
-        ...(filterValuesRequest.ACCOUNTING_DATE_FROM && {
-          billDateFrom: format(
-            filterValuesRequest.ACCOUNTING_DATE_FROM,
+        ...(filterValuesRequest.BILL_DATE_FROM && {
+          billDateFrom: format(filterValuesRequest.BILL_DATE_FROM, 'yyyy-MM-dd')
+        }),
+        ...(filterValuesRequest.BILL_DATE_TO && {
+          billDateTo: format(filterValuesRequest.BILL_DATE_TO, 'yyyy-MM-dd')
+        }),
+        ...(filterValuesRequest.PAYMENT_DATE_FROM && {
+          paymentDateTimeFrom:
+            filterValuesRequest.PAYMENT_DATE_FROM.toISOString()
+        }),
+        ...(filterValuesRequest.PAYMENT_DATE_TO && {
+          paymentDateTimeTo: filterValuesRequest.PAYMENT_DATE_TO.toISOString()
+        }),
+        ...(filterValuesRequest.PAY_DATE_FROM && {
+          payDateFrom: format(filterValuesRequest.PAY_DATE_FROM, 'yyyy-MM-dd')
+        }),
+        ...(filterValuesRequest.PAY_DATE_TO && {
+          payDateTo: format(filterValuesRequest.PAY_DATE_TO, 'yyyy-MM-dd')
+        }),
+        ...(filterValuesRequest.REGULATION_UNIQUE_IDENTIFIER && {
+          regulationUniqueIdentifier:
+            filterValuesRequest.REGULATION_UNIQUE_IDENTIFIER
+        }),
+        ...(filterValuesRequest.ACCOUNT_REGISTRY_CODE && {
+          accountRegistryCode: filterValuesRequest.ACCOUNT_REGISTRY_CODE
+        }),
+        ...(filterValuesRequest.REMITTANCE_INFORMATION && {
+          remittanceInformation: filterValuesRequest.REMITTANCE_INFORMATION
+        }),
+        ...(filterValuesRequest.PSP_COMPANY_NAME && {
+          pspCompanyName: filterValuesRequest.PSP_COMPANY_NAME
+        }),
+        ...(filterValuesRequest.REGION_VALUE_DATE_FROM && {
+          regionValueDateFrom: format(
+            filterValuesRequest.REGION_VALUE_DATE_FROM,
             'yyyy-MM-dd'
           )
         }),
-        ...(filterValuesRequest.ACCOUNTING_DATE_TO && {
-          billDateTo: format(
-            filterValuesRequest.ACCOUNTING_DATE_TO,
+        ...(filterValuesRequest.REGION_VALUE_DATE_TO && {
+          regionValueDateTo: format(
+            filterValuesRequest.REGION_VALUE_DATE_TO,
             'yyyy-MM-dd'
           )
         }),
