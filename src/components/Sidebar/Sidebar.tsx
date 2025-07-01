@@ -117,6 +117,11 @@ export const Sidebar: React.FC = () => {
           label: t('commons.routes.BACKOFFICE_TAXONOMY'),
           route: PageRoutes.BACKOFFICE_TAXONOMY,
           end: true
+        },
+        {
+          label: t('commons.routes.BACKOFFICE_EVENTS'),
+          route: PageRoutes.BACKOFFICE_EVENTS,
+          end: true
         }
       ]
     });

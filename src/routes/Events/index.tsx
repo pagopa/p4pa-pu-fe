@@ -92,7 +92,7 @@ const EventPage = () => {
 
   return (
     <>
-      <TitleComponent title={t('commons.routes.EVENTS')} />
+      <TitleComponent title={t('commons.routes.BACKOFFICE_EVENTS')} />
       <SearchCard
         title={t('events.searchCardTitle')}
         description={t('events.searchCardDescription')}
