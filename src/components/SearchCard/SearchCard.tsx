@@ -9,6 +9,8 @@ import { useState, useEffect } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { useTelematicReceiptsFilters } from '../../hooks/useTelematicReceiptsFilters';
 import { useReportingFilters } from '../../hooks/useReportingFilters';
+import { selectedFilters } from '../../store/FilterStore';
+import MultifilterInitSelect from '../MultiFilter/MultifilterInitSelect';
 
 export type TabsConfig = {
   label: string;
@@ -147,6 +149,10 @@ const SearchCard = ({
 
         {multiFilterConfig && (
           <Grid item lg={12}>
+            {selectedFilters.value.length === 0 && (
+              <MultifilterInitSelect multiFilterConfig={multiFilterConfig} />
+            )}
+
             <MultiFilter
               filterMap={multiFilterConfig}
               filterCategory={filterCategory}
