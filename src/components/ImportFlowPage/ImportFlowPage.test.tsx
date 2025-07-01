@@ -1,7 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, vi, expect, beforeEach } from 'vitest';
-import { fireEvent, render, screen, within } from '../../__tests__/renderers';
+import {
+  fireEvent,
+  render,
+  screen,
+  within,
+  waitFor
+} from '../../__tests__/renderers';
 import ImportFlow from './ImportFlowPage';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
+import { PageRoutes } from '../../routes';
+import * as ingestionFlowFiles from '../../api/ingestionFlowFiles';
+import utils from '../../utils';
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
@@ -9,11 +19,42 @@ vi.mock('react-router', async (importOriginal) => ({
   useParams: vi.fn()
 }));
 
+vi.mock('../../api/ingestionFlowFiles');
+vi.mock('../../store/GlobalStore', async (importOriginal) => {
+  const actual = (await importOriginal()) as any;
+  return {
+    ...actual,
+    useStore: () => ({
+      state: { organizationId: 123 }
+    })
+  };
+});
+
+vi.mock('../../utils', () => ({
+  default: {
+    config: {
+      deployPath: '/test-path'
+    },
+    notify: {
+      emit: vi.fn()
+    }
+  }
+}));
+
 describe('ImportFlow', () => {
   const mockUseParams = vi.mocked(useParams);
+  const mockUseNavigate = vi.mocked(useNavigate);
+  const mockNavigate = vi.fn();
+  const mockUploadMutate = vi.fn();
+  const mockNotifyEmit = vi.mocked(utils.notify.emit);
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockUseNavigate.mockReturnValue(mockNavigate);
+
+    vi.mocked(ingestionFlowFiles.uploadIngestionFlowFile).mockReturnValue({
+      mutate: mockUploadMutate
+    } as any);
   });
 
   describe('no select Config', () => {
@@ -57,6 +98,161 @@ describe('ImportFlow', () => {
 
       expect(successButton).toHaveProperty('disabled', false);
     });
+
+    it('handles 4xx error by navigating to error page', async () => {
+      const mockError = {
+        response: {
+          status: 400
+        }
+      };
+
+      mockUploadMutate.mockImplementation((_file, options) => {
+        options.onError(mockError);
+      });
+
+      render(<ImportFlow />);
+
+      const file = new File(['content'], 'test.zip', {
+        type: 'application/zip'
+      });
+      const dropZone = screen.getByTestId('drop-zone');
+
+      fireEvent.dragOver(dropZone);
+      fireEvent.drop(dropZone, {
+        dataTransfer: {
+          files: [file]
+        }
+      });
+
+      await vi.waitFor(() =>
+        expect(screen.getAllByText('test.zip')).toBeDefined()
+      );
+
+      const successButton = screen.getByTestId('success-button');
+      fireEvent.click(successButton);
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
+          state: {
+            category: 'reporting-import',
+            errorType: '4xx',
+            statusCode: 400
+          }
+        });
+      });
+    });
+
+    it('handles non-4xx error by showing notification', async () => {
+      const mockError = {
+        response: {
+          status: 500
+        }
+      };
+
+      mockUploadMutate.mockImplementation((_file, options) => {
+        options.onError(mockError);
+      });
+
+      render(<ImportFlow />);
+
+      const file = new File(['content'], 'test.zip', {
+        type: 'application/zip'
+      });
+      const dropZone = screen.getByTestId('drop-zone');
+
+      fireEvent.dragOver(dropZone);
+      fireEvent.drop(dropZone, {
+        dataTransfer: {
+          files: [file]
+        }
+      });
+
+      await vi.waitFor(() =>
+        expect(screen.getAllByText('test.zip')).toBeDefined()
+      );
+
+      const successButton = screen.getByTestId('success-button');
+      fireEvent.click(successButton);
+
+      await waitFor(() => {
+        expect(mockNotifyEmit).toHaveBeenCalledWith(
+          'commons.importFlowErrorMessage'
+        );
+      });
+    });
+
+    it('handles network error by showing notification', async () => {
+      const mockError = new Error('Network Error');
+
+      mockUploadMutate.mockImplementation((_file, options) => {
+        options.onError(mockError);
+      });
+
+      render(<ImportFlow />);
+
+      const file = new File(['content'], 'test.zip', {
+        type: 'application/zip'
+      });
+      const dropZone = screen.getByTestId('drop-zone');
+
+      fireEvent.dragOver(dropZone);
+      fireEvent.drop(dropZone, {
+        dataTransfer: {
+          files: [file]
+        }
+      });
+
+      await vi.waitFor(() =>
+        expect(screen.getAllByText('test.zip')).toBeDefined()
+      );
+
+      const successButton = screen.getByTestId('success-button');
+      fireEvent.click(successButton);
+
+      await waitFor(() => {
+        expect(mockNotifyEmit).toHaveBeenCalledWith(
+          'commons.importFlowErrorMessage'
+        );
+      });
+    });
+
+    it('handles successful upload', async () => {
+      mockUploadMutate.mockImplementation((_file, options) => {
+        options.onSuccess();
+      });
+
+      render(<ImportFlow />);
+
+      const file = new File(['content'], 'test.zip', {
+        type: 'application/zip'
+      });
+      const dropZone = screen.getByTestId('drop-zone');
+
+      fireEvent.dragOver(dropZone);
+      fireEvent.drop(dropZone, {
+        dataTransfer: {
+          files: [file]
+        }
+      });
+
+      await vi.waitFor(() =>
+        expect(screen.getAllByText('test.zip')).toBeDefined()
+      );
+
+      const successButton = screen.getByTestId('success-button');
+      fireEvent.click(successButton);
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith(
+          PageRoutes.RESPONSES_SUCCESS,
+          {
+            state: {
+              category: 'reporting-import'
+            }
+          }
+        );
+      });
+    });
   });
 
   describe('select config', () => {
@@ -99,6 +295,7 @@ describe('ImportFlow', () => {
         expect(listbox.getByText(option)).toBeDefined();
       });
     });
+
     it('should enable button when a file is uploaded and a flow type is selected', async () => {
       render(<ImportFlow />);
 
@@ -132,6 +329,60 @@ describe('ImportFlow', () => {
         'disabled',
         false
       );
+    });
+
+    it('handles 4xx error for treasury category', async () => {
+      const mockError = {
+        response: {
+          status: 403
+        }
+      };
+
+      mockUploadMutate.mockImplementation((_file, options) => {
+        options.onError(mockError);
+      });
+
+      render(<ImportFlow />);
+
+      const file = new File(['content'], 'test.zip', {
+        type: 'application/zip'
+      });
+      const dropZone = screen.getByTestId('drop-zone');
+
+      fireEvent.dragOver(dropZone);
+      fireEvent.drop(dropZone, {
+        dataTransfer: {
+          files: [file]
+        }
+      });
+
+      await vi.waitFor(() =>
+        expect(screen.getAllByText('test.zip')).toBeDefined()
+      );
+
+      const successButton = screen.getByTestId('success-button');
+      fireEvent.click(successButton);
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
+          state: {
+            category: 'treasury-import',
+            errorType: '4xx',
+            statusCode: 403
+          }
+        });
+      });
+    });
+
+    it('does not upload when no file is selected', () => {
+      render(<ImportFlow />);
+
+      const successButton = screen.getByTestId('success-button');
+      expect(successButton).toHaveProperty('disabled', true);
+
+      fireEvent.click(successButton);
+
+      expect(mockUploadMutate).not.toHaveBeenCalled();
     });
   });
 });
