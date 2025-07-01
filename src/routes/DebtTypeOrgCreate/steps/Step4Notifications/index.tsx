@@ -38,7 +38,7 @@ export const Step4Notifications = () => {
             <Stack gap={0.5}>
               <FormComponent.ControlledTextField
                 name="serviceId"
-                data-testId="serviceId"
+                data-testid="serviceId"
                 control={control}
                 label={t('debtTypeOrgCreate.notifications.serviceApiKey.label')}
                 required
@@ -50,7 +50,7 @@ export const Step4Notifications = () => {
             <Stack gap={0.5}>
               <FormComponent.ControlledTextField
                 name="ioTemplateSubject"
-                data-testId="ioTemplateSubject"
+                data-testid="ioTemplateSubject"
                 control={control}
                 label={t(
                   'debtTypeOrgCreate.notifications.messageSubject.label'
@@ -75,7 +75,7 @@ export const Step4Notifications = () => {
             <Stack gap={0.5}>
               <FormComponent.ControlledTextField
                 name="ioTemplateMessage"
-                data-testId="ioTemplateMessage"
+                data-testid="ioTemplateMessage"
                 control={control}
                 label={t('debtTypeOrgCreate.notifications.messageBody.label')}
                 multiline
