@@ -39,12 +39,79 @@ export const RegistryDetailPage: React.FC = () => {
     );
   }
 
-  const hasError = !!error;
-  const hasData = !!registry;
-  const showNotFound = !isLoading && !hasData && !hasError;
-  const showContent = hasData;
+  if (error) {
+    return (
+      <Box sx={{ padding: 2, maxWidth: '1200px', margin: '0 auto' }}>
+        <Alert severity="error">{t('registry.detail.loadError')}</Alert>
+      </Box>
+    );
+  }
 
-  const sections = hasData ? mapRegistryToDetailSections(registry, t) : null;
+  if (!registry && !isLoading) {
+    return (
+      <Box sx={{ padding: 2, maxWidth: '1200px', margin: '0 auto' }}>
+        <Alert severity="warning">{t('registry.detail.notFound')}</Alert>
+      </Box>
+    );
+  }
+
+  const sections = registry ? mapRegistryToDetailSections(registry, t) : null;
+
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <Grid container spacing={3}>
+          <Grid item md={6}>
+            <DetailContainer sections={[]} data-testid="event-container" />
+          </Grid>
+          <Grid item md={6}>
+            <Grid container spacing={3}>
+              <Grid item xs={12}>
+                <DetailContainer sections={[]} data-testid="detail-container" />
+              </Grid>
+              <Grid item xs={12}>
+                <DetailContainer
+                  sections={[]}
+                  data-testid="specific-parameters-container"
+                />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      );
+    }
+
+    if (!sections) {
+      return null;
+    }
+
+    return (
+      <Grid container spacing={3}>
+        <Grid item md={6}>
+          <DetailContainer
+            sections={[sections[0]]}
+            data-testid="event-container"
+          />
+        </Grid>
+        <Grid item md={6}>
+          <Grid container spacing={3}>
+            <Grid item xs={12}>
+              <DetailContainer
+                sections={[sections[1]]}
+                data-testid="detail-container"
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <DetailContainer
+                sections={[sections[2]]}
+                data-testid="specific-parameters-container"
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+      </Grid>
+    );
+  };
 
   return (
     <Box sx={{ padding: 2, maxWidth: '1200px', margin: '0 auto' }}>
@@ -59,40 +126,7 @@ export const RegistryDetailPage: React.FC = () => {
         </Typography>
       </Box>
 
-      {hasError && (
-        <Alert severity="error">{t('registry.detail.loadError')}</Alert>
-      )}
-
-      {showNotFound && (
-        <Alert severity="warning">{t('registry.detail.notFound')}</Alert>
-      )}
-
-      {showContent && sections && (
-        <Grid container spacing={3}>
-          <Grid item md={6}>
-            <DetailContainer
-              sections={[sections[0]]}
-              data-testid="event-container"
-            />
-          </Grid>
-          <Grid item md={6}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <DetailContainer
-                  sections={[sections[1]]}
-                  data-testid="detail-container"
-                />
-              </Grid>
-              <Grid item xs={12}>
-                <DetailContainer
-                  sections={[sections[2]]}
-                  data-testid="specific-parameters-container"
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      )}
+      {renderContent()}
     </Box>
   );
 };
