@@ -46,7 +46,7 @@ export const ExpandableCard: React.FC<ExpandableCardProps> = ({
           sx={{
             whiteSpace: 'pre-wrap'
           }}
-          data-testId="specific-params-content"
+          data-testid="specific-params-content"
         >
           {displayContent}
         </Typography>
@@ -55,7 +55,7 @@ export const ExpandableCard: React.FC<ExpandableCardProps> = ({
           placement="top"
           title={copied ? tCommons('commons.copied') : ''}
           open={copied}
-          data-testId="specific-params-copy-tooltip"
+          data-testid="specific-params-copy-tooltip"
         >
           <Button
             onClick={handleCopy}
@@ -65,7 +65,7 @@ export const ExpandableCard: React.FC<ExpandableCardProps> = ({
               padding: 0.5,
               flexShrink: 0
             }}
-            data-testId="specific-params-copy-button"
+            data-testid="specific-params-copy-button"
           >
             <ContentCopy fontSize="small" sx={{ color: 'primary.main' }} />
           </Button>
@@ -85,7 +85,7 @@ export const ExpandableCard: React.FC<ExpandableCardProps> = ({
             textTransform: 'none',
             color: 'primary.main'
           }}
-          data-testId="specific-params-show-button"
+          data-testid="specific-params-show-button"
         >
           {isExpanded ? t('commons.showLess') : t('commons.showMore')}
         </Button>

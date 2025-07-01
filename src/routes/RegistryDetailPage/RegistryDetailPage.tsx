@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router';
-import { Box, Typography, Alert, CircularProgress, Grid } from '@mui/material';
+import { Box, Typography, Alert, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import { useRegistry } from '../../api/registryDetail';
@@ -18,26 +18,12 @@ export const RegistryDetailPage: React.FC = () => {
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  const {
-    data: registry,
-    isLoading,
-    error
-  } = useRegistry(
+  const { data: registry, error } = useRegistry(
     registryType as 'pagopa' | 'sil',
     organizationId,
     registryId || '',
     !!(organizationId && registryId && registryType)
   );
-
-  if (!organizationId) {
-    return (
-      <Box m={2}>
-        <Alert severity="error">
-          {t('registry.detail.noOrganizationError')}
-        </Alert>
-      </Box>
-    );
-  }
 
   if (!registryType || !['pagopa', 'sil'].includes(registryType)) {
     return (
@@ -45,19 +31,6 @@ export const RegistryDetailPage: React.FC = () => {
         <Alert severity="error">
           {t('registry.detail.invalidRegistryTypeError')}
         </Alert>
-      </Box>
-    );
-  }
-
-  if (isLoading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="400px"
-      >
-        <CircularProgress size={40} />
       </Box>
     );
   }
@@ -81,7 +54,7 @@ export const RegistryDetailPage: React.FC = () => {
           variant="h4"
           component="h1"
           gutterBottom
-          data-testId="detail-title"
+          data-testid="detail-title"
         >
           {t('registry.detail.eventDetailTitle')}
         </Typography>
@@ -91,7 +64,7 @@ export const RegistryDetailPage: React.FC = () => {
         <Grid item md={6}>
           <DetailContainer
             sections={[sections[0]]}
-            data-testId="event-container"
+            data-testid="event-container"
           />
         </Grid>
         <Grid item md={6}>
@@ -99,14 +72,14 @@ export const RegistryDetailPage: React.FC = () => {
             <Grid item xs={12}>
               <DetailContainer
                 sections={[sections[1]]}
-                data-testId="detail-container"
+                data-testid="detail-container"
               />
             </Grid>
 
             <Grid item xs={12}>
               <DetailContainer
                 sections={[sections[2]]}
-                data-testId="specific-parameters-container"
+                data-testid="specific-parameters-container"
               />
             </Grid>
           </Grid>
