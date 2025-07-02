@@ -19,7 +19,7 @@ import {
 import React from 'react';
 
 export type DetailData = {
-  label: string;
+  label?: string;
   value?: string | number;
   valueType?: 'amount' | 'date' | 'dateTime' | 'status';
   variant?: 'body1' | 'body2' | 'h6' | 'subtitle1' | 'monospaced';
