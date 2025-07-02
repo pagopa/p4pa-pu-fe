@@ -12,6 +12,7 @@ export type _ControlledSelectProps<T extends FieldValues> = SelectProps & {
   label: string;
   fetchFn?: () => UseQueryResult<SelectOptions>;
   disabled?: boolean;
+  required?: boolean;
 };
 
 export const _ControlledSelect = <T extends FieldValues>({
@@ -36,7 +37,7 @@ export const _ControlledSelect = <T extends FieldValues>({
         <FormComponent.Select
           forwardRef={ref}
           id={name}
-          required
+          required={props.required}
           disabled={
             props.disabled || options.isLoading || !options.data?.length
           }

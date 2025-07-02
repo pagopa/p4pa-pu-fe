@@ -53,12 +53,11 @@ export const Step1Configuration = ({
   const { t } = useTranslation();
 
   const form = useForm<Step1Data>({
-    resolver: zodResolver(schema),
+    resolver: editmode ? undefined : zodResolver(schema),
     mode: 'onTouched'
   });
 
-  const { control, handleSubmit, watch } = form;
-  const organizationType = watch('orgType');
+  const { control, handleSubmit } = form;
 
   const onSubmit = async (values: Step1Data) => {
     if (setData) {
@@ -126,6 +125,8 @@ export const Step1Configuration = ({
               <TaxonomyEdit prefilledData={prefilledData} />
             ) : (
               <TaxonomyFilter
+                requiredFields={true}
+                disableFieldReset={true}
                 render={(fields) => (
                   <Stack
                     gap={2}
@@ -133,19 +134,18 @@ export const Step1Configuration = ({
                   >
                     {/* orgType is always visible */}
                     {fields.orgType}
-                    {/* Render rest only if orgType is selected */}
-                    {organizationType && (
-                      <>
-                        <Stack direction="row" gap={2}>
-                          {fields.macroAreaCode}
-                          {fields.serviceTypeCode}
-                        </Stack>
-                        <Stack direction="row" gap={2}>
-                          {fields.collectingReason}
-                          {fields.taxonomyCode}
-                        </Stack>
-                      </>
-                    )}
+                    {/* 
+                      In creation mode (requiredFields=true), show all fields to allow validation errors
+                      In search mode, show fields only if orgType is selected
+                    */}
+                    <Stack direction="row" gap={2}>
+                      {fields.macroAreaCode}
+                      {fields.serviceTypeCode}
+                    </Stack>
+                    <Stack direction="row" gap={2}>
+                      {fields.collectingReason}
+                      {fields.taxonomyCode}
+                    </Stack>
                   </Stack>
                 )}
               />

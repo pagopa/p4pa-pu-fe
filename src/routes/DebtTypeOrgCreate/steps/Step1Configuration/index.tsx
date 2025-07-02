@@ -121,7 +121,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
           name="debtPositionTypeId"
           disabled={!selectionQuery?.data?.optionsMap?.length || edit}
           options={selectionQuery?.data?.optionsMap}
-          data-testId="debtPositionTypeId"
+          data-testid="debtPositionTypeId"
         />
       </SectionBox>
 
@@ -133,7 +133,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
         <Stack direction="row" spacing={3}>
           <FormComponent.ControlledTextField
             name="code"
-            data-testId="code"
+            data-testid="code"
             sx={{ flex: 1 }}
             control={control}
             label={t('debtTypeOrgCreate.configuration.code.label')}
@@ -143,7 +143,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
           <Stack flex={3}>
             <FormComponent.ControlledTextField
               name="description"
-              data-testId="description"
+              data-testid="description"
               control={control}
               disabled={edit}
               label={t('debtTypeOrgCreate.configuration.description.label')}

@@ -30,7 +30,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
       <FormComponent.ControlledSwitch
         control={control}
         name="flagSpontaneous"
-        data-testId="flagSpontaneous"
+        data-testid="flagSpontaneous"
         label={t('debtTypeOrgCreate.behaviour.postalAccount')}
         disabled={edit}
       />
@@ -45,7 +45,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
           <PaymentMethodSelector
             control={control}
             name="paymentMethod"
-            data-testId="paymentMethod"
+            data-testid="paymentMethod"
             selectedValue={watch('paymentMethod')}
             edit={edit}
           />
@@ -58,7 +58,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
           <FormComponent.ControlledCheckbox
             control={control}
             name="flagMandatoryDueDate"
-            data-testId="flagMandatoryDueDate"
+            data-testid="flagMandatoryDueDate"
             label={t('debtTypeOrgCreate.behaviour.optionA.label')}
             description={t('debtTypeOrgCreate.behaviour.optionA.description')}
             disabled={edit}
@@ -66,7 +66,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
           <FormComponent.ControlledCheckbox
             control={control}
             name="flagAnonymousFiscalCode"
-            data-testId="flagAnonymousFiscalCode"
+            data-testid="flagAnonymousFiscalCode"
             label={t('debtTypeOrgCreate.behaviour.optionB.label')}
             description={t('debtTypeOrgCreate.behaviour.optionB.description')}
             disabled={edit}
@@ -80,7 +80,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
       >
         <FormComponent.ControlledRadioGroup
           name="flagNotifyOutcomePush"
-          data-testId="flagNotifyOutcomePush"
+          data-testid="flagNotifyOutcomePush"
           control={control}
           label={t('debtTypeOrgCreate.behaviour.notifications.radioLabel')}
           sx={{ flexDirection: 'row' }}

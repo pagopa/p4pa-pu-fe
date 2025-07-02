@@ -53,4 +53,52 @@ describe('noFilterSetted', () => {
       })
     ).toBe(false);
   });
+
+  it('should return false when date is not correct but other filters', () => {
+    expect(
+      noFilterSetted({
+        name: '',
+        city: '  ',
+        active: false,
+        count: 42,
+        date: { from: null, to: null }
+      })
+    ).toBe(false);
+  });
+
+  it('should return true when date is not correct', () => {
+    expect(
+      noFilterSetted({
+        name: '',
+        city: '  ',
+        active: '',
+        count: '',
+        date: { from: null, to: null }
+      })
+    ).toBe(true);
+  });
+
+  it('should return true when date is not correct (only one date from the range exists)', () => {
+    expect(
+      noFilterSetted({
+        name: '',
+        city: '  ',
+        active: '',
+        count: '',
+        date: { from: new Date(), to: null }
+      })
+    ).toBe(true);
+  });
+
+  it('should return true when date is not correct (only one date from the range exists)', () => {
+    expect(
+      noFilterSetted({
+        name: '',
+        city: '  ',
+        active: '',
+        count: '',
+        date: { from: new Date(), to: new Date() }
+      })
+    ).toBe(false);
+  });
 });
