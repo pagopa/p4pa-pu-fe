@@ -39,9 +39,13 @@ vi.mock('../../components/TitleComponent/TitleComponent', () => ({
   default: vi.fn(({ title }) => <div>{title}</div>)
 }));
 
-vi.mock('../../components/FilterContainer/FilterContainer', () => ({
-  default: vi.fn(() => <div>FilterContainer</div>)
-}));
+vi.mock(
+  '../../components/FilterContainer/FilterContainer',
+  async (importOriginal) => ({
+    ...(await importOriginal()),
+    default: vi.fn(() => <div>FilterContainer</div>)
+  })
+);
 
 describe('TelematicReceiptSearchResults', () => {
   it('should render correctly', () => {
