@@ -1,8 +1,8 @@
 import { useStore } from '../../store/GlobalStore';
-import { useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import { getClassificationDetail } from '../../api/getClassificationDetail';
 import { Stack, Tab, useTheme } from '@mui/material';
-import { SyntheticEvent, useState } from 'react';
+import { SyntheticEvent, useState, useEffect } from 'react';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import DetailContainer, {
   DetailData
@@ -11,16 +11,34 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { useTranslation } from 'react-i18next';
 
 import TitleComponent from '../TitleComponent/TitleComponent';
+import { PageRoutes } from '../../routes';
 
 export const ClassificationDetails = () => {
   const store = useStore();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const organizationId = store.state.organizationId;
   const { classificationId } = useParams();
-  const { data } = getClassificationDetail(
+  const { data, isError, error } = getClassificationDetail(
     organizationId,
     Number(classificationId)
   );
+
+  useEffect(() => {
+    if (isNaN(Number(classificationId))) {
+      navigate(PageRoutes.RESPONSES_ERROR);
+      return;
+    }
+    if (isError && error) {
+      console.error('Error loading classification detail:', error);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [classificationId, isError, error, navigate]);
+
+  if (isNaN(Number(classificationId))) {
+    return null;
+  }
+
   const [tabIndex, setTabIndex] = useState(0);
   const theme = useTheme();
   const handleChange = (_event: SyntheticEvent, value: number) => {
@@ -36,7 +54,7 @@ export const ClassificationDetails = () => {
     },
     {
       label: t(`${targetTransalationDebtType}.paymentObject`),
-      value: 'toBeDefined'
+      value: data?.remittanceInformation
     },
     {
       label: t(`${targetTransalationDebtType}.receiptPaymentAmount`),
@@ -91,35 +109,36 @@ export const ClassificationDetails = () => {
   const notifiedPaymentData: Array<DetailData> = [
     {
       label: t(`${targetTransalationNotifiedPayment}.debtType`),
-      value: 'toBeDefined'
+      value: data?.paymentNotificationDebtPositionTypeOrgCode
     },
     {
       label: t(`${targetTransalationNotifiedPayment}.paymentObject`),
-      value: 'toBeDefined'
+      value: data?.paymentNotificationRemittanceInformation
     },
     {
       label: t(`${targetTransalationNotifiedPayment}.amount`),
-      value: 'toBeDefined'
+      value: data?.paymentNotificationAmountPaidCents
     },
     {
       label: t(`${targetTransalationNotifiedPayment}.receiptPayerFullName`),
-      value: 'toBeDefined'
+      value: data?.paymentNotificationDebtor?.fullName
     },
     {
       label: t(`${targetTransalationNotifiedPayment}.receiptPayerFiscalCode`),
-      value: 'toBeDefined'
+      value: data?.paymentNotificationDebtor?.fiscalCode
     },
     {
       label: t(`${targetTransalationNotifiedPayment}.esecutionDate`),
+      value: data?.paymentExecutionDate,
       valueType: 'date'
     },
-    {
-      label: t(`${targetTransalationNotifiedPayment}.otherdata`),
-      value: 'toBeDefined'
-    },
+    // {
+    //   label: t(`${targetTransalationNotifiedPayment}.otherdata`),
+    //   value: 'toBeDefined'
+    // },
     {
       label: t(`${targetTransalationNotifiedPayment}.iud`),
-      value: 'toBeDefined'
+      value: data?.paymentNotificationIud
     }
   ];
 
@@ -155,11 +174,11 @@ export const ClassificationDetails = () => {
   const earningsData: Array<DetailData> = [
     {
       label: t(`${targetTransalationEarnings}.accountCode`),
-      value: 'toBeDefined'
+      value: data?.sealCode
     },
     {
-      label: t(`${targetTransalationEarnings}.pspFirstName`),
-      value: 'toBeDefined'
+      label: t(`${targetTransalationEarnings}.pspLastName`),
+      value: data?.pspLastName
     },
     {
       label: t(`${targetTransalationEarnings}.documentCode`),
@@ -177,7 +196,7 @@ export const ClassificationDetails = () => {
     },
     {
       label: t(`${targetTransalationEarnings}.provisionalAe`),
-      value: 'toBeDefined'
+      value: data?.provisionalAe
     },
     {
       label: t(`${targetTransalationEarnings}.receptionDate`),
@@ -190,7 +209,7 @@ export const ClassificationDetails = () => {
     },
     {
       label: t(`${targetTransalationEarnings}.provisionalCode`),
-      value: 'toBeDefined'
+      value: data?.provisionalCode
     }
   ];
 
@@ -242,7 +261,16 @@ export const ClassificationDetails = () => {
                     footerLink: {
                       label: t(`${targetTransalationDebtType}.link`),
                       icon: <ArrowRightAltIcon />,
-                      iconPosition: 'right'
+                      iconPosition: 'right',
+                      onLinkClick: () => {
+                        if (data?.receiptPaymentReceiptId) {
+                          navigate(
+                            generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
+                              id: data.receiptPaymentRequestId
+                            })
+                          );
+                        }
+                      }
                     }
                   }
                 ]}
@@ -282,7 +310,16 @@ export const ClassificationDetails = () => {
                   footerLink: {
                     label: t(`${targetTransalationReporting}.link`),
                     icon: <ArrowRightAltIcon />,
-                    iconPosition: 'right'
+                    iconPosition: 'right',
+                    onLinkClick: () => {
+                      if (data?.treasuryId) {
+                        navigate(
+                          generatePath(PageRoutes.REPORTING_DETAIL, {
+                            id: data.paymentsReportingId
+                          })
+                        );
+                      }
+                    }
                   }
                 }
               ]}
@@ -307,7 +344,16 @@ export const ClassificationDetails = () => {
                   footerLink: {
                     label: t(`${targetTransalationEarnings}.link`),
                     icon: <ArrowRightAltIcon />,
-                    iconPosition: 'right'
+                    iconPosition: 'right',
+                    onLinkClick: () => {
+                      if (data?.paymentsReportingId) {
+                        navigate(
+                          generatePath(PageRoutes.TREASURY_DETAIL, {
+                            id: data.treasuryId
+                          })
+                        );
+                      }
+                    }
                   }
                 }
               ]}

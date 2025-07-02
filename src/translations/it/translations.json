@@ -86,7 +86,7 @@
         "earnings": {
           "title": "Giornale di cassa",
           "accountCode": "Conto",
-          "pspFirstName": "Ordinante",
+          "pspLastName": "Ordinante",
           "documentCode": "Codice documento",
           "billDate": "Data Valuta",
           "billYear": "Anno bolletta",
