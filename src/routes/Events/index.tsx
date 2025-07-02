@@ -19,8 +19,8 @@ import utils from '../../utils';
 import { noFilterSetted } from '../../utils/filtersValidation';
 
 // Create a deep copy of filterValues to avoid mutating the state directly
-function deepCopy<T>(obj: T): T {
-  return structuredClone(obj);
+function deepCopy<T>(obj: T) {
+  return structuredClone<T>(obj);
 }
 
 const EventPage = () => {
@@ -63,25 +63,22 @@ const EventPage = () => {
 
   const testFilterValidity = (
     filterValues: NodoFilterValues | SilFilterValues
-  ) => noFilterSetted(filterValues);
+  ) => !noFilterSetted(filterValues);
 
   const handleSubmit = async () => {
     setError(false);
-    const activeFilterValues = filterValues[activeTabIndex];
-    if (testFilterValidity(activeFilterValues)) {
+
+    if (!testFilterValidity(filterValues[activeTabIndex])) {
       setError(true);
       return;
     }
     try {
       if (activeTabIndex === 0) {
-        const query = getQueryFromFilterValues(
-          activeFilterValues as SilFilterValues
-        );
+        const query = getQueryFromFilterValues(filterValues[activeTabIndex]);
         await getSilRegistriesMutation.mutateAsync(query);
-      } else {
-        const query = getQueryFromFilterValues(
-          activeFilterValues as NodoFilterValues
-        );
+      }
+      if (activeTabIndex === 1) {
+        const query = getQueryFromFilterValues(filterValues[activeTabIndex]);
         await getPagoPaRegistriesMutation.mutateAsync(query);
       }
     } catch {

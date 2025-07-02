@@ -8,7 +8,7 @@ type Query = Parameters<typeof utils.apiClient.bff.getPagoPaRegistries>['1'];
 
 const getPagoPaRegistries = (organizationId: OrgID) =>
   useMutation({
-    mutationKey: ['getPagoPaRegistry', organizationId],
+    mutationKey: ['getPagoPaRegistries', organizationId],
     mutationFn: async (query: Query) => {
       const { data: response } = await utils.apiClient.bff.getPagoPaRegistries(
         organizationId,

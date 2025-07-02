@@ -8,7 +8,7 @@ type Query = Parameters<typeof utils.apiClient.bff.getSilRegistries>['1'];
 
 const getSilRegistries = (organizationId: OrgID) =>
   useMutation({
-    mutationKey: ['getSilRegistry', organizationId],
+    mutationKey: ['getSilRegistries', organizationId],
     mutationFn: async (query: Query) => {
       const { data: response } = await utils.apiClient.bff.getSilRegistries(
         organizationId,
