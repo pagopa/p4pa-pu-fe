@@ -73,9 +73,13 @@ vi.mock('../../components/TitleComponent/TitleComponent', () => ({
   )
 }));
 
-vi.mock('../../components/FilterContainer/FilterContainer', () => ({
-  default: vi.fn(() => <div>FilterContainer</div>)
-}));
+vi.mock(
+  '../../components/FilterContainer/FilterContainer',
+  async (importOriginal) => ({
+    ...(await importOriginal()),
+    default: vi.fn(() => <div>FilterContainer</div>)
+  })
+);
 
 vi.mock('./components/DebtPositionIUVDataGrid', () => ({
   IUVDataGrid: vi.fn(() => <div>IUVDataGrid</div>)

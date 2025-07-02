@@ -1,12 +1,12 @@
-import SearchCard from '../SearchCard/SearchCard';
+import SearchCard, { ErrorMessage } from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { Download, Upload } from '@mui/icons-material';
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
-import { ReactNode, useCallback, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { noFilterSetted } from '../../utils/filtersValidation';
 
@@ -15,16 +15,6 @@ export const TelematicReceipt = () => {
   const navigate = useNavigate();
   const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}]);
   const [error, setError] = useState<boolean>(false);
-  const errorMessage: ReactNode = (
-    <Typography
-      variant="body2"
-      color="error"
-      mt={2}
-      data-testid="multifilters-error-text"
-    >
-      {t('commons.filters.atLeastOneFilter')}
-    </Typography>
-  );
 
   const navigateToResults = useCallback(() => {
     if (!noFilterSetted(filters[0])) {
@@ -73,7 +63,7 @@ export const TelematicReceipt = () => {
               filterContext="TELEMATIC"
               filterValues={filters[0]}
               onFilterChange={handleFilterChange}
-              render={error && errorMessage}
+              render={error && ErrorMessage}
               button={[
                 {
                   label: t('commons.filters.remove'),
