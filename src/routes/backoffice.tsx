@@ -7,6 +7,7 @@ import { SuperAdminRouteGuard } from '../components/RouteGuard/RouteGuard';
 import TaxonomySearchResults from './TaxonomySearchResults';
 import { RegistryDetailPage } from './RegistryDetailPage/RegistryDetailPage';
 import EventPage from './Events';
+import EventList from './Eventlist';
 
 const deployPath = config.deployPath;
 
@@ -71,11 +72,7 @@ export const backofficeRoutes = [
           {
             id: 'BACKOFFICE_REGISTRY_LIST',
             path: ':registryType',
-            element: (
-              <div>
-                <Outlet />
-              </div>
-            ),
+            element: <EventList />,
             handle: {
               backButton: true
             },

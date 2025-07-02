@@ -113,6 +113,7 @@ export const DebtPositionResults = () => {
     [searchType, t]
   );
 
+  console.log(filters);
   return (
     <Stack gap={5}>
       <TitleComponent title={title} callToAction={callToAction} />

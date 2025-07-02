@@ -11,7 +11,7 @@ import { TabsConfig } from '../../components/SearchCard/SearchCard';
 import i118n from '../../translations/i18n';
 import { BaseFilterValues } from '../../models/Filters';
 
-const silFields: Array<FilterItem> = [
+export const silFields: Array<FilterItem> = [
   {
     type: COMPONENT_TYPE.textField,
     label: i118n.t('events.searchIUVDescription'),
@@ -37,7 +37,7 @@ const silFields: Array<FilterItem> = [
   }
 ];
 
-const nodoFields: Array<FilterItem> = [
+export const nodoFields: Array<FilterItem> = [
   {
     type: COMPONENT_TYPE.textField,
     label: i118n.t('events.searchIUVDescription'),
