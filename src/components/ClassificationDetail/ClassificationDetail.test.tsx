@@ -5,7 +5,7 @@ import ClassificationsDetail from './';
 import * as classificationService from '../../api/getClassificationDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { createMock } from 'zodock';
-import { classificationDetailViewDTOSchema } from '../../../generated/zod-schema';
+import { classificationDetailDTOSchema } from '../../../generated/zod-schema';
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal();
@@ -17,7 +17,7 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
-const mockData = createMock(classificationDetailViewDTOSchema);
+const mockData = createMock(classificationDetailDTOSchema);
 vi.mock('../../utils', () => ({
   apiClient: {
     bff: {

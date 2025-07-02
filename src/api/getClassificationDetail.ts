@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { classificationDetailViewDTOSchema } from '../../generated/zod-schema';
+import { classificationDetailDTOSchema } from '../../generated/zod-schema';
 
 export const getClassificationDetail = (
   organizationId: number,
@@ -16,7 +16,7 @@ export const getClassificationDetail = (
           classificationId
         );
       if (classificationDetail) {
-        parseAndLog(classificationDetailViewDTOSchema, classificationDetail);
+        parseAndLog(classificationDetailDTOSchema, classificationDetail);
       }
       return classificationDetail;
     }
