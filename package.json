@@ -72,6 +72,7 @@
     ]
   },
   "name": "vite-project",
+  "packageManager": "yarn@4.9.2",
   "private": true,
   "scripts": {
     "generate-api-client": "swagger-typescript-api --extract-enums -p https://raw.githubusercontent.com/pagopa/p4pa-pu-bff/refs/heads/develop/openapi/generated.openapi.json -o ./generated -n apiClient --axios",
@@ -93,6 +94,5 @@
     "sort-translations": "node scripts/sort-translations.js"
   },
   "type": "module",
-  "version": "0.0.0",
-  "packageManager": "yarn@4.9.2"
+  "version": "0.0.0"
 }
