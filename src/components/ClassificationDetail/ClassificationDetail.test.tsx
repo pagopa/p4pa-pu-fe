@@ -8,9 +8,9 @@ import { createMock } from 'zodock';
 import { classificationDetailViewDTOSchema } from '../../../generated/zod-schema';
 
 vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof import('react-router')>();
   return {
-    ...(actual as any),
+    ...actual,
     useParams: () => ({
       classificationId: '673'
     })
@@ -18,13 +18,34 @@ vi.mock('react-router', async (importOriginal) => {
 });
 
 const mockData = createMock(classificationDetailViewDTOSchema);
-vi.mock('../../utils', () => ({
-  apiClient: {
+
+vi.mock('../../utils', () => {
+  const mockConfig = {
+    deployPath: '/test',
+    baseURL: 'http://test',
+    apiTimeout: 5000,
+    fileshareURL: 'http://test-fileshare'
+  };
+  const mockApiClient = {
     bff: {
       getClassificationDetails: () => ({ data: mockData })
     }
-  }
-}));
+  };
+
+  return {
+    default: {
+      config: mockConfig,
+      apiClient: mockApiClient,
+      loaders: {},
+      sidemenu: {},
+      style: {},
+      storage: {},
+      notify: { emit: vi.fn() },
+      roles: {},
+      filtersValidation: {}
+    }
+  };
+});
 
 setOrganizationId(2);
 
@@ -46,7 +67,14 @@ describe('Classifications Detail:', () => {
     vi.spyOn(
       classificationService,
       'getClassificationDetail'
-    ).mockImplementation(() => ({ data: mockData }) as any);
+    ).mockImplementation(
+      () =>
+        ({
+          data: mockData,
+          isError: false,
+          error: null
+        }) as ReturnType<typeof classificationService.getClassificationDetail>
+    );
 
     render(<ClassificationsDetail />);
 
