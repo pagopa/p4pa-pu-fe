@@ -98,10 +98,12 @@ const DetailContainer = ({
                 );
               }
               if (item.valueType === 'date') {
-                return formatDate(`${item.value}`);
+                const formattedDate = formatDate(`${item.value}`);
+                return formattedDate || '-';
               }
               if (item.valueType === 'dateTime') {
-                return formatDateTime(`${item.value}`);
+                const formattedDateTime = formatDateTime(`${item.value}`);
+                return formattedDateTime || '-';
               }
               return item.value || '-';
             })()
