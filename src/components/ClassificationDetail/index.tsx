@@ -132,10 +132,6 @@ export const ClassificationDetails = () => {
       value: data?.paymentExecutionDate,
       valueType: 'date'
     },
-    // {
-    //   label: t(`${targetTransalationNotifiedPayment}.otherdata`),
-    //   value: 'toBeDefined'
-    // },
     {
       label: t(`${targetTransalationNotifiedPayment}.iud`),
       value: data?.paymentNotificationIud
