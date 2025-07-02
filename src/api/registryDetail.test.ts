@@ -8,6 +8,15 @@ import {
   useRegistry
 } from './registryDetail';
 import { RequestParams } from '../../generated/apiClient';
+import {
+  PagoPaRegistryDTO,
+  SilRegistryDTO,
+  RegistryEventCategory,
+  RegistryPagoPaEventType,
+  RegistryEventSubType,
+  RegistryOutcome,
+  RegistrySilEventType
+} from '../../generated/data-contracts';
 
 vi.mock('../utils', async () => {
   const actual = await vi.importActual<typeof import('../utils')>('../utils');
@@ -22,23 +31,54 @@ vi.mock('../utils', async () => {
   };
 });
 
+vi.mock('../utils/loaders', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../utils/loaders')>();
+  return {
+    ...actual,
+    parseAndLog: vi.fn()
+  };
+});
+
 describe('registryDetail hooks', () => {
   const mockOrganizationId = 123;
   const mockRegistryId = 'test-registry-id';
   const mockParams: RequestParams = {};
 
-  const mockPagoPaData = {
-    id: 'pagopa-123',
-    name: 'PagoPA Registry',
-    type: 'pagopa',
-    status: 'active'
+  const mockPagoPaData: PagoPaRegistryDTO = {
+    registryId: 'pagopa-123',
+    dateTime: '2023-12-01T10:00:00Z',
+    traceId: 'trace-123',
+    brokerStationId: 'station-123',
+    orgFiscalCode: '12345678901',
+    iuv: 'IUV123456789',
+    nav: 'NAV123456789',
+    ccp: 'CCP123',
+    pspId: 'PSP001',
+    pspChannelId: 'CHANNEL001',
+    paymentMethod: 'CARD',
+    eventCategory: RegistryEventCategory.INTERFACCIA,
+    eventType: RegistryPagoPaEventType.PaVerifyPaymentNotice,
+    eventSubType: RegistryEventSubType.REQ,
+    requestorId: 'REQ001',
+    grantorId: 'GRANT001',
+    outcome: RegistryOutcome.OK,
+    body: '{"test": "data"}'
   };
 
-  const mockSilData = {
-    id: 'sil-456',
-    name: 'SIL Registry',
-    type: 'sil',
-    status: 'active'
+  const mockSilData: SilRegistryDTO = {
+    registryId: 'sil-456',
+    dateTime: '2023-12-01T10:00:00Z',
+    traceId: 'trace-456',
+    brokerFiscalCode: '98765432100',
+    orgFiscalCode: '12345678901',
+    iuv: 'IUV987654321',
+    nav: 'NAV987654321',
+    eventType: RegistrySilEventType.PaaSILImportaDovuto,
+    eventSubType: RegistryEventSubType.REQ,
+    requestorId: 'REQ002',
+    grantorId: 'GRANT002',
+    outcome: RegistryOutcome.OK,
+    body: '{"test": "sil data"}'
   };
 
   beforeEach(() => {

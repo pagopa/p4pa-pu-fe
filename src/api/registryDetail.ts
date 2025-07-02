@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
 import { RequestParams } from '../../generated/apiClient';
 import utils from '../utils';
+import { parseAndLog } from '../utils/loaders';
+import {
+  pagoPaRegistryDTOSchema,
+  silRegistryDTOSchema
+} from '../../generated/zod-schema';
 
 export const usePagoPaRegistry = (
   organizationId: number,
@@ -16,6 +21,9 @@ export const usePagoPaRegistry = (
         registryId,
         params
       );
+      if (response.data) {
+        parseAndLog(pagoPaRegistryDTOSchema, response.data);
+      }
       return response.data;
     },
     enabled: enabled && !!organizationId && !!registryId
@@ -35,6 +43,9 @@ export const useSilRegistry = (
         registryId,
         params
       );
+      if (response.data) {
+        parseAndLog(silRegistryDTOSchema, response.data);
+      }
       return response.data;
     },
     enabled: enabled && !!organizationId && !!registryId

@@ -58,29 +58,6 @@ export const RegistryDetailPage: React.FC = () => {
   const sections = registry ? mapRegistryToDetailSections(registry, t) : null;
 
   const renderContent = () => {
-    if (isLoading) {
-      return (
-        <Grid container spacing={3}>
-          <Grid item md={6}>
-            <DetailContainer sections={[]} data-testid="event-container" />
-          </Grid>
-          <Grid item md={6}>
-            <Grid container spacing={3}>
-              <Grid item xs={12}>
-                <DetailContainer sections={[]} data-testid="detail-container" />
-              </Grid>
-              <Grid item xs={12}>
-                <DetailContainer
-                  sections={[]}
-                  data-testid="specific-parameters-container"
-                />
-              </Grid>
-            </Grid>
-          </Grid>
-        </Grid>
-      );
-    }
-
     if (!sections) {
       return null;
     }
