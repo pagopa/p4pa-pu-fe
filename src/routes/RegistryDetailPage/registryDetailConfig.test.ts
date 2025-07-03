@@ -53,7 +53,7 @@ describe('registryDetailConfig', () => {
     iuv: 'iuv-test-123',
     nav: 'nav-test-456',
     eventCategory: RegistryEventCategory.INTERFACCIA,
-    eventType: RegistryPagoPaEventType.PaVerifyPaymentNotice,
+    eventType: RegistryPagoPaEventType.PaForNodePaVerifyPaymentNotice,
     eventSubType: RegistryEventSubType.REQ,
     requestorId: 'requestor-123',
     grantorId: 'grantor-456',
@@ -71,7 +71,7 @@ describe('registryDetailConfig', () => {
     orgFiscalCode: '12345678901',
     iuv: 'iuv-sil-789',
     nav: 'nav-sil-012',
-    eventType: RegistrySilEventType.PaaSILAutorizzaImportFlusso,
+    eventType: RegistrySilEventType.PTDPPaaSILImportaDovuto,
     eventSubType: RegistryEventSubType.RESP,
     requestorId: 'sil-requestor-789',
     grantorId: 'sil-grantor-012',
@@ -100,7 +100,7 @@ describe('registryDetailConfig', () => {
       it('should handle edge cases with minimal data', () => {
         const minimalPagoPaRegistry = {
           eventCategory: RegistryEventCategory.INTERNO,
-          eventType: RegistryPagoPaEventType.PaGetPaymentV2,
+          eventType: RegistryPagoPaEventType.PaForNodePaGetPaymentV2,
           eventSubType: RegistryEventSubType.REQ,
           registryId: 'test',
           dateTime: '2024-01-01T00:00:00Z',
@@ -133,7 +133,7 @@ describe('registryDetailConfig', () => {
       it('should handle edge cases with minimal data', () => {
         const minimalSilRegistry = {
           brokerFiscalCode: '98765432109',
-          eventType: RegistrySilEventType.PaaSILImportaDovuto,
+          eventType: RegistrySilEventType.PTDPPaaSILImportaDovuto,
           eventSubType: RegistryEventSubType.REQ,
           registryId: 'test',
           dateTime: '2024-01-01T00:00:00Z',
@@ -261,7 +261,7 @@ describe('registryDetailConfig', () => {
           expect.arrayContaining([
             expect.objectContaining({
               label: 'Tipo Evento',
-              value: RegistrySilEventType.PaaSILAutorizzaImportFlusso
+              value: RegistrySilEventType.PTDPPaaSILImportaDovuto
             }),
             expect.objectContaining({
               label: 'Sotto Tipo Evento',
@@ -362,7 +362,7 @@ describe('registryDetailConfig', () => {
           traceId: 'trace-minimal',
           orgFiscalCode: '12345678901',
           eventCategory: RegistryEventCategory.INTERNO,
-          eventType: RegistryPagoPaEventType.PaGetPaymentV2,
+          eventType: RegistryPagoPaEventType.PaForNodePaGetPaymentV2,
           eventSubType: RegistryEventSubType.REQ,
           requestorId: 'req-minimal',
           grantorId: 'grant-minimal',

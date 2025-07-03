@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { vi, describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import ClassificationsDetail from './';
