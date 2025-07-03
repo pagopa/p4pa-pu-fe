@@ -57,7 +57,7 @@ describe('registryDetail hooks', () => {
     pspChannelId: 'CHANNEL001',
     paymentMethod: 'CARD',
     eventCategory: RegistryEventCategory.INTERFACCIA,
-    eventType: RegistryPagoPaEventType.PaForNodePaGetPaymentV2,
+    eventType: RegistryPagoPaEventType.PaForNodePaVerifyPaymentNotice,
     eventSubType: RegistryEventSubType.REQ,
     requestorId: 'REQ001',
     grantorId: 'GRANT001',

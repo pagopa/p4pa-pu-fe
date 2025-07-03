@@ -53,7 +53,7 @@ describe('registryDetailConfig', () => {
     iuv: 'iuv-test-123',
     nav: 'nav-test-456',
     eventCategory: RegistryEventCategory.INTERFACCIA,
-    eventType: RegistryPagoPaEventType.ACANewDebtPosition,
+    eventType: RegistryPagoPaEventType.PaForNodePaVerifyPaymentNotice,
     eventSubType: RegistryEventSubType.REQ,
     requestorId: 'requestor-123',
     grantorId: 'grantor-456',
@@ -100,7 +100,7 @@ describe('registryDetailConfig', () => {
       it('should handle edge cases with minimal data', () => {
         const minimalPagoPaRegistry = {
           eventCategory: RegistryEventCategory.INTERNO,
-          eventType: RegistryPagoPaEventType.GPDUpdatePosition,
+          eventType: RegistryPagoPaEventType.PaForNodePaGetPaymentV2,
           eventSubType: RegistryEventSubType.REQ,
           registryId: 'test',
           dateTime: '2024-01-01T00:00:00Z',
@@ -133,7 +133,7 @@ describe('registryDetailConfig', () => {
       it('should handle edge cases with minimal data', () => {
         const minimalSilRegistry = {
           brokerFiscalCode: '98765432109',
-          eventType: RegistrySilEventType.PTDPPaaSILAutorizzaImportFlusso,
+          eventType: RegistrySilEventType.PTDPPaaSILImportaDovuto,
           eventSubType: RegistryEventSubType.REQ,
           registryId: 'test',
           dateTime: '2024-01-01T00:00:00Z',

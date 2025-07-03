@@ -72,7 +72,7 @@ describe('RegistryDetailPage', () => {
     orgFiscalCode: '12345678901',
     iuv: 'IUV123456789',
     nav: 'NAV123',
-    eventType: RegistrySilEventType.SILNotificaPagamento,
+    eventType: RegistrySilEventType.PTDPPaaSILImportaDovuto,
     eventSubType: RegistryEventSubType.REQ,
     requestorId: 'requestor-123',
     grantorId: 'grantor-456',
