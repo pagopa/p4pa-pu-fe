@@ -86,7 +86,7 @@
         "earnings": {
           "title": "Giornale di cassa",
           "accountCode": "Conto",
-          "pspFirstName": "Ordinante",
+          "pspLastName": "Ordinante",
           "documentCode": "Codice documento",
           "billDate": "Data Valuta",
           "billYear": "Anno bolletta",
@@ -135,12 +135,14 @@
       "notice": {
         "remittanceInformation": "Oggetto del pagamento",
         "applicant": "Attestante",
-        "paymentDate": "Data pagamento"
+        "paymentDate": "Data pagamento",
+        "paymentDateNotice": "Data pagamento ricevuta"
       },
       "reporting": {
         "title": "Rendicontazione",
         "paymentDate": "Data pagamento",
         "regulationDate": "Data regolamento",
+        "payDateReporting": "Data pagamento rendicontazione",
         "regulationUniqueIdentifier": "Identificativo univoco regolamento"
       },
       "treasury": {
@@ -331,6 +333,7 @@
     "from": "Dal",
     "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
     "importFlow": "Importa flusso",
+    "importFlowErrorMessage": "Non è stato possibile importare il flusso",
     "importFlows": "Importa flussi",
     "importFrom": "Caricati dal",
     "importNewFlow": "Carica un nuovo flusso",
@@ -345,12 +348,14 @@
     "mandatoryDueDate": "Data di Scadenza Obbligatoria",
     "message": "Messaggio",
     "messages": "Messaggi",
+    "nav": "NAV",
     "no": "No",
     "NO_EVENTS": "Nessun evento",
     "noFlows": "Non ci sono flussi.",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
     "notifications": "Notifiche",
     "notificationsConfig": "Configurazione",
+    "notFound": "Risorsa non trovata",
     "operator": "Operatore",
     "operators": "Operatori",
     "optional": "opzionale",
@@ -379,11 +384,14 @@
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
       "BACKOFFICE": "Backoffice",
+      "BACKOFFICE_REGISTRIES": "Giornale degli eventi",
+      "BACKOFFICE_REGISTRY_DETAIL": "Dettaglio evento",
       "BACKOFFICE_TAXONOMY": "Tassonomia",
       "BACKOFFICE_TAXONOMY_INDEX": "Tassonomia",
       "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
       "BACKOFFICE_TAXONOMY_SEARCH_RESULTS": "Risultato ricerca",
-      "CLASSIFICATIONS": "Classificazioni",
+      "BACKOFFICE_EVENTS": "Giornale degli eventi",
+      "CLASSIFICATIONS": "Classificazione pagamenti",
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
@@ -449,6 +457,8 @@
     "serviceUnavailable": "Il servizio è temporaneamente non disponibile, vi preghiamo di riprovare più tardi.",
     "showAllFlows": "Vedi tutti i flussi",
     "showDebtPositions": "Vedi Posizione debitoria",
+    "showLess": "Vedi meno",
+    "showMore": "Vedi di più",
     "showOtherBeneficiaries": "Vedi altri beneficiari",
     "sidebar": {
       "collapse": "Comprimi il menu",
@@ -963,7 +973,7 @@
       "code": {
         "label": "Codice Sistema Gestionale",
         "required": "Il Codice Sistema Gestionale é obbligatorio",
-        "notUnique": "Il Codice Sistema Gestionale deve essere univoco. Codice inserito già esistente."
+        "notUnique": "Codice già esistente. Inserisci un altro codice"
       },
       "description": {
         "label": "Descrizione",
@@ -1027,7 +1037,8 @@
           "helperText": "Seleziona una configurazione per la gestione delle notifiche",
           "editHelperText": "Seleziona una configurazione per la gestione delle notifiche",
           "errorState": "Errore nel recupero delle configurazioni",
-          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione"
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione",
+          "noOptionsHelp": "Non sono presenti configurazioni di notifica"
         }
       },
       "actualization": {
@@ -1041,12 +1052,13 @@
           "errorState": "Errore nel recupero delle configurazioni",
           "helperText": "Una volta selezionata una configurazione per l'attualizzazione sarà possibile modificarla ma non rimuoverla",
           "editHelperText": "È possibile la sola modifica della configurazione, non può essere rimossa",
-          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione"
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione",
+          "noOptionsHelp": "Non sono presenti configurazioni di attualizzazione"
         }
       },
       "errors": {
         "notificationServiceUnavailable": "Servizio di configurazione notifiche non disponibile - alcune opzioni potrebbero essere limitate",
-        "actualizationServiceUnavailable": "Servizio di configurazione attualizzazione non disponibile - alcune opzioni potrebbero essere limitate", 
+        "actualizationServiceUnavailable": "Servizio di configurazione attualizzazione non disponibile - alcune opzioni potrebbero essere limitate",
         "bothServicesUnavailable": "Servizi di configurazione notifiche e attualizzazione non disponibili - alcune opzioni potrebbero essere limitate"
       },
       "updateAmount": {
@@ -1171,6 +1183,25 @@
     "paymentToDate": "Pagamento al",
     "reservationDate": "Data prenotazione",
     "uploadDate": "Data Caricamento"
+  },
+  "registry": {
+    "detail": {
+      "eventDetailTitle": "Dettaglio evento",
+      "event": "Evento",
+      "eventType": "Tipo",
+      "eventSubType": "Sottotipo",
+      "eventCategory": "Categoria",
+      "details": "Dettagli",
+      "outcome": "Esito",
+      "dateTime": "Data Ora Evento",
+      "registryId": "ID Evento",
+      "intermediateStationPA": "Stazione intermediario PA",
+      "paymentChannel": "Canale pagamento",
+      "interfaceSpecificParamsTitle": "Parametri specifici interfaccia",
+      "invalidRegistryTypeError": "Tipo evento non valido",
+      "loadError": "Impossibile caricare i dati",
+      "notFound": "Evento non trovato"
+    }
   },
   "reporting": {
     "description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
@@ -1307,6 +1338,18 @@
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
     "tempDocumentCode": "Codice provvisorio",
     "tempDocumentYear": "Anno codice Provvisorio"
+  },
+  "events": {
+    "searchCardTitle": "Cosa stai cercando?",
+    "searchCardDescription": "Seleziona l’evento che stai cercando e inserisci i filtri per avviare la ricerca.",
+    "tabs": {
+      "sil": "Eventi SIL",
+      "nodo": "Eventi nodo PagoPA"
+    },
+    "searchIUVDescription": "IUV",
+    "searchEventDescription": "Evento",
+    "searchDateFromDescription": "Data dal",
+    "searchDateToDescription": "Al"
   },
   "treasuryImportFlowOverview": {
     "description": "Visualizza i flussi importati in precedenza e importa nuovi."

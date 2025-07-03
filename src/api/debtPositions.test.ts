@@ -18,7 +18,7 @@ import {
   DebtPositionRegistry,
   ManageDebtPositionDTO,
   Action,
-  EntityTypeEnum,
+  PersonEntityType,
   InstallmentRegistry,
   PaymentEventType
 } from '../../generated/data-contracts';
@@ -527,6 +527,7 @@ describe('createDebtPosition', () => {
 
       const organizationId = 3;
       const debtPositionId = 1536;
+      const nav = '123';
 
       const apiMock = vi
         .spyOn(utils.apiClient.bff, 'getInstallmentRegistries')
@@ -538,20 +539,27 @@ describe('createDebtPosition', () => {
         debtPositions.getInstallmentRegistriesMutation()
       );
 
-      result.current.mutate({ organizationId, debtPositionId });
+      result.current.mutate({
+        organizationId,
+        debtPositionId,
+        nav
+      });
 
       await waitFor(() => {
         expect(result.current.data).toEqual(mockInstallmentRegistriesData);
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        nav
+      });
     });
 
     it('handles empty installment registries array correctly', async () => {
       const mockEmptyData: Array<InstallmentRegistry> = [];
       const organizationId = 3;
       const debtPositionId = 1536;
+      const nav = '123';
 
       const apiMock = vi
         .spyOn(utils.apiClient.bff, 'getInstallmentRegistries')
@@ -561,14 +569,20 @@ describe('createDebtPosition', () => {
         debtPositions.getInstallmentRegistriesMutation()
       );
 
-      result.current.mutate({ organizationId, debtPositionId });
+      result.current.mutate({
+        organizationId,
+        debtPositionId,
+        nav
+      });
 
       await waitFor(() => {
         expect(result.current.data).toEqual([]);
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        nav
+      });
     });
 
     it('handles null/undefined installment registries data gracefully', async () => {
@@ -583,19 +597,26 @@ describe('createDebtPosition', () => {
         debtPositions.getInstallmentRegistriesMutation()
       );
 
-      result.current.mutate({ organizationId, debtPositionId });
+      result.current.mutate({
+        organizationId,
+        debtPositionId,
+        nav: ''
+      });
 
       await waitFor(() => {
         expect(result.current.data).toEqual([]);
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        nav: ''
+      });
     });
 
     it('handles API errors correctly for installment registries', async () => {
       const organizationId = 3;
       const debtPositionId = 1536;
+      const nav = '123';
       const error = new Error(
         'API Error: Failed to fetch installment registries'
       );
@@ -609,7 +630,11 @@ describe('createDebtPosition', () => {
         debtPositions.getInstallmentRegistriesMutation()
       );
 
-      result.current.mutate({ organizationId, debtPositionId });
+      result.current.mutate({
+        organizationId,
+        debtPositionId,
+        nav
+      });
 
       await waitFor(() => {
         expect(result.current.isError).toBe(true);
@@ -648,6 +673,7 @@ describe('createDebtPosition', () => {
 
       const organizationId = 3;
       const debtPositionId = 1536;
+      const nav = '123';
 
       const apiMock = vi
         .spyOn(utils.apiClient.bff, 'getInstallmentRegistries')
@@ -659,7 +685,11 @@ describe('createDebtPosition', () => {
         debtPositions.getInstallmentRegistriesMutation()
       );
 
-      result.current.mutate({ organizationId, debtPositionId });
+      result.current.mutate({
+        organizationId,
+        debtPositionId,
+        nav
+      });
 
       await waitFor(() => {
         expect(result.current.data).toEqual(
@@ -669,7 +699,9 @@ describe('createDebtPosition', () => {
         expect(result.current.isSuccess).toBe(true);
       });
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        nav
+      });
     });
 
     it('handles installment-specific event types correctly', async () => {
@@ -699,6 +731,7 @@ describe('createDebtPosition', () => {
 
       const organizationId = 3;
       const debtPositionId = 1536;
+      const nav = '123';
 
       const apiMock = vi
         .spyOn(utils.apiClient.bff, 'getInstallmentRegistries')
@@ -710,7 +743,11 @@ describe('createDebtPosition', () => {
         debtPositions.getInstallmentRegistriesMutation()
       );
 
-      result.current.mutate({ organizationId, debtPositionId });
+      result.current.mutate({
+        organizationId,
+        debtPositionId,
+        nav
+      });
 
       await waitFor(() => {
         expect(result.current.data).toEqual(mockInstallmentSpecificData);
@@ -723,7 +760,9 @@ describe('createDebtPosition', () => {
       expect(eventTypes).toContain(PaymentEventType.IO_NOTIFIED);
       expect(eventTypes).toContain(PaymentEventType.SEND_NOTIFICATION_CREATED);
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, debtPositionId, {
+        nav
+      });
     });
   });
 });
@@ -853,7 +892,7 @@ describe('manageDebtPositionInstallments', () => {
               dueDate: '2025-12-31',
               remittanceInformation: 'Test payment',
               debtor: {
-                entityType: EntityTypeEnum.F,
+                entityType: PersonEntityType.F,
                 fiscalCode: 'ABCDEF12G34H567I',
                 fullName: 'Test User'
               }
@@ -900,7 +939,7 @@ describe('manageDebtPositionInstallments', () => {
               dueDate: '2025-12-31',
               remittanceInformation: 'Test payment',
               debtor: {
-                entityType: EntityTypeEnum.F,
+                entityType: PersonEntityType.F,
                 fiscalCode: 'ABCDEF12G34H567I',
                 fullName: 'Test User'
               }

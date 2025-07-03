@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TelematicReceiptDetail } from '.';
 import { render, screen, fireEvent } from '@testing-library/react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router';
 import { getReceiptDetail } from '../../api/receiptDetail';
 import { receiptDetailDTOSchema } from '../../../generated/zod-schema';
 import { createMock } from 'zodock';
@@ -9,28 +9,38 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import * as receiptPdf from '../../api/receiptPdf';
 
+const mockNavigate = vi.fn();
+
 vi.mock('../../api/receiptDetail', () => ({
   getReceiptDetail: vi.fn()
 }));
 
-vi.mock('react-router-dom', () => ({
-  useLoaderData: vi.fn()
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useLoaderData: vi.fn(),
+  useNavigate: () => mockNavigate
 }));
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()
 }));
 
+vi.mock('../../routes', () => ({
+  PageRoutes: {
+    RESPONSES_ERROR: 'RESPONSES_ERROR'
+  }
+}));
+
 describe('TelematicReceiptDetail Page', () => {
   const mockOrganizationId = 123;
   const mockData = createMock(receiptDetailDTOSchema);
+  const mockUseLoaderData = vi.mocked(useLoaderData);
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockClear();
 
-    (useLoaderData as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockData.receiptId
-    );
+    mockUseLoaderData.mockReturnValue(mockData.receiptId);
     (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       state: { [STATE.ORGANIZATION_ID]: mockOrganizationId }
     });
@@ -72,5 +82,26 @@ describe('TelematicReceiptDetail Page', () => {
     const downloadButton = screen.getByLabelText('commons.files.download');
     fireEvent.click(downloadButton);
     expect(mutationMock).toBeCalledWith(mockData.receiptId);
+  });
+
+  it('handles invalid ID parameter', () => {
+    mockUseLoaderData.mockReturnValue('invalid-id');
+
+    render(<TelematicReceiptDetail />);
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
+  });
+
+  it('handles API errors correctly', () => {
+    (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new Error('API Error')
+    });
+
+    render(<TelematicReceiptDetail />);
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
   });
 });

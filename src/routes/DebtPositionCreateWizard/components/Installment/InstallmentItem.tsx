@@ -168,6 +168,8 @@ const InstallmentItem = <T extends FieldValues>({
   return (
     <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
       <IconButton
+        id={`installment-remove-${index}`}
+        data-testid={`installment-remove-${index}`}
         size="small"
         onClick={handleRemove}
         disabled={!onRemove || isEditing}
@@ -181,6 +183,7 @@ const InstallmentItem = <T extends FieldValues>({
       </IconButton>
 
       <Box
+        data-testid={`installment-item-${index}`}
         sx={{
           p: 2,
           border: '1px solid',

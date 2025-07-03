@@ -3,10 +3,10 @@ import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { getClassificationDetail } from './getClassificationDetail';
 import { renderHook, waitFor } from '../__tests__/renderers';
-import { classificationDetailViewDTOSchema } from '../../generated/zod-schema';
+import { classificationDetailDTOSchema } from '../../generated/zod-schema';
 import { createMock } from 'zodock';
 
-const dataMock = createMock(classificationDetailViewDTOSchema);
+const dataMock = createMock(classificationDetailDTOSchema);
 
 describe('getClassificationDetails query hook', () => {
   it('returns data correctly', async () => {

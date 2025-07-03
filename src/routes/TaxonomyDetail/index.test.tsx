@@ -7,12 +7,13 @@ import { getTaxonomyDetail } from '../../api/taxonomy';
 vi.mock('../../api/taxonomy', () => ({
   getTaxonomyDetail: vi.fn()
 }));
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useParams: () => ({ taxonomyId: '705' }),
-    Navigate: vi.fn(({ to }) => <div>Navigate to {to}</div>),
+    Navigate: vi.fn(({ to }: { to: string }) => <div>Navigate to {to}</div>),
     useNavigate: () => vi.fn()
   };
 });
@@ -49,7 +50,8 @@ describe('Taxonomy Detail Page', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (getTaxonomyDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    const mockGetTaxonomyDetail = getTaxonomyDetail as ReturnType<typeof vi.fn>;
+    mockGetTaxonomyDetail.mockReturnValue({
       data: dataMock
     });
   });

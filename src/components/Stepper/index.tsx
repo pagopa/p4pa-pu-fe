@@ -15,7 +15,12 @@ export const StepperContainer = ({
   description
 }: StepperContainerProps) => {
   return (
-    <Stack my={4} gap={1} justifyContent="center">
+    <Stack
+      my={4}
+      gap={1}
+      justifyContent="center"
+      data-testid="stepper-container"
+    >
       <TitleComponent title={title} description={description} />
       <Stack gap={3} pt={1} justifyContent="center">
         <StepBar activeStep={activeStep} steps={steps} />

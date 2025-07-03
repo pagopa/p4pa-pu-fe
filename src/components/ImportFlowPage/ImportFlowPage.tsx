@@ -13,13 +13,14 @@ import FileUploader from '../FileUploader/FileUploader';
 import { useTranslation } from 'react-i18next';
 import { AltRoute, ArrowBack } from '@mui/icons-material';
 import { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { importFlowConfig } from '../../models/ImportDetails';
 import { PageRoutes } from '../../routes';
 import { uploadIngestionFlowFile } from '../../api/ingestionFlowFiles';
 import { useStore } from '../../store/GlobalStore';
 import { IngestionFlowFileType } from '../../../generated/fileshare/fileshareClient';
+import utils from '../../utils';
 
 const ImportFlow = () => {
   const { t } = useTranslation();
@@ -46,13 +47,40 @@ const ImportFlow = () => {
 
   const handleFileUpload = () => {
     if (file) {
+      const handleError = (error: unknown) => {
+        console.error(error);
+
+        const isAxiosError = (
+          err: unknown
+        ): err is { response?: { status?: number } } => {
+          return typeof err === 'object' && err !== null && 'response' in err;
+        };
+
+        const statusCode = isAxiosError(error)
+          ? error.response?.status
+          : undefined;
+
+        if (statusCode && statusCode >= 400 && statusCode < 500) {
+          navigate(PageRoutes.RESPONSES_ERROR, {
+            state: {
+              category: config.category,
+              errorType: '4xx',
+              statusCode
+            }
+          });
+        } else {
+          utils.notify.emit(t('commons.importFlowErrorMessage'));
+        }
+      };
+
       ingestionFlowFile.mutate(file, {
         onSuccess: () =>
           navigate(PageRoutes.RESPONSES_SUCCESS, {
             state: {
               category: config.category
             }
-          })
+          }),
+        onError: handleError
       });
     }
   };

@@ -1,23 +1,34 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TreasuryDetail } from '.';
 import { render, screen } from '@testing-library/react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getTreasuryDetail } from '../../api/treasuryDetail';
 
+const mockNavigate = vi.fn();
+
 vi.mock('../../api/treasuryDetail', () => ({
   getTreasuryDetail: vi.fn()
 }));
-vi.mock('react-router-dom', () => ({
-  useLoaderData: vi.fn()
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useLoaderData: vi.fn(),
+  useNavigate: () => mockNavigate
 }));
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()
 }));
 
+vi.mock('../../routes', () => ({
+  PageRoutes: {
+    RESPONSES_ERROR: 'RESPONSES_ERROR'
+  }
+}));
+
 describe('Treasury detail Page', () => {
   const mockOrganizationId = '123';
+  const mockUseLoaderData = vi.mocked(useLoaderData);
   const mockData = {
     creationDate: '2025-02-25T14:48:30.843388',
     updateDate: '2025-03-07T10:03:58.199601',
@@ -55,10 +66,9 @@ describe('Treasury detail Page', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockClear();
 
-    (useLoaderData as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      id: mockData.treasuryId
-    });
+    mockUseLoaderData.mockReturnValue(mockData.treasuryId);
     (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       state: { [STATE.ORGANIZATION_ID]: mockOrganizationId }
     });
@@ -75,5 +85,26 @@ describe('Treasury detail Page', () => {
     expect(
       screen.getByText(mockData.remittanceDescription)
     ).toBeInTheDocument();
+  });
+
+  it('handles missing ID parameter', () => {
+    mockUseLoaderData.mockReturnValue(null);
+
+    render(<TreasuryDetail />);
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
+  });
+
+  it('handles API errors correctly', () => {
+    (getTreasuryDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      error: new Error('API Error')
+    });
+
+    render(<TreasuryDetail />);
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
   });
 });

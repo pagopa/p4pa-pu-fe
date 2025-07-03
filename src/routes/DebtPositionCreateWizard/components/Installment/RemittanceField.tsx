@@ -46,6 +46,8 @@ const RemittanceField = <T extends FieldValues>({
       render={({ field }) => (
         <TextField
           {...field}
+          id={`installment-remittance-${index}`}
+          data-testid={`installment-remittance-${index}`}
           fullWidth
           size="small"
           label={t(

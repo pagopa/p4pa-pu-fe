@@ -9,7 +9,7 @@ import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { PagedTreasuredClassification } from '../../../generated/apiClient';
 import { formatDate, moneyFormat } from '../../utils/formatters';
-import { generatePath, Link } from 'react-router-dom';
+import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../../routes';
 
 export type DataGridProps = {

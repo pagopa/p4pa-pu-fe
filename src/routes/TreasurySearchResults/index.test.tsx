@@ -3,11 +3,9 @@ import TreasurySearchResults from '.';
 import { render } from '../../__tests__/renderers';
 import React from 'react';
 
-vi.mock('react-router-dom', async () => {
+vi.mock('react-router', async () => {
   const actual =
-    await vi.importActual<typeof import('react-router-dom')>(
-      'react-router-dom'
-    );
+    await vi.importActual<typeof import('react-router')>('react-router');
   return {
     ...actual,
     useNavigate: vi.fn(),

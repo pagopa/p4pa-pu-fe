@@ -13,7 +13,7 @@ export type StepBarProps = Stepper;
 export const StepBar = ({ activeStep, steps }: StepBarProps) => {
   const { t } = useTranslation();
   return (
-    <MuiStepper alternativeLabel activeStep={activeStep}>
+    <MuiStepper alternativeLabel activeStep={activeStep} data-testid="stepbar">
       {steps.map(({ label, optional }) => (
         <Step key={label}>
           <Stack alignItems="center">

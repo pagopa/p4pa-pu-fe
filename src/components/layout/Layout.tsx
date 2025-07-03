@@ -8,7 +8,7 @@ import {
   useMediaQuery
 } from '@mui/material';
 import { grey } from '@mui/material/colors';
-import { Outlet, ScrollRestoration, useMatches } from 'react-router-dom';
+import { Outlet, ScrollRestoration, useMatches } from 'react-router';
 import { BackButton } from '../BackButton';
 import { NavigateNext } from '@mui/icons-material';
 import Breadcrumbs from '../Breadcrumbs/Breadcrumbs';
@@ -42,7 +42,7 @@ export function Layout() {
   const { collapsed } = useCollapseMenu(!lg);
   const getMainColumnWidth = () => {
     if (!sidebar.visible) return 12;
-    return collapsed ? 11 : 10;
+    return collapsed ? 11 : 9;
   };
 
   const {

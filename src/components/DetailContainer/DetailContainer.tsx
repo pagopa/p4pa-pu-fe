@@ -19,7 +19,7 @@ import {
 import React from 'react';
 
 export type DetailData = {
-  label: string;
+  label?: string;
   value?: string | number;
   valueType?: 'amount' | 'date' | 'dateTime' | 'status';
   variant?: 'body1' | 'body2' | 'h6' | 'subtitle1' | 'monospaced';
@@ -98,10 +98,12 @@ const DetailContainer = ({
                 );
               }
               if (item.valueType === 'date') {
-                return formatDate(`${item.value}`);
+                const formattedDate = formatDate(`${item.value}`);
+                return formattedDate || '-';
               }
               if (item.valueType === 'dateTime') {
-                return formatDateTime(`${item.value}`);
+                const formattedDateTime = formatDateTime(`${item.value}`);
+                return formattedDateTime || '-';
               }
               return item.value || '-';
             })()

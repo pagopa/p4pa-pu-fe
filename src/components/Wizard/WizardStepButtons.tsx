@@ -32,9 +32,16 @@ const WizardStepButtons = ({
   const { t } = useTranslation();
 
   return (
-    <Box mt={4} display="flex" justifyContent="space-between">
+    <Box
+      mt={4}
+      display="flex"
+      justifyContent="space-between"
+      data-testid="wizard-step-buttons"
+    >
       <Box>
         <Button
+          id="wizard-back-button"
+          data-testid="wizard-back-button"
           variant="outlined"
           onClick={onBack}
           disabled={disableBack}
@@ -46,6 +53,8 @@ const WizardStepButtons = ({
       <Box display="flex" gap={4}>
         {showSaveDraft && (
           <Button
+            id="wizard-save-draft-button"
+            data-testid="wizard-save-draft-button"
             variant={showSaveDraftIcon ? 'text' : 'outlined'}
             onClick={onSaveDraft}
             disabled={disableSaveDraft}
@@ -54,7 +63,13 @@ const WizardStepButtons = ({
             {t(saveDraftLabel)}
           </Button>
         )}
-        <Button variant="contained" onClick={onNext} disabled={disableNext}>
+        <Button
+          id="wizard-next-button"
+          data-testid="wizard-next-button"
+          variant="contained"
+          onClick={onNext}
+          disabled={disableNext}
+        >
           {t(nextLabel)}
         </Button>
       </Box>

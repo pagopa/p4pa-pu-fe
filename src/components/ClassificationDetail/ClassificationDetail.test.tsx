@@ -1,28 +1,42 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { vi, describe, it, expect } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import ClassificationsDetail from './';
 import * as classificationService from '../../api/getClassificationDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { createMock } from 'zodock';
-import { classificationDetailViewDTOSchema } from '../../../generated/zod-schema';
+import { classificationDetailDTOSchema } from '../../../generated/zod-schema';
 
 vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = await importOriginal<typeof import('react-router')>();
   return {
-    ...(actual as any),
+    ...actual,
     useParams: () => ({
       classificationId: '673'
     })
   };
 });
 
-const mockData = createMock(classificationDetailViewDTOSchema);
+const mockData = createMock(classificationDetailDTOSchema);
 vi.mock('../../utils', () => ({
-  apiClient: {
-    bff: {
-      getClassificationDetails: () => ({ data: mockData })
-    }
+  default: {
+    config: {
+      deployPath: '/test',
+      baseURL: 'http://test',
+      apiTimeout: 5000,
+      fileshareURL: 'http://test-fileshare'
+    },
+    apiClient: {
+      bff: {
+        getClassificationDetails: () => ({ data: mockData })
+      }
+    },
+    loaders: {},
+    sidemenu: {},
+    style: {},
+    storage: {},
+    notify: { emit: vi.fn() },
+    roles: {},
+    filtersValidation: {}
   }
 }));
 
@@ -46,7 +60,14 @@ describe('Classifications Detail:', () => {
     vi.spyOn(
       classificationService,
       'getClassificationDetail'
-    ).mockImplementation(() => ({ data: mockData }) as any);
+    ).mockImplementation(
+      () =>
+        ({
+          data: mockData,
+          isError: false,
+          error: null
+        }) as ReturnType<typeof classificationService.getClassificationDetail>
+    );
 
     render(<ClassificationsDetail />);
 

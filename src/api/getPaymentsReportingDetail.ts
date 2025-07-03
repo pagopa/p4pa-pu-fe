@@ -11,7 +11,8 @@ export type PaymentsReportingQuery = PaymentsReportingParams[1];
 export const getPaymentsReportingDetail = (
   organizationId: number,
   iuf: string,
-  paymentsReportingId: string
+  paymentsReportingId: string,
+  options: Record<string, unknown> = {}
 ) => {
   return useQuery({
     queryKey: [
@@ -36,6 +37,7 @@ export const getPaymentsReportingDetail = (
         parseAndLog(paymentsReportingDetailDTOSchema, paymentsReporting);
       }
       return paymentsReporting;
-    }
+    },
+    ...options
   });
 };

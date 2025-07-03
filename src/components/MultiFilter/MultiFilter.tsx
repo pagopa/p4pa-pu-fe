@@ -14,7 +14,6 @@ import {
 import { ChangeEvent } from 'react';
 import { FormComponent } from '../FormComponent';
 import { LabelEnum } from '../../../generated/apiClient';
-import { ClassificationsEnum } from '../../../generated/data-contracts';
 
 export type MultiFilterProps = {
   filterMap: FilterMap;
@@ -46,11 +45,7 @@ const MultiFilter = ({
 
     onFilterInteraction?.();
 
-    if (
-      newValue &&
-      newValue !== ClassificationsEnum.UNKNOWN &&
-      selectedFilters.length === 0
-    ) {
+    if (newValue && selectedFilters.length === 0) {
       const first = Object.keys(filterMap).find(
         (key) => key !== 'CLASSIFICATION_TYPE'
       ) as KeyofFilterMap;
@@ -72,8 +67,7 @@ const MultiFilter = ({
   };
 
   const showOtherFilters =
-    filterCategory != 'CLASSIFICATIONS' ||
-    (classificationType && classificationType !== ClassificationsEnum.UNKNOWN);
+    filterCategory != 'CLASSIFICATIONS' || Boolean(classificationType);
 
   return (
     <Stack gap={3}>
@@ -87,7 +81,13 @@ const MultiFilter = ({
               label: t(`classificationsExport.classificationsOptions.${value}`),
               value
             }))
-            .sort((a, b) => a.label.localeCompare(b.label))}
+            .sort((a, b) => {
+              // if value UNKNOWN sort before
+              if (a.value === 'UNKNOWN' && b.value !== 'UNKNOWN') return -1; // a comes first
+              if (a.value !== 'UNKNOWN' && b.value === 'UNKNOWN') return 1; // b comes first
+              // else, sort alphabetically by label
+              return a.label.localeCompare(b.label);
+            })}
           error={showLabelError}
           helperText={
             showLabelError

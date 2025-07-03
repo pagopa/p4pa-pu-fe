@@ -150,6 +150,7 @@ export function BeneficiaryHeader(
         </Typography>
       </Box>
       <Button
+        data-testid={`beneficiary-remove-${index}`}
         onClick={() => onRemove(index)}
         startIcon={<DeleteOutlineIcon />}
         color="error"
@@ -185,6 +186,7 @@ export function EntityNameField<T extends FieldValues>(
   return (
     <TextField
       {...field}
+      data-testid={`beneficiary-entity-name-${context.index}`}
       fullWidth
       label={t('debtPositionCreateWizard.step3.beneficiary.entityName.label')}
       required
@@ -237,6 +239,7 @@ export function AmountField<T extends FieldValues>(
   return (
     <TextField
       {...field}
+      data-testid={`beneficiary-amount-${index}`}
       fullWidth
       label={t('debtPositionCreateWizard.step3.beneficiary.amount.label')}
       required
@@ -288,6 +291,7 @@ export function TaxCodeField<T extends FieldValues>(
   return (
     <TextField
       {...field}
+      data-testid={`beneficiary-tax-code-${context.index}`}
       fullWidth
       label={t('debtPositionCreateWizard.step3.beneficiary.vat.label')}
       required
@@ -324,6 +328,7 @@ export function RemittanceField<T extends FieldValues>(
   return (
     <TextField
       {...field}
+      data-testid={`beneficiary-remittance-${context.index}`}
       fullWidth
       label={t('debtPositionCreateWizard.step3.beneficiary.remittance.label')}
       required
@@ -621,6 +626,7 @@ export function IBANField<T extends FieldValues>(
   return (
     <TextField
       {...field}
+      data-testid={`beneficiary-iban-${index}`}
       fullWidth
       label={t('debtPositionCreateWizard.step3.beneficiary.iban.label')}
       disabled={disabled}
@@ -674,6 +680,7 @@ export function PostalIbanField<T extends FieldValues>(
   return (
     <TextField
       {...field}
+      data-testid={`beneficiary-postal-iban-${index}`}
       fullWidth
       label={t('debtPositionCreateWizard.step3.beneficiary.postalIban.label')}
       disabled={disabled}
@@ -854,7 +861,7 @@ export function PostalAccountField<T extends FieldValues>(
     errors: FieldErrors<T>;
   }>
 ) {
-  const { field, t, disabled = false, context, errors } = props;
+  const { field, t, disabled = false, context, errors, index } = props;
 
   const actualValue =
     context.getValues(field.name as Path<T>) ?? field.value ?? '';
@@ -862,6 +869,7 @@ export function PostalAccountField<T extends FieldValues>(
   return (
     <TextField
       {...field}
+      data-testid={`beneficiary-postal-account-${index}`}
       fullWidth
       label={t(
         'debtPositionCreateWizard.step3.beneficiary.postalAccount.label'
@@ -904,6 +912,7 @@ export function TaxonomyCodeField<T extends FieldValues>(
   return (
     <TextField
       {...field}
+      data-testid={`beneficiary-taxonomy-code-${context.index}`}
       fullWidth
       label={t('debtPositionCreateWizard.step3.beneficiary.taxonomyCode.label')}
       required

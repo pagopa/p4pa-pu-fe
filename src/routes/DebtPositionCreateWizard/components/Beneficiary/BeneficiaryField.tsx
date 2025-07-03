@@ -150,6 +150,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
           <Divider sx={{ mt: 2, mb: 1 }} />
           <Box>
             <Button
+              data-testid="beneficiary-add-button"
               startIcon={<Add />}
               onClick={addBeneficiary}
               sx={{ mt: 1 }}
@@ -199,6 +200,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
     return (
       <Paper
         key={field.id}
+        data-testid={`beneficiary-item-${index}`}
         sx={{
           p: 2,
           mb: 2,
@@ -296,7 +298,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
   };
 
   return (
-    <Box>
+    <Box data-testid="beneficiaries-container">
       {fields.map((field, index) =>
         renderBeneficiary(field as BeneficiaryField, index)
       )}

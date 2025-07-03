@@ -3,7 +3,7 @@ import { Downloading, Search } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import IconButton from '@mui/material/IconButton';
 import { useTranslation } from 'react-i18next';
-import { generatePath, useNavigate } from 'react-router-dom';
+import { generatePath, useNavigate } from 'react-router';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import FilterContainer, {
@@ -21,7 +21,7 @@ import { getExportFile, getExportFiles } from '../../api/exportFiles';
 import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
 import { downloadBlob } from '../../utils/download';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
-import { formatDateTime } from '../../utils/formatters';
+import { formatDateTime, formatFileSize } from '../../utils/formatters';
 import utils from '../../utils';
 import { ReactNode, useEffect, useState } from 'react';
 
@@ -69,6 +69,7 @@ const ExportFlowOverview = ({
     organizationId,
     appliedFilters
   );
+
   const isEmptyData = !data?.content || data.content.length === 0;
 
   useEffect(() => {
@@ -152,12 +153,14 @@ const ExportFlowOverview = ({
       type: 'string'
     },
     {
-      field: 'size',
+      field: 'fileSize',
       headerName: t('commons.files.size'),
       flex: 1,
       type: 'number',
       headerAlign: 'left',
-      align: 'left'
+      align: 'left',
+      renderCell: (params: GridRenderCellParams) =>
+        formatFileSize(params.value as number)
     },
     {
       field: 'menu',
@@ -249,7 +252,7 @@ const ExportFlowOverview = ({
             padding: 2
           }}
         >
-          {isEmptyData && data && data.totalElements === 0 && (
+          {isEmptyData && data && data.totalElements === 0 ? (
             <EmptyDataGrid
               title={t('commons.noFlows')}
               action={{
@@ -257,30 +260,30 @@ const ExportFlowOverview = ({
                 onClick: handleExportFlow
               }}
             />
+          ) : (
+            <CustomDataGrid
+              rows={data?.content || []}
+              columns={columns}
+              getRowId={(row) => row.exportFileId}
+              disableColumnMenu
+              disableColumnResize
+              sortModel={sortModel}
+              onSortModelChange={handleSortModelChange}
+              loading={isLoading}
+              smartPagination={{
+                initialPage: 0,
+                initialSize: 10,
+                sizeOptions: [5, 10, 20],
+                backendData: {
+                  totalElements: data?.totalElements || 0,
+                  totalPages: data?.totalPages || 0,
+                  number: data?.number || 0,
+                  size: data?.size || 10
+                },
+                onPaginationChange: handlePaginationChange
+              }}
+            />
           )}
-
-          <CustomDataGrid
-            rows={data?.content || []}
-            columns={columns}
-            getRowId={(row) => row.exportFileId}
-            disableColumnMenu
-            disableColumnResize
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
-            loading={isLoading}
-            smartPagination={{
-              initialPage: 0,
-              initialSize: 10,
-              sizeOptions: [5, 10, 20],
-              backendData: {
-                totalElements: data?.totalElements || 0,
-                totalPages: data?.totalPages || 0,
-                number: data?.number || 0,
-                size: data?.size || 10
-              },
-              onPaginationChange: handlePaginationChange
-            }}
-          />
         </Box>
       </Stack>
     </>

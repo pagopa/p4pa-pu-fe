@@ -50,6 +50,8 @@ const AmountField = <T extends FieldValues>({
       render={({ field }) => (
         <TextField
           {...field}
+          id={`installment-amount-${index}`}
+          data-testid={`installment-amount-${index}`}
           fullWidth
           size="small"
           label={t('debtPositionCreateWizard.step3.installments.amount.label')}

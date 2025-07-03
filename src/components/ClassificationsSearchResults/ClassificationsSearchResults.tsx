@@ -15,7 +15,7 @@ import {
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
 import UseClassificationsSearch from '../../hooks/useClassificationsSearch';
-import { ClassificationsEnum, PagedTreasuredClassification } from '../../../generated/data-contracts';
+import { PagedTreasuredClassification } from '../../../generated/data-contracts';
 import DownloadIcon from '@mui/icons-material/Download';
 
 export type LocationState = {
@@ -53,14 +53,6 @@ const ClassificationsSearchResults = () => {
 
     if (!classificationType) {
       setLabelError(true);
-      return;
-    }
-
-    if (classificationType === ClassificationsEnum.UNKNOWN) {
-      setError(false);
-      setLabelError(false);
-      classifications.applyFilters(filterValues);
-      setDrawerOpen(false);
       return;
     }
 

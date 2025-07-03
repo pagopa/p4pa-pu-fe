@@ -4,7 +4,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import DetailContainer from '../../components/DetailContainer/DetailContainer';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';
@@ -21,14 +21,21 @@ import {
 import { useReportingDetailFilters } from '../../hooks/useReportingDetailFilters';
 import { PaymentsReporting } from '../../../generated/apiClient';
 import { Variant } from '@mui/material/styles/createTypography';
+import { PageRoutes } from '../../routes';
 
 export const ReportingDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const iuf = id;
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
+  if (!iuf) {
+    navigate(PageRoutes.RESPONSES_ERROR);
+    return null;
+  }
 
   const [detailItem, setDetailItem] = useState<PaymentsReporting | null>(null);
 
@@ -49,12 +56,19 @@ export const ReportingDetail = () => {
     }
   });
 
-  const { data, isLoading } = getPaymentsReportingRows(
+  const { data, isLoading, isError, error } = getPaymentsReportingRows(
     organizationId,
-    iuf || '',
+    iuf,
     appliedFilters,
     { enabled: !!organizationId && !!iuf }
   );
+
+  useEffect(() => {
+    if (isError && error) {
+      console.error('Error loading payments reporting rows:', error);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [isError, error, navigate]);
 
   useEffect(() => {
     if (data?.content?.[0] && !detailItem) {

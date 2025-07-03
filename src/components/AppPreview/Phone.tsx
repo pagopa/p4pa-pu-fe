@@ -37,9 +37,9 @@ export const Phone = ({ children, open, onClose, onEdit }: PhoneProps) => {
       fullWidth
       aria-labelledby="app-preview-dialog-title"
       aria-describedby="app-preview-dialog-description"
-      data-testid="confirm-dialog"
+      data-testid="phone-dialog"
     >
-      <DialogTitle id="app-preview-dialog-title" sx={styles.dialogTitle}>
+      <DialogTitle id="phone-dialog-title" sx={styles.dialogTitle}>
         <Stack direction="row" justifyContent="space-between">
           <Stack direction="row" alignItems="center" gap={1}>
             <Typography variant="h6">{t('appPreview.title')}</Typography>

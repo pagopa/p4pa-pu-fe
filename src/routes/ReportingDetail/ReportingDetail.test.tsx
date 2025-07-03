@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { getPaymentsReportingRows } from '../../api/reporting';
 import ReportingDetail from './ReportingDetail';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
@@ -42,12 +42,13 @@ vi.mock('../../api/reporting', () => ({
   getPaymentsReportingRows: vi.fn()
 }));
 
-vi.mock('react-router-dom', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('react-router-dom')>();
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>();
   return {
     ...actual,
     useParams: vi.fn().mockReturnValue({ id: 'TEST-IUF-123' }),
     useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+    useNavigate: vi.fn(),
     Link: ({ children }: { children: React.ReactNode }) => children,
     generatePath: vi.fn().mockReturnValue('/mock-path')
   };
@@ -62,6 +63,14 @@ vi.mock('../../store/GlobalStore', () => ({
     setState: vi.fn()
   }),
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
+}));
+
+vi.mock('../../routes', () => ({
+  PageRoutes: {
+    RESPONSES_ERROR: 'RESPONSES_ERROR',
+    REPORTING_INDEX: 'REPORTING_INDEX',
+    REPORTING_DETAIL: 'REPORTING_DETAIL'
+  }
 }));
 
 describe('ReportingDetail Page', () => {

@@ -53,12 +53,11 @@ export const Step1Configuration = ({
   const { t } = useTranslation();
 
   const form = useForm<Step1Data>({
-    resolver: zodResolver(schema),
+    resolver: editmode ? undefined : zodResolver(schema),
     mode: 'onTouched'
   });
 
-  const { control, handleSubmit, watch } = form;
-  const organizationType = watch('orgType');
+  const { control, handleSubmit } = form;
 
   const onSubmit = async (values: Step1Data) => {
     if (setData) {
@@ -74,7 +73,7 @@ export const Step1Configuration = ({
   };
 
   return (
-    <FormProvider {...form}>
+    <FormProvider {...form} data-testid="step1-configuration">
       <form aria-label="form">
         <WizardStepWrapper
           title={t('debtTypeCreate.configuration.title')}
@@ -84,6 +83,7 @@ export const Step1Configuration = ({
           }
         >
           <SectionBox
+            data-testid="step1-configuration-debt-type"
             title={t('debtTypeCreate.configuration.debtType.title')}
             adornment={<BookIcon />}
           >
@@ -93,6 +93,7 @@ export const Step1Configuration = ({
                 control={control}
                 sx={{ flex: 1 }}
                 label={t('debtTypeCreate.configuration.debtTypeCode.label')}
+                data-testid="code"
                 defaultValue={editmode ? prefilledData?.code : ''}
                 disabled={editmode}
               />
@@ -101,6 +102,7 @@ export const Step1Configuration = ({
                   name="description"
                   control={control}
                   label={t('debtTypeCreate.configuration.debtType.label')}
+                  data-testid="description"
                   placeholder={t(
                     'debtTypeCreate.configuration.debtType.placeholder'
                   )}
@@ -115,6 +117,7 @@ export const Step1Configuration = ({
             </Stack>
           </SectionBox>
           <SectionBox
+            data-testid="step1-configuration-taxonomy"
             title={t('debtTypeCreate.configuration.taxonomy.title')}
             adornment={<LocalOffer />}
           >
@@ -122,23 +125,27 @@ export const Step1Configuration = ({
               <TaxonomyEdit prefilledData={prefilledData} />
             ) : (
               <TaxonomyFilter
+                requiredFields={true}
+                disableFieldReset={true}
                 render={(fields) => (
-                  <Stack gap={2}>
+                  <Stack
+                    gap={2}
+                    data-testid="step1-configuration-taxonomy-fields"
+                  >
                     {/* orgType is always visible */}
                     {fields.orgType}
-                    {/* Render rest only if orgType is selected */}
-                    {organizationType && (
-                      <>
-                        <Stack direction="row" gap={2}>
-                          {fields.macroAreaCode}
-                          {fields.serviceTypeCode}
-                        </Stack>
-                        <Stack direction="row" gap={2}>
-                          {fields.collectingReason}
-                          {fields.taxonomyCode}
-                        </Stack>
-                      </>
-                    )}
+                    {/* 
+                      In creation mode (requiredFields=true), show all fields to allow validation errors
+                      In search mode, show fields only if orgType is selected
+                    */}
+                    <Stack direction="row" gap={2}>
+                      {fields.macroAreaCode}
+                      {fields.serviceTypeCode}
+                    </Stack>
+                    <Stack direction="row" gap={2}>
+                      {fields.collectingReason}
+                      {fields.taxonomyCode}
+                    </Stack>
                   </Stack>
                 )}
               />

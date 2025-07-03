@@ -2,13 +2,13 @@ import { render, screen } from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
 import { DebtTypeDetailView } from './DebtTypeDetailView';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
-import { useParams } from 'react-router-dom';
+import { useParams } from 'react-router';
 import { getDebtPositionTypeOrgById } from '../../api/debtPositionsTypeOrg';
 import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';
 import { useDebtPositionTypeOrgSearch } from '../../api/debtTypesCreated';
 
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useParams: vi.fn(),

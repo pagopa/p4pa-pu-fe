@@ -61,6 +61,7 @@ const DateField = <T extends FieldValues>({
         return (
           <DatePicker
             {...field}
+            data-testid={`installment-due-date-${index}`}
             value={dateValue}
             label={t(
               'debtPositionCreateWizard.step3.installments.dueDate.label'
@@ -70,6 +71,7 @@ const DateField = <T extends FieldValues>({
             format="dd/MM/yyyy"
             slotProps={{
               textField: {
+                id: `installment-due-date-${index}`,
                 fullWidth: true,
                 required: flagMandatoryDueDate,
                 error: !!error,

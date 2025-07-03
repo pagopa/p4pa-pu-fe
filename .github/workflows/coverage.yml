@@ -11,6 +11,11 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
         with:
           fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: Enable corepack
+        run: corepack enable    
       - name: Install dependencies
         run: yarn
       - name: Generate api client

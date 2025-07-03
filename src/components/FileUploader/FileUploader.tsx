@@ -18,6 +18,7 @@ import { theme } from '@pagopa/mui-italia';
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { isExtensionAllowed } from '../../utils/filevalidation';
+import { formatFileSize } from '../../utils/formatters';
 
 export type FileUploaderProps = {
   uploading: boolean;
@@ -112,19 +113,6 @@ const FileUploader = ({
     setFile(null);
     setProgress(0);
     setError(null);
-  };
-
-  const formatFileSize = (size: number) => {
-    if (!size) {
-      return '0 Bytes';
-    }
-    if (size >= 1024 * 1024) {
-      return `${(size / (1024 * 1024)).toFixed(2)} MB`;
-    } else if (size >= 1024) {
-      return `${(size / 1024).toFixed(1)} KB`;
-    } else {
-      return `${size} Bytes`;
-    }
   };
 
   return (

@@ -16,7 +16,10 @@ import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import utils from '../../utils';
-import { DebtPositionDetailDTO } from '../../../generated/data-contracts';
+import {
+  DebtPositionDetailDTO,
+  PersonEntityType
+} from '../../../generated/data-contracts';
 import { SubjectType } from '../../utils/fieldValidation';
 
 type FormData = {
@@ -158,7 +161,7 @@ const DebtPositionCreateWizard = () => {
     const step2: Step2Data = {
       subjectType: {
         value:
-          debtPositionDetail.debtor?.entityType === 'F'
+          debtPositionDetail.debtor?.entityType === PersonEntityType.F
             ? SubjectType.INDIVIDUAL
             : SubjectType.BUSINESS,
         readonly: isEditing

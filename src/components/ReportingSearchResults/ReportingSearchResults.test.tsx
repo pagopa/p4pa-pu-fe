@@ -1,6 +1,6 @@
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { render } from '../../__tests__/renderers';
-import { useLocation, useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router';
 import ReportingSearchResults from './ReportingSearchResults';
 import FilterContainer from '../FilterContainer/FilterContainer';
 import useReportingSearch from '../../hooks/useReportingSearch';
@@ -10,7 +10,7 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
 }));
 
-vi.mock('react-router-dom', async (importOriginal) => ({
+vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useLocation: vi.fn(),
   useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
@@ -40,9 +40,13 @@ vi.mock('../../components/TitleComponent/TitleComponent', () => ({
   default: vi.fn(({ title }) => <div>{title}</div>)
 }));
 
-vi.mock('../../components/FilterContainer/FilterContainer', () => ({
-  default: vi.fn(() => <div>FilterContainer</div>)
-}));
+vi.mock(
+  '../../components/FilterContainer/FilterContainer',
+  async (importOriginal) => ({
+    ...(await importOriginal()),
+    default: vi.fn(() => <div>FilterContainer</div>)
+  })
+);
 
 describe('ReportingSearchResults', () => {
   beforeEach(() => {

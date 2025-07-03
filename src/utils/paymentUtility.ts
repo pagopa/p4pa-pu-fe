@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 import { Step2Data, Step3Data } from '../models/DebtPositionType';
 import { UseFormTrigger } from 'react-hook-form';
 import { isBeneficiariesTotalValid } from './fieldValidation';
-import { EntityTypeEnum } from '../../generated/data-contracts';
+import { PersonEntityType } from '../../generated/data-contracts';
 import { isSameBeneficiariesAsBeforeEnabled } from '../models/Step3Schema';
 
 /**
@@ -368,7 +368,7 @@ export const DEFAULT_VALUES = {
 
 // Helper functions for creating debt position objects
 export const createDebtorObject = (step2Data: Step2Data) => ({
-  entityType: step2Data.subjectType.value as EntityTypeEnum,
+  entityType: step2Data.subjectType.value as PersonEntityType,
   fiscalCode: step2Data.taxCode.value,
   fullName: step2Data.fullName.value,
   address: step2Data.address.value,

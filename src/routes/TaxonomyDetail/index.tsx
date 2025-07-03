@@ -1,6 +1,6 @@
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { getTaxonomyDetail } from '../../api/taxonomy';
 import DetailContainer, {

@@ -1,6 +1,6 @@
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import { SearchType } from '../../models/DebtPositions';
 import DebtPositionResults from './DebtPositionsResults';
@@ -12,7 +12,7 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
 }));
 
-vi.mock('react-router-dom', async (importOriginal) => ({
+vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useLocation: vi.fn(),
   useNavigate: vi.fn(() => vi.fn()),
@@ -73,9 +73,13 @@ vi.mock('../../components/TitleComponent/TitleComponent', () => ({
   )
 }));
 
-vi.mock('../../components/FilterContainer/FilterContainer', () => ({
-  default: vi.fn(() => <div>FilterContainer</div>)
-}));
+vi.mock(
+  '../../components/FilterContainer/FilterContainer',
+  async (importOriginal) => ({
+    ...(await importOriginal()),
+    default: vi.fn(() => <div>FilterContainer</div>)
+  })
+);
 
 vi.mock('./components/DebtPositionIUVDataGrid', () => ({
   IUVDataGrid: vi.fn(() => <div>IUVDataGrid</div>)

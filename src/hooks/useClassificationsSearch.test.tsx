@@ -1,11 +1,15 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { renderHook } from '../__tests__/renderers';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 import UseClassificationsSearch from './useClassificationsSearch';
 
-vi.mock('react-router-dom', () => ({
-  useSearchParams: vi.fn()
-}));
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as typeof importOriginal),
+    useSearchParams: vi.fn()
+  };
+});
 
 vi.mock('../api/classifications', () => ({
   getClassifications: vi.fn(() => ({
@@ -29,24 +33,35 @@ const defaultFilters = {
   AMOUNT: null,
   BILL_CODE: '',
   BILL_FROM: null,
+  BILL_DATE_FROM: null,
+  BILL_DATE_TO: null,
   DOCUMENT_CODE: '',
   DOCUMENT_CODE_FROM: null,
-  DOCUMENT_YEAR: '',
   IUV: '',
+  IUR: '',
+  IUD: '',
+  IUF: '',
   PAYER: '',
+  PSP_COMPANY_NAME: '',
+  REGULATION_UNIQUE_IDENTIFIER: '',
+  REMITTANCE_INFORMATION: '',
+  REPORT_ID: '',
   TEMPORARY_CODE: '',
   TEMPORARY_CODE_FROM: null,
   VALUE_DATE_FROM: null,
   VALUE_DATE_TO: null,
-  REPORT_ID: '',
+  REGION_VALUE_DATE_FROM: null,
+  REGION_VALUE_DATE_TO: null,
+  PAY_DATE_FROM: null,
+  PAY_DATE_TO: null,
   CLASSIFICATION_TYPE: '',
-  IUR: '',
-  IUD: '',
-  IUF: '',
   LAST_CLASSIFICATION_DATE_FROM: null,
   LAST_CLASSIFICATION_DATE_TO: null,
   REGULATION_DATE_FROM: null,
-  REGULATION_DATE_TO: null
+  REGULATION_DATE_TO: null,
+  PAYMENT_DATE_FROM: null,
+  PAYMENT_DATE_TO: null,
+  ACCOUNT_REGISTRY_CODE: ''
 };
 
 describe('UseClassificationsSearch', () => {

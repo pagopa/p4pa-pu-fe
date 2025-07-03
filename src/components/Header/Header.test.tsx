@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import { Header } from './index';
 import { Mock } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
@@ -37,8 +37,8 @@ import { setUserInfo } from '../../store/UserInfoStore';
 // });
 
 // Mock dependencies
-vi.mock('react-router-dom', async () => {
-  const actual = await vi.importActual('react-router-dom');
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
   return {
     ...actual,
     useNavigate: vi.fn()

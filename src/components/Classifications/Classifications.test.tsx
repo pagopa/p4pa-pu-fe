@@ -1,9 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { Classifications } from './Classifications';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 
-vi.mock('react-router-dom', async (importOriginal) => {
+vi.mock('react-router', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,

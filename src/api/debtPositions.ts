@@ -300,15 +300,20 @@ const getInstallmentRegistriesMutation = () => {
     mutationKey: ['getInstallmentRegistriesMutation'],
     mutationFn: async ({
       organizationId,
-      debtPositionId
+      debtPositionId,
+      nav
     }: {
       organizationId: number;
       debtPositionId: number;
+      nav: string;
     }) => {
       const { data: registries } =
         await utils.apiClient.bff.getInstallmentRegistries(
           organizationId,
-          debtPositionId
+          debtPositionId,
+          {
+            nav: nav
+          }
         );
       if (registries && Array.isArray(registries)) {
         registries.forEach((registry) => {
