@@ -52,7 +52,7 @@ export const setupInterceptors = (client: Client) => {
 
       if (status === 404) {
         if (isApplicationReady) {
-          utils.notify.emit('commons.404');
+          utils.notify.emit(i18n.t('commons.notFound'));
           return Promise.resolve();
         }
         return Promise.reject();
