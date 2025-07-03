@@ -71,7 +71,11 @@ export const backofficeRoutes = [
           {
             id: 'BACKOFFICE_REGISTRY_LIST',
             path: ':registryType',
-            element: <>insert list component here</>,
+            element: (
+              <div>
+                <Outlet />
+              </div>
+            ),
             handle: {
               backButton: true
             },
