@@ -14,8 +14,10 @@ import {
 } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
-import UseTreasurySearch from '../../hooks/useTreasurySearch';
 import { PagedTreasuryView } from '../../../generated/data-contracts';
+import { useSearch } from '../../hooks/useSearch';
+import { useStore } from '../../store/GlobalStore';
+import { getTreasuries } from '../../api/treasuries';
 
 export type LocationState = {
   category: string;
@@ -42,13 +44,20 @@ const TreasurySearchResults = () => {
     setDrawerOpen((prev) => !prev);
   };
 
-  const treasury = UseTreasurySearch({
-    initialFilters: filterValues
+  const {
+    state: { organizationId }
+  } = useStore();
+
+  const query = getTreasuries({ organizationId });
+
+  const treasury = useSearch({
+    initialFilters: filterValues,
+    query
   });
 
   const applyFilters = () => {
     if (noFilterIsSelected.peek()) {
-      treasury.applyFilters(filterValues);
+      treasury.applyFilters();
       setError(false);
       setDrawerOpen(false);
     } else {

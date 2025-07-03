@@ -9,7 +9,7 @@ import { useStore } from '../store/GlobalStore';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 import { DebtPositionStatus } from '../../generated/data-contracts';
 import { optionMapsConverter } from '../utils/formatters';
-import { DebtPositionsFilters } from './useDebtPositionsSearch';
+import { DebtPositionsFilters } from '../api/debtPositions/mapping';
 
 type UseDebtPositionSearchProps = {
   searchType: SearchType;

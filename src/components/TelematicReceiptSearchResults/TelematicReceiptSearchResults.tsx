@@ -3,13 +3,15 @@ import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { BaseFilterValues } from '../../models/Filters';
-import useTelematicReceiptSearch from '../../hooks/useTelematicReceiptsSearch';
 import { useLocation } from 'react-router';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
 import FilterContainer from '../FilterContainer/FilterContainer';
 import { PagedReceiptView } from '../../../generated/data-contracts';
 import { ReactNode, useState } from 'react';
 import { noFilterSetted } from '../../utils/filtersValidation';
+import { getReceipts } from '../../api/receipts';
+import { useStore } from '../../store/GlobalStore';
+import { useSearch } from '../../hooks/useSearch';
 
 export type LocationState = {
   filters: BaseFilterValues;
@@ -29,8 +31,15 @@ const TelematicReceiptSearchResults = () => {
 
   const initialFilters = (location.state?.filters || {}) as BaseFilterValues;
 
-  const telematicReceipt = useTelematicReceiptSearch({
-    initialFilters
+  const {
+    state: { organizationId }
+  } = useStore();
+
+  const query = getReceipts({ organizationId });
+
+  const telematicReceipt = useSearch({
+    initialFilters,
+    query
   });
 
   const runSearch = () => {
