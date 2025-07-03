@@ -81,10 +81,11 @@ export const DebtPositionsInstallmentDetail = () => {
   const handleTimelineOpen = () => {
     setTimelineOpen(true);
 
-    if (installment?.debtPositionId) {
+    if (installment?.debtPositionId && installment?.nav) {
       fetchInstallmentRegistries({
         organizationId,
-        debtPositionId: installment.debtPositionId
+        debtPositionId: installment.debtPositionId,
+        nav: installment.nav
       });
     }
   };
