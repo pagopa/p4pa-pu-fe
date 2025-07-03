@@ -7,7 +7,8 @@ import {
   toEndOfDay,
   extractFilename,
   euroToCents,
-  optionMapsConverter
+  optionMapsConverter,
+  formatFileSize
 } from '../formatters';
 
 describe('moneyFormat', () => {
@@ -232,5 +233,38 @@ describe('optionMapsConverter', () => {
       { label: 'commons.status.C', value: 'C' }
     ];
     expect(optionMapsConverter(items, 'commons.status')).toEqual(expected);
+  });
+});
+
+describe('formatFileSize', () => {
+  it('should format bytes correctly', () => {
+    expect(formatFileSize(0)).toBe('0 Bytes');
+    expect(formatFileSize(100)).toBe('100 Bytes');
+    expect(formatFileSize(512)).toBe('512 Bytes');
+    expect(formatFileSize(1023)).toBe('1023 Bytes');
+  });
+
+  it('should format kilobytes correctly', () => {
+    expect(formatFileSize(1024)).toBe('1.0 KB');
+    expect(formatFileSize(2048)).toBe('2.0 KB');
+    expect(formatFileSize(1536)).toBe('1.5 KB');
+    expect(formatFileSize(1048575)).toBe('1024.0 KB');
+  });
+
+  it('should format megabytes correctly', () => {
+    expect(formatFileSize(1048576)).toBe('1.00 MB');
+    expect(formatFileSize(2097152)).toBe('2.00 MB');
+    expect(formatFileSize(1572864)).toBe('1.50 MB');
+    expect(formatFileSize(5242880)).toBe('5.00 MB');
+  });
+
+  it('should handle large file sizes correctly', () => {
+    expect(formatFileSize(1073741824)).toBe('1024.00 MB');
+    expect(formatFileSize(10737418240)).toBe('10240.00 MB');
+  });
+
+  it('should handle edge cases', () => {
+    expect(formatFileSize(null as unknown as number)).toBe('0 Bytes');
+    expect(formatFileSize(undefined as unknown as number)).toBe('0 Bytes');
   });
 });
