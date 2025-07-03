@@ -14,7 +14,7 @@ const getSilRegistries = (organizationId: OrgID) =>
         organizationId,
         query
       );
-      parseAndLog(pagedSilRegistrySchema, response);
+      parseAndLog(pagedSilRegistrySchema, response, false);
       return response;
     }
   });

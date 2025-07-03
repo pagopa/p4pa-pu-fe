@@ -121,15 +121,18 @@ export function getQueryFromFilterValues<
   };
 }
 
-export const columns: Array<GridColDef> = [
+export const getEventsColumns = (
+  action: (rowId: string) => void
+): Array<GridColDef> => [
   {
-    field: 'eventDate',
+    field: 'dateTime',
     headerName: i18n.t('event.DataEvento'),
+    valueGetter: (value) => new Date(value),
     flex: 1,
     type: 'date'
   },
   {
-    field: 'org',
+    field: 'orgFiscalCode',
     headerName: i18n.t('event.Ente'),
     flex: 1,
     type: 'string'
@@ -141,7 +144,7 @@ export const columns: Array<GridColDef> = [
     type: 'string'
   },
   {
-    field: 'event',
+    field: 'eventType',
     headerName: i18n.t('event.EVENTO'),
     flex: 1,
     type: 'string'
@@ -153,19 +156,22 @@ export const columns: Array<GridColDef> = [
     sortable: false,
     align: 'right',
     headerAlign: 'right',
-    renderCell: () => (
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          height: '100%',
-          width: '100%'
-        }}
-      >
-        <ReadMore color="primary" onClick={console.log} />
-      </div>
-    )
+    renderCell: (row) => {
+      const { id } = row;
+      return (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            height: '100%',
+            width: '100%'
+          }}
+        >
+          <ReadMore color="primary" onClick={() => action(id)} />
+        </div>
+      );
+    }
   }
 ];
 

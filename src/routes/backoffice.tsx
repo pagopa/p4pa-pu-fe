@@ -73,12 +73,17 @@ export const backofficeRoutes = [
           },
           {
             id: 'BACKOFFICE_REGISTRY_LIST',
-            path: ':registryType',
-            element: <EventList />,
-            handle: {
-              backButton: true
-            },
+            path: ':registryType/',
             children: [
+              {
+                id: 'BACKOFFICE_REGISTRY_LIST_INDEX',
+                index: true,
+                element: <EventList />,
+                handle: {
+                  backButton: true,
+                  hideBreadcrumbElement: true
+                } as RouteHandleObject
+              },
               {
                 id: 'BACKOFFICE_REGISTRY_DETAIL',
                 path: ':registryId',

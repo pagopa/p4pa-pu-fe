@@ -7,7 +7,7 @@ import { useRegistry } from '../../api/registryDetail';
 import { mapRegistryToDetailSections } from './registryDetailConfig';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { RegistryType } from '../Eventlist/config';
+import { RegistryType } from '../../routes/Events/configs';
 
 export const RegistryDetailPage: React.FC = () => {
   const { t } = useTranslation();
