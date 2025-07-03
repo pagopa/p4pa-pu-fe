@@ -23,19 +23,22 @@ export const TelematicReceiptDetail = () => {
   const id = useLoaderData();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  if (isNaN(Number(id))) {
-    navigate(PageRoutes.RESPONSES_ERROR);
-    return null;
-  }
-
   const { data, isError, error } = getReceiptDetail(organizationId, Number(id));
 
   useEffect(() => {
+    if (isNaN(Number(id))) {
+      navigate(PageRoutes.RESPONSES_ERROR);
+      return;
+    }
     if (isError && error) {
       console.error('Error loading receipt detail:', error);
       navigate(PageRoutes.RESPONSES_ERROR);
     }
-  }, [isError, error, navigate]);
+  }, [id, isError, error, navigate]);
+
+  if (isNaN(Number(id))) {
+    return null;
+  }
 
   const debtorType: string =
     data?.debtor.entityType == 'F' ? `(${t('commons.person')})` : '';
