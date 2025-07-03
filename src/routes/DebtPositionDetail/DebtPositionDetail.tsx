@@ -47,7 +47,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
 import { useTimelineData } from '../../hooks/useTimelineData';
-import { isDateInPast } from '../../utils/formatters';
+import { isDateInPast, moneyFormat } from '../../utils/formatters';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -433,7 +433,7 @@ const DebtPositionDetail = () => {
         },
         {
           label: t('commons.amount'),
-          value: paymentOption.totalAmountCents ?? 0
+          value: moneyFormat(paymentOption.totalAmountCents) ?? 0
         }
       ],
       installments: (paymentOption.installments ?? []).map((installment) =>
