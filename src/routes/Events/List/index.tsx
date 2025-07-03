@@ -8,7 +8,10 @@ import {
   getFilters,
   getQueryFromFilterValues,
   RegistryType,
-  testFilterValidity
+  testFilterValidity,
+  NodoOrSilEvent,
+  NodoFilterValues,
+  SilFilterValues
 } from '../configs';
 import { useNavigate, useOutletContext, useParams } from 'react-router';
 import { useStore } from '../../../store/GlobalStore';
@@ -16,15 +19,21 @@ import getPagoPaRegistries from '../../../api/getPagoPaRegistry';
 import getSilRegistries from '../../../api/getSilRegistries';
 import { ErrorMessage } from '../../../components/FormComponent/ErrorMessage';
 import { PageRoutes } from '../..';
+import { EventsContext } from '../EventsContainer';
+import {
+  PagoPaRegistry,
+  SilRegistry
+} from '../../../../generated/data-contracts';
+import { GridRowId } from '@mui/x-data-grid';
 
 const EventList = () => {
-  const [rows, setRows] = useState([]);
+  const [rows, setRows] = useState<Array<SilRegistry | PagoPaRegistry>>([]);
 
   const { registryType } = useParams<{
     registryType: RegistryType;
   }>();
   const { filterValues, handleFilterChange, activeTabIndex, setError, error } =
-    useOutletContext();
+    useOutletContext<EventsContext>();
 
   const navigate = useNavigate();
 
@@ -53,8 +62,12 @@ const EventList = () => {
 
       const result =
         activeTabIndex === 0
-          ? await getSilRegistriesMutation.mutateAsync(query)
-          : await getPagoPaRegistriesMutation.mutateAsync(query);
+          ? await getSilRegistriesMutation.mutateAsync(
+              query as NodoOrSilEvent<SilFilterValues>
+            )
+          : await getPagoPaRegistriesMutation.mutateAsync(
+              query as NodoOrSilEvent<NodoFilterValues>
+            );
 
       setRows(result?.content);
     } catch (e) {
@@ -63,16 +76,15 @@ const EventList = () => {
   };
 
   useEffect(() => {
-    fetchDta();
+    onSubmit();
   }, []);
 
-  const action = (id: string) => {
+  const action = (id: GridRowId) => {
     if (id && registryType) {
       const to = PageRoutes.BACKOFFICE_REGISTRY_DETAIL.replace(
         ':registryType',
         registryType
-      ).replace(':registryId', id);
-      console.log(to);
+      ).replace(':registryId', `${id}`);
       navigate(to);
     }
   };
@@ -89,6 +101,7 @@ const EventList = () => {
       />
       {error && ErrorMessage}
       <CustomDataGrid
+        sx={{ mt: 4 }}
         columns={columns}
         rows={rows}
         getRowId={(row) => row.registryId}

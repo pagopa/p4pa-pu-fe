@@ -11,7 +11,7 @@ import { TabsConfig } from '../../components/SearchCard/SearchCard';
 import { BaseFilterValues } from '../../models/Filters';
 import { ReadMore } from '@mui/icons-material';
 import i18n from '../../translations/i18n';
-import { GridColDef } from '@mui/x-data-grid';
+import { GridColDef, GridRowId } from '@mui/x-data-grid';
 import { noFilterSetted } from '../../utils/filtersValidation';
 
 export const silFields: Array<FilterItem> = [
@@ -101,7 +101,7 @@ export type SilFilterValues = {
   event?: RegistrySilEventType;
 } & BaseFilterValues;
 
-type NodoOrSilEvent<T extends NodoFilterValues | SilFilterValues> = {
+export type NodoOrSilEvent<T extends NodoFilterValues | SilFilterValues> = {
   iuv?: string;
   eventDateFrom?: string;
   eventDateTo?: string;
@@ -122,30 +122,30 @@ export function getQueryFromFilterValues<
 }
 
 export const getEventsColumns = (
-  action: (rowId: string) => void
+  action: (rowId: GridRowId) => void
 ): Array<GridColDef> => [
   {
     field: 'dateTime',
-    headerName: i18n.t('event.DataEvento'),
+    headerName: i18n.t('events.list.date'),
     valueGetter: (value) => new Date(value),
     flex: 1,
     type: 'date'
   },
   {
     field: 'orgFiscalCode',
-    headerName: i18n.t('event.Ente'),
+    headerName: i18n.t('events.list.org'),
     flex: 1,
     type: 'string'
   },
   {
     field: 'iuv',
-    headerName: i18n.t('event.IUV'),
+    headerName: i18n.t('events.list.iuv'),
     flex: 1,
     type: 'string'
   },
   {
     field: 'eventType',
-    headerName: i18n.t('event.EVENTO'),
+    headerName: i18n.t('events.list.event'),
     flex: 1,
     type: 'string'
   },
@@ -165,7 +165,8 @@ export const getEventsColumns = (
             alignItems: 'center',
             justifyContent: 'flex-end',
             height: '100%',
-            width: '100%'
+            width: '100%',
+            cursor: 'pointer'
           }}
         >
           <ReadMore color="primary" onClick={() => action(id)} />
@@ -184,7 +185,7 @@ export const getFilters = (
     ...fields.map((el) => ({ ...el, gridWidth: 3 })),
     {
       type: COMPONENT_TYPE.button,
-      label: 'cerca',
+      label: i18n.t('commons.search'),
       gridWidth: 3,
       onClick: onSubmit
     }

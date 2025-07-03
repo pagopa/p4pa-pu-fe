@@ -8,6 +8,7 @@ import { useOutletContext } from 'react-router';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
 import { RegistryType } from '../configs';
+import { EventsContext } from '../EventsContainer';
 
 const EventPage = () => {
   const { t } = useTranslation();
@@ -21,7 +22,7 @@ const EventPage = () => {
     handleTabChange,
     handleResetFilter,
     handleFilterChange
-  } = useOutletContext();
+  } = useOutletContext<EventsContext>();
 
   const handleSubmit = async () => {
     setError(false);

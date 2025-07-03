@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import {
   DefaultFilterValues,
   NodoFilterValues,
@@ -8,11 +8,25 @@ import {
 import { Outlet } from 'react-router';
 import { FilterFieldValue } from '../../models/Filters';
 
+export type EventsContext = {
+  error: boolean;
+  setError: Dispatch<SetStateAction<boolean>>;
+  activeTabIndex: number;
+  setActiveTabIndex: Dispatch<SetStateAction<number>>;
+  filterValues: [SilFilterValues, NodoFilterValues];
+  setFilterValues: Dispatch<
+    SetStateAction<[SilFilterValues, NodoFilterValues]>
+  >;
+  handleTabChange: (newTabIndex: number) => void;
+  handleResetFilter: () => void;
+  handleFilterChange: (id: string, value: FilterFieldValue) => void;
+};
+
 const EventsContainer = () => {
   const [filterValues, setFilterValues] = useState<
     [SilFilterValues, NodoFilterValues]
   >([DefaultFilterValues, DefaultFilterValues]);
-  const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [error, setError] = useState(false);
 
   const handleTabChange = (newTabIndex: number) => {
@@ -36,21 +50,18 @@ const EventsContainer = () => {
     setFilterValues(newFilterValues);
   };
 
-  return (
-    <Outlet
-      context={{
-        filterValues,
-        setFilterValues,
-        activeTabIndex,
-        setActiveTabIndex,
-        handleResetFilter,
-        handleFilterChange,
-        handleTabChange,
-        error,
-        setError
-      }}
-    />
-  );
+  const context: EventsContext = {
+    filterValues,
+    setFilterValues,
+    activeTabIndex,
+    setActiveTabIndex,
+    handleResetFilter,
+    handleFilterChange,
+    handleTabChange,
+    error,
+    setError
+  };
+  return <Outlet context={context} />;
 };
 
 export default EventsContainer;
