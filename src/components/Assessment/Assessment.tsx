@@ -9,6 +9,7 @@ import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
 import { ReactNode, useState, useMemo } from 'react';
 import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
 import { useStore } from '../../store/GlobalStore';
+import { useAssessmentsSearch } from '../../hooks/useAssessmentsSearch';
 
 export const Assessment = () => {
   const { t } = useTranslation();
@@ -17,12 +18,20 @@ export const Assessment = () => {
 
   const { optionsMap: debtTypesOptions } = useDebtPositionsTypeOrg({
     organizationId: organizationId || 0,
-    includeAllOption: false
+    includeAllOption: true,
+    useCodeAsValue: true // for assessments we use the code (string)
   });
 
-  const { filterMap, removeAllFilters, noFilterIsSelected } = useMultiFilters({
-    clearOnMount: true,
-    filterCategory: FilterCategory.ASSESSMENT
+  const { filterMap, removeAllFilters, noFilterIsSelected, filterValues } =
+    useMultiFilters({
+      clearOnMount: true,
+      filterCategory: FilterCategory.ASSESSMENT
+    });
+
+  const assessmentSearch = useAssessmentsSearch({
+    initialFilters: filterValues,
+    initialPage: 0,
+    initialSize: 20
   });
 
   // Populate the select DEBT_TYPE options dynamically
@@ -66,13 +75,17 @@ export const Assessment = () => {
   };
 
   function submitSearch() {
-    if (noFilterIsSelected.peek()) {
-      // If there are filters, proceed with the search
-      setError(false);
-      console.log('Navigating to assessment search results...');
-      // TODO: navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS);
-    } else {
+    if (!noFilterIsSelected.peek()) {
+      // If no filters are selected, show error
       setError(true);
+    } else {
+      setError(false);
+
+      assessmentSearch.executeSearch(filterValues);
+      console.log('assessmentSearch', assessmentSearch);
+
+      // TODO: Navigate to the results page when it is implemented
+      // navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS);
     }
   }
 
@@ -115,7 +128,8 @@ export const Assessment = () => {
                   label: t('commons.search'),
                   variant: 'contained',
                   onClick: submitSearch,
-                  id: 'assessment-search-btn'
+                  id: 'assessment-search-btn',
+                  disabled: assessmentSearch.isLoading
                 }
               ]}
             />
