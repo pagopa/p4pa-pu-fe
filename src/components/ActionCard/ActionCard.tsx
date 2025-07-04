@@ -4,7 +4,8 @@ import {
   ButtonProps,
   Divider,
   Grid,
-  Typography
+  Typography,
+  Stack
 } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 
@@ -16,6 +17,7 @@ type ActionCardProps = {
   footerText?: string;
   linkLabel?: string;
   title: string;
+  titleIcon?: React.ReactNode;
   onActionClick: () => void;
   onLinkClick?: () => void;
 };
@@ -28,6 +30,7 @@ const ActionCard = ({
   footerText,
   linkLabel,
   title,
+  titleIcon,
   onActionClick,
   onLinkClick
 }: ActionCardProps) => {
@@ -43,9 +46,16 @@ const ActionCard = ({
         padding={3}
         sx={{ backgroundColor: 'background.paper' }}
       >
-        <Typography id="action-card-title" variant="h6" sx={{ mb: 1 }}>
-          {title}
-        </Typography>
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+          {titleIcon && (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {titleIcon}
+            </Box>
+          )}
+          <Typography id="action-card-title" variant="h6">
+            {title}
+          </Typography>
+        </Stack>
         <Typography
           id="action-card-description"
           variant="body2"

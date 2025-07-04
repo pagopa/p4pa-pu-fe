@@ -16,7 +16,8 @@ import { LabelEnum } from '../../generated/apiClient';
 
 export enum FilterCategory {
   TREASURY = 'TREASURY',
-  CLASSIFICATIONS = 'CLASSIFICATIONS'
+  CLASSIFICATIONS = 'CLASSIFICATIONS',
+  ASSESSMENT = 'ASSESSMENT'
 }
 
 export type FilterMap = Record<
@@ -41,6 +42,8 @@ export type FilterMap = Record<
       | 'REGULATION_DATE_TO'
       | 'PAYMENT_DATE_FROM'
       | 'PAYMENT_DATE_TO'
+      | 'LAST_UPDATE_DATE_FROM'
+      | 'LAST_UPDATE_DATE_TO'
     >
   | 'ACCOUNTING_DATE'
   | 'VALUE_DATE'
@@ -49,7 +52,8 @@ export type FilterMap = Record<
   | 'PAY_DATE'
   | 'LAST_CLASSIFICATION_DATE'
   | 'REGULATION_DATE'
-  | 'PAYMENT_DATE',
+  | 'PAYMENT_DATE'
+  | 'LAST_UPDATE_DATE',
   { label: string; fields: Array<FilterItem> }
 >;
 
@@ -78,6 +82,12 @@ export const useMultiFilters = (props?: {
     value: filterValues[field] as Date | null,
     onChange: (date: Date | null) =>
       setFilterValues({ ...filterValues, [field]: date })
+  });
+
+  const selectControl = (field: keyof typeof filterValues) => ({
+    value: filterValues[field] as string,
+    onChange: (e: any) =>
+      setFilterValues({ ...filterValues, [field]: e.target.value })
   });
 
   const fullFilterMap: FilterMap = {
@@ -412,6 +422,63 @@ export const useMultiFilters = (props?: {
           }
         }
       ]
+    },
+    // Assessment filters
+    ASSESSMENT_NAME: {
+      label: t('assessment.filters.assessmentName'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('assessment.filters.assessmentName'),
+          ...fieldControl('ASSESSMENT_NAME')
+        }
+      ]
+    },
+    DEBT_TYPE: {
+      label: t('assessment.filters.debtType'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.select,
+          label: t('assessment.filters.debtType'),
+          // options: [],
+          ...selectControl('DEBT_TYPE')
+        }
+      ]
+    },
+    ASSESSMENT_STATUS: {
+      label: t('assessment.filters.status'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.select,
+          label: t('assessment.filters.status'),
+          options: [
+            { label: t('assessment.statusOptions.NEW'), value: 'NEW' },
+            { label: t('assessment.statusOptions.CLOSED'), value: 'CLOSED' },
+            {
+              label: t('assessment.statusOptions.CANCELLED'),
+              value: 'CANCELLED'
+            }
+          ],
+          ...selectControl('ASSESSMENT_STATUS')
+        }
+      ]
+    },
+    LAST_UPDATE_DATE: {
+      label: t('assessment.filters.lastUpdateDate'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.dateRange,
+          label: t('assessment.filters.lastUpdateDate'),
+          from: {
+            label: t('dates.from'),
+            ...dateControl('LAST_UPDATE_DATE_FROM')
+          },
+          to: {
+            label: t('dates.to'),
+            ...dateControl('LAST_UPDATE_DATE_TO')
+          }
+        }
+      ]
     }
   };
 
@@ -444,15 +511,27 @@ export const useMultiFilters = (props?: {
     'PAY_DATE'
   ];
 
+  const assessmentFilters: Array<keyof FilterMap> = [
+    'ASSESSMENT_NAME',
+    'DEBT_TYPE',
+    'ASSESSMENT_STATUS',
+    'LAST_UPDATE_DATE',
+    'IUV'
+  ];
+
   const getFilteredMap = (): FilterMap => {
     if (!props?.filterCategory) {
       return fullFilterMap;
     }
 
-    const allowedFilters =
-      props.filterCategory === FilterCategory.TREASURY
-        ? treasuryFilters
-        : classificationsFilters;
+    let allowedFilters: Array<keyof FilterMap>;
+    if (props.filterCategory === FilterCategory.TREASURY) {
+      allowedFilters = treasuryFilters;
+    } else if (props.filterCategory === FilterCategory.ASSESSMENT) {
+      allowedFilters = assessmentFilters;
+    } else {
+      allowedFilters = classificationsFilters;
+    }
 
     return Object.fromEntries(
       Object.entries(fullFilterMap).filter(([key]) =>

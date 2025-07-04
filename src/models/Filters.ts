@@ -41,6 +41,11 @@ export type FilterValues = {
   REGULATION_DATE_TO: Date | null;
   PAYMENT_DATE_FROM: Date | null;
   PAYMENT_DATE_TO: Date | null;
+  ASSESSMENT_NAME: string;
+  DEBT_TYPE: string;
+  ASSESSMENT_STATUS: string;
+  LAST_UPDATE_DATE_FROM: Date | null;
+  LAST_UPDATE_DATE_TO: Date | null;
 };
 
 export type FlowFilters = {

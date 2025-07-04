@@ -99,6 +99,27 @@
       }
     }
   },
+  "assessment": {
+    "title": "Accertamenti pagamenti",
+    "search": "Cerca accertamenti",
+    "searchDescription": "Cerca dei accertamenti e controlla l'andamento delle entrate.",
+    "chapters": "Capitoli",
+    "chaptersDescription": "Crea oppure visualizza capitoli di bilancio per distinguere le entrate per categoria.",
+    "createAssessment": "Crea accertamento",
+    "createChapter": "Crea nuovo capitolo",
+    "seeAllChapters": "Vedi tutti i capitoli",
+    "filters": {
+      "assessmentName": "Nome accertamento",
+      "debtType": "Tipo dovuto",
+      "status": "Stato",
+      "lastUpdateDate": "Data ultimo aggiornamento"
+    },
+    "statusOptions": {
+      "NEW": "Nuovo",
+      "CLOSED": "Chiuso",
+      "CANCELLED": "Annullato"
+    }
+  },
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
@@ -394,6 +415,7 @@
       "CLASSIFICATIONS": "Classificazione pagamenti",
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
+      "ASSESSMENT": "Accertamento pagamenti",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
       "DEBT_POSITIONS": "Posizioni debitorie",

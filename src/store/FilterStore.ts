@@ -36,7 +36,12 @@ export const initialFilterValues: FilterValues = {
   REGULATION_DATE_FROM: null,
   REGULATION_DATE_TO: null,
   PAYMENT_DATE_FROM: null,
-  PAYMENT_DATE_TO: null
+  PAYMENT_DATE_TO: null,
+  ASSESSMENT_NAME: '',
+  DEBT_TYPE: '',
+  ASSESSMENT_STATUS: '',
+  LAST_UPDATE_DATE_FROM: null,
+  LAST_UPDATE_DATE_TO: null
 };
 
 export const mapFilterNameToFilterValues: Record<
@@ -68,7 +73,11 @@ export const mapFilterNameToFilterValues: Record<
     'LAST_CLASSIFICATION_DATE_TO'
   ],
   REGULATION_DATE: ['REGULATION_DATE_FROM', 'REGULATION_DATE_TO'],
-  PAYMENT_DATE: ['PAYMENT_DATE_FROM', 'PAYMENT_DATE_TO']
+  PAYMENT_DATE: ['PAYMENT_DATE_FROM', 'PAYMENT_DATE_TO'],
+  ASSESSMENT_NAME: ['ASSESSMENT_NAME'],
+  DEBT_TYPE: ['DEBT_TYPE'],
+  ASSESSMENT_STATUS: ['ASSESSMENT_STATUS'],
+  LAST_UPDATE_DATE: ['LAST_UPDATE_DATE_FROM', 'LAST_UPDATE_DATE_TO']
 };
 
 export type KeyofFilterMap = keyof FilterMap;
