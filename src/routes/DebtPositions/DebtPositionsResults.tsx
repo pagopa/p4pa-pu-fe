@@ -2,32 +2,23 @@ import { Grid, Stack, useTheme } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { useMemo, useCallback, useRef } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { BaseFilterValues } from '../../models/Filters';
 import { SearchType } from '../../models/DebtPositions';
-import useDebtPositionsSearch from '../../hooks/useDebtPositionsSearch';
 import { IUVDataGrid } from './components/DebtPositionIUVDataGrid';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
 import useDebtPositionFilters from '../../hooks/useDebtPositionsFilters';
 import {
   PagedInstallmentView,
-  PagedDebtPositionView,
-  InstallmentView,
-  DebtPositionView
+  PagedDebtPositionView
 } from '../../../generated/apiClient';
 import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../routes';
-
-export type LocationState = {
-  searchType: SearchType;
-  filters: BaseFilterValues;
-};
-
-export type DebtResultsProps = {
-  searchType: SearchType;
-};
+import { useSearch } from '../../hooks/useSearch';
+import { useStore } from '../../store/GlobalStore';
+import { GridSortModel } from '@mui/x-data-grid';
 
 export const DebtPositionResults = () => {
   const theme = useTheme();
@@ -35,96 +26,72 @@ export const DebtPositionResults = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const initialStateRef = useRef<{
-    searchType?: SearchType;
-    filters?: BaseFilterValues;
-    captured: boolean;
-  }>({ captured: false });
+  // Extract initial state from location.state or fallback
+  const { searchType: locationSearchType, filters: locationFilters } =
+    location.state ?? {};
 
-  if (!initialStateRef.current.captured && location.state) {
-    initialStateRef.current = {
-      searchType: location.state.searchType,
-      filters: location.state.filters,
-      captured: true
-    };
-  }
+  // Determine searchType with fallback based on pathname
+  const searchType = useMemo<SearchType>(() => {
+    if (locationSearchType) return locationSearchType;
+    return location.pathname.includes('results-IUV')
+      ? SearchType.IUV
+      : SearchType.DEBT_POSITION;
+  }, [location.pathname, locationSearchType]);
 
-  const stableSearchType = useMemo(() => {
-    return initialStateRef.current.searchType || null;
-  }, [initialStateRef.current.searchType]);
+  // Filters from location or empty object fallback
+  const initialFilters = locationFilters ?? {};
 
-  const stableFilters = useMemo(() => {
-    return initialStateRef.current.filters || {};
-  }, [initialStateRef.current.filters]);
+  // Get organizationId from global store
+  const {
+    state: { organizationId }
+  } = useStore();
 
-  const searchType = useMemo((): SearchType => {
-    if (stableSearchType) {
-      return stableSearchType as SearchType;
-    }
-    const pathname = location.pathname;
-    if (pathname.includes('results-IUV')) {
-      return SearchType.IUV;
-    }
-    return SearchType.DEBT_POSITION;
-  }, [stableSearchType, location.pathname]);
+  // Choose query based on searchType
+  const query =
+    searchType === SearchType.IUV
+      ? debtPositions.getInstallments({ organizationId })
+      : debtPositions.getDebtPositionViews({ organizationId });
 
-  const initialFilters = useMemo(() => {
-    const filters = stableFilters as BaseFilterValues;
-    return filters;
-  }, [stableFilters]);
-
-  const requestFn = useMemo(() => {
-    const fn =
-      searchType === SearchType.IUV
-        ? debtPositions.getInstallments
-        : debtPositions.getDebtPositionViews;
-    return fn;
-  }, [searchType]);
-
-  const debtPosition = useDebtPositionsSearch({
+  // Use search hook
+  const debtPosition = useSearch<
+    BaseFilterValues,
+    PagedInstallmentView | PagedDebtPositionView
+  >({
     initialFilters,
-    requestFn
+    query
   });
 
+  // Filters UI logic
   const { filters } = useDebtPositionFilters({
     searchType,
     onFilter: debtPosition.applyFilters
   });
 
-  const DataGrid = useMemo(() => {
-    const component =
-      searchType === SearchType.IUV ? IUVDataGrid : DebtPositionsDataGrid;
-    return component;
-  }, [searchType]);
+  // Sort state
+  const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
-  const shouldRenderDataGrid = useCallback(() => {
-    if (!debtPosition.query.data) return false;
+  // Handle sort changes
+  const handleSortModelChange = useCallback(
+    (model: GridSortModel) => {
+      setSortModel(model);
 
-    if (searchType === SearchType.IUV) {
-      const hasValidInstallmentIds = debtPosition.query.data.content?.every(
-        (item: DebtPositionView | InstallmentView) =>
-          'installmentId' in item && item.installmentId != null
+      const apiSort = model.map(
+        (item) => `${item.field},${item.sort === 'desc' ? 'DESC' : 'ASC'}`
       );
-      if (!hasValidInstallmentIds) {
-        return false;
-      }
-    }
 
-    if (searchType === SearchType.DEBT_POSITION) {
-      const hasValidDebtPositionIds = debtPosition.query.data.content?.every(
-        (item: DebtPositionView | InstallmentView) =>
-          'debtPositionId' in item && item.debtPositionId != null
-      );
-      if (!hasValidDebtPositionIds) {
-        return false;
-      }
-    }
+      debtPosition.setSort(apiSort.length > 0 ? apiSort : []);
+      debtPosition.applyFilters();
+    },
+    [debtPosition]
+  );
 
-    return true;
-  }, [debtPosition.query.data, searchType]);
+  // Select DataGrid component based on searchType
+  const DataGrid =
+    searchType === SearchType.IUV ? IUVDataGrid : DebtPositionsDataGrid;
 
-  const callToAction = useMemo(() => {
-    const action = [
+  // Call to action button config
+  const callToAction = useMemo(
+    () => [
       {
         icon: searchType === SearchType.IUV ? null : <Add />,
         buttonText:
@@ -133,17 +100,18 @@ export const DebtPositionResults = () => {
             : t('commons.createNew'),
         onActionClick: () => navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD)
       }
-    ];
-    return action;
-  }, [searchType, t, navigate]);
+    ],
+    [searchType, t, navigate]
+  );
 
-  const title = useMemo(() => {
-    const titleText =
+  // Title text
+  const title = useMemo(
+    () =>
       searchType === SearchType.IUV
         ? t('DebtPositions.Results.titleIUV')
-        : t('DebtPositions.Results.title');
-    return titleText;
-  }, [searchType, t]);
+        : t('DebtPositions.Results.title'),
+    [searchType, t]
+  );
 
   return (
     <Stack gap={5}>
@@ -151,30 +119,25 @@ export const DebtPositionResults = () => {
       <Stack gap={3}>
         <FilterContainer
           items={filters}
-          values={debtPosition.filterValues}
+          values={debtPosition.filters}
           onChange={debtPosition.handleFilterChange}
         />
         <Grid
           container
           p={2}
           height="100%"
-          sx={{
-            bgcolor: theme.palette.grey[200],
-            overflow: 'auto'
-          }}
+          sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
           aria-label="results-table"
         >
-          {shouldRenderDataGrid() && (
-            <DataGrid
-              data={
-                debtPosition.query.data as PagedInstallmentView &
-                  PagedDebtPositionView
-              }
-              onSortChange={debtPosition.handleSortModelChange}
-              sortModel={debtPosition.sortModel}
-              onPaginationChange={debtPosition.handlePaginationChange}
-            />
-          )}
+          <DataGrid
+            data={
+              debtPosition.query.data as PagedInstallmentView &
+                PagedDebtPositionView
+            }
+            onSortChange={handleSortModelChange}
+            sortModel={sortModel}
+            onPaginationChange={debtPosition.handlePaginationChange}
+          />
         </Grid>
       </Stack>
     </Stack>

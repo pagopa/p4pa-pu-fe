@@ -1,14 +1,11 @@
-import { describe, expect, it, Mock, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render } from '../../__tests__/renderers';
-import { useLocation, useSearchParams } from 'react-router';
-import ReportingSearchResults from './ReportingSearchResults';
+import * as ReactRouter from 'react-router';
 import FilterContainer from '../FilterContainer/FilterContainer';
-import useReportingSearch from '../../hooks/useReportingSearch';
 import TitleComponent from '../TitleComponent/TitleComponent';
-
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key })
-}));
+import ReportingSearchResults from '../ReportingSearchResults';
+import * as useSearchModule from '../../hooks/useSearch';
+import useReportingFilters from '../../hooks/useReportingFilters';
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
@@ -17,24 +14,8 @@ vi.mock('react-router', async (importOriginal) => ({
   useNavigate: vi.fn()
 }));
 
-vi.mock('../../hooks/useReportingSearch', () => ({
-  default: vi.fn(() => ({
-    query: { data: { content: [], totalElements: 0 } },
-    applyFilters: vi.fn(),
-    handleFilterChange: vi.fn(),
-    handlePageChange: vi.fn(),
-    handlePageSizeChange: vi.fn(),
-    setSort: vi.fn(),
-    pagination: { page: 0, size: 10 },
-    filterValues: {}
-  }))
-}));
-
-vi.mock('../../hooks/useReportingFilters', () => ({
-  default: vi.fn(() => ({
-    filters: []
-  }))
-}));
+vi.mock('../../hooks/useSearch');
+vi.mock('../../hooks/useReportingFilters');
 
 vi.mock('../../components/TitleComponent/TitleComponent', () => ({
   default: vi.fn(({ title }) => <div>{title}</div>)
@@ -42,20 +23,48 @@ vi.mock('../../components/TitleComponent/TitleComponent', () => ({
 
 vi.mock(
   '../../components/FilterContainer/FilterContainer',
-  async (importOriginal) => ({
-    ...(await importOriginal()),
-    default: vi.fn(() => <div>FilterContainer</div>)
-  })
+  async (importOriginal) => {
+    const originalModule =
+      await importOriginal<
+        typeof import('../../components/FilterContainer/FilterContainer')
+      >();
+    return {
+      ...originalModule,
+      default: vi.fn(() => <div>FilterContainer</div>)
+    };
+  }
 );
 
 describe('ReportingSearchResults', () => {
+  const mockUseLocation = vi.mocked(ReactRouter.useLocation);
+  const mockUseSearchParams = vi.mocked(ReactRouter.useSearchParams);
+  const mockUseSearch = vi.mocked(useSearchModule.useSearch);
+  const mockUseReportingFilters = vi.mocked(useReportingFilters);
+
   beforeEach(() => {
     vi.clearAllMocks();
-    (useLocation as Mock).mockReturnValue({ state: { filters: {} } });
-    (useSearchParams as Mock).mockReturnValue([new URLSearchParams(), vi.fn()]);
+
+    // @ts-expect-error mocking location results
+    mockUseLocation.mockReturnValue({ state: { filters: {} } });
+    mockUseSearchParams.mockReturnValue([new URLSearchParams(), vi.fn()]);
+
+    mockUseReportingFilters.mockReturnValue({
+      filters: []
+    });
+
+    mockUseSearch.mockReturnValue({
+      // @ts-expect-error mocking useQuery results
+      query: { data: { content: [], totalElements: 0 } },
+      applyFilters: vi.fn(),
+      handleFilterChange: vi.fn(),
+      handlePaginationChange: vi.fn(),
+      setSort: vi.fn(),
+      pagination: { page: 0, size: 10 },
+      filters: {}
+    });
   });
 
-  it('should render correctly', () => {
+  it('renders TitleComponent with correct props', () => {
     render(<ReportingSearchResults />);
 
     expect(TitleComponent).toHaveBeenCalledWith(
@@ -67,7 +76,7 @@ describe('ReportingSearchResults', () => {
     );
   });
 
-  it('should pass the correct props to FilterContainer', () => {
+  it('passes correct props to FilterContainer', () => {
     render(<ReportingSearchResults />);
 
     expect(FilterContainer).toHaveBeenCalledWith(
@@ -80,15 +89,15 @@ describe('ReportingSearchResults', () => {
     );
   });
 
-  it('should handle pagination parameters from URL correctly', () => {
-    (useSearchParams as Mock).mockReturnValue([
+  it('handles pagination parameters from URL correctly', () => {
+    mockUseSearchParams.mockReturnValue([
       new URLSearchParams('?page=2&size=20'),
       vi.fn()
     ]);
 
     render(<ReportingSearchResults />);
 
-    expect(vi.mocked(useReportingSearch)).toHaveBeenCalledWith(
+    expect(mockUseSearch).toHaveBeenCalledWith(
       expect.objectContaining({
         initialFilters: expect.any(Object)
       })
