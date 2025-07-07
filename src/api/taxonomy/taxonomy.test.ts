@@ -1,29 +1,39 @@
-import utils from '../utils';
+import utils from '../../utils';
 import { AxiosResponse } from 'axios';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, Mock, vi } from 'vitest';
 import {
   getTaxonomies,
   getTaxonomyDetail,
   synchronizeTaxonomy
-} from './taxonomy';
-import { renderHook, waitFor } from '../__tests__/renderers';
-import { Taxonomy, WorkflowCreatedDTO } from '../../generated/data-contracts';
+} from '../taxonomy';
+import { renderHook, waitFor } from '../../__tests__/renderers';
+import {
+  Taxonomy,
+  WorkflowCreatedDTO
+} from '../../../generated/data-contracts';
+import { buildQueryParams, TaxonomyFilteredRequest } from './mappings';
 
-vi.mock('./utils', () => {
-  const originalModule = vi.importActual('utils');
+vi.mock('../../utils', () => {
+  const originalModule = vi.importActual('../../utils');
   return {
     ...originalModule,
-    apiClient: {
-      bff: {
-        getTaxonomyDetail: vi.fn(),
-        synchronizeTaxonomy: vi.fn(),
-        getTaxonomies: vi.fn()
+    default: {
+      apiClient: {
+        bff: {
+          getTaxonomyDetail: vi.fn(),
+          synchronizeTaxonomy: vi.fn(),
+          getTaxonomies: vi.fn()
+        }
       }
     }
   };
 });
 
-describe('get Taxonomy Detail ', () => {
+vi.mock('./mappings', () => ({
+  buildQueryParams: vi.fn()
+}));
+
+describe('getTaxonomyDetail', () => {
   it('returns data correctly', async () => {
     const dataMock: Taxonomy = {
       creationDate: '2025-02-20T09:23:17.977642',
@@ -53,16 +63,16 @@ describe('get Taxonomy Detail ', () => {
       }
     };
 
-    const params = { taxonomyId: 705 };
+    const taxonomyId = 705;
 
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'getTaxonomyDetail')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const { result } = renderHook(() => getTaxonomyDetail(params.taxonomyId));
+    const { result } = renderHook(() => getTaxonomyDetail(taxonomyId));
 
     await waitFor(() => {
-      expect(apiMock).toHaveBeenCalledWith(params.taxonomyId);
+      expect(apiMock).toHaveBeenCalledWith(taxonomyId);
       expect(result.current.data).toEqual(dataMock);
     });
   });
@@ -74,6 +84,7 @@ describe('synchronizeTaxonomy', () => {
       workflowId: 'SynchronizeTaxonomyPagoPaFetchWF-ON-DEMAND',
       runId: '01971768-1993-7287-8993-4218439ea77a'
     };
+
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'synchronizeTaxonomy')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
@@ -86,12 +97,11 @@ describe('synchronizeTaxonomy', () => {
       expect(result.current.data).toEqual(dataMock);
     });
 
-    expect(result.current.data).toEqual(dataMock);
     expect(apiMock).toHaveBeenCalled();
   });
 });
 
-describe('get Taxonomies list', () => {
+describe('getTaxonomies', () => {
   it('returns data correctly', async () => {
     const dataMock = {
       content: [
@@ -115,12 +125,8 @@ describe('get Taxonomies list', () => {
           endDateOfValidity: '2080-01-01T00:00:00.000000',
           taxonomyCode: '9/0714139AP/',
           _links: {
-            self: {
-              href: '8'
-            },
-            taxonomy: {
-              href: ''
-            }
+            self: { href: '8' },
+            taxonomy: { href: '' }
           }
         },
         {
@@ -143,12 +149,8 @@ describe('get Taxonomies list', () => {
           endDateOfValidity: '2080-01-01T00:00:00.000000',
           taxonomyCode: '0101108TS',
           _links: {
-            self: {
-              href: ''
-            },
-            taxonomy: {
-              href: ''
-            }
+            self: { href: '' },
+            taxonomy: { href: '' }
           }
         }
       ],
@@ -160,22 +162,25 @@ describe('get Taxonomies list', () => {
 
     const query = { macroAreaCode: '14' };
 
+    (buildQueryParams as Mock).mockReturnValue('mock-query-string');
+
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'getTaxonomies')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const { result } = renderHook(() => getTaxonomies());
 
-    result.current.mutate(query);
+    await result.current.mutateAsync(
+      query as unknown as TaxonomyFilteredRequest
+    );
 
     await waitFor(() => {
       expect(result.current.data).toEqual(dataMock);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(query, {
-      paramsSerializer: {
-        indexes: null
-      }
+    expect(buildQueryParams).toHaveBeenCalledWith(query);
+    expect(apiMock).toHaveBeenCalledWith('mock-query-string', {
+      paramsSerializer: { indexes: null }
     });
   });
 });

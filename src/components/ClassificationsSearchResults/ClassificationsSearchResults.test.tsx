@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
-import ClassificationsSearchResults from './ClassificationsSearchResults';
 import { ClassificationsEnum } from '../../../generated/data-contracts';
+import ClassificationsSearchResults from '.';
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),

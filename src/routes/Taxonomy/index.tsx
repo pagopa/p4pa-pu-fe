@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import ActionCard from '../../components/ActionCard/ActionCard';
 import utils from '../../utils';
-import { synchronizeTaxonomy } from '../../api/taxonomy';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
 import { TaxonomyFilter } from '../../components/TaxonomyFilter';
@@ -12,6 +11,7 @@ import SearchCard from '../../components/SearchCard/SearchCard';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TaxonomyFields } from '../../models/Taxonomy';
+import { synchronizeTaxonomy } from '../../api/taxonomy';
 
 export const TaxonomyPage = () => {
   const { t } = useTranslation();
