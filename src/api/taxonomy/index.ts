@@ -1,6 +1,6 @@
 import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
-import utils from '../utils';
-import { parseAndLog } from '../utils/loaders';
+import utils from '../../utils';
+import { parseAndLog } from '../../utils/loaders';
 import {
   taxonomyMacroAreaCodeDTOSchema,
   taxonomyServiceTypeCodeDTOSchema,
@@ -8,7 +8,8 @@ import {
   taxonomyCodeDTOSchema,
   taxonomyOrganizationTypeDTOSchema,
   taxonomySchema
-} from '../../generated/zod-schema';
+} from '../../../generated/zod-schema';
+import { buildQueryParams, TaxonomyFilteredRequest } from './mappings';
 
 export const getOrganizationsTypes = () =>
   useQuery({
@@ -123,22 +124,20 @@ export const synchronizeTaxonomy = () =>
     }
   });
 
-type TaxonomiesParams = Parameters<typeof utils.apiClient.bff.getTaxonomies>;
-export type TaxonomiesQuery = TaxonomiesParams[0];
-
 export const getTaxonomies = () =>
   useMutation({
     mutationKey: ['getTaxonomies'],
-    mutationFn: async (query: TaxonomiesQuery) => {
-      const { data: taxonomies } = await utils.apiClient.bff.getTaxonomies(
+    mutationFn: async (args: TaxonomyFilteredRequest) => {
+      const query = buildQueryParams(args);
+      const { data } = await utils.apiClient.bff.getTaxonomies(
         query,
+        // repeat array params as query string
         {
           paramsSerializer: {
-            // repeat array params as query string
             indexes: null
           }
         }
       );
-      return taxonomies;
+      return data;
     }
   });

@@ -1,86 +1,48 @@
-import { describe, expect, it, Mock, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
-import { useLocation, useNavigate } from 'react-router';
+import * as ReactRouter from 'react-router';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import { SearchType } from '../../models/DebtPositions';
 import DebtPositionResults from './DebtPositionsResults';
 import { DebtPositionsDataGrid } from './components/DebtPositionsDataGrid';
 import { PageRoutes } from '../../routes';
+import * as useSearchModule from '../../hooks/useSearch';
+import useDebtPositionFilters from '../../hooks/useDebtPositionsFilters';
 
-// Mock dependencies
+// Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
 }));
 
+// Mock react-router hooks
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useLocation: vi.fn(),
-  useNavigate: vi.fn(() => vi.fn()),
-  Navigate: vi.fn(),
-  generatePath: vi.fn((path) => path),
-  createBrowserRouter: vi.fn()
+  useNavigate: vi.fn()
 }));
 
-vi.mock('../../hooks/useDebtPositionsSearch', () => ({
-  default: vi.fn(() => ({
-    query: { data: { content: [], totalElements: 0 } },
-    applyFilters: vi.fn(),
-    handleFilterChange: vi.fn(),
-    handlePageChange: vi.fn(),
-    handlePageSizeChange: vi.fn(),
-    handlePaginationChange: vi.fn(),
-    setSort: vi.fn(),
-    sortModel: [],
-    handleSortModelChange: vi.fn(),
-    pagination: { page: 0, size: 10 },
-    filterValues: {}
-  }))
-}));
+// Mock useSearch hook (named export)
+vi.mock('../../hooks/useSearch');
 
-vi.mock('../../hooks/useDebtPositionsFilters', () => ({
-  default: vi.fn(() => ({
-    filters: []
-  }))
-}));
+// Mock useDebtPositionFilters (default export)
+vi.mock('../../hooks/useDebtPositionsFilters');
 
-type ActionType = {
-  buttonText?: string;
-  onActionClick: () => void;
-};
-
-vi.mock('../../components/TitleComponent/TitleComponent', () => ({
-  default: vi.fn(
-    ({
-      title,
-      callToAction
-    }: {
-      title: string;
-      callToAction?: Array<ActionType>;
-    }) => (
-      <div>
-        <div>{title}</div>
-        {callToAction?.map((action: ActionType, index: number) => (
-          <button
-            key={index}
-            onClick={action.onActionClick}
-            data-testid="action-button"
-          >
-            {action.buttonText}
-          </button>
-        ))}
-      </div>
-    )
-  )
-}));
-
+// Mock FilterContainer with partial mock preserving named exports
 vi.mock(
   '../../components/FilterContainer/FilterContainer',
-  async (importOriginal) => ({
-    ...(await importOriginal()),
-    default: vi.fn(() => <div>FilterContainer</div>)
-  })
+  async (importOriginal) => {
+    const originalModule =
+      await importOriginal<
+        typeof import('../../components/FilterContainer/FilterContainer')
+      >();
+    return {
+      ...originalModule,
+      default: vi.fn(() => <div>FilterContainer</div>)
+    };
+  }
 );
 
+// Mock DataGrid components
 vi.mock('./components/DebtPositionIUVDataGrid', () => ({
   IUVDataGrid: vi.fn(() => <div>IUVDataGrid</div>)
 }));
@@ -89,18 +51,69 @@ vi.mock('./components/DebtPositionsDataGrid', () => ({
   DebtPositionsDataGrid: vi.fn(() => <div>DebtPositionsDataGrid</div>)
 }));
 
+// Mock TitleComponent
+vi.mock('../../components/TitleComponent/TitleComponent', () => ({
+  default: vi.fn(({ title, callToAction }) => (
+    <div>
+      <div>{title}</div>
+      {callToAction?.map(
+        (
+          action: { buttonText?: string; onActionClick: () => void },
+          index: number
+        ) => (
+          <button
+            key={index}
+            onClick={action.onActionClick}
+            data-testid="action-button"
+          >
+            {action.buttonText}
+          </button>
+        )
+      )}
+    </div>
+  ))
+}));
+
 describe('DebtPositionResults', () => {
+  const mockUseLocation = vi.mocked(ReactRouter.useLocation);
+  const mockUseNavigate = vi.mocked(ReactRouter.useNavigate);
+  const mockUseSearch = vi.mocked(useSearchModule.useSearch);
+  const mockUseDebtPositionFilters = vi.mocked(useDebtPositionFilters);
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Default useNavigate mock returns a jest.fn()
+    mockUseNavigate.mockReturnValue(vi.fn());
+
+    // Default useDebtPositionFilters mock returns empty filters and noop onFilter
+    mockUseDebtPositionFilters.mockReturnValue({
+      filters: []
+    });
+
+    // Default useSearch mock returns expected shape
+    mockUseSearch.mockReturnValue({
+      // @ts-expect-error mocking useQuery result
+      query: { data: { content: [], totalElements: 0 } },
+      applyFilters: vi.fn(),
+      handleFilterChange: vi.fn(),
+      handlePaginationChange: vi.fn(),
+      setSort: vi.fn(),
+      filters: {}
+    });
+  });
+
   const mockLocationState = (searchType: SearchType) => ({
     state: {
       searchType,
-      filters: {
-        // Add mock filter values if needed for your tests
-      }
-    }
+      filters: {}
+    },
+    pathname: searchType === SearchType.IUV ? '/results-IUV' : '/results'
   });
 
-  it('should render IUV version correctly', () => {
-    (useLocation as Mock).mockReturnValue(mockLocationState(SearchType.IUV));
+  it('renders IUV version correctly', () => {
+    // @ts-expect-error mocking location state
+    mockUseLocation.mockReturnValue(mockLocationState(SearchType.IUV));
 
     render(<DebtPositionResults />);
 
@@ -110,8 +123,9 @@ describe('DebtPositionResults', () => {
     expect(screen.getByText('IUVDataGrid')).toBeInTheDocument();
   });
 
-  it('should render standard version correctly', () => {
-    (useLocation as Mock).mockReturnValue(
+  it('renders standard version correctly', () => {
+    mockUseLocation.mockReturnValue(
+      // @ts-expect-error mocking location state
       mockLocationState(SearchType.DEBT_POSITION)
     );
 
@@ -121,8 +135,9 @@ describe('DebtPositionResults', () => {
     expect(screen.getByText('DebtPositionsDataGrid')).toBeInTheDocument();
   });
 
-  it('should pass correct props to FilterContainer', () => {
-    (useLocation as Mock).mockReturnValue(
+  it('passes correct props to FilterContainer', () => {
+    mockUseLocation.mockReturnValue(
+      // @ts-expect-error mocking location state
       mockLocationState(SearchType.DEBT_POSITION)
     );
 
@@ -138,8 +153,9 @@ describe('DebtPositionResults', () => {
     );
   });
 
-  it('should pass correct props to DataGrid', () => {
-    (useLocation as Mock).mockReturnValue(
+  it('passes correct props to DataGrid', () => {
+    mockUseLocation.mockReturnValue(
+      // @ts-expect-error mocking location state
       mockLocationState(SearchType.DEBT_POSITION)
     );
 
@@ -159,12 +175,13 @@ describe('DebtPositionResults', () => {
     );
   });
 
-  it('should navigate to create wizard when action button is clicked', () => {
+  it('navigates to create wizard when action button clicked', () => {
     const navigateMock = vi.fn();
-    (useLocation as Mock).mockReturnValue(
+    mockUseNavigate.mockReturnValue(navigateMock);
+    mockUseLocation.mockReturnValue(
+      // @ts-expect-error mocking location state
       mockLocationState(SearchType.DEBT_POSITION)
     );
-    (useNavigate as Mock).mockReturnValue(navigateMock);
 
     render(<DebtPositionResults />);
 
