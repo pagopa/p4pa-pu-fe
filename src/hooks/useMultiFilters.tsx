@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import {
   COMPONENT_TYPE,
-  FilterItem
+  FilterItem,
+  SelectChangeEvent
 } from '../components/FilterContainer/FilterContainer';
 import { useStore } from '../store/GlobalStore';
 import { ChangeEvent, useEffect } from 'react';
@@ -86,7 +87,7 @@ export const useMultiFilters = (props?: {
 
   const selectControl = (field: keyof typeof filterValues) => ({
     value: filterValues[field] as string,
-    onChange: (e: any) =>
+    onChange: (e: SelectChangeEvent) =>
       setFilterValues({ ...filterValues, [field]: e.target.value })
   });
 
@@ -423,7 +424,6 @@ export const useMultiFilters = (props?: {
         }
       ]
     },
-    // Assessment filters
     ASSESSMENT_NAME: {
       label: t('assessment.filters.assessmentName'),
       fields: [
@@ -440,7 +440,6 @@ export const useMultiFilters = (props?: {
         {
           type: COMPONENT_TYPE.select,
           label: t('assessment.filters.debtType'),
-          // options: [],
           ...selectControl('DEBT_TYPE')
         }
       ]

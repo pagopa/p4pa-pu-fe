@@ -97,7 +97,9 @@ const Step1GeneralConfiguration = ({
 
     if (matchingTypeOrg) {
       const matchingSelectOption = debtPositionsTypes.find(
-        (type) => type.value === matchingTypeOrg.debtPositionTypeOrgId
+        (type) =>
+          matchingTypeOrg.debtPositionTypeOrgId !== undefined &&
+          type.value === matchingTypeOrg.debtPositionTypeOrgId
       );
 
       if (matchingSelectOption) {
@@ -138,7 +140,9 @@ const Step1GeneralConfiguration = ({
 
       if (matchingTypeOrg) {
         const matchingSelectOption = debtPositionsTypes.find(
-          (type) => type.value === matchingTypeOrg.debtPositionTypeOrgId
+          (type) =>
+            matchingTypeOrg.debtPositionTypeOrgId !== undefined &&
+            type.value === matchingTypeOrg.debtPositionTypeOrgId
         );
 
         if (matchingSelectOption) {
@@ -178,8 +182,7 @@ const Step1GeneralConfiguration = ({
 
   const onSubmit = (values: FormValues) => {
     const selectedType = debtPositionsTypes.find(
-      (type: DebtPositionType) =>
-        type.value.toString() === values.debtPositionType
+      (type: DebtPositionType) => String(type.value) === values.debtPositionType
     );
 
     const updatedData = {

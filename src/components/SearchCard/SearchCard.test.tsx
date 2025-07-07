@@ -204,6 +204,42 @@ describe('SearchCard', () => {
             label: 'REMITTANCE_INFORMATION Field'
           }
         ]
+      },
+      ASSESSMENT_NAME: {
+        label: 'ASSESSMENT_NAME',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'ASSESSMENT_NAME Field'
+          }
+        ]
+      },
+      DEBT_TYPE: {
+        label: 'DEBT_TYPE',
+        fields: [
+          {
+            type: COMPONENT_TYPE.select,
+            label: 'DEBT_TYPE Field'
+          }
+        ]
+      },
+      ASSESSMENT_STATUS: {
+        label: 'ASSESSMENT_STATUS',
+        fields: [
+          {
+            type: COMPONENT_TYPE.select,
+            label: 'ASSESSMENT_STATUS Field'
+          }
+        ]
+      },
+      LAST_UPDATE_DATE: {
+        label: 'LAST_UPDATE_DATE',
+        fields: [
+          {
+            type: COMPONENT_TYPE.dateRange,
+            label: 'LAST_UPDATE_DATE Field'
+          }
+        ]
       }
     }
   };

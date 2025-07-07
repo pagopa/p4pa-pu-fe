@@ -36,9 +36,25 @@ export const useAssessmentsSearch = ({
 
   const query = getAssessments(organizationId);
 
+  const isFilterValueSignificant = (value: unknown): boolean => {
+    if (value === null || value === undefined) {
+      return false;
+    }
+    if (typeof value === 'string') {
+      return value !== '';
+    }
+    if (typeof value === 'number') {
+      return true;
+    }
+    if (value instanceof Date) {
+      return true;
+    }
+    return Boolean(value);
+  };
+
   useEffect(() => {
     const hasFilters = Object.values(filterValues).some(
-      (value) => value !== null && value !== undefined && value !== ''
+      isFilterValueSignificant
     );
 
     if (hasFilters) {
