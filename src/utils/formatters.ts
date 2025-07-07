@@ -119,3 +119,21 @@ export function isDateInPast(
   today.setHours(0, 0, 0, 0);
   return date < today;
 }
+
+/**
+ * Formats file size from bytes to human-readable format
+ * @param size - The file size in bytes
+ * @returns Formatted file size string with appropriate unit (Bytes, KB, MB)
+ */
+export function formatFileSize(size: number): string {
+  if (!size) {
+    return '0 Bytes';
+  }
+  if (size >= 1024 * 1024) {
+    return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+  } else if (size >= 1024) {
+    return `${(size / 1024).toFixed(1)} KB`;
+  } else {
+    return `${size} Bytes`;
+  }
+}

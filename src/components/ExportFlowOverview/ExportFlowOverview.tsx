@@ -21,7 +21,7 @@ import { getExportFile, getExportFiles } from '../../api/exportFiles';
 import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
 import { downloadBlob } from '../../utils/download';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
-import { formatDateTime } from '../../utils/formatters';
+import { formatDateTime, formatFileSize } from '../../utils/formatters';
 import utils from '../../utils';
 import { ReactNode, useEffect, useState } from 'react';
 
@@ -69,6 +69,7 @@ const ExportFlowOverview = ({
     organizationId,
     appliedFilters
   );
+
   const isEmptyData = !data?.content || data.content.length === 0;
 
   useEffect(() => {
@@ -152,12 +153,14 @@ const ExportFlowOverview = ({
       type: 'string'
     },
     {
-      field: 'size',
+      field: 'fileSize',
       headerName: t('commons.files.size'),
       flex: 1,
       type: 'number',
       headerAlign: 'left',
-      align: 'left'
+      align: 'left',
+      renderCell: (params: GridRenderCellParams) =>
+        formatFileSize(params.value as number)
     },
     {
       field: 'menu',
