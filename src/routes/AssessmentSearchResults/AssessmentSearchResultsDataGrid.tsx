@@ -96,7 +96,6 @@ const AssessmentSearchResultsDataGrid = ({
       flex: 1.2,
       type: 'string',
       minWidth: 100,
-      sortable: false,
       renderCell: (params: GridRenderCellParams<AssessmentDataRow>) => {
         if (!params.value) {
           return <span>-</span>;
