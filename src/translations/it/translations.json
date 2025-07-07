@@ -108,6 +108,18 @@
     "createAssessment": "Crea accertamento",
     "createChapter": "Crea nuovo capitolo",
     "seeAllChapters": "Vedi tutti i capitoli",
+    "searchResults": {
+      "title": "Risultato ricerca accertamenti",
+      "description": "Questi sono i risultati della tua ricerca.",
+      "noResults": "Nessun risultato trovato per i filtri selezionati.",
+      "columns": {
+        "assessmentName": "Nome accertamento",
+        "debtType": "Tipo dovuto",
+        "createdBy": "Creato da",
+        "updatedAt": "Aggiornato il",
+        "status": "Stato"
+      }
+    },
     "filters": {
       "assessmentName": "Nome accertamento",
       "debtType": "Tipo dovuto",
@@ -115,9 +127,9 @@
       "lastUpdateDate": "Data ultimo aggiornamento"
     },
     "statusOptions": {
-      "NEW": "Nuovo",
+      "NEW": "In corso",
       "CLOSED": "Chiuso",
-      "CANCELLED": "Annullato"
+      "CANCELLED": "Eliminato"
     }
   },
   "classificationsExport": {
@@ -416,6 +428,7 @@
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "ASSESSMENT": "Accertamento pagamenti",
+      "ASSESSMENT_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
       "DEBT_POSITIONS": "Posizioni debitorie",
