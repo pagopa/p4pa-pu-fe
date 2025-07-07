@@ -209,7 +209,7 @@ describe('Assessment', () => {
     expect(viewAllButton).toBeInTheDocument();
   });
 
-  it('should execute search when clicking search button with valid filters', () => {
+  it('should navigate to search results when clicking search button with valid filters', () => {
     mockNoFilterIsSelected.mockReturnValue(true);
 
     render(<Assessment />);
@@ -217,7 +217,10 @@ describe('Assessment', () => {
     const searchButton = screen.getByRole('button', { name: 'commons.search' });
     fireEvent.click(searchButton);
 
-    expect(mockExecuteSearch).toHaveBeenCalled();
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/piattaformaunitaria/assessment/search-results'
+    );
+    expect(mockExecuteSearch).not.toHaveBeenCalled();
   });
 
   it('should show error when searching without selected filters', () => {

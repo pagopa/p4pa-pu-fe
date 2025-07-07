@@ -34,6 +34,7 @@ vi.mock('../FilterContainer/FilterContainer', () => ({
 }));
 
 vi.mock('../../../generated/apiClient', () => ({
+  Api: vi.fn().mockImplementation(() => ({})),
   LabelEnum: {
     DOPPI: 'DOPPI',
     RT_NO_IUF: 'RT_NO_IUF',

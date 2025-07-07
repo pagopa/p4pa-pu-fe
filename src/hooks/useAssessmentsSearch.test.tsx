@@ -145,10 +145,16 @@ describe('useAssessmentsSearch', () => {
     expect(result.current.data).toBe(null);
   });
 
-  it('should not call mutate on mount when no filters are set', () => {
+  it('should call mutate on mount with pagination params only when no filters are set', () => {
     renderHook(() => useAssessmentsSearch(defaultProps));
 
-    expect(mockMutate).not.toHaveBeenCalled();
+    expect(mockMutate).toHaveBeenCalledWith(
+      {
+        page: 0,
+        size: 20
+      },
+      { onError: expect.any(Function) }
+    );
   });
 
   it('should call mutate on mount when filters are set', () => {
