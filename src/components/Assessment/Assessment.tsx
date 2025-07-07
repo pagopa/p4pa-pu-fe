@@ -6,21 +6,14 @@ import { Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
-import { ReactNode, useState, useMemo } from 'react';
-import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
-import { useStore } from '../../store/GlobalStore';
+import { ReactNode, useState } from 'react';
 import { useAssessmentsSearch } from '../../hooks/useAssessmentsSearch';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '../../routes';
 
 export const Assessment = () => {
   const { t } = useTranslation();
-  const { state } = useStore();
-  const organizationId = state.organizationId;
-
-  const { optionsMap: debtTypesOptions } = useDebtPositionsTypeOrg({
-    organizationId: organizationId || 0,
-    includeAllOption: true,
-    useCodeAsValue: true // for assessments we use the code (string)
-  });
+  const navigate = useNavigate();
 
   const { filterMap, removeAllFilters, noFilterIsSelected, filterValues } =
     useMultiFilters({
@@ -33,22 +26,6 @@ export const Assessment = () => {
     initialPage: 0,
     initialSize: 20
   });
-
-  // Populate the select DEBT_TYPE options dynamically
-  const enhancedFilterMap = useMemo(() => {
-    if (!filterMap.DEBT_TYPE) return filterMap;
-
-    return {
-      ...filterMap,
-      DEBT_TYPE: {
-        ...filterMap.DEBT_TYPE,
-        fields: filterMap.DEBT_TYPE.fields.map((field) => ({
-          ...field,
-          options: debtTypesOptions
-        }))
-      }
-    };
-  }, [filterMap, debtTypesOptions]);
 
   const [error, setError] = useState(false);
   const errorMessage: ReactNode = (
@@ -81,11 +58,7 @@ export const Assessment = () => {
     } else {
       setError(false);
 
-      assessmentSearch.executeSearch(filterValues);
-      console.log('assessmentSearch', assessmentSearch);
-
-      // TODO: Navigate to the results page when it is implemented
-      // navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS);
+      navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS);
     }
   }
 
@@ -108,7 +81,7 @@ export const Assessment = () => {
             <SearchCard
               title={t('assessment.search')}
               description={t('assessment.searchDescription')}
-              multiFilterConfig={enhancedFilterMap}
+              multiFilterConfig={filterMap}
               render={error && errorMessage}
               extraProps={{
                 onFilterInteraction: () => setError(false)
