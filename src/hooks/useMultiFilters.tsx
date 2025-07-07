@@ -5,7 +5,7 @@ import {
   SelectChangeEvent
 } from '../components/FilterContainer/FilterContainer';
 import { useStore } from '../store/GlobalStore';
-import { ChangeEvent, useEffect } from 'react';
+import { ChangeEvent, useEffect, useMemo } from 'react';
 import {
   noFilterIsSelected,
   noFilterSelectedExcludingClassificationType,
@@ -14,6 +14,7 @@ import {
 } from '../store/FilterStore';
 import { FilterValues } from '../models/Filters';
 import { LabelEnum } from '../../generated/apiClient';
+import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 
 export enum FilterCategory {
   TREASURY = 'TREASURY',
@@ -64,8 +65,14 @@ export const useMultiFilters = (props?: {
 }) => {
   const { t } = useTranslation();
   const {
-    state: { filterValues, selectedFilters }
+    state: { filterValues, selectedFilters, organizationId }
   } = useStore();
+
+  const { optionsMap: debtTypesOptions } = useDebtPositionsTypeOrg({
+    organizationId: organizationId || 0,
+    includeAllOption: true,
+    useCodeAsValue: true // for assessments we use the code (string)
+  });
 
   useEffect(() => {
     if (props?.clearOnMount) {
@@ -539,10 +546,31 @@ export const useMultiFilters = (props?: {
     ) as FilterMap;
   };
 
-  const filterMap = getFilteredMap();
+  const baseFilterMap = getFilteredMap();
+
+  // Automatic enhancement for Assessment filters: populate the DEBT_TYPE options
+  const enhancedFilterMap = useMemo(() => {
+    if (
+      props?.filterCategory === FilterCategory.ASSESSMENT &&
+      baseFilterMap.DEBT_TYPE &&
+      debtTypesOptions.length > 0
+    ) {
+      return {
+        ...baseFilterMap,
+        DEBT_TYPE: {
+          ...baseFilterMap.DEBT_TYPE,
+          fields: baseFilterMap.DEBT_TYPE.fields.map((field) => ({
+            ...field,
+            options: debtTypesOptions
+          }))
+        }
+      };
+    }
+    return baseFilterMap;
+  }, [baseFilterMap, debtTypesOptions, props?.filterCategory]);
 
   return {
-    filterMap,
+    filterMap: enhancedFilterMap,
     selectedFilters,
     removeAllFilters,
     noFilterIsSelected,
