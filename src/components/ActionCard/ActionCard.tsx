@@ -20,6 +20,8 @@ type ActionCardProps = {
   titleIcon?: React.ReactNode;
   onActionClick: () => void;
   onLinkClick?: () => void;
+  actionDataTestId?: string;
+  linkDataTestId?: string;
 };
 
 const ActionCard = ({
@@ -32,7 +34,9 @@ const ActionCard = ({
   title,
   titleIcon,
   onActionClick,
-  onLinkClick
+  onLinkClick,
+  actionDataTestId,
+  linkDataTestId
 }: ActionCardProps) => {
   return (
     <section aria-labelledby="action-card-title">
@@ -72,6 +76,7 @@ const ActionCard = ({
               fullWidth={false}
               onClick={onActionClick}
               id="action-card-btn"
+              data-testid={actionDataTestId}
             >
               {actionLabel}
             </Button>
@@ -94,6 +99,7 @@ const ActionCard = ({
                 variant="text"
                 fullWidth={false}
                 onClick={onLinkClick}
+                data-testid={linkDataTestId}
                 sx={{ py: 1 }}
               >
                 {linkLabel}

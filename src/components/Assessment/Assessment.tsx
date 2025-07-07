@@ -97,7 +97,8 @@ export const Assessment = () => {
             icon: <AddIcon />,
             buttonText: t('assessment.createAssessment'),
             variant: 'contained',
-            onActionClick: handleCreateAssessment
+            onActionClick: handleCreateAssessment,
+            dataTestId: 'assessment-create-button'
           }
         ]}
       />
@@ -144,6 +145,8 @@ export const Assessment = () => {
               linkLabel={t('assessment.seeAllChapters')}
               onLinkClick={handleViewAllChapters}
               onActionClick={handleCreateChapter}
+              actionDataTestId="assessment-create-chapter-button"
+              linkDataTestId="assessment-view-all-chapters-button"
             />
           </Grid>
         </Grid>
