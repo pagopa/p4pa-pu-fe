@@ -42,7 +42,6 @@ export const useDebtPositionFilters = ({
         {
           type: COMPONENT_TYPE.dateRange,
           label: 'dateRange',
-          required: true,
           gridWidth: 5,
           from: { label: t('DebtPositions.Results.filters.from') },
           to: { label: t('dates.to') },
@@ -92,7 +91,6 @@ export const useDebtPositionFilters = ({
       {
         type: COMPONENT_TYPE.dateRange,
         label: 'dateRange',
-        required: true,
         gridWidth: 5,
         from: { label: t('debtPositions.expirationFrom') },
         to: { label: t('dates.to') },
