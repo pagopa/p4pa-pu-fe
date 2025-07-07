@@ -62,14 +62,10 @@ export const useDebtPositionSearch = ({
       sortParams: Array<string>
     ): DebtPositionViewQuery & DebtPositionInstallmentsQuery => {
       return {
-        dueDateFrom:
-          filters?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
-        dueDateTo:
-          filters?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
-        creationDateFrom:
-          filters?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
-        creationDateTo:
-          filters?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
+        dueDateFrom: filters?.dateRange?.from?.toISOString(),
+        dueDateTo: filters?.dateRange?.to?.toISOString(),
+        creationDateFrom: filters?.dateRange?.from?.toISOString(),
+        creationDateTo: filters?.dateRange?.to?.toISOString(),
         page: pagination.page,
         size: pagination.size,
         ...(filters?.typeOrgId && {
