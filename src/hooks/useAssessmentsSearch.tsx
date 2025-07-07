@@ -36,32 +36,10 @@ export const useAssessmentsSearch = ({
 
   const query = getAssessments(organizationId);
 
-  const isFilterValueSignificant = (value: unknown): boolean => {
-    if (value === null || value === undefined) {
-      return false;
-    }
-    if (typeof value === 'string') {
-      return value !== '';
-    }
-    if (typeof value === 'number') {
-      return true;
-    }
-    if (value instanceof Date) {
-      return true;
-    }
-    return Boolean(value);
-  };
-
   useEffect(() => {
-    const hasFilters = Object.values(filterValues).some(
-      isFilterValueSignificant
-    );
-
-    if (hasFilters) {
-      query.mutate(filterToRequest(), {
-        onError: handleError
-      });
-    }
+    query.mutate(filterToRequest(), {
+      onError: handleError
+    });
   }, [organizationId, paginationParams.page, paginationParams.size, sort]);
 
   const handleError = (error: unknown) => {
