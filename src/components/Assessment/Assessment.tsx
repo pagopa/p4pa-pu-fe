@@ -82,7 +82,6 @@ export const Assessment = () => {
       setError(false);
 
       assessmentSearch.executeSearch(filterValues);
-      console.log('assessmentSearch', assessmentSearch);
 
       // TODO: Navigate to the results page when it is implemented
       // navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS);
