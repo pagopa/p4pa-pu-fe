@@ -6,11 +6,11 @@ import {
 } from '../components/FilterContainer/FilterContainer';
 import { useStore } from '../store/GlobalStore';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
-import { TelematicReceiptFilters } from './useTelematicReceiptsSearch';
 import { FilterFieldIds } from '../models/SearchCardFields';
+import { TelematicReceiptsFilters } from '../api/receipts/mappings';
 
 type UseTelematicReceiptsProps = {
-  onFilter: (filters: TelematicReceiptFilters) => void;
+  onFilter: (filters: TelematicReceiptsFilters) => void;
   layout?: 'inline' | 'grid';
 };
 

@@ -30,6 +30,7 @@ type TitleComponentProps = {
       | 'info'
       | 'warning';
     onActionClick: () => void;
+    dataTestId?: string;
   }>;
 };
 
@@ -70,6 +71,7 @@ const TitleComponent = ({
                 color={(action.color as ButtonProps['color']) || 'primary'}
                 onClick={action.onActionClick}
                 aria-label={`${action.buttonText}`}
+                data-testid={action.dataTestId}
                 sx={
                   action.buttonText
                     ? undefined
