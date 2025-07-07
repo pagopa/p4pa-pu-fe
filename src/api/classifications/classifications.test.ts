@@ -82,7 +82,12 @@ describe('getClassifications', () => {
     REGULATION_DATE_FROM: null,
     REGULATION_DATE_TO: null,
     PAYMENT_DATE_FROM: null,
-    PAYMENT_DATE_TO: null
+    PAYMENT_DATE_TO: null,
+    ASSESSMENT_NAME: '',
+    DEBT_TYPE: '',
+    ASSESSMENT_STATUS: '',
+    LAST_UPDATE_DATE_FROM: null,
+    LAST_UPDATE_DATE_TO: null
   };
 
   const request: ClassificationsFilteredRequest = {
