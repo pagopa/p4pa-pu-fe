@@ -13,6 +13,23 @@ vi.mock('react-router', async () => {
   };
 });
 
+vi.mock('../../store/GlobalStore', () => ({
+  useStore: vi.fn(() => ({
+    state: { organizationId: 123 }
+  })),
+  StoreProvider: ({ children }: { children: React.ReactNode }) => children
+}));
+
+vi.mock('../../api/getPaymentsReporting', () => ({
+  getPaymentsReporting: vi.fn(() => ({
+    mutate: vi.fn(),
+    mutateAsync: vi.fn(),
+    data: null,
+    isLoading: false,
+    error: null
+  }))
+}));
+
 describe('Reporting Page', () => {
   it('renders Reporting without crashing', () => {
     render(<ReportingSearchResults />);
