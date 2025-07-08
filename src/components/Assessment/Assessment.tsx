@@ -1,12 +1,12 @@
-import SearchCard from '../SearchCard/SearchCard';
+import SearchCard, { ErrorMessage } from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import AddIcon from '@mui/icons-material/Add';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { useAssessmentsSearch } from '../../hooks/useAssessmentsSearch';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
@@ -28,16 +28,6 @@ export const Assessment = () => {
   });
 
   const [error, setError] = useState(false);
-  const errorMessage: ReactNode = (
-    <Typography
-      variant="body2"
-      color="error"
-      mt={2}
-      data-testid="multifilters-error-text"
-    >
-      {t('commons.filters.atLeastOneFilter')}
-    </Typography>
-  );
 
   const handleCreateAssessment = () => {
     console.log('Crea accertamento clicked');
@@ -83,7 +73,7 @@ export const Assessment = () => {
               title={t('assessment.search')}
               description={t('assessment.searchDescription')}
               multiFilterConfig={filterMap}
-              render={error && errorMessage}
+              render={error && ErrorMessage}
               extraProps={{
                 onFilterInteraction: () => setError(false)
               }}

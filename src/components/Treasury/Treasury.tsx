@@ -1,12 +1,12 @@
-import SearchCard from '../SearchCard/SearchCard';
+import SearchCard, { ErrorMessage } from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { FileUpload } from '@mui/icons-material';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { PageRoutes } from '../../routes';
 import { generatePath, useNavigate } from 'react-router';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
 
 export const Treasury = () => {
@@ -17,16 +17,6 @@ export const Treasury = () => {
   });
   const navigate = useNavigate();
   const [error, setError] = useState(false);
-  const errorMessage: ReactNode = (
-    <Typography
-      variant="body2"
-      color="error"
-      mt={2}
-      data-testid="multifilters-error-text"
-    >
-      {t('commons.filters.atLeastOneFilter')}
-    </Typography>
-  );
 
   function submitSearch() {
     if (noFilterIsSelected.peek()) {
@@ -49,7 +39,7 @@ export const Treasury = () => {
               title={t('treasury.search')}
               description={t('treasury.searchdescription')}
               multiFilterConfig={filterMap}
-              render={error && errorMessage}
+              render={error && ErrorMessage}
               extraProps={{
                 onFilterInteraction: () => setError(false)
               }}
