@@ -4,6 +4,7 @@ import AssessmentSearchResultsDataGrid from './AssessmentSearchResultsDataGrid';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
+import AddIcon from '@mui/icons-material/Add';
 import { ReactNode, useState } from 'react';
 import {
   FilterCategory,
@@ -21,17 +22,11 @@ export type LocationState = {
   filterMap: FilterMap;
 };
 
-/**
- * Pagina dei risultati di ricerca per gli accertamenti.
- * Mostra una tabella con i risultati trovati, breadcrumb e drawer per i filtri.
- */
 const AssessmentSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  // const navigate = useNavigate(); // TODO: Sarà usato per navigazione futura
   const [error, setError] = useState(false);
 
-  // Hook per gestire i filtri multi-selezione
   const {
     filterMap,
     selectedFilters,
@@ -46,14 +41,14 @@ const AssessmentSearchResults = () => {
     setDrawerOpen((prev) => !prev);
   };
 
-  // Hook per la ricerca degli accertamenti
+  const handleCreateAssessment = () => {
+    console.log('Crea accertamento clicked');
+  };
+
   const assessments = useAssessmentsSearch({
     initialFilters: filterValues
   });
 
-  /**
-   * Applica i filtri selezionati e esegue la ricerca
-   */
   const applyFilters = () => {
     if (noFilterIsSelected.peek()) {
       assessments.executeSearch(filterValues);
@@ -77,9 +72,19 @@ const AssessmentSearchResults = () => {
 
   return (
     <>
-      <TitleComponent title={t('commons.routes.ASSESSMENT_SEARCH_RESULTS')} />
+      <TitleComponent
+        title={t('commons.routes.ASSESSMENT_SEARCH_RESULTS')}
+        callToAction={[
+          {
+            icon: <AddIcon />,
+            buttonText: t('assessment.createAssessment'),
+            variant: 'contained',
+            onActionClick: handleCreateAssessment,
+            dataTestId: 'assessment-create-button'
+          }
+        ]}
+      />
 
-      {/* Pulsante per aprire il drawer dei filtri */}
       <Grid container justifyContent="flex-end" p={2}>
         <ButtonNaked
           data-testid="open-drawer"
@@ -106,7 +111,6 @@ const AssessmentSearchResults = () => {
         />
       </Grid>
 
-      {/* Drawer laterale per i filtri */}
       <FilterDrawer
         open={drawerOpen}
         onClose={toggleDrawer}
