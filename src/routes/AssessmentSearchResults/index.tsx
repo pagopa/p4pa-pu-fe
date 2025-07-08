@@ -102,6 +102,7 @@ const AssessmentSearchResults = () => {
         p={2}
         sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
         aria-label="results-table"
+        data-testid="assessment-results-container"
       >
         <AssessmentSearchResultsDataGrid
           data={assessments.data as PagedAssessmentsExtendedDTO}
