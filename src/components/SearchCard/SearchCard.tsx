@@ -1,4 +1,4 @@
-import { Box, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { Alert, Box, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import FilterContainer, {
   FilterItem
@@ -124,6 +124,12 @@ const SearchCard = ({
         {description}
       </Typography>
 
+      {render && (
+        <Grid item lg={12} mb={2}>
+          {render}
+        </Grid>
+      )}
+
       {tabsConfig && tabsConfig.length > 0 && (
         <Tabs
           value={currentTabIndex}
@@ -162,12 +168,6 @@ const SearchCard = ({
             />
           </Grid>
         )}
-
-        {render && (
-          <Grid item lg={12}>
-            {render}
-          </Grid>
-        )}
       </Grid>
 
       <Stack direction="row" justifyContent="flex-end">
@@ -185,12 +185,7 @@ const SearchCard = ({
 
 export default SearchCard;
 export const ErrorMessage: ReactNode = (
-  <Typography
-    variant="body2"
-    color="error"
-    mt={2}
-    data-testid="multifilters-error-text"
-  >
+  <Alert severity="error" data-testid="multifilters-error-text">
     {i18n.t('commons.filters.atLeastOneFilter')}
-  </Typography>
+  </Alert>
 );

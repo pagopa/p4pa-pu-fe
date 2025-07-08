@@ -7,15 +7,20 @@ import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
 import { TaxonomyFilter } from '../../components/TaxonomyFilter';
 import { FormProvider, useForm } from 'react-hook-form';
-import SearchCard from '../../components/SearchCard/SearchCard';
+import SearchCard, {
+  ErrorMessage
+} from '../../components/SearchCard/SearchCard';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TaxonomyFields } from '../../models/Taxonomy';
+import { useState } from 'react';
+import { noFilterSetted } from '../../utils/filtersValidation';
 import { synchronizeTaxonomy } from '../../api/taxonomy';
 
 export const TaxonomyPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [error, setError] = useState<boolean>(false);
 
   const form = useForm({
     resolver: zodResolver(
@@ -44,10 +49,37 @@ export const TaxonomyPage = () => {
     }
   };
 
+  const handleSearch = () => {
+    const currentValues = form.getValues();
+    const optionalFilters = {
+      macroAreaCode: currentValues.macroAreaCode,
+      serviceTypeCode: currentValues.serviceTypeCode,
+      collectingReason: currentValues.collectingReason,
+      taxonomyCode: currentValues.taxonomyCode
+    };
+
+    if (noFilterSetted(optionalFilters)) {
+      setError(true);
+    } else {
+      setError(false);
+    }
+
+    form.handleSubmit(onSubmit)();
+  };
+
   const onSubmit = async (filters: Partial<TaxonomyFields>) => {
+    if (error) {
+      return;
+    }
+
     navigate(PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS, {
       state: { filters }
     });
+  };
+
+  const handleReset = () => {
+    form.reset();
+    setError(false);
   };
 
   return (
@@ -59,18 +91,24 @@ export const TaxonomyPage = () => {
           <Grid item xs={12} lg={6}>
             <SearchCard
               title={t('Cerca tassonomia')}
-              render={<TaxonomyFilter />}
+              render={
+                <>
+                  <Grid mb={2}>{error && ErrorMessage}</Grid>
+                  <TaxonomyFilter />
+                </>
+              }
               description={t(
                 'Inserisci al meno un filtro per avviare la ricerca.'
               )}
               button={[
                 {
                   label: t('commons.filters.remove'),
-                  variant: 'outlined'
+                  variant: 'outlined',
+                  onClick: handleReset
                 },
                 {
                   label: t('commons.filters.filterResults'),
-                  onClick: form.handleSubmit(onSubmit),
+                  onClick: handleSearch,
                   variant: 'contained'
                 }
               ]}

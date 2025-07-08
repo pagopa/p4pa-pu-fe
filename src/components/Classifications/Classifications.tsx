@@ -1,13 +1,13 @@
-import SearchCard from '../SearchCard/SearchCard';
+import SearchCard, { ErrorMessage } from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import DownloadIcon from '@mui/icons-material/Download';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { FilterCategory, useMultiFilters } from '../../hooks/useMultiFilters';
 import { PageRoutes } from '../../routes';
 import { useNavigate } from 'react-router';
-import { ReactNode, useState } from 'react';
+import { useState, useMemo } from 'react';
 import { filterValues } from '../../store/FilterStore';
 
 export const Classifications = () => {
@@ -22,20 +22,23 @@ export const Classifications = () => {
     filterCategory: FilterCategory.CLASSIFICATIONS
   });
 
-  const [error, setError] = useState(false);
   const [labelError, setLabelError] = useState(false);
-  const errorMessage: ReactNode = (
-    <Typography
-      variant="body2"
-      color="error"
-      mt={2}
-      data-testid="multifilters-error-text"
-    >
-      {t('commons.filters.atLeastOneFilter')}
-    </Typography>
-  );
+  const [hasAttemptedSearch, setHasAttemptedSearch] = useState(false);
+
+  const shouldShowError = useMemo(() => {
+    const classificationType = filterValues.value.CLASSIFICATION_TYPE;
+    const hasNoFilters = noFilterSelectedExcludingClassificationType.peek();
+
+    return hasAttemptedSearch && (!classificationType || hasNoFilters);
+  }, [
+    filterValues.value,
+    noFilterSelectedExcludingClassificationType,
+    hasAttemptedSearch
+  ]);
 
   function submitSearch() {
+    setHasAttemptedSearch(true);
+
     const classificationType = filterValues.value.CLASSIFICATION_TYPE;
     if (!classificationType) {
       setLabelError(true);
@@ -43,11 +46,9 @@ export const Classifications = () => {
     }
 
     if (noFilterSelectedExcludingClassificationType.peek()) {
-      setError(true);
       return;
     }
 
-    setError(false);
     setLabelError(false);
     navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS);
   }
@@ -62,12 +63,11 @@ export const Classifications = () => {
               title={t('classifications.search')}
               description={t('classifications.searchdescription')}
               multiFilterConfig={filterMap}
-              render={error && errorMessage}
+              render={shouldShowError && ErrorMessage}
               extraProps={{
                 showLabelError: labelError,
                 onFilterInteraction: () => {
                   setLabelError(false);
-                  setError(false);
                 }
               }}
               filterCategory={FilterCategory.CLASSIFICATIONS}
@@ -78,7 +78,7 @@ export const Classifications = () => {
                   onClick: () => {
                     removeAllFilters();
                     setLabelError(false);
-                    setError(false);
+                    setHasAttemptedSearch(false);
                   },
                   id: 'searchcard-remove-btn'
                 },
