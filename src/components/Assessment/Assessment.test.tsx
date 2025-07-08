@@ -12,6 +12,46 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
+vi.mock('../SearchCard/SearchCard', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    default: ({
+      render,
+      button,
+      title,
+      description
+    }: {
+      render?: React.ReactNode;
+      button?: Array<{
+        label: string;
+        onClick?: () => void;
+        disabled?: boolean;
+        id?: string;
+      }>;
+      title?: string;
+      description?: string;
+      [key: string]: unknown;
+    }) => (
+      <div data-testid="search-card">
+        <h6>{title}</h6>
+        <p>{description}</p>
+        {render}
+        {button?.map((btn, index) => (
+          <button
+            key={index}
+            onClick={btn.onClick}
+            disabled={btn.disabled}
+            id={btn.id}
+          >
+            {btn.label}
+          </button>
+        ))}
+      </div>
+    )
+  };
+});
+
 const mockRemoveAllFilters = vi.fn();
 const mockNoFilterIsSelected = vi.fn(() => false);
 const mockExecuteSearch = vi.fn();
