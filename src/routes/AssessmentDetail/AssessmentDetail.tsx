@@ -1,0 +1,375 @@
+import { useEffect, useState, useMemo } from 'react';
+import { Grid, Typography, useTheme, Menu, MenuItem, Box } from '@mui/material';
+import { Close, Delete, MoreVert } from '@mui/icons-material';
+import { useTranslation } from 'react-i18next';
+import DetailContainer, {
+  DetailData
+} from '../../components/DetailContainer/DetailContainer';
+import { useParams, useNavigate } from 'react-router';
+import FilterContainer, {
+  COMPONENT_TYPE
+} from '../../components/FilterContainer/FilterContainer';
+import { Search } from '@mui/icons-material';
+import AssessmentDetailDataGrid from './components/AssessmentDetailDataGrid';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
+import { getAssessmentDetail } from '../../api/assessmentDetail';
+import { useAssessmentDetailFilters } from '../../hooks/useAssessmentDetailFilters';
+import {
+  AssessmentsDetail,
+  AssessmentsExtendedDTO
+} from '../../../generated/apiClient';
+import { Variant } from '@mui/material/styles/createTypography';
+import { PageRoutes } from '../../routes';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
+import GenericDialog from '../../components/GenericDialog/GenericDialog';
+
+type DialogConfig = {
+  open: boolean;
+  title: string;
+  message: string;
+  confirmLabel: string;
+  cancelLabel?: string;
+  onConfirm: () => void;
+  onClose: () => void;
+  testId: string;
+};
+
+/**
+ * Componente per la visualizzazione del dettaglio di un assessment specifico.
+ * Mostra informazioni di riepilogo e una lista filtrata dei dettagli.
+ */
+export const AssessmentDetail = () => {
+  const { t } = useTranslation();
+  const theme = useTheme();
+  const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const assessmentId = id ? Number(id) : null;
+  const { state } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
+  // Verifica parametri obbligatori
+  if (!assessmentId || isNaN(assessmentId)) {
+    navigate(PageRoutes.RESPONSES_ERROR);
+    return null;
+  }
+
+  const [detailItem, setDetailItem] = useState<AssessmentsDetail | null>(null);
+  const [assessmentInfo, setAssessmentInfo] =
+    useState<AssessmentsExtendedDTO | null>(null);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
+
+  const menuOpen = Boolean(menuAnchorEl);
+
+  // Hook per gestione filtri
+  const {
+    appliedFilters,
+    draftFilters,
+    updateDraftFilters,
+    applyFilters,
+    hasActiveFilters,
+    sortModel,
+    handleSortModelChange
+  } = useAssessmentDetailFilters({
+    initialFilters: {
+      page: 0,
+      size: 10
+    }
+  });
+
+  // Chiamata API per ottenere i dettagli dell'assessment
+  const { data, isLoading, isError, error } = getAssessmentDetail(
+    organizationId,
+    assessmentId,
+    appliedFilters,
+    { enabled: !!organizationId && !!assessmentId }
+  );
+
+  // Gestione errori
+  useEffect(() => {
+    if (isError && error) {
+      console.error('Error loading assessment details:', error);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [isError, error, navigate]);
+
+  // Imposta il primo elemento come dettaglio principale
+  useEffect(() => {
+    if (data?.content?.[0] && !detailItem) {
+      setDetailItem(data.content[0]);
+    }
+  }, [data, detailItem]);
+
+  const handleFiltersApplied = () => {
+    applyFilters();
+  };
+
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+  };
+
+  const handleClose = () => {
+    handleMenuClose();
+  };
+
+  const handleDelete = () => {
+    handleMenuClose();
+    showDeleteDialog();
+  };
+
+  const showDeleteDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: t('assessmentDetail.deleteDialog.title'),
+      message: t('assessmentDetail.deleteDialog.description'),
+      confirmLabel: t('commons.delete'),
+      cancelLabel: t('commons.cancel'),
+      onConfirm: handleDeleteConfirm,
+      onClose: () => setDialogConfig(null),
+      testId: 'confirm-delete-dialog'
+    });
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      // TODO: Implementare la chiamata API per eliminare l'assessment
+      console.log('Deleting assessment:', assessmentId);
+      setDialogConfig(null);
+      // Per ora naviga indietro, in futuro implementare la chiamata di eliminazione
+      navigate(-1);
+    } catch (error) {
+      console.error('Error while deleting the assessment:', error);
+      setDialogConfig(null);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  };
+
+  // Configurazione sezioni per il DetailContainer
+  const detailSections = useMemo(() => {
+    const firstAssessmentItem = detailItem;
+
+    const summaryData: DetailData[] = [
+      {
+        label: t('commons.status'),
+        value: 'In corso', // Per ora hardcoded, da collegare ai dati reali quando disponibili
+        valueType: 'status' as const,
+        chipConfig: {
+          color: 'success' as const,
+          variant: 'filled' as const
+        }
+      },
+      {
+        label: t('assessmentDetail.debtType'),
+        value:
+          firstAssessmentItem?.debtPositionTypeOrgCode || 'Bollo auto ordinario'
+      },
+      {
+        label: t('assessmentDetail.createdBy'),
+        value: firstAssessmentItem?.updateOperatorExternalId || 'Operatore'
+      }
+    ];
+
+    return [
+      {
+        title: { label: 'RIEPILOGO', variant: 'overline' as Variant },
+        data: [...summaryData],
+        inline: true
+      }
+    ];
+  }, [detailItem, assessmentId, t]);
+
+  return (
+    <>
+      <TitleComponent
+        title={
+          detailItem?.debtPositionTypeOrgCode ||
+          `Accertamento ${assessmentId || ''}`
+        }
+        callToAction={[
+          {
+            icon: <MoreVert />,
+            variant: 'text' as const,
+            onActionClick: () => {
+              const button = document.activeElement as HTMLElement;
+              setMenuAnchorEl(button);
+            }
+          }
+        ]}
+      />
+
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={menuOpen}
+        onClose={handleMenuClose}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiMenuItem-root': {
+                px: 2,
+                py: 1
+              }
+            }
+          }
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={handleClose}>
+          <Close fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
+          {t('commons.close')}
+        </MenuItem>
+        <MenuItem onClick={handleDelete}>
+          <Delete fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
+          {t('commons.delete')}
+        </MenuItem>
+      </Menu>
+
+      <Grid container spacing={2}>
+        <Grid item md={12}>
+          <DetailContainer sections={detailSections} />
+        </Grid>
+      </Grid>
+
+      <Grid container marginTop={4}>
+        <Typography variant="h6">
+          {t('assessmentDetail.paymentsAssociated')}
+        </Typography>
+        <Grid
+          container
+          direction="row"
+          my={2}
+          sx={{
+            alignItems: 'center',
+            justifyContent: 'space-between'
+          }}
+        >
+          <FilterContainer
+            items={[
+              {
+                type: COMPONENT_TYPE.textField,
+                label: 'Cerca IUV',
+                adornment: <Search />,
+                gridWidth: 2,
+                value: draftFilters.iuv || '',
+                onChange: (e) => updateDraftFilters({ iuv: e.target.value })
+              },
+              {
+                type: COMPONENT_TYPE.dateRange,
+                label: 'dateRange1',
+                gridWidth: 4,
+                from: {
+                  label: 'Esito dal',
+                  value: draftFilters.paymentDateTimeFrom
+                    ? new Date(draftFilters.paymentDateTimeFrom)
+                    : null,
+                  onChange: (date: Date | null) =>
+                    updateDraftFilters({
+                      paymentDateTimeFrom: date
+                        ? new Date(date.setHours(0, 0, 0, 0)).toISOString()
+                        : undefined
+                    })
+                },
+                to: {
+                  label: 'Al',
+                  value: draftFilters.paymentDateTimeTo
+                    ? new Date(draftFilters.paymentDateTimeTo)
+                    : null,
+                  onChange: (date: Date | null) =>
+                    updateDraftFilters({
+                      paymentDateTimeTo: date
+                        ? new Date(date.setHours(23, 59, 59, 999)).toISOString()
+                        : undefined
+                    })
+                }
+              },
+              {
+                type: COMPONENT_TYPE.dateRange,
+                label: 'dateRange2',
+                gridWidth: 4,
+                from: {
+                  label: 'Aggiornato dal',
+                  value: draftFilters.updateDateTimeFrom
+                    ? new Date(draftFilters.updateDateTimeFrom)
+                    : null,
+                  onChange: (date: Date | null) =>
+                    updateDraftFilters({
+                      updateDateTimeFrom: date
+                        ? new Date(date.setHours(0, 0, 0, 0)).toISOString()
+                        : undefined
+                    })
+                },
+                to: {
+                  label: 'Al',
+                  value: draftFilters.updateDateTimeTo
+                    ? new Date(draftFilters.updateDateTimeTo)
+                    : null,
+                  onChange: (date: Date | null) =>
+                    updateDraftFilters({
+                      updateDateTimeTo: date
+                        ? new Date(date.setHours(23, 59, 59, 999)).toISOString()
+                        : undefined
+                    })
+                }
+              },
+              {
+                type: COMPONENT_TYPE.button,
+                label: t('commons.filters.filterResults'),
+                gridWidth: 2,
+                onClick: handleFiltersApplied
+              }
+            ]}
+          />
+        </Grid>
+        <Grid
+          container
+          p={2}
+          height="100%"
+          sx={{
+            bgcolor: theme.palette.grey[200],
+            overflow: 'auto'
+          }}
+          aria-label="results-table"
+        >
+          <AssessmentDetailDataGrid
+            rows={data?.content || []}
+            sortModel={sortModel}
+            onSortModelChange={handleSortModelChange}
+            isLoading={isLoading}
+            smartPagination={{
+              initialPage: 0,
+              initialSize: 10,
+              sizeOptions: [5, 10, 20],
+              backendData: {
+                totalElements: data?.totalElements,
+                totalPages: data?.totalPages,
+                number: data?.number,
+                size: data?.size
+              },
+              onFiltersApplied: handleFiltersApplied
+            }}
+          />
+        </Grid>
+      </Grid>
+
+      {dialogConfig && (
+        <GenericDialog
+          data-testid={dialogConfig.testId}
+          open={dialogConfig.open}
+          title={dialogConfig.title}
+          message={dialogConfig.message}
+          confirmLabel={dialogConfig.confirmLabel}
+          cancelLabel={dialogConfig.cancelLabel}
+          onConfirm={dialogConfig.onConfirm}
+          onClose={dialogConfig.onClose}
+        />
+      )}
+    </>
+  );
+};
+
+export default AssessmentDetail;
