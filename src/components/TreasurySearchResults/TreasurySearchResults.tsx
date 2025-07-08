@@ -1,4 +1,4 @@
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Alert, Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
@@ -66,14 +66,9 @@ const TreasurySearchResults = () => {
   };
 
   const errorMessage: ReactNode = (
-    <Typography
-      variant="body2"
-      color="error"
-      mt={2}
-      data-testid="multifilters-error-text"
-    >
+    <Alert severity="error" data-testid="multifilters-error-text">
       {t('commons.filters.atLeastOneFilter')}
-    </Typography>
+    </Alert>
   );
 
   return (
