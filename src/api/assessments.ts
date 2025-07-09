@@ -36,9 +36,7 @@ export const getAssessments = (
           }
         );
 
-      if (response) {
-        parseAndLog(pagedAssessmentsExtendedDTOSchema, response);
-      }
+      parseAndLog(pagedAssessmentsExtendedDTOSchema, response);
 
       return response;
     }
