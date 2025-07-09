@@ -3,7 +3,12 @@ import TextField, { TextFieldProps } from '@mui/material/TextField';
 import Tooltip from '@mui/material/Tooltip';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 
-export type SelectOptions = Array<MenuItemProps & { label: string }>;
+export type SelectOptions = Array<
+  MenuItemProps & {
+    label: string;
+    flagMandatoryDueDate?: boolean;
+  }
+>;
 
 export type _SelectProps = Omit<TextFieldProps, 'select' | 'type'> & {
   options?: SelectOptions;
@@ -83,11 +88,21 @@ export const _Select = ({
         )
       }}
     >
-      {options.map((option, index) => (
-        <MenuItem key={`${props.label}-${option.value}-${index}`} {...option}>
-          {option.label}
-        </MenuItem>
-      ))}
+      {options.map((option, index) => {
+        // Filter the custom props to avoid React warning
+        // "React does not recognize the `flagMandatoryDueDate` prop on a DOM element"
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const { label, flagMandatoryDueDate, ...menuItemProps } = option;
+
+        return (
+          <MenuItem
+            key={`${props.label}-${option.value}-${index}`}
+            {...menuItemProps}
+          >
+            {option.label}
+          </MenuItem>
+        );
+      })}
     </TextField>
   );
 };

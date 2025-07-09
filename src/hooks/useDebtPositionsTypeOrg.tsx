@@ -8,10 +8,12 @@ import { AxiosError } from 'axios';
 
 export const useDebtPositionsTypeOrg = ({
   organizationId,
-  includeAllOption = true
+  includeAllOption = true,
+  useCodeAsValue = false
 }: {
   organizationId: number;
   includeAllOption?: boolean;
+  useCodeAsValue?: boolean;
 }) => {
   const [debtPositionsTypes, setDebtPositionsTypes] = useState<
     Array<DebtPositionType>
@@ -34,7 +36,9 @@ export const useDebtPositionsTypeOrg = ({
         .sort((a, b) => a.description.localeCompare(b.description))
         .map((type: DebtPositionTypeOrg) => ({
           label: type.description,
-          value: type.debtPositionTypeOrgId as number,
+          value: useCodeAsValue
+            ? type.code
+            : (type.debtPositionTypeOrgId as number),
           flagMandatoryDueDate: type.flagMandatoryDueDate
         }));
 
@@ -43,7 +47,7 @@ export const useDebtPositionsTypeOrg = ({
           ? [
               {
                 label: t('commons.all'),
-                value: 0,
+                value: useCodeAsValue ? 'ALL' : 0,
                 flagMandatoryDueDate: false
               },
               ...dueTypesMap

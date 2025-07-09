@@ -11,6 +11,7 @@ import ErrorPage from './UtilityPages/error';
 import { flowsRoutes } from '../routes/flows';
 import { importRoutes } from '../routes/import';
 import { classificationsRoutes } from '../routes/classifications';
+import { assessmentRoutes } from '../routes/assessment';
 import { detailRoutes } from '../routes/detail';
 import { exportRoutes } from '../routes/export';
 import { debtTypesRoutes } from '../routes/debtTypes';
@@ -55,6 +56,7 @@ const routesDef = [
       ...responsesRoutes,
       ...debtPositionsRoutes,
       ...classificationsRoutes,
+      ...assessmentRoutes,
       ...backofficeRoutes
     ]
   },

@@ -4,7 +4,40 @@ import TreasurySearchResults from './TreasurySearchResults';
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
-  useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
+  useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+  useNavigate: vi.fn(),
+  generatePath: vi.fn((path: string) => path)
+}));
+
+vi.mock('../../store/GlobalStore', () => ({
+  useStore: vi.fn(() => ({
+    state: { organizationId: 123 }
+  })),
+  StoreProvider: ({ children }: { children: React.ReactNode }) => children
+}));
+
+vi.mock('../../api/treasuries', () => ({
+  getTreasuries: vi.fn(() => ({
+    mutate: vi.fn(),
+    mutateAsync: vi.fn(),
+    data: null,
+    isLoading: false,
+    isPending: false,
+    error: null
+  }))
+}));
+
+vi.mock('../../hooks/useMultiFilters', () => ({
+  useMultiFilters: vi.fn(() => ({
+    filterMap: {},
+    selectedFilters: [],
+    removeAllFilters: vi.fn(),
+    noFilterIsSelected: { peek: vi.fn(() => true) },
+    filterValues: {}
+  })),
+  FilterCategory: {
+    TREASURY: 'TREASURY'
+  }
 }));
 
 vi.mock('../Drawer/CustomDrawer', () => ({
@@ -23,6 +56,17 @@ vi.mock('../Drawer/CustomDrawer', () => ({
 
 vi.mock('./SearchResultsDataGrid', () => ({
   default: () => <div data-testid="search-results-grid" />
+}));
+
+vi.mock('../Drawer/FilterDrawer', () => ({
+  FilterDrawer: ({ open }: { open: boolean }) => (
+    <div
+      data-testid="drawer"
+      style={{ visibility: open ? 'visible' : 'hidden' }}
+    >
+      Filter Drawer
+    </div>
+  )
 }));
 
 describe('TreasurySearchResults Component', () => {

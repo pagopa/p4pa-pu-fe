@@ -4,7 +4,8 @@ import {
   ButtonProps,
   Divider,
   Grid,
-  Typography
+  Typography,
+  Stack
 } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 
@@ -16,8 +17,11 @@ type ActionCardProps = {
   footerText?: string;
   linkLabel?: string;
   title: string;
+  titleIcon?: React.ReactNode;
   onActionClick: () => void;
   onLinkClick?: () => void;
+  actionDataTestId?: string;
+  linkDataTestId?: string;
 };
 
 const ActionCard = ({
@@ -28,8 +32,11 @@ const ActionCard = ({
   footerText,
   linkLabel,
   title,
+  titleIcon,
   onActionClick,
-  onLinkClick
+  onLinkClick,
+  actionDataTestId,
+  linkDataTestId
 }: ActionCardProps) => {
   return (
     <section aria-labelledby="action-card-title">
@@ -43,9 +50,16 @@ const ActionCard = ({
         padding={3}
         sx={{ backgroundColor: 'background.paper' }}
       >
-        <Typography id="action-card-title" variant="h6" sx={{ mb: 1 }}>
-          {title}
-        </Typography>
+        <Stack direction="row" alignItems="center" spacing={1} sx={{ mb: 1 }}>
+          {titleIcon && (
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              {titleIcon}
+            </Box>
+          )}
+          <Typography id="action-card-title" variant="h6">
+            {title}
+          </Typography>
+        </Stack>
         <Typography
           id="action-card-description"
           variant="body2"
@@ -62,6 +76,7 @@ const ActionCard = ({
               fullWidth={false}
               onClick={onActionClick}
               id="action-card-btn"
+              data-testid={actionDataTestId}
             >
               {actionLabel}
             </Button>
@@ -84,6 +99,7 @@ const ActionCard = ({
                 variant="text"
                 fullWidth={false}
                 onClick={onLinkClick}
+                data-testid={linkDataTestId}
                 sx={{ py: 1 }}
               >
                 {linkLabel}
