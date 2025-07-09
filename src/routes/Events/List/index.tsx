@@ -26,6 +26,7 @@ import {
 } from '../../../../generated/data-contracts';
 import { GridRowId } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
+import { Box } from '@mui/material';
 
 const EventList = () => {
   const [data, setData] = useState<
@@ -119,7 +120,7 @@ const EventList = () => {
         values={filterValues[activeTabIndex]}
         onChange={handleFilterChange}
       />
-      {error && ErrorMessage}
+      {error && <Box sx={{ mt: 4 }}>{ErrorMessage}</Box>}
       {data && (
         <CustomDataGrid
           customPagination={{
