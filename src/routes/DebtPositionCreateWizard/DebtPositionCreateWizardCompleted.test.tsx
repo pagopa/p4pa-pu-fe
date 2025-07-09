@@ -50,7 +50,12 @@ const mockFilterValues: FilterValues = {
   REGULATION_DATE_TO: null,
   PAYMENT_DATE_FROM: null,
   PAYMENT_DATE_TO: null,
-  ACCOUNT_REGISTRY_CODE: ''
+  ACCOUNT_REGISTRY_CODE: '',
+  ASSESSMENT_NAME: '',
+  DEBT_TYPE: '',
+  ASSESSMENT_STATUS: '',
+  LAST_UPDATE_DATE_FROM: null,
+  LAST_UPDATE_DATE_TO: null
 };
 
 // Create mock store context
