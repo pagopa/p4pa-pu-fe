@@ -17,7 +17,7 @@ import { useNavigate, useOutletContext, useParams } from 'react-router';
 import { useStore } from '../../../store/GlobalStore';
 import getPagoPaRegistries from '../../../api/getPagoPaRegistry';
 import getSilRegistries from '../../../api/getSilRegistries';
-import { ErrorMessage } from '../../../components/FormComponent/ErrorMessage';
+import { ErrorMessage } from '../../../components/SearchCard/SearchCard';
 import { PageRoutes } from '../..';
 import { EventsContext } from '../EventsContainer';
 import {

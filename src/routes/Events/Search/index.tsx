@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
 import { RegistryType } from '../configs';
 import { EventsContext } from '../EventsContainer';
+import { useEffect } from 'react';
 
 const EventPage = () => {
   const { t } = useTranslation();
@@ -37,6 +38,10 @@ const EventPage = () => {
       PageRoutes.BACKOFFICE_REGISTRY_LIST.replace(':registryType', registryType)
     );
   };
+
+  useEffect(() => {
+    setError(false);
+  }, []);
 
   return (
     <>
