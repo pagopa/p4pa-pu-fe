@@ -13,6 +13,7 @@ import { ReadMore } from '@mui/icons-material';
 import i18n from '../../translations/i18n';
 import { GridColDef, GridRowId } from '@mui/x-data-grid';
 import { noFilterSetted } from '../../utils/filtersValidation';
+import { formatDateTime } from '../../utils/formatters';
 
 export const silFields: Array<FilterItem> = [
   {
@@ -24,7 +25,6 @@ export const silFields: Array<FilterItem> = [
   {
     type: COMPONENT_TYPE.dateRange,
     label: 'dateRange',
-    required: true,
     from: { label: i18n.t('events.searchDateFromDescription') },
     to: { label: i18n.t('events.searchDateToDescription') },
     id: 'eventDate'
@@ -50,7 +50,6 @@ export const nodoFields: Array<FilterItem> = [
   {
     type: COMPONENT_TYPE.dateRange,
     label: 'dateRange',
-    required: true,
     from: { label: i18n.t('events.searchDateFromDescription') },
     to: { label: i18n.t('events.searchDateToDescription') },
     id: 'eventDate'
@@ -127,13 +126,13 @@ export const getEventsColumns = (
   {
     field: 'dateTime',
     headerName: i18n.t('events.list.date'),
-    valueGetter: (value) => new Date(value),
+    valueGetter: (value) => formatDateTime(value),
     flex: 1,
-    type: 'date'
+    type: 'string'
   },
   {
-    field: 'orgFiscalCode',
-    headerName: i18n.t('events.list.org'),
+    field: 'outcome',
+    headerName: i18n.t('events.list.outcome'),
     flex: 1,
     type: 'string'
   },
@@ -176,17 +175,28 @@ export const getEventsColumns = (
   }
 ];
 
-export const getFilters = (
+export const getFiltersWithSubmitButton = (
   registryType: RegistryType,
   onSubmit: () => void
 ) => {
+  const filtersWidth: Record<string, number> = {
+    iuv: 2,
+    eventDate: 5,
+    event: 3,
+    search: 2,
+    default: 3
+  };
   const fields = registryType === 'pagopa' ? nodoFields : silFields;
   const filters = [
-    ...fields.map((el) => ({ ...el, gridWidth: 3 })),
+    ...fields.map((el) => ({
+      ...el,
+      gridWidth: filtersWidth[el?.id || 'default']
+    })),
     {
       type: COMPONENT_TYPE.button,
       label: i18n.t('commons.search'),
-      gridWidth: 3,
+      id: 'search',
+      gridWidth: filtersWidth['search'],
       onClick: onSubmit
     }
   ];

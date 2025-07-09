@@ -1370,8 +1370,9 @@
       "nodo": "Eventi nodo PagoPA"
     },
     "list": {
+      "title": "Risultato ricerca",
       "date": "Data evento",
-      "org": "Ente",
+      "outcome": "Esito",
       "iuv": "IUV",
       "event": "Evento"
     },

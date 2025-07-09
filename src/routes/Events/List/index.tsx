@@ -5,7 +5,7 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 
 import {
   getEventsColumns,
-  getFilters,
+  getFiltersWithSubmitButton,
   getQueryFromFilterValues,
   RegistryType,
   testFilterValidity,
@@ -25,9 +25,11 @@ import {
   SilRegistry
 } from '../../../../generated/data-contracts';
 import { GridRowId } from '@mui/x-data-grid';
+import { useTranslation } from 'react-i18next';
 
 const EventList = () => {
   const [rows, setRows] = useState<Array<SilRegistry | PagoPaRegistry>>([]);
+  const { t } = useTranslation();
 
   const { registryType } = useParams<{
     registryType: RegistryType;
@@ -50,7 +52,10 @@ const EventList = () => {
     fetchDta();
   };
 
-  const filters = getFilters(registryType || 'pagopa', onSubmit);
+  const filters = getFiltersWithSubmitButton(
+    registryType || 'pagopa',
+    onSubmit
+  );
 
   const getPagoPaRegistriesMutation = getPagoPaRegistries(organizationId);
 
@@ -93,7 +98,7 @@ const EventList = () => {
 
   return (
     <>
-      <TitleComponent title={'Risultato ricerca'} />
+      <TitleComponent title={t('events.list.title')} />
       <FilterContainer
         items={filters}
         values={filterValues[activeTabIndex]}
