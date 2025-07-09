@@ -257,7 +257,7 @@
         "label": "Importo",
         "value": "Importo"
       },
-      "atLeastOneFilter": "Inserire almeno un filtro",
+      "atLeastOneFilter": "Inserisci almeno uno dei parametri per avviare la ricerca",
       "bill": {
         "code": "Codice",
         "date": {

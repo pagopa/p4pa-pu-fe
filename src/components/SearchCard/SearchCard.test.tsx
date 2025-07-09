@@ -3,6 +3,7 @@ import SearchCard from './SearchCard';
 import { vi } from 'vitest';
 import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 import { fireEvent, render, screen } from '../../__tests__/renderers';
+import { ErrorMessage } from './SearchCard';
 
 describe('SearchCard', () => {
   const defaultProps = {
@@ -302,5 +303,57 @@ describe('SearchCard', () => {
       screen.getByLabelText('commons.searchRegulationUniqueIdentifier')
     ).toBeInTheDocument();
     expect(screen.queryByText('commons.searchIUV')).not.toBeInTheDocument();
+  });
+
+  it('renders ErrorMessage correctly when passed through render prop', () => {
+    const propsWithError = {
+      ...defaultProps,
+      render: ErrorMessage
+    };
+
+    render(<SearchCard {...propsWithError} />);
+
+    const errorAlert = screen.getByTestId('multifilters-error-text');
+    expect(errorAlert).toBeInTheDocument();
+
+    expect(errorAlert).toHaveAttribute('role', 'alert');
+    expect(
+      errorAlert.closest('[class*="MuiAlert-standardError"]')
+    ).toBeInTheDocument();
+
+    expect(errorAlert).toHaveTextContent('commons.filters.atLeastOneFilter');
+  });
+
+  it('does not render ErrorMessage when render prop is not provided', () => {
+    render(<SearchCard {...defaultProps} />);
+
+    const errorAlert = screen.queryByTestId('multifilters-error-text');
+    expect(errorAlert).not.toBeInTheDocument();
+  });
+
+  it('renders ErrorMessage conditionally when passed through render prop', () => {
+    const showError = true;
+    const propsWithConditionalError = {
+      ...defaultProps,
+      render: showError && ErrorMessage
+    };
+
+    render(<SearchCard {...propsWithConditionalError} />);
+
+    const errorAlert = screen.getByTestId('multifilters-error-text');
+    expect(errorAlert).toBeInTheDocument();
+  });
+
+  it('does not render ErrorMessage when conditional render prop is false', () => {
+    const showError = false;
+    const propsWithConditionalError = {
+      ...defaultProps,
+      render: showError && ErrorMessage
+    };
+
+    render(<SearchCard {...propsWithConditionalError} />);
+
+    const errorAlert = screen.queryByTestId('multifilters-error-text');
+    expect(errorAlert).not.toBeInTheDocument();
   });
 });
