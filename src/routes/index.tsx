@@ -19,6 +19,7 @@ import { responsesRoutes } from '../routes/responses';
 import { debtPositionsRoutes } from '../routes/debtPositions';
 import { backofficeRoutes } from '../routes/backoffice';
 import { debtTypeOrgsRoutes } from '../routes/debtTypeOrgs';
+import { assessmentRegistryRoutes } from './assessmentsRegistry';
 
 const deployPath = utils.config.deployPath;
 
@@ -47,6 +48,7 @@ const routesDef = [
           hideBreadcrumbs: true
         } as RouteHandleObject
       },
+      ...assessmentRegistryRoutes,
       ...flowsRoutes,
       ...importRoutes,
       ...detailRoutes,

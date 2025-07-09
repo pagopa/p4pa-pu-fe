@@ -404,6 +404,8 @@
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
+      "ASSESSMENT": "Accertamento pagamenti",
+      "ASSESSMENT_REGISTRY_SEARCH_RESULTS": "Capitoli",
       "BACKOFFICE": "Backoffice",
       "BACKOFFICE_REGISTRIES": "Giornale degli eventi",
       "BACKOFFICE_REGISTRY_DETAIL": "Dettaglio evento",
@@ -550,6 +552,13 @@
       "to": "Data non valida"
     },
     "year": "Anno"
+  },
+  "assessmentsRegistrySearchResults": {
+    "uploadFlow": "Crea nuovo capitolo",
+    "assessmentRegistryId": "Codice Capitolo",
+    "operatingYear": "Anno",
+    "debtPositionTypeOrgCode": "Tipo dovuto",
+    "sectionCode": "Codice accertamento"
   },
   "debtPositionCreateWizard": {
     "addDebtor": {
