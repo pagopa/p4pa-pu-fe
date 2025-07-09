@@ -21,14 +21,17 @@ import { ErrorMessage } from '../../../components/SearchCard/SearchCard';
 import { PageRoutes } from '../..';
 import { EventsContext } from '../EventsContainer';
 import {
-  PagoPaRegistry,
-  SilRegistry
+  PagedPagoPaRegistry,
+  PagedSilRegistry
 } from '../../../../generated/data-contracts';
 import { GridRowId } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 
 const EventList = () => {
-  const [rows, setRows] = useState<Array<SilRegistry | PagoPaRegistry>>([]);
+  const [data, setData] = useState<
+    PagedSilRegistry | PagedPagoPaRegistry | undefined
+  >();
+
   const { t } = useTranslation();
 
   const { registryType } = useParams<{
@@ -49,7 +52,7 @@ const EventList = () => {
       setError(true);
       return;
     }
-    fetchDta();
+    fetchDta(data?.size);
   };
 
   const filters = getFiltersWithSubmitButton(
@@ -61,9 +64,13 @@ const EventList = () => {
 
   const getSilRegistriesMutation = getSilRegistries(organizationId);
 
-  const fetchDta = async function fetchDta() {
+  const fetchDta = async function fetchDta(size = 10, page = 0) {
     try {
-      const query = getQueryFromFilterValues(filterValues[activeTabIndex]);
+      const query = {
+        ...getQueryFromFilterValues(filterValues[activeTabIndex]),
+        size,
+        page
+      };
 
       const result =
         activeTabIndex === 0
@@ -74,7 +81,7 @@ const EventList = () => {
               query as NodoOrSilEvent<NodoFilterValues>
             );
 
-      setRows(result?.content);
+      setData(result);
     } catch (e) {
       console.error(e);
     }
@@ -96,6 +103,14 @@ const EventList = () => {
 
   const columns = getEventsColumns(action);
 
+  const onPageChange = (page: number) => {
+    fetchDta(data?.size, page - 1);
+  };
+
+  const onPageSizeChange = (size: number) => {
+    fetchDta(size, data?.number);
+  };
+
   return (
     <>
       <TitleComponent title={t('events.list.title')} />
@@ -105,12 +120,22 @@ const EventList = () => {
         onChange={handleFilterChange}
       />
       {error && ErrorMessage}
-      <CustomDataGrid
-        sx={{ mt: 4 }}
-        columns={columns}
-        rows={rows}
-        getRowId={(row) => row.registryId}
-      />
+      {data && (
+        <CustomDataGrid
+          customPagination={{
+            sizePageOptions: [5, 10, 20],
+            defaultPageOption: data.size,
+            totalPages: data.totalPages,
+            currentPage: data.number + 1,
+            onPageSizeChange,
+            onPageChange
+          }}
+          sx={{ mt: 4 }}
+          columns={columns}
+          rows={data.content}
+          getRowId={(row) => row.registryId}
+        />
+      )}
     </>
   );
 };
