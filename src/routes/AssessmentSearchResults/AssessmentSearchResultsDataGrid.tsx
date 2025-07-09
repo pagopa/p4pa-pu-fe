@@ -64,13 +64,15 @@ const AssessmentSearchResultsDataGrid = ({
       minWidth: 200
     },
     {
-      field: 'descriptionDebtPositionTypeOrgCode',
+      field: 'debtPositionTypeOrgCode',
       headerName: t('assessment.searchResults.columns.debtType'),
       flex: 2,
       type: 'string',
       minWidth: 180,
       renderCell: (params: GridRenderCellParams<AssessmentDataRow>) =>
-        params.value || params.row.debtPositionTypeOrgCode || '-'
+        params.row.descriptionDebtPositionTypeOrgCode ||
+        params.row.debtPositionTypeOrgCode ||
+        '-'
     },
     {
       field: 'updateOperatorExternalId',
