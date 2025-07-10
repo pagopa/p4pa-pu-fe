@@ -124,12 +124,6 @@ const SearchCard = ({
         {description}
       </Typography>
 
-      {render && (
-        <Grid item lg={12} mb={2}>
-          {render}
-        </Grid>
-      )}
-
       {tabsConfig && tabsConfig.length > 0 && (
         <Tabs
           value={currentTabIndex}
@@ -141,6 +135,12 @@ const SearchCard = ({
             <Tab key={index} label={tab.label} />
           ))}
         </Tabs>
+      )}
+
+      {render && (
+        <Grid item lg={12} mb={2}>
+          {render}
+        </Grid>
       )}
 
       <Grid container alignItems="center">
