@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import ErrorPage from './error';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { render, screen } from '../../__tests__/renderers';
-import { PageRoutes } from '..';
+import utils from '../../utils';
 
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
@@ -33,6 +33,9 @@ describe('ErrorPage', () => {
     expect(screen.getByText('Errore')).toBeInTheDocument();
     expect(screen.getByText('Si è verificato un errore')).toBeInTheDocument();
     expect(screen.getByText('Riprova')).toBeInTheDocument();
-    expect(screen.getByRole('link')).toHaveAttribute('href', PageRoutes.HOME);
+    expect(screen.getByRole('link')).toHaveAttribute(
+      'href',
+      utils.config.loginUrl
+    );
   });
 });

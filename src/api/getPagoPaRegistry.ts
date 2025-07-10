@@ -14,7 +14,7 @@ const getPagoPaRegistries = (organizationId: OrgID) =>
         organizationId,
         query
       );
-      parseAndLog(pagedPagoPaRegistrySchema, response);
+      parseAndLog(pagedPagoPaRegistrySchema, response, false);
       return response;
     }
   });
