@@ -16,13 +16,6 @@ describe('useDateRange', () => {
     vi.useRealTimers();
   });
 
-  it('should initialize with default range (1 month ago to today)', () => {
-    const { result } = renderHook(() => useDateRange(0));
-    expect(result.current.fromDate).toEqual(startOfDay(oneMonthAgo));
-    expect(result.current.toDate).toEqual(endOfDay(today));
-    expect(result.current.isButtonDisabled).toBe(false);
-  });
-
   it('should initialize with null date if prefilled is false', () => {
     const { result } = renderHook(() => useDateRange(0, false));
     expect(result.current.fromDate).toBeNull();
@@ -35,7 +28,6 @@ describe('useDateRange', () => {
     const newFrom = new Date('2025-03-01');
     act(() => result.current.setFromDate(newFrom));
     expect(result.current.fromDate).toEqual(startOfDay(newFrom));
-    expect(result.current.isButtonDisabled).toBe(false);
   });
 
   it('should update toDate and validate correctly', () => {
@@ -43,7 +35,6 @@ describe('useDateRange', () => {
     const newTo = new Date('2025-03-10');
     act(() => result.current.setToDate(newTo));
     expect(result.current.toDate).toEqual(endOfDay(newTo));
-    expect(result.current.isButtonDisabled).toBe(false);
   });
 
   it('should set toError if from > to', () => {

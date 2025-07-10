@@ -9,7 +9,7 @@ type DateRangeState = {
   toError: DateValidationError | null;
 };
 
-export const useDateRange = (tabIndex: number, prefilled = true) => {
+export const useDateRange = (tabIndex: number, prefilled = false) => {
   const [state, setState] = useState<Array<DateRangeState>>([
     {
       from: prefilled ? startOfDay(subMonths(new Date(), 1)) : null,
