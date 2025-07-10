@@ -424,7 +424,6 @@
       "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
       "BACKOFFICE_TAXONOMY_SEARCH_RESULTS": "Risultato ricerca",
       "BACKOFFICE_EVENTS": "Giornale degli eventi",
-      "BACKOFFICE_REGISTRY_LIST": "Risultato ricerca",
       "CLASSIFICATIONS": "Classificazione pagamenti",
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
@@ -1381,13 +1380,6 @@
     "tabs": {
       "sil": "Eventi SIL",
       "nodo": "Eventi nodo PagoPA"
-    },
-    "list": {
-      "title": "Risultato ricerca",
-      "date": "Data evento",
-      "outcome": "Esito",
-      "iuv": "IUV",
-      "event": "Evento"
     },
     "searchIUVDescription": "IUV",
     "searchEventDescription": "Evento",

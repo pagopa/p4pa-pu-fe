@@ -21,7 +21,7 @@ export const BackButton = (props: BackButtonProps) => {
       startIcon={<ArrowBack />}
       variant="text"
       onClick={onClick}
-      sx={{ marginBottom: 3, paddingLeft: 0 }}
+      sx={{ marginBottom: 3 }}
     >
       {text}
     </Button>
