@@ -54,7 +54,6 @@ vi.mock('../SearchCard/SearchCard', async (importOriginal) => {
 
 const mockRemoveAllFilters = vi.fn();
 const mockNoFilterIsSelected = vi.fn(() => false);
-const mockExecuteSearch = vi.fn();
 
 vi.mock('../../hooks/useMultiFilters', () => ({
   useMultiFilters: vi.fn(() => ({
@@ -167,25 +166,12 @@ vi.mock('../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: { children: React.ReactNode }) => children
 }));
 
-const mockAssessmentsSearch = {
-  executeSearch: mockExecuteSearch,
-  isLoading: false,
-  isError: false,
-  error: null,
-  data: null
-};
-
-vi.mock('../../hooks/useAssessmentsSearch', () => ({
-  useAssessmentsSearch: () => mockAssessmentsSearch
-}));
-
 describe('Assessment', () => {
   const mockNavigate = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useNavigate).mockReturnValue(mockNavigate);
-    mockAssessmentsSearch.isLoading = false;
     mockNoFilterIsSelected.mockReturnValue(false);
   });
 
@@ -260,7 +246,6 @@ describe('Assessment', () => {
     expect(mockNavigate).toHaveBeenCalledWith(
       '/piattaformaunitaria/assessment/search-results'
     );
-    expect(mockExecuteSearch).not.toHaveBeenCalled();
   });
 
   it('should show error when searching without selected filters', () => {
@@ -275,8 +260,6 @@ describe('Assessment', () => {
     expect(
       screen.getByText('commons.filters.atLeastOneFilter')
     ).toBeInTheDocument();
-
-    expect(mockExecuteSearch).not.toHaveBeenCalled();
   });
 
   it('should remove all filters when clicking remove button', () => {
@@ -288,15 +271,6 @@ describe('Assessment', () => {
     fireEvent.click(removeButton);
 
     expect(mockRemoveAllFilters).toHaveBeenCalled();
-  });
-
-  it('should disable search button when isLoading is true', () => {
-    mockAssessmentsSearch.isLoading = true;
-
-    render(<Assessment />);
-
-    const searchButton = screen.getByRole('button', { name: 'commons.search' });
-    expect(searchButton).toBeDisabled();
   });
 
   it('should hide error message when interacting with filters via removal', () => {

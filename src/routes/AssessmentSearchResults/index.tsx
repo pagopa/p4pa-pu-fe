@@ -42,7 +42,7 @@ const AssessmentSearchResults = () => {
   };
 
   const handleCreateAssessment = () => {
-    console.log('Crea accertamento clicked');
+    console.log('Create assessment clicked');
   };
 
   const assessments = useAssessmentsSearch({

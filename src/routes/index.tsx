@@ -100,4 +100,6 @@ const extractPathsWithIds = (
 };
 
 export const PageRoutes = extractPathsWithIds(routesDef);
+console.debug('routes', PageRoutes);
+
 export default router;
