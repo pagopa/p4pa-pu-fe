@@ -33,6 +33,7 @@
     }
   },
   "classifications": {
+    "title": "Dettaglio Pagamento",
     "description": "Ricerca o visualizza classificazioni",
     "search": "Cerca gli stati dei pagamenti",
     "searchdescription": "Controlla se i pagamenti sono stati debitamente notificati, rendicontati e riconciliati oppure verifica degli errori. Inserisci al meno un filtro per avviare la ricerca.",
@@ -56,6 +57,8 @@
           "receiptPaymentDateTime": "Data Esito",
           "receiptDebtorFullName": "Anagrafica attestante",
           "receiptDebtorFiscalCode": "Codice fiscale attestante",
+          "receiptPayerExecutorFullName": "Anagrafica versante",
+          "receiptPayerExecutorFiscalCode": "Codice fiscale versante",
           "iuv": "IUV",
           "iud": "IUD",
           "iur": "IUR",
@@ -95,6 +98,96 @@
           "billCode": "Codice Bolletta",
           "provisionalCode": "Codice provvisorio",
           "link": "Vedi Bolletta"
+        }
+      },
+      "statusBar": {
+        "status": {
+          "alerts": {
+            "correctlyReported": {
+              "title": "Il pagamento è stato notificato e riconciliato",
+              "description": "Sono disponibili la ricevuta telematica, il flusso delle notifiche, la rendicontazione tramite PagoPA."
+            },
+            "reported": {
+              "title": "Il pagamento è stato rendicontato",
+              "description": "Sono disponibili la ricevuta telematica e la rendicontazione tramite PagoPA."
+            },
+            "punctualReversal": {
+              "title": "Il pagamento ha un riversamento puntuale",
+              "description": "Sono disponibili la ricevuta telematica e il giornale di cassa."
+            },
+            "notified": {
+              "title": "Il pagamento è stato notificato",
+              "description": "Sono disponibili la ricevuta telematica, il flusso delle notifiche, la rendicontazione tramite PagoPA e il giornale di cassa."
+            },
+            "cumulativeReversal": {
+              "title": "Il pagamento ha un riversamento cumulativo",
+              "description": "Sono disponibili la ricevuta telematica, la rendicontazione tramite PagoPA e il giornale di cassa."
+            },
+            "incorrectlyReported": {
+              "title": "Pagamento non correttamente rendicontato",
+              "description": "È disponibile la ricevuta telematica, ma manca il flusso con i dati di rendicontazione."
+            },
+            "incorrectlyNotified": {
+              "title": "Pagamento non correttamente notificato",
+              "description": "È disponibile la ricevuta telematica, ma manca il flusso delle notifiche."
+            },
+            "incorrectlyReversed": {
+              "title": "La rendicontazione non è stata correttamente riversata.",
+              "description": "È disponibile la rendicontazione tramite PagoPA, ma manca il giornale di cassa."
+            },
+            "duplicatePayments": {
+              "title": "Pagamenti doppi",
+              "description": "Pagamenti doppi"
+            },
+            "unexecutedReporting": {
+              "title": "Rendicontazione relativa a un pagamento non eseguito",
+              "description": "È disponibile la rendicontazione tramite PagoPA, ma manca la ricevuta telematica."
+            },
+            "unrecognizedReversal": {
+              "title": "Riversamento non rendicontato o relativo a un pagamento non eseguito",
+              "description": "È disponibile il giornale di cassa, ma manca la ricevuta telematica o il flusso con i dati di rendicontazione tramite PagoPA."
+            },
+            "differentAmountReversal": {
+              "title": "Rendicontazione con riversamento presente, riversato ma con importo differente",
+              "description": "È disponibile il flusso con i dati di rendicontazione tramite PagoPA e il giornale di cassa, ma hanno importi diversi."
+            },
+            "notifiedNotExecuted": {
+              "title": "Pagamento notificato ma non eseguito",
+              "description": "È disponibile il flusso delle notifiche, ma manca la ricevuta telematica."
+            },
+            "unrecognizedTreasuryReversal": {
+              "title": "Riversamento di tesoreria non riconosciuto",
+              "description": "È disponibile il giornale di cassa, ma manca il flusso con i dati di rendicontazione tramite PagoPA."
+            },
+            "unknownTreasuryReversals": {
+              "title": "Riversamenti di tesoreria sconosciuti",
+              "description": "È presente il giornale di cassa ma non il flusso di Rendicontazione"
+            },
+            "default": {
+              "title": "Stato di riconciliazione",
+              "description": "Informazioni sui dati disponibili per questo pagamento."
+            }
+          },
+          "reconciliationState": {
+            "title": "Stato Riconciliazione"
+          },
+          "states": {
+            "paid": {
+              "label": "Pagato",
+              "descriptionActive": "È presente la Ricevuta",
+              "descriptionInactive": "Ricevuta assente"
+            },
+            "reported": {
+              "label": "Rendicontato",
+              "descriptionActive": "È presente l'ID Rendicontazione",
+              "descriptionInactive": "Flussi di Rendicontazione assente"
+            },
+            "collected": {
+              "label": "Incassato",
+              "descriptionActive": "È presente il Giornale di cassa",
+              "descriptionInactive": "Giornale di cassa assente"
+            }
+          }
         }
       }
     }
