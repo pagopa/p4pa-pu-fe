@@ -54,7 +54,7 @@ describe('useSearch', () => {
     const query = createMockQuery();
     const { result } = renderHook(() =>
       useSearch<Filters, Data, Error>({
-        initialFilters: { name: 'foo' },
+        filters: { name: 'foo' },
         initialPage: 1,
         initialSize: 20,
         query
@@ -68,7 +68,7 @@ describe('useSearch', () => {
     const query = createMockQuery();
     renderHook(() =>
       useSearch<Filters, Data, Error>({
-        initialFilters: { name: 'foo' },
+        filters: { name: 'foo' },
         query
       })
     );
@@ -79,25 +79,11 @@ describe('useSearch', () => {
     });
   });
 
-  it('updates filters with handleFilterChange', () => {
-    const query = createMockQuery();
-    const { result } = renderHook(() =>
-      useSearch<Filters, Data, Error>({
-        initialFilters: { name: 'foo' },
-        query
-      })
-    );
-    act(() => {
-      result.current.handleFilterChange('name', 'bar');
-    });
-    expect(result.current.filters).toEqual({ name: 'bar' });
-  });
-
   it('applyFilters resets page and calls query.mutate', () => {
     const query = createMockQuery();
     const { result } = renderHook(() =>
       useSearch<Filters, Data, Error>({
-        initialFilters: { name: 'foo' },
+        filters: { name: 'foo' },
         query
       })
     );
@@ -112,19 +98,17 @@ describe('useSearch', () => {
     });
   });
 
-  it('setFilters and setSort update state', () => {
+  it('setSort update state', () => {
     const query = createMockQuery();
     const { result } = renderHook(() =>
       useSearch<Filters, Data, Error>({
-        initialFilters: { name: 'foo' },
+        filters: { name: 'foo' },
         query
       })
     );
     act(() => {
-      result.current.setFilters({ name: 'baz' });
       result.current.setSort(['name']);
     });
-    expect(result.current.filters).toEqual({ name: 'baz' });
     expect(result.current.setSort).toBeTypeOf('function');
   });
 });

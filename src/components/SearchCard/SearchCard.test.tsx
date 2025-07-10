@@ -241,6 +241,62 @@ describe('SearchCard', () => {
             label: 'LAST_UPDATE_DATE Field'
           }
         ]
+      },
+      ASSESSMENT_CODE: {
+        label: 'ASSESSMENT_CODE',
+        fields: [
+          { type: COMPONENT_TYPE.textField, label: 'ASSESSMENT_CODE Field' }
+        ]
+      },
+      ASSESSMENT_DESCRIPTION: {
+        label: 'ASSESSMENT_DESCRIPTION',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'ASSESSMENT_DESCRIPTION Field'
+          }
+        ]
+      },
+      OFFICE_CODE: {
+        label: 'OFFICE_CODE',
+        fields: [{ type: COMPONENT_TYPE.textField, label: 'OFFICE_CODE Field' }]
+      },
+      OFFICE_DESCRIPTION: {
+        label: 'OFFICE_DESCRIPTION',
+        fields: [
+          { type: COMPONENT_TYPE.textField, label: 'OFFICE_DESCRIPTION Field' }
+        ]
+      },
+      SECTION_CODE: {
+        label: 'SECTION_CODE',
+        fields: [
+          { type: COMPONENT_TYPE.textField, label: 'SECTION_CODE Field' }
+        ]
+      },
+      SECTION_DESCRIPTION: {
+        label: 'SECTION_DESCRIPTION',
+        fields: [
+          { type: COMPONENT_TYPE.textField, label: 'SECTION_DESCRIPTION Field' }
+        ]
+      },
+      OPERATING_YEAR: {
+        label: 'OPERATING_YEAR',
+        fields: [
+          { type: COMPONENT_TYPE.textField, label: 'OPERATING_YEAR Field' }
+        ]
+      },
+      DEBT_POSITION_TYPE_ORG_CODE: {
+        label: 'DEBT_POSITION_TYPE_ORG_CODE',
+        fields: [
+          {
+            type: COMPONENT_TYPE.textField,
+            label: 'DEBT_POSITION_TYPE_ORG_CODE Field'
+          }
+        ]
+      },
+      STATUS: {
+        label: 'STATUS',
+        fields: [{ type: COMPONENT_TYPE.select, label: 'STATUS Field' }]
       }
     }
   };
