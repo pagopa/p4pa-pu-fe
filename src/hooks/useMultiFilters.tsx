@@ -458,7 +458,10 @@ export const useMultiFilters = (props?: {
           type: COMPONENT_TYPE.select,
           label: t('assessment.filters.status'),
           options: [
-            { label: t('assessment.statusOptions.NEW'), value: 'NEW' },
+            {
+              label: t('assessment.statusOptions.ACTIVE'),
+              value: 'ACTIVE'
+            },
             { label: t('assessment.statusOptions.CLOSED'), value: 'CLOSED' },
             {
               label: t('assessment.statusOptions.CANCELLED'),

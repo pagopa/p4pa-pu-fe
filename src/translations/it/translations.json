@@ -127,7 +127,7 @@
       "lastUpdateDate": "Data ultimo aggiornamento"
     },
     "statusOptions": {
-      "NEW": "In corso",
+      "ACTIVE": "In corso",
       "CLOSED": "Chiuso",
       "CANCELLED": "Eliminato"
     }
