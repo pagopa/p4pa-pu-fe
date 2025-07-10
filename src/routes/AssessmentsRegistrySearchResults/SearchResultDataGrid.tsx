@@ -1,15 +1,28 @@
-import { GridColDef, GridSortModel } from '@mui/x-data-grid';
+import {
+  GridColDef,
+  GridRenderCellParams,
+  GridSortModel
+} from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { Chip, ChipProps, IconButton } from '@mui/material';
 import { Link } from 'react-router';
 import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
-import { PagedAssessmentsRegistry } from '../../../generated/data-contracts';
+import {
+  AssessmentsRegistry,
+  AssessmentsRegistryStatus,
+  PagedAssessmentsRegistry
+} from '../../../generated/data-contracts';
 
 export type DataGridProps = {
   data: PagedAssessmentsRegistry;
   onSortChange: (model: Array<string>) => void;
   onPaginationChange?: (pagination: { page: number; size: number }) => void;
+};
+
+const stateColors: Record<AssessmentsRegistryStatus, ChipProps['color']> = {
+  ACTIVE: 'success',
+  INACTIVE: 'error'
 };
 
 export const SearchResultsDataGrid = ({
@@ -30,8 +43,8 @@ export const SearchResultsDataGrid = ({
 
   const columns: Array<GridColDef> = [
     {
-      field: 'assessmentRegistryId',
-      headerName: t('assessmentsRegistrySearchResults.assessmentRegistryId'),
+      field: 'sectionCode',
+      headerName: t('assessmentsRegistrySearchResults.sectionCode'),
       flex: 1,
       type: 'string'
     },
@@ -48,10 +61,30 @@ export const SearchResultsDataGrid = ({
       type: 'string'
     },
     {
-      field: 'sectionCode',
-      headerName: t('assessmentsRegistrySearchResults.sectionCode'),
+      field: 'assessmentCode',
+      headerName: t('assessmentsRegistrySearchResults.assessmentCode'),
       flex: 1,
       type: 'string'
+    },
+    {
+      field: 'officeCode',
+      headerName: t('assessmentsRegistrySearchResults.officeCode'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'status',
+      headerName: t('assessmentsRegistrySearchResults.status'),
+      flex: 1,
+      type: 'string',
+      renderCell: (params: GridRenderCellParams<AssessmentsRegistry>) => (
+        <Chip
+          label={t(`commons.status.${params.value}`)}
+          title={t(params.value)}
+          color={stateColors[params.value as AssessmentsRegistryStatus]}
+          size="small"
+        />
+      )
     },
     {
       field: 'action',
@@ -60,8 +93,9 @@ export const SearchResultsDataGrid = ({
       sortable: false,
       align: 'right',
       headerAlign: 'right',
+      // TODO: navigate to detail
       renderCell: () => (
-        <Link to={'assessments/detail'} aria-label={t('commons.detail')}>
+        <Link to={'#'} aria-label={t('commons.detail')}>
           <IconButton color="primary" size="small">
             <ReadMore />
           </IconButton>

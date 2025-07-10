@@ -32,6 +32,8 @@ const ReportingSearchResults = () => {
 
   const initialFilters = state?.filters ?? {};
 
+  const [filterValues, setFilterValues] = useState(initialFilters);
+
   const {
     state: { organizationId }
   } = useStore();
@@ -39,12 +41,12 @@ const ReportingSearchResults = () => {
   const query = getPaymentsReporting({ organizationId });
 
   const reporting = useSearch({
-    initialFilters,
+    filters: filterValues,
     query
   });
 
-  const runSearch = () => {
-    if (!noFilterSetted(reporting.filters)) {
+  const applyFilters = () => {
+    if (!noFilterSetted(filterValues)) {
       reporting.applyFilters();
       setError(false);
     } else {
@@ -53,7 +55,7 @@ const ReportingSearchResults = () => {
   };
 
   const { filters } = useReportingFilters({
-    onFilter: runSearch
+    onFilter: applyFilters
   });
 
   return (
@@ -66,8 +68,10 @@ const ReportingSearchResults = () => {
         {error && errorMessage}
         <FilterContainer
           items={filters}
-          values={reporting.filters}
-          onChange={reporting.handleFilterChange}
+          values={filterValues}
+          onChange={(field, value) =>
+            setFilterValues({ ...filterValues, [field]: value })
+          }
         />
         <Grid
           container

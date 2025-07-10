@@ -1,4 +1,6 @@
+import { format } from 'date-fns';
 import { AssessmentsRegistryStatus } from '../../../generated/data-contracts';
+import { FilterValues } from '../../models/Filters';
 
 export type AssessmentRegistryQueryParams = {
   debtPositionTypeOrgCode?: string;
@@ -16,7 +18,7 @@ export type AssessmentRegistryQueryParams = {
 };
 
 export type AssessmentsRegistriesFilteredRequest = {
-  filters: AssessmentRegistryQueryParams;
+  filters: FilterValues;
   pagination: { page: number; size: number };
   sort: Array<string>;
 };
@@ -26,6 +28,27 @@ export const buildQueryParams = ({
   pagination,
   sort
 }: AssessmentsRegistriesFilteredRequest) => ({
+  ...(filters.OFFICE_CODE && { officeCode: filters.OFFICE_CODE }),
+  ...(filters.OFFICE_DESCRIPTION && {
+    officeDescription: filters.OFFICE_DESCRIPTION
+  }),
+  ...(filters.ASSESSMENT_CODE && { assessmentCode: filters.ASSESSMENT_CODE }),
+  ...(filters.ASSESSMENT_DESCRIPTION && {
+    assessmentDescription: filters.ASSESSMENT_DESCRIPTION
+  }),
+  ...(filters.OPERATING_YEAR && {
+    operatingYear: format(filters.OPERATING_YEAR, 'yyyy')
+  }),
+  ...(filters.STATUS && {
+    status: filters.STATUS as AssessmentsRegistryStatus
+  }),
+  ...(filters.SECTION_CODE && { sectionCode: filters.SECTION_CODE }),
+  ...(filters.SECTION_DESCRIPTION && {
+    sectionDescription: filters.SECTION_DESCRIPTION
+  }),
+  ...(filters.DEBT_POSITION_TYPE_ORG_CODE && {
+    debtPositionTypeOrgCode: filters.DEBT_POSITION_TYPE_ORG_CODE
+  }),
   page: pagination.page,
   size: pagination.size,
   ...(sort.length && { sort })

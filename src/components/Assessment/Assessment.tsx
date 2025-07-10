@@ -10,11 +10,15 @@ import { useState, useMemo } from 'react';
 import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
 import { useStore } from '../../store/GlobalStore';
 import { useAssessmentsSearch } from '../../hooks/useAssessmentsSearch';
+import { PageRoutes } from '../../routes';
+import { useNavigate } from 'react-router';
 
 export const Assessment = () => {
   const { t } = useTranslation();
   const { state } = useStore();
   const organizationId = state.organizationId;
+
+  const navigate = useNavigate();
 
   const { optionsMap: debtTypesOptions } = useDebtPositionsTypeOrg({
     organizationId: organizationId || 0,
@@ -61,7 +65,7 @@ export const Assessment = () => {
   };
 
   const handleViewAllChapters = () => {
-    console.log('Vedi tutti i capitoli clicked');
+    navigate(PageRoutes.ASSESSMENT_REGISTRY_SEARCH_RESULTS);
   };
 
   function submitSearch() {

@@ -19,7 +19,6 @@ import { responsesRoutes } from '../routes/responses';
 import { debtPositionsRoutes } from '../routes/debtPositions';
 import { backofficeRoutes } from '../routes/backoffice';
 import { debtTypeOrgsRoutes } from '../routes/debtTypeOrgs';
-import { assessmentRegistryRoutes } from './assessmentsRegistry';
 
 const deployPath = utils.config.deployPath;
 
@@ -48,18 +47,17 @@ const routesDef = [
           hideBreadcrumbs: true
         } as RouteHandleObject
       },
-      ...assessmentRegistryRoutes,
-      ...flowsRoutes,
-      ...importRoutes,
+      ...assessmentRoutes,
+      ...backofficeRoutes,
+      ...classificationsRoutes,
+      ...debtPositionsRoutes,
+      ...debtTypeOrgsRoutes,
+      ...debtTypesRoutes,
       ...detailRoutes,
       ...exportRoutes,
-      ...debtTypesRoutes,
-      ...debtTypeOrgsRoutes,
-      ...responsesRoutes,
-      ...debtPositionsRoutes,
-      ...classificationsRoutes,
-      ...assessmentRoutes,
-      ...backofficeRoutes
+      ...flowsRoutes,
+      ...importRoutes,
+      ...responsesRoutes
     ]
   },
   {
@@ -102,6 +100,5 @@ const extractPathsWithIds = (
 };
 
 export const PageRoutes = extractPathsWithIds(routesDef);
-console.debug('routes', PageRoutes);
 
 export default router;

@@ -36,7 +36,7 @@ const TaxonomySearchResults = () => {
   const query = getTaxonomies();
 
   const taxonomies = useSearch({
-    initialFilters: form.getValues(),
+    filters: form.getValues(),
     query
   });
 
