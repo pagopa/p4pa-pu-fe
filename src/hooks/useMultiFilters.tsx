@@ -488,6 +488,97 @@ export const useMultiFilters = (props?: {
           }
         }
       ]
+    },
+    // Campi per assessment registries - definizioni di base (non utilizzati nell'UI)
+    OFFICE_CODE: {
+      label: 'Office Code',
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: 'Office Code',
+          ...fieldControl('OFFICE_CODE')
+        }
+      ]
+    },
+    OFFICE_DESCRIPTION: {
+      label: 'Office Description',
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: 'Office Description',
+          ...fieldControl('OFFICE_DESCRIPTION')
+        }
+      ]
+    },
+    ASSESSMENT_CODE: {
+      label: 'Assessment Code',
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: 'Assessment Code',
+          ...fieldControl('ASSESSMENT_CODE')
+        }
+      ]
+    },
+    ASSESSMENT_DESCRIPTION: {
+      label: 'Assessment Description',
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: 'Assessment Description',
+          ...fieldControl('ASSESSMENT_DESCRIPTION')
+        }
+      ]
+    },
+    SECTION_CODE: {
+      label: 'Section Code',
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: 'Section Code',
+          ...fieldControl('SECTION_CODE')
+        }
+      ]
+    },
+    SECTION_DESCRIPTION: {
+      label: 'Section Description',
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: 'Section Description',
+          ...fieldControl('SECTION_DESCRIPTION')
+        }
+      ]
+    },
+    OPERATING_YEAR: {
+      label: 'Operating Year',
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: 'Operating Year',
+          ...fieldControl('OPERATING_YEAR')
+        }
+      ]
+    },
+    DEBT_POSITION_TYPE_ORG_CODE: {
+      label: 'Debt Position Type Org Code',
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: 'Debt Position Type Org Code',
+          ...fieldControl('DEBT_POSITION_TYPE_ORG_CODE')
+        }
+      ]
+    },
+    STATUS: {
+      label: 'Status',
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: 'Status',
+          ...fieldControl('STATUS')
+        }
+      ]
     }
   };
 

@@ -46,6 +46,15 @@ export type FilterValues = {
   ASSESSMENT_STATUS: string;
   LAST_UPDATE_DATE_FROM: Date | null;
   LAST_UPDATE_DATE_TO: Date | null;
+  OFFICE_CODE: string;
+  OFFICE_DESCRIPTION: string;
+  ASSESSMENT_CODE: string;
+  ASSESSMENT_DESCRIPTION: string;
+  SECTION_CODE: string;
+  SECTION_DESCRIPTION: string;
+  DEBT_POSITION_TYPE_ORG_CODE: string;
+  OPERATING_YEAR: string;
+  STATUS: string;
 };
 
 export type FlowFilters = {
