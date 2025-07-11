@@ -1,8 +1,8 @@
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { useLocation } from 'react-router';
-import TelematicReceiptSearchResults from './TelematicReceiptSearchResults';
 import FilterContainer from '../FilterContainer/FilterContainer';
+import TelematicReceiptSearchResults from '../../routes/TelematicReceiptSearchResults';
 
 // Mock dependencies
 vi.mock('react-i18next', () => ({
@@ -14,19 +14,6 @@ vi.mock('react-router', async (importOriginal) => ({
   useLocation: vi.fn(),
   useNavigate: vi.fn(),
   useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
-}));
-
-vi.mock('../../hooks/useTelematicReceiptSearch', () => ({
-  default: vi.fn(() => ({
-    query: { data: { content: [], totalElements: 0 } },
-    applyFilters: vi.fn(),
-    handleFilterChange: vi.fn(),
-    handlePageChange: vi.fn(),
-    handlePageSizeChange: vi.fn(),
-    setSort: vi.fn(),
-    pagination: { page: 0, size: 10 },
-    filterValues: {}
-  }))
 }));
 
 vi.mock('../../hooks/useTelematicReceiptsFilters', () => ({

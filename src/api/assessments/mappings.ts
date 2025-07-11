@@ -26,14 +26,12 @@ export type AssessmentsRegistriesFilteredRequest = {
   sort: Array<string>;
 };
 
-// Nuovo tipo per gli assessment normali
 export type AssessmentsFilteredRequest = {
   filters: FilterValues;
   pagination: { page: number; size: number };
   sort: Array<string>;
 };
 
-// Mapping per assessment registries (esistente)
 export const buildQueryParams = ({
   filters,
   pagination,
@@ -65,7 +63,6 @@ export const buildQueryParams = ({
   ...(sort.length && { sort })
 });
 
-// Nuovo mapping per assessment normali
 export const buildAssessmentsQueryParams = ({
   filters,
   pagination,

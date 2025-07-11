@@ -14,12 +14,14 @@ import {
 } from '../store/FilterStore';
 import { FilterValues } from '../models/Filters';
 import { LabelEnum } from '../../generated/apiClient';
+import { AssessmentsRegistryStatus } from '../../generated/data-contracts';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 
 export enum FilterCategory {
-  TREASURY = 'TREASURY',
+  ASSESSMENT = 'ASSESSMENT',
+  ASSESSMENTS_REGISTRY = 'ASSESSMENTS_REGISTRY',
   CLASSIFICATIONS = 'CLASSIFICATIONS',
-  ASSESSMENT = 'ASSESSMENT'
+  TREASURY = 'TREASURY'
 }
 
 export type FilterMap = Record<
@@ -82,7 +84,7 @@ export const useMultiFilters = (props?: {
 
   const fieldControl = (field: keyof typeof filterValues) => ({
     value: filterValues[field] as string,
-    onChange: (e: ChangeEvent<HTMLInputElement>) =>
+    onChange: (e: ChangeEvent<HTMLInputElement> | SelectChangeEvent) =>
       setFilterValues({ ...filterValues, [field]: e.target?.value })
   });
 
@@ -90,12 +92,6 @@ export const useMultiFilters = (props?: {
     value: filterValues[field] as Date | null,
     onChange: (date: Date | null) =>
       setFilterValues({ ...filterValues, [field]: date })
-  });
-
-  const selectControl = (field: keyof typeof filterValues) => ({
-    value: filterValues[field] as string,
-    onChange: (e: SelectChangeEvent) =>
-      setFilterValues({ ...filterValues, [field]: e.target.value })
   });
 
   const fullFilterMap: FilterMap = {
@@ -447,7 +443,7 @@ export const useMultiFilters = (props?: {
         {
           type: COMPONENT_TYPE.select,
           label: t('assessment.filters.debtType'),
-          ...selectControl('DEBT_TYPE')
+          ...fieldControl('DEBT_TYPE')
         }
       ]
     },
@@ -468,7 +464,7 @@ export const useMultiFilters = (props?: {
               value: 'CANCELLED'
             }
           ],
-          ...selectControl('ASSESSMENT_STATUS')
+          ...fieldControl('ASSESSMENT_STATUS')
         }
       ]
     },
@@ -489,94 +485,105 @@ export const useMultiFilters = (props?: {
         }
       ]
     },
-    // Campi per assessment registries - definizioni di base (non utilizzati nell'UI)
     OFFICE_CODE: {
-      label: 'Office Code',
+      label: t('commons.filters.officeCode'),
       fields: [
         {
           type: COMPONENT_TYPE.textField,
-          label: 'Office Code',
+          label: t('commons.filters.officeCode'),
           ...fieldControl('OFFICE_CODE')
         }
       ]
     },
     OFFICE_DESCRIPTION: {
-      label: 'Office Description',
+      label: t('commons.filters.officeDescription'),
       fields: [
         {
           type: COMPONENT_TYPE.textField,
-          label: 'Office Description',
+          label: t('commons.filters.officeDescription'),
           ...fieldControl('OFFICE_DESCRIPTION')
         }
       ]
     },
     ASSESSMENT_CODE: {
-      label: 'Assessment Code',
+      label: t('commons.filters.assessmentCode'),
       fields: [
         {
           type: COMPONENT_TYPE.textField,
-          label: 'Assessment Code',
+          label: t('commons.filters.assessmentCode'),
           ...fieldControl('ASSESSMENT_CODE')
         }
       ]
     },
     ASSESSMENT_DESCRIPTION: {
-      label: 'Assessment Description',
+      label: t('commons.filters.assessmentDescription'),
       fields: [
         {
           type: COMPONENT_TYPE.textField,
-          label: 'Assessment Description',
+          label: t('commons.filters.assessmentDescription'),
           ...fieldControl('ASSESSMENT_DESCRIPTION')
         }
       ]
     },
     SECTION_CODE: {
-      label: 'Section Code',
+      label: t('commons.filters.sectionCode'),
       fields: [
         {
           type: COMPONENT_TYPE.textField,
-          label: 'Section Code',
+          label: t('commons.filters.sectionCode'),
           ...fieldControl('SECTION_CODE')
         }
       ]
     },
     SECTION_DESCRIPTION: {
-      label: 'Section Description',
+      label: t('commons.filters.sectionDescription'),
       fields: [
         {
           type: COMPONENT_TYPE.textField,
-          label: 'Section Description',
+          label: t('commons.filters.sectionDescription'),
           ...fieldControl('SECTION_DESCRIPTION')
         }
       ]
     },
-    OPERATING_YEAR: {
-      label: 'Operating Year',
+    DEBT_POSITION_TYPE_ORG_CODE: {
+      label: t('commons.filters.debtPositionType'),
       fields: [
         {
-          type: COMPONENT_TYPE.textField,
-          label: 'Operating Year',
-          ...fieldControl('OPERATING_YEAR')
+          type: COMPONENT_TYPE.select,
+          name: 'DEBT_POSITION_TYPE_ORG_CODE',
+          label: t('commons.filters.debtPositionType'),
+          ...fieldControl('DEBT_POSITION_TYPE_ORG_CODE'),
+          options: []
         }
       ]
     },
-    DEBT_POSITION_TYPE_ORG_CODE: {
-      label: 'Debt Position Type Org Code',
+    OPERATING_YEAR: {
+      label: t('commons.filters.operatingYear'),
       fields: [
         {
-          type: COMPONENT_TYPE.textField,
-          label: 'Debt Position Type Org Code',
-          ...fieldControl('DEBT_POSITION_TYPE_ORG_CODE')
+          type: COMPONENT_TYPE.dateRange,
+          label: t('commons.filters.operatingYear'),
+          isYear: true,
+          from: {
+            label: t('commons.filters.operatingYear'),
+            ...dateControl('OPERATING_YEAR')
+          }
         }
       ]
     },
     STATUS: {
-      label: 'Status',
+      label: t('commons.filters.status'),
       fields: [
         {
-          type: COMPONENT_TYPE.textField,
-          label: 'Status',
-          ...fieldControl('STATUS')
+          type: COMPONENT_TYPE.select,
+          name: 'STATUS',
+          label: t('commons.filters.status'),
+          ...fieldControl('STATUS'),
+          options: Object.values(AssessmentsRegistryStatus).map((value) => ({
+            label: t(`commons.status.${value}`),
+            value
+          })),
+          required: true
         }
       ]
     }
@@ -594,21 +601,21 @@ export const useMultiFilters = (props?: {
   ];
 
   const classificationsFilters: Array<keyof FilterMap> = [
-    'IUV',
-    'IUR',
-    'IUD',
-    'IUF',
-    'LAST_CLASSIFICATION_DATE',
-    'REGULATION_DATE',
-    'REGULATION_UNIQUE_IDENTIFIER',
-    'REMITTANCE_INFORMATION',
-    'PSP_COMPANY_NAME',
-    'PAYMENT_DATE',
-    'BILL_DATE',
-    'REGION_VALUE_DATE',
     'ACCOUNT_REGISTRY_CODE',
     'AMOUNT',
-    'PAY_DATE'
+    'BILL_DATE',
+    'IUD',
+    'IUF',
+    'IUR',
+    'IUV',
+    'LAST_CLASSIFICATION_DATE',
+    'PAY_DATE',
+    'PAYMENT_DATE',
+    'PSP_COMPANY_NAME',
+    'REGION_VALUE_DATE',
+    'REGULATION_DATE',
+    'REGULATION_UNIQUE_IDENTIFIER',
+    'REMITTANCE_INFORMATION'
   ];
 
   const assessmentFilters: Array<keyof FilterMap> = [
@@ -619,19 +626,31 @@ export const useMultiFilters = (props?: {
     'IUV'
   ];
 
+  const assessmentRegistryFilters: Array<keyof FilterMap> = [
+    'ASSESSMENT_CODE',
+    'ASSESSMENT_DESCRIPTION',
+    'OFFICE_CODE',
+    'OFFICE_DESCRIPTION',
+    'SECTION_CODE',
+    'SECTION_DESCRIPTION',
+    'STATUS',
+    'OPERATING_YEAR',
+    'DEBT_POSITION_TYPE_ORG_CODE'
+  ];
+
+  const categoryMap = {
+    [FilterCategory.TREASURY]: treasuryFilters,
+    [FilterCategory.CLASSIFICATIONS]: classificationsFilters,
+    [FilterCategory.ASSESSMENTS_REGISTRY]: assessmentRegistryFilters,
+    [FilterCategory.ASSESSMENT]: assessmentFilters
+  };
+
   const getFilteredMap = (): FilterMap => {
     if (!props?.filterCategory) {
       return fullFilterMap;
     }
 
-    let allowedFilters: Array<keyof FilterMap>;
-    if (props.filterCategory === FilterCategory.TREASURY) {
-      allowedFilters = treasuryFilters;
-    } else if (props.filterCategory === FilterCategory.ASSESSMENT) {
-      allowedFilters = assessmentFilters;
-    } else {
-      allowedFilters = classificationsFilters;
-    }
+    const allowedFilters = categoryMap[props.filterCategory];
 
     return Object.fromEntries(
       Object.entries(fullFilterMap).filter(([key]) =>

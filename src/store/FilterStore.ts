@@ -87,7 +87,6 @@ export const mapFilterNameToFilterValues: Record<
   DEBT_TYPE: ['DEBT_TYPE'],
   ASSESSMENT_STATUS: ['ASSESSMENT_STATUS'],
   LAST_UPDATE_DATE: ['LAST_UPDATE_DATE_FROM', 'LAST_UPDATE_DATE_TO'],
-  // Campi per assessment registries (definiti ma non utilizzati nell'UI)
   OFFICE_CODE: ['OFFICE_CODE'],
   OFFICE_DESCRIPTION: ['OFFICE_DESCRIPTION'],
   ASSESSMENT_CODE: ['ASSESSMENT_CODE'],
