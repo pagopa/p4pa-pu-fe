@@ -40,6 +40,7 @@ export const DebtPositionResults = () => {
 
   // Filters from location or empty object fallback
   const initialFilters = locationFilters ?? {};
+  const [filterValues, setFilterValues] = useState(initialFilters);
 
   // Get organizationId from global store
   const {
@@ -57,7 +58,7 @@ export const DebtPositionResults = () => {
     BaseFilterValues,
     PagedInstallmentView | PagedDebtPositionView
   >({
-    initialFilters,
+    filters: filterValues,
     query
   });
 
@@ -119,8 +120,10 @@ export const DebtPositionResults = () => {
       <Stack gap={3}>
         <FilterContainer
           items={filters}
-          values={debtPosition.filters}
-          onChange={debtPosition.handleFilterChange}
+          values={filterValues}
+          onChange={(id, value) =>
+            setFilterValues({ ...filterValues, [id]: value })
+          }
         />
         <Grid
           container

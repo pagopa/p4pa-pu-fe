@@ -87,7 +87,16 @@ describe('getClassifications', () => {
     DEBT_TYPE: '',
     ASSESSMENT_STATUS: '',
     LAST_UPDATE_DATE_FROM: null,
-    LAST_UPDATE_DATE_TO: null
+    LAST_UPDATE_DATE_TO: null,
+    ASSESSMENT_CODE: '',
+    ASSESSMENT_DESCRIPTION: '',
+    OFFICE_CODE: '',
+    OFFICE_DESCRIPTION: '',
+    SECTION_CODE: '',
+    SECTION_DESCRIPTION: '',
+    DEBT_POSITION_TYPE_ORG_CODE: '',
+    OPERATING_YEAR: '',
+    STATUS: ''
   };
 
   const request: ClassificationsFilteredRequest = {

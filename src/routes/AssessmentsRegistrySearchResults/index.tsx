@@ -1,23 +1,21 @@
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import SearchResultsDataGrid from './SearchResultsDataGrid';
-import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
-import { ReactNode, useState } from 'react';
-import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../routes';
+import { useState } from 'react';
 import {
   FilterCategory,
   FilterMap,
   useMultiFilters
 } from '../../hooks/useMultiFilters';
-import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
-import { PagedTreasuryView } from '../../../generated/data-contracts';
+import { PagedAssessmentsRegistry } from '../../../generated/data-contracts';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
-import { getTreasuries } from '../../api/treasuries';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
+import { FilterDrawer } from '../../components/Drawer/FilterDrawer';
+import { SearchResultsDataGrid } from './SearchResultDataGrid';
+import { getAssessmentsRegistries } from '../../api/assessments';
 
 export type LocationState = {
   category: string;
@@ -25,18 +23,11 @@ export type LocationState = {
   filterMap: FilterMap;
 };
 
-const TreasurySearchResults = () => {
+export const AssessmentsRegistrySearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [error, setError] = useState(false);
-  const {
-    filterMap,
-    selectedFilters,
-    removeAllFilters,
-    noFilterIsSelected,
-    filterValues
-  } = useMultiFilters({ filterCategory: FilterCategory.TREASURY });
+  const { filterMap, selectedFilters, removeAllFilters, filterValues } =
+    useMultiFilters({ filterCategory: FilterCategory.ASSESSMENTS_REGISTRY });
 
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -48,49 +39,30 @@ const TreasurySearchResults = () => {
     state: { organizationId }
   } = useStore();
 
-  const query = getTreasuries({ organizationId });
+  const query = getAssessmentsRegistries({ organizationId });
 
-  const treasury = useSearch({
-    initialFilters: filterValues,
+  const assessments = useSearch({
+    filters: filterValues,
     query
   });
 
   const applyFilters = () => {
-    if (noFilterIsSelected.peek()) {
-      treasury.applyFilters();
-      setError(false);
-      setDrawerOpen(false);
-    } else {
-      setError(true);
-    }
+    assessments.applyFilters();
+    setDrawerOpen(false);
   };
-
-  const errorMessage: ReactNode = (
-    <Typography
-      variant="body2"
-      color="error"
-      mt={2}
-      data-testid="multifilters-error-text"
-    >
-      {t('commons.filters.atLeastOneFilter')}
-    </Typography>
-  );
 
   return (
     <>
       <TitleComponent
-        title={t('commons.routes.TREASURY')}
+        title={t('commons.routes.ASSESSMENT_REGISTRY_SEARCH_RESULTS')}
         callToAction={[
           {
             variant: 'outlined',
-            buttonText: t('treasurySearchResults.uploadFlow'),
-            onActionClick: () =>
-              navigate(
-                generatePath(PageRoutes.IMPORT_FLOWS, { category: 'treasury' })
-              )
+            buttonText: t('assessmentsRegistrySearchResults.uploadFlow'),
+            // TODO: navigate to creation
+            onActionClick: () => null
           }
         ]}
-        description={t('treasurySearchResults.description')}
       />
 
       <Grid container justifyContent="flex-end" p={2}>
@@ -112,9 +84,9 @@ const TreasurySearchResults = () => {
         aria-label="results-table"
       >
         <SearchResultsDataGrid
-          data={treasury.query.data as PagedTreasuryView}
-          onSortChange={treasury.setSort}
-          onPaginationChange={treasury.handlePaginationChange}
+          data={assessments.query.data as PagedAssessmentsRegistry}
+          onSortChange={assessments.setSort}
+          onPaginationChange={assessments.handlePaginationChange}
         />
       </Grid>
 
@@ -123,7 +95,6 @@ const TreasurySearchResults = () => {
         onClose={toggleDrawer}
         title={t('commons.filters.filtersField')}
         filterMap={filterMap}
-        render={error && errorMessage}
         buttons={[
           {
             buttonText: t('commons.filters.filterResults'),
@@ -142,5 +113,3 @@ const TreasurySearchResults = () => {
     </>
   );
 };
-
-export default TreasurySearchResults;

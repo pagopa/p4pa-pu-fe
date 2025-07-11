@@ -99,7 +99,7 @@ describe('ReportingSearchResults', () => {
 
     expect(mockUseSearch).toHaveBeenCalledWith(
       expect.objectContaining({
-        initialFilters: expect.any(Object)
+        filters: expect.any(Object)
       })
     );
   });
