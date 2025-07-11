@@ -442,6 +442,7 @@
       "BACKOFFICE": "Backoffice",
       "BACKOFFICE_REGISTRIES": "Giornale degli eventi",
       "BACKOFFICE_REGISTRY_DETAIL": "Dettaglio evento",
+      "BACKOFFICE_REGISTRY_LIST": "Risultato ricerca",
       "BACKOFFICE_TAXONOMY": "Tassonomia",
       "BACKOFFICE_TAXONOMY_INDEX": "Tassonomia",
       "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
@@ -450,7 +451,6 @@
       "CLASSIFICATIONS": "Classificazione pagamenti",
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
-      "ASSESSMENT": "Accertamento pagamenti",
       "ASSESSMENT_SEARCH_RESULTS": "Risultato ricerca",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
@@ -1414,6 +1414,13 @@
     "tabs": {
       "sil": "Eventi SIL",
       "nodo": "Eventi nodo PagoPA"
+    },
+    "list": {
+      "title": "Risultato ricerca",
+      "date": "Data evento",
+      "outcome": "Esito",
+      "iuv": "IUV",
+      "event": "Evento"
     },
     "searchIUVDescription": "IUV",
     "searchEventDescription": "Evento",
