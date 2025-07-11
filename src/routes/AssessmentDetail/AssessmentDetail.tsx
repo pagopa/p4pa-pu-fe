@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Grid, Typography, useTheme, Menu, MenuItem, Box } from '@mui/material';
+import { Grid, Typography, useTheme, Menu, MenuItem } from '@mui/material';
 import { Close, Delete, MoreVert } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer, {
@@ -15,10 +15,7 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getAssessmentDetail } from '../../api/assessmentDetail';
 import { useAssessmentDetailFilters } from '../../hooks/useAssessmentDetailFilters';
-import {
-  AssessmentsDetail,
-  AssessmentsExtendedDTO
-} from '../../../generated/apiClient';
+import { AssessmentsDetail } from '../../../generated/apiClient';
 import { Variant } from '@mui/material/styles/createTypography';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
@@ -55,8 +52,6 @@ export const AssessmentDetail = () => {
   }
 
   const [detailItem, setDetailItem] = useState<AssessmentsDetail | null>(null);
-  const [assessmentInfo, setAssessmentInfo] =
-    useState<AssessmentsExtendedDTO | null>(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
   const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
 
@@ -68,7 +63,6 @@ export const AssessmentDetail = () => {
     draftFilters,
     updateDraftFilters,
     applyFilters,
-    hasActiveFilters,
     sortModel,
     handleSortModelChange
   } = useAssessmentDetailFilters({
