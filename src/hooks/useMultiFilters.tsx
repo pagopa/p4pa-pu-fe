@@ -5,7 +5,7 @@ import {
   SelectChangeEvent
 } from '../components/FilterContainer/FilterContainer';
 import { useStore } from '../store/GlobalStore';
-import { ChangeEvent, useEffect, useMemo } from 'react';
+import { ChangeEvent, useEffect } from 'react';
 import {
   noFilterIsSelected,
   noFilterSelectedExcludingClassificationType,
@@ -15,7 +15,7 @@ import {
 import { FilterValues } from '../models/Filters';
 import { LabelEnum } from '../../generated/apiClient';
 import { AssessmentsRegistryStatus } from '../../generated/data-contracts';
-import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
+import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
 
 export enum FilterCategory {
   ASSESSMENT = 'ASSESSMENT',
@@ -67,14 +67,8 @@ export const useMultiFilters = (props?: {
 }) => {
   const { t } = useTranslation();
   const {
-    state: { filterValues, selectedFilters, organizationId }
+    state: { filterValues, selectedFilters }
   } = useStore();
-
-  const { optionsMap: debtTypesOptions } = useDebtPositionsTypeOrg({
-    organizationId: organizationId || 0,
-    includeAllOption: true,
-    useCodeAsValue: true // for assessments we use the code (string)
-  });
 
   useEffect(() => {
     if (props?.clearOnMount) {
@@ -93,6 +87,29 @@ export const useMultiFilters = (props?: {
     onChange: (date: Date | null) =>
       setFilterValues({ ...filterValues, [field]: date })
   });
+
+  const debtPositionTypeOrgsControl = (field: keyof typeof filterValues) => {
+    const {
+      state: { organizationId }
+    } = useStore();
+
+    const { data } = getDebtPositionTypeOrgs({
+      organizationId
+    });
+
+    const options = data
+      ?.slice()
+      .sort((a, b) => a.description.localeCompare(b.description))
+      .map((type) => ({
+        label: type.description,
+        value: type.code
+      }));
+
+    return {
+      ...fieldControl(field),
+      options
+    };
+  };
 
   const fullFilterMap: FilterMap = {
     ACCOUNTING_DATE: {
@@ -443,7 +460,7 @@ export const useMultiFilters = (props?: {
         {
           type: COMPONENT_TYPE.select,
           label: t('assessment.filters.debtType'),
-          ...fieldControl('DEBT_TYPE')
+          ...debtPositionTypeOrgsControl('DEBT_TYPE')
         }
       ]
     },
@@ -552,8 +569,7 @@ export const useMultiFilters = (props?: {
           type: COMPONENT_TYPE.select,
           name: 'DEBT_POSITION_TYPE_ORG_CODE',
           label: t('commons.filters.debtPositionType'),
-          ...fieldControl('DEBT_POSITION_TYPE_ORG_CODE'),
-          options: []
+          ...debtPositionTypeOrgsControl('DEBT_POSITION_TYPE_ORG_CODE')
         }
       ]
     },
@@ -659,31 +675,10 @@ export const useMultiFilters = (props?: {
     ) as FilterMap;
   };
 
-  const baseFilterMap = getFilteredMap();
-
-  // Automatic enhancement for Assessment filters: populate the DEBT_TYPE options
-  const enhancedFilterMap = useMemo(() => {
-    if (
-      props?.filterCategory === FilterCategory.ASSESSMENT &&
-      baseFilterMap.DEBT_TYPE &&
-      debtTypesOptions.length > 0
-    ) {
-      return {
-        ...baseFilterMap,
-        DEBT_TYPE: {
-          ...baseFilterMap.DEBT_TYPE,
-          fields: baseFilterMap.DEBT_TYPE.fields.map((field) => ({
-            ...field,
-            options: debtTypesOptions
-          }))
-        }
-      };
-    }
-    return baseFilterMap;
-  }, [baseFilterMap, debtTypesOptions, props?.filterCategory]);
+  const filterMap = getFilteredMap();
 
   return {
-    filterMap: enhancedFilterMap,
+    filterMap,
     selectedFilters,
     removeAllFilters,
     noFilterIsSelected,
