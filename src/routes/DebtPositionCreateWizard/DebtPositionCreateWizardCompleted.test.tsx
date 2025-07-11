@@ -55,7 +55,16 @@ const mockFilterValues: FilterValues = {
   DEBT_TYPE: '',
   ASSESSMENT_STATUS: '',
   LAST_UPDATE_DATE_FROM: null,
-  LAST_UPDATE_DATE_TO: null
+  LAST_UPDATE_DATE_TO: null,
+  SECTION_CODE: '',
+  SECTION_DESCRIPTION: '',
+  ASSESSMENT_CODE: '',
+  ASSESSMENT_DESCRIPTION: '',
+  OFFICE_CODE: '',
+  OFFICE_DESCRIPTION: '',
+  OPERATING_YEAR: '',
+  DEBT_POSITION_TYPE_ORG_CODE: '',
+  STATUS: ''
 };
 
 // Create mock store context

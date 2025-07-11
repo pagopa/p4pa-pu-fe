@@ -47,17 +47,17 @@ const routesDef = [
           hideBreadcrumbs: true
         } as RouteHandleObject
       },
-      ...flowsRoutes,
-      ...importRoutes,
+      ...assessmentRoutes,
+      ...backofficeRoutes,
+      ...classificationsRoutes,
+      ...debtPositionsRoutes,
+      ...debtTypeOrgsRoutes,
+      ...debtTypesRoutes,
       ...detailRoutes,
       ...exportRoutes,
-      ...debtTypesRoutes,
-      ...debtTypeOrgsRoutes,
-      ...responsesRoutes,
-      ...debtPositionsRoutes,
-      ...classificationsRoutes,
-      ...assessmentRoutes,
-      ...backofficeRoutes
+      ...flowsRoutes,
+      ...importRoutes,
+      ...responsesRoutes
     ]
   },
   {
@@ -100,6 +100,5 @@ const extractPathsWithIds = (
 };
 
 export const PageRoutes = extractPathsWithIds(routesDef);
-console.debug('routes', PageRoutes);
 
 export default router;

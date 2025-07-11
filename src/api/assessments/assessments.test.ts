@@ -1,11 +1,12 @@
-import utils from '../utils';
+import utils from '../../utils';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '../__tests__/renderers';
-import { getAssessments, type AssessmentsQuery } from './assessments';
+import { renderHook, waitFor } from '../../__tests__/renderers';
+import { getAssessments, type AssessmentsQuery } from '.././assessments';
 
-vi.mock('../utils', async () => {
-  const actual = await vi.importActual<typeof import('../utils')>('../utils');
+vi.mock('../../utils', async () => {
+  const actual =
+    await vi.importActual<typeof import('../../utils')>('../../utils');
   return {
     ...actual,
     apiClient: {
@@ -16,7 +17,7 @@ vi.mock('../utils', async () => {
   };
 });
 
-vi.mock('../utils/loaders', () => ({
+vi.mock('../../utils/loaders', () => ({
   parseAndLog: vi.fn(),
   default: {
     getOrganizations: vi.fn(),

@@ -13,6 +13,17 @@
       "titleIUV": "Avvisi (IUV)"
     }
   },
+  "AssessmentRegistryDetail": {
+    "operatingYear": "Anno esercizio",
+    "status": "Stato ufficio",
+    "sectionDescription": "Capitolo",
+    "sectionCode": "Codice capitolo",
+    "officeCode": "Codice Ufficio",
+    "officeDescription": "Denominazione Ufficio",
+    "assessmentCode": "Codice Accertamento Capitolo",
+    "assessmentDescription": "Denominazione Accertamento Capitolo",
+    "debtPositionType": "Tipo dovuto"
+  },
   "FileUploaderFlowImport": {
     "debt-positions": {
       "description": "Carica qui il file .zip con i Dovuti"
@@ -324,7 +335,17 @@
       "valueDate": {
         "date": "Data Valuta",
         "label": "Data Valuta"
-      }
+      },
+      "officeCode": "Codice ufficio",
+      "officeDescription": "Denominazione ufficio",
+      "assessmentCode": "Codice accertamento",
+      "assessmentDescription": "Denominazione accertamento",
+      "sectionCode": "Codice capitolo",
+      "sectionDescription": "Capitolo",
+      "status": "Stato ufficio",
+      "debtPositionType": "Tipo dovuto",
+      "typeDescription": "Descrizione tipo dovuto",
+      "operatingYear": "Anno esercizio"
     },
     "fiscalCode": "Codice Fiscale",
     "fiscalCodeorVat": "CF / Partita IVA",
@@ -404,6 +425,8 @@
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
+      "ASSESSMENT": "Accertamento pagamenti",
+      "ASSESSMENT_REGISTRY_SEARCH_RESULTS": "Capitoli",
       "BACKOFFICE": "Backoffice",
       "BACKOFFICE_REGISTRIES": "Giornale degli eventi",
       "BACKOFFICE_REGISTRY_DETAIL": "Dettaglio evento",
@@ -498,6 +521,8 @@
     },
     "status": {
       "ALL": "Tutti",
+      "ACTIVE": "Attivo",
+      "INACTIVE": "Inattivo",
       "COMPLETED": "Elaborato",
       "ERROR": "Errore",
       "EXPIRED": "Scaduto",
@@ -550,6 +575,15 @@
       "to": "Data non valida"
     },
     "year": "Anno"
+  },
+  "assessmentsRegistrySearchResults": {
+    "sectionCode": "Codice Capitolo",
+    "operatingYear": "Anno",
+    "debtPositionTypeOrgCode": "Tipo dovuto",
+    "assessmentCode": "Codice accertamento",
+    "officeCode": "Codice ufficio",
+    "status": "Stato ufficio",
+    "uploadFlow": "Crea nuovo capitolo"
   },
   "debtPositionCreateWizard": {
     "addDebtor": {
