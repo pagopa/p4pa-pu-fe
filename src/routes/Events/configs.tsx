@@ -8,13 +8,13 @@ import {
   FilterItem
 } from '../../components/FilterContainer/FilterContainer';
 import { TabsConfig } from '../../components/SearchCard/SearchCard';
-import i118n from '../../translations/i18n';
+import i18n from '../../translations/i18n';
 import { BaseFilterValues } from '../../models/Filters';
 
 const silFields: Array<FilterItem> = [
   {
     type: COMPONENT_TYPE.textField,
-    label: i118n.t('events.searchIUVDescription'),
+    label: i18n.t('events.searchIUVDescription'),
     adornment: <Search />,
     id: 'iuv'
   },
@@ -22,13 +22,13 @@ const silFields: Array<FilterItem> = [
     type: COMPONENT_TYPE.dateRange,
     label: 'dateRange',
     required: true,
-    from: { label: i118n.t('events.searchDateFromDescription') },
-    to: { label: i118n.t('events.searchDateToDescription') },
+    from: { label: i18n.t('events.searchDateFromDescription') },
+    to: { label: i18n.t('events.searchDateToDescription') },
     id: 'eventDate'
   },
   {
     type: COMPONENT_TYPE.select,
-    label: i118n.t('events.searchEventDescription'),
+    label: i18n.t('events.searchEventDescription'),
     options: Object.entries(RegistrySilEventType).map(([key, value]) => ({
       label: key,
       value
@@ -40,7 +40,7 @@ const silFields: Array<FilterItem> = [
 const nodoFields: Array<FilterItem> = [
   {
     type: COMPONENT_TYPE.textField,
-    label: i118n.t('events.searchIUVDescription'),
+    label: i18n.t('events.searchIUVDescription'),
     adornment: <Search />,
     id: 'iuv'
   },
@@ -48,13 +48,13 @@ const nodoFields: Array<FilterItem> = [
     type: COMPONENT_TYPE.dateRange,
     label: 'dateRange',
     required: true,
-    from: { label: i118n.t('events.searchDateFromDescription') },
-    to: { label: i118n.t('events.searchDateToDescription') },
+    from: { label: i18n.t('events.searchDateFromDescription') },
+    to: { label: i18n.t('events.searchDateToDescription') },
     id: 'eventDate'
   },
   {
     type: COMPONENT_TYPE.select,
-    label: i118n.t('events.searchEventDescription'),
+    label: i18n.t('events.searchEventDescription'),
     options: Object.entries(RegistryPagoPaEventType).map(([key, value]) => ({
       label: key,
       value
@@ -65,11 +65,11 @@ const nodoFields: Array<FilterItem> = [
 
 export const tabs: Array<TabsConfig> = [
   {
-    label: i118n.t('events.tabs.sil'),
+    label: i18n.t('events.tabs.sil'),
     fields: silFields
   },
   {
-    label: i118n.t('events.tabs.nodo'),
+    label: i18n.t('events.tabs.nodo'),
     fields: nodoFields
   }
 ];

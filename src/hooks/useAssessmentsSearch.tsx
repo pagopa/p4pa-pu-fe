@@ -64,9 +64,6 @@ export const useAssessmentsSearch = ({
     }
   };
 
-  /**
-   * Crea gli argomenti per la richiesta API seguendo il pattern architetturale consolidato
-   */
   const buildRequestArgs = useCallback(
     (
       filterValuesRequest: FilterValues = filterValues,
