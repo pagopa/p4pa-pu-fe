@@ -32,10 +32,6 @@ type DialogConfig = {
   testId: string;
 };
 
-/**
- * Componente per la visualizzazione del dettaglio di un assessment specifico.
- * Mostra informazioni di riepilogo e una lista filtrata dei dettagli.
- */
 export const AssessmentDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -45,7 +41,6 @@ export const AssessmentDetail = () => {
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  // Verifica parametri obbligatori
   if (!assessmentId || isNaN(assessmentId)) {
     navigate(PageRoutes.RESPONSES_ERROR);
     return null;
@@ -57,7 +52,6 @@ export const AssessmentDetail = () => {
 
   const menuOpen = Boolean(menuAnchorEl);
 
-  // Hook per gestione filtri
   const {
     appliedFilters,
     draftFilters,
@@ -72,7 +66,6 @@ export const AssessmentDetail = () => {
     }
   });
 
-  // Chiamata API per ottenere i dettagli dell'assessment
   const { data, isLoading, isError, error } = getAssessmentDetail(
     organizationId,
     assessmentId,
@@ -80,7 +73,6 @@ export const AssessmentDetail = () => {
     { enabled: !!organizationId && !!assessmentId }
   );
 
-  // Gestione errori
   useEffect(() => {
     if (isError && error) {
       console.error('Error loading assessment details:', error);
@@ -88,7 +80,6 @@ export const AssessmentDetail = () => {
     }
   }, [isError, error, navigate]);
 
-  // Imposta il primo elemento come dettaglio principale
   useEffect(() => {
     if (data?.content?.[0] && !detailItem) {
       setDetailItem(data.content[0]);
@@ -127,10 +118,10 @@ export const AssessmentDetail = () => {
 
   const handleDeleteConfirm = async () => {
     try {
-      // TODO: Implementare la chiamata API per eliminare l'assessment
+      // TODO: Implement the API call to delete the assessment
       console.log('Deleting assessment:', assessmentId);
       setDialogConfig(null);
-      // Per ora naviga indietro, in futuro implementare la chiamata di eliminazione
+      // For now, navigate back, in the future implement the delete call
       navigate(-1);
     } catch (error) {
       console.error('Error while deleting the assessment:', error);
@@ -139,14 +130,14 @@ export const AssessmentDetail = () => {
     }
   };
 
-  // Configurazione sezioni per il DetailContainer
+  // Configuration sections for the DetailContainer
   const detailSections = useMemo(() => {
     const firstAssessmentItem = detailItem;
 
     const summaryData: DetailData[] = [
       {
         label: t('commons.status'),
-        value: 'In corso', // Per ora hardcoded, da collegare ai dati reali quando disponibili
+        value: 'In corso', // For now hardcoded, to be linked to real data when available
         valueType: 'status' as const,
         chipConfig: {
           color: 'success' as const,
@@ -155,12 +146,11 @@ export const AssessmentDetail = () => {
       },
       {
         label: t('assessmentDetail.debtType'),
-        value:
-          firstAssessmentItem?.debtPositionTypeOrgCode || 'Bollo auto ordinario'
+        value: firstAssessmentItem?.debtPositionTypeOrgCode || '-'
       },
       {
         label: t('assessmentDetail.createdBy'),
-        value: firstAssessmentItem?.updateOperatorExternalId || 'Operatore'
+        value: firstAssessmentItem?.updateOperatorExternalId || '-'
       }
     ];
 
@@ -284,7 +274,7 @@ export const AssessmentDetail = () => {
               {
                 type: COMPONENT_TYPE.dateRange,
                 label: 'dateRange2',
-                gridWidth: 4,
+                gridWidth: 5,
                 from: {
                   label: 'Aggiornato dal',
                   value: draftFilters.updateDateTimeFrom
@@ -313,7 +303,7 @@ export const AssessmentDetail = () => {
               {
                 type: COMPONENT_TYPE.button,
                 label: t('commons.filters.filterResults'),
-                gridWidth: 2,
+                gridWidth: 1,
                 onClick: handleFiltersApplied
               }
             ]}
