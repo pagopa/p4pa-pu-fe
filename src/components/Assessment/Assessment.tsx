@@ -30,7 +30,7 @@ export const Assessment = () => {
   };
 
   const handleViewAllChapters = () => {
-    console.log('View all chapters clicked');
+    navigate(PageRoutes.ASSESSMENT_REGISTRY_SEARCH_RESULTS);
   };
 
   function submitSearch() {

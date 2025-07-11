@@ -52,7 +52,7 @@ const ClassificationsSearchResults = () => {
   const query = getClassifications({ organizationId });
 
   const classifications = useSearch({
-    initialFilters: filterValues,
+    filters: filterValues,
     query
   });
 

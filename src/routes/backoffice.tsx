@@ -6,7 +6,9 @@ import { Navigate, Outlet } from 'react-router';
 import { SuperAdminRouteGuard } from '../components/RouteGuard/RouteGuard';
 import TaxonomySearchResults from './TaxonomySearchResults';
 import { RegistryDetailPage } from './RegistryDetailPage/RegistryDetailPage';
-import EventPage from './Events';
+import EventPage from './Events/Search';
+import EventList from './Events/list';
+import EventsContainer from './Events/EventsContainer';
 
 const deployPath = config.deployPath;
 
@@ -58,6 +60,7 @@ export const backofficeRoutes = [
       {
         id: 'BACKOFFICE_EVENTS',
         path: 'events/',
+        element: <EventsContainer />,
         children: [
           {
             id: 'BACKOFFICE_EVENTS_INDEX',
@@ -70,16 +73,17 @@ export const backofficeRoutes = [
           },
           {
             id: 'BACKOFFICE_REGISTRY_LIST',
-            path: ':registryType',
-            element: (
-              <div>
-                <Outlet />
-              </div>
-            ),
-            handle: {
-              backButton: true
-            },
+            path: ':registryType/',
             children: [
+              {
+                id: 'BACKOFFICE_REGISTRY_LIST_INDEX',
+                index: true,
+                element: <EventList />,
+                handle: {
+                  backButton: true,
+                  hideBreadcrumbElement: true
+                } as RouteHandleObject
+              },
               {
                 id: 'BACKOFFICE_REGISTRY_DETAIL',
                 path: ':registryId',

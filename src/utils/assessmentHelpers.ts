@@ -1,30 +1,30 @@
 import { ChipOwnProps } from '@mui/material/Chip';
 
 /**
- * Tipi di stato degli accertamenti
+ * Types of assessment status
  */
-export type AssessmentStatus = 'NEW' | 'CLOSED' | 'CANCELLED';
+export type AssessmentStatus = 'ACTIVE' | 'CLOSED' | 'CANCELLED';
 
 /**
- * Mapping dei colori per gli stati degli accertamenti
- * NEW: verde (success)
- * CLOSED: grigio (default)
- * CANCELLED: rosso (error)
+ * Mapping of colors for assessment status
+ * ACTIVE: green (success)
+ * CLOSED: gray (default)
+ * CANCELLED: red (error)
  */
 export const assessmentStateColors: Record<
   AssessmentStatus,
   ChipOwnProps['color']
 > = {
-  NEW: 'success',
+  ACTIVE: 'success',
   CLOSED: 'default',
   CANCELLED: 'error'
 };
 
 /**
- * Funzione per ottenere le props della chip di stato per un accertamento
- * @param status - Lo stato dell'accertamento
- * @param t - Funzione di traduzione
- * @returns Le props della chip (label e color)
+ * Function to get the props of the status chip for an assessment
+ * @param status - The status of the assessment
+ * @param t - Translation function
+ * @returns The props of the chip (label and color)
  */
 export const getAssessmentStatusChipProps = (
   status: string,
@@ -34,7 +34,7 @@ export const getAssessmentStatusChipProps = (
 
   if (!isValidStatus) {
     return {
-      label: 'Sconosciuto',
+      label: 'Unknown',
       color: 'default'
     };
   }

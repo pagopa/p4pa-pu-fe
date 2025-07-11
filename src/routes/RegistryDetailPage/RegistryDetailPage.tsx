@@ -7,12 +7,13 @@ import { useRegistry } from '../../api/registryDetail';
 import { mapRegistryToDetailSections } from './registryDetailConfig';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
+import { RegistryType } from '../Events/configs';
 
 export const RegistryDetailPage: React.FC = () => {
   const { t } = useTranslation();
   const { registryId, registryType } = useParams<{
     registryId: string;
-    registryType: 'pagopa' | 'sil';
+    registryType: RegistryType;
   }>();
 
   const { state } = useStore();
@@ -23,7 +24,7 @@ export const RegistryDetailPage: React.FC = () => {
     isLoading,
     error
   } = useRegistry(
-    registryType as 'pagopa' | 'sil',
+    registryType as RegistryType,
     organizationId,
     registryId || '',
     !!(organizationId && registryId && registryType)

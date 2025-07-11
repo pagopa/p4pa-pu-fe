@@ -1,7 +1,12 @@
 import { RouteHandleObject } from '../models/Routes';
 import Assessment from '../components/Assessment';
 import AssessmentSearchResults from './AssessmentSearchResults';
+<<<<<<< HEAD
 import AssessmentDetail from './AssessmentDetail/AssessmentDetail';
+import { AssessmentsRegistrySearchResults } from './AssessmentsRegistrySearchResults';
+=======
+import { AssessmentsRegistrySearchResults } from './AssessmentsRegistrySearchResults';
+>>>>>>> feat/P4ADEV-3355-assessment-list-page
 
 export const assessmentRoutes = [
   {
@@ -34,6 +39,22 @@ export const assessmentRoutes = [
           backButton: true,
           hideBreadcrumbs: false
         } as RouteHandleObject
+      },
+      {
+        path: 'registry/search-results/',
+        id: 'ASSESSMENT_REGISTRY_SEARCH_RESULTS',
+        children: [
+          {
+            id: 'ASSESSMENT_REGISTRY_SEARCH_RESULTS_INDEX',
+            index: true,
+            element: <AssessmentsRegistrySearchResults />,
+            handle: {
+              backButton: true,
+              hideBreadcrumbs: false,
+              hideBreadcrumbElement: true
+            } as RouteHandleObject
+          }
+        ]
       }
     ]
   }

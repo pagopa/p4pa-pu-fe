@@ -33,8 +33,8 @@ vi.mock('../FilterContainer/FilterContainer', () => ({
   }
 }));
 
-vi.mock('../../../generated/apiClient', () => ({
-  Api: vi.fn().mockImplementation(() => ({})),
+vi.mock('../../../generated/apiClient', async (importOriginal) => ({
+  ...(await importOriginal()),
   LabelEnum: {
     DOPPI: 'DOPPI',
     RT_NO_IUF: 'RT_NO_IUF',
@@ -228,6 +228,53 @@ const mockFilterMap: FilterMap = {
     fields: [
       { type: COMPONENT_TYPE.dateRange, label: 'LAST_UPDATE_DATE Field' }
     ]
+  },
+  ASSESSMENT_CODE: {
+    label: 'ASSESSMENT_CODE',
+    fields: [{ type: COMPONENT_TYPE.textField, label: 'ASSESSMENT_CODE Field' }]
+  },
+  ASSESSMENT_DESCRIPTION: {
+    label: 'ASSESSMENT_DESCRIPTION',
+    fields: [
+      { type: COMPONENT_TYPE.textField, label: 'ASSESSMENT_DESCRIPTION Field' }
+    ]
+  },
+  OFFICE_CODE: {
+    label: 'OFFICE_CODE',
+    fields: [{ type: COMPONENT_TYPE.textField, label: 'OFFICE_CODE Field' }]
+  },
+  OFFICE_DESCRIPTION: {
+    label: 'OFFICE_DESCRIPTION',
+    fields: [
+      { type: COMPONENT_TYPE.textField, label: 'OFFICE_DESCRIPTION Field' }
+    ]
+  },
+  SECTION_CODE: {
+    label: 'SECTION_CODE',
+    fields: [{ type: COMPONENT_TYPE.textField, label: 'SECTION_CODE Field' }]
+  },
+  SECTION_DESCRIPTION: {
+    label: 'SECTION_DESCRIPTION',
+    fields: [
+      { type: COMPONENT_TYPE.textField, label: 'SECTION_DESCRIPTION Field' }
+    ]
+  },
+  OPERATING_YEAR: {
+    label: 'OPERATING_YEAR',
+    fields: [{ type: COMPONENT_TYPE.textField, label: 'OPERATING_YEAR Field' }]
+  },
+  DEBT_POSITION_TYPE_ORG_CODE: {
+    label: 'DEBT_POSITION_TYPE_ORG_CODE',
+    fields: [
+      {
+        type: COMPONENT_TYPE.textField,
+        label: 'DEBT_POSITION_TYPE_ORG_CODE Field'
+      }
+    ]
+  },
+  STATUS: {
+    label: 'STATUS',
+    fields: [{ type: COMPONENT_TYPE.select, label: 'STATUS Field' }]
   }
 };
 
@@ -276,7 +323,16 @@ describe('MultiFilter Component', () => {
       DEBT_TYPE: '',
       ASSESSMENT_STATUS: '',
       LAST_UPDATE_DATE_FROM: null,
-      LAST_UPDATE_DATE_TO: null
+      LAST_UPDATE_DATE_TO: null,
+      ASSESSMENT_CODE: '',
+      ASSESSMENT_DESCRIPTION: '',
+      OFFICE_CODE: '',
+      OFFICE_DESCRIPTION: '',
+      SECTION_CODE: '',
+      SECTION_DESCRIPTION: '',
+      OPERATING_YEAR: '',
+      DEBT_POSITION_TYPE_ORG_CODE: '',
+      STATUS: ''
     });
   });
 
