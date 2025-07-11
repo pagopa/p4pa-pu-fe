@@ -7,7 +7,7 @@ import { SuperAdminRouteGuard } from '../components/RouteGuard/RouteGuard';
 import TaxonomySearchResults from './TaxonomySearchResults';
 import { RegistryDetailPage } from './RegistryDetailPage/RegistryDetailPage';
 import EventPage from './Events/Search';
-import EventList from './Events/list';
+import EventList from './Events/List';
 import EventsContainer from './Events/EventsContainer';
 
 const deployPath = config.deployPath;
