@@ -26,9 +26,7 @@ export const getAssessmentDetail = (
           filters
         );
 
-      if (assessmentDetail) {
-        parseAndLog(assessmentsRowsDetailSchema, assessmentDetail);
-      }
+      parseAndLog(assessmentsRowsDetailSchema, assessmentDetail);
 
       return assessmentDetail;
     },
