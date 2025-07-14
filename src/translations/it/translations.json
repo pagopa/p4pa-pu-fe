@@ -223,8 +223,9 @@
   },
   "commons": {
     "info": "Informazioni",
-    "addfilter": "Aggiunge filtro",
+    "add": "Aggiungi",
     "all": "Tutti",
+    "addfilter": "Aggiunge filtro",
     "amount": "Importo",
     "anonymousFiscalCode": "Codice Fiscale Anonimo",
     "auditor": "Attestante",
@@ -323,7 +324,7 @@
         "code": "Codice",
         "label": "Codice Documento"
       },
-      "filterResults": "Filtra",
+      "filterResults": "Cerca",
       "filtersField": "Filtri",
       "iuv": {
         "code": "Codice IUV",
@@ -444,6 +445,7 @@
     "personLegal": "Persona giuridica",
     "postAccount": "Conto Corrente Postale",
     "reason": "Causale",
+    "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {

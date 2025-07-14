@@ -1,6 +1,20 @@
 import { useEffect, useState, useMemo } from 'react';
-import { Grid, Typography, useTheme, Menu, MenuItem } from '@mui/material';
-import { Close, Delete, MoreVert } from '@mui/icons-material';
+import {
+  Grid,
+  Typography,
+  useTheme,
+  Menu,
+  MenuItem,
+  Button,
+  Box
+} from '@mui/material';
+import {
+  Close,
+  Delete,
+  MoreVert,
+  Add,
+  RemoveCircleOutline
+} from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer, {
   DetailData
@@ -130,6 +144,14 @@ export const AssessmentDetail = () => {
     }
   };
 
+  const handleRemovePayments = () => {
+    console.log('Remove payments clicked');
+  };
+
+  const handleAddPayments = () => {
+    console.log('Add payments clicked');
+  };
+
   // Configuration sections for the DetailContainer
   const detailSections = useMemo(() => {
     const firstAssessmentItem = detailItem;
@@ -220,9 +242,38 @@ export const AssessmentDetail = () => {
       </Grid>
 
       <Grid container marginTop={4}>
-        <Typography variant="h6">
-          {t('assessmentDetail.paymentsAssociated')}
-        </Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: '100%',
+            mb: 2
+          }}
+        >
+          <Typography variant="h6">
+            {t('assessmentDetail.paymentsAssociated')}
+          </Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="outlined"
+              color="error"
+              startIcon={<RemoveCircleOutline />}
+              onClick={handleRemovePayments}
+              data-testid="remove-payments-button"
+            >
+              {t('commons.remove')}
+            </Button>
+            <Button
+              variant="outlined"
+              startIcon={<Add />}
+              onClick={handleAddPayments}
+              data-testid="add-payments-button"
+            >
+              {t('commons.add')}
+            </Button>
+          </Box>
+        </Box>
         <Grid
           container
           direction="row"

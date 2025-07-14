@@ -9,7 +9,7 @@ import CustomDataGrid, {
 } from '../../../components/DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { moneyFormat, formatDateTime } from '../../../utils/formatters';
+import { moneyFormat, formatDate } from '../../../utils/formatters';
 import { AssessmentsDetail } from '../../../../generated/apiClient';
 
 type AssessmentDetailDataGridProps = {
@@ -20,10 +20,6 @@ type AssessmentDetailDataGridProps = {
   isLoading?: boolean;
 };
 
-/**
- * DataGrid per la visualizzazione dei dettagli di un assessment.
- * Mostra le colonne: IUV, Importo, Data esito, Ultimo aggiornamento.
- */
 const AssessmentDetailDataGrid = ({
   rows,
   sortModel,
@@ -54,7 +50,7 @@ const AssessmentDetailDataGrid = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams) =>
-        params.value ? formatDateTime(params.value) : ''
+        params.value ? formatDate(params.value) : ''
     },
     {
       field: 'updateDate',
@@ -62,7 +58,7 @@ const AssessmentDetailDataGrid = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams) =>
-        params.value ? formatDateTime(params.value) : ''
+        params.value ? formatDate(params.value) : ''
     },
     {
       field: 'action',
