@@ -33,7 +33,8 @@ export const assessmentRoutes = [
         element: <AssessmentDetail />,
         handle: {
           backButton: true,
-          hideBreadcrumbs: false
+          hideBreadcrumbs: false,
+          custom: true
         } as RouteHandleObject
       },
       {

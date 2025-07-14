@@ -6,7 +6,8 @@ import {
   Menu,
   MenuItem,
   Button,
-  Box
+  Box,
+  Chip
 } from '@mui/material';
 import {
   Close,
@@ -19,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, generatePath } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';
@@ -34,6 +35,9 @@ import { Variant } from '@mui/material/styles/createTypography';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
+import { setAppState } from '../../store/AppStateStore';
+import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
+import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
 
 type DialogConfig = {
   open: boolean;
@@ -95,10 +99,37 @@ export const AssessmentDetail = () => {
   }, [isError, error, navigate]);
 
   useEffect(() => {
-    if (data?.content?.[0] && !detailItem) {
-      setDetailItem(data.content[0]);
+    if (data?.pagedAssessmentsRowsDetail?.content?.[0] && !detailItem) {
+      setDetailItem(data.pagedAssessmentsRowsDetail.content[0]);
     }
   }, [data, detailItem]);
+
+  // Handle custom breadcrumb
+  useEffect(() => {
+    if ((detailItem || data?.assessmentsName) && assessmentId) {
+      const customBreadcrumbsItems: Array<BredcrumbItem> = [
+        { pathname: PageRoutes.ASSESSMENT_INDEX, id: 'ASSESSMENT' },
+        {
+          pathname: PageRoutes.ASSESSMENT_SEARCH_RESULTS,
+          id: 'ASSESSMENT_SEARCH_RESULTS'
+        },
+        {
+          pathname: generatePath(PageRoutes.ASSESSMENT_DETAIL, {
+            id: assessmentId.toString()
+          }),
+          label:
+            data?.assessmentsName ||
+            detailItem?.debtPositionTypeOrgCode ||
+            `Accertamento ${assessmentId}`,
+          id: 'ASSESSMENT_DETAIL'
+        }
+      ];
+      setAppState({
+        loading: false,
+        customBreadcrumbsItems: customBreadcrumbsItems
+      });
+    }
+  }, [detailItem, assessmentId, data?.assessmentsName]);
 
   const handleFiltersApplied = () => {
     applyFilters();
@@ -156,42 +187,59 @@ export const AssessmentDetail = () => {
   const detailSections = useMemo(() => {
     const firstAssessmentItem = detailItem;
 
-    const summaryData: DetailData[] = [
+    const statusChipProps = data?.status
+      ? getAssessmentStatusChipProps(data.status, t)
+      : null;
+
+    const summaryData: Array<DetailData> = [
       {
-        label: t('commons.status'),
-        value: 'In corso', // For now hardcoded, to be linked to real data when available
-        valueType: 'status' as const,
-        chipConfig: {
-          color: 'success' as const,
-          variant: 'filled' as const
-        }
+        label: t('commons.state'),
+        value: statusChipProps?.label || '-',
+        childrenComponent: statusChipProps ? (
+          <Chip
+            label={statusChipProps.label}
+            color={statusChipProps.color}
+            variant="filled"
+            size="small"
+          />
+        ) : undefined
       },
       {
         label: t('assessmentDetail.debtType'),
-        value: firstAssessmentItem?.debtPositionTypeOrgCode || '-'
+        value:
+          data?.debtPositionTypeOrgDescription ||
+          firstAssessmentItem?.debtPositionTypeOrgCode ||
+          '-'
       },
       {
         label: t('assessmentDetail.createdBy'),
-        value: firstAssessmentItem?.updateOperatorExternalId || '-'
+        value:
+          data?.updateOperatorExternalId ||
+          firstAssessmentItem?.updateOperatorExternalId ||
+          '-'
       }
     ];
 
     return [
       {
-        title: { label: 'RIEPILOGO', variant: 'overline' as Variant },
+        title: { label: t('commons.summary'), variant: 'overline' as Variant },
         data: [...summaryData],
         inline: true
       }
     ];
-  }, [detailItem, assessmentId, t]);
+  }, [
+    detailItem,
+    assessmentId,
+    t,
+    data?.status,
+    data?.debtPositionTypeOrgDescription,
+    data?.updateOperatorExternalId
+  ]);
 
   return (
     <>
       <TitleComponent
-        title={
-          detailItem?.debtPositionTypeOrgCode ||
-          `Accertamento ${assessmentId || ''}`
-        }
+        title={data?.assessmentsName || `Accertamento ${assessmentId || ''}`}
         callToAction={[
           {
             icon: <MoreVert />,
@@ -287,7 +335,7 @@ export const AssessmentDetail = () => {
             items={[
               {
                 type: COMPONENT_TYPE.textField,
-                label: 'Cerca IUV',
+                label: t('commons.search') + ' IUV',
                 adornment: <Search />,
                 gridWidth: 2,
                 value: draftFilters.iuv || '',
@@ -298,7 +346,7 @@ export const AssessmentDetail = () => {
                 label: 'dateRange1',
                 gridWidth: 4,
                 from: {
-                  label: 'Esito dal',
+                  label: t('commons.from'),
                   value: draftFilters.paymentDateTimeFrom
                     ? new Date(draftFilters.paymentDateTimeFrom)
                     : null,
@@ -310,7 +358,7 @@ export const AssessmentDetail = () => {
                     })
                 },
                 to: {
-                  label: 'Al',
+                  label: t('commons.to'),
                   value: draftFilters.paymentDateTimeTo
                     ? new Date(draftFilters.paymentDateTimeTo)
                     : null,
@@ -327,7 +375,7 @@ export const AssessmentDetail = () => {
                 label: 'dateRange2',
                 gridWidth: 5,
                 from: {
-                  label: 'Aggiornato dal',
+                  label: t('commons.updatedFrom'),
                   value: draftFilters.updateDateTimeFrom
                     ? new Date(draftFilters.updateDateTimeFrom)
                     : null,
@@ -339,7 +387,7 @@ export const AssessmentDetail = () => {
                     })
                 },
                 to: {
-                  label: 'Al',
+                  label: t('commons.to'),
                   value: draftFilters.updateDateTimeTo
                     ? new Date(draftFilters.updateDateTimeTo)
                     : null,
@@ -371,7 +419,7 @@ export const AssessmentDetail = () => {
           aria-label="results-table"
         >
           <AssessmentDetailDataGrid
-            rows={data?.content || []}
+            rows={data?.pagedAssessmentsRowsDetail?.content || []}
             sortModel={sortModel}
             onSortModelChange={handleSortModelChange}
             isLoading={isLoading}
@@ -380,10 +428,10 @@ export const AssessmentDetail = () => {
               initialSize: 10,
               sizeOptions: [5, 10, 20],
               backendData: {
-                totalElements: data?.totalElements,
-                totalPages: data?.totalPages,
-                number: data?.number,
-                size: data?.size
+                totalElements: data?.pagedAssessmentsRowsDetail?.totalElements,
+                totalPages: data?.pagedAssessmentsRowsDetail?.totalPages,
+                number: data?.pagedAssessmentsRowsDetail?.number,
+                size: data?.pagedAssessmentsRowsDetail?.size
               },
               onFiltersApplied: handleFiltersApplied
             }}
