@@ -2,7 +2,9 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
 import {
   AssessmentsRegistriesFilteredRequest,
-  buildQueryParams
+  AssessmentsFilteredRequest,
+  buildQueryParams,
+  buildAssessmentsQueryParams
 } from './mappings';
 import { parseAndLog } from '../../utils/loaders';
 import { assessmentsRegistryDTOSchema } from '../../../generated/zod-schema';
@@ -28,7 +30,8 @@ export const getAssessments = (
 ) =>
   useMutation({
     mutationKey: ['getAssessments', organizationId],
-    mutationFn: async (query: AssessmentsQuery) => {
+    mutationFn: async (args: AssessmentsFilteredRequest) => {
+      const query = buildAssessmentsQueryParams(args);
       const { data: response } =
         await utils.apiClient.bff.getPagedAssessmentsExtendedDto(
           organizationId,
@@ -40,9 +43,7 @@ export const getAssessments = (
             }
           }
         );
-
       parseAndLog(pagedAssessmentsExtendedDTOSchema, response);
-
       return response;
     }
   });

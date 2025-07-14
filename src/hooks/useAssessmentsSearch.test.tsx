@@ -154,10 +154,17 @@ describe('useAssessmentsSearch', () => {
     expect(result.current.data).toBe(null);
   });
 
-  it('should not call mutate on mount when no filters are set', () => {
+  it('should call mutate on mount with pagination params only when no filters are set', () => {
     renderHook(() => useAssessmentsSearch(defaultProps));
 
-    expect(mockMutate).not.toHaveBeenCalled();
+    expect(mockMutate).toHaveBeenCalledWith(
+      {
+        filters: defaultFilters,
+        pagination: { page: 0, size: 20 },
+        sort: []
+      },
+      { onError: expect.any(Function) }
+    );
   });
 
   it('should call mutate on mount when filters are set', () => {
@@ -175,9 +182,9 @@ describe('useAssessmentsSearch', () => {
 
     expect(mockMutate).toHaveBeenCalledWith(
       {
-        assessmentName: 'Test Assessment',
-        page: 0,
-        size: 20
+        filters: filtersWithData,
+        pagination: { page: 0, size: 20 },
+        sort: []
       },
       { onError: expect.any(Function) }
     );
@@ -203,102 +210,88 @@ describe('useAssessmentsSearch', () => {
       );
       expect(mockMutate).toHaveBeenCalledWith(
         {
-          assessmentName: 'New Assessment',
-          iuv: 'test-iuv',
-          page: 0,
-          size: 20
+          filters: newFilters,
+          pagination: { page: 0, size: 20 },
+          sort: []
         },
         { onError: expect.any(Function) }
       );
     });
 
-    it('should handle DEBT_TYPE filter correctly', () => {
+    it('should call mutate with correct arguments', () => {
       const { result } = renderHook(() => useAssessmentsSearch(defaultProps));
 
-      const filtersWithDebtType = {
+      const filters = {
         ...defaultFilters,
-        DEBT_TYPE: 'TYPE1'
+        ASSESSMENT_NAME: 'Test Assessment'
       };
 
       act(() => {
-        result.current.applyFilters(filtersWithDebtType);
+        result.current.applyFilters(filters);
       });
 
       expect(mockMutate).toHaveBeenCalledWith(
         {
-          debtPositionTypeOrgCode: 'TYPE1',
-          page: 0,
-          size: 20
+          filters: filters,
+          pagination: { page: 0, size: 20 },
+          sort: []
         },
         { onError: expect.any(Function) }
       );
     });
 
-    it('should exclude DEBT_TYPE when value is "ALL"', () => {
+    it('should handle multiple filter updates', () => {
       const { result } = renderHook(() => useAssessmentsSearch(defaultProps));
 
-      const filtersWithAllDebtType = {
+      const firstFilters = {
         ...defaultFilters,
-        DEBT_TYPE: 'ALL'
+        ASSESSMENT_NAME: 'First Assessment'
+      };
+
+      const secondFilters = {
+        ...defaultFilters,
+        ASSESSMENT_NAME: 'Second Assessment',
+        IUV: 'test-iuv'
       };
 
       act(() => {
-        result.current.applyFilters(filtersWithAllDebtType);
+        result.current.applyFilters(firstFilters);
       });
-
-      expect(mockMutate).toHaveBeenCalledWith(
-        {
-          page: 0,
-          size: 20
-        },
-        { onError: expect.any(Function) }
-      );
-    });
-
-    it('should format dates correctly to ISO string', () => {
-      const { result } = renderHook(() => useAssessmentsSearch(defaultProps));
-
-      const testDate = new Date('2023-12-25T10:30:00.000Z');
-      const filtersWithDates = {
-        ...defaultFilters,
-        LAST_UPDATE_DATE_FROM: testDate,
-        LAST_UPDATE_DATE_TO: testDate
-      };
 
       act(() => {
-        result.current.applyFilters(filtersWithDates);
+        result.current.applyFilters(secondFilters);
       });
 
-      expect(mockMutate).toHaveBeenCalledWith(
+      expect(mockMutate).toHaveBeenLastCalledWith(
         {
-          updateDateFrom: '2023-12-25T10:30:00.000Z',
-          updateDateTo: '2023-12-25T10:30:00.000Z',
-          page: 0,
-          size: 20
+          filters: secondFilters,
+          pagination: { page: 0, size: 20 },
+          sort: []
         },
         { onError: expect.any(Function) }
       );
     });
 
-    it('should include sort parameters when set', () => {
+    it('should include sort in the request when sort is set', () => {
       const { result } = renderHook(() => useAssessmentsSearch(defaultProps));
+
+      const filters = {
+        ...defaultFilters,
+        ASSESSMENT_NAME: 'Test Assessment'
+      };
 
       act(() => {
         result.current.setSort(['assessmentName,asc', 'updateDate,desc']);
       });
 
       act(() => {
-        result.current.applyFilters({
-          ...defaultFilters,
-          ASSESSMENT_NAME: 'Test'
-        });
+        result.current.applyFilters(filters);
       });
 
-      expect(mockMutate).toHaveBeenCalledWith(
+      expect(mockMutate).toHaveBeenLastCalledWith(
         {
-          assessmentName: 'Test',
-          page: 0,
-          size: 20,
+          filters: filters,
+          pagination: { page: 0, size: 20 },
           sort: ['assessmentName,asc', 'updateDate,desc']
         },
         { onError: expect.any(Function) }
@@ -310,7 +303,6 @@ describe('useAssessmentsSearch', () => {
     it('should call applyFilters with current filters when no filters provided', () => {
       const { result } = renderHook(() => useAssessmentsSearch(defaultProps));
 
-      // Set some filters first
       act(() => {
         result.current.setFilterValues({
           ...defaultFilters,
@@ -322,11 +314,14 @@ describe('useAssessmentsSearch', () => {
         result.current.executeSearch();
       });
 
-      expect(mockMutate).toHaveBeenCalledWith(
+      expect(mockMutate).toHaveBeenLastCalledWith(
         {
-          assessmentName: 'Current Assessment',
-          page: 0,
-          size: 20
+          filters: {
+            ...defaultFilters,
+            ASSESSMENT_NAME: 'Current Assessment'
+          },
+          pagination: { page: 0, size: 20 },
+          sort: []
         },
         { onError: expect.any(Function) }
       );
@@ -344,11 +339,11 @@ describe('useAssessmentsSearch', () => {
         result.current.executeSearch(customFilters);
       });
 
-      expect(mockMutate).toHaveBeenCalledWith(
+      expect(mockMutate).toHaveBeenLastCalledWith(
         {
-          assessmentName: 'Custom Assessment',
-          page: 0,
-          size: 20
+          filters: customFilters,
+          pagination: { page: 0, size: 20 },
+          sort: []
         },
         { onError: expect.any(Function) }
       );
@@ -449,7 +444,6 @@ describe('useAssessmentsSearch', () => {
         result.current.setSort(sortOptions);
       });
 
-      // Verify sort is used in next mutation
       act(() => {
         result.current.applyFilters({
           ...defaultFilters,
@@ -457,11 +451,13 @@ describe('useAssessmentsSearch', () => {
         });
       });
 
-      expect(mockMutate).toHaveBeenCalledWith(
+      expect(mockMutate).toHaveBeenLastCalledWith(
         {
-          assessmentName: 'Test',
-          page: 0,
-          size: 20,
+          filters: {
+            ...defaultFilters,
+            ASSESSMENT_NAME: 'Test'
+          },
+          pagination: { page: 0, size: 20 },
           sort: sortOptions
         },
         { onError: expect.any(Function) }

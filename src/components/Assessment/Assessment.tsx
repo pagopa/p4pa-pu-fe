@@ -6,62 +6,27 @@ import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
-import { useState, useMemo } from 'react';
-import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
-import { useStore } from '../../store/GlobalStore';
-import { useAssessmentsSearch } from '../../hooks/useAssessmentsSearch';
-import { PageRoutes } from '../../routes';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { PageRoutes } from '../../routes';
 
 export const Assessment = () => {
   const { t } = useTranslation();
-  const { state } = useStore();
-  const organizationId = state.organizationId;
-
   const navigate = useNavigate();
 
-  const { optionsMap: debtTypesOptions } = useDebtPositionsTypeOrg({
-    organizationId: organizationId || 0,
-    includeAllOption: true,
-    useCodeAsValue: true // for assessments we use the code (string)
+  const { filterMap, removeAllFilters, noFilterIsSelected } = useMultiFilters({
+    clearOnMount: true,
+    filterCategory: FilterCategory.ASSESSMENT
   });
-
-  const { filterMap, removeAllFilters, noFilterIsSelected, filterValues } =
-    useMultiFilters({
-      clearOnMount: true,
-      filterCategory: FilterCategory.ASSESSMENT
-    });
-
-  const assessmentSearch = useAssessmentsSearch({
-    initialFilters: filterValues,
-    initialPage: 0,
-    initialSize: 20
-  });
-
-  // Populate the select DEBT_TYPE options dynamically
-  const enhancedFilterMap = useMemo(() => {
-    if (!filterMap.DEBT_TYPE) return filterMap;
-
-    return {
-      ...filterMap,
-      DEBT_TYPE: {
-        ...filterMap.DEBT_TYPE,
-        fields: filterMap.DEBT_TYPE.fields.map((field) => ({
-          ...field,
-          options: debtTypesOptions
-        }))
-      }
-    };
-  }, [filterMap, debtTypesOptions]);
 
   const [error, setError] = useState(false);
 
   const handleCreateAssessment = () => {
-    console.log('Crea accertamento clicked');
+    console.log('Create assessment clicked');
   };
 
   const handleCreateChapter = () => {
-    console.log('Crea nuovo capitolo clicked');
+    console.log('Create new chapter clicked');
   };
 
   const handleViewAllChapters = () => {
@@ -69,16 +34,11 @@ export const Assessment = () => {
   };
 
   function submitSearch() {
-    if (!noFilterIsSelected.peek()) {
-      // If no filters are selected, show error
-      setError(true);
-    } else {
+    if (noFilterIsSelected.peek()) {
       setError(false);
-
-      assessmentSearch.executeSearch(filterValues);
-
-      // TODO: Navigate to the results page when it is implemented
-      // navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS);
+      navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS);
+    } else {
+      setError(true);
     }
   }
 
@@ -102,7 +62,7 @@ export const Assessment = () => {
             <SearchCard
               title={t('assessment.search')}
               description={t('assessment.searchDescription')}
-              multiFilterConfig={enhancedFilterMap}
+              multiFilterConfig={filterMap}
               render={error && ErrorMessage}
               extraProps={{
                 onFilterInteraction: () => setError(false)
@@ -122,8 +82,7 @@ export const Assessment = () => {
                   label: t('commons.search'),
                   variant: 'contained',
                   onClick: submitSearch,
-                  id: 'assessment-search-btn',
-                  disabled: assessmentSearch.isLoading
+                  id: 'assessment-search-btn'
                 }
               ]}
             />

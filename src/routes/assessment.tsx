@@ -1,5 +1,6 @@
 import { RouteHandleObject } from '../models/Routes';
 import Assessment from '../components/Assessment';
+import AssessmentSearchResults from './AssessmentSearchResults';
 import { AssessmentsRegistrySearchResults } from './AssessmentsRegistrySearchResults';
 
 export const assessmentRoutes = [
@@ -14,6 +15,15 @@ export const assessmentRoutes = [
         handle: {
           backButton: false,
           hideBreadcrumbs: true
+        } as RouteHandleObject
+      },
+      {
+        id: 'ASSESSMENT_SEARCH_RESULTS',
+        path: 'search-results',
+        element: <AssessmentSearchResults />,
+        handle: {
+          backButton: true,
+          hideBreadcrumbs: false
         } as RouteHandleObject
       },
       {
