@@ -152,7 +152,7 @@ describe('getAssessmentDetail', () => {
     const mockError = new Error('API Error: Assessment detail not found');
     mockGetPagedAssessmentsDetails.mockRejectedValueOnce(mockError);
 
-    const {} = renderHook(() =>
+    renderHook(() =>
       getAssessmentDetail(organizationId, assessmentId, mockFilters)
     );
 
