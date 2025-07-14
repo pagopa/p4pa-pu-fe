@@ -118,9 +118,7 @@ describe('AssessmentDetail', () => {
       expect(
         screen.getByText('assessmentDetail.paymentsAssociated')
       ).toBeDefined();
-      // Con la nuova struttura, il debtType ora mostra la descrizione completa
       expect(screen.getByText('FEATURE TEST - DO NOT DELETE')).toBeDefined();
-      // L'operatore ora viene dal livello assessment
       expect(screen.getByText('WS_USER-piattaforma-unitaria_')).toBeDefined();
     });
 
@@ -152,9 +150,7 @@ describe('AssessmentDetail', () => {
 
   describe('Button Interactions', () => {
     it('should log correct message when remove button is clicked', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {
-        // Funzione vuota implementata esplicitamente per evitare ESLint error
-      });
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
 
       render(<AssessmentDetail />);
 
@@ -167,9 +163,7 @@ describe('AssessmentDetail', () => {
     });
 
     it('should log correct message when add button is clicked', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {
-        // Funzione vuota implementata esplicitamente per evitare ESLint error
-      });
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
 
       render(<AssessmentDetail />);
 
