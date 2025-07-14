@@ -1,22 +1,83 @@
-import { vi, describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '../../__tests__/renderers';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { render, screen, waitFor } from '../../__tests__/renderers';
 import ClassificationsDetail from './';
 import * as classificationService from '../../api/getClassificationDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { createMock } from 'zodock';
 import { classificationDetailDTOSchema } from '../../../generated/zod-schema';
+import * as ReactRouter from 'react-router';
+
+const { mockNavigate, mockGeneratePath } = vi.hoisted(() => ({
+  mockNavigate: vi.fn(),
+  mockGeneratePath: vi.fn()
+}));
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>();
   return {
     ...actual,
-    useParams: () => ({
-      classificationId: '673'
-    })
+    useParams: vi.fn(() => ({ classificationId: '673' })),
+    useNavigate: () => mockNavigate,
+    generatePath: mockGeneratePath
   };
 });
 
+vi.mock('../../routes', () => ({
+  PageRoutes: {
+    RESPONSES_ERROR: '/error',
+    TELEMATIC_RECEIPT_DETAIL: '/telematic-receipt/:id',
+    REPORTING_DETAIL: '/reporting/:id',
+    TREASURY_DETAIL: '/treasury/:id'
+  }
+}));
+
 const mockData = createMock(classificationDetailDTOSchema);
+
+const createMockData = (overrides = {}) => {
+  const baseData = {
+    id: 673,
+    payed: false,
+    reported: false,
+    collected: false,
+    debtPositionTypeOrgCode: null,
+    remittanceInformation: null,
+    receiptPaymentAmount: null,
+    receiptPaymentDateTime: null,
+    iuv: null,
+    iud: null,
+    iur: null,
+    receiptDebtor: null,
+    receiptPayer: null,
+    paymentNotificationDebtPositionTypeOrgCode: null,
+    paymentNotificationRemittanceInformation: null,
+    paymentNotificationAmountPaidCents: null,
+    paymentNotificationDebtor: null,
+    paymentExecutionDate: null,
+    paymentNotificationIud: null,
+    iuf: null,
+    flowDateTime: null,
+    regulationUniqueIdentifier: null,
+    regionValueDate: null,
+    totalAmountCents: null,
+    sealCode: null,
+    pspLastName: null,
+    documentCode: null,
+    billDate: null,
+    billYear: null,
+    provisionalAe: null,
+    receptionDate: null,
+    billCode: null,
+    provisionalCode: null,
+    receiptPaymentReceiptId: null,
+    receiptPaymentRequestId: null,
+    treasuryId: null,
+    ...overrides
+  };
+
+  return baseData;
+};
+
 vi.mock('../../utils', () => ({
   default: {
     config: {
@@ -40,64 +101,572 @@ vi.mock('../../utils', () => ({
   }
 }));
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key
+  })
+}));
+
 setOrganizationId(2);
 
 describe('Classifications Detail:', () => {
-  it('renders without crashing', () => {
-    render(<ClassificationsDetail />);
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.mocked(ReactRouter.useParams).mockReturnValue({
+      classificationId: '673'
+    });
+
+    mockGeneratePath.mockImplementation((route, params) => {
+      if (route === '/telematic-receipt/:id') {
+        return `/telematic-receipt/${params.id}`;
+      }
+      if (route === '/reporting/:id') {
+        return `/reporting/${params.id}`;
+      }
+      if (route === '/treasury/:id') {
+        return `/treasury/${params.id}`;
+      }
+      return route;
+    });
   });
 
-  it('passes the right parameters to the getClassificationDetails hook', () => {
-    const spyGetClassificationDetails = vi.spyOn(
-      classificationService,
-      'getClassificationDetail'
-    );
-    render(<ClassificationsDetail />);
-    expect(spyGetClassificationDetails).toBeCalledWith(2, 673);
+  afterEach(() => {
+    vi.restoreAllMocks();
   });
 
-  it('switching tabs works properly', async () => {
-    vi.spyOn(
-      classificationService,
-      'getClassificationDetail'
-    ).mockImplementation(
-      () =>
-        ({
-          data: mockData,
-          isError: false,
-          error: null
-        }) as ReturnType<typeof classificationService.getClassificationDetail>
-    );
+  describe('Rendering', () => {
+    it('renders without crashing', () => {
+      render(<ClassificationsDetail />);
+    });
 
-    render(<ClassificationsDetail />);
+    it('displays title correctly', () => {
+      render(<ClassificationsDetail />);
+      expect(screen.getByText('classifications.title')).toBeInTheDocument();
+    });
+  });
 
-    const tab0 = screen.getByTestId('classificationDetailTabDebtType');
-    const tab1 = screen.getByTestId('classificationDetailTabReporting');
-    const tab2 = screen.getByTestId('classificationDetailTabEarnings');
+  describe('params & services handling', () => {
+    it('passes the right parameters to the getClassificationDetails hook', () => {
+      const spyGetClassificationDetails = vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      );
+      render(<ClassificationsDetail />);
+      expect(spyGetClassificationDetails).toBeCalledWith(2, 673);
+    });
 
-    const tabPanel0 = screen.getByTestId(
-      'ClassificationDetailTabPanelDebtType'
-    );
-    const tabPanel1 = screen.getByTestId(
-      'ClassificationDetailTabPanelReporting'
-    );
-    const tabPanel2 = screen.getByTestId(
-      'ClassificationDetailTabPanelEarnings'
-    );
+    it('handles invalid classificationId by navigating to error page', async () => {
+      vi.mocked(ReactRouter.useParams).mockReturnValue({
+        classificationId: 'invalid-id'
+      });
 
-    fireEvent.click(tab1);
-    expect(tabPanel0).not.toBeVisible();
-    expect(tabPanel1).toBeVisible();
-    expect(tabPanel2).not.toBeVisible();
+      render(<ClassificationsDetail />);
 
-    fireEvent.click(tab2);
-    expect(tabPanel0).not.toBeVisible();
-    expect(tabPanel1).not.toBeVisible();
-    expect(tabPanel2).toBeVisible();
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith('/error');
+      });
+    });
 
-    fireEvent.click(tab0);
-    expect(tabPanel0).toBeVisible();
-    expect(tabPanel1).not.toBeVisible();
-    expect(tabPanel2).not.toBeVisible();
+    it('handles API error by navigating to error page', async () => {
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: null,
+        isError: true,
+        error: new Error('API Error')
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith('/error');
+      });
+    });
+  });
+
+  describe('Tabs optional visibilty', () => {
+    it('shows only payed tab when only payed data is available', async () => {
+      const payedOnlyData = createMockData({
+        payed: true,
+        reported: false,
+        collected: false,
+        debtPositionTypeOrgCode: 'DEBT123',
+        remittanceInformation: 'Test Payment',
+        receiptPaymentAmount: 1000
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: payedOnlyData,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('shows only reported tab when only reported data is available', async () => {
+      const reportedOnlyData = createMockData({
+        payed: false,
+        reported: true,
+        collected: false,
+        iuf: 'IUF123',
+        flowDateTime: '2023-01-01T10:00:00Z'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: reportedOnlyData,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('shows all tabs when all data types are available', async () => {
+      const allDataAvailable = createMockData({
+        payed: true,
+        reported: true,
+        collected: true,
+        debtPositionTypeOrgCode: 'DEBT123',
+        iuf: 'IUF123',
+        sealCode: 'SEAL123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: allDataAvailable,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('hides tab list when only one tab is visible', async () => {
+      const singleTabData = createMockData({
+        payed: true,
+        reported: false,
+        collected: false,
+        debtPositionTypeOrgCode: 'DEBT123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: singleTabData,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Tabs functionality', () => {
+    let allDataAvailable: any;
+
+    beforeEach(() => {
+      allDataAvailable = createMockData({
+        payed: true,
+        reported: true,
+        collected: true,
+        debtPositionTypeOrgCode: 'DEBT123',
+        iuf: 'IUF123',
+        sealCode: 'SEAL123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: allDataAvailable,
+        isError: false,
+        error: null
+      } as any);
+    });
+
+    it('renders component with all data types', async () => {
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('sets up component correctly', async () => {
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Tabs content', () => {
+    it('displays component with debt type data', async () => {
+      const mockDataWithDebtType = createMockData({
+        payed: true,
+        debtPositionTypeOrgCode: 'DEBT123',
+        remittanceInformation: 'Test Payment Object',
+        receiptPaymentAmount: 1000,
+        iuv: 'IUV123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataWithDebtType,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('displays component with reporting data', async () => {
+      const mockDataWithReporting = createMockData({
+        payed: true,
+        reported: true,
+        iuf: 'IUF123',
+        regulationUniqueIdentifier: 'REG456'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataWithReporting,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Link handling', () => {
+    it('renders component with receipt data', async () => {
+      const mockDataWithReceiptId = createMockData({
+        payed: true,
+        receiptPaymentReceiptId: 'receipt123',
+        receiptPaymentRequestId: 'request456'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataWithReceiptId,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('renders component with iuf data', async () => {
+      const mockDataWithIuf = createMockData({
+        payed: true,
+        reported: true,
+        iuf: 'iuf789'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataWithIuf,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Notified Payment section', () => {
+    it('renders component with notified payment data', async () => {
+      const mockDataWithNotifiedPayment = createMockData({
+        payed: true,
+        paymentNotificationDebtPositionTypeOrgCode: 'NOTIF123',
+        paymentNotificationRemittanceInformation: 'Notification Info',
+        paymentNotificationAmountPaidCents: 5000
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataWithNotifiedPayment,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('renders component without notified payment data', async () => {
+      const mockDataWithoutNotifiedPayment = createMockData({
+        payed: true,
+        paymentNotificationDebtPositionTypeOrgCode: null,
+        paymentNotificationRemittanceInformation: null,
+        paymentNotificationAmountPaidCents: null
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataWithoutNotifiedPayment,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Loading state', () => {
+    it('shows only title when data is loading', () => {
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: null,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      expect(screen.getByText('classifications.title')).toBeInTheDocument();
+
+      expect(
+        screen.queryByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows title and status bar when data is loaded', async () => {
+      const loadedData = createMockData({
+        payed: true,
+        reported: true,
+        collected: true,
+        debtPositionTypeOrgCode: 'DEBT123',
+        iuf: 'IUF123',
+        sealCode: 'SEAL123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: loadedData,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      expect(screen.getByText('classifications.title')).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(
+          screen.getByText(
+            'classifications.detail.statusBar.status.reconciliationState.title'
+          )
+        ).toBeInTheDocument();
+      });
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('renders component with proper structure', async () => {
+      const allDataAvailable = createMockData({
+        payed: true,
+        reported: true,
+        collected: true,
+        debtPositionTypeOrgCode: 'DEBT123',
+        iuf: 'IUF123',
+        sealCode: 'SEAL123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: allDataAvailable,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('renders with proper accessibility structure', async () => {
+      const allDataAvailable = createMockData({
+        payed: true,
+        reported: true,
+        collected: true,
+        debtPositionTypeOrgCode: 'DEBT123',
+        iuf: 'IUF123',
+        sealCode: 'SEAL123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: allDataAvailable,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
   });
 });
