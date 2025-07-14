@@ -1,7 +1,7 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useNavigate, useParams } from 'react-router';
 import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
-import { getAssessmentDetail } from '../../api/assessmentDetail';
+import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../routes';
 import AssessmentDetail from './AssessmentDetail';
@@ -29,7 +29,7 @@ vi.mock('react-i18next', () => ({
   })
 }));
 
-vi.mock('../../api/assessmentDetail', () => ({
+vi.mock('../../api/assessments/assessmentDetail/assessmentDetail', () => ({
   getAssessmentDetail: vi.fn()
 }));
 

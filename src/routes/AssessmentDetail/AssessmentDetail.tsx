@@ -28,7 +28,7 @@ import { Search } from '@mui/icons-material';
 import AssessmentDetailDataGrid from './components/AssessmentDetailDataGrid';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { getAssessmentDetail } from '../../api/assessmentDetail';
+import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 import { useAssessmentDetailFilters } from '../../hooks/useAssessmentDetailFilters';
 import { AssessmentsDetail } from '../../../generated/apiClient';
 import { Variant } from '@mui/material/styles/createTypography';

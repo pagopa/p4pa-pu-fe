@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
-import utils from '../utils';
-import { parseAndLog } from '../utils/loaders';
-import { assessmentsRowsDetailSchema } from '../../generated/zod-schema';
+import utils from '../../../utils';
+import { parseAndLog } from '../../../utils/loaders';
+import { assessmentsRowsDetailSchema } from '../../../../generated/zod-schema';
 
 /**
  * Hook for getting the details of a specific assessment
