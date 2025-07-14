@@ -76,7 +76,7 @@ describe('getAssessmentDetail', () => {
     );
   });
 
-  it('should not call parseAndLog when assessment detail data is null/undefined', async () => {
+  it('should call parseAndLog when assessment detail data is null/undefined', async () => {
     mockGetPagedAssessmentsDetails.mockResolvedValueOnce({
       data: null
     } as AxiosResponse);
@@ -87,7 +87,10 @@ describe('getAssessmentDetail', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(mockParseAndLog).not.toHaveBeenCalled();
+    expect(mockParseAndLog).toHaveBeenCalledWith(
+      assessmentsRowsDetailSchema,
+      null
+    );
     expect(result.current.data).toBeNull();
   });
 
