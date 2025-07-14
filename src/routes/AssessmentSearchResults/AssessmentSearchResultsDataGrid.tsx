@@ -29,12 +29,6 @@ type AssessmentSearchResultsDataGridProps = {
 
 type AssessmentDataRow = AssessmentsExtendedDTO & GridValidRowModel;
 
-/**
- * Component DataGrid for assessment search results.
- * Shows a table with columns: assessment name, debt type, created by,
- * updated at, status (with colored chips) and action for detail.
- * Clicking the detail icon navigates to the assessment detail page.
- */
 const AssessmentSearchResultsDataGrid = ({
   data,
   onSortChange,
