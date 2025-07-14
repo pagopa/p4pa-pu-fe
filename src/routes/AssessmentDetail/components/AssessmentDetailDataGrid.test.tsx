@@ -182,7 +182,7 @@ describe('AssessmentDetailDataGrid', () => {
     });
 
     it('should log navigation message when action button is clicked', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
 
       render(<AssessmentDetailDataGrid {...defaultProps} />);
 
@@ -197,7 +197,7 @@ describe('AssessmentDetailDataGrid', () => {
     });
 
     it('should handle multiple action button clicks', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
 
       render(<AssessmentDetailDataGrid {...defaultProps} />);
 
@@ -329,7 +329,7 @@ describe('AssessmentDetailDataGrid', () => {
 
   describe('Component Props', () => {
     it('should use default isLoading value when not provided', () => {
-      const { isLoading, ...propsWithoutLoading } = defaultProps;
+      const { ...propsWithoutLoading } = defaultProps;
 
       render(<AssessmentDetailDataGrid {...propsWithoutLoading} />);
 

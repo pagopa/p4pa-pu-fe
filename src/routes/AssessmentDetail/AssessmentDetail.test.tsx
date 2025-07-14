@@ -6,6 +6,17 @@ import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../routes';
 import AssessmentDetail from './AssessmentDetail';
 import { AssessmentsDetail } from '../../../generated/apiClient';
+import { UseQueryResult } from '@tanstack/react-query';
+
+type AssessmentDetailResponse = {
+  content: Array<AssessmentsDetail>;
+  totalElements: number;
+  totalPages: number;
+  number: number;
+  size: number;
+};
+
+type MockQueryResult = UseQueryResult<AssessmentDetailResponse, Error>;
 
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
@@ -55,7 +66,7 @@ describe('AssessmentDetail', () => {
   const mockNavigate = vi.fn();
   const mockGetAssessmentDetail = vi.mocked(getAssessmentDetail);
 
-  const mockAssessmentData = {
+  const mockAssessmentData: AssessmentDetailResponse = {
     content: [
       {
         assessmentId: 123,
@@ -93,7 +104,7 @@ describe('AssessmentDetail', () => {
       isLoading: false,
       isError: false,
       error: null
-    } as any);
+    } as MockQueryResult);
 
     setOrganizationId(123);
   });
@@ -123,11 +134,11 @@ describe('AssessmentDetail', () => {
 
     it('should render loading state', () => {
       mockGetAssessmentDetail.mockReturnValue({
-        data: null,
+        data: undefined,
         isLoading: true,
         isError: false,
         error: null
-      } as any);
+      } as MockQueryResult);
 
       render(<AssessmentDetail />);
 
@@ -137,7 +148,9 @@ describe('AssessmentDetail', () => {
 
   describe('Button Interactions', () => {
     it('should log correct message when remove button is clicked', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {
+        // Funzione vuota implementata esplicitamente per evitare ESLint error
+      });
 
       render(<AssessmentDetail />);
 
@@ -150,7 +163,9 @@ describe('AssessmentDetail', () => {
     });
 
     it('should log correct message when add button is clicked', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {
+        // Funzione vuota implementata esplicitamente per evitare ESLint error
+      });
 
       render(<AssessmentDetail />);
 
@@ -225,11 +240,11 @@ describe('AssessmentDetail', () => {
 
     it('should navigate to error page when API fails', () => {
       mockGetAssessmentDetail.mockReturnValue({
-        data: null,
+        data: undefined,
         isLoading: false,
         isError: true,
         error: new Error('API Error')
-      } as any);
+      } as MockQueryResult);
 
       render(<AssessmentDetail />);
 
