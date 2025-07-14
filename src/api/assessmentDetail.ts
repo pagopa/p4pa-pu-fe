@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { pagedAssessmentsRowsDetailSchema } from '../../generated/zod-schema';
+import { assessmentsRowsDetailSchema } from '../../generated/zod-schema';
 
 /**
  * Hook for getting the details of a specific assessment
@@ -27,7 +27,7 @@ export const getAssessmentDetail = (
         );
 
       if (assessmentDetail) {
-        parseAndLog(pagedAssessmentsRowsDetailSchema, assessmentDetail);
+        parseAndLog(assessmentsRowsDetailSchema, assessmentDetail);
       }
 
       return assessmentDetail;

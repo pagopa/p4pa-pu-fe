@@ -575,6 +575,7 @@
     "unauthorized": "Non sei autorizzato ad accedere alla sezione, contatta il gestore dei permessi",
     "unknownOrganization": "Ente senza nome",
     "uploadedFrom": "Caricati dal",
+    "updatedFrom": "Aggiornato dal",
     "view": "Visualizza",
     "validation": {
       "selectAtLeastOneOption": "Seleziona almeno un'opzione",

@@ -5,18 +5,14 @@ import { getAssessmentDetail } from '../../api/assessmentDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../routes';
 import AssessmentDetail from './AssessmentDetail';
-import { AssessmentsDetail } from '../../../generated/apiClient';
+import {
+  AssessmentsDetail,
+  AssessmentsRowsDetail,
+  AssessmentStatus
+} from '../../../generated/apiClient';
 import { UseQueryResult } from '@tanstack/react-query';
 
-type AssessmentDetailResponse = {
-  content: Array<AssessmentsDetail>;
-  totalElements: number;
-  totalPages: number;
-  number: number;
-  size: number;
-};
-
-type MockQueryResult = UseQueryResult<AssessmentDetailResponse, Error>;
+type MockQueryResult = UseQueryResult<AssessmentsRowsDetail, Error>;
 
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
@@ -66,31 +62,37 @@ describe('AssessmentDetail', () => {
   const mockNavigate = vi.fn();
   const mockGetAssessmentDetail = vi.mocked(getAssessmentDetail);
 
-  const mockAssessmentData: AssessmentDetailResponse = {
-    content: [
-      {
-        assessmentId: 123,
-        organizationId: 123,
-        debtPositionTypeOrgCode: 'TIPO_DEBITO_TEST',
-        updateOperatorExternalId: 'operatore.test@example.com',
-        paymentDateTime: '2025-01-15T10:30:00Z',
-        updateDateTime: '2025-01-15T11:00:00Z',
-        iuv: 'IUV123456789',
-        iud: 'IUD123456789',
-        iur: 'IUR123456789',
-        debtorFiscalCodeHash: 'hash123',
-        amount: 100.5,
-        sectionCode: 'SEC001',
-        amountCents: 10050,
-        amountSubmitted: true,
-        status: 'PAID',
-        description: 'Test payment'
-      } as AssessmentsDetail
-    ],
-    totalElements: 1,
-    totalPages: 1,
-    number: 0,
-    size: 10
+  const mockAssessmentData: AssessmentsRowsDetail = {
+    assessmentsName: 'ACC20250618_FEATURE_TEST',
+    debtPositionTypeOrgDescription: 'FEATURE TEST - DO NOT DELETE',
+    status: AssessmentStatus.ACTIVE,
+    updateOperatorExternalId: 'WS_USER-piattaforma-unitaria_',
+    pagedAssessmentsRowsDetail: {
+      content: [
+        {
+          assessmentDetailId: 95,
+          assessmentId: 123,
+          organizationId: 123,
+          debtPositionTypeOrgCode: 'TIPO_DEBITO_TEST',
+          updateOperatorExternalId: 'operatore.test@example.com',
+          paymentDateTime: '2025-01-15T10:30:00Z',
+          updateDate: '2025-01-15T11:00:00Z',
+          iuv: 'IUV123456789',
+          iud: 'IUD123456789',
+          iur: 'IUR123456789',
+          debtorFiscalCodeHash: 'hash123',
+          sectionCode: 'SEC001',
+          amountCents: 10050,
+          amountSubmitted: true,
+          creationDate: '2025-01-15T10:00:00Z',
+          updateTraceId: '5d4f32b06f9a35667637c714ea03561d'
+        } as AssessmentsDetail
+      ],
+      totalElements: 1,
+      totalPages: 1,
+      number: 0,
+      size: 10
+    }
   };
 
   beforeEach(() => {
@@ -116,8 +118,10 @@ describe('AssessmentDetail', () => {
       expect(
         screen.getByText('assessmentDetail.paymentsAssociated')
       ).toBeDefined();
-      expect(screen.getAllByText('TIPO_DEBITO_TEST')).toHaveLength(2);
-      expect(screen.getByText('operatore.test@example.com')).toBeDefined();
+      // Con la nuova struttura, il debtType ora mostra la descrizione completa
+      expect(screen.getByText('FEATURE TEST - DO NOT DELETE')).toBeDefined();
+      // L'operatore ora viene dal livello assessment
+      expect(screen.getByText('WS_USER-piattaforma-unitaria_')).toBeDefined();
     });
 
     it('should render action buttons correctly', () => {
@@ -277,7 +281,9 @@ describe('AssessmentDetail', () => {
       render(<AssessmentDetail />);
 
       expect(screen.getByText('commons.filters.filterResults')).toBeDefined();
-      expect(screen.getByRole('textbox', { name: 'Cerca IUV' })).toBeDefined();
+      expect(
+        screen.getByRole('textbox', { name: 'commons.search IUV' })
+      ).toBeDefined();
     });
 
     it('should update filters when filter button is clicked', () => {
