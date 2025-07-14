@@ -76,7 +76,11 @@ export const AssessmentDetail = () => {
     updateDraftFilters,
     applyFilters,
     sortModel,
-    handleSortModelChange
+    handleSortModelChange,
+    handleDateFromChange,
+    handleDateToChange,
+    handlePaymentDateFromChange,
+    handlePaymentDateToChange
   } = useAssessmentDetailFilters({
     initialFilters: {
       page: 0,
@@ -350,24 +354,14 @@ export const AssessmentDetail = () => {
                   value: draftFilters.paymentDateTimeFrom
                     ? new Date(draftFilters.paymentDateTimeFrom)
                     : null,
-                  onChange: (date: Date | null) =>
-                    updateDraftFilters({
-                      paymentDateTimeFrom: date
-                        ? new Date(date.setHours(0, 0, 0, 0)).toISOString()
-                        : undefined
-                    })
+                  onChange: handlePaymentDateFromChange
                 },
                 to: {
                   label: t('commons.to'),
                   value: draftFilters.paymentDateTimeTo
                     ? new Date(draftFilters.paymentDateTimeTo)
                     : null,
-                  onChange: (date: Date | null) =>
-                    updateDraftFilters({
-                      paymentDateTimeTo: date
-                        ? new Date(date.setHours(23, 59, 59, 999)).toISOString()
-                        : undefined
-                    })
+                  onChange: handlePaymentDateToChange
                 }
               },
               {
@@ -379,24 +373,14 @@ export const AssessmentDetail = () => {
                   value: draftFilters.updateDateTimeFrom
                     ? new Date(draftFilters.updateDateTimeFrom)
                     : null,
-                  onChange: (date: Date | null) =>
-                    updateDraftFilters({
-                      updateDateTimeFrom: date
-                        ? new Date(date.setHours(0, 0, 0, 0)).toISOString()
-                        : undefined
-                    })
+                  onChange: handleDateFromChange
                 },
                 to: {
                   label: t('commons.to'),
                   value: draftFilters.updateDateTimeTo
                     ? new Date(draftFilters.updateDateTimeTo)
                     : null,
-                  onChange: (date: Date | null) =>
-                    updateDraftFilters({
-                      updateDateTimeTo: date
-                        ? new Date(date.setHours(23, 59, 59, 999)).toISOString()
-                        : undefined
-                    })
+                  onChange: handleDateToChange
                 }
               },
               {

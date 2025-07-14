@@ -1,9 +1,6 @@
 import { useState, useCallback } from 'react';
 import { GridSortModel } from '@mui/x-data-grid';
 
-/**
- * Tipo per i filtri dell'assessment detail
- */
 export type AssessmentDetailFilters = {
   iuv?: string;
   iud?: string;
@@ -25,8 +22,8 @@ type UseAssessmentDetailFiltersProps = {
 const DEFAULT_PAGE_SIZE = 10;
 
 /**
- * Hook per la gestione dei filtri nella pagina di dettaglio assessment.
- * Gestisce filtri applicati, draft filters, ordinamento e paginazione.
+ * Hook for the management of the filters in the assessment detail page.
+ * Handles applied filters, draft filters, sorting and pagination.
  */
 export const useAssessmentDetailFilters = ({
   initialFilters,
@@ -45,7 +42,7 @@ export const useAssessmentDetailFilters = ({
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
   /**
-   * Verifica se ci sono filtri attivi non ancora applicati
+   * Check if there are active filters that have not been applied yet
    */
   const hasActiveFilters = useCallback(() => {
     const isIuvChanged =
@@ -90,14 +87,14 @@ export const useAssessmentDetailFilters = ({
   ]);
 
   /**
-   * Aggiorna i filtri draft (non ancora applicati)
+   * Update the draft filters (not yet applied)
    */
   const updateDraftFilters = useCallback(
     (updates: Partial<AssessmentDetailFilters>) => {
       setDraftFilters((prev) => {
         const cleanedUpdates = { ...updates };
 
-        // Rimuove valori vuoti
+        // Remove empty values
         Object.keys(cleanedUpdates).forEach((key) => {
           const typedKey = key as keyof AssessmentDetailFilters;
           const value = cleanedUpdates[typedKey];
@@ -116,7 +113,7 @@ export const useAssessmentDetailFilters = ({
   );
 
   /**
-   * Applica i filtri draft ai filtri attivi
+   * Apply the draft filters to the active filters
    */
   const applyFilters = useCallback(() => {
     const filtersToApply = {
@@ -132,7 +129,20 @@ export const useAssessmentDetailFilters = ({
   }, [draftFilters, appliedFilters.size, onFiltersChange]);
 
   /**
-   * Gestisce il cambio di data inizio per update date
+   * Update pagination parameters and trigger filters change
+   */
+  const updatePagination = useCallback(
+    ({ page, size }: { page: number; size: number }) => {
+      const updatedFilters = { ...appliedFilters, page, size };
+      setAppliedFilters(updatedFilters);
+      setDraftFilters((prev) => ({ ...prev, page, size }));
+      onFiltersChange?.(updatedFilters);
+    },
+    [appliedFilters, onFiltersChange]
+  );
+
+  /**
+   * Handle the change of start date for update date
    */
   const handleDateFromChange = useCallback(
     (date: Date | null) => {
@@ -146,7 +156,7 @@ export const useAssessmentDetailFilters = ({
   );
 
   /**
-   * Gestisce il cambio di data fine per update date
+   * Handle the change of end date for update date
    */
   const handleDateToChange = useCallback(
     (date: Date | null) => {
@@ -160,7 +170,7 @@ export const useAssessmentDetailFilters = ({
   );
 
   /**
-   * Gestisce il cambio di data inizio per payment date
+   * Handle the change of start date for payment date
    */
   const handlePaymentDateFromChange = useCallback(
     (date: Date | null) => {
@@ -174,7 +184,7 @@ export const useAssessmentDetailFilters = ({
   );
 
   /**
-   * Gestisce il cambio di data fine per payment date
+   * Handle the change of end date for payment date
    */
   const handlePaymentDateToChange = useCallback(
     (date: Date | null) => {
@@ -188,7 +198,7 @@ export const useAssessmentDetailFilters = ({
   );
 
   /**
-   * Gestisce i cambi di ordinamento
+   * Handle the change of sorting
    */
   const handleSortModelChange = useCallback(
     (newModel: GridSortModel) => {
@@ -215,6 +225,7 @@ export const useAssessmentDetailFilters = ({
     draftFilters,
     updateDraftFilters,
     applyFilters,
+    updatePagination,
     handleDateFromChange,
     handleDateToChange,
     handlePaymentDateFromChange,
