@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router';
 import { useStore } from '../store/GlobalStore';
 import { FilterValues } from '../models/Filters';
 import { usePaginationState } from './usePaginationState';
-import { AssessmentsQuery, getAssessments } from '../api/assessments';
-import { AssessmentStatus } from '../../generated/apiClient';
+import { getAssessments } from '../api/assessments';
+import { AssessmentsFilteredRequest } from '../api/assessments/mappings';
 import { PageRoutes } from '../routes';
 
 export type UseAssessmentsSearchProps = {
@@ -36,32 +36,10 @@ export const useAssessmentsSearch = ({
 
   const query = getAssessments(organizationId);
 
-  const isFilterValueSignificant = (value: unknown): boolean => {
-    if (value === null || value === undefined) {
-      return false;
-    }
-    if (typeof value === 'string') {
-      return value !== '';
-    }
-    if (typeof value === 'number') {
-      return true;
-    }
-    if (value instanceof Date) {
-      return true;
-    }
-    return Boolean(value);
-  };
-
   useEffect(() => {
-    const hasFilters = Object.values(filterValues).some(
-      isFilterValueSignificant
-    );
-
-    if (hasFilters) {
-      query.mutate(filterToRequest(), {
-        onError: handleError
-      });
-    }
+    query.mutate(buildRequestArgs(), {
+      onError: handleError
+    });
   }, [organizationId, paginationParams.page, paginationParams.size, sort]);
 
   const handleError = (error: unknown) => {
@@ -86,45 +64,24 @@ export const useAssessmentsSearch = ({
     }
   };
 
-  const filterToRequest = useCallback(
+  const buildRequestArgs = useCallback(
     (
       filterValuesRequest: FilterValues = filterValues,
       paginationOverride?: { page: number; size: number }
-    ): AssessmentsQuery => {
+    ): AssessmentsFilteredRequest => {
       const pagination = paginationOverride || paginationParams;
 
-      const apiParams = {
-        ...(filterValuesRequest.ASSESSMENT_NAME && {
-          assessmentName: filterValuesRequest.ASSESSMENT_NAME
-        }),
-        ...(filterValuesRequest.DEBT_TYPE &&
-          filterValuesRequest.DEBT_TYPE !== 'ALL' && {
-            debtPositionTypeOrgCode: filterValuesRequest.DEBT_TYPE
-          }),
-        ...(filterValuesRequest.ASSESSMENT_STATUS && {
-          status: filterValuesRequest.ASSESSMENT_STATUS as AssessmentStatus
-        }),
-        ...(filterValuesRequest.IUV && {
-          iuv: filterValuesRequest.IUV
-        }),
-        ...(filterValuesRequest.LAST_UPDATE_DATE_FROM && {
-          updateDateFrom:
-            filterValuesRequest.LAST_UPDATE_DATE_FROM.toISOString()
-        }),
-        ...(filterValuesRequest.LAST_UPDATE_DATE_TO && {
-          updateDateTo: filterValuesRequest.LAST_UPDATE_DATE_TO.toISOString()
-        }),
-        page: pagination.page,
-        size: pagination.size,
-        ...(sort.length && { sort })
+      return {
+        filters: filterValuesRequest,
+        pagination,
+        sort
       };
-      return apiParams;
     },
     [filterValues, paginationParams, sort]
   );
 
   const applyFilters = (filterValues: FilterValues) => {
-    query.mutate(filterToRequest(filterValues), {
+    query.mutate(buildRequestArgs(filterValues), {
       onError: handleError
     });
     setFilterValues(filterValues);

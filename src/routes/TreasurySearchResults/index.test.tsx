@@ -15,6 +15,56 @@ vi.mock('react-router', async () => {
   };
 });
 
+vi.mock('../../store/GlobalStore', () => ({
+  useStore: vi.fn(() => ({
+    state: {
+      organizationId: 123,
+      filterValues: {},
+      selectedFilters: []
+    }
+  })),
+  StoreProvider: ({ children }: { children: React.ReactNode }) => children
+}));
+
+vi.mock('../../api/treasuries', () => ({
+  getTreasuries: vi.fn(() => ({
+    mutate: vi.fn(),
+    mutateAsync: vi.fn(),
+    data: null,
+    isLoading: false,
+    isPending: false,
+    error: null
+  }))
+}));
+
+vi.mock('../../hooks/useMultiFilters', () => ({
+  useMultiFilters: vi.fn(() => ({
+    filterMap: {},
+    selectedFilters: [],
+    removeAllFilters: vi.fn(),
+    noFilterIsSelected: { peek: vi.fn(() => true) },
+    filterValues: {}
+  })),
+  FilterCategory: {
+    TREASURY: 'TREASURY',
+    CLASSIFICATIONS: 'CLASSIFICATIONS',
+    ASSESSMENT: 'ASSESSMENT'
+  }
+}));
+
+vi.mock('../../hooks/useSearch', () => ({
+  useSearch: vi.fn(() => ({
+    query: {
+      data: null,
+      isLoading: false,
+      error: null
+    },
+    applyFilters: vi.fn(),
+    setSort: vi.fn(),
+    handlePaginationChange: vi.fn()
+  }))
+}));
+
 describe('TreasurySearchResults Page', () => {
   it('renders TreasurySearchResults view without crashing', () => {
     render(<TreasurySearchResults />);
