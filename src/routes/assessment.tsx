@@ -2,6 +2,7 @@ import { RouteHandleObject } from '../models/Routes';
 import Assessment from '../components/Assessment';
 import AssessmentSearchResults from './AssessmentSearchResults';
 import AssessmentDetail from './AssessmentDetail/AssessmentDetail';
+import TelematicReceiptDetail from './TelematicReceiptDetail';
 import { AssessmentsRegistrySearchResults } from './AssessmentsRegistrySearchResults';
 
 export const assessmentRoutes = [
@@ -33,6 +34,16 @@ export const assessmentRoutes = [
         element: <AssessmentDetail />,
         handle: {
           backButton: true,
+          hideBreadcrumbs: false,
+          custom: true
+        } as RouteHandleObject
+      },
+      {
+        id: 'ASSESSMENT_DETAIL_DETAIL',
+        path: 'detail/:id/:assessmentDetailId',
+        element: <TelematicReceiptDetail />,
+        handle: {
+          backButton: false,
           hideBreadcrumbs: false,
           custom: true
         } as RouteHandleObject
