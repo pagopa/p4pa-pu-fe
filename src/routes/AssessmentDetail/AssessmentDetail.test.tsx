@@ -42,17 +42,30 @@ vi.mock('./components/AssessmentDetailDataGrid', () => ({
   default: ({
     rows,
     isLoading,
+    onNavigateToDetail,
     'data-testid': testId
   }: {
     rows: Array<AssessmentsDetail>;
     isLoading: boolean;
+    onNavigateToDetail?: (assessmentDetailId: number) => void;
     'data-testid'?: string;
   }) => (
     <div data-testid={testId || 'assessment-detail-data-grid'}>
       {isLoading ? (
         <div data-testid="loading-indicator">Loading...</div>
       ) : (
-        <div data-testid="data-grid-content">{rows.length} items found</div>
+        <div data-testid="data-grid-content">
+          {rows.length} items found
+          {rows.map((row, index) => (
+            <button
+              key={index}
+              data-testid={`navigate-to-detail-${row.assessmentDetailId}`}
+              onClick={() => onNavigateToDetail?.(row.assessmentDetailId!)}
+            >
+              Navigate to Detail {row.assessmentDetailId}
+            </button>
+          ))}
+        </div>
       )}
     </div>
   )
@@ -61,6 +74,13 @@ vi.mock('./components/AssessmentDetailDataGrid', () => ({
 describe('AssessmentDetail', () => {
   const mockNavigate = vi.fn();
   const mockGetAssessmentDetail = vi.mocked(getAssessmentDetail);
+
+  // Mock di window.open
+  const mockWindowOpen = vi.fn();
+  Object.defineProperty(window, 'open', {
+    writable: true,
+    value: mockWindowOpen
+  });
 
   const mockAssessmentData: AssessmentsRowsDetail = {
     assessmentsName: 'ACC20250618_FEATURE_TEST',
@@ -97,6 +117,7 @@ describe('AssessmentDetail', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    mockWindowOpen.mockClear();
 
     (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
     (useParams as ReturnType<typeof vi.fn>).mockReturnValue({ id: '123' });
@@ -297,6 +318,35 @@ describe('AssessmentDetail', () => {
       expect(
         screen.getByText('assessmentDetail.paymentsAssociated')
       ).toBeDefined();
+    });
+  });
+
+  describe('Action Button Clicks', () => {
+    it('should handle action button clicks', () => {
+      render(<AssessmentDetail />);
+
+      const removeButton = screen.getByTestId('remove-payments-button');
+      const addButton = screen.getByTestId('add-payments-button');
+
+      fireEvent.click(removeButton);
+      fireEvent.click(addButton);
+
+      // Verify that the buttons can be clicked without errors
+      expect(removeButton).toBeDefined();
+      expect(addButton).toBeDefined();
+    });
+
+    it('should open assessment detail detail in new tab when data grid item is clicked', () => {
+      render(<AssessmentDetail />);
+
+      const navigateButton = screen.getByTestId('navigate-to-detail-95');
+      fireEvent.click(navigateButton);
+
+      expect(mockWindowOpen).toHaveBeenCalledWith(
+        expect.stringContaining('/assessment/detail/123/95'),
+        '_blank',
+        'noopener,noreferrer'
+      );
     });
   });
 });

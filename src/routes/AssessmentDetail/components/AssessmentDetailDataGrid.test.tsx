@@ -181,7 +181,7 @@ describe('AssessmentDetailDataGrid', () => {
       ]);
     });
 
-    it('should log navigation message when action button is clicked', () => {
+    it('should log navigation message when action button is clicked and no onNavigateToDetail is provided', () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
 
       render(<AssessmentDetailDataGrid {...defaultProps} />);
@@ -196,10 +196,51 @@ describe('AssessmentDetailDataGrid', () => {
       consoleSpy.mockRestore();
     });
 
-    it('should handle multiple action button clicks', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
+    it('should call onNavigateToDetail when action button is clicked and callback is provided', () => {
+      const mockOnNavigateToDetail = vi.fn();
 
-      render(<AssessmentDetailDataGrid {...defaultProps} />);
+      render(
+        <AssessmentDetailDataGrid
+          {...defaultProps}
+          onNavigateToDetail={mockOnNavigateToDetail}
+        />
+      );
+
+      const actionButton = screen.getByTestId('action-button-0');
+      fireEvent.click(actionButton);
+
+      expect(mockOnNavigateToDetail).toHaveBeenCalledWith(1); // assessmentDetailId: 1
+    });
+
+    it('should not call onNavigateToDetail when assessmentDetailId is undefined', () => {
+      const mockOnNavigateToDetail = vi.fn();
+      const dataWithoutId = [
+        { ...mockAssessmentData[0], assessmentDetailId: undefined }
+      ];
+
+      render(
+        <AssessmentDetailDataGrid
+          {...defaultProps}
+          rows={dataWithoutId}
+          onNavigateToDetail={mockOnNavigateToDetail}
+        />
+      );
+
+      const actionButton = screen.getByTestId('action-button-0');
+      fireEvent.click(actionButton);
+
+      expect(mockOnNavigateToDetail).not.toHaveBeenCalled();
+    });
+
+    it('should handle multiple action button clicks', () => {
+      const mockOnNavigateToDetail = vi.fn();
+
+      render(
+        <AssessmentDetailDataGrid
+          {...defaultProps}
+          onNavigateToDetail={mockOnNavigateToDetail}
+        />
+      );
 
       const actionButton1 = screen.getByTestId('action-button-0');
       const actionButton2 = screen.getByTestId('action-button-1');
@@ -207,17 +248,9 @@ describe('AssessmentDetailDataGrid', () => {
       fireEvent.click(actionButton1);
       fireEvent.click(actionButton2);
 
-      expect(consoleSpy).toHaveBeenCalledTimes(2);
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        1,
-        'Navigate to assessment detail item'
-      );
-      expect(consoleSpy).toHaveBeenNthCalledWith(
-        2,
-        'Navigate to assessment detail item'
-      );
-
-      consoleSpy.mockRestore();
+      expect(mockOnNavigateToDetail).toHaveBeenCalledTimes(2);
+      expect(mockOnNavigateToDetail).toHaveBeenNthCalledWith(1, 1); // assessmentDetailId: 1
+      expect(mockOnNavigateToDetail).toHaveBeenNthCalledWith(2, 2); // assessmentDetailId: 2
     });
   });
 
