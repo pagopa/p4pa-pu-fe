@@ -187,6 +187,23 @@ export const AssessmentDetail = () => {
     console.log('Add payments clicked');
   };
 
+  /**
+   * Handle the opening of the assessment detail record in a new tab
+   * @param assessmentDetailId - ID of the assessment detail
+   */
+  const handleNavigateToDetailDetail = (assessmentDetailId: number) => {
+    const detailUrl = generatePath(PageRoutes.ASSESSMENT_DETAIL_DETAIL, {
+      id: assessmentId.toString(),
+      assessmentDetailId: assessmentDetailId.toString()
+    });
+
+    // Add organizationId as query parameter for the new tab
+    const urlWithOrganizationId = `${detailUrl}?organizationId=${organizationId}`;
+
+    // Open the page in a new tab
+    window.open(urlWithOrganizationId, '_blank', 'noopener,noreferrer');
+  };
+
   // Configuration sections for the DetailContainer
   const detailSections = useMemo(() => {
     const firstAssessmentItem = detailItem;
@@ -419,6 +436,7 @@ export const AssessmentDetail = () => {
               },
               onFiltersApplied: handleFiltersApplied
             }}
+            onNavigateToDetail={handleNavigateToDetailDetail}
           />
         </Grid>
       </Grid>
