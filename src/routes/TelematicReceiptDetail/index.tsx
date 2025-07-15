@@ -5,7 +5,7 @@ import {
   useLoaderData,
   useNavigate,
   useParams,
-  useSearchParams
+  generatePath
 } from 'react-router';
 import { getReceiptDetail } from '../../api/receiptDetail';
 import { useStore } from '../../store/GlobalStore';
@@ -19,7 +19,7 @@ import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
 import { useEffect } from 'react';
 import { PageRoutes } from '../../routes';
-import { setOrganizationId } from '../../store/OrganizationIdStore';
+
 import { setAppState } from '../../store/AppStateStore';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import { moneyFormat } from '../../utils/formatters';
@@ -29,17 +29,13 @@ export const TelematicReceiptDetail = () => {
   const { state } = useStore();
   const navigate = useNavigate();
   const params = useParams();
-  const [searchParams] = useSearchParams();
 
   // If we are on the assessment route, use assessmentDetailId, otherwise useLoaderData
   const loaderData = useLoaderData();
   const id = params.assessmentDetailId || loaderData;
 
-  // Get organizationId: from the URL if present (new tab assessment), otherwise from the store
-  const urlOrganizationId = searchParams.get('organizationId');
-  const organizationId = urlOrganizationId
-    ? Number(urlOrganizationId)
-    : Number(state[STATE.ORGANIZATION_ID]);
+  // Get organizationId from the store
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
   const getContextualTranslation = (
     assessmentKey: string,
@@ -51,30 +47,34 @@ export const TelematicReceiptDetail = () => {
     return t(defaultKey);
   };
 
-  // Sync the organizationId from the query parameter with the store if present
-  // This is necessary when opening the page in a new tab from the assessment detail
-  useEffect(() => {
-    if (
-      urlOrganizationId &&
-      Number(urlOrganizationId) !== state[STATE.ORGANIZATION_ID]
-    ) {
-      setOrganizationId(Number(urlOrganizationId));
-    }
-  }, [urlOrganizationId, state]);
+  const { data, isError, error } = getReceiptDetail(organizationId, Number(id));
 
   // Setup custom breadcrumb for assessment context
   useEffect(() => {
-    if (params.assessmentDetailId && params.id) {
+    if (params.assessmentDetailId && params.id && data) {
       const customBreadcrumbsItems: Array<BredcrumbItem> = [
         {
-          pathname: '',
-          label: t('commons.routes.ASSESSMENT'),
-          id: 'assessment'
+          pathname: PageRoutes.ASSESSMENT_INDEX,
+          id: 'ASSESSMENT'
         },
         {
-          pathname: '',
+          pathname: PageRoutes.ASSESSMENT_SEARCH_RESULTS,
+          id: 'ASSESSMENT_SEARCH_RESULTS'
+        },
+        {
+          pathname: generatePath(PageRoutes.ASSESSMENT_DETAIL, {
+            id: params.id
+          }),
+          label: `Accertamento ${params.id}`,
+          id: 'ASSESSMENT_DETAIL'
+        },
+        {
+          pathname: generatePath(PageRoutes.ASSESSMENT_DETAIL_DETAIL, {
+            id: params.id,
+            assessmentDetailId: params.assessmentDetailId
+          }),
           label: t('assessmentDetail.paymentDetail.title'),
-          id: 'payment-detail'
+          id: 'ASSESSMENT_DETAIL_DETAIL'
         }
       ];
       setAppState({
@@ -82,9 +82,7 @@ export const TelematicReceiptDetail = () => {
         customBreadcrumbsItems: customBreadcrumbsItems
       });
     }
-  }, [params.assessmentDetailId, params.id, t]);
-
-  const { data, isError, error } = getReceiptDetail(organizationId, Number(id));
+  }, [params.assessmentDetailId, params.id, data, t]);
 
   useEffect(() => {
     if (isNaN(Number(id)) || isNaN(organizationId) || organizationId <= 0) {

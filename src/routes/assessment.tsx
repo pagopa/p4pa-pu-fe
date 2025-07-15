@@ -43,7 +43,7 @@ export const assessmentRoutes = [
         path: 'detail/:id/:assessmentDetailId',
         element: <TelematicReceiptDetail />,
         handle: {
-          backButton: false,
+          backButton: true,
           hideBreadcrumbs: false,
           custom: true
         } as RouteHandleObject

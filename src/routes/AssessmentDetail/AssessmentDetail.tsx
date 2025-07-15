@@ -188,7 +188,7 @@ export const AssessmentDetail = () => {
   };
 
   /**
-   * Handle the opening of the assessment detail record in a new tab
+   * Handle navigation to the assessment detail record
    * @param assessmentDetailId - ID of the assessment detail
    */
   const handleNavigateToDetailDetail = (assessmentDetailId: number) => {
@@ -197,11 +197,8 @@ export const AssessmentDetail = () => {
       assessmentDetailId: assessmentDetailId.toString()
     });
 
-    // Add organizationId as query parameter for the new tab
-    const urlWithOrganizationId = `${detailUrl}?organizationId=${organizationId}`;
-
-    // Open the page in a new tab
-    window.open(urlWithOrganizationId, '_blank', 'noopener,noreferrer');
+    // Navigate to the detail page in the same tab
+    navigate(detailUrl);
   };
 
   // Configuration sections for the DetailContainer
