@@ -2,16 +2,17 @@ import { useStore } from '../../store/GlobalStore';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { getClassificationDetail } from '../../api/getClassificationDetail';
 import { Stack, Tab, useTheme } from '@mui/material';
-import { SyntheticEvent, useState, useEffect } from 'react';
+import { SyntheticEvent, useState, useEffect, useMemo } from 'react';
 import { TabContext, TabList, TabPanel } from '@mui/lab';
 import DetailContainer, {
   DetailData
 } from '../DetailContainer/DetailContainer';
-import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { useTranslation } from 'react-i18next';
-
 import TitleComponent from '../TitleComponent/TitleComponent';
+import { StatusBar } from '../StatusBar/StatusBar';
 import { PageRoutes } from '../../routes';
+import { ClassificationDetailDTO } from '../../../generated/data-contracts';
+import { OpenInNew } from '@mui/icons-material';
 
 export const ClassificationDetails = () => {
   const store = useStore();
@@ -39,206 +40,272 @@ export const ClassificationDetails = () => {
     return null;
   }
 
-  const [tabIndex, setTabIndex] = useState(0);
+  const visibleTabs = useMemo(() => {
+    if (!data) return [];
+
+    const tabs = [];
+
+    if (data.payed) {
+      tabs.push({
+        index: 0,
+        label: t('classifications.detail.sections.telematicReceipt.title'),
+        value: 'telematic-receipt',
+        testId: 'classificationDetailTabDebtType'
+      });
+    }
+
+    if (data.reported) {
+      tabs.push({
+        index: tabs.length,
+        label: t('classifications.detail.sections.reporting.title'),
+        value: 'reporting',
+        testId: 'classificationDetailTabReporting'
+      });
+    }
+
+    if (data.collected) {
+      tabs.push({
+        index: tabs.length,
+        label: t('classifications.detail.sections.earnings.title'),
+        value: 'treasury',
+        testId: 'classificationDetailTabEarnings'
+      });
+    }
+
+    return tabs;
+  }, [data, t]);
+
+  const [activeTab, setActiveTab] = useState<string>('');
   const theme = useTheme();
-  const handleChange = (_event: SyntheticEvent, value: number) => {
-    setTabIndex(value);
+
+  useEffect(() => {
+    if (visibleTabs.length > 0 && !activeTab) {
+      setActiveTab(visibleTabs[0].value);
+    }
+  }, [visibleTabs, activeTab]);
+
+  const handleTabChange = (_event: SyntheticEvent, value: string) => {
+    setActiveTab(value);
   };
 
-  const targetTransalationDebtType =
+  const targetTranslationDebtType =
     'classifications.detail.sections.telematicReceipt';
   const debtTypeData: Array<DetailData> = [
     {
-      label: t(`${targetTransalationDebtType}.debtPositionTypeOrgCode`),
+      label: t(`${targetTranslationDebtType}.debtPositionTypeOrgCode`),
       value: data?.debtPositionTypeOrgCode
     },
     {
-      label: t(`${targetTransalationDebtType}.paymentObject`),
+      label: t(`${targetTranslationDebtType}.paymentObject`),
       value: data?.remittanceInformation
     },
     {
-      label: t(`${targetTransalationDebtType}.receiptPaymentAmount`),
+      label: t(`${targetTranslationDebtType}.receiptPaymentAmount`),
       value: data?.receiptPaymentAmount,
       valueType: 'amount'
     },
     {
-      label: t(`${targetTransalationDebtType}.receiptPaymentDateTime`),
+      label: t(`${targetTranslationDebtType}.receiptPaymentDateTime`),
       value: data?.receiptPaymentDateTime,
       valueType: 'dateTime'
     },
     {
-      label: t(`${targetTransalationDebtType}.receiptDebtorFullName`),
+      label: t(`${targetTranslationDebtType}.receiptDebtorFullName`),
       value: data?.receiptDebtor?.fullName
     },
     {
-      label: t(`${targetTransalationDebtType}.receiptDebtorFiscalCode`),
+      label: t(`${targetTranslationDebtType}.receiptDebtorFiscalCode`),
       value: data?.receiptDebtor?.fiscalCode
     },
     {
-      label: t(`${targetTransalationDebtType}.iuv`),
+      label: t(`${targetTranslationDebtType}.iuv`),
       value: data?.iuv
     },
     {
-      label: t(`${targetTransalationDebtType}.iuv`),
+      label: t(`${targetTranslationDebtType}.iud`),
       value: data?.iud
     },
     {
-      label: t(`${targetTransalationDebtType}.iur`),
+      label: t(`${targetTranslationDebtType}.iur`),
       value: data?.iur
     },
     {
-      label: t(`${targetTransalationDebtType}.receiptPayerFullName`),
+      label: t(`${targetTranslationDebtType}.receiptPayerFullName`),
       value: data?.receiptPayer?.fullName
     },
     {
-      label: t(`${targetTransalationDebtType}.receiptPayerFiscalCode`),
+      label: t(`${targetTranslationDebtType}.receiptPayerFiscalCode`),
       value: data?.receiptPayer?.fiscalCode
     },
     {
-      label: t(`${targetTransalationDebtType}.receiptDebtorFullName`),
+      label: t(`${targetTranslationDebtType}.receiptPayerExecutorFullName`),
       value: data?.receiptDebtor?.fullName
     },
     {
-      label: t(`${targetTransalationDebtType}.receiptDebtorFiscalCode`),
+      label: t(`${targetTranslationDebtType}.receiptPayerExecutorFiscalCode`),
       value: data?.receiptDebtor?.fiscalCode
     }
   ];
 
-  const targetTransalationNotifiedPayment =
+  const targetTranslationNotifiedPayment =
     'classifications.detail.sections.notifiedPayment';
   const notifiedPaymentData: Array<DetailData> = [
     {
-      label: t(`${targetTransalationNotifiedPayment}.debtType`),
+      label: t(`${targetTranslationNotifiedPayment}.debtType`),
       value: data?.paymentNotificationDebtPositionTypeOrgCode
     },
     {
-      label: t(`${targetTransalationNotifiedPayment}.paymentObject`),
+      label: t(`${targetTranslationNotifiedPayment}.paymentObject`),
       value: data?.paymentNotificationRemittanceInformation
     },
     {
-      label: t(`${targetTransalationNotifiedPayment}.amount`),
-      value: data?.paymentNotificationAmountPaidCents
+      label: t(`${targetTranslationNotifiedPayment}.amount`),
+      value: data?.paymentNotificationAmountPaidCents,
+      valueType: 'amount'
     },
     {
-      label: t(`${targetTransalationNotifiedPayment}.receiptPayerFullName`),
+      label: t(`${targetTranslationNotifiedPayment}.receiptPayerFullName`),
       value: data?.paymentNotificationDebtor?.fullName
     },
     {
-      label: t(`${targetTransalationNotifiedPayment}.receiptPayerFiscalCode`),
+      label: t(`${targetTranslationNotifiedPayment}.receiptPayerFiscalCode`),
       value: data?.paymentNotificationDebtor?.fiscalCode
     },
     {
-      label: t(`${targetTransalationNotifiedPayment}.esecutionDate`),
+      label: t(`${targetTranslationNotifiedPayment}.esecutionDate`),
       value: data?.paymentExecutionDate,
       valueType: 'date'
     },
     {
-      label: t(`${targetTransalationNotifiedPayment}.iud`),
+      label: t(`${targetTranslationNotifiedPayment}.iud`),
       value: data?.paymentNotificationIud
     }
   ];
 
-  const targetTransalationReporting =
+  const targetTranslationReporting =
     'classifications.detail.sections.reporting';
   const reportingData: Array<DetailData> = [
     {
-      label: t(`${targetTransalationReporting}.idReporting`),
+      label: t(`${targetTranslationReporting}.idReporting`),
       value: data?.iuf
     },
     {
-      label: t(`${targetTransalationReporting}.flowDateTime`),
+      label: t(`${targetTranslationReporting}.flowDateTime`),
       value: data?.flowDateTime,
       valueType: 'dateTime'
     },
     {
-      label: t(`${targetTransalationReporting}.regulationUniqueIdentifier`),
+      label: t(`${targetTranslationReporting}.regulationUniqueIdentifier`),
       value: data?.regulationUniqueIdentifier
     },
     {
-      label: t(`${targetTransalationReporting}.regionValueDate`),
+      label: t(`${targetTranslationReporting}.regionValueDate`),
       value: data?.regionValueDate,
-      valueType: 'dateTime'
+      valueType: 'date'
     },
     {
-      label: t(`${targetTransalationReporting}.totalPayments`),
-      value: data?.totalPayments,
+      label: t(`${targetTranslationReporting}.totalPayments`),
+      value: data?.totalAmountCents,
       valueType: 'amount'
     }
   ];
 
-  const targetTransalationEarnings = 'classifications.detail.sections.earnings';
+  const targetTranslationEarnings = 'classifications.detail.sections.earnings';
   const earningsData: Array<DetailData> = [
     {
-      label: t(`${targetTransalationEarnings}.accountCode`),
+      label: t(`${targetTranslationEarnings}.accountCode`),
       value: data?.sealCode
     },
     {
-      label: t(`${targetTransalationEarnings}.pspLastName`),
+      label: t(`${targetTranslationEarnings}.pspLastName`),
       value: data?.pspLastName
     },
     {
-      label: t(`${targetTransalationEarnings}.documentCode`),
+      label: t(`${targetTranslationEarnings}.documentCode`),
       value: data?.documentCode
     },
     {
-      label: t(`${targetTransalationEarnings}.billDate`),
+      label: t(`${targetTranslationEarnings}.billDate`),
       value: data?.billDate,
       valueType: 'date'
     },
     {
-      label: t(`${targetTransalationEarnings}.billYear`),
-      value: data?.billYear,
-      valueType: 'date'
+      label: t(`${targetTranslationEarnings}.billYear`),
+      value: data?.billYear
     },
     {
-      label: t(`${targetTransalationEarnings}.provisionalAe`),
+      label: t(`${targetTranslationEarnings}.provisionalAe`),
       value: data?.provisionalAe
     },
     {
-      label: t(`${targetTransalationEarnings}.receptionDate`),
+      label: t(`${targetTranslationEarnings}.receptionDate`),
       value: data?.receptionDate,
-      valueType: 'date'
+      valueType: 'dateTime'
     },
     {
-      label: t(`${targetTransalationEarnings}.billCode`),
+      label: t(`${targetTranslationEarnings}.billCode`),
       value: data?.billCode
     },
     {
-      label: t(`${targetTransalationEarnings}.provisionalCode`),
+      label: t(`${targetTranslationEarnings}.provisionalCode`),
       value: data?.provisionalCode
     }
   ];
 
+  if (!data || visibleTabs.length === 0 || !activeTab) {
+    return (
+      <>
+        <TitleComponent title={t('classifications.title')} />
+        {data && <StatusBar classificationData={data} />}
+      </>
+    );
+  }
+
+  const hasNotifiedPaymentData = (
+    data: ClassificationDetailDTO | undefined
+  ): boolean => {
+    if (!data) return false;
+
+    return !!(
+      data.paymentNotificationDebtPositionTypeOrgCode ||
+      data.paymentNotificationRemittanceInformation ||
+      data.paymentNotificationAmountPaidCents ||
+      data.paymentNotificationDebtor?.fullName ||
+      data.paymentNotificationDebtor?.fiscalCode ||
+      data.paymentExecutionDate ||
+      data.paymentNotificationIud
+    );
+  };
+
   return (
     <>
-      <TitleComponent title={t('commons.routes.CLASSIFICATIONS')} />
-      {data && (
-        <TabContext value={tabIndex} data-testid="ClassificationDetailTabs">
+      <TitleComponent title={t('classifications.title')} />
+
+      <StatusBar classificationData={data} />
+
+      <TabContext value={activeTab} data-testid="ClassificationDetailTabs">
+        {visibleTabs.length > 1 && (
           <TabList
-            onChange={handleChange}
+            onChange={handleTabChange}
             aria-label="classification detail tabs"
             centered
             variant="fullWidth"
             sx={{ backgroundColor: theme.palette.background.paper }}
           >
-            <Tab
-              label={t(`${targetTransalationDebtType}.title`)}
-              value={0}
-              data-testid="classificationDetailTabDebtType"
-            />
-            <Tab
-              label={t(`${targetTransalationReporting}.title`)}
-              value={1}
-              data-testid="classificationDetailTabReporting"
-            />
-            <Tab
-              label={t(`${targetTransalationEarnings}.title`)}
-              value={2}
-              data-testid="classificationDetailTabEarnings"
-            />
+            {visibleTabs.map((tab) => (
+              <Tab
+                key={tab.value}
+                label={tab.label}
+                value={tab.value}
+                data-testid={tab.testId}
+              />
+            ))}
           </TabList>
+        )}
+
+        {data.payed && (
           <TabPanel
-            value={0}
+            value="telematic-receipt"
             sx={{ padding: 0 }}
             data-testid="ClassificationDetailTabPanelDebtType"
           >
@@ -251,12 +318,12 @@ export const ClassificationDetails = () => {
                       textTransform: 'uppercase',
                       fontWeight: 700,
                       fontSize: '14px',
-                      label: t(`${targetTransalationDebtType}.title`)
+                      label: t(`${targetTranslationDebtType}.title`)
                     },
                     data: debtTypeData,
                     footerLink: {
-                      label: t(`${targetTransalationDebtType}.link`),
-                      icon: <ArrowRightAltIcon />,
+                      label: t(`${targetTranslationDebtType}.link`),
+                      icon: <OpenInNew />,
                       iconPosition: 'right',
                       onLinkClick: () => {
                         if (data?.receiptPaymentReceiptId) {
@@ -271,24 +338,29 @@ export const ClassificationDetails = () => {
                   }
                 ]}
               />
-              <DetailContainer
-                sections={[
-                  {
-                    inline: true,
-                    title: {
-                      textTransform: 'uppercase',
-                      fontWeight: 700,
-                      fontSize: '14px',
-                      label: t(`${targetTransalationNotifiedPayment}.title`)
-                    },
-                    data: notifiedPaymentData
-                  }
-                ]}
-              />
+              {hasNotifiedPaymentData(data) && (
+                <DetailContainer
+                  sections={[
+                    {
+                      inline: true,
+                      title: {
+                        textTransform: 'uppercase',
+                        fontWeight: 700,
+                        fontSize: '14px',
+                        label: t(`${targetTranslationNotifiedPayment}.title`)
+                      },
+                      data: notifiedPaymentData
+                    }
+                  ]}
+                />
+              )}
             </Stack>
           </TabPanel>
+        )}
+
+        {data.reported && (
           <TabPanel
-            value={1}
+            value="reporting"
             sx={{ padding: 0 }}
             data-testid="ClassificationDetailTabPanelReporting"
           >
@@ -297,21 +369,21 @@ export const ClassificationDetails = () => {
                 {
                   inline: true,
                   title: {
-                    label: t(`${targetTransalationReporting}.title`),
+                    label: t(`${targetTranslationReporting}.title`),
                     textTransform: 'uppercase',
                     fontWeight: 700,
                     fontSize: '14px'
                   },
                   data: reportingData,
                   footerLink: {
-                    label: t(`${targetTransalationReporting}.link`),
-                    icon: <ArrowRightAltIcon />,
+                    label: t(`${targetTranslationReporting}.link`),
+                    icon: <OpenInNew />,
                     iconPosition: 'right',
                     onLinkClick: () => {
-                      if (data?.treasuryId) {
+                      if (data?.iuf) {
                         navigate(
                           generatePath(PageRoutes.REPORTING_DETAIL, {
-                            id: data.paymentsReportingId
+                            id: data.iuf
                           })
                         );
                       }
@@ -321,8 +393,11 @@ export const ClassificationDetails = () => {
               ]}
             />
           </TabPanel>
+        )}
+
+        {data.collected && (
           <TabPanel
-            value={2}
+            value="treasury"
             sx={{ padding: 0 }}
             data-testid="ClassificationDetailTabPanelEarnings"
           >
@@ -331,18 +406,18 @@ export const ClassificationDetails = () => {
                 {
                   inline: true,
                   title: {
-                    label: t(`${targetTransalationEarnings}.title`),
+                    label: t(`${targetTranslationEarnings}.title`),
                     fontWeight: 700,
                     fontSize: '14px',
                     textTransform: 'uppercase'
                   },
                   data: earningsData,
                   footerLink: {
-                    label: t(`${targetTransalationEarnings}.link`),
-                    icon: <ArrowRightAltIcon />,
+                    label: t(`${targetTranslationEarnings}.link`),
+                    icon: <OpenInNew />,
                     iconPosition: 'right',
                     onLinkClick: () => {
-                      if (data?.paymentsReportingId) {
+                      if (data?.treasuryId) {
                         navigate(
                           generatePath(PageRoutes.TREASURY_DETAIL, {
                             id: data.treasuryId
@@ -355,8 +430,8 @@ export const ClassificationDetails = () => {
               ]}
             />
           </TabPanel>
-        </TabContext>
-      )}
+        )}
+      </TabContext>
     </>
   );
 };
