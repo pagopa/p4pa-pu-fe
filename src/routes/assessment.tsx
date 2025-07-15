@@ -2,6 +2,7 @@ import { RouteHandleObject } from '../models/Routes';
 import Assessment from '../components/Assessment';
 import AssessmentSearchResults from './AssessmentSearchResults';
 import { AssessmentsRegistrySearchResults } from './AssessmentsRegistrySearchResults';
+import { AssessmentCreate } from './AssessmentCreate/AssessmentCreate';
 
 export const assessmentRoutes = [
   {
@@ -15,6 +16,18 @@ export const assessmentRoutes = [
         handle: {
           backButton: false,
           hideBreadcrumbs: true
+        } as RouteHandleObject
+      },
+      {
+        id: 'ASSESSMENT_CREATION',
+        path: 'create',
+        element: <AssessmentCreate />,
+        handle: {
+          backButton: true,
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
         } as RouteHandleObject
       },
       {

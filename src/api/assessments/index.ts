@@ -7,7 +7,10 @@ import {
   buildAssessmentsQueryParams
 } from './mappings';
 import { parseAndLog } from '../../utils/loaders';
-import { assessmentsRegistryDTOSchema } from '../../../generated/zod-schema';
+import {
+  assessmentsRegistryDTOSchema,
+  assessmentsSchema
+} from '../../../generated/zod-schema';
 import { pagedAssessmentsExtendedDTOSchema } from '../../../generated/zod-schema';
 
 type AssessmentsParams = Parameters<
@@ -87,6 +90,29 @@ export const getAssessmentsRegistry = (
       if (data) {
         parseAndLog(assessmentsRegistryDTOSchema, data);
       }
+      return data;
+    }
+  });
+
+export const createAssessment = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['createAssessment', organizationId],
+    mutationFn: async (params: {
+      assessmentName: string;
+      debtPositionTypeOrgCode: string;
+    }) => {
+      const { data } = await utils.apiClient.bff.createAssessment(
+        organizationId,
+        {
+          assessmentName: params.assessmentName,
+          debtPositionTypeOrgCode: params.debtPositionTypeOrgCode
+        }
+      );
+
+      if (data) {
+        parseAndLog(assessmentsSchema, data);
+      }
+
       return data;
     }
   });
