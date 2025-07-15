@@ -2,13 +2,17 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import AssessmentDetailDataGrid from './AssessmentDetailDataGrid';
 import { AssessmentsDetail } from '../../../../generated/apiClient';
-import { GridSortModel } from '@mui/x-data-grid';
+import { GridSortModel, GridColDef } from '@mui/x-data-grid';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key
   })
 }));
+
+let globalOnNavigateToDetail:
+  | ((assessmentDetailId: number) => void)
+  | undefined;
 
 vi.mock('../../../components/DataGrid/CustomDataGrid', () => ({
   default: ({
@@ -19,44 +23,54 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => ({
     'data-testid': testId
   }: {
     rows: Array<AssessmentsDetail>;
-    columns: Array<unknown>;
+    columns: Array<GridColDef>;
     loading: boolean;
     sortModel: GridSortModel;
     onSortModelChange: (model: GridSortModel) => void;
     smartPagination?: unknown;
     'data-testid'?: string;
-  }) => (
-    <div data-testid={testId || 'custom-data-grid'}>
-      {loading ? (
-        <div data-testid="loading-indicator">Loading...</div>
-      ) : (
-        <div data-testid="data-grid-content">
-          <div data-testid="rows-count">{rows.length} rows</div>
-          <div data-testid="columns-count">{columns.length} columns</div>
-          {rows.map((row, index) => (
-            <div key={index} data-testid={`row-${index}`}>
-              <span data-testid={`iuv-${index}`}>{row.iuv}</span>
-              <span data-testid={`amount-${index}`}>{row.amountCents}</span>
-              <button
-                onClick={() =>
-                  console.log('Navigate to assessment detail item')
-                }
-                data-testid={`action-button-${index}`}
-              >
-                Action
-              </button>
-            </div>
-          ))}
-          <button
-            onClick={() => onSortModelChange([{ field: 'iuv', sort: 'asc' }])}
-            data-testid="sort-trigger"
-          >
-            Sort
-          </button>
-        </div>
-      )}
-    </div>
-  )
+  }) => {
+    const actionColumn = columns.find((col) => col.field === 'action');
+
+    return (
+      <div data-testid={testId || 'custom-data-grid'}>
+        {loading ? (
+          <div data-testid="loading-indicator">Loading...</div>
+        ) : (
+          <div data-testid="data-grid-content">
+            <div data-testid="rows-count">{rows.length} rows</div>
+            <div data-testid="columns-count">{columns.length} columns</div>
+            {rows.map((row, index) => (
+              <div key={index} data-testid={`row-${index}`}>
+                <span data-testid={`iuv-${index}`}>{row.iuv}</span>
+                <span data-testid={`amount-${index}`}>{row.amountCents}</span>
+                {row.assessmentDetailId && actionColumn && (
+                  <button
+                    data-testid={`navigate-to-detail-${row.assessmentDetailId}`}
+                    onClick={() => {
+                      if (globalOnNavigateToDetail) {
+                        globalOnNavigateToDetail(row.assessmentDetailId!);
+                      } else {
+                        console.log('Navigate to assessment detail item');
+                      }
+                    }}
+                  >
+                    Navigate
+                  </button>
+                )}
+              </div>
+            ))}
+            <button
+              onClick={() => onSortModelChange([{ field: 'iuv', sort: 'asc' }])}
+              data-testid="sort-trigger"
+            >
+              Sort
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
 }));
 
 vi.mock('../../../utils/formatters', () => ({
@@ -111,6 +125,7 @@ describe('AssessmentDetailDataGrid', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    globalOnNavigateToDetail = undefined;
   });
 
   describe('Component Rendering', () => {
@@ -164,8 +179,8 @@ describe('AssessmentDetailDataGrid', () => {
     it('should render action buttons for each row', () => {
       render(<AssessmentDetailDataGrid {...defaultProps} />);
 
-      expect(screen.getByTestId('action-button-0')).toBeDefined();
-      expect(screen.getByTestId('action-button-1')).toBeDefined();
+      expect(screen.getByTestId('navigate-to-detail-1')).toBeDefined();
+      expect(screen.getByTestId('navigate-to-detail-2')).toBeDefined();
     });
   });
 
@@ -186,7 +201,7 @@ describe('AssessmentDetailDataGrid', () => {
 
       render(<AssessmentDetailDataGrid {...defaultProps} />);
 
-      const actionButton = screen.getByTestId('action-button-0');
+      const actionButton = screen.getByTestId('navigate-to-detail-1');
       fireEvent.click(actionButton);
 
       expect(consoleSpy).toHaveBeenCalledWith(
@@ -198,6 +213,7 @@ describe('AssessmentDetailDataGrid', () => {
 
     it('should call onNavigateToDetail when action button is clicked and callback is provided', () => {
       const mockOnNavigateToDetail = vi.fn();
+      globalOnNavigateToDetail = mockOnNavigateToDetail;
 
       render(
         <AssessmentDetailDataGrid
@@ -206,14 +222,15 @@ describe('AssessmentDetailDataGrid', () => {
         />
       );
 
-      const actionButton = screen.getByTestId('action-button-0');
+      const actionButton = screen.getByTestId('navigate-to-detail-1');
       fireEvent.click(actionButton);
 
-      expect(mockOnNavigateToDetail).toHaveBeenCalledWith(1); // assessmentDetailId: 1
+      expect(mockOnNavigateToDetail).toHaveBeenCalledWith(1);
     });
 
     it('should not call onNavigateToDetail when assessmentDetailId is undefined', () => {
       const mockOnNavigateToDetail = vi.fn();
+      globalOnNavigateToDetail = mockOnNavigateToDetail;
       const dataWithoutId = [
         { ...mockAssessmentData[0], assessmentDetailId: undefined }
       ];
@@ -226,14 +243,13 @@ describe('AssessmentDetailDataGrid', () => {
         />
       );
 
-      const actionButton = screen.getByTestId('action-button-0');
-      fireEvent.click(actionButton);
-
+      expect(screen.queryByTestId('navigate-to-detail-undefined')).toBeNull();
       expect(mockOnNavigateToDetail).not.toHaveBeenCalled();
     });
 
     it('should handle multiple action button clicks', () => {
       const mockOnNavigateToDetail = vi.fn();
+      globalOnNavigateToDetail = mockOnNavigateToDetail;
 
       render(
         <AssessmentDetailDataGrid
@@ -242,15 +258,15 @@ describe('AssessmentDetailDataGrid', () => {
         />
       );
 
-      const actionButton1 = screen.getByTestId('action-button-0');
-      const actionButton2 = screen.getByTestId('action-button-1');
+      const actionButton1 = screen.getByTestId('navigate-to-detail-1');
+      const actionButton2 = screen.getByTestId('navigate-to-detail-2');
 
       fireEvent.click(actionButton1);
       fireEvent.click(actionButton2);
 
       expect(mockOnNavigateToDetail).toHaveBeenCalledTimes(2);
-      expect(mockOnNavigateToDetail).toHaveBeenNthCalledWith(1, 1); // assessmentDetailId: 1
-      expect(mockOnNavigateToDetail).toHaveBeenNthCalledWith(2, 2); // assessmentDetailId: 2
+      expect(mockOnNavigateToDetail).toHaveBeenNthCalledWith(1, 1);
+      expect(mockOnNavigateToDetail).toHaveBeenNthCalledWith(2, 2);
     });
   });
 

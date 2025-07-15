@@ -48,6 +48,9 @@ vi.mock('./components/AssessmentDetailDataGrid', () => ({
     rows: Array<AssessmentsDetail>;
     isLoading: boolean;
     onNavigateToDetail?: (assessmentDetailId: number) => void;
+    sortModel?: unknown;
+    onSortModelChange?: unknown;
+    smartPagination?: unknown;
     'data-testid'?: string;
   }) => (
     <div data-testid={testId || 'assessment-detail-data-grid'}>
@@ -60,7 +63,13 @@ vi.mock('./components/AssessmentDetailDataGrid', () => ({
             <button
               key={index}
               data-testid={`navigate-to-detail-${row.assessmentDetailId}`}
-              onClick={() => onNavigateToDetail?.(row.assessmentDetailId!)}
+              onClick={() => {
+                console.log(
+                  'Mock: Navigating to detail',
+                  row.assessmentDetailId
+                );
+                onNavigateToDetail?.(row.assessmentDetailId!);
+              }}
             >
               Navigate to Detail {row.assessmentDetailId}
             </button>
@@ -75,7 +84,6 @@ describe('AssessmentDetail', () => {
   const mockNavigate = vi.fn();
   const mockGetAssessmentDetail = vi.mocked(getAssessmentDetail);
 
-  // Mock di window.open
   const mockWindowOpen = vi.fn();
   Object.defineProperty(window, 'open', {
     writable: true,
@@ -331,21 +339,18 @@ describe('AssessmentDetail', () => {
       fireEvent.click(removeButton);
       fireEvent.click(addButton);
 
-      // Verify that the buttons can be clicked without errors
       expect(removeButton).toBeDefined();
       expect(addButton).toBeDefined();
     });
 
-    it('should open assessment detail detail in new tab when data grid item is clicked', () => {
+    it('should navigate to assessment detail detail when data grid item is clicked', () => {
       render(<AssessmentDetail />);
 
       const navigateButton = screen.getByTestId('navigate-to-detail-95');
       fireEvent.click(navigateButton);
 
-      expect(mockWindowOpen).toHaveBeenCalledWith(
-        expect.stringContaining('/assessment/detail/123/95'),
-        '_blank',
-        'noopener,noreferrer'
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('/assessment/detail/123/95')
       );
     });
   });
