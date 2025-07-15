@@ -18,6 +18,7 @@ type AssessmentDetailDataGridProps = {
   onSortModelChange: (model: GridSortModel) => void;
   smartPagination?: SmartPaginationConfig;
   isLoading?: boolean;
+  onNavigateToDetail?: (assessmentDetailId: number) => void;
 };
 
 const AssessmentDetailDataGrid = ({
@@ -25,9 +26,17 @@ const AssessmentDetailDataGrid = ({
   sortModel,
   onSortModelChange,
   smartPagination,
-  isLoading = false
+  isLoading = false,
+  onNavigateToDetail
 }: AssessmentDetailDataGridProps) => {
   const { t } = useTranslation();
+
+  // Handle the click on the navigation icon to the detail
+  const handleNavigateToDetail = (assessmentDetailId: number | undefined) => {
+    if (assessmentDetailId && onNavigateToDetail) {
+      onNavigateToDetail(assessmentDetailId);
+    }
+  };
 
   const columns: Array<GridColDef> = [
     {
@@ -67,12 +76,13 @@ const AssessmentDetailDataGrid = ({
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: () => (
+      renderCell: (params: GridRenderCellParams<AssessmentsDetail>) => (
         <IconButton
           color="primary"
           size="small"
-          onClick={() => console.log('Navigate to assessment detail item')}
+          onClick={() => handleNavigateToDetail(params.row.assessmentDetailId)}
           aria-label="go to assessment detail item"
+          data-testid={`navigate-to-detail-${params.row.assessmentDetailId}`}
         >
           <ReadMore />
         </IconButton>
