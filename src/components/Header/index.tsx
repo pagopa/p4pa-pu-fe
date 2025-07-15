@@ -11,11 +11,15 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
-import { setOrganizationId } from '../../store/OrganizationIdStore';
+import {
+  organizationIdState,
+  setOrganizationId
+} from '../../store/OrganizationIdStore';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
 import { OperatorRoleEnum } from '../../../generated/apiClient';
 import { PageRoutes } from '../../routes';
+import { useSignals } from '@preact/signals-react/runtime';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;
@@ -25,9 +29,14 @@ export type HeaderProps = {
 export const Header = (props: HeaderProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  useSignals(); // Enable the signal reactivity in this component
+
   const {
-    state: { userInfo, organizations, organizationId }
+    state: { userInfo, organizations }
   } = useStore();
+
+  // Direct access to the signal to ensure reactivity
+  const organizationId = organizationIdState.state?.value;
 
   const { onAssistanceClick = () => null } = props;
   const { onDocumentationClick = () => null } = props;
@@ -114,6 +123,7 @@ export const Header = (props: HeaderProps) => {
       />
       {partyIdToUse && organizationsToMenuItems.length > 0 ? (
         <HeaderProduct
+          key={`header-product-${partyIdToUse}`} // force re-render when partyId changes
           onSelectedParty={onSelectedParty}
           partyId={partyIdToUse}
           partyList={organizationsToMenuItems}
