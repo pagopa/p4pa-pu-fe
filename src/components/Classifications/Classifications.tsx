@@ -8,48 +8,30 @@ import { FilterCategory, useMultiFilters } from '../../hooks/useMultiFilters';
 import { PageRoutes } from '../../routes';
 import { useNavigate } from 'react-router';
 import { useState, useMemo } from 'react';
-import { filterValues } from '../../store/FilterStore';
 
 export const Classifications = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const {
-    filterMap,
-    removeAllFilters,
-    noFilterSelectedExcludingClassificationType
-  } = useMultiFilters({
+  const { filterMap, removeAllFilters, noFilterIsSelected } = useMultiFilters({
     clearOnMount: true,
     filterCategory: FilterCategory.CLASSIFICATIONS
   });
 
-  const [labelError, setLabelError] = useState(false);
   const [hasAttemptedSearch, setHasAttemptedSearch] = useState(false);
 
   const shouldShowError = useMemo(() => {
-    const classificationType = filterValues.value.CLASSIFICATION_TYPE;
-    const hasNoFilters = noFilterSelectedExcludingClassificationType.peek();
+    const hasNoFilters = !noFilterIsSelected.peek();
 
-    return hasAttemptedSearch && (!classificationType || hasNoFilters);
-  }, [
-    filterValues.value,
-    noFilterSelectedExcludingClassificationType,
-    hasAttemptedSearch
-  ]);
+    return hasAttemptedSearch && hasNoFilters;
+  }, [noFilterIsSelected, hasAttemptedSearch]);
 
   function submitSearch() {
     setHasAttemptedSearch(true);
 
-    const classificationType = filterValues.value.CLASSIFICATION_TYPE;
-    if (!classificationType) {
-      setLabelError(true);
+    if (!noFilterIsSelected.peek()) {
       return;
     }
 
-    if (noFilterSelectedExcludingClassificationType.peek()) {
-      return;
-    }
-
-    setLabelError(false);
     navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS);
   }
 
@@ -64,12 +46,7 @@ export const Classifications = () => {
               description={t('classifications.searchdescription')}
               multiFilterConfig={filterMap}
               render={shouldShowError && ErrorMessage}
-              extraProps={{
-                showLabelError: labelError,
-                onFilterInteraction: () => {
-                  setLabelError(false);
-                }
-              }}
+              extraProps={{}}
               filterCategory={FilterCategory.CLASSIFICATIONS}
               button={[
                 {
@@ -77,7 +54,6 @@ export const Classifications = () => {
                   variant: 'outlined',
                   onClick: () => {
                     removeAllFilters();
-                    setLabelError(false);
                     setHasAttemptedSearch(false);
                   },
                   id: 'searchcard-remove-btn'

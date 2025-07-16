@@ -8,12 +8,9 @@ import {
   addFilterRow,
   removeFilterRow,
   updateFilter,
-  setFilterValues,
   KeyofFilterMap
 } from '../../store/FilterStore';
 import { ChangeEvent } from 'react';
-import { FormComponent } from '../FormComponent';
-import { LabelEnum } from '../../../generated/apiClient';
 
 export type MultiFilterProps = {
   filterMap: FilterMap;
@@ -32,26 +29,8 @@ const MultiFilter = ({
   const { t } = useTranslation();
 
   const {
-    state: { selectedFilters, filterValues }
+    state: { selectedFilters }
   } = useStore();
-
-  const classificationType = filterValues.CLASSIFICATION_TYPE ?? '';
-
-  const onClassificationChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    const newValue = e.target.value;
-    setFilterValues({ ...filterValues, CLASSIFICATION_TYPE: newValue });
-
-    onFilterInteraction?.();
-
-    if (newValue && selectedFilters.length === 0) {
-      const first = Object.keys(filterMap).find(
-        (key) => key !== 'CLASSIFICATION_TYPE'
-      ) as KeyofFilterMap;
-      if (first) addFilterRow(first);
-    }
-  };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
     updateFilter(e.target.value as KeyofFilterMap, index);
@@ -66,85 +45,49 @@ const MultiFilter = ({
     if (next) addFilterRow(next);
   };
 
-  const showOtherFilters =
-    filterCategory != 'CLASSIFICATIONS' || Boolean(classificationType);
-
   return (
     <Stack gap={3}>
-      {filterCategory == 'CLASSIFICATIONS' && (
-        <FormComponent.Select
-          id="classification-type-select"
-          name="CLASSIFICATION_TYPE"
-          label={t('classifications.filters.classificationType')}
-          options={Object.values(LabelEnum)
-            .map((value) => ({
-              label: t(`classificationsExport.classificationsOptions.${value}`),
-              value
-            }))
-            .sort((a, b) => {
-              // if value UNKNOWN sort before
-              if (a.value === 'UNKNOWN' && b.value !== 'UNKNOWN') return -1; // a comes first
-              if (a.value !== 'UNKNOWN' && b.value === 'UNKNOWN') return 1; // b comes first
-              // else, sort alphabetically by label
-              return a.label.localeCompare(b.label);
-            })}
-          error={showLabelError}
-          helperText={
-            showLabelError
-              ? t('classifications.filters.noOptionSelected')
-              : undefined
-          }
-          value={classificationType}
-          onChange={onClassificationChange}
-          sx={{ mb: 2 }}
-          data-testid="classification-section-type"
-        />
-      )}
-
-      {showOtherFilters &&
-        selectedFilters
-          .slice()
-          .sort((a, b) => a.localeCompare(b))
-          .map((filterId, index) => (
-            <Stack
-              key={filterId}
-              direction="row"
-              gap={2}
-              justifyContent="space-between"
-            >
-              {selectedFilters.length > 1 && (
-                <IconButton
-                  sx={{
-                    color: theme.palette.error.dark,
-                    alignSelf: 'flex-start'
-                  }}
-                  onClick={() => removeFilterRow(filterId)}
-                  aria-label="remove"
-                >
-                  <RemoveCircleOutline fontSize="small" />
-                </IconButton>
-              )}
-              <Filter
-                value={filterId}
-                filterMap={filterMap}
-                selectedFilters={selectedFilters}
-                onChange={(value) => onChange(value, index)}
-              />
-            </Stack>
-          ))}
-
-      {showOtherFilters && (
-        <Box display="flex" justifyContent="flex-start">
-          <Button
-            variant="text"
-            onClick={addNextFilterRow}
-            startIcon={<Add />}
-            disabled={selectedFilters.length >= Object.keys(filterMap).length}
+      {selectedFilters
+        .slice()
+        .sort((a, b) => a.localeCompare(b))
+        .map((filterId, index) => (
+          <Stack
+            key={filterId}
+            direction="row"
+            gap={2}
+            justifyContent="space-between"
           >
-            {t('commons.addfilter')}
-          </Button>
-        </Box>
-      )}
+            {selectedFilters.length > 1 && (
+              <IconButton
+                sx={{
+                  color: theme.palette.error.dark,
+                  alignSelf: 'flex-start'
+                }}
+                onClick={() => removeFilterRow(filterId)}
+                aria-label="remove"
+              >
+                <RemoveCircleOutline fontSize="small" />
+              </IconButton>
+            )}
+            <Filter
+              value={filterId}
+              filterMap={filterMap}
+              selectedFilters={selectedFilters}
+              onChange={(value) => onChange(value, index)}
+            />
+          </Stack>
+        ))}
+
+      <Box display="flex" justifyContent="flex-start">
+        <Button
+          variant="text"
+          onClick={addNextFilterRow}
+          startIcon={<Add />}
+          disabled={selectedFilters.length >= Object.keys(filterMap).length}
+        >
+          {t('commons.addfilter')}
+        </Button>
+      </Box>
     </Stack>
   );
 };

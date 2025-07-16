@@ -35,12 +35,11 @@ const ClassificationsSearchResults = () => {
     filterMap,
     selectedFilters,
     removeAllFilters,
-    noFilterSelectedExcludingClassificationType,
+    noFilterIsSelected,
     filterValues
   } = useMultiFilters({ filterCategory: FilterCategory.CLASSIFICATIONS });
 
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [labelError, setLabelError] = useState(false);
 
   const toggleDrawer = () => {
     setDrawerOpen((prev) => !prev);
@@ -57,26 +56,17 @@ const ClassificationsSearchResults = () => {
   });
 
   const applyFilters = () => {
-    const classificationType = filterValues.CLASSIFICATION_TYPE;
-
-    if (!classificationType) {
-      setLabelError(true);
-      return;
-    }
-
-    if (noFilterSelectedExcludingClassificationType.peek()) {
+    if (!noFilterIsSelected.peek()) {
       setError(true);
       return;
     }
 
     setError(false);
-    setLabelError(false);
     classifications.applyFilters();
     setDrawerOpen(false);
   };
 
   const handleFilterInteraction = () => {
-    setLabelError(false);
     setError(false);
   };
 
@@ -108,7 +98,7 @@ const ClassificationsSearchResults = () => {
           startIcon={<FilterAlt />}
           onClick={toggleDrawer}
         >
-          {`${t('commons.filters.filtersField')} (${selectedFilters.length + (filterValues.CLASSIFICATION_TYPE ? 1 : 0)})`}
+          {`${t('commons.filters.filtersField')} (${selectedFilters.length})`}
         </ButtonNaked>
       </Grid>
 
@@ -131,7 +121,6 @@ const ClassificationsSearchResults = () => {
         title={t('commons.filters.filtersField')}
         filterMap={filterMap}
         filterCategory={FilterCategory.CLASSIFICATIONS}
-        showLabelError={labelError}
         onFilterInteraction={handleFilterInteraction}
         render={error && errorMessage}
         buttons={[
@@ -145,7 +134,6 @@ const ClassificationsSearchResults = () => {
             buttonText: t('commons.filters.remove'),
             onButtonClick: () => {
               removeAllFilters();
-              setLabelError(false);
               setError(false);
             },
             variant: 'text',
