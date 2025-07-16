@@ -13,6 +13,21 @@
       "titleIUV": "Avvisi (IUV)"
     }
   },
+  "AssessmentRegistryCreate": {
+    "title": "Crea un nuovo capitolo",
+    "subtitle": "Inserisci i parametri per creare un nuovo capitolo.",
+    "step1": "Configurazione del capitolo",
+    "debtPositionType": "Tipo dovuto",
+    "assessmentRegistry": "Capitolo",
+    "status": "Stato ufficio",
+    "operatingYear": "Anno esercizio",
+    "sectionDescription": "Denominazione Capitolo",
+    "sectionCode": "Codice capitolo",
+    "officeCode": "Codice Ufficio",
+    "officeDescription": "Denominazione Ufficio",
+    "assessmentCode": "Codice Accertamento Capitolo",
+    "assessmentDescription": "Denominazione Accertamento Capitolo"
+  },
   "AssessmentRegistryDetail": {
     "description": "Ecco i dettagli del capitolo.",
     "updatedAt": "Ultimo aggiornamento il",

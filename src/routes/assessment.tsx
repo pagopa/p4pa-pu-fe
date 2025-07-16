@@ -6,6 +6,7 @@ import TelematicReceiptDetail from './TelematicReceiptDetail';
 import { AssessmentsRegistrySearchResults } from './AssessmentsRegistrySearchResults';
 import { AssessmentCreate } from './AssessmentCreate/AssessmentCreate';
 import { AssessmentRegistryDetail } from './AssessmentsRegistryDetail';
+import { AssessmentRegistryCreate } from './AssessmentRegistryCreate';
 
 export const assessmentRoutes = [
   {
@@ -85,6 +86,19 @@ export const assessmentRoutes = [
         handle: {
           backButton: true,
           backButtonText: 'commons.back',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject
+      },
+      {
+        id: 'ASSESSMENT_REGISTRY_CREATE',
+        path: 'registry/new',
+        element: <AssessmentRegistryCreate />,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
           hideBreadcrumbs: true,
           sidebar: {
             visible: false
