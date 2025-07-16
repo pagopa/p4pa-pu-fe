@@ -301,7 +301,8 @@ export const useMultiFilters = (props?: {
             label: t(`classificationsExport.classificationsOptions.${value}`),
             value
           })),
-          required: true
+          required: true,
+          ...fieldControl('CLASSIFICATION_TYPE')
         }
       ]
     },
