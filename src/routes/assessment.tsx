@@ -1,6 +1,7 @@
 import { RouteHandleObject } from '../models/Routes';
 import Assessment from '../components/Assessment';
 import AssessmentSearchResults from './AssessmentSearchResults';
+import AssessmentDetail from './AssessmentDetail/AssessmentDetail';
 import { AssessmentsRegistrySearchResults } from './AssessmentsRegistrySearchResults';
 import { AssessmentCreate } from './AssessmentCreate/AssessmentCreate';
 
@@ -37,6 +38,16 @@ export const assessmentRoutes = [
         handle: {
           backButton: true,
           hideBreadcrumbs: false
+        } as RouteHandleObject
+      },
+      {
+        id: 'ASSESSMENT_DETAIL',
+        path: 'detail/:id',
+        element: <AssessmentDetail />,
+        handle: {
+          backButton: true,
+          hideBreadcrumbs: false,
+          custom: true
         } as RouteHandleObject
       },
       {
