@@ -7,7 +7,6 @@ import { getAssessmentsRegistry } from '../../api/assessments';
 import { useStore } from '../../store/GlobalStore';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-import { format } from 'date-fns';
 import Button from '@mui/material/Button';
 import Edit from '@mui/icons-material/Edit';
 
@@ -111,14 +110,6 @@ export const AssessmentRegistryDetail = () => {
           }
         ]}
       />
-      <Stack direction="row" alignItems="center">
-        <Typography variant="caption">
-          {t('AssessmentRegistryDetail.updatedAt')}
-        </Typography>
-        <Typography variant="caption-semibold">
-          {format(new Date(), 'dd/MM/yyyy')}
-        </Typography>
-      </Stack>
       <Stack direction="row" justifyContent="flex-end">
         {/* TODO: Navigate to edit on button click */}
         <Button

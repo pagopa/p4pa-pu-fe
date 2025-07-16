@@ -101,9 +101,6 @@ describe('AssessmentRegistryDetail', () => {
       screen.getByText('AssessmentRegistryDetail.description')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('AssessmentRegistryDetail.updatedAt')
-    ).toBeInTheDocument();
-    expect(
       screen.getByRole('button', { name: 'commons.edit' })
     ).toBeInTheDocument();
   });
