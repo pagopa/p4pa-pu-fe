@@ -98,7 +98,8 @@ export const AssessmentCreate = () => {
           category: 'assessment-create',
           i18nParams: {
             assessmentName: response.assessmentName
-          }
+          },
+          assessmentId: response.assessmentId
         }
       });
     } catch (error) {

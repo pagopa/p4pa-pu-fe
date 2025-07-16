@@ -149,7 +149,7 @@ export const SuccessPageConfig: SuccessOpts = {
         variant: 'contained',
         size: 'large',
         buttonLabel: 'assessmentCreate.success.goToDetail',
-        actionID: 'ASSESSMENTS'
+        customNavigation: 'ASSESSMENT_DETAIL'
       }
     ]
   }
