@@ -7,6 +7,8 @@ import {
 import { useTranslation } from 'react-i18next';
 import { IconButton, Chip } from '@mui/material';
 import { ReadMore } from '@mui/icons-material';
+import { useNavigate, generatePath } from 'react-router';
+import { PageRoutes } from '../../routes';
 import {
   PagedAssessmentsExtendedDTO,
   AssessmentsExtendedDTO
@@ -27,17 +29,13 @@ type AssessmentSearchResultsDataGridProps = {
 
 type AssessmentDataRow = AssessmentsExtendedDTO & GridValidRowModel;
 
-/**
- * Component DataGrid for assessment search results.
- * Shows a table with columns: assessment name, debt type, created by,
- * updated at, status (with colored chips) and action for detail.
- */
 const AssessmentSearchResultsDataGrid = ({
   data,
   onSortChange,
   onPaginationChange
 }: AssessmentSearchResultsDataGridProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const onSort = (model: GridSortModel) => {
     if (model?.length) {
@@ -50,8 +48,10 @@ const AssessmentSearchResultsDataGrid = ({
 
   const handleDetailClick = (assessmentId: number | undefined) => {
     if (assessmentId) {
-      // TODO: Add navigation to assessment detail page
-      console.log('Navigating to assessment detail:', assessmentId);
+      const detailPath = generatePath(PageRoutes.ASSESSMENT_DETAIL, {
+        id: assessmentId.toString()
+      });
+      navigate(detailPath);
     }
   };
 

@@ -236,6 +236,15 @@
       "CANCELLED": "Eliminato"
     }
   },
+  "assessmentDetail": {
+    "debtType": "Tipo dovuto",
+    "createdBy": "Creato da",
+    "paymentsAssociated": "Pagamenti associati",
+    "deleteDialog": {
+      "title": "Conferma eliminazione",
+      "description": "Sei sicuro di voler eliminare questo accertamento? L'operazione non può essere annullata."
+    }
+  },
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
@@ -307,8 +316,9 @@
   },
   "commons": {
     "info": "Informazioni",
-    "addfilter": "Aggiunge filtro",
+    "add": "Aggiungi",
     "all": "Tutti",
+    "addfilter": "Aggiunge filtro",
     "amount": "Importo",
     "anonymousFiscalCode": "Codice Fiscale Anonimo",
     "auditor": "Attestante",
@@ -317,6 +327,7 @@
     "breadcrumbs": "Elementi di navigazione breadcrumbs",
     "breadcrumbsElement": "Elemento breadcrumb",
     "breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
+    "cancel": "Annulla",
     "close": "Chiudi",
     "collectionReason": "Motivo Riscossione",
     "continue": "Continua",
@@ -406,7 +417,7 @@
         "code": "Codice",
         "label": "Codice Documento"
       },
-      "filterResults": "Filtra",
+      "filterResults": "Cerca",
       "filtersField": "Filtri",
       "iuv": {
         "code": "Codice IUV",
@@ -527,6 +538,7 @@
     "personLegal": "Persona giuridica",
     "postAccount": "Conto Corrente Postale",
     "reason": "Causale",
+    "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
@@ -545,6 +557,7 @@
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
       "ASSESSMENT_SEARCH_RESULTS": "Risultato ricerca",
+      "ASSESSMENT_DETAIL": "Dettaglio",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
       "DEBT_POSITIONS": "Posizioni debitorie",
@@ -655,6 +668,7 @@
     "unauthorized": "Non sei autorizzato ad accedere alla sezione, contatta il gestore dei permessi",
     "unknownOrganization": "Ente senza nome",
     "uploadedFrom": "Caricati dal",
+    "updatedFrom": "Aggiornato dal",
     "view": "Visualizza",
     "validation": {
       "selectAtLeastOneOption": "Seleziona almeno un'opzione",

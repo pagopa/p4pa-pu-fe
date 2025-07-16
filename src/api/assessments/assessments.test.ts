@@ -1,9 +1,16 @@
 import utils from '../../utils';
 import { AxiosResponse } from 'axios';
-import { describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '../../__tests__/renderers';
-import { getAssessments } from '.';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor, act } from '../../__tests__/renderers';
+import {
+  getAssessments,
+  getAssessmentsRegistries,
+  getAssessmentsRegistry
+} from '.';
 import { initialFilterValues } from '../../store/FilterStore';
+import { assessmentsRegistryDTOSchema } from '../../../generated/zod-schema';
+import { createMock } from 'zodock';
+import * as loaders from '../../utils/loaders';
 
 vi.mock('../../utils', async () => {
   const actual =
@@ -12,7 +19,9 @@ vi.mock('../../utils', async () => {
     ...actual,
     apiClient: {
       bff: {
-        getPagedAssessmentsExtendedDto: vi.fn()
+        getPagedAssessmentsExtendedDto: vi.fn(),
+        getAssessmentsRegistries: vi.fn(),
+        getAssessmentsRegistry: vi.fn()
       }
     }
   };
@@ -25,6 +34,8 @@ vi.mock('../../utils/loaders', () => ({
     getOrganizationsPlain: vi.fn()
   }
 }));
+
+const mockParseAndLog = vi.mocked(loaders.parseAndLog);
 
 describe('getAssessments', () => {
   it('should return data correctly when mutation is called', async () => {
@@ -274,5 +285,252 @@ describe('getAssessments', () => {
         indexes: null
       }
     });
+  });
+});
+
+describe('getAssessmentsRegistries', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should return data correctly when mutation is called', async () => {
+    const dataMock = {
+      content: [
+        {
+          assessmentRegistryId: 1,
+          organizationId: 123,
+          assessmentName: 'Registry Test 1',
+          status: 'ACTIVE',
+          creationDate: '2023-01-01T00:00:00Z'
+        },
+        {
+          assessmentRegistryId: 2,
+          organizationId: 123,
+          assessmentName: 'Registry Test 2',
+          status: 'INACTIVE',
+          creationDate: '2023-01-02T00:00:00Z'
+        }
+      ],
+      size: 20,
+      totalElements: 2,
+      totalPages: 1,
+      number: 0
+    };
+
+    const organizationId = 123;
+    const query = {
+      filters: {
+        ...initialFilterValues,
+        OFFICE_CODE: 'OFF001',
+        ASSESSMENT_CODE: 'ASS001'
+      },
+      pagination: { page: 0, size: 20 },
+      sort: []
+    };
+
+    const expectedApiParams = {
+      officeCode: 'OFF001',
+      assessmentCode: 'ASS001',
+      page: 0,
+      size: 20
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getAssessmentsRegistries')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      getAssessmentsRegistries({ organizationId })
+    );
+
+    await act(async () => {
+      result.current.mutate(query);
+    });
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(dataMock);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
+      paramsSerializer: {
+        indexes: null
+      }
+    });
+  });
+
+  it('should handle API errors correctly', async () => {
+    const organizationId = 123;
+    const query = {
+      filters: {
+        ...initialFilterValues,
+        OFFICE_CODE: 'TEST'
+      },
+      pagination: { page: 0, size: 20 },
+      sort: []
+    };
+
+    const errorMock = new Error('API Error');
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getAssessmentsRegistries')
+      .mockRejectedValue(errorMock);
+
+    const { result } = renderHook(() =>
+      getAssessmentsRegistries({ organizationId })
+    );
+
+    await act(async () => {
+      result.current.mutate(query);
+    });
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(errorMock);
+    });
+
+    expect(apiMock).toHaveBeenCalled();
+  });
+
+  it('should not fetch data if mutate is not called', () => {
+    const organizationId = 123;
+    const { result } = renderHook(() =>
+      getAssessmentsRegistries({ organizationId })
+    );
+
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.isPending).toBe(false);
+  });
+
+  it('should handle empty response correctly', async () => {
+    const organizationId = 123;
+    const query = {
+      filters: initialFilterValues,
+      pagination: { page: 0, size: 20 },
+      sort: []
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getAssessmentsRegistries')
+      .mockResolvedValue({ data: undefined } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      getAssessmentsRegistries({ organizationId })
+    );
+
+    await act(async () => {
+      result.current.mutate(query);
+    });
+
+    await waitFor(() => {
+      expect(result.current.data).toBeUndefined();
+    });
+
+    expect(apiMock).toHaveBeenCalled();
+  });
+});
+
+describe('getAssessmentsRegistry', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should fetch registry data successfully', async () => {
+    const mockRegistryData = createMock(assessmentsRegistryDTOSchema);
+    const organizationId = 123;
+    const assessmentRegistryId = 456;
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getAssessmentsRegistry')
+      .mockResolvedValue({ data: mockRegistryData } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      getAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockRegistryData);
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentRegistryId);
+    expect(mockParseAndLog).toHaveBeenCalledWith(
+      assessmentsRegistryDTOSchema,
+      mockRegistryData
+    );
+  });
+
+  it('should not call parseAndLog when data is null/undefined', async () => {
+    const organizationId = 123;
+    const assessmentRegistryId = 456;
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getAssessmentsRegistry')
+      .mockResolvedValue({ data: null } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      getAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toBeNull();
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentRegistryId);
+    expect(mockParseAndLog).not.toHaveBeenCalled();
+  });
+
+  it('should handle API errors correctly', async () => {
+    const organizationId = 123;
+    const assessmentRegistryId = 456;
+    const errorMock = new Error('API Error');
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getAssessmentsRegistry')
+      .mockRejectedValue(errorMock);
+
+    renderHook(() =>
+      getAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(
+        organizationId,
+        assessmentRegistryId
+      );
+    });
+
+    expect(mockParseAndLog).not.toHaveBeenCalled();
+  });
+
+  it('should use correct query key for caching', () => {
+    const organizationId = 123;
+    const assessmentRegistryId = 456;
+
+    const { result } = renderHook(() =>
+      getAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    expect(result.current).toBeDefined();
+  });
+
+  it('should handle different organizationId and assessmentRegistryId values', async () => {
+    const mockRegistryData = createMock(assessmentsRegistryDTOSchema);
+    const organizationId = 999;
+    const assessmentRegistryId = 777;
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getAssessmentsRegistry')
+      .mockResolvedValue({ data: mockRegistryData } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      getAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockRegistryData);
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentRegistryId);
   });
 });
