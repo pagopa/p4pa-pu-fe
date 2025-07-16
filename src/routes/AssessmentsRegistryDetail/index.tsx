@@ -48,7 +48,7 @@ export const AssessmentRegistryDetail = () => {
     },
     {
       label: t('AssessmentRegistryDetail.status'),
-      value: data?.status
+      value: t(`commons.status.${data?.status}`)
     },
     {
       label: t('AssessmentRegistryDetail.sectionDescription'),

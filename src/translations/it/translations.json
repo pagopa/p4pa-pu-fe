@@ -704,7 +704,7 @@
     "status": {
       "ALL": "Tutti",
       "ACTIVE": "Attivo",
-      "INACTIVE": "Inattivo",
+      "INACTIVE": "Disattivo",
       "COMPLETED": "Elaborato",
       "ERROR": "Errore",
       "EXPIRED": "Scaduto",
