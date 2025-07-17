@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import {
   COMPONENT_TYPE,
-  FilterItem
+  FilterItem,
+  SelectChangeEvent
 } from '../components/FilterContainer/FilterContainer';
 import { useStore } from '../store/GlobalStore';
 import { ChangeEvent, useEffect } from 'react';
@@ -13,10 +14,14 @@ import {
 } from '../store/FilterStore';
 import { FilterValues } from '../models/Filters';
 import { LabelEnum } from '../../generated/apiClient';
+import { AssessmentsRegistryStatus } from '../../generated/data-contracts';
+import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
 
 export enum FilterCategory {
-  TREASURY = 'TREASURY',
-  CLASSIFICATIONS = 'CLASSIFICATIONS'
+  ASSESSMENT = 'ASSESSMENT',
+  ASSESSMENTS_REGISTRY = 'ASSESSMENTS_REGISTRY',
+  CLASSIFICATIONS = 'CLASSIFICATIONS',
+  TREASURY = 'TREASURY'
 }
 
 export type FilterMap = Record<
@@ -41,6 +46,8 @@ export type FilterMap = Record<
       | 'REGULATION_DATE_TO'
       | 'PAYMENT_DATE_FROM'
       | 'PAYMENT_DATE_TO'
+      | 'LAST_UPDATE_DATE_FROM'
+      | 'LAST_UPDATE_DATE_TO'
     >
   | 'ACCOUNTING_DATE'
   | 'VALUE_DATE'
@@ -49,7 +56,8 @@ export type FilterMap = Record<
   | 'PAY_DATE'
   | 'LAST_CLASSIFICATION_DATE'
   | 'REGULATION_DATE'
-  | 'PAYMENT_DATE',
+  | 'PAYMENT_DATE'
+  | 'LAST_UPDATE_DATE',
   { label: string; fields: Array<FilterItem> }
 >;
 
@@ -70,7 +78,7 @@ export const useMultiFilters = (props?: {
 
   const fieldControl = (field: keyof typeof filterValues) => ({
     value: filterValues[field] as string,
-    onChange: (e: ChangeEvent<HTMLInputElement>) =>
+    onChange: (e: ChangeEvent<HTMLInputElement> | SelectChangeEvent) =>
       setFilterValues({ ...filterValues, [field]: e.target?.value })
   });
 
@@ -79,6 +87,29 @@ export const useMultiFilters = (props?: {
     onChange: (date: Date | null) =>
       setFilterValues({ ...filterValues, [field]: date })
   });
+
+  const debtPositionTypeOrgsControl = (field: keyof typeof filterValues) => {
+    const {
+      state: { organizationId }
+    } = useStore();
+
+    const { data } = getDebtPositionTypeOrgs({
+      organizationId
+    });
+
+    const options = data
+      ?.slice()
+      .sort((a, b) => a.description.localeCompare(b.description))
+      .map((type) => ({
+        label: type.description,
+        value: type.code
+      }));
+
+    return {
+      ...fieldControl(field),
+      options
+    };
+  };
 
   const fullFilterMap: FilterMap = {
     ACCOUNTING_DATE: {
@@ -412,6 +443,165 @@ export const useMultiFilters = (props?: {
           }
         }
       ]
+    },
+    ASSESSMENT_NAME: {
+      label: t('assessment.filters.assessmentName'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('assessment.filters.assessmentName'),
+          ...fieldControl('ASSESSMENT_NAME')
+        }
+      ]
+    },
+    DEBT_TYPE: {
+      label: t('assessment.filters.debtType'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.select,
+          label: t('assessment.filters.debtType'),
+          ...debtPositionTypeOrgsControl('DEBT_TYPE')
+        }
+      ]
+    },
+    ASSESSMENT_STATUS: {
+      label: t('assessment.filters.status'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.select,
+          label: t('assessment.filters.status'),
+          options: [
+            {
+              label: t('assessment.statusOptions.ACTIVE'),
+              value: 'ACTIVE'
+            },
+            { label: t('assessment.statusOptions.CLOSED'), value: 'CLOSED' },
+            {
+              label: t('assessment.statusOptions.CANCELLED'),
+              value: 'CANCELLED'
+            }
+          ],
+          ...fieldControl('ASSESSMENT_STATUS')
+        }
+      ]
+    },
+    LAST_UPDATE_DATE: {
+      label: t('assessment.filters.lastUpdateDate'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.dateRange,
+          label: t('assessment.filters.lastUpdateDate'),
+          from: {
+            label: t('dates.from'),
+            ...dateControl('LAST_UPDATE_DATE_FROM')
+          },
+          to: {
+            label: t('dates.to'),
+            ...dateControl('LAST_UPDATE_DATE_TO')
+          }
+        }
+      ]
+    },
+    OFFICE_CODE: {
+      label: t('commons.filters.officeCode'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('commons.filters.officeCode'),
+          ...fieldControl('OFFICE_CODE')
+        }
+      ]
+    },
+    OFFICE_DESCRIPTION: {
+      label: t('commons.filters.officeDescription'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('commons.filters.officeDescription'),
+          ...fieldControl('OFFICE_DESCRIPTION')
+        }
+      ]
+    },
+    ASSESSMENT_CODE: {
+      label: t('commons.filters.assessmentCode'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('commons.filters.assessmentCode'),
+          ...fieldControl('ASSESSMENT_CODE')
+        }
+      ]
+    },
+    ASSESSMENT_DESCRIPTION: {
+      label: t('commons.filters.assessmentDescription'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('commons.filters.assessmentDescription'),
+          ...fieldControl('ASSESSMENT_DESCRIPTION')
+        }
+      ]
+    },
+    SECTION_CODE: {
+      label: t('commons.filters.sectionCode'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('commons.filters.sectionCode'),
+          ...fieldControl('SECTION_CODE')
+        }
+      ]
+    },
+    SECTION_DESCRIPTION: {
+      label: t('commons.filters.sectionDescription'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.textField,
+          label: t('commons.filters.sectionDescription'),
+          ...fieldControl('SECTION_DESCRIPTION')
+        }
+      ]
+    },
+    DEBT_POSITION_TYPE_ORG_CODE: {
+      label: t('commons.filters.debtPositionType'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.select,
+          name: 'DEBT_POSITION_TYPE_ORG_CODE',
+          label: t('commons.filters.debtPositionType'),
+          ...debtPositionTypeOrgsControl('DEBT_POSITION_TYPE_ORG_CODE')
+        }
+      ]
+    },
+    OPERATING_YEAR: {
+      label: t('commons.filters.operatingYear'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.dateRange,
+          label: t('commons.filters.operatingYear'),
+          isYear: true,
+          from: {
+            label: t('commons.filters.operatingYear'),
+            ...dateControl('OPERATING_YEAR')
+          }
+        }
+      ]
+    },
+    STATUS: {
+      label: t('commons.filters.status'),
+      fields: [
+        {
+          type: COMPONENT_TYPE.select,
+          name: 'STATUS',
+          label: t('commons.filters.status'),
+          ...fieldControl('STATUS'),
+          options: Object.values(AssessmentsRegistryStatus).map((value) => ({
+            label: t(`commons.status.${value}`),
+            value
+          })),
+          required: true
+        }
+      ]
     }
   };
 
@@ -427,32 +617,56 @@ export const useMultiFilters = (props?: {
   ];
 
   const classificationsFilters: Array<keyof FilterMap> = [
-    'IUV',
-    'IUR',
-    'IUD',
-    'IUF',
-    'LAST_CLASSIFICATION_DATE',
-    'REGULATION_DATE',
-    'REGULATION_UNIQUE_IDENTIFIER',
-    'REMITTANCE_INFORMATION',
-    'PSP_COMPANY_NAME',
-    'PAYMENT_DATE',
-    'BILL_DATE',
-    'REGION_VALUE_DATE',
     'ACCOUNT_REGISTRY_CODE',
     'AMOUNT',
-    'PAY_DATE'
+    'BILL_DATE',
+    'IUD',
+    'IUF',
+    'IUR',
+    'IUV',
+    'LAST_CLASSIFICATION_DATE',
+    'PAY_DATE',
+    'PAYMENT_DATE',
+    'PSP_COMPANY_NAME',
+    'REGION_VALUE_DATE',
+    'REGULATION_DATE',
+    'REGULATION_UNIQUE_IDENTIFIER',
+    'REMITTANCE_INFORMATION'
   ];
+
+  const assessmentFilters: Array<keyof FilterMap> = [
+    'ASSESSMENT_NAME',
+    'DEBT_TYPE',
+    'ASSESSMENT_STATUS',
+    'LAST_UPDATE_DATE',
+    'IUV'
+  ];
+
+  const assessmentRegistryFilters: Array<keyof FilterMap> = [
+    'ASSESSMENT_CODE',
+    'ASSESSMENT_DESCRIPTION',
+    'OFFICE_CODE',
+    'OFFICE_DESCRIPTION',
+    'SECTION_CODE',
+    'SECTION_DESCRIPTION',
+    'STATUS',
+    'OPERATING_YEAR',
+    'DEBT_POSITION_TYPE_ORG_CODE'
+  ];
+
+  const categoryMap = {
+    [FilterCategory.TREASURY]: treasuryFilters,
+    [FilterCategory.CLASSIFICATIONS]: classificationsFilters,
+    [FilterCategory.ASSESSMENTS_REGISTRY]: assessmentRegistryFilters,
+    [FilterCategory.ASSESSMENT]: assessmentFilters
+  };
 
   const getFilteredMap = (): FilterMap => {
     if (!props?.filterCategory) {
       return fullFilterMap;
     }
 
-    const allowedFilters =
-      props.filterCategory === FilterCategory.TREASURY
-        ? treasuryFilters
-        : classificationsFilters;
+    const allowedFilters = categoryMap[props.filterCategory];
 
     return Object.fromEntries(
       Object.entries(fullFilterMap).filter(([key]) =>

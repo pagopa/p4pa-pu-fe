@@ -45,6 +45,17 @@ vi.mock('react-router', async () => {
   };
 });
 
+vi.mock('../../store/OrganizationIdStore', () => ({
+  organizationIdState: {
+    state: { value: 123 }
+  },
+  setOrganizationId: vi.fn()
+}));
+
+vi.mock('@preact/signals-react/runtime', () => ({
+  useSignals: vi.fn()
+}));
+
 describe('Header component', () => {
   const mockNavigate = vi.fn();
   const mockOnAssistanceClick = vi.fn();

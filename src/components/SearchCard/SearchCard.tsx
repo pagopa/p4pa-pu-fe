@@ -5,13 +5,12 @@ import FilterContainer, {
 } from '../FilterContainer/FilterContainer';
 import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
 import { ButtonProps, FormComponent } from '../FormComponent';
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { useTelematicReceiptsFilters } from '../../hooks/useTelematicReceiptsFilters';
 import { useReportingFilters } from '../../hooks/useReportingFilters';
 import { selectedFilters } from '../../store/FilterStore';
 import MultifilterInitSelect from '../MultiFilter/MultifilterInitSelect';
-import i18n from '../../translations/i18n';
 
 export type TabsConfig = {
   label: string;
@@ -137,6 +136,12 @@ const SearchCard = ({
         </Tabs>
       )}
 
+      {render && (
+        <Grid item lg={12} mb={2}>
+          {render}
+        </Grid>
+      )}
+
       <Grid container alignItems="center">
         {activeFields.length > 0 && (
           <FilterContainer
@@ -162,12 +167,6 @@ const SearchCard = ({
             />
           </Grid>
         )}
-
-        {render && (
-          <Grid item lg={12}>
-            {render}
-          </Grid>
-        )}
       </Grid>
 
       <Stack direction="row" justifyContent="flex-end">
@@ -184,13 +183,3 @@ const SearchCard = ({
 };
 
 export default SearchCard;
-export const ErrorMessage: ReactNode = (
-  <Typography
-    variant="body2"
-    color="error"
-    mt={2}
-    data-testid="multifilters-error-text"
-  >
-    {i18n.t('commons.filters.atLeastOneFilter')}
-  </Typography>
-);

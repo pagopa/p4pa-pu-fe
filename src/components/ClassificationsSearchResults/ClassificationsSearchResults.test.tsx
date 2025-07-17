@@ -1,7 +1,7 @@
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach } from 'vitest';
-import ClassificationsSearchResults from './ClassificationsSearchResults';
 import { ClassificationsEnum } from '../../../generated/data-contracts';
+import ClassificationsSearchResults from '.';
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
@@ -29,8 +29,27 @@ vi.mock('../../hooks/useMultiFilters', () => ({
   }
 }));
 
-vi.mock('../../hooks/useClassificationsSearch', () => ({
-  default: () => ({
+vi.mock('../../store/GlobalStore', () => ({
+  useStore: () => ({
+    state: {
+      organizationId: 1
+    }
+  }),
+  StoreProvider: ({ children }: { children: React.ReactNode }) => children
+}));
+
+vi.mock('../../api/classifications', () => ({
+  getClassifications: () => ({
+    mutate: vi.fn(),
+    data: null,
+    isLoading: false,
+    isError: false,
+    error: null
+  })
+}));
+
+vi.mock('../../hooks/useSearch', () => ({
+  useSearch: () => ({
     query: { data: {} },
     setSort: vi.fn(),
     handlePaginationChange: vi.fn(),

@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import { Stack } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import TaxonomyDataGrid from './TaxonomyDataGrid';
-import useTaxonomySearch from '../../hooks/useTaxonomySearch';
 import { TaxonomyFilter } from '../../components/TaxonomyFilter';
 import { useLocation } from 'react-router';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -10,6 +9,8 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TaxonomyFilters } from '../../models/Taxonomy';
 import { FormComponent } from '../../components/FormComponent';
+import { getTaxonomies } from '../../api/taxonomy';
+import { useSearch } from '../../hooks/useSearch';
 
 const TaxonomySearchResults = () => {
   const { t } = useTranslation();
@@ -32,8 +33,11 @@ const TaxonomySearchResults = () => {
     defaultValues: initialFilters
   });
 
-  const taxonomies = useTaxonomySearch({
-    filterValues: form.getValues()
+  const query = getTaxonomies();
+
+  const taxonomies = useSearch({
+    filters: form.getValues(),
+    query
   });
 
   const onSubmit = () => {

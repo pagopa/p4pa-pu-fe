@@ -4,7 +4,7 @@ import { PaymentOption } from './paymentTypes';
 
 export type DebtPositionType = {
   label: string;
-  value: number;
+  value: string | number;
   flagMandatoryDueDate?: boolean;
 };
 

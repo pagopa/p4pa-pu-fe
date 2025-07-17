@@ -30,7 +30,8 @@ describe('useClassificationExport', () => {
     payment: { from: null, to: null },
     reporting: { from: null, to: null },
     accounting: { from: null, to: null },
-    value: { from: null, to: null }
+    value: { from: null, to: null },
+    payDate: { from: null, to: null }
   });
 
   describe('Form Management', () => {
@@ -292,11 +293,11 @@ describe('useClassificationExport', () => {
         exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
         fileVersion: 'v1.0',
         filterFields: {
-          iuv: 'IUV123456',
+          iuv: ['IUV123456'],
           iud: 'IUD123456',
           iuf: 'IUF123456',
-          iur: 'IUR123456',
-          label: LabelEnum.DOPPI,
+          iur: ['IUR123456'],
+          label: [LabelEnum.DOPPI],
           remittanceInformation: 'Test remittance',
           billAmountCents: 10050,
           accountRegistryCode: 'ACC123',
@@ -366,7 +367,7 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      expect(payload.filterFields.iur).toBe('IUR123');
+      expect(payload.filterFields.iur).toStrictEqual(['IUR123']);
     });
 
     it('should use reportingIur when iur is empty', () => {
@@ -385,7 +386,45 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      expect(payload.filterFields.iur).toBe('REPORTING_IUR456');
+      expect(payload.filterFields.iur).toStrictEqual(['REPORTING_IUR456']);
+    });
+
+    it('should use iur when reportingIur is empty', () => {
+      const { result } = renderHook(() =>
+        useClassificationExport(mockOrganizationId)
+      );
+
+      const formData = {
+        ...createEmptyFormData(),
+        fileVersion: 'v1.0',
+        iur: 'IUR123',
+        reportingIur: ''
+      };
+
+      const emptyDateRanges = createEmptyDateRanges();
+
+      const payload = result.current.buildApiPayload(formData, emptyDateRanges);
+
+      expect(payload.filterFields.iur).toStrictEqual(['IUR123']);
+    });
+
+    it('should not include iur when both are empty', () => {
+      const { result } = renderHook(() =>
+        useClassificationExport(mockOrganizationId)
+      );
+
+      const formData = {
+        ...createEmptyFormData(),
+        fileVersion: 'v1.0',
+        iur: '',
+        reportingIur: ''
+      };
+
+      const emptyDateRanges = createEmptyDateRanges();
+
+      const payload = result.current.buildApiPayload(formData, emptyDateRanges);
+
+      expect(payload.filterFields.iur).toBeUndefined();
     });
 
     it('should convert billAmountCents from euros to cents', () => {

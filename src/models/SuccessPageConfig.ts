@@ -140,5 +140,17 @@ export const SuccessPageConfig: SuccessOpts = {
         actionID: 'CLASSIFICATIONS_EXPORT_OVERVIEW'
       }
     ]
+  },
+  'assessment-create': {
+    title: 'assessmentCreate.success.title',
+    description: 'assessmentCreate.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'assessmentCreate.success.goToDetail',
+        customNavigation: 'ASSESSMENT_DETAIL'
+      }
+    ]
   }
 };

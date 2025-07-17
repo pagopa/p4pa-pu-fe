@@ -1,8 +1,8 @@
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { useLocation } from 'react-router';
-import TelematicReceiptSearchResults from './TelematicReceiptSearchResults';
 import FilterContainer from '../FilterContainer/FilterContainer';
+import TelematicReceiptSearchResults from '../../routes/TelematicReceiptSearchResults';
 
 // Mock dependencies
 vi.mock('react-i18next', () => ({
@@ -16,16 +16,36 @@ vi.mock('react-router', async (importOriginal) => ({
   useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
 }));
 
-vi.mock('../../hooks/useTelematicReceiptSearch', () => ({
-  default: vi.fn(() => ({
-    query: { data: { content: [], totalElements: 0 } },
+vi.mock('../../store/GlobalStore', () => ({
+  useStore: vi.fn(() => ({
+    state: { organizationId: 123 }
+  })),
+  StoreProvider: ({ children }: { children: React.ReactNode }) => children
+}));
+
+vi.mock('../../api/receipts', () => ({
+  getReceipts: vi.fn(() => ({
+    mutate: vi.fn(),
+    mutateAsync: vi.fn(),
+    data: null,
+    isLoading: false,
+    isPending: false,
+    error: null
+  }))
+}));
+
+vi.mock('../../hooks/useSearch', () => ({
+  useSearch: vi.fn(() => ({
+    filters: {},
+    query: {
+      data: null,
+      isLoading: false,
+      isPending: false,
+      error: null
+    },
     applyFilters: vi.fn(),
-    handleFilterChange: vi.fn(),
-    handlePageChange: vi.fn(),
-    handlePageSizeChange: vi.fn(),
     setSort: vi.fn(),
-    pagination: { page: 0, size: 10 },
-    filterValues: {}
+    handlePaginationChange: vi.fn()
   }))
 }));
 
@@ -47,6 +67,10 @@ vi.mock(
   })
 );
 
+vi.mock('./SearchResultsDataGrid', () => ({
+  default: () => <div data-testid="search-results-grid" />
+}));
+
 describe('TelematicReceiptSearchResults', () => {
   it('should render correctly', () => {
     (useLocation as Mock).mockReturnValue({ state: { filters: {} } });
@@ -56,7 +80,8 @@ describe('TelematicReceiptSearchResults', () => {
     expect(
       screen.getByText('commons.routes.TELEMATIC_RECEIPT_SEARCH_RESULTS')
     ).toBeInTheDocument();
-    expect(screen.getByText('commons.iuv')).toBeInTheDocument();
+
+    expect(screen.getByTestId('search-results-grid')).toBeInTheDocument();
   });
 
   it('should pass correct props to FilterContainer', () => {

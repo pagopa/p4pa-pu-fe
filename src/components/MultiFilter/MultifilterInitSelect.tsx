@@ -12,6 +12,15 @@ const MultifilterInitSelect = ({
 }: MultifilterInitSelectProps) => {
   const { t } = useTranslation();
 
+  const handleChange = (event: { target: { value: string } }) => {
+    const value = event.target.value;
+    // Add the selected filter - the component will disappear automatically
+    // when selectedFilters.value.length > 0 in SearchCard
+    if (value) {
+      addFilterRow(value as KeyofFilterMap);
+    }
+  };
+
   return (
     <FormControl fullWidth size="small">
       <InputLabel
@@ -24,14 +33,11 @@ const MultifilterInitSelect = ({
         labelId="multifilters-init-choose-label"
         data-testid="multifilters-init-choose-select"
         id="multifilters-init-choose-select"
+        value=""
+        onChange={handleChange}
       >
         {Object.entries(multiFilterConfig).map(([key, obj]) => (
-          <MenuItem
-            key={key}
-            value={key}
-            data-testid={key}
-            onClick={() => addFilterRow(key as KeyofFilterMap)}
-          >
+          <MenuItem key={key} value={key} data-testid={key}>
             {obj.label}
           </MenuItem>
         ))}

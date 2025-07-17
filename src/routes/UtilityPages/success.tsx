@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useLocation } from 'react-router';
+import { useNavigate, useLocation, generatePath } from 'react-router';
 import { PageRoutes } from '../../routes';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import { theme } from '@pagopa/mui-italia';
@@ -25,7 +25,17 @@ export const SuccessPage = () => {
 
   const buttonConfig = pageConfig?.buttonConfig?.map((btn) => {
     const handleClick = () => {
-      navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
+      if (
+        btn.customNavigation === 'ASSESSMENT_DETAIL' &&
+        location?.state?.assessmentId
+      ) {
+        const detailPath = generatePath(PageRoutes.ASSESSMENT_DETAIL, {
+          id: location.state.assessmentId.toString()
+        });
+        navigate(detailPath);
+      } else {
+        navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
+      }
     };
 
     return {

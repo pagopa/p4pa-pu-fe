@@ -98,10 +98,20 @@ const DetailContainer = ({
                 );
               }
               if (item.valueType === 'date') {
+                if (!item.value || item.value === '') return '-';
+
+                const dateValue = new Date(item.value);
+                if (isNaN(dateValue.getTime())) return '-';
+
                 const formattedDate = formatDate(`${item.value}`);
                 return formattedDate || '-';
               }
               if (item.valueType === 'dateTime') {
+                if (!item.value || item.value === '') return '-';
+
+                const dateValue = new Date(item.value);
+                if (isNaN(dateValue.getTime())) return '-';
+
                 const formattedDateTime = formatDateTime(`${item.value}`);
                 return formattedDateTime || '-';
               }

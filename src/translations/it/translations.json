@@ -13,6 +13,19 @@
       "titleIUV": "Avvisi (IUV)"
     }
   },
+  "AssessmentRegistryDetail": {
+    "description": "Ecco i dettagli del capitolo.",
+    "updatedAt": "Ultimo aggiornamento il",
+    "operatingYear": "Anno esercizio",
+    "status": "Stato ufficio",
+    "sectionDescription": "Capitolo",
+    "sectionCode": "Codice capitolo",
+    "officeCode": "Codice Ufficio",
+    "officeDescription": "Denominazione Ufficio",
+    "assessmentCode": "Codice Accertamento Capitolo",
+    "assessmentDescription": "Denominazione Accertamento Capitolo",
+    "debtPositionType": "Tipo dovuto"
+  },
   "FileUploaderFlowImport": {
     "debt-positions": {
       "description": "Carica qui il file .zip con i Dovuti"
@@ -33,6 +46,7 @@
     }
   },
   "classifications": {
+    "title": "Dettaglio Pagamento",
     "description": "Ricerca o visualizza classificazioni",
     "search": "Cerca gli stati dei pagamenti",
     "searchdescription": "Controlla se i pagamenti sono stati debitamente notificati, rendicontati e riconciliati oppure verifica degli errori. Inserisci al meno un filtro per avviare la ricerca.",
@@ -56,6 +70,8 @@
           "receiptPaymentDateTime": "Data Esito",
           "receiptDebtorFullName": "Anagrafica attestante",
           "receiptDebtorFiscalCode": "Codice fiscale attestante",
+          "receiptPayerExecutorFullName": "Anagrafica versante",
+          "receiptPayerExecutorFiscalCode": "Codice fiscale versante",
           "iuv": "IUV",
           "iud": "IUD",
           "iur": "IUR",
@@ -96,9 +112,202 @@
           "provisionalCode": "Codice provvisorio",
           "link": "Vedi Bolletta"
         }
+      },
+      "statusBar": {
+        "status": {
+          "alerts": {
+            "correctlyReported": {
+              "title": "Il pagamento è stato notificato e riconciliato",
+              "description": "Sono disponibili la ricevuta telematica, il flusso delle notifiche, la rendicontazione tramite PagoPA."
+            },
+            "reported": {
+              "title": "Il pagamento è stato rendicontato",
+              "description": "Sono disponibili la ricevuta telematica e la rendicontazione tramite PagoPA."
+            },
+            "punctualReversal": {
+              "title": "Il pagamento ha un riversamento puntuale",
+              "description": "Sono disponibili la ricevuta telematica e il giornale di cassa."
+            },
+            "notified": {
+              "title": "Il pagamento è stato notificato",
+              "description": "Sono disponibili la ricevuta telematica, il flusso delle notifiche, la rendicontazione tramite PagoPA e il giornale di cassa."
+            },
+            "cumulativeReversal": {
+              "title": "Il pagamento ha un riversamento cumulativo",
+              "description": "Sono disponibili la ricevuta telematica, la rendicontazione tramite PagoPA e il giornale di cassa."
+            },
+            "incorrectlyReported": {
+              "title": "Pagamento non correttamente rendicontato",
+              "description": "È disponibile la ricevuta telematica, ma manca il flusso con i dati di rendicontazione."
+            },
+            "incorrectlyNotified": {
+              "title": "Pagamento non correttamente notificato",
+              "description": "È disponibile la ricevuta telematica, ma manca il flusso delle notifiche."
+            },
+            "incorrectlyReversed": {
+              "title": "La rendicontazione non è stata correttamente riversata.",
+              "description": "È disponibile la rendicontazione tramite PagoPA, ma manca il giornale di cassa."
+            },
+            "duplicatePayments": {
+              "title": "Pagamenti doppi",
+              "description": "Pagamenti doppi"
+            },
+            "unexecutedReporting": {
+              "title": "Rendicontazione relativa a un pagamento non eseguito",
+              "description": "È disponibile la rendicontazione tramite PagoPA, ma manca la ricevuta telematica."
+            },
+            "unrecognizedReversal": {
+              "title": "Riversamento non rendicontato o relativo a un pagamento non eseguito",
+              "description": "È disponibile il giornale di cassa, ma manca la ricevuta telematica o il flusso con i dati di rendicontazione tramite PagoPA."
+            },
+            "differentAmountReversal": {
+              "title": "Rendicontazione con riversamento presente, riversato ma con importo differente",
+              "description": "È disponibile il flusso con i dati di rendicontazione tramite PagoPA e il giornale di cassa, ma hanno importi diversi."
+            },
+            "notifiedNotExecuted": {
+              "title": "Pagamento notificato ma non eseguito",
+              "description": "È disponibile il flusso delle notifiche, ma manca la ricevuta telematica."
+            },
+            "unrecognizedTreasuryReversal": {
+              "title": "Riversamento di tesoreria non riconosciuto",
+              "description": "È disponibile il giornale di cassa, ma manca il flusso con i dati di rendicontazione tramite PagoPA."
+            },
+            "unknownTreasuryReversals": {
+              "title": "Riversamenti di tesoreria sconosciuti",
+              "description": "È presente il giornale di cassa ma non il flusso di Rendicontazione"
+            },
+            "default": {
+              "title": "Stato di riconciliazione",
+              "description": "Informazioni sui dati disponibili per questo pagamento."
+            }
+          },
+          "reconciliationState": {
+            "title": "Stato Riconciliazione"
+          },
+          "states": {
+            "paid": {
+              "label": "Pagato",
+              "descriptionActive": "È presente la Ricevuta",
+              "descriptionInactive": "Ricevuta assente"
+            },
+            "reported": {
+              "label": "Rendicontato",
+              "descriptionActive": "È presente l'ID Rendicontazione",
+              "descriptionInactive": "Flussi di Rendicontazione assente"
+            },
+            "collected": {
+              "label": "Incassato",
+              "descriptionActive": "È presente il Giornale di cassa",
+              "descriptionInactive": "Giornale di cassa assente"
+            }
+          }
+        }
       }
     }
   },
+  "assessment": {
+    "title": "Accertamenti pagamenti",
+    "assessment": "Accertamento ",
+    "search": "Cerca accertamenti",
+    "searchDescription": "Cerca dei accertamenti e controlla l'andamento delle entrate.",
+    "chapters": "Capitoli",
+    "chaptersDescription": "Crea oppure visualizza capitoli di bilancio per distinguere le entrate per categoria.",
+    "createAssessment": "Crea accertamento",
+    "createChapter": "Crea nuovo capitolo",
+    "seeAllChapters": "Vedi tutti i capitoli",
+    "searchResults": {
+      "title": "Risultato ricerca accertamenti",
+      "description": "Questi sono i risultati della tua ricerca.",
+      "noResults": "Nessun risultato trovato per i filtri selezionati.",
+      "columns": {
+        "assessmentName": "Nome accertamento",
+        "debtType": "Tipo dovuto",
+        "createdBy": "Creato da",
+        "updatedAt": "Aggiornato il",
+        "status": "Stato"
+      }
+    },
+    "filters": {
+      "assessmentName": "Nome accertamento",
+      "debtType": "Tipo dovuto",
+      "status": "Stato",
+      "lastUpdateDate": "Data ultimo aggiornamento"
+    },
+    "statusOptions": {
+      "ACTIVE": "In corso",
+      "CLOSED": "Chiuso",
+      "CANCELLED": "Eliminato"
+    }
+  },
+  "assessmentCreate": {
+    "configuration": {
+      "title": "Configurazione accertamento",
+      "step1": {
+        "title": "Dettaglio accertamento",
+        "fields": {
+          "name": {
+            "label": "Nome accertamento",
+            "placeholder": "Accertamento",
+            "required": "Il campo nome è obbligatorio"
+          },
+          "debtPositionType": {
+            "label": "Tipo dovuto",
+            "placeholder": "Dovuto",
+            "required": "Selezionare un tipo di dovuto"
+          }
+        }
+      },
+      "step2": {
+        "addPayments": {
+          "radioLabel": "Vuoi aggiungere pagamenti nell'accertamento?",
+          "options": {
+            "yes": "Si",
+            "no": "No"
+          }
+        }
+      }
+    },
+    "description": "Inserisci i parametri per creare un nuovo accertamento.",
+    "title": "Crea un nuovo accertamento",
+    "stepper": {
+      "step1": "Configurazione accertamento",
+      "step2": "Aggiungi pagamenti"
+    },
+    "success": {
+      "title": "L'accertamento \"{{assessmentName}}\" è stato creato!",
+      "description": "Puoi trovarlo nella sezione accertamento pagamenti, dove puoi consultarlo in qualsiasi momento.",
+      "goToDetail": "Visualizza accertamento"
+    },
+    "error": {
+      "creationFailed": "Errore durante la creazione dell'assessment",
+      "nameAlreadyPresent": "Esiste già un accertamento con lo stesso Nome"
+    }
+  },
+  "assessmentDetail": {
+    "debtType": "Tipo dovuto",
+    "createdBy": "Creato da",
+    "paymentsAssociated": "Pagamenti associati",
+    "deleteDialog": {
+      "title": "Conferma eliminazione",
+      "description": "Sei sicuro di voler eliminare questo accertamento? L'operazione non può essere annullata."
+    },
+    "paymentDetail": {
+      "title": "Dettaglio pagamento",
+      "summary": "Riepilogo",
+      "paymentInfo": "Informazione sul pagamento",
+      "iuv": "Codice Avviso (IUV)",
+      "amount": "Importo",
+      "paymentObject": "Oggetto del pagamento",
+      "duetype": "Tipo dovuto",
+      "debtor": "Debitore",
+      "fiscalCode": "CF / Partita IVA",
+      "paymentDate": "Data esito",
+      "psp": "Gestore della transazione (PSP)",
+      "iud": "IUD",
+      "iur": "IUR"
+    }
+  },
+
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
@@ -170,8 +379,9 @@
   },
   "commons": {
     "info": "Informazioni",
-    "addfilter": "Aggiunge filtro",
+    "add": "Aggiungi",
     "all": "Tutti",
+    "addfilter": "Aggiunge filtro",
     "amount": "Importo",
     "anonymousFiscalCode": "Codice Fiscale Anonimo",
     "auditor": "Attestante",
@@ -180,6 +390,7 @@
     "breadcrumbs": "Elementi di navigazione breadcrumbs",
     "breadcrumbsElement": "Elemento breadcrumb",
     "breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
+    "cancel": "Annulla",
     "close": "Chiudi",
     "collectionReason": "Motivo Riscossione",
     "continue": "Continua",
@@ -257,7 +468,7 @@
         "label": "Importo",
         "value": "Importo"
       },
-      "atLeastOneFilter": "Inserire almeno un filtro",
+      "atLeastOneFilter": "Inserisci almeno uno dei parametri per avviare la ricerca",
       "bill": {
         "code": "Codice",
         "date": {
@@ -269,7 +480,7 @@
         "code": "Codice",
         "label": "Codice Documento"
       },
-      "filterResults": "Filtra",
+      "filterResults": "Cerca",
       "filtersField": "Filtri",
       "iuv": {
         "code": "Codice IUV",
@@ -303,7 +514,17 @@
       "valueDate": {
         "date": "Data Valuta",
         "label": "Data Valuta"
-      }
+      },
+      "officeCode": "Codice ufficio",
+      "officeDescription": "Denominazione ufficio",
+      "assessmentCode": "Codice accertamento",
+      "assessmentDescription": "Denominazione accertamento",
+      "sectionCode": "Codice capitolo",
+      "sectionDescription": "Capitolo",
+      "status": "Stato ufficio",
+      "debtPositionType": "Tipo dovuto",
+      "typeDescription": "Descrizione tipo dovuto",
+      "operatingYear": "Anno esercizio"
     },
     "fiscalCode": "Codice Fiscale",
     "fiscalCodeorVat": "CF / Partita IVA",
@@ -380,12 +601,17 @@
     "personLegal": "Persona giuridica",
     "postAccount": "Conto Corrente Postale",
     "reason": "Causale",
+    "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
+      "ASSESSMENT": "Accertamento pagamenti",
+      "ASSESSMENT_CREATION": "Crea un nuovo accertamento",
+      "ASSESSMENT_REGISTRY_SEARCH_RESULTS": "Capitoli",
       "BACKOFFICE": "Backoffice",
       "BACKOFFICE_REGISTRIES": "Giornale degli eventi",
       "BACKOFFICE_REGISTRY_DETAIL": "Dettaglio evento",
+      "BACKOFFICE_REGISTRY_LIST": "Risultato ricerca",
       "BACKOFFICE_TAXONOMY": "Tassonomia",
       "BACKOFFICE_TAXONOMY_INDEX": "Tassonomia",
       "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
@@ -394,6 +620,8 @@
       "CLASSIFICATIONS": "Classificazione pagamenti",
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
+      "ASSESSMENT_SEARCH_RESULTS": "Risultato ricerca",
+      "ASSESSMENT_DETAIL": "Dettaglio",
       "CONSERVATION": "Conservazione",
       "CONSERVATION_INDEX": "Pagina principale",
       "DEBT_POSITIONS": "Posizioni debitorie",
@@ -475,6 +703,8 @@
     },
     "status": {
       "ALL": "Tutti",
+      "ACTIVE": "Attivo",
+      "INACTIVE": "Disattivo",
       "COMPLETED": "Elaborato",
       "ERROR": "Errore",
       "EXPIRED": "Scaduto",
@@ -498,10 +728,12 @@
     "taxCode": "Codice Tassonomico",
     "taxonomy": "Tassonomia",
     "to": "Al",
+    "resultFrom": "Esito dal",
     "transactionManager": "Gestore della transazione (PSP)",
     "unauthorized": "Non sei autorizzato ad accedere alla sezione, contatta il gestore dei permessi",
     "unknownOrganization": "Ente senza nome",
     "uploadedFrom": "Caricati dal",
+    "updatedFrom": "Aggiornato dal",
     "view": "Visualizza",
     "validation": {
       "selectAtLeastOneOption": "Seleziona almeno un'opzione",
@@ -527,6 +759,15 @@
       "to": "Data non valida"
     },
     "year": "Anno"
+  },
+  "assessmentsRegistrySearchResults": {
+    "sectionCode": "Codice Capitolo",
+    "operatingYear": "Anno",
+    "debtPositionTypeOrgCode": "Tipo dovuto",
+    "assessmentCode": "Codice accertamento",
+    "officeCode": "Codice ufficio",
+    "status": "Stato ufficio",
+    "uploadFlow": "Crea nuovo capitolo"
   },
   "debtPositionCreateWizard": {
     "addDebtor": {
@@ -1345,6 +1586,13 @@
     "tabs": {
       "sil": "Eventi SIL",
       "nodo": "Eventi nodo PagoPA"
+    },
+    "list": {
+      "title": "Risultato ricerca",
+      "date": "Data evento",
+      "outcome": "Esito",
+      "iuv": "IUV",
+      "event": "Evento"
     },
     "searchIUVDescription": "IUV",
     "searchEventDescription": "Evento",

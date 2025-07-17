@@ -23,6 +23,7 @@ import DnsIcon from '@mui/icons-material/Dns';
 import PeopleIcon from '@mui/icons-material/People';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
+import AllInboxIcon from '@mui/icons-material/AllInbox';
 import { sidebarStyles } from './sidebar.styles';
 import { PageRoutes } from '../../routes';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
@@ -95,6 +96,12 @@ export const Sidebar: React.FC = () => {
       label: t('commons.routes.CLASSIFICATIONS'),
       icon: PlaylistAddCheckIcon,
       route: PageRoutes.CLASSIFICATIONS,
+      end: true
+    },
+    {
+      label: t('commons.routes.ASSESSMENT'),
+      icon: AllInboxIcon,
+      route: PageRoutes.ASSESSMENT,
       end: true
     }
   ];

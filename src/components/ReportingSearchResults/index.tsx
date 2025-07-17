@@ -1,2 +1,92 @@
-import ReportingSearchResults from './ReportingSearchResults';
+import { useLocation } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { Grid, Stack, useTheme } from '@mui/material';
+import TitleComponent from '../TitleComponent/TitleComponent';
+import SearchResultsDataGrid from './ReportingDataGrid';
+import { BaseFilterValues } from '../../models/Filters';
+import { PagedPaymentsReportingView } from '../../../generated/data-contracts';
+import useReportingFilters from '../../hooks/useReportingFilters';
+import FilterContainer from '../FilterContainer/FilterContainer';
+import { useState } from 'react';
+import { noFilterSetted } from '../../utils/filtersValidation';
+import { useStore } from '../../store/GlobalStore';
+import { getPaymentsReporting } from '../../api/getPaymentsReporting';
+import { useSearch } from '../../hooks/useSearch';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+
+export type LocationState = {
+  filters: BaseFilterValues;
+};
+
+const ReportingSearchResults = () => {
+  const theme = useTheme();
+  const { t } = useTranslation();
+  const [error, setError] = useState(false);
+
+  const { state } = useLocation() as { state?: LocationState };
+
+  const initialFilters = state?.filters ?? {};
+
+  const [filterValues, setFilterValues] = useState(initialFilters);
+
+  const {
+    state: { organizationId }
+  } = useStore();
+
+  const query = getPaymentsReporting({ organizationId });
+
+  const reporting = useSearch({
+    filters: filterValues,
+    query
+  });
+
+  const applyFilters = () => {
+    if (!noFilterSetted(filterValues)) {
+      reporting.applyFilters();
+      setError(false);
+    } else {
+      setError(true);
+    }
+  };
+
+  const { filters } = useReportingFilters({
+    onFilter: applyFilters
+  });
+
+  return (
+    <Stack>
+      <TitleComponent
+        title={t('commons.routes.REPORTING_SEARCH_RESULTS')}
+        description={t('reportingSearchResults.description')}
+      />
+      <Stack gap={3}>
+        {error && <ErrorMessage variant="outlined" />}
+        <FilterContainer
+          items={filters}
+          values={filterValues}
+          onChange={(field, value) =>
+            setFilterValues({ ...filterValues, [field]: value })
+          }
+        />
+        <Grid
+          container
+          p={2}
+          height="100%"
+          sx={{
+            bgcolor: theme.palette.grey[200],
+            overflow: 'auto'
+          }}
+          aria-label="results-table"
+        >
+          <SearchResultsDataGrid
+            data={reporting.query.data as PagedPaymentsReportingView}
+            onSortChange={reporting.setSort}
+            onPaginationChange={reporting.handlePaginationChange}
+          />
+        </Grid>
+      </Stack>
+    </Stack>
+  );
+};
+
 export default ReportingSearchResults;

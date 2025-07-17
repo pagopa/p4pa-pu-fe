@@ -3,8 +3,8 @@ import { theme } from '@pagopa/mui-italia';
 import { PropsWithChildren } from 'react';
 
 type Props = {
-  title: string;
-  subtitle: string;
+  title?: string;
+  subtitle?: string;
   alertMessage?: string;
 };
 
