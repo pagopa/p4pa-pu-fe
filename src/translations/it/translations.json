@@ -205,6 +205,7 @@
   },
   "assessment": {
     "title": "Accertamenti pagamenti",
+    "assessment": "Accertamento ",
     "search": "Cerca accertamenti",
     "searchDescription": "Cerca dei accertamenti e controlla l'andamento delle entrate.",
     "chapters": "Capitoli",
