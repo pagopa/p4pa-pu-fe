@@ -3,7 +3,7 @@ import { FileUpload } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { generatePath, useNavigate } from 'react-router';
 import { useState, useCallback } from 'react';
-import SearchCard, { ErrorMessage } from '../SearchCard/SearchCard';
+import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useTabsConfig } from './useDebtTabsConfig';
@@ -13,6 +13,7 @@ import { SearchType } from '../../models/DebtPositions';
 import { useDateRange } from '../../hooks/useDateRange';
 import { FilterFieldIds } from '../../models/SearchCardFields';
 import { DateValidationError } from '@mui/x-date-pickers';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
@@ -174,7 +175,7 @@ export const DebtPositionsPage = () => {
               description={t('debtPositions.searchCardDescription')}
               tabsConfig={debtTabsConfig}
               activeTabIndex={activeTabIndex}
-              render={showError && ErrorMessage}
+              render={showError && <ErrorMessage />}
               onTabChange={handleTabChange}
               filterValues={filters[activeTabIndex]}
               onFilterChange={handleFilterChange}

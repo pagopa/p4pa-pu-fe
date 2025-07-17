@@ -3,7 +3,7 @@ import SearchCard from './SearchCard';
 import { vi } from 'vitest';
 import { COMPONENT_TYPE } from '../FilterContainer/FilterContainer';
 import { fireEvent, render, screen } from '../../__tests__/renderers';
-import { ErrorMessage } from './SearchCard';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 describe('SearchCard', () => {
   const defaultProps = {
@@ -400,7 +400,7 @@ describe('SearchCard', () => {
   it('renders ErrorMessage correctly when passed through render prop', () => {
     const propsWithError = {
       ...defaultProps,
-      render: ErrorMessage
+      render: <ErrorMessage testId="multifilters-error-text" />
     };
 
     render(<SearchCard {...propsWithError} />);
@@ -427,7 +427,7 @@ describe('SearchCard', () => {
     const showError = true;
     const propsWithConditionalError = {
       ...defaultProps,
-      render: showError && ErrorMessage
+      render: showError && <ErrorMessage testId="multifilters-error-text" />
     };
 
     render(<SearchCard {...propsWithConditionalError} />);

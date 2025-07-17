@@ -1,17 +1,16 @@
-import { Alert, Box, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
+import { Box, Grid, Stack, Tab, Tabs, Typography } from '@mui/material';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import FilterContainer, {
   FilterItem
 } from '../FilterContainer/FilterContainer';
 import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
 import { ButtonProps, FormComponent } from '../FormComponent';
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { useTelematicReceiptsFilters } from '../../hooks/useTelematicReceiptsFilters';
 import { useReportingFilters } from '../../hooks/useReportingFilters';
 import { selectedFilters } from '../../store/FilterStore';
 import MultifilterInitSelect from '../MultiFilter/MultifilterInitSelect';
-import i18n from '../../translations/i18n';
 
 export type TabsConfig = {
   label: string;
@@ -184,8 +183,3 @@ const SearchCard = ({
 };
 
 export default SearchCard;
-export const ErrorMessage: ReactNode = (
-  <Alert severity="error" data-testid="multifilters-error-text">
-    {i18n.t('commons.filters.atLeastOneFilter')}
-  </Alert>
-);
