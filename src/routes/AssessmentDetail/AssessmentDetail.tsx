@@ -124,7 +124,7 @@ export const AssessmentDetail = () => {
           label:
             data?.assessmentsName ||
             detailItem?.debtPositionTypeOrgCode ||
-            `Accertamento ${assessmentId}`,
+            `${t('assessment.assessment')} ${assessmentId}`,
           id: 'ASSESSMENT_DETAIL'
         }
       ];
@@ -187,6 +187,23 @@ export const AssessmentDetail = () => {
     console.log('Add payments clicked');
   };
 
+  /**
+   * Handle navigation to the assessment detail record
+   * @param assessmentDetailId - ID of the assessment detail
+   */
+  const handleNavigateToDetailDetail = (assessmentDetailId: number) => {
+    const detailUrl = generatePath(PageRoutes.ASSESSMENT_DETAIL_DETAIL, {
+      id: assessmentId.toString(),
+      assessmentDetailId: assessmentDetailId.toString()
+    });
+
+    navigate(detailUrl, {
+      state: {
+        assessmentName: data?.assessmentsName
+      }
+    });
+  };
+
   // Configuration sections for the DetailContainer
   const detailSections = useMemo(() => {
     const firstAssessmentItem = detailItem;
@@ -243,7 +260,10 @@ export const AssessmentDetail = () => {
   return (
     <>
       <TitleComponent
-        title={data?.assessmentsName || `Accertamento ${assessmentId || ''}`}
+        title={
+          data?.assessmentsName ||
+          `${t('assessment.assessment')} ${assessmentId || ''}`
+        }
         callToAction={[
           {
             icon: <MoreVert />,
@@ -350,7 +370,7 @@ export const AssessmentDetail = () => {
                 label: 'dateRange1',
                 gridWidth: 4,
                 from: {
-                  label: t('commons.from'),
+                  label: t('commons.resultFrom'),
                   value: draftFilters.paymentDateTimeFrom
                     ? new Date(draftFilters.paymentDateTimeFrom)
                     : null,
@@ -419,6 +439,7 @@ export const AssessmentDetail = () => {
               },
               onFiltersApplied: handleFiltersApplied
             }}
+            onNavigateToDetail={handleNavigateToDetailDetail}
           />
         </Grid>
       </Grid>
