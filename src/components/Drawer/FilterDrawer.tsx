@@ -29,6 +29,11 @@ export const FilterDrawer = ({
   ...props
 }: FilterDrawerProps) => (
   <Drawer {...props}>
+    {render && (
+      <Grid mb={2} container>
+        {render}
+      </Grid>
+    )}
     {children}
     <MultiFilter
       filterMap={filterMap}
@@ -36,7 +41,6 @@ export const FilterDrawer = ({
       showLabelError={showLabelError}
       onFilterInteraction={onFilterInteraction}
     />
-    {render && <Grid container>{render}</Grid>}
     <Grid container direction={'column'} marginTop={2}>
       {buttons &&
         buttons.map((btn, index) => (

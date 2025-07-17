@@ -17,7 +17,6 @@ import { useNavigate, useOutletContext, useParams } from 'react-router';
 import { useStore } from '../../../store/GlobalStore';
 import getPagoPaRegistries from '../../../api/getPagoPaRegistry';
 import getSilRegistries from '../../../api/getSilRegistries';
-import { ErrorMessage } from '../../../components/SearchCard/SearchCard';
 import { PageRoutes } from '../..';
 import { EventsContext } from '../EventsContainer';
 import {
@@ -26,7 +25,8 @@ import {
 } from '../../../../generated/data-contracts';
 import { GridRowId } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { Box } from '@mui/material';
+import { Stack } from '@mui/material';
+import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
 
 const EventList = () => {
   const [data, setData] = useState<
@@ -115,28 +115,30 @@ const EventList = () => {
   return (
     <>
       <TitleComponent title={t('events.list.title')} />
-      <FilterContainer
-        items={filters}
-        values={filterValues[activeTabIndex]}
-        onChange={handleFilterChange}
-      />
-      {error && <Box sx={{ mt: 4 }}>{ErrorMessage}</Box>}
-      {data && (
-        <CustomDataGrid
-          customPagination={{
-            sizePageOptions: [5, 10, 20],
-            defaultPageOption: data.size,
-            totalPages: data.totalPages,
-            currentPage: data.number + 1,
-            onPageSizeChange,
-            onPageChange
-          }}
-          sx={{ mt: 4 }}
-          columns={columns}
-          rows={data.content}
-          getRowId={(row) => row.registryId}
+      <Stack gap={3}>
+        {error && <ErrorMessage variant="outlined" />}
+        <FilterContainer
+          items={filters}
+          values={filterValues[activeTabIndex]}
+          onChange={handleFilterChange}
         />
-      )}
+        {data && (
+          <CustomDataGrid
+            customPagination={{
+              sizePageOptions: [5, 10, 20],
+              defaultPageOption: data.size,
+              totalPages: data.totalPages,
+              currentPage: data.number + 1,
+              onPageSizeChange,
+              onPageChange
+            }}
+            sx={{ mt: 4 }}
+            columns={columns}
+            rows={data.content}
+            getRowId={(row) => row.registryId}
+          />
+        )}
+      </Stack>
     </>
   );
 };

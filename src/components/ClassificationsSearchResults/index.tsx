@@ -1,10 +1,10 @@
-import { Alert, Grid, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import {
@@ -19,6 +19,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { getClassifications } from '../../api/classifications';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export type LocationState = {
   category: string;
@@ -80,12 +81,6 @@ const ClassificationsSearchResults = () => {
     setError(false);
   };
 
-  const errorMessage: ReactNode = (
-    <Alert severity="error" data-testid="multifilters-error-text">
-      {t('commons.filters.atLeastOneFilter')}
-    </Alert>
-  );
-
   return (
     <>
       <TitleComponent
@@ -133,7 +128,7 @@ const ClassificationsSearchResults = () => {
         filterCategory={FilterCategory.CLASSIFICATIONS}
         showLabelError={labelError}
         onFilterInteraction={handleFilterInteraction}
-        render={error && errorMessage}
+        render={error && <ErrorMessage variant="outlined" />}
         buttons={[
           {
             buttonText: t('commons.filters.filterResults'),

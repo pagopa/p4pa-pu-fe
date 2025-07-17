@@ -1,4 +1,4 @@
-import SearchCard, { ErrorMessage } from '../SearchCard/SearchCard';
+import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { Download, Upload } from '@mui/icons-material';
 import { Box, Grid } from '@mui/material';
@@ -9,6 +9,7 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import { useCallback, useState } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { noFilterSetted } from '../../utils/filtersValidation';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export const TelematicReceipt = () => {
   const { t } = useTranslation();
@@ -63,7 +64,7 @@ export const TelematicReceipt = () => {
               filterContext="TELEMATIC"
               filterValues={filters[0]}
               onFilterChange={handleFilterChange}
-              render={error && ErrorMessage}
+              render={error && <ErrorMessage />}
               button={[
                 {
                   label: t('commons.filters.remove'),

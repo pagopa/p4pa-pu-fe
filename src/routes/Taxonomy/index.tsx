@@ -7,15 +7,14 @@ import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
 import { TaxonomyFilter } from '../../components/TaxonomyFilter';
 import { FormProvider, useForm } from 'react-hook-form';
-import SearchCard, {
-  ErrorMessage
-} from '../../components/SearchCard/SearchCard';
+import SearchCard from '../../components/SearchCard/SearchCard';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TaxonomyFields } from '../../models/Taxonomy';
 import { useState } from 'react';
 import { noFilterSetted } from '../../utils/filtersValidation';
 import { synchronizeTaxonomy } from '../../api/taxonomy';
+import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 
 export const TaxonomyPage = () => {
   const { t } = useTranslation();
@@ -93,7 +92,9 @@ export const TaxonomyPage = () => {
               title={t('Cerca tassonomia')}
               render={
                 <>
-                  <Grid mb={2}>{error && ErrorMessage}</Grid>
+                  <Grid mb={2}>
+                    {error && <ErrorMessage testId="multifilters-error-text" />}
+                  </Grid>
                   <TaxonomyFilter />
                 </>
               }

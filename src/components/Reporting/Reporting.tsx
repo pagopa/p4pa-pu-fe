@@ -1,4 +1,4 @@
-import SearchCard, { ErrorMessage } from '../SearchCard/SearchCard';
+import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { FileUpload } from '@mui/icons-material';
 import { Grid } from '@mui/material';
@@ -9,6 +9,7 @@ import { PageRoutes } from '../../routes';
 import { useCallback, useState } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { noFilterSetted } from '../../utils/filtersValidation';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export const Reporting = () => {
   const { t } = useTranslation();
@@ -63,7 +64,9 @@ export const Reporting = () => {
               filterContext="REPORTING"
               filterValues={filters[0]}
               onFilterChange={handleFilterChange}
-              render={error && ErrorMessage}
+              render={
+                error && <ErrorMessage testId="multifilters-error-text" />
+              }
               button={[
                 {
                   label: t('commons.filters.remove'),
