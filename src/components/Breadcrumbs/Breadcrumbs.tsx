@@ -62,18 +62,32 @@ const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
           .filter((item) => !item.handle?.hideBreadcrumbElement)
           .map((b, i, array) => {
             const isLastElement = i === array.length - 1;
-            return (
-              <MUILink
-                color="textSecondary"
-                fontWeight={isLastElement ? '400' : '600'}
-                component={RouterLink}
-                to={b.pathname}
-                underline={'hover'}
-                key={`breadcrumb-${i}`}
-              >
-                {b.label ? b.label : t(`commons.routes.${b.id}`)}
-              </MUILink>
-            );
+            const isClickable = b.pathname && b.pathname !== '';
+
+            if (isClickable) {
+              return (
+                <MUILink
+                  color="textSecondary"
+                  fontWeight={isLastElement ? '400' : '600'}
+                  component={RouterLink}
+                  to={b.pathname}
+                  underline={'hover'}
+                  key={`breadcrumb-${i}`}
+                >
+                  {b.label ? b.label : t(`commons.routes.${b.id}`)}
+                </MUILink>
+              );
+            } else {
+              return (
+                <Typography
+                  color="textSecondary"
+                  fontWeight={isLastElement ? '400' : '600'}
+                  key={`breadcrumb-${i}`}
+                >
+                  {b.label ? b.label : t(`commons.routes.${b.id}`)}
+                </Typography>
+              );
+            }
           })}
       </BreadcrumbsMUI>
     </Stack>

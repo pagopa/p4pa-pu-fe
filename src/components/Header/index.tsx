@@ -10,6 +10,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
 import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
@@ -25,9 +26,12 @@ export type HeaderProps = {
 export const Header = (props: HeaderProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
   const {
-    state: { userInfo, organizations, organizationId }
+    state: { userInfo, organizations },
+    state
   } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
   const { onAssistanceClick = () => null } = props;
   const { onDocumentationClick = () => null } = props;

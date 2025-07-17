@@ -205,6 +205,7 @@
   },
   "assessment": {
     "title": "Accertamenti pagamenti",
+    "assessment": "Accertamento ",
     "search": "Cerca accertamenti",
     "searchDescription": "Cerca dei accertamenti e controlla l'andamento delle entrate.",
     "chapters": "Capitoli",
@@ -243,8 +244,24 @@
     "deleteDialog": {
       "title": "Conferma eliminazione",
       "description": "Sei sicuro di voler eliminare questo accertamento? L'operazione non può essere annullata."
+    },
+    "paymentDetail": {
+      "title": "Dettaglio pagamento",
+      "summary": "Riepilogo",
+      "paymentInfo": "Informazione sul pagamento",
+      "iuv": "Codice Avviso (IUV)",
+      "amount": "Importo",
+      "paymentObject": "Oggetto del pagamento",
+      "duetype": "Tipo dovuto",
+      "debtor": "Debitore",
+      "fiscalCode": "CF / Partita IVA",
+      "paymentDate": "Data esito",
+      "psp": "Gestore della transazione (PSP)",
+      "iud": "IUD",
+      "iur": "IUR"
     }
   },
+
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
@@ -664,6 +681,7 @@
     "taxCode": "Codice Tassonomico",
     "taxonomy": "Tassonomia",
     "to": "Al",
+    "resultFrom": "Esito da",
     "transactionManager": "Gestore della transazione (PSP)",
     "unauthorized": "Non sei autorizzato ad accedere alla sezione, contatta il gestore dei permessi",
     "unknownOrganization": "Ente senza nome",
