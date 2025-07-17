@@ -1,4 +1,4 @@
-import SearchCard, { ErrorMessage } from '../SearchCard/SearchCard';
+import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import DownloadIcon from '@mui/icons-material/Download';
 import { Grid } from '@mui/material';
@@ -9,6 +9,7 @@ import { PageRoutes } from '../../routes';
 import { useNavigate } from 'react-router';
 import { useState, useMemo } from 'react';
 import { filterValues } from '../../store/FilterStore';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export const Classifications = () => {
   const { t } = useTranslation();
@@ -63,7 +64,11 @@ export const Classifications = () => {
               title={t('classifications.search')}
               description={t('classifications.searchdescription')}
               multiFilterConfig={filterMap}
-              render={shouldShowError && ErrorMessage}
+              render={
+                shouldShowError && (
+                  <ErrorMessage testId="multifilters-error-text" />
+                )
+              }
               extraProps={{
                 showLabelError: labelError,
                 onFilterInteraction: () => {

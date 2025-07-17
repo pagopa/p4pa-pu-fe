@@ -1,10 +1,10 @@
-import { Grid, Typography, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import {
@@ -18,6 +18,7 @@ import { PagedTreasuryView } from '../../../generated/data-contracts';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { getTreasuries } from '../../api/treasuries';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export type LocationState = {
   category: string;
@@ -64,17 +65,6 @@ const TreasurySearchResults = () => {
       setError(true);
     }
   };
-
-  const errorMessage: ReactNode = (
-    <Typography
-      variant="body2"
-      color="error"
-      mt={2}
-      data-testid="multifilters-error-text"
-    >
-      {t('commons.filters.atLeastOneFilter')}
-    </Typography>
-  );
 
   return (
     <>
@@ -123,7 +113,11 @@ const TreasurySearchResults = () => {
         onClose={toggleDrawer}
         title={t('commons.filters.filtersField')}
         filterMap={filterMap}
-        render={error && errorMessage}
+        render={
+          error && (
+            <ErrorMessage variant="outlined" testId="multifilters-error-text" />
+          )
+        }
         buttons={[
           {
             buttonText: t('commons.filters.filterResults'),

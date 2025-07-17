@@ -1,11 +1,11 @@
-import { Alert, Grid, useTheme } from '@mui/material';
+import { Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import AssessmentSearchResultsDataGrid from './AssessmentSearchResultsDataGrid';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import {
   FilterCategory,
   FilterMap,
@@ -15,6 +15,7 @@ import { FilterDrawer } from '../../components/Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
 import { useAssessmentsSearch } from '../../hooks/useAssessmentsSearch';
 import { PagedAssessmentsExtendedDTO } from '../../../generated/data-contracts';
+import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 
 export type LocationState = {
   category: string;
@@ -58,12 +59,6 @@ const AssessmentSearchResults = () => {
       setError(true);
     }
   };
-
-  const errorMessage: ReactNode = (
-    <Alert severity="error" data-testid="multifilters-error-text">
-      {t('commons.filters.atLeastOneFilter')}
-    </Alert>
-  );
 
   return (
     <>
@@ -112,7 +107,11 @@ const AssessmentSearchResults = () => {
         onClose={toggleDrawer}
         title={t('commons.filters.filtersField')}
         filterMap={filterMap}
-        render={error && errorMessage}
+        render={
+          error && (
+            <ErrorMessage variant="outlined" testId="multifilters-error-text" />
+          )
+        }
         buttons={[
           {
             buttonText: t('commons.filters.filterResults'),
