@@ -81,8 +81,8 @@ describe('useClassificationExport', () => {
 
       const formValues = result.current.formMethods.getValues();
       expect(formValues.fileVersion).toBe(testValues.fileVersion);
-      expect(formValues.label).toBe(testValues.label); // Ora è una stringa, non array
-      expect(formValues.iuv).toBe(testValues.iuv); // Ora è una stringa, non array
+      expect(formValues.label).toBe(testValues.label);
+      expect(formValues.iuv).toBe(testValues.iuv);
     });
   });
 
@@ -293,11 +293,11 @@ describe('useClassificationExport', () => {
         exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
         fileVersion: 'v1.0',
         filterFields: {
-          iuv: ['IUV123456'], // Ora è un array come richiesto dall'API
+          iuv: ['IUV123456'],
           iud: 'IUD123456',
           iuf: 'IUF123456',
-          iur: ['IUR123456'], // Ora è un array come richiesto dall'API
-          label: [LabelEnum.DOPPI], // Ora è un array come richiesto dall'API
+          iur: ['IUR123456'],
+          label: [LabelEnum.DOPPI],
           remittanceInformation: 'Test remittance',
           billAmountCents: 10050,
           accountRegistryCode: 'ACC123',
@@ -367,7 +367,6 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      // iur ha precedenza su reportingIur
       expect(payload.filterFields.iur).toStrictEqual(['IUR123']);
     });
 
@@ -387,7 +386,6 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      // Usa reportingIur quando iur è vuoto
       expect(payload.filterFields.iur).toStrictEqual(['REPORTING_IUR456']);
     });
 
