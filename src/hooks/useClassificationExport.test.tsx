@@ -11,11 +11,11 @@ describe('useClassificationExport', () => {
 
   const createEmptyFormData = (): ClassificationFormFields => ({
     fileVersion: '',
-    label: [],
-    iuv: [],
+    label: '',
+    iuv: '',
     iud: '',
     iuf: '',
-    iur: [],
+    iur: '',
     remittanceInformation: '',
     accountRegistryCode: '',
     billAmountCents: '',
@@ -30,7 +30,8 @@ describe('useClassificationExport', () => {
     payment: { from: null, to: null },
     reporting: { from: null, to: null },
     accounting: { from: null, to: null },
-    value: { from: null, to: null }
+    value: { from: null, to: null },
+    payDate: { from: null, to: null }
   });
 
   describe('Form Management', () => {
@@ -43,10 +44,10 @@ describe('useClassificationExport', () => {
 
       expect(defaultValues).toEqual({
         fileVersion: '',
-        label: [],
-        iuv: [],
+        label: '',
+        iuv: '',
         remittanceInformation: '',
-        iur: [],
+        iur: '',
         iud: '',
         iuf: '',
         reportingIur: '',
@@ -65,8 +66,8 @@ describe('useClassificationExport', () => {
 
       const testValues: Partial<ClassificationFormFields> = {
         fileVersion: 'v1.0',
-        label: [LabelEnum.DOPPI],
-        iuv: ['IUV123456']
+        label: LabelEnum.DOPPI,
+        iuv: 'IUV123456'
       };
 
       act(() => {
@@ -80,8 +81,8 @@ describe('useClassificationExport', () => {
 
       const formValues = result.current.formMethods.getValues();
       expect(formValues.fileVersion).toBe(testValues.fileVersion);
-      expect(formValues.label).toStrictEqual(testValues.label);
-      expect(formValues.iuv).toStrictEqual(testValues.iuv);
+      expect(formValues.label).toBe(testValues.label); // Ora è una stringa, non array
+      expect(formValues.iuv).toBe(testValues.iuv); // Ora è una stringa, non array
     });
   });
 
@@ -115,8 +116,8 @@ describe('useClassificationExport', () => {
 
       const formData = {
         ...createEmptyFormData(),
-        label: [LabelEnum.DOPPI],
-        iuv: ['IUV123']
+        label: LabelEnum.DOPPI,
+        iuv: 'IUV123'
       };
 
       const dateRanges = {
@@ -161,7 +162,7 @@ describe('useClassificationExport', () => {
       const formData = {
         ...createEmptyFormData(),
         fileVersion: 'v1.0',
-        label: [LabelEnum.DOPPI]
+        label: LabelEnum.DOPPI
       };
 
       const dateRanges = createEmptyDateRanges();
@@ -257,11 +258,11 @@ describe('useClassificationExport', () => {
 
       const formData: ClassificationFormFields = {
         fileVersion: 'v1.0',
-        label: [LabelEnum.DOPPI],
-        iuv: ['IUV123456'],
+        label: LabelEnum.DOPPI,
+        iuv: 'IUV123456',
         iud: 'IUD123456',
         iuf: 'IUF123456',
-        iur: ['IUR123456'],
+        iur: 'IUR123456',
         remittanceInformation: 'Test remittance',
         accountRegistryCode: 'ACC123',
         billAmountCents: '100.50',
@@ -292,11 +293,11 @@ describe('useClassificationExport', () => {
         exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
         fileVersion: 'v1.0',
         filterFields: {
-          iuv: ['IUV123456'],
+          iuv: ['IUV123456'], // Ora è un array come richiesto dall'API
           iud: 'IUD123456',
           iuf: 'IUF123456',
-          iur: ['IUR123456'],
-          label: [LabelEnum.DOPPI],
+          iur: ['IUR123456'], // Ora è un array come richiesto dall'API
+          label: [LabelEnum.DOPPI], // Ora è un array come richiesto dall'API
           remittanceInformation: 'Test remittance',
           billAmountCents: 10050,
           accountRegistryCode: 'ACC123',
@@ -358,7 +359,7 @@ describe('useClassificationExport', () => {
       const formData = {
         ...createEmptyFormData(),
         fileVersion: 'v1.0',
-        iur: ['IUR123'],
+        iur: 'IUR123',
         reportingIur: 'REPORTING_IUR456'
       };
 
@@ -366,6 +367,7 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
+      // iur ha precedenza su reportingIur
       expect(payload.filterFields.iur).toStrictEqual(['IUR123']);
     });
 
@@ -377,7 +379,7 @@ describe('useClassificationExport', () => {
       const formData = {
         ...createEmptyFormData(),
         fileVersion: 'v1.0',
-        iur: [''],
+        iur: '',
         reportingIur: 'REPORTING_IUR456'
       };
 
@@ -385,7 +387,46 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      expect(payload.filterFields.iur).toStrictEqual(['']);
+      // Usa reportingIur quando iur è vuoto
+      expect(payload.filterFields.iur).toStrictEqual(['REPORTING_IUR456']);
+    });
+
+    it('should use iur when reportingIur is empty', () => {
+      const { result } = renderHook(() =>
+        useClassificationExport(mockOrganizationId)
+      );
+
+      const formData = {
+        ...createEmptyFormData(),
+        fileVersion: 'v1.0',
+        iur: 'IUR123',
+        reportingIur: ''
+      };
+
+      const emptyDateRanges = createEmptyDateRanges();
+
+      const payload = result.current.buildApiPayload(formData, emptyDateRanges);
+
+      expect(payload.filterFields.iur).toStrictEqual(['IUR123']);
+    });
+
+    it('should not include iur when both are empty', () => {
+      const { result } = renderHook(() =>
+        useClassificationExport(mockOrganizationId)
+      );
+
+      const formData = {
+        ...createEmptyFormData(),
+        fileVersion: 'v1.0',
+        iur: '',
+        reportingIur: ''
+      };
+
+      const emptyDateRanges = createEmptyDateRanges();
+
+      const payload = result.current.buildApiPayload(formData, emptyDateRanges);
+
+      expect(payload.filterFields.iur).toBeUndefined();
     });
 
     it('should convert billAmountCents from euros to cents', () => {
@@ -449,7 +490,7 @@ describe('useClassificationExport', () => {
       const formData = {
         ...createEmptyFormData(),
         fileVersion: 'v1.0',
-        label: ['INVALID_LABEL']
+        label: 'INVALID_LABEL'
       };
 
       const emptyDateRanges = createEmptyDateRanges();

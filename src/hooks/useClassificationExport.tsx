@@ -13,11 +13,11 @@ const isValidLabelEnum = (value: string): value is LabelEnum => {
 
 export type ClassificationFormFields = {
   fileVersion: string;
-  label: Array<string>;
-  iuv: Array<string>;
+  label: string;
+  iuv: string;
   iud: string;
   iuf: string;
-  iur: Array<string>;
+  iur: string;
   remittanceInformation: string;
   accountRegistryCode: string;
   billAmountCents: string;
@@ -29,10 +29,10 @@ export type ClassificationFormFields = {
 
 const DEFAULT_VALUES: ClassificationFormFields = {
   fileVersion: '',
-  label: [],
-  iuv: [],
+  label: '',
+  iuv: '',
   remittanceInformation: '',
-  iur: [],
+  iur: '',
   iud: '',
   iuf: '',
   reportingIur: '',
@@ -65,9 +65,9 @@ export const useClassificationExport = (organizationId: number) => {
       );
 
       const hasOtherCriteria = !!(
-        (formData.label && formData.label.length > 0) ||
-        (formData.iuv && formData.iuv.length > 0) ||
-        (formData.iur && formData.iur.length > 0) ||
+        formData.label ||
+        formData.iuv ||
+        formData.iur ||
         formData.iud ||
         formData.iuf ||
         formData.remittanceInformation ||
@@ -91,38 +91,48 @@ export const useClassificationExport = (organizationId: number) => {
     ): ClassificationsExportFileRequestDTO => {
       const filterFields: ClassificationsExportFileFilter = {};
 
-      if (formData.iuv && formData.iuv.length > 0)
-        filterFields.iuv = formData.iuv;
-      if (formData.iud) filterFields.iud = formData.iud;
-      if (formData.iuf) filterFields.iuf = formData.iuf;
-      if ((formData.iur && formData.iur.length > 0) || formData.reportingIur) {
-        filterFields.iur = formData.iur || formData.reportingIur;
+      if (formData.iuv) {
+        filterFields.iuv = [formData.iuv];
       }
-      if (
-        formData.label &&
-        formData.label.length > 0 &&
-        isValidLabelEnum(formData.label[0])
-      ) {
-        filterFields.label = [formData.label[0]];
+      if (formData.iud) {
+        filterFields.iud = formData.iud;
       }
+      if (formData.iuf) {
+        filterFields.iuf = formData.iuf;
+      }
+
+      const iurValue = formData.iur || formData.reportingIur;
+      if (iurValue) {
+        filterFields.iur = [iurValue];
+      }
+
+      if (formData.label && isValidLabelEnum(formData.label)) {
+        filterFields.label = [formData.label as LabelEnum];
+      }
+
       if (formData.remittanceInformation) {
         filterFields.remittanceInformation = formData.remittanceInformation;
       }
+
       if (formData.billAmountCents) {
         const amountInEuros = Number(formData.billAmountCents);
         if (!isNaN(amountInEuros)) {
           filterFields.billAmountCents = Math.round(amountInEuros * 100);
         }
       }
+
       if (formData.accountRegistryCode) {
         filterFields.accountRegistryCode = formData.accountRegistryCode;
       }
+
       if (formData.pspLastName) {
         filterFields.pspLastName = formData.pspLastName;
       }
+
       if (formData.pspCompanyName) {
         filterFields.pspCompanyName = formData.pspCompanyName;
       }
+
       if (formData.regulationUniqueIdentifier) {
         filterFields.regulationUniqueIdentifier =
           formData.regulationUniqueIdentifier;
