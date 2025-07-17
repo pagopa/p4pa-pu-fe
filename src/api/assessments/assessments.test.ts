@@ -3,6 +3,7 @@ import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor, act } from '../../__tests__/renderers';
 import {
+  createAssessment,
   getAssessments,
   getAssessmentsRegistries,
   getAssessmentsRegistry
@@ -20,6 +21,7 @@ vi.mock('../../utils', async () => {
     apiClient: {
       bff: {
         getPagedAssessmentsExtendedDto: vi.fn(),
+        createAssessment: vi.fn(),
         getAssessmentsRegistries: vi.fn(),
         getAssessmentsRegistry: vi.fn()
       }
@@ -284,6 +286,175 @@ describe('getAssessments', () => {
       paramsSerializer: {
         indexes: null
       }
+    });
+  });
+});
+
+describe('createAssessment', () => {
+  it('should create assessment successfully when mutation is called', async () => {
+    const organizationId = 123;
+    const assessmentParams = {
+      assessmentName: 'New Assessment',
+      debtPositionTypeOrgCode: 'TYPE1'
+    };
+
+    const expectedResponse = {
+      id: '12345',
+      assessmentName: 'New Assessment',
+      debtPositionTypeOrgCode: 'TYPE1',
+      status: 'ACTIVE',
+      createdDate: '2023-01-01T00:00:00Z'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessment')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() => createAssessment(organizationId));
+
+    result.current.mutate(assessmentParams);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentName: 'New Assessment',
+      debtPositionTypeOrgCode: 'TYPE1'
+    });
+  });
+
+  it('should handle API errors correctly during creation', async () => {
+    const organizationId = 123;
+    const assessmentParams = {
+      assessmentName: 'Failed Assessment',
+      debtPositionTypeOrgCode: 'TYPE2'
+    };
+
+    const errorMock = new Error('Creation failed');
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessment')
+      .mockRejectedValue(errorMock);
+
+    const { result } = renderHook(() => createAssessment(organizationId));
+
+    result.current.mutate(assessmentParams);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(errorMock);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentName: 'Failed Assessment',
+      debtPositionTypeOrgCode: 'TYPE2'
+    });
+  });
+
+  it('should not create assessment if mutate is not called', () => {
+    const organizationId = 123;
+    const { result } = renderHook(() => createAssessment(organizationId));
+
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.isPending).toBe(false);
+    expect(result.current.isSuccess).toBe(false);
+  });
+
+  it('should handle empty response correctly', async () => {
+    const organizationId = 123;
+    const assessmentParams = {
+      assessmentName: 'Empty Response Test',
+      debtPositionTypeOrgCode: 'TYPE3'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessment')
+      .mockResolvedValue({ data: undefined } as AxiosResponse);
+
+    const { result } = renderHook(() => createAssessment(organizationId));
+
+    result.current.mutate(assessmentParams);
+
+    await waitFor(() => {
+      expect(result.current.data).toBeUndefined();
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentName: 'Empty Response Test',
+      debtPositionTypeOrgCode: 'TYPE3'
+    });
+  });
+
+  it('should use correct mutation key', () => {
+    const organizationId = 456;
+    const { result } = renderHook(() => createAssessment(organizationId));
+
+    expect(result.current).toBeDefined();
+  });
+
+  it('should handle different organizationId values', async () => {
+    const organizationId = 789;
+    const assessmentParams = {
+      assessmentName: 'Different Org Assessment',
+      debtPositionTypeOrgCode: 'DIFF_TYPE'
+    };
+
+    const expectedResponse = {
+      id: '67890',
+      assessmentName: 'Different Org Assessment',
+      debtPositionTypeOrgCode: 'DIFF_TYPE',
+      status: 'ACTIVE'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessment')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() => createAssessment(organizationId));
+
+    result.current.mutate(assessmentParams);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentName: 'Different Org Assessment',
+      debtPositionTypeOrgCode: 'DIFF_TYPE'
+    });
+  });
+
+  it('should handle special characters in assessment name', async () => {
+    const organizationId = 123;
+    const assessmentParams = {
+      assessmentName: 'Assessment with àccénts & symbols!',
+      debtPositionTypeOrgCode: 'SPECIAL_TYPE'
+    };
+
+    const expectedResponse = {
+      id: '54321',
+      assessmentName: 'Assessment with àccénts & symbols!',
+      debtPositionTypeOrgCode: 'SPECIAL_TYPE',
+      status: 'ACTIVE'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessment')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() => createAssessment(organizationId));
+
+    result.current.mutate(assessmentParams);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentName: 'Assessment with àccénts & symbols!',
+      debtPositionTypeOrgCode: 'SPECIAL_TYPE'
     });
   });
 });

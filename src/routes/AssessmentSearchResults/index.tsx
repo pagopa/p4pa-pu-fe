@@ -15,6 +15,8 @@ import { FilterDrawer } from '../../components/Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
 import { useAssessmentsSearch } from '../../hooks/useAssessmentsSearch';
 import { PagedAssessmentsExtendedDTO } from '../../../generated/data-contracts';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '..';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 
 export type LocationState = {
@@ -26,6 +28,7 @@ export type LocationState = {
 const AssessmentSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const [error, setError] = useState(false);
 
   const {
@@ -43,7 +46,7 @@ const AssessmentSearchResults = () => {
   };
 
   const handleCreateAssessment = () => {
-    console.log('Create assessment clicked');
+    navigate(PageRoutes.ASSESSMENT_CREATION);
   };
 
   const assessments = useAssessmentsSearch({

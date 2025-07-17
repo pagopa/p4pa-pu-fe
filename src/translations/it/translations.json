@@ -237,6 +237,50 @@
       "CANCELLED": "Eliminato"
     }
   },
+  "assessmentCreate": {
+    "configuration": {
+      "title": "Configurazione accertamento",
+      "step1": {
+        "title": "Dettaglio accertamento",
+        "fields": {
+          "name":{
+            "label": "Nome accertamento",
+            "placeholder": "Accertamento",
+            "required": "Il campo nome è obbligatorio"
+          },
+          "debtPositionType": {
+            "label": "Tipo dovuto",
+            "placeholder": "Dovuto",
+            "required": "Selezionare un tipo di dovuto"
+          }
+        }
+      },
+      "step2": {
+        "addPayments": {
+          "radioLabel": "Vuoi aggiungere pagamenti nell'accertamento?",
+          "options": {
+            "yes": "Si",
+            "no": "No"
+          }
+        }
+      }
+    },
+    "description": "Inserisci i parametri per creare un nuovo accertamento.",
+    "title": "Crea un nuovo accertamento",
+    "stepper": {
+      "step1": "Configurazione accertamento",
+      "step2": "Aggiungi pagamenti"
+    },
+    "success": {
+      "title": "L'accertamento \"{{assessmentName}}\" è stato creato!",
+      "description": "Puoi trovarlo nella sezione accertamento pagamenti, dove puoi consultarlo in qualsiasi momento.",
+      "goToDetail": "Visualizza accertamento"
+    },
+    "error": {
+      "creationFailed": "Errore durante la creazione dell'assessment",
+      "nameAlreadyPresent": "Esiste già un accertamento con lo stesso Nome"
+    }
+  },
   "assessmentDetail": {
     "debtType": "Tipo dovuto",
     "createdBy": "Creato da",
@@ -560,6 +604,7 @@
     "requiredFieldDescription": "* Indica un campo obbligatorio",
     "routes": {
       "ASSESSMENT": "Accertamento pagamenti",
+      "ASSESSMENT_CREATION": "Crea un nuovo accertamento",
       "ASSESSMENT_REGISTRY_SEARCH_RESULTS": "Capitoli",
       "BACKOFFICE": "Backoffice",
       "BACKOFFICE_REGISTRIES": "Giornale degli eventi",

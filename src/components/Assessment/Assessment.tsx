@@ -23,7 +23,7 @@ export const Assessment = () => {
   const [error, setError] = useState(false);
 
   const handleCreateAssessment = () => {
-    console.log('Create assessment clicked');
+    navigate(PageRoutes.ASSESSMENT_CREATION);
   };
 
   const handleCreateChapter = () => {
