@@ -85,14 +85,20 @@ export const getDebtPositionTypesByOrganizationId = ({
       ),
     select: ({ data }) => {
       parseAndLog(debtPositionTypeSchema.array(), data);
-      const optionsMap = data
+      const sorted = data
         .slice()
-        .sort((a, b) => a.description.localeCompare(b.description))
-        .map((type) => ({
-          label: type.description,
-          value: type.debtPositionTypeId
-        }));
+        .sort((a, b) => a.description.localeCompare(b.description));
 
-      return { response: data, optionsMap };
+      const optionsMap = sorted.map((type) => ({
+        label: type.description,
+        value: type.debtPositionTypeId
+      }));
+
+      const codeMap = sorted.map((type) => ({
+        label: type.description,
+        value: type.code
+      }));
+
+      return { response: data, optionsMap, codeMap };
     }
   });

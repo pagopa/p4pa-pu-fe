@@ -14,6 +14,11 @@
     }
   },
   "AssessmentRegistryCreate": {
+    "success": {
+      "backToStart": "Visualizza capitoli",
+      "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato creato!"
+    },
     "title": "Crea un nuovo capitolo",
     "subtitle": "Inserisci i parametri per creare un nuovo capitolo.",
     "step1": "Configurazione del capitolo",

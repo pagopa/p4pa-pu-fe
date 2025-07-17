@@ -62,8 +62,7 @@ export const AssessmentsRegistrySearchResults = () => {
           {
             variant: 'outlined',
             buttonText: t('assessmentsRegistrySearchResults.uploadFlow'),
-            onActionClick: () =>
-              navigate(PageRoutes.ASSESSMENTS_REGISTRY_CREATE)
+            onActionClick: () => navigate(PageRoutes.ASSESSMENT_REGISTRY_CREATE)
           }
         ]}
       />

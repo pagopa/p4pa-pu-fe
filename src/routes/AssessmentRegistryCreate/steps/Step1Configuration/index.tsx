@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form';
+import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import ListAltIcon from '@mui/icons-material/ListAlt';
 import BookIcon from '@mui/icons-material/MenuBook';
@@ -8,7 +8,6 @@ import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../../components/FormComponent';
 import { useStore } from '../../../../store/GlobalStore';
 import { useDebtPositionTypesByOrg } from '../../../../hooks/useDebtPositionTypesByOrg';
-import EventIcon from '@mui/icons-material/Event';
 import Typography from '@mui/material/Typography';
 
 export type Step1Data = {
@@ -28,7 +27,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     organizationId
   });
 
-  const { control } = useForm();
+  const { control } = useFormContext();
 
   return (
     <Stack gap={3}>
@@ -53,8 +52,8 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
             data-testid="debtPositionType"
             control={control}
             label={t('AssessmentRegistryCreate.debtPositionType')}
-            options={selectionQuery?.data?.optionsMap}
-            disabled={!selectionQuery?.data?.optionsMap?.length || edit}
+            options={selectionQuery?.data?.codeMap}
+            disabled={!selectionQuery?.data?.codeMap?.length || edit}
             required
           />
         </SectionBox>

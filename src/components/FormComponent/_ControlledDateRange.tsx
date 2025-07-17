@@ -9,39 +9,47 @@ export type _ControlledDateRangeProps<T extends FieldValues> =
     label?: string;
   };
 
-export const _ControlledDateRange = <T extends FieldValues>({
+export function _ControlledDateRange<T extends FieldValues>({
   name,
   control,
-  label,
-  isYear,
-  required,
   ...props
-}: _ControlledDateRangeProps<T>) => (
-  <Controller
-    name={name}
-    control={control}
-    rules={{ required }}
-    render={({ field, fieldState }) => (
-      <_DateRange
-        rangeLabel={label}
-        isYear={isYear}
-        required={required}
-        from={
-          field.value?.from && {
-            value: field.value?.from,
-            onChange: field.onChange,
-            errorMessage: fieldState.error?.message
-          }
-        }
-        to={
-          field.value?.to && {
-            value: field.value?.to,
-            onChange: field.onChange,
-            errorMessage: fieldState.error?.message
-          }
-        }
-        {...props}
-      />
-    )}
-  />
-);
+}: _ControlledDateRangeProps<T>) {
+  return (
+    <Controller
+      name={name}
+      control={control}
+      render={({ field, fieldState }) => {
+        const value = field.value ?? { from: null, to: null };
+
+        return (
+          <_DateRange
+            {...props}
+            from={
+              props?.from
+                ? {
+                    value: value.from,
+                    onChange: (date) => {
+                      field.onChange({ ...value, from: date });
+                    },
+                    errorMessage: fieldState.error?.message,
+                    ...props?.from
+                  }
+                : undefined
+            }
+            to={
+              props?.to
+                ? {
+                    value: value.to,
+                    onChange: (date) => field.onChange({ ...value, to: date }),
+                    errorMessage: fieldState.error?.message,
+                    label: props?.to?.label,
+                    ...props?.to
+                  }
+                : undefined
+            }
+          />
+        );
+      }}
+    />
+  );
+}

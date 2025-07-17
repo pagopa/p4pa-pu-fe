@@ -9,6 +9,18 @@ type SuccessPage = {
 type SuccessOpts = Record<string, SuccessPage>;
 
 export const SuccessPageConfig: SuccessOpts = {
+  'assessment-registry-create': {
+    title: 'AssessmentRegistryCreate.success.title',
+    description: 'AssessmentRegistryCreate.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'AssessmentRegistryCreate.success.backToStart',
+        actionID: 'ASSESSMENT_SEARCH_RESULTS'
+      }
+    ]
+  },
   'reporting-import': {
     title: 'commons.successImport',
     description: 'reportingImportThankYouPage.description',

@@ -1,19 +1,48 @@
+// assessmentRegistry/AssessmentRegistryCreate.tsx
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { Step1Configuration } from './steps/Step1Configuration';
 import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
+import { FormProvider, useForm } from 'react-hook-form';
+import { z } from 'zod';
+import {
+  AssessmentRegistryFormValues,
+  assessmentRegistrySchema
+} from './steps/Step1Configuration/schema';
+import { AssessmentsRegistry } from '../../../generated/data-contracts';
+import { createAssessmentsRegistry } from '../../api/assessments';
+import { useStore } from '../../store/GlobalStore';
 
 export const AssessmentRegistryCreate = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const {
+    state: { organizationId }
+  } = useStore();
+  const create = createAssessmentsRegistry(organizationId);
 
-  const submit = async () => {
+  const methods = useForm<AssessmentRegistryFormValues>({
+    resolver: zodResolver(assessmentRegistrySchema)
+  });
+
+  const submit = async (data: z.infer<typeof assessmentRegistrySchema>) => {
     try {
+      const request: AssessmentsRegistry = {
+        ...data,
+        organizationId,
+        debtPositionTypeOrgCode: data.debtPositionType,
+        operatingYear: data.operatingYear.from.getFullYear().toString()
+      };
+      const response = await create.mutateAsync(request);
       navigate(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
         state: {
-          category: 'debt-type-catalog-create'
+          category: 'assessment-registry-create',
+          i18nParams: {
+            paymentObject: response.sectionDescription
+          }
         }
       });
     } catch (error) {
@@ -23,10 +52,21 @@ export const AssessmentRegistryCreate = () => {
   };
 
   return (
-    <form aria-label={t('debtTypeOrgCreate.formLabel')} role="form" noValidate>
-      <Step1Configuration key="step1" />
+    <FormProvider {...methods}>
+      <form
+        aria-label={t('assessmentRegistry.formLabel')}
+        role="form"
+        noValidate
+        onSubmit={methods.handleSubmit(submit)}
+      >
+        <Step1Configuration key="step1" />
 
-      <WizardStepButtons onBack={() => navigate(-1)} onNext={submit} />
-    </form>
+        <WizardStepButtons
+          nextLabel={t('commons.create')}
+          onBack={() => navigate(-1)}
+          onNext={methods.handleSubmit(submit)}
+        />
+      </form>
+    </FormProvider>
   );
 };
