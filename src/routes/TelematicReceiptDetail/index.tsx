@@ -127,14 +127,14 @@ export const TelematicReceiptDetail = () => {
         'assessmentDetail.paymentDetail.paymentObject',
         'commons.reason'
       ),
-      value: data?.debtPositionTypeOrgDescription || '-'
+      value: data?.remittanceInformation || '-'
     },
     {
       label: getContextualTranslation(
         'assessmentDetail.paymentDetail.duetype',
         'commons.duetype'
       ),
-      value: data?.remittanceInformation || '-'
+      value: data?.debtPositionTypeOrgDescription || '-'
     },
     {
       label: getContextualTranslation(
