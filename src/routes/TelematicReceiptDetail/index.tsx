@@ -5,7 +5,8 @@ import {
   useLoaderData,
   useNavigate,
   useParams,
-  generatePath
+  generatePath,
+  useLocation
 } from 'react-router';
 import { getReceiptDetail } from '../../api/receiptDetail';
 import { useStore } from '../../store/GlobalStore';
@@ -29,6 +30,7 @@ export const TelematicReceiptDetail = () => {
   const { state } = useStore();
   const navigate = useNavigate();
   const params = useParams();
+  const location = useLocation();
 
   // If we are on the assessment route, use assessmentDetailId, otherwise useLoaderData
   const loaderData = useLoaderData();
@@ -36,6 +38,8 @@ export const TelematicReceiptDetail = () => {
 
   // Get organizationId from the store
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
+  const assessmentName = location.state?.assessmentName;
 
   const getContextualTranslation = (
     assessmentKey: string,
@@ -48,6 +52,7 @@ export const TelematicReceiptDetail = () => {
   };
 
   const { data, isError, error } = getReceiptDetail(organizationId, Number(id));
+  console.log(data);
 
   // Setup custom breadcrumb for assessment context
   useEffect(() => {
@@ -65,7 +70,7 @@ export const TelematicReceiptDetail = () => {
           pathname: generatePath(PageRoutes.ASSESSMENT_DETAIL, {
             id: params.id
           }),
-          label: `Accertamento ${params.id}`,
+          label: assessmentName || '-',
           id: 'ASSESSMENT_DETAIL'
         },
         {
@@ -82,7 +87,7 @@ export const TelematicReceiptDetail = () => {
         customBreadcrumbsItems: customBreadcrumbsItems
       });
     }
-  }, [params.assessmentDetailId, params.id, data, t]);
+  }, [params.assessmentDetailId, params.id, data, t, assessmentName]);
 
   useEffect(() => {
     if (isNaN(Number(id)) || isNaN(organizationId) || organizationId <= 0) {
