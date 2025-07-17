@@ -1,8 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import SearchCard, {
-  ErrorMessage
-} from '../../components/SearchCard/SearchCard';
+import SearchCard from '../../components/SearchCard/SearchCard';
 import { useState } from 'react';
 import { useStore } from '../../store/GlobalStore';
 import getPagoPaRegistries from '../../api/getPagoPaRegistry';
@@ -17,6 +15,7 @@ import {
 import { FilterFieldValue } from '../../models/Filters';
 import utils from '../../utils';
 import { noFilterSetted } from '../../utils/filtersValidation';
+import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 
 // Create a deep copy of filterValues to avoid mutating the state directly
 function deepCopy<T>(obj: T) {
@@ -98,7 +97,7 @@ const EventPage = () => {
         activeTabIndex={activeTabIndex}
         onTabChange={handleTabChange}
         onFilterChange={handleFilterChange}
-        render={error && ErrorMessage}
+        render={error && <ErrorMessage />}
         button={[
           {
             label: t('commons.filters.remove'),

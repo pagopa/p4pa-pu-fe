@@ -1,4 +1,4 @@
-import { Grid, Stack, Typography, useTheme } from '@mui/material';
+import { Grid, Stack, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
@@ -7,11 +7,12 @@ import { useLocation } from 'react-router';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
 import FilterContainer from '../FilterContainer/FilterContainer';
 import { PagedReceiptView } from '../../../generated/data-contracts';
-import { ReactNode, useState } from 'react';
+import { useState } from 'react';
 import { noFilterSetted } from '../../utils/filtersValidation';
 import { getReceipts } from '../../api/receipts';
 import { useStore } from '../../store/GlobalStore';
 import { useSearch } from '../../hooks/useSearch';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export type LocationState = {
   filters: BaseFilterValues;
@@ -22,12 +23,6 @@ const TelematicReceiptSearchResults = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const [error, setError] = useState(false);
-
-  const errorMessage: ReactNode = (
-    <Typography variant="body2" color="error" data-testid="filters-error-text">
-      {t('commons.filters.atLeastOneFilter')}
-    </Typography>
-  );
 
   const initialFilters = (location.state?.filters || {}) as BaseFilterValues;
   const [filterValues, setFilterValues] = useState(initialFilters);
@@ -62,7 +57,7 @@ const TelematicReceiptSearchResults = () => {
         description={t('telematicreceiptSearchResults.description')}
       />
       <Stack gap={3}>
-        {error && errorMessage}
+        {error && <ErrorMessage variant="outlined" />}
         <FilterContainer
           items={filters}
           values={filterValues}

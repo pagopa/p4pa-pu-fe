@@ -1,8 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
-import SearchCard, {
-  ErrorMessage
-} from '../../../components/SearchCard/SearchCard';
+import SearchCard from '../../../components/SearchCard/SearchCard';
 import { tabs, testFilterValidity } from '../configs';
 import { useOutletContext } from 'react-router';
 import { useNavigate } from 'react-router';
@@ -10,6 +8,7 @@ import { PageRoutes } from '../..';
 import { RegistryType } from '../configs';
 import { EventsContext } from '../EventsContainer';
 import { useEffect } from 'react';
+import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
 
 const EventPage = () => {
   const { t } = useTranslation();
@@ -54,7 +53,7 @@ const EventPage = () => {
         activeTabIndex={activeTabIndex}
         onTabChange={handleTabChange}
         onFilterChange={handleFilterChange}
-        render={error && ErrorMessage}
+        render={error && <ErrorMessage />}
         button={[
           {
             label: t('commons.filters.remove'),

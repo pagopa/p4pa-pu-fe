@@ -1,4 +1,4 @@
-import SearchCard, { ErrorMessage } from '../SearchCard/SearchCard';
+import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import { FileUpload } from '@mui/icons-material';
 import { Grid } from '@mui/material';
@@ -8,6 +8,7 @@ import { PageRoutes } from '../../routes';
 import { generatePath, useNavigate } from 'react-router';
 import { useState } from 'react';
 import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export const Treasury = () => {
   const { t } = useTranslation();
@@ -39,7 +40,9 @@ export const Treasury = () => {
               title={t('treasury.search')}
               description={t('treasury.searchdescription')}
               multiFilterConfig={filterMap}
-              render={error && ErrorMessage}
+              render={
+                error && <ErrorMessage testId="multifilters-error-text" />
+              }
               extraProps={{
                 onFilterInteraction: () => setError(false)
               }}
