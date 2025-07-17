@@ -243,7 +243,7 @@
       "step1": {
         "title": "Dettaglio accertamento",
         "fields": {
-          "name":{
+          "name": {
             "label": "Nome accertamento",
             "placeholder": "Accertamento",
             "required": "Il campo nome è obbligatorio"
@@ -726,7 +726,7 @@
     "taxCode": "Codice Tassonomico",
     "taxonomy": "Tassonomia",
     "to": "Al",
-    "resultFrom": "Esito da",
+    "resultFrom": "Esito dal",
     "transactionManager": "Gestore della transazione (PSP)",
     "unauthorized": "Non sei autorizzato ad accedere alla sezione, contatta il gestore dei permessi",
     "unknownOrganization": "Ente senza nome",
