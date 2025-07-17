@@ -11,11 +11,11 @@ describe('useClassificationExport', () => {
 
   const createEmptyFormData = (): ClassificationFormFields => ({
     fileVersion: '',
-    label: '',
-    iuv: '',
+    label: [],
+    iuv: [],
     iud: '',
     iuf: '',
-    iur: '',
+    iur: [],
     remittanceInformation: '',
     accountRegistryCode: '',
     billAmountCents: '',
@@ -43,10 +43,10 @@ describe('useClassificationExport', () => {
 
       expect(defaultValues).toEqual({
         fileVersion: '',
-        label: '',
-        iuv: '',
+        label: [],
+        iuv: [],
         remittanceInformation: '',
-        iur: '',
+        iur: [],
         iud: '',
         iuf: '',
         reportingIur: '',
@@ -65,8 +65,8 @@ describe('useClassificationExport', () => {
 
       const testValues: Partial<ClassificationFormFields> = {
         fileVersion: 'v1.0',
-        label: LabelEnum.DOPPI,
-        iuv: 'IUV123456'
+        label: [LabelEnum.DOPPI],
+        iuv: ['IUV123456']
       };
 
       act(() => {
@@ -80,8 +80,8 @@ describe('useClassificationExport', () => {
 
       const formValues = result.current.formMethods.getValues();
       expect(formValues.fileVersion).toBe(testValues.fileVersion);
-      expect(formValues.label).toBe(testValues.label);
-      expect(formValues.iuv).toBe(testValues.iuv);
+      expect(formValues.label).toStrictEqual(testValues.label);
+      expect(formValues.iuv).toStrictEqual(testValues.iuv);
     });
   });
 
@@ -115,8 +115,8 @@ describe('useClassificationExport', () => {
 
       const formData = {
         ...createEmptyFormData(),
-        label: LabelEnum.DOPPI,
-        iuv: 'IUV123'
+        label: [LabelEnum.DOPPI],
+        iuv: ['IUV123']
       };
 
       const dateRanges = {
@@ -161,7 +161,7 @@ describe('useClassificationExport', () => {
       const formData = {
         ...createEmptyFormData(),
         fileVersion: 'v1.0',
-        label: LabelEnum.DOPPI
+        label: [LabelEnum.DOPPI]
       };
 
       const dateRanges = createEmptyDateRanges();
@@ -257,11 +257,11 @@ describe('useClassificationExport', () => {
 
       const formData: ClassificationFormFields = {
         fileVersion: 'v1.0',
-        label: LabelEnum.DOPPI,
-        iuv: 'IUV123456',
+        label: [LabelEnum.DOPPI],
+        iuv: ['IUV123456'],
         iud: 'IUD123456',
         iuf: 'IUF123456',
-        iur: 'IUR123456',
+        iur: ['IUR123456'],
         remittanceInformation: 'Test remittance',
         accountRegistryCode: 'ACC123',
         billAmountCents: '100.50',
@@ -292,11 +292,11 @@ describe('useClassificationExport', () => {
         exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
         fileVersion: 'v1.0',
         filterFields: {
-          iuv: 'IUV123456',
+          iuv: ['IUV123456'],
           iud: 'IUD123456',
           iuf: 'IUF123456',
-          iur: 'IUR123456',
-          label: LabelEnum.DOPPI,
+          iur: ['IUR123456'],
+          label: [LabelEnum.DOPPI],
           remittanceInformation: 'Test remittance',
           billAmountCents: 10050,
           accountRegistryCode: 'ACC123',
@@ -358,7 +358,7 @@ describe('useClassificationExport', () => {
       const formData = {
         ...createEmptyFormData(),
         fileVersion: 'v1.0',
-        iur: 'IUR123',
+        iur: ['IUR123'],
         reportingIur: 'REPORTING_IUR456'
       };
 
@@ -366,7 +366,7 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      expect(payload.filterFields.iur).toBe('IUR123');
+      expect(payload.filterFields.iur).toStrictEqual(['IUR123']);
     });
 
     it('should use reportingIur when iur is empty', () => {
@@ -377,7 +377,7 @@ describe('useClassificationExport', () => {
       const formData = {
         ...createEmptyFormData(),
         fileVersion: 'v1.0',
-        iur: '',
+        iur: [''],
         reportingIur: 'REPORTING_IUR456'
       };
 
@@ -385,7 +385,7 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      expect(payload.filterFields.iur).toBe('REPORTING_IUR456');
+      expect(payload.filterFields.iur).toStrictEqual(['']);
     });
 
     it('should convert billAmountCents from euros to cents', () => {
@@ -449,7 +449,7 @@ describe('useClassificationExport', () => {
       const formData = {
         ...createEmptyFormData(),
         fileVersion: 'v1.0',
-        label: 'INVALID_LABEL'
+        label: ['INVALID_LABEL']
       };
 
       const emptyDateRanges = createEmptyDateRanges();

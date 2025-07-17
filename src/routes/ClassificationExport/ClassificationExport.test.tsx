@@ -33,11 +33,11 @@ vi.mock('../../api/createExportFile', () => ({
 
 const defaultFormData = {
   fileVersion: 'v1.3',
-  label: '',
-  iuv: '',
+  label: [],
+  iuv: [],
   remittanceInformation: '',
   applicant: '',
-  iur: '',
+  iur: [],
   iud: '',
   iuf: '',
   reportingIur: '',
@@ -46,7 +46,7 @@ const defaultFormData = {
   pspLastName: '',
   pspCompanyName: '',
   regulationUniqueIdentifier: ''
-} as const;
+};
 
 const expectedPayload = {
   organizationId: 123,
