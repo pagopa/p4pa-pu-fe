@@ -14,6 +14,8 @@
     }
   },
   "AssessmentRegistryDetail": {
+    "description": "Ecco i dettagli del capitolo.",
+    "updatedAt": "Ultimo aggiornamento il",
     "operatingYear": "Anno esercizio",
     "status": "Stato ufficio",
     "sectionDescription": "Capitolo",
@@ -702,7 +704,7 @@
     "status": {
       "ALL": "Tutti",
       "ACTIVE": "Attivo",
-      "INACTIVE": "Inattivo",
+      "INACTIVE": "Disattivo",
       "COMPLETED": "Elaborato",
       "ERROR": "Errore",
       "EXPIRED": "Scaduto",
