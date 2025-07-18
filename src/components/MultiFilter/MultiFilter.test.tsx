@@ -1,13 +1,12 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import MultiFilter from './MultiFilter';
-import { FilterMap, FilterCategory } from '../../hooks/useMultiFilters';
+import { FilterMap } from '../../hooks/useMultiFilters';
 import { COMPONENT_TYPE, FilterItem } from '../FilterContainer/FilterContainer';
 import {
   selectedFilters,
   setSelectedFilters,
   setFilterValues,
-  initialFilterValues,
   KeyofFilterMap
 } from '../../store/FilterStore';
 
@@ -352,92 +351,35 @@ describe('MultiFilter Component', () => {
     expect(selectedFilters.value).toEqual(['BILL_CODE']);
   });
 
-  describe('Classification Category Tests', () => {
-    it('renders classification type select when filterCategory is CLASSIFICATIONS', () => {
-      render(
-        <MultiFilter
-          filterMap={mockFilterMap}
-          filterCategory={FilterCategory.CLASSIFICATIONS}
-        />
-      );
-
-      expect(screen.getByTestId('classification-select')).toBeInTheDocument();
-    });
-
-    it('shows label error when showLabelError is true for classification select', () => {
-      render(
-        <MultiFilter
-          filterMap={mockFilterMap}
-          filterCategory={FilterCategory.CLASSIFICATIONS}
-          showLabelError={true}
-        />
-      );
-
-      expect(screen.getByTestId('select-error')).toBeInTheDocument();
-    });
-
-    it('hides other filters when classification type is not selected', () => {
+  describe('MultiFilter - CLASSIFICATION_TYPE come filtro standard', () => {
+    it('allow to add CLASSIFICATION_TYPE as filter through select', () => {
       setSelectedFilters(['AMOUNT']);
-
-      render(
-        <MultiFilter
-          filterMap={mockFilterMap}
-          filterCategory={FilterCategory.CLASSIFICATIONS}
-        />
-      );
-
-      // Should not show the filter rows when CLASSIFICATION_TYPE is empty
-      expect(screen.queryByLabelText('remove')).not.toBeInTheDocument();
-    });
-
-    it('shows other filters when classification type is selected', () => {
-      setSelectedFilters(['AMOUNT']);
-      setFilterValues({
-        ...initialFilterValues,
-        CLASSIFICATION_TYPE: 'DOPPI'
+      render(<MultiFilter filterMap={mockFilterMap} />);
+      const selects = screen.getAllByRole('combobox');
+      const filterSelect = selects[0];
+      fireEvent.change(filterSelect, {
+        target: { value: 'CLASSIFICATION_TYPE' }
       });
-
-      render(
-        <MultiFilter
-          filterMap={mockFilterMap}
-          filterCategory={FilterCategory.CLASSIFICATIONS}
-        />
-      );
-
-      // Should show filters when CLASSIFICATION_TYPE has value
-      expect(screen.getByTestId('filter-container')).toBeInTheDocument();
+      expect(selectedFilters.value).toContain('CLASSIFICATION_TYPE');
     });
 
-    it('calls onFilterInteraction when classification type changes', () => {
-      render(
-        <MultiFilter
-          filterMap={mockFilterMap}
-          filterCategory={FilterCategory.CLASSIFICATIONS}
-          onFilterInteraction={mockOnFilterInteraction}
-        />
-      );
-
-      const select = screen.getByTestId('classification-section-type');
-      fireEvent.change(select, { target: { value: 'DOPPI' } });
-
-      expect(mockOnFilterInteraction).toHaveBeenCalled();
+    it('allow to change the value of the CLASSIFICATION_TYPE select', () => {
+      setSelectedFilters(['CLASSIFICATION_TYPE']);
+      render(<MultiFilter filterMap={mockFilterMap} />);
+      const selects = screen.getAllByRole('combobox');
+      const filterSelect = selects[0];
+      fireEvent.change(filterSelect, {
+        target: { value: 'CLASSIFICATION_TYPE' }
+      });
+      expect(filterSelect).toHaveValue('CLASSIFICATION_TYPE');
     });
 
-    it('automatically adds first filter when classification type is selected and no filters exist', () => {
-      setSelectedFilters([]);
-
-      render(
-        <MultiFilter
-          filterMap={mockFilterMap}
-          filterCategory={FilterCategory.CLASSIFICATIONS}
-        />
-      );
-
-      const select = screen.getByTestId('classification-section-type');
-      fireEvent.change(select, { target: { value: 'DOPPI' } });
-
-      // Should automatically add first available filter
-      expect(selectedFilters.value.length).toBeGreaterThan(0);
+    it('allow to remove CLASSIFICATION_TYPE as filter', () => {
+      setSelectedFilters(['AMOUNT', 'CLASSIFICATION_TYPE']);
+      render(<MultiFilter filterMap={mockFilterMap} />);
+      const removeButtons = screen.getAllByLabelText('remove');
+      fireEvent.click(removeButtons[1]);
+      expect(selectedFilters.value).not.toContain('CLASSIFICATION_TYPE');
     });
   });
 
