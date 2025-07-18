@@ -10,6 +10,7 @@ import {
   taxonomySchema
 } from '../../../generated/zod-schema';
 import { buildQueryParams, TaxonomyFilteredRequest } from './mappings';
+import { ScheduleEnum } from '../../../generated/data-contracts';
 
 export const getOrganizationsTypes = () =>
   useQuery({
@@ -120,6 +121,16 @@ export const synchronizeTaxonomy = () =>
     mutationKey: ['sync'],
     mutationFn: async () => {
       const { data } = await utils.apiClient.bff.synchronizeTaxonomy();
+      return data;
+    }
+  });
+
+export const getScheduleLastUpdatedTime = (scheduleId: ScheduleEnum) =>
+  useQuery({
+    queryKey: ['scheduleLastUpdatedTime'],
+    queryFn: async () => {
+      const { data } =
+        await utils.apiClient.bff.getScheduleLastUpdatedTime(scheduleId);
       return data;
     }
   });
