@@ -127,7 +127,7 @@ export const synchronizeTaxonomy = () =>
 
 export const getScheduleLastUpdatedTime = (scheduleId: ScheduleEnum) =>
   useQuery({
-    queryKey: ['scheduleLastUpdatedTime'],
+    queryKey: ['scheduleLastUpdatedTime', scheduleId],
     queryFn: async () => {
       const { data } =
         await utils.apiClient.bff.getScheduleLastUpdatedTime(scheduleId);
