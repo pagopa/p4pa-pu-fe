@@ -117,7 +117,7 @@ export const AssessmentRegistryDetail = () => {
           color={'primary'}
           onClick={() =>
             navigate(
-              generatePath(PageRoutes.ASSESSMENT_REGISTRY_DETAIL, {
+              generatePath(PageRoutes.ASSESSMENT_REGISTRY_EDIT, {
                 assessmentRegistryId
               })
             )

@@ -16,12 +16,12 @@ import {
   updateAssessmentsRegistry
 } from '../../api/assessments';
 import { useStore } from '../../store/GlobalStore';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 export const AssessmentRegistryEdit = () => {
-  const { id } = useParams<{ id: string }>();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const [init, setInit] = useState(false);
   const {
     state: { organizationId }
   } = useStore();
@@ -29,13 +29,13 @@ export const AssessmentRegistryEdit = () => {
     assessmentRegistryId: string;
   }>();
 
-  if (isNaN(Number(assessmentRegistryId))) {
+  if (!assessmentRegistryId || isNaN(Number(assessmentRegistryId))) {
     navigate(PageRoutes.RESPONSES_ERROR);
   }
 
   const { data: existingRegistry } = getAssessmentsRegistry(
     organizationId,
-    Number(id)
+    Number(assessmentRegistryId)
   );
 
   const update = updateAssessmentsRegistry(
@@ -44,8 +44,7 @@ export const AssessmentRegistryEdit = () => {
   );
 
   const methods = useForm<AssessmentRegistryFormValues>({
-    resolver: zodResolver(assessmentRegistrySchema),
-    shouldUnregister: true // Cleanup on unmount
+    resolver: zodResolver(assessmentRegistrySchema)
   });
 
   // Pre-fill form when data loads or changes
@@ -66,6 +65,7 @@ export const AssessmentRegistryEdit = () => {
         assessmentDescription: existingRegistry.assessmentDescription ?? ''
       };
       methods.reset(initValues);
+      setInit(true);
     }
   }, [existingRegistry, methods]);
 
@@ -74,10 +74,10 @@ export const AssessmentRegistryEdit = () => {
       const request: AssessmentsRegistry = {
         ...data,
         organizationId,
+        assessmentRegistryId: Number(assessmentRegistryId),
         debtPositionTypeOrgCode: data.debtPositionType,
         operatingYear: data.operatingYear.from.getFullYear().toString()
       };
-      console.debug(request);
       await update.mutateAsync(request);
       navigate(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
@@ -102,10 +102,10 @@ export const AssessmentRegistryEdit = () => {
         noValidate
         onSubmit={methods.handleSubmit(submit)}
       >
-        <Step1Configuration edit key="step1" />
+        {init && <Step1Configuration edit key="step1" />}
 
         <WizardStepButtons
-          nextLabel={t('commons.update')}
+          nextLabel={t('commons.save')}
           onBack={() => navigate(-1)}
           onNext={methods.handleSubmit(submit)}
         />

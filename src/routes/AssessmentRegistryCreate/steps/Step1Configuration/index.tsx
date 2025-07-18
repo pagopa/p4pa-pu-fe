@@ -27,22 +27,20 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     organizationId
   });
 
+  const i18nKey = edit
+    ? 'AssessmentRegistryUpdate'
+    : 'AssessmentRegistryCreate';
+
   const { control } = useFormContext();
 
   return (
     <Stack gap={3}>
       <Stack mt={2}>
-        <Typography variant="h4">
-          {t('AssessmentRegistryCreate.title')}
-        </Typography>
-        <Typography variant="body1">
-          {t('AssessmentRegistryCreate.subtitle')}
-        </Typography>
+        <Typography variant="h4">{t(`${i18nKey}.title`)}</Typography>
+        <Typography variant="body1">{t(`${i18nKey}.subtitle`)}</Typography>
       </Stack>
       <WizardStepWrapper>
-        <Typography variant="h6">
-          {t('AssessmentRegistryCreate.title')}
-        </Typography>
+        <Typography variant="h6">{t(`${i18nKey}.configuration`)}</Typography>
         <SectionBox
           title={t('AssessmentRegistryCreate.debtPositionType')}
           adornment={<BookIcon />}
@@ -53,7 +51,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
             control={control}
             label={t('AssessmentRegistryCreate.debtPositionType')}
             options={selectionQuery?.data?.codeMap}
-            disabled={!selectionQuery?.data?.codeMap?.length || edit}
+            disabled={!selectionQuery?.data?.codeMap?.length}
             required
           />
         </SectionBox>
@@ -69,7 +67,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.7 }}
               label={t('AssessmentRegistryCreate.status')}
-              disabled={edit}
               options={[
                 {
                   label: t('commons.status.ACTIVE'),
@@ -102,7 +99,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.4 }}
               label={t('AssessmentRegistryCreate.sectionCode')}
-              disabled={edit}
               required
             />
             <FormComponent.ControlledTextField
@@ -111,7 +107,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.6 }}
               label={t('AssessmentRegistryCreate.sectionDescription')}
-              disabled={edit}
               required
             />
           </Stack>
@@ -122,7 +117,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.4 }}
               label={t('AssessmentRegistryCreate.officeCode')}
-              disabled={edit}
               required
             />
             <FormComponent.ControlledTextField
@@ -131,7 +125,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.6 }}
               label={t('AssessmentRegistryCreate.officeDescription')}
-              disabled={edit}
               required
             />
           </Stack>
@@ -142,7 +135,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.4 }}
               label={t('AssessmentRegistryCreate.assessmentCode')}
-              disabled={edit}
               required
             />
             <FormComponent.ControlledTextField
@@ -152,7 +144,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               sx={{ flex: 0.6 }}
               label={t('AssessmentRegistryCreate.assessmentDescription')}
               required
-              disabled={edit}
             />
           </Stack>
         </SectionBox>
