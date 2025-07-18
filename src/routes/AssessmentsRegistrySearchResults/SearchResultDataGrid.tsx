@@ -4,7 +4,7 @@ import {
   GridSortModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { ReadMore } from '@mui/icons-material';
+import { ChevronRight } from '@mui/icons-material';
 import { Chip, ChipProps, IconButton } from '@mui/material';
 import { generatePath, Link } from 'react-router';
 import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
@@ -23,7 +23,7 @@ export type DataGridProps = {
 
 const stateColors: Record<AssessmentsRegistryStatus, ChipProps['color']> = {
   ACTIVE: 'success',
-  INACTIVE: 'error'
+  INACTIVE: 'default'
 };
 
 export const SearchResultsDataGrid = ({
@@ -102,7 +102,7 @@ export const SearchResultsDataGrid = ({
           aria-label={t('commons.detail')}
         >
           <IconButton color="primary" size="small">
-            <ReadMore />
+            <ChevronRight />
           </IconButton>
         </Link>
       )

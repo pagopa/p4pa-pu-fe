@@ -27,7 +27,7 @@ export const Assessment = () => {
   };
 
   const handleCreateChapter = () => {
-    console.log('Create new chapter clicked');
+    navigate(PageRoutes.ASSESSMENT_REGISTRY_CREATE);
   };
 
   const handleViewAllChapters = () => {

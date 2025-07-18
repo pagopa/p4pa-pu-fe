@@ -97,10 +97,11 @@ export const _DateRange = ({
             textField: {
               size: 'small',
               variant: 'outlined',
-              error: !!startDateError,
-              helperText: startDateError
-                ? (from?.errorMessage ?? t('dates.validations.from'))
-                : '',
+              error: !!startDateError || !!from?.errorMessage,
+              helperText:
+                startDateError || from?.errorMessage
+                  ? (from?.errorMessage ?? t('dates.validations.from'))
+                  : '',
               required
             }
           }}
@@ -124,10 +125,11 @@ export const _DateRange = ({
               textField: {
                 size: 'small',
                 variant: 'outlined',
-                error: !!endDateError,
-                helperText: endDateError
-                  ? (to?.errorMessage ?? t('dates.validations.to'))
-                  : '',
+                error: !!endDateError || !!to?.errorMessage,
+                helperText:
+                  endDateError || to?.errorMessage
+                    ? (to?.errorMessage ?? t('dates.validations.to'))
+                    : '',
                 required
               },
               inputAdornment: {

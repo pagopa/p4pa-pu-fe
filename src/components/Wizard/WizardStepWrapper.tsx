@@ -23,12 +23,16 @@ const WizardStepWrapper = ({
       width="100%"
     >
       <Grid item lg={12} mb={2}>
-        <Typography variant="h4" gutterBottom>
-          {title}
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          {subtitle}
-        </Typography>
+        {title && (
+          <Typography variant="h4" gutterBottom>
+            {title}
+          </Typography>
+        )}
+        {subtitle && (
+          <Typography variant="body1" gutterBottom>
+            {subtitle}
+          </Typography>
+        )}
         {alertMessage && (
           <Typography variant="body1" color="error" sx={{ marginBottom: 2 }}>
             {alertMessage}
