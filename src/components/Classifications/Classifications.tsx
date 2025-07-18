@@ -51,10 +51,6 @@ export const Classifications = () => {
                   <ErrorMessage testId="multifilters-error-text" />
                 )
               }
-              // extraProps={{
-              //   showLabelError: false,
-              //   onFilterInteraction: () => {}
-              // }}
               filterCategory={FilterCategory.CLASSIFICATIONS}
               button={[
                 {
