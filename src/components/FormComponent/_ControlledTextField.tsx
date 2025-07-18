@@ -24,6 +24,10 @@ export const _ControlledTextField = <T extends FieldValues>({
         noAdornment={!props?.adornment}
         error={!!fieldState.error}
         helperText={<ErrorMessage messageKey={fieldState.error?.message} />}
+        InputLabelProps={{
+          ...props.InputLabelProps,
+          shrink: !!field.value // Key fix: always shrink if value exists
+        }}
         {...field}
         {...props}
       />

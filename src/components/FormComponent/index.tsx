@@ -21,6 +21,10 @@ import {
   _ControlledFileUploader,
   _ControlledFileUploaderProps
 } from './_ControlledFileUploader';
+import {
+  _ControlledDateRange,
+  _ControlledDateRangeProps
+} from './_ControlledDateRange';
 
 export const FormComponent = {
   AmountField: _AmountField,
@@ -31,6 +35,7 @@ export const FormComponent = {
   ControlledSwitch: _ControlledSwitch,
   ControlledTextField: _ControlledTextField,
   ControlledFileUploader: _ControlledFileUploader,
+  ControlledDateRange: _ControlledDateRange,
   DateRange: _DateRange,
   Select: _Select,
   TextField: _TextField
@@ -44,6 +49,7 @@ export type {
   _ControlledSwitchProps as ControlledSwitchProps,
   _ControlledTextFieldProps as ControlledTextFieldProps,
   _ControlledFileUploaderProps as ControlledFileUploaderProps,
+  _ControlledDateRangeProps as ControlledDateRangeProps,
   _DateRangeProps as DateRangeProps,
   _SelectProps as SelectProps,
   _TextFieldProps as TextFieldProps

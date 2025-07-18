@@ -12,6 +12,7 @@ import {
   assessmentsSchema
 } from '../../../generated/zod-schema';
 import { pagedAssessmentsExtendedDTOSchema } from '../../../generated/zod-schema';
+import { AssessmentsRegistry } from '../../../generated/data-contracts';
 
 type AssessmentsParams = Parameters<
   typeof utils.apiClient.bff.getPagedAssessmentsExtendedDto
@@ -112,7 +113,44 @@ export const createAssessment = (organizationId: number) =>
       if (data) {
         parseAndLog(assessmentsSchema, data);
       }
+      return data;
+    }
+  });
 
+export const createAssessmentsRegistry = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['createAssessmentRegistry', organizationId],
+    mutationFn: async (assessmentRegistry: AssessmentsRegistry) => {
+      const { data } = await utils.apiClient.bff.createAssessmentsRegistry(
+        organizationId,
+        assessmentRegistry
+      );
+      if (data) {
+        parseAndLog(assessmentsRegistryDTOSchema, data);
+      }
+      return data;
+    }
+  });
+
+export const updateAssessmentsRegistry = (
+  organizationId: number,
+  assessmentRegistryId: number
+) =>
+  useMutation({
+    mutationKey: [
+      'updateAssessmentRegistry',
+      organizationId,
+      assessmentRegistryId
+    ],
+    mutationFn: async (assessmentRegistry: AssessmentsRegistry) => {
+      const { data } = await utils.apiClient.bff.updateAssessmentsRegistry(
+        organizationId,
+        assessmentRegistryId,
+        assessmentRegistry
+      );
+      if (data) {
+        parseAndLog(assessmentsRegistryDTOSchema, data);
+      }
       return data;
     }
   });

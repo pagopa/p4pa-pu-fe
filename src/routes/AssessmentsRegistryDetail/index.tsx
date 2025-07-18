@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import { PageRoutes } from '../../routes';
@@ -111,11 +111,17 @@ export const AssessmentRegistryDetail = () => {
         ]}
       />
       <Stack direction="row" justifyContent="flex-end">
-        {/* TODO: Navigate to edit on button click */}
         <Button
           size="large"
           startIcon={<Edit />}
           color={'primary'}
+          onClick={() =>
+            navigate(
+              generatePath(PageRoutes.ASSESSMENT_REGISTRY_EDIT, {
+                assessmentRegistryId
+              })
+            )
+          }
           variant={'contained'}
         >
           {t('commons.edit')}
