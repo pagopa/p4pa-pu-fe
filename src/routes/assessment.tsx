@@ -7,6 +7,7 @@ import { AssessmentsRegistrySearchResults } from './AssessmentsRegistrySearchRes
 import { AssessmentCreate } from './AssessmentCreate/AssessmentCreate';
 import { AssessmentRegistryDetail } from './AssessmentsRegistryDetail';
 import { AssessmentRegistryCreate } from './AssessmentRegistryCreate';
+import { AssessmentRegistryEdit } from './AssessmentRegistryCreate/AssessmentRegistryEdit';
 
 export const assessmentRoutes = [
   {
@@ -96,6 +97,19 @@ export const assessmentRoutes = [
         id: 'ASSESSMENT_REGISTRY_CREATE',
         path: 'registry/new',
         element: <AssessmentRegistryCreate />,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject
+      },
+      {
+        id: 'ASSESSMENT_REGISTRY_EDIT',
+        path: 'registry/edit/:assessmentRegistryId',
+        element: <AssessmentRegistryEdit />,
         handle: {
           backButton: true,
           backButtonText: 'commons.exit',
