@@ -131,3 +131,26 @@ export const createAssessmentsRegistry = (organizationId: number) =>
       return data;
     }
   });
+
+export const updateAssessmentsRegistry = (
+  organizationId: number,
+  assessmentRegistryId: number
+) =>
+  useMutation({
+    mutationKey: [
+      'updateAssessmentRegistry',
+      organizationId,
+      assessmentRegistryId
+    ],
+    mutationFn: async (assessmentRegistry: AssessmentsRegistry) => {
+      const { data } = await utils.apiClient.bff.updateAssessmentsRegistry(
+        organizationId,
+        assessmentRegistryId,
+        assessmentRegistry
+      );
+      if (data) {
+        parseAndLog(assessmentsRegistryDTOSchema, data);
+      }
+      return data;
+    }
+  });

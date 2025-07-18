@@ -9,6 +9,18 @@ type SuccessPage = {
 type SuccessOpts = Record<string, SuccessPage>;
 
 export const SuccessPageConfig: SuccessOpts = {
+  'assessment-registry-update': {
+    title: 'AssessmentRegistryUpdate.success.title',
+    description: 'AssessmentRegistryUpdate.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'AssessmentRegistryUpdate.success.backToStart',
+        actionID: 'ASSESSMENT_REGISTRY_SEARCH_RESULTS'
+      }
+    ]
+  },
   'assessment-registry-create': {
     title: 'AssessmentRegistryCreate.success.title',
     description: 'AssessmentRegistryCreate.success.description',
@@ -17,7 +29,7 @@ export const SuccessPageConfig: SuccessOpts = {
         variant: 'contained',
         size: 'large',
         buttonLabel: 'AssessmentRegistryCreate.success.backToStart',
-        actionID: 'ASSESSMENT_SEARCH_RESULTS'
+        actionID: 'ASSESSMENT_REGISTRY_SEARCH_RESULTS'
       }
     ]
   },

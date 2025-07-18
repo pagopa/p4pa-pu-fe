@@ -24,7 +24,18 @@ export const AssessmentRegistryCreate = () => {
   const create = createAssessmentsRegistry(organizationId);
 
   const methods = useForm<AssessmentRegistryFormValues>({
-    resolver: zodResolver(assessmentRegistrySchema)
+    resolver: zodResolver(assessmentRegistrySchema),
+    defaultValues: {
+      debtPositionType: '',
+      status: undefined,
+      operatingYear: { from: undefined, to: null },
+      sectionCode: '',
+      sectionDescription: '',
+      officeCode: '',
+      officeDescription: '',
+      assessmentCode: '',
+      assessmentDescription: ''
+    }
   });
 
   const submit = async (data: z.infer<typeof assessmentRegistrySchema>) => {

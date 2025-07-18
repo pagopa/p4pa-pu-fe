@@ -13,6 +13,16 @@
       "titleIUV": "Avvisi (IUV)"
     }
   },
+  "AssessmentRegistryUpdate": {
+    "success": {
+      "backToStart": "Visualizza capitoli",
+      "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato aggiornato!"
+    },
+    "title": "Modifica capitolo",
+    "subtitle": "Gestisci i parametri del capitolo.",
+    "configuration": "Configurazione del capitolo"
+  },
   "AssessmentRegistryCreate": {
     "success": {
       "backToStart": "Visualizza capitoli",
@@ -20,6 +30,7 @@
       "title": "Il Capitolo ‘{{paymentObject}}’ è stato creato!"
     },
     "title": "Crea un nuovo capitolo",
+    "configuration": "Crea un nuovo capitolo",
     "subtitle": "Inserisci i parametri per creare un nuovo capitolo.",
     "step1": "Configurazione del capitolo",
     "debtPositionType": "Tipo dovuto",
@@ -327,7 +338,6 @@
       "iur": "IUR"
     }
   },
-
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
