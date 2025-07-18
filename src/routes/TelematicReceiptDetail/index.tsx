@@ -89,6 +89,7 @@ export const TelematicReceiptDetail = () => {
     }
   }, [params.assessmentDetailId, params.id, data, t, assessmentName]);
 
+  // Setup custom breadcrumb for assessment context
   useEffect(() => {
     if (isNaN(Number(id)) || isNaN(organizationId) || organizationId <= 0) {
       navigate(PageRoutes.RESPONSES_ERROR);

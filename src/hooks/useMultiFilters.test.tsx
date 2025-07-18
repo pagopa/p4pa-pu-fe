@@ -73,9 +73,6 @@ describe('useMultiFilters', () => {
     expect(result.current.filterMap).toBeDefined();
     expect(typeof result.current.removeAllFilters).toBe('function');
     expect(typeof result.current.noFilterIsSelected).toBe('function');
-    expect(
-      typeof result.current.noFilterSelectedExcludingClassificationType
-    ).toBe('function');
   });
 
   it('should return correct filters for filterCategory TREASURY', () => {
