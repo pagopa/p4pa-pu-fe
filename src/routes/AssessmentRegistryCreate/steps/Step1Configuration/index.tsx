@@ -7,8 +7,8 @@ import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../../components/FormComponent';
 import { useStore } from '../../../../store/GlobalStore';
-import { useDebtPositionTypesByOrg } from '../../../../hooks/useDebtPositionTypesByOrg';
 import Typography from '@mui/material/Typography';
+import { useDebtPositionsTypeOrg } from '../../../../hooks/useDebtPositionsTypeOrg';
 
 export type Step1Data = {
   debtPositionTypeId: string;
@@ -23,8 +23,9 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     state: { organizationId }
   } = useStore();
 
-  const selectionQuery = useDebtPositionTypesByOrg({
-    organizationId
+  const selectionQuery = useDebtPositionsTypeOrg({
+    organizationId,
+    useCodeAsValue: true
   });
 
   const i18nKey = edit
@@ -50,8 +51,8 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
             data-testid="debtPositionType"
             control={control}
             label={t('AssessmentRegistryCreate.debtPositionType')}
-            options={selectionQuery?.data?.codeMap}
-            disabled={!selectionQuery?.data?.codeMap?.length}
+            options={selectionQuery?.optionsMap}
+            disabled={!selectionQuery?.optionsMap?.length}
             required
           />
         </SectionBox>
