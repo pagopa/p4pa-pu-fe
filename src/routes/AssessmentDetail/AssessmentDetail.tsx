@@ -124,7 +124,7 @@ export const AssessmentDetail = () => {
           label:
             data?.assessmentsName ||
             detailItem?.debtPositionTypeOrgCode ||
-            `Accertamento ${assessmentId}`,
+            `${t('assessment.assessment')} ${assessmentId}`,
           id: 'ASSESSMENT_DETAIL'
         }
       ];
@@ -197,8 +197,11 @@ export const AssessmentDetail = () => {
       assessmentDetailId: assessmentDetailId.toString()
     });
 
-    // Navigate to the detail page in the same tab
-    navigate(detailUrl);
+    navigate(detailUrl, {
+      state: {
+        assessmentName: data?.assessmentsName
+      }
+    });
   };
 
   // Configuration sections for the DetailContainer
@@ -257,7 +260,10 @@ export const AssessmentDetail = () => {
   return (
     <>
       <TitleComponent
-        title={data?.assessmentsName || `Accertamento ${assessmentId || ''}`}
+        title={
+          data?.assessmentsName ||
+          `${t('assessment.assessment')} ${assessmentId || ''}`
+        }
         callToAction={[
           {
             icon: <MoreVert />,
@@ -364,7 +370,7 @@ export const AssessmentDetail = () => {
                 label: 'dateRange1',
                 gridWidth: 4,
                 from: {
-                  label: t('commons.from'),
+                  label: t('commons.resultFrom'),
                   value: draftFilters.paymentDateTimeFrom
                     ? new Date(draftFilters.paymentDateTimeFrom)
                     : null,

@@ -6,6 +6,7 @@ export type ButtonConfig = {
   size?: ButtonOwnProps['size'];
   buttonLabel?: string;
   actionID?: string;
+  customNavigation?: string;
   onButtonClick?: () => void;
 };
 

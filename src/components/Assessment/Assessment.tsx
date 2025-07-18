@@ -1,4 +1,4 @@
-import SearchCard, { ErrorMessage } from '../SearchCard/SearchCard';
+import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import AddIcon from '@mui/icons-material/Add';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
@@ -9,6 +9,7 @@ import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export const Assessment = () => {
   const { t } = useTranslation();
@@ -22,7 +23,7 @@ export const Assessment = () => {
   const [error, setError] = useState(false);
 
   const handleCreateAssessment = () => {
-    console.log('Create assessment clicked');
+    navigate(PageRoutes.ASSESSMENT_CREATION);
   };
 
   const handleCreateChapter = () => {
@@ -63,7 +64,9 @@ export const Assessment = () => {
               title={t('assessment.search')}
               description={t('assessment.searchDescription')}
               multiFilterConfig={filterMap}
-              render={error && ErrorMessage}
+              render={
+                error && <ErrorMessage testId="multifilters-error-text" />
+              }
               extraProps={{
                 onFilterInteraction: () => setError(false)
               }}

@@ -350,7 +350,10 @@ describe('AssessmentDetail', () => {
       fireEvent.click(navigateButton);
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        expect.stringContaining('/assessment/detail/123/95')
+        expect.stringContaining('/assessment/detail/123/95'),
+        expect.objectContaining({
+          state: { assessmentName: 'ACC20250618_FEATURE_TEST' }
+        })
       );
     });
   });

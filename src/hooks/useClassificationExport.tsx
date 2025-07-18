@@ -91,33 +91,48 @@ export const useClassificationExport = (organizationId: number) => {
     ): ClassificationsExportFileRequestDTO => {
       const filterFields: ClassificationsExportFileFilter = {};
 
-      if (formData.iuv) filterFields.iuv = formData.iuv;
-      if (formData.iud) filterFields.iud = formData.iud;
-      if (formData.iuf) filterFields.iuf = formData.iuf;
-      if (formData.iur || formData.reportingIur) {
-        filterFields.iur = formData.iur || formData.reportingIur;
+      if (formData.iuv) {
+        filterFields.iuv = [formData.iuv];
       }
+      if (formData.iud) {
+        filterFields.iud = formData.iud;
+      }
+      if (formData.iuf) {
+        filterFields.iuf = formData.iuf;
+      }
+
+      const iurValue = formData.iur || formData.reportingIur;
+      if (iurValue) {
+        filterFields.iur = [iurValue];
+      }
+
       if (formData.label && isValidLabelEnum(formData.label)) {
-        filterFields.label = formData.label;
+        filterFields.label = [formData.label as LabelEnum];
       }
+
       if (formData.remittanceInformation) {
         filterFields.remittanceInformation = formData.remittanceInformation;
       }
+
       if (formData.billAmountCents) {
         const amountInEuros = Number(formData.billAmountCents);
         if (!isNaN(amountInEuros)) {
           filterFields.billAmountCents = Math.round(amountInEuros * 100);
         }
       }
+
       if (formData.accountRegistryCode) {
         filterFields.accountRegistryCode = formData.accountRegistryCode;
       }
+
       if (formData.pspLastName) {
         filterFields.pspLastName = formData.pspLastName;
       }
+
       if (formData.pspCompanyName) {
         filterFields.pspCompanyName = formData.pspCompanyName;
       }
+
       if (formData.regulationUniqueIdentifier) {
         filterFields.regulationUniqueIdentifier =
           formData.regulationUniqueIdentifier;

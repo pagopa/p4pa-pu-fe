@@ -6,13 +6,14 @@ import {
 import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
 import { Chip, ChipProps, IconButton } from '@mui/material';
-import { Link } from 'react-router';
+import { generatePath, Link } from 'react-router';
 import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
 import {
   AssessmentsRegistry,
   AssessmentsRegistryStatus,
   PagedAssessmentsRegistry
 } from '../../../generated/data-contracts';
+import { PageRoutes } from '..';
 
 export type DataGridProps = {
   data: PagedAssessmentsRegistry;
@@ -93,9 +94,13 @@ export const SearchResultsDataGrid = ({
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      // TODO: navigate to detail
-      renderCell: () => (
-        <Link to={'#'} aria-label={t('commons.detail')}>
+      renderCell: (params: GridRenderCellParams) => (
+        <Link
+          to={generatePath(PageRoutes.ASSESSMENT_REGISTRY_DETAIL, {
+            assessmentRegistryId: params.row.assessmentRegistryId
+          })}
+          aria-label={t('commons.detail')}
+        >
           <IconButton color="primary" size="small">
             <ReadMore />
           </IconButton>

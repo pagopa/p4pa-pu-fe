@@ -46,7 +46,7 @@ const defaultFormData = {
   pspLastName: '',
   pspCompanyName: '',
   regulationUniqueIdentifier: ''
-} as const;
+};
 
 const expectedPayload = {
   organizationId: 123,

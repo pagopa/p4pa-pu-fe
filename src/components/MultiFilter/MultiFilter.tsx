@@ -19,12 +19,7 @@ export type MultiFilterProps = {
   onFilterInteraction?: () => void;
 };
 
-const MultiFilter = ({
-  filterMap,
-  filterCategory,
-  showLabelError,
-  onFilterInteraction
-}: MultiFilterProps) => {
+const MultiFilter = ({ filterMap, onFilterInteraction }: MultiFilterProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 

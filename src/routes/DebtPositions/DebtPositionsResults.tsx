@@ -19,12 +19,16 @@ import { PageRoutes } from '../../routes';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { GridSortModel } from '@mui/x-data-grid';
+import { noFilterSetted } from '../../utils/filtersValidation';
+import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 
 export const DebtPositionResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
+
+  const [error, setError] = useState(false);
 
   // Extract initial state from location.state or fallback
   const { searchType: locationSearchType, filters: locationFilters } =
@@ -62,10 +66,18 @@ export const DebtPositionResults = () => {
     query
   });
 
-  // Filters UI logic
+  const applyFilters = () => {
+    if (!noFilterSetted(debtPosition.filters)) {
+      debtPosition.applyFilters();
+      setError(false);
+    } else {
+      setError(true);
+    }
+  };
+
   const { filters } = useDebtPositionFilters({
     searchType,
-    onFilter: debtPosition.applyFilters
+    onFilter: applyFilters
   });
 
   // Sort state
@@ -118,6 +130,7 @@ export const DebtPositionResults = () => {
     <Stack gap={5}>
       <TitleComponent title={title} callToAction={callToAction} />
       <Stack gap={3}>
+        {error && <ErrorMessage variant="outlined" />}
         <FilterContainer
           items={filters}
           values={filterValues}
