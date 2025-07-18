@@ -48,6 +48,7 @@ export const TaxonomyPage = () => {
 
   const handleUpdateCTA = async () => {
     try {
+      lastUpdatedTime.refetch();
       const result = await syncMutation.mutateAsync();
       if (result) utils.notify.emit(t('taxonomyPage.APIUpdateOK'), 'info');
     } catch (error) {

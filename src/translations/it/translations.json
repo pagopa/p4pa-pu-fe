@@ -1535,9 +1535,9 @@
     }
   },
   "taxonomyPage": {
-    "APIUpdate": "Aggiornamento API",
-    "APIUpdateText": "Aggiorna per verificare la presenza di nuove API di PagoPA.",
-    "APIUpdateCTA": "Aggiorna",
+    "APIUpdate": "Aggiornamento Lista Codici Tassonomici",
+    "APIUpdateText": "Aggiornamento per recuperare da PagoPA eventuali aggiornamenti della Lista Codici Tassonomici",
+    "APIUpdateCTA": "Aggiorna Lista",
     "APIUpdateOK": "Aggiornamento pianificato. Abbiamo ricevuto la richiesta è stata pianificata correttamente, sarà eseguita a breve dal sistema.",
     "APIUpdateKO": "Aggiornamento non riuscito. Il sistema non è stato in grado di pianificare l'aggiornamento.",
     "taxonomyInfo": "Informazioni sulla tassonomia",
