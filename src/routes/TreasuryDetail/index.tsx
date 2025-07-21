@@ -49,6 +49,7 @@ export const TreasuryDetail = () => {
     },
     {
       label: t('commons.amount'),
+      valueType: 'amount',
       value: data?.billAmountCents || ''
     },
     {
