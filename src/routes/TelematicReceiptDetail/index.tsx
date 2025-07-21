@@ -166,7 +166,7 @@ export const TelematicReceiptDetail = () => {
     {
       label: getContextualTranslation(
         'assessmentDetail.paymentDetail.psp',
-        'commons.auditor'
+        'commons.psp'
       ),
       value: data?.pspCompanyName || '-'
     },
