@@ -151,7 +151,7 @@ export const DebtPositionsInstallmentDetail = () => {
       {
         label: t('debtPositionSearchResults.expirationDate'),
         value: installment?.dueDate
-          ? new Date(installment?.dueDate).toLocaleDateString('it-IT')
+          ? new Date(installment.dueDate).toLocaleDateString('it-IT')
           : ''
       },
       {
