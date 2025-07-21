@@ -223,6 +223,7 @@ describe('Step1Configuration', () => {
 
       expect(mockUseDebtPositionsTypeOrg).toHaveBeenCalledWith({
         organizationId: 'test-org-123',
+        includeAllOption: false,
         useCodeAsValue: true
       });
     });
