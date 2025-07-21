@@ -13,6 +13,37 @@
       "titleIUV": "Avvisi (IUV)"
     }
   },
+  "AssessmentRegistryUpdate": {
+    "success": {
+      "backToStart": "Visualizza capitoli",
+      "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato aggiornato!"
+    },
+    "title": "Modifica capitolo",
+    "subtitle": "Gestisci i parametri del capitolo.",
+    "configuration": "Configurazione del capitolo"
+  },
+  "AssessmentRegistryCreate": {
+    "success": {
+      "backToStart": "Visualizza capitoli",
+      "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato creato!"
+    },
+    "title": "Crea un nuovo capitolo",
+    "configuration": "Crea un nuovo capitolo",
+    "subtitle": "Inserisci i parametri per creare un nuovo capitolo.",
+    "step1": "Configurazione del capitolo",
+    "debtPositionType": "Tipo dovuto",
+    "assessmentRegistry": "Capitolo",
+    "status": "Stato ufficio",
+    "operatingYear": "Anno esercizio",
+    "sectionDescription": "Denominazione Capitolo",
+    "sectionCode": "Codice capitolo",
+    "officeCode": "Codice Ufficio",
+    "officeDescription": "Denominazione Ufficio",
+    "assessmentCode": "Codice Accertamento Capitolo",
+    "assessmentDescription": "Denominazione Accertamento Capitolo"
+  },
   "AssessmentRegistryDetail": {
     "description": "Ecco i dettagli del capitolo.",
     "updatedAt": "Ultimo aggiornamento il",
@@ -307,7 +338,6 @@
       "iur": "IUR"
     }
   },
-
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
@@ -1505,9 +1535,9 @@
     }
   },
   "taxonomyPage": {
-    "APIUpdate": "Aggiornamento API",
-    "APIUpdateText": "Aggiorna per verificare la presenza di nuove API di PagoPA.",
-    "APIUpdateCTA": "Aggiorna",
+    "APIUpdate": "Aggiornamento Lista Codici Tassonomici",
+    "APIUpdateText": "Aggiornamento per recuperare da PagoPA eventuali aggiornamenti della Lista Codici Tassonomici",
+    "APIUpdateCTA": "Aggiorna Lista",
     "APIUpdateOK": "Aggiornamento pianificato. Abbiamo ricevuto la richiesta è stata pianificata correttamente, sarà eseguita a breve dal sistema.",
     "APIUpdateKO": "Aggiornamento non riuscito. Il sistema non è stato in grado di pianificare l'aggiornamento.",
     "taxonomyInfo": "Informazioni sulla tassonomia",

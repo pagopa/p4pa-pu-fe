@@ -8,7 +8,6 @@ import { useStore } from '../store/GlobalStore';
 import { ChangeEvent, useEffect } from 'react';
 import {
   noFilterIsSelected,
-  noFilterSelectedExcludingClassificationType,
   removeAllFilters,
   setFilterValues
 } from '../store/FilterStore';
@@ -302,7 +301,8 @@ export const useMultiFilters = (props?: {
             label: t(`classificationsExport.classificationsOptions.${value}`),
             value
           })),
-          required: true
+          required: true,
+          ...fieldControl('CLASSIFICATION_TYPE')
         }
       ]
     },
@@ -620,6 +620,7 @@ export const useMultiFilters = (props?: {
     'ACCOUNT_REGISTRY_CODE',
     'AMOUNT',
     'BILL_DATE',
+    'CLASSIFICATION_TYPE',
     'IUD',
     'IUF',
     'IUR',
@@ -682,7 +683,6 @@ export const useMultiFilters = (props?: {
     selectedFilters,
     removeAllFilters,
     noFilterIsSelected,
-    noFilterSelectedExcludingClassificationType,
     filterValues
   };
 };

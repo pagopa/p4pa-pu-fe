@@ -16,6 +16,8 @@ import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { FilterDrawer } from '../../components/Drawer/FilterDrawer';
 import { SearchResultsDataGrid } from './SearchResultDataGrid';
 import { getAssessmentsRegistries } from '../../api/assessments';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '..';
 
 export type LocationState = {
   category: string;
@@ -26,6 +28,7 @@ export type LocationState = {
 export const AssessmentsRegistrySearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { filterMap, selectedFilters, removeAllFilters, filterValues } =
     useMultiFilters({ filterCategory: FilterCategory.ASSESSMENTS_REGISTRY });
 
@@ -59,8 +62,7 @@ export const AssessmentsRegistrySearchResults = () => {
           {
             variant: 'outlined',
             buttonText: t('assessmentsRegistrySearchResults.uploadFlow'),
-            // TODO: navigate to creation
-            onActionClick: () => null
+            onActionClick: () => navigate(PageRoutes.ASSESSMENT_REGISTRY_CREATE)
           }
         ]}
       />
