@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen } from '@testing-library/react';
 import { FormProvider, useForm } from 'react-hook-form';
@@ -7,7 +6,7 @@ import { Step2Payments } from './Step2Payments';
 import { render } from '../../../__tests__/renderers';
 
 vi.mock('../../../components/Wizard/WizardStepWrapper', () => ({
-  default: ({ children }: any) => (
+  default: ({ children }: { children: React.ReactNode }) => (
     <div data-testid="wizard-step-wrapper">{children}</div>
   )
 }));
@@ -19,31 +18,59 @@ vi.mock('../../../components/FormComponent', () => ({
       name,
       options,
       disabled,
-      defaultValue,
+      control,
       'data-testid': testId,
       sx
-    }: any) => (
-      <div data-testid={testId}>
-        <fieldset disabled={disabled}>
-          <legend>{label}</legend>
-          <div style={{ flexDirection: sx?.flexDirection || 'column' }}>
-            {options?.map((option: any) => (
-              <label key={option.value}>
-                <input
-                  type="radio"
-                  name={name}
-                  value={option.value}
-                  defaultChecked={option.value === defaultValue}
-                  disabled={disabled}
-                  data-testid={`${testId}-${option.value}`}
-                />
-                {option.label}
-              </label>
-            ))}
-          </div>
-        </fieldset>
-      </div>
-    )
+    }: {
+      label: string;
+      name: string;
+      options: Array<{ value: boolean; label: string }>;
+      disabled?: boolean;
+      control: ReturnType<typeof useForm>['control'];
+      'data-testid': string;
+      sx?: { flexDirection?: string };
+    }) => {
+      const { Controller } = require('react-hook-form');
+
+      return (
+        <div data-testid={testId}>
+          <Controller
+            name={name}
+            control={control}
+            render={({
+              field
+            }: {
+              field: { value: boolean; onChange: (value: boolean) => void };
+            }) => (
+              <fieldset disabled={disabled}>
+                <legend>{label}</legend>
+                <div
+                  style={{
+                    flexDirection:
+                      (sx?.flexDirection as 'row' | 'column') || 'column'
+                  }}
+                >
+                  {options?.map((option) => (
+                    <label key={String(option.value)}>
+                      <input
+                        type="radio"
+                        name={name}
+                        value={String(option.value)}
+                        checked={field.value === option.value}
+                        onChange={() => field.onChange(option.value)}
+                        disabled={disabled}
+                        data-testid={`${testId}-${option.value}`}
+                      />
+                      {option.label}
+                    </label>
+                  ))}
+                </div>
+              </fieldset>
+            )}
+          />
+        </div>
+      );
+    }
   }
 }));
 
