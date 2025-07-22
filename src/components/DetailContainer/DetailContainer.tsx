@@ -86,6 +86,7 @@ const DetailContainer = ({
         <Typography
           fontWeight={item.variant ?? 600}
           variant={item.variant ?? 'body1'}
+          sx={{ wordBreak: 'break-word' }}
         >
           {
             // eslint-disable-next-line sonarjs/function-return-type
