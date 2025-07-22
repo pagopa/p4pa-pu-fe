@@ -4,13 +4,13 @@ import { FormComponent } from '../../../../../components/FormComponent';
 import { DebtTypeOrgForm } from '../../../types';
 import { useServiceSelectorState } from '../../../hooks/useServiceSelectorState';
 import { UseQueryResult } from '@tanstack/react-query';
-import { OrgSilServiceDTO } from '../.../../../../../../../generated/data-contracts';
+import { OrgSilServiceExtendedDTO } from '../.../../../../../../../generated/data-contracts';
 
 type ServiceSelectorProps = {
   control: Control<DebtTypeOrgForm>;
   name: keyof DebtTypeOrgForm;
   labelKey: string;
-  query: UseQueryResult<Array<OrgSilServiceDTO>, Error>;
+  query: UseQueryResult<Array<OrgSilServiceExtendedDTO>, Error>;
   edit?: boolean;
   required?: boolean;
   baseTranslationKey: string;

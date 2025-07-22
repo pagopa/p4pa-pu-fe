@@ -22,6 +22,8 @@ import { PageRoutes } from '../../routes';
 import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
 
+const ALL_CLASSIFICATIONS_VALUE = 'ALL_CLASSIFICATIONS';
+
 const ClassificationExportPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -34,10 +36,16 @@ const ClassificationExportPage = () => {
 
   const createClassificationsExport = createClassificationsExportFile();
 
-  const classificationOptions = Object.values(LabelEnum).map((value) => ({
-    label: t(`classificationsExport.classificationsOptions.${value}`),
-    value: value
-  }));
+  const classificationOptions = [
+    {
+      label: t('classificationsExport.classificationsOptions.ALL'),
+      value: ALL_CLASSIFICATIONS_VALUE
+    },
+    ...Object.values(LabelEnum).map((value) => ({
+      label: t(`classificationsExport.classificationsOptions.${value}`),
+      value: value
+    }))
+  ];
 
   const versionOptions = [
     { label: '1.3', value: 'v1.3' },
@@ -146,7 +154,12 @@ const ClassificationExportPage = () => {
   const handleSubmit = useCallback(() => {
     const formData = formMethods.getValues();
 
-    if (!validateForm(formData, dateRanges)) {
+    const processedFormData = { ...formData };
+    if (formData.label === ALL_CLASSIFICATIONS_VALUE) {
+      processedFormData.label = Object.values(LabelEnum);
+    }
+
+    if (!validateForm(processedFormData, dateRanges)) {
       utils.notify.emit(
         t('classificationsExport.errorMessages.missingRequiredFields')
       );
@@ -158,7 +171,7 @@ const ClassificationExportPage = () => {
       return;
     }
 
-    const payload = buildApiPayload(formData, dateRanges);
+    const payload = buildApiPayload(processedFormData, dateRanges);
 
     createClassificationsExport.mutate(
       { data: payload },

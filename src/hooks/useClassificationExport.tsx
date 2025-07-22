@@ -13,7 +13,7 @@ const isValidLabelEnum = (value: string): value is LabelEnum => {
 
 export type ClassificationFormFields = {
   fileVersion: string;
-  label: string;
+  label: string | Array<LabelEnum>;
   iuv: string;
   iud: string;
   iuf: string;
@@ -106,8 +106,12 @@ export const useClassificationExport = (organizationId: number) => {
         filterFields.iur = [iurValue];
       }
 
-      if (formData.label && isValidLabelEnum(formData.label)) {
-        filterFields.label = [formData.label as LabelEnum];
+      if (formData.label) {
+        if (Array.isArray(formData.label)) {
+          filterFields.label = formData.label;
+        } else if (isValidLabelEnum(formData.label)) {
+          filterFields.label = [formData.label as LabelEnum];
+        }
       }
 
       if (formData.remittanceInformation) {
