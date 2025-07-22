@@ -1,5 +1,14 @@
 import { useStore } from '../store/GlobalStore';
 
+/** Roles
++---------------+--------------+----------+
+| INTERMEDIARIO | INTERMEDIATO |          |
+| SUPERADMIN    | ADMIN        | ADMIN    |
+| OPERATOR      |              | OPERATOR |
++---------------+--------------+----------+
+SUPERADMIN > ADMIN > OPERATOR
+*/
+
 /** this hook returns true if the logged user is a super admin */
 const useIsSuperAdmin = () => {
   const { state } = useStore();
