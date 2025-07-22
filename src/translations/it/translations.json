@@ -341,6 +341,7 @@
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
+      "ALL": "Tutti", 
       "DOPPI": "Pagamenti doppi",
       "RT_NO_IUF": "Pagamenti non correttamente rendicontati",
       "RT_NO_IUD": "Pagamenti non correttamente notificati",
@@ -355,7 +356,7 @@
       "IUF_TES_DIV_IMP": "Rendicontazioni con riversamento ma con importo differente",
       "IUD_NO_RT": "Notifiche di pagamenti non eseguiti",
       "TES_NO_MATCH": "Riversamenti di tesoreria sconosciuti",
-      "UNKNOWN": "Tutti"
+      "UNKNOWN": "Sconosciuto"
     },
     "title": "Prenota export di un flusso",
     "description": "Imposta i filtri e Inserisci i dati per prenotare l'esportazione delle classificazioni dei pagamenti e conoscere se è stato riconciliato o ci sono delle anomalie.",
