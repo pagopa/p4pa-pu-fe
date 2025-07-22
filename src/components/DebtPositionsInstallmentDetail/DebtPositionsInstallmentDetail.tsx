@@ -146,7 +146,8 @@ export const DebtPositionsInstallmentDetail = () => {
       },
       {
         label: t('debtPositionSearchResults.amount'),
-        value: installment?.amountCents as number
+        value: installment?.amountCents as number,
+        valueType: 'amount'
       },
       {
         label: t('debtPositionSearchResults.expirationDate'),
