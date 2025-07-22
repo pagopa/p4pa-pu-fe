@@ -6,7 +6,7 @@ import { STATE } from './types';
 export const organizationIdState = usePersistentSignal<OrganizationIdMemo>(
   STATE.ORGANIZATION_ID,
   {
-    storage: sessionStorage
+    storage: localStorage
   }
 );
 
