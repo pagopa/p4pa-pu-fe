@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { UseQueryResult } from '@tanstack/react-query';
-import { OrgSilServiceDTO } from '../../../../generated/data-contracts';
+import { OrgSilServiceExtendedDTO } from '../../../../generated/data-contracts';
 
 type ServiceSelectorOption = {
   value: number;
@@ -18,15 +18,15 @@ type ServiceSelectorState = {
 };
 
 const hasValidId = (
-  service: OrgSilServiceDTO
-): service is OrgSilServiceDTO & { orgSilServiceId: number } => {
+  service: OrgSilServiceExtendedDTO
+): service is OrgSilServiceExtendedDTO & { orgSilServiceId: number } => {
   return (
     typeof service.orgSilServiceId === 'number' && service.orgSilServiceId > 0
   );
 };
 
 export const useServiceSelectorState = (
-  query: UseQueryResult<Array<OrgSilServiceDTO>, Error>,
+  query: UseQueryResult<Array<OrgSilServiceExtendedDTO>, Error>,
   edit = false,
   baseTranslationKey: string
 ): ServiceSelectorState => {

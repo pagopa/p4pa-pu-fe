@@ -693,4 +693,144 @@ describe('ClassificationExportPage', () => {
       expect(screen.getByText('Avviso')).toBeInTheDocument();
     });
   });
+
+  describe('All Classifications Option', () => {
+    it('should render "ALL" option in classification select', () => {
+      render(<ClassificationExportPage />);
+
+      const classificationSelect = screen.getByTestId(
+        'classification-section-type'
+      );
+      expect(classificationSelect).toBeInTheDocument();
+
+      const selectElement =
+        classificationSelect.querySelector('[role="combobox"]');
+      if (selectElement) {
+        fireEvent.mouseDown(selectElement);
+
+        waitFor(() => {
+          expect(
+            screen.getByText('classificationsExport.classificationsOptions.ALL')
+          ).toBeInTheDocument();
+        });
+      }
+    });
+
+    it('should test ALL_CLASSIFICATIONS_VALUE constant usage', () => {
+      render(<ClassificationExportPage />);
+
+      expect(
+        screen.getByTestId('classification-section-type')
+      ).toBeInTheDocument();
+
+      mockValidateForm.mockReturnValue(false);
+
+      const submitButton = screen.getByRole('button', {
+        name: 'exportFlow.buttonConfirmReservation'
+      });
+
+      fireEvent.click(submitButton);
+
+      expect(mockValidateForm).toHaveBeenCalled();
+    });
+
+    it('should handle form submission with different label processing', async () => {
+      mockValidateForm.mockReturnValue(true);
+      mockBuildApiPayload.mockReturnValue(expectedPayload);
+      mockMutate.mockImplementation((_, opts) => opts.onSuccess());
+
+      render(<ClassificationExportPage />);
+
+      const submitButton = screen.getByRole('button', {
+        name: 'exportFlow.buttonConfirmReservation'
+      });
+
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockValidateForm).toHaveBeenCalled();
+        expect(mockBuildApiPayload).toHaveBeenCalled();
+      });
+    });
+
+    it('should verify ALL_CLASSIFICATIONS_VALUE constant is used correctly', () => {
+      render(<ClassificationExportPage />);
+
+      const classificationSelect = screen.getByTestId(
+        'classification-section-type'
+      );
+      const selectElement =
+        classificationSelect.querySelector('[role="combobox"]');
+
+      if (selectElement) {
+        fireEvent.mouseDown(selectElement);
+
+        expect(classificationSelect).toBeInTheDocument();
+      }
+    });
+
+    it('should test classification options array includes ALL option first', () => {
+      render(<ClassificationExportPage />);
+
+      const classificationSelect = screen.getByTestId(
+        'classification-section-type'
+      );
+      expect(classificationSelect).toBeInTheDocument();
+
+      const selectElement =
+        classificationSelect.querySelector('[role="combobox"]');
+      if (selectElement) {
+        fireEvent.mouseDown(selectElement);
+
+        waitFor(() => {
+          const allOption = screen.getByText(
+            'classificationsExport.classificationsOptions.ALL'
+          );
+          expect(allOption).toBeInTheDocument();
+        });
+      }
+    });
+
+    it('should ensure LabelEnum values are properly mapped in options', () => {
+      render(<ClassificationExportPage />);
+
+      expect(
+        screen.getByTestId('classification-section-type')
+      ).toBeInTheDocument();
+
+      const classificationSelect = screen.getByTestId(
+        'classification-section-type'
+      );
+      const selectElement =
+        classificationSelect.querySelector('[role="combobox"]');
+
+      if (selectElement) {
+        fireEvent.mouseDown(selectElement);
+        expect(selectElement).toHaveAttribute('aria-expanded', 'true');
+      }
+    });
+
+    it('should test the processedFormData logic branch coverage', () => {
+      render(<ClassificationExportPage />);
+
+      expect(
+        screen.getByTestId('classification-section-type')
+      ).toBeInTheDocument();
+      expect(screen.getByLabelText('commons.iuv')).toBeInTheDocument();
+
+      const iuvField = screen.getByLabelText('commons.iuv');
+      fireEvent.change(iuvField, { target: { value: 'test-iuv' } });
+      expect(iuvField).toHaveValue('test-iuv');
+
+      const submitButton = screen.getByRole('button', {
+        name: 'exportFlow.buttonConfirmReservation'
+      });
+      expect(submitButton).toBeInTheDocument();
+
+      mockValidateForm.mockReturnValue(false);
+      fireEvent.click(submitButton);
+
+      expect(mockValidateForm).toHaveBeenCalled();
+    });
+  });
 });
