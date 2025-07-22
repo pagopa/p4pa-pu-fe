@@ -2,15 +2,15 @@ import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { orgSilServiceDTOSchema } from '../../generated/zod-schema';
+import { orgSilServiceExtendedDTOSchema } from '../../generated/zod-schema';
 import {
   OrgSilServiceType,
-  OrgSilServiceDTO
+  OrgSilServiceExtendedDTO
 } from '../../generated/data-contracts';
 
 const isValidService = (
-  service: OrgSilServiceDTO
-): service is OrgSilServiceDTO & { orgSilServiceId: number } => {
+  service: OrgSilServiceExtendedDTO
+): service is OrgSilServiceExtendedDTO & { orgSilServiceId: number } => {
   return service.orgSilServiceId != null && service.orgSilServiceId > 0;
 };
 
@@ -27,7 +27,7 @@ const getOrgSilServices = (
       );
 
       try {
-        parseAndLog(z.array(orgSilServiceDTOSchema), services, true);
+        parseAndLog(z.array(orgSilServiceExtendedDTOSchema), services, true);
         const validServices = services.filter(isValidService);
         return validServices;
       } catch {
@@ -56,5 +56,5 @@ export default {
   getActualizationServices
 };
 
-export type { orgSilServiceDTOSchema };
+export type { orgSilServiceExtendedDTOSchema };
 export { isValidService };

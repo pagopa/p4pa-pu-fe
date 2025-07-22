@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../__tests__/renderers';
 import {
   OrgSilServiceType,
-  OrgSilServiceDTO
+  OrgSilServiceExtendedDTO
 } from '../../generated/data-contracts';
 import { setOrganizationId } from '../store/OrganizationIdStore';
 
@@ -38,7 +38,7 @@ describe('orgSilServices', () => {
 
   describe('isValidService', () => {
     it('returns true for service with valid orgSilServiceId', () => {
-      const validService: OrgSilServiceDTO = {
+      const validService: OrgSilServiceExtendedDTO = {
         orgSilServiceId: 1,
         organizationId: 123,
         applicationName: 'Test Service',
@@ -50,7 +50,7 @@ describe('orgSilServices', () => {
     });
 
     it('returns false for service with null orgSilServiceId', () => {
-      const invalidService: OrgSilServiceDTO = {
+      const invalidService: OrgSilServiceExtendedDTO = {
         orgSilServiceId: null,
         organizationId: 123,
         applicationName: 'Test Service',
@@ -62,7 +62,7 @@ describe('orgSilServices', () => {
     });
 
     it('returns false for service with undefined orgSilServiceId', () => {
-      const invalidService: OrgSilServiceDTO = {
+      const invalidService: OrgSilServiceExtendedDTO = {
         orgSilServiceId: undefined,
         organizationId: 123,
         applicationName: 'Test Service',
@@ -74,7 +74,7 @@ describe('orgSilServices', () => {
     });
 
     it('returns false for service with zero orgSilServiceId', () => {
-      const invalidService: OrgSilServiceDTO = {
+      const invalidService: OrgSilServiceExtendedDTO = {
         orgSilServiceId: 0,
         organizationId: 123,
         applicationName: 'Test Service',
@@ -86,7 +86,7 @@ describe('orgSilServices', () => {
     });
 
     it('returns false for service with negative orgSilServiceId', () => {
-      const invalidService: OrgSilServiceDTO = {
+      const invalidService: OrgSilServiceExtendedDTO = {
         orgSilServiceId: -1,
         organizationId: 123,
         applicationName: 'Test Service',
@@ -99,7 +99,7 @@ describe('orgSilServices', () => {
   });
 
   describe('getOrgSilServices', () => {
-    const mockServices: Array<OrgSilServiceDTO> = [
+    const mockServices: Array<OrgSilServiceExtendedDTO> = [
       {
         orgSilServiceId: 1,
         organizationId: 123,
@@ -296,7 +296,7 @@ describe('orgSilServices', () => {
     });
 
     it('returns notification services successfully', async () => {
-      const notificationServices: Array<OrgSilServiceDTO> = [
+      const notificationServices: Array<OrgSilServiceExtendedDTO> = [
         {
           orgSilServiceId: 1,
           organizationId: 123,
@@ -342,7 +342,7 @@ describe('orgSilServices', () => {
     });
 
     it('returns actualization services successfully', async () => {
-      const actualizationServices: Array<OrgSilServiceDTO> = [
+      const actualizationServices: Array<OrgSilServiceExtendedDTO> = [
         {
           orgSilServiceId: 2,
           organizationId: 123,
@@ -370,7 +370,7 @@ describe('orgSilServices', () => {
 
   describe('edge cases and integration', () => {
     it('handles mixed valid and invalid services correctly', async () => {
-      const mixedServices: Array<OrgSilServiceDTO> = [
+      const mixedServices: Array<OrgSilServiceExtendedDTO> = [
         {
           orgSilServiceId: 1,
           organizationId: 123,
@@ -465,7 +465,7 @@ describe('orgSilServices', () => {
       ];
 
       testCases.forEach(({ id, expected }) => {
-        const service: OrgSilServiceDTO = {
+        const service: OrgSilServiceExtendedDTO = {
           orgSilServiceId: id,
           organizationId: 123,
           applicationName: 'Test Service',
