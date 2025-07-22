@@ -22,7 +22,6 @@ import { PageRoutes } from '../../routes';
 import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
 
-// Valore speciale per identificare l'opzione "tutti"
 const ALL_CLASSIFICATIONS_VALUE = 'ALL_CLASSIFICATIONS';
 
 const ClassificationExportPage = () => {
