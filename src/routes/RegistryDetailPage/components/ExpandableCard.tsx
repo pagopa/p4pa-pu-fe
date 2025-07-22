@@ -44,7 +44,8 @@ export const ExpandableCard: React.FC<ExpandableCardProps> = ({
         <Typography
           variant="body1"
           sx={{
-            whiteSpace: 'pre-wrap'
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word'
           }}
           data-testid="specific-params-content"
         >

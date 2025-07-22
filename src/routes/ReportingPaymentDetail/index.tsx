@@ -105,7 +105,8 @@ function ReportingPaymentDetail() {
     },
     {
       label: t('commons.amount'),
-      value: data?.amountPaidCents ? data?.amountPaidCents : ''
+      value: data?.amountPaidCents,
+      valueType: 'amount'
     },
     {
       label: t('commons.reason'),
