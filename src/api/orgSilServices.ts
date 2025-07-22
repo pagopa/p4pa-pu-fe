@@ -27,7 +27,11 @@ const getOrgSilServices = (
       );
 
       try {
+<<<<<<< Updated upstream
         parseAndLog(z.array(orgSilServiceExtendedDTOSchema), services, true);
+=======
+        parseAndLog(z.array(orgSilServiceTypeSchema), services, true);
+>>>>>>> Stashed changes
         const validServices = services.filter(isValidService);
         return validServices;
       } catch {
@@ -56,5 +60,9 @@ export default {
   getActualizationServices
 };
 
+<<<<<<< Updated upstream
 export type { orgSilServiceExtendedDTOSchema };
+=======
+export type { orgSilServiceTypeSchema };
+>>>>>>> Stashed changes
 export { isValidService };
