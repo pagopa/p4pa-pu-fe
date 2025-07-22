@@ -110,12 +110,8 @@ export const ClassificationDetails = () => {
       valueType: 'dateTime'
     },
     {
-      label: t(`${targetTranslationDebtType}.receiptDebtorFullName`),
-      value: data?.receiptDebtor?.fullName
-    },
-    {
-      label: t(`${targetTranslationDebtType}.receiptDebtorFiscalCode`),
-      value: data?.receiptDebtor?.fiscalCode
+      label: t(`${targetTranslationDebtType}.receiptPspCompanyName`),
+      value: data?.receiptPspCompanyName
     },
     {
       label: t(`${targetTranslationDebtType}.iuv`),
@@ -131,19 +127,19 @@ export const ClassificationDetails = () => {
     },
     {
       label: t(`${targetTranslationDebtType}.receiptPayerFullName`),
-      value: data?.receiptPayer?.fullName
-    },
-    {
-      label: t(`${targetTranslationDebtType}.receiptPayerFiscalCode`),
-      value: data?.receiptPayer?.fiscalCode
-    },
-    {
-      label: t(`${targetTranslationDebtType}.receiptPayerExecutorFullName`),
       value: data?.receiptDebtor?.fullName
     },
     {
-      label: t(`${targetTranslationDebtType}.receiptPayerExecutorFiscalCode`),
+      label: t(`${targetTranslationDebtType}.receiptPayerFiscalCode`),
       value: data?.receiptDebtor?.fiscalCode
+    },
+    {
+      label: t(`${targetTranslationDebtType}.receiptPayerExecutorFullName`),
+      value: data?.receiptPayer?.fullName
+    },
+    {
+      label: t(`${targetTranslationDebtType}.receiptPayerExecutorFiscalCode`),
+      value: data?.receiptPayer?.fiscalCode
     }
   ];
 
