@@ -370,7 +370,7 @@ export const AssessmentDetail = () => {
                 label: 'dateRange1',
                 gridWidth: 4,
                 from: {
-                  label: t('commons.resultFrom'),
+                  label: t('commons.outcomeFrom'),
                   value: draftFilters.paymentDateTimeFrom
                     ? new Date(draftFilters.paymentDateTimeFrom)
                     : null,

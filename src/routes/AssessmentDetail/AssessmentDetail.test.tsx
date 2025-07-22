@@ -95,6 +95,7 @@ describe('AssessmentDetail', () => {
     debtPositionTypeOrgDescription: 'FEATURE TEST - DO NOT DELETE',
     status: AssessmentStatus.ACTIVE,
     updateOperatorExternalId: 'WS_USER-piattaforma-unitaria_',
+    flagManualGeneration: false,
     pagedAssessmentsRowsDetail: {
       content: [
         {

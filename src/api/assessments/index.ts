@@ -154,3 +154,6 @@ export const updateAssessmentsRegistry = (
       return data;
     }
   });
+
+// export operating years API
+export { getOperatingYears } from './operatingYears';

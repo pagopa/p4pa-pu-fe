@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search } from '@mui/icons-material';
-import { Box, useTheme } from '@mui/material';
+import { Search, OpenInNew as OpenInNewIcon } from '@mui/icons-material';
+import { Box, useTheme, IconButton } from '@mui/material';
 import {
   GridColDef,
   GridSortModel,
@@ -12,6 +12,10 @@ import FilterContainer, {
 } from '../../../components/FilterContainer/FilterContainer';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { moneyFormat } from '../../../utils/formatters';
+import {
+  PagedPaidInstallmentsDTO,
+  PaidInstallmentsFilteredRequest
+} from '../../../api/classifications/paidInstallments/mappings';
 
 // Tipi per i filtri dei pagamenti
 type PaymentsFilters = {
@@ -22,23 +26,23 @@ type PaymentsFilters = {
   amountTo?: number;
 };
 
-// Tipo temporaneo per i dati della tabella (da sostituire con i tipi API reali)
-type PaymentData = {
-  id: string;
-  iuv: string;
-  amount: number;
-  date: string;
-  status: string;
-};
+// Tipi importati dall'API dei paid installments
 
 export type PaymentsTableProps = {
   onSelectionChange?: (selectedPayments: Array<string>) => void;
   disabled?: boolean;
+  paymentsData?: PagedPaidInstallmentsDTO;
+  isLoading?: boolean;
+  onDataRefresh?: (
+    params?: Partial<PaidInstallmentsFilteredRequest>
+  ) => Promise<PagedPaidInstallmentsDTO>;
 };
 
 export const PaymentsTable = ({
   onSelectionChange,
-  disabled = false
+  disabled = false,
+  paymentsData,
+  isLoading = false
 }: PaymentsTableProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -53,16 +57,16 @@ export const PaymentsTable = ({
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [selectedRows, setSelectedRows] = useState<GridRowSelectionModel>([]);
 
-  // Dati temporanei vuoti (da sostituire con chiamata API)
-  const paymentsData = {
-    content: [] as PaymentData[],
+  // Use data from props or fallback to empty data
+  const tableData = paymentsData || {
+    content: [],
     totalElements: 0,
     totalPages: 0,
     number: 0,
     size: 10
   };
 
-  // Gestione aggiornamento filtri bozza
+  // Update draft filters
   const updateDraftFilters = useCallback(
     (updates: Partial<PaymentsFilters>) => {
       setDraftFilters((prev) => ({ ...prev, ...updates }));
@@ -70,13 +74,13 @@ export const PaymentsTable = ({
     []
   );
 
-  // Applicazione filtri
+  // Apply filters
   const applyFilters = useCallback(() => {
     setFilterValues(draftFilters);
     setPaginationParams((prev) => ({ ...prev, page: 0 }));
   }, [draftFilters]);
 
-  // Gestione paginazione
+  // Handle pagination
   const handlePaginationChange = (pagination: {
     page: number;
     size: number;
@@ -84,12 +88,12 @@ export const PaymentsTable = ({
     setPaginationParams(pagination);
   };
 
-  // Gestione ordinamento
+  // Handle sorting
   const handleSortModelChange = (model: GridSortModel) => {
     setSortModel(model);
   };
 
-  // Gestione selezione righe
+  // Handle row selection
   const handleRowSelectionChange = (newSelection: GridRowSelectionModel) => {
     setSelectedRows(newSelection);
     if (onSelectionChange) {
@@ -97,7 +101,7 @@ export const PaymentsTable = ({
     }
   };
 
-  // Gestione date range
+  // Handle date range
   const handleDateFromChange = (date: Date | null) => {
     updateDraftFilters({ dateFrom: date });
   };
@@ -106,43 +110,71 @@ export const PaymentsTable = ({
     updateDraftFilters({ dateTo: date });
   };
 
-  // Verifica se i filtri sono cambiati
+  // Check if the filters have changed
   const hasFilterChanges =
     JSON.stringify(draftFilters) !== JSON.stringify(filterValues);
 
-  // Configurazione colonne tabella
+  // Handle detail view action
+  const handleDetailClick = useCallback((row: any) => {
+    console.log('Detail clicked for:', row);
+    // TODO: Navigate to detail page when implemented
+  }, []);
+
+  // Table column configuration
   const columns: Array<GridColDef> = [
     {
       field: 'iuv',
-      headerName: t('commons.iuv'),
-      flex: 1.5,
+      headerName: 'IUV',
+      flex: 1,
       type: 'string'
     },
     {
       field: 'amount',
-      headerName: t('commons.amount'),
+      headerName: 'Importo',
       flex: 1,
       type: 'number',
       renderCell: (params) => moneyFormat(params.value)
     },
     {
-      field: 'date',
-      headerName: t('commons.paymentdate'),
+      field: 'paymentDateTime',
+      headerName: 'Data esito',
       flex: 1,
       type: 'string',
-      renderCell: (params) => new Date(params.value).toLocaleDateString('it-IT')
+      renderCell: (params) => {
+        if (!params.value) return '';
+        return new Date(params.value).toLocaleDateString('it-IT');
+      }
     },
     {
-      field: 'status',
-      headerName: t('commons.status'),
+      field: 'updateDate',
+      headerName: 'Ultimo aggiornamento',
       flex: 1,
-      type: 'string'
+      type: 'string',
+      renderCell: (params) => {
+        if (!params.value) return '';
+        return new Date(params.value).toLocaleDateString('it-IT');
+      }
+    },
+    {
+      field: 'actions',
+      headerName: '',
+      width: 60,
+      sortable: false,
+      disableColumnMenu: true,
+      renderCell: (params) => (
+        <IconButton
+          onClick={() => handleDetailClick(params.row)}
+          size="small"
+          sx={{ color: theme.palette.primary.main }}
+        >
+          <OpenInNewIcon fontSize="small" />
+        </IconButton>
+      )
     }
   ];
 
   return (
     <Box>
-      {/* Filtri */}
       <FilterContainer
         items={[
           {
@@ -193,7 +225,6 @@ export const PaymentsTable = ({
         ]}
       />
 
-      {/* Tabella */}
       <Box
         sx={{
           bgcolor: theme.palette.grey[200],
@@ -202,9 +233,9 @@ export const PaymentsTable = ({
         }}
       >
         <CustomDataGrid
-          rows={paymentsData.content}
+          rows={tableData.content || []}
           columns={columns}
-          getRowId={(row) => row.id}
+          getRowId={(row) => row.iud}
           disableColumnMenu
           disableColumnResize
           checkboxSelection
@@ -217,15 +248,15 @@ export const PaymentsTable = ({
             initialSize: 10,
             sizeOptions: [5, 10, 20],
             backendData: {
-              totalElements: paymentsData.totalElements,
-              totalPages: paymentsData.totalPages,
-              number: paymentsData.number,
-              size: paymentsData.size
+              totalElements: tableData.totalElements,
+              totalPages: tableData.totalPages,
+              number: tableData.number,
+              size: tableData.size
             },
             onPaginationChange: handlePaginationChange
           }}
           localeText={{ noRowsLabel: t('flowDataGrid.noDataRows') }}
-          loading={false}
+          loading={isLoading}
         />
       </Box>
     </Box>

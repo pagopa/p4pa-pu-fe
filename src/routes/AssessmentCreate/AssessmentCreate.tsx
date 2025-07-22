@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { FormProvider } from 'react-hook-form';
+import { FormProvider, useWatch } from 'react-hook-form';
 import { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
 import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
@@ -10,7 +10,12 @@ import { useStore } from '../../store/GlobalStore';
 import { createAssessment } from '../../api/assessments';
 import { useStepperLogic } from '../../hooks/useStepperLogic';
 import { Step1Configuration } from './components/Step1Configuration';
-import { Step2Payments } from './components/Step2Payments';
+import {
+  Step2Payments,
+  validateStep2Payments,
+  Step2PaymentsRef
+} from './components/Step2Payments';
+import { Step3AssignChapter } from './components/Step3AssignChapter';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -35,8 +40,30 @@ const assessmentFormSchema = z.object({
     )
 });
 
+// Conditional schema for step 3 - applied only when addPaymentsToAssessment is true
+const step3Schema = z.object({
+  operatingYear: z
+    .string({
+      required_error:
+        'assessmentCreate.configuration.step3.fields.operatingYear.required'
+    })
+    .min(
+      1,
+      'assessmentCreate.configuration.step3.fields.operatingYear.required'
+    ),
+  chapterCode: z
+    .string({
+      required_error:
+        'assessmentCreate.configuration.step3.fields.chapter.required'
+    })
+    .min(1, 'assessmentCreate.configuration.step3.fields.chapter.required')
+});
+
 type AssessmentFormData = z.infer<typeof assessmentFormSchema> & {
   addPaymentsToAssessment?: boolean;
+  selectedPayments?: Array<string>;
+  operatingYear?: string;
+  chapterCode?: string;
 };
 
 export const AssessmentCreate = () => {
@@ -46,27 +73,48 @@ export const AssessmentCreate = () => {
     state: { organizationId }
   } = useStore();
 
-  const {
-    currentStep,
-    goToNextStep,
-    goToPreviousStep,
-    isFirstStep,
-    isLastStep
-  } = useStepperLogic({ initialStep: 0, totalSteps: 2 });
-
-  const createAssessmentMutation = createAssessment(organizationId);
-
+  // Dynamic calculation of totalSteps based on the form values
   const methods = useForm<AssessmentFormData>({
     resolver: zodResolver(assessmentFormSchema),
     mode: 'onTouched',
     defaultValues: {
       assessmentName: '',
       debtPositionTypeOrgCode: '',
-      addPaymentsToAssessment: false
+      addPaymentsToAssessment: false,
+      selectedPayments: [],
+      operatingYear: '',
+      chapterCode: ''
     }
   });
 
-  const { getValues, clearErrors, trigger } = methods;
+  // Monitor the value to calculate the number of steps and always convert it to boolean
+  const addPaymentsToAssessmentRaw = useWatch({
+    control: methods.control,
+    name: 'addPaymentsToAssessment'
+  });
+
+  // Always convert to boolean for consistency
+  const addPaymentsToAssessment =
+    addPaymentsToAssessmentRaw === true ||
+    String(addPaymentsToAssessmentRaw) === 'true';
+
+  // Dynamic calculation of totalSteps using only booleans
+  const totalSteps = addPaymentsToAssessment ? 3 : 2;
+
+  const {
+    currentStep,
+    goToNextStep,
+    goToPreviousStep,
+    isFirstStep,
+    isLastStep
+  } = useStepperLogic({ initialStep: 0, totalSteps });
+
+  const createAssessmentMutation = createAssessment(organizationId);
+
+  const { getValues, clearErrors, trigger, setError } = methods;
+
+  // Ref per controllare la validazione del Step2Payments
+  const step2PaymentsRef = useRef<Step2PaymentsRef>(null);
 
   const validateStep = (step: number, values: AssessmentFormData) => {
     switch (step) {
@@ -76,6 +124,22 @@ export const AssessmentCreate = () => {
           fields: ['assessmentName', 'debtPositionTypeOrgCode'] as const
         };
       case 1:
+        return {
+          isValid: validateStep2Payments(values),
+          fields: [] as const
+        };
+      case 2:
+        // Step 3 - Assign Chapter: conditional validation only if addPaymentsToAssessment is true
+        if (addPaymentsToAssessment) {
+          // Year is always required, Chapter is required only if Year is selected
+          const yearValid = !!values.operatingYear;
+          const chapterValid = !values.operatingYear || !!values.chapterCode;
+
+          return {
+            isValid: yearValid && chapterValid,
+            fields: ['operatingYear', 'chapterCode'] as const
+          };
+        }
         return {
           isValid: true,
           fields: [] as const
@@ -127,7 +191,43 @@ export const AssessmentCreate = () => {
       const { isValid, fields } = validateStep(currentStep, values);
 
       if (!isValid) {
-        await trigger(fields);
+        if (currentStep === 2 && addPaymentsToAssessment) {
+          // Conditional validation: only enabled fields
+          const fieldsToValidate: Array<'operatingYear' | 'chapterCode'> = [
+            'operatingYear'
+          ];
+          if (values.operatingYear) {
+            fieldsToValidate.push('chapterCode');
+          }
+
+          try {
+            step3Schema.parse({
+              operatingYear: values.operatingYear,
+              chapterCode: values.chapterCode
+            });
+          } catch (error) {
+            if (error instanceof z.ZodError) {
+              error.errors.forEach((err) => {
+                const fieldName = err.path[0] as
+                  | 'operatingYear'
+                  | 'chapterCode';
+                if (fieldsToValidate.includes(fieldName)) {
+                  setError(fieldName, {
+                    type: 'manual',
+                    message: t(err.message)
+                  });
+                }
+              });
+            }
+          }
+        } else if (currentStep === 1) {
+          // For step 2 payments, show validation error if selection is invalid
+          if (step2PaymentsRef.current) {
+            step2PaymentsRef.current.showValidationError(true);
+          }
+        } else {
+          await trigger(fields);
+        }
         return;
       }
 
@@ -144,10 +244,13 @@ export const AssessmentCreate = () => {
     clearErrors,
     getValues,
     currentStep,
+    addPaymentsToAssessment,
     isLastStep,
     goToNextStep,
     trigger,
-    handleSubmit
+    setError,
+    handleSubmit,
+    t
   ]);
 
   const handleBack = () => {
@@ -158,8 +261,8 @@ export const AssessmentCreate = () => {
     }
   };
 
-  const steps: Stepper['steps'] = useMemo(
-    () => [
+  const steps: Stepper['steps'] = useMemo(() => {
+    const baseSteps = [
       {
         label: t('assessmentCreate.stepper.step1'),
         content: <Step1Configuration key="step1" />
@@ -167,11 +270,20 @@ export const AssessmentCreate = () => {
       {
         label: t('assessmentCreate.stepper.step2'),
         optional: true,
-        content: <Step2Payments key="step2" />
+        content: <Step2Payments key="step2" ref={step2PaymentsRef} />
       }
-    ],
-    [t]
-  );
+    ];
+
+    // Add the third step only if addPaymentsToAssessment is true
+    if (addPaymentsToAssessment) {
+      baseSteps.push({
+        label: t('assessmentCreate.stepper.step3'),
+        content: <Step3AssignChapter key="step3" />
+      });
+    }
+
+    return baseSteps;
+  }, [t, addPaymentsToAssessment]);
 
   return (
     <FormProvider {...methods}>
