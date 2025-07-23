@@ -21,6 +21,7 @@ import { useStore } from '../../store/GlobalStore';
 import { GridSortModel } from '@mui/x-data-grid';
 import { noFilterSetted } from '../../utils/filtersValidation';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
+import utils from '../../utils';
 
 export const DebtPositionResults = () => {
   const theme = useTheme();
@@ -31,8 +32,8 @@ export const DebtPositionResults = () => {
   const [error, setError] = useState(false);
 
   // Extract initial state from location.state or fallback
-  const { searchType: locationSearchType, filters: locationFilters } =
-    location.state ?? {};
+  const { searchType: locationSearchType } = location.state ?? {};
+  const initialFilters = utils.URI.decode(window.location.hash);
 
   // Determine searchType with fallback based on pathname
   const searchType = useMemo<SearchType>(() => {
@@ -43,7 +44,6 @@ export const DebtPositionResults = () => {
   }, [location.pathname, locationSearchType]);
 
   // Filters from location or empty object fallback
-  const initialFilters = locationFilters ?? {};
   const [filterValues, setFilterValues] = useState(initialFilters);
 
   // Get organizationId from global store
@@ -67,8 +67,8 @@ export const DebtPositionResults = () => {
   });
 
   const applyFilters = () => {
-    if (!noFilterSetted(debtPosition.filters)) {
-      debtPosition.applyFilters();
+    if (!noFilterSetted(filterValues)) {
+      debtPosition.applyFilters(filterValues);
       setError(false);
     } else {
       setError(true);
@@ -93,7 +93,7 @@ export const DebtPositionResults = () => {
       );
 
       debtPosition.setSort(apiSort.length > 0 ? apiSort : []);
-      debtPosition.applyFilters();
+      debtPosition.applyFilters(filterValues);
     },
     [debtPosition]
   );
@@ -135,7 +135,10 @@ export const DebtPositionResults = () => {
           items={filters}
           values={filterValues}
           onChange={(id, value) =>
-            setFilterValues({ ...filterValues, [id]: value })
+            setFilterValues((filterValues) => ({
+              ...filterValues,
+              [id]: value as string
+            }))
           }
         />
         <Grid

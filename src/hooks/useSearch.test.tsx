@@ -60,7 +60,6 @@ describe('useSearch', () => {
         query
       })
     );
-    expect(result.current.filters).toEqual({ name: 'foo' });
     expect(result.current.paginationParams).toEqual(mockPaginationParams);
   });
 
@@ -88,7 +87,7 @@ describe('useSearch', () => {
       })
     );
     act(() => {
-      result.current.applyFilters();
+      result.current.applyFilters({ name: 'foo' });
     });
     expect(mockSetPaginationParams).toHaveBeenCalledWith(expect.any(Function));
     expect(query.mutate).toHaveBeenCalledWith({

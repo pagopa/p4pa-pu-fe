@@ -1,66 +1,64 @@
 import { useTranslation } from 'react-i18next';
 import SearchIcon from '@mui/icons-material/Search';
-import {
-  COMPONENT_TYPE,
-  FilterItem
-} from '../components/FilterContainer/FilterContainer';
 import { FilterFieldIds } from '../models/SearchCardFields';
-import { ReportingFilters } from '../api/getPaymentsReporting/mappings';
+import { FormComponent } from '../components/FormComponent';
+import Stack from '@mui/material/Stack';
+import { useFormContext } from 'react-hook-form';
+import { ErrorMessage } from '../components/ErrorMessage/ErrorMessage';
 
-type UseReportingFiltersProps = {
-  onFilter: (filters: ReportingFilters) => void;
+type ReportingFiltersProps = {
   layout?: 'inline' | 'grid';
+  error?: boolean;
 };
 
-export const useReportingFilters = ({
-  onFilter,
-  layout = 'inline'
-}: UseReportingFiltersProps) => {
+export const ReportingFilters = ({
+  layout = 'inline',
+  error
+}: ReportingFiltersProps) => {
   const { t } = useTranslation();
-
-  const getFilterItems = (): Array<FilterItem> => {
-    const items: Array<FilterItem> = [
-      {
-        type: COMPONENT_TYPE.textField,
-        label: t('commons.searchIUF'),
-        adornment: <SearchIcon />,
-        gridWidth: 3,
-        id: FilterFieldIds.IUF,
-        ...(layout === 'grid' ? { gridWidth: 12 } : {})
-      },
-      {
-        type: COMPONENT_TYPE.textField,
-        label: t('commons.searchRegulationUniqueIdentifier'),
-        adornment: <SearchIcon />,
-        gridWidth: 3,
-        id: FilterFieldIds.REGULATION_UNIQUE_IDENTIFIER,
-        ...(layout === 'grid' ? { gridWidth: 12 } : {})
-      },
-      {
-        type: COMPONENT_TYPE.dateRange,
-        label: 'dateRange',
-        gridWidth: 5,
-        from: { label: t('commons.from') },
-        to: { label: t('commons.to') },
-        id: FilterFieldIds.DATE_RANGE,
-        ...(layout === 'grid' ? { gridWidth: 12 } : {})
-      }
-    ];
-
-    if (layout === 'inline') {
-      items.push({
-        type: COMPONENT_TYPE.button,
-        label: t('commons.filters.filterResults'),
-        gridWidth: 1,
-        id: 'applyFilters',
-        onClick: onFilter
-      });
-    }
-
-    return items;
-  };
-
-  return { filters: getFilterItems() };
+  const { control } = useFormContext();
+  return (
+    <Stack gap={2}>
+      {error && <ErrorMessage variant="outlined" />}
+      <Stack
+        direction={layout === 'inline' ? 'row' : 'column'}
+        spacing={2}
+        width="100%"
+      >
+        <FormComponent.ControlledTextField
+          name="iuf"
+          control={control}
+          label={t('commons.searchIUF')}
+          adornment={<SearchIcon />}
+          sx={{ flex: 0.3 }}
+          key={FilterFieldIds.IUF}
+        />
+        <FormComponent.ControlledTextField
+          name="regulationUniqueIdentifier"
+          control={control}
+          sx={{ flex: 0.3 }}
+          label={t('commons.searchRegulationUniqueIdentifier')}
+          adornment={<SearchIcon />}
+          key={FilterFieldIds.REGULATION_UNIQUE_IDENTIFIER}
+        />
+        <Stack sx={{ flex: 0.4 }}>
+          <FormComponent.ControlledDateRange
+            name="dateRange"
+            control={control}
+            key={FilterFieldIds.DATE_RANGE}
+            from={{ label: t('commons.from') }}
+            to={{ label: t('commons.to') }}
+          />
+        </Stack>
+        {layout === 'inline' && (
+          <FormComponent.Button
+            label={t('commons.filters.filterResults')}
+            sx={{ flex: 0.1 }}
+            type="submit"
+            key="applyFilters"
+          />
+        )}
+      </Stack>
+    </Stack>
+  );
 };
-
-export default useReportingFilters;

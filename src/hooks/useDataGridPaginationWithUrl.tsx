@@ -99,6 +99,20 @@ export const useDataGridPaginationWithUrl = ({
   const [internalTotalElements, setInternalTotalElements] =
     useState<number>(totalElements);
 
+  const setSearchParamsStable = useCallback((params: URLSearchParams) => {
+    const currentHash = window.location.hash;
+
+    setSearchParams(params, { replace: true });
+
+    if (currentHash) {
+      window.history.replaceState(
+        window.history.state, // preserve existing state
+        document.title,
+        window.location.pathname + window.location.search + currentHash
+      );
+    }
+  }, []);
+
   useEffect(() => {
     setInternalTotalElements(totalElements);
   }, [totalElements]);
@@ -139,7 +153,7 @@ export const useDataGridPaginationWithUrl = ({
       if (!currentPage) params.set('page', String(pagination.page + 1)); // 1-based in URL
       if (!currentSize) params.set('size', String(pagination.size));
 
-      setSearchParams(params, { replace: true });
+      setSearchParamsStable(params);
     }
   }, [pagination.page, pagination.size, searchParams.get('tab')]);
 
@@ -174,9 +188,9 @@ export const useDataGridPaginationWithUrl = ({
       // Preserve all existing parameters
       params.set('page', String(newPage)); // Keep 1-based in URL
       params.set('size', String(newPagination.size));
-      setSearchParams(params, { replace: true });
+      setSearchParamsStable(params);
     },
-    [pagination, onPaginationChange, searchParams, setSearchParams]
+    [pagination, onPaginationChange, searchParams, setSearchParamsStable]
   );
 
   // Handler for page size change
@@ -205,7 +219,7 @@ export const useDataGridPaginationWithUrl = ({
       // Preserve all existing parameters
       params.set('page', String(newOneBasedPage)); // 1-based in URL
       params.set('size', String(newSize));
-      setSearchParams(params, { replace: true });
+      setSearchParamsStable(params);
 
       return newOneBasedPage;
     },
@@ -214,7 +228,7 @@ export const useDataGridPaginationWithUrl = ({
       internalTotalElements,
       onPaginationChange,
       searchParams,
-      setSearchParams
+      setSearchParamsStable
     ]
   );
 
@@ -258,7 +272,7 @@ export const useDataGridPaginationWithUrl = ({
         // Preserve the user's size preference from URL if valid, otherwise use backend size
         params.set('size', String(validSize));
 
-        setSearchParams(params, { replace: true });
+        setSearchParamsStable(params);
 
         // Update the internal state to be consistent
         const newPagination = {
@@ -303,12 +317,12 @@ export const useDataGridPaginationWithUrl = ({
         params.set('page', String(data.number + 1)); // Convert to 1-based for URL
         params.set('size', String(data.size));
 
-        setSearchParams(params, { replace: true });
+        setSearchParamsStable(params);
       }
     },
     [
       searchParams,
-      setSearchParams,
+      setSearchParamsStable,
       onPaginationChange,
       pagination,
       internalTotalElements

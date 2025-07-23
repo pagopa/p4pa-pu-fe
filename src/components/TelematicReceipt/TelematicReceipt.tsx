@@ -10,6 +10,7 @@ import { useCallback, useState } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { noFilterSetted } from '../../utils/filtersValidation';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import utils from '../../utils';
 
 export const TelematicReceipt = () => {
   const { t } = useTranslation();
@@ -19,11 +20,8 @@ export const TelematicReceipt = () => {
 
   const navigateToResults = useCallback(() => {
     if (!noFilterSetted(filters[0])) {
-      navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS, {
-        state: {
-          filters: filters[0]
-        }
-      });
+      const params = utils.URI.encode(filters[0]);
+      navigate(`${PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS}#${params}`);
     } else {
       setError(true);
     }

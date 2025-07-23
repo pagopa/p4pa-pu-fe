@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { BaseFilterValues } from '../../models/Filters';
-import { useLocation } from 'react-router';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
 import FilterContainer from '../FilterContainer/FilterContainer';
 import { PagedReceiptView } from '../../../generated/data-contracts';
@@ -13,6 +12,8 @@ import { getReceipts } from '../../api/receipts';
 import { useStore } from '../../store/GlobalStore';
 import { useSearch } from '../../hooks/useSearch';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import { FieldValues } from 'react-hook-form';
+import utils from '../../utils';
 
 export type LocationState = {
   filters: BaseFilterValues;
@@ -21,10 +22,9 @@ export type LocationState = {
 const TelematicReceiptSearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const location = useLocation();
   const [error, setError] = useState(false);
 
-  const initialFilters = (location.state?.filters || {}) as BaseFilterValues;
+  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
   const [filterValues, setFilterValues] = useState(initialFilters);
 
   const {
@@ -39,8 +39,8 @@ const TelematicReceiptSearchResults = () => {
   });
 
   const applyFilters = () => {
-    if (!noFilterSetted(telematicReceipt.filters)) {
-      telematicReceipt.applyFilters();
+    if (!noFilterSetted(filterValues)) {
+      telematicReceipt.applyFilters(filterValues);
       setError(false);
     } else {
       setError(true);
@@ -77,7 +77,7 @@ const TelematicReceiptSearchResults = () => {
         >
           <SearchResultsDataGrid
             data={telematicReceipt.query.data as PagedReceiptView}
-            onSortChange={telematicReceipt.setSort}
+            onSortChange={telematicReceipt.onSortChange}
             onPaginationChange={telematicReceipt.handlePaginationChange}
           />
         </Grid>

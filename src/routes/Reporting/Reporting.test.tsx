@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { fireEvent, render, screen } from '../../__tests__/renderers';
-import Reporting from './Reporting';
+import Reporting from '../Reporting';
 import { useNavigate, generatePath } from 'react-router';
 
 vi.mock('react-router', async (importOriginal) => {

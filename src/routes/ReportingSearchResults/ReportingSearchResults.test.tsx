@@ -1,11 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render } from '../../__tests__/renderers';
 import * as ReactRouter from 'react-router';
-import FilterContainer from '../FilterContainer/FilterContainer';
-import TitleComponent from '../TitleComponent/TitleComponent';
 import ReportingSearchResults from '../ReportingSearchResults';
 import * as useSearchModule from '../../hooks/useSearch';
-import useReportingFilters from '../../hooks/useReportingFilters';
+import FilterContainer from '../../components/FilterContainer/FilterContainer';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
@@ -39,7 +38,6 @@ describe('ReportingSearchResults', () => {
   const mockUseLocation = vi.mocked(ReactRouter.useLocation);
   const mockUseSearchParams = vi.mocked(ReactRouter.useSearchParams);
   const mockUseSearch = vi.mocked(useSearchModule.useSearch);
-  const mockUseReportingFilters = vi.mocked(useReportingFilters);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -47,10 +45,6 @@ describe('ReportingSearchResults', () => {
     // @ts-expect-error mocking location results
     mockUseLocation.mockReturnValue({ state: { filters: {} } });
     mockUseSearchParams.mockReturnValue([new URLSearchParams(), vi.fn()]);
-
-    mockUseReportingFilters.mockReturnValue({
-      filters: []
-    });
 
     mockUseSearch.mockReturnValue({
       // @ts-expect-error mocking useQuery results

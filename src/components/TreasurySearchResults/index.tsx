@@ -55,7 +55,7 @@ const TreasurySearchResults = () => {
 
   const applyFilters = () => {
     if (noFilterIsSelected.peek()) {
-      treasury.applyFilters();
+      treasury.applyFilters(filterValues);
       setError(false);
       setDrawerOpen(false);
     } else {
@@ -90,7 +90,7 @@ const TreasurySearchResults = () => {
       >
         <SearchResultsDataGrid
           data={treasury.query.data as PagedTreasuryView}
-          onSortChange={treasury.setSort}
+          onSortChange={treasury.onSortChange}
           onPaginationChange={treasury.handlePaginationChange}
         />
       </Grid>

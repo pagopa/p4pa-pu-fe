@@ -383,13 +383,7 @@ describe('SearchCard', () => {
   });
 
   it('renders filters from useReportingFilters when filterContext is "REPORTING"', () => {
-    render(
-      <SearchCard
-        title="Reporting"
-        description="Desc"
-        filterContext="REPORTING"
-      />
-    );
+    render(<SearchCard title="Reporting" description="Desc" />);
 
     expect(
       screen.getByLabelText('commons.searchRegulationUniqueIdentifier')
