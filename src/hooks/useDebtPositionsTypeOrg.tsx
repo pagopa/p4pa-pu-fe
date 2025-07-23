@@ -8,7 +8,7 @@ import { AxiosError } from 'axios';
 
 export const useDebtPositionsTypeOrg = ({
   organizationId,
-  includeAllOption = true,
+  includeAllOption = false,
   useCodeAsValue = false
 }: {
   organizationId: number;
