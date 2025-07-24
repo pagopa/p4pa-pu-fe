@@ -3,7 +3,6 @@ import { z } from 'zod';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 
-// Schema for validating the array of strings for years, following the pattern of generated/zod-schema.ts
 const operatingYearsSchema = z
   .array(
     z
@@ -25,7 +24,6 @@ export const getOperatingYears = (options?: { enabled?: boolean }) =>
     queryFn: async () => {
       const { data: response } = await utils.apiClient.bff.getOperatingYears();
 
-      // Validation of received data using the schema
       parseAndLog(operatingYearsSchema, response);
 
       return response;

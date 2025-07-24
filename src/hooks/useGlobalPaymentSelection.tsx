@@ -7,6 +7,7 @@
  * - Maintains global Set of selected uniqueIds (format: iud-index)
  * - Converts to/from IUD only when necessary for form
  * - Handles duplicate IUDs through artificial uniqueIds
+ * - Maintains global uniqueId -> IUD mapping for cross-page conversion
  *
  * FUTURE MIGRATION (when backend will have unique IUDs):
  * 1. Change globalSelectedUniqueIds → globalSelectedIuds
@@ -20,6 +21,7 @@
  * - Converts to/from IUD only when necessary for form
  * - Handles cross-page selection/deselection
  * - Solves duplicate IUD problem by managing uniqueIds
+ * - Maintains persistent uniqueId -> IUD mapping for cross-page conversion
  */
 import { useState, useCallback, useEffect, useRef } from 'react';
 
@@ -27,7 +29,7 @@ import { useState, useCallback, useEffect, useRef } from 'react';
  * Type for the hook's input parameters
  */
 export type UseGlobalPaymentSelectionParams = {
-  setValue: (name: any, value: any) => void;
+  setValue: (name: string, value: unknown) => void;
   selectedPayments?: Array<string>;
   /** TEMPORARY: current page rows for IUD ↔ uniqueId conversion */
   currentPageRows?: Array<{ uniqueId: string; iud: string }>;
@@ -74,7 +76,28 @@ export const useGlobalPaymentSelection = ({
     Set<string>
   >(new Set());
 
+  // TEMPORARY: Global mapping for uniqueId -> IUD conversion across pages
+  // This persists the mapping even when currentPageRows changes
+  const [globalUniqueIdToIudMap, setGlobalUniqueIdToIudMap] = useState<
+    Map<string, string>
+  >(new Map());
+
   const isInitializedRef = useRef(false);
+
+  // Update global mapping when currentPageRows changes
+  useEffect(() => {
+    if (currentPageRows.length > 0) {
+      setGlobalUniqueIdToIudMap((prevMap) => {
+        const newMap = new Map(prevMap);
+        currentPageRows.forEach((row) => {
+          if (row.uniqueId && row.iud) {
+            newMap.set(row.uniqueId, row.iud);
+          }
+        });
+        return newMap;
+      });
+    }
+  }, [currentPageRows]);
 
   useEffect(() => {
     // TEMPORARY: IUD → uniqueId conversion at initialization
@@ -110,7 +133,7 @@ export const useGlobalPaymentSelection = ({
         return newSet;
       });
 
-      // Sync immediately to form
+      // Sync immediately to form using global mapping
       queueMicrotask(() => {
         const newSet = new Set(globalSelectedUniqueIds);
         uniqueIds.forEach((uniqueId) => {
@@ -121,25 +144,25 @@ export const useGlobalPaymentSelection = ({
           }
         });
 
-        // Convert uniqueId to IUD for form
+        // Convert uniqueId to IUD for form using global mapping
         const selectedIuds = new Set<string>();
         newSet.forEach((uniqueId) => {
-          currentPageRows.forEach((row) => {
-            if (row.uniqueId === uniqueId && row.iud) {
-              selectedIuds.add(row.iud);
-            }
-          });
+          const iud = globalUniqueIdToIudMap.get(uniqueId);
+          if (iud) {
+            selectedIuds.add(iud);
+          }
         });
         const sortedArray = Array.from(selectedIuds).sort();
 
         setValue('selectedPayments', sortedArray);
       });
     },
-    [setValue, globalSelectedUniqueIds, currentPageRows]
+    [setValue, globalSelectedUniqueIds, globalUniqueIdToIudMap]
   );
 
   const clearAllSelections = useCallback(() => {
     setGlobalSelectedUniqueIds(new Set());
+    setGlobalUniqueIdToIudMap(new Map());
     setValue('selectedPayments', []);
   }, [setValue]);
 

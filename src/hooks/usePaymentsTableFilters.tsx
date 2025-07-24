@@ -85,11 +85,11 @@ export const usePaymentsTableFilters = ({
 
   // Validates that at least one filter is filled
   const hasValidFilters = useCallback(() => {
-    const { iud, dateFrom, dateTo, updateDateFrom, updateDateTo } =
+    const { iuv, dateFrom, dateTo, updateDateFrom, updateDateTo } =
       draftFilters;
 
     return !!(
-      (iud && iud.trim() !== '') ||
+      (iuv && iuv.trim() !== '') ||
       dateFrom ||
       dateTo ||
       updateDateFrom ||
@@ -99,8 +99,8 @@ export const usePaymentsTableFilters = ({
 
   // Checks if there are active filters not yet applied
   const hasActiveFilters = useCallback(() => {
-    const isIudChanged =
-      (draftFilters.iud || '') !== (appliedFilters.iud || '');
+    const isIuvChanged =
+      (draftFilters.iuv || '') !== (appliedFilters.iuv || '');
     const isDateFromChanged = draftFilters.dateFrom !== appliedFilters.dateFrom;
     const isDateToChanged = draftFilters.dateTo !== appliedFilters.dateTo;
     const isUpdateDateFromChanged =
@@ -109,7 +109,7 @@ export const usePaymentsTableFilters = ({
       draftFilters.updateDateTo !== appliedFilters.updateDateTo;
 
     return (
-      isIudChanged ||
+      isIuvChanged ||
       isDateFromChanged ||
       isDateToChanged ||
       isUpdateDateFromChanged ||

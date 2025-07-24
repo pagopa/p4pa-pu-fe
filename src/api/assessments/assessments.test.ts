@@ -6,7 +6,8 @@ import {
   createAssessment,
   getAssessments,
   getAssessmentsRegistries,
-  getAssessmentsRegistry
+  getAssessmentsRegistry,
+  createAssessmentDetails
 } from '.';
 import { initialFilterValues } from '../../store/FilterStore';
 import { assessmentsRegistryDTOSchema } from '../../../generated/zod-schema';
@@ -23,7 +24,8 @@ vi.mock('../../utils', async () => {
         getPagedAssessmentsExtendedDto: vi.fn(),
         createAssessment: vi.fn(),
         getAssessmentsRegistries: vi.fn(),
-        getAssessmentsRegistry: vi.fn()
+        getAssessmentsRegistry: vi.fn(),
+        createAssessmentsDetail: vi.fn()
       }
     }
   };
@@ -456,6 +458,177 @@ describe('createAssessment', () => {
       assessmentName: 'Assessment with àccénts & symbols!',
       debtPositionTypeOrgCode: 'SPECIAL_TYPE'
     });
+  });
+});
+
+describe('createAssessmentDetails', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should create assessment details successfully when mutation is called', async () => {
+    const organizationId = 123;
+    const assessmentId = 456;
+    const payload = {
+      assessmentRegistryId: 789,
+      iuds: ['IUD001', 'IUD002', 'IUD003']
+    };
+
+    const expectedResponse = {
+      id: '12345',
+      assessmentId: assessmentId,
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: payload.iuds,
+      status: 'CREATED',
+      createdDate: '2023-01-01T00:00:00Z'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessmentsDetail')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      createAssessmentDetails(organizationId, assessmentId)
+    );
+
+    result.current.mutate(payload);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentId, {
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: payload.iuds
+    });
+  });
+
+  it('should handle API errors correctly during assessment details creation', async () => {
+    const organizationId = 123;
+    const assessmentId = 456;
+    const payload = {
+      assessmentRegistryId: 789,
+      iuds: ['IUD001']
+    };
+
+    const errorMock = new Error('Assessment details creation failed');
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessmentsDetail')
+      .mockRejectedValue(errorMock);
+
+    const { result } = renderHook(() =>
+      createAssessmentDetails(organizationId, assessmentId)
+    );
+
+    result.current.mutate(payload);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(errorMock);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentId, {
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: payload.iuds
+    });
+  });
+
+  it('should handle empty IUDs array', async () => {
+    const organizationId = 123;
+    const assessmentId = 456;
+    const payload = {
+      assessmentRegistryId: 789,
+      iuds: []
+    };
+
+    const expectedResponse = {
+      id: '12345',
+      assessmentId: assessmentId,
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: [],
+      status: 'CREATED'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessmentsDetail')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      createAssessmentDetails(organizationId, assessmentId)
+    );
+
+    result.current.mutate(payload);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentId, {
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: payload.iuds
+    });
+  });
+
+  it('should call parseAndLog when response data is present', async () => {
+    const organizationId = 123;
+    const assessmentId = 456;
+    const payload = {
+      assessmentRegistryId: 789,
+      iuds: ['IUD001', 'IUD002']
+    };
+
+    const expectedResponse = [
+      {
+        assessmentDetailId: 1,
+        assessmentId: assessmentId,
+        organizationId: organizationId,
+        debtPositionTypeOrgCode: 'DEBT001',
+        iuv: 'IUV001',
+        iud: 'IUD001',
+        iur: 'IUR001',
+        debtorFiscalCodeHash: 'hash1',
+        sectionCode: 'SEC001',
+        amountCents: 10000,
+        amountSubmitted: true
+      },
+      {
+        assessmentDetailId: 2,
+        assessmentId: assessmentId,
+        organizationId: organizationId,
+        debtPositionTypeOrgCode: 'DEBT001',
+        iuv: 'IUV002',
+        iud: 'IUD002',
+        iur: 'IUR002',
+        debtorFiscalCodeHash: 'hash2',
+        sectionCode: 'SEC001',
+        amountCents: 15000,
+        amountSubmitted: true
+      }
+    ];
+
+    const { result } = renderHook(() =>
+      createAssessmentDetails(organizationId, assessmentId)
+    );
+
+    result.current.mutate(payload);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(mockParseAndLog).toHaveBeenCalledTimes(2);
+    expect(mockParseAndLog).toHaveBeenNthCalledWith(
+      1,
+      expect.any(Object),
+      expectedResponse[0]
+    );
+    expect(mockParseAndLog).toHaveBeenNthCalledWith(
+      2,
+      expect.any(Object),
+      expectedResponse[1]
+    );
   });
 });
 

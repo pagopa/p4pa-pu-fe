@@ -39,10 +39,9 @@ export const useOperatingYears = ({
   useEffect(() => {
     if (isSuccess && data) {
       try {
-        // Transform the array of strings into options for the select
         const yearsMap = data
           .filter((year: string) => year && year.trim() !== '')
-          .sort((a, b) => b.localeCompare(a)) // Descending order (most recent years first)
+          .sort((a, b) => b.localeCompare(a))
           .map((year: string) => ({
             label: year,
             value: year

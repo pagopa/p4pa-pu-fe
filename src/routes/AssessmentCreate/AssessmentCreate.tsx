@@ -9,6 +9,7 @@ import { PageRoutes } from '../../routes';
 import { useStore } from '../../store/GlobalStore';
 import { createAssessment } from '../../api/assessments';
 import { useStepperLogic } from '../../hooks/useStepperLogic';
+import utils from '../../utils';
 import { Step1Configuration } from './components/Step1Configuration';
 import {
   Step2Payments,
@@ -19,7 +20,6 @@ import { Step3AssignChapter } from './components/Step3AssignChapter';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import utils from '../../utils';
 import { AxiosError } from 'axios';
 
 const assessmentFormSchema = z.object({
@@ -40,7 +40,6 @@ const assessmentFormSchema = z.object({
     )
 });
 
-// Conditional schema for step 3 - applied only when addPaymentsToAssessment is true
 const step3Schema = z.object({
   operatingYear: z
     .string({
@@ -62,8 +61,10 @@ const step3Schema = z.object({
 type AssessmentFormData = z.infer<typeof assessmentFormSchema> & {
   addPaymentsToAssessment?: boolean;
   selectedPayments?: Array<string>;
+  selectedPaymentIuds?: Array<string>;
   operatingYear?: string;
   chapterCode?: string;
+  assessmentRegistryId?: number;
 };
 
 export const AssessmentCreate = () => {
@@ -73,7 +74,6 @@ export const AssessmentCreate = () => {
     state: { organizationId }
   } = useStore();
 
-  // Dynamic calculation of totalSteps based on the form values
   const methods = useForm<AssessmentFormData>({
     resolver: zodResolver(assessmentFormSchema),
     mode: 'onTouched',
@@ -82,23 +82,22 @@ export const AssessmentCreate = () => {
       debtPositionTypeOrgCode: '',
       addPaymentsToAssessment: false,
       selectedPayments: [],
+      selectedPaymentIuds: [],
       operatingYear: '',
-      chapterCode: ''
+      chapterCode: '',
+      assessmentRegistryId: undefined
     }
   });
 
-  // Monitor the value to calculate the number of steps and always convert it to boolean
   const addPaymentsToAssessmentRaw = useWatch({
     control: methods.control,
     name: 'addPaymentsToAssessment'
   });
 
-  // Always convert to boolean for consistency
   const addPaymentsToAssessment =
     addPaymentsToAssessmentRaw === true ||
     String(addPaymentsToAssessmentRaw) === 'true';
 
-  // Dynamic calculation of totalSteps using only booleans
   const totalSteps = addPaymentsToAssessment ? 3 : 2;
 
   const {
@@ -113,8 +112,13 @@ export const AssessmentCreate = () => {
 
   const { getValues, clearErrors, trigger, setError } = methods;
 
-  // Ref per controllare la validazione del Step2Payments
   const step2PaymentsRef = useRef<Step2PaymentsRef>(null);
+
+  const getAssessmentRegistryIdFromChapter = async (
+    values: AssessmentFormData
+  ): Promise<number | undefined> => {
+    return values.assessmentRegistryId;
+  };
 
   const validateStep = (step: number, values: AssessmentFormData) => {
     switch (step) {
@@ -129,7 +133,6 @@ export const AssessmentCreate = () => {
           fields: [] as const
         };
       case 2:
-        // Step 3 - Assign Chapter: conditional validation only if addPaymentsToAssessment is true
         if (addPaymentsToAssessment) {
           // Year is always required, Chapter is required only if Year is selected
           const yearValid = !!values.operatingYear;
@@ -151,11 +154,41 @@ export const AssessmentCreate = () => {
 
   const handleSubmit = async (values: AssessmentFormData) => {
     try {
+      // STEP 1: Create always the standard assessment
       const response = await createAssessmentMutation.mutateAsync({
         assessmentName: values.assessmentName,
         debtPositionTypeOrgCode: values.debtPositionTypeOrgCode
       });
+      const assessmentId = response.assessmentId;
+      if (!assessmentId) {
+        throw new Error('Assessment ID not received from the response');
+      }
+      // STEP 2: If there are selected payments, create also assessment-details
+      if (
+        addPaymentsToAssessment &&
+        values.selectedPaymentIuds &&
+        values.selectedPaymentIuds.length > 0
+      ) {
+        const assessmentRegistryId =
+          await getAssessmentRegistryIdFromChapter(values);
 
+        if (!assessmentRegistryId) {
+          throw new Error(
+            'Assessment Registry ID not found for the selected chapter'
+          );
+        }
+
+        await utils.apiClient.bff.createAssessmentsDetail(
+          organizationId,
+          assessmentId,
+          {
+            assessmentRegistryId,
+            iuds: values.selectedPaymentIuds
+          }
+        );
+      }
+
+      // STEP 3: Final navigation
       navigate(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
         state: {
@@ -167,7 +200,7 @@ export const AssessmentCreate = () => {
         }
       });
     } catch (error) {
-      console.log(error);
+      console.error('Error during creation:', error);
 
       if (error instanceof AxiosError && error.response?.status === 409) {
         utils.notify.emit(t('assessmentCreate.error.nameAlreadyPresent'));
@@ -183,6 +216,7 @@ export const AssessmentCreate = () => {
     }
   };
 
+  // Conditional navigation logic for the wizard
   const handleNext = useCallback(async () => {
     try {
       clearErrors();
@@ -192,7 +226,6 @@ export const AssessmentCreate = () => {
 
       if (!isValid) {
         if (currentStep === 2 && addPaymentsToAssessment) {
-          // Conditional validation: only enabled fields
           const fieldsToValidate: Array<'operatingYear' | 'chapterCode'> = [
             'operatingYear'
           ];
@@ -221,7 +254,6 @@ export const AssessmentCreate = () => {
             }
           }
         } else if (currentStep === 1) {
-          // For step 2 payments, show validation error if selection is invalid
           if (step2PaymentsRef.current) {
             step2PaymentsRef.current.showValidationError(true);
           }
@@ -231,6 +263,15 @@ export const AssessmentCreate = () => {
         return;
       }
 
+      // LOGIC CONDITIONAL STEP 2 - Point of bifurcation of the flow
+      if (currentStep === 1) {
+        if (addPaymentsToAssessment) {
+          goToNextStep();
+        } else {
+          await handleSubmit(values);
+        }
+        return;
+      }
       if (isLastStep) {
         await handleSubmit(values);
       } else {
@@ -261,29 +302,50 @@ export const AssessmentCreate = () => {
     }
   };
 
+  const getNextButtonLabel = () => {
+    if (currentStep === 1) {
+      return addPaymentsToAssessment
+        ? t('commons.continue')
+        : t('commons.create');
+    }
+    return isLastStep ? t('commons.create') : t('commons.continue');
+  };
+
+  const step1Component = useMemo(() => <Step1Configuration />, []);
+  const step2Component = useMemo(
+    () => <Step2Payments ref={step2PaymentsRef} />,
+    []
+  );
+  const step3Component = useMemo(() => <Step3AssignChapter />, []);
+
   const steps: Stepper['steps'] = useMemo(() => {
     const baseSteps = [
       {
         label: t('assessmentCreate.stepper.step1'),
-        content: <Step1Configuration key="step1" />
+        content: step1Component
       },
       {
         label: t('assessmentCreate.stepper.step2'),
         optional: true,
-        content: <Step2Payments key="step2" ref={step2PaymentsRef} />
+        content: step2Component
       }
     ];
 
-    // Add the third step only if addPaymentsToAssessment is true
     if (addPaymentsToAssessment) {
       baseSteps.push({
         label: t('assessmentCreate.stepper.step3'),
-        content: <Step3AssignChapter key="step3" />
+        content: step3Component
       });
     }
 
     return baseSteps;
-  }, [t, addPaymentsToAssessment]);
+  }, [
+    t,
+    addPaymentsToAssessment,
+    step1Component,
+    step2Component,
+    step3Component
+  ]);
 
   return (
     <FormProvider {...methods}>
@@ -298,7 +360,7 @@ export const AssessmentCreate = () => {
         <WizardStepButtons
           onBack={handleBack}
           onNext={handleNext}
-          nextLabel={isLastStep ? t('commons.create') : t('commons.continue')}
+          nextLabel={getNextButtonLabel()}
         />
       </form>
     </FormProvider>

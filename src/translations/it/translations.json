@@ -295,8 +295,16 @@
             "no": "No"
           }
         },
+        "selection": {
+          "banner": {
+            "single": "({{count}}) Pagamento selezionato",
+            "multiple": "({{count}}) Pagamenti selezionati",
+            "clearSelection": "Cancella la selezione"
+          }
+        },
         "validation": {
-          "noPaymentsSelected": "Devi selezionare almeno un pagamento da aggiungere."
+          "noPaymentsSelected": "Devi selezionare almeno un pagamento da aggiungere.",
+          "noFiltersSelected": "Selezionare almeno un filtro."
         }
       },
       "step3": {
@@ -361,7 +369,7 @@
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
-      "ALL": "Tutti", 
+      "ALL": "Tutti",
       "DOPPI": "Pagamenti doppi",
       "RT_NO_IUF": "Pagamenti non correttamente rendicontati",
       "RT_NO_IUD": "Pagamenti non correttamente notificati",
@@ -610,6 +618,7 @@
     "importFrom": "Caricati dal",
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
+    "inThisPage": "in questa pagina",
     "iud": "IUD",
     "iuf": "IUF",
     "iur": "IUR",

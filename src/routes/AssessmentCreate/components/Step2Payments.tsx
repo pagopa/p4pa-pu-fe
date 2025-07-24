@@ -1,19 +1,29 @@
 import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Stack, Alert } from '@mui/material';
+import { Stack, Alert, Button, Box } from '@mui/material';
+import { CopyAll } from '@mui/icons-material';
 import {
   useEffect,
   useCallback,
-  useState,
   useImperativeHandle,
-  forwardRef
+  forwardRef,
+  useMemo,
+  useState
 } from 'react';
+import { subDays, startOfDay, endOfDay } from 'date-fns';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
 import { PaymentsTable } from './PaymentsTable';
 import { useOperatingYears } from '../../../hooks/useOperatingYears';
 import { useChapters } from '../../../hooks/useChapters';
+import { useStep2PaymentsState } from '../../../hooks/useStep2PaymentsState';
 import { usePaidInstallments } from '../../../hooks/usePaidInstallments';
+import { useGlobalPaymentSelection } from '../../../hooks/useGlobalPaymentSelection';
+import type {
+  PagedPaidInstallmentsDTO,
+  PaymentsUIFilters
+} from '../../../api/classifications/paidInstallments/mappings';
+import { convertFiltersToAPI } from '../../../api/classifications/paidInstallments/mappings';
 
 export type Step2Props = {
   editmode?: boolean;
@@ -21,11 +31,13 @@ export type Step2Props = {
 
 export type Step2PaymentsRef = {
   showValidationError: (show: boolean) => void;
+  showFilterValidationError: (show: boolean) => void;
 };
 
 type AssessmentFormData = {
   addPaymentsToAssessment?: boolean;
   selectedPayments?: Array<string>;
+  selectedPaymentIuds?: Array<string>;
   operatingYear?: string;
   chapterCode?: string;
   debtPositionTypeOrgCode?: string;
@@ -38,31 +50,23 @@ export const validateStep2Payments = (values: AssessmentFormData): boolean => {
     String(values.addPaymentsToAssessment) === 'true';
 
   if (shouldLoadData) {
-    return !!(values.selectedPayments && values.selectedPayments.length > 0);
+    const hasSelectedPayments = !!(
+      values.selectedPayments && values.selectedPayments.length > 0
+    );
+    const hasSelectedIuds = !!(
+      values.selectedPaymentIuds && values.selectedPaymentIuds.length > 0
+    );
+
+    return hasSelectedPayments || hasSelectedIuds;
   }
 
-  return true; // If not adding payments, validation passes
+  return true;
 };
 
-/**
- * Step 2 - Payments Management
- *
- * Permette all'utente di scegliere se aggiungere pagamenti all'assessment e di
- * selezionare i pagamenti disponibili utilizzando l'API reale.
- *
- * NOTA: Durante la creazione, utilizziamo un assessmentId temporaneo (-1) per
- * recuperare i paid installments disponibili. Questo permetterà di mostrare
- * i pagamenti reali che possono essere associati all'assessment.
- */
 export const Step2Payments = forwardRef<Step2PaymentsRef, Step2Props>(
   ({ editmode = false }, ref) => {
     const { t } = useTranslation();
     const { control, setValue } = useFormContext<AssessmentFormData>();
-
-    // State per mostrare l'alert di validazione
-    const [showValidationError, setShowValidationError] = useState(false);
-
-    // Watch form values
     const addPaymentsToAssessmentRaw = useWatch({
       control,
       name: 'addPaymentsToAssessment'
@@ -76,19 +80,77 @@ export const Step2Payments = forwardRef<Step2PaymentsRef, Step2Props>(
       name: 'selectedPayments'
     });
 
-    // Always convert to boolean for consistency (pattern from AssessmentCreate.tsx)
+    // Normalize boolean value
     const shouldLoadData =
       addPaymentsToAssessmentRaw === true ||
       String(addPaymentsToAssessmentRaw) === 'true';
 
-    // Helper function for form field reset
-    const resetFormFields = useCallback(() => {
-      setValue('selectedPayments', []);
-      setValue('operatingYear', '');
-      setValue('chapterCode', '');
-    }, [setValue]);
+    // Syncronize IUDs when payments are selected
+    // This ensures the persistence of IUDs for the new assessment-details flow
+    useEffect(() => {
+      if (shouldLoadData && selectedPayments) {
+        setValue('selectedPaymentIuds', selectedPayments);
+      }
+    }, [selectedPayments, shouldLoadData, setValue]);
 
-    // API Calls - React Query handles automatically cache and deduplication
+    const paymentsState = useStep2PaymentsState();
+
+    // Hook for global cross-page IUD selection management
+    // TEMPORARY: When IUDs are unique, remove the currentPageRows parameter
+    // FUTURE: const globalSelection = useGlobalPaymentSelection({ setValue, selectedPayments });
+    const currentPageRows = useMemo(() => {
+      const currentPage = paymentsState.paymentsData.number || 0;
+      const currentSize = paymentsState.paymentsData.size || 10;
+
+      const rows =
+        paymentsState.paymentsData.content?.map((row, pageIndex) => {
+          const absoluteIndex = currentPage * currentSize + pageIndex;
+          return {
+            uniqueId: `${row.iud || 'no-iud'}-${absoluteIndex}`,
+            iud: row.iud || ''
+          };
+        }) || [];
+
+      return rows;
+    }, [
+      paymentsState.paymentsData.content,
+      paymentsState.paymentsData.number,
+      paymentsState.paymentsData.size
+    ]);
+
+    const globalSelection = useGlobalPaymentSelection({
+      setValue: setValue as (name: string, value: unknown) => void,
+      selectedPayments,
+      currentPageRows
+    });
+
+    // Flag to track if data has been loaded at least once
+    const [hasLoadedData, setHasLoadedData] = useState(false);
+
+    // Stable callbacks to avoid infinite loops
+    const handleApiSuccess = useCallback(
+      (data: PagedPaidInstallmentsDTO) => {
+        paymentsState.updatePaymentsData(data);
+        setHasLoadedData(true);
+      },
+      [paymentsState.updatePaymentsData]
+    );
+
+    const handleApiError = useCallback(
+      (error: Error) => {
+        console.error('Step2 Payments API Error:', error);
+        paymentsState.resetPaymentsData();
+      },
+      [paymentsState.resetPaymentsData]
+    );
+
+    const paymentsApi = usePaidInstallments({
+      enabled: shouldLoadData && !!debtPositionTypeOrgCode,
+      pageSize: 10,
+      debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
+      onError: handleApiError
+    });
+
     const operatingYearsQuery = useOperatingYears({
       includeAllOption: false,
       enabled: shouldLoadData
@@ -102,77 +164,182 @@ export const Step2Payments = forwardRef<Step2PaymentsRef, Step2Props>(
       purpose: 'validation'
     });
 
-    // Hook per recuperare i paid installments usando l'API reale
-    const paidInstallmentsHook = usePaidInstallments({
-      enabled: shouldLoadData && !!debtPositionTypeOrgCode,
-      debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
-      assessmentId: -1, // Valore temporaneo durante la creazione
-      pageSize: 10
-    });
+    const resetFormFields = useCallback(() => {
+      setValue('selectedPayments', []);
+      setValue('selectedPaymentIuds', []);
+      setValue('operatingYear', '');
+      setValue('chapterCode', '');
+      globalSelection.clearAllSelections();
+    }, [setValue, globalSelection.clearAllSelections]);
 
-    // Carica i pagamenti quando shouldLoadData diventa true e abbiamo debtPositionTypeOrgCode
-    useEffect(() => {
-      if (shouldLoadData && debtPositionTypeOrgCode && paidInstallmentsHook) {
-        paidInstallmentsHook
-          .fetchPaidInstallments({
-            pagination: { page: 0, size: 10 },
-            sort: ['paymentDateTime:desc']
-          })
-          .catch((error) => {
-            console.error('Failed to fetch paid installments:', error);
-          });
-      }
-    }, [shouldLoadData, debtPositionTypeOrgCode, paidInstallmentsHook]);
+    const handleClearSelection = useCallback(() => {
+      globalSelection.clearAllSelections();
+    }, [globalSelection.clearAllSelections]);
 
-    // Reset form fields when user selects "No"
-    useEffect(() => {
-      if (!shouldLoadData) {
-        resetFormFields();
-        setShowValidationError(false); // Hide validation error when switching to "No"
-      }
-    }, [shouldLoadData, resetFormFields]);
+    // TEMPORARY: When IUDs are unique, this handler will become much simpler
+    // FUTURE: handleTableSelectionChange = (newSelectedIuds) => { globalSelection.toggleIudSelection(newSelectedIuds) }
+    const handleTableSelectionChange = useCallback(
+      (newSelectedUniqueIds: Array<string>) => {
+        // Get all currently selected uniqueIds
+        const currentSelectedUniqueIds = Array.from(
+          globalSelection.globalSelectedUniqueIds
+        );
 
-    // Hide validation error when user selects payments
-    useEffect(() => {
-      if (selectedPayments && selectedPayments.length > 0) {
-        setShowValidationError(false);
-      }
-    }, [selectedPayments]);
+        // TEMPORARY: Calculate uniqueIds for current page
+        // FUTURE: const currentPageIuds = paymentsState.paymentsData.content?.map(row => row.iud) || [];
+        const currentPageUniqueIds =
+          paymentsState.paymentsData.content?.map(
+            (row, index) => `${row.iud || 'no-iud'}-${index}`
+          ) || [];
 
-    // Expose validation functions via ref
-    useImperativeHandle(
-      ref,
-      () => ({
-        showValidationError: (show: boolean) => {
-          setShowValidationError(show);
+        const toDeselect = currentPageUniqueIds.filter(
+          (uniqueId) =>
+            currentSelectedUniqueIds.includes(uniqueId) &&
+            !newSelectedUniqueIds.includes(uniqueId)
+        );
+        const toSelect = newSelectedUniqueIds.filter(
+          (uniqueId) => !currentSelectedUniqueIds.includes(uniqueId)
+        );
+
+        if (toDeselect.length > 0) {
+          globalSelection.toggleUniqueIdSelection(toDeselect, false);
         }
-      }),
-      []
+
+        if (toSelect.length > 0) {
+          globalSelection.toggleUniqueIdSelection(toSelect, true);
+        }
+      },
+      [paymentsState.paymentsData.content, globalSelection]
     );
 
-    // Auto-reset on API failures (non-edit mode only)
-    useEffect(() => {
-      if (!editmode && shouldLoadData) {
-        const shouldResetOnError =
-          operatingYearsQuery.isError ||
-          (chaptersQuery.isError && debtPositionTypeOrgCode) ||
-          paidInstallmentsHook.isError;
+    const handleFiltersApplied = useCallback(
+      async (
+        uiFilters: PaymentsUIFilters,
+        pagination: { page: number; size: number },
+        sortParams?: Array<string>
+      ) => {
+        try {
+          const apiFilters = convertFiltersToAPI(uiFilters);
 
-        if (shouldResetOnError) {
-          setValue('addPaymentsToAssessment', false);
-          resetFormFields();
+          const data = await paymentsApi.fetchPaidInstallments({
+            filters: apiFilters,
+            pagination,
+            sort: sortParams
+          });
+
+          if (data) {
+            handleApiSuccess(data);
+          }
+        } catch (error) {
+          console.error('Failed to fetch filtered paid installments:', error);
+          handleApiError(error as Error);
         }
+      },
+      [paymentsApi.fetchPaidInstallments, handleApiSuccess, handleApiError]
+    );
+
+    // Helper function to handle API errors
+    const handleExternalApiErrors = useCallback(() => {
+      const hasApiError =
+        operatingYearsQuery.isError ||
+        (chaptersQuery.isError && debtPositionTypeOrgCode) ||
+        paymentsApi.isError;
+
+      if (hasApiError) {
+        if (operatingYearsQuery.isError) {
+          console.error('Operating years error:', operatingYearsQuery.error);
+        }
+        if (chaptersQuery.isError && debtPositionTypeOrgCode) {
+          console.error('Chapters error:', chaptersQuery.error);
+        }
+        if (paymentsApi.isError) {
+          console.error('Payments API error:', paymentsApi.error);
+        }
+        setValue('addPaymentsToAssessment', false);
+        resetFormFields();
       }
     }, [
-      editmode,
-      shouldLoadData,
       operatingYearsQuery.isError,
+      operatingYearsQuery.error,
       chaptersQuery.isError,
-      paidInstallmentsHook.isError,
+      chaptersQuery.error,
+      paymentsApi.isError,
+      paymentsApi.error,
       debtPositionTypeOrgCode,
       setValue,
       resetFormFields
     ]);
+
+    useEffect(() => {
+      if (!shouldLoadData) {
+        // Reset all form fields and state when switching to "No"
+        resetFormFields();
+        paymentsState.resetPaymentsData();
+        paymentsState.clearValidationErrors();
+        setHasLoadedData(false);
+        return;
+      }
+      if (!editmode) {
+        handleExternalApiErrors();
+      }
+    }, [
+      shouldLoadData,
+      editmode,
+      handleExternalApiErrors,
+      resetFormFields,
+      paymentsState.resetPaymentsData,
+      paymentsState.clearValidationErrors
+    ]);
+
+    useEffect(() => {
+      if (selectedPayments && selectedPayments.length > 0) {
+        paymentsState.setShowPaymentsValidationError(false);
+      }
+    }, [selectedPayments, paymentsState.setShowPaymentsValidationError]);
+
+    useImperativeHandle(
+      ref,
+      () => ({
+        showValidationError: paymentsState.setShowPaymentsValidationError,
+        showFilterValidationError: paymentsState.setShowFiltersValidationError
+      }),
+      [
+        paymentsState.setShowPaymentsValidationError,
+        paymentsState.setShowFiltersValidationError
+      ]
+    );
+
+    const initialTableFilters = useMemo(() => {
+      return {
+        dateFrom: startOfDay(subDays(new Date(), 30)),
+        dateTo: endOfDay(new Date())
+      };
+    }, []);
+
+    const selectionBannerText = useMemo(() => {
+      const count = globalSelection.totalSelected;
+      if (count === 0) return '';
+
+      const translationKey =
+        count === 1
+          ? 'assessmentCreate.configuration.step2.selection.banner.single'
+          : 'assessmentCreate.configuration.step2.selection.banner.multiple';
+
+      return t(translationKey, { count });
+    }, [globalSelection.totalSelected, t]);
+
+    // Calculate selections for current page (for DataGrid synchronization)
+    // TEMPORARY: Convert from uniqueId to list for DataGrid
+    // FUTURE: Will be much simpler, direct IUD mapping
+    const currentPageSelectedUniqueIds = useMemo(() => {
+      const currentPageUniqueIds = currentPageRows.map((row) => row.uniqueId);
+
+      const selectedInCurrentPage = currentPageUniqueIds.filter((uniqueId) =>
+        globalSelection.isUniqueIdSelected(uniqueId)
+      );
+
+      return selectedInCurrentPage;
+    }, [currentPageRows, globalSelection.globalSelectedUniqueIds]);
 
     return (
       <Stack direction="column" gap={3} width="100%">
@@ -227,18 +394,7 @@ export const Step2Payments = forwardRef<Step2PaymentsRef, Step2Props>(
           </Alert>
         )}
 
-        {shouldLoadData && paidInstallmentsHook.isError && (
-          <Alert
-            severity="error"
-            variant="outlined"
-            sx={{ mb: 2 }}
-            data-testid="paid-installments-error-banner"
-          >
-            {t('errors.fetchPaidInstallments')}
-          </Alert>
-        )}
-
-        {shouldLoadData && showValidationError && (
+        {shouldLoadData && paymentsState.showPaymentsValidationError && (
           <Alert
             severity="error"
             variant="outlined"
@@ -251,15 +407,69 @@ export const Step2Payments = forwardRef<Step2PaymentsRef, Step2Props>(
           </Alert>
         )}
 
+        {shouldLoadData && paymentsState.showFiltersValidationError && (
+          <Alert
+            severity="error"
+            variant="outlined"
+            sx={{ mb: 2 }}
+            data-testid="filter-validation-error-banner"
+          >
+            {t(
+              'assessmentCreate.configuration.step2.validation.noFiltersSelected'
+            )}
+          </Alert>
+        )}
+
+        {shouldLoadData && globalSelection.totalSelected > 0 && (
+          <Alert
+            severity="info"
+            variant="outlined"
+            sx={{ mb: 2 }}
+            data-testid="payments-selection-banner"
+            action={
+              <Button
+                variant="naked"
+                size="small"
+                startIcon={<CopyAll />}
+                onClick={handleClearSelection}
+                disabled={editmode}
+                data-testid="clear-selection-button"
+              >
+                {t(
+                  'assessmentCreate.configuration.step2.selection.banner.clearSelection'
+                )}
+              </Button>
+            }
+          >
+            <Box component="span" sx={{ fontWeight: 'medium' }}>
+              {selectionBannerText}
+              {globalSelection.totalSelected >
+                currentPageSelectedUniqueIds.length && (
+                <Box
+                  component="span"
+                  sx={{ fontStyle: 'italic', ml: 1, color: 'text.secondary' }}
+                >
+                  ({currentPageSelectedUniqueIds.length}{' '}
+                  {t('commons.inThisPage')})
+                </Box>
+              )}
+            </Box>
+          </Alert>
+        )}
+
         {shouldLoadData && (
           <PaymentsTable
-            onSelectionChange={(selected) =>
-              setValue('selectedPayments', selected)
+            data={paymentsState.paymentsData}
+            onSelectionChange={handleTableSelectionChange}
+            onFiltersApplied={handleFiltersApplied}
+            onFilterValidationError={
+              paymentsState.setShowFiltersValidationError
             }
+            initialFilters={initialTableFilters}
+            isLoading={paymentsApi.isLoading}
             disabled={editmode}
-            paymentsData={paidInstallmentsHook.data}
-            isLoading={paidInstallmentsHook.isLoading}
-            onDataRefresh={paidInstallmentsHook.fetchPaidInstallments}
+            autoLoadOnMount={!hasLoadedData}
+            selectedUniqueIds={currentPageSelectedUniqueIds}
           />
         )}
       </Stack>

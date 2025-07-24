@@ -121,8 +121,7 @@ describe('AssessmentDetail', () => {
       totalPages: 1,
       number: 0,
       size: 10
-    },
-    flagManualGeneration: false
+    }
   };
 
   beforeEach(() => {

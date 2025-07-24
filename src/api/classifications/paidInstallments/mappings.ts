@@ -2,54 +2,38 @@ import {
   ClassificationPaidInstallmentsView,
   PagedClassificationPaidInstallmentsView
 } from '../../../../generated/data-contracts';
+import { subDays } from 'date-fns';
+import { toStartOfDay, toEndOfDay } from '../../../utils/formatters';
 
-/**
- * Tipi TypeScript generati dal backend
- * Utilizzati direttamente senza wrapper personalizzati
- */
 export type PaidInstallmentDTO = ClassificationPaidInstallmentsView;
 export type PagedPaidInstallmentsDTO = PagedClassificationPaidInstallmentsView;
-
-/**
- * Filtri per la richiesta API paid-installments
- * Basati sui parametri supportati dall'endpoint API
- */
-export type PaidInstallmentsFilters = {
-  /** Filtro IUV opzionale */
+export type PaymentsUIFilters = {
   iuv?: string;
-  /** Data inizio periodo pagamento */
+  dateFrom?: Date | null;
+  dateTo?: Date | null;
+  updateDateFrom?: Date | null;
+  updateDateTo?: Date | null;
+};
+
+export type PaidInstallmentsFilters = {
+  iuv?: string;
   paymentDateTimeFrom?: string;
-  /** Data fine periodo pagamento */
   paymentDateTimeTo?: string;
-  /** Data inizio ultimo aggiornamento */
   updateDateFrom?: string;
-  /** Data fine ultimo aggiornamento */
   updateDateTo?: string;
 };
 
-/**
- * Parametri per la richiesta API paid-installments
- * Segue il pattern standard delle altre API del progetto
- */
 export type PaidInstallmentsFilteredRequest = {
-  /** Parametri obbligatori richiesti dall'API */
   debtPositionTypeOrgCode: string;
-  assessmentId: number;
-  /** Filtri opzionali */
+  assessmentId?: number;
   filters?: PaidInstallmentsFilters;
-  /** Parametri di paginazione */
   pagination: {
     page: number;
     size: number;
   };
-  /** Ordinamento */
   sort?: Array<string>;
 };
 
-/**
- * Costruisce i parametri query per l'API paid-installments
- * Segue il pattern standard delle altre API del progetto
- */
 export const buildQueryParams = ({
   debtPositionTypeOrgCode,
   assessmentId,
@@ -57,10 +41,8 @@ export const buildQueryParams = ({
   pagination,
   sort
 }: PaidInstallmentsFilteredRequest) => ({
-  // Parametri obbligatori
   debtPositionTypeOrgCode,
-  assessmentId,
-  // Filtri opzionali
+  ...(assessmentId && { assessmentId }),
   ...(filters?.iuv && { iuv: filters.iuv }),
   ...(filters?.paymentDateTimeFrom && {
     paymentDateTimeFrom: filters.paymentDateTimeFrom
@@ -70,9 +52,39 @@ export const buildQueryParams = ({
   }),
   ...(filters?.updateDateFrom && { updateDateFrom: filters.updateDateFrom }),
   ...(filters?.updateDateTo && { updateDateTo: filters.updateDateTo }),
-  // Paginazione
   page: pagination.page,
   size: pagination.size,
-  // Ordinamento
   ...(sort?.length && { sort })
 });
+
+export const convertFiltersToAPI = (
+  uiFilters: PaymentsUIFilters
+): PaidInstallmentsFilters => {
+  const apiFilters: PaidInstallmentsFilters = {};
+
+  if (uiFilters.iuv?.trim()) {
+    apiFilters.iuv = uiFilters.iuv.trim();
+  }
+
+  if (uiFilters.dateFrom && uiFilters.dateTo) {
+    apiFilters.paymentDateTimeFrom = uiFilters.dateFrom.toISOString();
+    apiFilters.paymentDateTimeTo = uiFilters.dateTo.toISOString();
+  }
+
+  if (uiFilters.updateDateFrom && uiFilters.updateDateTo) {
+    apiFilters.updateDateFrom = uiFilters.updateDateFrom.toISOString();
+    apiFilters.updateDateTo = uiFilters.updateDateTo.toISOString();
+  }
+
+  if (!apiFilters.paymentDateTimeFrom && !apiFilters.paymentDateTimeTo) {
+    const today = new Date();
+    const thirtyDaysAgo = subDays(today, 30);
+    const from = toStartOfDay(thirtyDaysAgo);
+    const to = toEndOfDay(today);
+
+    apiFilters.paymentDateTimeFrom = from?.toISOString();
+    apiFilters.paymentDateTimeTo = to?.toISOString();
+  }
+
+  return apiFilters;
+};

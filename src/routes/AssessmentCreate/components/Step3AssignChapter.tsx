@@ -16,9 +16,11 @@ export type Step3Props = {
 type AssessmentFormData = {
   addPaymentsToAssessment?: boolean;
   selectedPayments?: Array<string>;
+  selectedPaymentIuds?: Array<string>;
   operatingYear?: string;
   chapterCode?: string;
   debtPositionTypeOrgCode?: string;
+  assessmentRegistryId?: number;
 };
 
 export const Step3AssignChapter = ({ editmode = false }: Step3Props) => {
@@ -59,14 +61,28 @@ export const Step3AssignChapter = ({ editmode = false }: Step3Props) => {
   const {
     optionsMap: chapterOptions = [],
     isLoading: isLoadingChapters,
-    hasNoResults
+    hasNoResults,
+    getAssessmentRegistryId
   } = chaptersQuery;
 
-  // Reset the chapter when the operating year changes
+  const selectedChapterCode = useWatch({
+    control,
+    name: 'chapterCode'
+  });
+
+  const assessmentRegistryId = selectedChapterCode
+    ? getAssessmentRegistryId(selectedChapterCode)
+    : undefined;
+
   useEffect(() => {
-    // Always reset the chapter when the operating year changes (selected or deselected)
+    if (selectedChapterCode && assessmentRegistryId) {
+      setValue('assessmentRegistryId', assessmentRegistryId);
+    }
+  }, [selectedChapterCode, assessmentRegistryId, setValue]);
+
+  useEffect(() => {
     setValue('chapterCode', '');
-    // Clear any errors on the fields when the user starts interacting
+    setValue('assessmentRegistryId', undefined);
     clearErrors(['operatingYear', 'chapterCode']);
   }, [selectedYear, setValue, clearErrors]);
 
