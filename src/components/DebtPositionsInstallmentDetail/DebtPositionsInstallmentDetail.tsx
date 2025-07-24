@@ -136,7 +136,9 @@ export const DebtPositionsInstallmentDetail = () => {
     summaryData: [
       {
         label: t('commons.state'),
-        value: installment?.status || '',
+        value: installment?.status
+          ? t(`commons.status.${installment.status}`)
+          : '',
         chipConfig: { color: 'default', variant: 'outlined' }
       },
       {

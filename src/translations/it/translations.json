@@ -770,7 +770,8 @@
       "REPORTED": "Rendicontato",
       "TO_SYNC": "Da sincronizzare",
       "UNPAID": "Da pagare",
-      "UNPAYABLE": "Non pagabile"
+      "UNPAYABLE": "Non pagabile",
+      "WAITING_FILE": "In attesa del file"
     },
     "subject": "Oggetto",
     "successExport": "Abbiamo ricevuto la tua richiesta!",
