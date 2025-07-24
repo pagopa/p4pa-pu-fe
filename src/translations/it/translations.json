@@ -1608,7 +1608,7 @@
     "payer": "Ordinante",
     "search": "Cerca flussi di Tesoreria",
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
-    "tempDocumentCode": "Codice provvisorio",
+    "provisionalCode": "Codice provvisorio",
     "tempDocumentYear": "Anno codice Provvisorio"
   },
   "events": {
