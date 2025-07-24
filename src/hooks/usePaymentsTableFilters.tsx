@@ -1,25 +1,16 @@
 import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { GridSortModel } from '@mui/x-data-grid';
-import { subDays, startOfDay, endOfDay } from 'date-fns';
+import { subDays } from 'date-fns';
 import { useSearchParams } from 'react-router';
+import { toStartOfDay, toEndOfDay } from '../utils/formatters';
+import {
+  convertFiltersToAPI,
+  PaymentsUIFilters,
+  PaidInstallmentsFilters
+} from '../api/classifications/paidInstallments/mappings';
 
-// Filtri per l'interfaccia utente (con date come Date objects)
-export type PaymentsUIFilters = {
-  iud?: string;
-  dateFrom?: Date | null;
-  dateTo?: Date | null;
-  updateDateFrom?: Date | null;
-  updateDateTo?: Date | null;
-};
-
-// Filtri per l'API (con date come stringhe ISO)
-export type PaymentsAPIFilters = {
-  iud?: string;
-  paymentDateTimeFrom?: string;
-  paymentDateTimeTo?: string;
-  updateDateFrom?: string;
-  updateDateTo?: string;
-};
+// API filters (with dates as ISO strings)
+export type PaymentsAPIFilters = PaidInstallmentsFilters;
 
 type UsePaymentsTableFiltersProps = {
   initialFilters?: Partial<PaymentsUIFilters>;
@@ -34,62 +25,26 @@ type UsePaymentsTableFiltersProps = {
 
 const DEFAULT_PAGE_SIZE = 10;
 
-/**
- * Crea filtri di default stabili per evitare re-render infiniti
- * Utilizza date-fns seguendo pattern esistenti del progetto
- */
 const createStableDefaultFilters = (): PaymentsUIFilters => {
+  const today = new Date();
+  const thirtyDaysAgo = subDays(today, 30);
+
   return {
-    dateFrom: startOfDay(subDays(new Date(), 30)),
-    dateTo: endOfDay(new Date())
+    dateFrom: toStartOfDay(thirtyDaysAgo),
+    dateTo: toEndOfDay(today)
   };
 };
 
 /**
- * Converte filtri UI in formato API
- * Esportata come utility function per riuso in altri componenti (DRY principle)
- */
-export const convertFiltersToAPI = (
-  uiFilters: PaymentsUIFilters
-): PaymentsAPIFilters => {
-  const apiFilters: PaymentsAPIFilters = {};
-
-  if (uiFilters.iud?.trim()) {
-    apiFilters.iud = uiFilters.iud.trim();
-  }
-
-  if (uiFilters.dateFrom && uiFilters.dateTo) {
-    apiFilters.paymentDateTimeFrom = uiFilters.dateFrom.toISOString();
-    apiFilters.paymentDateTimeTo = uiFilters.dateTo.toISOString();
-  }
-
-  if (uiFilters.updateDateFrom && uiFilters.updateDateTo) {
-    apiFilters.updateDateFrom = uiFilters.updateDateFrom.toISOString();
-    apiFilters.updateDateTo = uiFilters.updateDateTo.toISOString();
-  }
-
-  // Garantisce sempre un filtro date se non presente (requisito API)
-  if (!apiFilters.paymentDateTimeFrom && !apiFilters.paymentDateTimeTo) {
-    const to = endOfDay(new Date());
-    const from = startOfDay(subDays(new Date(), 30));
-    apiFilters.paymentDateTimeFrom = from.toISOString();
-    apiFilters.paymentDateTimeTo = to.toISOString();
-  }
-
-  return apiFilters;
-};
-
-/**
- * Hook per la gestione completa dei filtri nella PaymentsTable
- * Segue il pattern consolidato del progetto (useAssessmentDetailFilters)
+ * Hook for complete filter management in PaymentsTable
  *
- * Responsabilità:
- * - Gestione filtri draft vs applied con validazione
- * - Gestione paginazione
- * - Gestione sorting con reset automatico paginazione
- * - Auto-load al mount
- * - Conversione formati UI -> API
- * - Validazione filtri obbligatori
+ * Responsibilities:
+ * - Draft vs applied filters management with validation
+ * - Pagination management
+ * - Sorting management with automatic pagination reset
+ * - Auto-load on mount
+ * - UI -> API conversion delegation to mapping layer
+ * - Required filters validation
  */
 export const usePaymentsTableFilters = ({
   initialFilters = {},
@@ -99,7 +54,7 @@ export const usePaymentsTableFilters = ({
 }: UsePaymentsTableFiltersProps = {}) => {
   const [searchParams] = useSearchParams();
 
-  // Legge la paginazione dall'URL al mount (pattern del progetto)
+  // Read pagination from URL on mount
   const getInitialPaginationFromUrl = useMemo(() => {
     const urlPage = parseInt(searchParams.get('page') || '1');
     const urlSize = parseInt(
@@ -107,18 +62,15 @@ export const usePaymentsTableFilters = ({
     );
 
     return {
-      page: Math.max(0, urlPage - 1), // Convert to 0-based e valida
+      page: Math.max(0, urlPage - 1), // Convert to 0-based and validate
       size: urlSize > 0 ? urlSize : DEFAULT_PAGE_SIZE
     };
   }, [searchParams]);
 
-  // Filtri di default stabili (pattern del progetto)
   const defaultFilters = useMemo((): PaymentsUIFilters => {
-    // Se ci sono initialFilters validi, usali
     if (initialFilters?.dateFrom && initialFilters?.dateTo) {
       return initialFilters;
     }
-    // Altrimenti usa i filtri di default stabili
     return createStableDefaultFilters();
   }, [initialFilters?.dateFrom, initialFilters?.dateTo]);
 
@@ -128,13 +80,10 @@ export const usePaymentsTableFilters = ({
     useState<PaymentsUIFilters>(defaultFilters);
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
-  // Auto-load management (pattern del progetto)
+  // Auto-load management
   const hasAutoLoadedRef = useRef(false);
 
-  /**
-   * Valida che almeno un filtro sia compilato
-   * Segue la logica originale di PaymentsTable
-   */
+  // Validates that at least one filter is filled
   const hasValidFilters = useCallback(() => {
     const { iud, dateFrom, dateTo, updateDateFrom, updateDateTo } =
       draftFilters;
@@ -148,9 +97,7 @@ export const usePaymentsTableFilters = ({
     );
   }, [draftFilters]);
 
-  /**
-   * Verifica se ci sono filtri attivi non ancora applicati
-   */
+  // Checks if there are active filters not yet applied
   const hasActiveFilters = useCallback(() => {
     const isIudChanged =
       (draftFilters.iud || '') !== (appliedFilters.iud || '');
@@ -170,15 +117,13 @@ export const usePaymentsTableFilters = ({
     );
   }, [draftFilters, appliedFilters]);
 
-  /**
-   * Aggiorna i filtri draft (non ancora applicati)
-   */
+  // Updates draft filters (not yet applied)
   const updateDraftFilters = useCallback(
     (updates: Partial<PaymentsUIFilters>) => {
       setDraftFilters((prev) => {
         const cleanedUpdates = { ...updates };
 
-        // Rimuove valori vuoti
+        // Remove empty values
         Object.keys(cleanedUpdates).forEach((key) => {
           const typedKey = key as keyof PaymentsUIFilters;
           const value = cleanedUpdates[typedKey];
@@ -196,32 +141,28 @@ export const usePaymentsTableFilters = ({
     []
   );
 
-  /**
-   * Applica i filtri draft con validazione
-   * Segue la logica originale di PaymentsTable.applyFilters
-   * NOTA: La paginazione è ora gestita da CustomDataGrid tramite smartPagination
-   */
+  // Applies draft filters with validation
   const applyFilters = useCallback(() => {
-    // Verifica che almeno un filtro sia compilato
+    // Verify that at least one filter is filled
     if (!hasValidFilters()) {
-      // Triggera errore di validazione nel parent component
+      // Trigger validation error in parent component
       if (onFilterValidationError) {
         onFilterValidationError(true);
       }
       return;
     }
 
-    // Pulisce eventuali errori di validazione precedenti
+    // Clear any previous validation errors
     if (onFilterValidationError) {
       onFilterValidationError(false);
     }
 
-    // Applica filtri (la paginazione sarà gestita da smartPagination)
+    // Apply filters
     const filtersToApply = { ...draftFilters };
     setAppliedFilters(filtersToApply);
 
-    // Notifica il parent component che triggererà onFiltersApplied in CustomDataGrid
-    // che resetterà automaticamente la paginazione, mantendo il size dall'URL
+    // Notify parent component which will trigger onFiltersApplied in CustomDataGrid
+    // that will automatically reset pagination, keeping the size from URL
     if (onFiltersChange) {
       onFiltersChange(filtersToApply, {
         page: 0,
@@ -236,22 +177,19 @@ export const usePaymentsTableFilters = ({
     getInitialPaginationFromUrl.size
   ]);
 
-  /**
-   * Gestisce il cambio del modello di ordinamento
-   * NOTA: La paginazione è ora gestita da CustomDataGrid tramite smartPagination
-   */
+  // Handles sort model change
   const handleSortModelChange = useCallback(
     (newModel: GridSortModel) => {
       setSortModel(newModel);
 
-      // Converte in formato API
+      // Convert to API format
       const sortParams =
         newModel.length > 0
           ? [`${newModel[0].field},${newModel[0].sort}`]
           : undefined;
 
-      // CustomDataGrid gestirà automaticamente il reset della paginazione tramite smartPagination
-      // Notifica il parent con i parametri di sort, mantiene il size dall'URL
+      // CustomDataGrid will automatically handle pagination reset via smartPagination
+      // Notify parent with sort parameters, keeping the size from URL
       if (onFiltersChange) {
         onFiltersChange(
           appliedFilters,
@@ -263,9 +201,7 @@ export const usePaymentsTableFilters = ({
     [appliedFilters, onFiltersChange, getInitialPaginationFromUrl.size]
   );
 
-  /**
-   * Gestori per le date
-   */
+  // Date handlers
   const handleDateFromChange = useCallback(
     (date: Date | null) => {
       updateDraftFilters({ dateFrom: date });
@@ -294,15 +230,10 @@ export const usePaymentsTableFilters = ({
     [updateDraftFilters]
   );
 
-  /**
-   * Auto-applica i filtri di default al mount SOLO UNA VOLTA
-   * Segue il pattern di PaymentsTable con useRef persistente
-   * IMPORTANTE: Usa la paginazione dall'URL per sincronizzazione corretta
-   */
+  // Auto-apply default filters on mount ONLY ONCE
   useEffect(() => {
     if (autoLoadOnMount && !hasAutoLoadedRef.current && onFiltersChange) {
       hasAutoLoadedRef.current = true;
-      // Usa paginazione dall'URL invece di valore hardcoded
       onFiltersChange(defaultFilters, getInitialPaginationFromUrl);
     }
   }, [
@@ -313,22 +244,18 @@ export const usePaymentsTableFilters = ({
   ]);
 
   return {
-    // Stato
     appliedFilters,
     draftFilters,
     sortModel,
-
-    // Computed
     hasActiveFilters: hasActiveFilters(),
     hasValidFilters: hasValidFilters(),
-
-    // Actions
     updateDraftFilters,
     applyFilters,
     handleSortModelChange,
     handleDateFromChange,
     handleDateToChange,
     handleUpdateDateFromChange,
-    handleUpdateDateToChange
+    handleUpdateDateToChange,
+    convertFiltersToAPI
   };
 };
