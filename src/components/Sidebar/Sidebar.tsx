@@ -115,23 +115,6 @@ export const Sidebar: React.FC = () => {
       route: '/debtpositions',
       end: true
     });
-    additionalItems.push({
-      label: t('commons.routes.BACKOFFICE'),
-      icon: SettingsIcon,
-      end: false,
-      items: [
-        {
-          label: t('commons.routes.BACKOFFICE_TAXONOMY'),
-          route: PageRoutes.BACKOFFICE_TAXONOMY,
-          end: true
-        },
-        {
-          label: t('commons.routes.BACKOFFICE_EVENTS'),
-          route: PageRoutes.BACKOFFICE_EVENTS,
-          end: true
-        }
-      ]
-    });
   }
 
   if (isSuperAdmin || state.operatorRole == 'ROLE_ADMIN') {
@@ -166,6 +149,41 @@ export const Sidebar: React.FC = () => {
         items: debtypes
       }
     );
+
+    const commonBackOfficeItems = [
+      {
+        label: 'PLACEHOLDER MENU ITEM 1',
+        end: true
+      },
+      {
+        label: 'PLACEHOLDER MENU ITEM 2',
+        end: true
+      }
+    ];
+
+    // BACKOFFICE SECTION
+    additionalItems.push({
+      label: t('commons.routes.BACKOFFICE'),
+      icon: SettingsIcon,
+      end: false,
+      items: [
+        ...(isSuperAdmin
+          ? [
+              {
+                label: t('commons.routes.BACKOFFICE_TAXONOMY'),
+                route: PageRoutes.BACKOFFICE_TAXONOMY,
+                end: true
+              },
+              {
+                label: t('commons.routes.BACKOFFICE_EVENTS'),
+                route: PageRoutes.BACKOFFICE_EVENTS,
+                end: true
+              },
+              ...commonBackOfficeItems
+            ]
+          : commonBackOfficeItems)
+      ]
+    });
   }
 
   return (
