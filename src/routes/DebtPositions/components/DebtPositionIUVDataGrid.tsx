@@ -14,8 +14,7 @@ import {
   InstallmentView,
   PagedInstallmentView
 } from '../../../../generated/data-contracts';
-import { format } from 'date-fns/format';
-import { moneyFormat } from '../../../utils/formatters';
+import { formatDate, moneyFormat } from '../../../utils/formatters';
 
 export type DataGridProps = {
   data?: PagedInstallmentView;
@@ -80,7 +79,7 @@ export const IUVDataGrid = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams<InstallmentView>) =>
-        format(params.value, 'dd/MM/yyyy')
+        formatDate(params.value)
     },
     {
       field: 'status',
