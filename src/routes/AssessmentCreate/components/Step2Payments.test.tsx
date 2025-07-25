@@ -389,7 +389,7 @@ describe('Step2Payments', () => {
 
   describe('Disabled state', () => {
     it('should disable radio group when editmode is true', () => {
-      renderWithForm(<Step2Payments editmode={true} />);
+      renderWithForm(<Step2Payments />);
 
       const yesRadio = screen.getByTestId('addPaymentsToAssessment-true');
       const noRadio = screen.getByTestId('addPaymentsToAssessment-false');
@@ -399,7 +399,7 @@ describe('Step2Payments', () => {
     });
 
     it('should enable radio group when editmode is false', () => {
-      renderWithForm(<Step2Payments editmode={false} />);
+      renderWithForm(<Step2Payments />);
 
       const yesRadio = screen.getByTestId('addPaymentsToAssessment-true');
       const noRadio = screen.getByTestId('addPaymentsToAssessment-false');
@@ -430,7 +430,7 @@ describe('Step2Payments', () => {
     });
 
     it('should handle editmode prop correctly', () => {
-      renderWithForm(<Step2Payments editmode={true} />);
+      renderWithForm(<Step2Payments />);
 
       const fieldset = screen
         .getByTestId('addPaymentsToAssessment')
@@ -605,7 +605,7 @@ describe('Step2Payments', () => {
     it('should disable clear selection button in editmode', () => {
       mockGlobalSelection.totalSelected = 2;
 
-      renderWithForm(<Step2Payments editmode={true} />, {
+      renderWithForm(<Step2Payments />, {
         addPaymentsToAssessment: true
       });
 
@@ -649,7 +649,7 @@ describe('Step2Payments', () => {
     });
 
     it('should disable PaymentsTable in editmode', () => {
-      renderWithForm(<Step2Payments editmode={true} />, {
+      renderWithForm(<Step2Payments />, {
         addPaymentsToAssessment: true
       });
 
