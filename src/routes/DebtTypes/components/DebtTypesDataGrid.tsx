@@ -36,6 +36,12 @@ const DebtTypesDataGrid = ({
 
   const columns: Array<GridColDef> = [
     {
+      field: 'code',
+      headerName: t('flowDataGrid.code'),
+      flex: 1.3,
+      type: 'string'
+    },
+    {
       field: 'description',
       headerName: t('flowDataGrid.name'),
       flex: 1.3,
