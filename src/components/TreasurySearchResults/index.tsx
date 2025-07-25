@@ -5,8 +5,6 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
 import { useState } from 'react';
-import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../routes';
 import {
   FilterCategory,
   FilterMap,
@@ -29,7 +27,6 @@ export type LocationState = {
 const TreasurySearchResults = () => {
   const theme = useTheme();
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [error, setError] = useState(false);
   const {
     filterMap,
@@ -70,16 +67,6 @@ const TreasurySearchResults = () => {
     <>
       <TitleComponent
         title={t('commons.routes.TREASURY')}
-        callToAction={[
-          {
-            variant: 'outlined',
-            buttonText: t('treasurySearchResults.uploadFlow'),
-            onActionClick: () =>
-              navigate(
-                generatePath(PageRoutes.IMPORT_FLOWS, { category: 'treasury' })
-              )
-          }
-        ]}
         description={t('treasurySearchResults.description')}
       />
 
