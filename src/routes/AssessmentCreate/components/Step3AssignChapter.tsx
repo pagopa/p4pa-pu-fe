@@ -9,10 +9,6 @@ import { FormComponent } from '../../../components/FormComponent';
 import { useOperatingYears } from '../../../hooks/useOperatingYears';
 import { useChapters } from '../../../hooks/useChapters';
 
-export type Step3Props = {
-  editmode?: boolean;
-};
-
 type AssessmentFormData = {
   addPaymentsToAssessment?: boolean;
   selectedPayments?: Array<string>;
@@ -23,7 +19,7 @@ type AssessmentFormData = {
   assessmentRegistryId?: number;
 };
 
-export const Step3AssignChapter = ({ editmode = false }: Step3Props) => {
+export const Step3AssignChapter = () => {
   const { t } = useTranslation();
   const { control, setValue, clearErrors } =
     useFormContext<AssessmentFormData>();
@@ -128,7 +124,7 @@ export const Step3AssignChapter = ({ editmode = false }: Step3Props) => {
                           'assessmentCreate.configuration.step3.fields.operatingYear.placeholder'
                         )
                 }
-                disabled={editmode || isLoadingYears || !yearOptions?.length}
+                disabled={isLoadingYears || !yearOptions?.length}
                 options={yearOptions}
                 required
               />
@@ -157,9 +153,7 @@ export const Step3AssignChapter = ({ editmode = false }: Step3Props) => {
                             'assessmentCreate.configuration.step3.fields.chapter.placeholder'
                           )
                 }
-                disabled={
-                  editmode || !selectedYear || isLoadingChapters || hasNoResults
-                }
+                disabled={!selectedYear || isLoadingChapters || hasNoResults}
                 options={chapterOptions}
                 required
               />
