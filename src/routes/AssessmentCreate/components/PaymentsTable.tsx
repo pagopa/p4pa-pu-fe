@@ -174,14 +174,14 @@ export const PaymentsTable = ({
     },
     {
       field: 'amount',
-      headerName: 'Importo',
+      headerName: t('commons.amount'),
       flex: 1,
       type: 'number',
       renderCell: (params) => moneyFormat(params.value)
     },
     {
       field: 'paymentDateTime',
-      headerName: 'Data esito',
+      headerName: t('commons.paymentdate'),
       flex: 1,
       type: 'string',
       renderCell: (params) => {
@@ -190,8 +190,8 @@ export const PaymentsTable = ({
       }
     },
     {
-      field: 'updateDate',
-      headerName: 'Ultimo aggiornamento',
+      field: 'receiptCreationDate',
+      headerName: t('commons.lastUpdate'),
       flex: 1,
       type: 'string',
       renderCell: (params) => {

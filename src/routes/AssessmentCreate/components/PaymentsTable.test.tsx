@@ -31,9 +31,9 @@ vi.mock('react-i18next', () => ({
       const translations: Record<string, string> = {
         'commons.iuv': 'IUV',
         'commons.search': 'Cerca',
-        'commons.outcomeFrom': 'Data esito da',
-        'commons.dateTo': 'Data a',
-        'commons.updatedFrom': 'Aggiornato da',
+        'commons.amount': 'Importo',
+        'commons.paymentdate': 'Data esito',
+        'commons.lastUpdate': 'Ultimo aggiornamento',
         'flowDataGrid.noDataRows': 'Nessun dato disponibile'
       };
       return translations[key] || key;
@@ -47,7 +47,7 @@ describe('PaymentsTable', () => {
     iuv: 'test-iuv-1',
     amount: 100.5,
     paymentDateTime: '2023-01-01T10:30:00Z',
-    updateDate: '2023-01-02T15:45:00Z',
+    receiptCreationDate: '2023-01-02T15:45:00Z',
     organizationId: 123
   };
 
@@ -287,7 +287,7 @@ describe('PaymentsTable', () => {
           {
             ...mockPaidInstallment,
             paymentDateTime: '',
-            updateDate: ''
+            receiptCreationDate: ''
           }
         ],
         totalElements: 1,

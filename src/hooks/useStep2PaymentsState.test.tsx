@@ -48,7 +48,7 @@ describe('useStep2PaymentsState', () => {
             iuv: 'IUV001',
             amount: 100.5,
             paymentDateTime: '2023-12-01T10:00:00Z',
-            updateDate: '2023-12-01T11:00:00Z',
+            receiptCreationDate: '2023-12-01T11:00:00Z',
             organizationId: 123
           },
           {
@@ -56,7 +56,7 @@ describe('useStep2PaymentsState', () => {
             iuv: 'IUV002',
             amount: 200.75,
             paymentDateTime: '2023-12-02T11:30:00Z',
-            updateDate: '2023-12-02T12:00:00Z',
+            receiptCreationDate: '2023-12-02T12:00:00Z',
             organizationId: 123
           }
         ],
@@ -126,7 +126,7 @@ describe('useStep2PaymentsState', () => {
             iuv: 'IUV001',
             amount: 100.0,
             paymentDateTime: '2023-01-01T10:00:00Z',
-            updateDate: '2023-01-01T11:00:00Z',
+            receiptCreationDate: '2023-01-01T11:00:00Z',
             organizationId: 123
           }
         ],
@@ -165,7 +165,7 @@ describe('useStep2PaymentsState', () => {
             iuv: 'IUV001',
             amount: 100.0,
             paymentDateTime: '2023-01-01T10:00:00Z',
-            updateDate: '2023-01-01T11:00:00Z',
+            receiptCreationDate: '2023-01-01T11:00:00Z',
             organizationId: 123
           }
         ],
@@ -268,7 +268,7 @@ describe('useStep2PaymentsState', () => {
               iuv: 'IUV001',
               amount: 100.0,
               paymentDateTime: '2023-01-01T10:00:00Z',
-              updateDate: '2023-01-01T11:00:00Z',
+              receiptCreationDate: '2023-01-01T11:00:00Z',
               organizationId: 123
             }
           ],
@@ -307,7 +307,7 @@ describe('useStep2PaymentsState', () => {
               iuv: 'IUV001',
               amount: 100.0,
               paymentDateTime: '2023-01-01T10:00:00Z',
-              updateDate: '2023-01-01T11:00:00Z',
+              receiptCreationDate: '2023-01-01T11:00:00Z',
               organizationId: 123
             },
             {
@@ -315,7 +315,7 @@ describe('useStep2PaymentsState', () => {
               iuv: 'IUV002',
               amount: 200.0,
               paymentDateTime: '2023-01-02T10:00:00Z',
-              updateDate: '2023-01-02T11:00:00Z',
+              receiptCreationDate: '2023-01-02T11:00:00Z',
               organizationId: 123
             }
           ],
@@ -342,7 +342,7 @@ describe('useStep2PaymentsState', () => {
               iuv: 'IUV001',
               amount: 100.0,
               paymentDateTime: '2023-01-01T10:00:00Z',
-              updateDate: '2023-01-01T11:00:00Z',
+              receiptCreationDate: '2023-01-01T11:00:00Z',
               organizationId: 123
             }
           ],
@@ -365,7 +365,7 @@ describe('useStep2PaymentsState', () => {
               iuv: 'IUV001',
               amount: 100.0,
               paymentDateTime: '2023-01-01T10:00:00Z',
-              updateDate: '2023-01-01T11:00:00Z',
+              receiptCreationDate: '2023-01-01T11:00:00Z',
               organizationId: 123
             },
             {
@@ -373,7 +373,7 @@ describe('useStep2PaymentsState', () => {
               iuv: 'IUV002',
               amount: 200.0,
               paymentDateTime: '2023-01-02T10:00:00Z',
-              updateDate: '2023-01-02T11:00:00Z',
+              receiptCreationDate: '2023-01-02T11:00:00Z',
               organizationId: 123
             }
           ],
@@ -438,7 +438,7 @@ describe('useStep2PaymentsState', () => {
             iuv: 'IUV001',
             amount: 100.0,
             paymentDateTime: '2023-01-01T10:00:00Z',
-            updateDate: '2023-01-01T11:00:00Z',
+            receiptCreationDate: '2023-01-01T11:00:00Z',
             organizationId: 123
           }
         ],
@@ -459,7 +459,7 @@ describe('useStep2PaymentsState', () => {
         iuv: 'IUV002',
         amount: 200.0,
         paymentDateTime: '2023-01-02T10:00:00Z',
-        updateDate: '2023-01-02T11:00:00Z',
+        receiptCreationDate: '2023-01-02T11:00:00Z',
         organizationId: 123
       });
       originalData.totalElements = 2;
