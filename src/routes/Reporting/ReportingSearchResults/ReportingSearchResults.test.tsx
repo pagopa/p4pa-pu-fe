@@ -6,7 +6,6 @@ import ReportingSearchResults from '../ReportingSearchResults';
 import * as useSearchModule from '../../../hooks/useSearch';
 import SearchResultsDataGrid from './ReportingDataGrid';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
-import { ReportingFilters } from '../components/ReportingFilters';
 
 // Mock only what touches your logic but isn't provided globally
 vi.mock('react-router', async (importOriginal) => ({

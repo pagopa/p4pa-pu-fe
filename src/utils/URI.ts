@@ -1,6 +1,11 @@
 import { unflatten, flatten } from 'flat';
 import { formatDate, parse } from 'date-fns';
 
+function sanitizeKeyChars(input: string): string {
+  // Allows letters, digits and literal dot
+  return input.replace(/[^a-zA-Z0-9.]/g, '');
+}
+
 function decode(fragment: string): Record<string, string> {
   const params = new URLSearchParams(fragment);
   const flatObj: Record<string, string | Date> = {};
@@ -8,13 +13,14 @@ function decode(fragment: string): Record<string, string> {
 
   params.forEach((value, key) => {
     const decodedKey = decodeURIComponent(key).replace('#', '');
+    const sanitizedKey = sanitizeKeyChars(decodedKey);
     const decodedValue = decodeURIComponent(value);
 
     if (isDate.test(decodedValue)) {
       const parsedDate = parse(decodedValue, 'dd-MM-yyyy', new Date());
-      flatObj[decodedKey] = parsedDate;
+      flatObj[sanitizedKey] = parsedDate;
     } else {
-      flatObj[decodedKey] = decodedValue;
+      flatObj[sanitizedKey] = decodedValue;
     }
   });
 
