@@ -179,4 +179,12 @@ export const createAssessmentDetails = (
     }
   });
 
-export { getOperatingYears } from './operatingYears';
+export const getOperatingYears = (options?: { enabled?: boolean }) =>
+  useQuery({
+    queryKey: ['getOperatingYears'],
+    queryFn: async () => {
+      const { data: response } = await utils.apiClient.bff.getOperatingYears();
+      return response;
+    },
+    enabled: options?.enabled ?? true
+  });
