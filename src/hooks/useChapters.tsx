@@ -1,23 +1,16 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { useStore } from '../store/GlobalStore';
 import { initialFilterValues } from '../store/FilterStore';
 import utils from '../utils';
 import { AxiosError } from 'axios';
-
-type AssessmentRegistryItem = {
-  assessmentRegistryId?: number;
-  organizationId?: number;
-  sectionCode?: string;
-  sectionDescription?: string;
-  officeDescription?: string;
-  assessmentCode?: string;
-  assessmentDescription?: string;
-  operatingYear?: string;
-  status?: string;
-  creationDate?: string;
-};
+import {
+  transformChaptersData,
+  createAssessmentRegistryIdGetter,
+  type AssessmentRegistryItem,
+  type ChapterOption
+} from '../utils/chaptersHelpers';
 
 type PagedAssessmentRegistryResponse = {
   content?: Array<AssessmentRegistryItem>;
@@ -25,12 +18,6 @@ type PagedAssessmentRegistryResponse = {
   totalElements?: number;
   totalPages?: number;
   number?: number;
-};
-
-export type ChapterOption = {
-  label: string;
-  value: string;
-  assessmentRegistryId?: number;
 };
 
 export type ChaptersPurpose = 'validation' | 'selection';
@@ -41,6 +28,9 @@ export type UseChaptersParams = {
   enabled?: boolean;
   purpose?: ChaptersPurpose;
 };
+
+// Re-export dei tipi per compatibilità
+export type { ChapterOption, AssessmentRegistryItem };
 
 /**
  * Custom hook to retrieve and transform the chapters (assessments registries)
@@ -58,6 +48,7 @@ export const useChapters = ({
     state: { organizationId }
   } = useStore();
 
+  // Query params memoizzati (pattern esistente mantenuto)
   const queryParams = useMemo(() => {
     if (!operatingYear || !debtPositionTypeOrgCode) return null;
     return {
@@ -71,6 +62,7 @@ export const useChapters = ({
     };
   }, [operatingYear, debtPositionTypeOrgCode]);
 
+  // Cache key memoizzata (pattern esistente mantenuto)
   const baseCacheKey = useMemo(
     () => [
       'getChapters',
@@ -81,11 +73,11 @@ export const useChapters = ({
     [organizationId, operatingYear, debtPositionTypeOrgCode]
   );
 
-  const chaptersQuery = useQuery({
-    queryKey:
-      purpose === 'validation' ? [...baseCacheKey, 'validation'] : baseCacheKey,
-    queryFn: async () => {
+  // Query function estratta per maggiore chiarezza
+  const fetchChapters =
+    useCallback(async (): Promise<PagedAssessmentRegistryResponse | null> => {
       if (!queryParams) return null;
+
       const { buildQueryParams } = await import('../api/assessments/mappings');
       const query = buildQueryParams(queryParams);
       const { data: response } =
@@ -99,7 +91,12 @@ export const useChapters = ({
           }
         );
       return response as PagedAssessmentRegistryResponse;
-    },
+    }, [organizationId, queryParams]);
+
+  const chaptersQuery = useQuery({
+    queryKey:
+      purpose === 'validation' ? [...baseCacheKey, 'validation'] : baseCacheKey,
+    queryFn: fetchChapters,
     enabled:
       enabled &&
       !!organizationId &&
@@ -109,44 +106,22 @@ export const useChapters = ({
 
   const { data, isError, isSuccess, isPending, isFetching } = chaptersQuery;
 
+  // Gestione successo - logica di trasformazione estratta
   useEffect(() => {
     if (isSuccess && data?.content) {
       try {
-        const chaptersMap = data.content
-          .filter(
-            (chapter: AssessmentRegistryItem) => chapter && chapter.sectionCode
-          )
-          .sort((a: AssessmentRegistryItem, b: AssessmentRegistryItem) =>
-            (a.sectionCode || '').localeCompare(b.sectionCode || '')
-          )
-          .map((chapter: AssessmentRegistryItem) => {
-            const parts: Array<string> = [];
-            if (chapter.officeDescription) {
-              parts.push(chapter.officeDescription);
-            }
-            const sectionDesc =
-              chapter.sectionDescription || chapter.sectionCode;
-            if (sectionDesc) {
-              parts.push(sectionDesc);
-            }
-            if (chapter.assessmentDescription) {
-              parts.push(chapter.assessmentDescription);
-            }
-            const label =
-              parts.length > 0 ? parts.join(' - ') : chapter.sectionCode || '-';
-            return {
-              label,
-              value: chapter.sectionCode || '',
-              assessmentRegistryId: chapter.assessmentRegistryId
-            };
-          });
-        setChapters(chaptersMap);
+        const transformedChapters = transformChaptersData(data.content);
+        setChapters(transformedChapters);
       } catch (error) {
         console.error('Error processing chapters data:', error);
         utils.notify.emit(t('errors.fetchChapters'), 'error');
         setChapters([]);
       }
     }
+  }, [data, isSuccess, t]);
+
+  // Gestione errori - pattern esistente mantenuto
+  useEffect(() => {
     if (isError) {
       const error = chaptersQuery.error as AxiosError;
       const isServerError =
@@ -156,13 +131,20 @@ export const useChapters = ({
       }
       setChapters([]);
     }
-  }, [data, isError, isSuccess, t, chaptersQuery.error, purpose]);
+  }, [isError, chaptersQuery.error, purpose, t]);
 
+  // Reset quando parametri cambiano - pattern esistente mantenuto
   useEffect(() => {
     if (!enabled || !operatingYear || !debtPositionTypeOrgCode) {
       setChapters([]);
     }
   }, [enabled, operatingYear, debtPositionTypeOrgCode]);
+
+  // Getter function memoizzata per performance
+  const getAssessmentRegistryId = useMemo(
+    () => createAssessmentRegistryIdGetter(chapters),
+    [chapters]
+  );
 
   return {
     optionsMap: chapters,
@@ -172,9 +154,6 @@ export const useChapters = ({
     data,
     error: chaptersQuery.error,
     hasNoResults: isSuccess && (!data?.content || data.content.length === 0),
-    getAssessmentRegistryId: (chapterCode: string): number | undefined => {
-      return chapters.find((chapter) => chapter.value === chapterCode)
-        ?.assessmentRegistryId;
-    }
+    getAssessmentRegistryId
   };
 };
