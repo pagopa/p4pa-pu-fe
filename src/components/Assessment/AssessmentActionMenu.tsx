@@ -4,20 +4,21 @@ import { Button, Menu, MenuItem } from '@mui/material';
 import {
   AssessmentsRowsDetail,
   AssessmentStatus
-} from '../../../../generated/data-contracts';
+} from '../../../generated/data-contracts';
 import { useParams } from 'react-router';
-import { useStore } from '../../../store/GlobalStore';
-import { STATE } from '../../../store/types';
-import { updateAssessmentsStatus } from '../../../api/assessments';
-import utils from '../../../utils';
+import { useStore } from '../../store/GlobalStore';
+import { STATE } from '../../store/types';
+import { updateAssessmentsStatus } from '../../api/assessments';
+import utils from '../../utils';
 import { useTranslation } from 'react-i18next';
 
-type Props = {
+export type Props = {
   status?: AssessmentsRowsDetail['status'];
+  flagManualGeneration?: AssessmentsRowsDetail['flagManualGeneration'];
 };
 
-const AssesmentActionMenu = (props: Props) => {
-  const { status } = props;
+const AssessmentActionMenu = (props: Props) => {
+  const { status, flagManualGeneration } = props;
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const { id } = useParams<{ id: string }>();
   const { state } = useStore();
@@ -25,8 +26,11 @@ const AssesmentActionMenu = (props: Props) => {
   const { t } = useTranslation();
   const open = Boolean(anchorEl);
 
-  const handleOpen = (event: MouseEvent<HTMLElement>) => {
+  const handleClick = (event: MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   const updateAssessmentMutation = updateAssessmentsStatus(organizationId);
@@ -38,25 +42,21 @@ const AssesmentActionMenu = (props: Props) => {
         status
       });
       location.reload();
-    } catch {
-      utils.notify.emit('errore');
+    } catch (e) {
+      console.error(e);
+      utils.notify.emit(t('errors.generic'));
+      setAnchorEl(null);
     }
   };
 
   const cancelAssessment = () => updateAssessment(AssessmentStatus.CANCELLED);
   const closeAssessment = () => updateAssessment(AssessmentStatus.CLOSED);
 
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const toggle = (event: MouseEvent<HTMLElement>) =>
-    anchorEl === null ? handleOpen(event) : handleClose();
-
-  return status !== AssessmentStatus.CANCELLED ? (
+  return status !== AssessmentStatus.CANCELLED && flagManualGeneration ? (
     <>
       <Button
-        onClick={toggle}
+        data-testid="assessment-action-menu"
+        onClick={handleClick}
         size="large"
         sx={{ bgcolor: 'primary.contrastText' }}
       >
@@ -64,6 +64,7 @@ const AssesmentActionMenu = (props: Props) => {
       </Button>
 
       <Menu
+        onClose={handleClose}
         open={open}
         anchorEl={anchorEl}
         slotProps={{
@@ -86,7 +87,7 @@ const AssesmentActionMenu = (props: Props) => {
         {status === AssessmentStatus.ACTIVE && (
           <MenuItem
             onClick={closeAssessment}
-            data-testid="assessment-close-button"
+            data-testid="assessment-action-close"
           >
             <Close fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
             {t('commons.close')}
@@ -96,7 +97,7 @@ const AssesmentActionMenu = (props: Props) => {
           status === AssessmentStatus.CLOSED) && (
           <MenuItem
             onClick={cancelAssessment}
-            data-testid="assessment-delete-button"
+            data-testid="assessment-action-delete"
           >
             <Delete fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
             {t('commons.delete')}
@@ -107,4 +108,4 @@ const AssesmentActionMenu = (props: Props) => {
   ) : null;
 };
 
-export default AssesmentActionMenu;
+export default AssessmentActionMenu;

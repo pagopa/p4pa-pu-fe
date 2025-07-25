@@ -19,7 +19,7 @@ import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
 
-import AssesmentActionMenu from './components/AssesmentActionMenu';
+import AssesmentActionMenu from '../../components/Assessment/AssessmentActionMenu';
 import { useEffect, useMemo } from 'react';
 import { setAppState } from '../../store/AppStateStore';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
@@ -179,16 +179,13 @@ export const AssessmentDetail = () => {
           data?.assessmentsName ||
           `${t('assessment.assessment')} ${assessmentId || ''}`
         }
-        callToAction={
-          data?.flagManualGeneration === true
-            ? [
-                <AssesmentActionMenu
-                  key={'AssesmentActionMenu'}
-                  status={data?.status}
-                />
-              ]
-            : undefined
-        }
+        callToAction={[
+          <AssesmentActionMenu
+            key={'AssesmentActionMenu'}
+            flagManualGeneration={data?.flagManualGeneration}
+            status={data?.status}
+          />
+        ]}
       />
 
       <Grid container spacing={2}>
