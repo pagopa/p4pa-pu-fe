@@ -49,8 +49,32 @@ const AssessmentActionMenu = (props: Props) => {
     }
   };
 
-  const cancelAssessment = () => updateAssessment(AssessmentStatus.CANCELLED);
   const closeAssessment = () => updateAssessment(AssessmentStatus.CLOSED);
+  const cancelAssessment = () => updateAssessment(AssessmentStatus.CANCELLED);
+
+  const confirmCloseAssessment = () => {
+    utils.dialog.open({
+      'data-testid': 'confirm-close-dialog',
+      title: t('assessmentDetail.closeDialog.title'),
+      message: t('assessmentDetail.closeDialog.description'),
+      confirmLabel: t('assessmentDetail.closeDialog.ok'),
+      cancelLabel: t('assessmentDetail.closeDialog.ko'),
+      onConfirm: closeAssessment,
+      onClose: handleClose
+    });
+  };
+
+  const confirmCancelAssessment = () => {
+    utils.dialog.open({
+      'data-testid': 'confirm-cancel-dialog',
+      title: t('assessmentDetail.cancelDialog.title'),
+      message: t('assessmentDetail.cancelDialog.description'),
+      confirmLabel: t('assessmentDetail.cancelDialog.ok'),
+      cancelLabel: t('assessmentDetail.cancelDialog.ko'),
+      onConfirm: cancelAssessment,
+      onClose: handleClose
+    });
+  };
 
   return status !== AssessmentStatus.CANCELLED && flagManualGeneration ? (
     <>
@@ -60,7 +84,7 @@ const AssessmentActionMenu = (props: Props) => {
         size="large"
         sx={{ bgcolor: 'primary.contrastText' }}
       >
-        <MoreVert color="primary" />
+        <MoreVert color="primary" data-testid="MoreVertIcon" />
       </Button>
 
       <Menu
@@ -86,7 +110,7 @@ const AssessmentActionMenu = (props: Props) => {
       >
         {status === AssessmentStatus.ACTIVE && (
           <MenuItem
-            onClick={closeAssessment}
+            onClick={confirmCloseAssessment}
             data-testid="assessment-action-close"
           >
             <Close fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
@@ -96,7 +120,7 @@ const AssessmentActionMenu = (props: Props) => {
         {(status === AssessmentStatus.ACTIVE ||
           status === AssessmentStatus.CLOSED) && (
           <MenuItem
-            onClick={cancelAssessment}
+            onClick={confirmCancelAssessment}
             data-testid="assessment-action-delete"
           >
             <Delete fontSize="small" sx={{ mr: 1, color: 'error.main' }} />

@@ -8,6 +8,7 @@ import storage from './storage';
 import notify from './notify';
 import roles from './roles';
 import filtersValidation from './filtersValidation';
+import dialog from './dialog';
 
 export default {
   apiClient: new Api({ baseURL: config.baseURL, timeout: config.apiTimeout }),
@@ -21,6 +22,7 @@ export default {
   style,
   storage,
   notify,
+  dialog,
   roles,
   filtersValidation
 };
