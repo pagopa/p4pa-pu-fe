@@ -1479,6 +1479,7 @@
   },
   "flowDataGrid": {
     "authorizedOrganizations": "Enti abilitati",
+    "code": "Codice",
     "internalID": "ID Interno",
     "lastUpdate": "Ultima Modifica",
     "loadedDiscarded": "Caricati/Scarti",
