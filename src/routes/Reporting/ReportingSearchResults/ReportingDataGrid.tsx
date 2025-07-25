@@ -7,11 +7,12 @@ import {
 import { useTranslation } from 'react-i18next';
 import { FileDownload, Visibility } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../routes';
-import { PagedPaymentsReportingView } from '../../../generated/data-contracts';
-import { moneyFormat } from '../../utils/formatters';
-import ActionMenu from '../../components/ActionMenu/ActionMenu';
-import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
+
+import { PageRoutes } from '../../../routes';
+import { PagedPaymentsReportingView } from '../../../../generated/data-contracts';
+import { moneyFormat } from '../../../utils/formatters';
+import ActionMenu from '../../../components/ActionMenu/ActionMenu';
+import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 
 type SearchResultDataRow = {
   id: number;

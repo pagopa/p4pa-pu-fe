@@ -1,29 +1,42 @@
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { FileUpload } from '@mui/icons-material';
-import { generatePath, useNavigate } from 'react-router';
+import { generatePath } from 'react-router';
 import { Grid } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import ActionCard from '../../components/ActionCard/ActionCard';
-import { noFilterSetted } from '../../utils/filtersValidation';
-import { PageRoutes } from '../../routes';
-import { ReportingFilters } from '../../hooks/useReportingFilters';
-import SearchCard from '../../components/SearchCard/SearchCard';
-import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { useState } from 'react';
-import utils from '../../utils';
+import { useTranslation } from 'react-i18next';
+
+import ActionCard from '../../../components/ActionCard/ActionCard';
+import { PageRoutes } from '../../../routes';
+import { ReportingFilters } from '../components/ReportingFilters';
+import SearchCard from '../../../components/SearchCard/SearchCard';
+import TitleComponent from '../../../components/TitleComponent/TitleComponent';
+import { FilterFieldIds } from '../../../models/SearchCardFields';
+import { useAppNavigate } from '../../../hooks/useAppNavigation';
+import { noFilterSetted } from '../../../utils/filtersValidation';
 
 export const Reporting = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const form = useForm();
+  const navigate = useAppNavigate();
+
+  const handleReset = () => {
+    form.reset();
+  };
+
+  const form = useForm({
+    defaultValues: {
+      [FilterFieldIds.IUF]: '',
+      [FilterFieldIds.REGULATION_UNIQUE_IDENTIFIER]: '',
+      [FilterFieldIds.DATE_RANGE]: ''
+    }
+  });
   const [error, setError] = useState<boolean>(false);
 
+  // Reporting.tsx
   const navigateToResults = (filters: FieldValues) => {
     if (noFilterSetted(filters)) {
       setError(true);
     } else {
-      const params = utils.URI.encode(filters);
-      navigate(`${PageRoutes.REPORTING_SEARCH_RESULTS}#${params}`);
+      navigate(PageRoutes.REPORTING_SEARCH_RESULTS, { hashObject: filters });
     }
   };
 
@@ -45,7 +58,7 @@ export const Reporting = () => {
                     {
                       label: t('commons.filters.remove'),
                       variant: 'outlined',
-                      onClick: form.reset,
+                      onClick: handleReset,
                       id: 'reporting-reset-btn'
                     },
                     {
@@ -83,5 +96,3 @@ export const Reporting = () => {
     </>
   );
 };
-
-export default Reporting;

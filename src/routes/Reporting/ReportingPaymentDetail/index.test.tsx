@@ -1,16 +1,17 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import ReportingPaymentDetail from '.';
-import { render, screen } from '@testing-library/react';
-import { useParams } from 'react-router';
-import { getPaymentsReportingDetail } from '../../api/getPaymentsReportingDetail';
-import { paymentsReportingDetailDTOSchema } from '../../../generated/zod-schema';
 import { createMock } from 'zodock';
-import { useStore } from '../../store/GlobalStore';
-import { STATE } from '../../store/types';
+import { render, screen } from '@testing-library/react';
+import ReportingPaymentDetail from '.';
+import { useParams } from 'react-router';
+
+import { getPaymentsReportingDetail } from '../../../api/getPaymentsReportingDetail';
+import { paymentsReportingDetailDTOSchema } from '../../../../generated/zod-schema';
+import { STATE } from '../../../store/types';
+import { useStore } from '../../../store/GlobalStore';
 
 const mockNavigate = vi.fn();
 
-vi.mock('../../api/getPaymentsReportingDetail', () => ({
+vi.mock('../../../api/getPaymentsReportingDetail', () => ({
   getPaymentsReportingDetail: vi.fn()
 }));
 
@@ -31,7 +32,7 @@ vi.mock('react-router-dom', () => ({
   Outlet: vi.fn()
 }));
 
-vi.mock('../../store/GlobalStore', () => ({
+vi.mock('../../../store/GlobalStore', () => ({
   useStore: vi.fn()
 }));
 
@@ -41,7 +42,7 @@ vi.mock('react-i18next', () => ({
   })
 }));
 
-vi.mock('../../routes', () => ({
+vi.mock('../../../routes', () => ({
   PageRoutes: {
     RESPONSES_ERROR: 'RESPONSES_ERROR',
     REPORTING_INDEX: 'REPORTING_INDEX',

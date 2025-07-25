@@ -1,16 +1,17 @@
-import { useTranslation } from 'react-i18next';
-import { Grid, Stack, useTheme } from '@mui/material';
-import SearchResultsDataGrid from './ReportingDataGrid';
-import { PagedPaymentsReportingView } from '../../../generated/data-contracts';
-import { ReportingFilters } from '../../hooks/useReportingFilters';
-import { useStore } from '../../store/GlobalStore';
-import { getPaymentsReporting } from '../../api/getPaymentsReporting';
-import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
-import { noFilterSetted } from '../../utils/filtersValidation';
+import { Grid, Stack, useTheme } from '@mui/material';
 import { useState } from 'react';
-import { useSearch } from '../../hooks/useSearch';
-import utils from '../../utils';
+import { useTranslation } from 'react-i18next';
+
+import { getPaymentsReporting } from '../../../api/getPaymentsReporting';
+import { noFilterSetted } from '../../../utils/filtersValidation';
+import { PagedPaymentsReportingView } from '../../../../generated/data-contracts';
+import { ReportingFilters } from '../components/ReportingFilters';
+import SearchResultsDataGrid from './ReportingDataGrid';
+import TitleComponent from '../../../components/TitleComponent/TitleComponent';
+import { useSearch } from '../../../hooks/useSearch';
+import { useStore } from '../../../store/GlobalStore';
+import utils from '../../../utils';
 
 export type LocationState = {
   filters: FieldValues;

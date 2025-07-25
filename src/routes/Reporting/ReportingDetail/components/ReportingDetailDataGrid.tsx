@@ -4,16 +4,16 @@ import {
   GridSortModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import CustomDataGrid, {
-  SmartPaginationConfig
-} from '../../../components/DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { PageRoutes } from '../../../routes';
-import { Link } from 'react-router';
-import { generatePath } from 'react-router';
-import { moneyFormat } from '../../../utils/formatters';
-import { PaymentsReporting } from '../../../../generated/apiClient';
+import { Link, generatePath } from 'react-router';
+
+import CustomDataGrid, {
+  SmartPaginationConfig
+} from '../../../../components/DataGrid/CustomDataGrid';
+import { PageRoutes } from '../../../../routes';
+import { moneyFormat } from '../../../../utils/formatters';
+import { PaymentsReporting } from '../../../../../generated/apiClient';
 
 type ReportingDetailDataGridProps = {
   rows: Array<PaymentsReporting>;

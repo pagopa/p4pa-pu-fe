@@ -1,9 +1,15 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
 import { useParams } from 'react-router';
-import { getPaymentsReportingRows } from '../../api/reporting';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+import {
+  fireEvent,
+  render,
+  screen,
+  waitFor
+} from '../../../__tests__/renderers';
+import { getPaymentsReportingRows } from '../../../api/reporting';
+import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import ReportingDetail from './ReportingDetail';
-import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 
 i18nTestSetup({
   'reportingDetail.reportingIdOrIUF': 'Reporting ID/IUF',
@@ -38,7 +44,7 @@ const mockData = {
   paymentsReportingId: 'PR001'
 };
 
-vi.mock('../../api/reporting', () => ({
+vi.mock('../../../api/reporting', () => ({
   getPaymentsReportingRows: vi.fn()
 }));
 
@@ -54,7 +60,7 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
-vi.mock('../../store/GlobalStore', () => ({
+vi.mock('../../../store/GlobalStore', () => ({
   useStore: () => ({
     state: {
       ORGANIZATION_ID: 3,
@@ -65,7 +71,7 @@ vi.mock('../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
-vi.mock('../../routes', () => ({
+vi.mock('../../../routes', () => ({
   PageRoutes: {
     RESPONSES_ERROR: 'RESPONSES_ERROR',
     REPORTING_INDEX: 'REPORTING_INDEX',

@@ -1,10 +1,10 @@
 import { useTranslation } from 'react-i18next';
 import SearchIcon from '@mui/icons-material/Search';
-import { FilterFieldIds } from '../models/SearchCardFields';
-import { FormComponent } from '../components/FormComponent';
 import Stack from '@mui/material/Stack';
 import { useFormContext } from 'react-hook-form';
-import { ErrorMessage } from '../components/ErrorMessage/ErrorMessage';
+import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
+import { FormComponent } from '../../../components/FormComponent';
+import { FilterFieldIds } from '../../../models/SearchCardFields';
 
 type ReportingFiltersProps = {
   layout?: 'inline' | 'grid';

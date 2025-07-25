@@ -16,7 +16,7 @@ export type TabsConfig = {
   fields: Array<FilterItem>;
 };
 
-type SearchCardProps = {
+export type SearchCardProps = {
   title: string;
   description: string;
   tabsConfig?: Array<TabsConfig>;

@@ -1,6 +1,6 @@
 import { describe, it, vi } from 'vitest';
 import ReportingImportFlowOverview from '.';
-import { render } from '../../__tests__/renderers';
+import { render } from '../../../__tests__/renderers';
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
