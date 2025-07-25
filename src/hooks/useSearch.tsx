@@ -32,10 +32,6 @@ export function useSearch<
 }: UseSearchProps<T, TData, TError>) {
   const [sort, setSort] = useState<Array<string>>([]);
 
-  useEffect(() => {
-    query.mutate({ filters, pagination: { ...pagination, page: 0 }, sort });
-  }, []);
-
   const {
     paginationParams: pagination,
     handlePaginationChange,
@@ -48,6 +44,10 @@ export function useSearch<
       query.mutate({ filters, pagination: newPagination, sort });
     }
   });
+
+  useEffect(() => {
+    query.mutate({ filters, pagination: { ...pagination, page: 0 }, sort });
+  }, []);
 
   const onSortChange = (newSort: Array<string>) => {
     setSort(newSort);
