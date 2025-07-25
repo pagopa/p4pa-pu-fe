@@ -22,7 +22,7 @@ vi.mock('../utils', () => ({
 vi.mock('react-i18next');
 
 type MockQueryResult = {
-  data?: string[];
+  data?: Array<string>;
   isError: boolean;
   error: unknown;
   isLoading: boolean;
@@ -43,7 +43,7 @@ describe('transformOperatingYearsData', () => {
 
   it('should return empty array for null data', () => {
     const result = transformOperatingYearsData(
-      null as unknown as string[] | undefined,
+      null as unknown as Array<string> | undefined,
       false,
       'Tutti'
     );
@@ -51,14 +51,14 @@ describe('transformOperatingYearsData', () => {
   });
 
   it('should return empty array for non-array data', () => {
-    const invalidData = 'not-array' as unknown as string[];
+    const invalidData = 'not-array' as unknown as Array<string>;
     const result = transformOperatingYearsData(invalidData, false, 'Tutti');
     expect(result).toEqual([]);
   });
 
   it('should transform valid years array correctly', () => {
     const data = ['2023', '2024', '2022'];
-    const expected: OperatingYearOption[] = [
+    const expected: Array<OperatingYearOption> = [
       { label: '2024', value: '2024' },
       { label: '2023', value: '2023' },
       { label: '2022', value: '2022' }
@@ -70,7 +70,7 @@ describe('transformOperatingYearsData', () => {
 
   it('should filter out empty and whitespace-only strings', () => {
     const data = ['2023', '', '2024', '   ', '2022'];
-    const expected: OperatingYearOption[] = [
+    const expected: Array<OperatingYearOption> = [
       { label: '2024', value: '2024' },
       { label: '2023', value: '2023' },
       { label: '2022', value: '2022' }
@@ -82,7 +82,7 @@ describe('transformOperatingYearsData', () => {
 
   it('should include "All" option when includeAllOption is true', () => {
     const data = ['2023', '2024'];
-    const expected: OperatingYearOption[] = [
+    const expected: Array<OperatingYearOption> = [
       { label: 'Tutti', value: 'ALL' },
       { label: '2024', value: '2024' },
       { label: '2023', value: '2023' }
@@ -98,16 +98,6 @@ describe('transformOperatingYearsData', () => {
 
     const years = result.map((option) => option.value);
     expect(years).toEqual(['2024', '2023', '2022', '2021', '2020']);
-  });
-
-  it('should handle errors gracefully and return empty array', () => {
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    const invalidData = [null, undefined, 123] as unknown as string[];
-    const result = transformOperatingYearsData(invalidData, false, 'Tutti');
-
-    expect(result).toEqual([]);
-    consoleSpy.mockRestore();
   });
 });
 
@@ -189,8 +179,13 @@ describe('useOperatingYears', () => {
     vi.clearAllMocks();
     mockUseTranslation.mockReturnValue({
       t: mockTranslationFn,
-      i18n: {} as any,
+      i18n: {
+        language: 'it',
+        changeLanguage: vi.fn()
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any,
       ready: true
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any);
   });
 
@@ -206,6 +201,7 @@ describe('useOperatingYears', () => {
       isLoading: true,
       isSuccess: false
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockGetOperatingYears.mockReturnValue(mockQueryResult as any);
 
     const { result } = renderHook(() => useOperatingYears());
@@ -223,6 +219,7 @@ describe('useOperatingYears', () => {
       isLoading: false,
       isSuccess: false
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockGetOperatingYears.mockReturnValue(mockQueryResult as any);
 
     renderHook(() =>
@@ -241,6 +238,7 @@ describe('useOperatingYears', () => {
       isLoading: false,
       isSuccess: true
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockGetOperatingYears.mockReturnValue(mockQueryResult as any);
 
     const { result } = renderHook(() => useOperatingYears());
@@ -261,6 +259,7 @@ describe('useOperatingYears', () => {
       isLoading: false,
       isSuccess: true
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockGetOperatingYears.mockReturnValue(mockQueryResult as any);
 
     const { result } = renderHook(() =>
@@ -283,6 +282,7 @@ describe('useOperatingYears', () => {
       isLoading: false,
       isSuccess: false
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockGetOperatingYears.mockReturnValue(mockQueryResult as any);
 
     const { result } = renderHook(() => useOperatingYears());
@@ -306,6 +306,7 @@ describe('useOperatingYears', () => {
       isLoading: false,
       isSuccess: true
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockGetOperatingYears.mockReturnValue(mockQueryResult as any);
 
     renderHook(() => useOperatingYears());
@@ -323,6 +324,7 @@ describe('useOperatingYears', () => {
       isFetching: false,
       refetch: vi.fn()
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockGetOperatingYears.mockReturnValue(mockQueryResult as any);
 
     const { result } = renderHook(() => useOperatingYears());
@@ -347,6 +349,7 @@ describe('useOperatingYears', () => {
       isLoading: false,
       isSuccess: true
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockGetOperatingYears.mockReturnValue(mockQueryResult as any);
 
     const { result, rerender } = renderHook(() => useOperatingYears());

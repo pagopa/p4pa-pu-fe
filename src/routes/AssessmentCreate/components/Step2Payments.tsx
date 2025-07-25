@@ -59,7 +59,7 @@ export const validateStep2Payments = (values: AssessmentFormData): boolean => {
   return true;
 };
 
-export const Step2Payments = forwardRef<Step2PaymentsRef, {}>((_, ref) => {
+const Step2PaymentsComponent = forwardRef<Step2PaymentsRef>((_, ref) => {
   const { t } = useTranslation();
   const { control, setValue } = useFormContext<AssessmentFormData>();
   const addPaymentsToAssessmentRaw = useWatch({
@@ -272,7 +272,6 @@ export const Step2Payments = forwardRef<Step2PaymentsRef, {}>((_, ref) => {
       paymentsState.resetPaymentsData();
       paymentsState.clearValidationErrors();
       setHasLoadedData(false);
-      return;
     }
   }, [
     shouldLoadData,
@@ -461,3 +460,7 @@ export const Step2Payments = forwardRef<Step2PaymentsRef, {}>((_, ref) => {
     </Stack>
   );
 });
+
+Step2PaymentsComponent.displayName = 'Step2Payments';
+
+export { Step2PaymentsComponent as Step2Payments };

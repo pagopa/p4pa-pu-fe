@@ -224,6 +224,10 @@ describe('getPaidInstallments', () => {
       }
     };
 
+    vi.spyOn(utils.apiClient.bff, 'getPaidInstallments').mockResolvedValue({
+      data: emptyResponse
+    } as AxiosResponse);
+
     const { result } = renderHook(() =>
       getPaidInstallments({ organizationId })
     );
@@ -286,6 +290,10 @@ describe('getPaidInstallments', () => {
 
     const timeoutError = new Error('Network timeout');
     timeoutError.name = 'TimeoutError';
+
+    vi.spyOn(utils.apiClient.bff, 'getPaidInstallments').mockRejectedValue(
+      timeoutError
+    );
 
     const { result } = renderHook(() =>
       getPaidInstallments({ organizationId })

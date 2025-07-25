@@ -112,14 +112,10 @@ export const PaymentsTable = ({
 
     // Map selected uniqueIds to uniqueIds for current page
     const result = rowsWithUniqueId
-      .filter((row) => {
-        const shouldSelect =
-          row.uniqueId && selectedUniqueIds.includes(row.uniqueId);
-        return shouldSelect;
-      })
-      .map((row) => {
-        return row.uniqueId;
-      });
+      .filter((row): row is PaymentRowWithUniqueId =>
+        Boolean(row.uniqueId && selectedUniqueIds.includes(row.uniqueId))
+      )
+      .map((row) => row.uniqueId);
 
     return result;
   }, [selectedUniqueIds, rowsWithUniqueId, tableData.number, tableData.size]);

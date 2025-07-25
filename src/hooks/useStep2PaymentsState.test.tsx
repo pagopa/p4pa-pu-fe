@@ -99,7 +99,7 @@ describe('useStep2PaymentsState', () => {
       const { result } = renderHook(() => useStep2PaymentsState());
 
       const mockDataWithNullContent: PagedPaidInstallmentsDTO = {
-        content: undefined as unknown as PaidInstallmentDTO[],
+        content: undefined as unknown as Array<PaidInstallmentDTO>,
         size: 10,
         totalElements: 5,
         totalPages: 1,

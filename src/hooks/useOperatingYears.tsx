@@ -17,10 +17,10 @@ export type OperatingYearOption = {
  * @returns Array di opzioni trasformate
  */
 export const transformOperatingYearsData = (
-  data: string[] | undefined,
+  data: Array<string> | undefined,
   includeAllOption: boolean,
   allOptionLabel: string
-): OperatingYearOption[] => {
+): Array<OperatingYearOption> => {
   if (!data || !Array.isArray(data)) {
     return [];
   }

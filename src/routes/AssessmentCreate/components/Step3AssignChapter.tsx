@@ -70,6 +70,36 @@ export const Step3AssignChapter = () => {
     ? getAssessmentRegistryId(selectedChapterCode)
     : undefined;
 
+  // Helper functions per evitare ternary annidate
+  const getOperatingYearPlaceholder = () => {
+    if (isLoadingYears) {
+      return t('commons.loading');
+    }
+    if (!yearOptions?.length) {
+      return t(
+        'assessmentCreate.configuration.step3.fields.operatingYear.noData'
+      );
+    }
+    return t(
+      'assessmentCreate.configuration.step3.fields.operatingYear.placeholder'
+    );
+  };
+
+  const getChapterPlaceholder = () => {
+    if (isLoadingChapters) {
+      return t('commons.loading');
+    }
+    if (!selectedYear) {
+      return t(
+        'assessmentCreate.configuration.step3.fields.chapter.selectYearFirst'
+      );
+    }
+    if (hasNoResults) {
+      return t('assessmentCreate.configuration.step3.fields.chapter.noData');
+    }
+    return t('assessmentCreate.configuration.step3.fields.chapter.placeholder');
+  };
+
   useEffect(() => {
     if (selectedChapterCode && assessmentRegistryId) {
       setValue('assessmentRegistryId', assessmentRegistryId);
@@ -113,17 +143,7 @@ export const Step3AssignChapter = () => {
                   'assessmentCreate.configuration.step3.fields.operatingYear.label'
                 )}
                 data-testid="operatingYear"
-                placeholder={
-                  isLoadingYears
-                    ? t('commons.loading')
-                    : !yearOptions?.length
-                      ? t(
-                          'assessmentCreate.configuration.step3.fields.operatingYear.noData'
-                        )
-                      : t(
-                          'assessmentCreate.configuration.step3.fields.operatingYear.placeholder'
-                        )
-                }
+                placeholder={getOperatingYearPlaceholder()}
                 disabled={isLoadingYears || !yearOptions?.length}
                 options={yearOptions}
                 required
@@ -138,21 +158,7 @@ export const Step3AssignChapter = () => {
                   'assessmentCreate.configuration.step3.fields.chapter.label'
                 )}
                 data-testid="chapterCode"
-                placeholder={
-                  isLoadingChapters
-                    ? t('commons.loading')
-                    : !selectedYear
-                      ? t(
-                          'assessmentCreate.configuration.step3.fields.chapter.selectYearFirst'
-                        )
-                      : hasNoResults
-                        ? t(
-                            'assessmentCreate.configuration.step3.fields.chapter.noData'
-                          )
-                        : t(
-                            'assessmentCreate.configuration.step3.fields.chapter.placeholder'
-                          )
-                }
+                placeholder={getChapterPlaceholder()}
                 disabled={!selectedYear || isLoadingChapters || hasNoResults}
                 options={chapterOptions}
                 required

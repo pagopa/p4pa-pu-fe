@@ -138,7 +138,7 @@ describe('chaptersHelpers', () => {
   });
 
   describe('transformChaptersData', () => {
-    const mockData: AssessmentRegistryItem[] = [
+    const mockData: Array<AssessmentRegistryItem> = [
       {
         assessmentRegistryId: 1,
         sectionCode: 'SEC002',
@@ -182,7 +182,7 @@ describe('chaptersHelpers', () => {
     });
 
     it('should filter out items without sectionCode', () => {
-      const dataWithInvalidItems: AssessmentRegistryItem[] = [
+      const dataWithInvalidItems: Array<AssessmentRegistryItem> = [
         ...mockData,
         {
           assessmentRegistryId: 4,
@@ -213,7 +213,7 @@ describe('chaptersHelpers', () => {
     });
 
     it('should handle array with all invalid items', () => {
-      const invalidData: AssessmentRegistryItem[] = [
+      const invalidData: Array<AssessmentRegistryItem> = [
         { assessmentRegistryId: 1, sectionCode: '' },
         { assessmentRegistryId: 2 },
         { assessmentRegistryId: 3, sectionCode: undefined }
@@ -224,7 +224,7 @@ describe('chaptersHelpers', () => {
     });
 
     it('should sort alphabetically by sectionCode', () => {
-      const unsortedData: AssessmentRegistryItem[] = [
+      const unsortedData: Array<AssessmentRegistryItem> = [
         { assessmentRegistryId: 1, sectionCode: 'ZZZ' },
         { assessmentRegistryId: 2, sectionCode: 'AAA' },
         { assessmentRegistryId: 3, sectionCode: 'MMM' },
@@ -258,7 +258,7 @@ describe('chaptersHelpers', () => {
   });
 
   describe('createAssessmentRegistryIdGetter', () => {
-    const mockChapters: ChapterOption[] = [
+    const mockChapters: Array<ChapterOption> = [
       {
         label: 'Chapter A',
         value: 'SEC001',
@@ -311,7 +311,7 @@ describe('chaptersHelpers', () => {
     });
 
     it('should handle special characters and spaces', () => {
-      const specialChapters: ChapterOption[] = [
+      const specialChapters: Array<ChapterOption> = [
         {
           label: 'Special Chapter',
           value: 'SEC-001/A',
@@ -331,7 +331,7 @@ describe('chaptersHelpers', () => {
     });
 
     it('should return the first match for duplicate values', () => {
-      const duplicateChapters: ChapterOption[] = [
+      const duplicateChapters: Array<ChapterOption> = [
         {
           label: 'First Duplicate',
           value: 'DUPLICATE',

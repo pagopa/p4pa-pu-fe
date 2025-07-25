@@ -8,6 +8,14 @@ import {
 describe('useGlobalPaymentSelection', () => {
   const mockSetValue = vi.fn();
 
+  const waitForAsyncOperation = (): Promise<void> => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve(undefined);
+      }, 0);
+    });
+  };
+
   const sampleCurrentPageRows = [
     { uniqueId: 'iud1-0', iud: 'IUD1' },
     { uniqueId: 'iud2-0', iud: 'IUD2' },
@@ -132,7 +140,7 @@ describe('useGlobalPaymentSelection', () => {
       expect(result.current.totalSelected).toBe(1);
     });
 
-    it('should sync selections to form via setValue', () => {
+    it('should sync selections to form via setValue', async () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
@@ -141,18 +149,15 @@ describe('useGlobalPaymentSelection', () => {
         result.current.toggleUniqueIdSelection(['iud1-0', 'iud2-0'], true);
       });
 
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', [
-            'IUD1',
-            'IUD2'
-          ]);
-          resolve(undefined);
-        }, 0);
-      });
+      await waitForAsyncOperation();
+
+      expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', [
+        'IUD1',
+        'IUD2'
+      ]);
     });
 
-    it('should handle multiple uniqueIds for same IUD correctly in form sync', () => {
+    it('should handle multiple uniqueIds for same IUD correctly in form sync', async () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
@@ -161,14 +166,9 @@ describe('useGlobalPaymentSelection', () => {
         result.current.toggleUniqueIdSelection(['iud1-0', 'iud1-1'], true);
       });
 
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', [
-            'IUD1'
-          ]);
-          resolve(undefined);
-        }, 0);
-      });
+      await waitForAsyncOperation();
+
+      expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', ['IUD1']);
     });
 
     it('should handle empty uniqueIds array', () => {
@@ -183,7 +183,7 @@ describe('useGlobalPaymentSelection', () => {
       expect(result.current.totalSelected).toBe(0);
     });
 
-    it('should sort the selectedPayments array when syncing to form', () => {
+    it('should sort the selectedPayments array when syncing to form', async () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
@@ -195,16 +195,13 @@ describe('useGlobalPaymentSelection', () => {
         );
       });
 
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', [
-            'IUD1',
-            'IUD2',
-            'IUD3'
-          ]);
-          resolve(undefined);
-        }, 0);
-      });
+      await waitForAsyncOperation();
+
+      expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', [
+        'IUD1',
+        'IUD2',
+        'IUD3'
+      ]);
     });
   });
 
@@ -405,7 +402,7 @@ describe('useGlobalPaymentSelection', () => {
           { uniqueId: 'iud1-0', iud: 'IUD1' },
           { uniqueId: '', iud: 'IUD2' },
           { uniqueId: 'iud3-0', iud: '' },
-          {} as any
+          { uniqueId: '', iud: '' }
         ]
       };
 
@@ -468,7 +465,7 @@ describe('useGlobalPaymentSelection', () => {
   });
 
   describe('Form synchronization', () => {
-    it('should call setValue with sorted array of unique IUDs', () => {
+    it('should call setValue with sorted array of unique IUDs', async () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
@@ -480,19 +477,16 @@ describe('useGlobalPaymentSelection', () => {
         );
       });
 
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', [
-            'IUD1',
-            'IUD2',
-            'IUD3'
-          ]);
-          resolve(undefined);
-        }, 0);
-      });
+      await waitForAsyncOperation();
+
+      expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', [
+        'IUD1',
+        'IUD2',
+        'IUD3'
+      ]);
     });
 
-    it('should handle partial deselection correctly', () => {
+    it('should handle partial deselection correctly', async () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
@@ -508,15 +502,12 @@ describe('useGlobalPaymentSelection', () => {
         result.current.toggleUniqueIdSelection(['iud1-0'], false);
       });
 
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          expect(mockSetValue).toHaveBeenLastCalledWith('selectedPayments', [
-            'IUD1',
-            'IUD2'
-          ]);
-          resolve(undefined);
-        }, 0);
-      });
+      await waitForAsyncOperation();
+
+      expect(mockSetValue).toHaveBeenLastCalledWith('selectedPayments', [
+        'IUD1',
+        'IUD2'
+      ]);
     });
   });
 });

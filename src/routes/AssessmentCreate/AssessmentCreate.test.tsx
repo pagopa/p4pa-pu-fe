@@ -323,9 +323,7 @@ describe('AssessmentCreate', () => {
 
     it('should handle missing assessmentId in response', async () => {
       const user = userEvent.setup();
-      const consoleErrorSpy = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error');
 
       mockMutateAsync.mockResolvedValue({
         assessmentName: 'Test Assessment'

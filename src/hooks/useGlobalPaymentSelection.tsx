@@ -152,7 +152,9 @@ export const useGlobalPaymentSelection = ({
             selectedIuds.add(iud);
           }
         });
-        const sortedArray = Array.from(selectedIuds).sort();
+        const sortedArray = Array.from(selectedIuds).sort((a, b) =>
+          a.localeCompare(b)
+        );
 
         setValue('selectedPayments', sortedArray);
       });

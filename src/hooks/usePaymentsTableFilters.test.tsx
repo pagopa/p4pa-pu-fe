@@ -8,9 +8,11 @@ import { toStartOfDay, toEndOfDay } from '../utils/formatters';
 import type { PaymentsUIFilters } from '../api/classifications/paidInstallments/mappings';
 
 const createWrapper = (initialEntries = ['/']) => {
-  return ({ children }: { children: React.ReactNode }) => (
+  const TestWrapper = ({ children }: { children: React.ReactNode }) => (
     <MemoryRouter initialEntries={initialEntries}>{children}</MemoryRouter>
   );
+  TestWrapper.displayName = 'TestWrapper';
+  return TestWrapper;
 };
 
 describe('usePaymentsTableFilters', () => {
@@ -19,6 +21,12 @@ describe('usePaymentsTableFilters', () => {
 
   const today = new Date('2024-03-24T12:00:00Z');
   const thirtyDaysAgo = subDays(today, 30);
+
+  const expectHookActionsNotToThrow = (actions: () => void) => {
+    expect(() => {
+      act(actions);
+    }).not.toThrow();
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -584,15 +592,11 @@ describe('usePaymentsTableFilters', () => {
         { wrapper: createWrapper() }
       );
 
-      expect(() => {
-        act(() => {
-          result.current.updateDraftFilters({ iuv: 'NO_CALLBACK' });
-          result.current.applyFilters();
-          result.current.handleSortModelChange([
-            { field: 'test', sort: 'asc' }
-          ]);
-        });
-      }).not.toThrow();
+      expectHookActionsNotToThrow(() => {
+        result.current.updateDraftFilters({ iuv: 'NO_CALLBACK' });
+        result.current.applyFilters();
+        result.current.handleSortModelChange([{ field: 'test', sort: 'asc' }]);
+      });
     });
   });
 });

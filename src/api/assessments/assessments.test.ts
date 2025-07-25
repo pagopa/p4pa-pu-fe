@@ -1252,7 +1252,7 @@ describe('getOperatingYears', () => {
       .spyOn(utils.apiClient.bff, 'getOperatingYears')
       .mockRejectedValue(errorMock);
 
-    const {} = renderHook(() => getOperatingYears());
+    renderHook(() => getOperatingYears());
 
     await waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith();

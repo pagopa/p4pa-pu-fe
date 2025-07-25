@@ -244,7 +244,7 @@ describe('PaymentsTable', () => {
     });
 
     it('logs detail click when detail button is pressed', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'log');
 
       render(<PaymentsTable {...defaultProps} />);
 

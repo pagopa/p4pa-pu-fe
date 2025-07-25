@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, Controller } from 'react-hook-form';
 import { useOperatingYears } from '../../../hooks/useOperatingYears';
 import { useChapters } from '../../../hooks/useChapters';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
@@ -71,8 +71,6 @@ vi.mock('../../../components/FormComponent', () => ({
       control: ReturnType<typeof useForm>['control'];
       'data-testid': string;
     }) => {
-      const { Controller } = require('react-hook-form');
-
       return (
         <div data-testid={testId}>
           <Controller

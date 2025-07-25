@@ -90,7 +90,6 @@ vi.mock('./PaymentsTable', () => ({
     onSelectionChange,
     onFiltersApplied,
     onFilterValidationError,
-    disabled,
     selectedUniqueIds,
     'data-testid': testId
   }: {
@@ -101,7 +100,6 @@ vi.mock('./PaymentsTable', () => ({
       sortParams?: Array<string>
     ) => void;
     onFilterValidationError?: (hasError: boolean) => void;
-    disabled?: boolean;
     selectedUniqueIds?: Array<string>;
     'data-testid'?: string;
   }) => (
@@ -109,7 +107,6 @@ vi.mock('./PaymentsTable', () => ({
       <button
         data-testid="mock-select-payment"
         onClick={() => onSelectionChange?.(['test-unique-id-1'])}
-        disabled={disabled}
       >
         Seleziona pagamento
       </button>
@@ -147,63 +144,42 @@ vi.mock('../../../components/Wizard/WizardStepWrapper', () => ({
 vi.mock('../../../components/FormComponent', () => ({
   FormComponent: {
     ControlledRadioGroup: ({
-      label,
-      name,
-      options,
-      disabled,
-      control,
       'data-testid': testId,
+      label,
+      options,
       sx
     }: {
-      label: string;
-      name: string;
-      options: Array<{ value: boolean; label: string }>;
-      disabled?: boolean;
-      control: ReturnType<typeof useForm>['control'];
       'data-testid': string;
+      label: string;
+      options: Array<{ value: boolean; label: string }>;
       sx?: { flexDirection?: string };
-    }) => {
-      const { Controller } = require('react-hook-form');
-
-      return (
-        <div data-testid={testId}>
-          <Controller
-            name={name}
-            control={control}
-            render={({
-              field
-            }: {
-              field: { value: boolean; onChange: (value: boolean) => void };
-            }) => (
-              <fieldset disabled={disabled}>
-                <legend>{label}</legend>
-                <div
-                  style={{
-                    flexDirection:
-                      (sx?.flexDirection as 'row' | 'column') || 'column'
-                  }}
-                >
-                  {options?.map((option) => (
-                    <label key={String(option.value)}>
-                      <input
-                        type="radio"
-                        name={name}
-                        value={String(option.value)}
-                        checked={field.value === option.value}
-                        onChange={() => field.onChange(option.value)}
-                        disabled={disabled}
-                        data-testid={`${testId}-${option.value}`}
-                      />
-                      {option.label}
-                    </label>
-                  ))}
-                </div>
-              </fieldset>
-            )}
-          />
-        </div>
-      );
-    }
+    }) => (
+      <div data-testid={testId}>
+        <fieldset>
+          <legend>{label}</legend>
+          <div
+            style={
+              {
+                flexDirection: sx?.flexDirection || 'column'
+              } as React.CSSProperties
+            }
+          >
+            {options?.map((option) => (
+              <label key={String(option.value)}>
+                <input
+                  type="radio"
+                  name="addPaymentsToAssessment"
+                  value={String(option.value)}
+                  defaultChecked={option.value === false}
+                  data-testid={`${testId}-${option.value}`}
+                />
+                {option.label}
+              </label>
+            ))}
+          </div>
+        </fieldset>
+      </div>
+    )
   }
 }));
 
@@ -387,27 +363,7 @@ describe('Step2Payments', () => {
     });
   });
 
-  describe('Disabled state', () => {
-    it('should disable radio group when editmode is true', () => {
-      renderWithForm(<Step2Payments />);
-
-      const yesRadio = screen.getByTestId('addPaymentsToAssessment-true');
-      const noRadio = screen.getByTestId('addPaymentsToAssessment-false');
-
-      expect(yesRadio).toBeDisabled();
-      expect(noRadio).toBeDisabled();
-    });
-
-    it('should enable radio group when editmode is false', () => {
-      renderWithForm(<Step2Payments />);
-
-      const yesRadio = screen.getByTestId('addPaymentsToAssessment-true');
-      const noRadio = screen.getByTestId('addPaymentsToAssessment-false');
-
-      expect(yesRadio).not.toBeDisabled();
-      expect(noRadio).not.toBeDisabled();
-    });
-
+  describe('Radio group state', () => {
     it('should enable radio group by default', () => {
       renderWithForm(<Step2Payments />);
 
@@ -427,15 +383,6 @@ describe('Step2Payments', () => {
 
       const yesRadio = screen.getByTestId('addPaymentsToAssessment-true');
       expect(yesRadio).not.toBeDisabled();
-    });
-
-    it('should handle editmode prop correctly', () => {
-      renderWithForm(<Step2Payments />);
-
-      const fieldset = screen
-        .getByTestId('addPaymentsToAssessment')
-        .querySelector('fieldset');
-      expect(fieldset).toBeDisabled();
     });
   });
 
@@ -601,17 +548,6 @@ describe('Step2Payments', () => {
 
       expect(mockGlobalSelection.clearAllSelections).toHaveBeenCalledTimes(1);
     });
-
-    it('should disable clear selection button in editmode', () => {
-      mockGlobalSelection.totalSelected = 2;
-
-      renderWithForm(<Step2Payments />, {
-        addPaymentsToAssessment: true
-      });
-
-      const clearButton = screen.getByTestId('clear-selection-button');
-      expect(clearButton).toBeDisabled();
-    });
   });
 
   describe('PaymentsTable interactions', () => {
@@ -647,20 +583,11 @@ describe('Step2Payments', () => {
         mockPaymentsState.setShowFiltersValidationError
       ).toHaveBeenCalledWith(true);
     });
-
-    it('should disable PaymentsTable in editmode', () => {
-      renderWithForm(<Step2Payments />, {
-        addPaymentsToAssessment: true
-      });
-
-      const selectButton = screen.getByTestId('mock-select-payment');
-      expect(selectButton).toBeDisabled();
-    });
   });
 
   describe('Form field synchronization', () => {
     it('should update selectedPaymentIuds when selectedPayments changes', async () => {
-      const {} = renderWithForm(<Step2Payments />, {
+      renderWithForm(<Step2Payments />, {
         addPaymentsToAssessment: true,
         selectedPayments: ['payment1']
       });
@@ -703,9 +630,7 @@ describe('Step2Payments', () => {
 
   describe('Error scenarios', () => {
     it('should handle API errors in handleFiltersApplied', async () => {
-      const consoleErrorSpy = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error');
 
       mockPaidInstallments.fetchPaidInstallments.mockRejectedValueOnce(
         new Error('API Error')

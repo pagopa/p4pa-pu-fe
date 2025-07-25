@@ -52,6 +52,21 @@ describe('usePaidInstallments', () => {
     pageSize: 10
   };
 
+  const renderHookWithParams = (params: typeof defaultParams) => {
+    return renderHook(() => usePaidInstallments(params));
+  };
+
+  const expectHookToThrow = (
+    params: typeof defaultParams,
+    errorMessage: string
+  ) => {
+    expect(() => renderHookWithParams(params)).toThrow(errorMessage);
+  };
+
+  const expectHookNotToThrow = (params: typeof defaultParams) => {
+    expect(() => renderHookWithParams(params)).not.toThrow();
+  };
+
   const mockPaidInstallmentsData = {
     content: [],
     totalElements: 2,
@@ -83,26 +98,21 @@ describe('usePaidInstallments', () => {
     });
 
     it('should throw error when debtPositionTypeOrgCode is missing and enabled is true', () => {
-      expect(() => {
-        renderHook(() =>
-          usePaidInstallments({
-            ...defaultParams,
-            debtPositionTypeOrgCode: ''
-          })
-        );
-      }).toThrow('debtPositionTypeOrgCode is required');
+      expectHookToThrow(
+        {
+          ...defaultParams,
+          debtPositionTypeOrgCode: ''
+        },
+        'debtPositionTypeOrgCode is required'
+      );
     });
 
     it('should not throw error when enabled is false even if debtPositionTypeOrgCode is missing', () => {
-      expect(() => {
-        renderHook(() =>
-          usePaidInstallments({
-            ...defaultParams,
-            debtPositionTypeOrgCode: '',
-            enabled: false
-          })
-        );
-      }).not.toThrow();
+      expectHookNotToThrow({
+        ...defaultParams,
+        debtPositionTypeOrgCode: '',
+        enabled: false
+      });
     });
   });
 
@@ -270,9 +280,7 @@ describe('usePaidInstallments', () => {
     });
 
     it('should log errors to console', async () => {
-      const consoleErrorSpy = vi
-        .spyOn(console, 'error')
-        .mockImplementation(() => {});
+      const consoleErrorSpy = vi.spyOn(console, 'error');
       const mockError = new Error('Test Error');
 
       mockMutateAsync.mockRejectedValueOnce(mockError);
