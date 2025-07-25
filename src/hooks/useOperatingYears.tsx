@@ -1,15 +1,75 @@
-import { useEffect, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import utils from '../utils';
 import { getOperatingYears } from '../api/assessments';
 import { AxiosError } from 'axios';
 
-/**
- * Type for the options of the select of the operating years
- */
 export type OperatingYearOption = {
   label: string;
   value: string;
+};
+
+/**
+ * Transform the operating years data into options for the select
+ * @param data - Array of operating years as strings
+ * @param includeAllOption - Whether to include the "All" option
+ * @param allOptionLabel - Label for the "All" option
+ * @returns Array di opzioni trasformate
+ */
+export const transformOperatingYearsData = (
+  data: string[] | undefined,
+  includeAllOption: boolean,
+  allOptionLabel: string
+): OperatingYearOption[] => {
+  if (!data || !Array.isArray(data)) {
+    return [];
+  }
+
+  try {
+    const yearOptions = data
+      .filter((year: string) => year && year.trim() !== '')
+      .sort((a, b) => b.localeCompare(a))
+      .map((year: string) => ({
+        label: year,
+        value: year
+      }));
+
+    if (includeAllOption) {
+      return [
+        {
+          label: allOptionLabel,
+          value: 'ALL'
+        },
+        ...yearOptions
+      ];
+    }
+
+    return yearOptions;
+  } catch (error) {
+    console.error(
+      'Error during the transformation of the operating years data:',
+      error
+    );
+    return [];
+  }
+};
+
+/**
+ * Handles the error of the operating years query
+ * @param error - Error of the query
+ * @param t - Translation function
+ */
+export const handleOperatingYearsError = (
+  error: unknown,
+  t: (key: string) => string
+): void => {
+  const axiosError = error as AxiosError;
+  const isServerError =
+    axiosError?.response?.status && axiosError.response.status >= 500;
+
+  if (!isServerError) {
+    utils.notify.emit(t('errors.fetchOperatingYears'), 'error');
+  }
 };
 
 /**
@@ -17,8 +77,8 @@ export type OperatingYearOption = {
  * in a format compatible with the select
  *
  * @param includeAllOption - Whether to include the "All" option (default: false)
- * @param enabled - Whether to enable the query (default: true)
- * @returns Hook with optionsMap and query properties
+ * @param enabled - Se abilitare la query (default: true)
+ * @returns Hook con la proprietà optionsMap e tutte le proprietà della query
  */
 export const useOperatingYears = ({
   includeAllOption = false,
@@ -27,61 +87,27 @@ export const useOperatingYears = ({
   includeAllOption?: boolean;
   enabled?: boolean;
 } = {}) => {
-  const [operatingYears, setOperatingYears] = useState<
-    Array<OperatingYearOption>
-  >([]);
   const { t } = useTranslation();
-
   const operatingYearsQuery = getOperatingYears({ enabled });
 
-  const { data, isError, isSuccess } = operatingYearsQuery;
+  const { data, isError, error } = operatingYearsQuery;
 
-  useEffect(() => {
-    if (isSuccess && data) {
-      try {
-        const yearsMap = data
-          .filter((year: string) => year && year.trim() !== '')
-          .sort((a, b) => b.localeCompare(a))
-          .map((year: string) => ({
-            label: year,
-            value: year
-          }));
+  const optionsMap = useMemo(() => {
+    return transformOperatingYearsData(
+      data,
+      includeAllOption,
+      t('commons.all')
+    );
+  }, [data, includeAllOption, t]);
 
-        setOperatingYears(
-          includeAllOption
-            ? [
-                {
-                  label: t('commons.all'),
-                  value: 'ALL'
-                },
-                ...yearsMap
-              ]
-            : yearsMap
-        );
-      } catch (error) {
-        console.error('Error processing operating years data:', error);
-        utils.notify.emit(t('errors.fetchOperatingYears'), 'error');
-        setOperatingYears([]);
-      }
+  useMemo(() => {
+    if (isError && error) {
+      handleOperatingYearsError(error, t);
     }
+  }, [isError, error, t]);
 
-    if (isError) {
-      const error = operatingYearsQuery.error as AxiosError;
-      const isServerError =
-        error?.response?.status && error.response.status >= 500;
-
-      if (!isServerError) {
-        utils.notify.emit(t('errors.fetchOperatingYears'), 'error');
-      }
-    }
-  }, [
-    data,
-    isError,
-    isSuccess,
-    t,
-    operatingYearsQuery.error,
-    includeAllOption
-  ]);
-
-  return { optionsMap: operatingYears, ...operatingYearsQuery };
+  return {
+    optionsMap,
+    ...operatingYearsQuery
+  };
 };
