@@ -313,8 +313,8 @@ export const AssessmentCreate = () => {
 
   const step1Component = useMemo(() => <Step1Configuration />, []);
   const step2Component = useMemo(
-    () => <Step2Payments ref={step2PaymentsRef} />,
-    []
+    () => <Step2Payments ref={step2PaymentsRef} isActive={currentStep === 1} />,
+    [currentStep]
   );
   const step3Component = useMemo(() => <Step3AssignChapter />, []);
 

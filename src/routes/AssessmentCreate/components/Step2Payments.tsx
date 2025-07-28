@@ -59,7 +59,10 @@ export const validateStep2Payments = (values: AssessmentFormData): boolean => {
   return true;
 };
 
-const Step2PaymentsComponent = forwardRef<Step2PaymentsRef>((_, ref) => {
+const Step2PaymentsComponent = forwardRef<
+  Step2PaymentsRef,
+  { isActive?: boolean }
+>(({ isActive = true }, ref) => {
   const { t } = useTranslation();
   const { control, setValue } = useFormContext<AssessmentFormData>();
   const addPaymentsToAssessmentRaw = useWatch({
@@ -121,6 +124,9 @@ const Step2PaymentsComponent = forwardRef<Step2PaymentsRef>((_, ref) => {
 
   // Flag to track if data has been loaded at least once
   const [hasLoadedData, setHasLoadedData] = useState(false);
+  // Track previous debtPositionTypeOrgCode to detect changes
+  const [prevDebtPositionTypeOrgCode, setPrevDebtPositionTypeOrgCode] =
+    useState<string>('');
 
   // Stable callbacks to avoid infinite loops
   const handleApiSuccess = useCallback(
@@ -140,7 +146,7 @@ const Step2PaymentsComponent = forwardRef<Step2PaymentsRef>((_, ref) => {
   );
 
   const paymentsApi = usePaidInstallments({
-    enabled: shouldLoadData && !!debtPositionTypeOrgCode,
+    enabled: isActive && shouldLoadData && !!debtPositionTypeOrgCode,
     pageSize: 10,
     debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
     onError: handleApiError
@@ -148,14 +154,14 @@ const Step2PaymentsComponent = forwardRef<Step2PaymentsRef>((_, ref) => {
 
   const operatingYearsQuery = useOperatingYears({
     includeAllOption: false,
-    enabled: shouldLoadData
+    enabled: isActive && shouldLoadData
   });
 
   const currentYear = new Date().getFullYear().toString();
   const chaptersQuery = useChapters({
     operatingYear: currentYear,
     debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
-    enabled: shouldLoadData && !!debtPositionTypeOrgCode,
+    enabled: isActive && shouldLoadData && !!debtPositionTypeOrgCode,
     purpose: 'validation'
   });
 
@@ -305,6 +311,37 @@ const Step2PaymentsComponent = forwardRef<Step2PaymentsRef>((_, ref) => {
       dateTo: endOfDay(new Date())
     };
   }, []);
+
+  // Reset data when debtPositionTypeOrgCode changes and step becomes active
+  // This handles the case when user goes Step2->Step1->changes type->Step2
+  // and the table needs to reload with new debt type data
+  useEffect(() => {
+    if (isActive && shouldLoadData && debtPositionTypeOrgCode) {
+      // Check if debtPositionTypeOrgCode changed
+      if (
+        debtPositionTypeOrgCode !== prevDebtPositionTypeOrgCode &&
+        prevDebtPositionTypeOrgCode !== ''
+      ) {
+        setHasLoadedData(false);
+        paymentsState.resetPaymentsData();
+        globalSelection.clearAllSelections();
+
+        // Force reload data with new debtPositionTypeOrgCode
+        handleFiltersApplied(initialTableFilters, { page: 0, size: 10 });
+      }
+      // Update the previous value
+      setPrevDebtPositionTypeOrgCode(debtPositionTypeOrgCode);
+    }
+  }, [
+    isActive,
+    debtPositionTypeOrgCode,
+    shouldLoadData,
+    prevDebtPositionTypeOrgCode,
+    paymentsState.resetPaymentsData,
+    globalSelection.clearAllSelections,
+    handleFiltersApplied,
+    initialTableFilters
+  ]);
 
   const selectionBannerText = useMemo(() => {
     const count = globalSelection.totalSelected;
