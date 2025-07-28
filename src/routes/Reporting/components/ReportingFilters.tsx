@@ -19,7 +19,9 @@ export const ReportingFilters = ({
   const { control } = useFormContext();
   return (
     <Stack gap={2}>
-      {error && <ErrorMessage variant="outlined" />}
+      {error && (
+        <ErrorMessage variant={layout === 'inline' ? 'outlined' : 'standard'} />
+      )}
       <Stack
         direction={layout === 'inline' ? 'row' : 'column'}
         spacing={2}

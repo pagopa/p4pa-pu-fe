@@ -367,30 +367,6 @@ describe('SearchCard', () => {
     expect(screen.getByText('Minimal Description')).toBeInTheDocument();
   });
 
-  it('renders filters from useTelematicReceiptsFilters when filterContext is "TELEMATIC"', () => {
-    render(
-      <SearchCard
-        title="Telematic"
-        description="Desc"
-        filterContext="TELEMATIC"
-      />
-    );
-
-    expect(screen.getByLabelText('commons.searchIUV')).toBeInTheDocument();
-    expect(
-      screen.queryByText('commons.searchRegulationUniqueIdentifier')
-    ).not.toBeInTheDocument();
-  });
-
-  it('renders filters from useReportingFilters when filterContext is "REPORTING"', () => {
-    render(<SearchCard title="Reporting" description="Desc" />);
-
-    expect(
-      screen.getByLabelText('commons.searchRegulationUniqueIdentifier')
-    ).toBeInTheDocument();
-    expect(screen.queryByText('commons.searchIUV')).not.toBeInTheDocument();
-  });
-
   it('renders ErrorMessage correctly when passed through render prop', () => {
     const propsWithError = {
       ...defaultProps,

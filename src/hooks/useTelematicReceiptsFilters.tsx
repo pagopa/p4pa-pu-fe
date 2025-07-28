@@ -10,7 +10,7 @@ import { FilterFieldIds } from '../models/SearchCardFields';
 import { TelematicReceiptsFilters } from '../api/receipts/mappings';
 
 type UseTelematicReceiptsProps = {
-  onFilter: (filters: TelematicReceiptsFilters) => void;
+  onFilter?: (filters: TelematicReceiptsFilters) => void;
   layout?: 'inline' | 'grid';
 };
 
