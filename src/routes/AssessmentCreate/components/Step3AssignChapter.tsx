@@ -32,19 +32,16 @@ export const Step3AssignChapter = () => {
       enabled: false // Don't make new API calls - just access cached data
     });
 
-  // Observe the value of the selected year to enable/disable the chapter select
   const selectedYear = useWatch({
     control,
     name: 'operatingYear'
   });
 
-  // Observe debtPositionTypeOrgCode for chapters API call
   const debtPositionTypeOrgCode = useWatch({
     control,
     name: 'debtPositionTypeOrgCode'
   });
 
-  // Get chapters for the selected year using real API
   // This uses 'selection' purpose to have separate cache from Step2 validation
   // NOTE: The chapters select is populated ONLY after an operating year is selected
   const chaptersQuery = useChapters({
@@ -70,7 +67,6 @@ export const Step3AssignChapter = () => {
     ? getAssessmentRegistryId(selectedChapterCode)
     : undefined;
 
-  // Helper functions per evitare ternary annidate
   const getOperatingYearPlaceholder = () => {
     if (isLoadingYears) {
       return t('commons.loading');

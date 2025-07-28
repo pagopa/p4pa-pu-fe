@@ -29,7 +29,6 @@ export type UseChaptersParams = {
   purpose?: ChaptersPurpose;
 };
 
-// Re-export dei tipi per compatibilità
 export type { ChapterOption, AssessmentRegistryItem };
 
 /**
@@ -48,7 +47,6 @@ export const useChapters = ({
     state: { organizationId }
   } = useStore();
 
-  // Query params memoizzati (pattern esistente mantenuto)
   const queryParams = useMemo(() => {
     if (!operatingYear || !debtPositionTypeOrgCode) return null;
     return {
@@ -62,7 +60,6 @@ export const useChapters = ({
     };
   }, [operatingYear, debtPositionTypeOrgCode]);
 
-  // Cache key memoizzata (pattern esistente mantenuto)
   const baseCacheKey = useMemo(
     () => [
       'getChapters',
@@ -73,7 +70,6 @@ export const useChapters = ({
     [organizationId, operatingYear, debtPositionTypeOrgCode]
   );
 
-  // Query function estratta per maggiore chiarezza
   const fetchChapters =
     useCallback(async (): Promise<PagedAssessmentRegistryResponse | null> => {
       if (!queryParams) return null;
@@ -106,7 +102,6 @@ export const useChapters = ({
 
   const { data, isError, isSuccess, isPending, isFetching } = chaptersQuery;
 
-  // Gestione successo - logica di trasformazione estratta
   useEffect(() => {
     if (isSuccess && data?.content) {
       try {
@@ -120,7 +115,6 @@ export const useChapters = ({
     }
   }, [data, isSuccess, t]);
 
-  // Gestione errori - pattern esistente mantenuto
   useEffect(() => {
     if (isError) {
       const error = chaptersQuery.error as AxiosError;
@@ -133,14 +127,14 @@ export const useChapters = ({
     }
   }, [isError, chaptersQuery.error, purpose, t]);
 
-  // Reset quando parametri cambiano - pattern esistente mantenuto
+  // Reset when parameters change
   useEffect(() => {
     if (!enabled || !operatingYear || !debtPositionTypeOrgCode) {
       setChapters([]);
     }
   }, [enabled, operatingYear, debtPositionTypeOrgCode]);
 
-  // Getter function memoizzata per performance
+  // Getter function memoized for performance
   const getAssessmentRegistryId = useMemo(
     () => createAssessmentRegistryIdGetter(chapters),
     [chapters]

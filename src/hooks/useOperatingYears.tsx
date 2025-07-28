@@ -14,7 +14,7 @@ export type OperatingYearOption = {
  * @param data - Array of operating years as strings
  * @param includeAllOption - Whether to include the "All" option
  * @param allOptionLabel - Label for the "All" option
- * @returns Array di opzioni trasformate
+ * @returns Array of transformed options
  */
 export const transformOperatingYearsData = (
   data: Array<string> | undefined,
@@ -77,8 +77,8 @@ export const handleOperatingYearsError = (
  * in a format compatible with the select
  *
  * @param includeAllOption - Whether to include the "All" option (default: false)
- * @param enabled - Se abilitare la query (default: true)
- * @returns Hook con la proprietà optionsMap e tutte le proprietà della query
+ * @param enabled - Whether to enable the query (default: true)
+ * @returns Hook with the optionsMap property and all the properties of the query
  */
 export const useOperatingYears = ({
   includeAllOption = false,
