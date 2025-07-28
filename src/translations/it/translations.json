@@ -443,7 +443,7 @@
     "addfilter": "Aggiunge filtro",
     "amount": "Importo",
     "anonymousFiscalCode": "Codice Fiscale Anonimo",
-    "auditor": "Attestante",
+    "auditor": "Gestore della transazione (PSP)",
     "back": "Indietro",
     "behavior": "Comportamento",
     "breadcrumbs": "Elementi di navigazione breadcrumbs",
