@@ -216,20 +216,6 @@ export const usePaymentsTableFilters = ({
     [updateDraftFilters]
   );
 
-  const handleUpdateDateFromChange = useCallback(
-    (date: Date | null) => {
-      updateDraftFilters({ updateDateFrom: date });
-    },
-    [updateDraftFilters]
-  );
-
-  const handleUpdateDateToChange = useCallback(
-    (date: Date | null) => {
-      updateDraftFilters({ updateDateTo: date });
-    },
-    [updateDraftFilters]
-  );
-
   // Auto-apply default filters on mount ONLY ONCE
   useEffect(() => {
     if (autoLoadOnMount && !hasAutoLoadedRef.current && onFiltersChange) {
@@ -254,8 +240,6 @@ export const usePaymentsTableFilters = ({
     handleSortModelChange,
     handleDateFromChange,
     handleDateToChange,
-    handleUpdateDateFromChange,
-    handleUpdateDateToChange,
     convertFiltersToAPI
   };
 };

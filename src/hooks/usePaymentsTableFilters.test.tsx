@@ -408,36 +408,6 @@ describe('usePaymentsTableFilters', () => {
       expect(result.current.hasActiveFilters).toBe(true);
     });
 
-    it('should handle updateDateFrom change', () => {
-      const { result } = renderHook(() => usePaymentsTableFilters(), {
-        wrapper: createWrapper()
-      });
-
-      const newDate = new Date('2024-02-01');
-
-      act(() => {
-        result.current.handleUpdateDateFromChange(newDate);
-      });
-
-      expect(result.current.draftFilters.updateDateFrom).toEqual(newDate);
-      expect(result.current.hasActiveFilters).toBe(true);
-    });
-
-    it('should handle updateDateTo change', () => {
-      const { result } = renderHook(() => usePaymentsTableFilters(), {
-        wrapper: createWrapper()
-      });
-
-      const newDate = new Date('2024-02-28');
-
-      act(() => {
-        result.current.handleUpdateDateToChange(newDate);
-      });
-
-      expect(result.current.draftFilters.updateDateTo).toEqual(newDate);
-      expect(result.current.hasActiveFilters).toBe(true);
-    });
-
     it('should handle null values for dates', () => {
       const { result } = renderHook(
         () =>

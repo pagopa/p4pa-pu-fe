@@ -16,9 +16,7 @@ const mockUsePaymentsTableFilters = {
   applyFilters: vi.fn(),
   handleSortModelChange: vi.fn(),
   handleDateFromChange: vi.fn(),
-  handleDateToChange: vi.fn(),
-  handleUpdateDateFromChange: vi.fn(),
-  handleUpdateDateToChange: vi.fn()
+  handleDateToChange: vi.fn()
 };
 
 vi.mock('../../../hooks/usePaymentsTableFilters', () => ({
@@ -161,12 +159,6 @@ describe('PaymentsTable', () => {
 
       expect(mockUsePaymentsTableFilters.handleDateFromChange).toBeDefined();
       expect(mockUsePaymentsTableFilters.handleDateToChange).toBeDefined();
-      expect(
-        mockUsePaymentsTableFilters.handleUpdateDateFromChange
-      ).toBeDefined();
-      expect(
-        mockUsePaymentsTableFilters.handleUpdateDateToChange
-      ).toBeDefined();
     });
   });
 

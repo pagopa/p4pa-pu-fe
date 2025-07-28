@@ -63,9 +63,7 @@ export const PaymentsTable = ({
     applyFilters,
     handleSortModelChange,
     handleDateFromChange,
-    handleDateToChange,
-    handleUpdateDateFromChange,
-    handleUpdateDateToChange
+    handleDateToChange
   } = usePaymentsTableFilters({
     initialFilters,
     onFiltersChange: onFiltersApplied,
@@ -227,12 +225,12 @@ export const PaymentsTable = ({
             value: draftFilters.iuv || '',
             onChange: (e) => updateDraftFilters({ iuv: e.target.value }),
             adornment: <Search />,
-            gridWidth: 2
+            gridWidth: 5
           },
           {
             type: COMPONENT_TYPE.dateRange,
             label: 'dateRange',
-            gridWidth: 4.5,
+            gridWidth: 5,
             from: {
               label: t('commons.outcomeFrom'),
               value: draftFilters.dateFrom,
@@ -245,26 +243,11 @@ export const PaymentsTable = ({
             }
           },
           {
-            type: COMPONENT_TYPE.dateRange,
-            label: 'updateDateRange',
-            gridWidth: 4.5,
-            from: {
-              label: t('commons.updatedFrom'),
-              value: draftFilters.updateDateFrom,
-              onChange: handleUpdateDateFromChange
-            },
-            to: {
-              label: t('commons.dateTo'),
-              value: draftFilters.updateDateTo,
-              onChange: handleUpdateDateToChange
-            }
-          },
-          {
             type: COMPONENT_TYPE.button,
             label: t('commons.search'),
             onClick: applyFilters,
             disabled: disabled,
-            gridWidth: 1
+            gridWidth: 2
           }
         ]}
       />
