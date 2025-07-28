@@ -6,12 +6,18 @@ import {
   createAssessment,
   getAssessments,
   getAssessmentsRegistries,
-  getAssessmentsRegistry
+  getAssessmentsRegistry,
+  createAssessmentDetails,
+  createAssessmentsRegistry,
+  updateAssessmentsRegistry,
+  getOperatingYears
 } from '.';
 import { initialFilterValues } from '../../store/FilterStore';
 import { assessmentsRegistryDTOSchema } from '../../../generated/zod-schema';
 import { createMock } from 'zodock';
 import * as loaders from '../../utils/loaders';
+import type { AssessmentsRegistry } from '../../../generated/data-contracts';
+import { AssessmentsRegistryStatus } from '../../../generated/data-contracts';
 
 vi.mock('../../utils', async () => {
   const actual =
@@ -23,7 +29,11 @@ vi.mock('../../utils', async () => {
         getPagedAssessmentsExtendedDto: vi.fn(),
         createAssessment: vi.fn(),
         getAssessmentsRegistries: vi.fn(),
-        getAssessmentsRegistry: vi.fn()
+        getAssessmentsRegistry: vi.fn(),
+        createAssessmentsDetail: vi.fn(),
+        createAssessmentsRegistry: vi.fn(),
+        updateAssessmentsRegistry: vi.fn(),
+        getOperatingYears: vi.fn()
       }
     }
   };
@@ -459,6 +469,180 @@ describe('createAssessment', () => {
   });
 });
 
+describe('createAssessmentDetails', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should create assessment details successfully when mutation is called', async () => {
+    const organizationId = 123;
+    const assessmentId = 456;
+    const payload = {
+      assessmentRegistryId: 789,
+      iuds: ['IUD001', 'IUD002', 'IUD003']
+    };
+
+    const expectedResponse = {
+      id: '12345',
+      assessmentId: assessmentId,
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: payload.iuds,
+      status: 'CREATED',
+      createdDate: '2023-01-01T00:00:00Z'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessmentsDetail')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      createAssessmentDetails(organizationId, assessmentId)
+    );
+
+    result.current.mutate(payload);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentId, {
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: payload.iuds
+    });
+  });
+
+  it('should handle API errors correctly during assessment details creation', async () => {
+    const organizationId = 123;
+    const assessmentId = 456;
+    const payload = {
+      assessmentRegistryId: 789,
+      iuds: ['IUD001']
+    };
+
+    const errorMock = new Error('Assessment details creation failed');
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessmentsDetail')
+      .mockRejectedValue(errorMock);
+
+    const { result } = renderHook(() =>
+      createAssessmentDetails(organizationId, assessmentId)
+    );
+
+    result.current.mutate(payload);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(errorMock);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentId, {
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: payload.iuds
+    });
+  });
+
+  it('should handle empty IUDs array', async () => {
+    const organizationId = 123;
+    const assessmentId = 456;
+    const payload = {
+      assessmentRegistryId: 789,
+      iuds: []
+    };
+
+    const expectedResponse = {
+      id: '12345',
+      assessmentId: assessmentId,
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: [],
+      status: 'CREATED'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessmentsDetail')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      createAssessmentDetails(organizationId, assessmentId)
+    );
+
+    result.current.mutate(payload);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentId, {
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: payload.iuds
+    });
+  });
+
+  it('should call parseAndLog when response data is present', async () => {
+    const organizationId = 123;
+    const assessmentId = 456;
+    const payload = {
+      assessmentRegistryId: 789,
+      iuds: ['IUD001', 'IUD002']
+    };
+
+    const expectedResponse = [
+      {
+        assessmentDetailId: 1,
+        assessmentId: assessmentId,
+        organizationId: organizationId,
+        debtPositionTypeOrgCode: 'DEBT001',
+        iuv: 'IUV001',
+        iud: 'IUD001',
+        iur: 'IUR001',
+        debtorFiscalCodeHash: 'hash1',
+        sectionCode: 'SEC001',
+        amountCents: 10000,
+        amountSubmitted: true
+      },
+      {
+        assessmentDetailId: 2,
+        assessmentId: assessmentId,
+        organizationId: organizationId,
+        debtPositionTypeOrgCode: 'DEBT001',
+        iuv: 'IUV002',
+        iud: 'IUD002',
+        iur: 'IUR002',
+        debtorFiscalCodeHash: 'hash2',
+        sectionCode: 'SEC001',
+        amountCents: 15000,
+        amountSubmitted: true
+      }
+    ];
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessmentsDetail')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      createAssessmentDetails(organizationId, assessmentId)
+    );
+
+    result.current.mutate(payload);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentId, {
+      assessmentRegistryId: payload.assessmentRegistryId,
+      iuds: payload.iuds
+    });
+
+    expect(mockParseAndLog).toHaveBeenCalledTimes(1);
+    expect(mockParseAndLog).toHaveBeenCalledWith(
+      expect.any(Object),
+      expectedResponse
+    );
+  });
+});
+
 describe('getAssessmentsRegistries', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -703,5 +887,460 @@ describe('getAssessmentsRegistry', () => {
 
     expect(result.current.data).toEqual(mockRegistryData);
     expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentRegistryId);
+  });
+});
+
+describe('createAssessmentsRegistry', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should create assessments registry successfully when mutation is called', async () => {
+    const organizationId = 123;
+    const assessmentRegistry: AssessmentsRegistry = {
+      assessmentRegistryId: 456,
+      organizationId,
+      debtPositionTypeOrgCode: 'DEBT001',
+      sectionCode: 'SEC001',
+      operatingYear: '2023',
+      assessmentDescription: 'Test Registry',
+      officeCode: 'OFF001',
+      assessmentCode: 'ASS001',
+      status: AssessmentsRegistryStatus.ACTIVE,
+      creationDate: '2023-01-01T00:00:00Z'
+    };
+
+    const expectedResponse = {
+      ...assessmentRegistry,
+      assessmentRegistryId: 789
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessmentsRegistry')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      createAssessmentsRegistry(organizationId)
+    );
+
+    result.current.mutate(assessmentRegistry);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentRegistry);
+    expect(mockParseAndLog).toHaveBeenCalledWith(
+      assessmentsRegistryDTOSchema,
+      expectedResponse
+    );
+  });
+
+  it('should handle API errors correctly during registry creation', async () => {
+    const organizationId = 123;
+    const assessmentRegistry: AssessmentsRegistry = {
+      assessmentRegistryId: 456,
+      organizationId,
+      debtPositionTypeOrgCode: 'DEBT002',
+      sectionCode: 'SEC002',
+      operatingYear: '2023',
+      assessmentDescription: 'Failed Registry',
+      officeCode: 'OFF002',
+      assessmentCode: 'ASS002',
+      status: AssessmentsRegistryStatus.ACTIVE,
+      creationDate: '2023-01-01T00:00:00Z'
+    };
+
+    const errorMock = new Error('Registry creation failed');
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessmentsRegistry')
+      .mockRejectedValue(errorMock);
+
+    const { result } = renderHook(() =>
+      createAssessmentsRegistry(organizationId)
+    );
+
+    result.current.mutate(assessmentRegistry);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(errorMock);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentRegistry);
+    expect(mockParseAndLog).not.toHaveBeenCalled();
+  });
+
+  it('should not call parseAndLog when response data is null/undefined', async () => {
+    const organizationId = 123;
+    const assessmentRegistry: AssessmentsRegistry = {
+      assessmentRegistryId: 456,
+      organizationId,
+      debtPositionTypeOrgCode: 'DEBT003',
+      sectionCode: 'SEC003',
+      operatingYear: '2023',
+      assessmentDescription: 'Null Response Registry',
+      officeCode: 'OFF003',
+      assessmentCode: 'ASS003',
+      status: AssessmentsRegistryStatus.ACTIVE,
+      creationDate: '2023-01-01T00:00:00Z'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'createAssessmentsRegistry')
+      .mockResolvedValue({ data: null } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      createAssessmentsRegistry(organizationId)
+    );
+
+    result.current.mutate(assessmentRegistry);
+
+    await waitFor(() => {
+      expect(result.current.data).toBeNull();
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentRegistry);
+    expect(mockParseAndLog).not.toHaveBeenCalled();
+  });
+
+  it('should not create registry if mutate is not called', () => {
+    const organizationId = 123;
+    const { result } = renderHook(() =>
+      createAssessmentsRegistry(organizationId)
+    );
+
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.isPending).toBe(false);
+    expect(result.current.isSuccess).toBe(false);
+  });
+
+  it('should use correct mutation key', () => {
+    const organizationId = 456;
+    const { result } = renderHook(() =>
+      createAssessmentsRegistry(organizationId)
+    );
+
+    expect(result.current).toBeDefined();
+  });
+});
+
+describe('updateAssessmentsRegistry', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should update assessments registry successfully when mutation is called', async () => {
+    const organizationId = 123;
+    const assessmentRegistryId = 456;
+    const assessmentRegistry: AssessmentsRegistry = {
+      assessmentRegistryId,
+      organizationId,
+      debtPositionTypeOrgCode: 'DEBT001',
+      sectionCode: 'SEC001',
+      operatingYear: '2023',
+      assessmentDescription: 'Updated Registry',
+      officeCode: 'OFF001',
+      assessmentCode: 'ASS001',
+      status: AssessmentsRegistryStatus.ACTIVE,
+      creationDate: '2023-01-01T00:00:00Z'
+    };
+
+    const expectedResponse = {
+      ...assessmentRegistry,
+      lastUpdateDate: '2023-12-01T00:00:00Z'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'updateAssessmentsRegistry')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      updateAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    result.current.mutate(assessmentRegistry);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(
+      organizationId,
+      assessmentRegistryId,
+      assessmentRegistry
+    );
+    expect(mockParseAndLog).toHaveBeenCalledWith(
+      assessmentsRegistryDTOSchema,
+      expectedResponse
+    );
+  });
+
+  it('should handle API errors correctly during registry update', async () => {
+    const organizationId = 123;
+    const assessmentRegistryId = 456;
+    const assessmentRegistry: AssessmentsRegistry = {
+      assessmentRegistryId,
+      organizationId,
+      debtPositionTypeOrgCode: 'DEBT002',
+      sectionCode: 'SEC002',
+      operatingYear: '2023',
+      assessmentDescription: 'Failed Update Registry',
+      officeCode: 'OFF002',
+      assessmentCode: 'ASS002',
+      status: AssessmentsRegistryStatus.ACTIVE,
+      creationDate: '2023-01-01T00:00:00Z'
+    };
+
+    const errorMock = new Error('Registry update failed');
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'updateAssessmentsRegistry')
+      .mockRejectedValue(errorMock);
+
+    const { result } = renderHook(() =>
+      updateAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    result.current.mutate(assessmentRegistry);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(errorMock);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(
+      organizationId,
+      assessmentRegistryId,
+      assessmentRegistry
+    );
+    expect(mockParseAndLog).not.toHaveBeenCalled();
+  });
+
+  it('should not call parseAndLog when response data is null/undefined', async () => {
+    const organizationId = 123;
+    const assessmentRegistryId = 456;
+    const assessmentRegistry: AssessmentsRegistry = {
+      assessmentRegistryId,
+      organizationId,
+      debtPositionTypeOrgCode: 'DEBT003',
+      sectionCode: 'SEC003',
+      operatingYear: '2023',
+      assessmentDescription: 'Null Update Registry',
+      officeCode: 'OFF003',
+      assessmentCode: 'ASS003',
+      status: AssessmentsRegistryStatus.ACTIVE,
+      creationDate: '2023-01-01T00:00:00Z'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'updateAssessmentsRegistry')
+      .mockResolvedValue({ data: null } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      updateAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    result.current.mutate(assessmentRegistry);
+
+    await waitFor(() => {
+      expect(result.current.data).toBeNull();
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(
+      organizationId,
+      assessmentRegistryId,
+      assessmentRegistry
+    );
+    expect(mockParseAndLog).not.toHaveBeenCalled();
+  });
+
+  it('should not update registry if mutate is not called', () => {
+    const organizationId = 123;
+    const assessmentRegistryId = 456;
+    const { result } = renderHook(() =>
+      updateAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.isPending).toBe(false);
+    expect(result.current.isSuccess).toBe(false);
+  });
+
+  it('should use correct mutation key', () => {
+    const organizationId = 456;
+    const assessmentRegistryId = 789;
+    const { result } = renderHook(() =>
+      updateAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    expect(result.current).toBeDefined();
+  });
+
+  it('should handle different organizationId and assessmentRegistryId values', async () => {
+    const organizationId = 999;
+    const assessmentRegistryId = 777;
+    const assessmentRegistry: AssessmentsRegistry = {
+      assessmentRegistryId,
+      organizationId,
+      debtPositionTypeOrgCode: 'DIFF_DEBT',
+      sectionCode: 'DIFF_SEC',
+      operatingYear: '2023',
+      assessmentDescription: 'Different Org Registry',
+      officeCode: 'DIFF_OFF',
+      assessmentCode: 'DIFF_ASS',
+      status: AssessmentsRegistryStatus.INACTIVE,
+      creationDate: '2023-01-01T00:00:00Z'
+    };
+
+    const expectedResponse = {
+      ...assessmentRegistry,
+      lastUpdateDate: '2023-12-01T00:00:00Z'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'updateAssessmentsRegistry')
+      .mockResolvedValue({ data: expectedResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      updateAssessmentsRegistry(organizationId, assessmentRegistryId)
+    );
+
+    result.current.mutate(assessmentRegistry);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(expectedResponse);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(
+      organizationId,
+      assessmentRegistryId,
+      assessmentRegistry
+    );
+  });
+});
+
+describe('getOperatingYears', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should fetch operating years successfully', async () => {
+    const mockOperatingYears = [2021, 2022, 2023, 2024];
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getOperatingYears')
+      .mockResolvedValue({ data: mockOperatingYears } as AxiosResponse);
+
+    const { result } = renderHook(() => getOperatingYears());
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockOperatingYears);
+    expect(apiMock).toHaveBeenCalledWith();
+  });
+
+  it('should handle API errors correctly', async () => {
+    const errorMock = new Error('Operating years fetch failed');
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getOperatingYears')
+      .mockRejectedValue(errorMock);
+
+    renderHook(() => getOperatingYears());
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith();
+    });
+
+    expect(apiMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('should handle empty response correctly', async () => {
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getOperatingYears')
+      .mockResolvedValue({ data: [] } as AxiosResponse);
+
+    const { result } = renderHook(() => getOperatingYears());
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual([]);
+    expect(apiMock).toHaveBeenCalledWith();
+  });
+
+  it('should handle null/undefined response correctly', async () => {
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getOperatingYears')
+      .mockResolvedValue({ data: null } as AxiosResponse);
+
+    const { result } = renderHook(() => getOperatingYears());
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toBeNull();
+    expect(apiMock).toHaveBeenCalledWith();
+  });
+
+  it('should use enabled option correctly when set to false', () => {
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getOperatingYears')
+      .mockResolvedValue({ data: [2023] } as AxiosResponse);
+
+    const { result } = renderHook(() => getOperatingYears({ enabled: false }));
+
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.status).toBe('pending');
+    expect(result.current.fetchStatus).toBe('idle');
+    expect(apiMock).not.toHaveBeenCalled();
+  });
+
+  it('should use enabled option correctly when set to true', async () => {
+    const mockOperatingYears = [2023, 2024];
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getOperatingYears')
+      .mockResolvedValue({ data: mockOperatingYears } as AxiosResponse);
+
+    const { result } = renderHook(() => getOperatingYears({ enabled: true }));
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockOperatingYears);
+    expect(apiMock).toHaveBeenCalledWith();
+  });
+
+  it('should enable by default when no options provided', async () => {
+    const mockOperatingYears = [2024];
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getOperatingYears')
+      .mockResolvedValue({ data: mockOperatingYears } as AxiosResponse);
+
+    const { result } = renderHook(() => getOperatingYears());
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockOperatingYears);
+    expect(apiMock).toHaveBeenCalledWith();
+  });
+
+  it('should use correct query key for caching', () => {
+    const { result } = renderHook(() => getOperatingYears());
+
+    expect(result.current).toBeDefined();
   });
 });

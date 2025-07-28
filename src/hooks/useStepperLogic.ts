@@ -13,7 +13,7 @@ export const useStepperLogic = ({
 
   const goToNextStep = useCallback(() => {
     setCurrentStep((prev) => Math.min(prev + 1, totalSteps - 1));
-  }, []);
+  }, [totalSteps]);
 
   const goToPreviousStep = useCallback(() => {
     setCurrentStep((prev) => Math.max(prev - 1, 0));

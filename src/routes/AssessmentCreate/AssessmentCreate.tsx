@@ -1,7 +1,7 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { FormProvider } from 'react-hook-form';
+import { FormProvider, useWatch } from 'react-hook-form';
 import { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
 import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
@@ -9,12 +9,17 @@ import { PageRoutes } from '../../routes';
 import { useStore } from '../../store/GlobalStore';
 import { createAssessment } from '../../api/assessments';
 import { useStepperLogic } from '../../hooks/useStepperLogic';
+import utils from '../../utils';
 import { Step1Configuration } from './components/Step1Configuration';
-import { Step2Payments } from './components/Step2Payments';
+import {
+  Step2Payments,
+  validateStep2Payments,
+  Step2PaymentsRef
+} from './components/Step2Payments';
+import { Step3AssignChapter } from './components/Step3AssignChapter';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import utils from '../../utils';
 import { useAssessmentNameValidation } from './hooks/useAssessmentNameValidation';
 
 const assessmentFormSchema = z.object({
@@ -35,8 +40,31 @@ const assessmentFormSchema = z.object({
     )
 });
 
+const step3Schema = z.object({
+  operatingYear: z
+    .string({
+      required_error:
+        'assessmentCreate.configuration.step3.fields.operatingYear.required'
+    })
+    .min(
+      1,
+      'assessmentCreate.configuration.step3.fields.operatingYear.required'
+    ),
+  chapterCode: z
+    .string({
+      required_error:
+        'assessmentCreate.configuration.step3.fields.chapter.required'
+    })
+    .min(1, 'assessmentCreate.configuration.step3.fields.chapter.required')
+});
+
 type AssessmentFormData = z.infer<typeof assessmentFormSchema> & {
   addPaymentsToAssessment?: boolean;
+  selectedPayments?: Array<string>;
+  selectedPaymentIuds?: Array<string>;
+  operatingYear?: string;
+  chapterCode?: string;
+  assessmentRegistryId?: number;
 };
 
 export const AssessmentCreate = () => {
@@ -46,28 +74,52 @@ export const AssessmentCreate = () => {
     state: { organizationId }
   } = useStore();
 
-  const {
-    currentStep,
-    goToNextStep,
-    goToPreviousStep,
-    isFirstStep,
-    isLastStep
-  } = useStepperLogic({ initialStep: 0, totalSteps: 2 });
-
-  const createAssessmentMutation = createAssessment(organizationId);
-  const validateNameMutation = useAssessmentNameValidation(organizationId);
-
   const methods = useForm<AssessmentFormData>({
     resolver: zodResolver(assessmentFormSchema),
     mode: 'onTouched',
     defaultValues: {
       assessmentName: '',
       debtPositionTypeOrgCode: '',
-      addPaymentsToAssessment: false
+      addPaymentsToAssessment: false,
+      selectedPayments: [],
+      selectedPaymentIuds: [],
+      operatingYear: '',
+      chapterCode: '',
+      assessmentRegistryId: undefined
     }
   });
 
-  const { getValues, trigger, setError, clearErrors } = methods;
+  const addPaymentsToAssessmentRaw = useWatch({
+    control: methods.control,
+    name: 'addPaymentsToAssessment'
+  });
+
+  const addPaymentsToAssessment =
+    addPaymentsToAssessmentRaw === true ||
+    String(addPaymentsToAssessmentRaw) === 'true';
+
+  const totalSteps = addPaymentsToAssessment ? 3 : 2;
+
+  const {
+    currentStep,
+    goToNextStep,
+    goToPreviousStep,
+    isFirstStep,
+    isLastStep
+  } = useStepperLogic({ initialStep: 0, totalSteps });
+
+  const createAssessmentMutation = createAssessment(organizationId);
+  const validateNameMutation = useAssessmentNameValidation(organizationId);
+
+  const { getValues, clearErrors, trigger, setError } = methods;
+
+  const step2PaymentsRef = useRef<Step2PaymentsRef>(null);
+
+  const getAssessmentRegistryIdFromChapter = async (
+    values: AssessmentFormData
+  ): Promise<number | undefined> => {
+    return values.assessmentRegistryId;
+  };
 
   const validateStep = async (
     step: number,
@@ -112,6 +164,16 @@ export const AssessmentCreate = () => {
       }
 
       case 1:
+        return validateStep2Payments(values);
+
+      case 2:
+        if (addPaymentsToAssessment) {
+          // Year is always required, Chapter is required only if Year is selected
+          const yearValid = !!values.operatingYear;
+          const chapterValid = !values.operatingYear || !!values.chapterCode;
+
+          return yearValid && chapterValid;
+        }
         return true;
 
       default:
@@ -121,11 +183,41 @@ export const AssessmentCreate = () => {
 
   const handleSubmit = async (values: AssessmentFormData) => {
     try {
+      // STEP 1: Create always the standard assessment
       const response = await createAssessmentMutation.mutateAsync({
         assessmentName: values.assessmentName,
         debtPositionTypeOrgCode: values.debtPositionTypeOrgCode
       });
+      const assessmentId = response.assessmentId;
+      if (!assessmentId) {
+        throw new Error('Assessment ID not received from the response');
+      }
+      // STEP 2: If there are selected payments, create also assessment-details
+      if (
+        addPaymentsToAssessment &&
+        values.selectedPaymentIuds &&
+        values.selectedPaymentIuds.length > 0
+      ) {
+        const assessmentRegistryId =
+          await getAssessmentRegistryIdFromChapter(values);
 
+        if (!assessmentRegistryId) {
+          throw new Error(
+            'Assessment Registry ID not found for the selected chapter'
+          );
+        }
+
+        await utils.apiClient.bff.createAssessmentsDetail(
+          organizationId,
+          assessmentId,
+          {
+            assessmentRegistryId,
+            iuds: values.selectedPaymentIuds
+          }
+        );
+      }
+
+      // STEP 3: Final navigation
       navigate(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
         state: {
@@ -137,7 +229,7 @@ export const AssessmentCreate = () => {
         }
       });
     } catch (error) {
-      console.log(error);
+      console.error('Error during creation:', error);
 
       navigate(PageRoutes.RESPONSES_ERROR, {
         replace: true,
@@ -148,6 +240,7 @@ export const AssessmentCreate = () => {
     }
   };
 
+  // Conditional navigation logic for the wizard
   const handleNext = useCallback(async () => {
     try {
       const values = getValues();
@@ -155,9 +248,51 @@ export const AssessmentCreate = () => {
       const isStepValid = await validateStep(currentStep, values);
 
       if (!isStepValid) {
+        if (currentStep === 2 && addPaymentsToAssessment) {
+          const fieldsToValidate: Array<'operatingYear' | 'chapterCode'> = [
+            'operatingYear'
+          ];
+          if (values.operatingYear) {
+            fieldsToValidate.push('chapterCode');
+          }
+
+          try {
+            step3Schema.parse({
+              operatingYear: values.operatingYear,
+              chapterCode: values.chapterCode
+            });
+          } catch (error) {
+            if (error instanceof z.ZodError) {
+              error.errors.forEach((err) => {
+                const fieldName = err.path[0] as
+                  | 'operatingYear'
+                  | 'chapterCode';
+                if (fieldsToValidate.includes(fieldName)) {
+                  setError(fieldName, {
+                    type: 'manual',
+                    message: t(err.message)
+                  });
+                }
+              });
+            }
+          }
+        } else if (currentStep === 1) {
+          if (step2PaymentsRef.current) {
+            step2PaymentsRef.current.showValidationError(true);
+          }
+        }
         return;
       }
 
+      // LOGIC CONDITIONAL STEP 2 - Point of bifurcation of the flow
+      if (currentStep === 1) {
+        if (addPaymentsToAssessment) {
+          goToNextStep();
+        } else {
+          await handleSubmit(values);
+        }
+        return;
+      }
       if (isLastStep) {
         await handleSubmit(values);
       } else {
@@ -170,10 +305,13 @@ export const AssessmentCreate = () => {
   }, [
     getValues,
     currentStep,
+    addPaymentsToAssessment,
     isLastStep,
     goToNextStep,
+    trigger,
+    setError,
     handleSubmit,
-    validateStep
+    t
   ]);
 
   const handleBack = () => {
@@ -184,20 +322,50 @@ export const AssessmentCreate = () => {
     }
   };
 
-  const steps: Stepper['steps'] = useMemo(
-    () => [
+  const getNextButtonLabel = () => {
+    if (currentStep === 1) {
+      return addPaymentsToAssessment
+        ? t('commons.continue')
+        : t('commons.create');
+    }
+    return isLastStep ? t('commons.create') : t('commons.continue');
+  };
+
+  const step1Component = useMemo(() => <Step1Configuration />, []);
+  const step2Component = useMemo(
+    () => <Step2Payments ref={step2PaymentsRef} isActive={currentStep === 1} />,
+    [currentStep]
+  );
+  const step3Component = useMemo(() => <Step3AssignChapter />, []);
+
+  const steps: Stepper['steps'] = useMemo(() => {
+    const baseSteps = [
       {
         label: t('assessmentCreate.stepper.step1'),
-        content: <Step1Configuration key="step1" />
+        content: step1Component
       },
       {
         label: t('assessmentCreate.stepper.step2'),
         optional: true,
-        content: <Step2Payments key="step2" />
+        content: step2Component
       }
-    ],
-    [t]
-  );
+    ];
+
+    if (addPaymentsToAssessment) {
+      baseSteps.push({
+        label: t('assessmentCreate.stepper.step3'),
+        content: step3Component
+      });
+    }
+
+    return baseSteps;
+  }, [
+    t,
+    addPaymentsToAssessment,
+    step1Component,
+    step2Component,
+    step3Component
+  ]);
 
   return (
     <FormProvider {...methods}>
@@ -212,7 +380,7 @@ export const AssessmentCreate = () => {
         <WizardStepButtons
           onBack={handleBack}
           onNext={handleNext}
-          nextLabel={isLastStep ? t('commons.create') : t('commons.continue')}
+          nextLabel={getNextButtonLabel()}
         />
       </form>
     </FormProvider>

@@ -9,7 +9,8 @@ import {
 import { parseAndLog } from '../../utils/loaders';
 import {
   assessmentsRegistryDTOSchema,
-  assessmentsSchema
+  assessmentsSchema,
+  assessmentsDetailSchema
 } from '../../../generated/zod-schema';
 import { pagedAssessmentsExtendedDTOSchema } from '../../../generated/zod-schema';
 import { AssessmentsRegistry } from '../../../generated/data-contracts';
@@ -153,4 +154,37 @@ export const updateAssessmentsRegistry = (
       }
       return data;
     }
+  });
+
+export const createAssessmentDetails = (
+  organizationId: number,
+  assessmentId: number
+) =>
+  useMutation({
+    mutationKey: ['createAssessmentDetails', organizationId, assessmentId],
+    mutationFn: async (payload: {
+      assessmentRegistryId: number;
+      iuds: Array<string>;
+    }) => {
+      const { data } = await utils.apiClient.bff.createAssessmentsDetail(
+        organizationId,
+        assessmentId,
+        {
+          assessmentRegistryId: payload.assessmentRegistryId,
+          iuds: payload.iuds
+        }
+      );
+      parseAndLog(assessmentsDetailSchema, data);
+      return data;
+    }
+  });
+
+export const getOperatingYears = (options?: { enabled?: boolean }) =>
+  useQuery({
+    queryKey: ['getOperatingYears'],
+    queryFn: async () => {
+      const { data: response } = await utils.apiClient.bff.getOperatingYears();
+      return response;
+    },
+    enabled: options?.enabled ?? true
   });
