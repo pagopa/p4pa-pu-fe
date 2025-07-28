@@ -122,9 +122,7 @@ describe('AssessmentActionMenu component:', () => {
     fireEvent.click(screen.getByTestId('assessment-action-menu'));
     fireEvent.click(screen.getByTestId('assessment-action-close'));
 
-    await waitFor(() => {
-      screen.getByTestId('confirm-close-dialog');
-    });
+    screen.getByTestId('confirm-close-dialog');
 
     fireEvent.click(screen.getByTestId('confirm-close-dialog-confirm-button'));
     expect(mutateAsyncSpy).toHaveBeenCalledWith({
