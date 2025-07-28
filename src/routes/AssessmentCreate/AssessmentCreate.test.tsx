@@ -465,7 +465,6 @@ describe('AssessmentCreate', () => {
         );
       });
 
-      // Should not navigate to error page when showing notification
       expect(mockNavigate).not.toHaveBeenCalledWith('/responses/error', {
         replace: true,
         state: {
