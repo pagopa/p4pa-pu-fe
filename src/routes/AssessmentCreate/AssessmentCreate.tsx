@@ -21,6 +21,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useAssessmentNameValidation } from './hooks/useAssessmentNameValidation';
+import { AxiosError } from 'axios';
 
 const assessmentFormSchema = z.object({
   assessmentName: z
@@ -230,6 +231,11 @@ export const AssessmentCreate = () => {
       });
     } catch (error) {
       console.error('Error during creation:', error);
+
+      if (error instanceof AxiosError && error.response?.status === 409) {
+        utils.notify.emit(t('assessmentCreate.error.nameAlreadyPresent'));
+        return;
+      }
 
       navigate(PageRoutes.RESPONSES_ERROR, {
         replace: true,
