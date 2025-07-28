@@ -310,7 +310,7 @@
     },
     "error": {
       "creationFailed": "Errore durante la creazione dell'assessment",
-      "nameAlreadyPresent": "Esiste già un accertamento con lo stesso Nome"
+      "nameAlreadyPresent": "Esiste già un accertamento con la stessa combinazione di nome e tipo dovuto"
     }
   },
   "assessmentDetail": {

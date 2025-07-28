@@ -15,7 +15,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import utils from '../../utils';
-import { AxiosError } from 'axios';
+import { useAssessmentNameValidation } from './hooks/useAssessmentNameValidation';
 
 const assessmentFormSchema = z.object({
   assessmentName: z
@@ -55,6 +55,7 @@ export const AssessmentCreate = () => {
   } = useStepperLogic({ initialStep: 0, totalSteps: 2 });
 
   const createAssessmentMutation = createAssessment(organizationId);
+  const validateNameMutation = useAssessmentNameValidation(organizationId);
 
   const methods = useForm<AssessmentFormData>({
     resolver: zodResolver(assessmentFormSchema),
@@ -66,22 +67,55 @@ export const AssessmentCreate = () => {
     }
   });
 
-  const { getValues, clearErrors, trigger } = methods;
+  const { getValues, trigger, setError, clearErrors } = methods;
 
-  const validateStep = (step: number, values: AssessmentFormData) => {
+  const validateStep = async (
+    step: number,
+    values: AssessmentFormData
+  ): Promise<boolean> => {
     switch (step) {
-      case 0:
-        return {
-          isValid: !!values.assessmentName && !!values.debtPositionTypeOrgCode,
-          fields: ['assessmentName', 'debtPositionTypeOrgCode'] as const
-        };
+      case 0: {
+        const zodSchemaValidationResult = await trigger([
+          'assessmentName',
+          'debtPositionTypeOrgCode'
+        ]);
+
+        if (!zodSchemaValidationResult) {
+          return false;
+        }
+
+        try {
+          clearErrors('assessmentName');
+
+          const assessmentExists = await validateNameMutation.mutateAsync({
+            assessmentName: values.assessmentName,
+            debtPositionTypeOrgCode: values.debtPositionTypeOrgCode
+          });
+
+          if (assessmentExists) {
+            setError('assessmentName', {
+              type: 'manual',
+              message: 'assessmentCreate.error.nameAlreadyPresent'
+            });
+            return false;
+          }
+
+          return true;
+        } catch (error) {
+          console.error('Error validating assessment:', error);
+          setError('assessmentName', {
+            type: 'manual',
+            message: 'errors.generic'
+          });
+          return false;
+        }
+      }
+
       case 1:
-        return {
-          isValid: true,
-          fields: [] as const
-        };
+        return true;
+
       default:
-        return { isValid: false, fields: [] as const };
+        return false;
     }
   };
 
@@ -105,11 +139,6 @@ export const AssessmentCreate = () => {
     } catch (error) {
       console.log(error);
 
-      if (error instanceof AxiosError && error.response?.status === 409) {
-        utils.notify.emit(t('assessmentCreate.error.nameAlreadyPresent'));
-        return;
-      }
-
       navigate(PageRoutes.RESPONSES_ERROR, {
         replace: true,
         state: {
@@ -121,13 +150,11 @@ export const AssessmentCreate = () => {
 
   const handleNext = useCallback(async () => {
     try {
-      clearErrors();
       const values = getValues();
 
-      const { isValid, fields } = validateStep(currentStep, values);
+      const isStepValid = await validateStep(currentStep, values);
 
-      if (!isValid) {
-        await trigger(fields);
+      if (!isStepValid) {
         return;
       }
 
@@ -141,18 +168,17 @@ export const AssessmentCreate = () => {
       utils.notify.emit(t('errors.generic'));
     }
   }, [
-    clearErrors,
     getValues,
     currentStep,
     isLastStep,
     goToNextStep,
-    trigger,
-    handleSubmit
+    handleSubmit,
+    validateStep
   ]);
 
   const handleBack = () => {
     if (isFirstStep) {
-      navigate(PageRoutes.ASSESSMENTS);
+      navigate(-1);
     } else {
       goToPreviousStep();
     }
