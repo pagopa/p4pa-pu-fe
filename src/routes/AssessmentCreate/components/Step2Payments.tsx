@@ -418,7 +418,7 @@ const Step2PaymentsComponent = forwardRef<Step2PaymentsRef>((_, ref) => {
           action={
             <Button
               variant="naked"
-              size="small"
+              size="large"
               startIcon={<CopyAll />}
               onClick={handleClearSelection}
               data-testid="clear-selection-button"

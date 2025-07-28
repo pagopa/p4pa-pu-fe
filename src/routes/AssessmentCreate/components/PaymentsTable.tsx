@@ -232,7 +232,7 @@ export const PaymentsTable = ({
           {
             type: COMPONENT_TYPE.dateRange,
             label: 'dateRange',
-            gridWidth: 4,
+            gridWidth: 4.5,
             from: {
               label: t('commons.outcomeFrom'),
               value: draftFilters.dateFrom,
@@ -247,7 +247,7 @@ export const PaymentsTable = ({
           {
             type: COMPONENT_TYPE.dateRange,
             label: 'updateDateRange',
-            gridWidth: 5,
+            gridWidth: 4.5,
             from: {
               label: t('commons.updatedFrom'),
               value: draftFilters.updateDateFrom,
