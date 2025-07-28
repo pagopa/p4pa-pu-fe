@@ -294,6 +294,34 @@
             "yes": "Si",
             "no": "No"
           }
+        },
+        "selection": {
+          "banner": {
+            "single": "({{count}}) Pagamento selezionato",
+            "multiple": "({{count}}) Pagamenti selezionati",
+            "clearSelection": "Cancella la selezione"
+          }
+        },
+        "validation": {
+          "noPaymentsSelected": "Devi selezionare almeno un pagamento da aggiungere.",
+          "noFiltersSelected": "Selezionare almeno un filtro."
+        }
+      },
+      "step3": {
+        "title": "Assegna capitolo",
+        "fields": {
+          "operatingYear": {
+            "label": "Anno esercizio",
+            "placeholder": "Seleziona anno esercizio",
+            "required": "Il campo Anno esercizio è obbligatorio",
+            "noData": "Nessun anno disponibile"
+          },
+          "chapter": {
+            "label": "Capitolo",
+            "placeholder": "Seleziona capitolo",
+            "required": "Il campo Capitolo è obbligatorio",
+            "noData": "Nessun capitolo disponibile per l'anno selezionato"
+          }
         }
       }
     },
@@ -301,7 +329,8 @@
     "title": "Crea un nuovo accertamento",
     "stepper": {
       "step1": "Configurazione accertamento",
-      "step2": "Aggiungi pagamenti"
+      "step2": "Aggiungi pagamenti",
+      "step3": "Assegna capitolo"
     },
     "success": {
       "title": "L'accertamento \"{{assessmentName}}\" è stato creato!",
@@ -340,7 +369,7 @@
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
-      "ALL": "Tutti", 
+      "ALL": "Tutti",
       "DOPPI": "Pagamenti doppi",
       "RT_NO_IUF": "Pagamenti non correttamente rendicontati",
       "RT_NO_IUD": "Pagamenti non correttamente notificati",
@@ -589,6 +618,7 @@
     "importFrom": "Caricati dal",
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
+    "inThisPage": "in questa pagina",
     "iud": "IUD",
     "iuf": "IUF",
     "iur": "IUR",
@@ -760,7 +790,6 @@
     "taxCode": "Codice Tassonomico",
     "taxonomy": "Tassonomia",
     "to": "Al",
-    "resultFrom": "Esito dal",
     "transactionManager": "Gestore della transazione (PSP)",
     "unauthorized": "Non sei autorizzato ad accedere alla sezione, contatta il gestore dei permessi",
     "unknownOrganization": "Ente senza nome",
@@ -1430,6 +1459,10 @@
     "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
     "fetchOperators": "Impossibile caricare la lista di tutti gli operatori. Riprova più tardi.",
     "fetchOperatorsEnabled": "Impossibile caricare la lista degli operatori abilitati. Riprova più tardi.",
+    "fetchOperatingYears": "Impossibile caricare gli anni di esercizio. Riprova più tardi.",
+    "fetchChapters": "Impossibile caricare i capitoli. Riprova più tardi.",
+    "fetchPaidInstallments": "Impossibile caricare i pagamenti. Riprova più tardi.",
+    "noChaptersForYear": "Non ci sono capitoli per l'anno {{year}}",
     "generic": "Si è verificato un errore. Riprova più tardi."
   },
   "exportFlow": {

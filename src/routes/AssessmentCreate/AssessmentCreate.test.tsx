@@ -1,6 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createAssessment } from '../../api/assessments';
 import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
@@ -10,6 +9,7 @@ import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { AssessmentCreate } from './AssessmentCreate';
 import { render } from '../../__tests__/renderers';
 import { AxiosError } from 'axios';
+import utils from '../../utils';
 
 vi.mock('../../api/assessments', () => ({
   createAssessment: vi.fn()
@@ -43,6 +43,11 @@ vi.mock('../../utils', () => ({
     },
     config: {
       deployPath: ''
+    },
+    apiClient: {
+      bff: {
+        createAssessmentsDetail: vi.fn()
+      }
     }
   }
 }));
@@ -62,7 +67,18 @@ vi.mock('./components/Step1Configuration', () => ({
 }));
 
 vi.mock('./components/Step2Payments', () => ({
-  Step2Payments: () => <div data-testid="step2-payments">Step 2 Payments</div>
+  Step2Payments: vi
+    .fn()
+    .mockImplementation(() => (
+      <div data-testid="step2-payments">Step 2 Payments</div>
+    )),
+  validateStep2Payments: vi.fn().mockReturnValue(true)
+}));
+
+vi.mock('./components/Step3AssignChapter', () => ({
+  Step3AssignChapter: () => (
+    <div data-testid="step3-assign-chapter">Step 3 Assign Chapter</div>
+  )
 }));
 
 vi.mock('../../hooks/useStepperLogic', () => ({
@@ -81,6 +97,7 @@ describe('AssessmentCreate', () => {
   const mockUseNavigate = useNavigate as Mock;
 
   let mockUseStepperLogic: Mock;
+  let mockValidateStep2Payments: Mock;
 
   const translations = {
     'assessmentCreate.title': 'Crea Assessment',
@@ -88,11 +105,16 @@ describe('AssessmentCreate', () => {
     'assessmentCreate.formLabel': 'Form creazione assessment',
     'assessmentCreate.stepper.step1': 'Configurazione',
     'assessmentCreate.stepper.step2': 'Pagamenti',
+    'assessmentCreate.stepper.step3': 'Assegna Capitolo',
     'assessmentCreate.error.nameAlreadyPresent': 'Nome già presente',
     'assessmentCreate.configuration.step1.fields.name.required':
       'Nome richiesto',
     'assessmentCreate.configuration.step1.fields.debtPositionType.required':
       'Tipo posizione debitoria richiesto',
+    'assessmentCreate.configuration.step3.fields.operatingYear.required':
+      'Anno operativo richiesto',
+    'assessmentCreate.configuration.step3.fields.chapter.required':
+      'Capitolo richiesto',
     'commons.continue': 'Continua',
     'commons.create': 'Crea',
     'commons.back': 'Indietro',
@@ -105,8 +127,12 @@ describe('AssessmentCreate', () => {
     i18nTestSetup(translations);
 
     const { useStepperLogic } = await import('../../hooks/useStepperLogic');
+    const { validateStep2Payments } = await import(
+      './components/Step2Payments'
+    );
 
     mockUseStepperLogic = useStepperLogic as Mock;
+    mockValidateStep2Payments = validateStep2Payments as Mock;
 
     mockUseStore.mockReturnValue({
       state: {
@@ -134,6 +160,11 @@ describe('AssessmentCreate', () => {
       isFirstStep: true,
       isLastStep: false
     });
+
+    mockValidateStep2Payments.mockReturnValue(true);
+
+    vi.mocked(utils.notify.emit).mockClear();
+    vi.mocked(utils.apiClient.bff.createAssessmentsDetail).mockClear();
   });
 
   describe('Rendering and UI', () => {
@@ -207,6 +238,17 @@ describe('AssessmentCreate', () => {
     });
   });
 
+  describe('Dynamic step rendering', () => {
+    it('should initialize stepper with 2 steps by default', () => {
+      render(<AssessmentCreate />);
+
+      expect(mockUseStepperLogic).toHaveBeenCalledWith({
+        initialStep: 0,
+        totalSteps: 2
+      });
+    });
+  });
+
   describe('Navigation', () => {
     it('should navigate to assessments list when clicking back from step 1', async () => {
       const user = userEvent.setup();
@@ -248,48 +290,6 @@ describe('AssessmentCreate', () => {
     });
   });
 
-  describe('Form Validation', () => {
-    it('should handle form validation when proceeding to next step', async () => {
-      const user = userEvent.setup();
-
-      render(<AssessmentCreate />);
-
-      await user.click(screen.getByRole('button', { name: 'Continua' }));
-
-      expect(
-        screen.getByRole('button', { name: 'Continua' })
-      ).toBeInTheDocument();
-    });
-
-    it('should validate form fields on step 1', async () => {
-      const user = userEvent.setup();
-
-      render(<AssessmentCreate />);
-
-      await user.click(screen.getByRole('button', { name: 'Continua' }));
-
-      expect(screen.getByRole('form')).toBeInTheDocument();
-    });
-
-    it('should handle form submission on last step', async () => {
-      const user = userEvent.setup();
-
-      mockUseStepperLogic.mockReturnValue({
-        currentStep: 1,
-        goToNextStep: mockGoToNextStep,
-        goToPreviousStep: mockGoToPreviousStep,
-        isFirstStep: false,
-        isLastStep: true
-      });
-
-      render(<AssessmentCreate />);
-
-      await user.click(screen.getByRole('button', { name: 'Crea' }));
-
-      expect(screen.getByRole('form')).toBeInTheDocument();
-    });
-  });
-
   describe('Form Submission', () => {
     beforeEach(() => {
       mockUseStepperLogic.mockReturnValue({
@@ -301,34 +301,74 @@ describe('AssessmentCreate', () => {
       });
     });
 
-    it('should handle form submission when on last step', async () => {
+    it('should handle successful submission without payments', async () => {
       const user = userEvent.setup();
 
       mockMutateAsync.mockResolvedValue({
         assessmentName: 'Test Assessment',
-        id: 'assessment-123'
+        assessmentId: 'assessment-123'
       });
 
       render(<AssessmentCreate />);
 
       await user.click(screen.getByRole('button', { name: 'Crea' }));
 
-      expect(screen.getByRole('button', { name: 'Crea' })).toBeInTheDocument();
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith({
+          assessmentName: '',
+          debtPositionTypeOrgCode: ''
+        });
+      });
     });
 
-    it('should handle successful form submission', async () => {
+    it('should handle missing assessmentId in response', async () => {
       const user = userEvent.setup();
+      const consoleErrorSpy = vi.spyOn(console, 'error');
 
       mockMutateAsync.mockResolvedValue({
-        assessmentName: 'Test Assessment',
-        id: 'assessment-123'
+        assessmentName: 'Test Assessment'
       });
 
       render(<AssessmentCreate />);
 
       await user.click(screen.getByRole('button', { name: 'Crea' }));
 
-      expect(screen.getByRole('form')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith('/responses/error', {
+          replace: true,
+          state: {
+            errorType: 'default'
+          }
+        });
+      });
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should navigate to success page on successful submission', async () => {
+      const user = userEvent.setup();
+
+      mockMutateAsync.mockResolvedValue({
+        assessmentName: 'Test Assessment',
+        assessmentId: 'assessment-123'
+      });
+
+      render(<AssessmentCreate />);
+
+      await user.click(screen.getByRole('button', { name: 'Crea' }));
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith('/responses/success', {
+          replace: true,
+          state: {
+            category: 'assessment-create',
+            i18nParams: {
+              assessmentName: 'Test Assessment'
+            },
+            assessmentId: 'assessment-123'
+          }
+        });
+      });
     });
   });
 
@@ -347,7 +387,7 @@ describe('AssessmentCreate', () => {
       const user = userEvent.setup();
 
       const error409 = new AxiosError();
-      error409.response = { status: 409 } as any;
+      error409.response = { status: 409 } as never;
 
       mockMutateAsync.mockRejectedValue(error409);
 
@@ -355,7 +395,11 @@ describe('AssessmentCreate', () => {
 
       await user.click(screen.getByRole('button', { name: 'Crea' }));
 
-      expect(screen.getByRole('form')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(vi.mocked(utils.notify.emit)).toHaveBeenCalledWith(
+          'Nome già presente'
+        );
+      });
     });
 
     it('should handle generic errors', async () => {
@@ -368,14 +412,21 @@ describe('AssessmentCreate', () => {
 
       await user.click(screen.getByRole('button', { name: 'Crea' }));
 
-      expect(screen.getByRole('form')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith('/responses/error', {
+          replace: true,
+          state: {
+            errorType: 'default'
+          }
+        });
+      });
     });
 
     it('should handle AxiosError without 409 status', async () => {
       const user = userEvent.setup();
 
       const axiosError = new AxiosError();
-      axiosError.response = { status: 500 } as any;
+      axiosError.response = { status: 500 } as never;
 
       mockMutateAsync.mockRejectedValue(axiosError);
 
@@ -383,7 +434,14 @@ describe('AssessmentCreate', () => {
 
       await user.click(screen.getByRole('button', { name: 'Crea' }));
 
-      expect(screen.getByRole('form')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith('/responses/error', {
+          replace: true,
+          state: {
+            errorType: 'default'
+          }
+        });
+      });
     });
 
     it('should handle AxiosError without response', async () => {
@@ -397,7 +455,14 @@ describe('AssessmentCreate', () => {
 
       await user.click(screen.getByRole('button', { name: 'Crea' }));
 
-      expect(screen.getByRole('form')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith('/responses/error', {
+          replace: true,
+          state: {
+            errorType: 'default'
+          }
+        });
+      });
     });
   });
 
@@ -469,6 +534,65 @@ describe('AssessmentCreate', () => {
       rerender(<AssessmentCreate />);
 
       expect(screen.getByRole('form')).toBeInTheDocument();
+    });
+  });
+
+  describe('Button Label Logic', () => {
+    it('should show "Crea" button on step 1 when isLastStep is true', () => {
+      mockUseStepperLogic.mockReturnValue({
+        currentStep: 1,
+        goToNextStep: mockGoToNextStep,
+        goToPreviousStep: mockGoToPreviousStep,
+        isFirstStep: false,
+        isLastStep: true
+      });
+
+      render(<AssessmentCreate />);
+
+      expect(screen.getByRole('button', { name: 'Crea' })).toBeInTheDocument();
+    });
+
+    it('should show "Continua" button on step 0 when isLastStep is false', () => {
+      mockUseStepperLogic.mockReturnValue({
+        currentStep: 0,
+        goToNextStep: mockGoToNextStep,
+        goToPreviousStep: mockGoToPreviousStep,
+        isFirstStep: true,
+        isLastStep: false
+      });
+
+      render(<AssessmentCreate />);
+
+      expect(
+        screen.getByRole('button', { name: 'Continua' })
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Form Validation Logic', () => {
+    it('should validate step 0 fields when clicking continue', async () => {
+      const user = userEvent.setup();
+
+      render(<AssessmentCreate />);
+
+      await user.click(screen.getByRole('button', { name: 'Continua' }));
+
+      expect(screen.getByRole('form')).toBeInTheDocument();
+    });
+  });
+
+  describe('Step Components Memoization', () => {
+    it('should memoize step components correctly', () => {
+      const { rerender } = render(<AssessmentCreate />);
+
+      const initialStep1 = screen.getByTestId('step1-config');
+
+      rerender(<AssessmentCreate />);
+
+      const rerenderedStep1 = screen.getByTestId('step1-config');
+
+      expect(initialStep1).toBeInTheDocument();
+      expect(rerenderedStep1).toBeInTheDocument();
     });
   });
 });

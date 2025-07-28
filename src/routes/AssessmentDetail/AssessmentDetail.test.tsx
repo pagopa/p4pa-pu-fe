@@ -95,6 +95,7 @@ describe('AssessmentDetail', () => {
     debtPositionTypeOrgDescription: 'FEATURE TEST - DO NOT DELETE',
     status: AssessmentStatus.ACTIVE,
     updateOperatorExternalId: 'WS_USER-piattaforma-unitaria_',
+    flagManualGeneration: false,
     pagedAssessmentsRowsDetail: {
       content: [
         {
@@ -120,8 +121,7 @@ describe('AssessmentDetail', () => {
       totalPages: 1,
       number: 0,
       size: 10
-    },
-    flagManualGeneration: false
+    }
   };
 
   beforeEach(() => {
