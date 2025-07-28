@@ -41,18 +41,22 @@ export function useSearch<
     initialSize,
     onPaginationChange: (newPagination) => {
       setPaginationParams(newPagination);
-      query.mutate({ filters, pagination: newPagination, sort });
+      query.mutateAsync({ filters, pagination: newPagination, sort });
     }
   });
 
   useEffect(() => {
-    query.mutate({ filters, pagination: { ...pagination, page: 0 }, sort });
+    query.mutateAsync({
+      filters,
+      pagination: { ...pagination, page: 0 },
+      sort
+    });
   }, []);
 
   const onSortChange = (newSort: Array<string>) => {
     setSort(newSort);
     handlePaginationChange({ ...pagination, page: 0 });
-    query.mutate({
+    query.mutateAsync({
       filters,
       pagination: { ...pagination, page: 0 },
       sort: newSort
@@ -63,7 +67,7 @@ export function useSearch<
     handlePaginationChange({ ...pagination, page: 0 });
     const params = utils.URI.encode(filters);
     utils.URI.set(params);
-    query.mutate({
+    query.mutateAsync({
       filters,
       pagination: { ...pagination, page: 0 },
       sort

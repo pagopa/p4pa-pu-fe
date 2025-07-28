@@ -5,8 +5,12 @@ import { renderHook, act } from '../__tests__/renderers';
 
 // mock usePaginationState
 const mockHandlePaginationChange = vi.fn();
-const mockSetPaginationParams = vi.fn();
 const mockPaginationParams = { page: 1, size: 20 };
+const mockSetPaginationParams = vi.fn((updater) => {
+  if (typeof updater === 'function') {
+    updater(mockPaginationParams);
+  }
+});
 
 vi.mock('./usePaginationState', () => ({
   usePaginationState: () => ({
@@ -16,7 +20,6 @@ vi.mock('./usePaginationState', () => ({
   })
 }));
 
-// mock for query props
 type Filters = { name: string };
 type Data = { result: string };
 type Error = { message: string };
@@ -33,7 +36,6 @@ function createMockQuery(): UseMutationResult<
   return {
     mutate: vi.fn(),
     mutateAsync: vi.fn().mockResolvedValue({ result: 'ok' })
-    // Add any other methods if needed, with correct types
   } as unknown as UseMutationResult<
     Data,
     Error,
@@ -68,17 +70,19 @@ describe('useSearch', () => {
     renderHook(() =>
       useSearch<Filters, Data, Error>({
         filters: { name: 'foo' },
-        query
+        query,
+        initialPage: 1,
+        initialSize: 20
       })
     );
     expect(query.mutateAsync).toHaveBeenCalledWith({
       filters: { name: 'foo' },
-      pagination: mockPaginationParams,
+      pagination: { ...mockPaginationParams, page: 0 },
       sort: []
     });
   });
 
-  it('applyFilters resets page and calls query.mutate', () => {
+  it('applyFilters resets page and calls query.mutateAsync', () => {
     const query = createMockQuery();
     const { result } = renderHook(() =>
       useSearch<Filters, Data, Error>({
@@ -86,18 +90,22 @@ describe('useSearch', () => {
         query
       })
     );
+
     act(() => {
       result.current.applyFilters({ name: 'foo' });
     });
-    expect(mockSetPaginationParams).toHaveBeenCalledWith(expect.any(Function));
-    expect(query.mutate).toHaveBeenCalledWith({
+
+    expect(mockHandlePaginationChange).toHaveBeenCalledWith(
+      expect.objectContaining({ page: 0 })
+    );
+    expect(query.mutateAsync).toHaveBeenCalledWith({
       filters: { name: 'foo' },
       pagination: { page: 0, size: mockPaginationParams.size },
       sort: []
     });
   });
 
-  it('setSort update state', () => {
+  it('setSort updates state', () => {
     const query = createMockQuery();
     const { result } = renderHook(() =>
       useSearch<Filters, Data, Error>({
@@ -105,9 +113,11 @@ describe('useSearch', () => {
         query
       })
     );
+
     act(() => {
       result.current.setSort(['name']);
     });
-    expect(result.current.setSort).toBeTypeOf('function');
+
+    expect(typeof result.current.setSort).toBe('function');
   });
 });
