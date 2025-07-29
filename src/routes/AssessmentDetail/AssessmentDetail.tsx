@@ -1,21 +1,5 @@
-import { useEffect, useState, useMemo } from 'react';
-import {
-  Grid,
-  Typography,
-  useTheme,
-  Menu,
-  MenuItem,
-  Button,
-  Box,
-  Chip
-} from '@mui/material';
-import {
-  Close,
-  Delete,
-  MoreVert,
-  Add,
-  RemoveCircleOutline
-} from '@mui/icons-material';
+import { Grid, Typography, useTheme, Button, Box, Chip } from '@mui/material';
+import { Add, RemoveCircleOutline } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer, {
   DetailData
@@ -30,25 +14,15 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 import { useAssessmentDetailFilters } from '../../hooks/useAssessmentDetailFilters';
-import { AssessmentsDetail } from '../../../generated/apiClient';
 import { Variant } from '@mui/material/styles/createTypography';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import GenericDialog from '../../components/GenericDialog/GenericDialog';
-import { setAppState } from '../../store/AppStateStore';
-import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
 
-type DialogConfig = {
-  open: boolean;
-  title: string;
-  message: string;
-  confirmLabel: string;
-  cancelLabel?: string;
-  onConfirm: () => void;
-  onClose: () => void;
-  testId: string;
-};
+import AssesmentActionMenu from '../../components/Assessment/AssessmentActionMenu';
+import { useEffect, useMemo } from 'react';
+import { setAppState } from '../../store/AppStateStore';
+import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 
 export const AssessmentDetail = () => {
   const { t } = useTranslation();
@@ -63,12 +37,6 @@ export const AssessmentDetail = () => {
     navigate(PageRoutes.RESPONSES_ERROR);
     return null;
   }
-
-  const [detailItem, setDetailItem] = useState<AssessmentsDetail | null>(null);
-  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
-
-  const menuOpen = Boolean(menuAnchorEl);
 
   const {
     appliedFilters,
@@ -102,15 +70,9 @@ export const AssessmentDetail = () => {
     }
   }, [isError, error, navigate]);
 
-  useEffect(() => {
-    if (data?.pagedAssessmentsRowsDetail?.content?.[0] && !detailItem) {
-      setDetailItem(data.pagedAssessmentsRowsDetail.content[0]);
-    }
-  }, [data, detailItem]);
-
   // Handle custom breadcrumb
   useEffect(() => {
-    if ((detailItem || data?.assessmentsName) && assessmentId) {
+    if (assessmentId) {
       const customBreadcrumbsItems: Array<BredcrumbItem> = [
         { pathname: PageRoutes.ASSESSMENT_INDEX, id: 'ASSESSMENT' },
         {
@@ -123,7 +85,7 @@ export const AssessmentDetail = () => {
           }),
           label:
             data?.assessmentsName ||
-            detailItem?.debtPositionTypeOrgCode ||
+            data?.debtPositionTypeOrgDescription ||
             `${t('assessment.assessment')} ${assessmentId}`,
           id: 'ASSESSMENT_DETAIL'
         }
@@ -133,50 +95,14 @@ export const AssessmentDetail = () => {
         customBreadcrumbsItems: customBreadcrumbsItems
       });
     }
-  }, [detailItem, assessmentId, data?.assessmentsName]);
+  }, [
+    data?.assessmentsName,
+    data?.debtPositionTypeOrgDescription,
+    assessmentId
+  ]);
 
   const handleFiltersApplied = () => {
     applyFilters();
-  };
-
-  const handleMenuClose = () => {
-    setMenuAnchorEl(null);
-  };
-
-  const handleClose = () => {
-    handleMenuClose();
-  };
-
-  const handleDelete = () => {
-    handleMenuClose();
-    showDeleteDialog();
-  };
-
-  const showDeleteDialog = () => {
-    setDialogConfig({
-      open: true,
-      title: t('assessmentDetail.deleteDialog.title'),
-      message: t('assessmentDetail.deleteDialog.description'),
-      confirmLabel: t('commons.delete'),
-      cancelLabel: t('commons.cancel'),
-      onConfirm: handleDeleteConfirm,
-      onClose: () => setDialogConfig(null),
-      testId: 'confirm-delete-dialog'
-    });
-  };
-
-  const handleDeleteConfirm = async () => {
-    try {
-      // TODO: Implement the API call to delete the assessment
-      console.log('Deleting assessment:', assessmentId);
-      setDialogConfig(null);
-      // For now, navigate back, in the future implement the delete call
-      navigate(-1);
-    } catch (error) {
-      console.error('Error while deleting the assessment:', error);
-      setDialogConfig(null);
-      navigate(PageRoutes.RESPONSES_ERROR);
-    }
   };
 
   const handleRemovePayments = () => {
@@ -204,14 +130,10 @@ export const AssessmentDetail = () => {
     });
   };
 
-  // Configuration sections for the DetailContainer
   const detailSections = useMemo(() => {
-    const firstAssessmentItem = detailItem;
-
     const statusChipProps = data?.status
       ? getAssessmentStatusChipProps(data.status, t)
       : null;
-
     const summaryData: Array<DetailData> = [
       {
         label: t('commons.state'),
@@ -227,31 +149,24 @@ export const AssessmentDetail = () => {
       },
       {
         label: t('assessmentDetail.debtType'),
-        value:
-          data?.debtPositionTypeOrgDescription ||
-          firstAssessmentItem?.debtPositionTypeOrgCode ||
-          '-'
+        value: data?.debtPositionTypeOrgDescription || '-'
       },
       {
         label: t('assessmentDetail.createdBy'),
-        value:
-          data?.updateOperatorExternalId ||
-          firstAssessmentItem?.updateOperatorExternalId ||
-          '-'
+        value: data?.updateOperatorExternalId || '-'
       }
     ];
-
     return [
       {
-        title: { label: t('commons.summary'), variant: 'overline' as Variant },
-        data: [...summaryData],
+        title: {
+          label: t('commons.summary'),
+          variant: 'overline' as Variant
+        },
+        data: summaryData,
         inline: true
       }
     ];
   }, [
-    detailItem,
-    assessmentId,
-    t,
     data?.status,
     data?.debtPositionTypeOrgDescription,
     data?.updateOperatorExternalId
@@ -265,47 +180,13 @@ export const AssessmentDetail = () => {
           `${t('assessment.assessment')} ${assessmentId || ''}`
         }
         callToAction={[
-          {
-            icon: <MoreVert />,
-            variant: 'text' as const,
-            onActionClick: () => {
-              const button = document.activeElement as HTMLElement;
-              setMenuAnchorEl(button);
-            }
-          }
+          <AssesmentActionMenu
+            key={'AssesmentActionMenu'}
+            flagManualGeneration={data?.flagManualGeneration}
+            status={data?.status}
+          />
         ]}
       />
-
-      <Menu
-        anchorEl={menuAnchorEl}
-        open={menuOpen}
-        onClose={handleMenuClose}
-        slotProps={{
-          paper: {
-            elevation: 0,
-            sx: {
-              overflow: 'visible',
-              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-              mt: 1.5,
-              '& .MuiMenuItem-root': {
-                px: 2,
-                py: 1
-              }
-            }
-          }
-        }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
-        <MenuItem onClick={handleClose}>
-          <Close fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
-          {t('commons.close')}
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <Delete fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
-          {t('commons.delete')}
-        </MenuItem>
-      </Menu>
 
       <Grid container spacing={2}>
         <Grid item md={12}>
@@ -443,19 +324,6 @@ export const AssessmentDetail = () => {
           />
         </Grid>
       </Grid>
-
-      {dialogConfig && (
-        <GenericDialog
-          data-testid={dialogConfig.testId}
-          open={dialogConfig.open}
-          title={dialogConfig.title}
-          message={dialogConfig.message}
-          confirmLabel={dialogConfig.confirmLabel}
-          cancelLabel={dialogConfig.cancelLabel}
-          onConfirm={dialogConfig.onConfirm}
-          onClose={dialogConfig.onClose}
-        />
-      )}
     </>
   );
 };
