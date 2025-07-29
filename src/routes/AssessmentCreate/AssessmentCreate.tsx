@@ -93,61 +93,50 @@ export const AssessmentCreate = () => {
     state: { organizationId }
   } = useStore();
 
-  const getNavigationState = (): AssessmentDetailNavigationState | null => {
-    const locationState =
-      location.state as AssessmentDetailNavigationState | null;
-    if (locationState?.fromAssessmentDetail) {
-      return locationState;
-    }
+  const navigationState =
+    useMemo((): AssessmentDetailNavigationState | null => {
+      const locationState =
+        location.state as AssessmentDetailNavigationState | null;
+      if (locationState?.fromAssessmentDetail) {
+        return locationState;
+      }
 
-    // Fallback: read from URL params
-    const urlMode = searchParams.get('mode') as 'add' | 'remove' | null;
-    const urlAssessmentId = searchParams.get('assessmentId');
-    const urlFrom = searchParams.get('from');
-    const urlDebtPositionTypeOrgCode = searchParams.get(
-      'debtPositionTypeOrgCode'
-    );
-    const urlAssessmentName = searchParams.get('assessmentName');
+      const urlMode = searchParams.get('mode') as 'add' | 'remove' | null;
+      const urlAssessmentId = searchParams.get('assessmentId');
+      const urlFrom = searchParams.get('from');
 
-    if (urlMode && urlAssessmentId && urlFrom === 'detail') {
-      return {
-        mode: urlMode,
-        assessmentId: parseInt(urlAssessmentId),
-        assessmentName: urlAssessmentName || '',
-        debtPositionTypeOrgCode: urlDebtPositionTypeOrgCode || '',
-        fromAssessmentDetail: true
-      };
-    }
+      if (urlMode && urlAssessmentId && urlFrom === 'detail') {
+        return {
+          mode: urlMode,
+          assessmentId: parseInt(urlAssessmentId),
+          assessmentName: searchParams.get('assessmentName') || '',
+          debtPositionTypeOrgCode:
+            searchParams.get('debtPositionTypeOrgCode') || '',
+          fromAssessmentDetail: true
+        };
+      }
 
-    return null;
-  };
+      return null;
+    }, [location.state, searchParams]);
 
-  // Save the initial navigation state in a useRef to preserve it between re-renders
-  const initialNavigationState = useRef<AssessmentDetailNavigationState | null>(
-    getNavigationState()
-  );
-
-  // Always use the initial state, ignoring subsequent changes
-  const isModifyMode =
-    initialNavigationState.current?.fromAssessmentDetail === true;
-  const modifyAction = initialNavigationState.current?.mode;
+  const isModifyMode = navigationState?.fromAssessmentDetail === true;
+  const modifyAction = navigationState?.mode;
 
   const methods = useForm<AssessmentFormData>({
     resolver: zodResolver(assessmentFormSchema),
     mode: 'onTouched',
     defaultValues: {
-      assessmentName: initialNavigationState.current?.assessmentName || '',
-      debtPositionTypeOrgCode:
-        initialNavigationState.current?.debtPositionTypeOrgCode || '',
-      addPaymentsToAssessment: isModifyMode ? true : false,
+      assessmentName: navigationState?.assessmentName || '',
+      debtPositionTypeOrgCode: navigationState?.debtPositionTypeOrgCode || '',
+      addPaymentsToAssessment: isModifyMode,
       selectedPayments: [],
       selectedPaymentIuds: [],
       operatingYear: '',
       chapterCode: '',
       assessmentRegistryId: undefined,
-      isModifyMode: isModifyMode,
-      modifyAction: modifyAction,
-      assessmentId: initialNavigationState.current?.assessmentId
+      isModifyMode,
+      modifyAction,
+      assessmentId: navigationState?.assessmentId
     }
   });
 
@@ -464,10 +453,10 @@ export const AssessmentCreate = () => {
 
   const handleBack = () => {
     if (isFirstStep) {
-      if (isModifyMode && initialNavigationState.current?.assessmentId) {
+      if (isModifyMode && navigationState?.assessmentId) {
         navigate(
           generatePath(PageRoutes.ASSESSMENT_DETAIL, {
-            id: initialNavigationState.current.assessmentId.toString()
+            id: navigationState.assessmentId.toString()
           })
         );
       } else {
