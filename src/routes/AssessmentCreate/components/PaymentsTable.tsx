@@ -14,6 +14,8 @@ import {
   PaidInstallmentDTO
 } from '../../../api/classifications/paidInstallments/mappings';
 import { usePaymentsTableFilters } from '../../../hooks/usePaymentsTableFilters';
+import { generatePath } from 'react-router';
+import { PageRoutes } from '../..';
 
 // TEMPORARY: Type for row with added uniqueId until backend fixes duplicate IUDs
 type PaymentRowWithUniqueId = PaidInstallmentDTO & {
@@ -159,8 +161,12 @@ export const PaymentsTable = ({
   );
 
   const handleDetailClick = useCallback((row: PaymentRowWithUniqueId) => {
-    console.log('Detail clicked for:', row);
-    // TODO: Navigate to detail page when implemented
+    const detailPath = generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
+      id: Number(row.receiptPaymentRequestId)
+    });
+
+    const fullUrl = `${window.location.origin}${detailPath}`;
+    window.open(fullUrl, '_blank', 'noopener,noreferrer');
   }, []);
 
   const columns: Array<GridColDef> = [
