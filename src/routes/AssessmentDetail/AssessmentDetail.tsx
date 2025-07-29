@@ -179,12 +179,7 @@ export const AssessmentDetail = () => {
     }
   };
 
-  /**
-   * Verifica se l'assessment può essere modificato (aggiunta/rimozione pagamenti)
-   * @returns true se l'assessment può essere modificato
-   */
   const canModifyAssessment = () => {
-    // Controlla flagManualGeneration e status secondo i requisiti
     const hasManualGeneration = data?.flagManualGeneration === true;
     const isActive = data?.status !== undefined && data.status === 'ACTIVE';
 
