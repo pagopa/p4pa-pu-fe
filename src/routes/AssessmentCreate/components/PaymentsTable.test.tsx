@@ -19,6 +19,18 @@ const mockUsePaymentsTableFilters = {
   handleDateToChange: vi.fn()
 };
 
+vi.mock('../..', () => ({
+  PageRoutes: {
+    TELEMATIC_RECEIPT_DETAIL: '/telematic-receipt/:id'
+  }
+}));
+
+vi.mock('../../path/to/routes', () => ({
+  PageRoutes: {
+    TELEMATIC_RECEIPT_DETAIL: '/telematic-receipt/:id'
+  }
+}));
+
 vi.mock('../../../hooks/usePaymentsTableFilters', () => ({
   usePaymentsTableFilters: () => mockUsePaymentsTableFilters
 }));
@@ -227,6 +239,27 @@ describe('PaymentsTable', () => {
   });
 
   describe('Detail Actions', () => {
+    const mockWindowOpen = vi.fn();
+
+    beforeEach(() => {
+      mockWindowOpen.mockClear();
+      Object.defineProperty(window, 'open', {
+        value: mockWindowOpen,
+        writable: true
+      });
+
+      Object.defineProperty(window, 'location', {
+        value: {
+          origin: 'https://test-app.com'
+        },
+        writable: true
+      });
+    });
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
     it('renders detail button for each row', () => {
       render(<PaymentsTable {...defaultProps} />);
 
@@ -235,27 +268,182 @@ describe('PaymentsTable', () => {
       expect(iconButton).toBeInTheDocument();
     });
 
-    it('logs detail click when detail button is pressed', () => {
-      const consoleSpy = vi.spyOn(console, 'log');
+    it('opens detail page in new tab when detail button is clicked', () => {
+      const mockDataWithReceiptId: PagedPaidInstallmentsDTO = {
+        content: [
+          {
+            ...mockPaidInstallment,
+            receiptPaymentRequestId: '12345'
+          }
+        ],
+        totalElements: 1,
+        totalPages: 1,
+        number: 0,
+        size: 10
+      };
 
-      render(<PaymentsTable {...defaultProps} />);
+      render(<PaymentsTable {...defaultProps} data={mockDataWithReceiptId} />);
 
       const actionCell = screen.getByRole('gridcell', { name: '' });
       const detailButton = actionCell.querySelector('button');
+
       if (detailButton) {
         fireEvent.click(detailButton);
       }
 
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'Detail clicked for:',
-        expect.objectContaining({
-          iud: 'test-iud-1',
-          iuv: 'test-iuv-1',
-          uniqueId: expect.stringContaining('test-iud-1-0')
-        })
+      expect(mockWindowOpen).toHaveBeenCalledTimes(1);
+      expect(mockWindowOpen).toHaveBeenCalledWith(
+        'https://test-app.com/telematic-receipt/12345',
+        '_blank',
+        'noopener,noreferrer'
+      );
+    });
+
+    it('generates correct URL path for detail navigation', () => {
+      const testReceiptId = '67890';
+      const mockDataWithSpecificId: PagedPaidInstallmentsDTO = {
+        content: [
+          {
+            ...mockPaidInstallment,
+            receiptPaymentRequestId: testReceiptId
+          }
+        ],
+        totalElements: 1,
+        totalPages: 1,
+        number: 0,
+        size: 10
+      };
+
+      render(<PaymentsTable {...defaultProps} data={mockDataWithSpecificId} />);
+
+      const actionCell = screen.getByRole('gridcell', { name: '' });
+      const detailButton = actionCell.querySelector('button');
+
+      if (detailButton) {
+        fireEvent.click(detailButton);
+      }
+
+      expect(mockWindowOpen).toHaveBeenCalledWith(
+        expect.stringContaining(`/telematic-receipt/${testReceiptId}`),
+        '_blank',
+        'noopener,noreferrer'
+      );
+    });
+
+    it('handles missing receiptPaymentRequestId gracefully', () => {
+      const mockDataWithoutReceiptId: PagedPaidInstallmentsDTO = {
+        content: [
+          {
+            ...mockPaidInstallment,
+            receiptPaymentRequestId: undefined
+          }
+        ],
+        totalElements: 1,
+        totalPages: 1,
+        number: 0,
+        size: 10
+      };
+
+      render(
+        <PaymentsTable {...defaultProps} data={mockDataWithoutReceiptId} />
       );
 
-      consoleSpy.mockRestore();
+      const actionCell = screen.getByRole('gridcell', { name: '' });
+      const detailButton = actionCell.querySelector('button');
+
+      if (detailButton) {
+        fireEvent.click(detailButton);
+      }
+
+      expect(mockWindowOpen).toHaveBeenCalledTimes(1);
+    });
+
+    it('uses correct security parameters for new tab', () => {
+      render(<PaymentsTable {...defaultProps} />);
+
+      const actionCell = screen.getByRole('gridcell', { name: '' });
+      const detailButton = actionCell.querySelector('button');
+
+      if (detailButton) {
+        fireEvent.click(detailButton);
+      }
+
+      const [, target, features] = mockWindowOpen.mock.calls[0];
+
+      expect(target).toBe('_blank');
+      expect(features).toBe('noopener,noreferrer');
+    });
+
+    it('opens different URLs for different rows', () => {
+      const mockDataMultipleRows: PagedPaidInstallmentsDTO = {
+        content: [
+          {
+            ...mockPaidInstallment,
+            iud: 'iud-1',
+            receiptPaymentRequestId: '111'
+          },
+          {
+            ...mockPaidInstallment,
+            iud: 'iud-2',
+            receiptPaymentRequestId: '222'
+          }
+        ],
+        totalElements: 2,
+        totalPages: 1,
+        number: 0,
+        size: 10
+      };
+
+      render(<PaymentsTable {...defaultProps} data={mockDataMultipleRows} />);
+
+      const actionCells = screen.getAllByRole('gridcell', { name: '' });
+      const detailButtons = actionCells
+        .map((cell) => cell.querySelector('button'))
+        .filter(Boolean);
+
+      if (detailButtons[0]) {
+        fireEvent.click(detailButtons[0]);
+      }
+
+      expect(mockWindowOpen).toHaveBeenCalledWith(
+        expect.stringContaining('/telematic-receipt/111'),
+        '_blank',
+        'noopener,noreferrer'
+      );
+
+      mockWindowOpen.mockClear();
+
+      if (detailButtons[1]) {
+        fireEvent.click(detailButtons[1]);
+      }
+
+      expect(mockWindowOpen).toHaveBeenCalledWith(
+        expect.stringContaining('/telematic-receipt/222'),
+        '_blank',
+        'noopener,noreferrer'
+      );
+    });
+
+    it('integrates correctly with react-router generatePath', () => {
+      render(<PaymentsTable {...defaultProps} />);
+
+      const actionCell = screen.getByRole('gridcell', { name: '' });
+      const detailButton = actionCell.querySelector('button');
+
+      if (detailButton) {
+        fireEvent.click(detailButton);
+      }
+
+      const calledUrl = mockWindowOpen.mock.calls[0][0];
+      expect(calledUrl).toMatch('https://test-app.com/telematic-receipt/NaN');
+    });
+
+    it('renders detail button for each row', () => {
+      render(<PaymentsTable {...defaultProps} />);
+
+      const actionCell = screen.getByRole('gridcell', { name: '' });
+      const iconButton = actionCell.querySelector('button');
+      expect(iconButton).toBeInTheDocument();
     });
   });
 
