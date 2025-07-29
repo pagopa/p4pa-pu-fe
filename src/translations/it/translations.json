@@ -346,9 +346,17 @@
     "debtType": "Tipo dovuto",
     "createdBy": "Creato da",
     "paymentsAssociated": "Pagamenti associati",
-    "deleteDialog": {
-      "title": "Conferma eliminazione",
-      "description": "Sei sicuro di voler eliminare questo accertamento? L'operazione non può essere annullata."
+    "closeDialog": {
+      "title": "Sei sicuro di chiudere l’accertamento?",
+      "description": "Una volta chiuso, l’accertamento non potrà più essere modificato.",
+      "ok": "Chiudi l’accertamento",
+      "ko": "Annulla"
+    },
+    "cancelDialog": {
+      "title": "Sei sicuro di voler eliminare l’accertamento?",
+      "description": "Una volta cancellato, l’accertamento non potrà più essere riaperto. Potrai comunque consultarne i dettagli.",
+      "ok": "Elimina",
+      "ko": "Chiudi"
     },
     "paymentDetail": {
       "title": "Dettaglio pagamento",

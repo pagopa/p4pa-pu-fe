@@ -20,6 +20,7 @@ import { Footer } from '../Footer';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useFooterData } from '../../hooks/useFooterData';
 import { useTranslation } from 'react-i18next';
+import GenericDialog from '../GenericDialog/GenericDialog';
 
 const defaultRouteHandle: RouteHandleObject = {
   backButton: true,
@@ -63,6 +64,10 @@ export function Layout() {
 
   return (
     <>
+      <GenericDialog
+        {...utils.dialog.status.dialogPayload.value}
+        open={utils.dialog.status.isDialogVisible.value}
+      />
       <Snackbar
         autoHideDuration={6000}
         onClose={utils.notify.dismiss}
