@@ -201,67 +201,63 @@ export const AssessmentCreate = () => {
     if (isModifyMode) {
       if (modifyAction === 'remove') {
         // Remove mode: only Step 0 (payments)
-        switch (step) {
-          case 0:
-            return {
-              isValid: validateStep2Payments(values),
-              fields: [] as const
-            };
-          default:
-            return { isValid: false, fields: [] as const };
+        if (step === 0) {
+          return {
+            isValid: validateStep2Payments(values),
+            fields: [] as const
+          };
         }
+        return { isValid: false, fields: [] as const };
       } else {
         // Add mode: Step 0 = payments, Step 1 = chapters
-        switch (step) {
-          case 0:
-            return {
-              isValid: validateStep2Payments(values),
-              fields: [] as const
-            };
-          case 1: {
-            const yearValid = !!values.operatingYear;
-            const chapterValid = !values.operatingYear || !!values.chapterCode;
-            return {
-              isValid: yearValid && chapterValid,
-              fields: ['operatingYear', 'chapterCode'] as const
-            };
-          }
-          default:
-            return { isValid: false, fields: [] as const };
+        if (step === 0) {
+          return {
+            isValid: validateStep2Payments(values),
+            fields: [] as const
+          };
         }
-      }
-    }
-
-    // Normal flow creation
-    switch (step) {
-      case 0:
-        return {
-          isValid: !!values.assessmentName && !!values.debtPositionTypeOrgCode,
-          fields: ['assessmentName', 'debtPositionTypeOrgCode'] as const
-        };
-      case 1:
-        return {
-          isValid: validateStep2Payments(values),
-          fields: [] as const
-        };
-      case 2:
-        if (addPaymentsToAssessment) {
-          // Year is always required, Chapter is required only if Year is selected
+        if (step === 1) {
           const yearValid = !!values.operatingYear;
           const chapterValid = !values.operatingYear || !!values.chapterCode;
-
           return {
             isValid: yearValid && chapterValid,
             fields: ['operatingYear', 'chapterCode'] as const
           };
         }
-        return {
-          isValid: true,
-          fields: [] as const
-        };
-      default:
         return { isValid: false, fields: [] as const };
+      }
     }
+
+    // Normal flow creation
+    if (step === 0) {
+      return {
+        isValid: !!values.assessmentName && !!values.debtPositionTypeOrgCode,
+        fields: ['assessmentName', 'debtPositionTypeOrgCode'] as const
+      };
+    }
+    if (step === 1) {
+      return {
+        isValid: validateStep2Payments(values),
+        fields: [] as const
+      };
+    }
+    if (step === 2) {
+      if (addPaymentsToAssessment) {
+        // Year is always required, Chapter is required only if Year is selected
+        const yearValid = !!values.operatingYear;
+        const chapterValid = !values.operatingYear || !!values.chapterCode;
+
+        return {
+          isValid: yearValid && chapterValid,
+          fields: ['operatingYear', 'chapterCode'] as const
+        };
+      }
+      return {
+        isValid: true,
+        fields: [] as const
+      };
+    }
+    return { isValid: false, fields: [] as const };
   };
 
   const handleSubmit = async (values: AssessmentFormData) => {

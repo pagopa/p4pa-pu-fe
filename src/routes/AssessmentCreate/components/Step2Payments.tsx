@@ -619,7 +619,7 @@ const Step2PaymentsComponent = forwardRef<
               : paymentsState.paymentsData
           }
           onSelectionChange={handleTableSelectionChange}
-          onFiltersApplied={isRemoveMode ? () => {} : handleFiltersApplied}
+          onFiltersApplied={isRemoveMode ? undefined : handleFiltersApplied}
           onFilterValidationError={paymentsState.setShowFiltersValidationError}
           initialFilters={initialTableFilters}
           isLoading={
