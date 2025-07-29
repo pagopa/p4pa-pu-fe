@@ -25,7 +25,7 @@ import {
 } from '../../../../generated/data-contracts';
 import { GridRowId } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { Stack } from '@mui/material';
+import { Grid, Stack, useTheme } from '@mui/material';
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
 
 const EventList = () => {
@@ -41,6 +41,7 @@ const EventList = () => {
   const { filterValues, handleFilterChange, activeTabIndex, setError, error } =
     useOutletContext<EventsContext>();
 
+  const theme = useTheme();
   const navigate = useNavigate();
 
   const {
@@ -123,20 +124,32 @@ const EventList = () => {
           onChange={handleFilterChange}
         />
         {data && (
-          <CustomDataGrid
-            customPagination={{
-              sizePageOptions: [5, 10, 20],
-              defaultPageOption: data.size,
-              totalPages: data.totalPages,
-              currentPage: data.number + 1,
-              onPageSizeChange,
-              onPageChange
+          <Grid
+            container
+            p={2}
+            height="100%"
+            sx={{
+              bgcolor: theme.palette.grey[200],
+              overflow: 'auto'
             }}
-            sx={{ mt: 4 }}
-            columns={columns}
-            rows={data.content}
-            getRowId={(row) => row.registryId}
-          />
+            aria-label="results-table"
+          >
+            <CustomDataGrid
+              customPagination={{
+                sizePageOptions: [5, 10, 20],
+                defaultPageOption: data.size,
+                totalPages: data.totalPages,
+                currentPage: data.number + 1,
+                onPageSizeChange,
+                onPageChange
+              }}
+              disableColumnMenu
+              disableColumnResize
+              columns={columns}
+              rows={data.content}
+              getRowId={(row) => row.registryId}
+            />
+          </Grid>
         )}
       </Stack>
     </>

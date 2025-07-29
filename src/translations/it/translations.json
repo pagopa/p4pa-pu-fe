@@ -1666,12 +1666,14 @@
       "date": "Data evento",
       "outcome": "Esito",
       "iuv": "IUV",
-      "event": "Evento"
+      "event": "Evento",
+      "subEvent": "Sottotipo"
     },
     "searchIUVDescription": "IUV",
     "searchEventDescription": "Evento",
     "searchDateFromDescription": "Data dal",
-    "searchDateToDescription": "Al"
+    "searchDateToDescription": "Al",
+    "searchEventOutcome": "Esito"
   },
   "treasuryImportFlowOverview": {
     "description": "Visualizza i flussi importati in precedenza e importa nuovi."
