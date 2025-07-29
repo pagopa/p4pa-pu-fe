@@ -258,8 +258,6 @@ describe('ReportingPaymentDetail Page', () => {
     expect(screen.getByText('15/04/2023')).toBeInTheDocument();
   });
 
-
-
   it('handles case when amountPaidCents is available', () => {
     const amountMockData = {
       ...mockData,
