@@ -29,6 +29,7 @@ export const assessmentRoutes = [
         element: <AssessmentCreate />,
         handle: {
           backButton: true,
+          backButtonText: 'commons.exit',
           hideBreadcrumbs: true,
           sidebar: {
             visible: false

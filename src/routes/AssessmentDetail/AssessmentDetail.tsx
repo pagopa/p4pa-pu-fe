@@ -1,5 +1,21 @@
-import { Grid, Typography, useTheme, Button, Box, Chip } from '@mui/material';
-import { Add, RemoveCircleOutline } from '@mui/icons-material';
+import { useEffect, useState, useMemo } from 'react';
+import {
+  Grid,
+  Typography,
+  useTheme,
+  Menu,
+  MenuItem,
+  Button,
+  Box,
+  Chip
+} from '@mui/material';
+import {
+  Close,
+  Delete,
+  MoreVert,
+  Add,
+  RemoveCircleOutline
+} from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer, {
   DetailData
@@ -14,15 +30,25 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 import { useAssessmentDetailFilters } from '../../hooks/useAssessmentDetailFilters';
+import { AssessmentsDetail } from '../../../generated/apiClient';
 import { Variant } from '@mui/material/styles/createTypography';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
-
-import AssesmentActionMenu from '../../components/Assessment/AssessmentActionMenu';
-import { useEffect, useMemo } from 'react';
+import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { setAppState } from '../../store/AppStateStore';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
+import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
+
+type DialogConfig = {
+  open: boolean;
+  title: string;
+  message: string;
+  confirmLabel: string;
+  cancelLabel?: string;
+  onConfirm: () => void;
+  onClose: () => void;
+  testId: string;
+};
 
 export const AssessmentDetail = () => {
   const { t } = useTranslation();
@@ -37,6 +63,12 @@ export const AssessmentDetail = () => {
     navigate(PageRoutes.RESPONSES_ERROR);
     return null;
   }
+
+  const [detailItem, setDetailItem] = useState<AssessmentsDetail | null>(null);
+  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
+  const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
+
+  const menuOpen = Boolean(menuAnchorEl);
 
   const {
     appliedFilters,
@@ -70,9 +102,15 @@ export const AssessmentDetail = () => {
     }
   }, [isError, error, navigate]);
 
+  useEffect(() => {
+    if (data?.pagedAssessmentsRowsDetail?.content?.[0] && !detailItem) {
+      setDetailItem(data.pagedAssessmentsRowsDetail.content[0]);
+    }
+  }, [data, detailItem]);
+
   // Handle custom breadcrumb
   useEffect(() => {
-    if (assessmentId) {
+    if ((detailItem || data?.assessmentsName) && assessmentId) {
       const customBreadcrumbsItems: Array<BredcrumbItem> = [
         { pathname: PageRoutes.ASSESSMENT_INDEX, id: 'ASSESSMENT' },
         {
@@ -85,7 +123,7 @@ export const AssessmentDetail = () => {
           }),
           label:
             data?.assessmentsName ||
-            data?.debtPositionTypeOrgDescription ||
+            detailItem?.debtPositionTypeOrgCode ||
             `${t('assessment.assessment')} ${assessmentId}`,
           id: 'ASSESSMENT_DETAIL'
         }
@@ -95,22 +133,134 @@ export const AssessmentDetail = () => {
         customBreadcrumbsItems: customBreadcrumbsItems
       });
     }
-  }, [
-    data?.assessmentsName,
-    data?.debtPositionTypeOrgDescription,
-    assessmentId
-  ]);
+  }, [detailItem, assessmentId, data?.assessmentsName]);
 
   const handleFiltersApplied = () => {
     applyFilters();
   };
 
+  const handleMenuClose = () => {
+    setMenuAnchorEl(null);
+  };
+
+  const handleClose = () => {
+    handleMenuClose();
+  };
+
+  const handleDelete = () => {
+    handleMenuClose();
+    showDeleteDialog();
+  };
+
+  const showDeleteDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: t('assessmentDetail.deleteDialog.title'),
+      message: t('assessmentDetail.deleteDialog.description'),
+      confirmLabel: t('commons.delete'),
+      cancelLabel: t('commons.cancel'),
+      onConfirm: handleDeleteConfirm,
+      onClose: () => setDialogConfig(null),
+      testId: 'confirm-delete-dialog'
+    });
+  };
+
+  const handleDeleteConfirm = async () => {
+    try {
+      // TODO: Implement the API call to delete the assessment
+      console.log('Deleting assessment:', assessmentId);
+      setDialogConfig(null);
+      // For now, navigate back, in the future implement the delete call
+      navigate(-1);
+    } catch (error) {
+      console.error('Error while deleting the assessment:', error);
+      setDialogConfig(null);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  };
+
+  /**
+   * Verifica se l'assessment può essere modificato (aggiunta/rimozione pagamenti)
+   * @returns true se l'assessment può essere modificato
+   */
+  const canModifyAssessment = () => {
+    // Controlla flagManualGeneration e status secondo i requisiti
+    const hasManualGeneration = data?.flagManualGeneration === true;
+    const isActive = data?.status !== undefined && data.status === 'ACTIVE';
+
+    return hasManualGeneration && isActive;
+  };
+
+  const showCannotModifyDialog = () => {
+    setDialogConfig({
+      open: true,
+      title: t('assessmentDetail.cannotModifyDialog.title'),
+      message: t('assessmentDetail.cannotModifyDialog.description'),
+      confirmLabel: t('commons.close'),
+      onConfirm: () => setDialogConfig(null),
+      onClose: () => setDialogConfig(null),
+      testId: 'cannot-modify-payments-dialog'
+    });
+  };
+
   const handleRemovePayments = () => {
-    console.log('Remove payments clicked');
+    if (!canModifyAssessment()) {
+      showCannotModifyDialog();
+      return;
+    }
+
+    const debtPositionTypeOrgCode =
+      detailItem?.debtPositionTypeOrgCode ||
+      data?.debtPositionTypeOrgDescription;
+
+    // Usa URL params per persistere lo stato anche dopo il reload
+    const searchParams = new URLSearchParams({
+      mode: 'remove',
+      assessmentId: assessmentId.toString(),
+      from: 'detail',
+      debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
+      assessmentName: data?.assessmentsName || ''
+    });
+
+    navigate(`${PageRoutes.ASSESSMENT_CREATION}?${searchParams.toString()}`, {
+      state: {
+        mode: 'remove',
+        assessmentId: assessmentId,
+        assessmentName: data?.assessmentsName,
+        debtPositionTypeOrgCode: debtPositionTypeOrgCode,
+        fromAssessmentDetail: true
+      }
+    });
   };
 
   const handleAddPayments = () => {
-    console.log('Add payments clicked');
+    if (!canModifyAssessment()) {
+      showCannotModifyDialog();
+      return;
+    }
+
+    const debtPositionTypeOrgCode =
+      detailItem?.debtPositionTypeOrgCode ||
+      data?.debtPositionTypeOrgDescription;
+
+    // Usa URL params per persistere lo stato anche dopo il reload
+    const searchParams = new URLSearchParams({
+      mode: 'add',
+      assessmentId: assessmentId.toString(),
+      from: 'detail',
+      debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
+      assessmentName: data?.assessmentsName || ''
+    });
+
+    navigate(`${PageRoutes.ASSESSMENT_CREATION}?${searchParams.toString()}`, {
+      state: {
+        mode: 'add',
+        assessmentId: assessmentId,
+        assessmentName: data?.assessmentsName,
+        debtPositionTypeOrgCode: debtPositionTypeOrgCode,
+        fromAssessmentDetail: true
+      }
+    });
   };
 
   /**
@@ -130,10 +280,14 @@ export const AssessmentDetail = () => {
     });
   };
 
+  // Configuration sections for the DetailContainer
   const detailSections = useMemo(() => {
+    const firstAssessmentItem = detailItem;
+
     const statusChipProps = data?.status
       ? getAssessmentStatusChipProps(data.status, t)
       : null;
+
     const summaryData: Array<DetailData> = [
       {
         label: t('commons.state'),
@@ -149,24 +303,31 @@ export const AssessmentDetail = () => {
       },
       {
         label: t('assessmentDetail.debtType'),
-        value: data?.debtPositionTypeOrgDescription || '-'
+        value:
+          data?.debtPositionTypeOrgDescription ||
+          firstAssessmentItem?.debtPositionTypeOrgCode ||
+          '-'
       },
       {
         label: t('assessmentDetail.createdBy'),
-        value: data?.updateOperatorExternalId || '-'
+        value:
+          data?.updateOperatorExternalId ||
+          firstAssessmentItem?.updateOperatorExternalId ||
+          '-'
       }
     ];
+
     return [
       {
-        title: {
-          label: t('commons.summary'),
-          variant: 'overline' as Variant
-        },
-        data: summaryData,
+        title: { label: t('commons.summary'), variant: 'overline' as Variant },
+        data: [...summaryData],
         inline: true
       }
     ];
   }, [
+    detailItem,
+    assessmentId,
+    t,
     data?.status,
     data?.debtPositionTypeOrgDescription,
     data?.updateOperatorExternalId
@@ -180,13 +341,47 @@ export const AssessmentDetail = () => {
           `${t('assessment.assessment')} ${assessmentId || ''}`
         }
         callToAction={[
-          <AssesmentActionMenu
-            key={'AssesmentActionMenu'}
-            flagManualGeneration={data?.flagManualGeneration}
-            status={data?.status}
-          />
+          {
+            icon: <MoreVert />,
+            variant: 'text' as const,
+            onActionClick: () => {
+              const button = document.activeElement as HTMLElement;
+              setMenuAnchorEl(button);
+            }
+          }
         ]}
       />
+
+      <Menu
+        anchorEl={menuAnchorEl}
+        open={menuOpen}
+        onClose={handleMenuClose}
+        slotProps={{
+          paper: {
+            elevation: 0,
+            sx: {
+              overflow: 'visible',
+              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
+              mt: 1.5,
+              '& .MuiMenuItem-root': {
+                px: 2,
+                py: 1
+              }
+            }
+          }
+        }}
+        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+      >
+        <MenuItem onClick={handleClose}>
+          <Close fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
+          {t('commons.close')}
+        </MenuItem>
+        <MenuItem onClick={handleDelete}>
+          <Delete fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
+          {t('commons.delete')}
+        </MenuItem>
+      </Menu>
 
       <Grid container spacing={2}>
         <Grid item md={12}>
@@ -324,6 +519,19 @@ export const AssessmentDetail = () => {
           />
         </Grid>
       </Grid>
+
+      {dialogConfig && (
+        <GenericDialog
+          data-testid={dialogConfig.testId}
+          open={dialogConfig.open}
+          title={dialogConfig.title}
+          message={dialogConfig.message}
+          confirmLabel={dialogConfig.confirmLabel}
+          cancelLabel={dialogConfig.cancelLabel}
+          onConfirm={dialogConfig.onConfirm}
+          onClose={dialogConfig.onClose}
+        />
+      )}
     </>
   );
 };

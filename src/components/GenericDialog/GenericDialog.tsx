@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { ReactNode } from 'react';
 
-export type GenericDialogProps = {
+type GenericDialogProps = {
   open: boolean;
   title: string;
   message?: string;

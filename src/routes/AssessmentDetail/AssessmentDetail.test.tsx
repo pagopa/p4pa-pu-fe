@@ -1,11 +1,6 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import {
-  createBrowserRouter,
-  RouterProvider,
-  useNavigate,
-  useParams
-} from 'react-router';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { useNavigate, useParams } from 'react-router';
+import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../routes';
@@ -15,59 +10,32 @@ import {
   AssessmentsRowsDetail,
   AssessmentStatus
 } from '../../../generated/apiClient';
-import {
-  QueryClient,
-  QueryClientProvider,
-  UseQueryResult
-} from '@tanstack/react-query';
-import { Layout } from '../../components/layout/Layout';
-import { StoreProvider } from '../../store/GlobalStore';
-import { Theme } from '../../utils/theme';
-import { LocalizationProvider } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
-import { it as IT } from 'date-fns/locale/it';
-import '@preact/signals-react/auto';
-
-const queryClient = new QueryClient();
-const renderAssessmentDetail = () => {
-  const routesDef = [
-    {
-      path: '*',
-      element: <Layout />,
-      children: [
-        {
-          element: <AssessmentDetail />,
-          index: true
-        }
-      ]
-    }
-  ];
-  return render(
-    <QueryClientProvider client={queryClient}>
-      <StoreProvider>
-        <Theme>
-          <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={IT}>
-            <RouterProvider router={createBrowserRouter(routesDef)} />
-          </LocalizationProvider>
-        </Theme>
-      </StoreProvider>
-    </QueryClientProvider>
-  );
-};
-
-vi.mock('react-router', async (importOriginal) => {
-  const actual = await importOriginal();
-  return {
-    ...(actual as object),
-    useParams: vi.fn(),
-    useNavigate: vi.fn()
-  };
-});
+import { UseQueryResult } from '@tanstack/react-query';
 
 type MockQueryResult = UseQueryResult<AssessmentsRowsDetail, Error>;
 
+vi.mock('react-router', async () => {
+  const actual = await vi.importActual('react-router');
+  return {
+    ...actual,
+    useNavigate: vi.fn(),
+    useParams: vi.fn()
+  };
+});
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key
+  })
+}));
+
 vi.mock('../../api/assessments/assessmentDetail/assessmentDetail', () => ({
   getAssessmentDetail: vi.fn()
+}));
+
+vi.mock('../../store/OrganizationIdStore', () => ({
+  setOrganizationId: vi.fn(),
+  organizationIdState: { state: { value: 123 } }
 }));
 
 vi.mock('./components/AssessmentDetailDataGrid', () => ({
@@ -116,11 +84,18 @@ describe('AssessmentDetail', () => {
   const mockNavigate = vi.fn();
   const mockGetAssessmentDetail = vi.mocked(getAssessmentDetail);
 
+  const mockWindowOpen = vi.fn();
+  Object.defineProperty(window, 'open', {
+    writable: true,
+    value: mockWindowOpen
+  });
+
   const mockAssessmentData: AssessmentsRowsDetail = {
     assessmentsName: 'ACC20250618_FEATURE_TEST',
     debtPositionTypeOrgDescription: 'FEATURE TEST - DO NOT DELETE',
     status: AssessmentStatus.ACTIVE,
     updateOperatorExternalId: 'WS_USER-piattaforma-unitaria_',
+    flagManualGeneration: false,
     pagedAssessmentsRowsDetail: {
       content: [
         {
@@ -146,13 +121,12 @@ describe('AssessmentDetail', () => {
       totalPages: 1,
       number: 0,
       size: 10
-    },
-    flagManualGeneration: true
+    }
   };
 
   beforeEach(() => {
     vi.clearAllMocks();
-    //mockWindowOpen.mockClear();
+    mockWindowOpen.mockClear();
 
     (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
     (useParams as ReturnType<typeof vi.fn>).mockReturnValue({ id: '123' });
@@ -169,7 +143,7 @@ describe('AssessmentDetail', () => {
 
   describe('Component Rendering', () => {
     it('should render successfully with assessment data', () => {
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       expect(
         screen.getByText('assessmentDetail.paymentsAssociated')
@@ -179,7 +153,7 @@ describe('AssessmentDetail', () => {
     });
 
     it('should render action buttons correctly', () => {
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       const removeButton = screen.getByTestId('remove-payments-button');
       const addButton = screen.getByTestId('add-payments-button');
@@ -198,7 +172,7 @@ describe('AssessmentDetail', () => {
         error: null
       } as MockQueryResult);
 
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       expect(screen.getByTestId('loading-indicator')).toBeDefined();
     });
@@ -208,7 +182,7 @@ describe('AssessmentDetail', () => {
     it('should log correct message when remove button is clicked', () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
 
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       const removeButton = screen.getByTestId('remove-payments-button');
       fireEvent.click(removeButton);
@@ -221,7 +195,7 @@ describe('AssessmentDetail', () => {
     it('should log correct message when add button is clicked', () => {
       const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
 
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       const addButton = screen.getByTestId('add-payments-button');
       fireEvent.click(addButton);
@@ -234,40 +208,50 @@ describe('AssessmentDetail', () => {
 
   describe('Menu Actions', () => {
     it('should open menu when more actions button is clicked', async () => {
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
-      const menuButton = screen.getByTestId('assessment-action-menu');
+      const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
 
       expect(menuButton).toBeDefined();
 
-      fireEvent.click(menuButton);
+      if (menuButton) {
+        fireEvent.click(menuButton);
 
-      expect(screen.getByTestId('assessment-action-close')).toBeDefined();
-      expect(screen.getByTestId('assessment-action-delete')).toBeDefined();
+        await waitFor(() => {
+          expect(screen.getByText('commons.close')).toBeDefined();
+          expect(screen.getByText('commons.delete')).toBeDefined();
+        });
+      }
     });
 
     it('should show delete confirmation dialog when delete is clicked', async () => {
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
-      const menuButton = screen.getByTestId('assessment-action-menu');
+      const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
 
-      fireEvent.click(menuButton);
+      if (menuButton) {
+        fireEvent.click(menuButton);
 
-      const deleteMenuItem = screen.getByTestId('assessment-action-delete');
-      fireEvent.click(deleteMenuItem);
+        await waitFor(() => {
+          const deleteMenuItem = screen.getByText('commons.delete');
+          fireEvent.click(deleteMenuItem);
+        });
 
-      expect(
-        screen.getByText('assessmentDetail.cancelDialog.title')
-      ).toBeDefined();
-      expect(
-        screen.getByText('assessmentDetail.cancelDialog.description')
-      ).toBeDefined();
+        await waitFor(() => {
+          expect(
+            screen.getByText('assessmentDetail.deleteDialog.title')
+          ).toBeDefined();
+          expect(
+            screen.getByText('assessmentDetail.deleteDialog.description')
+          ).toBeDefined();
+        });
+      }
     });
   });
 
   describe('API Integration', () => {
     it('should call getAssessmentDetail with correct parameters', () => {
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       expect(mockGetAssessmentDetail).toHaveBeenCalledWith(
         123,
@@ -290,7 +274,7 @@ describe('AssessmentDetail', () => {
         error: new Error('API Error')
       } as MockQueryResult);
 
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR);
     });
@@ -302,7 +286,7 @@ describe('AssessmentDetail', () => {
         id: 'invalid'
       });
 
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR);
     });
@@ -310,7 +294,7 @@ describe('AssessmentDetail', () => {
     it('should navigate to error page with missing assessment ID', () => {
       (useParams as ReturnType<typeof vi.fn>).mockReturnValue({});
 
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR);
     });
@@ -318,13 +302,16 @@ describe('AssessmentDetail', () => {
 
   describe('Filter Functionality', () => {
     it('should render filter components', () => {
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       expect(screen.getByText('commons.filters.filterResults')).toBeDefined();
+      expect(
+        screen.getByRole('textbox', { name: 'commons.search IUV' })
+      ).toBeDefined();
     });
 
     it('should update filters when filter button is clicked', () => {
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       const filterButton = screen.getByText('commons.filters.filterResults');
       fireEvent.click(filterButton);
@@ -335,7 +322,7 @@ describe('AssessmentDetail', () => {
 
   describe('Error Handling', () => {
     it('should handle missing translation keys gracefully', () => {
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       expect(
         screen.getByText('assessmentDetail.paymentsAssociated')
@@ -345,7 +332,7 @@ describe('AssessmentDetail', () => {
 
   describe('Action Button Clicks', () => {
     it('should handle action button clicks', () => {
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       const removeButton = screen.getByTestId('remove-payments-button');
       const addButton = screen.getByTestId('add-payments-button');
@@ -358,7 +345,7 @@ describe('AssessmentDetail', () => {
     });
 
     it('should navigate to assessment detail detail when data grid item is clicked', () => {
-      renderAssessmentDetail();
+      render(<AssessmentDetail />);
 
       const navigateButton = screen.getByTestId('navigate-to-detail-95');
       fireEvent.click(navigateButton);

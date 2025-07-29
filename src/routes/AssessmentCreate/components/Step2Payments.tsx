@@ -37,6 +37,9 @@ type AssessmentFormData = {
   operatingYear?: string;
   chapterCode?: string;
   debtPositionTypeOrgCode?: string;
+  // Campi per modalità modifica
+  isModifyMode?: boolean;
+  modifyAction?: 'add' | 'remove';
 };
 
 // Export validation function for use in AssessmentCreate
@@ -77,9 +80,15 @@ const Step2PaymentsComponent = forwardRef<
     control,
     name: 'selectedPayments'
   });
+  const isModifyMode = useWatch({
+    control,
+    name: 'isModifyMode'
+  });
 
   // Normalize boolean value
+  // In modify mode, always load data since we're working with payments
   const shouldLoadData =
+    isModifyMode ||
     addPaymentsToAssessmentRaw === true ||
     String(addPaymentsToAssessmentRaw) === 'true';
 
@@ -370,33 +379,36 @@ const Step2PaymentsComponent = forwardRef<
 
   return (
     <Stack direction="column" gap={3} width="100%">
-      <WizardStepWrapper>
-        <Stack direction="column" gap={2} alignItems="left" width="100%">
-          <FormComponent.ControlledRadioGroup
-            name="addPaymentsToAssessment"
-            data-testid="addPaymentsToAssessment"
-            control={control}
-            label={t(
-              'assessmentCreate.configuration.step2.addPayments.radioLabel'
-            )}
-            sx={{ flexDirection: 'row' }}
-            options={[
-              {
-                value: true,
-                label: t(
-                  'assessmentCreate.configuration.step2.addPayments.options.yes'
-                )
-              },
-              {
-                value: false,
-                label: t(
-                  'assessmentCreate.configuration.step2.addPayments.options.no'
-                )
-              }
-            ]}
-          />
-        </Stack>
-      </WizardStepWrapper>
+      {/* In modalità normale, mostra il radio button senza titolo personalizzato */}
+      {!isModifyMode && (
+        <WizardStepWrapper>
+          <Stack direction="column" gap={2} alignItems="left" width="100%">
+            <FormComponent.ControlledRadioGroup
+              name="addPaymentsToAssessment"
+              data-testid="addPaymentsToAssessment"
+              control={control}
+              label={t(
+                'assessmentCreate.configuration.step2.addPayments.radioLabel'
+              )}
+              sx={{ flexDirection: 'row' }}
+              options={[
+                {
+                  value: true,
+                  label: t(
+                    'assessmentCreate.configuration.step2.addPayments.options.yes'
+                  )
+                },
+                {
+                  value: false,
+                  label: t(
+                    'assessmentCreate.configuration.step2.addPayments.options.no'
+                  )
+                }
+              ]}
+            />
+          </Stack>
+        </WizardStepWrapper>
+      )}
 
       {shouldLoadData && operatingYearsQuery.isError && (
         <Alert
@@ -489,7 +501,7 @@ const Step2PaymentsComponent = forwardRef<
           onFiltersApplied={handleFiltersApplied}
           onFilterValidationError={paymentsState.setShowFiltersValidationError}
           initialFilters={initialTableFilters}
-          isLoading={paymentsApi.isLoading}
+          isLoading={paymentsApi.isLoading && !hasLoadedData}
           autoLoadOnMount={!hasLoadedData}
           selectedUniqueIds={currentPageSelectedUniqueIds}
         />

@@ -327,6 +327,18 @@
     },
     "description": "Inserisci i parametri per creare un nuovo accertamento.",
     "title": "Crea un nuovo accertamento",
+    "modify": {
+      "addPayments": {
+        "title": "Aggiungi pagamenti",
+        "description": "Seleziona i pagamenti da aggiungere all'accertamento.",
+        "stepTitle": "Aggiungi pagamenti"
+      },
+      "removePayments": {
+        "title": "Rimuovi pagamenti",
+        "description": "Seleziona i pagamenti da rimuovere dall'accertamento.",
+        "stepTitle": "Rimuovi pagamenti"
+      }
+    },
     "stepper": {
       "step1": "Configurazione accertamento",
       "step2": "Aggiungi pagamenti",
@@ -339,24 +351,20 @@
     },
     "error": {
       "creationFailed": "Errore durante la creazione dell'assessment",
-      "nameAlreadyPresent": "Esiste già un accertamento con la stessa combinazione di nome e tipo dovuto"
+      "nameAlreadyPresent": "Esiste già un accertamento con lo stesso Nome"
     }
   },
   "assessmentDetail": {
     "debtType": "Tipo dovuto",
     "createdBy": "Creato da",
     "paymentsAssociated": "Pagamenti associati",
-    "closeDialog": {
-      "title": "Sei sicuro di chiudere l’accertamento?",
-      "description": "Una volta chiuso, l’accertamento non potrà più essere modificato.",
-      "ok": "Chiudi l’accertamento",
-      "ko": "Annulla"
+    "deleteDialog": {
+      "title": "Conferma eliminazione",
+      "description": "Sei sicuro di voler eliminare questo accertamento? L'operazione non può essere annullata."
     },
-    "cancelDialog": {
-      "title": "Sei sicuro di voler eliminare l’accertamento?",
-      "description": "Una volta cancellato, l’accertamento non potrà più essere riaperto. Potrai comunque consultarne i dettagli.",
-      "ok": "Elimina",
-      "ko": "Chiudi"
+    "cannotModifyDialog": {
+      "title": "Operazione non consentita",
+      "description": "Non è possibile aggiungere o rimuovere pagamenti per questo accertamento."
     },
     "paymentDetail": {
       "title": "Dettaglio pagamento",

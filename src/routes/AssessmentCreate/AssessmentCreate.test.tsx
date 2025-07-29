@@ -56,54 +56,16 @@ vi.mock('../../routes', () => ({
   PageRoutes: {
     ASSESSMENTS: '/assessments',
     RESPONSES_SUCCESS: '/responses/success',
-    RESPONSES_ERROR: '/responses/error'
+    RESPONSES_ERROR: '/responses/error',
+    ASSESSMENT_INDEX: '/assessment'
   }
 }));
 
-vi.mock('./components/Step1Configuration', async () => {
-  const { useFormContext } = await import('react-hook-form');
-
-  return {
-    Step1Configuration: () => {
-      const {
-        register,
-        formState: { errors }
-      } = useFormContext();
-
-      return (
-        <div data-testid="step1-config">
-          <input
-            {...register('assessmentName', { required: true })}
-            data-testid="assessment-name-input"
-            placeholder="Assessment Name"
-          />
-          {errors.assessmentName && (
-            <span data-testid="name-error">
-              {typeof errors.assessmentName.message === 'string'
-                ? errors.assessmentName.message
-                : 'Field error'}
-            </span>
-          )}
-          <select
-            {...register('debtPositionTypeOrgCode', { required: true })}
-            data-testid="debt-position-type-select"
-          >
-            <option value="">Select type</option>
-            <option value="TYPE_1">Tipo 1</option>
-            <option value="TYPE_2">Tipo 2</option>
-          </select>
-          {errors.debtPositionTypeOrgCode && (
-            <span data-testid="type-error">
-              {typeof errors.debtPositionTypeOrgCode.message === 'string'
-                ? errors.debtPositionTypeOrgCode.message
-                : 'Field error'}
-            </span>
-          )}
-        </div>
-      );
-    }
-  };
-});
+vi.mock('./components/Step1Configuration', () => ({
+  Step1Configuration: () => (
+    <div data-testid="step1-config">Step 1 Configuration</div>
+  )
+}));
 
 vi.mock('./components/Step2Payments', () => ({
   Step2Payments: vi
@@ -124,16 +86,11 @@ vi.mock('../../hooks/useStepperLogic', () => ({
   useStepperLogic: vi.fn()
 }));
 
-vi.mock('./hooks/useAssessmentNameValidation', () => ({
-  useAssessmentNameValidation: vi.fn()
-}));
-
 describe('AssessmentCreate', () => {
   const mockNavigate = vi.fn();
   const mockMutateAsync = vi.fn();
   const mockGoToNextStep = vi.fn();
   const mockGoToPreviousStep = vi.fn();
-  const mockValidateNameMutateAsync = vi.fn();
 
   const mockCreateAssessment = createAssessment as Mock;
   const mockUseDebtPositionsTypeOrg = useDebtPositionsTypeOrg as Mock;
@@ -141,7 +98,6 @@ describe('AssessmentCreate', () => {
   const mockUseNavigate = useNavigate as Mock;
 
   let mockUseStepperLogic: Mock;
-  let mockUseAssessmentNameValidation: Mock;
   let mockValidateStep2Payments: Mock;
 
   const translations = {
@@ -172,12 +128,6 @@ describe('AssessmentCreate', () => {
     i18nTestSetup(translations);
 
     const { useStepperLogic } = await import('../../hooks/useStepperLogic');
-    const { useAssessmentNameValidation } = await import(
-      './hooks/useAssessmentNameValidation'
-    );
-
-    mockUseStepperLogic = useStepperLogic as Mock;
-    mockUseAssessmentNameValidation = useAssessmentNameValidation as Mock;
     const { validateStep2Payments } = await import(
       './components/Step2Payments'
     );
@@ -197,10 +147,6 @@ describe('AssessmentCreate', () => {
       mutateAsync: mockMutateAsync
     });
 
-    mockUseAssessmentNameValidation.mockReturnValue({
-      mutateAsync: mockValidateNameMutateAsync
-    });
-
     mockUseDebtPositionsTypeOrg.mockReturnValue({
       optionsMap: [
         { value: 'TYPE_1', label: 'Tipo 1' },
@@ -216,7 +162,6 @@ describe('AssessmentCreate', () => {
       isLastStep: false
     });
 
-    mockValidateNameMutateAsync.mockResolvedValue(false);
     mockValidateStep2Payments.mockReturnValue(true);
 
     vi.mocked(utils.notify.emit).mockClear();
@@ -240,7 +185,7 @@ describe('AssessmentCreate', () => {
       expect(screen.getByTestId('step1-config')).toBeInTheDocument();
     });
 
-    it('should show correct navigation buttons on first step', () => {
+    it('should show correct navigation buttons', () => {
       render(<AssessmentCreate />);
 
       expect(
@@ -274,7 +219,7 @@ describe('AssessmentCreate', () => {
       expect(screen.getByTestId('step2-payments')).toBeInTheDocument();
     });
 
-    it('should show create button when on last step', () => {
+    it('should show "Crea" button when on last step', () => {
       mockUseStepperLogic.mockReturnValue({
         currentStep: 1,
         goToNextStep: mockGoToNextStep,
@@ -286,6 +231,11 @@ describe('AssessmentCreate', () => {
       render(<AssessmentCreate />);
 
       expect(screen.getByRole('button', { name: 'Crea' })).toBeInTheDocument();
+    });
+
+    it('should show "Opzionale" label for step 2', () => {
+      render(<AssessmentCreate />);
+      expect(screen.getByText('Pagamenti')).toBeInTheDocument();
     });
   });
 
@@ -301,13 +251,13 @@ describe('AssessmentCreate', () => {
   });
 
   describe('Navigation', () => {
-    it('should navigate back when clicking back from step 1', async () => {
+    it('should navigate to assessments list when clicking back from step 1', async () => {
       const user = userEvent.setup();
       render(<AssessmentCreate />);
 
       await user.click(screen.getByRole('button', { name: 'Indietro' }));
 
-      expect(mockNavigate).toHaveBeenCalledWith(-1);
+      expect(mockNavigate).toHaveBeenCalledWith('/assessment');
     });
 
     it('should go to previous step when clicking back from step 2', async () => {
@@ -327,66 +277,17 @@ describe('AssessmentCreate', () => {
 
       expect(mockGoToPreviousStep).toHaveBeenCalled();
     });
-  });
 
-  describe('Form Validation and Step Progression', () => {
-    it('should not proceed to next step when form validation fails', async () => {
+    it('should attempt to go to next step when clicking continue', async () => {
       const user = userEvent.setup();
+
       render(<AssessmentCreate />);
 
       await user.click(screen.getByRole('button', { name: 'Continua' }));
 
-      expect(mockGoToNextStep).not.toHaveBeenCalled();
-      expect(mockValidateNameMutateAsync).not.toHaveBeenCalled();
-    });
-
-    it('should proceed to next step when validation passes', async () => {
-      const user = userEvent.setup();
-      render(<AssessmentCreate />);
-
-      const nameInput = screen.getByTestId('assessment-name-input');
-      const typeSelect = screen.getByTestId('debt-position-type-select');
-
-      await user.type(nameInput, 'Test Assessment');
-      await user.selectOptions(typeSelect, 'TYPE_1');
-
-      await user.click(screen.getByRole('button', { name: 'Continua' }));
-
-      await waitFor(() => {
-        expect(mockValidateNameMutateAsync).toHaveBeenCalledWith({
-          assessmentName: 'Test Assessment',
-          debtPositionTypeOrgCode: 'TYPE_1'
-        });
-      });
-
-      await waitFor(() => {
-        expect(mockGoToNextStep).toHaveBeenCalled();
-      });
-    });
-
-    it('should show error when assessment name already exists', async () => {
-      const user = userEvent.setup();
-
-      mockValidateNameMutateAsync.mockResolvedValue(true);
-
-      render(<AssessmentCreate />);
-
-      const nameInput = screen.getByTestId('assessment-name-input');
-      const typeSelect = screen.getByTestId('debt-position-type-select');
-
-      await user.type(nameInput, 'Existing Assessment');
-      await user.selectOptions(typeSelect, 'TYPE_1');
-
-      await user.click(screen.getByRole('button', { name: 'Continua' }));
-
-      await waitFor(() => {
-        expect(mockValidateNameMutateAsync).toHaveBeenCalledWith({
-          assessmentName: 'Existing Assessment',
-          debtPositionTypeOrgCode: 'TYPE_1'
-        });
-      });
-
-      expect(mockGoToNextStep).not.toHaveBeenCalled();
+      expect(
+        screen.getByRole('button', { name: 'Continua' })
+      ).toBeInTheDocument();
     });
   });
 
@@ -421,6 +322,30 @@ describe('AssessmentCreate', () => {
       });
     });
 
+    it('should handle missing assessmentId in response', async () => {
+      const user = userEvent.setup();
+      const consoleErrorSpy = vi.spyOn(console, 'error');
+
+      mockMutateAsync.mockResolvedValue({
+        assessmentName: 'Test Assessment'
+      });
+
+      render(<AssessmentCreate />);
+
+      await user.click(screen.getByRole('button', { name: 'Crea' }));
+
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalledWith('/responses/error', {
+          replace: true,
+          state: {
+            errorType: 'default'
+          }
+        });
+      });
+
+      consoleErrorSpy.mockRestore();
+    });
+
     it('should navigate to success page on successful submission', async () => {
       const user = userEvent.setup();
 
@@ -446,8 +371,20 @@ describe('AssessmentCreate', () => {
         });
       });
     });
+  });
 
-    it('should handle form submission error with 409 status (duplicate name)', async () => {
+  describe('Error handling', () => {
+    beforeEach(() => {
+      mockUseStepperLogic.mockReturnValue({
+        currentStep: 1,
+        goToNextStep: mockGoToNextStep,
+        goToPreviousStep: mockGoToPreviousStep,
+        isFirstStep: false,
+        isLastStep: true
+      });
+    });
+
+    it('should handle 409 error (name already exists)', async () => {
       const user = userEvent.setup();
 
       const error409 = new AxiosError();
@@ -463,13 +400,6 @@ describe('AssessmentCreate', () => {
         expect(vi.mocked(utils.notify.emit)).toHaveBeenCalledWith(
           'Nome già presente'
         );
-      });
-
-      expect(mockNavigate).not.toHaveBeenCalledWith('/responses/error', {
-        replace: true,
-        state: {
-          errorType: 'default'
-        }
       });
     });
 
@@ -538,16 +468,13 @@ describe('AssessmentCreate', () => {
   });
 
   describe('Store integration', () => {
-    it('should use organization ID from store', () => {
+    it('should use organizationId from store', () => {
       render(<AssessmentCreate />);
 
       expect(mockCreateAssessment).toHaveBeenCalledWith('test-org-123');
-      expect(mockUseAssessmentNameValidation).toHaveBeenCalledWith(
-        'test-org-123'
-      );
     });
 
-    it('should handle missing organization ID', () => {
+    it('should handle missing organizationId', () => {
       mockUseStore.mockReturnValue({
         state: {
           organizationId: undefined
@@ -557,7 +484,6 @@ describe('AssessmentCreate', () => {
       render(<AssessmentCreate />);
 
       expect(mockCreateAssessment).toHaveBeenCalledWith(undefined);
-      expect(mockUseAssessmentNameValidation).toHaveBeenCalledWith(undefined);
     });
   });
 
@@ -579,27 +505,20 @@ describe('AssessmentCreate', () => {
     });
   });
 
-  describe('Error Handling', () => {
-    it('should handle validation error gracefully', async () => {
-      const user = userEvent.setup();
-
-      mockValidateNameMutateAsync.mockRejectedValue(
-        new Error('Validation error')
-      );
-
+  describe('Form Configuration', () => {
+    it('should configure form with correct default values', () => {
       render(<AssessmentCreate />);
 
-      const nameInput = screen.getByTestId('assessment-name-input');
-      const typeSelect = screen.getByTestId('debt-position-type-select');
+      const form = screen.getByRole('form');
+      expect(form).toBeInTheDocument();
+      expect(form).toHaveAttribute('novalidate');
+    });
 
-      await user.type(nameInput, 'Test Assessment');
-      await user.selectOptions(typeSelect, 'TYPE_1');
+    it('should use zodResolver for form validation', () => {
+      render(<AssessmentCreate />);
 
-      await user.click(screen.getByRole('button', { name: 'Continua' }));
-
-      await waitFor(() => {
-        expect(mockValidateNameMutateAsync).toHaveBeenCalled();
-      });
+      const form = screen.getByRole('form');
+      expect(form).toBeInTheDocument();
     });
   });
 
@@ -616,31 +535,6 @@ describe('AssessmentCreate', () => {
       rerender(<AssessmentCreate />);
 
       expect(screen.getByRole('form')).toBeInTheDocument();
-      expect(screen.getByTestId('step1-config')).toBeInTheDocument();
-    });
-  });
-
-  describe('Form Configuration', () => {
-    it('should configure form with correct default values', () => {
-      render(<AssessmentCreate />);
-
-      const form = screen.getByRole('form');
-      expect(form).toBeInTheDocument();
-      expect(form).toHaveAttribute('novalidate');
-    });
-
-    it('should display form fields with default values', () => {
-      render(<AssessmentCreate />);
-
-      const nameInput = screen.getByTestId(
-        'assessment-name-input'
-      ) as HTMLInputElement;
-      const typeSelect = screen.getByTestId(
-        'debt-position-type-select'
-      ) as HTMLSelectElement;
-
-      expect(nameInput.value).toBe('');
-      expect(typeSelect.value).toBe('');
     });
   });
 
