@@ -335,7 +335,7 @@
       },
       "removePayments": {
         "title": "Rimuovi pagamenti",
-        "description": "Seleziona i pagamenti da rimuovere dall'accertamento.",
+        "description": "Cerca e seleziona i pagamenti nell’acertamento da rimuovere.",
         "stepTitle": "Rimuovi pagamenti"
       }
     },

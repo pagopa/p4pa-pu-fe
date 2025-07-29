@@ -7,6 +7,7 @@ import {
   useSearchParams
 } from 'react-router';
 import { FormProvider, useWatch } from 'react-hook-form';
+import { Typography, Box } from '@mui/material';
 import { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
 import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
@@ -72,6 +73,7 @@ type AssessmentFormData = z.infer<typeof assessmentFormSchema> & {
   assessmentRegistryId?: number;
   isModifyMode?: boolean;
   modifyAction?: 'add' | 'remove';
+  assessmentId?: number;
 };
 
 type AssessmentDetailNavigationState = {
@@ -144,7 +146,8 @@ export const AssessmentCreate = () => {
       chapterCode: '',
       assessmentRegistryId: undefined,
       isModifyMode: isModifyMode,
-      modifyAction: modifyAction
+      modifyAction: modifyAction,
+      assessmentId: initialNavigationState.current?.assessmentId
     }
   });
 
@@ -159,14 +162,19 @@ export const AssessmentCreate = () => {
         addPaymentsToAssessmentRaw === 'true')
   );
 
-  // In modify mode, the number of steps is always 2 (Step2 and Step3 of the normal flow)
+  // In modify mode: Remove = 1 step (no wizard), Add = 2 steps
   // In normal mode: 2 steps if no payments, 3 steps if payments
   const totalSteps = useMemo(() => {
     if (isModifyMode) {
+      // Remove mode: no wizard, only Step2Payment
+      if (modifyAction === 'remove') {
+        return 1;
+      }
+      // Add mode: 2 steps (Step2 + Step3)
       return 2;
     }
     return addPaymentsToAssessment ? 3 : 2;
-  }, [isModifyMode, addPaymentsToAssessment]);
+  }, [isModifyMode, addPaymentsToAssessment, modifyAction]);
 
   const {
     currentStep,
@@ -189,26 +197,38 @@ export const AssessmentCreate = () => {
   };
 
   const validateStep = (step: number, values: AssessmentFormData) => {
-    // In modify mode: Step 0 = payments, Step 1 = chapters
+    // In modify mode: Remove = Step 0 only, Add = Step 0 (payments) + Step 1 (chapters)
     if (isModifyMode) {
-      switch (step) {
-        case 0:
-          // Step payments in modify mode
-          return {
-            isValid: validateStep2Payments(values),
-            fields: [] as const
-          };
-        case 1: {
-          // Step chapters in modify mode
-          const yearValid = !!values.operatingYear;
-          const chapterValid = !values.operatingYear || !!values.chapterCode;
-          return {
-            isValid: yearValid && chapterValid,
-            fields: ['operatingYear', 'chapterCode'] as const
-          };
+      if (modifyAction === 'remove') {
+        // Remove mode: only Step 0 (payments)
+        switch (step) {
+          case 0:
+            return {
+              isValid: validateStep2Payments(values),
+              fields: [] as const
+            };
+          default:
+            return { isValid: false, fields: [] as const };
         }
-        default:
-          return { isValid: false, fields: [] as const };
+      } else {
+        // Add mode: Step 0 = payments, Step 1 = chapters
+        switch (step) {
+          case 0:
+            return {
+              isValid: validateStep2Payments(values),
+              fields: [] as const
+            };
+          case 1: {
+            const yearValid = !!values.operatingYear;
+            const chapterValid = !values.operatingYear || !!values.chapterCode;
+            return {
+              isValid: yearValid && chapterValid,
+              fields: ['operatingYear', 'chapterCode'] as const
+            };
+          }
+          default:
+            return { isValid: false, fields: [] as const };
+        }
       }
     }
 
@@ -245,6 +265,16 @@ export const AssessmentCreate = () => {
   };
 
   const handleSubmit = async (values: AssessmentFormData) => {
+    // Handle Remove mode
+    if (isModifyMode && modifyAction === 'remove') {
+      console.log(
+        'Remove action triggered with selected payments:',
+        values.selectedPaymentIuds
+      );
+      // TODO: Implement remove API call
+      return;
+    }
+
     try {
       // STEP 1: Create always the standard assessment
       const response = await createAssessmentMutation.mutateAsync({
@@ -340,7 +370,6 @@ export const AssessmentCreate = () => {
     [setError, t]
   );
 
-  // Funzione helper per gestire gli errori di validazione
   const handleValidationErrors = useCallback(
     async (
       values: AssessmentFormData,
@@ -372,7 +401,6 @@ export const AssessmentCreate = () => {
     ]
   );
 
-  // Funzione helper per gestire la navigazione condizionale
   const handleConditionalNavigation = useCallback(
     async (values: AssessmentFormData) => {
       // LOGIC CONDITIONAL STEP - Point of bifurcation only in normal mode
@@ -456,12 +484,16 @@ export const AssessmentCreate = () => {
 
   const getNextButtonLabel = () => {
     if (isModifyMode) {
-      // In modify mode: step 0 = payments, step 1 = chapters (last)
-      if (currentStep === 1) {
-        // Last step in modify mode - show the action text
-        return modifyAction === 'add' ? t('commons.add') : t('commons.remove');
+      if (modifyAction === 'remove') {
+        // Remove mode: always show "Rimuovi" since it's only 1 step
+        return t('commons.remove');
+      } else {
+        // Add mode: step 0 = payments, step 1 = chapters (last)
+        if (currentStep === 1) {
+          return t('commons.add');
+        }
+        return t('commons.continue');
       }
-      return t('commons.continue');
     }
 
     // Normal flow
@@ -486,18 +518,29 @@ export const AssessmentCreate = () => {
   const step3Component = useMemo(() => <Step3AssignChapter />, []);
 
   const steps: Stepper['steps'] = useMemo(() => {
-    // In modify mode, rearrange the steps: Step2 becomes Step1, Step3 becomes Step2
+    // In modify mode
     if (isModifyMode) {
-      return [
-        {
-          label: t('assessmentCreate.stepper.step2'), // Step payments becomes Step 1
-          content: step2Component
-        },
-        {
-          label: t('assessmentCreate.stepper.step3'), // Step chapter becomes Step 2
-          content: step3Component
-        }
-      ];
+      if (modifyAction === 'remove') {
+        // Remove mode: no wizard, only Step2Payment content
+        return [
+          {
+            label: t('assessmentCreate.stepper.step2'),
+            content: step2Component
+          }
+        ];
+      } else {
+        // Add mode: Step2 becomes Step1, Step3 becomes Step2
+        return [
+          {
+            label: t('assessmentCreate.stepper.step2'),
+            content: step2Component
+          },
+          {
+            label: t('assessmentCreate.stepper.step3'),
+            content: step3Component
+          }
+        ];
+      }
     }
 
     // Normal flow creation
@@ -524,6 +567,7 @@ export const AssessmentCreate = () => {
   }, [
     t,
     isModifyMode,
+    modifyAction,
     addPaymentsToAssessment,
     step1Component,
     step2Component,
@@ -551,12 +595,26 @@ export const AssessmentCreate = () => {
   return (
     <FormProvider {...methods}>
       <form aria-label={t('assessmentCreate.formLabel')} role="form" noValidate>
-        <StepperContainer
-          title={getTitle()}
-          description={getDescription()}
-          steps={steps}
-          activeStep={currentStep}
-        />
+        {isModifyMode && modifyAction === 'remove' ? (
+          <>
+            <Box sx={{ mb: 4 }}>
+              <Typography variant="h4" component="h1" gutterBottom>
+                {getTitle()}
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                {getDescription()}
+              </Typography>
+            </Box>
+            {step2Component}
+          </>
+        ) : (
+          <StepperContainer
+            title={getTitle()}
+            description={getDescription()}
+            steps={steps}
+            activeStep={currentStep}
+          />
+        )}
 
         <WizardStepButtons
           onBack={handleBack}

@@ -8,7 +8,8 @@ import {
   useImperativeHandle,
   forwardRef,
   useMemo,
-  useState
+  useState,
+  memo
 } from 'react';
 import { subDays, startOfDay, endOfDay } from 'date-fns';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
@@ -19,11 +20,18 @@ import { useChapters } from '../../../hooks/useChapters';
 import { useStep2PaymentsState } from '../../../hooks/useStep2PaymentsState';
 import { usePaidInstallments } from '../../../hooks/usePaidInstallments';
 import { useGlobalPaymentSelection } from '../../../hooks/useGlobalPaymentSelection';
+import { getAssessmentDetail } from '../../../api/assessments/assessmentDetail/assessmentDetail';
+import { useStore } from '../../../store/GlobalStore';
+import { STATE } from '../../../store/types';
 import type {
   PagedPaidInstallmentsDTO,
   PaymentsUIFilters
 } from '../../../api/classifications/paidInstallments/mappings';
 import { convertFiltersToAPI } from '../../../api/classifications/paidInstallments/mappings';
+import { assessmentsRowsDetailSchema } from '../../../../generated/zod-schema';
+import { z } from 'zod';
+
+type AssessmentsRowsDetail = z.infer<typeof assessmentsRowsDetailSchema>;
 
 export type Step2PaymentsRef = {
   showValidationError: (show: boolean) => void;
@@ -40,6 +48,7 @@ type AssessmentFormData = {
   // Campi per modalità modifica
   isModifyMode?: boolean;
   modifyAction?: 'add' | 'remove';
+  assessmentId?: number;
 };
 
 // Export validation function for use in AssessmentCreate
@@ -68,6 +77,8 @@ const Step2PaymentsComponent = forwardRef<
 >(({ isActive = true }, ref) => {
   const { t } = useTranslation();
   const { control, setValue } = useFormContext<AssessmentFormData>();
+  const { state } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const addPaymentsToAssessmentRaw = useWatch({
     control,
     name: 'addPaymentsToAssessment'
@@ -84,6 +95,14 @@ const Step2PaymentsComponent = forwardRef<
     control,
     name: 'isModifyMode'
   });
+  const modifyAction = useWatch({
+    control,
+    name: 'modifyAction'
+  });
+  const assessmentId = useWatch({
+    control,
+    name: 'assessmentId'
+  });
 
   // Normalize boolean value
   // In modify mode, always load data since we're working with payments
@@ -92,13 +111,11 @@ const Step2PaymentsComponent = forwardRef<
     addPaymentsToAssessmentRaw === true ||
     String(addPaymentsToAssessmentRaw) === 'true';
 
-  // Syncronize IUDs when payments are selected
-  // This ensures the persistence of IUDs for the new assessment-details flow
-  useEffect(() => {
-    if (shouldLoadData && selectedPayments) {
-      setValue('selectedPaymentIuds', selectedPayments);
-    }
-  }, [selectedPayments, shouldLoadData, setValue]);
+  const isRemoveMode = isModifyMode && modifyAction === 'remove';
+
+  const [removeData, setRemoveData] = useState<PagedPaidInstallmentsDTO | null>(
+    null
+  );
 
   const paymentsState = useStep2PaymentsState();
 
@@ -106,11 +123,13 @@ const Step2PaymentsComponent = forwardRef<
   // TEMPORARY: When IUDs are unique, remove the currentPageRows parameter
   // FUTURE: const globalSelection = useGlobalPaymentSelection({ setValue, selectedPayments });
   const currentPageRows = useMemo(() => {
-    const currentPage = paymentsState.paymentsData.number || 0;
-    const currentSize = paymentsState.paymentsData.size || 10;
+    // For Remove mode, use removeData instead of paymentsState.paymentsData
+    const dataSource = isRemoveMode ? removeData : paymentsState.paymentsData;
+    const currentPage = dataSource?.number || 0;
+    const currentSize = dataSource?.size || 10;
 
     const rows =
-      paymentsState.paymentsData.content?.map((row, pageIndex) => {
+      dataSource?.content?.map((row, pageIndex) => {
         const absoluteIndex = currentPage * currentSize + pageIndex;
         return {
           uniqueId: `${row.iud || 'no-iud'}-${absoluteIndex}`,
@@ -120,6 +139,8 @@ const Step2PaymentsComponent = forwardRef<
 
     return rows;
   }, [
+    isRemoveMode,
+    removeData,
     paymentsState.paymentsData.content,
     paymentsState.paymentsData.number,
     paymentsState.paymentsData.size
@@ -130,6 +151,14 @@ const Step2PaymentsComponent = forwardRef<
     selectedPayments,
     currentPageRows
   });
+
+  // Syncronize IUDs when payments are selected
+  // This ensures the persistence of IUDs for the new assessment-details flow
+  useEffect(() => {
+    if (shouldLoadData && selectedPayments) {
+      setValue('selectedPaymentIuds', selectedPayments);
+    }
+  }, [selectedPayments, shouldLoadData, setValue]);
 
   // Flag to track if data has been loaded at least once
   const [hasLoadedData, setHasLoadedData] = useState(false);
@@ -146,6 +175,33 @@ const Step2PaymentsComponent = forwardRef<
     [paymentsState.updatePaymentsData]
   );
 
+  // Handler per i dati dell'assessment detail (Remove mode)
+  const handleAssessmentDetailSuccess = useCallback(
+    (data: AssessmentsRowsDetail) => {
+      // Transform data from assessment detail to PagedPaidInstallmentsDTO format
+      if (data?.pagedAssessmentsRowsDetail) {
+        const transformedData: PagedPaidInstallmentsDTO = {
+          content: (data.pagedAssessmentsRowsDetail.content || []).map(
+            (item) => ({
+              ...item,
+
+              receiptCreationDate: item.updateDate,
+              amount: item.amountCents || 0
+            })
+          ),
+          totalElements: data.pagedAssessmentsRowsDetail.totalElements || 0,
+          totalPages: data.pagedAssessmentsRowsDetail.totalPages || 0,
+          number: data.pagedAssessmentsRowsDetail.number || 0,
+          size: data.pagedAssessmentsRowsDetail.size || 10
+        };
+
+        setRemoveData(transformedData);
+        setHasLoadedData(true);
+      }
+    },
+    [paymentsState.updatePaymentsData]
+  );
+
   const handleApiError = useCallback(
     (error: Error) => {
       console.error('Step2 Payments API Error:', error);
@@ -154,12 +210,53 @@ const Step2PaymentsComponent = forwardRef<
     [paymentsState.resetPaymentsData]
   );
 
+  // For Remove mode, use getAssessmentDetail instead of usePaidInstallments
   const paymentsApi = usePaidInstallments({
-    enabled: isActive && shouldLoadData && !!debtPositionTypeOrgCode,
+    enabled:
+      isActive && shouldLoadData && !!debtPositionTypeOrgCode && !isRemoveMode,
     pageSize: 10,
     debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
     onError: handleApiError
   });
+
+  const assessmentDetailQuery = getAssessmentDetail(
+    organizationId,
+    assessmentId || 0,
+    { size: 10, page: 0 }, // Default pagination
+    {
+      enabled:
+        isActive &&
+        shouldLoadData &&
+        isRemoveMode &&
+        !!assessmentId &&
+        !!organizationId &&
+        !hasLoadedData
+    }
+  );
+
+  // Effect for handling assessment detail data (Remove mode)
+  useEffect(() => {
+    if (
+      isRemoveMode &&
+      assessmentDetailQuery.data &&
+      !assessmentDetailQuery.isLoading &&
+      !hasLoadedData
+    ) {
+      handleAssessmentDetailSuccess(assessmentDetailQuery.data);
+    }
+    if (isRemoveMode && assessmentDetailQuery.isError) {
+      handleApiError(assessmentDetailQuery.error as Error);
+    }
+  }, [
+    isRemoveMode,
+    assessmentDetailQuery.data,
+    assessmentDetailQuery.isLoading,
+    assessmentDetailQuery.isError,
+    assessmentDetailQuery.error,
+    hasLoadedData,
+    handleAssessmentDetailSuccess,
+    handleApiError
+  ]);
 
   const operatingYearsQuery = useOperatingYears({
     includeAllOption: false,
@@ -197,8 +294,10 @@ const Step2PaymentsComponent = forwardRef<
 
       // TEMPORARY: Calculate uniqueIds for current page
       // FUTURE: const currentPageIuds = paymentsState.paymentsData.content?.map(row => row.iud) || [];
+      // Use the same data source as currentPageRows
+      const dataSource = isRemoveMode ? removeData : paymentsState.paymentsData;
       const currentPageUniqueIds =
-        paymentsState.paymentsData.content?.map(
+        dataSource?.content?.map(
           (row, index) => `${row.iud || 'no-iud'}-${index}`
         ) || [];
 
@@ -219,7 +318,12 @@ const Step2PaymentsComponent = forwardRef<
         globalSelection.toggleUniqueIdSelection(toSelect, true);
       }
     },
-    [paymentsState.paymentsData.content, globalSelection]
+    [
+      isRemoveMode,
+      removeData?.content,
+      paymentsState.paymentsData.content,
+      globalSelection.toggleUniqueIdSelection
+    ]
   );
 
   const handleFiltersApplied = useCallback(
@@ -253,7 +357,7 @@ const Step2PaymentsComponent = forwardRef<
     const hasApiError =
       operatingYearsQuery.isError ||
       (chaptersQuery.isError && debtPositionTypeOrgCode) ||
-      paymentsApi.isError;
+      (isRemoveMode ? assessmentDetailQuery.isError : paymentsApi.isError);
 
     if (hasApiError) {
       if (operatingYearsQuery.isError) {
@@ -262,7 +366,12 @@ const Step2PaymentsComponent = forwardRef<
       if (chaptersQuery.isError && debtPositionTypeOrgCode) {
         console.error('Chapters error:', chaptersQuery.error);
       }
-      if (paymentsApi.isError) {
+      if (isRemoveMode && assessmentDetailQuery.isError) {
+        console.error(
+          'Assessment Detail API error:',
+          assessmentDetailQuery.error
+        );
+      } else if (!isRemoveMode && paymentsApi.isError) {
         console.error('Payments API error:', paymentsApi.error);
       }
       setValue('addPaymentsToAssessment', false);
@@ -273,6 +382,9 @@ const Step2PaymentsComponent = forwardRef<
     operatingYearsQuery.error,
     chaptersQuery.isError,
     chaptersQuery.error,
+    isRemoveMode,
+    assessmentDetailQuery.isError,
+    assessmentDetailQuery.error,
     paymentsApi.isError,
     paymentsApi.error,
     debtPositionTypeOrgCode,
@@ -300,7 +412,7 @@ const Step2PaymentsComponent = forwardRef<
     if (selectedPayments && selectedPayments.length > 0) {
       paymentsState.setShowPaymentsValidationError(false);
     }
-  }, [selectedPayments, paymentsState.setShowPaymentsValidationError]);
+  }, [selectedPayments?.length, paymentsState.setShowPaymentsValidationError]);
 
   useImperativeHandle(
     ref,
@@ -379,7 +491,6 @@ const Step2PaymentsComponent = forwardRef<
 
   return (
     <Stack direction="column" gap={3} width="100%">
-      {/* In modalità normale, mostra il radio button senza titolo personalizzato */}
       {!isModifyMode && (
         <WizardStepWrapper>
           <Stack direction="column" gap={2} alignItems="left" width="100%">
@@ -495,14 +606,28 @@ const Step2PaymentsComponent = forwardRef<
       )}
 
       {shouldLoadData && (
-        <PaymentsTable
-          data={paymentsState.paymentsData}
+        <MemoizedPaymentsTable
+          data={
+            isRemoveMode
+              ? removeData || {
+                  content: [],
+                  totalElements: 0,
+                  totalPages: 0,
+                  number: 0,
+                  size: 10
+                }
+              : paymentsState.paymentsData
+          }
           onSelectionChange={handleTableSelectionChange}
-          onFiltersApplied={handleFiltersApplied}
+          onFiltersApplied={isRemoveMode ? () => {} : handleFiltersApplied}
           onFilterValidationError={paymentsState.setShowFiltersValidationError}
           initialFilters={initialTableFilters}
-          isLoading={paymentsApi.isLoading && !hasLoadedData}
-          autoLoadOnMount={!hasLoadedData}
+          isLoading={
+            (isRemoveMode
+              ? assessmentDetailQuery.isLoading
+              : paymentsApi.isLoading) && !hasLoadedData
+          }
+          autoLoadOnMount={!hasLoadedData && !isRemoveMode}
           selectedUniqueIds={currentPageSelectedUniqueIds}
         />
       )}
@@ -511,5 +636,8 @@ const Step2PaymentsComponent = forwardRef<
 });
 
 Step2PaymentsComponent.displayName = 'Step2Payments';
+
+// Memoized PaymentsTable to prevent unnecessary re-renders
+const MemoizedPaymentsTable = memo(PaymentsTable);
 
 export { Step2PaymentsComponent as Step2Payments };
