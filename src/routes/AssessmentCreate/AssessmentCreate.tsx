@@ -20,6 +20,7 @@ import { Step3AssignChapter } from './components/Step3AssignChapter';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { useAssessmentNameValidation } from './hooks/useAssessmentNameValidation';
 import { AxiosError } from 'axios';
 
 const assessmentFormSchema = z.object({
@@ -109,6 +110,7 @@ export const AssessmentCreate = () => {
   } = useStepperLogic({ initialStep: 0, totalSteps });
 
   const createAssessmentMutation = createAssessment(organizationId);
+  const validateNameMutation = useAssessmentNameValidation(organizationId);
 
   const { getValues, clearErrors, trigger, setError } = methods;
 
@@ -120,35 +122,63 @@ export const AssessmentCreate = () => {
     return values.assessmentRegistryId;
   };
 
-  const validateStep = (step: number, values: AssessmentFormData) => {
+  const validateStep = async (
+    step: number,
+    values: AssessmentFormData
+  ): Promise<boolean> => {
     switch (step) {
-      case 0:
-        return {
-          isValid: !!values.assessmentName && !!values.debtPositionTypeOrgCode,
-          fields: ['assessmentName', 'debtPositionTypeOrgCode'] as const
-        };
+      case 0: {
+        const zodSchemaValidationResult = await trigger([
+          'assessmentName',
+          'debtPositionTypeOrgCode'
+        ]);
+
+        if (!zodSchemaValidationResult) {
+          return false;
+        }
+
+        try {
+          clearErrors('assessmentName');
+
+          const assessmentExists = await validateNameMutation.mutateAsync({
+            assessmentName: values.assessmentName,
+            debtPositionTypeOrgCode: values.debtPositionTypeOrgCode
+          });
+
+          if (assessmentExists) {
+            setError('assessmentName', {
+              type: 'manual',
+              message: 'assessmentCreate.error.nameAlreadyPresent'
+            });
+            return false;
+          }
+
+          return true;
+        } catch (error) {
+          console.error('Error validating assessment:', error);
+          setError('assessmentName', {
+            type: 'manual',
+            message: 'errors.generic'
+          });
+          return false;
+        }
+      }
+
       case 1:
-        return {
-          isValid: validateStep2Payments(values),
-          fields: [] as const
-        };
+        return validateStep2Payments(values);
+
       case 2:
         if (addPaymentsToAssessment) {
           // Year is always required, Chapter is required only if Year is selected
           const yearValid = !!values.operatingYear;
           const chapterValid = !values.operatingYear || !!values.chapterCode;
 
-          return {
-            isValid: yearValid && chapterValid,
-            fields: ['operatingYear', 'chapterCode'] as const
-          };
+          return yearValid && chapterValid;
         }
-        return {
-          isValid: true,
-          fields: [] as const
-        };
+        return true;
+
       default:
-        return { isValid: false, fields: [] as const };
+        return false;
     }
   };
 
@@ -219,12 +249,11 @@ export const AssessmentCreate = () => {
   // Conditional navigation logic for the wizard
   const handleNext = useCallback(async () => {
     try {
-      clearErrors();
       const values = getValues();
 
-      const { isValid, fields } = validateStep(currentStep, values);
+      const isStepValid = await validateStep(currentStep, values);
 
-      if (!isValid) {
+      if (!isStepValid) {
         if (currentStep === 2 && addPaymentsToAssessment) {
           const fieldsToValidate: Array<'operatingYear' | 'chapterCode'> = [
             'operatingYear'
@@ -257,8 +286,6 @@ export const AssessmentCreate = () => {
           if (step2PaymentsRef.current) {
             step2PaymentsRef.current.showValidationError(true);
           }
-        } else {
-          await trigger(fields);
         }
         return;
       }
@@ -282,7 +309,6 @@ export const AssessmentCreate = () => {
       utils.notify.emit(t('errors.generic'));
     }
   }, [
-    clearErrors,
     getValues,
     currentStep,
     addPaymentsToAssessment,
@@ -296,7 +322,7 @@ export const AssessmentCreate = () => {
 
   const handleBack = () => {
     if (isFirstStep) {
-      navigate(PageRoutes.ASSESSMENTS);
+      navigate(-1);
     } else {
       goToPreviousStep();
     }

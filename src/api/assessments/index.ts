@@ -13,7 +13,10 @@ import {
   assessmentsDetailSchema
 } from '../../../generated/zod-schema';
 import { pagedAssessmentsExtendedDTOSchema } from '../../../generated/zod-schema';
-import { AssessmentsRegistry } from '../../../generated/data-contracts';
+import {
+  AssessmentsRegistry,
+  AssessmentStatus
+} from '../../../generated/data-contracts';
 
 type AssessmentsParams = Parameters<
   typeof utils.apiClient.bff.getPagedAssessmentsExtendedDto
@@ -187,4 +190,23 @@ export const getOperatingYears = (options?: { enabled?: boolean }) =>
       return response;
     },
     enabled: options?.enabled ?? true
+  });
+export const updateAssessmentsStatus = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['updateAssessmentsStatus', organizationId],
+    mutationFn: async ({
+      assessmentId,
+      status
+    }: {
+      assessmentId: number;
+      status: AssessmentStatus;
+    }) => {
+      await utils.apiClient.bff.updateAssessmentsStatus(
+        organizationId,
+        assessmentId,
+        {
+          status
+        }
+      );
+    }
   });
