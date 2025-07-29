@@ -119,7 +119,7 @@ describe('ReportingPaymentDetail Page', () => {
     expect(screen.getByText('IUD67890')).toBeInTheDocument();
     expect(screen.getByText('Pagamento tassa')).toBeInTheDocument();
 
-    expect(screen.getByText('commons.state')).toBeInTheDocument();
+    expect(screen.getByText('commons.auditor')).toBeInTheDocument();
   });
 
   it('calls getPaymentsReportingDetail with correct parameters', () => {
@@ -256,48 +256,6 @@ describe('ReportingPaymentDetail Page', () => {
     render(<ReportingPaymentDetail />);
 
     expect(screen.getByText('15/04/2023')).toBeInTheDocument();
-  });
-
-  it('displays state label correctly', () => {
-    const statusMockData = {
-      ...mockData,
-      status: 'PAID'
-    };
-
-    (
-      getPaymentsReportingDetail as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
-      data: statusMockData,
-      isLoading: false
-    });
-
-    render(<ReportingPaymentDetail />);
-
-    expect(screen.getByText('commons.state')).toBeInTheDocument();
-  });
-
-  it('uses correct chip colors based on state type', () => {
-    const testStatuses = ['PAID', 'CANCELLED', 'DRAFT'];
-
-    for (const status of testStatuses) {
-      const statusMockData = {
-        ...mockData,
-        status: status
-      };
-
-      (
-        getPaymentsReportingDetail as unknown as ReturnType<typeof vi.fn>
-      ).mockReturnValue({
-        data: statusMockData,
-        isLoading: false
-      });
-
-      const { unmount } = render(<ReportingPaymentDetail />);
-
-      expect(screen.getByText('commons.state')).toBeInTheDocument();
-
-      unmount();
-    }
   });
 
   it('handles case when amountPaidCents is available', () => {
