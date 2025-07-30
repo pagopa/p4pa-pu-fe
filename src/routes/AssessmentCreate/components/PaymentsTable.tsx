@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useEffect } from 'react';
+import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   Search,
@@ -39,12 +39,12 @@ export type PaymentsTableProps = {
   onFilterValidationError?: (hasError: boolean) => void;
   initialFilters?: PaymentsUIFilters;
   isLoading?: boolean;
+  isApiCallPending?: boolean;
   disabled?: boolean;
   autoLoadOnMount?: boolean;
   // TEMPORARY: When IUDs are unique, it will become:
   // selectedIuds?: Array<string>;
   selectedUniqueIds?: Array<string>;
-  /** Indica se la tabella è in modalità remove */
   isRemoveMode?: boolean;
 };
 
@@ -55,6 +55,7 @@ export const PaymentsTable = ({
   onFilterValidationError,
   initialFilters = {},
   isLoading = false,
+  isApiCallPending = false,
   disabled = false,
   autoLoadOnMount = true,
   selectedUniqueIds = [],
@@ -87,6 +88,14 @@ export const PaymentsTable = ({
     onFilterValidationError,
     autoLoadOnMount
   });
+
+  const [isPaginationLoading, setIsPaginationLoading] = useState(false);
+
+  useEffect(() => {
+    if (isPaginationLoading && !isApiCallPending) {
+      setIsPaginationLoading(false);
+    }
+  }, [isPaginationLoading, isApiCallPending]);
 
   const tableData = data || {
     content: [],
@@ -156,6 +165,11 @@ export const PaymentsTable = ({
 
   const handlePaginationChange = useCallback(
     (pagination: { page: number; size: number }) => {
+      const isActualPageChange = pagination.page !== (tableData.number || 0);
+      if (isActualPageChange) {
+        setIsPaginationLoading(true);
+      }
+
       if (onFiltersApplied) {
         const sortParams =
           sortModel.length > 0
@@ -183,6 +197,10 @@ export const PaymentsTable = ({
     const fullUrl = `${window.location.origin}${detailPath}`;
     window.open(fullUrl, '_blank', 'noopener,noreferrer');
   }, []);
+
+  const combinedLoading = useMemo(() => {
+    return isLoading || isPaginationLoading;
+  }, [isLoading, isPaginationLoading]);
 
   const columns: Array<GridColDef> = [
     {
@@ -315,7 +333,7 @@ export const PaymentsTable = ({
             onPaginationChange: handlePaginationChange
           }}
           localeText={{ noRowsLabel: t('flowDataGrid.noDataRows') }}
-          loading={isLoading}
+          loading={combinedLoading}
           disableVirtualization={true}
         />
       </Box>

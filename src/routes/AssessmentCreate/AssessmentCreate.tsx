@@ -261,16 +261,6 @@ export const AssessmentCreate = () => {
   };
 
   const handleSubmit = async (values: AssessmentFormData) => {
-    // Handle Remove mode
-    if (isModifyMode && modifyAction === 'remove') {
-      console.log(
-        'Remove action triggered with selected assessment detail IDs:',
-        values.selectedAssessmentDetailIds || values.selectedPaymentIuds || []
-      );
-      // TODO: Implement remove API call
-      return;
-    }
-
     try {
       // STEP 1: Create always the standard assessment
       const response = await createAssessmentMutation.mutateAsync({
@@ -512,7 +502,7 @@ export const AssessmentCreate = () => {
   };
 
   const step1Component = useMemo(() => <Step1Configuration />, []);
-  
+
   const step2Component = useMemo(
     () => (
       <Step2Payments
@@ -522,7 +512,7 @@ export const AssessmentCreate = () => {
     ),
     [currentStep, isModifyMode]
   );
-  
+
   const step3Component = useMemo(() => <Step3AssignChapter />, []);
 
   const steps: Stepper['steps'] = useMemo(() => {
@@ -586,7 +576,7 @@ export const AssessmentCreate = () => {
     if (isModifyMode) {
       return modifyAction === 'add'
         ? t('assessmentCreate.modify.addPayments.title')
-        : t('assessmentCreate.modify.removePayments.title');
+        : t('assessmentCreate.removePayments.title');
     }
     return t('assessmentCreate.title');
   };
@@ -595,7 +585,7 @@ export const AssessmentCreate = () => {
     if (isModifyMode) {
       return modifyAction === 'add'
         ? t('assessmentCreate.modify.addPayments.description')
-        : t('assessmentCreate.modify.removePayments.description');
+        : t('assessmentCreate.removePayments.description');
     }
     return t('assessmentCreate.description');
   };

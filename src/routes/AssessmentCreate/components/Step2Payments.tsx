@@ -11,6 +11,7 @@ import {
   useState,
   memo
 } from 'react';
+import { useNavigate } from 'react-router';
 import { subDays, startOfDay, endOfDay } from 'date-fns';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
@@ -23,8 +24,10 @@ import { usePaidInstallments } from '../../../hooks/usePaidInstallments';
 import { useGlobalPaymentSelection } from '../../../hooks/useGlobalPaymentSelection';
 import { usePaymentsManager } from '../../../hooks/usePaymentsManager';
 import { getAssessmentDetail } from '../../../api/assessments/assessmentDetail/assessmentDetail';
+import { deleteAssessmentDetails } from '../../../api/assessments';
 import { useStore } from '../../../store/GlobalStore';
 import { STATE } from '../../../store/types';
+import { PageRoutes } from '../../../routes';
 import type {
   PagedPaidInstallmentsDTO,
   PaymentsUIFilters
@@ -32,6 +35,7 @@ import type {
 import { convertFiltersToAPI } from '../../../api/classifications/paidInstallments/mappings';
 import { assessmentsRowsDetailSchema } from '../../../../generated/zod-schema';
 import { z } from 'zod';
+import utils from '../../../utils';
 
 type AssessmentsRowsDetail = z.infer<typeof assessmentsRowsDetailSchema>;
 
@@ -48,6 +52,7 @@ export type AssessmentFormData = {
   operatingYear?: string;
   chapterCode?: string;
   debtPositionTypeOrgCode?: string;
+  assessmentName?: string;
   isModifyMode?: boolean;
   modifyAction?: 'add' | 'remove';
   assessmentId?: number;
@@ -108,6 +113,7 @@ const Step2PaymentsComponent = forwardRef<
   { isActive?: boolean }
 >(({ isActive = true }, ref) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { control, setValue } = useFormContext<AssessmentFormData>();
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
@@ -136,7 +142,10 @@ const Step2PaymentsComponent = forwardRef<
     control,
     name: 'assessmentId'
   });
-  // 🆕 AGGIUNTO: Watch selectedAssessmentDetailIds per Remove mode
+  const assessmentName = useWatch({
+    control,
+    name: 'assessmentName'
+  });
   const selectedAssessmentDetailIds = useWatch({
     control,
     name: 'selectedAssessmentDetailIds'
@@ -155,8 +164,13 @@ const Step2PaymentsComponent = forwardRef<
     null
   );
 
-  // 🆕 AGGIUNTO: Stato per gestione modale di conferma rimozione
   const [showRemoveConfirmModal, setShowRemoveConfirmModal] = useState(false);
+  // state for tracking manual API calls (pagination, filters, sorting)
+  const [isManualApiCallPending, setIsManualApiCallPending] = useState(false);
+
+  // Initialize delete mutation
+  const deleteAssessmentDetailsMutation =
+    deleteAssessmentDetails(organizationId);
 
   const paymentsState = useStep2PaymentsState();
 
@@ -360,9 +374,7 @@ const Step2PaymentsComponent = forwardRef<
     setValue
   ]);
 
-  // 🆕 AGGIUNTO: Handler per aprire modale di conferma rimozione
   const handleOpenRemoveConfirmModal = useCallback(() => {
-    // Verifica validazioni prima di aprire la modale
     if (!isRemoveMode) {
       return;
     }
@@ -373,34 +385,78 @@ const Step2PaymentsComponent = forwardRef<
     if (hasSelections) {
       setShowRemoveConfirmModal(true);
     } else {
-      // Nessuna selezione: mostra errore di validazione standard
       paymentsManager.showValidationError(true);
     }
   }, [
     isRemoveMode,
     selectedAssessmentDetailIds,
+    globalSelection.totalSelected,
     paymentsManager.showValidationError,
     setShowRemoveConfirmModal
   ]);
 
-  const handleConfirmRemove = useCallback((assessmentDetailIds: number[]) => {
-    console.log(
-      '🗑️ REMOVE MODE - Selected assessmentDetailIds:',
-      assessmentDetailIds
-    );
-    console.log('📊 Assessment Detail IDs Array:', {
-      ids: assessmentDetailIds,
-      count: assessmentDetailIds.length,
-      type: 'Remove Operation'
-    });
+  const handleConfirmRemove = useCallback(
+    async (assessmentDetailIds: number[]) => {
+      console.log(
+        '🗑️ REMOVE MODE - Selected assessmentDetailIds:',
+        assessmentDetailIds
+      );
+      console.log('📊 Assessment Detail IDs Array:', {
+        ids: assessmentDetailIds,
+        count: assessmentDetailIds.length,
+        type: 'Remove Operation'
+      });
 
-    // TODO: here we will implement the API call to delete in the next task
+      if (!assessmentDetailIds || assessmentDetailIds.length === 0) {
+        console.error('No assessmentDetailIds provided to handleConfirmRemove');
+        setShowRemoveConfirmModal(false);
+        return;
+      }
+      try {
+        await deleteAssessmentDetailsMutation.mutateAsync(assessmentDetailIds);
+        setShowRemoveConfirmModal(false);
 
-    setShowRemoveConfirmModal(false);
+        navigate(PageRoutes.RESPONSES_SUCCESS, {
+          replace: true,
+          state: {
+            category: 'assessment-remove-payments',
+            i18nParams: {
+              count: assessmentDetailIds.length,
+              assessmentName
+            },
+            assessmentId
+          }
+        });
+      } catch (error: unknown) {
+        console.error('Error during payment removal:', error);
 
-    // Optional: Clear selections after removal
-    // globalSelection.clearAllSelections();
-  }, []);
+        setShowRemoveConfirmModal(false);
+
+        const isAxiosErrorWithResponse = (
+          err: unknown
+        ): err is { response?: { status?: number } } => {
+          return typeof err === 'object' && err !== null && 'response' in err;
+        };
+
+        const statusCode = isAxiosErrorWithResponse(error)
+          ? error.response?.status
+          : undefined;
+
+        if (statusCode && statusCode >= 400 && statusCode < 500) {
+          navigate(PageRoutes.RESPONSES_ERROR, {
+            state: {
+              category: 'assessment-remove-payments',
+              errorType: '4xx',
+              statusCode
+            }
+          });
+          return;
+        }
+        utils.notify.emit(t('errors.generic'));
+      }
+    },
+    [deleteAssessmentDetailsMutation, navigate, setShowRemoveConfirmModal]
+  );
 
   const handleCancelRemove = useCallback(() => {
     setShowRemoveConfirmModal(false);
@@ -459,6 +515,8 @@ const Step2PaymentsComponent = forwardRef<
       pagination: { page: number; size: number },
       sortParams?: Array<string>
     ) => {
+      setIsManualApiCallPending(true);
+
       try {
         const apiFilters = convertFiltersToAPI(uiFilters);
 
@@ -474,9 +532,68 @@ const Step2PaymentsComponent = forwardRef<
       } catch (error) {
         console.error('Failed to fetch filtered paid installments:', error);
         handleApiError(error as Error);
+      } finally {
+        setIsManualApiCallPending(false);
       }
     },
     [paymentsApi.fetchPaidInstallments, handleApiSuccess, handleApiError]
+  );
+
+  const handleRemoveModeFiltersApplied = useCallback(
+    async (
+      uiFilters: PaymentsUIFilters,
+      pagination: { page: number; size: number },
+      sortParams?: Array<string>
+    ) => {
+      if (!isRemoveMode || !assessmentId || !organizationId) return;
+
+      setIsManualApiCallPending(true);
+
+      try {
+        const apiFilters = convertFiltersToAPI(uiFilters);
+
+        const queryParams = {
+          size: pagination.size,
+          page: pagination.page,
+          ...(apiFilters.iuv && { iuv: apiFilters.iuv }),
+          ...(apiFilters.paymentDateTimeFrom && {
+            paymentDateTimeFrom: apiFilters.paymentDateTimeFrom
+          }),
+          ...(apiFilters.paymentDateTimeTo && {
+            paymentDateTimeTo: apiFilters.paymentDateTimeTo
+          }),
+          ...(apiFilters.updateDateFrom && {
+            updateDateFrom: apiFilters.updateDateFrom
+          }),
+          ...(apiFilters.updateDateTo && {
+            updateDateTo: apiFilters.updateDateTo
+          }),
+          ...(sortParams?.length && { sort: sortParams })
+        };
+
+        const { data } = await utils.apiClient.bff.getPagedAssessmentsDetails(
+          organizationId,
+          assessmentId,
+          queryParams
+        );
+
+        if (data) {
+          handleAssessmentDetailSuccess(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch assessment detail:', error);
+        handleApiError(error as Error);
+      } finally {
+        setIsManualApiCallPending(false);
+      }
+    },
+    [
+      isRemoveMode,
+      assessmentId,
+      organizationId,
+      handleAssessmentDetailSuccess,
+      handleApiError
+    ]
   );
 
   // Helper function to handle API errors
@@ -520,6 +637,17 @@ const Step2PaymentsComponent = forwardRef<
   ]);
 
   useEffect(() => {
+    handleExternalApiErrors();
+  }, [
+    operatingYearsQuery.isError,
+    chaptersQuery.isError,
+    assessmentDetailQuery.isError,
+    paymentsApi.isError,
+    debtPositionTypeOrgCode,
+    handleExternalApiErrors
+  ]);
+
+  useEffect(() => {
     if (!shouldLoadData) {
       // Reset all form fields and state when switching to "No"
       resetFormFields();
@@ -529,7 +657,6 @@ const Step2PaymentsComponent = forwardRef<
     }
   }, [
     shouldLoadData,
-    handleExternalApiErrors,
     resetFormFields,
     paymentsState.resetPaymentsData,
     paymentsState.clearValidationErrors
@@ -582,6 +709,19 @@ const Step2PaymentsComponent = forwardRef<
       dateTo: endOfDay(new Date())
     };
   }, []);
+
+  const isApiCallPending = useMemo(() => {
+    if (isRemoveMode) {
+      return assessmentDetailQuery.isLoading || isManualApiCallPending;
+    } else {
+      return paymentsApi.isLoading || isManualApiCallPending;
+    }
+  }, [
+    isRemoveMode,
+    assessmentDetailQuery.isLoading,
+    paymentsApi.isLoading,
+    isManualApiCallPending
+  ]);
 
   // Reset data when debtPositionTypeOrgCode changes and step becomes active
   // This handles the case when user goes Step2->Step1->changes type->Step2
@@ -768,7 +908,9 @@ const Step2PaymentsComponent = forwardRef<
               : paymentsState.paymentsData
           }
           onSelectionChange={handleTableSelectionChange}
-          onFiltersApplied={isRemoveMode ? undefined : handleFiltersApplied}
+          onFiltersApplied={
+            isRemoveMode ? handleRemoveModeFiltersApplied : handleFiltersApplied
+          }
           onFilterValidationError={paymentsState.setShowFiltersValidationError}
           initialFilters={initialTableFilters}
           isLoading={
@@ -776,6 +918,7 @@ const Step2PaymentsComponent = forwardRef<
               ? assessmentDetailQuery.isLoading
               : paymentsApi.isLoading) && !hasLoadedData
           }
+          isApiCallPending={isApiCallPending}
           autoLoadOnMount={!hasLoadedData && !isRemoveMode}
           selectedUniqueIds={currentPageSelectedUniqueIds}
           isRemoveMode={isRemoveMode}

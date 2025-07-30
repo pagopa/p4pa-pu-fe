@@ -2,7 +2,7 @@ import { ButtonConfig } from '../components/ResponsePage/ResponsePage';
 
 type SuccessPage = {
   title: string;
-  description: string;
+  description?: string;
   buttonConfig?: Array<ButtonConfig>;
 };
 
@@ -173,6 +173,17 @@ export const SuccessPageConfig: SuccessOpts = {
         variant: 'contained',
         size: 'large',
         buttonLabel: 'assessmentCreate.success.goToDetail',
+        customNavigation: 'ASSESSMENT_DETAIL'
+      }
+    ]
+  },
+  'assessment-remove-payments': {
+    title: 'assessmentCreate.removePayments.success.title',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'assessmentCreate.removePayments.success.goToDetail',
         customNavigation: 'ASSESSMENT_DETAIL'
       }
     ]

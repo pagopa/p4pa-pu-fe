@@ -332,11 +332,6 @@
         "title": "Aggiungi pagamenti",
         "description": "Seleziona i pagamenti da aggiungere all'accertamento.",
         "stepTitle": "Aggiungi pagamenti"
-      },
-      "removePayments": {
-        "title": "Rimuovi pagamenti",
-        "description": "Cerca e seleziona i pagamenti nell’acertamento da rimuovere.",
-        "stepTitle": "Rimuovi pagamenti"
       }
     },
     "stepper": {
@@ -348,6 +343,19 @@
       "title": "L'accertamento \"{{assessmentName}}\" è stato creato!",
       "description": "Puoi trovarlo nella sezione accertamento pagamenti, dove puoi consultarlo in qualsiasi momento.",
       "goToDetail": "Visualizza accertamento"
+    },
+    "removePayments": {
+      "title": "Rimuovi pagamenti",
+      "description": "Cerca e seleziona i pagamenti nell’acertamento da rimuovere.",
+      "stepTitle": "Rimuovi pagamenti",
+      "success": {
+        "title": "Pagamenti rimossi correttamente nell'accertamento \"{{assessmentName}}\"",
+        "goToDetail": "Visualizza accertamento"
+      },
+      "confirmModal": {
+        "title": "Sei sicuro di voler rimuovere i pagamenti?",
+        "description": "Dopo la rimozione, i pagamenti non compariranno più nell'elenco dell'accertamento."
+      }
     },
     "error": {
       "creationFailed": "Errore durante la creazione dell'assessment",
@@ -380,6 +388,9 @@
       "psp": "Gestore della transazione (PSP)",
       "iud": "IUD",
       "iur": "IUR"
+    },
+    "error": {
+      "debtPositionTypeOrgCodeNotDefined": "Il tipo dovuto non è definito"
     }
   },
   "classificationsExport": {
@@ -578,6 +589,7 @@
         "name": "Nome ordinante"
       },
       "remove": "Rimuovi filtri",
+      "onlyRemove": "Rimuovi",
       "reportId": {
         "code": "ID Rendicontazione",
         "label": "ID Rendicontazione"

@@ -179,6 +179,26 @@ export const createAssessmentDetails = (
     }
   });
 
+export const deleteAssessmentDetails = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['deleteAssessmentDetails', organizationId],
+    mutationFn: async (assessmentDetailIds: number[]) => {
+      const response = await utils.apiClient.bff.deleteAssessmentsDetails(
+        organizationId,
+        {
+          assessmentDetailIds
+        },
+        // repeat array params as query string
+        {
+          paramsSerializer: {
+            indexes: null
+          }
+        }
+      );
+      return response;
+    }
+  });
+
 export const getOperatingYears = (options?: { enabled?: boolean }) =>
   useQuery({
     queryKey: ['getOperatingYears'],

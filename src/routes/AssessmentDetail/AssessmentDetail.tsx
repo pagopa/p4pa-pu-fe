@@ -38,6 +38,7 @@ import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { setAppState } from '../../store/AppStateStore';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
+import utils from '../../utils';
 
 type DialogConfig = {
   open: boolean;
@@ -204,11 +205,8 @@ export const AssessmentDetail = () => {
       return;
     }
 
-    const debtPositionTypeOrgCode =
-      detailItem?.debtPositionTypeOrgCode ||
-      data?.debtPositionTypeOrgDescription;
+    const debtPositionTypeOrgCode = detailItem?.debtPositionTypeOrgCode;
 
-    // Usa URL params per persistere lo stato anche dopo il reload
     const searchParams = new URLSearchParams({
       mode: 'remove',
       assessmentId: assessmentId.toString(),
@@ -234,11 +232,8 @@ export const AssessmentDetail = () => {
       return;
     }
 
-    const debtPositionTypeOrgCode =
-      detailItem?.debtPositionTypeOrgCode ||
-      data?.debtPositionTypeOrgDescription;
+    const debtPositionTypeOrgCode = detailItem?.debtPositionTypeOrgCode;
 
-    // Usa URL params per persistere lo stato anche dopo il reload
     const searchParams = new URLSearchParams({
       mode: 'add',
       assessmentId: assessmentId.toString(),
@@ -246,16 +241,25 @@ export const AssessmentDetail = () => {
       debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
       assessmentName: data?.assessmentsName || ''
     });
-
-    navigate(`${PageRoutes.ASSESSMENT_CREATION}?${searchParams.toString()}`, {
-      state: {
-        mode: 'add',
-        assessmentId: assessmentId,
-        assessmentName: data?.assessmentsName,
-        debtPositionTypeOrgCode: debtPositionTypeOrgCode,
-        fromAssessmentDetail: true
-      }
-    });
+    if (debtPositionTypeOrgCode) {
+      navigate(`${PageRoutes.ASSESSMENT_CREATION}?${searchParams.toString()}`, {
+        state: {
+          mode: 'add',
+          assessmentId: assessmentId,
+          assessmentName: data?.assessmentsName,
+          debtPositionTypeOrgCode: debtPositionTypeOrgCode,
+          fromAssessmentDetail: true
+        }
+      });
+    } else {
+      utils.notify.emit(
+        t('assessmentDetail.error.debtPositionTypeOrgCodeNotDefined')
+      );
+      console.error(
+        'debtPositionTypeOrgCode not defined',
+        debtPositionTypeOrgCode
+      );
+    }
   };
 
   /**
@@ -398,15 +402,18 @@ export const AssessmentDetail = () => {
             {t('assessmentDetail.paymentsAssociated')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<RemoveCircleOutline />}
-              onClick={handleRemovePayments}
-              data-testid="remove-payments-button"
-            >
-              {t('commons.remove')}
-            </Button>
+            {data?.pagedAssessmentsRowsDetail?.content &&
+              data.pagedAssessmentsRowsDetail.content.length > 0 && (
+                <Button
+                  variant="outlined"
+                  color="error"
+                  startIcon={<RemoveCircleOutline />}
+                  onClick={handleRemovePayments}
+                  data-testid="remove-payments-button"
+                >
+                  {t('commons.remove')}
+                </Button>
+              )}
             <Button
               variant="outlined"
               startIcon={<Add />}

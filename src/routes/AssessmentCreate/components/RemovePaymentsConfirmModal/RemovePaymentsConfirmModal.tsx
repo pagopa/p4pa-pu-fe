@@ -48,23 +48,14 @@ export const RemovePaymentsConfirmModal = ({
     >
       <DialogTitle sx={{ px: 4, pt: 4 }}>
         <Typography variant="h6" component="div">
-          Sei sicuro di voler rimuovere i pagamenti?
+          {t('assessmentCreate.removePayments.confirmModal.title')}
         </Typography>
       </DialogTitle>
 
       <DialogContent sx={{ px: 4, pb: 2 }}>
         <DialogContentText>
-          Dopo la rimozione, i pagamenti non compariranno più nell'elenco
-          dell'accertamento.
+          {t('assessmentCreate.removePayments.confirmModal.description')}
         </DialogContentText>
-
-        {selectedCount > 0 && (
-          <Typography variant="body2" sx={{ mt: 2, color: 'text.secondary' }}>
-            {selectedCount === 1
-              ? `1 pagamento selezionato`
-              : `${selectedCount} pagamenti selezionati`}
-          </Typography>
-        )}
       </DialogContent>
 
       <DialogActions sx={{ px: 4, pb: 3, gap: 1 }}>
@@ -73,7 +64,7 @@ export const RemovePaymentsConfirmModal = ({
           variant="outlined"
           data-testid={`${testId}-cancel-button`}
         >
-          Annulla
+          {t('commons.cancel')}
         </Button>
         <Button
           onClick={handleConfirm}
@@ -82,7 +73,7 @@ export const RemovePaymentsConfirmModal = ({
           data-testid={`${testId}-confirm-button`}
           disabled={selectedCount === 0}
         >
-          Rimuovi
+          {t('commons.onlyRemove')}
         </Button>
       </DialogActions>
     </Dialog>
