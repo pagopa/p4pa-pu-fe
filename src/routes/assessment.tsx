@@ -57,7 +57,7 @@ export const assessmentRoutes = [
       },
       {
         id: 'ASSESSMENT_DETAIL_DETAIL',
-        path: 'detail/:id/:assessmentDetailId',
+        path: 'detail/:id/:receiptId',
         element: <TelematicReceiptDetail />,
         handle: {
           backButton: true,

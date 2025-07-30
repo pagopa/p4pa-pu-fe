@@ -264,12 +264,12 @@ export const AssessmentDetail = () => {
 
   /**
    * Handle navigation to the assessment detail record
-   * @param assessmentDetailId - ID of the assessment detail
+   * @param receiptId - ID of the assessment detail
    */
-  const handleNavigateToDetailDetail = (assessmentDetailId: number) => {
+  const handleNavigateToDetailDetail = (receiptId: number) => {
     const detailUrl = generatePath(PageRoutes.ASSESSMENT_DETAIL_DETAIL, {
       id: assessmentId.toString(),
-      assessmentDetailId: assessmentDetailId.toString()
+      receiptId: receiptId.toString()
     });
 
     navigate(detailUrl, {
