@@ -9,7 +9,7 @@ import {
 } from '@mui/material';
 import { ArrowForward } from '@mui/icons-material';
 
-type ActionCardProps = {
+export type ActionCardProps = {
   actionButtonVariant?: ButtonProps['variant'];
   actionLabel: string;
   actionIcon?: React.ReactNode;

@@ -1,19 +1,20 @@
+import { useEffect } from 'react';
+import { Grid } from '@mui/material';
+import { generatePath } from 'react-router';
 import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
+
 import DetailContainer, {
   DetailData
-} from '../../components/DetailContainer/DetailContainer';
-import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { Grid } from '@mui/material';
-import { useStore } from '../../store/GlobalStore';
-import { getPaymentsReportingDetail } from '../../api/getPaymentsReportingDetail';
-import { STATE } from '../../store/types';
-import { setAppState } from '../../store/AppStateStore';
-import { formatDate } from '../../utils/formatters';
-import { useEffect } from 'react';
-import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
-import { PageRoutes } from '../../routes';
-import { generatePath } from 'react-router';
+} from '../../../components/DetailContainer/DetailContainer';
+import TitleComponent from '../../../components/TitleComponent/TitleComponent';
+import { useStore } from '../../../store/GlobalStore';
+import { getPaymentsReportingDetail } from '../../../api/getPaymentsReportingDetail';
+import { STATE } from '../../../store/types';
+import { setAppState } from '../../../store/AppStateStore';
+import { formatDate } from '../../../utils/formatters';
+import { BredcrumbItem } from '../../../components/Breadcrumbs/Breadcrumbs';
+import { PageRoutes } from '../../../routes';
 
 function ReportingPaymentDetail() {
   const { iuf, id } = useParams();
@@ -139,37 +140,33 @@ function ReportingPaymentDetail() {
     }
   ];
 
-  return (
+  return !isLoading ? (
     <>
-      {!isLoading && (
-        <>
-          <TitleComponent title={t('reportingPaymentDetail.title')} />
-          <Grid container spacing={3}>
-            <Grid item md={6}>
-              <DetailContainer
-                sections={[
-                  {
-                    title: { label: t('commons.summary'), variant: 'overline' },
-                    data: summaryData
-                  }
-                ]}
-              />
-            </Grid>
-            <Grid item md={6}>
-              <DetailContainer
-                sections={[
-                  {
-                    title: { label: t('commons.payment'), variant: 'overline' },
-                    data: paymentData
-                  }
-                ]}
-              />
-            </Grid>
-          </Grid>
-        </>
-      )}
+      <TitleComponent title={t('reportingPaymentDetail.title')} />
+      <Grid container spacing={3}>
+        <Grid item md={6}>
+          <DetailContainer
+            sections={[
+              {
+                title: { label: t('commons.summary'), variant: 'overline' },
+                data: summaryData
+              }
+            ]}
+          />
+        </Grid>
+        <Grid item md={6}>
+          <DetailContainer
+            sections={[
+              {
+                title: { label: t('commons.payment'), variant: 'overline' },
+                data: paymentData
+              }
+            ]}
+          />
+        </Grid>
+      </Grid>
     </>
-  );
+  ) : null;
 }
 
 export default ReportingPaymentDetail;

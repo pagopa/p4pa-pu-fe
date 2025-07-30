@@ -63,7 +63,7 @@ const ClassificationsSearchResults = () => {
     }
 
     setError(false);
-    classifications.applyFilters();
+    classifications.applyFilters(filterValues);
     setDrawerOpen(false);
   };
 
@@ -105,7 +105,7 @@ const ClassificationsSearchResults = () => {
       >
         <SearchResultsDataGrid
           data={classifications.query.data as PagedTreasuredClassification}
-          onSortChange={classifications.setSort}
+          onSortChange={classifications.onSortChange}
           onPaginationChange={classifications.handlePaginationChange}
         />
       </Grid>

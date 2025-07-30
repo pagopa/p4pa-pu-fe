@@ -1,27 +1,28 @@
+import { Search } from '@mui/icons-material';
+import { useParams, useNavigate } from 'react-router';
 import { useEffect, useState, useMemo } from 'react';
+import { Variant } from '@mui/material/styles/createTypography';
 import { Grid, Typography, useTheme } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
-import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import DetailContainer from '../../components/DetailContainer/DetailContainer';
-import { useParams, useNavigate } from 'react-router';
+
+import TitleComponent from '../../../components/TitleComponent/TitleComponent';
+import DetailContainer from '../../../components/DetailContainer/DetailContainer';
 import FilterContainer, {
   COMPONENT_TYPE
-} from '../../components/FilterContainer/FilterContainer';
-import { Search } from '@mui/icons-material';
+} from '../../../components/FilterContainer/FilterContainer';
 import ReportingDetailDataGrid from './components/ReportingDetailDataGrid';
-import { useStore } from '../../store/GlobalStore';
-import { STATE } from '../../store/types';
-import { getPaymentsReportingRows } from '../../api/reporting';
+import { useStore } from '../../../store/GlobalStore';
+import { STATE } from '../../../store/types';
+import { getPaymentsReportingRows } from '../../../api/reporting';
 import {
   formatDate,
   formatDateTime,
   moneyFormat
-} from '../../utils/formatters';
-import { useReportingDetailFilters } from '../../hooks/useReportingDetailFilters';
-import { PaymentsReporting } from '../../../generated/apiClient';
-import { Variant } from '@mui/material/styles/createTypography';
-import { PageRoutes } from '../../routes';
+} from '../../../utils/formatters';
+import { useReportingDetailFilters } from '../../../hooks/useReportingDetailFilters';
+import { PaymentsReporting } from '../../../../generated/apiClient';
+import { PageRoutes } from '../../../routes';
 
 export const ReportingDetail = () => {
   const { t } = useTranslation();

@@ -50,7 +50,7 @@ export const AssessmentsRegistrySearchResults = () => {
   });
 
   const applyFilters = () => {
-    assessments.applyFilters();
+    assessments.applyFilters(filterValues);
     setDrawerOpen(false);
   };
 
@@ -87,7 +87,7 @@ export const AssessmentsRegistrySearchResults = () => {
       >
         <SearchResultsDataGrid
           data={assessments.query.data as PagedAssessmentsRegistry}
-          onSortChange={assessments.setSort}
+          onSortChange={assessments.onSortChange}
           onPaginationChange={assessments.handlePaginationChange}
         />
       </Grid>

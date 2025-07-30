@@ -5,13 +5,14 @@ import {
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import ActionMenu from '../ActionMenu/ActionMenu';
-import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { FileDownload, Visibility } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../routes';
-import { PagedPaymentsReportingView } from '../../../generated/data-contracts';
-import { moneyFormat } from '../../utils/formatters';
+
+import { PageRoutes } from '../../../routes';
+import { PagedPaymentsReportingView } from '../../../../generated/data-contracts';
+import { moneyFormat } from '../../../utils/formatters';
+import ActionMenu from '../../../components/ActionMenu/ActionMenu';
+import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 
 type SearchResultDataRow = {
   id: number;
@@ -122,28 +123,26 @@ const SearchResultsDataGrid = ({
   ];
 
   return (
-    <>
-      <CustomDataGrid
-        rows={data?.content ?? []}
-        getRowId={(row) => row.iuf}
-        columns={columns}
-        disableColumnMenu
-        disableColumnResize
-        onSortModelChange={onSort}
-        smartPagination={{
-          initialPage: 0,
-          initialSize: 10,
-          sizeOptions: [5, 10, 20],
-          backendData: {
-            totalElements: data?.totalElements,
-            totalPages: data?.totalPages,
-            number: data?.number,
-            size: data?.size
-          },
-          onPaginationChange: onPaginationChange
-        }}
-      />
-    </>
+    <CustomDataGrid
+      rows={data?.content ?? []}
+      getRowId={(row) => row.iuf}
+      columns={columns}
+      disableColumnMenu
+      disableColumnResize
+      onSortModelChange={onSort}
+      smartPagination={{
+        initialPage: 0,
+        initialSize: 10,
+        sizeOptions: [5, 10, 20],
+        backendData: {
+          totalElements: data?.totalElements,
+          totalPages: data?.totalPages,
+          number: data?.number,
+          size: data?.size
+        },
+        onPaginationChange
+      }}
+    />
   );
 };
 

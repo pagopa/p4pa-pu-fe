@@ -14,6 +14,7 @@ import { useDateRange } from '../../hooks/useDateRange';
 import { FilterFieldIds } from '../../models/SearchCardFields';
 import { DateValidationError } from '@mui/x-date-pickers';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import utils from '../../utils';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
@@ -66,18 +67,18 @@ export const DebtPositionsPage = () => {
 
     setShowError(false);
 
+    const tabFilters = filters[activeTabIndex];
+    const params = utils.URI.encode(tabFilters);
     if (activeTabIndex === 0) {
-      navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, {
+      navigate(`${PageRoutes.DEBT_POSITION_SEARCH_RESULTS}#${params}`, {
         state: {
-          searchType: SearchType.IUV,
-          filters: filters[activeTabIndex]
+          searchType: SearchType.IUV
         }
       });
     } else {
-      navigate(PageRoutes.DEBT_POSITIONS_RESULTS, {
+      navigate(`${PageRoutes.DEBT_POSITIONS_RESULTS}#${params}`, {
         state: {
-          searchType: SearchType.DEBT_POSITION,
-          filters: filters[activeTabIndex]
+          searchType: SearchType.DEBT_POSITION
         }
       });
     }
