@@ -29,12 +29,6 @@ import { z } from 'zod';
 import { AxiosError } from 'axios';
 
 const assessmentFormSchema = z.object({
-  assessmentName: z
-    .string({
-      required_error:
-        'assessmentCreate.configuration.step1.fields.name.required'
-    })
-    .min(1, 'assessmentCreate.configuration.step1.fields.name.required'),
   debtPositionTypeOrgCode: z
     .string({
       required_error:
@@ -43,10 +37,16 @@ const assessmentFormSchema = z.object({
     .min(
       1,
       'assessmentCreate.configuration.step1.fields.debtPositionType.required'
-    )
-});
-
-const step3Schema = z.object({
+    ),
+  assessmentName: z
+    .string({
+      required_error:
+        'assessmentCreate.configuration.step1.fields.assessmentName.required'
+    })
+    .min(
+      1,
+      'assessmentCreate.configuration.step1.fields.assessmentName.required'
+    ),
   operatingYear: z
     .string({
       required_error:
@@ -74,6 +74,7 @@ type AssessmentFormData = z.infer<typeof assessmentFormSchema> & {
   isModifyMode?: boolean;
   modifyAction?: 'add' | 'remove';
   assessmentId?: number;
+  selectedAssessmentDetailIds?: Array<number>;
 };
 
 type AssessmentDetailNavigationState = {
@@ -128,7 +129,7 @@ export const AssessmentCreate = () => {
     defaultValues: {
       assessmentName: navigationState?.assessmentName || '',
       debtPositionTypeOrgCode: navigationState?.debtPositionTypeOrgCode || '',
-      addPaymentsToAssessment: isModifyMode,
+      addPaymentsToAssessment: isModifyMode, // 🔧 RIPRISTINATO: Fondamentale per il radio button!
       selectedPayments: [],
       selectedPaymentIuds: [],
       operatingYear: '',
@@ -136,7 +137,8 @@ export const AssessmentCreate = () => {
       assessmentRegistryId: undefined,
       isModifyMode,
       modifyAction,
-      assessmentId: navigationState?.assessmentId
+      assessmentId: navigationState?.assessmentId,
+      selectedAssessmentDetailIds: []
     }
   });
 
@@ -191,10 +193,19 @@ export const AssessmentCreate = () => {
       if (modifyAction === 'remove') {
         // Remove mode: only Step 0 (payments)
         if (step === 0) {
-          return {
-            isValid: validateStep2Payments(values),
-            fields: [] as const
-          };
+          if (step2PaymentsRef.current) {
+            const isValid = step2PaymentsRef.current.validateSelections();
+            return {
+              isValid,
+              fields: [] as const
+            };
+          } else {
+            const isValid = validateStep2Payments(values);
+            return {
+              isValid,
+              fields: [] as const
+            };
+          }
         }
         return { isValid: false, fields: [] as const };
       } else {
@@ -253,8 +264,8 @@ export const AssessmentCreate = () => {
     // Handle Remove mode
     if (isModifyMode && modifyAction === 'remove') {
       console.log(
-        'Remove action triggered with selected payments:',
-        values.selectedPaymentIuds
+        'Remove action triggered with selected assessment detail IDs:',
+        values.selectedAssessmentDetailIds || values.selectedPaymentIuds || []
       );
       // TODO: Implement remove API call
       return;
@@ -334,7 +345,7 @@ export const AssessmentCreate = () => {
       }
 
       try {
-        step3Schema.parse({
+        assessmentFormSchema.parse({
           operatingYear: values.operatingYear,
           chapterCode: values.chapterCode
         });
@@ -388,6 +399,14 @@ export const AssessmentCreate = () => {
 
   const handleConditionalNavigation = useCallback(
     async (values: AssessmentFormData) => {
+      if (isModifyMode && modifyAction === 'remove' && currentStep === 0) {
+        // In remove mode, when the validation passes, we open the confirmation modal
+        if (step2PaymentsRef.current) {
+          step2PaymentsRef.current.showValidationError(true);
+        }
+        return;
+      }
+
       // LOGIC CONDITIONAL STEP - Point of bifurcation only in normal mode
       if (!isModifyMode && currentStep === 1) {
         if (addPaymentsToAssessment) {
@@ -416,11 +435,13 @@ export const AssessmentCreate = () => {
     },
     [
       isModifyMode,
+      modifyAction,
       currentStep,
       addPaymentsToAssessment,
       goToNextStep,
       handleSubmit,
-      isLastStep
+      isLastStep,
+      step2PaymentsRef
     ]
   );
 
@@ -491,6 +512,7 @@ export const AssessmentCreate = () => {
   };
 
   const step1Component = useMemo(() => <Step1Configuration />, []);
+  
   const step2Component = useMemo(
     () => (
       <Step2Payments
@@ -500,6 +522,7 @@ export const AssessmentCreate = () => {
     ),
     [currentStep, isModifyMode]
   );
+  
   const step3Component = useMemo(() => <Step3AssignChapter />, []);
 
   const steps: Stepper['steps'] = useMemo(() => {

@@ -1,6 +1,10 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Search, OpenInNew as OpenInNewIcon } from '@mui/icons-material';
+import {
+  Search,
+  OpenInNew as OpenInNewIcon,
+  Visibility as VisibilityIcon
+} from '@mui/icons-material';
 import { Box, useTheme, IconButton } from '@mui/material';
 import { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import FilterContainer, {
@@ -40,6 +44,8 @@ export type PaymentsTableProps = {
   // TEMPORARY: When IUDs are unique, it will become:
   // selectedIuds?: Array<string>;
   selectedUniqueIds?: Array<string>;
+  /** Indica se la tabella è in modalità remove */
+  isRemoveMode?: boolean;
 };
 
 export const PaymentsTable = ({
@@ -51,10 +57,19 @@ export const PaymentsTable = ({
   isLoading = false,
   disabled = false,
   autoLoadOnMount = true,
-  selectedUniqueIds = []
+  selectedUniqueIds = [],
+  isRemoveMode = false
 }: PaymentsTableProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
+
+  // Root cause: DataGrid ResizeObserver fails during component remount
+  // Solution: Force recreation with render-based counter (minimal performance impact)
+  const renderCountRef = useRef(0);
+
+  useEffect(() => {
+    renderCountRef.current += 1;
+  });
 
   // Hook for managing filters and sorting
   const {
@@ -215,7 +230,11 @@ export const PaymentsTable = ({
           size="small"
           sx={{ color: theme.palette.primary.main }}
         >
-          <OpenInNewIcon fontSize="small" />
+          {isRemoveMode ? (
+            <VisibilityIcon fontSize="small" />
+          ) : (
+            <OpenInNewIcon fontSize="small" />
+          )}
         </IconButton>
       )
     }
@@ -271,6 +290,7 @@ export const PaymentsTable = ({
             - use rows={tableData.content}
             - use getRowId={(row) => row.iud} */}
         <CustomDataGrid
+          key={`datagrid-${renderCountRef.current}`} // Force recreation to prevent MUI height=0px bug
           rows={rowsWithUniqueId} // TEMPORARY: rows with artificial uniqueIds
           columns={columns}
           getRowId={(row) => row.uniqueId} // TEMPORARY: artificial key
