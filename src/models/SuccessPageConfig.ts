@@ -187,5 +187,17 @@ export const SuccessPageConfig: SuccessOpts = {
         customNavigation: 'ASSESSMENT_DETAIL'
       }
     ]
+  },
+  'assessment-add-payments': {
+    title: 'assessmentCreate.addPayments.success.title',
+    description: 'assessmentCreate.addPayments.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'assessmentCreate.addPayments.success.goToDetail',
+        customNavigation: 'ASSESSMENT_DETAIL'
+      }
+    ]
   }
 };

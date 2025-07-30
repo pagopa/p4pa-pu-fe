@@ -129,7 +129,7 @@ export const AssessmentCreate = () => {
     defaultValues: {
       assessmentName: navigationState?.assessmentName || '',
       debtPositionTypeOrgCode: navigationState?.debtPositionTypeOrgCode || '',
-      addPaymentsToAssessment: isModifyMode, // 🔧 RIPRISTINATO: Fondamentale per il radio button!
+      addPaymentsToAssessment: isModifyMode,
       selectedPayments: [],
       selectedPaymentIuds: [],
       operatingYear: '',
@@ -262,6 +262,11 @@ export const AssessmentCreate = () => {
 
   const handleSubmit = async (values: AssessmentFormData) => {
     try {
+      // Early return for add mode - delegate to separate function
+      if (isModifyMode && modifyAction === 'add') {
+        return await handleAddPaymentsToExistingAssessment(values);
+      }
+
       // STEP 1: Create always the standard assessment
       const response = await createAssessmentMutation.mutateAsync({
         assessmentName: values.assessmentName,
@@ -324,7 +329,64 @@ export const AssessmentCreate = () => {
     }
   };
 
-  // Funzione helper per gestire la validazione degli errori del capitolo
+  const handleAddPaymentsToExistingAssessment = async (
+    values: AssessmentFormData
+  ) => {
+    try {
+      const existingAssessmentId = navigationState?.assessmentId;
+      if (!existingAssessmentId) {
+        utils.notify.emit(t('assessmentCreate.error.assessmentIdNotFound'));
+        return;
+      }
+
+      if (
+        !values.selectedPaymentIuds ||
+        values.selectedPaymentIuds.length === 0
+      ) {
+        utils.notify.emit(t('assessmentCreate.error.noPaymentsSelected'));
+        return;
+      }
+
+      const assessmentRegistryId =
+        await getAssessmentRegistryIdFromChapter(values);
+      if (!assessmentRegistryId) {
+        utils.notify.emit(
+          t('assessmentCreate.error.assessmentRegistryIdNotFound')
+        );
+        return;
+      }
+
+      await utils.apiClient.bff.createAssessmentsDetail(
+        organizationId,
+        existingAssessmentId,
+        {
+          assessmentRegistryId,
+          iuds: values.selectedPaymentIuds
+        }
+      );
+
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'assessment-add-payments',
+          i18nParams: {
+            assessmentName: navigationState?.assessmentName || ''
+          },
+          assessmentId: existingAssessmentId
+        }
+      });
+    } catch (error) {
+      console.error('Error during add payments:', error);
+      navigate(PageRoutes.RESPONSES_ERROR, {
+        replace: true,
+        state: {
+          errorType: 'default'
+        }
+      });
+    }
+  };
+
+  // function helper to handle the validation errors of the chapter
   const handleChapterValidationErrors = useCallback(
     (values: AssessmentFormData) => {
       const fieldsToValidate: Array<'operatingYear' | 'chapterCode'> = [
@@ -393,6 +455,16 @@ export const AssessmentCreate = () => {
         // In remove mode, when the validation passes, we open the confirmation modal
         if (step2PaymentsRef.current) {
           step2PaymentsRef.current.showValidationError(true);
+        }
+        return;
+      }
+
+      // Add mode: Step 0 (payments) -> Step 1 (chapter) -> handleSubmit
+      if (isModifyMode && modifyAction === 'add') {
+        if (isLastStep) {
+          await handleSubmit(values);
+        } else {
+          goToNextStep();
         }
         return;
       }

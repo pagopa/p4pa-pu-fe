@@ -357,6 +357,15 @@
         "description": "Dopo la rimozione, i pagamenti non compariranno più nell'elenco dell'accertamento."
       }
     },
+    "addPayments": {
+      "title": "Pagamenti aggiunti",
+      "stepTitle": "Aggiungi pagamenti",
+      "success": {
+        "title": "Pagamenti aggiunti correttamente nell'accertamento \"{{assessmentName}}\"",
+        "description": "Li trovi nel dettaglio dell'accertamento, dove puoi gestirli in qualsiasi momento.",
+        "goToDetail": "Visualizza accertamento"
+      }
+    },
     "error": {
       "creationFailed": "Errore durante la creazione dell'assessment",
       "nameAlreadyPresent": "Esiste già un accertamento con lo stesso Nome"
@@ -589,7 +598,6 @@
         "name": "Nome ordinante"
       },
       "remove": "Rimuovi filtri",
-      "onlyRemove": "Rimuovi",
       "reportId": {
         "code": "ID Rendicontazione",
         "label": "ID Rendicontazione"
@@ -665,6 +673,7 @@
     "notifications": "Notifiche",
     "notificationsConfig": "Configurazione",
     "notFound": "Risorsa non trovata",
+    "onlyRemove": "Rimuovi",
     "operator": "Operatore",
     "operators": "Operatori",
     "optional": "opzionale",

@@ -672,10 +672,8 @@ const Step2PaymentsComponent = forwardRef<
           : globalSelection.totalSelected > 0;
 
         if (show && hasSelections) {
-          // 🗑️ REMOVE MODE con selezioni: Apri modale di conferma invece di mostrare errore
           handleOpenRemoveConfirmModal();
         } else {
-          // ✅ NORMAL MODE o Remove senza selezioni: Comportamento standard
           paymentsManager.showValidationError(show);
         }
       },
@@ -772,7 +770,7 @@ const Step2PaymentsComponent = forwardRef<
     const currentPageUniqueIds = currentPageRows.map((row) => row.uniqueId);
 
     const selectedInCurrentPage = currentPageUniqueIds
-      .filter((uniqueId) => uniqueId != null) // Filtra undefined/null
+      .filter((uniqueId) => uniqueId != null)
       .filter((uniqueId) => globalSelection.isUniqueIdSelected(uniqueId));
 
     return selectedInCurrentPage;
