@@ -187,6 +187,16 @@ export const AssessmentDetail = () => {
     return hasManualGeneration && isActive;
   };
 
+  const shouldShowButtons = useMemo(() => {
+    return canModifyAssessment();
+  }, [data?.flagManualGeneration, data?.status]);
+
+  const shouldShowRemoveButton = useMemo(() => {
+    return shouldShowButtons && 
+           data?.pagedAssessmentsRowsDetail?.content && 
+           data.pagedAssessmentsRowsDetail.content.length > 0;
+  }, [shouldShowButtons, data?.pagedAssessmentsRowsDetail?.content]);
+
   const showCannotModifyDialog = () => {
     setDialogConfig({
       open: true,
@@ -402,26 +412,27 @@ export const AssessmentDetail = () => {
             {t('assessmentDetail.paymentsAssociated')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            {data?.pagedAssessmentsRowsDetail?.content &&
-              data.pagedAssessmentsRowsDetail.content.length > 0 && (
-                <Button
-                  variant="outlined"
-                  color="error"
-                  startIcon={<RemoveCircleOutline />}
-                  onClick={handleRemovePayments}
-                  data-testid="remove-payments-button"
-                >
-                  {t('commons.remove')}
-                </Button>
-              )}
-            <Button
-              variant="outlined"
-              startIcon={<Add />}
-              onClick={handleAddPayments}
-              data-testid="add-payments-button"
-            >
-              {t('commons.add')}
-            </Button>
+            {shouldShowRemoveButton && (
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<RemoveCircleOutline />}
+                onClick={handleRemovePayments}
+                data-testid="remove-payments-button"
+              >
+                {t('commons.remove')}
+              </Button>
+            )}
+            {shouldShowButtons && (
+              <Button
+                variant="outlined"
+                startIcon={<Add />}
+                onClick={handleAddPayments}
+                data-testid="add-payments-button"
+              >
+                {t('commons.add')}
+              </Button>
+            )}
           </Box>
         </Box>
         <Grid
