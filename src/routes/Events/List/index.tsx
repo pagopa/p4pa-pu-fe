@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import FilterContainer from '../../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
-import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
+import CustomDataGrid, {
+  DataGridContainer,
+  EmptyData
+} from '../../../components/DataGrid/CustomDataGrid';
 
 import {
   getEventsColumns,
@@ -25,7 +28,7 @@ import {
 } from '../../../../generated/data-contracts';
 import { GridRowId } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import { Grid, Stack, useTheme } from '@mui/material';
+import { Stack } from '@mui/material';
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
 
 const EventList = () => {
@@ -41,7 +44,6 @@ const EventList = () => {
   const { filterValues, handleFilterChange, activeTabIndex, setError, error } =
     useOutletContext<EventsContext>();
 
-  const theme = useTheme();
   const navigate = useNavigate();
 
   const {
@@ -123,34 +125,36 @@ const EventList = () => {
           values={filterValues[activeTabIndex]}
           onChange={handleFilterChange}
         />
-        {data && (
-          <Grid
-            container
-            p={2}
-            height="100%"
-            sx={{
-              bgcolor: theme.palette.grey[200],
-              overflow: 'auto'
-            }}
-            aria-label="results-table"
-          >
-            <CustomDataGrid
-              customPagination={{
-                sizePageOptions: [5, 10, 20],
-                defaultPageOption: data.size,
-                totalPages: data.totalPages,
-                currentPage: data.number + 1,
-                onPageSizeChange,
-                onPageChange
-              }}
-              disableColumnMenu
-              disableColumnResize
-              columns={columns}
-              rows={data.content}
-              getRowId={(row) => row.registryId}
-            />
-          </Grid>
-        )}
+        {(() => {
+          if (data?.content.length === 0)
+            return (
+              <EmptyData
+                title={t('events.list.noResults.title')}
+                description={t('events.list.noResults.description')}
+              />
+            );
+          if (data?.content && data.content.length > 0)
+            return (
+              <DataGridContainer>
+                <CustomDataGrid
+                  customPagination={{
+                    sizePageOptions: [5, 10, 20],
+                    defaultPageOption: data.size,
+                    totalPages: data.totalPages,
+                    currentPage: data.number + 1,
+                    onPageSizeChange,
+                    onPageChange
+                  }}
+                  disableColumnMenu
+                  disableColumnResize
+                  columns={columns}
+                  rows={data.content}
+                  getRowId={(row) => row.registryId}
+                />
+              </DataGridContainer>
+            );
+          return null;
+        })()}
       </Stack>
     </>
   );

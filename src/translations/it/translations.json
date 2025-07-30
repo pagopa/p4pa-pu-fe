@@ -1667,7 +1667,11 @@
       "outcome": "Esito",
       "iuv": "IUV",
       "event": "Evento",
-      "subEvent": "Sottotipo"
+      "subEvent": "Sottotipo",
+      "noResults": {
+        "title": "Nessun risultato trovato",
+        "description": "Non ci sono avvisi che corrispondono alla tua ricerca, prova a impostare parametri diversi."
+      }
     },
     "searchIUVDescription": "IUV",
     "searchEventDescription": "Evento",
