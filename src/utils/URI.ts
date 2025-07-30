@@ -53,6 +53,7 @@ export function encode<T extends Record<string, unknown>>(obj: T): string {
  */
 const set = (params: string) => {
   window.history.pushState({}, '', `#${params}`);
+  window.dispatchEvent(new Event('hashchangeCustom'));
 };
 
 export default {

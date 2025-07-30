@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { useStore } from '../store/GlobalStore';
 import { FilterValues } from '../models/Filters';
-import { usePaginationState } from './usePaginationState';
 import { getAssessments } from '../api/assessments';
 import { AssessmentsFilteredRequest } from '../api/assessments/mappings';
 import { PageRoutes } from '../routes';
@@ -24,11 +23,10 @@ export const useAssessmentsSearch = ({
     useState<FilterValues>(initialFilters);
   const [sort, setSort] = useState<Array<string>>([]);
 
-  const { paginationParams, handlePaginationChange, setPaginationParams } =
-    usePaginationState({
-      initialPage,
-      initialSize
-    });
+  const { pagination, handlePageChange } = {
+    pagination: { page: 0, size: 10 },
+    handlePageChange: () => null
+  };
 
   const {
     state: { organizationId }
@@ -40,7 +38,7 @@ export const useAssessmentsSearch = ({
     query.mutate(buildRequestArgs(), {
       onError: handleError
     });
-  }, [organizationId, paginationParams.page, paginationParams.size, sort]);
+  }, [organizationId, pagination.page, pagination.size, sort]);
 
   const handleError = (error: unknown) => {
     console.error('Assessment search error:', error);
@@ -66,18 +64,15 @@ export const useAssessmentsSearch = ({
 
   const buildRequestArgs = useCallback(
     (
-      filterValuesRequest: FilterValues = filterValues,
-      paginationOverride?: { page: number; size: number }
+      filterValuesRequest: FilterValues = filterValues
     ): AssessmentsFilteredRequest => {
-      const pagination = paginationOverride || paginationParams;
-
       return {
         filters: filterValuesRequest,
         pagination,
         sort
       };
     },
-    [filterValues, paginationParams, sort]
+    [filterValues, pagination, sort]
   );
 
   const applyFilters = (filterValues: FilterValues) => {
@@ -85,7 +80,7 @@ export const useAssessmentsSearch = ({
       onError: handleError
     });
     setFilterValues(filterValues);
-    setPaginationParams((prev) => ({ ...prev, page: 0 }));
+    handlePageChange(0);
   };
 
   const executeSearch = (currentFilters?: FilterValues) => {
@@ -98,8 +93,8 @@ export const useAssessmentsSearch = ({
     executeSearch,
     query,
     filterValues,
-    handlePaginationChange,
-    paginationParams,
+    handlePageChange,
+    pagination,
     setFilterValues,
     setSort,
     isLoading: query.isPending,

@@ -1,12 +1,9 @@
 import {
   GridColDef,
   GridRenderCellParams,
-  GridSortModel,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import ActionMenu from '../ActionMenu/ActionMenu';
-import CustomDataGrid from './../DataGrid/CustomDataGrid';
 import { FileDownload, ReadMore } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
@@ -17,6 +14,8 @@ import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
+import ActionMenu from '../../components/ActionMenu/ActionMenu';
+import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
 
 type SearchResultDataRow = {
   id: number;
@@ -32,25 +31,12 @@ export type DataGridProps = {
   onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
-const SearchResultsDataGrid = ({
-  data,
-  onSortChange,
-  onPaginationChange
-}: DataGridProps) => {
+const SearchResultsDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { state } = useStore();
 
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-
-  const onSort = (model: GridSortModel) => {
-    if (model?.length) {
-      const sort = model.map((item) =>
-        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
-      );
-      onSortChange(sort);
-    }
-  };
 
   const getReceiptPdfMutation = getReceiptPdf(organizationId);
   const handleDownloadReceiptPdf = async (id: number) => {
@@ -123,28 +109,14 @@ const SearchResultsDataGrid = ({
   ];
 
   return (
-    <>
-      <CustomDataGrid
-        rows={data?.content ?? []}
-        getRowId={(row) => row.receiptId}
-        columns={columns}
-        disableColumnMenu
-        disableColumnResize
-        onSortModelChange={onSort}
-        smartPagination={{
-          initialPage: 0,
-          initialSize: 10,
-          sizeOptions: [5, 10, 20],
-          backendData: {
-            totalElements: data?.totalElements,
-            totalPages: data?.totalPages,
-            number: data?.number,
-            size: data?.size
-          },
-          onPaginationChange: onPaginationChange
-        }}
-      />
-    </>
+    <CustomDataGrid
+      rows={data?.content ?? []}
+      getRowId={(row) => row.receiptId}
+      columns={columns}
+      totalPages={data?.totalPages}
+      disableColumnMenu
+      disableColumnResize
+    />
   );
 };
 

@@ -1,8 +1,8 @@
 import { describe, expect, it, Mock, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { useLocation } from 'react-router';
-import FilterContainer from '../FilterContainer/FilterContainer';
 import TelematicReceiptSearchResults from '../../routes/TelematicReceiptSearchResults';
+import FilterContainer from '../../components/FilterContainer/FilterContainer';
 
 // Mock dependencies
 vi.mock('react-i18next', () => ({
