@@ -24,6 +24,7 @@ import { PageRoutes } from '../..';
 // TEMPORARY: Type for row with added uniqueId until backend fixes duplicate IUDs
 type PaymentRowWithUniqueId = PaidInstallmentDTO & {
   uniqueId: string;
+  receiptId?: number;
 };
 
 export type PaymentsTableProps = {
@@ -191,7 +192,9 @@ export const PaymentsTable = ({
 
   const handleDetailClick = useCallback((row: PaymentRowWithUniqueId) => {
     const detailPath = generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-      id: Number(row.receiptPaymentRequestId)
+      id: isRemoveMode
+        ? Number(row.receiptId)
+        : Number(row.receiptPaymentRequestId)
     });
 
     const fullUrl = `${window.location.origin}${detailPath}`;
