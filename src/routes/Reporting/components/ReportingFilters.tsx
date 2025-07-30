@@ -48,7 +48,7 @@ export const ReportingFilters = ({
             name="dateRange"
             control={control}
             key={FilterFieldIds.DATE_RANGE}
-            from={{ label: t('commons.from') }}
+            from={{ label: t('reporting.regulationFrom') }}
             to={{ label: t('commons.to') }}
           />
         </Stack>
