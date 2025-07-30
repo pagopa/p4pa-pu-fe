@@ -38,7 +38,7 @@ export const setupInterceptors = (client: Client) => {
       if (status === 400) {
         console.error(error);
         router.navigate(PageRoutes.RESPONSES_ERROR, { replace: true });
-        return Promise.reject();
+        return Promise.reject(error);
       }
 
       if (status === 403) {
