@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import FilterContainer from '../../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
-import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
+import CustomDataGrid, {
+  DataGridContainer,
+  EmptyData
+} from '../../../components/DataGrid/CustomDataGrid';
 
 import {
   getEventsColumns,
@@ -122,22 +125,36 @@ const EventList = () => {
           values={filterValues[activeTabIndex]}
           onChange={handleFilterChange}
         />
-        {data && (
-          <CustomDataGrid
-            customPagination={{
-              sizePageOptions: [5, 10, 20],
-              defaultPageOption: data.size,
-              totalPages: data.totalPages,
-              currentPage: data.number + 1,
-              onPageSizeChange,
-              onPageChange
-            }}
-            sx={{ mt: 4 }}
-            columns={columns}
-            rows={data.content}
-            getRowId={(row) => row.registryId}
-          />
-        )}
+        {(() => {
+          if (data?.content.length === 0)
+            return (
+              <EmptyData
+                title={t('events.list.noResults.title')}
+                description={t('events.list.noResults.description')}
+              />
+            );
+          if (data?.content && data.content.length > 0)
+            return (
+              <DataGridContainer>
+                <CustomDataGrid
+                  customPagination={{
+                    sizePageOptions: [5, 10, 20],
+                    defaultPageOption: data.size,
+                    totalPages: data.totalPages,
+                    currentPage: data.number + 1,
+                    onPageSizeChange,
+                    onPageChange
+                  }}
+                  disableColumnMenu
+                  disableColumnResize
+                  columns={columns}
+                  rows={data.content}
+                  getRowId={(row) => row.registryId}
+                />
+              </DataGridContainer>
+            );
+          return null;
+        })()}
       </Stack>
     </>
   );

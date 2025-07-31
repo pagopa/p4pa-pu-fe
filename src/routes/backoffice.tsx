@@ -16,11 +16,7 @@ export const backofficeRoutes = [
   {
     id: 'BACKOFFICE',
     path: `backoffice/`,
-    element: (
-      <SuperAdminRouteGuard>
-        <Outlet />
-      </SuperAdminRouteGuard>
-    ),
+    element: <Outlet />,
     children: [
       {
         element: <Navigate replace to={`${deployPath}/`} />,
@@ -29,6 +25,11 @@ export const backofficeRoutes = [
       {
         id: 'BACKOFFICE_TAXONOMY',
         path: 'taxonomy/',
+        element: (
+          <SuperAdminRouteGuard>
+            <Outlet />
+          </SuperAdminRouteGuard>
+        ),
         children: [
           {
             id: 'BACKOFFICE_TAXONOMY_INDEX',
@@ -60,7 +61,11 @@ export const backofficeRoutes = [
       {
         id: 'BACKOFFICE_EVENTS',
         path: 'events/',
-        element: <EventsContainer />,
+        element: (
+          <SuperAdminRouteGuard>
+            <EventsContainer />
+          </SuperAdminRouteGuard>
+        ),
         children: [
           {
             id: 'BACKOFFICE_EVENTS_INDEX',

@@ -134,14 +134,6 @@ export const noFilterIsSelected = computed(() =>
   Object.values(filterValues.value).some((value) => !!value)
 );
 
-export const noFilterSelectedExcludingClassificationType = computed(() => {
-  const filteredEntries = Object.entries(filterValues.value).filter(
-    ([key]) => key !== 'CLASSIFICATION_TYPE'
-  );
-
-  return !filteredEntries.some(([, value]) => !!value);
-});
-
 export const setFilterValues = (newState: FilterValues) => {
   filterValues.value = newState;
 };

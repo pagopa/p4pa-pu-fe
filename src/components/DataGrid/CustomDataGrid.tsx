@@ -1,4 +1,4 @@
-import { styled } from '@mui/material';
+import { Grid, styled, useTheme, Box, Typography } from '@mui/material';
 import {
   DataGrid,
   DataGridProps,
@@ -242,3 +242,45 @@ const CustomDataGrid = forwardRef<
 CustomDataGrid.displayName = 'CustomDataGrid';
 
 export default CustomDataGrid;
+
+export const DataGridContainer = (props: { children: React.ReactNode }) => {
+  const theme = useTheme();
+  return (
+    <Grid
+      container
+      p={2}
+      height="100%"
+      sx={{
+        bgcolor: theme.palette.grey[200],
+        overflow: 'auto'
+      }}
+      aria-label="results-table"
+    >
+      {props.children}
+    </Grid>
+  );
+};
+
+export const EmptyData = (props: { title: string; description: string }) => {
+  const theme = useTheme();
+  return (
+    <Box
+      sx={{
+        bgcolor: theme.palette.grey[200],
+        padding: 2
+      }}
+    >
+      <Box
+        sx={{
+          bgcolor: theme.palette.background.paper,
+          padding: 2
+        }}
+      >
+        <Typography textAlign="center" fontWeight={600} mb={1}>
+          {props.title}
+        </Typography>
+        <Typography textAlign="center">{props.description}</Typography>
+      </Box>
+    </Box>
+  );
+};

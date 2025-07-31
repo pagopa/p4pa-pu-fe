@@ -40,7 +40,7 @@ export const useReportingFilters = ({
         type: COMPONENT_TYPE.dateRange,
         label: 'dateRange',
         gridWidth: 5,
-        from: { label: t('commons.from') },
+        from: { label: t('reporting.regulationFrom') },
         to: { label: t('commons.to') },
         id: FilterFieldIds.DATE_RANGE,
         ...(layout === 'grid' ? { gridWidth: 12 } : {})

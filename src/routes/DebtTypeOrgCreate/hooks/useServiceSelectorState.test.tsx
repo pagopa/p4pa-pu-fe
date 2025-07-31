@@ -2,12 +2,12 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '../../../__tests__/renderers';
 import { useServiceSelectorState } from './useServiceSelectorState';
-import { OrgSilServiceDTO } from '../../../../generated/data-contracts';
+import { OrgSilServiceExtendedDTO } from '../../../../generated/data-contracts';
 
 describe('useServiceSelectorState', () => {
   const baseTranslationKey = 'test.service';
 
-  const mockServices: Array<OrgSilServiceDTO> = [
+  const mockServices: Array<OrgSilServiceExtendedDTO> = [
     {
       orgSilServiceId: 1,
       organizationId: 123,
@@ -52,7 +52,7 @@ describe('useServiceSelectorState', () => {
   });
 
   it('filters out services with invalid IDs', () => {
-    const servicesWithInvalidIds: Array<OrgSilServiceDTO> = [
+    const servicesWithInvalidIds: Array<OrgSilServiceExtendedDTO> = [
       ...mockServices,
       {
         orgSilServiceId: 0,
@@ -205,7 +205,7 @@ describe('useServiceSelectorState', () => {
   });
 
   it('handles services with missing optional fields gracefully', () => {
-    const minimalServices: Array<OrgSilServiceDTO> = [
+    const minimalServices: Array<OrgSilServiceExtendedDTO> = [
       {
         orgSilServiceId: 1,
         organizationId: 123,
@@ -235,7 +235,7 @@ describe('useServiceSelectorState', () => {
   });
 
   it('handles services with additional optional fields', () => {
-    const richServices: Array<OrgSilServiceDTO> = [
+    const richServices: Array<OrgSilServiceExtendedDTO> = [
       {
         orgSilServiceId: 1,
         organizationId: 123,

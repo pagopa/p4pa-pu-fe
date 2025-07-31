@@ -25,7 +25,7 @@ describe('useAssessmentDetailFilters', () => {
       paymentDateTimeFrom: '2023-02-01T00:00:00.000Z',
       paymentDateTimeTo: '2023-11-30T23:59:59.999Z',
       fiscalCode: 'RSSMRA80A01H501U',
-      sort: ['iuv,asc']
+      sort: 'iuv,asc'
     };
     const { result } = renderHook(() =>
       useAssessmentDetailFilters({ initialFilters })
@@ -139,11 +139,11 @@ describe('useAssessmentDetailFilters', () => {
       result.current.handleSortModelChange(sortModel);
     });
     expect(result.current.sortModel).toEqual(sortModel);
-    expect(result.current.appliedFilters.sort).toEqual(['iuv,asc']);
-    expect(result.current.draftFilters.sort).toEqual(['iuv,asc']);
+    expect(result.current.appliedFilters.sort).toEqual('iuv,asc');
+    expect(result.current.draftFilters.sort).toEqual('iuv,asc');
     expect(result.current.appliedFilters.page).toBe(0);
     expect(mockOnFiltersChange).toHaveBeenCalledWith(
-      expect.objectContaining({ sort: ['iuv,asc'], page: 0 })
+      expect.objectContaining({ sort: 'iuv,asc', page: 0 })
     );
   });
 });

@@ -1,4 +1,5 @@
 import {
+  RegistryOutcome,
   RegistryPagoPaEventType,
   RegistrySilEventType
 } from '../../../generated/data-contracts';
@@ -36,7 +37,18 @@ export const silFields: Array<FilterItem> = [
       label: key,
       value
     })),
-    id: 'event'
+    id: 'event',
+    gridWidth: 6
+  },
+  {
+    type: COMPONENT_TYPE.select,
+    label: i18n.t('events.searchEventOutcome'),
+    options: Object.entries(RegistryOutcome).map(([key, value]) => ({
+      label: key,
+      value
+    })),
+    id: 'outcome',
+    gridWidth: 6
   }
 ];
 
@@ -62,6 +74,15 @@ export const nodoFields: Array<FilterItem> = [
       value
     })),
     id: 'event'
+  },
+  {
+    type: COMPONENT_TYPE.select,
+    label: i18n.t('events.searchEventOutocme'),
+    options: Object.entries(RegistryOutcome).map(([key, value]) => ({
+      label: key,
+      value
+    })),
+    id: 'outcome'
   }
 ];
 
@@ -79,7 +100,8 @@ export const tabs: Array<TabsConfig> = [
 export const DefaultFilterValues: BaseFilterValues = {
   iuv: undefined,
   eventDate: { from: null, to: null },
-  event: undefined
+  event: undefined,
+  outcome: undefined
 };
 
 export type NodoFilterValues = {
@@ -89,6 +111,7 @@ export type NodoFilterValues = {
     to: Date | null;
   };
   event?: RegistryPagoPaEventType;
+  outcome?: RegistryOutcome;
 } & BaseFilterValues;
 
 export type SilFilterValues = {
@@ -98,6 +121,7 @@ export type SilFilterValues = {
     to?: Date;
   };
   event?: RegistrySilEventType;
+  outcome?: RegistryOutcome;
 } & BaseFilterValues;
 
 export type NodoOrSilEvent<T extends NodoFilterValues | SilFilterValues> = {
@@ -107,6 +131,7 @@ export type NodoOrSilEvent<T extends NodoFilterValues | SilFilterValues> = {
   eventType?: T extends NodoFilterValues
     ? RegistryPagoPaEventType
     : RegistrySilEventType;
+  outcome?: RegistryOutcome;
 };
 
 export function getQueryFromFilterValues<
@@ -116,7 +141,8 @@ export function getQueryFromFilterValues<
     iuv: activeFilterValues.iuv,
     eventDateFrom: activeFilterValues.eventDate?.from?.toISOString(),
     eventDateTo: activeFilterValues.eventDate?.to?.toISOString(),
-    eventType: activeFilterValues.event as NodoOrSilEvent<T>['eventType']
+    eventType: activeFilterValues.event as NodoOrSilEvent<T>['eventType'],
+    outcome: activeFilterValues.outcome
   };
 }
 
@@ -133,7 +159,7 @@ export const getEventsColumns = (
   {
     field: 'outcome',
     headerName: i18n.t('events.list.outcome'),
-    flex: 1,
+    flex: 0.5,
     type: 'string'
   },
   {
@@ -146,6 +172,12 @@ export const getEventsColumns = (
     field: 'eventType',
     headerName: i18n.t('events.list.event'),
     flex: 1,
+    type: 'string'
+  },
+  {
+    field: 'eventSubType',
+    headerName: i18n.t('events.list.subEvent'),
+    flex: 0.5,
     type: 'string'
   },
   {
@@ -181,8 +213,9 @@ export const getFiltersWithSubmitButton = (
 ) => {
   const filtersWidth: Record<string, number> = {
     iuv: 2,
-    eventDate: 5,
-    event: 3,
+    eventDate: 4,
+    event: 2,
+    outcome: 2,
     search: 2,
     default: 3
   };

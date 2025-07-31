@@ -49,6 +49,7 @@ export const TreasuryDetail = () => {
     },
     {
       label: t('commons.amount'),
+      valueType: 'amount',
       value: data?.billAmountCents || ''
     },
     {
@@ -76,15 +77,11 @@ export const TreasuryDetail = () => {
       value: data?.documentCode || ''
     },
     {
-      label: t('treasury.account'),
-      value: data?.accountCode || ''
-    },
-    {
       label: t('treasury.tempDocumentYear'),
       value: data?.provisionalAe || ''
     },
     {
-      label: t('treasury.documentCode'),
+      label: t('treasury.provisionalCode'),
       value: data?.provisionalCode || ''
     },
     {
@@ -112,10 +109,6 @@ export const TreasuryDetail = () => {
             <DetailContainer
               sections={[
                 {
-                  title: {
-                    label: t('commons.summary'),
-                    variant: 'overline'
-                  },
                   data: summaryData
                 }
               ]}

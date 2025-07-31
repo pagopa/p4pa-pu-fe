@@ -13,6 +13,37 @@
       "titleIUV": "Avvisi (IUV)"
     }
   },
+  "AssessmentRegistryUpdate": {
+    "success": {
+      "backToStart": "Visualizza capitoli",
+      "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato aggiornato!"
+    },
+    "title": "Modifica capitolo",
+    "subtitle": "Gestisci i parametri del capitolo.",
+    "configuration": "Configurazione del capitolo"
+  },
+  "AssessmentRegistryCreate": {
+    "success": {
+      "backToStart": "Visualizza capitoli",
+      "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato creato!"
+    },
+    "title": "Crea un nuovo capitolo",
+    "configuration": "Crea un nuovo capitolo",
+    "subtitle": "Inserisci i parametri per creare un nuovo capitolo.",
+    "step1": "Configurazione del capitolo",
+    "debtPositionType": "Tipo dovuto",
+    "assessmentRegistry": "Capitolo",
+    "status": "Stato ufficio",
+    "operatingYear": "Anno esercizio",
+    "sectionDescription": "Denominazione Capitolo",
+    "sectionCode": "Codice capitolo",
+    "officeCode": "Codice Ufficio",
+    "officeDescription": "Denominazione Ufficio",
+    "assessmentCode": "Codice Accertamento Capitolo",
+    "assessmentDescription": "Denominazione Accertamento Capitolo"
+  },
   "AssessmentRegistryDetail": {
     "description": "Ecco i dettagli del capitolo.",
     "updatedAt": "Ultimo aggiornamento il",
@@ -68,15 +99,14 @@
           "paymentObject": "Oggetto del pagamento",
           "receiptPaymentAmount": "Importo",
           "receiptPaymentDateTime": "Data Esito",
-          "receiptDebtorFullName": "Anagrafica attestante",
-          "receiptDebtorFiscalCode": "Codice fiscale attestante",
-          "receiptPayerExecutorFullName": "Anagrafica versante",
-          "receiptPayerExecutorFiscalCode": "Codice fiscale versante",
+          "receiptPspCompanyName": "Gestore della transazione (PSP)",
+          "receiptPayerExecutorFullName": "Anagrafica pagatore",
+          "receiptPayerExecutorFiscalCode": "Codice fiscale pagatore",
           "iuv": "IUV",
           "iud": "IUD",
           "iur": "IUR",
-          "receiptPayerFullName": "Anagrafica pagatore",
-          "receiptPayerFiscalCode": "Codice fiscale pagatore",
+          "receiptPayerFullName": "Anagrafica debitore",
+          "receiptPayerFiscalCode": "Codice fiscale debitore",
           "link": "Vedi Ricevuta Telematica"
         },
         "notifiedPayment": {
@@ -264,6 +294,34 @@
             "yes": "Si",
             "no": "No"
           }
+        },
+        "selection": {
+          "banner": {
+            "single": "({{count}}) Pagamento selezionato",
+            "multiple": "({{count}}) Pagamenti selezionati",
+            "clearSelection": "Cancella la selezione"
+          }
+        },
+        "validation": {
+          "noPaymentsSelected": "Devi selezionare almeno un pagamento da aggiungere.",
+          "noFiltersSelected": "Selezionare almeno un filtro."
+        }
+      },
+      "step3": {
+        "title": "Assegna capitolo",
+        "fields": {
+          "operatingYear": {
+            "label": "Anno esercizio",
+            "placeholder": "Seleziona anno esercizio",
+            "required": "Il campo Anno esercizio è obbligatorio",
+            "noData": "Nessun anno disponibile"
+          },
+          "chapter": {
+            "label": "Capitolo",
+            "placeholder": "Seleziona capitolo",
+            "required": "Il campo Capitolo è obbligatorio",
+            "noData": "Nessun capitolo disponibile per l'anno selezionato"
+          }
         }
       }
     },
@@ -271,7 +329,8 @@
     "title": "Crea un nuovo accertamento",
     "stepper": {
       "step1": "Configurazione accertamento",
-      "step2": "Aggiungi pagamenti"
+      "step2": "Aggiungi pagamenti",
+      "step3": "Assegna capitolo"
     },
     "success": {
       "title": "L'accertamento \"{{assessmentName}}\" è stato creato!",
@@ -280,16 +339,24 @@
     },
     "error": {
       "creationFailed": "Errore durante la creazione dell'assessment",
-      "nameAlreadyPresent": "Esiste già un accertamento con lo stesso Nome"
+      "nameAlreadyPresent": "Esiste già un accertamento con la stessa combinazione di nome e tipo dovuto"
     }
   },
   "assessmentDetail": {
     "debtType": "Tipo dovuto",
     "createdBy": "Creato da",
     "paymentsAssociated": "Pagamenti associati",
-    "deleteDialog": {
-      "title": "Conferma eliminazione",
-      "description": "Sei sicuro di voler eliminare questo accertamento? L'operazione non può essere annullata."
+    "closeDialog": {
+      "title": "Sei sicuro di chiudere l’accertamento?",
+      "description": "Una volta chiuso, l’accertamento non potrà più essere modificato.",
+      "ok": "Chiudi l’accertamento",
+      "ko": "Annulla"
+    },
+    "cancelDialog": {
+      "title": "Sei sicuro di voler eliminare l’accertamento?",
+      "description": "Una volta cancellato, l’accertamento non potrà più essere riaperto. Potrai comunque consultarne i dettagli.",
+      "ok": "Elimina",
+      "ko": "Chiudi"
     },
     "paymentDetail": {
       "title": "Dettaglio pagamento",
@@ -307,10 +374,10 @@
       "iur": "IUR"
     }
   },
-
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
+      "ALL": "Tutti",
       "DOPPI": "Pagamenti doppi",
       "RT_NO_IUF": "Pagamenti non correttamente rendicontati",
       "RT_NO_IUD": "Pagamenti non correttamente notificati",
@@ -325,7 +392,7 @@
       "IUF_TES_DIV_IMP": "Rendicontazioni con riversamento ma con importo differente",
       "IUD_NO_RT": "Notifiche di pagamenti non eseguiti",
       "TES_NO_MATCH": "Riversamenti di tesoreria sconosciuti",
-      "UNKNOWN": "Tutti"
+      "UNKNOWN": "Sconosciuto"
     },
     "title": "Prenota export di un flusso",
     "description": "Imposta i filtri e Inserisci i dati per prenotare l'esportazione delle classificazioni dei pagamenti e conoscere se è stato riconciliato o ci sono delle anomalie.",
@@ -384,7 +451,7 @@
     "addfilter": "Aggiunge filtro",
     "amount": "Importo",
     "anonymousFiscalCode": "Codice Fiscale Anonimo",
-    "auditor": "Attestante",
+    "auditor": "Gestore della transazione (PSP)",
     "back": "Indietro",
     "behavior": "Comportamento",
     "breadcrumbs": "Elementi di navigazione breadcrumbs",
@@ -559,6 +626,7 @@
     "importFrom": "Caricati dal",
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
+    "inThisPage": "in questa pagina",
     "iud": "IUD",
     "iuf": "IUF",
     "iur": "IUR",
@@ -600,6 +668,7 @@
     "person": "Persona fisica",
     "personLegal": "Persona giuridica",
     "postAccount": "Conto Corrente Postale",
+    "psp": "Gestore della transazione (PSP)",
     "reason": "Causale",
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
@@ -718,7 +787,8 @@
       "REPORTED": "Rendicontato",
       "TO_SYNC": "Da sincronizzare",
       "UNPAID": "Da pagare",
-      "UNPAYABLE": "Non pagabile"
+      "UNPAYABLE": "Non pagabile",
+      "WAITING_FILE": "In attesa del file"
     },
     "subject": "Oggetto",
     "successExport": "Abbiamo ricevuto la tua richiesta!",
@@ -728,7 +798,6 @@
     "taxCode": "Codice Tassonomico",
     "taxonomy": "Tassonomia",
     "to": "Al",
-    "resultFrom": "Esito dal",
     "transactionManager": "Gestore della transazione (PSP)",
     "unauthorized": "Non sei autorizzato ad accedere alla sezione, contatta il gestore dei permessi",
     "unknownOrganization": "Ente senza nome",
@@ -1398,6 +1467,10 @@
     "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
     "fetchOperators": "Impossibile caricare la lista di tutti gli operatori. Riprova più tardi.",
     "fetchOperatorsEnabled": "Impossibile caricare la lista degli operatori abilitati. Riprova più tardi.",
+    "fetchOperatingYears": "Impossibile caricare gli anni di esercizio. Riprova più tardi.",
+    "fetchChapters": "Impossibile caricare i capitoli. Riprova più tardi.",
+    "fetchPaidInstallments": "Impossibile caricare i pagamenti. Riprova più tardi.",
+    "noChaptersForYear": "Non ci sono capitoli per l'anno {{year}}",
     "generic": "Si è verificato un errore. Riprova più tardi."
   },
   "exportFlow": {
@@ -1414,6 +1487,7 @@
   },
   "flowDataGrid": {
     "authorizedOrganizations": "Enti abilitati",
+    "code": "Codice",
     "internalID": "ID Interno",
     "lastUpdate": "Ultima Modifica",
     "loadedDiscarded": "Caricati/Scarti",
@@ -1505,9 +1579,9 @@
     }
   },
   "taxonomyPage": {
-    "APIUpdate": "Aggiornamento API",
-    "APIUpdateText": "Aggiorna per verificare la presenza di nuove API di PagoPA.",
-    "APIUpdateCTA": "Aggiorna",
+    "APIUpdate": "Aggiornamento Lista Codici Tassonomici",
+    "APIUpdateText": "Aggiornamento per recuperare da PagoPA eventuali aggiornamenti della Lista Codici Tassonomici",
+    "APIUpdateCTA": "Aggiorna Lista",
     "APIUpdateOK": "Aggiornamento pianificato. Abbiamo ricevuto la richiesta è stata pianificata correttamente, sarà eseguita a breve dal sistema.",
     "APIUpdateKO": "Aggiornamento non riuscito. Il sistema non è stato in grado di pianificare l'aggiornamento.",
     "taxonomyInfo": "Informazioni sulla tassonomia",
@@ -1577,7 +1651,7 @@
     "payer": "Ordinante",
     "search": "Cerca flussi di Tesoreria",
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
-    "tempDocumentCode": "Codice provvisorio",
+    "provisionalCode": "Codice provvisorio",
     "tempDocumentYear": "Anno codice Provvisorio"
   },
   "events": {
@@ -1592,12 +1666,18 @@
       "date": "Data evento",
       "outcome": "Esito",
       "iuv": "IUV",
-      "event": "Evento"
+      "event": "Evento",
+      "subEvent": "Sottotipo",
+      "noResults": {
+        "title": "Nessun risultato trovato",
+        "description": "Non ci sono avvisi che corrispondono alla tua ricerca, prova a impostare parametri diversi."
+      }
     },
     "searchIUVDescription": "IUV",
     "searchEventDescription": "Evento",
     "searchDateFromDescription": "Data dal",
-    "searchDateToDescription": "Al"
+    "searchDateToDescription": "Al",
+    "searchEventOutcome": "Esito"
   },
   "treasuryImportFlowOverview": {
     "description": "Visualizza i flussi importati in precedenza e importa nuovi."

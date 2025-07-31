@@ -4,7 +4,7 @@ import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { Grid, ChipProps } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useStore } from '../../store/GlobalStore';
 import { getPaymentsReportingDetail } from '../../api/getPaymentsReportingDetail';
 import { STATE } from '../../store/types';
@@ -26,18 +26,6 @@ function ReportingPaymentDetail() {
     navigate(PageRoutes.RESPONSES_ERROR);
     return null;
   }
-
-  const stateColors: Record<string, ChipProps['color']> = {
-    CANCELLED: 'error',
-    DRAFT: 'default',
-    EXPIRED: 'error',
-    PAID: 'success',
-    PARTIALLY_PAID: 'info',
-    REPORTED: 'success',
-    TO_SYNC: 'default',
-    UNPAID: 'info',
-    INVALID: 'error'
-  };
 
   const { data, isLoading, isError, error } = getPaymentsReportingDetail(
     organizationId,
@@ -105,15 +93,16 @@ function ReportingPaymentDetail() {
     },
     {
       label: t('commons.amount'),
-      value: data?.amountPaidCents ? data?.amountPaidCents : ''
+      value: data?.amountPaidCents,
+      valueType: 'amount'
     },
     {
       label: t('commons.reason'),
-      value: data?.debtPositionTypeOrgDescription || ''
+      value: data?.remittanceInformation || ''
     },
     {
       label: t('commons.duetype'),
-      value: data?.remittanceInformation || ''
+      value: data?.debtPositionTypeOrgDescription || ''
     }
   ];
 
@@ -147,14 +136,6 @@ function ReportingPaymentDetail() {
     {
       label: t('commons.iur'),
       value: data?.iur || ''
-    },
-    {
-      label: t('commons.state'),
-      value: data?.status || '',
-      chipConfig: {
-        color: stateColors[data?.status || ''],
-        variant: 'filled'
-      }
     }
   ];
 

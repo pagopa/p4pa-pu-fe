@@ -13,8 +13,12 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { TaxonomyFields } from '../../models/Taxonomy';
 import { useState } from 'react';
 import { noFilterSetted } from '../../utils/filtersValidation';
-import { synchronizeTaxonomy } from '../../api/taxonomy';
+import {
+  getScheduleLastUpdatedTime,
+  synchronizeTaxonomy
+} from '../../api/taxonomy';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
+import { ScheduleEnum } from '../../../generated/data-contracts';
 
 export const TaxonomyPage = () => {
   const { t } = useTranslation();
@@ -38,8 +42,13 @@ export const TaxonomyPage = () => {
 
   const syncMutation = synchronizeTaxonomy();
 
+  const lastUpdatedTime = getScheduleLastUpdatedTime(
+    ScheduleEnum.SYNCHRONIZE_TAXONOMY_PAGOPA_FETCH
+  );
+
   const handleUpdateCTA = async () => {
     try {
+      lastUpdatedTime.refetch();
       const result = await syncMutation.mutateAsync();
       if (result) utils.notify.emit(t('taxonomyPage.APIUpdateOK'), 'info');
     } catch (error) {
@@ -121,7 +130,11 @@ export const TaxonomyPage = () => {
               title={t('taxonomyPage.APIUpdate')}
               description={t('taxonomyPage.APIUpdateText')}
               actionLabel={t('taxonomyPage.APIUpdateCTA')}
-              footerText={t('commons.lastUpdate')}
+              footerText={
+                lastUpdatedTime.isSuccess && lastUpdatedTime.data?.lastUpdatedAt
+                  ? `${t('commons.lastUpdate')} ${lastUpdatedTime.data.lastUpdatedAt}`
+                  : ''
+              }
               actionButtonVariant="contained"
               onActionClick={handleUpdateCTA}
             />

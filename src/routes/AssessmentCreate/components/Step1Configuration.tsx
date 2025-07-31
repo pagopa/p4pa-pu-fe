@@ -26,6 +26,7 @@ export const Step1Configuration = ({
 
   const debtTypesQuery = useDebtPositionsTypeOrg({
     organizationId,
+    includeAllOption: false,
     useCodeAsValue: true
   });
 

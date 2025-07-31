@@ -22,8 +22,8 @@ const mockSelectedFilters = vi.hoisted(() => ({
 }));
 
 const mockRemoveAllFilters = vi.hoisted(() => vi.fn());
-const mockNoFilterSelectedExcludingClassificationType = vi.hoisted(() => ({
-  peek: vi.fn(() => true)
+const mockNoFilterIsSelected = vi.hoisted(() => ({
+  peek: vi.fn(() => false)
 }));
 
 vi.mock('../../store/FilterStore', () => ({
@@ -35,8 +35,7 @@ vi.mock('../../hooks/useMultiFilters', () => ({
   useMultiFilters: () => ({
     filterMap: {},
     removeAllFilters: mockRemoveAllFilters,
-    noFilterSelectedExcludingClassificationType:
-      mockNoFilterSelectedExcludingClassificationType
+    noFilterIsSelected: mockNoFilterIsSelected
   }),
   FilterCategory: {
     CLASSIFICATIONS: 'CLASSIFICATIONS'
@@ -54,7 +53,7 @@ describe('Classifications', () => {
 
     mockFilterValues.value = {};
     mockSelectedFilters.value = [];
-    mockNoFilterSelectedExcludingClassificationType.peek.mockReturnValue(true);
+    mockNoFilterIsSelected.peek.mockReturnValue(false);
   });
 
   it('renders all sections and buttons', () => {
@@ -80,6 +79,8 @@ describe('Classifications', () => {
   });
 
   it('shows error alert when search is clicked without filters', async () => {
+    mockNoFilterIsSelected.peek.mockReturnValue(false);
+
     render(<Classifications />);
 
     const searchButton = screen.getByRole('button', { name: 'commons.search' });
@@ -91,7 +92,8 @@ describe('Classifications', () => {
   });
 
   it('shows error alert when search is clicked without classification type', async () => {
-    mockFilterValues.value = { SOME_OTHER_FILTER: 'value' };
+    mockNoFilterIsSelected.peek.mockReturnValue(false);
+    mockFilterValues.value = { SOME_OTHER_FILTER: '' };
 
     render(<Classifications />);
 
@@ -104,8 +106,8 @@ describe('Classifications', () => {
   });
 
   it('does not show error alert when filters are properly set', async () => {
+    mockNoFilterIsSelected.peek.mockReturnValue(true);
     mockFilterValues.value = { CLASSIFICATION_TYPE: 'some-type' };
-    mockNoFilterSelectedExcludingClassificationType.peek.mockReturnValue(false);
 
     render(<Classifications />);
 
@@ -122,6 +124,8 @@ describe('Classifications', () => {
   });
 
   it('hides error alert when remove button is clicked', async () => {
+    mockNoFilterIsSelected.peek.mockReturnValue(false);
+
     render(<Classifications />);
 
     const searchButton = screen.getByRole('button', { name: 'commons.search' });
@@ -143,6 +147,8 @@ describe('Classifications', () => {
 
   describe('Error Alert Content', () => {
     it('shows correct error message text', async () => {
+      mockNoFilterIsSelected.peek.mockReturnValue(false);
+
       render(<Classifications />);
 
       const searchButton = screen.getByRole('button', {
@@ -158,6 +164,8 @@ describe('Classifications', () => {
     });
 
     it('shows alert with error severity', async () => {
+      mockNoFilterIsSelected.peek.mockReturnValue(false);
+
       render(<Classifications />);
 
       const searchButton = screen.getByRole('button', {

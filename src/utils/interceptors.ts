@@ -35,6 +35,12 @@ export const setupInterceptors = (client: Client) => {
         return Promise.resolve();
       }
 
+      if (status === 400) {
+        console.error(error);
+        router.navigate(PageRoutes.RESPONSES_ERROR, { replace: true });
+        return Promise.reject(error);
+      }
+
       if (status === 403) {
         if (isApplicationReady) {
           sessionStorage.setItem(

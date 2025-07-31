@@ -136,7 +136,9 @@ export const DebtPositionsInstallmentDetail = () => {
     summaryData: [
       {
         label: t('commons.state'),
-        value: installment?.status || '',
+        value: installment?.status
+          ? t(`commons.status.${installment.status}`)
+          : '',
         chipConfig: { color: 'default', variant: 'outlined' }
       },
       {
@@ -146,12 +148,13 @@ export const DebtPositionsInstallmentDetail = () => {
       },
       {
         label: t('debtPositionSearchResults.amount'),
-        value: installment?.amountCents as number
+        value: installment?.amountCents as number,
+        valueType: 'amount'
       },
       {
         label: t('debtPositionSearchResults.expirationDate'),
         value: installment?.dueDate
-          ? new Date(installment?.dueDate).toLocaleDateString('it-IT')
+          ? new Date(installment.dueDate).toLocaleDateString('it-IT')
           : ''
       },
       {

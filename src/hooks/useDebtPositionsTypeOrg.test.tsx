@@ -81,7 +81,6 @@ describe('useDebtPositionsTypeOrg', () => {
     );
 
     expect(result.current.optionsMap).toEqual([
-      { label: 'commons.all', value: 0, flagMandatoryDueDate: false },
       { label: 'Type A', value: 1, flagMandatoryDueDate: undefined },
       { label: 'Type B', value: 2, flagMandatoryDueDate: undefined }
     ]);
@@ -106,22 +105,6 @@ describe('useDebtPositionsTypeOrg', () => {
     expect(result.current.optionsMap).toEqual([
       { label: 'Type A', value: 1, flagMandatoryDueDate: undefined },
       { label: 'Type B', value: 2, flagMandatoryDueDate: undefined }
-    ]);
-  });
-
-  it('should handle empty or invalid response with all option', () => {
-    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue({
-      ...mockQueryResult,
-      data: [],
-      isSuccess: true
-    } as unknown as MockQueryType);
-
-    const { result } = renderHook(() =>
-      useDebtPositionsTypeOrg({ organizationId: 1 })
-    );
-
-    expect(result.current.optionsMap).toEqual([
-      { label: 'commons.all', value: 0, flagMandatoryDueDate: false }
     ]);
   });
 
