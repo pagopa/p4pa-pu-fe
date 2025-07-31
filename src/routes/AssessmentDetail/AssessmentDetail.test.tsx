@@ -95,7 +95,7 @@ describe('AssessmentDetail', () => {
     debtPositionTypeOrgDescription: 'FEATURE TEST - DO NOT DELETE',
     status: AssessmentStatus.ACTIVE,
     updateOperatorExternalId: 'WS_USER-piattaforma-unitaria_',
-    flagManualGeneration: false,
+    flagManualGeneration: true,
     pagedAssessmentsRowsDetail: {
       content: [
         {
@@ -179,30 +179,46 @@ describe('AssessmentDetail', () => {
   });
 
   describe('Button Interactions', () => {
-    it('should log correct message when remove button is clicked', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
-
+    it('should navigate when remove button is clicked', () => {
       render(<AssessmentDetail />);
 
       const removeButton = screen.getByTestId('remove-payments-button');
       fireEvent.click(removeButton);
 
-      expect(consoleSpy).toHaveBeenCalledWith('Remove payments clicked');
-
-      consoleSpy.mockRestore();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.stringContaining(
+          '/assessment/create?mode=remove&assessmentId=123'
+        ),
+        {
+          state: {
+            mode: 'remove',
+            assessmentId: 123,
+            assessmentName: 'ACC20250618_FEATURE_TEST',
+            debtPositionTypeOrgCode: 'TIPO_DEBITO_TEST',
+            fromAssessmentDetail: true
+          }
+        }
+      );
     });
 
-    it('should log correct message when add button is clicked', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
-
+    it('should navigate when add button is clicked', () => {
       render(<AssessmentDetail />);
 
       const addButton = screen.getByTestId('add-payments-button');
       fireEvent.click(addButton);
 
-      expect(consoleSpy).toHaveBeenCalledWith('Add payments clicked');
-
-      consoleSpy.mockRestore();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('/assessment/create?mode=add&assessmentId=123'),
+        {
+          state: {
+            mode: 'add',
+            assessmentId: 123,
+            assessmentName: 'ACC20250618_FEATURE_TEST',
+            debtPositionTypeOrgCode: 'TIPO_DEBITO_TEST',
+            fromAssessmentDetail: true
+          }
+        }
+      );
     });
   });
 

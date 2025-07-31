@@ -31,23 +31,23 @@ export const usePaymentsManager = ({
 }: UsePaymentsManagerParams): UsePaymentsManagerResult => {
   const alertManager = useAlertManager();
 
-  // 🔄 Handle payment validation errors - solo quando NON ci sono selezioni
   useEffect(() => {
     if (paymentsValidationError && totalSelected === 0) {
       alertManager.showAlert('error');
-    } else if (totalSelected > 0) {
-      // Se ci sono selezioni, mostra info e nascondi error
+    }
+  }, [paymentsValidationError, totalSelected, alertManager.showAlert]);
+
+  useEffect(() => {
+    if (totalSelected > 0) {
       alertManager.showAlert('info');
-    } else if (!paymentsValidationError && totalSelected === 0) {
-      // Nessun errore e nessuna selezione
+    }
+  }, [totalSelected, alertManager.showAlert]);
+
+  useEffect(() => {
+    if (!paymentsValidationError && totalSelected === 0) {
       alertManager.hideAlert();
     }
-  }, [
-    paymentsValidationError,
-    totalSelected,
-    alertManager.showAlert,
-    alertManager.hideAlert
-  ]);
+  }, [paymentsValidationError, totalSelected, alertManager.hideAlert]);
 
   // Auto-hide validation error when there are selections
   useEffect(() => {

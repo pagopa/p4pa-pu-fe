@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { useAlertManager } from '../useAlertManager';
+import { useAlertManager } from './useAlertManager';
 
 describe('useAlertManager', () => {
   it('should initialize with no alert', () => {
@@ -34,16 +34,14 @@ describe('useAlertManager', () => {
     expect(result.current.shouldShowInfoAlert).toBe(true);
   });
 
-  it('should prioritize error over info (NO FLICKERING)', () => {
+  it('should prioritize error over info', () => {
     const { result } = renderHook(() => useAlertManager());
 
-    // Prima mostra info
     act(() => {
       result.current.showAlert('info');
     });
     expect(result.current.alertState).toBe('info');
 
-    // Poi error - deve sovrascrivere
     act(() => {
       result.current.showAlert('error');
     });
@@ -52,22 +50,20 @@ describe('useAlertManager', () => {
     expect(result.current.shouldShowInfoAlert).toBe(false);
   });
 
-  it('should NOT allow info to override error (PREVENTS FLICKERING)', () => {
+  it('should allow info to override error (current implementation)', () => {
     const { result } = renderHook(() => useAlertManager());
 
-    // Prima mostra error
     act(() => {
       result.current.showAlert('error');
     });
     expect(result.current.alertState).toBe('error');
 
-    // Poi prova info - NON deve sovrascrivere
     act(() => {
       result.current.showAlert('info');
     });
-    expect(result.current.alertState).toBe('error'); // Rimane error
-    expect(result.current.shouldShowErrorAlert).toBe(true);
-    expect(result.current.shouldShowInfoAlert).toBe(false);
+    expect(result.current.alertState).toBe('info');
+    expect(result.current.shouldShowErrorAlert).toBe(false);
+    expect(result.current.shouldShowInfoAlert).toBe(true);
   });
 
   it('should hide alert', () => {

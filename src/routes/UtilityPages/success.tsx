@@ -59,7 +59,7 @@ export const SuccessPage = () => {
             interpolation: { escapeValue: false }
           })
         )}
-        description={t(pageConfig?.description)}
+        description={pageConfig?.description ? t(pageConfig.description) : ''}
         buttonConfig={buttonConfig}
       />
     </>

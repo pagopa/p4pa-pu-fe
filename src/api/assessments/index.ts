@@ -182,7 +182,7 @@ export const createAssessmentDetails = (
 export const deleteAssessmentDetails = (organizationId: number) =>
   useMutation({
     mutationKey: ['deleteAssessmentDetails', organizationId],
-    mutationFn: async (assessmentDetailIds: number[]) => {
+    mutationFn: async (assessmentDetailIds: Array<number>) => {
       const response = await utils.apiClient.bff.deleteAssessmentsDetails(
         organizationId,
         {

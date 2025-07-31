@@ -1370,9 +1370,17 @@ describe('deleteAssessmentDetails', () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, {
-      assessmentDetailIds
-    });
+    expect(apiMock).toHaveBeenCalledWith(
+      organizationId,
+      {
+        assessmentDetailIds
+      },
+      {
+        paramsSerializer: {
+          indexes: null
+        }
+      }
+    );
   });
 
   it('should handle API errors correctly during deletion', async () => {
@@ -1496,6 +1504,6 @@ describe('deleteAssessmentDetails', () => {
     );
 
     expect(result.current).toBeDefined();
-    // La mutation key viene impostata internamente da React Query
+    // The mutation key is set internally by React Query
   });
 });

@@ -1,5 +1,5 @@
 import { renderHook, act } from '@testing-library/react';
-import { usePaymentSelection } from '../usePaymentSelection';
+import { usePaymentSelection } from './usePaymentSelection';
 
 describe('usePaymentSelection', () => {
   it('should initialize with empty selection', () => {
@@ -23,7 +23,6 @@ describe('usePaymentSelection', () => {
   it('should toggle selection correctly', () => {
     const { result } = renderHook(() => usePaymentSelection());
 
-    // Seleziona payment1
     act(() => {
       result.current.toggleSelection(['payment1']);
     });
@@ -32,7 +31,6 @@ describe('usePaymentSelection', () => {
     expect(result.current.selectedCount).toBe(1);
     expect(result.current.isSelected('payment1')).toBe(true);
 
-    // Deseleziona payment1
     act(() => {
       result.current.toggleSelection(['payment1']);
     });
@@ -80,7 +78,6 @@ describe('usePaymentSelection', () => {
       result.current.toggleSelection(['payment3', 'payment1', 'payment2']);
     });
 
-    // Deve essere sorted alfabeticamente
     expect(result.current.selectedPayments).toEqual([
       'payment1',
       'payment2',

@@ -16,7 +16,7 @@ import { subDays, startOfDay, endOfDay } from 'date-fns';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
 import { PaymentsTable } from './PaymentsTable';
-import { RemovePaymentsConfirmModal } from './RemovePaymentsConfirmModal';
+import GenericDialog from '../../../components/GenericDialog/GenericDialog';
 import { useOperatingYears } from '../../../hooks/useOperatingYears';
 import { useChapters } from '../../../hooks/useChapters';
 import { useStep2PaymentsState } from '../../../hooks/useStep2PaymentsState';
@@ -62,7 +62,7 @@ export type AssessmentFormData = {
 // Export validation function for use in AssessmentCreate
 export const validateStep2Payments = (
   values: AssessmentFormData,
-  currentSelectedAssessmentDetailIds?: number[]
+  currentSelectedAssessmentDetailIds?: Array<number>
 ): boolean => {
   const shouldLoadData =
     values.addPaymentsToAssessment === true ||
@@ -188,9 +188,12 @@ const Step2PaymentsComponent = forwardRef<
           iud: row.iud || ''
         };
         if (isRemoveMode) {
+          const assessmentRow = row as typeof row & {
+            assessmentDetailId: number;
+          };
           return {
             ...baseRow,
-            assessmentDetailId: (row as any).assessmentDetailId
+            assessmentDetailId: assessmentRow.assessmentDetailId
           };
         } else {
           return baseRow;
@@ -395,68 +398,74 @@ const Step2PaymentsComponent = forwardRef<
     setShowRemoveConfirmModal
   ]);
 
-  const handleConfirmRemove = useCallback(
-    async (assessmentDetailIds: number[]) => {
-      console.log(
-        '🗑️ REMOVE MODE - Selected assessmentDetailIds:',
-        assessmentDetailIds
-      );
-      console.log('📊 Assessment Detail IDs Array:', {
-        ids: assessmentDetailIds,
-        count: assessmentDetailIds.length,
-        type: 'Remove Operation'
+  const handleConfirmRemove = useCallback(async () => {
+    const assessmentDetailIds = selectedAssessmentDetailIds || [];
+
+    console.log(
+      '🗑️ REMOVE MODE - Selected assessmentDetailIds:',
+      assessmentDetailIds
+    );
+    console.log('📊 Assessment Detail IDs Array:', {
+      ids: assessmentDetailIds,
+      count: assessmentDetailIds.length,
+      type: 'Remove Operation'
+    });
+
+    if (!assessmentDetailIds || assessmentDetailIds.length === 0) {
+      console.error('No assessmentDetailIds provided to handleConfirmRemove');
+      setShowRemoveConfirmModal(false);
+      return;
+    }
+    try {
+      await deleteAssessmentDetailsMutation.mutateAsync(assessmentDetailIds);
+      setShowRemoveConfirmModal(false);
+
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'assessment-remove-payments',
+          i18nParams: {
+            count: assessmentDetailIds.length,
+            assessmentName
+          },
+          assessmentId
+        }
       });
+    } catch (error: unknown) {
+      console.error('Error during payment removal:', error);
 
-      if (!assessmentDetailIds || assessmentDetailIds.length === 0) {
-        console.error('No assessmentDetailIds provided to handleConfirmRemove');
-        setShowRemoveConfirmModal(false);
-        return;
-      }
-      try {
-        await deleteAssessmentDetailsMutation.mutateAsync(assessmentDetailIds);
-        setShowRemoveConfirmModal(false);
+      setShowRemoveConfirmModal(false);
 
-        navigate(PageRoutes.RESPONSES_SUCCESS, {
-          replace: true,
+      const isAxiosErrorWithResponse = (
+        err: unknown
+      ): err is { response?: { status?: number } } => {
+        return typeof err === 'object' && err !== null && 'response' in err;
+      };
+
+      const statusCode = isAxiosErrorWithResponse(error)
+        ? error.response?.status
+        : undefined;
+
+      if (statusCode && statusCode >= 400 && statusCode < 500) {
+        navigate(PageRoutes.RESPONSES_ERROR, {
           state: {
             category: 'assessment-remove-payments',
-            i18nParams: {
-              count: assessmentDetailIds.length,
-              assessmentName
-            },
-            assessmentId
+            errorType: '4xx',
+            statusCode
           }
         });
-      } catch (error: unknown) {
-        console.error('Error during payment removal:', error);
-
-        setShowRemoveConfirmModal(false);
-
-        const isAxiosErrorWithResponse = (
-          err: unknown
-        ): err is { response?: { status?: number } } => {
-          return typeof err === 'object' && err !== null && 'response' in err;
-        };
-
-        const statusCode = isAxiosErrorWithResponse(error)
-          ? error.response?.status
-          : undefined;
-
-        if (statusCode && statusCode >= 400 && statusCode < 500) {
-          navigate(PageRoutes.RESPONSES_ERROR, {
-            state: {
-              category: 'assessment-remove-payments',
-              errorType: '4xx',
-              statusCode
-            }
-          });
-          return;
-        }
-        utils.notify.emit(t('errors.generic'));
+        return;
       }
-    },
-    [deleteAssessmentDetailsMutation, navigate, setShowRemoveConfirmModal]
-  );
+      utils.notify.emit(t('errors.generic'));
+    }
+  }, [
+    selectedAssessmentDetailIds,
+    deleteAssessmentDetailsMutation,
+    navigate,
+    assessmentName,
+    assessmentId,
+    t
+  ]);
 
   const handleCancelRemove = useCallback(() => {
     setShowRemoveConfirmModal(false);
@@ -925,11 +934,26 @@ const Step2PaymentsComponent = forwardRef<
 
       {isRemoveMode && (
         <>
-          <RemovePaymentsConfirmModal
+          <GenericDialog
             open={showRemoveConfirmModal}
-            selectedAssessmentDetailIds={selectedAssessmentDetailIds || []}
-            onConfirm={handleConfirmRemove}
-            onCancel={handleCancelRemove}
+            title={t('assessmentCreate.removePayments.confirmModal.title')}
+            message={t(
+              'assessmentCreate.removePayments.confirmModal.description'
+            )}
+            confirmLabel={
+              selectedAssessmentDetailIds &&
+              selectedAssessmentDetailIds.length > 0
+                ? t('commons.onlyRemove')
+                : undefined
+            }
+            cancelLabel={t('commons.cancel')}
+            onConfirm={
+              selectedAssessmentDetailIds &&
+              selectedAssessmentDetailIds.length > 0
+                ? handleConfirmRemove
+                : undefined
+            }
+            onClose={handleCancelRemove}
             data-testid="remove-payments-confirm-modal"
           />
         </>

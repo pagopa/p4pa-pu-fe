@@ -192,9 +192,11 @@ export const AssessmentDetail = () => {
   }, [data?.flagManualGeneration, data?.status]);
 
   const shouldShowRemoveButton = useMemo(() => {
-    return shouldShowButtons && 
-           data?.pagedAssessmentsRowsDetail?.content && 
-           data.pagedAssessmentsRowsDetail.content.length > 0;
+    return (
+      shouldShowButtons &&
+      data?.pagedAssessmentsRowsDetail?.content &&
+      data.pagedAssessmentsRowsDetail.content.length > 0
+    );
   }, [shouldShowButtons, data?.pagedAssessmentsRowsDetail?.content]);
 
   const showCannotModifyDialog = () => {
