@@ -1666,12 +1666,18 @@
       "date": "Data evento",
       "outcome": "Esito",
       "iuv": "IUV",
-      "event": "Evento"
+      "event": "Evento",
+      "subEvent": "Sottotipo",
+      "noResults": {
+        "title": "Nessun risultato trovato",
+        "description": "Non ci sono avvisi che corrispondono alla tua ricerca, prova a impostare parametri diversi."
+      }
     },
     "searchIUVDescription": "IUV",
     "searchEventDescription": "Evento",
     "searchDateFromDescription": "Data dal",
-    "searchDateToDescription": "Al"
+    "searchDateToDescription": "Al",
+    "searchEventOutcome": "Esito"
   },
   "treasuryImportFlowOverview": {
     "description": "Visualizza i flussi importati in precedenza e importa nuovi."
