@@ -133,10 +133,7 @@ export const DebtTypes = () => {
               number: 0
             }
           }
-          sortModel={sortModel}
-          onSortChange={handleSortModelChange}
           onFiltersApplied={handleFiltersApplied}
-          onPaginationChange={handlePaginationChange}
         />
       </Box>
     </>

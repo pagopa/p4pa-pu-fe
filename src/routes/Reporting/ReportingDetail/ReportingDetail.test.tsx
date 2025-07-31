@@ -7,7 +7,7 @@ import {
   screen,
   waitFor
 } from '../../../__tests__/renderers';
-import { getPaymentsReportingRows } from '../../../api/reporting';
+import { getPaymentsReportingRows } from '../../../api/reporting/reporting';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import ReportingDetail from './ReportingDetail';
 

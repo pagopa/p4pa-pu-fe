@@ -1,31 +1,22 @@
-import {
-  GridColDef,
-  GridRenderCellParams,
-  GridSortModel
-} from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import CustomDataGrid, {
-  SmartPaginationConfig
-} from '../../../components/DataGrid/CustomDataGrid';
+import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { moneyFormat, formatDate } from '../../../utils/formatters';
-import { AssessmentsDetail } from '../../../../generated/apiClient';
+import {
+  AssessmentsDetail,
+  AssessmentsRowsDetail
+} from '../../../../generated/apiClient';
 
 type AssessmentDetailDataGridProps = {
-  rows: Array<AssessmentsDetail>;
-  sortModel: GridSortModel;
-  onSortModelChange: (model: GridSortModel) => void;
-  smartPagination?: SmartPaginationConfig;
+  data?: AssessmentsRowsDetail;
   isLoading?: boolean;
   onNavigateToDetail?: (receiptId: number) => void;
 };
 
 const AssessmentDetailDataGrid = ({
-  rows,
-  sortModel,
-  onSortModelChange,
-  smartPagination,
+  data,
   isLoading = false,
   onNavigateToDetail
 }: AssessmentDetailDataGridProps) => {
@@ -91,21 +82,17 @@ const AssessmentDetailDataGrid = ({
   ];
 
   return (
-    <>
-      <CustomDataGrid
-        rows={rows}
-        columns={columns}
-        getRowId={(row) =>
-          row.assessmentDetailId || `${row.assessmentId}-${row.iuv}`
-        }
-        disableColumnMenu
-        disableColumnResize
-        sortModel={sortModel}
-        onSortModelChange={onSortModelChange}
-        smartPagination={smartPagination}
-        loading={isLoading}
-      />
-    </>
+    <CustomDataGrid
+      rows={data?.pagedAssessmentsRowsDetail?.content || []}
+      columns={columns}
+      getRowId={(row) =>
+        row.assessmentDetailId || `${row.assessmentId}-${row.iuv}`
+      }
+      disableColumnMenu
+      disableColumnResize
+      loading={isLoading}
+      totalPages={data?.pagedAssessmentsRowsDetail?.totalPages || 1}
+    />
   );
 };
 

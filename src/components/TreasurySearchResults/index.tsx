@@ -90,7 +90,6 @@ const TreasurySearchResults = () => {
       >
         <SearchResultsDataGrid
           data={treasury.query.data as PagedTreasuryView}
-          onSortChange={treasury.onSortChange}
         />
       </Grid>
 

@@ -12,7 +12,6 @@ import FilterContainer, {
 import { Search } from '@mui/icons-material';
 import AssessmentDetailDataGrid from './components/AssessmentDetailDataGrid';
 import { useStore } from '../../store/GlobalStore';
-import { STATE } from '../../store/types';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 import { useAssessmentDetailFilters } from '../../hooks/useAssessmentDetailFilters';
 import { AssessmentsDetail } from '../../../generated/apiClient';
@@ -31,8 +30,9 @@ export const AssessmentDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const assessmentId = id ? Number(id) : null;
-  const { state } = useStore();
-  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+  const {
+    state: { organizationId }
+  } = useStore();
 
   if (!assessmentId || isNaN(assessmentId)) {
     navigate(PageRoutes.RESPONSES_ERROR);
@@ -46,9 +46,6 @@ export const AssessmentDetail = () => {
     draftFilters,
     updateDraftFilters,
     applyFilters,
-    sortModel,
-    updatePagination,
-    handleSortModelChange,
     handleDateFromChange,
     handleDateToChange,
     handlePaymentDateFromChange,
@@ -406,23 +403,8 @@ export const AssessmentDetail = () => {
           aria-label="results-table"
         >
           <AssessmentDetailDataGrid
-            rows={data?.pagedAssessmentsRowsDetail?.content || []}
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
+            data={data}
             isLoading={isLoading}
-            smartPagination={{
-              initialPage: 0,
-              initialSize: 10,
-              sizeOptions: [5, 10, 20],
-              backendData: {
-                totalElements: data?.pagedAssessmentsRowsDetail?.totalElements,
-                totalPages: data?.pagedAssessmentsRowsDetail?.totalPages,
-                number: data?.pagedAssessmentsRowsDetail?.number,
-                size: data?.pagedAssessmentsRowsDetail?.size
-              },
-              onFiltersApplied: handleFiltersApplied,
-              onPaginationChange: updatePagination
-            }}
             onNavigateToDetail={handleNavigateToDetailDetail}
           />
         </Grid>

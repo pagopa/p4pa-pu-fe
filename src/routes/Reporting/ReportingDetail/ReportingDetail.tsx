@@ -13,25 +13,30 @@ import FilterContainer, {
 } from '../../../components/FilterContainer/FilterContainer';
 import ReportingDetailDataGrid from './components/ReportingDetailDataGrid';
 import { useStore } from '../../../store/GlobalStore';
-import { STATE } from '../../../store/types';
-import { getPaymentsReportingRows } from '../../../api/reporting';
 import {
   formatDate,
   formatDateTime,
   moneyFormat
 } from '../../../utils/formatters';
-import { useReportingDetailFilters } from '../../../hooks/useReportingDetailFilters';
 import { PaymentsReporting } from '../../../../generated/apiClient';
 import { PageRoutes } from '../../../routes';
+import { getPaymentsReportingRows } from '../../../api/reporting';
+import { useSearch } from '../../../hooks/useSearch';
+import utils from '../../../utils';
+import { FieldValues } from 'react-hook-form';
+import { FilterFieldIds } from '../../../models/SearchCardFields';
 
 export const ReportingDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
-  const { id } = useParams<{ id: string }>();
-  const iuf = id;
-  const { state } = useStore();
-  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+  const { id: iuf } = useParams<{ id: string }>();
+  const {
+    state: { organizationId }
+  } = useStore();
+
+  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
+  const [appliedFilters, setAppliedFilters] = useState(initialFilters);
 
   if (!iuf) {
     navigate(PageRoutes.RESPONSES_ERROR);
@@ -40,46 +45,33 @@ export const ReportingDetail = () => {
 
   const [detailItem, setDetailItem] = useState<PaymentsReporting | null>(null);
 
-  const {
-    appliedFilters,
-    draftFilters,
-    updateDraftFilters,
-    applyFilters,
-    updatePagination,
-    hasActiveFilters,
-    sortModel,
-    handleSortModelChange,
-    handleDateFromChange,
-    handleDateToChange
-  } = useReportingDetailFilters({
-    initialFilters: {
-      page: 0,
-      size: 10
-    }
+  const query = getPaymentsReportingRows(organizationId, iuf, {
+    enabled: !!organizationId && !!iuf
   });
 
-  const { data, isLoading, isError, error } = getPaymentsReportingRows(
-    organizationId,
-    iuf,
-    appliedFilters,
-    { enabled: !!organizationId && !!iuf }
-  );
+  const reportingRows = useSearch({
+    query,
+    filters: appliedFilters
+  });
 
   useEffect(() => {
-    if (isError && error) {
-      console.error('Error loading payments reporting rows:', error);
+    if (reportingRows.query.isError && reportingRows.query.error) {
+      console.error(
+        'Error loading payments reporting rows:',
+        reportingRows.query.error
+      );
       navigate(PageRoutes.RESPONSES_ERROR);
     }
-  }, [isError, error, navigate]);
+  }, [reportingRows.query.isError, reportingRows.query.error, navigate]);
 
   useEffect(() => {
-    if (data?.content?.[0] && !detailItem) {
-      setDetailItem(data.content[0]);
+    if (reportingRows.query.data?.content?.[0] && !detailItem) {
+      setDetailItem(reportingRows.query.data.content[0]);
     }
-  }, [data, detailItem]);
+  }, [reportingRows.query.data, detailItem]);
 
   const handleFiltersApplied = () => {
-    applyFilters();
+    reportingRows.applyFilters(appliedFilters);
   };
 
   const detailSections = useMemo(() => {
@@ -165,11 +157,11 @@ export const ReportingDetail = () => {
             items={[
               {
                 type: COMPONENT_TYPE.textField,
+                id: FilterFieldIds.IUV_CODE,
                 label: t('commons.searchIUV'),
                 adornment: <Search />,
                 gridWidth: 5,
-                value: draftFilters.iuv || '',
-                onChange: (e) => updateDraftFilters({ iuv: e.target.value })
+                value: appliedFilters.iuv || ''
               },
               {
                 type: COMPONENT_TYPE.dateRange,
@@ -177,23 +169,24 @@ export const ReportingDetail = () => {
                 gridWidth: 6,
                 from: {
                   label: t('dates.from'),
-                  errorMessage: t('dates.validations.from'),
-                  onChange: handleDateFromChange
+                  errorMessage: t('dates.validations.from')
                 },
                 to: {
                   label: t('dates.to'),
-                  errorMessage: t('dates.validations.to'),
-                  onChange: handleDateToChange
+                  errorMessage: t('dates.validations.to')
                 }
               },
               {
                 type: COMPONENT_TYPE.button,
                 label: t('commons.filters.filterResults'),
                 gridWidth: 1,
-                onClick: handleFiltersApplied,
-                disabled: !hasActiveFilters()
+                onClick: handleFiltersApplied
               }
             ]}
+            values={appliedFilters}
+            onChange={(field, value) =>
+              setAppliedFilters({ ...appliedFilters, [field]: value })
+            }
           />
         </Grid>
         <Grid
@@ -207,22 +200,8 @@ export const ReportingDetail = () => {
           aria-label="results-table"
         >
           <ReportingDetailDataGrid
-            rows={data?.content || []}
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
-            isLoading={isLoading}
-            smartPagination={{
-              initialPage: 0,
-              initialSize: 10,
-              sizeOptions: [5, 10, 20],
-              backendData: {
-                totalElements: data?.totalElements,
-                totalPages: data?.totalPages,
-                number: data?.number,
-                size: data?.size
-              },
-              onPaginationChange: updatePagination
-            }}
+            data={reportingRows.query.data}
+            isLoading={reportingRows.query.isPending}
           />
         </Grid>
       </Grid>

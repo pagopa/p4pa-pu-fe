@@ -11,8 +11,6 @@ type UseExportFlowFiltersProps = {
   initialSize?: number;
 };
 
-const DEFAULT_PAGE_SIZE = 10;
-
 const getDefaultDateRange = () => {
   const today = new Date();
   const oneYearAgo = new Date();
@@ -27,9 +25,7 @@ const getDefaultDateRange = () => {
 export const useExportFlowFilters = ({
   exportFileType,
   initialFilters,
-  onFiltersChange,
-  initialPage = 0,
-  initialSize = DEFAULT_PAGE_SIZE
+  onFiltersChange
 }: UseExportFlowFiltersProps) => {
   const defaultDateRange = getDefaultDateRange();
 
@@ -108,8 +104,6 @@ export const useExportFlowFilters = ({
     };
     setAppliedFilters(filtersToApply);
 
-    handlePageChange(0);
-
     const completeFilters = {
       ...filtersToApply,
       page: 0,
@@ -143,8 +137,6 @@ export const useExportFlowFilters = ({
   const handleSortModelChange = useCallback(
     (newModel: GridSortModel) => {
       setSortModel(newModel);
-
-      handlePageChange(0);
 
       const completeFilters = getCompleteFilters();
       onFiltersChange?.({

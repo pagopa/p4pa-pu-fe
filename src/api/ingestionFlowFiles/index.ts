@@ -1,67 +1,33 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { useMemo } from 'react';
-import utils from '../utils';
+import { useMutation } from '@tanstack/react-query';
+import utils from '../../utils';
 import {
   FileOrigin,
   IngestionFlowFileType,
   RequestParams
-} from '../../generated/fileshare/fileshareClient';
-import {
-  IngestionFlowFileStatus,
-  IngestionFlowFileTypeEnum
-} from '../../generated/apiClient';
-import { extractFilename } from '../utils/formatters';
+} from '../../../generated/fileshare/fileshareClient';
+import { extractFilename } from '../../utils/formatters';
+import { buildQueryParams } from './mappings';
+import { FlowFileFilters } from '../../models/Filters';
+
+export type FlowFileFilteredRequest = {
+  filters: FlowFileFilters;
+  pagination: { page: number; size: number };
+  sort: Array<string>;
+};
 
 export const getIngestionFlowFiles = (
   organizationId: number,
-  query: {
-    ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
-    creationDateFrom?: string;
-    creationDateTo?: string;
-    status?: IngestionFlowFileStatus;
-    fileName?: string;
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
-  },
-  options = {}
+  routingCategory: string
 ) => {
-  const stableQueryKey = useMemo(
-    () => [
-      'ingestionFlowFiles',
-      organizationId,
-      JSON.stringify({
-        ingestionFlowFileTypes: query.ingestionFlowFileTypes,
-        creationDateFrom: query.creationDateFrom,
-        creationDateTo: query.creationDateTo,
-        status: query.status,
-        fileName: query.fileName,
-        page: query.page,
-        size: query.size,
-        sort: query.sort
-      })
-    ],
-    [
-      organizationId,
-      query.ingestionFlowFileTypes,
-      query.creationDateFrom,
-      query.creationDateTo,
-      query.status,
-      query.fileName,
-      query.page,
-      query.size,
-      query.sort
-    ]
-  );
-
-  return useQuery({
-    queryKey: stableQueryKey,
-    queryFn: async () => {
+  return useMutation({
+    mutationKey: ['getIngestionFlowFiles', organizationId, routingCategory],
+    mutationFn: async (args: FlowFileFilteredRequest) => {
+      const query = buildQueryParams(args);
       const { data: files } = await utils.apiClient.bff.getIngestionFlowFiles(
         organizationId,
         query,
+        // serialize without indexes
         {
-          // To serialize flowFileTypes parameters
           paramsSerializer: {
             indexes: null
           }
@@ -69,10 +35,7 @@ export const getIngestionFlowFiles = (
       );
 
       return files;
-    },
-    retry: false,
-    enabled: !!organizationId,
-    ...options
+    }
   });
 };
 

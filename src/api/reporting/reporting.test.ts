@@ -1,8 +1,8 @@
-import utils from '../utils';
+import utils from '../../utils';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '../__tests__/renderers';
-import { getPaymentsReportingRows } from './reporting';
+import { renderHook, waitFor } from '../../__tests__/renderers';
+import { getPaymentsReportingRows } from '../reporting';
 
 vi.mock('./utils', () => {
   const originalModule = vi.importActual('utils');

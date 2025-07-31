@@ -10,7 +10,6 @@ import DetailContainer, {
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import { useStore } from '../../../store/GlobalStore';
 import { getPaymentsReportingDetail } from '../../../api/getPaymentsReportingDetail';
-import { STATE } from '../../../store/types';
 import { setAppState } from '../../../store/AppStateStore';
 import { formatDate } from '../../../utils/formatters';
 import { BredcrumbItem } from '../../../components/Breadcrumbs/Breadcrumbs';
@@ -19,9 +18,10 @@ import { PageRoutes } from '../../../routes';
 function ReportingPaymentDetail() {
   const { iuf, id } = useParams();
   const { t } = useTranslation();
-  const { state } = useStore();
+  const {
+    state: { organizationId }
+  } = useStore();
   const navigate = useNavigate();
-  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
   if (!iuf || !id) {
     navigate(PageRoutes.RESPONSES_ERROR);

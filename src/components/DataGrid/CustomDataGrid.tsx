@@ -30,7 +30,7 @@ export type CustomDataGridProps<T extends GridValidRowModel> = {
   initialPageSize?: number;
   pageSizeOptions?: Array<number>;
   initialSortModel?: GridSortModel;
-  totalPages?: number;
+  totalPages: number;
 } & Omit<
   DataGridProps,
   | 'pagination'

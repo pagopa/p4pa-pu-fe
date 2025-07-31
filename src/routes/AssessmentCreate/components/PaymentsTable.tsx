@@ -71,12 +71,9 @@ export const PaymentsTable = ({
 
   // Hook for managing filters and sorting
   const {
-    appliedFilters,
     draftFilters,
-    sortModel,
     updateDraftFilters,
     applyFilters,
-    handleSortModelChange,
     handleDateFromChange,
     handleDateToChange
   } = usePaymentsTableFilters({
@@ -158,32 +155,6 @@ export const PaymentsTable = ({
       onSelectionChange(selectedUniqueIds);
     },
     [onSelectionChange]
-  );
-
-  const handlePaginationChange = useCallback(
-    (pagination: { page: number; size: number }) => {
-      const isActualPageChange = pagination.page !== (tableData.number || 0);
-      if (isActualPageChange) {
-        setIsPaginationLoading(true);
-      }
-
-      if (onFiltersApplied) {
-        const sortParams =
-          sortModel.length > 0
-            ? [`${sortModel[0].field},${sortModel[0].sort}`]
-            : undefined;
-
-        onFiltersApplied(appliedFilters, pagination, sortParams);
-      }
-    },
-    [
-      onFiltersApplied,
-      appliedFilters,
-      sortModel,
-      tableData.number,
-      tableData.size,
-      tableData.totalElements
-    ]
   );
 
   const handleDetailClick = useCallback((row: PaymentRowWithUniqueId) => {
@@ -312,21 +283,8 @@ export const PaymentsTable = ({
           checkboxSelection
           hideFooterSelectedRowCount
           rowSelectionModel={selectedRows}
+          totalPages={data?.totalPages || 1}
           onRowSelectionModelChange={handleRowSelectionChange}
-          sortModel={sortModel}
-          onSortModelChange={handleSortModelChange}
-          smartPagination={{
-            initialPage: 0,
-            initialSize: 10,
-            sizeOptions: [5, 10, 20],
-            backendData: {
-              totalElements: tableData.totalElements,
-              totalPages: tableData.totalPages,
-              number: tableData.number,
-              size: tableData.size
-            },
-            onPaginationChange: handlePaginationChange
-          }}
           localeText={{ noRowsLabel: t('flowDataGrid.noDataRows') }}
           loading={combinedLoading}
           disableVirtualization={true}

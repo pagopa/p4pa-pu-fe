@@ -27,8 +27,6 @@ type SearchResultDataRow = {
 
 export type DataGridProps = {
   data: PagedReceiptView;
-  onSortChange: (model: Array<string>) => void;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
 const SearchResultsDataGrid = ({ data }: DataGridProps) => {
@@ -113,9 +111,9 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
       rows={data?.content ?? []}
       getRowId={(row) => row.receiptId}
       columns={columns}
-      totalPages={data?.totalPages}
       disableColumnMenu
       disableColumnResize
+      totalPages={data?.totalPages || 1}
     />
   );
 };

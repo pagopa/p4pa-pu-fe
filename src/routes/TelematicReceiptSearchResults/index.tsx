@@ -77,7 +77,6 @@ const TelematicReceiptSearchResults = () => {
         >
           <SearchResultsDataGrid
             data={telematicReceipt.query.data as PagedReceiptView}
-            onSortChange={telematicReceipt.onSortChange}
           />
         </Grid>
       </Stack>
