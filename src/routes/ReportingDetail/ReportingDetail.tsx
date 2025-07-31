@@ -44,6 +44,7 @@ export const ReportingDetail = () => {
     draftFilters,
     updateDraftFilters,
     applyFilters,
+    updatePagination,
     hasActiveFilters,
     sortModel,
     handleSortModelChange,
@@ -219,7 +220,7 @@ export const ReportingDetail = () => {
                 number: data?.number,
                 size: data?.size
               },
-              onFiltersApplied: handleFiltersApplied
+              onPaginationChange: updatePagination
             }}
           />
         </Grid>
