@@ -44,6 +44,7 @@ export const AssessmentDetail = () => {
     updateDraftFilters,
     applyFilters,
     sortModel,
+    updatePagination,
     handleSortModelChange,
     handleDateFromChange,
     handleDateToChange,
@@ -318,7 +319,8 @@ export const AssessmentDetail = () => {
                 number: data?.pagedAssessmentsRowsDetail?.number,
                 size: data?.pagedAssessmentsRowsDetail?.size
               },
-              onFiltersApplied: handleFiltersApplied
+              onFiltersApplied: handleFiltersApplied,
+              onPaginationChange: updatePagination
             }}
             onNavigateToDetail={handleNavigateToDetailDetail}
           />

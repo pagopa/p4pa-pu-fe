@@ -11,7 +11,7 @@ export type AssessmentDetailFilters = {
   fiscalCode?: string;
   page: number;
   size: number;
-  sort?: Array<string>;
+  sort?: string;
 };
 
 type UseAssessmentDetailFiltersProps = {
@@ -122,11 +122,12 @@ export const useAssessmentDetailFilters = ({
       iud: draftFilters.iud?.trim() || undefined,
       fiscalCode: draftFilters.fiscalCode?.trim() || undefined,
       page: 0,
-      size: appliedFilters.size
+      size: appliedFilters.size,
+      sort: appliedFilters.sort // Mantieni il sort esistente
     };
     setAppliedFilters(filtersToApply);
     onFiltersChange?.(filtersToApply);
-  }, [draftFilters, appliedFilters.size, onFiltersChange]);
+  }, [draftFilters, appliedFilters.size, appliedFilters.sort, onFiltersChange]);
 
   /**
    * Update pagination parameters and trigger filters change
@@ -210,7 +211,7 @@ export const useAssessmentDetailFilters = ({
       const newFilters = {
         ...appliedFilters,
         page: 0,
-        sort: sortValue ? [sortValue] : undefined
+        sort: sortValue || undefined // Ora è una stringa singola invece di un array
       };
 
       setAppliedFilters(newFilters);
