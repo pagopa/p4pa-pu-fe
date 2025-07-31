@@ -247,7 +247,9 @@ describe('AssessmentDetail', () => {
     it('should open menu when more actions button is clicked', async () => {
       renderAssessmentDetail();
 
-      const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+      const menuButton = screen
+        .getByTestId('assessment-detail-menu-button')
+        .closest('button');
 
       expect(menuButton).toBeDefined();
 
@@ -264,7 +266,9 @@ describe('AssessmentDetail', () => {
     it('should show delete confirmation dialog when delete is clicked', async () => {
       renderAssessmentDetail();
 
-      const menuButton = screen.getByTestId('MoreVertIcon').closest('button');
+      const menuButton = screen
+        .getByTestId('assessment-detail-menu-button')
+        .closest('button');
 
       if (menuButton) {
         fireEvent.click(menuButton);

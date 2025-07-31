@@ -34,10 +34,11 @@ import { AssessmentsDetail } from '../../../generated/apiClient';
 import { Variant } from '@mui/material/styles/createTypography';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
+import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
+import AssesmentActionMenu from '../../components/Assessment/AssessmentActionMenu';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { setAppState } from '../../store/AppStateStore';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
-import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
 import utils from '../../utils';
 
 type DialogConfig = {
@@ -353,8 +354,13 @@ export const AssessmentDetail = () => {
           `${t('assessment.assessment')} ${assessmentId || ''}`
         }
         callToAction={[
+          <AssesmentActionMenu
+            key={'AssesmentActionMenu'}
+            flagManualGeneration={data?.flagManualGeneration}
+            status={data?.status}
+          />,
           {
-            icon: <MoreVert />,
+            icon: <MoreVert data-testid="assessment-detail-menu-button" />,
             variant: 'text' as const,
             onActionClick: () => {
               const button = document.activeElement as HTMLElement;
