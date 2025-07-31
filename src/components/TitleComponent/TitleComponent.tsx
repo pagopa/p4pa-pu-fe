@@ -8,6 +8,23 @@ import {
   Chip,
   useTheme
 } from '@mui/material';
+import React from 'react';
+
+type ActionMenuItem = {
+  icon?: React.ReactNode;
+  variant?: 'text' | 'outlined' | 'contained';
+  buttonText?: string;
+  color?:
+    | 'inherit'
+    | 'primary'
+    | 'secondary'
+    | 'success'
+    | 'error'
+    | 'info'
+    | 'warning';
+  onActionClick: () => void;
+  dataTestId?: string;
+};
 
 type TitleComponentProps = {
   title: string;
@@ -17,22 +34,12 @@ type TitleComponentProps = {
     label: string;
     color: ChipOwnProps['color'];
   };
-  callToAction?: Array<{
-    icon?: React.ReactNode;
-    variant?: 'text' | 'outlined' | 'contained';
-    buttonText?: string;
-    color?:
-      | 'inherit'
-      | 'primary'
-      | 'secondary'
-      | 'success'
-      | 'error'
-      | 'info'
-      | 'warning';
-    onActionClick: () => void;
-    dataTestId?: string;
-  }>;
+  callToAction?: Array<ActionMenuItem | React.ReactNode>;
 };
+
+const isActionMenuItem = (
+  action: ActionMenuItem | React.ReactNode
+): action is ActionMenuItem => !React.isValidElement(action);
 
 const TitleComponent = ({
   title,
@@ -62,25 +69,32 @@ const TitleComponent = ({
 
         {callToAction != undefined && callToAction?.length > 0 && (
           <Box sx={{ display: 'flex', gap: 1 }}>
-            {callToAction.map((action, index) => (
-              <Button
-                key={`${action.buttonText}-${index}`}
-                size="large"
-                startIcon={action.buttonText ? action.icon : undefined}
-                variant={action.variant || 'contained'}
-                color={(action.color as ButtonProps['color']) || 'primary'}
-                onClick={action.onActionClick}
-                aria-label={`${action.buttonText}`}
-                data-testid={action.dataTestId}
-                sx={
-                  action.buttonText
-                    ? undefined
-                    : { bgcolor: theme.palette.primary.contrastText }
-                }
-              >
-                {action.buttonText ?? action.icon}
-              </Button>
-            ))}
+            {
+              // eslint-disable-next-line sonarjs/function-return-type
+              callToAction.map((action, index) => {
+                return isActionMenuItem(action) ? (
+                  <Button
+                    key={`${action.buttonText}-${index}`}
+                    size="large"
+                    startIcon={action.buttonText ? action.icon : undefined}
+                    variant={action.variant || 'contained'}
+                    color={(action.color as ButtonProps['color']) || 'primary'}
+                    onClick={action.onActionClick}
+                    aria-label={`${action.buttonText}`}
+                    data-testid={action.dataTestId}
+                    sx={
+                      action.buttonText
+                        ? undefined
+                        : { bgcolor: theme.palette.primary.contrastText }
+                    }
+                  >
+                    {action.buttonText ?? action.icon}
+                  </Button>
+                ) : (
+                  action
+                );
+              })
+            }
           </Box>
         )}
       </Box>
