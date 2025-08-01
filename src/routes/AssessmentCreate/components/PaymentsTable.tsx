@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from 'react';
+import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search, OpenInNew as OpenInNewIcon } from '@mui/icons-material';
 import { Box, useTheme, IconButton } from '@mui/material';
@@ -20,6 +20,7 @@ import { PageRoutes } from '../..';
 // TEMPORARY: Type for row with added uniqueId until backend fixes duplicate IUDs
 type PaymentRowWithUniqueId = PaidInstallmentDTO & {
   uniqueId: string;
+  receiptId?: number;
 };
 
 export type PaymentsTableProps = {
@@ -35,11 +36,13 @@ export type PaymentsTableProps = {
   onFilterValidationError?: (hasError: boolean) => void;
   initialFilters?: PaymentsUIFilters;
   isLoading?: boolean;
+  isApiCallPending?: boolean;
   disabled?: boolean;
   autoLoadOnMount?: boolean;
   // TEMPORARY: When IUDs are unique, it will become:
   // selectedIuds?: Array<string>;
   selectedUniqueIds?: Array<string>;
+  isRemoveMode?: boolean;
 };
 
 export const PaymentsTable = ({
@@ -49,12 +52,22 @@ export const PaymentsTable = ({
   onFilterValidationError,
   initialFilters = {},
   isLoading = false,
+  isApiCallPending = false,
   disabled = false,
   autoLoadOnMount = true,
-  selectedUniqueIds = []
+  selectedUniqueIds = [],
+  isRemoveMode = false
 }: PaymentsTableProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
+
+  // Root cause: DataGrid ResizeObserver fails during component remount
+  // Solution: Force recreation with render-based counter (minimal performance impact)
+  const renderCountRef = useRef(0);
+
+  useEffect(() => {
+    renderCountRef.current += 1;
+  });
 
   // Hook for managing filters and sorting
   const {
@@ -72,6 +85,14 @@ export const PaymentsTable = ({
     onFilterValidationError,
     autoLoadOnMount
   });
+
+  const [isPaginationLoading, setIsPaginationLoading] = useState(false);
+
+  useEffect(() => {
+    if (isPaginationLoading && !isApiCallPending) {
+      setIsPaginationLoading(false);
+    }
+  }, [isPaginationLoading, isApiCallPending]);
 
   const tableData = data || {
     content: [],
@@ -141,6 +162,11 @@ export const PaymentsTable = ({
 
   const handlePaginationChange = useCallback(
     (pagination: { page: number; size: number }) => {
+      const isActualPageChange = pagination.page !== (tableData.number || 0);
+      if (isActualPageChange) {
+        setIsPaginationLoading(true);
+      }
+
       if (onFiltersApplied) {
         const sortParams =
           sortModel.length > 0
@@ -162,12 +188,18 @@ export const PaymentsTable = ({
 
   const handleDetailClick = useCallback((row: PaymentRowWithUniqueId) => {
     const detailPath = generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-      id: Number(row.receiptPaymentRequestId)
+      id: isRemoveMode
+        ? Number(row.receiptId)
+        : Number(row.receiptPaymentRequestId)
     });
 
     const fullUrl = `${window.location.origin}${detailPath}`;
     window.open(fullUrl, '_blank', 'noopener,noreferrer');
   }, []);
+
+  const combinedLoading = useMemo(() => {
+    return isLoading || isPaginationLoading;
+  }, [isLoading, isPaginationLoading]);
 
   const columns: Array<GridColDef> = [
     {
@@ -271,6 +303,7 @@ export const PaymentsTable = ({
             - use rows={tableData.content}
             - use getRowId={(row) => row.iud} */}
         <CustomDataGrid
+          key={`datagrid-${renderCountRef.current}`} // Force recreation to prevent MUI height=0px bug
           rows={rowsWithUniqueId} // TEMPORARY: rows with artificial uniqueIds
           columns={columns}
           getRowId={(row) => row.uniqueId} // TEMPORARY: artificial key
@@ -295,7 +328,7 @@ export const PaymentsTable = ({
             onPaginationChange: handlePaginationChange
           }}
           localeText={{ noRowsLabel: t('flowDataGrid.noDataRows') }}
-          loading={isLoading}
+          loading={combinedLoading}
           disableVirtualization={true}
         />
       </Box>

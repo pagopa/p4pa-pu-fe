@@ -37,7 +37,7 @@ vi.mock('../../routes', () => ({
     ASSESSMENT_INDEX: '/assessment',
     ASSESSMENT_SEARCH_RESULTS: '/assessment/search-results',
     ASSESSMENT_DETAIL: '/assessment/:id',
-    ASSESSMENT_DETAIL_DETAIL: '/assessment/:id/detail/:assessmentDetailId'
+    ASSESSMENT_DETAIL_DETAIL: '/assessment/:id/detail/:receiptId'
   }
 }));
 
@@ -134,8 +134,9 @@ describe('TelematicReceiptDetail Page', () => {
 
   it('shows "Dettaglio Pagamento" title when in assessment context', () => {
     mockUseParams.mockReturnValue({
-      assessmentDetailId: '60',
-      id: '209'
+      receiptId: '60',
+      id: '209',
+      assessmentDetailId: '60'
     });
 
     (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -165,8 +166,9 @@ describe('TelematicReceiptDetail Page', () => {
 
   it('hides download button when in assessment context', () => {
     mockUseParams.mockReturnValue({
-      assessmentDetailId: '60',
-      id: '209'
+      receiptId: '60',
+      id: '209',
+      assessmentDetailId: '60'
     });
 
     (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -209,7 +211,7 @@ describe('TelematicReceiptDetail Page', () => {
 
   it('uses assessment-specific translations when assessmentDetailId is present', () => {
     mockUseParams.mockReturnValue({
-      assessmentDetailId: '60'
+      receiptId: '60'
     });
 
     (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({

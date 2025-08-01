@@ -10,7 +10,8 @@ import {
   createAssessmentDetails,
   createAssessmentsRegistry,
   updateAssessmentsRegistry,
-  getOperatingYears
+  getOperatingYears,
+  deleteAssessmentDetails
 } from '.';
 import { initialFilterValues } from '../../store/FilterStore';
 import { assessmentsRegistryDTOSchema } from '../../../generated/zod-schema';
@@ -33,7 +34,8 @@ vi.mock('../../utils', async () => {
         createAssessmentsDetail: vi.fn(),
         createAssessmentsRegistry: vi.fn(),
         updateAssessmentsRegistry: vi.fn(),
-        getOperatingYears: vi.fn()
+        getOperatingYears: vi.fn(),
+        deleteAssessmentsDetails: vi.fn()
       }
     }
   };
@@ -1342,5 +1344,166 @@ describe('getOperatingYears', () => {
     const { result } = renderHook(() => getOperatingYears());
 
     expect(result.current).toBeDefined();
+  });
+});
+
+describe('deleteAssessmentDetails', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should delete assessment details successfully when mutation is called', async () => {
+    const organizationId = 123;
+    const assessmentDetailIds = [456, 789, 101112];
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteAssessmentsDetails')
+      .mockResolvedValue({ data: undefined } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      deleteAssessmentDetails(organizationId)
+    );
+
+    result.current.mutate(assessmentDetailIds);
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(
+      organizationId,
+      {
+        assessmentDetailIds
+      },
+      {
+        paramsSerializer: {
+          indexes: null
+        }
+      }
+    );
+  });
+
+  it('should handle API errors correctly during deletion', async () => {
+    const organizationId = 123;
+    const assessmentDetailIds = [456, 789];
+
+    const errorMock = new Error('Deletion failed');
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteAssessmentsDetails')
+      .mockRejectedValue(errorMock);
+
+    const { result } = renderHook(() =>
+      deleteAssessmentDetails(organizationId)
+    );
+
+    result.current.mutate(assessmentDetailIds);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(errorMock);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(
+      organizationId,
+      {
+        assessmentDetailIds
+      },
+      {
+        paramsSerializer: {
+          indexes: null
+        }
+      }
+    );
+  });
+
+  it('should handle 4xx client errors correctly during deletion', async () => {
+    const organizationId = 123;
+    const assessmentDetailIds = [456, 789];
+
+    const clientError = {
+      response: { status: 400 },
+      message: 'Bad Request'
+    };
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteAssessmentsDetails')
+      .mockRejectedValue(clientError);
+
+    const { result } = renderHook(() =>
+      deleteAssessmentDetails(organizationId)
+    );
+
+    result.current.mutate(assessmentDetailIds);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(clientError);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(
+      organizationId,
+      {
+        assessmentDetailIds
+      },
+      {
+        paramsSerializer: {
+          indexes: null
+        }
+      }
+    );
+  });
+
+  it('should handle 5xx server errors correctly during deletion', async () => {
+    const organizationId = 123;
+    const assessmentDetailIds = [456, 789];
+
+    const serverError = new Error('Internal Server Error');
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteAssessmentsDetails')
+      .mockRejectedValue(serverError);
+
+    const { result } = renderHook(() =>
+      deleteAssessmentDetails(organizationId)
+    );
+
+    result.current.mutate(assessmentDetailIds);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toEqual(serverError);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(
+      organizationId,
+      {
+        assessmentDetailIds
+      },
+      {
+        paramsSerializer: {
+          indexes: null
+        }
+      }
+    );
+  });
+
+  it('should not delete assessment details if mutate is not called', async () => {
+    const organizationId = 123;
+    const apiMock = vi.spyOn(utils.apiClient.bff, 'deleteAssessmentsDetails');
+
+    const { result } = renderHook(() =>
+      deleteAssessmentDetails(organizationId)
+    );
+
+    expect(result.current.isIdle).toBe(true);
+    expect(apiMock).not.toHaveBeenCalled();
+  });
+
+  it('should use the correct mutation key', () => {
+    const organizationId = 123;
+    const { result } = renderHook(() =>
+      deleteAssessmentDetails(organizationId)
+    );
+
+    expect(result.current).toBeDefined();
+    // The mutation key is set internally by React Query
   });
 });

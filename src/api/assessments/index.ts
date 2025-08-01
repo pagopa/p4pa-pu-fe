@@ -182,15 +182,26 @@ export const createAssessmentDetails = (
     }
   });
 
-export const getOperatingYears = (options?: { enabled?: boolean }) =>
-  useQuery({
-    queryKey: ['getOperatingYears'],
-    queryFn: async () => {
-      const { data: response } = await utils.apiClient.bff.getOperatingYears();
+export const deleteAssessmentDetails = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['deleteAssessmentDetails', organizationId],
+    mutationFn: async (assessmentDetailIds: Array<number>) => {
+      const response = await utils.apiClient.bff.deleteAssessmentsDetails(
+        organizationId,
+        {
+          assessmentDetailIds
+        },
+        // repeat array params as query string
+        {
+          paramsSerializer: {
+            indexes: null
+          }
+        }
+      );
       return response;
-    },
-    enabled: options?.enabled ?? true
+    }
   });
+
 export const updateAssessmentsStatus = (organizationId: number) =>
   useMutation({
     mutationKey: ['updateAssessmentsStatus', organizationId],
@@ -209,4 +220,14 @@ export const updateAssessmentsStatus = (organizationId: number) =>
         }
       );
     }
+  });
+
+export const getOperatingYears = (options?: { enabled?: boolean }) =>
+  useQuery({
+    queryKey: ['getOperatingYears'],
+    queryFn: async () => {
+      const { data: response } = await utils.apiClient.bff.getOperatingYears();
+      return response;
+    },
+    enabled: options?.enabled ?? true
   });
