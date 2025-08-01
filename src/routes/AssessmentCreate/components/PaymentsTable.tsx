@@ -1,10 +1,6 @@
 import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-  Search,
-  OpenInNew as OpenInNewIcon,
-  Visibility as VisibilityIcon
-} from '@mui/icons-material';
+import { Search, OpenInNew as OpenInNewIcon } from '@mui/icons-material';
 import { Box, useTheme, IconButton } from '@mui/material';
 import { GridColDef, GridRowSelectionModel } from '@mui/x-data-grid';
 import FilterContainer, {
@@ -251,11 +247,7 @@ export const PaymentsTable = ({
           size="small"
           sx={{ color: theme.palette.primary.main }}
         >
-          {isRemoveMode ? (
-            <VisibilityIcon fontSize="small" />
-          ) : (
-            <OpenInNewIcon fontSize="small" />
-          )}
+          <OpenInNewIcon fontSize="small" />
         </IconButton>
       )
     }

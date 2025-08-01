@@ -9,13 +9,7 @@ import {
   Box,
   Chip
 } from '@mui/material';
-import {
-  Close,
-  Delete,
-  MoreVert,
-  Add,
-  RemoveCircleOutline
-} from '@mui/icons-material';
+import { Close, Delete, Add, RemoveCircleOutline } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer, {
   DetailData
@@ -358,15 +352,7 @@ export const AssessmentDetail = () => {
             key={'AssesmentActionMenu'}
             flagManualGeneration={data?.flagManualGeneration}
             status={data?.status}
-          />,
-          {
-            icon: <MoreVert data-testid="assessment-detail-menu-button" />,
-            variant: 'text' as const,
-            onActionClick: () => {
-              const button = document.activeElement as HTMLElement;
-              setMenuAnchorEl(button);
-            }
-          }
+          />
         ]}
       />
 

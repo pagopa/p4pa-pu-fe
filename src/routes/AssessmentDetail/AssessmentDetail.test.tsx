@@ -1,6 +1,6 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useNavigate, useParams } from 'react-router';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../routes';
@@ -240,53 +240,6 @@ describe('AssessmentDetail', () => {
           }
         }
       );
-    });
-  });
-
-  describe('Menu Actions', () => {
-    it('should open menu when more actions button is clicked', async () => {
-      renderAssessmentDetail();
-
-      const menuButton = screen
-        .getByTestId('assessment-detail-menu-button')
-        .closest('button');
-
-      expect(menuButton).toBeDefined();
-
-      if (menuButton) {
-        fireEvent.click(menuButton);
-
-        await waitFor(() => {
-          expect(screen.getByText('commons.close')).toBeDefined();
-          expect(screen.getByText('commons.delete')).toBeDefined();
-        });
-      }
-    });
-
-    it('should show delete confirmation dialog when delete is clicked', async () => {
-      renderAssessmentDetail();
-
-      const menuButton = screen
-        .getByTestId('assessment-detail-menu-button')
-        .closest('button');
-
-      if (menuButton) {
-        fireEvent.click(menuButton);
-
-        await waitFor(() => {
-          const deleteMenuItem = screen.getByText('commons.delete');
-          fireEvent.click(deleteMenuItem);
-        });
-
-        await waitFor(() => {
-          expect(
-            screen.getByText('assessmentDetail.deleteDialog.title')
-          ).toBeDefined();
-          expect(
-            screen.getByText('assessmentDetail.deleteDialog.description')
-          ).toBeDefined();
-        });
-      }
     });
   });
 
