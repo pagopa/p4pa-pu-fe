@@ -1,15 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
-import {
-  Grid,
-  Typography,
-  useTheme,
-  Menu,
-  MenuItem,
-  Button,
-  Box,
-  Chip
-} from '@mui/material';
-import { Close, Delete, Add, RemoveCircleOutline } from '@mui/icons-material';
+import { Grid, Typography, useTheme, Button, Box, Chip } from '@mui/material';
+import { Add, RemoveCircleOutline } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer, {
   DetailData
@@ -30,21 +21,9 @@ import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
 import AssesmentActionMenu from '../../components/Assessment/AssessmentActionMenu';
-import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { setAppState } from '../../store/AppStateStore';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import utils from '../../utils';
-
-type DialogConfig = {
-  open: boolean;
-  title: string;
-  message: string;
-  confirmLabel: string;
-  cancelLabel?: string;
-  onConfirm: () => void;
-  onClose: () => void;
-  testId: string;
-};
 
 export const AssessmentDetail = () => {
   const { t } = useTranslation();
@@ -61,10 +40,6 @@ export const AssessmentDetail = () => {
   }
 
   const [detailItem, setDetailItem] = useState<AssessmentsDetail | null>(null);
-  const [menuAnchorEl, setMenuAnchorEl] = useState<null | HTMLElement>(null);
-  const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
-
-  const menuOpen = Boolean(menuAnchorEl);
 
   const {
     appliedFilters,
@@ -132,49 +107,7 @@ export const AssessmentDetail = () => {
     }
   }, [detailItem, assessmentId, data?.assessmentsName]);
 
-  const handleFiltersApplied = () => {
-    applyFilters();
-  };
-
-  const handleMenuClose = () => {
-    setMenuAnchorEl(null);
-  };
-
-  const handleClose = () => {
-    handleMenuClose();
-  };
-
-  const handleDelete = () => {
-    handleMenuClose();
-    showDeleteDialog();
-  };
-
-  const showDeleteDialog = () => {
-    setDialogConfig({
-      open: true,
-      title: t('assessmentDetail.deleteDialog.title'),
-      message: t('assessmentDetail.deleteDialog.description'),
-      confirmLabel: t('commons.delete'),
-      cancelLabel: t('commons.cancel'),
-      onConfirm: handleDeleteConfirm,
-      onClose: () => setDialogConfig(null),
-      testId: 'confirm-delete-dialog'
-    });
-  };
-
-  const handleDeleteConfirm = async () => {
-    try {
-      // TODO: Implement the API call to delete the assessment
-      console.log('Deleting assessment:', assessmentId);
-      setDialogConfig(null);
-      // For now, navigate back, in the future implement the delete call
-      navigate(-1);
-    } catch (error) {
-      console.error('Error while deleting the assessment:', error);
-      setDialogConfig(null);
-      navigate(PageRoutes.RESPONSES_ERROR);
-    }
-  };
+  const handleFiltersApplied = applyFilters;
 
   const canModifyAssessment = () => {
     const hasManualGeneration = data?.flagManualGeneration === true;
@@ -195,17 +128,15 @@ export const AssessmentDetail = () => {
     );
   }, [shouldShowButtons, data?.pagedAssessmentsRowsDetail?.content]);
 
-  const showCannotModifyDialog = () => {
-    setDialogConfig({
-      open: true,
+  const showCannotModifyDialog = () =>
+    utils.dialog.open({
       title: t('assessmentDetail.cannotModifyDialog.title'),
       message: t('assessmentDetail.cannotModifyDialog.description'),
       confirmLabel: t('commons.close'),
-      onConfirm: () => setDialogConfig(null),
-      onClose: () => setDialogConfig(null),
-      testId: 'cannot-modify-payments-dialog'
+      onConfirm: utils.dialog.close,
+      onClose: utils.dialog.close,
+      'data-testid': 'cannot-modify-payments-dialog'
     });
-  };
 
   const handleRemovePayments = () => {
     if (!canModifyAssessment()) {
@@ -355,38 +286,6 @@ export const AssessmentDetail = () => {
           />
         ]}
       />
-
-      <Menu
-        anchorEl={menuAnchorEl}
-        open={menuOpen}
-        onClose={handleMenuClose}
-        slotProps={{
-          paper: {
-            elevation: 0,
-            sx: {
-              overflow: 'visible',
-              filter: 'drop-shadow(0px 2px 8px rgba(0,0,0,0.32))',
-              mt: 1.5,
-              '& .MuiMenuItem-root': {
-                px: 2,
-                py: 1
-              }
-            }
-          }
-        }}
-        transformOrigin={{ horizontal: 'right', vertical: 'top' }}
-        anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
-      >
-        <MenuItem onClick={handleClose}>
-          <Close fontSize="small" sx={{ mr: 1, color: 'primary.main' }} />
-          {t('commons.close')}
-        </MenuItem>
-        <MenuItem onClick={handleDelete}>
-          <Delete fontSize="small" sx={{ mr: 1, color: 'error.main' }} />
-          {t('commons.delete')}
-        </MenuItem>
-      </Menu>
-
       <Grid container spacing={2}>
         <Grid item md={12}>
           <DetailContainer sections={detailSections} />
@@ -528,19 +427,6 @@ export const AssessmentDetail = () => {
           />
         </Grid>
       </Grid>
-
-      {dialogConfig && (
-        <GenericDialog
-          data-testid={dialogConfig.testId}
-          open={dialogConfig.open}
-          title={dialogConfig.title}
-          message={dialogConfig.message}
-          confirmLabel={dialogConfig.confirmLabel}
-          cancelLabel={dialogConfig.cancelLabel}
-          onConfirm={dialogConfig.onConfirm}
-          onClose={dialogConfig.onClose}
-        />
-      )}
     </>
   );
 };
