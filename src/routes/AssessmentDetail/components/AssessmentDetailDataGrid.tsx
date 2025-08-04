@@ -18,7 +18,7 @@ type AssessmentDetailDataGridProps = {
   onSortModelChange: (model: GridSortModel) => void;
   smartPagination?: SmartPaginationConfig;
   isLoading?: boolean;
-  onNavigateToDetail?: (assessmentDetailId: number) => void;
+  onNavigateToDetail?: (receiptId: number) => void;
 };
 
 const AssessmentDetailDataGrid = ({
@@ -32,9 +32,9 @@ const AssessmentDetailDataGrid = ({
   const { t } = useTranslation();
 
   // Handle the click on the navigation icon to the detail
-  const handleNavigateToDetail = (assessmentDetailId: number | undefined) => {
-    if (assessmentDetailId && onNavigateToDetail) {
-      onNavigateToDetail(assessmentDetailId);
+  const handleNavigateToDetail = (receiptId: number | undefined) => {
+    if (receiptId && onNavigateToDetail) {
+      onNavigateToDetail(receiptId);
     }
   };
 
@@ -80,9 +80,9 @@ const AssessmentDetailDataGrid = ({
         <IconButton
           color="primary"
           size="small"
-          onClick={() => handleNavigateToDetail(params.row.assessmentDetailId)}
+          onClick={() => handleNavigateToDetail(params.row.receiptId)}
           aria-label="go to assessment detail item"
-          data-testid={`navigate-to-detail-${params.row.assessmentDetailId}`}
+          data-testid={`navigate-to-detail-${params.row.receiptId}`}
         >
           <ReadMore />
         </IconButton>
