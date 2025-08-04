@@ -62,12 +62,14 @@ describe('Step1GeneralConfiguration', () => {
       debtPositionTypeOrgId: 1,
       description: 'Tipo 1',
       flagMandatoryDueDate: false,
+      flagActive: true,
       code: 'TYPE_1'
     },
     {
       debtPositionTypeOrgId: 2,
       description: 'Tipo 2',
       flagMandatoryDueDate: true,
+      flagActive: true,
       code: 'TYPE_2'
     }
   ];
@@ -524,6 +526,7 @@ describe('Step1GeneralConfiguration', () => {
           debtPositionTypeOrgId: 2,
           description: 'Tipo 2',
           flagMandatoryDueDate: true,
+          flagActive: true,
           code: 'TYPE_2'
         }
       ],
@@ -607,6 +610,7 @@ describe('Step1GeneralConfiguration', () => {
           debtPositionTypeOrgId: 999, // ID that won't match our processed types
           description: 'Tipo Non Processato',
           flagMandatoryDueDate: false,
+          flagActive: true,
           code: 'TYPE_1'
         }
       ],
