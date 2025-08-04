@@ -156,7 +156,8 @@ export const Sidebar: React.FC = () => {
         end: true
       },
       {
-        label: 'PLACEHOLDER MENU ITEM 2',
+        label: t('commons.routes.ORG_SIL_SERVICE'),
+        route: PageRoutes.ORG_SIL_SERVICE_INDEX,
         end: true
       }
     ];
