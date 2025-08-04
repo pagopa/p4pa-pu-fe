@@ -11,7 +11,7 @@ import {
   PagedDebtPositionTypeWithCount,
   DebtPositionTypeWithCount
 } from '../../../../generated/data-contracts';
-import { formatDate } from '../../../utils/formatters';
+import { formatDateTime } from '../../../utils/formatters';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';
 
@@ -53,7 +53,7 @@ const DebtTypesDataGrid = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams<DebtPositionTypeWithCount>) =>
-        params.value ? formatDate(params.value as string) : ''
+        params.value ? formatDateTime(params.value as string, true) : ''
     },
     {
       field: 'activeOrganizations',
