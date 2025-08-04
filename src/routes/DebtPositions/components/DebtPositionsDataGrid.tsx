@@ -9,12 +9,13 @@ import { ChevronRight } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import Chip, { ChipProps } from '@mui/material/Chip';
+import { ChipProps } from '@mui/material/Chip';
 import {
   DebtPositionStatus,
   PagedDebtPositionView
 } from '../../../../generated/data-contracts';
 import { format } from 'date-fns';
+import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
 
 type ResultDataRow = {
   id: number;
@@ -78,11 +79,9 @@ export const DebtPositionsDataGrid = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams<ResultDataRow>) => (
-        <Chip
+        <ChipTruncateTooltip
           label={t(`commons.status.${params.value}`)}
-          title={t(params.value)}
           color={stateColors[params.value as DebtPositionStatus]}
-          size="small"
         />
       )
     },

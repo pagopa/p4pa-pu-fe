@@ -1,4 +1,4 @@
-import { Box, Chip, Grid, IconButton, useTheme } from '@mui/material';
+import { Box, Grid, IconButton, useTheme } from '@mui/material';
 import { Search, Upload } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
@@ -33,6 +33,7 @@ import utils from '../../utils';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
+import ChipTruncateTooltip from '../ChipTruncateTooltip';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
@@ -183,7 +184,7 @@ const ImportFlowOverview = ({
     {
       field: 'loadedDiscarded',
       headerName: t('flowDataGrid.loadedDiscarded'),
-      flex: 1,
+      flex: 0.75,
       type: 'string',
       headerAlign: 'left',
       align: 'left',
@@ -196,14 +197,13 @@ const ImportFlowOverview = ({
     {
       field: 'status',
       headerName: t('commons.state'),
-      flex: 0.5,
+      flex: 1,
       type: 'string',
       valueFormatter: ({ value }) => t(`commons.status.${value}`, value),
       renderCell: (params) => (
-        <Chip
+        <ChipTruncateTooltip
           label={t(`commons.status.${params.value}`)}
           color={STATE_COLORS[params.value as FlowStatus] || 'default'}
-          size="small"
         />
       )
     },
