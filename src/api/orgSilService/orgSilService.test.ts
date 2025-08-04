@@ -22,6 +22,10 @@ vi.mock('../../utils', () => {
 });
 
 vi.mock('../../utils/loaders', () => ({
+  default: {
+    getOrganizations: vi.fn(),
+    getOrganizationsPlain: vi.fn()
+  },
   parseAndLog: vi.fn()
 }));
 
