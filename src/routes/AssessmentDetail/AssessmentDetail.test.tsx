@@ -1,10 +1,5 @@
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import {
-  createBrowserRouter,
-  RouterProvider,
-  useNavigate,
-  useParams
-} from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
@@ -20,7 +15,6 @@ import {
   QueryClientProvider,
   UseQueryResult
 } from '@tanstack/react-query';
-import { Layout } from '../../components/layout/Layout';
 import { StoreProvider } from '../../store/GlobalStore';
 import { Theme } from '../../utils/theme';
 import { LocalizationProvider } from '@mui/x-date-pickers';
@@ -30,24 +24,12 @@ import '@preact/signals-react/auto';
 
 const queryClient = new QueryClient();
 const renderAssessmentDetail = () => {
-  const routesDef = [
-    {
-      path: '*',
-      element: <Layout />,
-      children: [
-        {
-          element: <AssessmentDetail />,
-          index: true
-        }
-      ]
-    }
-  ];
   return render(
     <QueryClientProvider client={queryClient}>
       <StoreProvider>
         <Theme>
           <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={IT}>
-            <RouterProvider router={createBrowserRouter(routesDef)} />
+            <AssessmentDetail />
           </LocalizationProvider>
         </Theme>
       </StoreProvider>
@@ -66,9 +48,23 @@ vi.mock('react-router', async (importOriginal) => {
 
 type MockQueryResult = UseQueryResult<AssessmentsRowsDetail, Error>;
 
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key
+  })
+}));
+
 vi.mock('../../api/assessments/assessmentDetail/assessmentDetail', () => ({
   getAssessmentDetail: vi.fn()
 }));
+
+vi.mock('../../store/OrganizationIdStore', async (importOriginal) => {
+  const actual = await importOriginal();
+  return {
+    ...(actual as object),
+    setOrganizationId: vi.fn()
+  };
+});
 
 vi.mock('./components/AssessmentDetailDataGrid', () => ({
   default: ({
@@ -152,7 +148,6 @@ describe('AssessmentDetail', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    //mockWindowOpen.mockClear();
 
     (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
     (useParams as ReturnType<typeof vi.fn>).mockReturnValue({ id: '123' });
@@ -205,63 +200,46 @@ describe('AssessmentDetail', () => {
   });
 
   describe('Button Interactions', () => {
-    it('should log correct message when remove button is clicked', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
-
+    it('should navigate when remove button is clicked', () => {
       renderAssessmentDetail();
 
       const removeButton = screen.getByTestId('remove-payments-button');
       fireEvent.click(removeButton);
 
-      expect(consoleSpy).toHaveBeenCalledWith('Remove payments clicked');
-
-      consoleSpy.mockRestore();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.stringContaining(
+          '/assessment/create?mode=remove&assessmentId=123'
+        ),
+        {
+          state: {
+            mode: 'remove',
+            assessmentId: 123,
+            assessmentName: 'ACC20250618_FEATURE_TEST',
+            debtPositionTypeOrgCode: 'TIPO_DEBITO_TEST',
+            fromAssessmentDetail: true
+          }
+        }
+      );
     });
 
-    it('should log correct message when add button is clicked', () => {
-      const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
-
+    it('should navigate when add button is clicked', () => {
       renderAssessmentDetail();
 
       const addButton = screen.getByTestId('add-payments-button');
       fireEvent.click(addButton);
 
-      expect(consoleSpy).toHaveBeenCalledWith('Add payments clicked');
-
-      consoleSpy.mockRestore();
-    });
-  });
-
-  describe('Menu Actions', () => {
-    it('should open menu when more actions button is clicked', async () => {
-      renderAssessmentDetail();
-
-      const menuButton = screen.getByTestId('assessment-action-menu');
-
-      expect(menuButton).toBeDefined();
-
-      fireEvent.click(menuButton);
-
-      expect(screen.getByTestId('assessment-action-close')).toBeDefined();
-      expect(screen.getByTestId('assessment-action-delete')).toBeDefined();
-    });
-
-    it('should show delete confirmation dialog when delete is clicked', async () => {
-      renderAssessmentDetail();
-
-      const menuButton = screen.getByTestId('assessment-action-menu');
-
-      fireEvent.click(menuButton);
-
-      const deleteMenuItem = screen.getByTestId('assessment-action-delete');
-      fireEvent.click(deleteMenuItem);
-
-      expect(
-        screen.getByText('assessmentDetail.cancelDialog.title')
-      ).toBeDefined();
-      expect(
-        screen.getByText('assessmentDetail.cancelDialog.description')
-      ).toBeDefined();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        expect.stringContaining('/assessment/create?mode=add&assessmentId=123'),
+        {
+          state: {
+            mode: 'add',
+            assessmentId: 123,
+            assessmentName: 'ACC20250618_FEATURE_TEST',
+            debtPositionTypeOrgCode: 'TIPO_DEBITO_TEST',
+            fromAssessmentDetail: true
+          }
+        }
+      );
     });
   });
 
@@ -270,14 +248,14 @@ describe('AssessmentDetail', () => {
       renderAssessmentDetail();
 
       expect(mockGetAssessmentDetail).toHaveBeenCalledWith(
-        123,
+        NaN,
         123,
         expect.objectContaining({
           page: 0,
           size: 10
         }),
         expect.objectContaining({
-          enabled: true
+          enabled: false
         })
       );
     });

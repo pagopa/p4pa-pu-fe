@@ -1,3 +1,4 @@
+import { useEffect, useState, useMemo } from 'react';
 import { Grid, Typography, useTheme, Button, Box, Chip } from '@mui/material';
 import { Add, RemoveCircleOutline } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
@@ -14,15 +15,15 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 import { useAssessmentDetailFilters } from '../../hooks/useAssessmentDetailFilters';
+import { AssessmentsDetail } from '../../../generated/apiClient';
 import { Variant } from '@mui/material/styles/createTypography';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
-
 import AssesmentActionMenu from '../../components/Assessment/AssessmentActionMenu';
-import { useEffect, useMemo } from 'react';
 import { setAppState } from '../../store/AppStateStore';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
+import utils from '../../utils';
 
 export const AssessmentDetail = () => {
   const { t } = useTranslation();
@@ -37,6 +38,8 @@ export const AssessmentDetail = () => {
     navigate(PageRoutes.RESPONSES_ERROR);
     return null;
   }
+
+  const [detailItem, setDetailItem] = useState<AssessmentsDetail | null>(null);
 
   const {
     appliedFilters,
@@ -71,9 +74,15 @@ export const AssessmentDetail = () => {
     }
   }, [isError, error, navigate]);
 
+  useEffect(() => {
+    if (data?.pagedAssessmentsRowsDetail?.content?.[0] && !detailItem) {
+      setDetailItem(data.pagedAssessmentsRowsDetail.content[0]);
+    }
+  }, [data, detailItem]);
+
   // Handle custom breadcrumb
   useEffect(() => {
-    if (assessmentId) {
+    if ((detailItem || data?.assessmentsName) && assessmentId) {
       const customBreadcrumbsItems: Array<BredcrumbItem> = [
         { pathname: PageRoutes.ASSESSMENT_INDEX, id: 'ASSESSMENT' },
         {
@@ -86,7 +95,7 @@ export const AssessmentDetail = () => {
           }),
           label:
             data?.assessmentsName ||
-            data?.debtPositionTypeOrgDescription ||
+            detailItem?.debtPositionTypeOrgCode ||
             `${t('assessment.assessment')} ${assessmentId}`,
           id: 'ASSESSMENT_DETAIL'
         }
@@ -96,32 +105,110 @@ export const AssessmentDetail = () => {
         customBreadcrumbsItems: customBreadcrumbsItems
       });
     }
-  }, [
-    data?.assessmentsName,
-    data?.debtPositionTypeOrgDescription,
-    assessmentId
-  ]);
+  }, [detailItem, assessmentId, data?.assessmentsName]);
 
-  const handleFiltersApplied = () => {
-    applyFilters();
+  const handleFiltersApplied = applyFilters;
+
+  const canModifyAssessment = () => {
+    const hasManualGeneration = data?.flagManualGeneration === true;
+    const isActive = data?.status !== undefined && data.status === 'ACTIVE';
+
+    return hasManualGeneration && isActive;
   };
 
+  const shouldShowButtons = useMemo(() => {
+    return canModifyAssessment();
+  }, [data?.flagManualGeneration, data?.status]);
+
+  const shouldShowRemoveButton = useMemo(() => {
+    return (
+      shouldShowButtons &&
+      data?.pagedAssessmentsRowsDetail?.content &&
+      data.pagedAssessmentsRowsDetail.content.length > 0
+    );
+  }, [shouldShowButtons, data?.pagedAssessmentsRowsDetail?.content]);
+
+  const showCannotModifyDialog = () =>
+    utils.dialog.open({
+      title: t('assessmentDetail.cannotModifyDialog.title'),
+      message: t('assessmentDetail.cannotModifyDialog.description'),
+      confirmLabel: t('commons.close'),
+      onConfirm: utils.dialog.close,
+      onClose: utils.dialog.close,
+      'data-testid': 'cannot-modify-payments-dialog'
+    });
+
   const handleRemovePayments = () => {
-    console.log('Remove payments clicked');
+    if (!canModifyAssessment()) {
+      showCannotModifyDialog();
+      return;
+    }
+
+    const debtPositionTypeOrgCode = detailItem?.debtPositionTypeOrgCode;
+
+    const searchParams = new URLSearchParams({
+      mode: 'remove',
+      assessmentId: assessmentId.toString(),
+      from: 'detail',
+      debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
+      assessmentName: data?.assessmentsName || ''
+    });
+
+    navigate(`${PageRoutes.ASSESSMENT_CREATION}?${searchParams.toString()}`, {
+      state: {
+        mode: 'remove',
+        assessmentId: assessmentId,
+        assessmentName: data?.assessmentsName,
+        debtPositionTypeOrgCode: debtPositionTypeOrgCode,
+        fromAssessmentDetail: true
+      }
+    });
   };
 
   const handleAddPayments = () => {
-    console.log('Add payments clicked');
+    if (!canModifyAssessment()) {
+      showCannotModifyDialog();
+      return;
+    }
+
+    const debtPositionTypeOrgCode = detailItem?.debtPositionTypeOrgCode;
+
+    const searchParams = new URLSearchParams({
+      mode: 'add',
+      assessmentId: assessmentId.toString(),
+      from: 'detail',
+      debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
+      assessmentName: data?.assessmentsName || ''
+    });
+    if (debtPositionTypeOrgCode) {
+      navigate(`${PageRoutes.ASSESSMENT_CREATION}?${searchParams.toString()}`, {
+        state: {
+          mode: 'add',
+          assessmentId: assessmentId,
+          assessmentName: data?.assessmentsName,
+          debtPositionTypeOrgCode: debtPositionTypeOrgCode,
+          fromAssessmentDetail: true
+        }
+      });
+    } else {
+      utils.notify.emit(
+        t('assessmentDetail.error.debtPositionTypeOrgCodeNotDefined')
+      );
+      console.error(
+        'debtPositionTypeOrgCode not defined',
+        debtPositionTypeOrgCode
+      );
+    }
   };
 
   /**
    * Handle navigation to the assessment detail record
-   * @param assessmentDetailId - ID of the assessment detail
+   * @param receiptId - ID of the assessment detail
    */
-  const handleNavigateToDetailDetail = (assessmentDetailId: number) => {
+  const handleNavigateToDetailDetail = (receiptId: number) => {
     const detailUrl = generatePath(PageRoutes.ASSESSMENT_DETAIL_DETAIL, {
       id: assessmentId.toString(),
-      assessmentDetailId: assessmentDetailId.toString()
+      receiptId: receiptId.toString()
     });
 
     navigate(detailUrl, {
@@ -131,10 +218,14 @@ export const AssessmentDetail = () => {
     });
   };
 
+  // Configuration sections for the DetailContainer
   const detailSections = useMemo(() => {
+    const firstAssessmentItem = detailItem;
+
     const statusChipProps = data?.status
       ? getAssessmentStatusChipProps(data.status, t)
       : null;
+
     const summaryData: Array<DetailData> = [
       {
         label: t('commons.state'),
@@ -150,24 +241,31 @@ export const AssessmentDetail = () => {
       },
       {
         label: t('assessmentDetail.debtType'),
-        value: data?.debtPositionTypeOrgDescription || '-'
+        value:
+          data?.debtPositionTypeOrgDescription ||
+          firstAssessmentItem?.debtPositionTypeOrgCode ||
+          '-'
       },
       {
         label: t('assessmentDetail.createdBy'),
-        value: data?.updateOperatorExternalId || '-'
+        value:
+          data?.updateOperatorExternalId ||
+          firstAssessmentItem?.updateOperatorExternalId ||
+          '-'
       }
     ];
+
     return [
       {
-        title: {
-          label: t('commons.summary'),
-          variant: 'overline' as Variant
-        },
-        data: summaryData,
+        title: { label: t('commons.summary'), variant: 'overline' as Variant },
+        data: [...summaryData],
         inline: true
       }
     ];
   }, [
+    detailItem,
+    assessmentId,
+    t,
     data?.status,
     data?.debtPositionTypeOrgDescription,
     data?.updateOperatorExternalId
@@ -188,7 +286,6 @@ export const AssessmentDetail = () => {
           />
         ]}
       />
-
       <Grid container spacing={2}>
         <Grid item md={12}>
           <DetailContainer sections={detailSections} />
@@ -209,23 +306,27 @@ export const AssessmentDetail = () => {
             {t('assessmentDetail.paymentsAssociated')}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<RemoveCircleOutline />}
-              onClick={handleRemovePayments}
-              data-testid="remove-payments-button"
-            >
-              {t('commons.remove')}
-            </Button>
-            <Button
-              variant="outlined"
-              startIcon={<Add />}
-              onClick={handleAddPayments}
-              data-testid="add-payments-button"
-            >
-              {t('commons.add')}
-            </Button>
+            {shouldShowRemoveButton && (
+              <Button
+                variant="outlined"
+                color="error"
+                startIcon={<RemoveCircleOutline />}
+                onClick={handleRemovePayments}
+                data-testid="remove-payments-button"
+              >
+                {t('commons.remove')}
+              </Button>
+            )}
+            {shouldShowButtons && (
+              <Button
+                variant="outlined"
+                startIcon={<Add />}
+                onClick={handleAddPayments}
+                data-testid="add-payments-button"
+              >
+                {t('commons.add')}
+              </Button>
+            )}
           </Box>
         </Box>
         <Grid

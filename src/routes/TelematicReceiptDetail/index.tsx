@@ -34,7 +34,7 @@ export const TelematicReceiptDetail = () => {
 
   // If we are on the assessment route, use assessmentDetailId, otherwise useLoaderData
   const loaderData = useLoaderData();
-  const id = params.assessmentDetailId || loaderData;
+  const id = params.receiptId || loaderData;
 
   // Get organizationId from the store
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
@@ -45,18 +45,17 @@ export const TelematicReceiptDetail = () => {
     assessmentKey: string,
     defaultKey: string
   ) => {
-    if (params.assessmentDetailId) {
+    if (params.receiptId) {
       return t(assessmentKey);
     }
     return t(defaultKey);
   };
 
   const { data, isError, error } = getReceiptDetail(organizationId, Number(id));
-  console.log(data);
 
   // Setup custom breadcrumb for assessment context
   useEffect(() => {
-    if (params.assessmentDetailId && params.id && data) {
+    if (params.receiptId && params.id && data) {
       const customBreadcrumbsItems: Array<BredcrumbItem> = [
         {
           pathname: PageRoutes.ASSESSMENT_INDEX,
@@ -76,7 +75,7 @@ export const TelematicReceiptDetail = () => {
         {
           pathname: generatePath(PageRoutes.ASSESSMENT_DETAIL_DETAIL, {
             id: params.id,
-            assessmentDetailId: params.assessmentDetailId
+            receiptId: params.receiptId
           }),
           label: t('assessmentDetail.paymentDetail.title'),
           id: 'ASSESSMENT_DETAIL_DETAIL'
@@ -87,7 +86,7 @@ export const TelematicReceiptDetail = () => {
         customBreadcrumbsItems: customBreadcrumbsItems
       });
     }
-  }, [params.assessmentDetailId, params.id, data, t, assessmentName]);
+  }, [params.receiptId, params.id, data, t, assessmentName]);
 
   // Setup custom breadcrumb for assessment context
   useEffect(() => {
@@ -200,13 +199,13 @@ export const TelematicReceiptDetail = () => {
 
   // Determine the title based on the context (assessment vs telematic receipt)
   const getPageTitle = () => {
-    if (params.assessmentDetailId) {
+    if (params.receiptId) {
       return t('assessmentDetail.paymentDetail.title');
     }
     return t('telematicReceiptDetail.title');
   };
 
-  const shouldShowDownloadButton = !params.assessmentDetailId;
+  const shouldShowDownloadButton = !params.receiptId;
 
   return (
     <>

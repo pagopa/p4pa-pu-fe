@@ -464,6 +464,111 @@ describe('useGlobalPaymentSelection', () => {
     });
   });
 
+  describe('Remove mode functionality', () => {
+    it('should handle isRemoveMode with assessmentDetailId mapping', () => {
+      const currentPageRowsWithAssessmentDetailId = [
+        { uniqueId: 'iud1-0', iud: 'IUD1', assessmentDetailId: 101 },
+        { uniqueId: 'iud2-0', iud: 'IUD2', assessmentDetailId: 102 },
+        { uniqueId: 'iud3-0', iud: 'IUD3', assessmentDetailId: 103 }
+      ];
+
+      const removeModeProps: UseGlobalPaymentSelectionParams = {
+        setValue: mockSetValue,
+        selectedPayments: [],
+        currentPageRows: currentPageRowsWithAssessmentDetailId,
+        isRemoveMode: true
+      };
+
+      const { result } = renderHook(() =>
+        useGlobalPaymentSelection(removeModeProps)
+      );
+
+      act(() => {
+        result.current.toggleUniqueIdSelection(['iud1-0', 'iud2-0'], true);
+      });
+
+      expect(result.current.totalSelected).toBe(2);
+    });
+
+    it('should handle fallback IUD lookup when mapping is incomplete', async () => {
+      const { result, rerender } = renderHook(
+        (props) => useGlobalPaymentSelection(props),
+        { initialProps: defaultProps }
+      );
+
+      act(() => {
+        result.current.toggleUniqueIdSelection(['iud1-0'], true);
+      });
+
+      const newPageRows = [
+        { uniqueId: 'iud1-0', iud: 'IUD1' },
+        { uniqueId: 'iud4-0', iud: 'IUD4' }
+      ];
+
+      rerender({
+        ...defaultProps,
+        currentPageRows: newPageRows
+      });
+
+      act(() => {
+        result.current.toggleUniqueIdSelection(['iud4-0'], true);
+      });
+
+      await waitForAsyncOperation();
+
+      expect(result.current.totalSelected).toBe(2);
+      expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', [
+        'IUD1',
+        'IUD4'
+      ]);
+    });
+
+    it('should handle fallback assessmentDetailId lookup in remove mode', async () => {
+      const currentPageRowsWithAssessmentDetailId = [
+        { uniqueId: 'iud1-0', iud: 'IUD1', assessmentDetailId: 101 },
+        { uniqueId: 'iud2-0', iud: 'IUD2', assessmentDetailId: 102 }
+      ];
+
+      const removeModeProps: UseGlobalPaymentSelectionParams = {
+        setValue: mockSetValue,
+        selectedPayments: [],
+        currentPageRows: currentPageRowsWithAssessmentDetailId,
+        isRemoveMode: true
+      };
+
+      const { result, rerender } = renderHook(
+        (props) => useGlobalPaymentSelection(props),
+        { initialProps: removeModeProps }
+      );
+
+      act(() => {
+        result.current.toggleUniqueIdSelection(['iud1-0'], true);
+      });
+
+      const newPageRows = [
+        { uniqueId: 'iud1-0', iud: 'IUD1', assessmentDetailId: 101 },
+        { uniqueId: 'iud3-0', iud: 'IUD3', assessmentDetailId: 103 }
+      ];
+
+      rerender({
+        ...removeModeProps,
+        currentPageRows: newPageRows
+      });
+
+      act(() => {
+        result.current.toggleUniqueIdSelection(['iud3-0'], true);
+      });
+
+      await waitForAsyncOperation();
+
+      expect(result.current.totalSelected).toBe(2);
+      expect(mockSetValue).toHaveBeenCalledWith(
+        'selectedAssessmentDetailIds',
+        [101, 103]
+      );
+    });
+  });
+
   describe('Form synchronization', () => {
     it('should call setValue with sorted array of unique IUDs', async () => {
       const { result } = renderHook(() =>

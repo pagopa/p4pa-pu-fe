@@ -327,6 +327,13 @@
     },
     "description": "Inserisci i parametri per creare un nuovo accertamento.",
     "title": "Crea un nuovo accertamento",
+    "modify": {
+      "addPayments": {
+        "title": "Aggiungi pagamenti",
+        "description": "Seleziona i pagamenti da aggiungere all'accertamento.",
+        "stepTitle": "Aggiungi pagamenti"
+      }
+    },
     "stepper": {
       "step1": "Configurazione accertamento",
       "step2": "Aggiungi pagamenti",
@@ -337,9 +344,31 @@
       "description": "Puoi trovarlo nella sezione accertamento pagamenti, dove puoi consultarlo in qualsiasi momento.",
       "goToDetail": "Visualizza accertamento"
     },
+    "removePayments": {
+      "title": "Rimuovi pagamenti",
+      "description": "Cerca e seleziona i pagamenti nell’acertamento da rimuovere.",
+      "stepTitle": "Rimuovi pagamenti",
+      "success": {
+        "title": "Pagamenti rimossi correttamente nell'accertamento \"{{assessmentName}}\"",
+        "goToDetail": "Visualizza accertamento"
+      },
+      "confirmModal": {
+        "title": "Sei sicuro di voler rimuovere i pagamenti?",
+        "description": "Dopo la rimozione, i pagamenti non compariranno più nell'elenco dell'accertamento."
+      }
+    },
+    "addPayments": {
+      "title": "Pagamenti aggiunti",
+      "stepTitle": "Aggiungi pagamenti",
+      "success": {
+        "title": "Pagamenti aggiunti correttamente nell'accertamento \"{{assessmentName}}\"",
+        "description": "Li trovi nel dettaglio dell'accertamento, dove puoi gestirli in qualsiasi momento.",
+        "goToDetail": "Visualizza accertamento"
+      }
+    },
     "error": {
       "creationFailed": "Errore durante la creazione dell'assessment",
-      "nameAlreadyPresent": "Esiste già un accertamento con la stessa combinazione di nome e tipo dovuto"
+      "nameAlreadyPresent": "Esiste già un accertamento con lo stesso Nome"
     }
   },
   "assessmentDetail": {
@@ -358,6 +387,14 @@
       "ok": "Elimina",
       "ko": "Chiudi"
     },
+    "deleteDialog": {
+      "title": "Conferma eliminazione",
+      "description": "Sei sicuro di voler eliminare questo accertamento? L'operazione non può essere annullata."
+    },
+    "cannotModifyDialog": {
+      "title": "Operazione non consentita",
+      "description": "Non è possibile aggiungere o rimuovere pagamenti per questo accertamento."
+    },
     "paymentDetail": {
       "title": "Dettaglio pagamento",
       "summary": "Riepilogo",
@@ -372,6 +409,9 @@
       "psp": "Gestore della transazione (PSP)",
       "iud": "IUD",
       "iur": "IUR"
+    },
+    "error": {
+      "debtPositionTypeOrgCodeNotDefined": "Il tipo dovuto non è definito"
     }
   },
   "classificationsExport": {
@@ -645,6 +685,7 @@
     "notifications": "Notifiche",
     "notificationsConfig": "Configurazione",
     "notFound": "Risorsa non trovata",
+    "onlyRemove": "Rimuovi",
     "operator": "Operatore",
     "operators": "Operatori",
     "optional": "opzionale",

@@ -32,7 +32,12 @@ export type UseGlobalPaymentSelectionParams = {
   setValue: (name: string, value: unknown) => void;
   selectedPayments?: Array<string>;
   /** TEMPORARY: current page rows for IUD ↔ uniqueId conversion */
-  currentPageRows?: Array<{ uniqueId: string; iud: string }>;
+  currentPageRows?: Array<{
+    uniqueId: string;
+    iud: string;
+    assessmentDetailId?: number;
+  }>;
+  isRemoveMode?: boolean;
 };
 
 /**
@@ -68,7 +73,8 @@ export type UseGlobalPaymentSelectionResult = {
 export const useGlobalPaymentSelection = ({
   setValue,
   selectedPayments = [],
-  currentPageRows = []
+  currentPageRows = [],
+  isRemoveMode = false
 }: UseGlobalPaymentSelectionParams): UseGlobalPaymentSelectionResult => {
   // TEMPORARY: Set of uniqueIds instead of IUDs to handle duplicates
   // FUTURE: const [globalSelectedIuds, setGlobalSelectedIuds] = useState<Set<string>>(new Set());
@@ -77,10 +83,15 @@ export const useGlobalPaymentSelection = ({
   >(new Set());
 
   // TEMPORARY: Global mapping for uniqueId -> IUD conversion across pages
-  // This persists the mapping even when currentPageRows changes
+  // FUTURE: This will be removed when backend provides unique IUDs
   const [globalUniqueIdToIudMap, setGlobalUniqueIdToIudMap] = useState<
     Map<string, string>
   >(new Map());
+
+  const [
+    globalUniqueIdToAssessmentDetailIdMap,
+    setGlobalUniqueIdToAssessmentDetailIdMap
+  ] = useState<Map<string, number>>(new Map());
 
   const isInitializedRef = useRef(false);
 
@@ -96,8 +107,20 @@ export const useGlobalPaymentSelection = ({
         });
         return newMap;
       });
+
+      if (isRemoveMode) {
+        setGlobalUniqueIdToAssessmentDetailIdMap((prevMap) => {
+          const newMap = new Map(prevMap);
+          currentPageRows.forEach((row) => {
+            if (row.uniqueId && row.assessmentDetailId) {
+              newMap.set(row.uniqueId, row.assessmentDetailId);
+            }
+          });
+          return newMap;
+        });
+      }
     }
-  }, [currentPageRows]);
+  }, [currentPageRows, isRemoveMode]);
 
   useEffect(() => {
     // TEMPORARY: IUD → uniqueId conversion at initialization
@@ -116,6 +139,90 @@ export const useGlobalPaymentSelection = ({
       isInitializedRef.current = true;
     }
   }, []);
+
+  const updateMappingWithCurrentPage = useCallback(
+    (
+      globalMapping: Map<string, string>,
+      currentRows?: Array<{ uniqueId: string; iud: string }>
+    ): Map<string, string> => {
+      const updatedMapping = new Map(globalMapping);
+      currentRows?.forEach((row) => {
+        if (row.uniqueId && row.iud) {
+          updatedMapping.set(row.uniqueId, row.iud);
+        }
+      });
+      return updatedMapping;
+    },
+    []
+  );
+
+  const findIudForUniqueId = useCallback(
+    (
+      uniqueId: string,
+      mapping: Map<string, string>,
+      currentRows?: Array<{ uniqueId: string; iud: string }>
+    ): string | null => {
+      const iud = mapping.get(uniqueId);
+      if (iud) {
+        return iud;
+      }
+
+      // FALLBACK: Try to find IUD from currentPageRows if mapping failed
+      const fallbackRow = currentRows?.find((row) => row.uniqueId === uniqueId);
+      if (fallbackRow?.iud) {
+        return fallbackRow.iud;
+      }
+
+      return null;
+    },
+    []
+  );
+
+  const convertUniqueIdsToIuds = useCallback(
+    (
+      uniqueIds: Set<string>,
+      mapping: Map<string, string>,
+      currentRows?: Array<{ uniqueId: string; iud: string }>
+    ): Array<string> => {
+      const selectedIuds = new Set<string>();
+      uniqueIds.forEach((uniqueId) => {
+        const iud = findIudForUniqueId(uniqueId, mapping, currentRows);
+        if (iud) {
+          selectedIuds.add(iud);
+        }
+      });
+      return Array.from(selectedIuds).sort((a, b) => a.localeCompare(b));
+    },
+    [findIudForUniqueId]
+  );
+
+  const convertUniqueIdsToAssessmentDetailIds = useCallback(
+    (
+      uniqueIds: Set<string>,
+      mapping: Map<string, number>,
+      currentRows?: Array<{ uniqueId: string; assessmentDetailId?: number }>
+    ): Array<number> => {
+      const selectedIds = new Set<number>();
+      uniqueIds.forEach((uniqueId) => {
+        const assessmentDetailId = mapping.get(uniqueId);
+        if (assessmentDetailId) {
+          selectedIds.add(assessmentDetailId);
+        } else {
+          // FALLBACK: Try to find assessmentDetailId from currentRows
+          const fallbackRow = currentRows?.find(
+            (row) => row.uniqueId === uniqueId
+          );
+          if (fallbackRow?.assessmentDetailId) {
+            selectedIds.add(fallbackRow.assessmentDetailId);
+          }
+        }
+      });
+
+      const result = Array.from(selectedIds).sort((a, b) => a - b);
+      return result;
+    },
+    []
+  );
 
   // Selection management at uniqueId level
   // TEMPORARY: toggleUniqueIdSelection → toggleIudSelection in future
@@ -144,29 +251,67 @@ export const useGlobalPaymentSelection = ({
           }
         });
 
-        // Convert uniqueId to IUD for form using global mapping
-        const selectedIuds = new Set<string>();
-        newSet.forEach((uniqueId) => {
-          const iud = globalUniqueIdToIudMap.get(uniqueId);
-          if (iud) {
-            selectedIuds.add(iud);
-          }
-        });
-        const sortedArray = Array.from(selectedIuds).sort((a, b) =>
-          a.localeCompare(b)
+        // Update the global mapping with current page rows to avoid timing issues
+        const updatedMapping = updateMappingWithCurrentPage(
+          globalUniqueIdToIudMap,
+          currentPageRows
         );
 
-        setValue('selectedPayments', sortedArray);
+        if (isRemoveMode) {
+          const updatedAssessmentDetailIdMapping = new Map(
+            globalUniqueIdToAssessmentDetailIdMap
+          );
+          currentPageRows?.forEach((row) => {
+            if (row.uniqueId && row.assessmentDetailId) {
+              updatedAssessmentDetailIdMapping.set(
+                row.uniqueId,
+                row.assessmentDetailId
+              );
+            }
+          });
+
+          const sortedAssessmentDetailIds =
+            convertUniqueIdsToAssessmentDetailIds(
+              newSet,
+              updatedAssessmentDetailIdMapping,
+              currentPageRows
+            );
+
+          setValue('selectedAssessmentDetailIds', sortedAssessmentDetailIds);
+        } else {
+          const sortedArray = convertUniqueIdsToIuds(
+            newSet,
+            updatedMapping,
+            currentPageRows
+          );
+
+          setValue('selectedPayments', sortedArray);
+        }
       });
     },
-    [setValue, globalSelectedUniqueIds, globalUniqueIdToIudMap]
+    [
+      setValue,
+      globalSelectedUniqueIds,
+      globalUniqueIdToIudMap,
+      currentPageRows,
+      updateMappingWithCurrentPage,
+      convertUniqueIdsToIuds,
+      isRemoveMode,
+      globalUniqueIdToAssessmentDetailIdMap,
+      convertUniqueIdsToAssessmentDetailIds
+    ]
   );
 
   const clearAllSelections = useCallback(() => {
     setGlobalSelectedUniqueIds(new Set());
     setGlobalUniqueIdToIudMap(new Map());
+
     setValue('selectedPayments', []);
-  }, [setValue]);
+    if (isRemoveMode) {
+      setValue('selectedAssessmentDetailIds', []);
+      setGlobalUniqueIdToAssessmentDetailIdMap(new Map());
+    }
+  }, [setValue, isRemoveMode, setGlobalUniqueIdToAssessmentDetailIdMap]);
 
   const isUniqueIdSelected = useCallback(
     (uniqueId: string) => {
