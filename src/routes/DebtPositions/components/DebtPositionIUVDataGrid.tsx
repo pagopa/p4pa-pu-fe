@@ -5,7 +5,7 @@ import {
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
-import { Chip, ChipProps, Typography } from '@mui/material';
+import { ChipProps, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../../routes';
 import { generatePath, useNavigate } from 'react-router';
@@ -15,6 +15,7 @@ import {
   PagedInstallmentView
 } from '../../../../generated/data-contracts';
 import { formatDate, moneyFormat } from '../../../utils/formatters';
+import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
 
 export type DataGridProps = {
   data?: PagedInstallmentView;
@@ -87,11 +88,9 @@ export const IUVDataGrid = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams<InstallmentView>) => (
-        <Chip
+        <ChipTruncateTooltip
           label={t(`commons.status.${params.value}`)}
-          title={t(params.value)}
           color={stateColors[params.value as InstallmentStatus]}
-          size="small"
         />
       )
     },
