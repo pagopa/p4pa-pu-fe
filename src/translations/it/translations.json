@@ -757,6 +757,7 @@
       "IMPORT": "Import",
       "IMPORT_FLOWS": "Importa flusso",
       "ORGANIZATIONS": "Enti gestiti",
+      "ORG_SIL_SERVICE": "Org Sil Service",
       "REPORTING": "Rendicontazione",
       "REPORTING_DETAIL": "Dettaglio",
       "REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
@@ -1560,6 +1561,14 @@
     "paymentToDate": "Pagamento al",
     "reservationDate": "Data prenotazione",
     "uploadDate": "Data Caricamento"
+  },
+  "orgSilService": {
+    "amountActualization": "Attualizzazione importo",
+    "api": "API",
+    "serviceType": "Tipo Servizio",
+    "paymentNotice": "Notifica Pagamenti",
+    "apiName": "Nome API",
+    "addAPI": "Aggiungi API"
   },
   "notificationPreview": {
     "byOrg": "Ente mittente*",

@@ -3,12 +3,16 @@ import TaxonomyPage from './Taxonomy';
 import { RouteHandleObject } from '../models/Routes';
 import TaxonomyDetailPage from './TaxonomyDetail';
 import { Navigate, Outlet } from 'react-router';
-import { SuperAdminRouteGuard } from '../components/RouteGuard/RouteGuard';
+import {
+  AdminRouteGuard,
+  SuperAdminRouteGuard
+} from '../components/RouteGuard/RouteGuard';
 import TaxonomySearchResults from './TaxonomySearchResults';
 import { RegistryDetailPage } from './RegistryDetailPage/RegistryDetailPage';
 import EventPage from './Events/Search';
 import EventList from './Events/List';
 import EventsContainer from './Events/EventsContainer';
+import OrgSilServicesPage from './OrgSilServicePage/OrgSilServicesPage';
 
 const deployPath = config.deployPath;
 
@@ -98,6 +102,26 @@ export const backofficeRoutes = [
                 }
               }
             ]
+          }
+        ]
+      },
+      {
+        id: 'ORG_SIL_SERVICE',
+        path: 'org-sil-services/',
+        element: (
+          <AdminRouteGuard>
+            <Outlet />
+          </AdminRouteGuard>
+        ),
+        children: [
+          {
+            id: 'ORG_SIL_SERVICE_INDEX',
+            element: <OrgSilServicesPage />,
+            index: true,
+            handle: {
+              hideBreadcrumbs: true,
+              backButton: false
+            }
           }
         ]
       }
