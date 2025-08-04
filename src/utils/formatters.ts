@@ -55,11 +55,15 @@ export function formatDate(dateString?: string): string {
   }
 }
 
-export function formatDateTime(dateTimeString?: string): string {
+export function formatDateTime(
+  dateTimeString?: string,
+  noSeconds?: boolean
+): string {
   if (!dateTimeString) return '';
   try {
     const date = parseISO(dateTimeString);
-    return format(date, 'dd/MM/yyyy HH:mm:ss', { locale: it });
+    const dateFormat = noSeconds ? 'dd/MM/yyyy HH:mm' : 'dd/MM/yyyy HH:mm:ss';
+    return format(date, dateFormat, { locale: it });
   } catch (error) {
     console.error('Error formatting datetime:', error);
     return '';
