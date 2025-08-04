@@ -8,7 +8,6 @@ describe('ChipTruncateTooltip', () => {
 
     render(<ChipTruncateTooltip label={labelText} color="primary" />);
 
-    // Verifica che il Chip sia visibile con il testo giusto
     expect(screen.getByText(labelText)).toBeInTheDocument();
   });
 });
