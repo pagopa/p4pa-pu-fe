@@ -736,6 +736,7 @@
       "CLASSIFICATIONS": "Classificazione pagamenti",
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
+      "CLIENT_SIL": "Client Sil",
       "ASSESSMENT_SEARCH_RESULTS": "Risultato ricerca",
       "ASSESSMENT_DETAIL": "Dettaglio",
       "CONSERVATION": "Conservazione",
@@ -1569,6 +1570,21 @@
     "paymentNotice": "Notifica Pagamenti",
     "apiName": "Nome API",
     "addAPI": "Aggiungi API"
+  },
+  "clientSil": {
+    "addNew": "Aggiungi nuovo",
+    "filters": {
+      "clientName": "Nome Client SIL",
+      "clientNamePlaceholder": "Inserisci il nome del client",
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "Inserisci l'ID del client"
+    },
+    "table": {
+      "clientName": "Nome Client SIL",
+      "clientId": "Client ID"
+    },
+    "title": "Client SIL",
+    "description": "Gestisci i Client SIL dell'organizzazione"
   },
   "notificationPreview": {
     "byOrg": "Ente mittente*",
