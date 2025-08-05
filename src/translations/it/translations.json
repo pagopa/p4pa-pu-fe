@@ -675,6 +675,7 @@
     "inThisPage": "in questa pagina",
     "iud": "IUD",
     "iuf": "IUF",
+    "iun": "Identificativo univoco notifica",
     "iur": "IUR",
     "iuv": "IUV",
     "loading": "caricamento",
@@ -683,6 +684,8 @@
     "mandatoryDueDate": "Data di Scadenza Obbligatoria",
     "message": "Messaggio",
     "messages": "Messaggi",
+    "notificationDate": "Data di notifica",
+    "notificationFeeCents": "Costo di notifica",
     "nav": "NAV",
     "no": "No",
     "NO_EVENTS": "Nessun evento",
@@ -1562,6 +1565,10 @@
     "reservationDate": "Data prenotazione",
     "uploadDate": "Data Caricamento"
   },
+  "notificationPreview": {
+    "byOrg": "Ente mittente*",
+    "byService": "Servizio mittente*"
+  },
   "orgSilService": {
     "amountActualization": "Attualizzazione importo",
     "api": "API",
@@ -1569,10 +1576,6 @@
     "paymentNotice": "Notifica Pagamenti",
     "apiName": "Nome API",
     "addAPI": "Aggiungi API"
-  },
-  "notificationPreview": {
-    "byOrg": "Ente mittente*",
-    "byService": "Servizio mittente*"
   },
   "registry": {
     "detail": {

@@ -153,9 +153,8 @@ export const DebtPositionsInstallmentDetail = () => {
       },
       {
         label: t('debtPositionSearchResults.expirationDate'),
-        value: installment?.dueDate
-          ? new Date(installment.dueDate).toLocaleDateString('it-IT')
-          : ''
+        value: installment?.dueDate,
+        valueType: 'date'
       },
       {
         label: t('commons.debtor'),
@@ -171,6 +170,20 @@ export const DebtPositionsInstallmentDetail = () => {
       {
         label: t('commons.duetype'),
         value: installment?.debtPositionTypeOrgDescription || ''
+      },
+      {
+        label: t('commons.notificationDate'),
+        value: installment?.notificationDate,
+        valueType: 'date'
+      },
+      {
+        label: t('commons.notificationFeeCents'),
+        value: installment?.notificationFeeCents as number,
+        valueType: 'amount'
+      },
+      {
+        label: t('commons.iun'),
+        value: installment?.iun || ''
       }
     ],
     paymentData: [
