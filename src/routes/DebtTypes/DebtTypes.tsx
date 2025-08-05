@@ -2,17 +2,18 @@ import { Add, Search } from '@mui/icons-material';
 import { Box, Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';
 import DebtTypesDataGrid from './components/DebtTypesDataGrid';
 import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
-import useDebtTypesFilters from '../../hooks/useDebtTypesFilters';
 import { useStore } from '../../store/GlobalStore';
-import { STATE } from '../../store/types';
 import { PageRoutes } from '../../routes';
+import utils from '../../utils';
+import { useSearch } from '../../hooks/useSearch';
+import { PagedDebtPositionTypeWithCount } from '../../../generated/data-contracts';
 
 type DebtTypesFilters = {
   description?: string;
@@ -23,58 +24,30 @@ export const DebtTypes = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { state } = useStore();
-  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+  const {
+    state: { organizationId }
+  } = useStore();
 
-  const [filterValues, setFilterValues] = useState<DebtTypesFilters>({});
-  const [draftFilters, setDraftFilters] = useState<DebtTypesFilters>({});
-  const [paginationParams, setPaginationParams] = useState({
-    page: 0,
-    size: 10
+  const initialFilters: DebtTypesFilters = utils.URI.decode(
+    window.location.hash
+  );
+  const [filterValues, setFilterValues] =
+    useState<DebtTypesFilters>(initialFilters);
+
+  const query = getDebtPositionTypeWithCount({ organizationId });
+
+  const debtPositionTypes = useSearch({
+    query,
+    filters: filterValues
   });
 
-  const { handleSortModelChange, sortModel } = useDebtTypesFilters({
-    initialFilters: {
-      page: paginationParams.page,
-      size: paginationParams.size
-    }
-  });
-
-  const combinedFilters = {
-    page: paginationParams.page,
-    size: paginationParams.size,
-    ...(filterValues.description && { description: filterValues.description })
+  const onFilterChange = (updates: Partial<DebtTypesFilters>) => {
+    setFilterValues((prev) => ({ ...prev, ...updates }));
   };
 
-  const { data } = getDebtPositionTypeWithCount(
-    organizationId,
-    combinedFilters
-  );
-
-  const handlePaginationChange = (pagination: {
-    page: number;
-    size: number;
-  }) => {
-    setPaginationParams(pagination);
+  const applyFilters = () => {
+    debtPositionTypes.applyFilters(filterValues);
   };
-
-  const handleFiltersApplied = () => {
-    setFilterValues(draftFilters);
-    setPaginationParams((prev) => ({ ...prev, page: 0 }));
-  };
-
-  const updateDraftFilters = useCallback(
-    (updates: Partial<DebtTypesFilters>) => {
-      setDraftFilters((prev) => ({ ...prev, ...updates }));
-    },
-    []
-  );
-
-  const applyFilters = useCallback(() => {
-    handleFiltersApplied();
-  }, [draftFilters]);
-
-  const isSearchEnabled = draftFilters.description !== filterValues.description;
 
   return (
     <>
@@ -101,9 +74,8 @@ export const DebtTypes = () => {
             {
               type: COMPONENT_TYPE.textField,
               label: t('commons.searchForDescription'),
-              value: draftFilters.description || '',
-              onChange: (e) =>
-                updateDraftFilters({ description: e.target.value }),
+              value: filterValues.description || '',
+              onChange: (e) => onFilterChange({ description: e.target.value }),
               adornment: <Search />,
               gridWidth: 10.5
             },
@@ -111,8 +83,7 @@ export const DebtTypes = () => {
               type: COMPONENT_TYPE.button,
               label: t('commons.search'),
               gridWidth: 1.5,
-              onClick: applyFilters,
-              disabled: !isSearchEnabled
+              onClick: applyFilters
             }
           ]}
         />
@@ -124,16 +95,7 @@ export const DebtTypes = () => {
         }}
       >
         <DebtTypesDataGrid
-          data={
-            data || {
-              content: [],
-              size: 0,
-              totalElements: 0,
-              totalPages: 0,
-              number: 0
-            }
-          }
-          onFiltersApplied={handleFiltersApplied}
+          data={debtPositionTypes.query?.data as PagedDebtPositionTypeWithCount}
         />
       </Box>
     </>

@@ -115,7 +115,7 @@ export const DebtPositionsDataGrid = ({ data }: DataGridProps) => {
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      totalPages={data.totalPages}
+      totalPages={data?.totalPages ?? 1}
     />
   );
 };

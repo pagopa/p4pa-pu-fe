@@ -51,7 +51,7 @@ export function useSearch<
   // Handle filter application: reset page to 0, update URL hash, and query
   const applyFilters = (appliedFilters: T) => {
     const params = utils.URI.encode(appliedFilters);
-    utils.URI.set(params);
+    utils.URI.set(params, { replace: true });
 
     query.mutateAsync({
       filters: appliedFilters,

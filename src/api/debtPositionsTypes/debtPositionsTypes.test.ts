@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { renderHook, waitFor } from '../__tests__/renderers';
-import utils from '../utils';
-import { getDebtPositionTypeWithCount } from './debtPositionsTypes';
-import { parseAndLog } from '../utils/loaders';
+import { renderHook, waitFor } from '../../__tests__/renderers';
+import utils from '../../utils';
+import { getDebtPositionTypeWithCount } from '../debtPositionsTypes';
+import { parseAndLog } from '../../utils/loaders';
 
-vi.mock('../utils', () => ({
+vi.mock('../../utils', () => ({
   default: {
     apiClient: {
       bff: {
@@ -14,7 +14,7 @@ vi.mock('../utils', () => ({
   }
 }));
 
-vi.mock('../utils/loaders', () => ({
+vi.mock('../../utils/loaders', () => ({
   parseAndLog: vi.fn()
 }));
 
