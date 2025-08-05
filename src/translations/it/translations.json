@@ -1204,7 +1204,7 @@
       "taxonomy": {
         "title": "Tassonomia"
       },
-      "alertMessage": "* Indica una campo obbligatorio",
+      "alertMessage": "* Indica un campo obbligatorio",
       "debtType": {
         "label": "Nome del Tipo dovuto",
         "helper": "Inserisce il nome attribuito al servizio di incasso",
