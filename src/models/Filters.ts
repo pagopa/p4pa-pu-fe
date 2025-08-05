@@ -67,8 +67,8 @@ export type FlowFilters = {
   ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
   fileName?: string;
   status?: IngestionFlowFileStatus;
-  creationDateFrom?: string;
-  creationDateTo?: string;
+  creationDateFrom?: Date;
+  creationDateTo?: Date;
   sort?: Array<string>;
 };
 
