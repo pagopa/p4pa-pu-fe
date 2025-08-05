@@ -44,6 +44,18 @@ export function optionMapsConverter(
   }));
 }
 
+const DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
+const LOCALE = it;
+export const date = {
+  /** This method takes an object Date as param and formats in string
+   * compatible with our BE. This method should be called every time
+   * a date information is transmitted to the BE
+   * "yyyy-MM-dd'T'HH:mm:ss" locale: 'it' */
+  code: (date?: Date) => date && format(date, DATE_FORMAT, { locale: LOCALE }),
+  /** This method takes an string and convert to human redable date */
+  decode: () => 'To be implemented'
+};
+
 export function formatDate(dateString?: string): string {
   if (!dateString) return '';
   try {
