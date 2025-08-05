@@ -1599,16 +1599,20 @@
           "subtitle": "Descrizione"
         }
       },
+      "success": {
+        "title": "Il SIL '{{clientName}}' è stato aggiunto!",
+        "description": "La trovi nella sezione Gestione SIL, dove puoi consultarlo in qualsiasi momento.",
+        "backToStart": "Vedi dettaglio SIL"
+      },
       "fields": {
         "clientName": {
           "label": "Nome Client SIL",
           "placeholder": "Tassa seconde case",
           "required": "Il nome del Client SIL è obbligatorio",
           "maxLength": "Il nome non può superare i 100 caratteri",
-          "invalidFormat": "Il nome può contenere solo lettere, numeri, trattini e underscore"
+          "invalidFormat": "Il nome può contenere solo lettere, numeri, trattini e underscore, senza spazi"
         }
       },
-      "success": "Client SIL '{{clientName}}' creato con successo",
       "error": {
         "nameAlreadyExists": "Esiste già un Client SIL con questo nome",
         "invalidData": "I dati inseriti non sono validi",

@@ -199,5 +199,16 @@ export const SuccessPageConfig: SuccessOpts = {
         customNavigation: 'ASSESSMENT_DETAIL'
       }
     ]
+  },
+  'client-sil': {
+    title: 'clientSil.create.success.title',
+    description: 'clientSil.create.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'clientSil.create.success.backToStart'
+      }
+    ]
   }
 };

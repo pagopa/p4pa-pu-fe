@@ -6,8 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AxiosError } from 'axios';
 import { Stack, Box, Typography, TextField } from '@mui/material';
-import DescriptionIcon from '@mui/icons-material/Description';
-
+import BookIcon from '@mui/icons-material/MenuBook';
 import WizardStepWrapper from '../../components/Wizard/WizardStepWrapper';
 import SectionBox from '../../components/Wizard/SectionBox';
 import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
@@ -17,7 +16,7 @@ import { PageRoutes } from '../../routes';
 import utils from '../../utils';
 
 /**
- * Schema di validazione per la creazione di un Client SIL
+ * Schema of validation for the creation of a Client SIL
  */
 const clientSilCreateSchema = z.object({
   clientName: z
@@ -35,8 +34,8 @@ const clientSilCreateSchema = z.object({
 type ClientSilCreateFormData = z.infer<typeof clientSilCreateSchema>;
 
 /**
- * Componente per la creazione di un nuovo Client SIL
- * Gestisce form di input, validazione e chiamata API
+ * Component for the creation of a new Client SIL
+ * Handles input form, validation and API call
  */
 export const ClientSilCreate = () => {
   const { t } = useTranslation();
@@ -57,9 +56,6 @@ export const ClientSilCreate = () => {
 
   const { handleSubmit, trigger } = methods;
 
-  /**
-   * Gestisce il submit del form
-   */
   const onSubmit = useCallback(
     async (data: ClientSilCreateFormData) => {
       try {
@@ -74,9 +70,16 @@ export const ClientSilCreate = () => {
           'success'
         );
 
-        console.log('response', response);
-
-        navigate(PageRoutes.CLIENT_SIL_INDEX, { replace: true });
+        navigate(PageRoutes.RESPONSES_SUCCESS, {
+          replace: true,
+          state: {
+            category: 'client-sil',
+            i18nParams: {
+              clientName: response.clientName
+            },
+            clientId: response.clientId
+          }
+        });
       } catch (error) {
         console.error('Error creating Client SIL:', error);
 
@@ -100,10 +103,6 @@ export const ClientSilCreate = () => {
     [createClientSilMutation, navigate, t]
   );
 
-  /**
-   * Gestisce il click del pulsante Salva
-   * Valida il form prima di procedere con il submit
-   */
   const handleSave = useCallback(async () => {
     const isValid = await trigger();
     if (isValid) {
@@ -111,9 +110,6 @@ export const ClientSilCreate = () => {
     }
   }, [trigger, handleSubmit, onSubmit]);
 
-  /**
-   * Gestisce il click del pulsante Indietro
-   */
   const handleBack = useCallback(() => {
     navigate(PageRoutes.CLIENT_SIL_INDEX);
   }, [navigate]);
@@ -126,13 +122,12 @@ export const ClientSilCreate = () => {
             {t('clientSil.create.title')}
           </Typography>
         </Box>
-
         <WizardStepWrapper
           title={t('clientSil.create.section.description.title')}
         >
           <SectionBox
             title={t('clientSil.create.section.description.subtitle')}
-            adornment={<DescriptionIcon />}
+            adornment={<BookIcon />}
             data-testid="client-sil-configuration-section"
           >
             <Stack direction="column" spacing={3}>
@@ -153,7 +148,11 @@ export const ClientSilCreate = () => {
                     required
                     disabled={createClientSilMutation.isPending}
                     error={!!methods.formState.errors.clientName}
-                    helperText={methods.formState.errors.clientName?.message ? t(methods.formState.errors.clientName.message) : undefined}
+                    helperText={
+                      methods.formState.errors.clientName?.message
+                        ? t(methods.formState.errors.clientName.message)
+                        : undefined
+                    }
                   />
                 )}
               />
@@ -166,7 +165,6 @@ export const ClientSilCreate = () => {
               </Typography>
             </Stack>
           </SectionBox>
-
           <WizardStepButtons
             onBack={handleBack}
             onNext={handleSave}
