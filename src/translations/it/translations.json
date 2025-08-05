@@ -1584,7 +1584,33 @@
       "clientId": "Client ID"
     },
     "title": "Client SIL",
-    "description": "Gestisci i Client SIL dell'organizzazione"
+    "description": "Gestisci i Client SIL dell'organizzazione",
+    "create": {
+      "title": "Aggiungi nuovo Client SIL",
+      "subtitle": "Il client ID e key secret saranno generati automaticamente dopo la creazione",
+      "formLabel": "Form di creazione Client SIL",
+      "section": {
+        "description": {
+          "title": "Configurazione generale",
+          "subtitle": "Descrizione"
+        }
+      },
+      "fields": {
+        "clientName": {
+          "label": "Nome Client SIL",
+          "placeholder": "Tassa seconde case",
+          "required": "Il nome del Client SIL è obbligatorio",
+          "maxLength": "Il nome non può superare i 100 caratteri",
+          "invalidFormat": "Il nome può contenere solo lettere, numeri, trattini e underscore"
+        }
+      },
+      "success": "Client SIL '{{clientName}}' creato con successo",
+      "error": {
+        "nameAlreadyExists": "Esiste già un Client SIL con questo nome",
+        "invalidData": "I dati inseriti non sono validi",
+        "generic": "Errore durante la creazione del Client SIL"
+      }
+    }
   },
   "notificationPreview": {
     "byOrg": "Ente mittente*",

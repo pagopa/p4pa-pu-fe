@@ -14,6 +14,7 @@ import EventList from './Events/List';
 import EventsContainer from './Events/EventsContainer';
 import OrgSilServicesPage from './OrgSilServicePage/OrgSilServicesPage';
 import ClientSilPage from './ClientSilPage/ClientSilPage';
+import ClientSilCreate from './ClientSilCreate/ClientSilCreate';
 
 const deployPath = config.deployPath;
 
@@ -142,6 +143,19 @@ export const backofficeRoutes = [
             handle: {
               hideBreadcrumbs: true,
               backButton: false
+            }
+          },
+          {
+            id: 'CLIENT_SIL_CREATE',
+            path: 'create',
+            element: <ClientSilCreate />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
             }
           }
         ]

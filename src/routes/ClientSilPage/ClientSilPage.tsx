@@ -2,6 +2,7 @@ import { useState, useCallback, useMemo } from 'react';
 import { Add } from '@mui/icons-material';
 import { Grid, Stack, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import { ClientSilDataGrid } from './components/ClientSilDataGrid';
@@ -15,6 +16,7 @@ import type {
   ClientNoSecretDTO
 } from '../../../generated/apiClient';
 import { GridSortModel } from '@mui/x-data-grid';
+import { PageRoutes } from '../../routes';
 
 /**
  * Main page for the management of Client SIL
@@ -23,6 +25,7 @@ import { GridSortModel } from '@mui/x-data-grid';
 export const ClientSilPage = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const {
     state: { organizationId }
   } = useStore();
@@ -77,9 +80,8 @@ export const ClientSilPage = () => {
   );
 
   const handleAddNew = useCallback(() => {
-    // TODO: Implement navigation to create new client form
-    console.log('Navigate to create new client');
-  }, []);
+    navigate(PageRoutes.CLIENT_SIL_CREATE);
+  }, [navigate]);
 
   const handleRowClick = useCallback((row: ClientNoSecretDTO) => {
     // TODO: Implement navigation to client detail

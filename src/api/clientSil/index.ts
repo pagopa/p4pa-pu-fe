@@ -1,7 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
-import { clientDTOPageSchema } from '../../../generated/zod-schema';
+import { clientDTOPageSchema, clientDTOSchema } from '../../../generated/zod-schema';
+import type { CreateClientRequest } from '../../../generated/data-contracts';
 import type { ClientSilFilteredRequest } from './mappings';
 import { buildQueryParams } from './mappings';
 
@@ -32,6 +33,23 @@ export const getClientSils = ({ organizationId }: { organizationId: number }) =>
     }
   });
 
+/**
+ * Hook for creating a new Client SIL
+ */
+export const createClientSil = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['createClientSil', organizationId],
+    mutationFn: async (request: CreateClientRequest) => {
+      const { data } = await utils.apiClient.bff.registerClient(
+        organizationId,
+        request
+      );
+      parseAndLog(clientDTOSchema, data);
+      return data;
+    }
+  });
+
 export default {
-  getClientSils
+  getClientSils,
+  createClientSil
 };
