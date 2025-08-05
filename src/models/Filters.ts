@@ -76,8 +76,8 @@ export type ExportFlowFilters = {
   exportFileType: ExportFileTypeEnum;
   fileName?: string;
   status?: ExportFileStatus;
-  creationDateFrom?: string;
-  creationDateTo?: string;
+  creationDateFrom?: Date;
+  creationDateTo?: Date;
   sort?: Array<string>;
 };
 
