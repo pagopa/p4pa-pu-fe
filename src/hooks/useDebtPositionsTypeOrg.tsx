@@ -9,11 +9,13 @@ import { AxiosError } from 'axios';
 export const useDebtPositionsTypeOrg = ({
   organizationId,
   includeAllOption = false,
-  useCodeAsValue = false
+  useCodeAsValue = false,
+  filterActiveOnly = false
 }: {
   organizationId: number;
   includeAllOption?: boolean;
   useCodeAsValue?: boolean;
+  filterActiveOnly?: boolean;
 }) => {
   const [debtPositionsTypes, setDebtPositionsTypes] = useState<
     Array<DebtPositionType>
@@ -21,7 +23,8 @@ export const useDebtPositionsTypeOrg = ({
   const { t } = useTranslation();
 
   const debtPositionsTypesQuery = getDebtPositionTypeOrgs({
-    organizationId
+    organizationId,
+    flagActive: filterActiveOnly ? true : undefined
   });
 
   const { data, isError, isSuccess } = debtPositionsTypesQuery;

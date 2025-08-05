@@ -224,7 +224,8 @@ describe('Step1Configuration', () => {
       expect(mockUseDebtPositionsTypeOrg).toHaveBeenCalledWith({
         organizationId: 'test-org-123',
         includeAllOption: false,
-        useCodeAsValue: true
+        useCodeAsValue: true,
+        filterActiveOnly: true
       });
     });
 
@@ -234,7 +235,8 @@ describe('Step1Configuration', () => {
       expect(mockUseStore).toHaveBeenCalled();
       expect(mockUseDebtPositionsTypeOrg).toHaveBeenCalledWith(
         expect.objectContaining({
-          organizationId: 'test-org-123'
+          organizationId: 'test-org-123',
+          filterActiveOnly: true
         })
       );
     });

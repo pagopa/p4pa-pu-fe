@@ -1205,7 +1205,7 @@
       "taxonomy": {
         "title": "Tassonomia"
       },
-      "alertMessage": "* Indica una domanda obbligatoria",
+      "alertMessage": "* Indica un campo obbligatorio",
       "debtType": {
         "label": "Nome del Tipo dovuto",
         "helper": "Inserisce il nome attribuito al servizio di incasso",
@@ -1309,7 +1309,7 @@
     "configuration": {
       "title": "Configurazione generale",
       "subtitle": "Definisce quale sarà il Tipo Dovuto.",
-      "alertMessage": "* Indica una domanda obbligatoria",
+      "alertMessage": "* Indica un campo obbligatorio",
       "debtType": {
         "title": "Tipo dovuto",
         "label": "Tipo dovuto",
@@ -1563,6 +1563,10 @@
     "reservationDate": "Data prenotazione",
     "uploadDate": "Data Caricamento"
   },
+  "notificationPreview": {
+    "byOrg": "Ente mittente*",
+    "byService": "Servizio mittente*"
+  },
   "orgSilService": {
     "amountActualization": "Attualizzazione importo",
     "api": "API",
@@ -1585,10 +1589,6 @@
     },
     "title": "Client SIL",
     "description": "Gestisci i Client SIL dell'organizzazione"
-  },
-  "notificationPreview": {
-    "byOrg": "Ente mittente*",
-    "byService": "Servizio mittente*"
   },
   "registry": {
     "detail": {
