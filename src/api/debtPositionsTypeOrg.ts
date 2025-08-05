@@ -8,15 +8,20 @@ import {
 import { parseAndLog } from '../utils/loaders';
 
 export const getDebtPositionTypeOrgs = ({
-  organizationId
+  organizationId,
+  flagActive
 }: {
   organizationId: number;
+  flagActive?: boolean;
 }) =>
   useQuery({
-    queryKey: ['getDebtPositionTypeOrgs', organizationId],
+    queryKey: ['getDebtPositionTypeOrgs', organizationId, flagActive],
     queryFn: async () => {
       const { data: response } =
-        await utils.apiClient.bff.getDebtPositionTypeOrgs(organizationId);
+        await utils.apiClient.bff.getDebtPositionTypeOrgs(
+          organizationId,
+          flagActive !== undefined ? { flagActive } : undefined
+        );
       return response;
     }
   });

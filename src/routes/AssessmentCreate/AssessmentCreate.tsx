@@ -41,12 +41,9 @@ const assessmentFormSchema = z.object({
   assessmentName: z
     .string({
       required_error:
-        'assessmentCreate.configuration.step1.fields.assessmentName.required'
+        'assessmentCreate.configuration.step1.fields.name.required'
     })
-    .min(
-      1,
-      'assessmentCreate.configuration.step1.fields.assessmentName.required'
-    ),
+    .min(1, 'assessmentCreate.configuration.step1.fields.name.required'),
   operatingYear: z
     .string({
       required_error:
