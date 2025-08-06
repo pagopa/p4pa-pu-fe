@@ -24,7 +24,6 @@ const clientSilCreateSchema = z.object({
       required_error: 'clientSil.create.fields.clientName.required'
     })
     .min(1, 'clientSil.create.fields.clientName.required')
-    .max(100, 'clientSil.create.fields.clientName.maxLength')
     .regex(
       /^[a-zA-Z0-9-_]*$/,
       'clientSil.create.fields.clientName.invalidFormat'
@@ -69,7 +68,6 @@ export const ClientSilCreate = () => {
           }),
           'success'
         );
-
         navigate(PageRoutes.RESPONSES_SUCCESS, {
           replace: true,
           state: {
@@ -91,13 +89,8 @@ export const ClientSilCreate = () => {
             );
             return;
           }
-          if (error.response?.status === 400) {
-            utils.notify.emit(t('clientSil.create.error.invalidData'), 'error');
-            return;
-          }
         }
-
-        utils.notify.emit(t('clientSil.create.error.generic'), 'error');
+        navigate(PageRoutes.RESPONSES_ERROR);
       }
     },
     [createClientSilMutation, navigate, t]

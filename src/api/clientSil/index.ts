@@ -1,7 +1,10 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
-import { clientDTOPageSchema, clientDTOSchema } from '../../../generated/zod-schema';
+import {
+  clientDTOPageSchema,
+  clientDTOSchema
+} from '../../../generated/zod-schema';
 import type { CreateClientRequest } from '../../../generated/data-contracts';
 import type { ClientSilFilteredRequest } from './mappings';
 import { buildQueryParams } from './mappings';
