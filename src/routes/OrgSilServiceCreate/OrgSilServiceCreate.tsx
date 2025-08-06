@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useNavigate } from 'react-router';
@@ -9,15 +8,17 @@ import { ArrowBack, LibraryAddCheck, MenuBook } from '@mui/icons-material';
 import { orgSilServiceFormSchema, OrgSilServiceFormData } from './schema';
 import { useOrgSilServiceForm } from './hooks/useOrgSilServiceForm';
 import {
-  OrgSilServiceType,
-  JwtAlgorithm
-} from '../../../generated/data-contracts';
+  SERVICE_TYPE_OPTIONS,
+  LEGACY_OPTIONS
+} from './utils/orgSilServiceFormUtils';
+import { LegacyAuthConfiguration } from './components/LegacyAuthConfiguration';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import SectionBox from '../../components/Wizard/SectionBox';
 import { FormComponent } from '../../components/FormComponent';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { PageRoutes } from '..';
+import { useConditionalReset } from './hooks/useConditionalReset';
 
 export const OrgSilServiceCreate = () => {
   const navigate = useNavigate();
@@ -39,58 +40,14 @@ export const OrgSilServiceCreate = () => {
         applicationName: '',
         serviceUrl: '',
         serviceType: undefined,
-        flagLegacy: false,
-        authConfigType: undefined,
-        basicUser: '',
-        basicPassword: '',
-        basicAuthURL: '',
-        jwtKid: '',
-        jwtIssuer: '',
-        jwtSubject: '',
-        jwtAlgorithm: undefined,
-        jwtSigningKey: ''
+        flagLegacy: false
       }
     });
 
-  const watchFlagLegacy = watch('flagLegacy');
-  const watchAuthConfigType = watch('authConfigType');
-
-  useEffect(() => {
-    if (!watchFlagLegacy) {
-      resetField('authConfigType');
-      resetField('basicUser');
-      resetField('basicPassword');
-      resetField('basicAuthURL');
-      resetField('jwtKid');
-      resetField('jwtIssuer');
-      resetField('jwtSubject');
-      resetField('jwtAlgorithm');
-      resetField('jwtSigningKey');
-    }
-  }, [watchFlagLegacy, resetField]);
-
-  useEffect(() => {
-    if (watchAuthConfigType === 'basic') {
-      resetField('jwtKid');
-      resetField('jwtIssuer');
-      resetField('jwtSubject');
-      resetField('jwtAlgorithm');
-      resetField('jwtSigningKey');
-    } else if (watchAuthConfigType === 'jwt') {
-      resetField('basicUser');
-      resetField('basicPassword');
-      resetField('basicAuthURL');
-    } else {
-      resetField('basicUser');
-      resetField('basicPassword');
-      resetField('basicAuthURL');
-      resetField('jwtKid');
-      resetField('jwtIssuer');
-      resetField('jwtSubject');
-      resetField('jwtAlgorithm');
-      resetField('jwtSigningKey');
-    }
-  }, [watchAuthConfigType, resetField]);
+  const { watchFlagLegacy, watchAuthConfigType } = useConditionalReset({
+    watch,
+    resetField
+  });
 
   const onSubmit = (formData: OrgSilServiceFormData) => {
     createService(formData);
@@ -99,25 +56,6 @@ export const OrgSilServiceCreate = () => {
   const handleCancel = () => {
     navigate(PageRoutes.ORG_SIL_SERVICE);
   };
-
-  const serviceTypeOptions = [
-    {
-      value: OrgSilServiceType.ACTUALIZATION,
-      label: t('orgSilServiceCreate.actualization')
-    },
-    {
-      value: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME,
-      label: t('orgSilServiceCreate.notice')
-    }
-  ];
-  const authConfigOptions = [
-    { value: 'basic', label: t('orgSilServiceCreate.legacyBasic') },
-    { value: 'jwt', label: t('orgSilServiceCreate.legacyJWT') }
-  ];
-  const jwtAlgorithmOptions = Object.values(JwtAlgorithm).map((algo) => ({
-    value: algo,
-    label: algo
-  }));
 
   return (
     <Box sx={{ p: 3 }}>
@@ -160,7 +98,10 @@ export const OrgSilServiceCreate = () => {
                   control={control}
                   label={t('orgSilServiceCreate.serviceType')}
                   required
-                  options={serviceTypeOptions}
+                  options={SERVICE_TYPE_OPTIONS.map((option) => ({
+                    ...option,
+                    label: t(option.label)
+                  }))}
                 />
               </Stack>
             </SectionBox>
@@ -181,10 +122,10 @@ export const OrgSilServiceCreate = () => {
                       required
                       value={String(field.value)}
                       sx={{ flexDirection: 'row' }}
-                      options={[
-                        { value: 'true', label: t('commons.yes') },
-                        { value: 'false', label: t('commons.no') }
-                      ]}
+                      options={LEGACY_OPTIONS.map((option) => ({
+                        ...option,
+                        label: t(option.label)
+                      }))}
                       onChange={(event) => {
                         const boolValue = event.target.value === 'true';
                         field.onChange(boolValue);
@@ -192,81 +133,13 @@ export const OrgSilServiceCreate = () => {
                     />
                   )}
                 />
+
                 {watchFlagLegacy && (
-                  <Stack spacing={3}>
-                    <FormComponent.ControlledSelect
-                      name="authConfigType"
-                      control={control}
-                      label={t('orgSilServiceCreate.authConfig')}
-                      required
-                      options={authConfigOptions}
-                    />
-                    {watchAuthConfigType === 'basic' && (
-                      <Stack spacing={3}>
-                        <FormComponent.ControlledTextField
-                          name="basicUser"
-                          control={control}
-                          label={t('orgSilServiceCreate.basicUser')}
-                          required
-                          noAdornment
-                        />
-                        <FormComponent.ControlledTextField
-                          name="basicPassword"
-                          control={control}
-                          label={t('orgSilServiceCreate.basicPassword')}
-                          required
-                          noAdornment
-                        />
-                        <FormComponent.ControlledTextField
-                          name="basicAuthURL"
-                          control={control}
-                          label={t('orgSilServiceCreate.basicAuthURL')}
-                          required
-                          placeholder="https://auth.example.com"
-                          noAdornment
-                        />
-                      </Stack>
-                    )}
-                    {watchAuthConfigType === 'jwt' && (
-                      <Stack spacing={3}>
-                        <FormComponent.ControlledTextField
-                          name="jwtKid"
-                          control={control}
-                          label={t('orgSilServiceCreate.jwtKid')}
-                          required
-                          noAdornment
-                        />
-                        <FormComponent.ControlledTextField
-                          name="jwtIssuer"
-                          control={control}
-                          label={t('orgSilServiceCreate.jwtIssuer')}
-                          required
-                          noAdornment
-                        />
-                        <FormComponent.ControlledTextField
-                          name="jwtSubject"
-                          control={control}
-                          label="Subject"
-                          required
-                          noAdornment
-                        />
-                        <FormComponent.ControlledSelect
-                          name="jwtAlgorithm"
-                          control={control}
-                          label={t('orgSilServiceCreate.jwtAlgorithm')}
-                          required
-                          options={jwtAlgorithmOptions}
-                        />
-                        <FormComponent.ControlledTextField
-                          name="jwtSigningKey"
-                          control={control}
-                          label={t('orgSilServiceCreate.jwtSigningKey')}
-                          required
-                          noAdornment
-                        />
-                      </Stack>
-                    )}
-                  </Stack>
+                  <LegacyAuthConfiguration
+                    control={control}
+                    authConfigType={watchAuthConfigType}
+                    t={t}
+                  />
                 )}
               </Stack>
             </SectionBox>

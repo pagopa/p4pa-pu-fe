@@ -84,7 +84,7 @@ export const orgSilServiceFormSchema = z
       if (!data.jwtIssuer)
         ctx.addIssue({
           code: 'custom',
-          // message: t('orgSilServiceCreate.validations.requiredField'),
+          message: t('orgSilServiceCreate.validations.requiredField'),
           path: ['jwtIssuer']
         });
       if (!data.jwtSubject)

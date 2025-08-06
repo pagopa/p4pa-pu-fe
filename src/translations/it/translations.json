@@ -1576,7 +1576,7 @@
   },
   "orgSilServiceCreate": {
     "actualization": "Attualizzazione importo",
-    "notice": "Notifica Pagamenti",
+    "paidNotificationOutcome": "Notifica Pagamenti",
     "legacyBasic": "Legacy Basic",
     "legacyJWT": "Legacy JWT",
     "title": "Aggiungi nuova API",
