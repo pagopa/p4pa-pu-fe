@@ -374,7 +374,7 @@ describe('useExportFlowFilters', () => {
       })
     );
 
-    const testDate = new Date('2024-01-01T12:00:00.000Z').toISOString();
+    const testDate = new Date('2024-01-01T12:00:00.000Z');
 
     act(() => {
       result.current.updateDraftFilters({
