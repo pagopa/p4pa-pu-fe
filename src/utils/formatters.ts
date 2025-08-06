@@ -141,3 +141,14 @@ export function formatFileSize(size: number): string {
     return `${size} Bytes`;
   }
 }
+
+export const toCamelCase = (str: string): string => {
+  return str
+    .toLowerCase()
+    .split('_')
+    .filter((word) => word.length > 0)
+    .map((word, index) =>
+      index === 0 ? word : word.charAt(0).toUpperCase() + word.slice(1)
+    )
+    .join('');
+};
