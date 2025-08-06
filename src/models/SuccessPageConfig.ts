@@ -199,5 +199,16 @@ export const SuccessPageConfig: SuccessOpts = {
         customNavigation: 'ASSESSMENT_DETAIL'
       }
     ]
+  },
+  'org-sil-service-create': {
+    title: 'orgSilServiceCreate.newService.success.title',
+    description: 'orgSilServiceCreate.newService.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'orgSilServiceCreate.newService.success.goToDetail'
+      }
+    ]
   }
 };

@@ -1,8 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
-import { pagedOrgSilServiceViewSchema } from '../../../generated/zod-schema';
+import {
+  orgSilServiceDecryptedDTOSchema,
+  pagedOrgSilServiceViewSchema
+} from '../../../generated/zod-schema';
 import { buildQueryParams, OrgSilServicesFilteredRequest } from './mappings';
+import { OrgSilServiceDecryptedDTO } from '../../../generated/apiClient';
 
 const getOrgSilServices = ({ organizationId }: { organizationId: number }) =>
   useMutation({
@@ -24,6 +28,21 @@ const getOrgSilServices = ({ organizationId }: { organizationId: number }) =>
     }
   });
 
+const createOrgSilService = ({ organizationId }: { organizationId: number }) =>
+  useMutation({
+    mutationKey: ['createOrgSilService', organizationId],
+    mutationFn: async (payload: OrgSilServiceDecryptedDTO) => {
+      const { data } = await utils.apiClient.bff.createOrgSilService(
+        organizationId,
+        payload
+      );
+
+      parseAndLog(orgSilServiceDecryptedDTOSchema, data);
+      return data;
+    }
+  });
+
 export default {
-  getOrgSilServices
+  getOrgSilServices,
+  createOrgSilService
 };
