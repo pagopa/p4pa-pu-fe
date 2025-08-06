@@ -1,4 +1,5 @@
 import { format, parseISO } from 'date-fns';
+import { formatInTimeZone } from 'date-fns-tz';
 import { endOfDay } from 'date-fns/endOfDay';
 import { startOfDay } from 'date-fns/startOfDay';
 import { it } from 'date-fns/locale';
@@ -44,16 +45,31 @@ export function optionMapsConverter(
   }));
 }
 
-const DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
-const LOCALE = it;
 export const date = {
-  /** This method takes an object Date as param and formats in string
-   * compatible with our BE. This method should be called every time
-   * a date information is transmitted to the BE
-   * "yyyy-MM-dd'T'HH:mm:ss" locale: 'it' */
-  code: (date?: Date) => date && format(date, DATE_FORMAT, { locale: LOCALE }),
+  /**
+   * @name code
+   * @category utils
+   * @description
+   * This function takes an object Date as parameter and outpus it in a string
+   * compatible with BE service. This function should be called every time
+   * a date information is transmitted to the BE. It outputs full date according to
+   * the ISO 8601/RFC 3399 using and assuming the Europe/Rome timezone
+   * https://datatracker.ietf.org/doc/html/rfc3339#section-5.6
+   * @param dateObj - The original date object
+   * @example
+   * // Represent 1 Gennuary 2025 at 8:30:
+   * console.log(code(new Date('2025-01-01T08:30:00Z')))
+   * // => '2025-01-01T09:30:00+01:00'
+   * @example
+   * // Represent 15 August 2025 at 13:00:
+   * console.log(code(new Date('2025-08-15T13:00:00Z')))
+   * // => '2025-08-15T15:00:00+02:00' */
+  code: (dateObj?: Date) =>
+    dateObj && formatInTimeZone(dateObj, date.TIME_ZONE, date.DATE_FORMAT),
   /** This method takes an string and convert to human redable date */
-  decode: () => 'To be implemented'
+  decode: () => 'To be implemented',
+  DATE_FORMAT: "yyyy-MM-dd'T'HH:mm:ssXXX",
+  TIME_ZONE: 'Europe/Rome'
 };
 
 export function formatDate(dateString?: string): string {
