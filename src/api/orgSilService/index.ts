@@ -11,12 +11,7 @@ const getOrgSilServices = ({ organizationId }: { organizationId: number }) =>
       const query = buildQueryParams(args);
       const { data } = await utils.apiClient.bff.getOrgSilServicesByFilters(
         organizationId,
-        query,
-        {
-          paramsSerializer: {
-            indexes: null
-          }
-        }
+        query
       );
 
       parseAndLog(pagedOrgSilServiceViewSchema, data);

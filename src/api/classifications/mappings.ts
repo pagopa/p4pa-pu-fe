@@ -23,47 +23,42 @@ export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: ClassificationsFilteredRequest): ClassificationsQueryParams =>
-  Object.fromEntries(
-    Object.entries({
-      label: filters.CLASSIFICATION_TYPE as ClassificationsEnum,
-      iuv: filters.IUV,
-      iur: filters.IUR,
-      iud: filters.IUD,
-      iuf: filters.IUF,
-      lastClassificationDateTimeFrom: temporyFormatDateTimeFunction(
-        filters.LAST_CLASSIFICATION_DATE_FROM
-      ),
-      lastClassificationDateTimeTo: temporyFormatDateTimeFunction(
-        filters.LAST_CLASSIFICATION_DATE_TO
-      ),
-      regulationDateTimeFrom: temporyFormatDateTimeFunction(
-        filters.REGULATION_DATE_FROM
-      ),
-      regulationDateTimeTo: temporyFormatDateTimeFunction(
-        filters.REGULATION_DATE_TO
-      ),
-      billAmountCents: filters.AMOUNT ? filters.AMOUNT * 100 : undefined,
-      billDateTimeFrom: temporyFormatDateTimeFunction(filters.BILL_DATE_FROM),
-      billDateTimeTo: temporyFormatDateTimeFunction(filters.BILL_DATE_TO),
-      paymentDateTimeFrom: temporyFormatDateTimeFunction(
-        filters.PAYMENT_DATE_FROM
-      ),
-      paymentDateTimeTo: temporyFormatDateTimeFunction(filters.PAYMENT_DATE_TO),
-      payDateTimeFrom: temporyFormatDateTimeFunction(filters.PAY_DATE_FROM),
-      payDateTimeTo: temporyFormatDateTimeFunction(filters.PAY_DATE_TO),
-      regulationUniqueIdentifier: filters.REGULATION_UNIQUE_IDENTIFIER,
-      accountRegistryCode: filters.ACCOUNT_REGISTRY_CODE,
-      remittanceInformation: filters.REMITTANCE_INFORMATION,
-      pspCompanyName: filters.PSP_COMPANY_NAME,
-      regionValueDateTimeFrom: temporyFormatDateTimeFunction(
-        filters.REGION_VALUE_DATE_FROM
-      ),
-      regionValueDateTimeTo: temporyFormatDateTimeFunction(
-        filters.REGION_VALUE_DATE_TO
-      ),
-      page: pagination.page,
-      size: pagination.size,
-      sort
-    }).filter(([, v]) => v)
-  );
+}: ClassificationsFilteredRequest): ClassificationsQueryParams => ({
+  label: filters.CLASSIFICATION_TYPE as ClassificationsEnum,
+  iuv: filters.IUV,
+  iur: filters.IUR,
+  iud: filters.IUD,
+  iuf: filters.IUF,
+  lastClassificationDateTimeFrom: temporyFormatDateTimeFunction(
+    filters.LAST_CLASSIFICATION_DATE_FROM
+  ),
+  lastClassificationDateTimeTo: temporyFormatDateTimeFunction(
+    filters.LAST_CLASSIFICATION_DATE_TO
+  ),
+  regulationDateTimeFrom: temporyFormatDateTimeFunction(
+    filters.REGULATION_DATE_FROM
+  ),
+  regulationDateTimeTo: temporyFormatDateTimeFunction(
+    filters.REGULATION_DATE_TO
+  ),
+  billAmountCents: filters.AMOUNT ? filters.AMOUNT * 100 : undefined,
+  billDateTimeFrom: temporyFormatDateTimeFunction(filters.BILL_DATE_FROM),
+  billDateTimeTo: temporyFormatDateTimeFunction(filters.BILL_DATE_TO),
+  paymentDateTimeFrom: temporyFormatDateTimeFunction(filters.PAYMENT_DATE_FROM),
+  paymentDateTimeTo: temporyFormatDateTimeFunction(filters.PAYMENT_DATE_TO),
+  payDateTimeFrom: temporyFormatDateTimeFunction(filters.PAY_DATE_FROM),
+  payDateTimeTo: temporyFormatDateTimeFunction(filters.PAY_DATE_TO),
+  regulationUniqueIdentifier: filters.REGULATION_UNIQUE_IDENTIFIER,
+  accountRegistryCode: filters.ACCOUNT_REGISTRY_CODE,
+  remittanceInformation: filters.REMITTANCE_INFORMATION,
+  pspCompanyName: filters.PSP_COMPANY_NAME,
+  regionValueDateTimeFrom: temporyFormatDateTimeFunction(
+    filters.REGION_VALUE_DATE_FROM
+  ),
+  regionValueDateTimeTo: temporyFormatDateTimeFunction(
+    filters.REGION_VALUE_DATE_TO
+  ),
+  page: pagination.page,
+  size: pagination.size,
+  sort
+});

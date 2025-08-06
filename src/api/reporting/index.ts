@@ -22,12 +22,7 @@ export const getPaymentsReportingRows = (
         await utils.apiClient.bff.getPaymentsReportingRows(
           organizationId,
           iuf,
-          query,
-          {
-            paramsSerializer: {
-              indexes: null
-            }
-          }
+          query
         );
       if (paymentsReportingRows) {
         parseAndLog(pagedPaymentsReportingRowSchema, paymentsReportingRows);

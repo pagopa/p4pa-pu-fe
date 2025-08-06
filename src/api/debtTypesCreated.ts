@@ -19,13 +19,7 @@ export const useDebtPositionTypeOrgSearch = () => {
       const { data: response } =
         await utils.apiClient.bff.getDebtPositionTypeOrgWithCount(
           organizationId,
-          filters,
-          {
-            paramsSerializer: {
-              // repeat array params as query string
-              indexes: null
-            }
-          }
+          filters
         );
 
       if (response) {
