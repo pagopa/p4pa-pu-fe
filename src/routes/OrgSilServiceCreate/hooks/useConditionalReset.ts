@@ -17,6 +17,13 @@ export const useConditionalReset = ({
   watch,
   resetField
 }: UseConditionalResetProps) => {
+  if (!watch || !resetField) {
+    return {
+      watchFlagLegacy: undefined,
+      watchAuthConfigType: undefined
+    };
+  }
+
   const watchFlagLegacy = watch('flagLegacy');
   const watchAuthConfigType = watch('authConfigType');
 
@@ -25,11 +32,8 @@ export const useConditionalReset = ({
       (ALL_AUTH_FIELDS as ReadonlyArray<AuthFieldName>).forEach((field) =>
         resetField(field)
       );
+      return;
     }
-  }, [watchFlagLegacy, resetField]);
-
-  useEffect(() => {
-    if (!watchFlagLegacy) return;
 
     switch (watchAuthConfigType) {
       case 'basic':
@@ -42,7 +46,7 @@ export const useConditionalReset = ({
           resetField(field)
         );
         break;
-      case undefined:
+      default:
         (
           [
             ...BASIC_AUTH_FIELDS,
@@ -51,7 +55,7 @@ export const useConditionalReset = ({
         ).forEach((field) => resetField(field));
         break;
     }
-  }, [watchAuthConfigType, watchFlagLegacy, resetField]);
+  }, [watchFlagLegacy, watchAuthConfigType, resetField]);
 
   return {
     watchFlagLegacy,

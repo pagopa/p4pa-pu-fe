@@ -1594,6 +1594,7 @@
     "basicAuthURL": "Auth URL",
     "jwtKid": "KID",
     "jwtIssuer": "Issuer",
+    "jwtSubject": "Subject",
     "jwtAlgorithm": "Algorithm",
     "jwtSigningKey": "Signing key",
     "newService":{

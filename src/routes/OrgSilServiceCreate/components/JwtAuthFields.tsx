@@ -28,7 +28,7 @@ export const JwtAuthFields = ({ control, t }: JwtAuthFieldsProps) => (
     <FormComponent.ControlledTextField
       name="jwtSubject"
       control={control}
-      label="Subject"
+      label={t('orgSilServiceCreate.jwtSubject')}
       required
       noAdornment
     />
