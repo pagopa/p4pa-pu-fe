@@ -1602,7 +1602,7 @@
       "success": {
         "title": "Il SIL '{{clientName}}' è stato aggiunto!",
         "description": "La trovi nella sezione Gestione SIL, dove puoi consultarlo in qualsiasi momento.",
-        "backToStart": "Vedi dettaglio SIL"
+        "goToDetail": "Vedi dettaglio SIL"
       },
       "fields": {
         "clientName": {

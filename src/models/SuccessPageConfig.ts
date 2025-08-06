@@ -207,7 +207,7 @@ export const SuccessPageConfig: SuccessOpts = {
       {
         variant: 'contained',
         size: 'large',
-        buttonLabel: 'clientSil.create.success.backToStart'
+        buttonLabel: 'clientSil.create.success.goToDetail'
       }
     ]
   }

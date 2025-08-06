@@ -242,13 +242,6 @@ describe('ClientSilCreate', () => {
     });
 
     await waitFor(() => {
-      expect(mockNotifyEmit).toHaveBeenCalledWith(
-        expect.any(String),
-        'success'
-      );
-    });
-
-    await waitFor(() => {
       expect(mockNavigate).toHaveBeenCalledWith('/success', {
         replace: true,
         state: {

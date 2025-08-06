@@ -61,13 +61,6 @@ export const ClientSilCreate = () => {
         const response = await createClientSilMutation.mutateAsync({
           clientName: data.clientName
         });
-
-        utils.notify.emit(
-          t('clientSil.create.success', {
-            clientName: data.clientName
-          }),
-          'success'
-        );
         navigate(PageRoutes.RESPONSES_SUCCESS, {
           replace: true,
           state: {
