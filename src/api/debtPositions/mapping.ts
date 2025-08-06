@@ -18,15 +18,17 @@ export type DebtPositionFilteredRequest = {
   sort: Array<string>;
 };
 
+type InstallmentsQueryParameters = Parameters<
+  typeof utils.apiClient.bff.getInstallments
+>[1];
+
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: DebtPositionFilteredRequest) => ({
-  dueDateFrom: utils.formatters.date.code(filters?.dateRange?.from),
-  dueDateTo: utils.formatters.date.code(filters?.dateRange?.to),
-  creationDateFrom: utils.formatters.date.code(filters?.dateRange?.from),
-  creationDateTo: utils.formatters.date.code(filters?.dateRange?.to),
+}: DebtPositionFilteredRequest): InstallmentsQueryParameters => ({
+  dueDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  dueDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
   page: pagination.page,
   size: pagination.size,
   debtPositionTypeOrgId: filters.typeOrgId,
