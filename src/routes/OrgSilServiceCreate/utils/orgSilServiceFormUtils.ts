@@ -6,12 +6,15 @@ import {
   SilServiceLegacyJwtAuthConfigDTO,
   OrgSilServiceType
 } from '../../../../generated/data-contracts';
-import { optionMapsConverter, toCamelCase } from '../../../utils/formatters';
+import { toCamelCase } from '../../../utils/formatters';
 import i18n from '../../../translations/i18n';
+import { t } from 'i18next';
 
-export const SERVICE_TYPE_OPTIONS = optionMapsConverter(
-  Object.values(OrgSilServiceType).map(toCamelCase),
-  'orgSilServiceCreate'
+export const SERVICE_TYPE_OPTIONS = Object.values(OrgSilServiceType).map(
+  (type) => ({
+    value: type,
+    label: t(`orgSilServiceCreate.${toCamelCase(type)}`)
+  })
 );
 
 export const JWT_ALGORITHM_OPTIONS = Object.values(JwtAlgorithm).map(
