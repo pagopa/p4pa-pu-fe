@@ -87,8 +87,8 @@ describe('getAssessments', () => {
         ASSESSMENT_NAME: 'Test',
         DEBT_TYPE: 'TYPE1',
         IUV: 'test-iuv',
-        LAST_UPDATE_DATE_FROM: new Date('2023-01-01T00:00:00Z'),
-        LAST_UPDATE_DATE_TO: new Date('2023-12-31T23:59:59Z')
+        LAST_UPDATE_DATE_FROM: new Date('2022-12-31T23:00:00Z'),
+        LAST_UPDATE_DATE_TO: new Date('2023-12-31T22:59:59Z')
       },
       pagination: { page: 0, size: 20 },
       sort: []
@@ -98,8 +98,8 @@ describe('getAssessments', () => {
       assessmentName: 'Test',
       debtPositionTypeOrgCode: 'TYPE1',
       iuv: 'test-iuv',
-      updateDateFrom: '2023-01-01T00:00:00.000Z',
-      updateDateTo: '2023-12-31T23:59:59.000Z',
+      updateDateFrom: '2023-01-01T00:00:00+01:00',
+      updateDateTo: '2023-12-31T23:59:59+01:00',
       page: 0,
       size: 20
     };
@@ -248,8 +248,8 @@ describe('getAssessments', () => {
         ASSESSMENT_NAME: 'Full Test',
         DEBT_TYPE: 'FULL_TYPE',
         IUV: 'full-test-iuv',
-        LAST_UPDATE_DATE_FROM: new Date('2023-01-01T00:00:00Z'),
-        LAST_UPDATE_DATE_TO: new Date('2023-12-31T23:59:59Z')
+        LAST_UPDATE_DATE_FROM: new Date('2022-12-31T23:00:00Z'),
+        LAST_UPDATE_DATE_TO: new Date('2023-12-31T22:59:59Z')
       },
       pagination: { page: 2, size: 50 },
       sort: ['assessmentName,asc', 'updateDate,desc']
@@ -259,8 +259,8 @@ describe('getAssessments', () => {
       assessmentName: 'Full Test',
       debtPositionTypeOrgCode: 'FULL_TYPE',
       iuv: 'full-test-iuv',
-      updateDateFrom: '2023-01-01T00:00:00.000Z',
-      updateDateTo: '2023-12-31T23:59:59.000Z',
+      updateDateFrom: '2023-01-01T00:00:00+01:00',
+      updateDateTo: '2023-12-31T23:59:59+01:00',
       page: 2,
       size: 50,
       sort: ['assessmentName,asc', 'updateDate,desc']

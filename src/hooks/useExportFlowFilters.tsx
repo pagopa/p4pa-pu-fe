@@ -2,6 +2,7 @@ import { GridSortModel } from '@mui/x-data-grid';
 import { useState, useCallback } from 'react';
 import { ExportFileTypeEnum } from '../../generated/apiClient';
 import { ExportFileFilters } from '../models/Filters';
+import { endOfDay, startOfDay, subYears } from 'date-fns';
 
 type UseExportFlowFiltersProps = {
   initialFilters?: Partial<ExportFileFilters>;
@@ -13,12 +14,11 @@ type UseExportFlowFiltersProps = {
 
 const getDefaultDateRange = () => {
   const today = new Date();
-  const oneYearAgo = new Date();
-  oneYearAgo.setFullYear(today.getFullYear() - 1);
+  const oneYearAgo = subYears(today, 1);
 
   return {
-    creationDateFrom: new Date(oneYearAgo.setHours(0, 0, 0, 0)),
-    creationDateTo: new Date(today.setHours(23, 59, 59, 999))
+    creationDateFrom: startOfDay(oneYearAgo),
+    creationDateTo: endOfDay(today)
   };
 };
 
@@ -115,9 +115,7 @@ export const useExportFlowFilters = ({
   const handleDateFromChange = useCallback(
     (date: Date | null) => {
       updateDraftFilters({
-        creationDateFrom: date
-          ? new Date(date.setHours(0, 0, 0, 0)).toISOString()
-          : undefined
+        creationDateFrom: date ? startOfDay(date) : undefined
       });
     },
     [updateDraftFilters]
@@ -126,9 +124,7 @@ export const useExportFlowFilters = ({
   const handleDateToChange = useCallback(
     (date: Date | null) => {
       updateDraftFilters({
-        creationDateTo: date
-          ? new Date(date.setHours(23, 59, 59, 999)).toISOString()
-          : undefined
+        creationDateTo: date ? endOfDay(date) : undefined
       });
     },
     [updateDraftFilters]
