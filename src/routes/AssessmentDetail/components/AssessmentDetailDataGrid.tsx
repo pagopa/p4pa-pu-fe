@@ -8,24 +8,38 @@ import {
   AssessmentsDetail,
   AssessmentsRowsDetail
 } from '../../../../generated/apiClient';
+import { generatePath, useNavigate, useParams } from 'react-router';
+import { PageRoutes } from '../..';
 
 type AssessmentDetailDataGridProps = {
   data?: AssessmentsRowsDetail;
   isLoading?: boolean;
-  onNavigateToDetail?: (receiptId: number) => void;
 };
 
 const AssessmentDetailDataGrid = ({
   data,
-  isLoading = false,
-  onNavigateToDetail
+  isLoading = false
 }: AssessmentDetailDataGridProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { id: assessmentId } = useParams<{ id: string }>();
 
-  // Handle the click on the navigation icon to the detail
-  const handleNavigateToDetail = (receiptId: number | undefined) => {
-    if (receiptId && onNavigateToDetail) {
-      onNavigateToDetail(receiptId);
+  /**
+   * Handle navigation to the assessment detail record
+   * @param receiptId - ID of the assessment detail
+   */
+  const navigateToDetail = (receiptId?: number) => {
+    if (receiptId && assessmentId) {
+      const detailUrl = generatePath(PageRoutes.ASSESSMENT_DETAIL_DETAIL, {
+        id: assessmentId.toString(),
+        receiptId: receiptId.toString()
+      });
+
+      navigate(detailUrl, {
+        state: {
+          assessmentName: data?.assessmentsName
+        }
+      });
     }
   };
 
@@ -71,7 +85,7 @@ const AssessmentDetailDataGrid = ({
         <IconButton
           color="primary"
           size="small"
-          onClick={() => handleNavigateToDetail(params.row.receiptId)}
+          onClick={() => navigateToDetail(params.row.receiptId)}
           aria-label="go to assessment detail item"
           data-testid={`navigate-to-detail-${params.row.receiptId}`}
         >

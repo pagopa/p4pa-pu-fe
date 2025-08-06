@@ -1,25 +1,35 @@
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { renderHook } from '../../__tests__/renderers';
 import utils from '../../utils';
-import { AxiosResponse } from 'axios';
-import { describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '../../__tests__/renderers';
 import { getPaymentsReportingRows } from '../reporting';
+import { parseAndLog } from '../../utils/loaders';
+import type { PaymentReportingRowsFilteredRequest } from '../reporting/mappings';
+import type { AxiosResponse } from 'axios';
 
-vi.mock('./utils', () => {
-  const originalModule = vi.importActual('utils');
-  return {
-    ...originalModule,
+vi.mock('../../utils', () => ({
+  default: {
     apiClient: {
       bff: {
         getPaymentsReportingRows: vi.fn()
       }
     }
-  };
-});
+  }
+}));
 
-describe('get Payments Reporting Rows', () => {
-  it('returns data correctly', async () => {
-    // Manual mock because dataMock keeps throwing errors on date fields
-    const dataMock = {
+vi.mock('../../utils/loaders', () => ({
+  parseAndLog: vi.fn()
+}));
+
+describe('getPaymentsReportingRows', () => {
+  const organizationId = 33;
+  const iuf = 'test-iuf';
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should fetch and return payments reporting rows data', async () => {
+    const mockData = {
       content: [
         {
           paymentsReportingId: '1',
@@ -49,50 +59,114 @@ describe('get Payments Reporting Rows', () => {
       number: 0
     };
 
-    const params = {
-      organizationId: 33,
-      iuf: 'test-iuf',
-      query: {
-        page: 0,
-        size: 20
-      }
+    (utils.apiClient.bff.getPaymentsReportingRows as Mock).mockResolvedValue({
+      data: mockData
+    } as AxiosResponse);
+
+    const query: PaymentReportingRowsFilteredRequest = {
+      filters: {},
+      pagination: { page: 0, size: 20 },
+      sort: []
     };
 
-    const apiMock = vi
-      .spyOn(utils.apiClient.bff, 'getPaymentsReportingRows')
-      .mockResolvedValue({ data: dataMock } as AxiosResponse);
-
     const { result } = renderHook(() =>
-      getPaymentsReportingRows(params.organizationId, params.iuf, params.query)
+      getPaymentsReportingRows(organizationId, iuf)
     );
 
-    await waitFor(() => {
-      expect(apiMock).toHaveBeenCalledWith(
-        params.organizationId,
-        params.iuf,
-        params.query,
-        {
-          paramsSerializer: {
-            indexes: null
-          }
+    // Trigger the mutation with query
+    const data = await result.current.mutateAsync(query);
+
+    // Expected params based on buildQueryParams call
+    expect(utils.apiClient.bff.getPaymentsReportingRows).toHaveBeenCalledWith(
+      organizationId,
+      iuf,
+      {
+        page: 0,
+        size: 20
+      },
+      {
+        paramsSerializer: {
+          indexes: null
         }
-      );
-
-      expect(result.current.data).toEqual(dataMock);
-    });
-  });
-
-  it('does not fetch data when organizationId or iuf is missing', () => {
-    const { result } = renderHook(() => getPaymentsReportingRows(0, '', {}));
-
-    expect(result.current.data).toBeUndefined();
-  });
-
-  it('allows disabling the query via options', () => {
-    const { result } = renderHook(() =>
-      getPaymentsReportingRows(33, 'test-iuf', {}, { enabled: false })
+      }
     );
 
-    expect(result.current.data).toBeUndefined();
+    expect(data).toEqual(mockData);
+    expect(parseAndLog).toHaveBeenCalledWith(expect.any(Object), mockData);
+  });
+
+  it('should include filters and sort correctly in query params', async () => {
+    const mockData = {
+      content: [],
+      size: 0,
+      totalElements: 0,
+      totalPages: 0,
+      number: 0
+    };
+
+    (utils.apiClient.bff.getPaymentsReportingRows as Mock).mockResolvedValue({
+      data: mockData
+    } as AxiosResponse);
+
+    const filters = {
+      daterange: { from: new Date('2023-01-01'), to: new Date('2023-01-31') },
+      iuv: 'some-iuv'
+    };
+
+    const query: PaymentReportingRowsFilteredRequest = {
+      filters,
+      pagination: { page: 1, size: 10 },
+      sort: ['payDate,desc']
+    };
+
+    const { result } = renderHook(() =>
+      getPaymentsReportingRows(organizationId, iuf)
+    );
+
+    const data = await result.current.mutateAsync(query);
+
+    // Construct expected query parameters manually since buildQueryParams formats dates
+
+    const expectedQuery = {
+      payDateFrom: '2023-01-01',
+      payDateTo: '2023-01-31',
+      iuv: 'some-iuv',
+      page: 1,
+      size: 10,
+      sort: ['payDate,desc']
+    };
+
+    expect(utils.apiClient.bff.getPaymentsReportingRows).toHaveBeenCalledWith(
+      organizationId,
+      iuf,
+      expectedQuery,
+      {
+        paramsSerializer: {
+          indexes: null
+        }
+      }
+    );
+
+    expect(data).toEqual(mockData);
+  });
+
+  it('should not fetch data when organizationId or iuf is missing or disabled', () => {
+    // Disabled by missing organizationId
+    const { result: result1 } = renderHook(() =>
+      getPaymentsReportingRows(0, iuf)
+    );
+    expect(result1.current.data).toBeUndefined();
+
+    // Disabled by missing iuf
+    const { result: result2 } = renderHook(() =>
+      getPaymentsReportingRows(organizationId, '')
+    );
+    expect(result2.current.data).toBeUndefined();
+
+    // Disabled by option
+    const { result: result3 } = renderHook(() =>
+      getPaymentsReportingRows(organizationId, iuf, { enabled: false })
+    );
+    expect(result3.current.data).toBeUndefined();
   });
 });

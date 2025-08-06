@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useEffect, useState } from 'react';
+import { useEffect, useMemo, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Search, OpenInNew as OpenInNewIcon } from '@mui/icons-material';
 import { Box, useTheme, IconButton } from '@mui/material';
@@ -16,8 +16,9 @@ import {
 import { usePaymentsTableFilters } from '../../../hooks/usePaymentsTableFilters';
 import { generatePath } from 'react-router';
 import { PageRoutes } from '../..';
+import { useHashParamsListener } from '../../../hooks/useHashParamsListener';
 
-// TEMPORARY: Type for row with added uniqueId until backend fixes duplicate IUDs
+// TODO: Type for row with added uniqueId until backend fixes duplicate IUDs
 type PaymentRowWithUniqueId = PaidInstallmentDTO & {
   uniqueId: string;
   receiptId?: number;
@@ -25,13 +26,11 @@ type PaymentRowWithUniqueId = PaidInstallmentDTO & {
 
 export type PaymentsTableProps = {
   data?: PagedPaidInstallmentsDTO;
-  // TEMPORARY: When IUDs are unique, it will become:
-  // onSelectionChange?: (selectedIuds: Array<string>) => void;
   onSelectionChange?: (selectedUniqueIds: Array<string>) => void;
   onFiltersApplied?: (
     filters: PaymentsUIFilters,
     pagination: { page: number; size: number },
-    sortParams?: Array<string>
+    sort?: Array<string>
   ) => void;
   onFilterValidationError?: (hasError: boolean) => void;
   initialFilters?: PaymentsUIFilters;
@@ -39,8 +38,6 @@ export type PaymentsTableProps = {
   isApiCallPending?: boolean;
   disabled?: boolean;
   autoLoadOnMount?: boolean;
-  // TEMPORARY: When IUDs are unique, it will become:
-  // selectedIuds?: Array<string>;
   selectedUniqueIds?: Array<string>;
   isRemoveMode?: boolean;
 };
@@ -61,168 +58,169 @@ export const PaymentsTable = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
-  // Root cause: DataGrid ResizeObserver fails during component remount
-  // Solution: Force recreation with render-based counter (minimal performance impact)
-  const renderCountRef = useRef(0);
+  // Listen to hash parameters
+  const {
+    page: pageStr,
+    size: sizeStr,
+    sortDirection,
+    sortField
+  } = useHashParamsListener() as {
+    page: number;
+    size: number;
+    sortDirection: string;
+    sortField: string;
+  };
 
-  useEffect(() => {
-    renderCountRef.current += 1;
-  });
+  const page = pageStr ? Number(pageStr) : 1;
+  const size = sizeStr ? Number(sizeStr) : 10;
 
-  // Hook for managing filters and sorting
+  const sort = useMemo(
+    () => (sortDirection && sortField ? [`${sortField},${sortDirection}`] : []),
+    [sortDirection, sortField]
+  );
+
   const {
     draftFilters,
     updateDraftFilters,
     applyFilters,
     handleDateFromChange,
-    handleDateToChange
+    handleDateToChange,
+    hasValidFilters
   } = usePaymentsTableFilters({
     initialFilters,
-    onFiltersChange: onFiltersApplied,
+    onFiltersChange: (filters) => {
+      onFiltersApplied?.(filters, { page: 1, size: 10 }, []);
+    },
     onFilterValidationError,
     autoLoadOnMount
   });
 
-  const [isPaginationLoading, setIsPaginationLoading] = useState(false);
-
+  // Call onFiltersApplied when pagination, sorting, or filters change
   useEffect(() => {
-    if (isPaginationLoading && !isApiCallPending) {
-      setIsPaginationLoading(false);
+    if (onFiltersApplied && hasValidFilters) {
+      // Page for API/backend zero-based
+      onFiltersApplied(draftFilters, { page: page - 1, size }, sort);
     }
-  }, [isPaginationLoading, isApiCallPending]);
+  }, [page, size, sort]);
 
+  // Prepare table data with fallback defaults
   const tableData = data || {
     content: [],
     totalElements: 0,
     totalPages: 0,
     number: 0,
-    size: 10
+    size
   };
 
-  // TODO: TEMPORARY SOLUTION - Add unique index to handle duplicate rows
-  // The backend currently can return multiple rows with the same IUD, causing React warnings
-  // for duplicate keys. This solution adds a uniqueId based on ABSOLUTE index to guarantee
-  // uniqueness and stability across page changes until the backend is modified.
-  // Once resolved on backend side, remove this logic and use row.iud directly
-  // FUTURE MIGRATION:
-  // - Remove rowsWithUniqueId completely
-  // - Use rows={tableData.content} directly
-  // - Change getRowId={(row) => row.iud}
+  // TODO: Add uniqueId to rows to handle duplicate IUDs
   const rowsWithUniqueId = useMemo(() => {
     const currentPage = tableData.number || 0;
-    const currentSize = tableData.size || 10;
+    const currentSize = tableData.size || size;
 
     return (tableData.content || []).map((row, pageIndex) => {
-      // Calculate stable absolute index identical to Step2Payments
       const absoluteIndex = currentPage * currentSize + pageIndex;
       return {
         ...row,
         uniqueId: `${row.iud || 'no-iud'}-${absoluteIndex}`
       };
     });
-  }, [tableData.content, tableData.number, tableData.size]);
+  }, [tableData.content, tableData.number, tableData.size, size]);
 
-  // Calculate selectedRows based on global selection
+  // Map selected uniqueIds to row selection model
   const selectedRows: GridRowSelectionModel = useMemo(() => {
-    if (!selectedUniqueIds || selectedUniqueIds.length === 0) {
-      return [];
-    }
+    if (!selectedUniqueIds || selectedUniqueIds.length === 0) return [];
 
-    // Map selected uniqueIds to uniqueIds for current page
-    const result = rowsWithUniqueId
+    return rowsWithUniqueId
       .filter((row): row is PaymentRowWithUniqueId =>
         Boolean(row.uniqueId && selectedUniqueIds.includes(row.uniqueId))
       )
       .map((row) => row.uniqueId);
+  }, [selectedUniqueIds, rowsWithUniqueId]);
 
-    return result;
-  }, [selectedUniqueIds, rowsWithUniqueId, tableData.number, tableData.size]);
-
-  // Handler for row selection - passes uniqueId directly
+  // Handle row selection change
   const handleRowSelectionChange = useCallback(
     (newSelection: GridRowSelectionModel) => {
       if (!onSelectionChange) return;
 
-      // Pass uniqueId directly without conversion to IUD
-      const selectedUniqueIds = newSelection
-        .map((uniqueId) => {
-          // Type guard for string
-          if (typeof uniqueId !== 'string') return null;
-          return uniqueId;
-        })
-        .filter((uniqueId): uniqueId is string => uniqueId !== null);
+      const selectedIds = newSelection
+        .map((uniqueId) => (typeof uniqueId === 'string' ? uniqueId : null))
+        .filter((id): id is string => id !== null);
 
-      onSelectionChange(selectedUniqueIds);
+      onSelectionChange(selectedIds);
     },
     [onSelectionChange]
   );
 
-  const handleDetailClick = useCallback((row: PaymentRowWithUniqueId) => {
-    const detailPath = generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-      id: isRemoveMode
-        ? Number(row.receiptId)
-        : Number(row.receiptPaymentRequestId)
-    });
-
-    const fullUrl = `${window.location.origin}${detailPath}`;
-    window.open(fullUrl, '_blank', 'noopener,noreferrer');
-  }, []);
-
-  const combinedLoading = useMemo(() => {
-    return isLoading || isPaginationLoading;
-  }, [isLoading, isPaginationLoading]);
-
-  const columns: Array<GridColDef> = [
-    {
-      field: 'iuv',
-      headerName: t('commons.iuv') || 'IUV',
-      flex: 1,
-      type: 'string'
+  // Handle clicking detail icon button
+  const handleDetailClick = useCallback(
+    (row: PaymentRowWithUniqueId) => {
+      const detailPath = generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
+        id: isRemoveMode
+          ? Number(row.receiptId)
+          : Number(row.receiptPaymentRequestId)
+      });
+      const fullUrl = `${window.location.origin}${detailPath}`;
+      window.open(fullUrl, '_blank', 'noopener,noreferrer');
     },
-    {
-      field: 'amount',
-      headerName: t('commons.amount'),
-      flex: 1,
-      type: 'number',
-      renderCell: (params) => moneyFormat(params.value)
-    },
-    {
-      field: 'paymentDateTime',
-      headerName: t('commons.paymentdate'),
-      flex: 1,
-      type: 'string',
-      renderCell: (params) => {
-        if (!params.value) return '';
-        return new Date(params.value).toLocaleDateString('it-IT');
+    [isRemoveMode]
+  );
+
+  const combinedLoading = useMemo(
+    () => isLoading || isApiCallPending,
+    [isLoading, isApiCallPending]
+  );
+
+  // Define columns with translations and formatting
+  const columns: Array<GridColDef> = useMemo(
+    () => [
+      {
+        field: 'iuv',
+        headerName: t('commons.iuv') ?? 'IUV',
+        flex: 1,
+        type: 'string'
+      },
+      {
+        field: 'amount',
+        headerName: t('commons.amount'),
+        flex: 1,
+        type: 'number',
+        renderCell: (params) => moneyFormat(params.value)
+      },
+      {
+        field: 'paymentDateTime',
+        headerName: t('commons.paymentdate'),
+        flex: 1,
+        type: 'string',
+        renderCell: (params) =>
+          params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
+      },
+      {
+        field: 'receiptCreationDate',
+        headerName: t('commons.lastUpdate'),
+        flex: 1,
+        type: 'string',
+        renderCell: (params) =>
+          params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
+      },
+      {
+        field: 'actions',
+        headerName: '',
+        width: 60,
+        sortable: false,
+        disableColumnMenu: true,
+        renderCell: (params) => (
+          <IconButton
+            onClick={() => handleDetailClick(params.row)}
+            size="small"
+            sx={{ color: theme.palette.primary.main }}
+          >
+            <OpenInNewIcon fontSize="small" />
+          </IconButton>
+        )
       }
-    },
-    {
-      field: 'receiptCreationDate',
-      headerName: t('commons.lastUpdate'),
-      flex: 1,
-      type: 'string',
-      renderCell: (params) => {
-        if (!params.value) return '';
-        return new Date(params.value).toLocaleDateString('it-IT');
-      }
-    },
-    {
-      field: 'actions',
-      headerName: '',
-      width: 60,
-      sortable: false,
-      disableColumnMenu: true,
-      renderCell: (params) => (
-        <IconButton
-          onClick={() => handleDetailClick(params.row)}
-          size="small"
-          sx={{ color: theme.palette.primary.main }}
-        >
-          <OpenInNewIcon fontSize="small" />
-        </IconButton>
-      )
-    }
-  ];
+    ],
+    [t, theme.palette.primary.main, handleDetailClick]
+  );
 
   return (
     <Box>
@@ -230,7 +228,7 @@ export const PaymentsTable = ({
         items={[
           {
             type: COMPONENT_TYPE.textField,
-            label: t('commons.search') + ' ' + t('commons.iuv'),
+            label: `${t('commons.search')} ${t('commons.iuv')}`,
             value: draftFilters.iuv || '',
             onChange: (e) => updateDraftFilters({ iuv: e.target.value }),
             adornment: <Search />,
@@ -255,35 +253,23 @@ export const PaymentsTable = ({
             type: COMPONENT_TYPE.button,
             label: t('commons.search'),
             onClick: applyFilters,
-            disabled: disabled,
+            disabled,
             gridWidth: 2
           }
         ]}
       />
 
-      <Box
-        sx={{
-          bgcolor: theme.palette.grey[200],
-          padding: 2,
-          mt: 2
-        }}
-      >
-        {/* DataGrid now synchronized with global selection */}
-        {/* TODO: TEMPORARY SOLUTION - DataGrid with modified rows and custom getRowId
-            When backend is fixed to avoid duplicate IUDs:
-            - use rows={tableData.content}
-            - use getRowId={(row) => row.iud} */}
+      <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2, mt: 2 }}>
         <CustomDataGrid
-          key={`datagrid-${renderCountRef.current}`} // Force recreation to prevent MUI height=0px bug
-          rows={rowsWithUniqueId} // TEMPORARY: rows with artificial uniqueIds
+          rows={rowsWithUniqueId}
           columns={columns}
-          getRowId={(row) => row.uniqueId} // TEMPORARY: artificial key
+          getRowId={(row) => row.uniqueId}
           disableColumnMenu
           disableColumnResize
           checkboxSelection
           hideFooterSelectedRowCount
           rowSelectionModel={selectedRows}
-          totalPages={data?.totalPages || 1}
+          totalPages={data?.totalPages ?? 1}
           onRowSelectionModelChange={handleRowSelectionChange}
           localeText={{ noRowsLabel: t('flowDataGrid.noDataRows') }}
           loading={combinedLoading}

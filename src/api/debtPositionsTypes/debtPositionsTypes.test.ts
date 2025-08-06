@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { renderHook, waitFor } from '../../__tests__/renderers';
+import { renderHook } from '../../__tests__/renderers';
 import utils from '../../utils';
 import { getDebtPositionTypeWithCount } from '../debtPositionsTypes';
 import { parseAndLog } from '../../utils/loaders';
+import { DebtPositionTypeWithCountFilteredRequest } from './mappings';
 
 vi.mock('../../utils', () => ({
   default: {
@@ -42,28 +43,35 @@ describe('getDebtPositionTypeWithCount', () => {
     });
 
     const organizationId = 123;
-    const query = { page: 0, size: 10 };
+    const query: DebtPositionTypeWithCountFilteredRequest = {
+      filters: {},
+      pagination: { page: 0, size: 10 },
+      sort: []
+    };
 
     const { result } = renderHook(() =>
-      getDebtPositionTypeWithCount(organizationId, query)
+      getDebtPositionTypeWithCount({ organizationId })
     );
 
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
+    const data = await result.current.mutateAsync(query);
 
-    expect(result.current.data).toEqual(mockData);
+    expect(data).toEqual(mockData);
     expect(
       utils.apiClient.bff.getDebtPositionTypeWithCount
-    ).toHaveBeenCalledWith(organizationId, query, {
-      paramsSerializer: {
-        indexes: null
+    ).toHaveBeenCalledWith(
+      organizationId,
+      {
+        page: 0,
+        size: 10
+      },
+      {
+        paramsSerializer: { indexes: null }
       }
-    });
+    );
     expect(parseAndLog).toHaveBeenCalledWith(expect.any(Object), mockData);
   });
 
-  it('should handle query with sort parameters', async () => {
+  it('should handle query with sort parameters and description filter', async () => {
     const mockData = {
       content: [
         { id: 2, description: 'Type B', count: 10 },
@@ -82,51 +90,33 @@ describe('getDebtPositionTypeWithCount', () => {
     });
 
     const organizationId = 123;
-    const query = { page: 0, size: 10, sort: ['count,desc'] };
-
-    const { result } = renderHook(() =>
-      getDebtPositionTypeWithCount(organizationId, query)
-    );
-
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
-
-    expect(result.current.data).toEqual(mockData);
-    expect(
-      utils.apiClient.bff.getDebtPositionTypeWithCount
-    ).toHaveBeenCalledWith(organizationId, query, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
-  });
-
-  it('should use proper query key for caching', async () => {
-    const mockData = {
-      content: [],
-      totalElements: 0,
-      totalPages: 0,
-      number: 0,
-      size: 10
+    const query: DebtPositionTypeWithCountFilteredRequest = {
+      filters: { description: 'Type A' },
+      pagination: { page: 0, size: 10 },
+      sort: ['count,desc']
     };
 
-    (
-      utils.apiClient.bff.getDebtPositionTypeWithCount as Mock
-    ).mockResolvedValue({
-      data: mockData
-    });
-
-    const organizationId = 123;
-    const query = { page: 1, size: 20 };
-
     const { result } = renderHook(() =>
-      getDebtPositionTypeWithCount(organizationId, query)
+      getDebtPositionTypeWithCount({ organizationId })
     );
 
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
+    const data = await result.current.mutateAsync(query);
+
+    expect(data).toEqual(mockData);
+    expect(
+      utils.apiClient.bff.getDebtPositionTypeWithCount
+    ).toHaveBeenCalledWith(
+      organizationId,
+      {
+        page: 0,
+        size: 10,
+        description: 'Type A',
+        sort: ['count,desc']
+      },
+      {
+        paramsSerializer: { indexes: null }
+      }
+    );
   });
 
   it('should handle null response correctly', async () => {
@@ -137,17 +127,19 @@ describe('getDebtPositionTypeWithCount', () => {
     });
 
     const organizationId = 123;
-    const query = { page: 0, size: 10 };
+    const query: DebtPositionTypeWithCountFilteredRequest = {
+      filters: {},
+      pagination: { page: 0, size: 10 },
+      sort: []
+    };
 
     const { result } = renderHook(() =>
-      getDebtPositionTypeWithCount(organizationId, query)
+      getDebtPositionTypeWithCount({ organizationId })
     );
 
-    await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true);
-    });
+    const data = await result.current.mutateAsync(query);
 
-    expect(result.current.data).toBeNull();
+    expect(data).toBeNull();
     expect(parseAndLog).not.toHaveBeenCalled();
   });
 });
