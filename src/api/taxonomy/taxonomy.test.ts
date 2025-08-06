@@ -179,8 +179,6 @@ describe('getTaxonomies', () => {
     });
 
     expect(buildQueryParams).toHaveBeenCalledWith(query);
-    expect(apiMock).toHaveBeenCalledWith('mock-query-string', {
-      paramsSerializer: { indexes: null }
-    });
+    expect(apiMock).toHaveBeenCalledWith('mock-query-string');
   });
 });

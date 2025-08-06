@@ -10,38 +10,12 @@ import roles from './roles';
 import filtersValidation from './filtersValidation';
 import dialog from './dialog';
 import URI from './URI';
-import queryString from 'query-string';
-import { CustomParamsSerializer } from 'axios';
-
-/** A global custom parameters serializer:
- * - null value and empty string parameters are strippef off.
- * - arrays separated by comma.
- * - undefined parameters are always skipped.
- *
- * @example
- * const params = {
- *  a: "",
- *  b: 'test',
- *  c: null,
- *  d: [1, 2],
- *  e: undefined
- * };
- *
- * console.log(paramsSerializer(params))
- * => "b=test&d=1,2"
- *  */
-const paramsSerializer: CustomParamsSerializer = (params) =>
-  queryString.stringify(params, {
-    skipNull: true,
-    arrayFormat: 'comma',
-    skipEmptyString: true
-  });
 
 export default {
   apiClient: new Api({
     baseURL: config.baseURL,
     timeout: config.apiTimeout,
-    paramsSerializer
+    paramsSerializer: config.paramsSerializer
   }),
   fileshareClient: new FileshareApi({
     baseURL: config.fileshareURL,
