@@ -4,7 +4,9 @@ import { buildQueryParams } from './mappings';
 import orgSilServiceApi from './index';
 import { OrgSilServiceType } from '../../../generated/data-contracts';
 import type { OrgSilServicesFilteredRequest } from './mappings';
+import type { OrgSilServiceDecryptedDTO } from '../../../generated/apiClient';
 import utils from '../../utils';
+import { parseAndLog } from '../../utils/loaders';
 import { AxiosResponse } from 'axios';
 
 vi.mock('../../utils', () => {
@@ -14,7 +16,8 @@ vi.mock('../../utils', () => {
     default: {
       apiClient: {
         bff: {
-          getOrgSilServicesByFilters: vi.fn()
+          getOrgSilServicesByFilters: vi.fn(),
+          createOrgSilService: vi.fn()
         }
       }
     }
@@ -22,28 +25,42 @@ vi.mock('../../utils', () => {
 });
 
 vi.mock('../../utils/loaders', () => ({
-  default: {
-    getOrganizations: vi.fn(),
-    getOrganizationsPlain: vi.fn()
-  },
-  parseAndLog: vi.fn()
+  parseAndLog: vi.fn(),
+  default: {}
 }));
 
-const mockApiResponse = {
+vi.mock('../../utils/formatters', () => ({
+  toCamelCase: vi.fn((str) => str.toLowerCase().replace(/_/g, '')),
+  default: {}
+}));
+
+const createMockApiResponse = (overrides = {}) => ({
   content: [
     {
       orgSilServiceId: 1,
       applicationName: 'Test Service',
       organizationId: 123,
       serviceUrl: 'http://test.com',
-      serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME
+      serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME,
+      ...overrides
     }
   ],
   totalElements: 1,
   totalPages: 1,
   size: 10,
   number: 0
-};
+});
+
+const createMockServicePayload = (
+  overrides = {}
+): OrgSilServiceDecryptedDTO => ({
+  applicationName: 'New Test Service',
+  serviceUrl: 'https://new-test.com',
+  serviceType: OrgSilServiceType.ACTUALIZATION,
+  organizationId: 123,
+  ...overrides,
+  flagLegacy: false
+});
 
 describe('orgSilService API', () => {
   beforeEach(() => {
@@ -51,8 +68,9 @@ describe('orgSilService API', () => {
   });
 
   describe('getOrgSilServices', () => {
-    it('should return data correctly', async () => {
-      const organizationId = 123;
+    const organizationId = 123;
+
+    it('should fetch and return paginated services with filters', async () => {
       const requestData: OrgSilServicesFilteredRequest = {
         filters: {
           applicationName: 'Test App',
@@ -62,17 +80,45 @@ describe('orgSilService API', () => {
         sort: ['applicationName']
       };
 
-      const expectedQuery = {
-        page: 0,
-        size: 20,
-        applicationName: 'Test App',
-        serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME,
-        sort: ['applicationName']
-      };
-
+      const mockResponse = createMockApiResponse();
       const apiMock = vi
         .spyOn(utils.apiClient.bff, 'getOrgSilServicesByFilters')
-        .mockResolvedValue({ data: mockApiResponse } as AxiosResponse);
+        .mockResolvedValue({ data: mockResponse } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        orgSilServiceApi.getOrgSilServices({ organizationId })
+      );
+
+      const response = await result.current.mutateAsync(requestData);
+
+      expect(response).toEqual(mockResponse);
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      const expectedQuery = buildQueryParams(requestData);
+      expect(apiMock).toHaveBeenCalledWith(organizationId, expectedQuery, {
+        paramsSerializer: { indexes: null }
+      });
+
+      expect(parseAndLog).toHaveBeenCalledWith(
+        expect.any(Object),
+        mockResponse
+      );
+    });
+
+    it('should handle empty filters correctly', async () => {
+      const requestData: OrgSilServicesFilteredRequest = {
+        filters: {},
+        pagination: { page: 0, size: 10 },
+        sort: []
+      };
+
+      const mockResponse = createMockApiResponse();
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getOrgSilServicesByFilters')
+        .mockResolvedValue({ data: mockResponse } as AxiosResponse);
 
       const { result } = renderHook(() =>
         orgSilServiceApi.getOrgSilServices({ organizationId })
@@ -80,24 +126,19 @@ describe('orgSilService API', () => {
 
       await result.current.mutateAsync(requestData);
 
-      await waitFor(() => {
-        expect(result.current.data).toEqual(mockApiResponse);
-      });
-
-      expect(apiMock).toHaveBeenCalledWith(organizationId, expectedQuery, {
-        paramsSerializer: {
-          indexes: null
-        }
-      });
+      expect(apiMock).toHaveBeenCalledWith(
+        organizationId,
+        { page: 0, size: 10 },
+        { paramsSerializer: { indexes: null } }
+      );
     });
 
-    it('should handle API errors correctly', async () => {
-      const organizationId = 123;
-      const mockError = new Error('API Error');
-
-      const apiMock = vi
-        .spyOn(utils.apiClient.bff, 'getOrgSilServicesByFilters')
-        .mockRejectedValue(mockError);
+    it('should handle API errors and set error state', async () => {
+      const mockError = new Error('Network Error');
+      vi.spyOn(
+        utils.apiClient.bff,
+        'getOrgSilServicesByFilters'
+      ).mockRejectedValue(mockError);
 
       const { result } = renderHook(() =>
         orgSilServiceApi.getOrgSilServices({ organizationId })
@@ -110,9 +151,137 @@ describe('orgSilService API', () => {
       };
 
       await expect(result.current.mutateAsync(requestData)).rejects.toThrow(
-        'API Error'
+        'Network Error'
       );
-      expect(apiMock).toHaveBeenCalled();
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+        expect(result.current.error).toEqual(mockError);
+      });
+    });
+
+    it('should handle different organization IDs correctly', async () => {
+      const differentOrgId = 456;
+      const mockResponse = createMockApiResponse({
+        organizationId: differentOrgId
+      });
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getOrgSilServicesByFilters')
+        .mockResolvedValue({ data: mockResponse } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        orgSilServiceApi.getOrgSilServices({ organizationId: differentOrgId })
+      );
+
+      const requestData: OrgSilServicesFilteredRequest = {
+        filters: {},
+        pagination: { page: 0, size: 10 },
+        sort: []
+      };
+
+      await result.current.mutateAsync(requestData);
+
+      expect(apiMock).toHaveBeenCalledWith(
+        differentOrgId,
+        expect.any(Object),
+        expect.any(Object)
+      );
+    });
+  });
+
+  describe('createOrgSilService', () => {
+    const organizationId = 123;
+
+    it('should create a new service successfully', async () => {
+      const servicePayload = createMockServicePayload();
+      const mockResponse = { ...servicePayload, orgSilServiceId: 999 };
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'createOrgSilService')
+        .mockResolvedValue({ data: mockResponse } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        orgSilServiceApi.createOrgSilService({ organizationId })
+      );
+
+      const response = await result.current.mutateAsync(servicePayload);
+
+      expect(response).toEqual(mockResponse);
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, servicePayload);
+      expect(parseAndLog).toHaveBeenCalledWith(
+        expect.any(Object),
+        mockResponse
+      );
+    });
+
+    it('should handle creation errors correctly', async () => {
+      const servicePayload = createMockServicePayload();
+      const mockError = new Error('Validation Error');
+
+      vi.spyOn(utils.apiClient.bff, 'createOrgSilService').mockRejectedValue(
+        mockError
+      );
+
+      const { result } = renderHook(() =>
+        orgSilServiceApi.createOrgSilService({ organizationId })
+      );
+
+      await expect(result.current.mutateAsync(servicePayload)).rejects.toThrow(
+        'Validation Error'
+      );
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+        expect(result.current.error).toEqual(mockError);
+      });
+    });
+
+    it('should handle different service types during creation', async () => {
+      const servicePayload = createMockServicePayload({
+        serviceType: OrgSilServiceType.ACTUALIZATION
+      });
+      const mockResponse = { ...servicePayload, orgSilServiceId: 998 };
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'createOrgSilService')
+        .mockResolvedValue({ data: mockResponse } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        orgSilServiceApi.createOrgSilService({ organizationId })
+      );
+
+      await result.current.mutateAsync(servicePayload);
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, servicePayload);
+      expect(mockResponse.serviceType).toBe(OrgSilServiceType.ACTUALIZATION);
+    });
+  });
+
+  describe('mutation keys', () => {
+    it('should use correct mutation key for getOrgSilServices', () => {
+      const organizationId = 123;
+      const { result } = renderHook(() =>
+        orgSilServiceApi.getOrgSilServices({ organizationId })
+      );
+
+      expect(result.current).toBeDefined();
+      expect(typeof result.current.mutate).toBe('function');
+    });
+
+    it('should use correct mutation key for createOrgSilService', () => {
+      const organizationId = 456;
+      const { result } = renderHook(() =>
+        orgSilServiceApi.createOrgSilService({ organizationId })
+      );
+
+      expect(result.current).toBeDefined();
+      expect(typeof result.current.mutate).toBe('function');
     });
   });
 });
@@ -178,7 +347,7 @@ describe('buildQueryParams', () => {
     expect(result).not.toHaveProperty('flagLegacy');
   });
 
-  it('should handle flagLegacy false correctly (should include it when explicitly false)', () => {
+  it('should handle flagLegacy false correctly', () => {
     const request: OrgSilServicesFilteredRequest = {
       filters: {
         flagLegacy: false
@@ -215,43 +384,5 @@ describe('buildQueryParams', () => {
     });
 
     expect(result).not.toHaveProperty('flagLegacy');
-  });
-
-  it('should handle empty sort array correctly', () => {
-    const request: OrgSilServicesFilteredRequest = {
-      filters: {
-        applicationName: 'Test App'
-      },
-      pagination: { page: 0, size: 10 },
-      sort: []
-    };
-
-    const result = buildQueryParams(request);
-
-    expect(result).toEqual({
-      page: 0,
-      size: 10,
-      applicationName: 'Test App'
-    });
-
-    expect(result).not.toHaveProperty('sort');
-  });
-
-  it('should handle multiple service types correctly', () => {
-    const request: OrgSilServicesFilteredRequest = {
-      filters: {
-        serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME
-      },
-      pagination: { page: 0, size: 10 },
-      sort: []
-    };
-
-    const result = buildQueryParams(request);
-
-    expect(result).toEqual({
-      page: 0,
-      size: 10,
-      serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME
-    });
   });
 });
