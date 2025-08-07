@@ -105,8 +105,6 @@ const ClassificationsSearchResults = () => {
       >
         <SearchResultsDataGrid
           data={classifications.query.data as PagedTreasuredClassification}
-          onSortChange={classifications.onSortChange}
-          onPaginationChange={classifications.handlePaginationChange}
         />
       </Grid>
 

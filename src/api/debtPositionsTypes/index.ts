@@ -1,42 +1,35 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
-import utils from '../utils';
-import { parseAndLog } from '../utils/loaders';
+import utils from '../../utils';
+import { parseAndLog } from '../../utils/loaders';
 import {
   debtPositionTypeSchema,
   pagedDebtPositionTypeWithCountSchema
-} from '../../generated/zod-schema';
+} from '../../../generated/zod-schema';
 import {
   DebtPositionTypePatchRequestBody,
   DebtPositionTypeRequestBody
-} from '../../generated/data-contracts';
+} from '../../../generated/data-contracts';
+import {
+  buildQueryParams,
+  DebtPositionTypeWithCountFilteredRequest
+} from './mappings';
 
-type DebtPositionTypeWithCountParams = Parameters<
-  typeof utils.apiClient.bff.getDebtPositionTypeWithCount
->;
-export type DebtPositionTypeWithCountQuery = DebtPositionTypeWithCountParams[1];
-export type DebtPositionTypeWithCountRequest = {
-  organizationId: DebtPositionTypeWithCountParams[0];
-  query: DebtPositionTypeWithCountQuery;
-};
-
-export const getDebtPositionTypeWithCount = (
-  organizationId: number,
-  query: {
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
-  }
-) =>
-  useQuery({
-    queryKey: ['getDebtPositionTypeWithCount', organizationId, query],
-    queryFn: async () => {
+export const getDebtPositionTypeWithCount = ({
+  organizationId
+}: {
+  organizationId: number;
+}) =>
+  useMutation({
+    mutationKey: ['getDebtPositionTypeWithCount', organizationId],
+    mutationFn: async (args: DebtPositionTypeWithCountFilteredRequest) => {
+      const query = buildQueryParams(args);
       const { data: response } =
         await utils.apiClient.bff.getDebtPositionTypeWithCount(
           organizationId,
           query,
+          // repeat array params as query string
           {
             paramsSerializer: {
-              // repeat array params as query string
               indexes: null
             }
           }

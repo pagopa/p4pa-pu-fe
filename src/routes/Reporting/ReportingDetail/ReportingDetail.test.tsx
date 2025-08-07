@@ -1,26 +1,16 @@
-import { useParams } from 'react-router';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import {
   fireEvent,
   render,
   screen,
   waitFor
 } from '../../../__tests__/renderers';
+import { useNavigate, useParams } from 'react-router';
 import { getPaymentsReportingRows } from '../../../api/reporting';
-import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import ReportingDetail from './ReportingDetail';
-
-i18nTestSetup({
-  'reportingDetail.reportingIdOrIUF': 'Reporting ID/IUF',
-  'reportingDetail.regulationId': 'Regulation ID',
-  'commons.summary': 'Summary',
-  'commons.payments': 'Payments',
-  'commons.detail': 'Detail',
-  'commons.filters.filterResults': 'Filter',
-  'commons.files.downloadFlow': 'Download Flow',
-  'commons.searchIUV': 'Search IUV'
-});
+import utils from '../../../utils';
+import { PageRoutes } from '../../../routes';
 
 const mockData = {
   iuf: 'TEST-IUF-123',
@@ -52,8 +42,7 @@ vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>();
   return {
     ...actual,
-    useParams: vi.fn().mockReturnValue({ id: 'TEST-IUF-123' }),
-    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()]),
+    useParams: vi.fn(),
     useNavigate: vi.fn(),
     Link: ({ children }: { children: React.ReactNode }) => children,
     generatePath: vi.fn().mockReturnValue('/mock-path')
@@ -63,7 +52,7 @@ vi.mock('react-router', async (importOriginal) => {
 vi.mock('../../../store/GlobalStore', () => ({
   useStore: () => ({
     state: {
-      ORGANIZATION_ID: 3,
+      organizationId: 3,
       APP_STATE: { loading: false, customBreadcrumbsItems: [] }
     },
     setState: vi.fn()
@@ -71,25 +60,51 @@ vi.mock('../../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
-vi.mock('../../../routes', () => ({
-  PageRoutes: {
-    RESPONSES_ERROR: 'RESPONSES_ERROR',
-    REPORTING_INDEX: 'REPORTING_INDEX',
-    REPORTING_DETAIL: 'REPORTING_DETAIL'
-  }
+vi.mock('../../../utils', async () => {
+  const actualUtils: any = await vi.importActual('../../../utils');
+  return {
+    ...actualUtils,
+    default: {
+      ...actualUtils.default,
+      URI: {
+        decode: vi.fn(() => ({ iuv: '' }))
+      }
+    }
+  };
+});
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const mockMutateAsync = vi.fn((_filters: any) =>
+  Promise.resolve({
+    data: { content: [mockData], totalPages: 1, totalElements: 1 }
+  })
+);
+
+vi.mock('../../../hooks/useSearch', () => ({
+  useSearch: vi.fn(() => ({
+    query: {
+      data: { content: [mockData], totalPages: 1, totalElements: 1 },
+      isLoading: false,
+      isPending: false,
+      isError: false,
+      error: null,
+      mutateAsync: mockMutateAsync
+    },
+    applyFilters: (filters: any) =>
+      mockMutateAsync({ filters, pagination: { page: 0, size: 10 }, sort: [] })
+  }))
 }));
 
 describe('ReportingDetail Page', () => {
+  const mockUseParams = vi.mocked(useParams);
+  const mockUseNavigate = vi.mocked(useNavigate);
+  const mockDecode = utils.URI.decode as unknown as Mock;
+
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useParams as ReturnType<typeof vi.fn>).mockReturnValue({
-      id: mockData.iuf
-    });
-
-    (
-      getPaymentsReportingRows as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
+    mockUseParams.mockReturnValue({ id: mockData.iuf });
+    (getPaymentsReportingRows as unknown as Mock).mockReturnValue({
       data: {
         content: [mockData],
         totalPages: 1,
@@ -97,45 +112,83 @@ describe('ReportingDetail Page', () => {
       },
       isLoading: false
     });
+    mockDecode.mockReturnValue({ iuv: '' });
+
+    const navigateMock = vi.fn();
+    mockUseNavigate.mockReturnValue(navigateMock);
   });
 
-  it('renders Reporting Detail without crashing', () => {
+  it('renders Reporting Detail without crashing and displays content', () => {
     render(<ReportingDetail />);
 
-    expect(screen.getAllByText(mockData.iuf)).toHaveLength(2);
+    expect(screen.getAllByText(mockData.iuf)).toHaveLength(2); // header and summary
     expect(
       screen.getByText(mockData.regulationUniqueIdentifier)
     ).toBeInTheDocument();
 
-    expect(screen.getByText('Summary')).toBeInTheDocument();
-    expect(screen.getByText('Payments')).toBeInTheDocument();
-    expect(screen.getByText('Detail')).toBeInTheDocument();
+    expect(screen.getByText('commons.summary')).toBeInTheDocument();
+    expect(screen.getByText('commons.payments')).toBeInTheDocument();
+    expect(screen.getByText('commons.detail')).toBeInTheDocument();
 
     expect(screen.getByLabelText('results-table')).toBeInTheDocument();
 
-    expect(screen.getByText('Filter')).toBeInTheDocument();
+    expect(
+      screen.getByText('commons.filters.filterResults')
+    ).toBeInTheDocument();
 
-    expect(screen.getByText('Download Flow')).toBeInTheDocument();
+    expect(screen.getByText('commons.files.downloadFlow')).toBeInTheDocument();
   });
 
   it('applies filters when filter button is clicked', async () => {
     render(<ReportingDetail />);
 
     const searchInput = screen.getByRole('textbox', {
-      name: 'Search IUV'
+      name: 'commons.searchIUV'
     });
     fireEvent.change(searchInput, { target: { value: 'TEST-IUV' } });
 
-    const filterButton = screen.getByText('Filter');
+    const filterButton = screen.getByText('commons.filters.filterResults');
     fireEvent.click(filterButton);
 
     await waitFor(() => {
-      expect(getPaymentsReportingRows).toHaveBeenCalledWith(
-        expect.any(Number),
-        expect.any(String),
-        expect.objectContaining({ iuv: 'TEST-IUV' }),
-        expect.any(Object)
+      expect(mockMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: expect.objectContaining({ iuv: 'TEST-IUV' }),
+          pagination: expect.any(Object),
+          sort: expect.any(Array)
+        })
       );
+    });
+  });
+
+  it('redirects to error page if id param is missing', () => {
+    const navigateMock = vi.fn();
+    mockUseNavigate.mockReturnValue(navigateMock);
+    mockUseParams.mockReturnValue({ id: undefined });
+
+    const { container } = render(<ReportingDetail />);
+    expect(container.innerHTML).toBe(''); // returns null immediately
+    expect(navigateMock).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR);
+  });
+
+  it('redirects to error page if reportingRows query errors', async () => {
+    const { useSearch } = await import('../../../hooks/useSearch');
+    (useSearch as any).mockReturnValue({
+      query: {
+        isError: true,
+        error: new Error('Error fetching data'),
+        mutateAsync: mockMutateAsync
+      },
+      applyFilters: vi.fn()
+    });
+
+    const navigateMock = vi.fn();
+    mockUseNavigate.mockReturnValue(navigateMock);
+
+    render(<ReportingDetail />);
+
+    await waitFor(() => {
+      expect(navigateMock).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR);
     });
   });
 });

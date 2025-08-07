@@ -10,9 +10,8 @@ import {
 } from '../../../../generated/apiClient';
 
 vi.mock('../../../components/DataGrid/CustomDataGrid', () => ({
-  default: ({ rows, columns, loading }: any) => (
+  default: ({ rows, columns }: any) => (
     <div data-testid="custom-data-grid">
-      {loading && <div data-testid="loading">Loading...</div>}
       {rows.map((row: any, index: number) => {
         const actionsColumn = columns.find(
           (col: any) => col.field === 'actions'
@@ -51,7 +50,6 @@ vi.mock('react-i18next', () => ({
 
 describe('ServiceDataGrid', () => {
   const theme = createTheme();
-  const mockOnPaginationChange = vi.fn();
   const mockOnRowClick = vi.fn();
 
   const mockData: PagedOrgSilServiceView = {
@@ -79,8 +77,6 @@ describe('ServiceDataGrid', () => {
 
   const defaultProps = {
     data: mockData,
-    loading: false,
-    onPaginationChange: mockOnPaginationChange,
     onRowClick: mockOnRowClick
   };
 

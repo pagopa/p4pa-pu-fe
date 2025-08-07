@@ -2,7 +2,7 @@ import { Grid, Stack, useTheme } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate } from 'react-router';
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import FilterContainer from '../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { BaseFilterValues } from '../../models/Filters';
@@ -18,7 +18,6 @@ import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../routes';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
-import { GridSortModel } from '@mui/x-data-grid';
 import { noFilterSetted } from '../../utils/filtersValidation';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 import utils from '../../utils';
@@ -80,24 +79,6 @@ export const DebtPositionResults = () => {
     onFilter: applyFilters
   });
 
-  // Sort state
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
-
-  // Handle sort changes
-  const handleSortModelChange = useCallback(
-    (model: GridSortModel) => {
-      setSortModel(model);
-
-      const apiSort = model.map(
-        (item) => `${item.field},${item.sort === 'desc' ? 'DESC' : 'ASC'}`
-      );
-
-      debtPosition.setSort(apiSort.length > 0 ? apiSort : []);
-      debtPosition.applyFilters(filterValues);
-    },
-    [debtPosition]
-  );
-
   // Select DataGrid component based on searchType
   const DataGrid =
     searchType === SearchType.IUV ? IUVDataGrid : DebtPositionsDataGrid;
@@ -153,9 +134,6 @@ export const DebtPositionResults = () => {
               debtPosition.query.data as PagedInstallmentView &
                 PagedDebtPositionView
             }
-            onSortChange={handleSortModelChange}
-            sortModel={sortModel}
-            onPaginationChange={debtPosition.handlePaginationChange}
           />
         </Grid>
       </Stack>

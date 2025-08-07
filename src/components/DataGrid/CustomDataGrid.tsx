@@ -7,15 +7,10 @@ import {
   GridSortModel
 } from '@mui/x-data-grid';
 import { theme } from '@pagopa/mui-italia';
-import {
-  useEffect,
-  useCallback,
-  forwardRef,
-  useImperativeHandle,
-  useMemo
-} from 'react';
+import { useCallback } from 'react';
 import CustomPagination from './CustomPagination';
-import { useDataGridPaginationWithUrl } from '../../hooks/useDataGridPaginationWithUrl';
+import utils from '../../utils';
+import { useHashParamsListener } from '../../hooks/useHashParamsListener';
 
 const StyledDataGrid = styled(DataGrid)({
   border: 'none !important',
@@ -28,218 +23,128 @@ const StyledDataGrid = styled(DataGrid)({
   backgroundColor: theme.palette.background.paper
 });
 
-export type SmartPaginationConfig = {
-  initialPage?: number;
-  initialSize?: number;
-  sizeOptions?: Array<number>;
-  backendData?: {
-    totalElements?: number;
-    totalPages?: number;
-    number?: number; // Current page (0-based)
-    size?: number;
-  };
-  onFiltersApplied?: () => void;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
-};
-
-export type CustomDataGridRef = {
-  resetPagination: () => void;
-  getCurrentPage: () => number;
-  getCurrentSize: () => number;
-  goToPage: (page: number) => void;
-  setPageSize: (size: number) => void;
-};
-
 export type CustomDataGridProps<T extends GridValidRowModel> = {
   rows: Array<T>;
   columns: Array<GridColDef>;
-  sortModel?: GridSortModel;
-  onSortModelChange?: (model: GridSortModel) => void;
+  initialPage?: number; // 1-based indexing as fallback
+  initialPageSize?: number;
+  pageSizeOptions?: Array<number>;
+  initialSortModel?: GridSortModel;
+  totalPages: number;
+} & Omit<
+  DataGridProps,
+  | 'pagination'
+  | 'paginationModel'
+  | 'onPaginationModelChange'
+  | 'sortModel'
+  | 'onSortModelChange'
+>;
 
-  // Legacy support for backward compatibility
-  customPagination?: {
-    sizePageOptions?: Array<number>;
-    defaultPageOption?: number;
-    totalPages?: number;
-    currentPage?: number;
-    onPageChange?: (page: number) => void;
-    onPageSizeChange?: (pageSize: number) => void;
+const CustomDataGrid = <T extends GridValidRowModel>({
+  rows,
+  columns,
+  initialPage = 1,
+  initialPageSize = 10,
+  pageSizeOptions = [5, 10, 20],
+  initialSortModel = [],
+  totalPages = 1,
+  ...restProps
+}: CustomDataGridProps<T>) => {
+  // Read from URL hash params directly
+  const {
+    page: hashPage,
+    size: hashSize,
+    sortField: hashSort,
+    sortDirection: hashSortDirection,
+    ...hashParams
+  } = useHashParamsListener<Record<string, unknown>>();
+
+  const getPageFromHash = () => {
+    const page = hashPage ? Number(hashPage) : initialPage;
+    return isNaN(page) || page < 1 ? initialPage : page;
   };
 
-  // Smart pagination configuration with URL sync
-  smartPagination?: SmartPaginationConfig;
-} & Omit<DataGridProps, 'rows' | 'columns'>;
+  const getSizeFromHash = () => {
+    const size = hashSize ? Number(hashSize) : initialPageSize;
+    return isNaN(size) || size < 1 ? initialPageSize : size;
+  };
 
-const CustomDataGrid = forwardRef<
-  CustomDataGridRef,
-  CustomDataGridProps<GridValidRowModel>
->(
-  (
-    {
-      rows,
-      columns,
-      sortModel,
-      onSortModelChange,
-      customPagination,
-      smartPagination,
-      ...restProps
-    },
-    ref
-  ) => {
-    const isLegacyMode = !smartPagination || customPagination;
+  const getSortModelFromHash = (): GridSortModel => {
+    const sortField = typeof hashSort === 'string' ? hashSort : undefined;
+    const sortDirection =
+      typeof hashSortDirection === 'string' &&
+      (hashSortDirection === 'asc' || hashSortDirection === 'desc')
+        ? (hashSortDirection as 'asc' | 'desc')
+        : undefined;
+    return sortField && sortDirection
+      ? [{ field: sortField, sort: sortDirection }]
+      : initialSortModel;
+  };
+  const page = getPageFromHash();
+  const pageSize = getSizeFromHash();
+  const sortModel = getSortModelFromHash();
 
-    if (isLegacyMode) {
-      return (
-        <StyledDataGrid
-          rows={rows}
-          columns={columns}
-          pagination
-          disableRowSelectionOnClick
-          sortModel={sortModel}
-          onSortModelChange={onSortModelChange}
-          slots={{
-            pagination: () => (
-              <CustomPagination
-                sizePageOptions={customPagination?.sizePageOptions}
-                defaultPageOption={customPagination?.defaultPageOption}
-                totalPages={customPagination?.totalPages}
-                currentPage={customPagination?.currentPage}
-                onPageChange={customPagination?.onPageChange}
-                onPageSizeChange={customPagination?.onPageSizeChange}
-              />
-            )
-          }}
-          {...restProps}
-        />
-      );
-    }
+  // Write updated params into URL hash
+  const updateHashParams = useCallback(
+    (newPage: number, newSize: number, newSortModel: GridSortModel) => {
+      const sort =
+        newSortModel.length > 0
+          ? {
+              sortField: newSortModel[0].field,
+              sortDirection: newSortModel[0].sort
+            }
+          : {};
 
-    const memoizedBackendData = useMemo(() => {
-      if (!smartPagination?.backendData) {
-        return null;
-      }
-
-      const { backendData } = smartPagination;
-
-      if (
-        typeof backendData.number !== 'number' ||
-        typeof backendData.size !== 'number'
-      ) {
-        return null;
-      }
-
-      const result = {
-        totalElements: backendData.totalElements || 0,
-        totalPages: backendData.totalPages || 0,
-        number: backendData.number,
-        size: backendData.size
+      const paramsObj = {
+        ...hashParams,
+        page: newPage,
+        size: newSize,
+        ...sort
       };
 
-      return result;
-    }, [
-      // Create a stable reference by stringifying the values
-      JSON.stringify({
-        totalElements: smartPagination?.backendData?.totalElements,
-        totalPages: smartPagination?.backendData?.totalPages,
-        number: smartPagination?.backendData?.number,
-        size: smartPagination?.backendData?.size
-      })
-    ]);
+      const encoded = utils.URI.encode(paramsObj);
+      utils.URI.set(encoded);
+    },
+    [hashParams]
+  );
 
-    // Hook per URL sync
-    const urlPagination = useDataGridPaginationWithUrl({
-      initialPage: smartPagination.initialPage || 0,
-      initialSize: smartPagination.initialSize || 10,
-      totalElements: memoizedBackendData?.totalElements || 0,
-      onPaginationChange: smartPagination.onPaginationChange
-    });
+  const handlePageChange = (newPage: number) => {
+    updateHashParams(newPage, pageSize, sortModel);
+  };
 
-    // Auto-sync with backend data when available (URL sync only)
-    useEffect(() => {
-      // Skip sync if backend data is empty/invalid (loading state)
-      if (
-        !memoizedBackendData ||
-        !urlPagination ||
-        memoizedBackendData.totalElements === 0 ||
-        memoizedBackendData.totalPages === 0
-      ) {
-        return;
-      }
+  const handlePageSizeChange = (newSize: number) => {
+    updateHashParams(page, newSize, sortModel);
+  };
 
-      if (!smartPagination?.onPaginationChange) {
-        // No callback - full auto-sync
-        urlPagination.syncWithBackendData(memoizedBackendData);
-      } else {
-        // With callback - validate invalid pages only
-        const currentUrlPage = parseInt(
-          new URLSearchParams(window.location.search).get('page') || '1'
-        );
+  const handleSortModelChange = (newSortModel: GridSortModel) => {
+    updateHashParams(page, pageSize, newSortModel);
+  };
 
-        if (
-          currentUrlPage > memoizedBackendData.totalPages &&
-          memoizedBackendData.totalPages > 0
-        ) {
-          urlPagination.syncWithBackendData(memoizedBackendData);
-        }
-      }
-    }, [
-      memoizedBackendData,
-      smartPagination?.onPaginationChange,
-      urlPagination?.syncWithBackendData
-    ]);
-
-    // Handler for reset pagination on filters
-    const handleFiltersApplied = useCallback(() => {
-      if (urlPagination) {
-        urlPagination.handlePageChange(1);
-      }
-      smartPagination?.onFiltersApplied?.();
-    }, [urlPagination, smartPagination?.onFiltersApplied]);
-
-    // Expose API through ref for programmatic control
-    useImperativeHandle(
-      ref,
-      () => ({
-        resetPagination: handleFiltersApplied,
-        getCurrentPage: () => urlPagination?.pagination.currentPage || 1,
-        getCurrentSize: () => urlPagination?.pagination.size || 10,
-        goToPage: (page: number) => {
-          urlPagination?.handlePageChange(page);
-        },
-        setPageSize: (size: number) => {
-          urlPagination?.handlePageSizeChange(size);
-        }
-      }),
-      [urlPagination, handleFiltersApplied]
-    );
-
-    return (
-      <StyledDataGrid
-        rows={rows}
-        columns={columns}
-        pagination
-        disableRowSelectionOnClick
-        sortModel={sortModel}
-        onSortModelChange={onSortModelChange}
-        slots={{
-          pagination: () => (
-            <CustomPagination
-              sizePageOptions={smartPagination.sizeOptions || [5, 10, 20]}
-              defaultPageOption={urlPagination.pagination.size}
-              totalPages={smartPagination.backendData?.totalPages || 1}
-              currentPage={urlPagination.pagination.currentPage}
-              onPageChange={urlPagination.handlePageChange}
-              onPageSizeChange={urlPagination.handlePageSizeChange}
-            />
-          )
-        }}
-        {...restProps}
-      />
-    );
-  }
-);
-
-CustomDataGrid.displayName = 'CustomDataGrid';
+  return (
+    <StyledDataGrid
+      rows={rows}
+      columns={columns}
+      pagination
+      paginationMode="client"
+      sortingMode="client"
+      sortModel={sortModel}
+      onSortModelChange={handleSortModelChange}
+      slots={{
+        pagination: () => (
+          <CustomPagination
+            sizePageOptions={pageSizeOptions}
+            defaultPageOption={pageSize}
+            totalPages={totalPages}
+            currentPage={page}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+          />
+        )
+      }}
+      {...restProps}
+    />
+  );
+};
 
 export default CustomDataGrid;
 

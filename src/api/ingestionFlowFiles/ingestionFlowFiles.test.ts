@@ -1,18 +1,18 @@
-import utils from '../utils';
-import { act, renderHook } from '../__tests__/renderers';
+import utils from '../../utils';
+import { act, renderHook } from '../../__tests__/renderers';
 import {
   getIngestionFlowFile,
   uploadIngestionFlowFile
-} from './ingestionFlowFiles';
+} from '../ingestionFlowFiles';
 import {
   IngestionFlowFileType,
   UploadIngestionFlowFileResponseDTO
-} from '../../generated/fileshare/fileshareClient';
+} from '../../../generated/fileshare/fileshareClient';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
-import * as formatters from '../utils/formatters';
+import * as formatters from '../../utils/formatters';
 
-vi.mock('../utils', () => ({
+vi.mock('../../utils', () => ({
   default: {
     fileshareClient: {
       organization: {
@@ -23,7 +23,7 @@ vi.mock('../utils', () => ({
   }
 }));
 
-vi.mock('../utils/formatters', () => ({
+vi.mock('../../utils/formatters', () => ({
   extractFilename: vi.fn()
 }));
 

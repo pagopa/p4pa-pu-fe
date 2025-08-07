@@ -52,7 +52,7 @@ vi.mock('../../../routes', () => ({
 }));
 
 describe('ReportingPaymentDetail Page', () => {
-  const mockOrganizationId = '123';
+  const mockOrganizationId = 123;
   const mockIuf = 'iuf123';
   const mockId = '456';
   const mockData = createMock(paymentsReportingDetailDTOSchema);

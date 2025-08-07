@@ -21,11 +21,12 @@ export const TelematicReceipt = () => {
   const [error, setError] = useState<boolean>(false);
 
   const navigateToResults = useCallback(() => {
-    if (!noFilterSetted(filters)) {
+    if (noFilterSetted(filters)) {
+      setError(true);
+    } else {
+      setError(false);
       const params = utils.URI.encode(filters);
       navigate(`${PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS}#${params}`);
-    } else {
-      setError(true);
     }
   }, [filters, navigate]);
 

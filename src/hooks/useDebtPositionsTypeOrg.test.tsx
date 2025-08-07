@@ -81,8 +81,8 @@ describe('useDebtPositionsTypeOrg', () => {
     );
 
     expect(result.current.optionsMap).toEqual([
-      { label: 'Type A', value: 1, flagMandatoryDueDate: undefined },
-      { label: 'Type B', value: 2, flagMandatoryDueDate: undefined }
+      { label: 'Type A', value: '1', flagMandatoryDueDate: undefined },
+      { label: 'Type B', value: '2', flagMandatoryDueDate: undefined }
     ]);
   });
 
@@ -103,8 +103,8 @@ describe('useDebtPositionsTypeOrg', () => {
     );
 
     expect(result.current.optionsMap).toEqual([
-      { label: 'Type A', value: 1, flagMandatoryDueDate: undefined },
-      { label: 'Type B', value: 2, flagMandatoryDueDate: undefined }
+      { label: 'Type A', value: '1', flagMandatoryDueDate: undefined },
+      { label: 'Type B', value: '2', flagMandatoryDueDate: undefined }
     ]);
   });
 

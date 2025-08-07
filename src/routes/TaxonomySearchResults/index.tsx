@@ -58,9 +58,7 @@ const TaxonomySearchResults = () => {
             </Stack>
           </form>
           <TaxonomyDataGrid
-            onSortChange={taxonomies.onSortChange}
             isLoading={taxonomies.query.isPending}
-            onPaginationChange={taxonomies.handlePaginationChange}
             data={
               taxonomies.query.data || {
                 content: [],

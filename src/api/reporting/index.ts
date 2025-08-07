@@ -1,22 +1,23 @@
-import { useQuery } from '@tanstack/react-query';
-import utils from '../utils';
-import { parseAndLog } from '../utils/loaders';
-import { pagedPaymentsReportingRowSchema } from '../../generated/zod-schema';
-
-type PaymentsReportingRowsParams = Parameters<
-  typeof utils.apiClient.bff.getPaymentsReportingRows
->;
-export type PaymentsReportingRowsQuery = PaymentsReportingRowsParams[2];
+import { useMutation } from '@tanstack/react-query';
+import utils from '../../utils';
+import { parseAndLog } from '../../utils/loaders';
+import { pagedPaymentsReportingRowSchema } from '../../../generated/zod-schema';
+import {
+  buildQueryParams,
+  PaymentReportingRowsFilteredRequest
+} from './mappings';
 
 export const getPaymentsReportingRows = (
   organizationId: number,
   iuf: string,
-  query: PaymentsReportingRowsQuery,
   options: { enabled?: boolean } & Record<string, unknown> = {}
 ) => {
-  return useQuery({
-    queryKey: ['getPaymentsReportingRows', organizationId, iuf, query],
-    queryFn: async () => {
+  return useMutation({
+    mutationKey: ['getPaymentsReportingRows', organizationId, iuf],
+    mutationFn: async (args: PaymentReportingRowsFilteredRequest) => {
+      console.debug(args);
+      const query = buildQueryParams(args);
+      console.debug(query);
       const { data: paymentsReportingRows } =
         await utils.apiClient.bff.getPaymentsReportingRows(
           organizationId,

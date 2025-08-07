@@ -54,8 +54,6 @@ describe('ReportingSearchResults', () => {
         isLoading: false
       },
       applyFilters: vi.fn(),
-      onSortChange: vi.fn(),
-      handlePaginationChange: vi.fn(),
       filters: {}
     } as any);
   });
@@ -75,9 +73,7 @@ describe('ReportingSearchResults', () => {
     render(<ReportingSearchResults />);
     expect(SearchResultsDataGrid).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: { content: [], totalElements: 0 },
-        onSortChange: expect.any(Function),
-        onPaginationChange: expect.any(Function)
+        data: { content: [], totalElements: 0 }
       }),
       expect.anything()
     );

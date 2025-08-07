@@ -1,7 +1,6 @@
 import {
   GridColDef,
   GridRenderCellParams,
-  GridSortModel,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
@@ -26,26 +25,11 @@ type SearchResultDataRow = {
 
 export type DataGridProps = {
   data: PagedPaymentsReportingView;
-  onSortChange: (model: Array<string>) => void;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
-const SearchResultsDataGrid = ({
-  data,
-  onSortChange,
-  onPaginationChange
-}: DataGridProps) => {
+const SearchResultsDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  const onSort = (model: GridSortModel) => {
-    if (model?.length) {
-      const sort = model.map((item) =>
-        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
-      );
-      onSortChange(sort);
-    }
-  };
 
   const columns: Array<GridColDef> = [
     {
@@ -129,19 +113,7 @@ const SearchResultsDataGrid = ({
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      onSortModelChange={onSort}
-      smartPagination={{
-        initialPage: 0,
-        initialSize: 10,
-        sizeOptions: [5, 10, 20],
-        backendData: {
-          totalElements: data?.totalElements,
-          totalPages: data?.totalPages,
-          number: data?.number,
-          size: data?.size
-        },
-        onPaginationChange
-      }}
+      totalPages={data?.totalPages || 1}
     />
   );
 };

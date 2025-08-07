@@ -51,8 +51,13 @@ export function encode<T extends Record<string, unknown>>(obj: T): string {
 /**
  * Set or update the window's URL fragment parameters without reload.
  */
-const set = (params: string) => {
-  window.history.pushState({}, '', `#${params}`);
+const set = (params: string, opts?: { replace?: boolean }) => {
+  if (opts?.replace) {
+    window.history.replaceState({}, '', `#${params}`);
+  } else {
+    window.history.pushState({}, '', `#${params}`);
+  }
+  window.dispatchEvent(new Event('hashchangeCustom'));
 };
 
 export default {
