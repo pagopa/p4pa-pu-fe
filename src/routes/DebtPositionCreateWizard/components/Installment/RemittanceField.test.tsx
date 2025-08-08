@@ -7,8 +7,9 @@ vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
       const translations: Record<string, string> = {
-        'debtPositionCreateWizard.step3.beneficiary.remittance.label': 'Reason',
-        'debtPositionCreateWizard.step3.beneficiary.remittance.required':
+        'debtPositionCreateWizard.step3.installments.remittance.label':
+          'Reason',
+        'debtPositionCreateWizard.step3.installments.remittance.required':
           'Reason is required'
       };
       return translations[key] || key;

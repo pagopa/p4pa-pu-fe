@@ -15,16 +15,9 @@ export const createStep1GeneralConfigurationSchema = (t: TFunction) =>
     description: z
       .string()
       .nonempty(t('debtPositionCreateWizard.step1.description.required'))
-      .refine(
-        (value) => {
-          const trimmed = value.trim();
-          const wordCount = trimmed.split(/\s+/).length;
-          return wordCount >= 3;
-        },
-        {
-          message: t('debtPositionCreateWizard.step1.minWords')
-        }
-      )
+      .refine((value) => value.trim().length > 0, {
+        message: t('debtPositionCreateWizard.step1.description.required')
+      })
   });
 
 /**
