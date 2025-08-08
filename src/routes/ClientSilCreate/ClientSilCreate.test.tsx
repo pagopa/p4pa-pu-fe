@@ -171,24 +171,6 @@ describe('ClientSilCreate', () => {
     });
   });
 
-  it('validates client name format (alphanumeric, dash, underscore only)', async () => {
-    renderClientSilCreate();
-
-    const clientNameInput = screen
-      .getByTestId('client-name-field')
-      .querySelector('input')!;
-
-    fireEvent.change(clientNameInput, { target: { value: 'invalid@name' } });
-    fireEvent.blur(clientNameInput);
-
-    await waitFor(() => {
-      expect(screen.getByRole('textbox')).toHaveAttribute(
-        'aria-invalid',
-        'true'
-      );
-    });
-  });
-
   it('accepts valid client name format', async () => {
     renderClientSilCreate();
 

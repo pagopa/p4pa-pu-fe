@@ -24,10 +24,6 @@ const clientSilCreateSchema = z.object({
       required_error: 'clientSil.create.fields.clientName.required'
     })
     .min(1, 'clientSil.create.fields.clientName.required')
-    .regex(
-      /^[a-zA-Z0-9-_]*$/,
-      'clientSil.create.fields.clientName.invalidFormat'
-    )
 });
 
 type ClientSilCreateFormData = z.infer<typeof clientSilCreateSchema>;
@@ -154,7 +150,7 @@ export const ClientSilCreate = () => {
           <WizardStepButtons
             onBack={handleBack}
             onNext={handleSave}
-            nextLabel="commons.save"
+            nextLabel="commons.saveOnly"
             backLabel="commons.back"
             disableNext={createClientSilMutation.isPending}
             disableBack={createClientSilMutation.isPending}

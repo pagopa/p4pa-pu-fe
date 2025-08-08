@@ -785,6 +785,7 @@
     },
     "saveDraft": "Salva bozza",
     "save": "Salva modifiche",
+    "saveOnly": "Salva",
     "search": "Cerca",
     "searchCF": "Cerca CF",
     "searchFor": "Cerca per",
@@ -1609,8 +1610,7 @@
           "label": "Nome Client SIL",
           "placeholder": "Tassa seconde case",
           "required": "Il nome del Client SIL è obbligatorio",
-          "maxLength": "Il nome non può superare i 100 caratteri",
-          "invalidFormat": "Il nome può contenere solo lettere, numeri, trattini e underscore, senza spazi"
+          "maxLength": "Il nome non può superare i 100 caratteri"
         }
       },
       "error": {
