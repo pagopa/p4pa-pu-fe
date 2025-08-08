@@ -16,6 +16,8 @@ import {
   OrgSilServiceView,
   PagedOrgSilServiceView
 } from '../../../generated/apiClient';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '..';
 
 const SERVICE_CONFIGS: Record<
   number,
@@ -36,6 +38,7 @@ export const OrgSilServicesPage = () => {
   const {
     state: { organizationId }
   } = useStore();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState(0);
   const [filterValues, setFilterValues] = useState({
@@ -114,9 +117,12 @@ export const OrgSilServicesPage = () => {
   };
 
   const handleRowClick = (row: OrgSilServiceView) => {
-    if (!row) return;
-    console.log(
-      `click on "${row.applicationName}" with id: ${row.orgSilServiceId}`
+    if (!row?.orgSilServiceId) return;
+
+    navigate(
+      generatePath(PageRoutes.ORG_SIL_SERVICE_DETAIL, {
+        orgSilServiceId: row.orgSilServiceId.toString()
+      })
     );
   };
 
