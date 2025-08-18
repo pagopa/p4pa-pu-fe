@@ -54,7 +54,7 @@ export const OrgSilServiceDetailPage = () => {
   return (
     <>
       <TitleComponent
-        title={data ? data.response.applicationName : '-'}
+        title={data?.response?.applicationName || '-'}
         description={t('orgSilServiceDetail.description')}
       />
 

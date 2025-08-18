@@ -1603,7 +1603,7 @@
     },
     "serviceTypes": {
       "paymentNotification": "Notifica Pagamenti",
-      "amountActualization": "Attualizzazione Importi"
+      "amountActualization": "Attualizzazione Importo"
     },
     "authTypes": {
       "basicAuth": "Basic Auth",
