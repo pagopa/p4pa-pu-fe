@@ -46,7 +46,6 @@ vi.mock('./model/OrgSilServiceSectionConfigs', () => ({
   getOrgSilServiceSectionsConfig: vi.fn()
 }));
 
-// -------------------- Test Data --------------------
 const mockOrgSilService: OrgSilServiceDecryptedDTO = {
   orgSilServiceId: 1,
   applicationName: 'Test Payment Service',
@@ -115,7 +114,6 @@ describe('OrgSilServiceDetailPage', () => {
 
     render(<OrgSilServiceDetailPage />);
 
-    // Use more specific selectors to avoid multiple element matches
     expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent(
       'Test Payment Service'
     );
@@ -123,7 +121,6 @@ describe('OrgSilServiceDetailPage', () => {
       screen.getByText('orgSilServiceDetail.description')
     ).toBeInTheDocument();
 
-    // Verify both occurrences exist
     const serviceNameElements = screen.getAllByText('Test Payment Service');
     expect(serviceNameElements).toHaveLength(2);
   });
