@@ -239,10 +239,8 @@ describe('TitleComponent', () => {
     render(<TitleComponent {...props} />);
 
     const iconButton = screen.getByTestId('icon-button-edit');
-    // Verifica che abbia un attributo style con il colore applicato
     const computedStyle = window.getComputedStyle(iconButton);
     expect(computedStyle.color).toBeTruthy();
-    // Oppure verifica che il colore non sia quello di default
     expect(computedStyle.color).not.toBe('');
   });
 
