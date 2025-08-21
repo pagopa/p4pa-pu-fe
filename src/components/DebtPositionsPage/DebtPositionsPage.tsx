@@ -66,18 +66,24 @@ export const DebtPositionsPage = () => {
 
     setShowError(false);
 
+    const filtersWithSearchType = {
+      ...filters[activeTabIndex],
+      searchType:
+        activeTabIndex === 0 ? ('IUV' as const) : ('DEBT_POSITION' as const)
+    };
+
     if (activeTabIndex === 0) {
       navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, {
         state: {
           searchType: SearchType.IUV,
-          filters: filters[activeTabIndex]
+          filters: filtersWithSearchType
         }
       });
     } else {
       navigate(PageRoutes.DEBT_POSITIONS_RESULTS, {
         state: {
           searchType: SearchType.DEBT_POSITION,
-          filters: filters[activeTabIndex]
+          filters: filtersWithSearchType
         }
       });
     }
@@ -85,15 +91,18 @@ export const DebtPositionsPage = () => {
 
   const resetCurrentFilters = useCallback(() => {
     const newFilters = [...filters];
+
     newFilters[activeTabIndex] = {
-      ...newFilters[activeTabIndex],
       [FilterFieldIds.DATE_RANGE]: {
         from: null,
         to: null
       }
     };
+
     setFilters(newFilters);
     setShowError(false);
+
+    resetDates();
   }, [activeTabIndex, filters, resetDates]);
 
   const handleFilterChange = useCallback(
