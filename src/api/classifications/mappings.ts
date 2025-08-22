@@ -1,6 +1,7 @@
 import { format } from 'date-fns/format';
 import { ClassificationsEnum } from '../../../generated/data-contracts';
 import { FilterValues } from '../../models/Filters';
+import { euroToCents } from '../../utils/formatters';
 
 export type ClassificationsFilteredRequest = {
   filters: FilterValues;
@@ -39,7 +40,7 @@ export const buildQueryParams = ({
     regulationDateTo: format(filters.REGULATION_DATE_TO, 'yyyy-MM-dd')
   }),
   ...(filters.AMOUNT && {
-    billAmountCents: filters.AMOUNT * 100
+    billAmountCents: euroToCents(filters.AMOUNT)
   }),
   ...(filters.BILL_DATE_FROM && {
     billDateFrom: format(filters.BILL_DATE_FROM, 'yyyy-MM-dd')
