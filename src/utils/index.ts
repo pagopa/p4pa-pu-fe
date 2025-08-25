@@ -12,7 +12,11 @@ import dialog from './dialog';
 import URI from './URI';
 
 export default {
-  apiClient: new Api({ baseURL: config.baseURL, timeout: config.apiTimeout }),
+  apiClient: new Api({
+    baseURL: config.baseURL,
+    timeout: config.apiTimeout,
+    paramsSerializer: config.paramsSerializer
+  }),
   fileshareClient: new FileshareApi({
     baseURL: config.fileshareURL,
     timeout: config.apiTimeout

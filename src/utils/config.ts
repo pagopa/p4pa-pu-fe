@@ -1,5 +1,7 @@
 import { RootLinkType } from '@pagopa/mui-italia';
 import { z, ZodError } from 'zod';
+import queryString from 'query-string';
+import { CustomParamsSerializer } from 'axios';
 
 /** Useful default values  */
 /** APIHOST default value works in conjunction with the proxy server. See the .proxyrc file */
@@ -36,6 +38,7 @@ type Config = {
   fileshareURL: string;
   apiTimeout: number;
   loginUrl: string;
+  paramsSerializer: CustomParamsSerializer
 };
 
 const pagopaLink: RootLinkType = {
@@ -67,7 +70,30 @@ const config: Config = {
   deployPath: VITE_DEPLOY_PATH,
   loginUrl: VITE_LOGIN_URL,
   /** This array is populated by paths that don't need a auth token */
-  tokenHeaderExcludePaths: ['/auth-callback']
+  tokenHeaderExcludePaths: ['/auth-callback'],
+  /** A global custom parameters serializer:
+   * - null value and empty string parameters are strippef off.
+   * - arrays separated by comma.
+   * - undefined parameters are always skipped.
+   *
+   * @example
+   * const params = {
+   *  a: "",
+   *  b: 'test',
+   *  c: null,
+   *  d: [1, 2],
+   *  e: undefined
+   * };
+   *
+   * console.log(paramsSerializer(params))
+   * => "b=test&d=1,2"
+   *  */
+  paramsSerializer: (params) =>
+    queryString.stringify(params, {
+      skipNull: true,
+      arrayFormat: 'comma',
+      skipEmptyString: true
+    })
 };
 
 export default config;

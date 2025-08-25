@@ -26,13 +26,7 @@ export const getDebtPositionTypeWithCount = ({
       const { data: response } =
         await utils.apiClient.bff.getDebtPositionTypeWithCount(
           organizationId,
-          query,
-          // repeat array params as query string
-          {
-            paramsSerializer: {
-              indexes: null
-            }
-          }
+          query
         );
 
       if (response) {

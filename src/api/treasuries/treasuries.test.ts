@@ -119,11 +119,6 @@ describe('getTreasuries', () => {
     expect(apiMock).toHaveBeenCalledWith(
       params.organizationId,
       'mock-query-string',
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
     );
   });
 

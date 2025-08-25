@@ -74,11 +74,7 @@ describe('getExportFiles', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(result.current.data).toEqual(dataMock);
-    expect(apiMock).toHaveBeenCalledWith(organizationId, query, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, query);
   });
 
   it('applies complex filters correctly', async () => {
@@ -112,11 +108,7 @@ describe('getExportFiles', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, complexQuery, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, complexQuery);
   });
 });
 
