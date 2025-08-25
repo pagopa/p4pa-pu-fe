@@ -9,7 +9,6 @@ import {
   useMultiFilters
 } from '../../hooks/useMultiFilters';
 import { BaseFilterValues } from '../../models/Filters';
-import { PagedAssessmentsRegistry } from '../../../generated/data-contracts';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
@@ -50,7 +49,7 @@ export const AssessmentsRegistrySearchResults = () => {
   });
 
   const applyFilters = () => {
-    assessments.applyFilters();
+    assessments.applyFilters(filterValues);
     setDrawerOpen(false);
   };
 
@@ -85,11 +84,7 @@ export const AssessmentsRegistrySearchResults = () => {
         sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
         aria-label="results-table"
       >
-        <SearchResultsDataGrid
-          data={assessments.query.data as PagedAssessmentsRegistry}
-          onSortChange={assessments.setSort}
-          onPaginationChange={assessments.handlePaginationChange}
-        />
+        <SearchResultsDataGrid data={assessments.query.data} />
       </Grid>
 
       <FilterDrawer

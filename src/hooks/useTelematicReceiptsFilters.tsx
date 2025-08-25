@@ -10,7 +10,7 @@ import { FilterFieldIds } from '../models/SearchCardFields';
 import { TelematicReceiptsFilters } from '../api/receipts/mappings';
 
 type UseTelematicReceiptsProps = {
-  onFilter: (filters: TelematicReceiptsFilters) => void;
+  onFilter?: (filters: TelematicReceiptsFilters) => void;
   layout?: 'inline' | 'grid';
 };
 
@@ -25,50 +25,46 @@ export const useTelematicReceiptsFilters = ({
 
   const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
 
-  const getFilterItems = (): Array<FilterItem> => {
-    const items: Array<FilterItem> = [
-      {
-        type: COMPONENT_TYPE.textField,
-        label: t('commons.searchIUV'),
-        adornment: <SearchIcon />,
-        gridWidth: 3,
-        id: FilterFieldIds.IUV_CODE,
-        ...(layout === 'grid' ? { gridWidth: 12 } : {})
-      },
-      {
-        type: COMPONENT_TYPE.select,
-        label: t('commons.duetype'),
-        gridWidth: 3,
-        options: debtPositionsTypes.optionsMap,
-        id: FilterFieldIds.TYPE_ORG,
-        defaultValue: 0,
-        ...(layout === 'grid' ? { gridWidth: 12 } : {})
-      },
-      {
-        type: COMPONENT_TYPE.dateRange,
-        label: 'dateRange',
-        gridWidth: 5,
-        from: { label: t('commons.outcomeFrom') },
-        to: { label: t('commons.to') },
-        id: FilterFieldIds.DATE_RANGE,
-        ...(layout === 'grid' ? { gridWidth: 12 } : {})
-      }
-    ];
-
-    if (layout === 'inline') {
-      items.push({
-        type: COMPONENT_TYPE.button,
-        label: t('commons.filters.filterResults'),
-        gridWidth: 1,
-        id: 'applyFilters',
-        onClick: onFilter
-      });
+  const items: Array<FilterItem> = [
+    {
+      type: COMPONENT_TYPE.textField,
+      label: t('commons.searchIUV'),
+      adornment: <SearchIcon />,
+      gridWidth: 3,
+      id: FilterFieldIds.IUV_CODE,
+      ...(layout === 'grid' ? { gridWidth: 12 } : {})
+    },
+    {
+      type: COMPONENT_TYPE.select,
+      label: t('commons.duetype'),
+      gridWidth: 3,
+      options: debtPositionsTypes.optionsMap,
+      id: FilterFieldIds.TYPE_ORG,
+      defaultValue: 0,
+      ...(layout === 'grid' ? { gridWidth: 12 } : {})
+    },
+    {
+      type: COMPONENT_TYPE.dateRange,
+      label: 'dateRange',
+      gridWidth: 5,
+      from: { label: t('commons.outcomeFrom') },
+      to: { label: t('commons.to') },
+      id: FilterFieldIds.DATE_RANGE,
+      ...(layout === 'grid' ? { gridWidth: 12 } : {})
     }
+  ];
 
-    return items;
-  };
+  if (layout === 'inline') {
+    items.push({
+      type: COMPONENT_TYPE.button,
+      label: t('commons.filters.filterResults'),
+      gridWidth: 1,
+      id: 'applyFilters',
+      onClick: onFilter
+    });
+  }
 
-  return { filters: getFilterItems() };
+  return { filters: items };
 };
 
 export default useTelematicReceiptsFilters;

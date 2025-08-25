@@ -147,6 +147,7 @@ export const PaymentOptionSection = ({
           hideFooter={optionData.installments.length <= 5}
           disableColumnMenu
           disableColumnResize
+          totalPages={1}
         />
       </Box>
     </Box>

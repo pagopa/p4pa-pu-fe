@@ -96,6 +96,7 @@ const FlowDataGrid = () => {
       hideFooter
       disableColumnMenu
       disableColumnResize
+      totalPages={1}
     />
   );
 };
