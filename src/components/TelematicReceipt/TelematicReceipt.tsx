@@ -7,47 +7,40 @@ import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useCallback, useState } from 'react';
-import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
 import { noFilterSetted } from '../../utils/filtersValidation';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import utils from '../../utils';
+import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
+import { TelematicReceiptsFilters } from '../../api/receipts/mappings';
+import { FilterFieldValue } from '../../models/Filters';
 
 export const TelematicReceipt = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [filters, setFilters] = useState<Array<BaseFilterValues>>([{}]);
+  const [filters, setFilters] = useState<TelematicReceiptsFilters>({});
   const [error, setError] = useState<boolean>(false);
 
   const navigateToResults = useCallback(() => {
-    if (!noFilterSetted(filters[0])) {
-      navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS, {
-        state: {
-          filters: filters[0]
-        }
-      });
-    } else {
+    if (noFilterSetted(filters)) {
       setError(true);
+    } else {
+      setError(false);
+      const params = utils.URI.encode(filters);
+      navigate(`${PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS}#${params}`);
     }
-  }, [0, filters, navigate]);
+  }, [filters, navigate]);
 
   const resetCurrentFilters = useCallback(() => {
-    const newFilters = [...filters];
-    newFilters[0] = {};
-    setFilters(newFilters);
-  }, [0, filters]);
+    setFilters({});
+  }, [filters]);
 
-  const handleFilterChange = useCallback(
-    (id: string, value: FilterFieldValue) => {
-      setFilters((prevFilters) => {
-        const newFilters = [...prevFilters];
-        newFilters[0] = {
-          ...newFilters[0],
-          [id]: value
-        };
-        return newFilters;
-      });
-    },
-    [0]
-  );
+  const handleFilterChange = (id: string, value: FilterFieldValue) => {
+    setFilters((prev) => ({ ...prev, [id]: value }));
+  };
+
+  const { filters: filtersGrid } = useTelematicReceiptsFilters({
+    layout: 'grid'
+  });
 
   return (
     <>
@@ -61,8 +54,8 @@ export const TelematicReceipt = () => {
             <SearchCard
               title={t('telematicReceipts.search')}
               description={t('telematicReceipts.searchdescription')}
-              filterContext="TELEMATIC"
-              filterValues={filters[0]}
+              fields={filtersGrid}
+              filterValues={filters}
               onFilterChange={handleFilterChange}
               render={error && <ErrorMessage />}
               button={[
@@ -128,5 +121,3 @@ export const TelematicReceipt = () => {
     </>
   );
 };
-
-export default TelematicReceipt;

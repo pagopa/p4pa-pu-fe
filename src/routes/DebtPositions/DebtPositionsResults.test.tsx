@@ -166,10 +166,7 @@ describe('DebtPositionResults', () => {
         data: expect.objectContaining({
           content: expect.any(Array),
           totalElements: expect.any(Number)
-        }),
-        onSortChange: expect.any(Function),
-        sortModel: expect.any(Array),
-        onPaginationChange: expect.any(Function)
+        })
       }),
       expect.anything()
     );

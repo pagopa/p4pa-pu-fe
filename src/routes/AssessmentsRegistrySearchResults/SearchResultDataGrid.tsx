@@ -1,8 +1,4 @@
-import {
-  GridColDef,
-  GridRenderCellParams,
-  GridSortModel
-} from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight } from '@mui/icons-material';
 import { Chip, ChipProps, IconButton } from '@mui/material';
@@ -16,9 +12,7 @@ import {
 import { PageRoutes } from '..';
 
 export type DataGridProps = {
-  data: PagedAssessmentsRegistry;
-  onSortChange: (model: Array<string>) => void;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
+  data: PagedAssessmentsRegistry | undefined;
 };
 
 const stateColors: Record<AssessmentsRegistryStatus, ChipProps['color']> = {
@@ -26,21 +20,8 @@ const stateColors: Record<AssessmentsRegistryStatus, ChipProps['color']> = {
   INACTIVE: 'default'
 };
 
-export const SearchResultsDataGrid = ({
-  data,
-  onSortChange,
-  onPaginationChange
-}: DataGridProps) => {
+export const SearchResultsDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
-
-  const onSort = (model: GridSortModel) => {
-    if (model?.length) {
-      const sort = model.map((item) =>
-        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
-      );
-      onSortChange(sort);
-    }
-  };
 
   const columns: Array<GridColDef> = [
     {
@@ -116,19 +97,7 @@ export const SearchResultsDataGrid = ({
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      onSortModelChange={onSort}
-      smartPagination={{
-        initialPage: 0,
-        initialSize: 10,
-        sizeOptions: [5, 10, 20],
-        backendData: {
-          totalElements: data?.totalElements,
-          totalPages: data?.totalPages,
-          number: data?.number,
-          size: data?.size
-        },
-        onPaginationChange: onPaginationChange
-      }}
+      totalPages={data?.totalPages || 1}
     />
   );
 };

@@ -3,19 +3,18 @@ import { Stack } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import TaxonomyDataGrid from './TaxonomyDataGrid';
 import { TaxonomyFilter } from '../../components/TaxonomyFilter';
-import { useLocation } from 'react-router';
-import { FormProvider, useForm } from 'react-hook-form';
+import { FieldValues, FormProvider, useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TaxonomyFilters } from '../../models/Taxonomy';
 import { FormComponent } from '../../components/FormComponent';
 import { getTaxonomies } from '../../api/taxonomy';
 import { useSearch } from '../../hooks/useSearch';
+import utils from '../../utils';
 
 const TaxonomySearchResults = () => {
   const { t } = useTranslation();
-  const location = useLocation();
-  const initialFilters = (location.state?.filters || {}) as TaxonomyFilters;
+  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
 
   const form = useForm<TaxonomyFilters>({
     resolver: zodResolver(
@@ -34,14 +33,15 @@ const TaxonomySearchResults = () => {
   });
 
   const query = getTaxonomies();
+  const filters = form.getValues();
 
   const taxonomies = useSearch({
-    filters: form.getValues(),
+    filters,
     query
   });
 
   const onSubmit = () => {
-    taxonomies.applyFilters();
+    taxonomies.applyFilters(filters);
   };
 
   return (
@@ -58,9 +58,7 @@ const TaxonomySearchResults = () => {
             </Stack>
           </form>
           <TaxonomyDataGrid
-            onSortChange={taxonomies.setSort}
             isLoading={taxonomies.query.isPending}
-            onPaginationChange={taxonomies.handlePaginationChange}
             data={
               taxonomies.query.data || {
                 content: [],

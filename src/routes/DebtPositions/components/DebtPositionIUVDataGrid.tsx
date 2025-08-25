@@ -1,8 +1,4 @@
-import {
-  GridColDef,
-  GridRenderCellParams,
-  GridSortModel
-} from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
 import { ChipProps, Typography } from '@mui/material';
@@ -19,17 +15,9 @@ import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
 
 export type DataGridProps = {
   data?: PagedInstallmentView;
-  onSortChange: (model: GridSortModel) => void;
-  sortModel: GridSortModel;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
-export const IUVDataGrid = ({
-  data,
-  onSortChange,
-  sortModel,
-  onPaginationChange
-}: DataGridProps) => {
+export const IUVDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -130,20 +118,7 @@ export const IUVDataGrid = ({
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      sortModel={sortModel}
-      onSortModelChange={onSortChange}
-      smartPagination={{
-        initialPage: 0,
-        initialSize: 10,
-        sizeOptions: [5, 10, 20],
-        backendData: {
-          totalElements: data?.totalElements,
-          totalPages: data?.totalPages,
-          number: data?.number,
-          size: data?.size
-        },
-        onPaginationChange: onPaginationChange
-      }}
+      totalPages={data?.totalPages || 1}
     />
   );
 };
