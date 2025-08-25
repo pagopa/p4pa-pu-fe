@@ -25,78 +25,40 @@ export const buildQueryParams = ({
   pagination,
   sort
 }: ClassificationsFilteredRequest): ClassificationsQueryParams => ({
-  ...(filters.CLASSIFICATION_TYPE && {
-    label: filters.CLASSIFICATION_TYPE as ClassificationsEnum
-  }),
-  ...(filters.IUV && { iuv: filters.IUV }),
-  ...(filters.IUR && { iur: filters.IUR }),
-  ...(filters.IUD && { iud: filters.IUD }),
-  ...(filters.IUF && { iuf: filters.IUF }),
-  ...(filters.LAST_CLASSIFICATION_DATE_FROM && {
-    lastClassificationDateTimeFrom: temporyFormatDateTimeFunction(
-      filters.LAST_CLASSIFICATION_DATE_FROM
-    )
-  }),
-  ...(filters.LAST_CLASSIFICATION_DATE_TO && {
-    lastClassificationDateTimeTo: temporyFormatDateTimeFunction(
-      filters.LAST_CLASSIFICATION_DATE_TO
-    )
-  }),
-  ...(filters.REGULATION_DATE_FROM && {
-    regulationDateTimeFrom: temporyFormatDateTimeFunction(
-      filters.REGULATION_DATE_FROM
-    )
-  }),
-  ...(filters.REGULATION_DATE_TO && {
-    regulationDateTimeTo: temporyFormatDateTimeFunction(
-      filters.REGULATION_DATE_TO
-    )
-  }),
-  ...(filters.AMOUNT && {
-    billAmountCents: euroToCents(filters.AMOUNT)
-  }),
-  ...(filters.BILL_DATE_FROM && {
-    billDateTimeFrom: temporyFormatDateTimeFunction(filters.BILL_DATE_FROM)
-  }),
-  ...(filters.BILL_DATE_TO && {
-    billDateTimeTo: temporyFormatDateTimeFunction(filters.BILL_DATE_TO)
-  }),
-  ...(filters.PAYMENT_DATE_FROM && {
-    paymentDateTimeFrom: temporyFormatDateTimeFunction(
-      filters.PAYMENT_DATE_FROM
-    )
-  }),
-  ...(filters.PAYMENT_DATE_TO && {
-    paymentDateTimeTo: temporyFormatDateTimeFunction(filters.PAYMENT_DATE_TO)
-  }),
-  ...(filters.PAY_DATE_FROM && {
-    payDateTimeFrom: temporyFormatDateTimeFunction(filters.PAY_DATE_FROM)
-  }),
-  ...(filters.PAY_DATE_TO && {
-    payDateTimeTo: temporyFormatDateTimeFunction(filters.PAY_DATE_TO)
-  }),
-  ...(filters.REGULATION_UNIQUE_IDENTIFIER && {
-    regulationUniqueIdentifier: filters.REGULATION_UNIQUE_IDENTIFIER
-  }),
-  ...(filters.ACCOUNT_REGISTRY_CODE && {
-    accountRegistryCode: filters.ACCOUNT_REGISTRY_CODE
-  }),
-  ...(filters.REMITTANCE_INFORMATION && {
-    remittanceInformation: filters.REMITTANCE_INFORMATION
-  }),
-  ...(filters.PSP_COMPANY_NAME && {
-    pspCompanyName: filters.PSP_COMPANY_NAME
-  }),
-  ...(filters.REGION_VALUE_DATE_FROM && {
-    regionValueDateTimeFrom: temporyFormatDateTimeFunction(
-      filters.REGION_VALUE_DATE_FROM
-    )
-  }),
-  ...(filters.REGION_VALUE_DATE_TO && {
-    regionValueDateTimeTo: temporyFormatDateTimeFunction(
-      filters.REGION_VALUE_DATE_TO
-    )
-  }),
+  label: filters.CLASSIFICATION_TYPE as ClassificationsEnum,
+  iuv: filters.IUV,
+  iur: filters.IUR,
+  iud: filters.IUD,
+  iuf: filters.IUF,
+  lastClassificationDateTimeFrom: temporyFormatDateTimeFunction(
+    filters.LAST_CLASSIFICATION_DATE_FROM
+  ),
+  lastClassificationDateTimeTo: temporyFormatDateTimeFunction(
+    filters.LAST_CLASSIFICATION_DATE_TO
+  ),
+  regulationDateTimeFrom: temporyFormatDateTimeFunction(
+    filters.REGULATION_DATE_FROM
+  ),
+  regulationDateTimeTo: temporyFormatDateTimeFunction(
+    filters.REGULATION_DATE_TO
+  ),
+  billAmountCents: filters.AMOUNT ? euroToCents(filters.AMOUNT) : undefined,
+  billDateTimeFrom: temporyFormatDateTimeFunction(filters.BILL_DATE_FROM),
+  billDateTimeTo: temporyFormatDateTimeFunction(filters.BILL_DATE_TO),
+  paymentDateTimeFrom: temporyFormatDateTimeFunction(filters.PAYMENT_DATE_FROM),
+  paymentDateTimeTo: temporyFormatDateTimeFunction(filters.PAYMENT_DATE_TO),
+  payDateTimeFrom: temporyFormatDateTimeFunction(filters.PAY_DATE_FROM),
+  payDateTimeTo: temporyFormatDateTimeFunction(filters.PAY_DATE_TO),
+  regulationUniqueIdentifier: filters.REGULATION_UNIQUE_IDENTIFIER,
+  accountRegistryCode: filters.ACCOUNT_REGISTRY_CODE,
+  remittanceInformation: filters.REMITTANCE_INFORMATION,
+  pspCompanyName: filters.PSP_COMPANY_NAME,
+  regionValueDateTimeFrom: temporyFormatDateTimeFunction(
+    filters.REGION_VALUE_DATE_FROM
+  ),
+  regionValueDateTimeTo: temporyFormatDateTimeFunction(
+    filters.REGION_VALUE_DATE_TO
+  ),
   page: pagination.page,
   size: pagination.size,
   sort
