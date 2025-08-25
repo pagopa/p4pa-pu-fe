@@ -83,11 +83,6 @@ describe('getPaymentsReportingRows', () => {
       {
         page: 0,
         size: 20
-      },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
       }
     );
 
@@ -139,12 +134,7 @@ describe('getPaymentsReportingRows', () => {
     expect(utils.apiClient.bff.getPaymentsReportingRows).toHaveBeenCalledWith(
       organizationId,
       iuf,
-      expectedQuery,
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
+      expectedQuery
     );
 
     expect(data).toEqual(mockData);

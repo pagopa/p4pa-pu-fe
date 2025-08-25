@@ -16,5 +16,5 @@ export const buildQueryParams = ({
   debtPositionTypeOrgId: filters.debtPositionTypeOrgId,
   page: pagination.page,
   size: pagination.size,
-  ...(sort.length && { sort })
+  sort
 });

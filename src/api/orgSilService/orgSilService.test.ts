@@ -97,11 +97,7 @@ describe('orgSilService API', () => {
         expect(result.current.data).toEqual(mockApiResponse);
       });
 
-      expect(apiMock).toHaveBeenCalledWith(organizationId, expectedQuery, {
-        paramsSerializer: {
-          indexes: null
-        }
-      });
+      expect(apiMock).toHaveBeenCalledWith(organizationId, expectedQuery);
     });
 
     it('should handle API errors correctly', async () => {

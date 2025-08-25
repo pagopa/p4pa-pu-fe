@@ -83,10 +83,6 @@ describe('getPaymentsReporting', () => {
     });
 
     expect(mappings.buildQueryParams).toHaveBeenCalledWith(query);
-    expect(apiMock).toHaveBeenCalledWith(organizationId, mockQueryString, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, mockQueryString);
   });
 });
