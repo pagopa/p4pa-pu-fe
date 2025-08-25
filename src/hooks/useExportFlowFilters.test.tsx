@@ -135,7 +135,7 @@ describe('useExportFlowFilters', () => {
     );
 
     act(() => {
-      result.current.handlePaginationChange({ page: 2, size: 20 });
+      result.current.handlePageChange();
     });
 
     rerender();

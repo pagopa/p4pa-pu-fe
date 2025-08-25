@@ -98,10 +98,13 @@ describe('getAssessments', () => {
       assessmentName: 'Test',
       debtPositionTypeOrgCode: 'TYPE1',
       iuv: 'test-iuv',
+      operatingYear: "",
       updateDateFrom: '2023-01-01T00:00:00+01:00',
       updateDateTo: '2023-12-31T23:59:59+01:00',
       page: 0,
-      size: 20
+      size: 20,
+      sort: [],
+      status: "",
     };
 
     const apiMock = vi
@@ -110,11 +113,9 @@ describe('getAssessments', () => {
 
     const { result } = renderHook(() => getAssessments(organizationId));
 
-    result.current.mutate(query);
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toEqual(dataMock);
-    });
+    expect(data).toEqual(dataMock);
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
@@ -138,10 +139,17 @@ describe('getAssessments', () => {
       sort: []
     };
 
-    const expectedApiParams = {
-      assessmentName: 'Test',
+     const expectedApiParams = {
+      assessmentName: "Test",
+      debtPositionTypeOrgCode: undefined,
+      iuv: "",
+      operatingYear: "",
+      updateDateFrom: undefined,
+      updateDateTo: undefined,
       page: 0,
-      size: 20
+      size: 20,
+      sort: [],
+      status: "",
     };
 
     const errorMock = new Error('API Error');
@@ -169,9 +177,17 @@ describe('getAssessments', () => {
       sort: []
     };
 
-    const expectedApiParams = {
+     const expectedApiParams = {
+      assessmentName: "",
+      debtPositionTypeOrgCode: undefined,
+      iuv: "",
+      operatingYear: "",
+      updateDateFrom: undefined,
+      updateDateTo: undefined,
       page: 0,
-      size: 20
+      size: 20,
+      sort: [],
+      status: "",
     };
 
     const apiMock = vi
@@ -180,11 +196,9 @@ describe('getAssessments', () => {
 
     const { result } = renderHook(() => getAssessments(organizationId));
 
-    result.current.mutate(query);
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toBeUndefined();
-    });
+    expect(data).toBeUndefined();
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
@@ -213,8 +227,16 @@ describe('getAssessments', () => {
     };
 
     const expectedApiParams = {
+      assessmentName: "",
+      debtPositionTypeOrgCode: undefined,
+      iuv: "",
+      operatingYear: "",
       page: 0,
-      size: 10
+      size: 10,
+      sort: [],
+      status: "",
+      updateDateFrom: undefined,
+      updateDateTo: undefined,
     };
 
     const apiMock = vi
@@ -223,11 +245,9 @@ describe('getAssessments', () => {
 
     const { result } = renderHook(() => getAssessments(organizationId));
 
-    result.current.mutate(query);
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toEqual(dataMock);
-    });
+    expect(data).toEqual(dataMock);
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
@@ -259,11 +279,13 @@ describe('getAssessments', () => {
       assessmentName: 'Full Test',
       debtPositionTypeOrgCode: 'FULL_TYPE',
       iuv: 'full-test-iuv',
+      operatingYear: "",
       updateDateFrom: '2023-01-01T00:00:00+01:00',
       updateDateTo: '2023-12-31T23:59:59+01:00',
       page: 2,
       size: 50,
-      sort: ['assessmentName,asc', 'updateDate,desc']
+      sort: ['assessmentName,asc', 'updateDate,desc'],
+      status: "",
     };
 
     const apiMock = vi
@@ -272,12 +294,10 @@ describe('getAssessments', () => {
 
     const { result } = renderHook(() => getAssessments(organizationId));
 
-    result.current.mutate(query);
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toEqual(dataMock);
-    });
-
+    expect(data).toEqual(dataMock);
+  
     expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 });
@@ -658,6 +678,7 @@ describe('getAssessmentsRegistries', () => {
     const query = {
       filters: {
         ...initialFilterValues,
+        OPERATING_YEAR: "2023-01-01T00:00:00Z",
         OFFICE_CODE: 'OFF001',
         ASSESSMENT_CODE: 'ASS001'
       },
@@ -667,9 +688,17 @@ describe('getAssessmentsRegistries', () => {
 
     const expectedApiParams = {
       officeCode: 'OFF001',
+      assessmentDescription: "",
+      debtPositionTypeOrgCode: "",
       assessmentCode: 'ASS001',
       page: 0,
-      size: 20
+      size: 20,
+      operatingYear: "2023",
+      officeDescription: "",
+      sort: [],
+      sectionCode: "",
+      sectionDescription: "",
+      status: ""
     };
 
     const apiMock = vi
@@ -680,13 +709,10 @@ describe('getAssessmentsRegistries', () => {
       getAssessmentsRegistries({ organizationId })
     );
 
-    await act(async () => {
-      result.current.mutate(query);
-    });
+    const data = await
+      result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toEqual(dataMock);
-    });
+    expect(data).toEqual(dataMock);  
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
@@ -696,6 +722,7 @@ describe('getAssessmentsRegistries', () => {
     const query = {
       filters: {
         ...initialFilterValues,
+        OPERATING_YEAR: "2023-01-01T00:00:00Z",
         OFFICE_CODE: 'TEST'
       },
       pagination: { page: 0, size: 20 },
@@ -705,15 +732,15 @@ describe('getAssessmentsRegistries', () => {
     const errorMock = new Error('API Error');
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'getAssessmentsRegistries')
-      .mockRejectedValue(errorMock);
+      .mockRejectedValueOnce(errorMock);
 
     const { result } = renderHook(() =>
       getAssessmentsRegistries({ organizationId })
     );
 
-    await act(async () => {
-      result.current.mutate(query);
-    });
+    expect(
+      result.current.mutateAsync(query)
+    ).rejects.toThrow(errorMock);  
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
@@ -736,7 +763,10 @@ describe('getAssessmentsRegistries', () => {
   it('should handle empty response correctly', async () => {
     const organizationId = 123;
     const query = {
-      filters: initialFilterValues,
+      filters: {
+        ...initialFilterValues,
+        OPERATING_YEAR: "2023-01-01T00:00:00Z"
+      },
       pagination: { page: 0, size: 20 },
       sort: []
     };
@@ -749,13 +779,9 @@ describe('getAssessmentsRegistries', () => {
       getAssessmentsRegistries({ organizationId })
     );
 
-    await act(async () => {
-      result.current.mutate(query);
-    });
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toBeUndefined();
-    });
+    expect(data).toBeUndefined();
 
     expect(apiMock).toHaveBeenCalled();
   });
