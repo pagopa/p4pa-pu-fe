@@ -44,11 +44,9 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => ({
   }
 }));
 
-// Mock formatters simply
-vi.mock('../../../utils/formatters', () => ({
-  moneyFormat: (val: number) => `€${(val / 100).toFixed(2)}`,
-  formatDate: (date: string) => new Date(date).toLocaleDateString('it-IT')
-}));
+vi.mock('../../../utils/formatters', async (importOriginal) => {
+  return await importOriginal();
+});
 
 describe('AssessmentDetailDataGrid - Simple tests', () => {
   beforeEach(() => {
