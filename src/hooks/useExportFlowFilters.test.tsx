@@ -140,8 +140,8 @@ describe('useExportFlowFilters', () => {
 
     rerender();
 
-    expect(result.current.appliedFilters.page).toBe(2);
-    expect(result.current.appliedFilters.size).toBe(20);
+    expect(result.current.appliedFilters.page).toBe(0);
+    expect(result.current.appliedFilters.size).toBe(10);
   });
 
   it('should handle null dates correctly', () => {

@@ -46,13 +46,19 @@ export const buildAssessmentsQueryParams = ({
   sort
 }: FilteredRequest<FilterValues>) => ({
   assessmentName: filters.ASSESSMENT_NAME,
-  debtPositionTypeOrgCode: filters.DEBT_TYPE &&
-    filters.DEBT_TYPE !== 'ALL' ? filters.DEBT_TYPE : undefined,
+  debtPositionTypeOrgCode:
+    filters.DEBT_TYPE && filters.DEBT_TYPE !== 'ALL'
+      ? filters.DEBT_TYPE
+      : undefined,
   operatingYear: filters.OPERATING_YEAR,
   status: filters.ASSESSMENT_STATUS as AssessmentStatus,
   iuv: filters.IUV,
-  updateDateFrom: utils.formatters.date.code(filters.LAST_UPDATE_DATE_FROM || undefined),
-  updateDateTo: utils.formatters.date.code(filters.LAST_UPDATE_DATE_TO || undefined),
+  updateDateFrom: utils.formatters.date.code(
+    filters.LAST_UPDATE_DATE_FROM || undefined
+  ),
+  updateDateTo: utils.formatters.date.code(
+    filters.LAST_UPDATE_DATE_TO || undefined
+  ),
   page: pagination.page,
   size: pagination.size,
   sort
@@ -76,18 +82,18 @@ export const buildAssessmentDetailQueryParams = ({
   sort
 }: FilteredRequest<AssessmentDetailFilters>) => ({
   iuv: filters.iuv,
-  updateDateTimeFrom: utils.formatters.date.code(new Date(
-    filters?.update?.from?.setHours(0, 0, 0, 0) || 0
-  )),
-  updateDateTimeTo: utils.formatters.date.code(new Date(
-    filters?.update?.to?.setHours(23, 59, 59, 999)  || 0
-  )),
-  paymentDateTimeFrom: utils.formatters.date.code(new Date(
-    filters?.outcome?.from?.setHours(0, 0, 0, 0) || 0
-  )),
-  paymentDateTimeTo: utils.formatters.date.code(new Date(
-    filters?.outcome?.to?.setHours(23, 59, 59, 999) || 0
-  )),
+  updateDateTimeFrom: utils.formatters.date.code(
+    new Date(filters?.update?.from?.setHours(0, 0, 0, 0) || 0)
+  ),
+  updateDateTimeTo: utils.formatters.date.code(
+    new Date(filters?.update?.to?.setHours(23, 59, 59, 999) || 0)
+  ),
+  paymentDateTimeFrom: utils.formatters.date.code(
+    new Date(filters?.outcome?.from?.setHours(0, 0, 0, 0) || 0)
+  ),
+  paymentDateTimeTo: utils.formatters.date.code(
+    new Date(filters?.outcome?.to?.setHours(23, 59, 59, 999) || 0)
+  ),
   page: pagination.page,
   size: pagination.size,
   sort

@@ -40,7 +40,7 @@ export const getExportFiles = (
           ...query,
           creationDateFrom: utils.formatters.date.code(query.creationDateFrom),
           creationDateTo: utils.formatters.date.code(query.creationDateTo)
-        },
+        }
       );
 
       if (files) {

@@ -299,9 +299,7 @@ const ImportFlowOverview = ({
                 onChange: (value) =>
                   setFilters((prev) => ({
                     ...prev,
-                    creationDateFrom: value
-                      ? new Date(value)
-                      : undefined
+                    creationDateFrom: value ? new Date(value) : undefined
                   }))
               },
               to: {
@@ -313,9 +311,7 @@ const ImportFlowOverview = ({
                 onChange: (value) =>
                   setFilters((prev) => ({
                     ...prev,
-                    creationDateTo: value
-                      ? new Date(value)
-                      : undefined
+                    creationDateTo: value ? new Date(value) : undefined
                   }))
               }
             },

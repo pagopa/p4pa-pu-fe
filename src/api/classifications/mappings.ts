@@ -35,11 +35,19 @@ export const buildQueryParams = ({
     filters.REGULATION_DATE_TO || undefined
   ),
   billAmountCents: filters.AMOUNT ? filters.AMOUNT * 100 : undefined,
-  billDateTimeFrom: utils.formatters.date.code(filters.BILL_DATE_FROM || undefined),
+  billDateTimeFrom: utils.formatters.date.code(
+    filters.BILL_DATE_FROM || undefined
+  ),
   billDateTimeTo: utils.formatters.date.code(filters.BILL_DATE_TO || undefined),
-  paymentDateTimeFrom: utils.formatters.date.code(filters.PAYMENT_DATE_FROM || undefined),
-  paymentDateTimeTo: utils.formatters.date.code(filters.PAYMENT_DATE_TO || undefined),
-  payDateTimeFrom: utils.formatters.date.code(filters.PAY_DATE_FROM || undefined),
+  paymentDateTimeFrom: utils.formatters.date.code(
+    filters.PAYMENT_DATE_FROM || undefined
+  ),
+  paymentDateTimeTo: utils.formatters.date.code(
+    filters.PAYMENT_DATE_TO || undefined
+  ),
+  payDateTimeFrom: utils.formatters.date.code(
+    filters.PAY_DATE_FROM || undefined
+  ),
   payDateTimeTo: utils.formatters.date.code(filters.PAY_DATE_TO || undefined),
   regulationUniqueIdentifier: filters.REGULATION_UNIQUE_IDENTIFIER,
   accountRegistryCode: filters.ACCOUNT_REGISTRY_CODE,

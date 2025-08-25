@@ -96,15 +96,12 @@ describe('getDebtPositionTypeWithCount', () => {
     expect(data).toEqual(mockData);
     expect(
       utils.apiClient.bff.getDebtPositionTypeWithCount
-    ).toHaveBeenCalledWith(
-      organizationId,
-      {
-        page: 0,
-        size: 10,
-        description: 'Type A',
-        sort: ['count,desc']
-      },
-    );
+    ).toHaveBeenCalledWith(organizationId, {
+      page: 0,
+      size: 10,
+      description: 'Type A',
+      sort: ['count,desc']
+    });
   });
 
   it('should handle null response correctly', async () => {
