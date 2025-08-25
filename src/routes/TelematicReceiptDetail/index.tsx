@@ -48,12 +48,23 @@ export const TelematicReceiptDetail = () => {
   const shouldFetchAssessment =
     params.receiptId && params.id && !currentAssessmentName && organizationId;
 
-  const { data: assessmentData } = getAssessmentDetail(
+  const getAssessmentDetailMutation = getAssessmentDetail(
     organizationId,
     Number(params.id || 0),
-    { page: 0, size: 1 },
-    { enabled: !!shouldFetchAssessment }
+    { page: 0, size: 1 }
   );
+
+  useEffect(() => {
+    if (shouldFetchAssessment) {
+      getAssessmentDetailMutation.mutate({
+        filters: {},
+        pagination: { page: 0, size: 1 },
+        sort: []
+      });
+    }
+  }, [shouldFetchAssessment]);
+
+  const assessmentData = getAssessmentDetailMutation.data;
 
   useEffect(() => {
     if (assessmentData?.assessmentsName && !currentAssessmentName) {

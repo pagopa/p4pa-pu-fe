@@ -51,9 +51,19 @@ describe('TelematicReceiptDetail Page', () => {
   const mockUseLoaderData = vi.mocked(useLoaderData);
   const mockUseParams = vi.mocked(useParams);
 
+  const mockMutate = vi.fn();
+  const mockAssessmentMutation = {
+    mutate: mockMutate,
+    data: undefined,
+    isLoading: false,
+    isError: false,
+    error: null
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
+    mockMutate.mockClear();
 
     mockUseLoaderData.mockReturnValue(mockData.receiptId);
     mockUseParams.mockReturnValue({});
@@ -64,11 +74,7 @@ describe('TelematicReceiptDetail Page', () => {
 
     (
       getAssessmentDetail as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: false
-    });
+    ).mockReturnValue(mockAssessmentMutation);
   });
 
   it('renders Telematic Receipt Detail without crashing', () => {
@@ -232,7 +238,7 @@ describe('TelematicReceiptDetail Page', () => {
     ).toBeInTheDocument();
   });
 
-  it('fetches assessment name when in assessment context and no name in state', () => {
+  it('calls getAssessmentDetail with correct parameters when in assessment context', () => {
     mockUseParams.mockReturnValue({
       receiptId: '60',
       id: '209'
@@ -244,22 +250,73 @@ describe('TelematicReceiptDetail Page', () => {
       error: null
     });
 
-    (
-      getAssessmentDetail as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
-      data: { assessmentsName: 'Test Assessment Name' },
-      isLoading: false,
-      isError: false
+    vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
+    render(<TelematicReceiptDetail />);
+
+    expect(getAssessmentDetail).toHaveBeenCalledWith(mockOrganizationId, 209, {
+      page: 0,
+      size: 1
+    });
+  });
+
+  it('triggers mutation when shouldFetchAssessment condition is met', () => {
+    mockUseParams.mockReturnValue({
+      receiptId: '60',
+      id: '209'
+    });
+
+    (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: mockData,
+      isError: false,
+      error: null
     });
 
     vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
     render(<TelematicReceiptDetail />);
 
-    expect(getAssessmentDetail).toHaveBeenCalledWith(
-      mockOrganizationId,
-      209,
-      { page: 0, size: 1 },
-      { enabled: true }
-    );
+    expect(mockMutate).toHaveBeenCalledWith({
+      filters: {},
+      pagination: { page: 0, size: 1 },
+      sort: []
+    });
+  });
+
+  it('sets assessment name when mutation returns data', () => {
+    mockUseParams.mockReturnValue({
+      receiptId: '60',
+      id: '209'
+    });
+
+    const mockAssessmentMutationWithData = {
+      ...mockAssessmentMutation,
+      data: { assessmentsName: 'Test Assessment Name' }
+    };
+
+    (
+      getAssessmentDetail as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue(mockAssessmentMutationWithData);
+
+    (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: mockData,
+      isError: false,
+      error: null
+    });
+
+    vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
+    render(<TelematicReceiptDetail />);
+
+    expect(getAssessmentDetail).toHaveBeenCalledWith(mockOrganizationId, 209, {
+      page: 0,
+      size: 1
+    });
+  });
+
+  it('does not trigger mutation when shouldFetchAssessment condition is not met', () => {
+    mockUseParams.mockReturnValue({});
+
+    vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
+    render(<TelematicReceiptDetail />);
+
+    expect(mockMutate).not.toHaveBeenCalled();
   });
 });
