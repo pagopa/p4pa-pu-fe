@@ -70,8 +70,7 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   };
 
   const query = getDebtPositionTypeOrgOperators(
-    organizationId,
-    debtPositionTypeOrgId as number
+    organizationId
   );
 
   const debtTypeOrgOperators = useSearch({
