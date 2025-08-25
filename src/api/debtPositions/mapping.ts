@@ -1,4 +1,5 @@
 import { DebtPositionStatus } from '../../../generated/data-contracts';
+import utils from '../../utils';
 
 export type DebtPositionsFilters = {
   dateRange?: {
@@ -17,24 +18,21 @@ export type DebtPositionFilteredRequest = {
   sort: Array<string>;
 };
 
+type InstallmentsQueryParams = Parameters<
+  typeof utils.apiClient.bff.getInstallments
+>[1];
+
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: DebtPositionFilteredRequest) => ({
-  dueDateFrom: filters?.dateRange?.from?.toISOString(),
-  dueDateTo: filters?.dateRange?.to?.toISOString(),
-  creationDateFrom: filters?.dateRange?.from?.toISOString(),
-  creationDateTo: filters?.dateRange?.to?.toISOString(),
+}: DebtPositionFilteredRequest): InstallmentsQueryParams => ({
+  dueDateTimeFrom: filters?.dateRange?.from?.toISOString(),
+  dueDateTimeTo: filters?.dateRange?.to?.toISOString(),
   page: pagination.page,
   size: pagination.size,
-  ...(filters?.typeOrgId && {
-    debtPositionTypeOrgId: filters.typeOrgId
-  }),
-  ...(filters?.iuv && { iuv: filters.iuv }),
-  ...(filters?.fiscalCode && {
-    fiscalCode: filters.fiscalCode
-  }),
-  ...(filters?.status && { status: filters.status }),
-  ...(sort.length && { sort })
+  debtPositionTypeOrgId: filters.typeOrgId,
+  iuv: filters.iuv,
+  fiscalCode: filters.fiscalCode,
+  sort
 });

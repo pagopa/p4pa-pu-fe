@@ -106,8 +106,7 @@ export const DebtTypeDetailView = () => {
   });
 
   const operatorQuery = getDebtPositionTypeOrgOperators(
-    organizationId,
-    Number(debtPositionTypeOrgId)
+    organizationId
   );
 
   useEffect(() => {
