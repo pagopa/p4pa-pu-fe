@@ -3,14 +3,12 @@ import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import { ClientSilDataGrid } from './ClientSilDataGrid';
 import type { ClientDTOPage } from '../../../../generated/apiClient';
 
-// Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key
   })
 }));
 
-// Mock CustomDataGrid
 vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
   const handleActionClick = (
     col: {
@@ -75,7 +73,6 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
   };
 });
 
-// Mock MUI icons
 vi.mock('@mui/icons-material', () => ({
   ChevronRight: ({ onClick }: { onClick?: () => void }) => (
     <div data-testid="chevron-right" onClick={onClick}>
@@ -159,7 +156,6 @@ describe('ClientSilDataGrid', () => {
   it('should render data correctly in cells', () => {
     renderComponent();
 
-    // Verifica che i dati delle celle siano renderizzati correttamente
     expect(screen.getByText('Test Client 1')).toBeInTheDocument();
     expect(screen.getByText('Test Client 2')).toBeInTheDocument();
     expect(screen.getByText('client-1')).toBeInTheDocument();
