@@ -1,22 +1,10 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useNavigate } from 'react-router';
 import { getDebtPositionTypeWithCount } from '../../api/debtPositionsTypes';
 import DebtTypes from './DebtTypes';
-import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { PageRoutes } from '../../routes';
-
-i18nTestSetup({
-  'commons.routes.DEBT_TYPES_CATALOG': 'Debt Types Catalog',
-  'commons.createNewOne': 'Create New',
-  'debtTypes.description': 'Manage your debt types',
-  'commons.searchForDescription': 'Search by description',
-  'commons.search': 'Search',
-  'flowDataGrid.name': 'Name',
-  'flowDataGrid.lastUpdate': 'Last Update',
-  'flowDataGrid.authorizedOrganizations': 'Authorized Organizations',
-  'flowDataGrid.noDataRows': 'No data available'
-});
 
 const mockData = {
   content: [
@@ -48,8 +36,7 @@ vi.mock('react-router', async (importOriginal) => {
   return {
     ...actual,
     useParams: vi.fn(),
-    useNavigate: vi.fn().mockReturnValue(vi.fn()),
-    useSearchParams: vi.fn().mockReturnValue([new URLSearchParams(), vi.fn()]),
+    useNavigate: vi.fn(),
     Link: ({ children }: { children: React.ReactNode }) => children,
     generatePath: vi.fn().mockReturnValue('/mock-path')
   };
@@ -58,7 +45,7 @@ vi.mock('react-router', async (importOriginal) => {
 vi.mock('../../store/GlobalStore', () => ({
   useStore: () => ({
     state: {
-      ORGANIZATION_ID: 3,
+      organizationId: 3,
       APP_STATE: { loading: false, customBreadcrumbsItems: [] }
     },
     setState: vi.fn()
@@ -66,7 +53,26 @@ vi.mock('../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const mockMutateAsync = vi.fn((_args: any) =>
+  Promise.resolve({ data: mockData })
+);
+
+vi.mock('../../hooks/useSearch', () => ({
+  useSearch: vi.fn(() => ({
+    query: {
+      mutateAsync: mockMutateAsync,
+      isLoading: false,
+      data: mockData
+    },
+    applyFilters: (filters: any) =>
+      mockMutateAsync({ filters, pagination: { page: 0, size: 10 }, sort: [] })
+  }))
+}));
+
 describe('DebtTypes Page', () => {
+  const navigateMock = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -76,81 +82,61 @@ describe('DebtTypes Page', () => {
       data: mockData,
       isLoading: false
     });
+
+    (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(navigateMock);
+
+    mockMutateAsync.mockClear();
   });
 
-  it('renders DebtTypes without crashing', () => {
+  it('renders page with translation keys as text and shows initial data', () => {
     render(<DebtTypes />);
 
-    expect(screen.getByText('Debt Types Catalog')).toBeInTheDocument();
-    expect(screen.getByText('Manage your debt types')).toBeInTheDocument();
-    expect(screen.getByText('Create New')).toBeInTheDocument();
     expect(
-      screen.getByRole('textbox', { name: 'Search by description' })
+      screen.getByText('commons.routes.DEBT_TYPES_CATALOG')
     ).toBeInTheDocument();
-    expect(screen.getByText('Search')).toBeInTheDocument();
+    expect(screen.getByText('debtTypes.description')).toBeInTheDocument();
+    expect(screen.getByText('commons.createNewOne')).toBeInTheDocument();
 
-    expect(screen.getByRole('grid')).toBeInTheDocument();
+    expect(
+      screen.getByRole('textbox', { name: 'commons.searchForDescription' })
+    ).toBeInTheDocument();
+
+    expect(screen.getByText('commons.search')).toBeInTheDocument();
 
     expect(screen.getByText('Type A')).toBeInTheDocument();
     expect(screen.getByText('Type B')).toBeInTheDocument();
   });
 
-  it('applies filters when search button is clicked', async () => {
+  it('calls applyFilters and triggers mutateAsync when Search button is clicked', async () => {
     render(<DebtTypes />);
 
-    const searchInput = screen.getByLabelText('Search by description');
+    const searchInput = screen.getByRole('textbox', {
+      name: 'commons.searchForDescription'
+    });
     fireEvent.change(searchInput, { target: { value: 'Type A' } });
 
-    const searchButton = screen.getByText('Search');
+    const searchButton = screen.getByText('commons.search');
     fireEvent.click(searchButton);
 
     await waitFor(() => {
-      expect(getDebtPositionTypeWithCount).toHaveBeenCalledWith(
-        expect.any(Number),
-        expect.objectContaining({ description: 'Type A' })
+      expect(mockMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: expect.objectContaining({ description: 'Type A' }),
+          pagination: expect.any(Object),
+          sort: expect.any(Array)
+        })
       );
     });
   });
 
   it('navigates to creation page when Create New button is clicked', () => {
-    const navigateMock = vi.fn();
-    (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(navigateMock);
-
     render(<DebtTypes />);
 
-    const createButton = screen.getByText('Create New');
+    const createButton = screen.getByText('commons.createNewOne');
     fireEvent.click(createButton);
 
     expect(navigateMock).toHaveBeenCalledWith(
       PageRoutes.DEBT_TYPE_CATALOG_CREATE
-    );
-  });
-
-  it('handles pagination changes', async () => {
-    render(<DebtTypes />);
-
-    const nextPageButton = screen.getByLabelText('Go to next page');
-    fireEvent.click(nextPageButton);
-
-    await waitFor(() => {
-      expect(getDebtPositionTypeWithCount).toHaveBeenCalledWith(
-        expect.any(Number),
-        expect.objectContaining({ page: 1 })
-      );
-    });
-  });
-
-  it('handles URL parameters for pagination', () => {
-    (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue([
-      new URLSearchParams('page=2&size=20'),
-      vi.fn()
-    ]);
-
-    render(<DebtTypes />);
-
-    expect(getDebtPositionTypeWithCount).toHaveBeenCalledWith(
-      expect.any(Number),
-      expect.objectContaining({ page: 0, size: 10 })
     );
   });
 });

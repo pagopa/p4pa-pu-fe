@@ -41,7 +41,7 @@ export const useDebtPositionsTypeOrg = ({
           label: type.description,
           value: useCodeAsValue
             ? type.code
-            : (type.debtPositionTypeOrgId as number),
+            : String(type.debtPositionTypeOrgId),
           flagMandatoryDueDate: type.flagMandatoryDueDate
         }));
 

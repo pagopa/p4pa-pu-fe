@@ -26,7 +26,7 @@ import {
   PagedPagoPaRegistry,
   PagedSilRegistry
 } from '../../../../generated/data-contracts';
-import { GridRowId } from '@mui/x-data-grid';
+import { GridRowId, GridValidRowModel } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { Stack } from '@mui/material';
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
@@ -107,14 +107,6 @@ const EventList = () => {
 
   const columns = getEventsColumns(action);
 
-  const onPageChange = (page: number) => {
-    fetchDta(data?.size, page - 1);
-  };
-
-  const onPageSizeChange = (size: number) => {
-    fetchDta(size, data?.number);
-  };
-
   return (
     <>
       <TitleComponent title={t('events.list.title')} />
@@ -125,36 +117,24 @@ const EventList = () => {
           values={filterValues[activeTabIndex]}
           onChange={handleFilterChange}
         />
-        {(() => {
-          if (data?.content.length === 0)
-            return (
-              <EmptyData
-                title={t('events.list.noResults.title')}
-                description={t('events.list.noResults.description')}
-              />
-            );
-          if (data?.content && data.content.length > 0)
-            return (
-              <DataGridContainer>
-                <CustomDataGrid
-                  customPagination={{
-                    sizePageOptions: [5, 10, 20],
-                    defaultPageOption: data.size,
-                    totalPages: data.totalPages,
-                    currentPage: data.number + 1,
-                    onPageSizeChange,
-                    onPageChange
-                  }}
-                  disableColumnMenu
-                  disableColumnResize
-                  columns={columns}
-                  rows={data.content}
-                  getRowId={(row) => row.registryId}
-                />
-              </DataGridContainer>
-            );
-          return null;
-        })()}
+        {data?.content?.length ? (
+          <DataGridContainer>
+            <CustomDataGrid
+              sx={{ mt: 4 }}
+              columns={columns}
+              rows={data?.content as Array<GridValidRowModel>}
+              disableColumnMenu
+              disableColumnResize
+              getRowId={(row) => row.registryId}
+              totalPages={data?.totalPages || 1}
+            />
+          </DataGridContainer>
+        ) : (
+          <EmptyData
+            title={t('events.list.noResults.title')}
+            description={t('events.list.noResults.description')}
+          />
+        )}
       </Stack>
     </>
   );
