@@ -9,13 +9,7 @@ export const getReceipts = ({ organizationId }: { organizationId: number }) =>
       const query = buildQueryParams(args);
       const { data } = await utils.apiClient.bff.getReceipts(
         organizationId,
-        query,
-        // repeat array params as query string
-        {
-          paramsSerializer: {
-            indexes: null
-          }
-        }
+        query
       );
       return data;
     }

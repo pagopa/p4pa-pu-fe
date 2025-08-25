@@ -14,7 +14,6 @@ import { useFormContext } from 'react-hook-form';
 import { DebtTypeOrgForm } from '../../../types';
 import { OperatorsSelection } from '../../../../../../generated/data-contracts';
 import { useStore } from '../../../../../store/GlobalStore';
-import { useDebtTypeOrgId } from '../../../../../hooks/useDebtTypeOrgId';
 import { useSearch } from '../../../../../hooks/useSearch';
 import { getDebtPositionTypeOrgOperators } from '../../../../../api/debtPositionTypeOrgOperators';
 
@@ -35,8 +34,6 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   } = useStore();
 
   const defaultOperator = userInfo?.mappedExternalUserId;
-
-  const debtPositionTypeOrgId = useDebtTypeOrgId();
 
   const { watch, setValue } = useFormContext<DebtTypeOrgForm>();
 
@@ -70,8 +67,7 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   };
 
   const query = getDebtPositionTypeOrgOperators(
-    organizationId,
-    debtPositionTypeOrgId as number
+    organizationId
   );
 
   const debtTypeOrgOperators = useSearch({
