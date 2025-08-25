@@ -16,32 +16,20 @@ export type DebtPositionTypeOrgOperatorQuery = {
 
 export const getDebtPositionTypeOrgOperators = (
   organizationId: number,
-  debtPositionTypeOrgId: number
 ) =>
   useMutation({
     mutationKey: [
       'getDebtPositionTypeOrgOperators',
       organizationId,
-      debtPositionTypeOrgId
     ],
     mutationFn: async (args: DebtPositionTypeOrgOperatorFilteredRequest) => {
       const query = buildQueryParams(args);
       const { data: response } =
         await utils.apiClient.bff.getDebtPositionTypeOrgOperators(
           organizationId,
-          query,
-          {
-            paramsSerializer: {
-              // repeat array params as query string
-              indexes: null
-            }
-          }
+          query
         );
-
-      if (response) {
-        parseAndLog(pagedDebtPositionTypeOrgOperatorDTOSchema, response);
-      }
-
+      parseAndLog(pagedDebtPositionTypeOrgOperatorDTOSchema, response);
       return response;
     }
   });
