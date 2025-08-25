@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback } from 'react';
 import { Add } from '@mui/icons-material';
 import { Grid, Stack, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -14,7 +14,6 @@ import type {
   ClientDTOPage,
   ClientNoSecretDTO
 } from '../../../generated/apiClient';
-import { GridSortModel } from '@mui/x-data-grid';
 
 /**
  * Main page for the management of Client SIL
@@ -31,25 +30,19 @@ export const ClientSilPage = () => {
     clientName: '',
     clientId: ''
   });
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
 
   const clientSilQuery = clientSilApi.getClientSils({
     organizationId: Number(organizationId)
   });
 
-  const memoizedFilters = useMemo(
-    () => filterValues,
-    [filterValues.clientName, filterValues.clientId]
-  );
-
   const clientSilSearch = useSearch<ClientSilFilters, ClientDTOPage>({
-    filters: memoizedFilters,
+    filters: filterValues,
     query: clientSilQuery
   });
 
   const applyFilters = useCallback(() => {
-    clientSilSearch.applyFilters();
-  }, [clientSilSearch]);
+    clientSilSearch.applyFilters(filterValues);
+  }, [clientSilSearch, filterValues]);
 
   const { filters: filterItems } = useClientSilFilters({
     onFilter: applyFilters
@@ -61,20 +54,6 @@ export const ClientSilPage = () => {
       [id]: value as string
     }));
   }, []);
-
-  const handleSortModelChange = useCallback(
-    (model: GridSortModel) => {
-      setSortModel(model);
-
-      const apiSort = model.map(
-        (item) => `${item.field},${item.sort === 'desc' ? 'DESC' : 'ASC'}`
-      );
-
-      clientSilSearch.setSort(apiSort.length > 0 ? apiSort : []);
-      clientSilSearch.applyFilters();
-    },
-    [clientSilSearch]
-  );
 
   const handleAddNew = useCallback(() => {
     // TODO: Implement navigation to create new client form
@@ -113,9 +92,6 @@ export const ClientSilPage = () => {
         <ClientSilDataGrid
           data={clientSilSearch.query.data}
           loading={clientSilSearch.query.isPending}
-          onSortChange={handleSortModelChange}
-          sortModel={sortModel}
-          onPaginationChange={clientSilSearch.handlePaginationChange}
           onRowClick={handleRowClick}
         />
       </Grid>

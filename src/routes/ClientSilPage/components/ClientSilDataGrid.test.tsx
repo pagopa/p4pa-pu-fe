@@ -39,7 +39,8 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
       rows,
       columns,
       getRowId,
-      loading
+      loading,
+      totalPages
     }: {
       rows: Array<Record<string, unknown>>;
       columns: Array<{
@@ -50,10 +51,12 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
       }>;
       getRowId: (row: Record<string, unknown>) => string;
       loading: boolean;
+      totalPages?: number;
     }) => (
       <div data-testid="custom-data-grid">
         <div>Loading: {loading.toString()}</div>
         <div>Rows count: {rows.length}</div>
+        <div>Total pages: {totalPages || 1}</div>
         {rows.map((row) => (
           <div key={getRowId(row)} data-testid={`row-${getRowId(row)}`}>
             {columns.map((col) => (
@@ -102,8 +105,6 @@ const mockClientData: ClientDTOPage = {
 
 describe('ClientSilDataGrid', () => {
   const mockOnRowClick = vi.fn();
-  const mockOnSortChange = vi.fn();
-  const mockOnPaginationChange = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -117,8 +118,6 @@ describe('ClientSilDataGrid', () => {
         data={mockClientData}
         loading={false}
         onRowClick={mockOnRowClick}
-        onSortChange={mockOnSortChange}
-        onPaginationChange={mockOnPaginationChange}
         {...props}
       />
     );
@@ -179,5 +178,27 @@ describe('ClientSilDataGrid', () => {
     renderComponent({ data: emptyData });
 
     expect(screen.getByText('Rows count: 0')).toBeInTheDocument();
+  });
+
+  it('should pass totalPages correctly to CustomDataGrid', () => {
+    const dataWithMultiplePages: ClientDTOPage = {
+      ...mockClientData,
+      totalPages: 5
+    };
+
+    renderComponent({ data: dataWithMultiplePages });
+
+    expect(screen.getByText('Total pages: 5')).toBeInTheDocument();
+  });
+
+  it('should default to 1 page when totalPages is not provided', () => {
+    const dataWithoutTotalPages: ClientDTOPage = {
+      ...mockClientData,
+      totalPages: undefined as any
+    };
+
+    renderComponent({ data: dataWithoutTotalPages });
+
+    expect(screen.getByText('Total pages: 1')).toBeInTheDocument();
   });
 });
