@@ -190,6 +190,7 @@ describe('ClientSilDataGrid', () => {
   it('should default to 1 page when totalPages is not provided', () => {
     const dataWithoutTotalPages: ClientDTOPage = {
       ...mockClientData,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       totalPages: undefined as any
     };
 
