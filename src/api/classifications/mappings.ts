@@ -1,7 +1,8 @@
-import { format } from 'date-fns/format';
+import { formatISO } from 'date-fns';
 import { ClassificationsEnum } from '../../../generated/data-contracts';
 import { FilterValues } from '../../models/Filters';
 import { euroToCents } from '../../utils/formatters';
+import utils from '../../utils';
 
 export type ClassificationsFilteredRequest = {
   filters: FilterValues;
@@ -9,11 +10,21 @@ export type ClassificationsFilteredRequest = {
   sort: Array<string>;
 };
 
+type ClassificationsQueryParams = Parameters<
+  typeof utils.apiClient.bff.getTreasuredClassifications
+>[1];
+
+/** this is a tempory function that will be removed with the task P4ADEV-3617 */
+const temporyFormatDateTimeFunction = (date?: Date | null) => {
+  if (date === null || !date) return;
+  return formatISO(date);
+};
+
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: ClassificationsFilteredRequest) => ({
+}: ClassificationsFilteredRequest): ClassificationsQueryParams => ({
   ...(filters.CLASSIFICATION_TYPE && {
     label: filters.CLASSIFICATION_TYPE as ClassificationsEnum
   }),
@@ -22,43 +33,47 @@ export const buildQueryParams = ({
   ...(filters.IUD && { iud: filters.IUD }),
   ...(filters.IUF && { iuf: filters.IUF }),
   ...(filters.LAST_CLASSIFICATION_DATE_FROM && {
-    lastClassificationDateFrom: format(
-      filters.LAST_CLASSIFICATION_DATE_FROM,
-      'yyyy-MM-dd'
+    lastClassificationDateTimeFrom: temporyFormatDateTimeFunction(
+      filters.LAST_CLASSIFICATION_DATE_FROM
     )
   }),
   ...(filters.LAST_CLASSIFICATION_DATE_TO && {
-    lastClassificationDateTo: format(
-      filters.LAST_CLASSIFICATION_DATE_TO,
-      'yyyy-MM-dd'
+    lastClassificationDateTimeTo: temporyFormatDateTimeFunction(
+      filters.LAST_CLASSIFICATION_DATE_TO
     )
   }),
   ...(filters.REGULATION_DATE_FROM && {
-    regulationDateFrom: format(filters.REGULATION_DATE_FROM, 'yyyy-MM-dd')
+    regulationDateTimeFrom: temporyFormatDateTimeFunction(
+      filters.REGULATION_DATE_FROM
+    )
   }),
   ...(filters.REGULATION_DATE_TO && {
-    regulationDateTo: format(filters.REGULATION_DATE_TO, 'yyyy-MM-dd')
+    regulationDateTimeTo: temporyFormatDateTimeFunction(
+      filters.REGULATION_DATE_TO
+    )
   }),
   ...(filters.AMOUNT && {
     billAmountCents: euroToCents(filters.AMOUNT)
   }),
   ...(filters.BILL_DATE_FROM && {
-    billDateFrom: format(filters.BILL_DATE_FROM, 'yyyy-MM-dd')
+    billDateTimeFrom: temporyFormatDateTimeFunction(filters.BILL_DATE_FROM)
   }),
   ...(filters.BILL_DATE_TO && {
-    billDateTo: format(filters.BILL_DATE_TO, 'yyyy-MM-dd')
+    billDateTimeTo: temporyFormatDateTimeFunction(filters.BILL_DATE_TO)
   }),
   ...(filters.PAYMENT_DATE_FROM && {
-    paymentDateTimeFrom: filters.PAYMENT_DATE_FROM.toISOString()
+    paymentDateTimeFrom: temporyFormatDateTimeFunction(
+      filters.PAYMENT_DATE_FROM
+    )
   }),
   ...(filters.PAYMENT_DATE_TO && {
-    paymentDateTimeTo: filters.PAYMENT_DATE_TO.toISOString()
+    paymentDateTimeTo: temporyFormatDateTimeFunction(filters.PAYMENT_DATE_TO)
   }),
   ...(filters.PAY_DATE_FROM && {
-    payDateFrom: format(filters.PAY_DATE_FROM, 'yyyy-MM-dd')
+    payDateTimeFrom: temporyFormatDateTimeFunction(filters.PAY_DATE_FROM)
   }),
   ...(filters.PAY_DATE_TO && {
-    payDateTo: format(filters.PAY_DATE_TO, 'yyyy-MM-dd')
+    payDateTimeTo: temporyFormatDateTimeFunction(filters.PAY_DATE_TO)
   }),
   ...(filters.REGULATION_UNIQUE_IDENTIFIER && {
     regulationUniqueIdentifier: filters.REGULATION_UNIQUE_IDENTIFIER
@@ -73,12 +88,16 @@ export const buildQueryParams = ({
     pspCompanyName: filters.PSP_COMPANY_NAME
   }),
   ...(filters.REGION_VALUE_DATE_FROM && {
-    regionValueDateFrom: format(filters.REGION_VALUE_DATE_FROM, 'yyyy-MM-dd')
+    regionValueDateTimeFrom: temporyFormatDateTimeFunction(
+      filters.REGION_VALUE_DATE_FROM
+    )
   }),
   ...(filters.REGION_VALUE_DATE_TO && {
-    regionValueDateTo: format(filters.REGION_VALUE_DATE_TO, 'yyyy-MM-dd')
+    regionValueDateTimeTo: temporyFormatDateTimeFunction(
+      filters.REGION_VALUE_DATE_TO
+    )
   }),
   page: pagination.page,
   size: pagination.size,
-  ...(sort.length && { sort })
+  sort
 });

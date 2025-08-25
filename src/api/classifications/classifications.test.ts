@@ -127,11 +127,7 @@ describe('getClassifications', () => {
     });
 
     expect(mapping.buildQueryParams).toHaveBeenCalledWith(request);
-    expect(apiMock).toHaveBeenCalledWith(organizationId, 'mock-query-string', {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, 'mock-query-string');
   });
 
   it('does not fetch data when organizationId is 0', () => {

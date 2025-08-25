@@ -16,6 +16,8 @@ import {
   OrgSilServiceView,
   PagedOrgSilServiceView
 } from '../../../generated/apiClient';
+import { useNavigate } from 'react-router';
+import { PageRoutes } from '..';
 
 const SERVICE_CONFIGS: Record<
   number,
@@ -36,6 +38,8 @@ export const OrgSilServicesPage = () => {
   const {
     state: { organizationId }
   } = useStore();
+
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState(0);
   const [filterValues, setFilterValues] = useState({
@@ -122,7 +126,7 @@ export const OrgSilServicesPage = () => {
   };
 
   const handleAddNew = () => {
-    console.log('click on add new');
+    navigate(PageRoutes.ORG_SIL_SERVICE_CREATE);
   };
 
   const handleRowClick = (row: OrgSilServiceView) => {

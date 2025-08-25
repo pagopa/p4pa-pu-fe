@@ -39,13 +39,7 @@ export const getAssessments = (
       const { data: response } =
         await utils.apiClient.bff.getPagedAssessmentsExtendedDto(
           organizationId,
-          query,
-          {
-            paramsSerializer: {
-              // repeat array params as query string
-              indexes: null
-            }
-          }
+          query
         );
       parseAndLog(pagedAssessmentsExtendedDTOSchema, response);
       return response;
@@ -64,15 +58,8 @@ export const getAssessmentsRegistries = ({
       const { data: response } =
         await utils.apiClient.bff.getAssessmentsRegistries(
           organizationId,
-          query,
-          // repeat array params as query string
-          {
-            paramsSerializer: {
-              indexes: null
-            }
-          }
+          query
         );
-
       return response;
     }
   });
@@ -186,12 +173,6 @@ export const deleteAssessmentDetails = (organizationId: number) =>
         organizationId,
         {
           assessmentDetailIds
-        },
-        // repeat array params as query string
-        {
-          paramsSerializer: {
-            indexes: null
-          }
         }
       );
       return response;

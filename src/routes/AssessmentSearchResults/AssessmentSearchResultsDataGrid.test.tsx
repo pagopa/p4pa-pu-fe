@@ -7,7 +7,8 @@ import {
 } from '../../../generated/data-contracts';
 
 vi.mock('../../utils/formatters', () => ({
-  formatDate: () => '01/01/2023'
+  formatDate: () => '01/01/2023',
+  toCamelCase: () => vi.fn()
 }));
 
 vi.mock('../../utils/assessmentHelpers', () => ({

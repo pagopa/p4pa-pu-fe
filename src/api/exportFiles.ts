@@ -27,13 +27,7 @@ export const getExportFiles = (
     queryFn: async () => {
       const { data: files } = await utils.apiClient.bff.getExportFiles(
         organizationId,
-        query,
-        {
-          // Per serializzare correttamente i parametri
-          paramsSerializer: {
-            indexes: null
-          }
-        }
+        query
       );
 
       if (files) {

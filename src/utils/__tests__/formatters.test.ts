@@ -12,7 +12,8 @@ import {
   formatAmountForDisplay,
   isValidAmountInput,
   sanitizeAmountInput,
-  parseAmountToNumber
+  parseAmountToNumber,
+  toCamelCase
 } from '../formatters';
 
 describe('moneyFormat', () => {
@@ -336,6 +337,90 @@ describe('Amount Formatters', () => {
       expect(parseAmountToNumber('')).toBe(null);
       expect(parseAmountToNumber('abc')).toBe(null);
       expect(parseAmountToNumber('   ')).toBe(null);
+    });
+  });
+});
+
+describe('toCamelCase', () => {
+  describe('Basic cases', () => {
+    it('should convert simple snake_case to camelCase', () => {
+      expect(toCamelCase('hello_world')).toBe('helloWorld');
+    });
+
+    it('should convert snake_case with multiple words', () => {
+      expect(toCamelCase('user_first_name')).toBe('userFirstName');
+    });
+
+    it('should handle single word without underscore', () => {
+      expect(toCamelCase('hello')).toBe('hello');
+    });
+  });
+
+  describe('Edge cases', () => {
+    it('should handle empty string', () => {
+      expect(toCamelCase('')).toBe('');
+    });
+
+    it('should handle string with only underscore', () => {
+      expect(toCamelCase('_')).toBe('');
+    });
+
+    it('should handle multiple consecutive underscores', () => {
+      expect(toCamelCase('hello__world')).toBe('helloWorld');
+    });
+
+    it('should handle underscore at the beginning', () => {
+      expect(toCamelCase('_hello_world')).toBe('helloWorld');
+    });
+
+    it('should handle underscore at the end', () => {
+      expect(toCamelCase('hello_world_')).toBe('helloWorld');
+    });
+  });
+
+  describe('Case handling', () => {
+    it('should convert everything to lowercase before conversion', () => {
+      expect(toCamelCase('HELLO_WORLD')).toBe('helloWorld');
+    });
+
+    it('should handle mixed case strings', () => {
+      expect(toCamelCase('Hello_WORLD_Test')).toBe('helloWorldTest');
+    });
+  });
+
+  describe('Special cases', () => {
+    it('should handle numbers', () => {
+      expect(toCamelCase('user_id_123')).toBe('userId123');
+    });
+
+    it('should handle single words with numbers', () => {
+      expect(toCamelCase('test123')).toBe('test123');
+    });
+
+    it('should handle words starting with numbers', () => {
+      expect(toCamelCase('123_test_case')).toBe('123TestCase');
+    });
+  });
+
+  describe('Property tests', () => {
+    it('should never contain underscores in result', () => {
+      const testCases = [
+        'hello_world',
+        'a_b_c_d_e',
+        '_hello_',
+        'test__case',
+        'MIXED_case_STRING'
+      ];
+
+      testCases.forEach((testCase) => {
+        const result = toCamelCase(testCase);
+        expect(result).not.toContain('_');
+      });
+    });
+
+    it('should be idempotent for already camelCase strings', () => {
+      const camelCaseString = 'alreadyCamelCase';
+      expect(toCamelCase(camelCaseString)).toBe('alreadycamelcase');
     });
   });
 });
