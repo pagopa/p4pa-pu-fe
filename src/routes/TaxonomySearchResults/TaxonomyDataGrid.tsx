@@ -1,9 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import {
-  GridColDef,
-  GridRenderCellParams,
-  GridSortModel
-} from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
 import { ChevronRight } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router';
@@ -13,29 +9,15 @@ import { PageRoutes } from '..';
 
 export type TaxonomyDataGridProps = {
   data: PagedTaxonomy;
-  onFiltersApplied?: () => void;
-  onSortChange: (model: Array<string>) => void;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
   isLoading?: boolean;
 };
 
 const TaxonomyDataGrid = ({
   data,
-  onSortChange,
-  onPaginationChange,
   isLoading = false
 }: TaxonomyDataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  const onSort = (model: GridSortModel) => {
-    if (model?.length) {
-      const sort = model.map((item) =>
-        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
-      );
-      onSortChange(sort);
-    }
-  };
 
   const columns: Array<GridColDef> = [
     {
@@ -100,21 +82,9 @@ const TaxonomyDataGrid = ({
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      onSortModelChange={onSort}
-      smartPagination={{
-        initialPage: 0,
-        initialSize: 10,
-        sizeOptions: [5, 10, 20],
-        backendData: {
-          totalElements: data?.totalElements,
-          totalPages: data?.totalPages,
-          number: data?.number,
-          size: data?.size
-        },
-        onPaginationChange: onPaginationChange
-      }}
       localeText={{ noRowsLabel: t('flowDataGrid.noDataRows') }}
       loading={isLoading}
+      totalPages={data?.totalPages}
     />
   );
 };

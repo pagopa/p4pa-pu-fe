@@ -1,10 +1,6 @@
 import { Box, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import {
-  GridColDef,
-  GridRenderCellParams,
-  GridSortModel
-} from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useEffect } from 'react';
 import { ArrowForwardIos } from '@mui/icons-material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
@@ -39,15 +35,14 @@ export const MyOrg = ({
 
   const { mutate, data } = useDebtPositionTypeOrgSearch();
 
-  const { updateDraftFilters, applyFilters, sortModel, handleSortModelChange } =
-    useDebtTypesCreatedFilters({
-      initialFilters: {
-        code: codeFilter,
-        description: descriptionFilter,
-        page: 0,
-        size: 10
-      }
-    });
+  const { updateDraftFilters, applyFilters } = useDebtTypesCreatedFilters({
+    initialFilters: {
+      code: codeFilter,
+      description: descriptionFilter,
+      page: 0,
+      size: 10
+    }
+  });
 
   useEffect(() => {
     updateDraftFilters({
@@ -67,21 +62,6 @@ export const MyOrg = ({
 
     mutate({ organizationId, filters });
   }, [organizationId, codeFilter, descriptionFilter, mutate]);
-
-  const handlePaginationChange = (pagination: {
-    page: number;
-    size: number;
-  }) => {
-    const filters: FilterParams = {
-      page: pagination.page,
-      size: pagination.size
-    };
-
-    if (codeFilter) filters.code = codeFilter;
-    if (descriptionFilter) filters.description = descriptionFilter;
-
-    mutate({ organizationId, filters });
-  };
 
   useEffect(() => {
     const performSearch = () => {
@@ -147,11 +127,6 @@ export const MyOrg = ({
     );
   };
 
-  const handleSortChange = (newSortModel: GridSortModel) => {
-    const filters = handleSortModelChange(newSortModel);
-    mutate({ organizationId, filters });
-  };
-
   return (
     <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
       <CustomDataGrid
@@ -162,20 +137,7 @@ export const MyOrg = ({
         }
         disableColumnMenu
         disableColumnResize
-        sortModel={sortModel}
-        onSortModelChange={handleSortChange}
-        smartPagination={{
-          initialPage: 0,
-          initialSize: 10,
-          sizeOptions: [5, 10, 20],
-          backendData: {
-            totalElements: data?.totalElements,
-            totalPages: data?.totalPages,
-            number: data?.number,
-            size: data?.size
-          },
-          onPaginationChange: handlePaginationChange
-        }}
+        totalPages={data?.totalPages || 1}
       />
     </Box>
   );

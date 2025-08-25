@@ -296,16 +296,7 @@ const Step2PaymentsComponent = forwardRef<
   const assessmentDetailQuery = getAssessmentDetail(
     organizationId,
     assessmentId || 0,
-    { size: 10, page: 0 }, // Default pagination
-    {
-      enabled:
-        isActive &&
-        shouldLoadData &&
-        isRemoveMode &&
-        !!assessmentId &&
-        !!organizationId &&
-        !hasLoadedData
-    }
+    { size: 10, page: 0 }
   );
 
   // Effect for handling assessment detail data (Remove mode)
@@ -313,7 +304,7 @@ const Step2PaymentsComponent = forwardRef<
     if (
       isRemoveMode &&
       assessmentDetailQuery.data &&
-      !assessmentDetailQuery.isLoading &&
+      !assessmentDetailQuery.isPending &&
       !hasLoadedData
     ) {
       handleAssessmentDetailSuccess(assessmentDetailQuery.data);
@@ -324,7 +315,7 @@ const Step2PaymentsComponent = forwardRef<
   }, [
     isRemoveMode,
     assessmentDetailQuery.data,
-    assessmentDetailQuery.isLoading,
+    assessmentDetailQuery.isPending,
     assessmentDetailQuery.isError,
     assessmentDetailQuery.error,
     hasLoadedData,
@@ -719,13 +710,13 @@ const Step2PaymentsComponent = forwardRef<
 
   const isApiCallPending = useMemo(() => {
     if (isRemoveMode) {
-      return assessmentDetailQuery.isLoading || isManualApiCallPending;
+      return assessmentDetailQuery.isPending || isManualApiCallPending;
     } else {
       return paymentsApi.isLoading || isManualApiCallPending;
     }
   }, [
     isRemoveMode,
-    assessmentDetailQuery.isLoading,
+    assessmentDetailQuery.isPending,
     paymentsApi.isLoading,
     isManualApiCallPending
   ]);
@@ -922,7 +913,7 @@ const Step2PaymentsComponent = forwardRef<
           initialFilters={initialTableFilters}
           isLoading={
             (isRemoveMode
-              ? assessmentDetailQuery.isLoading
+              ? assessmentDetailQuery.isPending
               : paymentsApi.isLoading) && !hasLoadedData
           }
           isApiCallPending={isApiCallPending}
