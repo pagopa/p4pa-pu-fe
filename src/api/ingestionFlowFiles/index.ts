@@ -26,7 +26,6 @@ export const getIngestionFlowFiles = (
       const { data: files } = await utils.apiClient.bff.getIngestionFlowFiles(
         organizationId,
         query,
-        // serialize without indexes
         {
           paramsSerializer: {
             indexes: null
