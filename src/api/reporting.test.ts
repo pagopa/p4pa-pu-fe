@@ -4,20 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { renderHook, waitFor } from '../__tests__/renderers';
 import { getPaymentsReportingRows } from './reporting';
 
-vi.mock('./utils', () => {
-  const originalModule = vi.importActual('utils');
-  return {
-    ...originalModule,
-    apiClient: {
-      bff: {
-        getPaymentsReportingRows: vi.fn()
-      }
-    }
-  };
-});
-
 describe('get Payments Reporting Rows', () => {
-  it('returns data correctly', async () => {
     // Manual mock because dataMock keeps throwing errors on date fields
     const dataMock = {
       content: [
@@ -48,7 +35,8 @@ describe('get Payments Reporting Rows', () => {
       totalPages: 1,
       number: 0
     };
-
+  
+  it('returns data correctly', async () => {
     const params = {
       organizationId: 33,
       iuf: 'test-iuf',
@@ -63,10 +51,11 @@ describe('get Payments Reporting Rows', () => {
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const { result } = renderHook(() =>
-      getPaymentsReportingRows(params.organizationId, params.iuf, params.query)
+      getPaymentsReportingRows(params.organizationId, params.iuf, { enabled: true })
     );
+    result.current.mutate({ pagination: { page: 0, size: 20 }, filters: {}, sort: [] });
 
-    await waitFor(() => {
+    waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith(
         params.organizationId,
         params.iuf,
@@ -74,7 +63,7 @@ describe('get Payments Reporting Rows', () => {
       );
 
       expect(result.current.data).toEqual(dataMock);
-    });
+    })
   });
 
   it('does not fetch data when organizationId or iuf is missing', () => {
@@ -85,7 +74,7 @@ describe('get Payments Reporting Rows', () => {
 
   it('allows disabling the query via options', () => {
     const { result } = renderHook(() =>
-      getPaymentsReportingRows(33, 'test-iuf', {}, { enabled: false })
+      getPaymentsReportingRows(33, 'test-iuf', { enabled: false })
     );
 
     expect(result.current.data).toBeUndefined();

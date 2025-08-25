@@ -58,7 +58,7 @@ describe('getDebtPositionTypeWithCount', () => {
     expect(data).toEqual(mockData);
     expect(
       utils.apiClient.bff.getDebtPositionTypeWithCount
-    ).toHaveBeenCalledWith(organizationId, query);
+    ).toHaveBeenCalledWith(organizationId, { page: 0, size: 10 });
     expect(parseAndLog).toHaveBeenCalledWith(expect.any(Object), mockData);
   });
 
@@ -104,9 +104,6 @@ describe('getDebtPositionTypeWithCount', () => {
         description: 'Type A',
         sort: ['count,desc']
       },
-      {
-        paramsSerializer: { indexes: null }
-      }
     );
   });
 

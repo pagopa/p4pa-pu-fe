@@ -15,18 +15,14 @@ export const getPaymentsReportingRows = (
   return useMutation({
     mutationKey: ['getPaymentsReportingRows', organizationId, iuf],
     mutationFn: async (args: PaymentReportingRowsFilteredRequest) => {
-      console.debug(args);
       const query = buildQueryParams(args);
-      console.debug(query);
       const { data: paymentsReportingRows } =
         await utils.apiClient.bff.getPaymentsReportingRows(
           organizationId,
           iuf,
           query
         );
-      if (paymentsReportingRows) {
-        parseAndLog(pagedPaymentsReportingRowSchema, paymentsReportingRows);
-      }
+      parseAndLog(pagedPaymentsReportingRowSchema, paymentsReportingRows);
       return paymentsReportingRows;
     },
     enabled: options?.enabled !== false && !!organizationId && !!iuf,
