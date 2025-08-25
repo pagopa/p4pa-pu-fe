@@ -35,11 +35,11 @@ import { PageRoutes } from '../../routes';
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { AxiosError, isAxiosError } from 'axios';
 import { useStore } from '../../store/GlobalStore';
-import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';
 import { useDebtPositionTypeOrgSearch } from '../../api/debtTypesCreated';
 import { OrgSilServiceType } from '../../../generated/data-contracts';
 import { theme } from '@pagopa/mui-italia';
 import { useConfirmDialog } from './hooks/useConfirmDialog';
+import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';
 
 export const DebtTypeDetailView = () => {
   const {
@@ -94,13 +94,20 @@ export const DebtTypeDetailView = () => {
     debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
   });
 
-  const {
-    data: operatorsData,
-    isError: isOperatorsError,
-    error: operatorsError
-  } = getDebtPositionTypeOrgOperators(organizationId, {
-    debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
-  });
+  const operatorQuery = getDebtPositionTypeOrgOperators(
+    organizationId,
+    Number(debtPositionTypeOrgId)
+  );
+
+  useEffect(() => {
+    if (isSuccess && data?.response && operatorQuery?.isIdle) {
+      operatorQuery.mutate({
+        filters: { debtPositionTypeOrgId: Number(debtPositionTypeOrgId) },
+        pagination: { page: 0, size: 10 },
+        sort: []
+      });
+    }
+  }, [isSuccess, data]);
 
   const {
     data: operatorsEnabledData,
@@ -215,11 +222,11 @@ export const DebtTypeDetailView = () => {
   }
 
   const buildOperatorsData = (): OperatorsData | null => {
-    if (!operatorsData || !operatorsEnabledData?.content?.[0]) {
+    if (!operatorQuery.data || !operatorsEnabledData?.content?.[0]) {
       return null;
     }
 
-    const totalOperators = operatorsData.totalElements;
+    const totalOperators = operatorQuery.data.totalElements;
     const enabledOperators =
       operatorsEnabledData.content[0].enabledOperators || 0;
 
@@ -306,7 +313,7 @@ export const DebtTypeDetailView = () => {
       }
     }
 
-    if (isOperatorsError && operatorsError) {
+    if (operatorQuery.isError) {
       utils.notify.emit(t('errors.fetchOperators'), 'error');
     }
 
@@ -317,12 +324,11 @@ export const DebtTypeDetailView = () => {
     data,
     isLoading,
     isSuccess,
-    operatorsData,
+    operatorQuery.data,
     operatorsEnabledData,
     isDebtTypeError,
     debtTypeError,
-    isOperatorsError,
-    operatorsError,
+    operatorQuery.isError,
     isOperatorsEnabledError,
     operatorsEnabledError,
     t

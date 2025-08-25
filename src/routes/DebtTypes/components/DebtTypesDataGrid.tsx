@@ -1,9 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import {
-  GridColDef,
-  GridRenderCellParams,
-  GridSortModel
-} from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { IconButton } from '@mui/material';
 import { ChevronRight } from '@mui/icons-material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
@@ -17,18 +13,11 @@ import { PageRoutes } from '../../../routes';
 
 export type DebtTypesDataGridProps = {
   data: PagedDebtPositionTypeWithCount;
-  onSortChange: (model: GridSortModel) => void;
-  sortModel: GridSortModel;
-  onFiltersApplied?: () => void;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
   isLoading?: boolean;
 };
 
 const DebtTypesDataGrid = ({
   data,
-  onSortChange,
-  sortModel,
-  onPaginationChange,
   isLoading = false
 }: DebtTypesDataGridProps) => {
   const { t } = useTranslation();
@@ -95,22 +84,9 @@ const DebtTypesDataGrid = ({
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      sortModel={sortModel}
-      onSortModelChange={onSortChange}
-      smartPagination={{
-        initialPage: 0,
-        initialSize: 10,
-        sizeOptions: [5, 10, 20],
-        backendData: {
-          totalElements: data?.totalElements,
-          totalPages: data?.totalPages,
-          number: data?.number,
-          size: data?.size
-        },
-        onPaginationChange: onPaginationChange
-      }}
       localeText={{ noRowsLabel: t('flowDataGrid.noDataRows') }}
       loading={isLoading}
+      totalPages={data?.totalPages || 1}
     />
   );
 };

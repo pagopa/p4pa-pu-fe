@@ -57,10 +57,7 @@ const ExportFlowOverview = ({
     updateDraftFilters,
     applyFilters,
     handleDateFromChange,
-    handleDateToChange,
-    sortModel,
-    handleSortModelChange,
-    handlePaginationChange
+    handleDateToChange
   } = useExportFlowFilters({
     exportFileType: exportFileTypes
   });
@@ -267,21 +264,8 @@ const ExportFlowOverview = ({
               getRowId={(row) => row.exportFileId}
               disableColumnMenu
               disableColumnResize
-              sortModel={sortModel}
-              onSortModelChange={handleSortModelChange}
               loading={isLoading}
-              smartPagination={{
-                initialPage: 0,
-                initialSize: 10,
-                sizeOptions: [5, 10, 20],
-                backendData: {
-                  totalElements: data?.totalElements || 0,
-                  totalPages: data?.totalPages || 0,
-                  number: data?.number || 0,
-                  size: data?.size || 10
-                },
-                onPaginationChange: handlePaginationChange
-              }}
+              totalPages={data?.totalPages || 1}
             />
           )}
         </Box>

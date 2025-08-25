@@ -1,8 +1,4 @@
-import {
-  GridColDef,
-  GridRenderCellParams,
-  GridSortModel
-} from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
@@ -14,25 +10,10 @@ import { PageRoutes } from '../../routes';
 
 export type DataGridProps = {
   data: PagedTreasuredClassification;
-  onSortChange: (model: Array<string>) => void;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
-const SearchResultsDataGrid = ({
-  data,
-  onSortChange,
-  onPaginationChange
-}: DataGridProps) => {
+const SearchResultsDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
-
-  const onSort = (model: GridSortModel) => {
-    if (model?.length) {
-      const sort = model.map((item) =>
-        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
-      );
-      onSortChange(sort);
-    }
-  };
 
   const columns: Array<GridColDef> = [
     {
@@ -86,28 +67,14 @@ const SearchResultsDataGrid = ({
   ];
 
   return (
-    <>
-      <CustomDataGrid
-        rows={data?.content ?? []}
-        getRowId={(row) => row.classificationId}
-        columns={columns}
-        disableColumnMenu
-        disableColumnResize
-        onSortModelChange={onSort}
-        smartPagination={{
-          initialPage: 0,
-          initialSize: 10,
-          sizeOptions: [5, 10, 20],
-          backendData: {
-            totalElements: data?.totalElements,
-            totalPages: data?.totalPages,
-            number: data?.number,
-            size: data?.size
-          },
-          onPaginationChange: onPaginationChange
-        }}
-      />
-    </>
+    <CustomDataGrid
+      rows={data?.content ?? []}
+      getRowId={(row) => row.classificationId}
+      columns={columns}
+      disableColumnMenu
+      disableColumnResize
+      totalPages={data?.totalPages}
+    />
   );
 };
 
