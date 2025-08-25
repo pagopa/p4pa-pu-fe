@@ -66,21 +66,24 @@ describe('getDebtPositionTypeOrgOperators', () => {
       size: 10,
       totalElements: 1
     };
- 
-    vi.spyOn(utils.apiClient.bff, 'getDebtPositionTypeOrgOperators')
-      .mockResolvedValue({ data: mockData } as AxiosResponse);
+
+    vi.spyOn(
+      utils.apiClient.bff,
+      'getDebtPositionTypeOrgOperators'
+    ).mockResolvedValue({ data: mockData } as AxiosResponse);
 
     const { result } = renderHook(() => getDebtPositionTypeOrgOperators(3));
 
-    const data = await result.current.mutateAsync({ filters: {}, pagination:{ page: 0, size: 10}, sort: [] });
+    const data = await result.current.mutateAsync({
+      filters: {},
+      pagination: { page: 0, size: 10 },
+      sort: []
+    });
 
     expect(data).toEqual(mockData);
     expect(
       utils.apiClient.bff.getDebtPositionTypeOrgOperators
-    ).toHaveBeenCalledWith(
-      3,
-      { page: 0, size: 10, sort: [] }
-    );
+    ).toHaveBeenCalledWith(3, { page: 0, size: 10, sort: [] });
   });
 
   it('should handle sort parameters correctly', async () => {
@@ -98,24 +101,22 @@ describe('getDebtPositionTypeOrgOperators', () => {
       data: mockData
     });
 
-    const { result } = renderHook(() =>
-      getDebtPositionTypeOrgOperators(3)
-    );
+    const { result } = renderHook(() => getDebtPositionTypeOrgOperators(3));
 
-    const data = await result.current.mutateAsync({ filters: {}, pagination:{ page: 0, size: 10}, sort: ['operator,asc', 'firstName,desc'] });
-
+    const data = await result.current.mutateAsync({
+      filters: {},
+      pagination: { page: 0, size: 10 },
+      sort: ['operator,asc', 'firstName,desc']
+    });
 
     expect(data).toEqual(mockData);
     expect(
       utils.apiClient.bff.getDebtPositionTypeOrgOperators
-    ).toHaveBeenCalledWith(
-      3,
-      {
-        page: 0,
-        size: 10,
-        sort: ['operator,asc', 'firstName,desc']
-      }
-    );
+    ).toHaveBeenCalledWith(3, {
+      page: 0,
+      size: 10,
+      sort: ['operator,asc', 'firstName,desc']
+    });
   });
 
   it('should handle debtPositionTypeOrgId parameter', async () => {
@@ -133,25 +134,23 @@ describe('getDebtPositionTypeOrgOperators', () => {
       data: mockData
     });
 
-    const { result } = renderHook(() =>
-      getDebtPositionTypeOrgOperators(3)
-    );
+    const { result } = renderHook(() => getDebtPositionTypeOrgOperators(3));
 
-    const data = await result.current.mutateAsync({ filters: { debtPositionTypeOrgId: 123 }, pagination:{ page: 0, size: 10}, sort: [] });
-
+    const data = await result.current.mutateAsync({
+      filters: { debtPositionTypeOrgId: 123 },
+      pagination: { page: 0, size: 10 },
+      sort: []
+    });
 
     expect(data).toEqual(mockData);
     expect(
       utils.apiClient.bff.getDebtPositionTypeOrgOperators
-    ).toHaveBeenCalledWith(
-      3,
-      {
-        debtPositionTypeOrgId: 123,
-        page: 0,
-        size: 10,
-        sort: []
-      }
-    );
+    ).toHaveBeenCalledWith(3, {
+      debtPositionTypeOrgId: 123,
+      page: 0,
+      size: 10,
+      sort: []
+    });
   });
 
   it('should handle errors correctly', async () => {
@@ -163,7 +162,11 @@ describe('getDebtPositionTypeOrgOperators', () => {
     const { result } = renderHook(() => getDebtPositionTypeOrgOperators(3));
 
     expect(
-      result.current.mutateAsync({ filters: {}, pagination:{ page: 0, size: 10}, sort: [] })
+      result.current.mutateAsync({
+        filters: {},
+        pagination: { page: 0, size: 10 },
+        sort: []
+      })
     ).rejects.toThrow('API error');
   });
 
@@ -191,8 +194,12 @@ describe('getDebtPositionTypeOrgOperators', () => {
 
     const { result } = renderHook(() => getDebtPositionTypeOrgOperators(3));
 
-    result.current.mutateAsync({ filters: { debtPositionTypeOrgId: 123 }, pagination:{ page: 0, size: 10}, sort: [] });
-  
+    result.current.mutateAsync({
+      filters: { debtPositionTypeOrgId: 123 },
+      pagination: { page: 0, size: 10 },
+      sort: []
+    });
+
     expect(useQueryMock.lastOptions).toBeTruthy();
     if (useQueryMock.lastOptions) {
       expect(useQueryMock.lastOptions.queryKey).toEqual([

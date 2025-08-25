@@ -6,6 +6,7 @@ import {
   pagedOrgSilServiceViewSchema
 } from '../../../generated/zod-schema';
 import { buildQueryParams, OrgSilServicesFilteredRequest } from './mappings';
+import { OrgSilServiceDecryptedDTO } from '../../../generated/apiClient';
 
 const getOrgSilServices = ({ organizationId }: { organizationId: number }) =>
   useMutation({
@@ -42,7 +43,22 @@ const getOrgSilServiceById = ({
     }
   });
 
+const createOrgSilService = ({ organizationId }: { organizationId: number }) =>
+  useMutation({
+    mutationKey: ['createOrgSilService', organizationId],
+    mutationFn: async (payload: OrgSilServiceDecryptedDTO) => {
+      const { data } = await utils.apiClient.bff.createOrgSilService(
+        organizationId,
+        payload
+      );
+
+      parseAndLog(orgSilServiceDecryptedDTOSchema, data);
+      return data;
+    }
+  });
+
 export default {
   getOrgSilServices,
-  getOrgSilServiceById
+  getOrgSilServiceById,
+  createOrgSilService
 };

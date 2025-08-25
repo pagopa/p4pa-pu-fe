@@ -125,7 +125,7 @@ export const OrgSilServicesPage = () => {
   };
 
   const handleAddNew = () => {
-    console.log('click on add new');
+    navigate(PageRoutes.ORG_SIL_SERVICE_CREATE);
   };
 
   const handleRowClick = (row: OrgSilServiceView) => {
