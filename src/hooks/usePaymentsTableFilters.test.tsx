@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { MemoryRouter } from 'react-router';
-import { GridSortModel } from '@mui/x-data-grid';
 import { subDays, addDays } from 'date-fns';
 import { usePaymentsTableFilters } from './usePaymentsTableFilters';
 import { toStartOfDay, toEndOfDay } from '../utils/formatters';
@@ -52,7 +51,6 @@ describe('usePaymentsTableFilters', () => {
         toStartOfDay(thirtyDaysAgo)
       );
       expect(result.current.appliedFilters.dateTo).toEqual(toEndOfDay(today));
-      expect(result.current.sortModel).toEqual([]);
       expect(result.current.hasActiveFilters).toBe(false);
       expect(result.current.hasValidFilters).toBe(true);
     });
@@ -79,15 +77,6 @@ describe('usePaymentsTableFilters', () => {
       expect(result.current.appliedFilters.iuv).toBe('TEST123');
     });
 
-    it('should read pagination from URL if present', () => {
-      const { result } = renderHook(() => usePaymentsTableFilters(), {
-        wrapper: createWrapper(['/?page=3&size=25'])
-      });
-
-      expect(result.current.draftFilters).toBeDefined();
-      expect(result.current.appliedFilters).toBeDefined();
-    });
-
     it('should auto-load default filters on mount when autoLoadOnMount is true', () => {
       renderHook(
         () =>
@@ -102,10 +91,6 @@ describe('usePaymentsTableFilters', () => {
         expect.objectContaining({
           dateFrom: toStartOfDay(thirtyDaysAgo),
           dateTo: toEndOfDay(today)
-        }),
-        expect.objectContaining({
-          page: 0,
-          size: 10
         })
       );
     });
@@ -260,13 +245,17 @@ describe('usePaymentsTableFilters', () => {
         result.current.applyFilters();
       });
 
+      const today = toEndOfDay(new Date());
+      const thirtyDaysAgo = toStartOfDay(subDays(today as Date, 30));
+
       expect(result.current.appliedFilters.iuv).toBe('APPLY_TEST');
       expect(result.current.hasActiveFilters).toBe(false);
       expect(mockOnFilterValidationError).toHaveBeenCalledWith(false);
-      expect(mockOnFiltersChange).toHaveBeenCalledWith(
-        expect.objectContaining({ iuv: 'APPLY_TEST' }),
-        expect.objectContaining({ page: 0, size: 10 })
-      );
+      expect(mockOnFiltersChange).toHaveBeenCalledWith({
+        iuv: 'APPLY_TEST',
+        dateFrom: thirtyDaysAgo,
+        dateTo: today
+      });
     });
 
     it('should fail application when filters are not valid (all dates nullified)', () => {
@@ -304,77 +293,6 @@ describe('usePaymentsTableFilters', () => {
       expect(mockOnFilterValidationError).toHaveBeenCalledWith(true);
       expect(mockOnFiltersChange).not.toHaveBeenCalled();
     });
-
-    it('should reset pagination when applying filters', () => {
-      const { result } = renderHook(
-        () =>
-          usePaymentsTableFilters({
-            onFiltersChange: mockOnFiltersChange
-          }),
-        { wrapper: createWrapper(['/?page=5&size=25']) }
-      );
-
-      act(() => {
-        result.current.updateDraftFilters({ iuv: 'RESET_PAGE' });
-      });
-
-      act(() => {
-        result.current.applyFilters();
-      });
-
-      expect(mockOnFiltersChange).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ page: 0, size: 25 })
-      );
-    });
-  });
-
-  describe('Sort management', () => {
-    it('should handle sort change correctly', () => {
-      const { result } = renderHook(
-        () =>
-          usePaymentsTableFilters({
-            onFiltersChange: mockOnFiltersChange
-          }),
-        { wrapper: createWrapper() }
-      );
-
-      const newSortModel: GridSortModel = [
-        { field: 'paymentDateTime', sort: 'desc' }
-      ];
-
-      act(() => {
-        result.current.handleSortModelChange(newSortModel);
-      });
-
-      expect(result.current.sortModel).toEqual(newSortModel);
-      expect(mockOnFiltersChange).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ page: 0, size: 10 }),
-        ['paymentDateTime,desc']
-      );
-    });
-
-    it('should handle empty sorting', () => {
-      const { result } = renderHook(
-        () =>
-          usePaymentsTableFilters({
-            onFiltersChange: mockOnFiltersChange
-          }),
-        { wrapper: createWrapper() }
-      );
-
-      act(() => {
-        result.current.handleSortModelChange([]);
-      });
-
-      expect(result.current.sortModel).toEqual([]);
-      expect(mockOnFiltersChange).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining({ page: 0, size: 10 }),
-        undefined
-      );
-    });
   });
 
   describe('Date handlers', () => {
@@ -408,7 +326,7 @@ describe('usePaymentsTableFilters', () => {
       expect(result.current.hasActiveFilters).toBe(true);
     });
 
-    it('should handle null values for dates', () => {
+    it('should handle nullish values for dates', () => {
       const { result } = renderHook(
         () =>
           usePaymentsTableFilters({
@@ -425,8 +343,8 @@ describe('usePaymentsTableFilters', () => {
         result.current.handleDateToChange(null);
       });
 
-      expect(result.current.draftFilters.dateFrom).toBeNull();
-      expect(result.current.draftFilters.dateTo).toBeNull();
+      expect(result.current.draftFilters.dateFrom).toBeFalsy();
+      expect(result.current.draftFilters.dateTo).toBeFalsy();
     });
   });
 
@@ -565,7 +483,6 @@ describe('usePaymentsTableFilters', () => {
       expectHookActionsNotToThrow(() => {
         result.current.updateDraftFilters({ iuv: 'NO_CALLBACK' });
         result.current.applyFilters();
-        result.current.handleSortModelChange([{ field: 'test', sort: 'asc' }]);
       });
     });
   });

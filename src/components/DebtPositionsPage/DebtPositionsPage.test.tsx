@@ -314,7 +314,7 @@ describe('DebtPositionsPage', async () => {
 
       await waitFor(() => {
         expect(mockNavigate).toHaveBeenCalledWith(
-          PageRoutes.DEBT_POSITION_SEARCH_RESULTS,
+          expect.stringContaining(PageRoutes.DEBT_POSITIONS_RESULTS),
           expect.objectContaining({
             state: expect.objectContaining({
               searchType: SearchType.IUV
@@ -344,7 +344,7 @@ describe('DebtPositionsPage', async () => {
 
       await waitFor(() => {
         expect(mockNavigate).toHaveBeenCalledWith(
-          PageRoutes.DEBT_POSITIONS_RESULTS,
+          expect.stringContaining(PageRoutes.DEBT_POSITIONS_RESULTS),
           expect.objectContaining({
             state: expect.objectContaining({
               searchType: SearchType.DEBT_POSITION

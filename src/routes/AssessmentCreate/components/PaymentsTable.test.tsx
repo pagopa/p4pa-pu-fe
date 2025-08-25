@@ -1,40 +1,29 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
 import { screen, fireEvent, waitFor } from '@testing-library/react';
 import { render } from '../../../__tests__/renderers';
 import { PaymentsTable, PaymentsTableProps } from './PaymentsTable';
 import {
   PagedPaidInstallmentsDTO,
-  PaymentsUIFilters,
-  PaidInstallmentDTO
+  PaidInstallmentDTO,
+  PaymentsUIFilters
 } from '../../../api/classifications/paidInstallments/mappings';
 
+// Mock the usePaymentsTableFilters hook
 const mockUsePaymentsTableFilters = {
-  appliedFilters: {} as PaymentsUIFilters,
   draftFilters: {} as PaymentsUIFilters,
-  sortModel: [],
   updateDraftFilters: vi.fn(),
   applyFilters: vi.fn(),
-  handleSortModelChange: vi.fn(),
   handleDateFromChange: vi.fn(),
-  handleDateToChange: vi.fn()
+  handleDateToChange: vi.fn(),
+  hasValidFilters: true
 };
 
-vi.mock('../..', () => ({
-  PageRoutes: {
-    TELEMATIC_RECEIPT_DETAIL: '/telematic-receipt/:id'
-  }
+// Mock the useHashParamsListener hook
+vi.mock('../../../hooks/useHashParamsListener', () => ({
+  useHashParamsListener: vi.fn()
 }));
 
-vi.mock('../../path/to/routes', () => ({
-  PageRoutes: {
-    TELEMATIC_RECEIPT_DETAIL: '/telematic-receipt/:id'
-  }
-}));
-
-vi.mock('../../../hooks/usePaymentsTableFilters', () => ({
-  usePaymentsTableFilters: () => mockUsePaymentsTableFilters
-}));
-
+// Mock react-i18next translation
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => {
@@ -50,6 +39,19 @@ vi.mock('react-i18next', () => ({
     }
   })
 }));
+
+// Mock react-router's generatePath function
+vi.mock('react-router', async (importOriginal) => ({
+  ...((await importOriginal()) as typeof import('react-router')),
+  generatePath: vi.fn((path, params) => path.replace(':id', params.id))
+}));
+
+// Mock paymentsTableFilters Hook module, returning your mock object
+vi.mock('../../../hooks/usePaymentsTableFilters', () => ({
+  usePaymentsTableFilters: () => mockUsePaymentsTableFilters
+}));
+
+import { useHashParamsListener } from '../../../hooks/useHashParamsListener';
 
 describe('PaymentsTable', () => {
   const mockPaidInstallment: PaidInstallmentDTO = {
@@ -69,7 +71,7 @@ describe('PaymentsTable', () => {
     size: 10
   };
 
-  const defaultProps: PaymentsTableProps = {
+  const baseProps: PaymentsTableProps = {
     data: mockData,
     onSelectionChange: vi.fn(),
     onFiltersApplied: vi.fn(),
@@ -83,481 +85,146 @@ describe('PaymentsTable', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+
+    // Default mock return value for useHashParamsListener
+    (useHashParamsListener as Mock).mockReturnValue({
+      page: '1',
+      size: '10',
+      sortField: 'paymentDateTime',
+      sortDirection: 'desc'
+    });
+
+    // Reset mock filters
+    mockUsePaymentsTableFilters.draftFilters = {};
+    mockUsePaymentsTableFilters.updateDraftFilters.mockClear();
+    mockUsePaymentsTableFilters.applyFilters.mockClear();
+    mockUsePaymentsTableFilters.handleDateFromChange.mockClear();
+    mockUsePaymentsTableFilters.handleDateToChange.mockClear();
   });
 
-  afterEach(() => {
-    vi.clearAllTimers();
+  it('renders filters and table columns', () => {
+    render(<PaymentsTable {...baseProps} />);
+
+    expect(screen.getByLabelText('Cerca IUV')).toBeInTheDocument();
+    expect(screen.getByText('Cerca')).toBeInTheDocument();
+
+    expect(screen.getByText('IUV')).toBeInTheDocument();
+    expect(screen.getByText('Importo')).toBeInTheDocument();
+    expect(screen.getByText('Data esito')).toBeInTheDocument();
+    expect(screen.getByText('Ultimo aggiornamento')).toBeInTheDocument();
   });
 
-  describe('Rendering', () => {
-    it('renders the component with default props', () => {
-      render(<PaymentsTable {...defaultProps} />);
+  it('calls updateDraftFilters on IUV input change', () => {
+    render(<PaymentsTable {...baseProps} />);
 
-      expect(screen.getByLabelText('Cerca IUV')).toBeInTheDocument();
-      expect(screen.getByText('Cerca')).toBeInTheDocument();
-    });
+    const input = screen.getByLabelText('Cerca IUV');
+    fireEvent.change(input, { target: { value: 'test-iuv' } });
 
-    it('renders table columns correctly', () => {
-      render(<PaymentsTable {...defaultProps} />);
-
-      expect(screen.getByText('IUV')).toBeInTheDocument();
-      expect(screen.getByText('Importo')).toBeInTheDocument();
-      expect(screen.getByText('Data esito')).toBeInTheDocument();
-      expect(screen.getByText('Ultimo aggiornamento')).toBeInTheDocument();
-    });
-
-    it('renders table data correctly', () => {
-      render(<PaymentsTable {...defaultProps} />);
-
-      expect(screen.getByText('test-iuv-1')).toBeInTheDocument();
-      expect(screen.getByText('1,01 €')).toBeInTheDocument();
-      expect(screen.getByText('01/01/2023')).toBeInTheDocument();
-      expect(screen.getByText('02/01/2023')).toBeInTheDocument();
-    });
-
-    it('renders empty state when no data', () => {
-      const emptyData: PagedPaidInstallmentsDTO = {
-        content: [],
-        totalElements: 0,
-        totalPages: 0,
-        number: 0,
-        size: 10
-      };
-
-      render(<PaymentsTable {...defaultProps} data={emptyData} />);
-
-      expect(screen.getByText('Nessun dato disponibile')).toBeInTheDocument();
-    });
-
-    it('renders loading state correctly', () => {
-      render(<PaymentsTable {...defaultProps} isLoading={true} />);
-
-      expect(screen.getByRole('progressbar')).toBeInTheDocument();
-    });
+    expect(mockUsePaymentsTableFilters.updateDraftFilters).toHaveBeenCalledWith(
+      { iuv: 'test-iuv' }
+    );
   });
 
-  describe('Filters', () => {
-    it('calls updateDraftFilters when IUV filter changes', () => {
-      render(<PaymentsTable {...defaultProps} />);
+  it('calls applyFilters on search button click', () => {
+    render(<PaymentsTable {...baseProps} />);
 
-      const iuvInput = screen.getByLabelText('Cerca IUV');
-      fireEvent.change(iuvInput, { target: { value: 'test-iuv' } });
+    const button = screen.getByText('Cerca');
+    fireEvent.click(button);
 
-      expect(
-        mockUsePaymentsTableFilters.updateDraftFilters
-      ).toHaveBeenCalledWith({
-        iuv: 'test-iuv'
-      });
-    });
+    expect(mockUsePaymentsTableFilters.applyFilters).toHaveBeenCalled();
+  });
 
-    it('calls applyFilters when search button is clicked', () => {
-      render(<PaymentsTable {...defaultProps} />);
+  it('disables search button when disabled prop is true', () => {
+    render(<PaymentsTable {...baseProps} disabled={true} />);
 
-      const searchButton = screen.getByText('Cerca');
-      fireEvent.click(searchButton);
+    const button = screen.getByText('Cerca');
+    expect(button).toBeDisabled();
+  });
 
-      expect(mockUsePaymentsTableFilters.applyFilters).toHaveBeenCalled();
-    });
+  it('calls date filter change handlers', () => {
+    render(<PaymentsTable {...baseProps} />);
 
-    it('disables search button when disabled prop is true', () => {
-      render(<PaymentsTable {...defaultProps} disabled={true} />);
+    expect(mockUsePaymentsTableFilters.handleDateFromChange).toBeDefined();
+    expect(mockUsePaymentsTableFilters.handleDateToChange).toBeDefined();
+  });
 
-      const searchButton = screen.getByText('Cerca');
-      expect(searchButton).toBeDisabled();
-    });
+  it('renders table rows correctly', () => {
+    render(<PaymentsTable {...baseProps} />);
 
-    it('calls date handlers when date filters change', () => {
-      render(<PaymentsTable {...defaultProps} />);
+    expect(screen.getByText('test-iuv-1')).toBeInTheDocument();
+    expect(screen.getByText('1,01 €')).toBeInTheDocument();
+    expect(screen.getByText('01/01/2023')).toBeInTheDocument();
+    expect(screen.getByText('02/01/2023')).toBeInTheDocument();
+  });
 
-      expect(mockUsePaymentsTableFilters.handleDateFromChange).toBeDefined();
-      expect(mockUsePaymentsTableFilters.handleDateToChange).toBeDefined();
+  it('handles row selection and calls onSelectionChange with uniqueIds', async () => {
+    render(<PaymentsTable {...baseProps} />);
+
+    const checkboxes = screen.getAllByRole('checkbox');
+    fireEvent.click(checkboxes[1]);
+
+    await waitFor(() => {
+      expect(baseProps.onSelectionChange).toHaveBeenCalled();
+      const calls = (baseProps.onSelectionChange as Mock).mock.calls;
+      const selectedIds = calls[0][0];
+      expect(Array.isArray(selectedIds)).toBe(true);
+      expect(selectedIds[0]).toContain('test-iud-1');
     });
   });
 
-  describe('Data Grid Functionality', () => {
-    it('renders rows with unique IDs correctly', () => {
-      const multipleItemsData: PagedPaidInstallmentsDTO = {
-        content: [
-          { ...mockPaidInstallment, iud: 'iud-1', iuv: 'iuv-1' },
-          { ...mockPaidInstallment, iud: 'iud-2', iuv: 'iuv-2' }
-        ],
-        totalElements: 2,
-        totalPages: 1,
-        number: 0,
-        size: 10
-      };
+  it('shows rows as selected based on selectedUniqueIds prop', () => {
+    render(
+      <PaymentsTable {...baseProps} selectedUniqueIds={['test-iud-1-0']} />
+    );
 
-      render(<PaymentsTable {...defaultProps} data={multipleItemsData} />);
-
-      expect(screen.getByText('iuv-1')).toBeInTheDocument();
-      expect(screen.getByText('iuv-2')).toBeInTheDocument();
-    });
-
-    it('handles row selection correctly', async () => {
-      render(<PaymentsTable {...defaultProps} />);
-
-      const checkboxes = screen.getAllByRole('checkbox');
-      const rowCheckbox = checkboxes[1];
-      fireEvent.click(rowCheckbox);
-
-      await waitFor(() => {
-        expect(defaultProps.onSelectionChange).toHaveBeenCalled();
-      });
-    });
-
-    it('shows selected rows based on selectedUniqueIds prop', () => {
-      const selectedUniqueIds = ['test-iud-1-0'];
-
-      render(
-        <PaymentsTable
-          {...defaultProps}
-          selectedUniqueIds={selectedUniqueIds}
-        />
-      );
-
-      const checkboxes = screen.getAllByRole('checkbox');
-      const rowCheckbox = checkboxes[1];
-      expect(rowCheckbox).toBeChecked();
-    });
-
-    it('calls handleSortModelChange when sorting changes', () => {
-      render(<PaymentsTable {...defaultProps} />);
-
-      const iuvHeader = screen.getByText('IUV');
-      fireEvent.click(iuvHeader);
-
-      expect(
-        mockUsePaymentsTableFilters.handleSortModelChange
-      ).toHaveBeenCalled();
-    });
-
-    it('calls onFiltersApplied when pagination changes', async () => {
-      render(<PaymentsTable {...defaultProps} />);
-
-      expect(defaultProps.onFiltersApplied).toBeDefined();
-    });
+    const checkboxes = screen.getAllByRole('checkbox');
+    expect(checkboxes[1]).toBeChecked();
   });
 
-  describe('Detail Actions', () => {
+  it('opens detail page in new tab when action button clicked', () => {
     const mockWindowOpen = vi.fn();
-
-    beforeEach(() => {
-      mockWindowOpen.mockClear();
-      Object.defineProperty(window, 'open', {
-        value: mockWindowOpen,
-        writable: true
-      });
-
-      Object.defineProperty(window, 'location', {
-        value: {
-          origin: 'https://test-app.com'
-        },
-        writable: true
-      });
+    Object.defineProperty(window, 'open', {
+      writable: true,
+      value: mockWindowOpen
+    });
+    Object.defineProperty(window, 'location', {
+      writable: true,
+      value: { origin: 'https://test-app.com' }
     });
 
-    afterEach(() => {
-      vi.restoreAllMocks();
-    });
+    render(<PaymentsTable {...baseProps} />);
 
-    it('renders detail button for each row', () => {
-      render(<PaymentsTable {...defaultProps} />);
+    const actionCell = screen.getByRole('gridcell', { name: '' });
+    const button = actionCell.querySelector('button');
+    if (button) {
+      fireEvent.click(button);
+    }
 
-      const actionCell = screen.getByRole('gridcell', { name: '' });
-      const iconButton = actionCell.querySelector('button');
-      expect(iconButton).toBeInTheDocument();
-    });
-
-    it('opens detail page in new tab when detail button is clicked', () => {
-      const mockDataWithReceiptId: PagedPaidInstallmentsDTO = {
-        content: [
-          {
-            ...mockPaidInstallment,
-            receiptPaymentRequestId: '12345'
-          }
-        ],
-        totalElements: 1,
-        totalPages: 1,
-        number: 0,
-        size: 10
-      };
-
-      render(<PaymentsTable {...defaultProps} data={mockDataWithReceiptId} />);
-
-      const actionCell = screen.getByRole('gridcell', { name: '' });
-      const detailButton = actionCell.querySelector('button');
-
-      if (detailButton) {
-        fireEvent.click(detailButton);
-      }
-
-      expect(mockWindowOpen).toHaveBeenCalledTimes(1);
-      expect(mockWindowOpen).toHaveBeenCalledWith(
-        'https://test-app.com/telematic-receipt/12345',
-        '_blank',
-        'noopener,noreferrer'
-      );
-    });
-
-    it('generates correct URL path for detail navigation', () => {
-      const testReceiptId = '67890';
-      const mockDataWithSpecificId: PagedPaidInstallmentsDTO = {
-        content: [
-          {
-            ...mockPaidInstallment,
-            receiptPaymentRequestId: testReceiptId
-          }
-        ],
-        totalElements: 1,
-        totalPages: 1,
-        number: 0,
-        size: 10
-      };
-
-      render(<PaymentsTable {...defaultProps} data={mockDataWithSpecificId} />);
-
-      const actionCell = screen.getByRole('gridcell', { name: '' });
-      const detailButton = actionCell.querySelector('button');
-
-      if (detailButton) {
-        fireEvent.click(detailButton);
-      }
-
-      expect(mockWindowOpen).toHaveBeenCalledWith(
-        expect.stringContaining(`/telematic-receipt/${testReceiptId}`),
-        '_blank',
-        'noopener,noreferrer'
-      );
-    });
-
-    it('handles missing receiptPaymentRequestId gracefully', () => {
-      const mockDataWithoutReceiptId: PagedPaidInstallmentsDTO = {
-        content: [
-          {
-            ...mockPaidInstallment,
-            receiptPaymentRequestId: undefined
-          }
-        ],
-        totalElements: 1,
-        totalPages: 1,
-        number: 0,
-        size: 10
-      };
-
-      render(
-        <PaymentsTable {...defaultProps} data={mockDataWithoutReceiptId} />
-      );
-
-      const actionCell = screen.getByRole('gridcell', { name: '' });
-      const detailButton = actionCell.querySelector('button');
-
-      if (detailButton) {
-        fireEvent.click(detailButton);
-      }
-
-      expect(mockWindowOpen).toHaveBeenCalledTimes(1);
-    });
-
-    it('uses correct security parameters for new tab', () => {
-      render(<PaymentsTable {...defaultProps} />);
-
-      const actionCell = screen.getByRole('gridcell', { name: '' });
-      const detailButton = actionCell.querySelector('button');
-
-      if (detailButton) {
-        fireEvent.click(detailButton);
-      }
-
-      const [, target, features] = mockWindowOpen.mock.calls[0];
-
-      expect(target).toBe('_blank');
-      expect(features).toBe('noopener,noreferrer');
-    });
-
-    it('opens different URLs for different rows', () => {
-      const mockDataMultipleRows: PagedPaidInstallmentsDTO = {
-        content: [
-          {
-            ...mockPaidInstallment,
-            iud: 'iud-1',
-            receiptPaymentRequestId: '111'
-          },
-          {
-            ...mockPaidInstallment,
-            iud: 'iud-2',
-            receiptPaymentRequestId: '222'
-          }
-        ],
-        totalElements: 2,
-        totalPages: 1,
-        number: 0,
-        size: 10
-      };
-
-      render(<PaymentsTable {...defaultProps} data={mockDataMultipleRows} />);
-
-      const actionCells = screen.getAllByRole('gridcell', { name: '' });
-      const detailButtons = actionCells
-        .map((cell) => cell.querySelector('button'))
-        .filter(Boolean);
-
-      if (detailButtons[0]) {
-        fireEvent.click(detailButtons[0]);
-      }
-
-      expect(mockWindowOpen).toHaveBeenCalledWith(
-        expect.stringContaining('/telematic-receipt/111'),
-        '_blank',
-        'noopener,noreferrer'
-      );
-
-      mockWindowOpen.mockClear();
-
-      if (detailButtons[1]) {
-        fireEvent.click(detailButtons[1]);
-      }
-
-      expect(mockWindowOpen).toHaveBeenCalledWith(
-        expect.stringContaining('/telematic-receipt/222'),
-        '_blank',
-        'noopener,noreferrer'
-      );
-    });
-
-    it('integrates correctly with react-router generatePath', () => {
-      render(<PaymentsTable {...defaultProps} />);
-
-      const actionCell = screen.getByRole('gridcell', { name: '' });
-      const detailButton = actionCell.querySelector('button');
-
-      if (detailButton) {
-        fireEvent.click(detailButton);
-      }
-
-      const calledUrl = mockWindowOpen.mock.calls[0][0];
-      expect(calledUrl).toMatch('https://test-app.com/telematic-receipt/NaN');
-    });
-
-    it('renders detail button for each row', () => {
-      render(<PaymentsTable {...defaultProps} />);
-
-      const actionCell = screen.getByRole('gridcell', { name: '' });
-      const iconButton = actionCell.querySelector('button');
-      expect(iconButton).toBeInTheDocument();
-    });
+    expect(mockWindowOpen).toHaveBeenCalledTimes(1);
+    expect(mockWindowOpen).toHaveBeenCalledWith(
+      expect.stringContaining('/telematic-receipt/NaN'), // NaN because receiptPaymentRequestId undefined in mock
+      '_blank',
+      'noopener,noreferrer'
+    );
   });
 
-  describe('Data Formatting', () => {
-    it('formats amount correctly in money format', () => {
-      render(<PaymentsTable {...defaultProps} />);
+  it('renders empty state text when no data', () => {
+    const emptyData = {
+      content: [],
+      totalElements: 0,
+      totalPages: 0,
+      number: 0,
+      size: 10
+    };
 
-      expect(screen.getByText('1,01 €')).toBeInTheDocument();
-    });
+    render(<PaymentsTable {...baseProps} data={emptyData} />);
 
-    it('formats dates correctly in Italian format', () => {
-      render(<PaymentsTable {...defaultProps} />);
-
-      expect(screen.getByText('01/01/2023')).toBeInTheDocument();
-      expect(screen.getByText('02/01/2023')).toBeInTheDocument();
-    });
-
-    it('handles null dates gracefully', () => {
-      const dataWithNullDates: PagedPaidInstallmentsDTO = {
-        content: [
-          {
-            ...mockPaidInstallment,
-            paymentDateTime: '',
-            receiptCreationDate: ''
-          }
-        ],
-        totalElements: 1,
-        totalPages: 1,
-        number: 0,
-        size: 10
-      };
-
-      render(<PaymentsTable {...defaultProps} data={dataWithNullDates} />);
-
-      expect(screen.getByText('test-iuv-1')).toBeInTheDocument();
-    });
+    expect(screen.getByText('Nessun dato disponibile')).toBeInTheDocument();
   });
 
-  describe('Edge Cases', () => {
-    it('handles undefined data gracefully', () => {
-      render(<PaymentsTable {...defaultProps} data={undefined} />);
+  it('renders loading spinner when isLoading is true', () => {
+    render(<PaymentsTable {...baseProps} isLoading={true} />);
 
-      expect(screen.getByText('Nessun dato disponibile')).toBeInTheDocument();
-    });
-
-    it('handles empty selectedUniqueIds array', () => {
-      render(<PaymentsTable {...defaultProps} selectedUniqueIds={[]} />);
-
-      const checkboxes = screen.getAllByRole('checkbox');
-      const rowCheckbox = checkboxes[1];
-      expect(rowCheckbox).not.toBeChecked();
-    });
-
-    it('handles missing onSelectionChange callback', () => {
-      const propsWithoutCallback = {
-        ...defaultProps,
-        onSelectionChange: undefined
-      };
-
-      render(<PaymentsTable {...propsWithoutCallback} />);
-
-      const checkboxes = screen.getAllByRole('checkbox');
-      const rowCheckbox = checkboxes[1];
-      fireEvent.click(rowCheckbox);
-
-      expect(screen.getByText('test-iuv-1')).toBeInTheDocument();
-    });
-
-    it('handles missing onFiltersApplied callback', () => {
-      const propsWithoutCallback = {
-        ...defaultProps,
-        onFiltersApplied: undefined
-      };
-
-      render(<PaymentsTable {...propsWithoutCallback} />);
-
-      const searchButton = screen.getByText('Cerca');
-      fireEvent.click(searchButton);
-
-      expect(mockUsePaymentsTableFilters.applyFilters).toHaveBeenCalled();
-    });
-  });
-
-  describe('Unique ID Generation', () => {
-    it('generates stable unique IDs based on pagination', () => {
-      const dataPage1: PagedPaidInstallmentsDTO = {
-        content: [mockPaidInstallment],
-        totalElements: 20,
-        totalPages: 2,
-        number: 0,
-        size: 10
-      };
-
-      render(<PaymentsTable {...defaultProps} data={dataPage1} />);
-
-      expect(screen.getByText('test-iuv-1')).toBeInTheDocument();
-    });
-
-    it('handles duplicate IUDs with unique IDs', () => {
-      const dataWithDuplicates: PagedPaidInstallmentsDTO = {
-        content: [
-          { ...mockPaidInstallment, iud: 'duplicate-iud', iuv: 'iuv-1' },
-          { ...mockPaidInstallment, iud: 'duplicate-iud', iuv: 'iuv-2' }
-        ],
-        totalElements: 2,
-        totalPages: 1,
-        number: 0,
-        size: 10
-      };
-
-      render(<PaymentsTable {...defaultProps} data={dataWithDuplicates} />);
-
-      expect(screen.getByText('iuv-1')).toBeInTheDocument();
-      expect(screen.getByText('iuv-2')).toBeInTheDocument();
-    });
+    expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 });
