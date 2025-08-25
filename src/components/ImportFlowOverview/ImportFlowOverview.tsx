@@ -13,6 +13,7 @@ import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import {
   DOWNLOAD_STATES,
+  FlowFileFilters,
   FlowStatus,
   MENU_STATES,
   STATE_COLORS
@@ -22,7 +23,6 @@ import {
   getIngestionFlowFileError,
   getIngestionFlowFiles
 } from '../../api/ingestionFlowFiles';
-import { useFlowFilters } from '../../hooks/useFlowFilters';
 import {
   IngestionFlowFile,
   IngestionFlowFileStatus,
@@ -32,8 +32,21 @@ import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
 import { useStore } from '../../store/GlobalStore';
-import { STATE } from '../../store/types';
 import ChipTruncateTooltip from '../ChipTruncateTooltip';
+import { useSearch } from '../../hooks/useSearch';
+import { useState } from 'react';
+import { FieldValues } from 'react-hook-form';
+
+const getDefaultDateRange = () => {
+  const today = new Date();
+  const oneYearAgo = new Date();
+  oneYearAgo.setFullYear(today.getFullYear() - 1);
+
+  return {
+    creationDateFrom: new Date(oneYearAgo.setHours(0, 0, 0, 0)).toISOString(),
+    creationDateTo: new Date(today.setHours(23, 59, 59, 999)).toISOString()
+  };
+};
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
@@ -52,29 +65,30 @@ const ImportFlowOverview = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { state } = useStore();
-  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-
   const {
-    appliedFilters,
-    draftFilters,
-    updateDraftFilters,
-    applyFilters,
-    handleDateFromChange,
-    handleDateToChange,
-    hasActiveFilters,
-    sortModel,
-    handleSortModelChange,
-    updatePagination
-  } = useFlowFilters({
-    ingestionFlowFileTypes: ingestionFlowFileTypes
+    state: { organizationId }
+  } = useStore();
+
+  const defaultDateRange = getDefaultDateRange();
+
+  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
+  const [filters, setFilters] = useState<FlowFileFilters>({
+    ...initialFilters,
+    ingestionFlowFileTypes,
+    creationDateFrom: defaultDateRange.creationDateFrom,
+    creationDateTo: defaultDateRange.creationDateTo,
+    page: 0,
+    size: 10
   });
 
-  const { data, isLoading } = getIngestionFlowFiles(
-    organizationId,
-    appliedFilters
-  );
-  const isEmptyData = !data?.content || data.content.length === 0;
+  const query = getIngestionFlowFiles(organizationId, routingCategory);
+
+  const flowFilters = useSearch({
+    filters,
+    query
+  });
+
+  const isEmptyData = !query.data?.content?.length;
 
   const getIngestionFlowFileErrorMutation =
     getIngestionFlowFileError(organizationId);
@@ -249,26 +263,27 @@ const ImportFlowOverview = ({
               label: t('commons.searchName'),
               adornment: <Search />,
               gridWidth: 5,
-              value: draftFilters.fileName || '',
-              onChange: (e) => updateDraftFilters({ fileName: e.target.value })
+              value: filters.fileName || '',
+              onChange: (e) =>
+                setFilters((prev) => ({ ...prev, fileName: e.target.value }))
             },
             {
               type: COMPONENT_TYPE.select,
               label: t('commons.state'),
               gridWidth: 2,
               options: [
-                { label: t('commons.status.ALL'), value: 'ALL' },
                 ...Object.values(IngestionFlowFileStatus).map((status) => ({
                   label: t(`commons.status.${status}`),
                   value: status
                 }))
               ],
-              value: draftFilters.status || 'ALL',
+              value: filters.status,
               onChange: (e) => {
                 const value = e.target.value;
-                updateDraftFilters({
-                  status: value === 'ALL' ? undefined : (value as FlowStatus)
-                });
+                setFilters((prev) => ({
+                  ...prev,
+                  status: value as IngestionFlowFileStatus
+                }));
               }
             },
             {
@@ -278,33 +293,44 @@ const ImportFlowOverview = ({
               from: {
                 label: t('commons.exportFrom'),
                 errorMessage: t('dates.validations.from'),
-                value: draftFilters.creationDateFrom
-                  ? new Date(draftFilters.creationDateFrom)
+                value: filters.creationDateFrom
+                  ? new Date(filters.creationDateFrom)
                   : null,
-                onChange: handleDateFromChange
+                onChange: (value) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    creationDateFrom: value
+                      ? new Date(value).toISOString()
+                      : undefined
+                  }))
               },
               to: {
                 label: t('dates.to'),
                 errorMessage: t('dates.validations.to'),
-                value: draftFilters.creationDateTo
-                  ? new Date(draftFilters.creationDateTo)
+                value: filters.creationDateTo
+                  ? new Date(filters.creationDateTo)
                   : null,
-                onChange: handleDateToChange
+                onChange: (value) =>
+                  setFilters((prev) => ({
+                    ...prev,
+                    creationDateTo: value
+                      ? new Date(value).toISOString()
+                      : undefined
+                  }))
               }
             },
             {
               type: COMPONENT_TYPE.button,
               label: t('commons.filters.filterResults'),
               gridWidth: 1,
-              onClick: applyFilters,
-              disabled: !hasActiveFilters()
+              onClick: () => flowFilters.applyFilters(filters)
             }
           ]}
         />
       </Grid>
 
       <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
-        {isEmptyData && data && data.totalElements === 0 ? (
+        {isEmptyData && query.data && query.data.totalElements === 0 ? (
           <EmptyDataGrid
             title={t('commons.noFlows')}
             action={{
@@ -314,26 +340,13 @@ const ImportFlowOverview = ({
           />
         ) : (
           <CustomDataGrid
-            rows={data?.content || []}
+            rows={query.data?.content || []}
             columns={columns}
             getRowId={(row) => row.ingestionFlowFileId}
             disableColumnMenu
             disableColumnResize
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
-            loading={isLoading}
-            smartPagination={{
-              initialPage: 0,
-              initialSize: 10,
-              sizeOptions: [5, 10, 20],
-              backendData: {
-                totalElements: data?.totalElements || 0,
-                totalPages: data?.totalPages || 0,
-                number: data?.number || 0,
-                size: data?.size || 10
-              },
-              onPaginationChange: updatePagination
-            }}
+            loading={query.isPending}
+            totalPages={query.data?.totalPages || 1}
           />
         )}
       </Box>

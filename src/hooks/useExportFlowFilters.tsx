@@ -2,7 +2,6 @@ import { GridSortModel } from '@mui/x-data-grid';
 import { useState, useCallback } from 'react';
 import { ExportFileTypeEnum } from '../../generated/apiClient';
 import { ExportFileFilters } from '../models/Filters';
-import { usePaginationState } from './usePaginationState';
 
 type UseExportFlowFiltersProps = {
   initialFilters?: Partial<ExportFileFilters>;
@@ -11,8 +10,6 @@ type UseExportFlowFiltersProps = {
   initialPage?: number;
   initialSize?: number;
 };
-
-const DEFAULT_PAGE_SIZE = 10;
 
 const getDefaultDateRange = () => {
   const today = new Date();
@@ -28,20 +25,14 @@ const getDefaultDateRange = () => {
 export const useExportFlowFilters = ({
   exportFileType,
   initialFilters,
-  onFiltersChange,
-  initialPage = 0,
-  initialSize = DEFAULT_PAGE_SIZE
+  onFiltersChange
 }: UseExportFlowFiltersProps) => {
   const defaultDateRange = getDefaultDateRange();
 
-  const {
-    paginationParams,
-    handlePaginationChange: updatePaginationState,
-    setPaginationParams
-  } = usePaginationState({
-    initialPage: initialFilters?.page ?? initialPage,
-    initialSize: initialFilters?.size ?? initialSize
-  });
+  const { pagination, handlePageChange } = {
+    pagination: { page: 0, size: 10 },
+    handlePageChange: () => null
+  };
 
   const [appliedFilters, setAppliedFilters] = useState<
     Omit<ExportFileFilters, 'page' | 'size'>
@@ -62,13 +53,13 @@ export const useExportFlowFilters = ({
   const getCompleteFilters = useCallback(
     (): ExportFileFilters => ({
       ...appliedFilters,
-      page: paginationParams.page,
-      size: paginationParams.size,
+      page: pagination.page,
+      size: pagination.size,
       ...(sortModel.length > 0 && {
         sort: [`${sortModel[0].field},${sortModel[0].sort}`]
       })
     }),
-    [appliedFilters, paginationParams, sortModel]
+    [appliedFilters, pagination, sortModel]
   );
 
   const hasActiveFilters = useCallback(() => {
@@ -113,20 +104,13 @@ export const useExportFlowFilters = ({
     };
     setAppliedFilters(filtersToApply);
 
-    setPaginationParams((prev) => ({ ...prev, page: 0 }));
-
     const completeFilters = {
       ...filtersToApply,
       page: 0,
-      size: paginationParams.size
+      size: pagination.size
     };
     onFiltersChange?.(completeFilters);
-  }, [
-    draftFilters,
-    paginationParams.size,
-    setPaginationParams,
-    onFiltersChange
-  ]);
+  }, [draftFilters, pagination.size, handlePageChange, onFiltersChange]);
 
   const handleDateFromChange = useCallback(
     (date: Date | null) => {
@@ -154,8 +138,6 @@ export const useExportFlowFilters = ({
     (newModel: GridSortModel) => {
       setSortModel(newModel);
 
-      setPaginationParams((prev) => ({ ...prev, page: 0 }));
-
       const completeFilters = getCompleteFilters();
       onFiltersChange?.({
         ...completeFilters,
@@ -165,24 +147,24 @@ export const useExportFlowFilters = ({
         })
       });
     },
-    [getCompleteFilters, setPaginationParams, onFiltersChange]
+    [getCompleteFilters, handlePageChange, onFiltersChange]
   );
 
-  const handlePaginationChange = useCallback(
-    (pagination: { page: number; size: number }) => {
-      updatePaginationState(pagination);
-
-      const completeFilters = {
-        ...appliedFilters,
-        ...pagination,
-        ...(sortModel.length > 0 && {
-          sort: [`${sortModel[0].field},${sortModel[0].sort}`]
-        })
-      };
-      onFiltersChange?.(completeFilters);
-    },
-    [appliedFilters, sortModel, onFiltersChange, updatePaginationState]
-  );
+  // const handlePaginationChange = useCallback(
+  //   (pagination: { page: number; size: number }) => {
+  //     updatePaginationState(pagination);
+  //
+  //     const completeFilters = {
+  //       ...appliedFilters,
+  //       ...pagination,
+  //       ...(sortModel.length > 0 && {
+  //         sort: [`${sortModel[0].field},${sortModel[0].sort}`]
+  //       })
+  //     };
+  //     onFiltersChange?.(completeFilters);
+  //   },
+  //   [appliedFilters, sortModel, onFiltersChange, updatePaginationState]
+  // );
 
   return {
     appliedFilters: getCompleteFilters(),
@@ -194,8 +176,8 @@ export const useExportFlowFilters = ({
     hasActiveFilters,
     sortModel,
     handleSortModelChange,
-    paginationParams,
-    handlePaginationChange,
+    pagination,
+    handlePageChange,
     getCompleteFilters
   };
 };
