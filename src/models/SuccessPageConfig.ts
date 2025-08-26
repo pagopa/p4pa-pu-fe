@@ -210,5 +210,16 @@ export const SuccessPageConfig: SuccessOpts = {
         buttonLabel: 'clientSil.create.success.goToDetail'
       }
     ]
+  },
+  'org-sil-service-create': {
+    title: 'orgSilServiceCreate.newService.success.title',
+    description: 'orgSilServiceCreate.newService.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'orgSilServiceCreate.newService.success.goToDetail'
+      }
+    ]
   }
 };

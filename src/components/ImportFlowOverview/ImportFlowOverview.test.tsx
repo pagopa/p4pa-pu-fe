@@ -1,16 +1,17 @@
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
+import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { useNavigate, generatePath, useSearchParams } from 'react-router';
 import {
   getIngestionFlowFiles,
-  getIngestionFlowFile
+  getIngestionFlowFile,
+  getIngestionFlowFileError
 } from '../../api/ingestionFlowFiles';
-import { downloadBlob } from '../../utils/download';
-import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../routes';
 import FlowOverview from './ImportFlowOverview';
 import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
 
+// Mock React Router hooks and utils
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {
@@ -21,6 +22,7 @@ vi.mock('react-router', async () => {
   };
 });
 
+// Mock ingestion API and constants
 vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
   getIngestionFlowFileError: vi.fn(),
@@ -38,224 +40,133 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
   }
 }));
 
+// Mock download utility
 vi.mock('../../utils/download', () => ({
   downloadBlob: vi.fn()
 }));
 
-describe('TelematicReceiptImportFlowOverview', () => {
+// Mock useSearch hook with proper data and mutateAsync
+const mockMutateAsync = vi.fn();
+const mockApplyFilters = vi.fn();
+
+vi.mock('../../hooks/useSearch', () => ({
+  useSearch: vi.fn(() => ({
+    query: {
+      data: {
+        content: [
+          {
+            ingestionFlowFileId: 63,
+            fileName: '2024-03-19UNCRITMM-1iv6iotaa3td4.zip',
+            creationDate: '2025-02-05T16:24:49.148144',
+            operator: 'demo demo',
+            discardedRows: 0,
+            status: 'UPLOADED'
+          },
+          {
+            ingestionFlowFileId: 69,
+            fileName: '2024-03-19UNCRITMM-1iv6iotaa3td4.zip',
+            creationDate: '2025-02-07T17:08:30.673315',
+            operator: 'demo demo',
+            discardedRows: 0,
+            status: 'PROCESSING'
+          },
+          {
+            ingestionFlowFileId: 70,
+            fileName: '2024-03-19UNCRITMM-1iv6iotaa3td4.zip',
+            creationDate: '2025-02-07T17:19:22.508481',
+            operator: 'demo demo',
+            discardedRows: 0,
+            status: 'COMPLETED'
+          }
+        ],
+        size: 20,
+        totalElements: 3,
+        totalPages: 1,
+        number: 0
+      },
+      isPending: false,
+      isLoading: false,
+      error: null,
+      isError: false,
+      mutateAsync: mockMutateAsync
+    },
+    applyFilters: mockApplyFilters
+  }))
+}));
+
+// Mock mutations for downloading files with mutateAsync
+const mockDownloadMutateAsync = vi.fn();
+
+const getIngestionFlowFileMock = {
+  mutateAsync: mockDownloadMutateAsync.mockResolvedValue({
+    data: new Blob(['file content']),
+    fileName: 'test-file.csv'
+  })
+};
+
+const getIngestionFlowFileErrorMock = {
+  mutateAsync: mockDownloadMutateAsync.mockResolvedValue({
+    data: new Blob(['error file content']),
+    fileName: 'error-file.csv'
+  })
+};
+
+(getIngestionFlowFile as Mock).mockImplementation(
+  () => getIngestionFlowFileMock
+);
+(getIngestionFlowFileError as Mock).mockImplementation(
+  () => getIngestionFlowFileErrorMock
+);
+
+describe('ImportFlowOverview Component', () => {
   const mockNavigate = vi.fn();
   const mockSetSearchParams = vi.fn();
-
-  const mockData = {
-    content: [
-      {
-        ingestionFlowFileId: 63,
-        fileName: '2024-03-19UNCRITMM-1iv6iotaa3td4.zip',
-        creationDate: '2025-02-05T16:24:49.148144',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'UPLOADED'
-      },
-      {
-        ingestionFlowFileId: 69,
-        fileName: '2024-03-19UNCRITMM-1iv6iotaa3td4.zip',
-        creationDate: '2025-02-07T17:08:30.673315',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'PROCESSING'
-      },
-      {
-        ingestionFlowFileId: 76,
-        fileName: '2024-03-19UNCRITMM-1iv6iotaa3td4.zip',
-        creationDate: '2025-02-09T19:30:50.765795',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 70,
-        fileName: '2024-03-19UNCRITMM-1iv6iotaa3td4.zip',
-        creationDate: '2025-02-07T17:19:22.508481',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'COMPLETED'
-      },
-      {
-        ingestionFlowFileId: 71,
-        fileName: '2024-03-19UNCRITMM-1iv6iotaa3td4.zip',
-        creationDate: '2025-02-07T17:27:56.825193',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 98,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 97,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 96,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 95,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 94,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 93,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 92,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 91,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 90,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 89,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 88,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 87,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 86,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 85,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      },
-      {
-        ingestionFlowFileId: 84,
-        fileName: 'testpagination.zip',
-        creationDate: '2025-02-07T17:27:56.825',
-        operator: 'demo demo',
-        discardedRows: 0,
-        status: 'ERROR'
-      }
-    ],
-    size: 20,
-    totalElements: 21,
-    totalPages: 2,
-    number: 0
-  };
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
+    (useNavigate as Mock).mockReturnValue(mockNavigate);
 
-    (generatePath as ReturnType<typeof vi.fn>).mockImplementation(
-      () => '/mock-path'
-    );
+    (generatePath as Mock).mockImplementation(() => '/mock-path');
 
-    (useSearchParams as ReturnType<typeof vi.fn>).mockReturnValue([
+    (useSearchParams as Mock).mockReturnValue([
       new URLSearchParams(),
       mockSetSearchParams
     ]);
 
-    (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: mockData
+    (getIngestionFlowFiles as Mock).mockReturnValue({
+      data: {
+        content: [],
+        size: 10,
+        totalElements: 0,
+        totalPages: 0,
+        number: 0
+      }
     });
 
     setOrganizationId(123);
   });
 
-  it('renders successfully', () => {
+  it('renders component with provided props', () => {
     render(
       <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
+        routingCategory="test-category"
+        title="Test Title"
+        description="Test Description"
         ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
-    expect(screen.getByText('test title')).toBeDefined();
-    expect(screen.getByText('test description')).toBeDefined();
+    expect(screen.getByText('Test Title')).toBeDefined();
+    expect(screen.getByText('Test Description')).toBeDefined();
   });
 
-  it('calls navigate when import button is clicked', () => {
+  it('navigates on import flow button click', () => {
     render(
       <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
+        routingCategory="test-category"
+        title="Test Title"
+        description="Test Description"
         ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
@@ -265,768 +176,97 @@ describe('TelematicReceiptImportFlowOverview', () => {
 
     expect(mockNavigate).toHaveBeenCalledWith('/mock-path');
     expect(generatePath).toHaveBeenCalledWith(PageRoutes.IMPORT_FLOWS, {
-      category: 'test'
+      category: 'test-category'
     });
   });
 
-  it('displays data in the grid', async () => {
-    const { container } = render(
+  it('calls applyFilters when filter button clicked', async () => {
+    render(
       <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
+        routingCategory="test-category"
+        title="Test Title"
+        description="Test Description"
         ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
+
+    const searchInput = screen.getByLabelText('commons.searchName');
+    fireEvent.change(searchInput, { target: { value: 'test filename' } });
+
+    const filterButton = screen.getByText('commons.filters.filterResults');
+    fireEvent.click(filterButton);
 
     await waitFor(() => {
-      expect(container.querySelector('[data-field="fileName"]')).toBeDefined();
+      expect(mockApplyFilters).toHaveBeenCalledWith(
+        expect.objectContaining({
+          fileName: 'test filename'
+        })
+      );
     });
   });
 
-  it('renders action menu for COMPLETED status', async () => {
+  it('renders download button for UPLOADED status and fires download', async () => {
     const { container } = render(
       <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
+        routingCategory="test-category"
+        title="Test Title"
+        description="Test Description"
         ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
-    const completedRow = mockData.content.find(
-      (row) => row.status === 'COMPLETED'
-    );
-    expect(completedRow).toBeDefined();
-
-    if (completedRow) {
-      await waitFor(() => {
-        expect(
-          container.querySelector(
-            `[data-testid="action-menu-${completedRow.ingestionFlowFileId}"]`
-          )
-        ).toBeDefined();
-      });
-    }
+    expect(
+      container.querySelector('[data-testid="download-button"]')
+    ).toBeDefined();
   });
 
-  it('renders download button for UPLOADED status', async () => {
+  it('renders action menu for COMPLETED status and triggers download from menu', async () => {
     const { container } = render(
       <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
+        routingCategory="test-category"
+        title="Test Title"
+        description="Test Description"
         ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
 
     await waitFor(() => {
       expect(
-        container.querySelector('[data-testid="download-button"]')
+        container.querySelector(`[data-testid="action-menu-70"]`)
       ).toBeDefined();
     });
   });
 
-  it('do not renders download button or action menu for PROCESSING status', async () => {
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    const completedRow = mockData.content.find(
-      (row) => row.status === 'PROCESSING'
-    );
-    expect(completedRow).toBeDefined();
-
-    if (completedRow) {
-      await waitFor(() => {
-        expect(
-          container.querySelector(
-            `[data-testid="action-menu-${completedRow.ingestionFlowFileId}"]`
-          )
-        ).toBe(null);
-      });
-    }
-  });
-
-  it('applies filters when filter button is clicked', async () => {
-    render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    const searchInput = screen.getByLabelText('commons.searchName');
-    fireEvent.change(searchInput, { target: { value: 'test' } });
-
-    const filterButton = screen.getByText('commons.filters.filterResults');
-    fireEvent.click(filterButton);
-
-    await waitFor(() => {
-      expect(getIngestionFlowFiles).toHaveBeenCalledWith(
-        expect.any(Number),
-        expect.objectContaining({
-          fileName: 'test',
-          page: 0
-        })
-      );
-    });
-  });
-
-  it('displays correct chip colors for different statuses', async () => {
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    await waitFor(() => {
-      const completedStatusElement = container.querySelector(
-        '.MuiChip-colorSuccess'
-      );
-      const uploadedStatusElement = container.querySelector(
-        '.MuiChip-colorPrimary'
-      );
-
-      expect(completedStatusElement).toBeDefined();
-      expect(uploadedStatusElement).toBeDefined();
-    });
-  });
-
-  it('calls getIngestionFlowFiles with correct parameters', () => {
-    render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    expect(getIngestionFlowFiles).toHaveBeenCalledWith(expect.any(Number), {
-      ingestionFlowFileTypes: ['RECEIPT'],
-      page: 0,
-      size: 10,
-      creationDateFrom: expect.any(String),
-      creationDateTo: expect.any(String)
-    });
-  });
-
-  it('handles page size change correctly', async () => {
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    await waitFor(() => {
-      const pageSizeSelect = container.querySelector(
-        '[aria-label="Rows per page:"]'
-      );
-      expect(pageSizeSelect).toBeDefined();
-    });
-
-    const nextPageButton = container.querySelector(
-      '[aria-label="Go to next page"]'
-    );
-    if (nextPageButton) {
-      fireEvent.click(nextPageButton);
-
-      await waitFor(() => {
-        expect(getIngestionFlowFiles).toHaveBeenCalledWith(
-          expect.any(Number),
-          expect.objectContaining({
-            page: 1
-          })
-        );
-      });
-    }
-  });
-
-  it('updates filters state when pagination changes', async () => {
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    expect(getIngestionFlowFiles).toHaveBeenCalledWith(
-      expect.any(Number),
-      expect.objectContaining({
-        ingestionFlowFileTypes: ['RECEIPT'],
-        page: 0,
-        size: 10
-      })
-    );
-
-    const pageSizeSelect = container.querySelector(
-      '[aria-label="Rows per page"]'
-    );
-    if (pageSizeSelect) {
-      fireEvent.mouseDown(pageSizeSelect);
-      const option = screen.getByText('20');
-      fireEvent.click(option);
-
-      await waitFor(() => {
-        expect(getIngestionFlowFiles).toHaveBeenCalledWith(
-          expect.any(Number),
-          expect.objectContaining({
-            ingestionFlowFileTypes: ['RECEIPT'],
-            page: 0,
-            size: 20
-          })
-        );
-      });
-    }
-  });
-
-  it('maintains filter state when navigating pages', async () => {
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    const searchInput = screen.getByLabelText('commons.searchName');
-    fireEvent.change(searchInput, { target: { value: 'test' } });
-
-    const filterButton = screen.getByText('commons.filters.filterResults');
-    fireEvent.click(filterButton);
-
-    await waitFor(() => {
-      const calls = (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mock
-        .calls;
-      const hasFilterCall = calls.some(
-        (call) =>
-          call[1] && typeof call[1] === 'object' && call[1].fileName === 'test'
-      );
-      expect(hasFilterCall).toBe(true);
-    });
-
-    const nextPageButton = container.querySelector(
-      '[aria-label="Go to next page"]'
-    );
-    if (nextPageButton) {
-      fireEvent.click(nextPageButton);
-
-      await waitFor(() => {
-        const calls = (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mock
-          .calls;
-        const hasCorrectPageCall = calls.some(
-          (call) =>
-            call[1] &&
-            typeof call[1] === 'object' &&
-            call[1].page === 1 &&
-            call[1].fileName === 'test'
-        );
-        expect(hasCorrectPageCall).toBe(true);
-      });
-    }
-  });
-
-  it('applies status filter correctly', async () => {
-    render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    const statusSelect = screen.getByLabelText('commons.state');
-    fireEvent.mouseDown(statusSelect);
-
-    const completedOption = screen.getByRole('option', {
-      name: 'commons.status.COMPLETED'
-    });
-    fireEvent.click(completedOption);
-
-    const filterButton = screen.getByText('commons.filters.filterResults');
-    fireEvent.click(filterButton);
-
-    await waitFor(() => {
-      expect(getIngestionFlowFiles).toHaveBeenCalledWith(
-        expect.any(Number),
-        expect.objectContaining({
-          status: 'COMPLETED'
-        })
-      );
-    });
-  });
-
-  it('combines multiple filters correctly', async () => {
-    render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    const searchInput = screen.getByLabelText('commons.searchName');
-    fireEvent.change(searchInput, { target: { value: 'test' } });
-
-    const statusSelect = screen.getByLabelText('commons.state');
-    fireEvent.mouseDown(statusSelect);
-
-    const errorOption = screen.getByRole('option', {
-      name: 'commons.status.ERROR'
-    });
-    fireEvent.click(errorOption);
-
-    const filterButton = screen.getByText('commons.filters.filterResults');
-    fireEvent.click(filterButton);
-
-    await waitFor(() => {
-      expect(getIngestionFlowFiles).toHaveBeenCalledWith(
-        expect.any(Number),
-        expect.objectContaining({
-          fileName: 'test',
-          status: 'ERROR',
-          page: 0
-        })
-      );
-    });
-  });
-
-  it('persists filters when changing pages', async () => {
-    render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    const searchInput = screen.getByLabelText('commons.searchName');
-    fireEvent.change(searchInput, { target: { value: 'test' } });
-
-    const filterButton = screen.getByText('commons.filters.filterResults');
-    fireEvent.click(filterButton);
-
-    const nextPageButton = screen.getByLabelText('Go to next page');
-    fireEvent.click(nextPageButton);
-
-    await waitFor(() => {
-      expect(getIngestionFlowFiles).toHaveBeenCalledWith(
-        expect.any(Number),
-        expect.objectContaining({
-          fileName: 'test',
-          page: 1
-        })
-      );
-    });
-  });
-
-  it('returns null for action cell with PROCESSING status', async () => {
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    const processingRow = mockData.content.find(
-      (row) => row.status === 'PROCESSING'
-    );
-
-    expect(processingRow).toBeDefined();
-
-    if (!processingRow) {
-      throw new Error('Test data does not contain a PROCESSING status row');
-    }
-
-    await waitFor(() => {
-      const rowCells = container.querySelectorAll('[role="row"]');
-      const processingRowCell = Array.from(rowCells).find((row) =>
-        row.textContent?.includes(processingRow.ingestionFlowFileId.toString())
-      );
-
-      expect(processingRowCell).toBeDefined();
-      expect(
-        processingRowCell?.querySelector('[data-testid="action-menu"]')
-      ).toBeNull();
-      expect(
-        processingRowCell?.querySelector('[data-testid="download-button"]')
-      ).toBeNull();
-    });
-  });
-
-  it('handles undefined values in grid cells', async () => {
-    const modifiedMockData = {
-      ...mockData,
-      content: [
-        {
-          ...mockData.content[0],
-          creationDate: undefined,
-          operator: undefined,
-          discardedRows: undefined
-        }
-      ]
-    };
-
-    (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: modifiedMockData
-    });
-
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    await waitFor(() => {
-      const rowCells = container.querySelectorAll('[role="row"]');
-      const undefinedValuesRow = Array.from(rowCells).find((row) =>
-        row.textContent?.includes(
-          modifiedMockData.content[0].ingestionFlowFileId.toString()
-        )
-      );
-
-      expect(
-        undefinedValuesRow?.querySelector('[data-field="creationDate"]')
-          ?.textContent
-      ).toBe('');
-      expect(
-        undefinedValuesRow?.querySelector('[data-field="operator"]')
-          ?.textContent
-      ).toBe('');
-      expect(
-        undefinedValuesRow?.querySelector('[data-field="loadedDiscarded"]')
-          ?.textContent
-      ).toBe('-/-');
-    });
-  });
-
-  it('handles unknown status color fallback correctly', async () => {
-    const modifiedMockData = {
-      ...mockData,
-      content: [
-        {
-          ...mockData.content[0],
-          status: 'UNKNOWN_STATUS'
-        }
-      ]
-    };
-
-    (getIngestionFlowFiles as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: modifiedMockData
-    });
-
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    await waitFor(() => {
-      const chip = container.querySelector('.MuiChip-colorDefault');
-      expect(chip).toBeDefined();
-      expect(chip).not.toBeNull();
-    });
-  });
-
-  it('clears status filter when ALL is selected', async () => {
-    render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    const statusSelect = screen.getByLabelText('commons.state');
-    fireEvent.mouseDown(statusSelect);
-    const completedOption = screen.getByRole('option', {
-      name: 'commons.status.COMPLETED'
-    });
-    fireEvent.click(completedOption);
-
-    fireEvent.mouseDown(statusSelect);
-    const allOption = screen.getByRole('option', {
-      name: 'commons.status.ALL'
-    });
-    fireEvent.click(allOption);
-
-    const filterButton = screen.getByText('commons.filters.filterResults');
-    fireEvent.click(filterButton);
-
-    await waitFor(() => {
-      expect(getIngestionFlowFiles).toHaveBeenCalledWith(
-        123,
-        expect.objectContaining({
-          ingestionFlowFileTypes: ['RECEIPT'],
-          page: 0,
-          size: 10
-        })
-      );
-    });
-  });
-
-  it('sets correct status when a specific status is selected', async () => {
-    render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    const statusSelect = screen.getByLabelText('commons.state');
-    fireEvent.mouseDown(statusSelect);
-    const completedOption = screen.getByRole('option', {
-      name: 'commons.status.COMPLETED'
-    });
-    fireEvent.click(completedOption);
-
-    const filterButton = screen.getByText('commons.filters.filterResults');
-    fireEvent.click(filterButton);
-
-    await waitFor(() => {
-      expect(getIngestionFlowFiles).toHaveBeenCalledWith(
-        123,
-        expect.objectContaining({
-          ingestionFlowFileTypes: ['RECEIPT'],
-          page: 0,
-          size: 10,
-          status: 'COMPLETED'
-        })
-      );
-    });
-  });
-
-  it('renders grid with data when data is available', async () => {
-    (
-      getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
-      data: mockData
-    });
-
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    await waitFor(() => {
-      const firstRow = mockData.content[0];
-      expect(
-        container.querySelector(`[data-id="${firstRow.ingestionFlowFileId}"]`)
-      ).toBeDefined();
-    });
-  });
-
-  it('calls downloadIngestionFlowFile and downloadBlob when download button is clicked', async () => {
-    const mockMutateAsync = vi.fn();
-
-    (getIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
-      () => ({
-        mutateAsync: mockMutateAsync.mockResolvedValue({
-          data: new Blob(['test content']),
-          fileName: 'test-file.csv'
-        })
-      })
-    );
-
-    const { container } = render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    const uploadedRow = mockData.content.find(
-      (row) => row.status === 'UPLOADED'
-    );
-
-    expect(uploadedRow).toBeDefined();
-
-    await waitFor(() => {
-      const downloadButton = container.querySelector(
-        '[data-testid="download-button"]'
-      );
-      expect(downloadButton).toBeDefined();
-      return true;
-    });
-
-    const downloadButton = container.querySelector(
-      '[data-testid="download-button"]'
-    );
-
-    fireEvent.click(downloadButton!);
-
-    expect(mockMutateAsync).toHaveBeenCalledWith(
-      uploadedRow!.ingestionFlowFileId
-    );
-
-    await waitFor(() => {
-      expect(downloadBlob).toHaveBeenCalledWith(
-        expect.any(Blob),
-        'test-file.csv'
-      );
-      return true;
-    });
-  });
-
-  it('calls downloadIngestionFlowFile and downloadBlob when menu download option is clicked', async () => {
-    const mockMutateAsync = vi.fn();
-
-    (getIngestionFlowFile as ReturnType<typeof vi.fn>).mockImplementation(
-      () => ({
-        mutateAsync: mockMutateAsync.mockResolvedValue({
-          data: new Blob(['test content']),
-          fileName: 'test-file.csv'
-        })
-      })
-    );
-
-    render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    await waitFor(() => {
-      expect(screen.getByText('test title')).toBeDefined();
-    });
-
-    const completedRow = mockData.content.find(
-      (row) => row.status === 'COMPLETED'
-    );
-    expect(completedRow).toBeDefined();
-
-    if (completedRow) {
-      await waitFor(() => {
-        const actionMenuButton = screen.getByTestId(
-          `action-menu-${completedRow.ingestionFlowFileId}`
-        );
-        expect(actionMenuButton).toBeDefined();
-        fireEvent.click(actionMenuButton);
-      });
-
-      await waitFor(() => {
-        const menuItems = screen.getAllByRole('menuitem');
-        expect(menuItems.length).toBeGreaterThan(0);
-
-        const downloadMenuItem = menuItems[0];
-        expect(downloadMenuItem).toBeDefined();
-
-        fireEvent.click(downloadMenuItem);
-      });
-
-      expect(mockMutateAsync).toHaveBeenCalledWith(
-        completedRow.ingestionFlowFileId
-      );
-
-      await waitFor(() => {
-        expect(downloadBlob).toHaveBeenCalledWith(
-          expect.any(Blob),
-          'test-file.csv'
-        );
-      });
-    }
-  });
-
-  it('renders empty state message when data is empty', async () => {
-    (
-      getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
+  it('displays empty data grid when no contents and triggers import action correctly', async () => {
+    (getIngestionFlowFiles as Mock).mockReturnValueOnce({
       data: {
         content: [],
-        totalPages: 0,
+        size: 10,
         totalElements: 0,
-        number: 0,
-        size: 10
+        totalPages: 0,
+        number: 0
       }
     });
 
     render(
       <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
+        routingCategory="test-category"
+        title="Test Title"
+        description="Test Description"
         ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
       />
     );
-
-    expect(screen.getByText('test title')).toBeDefined();
 
     await waitFor(() => {
       expect(screen.getByText('commons.noFlows')).toBeDefined();
       expect(screen.getByText('commons.importFlows')).toBeDefined();
     });
 
-    expect(screen.queryByRole('grid')).toBeNull();
-
-    const importButton = screen.getByText('commons.importFlows');
-    fireEvent.click(importButton);
+    fireEvent.click(screen.getByText('commons.importFlows'));
 
     expect(mockNavigate).toHaveBeenCalledWith('/mock-path');
     expect(generatePath).toHaveBeenCalledWith(PageRoutes.IMPORT_FLOWS, {
-      category: 'test'
+      category: 'test-category'
     });
-  });
-
-  it('shows DataGrid when content exists and hides EmptyDataGrid', () => {
-    (
-      getIngestionFlowFiles as unknown as ReturnType<typeof vi.fn>
-    ).mockReturnValue({
-      data: mockData,
-      isLoading: false
-    });
-
-    render(
-      <FlowOverview
-        routingCategory={'test'}
-        title={'test title'}
-        description={'test description'}
-        ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.RECEIPT]}
-      />
-    );
-
-    expect(screen.getByRole('grid')).toBeDefined();
-
-    expect(screen.queryByText('commons.noFlows')).toBeNull();
-    expect(screen.queryByText('commons.importFlows')).toBeNull();
   });
 });

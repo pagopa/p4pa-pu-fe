@@ -3,14 +3,12 @@ import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import { ClientSilDataGrid } from './ClientSilDataGrid';
 import type { ClientDTOPage } from '../../../../generated/apiClient';
 
-// Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key
   })
 }));
 
-// Mock CustomDataGrid
 vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
   const handleActionClick = (
     col: {
@@ -39,7 +37,8 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
       rows,
       columns,
       getRowId,
-      loading
+      loading,
+      totalPages
     }: {
       rows: Array<Record<string, unknown>>;
       columns: Array<{
@@ -50,10 +49,12 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
       }>;
       getRowId: (row: Record<string, unknown>) => string;
       loading: boolean;
+      totalPages?: number;
     }) => (
       <div data-testid="custom-data-grid">
         <div>Loading: {loading.toString()}</div>
         <div>Rows count: {rows.length}</div>
+        <div>Total pages: {totalPages || 1}</div>
         {rows.map((row) => (
           <div key={getRowId(row)} data-testid={`row-${getRowId(row)}`}>
             {columns.map((col) => (
@@ -72,7 +73,6 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
   };
 });
 
-// Mock MUI icons
 vi.mock('@mui/icons-material', () => ({
   ChevronRight: ({ onClick }: { onClick?: () => void }) => (
     <div data-testid="chevron-right" onClick={onClick}>
@@ -102,8 +102,6 @@ const mockClientData: ClientDTOPage = {
 
 describe('ClientSilDataGrid', () => {
   const mockOnRowClick = vi.fn();
-  const mockOnSortChange = vi.fn();
-  const mockOnPaginationChange = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -117,8 +115,6 @@ describe('ClientSilDataGrid', () => {
         data={mockClientData}
         loading={false}
         onRowClick={mockOnRowClick}
-        onSortChange={mockOnSortChange}
-        onPaginationChange={mockOnPaginationChange}
         {...props}
       />
     );
@@ -160,7 +156,6 @@ describe('ClientSilDataGrid', () => {
   it('should render data correctly in cells', () => {
     renderComponent();
 
-    // Verifica che i dati delle celle siano renderizzati correttamente
     expect(screen.getByText('Test Client 1')).toBeInTheDocument();
     expect(screen.getByText('Test Client 2')).toBeInTheDocument();
     expect(screen.getByText('client-1')).toBeInTheDocument();
@@ -179,5 +174,28 @@ describe('ClientSilDataGrid', () => {
     renderComponent({ data: emptyData });
 
     expect(screen.getByText('Rows count: 0')).toBeInTheDocument();
+  });
+
+  it('should pass totalPages correctly to CustomDataGrid', () => {
+    const dataWithMultiplePages: ClientDTOPage = {
+      ...mockClientData,
+      totalPages: 5
+    };
+
+    renderComponent({ data: dataWithMultiplePages });
+
+    expect(screen.getByText('Total pages: 5')).toBeInTheDocument();
+  });
+
+  it('should default to 1 page when totalPages is not provided', () => {
+    const dataWithoutTotalPages: ClientDTOPage = {
+      ...mockClientData,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      totalPages: undefined as any
+    };
+
+    renderComponent({ data: dataWithoutTotalPages });
+
+    expect(screen.getByText('Total pages: 1')).toBeInTheDocument();
   });
 });

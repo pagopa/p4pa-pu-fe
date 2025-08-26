@@ -14,15 +14,8 @@ export const getClassifications = ({
       const { data: response } =
         await utils.apiClient.bff.getTreasuredClassifications(
           organizationId,
-          query,
-          // repeat array params as query string
-          {
-            paramsSerializer: {
-              indexes: null
-            }
-          }
+          query
         );
-
       return response;
     }
   });

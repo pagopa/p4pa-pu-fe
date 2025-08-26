@@ -15,13 +15,7 @@ export const getPaymentsReporting = ({
       const query = buildQueryParams(args);
       const { data } = await utils.apiClient.bff.getPaymentsReporting(
         organizationId,
-        query,
-        // repeat array params as query string
-        {
-          paramsSerializer: {
-            indexes: null
-          }
-        }
+        query
       );
       parseAndLog(pagedPaymentsReportingViewSchema, data);
       return data;

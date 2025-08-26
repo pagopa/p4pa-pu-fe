@@ -5,7 +5,6 @@ import { buildQueryParams } from './mappings';
 import type { ClientSilFilteredRequest } from './mappings';
 import { AxiosResponse } from 'axios';
 
-// Mock utils
 vi.mock('../../utils', () => ({
   default: {
     apiClient: {
@@ -16,7 +15,6 @@ vi.mock('../../utils', () => ({
   }
 }));
 
-// Mock parseAndLog
 vi.mock('../../utils/loaders', () => ({
   parseAndLog: vi.fn()
 }));

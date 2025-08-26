@@ -116,11 +116,7 @@ describe('getAssessments', () => {
       expect(result.current.data).toEqual(dataMock);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 
   it('should not fetch data if mutate is not called', () => {
@@ -162,11 +158,7 @@ describe('getAssessments', () => {
       expect(result.current.error).toEqual(errorMock);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 
   it('should handle empty response correctly', async () => {
@@ -194,11 +186,7 @@ describe('getAssessments', () => {
       expect(result.current.data).toBeUndefined();
     });
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 
   it('should use correct mutation key', () => {
@@ -241,11 +229,7 @@ describe('getAssessments', () => {
       expect(result.current.data).toEqual(dataMock);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 
   it('should handle query with all optional parameters', async () => {
@@ -294,11 +278,7 @@ describe('getAssessments', () => {
       expect(result.current.data).toEqual(dataMock);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 });
 
@@ -708,11 +688,7 @@ describe('getAssessmentsRegistries', () => {
       expect(result.current.data).toEqual(dataMock);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 
   it('should handle API errors correctly', async () => {
@@ -1370,17 +1346,9 @@ describe('deleteAssessmentDetails', () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(
-      organizationId,
-      {
-        assessmentDetailIds
-      },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
-    );
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentDetailIds
+    });
   });
 
   it('should handle API errors correctly during deletion', async () => {
@@ -1403,17 +1371,9 @@ describe('deleteAssessmentDetails', () => {
       expect(result.current.error).toEqual(errorMock);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(
-      organizationId,
-      {
-        assessmentDetailIds
-      },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
-    );
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentDetailIds
+    });
   });
 
   it('should handle 4xx client errors correctly during deletion', async () => {
@@ -1439,17 +1399,9 @@ describe('deleteAssessmentDetails', () => {
       expect(result.current.error).toEqual(clientError);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(
-      organizationId,
-      {
-        assessmentDetailIds
-      },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
-    );
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentDetailIds
+    });
   });
 
   it('should handle 5xx server errors correctly during deletion', async () => {
@@ -1472,17 +1424,9 @@ describe('deleteAssessmentDetails', () => {
       expect(result.current.error).toEqual(serverError);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(
-      organizationId,
-      {
-        assessmentDetailIds
-      },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
-    );
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentDetailIds
+    });
   });
 
   it('should not delete assessment details if mutate is not called', async () => {

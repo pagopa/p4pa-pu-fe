@@ -140,15 +140,7 @@ export const getTaxonomies = () =>
     mutationKey: ['getTaxonomies'],
     mutationFn: async (args: TaxonomyFilteredRequest) => {
       const query = buildQueryParams(args);
-      const { data } = await utils.apiClient.bff.getTaxonomies(
-        query,
-        // repeat array params as query string
-        {
-          paramsSerializer: {
-            indexes: null
-          }
-        }
-      );
+      const { data } = await utils.apiClient.bff.getTaxonomies(query);
       return data;
     }
   });

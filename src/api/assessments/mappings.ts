@@ -3,7 +3,7 @@ import {
   AssessmentsRegistryStatus,
   AssessmentStatus
 } from '../../../generated/data-contracts';
-import { FilterValues } from '../../models/Filters';
+import { FilteredRequest, FilterValues } from '../../models/Filters';
 
 export type AssessmentRegistryQueryParams = {
   debtPositionTypeOrgCode?: string;
@@ -20,23 +20,11 @@ export type AssessmentRegistryQueryParams = {
   sort?: Array<string>;
 };
 
-export type AssessmentsRegistriesFilteredRequest = {
-  filters: FilterValues;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
-
-export type AssessmentsFilteredRequest = {
-  filters: FilterValues;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
-
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: AssessmentsRegistriesFilteredRequest) => ({
+}: FilteredRequest<FilterValues>) => ({
   ...(filters.OFFICE_CODE && { officeCode: filters.OFFICE_CODE }),
   ...(filters.OFFICE_DESCRIPTION && {
     officeDescription: filters.OFFICE_DESCRIPTION
@@ -67,7 +55,7 @@ export const buildAssessmentsQueryParams = ({
   filters,
   pagination,
   sort
-}: AssessmentsFilteredRequest) => ({
+}: FilteredRequest<FilterValues>) => ({
   ...(filters.ASSESSMENT_NAME && {
     assessmentName: filters.ASSESSMENT_NAME
   }),
@@ -86,6 +74,51 @@ export const buildAssessmentsQueryParams = ({
   }),
   ...(filters.LAST_UPDATE_DATE_TO && {
     updateDateTo: filters.LAST_UPDATE_DATE_TO.toISOString()
+  }),
+  page: pagination.page,
+  size: pagination.size,
+  ...(sort.length && { sort })
+});
+
+export type AssessmentDetailFilters = {
+  iuv?: string;
+  update?: {
+    from?: Date;
+    to?: Date;
+  };
+  outcome?: {
+    from?: Date;
+    to?: Date;
+  };
+};
+
+export const buildAssessmentDetailQueryParams = ({
+  filters,
+  pagination,
+  sort
+}: FilteredRequest<AssessmentDetailFilters>) => ({
+  ...(filters.iuv && {
+    iuv: filters.iuv
+  }),
+  ...(filters?.update?.from && {
+    updateDateTimeFrom: new Date(
+      filters.update.from.setHours(0, 0, 0, 0)
+    ).toISOString()
+  }),
+  ...(filters.update?.to && {
+    updateDateTimeTo: new Date(
+      filters.update.to.setHours(23, 59, 59, 999)
+    ).toISOString()
+  }),
+  ...(filters.outcome?.from && {
+    paymentDateTimeFrom: new Date(
+      filters.outcome.from.setHours(0, 0, 0, 0)
+    ).toISOString()
+  }),
+  ...(filters.outcome?.to && {
+    paymentDateTimeTo: new Date(
+      filters.outcome.to.setHours(23, 59, 59, 999)
+    ).toISOString()
   }),
   page: pagination.page,
   size: pagination.size,

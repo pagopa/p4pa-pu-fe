@@ -1,7 +1,6 @@
 import {
   GridColDef,
   GridRenderCellParams,
-  GridSortModel,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
@@ -19,32 +18,16 @@ import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';
 
 type AssessmentSearchResultsDataGridProps = {
   data?: PagedAssessmentsExtendedDTO;
-  onSortChange: (sort: Array<string>) => void;
-  onPaginationChange: (paginationParams: {
-    page: number;
-    size: number;
-  }) => void;
   isLoading?: boolean;
 };
 
 type AssessmentDataRow = AssessmentsExtendedDTO & GridValidRowModel;
 
 const AssessmentSearchResultsDataGrid = ({
-  data,
-  onSortChange,
-  onPaginationChange
+  data
 }: AssessmentSearchResultsDataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-
-  const onSort = (model: GridSortModel) => {
-    if (model?.length) {
-      const sort = model.map((item) =>
-        item?.sort ? `${item.field},${item.sort.toUpperCase()}` : ''
-      );
-      onSortChange(sort);
-    }
-  };
 
   const handleDetailClick = (assessmentId: number | undefined) => {
     if (assessmentId) {
@@ -143,17 +126,7 @@ const AssessmentSearchResultsDataGrid = ({
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      onSortModelChange={onSort}
-      smartPagination={{
-        sizeOptions: [5, 10, 20],
-        backendData: {
-          totalElements: data?.totalElements,
-          totalPages: data?.totalPages,
-          number: data?.number,
-          size: data?.size
-        },
-        onPaginationChange: onPaginationChange
-      }}
+      totalPages={data?.totalPages || 1}
     />
   );
 };

@@ -1,7 +1,6 @@
 import {
   GridColDef,
   GridRenderCellParams,
-  GridSortModel,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
@@ -27,17 +26,9 @@ type ResultDataRow = {
 
 export type DataGridProps = {
   data: PagedDebtPositionView;
-  onSortChange: (model: GridSortModel) => void;
-  sortModel: GridSortModel;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
-export const DebtPositionsDataGrid = ({
-  data,
-  onSortChange,
-  sortModel,
-  onPaginationChange
-}: DataGridProps) => {
+export const DebtPositionsDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -124,20 +115,7 @@ export const DebtPositionsDataGrid = ({
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      sortModel={sortModel}
-      onSortModelChange={onSortChange}
-      smartPagination={{
-        initialPage: 0,
-        initialSize: 10,
-        sizeOptions: [5, 10, 20],
-        backendData: {
-          totalElements: data?.totalElements,
-          totalPages: data?.totalPages,
-          number: data?.number,
-          size: data?.size
-        },
-        onPaginationChange: onPaginationChange
-      }}
+      totalPages={data?.totalPages ?? 1}
     />
   );
 };

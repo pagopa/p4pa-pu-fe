@@ -252,12 +252,16 @@ describe('ClientSilPage', () => {
   });
 
   it('should handle add new click', () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
     renderComponent();
 
     const addButton = screen.getByText('clientSil.addNew');
     fireEvent.click(addButton);
 
     expect(mockNavigate).toHaveBeenCalledWith('/client-sil/create');
+    expect(consoleSpy).toHaveBeenCalledWith('Navigate to create new client');
+
+    consoleSpy.mockRestore();
   });
 
   it('should use correct translation keys', () => {

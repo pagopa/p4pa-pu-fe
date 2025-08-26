@@ -15,6 +15,7 @@ import EventsContainer from './Events/EventsContainer';
 import OrgSilServicesPage from './OrgSilServicePage/OrgSilServicesPage';
 import ClientSilPage from './ClientSilPage/ClientSilPage';
 import ClientSilCreate from './ClientSilCreate/ClientSilCreate';
+import { OrgSilServiceCreate } from './OrgSilServiceCreate/OrgSilServiceCreate';
 
 const deployPath = config.deployPath;
 
@@ -123,6 +124,19 @@ export const backofficeRoutes = [
             handle: {
               hideBreadcrumbs: true,
               backButton: false
+            }
+          },
+          {
+            id: 'ORG_SIL_SERVICE_CREATE',
+            path: 'new',
+            element: <OrgSilServiceCreate />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
             }
           }
         ]
