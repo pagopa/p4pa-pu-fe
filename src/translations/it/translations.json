@@ -1515,7 +1515,8 @@
     "fetchChapters": "Impossibile caricare i capitoli. Riprova più tardi.",
     "fetchPaidInstallments": "Impossibile caricare i pagamenti. Riprova più tardi.",
     "noChaptersForYear": "Non ci sono capitoli per l'anno {{year}}",
-    "generic": "Si è verificato un errore. Riprova più tardi."
+    "generic": "Si è verificato un errore. Riprova più tardi.",
+    "fetchOrgSilService": "Errore nel recuperare i dettagli del servizio"
   },
   "events": {
     "searchCardTitle": "Cosa stai cercando?",
@@ -1579,6 +1580,41 @@
     "paymentNotice": "Notifica Pagamenti",
     "apiName": "Nome API",
     "addAPI": "Aggiungi API"
+  },
+  "orgSilServiceDetail": {
+    "description": "Ecco i dettagli dell'API.",
+    "notFound": "Servizio non trovato",
+    "noAuthConfigured": "Nessuna configurazione di autenticazione",
+    "sections": {
+      "generalConfig": {
+        "title": "Configurazione generale"
+      },
+      "authConfig": {
+        "title": "Modalità di autenticazione"
+      }
+    },
+    "fields": {
+      "applicationName": "Nome API",
+      "serviceUrl": "Service URL",
+      "serviceType": "Tipo Servizio",
+      "apiLegacy": "API Legacy",
+      "authConfig": "Auth Config",
+      "authUrl": "Auth URL",
+      "username": "Username",
+      "kid": "KID",
+      "subject": "Subject",
+      "issuer": "Issuer",
+      "algorithm": "Algorithm",
+      "signingKey": "Signing Key"
+    },
+    "serviceTypes": {
+      "paymentNotification": "Notifica Pagamenti",
+      "amountActualization": "Attualizzazione Importo"
+    },
+    "authTypes": {
+      "basicAuth": "Basic Auth",
+      "jwtAuth": "Legacy JWT"
+    }
   },
   "clientSil": {
     "addNew": "Aggiungi nuovo",
