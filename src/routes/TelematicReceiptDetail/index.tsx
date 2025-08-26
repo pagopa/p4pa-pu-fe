@@ -152,6 +152,15 @@ export const TelematicReceiptDetail = () => {
     }
   ];
 
+  // add Notification Fee only if present
+  if (data?.notificationFeeCents !== undefined) {
+    summaryData.push({
+      label: t('commons.notificationFeeCents'),
+      value: `${data?.notificationFeeCents || '-'}`,
+      valueType: 'amount'
+    });
+  }
+
   const paymentData: Array<DetailData> = [
     {
       label: getContextualTranslation(
