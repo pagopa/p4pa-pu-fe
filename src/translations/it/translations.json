@@ -828,6 +828,7 @@
       "ACTIVE": "Attivo",
       "INACTIVE": "Disattivo",
       "COMPLETED": "Elaborato",
+      "DISABLED": "Disabilitato",
       "ERROR": "Errore",
       "EXPIRED": "Scaduto",
       "PROCESSING": "In elaborazione",
