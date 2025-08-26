@@ -24,6 +24,7 @@ const clientSilCreateSchema = z.object({
       required_error: 'clientSil.create.fields.clientName.required'
     })
     .min(1, 'clientSil.create.fields.clientName.required')
+    .regex(/^[a-zA-Z0-9-_]*$/, 'clientSil.create.fields.clientName.invalid')
 });
 
 type ClientSilCreateFormData = z.infer<typeof clientSilCreateSchema>;

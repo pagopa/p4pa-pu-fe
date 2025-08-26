@@ -1595,7 +1595,7 @@
     "description": "Gestisci i Client SIL dell'organizzazione",
     "create": {
       "title": "Aggiungi nuovo Client SIL",
-      "subtitle": "Il client ID e key secret saranno generati automaticamente dopo la creazione",
+      "subtitle": "Il client ID e key secret saranno generati automaticamente dopo la creazione.",
       "formLabel": "Form di creazione Client SIL",
       "section": {
         "description": {
@@ -1613,7 +1613,8 @@
           "label": "Nome Client SIL",
           "placeholder": "Tassa seconde case",
           "required": "Il nome del Client SIL è obbligatorio",
-          "maxLength": "Il nome non può superare i 100 caratteri"
+          "maxLength": "Il nome non può superare i 100 caratteri",
+          "invalid": "Il nome del Client SIL può contenere solo caratteri alfanumerici ed i simboli - e _"
         }
       },
       "error": {
