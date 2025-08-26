@@ -483,7 +483,6 @@ describe('Step3 Component', () => {
     });
   });
 
-  // Fix failing test
   it('should handle save as draft functionality', async () => {
     renderComponent();
 
