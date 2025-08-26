@@ -14,7 +14,11 @@ import {
   ManageDebtPositionDTO
 } from '../../../generated/data-contracts';
 import { extractFilename } from '../../utils/formatters';
-import { buildDebtPositionsQueryParams, buildInstallmentsQueryParams, DebtPositionFilteredRequest } from './mapping';
+import {
+  buildDebtPositionsQueryParams,
+  buildInstallmentsQueryParams,
+  DebtPositionFilteredRequest
+} from './mapping';
 
 const getDebtPositionViews = ({ organizationId }: { organizationId: number }) =>
   useMutation({
@@ -23,7 +27,7 @@ const getDebtPositionViews = ({ organizationId }: { organizationId: number }) =>
       const query = buildDebtPositionsQueryParams(args);
       const { data } = await utils.apiClient.bff.getDebtPositionViews(
         organizationId,
-        query,
+        query
       );
 
       return data;
@@ -37,7 +41,7 @@ const getInstallments = ({ organizationId }: { organizationId: number }) =>
       const query = buildInstallmentsQueryParams(args);
       const { data } = await utils.apiClient.bff.getInstallments(
         organizationId,
-        query,
+        query
       );
 
       return data;

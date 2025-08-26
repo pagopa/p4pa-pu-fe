@@ -10,8 +10,8 @@ import { extractFilename } from '../utils/formatters';
 
 export type ExportQuery = {
   exportFileType: ExportFileTypeEnum;
-  creationDateFrom?: string;
-  creationDateTo?: string;
+  creationDateFrom?: Date;
+  creationDateTo?: Date;
   status?: ExportFileStatus;
   fileName?: string;
 };

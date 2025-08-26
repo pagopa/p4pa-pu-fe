@@ -44,7 +44,9 @@ describe('debtPositions API', () => {
     it('returns data correctly', async () => {
       const dataMock = createMock(debtPositionViewSchema);
 
-      (mapping.buildDebtPositionsQueryParams as Mock).mockReturnValue('mock-query-string');
+      (mapping.buildDebtPositionsQueryParams as Mock).mockReturnValue(
+        'mock-query-string'
+      );
 
       const apiMock = vi
         .spyOn(utils.apiClient.bff, 'getDebtPositionViews')
@@ -63,14 +65,16 @@ describe('debtPositions API', () => {
       expect(mapping.buildDebtPositionsQueryParams).toHaveBeenCalledWith(query);
       expect(apiMock).toHaveBeenCalledWith(
         params.organizationId,
-        'mock-query-string',
+        'mock-query-string'
       );
     });
 
     it('handles errors correctly', async () => {
       const error = new Error('API error');
 
-      (mapping.buildDebtPositionsQueryParams as Mock).mockReturnValue('mock-query-string');
+      (mapping.buildDebtPositionsQueryParams as Mock).mockReturnValue(
+        'mock-query-string'
+      );
 
       vi.spyOn(utils.apiClient.bff, 'getDebtPositionViews').mockRejectedValue(
         error
@@ -102,7 +106,9 @@ describe('debtPositions API', () => {
     it('returns data correctly', async () => {
       const dataMock = createMock(debtPositionViewSchema);
 
-      (mapping.buildInstallmentsQueryParams as Mock).mockReturnValue('mock-query-string');
+      (mapping.buildInstallmentsQueryParams as Mock).mockReturnValue(
+        'mock-query-string'
+      );
 
       const apiMock = vi
         .spyOn(utils.apiClient.bff, 'getInstallments')
@@ -121,14 +127,16 @@ describe('debtPositions API', () => {
       expect(mapping.buildInstallmentsQueryParams).toHaveBeenCalledWith(query);
       expect(apiMock).toHaveBeenCalledWith(
         params.organizationId,
-        'mock-query-string',
+        'mock-query-string'
       );
     });
 
     it('handles errors correctly', async () => {
       const error = new Error('API error');
 
-      (mapping.buildInstallmentsQueryParams as Mock).mockReturnValue('mock-query-string');
+      (mapping.buildInstallmentsQueryParams as Mock).mockReturnValue(
+        'mock-query-string'
+      );
 
       vi.spyOn(utils.apiClient.bff, 'getInstallments').mockRejectedValue(error);
 
