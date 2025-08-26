@@ -142,7 +142,7 @@ export const useGlobalPaymentSelection = ({
 
       // Sync to form with the new state
       queueMicrotask(() => {
-        const currentSet = newSet!;
+        const currentSet = newSet;
 
         if (isRemoveMode) {
           const selectedAssessmentDetailIds =
