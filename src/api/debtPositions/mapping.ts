@@ -22,7 +22,11 @@ type InstallmentsQueryParameters = Parameters<
   typeof utils.apiClient.bff.getInstallments
 >[1];
 
-export const buildQueryParams = ({
+type debtPositionsQueryParameters = Parameters<
+  typeof utils.apiClient.bff.getDebtPositionViews
+>[1];
+
+export const buildInstallmentsQueryParams = ({
   filters,
   pagination,
   sort
@@ -34,5 +38,19 @@ export const buildQueryParams = ({
   debtPositionTypeOrgId: filters.typeOrgId,
   iuv: filters.iuv,
   fiscalCode: filters.fiscalCode,
+  sort
+});
+
+export const buildDebtPositionsQueryParams = ({
+  filters,
+  pagination,
+  sort
+}: DebtPositionFilteredRequest): debtPositionsQueryParameters => ({
+  creationDateFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  creationDateTo: utils.formatters.date.code(filters?.dateRange?.to),
+  fiscalCode: filters.fiscalCode,
+  status: filters.status,
+  page: pagination.page,
+  size: pagination.size,
   sort
 });
