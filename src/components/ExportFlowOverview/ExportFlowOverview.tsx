@@ -26,7 +26,6 @@ import { ReactNode, useEffect, useState } from 'react';
 import { useSearch } from '../../hooks/useSearch';
 import { FieldValues } from 'react-hook-form';
 import { ExportFileFilters } from '../../models/Filters';
-import { getDefaultDateRange } from '../../utils/dates';
 
 export type ExportFlowOverviewProps = {
   routingCategory: string;
@@ -56,7 +55,7 @@ const ExportFlowOverview = ({
 
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
 
-  const defaultDateRange = getDefaultDateRange();
+  const defaultDateRange = utils.formatters.getDefaultDateRange();
   const [filters, setFilters] = useState<ExportFileFilters>({
     creationDateFrom: defaultDateRange.from,
     creationDateTo: defaultDateRange.to,
