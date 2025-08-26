@@ -1,3 +1,5 @@
+import utils from '../../utils';
+
 export type PaymentReportingRowsFilters = {
   daterange?: {
     from: Date;
@@ -12,23 +14,19 @@ export type PaymentReportingRowsFilteredRequest = {
   sort: Array<string>;
 };
 
+type getPaymentReportingRowsQueryParameters = Parameters<
+  typeof utils.apiClient.bff.getPaymentsReportingRows
+>[2];
+
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: PaymentReportingRowsFilteredRequest) => ({
-  ...(filters?.daterange?.from && {
-    payDateFrom: new Date(filters.daterange.from.setHours(0, 0, 0, 0))
-      .toISOString()
-      .split('T')[0]
-  }),
-  ...(filters?.daterange?.to && {
-    payDateTo: new Date(filters.daterange.to.setHours(23, 59, 59, 999))
-      .toISOString()
-      .split('T')[0]
-  }),
-  ...(filters?.iuv && { iuv: filters.iuv }),
+}: PaymentReportingRowsFilteredRequest): getPaymentReportingRowsQueryParameters => ({
+  iuv: filters.iuv,
+  payDateTimeFrom: utils.formatters.date.code(filters.daterange?.from),
+  payDateTimeTo: utils.formatters.date.code(filters.daterange?.to),
   page: pagination.page,
   size: pagination.size,
-  ...(sort.length && { sort })
+  sort
 });
