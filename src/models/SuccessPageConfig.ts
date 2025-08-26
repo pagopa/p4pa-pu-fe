@@ -207,7 +207,20 @@ export const SuccessPageConfig: SuccessOpts = {
       {
         variant: 'contained',
         size: 'large',
-        buttonLabel: 'orgSilServiceCreate.newService.success.goToDetail'
+        buttonLabel: 'orgSilServiceCreate.newService.success.goToDetail',
+        customNavigation: 'ORG_SIL_SERVICE_DETAIL'
+      }
+    ]
+  },
+  'org-sil-service-edit': {
+    title: 'orgSilServiceEdit.updateService.success.title',
+    description: 'orgSilServiceEdit.updateService.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'orgSilServiceEdit.updateService.success.goToDetail',
+        customNavigation: 'ORG_SIL_SERVICE_DETAIL'
       }
     ]
   }

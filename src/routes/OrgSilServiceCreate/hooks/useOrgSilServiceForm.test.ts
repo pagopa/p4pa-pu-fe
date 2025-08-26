@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-nested-functions */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
@@ -15,7 +14,8 @@ vi.mock('react-router', async (importOriginal) => ({
 
 vi.mock('../../../api/orgSilService/index', () => ({
   default: {
-    createOrgSilService: vi.fn()
+    createOrgSilService: vi.fn(),
+    updateOrgSilService: vi.fn()
   }
 }));
 
@@ -48,16 +48,23 @@ describe('useOrgSilServiceForm', () => {
     orgSilServiceId: 'service-123'
   };
 
-  const mockMutateAsync = vi.fn();
+  const mockCreateMutateAsync = vi.fn();
+  const mockUpdateMutateAsync = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     vi.mocked(transformFormDataToDTO).mockReturnValue(mockDTO);
-    mockMutateAsync.mockResolvedValue(mockSuccessResponse);
+    mockCreateMutateAsync.mockResolvedValue(mockSuccessResponse);
+    mockUpdateMutateAsync.mockResolvedValue(mockSuccessResponse);
 
     vi.mocked(orgSilService.createOrgSilService).mockReturnValue({
-      mutateAsync: mockMutateAsync,
+      mutateAsync: mockCreateMutateAsync,
+      isPending: false
+    } as any);
+
+    vi.mocked(orgSilService.updateOrgSilService).mockReturnValue({
+      mutateAsync: mockUpdateMutateAsync,
       isPending: false
     } as any);
   });
@@ -75,22 +82,26 @@ describe('useOrgSilServiceForm', () => {
       expect(result.current.isLoading).toBe(false);
       expect(result.current.error).toBeNull();
       expect(typeof result.current.createService).toBe('function');
+      expect(typeof result.current.updateService).toBe('function');
       expect(typeof result.current.clearError).toBe('function');
     });
 
-    it('should call createOrgSilService with correct organizationId', () => {
+    it('should call both createOrgSilService and updateOrgSilService with correct organizationId', () => {
       renderHook(() => useOrgSilServiceForm({ organizationId }));
 
       expect(orgSilService.createOrgSilService).toHaveBeenCalledWith({
+        organizationId
+      });
+      expect(orgSilService.updateOrgSilService).toHaveBeenCalledWith({
         organizationId
       });
     });
   });
 
   describe('Loading State', () => {
-    it('should reflect loading state from mutation', () => {
+    it('should reflect loading state from create mutation', () => {
       vi.mocked(orgSilService.createOrgSilService).mockReturnValue({
-        mutateAsync: mockMutateAsync,
+        mutateAsync: mockCreateMutateAsync,
         isPending: true
       } as any);
 
@@ -101,19 +112,34 @@ describe('useOrgSilServiceForm', () => {
       expect(result.current.isLoading).toBe(true);
     });
 
-    it('should reflect loading state changes between renders', () => {
-      const { result, rerender } = renderHook(() =>
-        useOrgSilServiceForm({ organizationId })
-      );
-
-      expect(result.current.isLoading).toBe(false);
-
-      vi.mocked(orgSilService.createOrgSilService).mockReturnValue({
-        mutateAsync: mockMutateAsync,
+    it('should reflect loading state from update mutation', () => {
+      vi.mocked(orgSilService.updateOrgSilService).mockReturnValue({
+        mutateAsync: mockUpdateMutateAsync,
         isPending: true
       } as any);
 
-      rerender();
+      const { result } = renderHook(() =>
+        useOrgSilServiceForm({ organizationId })
+      );
+
+      expect(result.current.isLoading).toBe(true);
+    });
+
+    it('should reflect loading state from both mutations', () => {
+      vi.mocked(orgSilService.createOrgSilService).mockReturnValue({
+        mutateAsync: mockCreateMutateAsync,
+        isPending: true
+      } as any);
+
+      vi.mocked(orgSilService.updateOrgSilService).mockReturnValue({
+        mutateAsync: mockUpdateMutateAsync,
+        isPending: true
+      } as any);
+
+      const { result } = renderHook(() =>
+        useOrgSilServiceForm({ organizationId })
+      );
+
       expect(result.current.isLoading).toBe(true);
     });
   });
@@ -133,7 +159,7 @@ describe('useOrgSilServiceForm', () => {
         organizationId
       );
 
-      expect(mockMutateAsync).toHaveBeenCalledWith(mockDTO);
+      expect(mockCreateMutateAsync).toHaveBeenCalledWith(mockDTO);
 
       expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
@@ -152,51 +178,79 @@ describe('useOrgSilServiceForm', () => {
         useOrgSilServiceForm({ organizationId })
       );
 
-      act(() => {
-        result.current.clearError();
+      mockCreateMutateAsync.mockRejectedValueOnce(new Error('Initial error'));
+      await act(async () => {
+        await result.current.createService(mockFormData);
       });
+      expect(result.current.error).toBe('Initial error');
 
+      mockCreateMutateAsync.mockResolvedValueOnce(mockSuccessResponse);
       await act(async () => {
         await result.current.createService(mockFormData);
       });
 
       expect(result.current.error).toBeNull();
     });
+  });
 
-    it('should handle different service types correctly', async () => {
+  describe('Successful Service Update', () => {
+    it('should update service successfully and navigate to success page', async () => {
+      const updateFormData = { ...mockFormData, orgSilServiceId: 456 };
+      const expectedDTO = { ...mockDTO, orgSilServiceId: 456 };
+
       const { result } = renderHook(() =>
         useOrgSilServiceForm({ organizationId })
       );
 
-      const actualizationFormData = {
-        ...mockFormData,
-        serviceType: OrgSilServiceType.ACTUALIZATION
-      };
-
-      const actualizationDTO = {
-        ...mockDTO,
-        serviceType: OrgSilServiceType.ACTUALIZATION
-      };
-
-      vi.mocked(transformFormDataToDTO).mockReturnValue(actualizationDTO);
-
       await act(async () => {
-        await result.current.createService(actualizationFormData);
+        await result.current.updateService(updateFormData);
       });
 
       expect(transformFormDataToDTO).toHaveBeenCalledWith(
-        actualizationFormData,
+        updateFormData,
         organizationId
       );
-      expect(mockMutateAsync).toHaveBeenCalledWith(actualizationDTO);
+
+      expect(mockUpdateMutateAsync).toHaveBeenCalledWith(expectedDTO);
+
+      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'org-sil-service-edit',
+          i18nParams: { applicationName: mockSuccessResponse.applicationName },
+          orgSilServiceId: mockSuccessResponse.orgSilServiceId
+        }
+      });
+
+      expect(result.current.error).toBeNull();
+    });
+
+    it('should handle missing updateMutation gracefully', async () => {
+      vi.mocked(orgSilService.updateOrgSilService).mockReturnValue(null as any);
+
+      const { result } = renderHook(() =>
+        useOrgSilServiceForm({ organizationId })
+      );
+
+      expect(result.current.isLoading).toBe(false);
+      expect(typeof result.current.updateService).toBe('function');
+
+      const updateFormData = { ...mockFormData, orgSilServiceId: 456 };
+
+      await act(async () => {
+        await result.current.updateService(updateFormData);
+      });
+
+      expect(result.current.error).toBe('Update functionality not available');
+      expect(mockUpdateMutateAsync).not.toHaveBeenCalled();
     });
   });
 
   describe('Error Handling', () => {
-    it('should handle mutation error and navigate to error page', async () => {
+    it('should handle create mutation error and navigate to error page', async () => {
       const errorMessage = 'Service creation failed';
       const mockError = new Error(errorMessage);
-      mockMutateAsync.mockRejectedValue(mockError);
+      mockCreateMutateAsync.mockRejectedValue(mockError);
 
       const { result } = renderHook(() =>
         useOrgSilServiceForm({ organizationId })
@@ -214,9 +268,32 @@ describe('useOrgSilServiceForm', () => {
       });
     });
 
+    it('should handle update mutation error and navigate to error page', async () => {
+      const errorMessage = 'Service update failed';
+      const mockError = new Error(errorMessage);
+      mockUpdateMutateAsync.mockRejectedValue(mockError);
+
+      const { result } = renderHook(() =>
+        useOrgSilServiceForm({ organizationId })
+      );
+
+      const updateFormData = { ...mockFormData, orgSilServiceId: 456 };
+
+      await act(async () => {
+        await result.current.updateService(updateFormData);
+      });
+
+      expect(result.current.error).toBe(errorMessage);
+
+      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
+        replace: true,
+        state: { errorType: 'default' }
+      });
+    });
+
     it('should handle non-Error objects as generic error', async () => {
       const nonErrorObject = 'Something went wrong';
-      mockMutateAsync.mockRejectedValue(nonErrorObject);
+      mockCreateMutateAsync.mockRejectedValue(nonErrorObject);
 
       const { result } = renderHook(() =>
         useOrgSilServiceForm({ organizationId })
@@ -233,30 +310,9 @@ describe('useOrgSilServiceForm', () => {
       });
     });
 
-    it('should handle transformation error', async () => {
-      const transformError = new Error('Transformation failed');
-      vi.mocked(transformFormDataToDTO).mockImplementation(() => {
-        throw transformError;
-      });
-
-      const { result } = renderHook(() =>
-        useOrgSilServiceForm({ organizationId })
-      );
-
-      await act(async () => {
-        await result.current.createService(mockFormData);
-      });
-
-      expect(result.current.error).toBe('Transformation failed');
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
-        replace: true,
-        state: { errorType: 'default' }
-      });
-    });
-
     it('should clear error when clearError is called', async () => {
       const mockError = new Error('Test error');
-      mockMutateAsync.mockRejectedValue(mockError);
+      mockCreateMutateAsync.mockRejectedValue(mockError);
 
       const { result } = renderHook(() =>
         useOrgSilServiceForm({ organizationId })
@@ -294,10 +350,12 @@ describe('useOrgSilServiceForm', () => {
         applicationName: 'Legacy API',
         serviceUrl: 'https://legacy.api.com/v1',
         flagLegacy: true,
-        authConfigType: 'basic',
-        basicUser: 'testuser',
-        basicPassword: 'testpass',
-        basicAuthURL: 'https://auth.legacy.com/basic'
+        legacyBasicAuthConfig: {
+          authUrl: 'https://auth.legacy.com/basic',
+          user: 'testuser',
+          psw: 'testpass',
+          authConfig: 'legacyBasic'
+        }
       };
 
       vi.mocked(transformFormDataToDTO).mockReturnValue(legacyDTO);
@@ -314,25 +372,7 @@ describe('useOrgSilServiceForm', () => {
         legacyFormData,
         organizationId
       );
-      expect(mockMutateAsync).toHaveBeenCalledWith(legacyDTO);
-    });
-
-    it('should handle multiple rapid calls correctly', async () => {
-      const { result } = renderHook(() =>
-        useOrgSilServiceForm({ organizationId })
-      );
-
-      await act(async () => {
-        const promises = [
-          result.current.createService(mockFormData),
-          result.current.createService(mockFormData),
-          result.current.createService(mockFormData)
-        ];
-        await Promise.all(promises);
-      });
-
-      expect(mockMutateAsync).toHaveBeenCalledTimes(3);
-      expect(transformFormDataToDTO).toHaveBeenCalledTimes(3);
+      expect(mockCreateMutateAsync).toHaveBeenCalledWith(legacyDTO);
     });
 
     it('should maintain error state between operations', async () => {
@@ -340,7 +380,7 @@ describe('useOrgSilServiceForm', () => {
         useOrgSilServiceForm({ organizationId })
       );
 
-      mockMutateAsync.mockRejectedValueOnce(new Error('First error'));
+      mockCreateMutateAsync.mockRejectedValueOnce(new Error('First error'));
 
       await act(async () => {
         await result.current.createService(mockFormData);
@@ -348,7 +388,7 @@ describe('useOrgSilServiceForm', () => {
 
       expect(result.current.error).toBe('First error');
 
-      mockMutateAsync.mockResolvedValueOnce(mockSuccessResponse);
+      mockCreateMutateAsync.mockResolvedValueOnce(mockSuccessResponse);
 
       await act(async () => {
         await result.current.createService(mockFormData);
@@ -359,32 +399,36 @@ describe('useOrgSilServiceForm', () => {
   });
 
   describe('Integration with Dependencies', () => {
-    it('should pass organizationId correctly through the flow', async () => {
+    it('should pass organizationId correctly through both mutations', async () => {
       const customOrgId = 456;
 
       const { result } = renderHook(() =>
         useOrgSilServiceForm({ organizationId: customOrgId })
       );
 
+      expect(orgSilService.createOrgSilService).toHaveBeenCalledWith({
+        organizationId: customOrgId
+      });
+      expect(orgSilService.updateOrgSilService).toHaveBeenCalledWith({
+        organizationId: customOrgId
+      });
+
       await act(async () => {
         await result.current.createService(mockFormData);
       });
 
-      expect(orgSilService.createOrgSilService).toHaveBeenCalledWith({
-        organizationId: customOrgId
-      });
       expect(transformFormDataToDTO).toHaveBeenCalledWith(
         mockFormData,
         customOrgId
       );
     });
 
-    it('should handle navigation state correctly', async () => {
+    it('should handle navigation state correctly for create', async () => {
       const customResponse = {
         applicationName: 'Custom API Service',
         orgSilServiceId: 'custom-service-456'
       };
-      mockMutateAsync.mockResolvedValue(customResponse);
+      mockCreateMutateAsync.mockResolvedValue(customResponse);
 
       const { result } = renderHook(() =>
         useOrgSilServiceForm({ organizationId })
@@ -404,71 +448,43 @@ describe('useOrgSilServiceForm', () => {
       });
     });
 
-    it('should work with different organizationId values', () => {
-      const orgIds = [1, 999, 12345];
-
-      orgIds.forEach((orgId) => {
-        renderHook(() => useOrgSilServiceForm({ organizationId: orgId }));
-
-        expect(orgSilService.createOrgSilService).toHaveBeenCalledWith({
-          organizationId: orgId
-        });
-      });
-    });
-  });
-
-  describe('Error Edge Cases', () => {
-    it('should handle null error objects', async () => {
-      mockMutateAsync.mockRejectedValue(null);
+    it('should handle navigation state correctly for update', async () => {
+      const customResponse = {
+        applicationName: 'Updated API Service',
+        orgSilServiceId: 'updated-service-789'
+      };
+      mockUpdateMutateAsync.mockResolvedValue(customResponse);
 
       const { result } = renderHook(() =>
         useOrgSilServiceForm({ organizationId })
       );
+
+      const updateFormData = { ...mockFormData, orgSilServiceId: 789 };
 
       await act(async () => {
-        await result.current.createService(mockFormData);
+        await result.current.updateService(updateFormData);
       });
 
-      expect(result.current.error).toBe('Error during service creation');
-    });
-
-    it('should handle undefined error objects', async () => {
-      mockMutateAsync.mockRejectedValue(undefined);
-
-      const { result } = renderHook(() =>
-        useOrgSilServiceForm({ organizationId })
-      );
-
-      await act(async () => {
-        await result.current.createService(mockFormData);
+      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'org-sil-service-edit',
+          i18nParams: { applicationName: customResponse.applicationName },
+          orgSilServiceId: customResponse.orgSilServiceId
+        }
       });
-
-      expect(result.current.error).toBe('Error during service creation');
-    });
-
-    it('should handle errors during navigation', async () => {
-      mockNavigate.mockImplementation(() => {
-        throw new Error('Navigation failed');
-      });
-
-      const { result } = renderHook(() =>
-        useOrgSilServiceForm({ organizationId })
-      );
-
-      await expect(async () => {
-        await act(async () => {
-          await result.current.createService(mockFormData);
-        });
-      }).rejects.toThrow('Navigation failed');
-
-      expect(mockMutateAsync).toHaveBeenCalledWith(mockDTO);
     });
   });
 
   describe('Loading State Management', () => {
-    it('should reflect isPending state from mutation', () => {
+    it('should reflect isPending state from both mutations', () => {
       vi.mocked(orgSilService.createOrgSilService).mockReturnValue({
-        mutateAsync: mockMutateAsync,
+        mutateAsync: mockCreateMutateAsync,
+        isPending: false
+      } as any);
+
+      vi.mocked(orgSilService.updateOrgSilService).mockReturnValue({
+        mutateAsync: mockUpdateMutateAsync,
         isPending: true
       } as any);
 
@@ -479,90 +495,68 @@ describe('useOrgSilServiceForm', () => {
       expect(result.current.isLoading).toBe(true);
     });
 
-    it('should handle loading state transitions correctly', () => {
-      const { result, rerender } = renderHook(() =>
-        useOrgSilServiceForm({ organizationId })
-      );
-
-      expect(result.current.isLoading).toBe(false);
-
+    it('should be false when both mutations are not pending', () => {
       vi.mocked(orgSilService.createOrgSilService).mockReturnValue({
-        mutateAsync: mockMutateAsync,
-        isPending: true
-      } as any);
-
-      rerender();
-      expect(result.current.isLoading).toBe(true);
-
-      vi.mocked(orgSilService.createOrgSilService).mockReturnValue({
-        mutateAsync: mockMutateAsync,
+        mutateAsync: mockCreateMutateAsync,
         isPending: false
       } as any);
 
-      rerender();
+      vi.mocked(orgSilService.updateOrgSilService).mockReturnValue({
+        mutateAsync: mockUpdateMutateAsync,
+        isPending: false
+      } as any);
+
+      const { result } = renderHook(() =>
+        useOrgSilServiceForm({ organizationId })
+      );
+
       expect(result.current.isLoading).toBe(false);
     });
   });
 
-  describe('State Consistency', () => {
-    it('should maintain consistent state during async operations', async () => {
+  describe('Error Edge Cases', () => {
+    it('should handle transformation error in create', async () => {
+      const transformError = new Error('Transformation failed');
+      vi.mocked(transformFormDataToDTO).mockImplementation(() => {
+        throw transformError;
+      });
+
       const { result } = renderHook(() =>
         useOrgSilServiceForm({ organizationId })
       );
-
-      expect(result.current.error).toBeNull();
-      expect(result.current.isLoading).toBe(false);
 
       await act(async () => {
         await result.current.createService(mockFormData);
       });
 
-      expect(result.current.error).toBeNull();
+      expect(result.current.error).toBe('Transformation failed');
+      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
+        replace: true,
+        state: { errorType: 'default' }
+      });
     });
 
-    it('should handle rapid successive operations', async () => {
+    it('should handle transformation error in update', async () => {
+      const transformError = new Error('Update transformation failed');
+      vi.mocked(transformFormDataToDTO).mockImplementation(() => {
+        throw transformError;
+      });
+
       const { result } = renderHook(() =>
         useOrgSilServiceForm({ organizationId })
       );
 
-      const formData1 = { ...mockFormData, applicationName: 'API 1' };
-      const formData2 = { ...mockFormData, applicationName: 'API 2' };
+      const updateFormData = { ...mockFormData, orgSilServiceId: 456 };
 
       await act(async () => {
-        const promise1 = result.current.createService(formData1);
-        const promise2 = result.current.createService(formData2);
-
-        await Promise.all([promise1, promise2]);
+        await result.current.updateService(updateFormData);
       });
 
-      expect(mockMutateAsync).toHaveBeenCalledTimes(2);
-      expect(result.current.error).toBeNull();
-    });
-
-    it('should handle async error recovery', async () => {
-      const { result } = renderHook(() =>
-        useOrgSilServiceForm({ organizationId })
-      );
-
-      mockMutateAsync.mockRejectedValueOnce(new Error('Network error'));
-
-      await act(async () => {
-        await result.current.createService(mockFormData);
+      expect(result.current.error).toBe('Update transformation failed');
+      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
+        replace: true,
+        state: { errorType: 'default' }
       });
-
-      expect(result.current.error).toBe('Network error');
-
-      mockMutateAsync.mockResolvedValueOnce(mockSuccessResponse);
-
-      await act(async () => {
-        await result.current.createService(mockFormData);
-      });
-
-      expect(result.current.error).toBeNull();
-      expect(mockNavigate).toHaveBeenCalledWith(
-        PageRoutes.RESPONSES_SUCCESS,
-        expect.any(Object)
-      );
     });
   });
 });

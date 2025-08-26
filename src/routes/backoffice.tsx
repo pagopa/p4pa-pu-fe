@@ -16,6 +16,7 @@ import OrgSilServicesPage from './OrgSilServicePage/OrgSilServicesPage';
 import OrgSilServiceDetailPage from './OrgSilServiceDetailPage/OrgSilServiceDetailPage';
 import ClientSilPage from './ClientSilPage/ClientSilPage';
 import { OrgSilServiceCreate } from './OrgSilServiceCreate/OrgSilServiceCreate';
+import { OrgSilServiceEdit } from './OrgSilServiceCreate/OrgSilServiceEdit';
 
 const deployPath = config.deployPath;
 
@@ -143,6 +144,19 @@ export const backofficeRoutes = [
             id: 'ORG_SIL_SERVICE_CREATE',
             path: 'new',
             element: <OrgSilServiceCreate />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            }
+          },
+          {
+            id: 'ORG_SIL_SERVICE_EDIT',
+            path: ':orgSilServiceId/edit',
+            element: <OrgSilServiceEdit />,
             handle: {
               backButton: true,
               backButtonText: 'commons.exit',

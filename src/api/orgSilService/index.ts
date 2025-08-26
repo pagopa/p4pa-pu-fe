@@ -57,8 +57,23 @@ const createOrgSilService = ({ organizationId }: { organizationId: number }) =>
     }
   });
 
+const updateOrgSilService = ({ organizationId }: { organizationId: number }) =>
+  useMutation({
+    mutationKey: ['updateOrgSilService', organizationId],
+    mutationFn: async (payload: OrgSilServiceDecryptedDTO) => {
+      const { data } = await utils.apiClient.bff.updateOrgSilService(
+        organizationId,
+        payload
+      );
+
+      parseAndLog(orgSilServiceDecryptedDTOSchema, data);
+      return data;
+    }
+  });
+
 export default {
   getOrgSilServices,
   getOrgSilServiceById,
-  createOrgSilService
+  createOrgSilService,
+  updateOrgSilService
 };

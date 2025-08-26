@@ -19,6 +19,10 @@ export const useOrgSilServiceForm = ({
     organizationId
   });
 
+  const updateMutation = orgSilService.updateOrgSilService({
+    organizationId
+  });
+
   const createService = async (
     formData: OrgSilServiceFormData
   ): Promise<void> => {
@@ -48,9 +52,47 @@ export const useOrgSilServiceForm = ({
     }
   };
 
+  const updateService = async (
+    formData: OrgSilServiceFormData & { orgSilServiceId: number }
+  ): Promise<void> => {
+    setError(null);
+
+    if (!updateMutation) {
+      console.error('Update mutation not available');
+      setError('Update functionality not available');
+      return;
+    }
+
+    try {
+      const dto = transformFormDataToDTO(formData, organizationId);
+      dto.orgSilServiceId = formData.orgSilServiceId;
+
+      const response = await updateMutation.mutateAsync(dto);
+
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'org-sil-service-edit',
+          i18nParams: { applicationName: response.applicationName },
+          orgSilServiceId: response.orgSilServiceId
+        }
+      });
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : 'Error during service update';
+      setError(errorMessage);
+
+      navigate(PageRoutes.RESPONSES_ERROR, {
+        replace: true,
+        state: { errorType: 'default' }
+      });
+    }
+  };
+
   return {
     createService,
-    isLoading: createMutation.isPending,
+    updateService,
+    isLoading: createMutation.isPending || (updateMutation?.isPending ?? false),
     error,
     clearError: () => setError(null)
   };

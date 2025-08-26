@@ -685,7 +685,6 @@
     "message": "Messaggio",
     "messages": "Messaggi",
     "notificationDate": "Data di notifica",
-    "notificationFeeCents": "Costo di notifica",
     "nav": "NAV",
     "no": "No",
     "NO_EVENTS": "Nessun evento",
@@ -1605,7 +1604,8 @@
       "subject": "Subject",
       "issuer": "Issuer",
       "algorithm": "Algorithm",
-      "signingKey": "Signing Key"
+      "signingKey": "Signing Key",
+      "password": "password"
     },
     "serviceTypes": {
       "paymentNotification": "Notifica Pagamenti",
@@ -1668,6 +1668,17 @@
       "requiredServiceType": "Il tipo di servizio è obbligatorio",
       "requiredLegacyType": "Seleziona un tipo di autenticazione legacy",
       "requiredField": "Campo obbligatorio"
+    }
+  },
+  "orgSilServiceEdit": {
+    "title": "Modifica API",
+    "description": "Modifica i dati delle API già esposte in Piattaforma Unitaria per essere utilizzati nei processi di Notifica Pagamenti ed Attualizzazione Importo.",
+    "updateService": {
+      "success":{
+        "title": "L'API ‘{{applicationName}}’ è stata modificata!",
+        "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
+        "goToDetail": "Vedi dettaglio API"
+      }
     }
   },
   "registry": {
