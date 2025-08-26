@@ -13,6 +13,7 @@ import EventPage from './Events/Search';
 import EventList from './Events/List';
 import EventsContainer from './Events/EventsContainer';
 import OrgSilServicesPage from './OrgSilServicePage/OrgSilServicesPage';
+import OrgSilServiceDetailPage from './OrgSilServiceDetailPage/OrgSilServiceDetailPage';
 import ClientSilPage from './ClientSilPage/ClientSilPage';
 import ClientSilCreate from './ClientSilCreate/ClientSilCreate';
 import { OrgSilServiceCreate } from './OrgSilServiceCreate/OrgSilServiceCreate';
@@ -124,6 +125,19 @@ export const backofficeRoutes = [
             handle: {
               hideBreadcrumbs: true,
               backButton: false
+            }
+          },
+          {
+            id: 'ORG_SIL_SERVICE_DETAIL',
+            path: ':orgSilServiceId',
+            element: <OrgSilServiceDetailPage />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
             }
           },
           {

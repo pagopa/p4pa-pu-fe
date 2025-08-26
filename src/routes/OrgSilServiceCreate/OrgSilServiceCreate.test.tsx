@@ -26,7 +26,7 @@ vi.mock('./components/LegacyAuthConfiguration', () => ({
 
 const translations = {
   'orgSilServiceCreate.title': 'Create New Service',
-  'orgSilServiceCreate.descriprion': 'Fill in the details for your new service',
+  'orgSilServiceCreate.description': 'Fill in the details for your new service',
   'orgSilServiceCreate.subTitle': 'Service Configuration',
   'orgSilServiceCreate.generalConfiguration': 'General Configuration',
   'orgSilServiceCreate.authMethod': 'Authentication Method',
