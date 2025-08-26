@@ -12,14 +12,11 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 
 type ServiceDataGridProps = {
   data?: PagedOrgSilServiceView;
-  loading: boolean;
-  onPaginationChange: (pagination: { page: number; size: number }) => void;
   onRowClick: (row: OrgSilServiceView) => void;
 };
 
 export const ServiceDataGrid: React.FC<ServiceDataGridProps> = ({
   data,
-  onPaginationChange,
   onRowClick
 }) => {
   const theme = useTheme();
@@ -79,18 +76,7 @@ export const ServiceDataGrid: React.FC<ServiceDataGridProps> = ({
         }
         disableColumnMenu
         disableColumnResize
-        smartPagination={{
-          initialPage: 0,
-          initialSize: 10,
-          sizeOptions: [5, 10, 20],
-          backendData: {
-            totalElements: data?.totalElements,
-            totalPages: data?.totalPages,
-            number: data?.number,
-            size: data?.size
-          },
-          onPaginationChange
-        }}
+        totalPages={data?.totalPages || 1}
       />
     </Box>
   );

@@ -27,7 +27,8 @@ export const Step1Configuration = ({
   const debtTypesQuery = useDebtPositionsTypeOrg({
     organizationId,
     includeAllOption: false,
-    useCodeAsValue: true
+    useCodeAsValue: true,
+    filterActiveOnly: true
   });
 
   const { control } = useFormContext();

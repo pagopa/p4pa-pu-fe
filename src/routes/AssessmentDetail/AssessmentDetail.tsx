@@ -12,9 +12,7 @@ import FilterContainer, {
 import { Search } from '@mui/icons-material';
 import AssessmentDetailDataGrid from './components/AssessmentDetailDataGrid';
 import { useStore } from '../../store/GlobalStore';
-import { STATE } from '../../store/types';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
-import { useAssessmentDetailFilters } from '../../hooks/useAssessmentDetailFilters';
 import { AssessmentsDetail } from '../../../generated/apiClient';
 import { Variant } from '@mui/material/styles/createTypography';
 import { PageRoutes } from '../../routes';
@@ -24,6 +22,11 @@ import AssesmentActionMenu from '../../components/Assessment/AssessmentActionMen
 import { setAppState } from '../../store/AppStateStore';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import utils from '../../utils';
+import { FieldValues } from 'react-hook-form';
+import { useSearch } from '../../hooks/useSearch';
+import { FilterFieldValue } from '../../models/Filters';
+import { AssessmentDetailFilters } from '../../api/assessments/mappings';
+import { FilterFieldIds } from '../../models/SearchCardFields';
 
 export const AssessmentDetail = () => {
   const { t } = useTranslation();
@@ -31,8 +34,10 @@ export const AssessmentDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const assessmentId = id ? Number(id) : null;
-  const { state } = useStore();
-  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
+  const {
+    state: { organizationId }
+  } = useStore();
 
   if (!assessmentId || isNaN(assessmentId)) {
     navigate(PageRoutes.RESPONSES_ERROR);
@@ -41,32 +46,14 @@ export const AssessmentDetail = () => {
 
   const [detailItem, setDetailItem] = useState<AssessmentsDetail | null>(null);
 
-  const {
-    appliedFilters,
-    draftFilters,
-    updateDraftFilters,
-    applyFilters,
-    sortModel,
-    updatePagination,
-    handleSortModelChange,
-    handleDateFromChange,
-    handleDateToChange,
-    handlePaymentDateFromChange,
-    handlePaymentDateToChange
-  } = useAssessmentDetailFilters({
-    initialFilters: {
-      page: 0,
-      size: 10
-    }
-  });
+  const [appliedFilters, setAppliedFilters] =
+    useState<AssessmentDetailFilters>(initialFilters);
 
-  const { data, isLoading, isError, error } = getAssessmentDetail(
-    organizationId,
-    assessmentId,
-    appliedFilters,
-    { enabled: !!organizationId && !!assessmentId }
-  );
+  const query = getAssessmentDetail(organizationId, assessmentId);
 
+  const assessmentDetail = useSearch({ query, filters: appliedFilters });
+
+  const { isPending, isError, error, data } = query;
   useEffect(() => {
     if (isError && error) {
       console.error('Error loading assessment details:', error);
@@ -106,8 +93,6 @@ export const AssessmentDetail = () => {
       });
     }
   }, [detailItem, assessmentId, data?.assessmentsName]);
-
-  const handleFiltersApplied = applyFilters;
 
   const canModifyAssessment = () => {
     const hasManualGeneration = data?.flagManualGeneration === true;
@@ -201,23 +186,6 @@ export const AssessmentDetail = () => {
     }
   };
 
-  /**
-   * Handle navigation to the assessment detail record
-   * @param receiptId - ID of the assessment detail
-   */
-  const handleNavigateToDetailDetail = (receiptId: number) => {
-    const detailUrl = generatePath(PageRoutes.ASSESSMENT_DETAIL_DETAIL, {
-      id: assessmentId.toString(),
-      receiptId: receiptId.toString()
-    });
-
-    navigate(detailUrl, {
-      state: {
-        assessmentName: data?.assessmentsName
-      }
-    });
-  };
-
   // Configuration sections for the DetailContainer
   const detailSections = useMemo(() => {
     const firstAssessmentItem = detailItem;
@@ -271,6 +239,14 @@ export const AssessmentDetail = () => {
     data?.updateOperatorExternalId
   ]);
 
+  const handleFilterChange = (id: string, value: FilterFieldValue) => {
+    setAppliedFilters((prevFilters) => ({
+      ...prevFilters,
+      [id]: value
+    }));
+  };
+
+  console.debug(appliedFilters);
   return (
     <>
       <TitleComponent
@@ -339,58 +315,43 @@ export const AssessmentDetail = () => {
           }}
         >
           <FilterContainer
+            onChange={handleFilterChange}
+            values={appliedFilters}
             items={[
               {
+                id: FilterFieldIds.IUV_CODE,
                 type: COMPONENT_TYPE.textField,
                 label: t('commons.search') + ' IUV',
                 adornment: <Search />,
-                gridWidth: 2,
-                value: draftFilters.iuv || '',
-                onChange: (e) => updateDraftFilters({ iuv: e.target.value })
+                gridWidth: 2
               },
               {
                 type: COMPONENT_TYPE.dateRange,
-                label: 'dateRange1',
+                label: 'outcome',
                 gridWidth: 4,
                 from: {
-                  label: t('commons.outcomeFrom'),
-                  value: draftFilters.paymentDateTimeFrom
-                    ? new Date(draftFilters.paymentDateTimeFrom)
-                    : null,
-                  onChange: handlePaymentDateFromChange
+                  label: t('commons.outcomeFrom')
                 },
                 to: {
-                  label: t('commons.to'),
-                  value: draftFilters.paymentDateTimeTo
-                    ? new Date(draftFilters.paymentDateTimeTo)
-                    : null,
-                  onChange: handlePaymentDateToChange
+                  label: t('commons.to')
                 }
               },
               {
                 type: COMPONENT_TYPE.dateRange,
-                label: 'dateRange2',
+                label: 'update',
                 gridWidth: 5,
                 from: {
-                  label: t('commons.updatedFrom'),
-                  value: draftFilters.updateDateTimeFrom
-                    ? new Date(draftFilters.updateDateTimeFrom)
-                    : null,
-                  onChange: handleDateFromChange
+                  label: t('commons.updatedFrom')
                 },
                 to: {
-                  label: t('commons.to'),
-                  value: draftFilters.updateDateTimeTo
-                    ? new Date(draftFilters.updateDateTimeTo)
-                    : null,
-                  onChange: handleDateToChange
+                  label: t('commons.to')
                 }
               },
               {
                 type: COMPONENT_TYPE.button,
                 label: t('commons.filters.filterResults'),
                 gridWidth: 1,
-                onClick: handleFiltersApplied
+                onClick: () => assessmentDetail.applyFilters(appliedFilters)
               }
             ]}
           />
@@ -405,26 +366,7 @@ export const AssessmentDetail = () => {
           }}
           aria-label="results-table"
         >
-          <AssessmentDetailDataGrid
-            rows={data?.pagedAssessmentsRowsDetail?.content || []}
-            sortModel={sortModel}
-            onSortModelChange={handleSortModelChange}
-            isLoading={isLoading}
-            smartPagination={{
-              initialPage: 0,
-              initialSize: 10,
-              sizeOptions: [5, 10, 20],
-              backendData: {
-                totalElements: data?.pagedAssessmentsRowsDetail?.totalElements,
-                totalPages: data?.pagedAssessmentsRowsDetail?.totalPages,
-                number: data?.pagedAssessmentsRowsDetail?.number,
-                size: data?.pagedAssessmentsRowsDetail?.size
-              },
-              onFiltersApplied: handleFiltersApplied,
-              onPaginationChange: updatePagination
-            }}
-            onNavigateToDetail={handleNavigateToDetailDetail}
-          />
+          <AssessmentDetailDataGrid data={data} isLoading={isPending} />
         </Grid>
       </Grid>
     </>

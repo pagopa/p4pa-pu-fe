@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import utils from '../utils';
 import {
   ExportFileStatus,
@@ -8,32 +8,35 @@ import { parseAndLog } from '../utils/loaders';
 import { pagedExportFileSchema } from '../../generated/zod-schema';
 import { extractFilename } from '../utils/formatters';
 
+export type ExportQuery = {
+  exportFileType: ExportFileTypeEnum;
+  creationDateFrom?: string;
+  creationDateTo?: string;
+  status?: ExportFileStatus;
+  fileName?: string;
+};
+
+export type ExportFilesFilteredRequest = {
+  filters: ExportQuery;
+  pagination: { page: number; size: number };
+  sort: Array<string>;
+};
+
 export const getExportFiles = (
   organizationId: number,
-  query: {
-    exportFileType: ExportFileTypeEnum;
-    creationDateFrom?: string;
-    creationDateTo?: string;
-    status?: ExportFileStatus;
-    fileName?: string;
-    page?: number;
-    size?: number;
-    sort?: Array<string>;
-  },
-  options = {}
+  routingCategory: string
 ) => {
-  return useQuery({
-    queryKey: ['exportFiles', organizationId, query],
-    queryFn: async () => {
+  return useMutation({
+    mutationKey: ['exportFiles', organizationId, routingCategory],
+    mutationFn: async ({
+      filters,
+      pagination,
+      sort
+    }: ExportFilesFilteredRequest) => {
+      const query = { ...filters, ...pagination, sort };
       const { data: files } = await utils.apiClient.bff.getExportFiles(
         organizationId,
-        query,
-        {
-          // Per serializzare correttamente i parametri
-          paramsSerializer: {
-            indexes: null
-          }
-        }
+        query
       );
 
       if (files) {
@@ -41,9 +44,7 @@ export const getExportFiles = (
       }
       return files;
     },
-    retry: false,
-    enabled: !!organizationId,
-    ...options
+    retry: false
   });
 };
 

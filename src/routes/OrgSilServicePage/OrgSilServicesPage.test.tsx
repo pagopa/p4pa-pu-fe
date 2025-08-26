@@ -98,9 +98,8 @@ vi.mock('./components/ServiceTab', () => ({
   )
 }));
 vi.mock('./components/ServiceDataGrid', () => ({
-  ServiceDataGrid: ({ data, loading }: any) => (
+  ServiceDataGrid: ({ data }: any) => (
     <div data-testid="service-data-grid">
-      {loading && <span>Loading...</span>}
       {data?.content?.map((row: any) => (
         <div key={row.orgSilServiceId}>{row.applicationName}</div>
       ))}
@@ -153,8 +152,6 @@ describe('OrgSilServicesPage', () => {
     ).toBeInTheDocument();
 
     expect(screen.getByText('Notification Service')).toBeInTheDocument();
-
-    expect(mockApplyFilters).toHaveBeenCalledTimes(1);
   });
 
   it('should call applyFilters when switching to a tab without data', () => {
@@ -218,18 +215,6 @@ describe('OrgSilServicesPage', () => {
     fireEvent.change(filterInput, { target: { value: 'Test Filter' } });
 
     expect(filterInput).toHaveValue('Test Filter');
-  });
-
-  it('should show loading state when data is pending', () => {
-    vi.spyOn(useSearchModule, 'useSearch').mockReturnValue({
-      applyFilters: mockApplyFilters,
-      handlePaginationChange: mockHandlePaginationChange,
-      query: { data: undefined, isPending: true }
-    } as any);
-
-    render(<OrgSilServicesPage />);
-
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 
   it('should maintain separate filter values for different tabs', () => {

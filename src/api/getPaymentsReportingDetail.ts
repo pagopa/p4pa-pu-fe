@@ -26,12 +26,7 @@ export const getPaymentsReportingDetail = (
         await utils.apiClient.bff.getPaymentsReportingDetail(
           organizationId,
           iuf,
-          paymentsReportingId,
-          {
-            paramsSerializer: {
-              indexes: null
-            }
-          }
+          paymentsReportingId
         );
       if (paymentsReporting) {
         parseAndLog(paymentsReportingDetailDTOSchema, paymentsReporting);

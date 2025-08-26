@@ -7,8 +7,6 @@ import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
 import { ButtonProps, FormComponent } from '../FormComponent';
 import { useState, useEffect } from 'react';
 import { BaseFilterValues, FilterFieldValue } from '../../models/Filters';
-import { useTelematicReceiptsFilters } from '../../hooks/useTelematicReceiptsFilters';
-import { useReportingFilters } from '../../hooks/useReportingFilters';
 import { selectedFilters } from '../../store/FilterStore';
 import MultifilterInitSelect from '../MultiFilter/MultifilterInitSelect';
 
@@ -17,13 +15,13 @@ export type TabsConfig = {
   fields: Array<FilterItem>;
 };
 
-type SearchCardProps = {
+export type SearchCardProps = {
   title: string;
   description: string;
   tabsConfig?: Array<TabsConfig>;
   fields?: Array<FilterItem>;
   button?: Array<ButtonProps>;
-  filterContext?: 'TELEMATIC' | 'REPORTING';
+  filterContext?: 'TELEMATIC';
   multiFilterConfig?: FilterMap;
   activeTabIndex?: number;
   onTabChange?: (index: number) => void;
@@ -44,7 +42,6 @@ const SearchCard = ({
   render,
   filterCategory,
   extraProps,
-  filterContext,
   multiFilterConfig,
   activeTabIndex = 0,
   onTabChange,
@@ -77,30 +74,10 @@ const SearchCard = ({
     }
   }, [onReset]);
 
-  const getHookFilters = (): Array<FilterItem> => {
-    if (filterContext === 'TELEMATIC') {
-      return useTelematicReceiptsFilters({
-        onFilter: () => {
-          //required by hook
-        },
-        layout: 'grid'
-      }).filters;
-    }
-    if (filterContext === 'REPORTING') {
-      return useReportingFilters({
-        onFilter: () => {
-          //required by hook
-        },
-        layout: 'grid'
-      }).filters;
-    }
-    return [];
-  };
-
   const activeFields =
     tabsConfig && tabsConfig.length > 0
       ? tabsConfig[currentTabIndex].fields
-      : (fields ?? getHookFilters());
+      : fields || [];
 
   const getButtonLenght = (length: number, index: number) => {
     if (length === 1) return 12;

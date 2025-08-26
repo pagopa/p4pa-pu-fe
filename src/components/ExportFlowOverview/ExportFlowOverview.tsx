@@ -18,12 +18,15 @@ import {
   ExportFileTypeEnum
 } from '../../../generated/apiClient';
 import { getExportFile, getExportFiles } from '../../api/exportFiles';
-import { useExportFlowFilters } from '../../hooks/useExportFlowFilters';
 import { downloadBlob } from '../../utils/download';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
 import { formatDateTime, formatFileSize } from '../../utils/formatters';
 import utils from '../../utils';
 import { ReactNode, useEffect, useState } from 'react';
+import { useSearch } from '../../hooks/useSearch';
+import { FieldValues } from 'react-hook-form';
+import { ExportFileFilters } from '../../models/Filters';
+import { getDefaultDateRange } from '../../utils/dates';
 
 export type ExportFlowOverviewProps = {
   routingCategory: string;
@@ -51,26 +54,34 @@ const ExportFlowOverview = ({
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  const {
-    appliedFilters,
-    draftFilters,
-    updateDraftFilters,
-    applyFilters,
-    handleDateFromChange,
-    handleDateToChange,
-    sortModel,
-    handleSortModelChange,
-    handlePaginationChange
-  } = useExportFlowFilters({
+  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
+
+  const defaultDateRange = getDefaultDateRange();
+  const [filters, setFilters] = useState<ExportFileFilters>({
+    creationDateFrom: defaultDateRange.from,
+    creationDateTo: defaultDateRange.to,
+    page: 0,
+    size: 10,
+    ...initialFilters,
     exportFileType: exportFileTypes
   });
 
-  const { data, isLoading, isError } = getExportFiles(
-    organizationId,
-    appliedFilters
-  );
+  const query = getExportFiles(organizationId, routingCategory);
 
-  const isEmptyData = !data?.content || data.content.length === 0;
+  const exportFilters = useSearch({
+    filters,
+    query
+  });
+
+  const { data, isError } = exportFilters.query;
+  const isEmptyData = !data?.content.length;
+
+  const updateFilterValue = (key: string, value: string | undefined) => {
+    setFilters((prev) => ({
+      ...prev,
+      [key]: value
+    }));
+  };
 
   useEffect(() => {
     if (isError) {
@@ -213,8 +224,8 @@ const ExportFlowOverview = ({
               label: t('commons.searchName'),
               adornment: <Search />,
               gridWidth: 6,
-              value: draftFilters.fileName || '',
-              onChange: (e) => updateDraftFilters({ fileName: e.target.value })
+              value: filters.fileName || '',
+              onChange: (e) => updateFilterValue('fileName', e.target.value)
             },
             {
               type: COMPONENT_TYPE.dateRange,
@@ -223,25 +234,33 @@ const ExportFlowOverview = ({
               from: {
                 label: t('commons.exportFrom'),
                 errorMessage: t('dates.validations.from'),
-                value: draftFilters.creationDateFrom
-                  ? new Date(draftFilters.creationDateFrom)
+                value: filters.creationDateFrom
+                  ? new Date(filters.creationDateFrom)
                   : null,
-                onChange: handleDateFromChange
+                onChange: (value) =>
+                  updateFilterValue(
+                    'creationDateFrom',
+                    value ? new Date(value).toISOString() : undefined
+                  )
               },
               to: {
                 label: t('dates.to'),
                 errorMessage: t('dates.validations.to'),
-                value: draftFilters.creationDateTo
-                  ? new Date(draftFilters.creationDateTo)
+                value: filters.creationDateTo
+                  ? new Date(filters.creationDateTo)
                   : null,
-                onChange: handleDateToChange
+                onChange: (value) =>
+                  updateFilterValue(
+                    'creationDateTo',
+                    value ? new Date(value).toISOString() : undefined
+                  )
               }
             },
             {
               type: COMPONENT_TYPE.button,
               label: t('commons.filters.filterResults'),
               gridWidth: 1,
-              onClick: applyFilters
+              onClick: () => exportFilters.applyFilters(filters)
             }
           ]}
         />
@@ -267,21 +286,7 @@ const ExportFlowOverview = ({
               getRowId={(row) => row.exportFileId}
               disableColumnMenu
               disableColumnResize
-              sortModel={sortModel}
-              onSortModelChange={handleSortModelChange}
-              loading={isLoading}
-              smartPagination={{
-                initialPage: 0,
-                initialSize: 10,
-                sizeOptions: [5, 10, 20],
-                backendData: {
-                  totalElements: data?.totalElements || 0,
-                  totalPages: data?.totalPages || 0,
-                  number: data?.number || 0,
-                  size: data?.size || 10
-                },
-                onPaginationChange: handlePaginationChange
-              }}
+              totalPages={data?.totalPages || 1}
             />
           )}
         </Box>
