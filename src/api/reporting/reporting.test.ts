@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '../../__tests__/renderers';
 import utils from '../../utils';
 import { getPaymentsReportingRows } from '../reporting';
@@ -44,9 +44,11 @@ describe('getPaymentsReportingRows', () => {
       number: 0
     };
 
-    const spyGetPaymentsReportingRows = vi.spyOn(utils.apiClient.bff, 'getPaymentsReportingRows').mockResolvedValue({
-      data: mockData
-    } as AxiosResponse);
+    const spyGetPaymentsReportingRows = vi
+      .spyOn(utils.apiClient.bff, 'getPaymentsReportingRows')
+      .mockResolvedValue({
+        data: mockData
+      } as AxiosResponse);
 
     const query: PaymentReportingRowsFilteredRequest = {
       filters: {},
@@ -71,7 +73,7 @@ describe('getPaymentsReportingRows', () => {
         size: 20,
         payDateTimeFrom: undefined,
         payDateTimeTo: undefined,
-        sort: [],
+        sort: []
       }
     );
 
@@ -87,9 +89,11 @@ describe('getPaymentsReportingRows', () => {
       number: 0
     };
 
-    const spyGetPaymentsReportingRows = vi.spyOn(utils.apiClient.bff, 'getPaymentsReportingRows').mockResolvedValue({
-      data: mockData
-    } as AxiosResponse);
+    const spyGetPaymentsReportingRows = vi
+      .spyOn(utils.apiClient.bff, 'getPaymentsReportingRows')
+      .mockResolvedValue({
+        data: mockData
+      } as AxiosResponse);
 
     const filters = {
       daterange: { from: new Date('2023-01-01'), to: new Date('2023-01-31') },
@@ -111,8 +115,8 @@ describe('getPaymentsReportingRows', () => {
     // Construct expected query parameters manually since buildQueryParams formats dates
 
     const expectedQuery = {
-      payDateTimeFrom: "2023-01-01T01:00:00+01:00",
-      payDateTimeTo: "2023-01-31T01:00:00+01:00",
+      payDateTimeFrom: '2023-01-01T01:00:00+01:00',
+      payDateTimeTo: '2023-01-31T01:00:00+01:00',
       iuv: 'some-iuv',
       page: 1,
       size: 10,
