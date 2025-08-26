@@ -26,15 +26,27 @@ export const buildQueryParams = ({
   pagination,
   sort
 }: FilteredRequest<FilterValues>) => ({
-  officeCode: filters.OFFICE_CODE,
-  officeDescription: filters.OFFICE_DESCRIPTION,
-  assessmentCode: filters.ASSESSMENT_CODE,
-  assessmentDescription: filters.ASSESSMENT_DESCRIPTION,
-  operatingYear: format(filters.OPERATING_YEAR, 'yyyy'),
-  status: filters.STATUS as AssessmentsRegistryStatus,
-  sectionCode: filters.SECTION_CODE,
-  sectionDescription: filters.SECTION_DESCRIPTION,
-  debtPositionTypeOrgCode: filters.DEBT_POSITION_TYPE_ORG_CODE,
+  ...(filters.OFFICE_CODE && { officeCode: filters.OFFICE_CODE }),
+  ...(filters.OFFICE_DESCRIPTION && {
+    officeDescription: filters.OFFICE_DESCRIPTION
+  }),
+  ...(filters.ASSESSMENT_CODE && { assessmentCode: filters.ASSESSMENT_CODE }),
+  ...(filters.ASSESSMENT_DESCRIPTION && {
+    assessmentDescription: filters.ASSESSMENT_DESCRIPTION
+  }),
+  ...(filters.OPERATING_YEAR && {
+    operatingYear: format(filters.OPERATING_YEAR, 'yyyy')
+  }),
+  ...(filters.STATUS && {
+    status: filters.STATUS as AssessmentsRegistryStatus
+  }),
+  ...(filters.SECTION_CODE && { sectionCode: filters.SECTION_CODE }),
+  ...(filters.SECTION_DESCRIPTION && {
+    sectionDescription: filters.SECTION_DESCRIPTION
+  }),
+  ...(filters.DEBT_POSITION_TYPE_ORG_CODE && {
+    debtPositionTypeOrgCode: filters.DEBT_POSITION_TYPE_ORG_CODE
+  }),
   page: pagination.page,
   size: pagination.size,
   sort
@@ -80,21 +92,40 @@ export const buildAssessmentDetailQueryParams = ({
   filters,
   pagination,
   sort
-}: FilteredRequest<AssessmentDetailFilters>) => ({
-  iuv: filters.iuv,
-  updateDateTimeFrom: utils.formatters.date.code(
-    new Date(filters?.update?.from?.setHours(0, 0, 0, 0) || 0)
-  ),
-  updateDateTimeTo: utils.formatters.date.code(
-    new Date(filters?.update?.to?.setHours(23, 59, 59, 999) || 0)
-  ),
-  paymentDateTimeFrom: utils.formatters.date.code(
-    new Date(filters?.outcome?.from?.setHours(0, 0, 0, 0) || 0)
-  ),
-  paymentDateTimeTo: utils.formatters.date.code(
-    new Date(filters?.outcome?.to?.setHours(23, 59, 59, 999) || 0)
-  ),
-  page: pagination.page,
-  size: pagination.size,
-  sort
-});
+}: FilteredRequest<AssessmentDetailFilters>) => {
+  const params: Record<string, unknown> = {
+    page: pagination.page,
+    size: pagination.size,
+    sort
+  };
+
+  if (filters.iuv) {
+    params.iuv = filters.iuv;
+  }
+
+  if (filters?.update?.from) {
+    params.updateDateTimeFrom = utils.formatters.date.code(
+      new Date(filters.update.from.setHours(0, 0, 0, 0))
+    );
+  }
+
+  if (filters?.update?.to) {
+    params.updateDateTimeTo = utils.formatters.date.code(
+      new Date(filters.update.to.setHours(23, 59, 59, 999))
+    );
+  }
+
+  if (filters?.outcome?.from) {
+    params.paymentDateTimeFrom = utils.formatters.date.code(
+      new Date(filters.outcome.from.setHours(0, 0, 0, 0))
+    );
+  }
+
+  if (filters?.outcome?.to) {
+    params.paymentDateTimeTo = utils.formatters.date.code(
+      new Date(filters.outcome.to.setHours(23, 59, 59, 999))
+    );
+  }
+
+  return params;
+};
