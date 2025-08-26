@@ -118,7 +118,7 @@ describe('getTreasuries', () => {
     expect(mapping.buildQueryParams).toHaveBeenCalledWith(query);
     expect(apiMock).toHaveBeenCalledWith(
       params.organizationId,
-      'mock-query-string',
+      'mock-query-string'
     );
   });
 

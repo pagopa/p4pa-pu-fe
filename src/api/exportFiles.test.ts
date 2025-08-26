@@ -1,47 +1,15 @@
 import { describe, expect, it, vi } from 'vitest';
-import { act, renderHook, waitFor } from '../__tests__/renderers';
-import { getExportFile, getExportFiles } from './exportFiles';
+import { renderHook, waitFor } from '../__tests__/renderers';
+import { getExportFiles, getExportFile } from './exportFiles';
 import utils from '../utils';
 import { AxiosResponse } from 'axios';
 import {
   ExportFileStatus,
   ExportFileTypeEnum
 } from '../../generated/apiClient';
-import * as formatters from '../utils/formatters';
-
-vi.mock('../utils', () => {
-  return {
-    default: {
-      apiClient: {
-        bff: {
-          getExportFiles: vi.fn()
-        }
-      },
-      fileshareClient: {
-        organization: {
-          downloadExportFile: vi.fn()
-        }
-      }
-    }
-  };
-});
-
-vi.mock('../../utils/loaders', () => ({
-  parseAndLog: vi.fn()
-}));
-
-vi.mock('../utils/formatters', () => ({
-  extractFilename: vi.fn()
-}));
-
-const mockDownloadExportFile = vi.mocked(
-  utils.fileshareClient.organization.downloadExportFile
-);
-
-const mockExtractFilename = vi.mocked(formatters.extractFilename);
 
 describe('getExportFiles', () => {
-  it('returns data correctly', async () => {
+  it('fetches and returns export files data', async () => {
     const dataMock = {
       content: [
         {
@@ -59,25 +27,46 @@ describe('getExportFiles', () => {
     };
 
     const organizationId = 123;
-    const query = {
+    const filters = {
       exportFileType: ExportFileTypeEnum.PAID,
       page: 0,
-      size: 10
+      size: 10,
+      sort: undefined
     };
 
-    const apiMock = vi
+    vi.spyOn(utils.formatters.date, 'code').mockReturnValue(
+      '2024-08-01T00:00:00+02:00'
+    );
+
+    const spyGetExportFiles = vi
       .spyOn(utils.apiClient.bff, 'getExportFiles')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const { result } = renderHook(() => getExportFiles(organizationId, query));
+    const { result } = renderHook(() =>
+      getExportFiles(organizationId, '' /* routingCategory placeholder */)
+    );
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    // We must call mutateAsync since useMutation returns a mutate function:
+    const data = await result.current.mutateAsync({
+      filters,
+      pagination: { page: filters.page, size: filters.size },
+      sort: filters.sort || []
+    });
 
-    expect(result.current.data).toEqual(dataMock);
-    expect(apiMock).toHaveBeenCalledWith(organizationId, query);
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
+      ...filters,
+      creationDateFrom: '2024-08-01T00:00:00+02:00',
+      creationDateTo: '2024-08-01T00:00:00+02:00',
+      sort: filters.sort || []
+    });
+    expect(data).toEqual(dataMock);
   });
 
-  it('applies complex filters correctly', async () => {
+  it('supports complex filter queries', async () => {
     const dataMock = {
       content: [],
       size: 10,
@@ -85,12 +74,11 @@ describe('getExportFiles', () => {
       totalPages: 0,
       number: 0
     };
-
     const organizationId = 123;
-    const complexQuery = {
+    const complexFilters = {
       exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
-      creationDateFrom: '2023-01-01',
-      creationDateTo: '2023-01-31',
+      creationDateFrom: new Date('2023-01-01'),
+      creationDateTo: new Date('2023-01-31'),
       status: ExportFileStatus.COMPLETED,
       fileName: 'test',
       page: 0,
@@ -98,73 +86,84 @@ describe('getExportFiles', () => {
       sort: ['creationDate,desc', 'fileName,asc']
     };
 
-    const apiMock = vi
+    vi.spyOn(utils.formatters.date, 'code').mockReturnValue(
+      '2024-08-01T00:00:00+02:00'
+    );
+
+    const spyGetExportFiles = vi
       .spyOn(utils.apiClient.bff, 'getExportFiles')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const { result } = renderHook(() =>
-      getExportFiles(organizationId, complexQuery)
-    );
+    const { result } = renderHook(() => getExportFiles(organizationId, ''));
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    await result.current.mutateAsync({
+      filters: complexFilters,
+      pagination: { page: complexFilters.page, size: complexFilters.size },
+      sort: complexFilters.sort
+    });
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, complexQuery);
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
+      ...complexFilters,
+      creationDateFrom: '2024-08-01T00:00:00+02:00',
+      creationDateTo: '2024-08-01T00:00:00+02:00'
+    });
   });
 });
 
-describe('downloadExportFile', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    mockExtractFilename.mockImplementation((header) => {
-      if (header.includes('test-file.csv')) {
-        return 'test-file.csv';
-      }
-      return null;
-    });
-  });
+describe('getExportFile', () => {
+  it('downloads file and extracts filename from headers', async () => {
+    const fileBlob = new Blob(['data'], { type: 'text/plain' });
+    const contentDispositionHeader = 'attachment; filename="test-file.csv"';
 
-  it('returns blob and filename from response with content-disposition header', async () => {
-    const mockFileData = new Blob(['test data'], { type: 'text/plain' });
-    const mockFileName = 'test-file.csv';
+    const spyExtracFileName = vi
+      .spyOn(utils.formatters, 'extractFilename')
+      .mockImplementation((header) => {
+        if (header.includes('test-file.csv')) return 'test-file.csv';
+        return null;
+      });
 
-    mockDownloadExportFile.mockResolvedValueOnce({
-      data: mockFileData,
-      headers: {
-        'content-disposition': `attachment; filename="${mockFileName}"`
-      }
-    } as unknown as AxiosResponse);
+    const spyDownloadExportFile = vi
+      .spyOn(utils.fileshareClient.organization, 'downloadExportFile')
+      .mockResolvedValueOnce({
+        data: fileBlob,
+        headers: { 'content-disposition': contentDispositionHeader }
+      } as unknown as AxiosResponse);
 
     const { result } = renderHook(() => getExportFile(123));
 
-    await act(async () => {
-      const response = await result.current.mutateAsync(456);
-      expect(response).toEqual({ data: mockFileData, fileName: mockFileName });
-    });
+    const data = await result.current.mutateAsync(456);
 
-    expect(mockDownloadExportFile).toHaveBeenCalledWith(123, 456, {
+    expect(data).toEqual({ data: fileBlob, fileName: 'test-file.csv' });
+    expect(spyDownloadExportFile).toHaveBeenCalledWith(123, 456, {
       format: 'blob'
     });
-    expect(mockExtractFilename).toHaveBeenCalledWith(
-      `attachment; filename="${mockFileName}"`
-    );
+    expect(spyExtracFileName).toHaveBeenCalledWith(contentDispositionHeader);
   });
 
-  it('uses default filename when content-disposition header is missing', async () => {
-    const mockFileData = new Blob(['test data'], { type: 'text/plain' });
+  it('uses default filename if no content-disposition header', async () => {
+    const fileBlob = new Blob(['data'], { type: 'text/plain' });
 
-    mockDownloadExportFile.mockResolvedValueOnce({
-      data: mockFileData,
+    vi.spyOn(
+      utils.fileshareClient.organization,
+      'downloadExportFile'
+    ).mockResolvedValueOnce({
+      data: fileBlob,
       headers: {}
     } as unknown as AxiosResponse);
 
-    mockExtractFilename.mockReturnValueOnce(null);
+    const spyExtracFileName = vi
+      .spyOn(utils.formatters, 'extractFilename')
+      .mockImplementation(() => null);
 
     const { result } = renderHook(() => getExportFile(123));
 
-    await act(async () => {
-      const response = await result.current.mutateAsync(456);
-      expect(response).toEqual({ data: mockFileData, fileName: 'file-456' });
-    });
-    expect(mockExtractFilename).toHaveBeenCalledWith('');
+    const data = await result.current.mutateAsync(456);
+
+    expect(data).toEqual({ data: fileBlob, fileName: 'file-456' });
+    expect(spyExtracFileName).toHaveBeenCalledWith('');
   });
 });

@@ -38,7 +38,7 @@ type Config = {
   fileshareURL: string;
   apiTimeout: number;
   loginUrl: string;
-  paramsSerializer: CustomParamsSerializer
+  paramsSerializer: CustomParamsSerializer;
 };
 
 const pagopaLink: RootLinkType = {

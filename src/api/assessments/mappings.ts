@@ -4,6 +4,7 @@ import {
   AssessmentStatus
 } from '../../../generated/data-contracts';
 import { FilteredRequest, FilterValues } from '../../models/Filters';
+import utils from '../../utils';
 
 export type AssessmentRegistryQueryParams = {
   debtPositionTypeOrgCode?: string;
@@ -25,30 +26,18 @@ export const buildQueryParams = ({
   pagination,
   sort
 }: FilteredRequest<FilterValues>) => ({
-  ...(filters.OFFICE_CODE && { officeCode: filters.OFFICE_CODE }),
-  ...(filters.OFFICE_DESCRIPTION && {
-    officeDescription: filters.OFFICE_DESCRIPTION
-  }),
-  ...(filters.ASSESSMENT_CODE && { assessmentCode: filters.ASSESSMENT_CODE }),
-  ...(filters.ASSESSMENT_DESCRIPTION && {
-    assessmentDescription: filters.ASSESSMENT_DESCRIPTION
-  }),
-  ...(filters.OPERATING_YEAR && {
-    operatingYear: format(filters.OPERATING_YEAR, 'yyyy')
-  }),
-  ...(filters.STATUS && {
-    status: filters.STATUS as AssessmentsRegistryStatus
-  }),
-  ...(filters.SECTION_CODE && { sectionCode: filters.SECTION_CODE }),
-  ...(filters.SECTION_DESCRIPTION && {
-    sectionDescription: filters.SECTION_DESCRIPTION
-  }),
-  ...(filters.DEBT_POSITION_TYPE_ORG_CODE && {
-    debtPositionTypeOrgCode: filters.DEBT_POSITION_TYPE_ORG_CODE
-  }),
+  officeCode: filters.OFFICE_CODE,
+  officeDescription: filters.OFFICE_DESCRIPTION,
+  assessmentCode: filters.ASSESSMENT_CODE,
+  assessmentDescription: filters.ASSESSMENT_DESCRIPTION,
+  operatingYear: format(filters.OPERATING_YEAR, 'yyyy'),
+  status: filters.STATUS as AssessmentsRegistryStatus,
+  sectionCode: filters.SECTION_CODE,
+  sectionDescription: filters.SECTION_DESCRIPTION,
+  debtPositionTypeOrgCode: filters.DEBT_POSITION_TYPE_ORG_CODE,
   page: pagination.page,
   size: pagination.size,
-  ...(sort.length && { sort })
+  sort
 });
 
 export const buildAssessmentsQueryParams = ({
@@ -56,28 +45,23 @@ export const buildAssessmentsQueryParams = ({
   pagination,
   sort
 }: FilteredRequest<FilterValues>) => ({
-  ...(filters.ASSESSMENT_NAME && {
-    assessmentName: filters.ASSESSMENT_NAME
-  }),
-  ...(filters.DEBT_TYPE &&
-    filters.DEBT_TYPE !== 'ALL' && {
-      debtPositionTypeOrgCode: filters.DEBT_TYPE
-    }),
-  ...(filters.ASSESSMENT_STATUS && {
-    status: filters.ASSESSMENT_STATUS as AssessmentStatus
-  }),
-  ...(filters.IUV && {
-    iuv: filters.IUV
-  }),
-  ...(filters.LAST_UPDATE_DATE_FROM && {
-    updateDateFrom: filters.LAST_UPDATE_DATE_FROM.toISOString()
-  }),
-  ...(filters.LAST_UPDATE_DATE_TO && {
-    updateDateTo: filters.LAST_UPDATE_DATE_TO.toISOString()
-  }),
+  assessmentName: filters.ASSESSMENT_NAME,
+  debtPositionTypeOrgCode:
+    filters.DEBT_TYPE && filters.DEBT_TYPE !== 'ALL'
+      ? filters.DEBT_TYPE
+      : undefined,
+  operatingYear: filters.OPERATING_YEAR,
+  status: filters.ASSESSMENT_STATUS as AssessmentStatus,
+  iuv: filters.IUV,
+  updateDateFrom: utils.formatters.date.code(
+    filters.LAST_UPDATE_DATE_FROM || undefined
+  ),
+  updateDateTo: utils.formatters.date.code(
+    filters.LAST_UPDATE_DATE_TO || undefined
+  ),
   page: pagination.page,
   size: pagination.size,
-  ...(sort.length && { sort })
+  sort
 });
 
 export type AssessmentDetailFilters = {
@@ -97,30 +81,20 @@ export const buildAssessmentDetailQueryParams = ({
   pagination,
   sort
 }: FilteredRequest<AssessmentDetailFilters>) => ({
-  ...(filters.iuv && {
-    iuv: filters.iuv
-  }),
-  ...(filters?.update?.from && {
-    updateDateTimeFrom: new Date(
-      filters.update.from.setHours(0, 0, 0, 0)
-    ).toISOString()
-  }),
-  ...(filters.update?.to && {
-    updateDateTimeTo: new Date(
-      filters.update.to.setHours(23, 59, 59, 999)
-    ).toISOString()
-  }),
-  ...(filters.outcome?.from && {
-    paymentDateTimeFrom: new Date(
-      filters.outcome.from.setHours(0, 0, 0, 0)
-    ).toISOString()
-  }),
-  ...(filters.outcome?.to && {
-    paymentDateTimeTo: new Date(
-      filters.outcome.to.setHours(23, 59, 59, 999)
-    ).toISOString()
-  }),
+  iuv: filters.iuv,
+  updateDateTimeFrom: utils.formatters.date.code(
+    new Date(filters?.update?.from?.setHours(0, 0, 0, 0) || 0)
+  ),
+  updateDateTimeTo: utils.formatters.date.code(
+    new Date(filters?.update?.to?.setHours(23, 59, 59, 999) || 0)
+  ),
+  paymentDateTimeFrom: utils.formatters.date.code(
+    new Date(filters?.outcome?.from?.setHours(0, 0, 0, 0) || 0)
+  ),
+  paymentDateTimeTo: utils.formatters.date.code(
+    new Date(filters?.outcome?.to?.setHours(23, 59, 59, 999) || 0)
+  ),
   page: pagination.page,
   size: pagination.size,
-  ...(sort.length && { sort })
+  sort
 });

@@ -1,3 +1,5 @@
+import utils from '../../utils';
+
 export type ReportingFilters = {
   dateRange?: {
     from: Date;
@@ -20,11 +22,11 @@ export const buildQueryParams = ({
   sort
 }: ReportingFilteredRequest) => ({
   regulationDateFrom:
-    filters?.dateRange?.from?.toISOString().slice(0, 10) ??
-    new Date(0).toISOString().slice(0, 10),
+    utils.formatters.date.code(filters?.dateRange?.from) ??
+    utils.formatters.date.code(new Date(0)),
   regulationDateTo:
-    filters?.dateRange?.to?.toISOString().slice(0, 10) ??
-    new Date().toISOString().slice(0, 10),
+    utils.formatters.date.code(filters?.dateRange?.to) ??
+    utils.formatters.date.code(new Date()),
   page: pagination.page,
   size: pagination.size,
   ...(filters?.regulationUniqueIdentifier && {
