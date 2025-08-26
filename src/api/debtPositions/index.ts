@@ -14,22 +14,20 @@ import {
   ManageDebtPositionDTO
 } from '../../../generated/data-contracts';
 import { extractFilename } from '../../utils/formatters';
-import { buildQueryParams, DebtPositionFilteredRequest } from './mapping';
+import {
+  buildDebtPositionsQueryParams,
+  buildInstallmentsQueryParams,
+  DebtPositionFilteredRequest
+} from './mapping';
 
 const getDebtPositionViews = ({ organizationId }: { organizationId: number }) =>
   useMutation({
     mutationKey: ['getDebtPositionViews', organizationId],
     mutationFn: async (args: DebtPositionFilteredRequest) => {
-      const query = buildQueryParams(args);
+      const query = buildDebtPositionsQueryParams(args);
       const { data } = await utils.apiClient.bff.getDebtPositionViews(
         organizationId,
-        query,
-        {
-          paramsSerializer: {
-            // repeat array params as query string
-            indexes: null
-          }
-        }
+        query
       );
 
       return data;
@@ -40,16 +38,10 @@ const getInstallments = ({ organizationId }: { organizationId: number }) =>
   useMutation({
     mutationKey: ['getInstallments', organizationId],
     mutationFn: async (args: DebtPositionFilteredRequest) => {
-      const query = buildQueryParams(args);
+      const query = buildInstallmentsQueryParams(args);
       const { data } = await utils.apiClient.bff.getInstallments(
         organizationId,
-        query,
-        {
-          paramsSerializer: {
-            // repeat array params as query string
-            indexes: null
-          }
-        }
+        query
       );
 
       return data;

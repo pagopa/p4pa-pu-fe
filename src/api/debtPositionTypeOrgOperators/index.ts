@@ -14,14 +14,9 @@ export type DebtPositionTypeOrgOperatorQuery = {
   sort?: Array<string>;
 };
 
-export const getDebtPositionTypeOrgOperators = (
-  organizationId: number,
-) =>
+export const getDebtPositionTypeOrgOperators = (organizationId: number) =>
   useMutation({
-    mutationKey: [
-      'getDebtPositionTypeOrgOperators',
-      organizationId,
-    ],
+    mutationKey: ['getDebtPositionTypeOrgOperators', organizationId],
     mutationFn: async (args: DebtPositionTypeOrgOperatorFilteredRequest) => {
       const query = buildQueryParams(args);
       const { data: response } =

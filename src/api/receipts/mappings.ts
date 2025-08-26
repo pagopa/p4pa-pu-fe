@@ -1,4 +1,5 @@
 import { ReceiptOriginType } from '../../../generated/data-contracts';
+import utils from '../../utils';
 
 export type TelematicReceiptsFilters = {
   dateRange?: {
@@ -21,9 +22,11 @@ export const buildQueryParams = ({
   sort
 }: TelematicReceiptsFilteredRequest) => ({
   paymentDateTimeFrom:
-    filters?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
+    utils.formatters.date.code(filters?.dateRange?.from) ??
+    new Date(0).toISOString(),
   paymentDateTimeTo:
-    filters?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
+    utils.formatters.date.code(filters?.dateRange?.to) ??
+    new Date().toISOString(),
   page: pagination.page,
   size: pagination.size,
   ...(filters?.typeOrgId && {
