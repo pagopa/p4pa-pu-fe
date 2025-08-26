@@ -439,7 +439,7 @@ const Step2PaymentsComponent = forwardRef<
   // Handle table selection changes with direct IUD management
   const handleTableSelectionChange = useCallback(
     (newSelectedIuds: Array<string>) => {
-      // Use Set for O(1) lookup performance
+      // Use Set for performance
       const currentSelectedSet = globalSelection.globalSelectedIuds;
       const newSelectedSet = new Set(newSelectedIuds);
 
@@ -460,7 +460,6 @@ const Step2PaymentsComponent = forwardRef<
         (iud) => !currentSelectedSet.has(iud)
       );
 
-      // Apply changes in batch
       if (toDeselect.length > 0) {
         globalSelection.toggleIudSelection(toDeselect, false);
       }

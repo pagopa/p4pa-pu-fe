@@ -232,10 +232,13 @@ describe('orgSilService API', () => {
         );
 
         await waitFor(() => {
-          expect(result.current.isSuccess).toBe(true);
+          expect(result.current.data).toEqual({
+            response: mockServiceDetailsResponse
+          });
         });
 
         expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
+        expect(result.current.isSuccess).toBe(true);
 
         vi.clearAllMocks();
       }
