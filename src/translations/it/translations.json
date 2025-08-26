@@ -691,6 +691,7 @@
     "NO_EVENTS": "Nessun evento",
     "noFlows": "Non ci sono flussi.",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+    "notificationFeeCents": "Costo di notifica",
     "notifications": "Notifiche",
     "notificationsConfig": "Configurazione",
     "notFound": "Risorsa non trovata",
@@ -739,6 +740,7 @@
       "CLASSIFICATIONS": "Classificazione pagamenti",
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
+      "CLIENT_SIL": "Client Sil",
       "ASSESSMENT_SEARCH_RESULTS": "Risultato ricerca",
       "ASSESSMENT_DETAIL": "Dettaglio",
       "CONSERVATION": "Conservazione",
@@ -1613,6 +1615,21 @@
       "jwtAuth": "Legacy JWT"
     }
   },
+  "clientSil": {
+    "addNew": "Aggiungi nuovo",
+    "filters": {
+      "clientName": "Nome Client SIL",
+      "clientNamePlaceholder": "Inserisci il nome del client",
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "Inserisci l'ID del client"
+    },
+    "table": {
+      "clientName": "Nome Client SIL",
+      "clientId": "Client ID"
+    },
+    "title": "Client SIL",
+    "description": "Gestisci i Client SIL dell'organizzazione"
+  },
   "orgSilServiceCreate": {
     "actualization": "Attualizzazione importo",
     "paidNotificationOutcome": "Notifica Pagamenti",
@@ -1636,9 +1653,9 @@
     "jwtSubject": "Subject",
     "jwtAlgorithm": "Algorithm",
     "jwtSigningKey": "Signing key",
-    "newService":{
+    "newService": {
       "success": {
-        "title":"L'API ‘{{applicationName}}’ è stata aggiunta!",
+        "title": "L'API ‘{{applicationName}}’ è stata aggiunta!",
         "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
         "goToDetail": "Vedi dettaglio API"
       }
