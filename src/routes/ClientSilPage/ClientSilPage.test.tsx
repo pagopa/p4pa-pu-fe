@@ -2,6 +2,21 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { ClientSilPage } from './ClientSilPage';
 
+const mockNavigate = vi.fn();
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>();
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate
+  };
+});
+
+vi.mock('../../routes', () => ({
+  PageRoutes: {
+    CLIENT_SIL_CREATE: '/client-sil/create'
+  }
+}));
+
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key
@@ -101,6 +116,13 @@ vi.mock('../../components/TitleComponent/TitleComponent', () => ({
 }));
 
 vi.mock('../../components/FilterContainer/FilterContainer', () => ({
+  COMPONENT_TYPE: {
+    textField: 'textField',
+    select: 'select',
+    button: 'button',
+    dateRange: 'dateRange',
+    amount: 'amount'
+  },
   default: ({
     items,
     values,
@@ -171,6 +193,7 @@ vi.mock('./components/ClientSilDataGrid', () => ({
 describe('ClientSilPage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockNavigate.mockClear();
   });
 
   const renderComponent = () => {
@@ -229,15 +252,12 @@ describe('ClientSilPage', () => {
   });
 
   it('should handle add new click', () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
     renderComponent();
 
     const addButton = screen.getByText('clientSil.addNew');
     fireEvent.click(addButton);
 
-    expect(consoleSpy).toHaveBeenCalledWith('Navigate to create new client');
-
-    consoleSpy.mockRestore();
+    expect(mockNavigate).toHaveBeenCalledWith('/client-sil/create');
   });
 
   it('should use correct translation keys', () => {

@@ -13,6 +13,10 @@ export type ClientSilFilteredRequest = {
   sort: Array<string>;
 };
 
+export type ClientSilCreateRequest = {
+  clientName: string;
+};
+
 export const buildQueryParams = ({
   filters,
   pagination,
