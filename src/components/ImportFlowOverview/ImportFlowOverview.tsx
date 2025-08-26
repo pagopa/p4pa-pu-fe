@@ -73,12 +73,12 @@ const ImportFlowOverview = ({
 
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
   const [filters, setFilters] = useState<FlowFileFilters>({
-    ...initialFilters,
-    ingestionFlowFileTypes,
     creationDateFrom: defaultDateRange.creationDateFrom,
     creationDateTo: defaultDateRange.creationDateTo,
     page: 0,
-    size: 10
+    size: 10,
+    ...initialFilters,
+    ingestionFlowFileTypes
   });
 
   const query = getIngestionFlowFiles(organizationId, routingCategory);

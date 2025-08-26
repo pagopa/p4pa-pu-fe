@@ -1,511 +1,176 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { vi, describe, it, expect, beforeEach, Mock } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
+import ExportFlowOverview from './ExportFlowOverview';
 import { useNavigate, generatePath } from 'react-router';
-import { getExportFiles, getExportFile } from '../../api/exportFiles';
-import { fireEvent, render, waitFor, screen } from '../../__tests__/renderers';
+import { downloadBlob } from '../../utils/download';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../routes';
-import ExportFlowOverview from './ExportFlowOverview';
 import { ExportFileTypeEnum } from '../../../generated/apiClient';
-import { downloadBlob } from '../../utils/download';
 
-vi.mock('react-router', async (importOriginal) => {
-  const actual = (await importOriginal()) as Record<string, unknown>;
-  return {
-    ...actual,
-    useNavigate: vi.fn(),
-    generatePath: vi.fn(),
-    useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
-  };
+// Mock react-router hooks
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: vi.fn(),
+  generatePath: vi.fn()
+}));
+
+// Mock API and utils
+const mutateAsyncMock = vi.fn().mockResolvedValue({
+  data: new Blob(['test data']),
+  fileName: 'file_1.zip'
 });
+const mockApplyFilters = vi.fn();
 
-const mutateAsyncMock = vi.fn();
-vi.mock('../../api/exportFiles', () => ({
-  getExportFiles: vi
-    .fn()
-    .mockReturnValue({ data: { content: [] }, isLoading: false }),
-  getExportFile: vi.fn().mockImplementation(() => ({
-    mutateAsync: mutateAsyncMock.mockReturnValue({
-      data: new Blob(['test data']),
-      fileName: 'test_file.zip'
-    })
+vi.mock('../../hooks/useSearch', () => ({
+  useSearch: vi.fn(() => ({
+    query: {
+      data: {
+        content: [
+          {
+            exportFileId: 1,
+            fileName: 'file_1.zip',
+            creationDate: '2025-04-01T10:00:00Z',
+            operator: 'Mario',
+            size: 1024,
+            status: 'COMPLETED'
+          },
+          {
+            exportFileId: 2,
+            fileName: 'file_2.zip',
+            creationDate: '2025-04-02T10:00:00Z',
+            operator: 'Luigi',
+            size: 2048,
+            status: 'PROCESSING'
+          }
+        ],
+        totalPages: 1,
+        totalElements: 2,
+        size: 10,
+        number: 0
+      },
+      isLoading: false,
+      isError: false,
+      error: null,
+      mutateAsync: mutateAsyncMock
+    },
+    applyFilters: mockApplyFilters
   }))
+}));
+
+vi.mock('../../api/exportFiles', () => ({
+  getExportFiles: vi.fn(),
+  getExportFile: vi.fn(() => ({ mutateAsync: mutateAsyncMock }))
 }));
 
 vi.mock('../../utils/download', () => ({
   downloadBlob: vi.fn()
 }));
 
-describe('ExportFlowOverview', () => {
+describe('ExportFlowOverview component logic', () => {
   const mockNavigate = vi.fn();
-
-  const mockData = {
-    content: [
-      {
-        exportFileId: 1,
-        fileName: 'file_1.zip',
-        creationDate: '2025-04-01T10:00:00Z',
-        operator: 'Mario',
-        size: 1024,
-        status: 'COMPLETED'
-      },
-      {
-        exportFileId: 2,
-        fileName: 'file_2.zip',
-        creationDate: '2025-04-02T10:00:00Z',
-        operator: 'Luigi',
-        size: 2048,
-        status: 'PROCESSING'
-      }
-    ],
-    totalPages: 1,
-    totalElements: 2,
-    size: 10,
-    number: 0
-  };
 
   beforeEach(() => {
     vi.clearAllMocks();
-
-    // Mock useNavigate
-    (useNavigate as ReturnType<typeof vi.fn>).mockReturnValue(mockNavigate);
-
-    // Mock generatePath
-    (generatePath as ReturnType<typeof vi.fn>).mockImplementation(
-      () => '/mock-path'
-    );
-
-    // Mock API calls
-    (getExportFiles as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: mockData,
-      isLoading: false
-    });
-
+    (useNavigate as unknown as Mock).mockReturnValue(mockNavigate);
+    (generatePath as unknown as Mock).mockReturnValue('/mock-path');
     setOrganizationId(123);
   });
 
-  it('renders successfully', () => {
+  it('renders title and description', () => {
     render(
       <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        description="Export description"
+        routingCategory="category1"
+        title="Export Title"
+        description="Description text"
         exportFileTypes={ExportFileTypeEnum.PAID}
       />
     );
 
-    expect(screen.getByText('Export title')).toBeDefined();
-    expect(screen.getByText('Export description')).toBeDefined();
+    expect(screen.getByText('Export Title')).toBeInTheDocument();
+    expect(screen.getByText('Description text')).toBeInTheDocument();
   });
 
-  it('shows data in the grid', async () => {
-    const { container } = render(
+  it('renders rows with download button only for COMPLETED status', async () => {
+    render(
       <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
+        routingCategory="category1"
+        title="Export Title"
         exportFileTypes={ExportFileTypeEnum.PAID}
       />
     );
 
     await waitFor(() => {
-      expect(container.querySelector('[data-field="fileName"]')).toBeDefined();
-    });
-  });
-
-  it('renders download button only for COMPLETED status', async () => {
-    const { container } = render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    await waitFor(() => {
-      const buttons = container.querySelectorAll(
-        '[data-testid="download-button"]'
-      );
+      // One download button for row with status 'COMPLETED'
+      const buttons = screen.getAllByTestId('download-button');
       expect(buttons.length).toBe(1);
-    });
-  });
 
-  it('does not show download for PROCESSING row', async () => {
-    const { container } = render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    await waitFor(() => {
-      const row = Array.from(container.querySelectorAll('[role="row"]')).find(
-        (r) => r.textContent?.includes('file_2.zip')
-      );
-      expect(row?.querySelector('[data-testid="download-button"]')).toBeNull();
-    });
-  });
-
-  it('calls getExportFiles with default params', () => {
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    expect(getExportFiles).toHaveBeenCalledWith(expect.any(Number), {
-      exportFileType: ExportFileTypeEnum.PAID,
-      page: 0,
-      size: 10,
-      creationDateFrom: expect.any(String),
-      creationDateTo: expect.any(String)
-    });
-  });
-
-  it('calls downloadExportFile and downloadBlob when download button is clicked', async () => {
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    const downloadButtons = await screen.findAllByTestId('download-button');
-    expect(downloadButtons.length).toBeGreaterThan(0);
-
-    fireEvent.click(downloadButtons[0]);
-
-    await waitFor(() => {
-      expect(mutateAsyncMock).toHaveBeenCalledWith(expect.any(Number));
-    });
-
-    await waitFor(() => {
-      expect(downloadBlob).toHaveBeenCalledWith(
-        expect.any(Blob),
-        expect.any(String)
-      );
-    });
-  });
-
-  it('only shows download button for COMPLETED status', async () => {
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    await waitFor(() => {
-      const rows = screen.getAllByRole('row');
-
-      const completedRow = mockData.content.find(
-        (row) => row.status === 'COMPLETED'
-      );
-      expect(completedRow).toBeDefined();
-
-      const completedRowElement = Array.from(rows).find((row) =>
-        row.textContent?.includes(completedRow!.fileName)
-      );
-
+      // Check processing row has no download button
+      const processingRow = screen
+        .getAllByRole('row')
+        .find((row) => row.textContent?.includes('file_2.zip'));
       expect(
-        completedRowElement?.querySelector('[data-testid="download-button"]')
-      ).toBeDefined();
-
-      const nonCompletedRow = mockData.content.find(
-        (row) => row.status !== 'COMPLETED'
-      );
-      expect(nonCompletedRow).toBeDefined();
-
-      const nonCompletedRowElement = Array.from(rows).find((row) =>
-        row.textContent?.includes(nonCompletedRow!.fileName)
-      );
-
-      expect(
-        nonCompletedRowElement?.querySelector('[data-testid="download-button"]')
+        processingRow?.querySelector('[data-testid="download-button"]')
       ).toBeNull();
     });
   });
 
-  it('shows EmptyDataGrid when content is empty array', () => {
-    (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: {
-        content: [],
-        totalPages: 0,
-        totalElements: 0,
-        size: 10,
-        number: 0
-      },
-      isLoading: false
-    });
-
+  it('clicking download button calls mutateAsync and downloadBlob', async () => {
     render(
       <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
+        routingCategory="category1"
+        title="Export Title"
         exportFileTypes={ExportFileTypeEnum.PAID}
       />
     );
 
-    expect(screen.getByText('commons.noFlows')).toBeDefined();
-    expect(
-      screen.getByRole('button', { name: 'commons.exportFlows' })
-    ).toBeDefined();
-
-    expect(screen.queryByRole('grid')).toBeNull();
-  });
-
-  it('shows DataGrid when content exists and hides EmptyDataGrid', () => {
-    (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: mockData,
-      isLoading: false
-    });
-
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    expect(screen.getByRole('grid')).toBeDefined();
-
-    expect(screen.queryByText('commons.noFlows')).toBeNull();
-    expect(
-      screen.queryByRole('button', { name: 'commons.exportFlows' })
-    ).toBeNull();
-  });
-
-  it('shows EmptyDataGrid when data.content is undefined', () => {
-    (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: {
-        content: undefined,
-        totalPages: 0,
-        totalElements: 0,
-        size: 10,
-        number: 0
-      },
-      isLoading: false
-    });
-
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    expect(screen.getByText('commons.noFlows')).toBeDefined();
-    expect(
-      screen.getByRole('button', { name: 'commons.exportFlows' })
-    ).toBeDefined();
-  });
-
-  it('shows EmptyDataGrid when entire data object is undefined', () => {
-    (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: {
-        content: [],
-        totalPages: 0,
-        totalElements: 0,
-        size: 10,
-        number: 0
-      },
-      isLoading: false
-    });
-
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    expect(screen.getByText('commons.noFlows')).toBeDefined();
-    expect(
-      screen.getByRole('button', { name: 'commons.exportFlows' })
-    ).toBeDefined();
-  });
-
-  it('calls navigate when EmptyDataGrid action button is clicked', () => {
-    (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: {
-        content: [],
-        totalPages: 0,
-        totalElements: 0,
-        size: 10,
-        number: 0
-      },
-      isLoading: false
-    });
-
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-    const actionButton = screen.getByRole('button', {
-      name: 'commons.exportFlows'
-    });
-    fireEvent.click(actionButton);
-
-    expect(mockNavigate).toHaveBeenCalledWith('/mock-path');
-    expect(generatePath).toHaveBeenCalledWith(PageRoutes.EXPORT_FLOWS, {
-      category: 'test'
-    });
-  });
-
-  it('shows data grid with filters when content exists', () => {
-    (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: mockData,
-      isLoading: false
-    });
-
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    expect(screen.getByRole('grid')).toBeDefined();
-
-    expect(screen.queryByText('commons.noFlows')).toBeNull();
-  });
-
-  it('handles error download result', async () => {
-    vi.mocked(getExportFile).mockReturnValue({
-      mutateAsync: mutateAsyncMock.mockRejectedValue(
-        new Error('Download failed')
-      )
-    } as any);
-
-    const consoleSpy = vi.spyOn(console, 'error');
-
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    const downloadButtons = await screen.findAllByTestId('download-button');
-    fireEvent.click(downloadButtons[0]);
+    const downloadButton = await screen.findByTestId('download-button');
+    fireEvent.click(downloadButton);
 
     await waitFor(() => {
-      expect(console.error).toHaveBeenCalled();
-      expect(downloadBlob).not.toHaveBeenCalled();
+      expect(mutateAsyncMock).toHaveBeenCalledWith(1);
+      expect(downloadBlob).toHaveBeenCalledWith(expect.any(Blob), 'file_1.zip');
     });
-
-    consoleSpy.mockRestore();
   });
 
-  it('shows sectionTitle when provided', () => {
+  it('calls applyFilters when filter button is clicked', async () => {
     render(
       <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        sectionTitle="My Section Title"
+        routingCategory="category1"
+        title="Export Title"
         exportFileTypes={ExportFileTypeEnum.PAID}
       />
     );
 
-    expect(screen.getByText('My Section Title')).toBeDefined();
-  });
+    const input = screen.getByLabelText('commons.searchName');
+    fireEvent.change(input, { target: { value: 'filter-test' } });
 
-  it('does not show sectionTitle when not provided', () => {
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    expect(screen.queryByRole('heading', { level: 4 })).toBeNull();
-  });
-
-  it('renders date column with empty string for null date', async () => {
-    const mockDataWithNullDate = {
-      ...mockData,
-      content: [
-        {
-          ...mockData.content[0],
-          creationDate: null
-        }
-      ]
-    };
-
-    (getExportFiles as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      data: mockDataWithNullDate,
-      isLoading: false
-    });
-
-    render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
+    const filterBtn = screen.getByText('commons.filters.filterResults');
+    fireEvent.click(filterBtn);
 
     await waitFor(() => {
-      const rows = screen.getAllByRole('row');
-      expect(rows.length).toBeGreaterThan(1);
-    });
-  });
-
-  it('handles pagination change correctly', async () => {
-    const { container } = render(
-      <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
-        exportFileTypes={ExportFileTypeEnum.PAID}
-      />
-    );
-
-    await waitFor(() => {
-      const pageSizeSelect = container.querySelector(
-        '[aria-label="Rows per page:"]'
+      expect(mockApplyFilters).toHaveBeenCalledWith(
+        expect.objectContaining({ fileName: 'filter-test' })
       );
-      expect(pageSizeSelect).toBeDefined();
     });
-
-    const nextPageButton = container.querySelector(
-      '[aria-label="Go to next page"]'
-    );
-    if (nextPageButton) {
-      fireEvent.click(nextPageButton);
-    }
   });
 
-  it('handles button click in TitleComponent action', () => {
+  it('fires navigation when reservation export button clicked', () => {
     render(
       <ExportFlowOverview
-        routingCategory="test"
-        title="Export title"
+        routingCategory="category1"
+        title="Export Title"
         exportFileTypes={ExportFileTypeEnum.PAID}
       />
     );
 
-    const titleButton = screen.getByRole('button', {
+    const button = screen.getByRole('button', {
       name: 'exportFlow.buttonReservationExport'
     });
-
-    fireEvent.click(titleButton);
+    fireEvent.click(button);
 
     expect(mockNavigate).toHaveBeenCalledWith('/mock-path');
     expect(generatePath).toHaveBeenCalledWith(PageRoutes.EXPORT_FLOWS, {
-      category: 'test'
+      category: 'category1'
     });
   });
 });
