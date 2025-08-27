@@ -111,7 +111,7 @@ export const DebtTypeDetailView = () => {
     mutate,
     isError: isOperatorsEnabledError,
     error: operatorsEnabledError
-  } = useDebtPositionTypeOrgSearch();
+  } = useDebtPositionTypeOrgSearch(organizationId);
 
   const handleDeleteClick = () => {
     handleActionMenuClose();
@@ -339,11 +339,12 @@ export const DebtTypeDetailView = () => {
       !operatorsEnabledData
     ) {
       mutate({
-        organizationId,
         filters: {
           code: data.response.code,
           description: data.response.description
-        }
+        },
+        pagination: { page: 0, size: 10 },
+        sort: []
       });
     }
   }, [

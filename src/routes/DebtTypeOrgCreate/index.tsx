@@ -58,7 +58,8 @@ export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
 
   const { getValues, setError, clearErrors } = methods;
 
-  const DebtPositionTypeOrgSearchMutation = useDebtPositionTypeOrgSearch();
+  const DebtPositionTypeOrgSearchMutation =
+    useDebtPositionTypeOrgSearch(organizationId);
 
   const handleNext = useCallback(async () => {
     try {
@@ -69,8 +70,9 @@ export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
       let isCodeUnique: boolean | undefined;
       if (currentStep === 0) {
         const response = await DebtPositionTypeOrgSearchMutation.mutateAsync({
-          organizationId,
-          filters: { size: 1, code: values.code }
+          filters: { code: values.code },
+          pagination: { page: 0, size: 1 },
+          sort: []
         });
         isCodeUnique = response.content.length === 0;
       }
