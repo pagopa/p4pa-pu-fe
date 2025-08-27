@@ -21,6 +21,15 @@ export const OrgSilServiceEdit = () => {
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
+  useEffect(() => {
+    if (!orgSilServiceId || !organizationId) {
+      navigate(PageRoutes.RESPONSES_ERROR, {
+        replace: true,
+        state: { errorType: 'invalidParameters' }
+      });
+    }
+  }, [orgSilServiceId, organizationId, navigate]);
+
   const { updateService } = useOrgSilServiceForm({
     organizationId
   });
@@ -28,7 +37,7 @@ export const OrgSilServiceEdit = () => {
   const {
     data: serviceData,
     error,
-    refetch
+    isLoading
   } = useQuery({
     queryKey: ['orgSilServiceDetail', organizationId, orgSilServiceId],
     queryFn: async () => {
@@ -44,14 +53,10 @@ export const OrgSilServiceEdit = () => {
       parseAndLog(orgSilServiceDecryptedDTOSchema, data);
       return data;
     },
-    enabled: !!orgSilServiceId && !!organizationId
+    enabled: !!orgSilServiceId && !!organizationId,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true
   });
-
-  useEffect(() => {
-    if (orgSilServiceId && organizationId) {
-      refetch();
-    }
-  }, [orgSilServiceId, organizationId, refetch]);
 
   const transformToFormData = (
     data: OrgSilServiceDecryptedDTO
@@ -99,6 +104,10 @@ export const OrgSilServiceEdit = () => {
     navigate(PageRoutes.ORG_SIL_SERVICE);
   };
 
+  if (!orgSilServiceId || !organizationId) {
+    return null;
+  }
+
   if (error) {
     return (
       <Box p={3}>
@@ -107,12 +116,20 @@ export const OrgSilServiceEdit = () => {
     );
   }
 
-  if (!serviceData) {
+  if (!isLoading && !serviceData) {
     return (
       <Box p={3}>
         <div>{t('commons.dataNotFound')}</div>
       </Box>
     );
+  }
+
+  if (isLoading) {
+    return null;
+  }
+
+  if (!serviceData) {
+    return null;
   }
 
   const config = {

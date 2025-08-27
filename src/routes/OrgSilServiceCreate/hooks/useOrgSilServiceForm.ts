@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { OrgSilServiceFormData } from '../schema';
 import { transformFormDataToDTO } from '../utils/orgSilServiceFormUtils';
 import orgSilService from '../../../api/orgSilService/index';
@@ -13,6 +14,7 @@ export const useOrgSilServiceForm = ({
   organizationId
 }: UseOrgSilServiceFormProps) => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
 
   const createMutation = orgSilService.createOrgSilService({
@@ -32,6 +34,12 @@ export const useOrgSilServiceForm = ({
       const dto = transformFormDataToDTO(formData, organizationId);
       const response = await createMutation.mutateAsync(dto);
 
+      // ✅ Invalida cache per refresh delle liste
+      await queryClient.invalidateQueries({
+        queryKey: ['orgSilService', organizationId]
+      });
+
+      // ✅ Naviga immediatamente alla success page
       navigate(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
         state: {
@@ -69,6 +77,21 @@ export const useOrgSilServiceForm = ({
 
       const response = await updateMutation.mutateAsync(dto);
 
+      // ✅ Invalida cache per refresh delle liste
+      await queryClient.invalidateQueries({
+        queryKey: ['orgSilService', organizationId]
+      });
+
+      // ✅ Invalida anche il dettaglio specifico per quando si torna indietro
+      await queryClient.invalidateQueries({
+        queryKey: [
+          'orgSilServiceDetail',
+          organizationId,
+          formData.orgSilServiceId
+        ]
+      });
+
+      // ✅ Naviga immediatamente alla success page - NIENTE FLASH!
       navigate(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
         state: {

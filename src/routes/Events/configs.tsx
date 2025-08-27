@@ -78,7 +78,7 @@ export const nodoFields: Array<FilterItem> = [
   },
   {
     type: COMPONENT_TYPE.select,
-    label: i18n.t('events.searchEventOutocme'),
+    label: i18n.t('events.searchEventOutcome'),
     options: Object.entries(RegistryOutcome).map(([key, value]) => ({
       label: key,
       value

@@ -132,11 +132,10 @@ export const backofficeRoutes = [
             path: ':orgSilServiceId',
             element: <OrgSilServiceDetailPage />,
             handle: {
-              backButton: true,
-              backButtonText: 'commons.exit',
-              hideBreadcrumbs: true,
+              backButton: false,
+              hideBreadcrumbs: false,
               sidebar: {
-                visible: false
+                visible: true
               }
             }
           },
