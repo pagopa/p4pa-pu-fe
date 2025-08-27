@@ -19,8 +19,8 @@ export const DebtTypesCreated = () => {
     organizationId: string;
   }>();
   const {
-      state: { organizations },
-    } = useStore();
+    state: { organizations }
+  } = useStore();
 
   const getInitialTab = () => {
     const tabParam = searchParams.get('tab');
@@ -96,30 +96,34 @@ export const DebtTypesCreated = () => {
       </Box>
     );
   };
-  
-  const callToActionEl = [
-          {
-            icon: <Add />,
-            buttonText: t('debtTypesCreated.callToAction'),
-            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_ORG_CREATE)
-          }
-        ];
-  
-  const descriptionByUrl = t('debtTypesCreated.descriptionByURL') ;
 
-  const org = organizations.find(o => o.organizationId === Number(organizationIdByURL));
+  const callToActionEl = [
+    {
+      icon: <Add />,
+      buttonText: t('debtTypesCreated.callToAction'),
+      onActionClick: () => navigate(PageRoutes.DEBT_TYPE_ORG_CREATE)
+    }
+  ];
+
+  const descriptionByUrl = t('debtTypesCreated.descriptionByURL');
+
+  const org = organizations.find(
+    (o) => o.organizationId === Number(organizationIdByURL)
+  );
 
   const titleByUrl = org ? org.orgName : undefined;
+
+  const descriptionFullOrNot = `debtTypesCreated.description${isSuperAdmin ? 'Full' : ''}`;
+  const description = !organizationIdByURL
+    ? descriptionFullOrNot
+    : descriptionByUrl;
 
   return (
     <>
       <TitleComponent
         title={titleByUrl ?? t('commons.routes.DEBT_TYPES_DASHBOARD')}
         callToAction={!organizationIdByURL ? callToActionEl : []}
-        description={t(!organizationIdByURL ?
-          `debtTypesCreated.description${isSuperAdmin ? 'Full' : ''}` :
-          descriptionByUrl
-        )}
+        description={t(description)}
       />
 
       {isSuperAdmin && !organizationIdByURL ? renderTabs() : null}
