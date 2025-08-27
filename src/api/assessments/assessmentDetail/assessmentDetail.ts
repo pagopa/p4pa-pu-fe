@@ -30,9 +30,7 @@ export const getAssessmentDetail = (
           assessmentId,
           query
         );
-
       parseAndLog(assessmentsRowsDetailSchema, assessmentDetail);
-
       return assessmentDetail;
     }
   });
