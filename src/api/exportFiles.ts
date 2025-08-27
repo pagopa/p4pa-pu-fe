@@ -38,8 +38,10 @@ export const getExportFiles = (
         organizationId,
         {
           ...query,
-          creationDateFrom: utils.formatters.date.code(query.creationDateFrom),
-          creationDateTo: utils.formatters.date.code(query.creationDateTo)
+          creationDateTimeFrom: utils.formatters.date.code(
+            query.creationDateFrom
+          ),
+          creationDateTimeTo: utils.formatters.date.code(query.creationDateTo)
         }
       );
 
