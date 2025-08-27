@@ -1,26 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import utils from '../utils';
-import {
-  ExportFileStatus,
-  ExportFileTypeEnum
-} from '../../generated/apiClient';
-import { parseAndLog } from '../utils/loaders';
-import { pagedExportFileSchema } from '../../generated/zod-schema';
-import { extractFilename } from '../utils/formatters';
+import utils from '../../utils';
+import { parseAndLog } from '../../utils/loaders';
+import { pagedExportFileSchema } from '../../../generated/zod-schema';
+import { buildGetExportFilesQueryParams, ExportFilesFilteredRequest } from './mapping';
 
-export type ExportQuery = {
-  exportFileType: ExportFileTypeEnum;
-  creationDateFrom?: Date;
-  creationDateTo?: Date;
-  status?: ExportFileStatus;
-  fileName?: string;
-};
-
-export type ExportFilesFilteredRequest = {
-  filters: ExportQuery;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
 
 export const getExportFiles = (
   organizationId: number,
@@ -33,19 +16,12 @@ export const getExportFiles = (
       pagination,
       sort
     }: ExportFilesFilteredRequest) => {
-      const query = { ...filters, ...pagination, sort };
+      const query = buildGetExportFilesQueryParams({ filters, pagination, sort });
       const { data: files } = await utils.apiClient.bff.getExportFiles(
         organizationId,
-        {
-          ...query,
-          creationDateTimeFrom: utils.formatters.date.code(query.creationDateFrom),
-          creationDateTimeTo: utils.formatters.date.code(query.creationDateTo)
-        }
+        query,
       );
-
-      if (files) {
-        parseAndLog(pagedExportFileSchema, files);
-      }
+      parseAndLog(pagedExportFileSchema, files);
       return files;
     },
     retry: false
@@ -65,7 +41,7 @@ export const getExportFile = (organizationId: number) =>
         );
       const contentDisposition = response.headers['content-disposition'] || '';
       const fileName =
-        extractFilename(contentDisposition) || `file-${exportFileId}`;
+        utils.formatters.extractFilename(contentDisposition) || `file-${exportFileId}`;
       return { data: response.data, fileName };
     }
   });
