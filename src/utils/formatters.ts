@@ -180,6 +180,72 @@ export function formatFileSize(size: number): string {
     return `${size} Bytes`;
   }
 }
+/**
+ * Converts any value to Italian format display (with comma as decimal separator)
+ * @param value - The value to format (can be string, number, or any type)
+ * @returns Formatted string with comma as decimal separator for display
+ */
+export function formatAmountForDisplay(value: unknown): string {
+  if (!value && value !== 0) return '';
+  const stringVal = String(value);
+  return stringVal.replace('.', ',');
+}
+
+/**
+ * Validates if the input is a valid amount format
+ * Allows only digits, one comma or dot, and maximum 2 decimal places
+ * @param input - The input string to validate
+ * @returns true if the input is valid, false otherwise
+ */
+export function isValidAmountInput(input: string): boolean {
+  const regex = /^\d*[,.]?\d{0,2}$/;
+  return regex.test(input);
+}
+
+/**
+ * Sanitizes amount input by removing invalid characters and formatting
+ * - Removes all non-numeric characters except comma and dot
+ * - Converts dots to commas for consistency
+ * - Keeps only the first decimal separator
+ * - Limits to maximum 2 decimal places
+ * @param input - The raw input string
+ * @returns Cleaned and formatted string
+ */
+export function sanitizeAmountInput(input: string): string {
+  // Remove everything except numbers, comma and dot
+  let cleaned = input.replace(/[^0-9,.]/g, '');
+
+  // Replace dots with commas for visual consistency
+  cleaned = cleaned.replace(/\./g, ',');
+
+  // Keep only the first comma
+  const parts = cleaned.split(',');
+  if (parts.length > 2) {
+    cleaned = parts[0] + ',' + parts.slice(1).join('');
+  }
+
+  // Limit to maximum 2 decimal places after comma
+  if (parts.length === 2 && parts[1].length > 2) {
+    cleaned = parts[0] + ',' + parts[1].substring(0, 2);
+  }
+
+  return cleaned;
+}
+
+/**
+ * Converts amount string to number, handling both comma and dot formats
+ * @param amount - The amount string (can have comma or dot as decimal separator)
+ * @returns Number value or null if conversion fails
+ */
+export function parseAmountToNumber(amount: string): number | null {
+  if (!amount || amount.trim() === '') return null;
+
+  // Convert comma to dot for parsing
+  const normalizedAmount = amount.replace(',', '.');
+  const parsed = parseFloat(normalizedAmount);
+
+  return isNaN(parsed) ? null : parsed;
+}
 
 export const toCamelCase = (str: string): string => {
   return str

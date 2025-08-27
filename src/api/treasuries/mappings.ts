@@ -1,4 +1,5 @@
 import { FilterValues } from '../../models/Filters';
+import { euroToCents } from '../../utils/formatters';
 import utils from '../../utils';
 
 export type TreasuriesFilteredRequest = {
@@ -19,7 +20,7 @@ export const buildQueryParams = ({
     billDateTo: utils.formatters.date.code(filters.ACCOUNTING_DATE_TO)
   }),
   ...(filters.AMOUNT && {
-    billAmountCents: filters.AMOUNT * 100
+    billAmountCents: euroToCents(filters.AMOUNT)
   }),
   ...(filters.BILL_CODE && {
     billCode: filters.BILL_CODE

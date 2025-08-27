@@ -18,12 +18,13 @@ import DetailContainer, {
 import { getReceiptPdf } from '../../api/receiptPdf';
 import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { PageRoutes } from '../../routes';
 
 import { setAppState } from '../../store/AppStateStore';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import { moneyFormat } from '../../utils/formatters';
+import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 
 export const TelematicReceiptDetail = () => {
   const { t } = useTranslation();
@@ -32,6 +33,10 @@ export const TelematicReceiptDetail = () => {
   const params = useParams();
   const location = useLocation();
 
+  const [currentAssessmentName, setCurrentAssessmentName] = useState<string>(
+    location.state?.assessmentName || ''
+  );
+
   // If we are on the assessment route, use assessmentDetailId, otherwise useLoaderData
   const loaderData = useLoaderData();
   const id = params.receiptId || loaderData;
@@ -39,7 +44,46 @@ export const TelematicReceiptDetail = () => {
   // Get organizationId from the store
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
-  const assessmentName = location.state?.assessmentName;
+  // Conditional query to fetch assessment name if missing
+  const shouldFetchAssessment =
+    params.receiptId && params.id && !currentAssessmentName && organizationId;
+
+  const getAssessmentDetailMutation = getAssessmentDetail(
+    organizationId,
+    Number(params.id || 0),
+    { page: 0, size: 1 }
+  );
+
+  useEffect(() => {
+    if (shouldFetchAssessment) {
+      getAssessmentDetailMutation.mutate({
+        filters: {},
+        pagination: { page: 0, size: 1 },
+        sort: []
+      });
+    }
+  }, [shouldFetchAssessment]);
+
+  const assessmentData = getAssessmentDetailMutation.data;
+
+  useEffect(() => {
+    if (assessmentData?.assessmentsName && !currentAssessmentName) {
+      setCurrentAssessmentName(assessmentData.assessmentsName);
+    } else if (
+      shouldFetchAssessment &&
+      assessmentData &&
+      !assessmentData.assessmentsName &&
+      !currentAssessmentName
+    ) {
+      setCurrentAssessmentName(`${t('assessment.assessment')} ${params.id}`);
+    }
+  }, [
+    assessmentData,
+    currentAssessmentName,
+    shouldFetchAssessment,
+    t,
+    params.id
+  ]);
 
   const getContextualTranslation = (
     assessmentKey: string,
@@ -55,7 +99,7 @@ export const TelematicReceiptDetail = () => {
 
   // Setup custom breadcrumb for assessment context
   useEffect(() => {
-    if (params.receiptId && params.id && data) {
+    if (params.receiptId && params.id && data && currentAssessmentName) {
       const customBreadcrumbsItems: Array<BredcrumbItem> = [
         {
           pathname: PageRoutes.ASSESSMENT_INDEX,
@@ -69,7 +113,7 @@ export const TelematicReceiptDetail = () => {
           pathname: generatePath(PageRoutes.ASSESSMENT_DETAIL, {
             id: params.id
           }),
-          label: assessmentName || '-',
+          label: currentAssessmentName,
           id: 'ASSESSMENT_DETAIL'
         },
         {
@@ -86,7 +130,7 @@ export const TelematicReceiptDetail = () => {
         customBreadcrumbsItems: customBreadcrumbsItems
       });
     }
-  }, [params.receiptId, params.id, data, t, assessmentName]);
+  }, [params.receiptId, params.id, data, t, currentAssessmentName]);
 
   // Setup custom breadcrumb for assessment context
   useEffect(() => {
