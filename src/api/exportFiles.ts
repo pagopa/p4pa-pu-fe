@@ -10,8 +10,8 @@ import { extractFilename } from '../utils/formatters';
 
 export type ExportQuery = {
   exportFileType: ExportFileTypeEnum;
-  creationDateFrom?: string;
-  creationDateTo?: string;
+  creationDateFrom?: Date;
+  creationDateTo?: Date;
   status?: ExportFileStatus;
   fileName?: string;
 };
@@ -36,7 +36,11 @@ export const getExportFiles = (
       const query = { ...filters, ...pagination, sort };
       const { data: files } = await utils.apiClient.bff.getExportFiles(
         organizationId,
-        query
+        {
+          ...query,
+          creationDateFrom: utils.formatters.date.code(query.creationDateFrom),
+          creationDateTo: utils.formatters.date.code(query.creationDateTo)
+        }
       );
 
       if (files) {

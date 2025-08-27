@@ -61,7 +61,7 @@ export const OrgSilServiceCreate = () => {
     <Box sx={{ p: 3 }}>
       <TitleComponent
         title={t('orgSilServiceCreate.title')}
-        description={t('orgSilServiceCreate.descriprion')}
+        description={t('orgSilServiceCreate.description')}
       />
 
       <form onSubmit={handleSubmit(onSubmit)} noValidate>

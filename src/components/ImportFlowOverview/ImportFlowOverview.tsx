@@ -73,8 +73,8 @@ const ImportFlowOverview = ({
 
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
   const [filters, setFilters] = useState<FlowFileFilters>({
-    creationDateFrom: defaultDateRange.creationDateFrom,
-    creationDateTo: defaultDateRange.creationDateTo,
+    creationDateFrom: new Date(defaultDateRange.creationDateFrom),
+    creationDateTo: new Date(defaultDateRange.creationDateTo),
     page: 0,
     size: 10,
     ...initialFilters,
@@ -299,9 +299,7 @@ const ImportFlowOverview = ({
                 onChange: (value) =>
                   setFilters((prev) => ({
                     ...prev,
-                    creationDateFrom: value
-                      ? new Date(value).toISOString()
-                      : undefined
+                    creationDateFrom: value ? new Date(value) : undefined
                   }))
               },
               to: {
@@ -313,9 +311,7 @@ const ImportFlowOverview = ({
                 onChange: (value) =>
                   setFilters((prev) => ({
                     ...prev,
-                    creationDateTo: value
-                      ? new Date(value).toISOString()
-                      : undefined
+                    creationDateTo: value ? new Date(value) : undefined
                   }))
               }
             },

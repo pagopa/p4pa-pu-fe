@@ -66,9 +66,7 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
     setValue('disabledOperators', newDisabled);
   };
 
-  const query = getDebtPositionTypeOrgOperators(
-    organizationId
-  );
+  const query = getDebtPositionTypeOrgOperators(organizationId);
 
   const debtTypeOrgOperators = useSearch({
     filters: {},

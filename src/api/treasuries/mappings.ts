@@ -1,5 +1,5 @@
-import { format } from 'date-fns/format';
 import { FilterValues } from '../../models/Filters';
+import utils from '../../utils';
 
 export type TreasuriesFilteredRequest = {
   filters: FilterValues;
@@ -7,52 +7,33 @@ export type TreasuriesFilteredRequest = {
   sort: Array<string>;
 };
 
+type getTreasuriesQueryParameters = Parameters<
+  typeof utils.apiClient.bff.getTreasuries
+>[1];
+
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: TreasuriesFilteredRequest) => ({
-  ...(filters.ACCOUNTING_DATE_FROM && {
-    billDateFrom: format(filters.ACCOUNTING_DATE_FROM, 'yyyy-MM-dd')
-  }),
-  ...(filters.ACCOUNTING_DATE_TO && {
-    billDateTo: format(filters.ACCOUNTING_DATE_TO, 'yyyy-MM-dd')
-  }),
-  ...(filters.AMOUNT && {
-    billAmountCents: filters.AMOUNT * 100
-  }),
-  ...(filters.BILL_CODE && {
-    billCode: filters.BILL_CODE
-  }),
-  ...(filters.BILL_FROM && {
-    billYear: filters.BILL_FROM.getFullYear().toString()
-  }),
-  ...(filters.DOCUMENT_CODE && {
-    documentCode: filters.DOCUMENT_CODE
-  }),
-  ...(filters.DOCUMENT_CODE_FROM && {
-    documentYear: format(filters.DOCUMENT_CODE_FROM, 'yyyy-MM-dd')
-  }),
-  ...(filters.IUV && { iuv: filters.IUV }),
-  ...(filters.PAYER && {
-    pspLastName: filters.PAYER
-  }),
-  ...(filters.TEMPORARY_CODE && {
-    provisionalCode: filters.TEMPORARY_CODE
-  }),
-  ...(filters?.TEMPORARY_CODE_FROM && {
-    provisionalAe: format(filters.TEMPORARY_CODE_FROM, 'yyyy-MM-dd')
-  }),
-  ...(filters.VALUE_DATE_FROM && {
-    regionValueDateFrom: format(filters.VALUE_DATE_FROM, 'yyyy-MM-dd')
-  }),
-  ...(filters.VALUE_DATE_TO && {
-    regionValueDateTo: format(filters.VALUE_DATE_TO, 'yyyy-MM-dd')
-  }),
-  ...(filters.REPORT_ID && {
-    iuf: filters.REPORT_ID
-  }),
+}: TreasuriesFilteredRequest): getTreasuriesQueryParameters => ({
+  iuv: filters.IUV,
+  iuf: filters.REPORT_ID,
+  billAmountCents: filters.AMOUNT
+    ? utils.formatters.euroToCents(filters.AMOUNT)
+    : undefined,
+  billDateTimeFrom: utils.formatters.date.code(filters.ACCOUNTING_DATE_FROM),
+  billDateTimeTo: utils.formatters.date.code(filters.ACCOUNTING_DATE_TO),
+  provisionalCode: filters.TEMPORARY_CODE,
+  provisionalAe: utils.formatters.date.code(filters.TEMPORARY_CODE_FROM),
+  billCode: filters.BILL_CODE,
+  billYear: filters.BILL_FROM?.getFullYear().toString() || undefined,
+  pspLastName: filters.PAYER,
+  regionValueDateTimeFrom: utils.formatters.date.code(filters.VALUE_DATE_FROM),
+  regionValueDateTimeTo: utils.formatters.date.code(filters.VALUE_DATE_TO),
+  documentYear:
+    filters.DOCUMENT_CODE_FROM?.getFullYear().toString() || undefined,
+  documentCode: filters.DOCUMENT_CODE,
   page: pagination.page,
   size: pagination.size,
-  ...(sort.length && { sort })
+  sort
 });

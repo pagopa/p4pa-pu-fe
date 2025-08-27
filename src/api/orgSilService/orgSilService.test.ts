@@ -14,7 +14,8 @@ vi.mock('../../utils', () => {
     default: {
       apiClient: {
         bff: {
-          getOrgSilServicesByFilters: vi.fn()
+          getOrgSilServicesByFilters: vi.fn(),
+          getOrgSilServiceDetails: vi.fn()
         }
       }
     }
@@ -43,6 +44,18 @@ const mockApiResponse = {
   totalPages: 1,
   size: 10,
   number: 0
+};
+
+const mockServiceDetailsResponse = {
+  orgSilServiceId: 1,
+  applicationName: 'Test Service Details',
+  organizationId: 123,
+  serviceUrl: 'http://test-details.com',
+  serviceType: OrgSilServiceType.ACTUALIZATION,
+  apiKey: 'decrypted-api-key-123',
+  description: 'Detailed service information',
+  createdAt: '2024-01-15T10:30:00Z',
+  updatedAt: '2024-01-16T14:20:00Z'
 };
 
 describe('orgSilService API', () => {
@@ -109,6 +122,126 @@ describe('orgSilService API', () => {
         'API Error'
       );
       expect(apiMock).toHaveBeenCalled();
+    });
+  });
+
+  describe('getOrgSilServiceById', () => {
+    it('should fetch service details correctly', async () => {
+      const organizationId = 123;
+      const orgSilServiceId = 456;
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getOrgSilServiceDetails')
+        .mockResolvedValue({
+          data: mockServiceDetailsResponse
+        } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        orgSilServiceApi.getOrgSilServiceById({
+          organizationId,
+          orgSilServiceId
+        })
+      );
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual({
+          response: mockServiceDetailsResponse
+        });
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    it('should handle API errors correctly', async () => {
+      const organizationId = 123;
+      const orgSilServiceId = 456;
+      const mockError = new Error('Service not found');
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getOrgSilServiceDetails')
+        .mockRejectedValue(mockError);
+
+      const { result } = renderHook(() =>
+        orgSilServiceApi.getOrgSilServiceById({
+          organizationId,
+          orgSilServiceId
+        })
+      );
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
+
+      expect(result.current.isLoading).toBe(true);
+
+      await expect(apiMock.mock.results[0].value).rejects.toThrow(
+        'Service not found'
+      );
+    });
+
+    it('should create query with correct parameters', () => {
+      const organizationId = 123;
+      const orgSilServiceId = 456;
+
+      const apiMock = vi.spyOn(utils.apiClient.bff, 'getOrgSilServiceDetails');
+
+      renderHook(() =>
+        orgSilServiceApi.getOrgSilServiceById({
+          organizationId,
+          orgSilServiceId
+        })
+      );
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
+    });
+
+    it('should fetch data automatically on mount', () => {
+      const organizationId = 123;
+      const orgSilServiceId = 456;
+
+      const apiMock = vi.spyOn(utils.apiClient.bff, 'getOrgSilServiceDetails');
+
+      renderHook(() =>
+        orgSilServiceApi.getOrgSilServiceById({
+          organizationId,
+          orgSilServiceId
+        })
+      );
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
+    });
+
+    it('should handle different organization and service IDs', async () => {
+      const testCases = [
+        { organizationId: 100, orgSilServiceId: 200 },
+        { organizationId: 999, orgSilServiceId: 1 },
+        { organizationId: 1, orgSilServiceId: 999 }
+      ];
+
+      for (const { organizationId, orgSilServiceId } of testCases) {
+        const apiMock = vi
+          .spyOn(utils.apiClient.bff, 'getOrgSilServiceDetails')
+          .mockResolvedValue({
+            data: mockServiceDetailsResponse
+          } as AxiosResponse);
+
+        const { result } = renderHook(() =>
+          orgSilServiceApi.getOrgSilServiceById({
+            organizationId,
+            orgSilServiceId
+          })
+        );
+
+        await waitFor(() => {
+          expect(result.current.data).toEqual({
+            response: mockServiceDetailsResponse
+          });
+        });
+
+        expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
+        expect(result.current.isSuccess).toBe(true);
+
+        vi.clearAllMocks();
+      }
     });
   });
 });

@@ -1,14 +1,13 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TelematicReceiptDetail } from '.';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { useLoaderData, useParams } from 'react-router';
 import { getReceiptDetail } from '../../api/receiptDetail';
+import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 import { receiptDetailDTOSchema } from '../../../generated/zod-schema';
 import { createMock } from 'zodock';
-import { useStore } from '../../store/GlobalStore';
-import { STATE } from '../../store/types';
 import * as receiptPdf from '../../api/receiptPdf';
-import { MemoryRouter, Route, Routes } from 'react-router';
 
 const mockNavigate = vi.fn();
 
@@ -16,15 +15,15 @@ vi.mock('../../api/receiptDetail', () => ({
   getReceiptDetail: vi.fn()
 }));
 
+vi.mock('../../api/assessments/assessmentDetail/assessmentDetail', () => ({
+  getAssessmentDetail: vi.fn()
+}));
+
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useLoaderData: vi.fn(),
   useNavigate: () => mockNavigate,
   useParams: vi.fn()
-}));
-
-vi.mock('../../store/GlobalStore', () => ({
-  useStore: vi.fn()
 }));
 
 vi.mock('../../store/AppStateStore', () => ({
@@ -41,21 +40,10 @@ vi.mock('../../routes', () => ({
   }
 }));
 
-function renderWithRouter(
-  ui: React.ReactElement,
-  {
-    route = '/',
-    locationState = {}
-  }: { route?: string; locationState?: Record<string, unknown> } = {}
-) {
-  return render(
-    <MemoryRouter initialEntries={[{ pathname: route, state: locationState }]}>
-      <Routes>
-        <Route path="*" element={ui} />
-      </Routes>
-    </MemoryRouter>
-  );
-}
+vi.mock('../../store/GlobalStore', () => ({
+  useStore: () => ({ state: { organizationId: '123' } }),
+  StoreProvider: ({ children }: { children: React.ReactNode }) => children
+}));
 
 describe('TelematicReceiptDetail Page', () => {
   const mockOrganizationId = 123;
@@ -63,24 +51,35 @@ describe('TelematicReceiptDetail Page', () => {
   const mockUseLoaderData = vi.mocked(useLoaderData);
   const mockUseParams = vi.mocked(useParams);
 
+  const mockMutate = vi.fn();
+  const mockAssessmentMutation = {
+    mutate: mockMutate,
+    data: undefined,
+    isLoading: false,
+    isError: false,
+    error: null
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
+    mockMutate.mockClear();
 
     mockUseLoaderData.mockReturnValue(mockData.receiptId);
     mockUseParams.mockReturnValue({});
-    (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      state: { [STATE.ORGANIZATION_ID]: mockOrganizationId }
-    });
 
     (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       data: mockData
     });
+
+    (
+      getAssessmentDetail as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue(mockAssessmentMutation);
   });
 
   it('renders Telematic Receipt Detail without crashing', () => {
     vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(screen.getByText(mockData.iud)).toBeInTheDocument();
     expect(
@@ -92,7 +91,7 @@ describe('TelematicReceiptDetail Page', () => {
     const mutateSpy = vi
       .spyOn(receiptPdf, 'getReceiptPdf')
       .mockImplementation(vi.fn());
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(mutateSpy).toBeCalledWith(mockOrganizationId);
   });
@@ -105,7 +104,7 @@ describe('TelematicReceiptDetail Page', () => {
           mutateAsync: mutationMock
         }) as unknown as ReturnType<typeof receiptPdf.getReceiptPdf>
     );
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
     const downloadButton = screen.getByLabelText('commons.files.download');
     fireEvent.click(downloadButton);
     expect(mutationMock).toBeCalledWith(mockData.receiptId);
@@ -114,7 +113,7 @@ describe('TelematicReceiptDetail Page', () => {
   it('handles invalid ID parameter', () => {
     mockUseLoaderData.mockReturnValue('invalid-id');
 
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
   });
@@ -127,7 +126,7 @@ describe('TelematicReceiptDetail Page', () => {
       error: new Error('API Error')
     });
 
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
   });
@@ -146,7 +145,7 @@ describe('TelematicReceiptDetail Page', () => {
     });
 
     vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(
       screen.getByText('assessmentDetail.paymentDetail.title')
@@ -157,7 +156,7 @@ describe('TelematicReceiptDetail Page', () => {
     mockUseParams.mockReturnValue({});
 
     vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(
       screen.getByText('telematicReceiptDetail.title')
@@ -171,14 +170,14 @@ describe('TelematicReceiptDetail Page', () => {
       assessmentDetailId: '60'
     });
 
-    (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+    (getReceiptDetail as any).mockReturnValue({
       data: mockData,
       isError: false,
       error: null
     });
 
     vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(
       screen.queryByLabelText('commons.files.download')
@@ -192,7 +191,7 @@ describe('TelematicReceiptDetail Page', () => {
     mockUseParams.mockReturnValue({});
 
     vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(screen.getByLabelText('commons.files.download')).toBeInTheDocument();
   });
@@ -201,7 +200,7 @@ describe('TelematicReceiptDetail Page', () => {
     mockUseParams.mockReturnValue({});
 
     vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(getReceiptDetail).toHaveBeenCalledWith(
       mockOrganizationId,
@@ -221,7 +220,7 @@ describe('TelematicReceiptDetail Page', () => {
     });
 
     vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(
       screen.getByText('assessmentDetail.paymentDetail.title')
@@ -232,10 +231,92 @@ describe('TelematicReceiptDetail Page', () => {
     mockUseParams.mockReturnValue({});
 
     vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
-    renderWithRouter(<TelematicReceiptDetail />);
+    render(<TelematicReceiptDetail />);
 
     expect(
       screen.getByText('telematicReceiptDetail.title')
     ).toBeInTheDocument();
+  });
+
+  it('calls getAssessmentDetail with correct parameters when in assessment context', () => {
+    mockUseParams.mockReturnValue({
+      receiptId: '60',
+      id: '209'
+    });
+
+    (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: mockData,
+      isError: false,
+      error: null
+    });
+
+    vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
+    render(<TelematicReceiptDetail />);
+
+    expect(getAssessmentDetail).toHaveBeenCalledWith(mockOrganizationId, 209, {
+      page: 0,
+      size: 1
+    });
+  });
+
+  it('triggers mutation when shouldFetchAssessment condition is met', () => {
+    mockUseParams.mockReturnValue({
+      receiptId: '60',
+      id: '209'
+    });
+
+    (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: mockData,
+      isError: false,
+      error: null
+    });
+
+    vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
+    render(<TelematicReceiptDetail />);
+
+    expect(mockMutate).toHaveBeenCalledWith({
+      filters: {},
+      pagination: { page: 0, size: 1 },
+      sort: []
+    });
+  });
+
+  it('sets assessment name when mutation returns data', () => {
+    mockUseParams.mockReturnValue({
+      receiptId: '60',
+      id: '209'
+    });
+
+    const mockAssessmentMutationWithData = {
+      ...mockAssessmentMutation,
+      data: { assessmentsName: 'Test Assessment Name' }
+    };
+
+    (
+      getAssessmentDetail as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue(mockAssessmentMutationWithData);
+
+    (getReceiptDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: mockData,
+      isError: false,
+      error: null
+    });
+
+    vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
+    render(<TelematicReceiptDetail />);
+
+    expect(getAssessmentDetail).toHaveBeenCalledWith(mockOrganizationId, 209, {
+      page: 0,
+      size: 1
+    });
+  });
+
+  it('does not trigger mutation when shouldFetchAssessment condition is not met', () => {
+    mockUseParams.mockReturnValue({});
+
+    vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(vi.fn());
+    render(<TelematicReceiptDetail />);
+
+    expect(mockMutate).not.toHaveBeenCalled();
   });
 });

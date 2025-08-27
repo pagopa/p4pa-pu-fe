@@ -15,6 +15,7 @@ import i18n from '../../translations/i18n';
 import { GridColDef, GridRowId } from '@mui/x-data-grid';
 import { noFilterSetted } from '../../utils/filtersValidation';
 import { formatDateTime } from '../../utils/formatters';
+import utils from '../../utils';
 
 export const silFields: Array<FilterItem> = [
   {
@@ -107,8 +108,8 @@ export const DefaultFilterValues: BaseFilterValues = {
 export type NodoFilterValues = {
   iuv?: string;
   eventDate?: {
-    from: Date | null;
-    to: Date | null;
+    from?: Date;
+    to?: Date;
   };
   event?: RegistryPagoPaEventType;
   outcome?: RegistryOutcome;
@@ -139,8 +140,10 @@ export function getQueryFromFilterValues<
 >(activeFilterValues: T): NodoOrSilEvent<T> {
   return {
     iuv: activeFilterValues.iuv,
-    eventDateFrom: activeFilterValues.eventDate?.from?.toISOString(),
-    eventDateTo: activeFilterValues.eventDate?.to?.toISOString(),
+    eventDateFrom: utils.formatters.date.code(
+      activeFilterValues.eventDate?.from
+    ),
+    eventDateTo: utils.formatters.date.code(activeFilterValues.eventDate?.to),
     eventType: activeFilterValues.event as NodoOrSilEvent<T>['eventType'],
     outcome: activeFilterValues.outcome
   };
