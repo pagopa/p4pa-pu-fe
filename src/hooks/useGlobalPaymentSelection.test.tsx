@@ -17,10 +17,9 @@ describe('useGlobalPaymentSelection', () => {
   };
 
   const sampleCurrentPageRows = [
-    { uniqueId: 'iud1-0', iud: 'IUD1' },
-    { uniqueId: 'iud2-0', iud: 'IUD2' },
-    { uniqueId: 'iud1-1', iud: 'IUD1' },
-    { uniqueId: 'iud3-0', iud: 'IUD3' }
+    { iud: 'IUD1' },
+    { iud: 'IUD2' },
+    { iud: 'IUD3' }
   ];
 
   const defaultProps: UseGlobalPaymentSelectionParams = {
@@ -39,7 +38,7 @@ describe('useGlobalPaymentSelection', () => {
         useGlobalPaymentSelection(defaultProps)
       );
 
-      expect(result.current.globalSelectedUniqueIds.size).toBe(0);
+      expect(result.current.globalSelectedIuds.size).toBe(0);
       expect(result.current.totalSelected).toBe(0);
     });
 
@@ -53,12 +52,11 @@ describe('useGlobalPaymentSelection', () => {
         useGlobalPaymentSelection(propsWithSelection)
       );
 
-      expect(result.current.globalSelectedUniqueIds.size).toBe(3);
-      expect(result.current.totalSelected).toBe(3);
-      expect(result.current.isUniqueIdSelected('iud1-0')).toBe(true);
-      expect(result.current.isUniqueIdSelected('iud1-1')).toBe(true);
-      expect(result.current.isUniqueIdSelected('iud2-0')).toBe(true);
-      expect(result.current.isUniqueIdSelected('iud3-0')).toBe(false);
+      expect(result.current.globalSelectedIuds.size).toBe(2);
+      expect(result.current.totalSelected).toBe(2);
+      expect(result.current.isIudSelected('IUD1')).toBe(true);
+      expect(result.current.isIudSelected('IUD2')).toBe(true);
+      expect(result.current.isIudSelected('IUD3')).toBe(false);
     });
 
     it('should handle empty currentPageRows', () => {
@@ -71,20 +69,17 @@ describe('useGlobalPaymentSelection', () => {
         useGlobalPaymentSelection(propsWithoutRows)
       );
 
-      expect(result.current.globalSelectedUniqueIds.size).toBe(0);
+      expect(result.current.globalSelectedIuds.size).toBe(0);
       expect(result.current.totalSelected).toBe(0);
     });
 
-    it('should update global mapping when currentPageRows changes', () => {
+    it('should handle currentPageRows changes', () => {
       const { result, rerender } = renderHook(
         (props) => useGlobalPaymentSelection(props),
         { initialProps: defaultProps }
       );
 
-      const newCurrentPageRows = [
-        { uniqueId: 'iud4-0', iud: 'IUD4' },
-        { uniqueId: 'iud5-0', iud: 'IUD5' }
-      ];
+      const newCurrentPageRows = [{ iud: 'IUD4' }, { iud: 'IUD5' }];
 
       const newProps = {
         ...defaultProps,
@@ -94,49 +89,46 @@ describe('useGlobalPaymentSelection', () => {
       rerender(newProps);
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud4-0'], true);
+        result.current.toggleIudSelection(['IUD4'], true);
       });
 
-      expect(result.current.isUniqueIdSelected('iud4-0')).toBe(true);
+      expect(result.current.isIudSelected('IUD4')).toBe(true);
     });
   });
 
-  describe('toggleUniqueIdSelection', () => {
-    it('should select uniqueIds when selected is true', () => {
+  describe('toggleIudSelection', () => {
+    it('should select IUDs when selected is true', () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0', 'iud2-0'], true);
+        result.current.toggleIudSelection(['IUD1', 'IUD2'], true);
       });
 
-      expect(result.current.isUniqueIdSelected('iud1-0')).toBe(true);
-      expect(result.current.isUniqueIdSelected('iud2-0')).toBe(true);
+      expect(result.current.isIudSelected('IUD1')).toBe(true);
+      expect(result.current.isIudSelected('IUD2')).toBe(true);
       expect(result.current.totalSelected).toBe(2);
     });
 
-    it('should deselect uniqueIds when selected is false', () => {
+    it('should deselect IUDs when selected is false', () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(
-          ['iud1-0', 'iud2-0', 'iud3-0'],
-          true
-        );
+        result.current.toggleIudSelection(['IUD1', 'IUD2', 'IUD3'], true);
       });
 
       expect(result.current.totalSelected).toBe(3);
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0', 'iud3-0'], false);
+        result.current.toggleIudSelection(['IUD1', 'IUD3'], false);
       });
 
-      expect(result.current.isUniqueIdSelected('iud1-0')).toBe(false);
-      expect(result.current.isUniqueIdSelected('iud2-0')).toBe(true);
-      expect(result.current.isUniqueIdSelected('iud3-0')).toBe(false);
+      expect(result.current.isIudSelected('IUD1')).toBe(false);
+      expect(result.current.isIudSelected('IUD2')).toBe(true);
+      expect(result.current.isIudSelected('IUD3')).toBe(false);
       expect(result.current.totalSelected).toBe(1);
     });
 
@@ -146,7 +138,7 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0', 'iud2-0'], true);
+        result.current.toggleIudSelection(['IUD1', 'IUD2'], true);
       });
 
       await waitForAsyncOperation();
@@ -157,27 +149,13 @@ describe('useGlobalPaymentSelection', () => {
       ]);
     });
 
-    it('should handle multiple uniqueIds for same IUD correctly in form sync', async () => {
+    it('should handle empty IUDs array', () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0', 'iud1-1'], true);
-      });
-
-      await waitForAsyncOperation();
-
-      expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', ['IUD1']);
-    });
-
-    it('should handle empty uniqueIds array', () => {
-      const { result } = renderHook(() =>
-        useGlobalPaymentSelection(defaultProps)
-      );
-
-      act(() => {
-        result.current.toggleUniqueIdSelection([], true);
+        result.current.toggleIudSelection([], true);
       });
 
       expect(result.current.totalSelected).toBe(0);
@@ -189,10 +167,7 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(
-          ['iud3-0', 'iud1-0', 'iud2-0'],
-          true
-        );
+        result.current.toggleIudSelection(['IUD3', 'IUD1', 'IUD2'], true);
       });
 
       await waitForAsyncOperation();
@@ -212,10 +187,7 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(
-          ['iud1-0', 'iud2-0', 'iud3-0'],
-          true
-        );
+        result.current.toggleIudSelection(['IUD1', 'IUD2', 'IUD3'], true);
       });
 
       expect(result.current.totalSelected).toBe(3);
@@ -224,11 +196,11 @@ describe('useGlobalPaymentSelection', () => {
         result.current.clearAllSelections();
       });
 
-      expect(result.current.globalSelectedUniqueIds.size).toBe(0);
+      expect(result.current.globalSelectedIuds.size).toBe(0);
       expect(result.current.totalSelected).toBe(0);
-      expect(result.current.isUniqueIdSelected('iud1-0')).toBe(false);
-      expect(result.current.isUniqueIdSelected('iud2-0')).toBe(false);
-      expect(result.current.isUniqueIdSelected('iud3-0')).toBe(false);
+      expect(result.current.isIudSelected('IUD1')).toBe(false);
+      expect(result.current.isIudSelected('IUD2')).toBe(false);
+      expect(result.current.isIudSelected('IUD3')).toBe(false);
       expect(mockSetValue).toHaveBeenCalledWith('selectedPayments', []);
     });
 
@@ -246,54 +218,42 @@ describe('useGlobalPaymentSelection', () => {
     });
   });
 
-  describe('isUniqueIdSelected', () => {
-    it('should return true for selected uniqueIds', () => {
+  describe('isIudSelected', () => {
+    it('should return true for selected IUDs', () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0', 'iud2-0'], true);
+        result.current.toggleIudSelection(['IUD1', 'IUD2'], true);
       });
 
-      expect(result.current.isUniqueIdSelected('iud1-0')).toBe(true);
-      expect(result.current.isUniqueIdSelected('iud2-0')).toBe(true);
-      expect(result.current.isUniqueIdSelected('iud3-0')).toBe(false);
+      expect(result.current.isIudSelected('IUD1')).toBe(true);
+      expect(result.current.isIudSelected('IUD2')).toBe(true);
+      expect(result.current.isIudSelected('IUD3')).toBe(false);
     });
 
-    it('should return false for non-existent uniqueIds', () => {
+    it('should return false for non-existent IUDs', () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
 
-      expect(result.current.isUniqueIdSelected('non-existent')).toBe(false);
+      expect(result.current.isIudSelected('NON_EXISTENT')).toBe(false);
     });
   });
 
   describe('isSelected (backward compatibility)', () => {
-    it('should return true if any uniqueId with the IUD is selected', () => {
+    it('should return true if the IUD is selected', () => {
       const { result } = renderHook(() =>
         useGlobalPaymentSelection(defaultProps)
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0'], true);
+        result.current.toggleIudSelection(['IUD1'], true);
       });
 
       expect(result.current.isSelected('IUD1')).toBe(true);
       expect(result.current.isSelected('IUD2')).toBe(false);
-    });
-
-    it('should return true if all uniqueIds with the IUD are selected', () => {
-      const { result } = renderHook(() =>
-        useGlobalPaymentSelection(defaultProps)
-      );
-
-      act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0', 'iud1-1'], true);
-      });
-
-      expect(result.current.isSelected('IUD1')).toBe(true);
     });
 
     it('should return false for non-existent IUDs', () => {
@@ -326,15 +286,12 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0', 'iud2-0'], true);
+        result.current.toggleIudSelection(['IUD1', 'IUD2'], true);
       });
 
       expect(result.current.totalSelected).toBe(2);
 
-      const newPageRows = [
-        { uniqueId: 'iud4-0', iud: 'IUD4' },
-        { uniqueId: 'iud5-0', iud: 'IUD5' }
-      ];
+      const newPageRows = [{ iud: 'IUD4' }, { iud: 'IUD5' }];
 
       const newProps = {
         ...defaultProps,
@@ -344,24 +301,23 @@ describe('useGlobalPaymentSelection', () => {
       rerender(newProps);
 
       expect(result.current.totalSelected).toBe(2);
-      expect(result.current.isUniqueIdSelected('iud1-0')).toBe(true);
-      expect(result.current.isUniqueIdSelected('iud2-0')).toBe(true);
-
-      expect(result.current.isSelected('IUD1')).toBe(false);
+      expect(result.current.isIudSelected('IUD1')).toBe(true);
+      expect(result.current.isIudSelected('IUD2')).toBe(true);
+      expect(result.current.isSelected('IUD1')).toBe(true);
       expect(result.current.isSelected('IUD4')).toBe(false);
     });
 
-    it('should handle selections on new page with global mapping', () => {
+    it('should handle selections on new page', () => {
       const { result, rerender } = renderHook(
         (props) => useGlobalPaymentSelection(props),
         { initialProps: defaultProps }
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0'], true);
+        result.current.toggleIudSelection(['IUD1'], true);
       });
 
-      const newPageRows = [{ uniqueId: 'iud4-0', iud: 'IUD4' }];
+      const newPageRows = [{ iud: 'IUD4' }];
 
       rerender({
         ...defaultProps,
@@ -369,12 +325,12 @@ describe('useGlobalPaymentSelection', () => {
       });
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud4-0'], true);
+        result.current.toggleIudSelection(['IUD4'], true);
       });
 
       expect(result.current.totalSelected).toBe(2);
-      expect(result.current.isUniqueIdSelected('iud1-0')).toBe(true);
-      expect(result.current.isUniqueIdSelected('iud4-0')).toBe(true);
+      expect(result.current.isIudSelected('IUD1')).toBe(true);
+      expect(result.current.isIudSelected('IUD4')).toBe(true);
     });
   });
 
@@ -391,7 +347,7 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       expect(result.current.totalSelected).toBe(0);
-      expect(result.current.isUniqueIdSelected('any')).toBe(false);
+      expect(result.current.isIudSelected('any')).toBe(false);
       expect(result.current.isSelected('any')).toBe(false);
     });
 
@@ -399,11 +355,10 @@ describe('useGlobalPaymentSelection', () => {
       const propsWithIncompleteRows = {
         ...defaultProps,
         currentPageRows: [
-          { uniqueId: 'iud1-0', iud: 'IUD1' },
-          { uniqueId: '', iud: 'IUD2' },
-          { uniqueId: 'iud3-0', iud: '' },
-          { uniqueId: '', iud: '' }
-        ]
+          { iud: 'IUD1' },
+          { iud: 'IUD2' },
+          { iud: '' }
+        ] as Array<{ iud: string; assessmentDetailId?: number }>
       };
 
       const { result } = renderHook(() =>
@@ -411,10 +366,10 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0'], true);
+        result.current.toggleIudSelection(['IUD1'], true);
       });
 
-      expect(result.current.isUniqueIdSelected('iud1-0')).toBe(true);
+      expect(result.current.isIudSelected('IUD1')).toBe(true);
       expect(result.current.totalSelected).toBe(1);
     });
 
@@ -424,18 +379,17 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0'], true);
-        result.current.toggleUniqueIdSelection(['iud1-0'], false);
-        result.current.toggleUniqueIdSelection(['iud1-0'], true);
+        result.current.toggleIudSelection(['IUD1'], true);
+        result.current.toggleIudSelection(['IUD1'], false);
+        result.current.toggleIudSelection(['IUD1'], true);
       });
 
-      expect(result.current.isUniqueIdSelected('iud1-0')).toBe(true);
+      expect(result.current.isIudSelected('IUD1')).toBe(true);
       expect(result.current.totalSelected).toBe(1);
     });
 
     it('should handle large number of selections', () => {
       const manyRows = Array.from({ length: 100 }, (_, i) => ({
-        uniqueId: `iud${i}-0`,
         iud: `IUD${i}`
       }));
 
@@ -448,10 +402,10 @@ describe('useGlobalPaymentSelection', () => {
         useGlobalPaymentSelection(propsWithManyRows)
       );
 
-      const allUniqueIds = manyRows.map((row) => row.uniqueId);
+      const allIuds = manyRows.map((row) => row.iud);
 
       act(() => {
-        result.current.toggleUniqueIdSelection(allUniqueIds, true);
+        result.current.toggleIudSelection(allIuds, true);
       });
 
       expect(result.current.totalSelected).toBe(100);
@@ -467,9 +421,9 @@ describe('useGlobalPaymentSelection', () => {
   describe('Remove mode functionality', () => {
     it('should handle isRemoveMode with assessmentDetailId mapping', () => {
       const currentPageRowsWithAssessmentDetailId = [
-        { uniqueId: 'iud1-0', iud: 'IUD1', assessmentDetailId: 101 },
-        { uniqueId: 'iud2-0', iud: 'IUD2', assessmentDetailId: 102 },
-        { uniqueId: 'iud3-0', iud: 'IUD3', assessmentDetailId: 103 }
+        { iud: 'IUD1', assessmentDetailId: 101 },
+        { iud: 'IUD2', assessmentDetailId: 102 },
+        { iud: 'IUD3', assessmentDetailId: 103 }
       ];
 
       const removeModeProps: UseGlobalPaymentSelectionParams = {
@@ -484,26 +438,23 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0', 'iud2-0'], true);
+        result.current.toggleIudSelection(['IUD1', 'IUD2'], true);
       });
 
       expect(result.current.totalSelected).toBe(2);
     });
 
-    it('should handle fallback IUD lookup when mapping is incomplete', async () => {
+    it('should handle cross-page IUD selection correctly', async () => {
       const { result, rerender } = renderHook(
         (props) => useGlobalPaymentSelection(props),
         { initialProps: defaultProps }
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0'], true);
+        result.current.toggleIudSelection(['IUD1'], true);
       });
 
-      const newPageRows = [
-        { uniqueId: 'iud1-0', iud: 'IUD1' },
-        { uniqueId: 'iud4-0', iud: 'IUD4' }
-      ];
+      const newPageRows = [{ iud: 'IUD1' }, { iud: 'IUD4' }];
 
       rerender({
         ...defaultProps,
@@ -511,7 +462,7 @@ describe('useGlobalPaymentSelection', () => {
       });
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud4-0'], true);
+        result.current.toggleIudSelection(['IUD4'], true);
       });
 
       await waitForAsyncOperation();
@@ -523,10 +474,10 @@ describe('useGlobalPaymentSelection', () => {
       ]);
     });
 
-    it('should handle fallback assessmentDetailId lookup in remove mode', async () => {
+    it('should handle assessmentDetailId mapping in remove mode', async () => {
       const currentPageRowsWithAssessmentDetailId = [
-        { uniqueId: 'iud1-0', iud: 'IUD1', assessmentDetailId: 101 },
-        { uniqueId: 'iud2-0', iud: 'IUD2', assessmentDetailId: 102 }
+        { iud: 'IUD1', assessmentDetailId: 101 },
+        { iud: 'IUD2', assessmentDetailId: 102 }
       ];
 
       const removeModeProps: UseGlobalPaymentSelectionParams = {
@@ -542,12 +493,12 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0'], true);
+        result.current.toggleIudSelection(['IUD1'], true);
       });
 
       const newPageRows = [
-        { uniqueId: 'iud1-0', iud: 'IUD1', assessmentDetailId: 101 },
-        { uniqueId: 'iud3-0', iud: 'IUD3', assessmentDetailId: 103 }
+        { iud: 'IUD1', assessmentDetailId: 101 },
+        { iud: 'IUD3', assessmentDetailId: 103 }
       ];
 
       rerender({
@@ -556,7 +507,7 @@ describe('useGlobalPaymentSelection', () => {
       });
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud3-0'], true);
+        result.current.toggleIudSelection(['IUD3'], true);
       });
 
       await waitForAsyncOperation();
@@ -576,10 +527,7 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(
-          ['iud3-0', 'iud1-0', 'iud1-1', 'iud2-0'],
-          true
-        );
+        result.current.toggleIudSelection(['IUD3', 'IUD1', 'IUD2'], true);
       });
 
       await waitForAsyncOperation();
@@ -597,20 +545,16 @@ describe('useGlobalPaymentSelection', () => {
       );
 
       act(() => {
-        result.current.toggleUniqueIdSelection(
-          ['iud1-0', 'iud1-1', 'iud2-0'],
-          true
-        );
+        result.current.toggleIudSelection(['IUD1', 'IUD2'], true);
       });
 
       act(() => {
-        result.current.toggleUniqueIdSelection(['iud1-0'], false);
+        result.current.toggleIudSelection(['IUD1'], false);
       });
 
       await waitForAsyncOperation();
 
       expect(mockSetValue).toHaveBeenLastCalledWith('selectedPayments', [
-        'IUD1',
         'IUD2'
       ]);
     });

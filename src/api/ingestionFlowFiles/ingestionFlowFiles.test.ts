@@ -4,13 +4,14 @@ import {
   getIngestionFlowFiles,
   getIngestionFlowFile,
   uploadIngestionFlowFile
-} from './index';
+} from './';
 import {
   IngestionFlowFileType,
   UploadIngestionFlowFileResponseDTO
 } from '../../../generated/fileshare/fileshareClient';
+import { IngestionFlowFileTypeEnum } from '../../../generated/data-contracts';
 import { AxiosResponse } from 'axios';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import * as formatters from '../../utils/formatters';
 
 vi.mock('../../utils', () => ({
@@ -50,8 +51,8 @@ const mockDownloadIngestionFlowFile = vi.mocked(
   utils.fileshareClient.organization.downloadIngestionFlowFile
 );
 
-const mockDateCode = vi.mocked(utils.formatters.date.code);
 const mockExtractFilename = vi.mocked(formatters.extractFilename);
+const mockDateCode = vi.mocked(utils.formatters.date.code);
 
 describe('getIngestionFlowFiles', () => {
   it('fetches and returns ingestion flow files data', async () => {
@@ -72,9 +73,11 @@ describe('getIngestionFlowFiles', () => {
 
     const organizationId = 123;
     const filters = {
-      ingestionFlowFileTypes: [IngestionFlowFileType.TREASURY_CSV],
+      ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.TREASURY_CSV],
       creationDateFrom: new Date('2023-01-01'),
-      creationDateTo: new Date('2023-01-31')
+      creationDateTo: new Date('2023-01-31'),
+      page: 0,
+      size: 10
     };
     const pagination = { page: 0, size: 10 };
     const sort = ['creationDate,desc'];
@@ -100,7 +103,7 @@ describe('getIngestionFlowFiles', () => {
     expect(mockGetIngestionFlowFiles).toHaveBeenCalledWith(
       organizationId,
       {
-        ingestionFlowFileTypes: [IngestionFlowFileType.TREASURY_CSV],
+        ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.TREASURY_CSV],
         page: 0,
         size: 10,
         sort: ['creationDate,desc'],
