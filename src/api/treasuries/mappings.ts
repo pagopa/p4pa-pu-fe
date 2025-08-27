@@ -1,5 +1,4 @@
 import { FilterValues } from '../../models/Filters';
-import { euroToCents } from '../../utils/formatters';
 import utils from '../../utils';
 
 export type TreasuriesFilteredRequest = {
