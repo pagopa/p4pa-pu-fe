@@ -151,7 +151,7 @@ const DetailContainer = ({
                       key={index}
                       direction={section.inline ? 'row' : 'column'}
                     >
-                      <Grid
+                      {item.label && <Grid
                         item
                         lg={section.inline ? 6 : 12}
                         md={section.inline ? 6 : 12}
@@ -162,7 +162,7 @@ const DetailContainer = ({
                         >
                           {item.label}
                         </Typography>
-                      </Grid>
+                      </Grid> }
                       <Grid
                         item
                         lg={section.inline ? 6 : 12}

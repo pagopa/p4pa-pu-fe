@@ -17,6 +17,7 @@ import OrgSilServiceDetailPage from './OrgSilServiceDetailPage/OrgSilServiceDeta
 import ClientSilPage from './ClientSilPage/ClientSilPage';
 import ClientSilCreate from './ClientSilCreate/ClientSilCreate';
 import { OrgSilServiceCreate } from './OrgSilServiceCreate/OrgSilServiceCreate';
+import ClientSilDetail from './ClientSilDetail';
 
 const deployPath = config.deployPath;
 
@@ -185,7 +186,19 @@ export const backofficeRoutes = [
                 visible: false
               }
             }
-          }
+          },
+                    {
+            id: 'CLIENT_SIL_DETAIL',
+            element: <ClientSilDetail />,
+            path: ':clientId',
+            handle: {
+              hideBreadcrumbs: true,
+              backButton: true,
+              sidebar: {
+                visible: false
+              }
+            }
+          },
         ]
       }
     ]

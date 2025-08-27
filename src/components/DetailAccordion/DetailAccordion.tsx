@@ -15,19 +15,22 @@ type Props = {
   title: string;
   description: string;
   sections: DetailSectionProps['sections'];
+  defaultExpanded?: boolean;
 };
 
 export const DetailAccordion = ({
   idTitle,
   title,
   description,
-  sections
+  sections,
+  defaultExpanded= false
 }: Props) => {
   const theme = useTheme();
 
   return (
     <Accordion
       disableGutters
+      defaultExpanded={defaultExpanded}
       sx={{
         py: 3,
         px: 2,
@@ -36,7 +39,7 @@ export const DetailAccordion = ({
       }}
     >
       <AccordionSummary expandIcon={<KeyboardArrowDown color="primary" />}>
-        <Stack direction="row" alignItems="center" spacing={1} ml={2}>
+        <Stack direction="row" alignItems="center" spacing={1} ml={idTitle ? 2 : 0}>
           <Typography variant="caption-semibold">{idTitle}</Typography>
           <Typography variant="h6">{title}</Typography>
         </Stack>

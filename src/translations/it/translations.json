@@ -489,6 +489,51 @@
       "missingRequiredFields": "Verifica di aver compilato i filtri obbligatori"
     }
   },
+  "clientSil": {
+    "addNew": "Aggiungi nuovo",
+    "filters": {
+      "clientName": "Nome Client SIL",
+      "clientNamePlaceholder": "Inserisci il nome del client",
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "Inserisci l'ID del client"
+    },
+    "table": {
+      "clientName": "Nome Client SIL",
+      "clientId": "Client ID"
+    },
+    "title": "Client SIL",
+    "description": "Gestisci i Client SIL dell'organizzazione",
+    "create": {
+      "title": "Aggiungi nuovo Client SIL",
+      "subtitle": "Il client ID e key secret saranno generati automaticamente dopo la creazione.",
+      "formLabel": "Form di creazione Client SIL",
+      "section": {
+        "description": {
+          "title": "Configurazione generale",
+          "subtitle": "Descrizione"
+        }
+      },
+      "success": {
+        "title": "Il SIL '{{clientName}}' è stato aggiunto!",
+        "description": "La trovi nella sezione Gestione SIL, dove puoi consultarlo in qualsiasi momento.",
+        "goToDetail": "Vedi dettaglio SIL"
+      },
+      "fields": {
+        "clientName": {
+          "label": "Nome Client SIL",
+          "placeholder": "Tassa seconde case",
+          "required": "Il nome del Client SIL è obbligatorio",
+          "maxLength": "Il nome non può superare i 100 caratteri",
+          "invalid": "Il nome del Client SIL può contenere solo caratteri alfanumerici ed i simboli - e _"
+        }
+      },
+      "error": {
+        "nameAlreadyExists": "Esiste già un Client SIL con questo nome",
+        "invalidData": "I dati inseriti non sono validi",
+        "generic": "Errore durante la creazione del Client SIL"
+      }
+    }
+  },
   "commons": {
     "404": "404: risorsa non disponibile",
     "info": "Informazioni",
@@ -666,6 +711,7 @@
     },
     "from": "Dal",
     "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
+    "key": "Chiave",
     "importFlow": "Importa flusso",
     "importFlowErrorMessage": "Non è stato possibile importare il flusso",
     "importFlows": "Importa flussi",
@@ -1581,86 +1627,6 @@
     "apiName": "Nome API",
     "addAPI": "Aggiungi API"
   },
-  "orgSilServiceDetail": {
-    "description": "Ecco i dettagli dell'API.",
-    "notFound": "Servizio non trovato",
-    "noAuthConfigured": "Nessuna configurazione di autenticazione",
-    "sections": {
-      "generalConfig": {
-        "title": "Configurazione generale"
-      },
-      "authConfig": {
-        "title": "Modalità di autenticazione"
-      }
-    },
-    "fields": {
-      "applicationName": "Nome API",
-      "serviceUrl": "Service URL",
-      "serviceType": "Tipo Servizio",
-      "apiLegacy": "API Legacy",
-      "authConfig": "Auth Config",
-      "authUrl": "Auth URL",
-      "username": "Username",
-      "kid": "KID",
-      "subject": "Subject",
-      "issuer": "Issuer",
-      "algorithm": "Algorithm",
-      "signingKey": "Signing Key"
-    },
-    "serviceTypes": {
-      "paymentNotification": "Notifica Pagamenti",
-      "amountActualization": "Attualizzazione Importo"
-    },
-    "authTypes": {
-      "basicAuth": "Basic Auth",
-      "jwtAuth": "Legacy JWT"
-    }
-  },
-  "clientSil": {
-    "addNew": "Aggiungi nuovo",
-    "filters": {
-      "clientName": "Nome Client SIL",
-      "clientNamePlaceholder": "Inserisci il nome del client",
-      "clientId": "Client ID",
-      "clientIdPlaceholder": "Inserisci l'ID del client"
-    },
-    "table": {
-      "clientName": "Nome Client SIL",
-      "clientId": "Client ID"
-    },
-    "title": "Client SIL",
-    "description": "Gestisci i Client SIL dell'organizzazione",
-    "create": {
-      "title": "Aggiungi nuovo Client SIL",
-      "subtitle": "Il client ID e key secret saranno generati automaticamente dopo la creazione.",
-      "formLabel": "Form di creazione Client SIL",
-      "section": {
-        "description": {
-          "title": "Configurazione generale",
-          "subtitle": "Descrizione"
-        }
-      },
-      "success": {
-        "title": "Il SIL '{{clientName}}' è stato aggiunto!",
-        "description": "La trovi nella sezione Gestione SIL, dove puoi consultarlo in qualsiasi momento.",
-        "goToDetail": "Vedi dettaglio SIL"
-      },
-      "fields": {
-        "clientName": {
-          "label": "Nome Client SIL",
-          "placeholder": "Tassa seconde case",
-          "required": "Il nome del Client SIL è obbligatorio",
-          "maxLength": "Il nome non può superare i 100 caratteri",
-          "invalid": "Il nome del Client SIL può contenere solo caratteri alfanumerici ed i simboli - e _"
-        }
-      },
-      "error": {
-        "nameAlreadyExists": "Esiste già un Client SIL con questo nome",
-        "invalidData": "I dati inseriti non sono validi",
-        "generic": "Errore durante la creazione del Client SIL"
-      }
-    }
-  },
   "orgSilServiceCreate": {
     "actualization": "Attualizzazione importo",
     "paidNotificationOutcome": "Notifica Pagamenti",
@@ -1698,6 +1664,41 @@
       "requiredServiceType": "Il tipo di servizio è obbligatorio",
       "requiredLegacyType": "Seleziona un tipo di autenticazione legacy",
       "requiredField": "Campo obbligatorio"
+    }
+  },
+  "orgSilServiceDetail": {
+    "description": "Ecco i dettagli dell'API.",
+    "notFound": "Servizio non trovato",
+    "noAuthConfigured": "Nessuna configurazione di autenticazione",
+    "sections": {
+      "generalConfig": {
+        "title": "Configurazione generale"
+      },
+      "authConfig": {
+        "title": "Modalità di autenticazione"
+      }
+    },
+    "fields": {
+      "applicationName": "Nome API",
+      "serviceUrl": "Service URL",
+      "serviceType": "Tipo Servizio",
+      "apiLegacy": "API Legacy",
+      "authConfig": "Auth Config",
+      "authUrl": "Auth URL",
+      "username": "Username",
+      "kid": "KID",
+      "subject": "Subject",
+      "issuer": "Issuer",
+      "algorithm": "Algorithm",
+      "signingKey": "Signing Key"
+    },
+    "serviceTypes": {
+      "paymentNotification": "Notifica Pagamenti",
+      "amountActualization": "Attualizzazione Importo"
+    },
+    "authTypes": {
+      "basicAuth": "Basic Auth",
+      "jwtAuth": "Legacy JWT"
     }
   },
   "registry": {
