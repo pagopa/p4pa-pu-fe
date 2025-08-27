@@ -33,24 +33,59 @@ export const DebtPositionsPage = () => {
   const navigateToResults = useCallback(() => {
     if (!filters?.length || noFilterSetted(filters[activeTabIndex])) {
       setShowError(true);
-    } else {
-      setShowError(false);
+      return;
+    }
 
-      const tabFilters = filters[activeTabIndex];
-      const params = utils.URI.encode(tabFilters);
-      if (activeTabIndex === 0) {
-        navigate(`${PageRoutes.DEBT_POSITION_SEARCH_RESULTS}#${params}`, {
-          state: {
-            searchType: SearchType.IUV
+    setShowError(false);
+
+    const tabFilters = filters[activeTabIndex];
+
+    const cleanedFilters = Object.entries(tabFilters).reduce(
+      (acc, [key, value]) => {
+        if (key.endsWith('_fromError') || key.endsWith('_toError')) {
+          return acc;
+        }
+
+        if (
+          typeof value === 'object' &&
+          value !== null &&
+          'from' in value &&
+          'to' in value
+        ) {
+          const dateRange = value as { from?: Date | null; to?: Date | null };
+          if (dateRange.from && dateRange.to) {
+            acc[key] = value;
           }
-        });
-      } else {
-        navigate(`${PageRoutes.DEBT_POSITIONS_RESULTS}#${params}`, {
-          state: {
-            searchType: SearchType.DEBT_POSITION
+        } else if (value !== null && value !== undefined && value !== '') {
+          if (typeof value === 'string') {
+            const trimmedValue = value.trim();
+            if (trimmedValue) {
+              acc[key] = trimmedValue;
+            }
+          } else {
+            acc[key] = value;
           }
-        });
-      }
+        }
+
+        return acc;
+      },
+      {} as BaseFilterValues
+    );
+
+    const params = utils.URI.encode(cleanedFilters);
+
+    if (activeTabIndex === 0) {
+      navigate(`${PageRoutes.DEBT_POSITION_SEARCH_RESULTS}#${params}`, {
+        state: {
+          searchType: SearchType.IUV
+        }
+      });
+    } else {
+      navigate(`${PageRoutes.DEBT_POSITIONS_RESULTS}#${params}`, {
+        state: {
+          searchType: SearchType.DEBT_POSITION
+        }
+      });
     }
   }, [activeTabIndex, filters, navigate]);
 
