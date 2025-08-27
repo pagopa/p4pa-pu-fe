@@ -64,8 +64,10 @@ export const date = {
    * // Represent 15 August 2025 at 13:00:
    * console.log(code(new Date('2025-08-15T13:00:00Z')))
    * // => '2025-08-15T15:00:00+02:00' */
-  code: (dateObj?: Date) =>
-    dateObj && formatInTimeZone(dateObj, date.TIME_ZONE, date.DATE_FORMAT),
+  code: (dateObj?: Date | null) =>
+    dateObj
+      ? formatInTimeZone(dateObj, date.TIME_ZONE, date.DATE_FORMAT)
+      : undefined,
   /** This method takes an string and convert to human redable date */
   decode: () => 'To be implemented',
   DATE_FORMAT: "yyyy-MM-dd'T'HH:mm:ssXXX",
