@@ -1,4 +1,4 @@
-import { Box, useTheme } from '@mui/material';
+import { Box, Chip, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useEffect } from 'react';
@@ -18,12 +18,14 @@ import { PageRoutes } from '../../../routes';
 type MyOrgProps = {
   codeFilter: string;
   descriptionFilter: string;
+  statusFilter: string;
   onSearch: (searchFn: () => void) => void;
 };
 
 export const MyOrg = ({
   codeFilter,
   descriptionFilter,
+  statusFilter,
   onSearch
 }: MyOrgProps) => {
   const theme = useTheme();
@@ -39,6 +41,7 @@ export const MyOrg = ({
     initialFilters: {
       code: codeFilter,
       description: descriptionFilter,
+      flagActive: statusFilter === 'true' ? true : false,
       page: 0,
       size: 10
     }
@@ -47,9 +50,10 @@ export const MyOrg = ({
   useEffect(() => {
     updateDraftFilters({
       code: codeFilter,
-      description: descriptionFilter
+      description: descriptionFilter,
+      flagActive: statusFilter === 'true' ? true : false
     });
-  }, [codeFilter, descriptionFilter, updateDraftFilters]);
+  }, [codeFilter, descriptionFilter, statusFilter, updateDraftFilters]);
 
   useEffect(() => {
     const filters: FilterParams = {
@@ -59,9 +63,10 @@ export const MyOrg = ({
 
     if (codeFilter) filters.code = codeFilter;
     if (descriptionFilter) filters.description = descriptionFilter;
+    if (statusFilter) filters.flagActive = statusFilter;
 
     mutate({ organizationId, filters });
-  }, [organizationId, codeFilter, descriptionFilter, mutate]);
+  }, [organizationId, codeFilter, descriptionFilter, statusFilter, mutate]);
 
   useEffect(() => {
     const performSearch = () => {
@@ -98,6 +103,29 @@ export const MyOrg = ({
       headerName: t('debtTypesCreated.myOrganizationDataGrid.enabledOperators'),
       flex: 1,
       minWidth: 150
+    },
+    {
+      field: 'flagActive',
+      headerName: t('commons.state'),
+      flex: 1,
+      renderCell: (
+        params: GridRenderCellParams<DebtPositionTypeOrgWithCount>
+      ) => (
+        <Chip
+          label={
+            params.value
+              ? t('commons.status.ACTIVE')
+              : t('commons.status.DISABLED')
+          }
+          title={
+            params.value
+              ? t('commons.status.ACTIVE')
+              : t('commons.status.DISABLED')
+          }
+          color={params.value ? 'success' : 'default'}
+          size="small"
+        />
+      )
     },
     {
       field: 'actions',

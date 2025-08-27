@@ -1,6 +1,6 @@
-import { format } from 'date-fns/format';
 import { FilterValues } from '../../models/Filters';
 import { euroToCents } from '../../utils/formatters';
+import utils from '../../utils';
 
 export type TreasuriesFilteredRequest = {
   filters: FilterValues;
@@ -14,10 +14,10 @@ export const buildQueryParams = ({
   sort
 }: TreasuriesFilteredRequest) => ({
   ...(filters.ACCOUNTING_DATE_FROM && {
-    billDateFrom: format(filters.ACCOUNTING_DATE_FROM, 'yyyy-MM-dd')
+    billDateFrom: utils.formatters.date.code(filters.ACCOUNTING_DATE_FROM)
   }),
   ...(filters.ACCOUNTING_DATE_TO && {
-    billDateTo: format(filters.ACCOUNTING_DATE_TO, 'yyyy-MM-dd')
+    billDateTo: utils.formatters.date.code(filters.ACCOUNTING_DATE_TO)
   }),
   ...(filters.AMOUNT && {
     billAmountCents: euroToCents(filters.AMOUNT)
@@ -32,7 +32,7 @@ export const buildQueryParams = ({
     documentCode: filters.DOCUMENT_CODE
   }),
   ...(filters.DOCUMENT_CODE_FROM && {
-    documentYear: format(filters.DOCUMENT_CODE_FROM, 'yyyy-MM-dd')
+    documentYear: utils.formatters.date.code(filters.DOCUMENT_CODE_FROM)
   }),
   ...(filters.IUV && { iuv: filters.IUV }),
   ...(filters.PAYER && {
@@ -42,13 +42,13 @@ export const buildQueryParams = ({
     provisionalCode: filters.TEMPORARY_CODE
   }),
   ...(filters?.TEMPORARY_CODE_FROM && {
-    provisionalAe: format(filters.TEMPORARY_CODE_FROM, 'yyyy-MM-dd')
+    provisionalAe: utils.formatters.date.code(filters.TEMPORARY_CODE_FROM)
   }),
   ...(filters.VALUE_DATE_FROM && {
-    regionValueDateFrom: format(filters.VALUE_DATE_FROM, 'yyyy-MM-dd')
+    regionValueDateFrom: utils.formatters.date.code(filters.VALUE_DATE_FROM)
   }),
   ...(filters.VALUE_DATE_TO && {
-    regionValueDateTo: format(filters.VALUE_DATE_TO, 'yyyy-MM-dd')
+    regionValueDateTo: utils.formatters.date.code(filters.VALUE_DATE_TO)
   }),
   ...(filters.REPORT_ID && {
     iuf: filters.REPORT_ID

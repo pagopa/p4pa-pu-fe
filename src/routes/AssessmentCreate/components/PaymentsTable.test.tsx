@@ -80,7 +80,7 @@ describe('PaymentsTable', () => {
     isLoading: false,
     disabled: false,
     autoLoadOnMount: true,
-    selectedUniqueIds: []
+    selectedIuds: []
   };
 
   beforeEach(() => {
@@ -157,7 +157,7 @@ describe('PaymentsTable', () => {
     expect(screen.getByText('02/01/2023')).toBeInTheDocument();
   });
 
-  it('handles row selection and calls onSelectionChange with uniqueIds', async () => {
+  it('handles row selection and calls onSelectionChange with iuds', async () => {
     render(<PaymentsTable {...baseProps} />);
 
     const checkboxes = screen.getAllByRole('checkbox');
@@ -172,10 +172,8 @@ describe('PaymentsTable', () => {
     });
   });
 
-  it('shows rows as selected based on selectedUniqueIds prop', () => {
-    render(
-      <PaymentsTable {...baseProps} selectedUniqueIds={['test-iud-1-0']} />
-    );
+  it('shows rows as selected based on selectedIuds prop', () => {
+    render(<PaymentsTable {...baseProps} selectedIuds={['test-iud-1']} />);
 
     const checkboxes = screen.getAllByRole('checkbox');
     expect(checkboxes[1]).toBeChecked();

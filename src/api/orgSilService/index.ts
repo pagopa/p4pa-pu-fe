@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import {
@@ -23,6 +23,26 @@ const getOrgSilServices = ({ organizationId }: { organizationId: number }) =>
     }
   });
 
+const getOrgSilServiceById = ({
+  organizationId,
+  orgSilServiceId
+}: {
+  organizationId: number;
+  orgSilServiceId: number;
+}) =>
+  useQuery({
+    queryKey: ['orgSilService', organizationId, orgSilServiceId],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.bff.getOrgSilServiceDetails(
+        organizationId,
+        orgSilServiceId
+      );
+
+      parseAndLog(orgSilServiceDecryptedDTOSchema, data);
+      return { response: data };
+    }
+  });
+
 const createOrgSilService = ({ organizationId }: { organizationId: number }) =>
   useMutation({
     mutationKey: ['createOrgSilService', organizationId],
@@ -39,5 +59,6 @@ const createOrgSilService = ({ organizationId }: { organizationId: number }) =>
 
 export default {
   getOrgSilServices,
+  getOrgSilServiceById,
   createOrgSilService
 };

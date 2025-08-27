@@ -10,6 +10,7 @@ import roles from './roles';
 import filtersValidation from './filtersValidation';
 import dialog from './dialog';
 import URI from './URI';
+import * as formatters from './formatters';
 
 export default {
   apiClient: new Api({
@@ -30,5 +31,6 @@ export default {
   dialog,
   URI,
   roles,
-  filtersValidation
+  filtersValidation,
+  formatters
 };

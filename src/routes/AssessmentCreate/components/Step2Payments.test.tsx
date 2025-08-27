@@ -26,10 +26,11 @@ const mockPaymentsState = {
 
 const mockGlobalSelection = {
   totalSelected: 0,
-  globalSelectedUniqueIds: new Set<string>(),
+  globalSelectedIuds: new Set<string>(),
   clearAllSelections: vi.fn(),
-  toggleUniqueIdSelection: vi.fn(),
-  isUniqueIdSelected: vi.fn().mockReturnValue(false)
+  toggleIudSelection: vi.fn(),
+  isIudSelected: vi.fn().mockReturnValue(false),
+  isSelected: vi.fn().mockReturnValue(false)
 };
 
 const mockPaidInstallments = {
@@ -93,7 +94,7 @@ vi.mock('./PaymentsTable', () => ({
     onSelectionChange,
     onFiltersApplied,
     onFilterValidationError,
-    selectedUniqueIds,
+    selectedIuds,
     'data-testid': testId
   }: {
     onSelectionChange?: (selectedIds: Array<string>) => void;
@@ -103,13 +104,13 @@ vi.mock('./PaymentsTable', () => ({
       sortParams?: Array<string>
     ) => void;
     onFilterValidationError?: (hasError: boolean) => void;
-    selectedUniqueIds?: Array<string>;
+    selectedIuds?: Array<string>;
     'data-testid'?: string;
   }) => (
     <div data-testid={testId || 'payments-table'}>
       <button
         data-testid="mock-select-payment"
-        onClick={() => onSelectionChange?.(['test-unique-id-1'])}
+        onClick={() => onSelectionChange?.(['test-iud-1'])}
       >
         Seleziona pagamento
       </button>
@@ -131,9 +132,7 @@ vi.mock('./PaymentsTable', () => ({
       >
         Errore filtri
       </button>
-      <div data-testid="selected-unique-ids">
-        {selectedUniqueIds?.join(',')}
-      </div>
+      <div data-testid="selected-iuds">{selectedIuds?.join(',')}</div>
     </div>
   )
 }));
@@ -261,7 +260,7 @@ describe('Step2Payments', () => {
     };
 
     mockGlobalSelection.totalSelected = 0;
-    mockGlobalSelection.globalSelectedUniqueIds = new Set();
+    mockGlobalSelection.globalSelectedIuds = new Set();
 
     mockPaidInstallments.isError = false;
     mockPaidInstallments.error = null;
@@ -608,7 +607,7 @@ describe('Step2Payments', () => {
       fireEvent.click(selectButton);
 
       await waitFor(() => {
-        expect(mockGlobalSelection.toggleUniqueIdSelection).toHaveBeenCalled();
+        expect(mockGlobalSelection.toggleIudSelection).toHaveBeenCalled();
       });
     });
 
@@ -631,7 +630,7 @@ describe('Step2Payments', () => {
       } as PagedPaidInstallmentsDTO;
 
       // Mock global selection to simulate existing selections
-      mockGlobalSelection.globalSelectedUniqueIds = new Set(['test-iud-1-0']);
+      mockGlobalSelection.globalSelectedIuds = new Set(['test-iud-1-0']);
 
       renderWithForm(<Step2Payments />, { addPaymentsToAssessment: true });
 
@@ -663,7 +662,7 @@ describe('Step2Payments', () => {
       fireEvent.click(selectButton);
 
       await waitFor(() => {
-        expect(mockGlobalSelection.toggleUniqueIdSelection).toHaveBeenCalled();
+        expect(mockGlobalSelection.toggleIudSelection).toHaveBeenCalled();
       });
     });
 
@@ -942,14 +941,14 @@ describe('Step2Payments', () => {
       } as PagedPaidInstallmentsDTO;
 
       // Mock that this unique ID is selected
-      mockGlobalSelection.isUniqueIdSelected = vi.fn().mockReturnValue(true);
+      mockGlobalSelection.isIudSelected = vi.fn().mockReturnValue(true);
 
       renderWithForm(<Step2Payments />, { addPaymentsToAssessment: true });
 
       expect(screen.getByTestId('payments-table')).toBeInTheDocument();
-      // The selected unique IDs should be passed to the table
-      const selectedUniqueIds = screen.getByTestId('selected-unique-ids');
-      expect(selectedUniqueIds).toBeInTheDocument();
+      // The selected IUDs should be passed to the table
+      const selectedIuds = screen.getByTestId('selected-iuds');
+      expect(selectedIuds).toBeInTheDocument();
     });
 
     it('should handle empty content with proper unique IDs', () => {
@@ -1037,7 +1036,7 @@ describe('Step2Payments', () => {
       } as PagedPaidInstallmentsDTO;
 
       // Mock that no unique IDs are selected initially
-      mockGlobalSelection.isUniqueIdSelected = vi.fn().mockReturnValue(false);
+      mockGlobalSelection.isIudSelected = vi.fn().mockReturnValue(false);
 
       renderWithForm(<Step2Payments />, { addPaymentsToAssessment: true });
 
@@ -1072,11 +1071,9 @@ describe('Step2Payments', () => {
 
       // Mock global selection: 3 total selected, but only some on current page
       mockGlobalSelection.totalSelected = 3;
-      mockGlobalSelection.isUniqueIdSelected = vi
-        .fn()
-        .mockImplementation((id) => {
-          return id === 'current-page-iud-0'; // Only first item selected on current page
-        });
+      mockGlobalSelection.isIudSelected = vi.fn().mockImplementation((id) => {
+        return id === 'current-page-iud'; // Only first item selected on current page
+      });
 
       renderWithForm(<Step2Payments />, { addPaymentsToAssessment: true });
 
