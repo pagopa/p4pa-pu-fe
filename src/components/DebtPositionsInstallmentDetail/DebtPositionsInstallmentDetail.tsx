@@ -248,7 +248,8 @@ export const DebtPositionsInstallmentDetail = () => {
             variant: 'text',
             onActionClick: handleTimelineOpen
           },
-          ...(statusInstallment !== InstallmentStatus.DRAFT
+          ...(statusInstallment !== InstallmentStatus.DRAFT &&
+          statusInstallment !== InstallmentStatus.CANCELLED
             ? [
                 {
                   icon: <Download />,
