@@ -170,7 +170,7 @@ export const MyOrg = () => {
         items={items}
         values={filters}
         onChange={(field, value) => setFilters({ ...filters, [field]: value })}
-        sx={{ py: 24 }}
+        sx={{ py: 3 }}
       />
       <DataGridContainer>
         <CustomDataGrid
