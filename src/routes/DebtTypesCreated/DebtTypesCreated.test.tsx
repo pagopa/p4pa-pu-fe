@@ -55,6 +55,7 @@ vi.mock('../../utils', async () => {
   return {
     ...actual,
     default: {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ...(actual as any).default,
       URI: {
         decode: vi.fn(() => ({}))
