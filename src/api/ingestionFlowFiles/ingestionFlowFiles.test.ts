@@ -2,22 +2,34 @@ import utils from '../../utils';
 import { act, renderHook } from '../../__tests__/renderers';
 import {
   getIngestionFlowFile,
+  getIngestionFlowFiles,
   uploadIngestionFlowFile
-} from '../ingestionFlowFiles';
+} from './';
 import {
   IngestionFlowFileType,
   UploadIngestionFlowFileResponseDTO
 } from '../../../generated/fileshare/fileshareClient';
+import { IngestionFlowFileTypeEnum } from '../../../generated/data-contracts';
 import { AxiosResponse } from 'axios';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import * as formatters from '../../utils/formatters';
 
 vi.mock('../../utils', () => ({
   default: {
+    apiClient: {
+      bff: {
+        getIngestionFlowFiles: vi.fn()
+      }
+    },
     fileshareClient: {
       organization: {
         uploadIngestionFlowFile: vi.fn(),
         downloadIngestionFlowFile: vi.fn()
+      }
+    },
+    formatters: {
+      date: {
+        code: vi.fn()
       }
     }
   }
@@ -26,6 +38,10 @@ vi.mock('../../utils', () => ({
 vi.mock('../../utils/formatters', () => ({
   extractFilename: vi.fn()
 }));
+
+const mockGetIngestionFlowFiles = vi.mocked(
+  utils.apiClient.bff.getIngestionFlowFiles
+);
 
 const mockUploadIngestionFlowFile = vi.mocked(
   utils.fileshareClient.organization.uploadIngestionFlowFile
@@ -36,6 +52,44 @@ const mockDownloadIngestionFlowFile = vi.mocked(
 );
 
 const mockExtractFilename = vi.mocked(formatters.extractFilename);
+const mockDateCode = vi.mocked(utils.formatters.date.code);
+
+describe('getIngestionFlowFiles', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockDateCode.mockImplementation((date) => date?.toISOString() || '');
+  });
+
+  it('should fetch ingestion flow files successfully', async () => {
+    const mockFiles = [
+      { id: 1, name: 'file1.csv' },
+      { id: 2, name: 'file2.csv' }
+    ];
+
+    mockGetIngestionFlowFiles.mockResolvedValueOnce({
+      data: mockFiles
+    } as AxiosResponse);
+
+    const { result } = renderHook(() => getIngestionFlowFiles(123, 'TREASURY'));
+
+    await act(async () => {
+      const request = {
+        filters: {
+          ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.TREASURY_CSV],
+          creationDateFrom: new Date('2023-01-01'),
+          size: 10,
+          page: 0
+        },
+        pagination: { page: 0, size: 10 },
+        sort: []
+      };
+      const response = await result.current.mutateAsync(request);
+      expect(response).toEqual(mockFiles);
+    });
+
+    expect(mockGetIngestionFlowFiles).toHaveBeenCalled();
+  });
+});
 
 describe('uploadIngestionFlowFile', () => {
   it('uploads file with correct parameters', async () => {

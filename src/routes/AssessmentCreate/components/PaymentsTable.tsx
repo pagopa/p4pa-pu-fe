@@ -18,15 +18,14 @@ import { generatePath } from 'react-router';
 import { PageRoutes } from '../..';
 import { useHashParamsListener } from '../../../hooks/useHashParamsListener';
 
-// TODO: Type for row with added uniqueId until backend fixes duplicate IUDs
-type PaymentRowWithUniqueId = PaidInstallmentDTO & {
-  uniqueId: string;
+// Payment row type with additional fields for table display
+type PaymentRow = PaidInstallmentDTO & {
   receiptId?: number;
 };
 
 export type PaymentsTableProps = {
   data?: PagedPaidInstallmentsDTO;
-  onSelectionChange?: (selectedUniqueIds: Array<string>) => void;
+  onSelectionChange?: (selectedIuds: Array<string>) => void;
   onFiltersApplied?: (
     filters: PaymentsUIFilters,
     pagination: { page: number; size: number },
@@ -38,7 +37,7 @@ export type PaymentsTableProps = {
   isApiCallPending?: boolean;
   disabled?: boolean;
   autoLoadOnMount?: boolean;
-  selectedUniqueIds?: Array<string>;
+  selectedIuds?: Array<string>;
   isRemoveMode?: boolean;
 };
 
@@ -52,7 +51,7 @@ export const PaymentsTable = ({
   isApiCallPending = false,
   disabled = false,
   autoLoadOnMount = true,
-  selectedUniqueIds = [],
+  selectedIuds = [],
   isRemoveMode = false
 }: PaymentsTableProps) => {
   const { t } = useTranslation();
@@ -89,7 +88,7 @@ export const PaymentsTable = ({
   } = usePaymentsTableFilters({
     initialFilters,
     onFiltersChange: (filters) => {
-      onFiltersApplied?.(filters, { page: 1, size: 10 }, []);
+      onFiltersApplied?.(filters, { page: 0, size: 10 }, []);
     },
     onFilterValidationError,
     autoLoadOnMount
@@ -112,48 +111,43 @@ export const PaymentsTable = ({
     size
   };
 
-  // TODO: Add uniqueId to rows to handle duplicate IUDs
-  const rowsWithUniqueId = useMemo(() => {
-    const currentPage = tableData.number || 0;
-    const currentSize = tableData.size || size;
+  // Use API data directly with unique IUDs
+  const tableRows = useMemo(() => {
+    const rows = tableData.content || [];
 
-    return (tableData.content || []).map((row, pageIndex) => {
-      const absoluteIndex = currentPage * currentSize + pageIndex;
-      return {
-        ...row,
-        uniqueId: `${row.iud || 'no-iud'}-${absoluteIndex}`
-      };
-    });
-  }, [tableData.content, tableData.number, tableData.size, size]);
+    return rows;
+  }, [tableData.content]);
 
-  // Map selected uniqueIds to row selection model
+  // Map selected IUDs to row selection model
   const selectedRows: GridRowSelectionModel = useMemo(() => {
-    if (!selectedUniqueIds || selectedUniqueIds.length === 0) return [];
+    if (!selectedIuds || selectedIuds.length === 0) return [];
+    if (tableRows.length === 0) return [];
 
-    return rowsWithUniqueId
-      .filter((row): row is PaymentRowWithUniqueId =>
-        Boolean(row.uniqueId && selectedUniqueIds.includes(row.uniqueId))
-      )
-      .map((row) => row.uniqueId);
-  }, [selectedUniqueIds, rowsWithUniqueId]);
+    // Create a Set for faster lookup
+    const tableIuds = new Set(tableRows.map((row) => row.iud).filter(Boolean));
 
-  // Handle row selection change
+    // Filter selectedIuds to only include those present in current page
+    return selectedIuds.filter((iud) => tableIuds.has(iud));
+  }, [selectedIuds, tableRows]);
+
+  // Handle row selection change - newSelection contains IUDs directly
   const handleRowSelectionChange = useCallback(
     (newSelection: GridRowSelectionModel) => {
       if (!onSelectionChange) return;
 
-      const selectedIds = newSelection
-        .map((uniqueId) => (typeof uniqueId === 'string' ? uniqueId : null))
-        .filter((id): id is string => id !== null);
+      // Filter to ensure we only get valid string IUDs
+      const selectedIuds = newSelection
+        .map((iud) => (typeof iud === 'string' ? iud : null))
+        .filter((iud): iud is string => iud !== null);
 
-      onSelectionChange(selectedIds);
+      onSelectionChange(selectedIuds);
     },
     [onSelectionChange]
   );
 
   // Handle clicking detail icon button
   const handleDetailClick = useCallback(
-    (row: PaymentRowWithUniqueId) => {
+    (row: PaymentRow) => {
       const detailPath = generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
         id: isRemoveMode
           ? Number(row.receiptId)
@@ -261,9 +255,9 @@ export const PaymentsTable = ({
 
       <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2, mt: 2 }}>
         <CustomDataGrid
-          rows={rowsWithUniqueId}
+          rows={tableRows}
           columns={columns}
-          getRowId={(row) => row.uniqueId}
+          getRowId={(row) => row.iud}
           disableColumnMenu
           disableColumnResize
           checkboxSelection

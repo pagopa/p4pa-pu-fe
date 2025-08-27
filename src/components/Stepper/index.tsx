@@ -24,16 +24,30 @@ export const StepperContainer = ({
       <TitleComponent title={title} description={description} />
       <Stack gap={3} pt={1} justifyContent="center">
         <StepBar activeStep={activeStep} steps={steps} />
-        {steps.map((step, index) => (
-          <Stack
-            data-testid={`step-${index}`}
-            key={step.label}
-            display={activeStep === index ? 'flex' : 'none'}
-            visibility={activeStep === index ? 'visible' : 'hidden'}
-          >
-            {step.content}
-          </Stack>
-        ))}
+        {steps.map((step, index) =>
+          activeStep === index ? (
+            <Stack data-testid={`step-${index}`} key={step.label}>
+              {step.content}
+            </Stack>
+          ) : (
+            <Stack
+              data-testid={`step-${index}`}
+              key={step.label}
+              sx={{
+                height: 0,
+                minHeight: 0,
+                maxHeight: 0,
+                overflow: 'hidden',
+                visibility: 'hidden',
+                '& > *': {
+                  visibility: 'hidden'
+                }
+              }}
+            >
+              {step.content}
+            </Stack>
+          )
+        )}
       </Stack>
     </Stack>
   );

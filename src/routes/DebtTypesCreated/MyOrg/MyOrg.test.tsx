@@ -84,7 +84,12 @@ describe('MyOrg', () => {
 
   it('should render data grid with correct columns', async () => {
     render(
-      <MyOrg codeFilter="" descriptionFilter="" statusFilter="true" onSearch={onSearchMock} />
+      <MyOrg
+        codeFilter=""
+        descriptionFilter=""
+        statusFilter="true"
+        onSearch={onSearchMock}
+      />
     );
 
     await waitFor(() => {
@@ -97,7 +102,12 @@ describe('MyOrg', () => {
 
   it('should render data rows correctly', async () => {
     render(
-      <MyOrg codeFilter="" descriptionFilter="" statusFilter="" onSearch={onSearchMock} />
+      <MyOrg
+        codeFilter=""
+        descriptionFilter=""
+        statusFilter=""
+        onSearch={onSearchMock}
+      />
     );
 
     await waitFor(() => {
@@ -123,7 +133,12 @@ describe('MyOrg', () => {
 
   it('should update filters when props change', async () => {
     const { rerender } = render(
-      <MyOrg codeFilter="" descriptionFilter="" statusFilter="" onSearch={onSearchMock} />
+      <MyOrg
+        codeFilter=""
+        descriptionFilter=""
+        statusFilter=""
+        onSearch={onSearchMock}
+      />
     );
 
     mutateMock.mockClear();
