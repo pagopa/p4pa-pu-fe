@@ -168,7 +168,8 @@ const DebtPositionDetail = () => {
   const showDeleteOption =
     debtPositionDetail?.status !== DebtPositionStatus.CANCELLED;
   const showEditOption =
-    debtPositionDetail?.debtPositionOrigin === DebtPositionOrigin.ORDINARY;
+    debtPositionDetail?.debtPositionOrigin === DebtPositionOrigin.ORDINARY ||
+    debtPositionDetail?.debtPositionOrigin === DebtPositionOrigin.ORDINARY_SIL;
 
   const showDownloadCTA =
     debtPositionDetail?.status !== DebtPositionStatus.DRAFT &&
