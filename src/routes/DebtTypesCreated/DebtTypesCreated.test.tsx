@@ -21,6 +21,51 @@ vi.mock('react-router', async () => {
   };
 });
 
+vi.mock('../../store/GlobalStore', () => ({
+  useStore: () => ({
+    state: { organizationId: 123 }
+  }),
+  StoreProvider: ({ children }: { children: React.ReactNode }) => children
+}));
+
+vi.mock('../../api/debtTypesCreated', () => ({
+  useDebtPositionTypeOrgSearch: vi.fn(() => ({
+    mutate: vi.fn(),
+    data: null,
+    isLoading: false,
+    error: null
+  })),
+  useManagedOrgsSearch: vi.fn(() => ({
+    mutate: vi.fn(),
+    data: null,
+    isLoading: false,
+    error: null
+  }))
+}));
+
+vi.mock('../../hooks/useSearch', () => ({
+  useSearch: vi.fn(() => ({
+    query: { data: null },
+    applyFilters: vi.fn()
+  }))
+}));
+
+vi.mock('../../utils', async () => {
+  const actual = await vi.importActual('../../utils');
+  return {
+    ...actual,
+    default: {
+      ...(actual as any).default,
+      URI: {
+        decode: vi.fn(() => ({}))
+      },
+      roles: {
+        useIsSuperAdmin: vi.fn(() => false)
+      }
+    }
+  };
+});
+
 describe('DebtTypesCreated component', () => {
   beforeEach(() => {
     i18nTestSetup({
@@ -43,7 +88,8 @@ describe('DebtTypesCreated component', () => {
   });
 
   it('renders title, call to action, and description for non-super admin', () => {
-    vi.spyOn(utils.roles, 'useIsSuperAdmin').mockReturnValue(false);
+    const mockUseIsSuperAdmin = vi.mocked(utils.roles.useIsSuperAdmin);
+    mockUseIsSuperAdmin.mockReturnValue(false);
 
     render(<DebtTypesCreated />);
 
@@ -56,7 +102,8 @@ describe('DebtTypesCreated component', () => {
   });
 
   it('renders tabs and full description for super admin', () => {
-    vi.spyOn(utils.roles, 'useIsSuperAdmin').mockReturnValue(true);
+    const mockUseIsSuperAdmin = vi.mocked(utils.roles.useIsSuperAdmin);
+    mockUseIsSuperAdmin.mockReturnValue(true);
 
     render(<DebtTypesCreated />);
 
@@ -70,7 +117,8 @@ describe('DebtTypesCreated component', () => {
   });
 
   it('navigates to create page when call to action clicked', () => {
-    vi.spyOn(utils.roles, 'useIsSuperAdmin').mockReturnValue(false);
+    const mockUseIsSuperAdmin = vi.mocked(utils.roles.useIsSuperAdmin);
+    mockUseIsSuperAdmin.mockReturnValue(false);
 
     render(<DebtTypesCreated />);
     const createBtn = screen.getByText('Create New Debt Type');
@@ -79,7 +127,8 @@ describe('DebtTypesCreated component', () => {
   });
 
   it('switches tabs and shows correct filter fields', async () => {
-    vi.spyOn(utils.roles, 'useIsSuperAdmin').mockReturnValue(true);
+    const mockUseIsSuperAdmin = vi.mocked(utils.roles.useIsSuperAdmin);
+    mockUseIsSuperAdmin.mockReturnValue(true);
 
     render(<DebtTypesCreated />);
 
@@ -98,7 +147,8 @@ describe('DebtTypesCreated component', () => {
   });
 
   it('allows user to enter filters and click Search in My Organization tab', async () => {
-    vi.spyOn(utils.roles, 'useIsSuperAdmin').mockReturnValue(true);
+    const mockUseIsSuperAdmin = vi.mocked(utils.roles.useIsSuperAdmin);
+    mockUseIsSuperAdmin.mockReturnValue(true);
     render(<DebtTypesCreated />);
 
     const codeInput = screen.getByLabelText('Search by code');
@@ -119,7 +169,8 @@ describe('DebtTypesCreated component', () => {
   });
 
   it('allows user to enter filters and click Search in Managed Organizations tab', async () => {
-    vi.spyOn(utils.roles, 'useIsSuperAdmin').mockReturnValue(true);
+    const mockUseIsSuperAdmin = vi.mocked(utils.roles.useIsSuperAdmin);
+    mockUseIsSuperAdmin.mockReturnValue(true);
     render(<DebtTypesCreated />);
     const managedTab = screen.getByText('Managed Organizations');
     fireEvent.click(managedTab);
