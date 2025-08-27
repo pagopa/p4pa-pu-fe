@@ -13,7 +13,7 @@ import {
 import { DebtPositionTypeOrgWithCount } from '../../../../generated/data-contracts';
 import { useStore } from '../../../store/GlobalStore';
 import { formatDateTime } from '../../../utils/formatters';
-import { generatePath, useNavigate } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import { PageRoutes } from '../../../routes';
 import { useSearch } from '../../../hooks/useSearch';
 import FilterContainer, {
@@ -27,6 +27,9 @@ export const MyOrg = () => {
   const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { organizationId: organizationIdByURL } = useParams<{
+    organizationId: string;
+  }>();
 
   const initialFilters: DebtPositionTypeOrgWithCountFilters = utils.URI.decode(
     window.location.hash
@@ -38,7 +41,12 @@ export const MyOrg = () => {
     state: { organizationId }
   } = useStore();
 
-  const query = useDebtPositionTypeOrgSearch(organizationId);
+  // switch if list types using organizationID in URL or setted in the storage
+  const query = useDebtPositionTypeOrgSearch(
+    organizationIdByURL && !isNaN(Number(organizationIdByURL))
+      ? Number(organizationIdByURL)
+      : organizationId
+  );
 
   const {
     query: { data },
