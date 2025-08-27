@@ -1,11 +1,6 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
-import {
-  AssessmentsRegistriesFilteredRequest,
-  AssessmentsFilteredRequest,
-  buildQueryParams,
-  buildAssessmentsQueryParams
-} from './mappings';
+import { buildQueryParams, buildAssessmentsQueryParams } from './mappings';
 import { parseAndLog } from '../../utils/loaders';
 import {
   assessmentsRegistryDTOSchema,
@@ -17,6 +12,7 @@ import {
   AssessmentsRegistry,
   AssessmentStatus
 } from '../../../generated/data-contracts';
+import { FilteredRequest, FilterValues } from '../../models/Filters';
 
 type AssessmentsParams = Parameters<
   typeof utils.apiClient.bff.getPagedAssessmentsExtendedDto
@@ -38,18 +34,12 @@ export const getAssessments = (
 ) =>
   useMutation({
     mutationKey: ['getAssessments', organizationId],
-    mutationFn: async (args: AssessmentsFilteredRequest) => {
+    mutationFn: async (args: FilteredRequest<FilterValues>) => {
       const query = buildAssessmentsQueryParams(args);
       const { data: response } =
         await utils.apiClient.bff.getPagedAssessmentsExtendedDto(
           organizationId,
-          query,
-          {
-            paramsSerializer: {
-              // repeat array params as query string
-              indexes: null
-            }
-          }
+          query
         );
       parseAndLog(pagedAssessmentsExtendedDTOSchema, response);
       return response;
@@ -63,20 +53,13 @@ export const getAssessmentsRegistries = ({
 }) =>
   useMutation({
     mutationKey: ['getTreasuries', organizationId],
-    mutationFn: async (args: AssessmentsRegistriesFilteredRequest) => {
+    mutationFn: async (args: FilteredRequest<FilterValues>) => {
       const query = buildQueryParams(args);
       const { data: response } =
         await utils.apiClient.bff.getAssessmentsRegistries(
           organizationId,
-          query,
-          // repeat array params as query string
-          {
-            paramsSerializer: {
-              indexes: null
-            }
-          }
+          query
         );
-
       return response;
     }
   });
@@ -190,12 +173,6 @@ export const deleteAssessmentDetails = (organizationId: number) =>
         organizationId,
         {
           assessmentDetailIds
-        },
-        // repeat array params as query string
-        {
-          paramsSerializer: {
-            indexes: null
-          }
         }
       );
       return response;

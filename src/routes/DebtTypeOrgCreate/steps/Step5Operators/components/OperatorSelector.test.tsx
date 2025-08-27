@@ -1,20 +1,22 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import React from 'react';
-import { OperatorSelector } from './OperatorSelector';
-import * as api from '../../../../../api/debtPositionTypeOrgOperators';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor
+} from '../../../../../__tests__/renderers';
 import { useForm, FormProvider } from 'react-hook-form';
 import {
   OperatorsSelection,
   UserInfo
 } from '../../../../../../generated/data-contracts';
-import {
-  fireEvent,
-  render,
-  waitFor,
-  screen
-} from '../../../../../__tests__/renderers';
+import * as api from '../../../../../api/debtPositionTypeOrgOperators';
+import { OperatorSelector } from './OperatorSelector';
 import { setUserInfo } from '../../../../../store/UserInfoStore';
+import { vi } from 'vitest';
 
-// Realistic test data for API
+// Sample data to be returned by the mocked useSearch hook
 const testApiResponse = {
   content: [
     {
@@ -45,13 +47,28 @@ const testApiResponse = {
   number: 0
 };
 
-// Mock only the API call
-// @ts-expect-error mocking query
-vi.spyOn(api, 'getDebtPositionTypeOrgOperators').mockImplementation(() => ({
-  data: testApiResponse
+const mockMutateAsync = vi.fn(() => Promise.resolve());
+
+vi.mock('../../../../../hooks/useSearch', () => ({
+  useSearch: vi.fn(() => ({
+    query: {
+      data: testApiResponse,
+      isLoading: false,
+      mutateAsync: mockMutateAsync
+    },
+    applyFilters: vi.fn()
+  }))
 }));
 
-// Helper to render with form and store providers
+// Spy on the API mock; return data synchronously as returned by useSearch
+vi.spyOn(api, 'getDebtPositionTypeOrgOperators').mockImplementation(
+  () =>
+    ({
+      data: testApiResponse
+    }) as any
+);
+
+// Helper: render the component wrapped with RHF form context and optional edit mode
 const renderWithProviders = (edit?: boolean) => {
   const Wrapper = ({ children }: { children: React.ReactNode }) => {
     const methods = useForm({
@@ -61,7 +78,6 @@ const renderWithProviders = (edit?: boolean) => {
         operatorsSelection: OperatorsSelection.SELECTED
       }
     });
-
     return <FormProvider {...methods}>{children}</FormProvider>;
   };
 
@@ -72,26 +88,33 @@ const renderWithProviders = (edit?: boolean) => {
   );
 };
 
-describe('OperatorSelector integration tests', () => {
-  test('renders operators and selection alert', async () => {
-    renderWithProviders(true);
+describe('OperatorSelector component integration', () => {
+  beforeEach(() => {
+    // Reset the user info to empty before each test
+    setUserInfo(undefined);
+  });
 
-    // Wait for operators to appear
+  it('renders operators and displays selection alert', async () => {
+    renderWithProviders(true /* edit mode */);
+
+    // Wait for operators to be rendered by useSearch data
     await waitFor(() => {
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Jane Smith')).toBeInTheDocument();
+      expect(screen.getByText('Default Operator')).toBeInTheDocument();
     });
 
-    // Alert shows selected count
+    // Alert shows selected count text (contains translation key as string)
     expect(screen.getByText(/commons.selectedOperator/)).toBeInTheDocument();
 
-    // Delete Selection button present
+    // Delete Selection button also rendered
     expect(
       screen.getByRole('button', { name: 'commons.deleteSelection' })
     ).toBeInTheDocument();
   });
 
-  test('default operator row is disabled for selection', async () => {
+  it('disables row checkbox for default operator', async () => {
+    // Set default operator user info mappedExternalUserId
     setUserInfo({
       mappedExternalUserId: 'default-op'
     } as UserInfo);
@@ -102,15 +125,18 @@ describe('OperatorSelector integration tests', () => {
       expect(screen.getByText('Default Operator')).toBeInTheDocument();
     });
 
+    // Get checkboxes (exclude "Select All"; assumes basic structure)
     const checkboxes = screen.getAllByRole('checkbox');
-    const defaultOpCheckbox = checkboxes[checkboxes.length - 1];
 
-    expect(defaultOpCheckbox).toBeDisabled();
+    // Find checkbox corresponding to default-op row: last checkbox should be default operator row
+    const defaultOperatorCheckbox = checkboxes[checkboxes.length - 1];
+    expect(defaultOperatorCheckbox).toBeDisabled();
   });
 
-  test('clicking Delete Selection clears selection', async () => {
+  it('clears selection when Delete Selection button is clicked', async () => {
     renderWithProviders(true);
 
+    // Wait until alert and button appear
     await waitFor(() => {
       expect(
         screen.getByRole('button', { name: 'commons.deleteSelection' })
@@ -121,7 +147,7 @@ describe('OperatorSelector integration tests', () => {
       screen.getByRole('button', { name: 'commons.deleteSelection' })
     );
 
-    // Alert disappears since selection cleared
+    // After clearing selection alert disappears (no selected operators)
     await waitFor(() => {
       expect(
         screen.queryByText(/commons.selectedOperator/)
@@ -129,7 +155,7 @@ describe('OperatorSelector integration tests', () => {
     });
   });
 
-  test('selecting an operator updates selection', async () => {
+  it('updates selection alert when selecting and deselecting operators', async () => {
     renderWithProviders(true);
 
     await waitFor(() => {
@@ -137,13 +163,13 @@ describe('OperatorSelector integration tests', () => {
     });
 
     const checkboxes = screen.getAllByRole('checkbox');
-    // Assuming first checkbox is "select all", second is John Doe, third is Jane Smith
+    // Assuming first checkbox is Select All, second checkbox corresponds to John Doe, third to Jane Smith, etc.
     const janeCheckbox = checkboxes[2];
 
     // Select Jane Smith
     fireEvent.click(janeCheckbox);
 
-    // Alert updates to show 2 selected operators
+    // Alert updates (now 2 selected)
     await waitFor(() => {
       expect(screen.getByText(/commons.selectedOperator/)).toBeInTheDocument();
     });

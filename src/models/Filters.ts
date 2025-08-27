@@ -6,6 +6,12 @@ import {
 } from '../../generated/apiClient';
 export type FlowStatus = IngestionFlowFileStatus;
 
+export type FilteredRequest<T> = {
+  filters: T;
+  pagination: { page: number; size: number };
+  sort: Array<string>;
+};
+
 export type FilterValues = {
   ACCOUNTING_DATE_FROM: Date | null;
   ACCOUNTING_DATE_TO: Date | null;
@@ -61,8 +67,8 @@ export type FlowFilters = {
   ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
   fileName?: string;
   status?: IngestionFlowFileStatus;
-  creationDateFrom?: string;
-  creationDateTo?: string;
+  creationDateFrom?: Date;
+  creationDateTo?: Date;
   sort?: Array<string>;
 };
 
@@ -70,8 +76,8 @@ export type ExportFlowFilters = {
   exportFileType: ExportFileTypeEnum;
   fileName?: string;
   status?: ExportFileStatus;
-  creationDateFrom?: string;
-  creationDateTo?: string;
+  creationDateFrom?: Date;
+  creationDateTo?: Date;
   sort?: Array<string>;
 };
 
@@ -110,8 +116,8 @@ export const DOWNLOAD_STATES = ['UPLOADED'] as const;
 export const EXPORT_DOWNLOAD_STATES = [ExportFileStatus.COMPLETED];
 
 export type DateRangeValue = {
-  from: Date | null;
-  to: Date | null;
+  from?: Date | null;
+  to?: Date | null;
 };
 
 export type FilterFieldValue =

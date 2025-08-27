@@ -3,20 +3,19 @@ import { theme } from '@pagopa/mui-italia';
 import {
   GridColDef,
   GridRowParams,
-  GridRowSelectionModel,
-  GridSortModel
+  GridRowSelectionModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { CopyAll } from '@mui/icons-material';
-import { useState, useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { DebtPositionTypeOrgOperatorDTO } from '../../../../../../generated/apiClient';
-import { getDebtPositionTypeOrgOperators } from '../../../../../api/debtPositionTypeOrgOperators';
 import CustomDataGrid from '../../../../../components/DataGrid/CustomDataGrid';
 import { useFormContext } from 'react-hook-form';
 import { DebtTypeOrgForm } from '../../../types';
 import { OperatorsSelection } from '../../../../../../generated/data-contracts';
 import { useStore } from '../../../../../store/GlobalStore';
-import { useDebtTypeOrgId } from '../../../../../hooks/useDebtTypeOrgId';
+import { useSearch } from '../../../../../hooks/useSearch';
+import { getDebtPositionTypeOrgOperators } from '../../../../../api/debtPositionTypeOrgOperators';
 
 type OperatorData = {
   id: string;
@@ -35,8 +34,6 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   } = useStore();
 
   const defaultOperator = userInfo?.mappedExternalUserId;
-
-  const debtPositionTypeOrgId = useDebtTypeOrgId();
 
   const { watch, setValue } = useFormContext<DebtTypeOrgForm>();
 
@@ -69,26 +66,12 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
     setValue('disabledOperators', newDisabled);
   };
 
-  const [appliedFilters, setAppliedFilters] = useState({
-    page: 0,
-    size: 10
+  const query = getDebtPositionTypeOrgOperators(organizationId);
+
+  const debtTypeOrgOperators = useSearch({
+    filters: {},
+    query
   });
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
-
-  const sortArray = useMemo(() => {
-    if (sortModel.length === 0) return undefined;
-    return sortModel.map((sort) => `${sort.field},${sort.sort}`);
-  }, [sortModel]);
-
-  const { data: apiResponse } = getDebtPositionTypeOrgOperators(
-    organizationId,
-    {
-      debtPositionTypeOrgId,
-      page: appliedFilters.page,
-      size: appliedFilters.size,
-      ...(sortArray && { sort: sortArray })
-    }
-  );
 
   const isRowSelectable = (params: GridRowParams) => {
     // Coerce id to string for comparison, since defaultOperator is string
@@ -96,7 +79,7 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   };
 
   useEffect(() => {
-    if (apiResponse) {
+    if (debtTypeOrgOperators.query?.data) {
       onSelectionChange(
         operators.filter((op) => op.enabled).map((op) => op.id)
       );
@@ -107,12 +90,12 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
         setValue('enabledOperators', [defaultOperator]);
       }
     }
-  }, [apiResponse]);
+  }, [debtTypeOrgOperators.query?.data]);
 
   const operators: Array<OperatorData> = useMemo(() => {
-    if (!apiResponse?.content) return [];
+    if (!debtTypeOrgOperators.query?.data?.content) return [];
 
-    return apiResponse.content.map(
+    return debtTypeOrgOperators.query?.data?.content.map(
       (operator: DebtPositionTypeOrgOperatorDTO) => ({
         ...operator,
         id: operator.mappedExternalUserId || operator.operatorId || '',
@@ -123,7 +106,7 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
           'N/A'
       })
     );
-  }, [apiResponse]);
+  }, [debtTypeOrgOperators.query?.data]);
 
   const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
     onSelectionChange(newSelection as Array<string>);
@@ -131,17 +114,6 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
 
   const handleClearSelection = () => {
     onSelectionChange([]);
-  };
-
-  const handleSortModelChange = (model: GridSortModel) => {
-    setSortModel(model);
-  };
-
-  const updatePagination = (params: { page?: number; size?: number }) => {
-    setAppliedFilters((prev) => ({
-      ...prev,
-      ...params
-    }));
   };
 
   const columns: Array<GridColDef> = [
@@ -187,20 +159,7 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
           rowSelectionModel={enabledOperators}
           hideFooterSelectedRowCount
           onRowSelectionModelChange={handleSelectionChange}
-          sortModel={sortModel}
-          onSortModelChange={handleSortModelChange}
-          customPagination={{
-            totalPages: apiResponse?.totalPages || 0,
-            defaultPageOption: appliedFilters.size,
-            sizePageOptions: [5, 10, 15, 20],
-            onPageChange: (page) =>
-              updatePagination({
-                page: page - 1,
-                size: appliedFilters.size
-              }),
-            onPageSizeChange: (size) => updatePagination({ size, page: 0 }),
-            currentPage: appliedFilters.page + 1
-          }}
+          totalPages={debtTypeOrgOperators.query?.data?.totalPages || 1}
         />
       </Box>
     </Box>

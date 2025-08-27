@@ -1,8 +1,9 @@
-import { useState, useCallback, useEffect } from 'react';
-import { usePaginationState } from './usePaginationState';
+import { useEffect } from 'react';
 import { UseMutationResult } from '@tanstack/react-query';
+import utils from '../utils';
+import { useHashParamsListener } from './useHashParamsListener';
 
-type SearchVariables<T> = {
+export type SearchVariables<T> = {
   filters: T;
   pagination: { page: number; size: number };
   sort: Array<string>;
@@ -15,44 +16,52 @@ export type UseSearchProps<T, TData = unknown, TError = unknown> = {
   query: UseMutationResult<TData, TError, SearchVariables<T>>;
 };
 
-export const useSearch = <T, TData = unknown, TError = unknown>({
-  filters,
-  initialPage = 0,
-  initialSize = 10,
-  query
-}: UseSearchProps<T, TData, TError>) => {
-  const [sort, setSort] = useState<Array<string>>([]);
-
+/**
+ * React Hook for managing search interfaces with filter state,
+ * pagination (with URL hash sync), and sort, performing query on changes.
+ */
+export function useSearch<
+  T extends Record<string, unknown>,
+  TData = unknown,
+  TError = unknown
+>({ filters, query }: UseSearchProps<T, TData, TError>) {
   const {
-    paginationParams: pagination,
-    handlePaginationChange,
-    setPaginationParams
-  } = usePaginationState({
-    initialPage,
-    initialSize
-  });
+    page = 1,
+    size = 10,
+    sortDirection,
+    sortField
+  } = useHashParamsListener() as {
+    page: number;
+    size: number;
+    sortDirection: string;
+    sortField: string;
+  };
 
-  // update query when pagination or sort changes
+  const sort =
+    sortDirection && sortField ? [`${sortField},${sortDirection}`] : [];
+
   useEffect(() => {
-    query.mutateAsync({ filters, pagination, sort });
-  }, [pagination, sort]);
-
-  const applyFilters = useCallback(() => {
-    // Reset to first page when applying new filters
-    setPaginationParams((prev) => ({ ...prev, page: 0 }));
-    query.mutate({
+    query.mutateAsync({
       filters,
-      pagination: { page: 0, size: pagination.size },
+      pagination: { size, page: page - 1 },
       sort
     });
-  }, [filters, pagination.size, query, setPaginationParams, sort]);
+  }, [page, size, sortDirection, sortField]);
+
+  // Handle filter application: reset page to 0, update URL hash, and query
+  const applyFilters = (appliedFilters: T) => {
+    const params = utils.URI.encode(appliedFilters);
+    utils.URI.set(params, { replace: true });
+
+    query.mutateAsync({
+      filters: appliedFilters,
+      pagination: { size, page: 0 },
+      sort: []
+    });
+  };
 
   return {
     applyFilters,
-    query,
-    filters,
-    handlePaginationChange,
-    paginationParams: pagination,
-    setSort
+    query
   };
-};
+}

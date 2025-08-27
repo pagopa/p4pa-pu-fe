@@ -63,12 +63,7 @@ describe('DebtTypesCreated API hooks', () => {
 
       expect(mockGetDebtPositionTypeOrgWithCount).toHaveBeenCalledWith(
         params.organizationId,
-        params.filters,
-        {
-          paramsSerializer: {
-            indexes: null
-          }
-        }
+        params.filters
       );
     });
   });

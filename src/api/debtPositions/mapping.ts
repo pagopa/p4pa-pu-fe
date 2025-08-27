@@ -1,4 +1,5 @@
 import { DebtPositionStatus } from '../../../generated/data-contracts';
+import utils from '../../utils';
 
 export type DebtPositionsFilters = {
   dateRange?: {
@@ -18,48 +19,39 @@ export type DebtPositionFilteredRequest = {
   sort: Array<string>;
 };
 
-export const buildQueryParams = ({
+type InstallmentsQueryParameters = Parameters<
+  typeof utils.apiClient.bff.getInstallments
+>[1];
+
+type debtPositionsQueryParameters = Parameters<
+  typeof utils.apiClient.bff.getDebtPositionViews
+>[1];
+
+export const buildInstallmentsQueryParams = ({
   filters,
   pagination,
   sort
-}: DebtPositionFilteredRequest) => {
-  const baseParams = {
-    page: pagination.page,
-    size: pagination.size,
-    ...(filters?.typeOrgId && {
-      debtPositionTypeOrgId: filters.typeOrgId
-    }),
-    ...(filters?.iuv && { iuv: filters.iuv }),
-    ...(filters?.fiscalCode && {
-      fiscalCode: filters.fiscalCode
-    }),
-    ...(filters?.status && { status: filters.status }),
-    ...(sort.length && { sort })
-  };
+}: DebtPositionFilteredRequest): InstallmentsQueryParameters => ({
+  dueDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  dueDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
+  page: pagination.page,
+  size: pagination.size,
+  debtPositionTypeOrgId: filters.typeOrgId,
+  iuv: filters.iuv,
+  fiscalCode: filters.fiscalCode,
+  sort
+});
 
-  if (filters?.dateRange?.from || filters?.dateRange?.to) {
-    if (filters.searchType === 'IUV') {
-      return {
-        ...baseParams,
-        ...(filters.dateRange.from && {
-          dueDateTimeFrom: filters.dateRange.from.toISOString()
-        }),
-        ...(filters.dateRange.to && {
-          dueDateTimeTo: filters.dateRange.to.toISOString()
-        })
-      };
-    } else {
-      return {
-        ...baseParams,
-        ...(filters.dateRange.from && {
-          creationDateFrom: filters.dateRange.from.toISOString()
-        }),
-        ...(filters.dateRange.to && {
-          creationDateTo: filters.dateRange.to.toISOString()
-        })
-      };
-    }
-  }
-
-  return baseParams;
-};
+export const buildDebtPositionsQueryParams = ({
+  filters,
+  pagination,
+  sort
+}: DebtPositionFilteredRequest): debtPositionsQueryParameters => ({
+  creationDateFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  creationDateTo: utils.formatters.date.code(filters?.dateRange?.to),
+  fiscalCode: filters.fiscalCode,
+  status: filters.status,
+  page: pagination.page,
+  size: pagination.size,
+  sort
+});

@@ -1,8 +1,12 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
-import { pagedOrgSilServiceViewSchema } from '../../../generated/zod-schema';
+import {
+  orgSilServiceDecryptedDTOSchema,
+  pagedOrgSilServiceViewSchema
+} from '../../../generated/zod-schema';
 import { buildQueryParams, OrgSilServicesFilteredRequest } from './mappings';
+import { OrgSilServiceDecryptedDTO } from '../../../generated/apiClient';
 
 const getOrgSilServices = ({ organizationId }: { organizationId: number }) =>
   useMutation({
@@ -11,12 +15,7 @@ const getOrgSilServices = ({ organizationId }: { organizationId: number }) =>
       const query = buildQueryParams(args);
       const { data } = await utils.apiClient.bff.getOrgSilServicesByFilters(
         organizationId,
-        query,
-        {
-          paramsSerializer: {
-            indexes: null
-          }
-        }
+        query
       );
 
       parseAndLog(pagedOrgSilServiceViewSchema, data);
@@ -24,6 +23,42 @@ const getOrgSilServices = ({ organizationId }: { organizationId: number }) =>
     }
   });
 
+const getOrgSilServiceById = ({
+  organizationId,
+  orgSilServiceId
+}: {
+  organizationId: number;
+  orgSilServiceId: number;
+}) =>
+  useQuery({
+    queryKey: ['orgSilService', organizationId, orgSilServiceId],
+    queryFn: async () => {
+      const { data } = await utils.apiClient.bff.getOrgSilServiceDetails(
+        organizationId,
+        orgSilServiceId
+      );
+
+      parseAndLog(orgSilServiceDecryptedDTOSchema, data);
+      return { response: data };
+    }
+  });
+
+const createOrgSilService = ({ organizationId }: { organizationId: number }) =>
+  useMutation({
+    mutationKey: ['createOrgSilService', organizationId],
+    mutationFn: async (payload: OrgSilServiceDecryptedDTO) => {
+      const { data } = await utils.apiClient.bff.createOrgSilService(
+        organizationId,
+        payload
+      );
+
+      parseAndLog(orgSilServiceDecryptedDTOSchema, data);
+      return data;
+    }
+  });
+
 export default {
-  getOrgSilServices
+  getOrgSilServices,
+  getOrgSilServiceById,
+  createOrgSilService
 };

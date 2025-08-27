@@ -1,7 +1,7 @@
 import utils from '../../utils';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor, act } from '../../__tests__/renderers';
+import { renderHook, waitFor } from '../../__tests__/renderers';
 import {
   createAssessment,
   getAssessments,
@@ -87,8 +87,8 @@ describe('getAssessments', () => {
         ASSESSMENT_NAME: 'Test',
         DEBT_TYPE: 'TYPE1',
         IUV: 'test-iuv',
-        LAST_UPDATE_DATE_FROM: new Date('2023-01-01T00:00:00Z'),
-        LAST_UPDATE_DATE_TO: new Date('2023-12-31T23:59:59Z')
+        LAST_UPDATE_DATE_FROM: new Date('2022-12-31T23:00:00Z'),
+        LAST_UPDATE_DATE_TO: new Date('2023-12-31T22:59:59Z')
       },
       pagination: { page: 0, size: 20 },
       sort: []
@@ -98,10 +98,13 @@ describe('getAssessments', () => {
       assessmentName: 'Test',
       debtPositionTypeOrgCode: 'TYPE1',
       iuv: 'test-iuv',
-      updateDateFrom: '2023-01-01T00:00:00.000Z',
-      updateDateTo: '2023-12-31T23:59:59.000Z',
+      operatingYear: '',
+      updateDateFrom: '2023-01-01T00:00:00+01:00',
+      updateDateTo: '2023-12-31T23:59:59+01:00',
       page: 0,
-      size: 20
+      size: 20,
+      sort: [],
+      status: ''
     };
 
     const apiMock = vi
@@ -110,17 +113,11 @@ describe('getAssessments', () => {
 
     const { result } = renderHook(() => getAssessments(organizationId));
 
-    result.current.mutate(query);
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toEqual(dataMock);
-    });
+    expect(data).toEqual(dataMock);
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 
   it('should not fetch data if mutate is not called', () => {
@@ -144,8 +141,15 @@ describe('getAssessments', () => {
 
     const expectedApiParams = {
       assessmentName: 'Test',
+      debtPositionTypeOrgCode: undefined,
+      iuv: '',
+      operatingYear: '',
+      updateDateFrom: undefined,
+      updateDateTo: undefined,
       page: 0,
-      size: 20
+      size: 20,
+      sort: [],
+      status: ''
     };
 
     const errorMock = new Error('API Error');
@@ -162,11 +166,7 @@ describe('getAssessments', () => {
       expect(result.current.error).toEqual(errorMock);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 
   it('should handle empty response correctly', async () => {
@@ -178,8 +178,16 @@ describe('getAssessments', () => {
     };
 
     const expectedApiParams = {
+      assessmentName: '',
+      debtPositionTypeOrgCode: undefined,
+      iuv: '',
+      operatingYear: '',
+      updateDateFrom: undefined,
+      updateDateTo: undefined,
       page: 0,
-      size: 20
+      size: 20,
+      sort: [],
+      status: ''
     };
 
     const apiMock = vi
@@ -188,17 +196,11 @@ describe('getAssessments', () => {
 
     const { result } = renderHook(() => getAssessments(organizationId));
 
-    result.current.mutate(query);
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toBeUndefined();
-    });
+    expect(data).toBeUndefined();
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 
   it('should use correct mutation key', () => {
@@ -225,8 +227,16 @@ describe('getAssessments', () => {
     };
 
     const expectedApiParams = {
+      assessmentName: '',
+      debtPositionTypeOrgCode: undefined,
+      iuv: '',
+      operatingYear: '',
       page: 0,
-      size: 10
+      size: 10,
+      sort: [],
+      status: '',
+      updateDateFrom: undefined,
+      updateDateTo: undefined
     };
 
     const apiMock = vi
@@ -235,17 +245,11 @@ describe('getAssessments', () => {
 
     const { result } = renderHook(() => getAssessments(organizationId));
 
-    result.current.mutate(query);
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toEqual(dataMock);
-    });
+    expect(data).toEqual(dataMock);
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 
   it('should handle query with all optional parameters', async () => {
@@ -264,8 +268,8 @@ describe('getAssessments', () => {
         ASSESSMENT_NAME: 'Full Test',
         DEBT_TYPE: 'FULL_TYPE',
         IUV: 'full-test-iuv',
-        LAST_UPDATE_DATE_FROM: new Date('2023-01-01T00:00:00Z'),
-        LAST_UPDATE_DATE_TO: new Date('2023-12-31T23:59:59Z')
+        LAST_UPDATE_DATE_FROM: new Date('2022-12-31T23:00:00Z'),
+        LAST_UPDATE_DATE_TO: new Date('2023-12-31T22:59:59Z')
       },
       pagination: { page: 2, size: 50 },
       sort: ['assessmentName,asc', 'updateDate,desc']
@@ -275,11 +279,13 @@ describe('getAssessments', () => {
       assessmentName: 'Full Test',
       debtPositionTypeOrgCode: 'FULL_TYPE',
       iuv: 'full-test-iuv',
-      updateDateFrom: '2023-01-01T00:00:00.000Z',
-      updateDateTo: '2023-12-31T23:59:59.000Z',
+      operatingYear: '',
+      updateDateFrom: '2023-01-01T00:00:00+01:00',
+      updateDateTo: '2023-12-31T23:59:59+01:00',
       page: 2,
       size: 50,
-      sort: ['assessmentName,asc', 'updateDate,desc']
+      sort: ['assessmentName,asc', 'updateDate,desc'],
+      status: ''
     };
 
     const apiMock = vi
@@ -288,17 +294,11 @@ describe('getAssessments', () => {
 
     const { result } = renderHook(() => getAssessments(organizationId));
 
-    result.current.mutate(query);
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toEqual(dataMock);
-    });
+    expect(data).toEqual(dataMock);
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 });
 
@@ -678,6 +678,7 @@ describe('getAssessmentsRegistries', () => {
     const query = {
       filters: {
         ...initialFilterValues,
+        OPERATING_YEAR: '2023-01-01T00:00:00Z',
         OFFICE_CODE: 'OFF001',
         ASSESSMENT_CODE: 'ASS001'
       },
@@ -689,7 +690,9 @@ describe('getAssessmentsRegistries', () => {
       officeCode: 'OFF001',
       assessmentCode: 'ASS001',
       page: 0,
-      size: 20
+      size: 20,
+      operatingYear: '2023',
+      sort: []
     };
 
     const apiMock = vi
@@ -700,19 +703,11 @@ describe('getAssessmentsRegistries', () => {
       getAssessmentsRegistries({ organizationId })
     );
 
-    await act(async () => {
-      result.current.mutate(query);
-    });
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toEqual(dataMock);
-    });
+    expect(data).toEqual(dataMock);
 
-    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams, {
-      paramsSerializer: {
-        indexes: null
-      }
-    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, expectedApiParams);
   });
 
   it('should handle API errors correctly', async () => {
@@ -720,6 +715,7 @@ describe('getAssessmentsRegistries', () => {
     const query = {
       filters: {
         ...initialFilterValues,
+        OPERATING_YEAR: '2023-01-01T00:00:00Z',
         OFFICE_CODE: 'TEST'
       },
       pagination: { page: 0, size: 20 },
@@ -729,15 +725,13 @@ describe('getAssessmentsRegistries', () => {
     const errorMock = new Error('API Error');
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'getAssessmentsRegistries')
-      .mockRejectedValue(errorMock);
+      .mockRejectedValueOnce(errorMock);
 
     const { result } = renderHook(() =>
       getAssessmentsRegistries({ organizationId })
     );
 
-    await act(async () => {
-      result.current.mutate(query);
-    });
+    expect(result.current.mutateAsync(query)).rejects.toThrow(errorMock);
 
     await waitFor(() => {
       expect(result.current.isError).toBe(true);
@@ -760,7 +754,10 @@ describe('getAssessmentsRegistries', () => {
   it('should handle empty response correctly', async () => {
     const organizationId = 123;
     const query = {
-      filters: initialFilterValues,
+      filters: {
+        ...initialFilterValues,
+        OPERATING_YEAR: '2023-01-01T00:00:00Z'
+      },
       pagination: { page: 0, size: 20 },
       sort: []
     };
@@ -773,13 +770,9 @@ describe('getAssessmentsRegistries', () => {
       getAssessmentsRegistries({ organizationId })
     );
 
-    await act(async () => {
-      result.current.mutate(query);
-    });
+    const data = await result.current.mutateAsync(query);
 
-    await waitFor(() => {
-      expect(result.current.data).toBeUndefined();
-    });
+    expect(data).toBeUndefined();
 
     expect(apiMock).toHaveBeenCalled();
   });
@@ -1370,17 +1363,9 @@ describe('deleteAssessmentDetails', () => {
       expect(result.current.isSuccess).toBe(true);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(
-      organizationId,
-      {
-        assessmentDetailIds
-      },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
-    );
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentDetailIds
+    });
   });
 
   it('should handle API errors correctly during deletion', async () => {
@@ -1403,17 +1388,9 @@ describe('deleteAssessmentDetails', () => {
       expect(result.current.error).toEqual(errorMock);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(
-      organizationId,
-      {
-        assessmentDetailIds
-      },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
-    );
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentDetailIds
+    });
   });
 
   it('should handle 4xx client errors correctly during deletion', async () => {
@@ -1439,17 +1416,9 @@ describe('deleteAssessmentDetails', () => {
       expect(result.current.error).toEqual(clientError);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(
-      organizationId,
-      {
-        assessmentDetailIds
-      },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
-    );
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentDetailIds
+    });
   });
 
   it('should handle 5xx server errors correctly during deletion', async () => {
@@ -1472,17 +1441,9 @@ describe('deleteAssessmentDetails', () => {
       expect(result.current.error).toEqual(serverError);
     });
 
-    expect(apiMock).toHaveBeenCalledWith(
-      organizationId,
-      {
-        assessmentDetailIds
-      },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
-    );
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      assessmentDetailIds
+    });
   });
 
   it('should not delete assessment details if mutate is not called', async () => {

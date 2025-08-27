@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '../../../__tests__/renderers';
+import { renderHook, waitFor, act } from '../../../__tests__/renderers';
 import { AxiosResponse } from 'axios';
 import utils from '../../../utils';
+import * as loaders from '../../../utils/loaders';
 import { getAssessmentDetail } from './assessmentDetail';
 import { assessmentsRowsDetailSchema } from '../../../../generated/zod-schema';
 import { createMock } from 'zodock';
-import * as loaders from '../../../utils/loaders';
 
 vi.mock('../../../utils', () => ({
   default: {
@@ -21,6 +22,11 @@ vi.mock('../../../utils/loaders', () => ({
   parseAndLog: vi.fn()
 }));
 
+vi.mock('../mappings', () => ({
+  buildAssessmentDetailQueryParams: (filters: any) => filters,
+  AssessmentDetailFilters: {}
+}));
+
 const mockGetPagedAssessmentsDetails = vi.mocked(
   utils.apiClient.bff.getPagedAssessmentsDetails
 );
@@ -30,8 +36,12 @@ describe('getAssessmentDetail', () => {
   const organizationId = 123;
   const assessmentId = 456;
   const mockFilters = {
-    startDate: '2024-01-01',
-    endDate: '2024-12-31'
+    filters: {
+      startDate: '2024-01-01',
+      endDate: '2024-12-31'
+    } as any,
+    pagination: { page: 0, size: 10 },
+    sort: []
   };
 
   const mockAssessmentDetail = createMock(assessmentsRowsDetailSchema);
@@ -48,6 +58,10 @@ describe('getAssessmentDetail', () => {
     const { result } = renderHook(() =>
       getAssessmentDetail(organizationId, assessmentId, mockFilters)
     );
+
+    act(() => {
+      result.current.mutate(mockFilters);
+    });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
@@ -68,6 +82,10 @@ describe('getAssessmentDetail', () => {
       getAssessmentDetail(organizationId, assessmentId, mockFilters)
     );
 
+    act(() => {
+      result.current.mutate(mockFilters);
+    });
+
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(mockParseAndLog).toHaveBeenCalledWith(
@@ -85,6 +103,10 @@ describe('getAssessmentDetail', () => {
       getAssessmentDetail(organizationId, assessmentId, mockFilters)
     );
 
+    act(() => {
+      result.current.mutate(mockFilters);
+    });
+
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
 
     expect(mockParseAndLog).toHaveBeenCalledWith(
@@ -94,97 +116,56 @@ describe('getAssessmentDetail', () => {
     expect(result.current.data).toBeNull();
   });
 
-  it('should be disabled when organizationId is not provided', () => {
+  it('should not perform mutation when organizationId is 0', async () => {
     const { result } = renderHook(() =>
       getAssessmentDetail(0, assessmentId, mockFilters)
     );
 
     expect(result.current.data).toBeUndefined();
-    expect(result.current.isLoading).toBe(false);
+    expect(result.current.isPending).toBe(false);
+
+    act(() => {
+      result.current.mutate(mockFilters);
+    });
+
     expect(mockGetPagedAssessmentsDetails).not.toHaveBeenCalled();
   });
 
-  it('should be disabled when assessmentId is not provided', () => {
+  it('should not perform mutation when assessmentId is 0', async () => {
     const { result } = renderHook(() =>
       getAssessmentDetail(organizationId, 0, mockFilters)
     );
 
     expect(result.current.data).toBeUndefined();
-    expect(result.current.isLoading).toBe(false);
+    expect(result.current.isPending).toBe(false);
+
+    act(() => {
+      result.current.mutate(mockFilters);
+    });
+
     expect(mockGetPagedAssessmentsDetails).not.toHaveBeenCalled();
-  });
-
-  it('should work with optional filters parameter', async () => {
-    mockGetPagedAssessmentsDetails.mockResolvedValueOnce({
-      data: mockAssessmentDetail
-    } as AxiosResponse);
-
-    const { result } = renderHook(() =>
-      getAssessmentDetail(organizationId, assessmentId)
-    );
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-
-    expect(mockGetPagedAssessmentsDetails).toHaveBeenCalledWith(
-      organizationId,
-      assessmentId,
-      undefined
-    );
-  });
-
-  it('should pass custom options to useQuery', async () => {
-    const customOptions = { retry: false, refetchOnWindowFocus: false };
-    mockGetPagedAssessmentsDetails.mockResolvedValueOnce({
-      data: mockAssessmentDetail
-    } as AxiosResponse);
-
-    const { result } = renderHook(() =>
-      getAssessmentDetail(
-        organizationId,
-        assessmentId,
-        mockFilters,
-        customOptions
-      )
-    );
-
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(mockAssessmentDetail);
   });
 
   it('should handle API errors correctly', async () => {
     const mockError = new Error('API Error: Assessment detail not found');
     mockGetPagedAssessmentsDetails.mockRejectedValueOnce(mockError);
 
-    renderHook(() =>
-      getAssessmentDetail(organizationId, assessmentId, mockFilters)
-    );
-
-    await waitFor(() => {
-      expect(mockGetPagedAssessmentsDetails).toHaveBeenCalledWith(
-        organizationId,
-        assessmentId,
-        mockFilters
-      );
-    });
-
-    expect(mockParseAndLog).not.toHaveBeenCalled();
-  });
-
-  it('should use correct query key for caching', async () => {
-    mockGetPagedAssessmentsDetails.mockResolvedValueOnce({
-      data: mockAssessmentDetail
-    } as AxiosResponse);
-
     const { result } = renderHook(() =>
       getAssessmentDetail(organizationId, assessmentId, mockFilters)
     );
 
-    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    act(() => {
+      result.current.mutate(mockFilters);
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
 
     expect(mockGetPagedAssessmentsDetails).toHaveBeenCalledWith(
       organizationId,
       assessmentId,
       mockFilters
     );
+
+    expect(mockParseAndLog).not.toHaveBeenCalled();
   });
 });

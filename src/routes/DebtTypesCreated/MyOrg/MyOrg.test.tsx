@@ -65,6 +65,7 @@ describe('MyOrg', () => {
             code: 'CODE1',
             description: 'Description 1',
             updateDate: '2023-01-01T12:00:00Z',
+            flagActive: true,
             enabledOperators: 3
           },
           {
@@ -72,6 +73,7 @@ describe('MyOrg', () => {
             code: 'CODE2',
             description: 'Description 2',
             updateDate: '2023-02-01T12:00:00Z',
+            flagActive: true,
             enabledOperators: 5
           }
         ],
@@ -82,7 +84,12 @@ describe('MyOrg', () => {
 
   it('should render data grid with correct columns', async () => {
     render(
-      <MyOrg codeFilter="" descriptionFilter="" onSearch={onSearchMock} />
+      <MyOrg
+        codeFilter=""
+        descriptionFilter=""
+        statusFilter="true"
+        onSearch={onSearchMock}
+      />
     );
 
     await waitFor(() => {
@@ -95,7 +102,12 @@ describe('MyOrg', () => {
 
   it('should render data rows correctly', async () => {
     render(
-      <MyOrg codeFilter="" descriptionFilter="" onSearch={onSearchMock} />
+      <MyOrg
+        codeFilter=""
+        descriptionFilter=""
+        statusFilter=""
+        onSearch={onSearchMock}
+      />
     );
 
     await waitFor(() => {
@@ -111,6 +123,7 @@ describe('MyOrg', () => {
       <MyOrg
         codeFilter="test-code"
         descriptionFilter="test-desc"
+        statusFilter="true"
         onSearch={onSearchMock}
       />
     );
@@ -120,7 +133,12 @@ describe('MyOrg', () => {
 
   it('should update filters when props change', async () => {
     const { rerender } = render(
-      <MyOrg codeFilter="" descriptionFilter="" onSearch={onSearchMock} />
+      <MyOrg
+        codeFilter=""
+        descriptionFilter=""
+        statusFilter=""
+        onSearch={onSearchMock}
+      />
     );
 
     mutateMock.mockClear();
@@ -129,6 +147,7 @@ describe('MyOrg', () => {
       <MyOrg
         codeFilter="new-code"
         descriptionFilter="new-desc"
+        statusFilter="true"
         onSearch={onSearchMock}
       />
     );

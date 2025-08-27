@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo } from 'react';
 import { Add } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -16,6 +16,8 @@ import {
   OrgSilServiceView,
   PagedOrgSilServiceView
 } from '../../../generated/apiClient';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '..';
 
 const SERVICE_CONFIGS: Record<
   number,
@@ -36,6 +38,7 @@ export const OrgSilServicesPage = () => {
   const {
     state: { organizationId }
   } = useStore();
+  const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState(0);
   const [filterValues, setFilterValues] = useState({
@@ -46,6 +49,7 @@ export const OrgSilServicesPage = () => {
   const notificationsQuery = orgSilServiceApi.getOrgSilServices({
     organizationId: Number(organizationId)
   });
+
   const notificationsSearch = useSearch<
     OrgSilServicesFilters,
     PagedOrgSilServiceView
@@ -60,6 +64,7 @@ export const OrgSilServicesPage = () => {
   const actualizationQuery = orgSilServiceApi.getOrgSilServices({
     organizationId: Number(organizationId)
   });
+
   const actualizationSearch = useSearch<
     OrgSilServicesFilters,
     PagedOrgSilServiceView
@@ -71,9 +76,19 @@ export const OrgSilServicesPage = () => {
     query: actualizationQuery
   });
 
-  useEffect(() => {
-    notificationsSearch.applyFilters();
-  }, []);
+  const activeFilters = useMemo(() => {
+    if (activeTab === 0) {
+      return {
+        serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME,
+        applicationName: filterValues.notifications
+      };
+    } else {
+      return {
+        serviceType: OrgSilServiceType.ACTUALIZATION,
+        applicationName: filterValues.actualization
+      };
+    }
+  }, [activeTab]);
 
   const currentSearch = useMemo(
     () => (activeTab === 0 ? notificationsSearch : actualizationSearch),
@@ -81,7 +96,7 @@ export const OrgSilServicesPage = () => {
   );
 
   const { filters: filterItems } = useOrgSilServiceFilters({
-    onFilter: () => currentSearch.applyFilters()
+    onFilter: () => currentSearch.applyFilters(activeFilters)
   });
 
   const handleFilterChange = (id: string, value: unknown) => {
@@ -105,18 +120,21 @@ export const OrgSilServicesPage = () => {
     const targetSearch =
       newTab === 0 ? notificationsSearch : actualizationSearch;
     if (!targetSearch.query.data) {
-      targetSearch.applyFilters();
+      targetSearch.applyFilters(activeFilters);
     }
   };
 
   const handleAddNew = () => {
-    console.log('click on add new');
+    navigate(PageRoutes.ORG_SIL_SERVICE_CREATE);
   };
 
   const handleRowClick = (row: OrgSilServiceView) => {
-    if (!row) return;
-    console.log(
-      `click on "${row.applicationName}" with id: ${row.orgSilServiceId}`
+    if (!row?.orgSilServiceId) return;
+
+    navigate(
+      generatePath(PageRoutes.ORG_SIL_SERVICE_DETAIL, {
+        orgSilServiceId: row.orgSilServiceId.toString()
+      })
     );
   };
 
@@ -160,8 +178,6 @@ export const OrgSilServicesPage = () => {
 
       <ServiceDataGrid
         data={currentSearch.query.data}
-        loading={currentSearch.query.isPending}
-        onPaginationChange={currentSearch.handlePaginationChange}
         onRowClick={handleRowClick}
       />
     </>

@@ -9,9 +9,15 @@ import notify from './notify';
 import roles from './roles';
 import filtersValidation from './filtersValidation';
 import dialog from './dialog';
+import URI from './URI';
+import * as formatters from './formatters';
 
 export default {
-  apiClient: new Api({ baseURL: config.baseURL, timeout: config.apiTimeout }),
+  apiClient: new Api({
+    baseURL: config.baseURL,
+    timeout: config.apiTimeout,
+    paramsSerializer: config.paramsSerializer
+  }),
   fileshareClient: new FileshareApi({
     baseURL: config.fileshareURL,
     timeout: config.apiTimeout
@@ -23,6 +29,8 @@ export default {
   storage,
   notify,
   dialog,
+  URI,
   roles,
-  filtersValidation
+  filtersValidation,
+  formatters
 };

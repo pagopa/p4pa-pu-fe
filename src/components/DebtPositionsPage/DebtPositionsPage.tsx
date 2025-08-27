@@ -14,6 +14,8 @@ import { useDateRange } from '../../hooks/useDateRange';
 import { FilterFieldIds } from '../../models/SearchCardFields';
 import { DateValidationError } from '@mui/x-date-pickers';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import utils from '../../utils';
+import { noFilterSetted } from '../../utils/filtersValidation';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
@@ -23,71 +25,34 @@ export const DebtPositionsPage = () => {
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
   const [showError, setShowError] = useState(false);
 
-  const {
-    fromDate,
-    toDate,
-    setFromDate,
-    setToDate,
-    setFromError,
-    setToError,
-    resetDates
-  } = useDateRange(activeTabIndex);
+  const { setFromDate, setToDate, setFromError, setToError, resetDates } =
+    useDateRange(activeTabIndex);
 
-  const [filters, setFilters] = useState<Array<BaseFilterValues>>([
-    { [FilterFieldIds.DATE_RANGE]: { from: fromDate, to: toDate } },
-    { [FilterFieldIds.DATE_RANGE]: { from: fromDate, to: toDate } }
-  ]);
-
-  const isCurrentTabFiltersEmpty = useCallback(() => {
-    const currentFilters = filters[activeTabIndex];
-
-    const hasNonDateFilters = Object.keys(currentFilters).some((key) => {
-      if (key === FilterFieldIds.DATE_RANGE) return false;
-
-      const value = currentFilters[key];
-      return value !== null && value !== undefined && value !== '';
-    });
-
-    const dateRange = currentFilters[FilterFieldIds.DATE_RANGE];
-    const dateRangeValue = dateRange as
-      | { from?: Date | null; to?: Date | null }
-      | undefined;
-    const hasDateRange =
-      dateRangeValue && (dateRangeValue.from || dateRangeValue.to);
-
-    return !hasNonDateFilters && !hasDateRange;
-  }, [activeTabIndex, filters]);
+  const [filters, setFilters] = useState<Array<BaseFilterValues>>([]);
 
   const navigateToResults = useCallback(() => {
-    if (isCurrentTabFiltersEmpty()) {
+    if (!filters?.length || noFilterSetted(filters[activeTabIndex])) {
       setShowError(true);
-      return;
-    }
-
-    setShowError(false);
-
-    const filtersWithSearchType = {
-      ...filters[activeTabIndex],
-      searchType:
-        activeTabIndex === 0 ? ('IUV' as const) : ('DEBT_POSITION' as const)
-    };
-
-    if (activeTabIndex === 0) {
-      navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, {
-        state: {
-          searchType: SearchType.IUV,
-          filters: filtersWithSearchType
-        }
-      });
     } else {
-      navigate(PageRoutes.DEBT_POSITIONS_RESULTS, {
-        state: {
-          searchType: SearchType.DEBT_POSITION,
-          filters: filtersWithSearchType
-        }
-      });
+      setShowError(false);
+
+      const tabFilters = filters[activeTabIndex];
+      const params = utils.URI.encode(tabFilters);
+      if (activeTabIndex === 0) {
+        navigate(`${PageRoutes.DEBT_POSITION_SEARCH_RESULTS}#${params}`, {
+          state: {
+            searchType: SearchType.IUV
+          }
+        });
+      } else {
+        navigate(`${PageRoutes.DEBT_POSITIONS_RESULTS}#${params}`, {
+          state: {
+            searchType: SearchType.DEBT_POSITION
+          }
+        });
+      }
     }
-  }, [activeTabIndex, filters, navigate, isCurrentTabFiltersEmpty]);
+  }, [activeTabIndex, filters, navigate]);
 
   const resetCurrentFilters = useCallback(() => {
     const newFilters = [...filters];

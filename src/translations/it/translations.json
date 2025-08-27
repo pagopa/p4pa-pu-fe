@@ -675,6 +675,7 @@
     "inThisPage": "in questa pagina",
     "iud": "IUD",
     "iuf": "IUF",
+    "iun": "Identificativo univoco notifica",
     "iur": "IUR",
     "iuv": "IUV",
     "loading": "caricamento",
@@ -683,11 +684,13 @@
     "mandatoryDueDate": "Data di Scadenza Obbligatoria",
     "message": "Messaggio",
     "messages": "Messaggi",
+    "notificationDate": "Data di notifica",
     "nav": "NAV",
     "no": "No",
     "NO_EVENTS": "Nessun evento",
     "noFlows": "Non ci sono flussi.",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+    "notificationFeeCents": "Costo di notifica",
     "notifications": "Notifiche",
     "notificationsConfig": "Configurazione",
     "notFound": "Risorsa non trovata",
@@ -736,6 +739,7 @@
       "CLASSIFICATIONS": "Classificazione pagamenti",
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
+      "CLIENT_SIL": "Client Sil",
       "ASSESSMENT_SEARCH_RESULTS": "Risultato ricerca",
       "ASSESSMENT_DETAIL": "Dettaglio",
       "CONSERVATION": "Conservazione",
@@ -784,6 +788,7 @@
     },
     "saveDraft": "Salva bozza",
     "save": "Salva modifiche",
+    "saveOnly": "Salva",
     "search": "Cerca",
     "searchCF": "Cerca CF",
     "searchFor": "Cerca per",
@@ -823,6 +828,7 @@
       "ACTIVE": "Attivo",
       "INACTIVE": "Disattivo",
       "COMPLETED": "Elaborato",
+      "DISABLED": "Disabilitato",
       "ERROR": "Errore",
       "EXPIRED": "Scaduto",
       "PROCESSING": "In elaborazione",
@@ -1509,7 +1515,8 @@
     "fetchChapters": "Impossibile caricare i capitoli. Riprova più tardi.",
     "fetchPaidInstallments": "Impossibile caricare i pagamenti. Riprova più tardi.",
     "noChaptersForYear": "Non ci sono capitoli per l'anno {{year}}",
-    "generic": "Si è verificato un errore. Riprova più tardi."
+    "generic": "Si è verificato un errore. Riprova più tardi.",
+    "fetchOrgSilService": "Errore nel recuperare i dettagli del servizio"
   },
   "events": {
     "searchCardTitle": "Cosa stai cercando?",
@@ -1573,6 +1580,125 @@
     "paymentNotice": "Notifica Pagamenti",
     "apiName": "Nome API",
     "addAPI": "Aggiungi API"
+  },
+  "orgSilServiceDetail": {
+    "description": "Ecco i dettagli dell'API.",
+    "notFound": "Servizio non trovato",
+    "noAuthConfigured": "Nessuna configurazione di autenticazione",
+    "sections": {
+      "generalConfig": {
+        "title": "Configurazione generale"
+      },
+      "authConfig": {
+        "title": "Modalità di autenticazione"
+      }
+    },
+    "fields": {
+      "applicationName": "Nome API",
+      "serviceUrl": "Service URL",
+      "serviceType": "Tipo Servizio",
+      "apiLegacy": "API Legacy",
+      "authConfig": "Auth Config",
+      "authUrl": "Auth URL",
+      "username": "Username",
+      "kid": "KID",
+      "subject": "Subject",
+      "issuer": "Issuer",
+      "algorithm": "Algorithm",
+      "signingKey": "Signing Key"
+    },
+    "serviceTypes": {
+      "paymentNotification": "Notifica Pagamenti",
+      "amountActualization": "Attualizzazione Importo"
+    },
+    "authTypes": {
+      "basicAuth": "Basic Auth",
+      "jwtAuth": "Legacy JWT"
+    }
+  },
+  "clientSil": {
+    "addNew": "Aggiungi nuovo",
+    "filters": {
+      "clientName": "Nome Client SIL",
+      "clientNamePlaceholder": "Inserisci il nome del client",
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "Inserisci l'ID del client"
+    },
+    "table": {
+      "clientName": "Nome Client SIL",
+      "clientId": "Client ID"
+    },
+    "title": "Client SIL",
+    "description": "Gestisci i Client SIL dell'organizzazione",
+    "create": {
+      "title": "Aggiungi nuovo Client SIL",
+      "subtitle": "Il client ID e key secret saranno generati automaticamente dopo la creazione.",
+      "formLabel": "Form di creazione Client SIL",
+      "section": {
+        "description": {
+          "title": "Configurazione generale",
+          "subtitle": "Descrizione"
+        }
+      },
+      "success": {
+        "title": "Il SIL '{{clientName}}' è stato aggiunto!",
+        "description": "La trovi nella sezione Gestione SIL, dove puoi consultarlo in qualsiasi momento.",
+        "goToDetail": "Vedi dettaglio SIL"
+      },
+      "fields": {
+        "clientName": {
+          "label": "Nome Client SIL",
+          "placeholder": "Tassa seconde case",
+          "required": "Il nome del Client SIL è obbligatorio",
+          "maxLength": "Il nome non può superare i 100 caratteri",
+          "invalid": "Il nome del Client SIL può contenere solo caratteri alfanumerici ed i simboli - e _"
+        }
+      },
+      "error": {
+        "nameAlreadyExists": "Esiste già un Client SIL con questo nome",
+        "invalidData": "I dati inseriti non sono validi",
+        "generic": "Errore durante la creazione del Client SIL"
+      }
+    }
+  },
+  "orgSilServiceCreate": {
+    "actualization": "Attualizzazione importo",
+    "paidNotificationOutcome": "Notifica Pagamenti",
+    "legacyBasic": "Legacy Basic",
+    "legacyJWT": "Legacy JWT",
+    "title": "Aggiungi nuova API",
+    "description": "Inserisci i dati delle API ad esporre in Piattaforma Unitaria per essere utilizzati nei processi di Notifica Pagamenti ed Attualizzazione Importo.",
+    "subTitle": "Configurazione dell'API",
+    "generalConfiguration": "Configurazione generale",
+    "APIName": "Nome API",
+    "serviceURL": "Service URL",
+    "serviceType": "Tipo Servizio",
+    "authMethod": "Modalità di autenticazione",
+    "flagLegacy": "L'API deve mantenere la retrocompatibilità con i vecchi metodi di autenticazione?",
+    "authConfig": "Auth Config",
+    "basicUser": "User",
+    "basicPassword": "Password",
+    "basicAuthURL": "Auth URL",
+    "jwtKid": "KID",
+    "jwtIssuer": "Issuer",
+    "jwtSubject": "Subject",
+    "jwtAlgorithm": "Algorithm",
+    "jwtSigningKey": "Signing key",
+    "newService": {
+      "success": {
+        "title": "L'API ‘{{applicationName}}’ è stata aggiunta!",
+        "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
+        "goToDetail": "Vedi dettaglio API"
+      }
+    },
+    "validations": {
+      "requiredAPIName": "Il nome dell'API è obbligatorio",
+      "requiredURL": "L'URL del servizio è obbligatorio",
+      "invalidURL": "Formato URL non valido",
+      "requiredServiceType": "Il tipo di servizio è obbligatorio",
+      "requiredLegacyType": "Seleziona un tipo di autenticazione legacy",
+      "requiredField": "Campo obbligatorio"
+    }
   },
   "registry": {
     "detail": {

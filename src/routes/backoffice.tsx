@@ -13,6 +13,10 @@ import EventPage from './Events/Search';
 import EventList from './Events/List';
 import EventsContainer from './Events/EventsContainer';
 import OrgSilServicesPage from './OrgSilServicePage/OrgSilServicesPage';
+import OrgSilServiceDetailPage from './OrgSilServiceDetailPage/OrgSilServiceDetailPage';
+import ClientSilPage from './ClientSilPage/ClientSilPage';
+import ClientSilCreate from './ClientSilCreate/ClientSilCreate';
+import { OrgSilServiceCreate } from './OrgSilServiceCreate/OrgSilServiceCreate';
 
 const deployPath = config.deployPath;
 
@@ -121,6 +125,65 @@ export const backofficeRoutes = [
             handle: {
               hideBreadcrumbs: true,
               backButton: false
+            }
+          },
+          {
+            id: 'ORG_SIL_SERVICE_DETAIL',
+            path: ':orgSilServiceId',
+            element: <OrgSilServiceDetailPage />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            }
+          },
+          {
+            id: 'ORG_SIL_SERVICE_CREATE',
+            path: 'new',
+            element: <OrgSilServiceCreate />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            }
+          }
+        ]
+      },
+      {
+        id: 'CLIENT_SIL',
+        path: 'client-sil/',
+        element: (
+          <AdminRouteGuard>
+            <Outlet />
+          </AdminRouteGuard>
+        ),
+        children: [
+          {
+            id: 'CLIENT_SIL_INDEX',
+            element: <ClientSilPage />,
+            index: true,
+            handle: {
+              hideBreadcrumbs: true,
+              backButton: false
+            }
+          },
+          {
+            id: 'CLIENT_SIL_CREATE',
+            path: 'create',
+            element: <ClientSilCreate />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
             }
           }
         ]

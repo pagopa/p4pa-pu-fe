@@ -176,38 +176,14 @@ const Step2PaymentsComponent = forwardRef<
 
   const currentPageRows = useMemo(() => {
     const dataSource = isRemoveMode ? removeData : paymentsState.paymentsData;
-    const currentPage = dataSource?.number || 0;
-    const currentSize = dataSource?.size || 10;
-
-    const rows =
-      dataSource?.content?.map((row, pageIndex) => {
-        const absoluteIndex = currentPage * currentSize + pageIndex;
-
-        const baseRow = {
-          uniqueId: `${row.iud || 'no-iud'}-${absoluteIndex}`,
-          iud: row.iud || ''
-        };
-        if (isRemoveMode) {
-          const assessmentRow = row as typeof row & {
-            assessmentDetailId: number;
-          };
-          return {
-            ...baseRow,
-            assessmentDetailId: assessmentRow.assessmentDetailId
-          };
-        } else {
-          return baseRow;
-        }
-      }) || [];
-
-    return rows;
-  }, [
-    isRemoveMode,
-    removeData,
-    paymentsState.paymentsData.content,
-    paymentsState.paymentsData.number,
-    paymentsState.paymentsData.size
-  ]);
+    return (dataSource?.content || []).map((row) => ({
+      iud: row.iud || '',
+      assessmentDetailId: isRemoveMode
+        ? (row as typeof row & { assessmentDetailId?: number })
+            .assessmentDetailId
+        : undefined
+    }));
+  }, [isRemoveMode, removeData, paymentsState.paymentsData.content]);
 
   const globalSelection = useGlobalPaymentSelection({
     setValue: setValue as (name: string, value: unknown) => void,
@@ -296,16 +272,7 @@ const Step2PaymentsComponent = forwardRef<
   const assessmentDetailQuery = getAssessmentDetail(
     organizationId,
     assessmentId || 0,
-    { size: 10, page: 0 }, // Default pagination
-    {
-      enabled:
-        isActive &&
-        shouldLoadData &&
-        isRemoveMode &&
-        !!assessmentId &&
-        !!organizationId &&
-        !hasLoadedData
-    }
+    { size: 10, page: 0 }
   );
 
   // Effect for handling assessment detail data (Remove mode)
@@ -313,7 +280,7 @@ const Step2PaymentsComponent = forwardRef<
     if (
       isRemoveMode &&
       assessmentDetailQuery.data &&
-      !assessmentDetailQuery.isLoading &&
+      !assessmentDetailQuery.isPending &&
       !hasLoadedData
     ) {
       handleAssessmentDetailSuccess(assessmentDetailQuery.data);
@@ -324,7 +291,7 @@ const Step2PaymentsComponent = forwardRef<
   }, [
     isRemoveMode,
     assessmentDetailQuery.data,
-    assessmentDetailQuery.isLoading,
+    assessmentDetailQuery.isPending,
     assessmentDetailQuery.isError,
     assessmentDetailQuery.error,
     hasLoadedData,
@@ -372,7 +339,6 @@ const Step2PaymentsComponent = forwardRef<
   }, [
     globalSelection.clearAllSelections,
     paymentsManager.hideAlert,
-    selectedAssessmentDetailIds,
     isRemoveMode,
     setValue
   ]);
@@ -393,7 +359,6 @@ const Step2PaymentsComponent = forwardRef<
   }, [
     isRemoveMode,
     selectedAssessmentDetailIds,
-    globalSelection.totalSelected,
     paymentsManager.showValidationError,
     setShowRemoveConfirmModal
   ]);
@@ -471,50 +436,41 @@ const Step2PaymentsComponent = forwardRef<
     setShowRemoveConfirmModal(false);
   }, []);
 
-  // TEMPORARY: When IUDs are unique, this handler will become much simpler
-  // FUTURE: handleTableSelectionChange = (newSelectedIuds) => { globalSelection.toggleIudSelection(newSelectedIuds) }
+  // Handle table selection changes with direct IUD management
   const handleTableSelectionChange = useCallback(
-    (newSelectedUniqueIds: Array<string>) => {
-      // Get all currently selected uniqueIds
-      const currentSelectedUniqueIds = Array.from(
-        globalSelection.globalSelectedUniqueIds
+    (newSelectedIuds: Array<string>) => {
+      // Use Set for performance
+      const currentSelectedSet = globalSelection.globalSelectedIuds;
+      const newSelectedSet = new Set(newSelectedIuds);
+
+      // Get current page IUDs for proper scope calculation
+      const currentPageIuds = new Set(
+        currentPageRows.map((row) => row.iud).filter(Boolean)
       );
 
-      // TEMPORARY: Calculate uniqueIds for current page
-      // FUTURE: const currentPageIuds = paymentsState.paymentsData.content?.map(row => row.iud) || [];
-      // Use the same data source as currentPageRows
-      const dataSource = isRemoveMode ? removeData : paymentsState.paymentsData;
-      const currentPage = dataSource?.number || 0;
-      const currentSize = dataSource?.size || 10;
-
-      const currentPageUniqueIds =
-        dataSource?.content?.map((row, pageIndex) => {
-          const absoluteIndex = currentPage * currentSize + pageIndex;
-          return `${row.iud || 'no-iud'}-${absoluteIndex}`;
-        }) || [];
-
-      const toDeselect = currentPageUniqueIds.filter(
-        (uniqueId) =>
-          currentSelectedUniqueIds.includes(uniqueId) &&
-          !newSelectedUniqueIds.includes(uniqueId)
+      // Calculate changes ONLY for current page scope
+      const currentPageSelectedIuds = Array.from(currentSelectedSet).filter(
+        (iud) => currentPageIuds.has(iud)
       );
-      const toSelect = newSelectedUniqueIds.filter(
-        (uniqueId) => !currentSelectedUniqueIds.includes(uniqueId)
+
+      const toDeselect = currentPageSelectedIuds.filter(
+        (iud) => !newSelectedSet.has(iud)
+      );
+      const toSelect = newSelectedIuds.filter(
+        (iud) => !currentSelectedSet.has(iud)
       );
 
       if (toDeselect.length > 0) {
-        globalSelection.toggleUniqueIdSelection(toDeselect, false);
+        globalSelection.toggleIudSelection(toDeselect, false);
       }
-
       if (toSelect.length > 0) {
-        globalSelection.toggleUniqueIdSelection(toSelect, true);
+        globalSelection.toggleIudSelection(toSelect, true);
       }
     },
     [
-      isRemoveMode,
-      removeData?.content,
-      paymentsState.paymentsData.content,
-      globalSelection.toggleUniqueIdSelection
+      globalSelection.globalSelectedIuds,
+      globalSelection.toggleIudSelection,
+      currentPageRows
     ]
   );
 
@@ -671,39 +627,36 @@ const Step2PaymentsComponent = forwardRef<
     paymentsState.clearValidationErrors
   ]);
 
+  // Helper function to check if there are selections
+  const hasSelections = useCallback(() => {
+    return isRemoveMode
+      ? !!(
+          selectedAssessmentDetailIds && selectedAssessmentDetailIds.length > 0
+        )
+      : globalSelection.totalSelected > 0;
+  }, [
+    isRemoveMode,
+    selectedAssessmentDetailIds,
+    globalSelection.totalSelected
+  ]);
+
   useImperativeHandle(
     ref,
     () => ({
       showValidationError: (show: boolean) => {
-        const hasSelections = isRemoveMode
-          ? selectedAssessmentDetailIds &&
-            selectedAssessmentDetailIds.length > 0
-          : globalSelection.totalSelected > 0;
+        const hasCurrentSelections = hasSelections();
 
-        if (show && hasSelections) {
+        if (show && hasCurrentSelections) {
           handleOpenRemoveConfirmModal();
         } else {
           paymentsManager.showValidationError(show);
         }
       },
       showFilterValidationError: paymentsManager.showFilterValidationError,
-      validateSelections: () => {
-        if (isRemoveMode) {
-          const hasSelections = !!(
-            selectedAssessmentDetailIds &&
-            selectedAssessmentDetailIds.length > 0
-          );
-          return hasSelections;
-        } else {
-          const hasSelections = globalSelection.totalSelected > 0;
-          return hasSelections;
-        }
-      }
+      validateSelections: hasSelections
     }),
     [
-      isRemoveMode,
-      globalSelection.totalSelected,
-      selectedAssessmentDetailIds,
+      hasSelections,
       handleOpenRemoveConfirmModal,
       paymentsManager.showValidationError,
       paymentsManager.showFilterValidationError
@@ -719,13 +672,13 @@ const Step2PaymentsComponent = forwardRef<
 
   const isApiCallPending = useMemo(() => {
     if (isRemoveMode) {
-      return assessmentDetailQuery.isLoading || isManualApiCallPending;
+      return assessmentDetailQuery.isPending || isManualApiCallPending;
     } else {
       return paymentsApi.isLoading || isManualApiCallPending;
     }
   }, [
     isRemoveMode,
-    assessmentDetailQuery.isLoading,
+    assessmentDetailQuery.isPending,
     paymentsApi.isLoading,
     isManualApiCallPending
   ]);
@@ -773,17 +726,17 @@ const Step2PaymentsComponent = forwardRef<
   }, [globalSelection.totalSelected, t]);
 
   // Calculate selections for current page (for DataGrid synchronization)
-  // TEMPORARY: Convert from uniqueId to list for DataGrid
-  // FUTURE: Will be much simpler, direct IUD mapping
-  const currentPageSelectedUniqueIds = useMemo(() => {
-    const currentPageUniqueIds = currentPageRows.map((row) => row.uniqueId);
+  const currentPageSelectedIuds = useMemo(() => {
+    const currentPageIuds = currentPageRows
+      .map((row) => row.iud)
+      .filter((iud): iud is string => Boolean(iud));
 
-    const selectedInCurrentPage = currentPageUniqueIds
-      .filter((uniqueId) => uniqueId != null)
-      .filter((uniqueId) => globalSelection.isUniqueIdSelected(uniqueId));
+    const selectedInCurrentPage = currentPageIuds.filter((iud) =>
+      globalSelection.isIudSelected(iud)
+    );
 
     return selectedInCurrentPage;
-  }, [currentPageRows, globalSelection.globalSelectedUniqueIds]);
+  }, [currentPageRows, globalSelection.globalSelectedIuds]);
 
   return (
     <Stack direction="column" gap={3} width="100%">
@@ -887,14 +840,12 @@ const Step2PaymentsComponent = forwardRef<
         >
           <Box component="span" sx={{ fontWeight: 'medium' }}>
             {selectionBannerText}
-            {globalSelection.totalSelected >
-              currentPageSelectedUniqueIds.length && (
+            {globalSelection.totalSelected > currentPageSelectedIuds.length && (
               <Box
                 component="span"
                 sx={{ fontStyle: 'italic', ml: 1, color: 'text.secondary' }}
               >
-                ({currentPageSelectedUniqueIds.length} {t('commons.inThisPage')}
-                )
+                ({currentPageSelectedIuds.length} {t('commons.inThisPage')})
               </Box>
             )}
           </Box>
@@ -922,12 +873,12 @@ const Step2PaymentsComponent = forwardRef<
           initialFilters={initialTableFilters}
           isLoading={
             (isRemoveMode
-              ? assessmentDetailQuery.isLoading
+              ? assessmentDetailQuery.isPending
               : paymentsApi.isLoading) && !hasLoadedData
           }
           isApiCallPending={isApiCallPending}
           autoLoadOnMount={!hasLoadedData && !isRemoveMode}
-          selectedUniqueIds={currentPageSelectedUniqueIds}
+          selectedIuds={currentPageSelectedIuds}
           isRemoveMode={isRemoveMode}
         />
       )}

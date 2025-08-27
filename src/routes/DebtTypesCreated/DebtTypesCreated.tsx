@@ -27,6 +27,7 @@ export const DebtTypesCreated = () => {
   const [tabValue, setTabValue] = useState(getInitialTab);
   const [codeFilter, setCodeFilter] = useState('');
   const [descriptionFilter, setDescriptionFilter] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [IPACodeFilter, setIPACodeFilter] = useState('');
 
   const myOrgSearchRef = useRef<(() => void) | null>(null);
@@ -82,6 +83,11 @@ export const DebtTypesCreated = () => {
     managedOrgsSearchRef.current = searchFn;
   };
 
+  const stateFilterSearch = [
+    { label: t('commons.status.ACTIVE'), value: 'true' },
+    { label: t('commons.status.DISABLED'), value: 'false' }
+  ];
+
   const renderFilters = () => {
     if (tabValue === 0) {
       return (
@@ -93,7 +99,7 @@ export const DebtTypesCreated = () => {
               value: codeFilter,
               adornment: <Search />,
               onChange: (e) => setCodeFilter(e.target.value),
-              gridWidth: 5
+              gridWidth: 4
             },
             {
               type: COMPONENT_TYPE.textField,
@@ -104,10 +110,22 @@ export const DebtTypesCreated = () => {
               gridWidth: 5
             },
             {
+              type: COMPONENT_TYPE.select,
+              defaultValue: '',
+              id: 'flagActive',
+              name: 'flagActive',
+              label: t('commons.state'),
+              value: statusFilter,
+              options: stateFilterSearch,
+              onChange: (e) =>
+                setStatusFilter((e.target.value as string) || ''),
+              gridWidth: 2
+            },
+            {
               type: COMPONENT_TYPE.button,
               label: t('commons.search'),
               onClick: handleSearch,
-              gridWidth: 2
+              gridWidth: 1
             }
           ]}
         />
@@ -203,6 +221,7 @@ export const DebtTypesCreated = () => {
             key={`myorg-tab-${tabValue}`}
             codeFilter={codeFilter}
             descriptionFilter={descriptionFilter}
+            statusFilter={statusFilter}
             onSearch={registerMyOrgSearch}
           />
         ) : (

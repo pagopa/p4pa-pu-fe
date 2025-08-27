@@ -8,6 +8,7 @@ import { AssessmentCreate } from './AssessmentCreate/AssessmentCreate';
 import { AssessmentRegistryDetail } from './AssessmentsRegistryDetail';
 import { AssessmentRegistryCreate } from './AssessmentRegistryCreate';
 import { AssessmentRegistryEdit } from './AssessmentRegistryCreate/AssessmentRegistryEdit';
+import utils from '../utils';
 
 export const assessmentRoutes = [
   {
@@ -33,6 +34,13 @@ export const assessmentRoutes = [
           hideBreadcrumbs: true,
           sidebar: {
             visible: false
+          },
+          backButtonFunction: () => {
+            // Clear hash to prevent unwanted API calls from pagination reset
+            window.location.hash = '';
+            // Navigate using configured deployPath
+            window.location.href =
+              window.location.origin + utils.config.deployPath + '/assessment';
           }
         } as RouteHandleObject
       },

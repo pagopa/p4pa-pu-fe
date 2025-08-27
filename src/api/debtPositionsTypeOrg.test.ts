@@ -50,7 +50,33 @@ describe('getDebtPositionTypeOrgs', () => {
 
     expect(result.current.data).toEqual(mockData);
     expect(utils.apiClient.bff.getDebtPositionTypeOrgs).toHaveBeenCalledWith(
-      123
+      123,
+      undefined
+    );
+  });
+
+  it('should pass flagActive parameter when provided', async () => {
+    const mockData = [
+      { id: 1, description: 'Type A' },
+      { id: 2, description: 'Type B' }
+    ];
+
+    (utils.apiClient.bff.getDebtPositionTypeOrgs as Mock).mockResolvedValue({
+      data: mockData
+    });
+
+    const { result } = renderHook(() =>
+      getDebtPositionTypeOrgs({ organizationId: 123, flagActive: true })
+    );
+
+    await waitFor(() => {
+      expect(result.current.isSuccess).toBe(true);
+    });
+
+    expect(result.current.data).toEqual(mockData);
+    expect(utils.apiClient.bff.getDebtPositionTypeOrgs).toHaveBeenCalledWith(
+      123,
+      { flagActive: true }
     );
   });
 });
