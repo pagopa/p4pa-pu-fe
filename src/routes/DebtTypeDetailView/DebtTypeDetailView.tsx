@@ -1,5 +1,19 @@
-import { Box, Button, Stack } from '@mui/material';
-import { Delete, Edit } from '@mui/icons-material';
+import {
+  Box,
+  Button,
+  Stack,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText
+} from '@mui/material';
+import {
+  Delete,
+  Edit,
+  MoreVert,
+  HighlightOff,
+  Check
+} from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { generatePath, useNavigate, useParams } from 'react-router';
@@ -9,9 +23,12 @@ import {
   getAccordionSectionsConfig,
   OperatorsData
 } from '../../models/DebtTypeSectionsConfig';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { STATE } from '../../store/types';
-import { getDebtPositionTypeOrgById } from '../../api/debtPositionsTypeOrg';
+import {
+  getDebtPositionTypeOrgById,
+  updateFlagActiveDebtPositionTypeOrg
+} from '../../api/debtPositionsTypeOrg';
 import utils from '../../utils';
 import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../routes';
@@ -20,14 +37,24 @@ import { AxiosError, isAxiosError } from 'axios';
 import { useStore } from '../../store/GlobalStore';
 import { useDebtPositionTypeOrgSearch } from '../../api/debtTypesCreated';
 import { OrgSilServiceType } from '../../../generated/data-contracts';
+import { theme } from '@pagopa/mui-italia';
+import { useConfirmDialog } from './hooks/useConfirmDialog';
 import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';
 
 export const DebtTypeDetailView = () => {
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [openErrorDialog, setOpenErrorDialog] = useState(false);
-  const [ErrorDescription, setErrorDescription] = useState<
-    'genericErrorDescription' | 'alreadyUsedDescription'
-  >('genericErrorDescription');
+  const {
+    isOpen,
+    currentAction,
+    closeDialog,
+    handleConfirm,
+    showDeleteDialog,
+    showDisableDialog,
+    showEnableDialog,
+    showErrorDialog
+  } = useConfirmDialog();
+
+  const [actionMenuAnchorEl, setActionMenuAnchorEl] =
+    useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const [accordionSections, setAccordionSections] = useState<
     Array<AccordionSectionConfig>
@@ -44,55 +71,17 @@ export const DebtTypeDetailView = () => {
     Number(debtPositionTypeOrgId)
   );
 
-  const handleDeleteConfirm = async () => {
-    setOpenDeleteDialog(false);
-    try {
-      await deleteDebtPositionTypeOrgs.mutateAsync();
-      navigate(PageRoutes.DEBT_TYPES_DASHBOARD);
-    } catch (error: unknown) {
-      setOpenErrorDialog(true);
-      if (isAxiosError(error) && error.response?.status === 409) {
-        return setErrorDescription('alreadyUsedDescription');
-      }
-      setErrorDescription('genericErrorDescription');
+  const updateFlagActive = updateFlagActiveDebtPositionTypeOrg(
+    () => {
+      utils.notify.emit(t('debtTypeDetail.success.updated'), 'success');
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
+    },
+    () => {
+      showErrorDialog('genericErrorDescription');
     }
-  };
-
-  const handleErrorConfirm = () => {
-    setOpenErrorDialog(false);
-  };
-
-  const handleEditClick = async () => {
-    try {
-      const notificationPromise = utils.apiClient.bff.getOrgSilServices(
-        organizationId,
-        { serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME }
-      );
-      const actualizationPromise = utils.apiClient.bff.getOrgSilServices(
-        organizationId,
-        { serviceType: OrgSilServiceType.ACTUALIZATION }
-      );
-
-      await Promise.all([notificationPromise, actualizationPromise]);
-
-      navigate(
-        generatePath(PageRoutes.DEBT_TYPE_ORG_EDIT, {
-          debtPositionTypeOrgId
-        })
-      );
-    } catch (error) {
-      console.error('Services availability check failed:', error);
-
-      utils.notify.emit(
-        t('debtTypeDetail.errors.servicesUnavailableCannotEdit'),
-        'error'
-      );
-    }
-  };
-
-  if (isNaN(Number(debtPositionTypeOrgId))) {
-    console.error('debtPositionTypeOrgId is not a number');
-  }
+  );
 
   const {
     data,
@@ -124,6 +113,111 @@ export const DebtTypeDetailView = () => {
     error: operatorsEnabledError
   } = useDebtPositionTypeOrgSearch();
 
+  const handleDeleteClick = () => {
+    handleActionMenuClose();
+    showDeleteDialog(async () => {
+      try {
+        await deleteDebtPositionTypeOrgs.mutateAsync();
+        navigate(PageRoutes.DEBT_TYPES_DASHBOARD);
+      } catch (error: unknown) {
+        if (isAxiosError(error) && error.response?.status === 409) {
+          showErrorDialog('alreadyUsedDescription');
+        } else {
+          showErrorDialog('genericErrorDescription');
+        }
+        throw error;
+      }
+    });
+  };
+
+  const handleDisableClick = () => {
+    handleActionMenuClose();
+    showDisableDialog(async () => {
+      try {
+        await updateFlagActive.mutateAsync({
+          organizationId,
+          debtPositionTypeOrgId: Number(debtPositionTypeOrgId),
+          flagActive: false
+        });
+      } catch (error: unknown) {
+        console.error('Disable error:', error);
+      }
+    });
+  };
+
+  const handleEnableClick = () => {
+    showEnableDialog(async () => {
+      try {
+        await updateFlagActive.mutateAsync({
+          organizationId,
+          debtPositionTypeOrgId: Number(debtPositionTypeOrgId),
+          flagActive: true
+        });
+      } catch (error: unknown) {
+        console.error('Enable error:', error);
+        utils.notify.emit(t('debtTypeDetail.errors.enableFailed'), 'error');
+      }
+    });
+  };
+
+  const handleDirectDeleteClick = () => {
+    showDeleteDialog(async () => {
+      try {
+        await deleteDebtPositionTypeOrgs.mutateAsync();
+        navigate(PageRoutes.DEBT_TYPES_DASHBOARD);
+      } catch (error: unknown) {
+        if (isAxiosError(error) && error.response?.status === 409) {
+          showErrorDialog('alreadyUsedDescription');
+        } else {
+          showErrorDialog('genericErrorDescription');
+        }
+        throw error;
+      }
+    });
+  };
+
+  const handleEditClick = async () => {
+    try {
+      const notificationPromise = utils.apiClient.bff.getOrgSilServices(
+        organizationId,
+        { serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME }
+      );
+      const actualizationPromise = utils.apiClient.bff.getOrgSilServices(
+        organizationId,
+        { serviceType: OrgSilServiceType.ACTUALIZATION }
+      );
+
+      await Promise.all([notificationPromise, actualizationPromise]);
+
+      navigate(
+        generatePath(PageRoutes.DEBT_TYPE_ORG_EDIT, {
+          debtPositionTypeOrgId
+        })
+      );
+    } catch (error) {
+      console.error('Services availability check failed:', error);
+      utils.notify.emit(
+        t('debtTypeDetail.errors.servicesUnavailableCannotEdit'),
+        'error'
+      );
+    }
+  };
+
+  const handleActionMenuOpen = () => {
+    const activeElement = document.activeElement as HTMLElement;
+    if (activeElement) {
+      setActionMenuAnchorEl(activeElement);
+    }
+  };
+
+  const handleActionMenuClose = () => {
+    setActionMenuAnchorEl(null);
+  };
+
+  if (isNaN(Number(debtPositionTypeOrgId))) {
+    console.error('debtPositionTypeOrgId is not a number');
+  }
+
   const buildOperatorsData = (): OperatorsData | null => {
     if (!operatorQuery.data || !operatorsEnabledData?.content?.[0]) {
       return null;
@@ -137,6 +231,65 @@ export const DebtTypeDetailView = () => {
       totalOperators,
       enabledOperators
     };
+  };
+
+  const { titleActions, bottomActions } = useMemo(() => {
+    const isActive = data?.response?.flagActive;
+
+    if (isActive) {
+      const actionMenuButton = {
+        icon: <MoreVert />,
+        color: 'primary' as const,
+        disabled: false,
+        onActionClick: handleActionMenuOpen,
+        dataTestId: 'action-menu-button',
+        isIconButton: true
+      };
+
+      const editButton = {
+        icon: <Edit />,
+        buttonText: t('commons.edit'),
+        color: 'primary' as const,
+        variant: 'contained' as const,
+        disabled: false,
+        onActionClick: handleEditClick
+      };
+
+      return {
+        titleActions: [actionMenuButton, editButton],
+        bottomActions: [editButton]
+      };
+    } else {
+      const deleteButton = {
+        icon: <Delete />,
+        buttonText: t('commons.delete'),
+        color: 'error' as const,
+        variant: 'outlined' as const,
+        disabled: false,
+        onActionClick: handleDirectDeleteClick
+      };
+
+      const enableButton = {
+        icon: <Check />,
+        buttonText: t('commons.enable'),
+        color: 'primary' as const,
+        variant: 'contained' as const,
+        disabled: false,
+        onActionClick: handleEnableClick
+      };
+
+      return {
+        titleActions: [deleteButton, enableButton],
+        bottomActions: [deleteButton, enableButton]
+      };
+    }
+  }, [data?.response?.flagActive, t]);
+
+  const getStatusChip = () => {
+    if (data?.response?.flagActive) {
+      return { label: t('commons.enabled'), color: 'success' as const };
+    }
+    return { label: t('commons.disabled'), color: 'error' as const };
   };
 
   useEffect(() => {
@@ -202,82 +355,94 @@ export const DebtTypeDetailView = () => {
     organizationId
   ]);
 
-  const actionButtons = [
-    {
-      icon: <Delete />,
-      buttonText: t('commons.delete'),
-      color: 'error' as const,
-      variant: 'outlined' as const,
-      onActionClick: () => setOpenDeleteDialog(true)
-    },
-    {
-      icon: <Edit />,
-      buttonText: t('commons.edit'),
-      color: 'primary' as const,
-      variant: 'contained' as const,
-      disabled: false,
-      onActionClick: handleEditClick
-    }
-  ];
-
   return (
     <>
-      <>
-        <TitleComponent
-          title={data?.response?.description ?? '-'}
-          description={t('debtTypeDetail.description')}
-          callToAction={actionButtons}
-        />
-        <Box mt={3}>
-          <Stack spacing={2}>
-            {accordionSections?.map((section, index) => (
-              <DetailAccordion
-                key={section.configType}
-                idTitle={++index}
-                title={section.title}
-                description={section.description}
-                sections={section.sections}
+      <TitleComponent
+        title={data?.response?.description ?? '-'}
+        chip={getStatusChip()}
+        description={t('debtTypeDetail.description')}
+        callToAction={titleActions}
+      />
+      <Box mt={3}>
+        <Stack spacing={2}>
+          {accordionSections?.map((section, index) => (
+            <DetailAccordion
+              key={section.configType}
+              idTitle={++index}
+              title={section.title}
+              description={section.description}
+              sections={section.sections}
+            />
+          ))}
+        </Stack>
+      </Box>
+      <Box mt={3} display="flex" justifyContent="flex-end">
+        <Stack spacing={2} direction="row">
+          {bottomActions.map((button, index) => (
+            <Button
+              size="large"
+              key={index}
+              startIcon={button.icon}
+              color={button.color}
+              variant={button.variant}
+              disabled={button.disabled}
+              onClick={button.onActionClick}
+            >
+              {button.buttonText}
+            </Button>
+          ))}
+        </Stack>
+      </Box>
+
+      {data?.response?.flagActive && (
+        <Menu
+          anchorEl={actionMenuAnchorEl}
+          open={Boolean(actionMenuAnchorEl)}
+          onClose={handleActionMenuClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'right'
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'right'
+          }}
+        >
+          <MenuItem onClick={handleDisableClick}>
+            <ListItemIcon>
+              <HighlightOff
+                fontSize="small"
+                sx={{ color: theme.palette.primary.main }}
               />
-            ))}
-          </Stack>
-        </Box>
-        <Box mt={3} display="flex" justifyContent="flex-end">
-          <Stack spacing={2} direction="row">
-            {actionButtons.map((button, index) => (
-              <Button
-                size="large"
-                key={index}
-                startIcon={button.icon}
-                color={button.color}
-                variant={button.variant}
-                disabled={button.disabled}
-                onClick={button.onActionClick}
-              >
-                {button.buttonText}
-              </Button>
-            ))}
-          </Stack>
-        </Box>
-      </>
-      <GenericDialog
-        data-testid="confirm-dialog"
-        open={openDeleteDialog}
-        title={t('debtTypeCatalogDetail.confirmDialog.title')}
-        message={t('debtTypeCatalogDetail.confirmDialog.description')}
-        confirmLabel={t('commons.delete')}
-        cancelLabel={t('commons.close')}
-        onConfirm={handleDeleteConfirm}
-        onClose={() => setOpenDeleteDialog(false)}
-      />
-      <GenericDialog
-        data-testid="error-dialog"
-        open={openErrorDialog}
-        title={t('debtTypeCatalogDetail.errorDialog.title')}
-        message={t(`debtTypeCatalogDetail.errorDialog.${ErrorDescription}`)}
-        confirmLabel={t('commons.close')}
-        onConfirm={handleErrorConfirm}
-        onClose={() => setOpenErrorDialog(false)}
-      />
+            </ListItemIcon>
+            <ListItemText>{t('commons.disable')}</ListItemText>
+          </MenuItem>
+          <MenuItem onClick={handleDeleteClick}>
+            <ListItemIcon>
+              <Delete
+                fontSize="small"
+                sx={{ color: theme.palette.error.main }}
+              />
+            </ListItemIcon>
+            <ListItemText>{t('commons.delete')}</ListItemText>
+          </MenuItem>
+        </Menu>
+      )}
+
+      {currentAction && (
+        <GenericDialog
+          data-testid={currentAction.testId}
+          open={isOpen}
+          title={currentAction.title}
+          message={currentAction.message}
+          confirmLabel={currentAction.confirmLabel}
+          cancelLabel={
+            currentAction.showCancel ? currentAction.cancelLabel : undefined
+          }
+          onConfirm={handleConfirm}
+          onClose={closeDialog}
+        />
+      )}
     </>
   );
 };
