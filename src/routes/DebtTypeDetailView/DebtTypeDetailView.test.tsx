@@ -28,7 +28,7 @@ vi.mock('react-router', async () => {
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn(() => ({
     state: {
-      [STATE.ORGANIZATION_ID]: '3'
+      [STATE.ORGANIZATION_ID]: 3
     }
   })),
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
@@ -606,11 +606,15 @@ describe('DebtTypeDetailView', () => {
 
       await waitFor(() => {
         expect(mockMutate).toHaveBeenCalledWith({
-          organizationId: 3,
           filters: {
             code: 'TEST_CODE',
             description: 'Test Debt Type'
-          }
+          },
+          pagination: {
+            page: 0,
+            size: 10
+          },
+          sort: []
         });
       });
     });
