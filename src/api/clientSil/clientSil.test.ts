@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
-import { getClientSils } from './index';
+import { getClientSils, deleteClientSil } from './index';
 import { buildQueryParams } from './mappings';
 import type { ClientSilFilteredRequest } from './mappings';
 import { AxiosResponse } from 'axios';
@@ -9,7 +9,8 @@ vi.mock('../../utils', () => ({
   default: {
     apiClient: {
       bff: {
-        getClients: vi.fn()
+        getClients: vi.fn(),
+        deleteClient: vi.fn()
       }
     }
   }
@@ -138,6 +139,99 @@ describe('ClientSil API', () => {
         clientName: 'Test',
         sort: ['clientId,ASC']
       });
+    });
+  });
+
+  describe('deleteClientSil', () => {
+    it('should call deleteClient API with correct parameters', async () => {
+      const organizationId = 123;
+      const clientId = 'client123';
+      
+      vi.mocked(utils.apiClient.bff.deleteClient).mockResolvedValue({
+        data: undefined
+      } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        deleteClientSil(organizationId)
+      );
+
+      result.current.mutate(clientId);
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(utils.apiClient.bff.deleteClient).toHaveBeenCalledWith(
+        organizationId,
+        clientId
+      );
+    });
+
+    it('should handle delete API error', async () => {
+      const organizationId = 123;
+      const clientId = 'client123';
+      const mockError = new Error('Delete failed');
+      
+      vi.mocked(utils.apiClient.bff.deleteClient).mockRejectedValue(mockError);
+
+      const { result } = renderHook(() =>
+        deleteClientSil(organizationId)
+      );
+
+      result.current.mutate(clientId);
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      });
+
+      expect(result.current.error).toBe(mockError);
+      expect(utils.apiClient.bff.deleteClient).toHaveBeenCalledWith(
+        organizationId,
+        clientId
+      );
+    });
+
+    it('should call onSuccess callback when delete succeeds', async () => {
+      const organizationId = 123;
+      const clientId = 'client123';
+      const onSuccess = vi.fn();
+      
+      vi.mocked(utils.apiClient.bff.deleteClient).mockResolvedValue({
+        data: undefined
+      } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        deleteClientSil(organizationId, onSuccess)
+      );
+
+      result.current.mutate(clientId);
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(onSuccess).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call onError callback when delete fails', async () => {
+      const organizationId = 123;
+      const clientId = 'client123';
+      const onError = vi.fn();
+      const mockError = new Error('Delete failed');
+      
+      vi.mocked(utils.apiClient.bff.deleteClient).mockRejectedValue(mockError);
+
+      const { result } = renderHook(() =>
+        deleteClientSil(organizationId, undefined, onError)
+      );
+
+      result.current.mutate(clientId);
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      });
+
+      expect(onError).toHaveBeenCalledWith(mockError);
     });
   });
 });

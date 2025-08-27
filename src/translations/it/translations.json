@@ -1673,6 +1673,12 @@
         "invalidData": "I dati inseriti non sono validi",
         "generic": "Errore durante la creazione del Client SIL"
       }
+    },
+    "delete": {
+      "confirmDialog": {
+        "title": "Sei sicuro di voler eliminare il Client SIL?",
+        "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
+      }
     }
   },
   "orgSilServiceCreate": {

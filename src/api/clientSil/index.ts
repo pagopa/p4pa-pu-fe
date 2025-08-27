@@ -52,7 +52,28 @@ export const createClientSil = (organizationId: number) =>
     }
   });
 
+/**
+ * Hook for deleting a Client SIL
+ * @param organizationId - ID of the organization
+ * @param onSuccess - Callback function called on successful deletion
+ * @param onError - Callback function called on error
+ */
+export const deleteClientSil = (
+  organizationId: number,
+  onSuccess?: () => void,
+  onError?: (error: unknown) => void
+) =>
+  useMutation({
+    mutationKey: ['deleteClientSil', organizationId],
+    mutationFn: async (clientId: string) => {
+      await utils.apiClient.bff.deleteClient(organizationId, clientId);
+    },
+    onSuccess,
+    onError
+  });
+
 export default {
   getClientSils,
-  createClientSil
+  createClientSil,
+  deleteClientSil
 };
