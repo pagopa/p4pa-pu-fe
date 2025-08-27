@@ -59,9 +59,11 @@ describe('getExportFiles', () => {
 
     expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
       ...filters,
+      page: filters.page,
+      size: filters.size,
+      sort: filters.sort || [],
       creationDateFrom: '2024-08-01T00:00:00+02:00',
-      creationDateTo: '2024-08-01T00:00:00+02:00',
-      sort: filters.sort || []
+      creationDateTo: '2024-08-01T00:00:00+02:00'
     });
     expect(data).toEqual(dataMock);
   });
@@ -108,6 +110,7 @@ describe('getExportFiles', () => {
 
     expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
       ...complexFilters,
+      sort: complexFilters.sort,
       creationDateFrom: '2024-08-01T00:00:00+02:00',
       creationDateTo: '2024-08-01T00:00:00+02:00'
     });
