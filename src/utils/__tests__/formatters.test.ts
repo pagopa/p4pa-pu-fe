@@ -9,6 +9,10 @@ import {
   euroToCents,
   optionMapsConverter,
   formatFileSize,
+  formatAmountForDisplay,
+  isValidAmountInput,
+  sanitizeAmountInput,
+  parseAmountToNumber,
   toCamelCase
 } from '../formatters';
 
@@ -267,6 +271,73 @@ describe('formatFileSize', () => {
   it('should handle edge cases', () => {
     expect(formatFileSize(null as unknown as number)).toBe('0 Bytes');
     expect(formatFileSize(undefined as unknown as number)).toBe('0 Bytes');
+  });
+});
+
+describe('Amount Formatters', () => {
+  describe('formatAmountForDisplay', () => {
+    it('converts dot to comma for display', () => {
+      expect(formatAmountForDisplay('135.50')).toBe('135,50');
+      expect(formatAmountForDisplay(135.5)).toBe('135,5');
+    });
+
+    it('handles edge cases', () => {
+      expect(formatAmountForDisplay('')).toBe('');
+      expect(formatAmountForDisplay(null)).toBe('');
+      expect(formatAmountForDisplay(undefined)).toBe('');
+      expect(formatAmountForDisplay(0)).toBe('0');
+    });
+  });
+
+  describe('isValidAmountInput', () => {
+    it('accepts valid amount formats', () => {
+      expect(isValidAmountInput('135')).toBe(true);
+      expect(isValidAmountInput('135,50')).toBe(true);
+      expect(isValidAmountInput('135.50')).toBe(true);
+      expect(isValidAmountInput('0,99')).toBe(true);
+      expect(isValidAmountInput('1234')).toBe(true);
+    });
+
+    it('rejects invalid formats', () => {
+      expect(isValidAmountInput('135,123')).toBe(false);
+      expect(isValidAmountInput('135,50,25')).toBe(false);
+      expect(isValidAmountInput('abc')).toBe(false);
+      expect(isValidAmountInput('135.50.25')).toBe(false);
+    });
+  });
+
+  describe('sanitizeAmountInput', () => {
+    it('removes invalid characters', () => {
+      expect(sanitizeAmountInput('abc135def,50xyz')).toBe('135,50');
+      expect(sanitizeAmountInput('€135,50')).toBe('135,50');
+    });
+
+    it('converts dots to commas', () => {
+      expect(sanitizeAmountInput('135.50')).toBe('135,50');
+    });
+
+    it('handles multiple separators', () => {
+      expect(sanitizeAmountInput('135,50,25')).toBe('135,5025');
+      expect(sanitizeAmountInput('135.50.25')).toBe('135,5025');
+    });
+
+    it('limits decimal places to 2', () => {
+      expect(sanitizeAmountInput('135,123456')).toBe('135,12');
+    });
+  });
+
+  describe('parseAmountToNumber', () => {
+    it('parses valid amounts', () => {
+      expect(parseAmountToNumber('135,50')).toBe(135.5);
+      expect(parseAmountToNumber('135.50')).toBe(135.5);
+      expect(parseAmountToNumber('135')).toBe(135);
+    });
+
+    it('handles invalid inputs', () => {
+      expect(parseAmountToNumber('')).toBe(null);
+      expect(parseAmountToNumber('abc')).toBe(null);
+      expect(parseAmountToNumber('   ')).toBe(null);
+    });
   });
 });
 

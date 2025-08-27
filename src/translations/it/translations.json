@@ -522,6 +522,7 @@
     "deleteSelection": "Cancella la selezione",
     "description": "Descrizione",
     "detail": "Dettaglio",
+    "disable": "Disabilita",
     "disabled": "Disabilitato",
     "downloadInstallment": "Scarica avviso",
     "DP_DESCRIPTION": {
@@ -549,6 +550,7 @@
     },
     "duetype": "Tipo dovuto",
     "edit": "Modifica",
+    "enable": "Abilita",
     "enabled": "Abilitato",
     "executedBy": "Eseguito da",
     "exit": "Esci",
@@ -1268,8 +1270,17 @@
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
   "debtTypeDetail": {
+    "confirmDisableDialog": {
+      "title": "Sei sicuro di voler Disabilitare il Tipo dovuto?",
+      "description": "Una volta disabilitato, non sarà più possibile creare nuove posizioni debitorie con questo Tipo dovuto. Le posizioni già create, tuttavia, resteranno valide."
+    },
+    "confirmEnableDialog": {
+      "title": "Sei sicuro di voler Abilitare il Tipo dovuto?",
+      "description": "Una volta abilitato, questo Tipo dovuto sarà disponibile per la creazione di nuove posizioni debitorie."
+    },
     "errors": {
-      "servicesUnavailableCannotEdit": "Non è stato possibile recuperare configurazioni la modifica non è consentita al momento, riprova più tardi"
+      "servicesUnavailableCannotEdit": "Non è stato possibile recuperare configurazioni la modifica non è consentita al momento, riprova più tardi",
+      "enableFailed": "Abilitazione tipo dovuto non riuscita"
     },
     "description": "Ecco i dettagli del Tipo dovuto",
     "debtMainConfiguration": {
@@ -1295,6 +1306,9 @@
       "allOperatorsSelected": "Tutti gli operatori",
       "selectedOperators": "Operatori selezionati",
       "noSelectedOperators": "Senza operatori associati"
+    },
+    "success": {
+      "updated": "Stato del Tipo dovuto aggiornato con successo"
     }
   },
   "debtTypeOrgCreate": {
