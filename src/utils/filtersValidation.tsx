@@ -69,6 +69,10 @@ export const noFilterSetted = (filters: BaseFilterValues): boolean => {
       return value;
     }
 
+    if (typeof value === 'number') {
+      return value !== 0;
+    }
+
     if (value instanceof Date) {
       return true;
     }

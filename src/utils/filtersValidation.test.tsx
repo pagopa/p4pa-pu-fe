@@ -15,14 +15,14 @@ describe('noFilterSetted', () => {
     ).toBe(true);
   });
 
-  it('should return false when all non-string values are falsy', () => {
+  it('should return true when all non-string values are falsy', () => {
     expect(
       noFilterSetted({
         draft: false,
         count: 0,
         active: null
       })
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it('should return false when at least one string value is not empty', () => {

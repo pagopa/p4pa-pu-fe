@@ -10,7 +10,6 @@ export type DebtPositionsFilters = {
   fiscalCode?: string;
   iuv?: string;
   typeOrgId?: number;
-  searchType?: 'IUV' | 'DEBT_POSITION';
 };
 
 export type DebtPositionFilteredRequest = {
