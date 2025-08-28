@@ -64,7 +64,7 @@ describe('StepperContainer', () => {
     );
   });
 
-  it('sets correct display and visibility properties for steps', () => {
+  it('sets correct visibility and height properties for active and inactive steps', () => {
     render(
       <StepperContainer activeStep={0} steps={steps} title="Visibility Test" />
     );
@@ -73,12 +73,12 @@ describe('StepperContainer', () => {
     const step2 = screen.getByTestId('step-1');
 
     expect(step1).toHaveStyle({
-      display: 'flex',
-      visibility: 'visible'
+      display: 'flex' // MUI Stack default
     });
 
     expect(step2).toHaveStyle({
-      display: 'none',
+      height: '0px',
+      overflow: 'hidden',
       visibility: 'hidden'
     });
   });

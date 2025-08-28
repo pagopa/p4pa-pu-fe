@@ -1,33 +1,84 @@
-import { BaseFilterValues } from '../models/Filters';
-
-type FilterValues = BaseFilterValues;
+import { BaseFilterValues, FilterFieldValue } from '../models/Filters';
 
 /**
- * Checks if ad object filters contains non empty filters
- * @param filters - Object with filters
- * @returns true if there is at least one filter filled
+ * Validates a date filter object ensuring both 'from' and 'to' are truthy if either is set.
  */
-export const noFilterSetted = (filters: FilterValues) => {
-  const listEntries = Object.values(filters);
+const isValidDateFilter = (value: FilterFieldValue): boolean => {
+  if (typeof value !== 'object' || value === null) return false;
 
-  const filtersHaveAtLeastADateFilterCorrectlyValued = listEntries.some(
-    (el) => {
-      return el instanceof Object
-        ? 'from' in el && el.from !== null && 'to' in el && el.to !== null
-        : false;
+  if ('from' in value && 'to' in value) {
+    const hasFrom = Boolean(value.from);
+    const hasTo = Boolean(value.to);
+
+    return hasFrom && hasTo;
+  }
+
+  return false;
+};
+
+const isDateFilter = (value: FilterFieldValue): boolean => {
+  if (typeof value !== 'object' || value === null) return false;
+
+  return 'from' in value || 'to' in value;
+};
+
+/**
+ * Checks if filters object has no meaningful filters set,
+ * including date filters with complete 'from' and 'to' fields.
+ */
+export const noFilterSetted = (filters: BaseFilterValues): boolean => {
+  if (!filters || typeof filters !== 'object') return true;
+
+  const entries = Object.entries(filters);
+  if (entries.length === 0) return true;
+
+  const hasInvalidDateRange = entries.some(([key, value]) => {
+    if (key.endsWith('_fromError') || key.endsWith('_toError')) {
+      return false;
     }
-  );
 
-  // false when at least one filter is setted
-  const otherFiltersAreAllEmpty = listEntries
-    .filter((el) => !(el instanceof Object))
-    .every((el) => (typeof el === 'string' ? el.trim() === '' : !el));
+    if (isDateFilter(value)) {
+      const dateRange = value as { from?: Date | null; to?: Date | null };
+      const hasFrom = Boolean(dateRange.from);
+      const hasTo = Boolean(dateRange.to);
 
-  return (
-    !Array.isArray(listEntries) ||
-    listEntries.length === 0 ||
-    (otherFiltersAreAllEmpty && !filtersHaveAtLeastADateFilterCorrectlyValued)
-  );
+      return (hasFrom && !hasTo) || (!hasFrom && hasTo);
+    }
+
+    return false;
+  });
+
+  if (hasInvalidDateRange) {
+    return true;
+  }
+
+  return !entries.some(([key, value]) => {
+    if (key.endsWith('_fromError') || key.endsWith('_toError')) {
+      return false;
+    }
+
+    if (isDateFilter(value)) {
+      return isValidDateFilter(value);
+    }
+
+    if (typeof value === 'string') {
+      return !!value.trim();
+    }
+
+    if (typeof value === 'boolean') {
+      return value;
+    }
+
+    if (typeof value === 'number') {
+      return value !== 0;
+    }
+
+    if (value instanceof Date) {
+      return true;
+    }
+
+    return value != null;
+  });
 };
 
 export default { noFilterSetted };

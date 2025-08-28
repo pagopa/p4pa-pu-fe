@@ -13,7 +13,6 @@ import { BaseFilterValues } from '../../models/Filters';
 import { ReadMore } from '@mui/icons-material';
 import i18n from '../../translations/i18n';
 import { GridColDef, GridRowId } from '@mui/x-data-grid';
-import { noFilterSetted } from '../../utils/filtersValidation';
 import { formatDateTime } from '../../utils/formatters';
 import utils from '../../utils';
 
@@ -74,7 +73,8 @@ export const nodoFields: Array<FilterItem> = [
       label: key,
       value
     })),
-    id: 'event'
+    id: 'event',
+    gridWidth: 6
   },
   {
     type: COMPONENT_TYPE.select,
@@ -83,7 +83,8 @@ export const nodoFields: Array<FilterItem> = [
       label: key,
       value
     })),
-    id: 'outcome'
+    id: 'outcome',
+    gridWidth: 6
   }
 ];
 
@@ -97,13 +98,6 @@ export const tabs: Array<TabsConfig> = [
     fields: nodoFields
   }
 ];
-
-export const DefaultFilterValues: BaseFilterValues = {
-  iuv: undefined,
-  eventDate: { from: null, to: null },
-  event: undefined,
-  outcome: undefined
-};
 
 export type NodoFilterValues = {
   iuv?: string;
@@ -246,7 +240,3 @@ export type RegistryType = 'pagopa' | 'sil';
 export function deepCopy<T>(obj: T) {
   return structuredClone<T>(obj);
 }
-
-export const testFilterValidity = (
-  filterValues: NodoFilterValues | SilFilterValues
-) => !noFilterSetted(filterValues);

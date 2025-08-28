@@ -489,6 +489,57 @@
       "missingRequiredFields": "Verifica di aver compilato i filtri obbligatori"
     }
   },
+  "clientSil": {
+    "addNew": "Aggiungi nuovo",
+    "filters": {
+      "clientName": "Nome Client SIL",
+      "clientNamePlaceholder": "Inserisci il nome del client",
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "Inserisci l'ID del client"
+    },
+    "table": {
+      "clientName": "Nome Client SIL",
+      "clientId": "Client ID"
+    },
+    "title": "Client SIL",
+    "description": "Gestisci i Client SIL dell'organizzazione",
+    "create": {
+      "title": "Aggiungi nuovo Client SIL",
+      "subtitle": "Il client ID e key secret saranno generati automaticamente dopo la creazione.",
+      "formLabel": "Form di creazione Client SIL",
+      "section": {
+        "description": {
+          "title": "Configurazione generale",
+          "subtitle": "Descrizione"
+        }
+      },
+      "success": {
+        "title": "Il SIL '{{clientName}}' è stato aggiunto!",
+        "description": "La trovi nella sezione Gestione SIL, dove puoi consultarlo in qualsiasi momento.",
+        "goToDetail": "Vedi dettaglio SIL"
+      },
+      "fields": {
+        "clientName": {
+          "label": "Nome Client SIL",
+          "placeholder": "Tassa seconde case",
+          "required": "Il nome del Client SIL è obbligatorio",
+          "maxLength": "Il nome non può superare i 100 caratteri",
+          "invalid": "Il nome del Client SIL può contenere solo caratteri alfanumerici ed i simboli - e _"
+        }
+      },
+      "error": {
+        "nameAlreadyExists": "Esiste già un Client SIL con questo nome",
+        "invalidData": "I dati inseriti non sono validi",
+        "generic": "Errore durante la creazione del Client SIL"
+      }
+    },
+    "delete": {
+      "confirmDialog": {
+        "title": "Sei sicuro di voler eliminare il Client SIL?",
+        "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
+      }
+    }
+  },
   "commons": {
     "404": "404: risorsa non disponibile",
     "info": "Informazioni",
@@ -522,6 +573,7 @@
     "deleteSelection": "Cancella la selezione",
     "description": "Descrizione",
     "detail": "Dettaglio",
+    "disable": "Disabilita",
     "disabled": "Disabilitato",
     "downloadInstallment": "Scarica avviso",
     "DP_DESCRIPTION": {
@@ -549,6 +601,7 @@
     },
     "duetype": "Tipo dovuto",
     "edit": "Modifica",
+    "enable": "Abilita",
     "enabled": "Abilitato",
     "executedBy": "Eseguito da",
     "exit": "Esci",
@@ -752,6 +805,7 @@
       "DEBT_TYPES": "Tipi dovuti",
       "DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
       "DEBT_TYPES_DASHBOARD": "Tipi dovuti impostati",
+      "DEBT_TYPES_DASHBOARD_BYORG": "Ente gestito",
       "DETAIL": "Dettagli",
       "DETAIL_FLOWS": "Dettaglio flusso",
       "EXPORT": "Export",
@@ -789,6 +843,7 @@
     },
     "saveDraft": "Salva bozza",
     "save": "Salva modifiche",
+    "saveOnly": "Salva",
     "search": "Cerca",
     "searchCF": "Cerca CF",
     "searchFor": "Cerca per",
@@ -908,7 +963,6 @@
         "label": "Descrizione Posizione Debitoria",
         "required": "Il campo descrizione è obbligatorio"
       },
-      "minWords": "Inserire almeno 3 parole nella descrizione",
       "title": "Descrizione"
     },
     "step2": {
@@ -935,7 +989,7 @@
       "fiscalData": "DATI FISCALI",
       "fullName": {
         "label": "Nome e cognome",
-        "minTwoWords": "Inserire almeno 2 parole",
+        "minTwoWords": "Controlla di aver scritto il nome e il cognome",
         "required": "Il campo nome e cognome è obbligatorio"
       },
       "personalData": "DATI PERSONALI",
@@ -952,22 +1006,22 @@
         "required": "Il campo tipo di soggetto è obbligatorio"
       },
       "taxCode": {
-        "invalid": "Codice fiscale non valido",
-        "invalidVAT": "Partita IVA non valida",
+        "invalid": "Verifica che il Codice fiscale sia corretto",
+        "invalidVAT": "Verifica che la Partita IVA sia corretta",
         "label": "Codice Fiscale",
         "placeholder": "Inserisci il codice fiscale (16 caratteri)",
         "required": "Il campo codice fiscale è obbligatorio"
       },
       "title": "Debitore",
       "vat": {
-        "invalid": "Partita IVA non valida",
+        "invalid": "Verifica che la Partita IVA sia corretta",
         "label": "Partita IVA",
         "placeholder": "Inserisci la partita IVA (11 cifre)",
         "required": "Il campo partita IVA è obbligatorio"
       },
       "zipCode": {
-        "error": "Il CAP deve essere di 5 cifre numeriche",
-        "invalid": "CAP non valido",
+        "error": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
+        "invalid": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
         "label": "CAP",
         "required": "Il campo CAP è obbligatorio"
       }
@@ -1053,8 +1107,8 @@
         "maxInstallmentsReached": "Hai raggiunto il numero massimo di rate (12)",
         "minInstallmentsRequired": "Sono richieste almeno 2 rate",
         "remittance": {
-          "label": "Causale",
-          "required": "Il campo causale è obbligatorio"
+          "label": "Oggetto pagamento",
+          "required": "Il campo oggetto pagamento è obbligatorio"
         },
         "otherBeneficiaries": "Altri beneficiari",
         "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?",
@@ -1268,8 +1322,17 @@
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
   "debtTypeDetail": {
+    "confirmDisableDialog": {
+      "title": "Sei sicuro di voler Disabilitare il Tipo dovuto?",
+      "description": "Una volta disabilitato, non sarà più possibile creare nuove posizioni debitorie con questo Tipo dovuto. Le posizioni già create, tuttavia, resteranno valide."
+    },
+    "confirmEnableDialog": {
+      "title": "Sei sicuro di voler Abilitare il Tipo dovuto?",
+      "description": "Una volta abilitato, questo Tipo dovuto sarà disponibile per la creazione di nuove posizioni debitorie."
+    },
     "errors": {
-      "servicesUnavailableCannotEdit": "Non è stato possibile recuperare configurazioni la modifica non è consentita al momento, riprova più tardi"
+      "servicesUnavailableCannotEdit": "Non è stato possibile recuperare configurazioni la modifica non è consentita al momento, riprova più tardi",
+      "enableFailed": "Abilitazione tipo dovuto non riuscita"
     },
     "description": "Ecco i dettagli del Tipo dovuto",
     "debtMainConfiguration": {
@@ -1295,6 +1358,9 @@
       "allOperatorsSelected": "Tutti gli operatori",
       "selectedOperators": "Operatori selezionati",
       "noSelectedOperators": "Senza operatori associati"
+    },
+    "success": {
+      "updated": "Stato del Tipo dovuto aggiornato con successo"
     }
   },
   "debtTypeOrgCreate": {
@@ -1490,6 +1556,7 @@
   "debtTypesCreated": {
     "callToAction": "Imposta nuovo",
     "descriptionFull": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente o negli enti gestiti.",
+    "descriptionByURL": "In questa sezione trovi i Tipi di dovuti presenti per l'ente gestito.",
     "description": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente.",
     "tabManagedOrganizations": "Enti gestiti",
     "tabMyOrganization": "Il mio ente",
@@ -1616,21 +1683,6 @@
       "basicAuth": "Basic Auth",
       "jwtAuth": "Legacy JWT"
     }
-  },
-  "clientSil": {
-    "addNew": "Aggiungi nuovo",
-    "filters": {
-      "clientName": "Nome Client SIL",
-      "clientNamePlaceholder": "Inserisci il nome del client",
-      "clientId": "Client ID",
-      "clientIdPlaceholder": "Inserisci l'ID del client"
-    },
-    "table": {
-      "clientName": "Nome Client SIL",
-      "clientId": "Client ID"
-    },
-    "title": "Client SIL",
-    "description": "Gestisci i Client SIL dell'organizzazione"
   },
   "orgSilServiceCreate": {
     "actualization": "Attualizzazione importo",

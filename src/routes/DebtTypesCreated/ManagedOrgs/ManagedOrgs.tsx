@@ -1,63 +1,50 @@
-import { Box, useTheme } from '@mui/material';
+import { useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useEffect } from 'react';
+import { useState } from 'react';
 import { ArrowForwardIos } from '@mui/icons-material';
-import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import useDebtTypesCreatedFilters, {
-  FilterParams
-} from '../../../hooks/useDebtTypesCreatedFilters';
-import { useManagedOrgsSearch } from '../../../api/debtTypesCreated';
+import CustomDataGrid, {
+  DataGridContainer
+} from '../../../components/DataGrid/CustomDataGrid';
+import {
+  OrganizationsWithDebtPositionTypeOrgCountFilters,
+  useManagedOrgsSearch
+} from '../../../api/debtTypesCreated';
 import { OrganizationWithDebtPositionTypeOrgCount } from '../../../../generated/data-contracts';
 import { useStore } from '../../../store/GlobalStore';
-import { STATE } from '../../../store/types';
+import utils from '../../../utils';
+import { useSearch } from '../../../hooks/useSearch';
+import FilterContainer, {
+  COMPONENT_TYPE,
+  FilterItem
+} from '../../../components/FilterContainer/FilterContainer';
+import Search from '@mui/icons-material/Search';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '../..';
 
-type ManagedOrgsProps = {
-  IPACodeFilter: string;
-  onSearch: (searchFn: () => void) => void;
-};
-
-export const ManagedOrgs = ({ IPACodeFilter, onSearch }: ManagedOrgsProps) => {
+export const ManagedOrgs = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const { state } = useStore();
-  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+  const {
+    state: { organizationId }
+  } = useStore();
 
-  const { mutate, data } = useManagedOrgsSearch();
+  const initialFilters: OrganizationsWithDebtPositionTypeOrgCountFilters =
+    utils.URI.decode(window.location.hash);
+  const [filters, setFilters] =
+    useState<OrganizationsWithDebtPositionTypeOrgCountFilters>(initialFilters);
 
-  const { updateDraftFilters, applyFilters } = useDebtTypesCreatedFilters({
-    initialFilters: {
-      organizationName: IPACodeFilter,
-      page: 0,
-      size: 10
-    }
+  const query = useManagedOrgsSearch(organizationId);
+
+  const {
+    query: { data },
+    applyFilters
+  } = useSearch({
+    query,
+    filters
   });
-
-  useEffect(() => {
-    updateDraftFilters({
-      organizationName: IPACodeFilter
-    });
-  }, [IPACodeFilter, updateDraftFilters]);
-  useEffect(() => {
-    const filters: FilterParams = {
-      page: 0,
-      size: 10
-    };
-
-    if (IPACodeFilter) filters.organizationName = IPACodeFilter;
-
-    mutate({ organizationId, filters });
-  }, [organizationId, IPACodeFilter, mutate]);
-
-  useEffect(() => {
-    const performSearch = () => {
-      const filters = applyFilters();
-      mutate({ organizationId, filters });
-    };
-
-    onSearch(performSearch);
-  }, [onSearch, applyFilters, mutate, organizationId]);
 
   const columns: Array<GridColDef> = [
     {
@@ -103,23 +90,50 @@ export const ManagedOrgs = ({ IPACodeFilter, onSearch }: ManagedOrgsProps) => {
     row: OrganizationWithDebtPositionTypeOrgCount | undefined
   ) => {
     if (!row) return;
-    //TODO: redirect to organization detail
-    console.log('Organization:', row);
+    navigate(
+      generatePath(PageRoutes.DEBT_TYPES_DASHBOARD_BYORG, {
+        organizationId: row.organizationId
+      })
+    );
   };
 
+  const items: Array<FilterItem> = [
+    {
+      type: COMPONENT_TYPE.textField,
+      id: 'organizationName',
+      label: t('commons.searchForOrganizationName'),
+      adornment: <Search />,
+      gridWidth: 10.5
+    },
+    {
+      type: COMPONENT_TYPE.button,
+      label: t('commons.search'),
+      onClick: () => applyFilters(filters),
+      gridWidth: 1.5
+    }
+  ];
+
   return (
-    <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
-      <CustomDataGrid
-        rows={data?.content || []}
-        columns={columns}
-        getRowId={(row: OrganizationWithDebtPositionTypeOrgCount) =>
-          row.organizationId?.toString() || ''
-        }
-        disableColumnMenu
-        disableColumnResize
-        totalPages={data?.totalPages || 1}
+    <>
+      <FilterContainer
+        items={items}
+        values={filters}
+        onChange={(field, value) => setFilters({ ...filters, [field]: value })}
+        sx={{ py: 3 }}
       />
-    </Box>
+      <DataGridContainer>
+        <CustomDataGrid
+          rows={data?.content || []}
+          columns={columns}
+          getRowId={(row: OrganizationWithDebtPositionTypeOrgCount) =>
+            row.organizationId?.toString() || ''
+          }
+          disableColumnMenu
+          disableColumnResize
+          totalPages={data?.totalPages || 1}
+        />
+      </DataGridContainer>
+    </>
   );
 };
 

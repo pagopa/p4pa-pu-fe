@@ -6,6 +6,7 @@ import {
   saveDebtPositionTypeOrgDTOSchema
 } from '../../generated/zod-schema';
 import { parseAndLog } from '../utils/loaders';
+import { AxiosError } from 'axios';
 
 export const getDebtPositionTypeOrgs = ({
   organizationId,
@@ -96,4 +97,27 @@ export const updateDebtPositionTypeOrg = () =>
       parseAndLog(debtPositionTypeOrgSchema, data);
       return data;
     }
+  });
+
+export type UpdateFlagActiveDebtPositionTypeOrg = {
+  organizationId: number;
+  debtPositionTypeOrgId: number;
+  flagActive: boolean;
+};
+
+export const updateFlagActiveDebtPositionTypeOrg = (
+  onSuccess?: () => void,
+  onError?: (error: AxiosError) => void
+) =>
+  useMutation({
+    mutationKey: ['updateFlagActiveDebtPositionTypeOrg'],
+    mutationFn: async (query: UpdateFlagActiveDebtPositionTypeOrg) => {
+      await utils.apiClient.bff.updateFlagActiveDebtPositionTypeOrg(
+        query.organizationId,
+        query.debtPositionTypeOrgId,
+        { flagActive: query.flagActive }
+      );
+    },
+    onSuccess,
+    onError
   });

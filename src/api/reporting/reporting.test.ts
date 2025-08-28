@@ -1,24 +1,9 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook } from '../../__tests__/renderers';
 import utils from '../../utils';
 import { getPaymentsReportingRows } from '../reporting';
-import { parseAndLog } from '../../utils/loaders';
 import type { PaymentReportingRowsFilteredRequest } from '../reporting/mappings';
 import type { AxiosResponse } from 'axios';
-
-vi.mock('../../utils', () => ({
-  default: {
-    apiClient: {
-      bff: {
-        getPaymentsReportingRows: vi.fn()
-      }
-    }
-  }
-}));
-
-vi.mock('../../utils/loaders', () => ({
-  parseAndLog: vi.fn()
-}));
 
 describe('getPaymentsReportingRows', () => {
   const organizationId = 33;
@@ -59,9 +44,11 @@ describe('getPaymentsReportingRows', () => {
       number: 0
     };
 
-    (utils.apiClient.bff.getPaymentsReportingRows as Mock).mockResolvedValue({
-      data: mockData
-    } as AxiosResponse);
+    const spyGetPaymentsReportingRows = vi
+      .spyOn(utils.apiClient.bff, 'getPaymentsReportingRows')
+      .mockResolvedValue({
+        data: mockData
+      } as AxiosResponse);
 
     const query: PaymentReportingRowsFilteredRequest = {
       filters: {},
@@ -77,17 +64,20 @@ describe('getPaymentsReportingRows', () => {
     const data = await result.current.mutateAsync(query);
 
     // Expected params based on buildQueryParams call
-    expect(utils.apiClient.bff.getPaymentsReportingRows).toHaveBeenCalledWith(
+    expect(spyGetPaymentsReportingRows).toHaveBeenCalledWith(
       organizationId,
       iuf,
       {
+        iuv: undefined,
         page: 0,
-        size: 20
+        size: 20,
+        payDateTimeFrom: undefined,
+        payDateTimeTo: undefined,
+        sort: []
       }
     );
 
     expect(data).toEqual(mockData);
-    expect(parseAndLog).toHaveBeenCalledWith(expect.any(Object), mockData);
   });
 
   it('should include filters and sort correctly in query params', async () => {
@@ -99,9 +89,11 @@ describe('getPaymentsReportingRows', () => {
       number: 0
     };
 
-    (utils.apiClient.bff.getPaymentsReportingRows as Mock).mockResolvedValue({
-      data: mockData
-    } as AxiosResponse);
+    const spyGetPaymentsReportingRows = vi
+      .spyOn(utils.apiClient.bff, 'getPaymentsReportingRows')
+      .mockResolvedValue({
+        data: mockData
+      } as AxiosResponse);
 
     const filters = {
       daterange: { from: new Date('2023-01-01'), to: new Date('2023-01-31') },
@@ -123,15 +115,15 @@ describe('getPaymentsReportingRows', () => {
     // Construct expected query parameters manually since buildQueryParams formats dates
 
     const expectedQuery = {
-      payDateFrom: '2023-01-01',
-      payDateTo: '2023-01-31',
+      payDateTimeFrom: '2023-01-01T01:00:00+01:00',
+      payDateTimeTo: '2023-01-31T01:00:00+01:00',
       iuv: 'some-iuv',
       page: 1,
       size: 10,
       sort: ['payDate,desc']
     };
 
-    expect(utils.apiClient.bff.getPaymentsReportingRows).toHaveBeenCalledWith(
+    expect(spyGetPaymentsReportingRows).toHaveBeenCalledWith(
       organizationId,
       iuf,
       expectedQuery

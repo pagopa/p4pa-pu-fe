@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '../__tests__/renderers';
-import { getExportFiles, getExportFile } from './exportFiles';
-import utils from '../utils';
+import { renderHook, waitFor } from '../../__tests__/renderers';
+import { getExportFiles, getExportFile } from '.';
+import utils from '../../utils';
 import { AxiosResponse } from 'axios';
 import {
   ExportFileStatus,
   ExportFileTypeEnum
-} from '../../generated/apiClient';
+} from '../../../generated/apiClient';
 
 describe('getExportFiles', () => {
   it('fetches and returns export files data', async () => {
@@ -59,9 +59,11 @@ describe('getExportFiles', () => {
 
     expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
       ...filters,
-      creationDateFrom: '2024-08-01T00:00:00+02:00',
-      creationDateTo: '2024-08-01T00:00:00+02:00',
-      sort: filters.sort || []
+      page: filters.page,
+      size: filters.size,
+      sort: filters.sort || [],
+      creationDateTimeFrom: '2024-08-01T00:00:00+02:00',
+      creationDateTimeTo: '2024-08-01T00:00:00+02:00'
     });
     expect(data).toEqual(dataMock);
   });
@@ -77,8 +79,8 @@ describe('getExportFiles', () => {
     const organizationId = 123;
     const complexFilters = {
       exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
-      creationDateFrom: new Date('2023-01-01'),
-      creationDateTo: new Date('2023-01-31'),
+      creationDateTimeFrom: new Date('2023-01-01'),
+      creationDateTimeTo: new Date('2023-01-31'),
       status: ExportFileStatus.COMPLETED,
       fileName: 'test',
       page: 0,
@@ -108,8 +110,9 @@ describe('getExportFiles', () => {
 
     expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
       ...complexFilters,
-      creationDateFrom: '2024-08-01T00:00:00+02:00',
-      creationDateTo: '2024-08-01T00:00:00+02:00'
+      sort: complexFilters.sort,
+      creationDateTimeFrom: '2024-08-01T00:00:00+02:00',
+      creationDateTimeTo: '2024-08-01T00:00:00+02:00'
     });
   });
 });

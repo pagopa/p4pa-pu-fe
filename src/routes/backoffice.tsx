@@ -9,12 +9,12 @@ import {
 } from '../components/RouteGuard/RouteGuard';
 import TaxonomySearchResults from './TaxonomySearchResults';
 import { RegistryDetailPage } from './RegistryDetailPage/RegistryDetailPage';
-import EventPage from './Events/Search';
-import EventList from './Events/List';
-import EventsContainer from './Events/EventsContainer';
+import { EventPage } from './Events/Search';
+import { EventList } from './Events/List';
 import OrgSilServicesPage from './OrgSilServicePage/OrgSilServicesPage';
 import OrgSilServiceDetailPage from './OrgSilServiceDetailPage/OrgSilServiceDetailPage';
 import ClientSilPage from './ClientSilPage/ClientSilPage';
+import ClientSilCreate from './ClientSilCreate/ClientSilCreate';
 import { OrgSilServiceCreate } from './OrgSilServiceCreate/OrgSilServiceCreate';
 import { OrgSilServiceEdit } from './OrgSilServiceCreate/OrgSilServiceEdit';
 
@@ -71,7 +71,7 @@ export const backofficeRoutes = [
         path: 'events/',
         element: (
           <SuperAdminRouteGuard>
-            <EventsContainer />
+            <Outlet />
           </SuperAdminRouteGuard>
         ),
         children: [
@@ -183,6 +183,19 @@ export const backofficeRoutes = [
             handle: {
               hideBreadcrumbs: true,
               backButton: false
+            }
+          },
+          {
+            id: 'CLIENT_SIL_CREATE',
+            path: 'create',
+            element: <ClientSilCreate />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
             }
           }
         ]

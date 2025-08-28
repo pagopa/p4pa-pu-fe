@@ -15,6 +15,7 @@ import { FilterFieldIds } from '../../models/SearchCardFields';
 import { DateValidationError } from '@mui/x-date-pickers';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import utils from '../../utils';
+import { noFilterSetted } from '../../utils/filtersValidation';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
@@ -24,43 +25,13 @@ export const DebtPositionsPage = () => {
   const [activeTabIndex, setActiveTabIndex] = useState<number>(0);
   const [showError, setShowError] = useState(false);
 
-  const {
-    fromDate,
-    toDate,
-    setFromDate,
-    setToDate,
-    setFromError,
-    setToError,
-    resetDates
-  } = useDateRange(activeTabIndex);
+  const { setFromDate, setToDate, setFromError, setToError, resetDates } =
+    useDateRange(activeTabIndex);
 
-  const [filters, setFilters] = useState<Array<BaseFilterValues>>([
-    { [FilterFieldIds.DATE_RANGE]: { from: fromDate, to: toDate } },
-    { [FilterFieldIds.DATE_RANGE]: { from: fromDate, to: toDate } }
-  ]);
-
-  const isCurrentTabFiltersEmpty = useCallback(() => {
-    const currentFilters = filters[activeTabIndex];
-
-    const hasNonDateFilters = Object.keys(currentFilters).some((key) => {
-      if (key === FilterFieldIds.DATE_RANGE) return false;
-
-      const value = currentFilters[key];
-      return value !== null && value !== undefined && value !== '';
-    });
-
-    const dateRange = currentFilters[FilterFieldIds.DATE_RANGE];
-    const dateRangeValue = dateRange as
-      | { from?: Date | null; to?: Date | null }
-      | undefined;
-    const hasDateRange =
-      dateRangeValue && (dateRangeValue.from || dateRangeValue.to);
-
-    return !hasNonDateFilters && !hasDateRange;
-  }, [activeTabIndex, filters]);
+  const [filters, setFilters] = useState<Array<BaseFilterValues>>([]);
 
   const navigateToResults = useCallback(() => {
-    if (isCurrentTabFiltersEmpty()) {
+    if (!filters?.length || noFilterSetted(filters[activeTabIndex])) {
       setShowError(true);
       return;
     }
@@ -68,7 +39,41 @@ export const DebtPositionsPage = () => {
     setShowError(false);
 
     const tabFilters = filters[activeTabIndex];
-    const params = utils.URI.encode(tabFilters);
+
+    const cleanedFilters = Object.entries(tabFilters).reduce(
+      (acc, [key, value]) => {
+        if (key.endsWith('_fromError') || key.endsWith('_toError')) {
+          return acc;
+        }
+
+        if (
+          typeof value === 'object' &&
+          value !== null &&
+          'from' in value &&
+          'to' in value
+        ) {
+          const dateRange = value as { from?: Date | null; to?: Date | null };
+          if (dateRange.from && dateRange.to) {
+            acc[key] = value;
+          }
+        } else if (value !== null && value !== undefined && value !== '') {
+          if (typeof value === 'string') {
+            const trimmedValue = value.trim();
+            if (trimmedValue) {
+              acc[key] = trimmedValue;
+            }
+          } else {
+            acc[key] = value;
+          }
+        }
+
+        return acc;
+      },
+      {} as BaseFilterValues
+    );
+
+    const params = utils.URI.encode(cleanedFilters);
+
     if (activeTabIndex === 0) {
       navigate(`${PageRoutes.DEBT_POSITION_SEARCH_RESULTS}#${params}`, {
         state: {
@@ -82,19 +87,22 @@ export const DebtPositionsPage = () => {
         }
       });
     }
-  }, [activeTabIndex, filters, navigate, isCurrentTabFiltersEmpty]);
+  }, [activeTabIndex, filters, navigate]);
 
   const resetCurrentFilters = useCallback(() => {
     const newFilters = [...filters];
+
     newFilters[activeTabIndex] = {
-      ...newFilters[activeTabIndex],
       [FilterFieldIds.DATE_RANGE]: {
         from: null,
         to: null
       }
     };
+
     setFilters(newFilters);
     setShowError(false);
+
+    resetDates();
   }, [activeTabIndex, filters, resetDates]);
 
   const handleFilterChange = useCallback(

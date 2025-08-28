@@ -46,8 +46,9 @@ export const buildDebtPositionsQueryParams = ({
   pagination,
   sort
 }: DebtPositionFilteredRequest): debtPositionsQueryParameters => ({
-  creationDateFrom: utils.formatters.date.code(filters?.dateRange?.from),
-  creationDateTo: utils.formatters.date.code(filters?.dateRange?.to),
+  creationDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  creationDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
+  debtPositionTypeOrgId: filters.typeOrgId,
   fiscalCode: filters.fiscalCode,
   status: filters.status,
   page: pagination.page,
