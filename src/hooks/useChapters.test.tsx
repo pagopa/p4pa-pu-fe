@@ -7,6 +7,11 @@ import type { AppState } from '../models/AppState';
 import type { FilterValues } from '../models/Filters';
 import utils from '../utils';
 import type { AxiosResponse } from 'axios';
+import {
+  AssessmentsRegistry,
+  AssessmentsRegistryStatus
+} from '../../generated/data-contracts';
+
 vi.mock('../utils', () => ({
   default: {
     apiClient: {
@@ -21,7 +26,9 @@ vi.mock('../utils', () => ({
 }));
 
 vi.mock('../api/assessments/mappings', () => ({
-  buildQueryParams: vi.fn().mockReturnValue('mocked-query-params')
+  buildAssessmentsRegistriesQueryParams: vi
+    .fn()
+    .mockReturnValue('mocked-query-params')
 }));
 
 vi.mock('../utils/chaptersHelpers', () => ({
@@ -41,9 +48,10 @@ describe('useChapters', () => {
   const mockOperatingYear = '2024';
   const mockDebtPositionTypeOrgCode = 'DEBT_TYPE_001';
 
-  const mockAssessmentRegistryData = [
+  const mockAssessmentRegistryData: Array<AssessmentsRegistry> = [
     {
       assessmentRegistryId: 1,
+      debtPositionTypeOrgCode: mockDebtPositionTypeOrgCode,
       organizationId: 123,
       sectionCode: 'SEC001',
       sectionDescription: 'Section 1',
@@ -51,7 +59,7 @@ describe('useChapters', () => {
       assessmentCode: 'ASS001',
       assessmentDescription: 'Assessment 1',
       operatingYear: '2024',
-      status: 'ACTIVE'
+      status: AssessmentsRegistryStatus.ACTIVE
     }
   ];
 
@@ -138,12 +146,7 @@ describe('useChapters', () => {
 
     expect(utils.apiClient.bff.getAssessmentsRegistries).toHaveBeenCalledWith(
       mockOrganizationId,
-      'mocked-query-params',
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
+      'mocked-query-params'
     );
 
     expect(result.current.optionsMap).toEqual(mockTransformedChapters);

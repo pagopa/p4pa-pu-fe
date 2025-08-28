@@ -5,8 +5,11 @@ import { createMock } from 'zodock';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
-import { debtPositionViewSchema } from '../../../generated/zod-schema';
 import { DebtPositionStatus } from '../../../generated/data-contracts';
+import {
+  pagedDebtPositionViewSchema,
+  pagedInstallmentViewSchema
+} from '../../../generated/zod-schema';
 import { DebtPositionFilteredRequest } from '../debtPositions/mapping';
 
 vi.mock('../../utils', () => ({
@@ -42,7 +45,7 @@ describe('debtPositions API', () => {
     };
 
     it('returns data correctly', async () => {
-      const dataMock = createMock(debtPositionViewSchema);
+      const dataMock = createMock(pagedDebtPositionViewSchema);
 
       (mapping.buildDebtPositionsQueryParams as Mock).mockReturnValue(
         'mock-query-string'
@@ -56,11 +59,9 @@ describe('debtPositions API', () => {
         debtPositions.getDebtPositionViews(params)
       );
 
-      result.current.mutate(query);
+      const data = await result.current.mutateAsync(query);
 
-      await waitFor(() => {
-        expect(result.current.data).toEqual(dataMock);
-      });
+      expect(data).toEqual(dataMock);
 
       expect(mapping.buildDebtPositionsQueryParams).toHaveBeenCalledWith(query);
       expect(apiMock).toHaveBeenCalledWith(
@@ -104,7 +105,7 @@ describe('debtPositions API', () => {
     };
 
     it('returns data correctly', async () => {
-      const dataMock = createMock(debtPositionViewSchema);
+      const dataMock = createMock(pagedInstallmentViewSchema);
 
       (mapping.buildInstallmentsQueryParams as Mock).mockReturnValue(
         'mock-query-string'
@@ -118,11 +119,9 @@ describe('debtPositions API', () => {
         debtPositions.getInstallments(params)
       );
 
-      result.current.mutate(query);
+      const data = await result.current.mutateAsync(query);
 
-      await waitFor(() => {
-        expect(result.current.data).toEqual(dataMock);
-      });
+      expect(data).toEqual(dataMock);
 
       expect(mapping.buildInstallmentsQueryParams).toHaveBeenCalledWith(query);
       expect(apiMock).toHaveBeenCalledWith(
