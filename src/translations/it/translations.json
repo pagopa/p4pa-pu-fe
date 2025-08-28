@@ -956,7 +956,6 @@
         "label": "Descrizione Posizione Debitoria",
         "required": "Il campo descrizione è obbligatorio"
       },
-      "minWords": "Inserire almeno 3 parole nella descrizione",
       "title": "Descrizione"
     },
     "step2": {
@@ -983,7 +982,7 @@
       "fiscalData": "DATI FISCALI",
       "fullName": {
         "label": "Nome e cognome",
-        "minTwoWords": "Inserire almeno 2 parole",
+        "minTwoWords": "Controlla di aver scritto il nome e il cognome",
         "required": "Il campo nome e cognome è obbligatorio"
       },
       "personalData": "DATI PERSONALI",
@@ -1000,22 +999,22 @@
         "required": "Il campo tipo di soggetto è obbligatorio"
       },
       "taxCode": {
-        "invalid": "Codice fiscale non valido",
-        "invalidVAT": "Partita IVA non valida",
+        "invalid": "Verifica che il Codice fiscale sia corretto",
+        "invalidVAT": "Verifica che la Partita IVA sia corretta",
         "label": "Codice Fiscale",
         "placeholder": "Inserisci il codice fiscale (16 caratteri)",
         "required": "Il campo codice fiscale è obbligatorio"
       },
       "title": "Debitore",
       "vat": {
-        "invalid": "Partita IVA non valida",
+        "invalid": "Verifica che la Partita IVA sia corretta",
         "label": "Partita IVA",
         "placeholder": "Inserisci la partita IVA (11 cifre)",
         "required": "Il campo partita IVA è obbligatorio"
       },
       "zipCode": {
-        "error": "Il CAP deve essere di 5 cifre numeriche",
-        "invalid": "CAP non valido",
+        "error": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
+        "invalid": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
         "label": "CAP",
         "required": "Il campo CAP è obbligatorio"
       }
@@ -1101,8 +1100,8 @@
         "maxInstallmentsReached": "Hai raggiunto il numero massimo di rate (12)",
         "minInstallmentsRequired": "Sono richieste almeno 2 rate",
         "remittance": {
-          "label": "Causale",
-          "required": "Il campo causale è obbligatorio"
+          "label": "Oggetto pagamento",
+          "required": "Il campo oggetto pagamento è obbligatorio"
         },
         "otherBeneficiaries": "Altri beneficiari",
         "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?",
