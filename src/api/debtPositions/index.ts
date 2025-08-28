@@ -6,7 +6,9 @@ import {
   debtPositionDTOSchema,
   debtPositionRegistrySchema,
   installmentDetailDTOSchema,
-  installmentRegistrySchema
+  installmentRegistrySchema,
+  pagedDebtPositionViewSchema,
+  pagedInstallmentViewSchema
 } from '../../../generated/zod-schema';
 import { AxiosError } from 'axios';
 import {
@@ -19,6 +21,7 @@ import {
   buildInstallmentsQueryParams,
   DebtPositionFilteredRequest
 } from './mapping';
+import { z } from 'zod';
 
 const getDebtPositionViews = ({ organizationId }: { organizationId: number }) =>
   useMutation({
@@ -29,7 +32,7 @@ const getDebtPositionViews = ({ organizationId }: { organizationId: number }) =>
         organizationId,
         query
       );
-
+      parseAndLog(pagedDebtPositionViewSchema, data);
       return data;
     }
   });
@@ -43,7 +46,7 @@ const getInstallments = ({ organizationId }: { organizationId: number }) =>
         organizationId,
         query
       );
-
+      parseAndLog(pagedInstallmentViewSchema, data);
       return data;
     }
   });
@@ -60,9 +63,7 @@ const getInstallmentDetail = (
           organizationId,
           installmentId
         );
-      if (installment) {
-        parseAndLog(installmentDetailDTOSchema, installment);
-      }
+      parseAndLog(installmentDetailDTOSchema, installment);
       return installment;
     },
     enabled: !!organizationId && !!installmentId,
@@ -82,9 +83,7 @@ const getDebtPositionDetail = (
           organizationId,
           debtPositionId
         );
-      if (debtPosition) {
-        parseAndLog(debtPositionDetailDTOSchema, debtPosition);
-      }
+      parseAndLog(debtPositionDetailDTOSchema, debtPosition);
       return debtPosition;
     },
     enabled: !!organizationId && !!debtPositionId,
@@ -154,9 +153,7 @@ const createDebtPosition = (
       const response = await utils.apiClient.bff.createDebtPosition(
         params.body
       );
-      if (response.data) {
-        parseAndLog(debtPositionDTOSchema, response.data);
-      }
+      parseAndLog(debtPositionDTOSchema, response.data);
       return { response: response.data, paymentObject: params.paymentObject };
     },
     onSuccess: (data) => {
@@ -184,9 +181,7 @@ const manageDebtPositionInstallments = (
         params.body,
         params.publish ? { publish: params.publish } : undefined
       );
-      if (response.data) {
-        parseAndLog(debtPositionDTOSchema, response.data);
-      }
+      parseAndLog(debtPositionDTOSchema, response.data);
       return response.data;
     },
     onSuccess,
@@ -250,11 +245,7 @@ const getDebtPositionRegistriesMutation = () => {
           organizationId,
           debtPositionId
         );
-      if (registries && Array.isArray(registries)) {
-        registries.forEach((registry) => {
-          parseAndLog(debtPositionRegistrySchema, registry);
-        });
-      }
+      parseAndLog(z.array(debtPositionRegistrySchema), registries);
       return registries || [];
     }
   });
@@ -280,11 +271,7 @@ const getInstallmentRegistriesMutation = () => {
             nav: nav
           }
         );
-      if (registries && Array.isArray(registries)) {
-        registries.forEach((registry) => {
-          parseAndLog(installmentRegistrySchema, registry);
-        });
-      }
+      parseAndLog(z.array(installmentRegistrySchema), registries);
       return registries || [];
     }
   });

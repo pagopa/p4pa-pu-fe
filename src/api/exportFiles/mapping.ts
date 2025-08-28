@@ -1,5 +1,8 @@
-import { ExportFileStatus, ExportFileTypeEnum } from "../../../generated/data-contracts";
-import utils from "../../utils";
+import {
+  ExportFileStatus,
+  ExportFileTypeEnum
+} from '../../../generated/data-contracts';
+import utils from '../../utils';
 
 export type DebtPositionTypeOrgOperatorFilters = {
   debtPositionTypeOrgId?: number;

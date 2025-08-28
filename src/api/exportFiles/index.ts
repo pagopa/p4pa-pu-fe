@@ -2,8 +2,10 @@ import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import { pagedExportFileSchema } from '../../../generated/zod-schema';
-import { buildGetExportFilesQueryParams, ExportFilesFilteredRequest } from './mapping';
-
+import {
+  buildGetExportFilesQueryParams,
+  ExportFilesFilteredRequest
+} from './mapping';
 
 export const getExportFiles = (
   organizationId: number,
@@ -16,10 +18,14 @@ export const getExportFiles = (
       pagination,
       sort
     }: ExportFilesFilteredRequest) => {
-      const query = buildGetExportFilesQueryParams({ filters, pagination, sort });
+      const query = buildGetExportFilesQueryParams({
+        filters,
+        pagination,
+        sort
+      });
       const { data: files } = await utils.apiClient.bff.getExportFiles(
         organizationId,
-        query,
+        query
       );
       parseAndLog(pagedExportFileSchema, files);
       return files;
@@ -41,7 +47,8 @@ export const getExportFile = (organizationId: number) =>
         );
       const contentDisposition = response.headers['content-disposition'] || '';
       const fileName =
-        utils.formatters.extractFilename(contentDisposition) || `file-${exportFileId}`;
+        utils.formatters.extractFilename(contentDisposition) ||
+        `file-${exportFileId}`;
       return { data: response.data, fileName };
     }
   });
