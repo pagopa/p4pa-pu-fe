@@ -1,5 +1,5 @@
 import { Search } from '@mui/icons-material';
-import { useParams, useNavigate } from 'react-router';
+import { useParams, useNavigate, useLocation } from 'react-router';
 import { useEffect, useState, useMemo } from 'react';
 import { Variant } from '@mui/material/styles/createTypography';
 import { Grid, Typography, useTheme } from '@mui/material';
@@ -25,6 +25,7 @@ import { useSearch } from '../../../hooks/useSearch';
 import utils from '../../../utils';
 import { FieldValues } from 'react-hook-form';
 import { FilterFieldIds } from '../../../models/SearchCardFields';
+import { getIngestionFlowFile } from '../../../api/ingestionFlowFiles';
 
 export const ReportingDetail = () => {
   const { t } = useTranslation();
@@ -34,6 +35,21 @@ export const ReportingDetail = () => {
   const {
     state: { organizationId }
   } = useStore();
+  const location = useLocation();
+  const { ingestionFlowFileId } = location.state;
+
+  const mutation = getIngestionFlowFile(organizationId)
+  
+  const downloadIngestionFlowFile = async () => {
+      try {
+        const { fileName, data } = await mutation.mutateAsync(ingestionFlowFileId);
+        utils.download.downloadBlob(data, fileName);
+      }
+      catch (error) {
+        console.error('Error downloading file:', error);
+        utils.notify.emit(t('commons.files.downloadFailed'));
+      }
+  }
 
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
   const [appliedFilters, setAppliedFilters] = useState(initialFilters);
@@ -131,7 +147,7 @@ export const ReportingDetail = () => {
           {
             icon: <DownloadIcon fontSize="small" />,
             buttonText: t('commons.files.downloadFlow'),
-            onActionClick: () => console.log('Download')
+            onActionClick: downloadIngestionFlowFile,
           }
         ]}
       />

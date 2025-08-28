@@ -8,3 +8,7 @@ export const downloadBlob = (blob: Blob, fileName: string): void => {
   document.body.removeChild(link);
   URL.revokeObjectURL(url);
 };
+
+export default {
+  downloadBlob
+};  
