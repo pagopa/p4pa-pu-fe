@@ -107,14 +107,10 @@ describe('getIngestionFlowFiles', () => {
         page: 0,
         size: 10,
         sort: ['creationDate,desc'],
-        creationDateFrom: '2024-08-01T00:00:00+02:00',
-        creationDateTo: '2024-08-01T00:00:00+02:00'
+        creationDateTimeFrom: '2024-08-01T00:00:00+02:00',
+        creationDateTimeTo: '2024-08-01T00:00:00+02:00',
+        fileName: undefined
       },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
     );
   });
 });

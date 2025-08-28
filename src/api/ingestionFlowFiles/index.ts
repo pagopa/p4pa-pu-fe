@@ -25,18 +25,8 @@ export const getIngestionFlowFiles = (
       const query = buildQueryParams(args);
       const { data: files } = await utils.apiClient.bff.getIngestionFlowFiles(
         organizationId,
-        {
-          ...query,
-          creationDateFrom: utils.formatters.date.code(query.creationDateFrom),
-          creationDateTo: utils.formatters.date.code(query.creationDateTo)
-        },
-        {
-          paramsSerializer: {
-            indexes: null
-          }
-        }
+        query
       );
-
       return files;
     }
   });

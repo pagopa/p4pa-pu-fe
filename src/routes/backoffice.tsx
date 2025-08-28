@@ -9,9 +9,8 @@ import {
 } from '../components/RouteGuard/RouteGuard';
 import TaxonomySearchResults from './TaxonomySearchResults';
 import { RegistryDetailPage } from './RegistryDetailPage/RegistryDetailPage';
-import EventPage from './Events/Search';
-import EventList from './Events/List';
-import EventsContainer from './Events/EventsContainer';
+import { EventPage } from './Events/Search';
+import { EventList } from './Events/List';
 import OrgSilServicesPage from './OrgSilServicePage/OrgSilServicesPage';
 import OrgSilServiceDetailPage from './OrgSilServiceDetailPage/OrgSilServiceDetailPage';
 import ClientSilPage from './ClientSilPage/ClientSilPage';
@@ -71,7 +70,7 @@ export const backofficeRoutes = [
         path: 'events/',
         element: (
           <SuperAdminRouteGuard>
-            <EventsContainer />
+            <Outlet />
           </SuperAdminRouteGuard>
         ),
         children: [
