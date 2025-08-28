@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import FilterContainer from '../../../components/FilterContainer/FilterContainer';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import CustomDataGrid, {
@@ -9,91 +9,69 @@ import CustomDataGrid, {
 import {
   getEventsColumns,
   getFiltersWithSubmitButton,
-  getQueryFromFilterValues,
-  RegistryType,
-  testFilterValidity,
-  NodoOrSilEvent,
   NodoFilterValues,
+  RegistryType,
   SilFilterValues
 } from '../configs';
-import { useNavigate, useOutletContext, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import { useStore } from '../../../store/GlobalStore';
 import getPagoPaRegistries from '../../../api/getPagoPaRegistry';
 import getSilRegistries from '../../../api/getSilRegistries';
 import { PageRoutes } from '../..';
-import { EventsContext } from '../EventsContainer';
-import {
-  PagedPagoPaRegistry,
-  PagedSilRegistry
-} from '../../../../generated/data-contracts';
 import { GridRowId, GridValidRowModel } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { Stack } from '@mui/material';
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
+import utils from '../../../utils';
+import { noFilterSetted } from '../../../utils/filtersValidation';
+import { useSearch } from '../../../hooks/useSearch';
+import {
+  PagedPagoPaRegistry,
+  PagedSilRegistry
+} from '../../../../generated/data-contracts';
+import { BaseFilterValues } from '../../../models/Filters';
 
-const EventList = () => {
-  const [data, setData] = useState<
-    PagedSilRegistry | PagedPagoPaRegistry | undefined
-  >();
+type EventsFilters = SilFilterValues | NodoFilterValues;
 
+export const EventList = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const { registryType } = useParams<{
     registryType: RegistryType;
   }>();
-  const { filterValues, handleFilterChange, activeTabIndex, setError, error } =
-    useOutletContext<EventsContext>();
 
-  const navigate = useNavigate();
+  const initialFilters: EventsFilters = utils.URI.decode(window.location.hash);
+  const [filters, setFilters] = useState<EventsFilters>(initialFilters);
+  const [error, setError] = useState(false);
 
   const {
     state: { organizationId }
   } = useStore();
 
+  const query =
+    registryType === 'sil'
+      ? getSilRegistries(organizationId)
+      : getPagoPaRegistries(organizationId);
+
+  const {
+    applyFilters,
+    query: { data, isPending }
+  } = useSearch<BaseFilterValues, PagedSilRegistry | PagedPagoPaRegistry>({
+    query,
+    filters
+  });
+
   const onSubmit = () => {
-    setError(false);
-    if (!testFilterValidity(filterValues[activeTabIndex])) {
+    if (noFilterSetted(filters)) {
       setError(true);
-      return;
-    }
-    fetchDta(data?.size);
-  };
-
-  const filters = getFiltersWithSubmitButton(
-    registryType || 'pagopa',
-    onSubmit
-  );
-
-  const getPagoPaRegistriesMutation = getPagoPaRegistries(organizationId);
-
-  const getSilRegistriesMutation = getSilRegistries(organizationId);
-
-  const fetchDta = async function fetchDta(size = 10, page = 0) {
-    try {
-      const query = {
-        ...getQueryFromFilterValues(filterValues[activeTabIndex]),
-        size,
-        page
-      };
-
-      const result =
-        activeTabIndex === 0
-          ? await getSilRegistriesMutation.mutateAsync(
-              query as NodoOrSilEvent<SilFilterValues>
-            )
-          : await getPagoPaRegistriesMutation.mutateAsync(
-              query as NodoOrSilEvent<NodoFilterValues>
-            );
-
-      setData(result);
-    } catch (e) {
-      console.error(e);
+    } else {
+      setError(false);
+      applyFilters(filters);
     }
   };
 
-  useEffect(() => {
-    onSubmit();
-  }, []);
+  const items = getFiltersWithSubmitButton(registryType || 'pagopa', onSubmit);
 
   const action = (id: GridRowId) => {
     if (id && registryType) {
@@ -113,16 +91,18 @@ const EventList = () => {
       <Stack gap={3}>
         {error && <ErrorMessage variant="outlined" />}
         <FilterContainer
-          items={filters}
-          values={filterValues[activeTabIndex]}
-          onChange={handleFilterChange}
+          items={items}
+          values={filters}
+          onChange={(field, value) =>
+            setFilters({ ...filters, [field]: value })
+          }
         />
-        {data?.content?.length ? (
+        {data?.content?.length || isPending ? (
           <DataGridContainer>
-            <CustomDataGrid
+            <CustomDataGrid<GridValidRowModel>
               sx={{ mt: 4 }}
               columns={columns}
-              rows={data?.content as Array<GridValidRowModel>}
+              rows={data?.content ?? []}
               disableColumnMenu
               disableColumnResize
               getRowId={(row) => row.registryId}
@@ -139,5 +119,3 @@ const EventList = () => {
     </>
   );
 };
-
-export default EventList;
