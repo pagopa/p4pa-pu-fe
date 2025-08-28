@@ -13,7 +13,8 @@ vi.mock('react-router', async (importOriginal) => {
 
 vi.mock('../../routes', () => ({
   PageRoutes: {
-    CLIENT_SIL_CREATE: '/client-sil/create'
+    CLIENT_SIL_CREATE: '/client-sil/create',
+    CLIENT_SIL_DETAIL: '/client-sil/:clientId'
   }
 }));
 
@@ -238,17 +239,11 @@ describe('ClientSilPage', () => {
   });
 
   it('should handle row click', () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
     renderComponent();
 
     const clientRow = screen.getByTestId('client-row-client-1');
     fireEvent.click(clientRow);
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Navigate to client detail: client-1'
-    );
-
-    consoleSpy.mockRestore();
+    expect(mockNavigate).toHaveBeenCalledWith('/client-sil/client-1');
   });
 
   it('should handle add new click', () => {

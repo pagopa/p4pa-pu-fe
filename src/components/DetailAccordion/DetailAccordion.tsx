@@ -23,7 +23,7 @@ export const DetailAccordion = ({
   title,
   description,
   sections,
-  defaultExpanded= false
+  defaultExpanded = false
 }: Props) => {
   const theme = useTheme();
 
@@ -39,7 +39,12 @@ export const DetailAccordion = ({
       }}
     >
       <AccordionSummary expandIcon={<KeyboardArrowDown color="primary" />}>
-        <Stack direction="row" alignItems="center" spacing={1} ml={idTitle ? 2 : 0}>
+        <Stack
+          direction="row"
+          alignItems="center"
+          spacing={1}
+          ml={idTitle ? 2 : 0}
+        >
           <Typography variant="caption-semibold">{idTitle}</Typography>
           <Typography variant="h6">{title}</Typography>
         </Stack>

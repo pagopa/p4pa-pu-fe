@@ -63,11 +63,10 @@ export const ClientSilPage = () => {
   }, [navigate]);
 
   const handleRowClick = useCallback((row: ClientNoSecretDTO) => {
-    navigate(
-              generatePath(PageRoutes.CLIENT_SIL_DETAIL, {
-                clientId: row.clientId
-              })
-            );
+    const url = generatePath(PageRoutes.CLIENT_SIL_DETAIL, {
+      clientId: row.clientId
+    });
+    navigate(url);
   }, []);
 
   return (

@@ -534,6 +534,10 @@
       }
     }
   },
+  "clientSilDetail": {
+    "description": "Ecco i dettagli del Client SIL censito",
+    "key": "Key"
+  },
   "commons": {
     "404": "404: risorsa non disponibile",
     "info": "Informazioni",
@@ -768,6 +772,7 @@
     "postAccount": "Conto Corrente Postale",
     "psp": "Gestore della transazione (PSP)",
     "reason": "Causale",
+    "reload": "Rigenera",
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",

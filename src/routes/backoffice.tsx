@@ -187,7 +187,7 @@ export const backofficeRoutes = [
               }
             }
           },
-                    {
+          {
             id: 'CLIENT_SIL_DETAIL',
             element: <ClientSilDetail />,
             path: ':clientId',
@@ -198,7 +198,7 @@ export const backofficeRoutes = [
                 visible: false
               }
             }
-          },
+          }
         ]
       }
     ]

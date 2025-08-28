@@ -57,25 +57,20 @@ export default {
   createClientSil
 };
 
-
 /**
  * Hook for getting the details of a specific SIL
  * @param organizationId - Organization ID
  * @param clientId - Cient ID
  * @returns useQuery hook for executing the API call
  */
-export const getClientDetail = (
-  organizationId: number,
-  clientId: string,
-) => {
+export const getClientDetail = (organizationId: number, clientId: string) => {
   return useQuery({
     queryKey: ['getClientDetail', organizationId, clientId],
     queryFn: async () => {
-      const { data: clientDetail } =
-        await utils.apiClient.bff.getClient(
-          organizationId,
-          clientId
-        );
+      const { data: clientDetail } = await utils.apiClient.bff.getClient(
+        organizationId,
+        clientId
+      );
 
       parseAndLog(clientDTOSchema, clientDetail);
 
@@ -83,4 +78,3 @@ export const getClientDetail = (
     }
   });
 };
-

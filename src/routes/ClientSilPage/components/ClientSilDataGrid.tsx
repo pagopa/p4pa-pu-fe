@@ -72,6 +72,7 @@ export const ClientSilDataGrid = ({
           <ChevronRight
             color="primary"
             style={{ cursor: 'pointer' }}
+            data-testid={params.row.clientId}
             onClick={() => handleRowClick(params.row)}
           />
         </div>
