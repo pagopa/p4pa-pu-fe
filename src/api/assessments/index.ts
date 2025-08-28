@@ -1,6 +1,9 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
-import { buildQueryParams, buildAssessmentsQueryParams } from './mappings';
+import {
+  buildAssessmentsRegistriesQueryParams,
+  buildAssessmentsQueryParams
+} from './mappings';
 import { parseAndLog } from '../../utils/loaders';
 import {
   assessmentsRegistryDTOSchema,
@@ -54,7 +57,7 @@ export const getAssessmentsRegistries = ({
   useMutation({
     mutationKey: ['getTreasuries', organizationId],
     mutationFn: async (args: FilteredRequest<FilterValues>) => {
-      const query = buildQueryParams(args);
+      const query = buildAssessmentsRegistriesQueryParams(args);
       const { data: response } =
         await utils.apiClient.bff.getAssessmentsRegistries(
           organizationId,
@@ -75,9 +78,7 @@ export const getAssessmentsRegistry = (
         organizationId,
         assessmentRegistryId
       );
-      if (data) {
-        parseAndLog(assessmentsRegistryDTOSchema, data);
-      }
+      parseAndLog(assessmentsRegistryDTOSchema, data);
       return data;
     }
   });
@@ -96,10 +97,7 @@ export const createAssessment = (organizationId: number) =>
           debtPositionTypeOrgCode: params.debtPositionTypeOrgCode
         }
       );
-
-      if (data) {
-        parseAndLog(assessmentsSchema, data);
-      }
+      parseAndLog(assessmentsSchema, data);
       return data;
     }
   });
@@ -112,9 +110,7 @@ export const createAssessmentsRegistry = (organizationId: number) =>
         organizationId,
         assessmentRegistry
       );
-      if (data) {
-        parseAndLog(assessmentsRegistryDTOSchema, data);
-      }
+      parseAndLog(assessmentsRegistryDTOSchema, data);
       return data;
     }
   });
@@ -135,9 +131,7 @@ export const updateAssessmentsRegistry = (
         assessmentRegistryId,
         assessmentRegistry
       );
-      if (data) {
-        parseAndLog(assessmentsRegistryDTOSchema, data);
-      }
+      parseAndLog(assessmentsRegistryDTOSchema, data);
       return data;
     }
   });

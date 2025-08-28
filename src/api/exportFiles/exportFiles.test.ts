@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
-import { renderHook, waitFor } from '../__tests__/renderers';
-import { getExportFiles, getExportFile } from './exportFiles';
-import utils from '../utils';
+import { renderHook, waitFor } from '../../__tests__/renderers';
+import { getExportFiles, getExportFile } from '.';
+import utils from '../../utils';
 import { AxiosResponse } from 'axios';
 import {
   ExportFileStatus,
   ExportFileTypeEnum
-} from '../../generated/apiClient';
+} from '../../../generated/apiClient';
 
 describe('getExportFiles', () => {
   it('fetches and returns export files data', async () => {
