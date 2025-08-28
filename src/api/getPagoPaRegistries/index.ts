@@ -3,9 +3,7 @@ import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import { pagedPagoPaRegistrySchema } from '../../../generated/zod-schema';
 import { FilteredRequest } from '../../models/Filters';
-import {
-  NodoFilterValues
-} from '../../routes/Events/configs';
+import { NodoFilterValues } from '../../routes/Events/configs';
 import { buildQueryParams } from './mapping';
 
 const getPagoPaRegistries = (organizationId: number) =>
