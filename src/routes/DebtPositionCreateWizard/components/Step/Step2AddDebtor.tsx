@@ -270,6 +270,7 @@ const Step2AddDebtor = ({
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.addDebtor.title')}
         subtitle={t('debtPositionCreateWizard.addDebtor.subtitle')}
+        showRequiredFieldsMessage={true}
       >
         <SectionBox
           title={t('debtPositionCreateWizard.step2.title')}

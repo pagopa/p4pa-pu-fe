@@ -233,6 +233,7 @@ const Step1GeneralConfiguration = ({
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.generalConfiguration.title')}
         subtitle={t('debtPositionCreateWizard.generalConfiguration.subtitle')}
+        showRequiredFieldsMessage={true}
       >
         <SectionBox
           title={t('debtPositionCreateWizard.step1.title')}
