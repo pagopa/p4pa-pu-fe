@@ -19,10 +19,13 @@ import FilterContainer, {
   FilterItem
 } from '../../../components/FilterContainer/FilterContainer';
 import Search from '@mui/icons-material/Search';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '../..';
 
 export const ManagedOrgs = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const {
     state: { organizationId }
@@ -87,8 +90,11 @@ export const ManagedOrgs = () => {
     row: OrganizationWithDebtPositionTypeOrgCount | undefined
   ) => {
     if (!row) return;
-    //TODO: redirect to organization detail
-    console.log('Organization:', row);
+    navigate(
+      generatePath(PageRoutes.DEBT_TYPES_DASHBOARD_BYORG, {
+        organizationId: row.organizationId
+      })
+    );
   };
 
   const items: Array<FilterItem> = [
