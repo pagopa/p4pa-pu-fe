@@ -14,6 +14,7 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import utils from '../../../utils';
 import { useStore } from '../../../store/GlobalStore';
 import { getIngestionFlowFile } from '../../../api/ingestionFlowFiles';
+import { downloadBlob } from '../../../utils/download';
 
 type SearchResultDataRow = {
   id: number;
@@ -42,7 +43,7 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
     try {
       const { fileName, data } =
         await mutation.mutateAsync(ingestionFlowFileId);
-      utils.download.downloadBlob(data, fileName);
+      downloadBlob(data, fileName);
     } catch (error) {
       console.error('Error downloading file:', error);
       utils.notify.emit(t('commons.files.downloadFailed'));

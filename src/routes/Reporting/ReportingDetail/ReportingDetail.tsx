@@ -26,6 +26,7 @@ import utils from '../../../utils';
 import { FieldValues } from 'react-hook-form';
 import { FilterFieldIds } from '../../../models/SearchCardFields';
 import { getIngestionFlowFile } from '../../../api/ingestionFlowFiles';
+import { downloadBlob } from '../../../utils/download';
 
 export const ReportingDetail = () => {
   const { t } = useTranslation();
@@ -44,7 +45,7 @@ export const ReportingDetail = () => {
     try {
       const { fileName, data } =
         await mutation.mutateAsync(ingestionFlowFileId);
-      utils.download.downloadBlob(data, fileName);
+      downloadBlob(data, fileName);
     } catch (error) {
       console.error('Error downloading file:', error);
       utils.notify.emit(t('commons.files.downloadFailed'));

@@ -1,12 +1,12 @@
 import { useMutation } from '@tanstack/react-query';
-import utils from '../utils';
-import { parseAndLog } from '../utils/loaders';
-import { pagedPagoPaRegistrySchema } from '../../generated/zod-schema';
-import { FilteredRequest } from '../models/Filters';
+import utils from '../../utils';
+import { parseAndLog } from '../../utils/loaders';
+import { pagedPagoPaRegistrySchema } from '../../../generated/zod-schema';
+import { FilteredRequest } from '../../models/Filters';
 import {
-  getQueryFromFilterValues,
   NodoFilterValues
-} from '../routes/Events/configs';
+} from '../../routes/Events/configs';
+import { buildQueryParams } from './mapping';
 
 const getPagoPaRegistries = (organizationId: number) =>
   useMutation({
@@ -16,11 +16,7 @@ const getPagoPaRegistries = (organizationId: number) =>
       pagination,
       sort
     }: FilteredRequest<NodoFilterValues>) => {
-      const query = {
-        ...getQueryFromFilterValues(filters),
-        ...pagination,
-        sort
-      };
+      const query = buildQueryParams({ filters, pagination, sort });
       const { data: response } = await utils.apiClient.bff.getPagoPaRegistries(
         organizationId,
         query

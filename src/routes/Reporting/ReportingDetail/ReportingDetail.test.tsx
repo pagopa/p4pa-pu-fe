@@ -45,7 +45,8 @@ vi.mock('react-router', async (importOriginal) => {
     useParams: vi.fn(),
     useNavigate: vi.fn(),
     Link: ({ children }: { children: React.ReactNode }) => children,
-    generatePath: vi.fn().mockReturnValue('/mock-path')
+    generatePath: vi.fn().mockReturnValue('/mock-path'),
+    useLocation: vi.fn().mockReturnValue({ state: { ingestionFlowFileId: 1 } })
   };
 });
 
