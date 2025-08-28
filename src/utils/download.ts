@@ -11,4 +11,4 @@ export const downloadBlob = (blob: Blob, fileName: string): void => {
 
 export default {
   downloadBlob
-};  
+};

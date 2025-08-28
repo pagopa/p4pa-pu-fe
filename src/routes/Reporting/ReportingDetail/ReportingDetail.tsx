@@ -38,18 +38,18 @@ export const ReportingDetail = () => {
   const location = useLocation();
   const { ingestionFlowFileId } = location.state;
 
-  const mutation = getIngestionFlowFile(organizationId)
-  
+  const mutation = getIngestionFlowFile(organizationId);
+
   const downloadIngestionFlowFile = async () => {
-      try {
-        const { fileName, data } = await mutation.mutateAsync(ingestionFlowFileId);
-        utils.download.downloadBlob(data, fileName);
-      }
-      catch (error) {
-        console.error('Error downloading file:', error);
-        utils.notify.emit(t('commons.files.downloadFailed'));
-      }
-  }
+    try {
+      const { fileName, data } =
+        await mutation.mutateAsync(ingestionFlowFileId);
+      utils.download.downloadBlob(data, fileName);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      utils.notify.emit(t('commons.files.downloadFailed'));
+    }
+  };
 
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
   const [appliedFilters, setAppliedFilters] = useState(initialFilters);
@@ -147,7 +147,7 @@ export const ReportingDetail = () => {
           {
             icon: <DownloadIcon fontSize="small" />,
             buttonText: t('commons.files.downloadFlow'),
-            onActionClick: downloadIngestionFlowFile,
+            onActionClick: downloadIngestionFlowFile
           }
         ]}
       />
