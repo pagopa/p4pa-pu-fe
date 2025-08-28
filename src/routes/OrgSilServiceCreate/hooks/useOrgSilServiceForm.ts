@@ -34,12 +34,10 @@ export const useOrgSilServiceForm = ({
       const dto = transformFormDataToDTO(formData, organizationId);
       const response = await createMutation.mutateAsync(dto);
 
-      // ✅ Invalida cache per refresh delle liste
       await queryClient.invalidateQueries({
         queryKey: ['orgSilService', organizationId]
       });
 
-      // ✅ Naviga immediatamente alla success page
       navigate(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
         state: {
@@ -77,12 +75,10 @@ export const useOrgSilServiceForm = ({
 
       const response = await updateMutation.mutateAsync(dto);
 
-      // ✅ Invalida cache per refresh delle liste
       await queryClient.invalidateQueries({
         queryKey: ['orgSilService', organizationId]
       });
 
-      // ✅ Invalida anche il dettaglio specifico per quando si torna indietro
       await queryClient.invalidateQueries({
         queryKey: [
           'orgSilServiceDetail',
@@ -91,7 +87,6 @@ export const useOrgSilServiceForm = ({
         ]
       });
 
-      // ✅ Naviga immediatamente alla success page - NIENTE FLASH!
       navigate(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
         state: {

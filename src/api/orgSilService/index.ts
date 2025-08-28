@@ -40,7 +40,12 @@ const getOrgSilServiceById = ({
 
       parseAndLog(orgSilServiceDecryptedDTOSchema, data);
       return { response: data };
-    }
+    },
+    // parameters to always fetch new data and avoid re-rendering of fields
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false
   });
 
 const createOrgSilService = ({ organizationId }: { organizationId: number }) =>

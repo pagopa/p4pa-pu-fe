@@ -115,6 +115,9 @@ describe('OrgSilServiceEdit Component', () => {
     i18nTestSetup(translations);
     mockRefetch.mockClear();
 
+    mockUpdateService.mockResolvedValue(undefined);
+    mockCreateService.mockResolvedValue(undefined);
+
     vi.mocked(useOrgSilServiceForm).mockReturnValue({
       createService: mockCreateService,
       updateService: mockUpdateService,
@@ -124,8 +127,11 @@ describe('OrgSilServiceEdit Component', () => {
     });
 
     mockUseQuery.mockReturnValue({
-      data: mockServiceData,
+      data: {
+        response: mockServiceData
+      },
       isLoading: false,
+      isPending: false,
       error: null,
       refetch: mockRefetch,
       isFetching: false,
@@ -133,48 +139,6 @@ describe('OrgSilServiceEdit Component', () => {
       isSuccess: true,
       status: 'success'
     } as any);
-  });
-
-  describe('Data Loading States', () => {
-    it('should show error state when data loading fails', () => {
-      mockUseQuery.mockReturnValue({
-        data: null,
-        isLoading: false,
-        error: new Error('Failed to load'),
-        refetch: mockRefetch,
-        isFetching: false,
-        isError: true,
-        isSuccess: false,
-        status: 'error'
-      } as any);
-
-      render(<OrgSilServiceEdit />);
-
-      expect(screen.getByText('Error loading data')).toBeInTheDocument();
-      expect(
-        screen.queryByTestId('org-sil-service-form')
-      ).not.toBeInTheDocument();
-    });
-
-    it('should show not found state when no data is returned', () => {
-      mockUseQuery.mockReturnValue({
-        data: null,
-        isLoading: false,
-        error: null,
-        refetch: mockRefetch,
-        isFetching: false,
-        isError: false,
-        isSuccess: true,
-        status: 'success'
-      } as any);
-
-      render(<OrgSilServiceEdit />);
-
-      expect(screen.getByText('Data not found')).toBeInTheDocument();
-      expect(
-        screen.queryByTestId('org-sil-service-form')
-      ).not.toBeInTheDocument();
-    });
   });
 
   describe('Successful Data Loading', () => {
@@ -233,8 +197,11 @@ describe('OrgSilServiceEdit Component', () => {
       };
 
       mockUseQuery.mockReturnValue({
-        data: serviceDataWithJWT,
+        data: {
+          response: serviceDataWithJWT
+        },
         isLoading: false,
+        isPending: false,
         error: null,
         refetch: mockRefetch,
         isFetching: false,
@@ -265,8 +232,11 @@ describe('OrgSilServiceEdit Component', () => {
       };
 
       mockUseQuery.mockReturnValue({
-        data: serviceDataWithoutAuth,
+        data: {
+          response: serviceDataWithoutAuth
+        },
         isLoading: false,
+        isPending: false,
         error: null,
         refetch: mockRefetch,
         isFetching: false,
@@ -312,10 +282,13 @@ describe('OrgSilServiceEdit Component', () => {
       expect(mockCreateService).not.toHaveBeenCalled();
     });
 
-    it('should not submit if serviceData is missing', async () => {
+    it('should not submit if serviceData is missing orgSilServiceId', async () => {
       mockUseQuery.mockReturnValue({
-        data: { ...mockServiceData, orgSilServiceId: undefined },
+        data: {
+          response: { ...mockServiceData, orgSilServiceId: undefined }
+        },
         isLoading: false,
+        isPending: false,
         error: null,
         refetch: mockRefetch,
         isFetching: false,
@@ -331,6 +304,17 @@ describe('OrgSilServiceEdit Component', () => {
 
       expect(mockUpdateService).not.toHaveBeenCalled();
     });
+
+    it('should handle updateService errors correctly', async () => {
+      mockUpdateService.mockRejectedValueOnce(new Error('Update failed'));
+
+      render(<OrgSilServiceEdit />);
+
+      const submitButton = screen.getByTestId('submit-button');
+      await user.click(submitButton);
+
+      expect(mockUpdateService).toHaveBeenCalledTimes(1);
+    });
   });
 
   describe('Navigation', () => {
@@ -341,29 +325,60 @@ describe('OrgSilServiceEdit Component', () => {
       await user.click(cancelButton);
 
       expect(mockNavigate).toHaveBeenCalledTimes(1);
-      expect(mockNavigate).toHaveBeenCalledWith(
-        '/piattaformaunitaria/backoffice/org-sil-services/'
-      );
+      expect(mockNavigate).toHaveBeenCalledWith(-1);
     });
   });
 
-  describe('Query Configuration', () => {
-    it('should call useQuery with correct parameters', () => {
-      render(<OrgSilServiceEdit />);
+  describe('Loading States', () => {
+    it('should return null when data is pending', () => {
+      mockUseQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isPending: true,
+        error: null,
+        refetch: mockRefetch,
+        isFetching: false,
+        isError: false,
+        isSuccess: false,
+        status: 'pending'
+      } as any);
 
-      expect(mockUseQuery).toHaveBeenCalledWith({
-        queryKey: ['orgSilServiceDetail', 123, '456'],
-        queryFn: expect.any(Function),
-        enabled: true
-      });
+      const { container } = render(<OrgSilServiceEdit />);
+      expect(container.firstChild).toBeNull();
     });
-  });
 
-  describe('Refetch Behavior', () => {
-    it('should call refetch when orgSilServiceId and organizationId are available', () => {
-      render(<OrgSilServiceEdit />);
+    it('should return null when data is fetching', () => {
+      mockUseQuery.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isPending: false,
+        error: null,
+        refetch: mockRefetch,
+        isFetching: true,
+        isError: false,
+        isSuccess: false,
+        status: 'pending'
+      } as any);
 
-      expect(mockRefetch).toHaveBeenCalled();
+      const { container } = render(<OrgSilServiceEdit />);
+      expect(container.firstChild).toBeNull();
+    });
+
+    it('should return null when no service data response', () => {
+      mockUseQuery.mockReturnValue({
+        data: {},
+        isLoading: false,
+        isPending: false,
+        error: null,
+        refetch: mockRefetch,
+        isFetching: false,
+        isError: false,
+        isSuccess: true,
+        status: 'success'
+      } as any);
+
+      const { container } = render(<OrgSilServiceEdit />);
+      expect(container.firstChild).toBeNull();
     });
   });
 });

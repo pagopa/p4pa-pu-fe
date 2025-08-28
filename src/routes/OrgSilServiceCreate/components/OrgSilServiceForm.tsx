@@ -46,7 +46,7 @@ export const OrgSilServiceForm = ({
     ...initialData
   };
 
-  const { control, handleSubmit, watch, resetField, reset } =
+  const { control, handleSubmit, watch, resetField, reset, formState } =
     useForm<OrgSilServiceFormData>({
       resolver: zodResolver(orgSilServiceFormSchema),
       mode: 'onSubmit',
@@ -55,11 +55,11 @@ export const OrgSilServiceForm = ({
     });
 
   useEffect(() => {
-    if (initialData) {
-      console.log('Resetting form with new data:', initialData);
+    // No reset when the user press submit in Edit
+    if (initialData && !formState.isDirty) {
       reset(initialData);
     }
-  }, [initialData, reset]);
+  }, [initialData, reset, formState.isDirty]);
 
   const { watchFlagLegacy, watchAuthConfigType } = useConditionalReset({
     watch,

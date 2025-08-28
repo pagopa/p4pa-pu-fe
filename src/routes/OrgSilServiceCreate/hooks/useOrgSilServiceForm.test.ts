@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { renderHook, act } from '@testing-library/react';
+
 import { useOrgSilServiceForm } from './useOrgSilServiceForm';
 import { OrgSilServiceType } from '../../../../generated/data-contracts';
 import { OrgSilServiceFormData } from '../schema';
@@ -25,6 +25,7 @@ vi.mock('../utils/orgSilServiceFormUtils', () => ({
 
 import orgSilService from '../../../api/orgSilService/index';
 import { transformFormDataToDTO } from '../utils/orgSilServiceFormUtils';
+import { act, renderHook } from '../../../__tests__/renderers';
 
 describe('useOrgSilServiceForm', () => {
   const organizationId = 123;

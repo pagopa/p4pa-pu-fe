@@ -1,18 +1,14 @@
 import { useParams, useNavigate } from 'react-router';
-import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { Box } from '@mui/material';
 import { useOrgSilServiceForm } from './hooks/useOrgSilServiceForm';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { PageRoutes } from '..';
 import { OrgSilServiceForm } from './components/OrgSilServiceForm';
 import { OrgSilServiceFormData } from './schema';
-import utils from '../../utils';
-import { parseAndLog } from '../../utils/loaders';
-import { orgSilServiceDecryptedDTOSchema } from '../../../generated/zod-schema';
+import orgSilServiceApi from '../../api/orgSilService';
 import { OrgSilServiceDecryptedDTO } from '../../../generated/data-contracts';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 export const OrgSilServiceEdit = () => {
   const { orgSilServiceId } = useParams<{ orgSilServiceId: string }>();
@@ -20,6 +16,9 @@ export const OrgSilServiceEdit = () => {
   const { t } = useTranslation();
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
+  // Prevent flash render during navigation after successful update
+  const isNavigatingRef = useRef(false);
 
   useEffect(() => {
     if (!orgSilServiceId || !organizationId) {
@@ -37,25 +36,11 @@ export const OrgSilServiceEdit = () => {
   const {
     data: serviceData,
     error,
-    isLoading
-  } = useQuery({
-    queryKey: ['orgSilServiceDetail', organizationId, orgSilServiceId],
-    queryFn: async () => {
-      if (!orgSilServiceId) {
-        throw new Error('Service ID not provided');
-      }
-
-      const { data } = await utils.apiClient.bff.getOrgSilServiceDetails(
-        organizationId,
-        Number(orgSilServiceId)
-      );
-
-      parseAndLog(orgSilServiceDecryptedDTOSchema, data);
-      return data;
-    },
-    enabled: !!orgSilServiceId && !!organizationId,
-    refetchOnWindowFocus: false,
-    refetchOnMount: true
+    isPending,
+    isFetching
+  } = orgSilServiceApi.getOrgSilServiceById({
+    organizationId,
+    orgSilServiceId: Number(orgSilServiceId)
   });
 
   const transformToFormData = (
@@ -88,20 +73,24 @@ export const OrgSilServiceEdit = () => {
   };
 
   const handleSubmit = (formData: OrgSilServiceFormData) => {
-    if (!serviceData?.orgSilServiceId) {
+    if (!serviceData?.response?.orgSilServiceId) {
       return;
     }
 
+    isNavigatingRef.current = true;
+
     const updateData = {
       ...formData,
-      orgSilServiceId: serviceData.orgSilServiceId,
+      orgSilServiceId: serviceData.response.orgSilServiceId,
       organizationId
     };
-    updateService(updateData);
+    updateService(updateData).catch(() => {
+      isNavigatingRef.current = false;
+    });
   };
 
   const handleCancel = () => {
-    navigate(PageRoutes.ORG_SIL_SERVICE);
+    navigate(-1);
   };
 
   if (!orgSilServiceId || !organizationId) {
@@ -109,26 +98,14 @@ export const OrgSilServiceEdit = () => {
   }
 
   if (error) {
-    return (
-      <Box p={3}>
-        <div>{t('commons.errorLoadingData')}</div>
-      </Box>
-    );
+    navigate(PageRoutes.RESPONSES_ERROR);
   }
 
-  if (!isLoading && !serviceData) {
-    return (
-      <Box p={3}>
-        <div>{t('commons.dataNotFound')}</div>
-      </Box>
-    );
-  }
-
-  if (isLoading) {
+  if (isPending || isFetching || !serviceData?.response) {
     return null;
   }
 
-  if (!serviceData) {
+  if (isNavigatingRef.current) {
     return null;
   }
 
@@ -142,7 +119,7 @@ export const OrgSilServiceEdit = () => {
   return (
     <OrgSilServiceForm
       config={config}
-      initialData={transformToFormData(serviceData)}
+      initialData={transformToFormData(serviceData.response)}
       onSubmit={handleSubmit}
       onCancel={handleCancel}
     />
