@@ -23,7 +23,31 @@ vi.mock('react-router', async () => {
 
 vi.mock('../../store/GlobalStore', () => ({
   useStore: () => ({
-    state: { organizationId: 123 }
+    state: {
+      organizationId: 123,
+      organizations: [
+        {
+          organizationId: 1,
+          ipaCode: 'REGIONE_A',
+          orgName: 'Regione A',
+          operatorRole: 'ROLE_ADMIN',
+          orgFiscalCode: '30002310204',
+          flagNotifyIo: true,
+          flagNotifyOutcomePush: false,
+          flagPaymentNotification: false
+        },
+        {
+          organizationId: 2,
+          ipaCode: 'REGIONE_B',
+          orgName: 'Regione B',
+          operatorRole: 'ROLE_ADMIN',
+          orgFiscalCode: '30002310206',
+          flagNotifyIo: true,
+          flagNotifyOutcomePush: false,
+          flagPaymentNotification: false
+        }
+      ]
+    }
   }),
   StoreProvider: ({ children }: { children: React.ReactNode }) => children
 }));

@@ -24,6 +24,15 @@ export const debtTypeOrgsRoutes: Array<RouteObject> = [
         } as RouteHandleObject
       },
       {
+        id: 'DEBT_TYPES_DASHBOARD_BYORG',
+        element: <DebtTypesCreated />,
+        path: `:organizationId?`,
+        handle: {
+          backButton: true,
+          hideBreadcrumbs: false
+        } as RouteHandleObject
+      },
+      {
         id: 'DEBT_TYPE_ORG_DETAIL',
         path: 'detail/:debtPositionTypeOrgId',
         element: <DebtTypeDetailView />,
