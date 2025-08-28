@@ -178,13 +178,6 @@ const DebtPositionDetail = () => {
   const showActivatePaymentCTA =
     debtPositionDetail?.status === DebtPositionStatus.DRAFT;
 
-  const showDownloadCTA =
-    debtPositionDetail?.status !== DebtPositionStatus.DRAFT &&
-    debtPositionDetail?.status !== DebtPositionStatus.CANCELLED;
-
-  const showActivatePaymentCTA =
-    debtPositionDetail?.status === DebtPositionStatus.DRAFT;
-
   const menuOpen = Boolean(menuAnchorEl);
 
   const handleTimelineOpen = () => {
