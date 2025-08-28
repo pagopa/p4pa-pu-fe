@@ -62,8 +62,8 @@ describe('getExportFiles', () => {
       page: filters.page,
       size: filters.size,
       sort: filters.sort || [],
-      creationDateFrom: '2024-08-01T00:00:00+02:00',
-      creationDateTo: '2024-08-01T00:00:00+02:00'
+      creationDateTimeFrom: '2024-08-01T00:00:00+02:00',
+      creationDateTimeTo: '2024-08-01T00:00:00+02:00'
     });
     expect(data).toEqual(dataMock);
   });
@@ -79,8 +79,8 @@ describe('getExportFiles', () => {
     const organizationId = 123;
     const complexFilters = {
       exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
-      creationDateFrom: new Date('2023-01-01'),
-      creationDateTo: new Date('2023-01-31'),
+      creationDateTimeFrom: new Date('2023-01-01'),
+      creationDateTimeTo: new Date('2023-01-31'),
       status: ExportFileStatus.COMPLETED,
       fileName: 'test',
       page: 0,
@@ -111,8 +111,8 @@ describe('getExportFiles', () => {
     expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
       ...complexFilters,
       sort: complexFilters.sort,
-      creationDateFrom: '2024-08-01T00:00:00+02:00',
-      creationDateTo: '2024-08-01T00:00:00+02:00'
+      creationDateTimeFrom: '2024-08-01T00:00:00+02:00',
+      creationDateTimeTo: '2024-08-01T00:00:00+02:00'
     });
   });
 });
