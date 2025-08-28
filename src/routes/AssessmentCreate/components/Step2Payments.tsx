@@ -366,16 +366,6 @@ const Step2PaymentsComponent = forwardRef<
   const handleConfirmRemove = useCallback(async () => {
     const assessmentDetailIds = selectedAssessmentDetailIds || [];
 
-    console.log(
-      '🗑️ REMOVE MODE - Selected assessmentDetailIds:',
-      assessmentDetailIds
-    );
-    console.log('📊 Assessment Detail IDs Array:', {
-      ids: assessmentDetailIds,
-      count: assessmentDetailIds.length,
-      type: 'Remove Operation'
-    });
-
     if (!assessmentDetailIds || assessmentDetailIds.length === 0) {
       console.error('No assessmentDetailIds provided to handleConfirmRemove');
       setShowRemoveConfirmModal(false);
