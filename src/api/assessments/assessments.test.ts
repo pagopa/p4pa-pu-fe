@@ -51,7 +51,7 @@ vi.mock('../../utils/loaders', () => ({
 
 const mockParseAndLog = vi.mocked(loaders.parseAndLog);
 
-describe.skip('getAssessments', () => {
+describe('getAssessments', () => {
   it('should return data correctly when mutation is called', async () => {
     const dataMock = {
       content: [
