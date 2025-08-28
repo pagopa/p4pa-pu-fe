@@ -1,4 +1,5 @@
 import { FlowFileFilters } from '../../models/Filters';
+import utils from '../../utils';
 
 export type FlowFileFilteredRequest = {
   filters: FlowFileFilters;
@@ -6,23 +7,21 @@ export type FlowFileFilteredRequest = {
   sort: Array<string>;
 };
 
+type getIngestionFlowFilesQuery = Parameters<
+  typeof utils.apiClient.bff.getIngestionFlowFiles
+>[1];
+
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: FlowFileFilteredRequest) => ({
-  ...(filters.creationDateFrom && {
-    creationDateFrom: filters.creationDateFrom
-  }),
-  ...(filters.creationDateTo && {
-    creationDateTo: filters.creationDateTo
-  }),
-  ...(filters.ingestionFlowFileTypes && {
-    ingestionFlowFileTypes: filters.ingestionFlowFileTypes
-  }),
-  ...(filters.status && { status: filters.status }),
-  ...(filters.fileName && { fileName: filters.fileName }),
+}: FlowFileFilteredRequest): getIngestionFlowFilesQuery => ({
+  ingestionFlowFileTypes: filters.ingestionFlowFileTypes,
+  creationDateTimeFrom: utils.formatters.date.code(filters.creationDateFrom),
+  creationDateTimeTo: utils.formatters.date.code(filters.creationDateTo),
+  status: filters.status,
+  fileName: filters.fileName,
   page: pagination.page,
   size: pagination.size,
-  ...(sort.length && { sort })
+  sort
 });
