@@ -1,46 +1,53 @@
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import SearchCard from '../../../components/SearchCard/SearchCard';
-import { tabs, testFilterValidity } from '../configs';
-import { useOutletContext } from 'react-router';
+import { tabs } from '../configs';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
 import { RegistryType } from '../configs';
-import { EventsContext } from '../EventsContainer';
-import { useEffect } from 'react';
+import { useCallback, useState } from 'react';
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
+import { noFilterSetted } from '../../../utils/filtersValidation';
+import utils from '../../../utils';
+import { FilterFieldValue } from '../../../models/Filters';
 
-const EventPage = () => {
+export const EventPage = () => {
   const { t } = useTranslation();
-
   const navigate = useNavigate();
-  const {
-    filterValues,
-    activeTabIndex,
-    setError,
-    error,
-    handleTabChange,
-    handleResetFilter,
-    handleFilterChange
-  } = useOutletContext<EventsContext>();
 
-  const handleSubmit = async () => {
-    setError(false);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [filters, setFilters] = useState({});
+  const [error, setError] = useState<boolean>(false);
 
-    if (!testFilterValidity(filterValues[activeTabIndex])) {
-      setError(true);
-      return;
-    }
-
-    const registryType: RegistryType = activeTabIndex === 0 ? 'sil' : 'pagopa';
-    navigate(
-      PageRoutes.BACKOFFICE_REGISTRY_LIST.replace(':registryType', registryType)
-    );
+  const handleFilterChange = (id: string, value: FilterFieldValue) => {
+    setFilters((prev) => ({ ...prev, [id]: value }));
   };
 
-  useEffect(() => {
+  const resetFilters = () => {
+    setFilters({});
+  };
+
+  const handleTabChange = (newTabIndex: number) => {
+    setActiveTabIndex(newTabIndex);
+    resetFilters();
     setError(false);
-  }, []);
+  };
+
+  const navigateToResults = useCallback(() => {
+    if (noFilterSetted(filters)) {
+      setError(true);
+    } else {
+      setError(false);
+      const params = utils.URI.encode(filters);
+      const registryType: RegistryType =
+        activeTabIndex === 0 ? 'sil' : 'pagopa';
+      const route = PageRoutes.BACKOFFICE_REGISTRY_LIST.replace(
+        ':registryType',
+        registryType
+      );
+      navigate(`${route}#${params}`);
+    }
+  }, [filters, navigate]);
 
   return (
     <>
@@ -49,7 +56,7 @@ const EventPage = () => {
         title={t('events.searchCardTitle')}
         description={t('events.searchCardDescription')}
         tabsConfig={tabs}
-        filterValues={filterValues[activeTabIndex]}
+        filterValues={filters}
         activeTabIndex={activeTabIndex}
         onTabChange={handleTabChange}
         onFilterChange={handleFilterChange}
@@ -58,17 +65,15 @@ const EventPage = () => {
           {
             label: t('commons.filters.remove'),
             variant: 'outlined',
-            onClick: handleResetFilter
+            onClick: resetFilters
           },
           {
             label: t('commons.filters.filterResults'),
             variant: 'contained',
-            onClick: handleSubmit
+            onClick: navigateToResults
           }
         ]}
       />
     </>
   );
 };
-
-export default EventPage;
