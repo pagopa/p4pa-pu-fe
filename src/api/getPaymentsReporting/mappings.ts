@@ -16,22 +16,20 @@ export type ReportingFilteredRequest = {
   sort: Array<string>;
 };
 
+type getPaymentReportingQueryParameters = Parameters<
+  typeof utils.apiClient.bff.getPaymentsReporting
+>[1];
+
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: ReportingFilteredRequest) => ({
-  regulationDateFrom:
-    utils.formatters.date.code(filters?.dateRange?.from) ??
-    utils.formatters.date.code(new Date(0)),
-  regulationDateTo:
-    utils.formatters.date.code(filters?.dateRange?.to) ??
-    utils.formatters.date.code(new Date()),
+}: ReportingFilteredRequest): getPaymentReportingQueryParameters => ({
+  iuf: filters.iuf,
+  regulationUniqueIdentifier: filters.regulationUniqueIdentifier,
+  regulationDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  regulationDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
   page: pagination.page,
   size: pagination.size,
-  ...(filters?.regulationUniqueIdentifier && {
-    regulationUniqueIdentifier: filters.regulationUniqueIdentifier
-  }),
-  ...(filters?.iuf && { iuf: filters.iuf }),
-  ...(sort.length && { sort })
+  sort
 });

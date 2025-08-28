@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Grid, GridOwnProps } from '@mui/material';
 import { FormComponent } from '../FormComponent';
 import type {
   ButtonProps,
@@ -77,6 +77,7 @@ type FilterContainerProps = {
   items: Array<FilterItem>;
   values?: BaseFilterValues;
   onChange?: (id: string, value: FilterFieldValue) => void;
+  sx?: GridOwnProps['sx'];
 };
 
 const RenderComponent = ({
@@ -232,8 +233,13 @@ const RenderComponent = ({
   }
 };
 
-const FilterContainer = ({ items, values, onChange }: FilterContainerProps) => (
-  <Grid container spacing={2} data-testid="filter-container">
+const FilterContainer = ({
+  items,
+  values,
+  onChange,
+  sx
+}: FilterContainerProps) => (
+  <Grid container spacing={2} data-testid="filter-container" sx={sx}>
     {items.map(({ gridWidth, ...item }, index) => {
       const key = `${item.type}-${item.label}-${index}`;
 

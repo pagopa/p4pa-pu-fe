@@ -688,17 +688,11 @@ describe('getAssessmentsRegistries', () => {
 
     const expectedApiParams = {
       officeCode: 'OFF001',
-      assessmentDescription: '',
-      debtPositionTypeOrgCode: '',
       assessmentCode: 'ASS001',
       page: 0,
       size: 20,
       operatingYear: '2023',
-      officeDescription: '',
-      sort: [],
-      sectionCode: '',
-      sectionDescription: '',
-      status: ''
+      sort: []
     };
 
     const apiMock = vi
