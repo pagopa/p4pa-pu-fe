@@ -74,17 +74,14 @@ export const useChapters = ({
     useCallback(async (): Promise<PagedAssessmentRegistryResponse | null> => {
       if (!queryParams) return null;
 
-      const { buildQueryParams } = await import('../api/assessments/mappings');
-      const query = buildQueryParams(queryParams);
+      const { buildAssessmentsRegistriesQueryParams } = await import(
+        '../api/assessments/mappings'
+      );
+      const query = buildAssessmentsRegistriesQueryParams(queryParams);
       const { data: response } =
         await utils.apiClient.bff.getAssessmentsRegistries(
           organizationId,
-          query,
-          {
-            paramsSerializer: {
-              indexes: null
-            }
-          }
+          query
         );
       return response as PagedAssessmentRegistryResponse;
     }, [organizationId, queryParams]);
