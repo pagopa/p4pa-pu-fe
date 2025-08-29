@@ -1682,6 +1682,14 @@
   },
   "orgSilServiceDetail": {
     "description": "Ecco i dettagli dell'API.",
+    "delete": {
+      "title": "Sei sicuro di voler eliminare l'API?",
+      "message": "Una volta eliminata, tutti i dati saranno cancellati e non potranno essere recuperati.",
+      "conflict": {
+        "title": "L'API non può essere eliminata"
+      },
+      "conflictMessage": "Questa API è associata ad un Tipo dovuto, pertanto non può essere eliminata."
+    },
     "notFound": "Servizio non trovato",
     "noAuthConfigured": "Nessuna configurazione di autenticazione",
     "sections": {

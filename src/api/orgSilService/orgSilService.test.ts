@@ -15,7 +15,8 @@ vi.mock('../../utils', () => {
       apiClient: {
         bff: {
           getOrgSilServicesByFilters: vi.fn(),
-          getOrgSilServiceDetails: vi.fn()
+          getOrgSilServiceDetails: vi.fn(),
+          deleteOrgSilService: vi.fn()
         }
       }
     }
@@ -382,5 +383,131 @@ describe('buildQueryParams', () => {
       size: 10,
       serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME
     });
+  });
+});
+
+describe('deleteOrgSilService', () => {
+  it('should delete service successfully', async () => {
+    const organizationId = 123;
+    const orgSilServiceId = 456;
+    const mockDeleteResponse = {
+      success: true,
+      message: 'Service deleted successfully'
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteOrgSilService')
+      .mockResolvedValue({ data: mockDeleteResponse } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      orgSilServiceApi.deleteOrgSilService({ organizationId })
+    );
+
+    await result.current.mutateAsync(orgSilServiceId);
+
+    await waitFor(() => {
+      expect(result.current.data).toEqual(mockDeleteResponse);
+    });
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
+    expect(result.current.isSuccess).toBe(true);
+  });
+
+  it('should handle API errors during deletion', async () => {
+    const organizationId = 123;
+    const orgSilServiceId = 456;
+    const mockError = new Error('Service not found for deletion');
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteOrgSilService')
+      .mockRejectedValue(mockError);
+
+    const { result } = renderHook(() =>
+      orgSilServiceApi.deleteOrgSilService({ organizationId })
+    );
+
+    await expect(result.current.mutateAsync(orgSilServiceId)).rejects.toThrow(
+      'Service not found for deletion'
+    );
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
+  });
+
+  it('should handle different organization and service IDs for deletion', async () => {
+    const testCases = [
+      { organizationId: 100, orgSilServiceId: 200 },
+      { organizationId: 999, orgSilServiceId: 1 },
+      { organizationId: 1, orgSilServiceId: 999 }
+    ];
+
+    for (const { organizationId, orgSilServiceId } of testCases) {
+      const mockResponse = {
+        success: true,
+        deletedServiceId: orgSilServiceId
+      };
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'deleteOrgSilService')
+        .mockResolvedValue({ data: mockResponse } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        orgSilServiceApi.deleteOrgSilService({ organizationId })
+      );
+
+      await result.current.mutateAsync(orgSilServiceId);
+
+      await waitFor(() => {
+        expect(result.current.data).toEqual(mockResponse);
+      });
+
+      expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
+      expect(result.current.isSuccess).toBe(true);
+
+      vi.clearAllMocks();
+    }
+  });
+
+  it('should handle network errors during deletion', async () => {
+    const organizationId = 123;
+    const orgSilServiceId = 456;
+    const networkError = new Error('Network timeout');
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteOrgSilService')
+      .mockRejectedValue(networkError);
+
+    const { result } = renderHook(() =>
+      orgSilServiceApi.deleteOrgSilService({ organizationId })
+    );
+
+    await expect(result.current.mutateAsync(orgSilServiceId)).rejects.toThrow(
+      'Network timeout'
+    );
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
+
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+    });
+  });
+
+  it('should handle server error responses during deletion', async () => {
+    const organizationId = 123;
+    const orgSilServiceId = 456;
+    const serverError = new Error('Internal server error');
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'deleteOrgSilService')
+      .mockRejectedValue(serverError);
+
+    const { result } = renderHook(() =>
+      orgSilServiceApi.deleteOrgSilService({ organizationId })
+    );
+
+    await expect(result.current.mutateAsync(orgSilServiceId)).rejects.toThrow(
+      'Internal server error'
+    );
+
+    expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
   });
 });
