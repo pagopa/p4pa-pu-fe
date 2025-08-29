@@ -684,6 +684,7 @@ const Step3 = ({
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.configurationAlert.title')}
         subtitle={t('debtPositionCreateWizard.configurationAlert.subtitle')}
+        showRequiredFieldsMessage={true}
       >
         <SectionBox
           title={t('debtPositionCreateWizard.step3.title')}
