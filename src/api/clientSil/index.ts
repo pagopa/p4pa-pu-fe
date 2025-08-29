@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import {
@@ -76,4 +76,26 @@ export default {
   getClientSils,
   createClientSil,
   deleteClientSil
+};
+
+/**
+ * Hook for getting the details of a specific SIL
+ * @param organizationId - Organization ID
+ * @param clientId - Cient ID
+ * @returns useQuery hook for executing the API call
+ */
+export const getClientDetail = (organizationId: number, clientId: string) => {
+  return useQuery({
+    queryKey: ['getClientDetail', organizationId, clientId],
+    queryFn: async () => {
+      const { data: clientDetail } = await utils.apiClient.bff.getClient(
+        organizationId,
+        clientId
+      );
+
+      parseAndLog(clientDTOSchema, clientDetail);
+
+      return clientDetail;
+    }
+  });
 };

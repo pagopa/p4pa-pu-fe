@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
-import { getClientSils, deleteClientSil } from './index';
+import { getClientSils, deleteClientSil, getClientDetail } from './index';
 import { buildQueryParams } from './mappings';
 import type { ClientSilFilteredRequest } from './mappings';
 import { AxiosResponse } from 'axios';
@@ -10,7 +10,8 @@ vi.mock('../../utils', () => ({
     apiClient: {
       bff: {
         getClients: vi.fn(),
-        deleteClient: vi.fn()
+        deleteClient: vi.fn(),
+        getClient: vi.fn()
       }
     }
   }
@@ -232,6 +233,35 @@ describe('ClientSil API', () => {
       });
 
       expect(onError).toHaveBeenCalledWith(mockError);
+    });
+  });
+
+  describe('getClientDetail', () => {
+    it('returns data correctly', async () => {
+      const dataMock = {
+        clientId: 'IPA_TEST_ID',
+        clientName: 'IPA_TEST_NAME',
+        organizationIpaCode: 'IPA_TEST',
+        clientSecret: '000111'
+      };
+
+      const params = { organizationId: 33, clientId: dataMock.clientId };
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getClient')
+        .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        getClientDetail(params.organizationId, params.clientId || '')
+      );
+
+      await waitFor(() => {
+        expect(apiMock).toHaveBeenCalledWith(
+          params.organizationId,
+          params.clientId
+        );
+        expect(result.current.data).toEqual(dataMock);
+      });
     });
   });
 });
