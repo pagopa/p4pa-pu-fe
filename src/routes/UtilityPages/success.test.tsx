@@ -138,8 +138,10 @@ describe('SuccessPage', () => {
         name: 'assessmentCreate.success.goToDetail'
       });
       fireEvent.click(button);
-      
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.ASSESSMENT_DETAIL.replace(':id', '123'));
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        PageRoutes.ASSESSMENT_DETAIL.replace(':id', '123')
+      );
     });
 
     it('navigates to ORG_SIL_SERVICE_DETAIL when customNavigation is ORG_SIL_SERVICE_DETAIL and orgSilServiceId is provided', () => {
@@ -155,8 +157,10 @@ describe('SuccessPage', () => {
         name: 'orgSilServiceCreate.newService.success.goToDetail'
       });
       fireEvent.click(button);
-      
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.ORG_SIL_SERVICE_DETAIL.replace(':orgSilServiceId', '456'));
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        PageRoutes.ORG_SIL_SERVICE_DETAIL.replace(':orgSilServiceId', '456')
+      );
     });
 
     it('navigates to CLIENT_SIL_DETAIL when customNavigation is CLIENT_SIL_DETAIL and clientId is provided', () => {
@@ -172,11 +176,13 @@ describe('SuccessPage', () => {
         name: 'clientSil.create.success.goToDetail'
       });
       fireEvent.click(button);
-      
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.CLIENT_SIL_DETAIL.replace(':clientId', 'client789'));
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        PageRoutes.CLIENT_SIL_DETAIL.replace(':clientId', 'client789')
+      );
     });
 
-    it('falls back to actionID navigation when customNavigation is set but required ID is missing', () => {      
+    it('falls back to actionID navigation when customNavigation is set but required ID is missing', () => {
       mockUseLocation.mockReturnValue({
         state: {
           category: 'assessment-with-fallback'
@@ -189,7 +195,7 @@ describe('SuccessPage', () => {
         name: 'assessmentCreate.success.goToDetail'
       });
       fireEvent.click(button);
-      
+
       expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.DEBT_TYPES_CATALOG);
     });
   });
@@ -202,7 +208,9 @@ describe('SuccessPage', () => {
 
       render(<SuccessPage />);
       expect(screen.getByText('noButtonsSuccess.title')).toBeInTheDocument();
-      expect(screen.getByText('noButtonsSuccess.description')).toBeInTheDocument();
+      expect(
+        screen.getByText('noButtonsSuccess.description')
+      ).toBeInTheDocument();
       expect(screen.queryByRole('button')).not.toBeInTheDocument();
     });
 
@@ -215,7 +223,9 @@ describe('SuccessPage', () => {
       });
 
       render(<SuccessPage />);
-      expect(screen.getByText('debtTypeCreateSuccess.title')).toBeInTheDocument();
+      expect(
+        screen.getByText('debtTypeCreateSuccess.title')
+      ).toBeInTheDocument();
     });
 
     it('navigates to undefined when actionID is undefined (edge case behavior)', () => {
@@ -231,7 +241,7 @@ describe('SuccessPage', () => {
         name: 'clientSil.create.success.goToDetail'
       });
       fireEvent.click(button);
-      
+
       // This is the actual behavior: PageRoutes[undefined || PageRoutes.HOME] = PageRoutes[PageRoutes.HOME] = undefined
       expect(mockNavigate).toHaveBeenCalledWith(undefined);
     });

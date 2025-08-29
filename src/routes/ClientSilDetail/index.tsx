@@ -111,17 +111,10 @@ const ClientSilDetail = () => {
           });
           return;
         }
-        // For 5xx errors or other errors, show generic notification and stay on page
         utils.notify.emit(t('errors.generic'), 'error');
       }
     });
-  }, [
-    clientId,
-    deleteClientMutation,
-    navigate,
-    showClientSilDeleteDialog,
-    t
-  ]);
+  }, [clientId, deleteClientMutation, navigate, showClientSilDeleteDialog, t]);
 
   const actionButtons = [
     {
@@ -203,7 +196,6 @@ const ClientSilDetail = () => {
             </Stack>
           </Box>
 
-          {/* Confirmation Dialog */}
           <GenericDialog
             open={isOpen}
             title={currentAction?.title || ''}

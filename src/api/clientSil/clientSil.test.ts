@@ -147,14 +147,12 @@ describe('ClientSil API', () => {
     it('should call deleteClient API with correct parameters', async () => {
       const organizationId = 123;
       const clientId = 'client123';
-      
+
       vi.mocked(utils.apiClient.bff.deleteClient).mockResolvedValue({
         data: undefined
       } as AxiosResponse);
 
-      const { result } = renderHook(() =>
-        deleteClientSil(organizationId)
-      );
+      const { result } = renderHook(() => deleteClientSil(organizationId));
 
       result.current.mutate(clientId);
 
@@ -172,12 +170,10 @@ describe('ClientSil API', () => {
       const organizationId = 123;
       const clientId = 'client123';
       const mockError = new Error('Delete failed');
-      
+
       vi.mocked(utils.apiClient.bff.deleteClient).mockRejectedValue(mockError);
 
-      const { result } = renderHook(() =>
-        deleteClientSil(organizationId)
-      );
+      const { result } = renderHook(() => deleteClientSil(organizationId));
 
       result.current.mutate(clientId);
 
@@ -196,7 +192,7 @@ describe('ClientSil API', () => {
       const organizationId = 123;
       const clientId = 'client123';
       const onSuccess = vi.fn();
-      
+
       vi.mocked(utils.apiClient.bff.deleteClient).mockResolvedValue({
         data: undefined
       } as AxiosResponse);
@@ -219,7 +215,7 @@ describe('ClientSil API', () => {
       const clientId = 'client123';
       const onError = vi.fn();
       const mockError = new Error('Delete failed');
-      
+
       vi.mocked(utils.apiClient.bff.deleteClient).mockRejectedValue(mockError);
 
       const { result } = renderHook(() =>
