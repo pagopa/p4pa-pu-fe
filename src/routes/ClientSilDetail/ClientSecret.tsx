@@ -37,9 +37,13 @@ const ClientSecret = ({ secretValue }: ClientSecretProps) => {
     <>
       <Stack spacing={1} direction={'row'} alignItems={'center'} mt={2}>
         <Typography variant="body2" color={theme.palette.action.active}>
-          Secret
+          {t('commons.secret')}
         </Typography>
-        <Button size="small" onClick={toggleValue}>
+        <Button
+          size="small"
+          onClick={toggleValue}
+          data-testid="show-secret-value"
+        >
           {!showSecret ? (
             <VisibilityIcon color="primary" />
           ) : (

@@ -140,34 +140,33 @@ describe('ClientSil API', () => {
         sort: ['clientId,ASC']
       });
     });
-
   });
   describe('get ClientSIL Detail ', () => {
-      it('returns data correctly', async () => {
-        const dataMock = {
-            clientId: "IPA_TEST_ID",
-            clientName: "IPA_TEST_NAME",
-            organizationIpaCode: "IPA_TEST",
-            clientSecret: "000111" };
-    
-        const params = { organizationId: 33, clientId: dataMock.clientId };
-    
-        const apiMock = vi
-          .spyOn(utils.apiClient.bff, 'getClient')
-          .mockResolvedValue({ data: dataMock } as AxiosResponse);
-    
-        const { result } = renderHook(() =>
-          getClientDetail(params.organizationId, params.clientId || '')
+    it('returns data correctly', async () => {
+      const dataMock = {
+        clientId: 'IPA_TEST_ID',
+        clientName: 'IPA_TEST_NAME',
+        organizationIpaCode: 'IPA_TEST',
+        clientSecret: '000111'
+      };
+
+      const params = { organizationId: 33, clientId: dataMock.clientId };
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getClient')
+        .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        getClientDetail(params.organizationId, params.clientId || '')
+      );
+
+      await waitFor(() => {
+        expect(apiMock).toHaveBeenCalledWith(
+          params.organizationId,
+          params.clientId
         );
-    
-        await waitFor(() => {
-          expect(apiMock).toHaveBeenCalledWith(
-            params.organizationId,
-            params.clientId
-          );
-          expect(result.current.data).toEqual(dataMock);
-        });
+        expect(result.current.data).toEqual(dataMock);
       });
-      
+    });
   });
 });
