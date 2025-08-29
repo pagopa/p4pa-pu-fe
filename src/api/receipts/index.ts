@@ -13,7 +13,7 @@ export const getReceipts = ({ organizationId }: { organizationId: number }) =>
         organizationId,
         query
       );
-      parseAndLog(pagedReceiptViewSchema, data)
+      parseAndLog(pagedReceiptViewSchema, data);
       return data;
     }
   });

@@ -27,10 +27,10 @@ export const buildQueryParams = ({
 }: TelematicReceiptsFilteredRequest): TelematicReceiptsFiltered => ({
   receiptOrigin: ReceiptOriginType.RECEIPT_PAGOPA,
   iuv: filters.iuv,
-  paymentDateTimeFrom:utils.formatters.date.code(filters?.dateRange?.from),
+  paymentDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
   paymentDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
   debtPositionTypeOrgId: filters.typeOrgId,
   sort,
   page: pagination.page,
-  size: pagination.size,
+  size: pagination.size
 });
