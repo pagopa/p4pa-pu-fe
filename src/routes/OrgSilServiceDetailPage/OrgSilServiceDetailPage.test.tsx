@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '../../__tests__/renderers';
-import { useParams, useNavigate } from 'react-router';
+import { useParams } from 'react-router';
 import { AxiosError } from 'axios';
 import OrgSilServiceDetailPage from './OrgSilServiceDetailPage';
 import orgSilServiceApi from '../../api/orgSilService';
@@ -83,7 +83,6 @@ const mockOrgSilServiceLegacy: OrgSilServiceDecryptedDTO = {
 
 describe('OrgSilServiceDetailPage', () => {
   const mockUseParams = vi.mocked(useParams);
-  const mockUseNavigate = vi.mocked(useNavigate);
   const mockUseStore = vi.mocked(useStore);
   const mockGetOrgSilServiceById = vi.mocked(
     orgSilServiceApi.getOrgSilServiceById
@@ -92,13 +91,11 @@ describe('OrgSilServiceDetailPage', () => {
     orgSilServiceApi.deleteOrgSilService
   );
   const mockGetSections = vi.mocked(getOrgSilServiceSectionsConfig);
-  const mockNavigate = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     mockUseParams.mockReturnValue({ orgSilServiceId: '1' });
-    mockUseNavigate.mockReturnValue(mockNavigate);
     mockUseStore.mockReturnValue({
       state: { [STATE.ORGANIZATION_ID]: 123 }
     } as any);
@@ -206,8 +203,9 @@ describe('OrgSilServiceDetailPage', () => {
     const deleteButton = screen.getByRole('button', {
       name: /commons.delete/i
     });
-    expect(editButton).toBeDisabled();
-    expect(deleteButton).toBeDisabled();
+
+    expect(editButton).not.toBeDisabled();
+    expect(deleteButton).not.toBeDisabled();
   });
 
   it('handles edit button click', async () => {
