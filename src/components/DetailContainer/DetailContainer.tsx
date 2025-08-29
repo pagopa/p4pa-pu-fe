@@ -151,18 +151,20 @@ const DetailContainer = ({
                       key={index}
                       direction={section.inline ? 'row' : 'column'}
                     >
-                      <Grid
-                        item
-                        lg={section.inline ? 6 : 12}
-                        md={section.inline ? 6 : 12}
-                      >
-                        <Typography
-                          variant="body2"
-                          color={theme.palette.action.active}
+                      {item.label && (
+                        <Grid
+                          item
+                          lg={section.inline ? 6 : 12}
+                          md={section.inline ? 6 : 12}
                         >
-                          {item.label}
-                        </Typography>
-                      </Grid>
+                          <Typography
+                            variant="body2"
+                            color={theme.palette.action.active}
+                          >
+                            {item.label}
+                          </Typography>
+                        </Grid>
+                      )}
                       <Grid
                         item
                         lg={section.inline ? 6 : 12}

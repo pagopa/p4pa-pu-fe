@@ -540,6 +540,10 @@
       }
     }
   },
+  "clientSilDetail": {
+    "description": "Ecco i dettagli del Client SIL censito",
+    "key": "Key"
+  },
   "commons": {
     "404": "404: risorsa non disponibile",
     "info": "Informazioni",
@@ -718,6 +722,7 @@
       "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
     },
     "from": "Dal",
+    "key": "Chiave",
     "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
     "importFlow": "Importa flusso",
     "importFlowErrorMessage": "Non è stato possibile importare il flusso",
@@ -773,6 +778,7 @@
     "postAccount": "Conto Corrente Postale",
     "psp": "Gestore della transazione (PSP)",
     "reason": "Causale",
+    "reload": "Rigenera",
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
@@ -856,6 +862,7 @@
     "searchName": "Cerca Nome",
     "searchOperator": "Cerca operatore",
     "searchRegulationUniqueIdentifier": "ID Regolamento",
+    "secret": "Secret",
     "selectedOperator_one": "Operatore selezionato",
     "selectedOperator_other": "Operatori selezionati",
     "serviceType": "Tipo Servizio",
@@ -1735,7 +1742,7 @@
     "title": "Modifica API",
     "description": "Modifica i dati delle API già esposte in Piattaforma Unitaria per essere utilizzati nei processi di Notifica Pagamenti ed Attualizzazione Importo.",
     "updateService": {
-      "success":{
+      "success": {
         "title": "L'API ‘{{applicationName}}’ è stata modificata!",
         "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
         "goToDetail": "Vedi dettaglio API"

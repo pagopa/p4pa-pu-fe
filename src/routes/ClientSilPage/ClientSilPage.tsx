@@ -15,7 +15,7 @@ import type {
   ClientNoSecretDTO
 } from '../../../generated/apiClient';
 import { PageRoutes } from '../../routes';
-import { useNavigate } from 'react-router';
+import { generatePath, useNavigate } from 'react-router';
 
 /**
  * Main page for the management of Client SIL
@@ -63,8 +63,10 @@ export const ClientSilPage = () => {
   }, [navigate]);
 
   const handleRowClick = useCallback((row: ClientNoSecretDTO) => {
-    // TODO: Implement navigation to client detail
-    console.log(`Navigate to client detail: ${row.clientId}`);
+    const url = generatePath(PageRoutes.CLIENT_SIL_DETAIL, {
+      clientId: row.clientId
+    });
+    navigate(url);
   }, []);
 
   return (
