@@ -2,7 +2,7 @@ import { Box, Button, Stack } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import { STATE } from '../../store/types';
 import { useStore } from '../../store/GlobalStore';
@@ -10,10 +10,12 @@ import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import orgSilServiceApi from '../../api/orgSilService';
 import { DetailSectionProps } from '../../components/DetailContainer/DetailContainer';
 import { getOrgSilServiceSectionsConfig } from './model/OrgSilServiceSectionConfigs';
+import { PageRoutes } from '..';
 
 export const OrgSilServiceDetailPage = () => {
   const [sections, setSections] = useState<DetailSectionProps['sections']>([]);
   const { state } = useStore();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
@@ -21,7 +23,7 @@ export const OrgSilServiceDetailPage = () => {
     orgSilServiceId: string;
   }>();
 
-  const { data, isSuccess, isLoading } = orgSilServiceApi.getOrgSilServiceById({
+  const { data, isSuccess } = orgSilServiceApi.getOrgSilServiceById({
     organizationId,
     orgSilServiceId: Number(orgSilServiceId)
   });
@@ -47,7 +49,12 @@ export const OrgSilServiceDetailPage = () => {
       color: 'primary' as const,
       variant: 'contained' as const,
       disabled: false,
-      onActionClick: () => console.log('edit click')
+      onActionClick: () =>
+        navigate(
+          generatePath(PageRoutes.ORG_SIL_SERVICE_EDIT, {
+            orgSilServiceId: Number(orgSilServiceId)
+          })
+        )
     }
   ];
 
@@ -73,7 +80,7 @@ export const OrgSilServiceDetailPage = () => {
               startIcon={button.icon}
               color={button.color}
               variant={button.variant}
-              disabled={button.disabled || isLoading}
+              disabled={button.disabled}
               onClick={button.onActionClick}
             >
               {button.buttonText}
