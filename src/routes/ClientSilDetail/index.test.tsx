@@ -13,6 +13,25 @@ vi.mock('../../api/clientSil', () => ({
   }
 }));
 
+vi.mock('../../utils', () => ({
+  default: {
+    dialog: {
+      open: vi.fn(),
+      close: vi.fn(),
+      status: {
+        isDialogVisible: { value: false },
+        dialogPayload: { value: { title: '', open: false } }
+      }
+    },
+    config: {
+      deployPath: '/piattaformaunitaria'
+    },
+    notify: {
+      emit: vi.fn()
+    }
+  }
+}));
+
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
   return {

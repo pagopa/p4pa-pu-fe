@@ -11,8 +11,6 @@ import { ClientDTO } from '../../../generated/data-contracts';
 import { getClientDetail } from '../../api/clientSil';
 import { PageRoutes } from '..';
 import ClientSecret from './ClientSecret';
-import { useConfirmDialog } from '../DebtTypeDetailView/hooks/useConfirmDialog';
-import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import clientSilApi from '../../api/clientSil';
 import utils from '../../utils';
 
@@ -32,9 +30,6 @@ const ClientSilDetail = () => {
   } = useStore();
 
   const [clientItem, setClientItem] = useState<ClientDTO | null>(null);
-
-  const { isOpen, currentAction, closeDialog, handleConfirm, showDialog } =
-    useConfirmDialog();
 
   if (!clientId) {
     navigate(PageRoutes.RESPONSES_ERROR);
@@ -63,58 +58,60 @@ const ClientSilDetail = () => {
     }
   }, [data, clientItem]);
 
-  // Custom delete dialog for Client SIL with specific translations
-  const showClientSilDeleteDialog = useCallback(
-    (onConfirm: () => void | Promise<void>) => {
-      showDialog({
-        title: t('clientSil.delete.confirmDialog.title'),
-        message: t('clientSil.delete.confirmDialog.description'),
-        confirmLabel: t('commons.delete'),
-        onConfirm,
-        variant: 'error',
-        testId: 'confirm-delete-client-sil-dialog'
-      });
-    },
-    [showDialog, t]
-  );
+  const showDeleteDialog = () => {
+    utils.dialog.open({
+      title: t('clientSil.delete.confirmDialog.title'),
+      message: t('clientSil.delete.confirmDialog.description'),
+      confirmLabel: t('commons.delete'),
+      cancelLabel: t('commons.cancel'),
+      onConfirm: handleDeleteConfirm,
+      onClose: () => utils.dialog.close(),
+      'data-testid': 'confirm-delete-client-sil-dialog'
+    });
+  };
 
   /**
    * Handle delete action for Client SIL
    */
   const handleDelete = useCallback(() => {
     if (!clientId) return;
+    showDeleteDialog();
+  }, [clientId]);
 
-    showClientSilDeleteDialog(async () => {
-      try {
-        await deleteClientMutation.mutateAsync(clientId);
-        navigate(PageRoutes.CLIENT_SIL_INDEX);
-      } catch (error: unknown) {
-        console.error('Error while deleting the client:', error);
+  const handleDeleteConfirm = async () => {
+    if (!clientId) return;
 
-        const isAxiosErrorWithResponse = (
-          err: unknown
-        ): err is { response?: { status?: number } } => {
-          return typeof err === 'object' && err !== null && 'response' in err;
-        };
+    try {
+      await deleteClientMutation.mutateAsync(clientId);
+      utils.dialog.close();
+      navigate(PageRoutes.CLIENT_SIL_INDEX);
+    } catch (error: unknown) {
+      utils.dialog.close();
+      console.error('Error while deleting the client:', error);
 
-        const statusCode = isAxiosErrorWithResponse(error)
-          ? error.response?.status
-          : undefined;
+      const isAxiosErrorWithResponse = (
+        err: unknown
+      ): err is { response?: { status?: number } } => {
+        return typeof err === 'object' && err !== null && 'response' in err;
+      };
 
-        if (statusCode && statusCode >= 400 && statusCode < 500) {
-          navigate(PageRoutes.RESPONSES_ERROR, {
-            state: {
-              category: 'client-sil-delete',
-              errorType: '4xx',
-              statusCode
-            }
-          });
-          return;
-        }
-        utils.notify.emit(t('errors.generic'), 'error');
+      const statusCode = isAxiosErrorWithResponse(error)
+        ? error.response?.status
+        : undefined;
+
+      if (statusCode && statusCode >= 400 && statusCode < 500) {
+        navigate(PageRoutes.RESPONSES_ERROR, {
+          state: {
+            category: 'client-sil-delete',
+            errorType: '4xx',
+            statusCode
+          }
+        });
+        return;
       }
-    });
-  }, [clientId, deleteClientMutation, navigate, showClientSilDeleteDialog, t]);
+      utils.notify.emit(t('errors.generic'), 'error');
+    }
+  };
 
   const actionButtons = [
     {
@@ -195,17 +192,6 @@ const ClientSilDetail = () => {
               ))}
             </Stack>
           </Box>
-
-          <GenericDialog
-            open={isOpen}
-            title={currentAction?.title || ''}
-            message={currentAction?.message}
-            confirmLabel={currentAction?.confirmLabel}
-            cancelLabel={currentAction?.cancelLabel}
-            onConfirm={handleConfirm}
-            onClose={closeDialog}
-            data-testid={currentAction?.testId}
-          />
         </>
       )}
     </>
