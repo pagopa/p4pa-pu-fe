@@ -1,27 +1,11 @@
 /**
  * Custom hook for cross-page IUD selection management
  *
- * TEMPORARY SOLUTION for duplicate IUDs from backend
- *
- * CURRENTLY:
- * - Maintains global Set of selected uniqueIds (format: iud-index)
- * - Converts to/from IUD only when necessary for form
- * - Handles duplicate IUDs through artificial uniqueIds
- * - Maintains global uniqueId -> IUD mapping for cross-page conversion
- *
- * FUTURE MIGRATION (when backend will have unique IUDs):
- * 1. Change globalSelectedUniqueIds → globalSelectedIuds
- * 2. Remove currentPageRows parameter
- * 3. Eliminate uniqueId ↔ IUD conversion logic
- * 4. Rename toggleUniqueIdSelection → toggleIudSelection
- * 5. Simplify isSelected (no more loop on currentPageRows)
- *
  * Responsibilities:
- * - Maintains global Set of selected uniqueIds (instead of IUDs)
- * - Converts to/from IUD only when necessary for form
- * - Handles cross-page selection/deselection
- * - Solves duplicate IUD problem by managing uniqueIds
- * - Maintains persistent uniqueId -> IUD mapping for cross-page conversion
+ * - Maintains global Set of selected IUDs for cross-page persistence
+ * - Handles cross-page selection/deselection with unique IUDs from API
+ * - Manages form synchronization for selectedPayments and selectedAssessmentDetailIds
+ * - Supports both normal mode (IUD selection) and remove mode (assessmentDetailId selection)
  */
 import { useState, useCallback, useEffect, useRef } from 'react';
 
@@ -31,24 +15,25 @@ import { useState, useCallback, useEffect, useRef } from 'react';
 export type UseGlobalPaymentSelectionParams = {
   setValue: (name: string, value: unknown) => void;
   selectedPayments?: Array<string>;
-  /** TEMPORARY: current page rows for IUD ↔ uniqueId conversion */
-  currentPageRows?: Array<{ uniqueId: string; iud: string }>;
+  /** Current page rows for assessmentDetailId mapping in remove mode */
+  currentPageRows?: Array<{
+    iud: string;
+    assessmentDetailId?: number;
+  }>;
+  isRemoveMode?: boolean;
 };
 
 /**
  * Type for the hook's return value
  */
 export type UseGlobalPaymentSelectionResult = {
-  /** TEMPORARY: Set of selected uniqueIds - will become globalSelectedIuds */
-  globalSelectedUniqueIds: Set<string>;
-  /** TEMPORARY: Toggle uniqueId selection - will become toggleIudSelection */
-  toggleUniqueIdSelection: (
-    uniqueIds: Array<string>,
-    selected: boolean
-  ) => void;
+  /** Set of selected IUDs for cross-page persistence */
+  globalSelectedIuds: Set<string>;
+  /** Toggle IUD selection */
+  toggleIudSelection: (iuds: Array<string>, selected: boolean) => void;
   clearAllSelections: () => void;
-  /** TEMPORARY: Check if uniqueId is selected - will become isIudSelected */
-  isUniqueIdSelected: (uniqueId: string) => boolean;
+  /** Check if IUD is selected */
+  isIudSelected: (iud: string) => boolean;
   /** Backward compatibility: check if IUD is selected */
   isSelected: (iud: string) => boolean;
   /** Total count of selected items */
@@ -59,7 +44,7 @@ export type UseGlobalPaymentSelectionResult = {
  * Custom hook for managing cross-page payment selection state
  *
  * This hook centralizes the selection state management for payment tables
- * with support for cross-page persistence and duplicate IUD handling.
+ * with support for cross-page persistence using unique IUDs from API.
  *
  * @param params Hook configuration parameters
  * @returns Selection state and management functions
@@ -68,132 +53,143 @@ export type UseGlobalPaymentSelectionResult = {
 export const useGlobalPaymentSelection = ({
   setValue,
   selectedPayments = [],
-  currentPageRows = []
+  currentPageRows = [],
+  isRemoveMode = false
 }: UseGlobalPaymentSelectionParams): UseGlobalPaymentSelectionResult => {
-  // TEMPORARY: Set of uniqueIds instead of IUDs to handle duplicates
-  // FUTURE: const [globalSelectedIuds, setGlobalSelectedIuds] = useState<Set<string>>(new Set());
-  const [globalSelectedUniqueIds, setGlobalSelectedUniqueIds] = useState<
-    Set<string>
-  >(new Set());
+  // Set of selected IUDs for cross-page persistence
+  const [globalSelectedIuds, setGlobalSelectedIuds] = useState<Set<string>>(
+    new Set()
+  );
 
-  // TEMPORARY: Global mapping for uniqueId -> IUD conversion across pages
-  // This persists the mapping even when currentPageRows changes
-  const [globalUniqueIdToIudMap, setGlobalUniqueIdToIudMap] = useState<
-    Map<string, string>
-  >(new Map());
+  // Global mapping for IUD -> assessmentDetailId conversion in remove mode
+  const [
+    globalIudToAssessmentDetailIdMap,
+    setGlobalIudToAssessmentDetailIdMap
+  ] = useState<Map<string, number>>(new Map());
 
   const isInitializedRef = useRef(false);
 
-  // Update global mapping when currentPageRows changes
+  // Helper function to convert IUDs to assessment detail IDs for remove mode
+  const convertIudsToAssessmentDetailIds = useCallback(
+    (iudSet: Set<string>): Array<number> => {
+      // Update mapping with current page rows
+      const updatedMapping = new Map(globalIudToAssessmentDetailIdMap);
+      currentPageRows?.forEach((row) => {
+        if (row.iud && row.assessmentDetailId) {
+          updatedMapping.set(row.iud, row.assessmentDetailId);
+        }
+      });
+
+      // Convert IUDs to assessment detail IDs
+      const assessmentDetailIds: Array<number> = [];
+      iudSet.forEach((iud) => {
+        const assessmentDetailId = updatedMapping.get(iud);
+        if (assessmentDetailId) {
+          assessmentDetailIds.push(assessmentDetailId);
+        }
+      });
+
+      return assessmentDetailIds.sort((a, b) => a - b);
+    },
+    [globalIudToAssessmentDetailIdMap, currentPageRows]
+  );
+
+  // Update assessment detail mapping when currentPageRows changes (remove mode only)
   useEffect(() => {
-    if (currentPageRows.length > 0) {
-      setGlobalUniqueIdToIudMap((prevMap) => {
+    if (currentPageRows.length > 0 && isRemoveMode) {
+      setGlobalIudToAssessmentDetailIdMap((prevMap) => {
         const newMap = new Map(prevMap);
         currentPageRows.forEach((row) => {
-          if (row.uniqueId && row.iud) {
-            newMap.set(row.uniqueId, row.iud);
+          if (row.iud && row.assessmentDetailId) {
+            newMap.set(row.iud, row.assessmentDetailId);
           }
         });
         return newMap;
       });
     }
-  }, [currentPageRows]);
+  }, [currentPageRows, isRemoveMode]);
 
   useEffect(() => {
-    // TEMPORARY: IUD → uniqueId conversion at initialization
-    // FUTURE: setGlobalSelectedIuds(new Set(selectedPayments));
+    // Initialize selected IUDs from form data
     if (!isInitializedRef.current && selectedPayments.length > 0) {
-      const uniqueIds = new Set<string>();
-      selectedPayments.forEach((iud) => {
-        // Find all uniqueIds corresponding to this IUD
-        currentPageRows.forEach((row) => {
-          if (row.iud === iud) {
-            uniqueIds.add(row.uniqueId);
-          }
-        });
-      });
-      setGlobalSelectedUniqueIds(uniqueIds);
+      setGlobalSelectedIuds(new Set(selectedPayments));
       isInitializedRef.current = true;
     }
-  }, []);
+  }, [selectedPayments]);
 
-  // Selection management at uniqueId level
-  // TEMPORARY: toggleUniqueIdSelection → toggleIudSelection in future
-  const toggleUniqueIdSelection = useCallback(
-    (uniqueIds: Array<string>, selected: boolean) => {
-      setGlobalSelectedUniqueIds((prev) => {
+  // Selection management at IUD level
+  const toggleIudSelection = useCallback(
+    (iuds: Array<string>, selected: boolean) => {
+      // Helper function to update set
+      const updateSet = (prev: Set<string>) => {
         const newSet = new Set(prev);
-        uniqueIds.forEach((uniqueId) => {
+        iuds.forEach((iud) => {
           if (selected) {
-            newSet.add(uniqueId);
+            newSet.add(iud);
           } else {
-            newSet.delete(uniqueId);
+            newSet.delete(iud);
           }
         });
         return newSet;
+      };
+
+      // Update state and get the new set
+      let newSet: Set<string>;
+      setGlobalSelectedIuds((prev) => {
+        newSet = updateSet(prev);
+        return newSet;
       });
 
-      // Sync immediately to form using global mapping
+      // Sync to form with the new state
       queueMicrotask(() => {
-        const newSet = new Set(globalSelectedUniqueIds);
-        uniqueIds.forEach((uniqueId) => {
-          if (selected) {
-            newSet.add(uniqueId);
-          } else {
-            newSet.delete(uniqueId);
-          }
-        });
+        const currentSet = newSet;
 
-        // Convert uniqueId to IUD for form using global mapping
-        const selectedIuds = new Set<string>();
-        newSet.forEach((uniqueId) => {
-          const iud = globalUniqueIdToIudMap.get(uniqueId);
-          if (iud) {
-            selectedIuds.add(iud);
-          }
-        });
-        const sortedArray = Array.from(selectedIuds).sort((a, b) =>
-          a.localeCompare(b)
-        );
-
-        setValue('selectedPayments', sortedArray);
+        if (isRemoveMode) {
+          const selectedAssessmentDetailIds =
+            convertIudsToAssessmentDetailIds(currentSet);
+          setValue('selectedAssessmentDetailIds', selectedAssessmentDetailIds);
+        } else {
+          const sortedIuds = Array.from(currentSet).sort((a, b) =>
+            a.localeCompare(b)
+          );
+          setValue('selectedPayments', sortedIuds);
+        }
       });
     },
-    [setValue, globalSelectedUniqueIds, globalUniqueIdToIudMap]
+    [setValue, isRemoveMode, convertIudsToAssessmentDetailIds]
   );
 
   const clearAllSelections = useCallback(() => {
-    setGlobalSelectedUniqueIds(new Set());
-    setGlobalUniqueIdToIudMap(new Map());
-    setValue('selectedPayments', []);
-  }, [setValue]);
+    setGlobalSelectedIuds(new Set());
 
-  const isUniqueIdSelected = useCallback(
-    (uniqueId: string) => {
-      return globalSelectedUniqueIds.has(uniqueId);
+    setValue('selectedPayments', []);
+    if (isRemoveMode) {
+      setValue('selectedAssessmentDetailIds', []);
+      setGlobalIudToAssessmentDetailIdMap(new Map());
+    }
+  }, [setValue, isRemoveMode]);
+
+  const isIudSelected = useCallback(
+    (iud: string) => {
+      return globalSelectedIuds.has(iud);
     },
-    [globalSelectedUniqueIds]
+    [globalSelectedIuds]
   );
 
-  // Helper to convert IUD to uniqueId for backward compatibility
-  // TEMPORARY: This function will be simplified when IUDs are unique
-  // FUTURE: isSelected = (iud: string) => globalSelectedIuds.has(iud);
+  // Backward compatibility function - same as isIudSelected
   const isSelected = useCallback(
     (iud: string) => {
-      // Find if at least one uniqueId with this IUD is selected
-      return currentPageRows.some(
-        (row) => row.iud === iud && globalSelectedUniqueIds.has(row.uniqueId)
-      );
+      return globalSelectedIuds.has(iud);
     },
-    [globalSelectedUniqueIds, currentPageRows]
+    [globalSelectedIuds]
   );
 
   return {
-    globalSelectedUniqueIds, // TEMPORARY: will become globalSelectedIuds
-    toggleUniqueIdSelection, // TEMPORARY: will become toggleIudSelection
+    globalSelectedIuds,
+    toggleIudSelection,
     clearAllSelections,
-    isUniqueIdSelected, // TEMPORARY: will become isIudSelected
+    isIudSelected,
     isSelected, // Backward compatibility
-    totalSelected: globalSelectedUniqueIds.size
+    totalSelected: globalSelectedIuds.size
   };
 };

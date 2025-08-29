@@ -1,28 +1,4 @@
 {
-  "DebtPositions": {
-    "Results": {
-      "filters": {
-        "from": "Creazione dal"
-      },
-      "table": {
-        "creationDate": "Data creazione",
-        "description": "Descrizione",
-        "status": "Stato"
-      },
-      "title": "Posizioni Debitorie",
-      "titleIUV": "Avvisi (IUV)"
-    }
-  },
-  "AssessmentRegistryUpdate": {
-    "success": {
-      "backToStart": "Visualizza capitoli",
-      "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
-      "title": "Il Capitolo ‘{{paymentObject}}’ è stato aggiornato!"
-    },
-    "title": "Modifica capitolo",
-    "subtitle": "Gestisci i parametri del capitolo.",
-    "configuration": "Configurazione del capitolo"
-  },
   "AssessmentRegistryCreate": {
     "success": {
       "backToStart": "Visualizza capitoli",
@@ -57,6 +33,30 @@
     "assessmentDescription": "Denominazione Accertamento Capitolo",
     "debtPositionType": "Tipo dovuto"
   },
+  "AssessmentRegistryUpdate": {
+    "success": {
+      "backToStart": "Visualizza capitoli",
+      "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato aggiornato!"
+    },
+    "title": "Modifica capitolo",
+    "subtitle": "Gestisci i parametri del capitolo.",
+    "configuration": "Configurazione del capitolo"
+  },
+  "DebtPositions": {
+    "Results": {
+      "filters": {
+        "from": "Creazione dal"
+      },
+      "table": {
+        "creationDate": "Data creazione",
+        "description": "Descrizione",
+        "status": "Stato"
+      },
+      "title": "Posizioni Debitorie",
+      "titleIUV": "Avvisi (IUV)"
+    }
+  },
   "FileUploaderFlowImport": {
     "debt-positions": {
       "description": "Carica qui il file .zip con i Dovuti"
@@ -75,6 +75,199 @@
       "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
       "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
     }
+  },
+  "appPreview": {
+    "title": "Anteprima in App IO",
+    "messageInfo": "*Verrà mostrato il nome dell’ente e il servizio assegnati per inviare il messaggio.",
+    "mousePopup": "Scorri con il cursore per visualizzare l’anteprima completa"
+  },
+  "assessment": {
+    "title": "Accertamenti pagamenti",
+    "assessment": "Accertamento ",
+    "search": "Cerca accertamenti",
+    "searchDescription": "Cerca dei accertamenti e controlla l'andamento delle entrate.",
+    "chapters": "Capitoli",
+    "chaptersDescription": "Crea oppure visualizza capitoli di bilancio per distinguere le entrate per categoria.",
+    "createAssessment": "Crea accertamento",
+    "createChapter": "Crea nuovo capitolo",
+    "seeAllChapters": "Vedi tutti i capitoli",
+    "searchResults": {
+      "title": "Risultato ricerca accertamenti",
+      "description": "Questi sono i risultati della tua ricerca.",
+      "noResults": "Nessun risultato trovato per i filtri selezionati.",
+      "columns": {
+        "assessmentName": "Nome accertamento",
+        "debtType": "Tipo dovuto",
+        "createdBy": "Creato da",
+        "updatedAt": "Aggiornato il",
+        "status": "Stato"
+      }
+    },
+    "filters": {
+      "assessmentName": "Nome accertamento",
+      "debtType": "Tipo dovuto",
+      "status": "Stato",
+      "lastUpdateDate": "Data ultimo aggiornamento"
+    },
+    "statusOptions": {
+      "ACTIVE": "In corso",
+      "CLOSED": "Chiuso",
+      "CANCELLED": "Eliminato"
+    }
+  },
+  "assessmentCreate": {
+    "configuration": {
+      "title": "Configurazione accertamento",
+      "step1": {
+        "title": "Dettaglio accertamento",
+        "fields": {
+          "name": {
+            "label": "Nome accertamento",
+            "placeholder": "Accertamento",
+            "required": "Il campo nome è obbligatorio"
+          },
+          "debtPositionType": {
+            "label": "Tipo dovuto",
+            "placeholder": "Dovuto",
+            "required": "Selezionare un tipo di dovuto"
+          }
+        }
+      },
+      "step2": {
+        "addPayments": {
+          "radioLabel": "Vuoi aggiungere pagamenti nell'accertamento?",
+          "options": {
+            "yes": "Si",
+            "no": "No"
+          }
+        },
+        "selection": {
+          "banner": {
+            "single": "({{count}}) Pagamento selezionato",
+            "multiple": "({{count}}) Pagamenti selezionati",
+            "clearSelection": "Cancella la selezione"
+          }
+        },
+        "validation": {
+          "noPaymentsSelected": "Devi selezionare almeno un pagamento da aggiungere.",
+          "noFiltersSelected": "Selezionare almeno un filtro."
+        }
+      },
+      "step3": {
+        "title": "Assegna capitolo",
+        "fields": {
+          "operatingYear": {
+            "label": "Anno esercizio",
+            "placeholder": "Seleziona anno esercizio",
+            "required": "Il campo Anno esercizio è obbligatorio",
+            "noData": "Nessun anno disponibile"
+          },
+          "chapter": {
+            "label": "Capitolo",
+            "placeholder": "Seleziona capitolo",
+            "required": "Il campo Capitolo è obbligatorio",
+            "noData": "Nessun capitolo disponibile per l'anno selezionato"
+          }
+        }
+      }
+    },
+    "description": "Inserisci i parametri per creare un nuovo accertamento.",
+    "title": "Crea un nuovo accertamento",
+    "modify": {
+      "addPayments": {
+        "title": "Aggiungi pagamenti",
+        "description": "Seleziona i pagamenti da aggiungere all'accertamento.",
+        "stepTitle": "Aggiungi pagamenti"
+      }
+    },
+    "stepper": {
+      "step1": "Configurazione accertamento",
+      "step2": "Aggiungi pagamenti",
+      "step3": "Assegna capitolo"
+    },
+    "success": {
+      "title": "L'accertamento \"{{assessmentName}}\" è stato creato!",
+      "description": "Puoi trovarlo nella sezione accertamento pagamenti, dove puoi consultarlo in qualsiasi momento.",
+      "goToDetail": "Visualizza accertamento"
+    },
+    "removePayments": {
+      "title": "Rimuovi pagamenti",
+      "description": "Cerca e seleziona i pagamenti nell’acertamento da rimuovere.",
+      "stepTitle": "Rimuovi pagamenti",
+      "success": {
+        "title": "Pagamenti rimossi correttamente nell'accertamento \"{{assessmentName}}\"",
+        "goToDetail": "Visualizza accertamento"
+      },
+      "confirmModal": {
+        "title": "Sei sicuro di voler rimuovere i pagamenti?",
+        "description": "Dopo la rimozione, i pagamenti non compariranno più nell'elenco dell'accertamento."
+      }
+    },
+    "addPayments": {
+      "title": "Pagamenti aggiunti",
+      "stepTitle": "Aggiungi pagamenti",
+      "success": {
+        "title": "Pagamenti aggiunti correttamente nell'accertamento \"{{assessmentName}}\"",
+        "description": "Li trovi nel dettaglio dell'accertamento, dove puoi gestirli in qualsiasi momento.",
+        "goToDetail": "Visualizza accertamento"
+      }
+    },
+    "error": {
+      "creationFailed": "Errore durante la creazione dell'assessment",
+      "nameAlreadyPresent": "Esiste già un accertamento con lo stesso Nome"
+    }
+  },
+  "assessmentDetail": {
+    "debtType": "Tipo dovuto",
+    "createdBy": "Creato da",
+    "paymentsAssociated": "Pagamenti associati",
+    "closeDialog": {
+      "title": "Sei sicuro di chiudere l’accertamento?",
+      "description": "Una volta chiuso, l’accertamento non potrà più essere modificato.",
+      "ok": "Chiudi l’accertamento",
+      "ko": "Annulla"
+    },
+    "cancelDialog": {
+      "title": "Sei sicuro di voler eliminare l’accertamento?",
+      "description": "Una volta cancellato, l’accertamento non potrà più essere riaperto. Potrai comunque consultarne i dettagli.",
+      "ok": "Elimina",
+      "ko": "Chiudi"
+    },
+    "deleteDialog": {
+      "title": "Conferma eliminazione",
+      "description": "Sei sicuro di voler eliminare questo accertamento? L'operazione non può essere annullata."
+    },
+    "cannotModifyDialog": {
+      "title": "Operazione non consentita",
+      "description": "Non è possibile aggiungere o rimuovere pagamenti per questo accertamento."
+    },
+    "paymentDetail": {
+      "title": "Dettaglio pagamento",
+      "summary": "Riepilogo",
+      "paymentInfo": "Informazione sul pagamento",
+      "iuv": "Codice Avviso (IUV)",
+      "amount": "Importo",
+      "paymentObject": "Oggetto del pagamento",
+      "duetype": "Tipo dovuto",
+      "debtor": "Debitore",
+      "fiscalCode": "CF / Partita IVA",
+      "paymentDate": "Data esito",
+      "psp": "Gestore della transazione (PSP)",
+      "iud": "IUD",
+      "iur": "IUR"
+    },
+    "error": {
+      "debtPositionTypeOrgCodeNotDefined": "Il tipo dovuto non è definito"
+    }
+  },
+  "assessmentsRegistrySearchResults": {
+    "sectionCode": "Codice Capitolo",
+    "operatingYear": "Anno",
+    "debtPositionTypeOrgCode": "Tipo dovuto",
+    "assessmentCode": "Codice accertamento",
+    "officeCode": "Codice ufficio",
+    "status": "Stato ufficio",
+    "uploadFlow": "Crea nuovo capitolo"
   },
   "classifications": {
     "title": "Dettaglio Pagamento",
@@ -235,145 +428,6 @@
       }
     }
   },
-  "assessment": {
-    "title": "Accertamenti pagamenti",
-    "assessment": "Accertamento ",
-    "search": "Cerca accertamenti",
-    "searchDescription": "Cerca dei accertamenti e controlla l'andamento delle entrate.",
-    "chapters": "Capitoli",
-    "chaptersDescription": "Crea oppure visualizza capitoli di bilancio per distinguere le entrate per categoria.",
-    "createAssessment": "Crea accertamento",
-    "createChapter": "Crea nuovo capitolo",
-    "seeAllChapters": "Vedi tutti i capitoli",
-    "searchResults": {
-      "title": "Risultato ricerca accertamenti",
-      "description": "Questi sono i risultati della tua ricerca.",
-      "noResults": "Nessun risultato trovato per i filtri selezionati.",
-      "columns": {
-        "assessmentName": "Nome accertamento",
-        "debtType": "Tipo dovuto",
-        "createdBy": "Creato da",
-        "updatedAt": "Aggiornato il",
-        "status": "Stato"
-      }
-    },
-    "filters": {
-      "assessmentName": "Nome accertamento",
-      "debtType": "Tipo dovuto",
-      "status": "Stato",
-      "lastUpdateDate": "Data ultimo aggiornamento"
-    },
-    "statusOptions": {
-      "ACTIVE": "In corso",
-      "CLOSED": "Chiuso",
-      "CANCELLED": "Eliminato"
-    }
-  },
-  "assessmentCreate": {
-    "configuration": {
-      "title": "Configurazione accertamento",
-      "step1": {
-        "title": "Dettaglio accertamento",
-        "fields": {
-          "name": {
-            "label": "Nome accertamento",
-            "placeholder": "Accertamento",
-            "required": "Il campo nome è obbligatorio"
-          },
-          "debtPositionType": {
-            "label": "Tipo dovuto",
-            "placeholder": "Dovuto",
-            "required": "Selezionare un tipo di dovuto"
-          }
-        }
-      },
-      "step2": {
-        "addPayments": {
-          "radioLabel": "Vuoi aggiungere pagamenti nell'accertamento?",
-          "options": {
-            "yes": "Si",
-            "no": "No"
-          }
-        },
-        "selection": {
-          "banner": {
-            "single": "({{count}}) Pagamento selezionato",
-            "multiple": "({{count}}) Pagamenti selezionati",
-            "clearSelection": "Cancella la selezione"
-          }
-        },
-        "validation": {
-          "noPaymentsSelected": "Devi selezionare almeno un pagamento da aggiungere.",
-          "noFiltersSelected": "Selezionare almeno un filtro."
-        }
-      },
-      "step3": {
-        "title": "Assegna capitolo",
-        "fields": {
-          "operatingYear": {
-            "label": "Anno esercizio",
-            "placeholder": "Seleziona anno esercizio",
-            "required": "Il campo Anno esercizio è obbligatorio",
-            "noData": "Nessun anno disponibile"
-          },
-          "chapter": {
-            "label": "Capitolo",
-            "placeholder": "Seleziona capitolo",
-            "required": "Il campo Capitolo è obbligatorio",
-            "noData": "Nessun capitolo disponibile per l'anno selezionato"
-          }
-        }
-      }
-    },
-    "description": "Inserisci i parametri per creare un nuovo accertamento.",
-    "title": "Crea un nuovo accertamento",
-    "stepper": {
-      "step1": "Configurazione accertamento",
-      "step2": "Aggiungi pagamenti",
-      "step3": "Assegna capitolo"
-    },
-    "success": {
-      "title": "L'accertamento \"{{assessmentName}}\" è stato creato!",
-      "description": "Puoi trovarlo nella sezione accertamento pagamenti, dove puoi consultarlo in qualsiasi momento.",
-      "goToDetail": "Visualizza accertamento"
-    },
-    "error": {
-      "creationFailed": "Errore durante la creazione dell'assessment",
-      "nameAlreadyPresent": "Esiste già un accertamento con la stessa combinazione di nome e tipo dovuto"
-    }
-  },
-  "assessmentDetail": {
-    "debtType": "Tipo dovuto",
-    "createdBy": "Creato da",
-    "paymentsAssociated": "Pagamenti associati",
-    "closeDialog": {
-      "title": "Sei sicuro di chiudere l’accertamento?",
-      "description": "Una volta chiuso, l’accertamento non potrà più essere modificato.",
-      "ok": "Chiudi l’accertamento",
-      "ko": "Annulla"
-    },
-    "cancelDialog": {
-      "title": "Sei sicuro di voler eliminare l’accertamento?",
-      "description": "Una volta cancellato, l’accertamento non potrà più essere riaperto. Potrai comunque consultarne i dettagli.",
-      "ok": "Elimina",
-      "ko": "Chiudi"
-    },
-    "paymentDetail": {
-      "title": "Dettaglio pagamento",
-      "summary": "Riepilogo",
-      "paymentInfo": "Informazione sul pagamento",
-      "iuv": "Codice Avviso (IUV)",
-      "amount": "Importo",
-      "paymentObject": "Oggetto del pagamento",
-      "duetype": "Tipo dovuto",
-      "debtor": "Debitore",
-      "fiscalCode": "CF / Partita IVA",
-      "paymentDate": "Data esito",
-      "psp": "Gestore della transazione (PSP)",
-      "iud": "IUD",
-      "iur": "IUR"
-    }
-  },
   "classificationsExport": {
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
@@ -435,16 +489,63 @@
       "missingRequiredFields": "Verifica di aver compilato i filtri obbligatori"
     }
   },
-  "appPreview": {
-    "title": "Anteprima in App IO",
-    "messageInfo": "*Verrà mostrato il nome dell’ente e il servizio assegnati per inviare il messaggio.",
-    "mousePopup": "Scorri con il cursore per visualizzare l’anteprima completa"
+  "clientSil": {
+    "addNew": "Aggiungi nuovo",
+    "filters": {
+      "clientName": "Nome Client SIL",
+      "clientNamePlaceholder": "Inserisci il nome del client",
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "Inserisci l'ID del client"
+    },
+    "table": {
+      "clientName": "Nome Client SIL",
+      "clientId": "Client ID"
+    },
+    "title": "Client SIL",
+    "description": "Gestisci i Client SIL dell'organizzazione",
+    "create": {
+      "title": "Aggiungi nuovo Client SIL",
+      "subtitle": "Il client ID e key secret saranno generati automaticamente dopo la creazione.",
+      "formLabel": "Form di creazione Client SIL",
+      "section": {
+        "description": {
+          "title": "Configurazione generale",
+          "subtitle": "Descrizione"
+        }
+      },
+      "success": {
+        "title": "Il SIL '{{clientName}}' è stato aggiunto!",
+        "description": "La trovi nella sezione Gestione SIL, dove puoi consultarlo in qualsiasi momento.",
+        "goToDetail": "Vedi dettaglio SIL"
+      },
+      "fields": {
+        "clientName": {
+          "label": "Nome Client SIL",
+          "placeholder": "Tassa seconde case",
+          "required": "Il nome del Client SIL è obbligatorio",
+          "maxLength": "Il nome non può superare i 100 caratteri",
+          "invalid": "Il nome del Client SIL può contenere solo caratteri alfanumerici ed i simboli - e _"
+        }
+      },
+      "error": {
+        "nameAlreadyExists": "Esiste già un Client SIL con questo nome",
+        "invalidData": "I dati inseriti non sono validi",
+        "generic": "Errore durante la creazione del Client SIL"
+      }
+    },
+    "delete": {
+      "confirmDialog": {
+        "title": "Sei sicuro di voler eliminare il Client SIL?",
+        "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
+      }
+    }
   },
-  "notificationPreview": {
-    "byOrg": "Ente mittente*",
-    "byService": "Servizio mittente*"
+  "clientSilDetail": {
+    "description": "Ecco i dettagli del Client SIL censito",
+    "key": "Key"
   },
   "commons": {
+    "404": "404: risorsa non disponibile",
     "info": "Informazioni",
     "add": "Aggiungi",
     "all": "Tutti",
@@ -476,6 +577,7 @@
     "deleteSelection": "Cancella la selezione",
     "description": "Descrizione",
     "detail": "Dettaglio",
+    "disable": "Disabilita",
     "disabled": "Disabilitato",
     "downloadInstallment": "Scarica avviso",
     "DP_DESCRIPTION": {
@@ -503,6 +605,7 @@
     },
     "duetype": "Tipo dovuto",
     "edit": "Modifica",
+    "enable": "Abilita",
     "enabled": "Abilitato",
     "executedBy": "Eseguito da",
     "exit": "Esci",
@@ -619,6 +722,7 @@
       "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
     },
     "from": "Dal",
+    "key": "Chiave",
     "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
     "importFlow": "Importa flusso",
     "importFlowErrorMessage": "Non è stato possibile importare il flusso",
@@ -629,6 +733,7 @@
     "inThisPage": "in questa pagina",
     "iud": "IUD",
     "iuf": "IUF",
+    "iun": "Identificativo univoco notifica",
     "iur": "IUR",
     "iuv": "IUV",
     "loading": "caricamento",
@@ -637,14 +742,17 @@
     "mandatoryDueDate": "Data di Scadenza Obbligatoria",
     "message": "Messaggio",
     "messages": "Messaggi",
+    "notificationDate": "Data di notifica",
     "nav": "NAV",
     "no": "No",
     "NO_EVENTS": "Nessun evento",
     "noFlows": "Non ci sono flussi.",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+    "notificationFeeCents": "Costo di notifica",
     "notifications": "Notifiche",
     "notificationsConfig": "Configurazione",
     "notFound": "Risorsa non trovata",
+    "onlyRemove": "Rimuovi",
     "operator": "Operatore",
     "operators": "Operatori",
     "optional": "opzionale",
@@ -670,6 +778,7 @@
     "postAccount": "Conto Corrente Postale",
     "psp": "Gestore della transazione (PSP)",
     "reason": "Causale",
+    "reload": "Rigenera",
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
@@ -689,6 +798,7 @@
       "CLASSIFICATIONS": "Classificazione pagamenti",
       "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
       "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
+      "CLIENT_SIL": "Client Sil",
       "ASSESSMENT_SEARCH_RESULTS": "Risultato ricerca",
       "ASSESSMENT_DETAIL": "Dettaglio",
       "CONSERVATION": "Conservazione",
@@ -701,6 +811,7 @@
       "DEBT_TYPES": "Tipi dovuti",
       "DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
       "DEBT_TYPES_DASHBOARD": "Tipi dovuti impostati",
+      "DEBT_TYPES_DASHBOARD_BYORG": "Ente gestito",
       "DETAIL": "Dettagli",
       "DETAIL_FLOWS": "Dettaglio flusso",
       "EXPORT": "Export",
@@ -710,6 +821,8 @@
       "IMPORT": "Import",
       "IMPORT_FLOWS": "Importa flusso",
       "ORGANIZATIONS": "Enti gestiti",
+      "ORG_SIL_SERVICE": "Org Sil Service",
+      "ORG_SIL_SERVICE_DETAIL": "Dettaglio Org Sil Service",
       "REPORTING": "Rendicontazione",
       "REPORTING_DETAIL": "Dettaglio",
       "REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
@@ -736,6 +849,7 @@
     },
     "saveDraft": "Salva bozza",
     "save": "Salva modifiche",
+    "saveOnly": "Salva",
     "search": "Cerca",
     "searchCF": "Cerca CF",
     "searchFor": "Cerca per",
@@ -748,6 +862,7 @@
     "searchName": "Cerca Nome",
     "searchOperator": "Cerca operatore",
     "searchRegulationUniqueIdentifier": "ID Regolamento",
+    "secret": "Secret",
     "selectedOperator_one": "Operatore selezionato",
     "selectedOperator_other": "Operatori selezionati",
     "serviceType": "Tipo Servizio",
@@ -775,6 +890,7 @@
       "ACTIVE": "Attivo",
       "INACTIVE": "Disattivo",
       "COMPLETED": "Elaborato",
+      "DISABLED": "Disabilitato",
       "ERROR": "Errore",
       "EXPIRED": "Scaduto",
       "PROCESSING": "In elaborazione",
@@ -814,8 +930,7 @@
       "invalidIban": "Formato IBAN non valido",
       "invalidPostalIban": "Formato conto poste non valido"
     },
-    "yes": "Si",
-    "404": "404: risorsa non disponibile"
+    "yes": "Si"
   },
   "conservation": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni."
@@ -828,15 +943,6 @@
       "to": "Data non valida"
     },
     "year": "Anno"
-  },
-  "assessmentsRegistrySearchResults": {
-    "sectionCode": "Codice Capitolo",
-    "operatingYear": "Anno",
-    "debtPositionTypeOrgCode": "Tipo dovuto",
-    "assessmentCode": "Codice accertamento",
-    "officeCode": "Codice ufficio",
-    "status": "Stato ufficio",
-    "uploadFlow": "Crea nuovo capitolo"
   },
   "debtPositionCreateWizard": {
     "addDebtor": {
@@ -864,7 +970,6 @@
         "label": "Descrizione Posizione Debitoria",
         "required": "Il campo descrizione è obbligatorio"
       },
-      "minWords": "Inserire almeno 3 parole nella descrizione",
       "title": "Descrizione"
     },
     "step2": {
@@ -891,7 +996,7 @@
       "fiscalData": "DATI FISCALI",
       "fullName": {
         "label": "Nome e cognome",
-        "minTwoWords": "Inserire almeno 2 parole",
+        "minTwoWords": "Controlla di aver scritto il nome e il cognome",
         "required": "Il campo nome e cognome è obbligatorio"
       },
       "personalData": "DATI PERSONALI",
@@ -908,22 +1013,22 @@
         "required": "Il campo tipo di soggetto è obbligatorio"
       },
       "taxCode": {
-        "invalid": "Codice fiscale non valido",
-        "invalidVAT": "Partita IVA non valida",
+        "invalid": "Verifica che il Codice fiscale sia corretto",
+        "invalidVAT": "Verifica che la Partita IVA sia corretta",
         "label": "Codice Fiscale",
         "placeholder": "Inserisci il codice fiscale (16 caratteri)",
         "required": "Il campo codice fiscale è obbligatorio"
       },
       "title": "Debitore",
       "vat": {
-        "invalid": "Partita IVA non valida",
+        "invalid": "Verifica che la Partita IVA sia corretta",
         "label": "Partita IVA",
         "placeholder": "Inserisci la partita IVA (11 cifre)",
         "required": "Il campo partita IVA è obbligatorio"
       },
       "zipCode": {
-        "error": "Il CAP deve essere di 5 cifre numeriche",
-        "invalid": "CAP non valido",
+        "error": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
+        "invalid": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
         "label": "CAP",
         "required": "Il campo CAP è obbligatorio"
       }
@@ -1009,8 +1114,8 @@
         "maxInstallmentsReached": "Hai raggiunto il numero massimo di rate (12)",
         "minInstallmentsRequired": "Sono richieste almeno 2 rate",
         "remittance": {
-          "label": "Causale",
-          "required": "Il campo causale è obbligatorio"
+          "label": "Oggetto pagamento",
+          "required": "Il campo oggetto pagamento è obbligatorio"
         },
         "otherBeneficiaries": "Altri beneficiari",
         "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?",
@@ -1166,7 +1271,7 @@
       "taxonomy": {
         "title": "Tassonomia"
       },
-      "alertMessage": "* Indica una domanda obbligatoria",
+      "alertMessage": "* Indica un campo obbligatorio",
       "debtType": {
         "label": "Nome del Tipo dovuto",
         "helper": "Inserisce il nome attribuito al servizio di incasso",
@@ -1224,8 +1329,17 @@
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
   "debtTypeDetail": {
+    "confirmDisableDialog": {
+      "title": "Sei sicuro di voler Disabilitare il Tipo dovuto?",
+      "description": "Una volta disabilitato, non sarà più possibile creare nuove posizioni debitorie con questo Tipo dovuto. Le posizioni già create, tuttavia, resteranno valide."
+    },
+    "confirmEnableDialog": {
+      "title": "Sei sicuro di voler Abilitare il Tipo dovuto?",
+      "description": "Una volta abilitato, questo Tipo dovuto sarà disponibile per la creazione di nuove posizioni debitorie."
+    },
     "errors": {
-      "servicesUnavailableCannotEdit": "Non è stato possibile recuperare configurazioni la modifica non è consentita al momento, riprova più tardi"
+      "servicesUnavailableCannotEdit": "Non è stato possibile recuperare configurazioni la modifica non è consentita al momento, riprova più tardi",
+      "enableFailed": "Abilitazione tipo dovuto non riuscita"
     },
     "description": "Ecco i dettagli del Tipo dovuto",
     "debtMainConfiguration": {
@@ -1251,6 +1365,9 @@
       "allOperatorsSelected": "Tutti gli operatori",
       "selectedOperators": "Operatori selezionati",
       "noSelectedOperators": "Senza operatori associati"
+    },
+    "success": {
+      "updated": "Stato del Tipo dovuto aggiornato con successo"
     }
   },
   "debtTypeOrgCreate": {
@@ -1270,7 +1387,7 @@
     "configuration": {
       "title": "Configurazione generale",
       "subtitle": "Definisce quale sarà il Tipo Dovuto.",
-      "alertMessage": "* Indica una domanda obbligatoria",
+      "alertMessage": "* Indica un campo obbligatorio",
       "debtType": {
         "title": "Tipo dovuto",
         "label": "Tipo dovuto",
@@ -1446,6 +1563,7 @@
   "debtTypesCreated": {
     "callToAction": "Imposta nuovo",
     "descriptionFull": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente o negli enti gestiti.",
+    "descriptionByURL": "In questa sezione trovi i Tipi di dovuti presenti per l'ente gestito.",
     "description": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente.",
     "tabManagedOrganizations": "Enti gestiti",
     "tabMyOrganization": "Il mio ente",
@@ -1471,7 +1589,33 @@
     "fetchChapters": "Impossibile caricare i capitoli. Riprova più tardi.",
     "fetchPaidInstallments": "Impossibile caricare i pagamenti. Riprova più tardi.",
     "noChaptersForYear": "Non ci sono capitoli per l'anno {{year}}",
-    "generic": "Si è verificato un errore. Riprova più tardi."
+    "generic": "Si è verificato un errore. Riprova più tardi.",
+    "fetchOrgSilService": "Errore nel recuperare i dettagli del servizio"
+  },
+  "events": {
+    "searchCardTitle": "Cosa stai cercando?",
+    "searchCardDescription": "Seleziona l’evento che stai cercando e inserisci i filtri per avviare la ricerca.",
+    "tabs": {
+      "sil": "Eventi SIL",
+      "nodo": "Eventi nodo PagoPA"
+    },
+    "list": {
+      "title": "Risultato ricerca",
+      "date": "Data evento",
+      "outcome": "Esito",
+      "iuv": "IUV",
+      "event": "Evento",
+      "subEvent": "Sottotipo",
+      "noResults": {
+        "title": "Nessun risultato trovato",
+        "description": "Non ci sono avvisi che corrispondono alla tua ricerca, prova a impostare parametri diversi."
+      }
+    },
+    "searchIUVDescription": "IUV",
+    "searchEventDescription": "Evento",
+    "searchDateFromDescription": "Data dal",
+    "searchDateToDescription": "Al",
+    "searchEventOutcome": "Esito"
   },
   "exportFlow": {
     "buttonConfirmReservation": "Prenota",
@@ -1490,7 +1634,7 @@
     "code": "Codice",
     "internalID": "ID Interno",
     "lastUpdate": "Ultima Modifica",
-    "loadedDiscarded": "Caricati/Scarti",
+    "loadedDiscarded": "Validi/Scarti",
     "name": "Nome",
     "noDataRows": "Nessun elemento trovato",
     "operator": "Operatore",
@@ -1498,6 +1642,112 @@
     "paymentToDate": "Pagamento al",
     "reservationDate": "Data prenotazione",
     "uploadDate": "Data Caricamento"
+  },
+  "notificationPreview": {
+    "byOrg": "Ente mittente*",
+    "byService": "Servizio mittente*"
+  },
+  "orgSilService": {
+    "amountActualization": "Attualizzazione importo",
+    "api": "API",
+    "serviceType": "Tipo Servizio",
+    "paymentNotice": "Notifica Pagamenti",
+    "apiName": "Nome API",
+    "addAPI": "Aggiungi API"
+  },
+  "orgSilServiceDetail": {
+    "description": "Ecco i dettagli dell'API.",
+    "delete": {
+      "title": "Sei sicuro di voler eliminare l'API?",
+      "message": "Una volta eliminata, tutti i dati saranno cancellati e non potranno essere recuperati.",
+      "conflict": {
+        "title": "L'API non può essere eliminata"
+      },
+      "conflictMessage": "Questa API è associata ad un Tipo dovuto, pertanto non può essere eliminata."
+    },
+    "notFound": "Servizio non trovato",
+    "noAuthConfigured": "Nessuna configurazione di autenticazione",
+    "sections": {
+      "generalConfig": {
+        "title": "Configurazione generale"
+      },
+      "authConfig": {
+        "title": "Modalità di autenticazione"
+      }
+    },
+    "fields": {
+      "applicationName": "Nome API",
+      "serviceUrl": "Service URL",
+      "serviceType": "Tipo Servizio",
+      "apiLegacy": "API Legacy",
+      "authConfig": "Auth Config",
+      "authUrl": "Auth URL",
+      "username": "Username",
+      "kid": "KID",
+      "subject": "Subject",
+      "issuer": "Issuer",
+      "algorithm": "Algorithm",
+      "signingKey": "Signing Key",
+      "password": "password"
+    },
+    "serviceTypes": {
+      "paymentNotification": "Notifica Pagamenti",
+      "amountActualization": "Attualizzazione Importo"
+    },
+    "authTypes": {
+      "basicAuth": "Basic Auth",
+      "jwtAuth": "Legacy JWT"
+    }
+  },
+  "orgSilServiceCreate": {
+    "actualization": "Attualizzazione importo",
+    "paidNotificationOutcome": "Notifica Pagamenti",
+    "legacyBasic": "Legacy Basic",
+    "legacyJWT": "Legacy JWT",
+    "title": "Aggiungi nuova API",
+    "description": "Inserisci i dati delle API ad esporre in Piattaforma Unitaria per essere utilizzati nei processi di Notifica Pagamenti ed Attualizzazione Importo.",
+    "subTitle": "Configurazione dell'API",
+    "generalConfiguration": "Configurazione generale",
+    "APIName": "Nome API",
+    "serviceURL": "Service URL",
+    "serviceType": "Tipo Servizio",
+    "authMethod": "Modalità di autenticazione",
+    "flagLegacy": "L'API deve mantenere la retrocompatibilità con i vecchi metodi di autenticazione?",
+    "authConfig": "Auth Config",
+    "basicUser": "User",
+    "basicPassword": "Password",
+    "basicAuthURL": "Auth URL",
+    "jwtKid": "KID",
+    "jwtIssuer": "Issuer",
+    "jwtSubject": "Subject",
+    "jwtAlgorithm": "Algorithm",
+    "jwtSigningKey": "Signing key",
+    "newService": {
+      "success": {
+        "title": "L'API ‘{{applicationName}}’ è stata aggiunta!",
+        "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
+        "goToDetail": "Vedi dettaglio API"
+      }
+    },
+    "validations": {
+      "requiredAPIName": "Il nome dell'API è obbligatorio",
+      "requiredURL": "L'URL del servizio è obbligatorio",
+      "invalidURL": "Formato URL non valido",
+      "requiredServiceType": "Il tipo di servizio è obbligatorio",
+      "requiredLegacyType": "Seleziona un tipo di autenticazione legacy",
+      "requiredField": "Campo obbligatorio"
+    }
+  },
+  "orgSilServiceEdit": {
+    "title": "Modifica API",
+    "description": "Modifica i dati delle API già esposte in Piattaforma Unitaria per essere utilizzati nei processi di Notifica Pagamenti ed Attualizzazione Importo.",
+    "updateService": {
+      "success": {
+        "title": "L'API ‘{{applicationName}}’ è stata modificata!",
+        "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
+        "goToDetail": "Vedi dettaglio API"
+      }
+    }
   },
   "registry": {
     "detail": {
@@ -1620,7 +1870,7 @@
   "telematicReceiptImportFlowOverview": {
     "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
     "internalID": "ID interno",
-    "loadedDiscarded": "Caricati/Scarti"
+    "loadedDiscarded": "Validi/Scarti"
   },
   "telematicReceipts": {
     "description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
@@ -1653,31 +1903,6 @@
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
     "provisionalCode": "Codice provvisorio",
     "tempDocumentYear": "Anno codice Provvisorio"
-  },
-  "events": {
-    "searchCardTitle": "Cosa stai cercando?",
-    "searchCardDescription": "Seleziona l’evento che stai cercando e inserisci i filtri per avviare la ricerca.",
-    "tabs": {
-      "sil": "Eventi SIL",
-      "nodo": "Eventi nodo PagoPA"
-    },
-    "list": {
-      "title": "Risultato ricerca",
-      "date": "Data evento",
-      "outcome": "Esito",
-      "iuv": "IUV",
-      "event": "Evento",
-      "subEvent": "Sottotipo",
-      "noResults": {
-        "title": "Nessun risultato trovato",
-        "description": "Non ci sono avvisi che corrispondono alla tua ricerca, prova a impostare parametri diversi."
-      }
-    },
-    "searchIUVDescription": "IUV",
-    "searchEventDescription": "Evento",
-    "searchDateFromDescription": "Data dal",
-    "searchDateToDescription": "Al",
-    "searchEventOutcome": "Esito"
   },
   "treasuryImportFlowOverview": {
     "description": "Visualizza i flussi importati in precedenza e importa nuovi."

@@ -54,14 +54,14 @@ describe('noFilterSetted', () => {
     ).toBe(false);
   });
 
-  it('should return false when date is not correct but other filters', () => {
+  it('should return false when date and other filters are correct', () => {
     expect(
       noFilterSetted({
         name: '',
         city: '  ',
         active: false,
         count: 42,
-        date: { from: null, to: null }
+        date: { from: new Date(), to: new Date() }
       })
     ).toBe(false);
   });
@@ -90,15 +90,15 @@ describe('noFilterSetted', () => {
     ).toBe(true);
   });
 
-  it('should return true when date is not correct (only one date from the range exists)', () => {
+  it('should return true when date is not correct and a value is correct', () => {
     expect(
       noFilterSetted({
         name: '',
         city: '  ',
         active: '',
-        count: '',
-        date: { from: new Date(), to: new Date() }
+        count: 42,
+        date: { from: new Date(), to: null }
       })
-    ).toBe(false);
+    ).toBe(true);
   });
 });

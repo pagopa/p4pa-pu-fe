@@ -1,3 +1,5 @@
+import utils from '../../utils';
+
 export type ReportingFilters = {
   dateRange?: {
     from: Date;
@@ -14,22 +16,20 @@ export type ReportingFilteredRequest = {
   sort: Array<string>;
 };
 
+type getPaymentReportingQueryParameters = Parameters<
+  typeof utils.apiClient.bff.getPaymentsReporting
+>[1];
+
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: ReportingFilteredRequest) => ({
-  regulationDateFrom:
-    filters?.dateRange?.from?.toISOString().slice(0, 10) ??
-    new Date(0).toISOString().slice(0, 10),
-  regulationDateTo:
-    filters?.dateRange?.to?.toISOString().slice(0, 10) ??
-    new Date().toISOString().slice(0, 10),
+}: ReportingFilteredRequest): getPaymentReportingQueryParameters => ({
+  iuf: filters.iuf,
+  regulationUniqueIdentifier: filters.regulationUniqueIdentifier,
+  regulationDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  regulationDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
   page: pagination.page,
   size: pagination.size,
-  ...(filters?.regulationUniqueIdentifier && {
-    regulationUniqueIdentifier: filters.regulationUniqueIdentifier
-  }),
-  ...(filters?.iuf && { iuf: filters.iuf }),
-  ...(sort.length && { sort })
+  sort
 });

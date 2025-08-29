@@ -13,11 +13,12 @@ import {
 } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../../components/Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
-import { useAssessmentsSearch } from '../../hooks/useAssessmentsSearch';
-import { PagedAssessmentsExtendedDTO } from '../../../generated/data-contracts';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
+import { useSearch } from '../../hooks/useSearch';
+import { useStore } from '../../store/GlobalStore';
+import { getAssessments } from '../../api/assessments';
 
 export type LocationState = {
   category: string;
@@ -30,6 +31,9 @@ const AssessmentSearchResults = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [error, setError] = useState(false);
+  const {
+    state: { organizationId }
+  } = useStore();
 
   const {
     filterMap,
@@ -49,13 +53,15 @@ const AssessmentSearchResults = () => {
     navigate(PageRoutes.ASSESSMENT_CREATION);
   };
 
-  const assessments = useAssessmentsSearch({
-    initialFilters: filterValues
+  const query = getAssessments(organizationId);
+  const assessments = useSearch({
+    filters: filterValues,
+    query
   });
 
   const applyFilters = () => {
     if (noFilterIsSelected.peek()) {
-      assessments.executeSearch(filterValues);
+      assessments.applyFilters(filterValues);
       setError(false);
       setDrawerOpen(false);
     } else {
@@ -98,10 +104,8 @@ const AssessmentSearchResults = () => {
         data-testid="assessment-results-container"
       >
         <AssessmentSearchResultsDataGrid
-          data={assessments.data as PagedAssessmentsExtendedDTO}
-          onSortChange={assessments.setSort}
-          onPaginationChange={assessments.handlePaginationChange}
-          isLoading={assessments.isLoading}
+          data={assessments.query.data}
+          isLoading={assessments.query.isPending}
         />
       </Grid>
 

@@ -80,9 +80,8 @@ export const TaxonomyPage = () => {
       return;
     }
 
-    navigate(PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS, {
-      state: { filters }
-    });
+    const params = utils.URI.encode(filters);
+    navigate(`${PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS}#${params}`);
   };
 
   const handleReset = () => {

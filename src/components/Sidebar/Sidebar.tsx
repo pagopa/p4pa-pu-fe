@@ -152,11 +152,13 @@ export const Sidebar: React.FC = () => {
 
     const commonBackOfficeItems = [
       {
-        label: 'PLACEHOLDER MENU ITEM 1',
+        label: t('commons.routes.CLIENT_SIL'),
+        route: PageRoutes.CLIENT_SIL_INDEX,
         end: true
       },
       {
-        label: 'PLACEHOLDER MENU ITEM 2',
+        label: t('commons.routes.ORG_SIL_SERVICE'),
+        route: PageRoutes.ORG_SIL_SERVICE_INDEX,
         end: true
       }
     ];

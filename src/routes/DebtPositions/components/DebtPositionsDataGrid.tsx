@@ -1,7 +1,6 @@
 import {
   GridColDef,
   GridRenderCellParams,
-  GridSortModel,
   GridValidRowModel
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
@@ -9,12 +8,13 @@ import { ChevronRight } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import Chip, { ChipProps } from '@mui/material/Chip';
+import { ChipProps } from '@mui/material/Chip';
 import {
   DebtPositionStatus,
   PagedDebtPositionView
 } from '../../../../generated/data-contracts';
 import { format } from 'date-fns';
+import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
 
 type ResultDataRow = {
   id: number;
@@ -26,17 +26,9 @@ type ResultDataRow = {
 
 export type DataGridProps = {
   data: PagedDebtPositionView;
-  onSortChange: (model: GridSortModel) => void;
-  sortModel: GridSortModel;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
-export const DebtPositionsDataGrid = ({
-  data,
-  onSortChange,
-  sortModel,
-  onPaginationChange
-}: DataGridProps) => {
+export const DebtPositionsDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -78,11 +70,9 @@ export const DebtPositionsDataGrid = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams<ResultDataRow>) => (
-        <Chip
+        <ChipTruncateTooltip
           label={t(`commons.status.${params.value}`)}
-          title={t(params.value)}
           color={stateColors[params.value as DebtPositionStatus]}
-          size="small"
         />
       )
     },
@@ -125,20 +115,7 @@ export const DebtPositionsDataGrid = ({
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      sortModel={sortModel}
-      onSortModelChange={onSortChange}
-      smartPagination={{
-        initialPage: 0,
-        initialSize: 10,
-        sizeOptions: [5, 10, 20],
-        backendData: {
-          totalElements: data?.totalElements,
-          totalPages: data?.totalPages,
-          number: data?.number,
-          size: data?.size
-        },
-        onPaginationChange: onPaginationChange
-      }}
+      totalPages={data?.totalPages ?? 1}
     />
   );
 };

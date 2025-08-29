@@ -13,8 +13,8 @@ import { BaseFilterValues } from '../../models/Filters';
 import { ReadMore } from '@mui/icons-material';
 import i18n from '../../translations/i18n';
 import { GridColDef, GridRowId } from '@mui/x-data-grid';
-import { noFilterSetted } from '../../utils/filtersValidation';
 import { formatDateTime } from '../../utils/formatters';
+import utils from '../../utils';
 
 export const silFields: Array<FilterItem> = [
   {
@@ -73,16 +73,18 @@ export const nodoFields: Array<FilterItem> = [
       label: key,
       value
     })),
-    id: 'event'
+    id: 'event',
+    gridWidth: 6
   },
   {
     type: COMPONENT_TYPE.select,
-    label: i18n.t('events.searchEventOutocme'),
+    label: i18n.t('events.searchEventOutcome'),
     options: Object.entries(RegistryOutcome).map(([key, value]) => ({
       label: key,
       value
     })),
-    id: 'outcome'
+    id: 'outcome',
+    gridWidth: 6
   }
 ];
 
@@ -97,18 +99,11 @@ export const tabs: Array<TabsConfig> = [
   }
 ];
 
-export const DefaultFilterValues: BaseFilterValues = {
-  iuv: undefined,
-  eventDate: { from: null, to: null },
-  event: undefined,
-  outcome: undefined
-};
-
 export type NodoFilterValues = {
   iuv?: string;
   eventDate?: {
-    from: Date | null;
-    to: Date | null;
+    from?: Date;
+    to?: Date;
   };
   event?: RegistryPagoPaEventType;
   outcome?: RegistryOutcome;
@@ -139,8 +134,10 @@ export function getQueryFromFilterValues<
 >(activeFilterValues: T): NodoOrSilEvent<T> {
   return {
     iuv: activeFilterValues.iuv,
-    eventDateFrom: activeFilterValues.eventDate?.from?.toISOString(),
-    eventDateTo: activeFilterValues.eventDate?.to?.toISOString(),
+    eventDateFrom: utils.formatters.date.code(
+      activeFilterValues.eventDate?.from
+    ),
+    eventDateTo: utils.formatters.date.code(activeFilterValues.eventDate?.to),
     eventType: activeFilterValues.event as NodoOrSilEvent<T>['eventType'],
     outcome: activeFilterValues.outcome
   };
@@ -243,7 +240,3 @@ export type RegistryType = 'pagopa' | 'sil';
 export function deepCopy<T>(obj: T) {
   return structuredClone<T>(obj);
 }
-
-export const testFilterValidity = (
-  filterValues: NodoFilterValues | SilFilterValues
-) => !noFilterSetted(filterValues);

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { renderHook, waitFor } from '../__tests__/renderers';
+import { renderHook, waitFor, act } from '../__tests__/renderers';
 import {
   useDebtPositionTypeOrgSearch,
   useManagedOrgsSearch
@@ -26,7 +26,6 @@ vi.mock('../utils', () => ({
 const mockGetDebtPositionTypeOrgWithCount = vi.mocked(
   utils.apiClient.bff.getDebtPositionTypeOrgWithCount
 );
-
 const mockGetOrganizationsWithDebtPositionTypeOrgCount = vi.mocked(
   utils.apiClient.bff.getOrganizationsWithDebtPositionTypeOrgCount
 );
@@ -37,76 +36,71 @@ describe('DebtTypesCreated API hooks', () => {
   });
 
   describe('useDebtPositionTypeOrgSearch', () => {
-    it('should call the correct API endpoint with parameters', async () => {
+    it('calls API correctly with filters, pagination, and sort', async () => {
       const dataMock = createMock(pagedDebtPositionTypeOrgWithCountSchema);
-
       mockGetDebtPositionTypeOrgWithCount.mockResolvedValue({
         data: dataMock
       } as AxiosResponse);
 
-      const { result } = renderHook(() => useDebtPositionTypeOrgSearch());
+      const organizationId = 123;
+      const filters = { code: 'TEST' };
+      const pagination = { page: 0, size: 10 };
+      const sort: Array<string> = [];
 
-      const params = {
-        organizationId: 123,
-        filters: {
-          code: 'TEST',
-          page: 0,
-          size: 10
-        }
-      };
+      const { result } = renderHook(() =>
+        useDebtPositionTypeOrgSearch(organizationId)
+      );
 
-      result.current.mutate(params);
-
-      await waitFor(() => {
-        expect(result.current.data).toEqual(dataMock);
+      await act(async () => {
+        // mutateAsync to await completion
+        await result.current.mutateAsync({ filters, pagination, sort });
       });
 
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      // Because the hook constructs query by spreading filters + pagination + sort
+      const expectedQuery = { ...filters, ...pagination, sort };
+
       expect(mockGetDebtPositionTypeOrgWithCount).toHaveBeenCalledWith(
-        params.organizationId,
-        params.filters,
-        {
-          paramsSerializer: {
-            indexes: null
-          }
-        }
+        organizationId,
+        expectedQuery
       );
+      expect(result.current.data).toEqual(dataMock);
     });
   });
 
   describe('useManagedOrgsSearch', () => {
-    it('should call the correct API endpoint with parameters', async () => {
+    it('calls API correctly with filters, pagination, and sort', async () => {
       const dataMock = createMock(
         pagedOrganizationWithDebtPositionTypeOrgCountSchema
       );
-
       mockGetOrganizationsWithDebtPositionTypeOrgCount.mockResolvedValue({
         data: dataMock
       } as AxiosResponse);
 
-      const { result } = renderHook(() => useManagedOrgsSearch());
+      const organizationId = 123;
+      const filters = { organizationName: 'Test Org' };
+      const pagination = { page: 0, size: 10 };
+      const sort = ['name,asc'];
 
-      const params = {
-        organizationId: 123,
-        filters: {
-          organizationName: 'Test Org',
-          page: 0,
-          size: 10
-        }
-      };
+      const { result } = renderHook(() => useManagedOrgsSearch(organizationId));
 
-      result.current.mutate(params);
+      await act(async () => {
+        await result.current.mutateAsync({ filters, pagination, sort });
+      });
 
       await waitFor(() => {
-        expect(result.current.data).toEqual(dataMock);
+        expect(result.current.isSuccess).toBe(true);
       });
+
+      const expectedQuery = { ...filters, ...pagination, sort };
 
       expect(
         mockGetOrganizationsWithDebtPositionTypeOrgCount
-      ).toHaveBeenCalledWith(params.organizationId, params.filters, {
-        paramsSerializer: {
-          indexes: null
-        }
-      });
+      ).toHaveBeenCalledWith(organizationId, expectedQuery);
+      expect(result.current.data).toEqual(dataMock);
     });
   });
 });

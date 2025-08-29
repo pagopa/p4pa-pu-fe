@@ -1,40 +1,45 @@
-import {
-  GridColDef,
-  GridRenderCellParams,
-  GridSortModel
-} from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
-import CustomDataGrid, {
-  SmartPaginationConfig
-} from '../../../components/DataGrid/CustomDataGrid';
+import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { moneyFormat, formatDate } from '../../../utils/formatters';
-import { AssessmentsDetail } from '../../../../generated/apiClient';
+import {
+  AssessmentsDetail,
+  AssessmentsRowsDetail
+} from '../../../../generated/apiClient';
+import { generatePath, useNavigate, useParams } from 'react-router';
+import { PageRoutes } from '../..';
 
 type AssessmentDetailDataGridProps = {
-  rows: Array<AssessmentsDetail>;
-  sortModel: GridSortModel;
-  onSortModelChange: (model: GridSortModel) => void;
-  smartPagination?: SmartPaginationConfig;
+  data?: AssessmentsRowsDetail;
   isLoading?: boolean;
-  onNavigateToDetail?: (assessmentDetailId: number) => void;
 };
 
 const AssessmentDetailDataGrid = ({
-  rows,
-  sortModel,
-  onSortModelChange,
-  smartPagination,
-  isLoading = false,
-  onNavigateToDetail
+  data,
+  isLoading = false
 }: AssessmentDetailDataGridProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { id: assessmentId } = useParams<{ id: string }>();
 
-  // Handle the click on the navigation icon to the detail
-  const handleNavigateToDetail = (assessmentDetailId: number | undefined) => {
-    if (assessmentDetailId && onNavigateToDetail) {
-      onNavigateToDetail(assessmentDetailId);
+  /**
+   * Handle navigation to the assessment detail record
+   * @param receiptId - ID of the assessment detail
+   */
+  const navigateToDetail = (receiptId?: number) => {
+    if (receiptId && assessmentId) {
+      const detailUrl = generatePath(PageRoutes.ASSESSMENT_DETAIL_DETAIL, {
+        id: assessmentId.toString(),
+        receiptId: receiptId.toString()
+      });
+
+      navigate(detailUrl, {
+        state: {
+          assessmentName: data?.assessmentsName
+        }
+      });
     }
   };
 
@@ -80,9 +85,9 @@ const AssessmentDetailDataGrid = ({
         <IconButton
           color="primary"
           size="small"
-          onClick={() => handleNavigateToDetail(params.row.assessmentDetailId)}
+          onClick={() => navigateToDetail(params.row.receiptId)}
           aria-label="go to assessment detail item"
-          data-testid={`navigate-to-detail-${params.row.assessmentDetailId}`}
+          data-testid={`navigate-to-detail-${params.row.receiptId}`}
         >
           <ReadMore />
         </IconButton>
@@ -91,21 +96,17 @@ const AssessmentDetailDataGrid = ({
   ];
 
   return (
-    <>
-      <CustomDataGrid
-        rows={rows}
-        columns={columns}
-        getRowId={(row) =>
-          row.assessmentDetailId || `${row.assessmentId}-${row.iuv}`
-        }
-        disableColumnMenu
-        disableColumnResize
-        sortModel={sortModel}
-        onSortModelChange={onSortModelChange}
-        smartPagination={smartPagination}
-        loading={isLoading}
-      />
-    </>
+    <CustomDataGrid
+      rows={data?.pagedAssessmentsRowsDetail?.content || []}
+      columns={columns}
+      getRowId={(row) =>
+        row.assessmentDetailId || `${row.assessmentId}-${row.iuv}`
+      }
+      disableColumnMenu
+      disableColumnResize
+      loading={isLoading}
+      totalPages={data?.pagedAssessmentsRowsDetail?.totalPages || 1}
+    />
   );
 };
 

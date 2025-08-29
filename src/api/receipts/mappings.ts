@@ -1,4 +1,5 @@
 import { ReceiptOriginType } from '../../../generated/data-contracts';
+import utils from '../../utils';
 
 export type TelematicReceiptsFilters = {
   dateRange?: {
@@ -15,21 +16,21 @@ export type TelematicReceiptsFilteredRequest = {
   sort: Array<string>;
 };
 
+type TelematicReceiptsFiltered = Parameters<
+  typeof utils.apiClient.bff.getReceipts
+>[1];
+
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: TelematicReceiptsFilteredRequest) => ({
-  paymentDateTimeFrom:
-    filters?.dateRange?.from?.toISOString() ?? new Date(0).toISOString(),
-  paymentDateTimeTo:
-    filters?.dateRange?.to?.toISOString() ?? new Date().toISOString(),
+}: TelematicReceiptsFilteredRequest): TelematicReceiptsFiltered => ({
+  receiptOrigin: ReceiptOriginType.RECEIPT_PAGOPA,
+  iuv: filters.iuv,
+  paymentDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  paymentDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
+  debtPositionTypeOrgId: filters.typeOrgId,
+  sort,
   page: pagination.page,
-  size: pagination.size,
-  ...(filters?.typeOrgId && {
-    debtPositionTypeOrgId: filters.typeOrgId
-  }),
-  ...(filters?.iuv && { iuv: filters.iuv }),
-  ...(sort.length && { sort }),
-  receiptOrigin: ReceiptOriginType.RECEIPT_PAGOPA
+  size: pagination.size
 });

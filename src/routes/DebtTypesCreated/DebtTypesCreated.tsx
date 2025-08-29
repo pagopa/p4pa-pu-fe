@@ -1,22 +1,26 @@
-import { Add, Search } from '@mui/icons-material';
-import { Box, Tab, Tabs, Grid } from '@mui/material';
-import { useState, useRef, useEffect } from 'react';
+import { Add } from '@mui/icons-material';
+import { Box, Tab, Tabs } from '@mui/material';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { PageRoutes } from '../../routes';
-import FilterContainer, {
-  COMPONENT_TYPE
-} from '../../components/FilterContainer/FilterContainer';
 import ManagedOrgs from './ManagedOrgs/ManagedOrgs';
 import MyOrg from './MyOrg/MyOrg';
 import utils from '../../utils';
+import { useStore } from '../../store/GlobalStore';
 
 export const DebtTypesCreated = () => {
   const isSuperAdmin = utils.roles.useIsSuperAdmin();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { organizationId: organizationIdByURL } = useParams<{
+    organizationId: string;
+  }>();
+  const {
+    state: { organizations }
+  } = useStore();
 
   const getInitialTab = () => {
     const tabParam = searchParams.get('tab');
@@ -25,12 +29,6 @@ export const DebtTypesCreated = () => {
   };
 
   const [tabValue, setTabValue] = useState(getInitialTab);
-  const [codeFilter, setCodeFilter] = useState('');
-  const [descriptionFilter, setDescriptionFilter] = useState('');
-  const [IPACodeFilter, setIPACodeFilter] = useState('');
-
-  const myOrgSearchRef = useRef<(() => void) | null>(null);
-  const managedOrgsSearchRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const currentTab = searchParams.get('tab');
@@ -66,76 +64,6 @@ export const DebtTypesCreated = () => {
     setSearchParams(params, { replace: true });
   };
 
-  const handleSearch = () => {
-    if (tabValue === 0 && myOrgSearchRef.current) {
-      myOrgSearchRef.current();
-    } else if (tabValue === 1 && managedOrgsSearchRef.current) {
-      managedOrgsSearchRef.current();
-    }
-  };
-
-  const registerMyOrgSearch = (searchFn: () => void) => {
-    myOrgSearchRef.current = searchFn;
-  };
-
-  const registerManagedOrgsSearch = (searchFn: () => void) => {
-    managedOrgsSearchRef.current = searchFn;
-  };
-
-  const renderFilters = () => {
-    if (tabValue === 0) {
-      return (
-        <FilterContainer
-          items={[
-            {
-              type: COMPONENT_TYPE.textField,
-              label: t('commons.searchForCode'),
-              value: codeFilter,
-              adornment: <Search />,
-              onChange: (e) => setCodeFilter(e.target.value),
-              gridWidth: 5
-            },
-            {
-              type: COMPONENT_TYPE.textField,
-              label: t('commons.searchForDescription'),
-              value: descriptionFilter,
-              adornment: <Search />,
-              onChange: (e) => setDescriptionFilter(e.target.value),
-              gridWidth: 5
-            },
-            {
-              type: COMPONENT_TYPE.button,
-              label: t('commons.search'),
-              onClick: handleSearch,
-              gridWidth: 2
-            }
-          ]}
-        />
-      );
-    } else {
-      return (
-        <FilterContainer
-          items={[
-            {
-              type: COMPONENT_TYPE.textField,
-              label: t('commons.searchForOrganizationName'),
-              value: IPACodeFilter,
-              adornment: <Search />,
-              onChange: (e) => setIPACodeFilter(e.target.value),
-              gridWidth: 10.5
-            },
-            {
-              type: COMPONENT_TYPE.button,
-              label: t('commons.search'),
-              onClick: handleSearch,
-              gridWidth: 1.5
-            }
-          ]}
-        />
-      );
-    }
-  };
-
   const renderTabs = () => {
     return (
       <Box
@@ -169,48 +97,42 @@ export const DebtTypesCreated = () => {
     );
   };
 
+  const callToActionEl = [
+    {
+      icon: <Add />,
+      buttonText: t('debtTypesCreated.callToAction'),
+      onActionClick: () => navigate(PageRoutes.DEBT_TYPE_ORG_CREATE)
+    }
+  ];
+
+  const descriptionByUrl = t('debtTypesCreated.descriptionByURL');
+
+  const org = organizations.find(
+    (o) => o.organizationId === Number(organizationIdByURL)
+  );
+
+  const titleByUrl = org ? org.orgName : undefined;
+
+  const descriptionFullOrNot = `debtTypesCreated.description${isSuperAdmin ? 'Full' : ''}`;
+  const description = !organizationIdByURL
+    ? descriptionFullOrNot
+    : descriptionByUrl;
+
   return (
     <>
       <TitleComponent
-        title={t('commons.routes.DEBT_TYPES_DASHBOARD')}
-        callToAction={[
-          {
-            icon: <Add />,
-            buttonText: t('debtTypesCreated.callToAction'),
-            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_ORG_CREATE)
-          }
-        ]}
-        description={t(
-          `debtTypesCreated.description${isSuperAdmin ? 'Full' : ''}`
-        )}
+        title={titleByUrl ?? t('commons.routes.DEBT_TYPES_DASHBOARD')}
+        callToAction={!organizationIdByURL ? callToActionEl : []}
+        description={t(description)}
       />
 
-      <Grid
-        container
-        direction="row"
-        alignItems={'center'}
-        justifyContent={'space-between'}
-        sx={{ mt: 6, mb: 4 }}
-      >
-        {renderFilters()}
-      </Grid>
-
-      {isSuperAdmin ? renderTabs() : null}
+      {isSuperAdmin && !organizationIdByURL ? renderTabs() : null}
 
       <Box>
         {tabValue === 0 ? (
-          <MyOrg
-            key={`myorg-tab-${tabValue}`}
-            codeFilter={codeFilter}
-            descriptionFilter={descriptionFilter}
-            onSearch={registerMyOrgSearch}
-          />
+          <MyOrg key={`myorg-tab-${tabValue}`} />
         ) : (
-          <ManagedOrgs
-            key={`managedorgs-tab-${tabValue}`}
-            IPACodeFilter={IPACodeFilter}
-            onSearch={registerManagedOrgsSearch}
-          />
+          <ManagedOrgs key={`managedorgs-tab-${tabValue}`} />
         )}
       </Box>
     </>

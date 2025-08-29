@@ -1,11 +1,7 @@
-import {
-  GridColDef,
-  GridRenderCellParams,
-  GridSortModel
-} from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
-import { Chip, ChipProps, Typography } from '@mui/material';
+import { ChipProps, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../../routes';
 import { generatePath, useNavigate } from 'react-router';
@@ -15,20 +11,13 @@ import {
   PagedInstallmentView
 } from '../../../../generated/data-contracts';
 import { formatDate, moneyFormat } from '../../../utils/formatters';
+import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
 
 export type DataGridProps = {
   data?: PagedInstallmentView;
-  onSortChange: (model: GridSortModel) => void;
-  sortModel: GridSortModel;
-  onPaginationChange?: (pagination: { page: number; size: number }) => void;
 };
 
-export const IUVDataGrid = ({
-  data,
-  onSortChange,
-  sortModel,
-  onPaginationChange
-}: DataGridProps) => {
+export const IUVDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -87,11 +76,9 @@ export const IUVDataGrid = ({
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams<InstallmentView>) => (
-        <Chip
+        <ChipTruncateTooltip
           label={t(`commons.status.${params.value}`)}
-          title={t(params.value)}
           color={stateColors[params.value as InstallmentStatus]}
-          size="small"
         />
       )
     },
@@ -131,20 +118,7 @@ export const IUVDataGrid = ({
       columns={columns}
       disableColumnMenu
       disableColumnResize
-      sortModel={sortModel}
-      onSortModelChange={onSortChange}
-      smartPagination={{
-        initialPage: 0,
-        initialSize: 10,
-        sizeOptions: [5, 10, 20],
-        backendData: {
-          totalElements: data?.totalElements,
-          totalPages: data?.totalPages,
-          number: data?.number,
-          size: data?.size
-        },
-        onPaginationChange: onPaginationChange
-      }}
+      totalPages={data?.totalPages || 1}
     />
   );
 };

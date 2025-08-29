@@ -54,17 +54,40 @@ const Step1GeneralConfiguration = ({
   const debtPositionsTypes: Array<DebtPositionType> = useMemo(() => {
     if (!debtPositionTypeOrgsData) return [];
 
-    return debtPositionTypeOrgsData
-      .filter(
-        (type) => type?.description && type?.debtPositionTypeOrgId !== undefined
-      )
-      .sort((a, b) => a.description.localeCompare(b.description))
-      .map((type) => ({
-        label: type.description,
-        value: type.debtPositionTypeOrgId as number,
-        flagMandatoryDueDate: type.flagMandatoryDueDate || false
-      }));
-  }, [debtPositionTypeOrgsData]);
+    let filteredTypes = debtPositionTypeOrgsData.filter(
+      (type) => type?.description && type?.debtPositionTypeOrgId !== undefined
+    );
+
+    if (!isEditing) {
+      filteredTypes = filteredTypes.filter((type) => type?.flagActive);
+    } else {
+      if (debtPositionTypeOrgCode && debtPositionTypeOrgsData) {
+        const originalType = debtPositionTypeOrgsData.find(
+          (typeOrg) => typeOrg.code === debtPositionTypeOrgCode
+        );
+
+        if (originalType && !originalType.flagActive) {
+          const isOriginalTypeIncluded = filteredTypes.some(
+            (type) =>
+              type.debtPositionTypeOrgId === originalType.debtPositionTypeOrgId
+          );
+
+          if (!isOriginalTypeIncluded) {
+            filteredTypes.push(originalType);
+          }
+        }
+      }
+    }
+
+    const sortedTypes = [...filteredTypes].sort((a, b) =>
+      a.description.localeCompare(b.description)
+    );
+    return sortedTypes.map((type) => ({
+      label: type.description,
+      value: type.debtPositionTypeOrgId as number,
+      flagMandatoryDueDate: type.flagMandatoryDueDate || false
+    }));
+  }, [debtPositionTypeOrgsData, isEditing, debtPositionTypeOrgCode]);
 
   const schema = createStep1GeneralConfigurationSchema(t);
 
@@ -210,6 +233,7 @@ const Step1GeneralConfiguration = ({
       <WizardStepWrapper
         title={t('debtPositionCreateWizard.generalConfiguration.title')}
         subtitle={t('debtPositionCreateWizard.generalConfiguration.subtitle')}
+        showRequiredFieldsMessage={true}
       >
         <SectionBox
           title={t('debtPositionCreateWizard.step1.title')}

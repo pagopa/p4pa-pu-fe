@@ -8,63 +8,116 @@ import {
   useImperativeHandle,
   forwardRef,
   useMemo,
-  useState
+  useState,
+  memo
 } from 'react';
+import { useNavigate } from 'react-router';
 import { subDays, startOfDay, endOfDay } from 'date-fns';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
 import { PaymentsTable } from './PaymentsTable';
+import GenericDialog from '../../../components/GenericDialog/GenericDialog';
 import { useOperatingYears } from '../../../hooks/useOperatingYears';
 import { useChapters } from '../../../hooks/useChapters';
 import { useStep2PaymentsState } from '../../../hooks/useStep2PaymentsState';
 import { usePaidInstallments } from '../../../hooks/usePaidInstallments';
 import { useGlobalPaymentSelection } from '../../../hooks/useGlobalPaymentSelection';
+import { usePaymentsManager } from '../../../hooks/usePaymentsManager';
+import { getAssessmentDetail } from '../../../api/assessments/assessmentDetail/assessmentDetail';
+import { deleteAssessmentDetails } from '../../../api/assessments';
+import { useStore } from '../../../store/GlobalStore';
+import { STATE } from '../../../store/types';
+import { PageRoutes } from '../../../routes';
 import type {
   PagedPaidInstallmentsDTO,
   PaymentsUIFilters
 } from '../../../api/classifications/paidInstallments/mappings';
 import { convertFiltersToAPI } from '../../../api/classifications/paidInstallments/mappings';
+import { assessmentsRowsDetailSchema } from '../../../../generated/zod-schema';
+import { z } from 'zod';
+import utils from '../../../utils';
+
+type AssessmentsRowsDetail = z.infer<typeof assessmentsRowsDetailSchema>;
 
 export type Step2PaymentsRef = {
   showValidationError: (show: boolean) => void;
   showFilterValidationError: (show: boolean) => void;
+  validateSelections: () => boolean;
 };
 
-type AssessmentFormData = {
+export type AssessmentFormData = {
   addPaymentsToAssessment?: boolean;
   selectedPayments?: Array<string>;
   selectedPaymentIuds?: Array<string>;
   operatingYear?: string;
   chapterCode?: string;
   debtPositionTypeOrgCode?: string;
+  assessmentName?: string;
+  isModifyMode?: boolean;
+  modifyAction?: 'add' | 'remove';
+  assessmentId?: number;
+  selectedAssessmentDetailIds?: Array<number>;
 };
 
 // Export validation function for use in AssessmentCreate
-export const validateStep2Payments = (values: AssessmentFormData): boolean => {
+export const validateStep2Payments = (
+  values: AssessmentFormData,
+  currentSelectedAssessmentDetailIds?: Array<number>
+): boolean => {
   const shouldLoadData =
     values.addPaymentsToAssessment === true ||
     String(values.addPaymentsToAssessment) === 'true';
 
   if (shouldLoadData) {
-    const hasSelectedPayments = !!(
-      values.selectedPayments && values.selectedPayments.length > 0
-    );
-    const hasSelectedIuds = !!(
-      values.selectedPaymentIuds && values.selectedPaymentIuds.length > 0
-    );
+    // Check if we're in Remove mode
+    if (values.isModifyMode && values.modifyAction === 'remove') {
+      const assessmentDetailIds =
+        currentSelectedAssessmentDetailIds !== undefined
+          ? currentSelectedAssessmentDetailIds
+          : values.selectedAssessmentDetailIds;
 
-    return hasSelectedPayments || hasSelectedIuds;
+      const hasSelectedAssessmentDetailIds = !!(
+        assessmentDetailIds && assessmentDetailIds.length > 0
+      );
+      return hasSelectedAssessmentDetailIds;
+    } else {
+      const hasSelectedPayments = !!(
+        values.selectedPayments && values.selectedPayments.length > 0
+      );
+      const hasSelectedIuds = !!(
+        values.selectedPaymentIuds && values.selectedPaymentIuds.length > 0
+      );
+      return hasSelectedPayments || hasSelectedIuds;
+    }
   }
 
   return true;
 };
 
+/**
+ * Step2Payments - Component for payment management in the Assessment Create flow
+ *
+ * Responsibilities:
+ * - Payment selection/deselection
+ * - Alert coordination for validation and info
+ * - Integration with Assessment wizard
+ * - Support for Add/Remove mode for existing Assessments
+ *
+ * Supported modes:
+ * - Normal flow: Step 2 of the wizard creation
+ * - Modify Add: Add payments to an existing Assessment
+ * - Modify Remove: Remove payments from an existing Assessment
+ */
 const Step2PaymentsComponent = forwardRef<
   Step2PaymentsRef,
   { isActive?: boolean }
 >(({ isActive = true }, ref) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { control, setValue } = useFormContext<AssessmentFormData>();
+  const { state } = useStore();
+  const organizationId = Number(state[STATE.ORGANIZATION_ID]);
+
   const addPaymentsToAssessmentRaw = useWatch({
     control,
     name: 'addPaymentsToAssessment'
@@ -77,11 +130,77 @@ const Step2PaymentsComponent = forwardRef<
     control,
     name: 'selectedPayments'
   });
+  const isModifyMode = useWatch({
+    control,
+    name: 'isModifyMode'
+  });
+  const modifyAction = useWatch({
+    control,
+    name: 'modifyAction'
+  });
+  const assessmentId = useWatch({
+    control,
+    name: 'assessmentId'
+  });
+  const assessmentName = useWatch({
+    control,
+    name: 'assessmentName'
+  });
+  const selectedAssessmentDetailIds = useWatch({
+    control,
+    name: 'selectedAssessmentDetailIds'
+  });
 
   // Normalize boolean value
+  // In modify mode, always load data since we're working with payments
   const shouldLoadData =
+    isModifyMode ||
     addPaymentsToAssessmentRaw === true ||
     String(addPaymentsToAssessmentRaw) === 'true';
+
+  const isRemoveMode = isModifyMode && modifyAction === 'remove';
+
+  const [removeData, setRemoveData] = useState<PagedPaidInstallmentsDTO | null>(
+    null
+  );
+
+  const [showRemoveConfirmModal, setShowRemoveConfirmModal] = useState(false);
+  // state for tracking manual API calls (pagination, filters, sorting)
+  const [isManualApiCallPending, setIsManualApiCallPending] = useState(false);
+
+  // Initialize delete mutation
+  const deleteAssessmentDetailsMutation =
+    deleteAssessmentDetails(organizationId);
+
+  const paymentsState = useStep2PaymentsState();
+
+  const currentPageRows = useMemo(() => {
+    const dataSource = isRemoveMode ? removeData : paymentsState.paymentsData;
+    return (dataSource?.content || []).map((row) => ({
+      iud: row.iud || '',
+      assessmentDetailId: isRemoveMode
+        ? (row as typeof row & { assessmentDetailId?: number })
+            .assessmentDetailId
+        : undefined
+    }));
+  }, [isRemoveMode, removeData, paymentsState.paymentsData.content]);
+
+  const globalSelection = useGlobalPaymentSelection({
+    setValue: setValue as (name: string, value: unknown) => void,
+    selectedPayments,
+    currentPageRows,
+    isRemoveMode
+  });
+
+  const paymentsManager = usePaymentsManager({
+    shouldLoadData,
+    selectedPayments,
+    paymentsValidationError: paymentsState.showPaymentsValidationError,
+    filtersValidationError: paymentsState.showFiltersValidationError,
+    onPaymentsValidationChange: paymentsState.setShowPaymentsValidationError,
+    onFiltersValidationChange: paymentsState.setShowFiltersValidationError,
+    totalSelected: globalSelection.totalSelected
+  });
 
   // Syncronize IUDs when payments are selected
   // This ensures the persistence of IUDs for the new assessment-details flow
@@ -90,37 +209,6 @@ const Step2PaymentsComponent = forwardRef<
       setValue('selectedPaymentIuds', selectedPayments);
     }
   }, [selectedPayments, shouldLoadData, setValue]);
-
-  const paymentsState = useStep2PaymentsState();
-
-  // Hook for global cross-page IUD selection management
-  // TEMPORARY: When IUDs are unique, remove the currentPageRows parameter
-  // FUTURE: const globalSelection = useGlobalPaymentSelection({ setValue, selectedPayments });
-  const currentPageRows = useMemo(() => {
-    const currentPage = paymentsState.paymentsData.number || 0;
-    const currentSize = paymentsState.paymentsData.size || 10;
-
-    const rows =
-      paymentsState.paymentsData.content?.map((row, pageIndex) => {
-        const absoluteIndex = currentPage * currentSize + pageIndex;
-        return {
-          uniqueId: `${row.iud || 'no-iud'}-${absoluteIndex}`,
-          iud: row.iud || ''
-        };
-      }) || [];
-
-    return rows;
-  }, [
-    paymentsState.paymentsData.content,
-    paymentsState.paymentsData.number,
-    paymentsState.paymentsData.size
-  ]);
-
-  const globalSelection = useGlobalPaymentSelection({
-    setValue: setValue as (name: string, value: unknown) => void,
-    selectedPayments,
-    currentPageRows
-  });
 
   // Flag to track if data has been loaded at least once
   const [hasLoadedData, setHasLoadedData] = useState(false);
@@ -137,6 +225,33 @@ const Step2PaymentsComponent = forwardRef<
     [paymentsState.updatePaymentsData]
   );
 
+  // Handler for assessment detail data (Remove mode)
+  const handleAssessmentDetailSuccess = useCallback(
+    (data: AssessmentsRowsDetail) => {
+      // Transform data from assessment detail to PagedPaidInstallmentsDTO format
+      if (data?.pagedAssessmentsRowsDetail) {
+        const transformedData: PagedPaidInstallmentsDTO = {
+          content: (data.pagedAssessmentsRowsDetail.content || []).map(
+            (item) => ({
+              ...item,
+
+              receiptCreationDate: item.updateDate,
+              amount: item.amountCents || 0
+            })
+          ),
+          totalElements: data.pagedAssessmentsRowsDetail.totalElements || 0,
+          totalPages: data.pagedAssessmentsRowsDetail.totalPages || 0,
+          number: data.pagedAssessmentsRowsDetail.number || 0,
+          size: data.pagedAssessmentsRowsDetail.size || 10
+        };
+
+        setRemoveData(transformedData);
+        setHasLoadedData(true);
+      }
+    },
+    [paymentsState.updatePaymentsData]
+  );
+
   const handleApiError = useCallback(
     (error: Error) => {
       console.error('Step2 Payments API Error:', error);
@@ -145,12 +260,44 @@ const Step2PaymentsComponent = forwardRef<
     [paymentsState.resetPaymentsData]
   );
 
+  // For Remove mode, use getAssessmentDetail instead of usePaidInstallments
   const paymentsApi = usePaidInstallments({
-    enabled: isActive && shouldLoadData && !!debtPositionTypeOrgCode,
+    enabled:
+      isActive && shouldLoadData && !!debtPositionTypeOrgCode && !isRemoveMode,
     pageSize: 10,
     debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
     onError: handleApiError
   });
+
+  const assessmentDetailQuery = getAssessmentDetail(
+    organizationId,
+    assessmentId || 0,
+    { size: 10, page: 0 }
+  );
+
+  // Effect for handling assessment detail data (Remove mode)
+  useEffect(() => {
+    if (
+      isRemoveMode &&
+      assessmentDetailQuery.data &&
+      !assessmentDetailQuery.isPending &&
+      !hasLoadedData
+    ) {
+      handleAssessmentDetailSuccess(assessmentDetailQuery.data);
+    }
+    if (isRemoveMode && assessmentDetailQuery.isError) {
+      handleApiError(assessmentDetailQuery.error as Error);
+    }
+  }, [
+    isRemoveMode,
+    assessmentDetailQuery.data,
+    assessmentDetailQuery.isPending,
+    assessmentDetailQuery.isError,
+    assessmentDetailQuery.error,
+    hasLoadedData,
+    handleAssessmentDetailSuccess,
+    handleApiError
+  ]);
 
   const operatingYearsQuery = useOperatingYears({
     includeAllOption: false,
@@ -171,46 +318,150 @@ const Step2PaymentsComponent = forwardRef<
     setValue('operatingYear', '');
     setValue('chapterCode', '');
     globalSelection.clearAllSelections();
-  }, [setValue, globalSelection.clearAllSelections]);
+    // Synchronize with payments manager
+    paymentsManager.clearAllAlerts();
+  }, [
+    setValue,
+    globalSelection.clearAllSelections,
+    paymentsManager.clearAllAlerts
+  ]);
 
   const handleClearSelection = useCallback(() => {
+    if (isRemoveMode) {
+      setValue('selectedAssessmentDetailIds', []);
+    }
+    setValue('selectedPayments', []);
+    setValue('selectedPaymentIuds', []);
+
     globalSelection.clearAllSelections();
-  }, [globalSelection.clearAllSelections]);
+    // Synchronize with payments manager
+    paymentsManager.hideAlert();
+  }, [
+    globalSelection.clearAllSelections,
+    paymentsManager.hideAlert,
+    isRemoveMode,
+    setValue
+  ]);
 
-  // TEMPORARY: When IUDs are unique, this handler will become much simpler
-  // FUTURE: handleTableSelectionChange = (newSelectedIuds) => { globalSelection.toggleIudSelection(newSelectedIuds) }
+  const handleOpenRemoveConfirmModal = useCallback(() => {
+    if (!isRemoveMode) {
+      return;
+    }
+
+    const hasSelections =
+      selectedAssessmentDetailIds && selectedAssessmentDetailIds.length > 0;
+
+    if (hasSelections) {
+      setShowRemoveConfirmModal(true);
+    } else {
+      paymentsManager.showValidationError(true);
+    }
+  }, [
+    isRemoveMode,
+    selectedAssessmentDetailIds,
+    paymentsManager.showValidationError,
+    setShowRemoveConfirmModal
+  ]);
+
+  const handleConfirmRemove = useCallback(async () => {
+    const assessmentDetailIds = selectedAssessmentDetailIds || [];
+
+    if (!assessmentDetailIds || assessmentDetailIds.length === 0) {
+      console.error('No assessmentDetailIds provided to handleConfirmRemove');
+      setShowRemoveConfirmModal(false);
+      return;
+    }
+    try {
+      await deleteAssessmentDetailsMutation.mutateAsync(assessmentDetailIds);
+      setShowRemoveConfirmModal(false);
+
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'assessment-remove-payments',
+          i18nParams: {
+            count: assessmentDetailIds.length,
+            assessmentName
+          },
+          assessmentId
+        }
+      });
+    } catch (error: unknown) {
+      console.error('Error during payment removal:', error);
+
+      setShowRemoveConfirmModal(false);
+
+      const isAxiosErrorWithResponse = (
+        err: unknown
+      ): err is { response?: { status?: number } } => {
+        return typeof err === 'object' && err !== null && 'response' in err;
+      };
+
+      const statusCode = isAxiosErrorWithResponse(error)
+        ? error.response?.status
+        : undefined;
+
+      if (statusCode && statusCode >= 400 && statusCode < 500) {
+        navigate(PageRoutes.RESPONSES_ERROR, {
+          state: {
+            category: 'assessment-remove-payments',
+            errorType: '4xx',
+            statusCode
+          }
+        });
+        return;
+      }
+      utils.notify.emit(t('errors.generic'));
+    }
+  }, [
+    selectedAssessmentDetailIds,
+    deleteAssessmentDetailsMutation,
+    navigate,
+    assessmentName,
+    assessmentId,
+    t
+  ]);
+
+  const handleCancelRemove = useCallback(() => {
+    setShowRemoveConfirmModal(false);
+  }, []);
+
+  // Handle table selection changes with direct IUD management
   const handleTableSelectionChange = useCallback(
-    (newSelectedUniqueIds: Array<string>) => {
-      // Get all currently selected uniqueIds
-      const currentSelectedUniqueIds = Array.from(
-        globalSelection.globalSelectedUniqueIds
+    (newSelectedIuds: Array<string>) => {
+      // Use Set for performance
+      const currentSelectedSet = globalSelection.globalSelectedIuds;
+      const newSelectedSet = new Set(newSelectedIuds);
+
+      // Get current page IUDs for proper scope calculation
+      const currentPageIuds = new Set(
+        currentPageRows.map((row) => row.iud).filter(Boolean)
       );
 
-      // TEMPORARY: Calculate uniqueIds for current page
-      // FUTURE: const currentPageIuds = paymentsState.paymentsData.content?.map(row => row.iud) || [];
-      const currentPageUniqueIds =
-        paymentsState.paymentsData.content?.map(
-          (row, index) => `${row.iud || 'no-iud'}-${index}`
-        ) || [];
-
-      const toDeselect = currentPageUniqueIds.filter(
-        (uniqueId) =>
-          currentSelectedUniqueIds.includes(uniqueId) &&
-          !newSelectedUniqueIds.includes(uniqueId)
+      // Calculate changes ONLY for current page scope
+      const currentPageSelectedIuds = Array.from(currentSelectedSet).filter(
+        (iud) => currentPageIuds.has(iud)
       );
-      const toSelect = newSelectedUniqueIds.filter(
-        (uniqueId) => !currentSelectedUniqueIds.includes(uniqueId)
+
+      const toDeselect = currentPageSelectedIuds.filter(
+        (iud) => !newSelectedSet.has(iud)
+      );
+      const toSelect = newSelectedIuds.filter(
+        (iud) => !currentSelectedSet.has(iud)
       );
 
       if (toDeselect.length > 0) {
-        globalSelection.toggleUniqueIdSelection(toDeselect, false);
+        globalSelection.toggleIudSelection(toDeselect, false);
       }
-
       if (toSelect.length > 0) {
-        globalSelection.toggleUniqueIdSelection(toSelect, true);
+        globalSelection.toggleIudSelection(toSelect, true);
       }
     },
-    [paymentsState.paymentsData.content, globalSelection]
+    [
+      globalSelection.globalSelectedIuds,
+      globalSelection.toggleIudSelection,
+      currentPageRows
+    ]
   );
 
   const handleFiltersApplied = useCallback(
@@ -219,6 +470,8 @@ const Step2PaymentsComponent = forwardRef<
       pagination: { page: number; size: number },
       sortParams?: Array<string>
     ) => {
+      setIsManualApiCallPending(true);
+
       try {
         const apiFilters = convertFiltersToAPI(uiFilters);
 
@@ -234,9 +487,68 @@ const Step2PaymentsComponent = forwardRef<
       } catch (error) {
         console.error('Failed to fetch filtered paid installments:', error);
         handleApiError(error as Error);
+      } finally {
+        setIsManualApiCallPending(false);
       }
     },
     [paymentsApi.fetchPaidInstallments, handleApiSuccess, handleApiError]
+  );
+
+  const handleRemoveModeFiltersApplied = useCallback(
+    async (
+      uiFilters: PaymentsUIFilters,
+      pagination: { page: number; size: number },
+      sortParams?: Array<string>
+    ) => {
+      if (!isRemoveMode || !assessmentId || !organizationId) return;
+
+      setIsManualApiCallPending(true);
+
+      try {
+        const apiFilters = convertFiltersToAPI(uiFilters);
+
+        const queryParams = {
+          size: pagination.size,
+          page: pagination.page,
+          ...(apiFilters.iuv && { iuv: apiFilters.iuv }),
+          ...(apiFilters.paymentDateTimeFrom && {
+            paymentDateTimeFrom: apiFilters.paymentDateTimeFrom
+          }),
+          ...(apiFilters.paymentDateTimeTo && {
+            paymentDateTimeTo: apiFilters.paymentDateTimeTo
+          }),
+          ...(apiFilters.updateDateFrom && {
+            updateDateFrom: apiFilters.updateDateFrom
+          }),
+          ...(apiFilters.updateDateTo && {
+            updateDateTo: apiFilters.updateDateTo
+          }),
+          ...(sortParams?.length && { sort: sortParams })
+        };
+
+        const { data } = await utils.apiClient.bff.getPagedAssessmentsDetails(
+          organizationId,
+          assessmentId,
+          queryParams
+        );
+
+        if (data) {
+          handleAssessmentDetailSuccess(data);
+        }
+      } catch (error) {
+        console.error('Failed to fetch assessment detail:', error);
+        handleApiError(error as Error);
+      } finally {
+        setIsManualApiCallPending(false);
+      }
+    },
+    [
+      isRemoveMode,
+      assessmentId,
+      organizationId,
+      handleAssessmentDetailSuccess,
+      handleApiError
+    ]
   );
 
   // Helper function to handle API errors
@@ -244,7 +556,7 @@ const Step2PaymentsComponent = forwardRef<
     const hasApiError =
       operatingYearsQuery.isError ||
       (chaptersQuery.isError && debtPositionTypeOrgCode) ||
-      paymentsApi.isError;
+      (isRemoveMode ? assessmentDetailQuery.isError : paymentsApi.isError);
 
     if (hasApiError) {
       if (operatingYearsQuery.isError) {
@@ -253,7 +565,12 @@ const Step2PaymentsComponent = forwardRef<
       if (chaptersQuery.isError && debtPositionTypeOrgCode) {
         console.error('Chapters error:', chaptersQuery.error);
       }
-      if (paymentsApi.isError) {
+      if (isRemoveMode && assessmentDetailQuery.isError) {
+        console.error(
+          'Assessment Detail API error:',
+          assessmentDetailQuery.error
+        );
+      } else if (!isRemoveMode && paymentsApi.isError) {
         console.error('Payments API error:', paymentsApi.error);
       }
       setValue('addPaymentsToAssessment', false);
@@ -264,11 +581,25 @@ const Step2PaymentsComponent = forwardRef<
     operatingYearsQuery.error,
     chaptersQuery.isError,
     chaptersQuery.error,
+    isRemoveMode,
+    assessmentDetailQuery.isError,
+    assessmentDetailQuery.error,
     paymentsApi.isError,
     paymentsApi.error,
     debtPositionTypeOrgCode,
     setValue,
     resetFormFields
+  ]);
+
+  useEffect(() => {
+    handleExternalApiErrors();
+  }, [
+    operatingYearsQuery.isError,
+    chaptersQuery.isError,
+    assessmentDetailQuery.isError,
+    paymentsApi.isError,
+    debtPositionTypeOrgCode,
+    handleExternalApiErrors
   ]);
 
   useEffect(() => {
@@ -281,27 +612,44 @@ const Step2PaymentsComponent = forwardRef<
     }
   }, [
     shouldLoadData,
-    handleExternalApiErrors,
     resetFormFields,
     paymentsState.resetPaymentsData,
     paymentsState.clearValidationErrors
   ]);
 
-  useEffect(() => {
-    if (selectedPayments && selectedPayments.length > 0) {
-      paymentsState.setShowPaymentsValidationError(false);
-    }
-  }, [selectedPayments, paymentsState.setShowPaymentsValidationError]);
+  // Helper function to check if there are selections
+  const hasSelections = useCallback(() => {
+    return isRemoveMode
+      ? !!(
+          selectedAssessmentDetailIds && selectedAssessmentDetailIds.length > 0
+        )
+      : globalSelection.totalSelected > 0;
+  }, [
+    isRemoveMode,
+    selectedAssessmentDetailIds,
+    globalSelection.totalSelected
+  ]);
 
   useImperativeHandle(
     ref,
     () => ({
-      showValidationError: paymentsState.setShowPaymentsValidationError,
-      showFilterValidationError: paymentsState.setShowFiltersValidationError
+      showValidationError: (show: boolean) => {
+        const hasCurrentSelections = hasSelections();
+
+        if (show && hasCurrentSelections) {
+          handleOpenRemoveConfirmModal();
+        } else {
+          paymentsManager.showValidationError(show);
+        }
+      },
+      showFilterValidationError: paymentsManager.showFilterValidationError,
+      validateSelections: hasSelections
     }),
     [
-      paymentsState.setShowPaymentsValidationError,
-      paymentsState.setShowFiltersValidationError
+      hasSelections,
+      handleOpenRemoveConfirmModal,
+      paymentsManager.showValidationError,
+      paymentsManager.showFilterValidationError
     ]
   );
 
@@ -311,6 +659,19 @@ const Step2PaymentsComponent = forwardRef<
       dateTo: endOfDay(new Date())
     };
   }, []);
+
+  const isApiCallPending = useMemo(() => {
+    if (isRemoveMode) {
+      return assessmentDetailQuery.isPending || isManualApiCallPending;
+    } else {
+      return paymentsApi.isLoading || isManualApiCallPending;
+    }
+  }, [
+    isRemoveMode,
+    assessmentDetailQuery.isPending,
+    paymentsApi.isLoading,
+    isManualApiCallPending
+  ]);
 
   // Reset data when debtPositionTypeOrgCode changes and step becomes active
   // This handles the case when user goes Step2->Step1->changes type->Step2
@@ -325,7 +686,6 @@ const Step2PaymentsComponent = forwardRef<
         setHasLoadedData(false);
         paymentsState.resetPaymentsData();
         globalSelection.clearAllSelections();
-
         // Force reload data with new debtPositionTypeOrgCode
         handleFiltersApplied(initialTableFilters, { page: 0, size: 10 });
       }
@@ -356,47 +716,49 @@ const Step2PaymentsComponent = forwardRef<
   }, [globalSelection.totalSelected, t]);
 
   // Calculate selections for current page (for DataGrid synchronization)
-  // TEMPORARY: Convert from uniqueId to list for DataGrid
-  // FUTURE: Will be much simpler, direct IUD mapping
-  const currentPageSelectedUniqueIds = useMemo(() => {
-    const currentPageUniqueIds = currentPageRows.map((row) => row.uniqueId);
+  const currentPageSelectedIuds = useMemo(() => {
+    const currentPageIuds = currentPageRows
+      .map((row) => row.iud)
+      .filter((iud): iud is string => Boolean(iud));
 
-    const selectedInCurrentPage = currentPageUniqueIds.filter((uniqueId) =>
-      globalSelection.isUniqueIdSelected(uniqueId)
+    const selectedInCurrentPage = currentPageIuds.filter((iud) =>
+      globalSelection.isIudSelected(iud)
     );
 
     return selectedInCurrentPage;
-  }, [currentPageRows, globalSelection.globalSelectedUniqueIds]);
+  }, [currentPageRows, globalSelection.globalSelectedIuds]);
 
   return (
     <Stack direction="column" gap={3} width="100%">
-      <WizardStepWrapper>
-        <Stack direction="column" gap={2} alignItems="left" width="100%">
-          <FormComponent.ControlledRadioGroup
-            name="addPaymentsToAssessment"
-            data-testid="addPaymentsToAssessment"
-            control={control}
-            label={t(
-              'assessmentCreate.configuration.step2.addPayments.radioLabel'
-            )}
-            sx={{ flexDirection: 'row' }}
-            options={[
-              {
-                value: true,
-                label: t(
-                  'assessmentCreate.configuration.step2.addPayments.options.yes'
-                )
-              },
-              {
-                value: false,
-                label: t(
-                  'assessmentCreate.configuration.step2.addPayments.options.no'
-                )
-              }
-            ]}
-          />
-        </Stack>
-      </WizardStepWrapper>
+      {!isModifyMode && (
+        <WizardStepWrapper>
+          <Stack direction="column" gap={2} alignItems="left" width="100%">
+            <FormComponent.ControlledRadioGroup
+              name="addPaymentsToAssessment"
+              data-testid="addPaymentsToAssessment"
+              control={control}
+              label={t(
+                'assessmentCreate.configuration.step2.addPayments.radioLabel'
+              )}
+              sx={{ flexDirection: 'row' }}
+              options={[
+                {
+                  value: true,
+                  label: t(
+                    'assessmentCreate.configuration.step2.addPayments.options.yes'
+                  )
+                },
+                {
+                  value: false,
+                  label: t(
+                    'assessmentCreate.configuration.step2.addPayments.options.no'
+                  )
+                }
+              ]}
+            />
+          </Stack>
+        </WizardStepWrapper>
+      )}
 
       {shouldLoadData && operatingYearsQuery.isError && (
         <Alert
@@ -420,7 +782,7 @@ const Step2PaymentsComponent = forwardRef<
         </Alert>
       )}
 
-      {shouldLoadData && paymentsState.showPaymentsValidationError && (
+      {shouldLoadData && paymentsManager.shouldShowErrorAlert && (
         <Alert
           severity="error"
           variant="outlined"
@@ -446,7 +808,7 @@ const Step2PaymentsComponent = forwardRef<
         </Alert>
       )}
 
-      {shouldLoadData && globalSelection.totalSelected > 0 && (
+      {shouldLoadData && paymentsManager.shouldShowInfoAlert && (
         <Alert
           severity="info"
           variant="outlined"
@@ -468,14 +830,12 @@ const Step2PaymentsComponent = forwardRef<
         >
           <Box component="span" sx={{ fontWeight: 'medium' }}>
             {selectionBannerText}
-            {globalSelection.totalSelected >
-              currentPageSelectedUniqueIds.length && (
+            {globalSelection.totalSelected > currentPageSelectedIuds.length && (
               <Box
                 component="span"
                 sx={{ fontStyle: 'italic', ml: 1, color: 'text.secondary' }}
               >
-                ({currentPageSelectedUniqueIds.length} {t('commons.inThisPage')}
-                )
+                ({currentPageSelectedIuds.length} {t('commons.inThisPage')})
               </Box>
             )}
           </Box>
@@ -483,21 +843,69 @@ const Step2PaymentsComponent = forwardRef<
       )}
 
       {shouldLoadData && (
-        <PaymentsTable
-          data={paymentsState.paymentsData}
+        <MemoizedPaymentsTable
+          data={
+            isRemoveMode
+              ? removeData || {
+                  content: [],
+                  totalElements: 0,
+                  totalPages: 0,
+                  number: 0,
+                  size: 10
+                }
+              : paymentsState.paymentsData
+          }
           onSelectionChange={handleTableSelectionChange}
-          onFiltersApplied={handleFiltersApplied}
+          onFiltersApplied={
+            isRemoveMode ? handleRemoveModeFiltersApplied : handleFiltersApplied
+          }
           onFilterValidationError={paymentsState.setShowFiltersValidationError}
           initialFilters={initialTableFilters}
-          isLoading={paymentsApi.isLoading}
-          autoLoadOnMount={!hasLoadedData}
-          selectedUniqueIds={currentPageSelectedUniqueIds}
+          isLoading={
+            (isRemoveMode
+              ? assessmentDetailQuery.isPending
+              : paymentsApi.isLoading) && !hasLoadedData
+          }
+          isApiCallPending={isApiCallPending}
+          autoLoadOnMount={!hasLoadedData && !isRemoveMode}
+          selectedIuds={currentPageSelectedIuds}
+          isRemoveMode={isRemoveMode}
         />
+      )}
+
+      {isRemoveMode && (
+        <>
+          <GenericDialog
+            open={showRemoveConfirmModal}
+            title={t('assessmentCreate.removePayments.confirmModal.title')}
+            message={t(
+              'assessmentCreate.removePayments.confirmModal.description'
+            )}
+            confirmLabel={
+              selectedAssessmentDetailIds &&
+              selectedAssessmentDetailIds.length > 0
+                ? t('commons.onlyRemove')
+                : undefined
+            }
+            cancelLabel={t('commons.cancel')}
+            onConfirm={
+              selectedAssessmentDetailIds &&
+              selectedAssessmentDetailIds.length > 0
+                ? handleConfirmRemove
+                : undefined
+            }
+            onClose={handleCancelRemove}
+            data-testid="remove-payments-confirm-modal"
+          />
+        </>
       )}
     </Stack>
   );
 });
 
 Step2PaymentsComponent.displayName = 'Step2Payments';
+
+// Memoized PaymentsTable to prevent unnecessary re-renders
+const MemoizedPaymentsTable = memo(PaymentsTable);
 
 export { Step2PaymentsComponent as Step2Payments };

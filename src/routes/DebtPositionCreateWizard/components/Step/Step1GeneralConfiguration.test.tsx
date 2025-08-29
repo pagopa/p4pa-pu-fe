@@ -62,12 +62,14 @@ describe('Step1GeneralConfiguration', () => {
       debtPositionTypeOrgId: 1,
       description: 'Tipo 1',
       flagMandatoryDueDate: false,
+      flagActive: true,
       code: 'TYPE_1'
     },
     {
       debtPositionTypeOrgId: 2,
       description: 'Tipo 2',
       flagMandatoryDueDate: true,
+      flagActive: true,
       code: 'TYPE_2'
     }
   ];
@@ -95,9 +97,7 @@ describe('Step1GeneralConfiguration', () => {
       'Il tipo di dovuto è obbligatorio',
     'debtPositionCreateWizard.step1.description.label': 'Descrizione',
     'debtPositionCreateWizard.step1.description.required':
-      'La descrizione è obbligatoria',
-    'debtPositionCreateWizard.step1.minWords':
-      'La descrizione deve contenere almeno 3 parole'
+      'La descrizione è obbligatoria'
   };
 
   const renderWithProviders = (component: React.ReactElement) => {
@@ -237,7 +237,7 @@ describe('Step1GeneralConfiguration', () => {
     expect(mockOnNext).not.toHaveBeenCalled();
   });
 
-  it('should validate that description has at least 3 words', async () => {
+  it('should invalidate description with only spaces and accept non-empty', async () => {
     renderWithProviders(
       <Step1GeneralConfiguration
         data={{
@@ -267,22 +267,22 @@ describe('Step1GeneralConfiguration', () => {
     }
     fireEvent.click(option);
 
-    // Enter a description with less than 3 words
+    // Enter a description made of spaces only
     const descriptionInput = screen.getByLabelText(/Descrizione/i);
-    fireEvent.change(descriptionInput, { target: { value: 'Due parole' } });
+    fireEvent.change(descriptionInput, { target: { value: '   ' } });
 
     // Try to proceed
     fireEvent.click(screen.getByTestId('next-button'));
 
     await waitFor(() => {
       expect(
-        screen.getByText('La descrizione deve contenere almeno 3 parole')
+        screen.getByText('La descrizione è obbligatoria')
       ).toBeInTheDocument();
     });
 
-    // Update description with 3 words
+    // Update description with a non-empty value (single word)
     fireEvent.change(descriptionInput, {
-      target: { value: 'Descrizione con tre parole' }
+      target: { value: 'Valida' }
     });
     fireEvent.click(screen.getByTestId('next-button'));
 
@@ -294,7 +294,7 @@ describe('Step1GeneralConfiguration', () => {
           readonly: false
         },
         description: {
-          value: 'Descrizione con tre parole',
+          value: 'Valida',
           readonly: false
         }
       });
@@ -524,6 +524,7 @@ describe('Step1GeneralConfiguration', () => {
           debtPositionTypeOrgId: 2,
           description: 'Tipo 2',
           flagMandatoryDueDate: true,
+          flagActive: true,
           code: 'TYPE_2'
         }
       ],
@@ -607,6 +608,7 @@ describe('Step1GeneralConfiguration', () => {
           debtPositionTypeOrgId: 999, // ID that won't match our processed types
           description: 'Tipo Non Processato',
           flagMandatoryDueDate: false,
+          flagActive: true,
           code: 'TYPE_1'
         }
       ],

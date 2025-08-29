@@ -2,9 +2,6 @@ import { LoaderFunction, LoaderFunctionArgs, Navigate } from 'react-router';
 import { RouteHandleObject } from '../models/Routes';
 import config from '../utils/config';
 import Conservation from './Conservation';
-import Reporting from './Reporting';
-import ReportingImportFlowOverview from './ReportingImportFlowOverview';
-import ReportingSearchResults from './ReportingSearchResults';
 import TelematicReceipt from './TelematicReceipt';
 import TelematicReceiptImportFlowOverview from './TelematicReceiptImportFlowOverview';
 import TelematicReceiptSearchResults from './TelematicReceiptSearchResults';
@@ -13,9 +10,12 @@ import TreasuryImportFlowOverview from './TreasuryImportFlowOverview';
 import TreasurySearchResults from './TreasurySearchResults';
 import TelematicReceiptDetail from './TelematicReceiptDetail';
 import TreasuryDetail from './TreasuryDetail';
-import ReportingDetail from './ReportingDetail/ReportingDetail';
-import ReportingPaymentDetail from './ReportingPaymentDetail';
 import TelematicReceiptFlowExportOverview from './TelematicReceiptFlowExportOverview';
+import { Reporting } from './Reporting/ReportingPage';
+import ReportingSearchResults from './Reporting/ReportingSearchResults';
+import ReportingDetail from './Reporting/ReportingDetail/ReportingDetail';
+import ReportingPaymentDetail from './Reporting/ReportingPaymentDetail';
+import ReportingImportFlowOverview from './Reporting/ReportingImportFlowOverview';
 
 const deployPath = config.deployPath;
 

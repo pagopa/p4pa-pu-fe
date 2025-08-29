@@ -5,27 +5,27 @@ import {
   pagedDebtPositionTypeOrgWithCountSchema,
   pagedOrganizationWithDebtPositionTypeOrgCountSchema
 } from '../../generated/zod-schema';
+import { FilteredRequest } from '../models/Filters';
 
-export const useDebtPositionTypeOrgSearch = () => {
+export type DebtPositionTypeOrgWithCountFilters = {
+  code?: string;
+  description?: string;
+  flagActive?: boolean;
+};
+
+export const useDebtPositionTypeOrgSearch = (organizationId: number) => {
   return useMutation({
-    mutationKey: ['searchDebtPositionTypeOrg'],
+    mutationKey: ['searchDebtPositionTypeOrg', organizationId],
     mutationFn: async ({
-      organizationId,
-      filters
-    }: {
-      organizationId: number;
-      filters: Record<string, string | number | boolean | Array<string>>;
-    }) => {
+      filters,
+      pagination,
+      sort
+    }: FilteredRequest<DebtPositionTypeOrgWithCountFilters>) => {
+      const query = { ...filters, ...pagination, sort };
       const { data: response } =
         await utils.apiClient.bff.getDebtPositionTypeOrgWithCount(
           organizationId,
-          filters,
-          {
-            paramsSerializer: {
-              // repeat array params as query string
-              indexes: null
-            }
-          }
+          query
         );
 
       if (response) {
@@ -37,26 +37,23 @@ export const useDebtPositionTypeOrgSearch = () => {
   });
 };
 
-export const useManagedOrgsSearch = () => {
+export type OrganizationsWithDebtPositionTypeOrgCountFilters = {
+  organizationName?: string;
+};
+
+export const useManagedOrgsSearch = (organizationId: number) => {
   return useMutation({
-    mutationKey: ['searchManagedOrgs'],
+    mutationKey: ['searchManagedOrgs', organizationId],
     mutationFn: async ({
-      organizationId,
-      filters
-    }: {
-      organizationId: number;
-      filters: Record<string, string | number | boolean | Array<string>>;
-    }) => {
+      filters,
+      pagination,
+      sort
+    }: FilteredRequest<OrganizationsWithDebtPositionTypeOrgCountFilters>) => {
+      const query = { ...filters, ...pagination, sort };
       const { data: response } =
         await utils.apiClient.bff.getOrganizationsWithDebtPositionTypeOrgCount(
           organizationId,
-          filters,
-          {
-            paramsSerializer: {
-              // repeat array params as query string
-              indexes: null
-            }
-          }
+          query
         );
 
       if (response) {

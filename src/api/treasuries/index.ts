@@ -9,13 +9,7 @@ export const getTreasuries = ({ organizationId }: { organizationId: number }) =>
       const query = buildQueryParams(args);
       const { data: response } = await utils.apiClient.bff.getTreasuries(
         organizationId,
-        query,
-        // repeat array params as query string
-        {
-          paramsSerializer: {
-            indexes: null
-          }
-        }
+        query
       );
 
       return response;

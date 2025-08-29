@@ -5,8 +5,11 @@ import { createMock } from 'zodock';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
-import { debtPositionViewSchema } from '../../../generated/zod-schema';
 import { DebtPositionStatus } from '../../../generated/data-contracts';
+import {
+  pagedDebtPositionViewSchema,
+  pagedInstallmentViewSchema
+} from '../../../generated/zod-schema';
 import { DebtPositionFilteredRequest } from '../debtPositions/mapping';
 
 vi.mock('../../utils', () => ({
@@ -21,7 +24,8 @@ vi.mock('../../utils', () => ({
 }));
 
 vi.mock('../debtPositions/mapping', () => ({
-  buildQueryParams: vi.fn()
+  buildInstallmentsQueryParams: vi.fn(),
+  buildDebtPositionsQueryParams: vi.fn()
 }));
 
 describe('debtPositions API', () => {
@@ -41,9 +45,11 @@ describe('debtPositions API', () => {
     };
 
     it('returns data correctly', async () => {
-      const dataMock = createMock(debtPositionViewSchema);
+      const dataMock = createMock(pagedDebtPositionViewSchema);
 
-      (mapping.buildQueryParams as Mock).mockReturnValue('mock-query-string');
+      (mapping.buildDebtPositionsQueryParams as Mock).mockReturnValue(
+        'mock-query-string'
+      );
 
       const apiMock = vi
         .spyOn(utils.apiClient.bff, 'getDebtPositionViews')
@@ -53,26 +59,23 @@ describe('debtPositions API', () => {
         debtPositions.getDebtPositionViews(params)
       );
 
-      result.current.mutate(query);
+      const data = await result.current.mutateAsync(query);
 
-      await waitFor(() => {
-        expect(result.current.data).toEqual(dataMock);
-      });
+      expect(data).toEqual(dataMock);
 
-      expect(mapping.buildQueryParams).toHaveBeenCalledWith(query);
+      expect(mapping.buildDebtPositionsQueryParams).toHaveBeenCalledWith(query);
       expect(apiMock).toHaveBeenCalledWith(
         params.organizationId,
-        'mock-query-string',
-        {
-          paramsSerializer: { indexes: null }
-        }
+        'mock-query-string'
       );
     });
 
     it('handles errors correctly', async () => {
       const error = new Error('API error');
 
-      (mapping.buildQueryParams as Mock).mockReturnValue('mock-query-string');
+      (mapping.buildDebtPositionsQueryParams as Mock).mockReturnValue(
+        'mock-query-string'
+      );
 
       vi.spyOn(utils.apiClient.bff, 'getDebtPositionViews').mockRejectedValue(
         error
@@ -102,9 +105,11 @@ describe('debtPositions API', () => {
     };
 
     it('returns data correctly', async () => {
-      const dataMock = createMock(debtPositionViewSchema);
+      const dataMock = createMock(pagedInstallmentViewSchema);
 
-      (mapping.buildQueryParams as Mock).mockReturnValue('mock-query-string');
+      (mapping.buildInstallmentsQueryParams as Mock).mockReturnValue(
+        'mock-query-string'
+      );
 
       const apiMock = vi
         .spyOn(utils.apiClient.bff, 'getInstallments')
@@ -114,26 +119,23 @@ describe('debtPositions API', () => {
         debtPositions.getInstallments(params)
       );
 
-      result.current.mutate(query);
+      const data = await result.current.mutateAsync(query);
 
-      await waitFor(() => {
-        expect(result.current.data).toEqual(dataMock);
-      });
+      expect(data).toEqual(dataMock);
 
-      expect(mapping.buildQueryParams).toHaveBeenCalledWith(query);
+      expect(mapping.buildInstallmentsQueryParams).toHaveBeenCalledWith(query);
       expect(apiMock).toHaveBeenCalledWith(
         params.organizationId,
-        'mock-query-string',
-        {
-          paramsSerializer: { indexes: null }
-        }
+        'mock-query-string'
       );
     });
 
     it('handles errors correctly', async () => {
       const error = new Error('API error');
 
-      (mapping.buildQueryParams as Mock).mockReturnValue('mock-query-string');
+      (mapping.buildInstallmentsQueryParams as Mock).mockReturnValue(
+        'mock-query-string'
+      );
 
       vi.spyOn(utils.apiClient.bff, 'getInstallments').mockRejectedValue(error);
 

@@ -1,4 +1,5 @@
 import { DebtPositionStatus } from '../../../generated/data-contracts';
+import utils from '../../utils';
 
 export type DebtPositionsFilters = {
   dateRange?: {
@@ -17,24 +18,40 @@ export type DebtPositionFilteredRequest = {
   sort: Array<string>;
 };
 
-export const buildQueryParams = ({
+type InstallmentsQueryParameters = Parameters<
+  typeof utils.apiClient.bff.getInstallments
+>[1];
+
+type debtPositionsQueryParameters = Parameters<
+  typeof utils.apiClient.bff.getDebtPositionViews
+>[1];
+
+export const buildInstallmentsQueryParams = ({
   filters,
   pagination,
   sort
-}: DebtPositionFilteredRequest) => ({
-  dueDateFrom: filters?.dateRange?.from?.toISOString(),
-  dueDateTo: filters?.dateRange?.to?.toISOString(),
-  creationDateFrom: filters?.dateRange?.from?.toISOString(),
-  creationDateTo: filters?.dateRange?.to?.toISOString(),
+}: DebtPositionFilteredRequest): InstallmentsQueryParameters => ({
+  dueDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  dueDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
   page: pagination.page,
   size: pagination.size,
-  ...(filters?.typeOrgId && {
-    debtPositionTypeOrgId: filters.typeOrgId
-  }),
-  ...(filters?.iuv && { iuv: filters.iuv }),
-  ...(filters?.fiscalCode && {
-    fiscalCode: filters.fiscalCode
-  }),
-  ...(filters?.status && { status: filters.status }),
-  ...(sort.length && { sort })
+  debtPositionTypeOrgId: filters.typeOrgId,
+  iuv: filters.iuv,
+  fiscalCode: filters.fiscalCode,
+  sort
+});
+
+export const buildDebtPositionsQueryParams = ({
+  filters,
+  pagination,
+  sort
+}: DebtPositionFilteredRequest): debtPositionsQueryParameters => ({
+  creationDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  creationDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
+  debtPositionTypeOrgId: filters.typeOrgId,
+  fiscalCode: filters.fiscalCode,
+  status: filters.status,
+  page: pagination.page,
+  size: pagination.size,
+  sort
 });

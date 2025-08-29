@@ -2,7 +2,7 @@ import { ButtonConfig } from '../components/ResponsePage/ResponsePage';
 
 type SuccessPage = {
   title: string;
-  description: string;
+  description?: string;
   buttonConfig?: Array<ButtonConfig>;
 };
 
@@ -174,6 +174,65 @@ export const SuccessPageConfig: SuccessOpts = {
         size: 'large',
         buttonLabel: 'assessmentCreate.success.goToDetail',
         customNavigation: 'ASSESSMENT_DETAIL'
+      }
+    ]
+  },
+  'assessment-remove-payments': {
+    title: 'assessmentCreate.removePayments.success.title',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'assessmentCreate.removePayments.success.goToDetail',
+        customNavigation: 'ASSESSMENT_DETAIL'
+      }
+    ]
+  },
+  'assessment-add-payments': {
+    title: 'assessmentCreate.addPayments.success.title',
+    description: 'assessmentCreate.addPayments.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'assessmentCreate.addPayments.success.goToDetail',
+        customNavigation: 'ASSESSMENT_DETAIL'
+      }
+    ]
+  },
+  'client-sil': {
+    title: 'clientSil.create.success.title',
+    description: 'clientSil.create.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'clientSil.create.success.goToDetail',
+        customNavigation: 'CLIENT_SIL_DETAIL'
+      }
+    ]
+  },
+  'org-sil-service-create': {
+    title: 'orgSilServiceCreate.newService.success.title',
+    description: 'orgSilServiceCreate.newService.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'orgSilServiceCreate.newService.success.goToDetail',
+        customNavigation: 'ORG_SIL_SERVICE_DETAIL'
+      }
+    ]
+  },
+  'org-sil-service-edit': {
+    title: 'orgSilServiceEdit.updateService.success.title',
+    description: 'orgSilServiceEdit.updateService.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'orgSilServiceEdit.updateService.success.goToDetail',
+        customNavigation: 'ORG_SIL_SERVICE_DETAIL'
       }
     ]
   }

@@ -1,7 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import utils from '../../../utils';
 import { parseAndLog } from '../../../utils/loaders';
 import { assessmentsRowsDetailSchema } from '../../../../generated/zod-schema';
+import { FilteredRequest } from '../../../models/Filters';
+import {
+  AssessmentDetailFilters,
+  buildAssessmentDetailQueryParams
+} from '../mappings';
 
 /**
  * Hook for getting the details of a specific assessment
@@ -13,24 +18,20 @@ import { assessmentsRowsDetailSchema } from '../../../../generated/zod-schema';
 export const getAssessmentDetail = (
   organizationId: number,
   assessmentId: number,
-  filters?: Record<string, unknown>,
-  options: Record<string, unknown> = {}
+  filters?: Record<string, unknown>
 ) => {
-  return useQuery({
-    queryKey: ['getAssessmentDetail', organizationId, assessmentId, filters],
-    queryFn: async () => {
+  return useMutation({
+    mutationKey: ['getAssessmentDetail', organizationId, assessmentId, filters],
+    mutationFn: async (args: FilteredRequest<AssessmentDetailFilters>) => {
+      const query = buildAssessmentDetailQueryParams(args);
       const { data: assessmentDetail } =
         await utils.apiClient.bff.getPagedAssessmentsDetails(
           organizationId,
           assessmentId,
-          filters
+          query
         );
-
       parseAndLog(assessmentsRowsDetailSchema, assessmentDetail);
-
       return assessmentDetail;
-    },
-    enabled: !!organizationId && !!assessmentId,
-    ...options
+    }
   });
 };

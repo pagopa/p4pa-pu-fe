@@ -24,7 +24,6 @@ export const LazyBackground: React.FC<LazyBackgroundProps> = ({
     img.onerror = () => setBackground(placeholder ?? '');
   }, [src]);
 
-  console.debug(background);
   return (
     <div
       className={className}

@@ -1,9 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
 import {
-  AssessmentsRegistriesFilteredRequest,
-  AssessmentsFilteredRequest,
-  buildQueryParams,
+  buildAssessmentsRegistriesQueryParams,
   buildAssessmentsQueryParams
 } from './mappings';
 import { parseAndLog } from '../../utils/loaders';
@@ -17,6 +15,7 @@ import {
   AssessmentsRegistry,
   AssessmentStatus
 } from '../../../generated/data-contracts';
+import { FilteredRequest, FilterValues } from '../../models/Filters';
 
 type AssessmentsParams = Parameters<
   typeof utils.apiClient.bff.getPagedAssessmentsExtendedDto
@@ -38,18 +37,12 @@ export const getAssessments = (
 ) =>
   useMutation({
     mutationKey: ['getAssessments', organizationId],
-    mutationFn: async (args: AssessmentsFilteredRequest) => {
+    mutationFn: async (args: FilteredRequest<FilterValues>) => {
       const query = buildAssessmentsQueryParams(args);
       const { data: response } =
         await utils.apiClient.bff.getPagedAssessmentsExtendedDto(
           organizationId,
-          query,
-          {
-            paramsSerializer: {
-              // repeat array params as query string
-              indexes: null
-            }
-          }
+          query
         );
       parseAndLog(pagedAssessmentsExtendedDTOSchema, response);
       return response;
@@ -63,20 +56,13 @@ export const getAssessmentsRegistries = ({
 }) =>
   useMutation({
     mutationKey: ['getTreasuries', organizationId],
-    mutationFn: async (args: AssessmentsRegistriesFilteredRequest) => {
-      const query = buildQueryParams(args);
+    mutationFn: async (args: FilteredRequest<FilterValues>) => {
+      const query = buildAssessmentsRegistriesQueryParams(args);
       const { data: response } =
         await utils.apiClient.bff.getAssessmentsRegistries(
           organizationId,
-          query,
-          // repeat array params as query string
-          {
-            paramsSerializer: {
-              indexes: null
-            }
-          }
+          query
         );
-
       return response;
     }
   });
@@ -92,9 +78,7 @@ export const getAssessmentsRegistry = (
         organizationId,
         assessmentRegistryId
       );
-      if (data) {
-        parseAndLog(assessmentsRegistryDTOSchema, data);
-      }
+      parseAndLog(assessmentsRegistryDTOSchema, data);
       return data;
     }
   });
@@ -113,10 +97,7 @@ export const createAssessment = (organizationId: number) =>
           debtPositionTypeOrgCode: params.debtPositionTypeOrgCode
         }
       );
-
-      if (data) {
-        parseAndLog(assessmentsSchema, data);
-      }
+      parseAndLog(assessmentsSchema, data);
       return data;
     }
   });
@@ -129,9 +110,7 @@ export const createAssessmentsRegistry = (organizationId: number) =>
         organizationId,
         assessmentRegistry
       );
-      if (data) {
-        parseAndLog(assessmentsRegistryDTOSchema, data);
-      }
+      parseAndLog(assessmentsRegistryDTOSchema, data);
       return data;
     }
   });
@@ -152,9 +131,7 @@ export const updateAssessmentsRegistry = (
         assessmentRegistryId,
         assessmentRegistry
       );
-      if (data) {
-        parseAndLog(assessmentsRegistryDTOSchema, data);
-      }
+      parseAndLog(assessmentsRegistryDTOSchema, data);
       return data;
     }
   });
@@ -182,15 +159,20 @@ export const createAssessmentDetails = (
     }
   });
 
-export const getOperatingYears = (options?: { enabled?: boolean }) =>
-  useQuery({
-    queryKey: ['getOperatingYears'],
-    queryFn: async () => {
-      const { data: response } = await utils.apiClient.bff.getOperatingYears();
+export const deleteAssessmentDetails = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['deleteAssessmentDetails', organizationId],
+    mutationFn: async (assessmentDetailIds: Array<number>) => {
+      const response = await utils.apiClient.bff.deleteAssessmentsDetails(
+        organizationId,
+        {
+          assessmentDetailIds
+        }
+      );
       return response;
-    },
-    enabled: options?.enabled ?? true
+    }
   });
+
 export const updateAssessmentsStatus = (organizationId: number) =>
   useMutation({
     mutationKey: ['updateAssessmentsStatus', organizationId],
@@ -209,4 +191,14 @@ export const updateAssessmentsStatus = (organizationId: number) =>
         }
       );
     }
+  });
+
+export const getOperatingYears = (options?: { enabled?: boolean }) =>
+  useQuery({
+    queryKey: ['getOperatingYears'],
+    queryFn: async () => {
+      const { data: response } = await utils.apiClient.bff.getOperatingYears();
+      return response;
+    },
+    enabled: options?.enabled ?? true
   });

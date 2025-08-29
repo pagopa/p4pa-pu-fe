@@ -168,7 +168,15 @@ const DebtPositionDetail = () => {
   const showDeleteOption =
     debtPositionDetail?.status !== DebtPositionStatus.CANCELLED;
   const showEditOption =
-    debtPositionDetail?.debtPositionOrigin === DebtPositionOrigin.ORDINARY;
+    debtPositionDetail?.debtPositionOrigin === DebtPositionOrigin.ORDINARY ||
+    debtPositionDetail?.debtPositionOrigin === DebtPositionOrigin.ORDINARY_SIL;
+
+  const showDownloadCTA =
+    debtPositionDetail?.status !== DebtPositionStatus.DRAFT &&
+    debtPositionDetail?.status !== DebtPositionStatus.CANCELLED;
+
+  const showActivatePaymentCTA =
+    debtPositionDetail?.status === DebtPositionStatus.DRAFT;
 
   const menuOpen = Boolean(menuAnchorEl);
 
@@ -484,20 +492,26 @@ const DebtPositionDetail = () => {
         }
         chip={statusChip}
         callToAction={[
-          {
-            icon: debtPositionDetail.status !== DebtPositionStatus.DRAFT && (
-              <GetApp data-testid="DownloadButton" />
-            ),
-            variant: 'contained',
-            buttonText:
-              debtPositionDetail.status !== DebtPositionStatus.DRAFT
-                ? t('debtPositionDetail.downloadNotices')
-                : t('debtPositionDetail.activePayment'),
-            onActionClick:
-              debtPositionDetail.status !== DebtPositionStatus.DRAFT
-                ? handleDownloadNotices
-                : handleActivePayment
-          },
+          ...(showDownloadCTA
+            ? [
+                {
+                  icon: <GetApp data-testid="DownloadButton" />,
+                  variant: 'contained' as const,
+                  buttonText: t('debtPositionDetail.downloadNotices'),
+                  onActionClick: handleDownloadNotices
+                }
+              ]
+            : []),
+          ...(showActivatePaymentCTA
+            ? [
+                {
+                  icon: undefined,
+                  variant: 'contained' as const,
+                  buttonText: t('debtPositionDetail.activePayment'),
+                  onActionClick: handleActivePayment
+                }
+              ]
+            : []),
           {
             icon: <History data-testid="HistoryButton" />,
             variant: 'text',

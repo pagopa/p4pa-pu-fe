@@ -33,6 +33,22 @@ export const SuccessPage = () => {
           id: location.state.assessmentId.toString()
         });
         navigate(detailPath);
+      } else if (
+        btn.customNavigation === 'ORG_SIL_SERVICE_DETAIL' &&
+        location?.state?.orgSilServiceId
+      ) {
+        const detailPath = generatePath(PageRoutes.ORG_SIL_SERVICE_DETAIL, {
+          orgSilServiceId: location.state.orgSilServiceId.toString()
+        });
+        navigate(detailPath);
+      } else if (
+        btn.customNavigation === 'CLIENT_SIL_DETAIL' &&
+        location?.state?.clientId
+      ) {
+        const detailPath = generatePath(PageRoutes.CLIENT_SIL_DETAIL, {
+          clientId: location.state.clientId.toString()
+        });
+        navigate(detailPath);
       } else {
         navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
       }
@@ -59,7 +75,7 @@ export const SuccessPage = () => {
             interpolation: { escapeValue: false }
           })
         )}
-        description={t(pageConfig?.description)}
+        description={pageConfig?.description ? t(pageConfig.description) : ''}
         buttonConfig={buttonConfig}
       />
     </>

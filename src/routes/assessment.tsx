@@ -8,6 +8,7 @@ import { AssessmentCreate } from './AssessmentCreate/AssessmentCreate';
 import { AssessmentRegistryDetail } from './AssessmentsRegistryDetail';
 import { AssessmentRegistryCreate } from './AssessmentRegistryCreate';
 import { AssessmentRegistryEdit } from './AssessmentRegistryCreate/AssessmentRegistryEdit';
+import utils from '../utils';
 
 export const assessmentRoutes = [
   {
@@ -29,9 +30,17 @@ export const assessmentRoutes = [
         element: <AssessmentCreate />,
         handle: {
           backButton: true,
+          backButtonText: 'commons.exit',
           hideBreadcrumbs: true,
           sidebar: {
             visible: false
+          },
+          backButtonFunction: () => {
+            // Clear hash to prevent unwanted API calls from pagination reset
+            window.location.hash = '';
+            // Navigate using configured deployPath
+            window.location.href =
+              window.location.origin + utils.config.deployPath + '/assessment';
           }
         } as RouteHandleObject
       },
@@ -56,7 +65,7 @@ export const assessmentRoutes = [
       },
       {
         id: 'ASSESSMENT_DETAIL_DETAIL',
-        path: 'detail/:id/:assessmentDetailId',
+        path: 'detail/:id/:receiptId',
         element: <TelematicReceiptDetail />,
         handle: {
           backButton: true,
