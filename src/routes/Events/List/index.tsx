@@ -15,7 +15,7 @@ import {
 } from '../configs';
 import { useNavigate, useParams } from 'react-router';
 import { useStore } from '../../../store/GlobalStore';
-import getPagoPaRegistries from '../../../api/getPagoPaRegistry';
+import getPagoPaRegistries from '../../../api/getPagoPaRegistries';
 import getSilRegistries from '../../../api/getSilRegistries';
 import { PageRoutes } from '../..';
 import { GridRowId, GridValidRowModel } from '@mui/x-data-grid';

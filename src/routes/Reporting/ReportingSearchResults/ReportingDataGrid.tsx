@@ -6,12 +6,15 @@ import {
 import { useTranslation } from 'react-i18next';
 import { FileDownload, Visibility } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router';
-
 import { PageRoutes } from '../../../routes';
 import { PagedPaymentsReportingView } from '../../../../generated/data-contracts';
 import { moneyFormat } from '../../../utils/formatters';
 import ActionMenu from '../../../components/ActionMenu/ActionMenu';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
+import utils from '../../../utils';
+import { useStore } from '../../../store/GlobalStore';
+import { getIngestionFlowFile } from '../../../api/ingestionFlowFiles';
+import { downloadBlob } from '../../../utils/download';
 
 type SearchResultDataRow = {
   id: number;
@@ -30,6 +33,22 @@ export type DataGridProps = {
 const SearchResultsDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const {
+    state: { organizationId }
+  } = useStore();
+
+  const mutation = getIngestionFlowFile(organizationId);
+
+  const downloadIngestionFlowFile = async (ingestionFlowFileId: number) => {
+    try {
+      const { fileName, data } =
+        await mutation.mutateAsync(ingestionFlowFileId);
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      utils.notify.emit(t('commons.files.downloadFailed'));
+    }
+  };
 
   const columns: Array<GridColDef> = [
     {
@@ -92,13 +111,19 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
                 navigate(
                   generatePath(PageRoutes.REPORTING_DETAIL, {
                     id: params.row.iuf
-                  })
+                  }),
+                  {
+                    state: {
+                      ingestionFlowFileId: params.row.ingestionFlowFileId
+                    }
+                  }
                 )
             },
             {
               icon: <FileDownload fontSize="small" />,
               label: t('commons.files.download'),
-              action: () => console.log('Scarica file per ID: ', params.row.iuf)
+              action: () =>
+                downloadIngestionFlowFile(params.row.ingestionFlowFileId)
             }
           ]}
         />
