@@ -40,7 +40,7 @@ const RemittanceField = <T extends FieldValues>({
       control={control}
       rules={{
         required: t(
-          'debtPositionCreateWizard.step3.beneficiary.remittance.required'
+          'debtPositionCreateWizard.step3.installments.remittance.required'
         )
       }}
       render={({ field }) => (
@@ -51,7 +51,7 @@ const RemittanceField = <T extends FieldValues>({
           fullWidth
           size="small"
           label={t(
-            'debtPositionCreateWizard.step3.beneficiary.remittance.label'
+            'debtPositionCreateWizard.step3.installments.remittance.label'
           )}
           required
           disabled={disabled}

@@ -9,15 +9,15 @@ import {
 } from '../components/RouteGuard/RouteGuard';
 import TaxonomySearchResults from './TaxonomySearchResults';
 import { RegistryDetailPage } from './RegistryDetailPage/RegistryDetailPage';
-import EventPage from './Events/Search';
-import EventList from './Events/List';
-import EventsContainer from './Events/EventsContainer';
+import { EventPage } from './Events/Search';
+import { EventList } from './Events/List';
 import OrgSilServicesPage from './OrgSilServicePage/OrgSilServicesPage';
 import OrgSilServiceDetailPage from './OrgSilServiceDetailPage/OrgSilServiceDetailPage';
 import ClientSilPage from './ClientSilPage/ClientSilPage';
 import ClientSilCreate from './ClientSilCreate/ClientSilCreate';
 import { OrgSilServiceCreate } from './OrgSilServiceCreate/OrgSilServiceCreate';
 import ClientSilDetail from './ClientSilDetail';
+import { OrgSilServiceEdit } from './OrgSilServiceCreate/OrgSilServiceEdit';
 
 const deployPath = config.deployPath;
 
@@ -72,7 +72,7 @@ export const backofficeRoutes = [
         path: 'events/',
         element: (
           <SuperAdminRouteGuard>
-            <EventsContainer />
+            <Outlet />
           </SuperAdminRouteGuard>
         ),
         children: [
@@ -133,6 +133,18 @@ export const backofficeRoutes = [
             path: ':orgSilServiceId',
             element: <OrgSilServiceDetailPage />,
             handle: {
+              backButton: false,
+              hideBreadcrumbs: false,
+              sidebar: {
+                visible: true
+              }
+            }
+          },
+          {
+            id: 'ORG_SIL_SERVICE_CREATE',
+            path: 'new',
+            element: <OrgSilServiceCreate />,
+            handle: {
               backButton: true,
               backButtonText: 'commons.exit',
               hideBreadcrumbs: true,
@@ -142,9 +154,9 @@ export const backofficeRoutes = [
             }
           },
           {
-            id: 'ORG_SIL_SERVICE_CREATE',
-            path: 'new',
-            element: <OrgSilServiceCreate />,
+            id: 'ORG_SIL_SERVICE_EDIT',
+            path: ':orgSilServiceId/edit',
+            element: <OrgSilServiceEdit />,
             handle: {
               backButton: true,
               backButtonText: 'commons.exit',

@@ -100,22 +100,15 @@ describe('getIngestionFlowFiles', () => {
       expect(response).toEqual(mockData);
     });
 
-    expect(mockGetIngestionFlowFiles).toHaveBeenCalledWith(
-      organizationId,
-      {
-        ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.TREASURY_CSV],
-        page: 0,
-        size: 10,
-        sort: ['creationDate,desc'],
-        creationDateFrom: '2024-08-01T00:00:00+02:00',
-        creationDateTo: '2024-08-01T00:00:00+02:00'
-      },
-      {
-        paramsSerializer: {
-          indexes: null
-        }
-      }
-    );
+    expect(mockGetIngestionFlowFiles).toHaveBeenCalledWith(organizationId, {
+      ingestionFlowFileTypes: [IngestionFlowFileTypeEnum.TREASURY_CSV],
+      page: 0,
+      size: 10,
+      sort: ['creationDate,desc'],
+      creationDateTimeFrom: '2024-08-01T00:00:00+02:00',
+      creationDateTimeTo: '2024-08-01T00:00:00+02:00',
+      fileName: undefined
+    });
   });
 });
 

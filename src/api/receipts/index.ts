@@ -1,6 +1,8 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { buildQueryParams, TelematicReceiptsFilteredRequest } from './mappings';
+import { parseAndLog } from '../../utils/loaders';
+import { pagedReceiptViewSchema } from '../../../generated/zod-schema';
 
 export const getReceipts = ({ organizationId }: { organizationId: number }) =>
   useMutation({
@@ -11,6 +13,7 @@ export const getReceipts = ({ organizationId }: { organizationId: number }) =>
         organizationId,
         query
       );
+      parseAndLog(pagedReceiptViewSchema, data);
       return data;
     }
   });

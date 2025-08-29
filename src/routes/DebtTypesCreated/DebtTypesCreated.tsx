@@ -2,18 +2,25 @@ import { Add } from '@mui/icons-material';
 import { Box, Tab, Tabs } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useSearchParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { PageRoutes } from '../../routes';
 import ManagedOrgs from './ManagedOrgs/ManagedOrgs';
 import MyOrg from './MyOrg/MyOrg';
 import utils from '../../utils';
+import { useStore } from '../../store/GlobalStore';
 
 export const DebtTypesCreated = () => {
   const isSuperAdmin = utils.roles.useIsSuperAdmin();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { organizationId: organizationIdByURL } = useParams<{
+    organizationId: string;
+  }>();
+  const {
+    state: { organizations }
+  } = useStore();
 
   const getInitialTab = () => {
     const tabParam = searchParams.get('tab');
@@ -90,23 +97,36 @@ export const DebtTypesCreated = () => {
     );
   };
 
+  const callToActionEl = [
+    {
+      icon: <Add />,
+      buttonText: t('debtTypesCreated.callToAction'),
+      onActionClick: () => navigate(PageRoutes.DEBT_TYPE_ORG_CREATE)
+    }
+  ];
+
+  const descriptionByUrl = t('debtTypesCreated.descriptionByURL');
+
+  const org = organizations.find(
+    (o) => o.organizationId === Number(organizationIdByURL)
+  );
+
+  const titleByUrl = org ? org.orgName : undefined;
+
+  const descriptionFullOrNot = `debtTypesCreated.description${isSuperAdmin ? 'Full' : ''}`;
+  const description = !organizationIdByURL
+    ? descriptionFullOrNot
+    : descriptionByUrl;
+
   return (
     <>
       <TitleComponent
-        title={t('commons.routes.DEBT_TYPES_DASHBOARD')}
-        callToAction={[
-          {
-            icon: <Add />,
-            buttonText: t('debtTypesCreated.callToAction'),
-            onActionClick: () => navigate(PageRoutes.DEBT_TYPE_ORG_CREATE)
-          }
-        ]}
-        description={t(
-          `debtTypesCreated.description${isSuperAdmin ? 'Full' : ''}`
-        )}
+        title={titleByUrl ?? t('commons.routes.DEBT_TYPES_DASHBOARD')}
+        callToAction={!organizationIdByURL ? callToActionEl : []}
+        description={t(description)}
       />
 
-      {isSuperAdmin ? renderTabs() : null}
+      {isSuperAdmin && !organizationIdByURL ? renderTabs() : null}
 
       <Box>
         {tabValue === 0 ? (
