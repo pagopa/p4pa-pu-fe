@@ -232,7 +232,7 @@ describe('ClientSil API', () => {
         expect(result.current.isError).toBe(true);
       });
 
-      expect(onError).toHaveBeenCalledWith(mockError);
+      expect(onError).toHaveBeenCalledWith(mockError, clientId, undefined);
     });
   });
 
