@@ -62,6 +62,17 @@ const createOrgSilService = ({ organizationId }: { organizationId: number }) =>
     }
   });
 
+const deleteOrgSilService = ({ organizationId }: { organizationId: number }) =>
+  useMutation({
+    mutationKey: ['deleteOrgSilService', organizationId],
+    mutationFn: async (orgSilServiceId: number) => {
+      await utils.apiClient.bff.deleteOrgSilService(
+        organizationId,
+        orgSilServiceId
+      );
+    }
+  });
+
 const updateOrgSilService = ({ organizationId }: { organizationId: number }) =>
   useMutation({
     mutationKey: ['updateOrgSilService', organizationId],
@@ -80,5 +91,6 @@ export default {
   getOrgSilServices,
   getOrgSilServiceById,
   createOrgSilService,
+  deleteOrgSilService,
   updateOrgSilService
 };
