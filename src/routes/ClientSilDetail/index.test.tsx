@@ -1,10 +1,16 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { screen, render } from '../../__tests__/renderers';
 import { getClientDetail } from '../../api/clientSil';
+import clientSilApi from '../../api/clientSil';
 import ClientSilDetail from '.';
 
 vi.mock('../../api/clientSil', () => ({
-  getClientDetail: vi.fn()
+  getClientDetail: vi.fn(),
+  deleteClientSil: vi.fn(),
+  default: {
+    getClientDetail: vi.fn(),
+    deleteClientSil: vi.fn()
+  }
 }));
 
 vi.mock('react-router', async () => {
@@ -31,7 +37,15 @@ describe('ClientSIL Detail Page', () => {
     const mockGetClientSilDetail = getClientDetail as ReturnType<typeof vi.fn>;
     mockGetClientSilDetail.mockReturnValue({
       data: dataMock,
-      isPending: false
+      isPending: false,
+      isError: false,
+      error: null
+    });
+
+    // Mock the default export methods
+    const mockDeleteClientSil = clientSilApi.deleteClientSil as ReturnType<typeof vi.fn>;
+    mockDeleteClientSil.mockReturnValue({
+      mutateAsync: vi.fn()
     });
   });
 
