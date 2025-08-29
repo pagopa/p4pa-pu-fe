@@ -62,12 +62,15 @@ export const ClientSilPage = () => {
     navigate(PageRoutes.CLIENT_SIL_CREATE);
   }, [navigate]);
 
-  const handleRowClick = useCallback((row: ClientNoSecretDTO) => {
-    const url = generatePath(PageRoutes.CLIENT_SIL_DETAIL, {
-      clientId: row.clientId
-    });
-    navigate(url);
-  }, []);
+  const handleRowClick = useCallback(
+    (row: ClientNoSecretDTO) => {
+      const url = generatePath(PageRoutes.CLIENT_SIL_DETAIL, {
+        clientId: row.clientId
+      });
+      navigate(url);
+    },
+    [navigate]
+  );
 
   return (
     <Stack gap={5}>

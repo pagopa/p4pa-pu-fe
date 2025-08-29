@@ -6,11 +6,13 @@ import DetailAccordion from '../../components/DetailAccordion/DetailAccordion';
 import { DetailSectionProps } from '../../components/DetailContainer/DetailContainer';
 import { useStore } from '../../store/GlobalStore';
 import { useNavigate, useParams } from 'react-router';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { ClientDTO } from '../../../generated/data-contracts';
 import { getClientDetail } from '../../api/clientSil';
 import { PageRoutes } from '..';
 import ClientSecret from './ClientSecret';
+import clientSilApi from '../../api/clientSil';
+import utils from '../../utils';
 
 function truncTitle(str: string, maxLength = 30) {
   if (str.length > maxLength) {
@@ -38,6 +40,11 @@ const ClientSilDetail = () => {
 
   const { isPending, isError, error, data } = query;
 
+  // Create delete mutation hook
+  const deleteClientMutation = clientSilApi.deleteClientSil(
+    Number(organizationId)
+  );
+
   useEffect(() => {
     if (isError && error) {
       console.error('Error loading client details:', error);
@@ -51,13 +58,68 @@ const ClientSilDetail = () => {
     }
   }, [data, clientItem]);
 
+  const showDeleteDialog = () => {
+    utils.dialog.open({
+      title: t('clientSil.delete.confirmDialog.title'),
+      message: t('clientSil.delete.confirmDialog.description'),
+      confirmLabel: t('commons.delete'),
+      cancelLabel: t('commons.cancel'),
+      onConfirm: handleDeleteConfirm,
+      onClose: () => utils.dialog.close(),
+      'data-testid': 'confirm-delete-client-sil-dialog'
+    });
+  };
+
+  /**
+   * Handle delete action for Client SIL
+   */
+  const handleDelete = useCallback(() => {
+    if (!clientId) return;
+    showDeleteDialog();
+  }, [clientId]);
+
+  const handleDeleteConfirm = async () => {
+    if (!clientId) return;
+
+    try {
+      await deleteClientMutation.mutateAsync(clientId);
+      utils.dialog.close();
+      navigate(PageRoutes.CLIENT_SIL_INDEX);
+    } catch (error: unknown) {
+      utils.dialog.close();
+      console.error('Error while deleting the client:', error);
+
+      const isAxiosErrorWithResponse = (
+        err: unknown
+      ): err is { response?: { status?: number } } => {
+        return typeof err === 'object' && err !== null && 'response' in err;
+      };
+
+      const statusCode = isAxiosErrorWithResponse(error)
+        ? error.response?.status
+        : undefined;
+
+      if (statusCode && statusCode >= 400 && statusCode < 500) {
+        navigate(PageRoutes.RESPONSES_ERROR, {
+          state: {
+            category: 'client-sil-delete',
+            errorType: '4xx',
+            statusCode
+          }
+        });
+        return;
+      }
+      utils.notify.emit(t('errors.generic'), 'error');
+    }
+  };
+
   const actionButtons = [
     {
       icon: <Delete />,
       buttonText: t('commons.delete'),
       color: 'error' as const,
       variant: 'outlined' as const,
-      onActionClick: () => console.log('TO-DO')
+      onActionClick: handleDelete
     },
     {
       icon: <Edit />,
