@@ -94,6 +94,10 @@ const buildAuthConfigData = (
       {
         label: t('orgSilServiceDetail.fields.username'),
         value: config.user || '-'
+      },
+      {
+        label: t('orgSilServiceDetail.fields.password'),
+        value: config.psw || '-'
       }
     );
   }

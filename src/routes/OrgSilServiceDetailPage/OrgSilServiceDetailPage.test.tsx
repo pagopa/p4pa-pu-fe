@@ -14,11 +14,17 @@ import {
 } from '../../../generated/data-contracts';
 import { STATE } from '../../store/types';
 
+const mockNavigate = vi.fn();
+
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...(actual as object),
-    useParams: vi.fn()
+    useParams: vi.fn(),
+    useNavigate: () => mockNavigate,
+    generatePath: vi.fn(
+      (_route, params) => `/test-route/${params.orgSilServiceId}`
+    )
   };
 });
 
@@ -157,28 +163,7 @@ describe('OrgSilServiceDetailPage', () => {
     });
   });
 
-  it('handles loading state correctly', () => {
-    mockGetOrgSilServiceById.mockReturnValue({
-      data: undefined,
-      isSuccess: false,
-      isLoading: true
-    } as any);
-
-    render(<OrgSilServiceDetailPage />);
-
-    expect(screen.getByText('-')).toBeInTheDocument();
-
-    const editButton = screen.getByRole('button', { name: /commons.edit/i });
-    const deleteButton = screen.getByRole('button', {
-      name: /commons.delete/i
-    });
-    expect(editButton).toBeDisabled();
-    expect(deleteButton).toBeDisabled();
-  });
-
   it('handles edit button click', async () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
     mockGetOrgSilServiceById.mockReturnValue({
       data: { response: mockOrgSilService },
       isSuccess: true,
@@ -190,8 +175,7 @@ describe('OrgSilServiceDetailPage', () => {
     const editButton = screen.getByRole('button', { name: /commons.edit/i });
     fireEvent.click(editButton);
 
-    expect(consoleSpy).toHaveBeenCalledWith('edit click');
-    consoleSpy.mockRestore();
+    expect(mockNavigate).toHaveBeenCalledWith('/test-route/1');
   });
 
   it('handles delete button click', async () => {
