@@ -40,7 +40,12 @@ const getOrgSilServiceById = ({
 
       parseAndLog(orgSilServiceDecryptedDTOSchema, data);
       return { response: data };
-    }
+    },
+    // parameters to always fetch new data and avoid re-rendering of fields
+    staleTime: 0,
+    gcTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false
   });
 
 const createOrgSilService = ({ organizationId }: { organizationId: number }) =>
@@ -69,9 +74,24 @@ const deleteOrgSilService = ({ organizationId }: { organizationId: number }) =>
     }
   });
 
+const updateOrgSilService = ({ organizationId }: { organizationId: number }) =>
+  useMutation({
+    mutationKey: ['updateOrgSilService', organizationId],
+    mutationFn: async (payload: OrgSilServiceDecryptedDTO) => {
+      const { data } = await utils.apiClient.bff.updateOrgSilService(
+        organizationId,
+        payload
+      );
+
+      parseAndLog(orgSilServiceDecryptedDTOSchema, data);
+      return data;
+    }
+  });
+
 export default {
   getOrgSilServices,
   getOrgSilServiceById,
   createOrgSilService,
-  deleteOrgSilService
+  deleteOrgSilService,
+  updateOrgSilService
 };

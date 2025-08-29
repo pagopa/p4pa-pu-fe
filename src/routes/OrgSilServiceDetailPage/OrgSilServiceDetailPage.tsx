@@ -1,7 +1,7 @@
 import { Box, Button, Stack } from '@mui/material';
 import { Edit, Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import { useEffect, useState } from 'react';
 import { AxiosError } from 'axios';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
@@ -29,15 +29,15 @@ export const OrgSilServiceDetailPage = () => {
   const [sections, setSections] = useState<DetailSectionProps['sections']>([]);
   const [dialogConfig, setDialogConfig] = useState<DialogConfig | null>(null);
   const { state } = useStore();
-  const { t } = useTranslation();
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
 
   const { orgSilServiceId } = useParams<{
     orgSilServiceId: string;
   }>();
 
-  const { data, isSuccess, isLoading } = orgSilServiceApi.getOrgSilServiceById({
+  const { data, isSuccess } = orgSilServiceApi.getOrgSilServiceById({
     organizationId,
     orgSilServiceId: Number(orgSilServiceId)
   });
@@ -113,7 +113,12 @@ export const OrgSilServiceDetailPage = () => {
       color: 'primary' as const,
       variant: 'contained' as const,
       disabled: false,
-      onActionClick: () => console.log('edit click')
+      onActionClick: () =>
+        navigate(
+          generatePath(PageRoutes.ORG_SIL_SERVICE_EDIT, {
+            orgSilServiceId: Number(orgSilServiceId)
+          })
+        )
     }
   ];
 
@@ -139,7 +144,7 @@ export const OrgSilServiceDetailPage = () => {
               startIcon={button.icon}
               color={button.color}
               variant={button.variant}
-              disabled={button.disabled || isLoading}
+              disabled={button.disabled}
               onClick={button.onActionClick}
             >
               {button.buttonText}

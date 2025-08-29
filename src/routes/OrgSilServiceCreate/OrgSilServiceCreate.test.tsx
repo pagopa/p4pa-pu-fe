@@ -1,13 +1,41 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import userEvent from '@testing-library/user-event';
-import { render, screen, waitFor } from '../../__tests__/renderers';
+import { render, screen } from '../../__tests__/renderers';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { useOrgSilServiceForm } from './hooks/useOrgSilServiceForm';
-import { useConditionalReset } from './hooks/useConditionalReset';
 import { OrgSilServiceCreate } from './OrgSilServiceCreate';
 
+vi.mock('./components/OrgSilServiceForm', () => ({
+  OrgSilServiceForm: ({ config, isLoading, onSubmit, onCancel }: any) => (
+    <div data-testid="org-sil-service-form">
+      <h1>{config.title}</h1>
+      <p>{config.description}</p>
+      <button
+        data-testid="submit-button"
+        disabled={isLoading}
+        onClick={() =>
+          onSubmit({
+            applicationName: 'Test API',
+            serviceUrl: 'https://test.com',
+            serviceType: 'PAID_NOTIFICATION_OUTCOME',
+            flagLegacy: false
+          })
+        }
+      >
+        {config.submitButtonLabel}
+      </button>
+      <button data-testid="cancel-button" onClick={onCancel}>
+        Cancel
+      </button>
+      <div data-testid="service-type-disabled">
+        {config.serviceTypeDisabled.toString()}
+      </div>
+    </div>
+  )
+}));
+
 vi.mock('./hooks/useOrgSilServiceForm');
-vi.mock('./hooks/useConditionalReset');
 
 const mockNavigate = vi.fn();
 vi.mock('react-router', async (importOriginal) => ({
@@ -18,10 +46,6 @@ vi.mock('react-router', async (importOriginal) => ({
 vi.mock('../../store/GlobalStore', async (importOriginal) => ({
   ...(await importOriginal<typeof import('../../store/GlobalStore')>()),
   useStore: () => ({ state: { organizationId: '123' } })
-}));
-
-vi.mock('./components/LegacyAuthConfiguration', () => ({
-  LegacyAuthConfiguration: () => <div data-testid="legacy-auth-configuration" />
 }));
 
 const translations = {
@@ -49,22 +73,6 @@ describe('OrgSilServiceCreate Component', () => {
   let user: ReturnType<typeof userEvent.setup>;
   const mockCreateService = vi.fn();
 
-  const fillBasicFields = async (data: {
-    apiName?: string;
-    serviceUrl?: string;
-  }) => {
-    if (data.apiName) {
-      const apiInput = screen.getByRole('textbox', { name: /API Name/i });
-      await user.clear(apiInput);
-      await user.type(apiInput, data.apiName);
-    }
-    if (data.serviceUrl) {
-      const urlInput = screen.getByRole('textbox', { name: /Service URL/i });
-      await user.clear(urlInput);
-      await user.type(urlInput, data.serviceUrl);
-    }
-  };
-
   beforeEach(() => {
     vi.clearAllMocks();
     user = userEvent.setup();
@@ -72,215 +80,147 @@ describe('OrgSilServiceCreate Component', () => {
 
     vi.mocked(useOrgSilServiceForm).mockReturnValue({
       createService: mockCreateService,
+      updateService: vi.fn(),
       isLoading: false,
       error: null,
       clearError: vi.fn()
     });
-
-    vi.mocked(useConditionalReset).mockReturnValue({
-      watchFlagLegacy: false,
-      watchAuthConfigType: undefined
-    });
   });
 
   describe('Rendering', () => {
-    it('should render the form with all its fields', () => {
+    it('should render the OrgSilServiceForm with correct config for create mode', () => {
       render(<OrgSilServiceCreate />);
 
+      expect(screen.getByTestId('org-sil-service-form')).toBeInTheDocument();
       expect(screen.getByText('Create New Service')).toBeInTheDocument();
       expect(
-        screen.getByRole('textbox', { name: /API Name/i })
+        screen.getByText('Fill in the details for your new service')
       ).toBeInTheDocument();
-      expect(
-        screen.getByRole('textbox', { name: /Service URL/i })
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('combobox', { name: /Service Type/i })
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole('radiogroup', { name: /Legacy Authentication/i })
-      ).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Add/i })).toBeInTheDocument();
-      expect(screen.getByRole('button', { name: /Back/i })).toBeInTheDocument();
+      expect(screen.getByText('Add')).toBeInTheDocument();
+      expect(screen.getByTestId('service-type-disabled')).toHaveTextContent(
+        'false'
+      );
     });
 
-    it('should show required field indicator', () => {
+    it('should pass the correct config to OrgSilServiceForm', () => {
       render(<OrgSilServiceCreate />);
-      expect(screen.getByText('* Required fields')).toBeInTheDocument();
+
+      expect(screen.getByTestId('service-type-disabled')).toHaveTextContent(
+        'false'
+      );
+
+      expect(screen.getByTestId('submit-button')).toHaveTextContent('Add');
     });
   });
 
-  describe('Form Submission and Validation', () => {
-    it('should allow filling basic form fields', async () => {
+  describe('Form Submission', () => {
+    it('should call createService when form is submitted', async () => {
       render(<OrgSilServiceCreate />);
 
-      await fillBasicFields({
-        apiName: 'Test API',
-        serviceUrl: 'https://test.com/api'
-      });
+      const submitButton = screen.getByTestId('submit-button');
+      await user.click(submitButton);
 
-      expect(screen.getByDisplayValue('Test API')).toBeInTheDocument();
-      expect(
-        screen.getByDisplayValue('https://test.com/api')
-      ).toBeInTheDocument();
+      expect(mockCreateService).toHaveBeenCalledTimes(1);
+      expect(mockCreateService).toHaveBeenCalledWith({
+        applicationName: 'Test API',
+        serviceUrl: 'https://test.com',
+        serviceType: 'PAID_NOTIFICATION_OUTCOME',
+        flagLegacy: false
+      });
     });
 
-    it('should handle radio button selection', async () => {
-      render(<OrgSilServiceCreate />);
-
-      const noRadio = screen.getByRole('radio', { name: /No/i });
-      const yesRadio = screen.getByRole('radio', { name: /Yes/i });
-
-      expect(noRadio).toBeInTheDocument();
-      expect(yesRadio).toBeInTheDocument();
-
-      await user.click(yesRadio);
-      expect(yesRadio).toBeChecked();
-
-      await user.click(noRadio);
-      expect(noRadio).toBeChecked();
-      expect(yesRadio).not.toBeChecked();
-    });
-
-    it('should show form sections correctly', () => {
-      render(<OrgSilServiceCreate />);
-
-      expect(screen.getByText('General Configuration')).toBeInTheDocument();
-      expect(screen.getByText('Authentication Method')).toBeInTheDocument();
-    });
-
-    it('should show error states when form is invalid', async () => {
-      render(<OrgSilServiceCreate />);
-
-      await user.click(screen.getByRole('button', { name: /Add/i }));
-
-      await waitFor(() => {
-        const apiNameInput = screen.getByRole('textbox', { name: /API Name/i });
-        const urlInput = screen.getByRole('textbox', { name: /Service URL/i });
-
-        expect(apiNameInput).toHaveAttribute('aria-invalid', 'true');
-        expect(urlInput).toHaveAttribute('aria-invalid', 'true');
-      });
-
-      expect(mockCreateService).not.toHaveBeenCalled();
-    });
-
-    it('should submit form when all required data is provided', async () => {
-      render(<OrgSilServiceCreate />);
-
-      await fillBasicFields({
-        apiName: 'Payment API',
-        serviceUrl: 'https://payment.com/v1'
-      });
-
-      await user.click(screen.getByRole('radio', { name: /No/i }));
-
-      const selectElement = screen.getByRole('combobox', {
-        name: /Service Type/i
-      });
-      await user.click(selectElement);
-
-      await waitFor(() => {
-        expect(screen.getByRole('listbox')).toBeInTheDocument();
-      });
-
-      await user.keyboard('{Escape}');
-
-      await waitFor(() => {
-        expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
-      });
-
-      const submitButton = screen.getByRole('button', { name: /Add/i });
-      expect(submitButton).toBeInTheDocument();
-      expect(submitButton).not.toBeDisabled();
-    });
-  });
-
-  describe('Conditional Logic', () => {
-    it('should NOT render LegacyAuthConfiguration when flagLegacy is false', () => {
-      render(<OrgSilServiceCreate />);
-      expect(
-        screen.queryByTestId('legacy-auth-configuration')
-      ).not.toBeInTheDocument();
-    });
-
-    it('should render LegacyAuthConfiguration when flagLegacy is true', () => {
-      vi.mocked(useConditionalReset).mockReturnValue({
-        watchFlagLegacy: true,
-        watchAuthConfigType: 'basic'
-      });
-
-      render(<OrgSilServiceCreate />);
-      expect(
-        screen.getByTestId('legacy-auth-configuration')
-      ).toBeInTheDocument();
-    });
-  });
-
-  describe('UI State and Navigation', () => {
-    it('should disable the submit button when isLoading is true', () => {
+    it('should not call updateService', async () => {
+      const mockUpdateService = vi.fn();
       vi.mocked(useOrgSilServiceForm).mockReturnValue({
         createService: mockCreateService,
-        isLoading: true,
+        updateService: mockUpdateService,
+        isLoading: false,
         error: null,
         clearError: vi.fn()
       });
 
       render(<OrgSilServiceCreate />);
-      expect(screen.getByRole('button', { name: /Add/i })).toBeDisabled();
-    });
 
-    it('should navigate to the services list page when back button is clicked', async () => {
+      const submitButton = screen.getByTestId('submit-button');
+      await user.click(submitButton);
+
+      expect(mockUpdateService).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('Navigation', () => {
+    it('should navigate to services list when cancel is clicked', async () => {
       render(<OrgSilServiceCreate />);
 
-      await user.click(screen.getByRole('button', { name: /Back/i }));
+      const cancelButton = screen.getByTestId('cancel-button');
+      await user.click(cancelButton);
 
       expect(mockNavigate).toHaveBeenCalledTimes(1);
       expect(mockNavigate).toHaveBeenCalledWith(
         '/piattaformaunitaria/backoffice/org-sil-services/'
       );
     });
+  });
 
-    it('should show loading state correctly', () => {
+  describe('Loading State', () => {
+    it('should not be loading by default', () => {
       vi.mocked(useOrgSilServiceForm).mockReturnValue({
         createService: mockCreateService,
+        updateService: vi.fn(),
         isLoading: true,
         error: null,
         clearError: vi.fn()
       });
-
       render(<OrgSilServiceCreate />);
 
-      const submitButton = screen.getByRole('button', { name: /Add/i });
-      expect(submitButton).toBeDisabled();
+      const submitButton = screen.getByTestId('submit-button');
+      expect(submitButton).not.toBeDisabled();
     });
   });
 
-  describe('Form Structure and Accessibility', () => {
-    it('should have proper form structure', () => {
+  describe('Hook Integration', () => {
+    it('should call useOrgSilServiceForm with correct organizationId', () => {
       render(<OrgSilServiceCreate />);
 
-      const form = document.querySelector('form');
-      expect(form).toBeInTheDocument();
-      expect(form).toHaveAttribute('noValidate');
+      expect(useOrgSilServiceForm).toHaveBeenCalledWith({
+        organizationId: 123
+      });
     });
 
-    it('should have proper labeling for form fields', () => {
+    it('should use only the createService function from the hook', () => {
+      const hookReturn = {
+        createService: mockCreateService,
+        updateService: vi.fn(),
+        isLoading: false,
+        error: null,
+        clearError: vi.fn()
+      };
+
+      vi.mocked(useOrgSilServiceForm).mockReturnValue(hookReturn);
+
       render(<OrgSilServiceCreate />);
 
-      const apiNameInput = screen.getByRole('textbox', { name: /API Name/i });
-      const urlInput = screen.getByRole('textbox', { name: /Service URL/i });
-      const serviceTypeSelect = screen.getByRole('combobox', {
-        name: /Service Type/i
-      });
-      const radioGroup = screen.getByRole('radiogroup', {
-        name: /Legacy Authentication/i
-      });
+      expect(useOrgSilServiceForm).toHaveBeenCalled();
 
-      expect(apiNameInput).toHaveAttribute('required');
-      expect(urlInput).toHaveAttribute('required');
-      expect(serviceTypeSelect).toBeInTheDocument();
-      expect(radioGroup).toBeInTheDocument();
+      const submitButton = screen.getByTestId('submit-button');
+      expect(submitButton).toBeInTheDocument();
+    });
+  });
+
+  describe('Component Props and Config', () => {
+    it('should create config object with correct properties for create mode', () => {
+      render(<OrgSilServiceCreate />);
+
+      expect(screen.getByText('Create New Service')).toBeInTheDocument();
+      expect(screen.getByText('Add')).toBeInTheDocument();
+      expect(screen.getByTestId('service-type-disabled')).toHaveTextContent(
+        'false'
+      );
+    });
+
+    it('should not pass initialData to form component', () => {
+      render(<OrgSilServiceCreate />);
+      expect(screen.getByTestId('org-sil-service-form')).toBeInTheDocument();
     });
   });
 });

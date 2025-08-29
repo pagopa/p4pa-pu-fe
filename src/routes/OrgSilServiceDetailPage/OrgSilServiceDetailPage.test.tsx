@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor, fireEvent } from '../../__tests__/renderers';
@@ -16,12 +15,17 @@ import {
 import { STATE } from '../../store/types';
 import { PageRoutes } from '..';
 
+const mockNavigate = vi.fn();
+
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal();
   return {
     ...(actual as object),
     useParams: vi.fn(),
-    useNavigate: vi.fn()
+    useNavigate: () => mockNavigate,
+    generatePath: vi.fn(
+      (_route, params) => `/test-route/${params.orgSilServiceId}`
+    )
   };
 });
 
@@ -207,8 +211,6 @@ describe('OrgSilServiceDetailPage', () => {
   });
 
   it('handles edit button click', async () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
-
     mockGetOrgSilServiceById.mockReturnValue({
       data: { response: mockOrgSilService },
       isSuccess: true,
@@ -225,8 +227,7 @@ describe('OrgSilServiceDetailPage', () => {
     const editButton = screen.getByRole('button', { name: /commons.edit/i });
     fireEvent.click(editButton);
 
-    expect(consoleSpy).toHaveBeenCalledWith('edit click');
-    consoleSpy.mockRestore();
+    expect(mockNavigate).toHaveBeenCalledWith('/test-route/1');
   });
 
   it('handles legacy service correctly', async () => {

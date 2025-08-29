@@ -532,6 +532,12 @@
         "invalidData": "I dati inseriti non sono validi",
         "generic": "Errore durante la creazione del Client SIL"
       }
+    },
+    "delete": {
+      "confirmDialog": {
+        "title": "Sei sicuro di voler eliminare il Client SIL?",
+        "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
+      }
     }
   },
   "commons": {
@@ -810,6 +816,7 @@
       "IMPORT_FLOWS": "Importa flusso",
       "ORGANIZATIONS": "Enti gestiti",
       "ORG_SIL_SERVICE": "Org Sil Service",
+      "ORG_SIL_SERVICE_DETAIL": "Dettaglio Org Sil Service",
       "REPORTING": "Rendicontazione",
       "REPORTING_DETAIL": "Dettaglio",
       "REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
@@ -1641,6 +1648,50 @@
     "apiName": "Nome API",
     "addAPI": "Aggiungi API"
   },
+  "orgSilServiceDetail": {
+    "description": "Ecco i dettagli dell'API.",
+    "delete": {
+      "title": "Sei sicuro di voler eliminare l'API?",
+      "message": "Una volta eliminata, tutti i dati saranno cancellati e non potranno essere recuperati.",
+      "conflict": {
+        "title": "L'API non può essere eliminata"
+      },
+      "conflictMessage": "Questa API è associata ad un Tipo dovuto, pertanto non può essere eliminata."
+    },
+    "notFound": "Servizio non trovato",
+    "noAuthConfigured": "Nessuna configurazione di autenticazione",
+    "sections": {
+      "generalConfig": {
+        "title": "Configurazione generale"
+      },
+      "authConfig": {
+        "title": "Modalità di autenticazione"
+      }
+    },
+    "fields": {
+      "applicationName": "Nome API",
+      "serviceUrl": "Service URL",
+      "serviceType": "Tipo Servizio",
+      "apiLegacy": "API Legacy",
+      "authConfig": "Auth Config",
+      "authUrl": "Auth URL",
+      "username": "Username",
+      "kid": "KID",
+      "subject": "Subject",
+      "issuer": "Issuer",
+      "algorithm": "Algorithm",
+      "signingKey": "Signing Key",
+      "password": "password"
+    },
+    "serviceTypes": {
+      "paymentNotification": "Notifica Pagamenti",
+      "amountActualization": "Attualizzazione Importo"
+    },
+    "authTypes": {
+      "basicAuth": "Basic Auth",
+      "jwtAuth": "Legacy JWT"
+    }
+  },
   "orgSilServiceCreate": {
     "actualization": "Attualizzazione importo",
     "paidNotificationOutcome": "Notifica Pagamenti",
@@ -1680,47 +1731,15 @@
       "requiredField": "Campo obbligatorio"
     }
   },
-  "orgSilServiceDetail": {
-    "description": "Ecco i dettagli dell'API.",
-    "delete": {
-      "title": "Sei sicuro di voler eliminare l'API?",
-      "message": "Una volta eliminata, tutti i dati saranno cancellati e non potranno essere recuperati.",
-      "conflict": {
-        "title": "L'API non può essere eliminata"
-      },
-      "conflictMessage": "Questa API è associata ad un Tipo dovuto, pertanto non può essere eliminata."
-    },
-    "notFound": "Servizio non trovato",
-    "noAuthConfigured": "Nessuna configurazione di autenticazione",
-    "sections": {
-      "generalConfig": {
-        "title": "Configurazione generale"
-      },
-      "authConfig": {
-        "title": "Modalità di autenticazione"
+  "orgSilServiceEdit": {
+    "title": "Modifica API",
+    "description": "Modifica i dati delle API già esposte in Piattaforma Unitaria per essere utilizzati nei processi di Notifica Pagamenti ed Attualizzazione Importo.",
+    "updateService": {
+      "success":{
+        "title": "L'API ‘{{applicationName}}’ è stata modificata!",
+        "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
+        "goToDetail": "Vedi dettaglio API"
       }
-    },
-    "fields": {
-      "applicationName": "Nome API",
-      "serviceUrl": "Service URL",
-      "serviceType": "Tipo Servizio",
-      "apiLegacy": "API Legacy",
-      "authConfig": "Auth Config",
-      "authUrl": "Auth URL",
-      "username": "Username",
-      "kid": "KID",
-      "subject": "Subject",
-      "issuer": "Issuer",
-      "algorithm": "Algorithm",
-      "signingKey": "Signing Key"
-    },
-    "serviceTypes": {
-      "paymentNotification": "Notifica Pagamenti",
-      "amountActualization": "Attualizzazione Importo"
-    },
-    "authTypes": {
-      "basicAuth": "Basic Auth",
-      "jwtAuth": "Legacy JWT"
     }
   },
   "registry": {
