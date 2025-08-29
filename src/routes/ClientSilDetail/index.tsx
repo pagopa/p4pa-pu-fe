@@ -99,7 +99,7 @@ const ClientSilDetail = () => {
       {!isPending && (
         <>
           <TitleComponent
-            title={truncTitle(data?.clientId || '')}
+            title={truncTitle(data?.clientName || '')}
             description={t('clientSilDetail.description')}
             callToAction={actionButtons}
           />
