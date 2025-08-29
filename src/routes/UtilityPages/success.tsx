@@ -41,6 +41,14 @@ export const SuccessPage = () => {
           orgSilServiceId: location.state.orgSilServiceId.toString()
         });
         navigate(detailPath);
+      } else if (
+        btn.customNavigation === 'CLIENT_SIL_DETAIL' &&
+        location?.state?.clientId
+      ) {
+        const detailPath = generatePath(PageRoutes.CLIENT_SIL_DETAIL, {
+          clientId: location.state.clientId.toString()
+        });
+        navigate(detailPath);
       } else {
         navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
       }
