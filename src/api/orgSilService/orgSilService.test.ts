@@ -390,14 +390,10 @@ describe('deleteOrgSilService', () => {
   it('should delete service successfully', async () => {
     const organizationId = 123;
     const orgSilServiceId = 456;
-    const mockDeleteResponse = {
-      success: true,
-      message: 'Service deleted successfully'
-    };
 
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'deleteOrgSilService')
-      .mockResolvedValue({ data: mockDeleteResponse } as AxiosResponse);
+      .mockResolvedValue({} as AxiosResponse);
 
     const { result } = renderHook(() =>
       orgSilServiceApi.deleteOrgSilService({ organizationId })
@@ -406,11 +402,11 @@ describe('deleteOrgSilService', () => {
     await result.current.mutateAsync(orgSilServiceId);
 
     await waitFor(() => {
-      expect(result.current.data).toEqual(mockDeleteResponse);
+      expect(result.current.isSuccess).toBe(true);
     });
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
-    expect(result.current.isSuccess).toBe(true);
+    expect(result.current.isError).toBe(false);
   });
 
   it('should handle API errors during deletion', async () => {
@@ -441,14 +437,9 @@ describe('deleteOrgSilService', () => {
     ];
 
     for (const { organizationId, orgSilServiceId } of testCases) {
-      const mockResponse = {
-        success: true,
-        deletedServiceId: orgSilServiceId
-      };
-
       const apiMock = vi
         .spyOn(utils.apiClient.bff, 'deleteOrgSilService')
-        .mockResolvedValue({ data: mockResponse } as AxiosResponse);
+        .mockResolvedValue({} as AxiosResponse);
 
       const { result } = renderHook(() =>
         orgSilServiceApi.deleteOrgSilService({ organizationId })
@@ -457,11 +448,10 @@ describe('deleteOrgSilService', () => {
       await result.current.mutateAsync(orgSilServiceId);
 
       await waitFor(() => {
-        expect(result.current.data).toEqual(mockResponse);
+        expect(result.current.isSuccess).toBe(true);
       });
 
       expect(apiMock).toHaveBeenCalledWith(organizationId, orgSilServiceId);
-      expect(result.current.isSuccess).toBe(true);
 
       vi.clearAllMocks();
     }

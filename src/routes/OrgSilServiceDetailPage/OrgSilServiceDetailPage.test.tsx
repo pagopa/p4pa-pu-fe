@@ -14,6 +14,7 @@ import {
 } from '../../../generated/data-contracts';
 import { STATE } from '../../store/types';
 import { PageRoutes } from '..';
+import utils from '../../utils';
 
 const mockNavigate = vi.fn();
 
@@ -52,6 +53,25 @@ vi.mock('../../store/GlobalStore', async (importOriginal) => {
 
 vi.mock('./model/OrgSilServiceSectionConfigs', () => ({
   getOrgSilServiceSectionsConfig: vi.fn()
+}));
+
+vi.mock('../../utils', () => ({
+  default: {
+    dialog: {
+      open: vi.fn(),
+      close: vi.fn(),
+      status: {
+        isDialogVisible: { value: false },
+        dialogPayload: { value: { title: '', open: false } }
+      }
+    },
+    config: {
+      deployPath: '/piattaformaunitaria'
+    },
+    notify: {
+      emit: vi.fn()
+    }
+  }
 }));
 
 const mockOrgSilService: OrgSilServiceDecryptedDTO = {
@@ -208,7 +228,7 @@ describe('OrgSilServiceDetailPage', () => {
     expect(deleteButton).not.toBeDisabled();
   });
 
-  it('handles edit button click', async () => {
+  it('handles edit button click', () => {
     mockGetOrgSilServiceById.mockReturnValue({
       data: { response: mockOrgSilService },
       isSuccess: true,
@@ -362,44 +382,15 @@ describe('OrgSilServiceDetailPage', () => {
       });
       fireEvent.click(deleteButton);
 
-      expect(
-        screen.getByTestId('delete-orgSilService-dialog')
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText('orgSilServiceDetail.delete.title')
-      ).toBeInTheDocument();
-      expect(
-        screen.getByText('orgSilServiceDetail.delete.message')
-      ).toBeInTheDocument();
-    });
-
-    it('should close delete dialog when cancel is clicked', () => {
-      mockGetOrgSilServiceById.mockReturnValue({
-        data: { response: mockOrgSilService },
-        isSuccess: true,
-        isLoading: false
-      } as any);
-
-      mockDeleteOrgSilService.mockReturnValue({
-        mutateAsync: vi.fn(),
-        isPending: false
-      } as any);
-
-      render(<OrgSilServiceDetailPage />);
-
-      const deleteButton = screen.getByRole('button', {
-        name: /commons.delete/i
+      expect(utils.dialog.open).toHaveBeenCalledWith({
+        title: 'orgSilServiceDetail.delete.title',
+        message: 'orgSilServiceDetail.delete.message',
+        confirmLabel: 'commons.delete',
+        cancelLabel: 'commons.cancel',
+        onConfirm: expect.any(Function),
+        onClose: expect.any(Function),
+        'data-testid': 'delete-orgSilService-dialog'
       });
-      fireEvent.click(deleteButton);
-
-      const cancelButton = screen.getByRole('button', {
-        name: /commons.cancel/i
-      });
-      fireEvent.click(cancelButton);
-
-      expect(
-        screen.queryByTestId('delete-orgSilService-dialog')
-      ).not.toBeInTheDocument();
     });
 
     it('should delete service successfully and navigate back', async () => {
@@ -423,20 +414,21 @@ describe('OrgSilServiceDetailPage', () => {
       });
       fireEvent.click(deleteButton);
 
-      const confirmButton = screen.getByRole('button', {
-        name: /commons.delete/i
-      });
-      fireEvent.click(confirmButton);
+      const dialogOpenCalls = vi.mocked(utils.dialog.open).mock.calls;
+      const lastCall = dialogOpenCalls[dialogOpenCalls.length - 1];
+      const onConfirm = lastCall?.[0]?.onConfirm;
+
+      if (onConfirm) {
+        onConfirm();
+      }
 
       await waitFor(() => {
         expect(mockDeleteMutation.mutateAsync).toHaveBeenCalledWith(1);
       });
 
-      await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalledWith(
-          PageRoutes.ORG_SIL_SERVICE_INDEX
-        );
-      });
+      expect(mockNavigate).toHaveBeenCalledWith(
+        PageRoutes.ORG_SIL_SERVICE_INDEX
+      );
     });
 
     it('should handle 409 conflict error and show conflict dialog', async () => {
@@ -474,23 +466,26 @@ describe('OrgSilServiceDetailPage', () => {
       });
       fireEvent.click(deleteButton);
 
-      const confirmButton = screen.getByRole('button', {
-        name: /commons.delete/i
-      });
-      fireEvent.click(confirmButton);
+      const dialogOpenCalls = vi.mocked(utils.dialog.open).mock.calls;
+      const deleteDialogCall = dialogOpenCalls[0];
+      const onConfirm = deleteDialogCall?.[0]?.onConfirm;
+
+      if (onConfirm) {
+        onConfirm();
+      }
 
       await waitFor(() => {
         expect(mockDeleteMutation.mutateAsync).toHaveBeenCalledWith(1);
       });
 
-      await waitFor(() => {
-        expect(screen.getByTestId('conflict-error-dialog')).toBeInTheDocument();
-        expect(
-          screen.getByText('orgSilServiceDetail.delete.conflict.title')
-        ).toBeInTheDocument();
-        expect(
-          screen.getByText('orgSilServiceDetail.delete.conflictMessage')
-        ).toBeInTheDocument();
+      expect(utils.dialog.open).toHaveBeenCalledTimes(2);
+      expect(utils.dialog.open).toHaveBeenLastCalledWith({
+        title: 'orgSilServiceDetail.delete.conflict.title',
+        message: 'orgSilServiceDetail.delete.conflictMessage',
+        confirmLabel: 'commons.close',
+        onConfirm: expect.any(Function),
+        onClose: expect.any(Function),
+        'data-testid': 'conflict-error-dialog'
       });
 
       expect(mockNavigate).not.toHaveBeenCalled();
@@ -519,24 +514,19 @@ describe('OrgSilServiceDetailPage', () => {
       });
       fireEvent.click(deleteButton);
 
-      const confirmButton = screen.getByRole('button', {
-        name: /commons.delete/i
-      });
-      fireEvent.click(confirmButton);
+      const dialogOpenCalls = vi.mocked(utils.dialog.open).mock.calls;
+      const deleteDialogCall = dialogOpenCalls[0];
+      const onConfirm = deleteDialogCall?.[0]?.onConfirm;
+
+      if (onConfirm) {
+        onConfirm();
+      }
 
       await waitFor(() => {
         expect(mockDeleteMutation.mutateAsync).toHaveBeenCalledWith(1);
       });
 
-      await waitFor(() => {
-        expect(
-          screen.queryByTestId('delete-orgSilService-dialog')
-        ).not.toBeInTheDocument();
-        expect(
-          screen.queryByTestId('conflict-error-dialog')
-        ).not.toBeInTheDocument();
-      });
-
+      expect(utils.dialog.open).toHaveBeenCalledTimes(1);
       expect(mockNavigate).not.toHaveBeenCalled();
     });
 
@@ -558,62 +548,6 @@ describe('OrgSilServiceDetailPage', () => {
         name: /commons.delete/i
       });
       expect(deleteButton).toBeDisabled();
-    });
-
-    it('should close conflict dialog when close button is clicked', async () => {
-      mockGetOrgSilServiceById.mockReturnValue({
-        data: { response: mockOrgSilService },
-        isSuccess: true,
-        isLoading: false
-      } as any);
-
-      const conflictError = new AxiosError(
-        'Conflict',
-        '409',
-        undefined,
-        undefined,
-        {
-          status: 409,
-          statusText: 'Conflict',
-          data: {},
-          headers: {},
-          config: {}
-        } as any
-      );
-
-      const mockDeleteMutation = {
-        mutateAsync: vi.fn().mockRejectedValue(conflictError),
-        isPending: false
-      };
-
-      mockDeleteOrgSilService.mockReturnValue(mockDeleteMutation as any);
-
-      render(<OrgSilServiceDetailPage />);
-
-      const deleteButton = screen.getByRole('button', {
-        name: /commons.delete/i
-      });
-      fireEvent.click(deleteButton);
-
-      const confirmButton = screen.getByRole('button', {
-        name: /commons.delete/i
-      });
-      fireEvent.click(confirmButton);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('conflict-error-dialog')).toBeInTheDocument();
-      });
-
-      const closeButton = screen.getByRole('button', {
-        name: /commons.close/i
-      });
-      fireEvent.click(closeButton);
-
-      await waitFor(() => {
-        expect(
-          screen.queryByTestId('conflict-error-dialog')
-        ).not.toBeInTheDocument();
-      });
     });
 
     it('should not proceed with delete if orgSilServiceId is missing', async () => {
@@ -639,10 +573,13 @@ describe('OrgSilServiceDetailPage', () => {
       });
       fireEvent.click(deleteButton);
 
-      const confirmButton = screen.getByRole('button', {
-        name: /commons.delete/i
-      });
-      fireEvent.click(confirmButton);
+      const dialogOpenCalls = vi.mocked(utils.dialog.open).mock.calls;
+      const deleteDialogCall = dialogOpenCalls[0];
+      const onConfirm = deleteDialogCall?.[0]?.onConfirm;
+
+      if (onConfirm) {
+        onConfirm();
+      }
 
       await waitFor(() => {
         expect(mockDeleteMutation.mutateAsync).not.toHaveBeenCalled();
