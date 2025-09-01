@@ -73,7 +73,7 @@ export const DetailFlowPage = () => {
         label: 'ID Rendicontazione',
         value: '2024-09-03PPAYITR1XXX-S500333000012024'
       },
-      { label: 'Ordinante', value: '' },
+      { label: 'Gestore della transazione (PSP)', value: '' },
       { label: 'Data Valuta', value: '02/09/2024' },
       { label: 'Data Contabile', value: '02/09/2024' },
       { label: 'Conto', value: '' },

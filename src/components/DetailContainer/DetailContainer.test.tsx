@@ -75,7 +75,7 @@ describe('DetailContainer', () => {
       sections: [
         {
           data: [
-            { label: 'Ordinante', value: '' },
+            { label: 'Gestore della transazione (PSP)', value: '' },
             { label: 'Conto', value: '' }
           ]
         }
@@ -84,7 +84,9 @@ describe('DetailContainer', () => {
 
     render(<DetailContainer {...missingValuesProps} />);
 
-    const firstLabelDiv = screen.getByText('Ordinante').closest('div');
+    const firstLabelDiv = screen
+      .getByText('Gestore della transazione (PSP)')
+      .closest('div');
     const firstValueDiv = firstLabelDiv?.nextElementSibling;
     expect(firstValueDiv).toHaveTextContent('-');
 
