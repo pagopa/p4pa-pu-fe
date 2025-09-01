@@ -3,13 +3,13 @@ import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { PagedTreasuredClassification } from '../../../generated/apiClient';
+import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/apiClient';
 import { formatDate, moneyFormat } from '../../utils/formatters';
 import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../../routes';
 
 export type DataGridProps = {
-  data: PagedTreasuredClassification;
+  data: PagedTreasuredClassificationExtendedDTO;
 };
 
 const SearchResultsDataGrid = ({ data }: DataGridProps) => {
