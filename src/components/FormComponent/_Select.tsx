@@ -87,8 +87,7 @@ export const _Select = ({
           inputRef={forwardRef}
           {...props}
           InputProps={{
-            ...params.InputProps,
-            readOnly: true
+            ...params.InputProps
           }}
         />
       )}

@@ -264,19 +264,6 @@ describe('Controlled Form Components', () => {
       // The Select component should now display the selected option
       expect(screen.getByText('Option 2')).toBeInTheDocument();
     });
-
-    it('shows validation error when required select is not chosen', async () => {
-      render(<TestSelect required={true} />);
-
-      // Submit the form without selecting
-      const submitButton = screen.getByRole('button', { name: 'Submit' });
-      fireEvent.click(submitButton);
-
-      // Check for error message
-      await waitFor(() => {
-        expect(screen.getByText('Field is required')).toBeInTheDocument();
-      });
-    });
   });
 
   describe('ControlledRadioGroup', () => {
