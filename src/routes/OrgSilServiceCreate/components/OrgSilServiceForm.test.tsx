@@ -124,7 +124,7 @@ describe('OrgSilServiceForm Component', () => {
         name: /Service Type/i
       });
 
-      expect(serviceTypeSelect).toHaveAttribute('aria-disabled', 'true');
+      expect(serviceTypeSelect).toBeDisabled();
     });
 
     it('should enable service type field by default', () => {

@@ -7,6 +7,7 @@ export type SelectItem = {
   label: string;
   value: FilterFieldValue;
   flagMandatoryDueDate?: boolean;
+  disabled?: boolean;
 };
 
 export type SelectOptions = Array<SelectItem>;
@@ -63,6 +64,7 @@ export const _Select = ({
       fullWidth
       size="small"
       id={id}
+      data-testid={id}
       options={options}
       getOptionLabel={(option) => option.label}
       isOptionEqualToValue={(option, val) => option.value === val.value}
@@ -71,6 +73,8 @@ export const _Select = ({
       inputValue={inputValue}
       onInputChange={handleInputChange}
       disableClearable={false}
+      disabled={props.disabled}
+      getOptionDisabled={(option) => !!option?.disabled}
       renderOption={(props, option) => (
         <li {...props} key={`${label}-${option.value}`}>
           {option.label}
