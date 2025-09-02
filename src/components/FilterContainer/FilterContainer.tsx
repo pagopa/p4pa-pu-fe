@@ -46,7 +46,7 @@ export type AmountField = {
 export type SelectField = {
   type: COMPONENT_TYPE.select;
   value?: string;
-  onChange?: (e: SelectChangeEvent) => void;
+  onChange?: (e: string) => void;
 } & SelectProps;
 
 export type ButtonField = {
@@ -116,22 +116,21 @@ const RenderComponent = ({
     }
 
     case COMPONENT_TYPE.select: {
-      const selectItem = item as SelectField;
-      const defaultValue = selectItem.defaultValue || '';
+      const defaultValue = '';
       const currentValue =
         values && fieldId in values
           ? ((values[fieldId] as string) ?? defaultValue)
-          : (selectItem.value ?? defaultValue);
+          : (item.value ?? defaultValue);
 
       return (
         <FormComponent.Select
-          {...selectItem}
+          {...item}
           value={currentValue}
-          onChange={(e: SelectChangeEvent) => {
+          onChange={(value) => {
             if (onChange) {
-              onChange(fieldId, e.target.value as string);
-            } else if (selectItem.onChange) {
-              selectItem.onChange(e);
+              onChange(fieldId, value);
+            } else if (item.onChange) {
+              item.onChange(value);
             }
           }}
         />

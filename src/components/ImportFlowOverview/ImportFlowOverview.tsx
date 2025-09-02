@@ -278,8 +278,7 @@ const ImportFlowOverview = ({
                 }))
               ],
               value: filters.status,
-              onChange: (e) => {
-                const value = e.target.value;
+              onChange: (value) => {
                 setFilters((prev) => ({
                   ...prev,
                   status: value as IngestionFlowFileStatus
