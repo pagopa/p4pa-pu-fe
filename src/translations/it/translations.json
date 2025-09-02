@@ -325,7 +325,7 @@
         "earnings": {
           "title": "Giornale di cassa",
           "accountCode": "Conto",
-          "pspLastName": "Ordinante",
+          "pspLastName": "Gestore della transazione (PSP)",
           "documentCode": "Codice documento",
           "billDate": "Data Valuta",
           "billYear": "Anno bolletta",
@@ -669,7 +669,7 @@
         "label": "IUF"
       },
       "payer": {
-        "label": "Ordinante",
+        "label": "Gestore della transazione (PSP)",
         "name": "Nome ordinante"
       },
       "remove": "Rimuovi filtri",
@@ -1898,7 +1898,7 @@
     "documentCode": "Codice documento",
     "importflowsdescription": "Carica un file .zip con l'informazione necessaria di Giornale di Cassa mancanti.",
     "importflowstitle": "Importa Flussi di Tesoreria",
-    "payer": "Ordinante",
+    "payer": "Gestore della transazione (PSP)",
     "search": "Cerca flussi di Tesoreria",
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
     "provisionalCode": "Codice provvisorio",
