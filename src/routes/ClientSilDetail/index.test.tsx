@@ -64,7 +64,9 @@ describe('ClientSIL Detail Page', () => {
     });
 
     // Mock the default export methods
-    const mockDeleteClientSil = clientSilApi.deleteClientSil as ReturnType<typeof vi.fn>;
+    const mockDeleteClientSil = clientSilApi.deleteClientSil as ReturnType<
+      typeof vi.fn
+    >;
     mockDeleteClientSil.mockReturnValue({
       mutateAsync: vi.fn()
     });

@@ -14,7 +14,7 @@ import {
 } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
-import { PagedTreasuredClassification } from '../../../generated/data-contracts';
+import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/data-contracts';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getClassifications } from '../../api/classifications';
 import { useSearch } from '../../hooks/useSearch';
@@ -104,7 +104,10 @@ const ClassificationsSearchResults = () => {
         aria-label="results-table"
       >
         <SearchResultsDataGrid
-          data={classifications.query.data as PagedTreasuredClassification}
+          data={
+            classifications.query
+              .data as PagedTreasuredClassificationExtendedDTO
+          }
         />
       </Grid>
 
