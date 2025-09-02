@@ -363,6 +363,10 @@ export const DebtTypeDetailView = () => {
         chip={getStatusChip()}
         description={t('debtTypeDetail.description')}
         callToAction={titleActions}
+        accessibleTitle={t('debtTypeDetail.accessibleTitle', {
+          description: data?.response?.description,
+          interpolation: { escapeValue: false }
+        })}
       />
       <Box mt={3}>
         <Stack spacing={2}>

@@ -530,6 +530,12 @@ const DebtPositionDetail = () => {
               ]
             : [])
         ]}
+        accessibleTitle={t('debtPositionInstallmentDetail.accessibleTitle', {
+          description:
+            debtPositionDetail.description ||
+            debtPositionDetail.debtPositionTypeOrgDescription,
+          interpolation: { escapeValue: false }
+        })}
       />
 
       <Menu

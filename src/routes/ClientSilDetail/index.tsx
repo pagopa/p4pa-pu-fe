@@ -164,6 +164,10 @@ const ClientSilDetail = () => {
             title={truncTitle(data?.clientName || '')}
             description={t('clientSilDetail.description')}
             callToAction={actionButtons}
+            accessibleTitle={t('clientSilDetail.accessibleTitle', {
+              clientName: data?.clientName,
+              interpolation: { escapeValue: false }
+            })}
           />
           <Box mt={3}>
             <Stack spacing={2}>

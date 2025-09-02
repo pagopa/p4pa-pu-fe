@@ -14,6 +14,7 @@ import { useStore } from '../../store/GlobalStore';
 import { createClientSil } from '../../api/clientSil';
 import { PageRoutes } from '../../routes';
 import utils from '../../utils';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
 
 /**
  * Schema of validation for the creation of a Client SIL
@@ -101,9 +102,7 @@ export const ClientSilCreate = () => {
     <FormProvider {...methods}>
       <form aria-label={t('clientSil.create.formLabel')} role="form" noValidate>
         <Box sx={{ mb: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
-            {t('clientSil.create.title')}
-          </Typography>
+          <TitleComponent title={t('clientSil.create.title')} variant="h4" />
         </Box>
         <WizardStepWrapper
           title={t('clientSil.create.section.description.title')}

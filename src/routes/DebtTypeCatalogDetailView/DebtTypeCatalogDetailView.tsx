@@ -101,6 +101,10 @@ export const DebtTypeCatalogDetailView = () => {
           title={data?.description ?? '-'}
           description={t('debtTypeCatalogDetail.description')}
           callToAction={actionButtons}
+          accessibleTitle={t('debtTypeCatalogDetail.accessibleTitle', {
+            description: data?.description,
+            interpolation: { escapeValue: false }
+          })}
         />
         <Box mt={3}>
           <Stack spacing={2}>

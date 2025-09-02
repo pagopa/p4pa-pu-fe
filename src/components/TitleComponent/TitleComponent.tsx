@@ -9,7 +9,8 @@ import {
   useTheme,
   IconButton
 } from '@mui/material';
-import React from 'react';
+import React, { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 type ActionMenuItem = {
   icon?: React.ReactNode;
@@ -29,7 +30,7 @@ type ActionMenuItem = {
 };
 
 type TitleComponentProps = {
-  title: string;
+  title?: string;
   variant?: TypographyOwnProps['variant'];
   description?: string;
   chip?: {
@@ -37,6 +38,9 @@ type TitleComponentProps = {
     color: ChipOwnProps['color'];
   };
   callToAction?: Array<ActionMenuItem | React.ReactNode>;
+  updatePageTitle?: boolean;
+  accessibleTitle?: string;
+  dataTestId?: string;
 };
 
 const isActionMenuItem = (
@@ -48,9 +52,22 @@ const TitleComponent = ({
   variant = 'h3',
   description,
   chip,
-  callToAction
+  callToAction,
+  updatePageTitle = true,
+  accessibleTitle,
+  dataTestId
 }: TitleComponentProps) => {
   const theme = useTheme();
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (updatePageTitle) {
+      const pageTitle = accessibleTitle || title;
+      if (pageTitle) {
+        document.title = `${pageTitle} - ${t('commons.appName')}`;
+      }
+    }
+  }, [title, accessibleTitle, updatePageTitle]);
 
   const getActionColor = (actionColor?: ActionMenuItem['color']) => {
     if (!actionColor || actionColor === 'inherit') return 'inherit';
@@ -130,7 +147,9 @@ const TitleComponent = ({
         }}
       >
         <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
-          <Typography variant={variant}>{title}</Typography>
+          <Typography variant={variant} data-testid={dataTestId}>
+            {title}
+          </Typography>
 
           {chip && (
             <Chip label={chip.label} color={chip.color} sx={{ ml: 2 }} />

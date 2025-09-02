@@ -82,6 +82,7 @@ const AssessmentSearchResults = () => {
             dataTestId: 'assessment-create-button'
           }
         ]}
+        accessibleTitle={t('assessment.accessibleTitle')}
       />
 
       <Grid container justifyContent="flex-end" p={2}>

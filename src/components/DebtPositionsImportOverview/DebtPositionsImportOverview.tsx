@@ -9,6 +9,7 @@ export const DebtPositionsImportOverview = () => {
     <ImportFlowOverview
       routingCategory="debt-positions"
       title={t('commons.debtFlow')}
+      accessibleTitle={t('debtPositionsImportFlowOverview.accessibleTitle')}
       ingestionFlowFileTypes={[IngestionFlowFileTypeEnum.DP_INSTALLMENTS]}
     />
   );

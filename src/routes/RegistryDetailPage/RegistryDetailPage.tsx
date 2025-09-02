@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams } from 'react-router';
-import { Box, Typography, Alert, Grid } from '@mui/material';
+import { Box, Alert, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import { useRegistry } from '../../api/registryDetail';
@@ -8,6 +8,7 @@ import { mapRegistryToDetailSections } from './registryDetailConfig';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { RegistryType } from '../Events/configs';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
 
 export const RegistryDetailPage: React.FC = () => {
   const { t } = useTranslation();
@@ -94,14 +95,10 @@ export const RegistryDetailPage: React.FC = () => {
   return (
     <Box sx={{ padding: 2, maxWidth: '1200px', margin: '0 auto' }}>
       <Box mb={3}>
-        <Typography
-          variant="h4"
-          component="h1"
-          gutterBottom
-          data-testid="detail-title"
-        >
-          {t('registry.detail.eventDetailTitle')}
-        </Typography>
+        <TitleComponent
+          title={t('registry.detail.eventDetailTitle')}
+          dataTestId="detail-title"
+        />
       </Box>
 
       {renderContent()}

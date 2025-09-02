@@ -68,6 +68,7 @@ const TreasurySearchResults = () => {
       <TitleComponent
         title={t('commons.routes.TREASURY')}
         description={t('treasurySearchResults.description')}
+        accessibleTitle={t('treasurySearchResults.accessibleTitle')}
       />
 
       <Grid container justifyContent="flex-end" p={2}>

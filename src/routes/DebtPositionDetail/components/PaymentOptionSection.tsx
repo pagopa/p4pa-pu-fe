@@ -118,6 +118,7 @@ export const PaymentOptionSection = ({
           variant="h6"
           title={optionData.title}
           chip={optionData.chip}
+          updatePageTitle={false}
         />
       </Box>
 
