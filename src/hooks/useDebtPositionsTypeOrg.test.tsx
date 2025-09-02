@@ -99,7 +99,7 @@ describe('useDebtPositionsTypeOrg', () => {
     } as unknown as MockQueryType);
 
     const { result } = renderHook(() =>
-      useDebtPositionsTypeOrg({ organizationId: 1, includeAllOption: false })
+      useDebtPositionsTypeOrg({ organizationId: 1 })
     );
 
     expect(result.current.optionsMap).toEqual([
@@ -116,7 +116,7 @@ describe('useDebtPositionsTypeOrg', () => {
     } as unknown as MockQueryType);
 
     const { result } = renderHook(() =>
-      useDebtPositionsTypeOrg({ organizationId: 1, includeAllOption: false })
+      useDebtPositionsTypeOrg({ organizationId: 1 })
     );
 
     expect(result.current.optionsMap).toEqual([]);
