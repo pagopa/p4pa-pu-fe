@@ -33,7 +33,7 @@ function decode(fragment: string): Record<string, string | Date> {
       if (sanitizedKey.endsWith('to')) {
         flatObj[sanitizedKey] = endOfDay(toDate(value));
       } else {
-        flatObj[sanitizedKey] = toDate(value)
+        flatObj[sanitizedKey] = toDate(value);
       }
     } else {
       flatObj[sanitizedKey] = value;
