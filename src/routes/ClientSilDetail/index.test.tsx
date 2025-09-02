@@ -7,9 +7,11 @@ import ClientSilDetail from '.';
 vi.mock('../../api/clientSil', () => ({
   getClientDetail: vi.fn(),
   deleteClientSil: vi.fn(),
+  generateClientSecret: vi.fn(),
   default: {
     getClientDetail: vi.fn(),
-    deleteClientSil: vi.fn()
+    deleteClientSil: vi.fn(),
+    generateClientSecret: vi.fn()
   }
 }));
 

@@ -542,7 +542,9 @@
   },
   "clientSilDetail": {
     "description": "Ecco i dettagli del Client SIL censito",
-    "key": "Key"
+    "key": "Key",
+    "reloadSecretOK": "Secret key rigenerata correttamente",
+    "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
     "404": "404: risorsa non disponibile",
@@ -1655,6 +1657,45 @@
     "apiName": "Nome API",
     "addAPI": "Aggiungi API"
   },
+  "orgSilServiceCreate": {
+    "actualization": "Attualizzazione importo",
+    "paidNotificationOutcome": "Notifica Pagamenti",
+    "legacyBasic": "Legacy Basic",
+    "legacyJWT": "Legacy JWT",
+    "title": "Aggiungi nuova API",
+    "description": "Inserisci i dati delle API ad esporre in Piattaforma Unitaria per essere utilizzati nei processi di Notifica Pagamenti ed Attualizzazione Importo.",
+    "subTitle": "Configurazione dell'API",
+    "generalConfiguration": "Configurazione generale",
+    "APIName": "Nome API",
+    "serviceURL": "Service URL",
+    "serviceType": "Tipo Servizio",
+    "authMethod": "Modalità di autenticazione",
+    "flagLegacy": "L'API deve mantenere la retrocompatibilità con i vecchi metodi di autenticazione?",
+    "authConfig": "Auth Config",
+    "basicUser": "User",
+    "basicPassword": "Password",
+    "basicAuthURL": "Auth URL",
+    "jwtKid": "KID",
+    "jwtIssuer": "Issuer",
+    "jwtSubject": "Subject",
+    "jwtAlgorithm": "Algorithm",
+    "jwtSigningKey": "Signing key",
+    "newService": {
+      "success": {
+        "title": "L'API ‘{{applicationName}}’ è stata aggiunta!",
+        "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
+        "goToDetail": "Vedi dettaglio API"
+      }
+    },
+    "validations": {
+      "requiredAPIName": "Il nome dell'API è obbligatorio",
+      "requiredURL": "L'URL del servizio è obbligatorio",
+      "invalidURL": "Formato URL non valido",
+      "requiredServiceType": "Il tipo di servizio è obbligatorio",
+      "requiredLegacyType": "Seleziona un tipo di autenticazione legacy",
+      "requiredField": "Campo obbligatorio"
+    }
+  },
   "orgSilServiceDetail": {
     "description": "Ecco i dettagli dell'API.",
     "delete": {
@@ -1697,45 +1738,6 @@
     "authTypes": {
       "basicAuth": "Basic Auth",
       "jwtAuth": "Legacy JWT"
-    }
-  },
-  "orgSilServiceCreate": {
-    "actualization": "Attualizzazione importo",
-    "paidNotificationOutcome": "Notifica Pagamenti",
-    "legacyBasic": "Legacy Basic",
-    "legacyJWT": "Legacy JWT",
-    "title": "Aggiungi nuova API",
-    "description": "Inserisci i dati delle API ad esporre in Piattaforma Unitaria per essere utilizzati nei processi di Notifica Pagamenti ed Attualizzazione Importo.",
-    "subTitle": "Configurazione dell'API",
-    "generalConfiguration": "Configurazione generale",
-    "APIName": "Nome API",
-    "serviceURL": "Service URL",
-    "serviceType": "Tipo Servizio",
-    "authMethod": "Modalità di autenticazione",
-    "flagLegacy": "L'API deve mantenere la retrocompatibilità con i vecchi metodi di autenticazione?",
-    "authConfig": "Auth Config",
-    "basicUser": "User",
-    "basicPassword": "Password",
-    "basicAuthURL": "Auth URL",
-    "jwtKid": "KID",
-    "jwtIssuer": "Issuer",
-    "jwtSubject": "Subject",
-    "jwtAlgorithm": "Algorithm",
-    "jwtSigningKey": "Signing key",
-    "newService": {
-      "success": {
-        "title": "L'API ‘{{applicationName}}’ è stata aggiunta!",
-        "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
-        "goToDetail": "Vedi dettaglio API"
-      }
-    },
-    "validations": {
-      "requiredAPIName": "Il nome dell'API è obbligatorio",
-      "requiredURL": "L'URL del servizio è obbligatorio",
-      "invalidURL": "Formato URL non valido",
-      "requiredServiceType": "Il tipo di servizio è obbligatorio",
-      "requiredLegacyType": "Seleziona un tipo di autenticazione legacy",
-      "requiredField": "Campo obbligatorio"
     }
   },
   "orgSilServiceEdit": {

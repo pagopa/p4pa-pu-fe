@@ -14,23 +14,45 @@ import { useState } from 'react';
 import { copyToClipboard } from '../../utils/clipboard';
 import { ContentCopy } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import utils from '../../utils';
+import { generateClientSecret } from '../../api/clientSil';
 
 type ClientSecretProps = {
   secretValue: string;
+  organizationId: number;
+  clientId: string;
 };
 
-const ClientSecret = ({ secretValue }: ClientSecretProps) => {
+const ClientSecret = ({
+  secretValue,
+  organizationId,
+  clientId
+}: ClientSecretProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const [showSecret, setShowSecret] = useState<boolean>(false);
+  const [currentSecretValue, setCurrentSecretValue] = useState(secretValue);
   const [tooltipTriggered, setTooltipTriggered] = useState<boolean>(false);
+
+  const reloadSecretMutation = generateClientSecret(organizationId);
 
   const toggleValue = () => {
     setShowSecret(!showSecret);
   };
 
   const handleCopy = () => {
-    copyToClipboard(secretValue, () => setTooltipTriggered(true));
+    copyToClipboard(currentSecretValue, () => setTooltipTriggered(true));
+  };
+
+  const handleReloadSecret = async () => {
+    try {
+      const data = await reloadSecretMutation.mutateAsync(clientId);
+      setCurrentSecretValue(data.clientSecret);
+      setShowSecret(true);
+      utils.notify.emit(t('clientSilDetail.reloadSecretOK'), 'success');
+    } catch {
+      utils.notify.emit(t('clientSilDetail.reloadSecretKO'), 'error');
+    }
   };
 
   return (
@@ -52,7 +74,7 @@ const ClientSecret = ({ secretValue }: ClientSecretProps) => {
         </Button>
       </Stack>
       <Grid container gap={1}>
-        <Grid xs={6}>
+        <Grid item xs={8}>
           <Stack
             spacing={2}
             direction={'row'}
@@ -70,7 +92,7 @@ const ClientSecret = ({ secretValue }: ClientSecretProps) => {
                   overflow: 'hidden'
                 }}
               >
-                {secretValue}
+                {currentSecretValue}
               </Typography>
             ) : (
               <Typography pl={2} overflow={'hidden'}>
@@ -103,8 +125,13 @@ const ClientSecret = ({ secretValue }: ClientSecretProps) => {
             </Box>
           </Stack>
         </Grid>
-        <Grid xs={4}>
-          <Button variant="outlined" size="small">
+        <Grid item xs={2}>
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={handleReloadSecret}
+            data-testid="reload-secret-button"
+          >
             <CachedIcon color="primary"></CachedIcon>&nbsp;{t('commons.reload')}
           </Button>
         </Grid>
