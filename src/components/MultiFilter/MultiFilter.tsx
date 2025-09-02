@@ -10,7 +10,7 @@ import {
   updateFilter,
   KeyofFilterMap
 } from '../../store/FilterStore';
-import { ChangeEvent } from 'react';
+import { FilterFieldValue } from '../../models/Filters';
 
 export type MultiFilterProps = {
   filterMap: FilterMap;
@@ -27,8 +27,8 @@ const MultiFilter = ({ filterMap, onFilterInteraction }: MultiFilterProps) => {
     state: { selectedFilters }
   } = useStore();
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    updateFilter(e.target.value as KeyofFilterMap, index);
+  const onChange = (value: FilterFieldValue, index: number) => {
+    updateFilter(value as KeyofFilterMap, index);
     onFilterInteraction?.();
   };
 

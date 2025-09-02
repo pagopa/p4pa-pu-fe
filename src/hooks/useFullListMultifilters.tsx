@@ -10,6 +10,7 @@ import { setFilterValues } from '../store/FilterStore';
 import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
 import { LabelEnum } from '../../generated/apiClient';
 import { AssessmentsRegistryStatus } from '../../generated/data-contracts';
+import { FilterFieldValue } from '../models/Filters';
 
 export const useFullListMultifilters = () => {
   const { t } = useTranslation();
@@ -22,6 +23,12 @@ export const useFullListMultifilters = () => {
     value: filterValues[field] as string,
     onChange: (e: ChangeEvent<HTMLInputElement> | SelectChangeEvent) =>
       setFilterValues({ ...filterValues, [field]: e.target?.value })
+  });
+
+  const selectControl = (field: keyof typeof filterValues) => ({
+    value: filterValues[field] as string,
+    onChange: (value: FilterFieldValue) =>
+      setFilterValues({ ...filterValues, [field]: value })
   });
 
   const dateControl = (field: keyof typeof filterValues) => ({
@@ -44,7 +51,7 @@ export const useFullListMultifilters = () => {
       }));
 
     return {
-      ...fieldControl(field),
+      ...selectControl(field),
       options
     };
   };
@@ -134,7 +141,7 @@ export const useFullListMultifilters = () => {
               value: 'CANCELLED'
             }
           ],
-          ...fieldControl('ASSESSMENT_STATUS')
+          ...selectControl('ASSESSMENT_STATUS')
         }
       ]
     },
@@ -188,7 +195,7 @@ export const useFullListMultifilters = () => {
             value
           })),
           required: true,
-          ...fieldControl('CLASSIFICATION_TYPE')
+          ...selectControl('CLASSIFICATION_TYPE')
         }
       ]
     },
@@ -493,12 +500,12 @@ export const useFullListMultifilters = () => {
           type: COMPONENT_TYPE.select,
           name: 'STATUS',
           label: t('commons.filters.status'),
-          ...fieldControl('STATUS'),
           options: Object.values(AssessmentsRegistryStatus).map((value) => ({
             label: t(`commons.status.${value}`),
             value
           })),
-          required: true
+          required: true,
+          ...selectControl('STATUS')
         }
       ]
     },
