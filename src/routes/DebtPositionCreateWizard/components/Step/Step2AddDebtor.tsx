@@ -247,6 +247,17 @@ const Step2AddDebtor = ({
     onNext();
   };
 
+  /**
+   * Helper function to determine if a field should be disabled in editing mode
+   * In editing mode:
+   * - Fiscal data fields (subjectType, taxCode) should remain disabled
+   * - Personal data fields should be editable
+   */
+  const isFieldDisabled = (fieldType: 'fiscal' | 'personal') => {
+    if (!isEditing) return false;
+    return fieldType === 'fiscal'; // Only fiscal fields are disabled in editing mode
+  };
+
   const getTaxCodeLabel = () => {
     return subjectTypeValue === SubjectType.BUSINESS
       ? t('debtPositionCreateWizard.step2.vat.label')
@@ -293,7 +304,7 @@ const Step2AddDebtor = ({
                 select
                 fullWidth
                 margin="normal"
-                disabled={isEditing}
+                disabled={isFieldDisabled('fiscal')}
                 error={isSubmitted && !!errors.subjectType?.value}
                 helperText={isSubmitted && errors.subjectType?.value?.message}
                 onChange={(e) => {
@@ -334,7 +345,7 @@ const Step2AddDebtor = ({
                 required
                 fullWidth
                 margin="normal"
-                disabled={isEditing}
+                disabled={isFieldDisabled('fiscal')}
                 error={isSubmitted && !!errors.taxCode?.value}
                 helperText={isSubmitted && errors.taxCode?.value?.message}
                 onChange={(e) => {
@@ -363,7 +374,7 @@ const Step2AddDebtor = ({
                 fullWidth
                 margin="normal"
                 required
-                disabled={isEditing}
+                disabled={isFieldDisabled('personal')}
                 error={isSubmitted && !!errors.fullName?.value}
                 helperText={isSubmitted && errors.fullName?.value?.message}
                 onChange={(e) => {
@@ -388,7 +399,7 @@ const Step2AddDebtor = ({
                     label={t('debtPositionCreateWizard.step2.address.label')}
                     fullWidth
                     required
-                    disabled={isEditing}
+                    disabled={isFieldDisabled('personal')}
                     error={isSubmitted && !!errors.address?.value}
                     helperText={isSubmitted && errors.address?.value?.message}
                     onChange={(e) => {
@@ -415,7 +426,7 @@ const Step2AddDebtor = ({
                     )}
                     fullWidth
                     required
-                    disabled={isEditing}
+                    disabled={isFieldDisabled('personal')}
                     error={isSubmitted && !!errors.civicNumber?.value}
                     helperText={
                       isSubmitted && errors.civicNumber?.value?.message
@@ -442,7 +453,7 @@ const Step2AddDebtor = ({
                     label={t('debtPositionCreateWizard.step2.zipCode.label')}
                     fullWidth
                     required
-                    disabled={isEditing}
+                    disabled={isFieldDisabled('personal')}
                     error={isSubmitted && !!errors.zipCode?.value}
                     helperText={isSubmitted && errors.zipCode?.value?.message}
                     onChange={(e) => {
@@ -471,7 +482,7 @@ const Step2AddDebtor = ({
                     select
                     fullWidth
                     required
-                    disabled={isEditing}
+                    disabled={isFieldDisabled('personal')}
                     error={isSubmitted && !!errors.country?.value}
                     helperText={isSubmitted && errors.country?.value?.message}
                     onChange={(e) => {
@@ -507,7 +518,7 @@ const Step2AddDebtor = ({
                     select
                     fullWidth
                     required
-                    disabled={isEditing}
+                    disabled={isFieldDisabled('personal')}
                     error={isSubmitted && !!errors.province?.value}
                     helperText={isSubmitted && errors.province?.value?.message}
                     onChange={(e) => {
@@ -542,7 +553,7 @@ const Step2AddDebtor = ({
                     label={t('debtPositionCreateWizard.step2.city.label')}
                     fullWidth
                     required
-                    disabled={isEditing}
+                    disabled={isFieldDisabled('personal')}
                     error={isSubmitted && !!errors.city?.value}
                     helperText={isSubmitted && errors.city?.value?.message}
                     onChange={(e) => {
