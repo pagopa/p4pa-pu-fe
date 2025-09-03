@@ -66,12 +66,6 @@ export const deleteClientSil = (organizationId: number) =>
     }
   });
 
-export default {
-  getClientSils,
-  createClientSil,
-  deleteClientSil
-};
-
 /**
  * Hook for getting the details of a specific SIL
  * @param organizationId - Organization ID
@@ -92,4 +86,31 @@ export const getClientDetail = (organizationId: number, clientId: string) => {
       return clientDetail;
     }
   });
+};
+
+/**
+ * Hook for update client secret of a specific SIL
+ * @param organizationId - Organization ID
+ * @param clientId - Cient ID
+ * @returns useQuery hook for executing the API call
+ */
+export const generateClientSecret = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['generateClientSecret', organizationId],
+    mutationFn: async (clientId: string) => {
+      const { data } = await utils.apiClient.bff.generateClientSecret(
+        organizationId,
+        clientId
+      );
+      parseAndLog(clientDTOSchema, data);
+      return data;
+    }
+  });
+
+export default {
+  getClientSils,
+  createClientSil,
+  deleteClientSil,
+  getClientDetail,
+  generateClientSecret
 };

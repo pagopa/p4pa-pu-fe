@@ -149,7 +149,11 @@ const ClientSilDetail = () => {
       data: [
         {
           childrenComponent: (
-            <ClientSecret secretValue={data?.clientSecret || ''} />
+            <ClientSecret
+              secretValue={data?.clientSecret || ''}
+              organizationId={organizationId}
+              clientId={data?.clientId || ''}
+            />
           )
         }
       ]
