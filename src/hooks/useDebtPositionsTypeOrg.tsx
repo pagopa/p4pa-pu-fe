@@ -8,12 +8,10 @@ import { AxiosError } from 'axios';
 
 export const useDebtPositionsTypeOrg = ({
   organizationId,
-  includeAllOption = false,
   useCodeAsValue = false,
   filterActiveOnly = false
 }: {
   organizationId: number;
-  includeAllOption?: boolean;
   useCodeAsValue?: boolean;
   filterActiveOnly?: boolean;
 }) => {
@@ -45,18 +43,7 @@ export const useDebtPositionsTypeOrg = ({
           flagMandatoryDueDate: type.flagMandatoryDueDate
         }));
 
-      setDebtPositionsTypes(
-        includeAllOption
-          ? [
-              {
-                label: t('commons.all'),
-                value: useCodeAsValue ? 'ALL' : 0,
-                flagMandatoryDueDate: false
-              },
-              ...dueTypesMap
-            ]
-          : dueTypesMap
-      );
+      setDebtPositionsTypes(dueTypesMap);
     }
 
     if (isError) {

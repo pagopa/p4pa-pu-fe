@@ -22,36 +22,47 @@ export const _ControlledSelect = <T extends FieldValues>({
   ...props
 }: _ControlledSelectProps<T>) => {
   const { t } = useTranslation();
-  const options = fetchFn
+
+  // Fetch options either from fetchFn or props.options fallback
+  const optionsResult = fetchFn
     ? fetchFn()
     : { data: props.options, isLoading: false, isError: false };
 
-  if (fetchFn && options.isError)
+  if (fetchFn && optionsResult.isError)
     utils.notify.emit(t('commons.genericError'), 'error');
 
   return (
     <Controller
       name={name}
       control={control}
-      render={({ field: { ref, ...field }, fieldState }) => (
-        <FormComponent.Select
-          forwardRef={ref}
-          id={name}
-          required={props.required}
-          disabled={
-            props.disabled || options.isLoading || !options.data?.length
-          }
-          options={options?.data}
-          error={!!fieldState.error}
-          helperText={
-            fieldState.error && (
-              <ErrorMessage messageKey={fieldState.error?.message} />
-            )
-          }
-          {...field}
-          {...props}
-        />
-      )}
+      render={({ field: { ref, value, ...field }, fieldState }) => {
+        // value here is the entire option object or undefined
+        // Make sure default to null if undefined for Autocomplete compatibility
+        const selectedOption = value ?? undefined;
+
+        return (
+          <FormComponent.Select
+            forwardRef={ref}
+            id={name}
+            required={props.required}
+            disabled={
+              props.disabled ||
+              optionsResult.isLoading ||
+              !optionsResult.data?.length
+            }
+            options={optionsResult.data}
+            value={selectedOption}
+            error={!!fieldState.error}
+            helperText={
+              fieldState.error && (
+                <ErrorMessage messageKey={fieldState.error?.message} />
+              )
+            }
+            {...field}
+            {...props}
+          />
+        );
+      }}
     />
   );
 };
