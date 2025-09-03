@@ -251,7 +251,7 @@
       "description": "Non è possibile aggiungere o rimuovere pagamenti per questo accertamento."
     },
     "paymentDetail": {
-      "accessibleTitle": "Dettaglio pagamenti accertamento",
+      "accessibleTitle": "Dettaglio pagamento accertamento",
       "title": "Dettaglio pagamento",
       "summary": "Riepilogo",
       "paymentInfo": "Informazione sul pagamento",
@@ -459,6 +459,9 @@
       "IUD_NO_RT": "Notifiche di pagamenti non eseguiti",
       "TES_NO_MATCH": "Riversamenti di tesoreria sconosciuti",
       "UNKNOWN": "Sconosciuto"
+    },
+    "exportPage": {
+      "accessibleTitle": "Prenotazione export flusso: Conservazione"
     },
     "title": "Prenota export di un flusso",
     "description": "Imposta i filtri e Inserisci i dati per prenotare l'esportazione delle classificazioni dei pagamenti e conoscere se è stato riconciliato o ci sono delle anomalie.",
@@ -752,7 +755,7 @@
     "importFlows": "Importa flussi",
     "importFlowCategories": {
       "telematic-receipt": "di Ricevute Telematiche",
-      "reporting": "di Rendicontazioni",
+      "reporting": "di Rendicontazione",
       "treasury": "di Tesoreria", 
       "debt-positions": "di Posizioni Debitorie"
     },
