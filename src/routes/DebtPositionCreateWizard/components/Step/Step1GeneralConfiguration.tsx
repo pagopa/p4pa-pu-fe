@@ -48,19 +48,18 @@ const Step1GeneralConfiguration = ({
     data: debtPositionTypeOrgsData,
     isLoading: isLoadingDebtPositionTypes
   } = getDebtPositionTypeOrgs({
-    organizationId
+    organizationId,
+    flagActive: !isEditing ? true : undefined
   });
 
   const debtPositionsTypes: Array<DebtPositionType> = useMemo(() => {
     if (!debtPositionTypeOrgsData) return [];
 
-    let filteredTypes = debtPositionTypeOrgsData.filter(
+    const filteredTypes = debtPositionTypeOrgsData.filter(
       (type) => type?.description && type?.debtPositionTypeOrgId !== undefined
     );
 
-    if (!isEditing) {
-      filteredTypes = filteredTypes.filter((type) => type?.flagActive);
-    } else {
+    if (isEditing) {
       if (debtPositionTypeOrgCode && debtPositionTypeOrgsData) {
         const originalType = debtPositionTypeOrgsData.find(
           (typeOrg) => typeOrg.code === debtPositionTypeOrgCode
