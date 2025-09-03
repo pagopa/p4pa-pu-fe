@@ -177,6 +177,18 @@ export const SuccessPageConfig: SuccessOpts = {
       }
     ]
   },
+  'assessment-create-partial-success': {
+    title: 'assessmentCreate.partialSuccess.title',
+    description: 'assessmentCreate.partialSuccess.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'assessmentCreate.partialSuccess.goToDetail',
+        customNavigation: 'ASSESSMENT_DETAIL'
+      }
+    ]
+  },
   'assessment-remove-payments': {
     title: 'assessmentCreate.removePayments.success.title',
     buttonConfig: [
