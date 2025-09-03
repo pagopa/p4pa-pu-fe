@@ -134,14 +134,6 @@ export const DebtPositionsInstallmentDetail = () => {
 
   const installmentDetailData: DetailDataValue = {
     summaryData: [
-      ...(installment?.debtPositionDescription
-        ? [
-            {
-              value: installment.debtPositionDescription,
-              variant: 'h6' as const
-            }
-          ]
-        : []),
       {
         label: t('commons.state'),
         value: installment?.status
@@ -275,6 +267,7 @@ export const DebtPositionsInstallmentDetail = () => {
             sections={[
               {
                 title: { label: t(summaryTitle), variant: 'h6' },
+                description: installment?.debtPositionDescription,
                 data: installmentDetailData.summaryData,
                 inline: true,
                 footerLink: {
