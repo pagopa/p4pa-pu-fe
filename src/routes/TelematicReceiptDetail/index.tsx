@@ -259,7 +259,7 @@ export const TelematicReceiptDetail = () => {
   };
 
   const shouldShowDownloadButton = !params.receiptId;
-
+  // Determine the accessibleTitle based on the context (assessment vs telematic receipt)
   const getAccessibleTitle = () => {
     if (params.receiptId) {
       return t('assessmentDetail.paymentDetail.accessibleTitle');
