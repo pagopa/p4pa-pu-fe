@@ -1149,8 +1149,8 @@
         "maxInstallmentsReached": "Hai raggiunto il numero massimo di rate (12)",
         "minInstallmentsRequired": "Sono richieste almeno 2 rate",
         "remittance": {
-          "label": "Oggetto pagamento",
-          "required": "Il campo oggetto pagamento è obbligatorio"
+          "label": "Oggetto del pagamento",
+          "required": "Il campo oggetto del pagamento è obbligatorio"
         },
         "otherBeneficiaries": "Altri beneficiari",
         "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?",
@@ -1162,13 +1162,13 @@
         "label": "Altri beneficiari"
       },
       "paymentObject": {
-        "label": "Oggetto pagamento",
-        "required": "Il campo oggetto pagamento è obbligatorio"
+        "label": "Oggetto del pagamento",
+        "required": "Il campo oggetto del pagamento è obbligatorio"
       },
       "paymentOption": {
         "installments": "Soluzione rateale",
-        "label": "Opzione pagamento",
-        "required": "Il campo opzione pagamento è obbligatorio",
+        "label": "Opzione di pagamento",
+        "required": "Il campo opzione di pagamento è obbligatorio",
         "single": "Soluzione unica"
       },
       "title": "Avviso"
