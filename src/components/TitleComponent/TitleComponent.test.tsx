@@ -368,7 +368,7 @@ describe('TitleComponent', () => {
     render(<TitleComponent {...defaultProps} />);
 
     const title = screen.getByText('Test Title');
-    expect(title.tagName).toBe('H3');
+    expect(title.tagName).toBe('H1');
   });
 
   const colors = ['secondary', 'success', 'error', 'info', 'warning'] as const;

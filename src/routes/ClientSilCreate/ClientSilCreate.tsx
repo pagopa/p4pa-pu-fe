@@ -102,7 +102,7 @@ export const ClientSilCreate = () => {
     <FormProvider {...methods}>
       <form aria-label={t('clientSil.create.formLabel')} role="form" noValidate>
         <Box sx={{ mb: 4 }}>
-          <TitleComponent title={t('clientSil.create.title')} variant="h4" />
+          <TitleComponent title={t('clientSil.create.title')} variant="h3" />
         </Box>
         <WizardStepWrapper
           title={t('clientSil.create.section.description.title')}

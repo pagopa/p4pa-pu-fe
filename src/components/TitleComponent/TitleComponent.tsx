@@ -38,7 +38,6 @@ type TitleComponentProps = {
     color: ChipOwnProps['color'];
   };
   callToAction?: Array<ActionMenuItem | React.ReactNode>;
-  updatePageTitle?: boolean;
   accessibleTitle?: string;
   dataTestId?: string;
 };
@@ -53,21 +52,33 @@ const TitleComponent = ({
   description,
   chip,
   callToAction,
-  updatePageTitle = true,
   accessibleTitle,
   dataTestId
 }: TitleComponentProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
 
+  // Update page title only for main page titles (h1, h2, h3)
+  // Section titles (h4, h5, h6) are considered sub-sections and don't update the browser title
+  const isMainPageTitle = ['h1', 'h2', 'h3'].includes(variant || 'h3');
+
+  /**
+   * Updates the browser document title only for main page titles (h1, h2, h3).
+   * This ensures that only primary page headings affect the browser tab title,
+   * while section headings (h4, h5, h6) remain purely visual without changing
+   * the page's identity in the browser.
+   *
+   * @description Uses accessibleTitle if provided for better screen reader support,
+   * otherwise falls back to the display title.
+   */
   useEffect(() => {
-    if (updatePageTitle) {
+    if (isMainPageTitle) {
       const pageTitle = accessibleTitle || title;
       if (pageTitle) {
         document.title = `${pageTitle} - ${t('commons.appName')}`;
       }
     }
-  }, [title, accessibleTitle, updatePageTitle]);
+  }, [title, accessibleTitle, isMainPageTitle, t]);
 
   const getActionColor = (actionColor?: ActionMenuItem['color']) => {
     if (!actionColor || actionColor === 'inherit') return 'inherit';
@@ -147,7 +158,14 @@ const TitleComponent = ({
         }}
       >
         <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
-          <Typography variant={variant} data-testid={dataTestId}>
+          <Typography
+            variant={variant}
+            // render text as h1 if it's the main title, otherwise renders it as the variant provided
+            {...(isMainPageTitle && { component: 'h1' as const })}
+            data-testid={
+              dataTestId || (isMainPageTitle ? 'main-title' : 'section-title')
+            }
+          >
             {title}
           </Typography>
 

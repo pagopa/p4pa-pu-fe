@@ -41,7 +41,7 @@ describe('Home page', () => {
     mockSessionStorage.getItem.mockReturnValue(null);
     renderHome();
 
-    expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent('HOME');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('HOME');
   });
 
   it('handles pending notification when present in sessionStorage', () => {
