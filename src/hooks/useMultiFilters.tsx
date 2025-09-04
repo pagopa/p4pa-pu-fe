@@ -1,7 +1,11 @@
 import { FilterItem } from '../components/FilterContainer/FilterContainer';
 import { useStore } from '../store/GlobalStore';
-import { useEffect } from 'react';
-import { noFilterIsSelected, removeAllFilters } from '../store/FilterStore';
+import { useEffect, useState } from 'react';
+import {
+  mapFilterNameToFilterValues,
+  noFilterIsSelected,
+  removeAllFilters
+} from '../store/FilterStore';
 import { FilterValues } from '../models/Filters';
 import { useFullListMultifilters } from './useFullListMultifilters';
 
@@ -57,11 +61,41 @@ export const useMultiFilters = (props?: {
     state: { filterValues, selectedFilters }
   } = useStore();
 
+  const [validationErrors, setValidationErrors] = useState<
+    Record<string, string | null>
+  >({});
+
   useEffect(() => {
     if (props?.clearOnMount) {
       removeAllFilters();
     }
   }, []);
+
+  const validateDateRanges = () => {
+    const errors: Record<string, string | null> = {};
+    for (const filterKey in mapFilterNameToFilterValues) {
+      const fields = mapFilterNameToFilterValues[filterKey as keyof FilterMap];
+      if (
+        fields.length === 2 &&
+        fields[0].toString().endsWith('_FROM') &&
+        fields[1].toString().endsWith('_TO')
+      ) {
+        const fromValue = filterValues[fields[0]];
+        const toValue = filterValues[fields[1]];
+        if ((!fromValue && toValue) || (fromValue && !toValue)) {
+          errors[filterKey] =
+            'Both FROM and TO dates must be set or both unset';
+        } else {
+          errors[filterKey] = null;
+        }
+      }
+    }
+    setValidationErrors(errors);
+  };
+
+  useEffect(() => {
+    validateDateRanges();
+  }, [filterValues]);
 
   const fullFilterMap = useFullListMultifilters();
 
@@ -138,11 +172,17 @@ export const useMultiFilters = (props?: {
 
   const filterMap = getFilteredMap();
 
+  console.debug(validationErrors);
+
   return {
     filterMap,
     selectedFilters,
     removeAllFilters,
     noFilterIsSelected,
-    filterValues
+    filterValues,
+    validationErrors,
+    isValid:
+      !noFilterIsSelected.peek() &&
+      !Object.values(validationErrors).some((value) => value)
   };
 };

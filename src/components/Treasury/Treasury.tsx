@@ -12,7 +12,7 @@ import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export const Treasury = () => {
   const { t } = useTranslation();
-  const { filterMap, removeAllFilters, noFilterIsSelected } = useMultiFilters({
+  const { filterMap, removeAllFilters, isValid } = useMultiFilters({
     clearOnMount: true,
     filterCategory: FilterCategory.TREASURY
   });
@@ -20,7 +20,7 @@ export const Treasury = () => {
   const [error, setError] = useState(false);
 
   function submitSearch() {
-    if (noFilterIsSelected.peek()) {
+    if (isValid) {
       navigate(PageRoutes.TREASURY_SEARCH_RESULTS);
     } else {
       setError(true);

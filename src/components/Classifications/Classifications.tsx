@@ -7,33 +7,25 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import { FilterCategory, useMultiFilters } from '../../hooks/useMultiFilters';
 import { PageRoutes } from '../../routes';
 import { useNavigate } from 'react-router';
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 
 export const Classifications = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { filterMap, removeAllFilters, noFilterIsSelected } = useMultiFilters({
+  const { filterMap, removeAllFilters, isValid } = useMultiFilters({
     clearOnMount: true,
     filterCategory: FilterCategory.CLASSIFICATIONS
   });
 
-  const [hasAttemptedSearch, setHasAttemptedSearch] = useState(false);
-
-  const shouldShowError = useMemo(() => {
-    const hasNoFilters = !noFilterIsSelected.peek();
-
-    return hasAttemptedSearch && hasNoFilters;
-  }, [noFilterIsSelected, hasAttemptedSearch]);
+  const [error, setError] = useState(false);
 
   function submitSearch() {
-    setHasAttemptedSearch(true);
-
-    if (!noFilterIsSelected.peek()) {
-      return;
+    if (isValid) {
+      navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS);
+    } else {
+      setError(true);
     }
-
-    navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS);
   }
 
   return (
@@ -47,9 +39,7 @@ export const Classifications = () => {
               description={t('classifications.searchdescription')}
               multiFilterConfig={filterMap}
               render={
-                shouldShowError && (
-                  <ErrorMessage testId="multifilters-error-text" />
-                )
+                error && <ErrorMessage testId="multifilters-error-text" />
               }
               filterCategory={FilterCategory.CLASSIFICATIONS}
               button={[
@@ -58,7 +48,7 @@ export const Classifications = () => {
                   variant: 'outlined',
                   onClick: () => {
                     removeAllFilters();
-                    setHasAttemptedSearch(false);
+                    setError(false);
                   },
                   id: 'searchcard-remove-btn'
                 },
