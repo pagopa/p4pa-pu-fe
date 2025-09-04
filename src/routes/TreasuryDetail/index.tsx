@@ -58,11 +58,13 @@ export const TreasuryDetail = () => {
     },
     {
       label: t('treasurySearchResults.valueDate'),
-      value: data?.regionValueDate || ''
+      value: data?.regionValueDate || '',
+      valueType: 'date'
     },
     {
       label: t('treasurySearchResults.accountingDate'),
-      value: data?.receptionDate || ''
+      value: data?.receptionDate || '',
+      valueType: 'date'
     },
     {
       label: t('treasury.account'),

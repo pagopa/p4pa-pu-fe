@@ -26,7 +26,7 @@ export function useSearch<
   TError = unknown
 >({ filters, query }: UseSearchProps<T, TData, TError>) {
   const {
-    page = 1,
+    page: hashPage = 1,
     size = 10,
     sortDirection,
     sortField
@@ -37,25 +37,31 @@ export function useSearch<
     sortField: string;
   };
 
+  const page = hashPage > 0 ? hashPage - 1 : 0;
+
   const sort =
     sortDirection && sortField ? [`${sortField},${sortDirection}`] : [];
 
   useEffect(() => {
     query.mutateAsync({
       filters,
-      pagination: { size, page: page - 1 },
+      pagination: { size, page },
       sort
     });
   }, [page, size, sortDirection, sortField]);
 
-  // Handle filter application: reset page to 0, update URL hash, and query
+  // Handle filter application: resetting pagination and sort model
   const applyFilters = (appliedFilters: T) => {
-    const params = utils.URI.encode(appliedFilters);
+    const params = utils.URI.encode({
+      ...appliedFilters,
+      page: null,
+      size: null,
+      sort: null
+    });
     utils.URI.set(params, { replace: true });
-
     query.mutateAsync({
       filters: appliedFilters,
-      pagination: { size, page: 0 },
+      pagination: { size: 10, page: 0 },
       sort: []
     });
   };
