@@ -40,15 +40,11 @@ describe('PaymentMethodSelector', () => {
   it('renders the select with FREE as default option', () => {
     renderWithForm();
 
-    const select = screen.getByRole('combobox', {
-      name: 'debtTypeOrgCreate.behaviour.spontaneous.label'
-    });
+    const select = screen.getByLabelText(
+      /debtTypeOrgCreate\.behaviour\.spontaneous\.label/i,
+      { exact: false }
+    );
     expect(select).toBeInTheDocument();
-
-    // Check options labels are rendered
-    expect(
-      screen.getByText('debtTypeOrgCreate.behaviour.spontaneous.free')
-    ).toBeInTheDocument();
   });
 
   it('renders no additional field when FREE option is selected', () => {

@@ -1,14 +1,14 @@
-import { ChangeEvent } from 'react';
 import { Stack } from '@mui/material';
 import { FormComponent } from '../FormComponent';
 import FilterContainer from '../FilterContainer/FilterContainer';
 import { FilterMap } from '../../hooks/useMultiFilters';
 import { useTranslation } from 'react-i18next';
 import { KeyofFilterMap } from '../../store/FilterStore';
+import { FilterFieldValue } from '../../models/Filters';
 
 export type FilterProps = {
   filterMap: FilterMap;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (value: FilterFieldValue) => void;
   value: keyof FilterMap;
   selectedFilters: Array<KeyofFilterMap>;
 };

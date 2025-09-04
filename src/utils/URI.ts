@@ -1,6 +1,7 @@
 import { formatDate, parse } from 'date-fns';
 import { unflatten, flatten } from 'flat';
 import queryString from 'query-string';
+import { endOfDay } from 'date-fns';
 
 function sanitizeKeyChars(input: string): string {
   // Allows letters, digits and literal dot
@@ -29,7 +30,11 @@ function decode(fragment: string): Record<string, string | Date> {
   Object.entries(parsed).forEach(([key, value]) => {
     const sanitizedKey = sanitizeKeyChars(key);
     if (isDateString(value)) {
-      flatObj[sanitizedKey] = toDate(value);
+      if (sanitizedKey.endsWith('to')) {
+        flatObj[sanitizedKey] = endOfDay(toDate(value));
+      } else {
+        flatObj[sanitizedKey] = toDate(value);
+      }
     } else {
       flatObj[sanitizedKey] = value;
     }
@@ -41,11 +46,14 @@ function decode(fragment: string): Record<string, string | Date> {
 export function encode<T extends Record<string, unknown>>(obj: T): string {
   // Flatten the object to dot-notation keys
   const flattened = flatten(obj) as Record<string, unknown>;
+  const flatStrings: Record<string, string> = {};
   // Convert all values to strings, formatting dates
   Object.entries(flattened).forEach(([key, value]) => {
-    flattened[key] = encodeValue(value);
+    if (value && key) {
+      flatStrings[key] = encodeValue(value);
+    }
   });
-  return queryString.stringify(flattened);
+  return queryString.stringify(flatStrings);
 }
 
 /**
