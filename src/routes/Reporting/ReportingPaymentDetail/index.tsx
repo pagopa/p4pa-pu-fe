@@ -142,7 +142,10 @@ function ReportingPaymentDetail() {
 
   return !isLoading ? (
     <>
-      <TitleComponent title={t('reportingPaymentDetail.title')} />
+      <TitleComponent
+        title={t('reportingPaymentDetail.title')}
+        accessibleTitle={t('reportingPaymentDetail.accessibleTitle')}
+      />
       <Grid container spacing={3}>
         <Grid item md={6}>
           <DetailContainer

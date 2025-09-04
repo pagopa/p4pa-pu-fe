@@ -54,6 +54,7 @@ const TelematicReceiptSearchResults = () => {
     <Stack>
       <TitleComponent
         title={t('commons.routes.TELEMATIC_RECEIPT_SEARCH_RESULTS')}
+        accessibleTitle={t('telematicreceiptSearchResults.accessibleTitle')}
         description={t('telematicreceiptSearchResults.description')}
       />
       <Stack gap={3}>

@@ -17,6 +17,7 @@ export const TreasuryImportFlowOverview = () => {
         IngestionFlowFileTypeEnum.TREASURY_POSTE,
         IngestionFlowFileTypeEnum.TREASURY_XLS
       ]}
+      accessibleTitle={t('treasuryImportFlowOverview.accessibleTitle')}
     />
   );
 };

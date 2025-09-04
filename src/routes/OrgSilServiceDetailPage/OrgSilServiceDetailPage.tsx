@@ -113,6 +113,10 @@ export const OrgSilServiceDetailPage = () => {
       <TitleComponent
         title={data?.response?.applicationName || '-'}
         description={t('orgSilServiceDetail.description')}
+        accessibleTitle={t('orgSilServiceDetail.accessibleTitle', {
+          applicationName: data?.response?.applicationName,
+          interpolation: { escapeValue: false }
+        })}
       />
 
       <Box mt={3}>

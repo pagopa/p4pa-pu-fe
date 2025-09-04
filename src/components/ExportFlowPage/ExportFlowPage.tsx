@@ -167,11 +167,16 @@ export const ExportFlowPage = () => {
     }
   };
 
+  const categoryTranslation = t(`commons.exportFlowCategories.${category}`);
+
   return (
     <>
       <TitleComponent
         title={t('exportFlow.title')}
         description={t('exportFlow.description')}
+        accessibleTitle={t('commons.exportFlowPageTitleWithCategory', {
+          category: categoryTranslation
+        })}
       />
       <ExportFlowContainer
         section={[

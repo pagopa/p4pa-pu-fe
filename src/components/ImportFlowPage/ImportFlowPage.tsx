@@ -89,6 +89,8 @@ const ImportFlow = () => {
 
   const fileUploaderDescriptionKey = `FileUploaderFlowImport.${category}.description`;
 
+  const categorySuffix = t(`commons.importFlowCategories.${category}`);
+
   return (
     <>
       <Grid container direction="column" alignItems="center" marginTop={2}>
@@ -103,6 +105,10 @@ const ImportFlow = () => {
           <TitleComponent
             title={t(config.title)}
             description={t('commons.flowImport.description')}
+            accessibleTitle={t('commons.importNewFlowWithCategory', {
+              category: categorySuffix,
+              interpolation: { escapeValue: false }
+            })}
           />
           <Box
             bgcolor={theme.palette.common.white}

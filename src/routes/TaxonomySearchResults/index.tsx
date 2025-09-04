@@ -49,6 +49,7 @@ const TaxonomySearchResults = () => {
       <Stack>
         <TitleComponent
           title={t('commons.routes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS')}
+          accessibleTitle={t('taxonomySearchResults.accessibleTitle')}
         />
         <Stack gap={3}>
           <form onSubmit={form.handleSubmit(onSubmit)}>

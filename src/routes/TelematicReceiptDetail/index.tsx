@@ -259,6 +259,13 @@ export const TelematicReceiptDetail = () => {
   };
 
   const shouldShowDownloadButton = !params.receiptId;
+  // Determine the accessibleTitle based on the context (assessment vs telematic receipt)
+  const getAccessibleTitle = () => {
+    if (params.receiptId) {
+      return t('assessmentDetail.paymentDetail.accessibleTitle');
+    }
+    return t('telematicReceiptDetail.title');
+  };
 
   return (
     <>
@@ -276,6 +283,7 @@ export const TelematicReceiptDetail = () => {
               ]
             : []
         }
+        accessibleTitle={getAccessibleTitle()}
       />
       {
         <Grid container spacing={3}>
