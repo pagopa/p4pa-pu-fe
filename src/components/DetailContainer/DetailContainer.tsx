@@ -44,6 +44,7 @@ export type footerLinkConfig = {
 export type DetailSectionProps = {
   sections: Array<{
     title?: titleConfig;
+    description?: string;
     data: Array<DetailData>;
     inline?: boolean;
     footerLink?: footerLinkConfig;
@@ -140,6 +141,14 @@ const DetailContainer = ({
                 {section.title ? (
                   <Typography {...section.title}>
                     {section.title.label}
+                  </Typography>
+                ) : null}
+                {section.description ? (
+                  <Typography
+                    variant="h6"
+                    sx={{ mb: 2, wordBreak: 'break-word' }}
+                  >
+                    {section.description}
                   </Typography>
                 ) : null}
                 <Grid container direction="column">

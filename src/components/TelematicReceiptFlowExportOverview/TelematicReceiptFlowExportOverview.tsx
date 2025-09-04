@@ -10,6 +10,7 @@ const TelematicReceiptExportFlowOverview = () => {
       routingCategory="receipt"
       title={t('commons.exportedFlows')}
       description={t('telematicReceiptFlowExportOverview.description')}
+      accessibleTitle={t('telematicReceiptFlowExportOverview.accessibleTitle')}
       exportFileTypes={ExportFileTypeEnum.PAID}
     />
   );

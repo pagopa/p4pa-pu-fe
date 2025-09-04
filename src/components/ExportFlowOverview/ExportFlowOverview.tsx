@@ -31,6 +31,7 @@ export type ExportFlowOverviewProps = {
   routingCategory: string;
   title: string;
   description?: string;
+  accessibleTitle?: string;
   sectionTitle?: string;
   exportFileTypes: ExportFileTypeEnum;
   specializedExportPage?: string;
@@ -41,6 +42,7 @@ const ExportFlowOverview = ({
   routingCategory,
   title,
   description,
+  accessibleTitle,
   sectionTitle,
   exportFileTypes,
   specializedExportPage,
@@ -208,6 +210,7 @@ const ExportFlowOverview = ({
           }
         ]}
         description={description}
+        accessibleTitle={accessibleTitle}
       />
       <Stack gap={3}>
         {sectionTitle && (

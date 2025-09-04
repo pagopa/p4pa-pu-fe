@@ -144,6 +144,10 @@ export const ReportingDetail = () => {
     <>
       <TitleComponent
         title={iuf || ''}
+        accessibleTitle={t('reportingDetail.accessibleTitle', {
+          iuf: iuf,
+          interpolation: { escapeValue: false }
+        })}
         callToAction={[
           {
             icon: <DownloadIcon fontSize="small" />,
