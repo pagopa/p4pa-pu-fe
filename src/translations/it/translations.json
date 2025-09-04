@@ -784,6 +784,10 @@
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
+    "roles": {
+      "ROLE_ADMIN": "Amministratore",
+      "ROLE_OPER": "Operatore"
+    },
     "routes": {
       "ASSESSMENT": "Accertamento pagamenti",
       "ASSESSMENT_CREATION": "Crea un nuovo accertamento",
@@ -921,6 +925,10 @@
     "unknownOrganization": "Ente senza nome",
     "uploadedFrom": "Caricati dal",
     "updatedFrom": "Aggiornato dal",
+    "userActions": {
+      "yourdata": "I tuoi dati",
+      "logout": "Esci"
+    },
     "view": "Visualizza",
     "validation": {
       "selectAtLeastOneOption": "Seleziona almeno un'opzione",

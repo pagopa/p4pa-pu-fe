@@ -49,7 +49,7 @@ export const Header = (props: HeaderProps) => {
       id: org.organizationId.toString(),
       logoUrl: org.orgLogo,
       name: org.orgName || t('commons.unknownOrganization'),
-      productRole: org.operatorRole
+      productRole: t(`commons.roles.${org.operatorRole}`, org.operatorRole)
     })) || [];
 
   const currentOrgExists =
@@ -78,7 +78,7 @@ export const Header = (props: HeaderProps) => {
   const userActions: Array<UserAction> = [
     {
       id: 'profile',
-      label: 'I tuoi dati',
+      label: t('commons.userActions.yourdata'),
       onClick: () => {
         /* TODO: create a userdata page */
         navigate('/');
@@ -87,7 +87,7 @@ export const Header = (props: HeaderProps) => {
     },
     {
       id: 'logout',
-      label: 'Esci',
+      label: t('commons.userActions.logout'),
       onClick: logoutUser,
       icon: <LogoutRoundedIcon fontSize="small" color="inherit" />
     }
