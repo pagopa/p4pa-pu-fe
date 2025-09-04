@@ -95,7 +95,7 @@ export const Header = (props: HeaderProps) => {
 
   const product: ProductEntity = {
     id: '0',
-    title: 'Piattaforma Unitaria',
+    title: t('commons.appName'),
     productUrl: '#pu',
     linkType: 'internal'
   };
