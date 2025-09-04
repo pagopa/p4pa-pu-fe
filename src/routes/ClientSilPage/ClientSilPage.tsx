@@ -83,6 +83,7 @@ export const ClientSilPage = () => {
             onActionClick: handleAddNew
           }
         ]}
+        accessibleTitle={t('clientSil.accessibleTitle')}
       />
       <FilterContainer
         items={filterItems}

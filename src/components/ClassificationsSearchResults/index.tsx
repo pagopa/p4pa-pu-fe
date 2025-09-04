@@ -75,6 +75,7 @@ const ClassificationsSearchResults = () => {
     <>
       <TitleComponent
         title={t('commons.routes.CLASSIFICATIONS_SEARCH_RESULTS')}
+        accessibleTitle={t('classificationsSearchResults.accessibleTitle')}
         callToAction={[
           {
             variant: 'outlined',

@@ -14,6 +14,7 @@ export const ReportingImportFlowOverview = () => {
         IngestionFlowFileTypeEnum.PAYMENTS_REPORTING,
         IngestionFlowFileTypeEnum.PAYMENTS_REPORTING_PAGOPA
       ]}
+      accessibleTitle={t('reportingImportFlowOverview.accessibleTitle')}
     />
   );
 };

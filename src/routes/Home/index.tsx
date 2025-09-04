@@ -1,8 +1,10 @@
-import { Typography } from '@mui/material';
 import { useEffect } from 'react';
 import utils from '../../utils';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
+  const { t } = useTranslation();
   useEffect(() => {
     const pendingNotification = sessionStorage.getItem('pendingNotification');
     if (pendingNotification) {
@@ -14,7 +16,7 @@ const Home = () => {
 
   return (
     <>
-      <Typography variant="h3">HOME</Typography>
+      <TitleComponent title={t('commons.routes.HOME')}></TitleComponent>
     </>
   );
 };

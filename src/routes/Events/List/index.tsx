@@ -85,9 +85,17 @@ export const EventList = () => {
 
   const columns = getEventsColumns(action);
 
+  const accessibleTitle =
+    registryType === 'sil'
+      ? t('events.list.accessibleTitleSil')
+      : t('events.list.accessibleTitlePagoPa');
+
   return (
     <>
-      <TitleComponent title={t('events.list.title')} />
+      <TitleComponent
+        title={t('events.list.title')}
+        accessibleTitle={accessibleTitle}
+      />
       <Stack gap={3}>
         {error && <ErrorMessage variant="outlined" />}
         <FilterContainer

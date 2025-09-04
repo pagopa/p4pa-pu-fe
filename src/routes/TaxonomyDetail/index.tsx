@@ -80,7 +80,13 @@ export const TaxonomyDetailPage = () => {
     <>
       {data && (
         <>
-          <TitleComponent title={data.taxonomyCode} />
+          <TitleComponent
+            title={data.taxonomyCode}
+            accessibleTitle={t('taxonomyPage.accessibleTitle', {
+              taxonomyCode: data.taxonomyCode,
+              interpolation: { escapeValue: false }
+            })}
+          />
           <Grid container spacing={3} my={2}>
             <Grid item md={6}>
               <DetailContainer

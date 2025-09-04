@@ -149,6 +149,7 @@ export const OrgSilServicesPage = () => {
             onActionClick: handleAddNew
           }
         ]}
+        accessibleTitle={t('orgSilService.accessibleTitle')}
       />
 
       <Grid
