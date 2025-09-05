@@ -37,7 +37,9 @@ export const Assessment = () => {
   function submitSearch() {
     if (isValid) {
       setError(false);
-      navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS, { hashObject: filterValues });
+      navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS, {
+        hashObject: filterValues
+      });
     } else {
       setError(true);
     }

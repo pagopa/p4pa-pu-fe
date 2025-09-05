@@ -4,14 +4,18 @@ import { FilterMap } from '../hooks/useMultiFilters';
 import { noFilterSetted } from '../utils/filtersValidation';
 import URI from '../utils/URI';
 
-const initialFilterValuesFromURI: Partial<FilterValues> = URI.decode(window.location.hash);
+const initialFilterValuesFromURI: Partial<FilterValues> = URI.decode(
+  window.location.hash
+);
 
 /**
  * Get initial selected filters based on the initial filter values from the URI
  * @param initialFilterValuesFromURI Partial<FilterValues>
  * @returns Array <keyof FilterMap>
  */
-const getInitialSelectedFilters = (initialFilterValuesFromURI:Partial<FilterValues> ): Array<keyof FilterMap> => {
+const getInitialSelectedFilters = (
+  initialFilterValuesFromURI: Partial<FilterValues>
+): Array<keyof FilterMap> => {
   const filters = Object.keys(initialFilterValuesFromURI) as Array<
     keyof FilterValues
   >;
@@ -28,7 +32,7 @@ const getInitialSelectedFilters = (initialFilterValuesFromURI:Partial<FilterValu
     }
   });
   return selected;
-}
+};
 
 export const initialFilterValues: FilterValues = {
   ACCOUNTING_DATE_FROM: null,
@@ -129,7 +133,9 @@ export const mapFilterNameToFilterValues: Record<
 export type KeyofFilterMap = keyof FilterMap;
 export type KeyofFilterValues = keyof FilterValues;
 
-export const selectedFilters = signal<Array<KeyofFilterMap>>(getInitialSelectedFilters(initialFilterValuesFromURI));
+export const selectedFilters = signal<Array<KeyofFilterMap>>(
+  getInitialSelectedFilters(initialFilterValuesFromURI)
+);
 
 export function setSelectedFilters(newState: Array<KeyofFilterMap>) {
   selectedFilters.value = newState;
@@ -156,7 +162,10 @@ export const updateFilter = (id: KeyofFilterMap, index: number) => {
   removeFilterRow(previousFilter);
 };
 
-export const filterValues = signal<FilterValues>({...initialFilterValues, ...initialFilterValuesFromURI});
+export const filterValues = signal<FilterValues>({
+  ...initialFilterValues,
+  ...initialFilterValuesFromURI
+});
 
 export const noFilterIsSelected = computed(() =>
   noFilterSetted(filterValues.value)
@@ -176,5 +185,5 @@ export const resetFilterValue = (id: keyof FilterValues) => {
 export const removeAllFilters = () => {
   setSelectedFilters([]);
   setFilterValues(initialFilterValues);
-  URI.set('', { replace: true })
+  URI.set('', { replace: true });
 };
