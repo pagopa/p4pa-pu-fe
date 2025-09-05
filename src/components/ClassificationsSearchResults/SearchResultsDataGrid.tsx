@@ -2,18 +2,27 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { ChipProps, IconButton } from '@mui/material';
 import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/apiClient';
 import { formatDate, moneyFormat } from '../../utils/formatters';
 import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../../routes';
+import ChipTruncateTooltip from '../ChipTruncateTooltip';
 
 export type DataGridProps = {
   data: PagedTreasuredClassificationExtendedDTO;
 };
 
+type ChipColor = ChipProps['color'];
+
 const SearchResultsDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
+
+  const mapStatus: Record<string, ChipColor> = {
+    INFO: 'success',
+    WARNING: 'warning',
+    ERROR: 'error'
+  };
 
   const columns: Array<GridColDef> = [
     {
@@ -43,6 +52,22 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
       type: 'string',
       renderCell: (params: GridRenderCellParams) =>
         formatDate(params.value as string)
+    },
+    {
+      field: 'status',
+      headerName: t('commons.state'),
+      flex: 1,
+      type: 'string',
+      sortable: false,
+      renderCell: (params: GridRenderCellParams) => (
+        <ChipTruncateTooltip
+          label={t([
+            `classifications.statusChip.${params.value}`,
+            params.value
+          ])}
+          color={mapStatus[params.value] || 'default'}
+        />
+      )
     },
     {
       field: 'action',
