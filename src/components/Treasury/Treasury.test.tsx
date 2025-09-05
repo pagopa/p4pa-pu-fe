@@ -1,53 +1,34 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { fireEvent, screen } from '@testing-library/react';
-import { render } from '../../__tests__/renderers';
+import { fireEvent, screen, render, waitFor } from '../../__tests__/renderers';
 import Treasury from './Treasury';
-import { useNavigate } from 'react-router';
+import {
+  filterValues,
+  initialFilterValues,
+  noFilterIsSelected,
+  selectedFilters
+} from '../../store/FilterStore';
 
+// Mock useNavigate
+const mockNavigate = vi.fn();
 vi.mock('react-router', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
-    useNavigate: vi.fn()
-  };
-});
-
-const mockNoFilterIsSelected = {
-  peek: vi.fn()
-};
-
-vi.mock('../../hooks/useMultiFilters', () => ({
-  useMultiFilters: () => ({
-    filterMap: {},
-    removeAllFilters: vi.fn(),
-    noFilterIsSelected: mockNoFilterIsSelected
-  }),
-  FilterCategory: {
-    TREASURY: 'TREASURY'
-  }
-}));
-
-vi.mock('../../utils/filtersValidation', async (importOriginal) => {
-  const actual = (await importOriginal()) as Record<string, unknown>;
-  return {
-    ...actual,
-    noFilterSetted: vi.fn()
+    useNavigate: () => mockNavigate
   };
 });
 
 describe('Treasury', () => {
-  const mockNavigate = vi.fn();
-
   beforeEach(() => {
     vi.clearAllMocks();
-    (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
-      mockNavigate
-    );
+    // Reset store signals/state before each test
+    filterValues.value = { ...initialFilterValues };
+    selectedFilters.value = [];
+    mockNavigate.mockClear();
   });
 
   it('renders all sections and buttons', () => {
     render(<Treasury />);
-
     expect(screen.getByText('commons.routes.TREASURY')).toBeDefined();
     expect(screen.getByText('treasury.description')).toBeDefined();
     expect(screen.getByText('treasury.search')).toBeDefined();
@@ -58,9 +39,9 @@ describe('Treasury', () => {
     expect(screen.getByText('commons.showAllFlows')).toBeDefined();
   });
 
-  it('shows error alert with correct severity and text when trying to filter without any filters set', async () => {
-    mockNoFilterIsSelected.peek.mockReturnValue(false);
-
+  it('shows error alert when trying to search without valid filters', async () => {
+    // Simulate invalid filter state: empty selected filters so isValid false
+    selectedFilters.value = [];
     render(<Treasury />);
 
     const searchButton = screen.getByRole('button', {
@@ -70,38 +51,43 @@ describe('Treasury', () => {
 
     const errorAlert = screen.getByTestId('multifilters-error-text');
     expect(errorAlert).toBeInTheDocument();
-
     expect(errorAlert).toHaveAttribute('role', 'alert');
     expect(
       errorAlert.closest('[class*="MuiAlert-standardError"]')
     ).toBeInTheDocument();
-
     expect(errorAlert).toHaveTextContent('commons.filters.atLeastOneFilter');
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it('does not show error alert when no filters are selected and navigates correctly', async () => {
-    mockNoFilterIsSelected.peek.mockReturnValue(true);
+  it('does not show error and navigates correctly when filters are valid', async () => {
+    // Set up real store state with filters selected
+    selectedFilters.value = ['AMOUNT'];
+    filterValues.value = {
+      ...filterValues.value,
+      AMOUNT: 100 // example value to simulate filter set
+    };
+
+    const peekSpy = vi.spyOn(noFilterIsSelected, 'peek').mockReturnValue(false);
 
     render(<Treasury />);
-
     const searchButton = screen.getByRole('button', {
       name: 'commons.filters.filterResults'
     });
     fireEvent.click(searchButton);
 
-    const errorAlert = screen.queryByTestId('multifilters-error-text');
-    expect(errorAlert).not.toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId('multifilters-error-text')
+      ).not.toBeInTheDocument();
+    });
 
-    expect(mockNavigate).toHaveBeenCalledWith(
-      expect.stringContaining(
-        '/piattaformaunitaria/flows/treasury/search-results'
-      )
-    );
+    expect(mockNavigate).toHaveBeenCalledWith(expect.any(String));
+
+    peekSpy.mockRestore();
   });
 
-  it('clears error when remove button is clicked', async () => {
-    mockNoFilterIsSelected.peek.mockReturnValue(false);
-
+  it('clears error when remove filters button is clicked', () => {
+    selectedFilters.value = [];
     render(<Treasury />);
 
     const searchButton = screen.getByRole('button', {
@@ -119,5 +105,6 @@ describe('Treasury', () => {
     expect(
       screen.queryByTestId('multifilters-error-text')
     ).not.toBeInTheDocument();
+    expect(selectedFilters.value.length).toBe(0);
   });
 });

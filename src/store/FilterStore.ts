@@ -1,6 +1,7 @@
 import { computed, signal } from '@preact/signals-react';
 import { FilterValues } from '../models/Filters';
 import { FilterMap } from '../hooks/useMultiFilters';
+import { noFilterSetted } from '../utils/filtersValidation';
 
 export const initialFilterValues: FilterValues = {
   ACCOUNTING_DATE_FROM: null,
@@ -131,7 +132,7 @@ export const updateFilter = (id: KeyofFilterMap, index: number) => {
 export const filterValues = signal<FilterValues>(initialFilterValues);
 
 export const noFilterIsSelected = computed(() =>
-  Object.values(filterValues.value).some((value) => !!value)
+  noFilterSetted(filterValues.value)
 );
 
 export const setFilterValues = (newState: FilterValues) => {

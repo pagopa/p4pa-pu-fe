@@ -36,7 +36,7 @@ const ClassificationsSearchResults = () => {
     filterMap,
     selectedFilters,
     removeAllFilters,
-    noFilterIsSelected,
+    isValid,
     filterValues
   } = useMultiFilters({ filterCategory: FilterCategory.CLASSIFICATIONS });
 
@@ -57,14 +57,13 @@ const ClassificationsSearchResults = () => {
   });
 
   const applyFilters = () => {
-    if (!noFilterIsSelected.peek()) {
+    if (isValid) {
+      setError(false);
+      classifications.applyFilters(filterValues);
+      setDrawerOpen(false);
+    } else {
       setError(true);
-      return;
     }
-
-    setError(false);
-    classifications.applyFilters(filterValues);
-    setDrawerOpen(false);
   };
 
   const handleFilterInteraction = () => {
