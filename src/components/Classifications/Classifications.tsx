@@ -6,14 +6,14 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { FilterCategory, useMultiFilters } from '../../hooks/useMultiFilters';
 import { PageRoutes } from '../../routes';
-import { useNavigate } from 'react-router';
 import { useState } from 'react';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import { useAppNavigate } from '../../hooks/useAppNavigation';
 
 export const Classifications = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const { filterMap, removeAllFilters, isValid } = useMultiFilters({
+  const navigate = useAppNavigate();
+  const {  filterValues, filterMap, removeAllFilters, isValid } = useMultiFilters({
     clearOnMount: true,
     filterCategory: FilterCategory.CLASSIFICATIONS
   });
@@ -22,7 +22,7 @@ export const Classifications = () => {
 
   function submitSearch() {
     if (isValid) {
-      navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS);
+      navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS, { hashObject: filterValues });
     } else {
       setError(true);
     }

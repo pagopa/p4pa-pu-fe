@@ -4,8 +4,8 @@ import queryString from 'query-string';
 import { endOfDay } from 'date-fns';
 
 function sanitizeKeyChars(input: string): string {
-  // Allows letters, digits and literal dot
-  return input.replace(/[^a-zA-Z0-9.]/g, '');
+  // Allows letters, digits and literal dot and _
+  return input.replace(/[^a-zA-Z0-9._]/g, '');
 }
 
 const toDate = (value: string): Date => {
@@ -30,7 +30,7 @@ function decode(fragment: string): Record<string, string | Date> {
   Object.entries(parsed).forEach(([key, value]) => {
     const sanitizedKey = sanitizeKeyChars(key);
     if (isDateString(value)) {
-      if (sanitizedKey.endsWith('to')) {
+      if (/to$/i.test(sanitizedKey)) {
         flatObj[sanitizedKey] = endOfDay(toDate(value));
       } else {
         flatObj[sanitizedKey] = toDate(value);

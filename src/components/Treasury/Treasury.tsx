@@ -5,23 +5,24 @@ import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { PageRoutes } from '../../routes';
-import { generatePath, useNavigate } from 'react-router';
+import { generatePath } from 'react-router';
 import { useState } from 'react';
 import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import { useAppNavigate } from '../../hooks/useAppNavigation';
 
 export const Treasury = () => {
   const { t } = useTranslation();
-  const { filterMap, removeAllFilters, isValid } = useMultiFilters({
+  const { filterValues, filterMap, removeAllFilters, isValid } = useMultiFilters({
     clearOnMount: true,
     filterCategory: FilterCategory.TREASURY
   });
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
   const [error, setError] = useState(false);
 
   function submitSearch() {
     if (isValid) {
-      navigate(PageRoutes.TREASURY_SEARCH_RESULTS);
+      navigate(PageRoutes.TREASURY_SEARCH_RESULTS, { hashObject: filterValues });
     } else {
       setError(true);
     }

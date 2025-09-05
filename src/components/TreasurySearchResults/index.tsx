@@ -17,6 +17,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { getTreasuries } from '../../api/treasuries';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import utils from '../../utils';
 
 export type LocationState = {
   category: string;
