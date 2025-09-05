@@ -5,37 +5,6 @@ import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
 import { PageRoutes } from '../../routes';
 import { setUserInfo } from '../../store/UserInfoStore';
 
-//   state: {
-//     userInfo: {
-//       userId: 'userId',
-//       familyName: 'Polo',
-//       name: 'Marco'
-//     },
-//     organizations: [
-//       {
-//         organizationId: 1,
-//         orgLogo: 'logo.png',
-//         orgName: 'Org 1',
-//         operatorRole: OperatorRoleEnum.ROLE_ADMIN,
-//         ipaCode: 'ipaCode',
-//         orgFiscalCode: 'XXXXXXX',
-//         flagNotifyIo: false,
-//         flagNotifyOutcomePush: false,
-//         flagPaymentNotification: false
-//       }
-//     ]
-//   }
-// }));
-
-// // Mock dependencies
-// vi.mock('../../store/GlobalStore', async (importOriginal) => {
-//   const actual = await importOriginal();
-//   return {
-//     ...(actual as any),
-//     useStore: mockStore
-//   };
-// });
-
 // Mock dependencies
 vi.mock('react-router', async () => {
   const actual = await vi.importActual('react-router');
@@ -86,8 +55,10 @@ describe('Header component', () => {
     render(<Header onAssistanceClick={mockOnAssistanceClick} />);
 
     fireEvent.click(screen.getByText('Marco Polo'));
-    expect(screen.getByText('I tuoi dati')).toBeInTheDocument();
-    expect(screen.getByText('Esci')).toBeInTheDocument();
+    expect(
+      screen.getByText('commons.userActions.yourdata')
+    ).toBeInTheDocument();
+    expect(screen.getByText('commons.userActions.logout')).toBeInTheDocument();
   });
 
   it('should call onAssistanceClick when assistance button is clicked', () => {
@@ -103,7 +74,7 @@ describe('Header component', () => {
     render(<Header />);
 
     fireEvent.click(screen.getByText('Marco Polo'));
-    fireEvent.click(screen.getByText('Esci'));
+    fireEvent.click(screen.getByText('commons.userActions.logout'));
 
     await waitFor(() => {
       expect(mockStorage).toHaveBeenCalled();
@@ -132,7 +103,7 @@ describe('Header component', () => {
     render(<Header />);
 
     fireEvent.click(screen.getByText('Marco Polo'));
-    fireEvent.click(screen.getByText('I tuoi dati'));
+    fireEvent.click(screen.getByText('commons.userActions.yourdata'));
 
     expect(mockNavigate).toHaveBeenCalledWith('/');
   });
