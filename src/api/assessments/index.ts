@@ -7,6 +7,7 @@ import {
 import { parseAndLog } from '../../utils/loaders';
 import {
   assessmentsRegistryDTOSchema,
+  assessmentsRegistrySchema,
   assessmentsSchema,
   assessmentsDetailSchema
 } from '../../../generated/zod-schema';
@@ -131,7 +132,7 @@ export const updateAssessmentsRegistry = (
         assessmentRegistryId,
         assessmentRegistry
       );
-      parseAndLog(assessmentsRegistryDTOSchema, data);
+      parseAndLog(assessmentsRegistrySchema, data);
       return data;
     }
   });
