@@ -32,7 +32,7 @@ const TreasurySearchResults = () => {
     filterMap,
     selectedFilters,
     removeAllFilters,
-    noFilterIsSelected,
+    isValid,
     filterValues
   } = useMultiFilters({ filterCategory: FilterCategory.TREASURY });
 
@@ -54,9 +54,9 @@ const TreasurySearchResults = () => {
   });
 
   const applyFilters = () => {
-    if (noFilterIsSelected.peek()) {
-      treasury.applyFilters(filterValues);
+    if (isValid) {
       setError(false);
+      treasury.applyFilters(filterValues);
       setDrawerOpen(false);
     } else {
       setError(true);
