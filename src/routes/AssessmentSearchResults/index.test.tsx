@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
-import AssessmentSearchResults from './index';
-
-// Mock component props type
-type MockDataGridProps = {
-  data?: { content?: Array<unknown> };
-  onSortChange?: (sort: Array<string>) => void;
-  onPaginationChange?: (params: { page: number; size: number }) => void;
-  isLoading?: boolean;
-};
+import {
+  filterValues,
+  initialFilterValues,
+  selectedFilters
+} from '../../store/FilterStore';
+import AssessmentSearchResults from '../AssessmentSearchResults';
 
 // Mock data for assessments
 const mockAssessmentsSearchData = {
@@ -26,122 +23,69 @@ const mockAssessmentsSearchData = {
   size: 20
 };
 
-// Mocks for functions used in hooks and components
-const mockRemoveAllFilters = vi.fn();
-const mockNoFilterIsSelected = vi.fn(() => false);
-const mockApplyFilters = vi.fn();
-
-// Mock useMultiFilters hook
-vi.mock('../../hooks/useMultiFilters', () => {
-  return {
-    useMultiFilters: vi.fn(() => ({
-      filterMap: {
-        ASSESSMENT_NAME: {
-          label: 'assessment.name',
-          fields: [
-            {
-              type: 'textField',
-              label: 'assessment.name'
-            }
-          ]
-        },
-        DEBT_TYPE: {
-          label: 'debtType.title',
-          fields: [
-            {
-              type: 'select',
-              label: 'debtType.title',
-              options: []
-            }
-          ]
-        }
-      },
-      selectedFilters: ['ASSESSMENT_NAME'],
-      removeAllFilters: mockRemoveAllFilters,
-      noFilterIsSelected: {
-        peek: mockNoFilterIsSelected
-      },
-      filterValues: {
-        ASSESSMENT_NAME: 'Test Assessment',
-        DEBT_TYPE: '',
-        ASSESSMENT_STATUS: '',
-        IUV: '',
-        LAST_UPDATE_DATE_FROM: null,
-        LAST_UPDATE_DATE_TO: null
-      }
-    })),
-    FilterCategory: {
-      ASSESSMENT: 'ASSESSMENT'
-    }
-  };
-});
-
-// Mock useSearch hook
-vi.mock('../../hooks/useSearch', () => {
-  return {
-    useSearch: vi.fn(() => ({
-      query: {
-        data: mockAssessmentsSearchData,
-        isPending: false
-      },
-      applyFilters: mockApplyFilters
-    }))
-  };
-});
-
 // Mock AssessmentSearchResultsDataGrid component
-vi.mock('./AssessmentSearchResultsDataGrid', () => {
-  return {
-    default: (props: MockDataGridProps) => {
-      const length = props.data?.content?.length || 0;
-      const loadingText = props.isLoading ? 'loading' : 'loaded';
-      return (
-        <div data-testid="assessment-search-results-datagrid">
-          <span data-testid="mock-data-length">{length}</span>
-          <span data-testid="mock-is-loading">{loadingText}</span>
-        </div>
-      );
-    }
-  };
-});
+vi.mock('./AssessmentSearchResultsDataGrid', () => ({
+  default: (props: any) => {
+    const length = props.data?.content?.length || 0;
+    const loadingText = props.isLoading ? 'loading' : 'loaded';
+    return (
+      <div data-testid="assessment-search-results-datagrid">
+        <span data-testid="mock-data-length">{length}</span>
+        <span data-testid="mock-is-loading">{loadingText}</span>
+      </div>
+    );
+  }
+}));
 
 // Mock FilterDrawer component with data-testid and visibility logic
-vi.mock('../../components/Drawer/FilterDrawer', () => {
-  return {
-    FilterDrawer: (props: any) => {
-      const {
-        open,
-        onClose,
-        title,
-        render,
-        buttons,
-        'data-testid': dataTestId
-      } = props;
-      return (
-        <div
-          data-testid={dataTestId ?? 'drawer'}
-          style={{ visibility: open ? 'visible' : 'hidden' }}
-        >
-          <div>{title}</div>
-          {render}
-          {buttons?.map((btn: any, idx: number) => (
-            <button key={idx} onClick={btn.onButtonClick}>
-              {btn.buttonText}
-            </button>
-          ))}
-          <button onClick={onClose}>Close</button>
-        </div>
-      );
-    }
-  };
-});
+vi.mock('../../components/Drawer/FilterDrawer', () => ({
+  FilterDrawer: (props: any) => {
+    const {
+      open,
+      onClose,
+      title,
+      render,
+      buttons,
+      'data-testid': dataTestId
+    } = props;
+    return (
+      <div
+        data-testid={dataTestId ?? 'drawer'}
+        style={{ visibility: open ? 'visible' : 'hidden' }}
+      >
+        <div>{title}</div>
+        {render}
+        {buttons?.map((btn: any, idx: number) => (
+          <button key={idx} onClick={btn.onButtonClick}>
+            {btn.buttonText}
+          </button>
+        ))}
+        <button onClick={onClose}>Close</button>
+      </div>
+    );
+  }
+}));
+
+// Mock useSearch hook to return controlled data and spy on applyFilters
+const mockApplyFilters = vi.fn();
+vi.mock('../../hooks/useSearch', () => ({
+  useSearch: vi.fn(() => ({
+    query: {
+      data: mockAssessmentsSearchData,
+      isPending: false
+    },
+    applyFilters: mockApplyFilters
+  }))
+}));
 
 describe('AssessmentSearchResults', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Reset store state before each test
+    filterValues.value = { ...initialFilterValues };
+    selectedFilters.value = [];
+
     mockApplyFilters.mockClear();
-    // Default: no filters selected = false, triggers error case
-    mockNoFilterIsSelected.mockReturnValue(false);
   });
 
   it('should render all main elements', () => {
@@ -151,7 +95,7 @@ describe('AssessmentSearchResults', () => {
     ).toBeInTheDocument();
     expect(screen.getByTestId('open-drawer')).toBeInTheDocument();
     expect(
-      screen.getByText('commons.filters.filtersField (1)')
+      screen.getByText('commons.filters.filtersField (0)')
     ).toBeInTheDocument();
     expect(
       screen.getByTestId('assessment-search-results-datagrid')
@@ -159,6 +103,7 @@ describe('AssessmentSearchResults', () => {
   });
 
   it('should display correct filter count in drawer button', () => {
+    selectedFilters.value = ['ASSESSMENT_NAME'];
     render(<AssessmentSearchResults />);
     const drawerButton = screen.getByTestId('open-drawer');
     expect(drawerButton).toHaveTextContent('commons.filters.filtersField (1)');
@@ -168,7 +113,6 @@ describe('AssessmentSearchResults', () => {
     render(<AssessmentSearchResults />);
     const drawerButton = screen.getByTestId('open-drawer');
     const drawer = screen.getByTestId('drawer');
-
     expect(drawer).toHaveStyle({ visibility: 'hidden' });
     fireEvent.click(drawerButton);
     expect(drawer).toHaveStyle({ visibility: 'visible' });
@@ -176,29 +120,25 @@ describe('AssessmentSearchResults', () => {
       screen.getByText('commons.filters.filterResults')
     ).toBeInTheDocument();
     expect(screen.getByText('commons.filters.remove')).toBeInTheDocument();
-
     fireEvent.click(screen.getByText('Close'));
     expect(drawer).toHaveStyle({ visibility: 'hidden' });
   });
 
   it('should apply filters when filter button in drawer is clicked', () => {
-    mockNoFilterIsSelected.mockReturnValue(true); // filters are selected
+    selectedFilters.value = ['ASSESSMENT_NAME'];
+    filterValues.value = {
+      ...initialFilterValues,
+      ASSESSMENT_NAME: 'Test Assessment'
+    };
     render(<AssessmentSearchResults />);
     fireEvent.click(screen.getByTestId('open-drawer'));
     const filterButton = screen.getByText('commons.filters.filterResults');
     fireEvent.click(filterButton);
-    expect(mockApplyFilters).toHaveBeenCalledWith({
-      ASSESSMENT_NAME: 'Test Assessment',
-      DEBT_TYPE: '',
-      ASSESSMENT_STATUS: '',
-      IUV: '',
-      LAST_UPDATE_DATE_FROM: null,
-      LAST_UPDATE_DATE_TO: null
-    });
+    expect(mockApplyFilters).toHaveBeenCalledWith(filterValues.value);
   });
 
   it('should show error when applying filters without selected filters', () => {
-    mockNoFilterIsSelected.mockReturnValue(false); // no filters selected, should show error
+    selectedFilters.value = [];
     render(<AssessmentSearchResults />);
     fireEvent.click(screen.getByTestId('open-drawer'));
     const filterButton = screen.getByText('commons.filters.filterResults');
@@ -211,11 +151,13 @@ describe('AssessmentSearchResults', () => {
   });
 
   it('should remove all filters when remove button in drawer is clicked', () => {
+    selectedFilters.value = ['ASSESSMENT_NAME'];
     render(<AssessmentSearchResults />);
     fireEvent.click(screen.getByTestId('open-drawer'));
     const removeButton = screen.getByText('commons.filters.remove');
     fireEvent.click(removeButton);
-    expect(mockRemoveAllFilters).toHaveBeenCalled();
+    // check if selectedFilters were cleared
+    expect(selectedFilters.value.length).toBe(0);
   });
 
   it('should pass correct props to AssessmentSearchResultsDataGrid', () => {
@@ -225,7 +167,11 @@ describe('AssessmentSearchResults', () => {
   });
 
   it('should close drawer after applying filters successfully', async () => {
-    mockNoFilterIsSelected.mockReturnValue(true);
+    selectedFilters.value = ['ASSESSMENT_NAME'];
+    filterValues.value = {
+      ...initialFilterValues,
+      ASSESSMENT_NAME: 'Test Assessment'
+    };
     render(<AssessmentSearchResults />);
     const drawer = screen.getByTestId('drawer');
     fireEvent.click(screen.getByTestId('open-drawer'));
@@ -234,14 +180,7 @@ describe('AssessmentSearchResults', () => {
     ).toBeInTheDocument();
     const filterButton = screen.getByText('commons.filters.filterResults');
     fireEvent.click(filterButton);
-    expect(mockApplyFilters).toHaveBeenCalledWith({
-      ASSESSMENT_NAME: 'Test Assessment',
-      DEBT_TYPE: '',
-      ASSESSMENT_STATUS: '',
-      IUV: '',
-      LAST_UPDATE_DATE_FROM: null,
-      LAST_UPDATE_DATE_TO: null
-    });
+    expect(mockApplyFilters).toHaveBeenCalledWith(filterValues.value);
     await waitFor(() => {
       expect(drawer).toHaveStyle({ visibility: 'hidden' });
     });
