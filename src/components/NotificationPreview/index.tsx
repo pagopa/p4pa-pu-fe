@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns/format';
 import { it } from 'date-fns/locale';
 import { Stack, Typography, Divider } from '@mui/material';
@@ -7,6 +8,7 @@ import { ReceiptIcon } from '../../assets/icons/receipt';
 import { BackIcon } from '../../assets/icons/back';
 import { useTranslation } from 'react-i18next';
 import { MarkdownPreview } from '../MarkdownPreview';
+import { MousePopup } from '../AppPreview/MousePopup';
 
 type NotificationPreviewProps = {
   title?: string;
@@ -18,6 +20,16 @@ export const NotificationPreview = ({
   title
 }: NotificationPreviewProps) => {
   const { t } = useTranslation();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [isScrollable, setIsScrollable] = useState(false);
+
+  useEffect(() => {
+    const el = contentRef.current;
+    if (el) {
+      setIsScrollable(el.scrollHeight > el.clientHeight);
+    }
+  }, [message]);
+
   return (
     <Stack gap={2}>
       {/* Header */}
@@ -28,7 +40,6 @@ export const NotificationPreview = ({
           <QuestionIcon />
         </Stack>
       </Stack>
-
       {/* Meta Info */}
       <Stack>
         <Typography variant="h6" fontWeight={600}>
@@ -38,7 +49,6 @@ export const NotificationPreview = ({
           {format(new Date(), 'dd MMMM yyyy, HH:mm', { locale: it })}
         </Typography>
       </Stack>
-
       <Divider />
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Stack>
@@ -57,11 +67,17 @@ export const NotificationPreview = ({
         </Stack>
       </Stack>
       <Divider />
-
       {/* Message Body */}
-      <Stack mt={-2} data-testid="preview-body">
+      <Stack
+        mt={-2}
+        data-testid="preview-body"
+        ref={contentRef}
+        sx={{ maxHeight: 400, overflowY: 'scroll' }}
+      >
         <MarkdownPreview message={message} />
       </Stack>
+      {/* Show MousePopup only if message is scrollable */}
+      {isScrollable && <MousePopup />}
     </Stack>
   );
 };

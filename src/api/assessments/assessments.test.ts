@@ -14,7 +14,10 @@ import {
   deleteAssessmentDetails
 } from '.';
 import { initialFilterValues } from '../../store/FilterStore';
-import { assessmentsRegistryDTOSchema } from '../../../generated/zod-schema';
+import {
+  assessmentsRegistrySchema,
+  assessmentsRegistryDTOSchema
+} from '../../../generated/zod-schema';
 import { createMock } from 'zodock';
 import * as loaders from '../../utils/loaders';
 import type { AssessmentsRegistry } from '../../../generated/data-contracts';
@@ -1070,7 +1073,7 @@ describe('updateAssessmentsRegistry', () => {
       assessmentRegistry
     );
     expect(mockParseAndLog).toHaveBeenCalledWith(
-      assessmentsRegistryDTOSchema,
+      assessmentsRegistrySchema,
       expectedResponse
     );
   });

@@ -14,6 +14,7 @@ const TelematicReceiptImportFlowOverview = () => {
         IngestionFlowFileTypeEnum.RECEIPT,
         IngestionFlowFileTypeEnum.RECEIPT_PAGOPA
       ]}
+      accessibleTitle={t('telematicReceiptImportFlowOverview.accessibleTitle')}
     />
   );
 };

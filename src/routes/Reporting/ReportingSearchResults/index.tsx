@@ -50,6 +50,7 @@ const ReportingSearchResults = () => {
         <Stack>
           <TitleComponent
             title={t('commons.routes.REPORTING_SEARCH_RESULTS')}
+            accessibleTitle={t('reportingSearchResults.accessibleTitle')}
             description={t('reportingSearchResults.description')}
           />
           <Stack gap={3}>

@@ -261,6 +261,10 @@ export const AssessmentDetail = () => {
             status={data?.status}
           />
         ]}
+        accessibleTitle={t('assessmentDetail.accessibleTitle', {
+          assessmentId: data?.assessmentsName,
+          interpolation: { escapeValue: false }
+        })}
       />
       <Grid container spacing={2}>
         <Grid item md={12}>

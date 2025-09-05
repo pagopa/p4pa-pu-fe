@@ -267,6 +267,7 @@ export const DebtPositionsInstallmentDetail = () => {
             sections={[
               {
                 title: { label: t(summaryTitle), variant: 'h6' },
+                description: installment?.debtPositionDescription,
                 data: installmentDetailData.summaryData,
                 inline: true,
                 footerLink: {

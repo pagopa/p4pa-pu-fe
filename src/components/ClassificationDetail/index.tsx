@@ -275,7 +275,10 @@ export const ClassificationDetails = () => {
 
   return (
     <>
-      <TitleComponent title={t('classifications.title')} />
+      <TitleComponent
+        title={t('classifications.title')}
+        accessibleTitle={t('classifications.accessibleTitle')}
+      />
 
       <StatusBar classificationData={data} />
 
