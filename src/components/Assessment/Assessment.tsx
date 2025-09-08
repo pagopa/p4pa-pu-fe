@@ -15,10 +15,11 @@ export const Assessment = () => {
   const { t } = useTranslation();
   const navigate = useAppNavigate();
 
-  const { filterValues, filterMap, removeAllFilters, isValid } = useMultiFilters({
-    clearOnMount: true,
-    filterCategory: FilterCategory.ASSESSMENT
-  });
+  const { filterValues, filterMap, removeAllFilters, isValid } =
+    useMultiFilters({
+      clearOnMount: true,
+      filterCategory: FilterCategory.ASSESSMENT
+    });
 
   const [error, setError] = useState(false);
 

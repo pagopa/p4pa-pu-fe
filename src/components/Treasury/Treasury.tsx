@@ -13,16 +13,19 @@ import { useAppNavigate } from '../../hooks/useAppNavigation';
 
 export const Treasury = () => {
   const { t } = useTranslation();
-  const { filterValues, filterMap, removeAllFilters, isValid } = useMultiFilters({
-    clearOnMount: true,
-    filterCategory: FilterCategory.TREASURY
-  });
+  const { filterValues, filterMap, removeAllFilters, isValid } =
+    useMultiFilters({
+      clearOnMount: true,
+      filterCategory: FilterCategory.TREASURY
+    });
   const navigate = useAppNavigate();
   const [error, setError] = useState(false);
 
   function submitSearch() {
     if (isValid) {
-      navigate(PageRoutes.TREASURY_SEARCH_RESULTS, { hashObject: filterValues });
+      navigate(PageRoutes.TREASURY_SEARCH_RESULTS, {
+        hashObject: filterValues
+      });
     } else {
       setError(true);
     }

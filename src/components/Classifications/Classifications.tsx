@@ -13,16 +13,19 @@ import { useAppNavigate } from '../../hooks/useAppNavigation';
 export const Classifications = () => {
   const { t } = useTranslation();
   const navigate = useAppNavigate();
-  const {  filterValues, filterMap, removeAllFilters, isValid } = useMultiFilters({
-    clearOnMount: true,
-    filterCategory: FilterCategory.CLASSIFICATIONS
-  });
+  const { filterValues, filterMap, removeAllFilters, isValid } =
+    useMultiFilters({
+      clearOnMount: true,
+      filterCategory: FilterCategory.CLASSIFICATIONS
+    });
 
   const [error, setError] = useState(false);
 
   function submitSearch() {
     if (isValid) {
-      navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS, { hashObject: filterValues });
+      navigate(PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS, {
+        hashObject: filterValues
+      });
     } else {
       setError(true);
     }

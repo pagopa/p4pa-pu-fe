@@ -22,8 +22,10 @@ export function useAppNavigate() {
     const filteredOptions = Object.fromEntries(
       Object.entries(options || {}).filter(([_, v]) => v !== undefined)
     );
-  
-    Object.keys(filteredOptions).length > 0 ? navigate(path, options) : navigate(path);
+
+    Object.keys(filteredOptions).length > 0
+      ? navigate(path, options)
+      : navigate(path);
   };
 
   return appNavigate;
