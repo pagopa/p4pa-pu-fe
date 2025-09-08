@@ -118,12 +118,20 @@ export const DebtTypesCreated = () => {
     ? descriptionFullOrNot
     : descriptionByUrl;
 
+  const getAccessibleTitle = () => {
+    if (organizationIdByURL && titleByUrl) {
+      return t('debtTypesCreated.accessibleTitle', { orgName: titleByUrl });
+    }
+    return t('commons.routes.DEBT_TYPES_DASHBOARD');
+  };
+
   return (
     <>
       <TitleComponent
         title={titleByUrl ?? t('commons.routes.DEBT_TYPES_DASHBOARD')}
         callToAction={!organizationIdByURL ? callToActionEl : []}
         description={t(description)}
+        accessibleTitle={getAccessibleTitle()}
       />
 
       {isSuperAdmin && !organizationIdByURL ? renderTabs() : null}

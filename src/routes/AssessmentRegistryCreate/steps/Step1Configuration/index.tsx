@@ -52,7 +52,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
             control={control}
             label={t('AssessmentRegistryCreate.debtPositionType')}
             options={selectionQuery?.optionsMap}
-            disabled={!selectionQuery?.optionsMap?.length}
+            disabled={edit || !selectionQuery?.optionsMap?.length}
             required
           />
         </SectionBox>

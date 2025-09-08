@@ -1,5 +1,6 @@
 {
   "AssessmentRegistryCreate": {
+    "accessibleTitle": "Creazione capitolo",
     "success": {
       "backToStart": "Visualizza capitoli",
       "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
@@ -34,6 +35,7 @@
     "debtPositionType": "Tipo dovuto"
   },
   "AssessmentRegistryUpdate": {
+    "accessibleTitle": "Modifica capitolo",
     "success": {
       "backToStart": "Visualizza capitoli",
       "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
@@ -54,8 +56,13 @@
         "status": "Stato"
       },
       "title": "Posizioni Debitorie",
-      "titleIUV": "Avvisi (IUV)"
+      "titleIUV": "Avvisi (IUV)",
+      "accessibleTitleIUV": "Risultato ricerca Avvisi",
+      "accessibleTitleDP": "Risultato ricerca posizioni debitorie"
     }
+  },
+  "debtPositionsImportFlowOverview": {
+    "accessibleTitle": "Flussi importati: posizioni debitorie"
   },
   "FileUploaderFlowImport": {
     "debt-positions": {
@@ -82,6 +89,7 @@
     "mousePopup": "Scorri con il cursore per visualizzare l’anteprima completa"
   },
   "assessment": {
+    "accessibleTitle": "Risultato ricerca accertamento pagamenti",
     "title": "Accertamenti pagamenti",
     "assessment": "Accertamento ",
     "search": "Cerca accertamenti",
@@ -223,6 +231,7 @@
     }
   },
   "assessmentDetail": {
+    "accessibleTitle": "Dettaglio accertamento: {{assessmentId}}",
     "debtType": "Tipo dovuto",
     "createdBy": "Creato da",
     "paymentsAssociated": "Pagamenti associati",
@@ -247,6 +256,7 @@
       "description": "Non è possibile aggiungere o rimuovere pagamenti per questo accertamento."
     },
     "paymentDetail": {
+      "accessibleTitle": "Dettaglio pagamento accertamento",
       "title": "Dettaglio pagamento",
       "summary": "Riepilogo",
       "paymentInfo": "Informazione sul pagamento",
@@ -276,6 +286,7 @@
   },
   "classifications": {
     "title": "Dettaglio Pagamento",
+    "accessibleTitle": "Dettaglio classificazione pagamenti",
     "description": "Ricerca o visualizza classificazioni",
     "search": "Cerca gli stati dei pagamenti",
     "searchdescription": "Controlla se i pagamenti sono stati debitamente notificati, rendicontati e riconciliati oppure verifica degli errori. Inserisci al meno un filtro per avviare la ricerca.",
@@ -434,6 +445,7 @@
     }
   },
   "classificationsExport": {
+    "accessibleTitle": "Flussi esportati: classificazione pagamenti",
     "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "classificationsOptions": {
       "ALL": "Tutti",
@@ -452,6 +464,9 @@
       "IUD_NO_RT": "Notifiche di pagamenti non eseguiti",
       "TES_NO_MATCH": "Riversamenti di tesoreria sconosciuti",
       "UNKNOWN": "Sconosciuto"
+    },
+    "exportPage": {
+      "accessibleTitle": "Prenotazione export flusso: Conservazione"
     },
     "title": "Prenota export di un flusso",
     "description": "Imposta i filtri e Inserisci i dati per prenotare l'esportazione delle classificazioni dei pagamenti e conoscere se è stato riconciliato o ci sono delle anomalie.",
@@ -494,7 +509,11 @@
       "missingRequiredFields": "Verifica di aver compilato i filtri obbligatori"
     }
   },
+  "classificationsSearchResults": {
+    "accessibleTitle": "Risultato ricerca classificazione pagamenti"
+  },
   "clientSil": {
+    "accessibleTitle": "Ricerca client sil",
     "addNew": "Aggiungi nuovo",
     "filters": {
       "clientName": "Nome Client SIL",
@@ -546,6 +565,7 @@
     }
   },
   "clientSilDetail": {
+    "accessibleTitle": "Dettaglio client sil: {{clientName}}",
     "description": "Ecco i dettagli del Client SIL censito",
     "key": "Key",
     "reloadSecretOK": "Secret key rigenerata correttamente",
@@ -559,6 +579,7 @@
     "addfilter": "Aggiunge filtro",
     "amount": "Importo",
     "anonymousFiscalCode": "Codice Fiscale Anonimo",
+    "appName": "Piattaforma Unitaria",
     "auditor": "Gestore della transazione (PSP)",
     "back": "Indietro",
     "behavior": "Comportamento",
@@ -618,6 +639,11 @@
     "exit": "Esci",
     "exportedFlows": "Flussi esportati",
     "exportFlows": "Esporta flussi",
+    "exportFlowCategories": {
+      "receipt": "Ricevute Telematiche",
+      "conservation": "Conservazione"
+    },
+    "exportFlowPageTitleWithCategory": "Prenotazione export flusso: {{category}}",
     "exportFrom": "Esportati dal",
     "files": {
       "download": "Scarica",
@@ -734,6 +760,13 @@
     "importFlow": "Importa flusso",
     "importFlowErrorMessage": "Non è stato possibile importare il flusso",
     "importFlows": "Importa flussi",
+    "importFlowCategories": {
+      "telematic-receipt": "di Ricevute Telematiche",
+      "reporting": "di Rendicontazione",
+      "treasury": "di Tesoreria", 
+      "debt-positions": "di Posizioni Debitorie"
+    },
+    "importNewFlowWithCategory": "Carica un nuovo flusso {{category}}",
     "importFrom": "Caricati dal",
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
@@ -789,6 +822,10 @@
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
+    "roles": {
+      "ROLE_ADMIN": "Amministratore",
+      "ROLE_OPER": "Operatore"
+    },
     "routes": {
       "ASSESSMENT": "Accertamento pagamenti",
       "ASSESSMENT_CREATION": "Crea un nuovo accertamento",
@@ -926,6 +963,10 @@
     "unknownOrganization": "Ente senza nome",
     "uploadedFrom": "Caricati dal",
     "updatedFrom": "Aggiornato dal",
+    "userActions": {
+      "yourdata": "I tuoi dati",
+      "logout": "Esci"
+    },
     "view": "Visualizza",
     "validation": {
       "selectAtLeastOneOption": "Seleziona almeno un'opzione",
@@ -1207,6 +1248,7 @@
     }
   },
   "debtPositionInstallmentDetail": {
+    "accessibleTitle": "Dettaglio Posizione Debitoria: {{description}}",
     "dialogDownload": {
       "title": "L'avviso non può essere scaricato.",
       "message": "Siamo spiacenti, questo file non può essere scaricato. Possono essere scaricati solo gli avvisi non pagati."
@@ -1242,6 +1284,7 @@
     "description": "Troverai il flusso caricato nella sezione Flussi importati"
   },
   "debtTypeCatalogDetail": {
+    "accessibleTitle": "Dettaglio tipo dovuto: {{description}}",
     "IOAppMessageTemplate": "Template Messaggio su app IO",
     "additionalSettings": {
       "description": "Altre caratteristiche del Tipo dovuto.",
@@ -1336,6 +1379,7 @@
     "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
   },
   "debtTypeDetail": {
+    "accessibleTitle": "Dettaglio tipo dovuto impostato: {{description}}",
     "confirmDisableDialog": {
       "title": "Sei sicuro di voler Disabilitare il Tipo dovuto?",
       "description": "Una volta disabilitato, non sarà più possibile creare nuove posizioni debitorie con questo Tipo dovuto. Le posizioni già create, tuttavia, resteranno valide."
@@ -1568,6 +1612,7 @@
     "searchDescription": "Codice per Descrizione"
   },
   "debtTypesCreated": {
+    "accessibleTitle": "Tipi dovuti impostati ente: {{orgName}}",
     "callToAction": "Imposta nuovo",
     "descriptionFull": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente o negli enti gestiti.",
     "descriptionByURL": "In questa sezione trovi i Tipi di dovuti presenti per l'ente gestito.",
@@ -1607,6 +1652,8 @@
       "nodo": "Eventi nodo PagoPA"
     },
     "list": {
+      "accessibleTitleSil": "Risultati ricerca eventi Sil",
+      "accessibleTitlePagoPa": "Risultati ricerca eventi PagoPa",
       "title": "Risultato ricerca",
       "date": "Data evento",
       "outcome": "Esito",
@@ -1655,6 +1702,7 @@
     "byService": "Servizio mittente*"
   },
   "orgSilService": {
+    "accessibleTitle": "Ricerca org sil service",
     "amountActualization": "Attualizzazione importo",
     "api": "API",
     "serviceType": "Tipo Servizio",
@@ -1702,6 +1750,7 @@
     }
   },
   "orgSilServiceDetail": {
+    "accessibleTitle":"Dettaglio org sil service: {{applicationName}}",
     "description": "Ecco i dettagli dell'API.",
     "delete": {
       "title": "Sei sicuro di voler eliminare l'API?",
@@ -1787,6 +1836,7 @@
     "title": "Rendicontazione"
   },
   "reportingDetail": {
+    "accessibleTitle": "Dettaglio rendicontazione: {{iuf}}",
     "hourAndDate": "Data e ora",
     "regulationDate": "Data Regolamento",
     "regulationId": "ID Regolamento",
@@ -1795,15 +1845,18 @@
     "totalPayments": "Totale pagamenti"
   },
   "reportingImportFlowOverview": {
+    "accessibleTitle": "Flussi importati: rendicontazione",
     "description": "Visualizza i flussi importati in precedenza e importa nuovi."
   },
   "reportingImportThankYouPage": {
     "description": "Troverai il flusso caricato nella sezione Flussi importati"
   },
   "reportingPaymentDetail": {
-    "title": "Dettaglio Pagamento"
+    "title": "Dettaglio Pagamento",
+    "accessibleTitle": "Dettaglio pagamento rendicontazione"
   },
   "reportingSearchResults": {
+    "accessibleTitle": "Risultato ricerca rendicontazione",
     "description": "Visualizza in dettaglio e scarica i flussi di Rendicontazione.",
     "flowDate": "Data flusso",
     "payments": "Pagamenti",
@@ -1836,6 +1889,7 @@
     }
   },
   "taxonomyPage": {
+    "accessibleTitle": "Dettaglio tassonomia: {{taxonomyCode}}",
     "APIUpdate": "Aggiornamento Lista Codici Tassonomici",
     "APIUpdateText": "Aggiornamento per recuperare da PagoPA eventuali aggiornamenti della Lista Codici Tassonomici",
     "APIUpdateCTA": "Aggiorna Lista",
@@ -1857,10 +1911,14 @@
       "taxonomyCode": "Codice tassonomico"
     }
   },
+  "taxonomySearchResults": {
+    "accessibleTitle": "Risultato ricerca tassonomia"
+  },
   "telematicReceiptDetail": {
     "title": "Dettaglio Ricevuta Telematica"
   },
   "telematicReceiptFlowExportOverview": {
+    "accessibleTitle": "Flussi esportati: ricevute telematiche",
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
     "exportFrom": "Esportati dal"
   },
@@ -1875,6 +1933,7 @@
     "description": "Troverai il flusso caricato nella sezione Flussi importati"
   },
   "telematicReceiptImportFlowOverview": {
+    "accessibleTitle": "Flussi importati: ricevute telematiche",
     "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
     "internalID": "ID interno",
     "loadedDiscarded": "Validi/Scarti"
@@ -1895,7 +1954,8 @@
   },
   "telematicreceiptSearchResults": {
     "description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
-    "title": "Risultato ricerca"
+    "title": "Risultato ricerca",
+    "accessibleTitle": "Risultato ricerca ricevute telematiche"
   },
   "treasury": {
     "account": "Conto",
@@ -1912,9 +1972,11 @@
     "tempDocumentYear": "Anno codice Provvisorio"
   },
   "treasuryImportFlowOverview": {
+    "accessibleTitle": "Flussi importati: tesoreria",
     "description": "Visualizza i flussi importati in precedenza e importa nuovi."
   },
   "treasurySearchResults": {
+    "accessibleTitle": "Risultato ricerca tesoreria",
     "accountingDate": "Data Contabile",
     "billingCode": "Codice bolletta",
     "billingYear": "Anno bolletta",

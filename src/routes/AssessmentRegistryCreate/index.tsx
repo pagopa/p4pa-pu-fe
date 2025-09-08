@@ -1,4 +1,3 @@
-// assessmentRegistry/AssessmentRegistryCreate.tsx
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -14,6 +13,7 @@ import {
 import { AssessmentsRegistry } from '../../../generated/data-contracts';
 import { createAssessmentsRegistry } from '../../api/assessments';
 import { useStore } from '../../store/GlobalStore';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
 
 export const AssessmentRegistryCreate = () => {
   const { t } = useTranslation();
@@ -64,6 +64,9 @@ export const AssessmentRegistryCreate = () => {
 
   return (
     <FormProvider {...methods}>
+      <TitleComponent
+        accessibleTitle={t('AssessmentRegistryCreate.accessibleTitle')}
+      />
       <form
         aria-label={t('assessmentRegistry.formLabel')}
         role="form"

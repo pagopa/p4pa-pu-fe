@@ -39,7 +39,7 @@ const AssessmentSearchResults = () => {
     filterMap,
     selectedFilters,
     removeAllFilters,
-    noFilterIsSelected,
+    isValid,
     filterValues
   } = useMultiFilters({ filterCategory: FilterCategory.ASSESSMENT });
 
@@ -60,9 +60,9 @@ const AssessmentSearchResults = () => {
   });
 
   const applyFilters = () => {
-    if (noFilterIsSelected.peek()) {
-      assessments.applyFilters(filterValues);
+    if (isValid) {
       setError(false);
+      assessments.applyFilters(filterValues);
       setDrawerOpen(false);
     } else {
       setError(true);
@@ -82,6 +82,7 @@ const AssessmentSearchResults = () => {
             dataTestId: 'assessment-create-button'
           }
         ]}
+        accessibleTitle={t('assessment.accessibleTitle')}
       />
 
       <Grid container justifyContent="flex-end" p={2}>

@@ -17,6 +17,7 @@ import {
 } from '../../api/assessments';
 import { useStore } from '../../store/GlobalStore';
 import { useEffect, useState } from 'react';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
 
 export const AssessmentRegistryEdit = () => {
   const { t } = useTranslation();
@@ -96,6 +97,9 @@ export const AssessmentRegistryEdit = () => {
 
   return (
     <FormProvider {...methods}>
+      <TitleComponent
+        accessibleTitle={t('AssessmentRegistryUpdate.accessibleTitle')}
+      />
       <form
         aria-label={t('assessmentRegistry.formLabelEdit')}
         role="form"

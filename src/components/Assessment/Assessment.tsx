@@ -15,7 +15,7 @@ export const Assessment = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { filterMap, removeAllFilters, noFilterIsSelected } = useMultiFilters({
+  const { filterMap, removeAllFilters, isValid } = useMultiFilters({
     clearOnMount: true,
     filterCategory: FilterCategory.ASSESSMENT
   });
@@ -35,8 +35,7 @@ export const Assessment = () => {
   };
 
   function submitSearch() {
-    if (noFilterIsSelected.peek()) {
-      setError(false);
+    if (isValid) {
       navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS);
     } else {
       setError(true);
