@@ -61,9 +61,6 @@
       "accessibleTitleDP": "Risultato ricerca posizioni debitorie"
     }
   },
-  "debtPositionsImportFlowOverview": {
-    "accessibleTitle": "Flussi importati: posizioni debitorie"
-  },
   "FileUploaderFlowImport": {
     "debt-positions": {
       "description": "Carica qui il file .zip con i Dovuti"
@@ -442,6 +439,11 @@
           }
         }
       }
+    },
+    "statusChip": {
+      "ERROR": "Anomalie",
+      "INFO": "Verificato",
+      "WARNING": "In completamento"
     }
   },
   "classificationsExport": {
@@ -763,7 +765,7 @@
     "importFlowCategories": {
       "telematic-receipt": "di Ricevute Telematiche",
       "reporting": "di Rendicontazione",
-      "treasury": "di Tesoreria", 
+      "treasury": "di Tesoreria",
       "debt-positions": "di Posizioni Debitorie"
     },
     "importNewFlowWithCategory": "Carica un nuovo flusso {{category}}",
@@ -1280,6 +1282,9 @@
     "searchFiscalCodeDescription": "Cerca Codice Fiscale",
     "searchIUVDescription": "Cerca Codice Avviso (IUV)"
   },
+  "debtPositionsImportFlowOverview": {
+    "accessibleTitle": "Flussi importati: posizioni debitorie"
+  },
   "debtPositionsImportThankYouPage": {
     "description": "Troverai il flusso caricato nella sezione Flussi importati"
   },
@@ -1750,7 +1755,7 @@
     }
   },
   "orgSilServiceDetail": {
-    "accessibleTitle":"Dettaglio org sil service: {{applicationName}}",
+    "accessibleTitle": "Dettaglio org sil service: {{applicationName}}",
     "description": "Ecco i dettagli dell'API.",
     "delete": {
       "title": "Sei sicuro di voler eliminare l'API?",

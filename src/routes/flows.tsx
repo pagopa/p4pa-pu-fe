@@ -47,7 +47,8 @@ export const flowsRoutes = [
             element: <TelematicReceipt />,
             id: 'TELEMATIC_RECEIPT_INDEX',
             handle: {
-              backButton: false
+              backButton: false,
+              hideBreadcrumbElement: true
             } as RouteHandleObject
           },
           {
@@ -100,7 +101,8 @@ export const flowsRoutes = [
             element: <Reporting />,
             id: 'REPORTING_INDEX',
             handle: {
-              backButton: false
+              backButton: false,
+              hideBreadcrumbElement: true
             } as RouteHandleObject
           },
           {
@@ -152,7 +154,8 @@ export const flowsRoutes = [
             element: <Treasury />,
             id: 'TREASURY_INDEX',
             handle: {
-              backButton: false
+              backButton: false,
+              hideBreadcrumbElement: true
             } as RouteHandleObject
           },
           {
@@ -194,7 +197,8 @@ export const flowsRoutes = [
             element: <Conservation />,
             id: 'CONSERVATION_INDEX',
             handle: {
-              backButton: false
+              backButton: false,
+              hideBreadcrumbElement: true
             } as RouteHandleObject
           }
         ]
