@@ -15,9 +15,17 @@ export function useAppNavigate() {
     let path = to;
     if (options?.hashObject !== undefined) {
       const hash = utils.URI.encode(options.hashObject);
-      path = `${to}#${hash}`;
+      path = hash ? `${to}#${hash}` : to;
+      delete options.hashObject;
     }
-    navigate(path, options);
+
+    const filteredOptions = Object.fromEntries(
+      Object.entries(options || {}).filter(([, v]) => v !== undefined)
+    );
+
+    return Object.keys(filteredOptions).length > 0
+      ? navigate(path, options)
+      : navigate(path);
   };
 
   return appNavigate;
