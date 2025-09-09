@@ -11,7 +11,6 @@ import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
 import {
-  useLocation,
   useParams,
   useNavigate,
   generatePath
@@ -33,9 +32,6 @@ export const DebtPositionsInstallmentDetail = () => {
   const { state } = useStore();
   const { id } = useParams<{ id: string }>();
 
-  const {
-    state: { remittanceInformation: remittanceInformation }
-  } = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -129,8 +125,6 @@ export const DebtPositionsInstallmentDetail = () => {
     installment?.status && DEBT_RESOLVED_STATES.includes(installment.status);
 
   type DetailDataValue = Record<string, Array<DetailData>> | Array<DetailData>;
-
-  const summaryTitle: string = remittanceInformation || '';
 
   const installmentDetailData: DetailDataValue = {
     summaryData: [
@@ -266,7 +260,6 @@ export const DebtPositionsInstallmentDetail = () => {
           <DetailContainer
             sections={[
               {
-                title: { label: t(summaryTitle), variant: 'h6' },
                 description: installment?.debtPositionDescription,
                 data: installmentDetailData.summaryData,
                 inline: true,
