@@ -83,7 +83,7 @@ describe('Classifications', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('multifilters-error-text')).toBeNull();
       expect(mockNavigate).toHaveBeenCalledWith(
-        '/piattaformaunitaria/classifications/search-results/'
+        '/piattaformaunitaria/classifications/search-results/#CLASSIFICATION_TYPE=some-type'
       );
     });
 

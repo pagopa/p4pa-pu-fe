@@ -70,7 +70,7 @@ describe('Assessment', () => {
         screen.queryByTestId('multifilters-error-text')
       ).not.toBeInTheDocument();
       expect(mockNavigate).toHaveBeenCalledWith(
-        '/piattaformaunitaria/assessment/search-results'
+        '/piattaformaunitaria/assessment/search-results#ASSESSMENT_NAME=test'
       );
     });
 

@@ -7,18 +7,19 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import { useAppNavigate } from '../../hooks/useAppNavigation';
 
 export const Assessment = () => {
   const { t } = useTranslation();
-  const navigate = useNavigate();
+  const navigate = useAppNavigate();
 
-  const { filterMap, removeAllFilters, isValid } = useMultiFilters({
-    clearOnMount: true,
-    filterCategory: FilterCategory.ASSESSMENT
-  });
+  const { filterValues, filterMap, removeAllFilters, isValid } =
+    useMultiFilters({
+      clearOnMount: true,
+      filterCategory: FilterCategory.ASSESSMENT
+    });
 
   const [error, setError] = useState(false);
 
@@ -36,7 +37,10 @@ export const Assessment = () => {
 
   function submitSearch() {
     if (isValid) {
-      navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS);
+      setError(false);
+      navigate(PageRoutes.ASSESSMENT_SEARCH_RESULTS, {
+        hashObject: filterValues
+      });
     } else {
       setError(true);
     }
