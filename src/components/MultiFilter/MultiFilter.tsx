@@ -44,7 +44,6 @@ const MultiFilter = ({ filterMap, onFilterInteraction }: MultiFilterProps) => {
     <Stack gap={3}>
       {selectedFilters
         .slice()
-        .sort((a, b) => a.localeCompare(b))
         .map((filterId, index) => (
           <Stack
             key={filterId}
