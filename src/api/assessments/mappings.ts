@@ -22,7 +22,9 @@ export const buildAssessmentsRegistriesQueryParams = ({
   officeDescription: filters.OFFICE_DESCRIPTION,
   assessmentCode: filters.ASSESSMENT_CODE,
   assessmentDescription: filters.ASSESSMENT_DESCRIPTION,
-  operatingYear: format(filters.OPERATING_YEAR, 'yyyy'),
+  operatingYear: filters.OPERATING_YEAR
+    ? format(filters.OPERATING_YEAR, 'yyyy')
+    : undefined,
   status: filters.STATUS as AssessmentsRegistryStatus,
   page: pagination.page,
   size: pagination.size,
