@@ -73,6 +73,16 @@ vi.mock('../../models/SuccessPageConfig', () => ({
           actionID: 'DEBT_TYPES_CATALOG'
         }
       ]
+    },
+    'assessment-create-partial-success': {
+      title: 'assessmentCreate.partialSuccess.title',
+      description: 'assessmentCreate.partialSuccess.description',
+      buttonConfig: [
+        {
+          buttonLabel: 'assessmentCreate.partialSuccess.goToDetail',
+          customNavigation: 'ASSESSMENT_DETAIL'
+        }
+      ]
     }
   }
 }));
@@ -244,6 +254,78 @@ describe('SuccessPage', () => {
 
       // This is the actual behavior: PageRoutes[undefined || PageRoutes.HOME] = PageRoutes[PageRoutes.HOME] = undefined
       expect(mockNavigate).toHaveBeenCalledWith(undefined);
+    });
+  });
+
+  describe('partial success scenarios', () => {
+    it('renders partial success page with warning icon and appropriate messages', () => {
+      mockUseLocation.mockReturnValue({
+        state: {
+          category: 'assessment-create-partial-success',
+          assessmentId: 123,
+          i18nParams: { assessmentName: 'Test Assessment' }
+        }
+      });
+
+      render(<SuccessPage />);
+
+      expect(
+        screen.getByText('assessmentCreate.partialSuccess.title')
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText('assessmentCreate.partialSuccess.description')
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByRole('button', {
+          name: 'assessmentCreate.partialSuccess.goToDetail'
+        })
+      ).toBeInTheDocument();
+
+      const warningIcon = document.querySelector(
+        '[data-testid="WarningAmberOutlinedIcon"]'
+      );
+      expect(warningIcon).toBeInTheDocument();
+    });
+
+    it('navigates to assessment detail when partial success button is clicked', () => {
+      mockUseLocation.mockReturnValue({
+        state: {
+          category: 'assessment-create-partial-success',
+          assessmentId: 456
+        }
+      });
+
+      render(<SuccessPage />);
+      const button = screen.getByRole('button', {
+        name: 'assessmentCreate.partialSuccess.goToDetail'
+      });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        PageRoutes.ASSESSMENT_DETAIL.replace(':id', '456')
+      );
+    });
+
+    it('shows success icon for normal assessment creation', () => {
+      mockUseLocation.mockReturnValue({
+        state: {
+          category: 'assessment-create',
+          assessmentId: 123
+        }
+      });
+
+      render(<SuccessPage />);
+
+      const successIcon = document.querySelector(
+        '[data-testid="CheckCircleOutlineOutlinedIcon"]'
+      );
+      expect(successIcon).toBeInTheDocument();
+
+      const warningIcon = document.querySelector(
+        '[data-testid="WarningAmberOutlinedIcon"]'
+      );
+      expect(warningIcon).not.toBeInTheDocument();
     });
   });
 });

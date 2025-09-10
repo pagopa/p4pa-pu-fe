@@ -129,7 +129,8 @@ export const AssessmentDetail = () => {
       return;
     }
 
-    const debtPositionTypeOrgCode = detailItem?.debtPositionTypeOrgCode;
+    const debtPositionTypeOrgCode =
+      data?.debtPositionTypeOrgCode || detailItem?.debtPositionTypeOrgCode;
 
     const searchParams = new URLSearchParams({
       mode: 'remove',
@@ -156,7 +157,8 @@ export const AssessmentDetail = () => {
       return;
     }
 
-    const debtPositionTypeOrgCode = detailItem?.debtPositionTypeOrgCode;
+    const debtPositionTypeOrgCode =
+      data?.debtPositionTypeOrgCode || detailItem?.debtPositionTypeOrgCode;
 
     const searchParams = new URLSearchParams({
       mode: 'add',
