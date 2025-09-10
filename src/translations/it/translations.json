@@ -195,6 +195,11 @@
       "description": "Puoi trovarlo nella sezione accertamento pagamenti, dove puoi consultarlo in qualsiasi momento.",
       "goToDetail": "Visualizza accertamento"
     },
+    "partialSuccess": {
+      "title": "Accertamento \"{{assessmentName}}\" creato con pagamenti non associati",
+      "description": "L'accertamento è stato creato correttamente, ma non è stato possibile associare i pagamenti selezionati. Puoi aggiungerli manualmente accedendo al dettaglio dell'accertamento.",
+      "goToDetail": "Vai al dettaglio e aggiungi pagamenti"
+    },
     "removePayments": {
       "title": "Rimuovi pagamenti",
       "description": "Cerca e seleziona i pagamenti nell’acertamento da rimuovere.",

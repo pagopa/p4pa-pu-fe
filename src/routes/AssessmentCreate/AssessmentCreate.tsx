@@ -273,42 +273,69 @@ export const AssessmentCreate = () => {
       if (!assessmentId) {
         throw new Error('Assessment ID not received from the response');
       }
-      // STEP 2: If there are selected payments, create also assessment-details
+
+      // STEP 2: If there are selected payments, try to create assessment-details
+      let assessmentDetailsCreated = true;
       if (
         addPaymentsToAssessment &&
         values.selectedPaymentIuds &&
         values.selectedPaymentIuds.length > 0
       ) {
-        const assessmentRegistryId =
-          await getAssessmentRegistryIdFromChapter(values);
+        try {
+          const assessmentRegistryId =
+            await getAssessmentRegistryIdFromChapter(values);
 
-        if (!assessmentRegistryId) {
-          throw new Error(
-            'Assessment Registry ID not found for the selected chapter'
-          );
-        }
-
-        await utils.apiClient.bff.createAssessmentsDetail(
-          organizationId,
-          assessmentId,
-          {
-            assessmentRegistryId,
-            iuds: values.selectedPaymentIuds
+          if (!assessmentRegistryId) {
+            throw new Error(
+              'Assessment Registry ID not found for the selected chapter'
+            );
           }
-        );
+
+          await utils.apiClient.bff.createAssessmentsDetail(
+            organizationId,
+            assessmentId,
+            {
+              assessmentRegistryId,
+              iuds: values.selectedPaymentIuds
+            }
+          );
+        } catch (detailError) {
+          console.error('Error creating assessment details:', detailError);
+          assessmentDetailsCreated = false;
+        }
       }
 
-      // STEP 3: Final navigation
-      navigate(PageRoutes.RESPONSES_SUCCESS, {
-        replace: true,
-        state: {
-          category: 'assessment-create',
-          i18nParams: {
-            assessmentName: response.assessmentName
-          },
-          assessmentId: response.assessmentId
-        }
-      });
+      // STEP 3: Final navigation based on success type
+      if (
+        addPaymentsToAssessment &&
+        values.selectedPaymentIuds &&
+        values.selectedPaymentIuds.length > 0 &&
+        !assessmentDetailsCreated
+      ) {
+        // Partial success: assessment created but payments not associated
+        navigate(PageRoutes.RESPONSES_SUCCESS, {
+          replace: true,
+          state: {
+            category: 'assessment-create-partial-success',
+            i18nParams: {
+              assessmentName: response.assessmentName
+            },
+            assessmentId: response.assessmentId
+          }
+        });
+      } else {
+        // Full success: assessment created (with or without payments)
+        navigate(PageRoutes.RESPONSES_SUCCESS, {
+          replace: true,
+          state: {
+            category: 'assessment-create',
+            i18nParams: {
+              assessmentName: response.assessmentName
+            },
+            assessmentId: response.assessmentId
+          }
+        });
+      }
     } catch (error) {
       console.error('Error during creation:', error);
 
