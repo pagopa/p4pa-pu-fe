@@ -17,6 +17,7 @@ import { usePaymentsTableFilters } from '../../../hooks/usePaymentsTableFilters'
 import { generatePath } from 'react-router';
 import { PageRoutes } from '../..';
 import { useHashParamsListener } from '../../../hooks/useHashParamsListener';
+import utils from '../../../utils';
 
 // Payment row type with additional fields for table display
 type PaymentRow = PaidInstallmentDTO & {
@@ -57,13 +58,16 @@ export const PaymentsTable = ({
   const { t } = useTranslation();
   const theme = useTheme();
 
-  // Listen to hash parameters
+  // Get all current hash params
+  const allHashParams = useHashParamsListener<Record<string, unknown>>();
+
+  // Extract specific params from hash
   const {
     page: pageStr,
     size: sizeStr,
     sortDirection,
     sortField
-  } = useHashParamsListener() as {
+  } = allHashParams as {
     page: number;
     size: number;
     sortDirection: string;
@@ -78,6 +82,25 @@ export const PaymentsTable = ({
     [sortDirection, sortField]
   );
 
+  // Function to reset URL parameters when applying filters
+  const resetUrlParams = useCallback(() => {
+    // Remove pagination and sorting params but keep other params
+    const resetParams = Object.fromEntries(
+      Object.entries(allHashParams).filter(
+        ([key]) => !['page', 'size', 'sortField', 'sortDirection'].includes(key)
+      )
+    );
+
+    const paramsObj = {
+      ...resetParams,
+      page: 1,
+      size: 10
+    };
+
+    const encoded = utils.URI.encode(paramsObj);
+    utils.URI.set(encoded);
+  }, [allHashParams]);
+
   const {
     draftFilters,
     updateDraftFilters,
@@ -88,6 +111,8 @@ export const PaymentsTable = ({
   } = usePaymentsTableFilters({
     initialFilters,
     onFiltersChange: (filters) => {
+      // Reset URL parameters to default when applying new filters
+      resetUrlParams();
       onFiltersApplied?.(filters, { page: 0, size: 10 }, []);
     },
     onFilterValidationError,
