@@ -34,6 +34,7 @@ export const ReportingFilters = ({
           adornment={<SearchIcon />}
           sx={{ flex: 0.3 }}
           key={FilterFieldIds.IUF}
+          required={false}
         />
         <FormComponent.ControlledTextField
           name="regulationUniqueIdentifier"
@@ -42,6 +43,7 @@ export const ReportingFilters = ({
           label={t('commons.searchRegulationUniqueIdentifier')}
           adornment={<SearchIcon />}
           key={FilterFieldIds.REGULATION_UNIQUE_IDENTIFIER}
+          required={false}
         />
         <Stack sx={{ flex: 0.4 }}>
           <FormComponent.ControlledDateRange
