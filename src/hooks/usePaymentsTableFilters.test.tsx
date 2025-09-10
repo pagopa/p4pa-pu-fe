@@ -201,7 +201,8 @@ describe('usePaymentsTableFilters', () => {
               dateTo: undefined,
               updateDateFrom: undefined,
               updateDateTo: undefined
-            }
+            },
+            isRemoveMode: false
           }),
         { wrapper: createWrapper() }
       );
@@ -215,14 +216,40 @@ describe('usePaymentsTableFilters', () => {
       const { result } = renderHook(
         () =>
           usePaymentsTableFilters({
-            initialFilters: { iuv: '   ' }
+            initialFilters: { iuv: '   ' },
+            isRemoveMode: false
+          }),
+        { wrapper: createWrapper() }
+      );
+
+      expect(result.current.hasValidFilters).toBe(false);
+      expect(result.current.draftFilters.iuv).toBe('   ');
+    });
+
+    it('should always consider filters valid in remove mode', () => {
+      const { result } = renderHook(
+        () =>
+          usePaymentsTableFilters({
+            initialFilters: {},
+            isRemoveMode: true
           }),
         { wrapper: createWrapper() }
       );
 
       expect(result.current.hasValidFilters).toBe(true);
-      expect(result.current.draftFilters.dateFrom).toBeDefined();
-      expect(result.current.draftFilters.dateTo).toBeDefined();
+    });
+
+    it('should use empty filters in remove mode', () => {
+      const { result } = renderHook(
+        () =>
+          usePaymentsTableFilters({
+            initialFilters: {},
+            isRemoveMode: true
+          }),
+        { wrapper: createWrapper() }
+      );
+
+      expect(result.current.draftFilters).toEqual({});
     });
   });
 
@@ -437,19 +464,19 @@ describe('usePaymentsTableFilters', () => {
       expect(result.current.draftFilters.dateTo).toEqual(customDateTo);
     });
 
-    it('should use default filters when only one initial date is defined', () => {
+    it('should use provided initial filters when defined', () => {
+      const initialDate = new Date('2024-01-01');
       const { result } = renderHook(
         () =>
           usePaymentsTableFilters({
-            initialFilters: { dateFrom: new Date('2024-01-01') }
+            initialFilters: { dateFrom: initialDate },
+            isRemoveMode: false
           }),
         { wrapper: createWrapper() }
       );
 
-      expect(result.current.draftFilters.dateFrom).toEqual(
-        toStartOfDay(thirtyDaysAgo)
-      );
-      expect(result.current.draftFilters.dateTo).toEqual(toEndOfDay(today));
+      expect(result.current.draftFilters.dateFrom).toEqual(initialDate);
+      expect(result.current.draftFilters.dateTo).toBeUndefined();
     });
 
     it('should not auto-load more than once', () => {
