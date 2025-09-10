@@ -11,6 +11,7 @@ type UsePaymentsTableFiltersProps = {
   onFiltersChange?: (filters: PaymentsUIFilters) => void;
   onFilterValidationError?: (hasError: boolean) => void;
   autoLoadOnMount?: boolean;
+  isRemoveMode?: boolean;
 };
 
 const createStableDefaultFilters = (): PaymentsUIFilters => {
@@ -27,14 +28,23 @@ export const usePaymentsTableFilters = ({
   initialFilters = {},
   onFiltersChange,
   onFilterValidationError,
-  autoLoadOnMount = true
+  autoLoadOnMount = true,
+  isRemoveMode = false
 }: UsePaymentsTableFiltersProps = {}) => {
   const defaultFilters = useMemo((): PaymentsUIFilters => {
-    if (initialFilters?.dateFrom && initialFilters?.dateTo) {
-      return initialFilters;
+    // If there are explicit initial filters with defined values, we use them
+    const hasDefinedInitialFilters = Object.values(initialFilters).some(
+      (value) => Boolean(value) && (typeof value !== 'string' || value !== '')
+    );
+    if (hasDefinedInitialFilters) {
+      return initialFilters as PaymentsUIFilters;
+    }
+    // In remove mode, we use empty filters (no data filters)
+    if (isRemoveMode) {
+      return {};
     }
     return createStableDefaultFilters();
-  }, [initialFilters?.dateFrom, initialFilters?.dateTo]);
+  }, [initialFilters, isRemoveMode]);
 
   const [draftFilters, setDraftFilters] =
     useState<PaymentsUIFilters>(defaultFilters);
@@ -44,7 +54,13 @@ export const usePaymentsTableFilters = ({
   const hasAutoLoadedRef = useRef(false);
 
   // Validates that at least one filter is filled
+  // In remove mode, we don't require mandatory filters
   const hasValidFilters = useCallback(() => {
+    // In remove mode, we consider filters always valid (even empty)
+    if (isRemoveMode) {
+      return true;
+    }
+
     const { iuv, dateFrom, dateTo, updateDateFrom, updateDateTo } =
       draftFilters;
 
@@ -55,7 +71,7 @@ export const usePaymentsTableFilters = ({
       updateDateFrom ||
       updateDateTo
     );
-  }, [draftFilters]);
+  }, [draftFilters, isRemoveMode]);
 
   // Checks if there are active filters not yet applied
   const hasActiveFilters = useCallback(() => {
