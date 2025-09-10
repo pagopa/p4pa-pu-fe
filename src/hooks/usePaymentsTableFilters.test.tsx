@@ -222,8 +222,7 @@ describe('usePaymentsTableFilters', () => {
         { wrapper: createWrapper() }
       );
 
-      // Con la nuova logica, una stringa con spazi viene considerata come filtro iniziale valido
-      expect(result.current.hasValidFilters).toBe(false); // Perché iuv è solo spazi vuoti
+      expect(result.current.hasValidFilters).toBe(false);
       expect(result.current.draftFilters.iuv).toBe('   ');
     });
 
@@ -476,7 +475,6 @@ describe('usePaymentsTableFilters', () => {
         { wrapper: createWrapper() }
       );
 
-      // Con la nuova logica, se c'è un filtro iniziale definito, lo usa
       expect(result.current.draftFilters.dateFrom).toEqual(initialDate);
       expect(result.current.draftFilters.dateTo).toBeUndefined();
     });
