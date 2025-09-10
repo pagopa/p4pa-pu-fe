@@ -32,6 +32,7 @@ export const Assessment = () => {
   };
 
   const handleViewAllChapters = () => {
+    removeAllFilters();
     navigate(PageRoutes.ASSESSMENT_REGISTRY_SEARCH_RESULTS);
   };
 
