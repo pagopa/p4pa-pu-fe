@@ -129,6 +129,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
       sortingMode="client"
       sortModel={sortModel}
       onSortModelChange={handleSortModelChange}
+      hideFooterSelectedRowCount
       slots={{
         pagination: () => (
           <CustomPagination
