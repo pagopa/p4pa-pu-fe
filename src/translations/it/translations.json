@@ -424,7 +424,7 @@
             "reported": {
               "label": "Rendicontato",
               "descriptionActive": "È presente l'ID Rendicontazione",
-              "descriptionInactive": "Flussi di Rendicontazione assente"
+              "descriptionInactive": "Flusso di Rendicontazione assente"
             },
             "collected": {
               "label": "Incassato",
