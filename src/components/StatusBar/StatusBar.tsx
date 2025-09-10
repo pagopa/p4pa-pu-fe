@@ -53,24 +53,29 @@ export const StatusBar: React.FC<StatusBarProps> = ({ classificationData }) => {
           ),
       isActive: Boolean(classificationData.reported)
     },
-    {
-      icon: classificationData.collected ? (
-        <CheckBox sx={{ color: 'success.main', fontSize: 20 }} />
-      ) : (
-        <DisabledByDefault sx={{ color: 'error.main', fontSize: 20 }} />
-      ),
-      label: t(
-        'classifications.detail.statusBar.status.states.collected.label'
-      ),
-      description: classificationData.collected
-        ? t(
-            'classifications.detail.statusBar.status.states.collected.descriptionActive'
-          )
-        : t(
-            'classifications.detail.statusBar.status.states.collected.descriptionInactive'
-          ),
-      isActive: Boolean(classificationData.collected)
-    }
+    // collected section is visible only if flagTreasury is true
+    ...(classificationData.flagTreasury
+      ? [
+          {
+            icon: classificationData.collected ? (
+              <CheckBox sx={{ color: 'success.main', fontSize: 20 }} />
+            ) : (
+              <DisabledByDefault sx={{ color: 'error.main', fontSize: 20 }} />
+            ),
+            label: t(
+              'classifications.detail.statusBar.status.states.collected.label'
+            ),
+            description: classificationData.collected
+              ? t(
+                  'classifications.detail.statusBar.status.states.collected.descriptionActive'
+                )
+              : t(
+                  'classifications.detail.statusBar.status.states.collected.descriptionInactive'
+                ),
+            isActive: Boolean(classificationData.collected)
+          }
+        ]
+      : [])
   ];
 
   return (
