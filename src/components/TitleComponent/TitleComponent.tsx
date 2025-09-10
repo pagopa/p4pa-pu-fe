@@ -7,7 +7,9 @@ import {
   ChipOwnProps,
   Chip,
   useTheme,
-  IconButton
+  IconButton,
+  SxProps,
+  Theme
 } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -40,6 +42,7 @@ type TitleComponentProps = {
   callToAction?: Array<ActionMenuItem | React.ReactNode>;
   accessibleTitle?: string;
   dataTestId?: string;
+  sx?: SxProps<Theme>;
 };
 
 const isActionMenuItem = (
@@ -53,7 +56,8 @@ const TitleComponent = ({
   chip,
   callToAction,
   accessibleTitle,
-  dataTestId
+  dataTestId,
+  sx
 }: TitleComponentProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -160,6 +164,7 @@ const TitleComponent = ({
         <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
           <Typography
             variant={variant}
+            sx={sx}
             // render text as h1 if it's the main title, otherwise renders it as the variant provided
             {...(isMainPageTitle && { component: 'h1' as const })}
             data-testid={
