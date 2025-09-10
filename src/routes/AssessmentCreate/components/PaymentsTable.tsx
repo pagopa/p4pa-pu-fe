@@ -91,7 +91,8 @@ export const PaymentsTable = ({
       onFiltersApplied?.(filters, { page: 0, size: 10 }, []);
     },
     onFilterValidationError,
-    autoLoadOnMount
+    autoLoadOnMount,
+    isRemoveMode
   });
 
   // Call onFiltersApplied when pagination, sorting, or filters change
