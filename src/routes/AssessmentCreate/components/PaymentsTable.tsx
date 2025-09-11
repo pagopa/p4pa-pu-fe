@@ -84,21 +84,11 @@ export const PaymentsTable = ({
 
   // Function to reset URL parameters when applying filters
   const resetUrlParams = useCallback(() => {
-    // Remove pagination and sorting params but keep other params
-    const resetParams = Object.fromEntries(
-      Object.entries(allHashParams).filter(
-        ([key]) => !['page', 'size', 'sortField', 'sortDirection'].includes(key)
-      )
-    );
-
-    const paramsObj = {
-      ...resetParams,
-      page: 1,
-      size: 10
-    };
-
-    const encoded = utils.URI.encode(paramsObj);
-    utils.URI.set(encoded);
+    utils.URI.resetUrlParams({
+      excludeKeys: ['page', 'size', 'sortField', 'sortDirection'],
+      defaults: { page: 1, size: 10 },
+      sourceParams: allHashParams
+    });
   }, [allHashParams]);
 
   const {
