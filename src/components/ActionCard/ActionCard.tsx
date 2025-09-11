@@ -56,7 +56,12 @@ const ActionCard = ({
               {titleIcon}
             </Box>
           )}
-          <Typography id="action-card-title" variant="h6">
+          <Typography
+            id="action-card-title"
+            variant="h6"
+            component={'h2'}
+            fontWeight={700}
+          >
             {title}
           </Typography>
         </Stack>

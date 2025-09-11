@@ -10,11 +10,7 @@ import { InstallmentStatus } from '../../../generated/data-contracts';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
-import {
-  useParams,
-  useNavigate,
-  generatePath
-} from 'react-router';
+import { useParams, useNavigate, generatePath } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { useEffect, useState } from 'react';
 import { BredcrumbItem } from '../Breadcrumbs/Breadcrumbs';
