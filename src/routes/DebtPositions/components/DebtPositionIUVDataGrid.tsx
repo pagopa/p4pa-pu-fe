@@ -17,24 +17,24 @@ export type DataGridProps = {
   data?: PagedInstallmentView;
 };
 
+export const stateColors: Record<InstallmentStatus, ChipProps['color']> = {
+  CANCELLED: 'error',
+  DRAFT: 'default',
+  EXPIRED: 'error',
+  PAID: 'success',
+  REPORTED: 'success',
+  TO_SYNC: 'default',
+  UNPAID: 'info',
+  INVALID: 'error',
+  UNPAYABLE: 'error'
+};
+
 export const IUVDataGrid = ({ data }: DataGridProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
   const safeRows =
     data?.content?.filter((row) => row.installmentId != null) || [];
-
-  const stateColors: Record<InstallmentStatus, ChipProps['color']> = {
-    CANCELLED: 'error',
-    DRAFT: 'default',
-    EXPIRED: 'error',
-    PAID: 'success',
-    REPORTED: 'success',
-    TO_SYNC: 'default',
-    UNPAID: 'info',
-    INVALID: 'error',
-    UNPAYABLE: 'error'
-  };
 
   const columns: Array<GridColDef<InstallmentView>> = [
     {
@@ -79,6 +79,7 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
         <ChipTruncateTooltip
           label={t(`commons.status.${params.value}`)}
           color={stateColors[params.value as InstallmentStatus]}
+          variant="outlined"
         />
       )
     },

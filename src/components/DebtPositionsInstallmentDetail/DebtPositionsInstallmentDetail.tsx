@@ -21,6 +21,7 @@ import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
 import GenericDialog from '../GenericDialog/GenericDialog';
 import { useTimelineData } from '../../hooks/useTimelineData';
+import { stateColors } from '../../routes/DebtPositions/components/DebtPositionIUVDataGrid';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
@@ -126,10 +127,14 @@ export const DebtPositionsInstallmentDetail = () => {
     summaryData: [
       {
         label: t('commons.state'),
-        value: installment?.status
-          ? t(`commons.status.${installment.status}`)
-          : '',
-        chipConfig: { color: 'default', variant: 'outlined' }
+        value: installment?.status || '',
+        chipConfig: {
+          color: installment?.status
+            ? stateColors[installment.status]
+            : 'default',
+          variant: 'outlined'
+        },
+        valueType: 'status'
       },
       {
         label: t('debtPositionSearchResults.iuv'),
