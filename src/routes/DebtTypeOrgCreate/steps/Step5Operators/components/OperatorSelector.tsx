@@ -16,6 +16,7 @@ import { OperatorsSelection } from '../../../../../../generated/data-contracts';
 import { useStore } from '../../../../../store/GlobalStore';
 import { useSearch } from '../../../../../hooks/useSearch';
 import { getDebtPositionTypeOrgOperators } from '../../../../../api/debtPositionTypeOrgOperators';
+import { useParams } from 'react-router';
 
 type OperatorData = {
   id: string;
@@ -28,6 +29,10 @@ type OperatorData = {
 
 export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
+
+  const { debtPositionTypeOrgId } = useParams<{
+    debtPositionTypeOrgId: string;
+  }>();
 
   const {
     state: { organizationId, userInfo }
@@ -69,7 +74,9 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   const query = getDebtPositionTypeOrgOperators(organizationId);
 
   const debtTypeOrgOperators = useSearch({
-    filters: {},
+    filters: {
+      debtPositionTypeOrgId: edit ? Number(debtPositionTypeOrgId) : undefined
+    },
     query
   });
 

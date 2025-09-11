@@ -15,6 +15,8 @@ import * as api from '../../../../../api/debtPositionTypeOrgOperators';
 import { OperatorSelector } from './OperatorSelector';
 import { setUserInfo } from '../../../../../store/UserInfoStore';
 import { vi } from 'vitest';
+import { useSearch } from '../../../../../hooks/useSearch';
+import { useParams } from 'react-router';
 
 // Sample data to be returned by the mocked useSearch hook
 const testApiResponse = {
@@ -60,6 +62,14 @@ vi.mock('../../../../../hooks/useSearch', () => ({
   }))
 }));
 
+vi.mock('react-router', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('react-router')>();
+  return {
+    ...actual,
+    useParams: vi.fn()
+  };
+});
+
 // Spy on the API mock; return data synchronously as returned by useSearch
 vi.spyOn(api, 'getDebtPositionTypeOrgOperators').mockImplementation(
   () =>
@@ -89,9 +99,16 @@ const renderWithProviders = (edit?: boolean) => {
 };
 
 describe('OperatorSelector component integration', () => {
+  const mockedUseParams = vi.mocked(useParams);
+  const mockedUseSearch = vi.mocked(useSearch);
+
   beforeEach(() => {
-    // Reset the user info to empty before each test
+    // Reset mocks to a clean state before each test
+    vi.clearAllMocks();
     setUserInfo(undefined);
+
+    // Provide a default return value for useParams for tests in edit mode
+    mockedUseParams.mockReturnValue({ debtPositionTypeOrgId: '123' });
   });
 
   it('renders operators and displays selection alert', async () => {
@@ -172,6 +189,31 @@ describe('OperatorSelector component integration', () => {
     // Alert updates (now 2 selected)
     await waitFor(() => {
       expect(screen.getByText(/commons.selectedOperator/)).toBeInTheDocument();
+    });
+  });
+
+  describe('API filter logic', () => {
+    it('passes debtPositionTypeOrgId to useSearch filters when in edit mode', () => {
+      renderWithProviders(true);
+
+      expect(mockedUseSearch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { debtPositionTypeOrgId: 123 }
+        })
+      );
+    });
+
+    it('does not pass debtPositionTypeOrgId when not in edit mode (create mode)', () => {
+      // Override beforeEach setup for create mode, which has no URL params
+      mockedUseParams.mockReturnValue({});
+
+      renderWithProviders(false);
+
+      expect(mockedUseSearch).toHaveBeenCalledWith(
+        expect.objectContaining({
+          filters: { debtPositionTypeOrgId: undefined }
+        })
+      );
     });
   });
 });
