@@ -1667,7 +1667,7 @@
       "subEvent": "Sottotipo",
       "noResults": {
         "title": "Nessun risultato trovato",
-        "description": "Non ci sono avvisi che corrispondono alla tua ricerca, prova a impostare parametri diversi."
+        "description": "Non ci sono eventi che corrispondono alla tua ricerca, prova a impostare parametri diversi."
       }
     },
     "searchIUVDescription": "IUV",
