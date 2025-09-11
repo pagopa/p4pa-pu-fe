@@ -96,6 +96,7 @@ export const Step1Configuration = ({
                 data-testid="code"
                 defaultValue={editmode ? prefilledData?.code : ''}
                 disabled={editmode}
+                required={!editmode}
               />
               <Stack flex={3}>
                 <FormComponent.ControlledTextField
@@ -109,6 +110,7 @@ export const Step1Configuration = ({
                   adornment={`${form.getValues('description')?.length || 0}/100`}
                   defaultValue={editmode ? prefilledData?.description : ''}
                   disabled={editmode}
+                  required={!editmode}
                 />
                 <Typography variant="caption" px={1.5}>
                   {t('debtTypeCreate.configuration.debtType.helper')}
