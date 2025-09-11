@@ -681,6 +681,13 @@ const Step2PaymentsComponent = forwardRef<
         setHasLoadedData(false);
         paymentsState.resetPaymentsData();
         globalSelection.clearAllSelections();
+
+        // Reset URL parameters to default when debt type changes
+        utils.URI.resetUrlParams({
+          excludeKeys: ['page', 'size', 'sortField', 'sortDirection'],
+          defaults: { page: 1, size: 10 }
+        });
+
         // Force reload data with new debtPositionTypeOrgCode
         handleFiltersApplied(initialTableFilters, { page: 0, size: 10 });
       }

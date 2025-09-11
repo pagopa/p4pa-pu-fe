@@ -68,8 +68,38 @@ const set = (params: string, opts?: { replace?: boolean }) => {
   window.dispatchEvent(new Event('hashchangeCustom'));
 };
 
+type ResetUrlParamsOptions = {
+  excludeKeys: Array<string>;
+  defaults?: Record<string, unknown>;
+  sourceParams?: Record<string, unknown>;
+};
+
+/**
+ * Reset URL hash parameters by filtering out specified keys and applying defaults.
+ */
+const resetUrlParams = (options: ResetUrlParamsOptions): string => {
+  const { excludeKeys, defaults = {}, sourceParams } = options;
+
+  const currentParams = sourceParams || decode(window.location.hash);
+
+  const filteredParams = Object.fromEntries(
+    Object.entries(currentParams).filter(([key]) => !excludeKeys.includes(key))
+  );
+
+  const finalParams = {
+    ...filteredParams,
+    ...defaults
+  };
+
+  const encoded = encode(finalParams);
+  set(encoded);
+
+  return encoded;
+};
+
 export default {
   decode,
   encode,
-  set
+  set,
+  resetUrlParams
 };
