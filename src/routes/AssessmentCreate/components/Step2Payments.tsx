@@ -23,7 +23,6 @@ import { useStep2PaymentsState } from '../../../hooks/useStep2PaymentsState';
 import { usePaidInstallments } from '../../../hooks/usePaidInstallments';
 import { useGlobalPaymentSelection } from '../../../hooks/useGlobalPaymentSelection';
 import { usePaymentsManager } from '../../../hooks/usePaymentsManager';
-import { getAssessmentDetail } from '../../../api/assessments/assessmentDetail/assessmentDetail';
 import { deleteAssessmentDetails } from '../../../api/assessments';
 import { useStore } from '../../../store/GlobalStore';
 import { STATE } from '../../../store/types';
@@ -260,7 +259,7 @@ const Step2PaymentsComponent = forwardRef<
     [paymentsState.resetPaymentsData]
   );
 
-  // For Remove mode, use getAssessmentDetail instead of usePaidInstallments
+  // In Remove mode, disable usePaidInstallments - data loading handled by PaymentsTable
   const paymentsApi = usePaidInstallments({
     enabled:
       isActive && shouldLoadData && !!debtPositionTypeOrgCode && !isRemoveMode,
@@ -268,36 +267,6 @@ const Step2PaymentsComponent = forwardRef<
     debtPositionTypeOrgCode: debtPositionTypeOrgCode || '',
     onError: handleApiError
   });
-
-  const assessmentDetailQuery = getAssessmentDetail(
-    organizationId,
-    assessmentId || 0,
-    { size: 10, page: 0 }
-  );
-
-  // Effect for handling assessment detail data (Remove mode)
-  useEffect(() => {
-    if (
-      isRemoveMode &&
-      assessmentDetailQuery.data &&
-      !assessmentDetailQuery.isPending &&
-      !hasLoadedData
-    ) {
-      handleAssessmentDetailSuccess(assessmentDetailQuery.data);
-    }
-    if (isRemoveMode && assessmentDetailQuery.isError) {
-      handleApiError(assessmentDetailQuery.error as Error);
-    }
-  }, [
-    isRemoveMode,
-    assessmentDetailQuery.data,
-    assessmentDetailQuery.isPending,
-    assessmentDetailQuery.isError,
-    assessmentDetailQuery.error,
-    hasLoadedData,
-    handleAssessmentDetailSuccess,
-    handleApiError
-  ]);
 
   const operatingYearsQuery = useOperatingYears({
     includeAllOption: false,
@@ -505,7 +474,36 @@ const Step2PaymentsComponent = forwardRef<
       setIsManualApiCallPending(true);
 
       try {
-        const apiFilters = convertFiltersToAPI(uiFilters);
+        // In remove mode, convert filters without adding automatic dates
+        const convertFiltersForRemoval = (uiFilters: PaymentsUIFilters) => {
+          const apiFilters: {
+            iuv?: string;
+            paymentDateTimeFrom?: string;
+            paymentDateTimeTo?: string;
+            updateDateFrom?: string;
+            updateDateTo?: string;
+          } = {};
+
+          if (uiFilters.iuv?.trim()) {
+            apiFilters.iuv = uiFilters.iuv.trim();
+          }
+
+          // If explicitly present, add data filters
+          if (uiFilters.dateFrom && uiFilters.dateTo) {
+            apiFilters.paymentDateTimeFrom = uiFilters.dateFrom.toISOString();
+            apiFilters.paymentDateTimeTo = uiFilters.dateTo.toISOString();
+          }
+
+          if (uiFilters.updateDateFrom && uiFilters.updateDateTo) {
+            apiFilters.updateDateFrom = uiFilters.updateDateFrom.toISOString();
+            apiFilters.updateDateTo = uiFilters.updateDateTo.toISOString();
+          }
+
+          // We don't add default dates in remove mode
+          return apiFilters;
+        };
+
+        const apiFilters = convertFiltersForRemoval(uiFilters);
 
         const queryParams = {
           size: pagination.size,
@@ -556,7 +554,7 @@ const Step2PaymentsComponent = forwardRef<
     const hasApiError =
       operatingYearsQuery.isError ||
       (chaptersQuery.isError && debtPositionTypeOrgCode) ||
-      (isRemoveMode ? assessmentDetailQuery.isError : paymentsApi.isError);
+      (!isRemoveMode && paymentsApi.isError);
 
     if (hasApiError) {
       if (operatingYearsQuery.isError) {
@@ -565,12 +563,7 @@ const Step2PaymentsComponent = forwardRef<
       if (chaptersQuery.isError && debtPositionTypeOrgCode) {
         console.error('Chapters error:', chaptersQuery.error);
       }
-      if (isRemoveMode && assessmentDetailQuery.isError) {
-        console.error(
-          'Assessment Detail API error:',
-          assessmentDetailQuery.error
-        );
-      } else if (!isRemoveMode && paymentsApi.isError) {
+      if (!isRemoveMode && paymentsApi.isError) {
         console.error('Payments API error:', paymentsApi.error);
       }
       setValue('addPaymentsToAssessment', false);
@@ -582,8 +575,6 @@ const Step2PaymentsComponent = forwardRef<
     chaptersQuery.isError,
     chaptersQuery.error,
     isRemoveMode,
-    assessmentDetailQuery.isError,
-    assessmentDetailQuery.error,
     paymentsApi.isError,
     paymentsApi.error,
     debtPositionTypeOrgCode,
@@ -596,7 +587,6 @@ const Step2PaymentsComponent = forwardRef<
   }, [
     operatingYearsQuery.isError,
     chaptersQuery.isError,
-    assessmentDetailQuery.isError,
     paymentsApi.isError,
     debtPositionTypeOrgCode,
     handleExternalApiErrors
@@ -654,24 +644,29 @@ const Step2PaymentsComponent = forwardRef<
   );
 
   const initialTableFilters = useMemo(() => {
+    // In remove mode, we take the existing filters from the URL but remove the dates
+    if (isRemoveMode) {
+      const currentFilters = utils.URI.decode(window.location.hash);
+      // We remove only the data filters keeping the others (e.g. IUV)
+      return Object.fromEntries(
+        Object.entries(currentFilters).filter(
+          ([key]) => !['dateFrom', 'dateTo'].includes(key)
+        )
+      );
+    }
     return {
       dateFrom: startOfDay(subDays(new Date(), 30)),
       dateTo: endOfDay(new Date())
     };
-  }, []);
+  }, [isRemoveMode]);
 
   const isApiCallPending = useMemo(() => {
     if (isRemoveMode) {
-      return assessmentDetailQuery.isPending || isManualApiCallPending;
+      return isManualApiCallPending;
     } else {
       return paymentsApi.isLoading || isManualApiCallPending;
     }
-  }, [
-    isRemoveMode,
-    assessmentDetailQuery.isPending,
-    paymentsApi.isLoading,
-    isManualApiCallPending
-  ]);
+  }, [isRemoveMode, paymentsApi.isLoading, isManualApiCallPending]);
 
   // Reset data when debtPositionTypeOrgCode changes and step becomes active
   // This handles the case when user goes Step2->Step1->changes type->Step2
@@ -686,6 +681,13 @@ const Step2PaymentsComponent = forwardRef<
         setHasLoadedData(false);
         paymentsState.resetPaymentsData();
         globalSelection.clearAllSelections();
+
+        // Reset URL parameters to default when debt type changes
+        utils.URI.resetUrlParams({
+          excludeKeys: ['page', 'size', 'sortField', 'sortDirection'],
+          defaults: { page: 1, size: 10 }
+        });
+
         // Force reload data with new debtPositionTypeOrgCode
         handleFiltersApplied(initialTableFilters, { page: 0, size: 10 });
       }
@@ -862,12 +864,11 @@ const Step2PaymentsComponent = forwardRef<
           onFilterValidationError={paymentsState.setShowFiltersValidationError}
           initialFilters={initialTableFilters}
           isLoading={
-            (isRemoveMode
-              ? assessmentDetailQuery.isPending
-              : paymentsApi.isLoading) && !hasLoadedData
+            (isRemoveMode ? isManualApiCallPending : paymentsApi.isLoading) &&
+            !hasLoadedData
           }
           isApiCallPending={isApiCallPending}
-          autoLoadOnMount={!hasLoadedData && !isRemoveMode}
+          autoLoadOnMount={!hasLoadedData}
           selectedIuds={currentPageSelectedIuds}
           isRemoveMode={isRemoveMode}
         />

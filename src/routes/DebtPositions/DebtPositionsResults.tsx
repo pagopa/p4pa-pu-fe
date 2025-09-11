@@ -107,9 +107,21 @@ export const DebtPositionResults = () => {
     [searchType, t]
   );
 
+  const accessibleTitle = useMemo(
+    () =>
+      searchType === SearchType.IUV
+        ? t('DebtPositions.Results.accessibleTitleIUV')
+        : t('DebtPositions.Results.accessibleTitleDP'),
+    [searchType, t]
+  );
+
   return (
     <Stack gap={5}>
-      <TitleComponent title={title} callToAction={callToAction} />
+      <TitleComponent
+        title={title}
+        callToAction={callToAction}
+        accessibleTitle={accessibleTitle}
+      />
       <Stack gap={3}>
         {error && <ErrorMessage variant="outlined" />}
         <FilterContainer

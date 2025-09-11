@@ -2,6 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation, generatePath } from 'react-router';
 import { PageRoutes } from '../../routes';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import { theme } from '@pagopa/mui-italia';
 import { SuccessPageConfig } from '../../models/SuccessPageConfig';
 import { useEffect } from 'react';
@@ -61,14 +62,28 @@ export const SuccessPage = () => {
     };
   });
 
+  const getIcon = () => {
+    const isPartialSuccess = category === 'assessment-create-partial-success';
+
+    if (isPartialSuccess) {
+      return (
+        <WarningAmberOutlinedIcon
+          sx={{ fontSize: 60, color: theme.palette.warning.main }}
+        />
+      );
+    }
+
+    return (
+      <CheckCircleOutlineOutlinedIcon
+        sx={{ fontSize: 60, color: theme.palette.secondary.main }}
+      />
+    );
+  };
+
   return (
     <>
       <ResponsePage
-        icon={
-          <CheckCircleOutlineOutlinedIcon
-            sx={{ fontSize: 60, color: theme.palette.secondary.main }}
-          />
-        }
+        icon={getIcon()}
         title={String(
           t(pageConfig?.title, {
             ...i18nParams,

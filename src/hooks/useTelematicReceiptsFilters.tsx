@@ -40,7 +40,6 @@ export const useTelematicReceiptsFilters = ({
       gridWidth: 3,
       options: debtPositionsTypes.optionsMap,
       id: FilterFieldIds.TYPE_ORG,
-      defaultValue: 0,
       ...(layout === 'grid' ? { gridWidth: 12 } : {})
     },
     {

@@ -14,7 +14,7 @@ import {
 } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
-import { PagedTreasuredClassification } from '../../../generated/data-contracts';
+import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/data-contracts';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getClassifications } from '../../api/classifications';
 import { useSearch } from '../../hooks/useSearch';
@@ -36,7 +36,7 @@ const ClassificationsSearchResults = () => {
     filterMap,
     selectedFilters,
     removeAllFilters,
-    noFilterIsSelected,
+    isValid,
     filterValues
   } = useMultiFilters({ filterCategory: FilterCategory.CLASSIFICATIONS });
 
@@ -57,14 +57,13 @@ const ClassificationsSearchResults = () => {
   });
 
   const applyFilters = () => {
-    if (!noFilterIsSelected.peek()) {
+    if (isValid) {
+      setError(false);
+      classifications.applyFilters(filterValues);
+      setDrawerOpen(false);
+    } else {
       setError(true);
-      return;
     }
-
-    setError(false);
-    classifications.applyFilters(filterValues);
-    setDrawerOpen(false);
   };
 
   const handleFilterInteraction = () => {
@@ -75,6 +74,7 @@ const ClassificationsSearchResults = () => {
     <>
       <TitleComponent
         title={t('commons.routes.CLASSIFICATIONS_SEARCH_RESULTS')}
+        accessibleTitle={t('classificationsSearchResults.accessibleTitle')}
         callToAction={[
           {
             variant: 'outlined',
@@ -104,7 +104,10 @@ const ClassificationsSearchResults = () => {
         aria-label="results-table"
       >
         <SearchResultsDataGrid
-          data={classifications.query.data as PagedTreasuredClassification}
+          data={
+            classifications.query
+              .data as PagedTreasuredClassificationExtendedDTO
+          }
         />
       </Grid>
 

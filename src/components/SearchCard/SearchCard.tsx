@@ -93,7 +93,7 @@ const SearchCard = ({
       padding={3}
       sx={{ backgroundColor: 'background.paper' }}
     >
-      <Typography variant="h6" sx={{ mb: 1 }}>
+      <Typography variant="h6" component={'h2'} fontWeight={700} mb={1}>
         {title}
       </Typography>
       <Typography variant="body2" sx={{ color: 'text.secondary', mb: 2 }}>

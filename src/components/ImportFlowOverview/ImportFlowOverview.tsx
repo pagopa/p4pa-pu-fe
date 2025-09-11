@@ -51,6 +51,7 @@ const getDefaultDateRange = () => {
 export type ImportFlowOverviewProps = {
   routingCategory: string;
   title: string;
+  accessibleTitle?: string;
   description?: string;
   ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
 };
@@ -58,6 +59,7 @@ export type ImportFlowOverviewProps = {
 const ImportFlowOverview = ({
   routingCategory,
   title,
+  accessibleTitle,
   description,
   ingestionFlowFileTypes
 }: ImportFlowOverviewProps) => {
@@ -245,6 +247,7 @@ const ImportFlowOverview = ({
           }
         ]}
         description={description}
+        accessibleTitle={accessibleTitle}
       />
 
       <Grid
@@ -278,8 +281,7 @@ const ImportFlowOverview = ({
                 }))
               ],
               value: filters.status,
-              onChange: (e) => {
-                const value = e.target.value;
+              onChange: (value) => {
                 setFilters((prev) => ({
                   ...prev,
                   status: value as IngestionFlowFileStatus

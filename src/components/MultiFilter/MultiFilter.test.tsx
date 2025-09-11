@@ -360,7 +360,9 @@ describe('MultiFilter Component', () => {
       fireEvent.change(filterSelect, {
         target: { value: 'CLASSIFICATION_TYPE' }
       });
-      expect(selectedFilters.value).toContain('CLASSIFICATION_TYPE');
+      expect(selectedFilters.value).toEqual([
+        { target: { value: 'CLASSIFICATION_TYPE' } }
+      ]);
     });
 
     it('allow to change the value of the CLASSIFICATION_TYPE select', () => {

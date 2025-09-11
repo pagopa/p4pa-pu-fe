@@ -11,7 +11,6 @@ import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { StatusBar } from '../StatusBar/StatusBar';
 import { PageRoutes } from '../../routes';
-import { ClassificationDetailDTO } from '../../../generated/data-contracts';
 import { OpenInNew } from '@mui/icons-material';
 
 export const ClassificationDetails = () => {
@@ -63,7 +62,7 @@ export const ClassificationDetails = () => {
       });
     }
 
-    if (data.collected) {
+    if (data.collected && data.flagTreasury) {
       tabs.push({
         index: tabs.length,
         label: t('classifications.detail.sections.earnings.title'),
@@ -257,25 +256,12 @@ export const ClassificationDetails = () => {
     );
   }
 
-  const hasNotifiedPaymentData = (
-    data: ClassificationDetailDTO | undefined
-  ): boolean => {
-    if (!data) return false;
-
-    return !!(
-      data.paymentNotificationDebtPositionTypeOrgCode ||
-      data.paymentNotificationRemittanceInformation ||
-      data.paymentNotificationAmountPaidCents ||
-      data.paymentNotificationDebtor?.fullName ||
-      data.paymentNotificationDebtor?.fiscalCode ||
-      data.paymentExecutionDate ||
-      data.paymentNotificationIud
-    );
-  };
-
   return (
     <>
-      <TitleComponent title={t('classifications.title')} />
+      <TitleComponent
+        title={t('classifications.title')}
+        accessibleTitle={t('classifications.accessibleTitle')}
+      />
 
       <StatusBar classificationData={data} />
 
@@ -334,7 +320,7 @@ export const ClassificationDetails = () => {
                   }
                 ]}
               />
-              {hasNotifiedPaymentData(data) && (
+              {data.flagPaymentNotification && (
                 <DetailContainer
                   sections={[
                     {
@@ -390,8 +376,7 @@ export const ClassificationDetails = () => {
             />
           </TabPanel>
         )}
-
-        {data.collected && (
+        {data.flagTreasury && (
           <TabPanel
             value="treasury"
             sx={{ padding: 0 }}

@@ -204,6 +204,9 @@ const ClassificationExportPage = () => {
         <TitleComponent
           title={t('classificationsExport.title')}
           description={t('classificationsExport.description')}
+          accessibleTitle={t(
+            'classificationsExport.exportPage.accessibleTitle'
+          )}
         />
 
         <Paper sx={{ p: 4, mt: 3 }}>

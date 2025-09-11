@@ -149,7 +149,11 @@ const ClientSilDetail = () => {
       data: [
         {
           childrenComponent: (
-            <ClientSecret secretValue={data?.clientSecret || ''} />
+            <ClientSecret
+              secretValue={data?.clientSecret || ''}
+              organizationId={organizationId}
+              clientId={data?.clientId || ''}
+            />
           )
         }
       ]
@@ -164,6 +168,10 @@ const ClientSilDetail = () => {
             title={truncTitle(data?.clientName || '')}
             description={t('clientSilDetail.description')}
             callToAction={actionButtons}
+            accessibleTitle={t('clientSilDetail.accessibleTitle', {
+              clientName: data?.clientName,
+              interpolation: { escapeValue: false }
+            })}
           />
           <Box mt={3}>
             <Stack spacing={2}>

@@ -75,7 +75,7 @@ describe('DetailContainer', () => {
       sections: [
         {
           data: [
-            { label: 'Ordinante', value: '' },
+            { label: 'Gestore della transazione (PSP)', value: '' },
             { label: 'Conto', value: '' }
           ]
         }
@@ -84,7 +84,9 @@ describe('DetailContainer', () => {
 
     render(<DetailContainer {...missingValuesProps} />);
 
-    const firstLabelDiv = screen.getByText('Ordinante').closest('div');
+    const firstLabelDiv = screen
+      .getByText('Gestore della transazione (PSP)')
+      .closest('div');
     const firstValueDiv = firstLabelDiv?.nextElementSibling;
     expect(firstValueDiv).toHaveTextContent('-');
 
@@ -145,5 +147,94 @@ describe('DetailContainer', () => {
     expect(
       gridContainer?.querySelector('.MuiGrid-item.MuiGrid-grid-md-12')
     ).not.toBeNull();
+  });
+
+  it('renders description when provided', () => {
+    const propsWithDescription = {
+      sections: [
+        {
+          title: { label: 'Test Title' },
+          description: 'This is a test description',
+          data: [{ label: 'Test Label', value: 'Test Value' }]
+        }
+      ]
+    };
+
+    render(<DetailContainer {...propsWithDescription} />);
+
+    expect(screen.getByText('This is a test description')).toBeDefined();
+    expect(screen.getByText('Test Title')).toBeDefined();
+  });
+
+  it('renders date values correctly', () => {
+    const propsWithDate = {
+      sections: [
+        {
+          data: [
+            {
+              label: 'Data Valida',
+              value: '2024-12-31',
+              valueType: 'date' as const
+            },
+            { label: 'Data Vuota', value: '', valueType: 'date' as const }
+          ]
+        }
+      ]
+    };
+
+    render(<DetailContainer {...propsWithDate} />);
+
+    expect(screen.getByText('Data Valida')).toBeDefined();
+    expect(screen.getByText('Data Vuota')).toBeDefined();
+    expect(screen.getByText('-')).toBeDefined();
+  });
+
+  it('renders childrenComponent when provided', () => {
+    const propsWithChildren = {
+      sections: [
+        {
+          data: [
+            {
+              label: 'Custom Component',
+              childrenComponent: (
+                <div data-testid="custom-component">Custom Content</div>
+              )
+            }
+          ]
+        }
+      ]
+    };
+
+    render(<DetailContainer {...propsWithChildren} />);
+
+    expect(screen.getByTestId('custom-component')).toBeDefined();
+    expect(screen.getByText('Custom Content')).toBeDefined();
+  });
+
+  it('renders footer link with icon and handles click', () => {
+    const mockOnLinkClick = vi.fn();
+    const propsWithFooterLink = {
+      sections: [
+        {
+          data: [{ label: 'Test Data', value: 'Test Value' }],
+          footerLink: {
+            label: 'Show Details',
+            icon: <span data-testid="footer-icon">📄</span>,
+            onLinkClick: mockOnLinkClick,
+            iconPosition: 'left' as const
+          }
+        }
+      ]
+    };
+
+    render(<DetailContainer {...propsWithFooterLink} />);
+
+    const footerButton = screen.getByText('Show Details');
+    expect(footerButton).toBeDefined();
+    expect(footerButton).toHaveClass('MuiButton-text');
+    expect(screen.getByTestId('footer-icon')).toBeDefined();
+
+    footerButton.click();
+    expect(mockOnLinkClick).toHaveBeenCalledOnce();
   });
 });

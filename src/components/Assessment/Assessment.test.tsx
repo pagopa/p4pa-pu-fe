@@ -1,8 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { fireEvent, render, screen } from '../../__tests__/renderers';
+import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
 import { Assessment } from './Assessment';
 import { useNavigate } from 'react-router';
-import React from 'react';
+
+import {
+  filterValues,
+  selectedFilters,
+  noFilterIsSelected,
+  initialFilterValues
+} from '../../store/FilterStore';
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
@@ -12,181 +18,26 @@ vi.mock('react-router', async (importOriginal) => {
   };
 });
 
-vi.mock('../SearchCard/SearchCard', async (importOriginal) => {
-  const actual = (await importOriginal()) as Record<string, unknown>;
-  return {
-    ...actual,
-    default: ({
-      render,
-      button,
-      title,
-      description
-    }: {
-      render?: React.ReactNode;
-      button?: Array<{
-        label: string;
-        onClick?: () => void;
-        disabled?: boolean;
-        id?: string;
-      }>;
-      title?: string;
-      description?: string;
-      [key: string]: unknown;
-    }) => (
-      <div data-testid="search-card">
-        <h6>{title}</h6>
-        <p>{description}</p>
-        {render}
-        {button?.map((btn, index) => (
-          <button
-            key={index}
-            onClick={btn.onClick}
-            disabled={btn.disabled}
-            id={btn.id}
-          >
-            {btn.label}
-          </button>
-        ))}
-      </div>
-    )
-  };
-});
-
-const mockRemoveAllFilters = vi.fn();
-const mockNoFilterIsSelected = vi.fn(() => false);
-
-vi.mock('../../hooks/useMultiFilters', () => ({
-  useMultiFilters: vi.fn(() => ({
-    filterMap: {
-      ASSESSMENT_NAME: {
-        label: 'assessment.name',
-        fields: [
-          {
-            type: 'textField',
-            label: 'assessment.name'
-          }
-        ]
-      },
-      DEBT_TYPE: {
-        label: 'debtType.title',
-        fields: [
-          {
-            type: 'select',
-            label: 'debtType.title',
-            options: []
-          }
-        ]
-      },
-      ASSESSMENT_STATUS: {
-        label: 'assessment.status',
-        fields: [
-          {
-            type: 'select',
-            label: 'assessment.status'
-          }
-        ]
-      }
-    },
-    removeAllFilters: mockRemoveAllFilters,
-    noFilterIsSelected: {
-      peek: mockNoFilterIsSelected
-    },
-    filterValues: {
-      ASSESSMENT_NAME: '',
-      DEBT_TYPE: '',
-      ASSESSMENT_STATUS: '',
-      IUV: '',
-      LAST_UPDATE_DATE_FROM: null,
-      LAST_UPDATE_DATE_TO: null
-    }
-  })),
-  FilterCategory: {
-    ASSESSMENT: 'ASSESSMENT'
-  }
-}));
-
-vi.mock('../../hooks/useDebtPositionsTypeOrg', () => ({
-  useDebtPositionsTypeOrg: () => ({
-    optionsMap: [
-      { value: 'ALL', label: 'commons.all' },
-      { value: 'TYPE1', label: 'Type 1' },
-      { value: 'TYPE2', label: 'Type 2' }
-    ]
-  })
-}));
-
-vi.mock('../../store/GlobalStore', () => ({
-  useStore: () => ({
-    state: {
-      organizationId: 123,
-      filterValues: {
-        ACCOUNTING_DATE_FROM: null,
-        ACCOUNTING_DATE_TO: null,
-        ACCOUNT_REGISTRY_CODE: '',
-        AMOUNT: null,
-        BILL_CODE: '',
-        BILL_FROM: null,
-        BILL_DATE_FROM: null,
-        BILL_DATE_TO: null,
-        DOCUMENT_CODE: '',
-        DOCUMENT_CODE_FROM: null,
-        IUV: '',
-        IUR: '',
-        IUD: '',
-        IUF: '',
-        PAYER: '',
-        PSP_COMPANY_NAME: '',
-        REGULATION_UNIQUE_IDENTIFIER: '',
-        REMITTANCE_INFORMATION: '',
-        REPORT_ID: '',
-        TEMPORARY_CODE: '',
-        TEMPORARY_CODE_FROM: null,
-        VALUE_DATE_FROM: null,
-        VALUE_DATE_TO: null,
-        REGION_VALUE_DATE_FROM: null,
-        REGION_VALUE_DATE_TO: null,
-        PAY_DATE_FROM: null,
-        PAY_DATE_TO: null,
-        CLASSIFICATION_TYPE: '',
-        LAST_CLASSIFICATION_DATE_FROM: null,
-        LAST_CLASSIFICATION_DATE_TO: null,
-        REGULATION_DATE_FROM: null,
-        REGULATION_DATE_TO: null,
-        PAYMENT_DATE_FROM: null,
-        PAYMENT_DATE_TO: null,
-        ASSESSMENT_NAME: '',
-        DEBT_TYPE: '',
-        ASSESSMENT_STATUS: '',
-        LAST_UPDATE_DATE_FROM: null,
-        LAST_UPDATE_DATE_TO: null
-      },
-      selectedFilters: []
-    }
-  }),
-  StoreProvider: ({ children }: { children: React.ReactNode }) => children
-}));
-
 describe('Assessment', () => {
   const mockNavigate = vi.fn();
 
   beforeEach(() => {
     vi.clearAllMocks();
+    filterValues.value = { ...initialFilterValues };
+    selectedFilters.value = [];
+    // control peek to check selected filters in your hook
+    noFilterIsSelected.peek = () => selectedFilters.value.length === 0;
     vi.mocked(useNavigate).mockReturnValue(mockNavigate);
-    mockNoFilterIsSelected.mockReturnValue(false);
   });
 
   it('should render all main elements', () => {
     render(<Assessment />);
-
     expect(screen.getByText('commons.routes.ASSESSMENT')).toBeInTheDocument();
-
     expect(screen.getByText('assessment.createAssessment')).toBeInTheDocument();
-
     expect(screen.getByText('assessment.search')).toBeInTheDocument();
     expect(
       screen.getByText('assessment.searchDescription')
     ).toBeInTheDocument();
-
     expect(screen.getByText('assessment.chapters')).toBeInTheDocument();
     expect(
       screen.getByText('assessment.chaptersDescription')
@@ -197,7 +48,6 @@ describe('Assessment', () => {
 
   it('should render SearchCard buttons', () => {
     render(<Assessment />);
-
     expect(
       screen.getByRole('button', { name: 'commons.filters.remove' })
     ).toBeInTheDocument();
@@ -206,102 +56,80 @@ describe('Assessment', () => {
     ).toBeInTheDocument();
   });
 
-  it('should render create assessment button and allow click', () => {
-    render(<Assessment />);
+  it('should navigate on valid filters', async () => {
+    selectedFilters.value = ['ASSESSMENT_NAME'];
+    filterValues.value.ASSESSMENT_NAME = 'test';
 
-    const createButton = screen.getByText('assessment.createAssessment');
-    expect(createButton).toBeInTheDocument();
-    fireEvent.click(createButton);
-    expect(createButton).toBeInTheDocument();
+    const peekSpy = vi.spyOn(noFilterIsSelected, 'peek').mockReturnValue(false);
+
+    render(<Assessment />);
+    fireEvent.click(screen.getByRole('button', { name: 'commons.search' }));
+
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId('multifilters-error-text')
+      ).not.toBeInTheDocument();
+      expect(mockNavigate).toHaveBeenCalledWith(
+        '/piattaformaunitaria/assessment/search-results#ASSESSMENT_NAME=test'
+      );
+    });
+
+    peekSpy.mockRestore();
   });
 
-  it('should render create chapter button and allow click', () => {
+  it('should show error on invalid filters', () => {
+    selectedFilters.value = [];
+    filterValues.value.ASSESSMENT_NAME = '';
     render(<Assessment />);
+    fireEvent.click(screen.getByRole('button', { name: 'commons.search' }));
 
-    const createChapterButton = screen.getByText('assessment.createChapter');
-    expect(createChapterButton).toBeInTheDocument();
-
-    fireEvent.click(createChapterButton);
-    expect(createChapterButton).toBeInTheDocument();
+    expect(screen.getByTestId('multifilters-error-text')).toBeInTheDocument();
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
-  it('should render view all chapters link and allow click', () => {
+  it('should remove filters when remove button clicked', () => {
+    selectedFilters.value = ['ASSESSMENT_NAME'];
     render(<Assessment />);
-
-    const viewAllButton = screen.getByText('assessment.seeAllChapters');
-    expect(viewAllButton).toBeInTheDocument();
-
-    fireEvent.click(viewAllButton);
-    expect(viewAllButton).toBeInTheDocument();
-  });
-
-  it('should navigate to search results when clicking search button with valid filters', () => {
-    mockNoFilterIsSelected.mockReturnValue(true);
-
-    render(<Assessment />);
-
-    const searchButton = screen.getByRole('button', { name: 'commons.search' });
-    fireEvent.click(searchButton);
-
-    expect(mockNavigate).toHaveBeenCalledWith(
-      '/piattaformaunitaria/assessment/search-results'
+    fireEvent.click(
+      screen.getByRole('button', { name: 'commons.filters.remove' })
     );
+    expect(selectedFilters.value.length).toBe(0);
   });
 
-  it('should show error when searching without selected filters', () => {
-    mockNoFilterIsSelected.mockReturnValue(false);
-
+  it('should hide error on remove filters button after showing error', async () => {
+    selectedFilters.value = [];
     render(<Assessment />);
+    fireEvent.click(screen.getByRole('button', { name: 'commons.search' }));
+    const alert = await screen.findByTestId('multifilters-error-text');
+    expect(alert).toBeInTheDocument();
 
-    const searchButton = screen.getByRole('button', { name: 'commons.search' });
-    fireEvent.click(searchButton);
-
-    expect(screen.getByTestId('multifilters-error-text')).toBeInTheDocument();
-    expect(
-      screen.getByText('commons.filters.atLeastOneFilter')
-    ).toBeInTheDocument();
-  });
-
-  it('should remove all filters when clicking remove button', () => {
-    render(<Assessment />);
-
-    const removeButton = screen.getByRole('button', {
-      name: 'commons.filters.remove'
-    });
-    fireEvent.click(removeButton);
-
-    expect(mockRemoveAllFilters).toHaveBeenCalled();
-  });
-
-  it('should hide error message when interacting with filters via removal', () => {
-    mockNoFilterIsSelected.mockReturnValue(false);
-
-    render(<Assessment />);
-
-    const searchButton = screen.getByRole('button', { name: 'commons.search' });
-    fireEvent.click(searchButton);
-
-    expect(screen.getByTestId('multifilters-error-text')).toBeInTheDocument();
-
-    const removeButton = screen.getByRole('button', {
-      name: 'commons.filters.remove'
-    });
-    fireEvent.click(removeButton);
+    fireEvent.click(
+      screen.getByRole('button', { name: 'commons.filters.remove' })
+    );
 
     expect(
       screen.queryByTestId('multifilters-error-text')
     ).not.toBeInTheDocument();
   });
 
-  it('should configure DEBT_TYPE options in filterMap correctly', () => {
+  it('should trigger create assessment button click', () => {
     render(<Assessment />);
-
-    expect(screen.getByText('assessment.search')).toBeInTheDocument();
+    const btn = screen.getByText('assessment.createAssessment');
+    fireEvent.click(btn);
+    expect(btn).toBeInTheDocument();
   });
 
-  it('should initialize useAssessmentsSearch with correct parameters', () => {
+  it('should trigger create chapter button click', () => {
     render(<Assessment />);
+    const btn = screen.getByText('assessment.createChapter');
+    fireEvent.click(btn);
+    expect(btn).toBeInTheDocument();
+  });
 
-    expect(screen.getByText('commons.routes.ASSESSMENT')).toBeInTheDocument();
+  it('should trigger view all chapters click', () => {
+    render(<Assessment />);
+    const btn = screen.getByText('assessment.seeAllChapters');
+    fireEvent.click(btn);
+    expect(btn).toBeInTheDocument();
   });
 });

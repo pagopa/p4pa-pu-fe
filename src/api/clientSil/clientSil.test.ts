@@ -1,6 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
-import { getClientSils, deleteClientSil, getClientDetail } from './index';
+import {
+  getClientSils,
+  deleteClientSil,
+  getClientDetail,
+  generateClientSecret
+} from './index';
 import { buildQueryParams } from './mappings';
 import type { ClientSilFilteredRequest } from './mappings';
 import { AxiosResponse } from 'axios';
@@ -11,7 +16,8 @@ vi.mock('../../utils', () => ({
       bff: {
         getClients: vi.fn(),
         deleteClient: vi.fn(),
-        getClient: vi.fn()
+        getClient: vi.fn(),
+        generateClientSecret: vi.fn()
       }
     }
   }
@@ -255,6 +261,74 @@ describe('ClientSil API', () => {
         );
         expect(result.current.data).toEqual(dataMock);
       });
+    });
+  });
+
+  describe('regenerate secret values', () => {
+    it('should call generateClientSecret API with correct parameters', async () => {
+      const organizationId = 123;
+      const clientId = 'client123';
+
+      vi.mocked(utils.apiClient.bff.generateClientSecret).mockResolvedValue({
+        data: undefined
+      } as AxiosResponse);
+
+      const { result } = renderHook(() => generateClientSecret(organizationId));
+
+      result.current.mutate(clientId);
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(utils.apiClient.bff.generateClientSecret).toHaveBeenCalledWith(
+        organizationId,
+        clientId
+      );
+    });
+
+    it('should handle generateClientSecret error', async () => {
+      const organizationId = 123;
+      const clientId = 'client123';
+      const mockError = new Error('generateClientSecret failed');
+
+      vi.mocked(utils.apiClient.bff.generateClientSecret).mockRejectedValue(
+        mockError
+      );
+
+      const { result } = renderHook(() => generateClientSecret(organizationId));
+
+      result.current.mutate(clientId);
+
+      await waitFor(() => {
+        expect(result.current.isError).toBe(true);
+      });
+
+      expect(result.current.error).toBe(mockError);
+      expect(utils.apiClient.bff.generateClientSecret).toHaveBeenCalledWith(
+        organizationId,
+        clientId
+      );
+    });
+
+    it('should successfully complete generateClientSecret mutation', async () => {
+      const organizationId = 123;
+      const clientId = 'client123';
+
+      vi.mocked(utils.apiClient.bff.generateClientSecret).mockResolvedValue({
+        data: undefined
+      } as AxiosResponse);
+
+      const { result } = renderHook(() => generateClientSecret(organizationId));
+
+      result.current.mutate(clientId);
+
+      await waitFor(() => {
+        expect(result.current.isSuccess).toBe(true);
+      });
+
+      expect(result.current.isSuccess).toBe(true);
+      expect(result.current.isError).toBe(false);
     });
   });
 });

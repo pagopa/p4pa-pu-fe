@@ -116,6 +116,7 @@ export const PaymentOptionSection = ({
       <Box mb={3}>
         <TitleComponent
           variant="h6"
+          sx={{ fontWeight: 700 }}
           title={optionData.title}
           chip={optionData.chip}
         />

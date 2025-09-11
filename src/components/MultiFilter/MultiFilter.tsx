@@ -10,7 +10,7 @@ import {
   updateFilter,
   KeyofFilterMap
 } from '../../store/FilterStore';
-import { ChangeEvent } from 'react';
+import { FilterFieldValue } from '../../models/Filters';
 
 export type MultiFilterProps = {
   filterMap: FilterMap;
@@ -27,8 +27,8 @@ const MultiFilter = ({ filterMap, onFilterInteraction }: MultiFilterProps) => {
     state: { selectedFilters }
   } = useStore();
 
-  const onChange = (e: ChangeEvent<HTMLInputElement>, index: number) => {
-    updateFilter(e.target.value as KeyofFilterMap, index);
+  const onChange = (value: FilterFieldValue, index: number) => {
+    updateFilter(value as KeyofFilterMap, index);
     onFilterInteraction?.();
   };
 
@@ -42,36 +42,33 @@ const MultiFilter = ({ filterMap, onFilterInteraction }: MultiFilterProps) => {
 
   return (
     <Stack gap={3}>
-      {selectedFilters
-        .slice()
-        .sort((a, b) => a.localeCompare(b))
-        .map((filterId, index) => (
-          <Stack
-            key={filterId}
-            direction="row"
-            gap={2}
-            justifyContent="space-between"
-          >
-            {selectedFilters.length > 1 && (
-              <IconButton
-                sx={{
-                  color: theme.palette.error.dark,
-                  alignSelf: 'flex-start'
-                }}
-                onClick={() => removeFilterRow(filterId)}
-                aria-label="remove"
-              >
-                <RemoveCircleOutline fontSize="small" />
-              </IconButton>
-            )}
-            <Filter
-              value={filterId}
-              filterMap={filterMap}
-              selectedFilters={selectedFilters}
-              onChange={(value) => onChange(value, index)}
-            />
-          </Stack>
-        ))}
+      {selectedFilters.map((filterId, index) => (
+        <Stack
+          key={filterId}
+          direction="row"
+          gap={2}
+          justifyContent="space-between"
+        >
+          {selectedFilters.length > 1 && (
+            <IconButton
+              sx={{
+                color: theme.palette.error.dark,
+                alignSelf: 'flex-start'
+              }}
+              onClick={() => removeFilterRow(filterId)}
+              aria-label="remove"
+            >
+              <RemoveCircleOutline fontSize="small" />
+            </IconButton>
+          )}
+          <Filter
+            value={filterId}
+            filterMap={filterMap}
+            selectedFilters={selectedFilters}
+            onChange={(value) => onChange(value, index)}
+          />
+        </Stack>
+      ))}
 
       <Box display="flex" justifyContent="flex-start">
         <Button

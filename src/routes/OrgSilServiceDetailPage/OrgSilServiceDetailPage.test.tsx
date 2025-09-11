@@ -150,7 +150,7 @@ describe('OrgSilServiceDetailPage', () => {
 
     render(<OrgSilServiceDetailPage />);
 
-    expect(screen.getByRole('heading', { level: 3 })).toHaveTextContent(
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
       'Test Payment Service'
     );
     expect(

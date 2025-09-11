@@ -10,12 +10,7 @@ import { InstallmentStatus } from '../../../generated/data-contracts';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';
-import {
-  useLocation,
-  useParams,
-  useNavigate,
-  generatePath
-} from 'react-router';
+import { useParams, useNavigate, generatePath } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { useEffect, useState } from 'react';
 import { BredcrumbItem } from '../Breadcrumbs/Breadcrumbs';
@@ -26,6 +21,7 @@ import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
 import GenericDialog from '../GenericDialog/GenericDialog';
 import { useTimelineData } from '../../hooks/useTimelineData';
+import { stateColors } from '../../routes/DebtPositions/components/DebtPositionIUVDataGrid';
 
 export const DebtPositionsInstallmentDetail = () => {
   const { t } = useTranslation();
@@ -33,9 +29,6 @@ export const DebtPositionsInstallmentDetail = () => {
   const { state } = useStore();
   const { id } = useParams<{ id: string }>();
 
-  const {
-    state: { remittanceInformation: remittanceInformation }
-  } = useLocation();
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
@@ -130,16 +123,18 @@ export const DebtPositionsInstallmentDetail = () => {
 
   type DetailDataValue = Record<string, Array<DetailData>> | Array<DetailData>;
 
-  const summaryTitle: string = remittanceInformation || '';
-
   const installmentDetailData: DetailDataValue = {
     summaryData: [
       {
         label: t('commons.state'),
-        value: installment?.status
-          ? t(`commons.status.${installment.status}`)
-          : '',
-        chipConfig: { color: 'default', variant: 'outlined' }
+        value: installment?.status || '',
+        chipConfig: {
+          color: installment?.status
+            ? stateColors[installment.status]
+            : 'default',
+          variant: 'outlined'
+        },
+        valueType: 'status'
       },
       {
         label: t('debtPositionSearchResults.iuv'),
@@ -266,7 +261,7 @@ export const DebtPositionsInstallmentDetail = () => {
           <DetailContainer
             sections={[
               {
-                title: { label: t(summaryTitle), variant: 'h6' },
+                description: installment?.debtPositionDescription,
                 data: installmentDetailData.summaryData,
                 inline: true,
                 footerLink: {

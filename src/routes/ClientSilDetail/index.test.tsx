@@ -7,9 +7,11 @@ import ClientSilDetail from '.';
 vi.mock('../../api/clientSil', () => ({
   getClientDetail: vi.fn(),
   deleteClientSil: vi.fn(),
+  generateClientSecret: vi.fn(),
   default: {
     getClientDetail: vi.fn(),
-    deleteClientSil: vi.fn()
+    deleteClientSil: vi.fn(),
+    generateClientSecret: vi.fn()
   }
 }));
 
@@ -62,7 +64,9 @@ describe('ClientSIL Detail Page', () => {
     });
 
     // Mock the default export methods
-    const mockDeleteClientSil = clientSilApi.deleteClientSil as ReturnType<typeof vi.fn>;
+    const mockDeleteClientSil = clientSilApi.deleteClientSil as ReturnType<
+      typeof vi.fn
+    >;
     mockDeleteClientSil.mockReturnValue({
       mutateAsync: vi.fn()
     });

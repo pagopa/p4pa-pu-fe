@@ -530,6 +530,12 @@ const DebtPositionDetail = () => {
               ]
             : [])
         ]}
+        accessibleTitle={t('debtPositionInstallmentDetail.accessibleTitle', {
+          description:
+            debtPositionDetail.description ||
+            debtPositionDetail.debtPositionTypeOrgDescription,
+          interpolation: { escapeValue: false }
+        })}
       />
 
       <Menu
@@ -587,7 +593,13 @@ const DebtPositionDetail = () => {
           {debtorSection && <DetailContainer sections={[debtorSection]} />}
         </Accordion>
 
-        <Typography variant="h5" mb={2} mt={4}>
+        <Typography
+          variant="h5"
+          component={'h2'}
+          fontWeight={700}
+          mb={2}
+          mt={4}
+        >
           {t('debtPositionDetail.paymentOptions')}
         </Typography>
       </Box>

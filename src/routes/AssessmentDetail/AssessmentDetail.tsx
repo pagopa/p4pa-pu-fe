@@ -129,7 +129,8 @@ export const AssessmentDetail = () => {
       return;
     }
 
-    const debtPositionTypeOrgCode = detailItem?.debtPositionTypeOrgCode;
+    const debtPositionTypeOrgCode =
+      data?.debtPositionTypeOrgCode || detailItem?.debtPositionTypeOrgCode;
 
     const searchParams = new URLSearchParams({
       mode: 'remove',
@@ -156,7 +157,8 @@ export const AssessmentDetail = () => {
       return;
     }
 
-    const debtPositionTypeOrgCode = detailItem?.debtPositionTypeOrgCode;
+    const debtPositionTypeOrgCode =
+      data?.debtPositionTypeOrgCode || detailItem?.debtPositionTypeOrgCode;
 
     const searchParams = new URLSearchParams({
       mode: 'add',
@@ -261,6 +263,10 @@ export const AssessmentDetail = () => {
             status={data?.status}
           />
         ]}
+        accessibleTitle={t('assessmentDetail.accessibleTitle', {
+          assessmentId: data?.assessmentsName,
+          interpolation: { escapeValue: false }
+        })}
       />
       <Grid container spacing={2}>
         <Grid item md={12}>
