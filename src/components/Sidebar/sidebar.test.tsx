@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { Sidebar } from './Sidebar';
 import { StoreProvider } from '../../store/GlobalStore';
-import { OperatorRoleEnum } from '../../../generated/data-contracts';
+import { OperatorRole } from '../../../generated/data-contracts';
 import { Theme } from '../../utils/theme';
 import { MemoryRouter } from 'react-router';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
@@ -20,7 +20,7 @@ const renderSidebar = () =>
 
 describe('Sidebar component', () => {
   it('should not render backoffice section when the role is operator', () => {
-    setOperatorRole(OperatorRoleEnum.ROLE_OPER);
+    setOperatorRole(OperatorRole.ROLE_OPER);
     vi.spyOn(utils.roles, 'useIsSuperAdmin').mockImplementation(() => false);
 
     renderSidebar();
@@ -29,7 +29,7 @@ describe('Sidebar component', () => {
   });
 
   it('should render backoffice section with all sub menu items when the role is superAdmin', () => {
-    setOperatorRole(OperatorRoleEnum.ROLE_ADMIN);
+    setOperatorRole(OperatorRole.ROLE_ADMIN);
     vi.spyOn(utils.roles, 'useIsSuperAdmin').mockImplementation(() => true);
 
     renderSidebar();
@@ -47,7 +47,7 @@ describe('Sidebar component', () => {
   });
 
   it('should render backoffice section with a limited sub menu items when the role is admin', () => {
-    setOperatorRole(OperatorRoleEnum.ROLE_ADMIN);
+    setOperatorRole(OperatorRole.ROLE_ADMIN);
     vi.spyOn(utils.roles, 'useIsSuperAdmin').mockImplementation(() => false);
 
     renderSidebar();

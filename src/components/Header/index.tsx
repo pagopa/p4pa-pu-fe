@@ -15,7 +15,7 @@ import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch'
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
-import { OperatorRoleEnum } from '../../../generated/apiClient';
+import { OperatorRole } from '../../../generated/apiClient';
 import { PageRoutes } from '../../routes';
 
 export type HeaderProps = {
@@ -102,7 +102,7 @@ export const Header = (props: HeaderProps) => {
 
   const onSelectedParty = (organization: PartySwitchItem) => {
     setOrganizationId(Number(organization.id));
-    setOperatorRole(organization.productRole as OperatorRoleEnum);
+    setOperatorRole(organization.productRole as OperatorRole);
     navigate(0);
   };
 

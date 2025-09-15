@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
-  OperatorRoleEnum,
+  OperatorRole,
   OrganizationDTO
 } from '../../../generated/data-contracts';
 import { AxiosResponse } from 'axios';
@@ -39,7 +39,7 @@ describe('loaders', () => {
           organizationId: 1,
           ipaCode: 'IPA01',
           orgName: 'Test Org',
-          operatorRole: OperatorRoleEnum.ROLE_ADMIN,
+          operatorRole: OperatorRole.ROLE_ADMIN,
           orgFiscalCode: '123456789',
           flagNotifyIo: false,
           flagNotifyOutcomePush: false,
