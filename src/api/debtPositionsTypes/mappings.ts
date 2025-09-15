@@ -18,8 +18,10 @@ export const buildQueryParams = ({
 }: DebtPositionTypeWithCountFilteredRequest) => ({
   page: pagination.page,
   size: pagination.size,
-  description: filters.description,
-  sort
+  ...(filters?.description && {
+    description: filters.description
+  }),
+  ...(sort.length && { sort })
 });
 
 export const buildQueryPostParams = (
