@@ -902,6 +902,7 @@
     "searchForCode": "Cerca per codice",
     "searchForDescription": "Cerca per descrizione",
     "searchForIPACode": "Cerca per codice IPA",
+    "searchForOrganization": "Cerca ente",
     "searchForOrganizationName": "Cerca per nome ente",
     "searchIUF": "Cerca ID Rendicontazione",
     "searchIUV": "Cerca IUV",
@@ -1705,6 +1706,12 @@
   "notificationPreview": {
     "byOrg": "Ente mittente*",
     "byService": "Servizio mittente*"
+  },
+  "organizations": {
+    "name": "Nome o ragione sociale",
+    "fiscalCode": "Codice fiscale",
+    "activeOperators": "Operatori attivi",
+    "activeDebtTypes": "Tipi dovuti attivi"
   },
   "orgSilService": {
     "accessibleTitle": "Ricerca org sil service",

@@ -60,7 +60,8 @@ export const ExportFlowPage = () => {
     { label: '1.0', value: 'v1.0' },
     { label: '1.1', value: 'v1.1' },
     { label: '1.2', value: 'v1.2' },
-    { label: '1.3', value: 'v1.3' }
+    { label: '1.3', value: 'v1.3' },
+    { label: '1.4', value: 'v1.4' }
   ];
 
   const createPaidExport = createPaidExportFile();

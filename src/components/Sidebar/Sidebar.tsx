@@ -19,7 +19,6 @@ import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
-import DnsIcon from '@mui/icons-material/Dns';
 import PeopleIcon from '@mui/icons-material/People';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -30,6 +29,7 @@ import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
 import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
+import { Dns } from '@mui/icons-material';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -107,15 +107,6 @@ export const Sidebar: React.FC = () => {
   ];
 
   const additionalItems = [];
-
-  if (isSuperAdmin) {
-    additionalItems.push({
-      label: t('commons.routes.ORGANIZATIONS'),
-      icon: DnsIcon,
-      route: '/debtpositions',
-      end: true
-    });
-  }
 
   if (isSuperAdmin || state.operatorRole == 'ROLE_ADMIN') {
     const debtypes = [];
@@ -230,6 +221,33 @@ export const Sidebar: React.FC = () => {
                 </IconButton>
               </Tooltip>
             </Box>
+          )}
+          {isSuperAdmin && (
+            <>
+              <List
+                sx={styles.list}
+                component="ol"
+                aria-hidden={collapsed && !lg}
+                aria-label={t('commons.sidebar.menudescription')}
+              >
+                <SidebarMenuItem
+                  onClick={() => !lg && setCollapsed(true)}
+                  collapsed={collapsed}
+                  item={{
+                    label: t('commons.routes.ORGANIZATIONS'),
+                    icon: Dns,
+                    route: PageRoutes.ORGANIZATIONS,
+                    end: true
+                  }}
+                  key="managed-orgs"
+                />
+              </List>
+              <Divider
+                orientation="horizontal"
+                flexItem
+                sx={{ display: lg ? 'block' : 'none' }}
+              />
+            </>
           )}
           <List
             sx={styles.list}
