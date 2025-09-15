@@ -5,14 +5,13 @@ import {
   debtPositionTypeSchema,
   pagedDebtPositionTypeWithCountSchema
 } from '../../../generated/zod-schema';
-import {
-  DebtPositionTypePatchRequestBody,
-  DebtPositionTypeRequestBody
-} from '../../../generated/data-contracts';
+import { DebtPositionTypePatchRequestBody } from '../../../generated/data-contracts';
 import {
   buildQueryParams,
+  buildQueryPostParams,
   DebtPositionTypeWithCountFilteredRequest
 } from './mappings';
+import { Step2Data } from '../../routes/DebtTypeCreate/components/Step2Settings';
 
 export const getDebtPositionTypeWithCount = ({
   organizationId
@@ -40,8 +39,10 @@ export const getDebtPositionTypeWithCount = ({
 export const postDebtPositionType = () =>
   useMutation({
     mutationKey: ['postDebtPositionType'],
-    mutationFn: async (query: DebtPositionTypeRequestBody) => {
-      const response = await utils.apiClient.bff.createDebtPositionType(query);
+    mutationFn: async (query: Step2Data) => {
+      const querySanitizer = buildQueryPostParams(query);
+      const response =
+        await utils.apiClient.bff.createDebtPositionType(querySanitizer);
       parseAndLog(debtPositionTypeSchema, response.data);
       return response.data;
     }
