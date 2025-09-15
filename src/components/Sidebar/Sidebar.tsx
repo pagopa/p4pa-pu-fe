@@ -21,6 +21,7 @@ import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import DnsIcon from '@mui/icons-material/Dns';
 import PeopleIcon from '@mui/icons-material/People';
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AllInboxIcon from '@mui/icons-material/AllInbox';
@@ -140,6 +141,12 @@ export const Sidebar: React.FC = () => {
         label: t('commons.routes.USERS'),
         icon: PeopleIcon,
         route: '/debtpositions',
+        end: true
+      },
+      {
+        label: t('commons.routes.OPERATORS_LIST'),
+        icon: ManageAccountsIcon,
+        route: PageRoutes.OPERATORS_LIST,
         end: true
       },
       {

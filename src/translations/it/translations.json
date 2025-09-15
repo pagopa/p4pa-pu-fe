@@ -566,6 +566,28 @@
       }
     }
   },
+  "operatorsList": {
+    "description": "In questa sezione trovi gli operatori presenti per il proprio ente.",
+    "descriptionFull": "In questa sezione trovi gli operatori presenti per il proprio ente o per gli enti gestiti.",
+    "tabMyOrganization": "Il mio ente",
+    "tabAllOrganizations": "Enti gestiti",
+    "searchByName": "Cerca per nome",
+    "searchByFiscalCode": "Cerca per CF",
+    "searchByIPACode": "Cerca per codice IPA",
+    "myOrganizationDataGrid": {
+      "id": "ID",
+      "name": "Nome",
+      "fiscalCode": "Codice Fiscale",
+      "enabledDebtTypes": "Tipi di dovuto abilitati"
+    },
+    "allOrganizationsDataGrid": {
+      "id": "ID",
+      "name": "Nome", 
+      "fiscalCode": "Codice Fiscale",
+      "enabledDebtTypes": "Tipi di dovuto abilitati",
+      "operators": "Operatori"
+    }
+  },
   "clientSilDetail": {
     "accessibleTitle": "Dettaglio client sil: {{clientName}}",
     "description": "Ecco i dettagli del Client SIL censito",
@@ -891,6 +913,7 @@
       "TREASURY_INDEX": "Pagina principale",
       "TREASURY_SEARCH_RESULTS": "Risultato ricerca",
       "USERS": "Utenti",
+      "OPERATORS_LIST": "Gestione operatori",
       "CLASSIFICATION_DETAIL": "Dettaglio Pagamento"
     },
     "saveDraft": "Salva bozza",
