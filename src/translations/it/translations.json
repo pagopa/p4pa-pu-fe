@@ -275,7 +275,7 @@
   "assessmentsRegistrySearchResults": {
     "sectionCode": "Codice Capitolo",
     "operatingYear": "Anno",
-    "debtPositionTypeOrgCode": "Tipo dovuto",
+    "debtPositionTypeOrgDescription": "Tipo dovuto",
     "assessmentCode": "Codice accertamento",
     "officeCode": "Codice ufficio",
     "status": "Stato ufficio",

@@ -37,7 +37,7 @@ export const AssessmentRegistryDetail = () => {
   const debtTypeInfo = [
     {
       label: t('AssessmentRegistryDetail.debtPositionType'),
-      value: data?.debtPositionTypeOrgCode
+      value: data?.debtPositionTypeOrgDescription
     }
   ];
 
