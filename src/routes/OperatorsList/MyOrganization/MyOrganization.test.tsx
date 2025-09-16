@@ -55,6 +55,7 @@ describe('MyOrganization', () => {
       'operatorsList.myOrganizationDataGrid.enabledDebtTypes':
         'Enabled Debt Types',
       'operatorsList.searchByName': 'Search by Name',
+      'operatorsList.searchByLastName': 'Search by Last Name',
       'operatorsList.searchByFiscalCode': 'Search by Fiscal Code',
       'commons.search': 'Search'
     });
@@ -136,6 +137,7 @@ describe('MyOrganization', () => {
   it('renders search filters with correct labels', async () => {
     render(<MyOrganization />);
     expect(screen.getByLabelText('Search by Name')).toBeInTheDocument();
+    expect(screen.getByLabelText('Search by Last Name')).toBeInTheDocument();
     expect(screen.getByLabelText('Search by Fiscal Code')).toBeInTheDocument();
   });
 
@@ -194,14 +196,17 @@ describe('MyOrganization', () => {
     render(<MyOrganization />);
 
     const nameInput = screen.getByLabelText('Search by Name');
+    const lastNameInput = screen.getByLabelText('Search by Last Name');
     const fiscalCodeInput = screen.getByLabelText('Search by Fiscal Code');
 
     fireEvent.change(nameInput, { target: { value: 'Mario' } });
+    fireEvent.change(lastNameInput, { target: { value: 'Rossi' } });
     fireEvent.change(fiscalCodeInput, {
       target: { value: 'RSSMRA80A01H501X' }
     });
 
     expect(nameInput).toHaveValue('Mario');
+    expect(lastNameInput).toHaveValue('Rossi');
     expect(fiscalCodeInput).toHaveValue('RSSMRA80A01H501X');
   });
 

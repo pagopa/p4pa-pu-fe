@@ -27,7 +27,7 @@ type OperatorFilters = {
 
 type Operator = {
   id: string;
-  name: string;
+  nameAndLastName: string;
   fiscalCode: string;
   enabledDebtTypes: number;
 };
@@ -66,7 +66,7 @@ export const MyOrganization = () => {
   const mappedData =
     data?.content?.map((operator: OrganizationOperator) => ({
       id: operator.mappedExternalUserId || '-',
-      name:
+      nameAndLastName:
         `${operator.firstName || '-'} ${operator.lastName || '-'}`.trim() ||
         '-',
       fiscalCode: operator.fiscalCode || '-',
@@ -81,8 +81,8 @@ export const MyOrganization = () => {
       minWidth: 100
     },
     {
-      field: 'name',
-      headerName: t('operatorsList.myOrganizationDataGrid.name'),
+      field: 'nameAndLastName',
+      headerName: t('operatorsList.myOrganizationDataGrid.nameAndLastName'),
       flex: 2,
       minWidth: 200
     },
@@ -128,14 +128,21 @@ export const MyOrganization = () => {
       id: 'firstName',
       label: t('operatorsList.searchByName'),
       adornment: <Search />,
-      gridWidth: 5
+      gridWidth: 3
+    },
+    {
+      type: COMPONENT_TYPE.textField,
+      id: 'lastName',
+      label: t('operatorsList.searchByLastName'),
+      adornment: <Search />,
+      gridWidth: 3
     },
     {
       type: COMPONENT_TYPE.textField,
       id: 'fiscalCode',
       label: t('operatorsList.searchByFiscalCode'),
       adornment: <Search />,
-      gridWidth: 5
+      gridWidth: 4
     },
     {
       type: COMPONENT_TYPE.button,

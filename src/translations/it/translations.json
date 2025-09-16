@@ -572,17 +572,18 @@
     "tabMyOrganization": "Il mio ente",
     "tabAllOrganizations": "Enti gestiti",
     "searchByName": "Cerca per nome",
+    "searchByLastName": "Cerca per Cognome",
     "searchByFiscalCode": "Cerca per CF",
     "searchByIPACode": "Cerca per codice IPA",
     "myOrganizationDataGrid": {
       "id": "ID",
-      "name": "Nome",
+      "nameAndLastName": "Nome e Cognome",
       "fiscalCode": "Codice Fiscale",
       "enabledDebtTypes": "Tipi di dovuto abilitati"
     },
     "allOrganizationsDataGrid": {
       "id": "ID",
-      "name": "Nome", 
+      "name": "Nome",
       "fiscalCode": "Codice Fiscale",
       "enabledDebtTypes": "Tipi di dovuto abilitati",
       "operators": "Operatori"
