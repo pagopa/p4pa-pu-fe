@@ -31,7 +31,7 @@ vi.mock('../../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
-vi.mock('../../../api/organizationOperators/organizationOperators', () => ({
+vi.mock('../../../api/organizationOperators', () => ({
   useOrganizationOperatorsSearch: vi.fn()
 }));
 
