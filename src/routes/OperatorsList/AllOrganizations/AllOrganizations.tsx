@@ -14,7 +14,7 @@ import FilterContainer, {
 } from '../../../components/FilterContainer/FilterContainer';
 import { BaseFilterValues } from '../../../models/Filters';
 import Search from '@mui/icons-material/Search';
-import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators/organizationOperators';
+import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
 import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/data-contracts';
 
 type BrokerOrganizationFilters = BaseFilterValues & {

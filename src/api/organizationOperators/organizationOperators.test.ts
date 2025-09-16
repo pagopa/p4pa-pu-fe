@@ -3,7 +3,7 @@ import { renderHook, waitFor, act } from '../../__tests__/renderers';
 import {
   useOrganizationOperatorsSearch,
   useBrokerOrganizationsSearch
-} from './organizationOperators';
+} from '.';
 import utils from '../../utils';
 import {
   pagedOrganizationOperatorSchema,

@@ -17,7 +17,7 @@ import Search from '@mui/icons-material/Search';
 import { BaseFilterValues } from '../../../models/Filters';
 import { useSearch } from '../../../hooks/useSearch';
 import { OrganizationOperator } from '../../../../generated/data-contracts';
-import { useOrganizationOperatorsSearch } from '../../../api/organizationOperators/organizationOperators';
+import { useOrganizationOperatorsSearch } from '../../../api/organizationOperators';
 
 type OperatorFilters = {
   firstName?: string;

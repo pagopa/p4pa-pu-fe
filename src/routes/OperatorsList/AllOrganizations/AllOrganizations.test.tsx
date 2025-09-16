@@ -39,7 +39,7 @@ vi.mock('../../../hooks/useSearch', () => ({
   useSearch: vi.fn()
 }));
 
-import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators/organizationOperators';
+import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
 import { useSearch } from '../../../hooks/useSearch';
 
 describe('AllOrganizations', () => {
