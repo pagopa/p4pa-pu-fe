@@ -39,7 +39,7 @@ const OrganizationsDatagrid = ({
       flex: 1,
       type: 'number',
       align: 'left',
-      headerAlign: 'center'
+      headerAlign: 'left'
     },
     {
       field: 'debtPositionTypeOrgCount',
@@ -47,7 +47,7 @@ const OrganizationsDatagrid = ({
       flex: 1,
       type: 'number',
       align: 'left',
-      headerAlign: 'center'
+      headerAlign: 'left'
     },
     {
       field: 'status',
