@@ -103,7 +103,7 @@ export const Header = (props: HeaderProps) => {
   const onSelectedParty = (organization: PartySwitchItem) => {
     setOrganizationId(Number(organization.id));
     setOperatorRole(organization.productRole as OperatorRole);
-    navigate(0);
+    navigate(PageRoutes.HOME);
   };
 
   return (

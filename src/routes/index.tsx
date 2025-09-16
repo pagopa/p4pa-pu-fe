@@ -20,6 +20,7 @@ import { debtPositionsRoutes } from '../routes/debtPositions';
 import { backofficeRoutes } from '../routes/backoffice';
 import { debtTypeOrgsRoutes } from '../routes/debtTypeOrgs';
 import { operatorsRoutes } from '../routes/operators';
+import { organizationsRoutes } from './organizations';
 
 const deployPath = utils.config.deployPath;
 
@@ -39,6 +40,7 @@ const routesDef = [
         element: <Navigate replace to={`${deployPath}/home`} />,
         index: true
       },
+      ...organizationsRoutes,
       {
         path: `home`,
         element: <Home />,
