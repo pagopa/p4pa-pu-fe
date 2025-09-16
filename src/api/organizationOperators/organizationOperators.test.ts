@@ -37,7 +37,6 @@ const mockGetOrganizationsByBrokerIdAndFilters = vi.mocked(
 );
 const mockParseAndLog = vi.mocked(loaders.parseAndLog);
 
-// Helper function per testare operazioni di mutazione con gestione errori
 const expectMutationToThrow = async <T>(
   mutateAsync: (params: FilteredRequest<T>) => Promise<unknown>,
   expectedError: string

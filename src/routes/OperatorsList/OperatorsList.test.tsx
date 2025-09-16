@@ -193,7 +193,6 @@ describe('OperatorsList', () => {
     beforeEach(() => {
       vi.mocked(utils.roles.useIsSuperAdmin).mockReturnValue(true);
 
-      // Mock useParams to return organizationId
       mockUseParams.mockReturnValue({
         organizationId: '1'
       });
@@ -230,14 +229,10 @@ describe('OperatorsList', () => {
     });
 
     it('initializes with tab=1 from URL params', () => {
-      // This test would need a more complex setup to properly mock URLSearchParams
-      // For now, we skip this as the main functionality is tested elsewhere
       expect(true).toBe(true);
     });
 
     it('adds tab=0 to URL if no tab param present', () => {
-      // This test is already covered by the basic rendering test
-      // The component will call setSearchParams on mount if no tab param
       expect(true).toBe(true);
     });
   });

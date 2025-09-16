@@ -9,7 +9,6 @@ import {
 import { AllOrganizations } from './AllOrganizations';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 
-// Mock react-router and store as needed
 vi.mock('react-router', async () => {
   const actual = (await vi.importActual('react-router')) as Record<
     string,
@@ -32,7 +31,6 @@ vi.mock('../../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
-// Mock useBrokerOrganizationsSearch & useSearch hooks
 vi.mock('../../../api/organizationOperators/organizationOperators', () => ({
   useBrokerOrganizationsSearch: vi.fn()
 }));

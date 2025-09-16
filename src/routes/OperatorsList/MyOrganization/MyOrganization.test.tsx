@@ -9,7 +9,6 @@ import {
 import { MyOrganization } from './MyOrganization';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 
-// Mock react-router and store
 vi.mock('react-router', async () => {
   const actual = (await vi.importActual('react-router')) as Record<
     string,

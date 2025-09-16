@@ -83,7 +83,7 @@ export const AllOrganizations = () => {
     row: OrganizationWithDebtPositionTypeOrgAndOperatorsCount | undefined
   ) => {
     if (!row) return;
-    // TODO: Add navigation to operators of specific organization (future task)
+    // TODO: Add navigation to operators of specific organization
     console.log('Navigate to operators for organization:', row.organizationId);
   };
 
