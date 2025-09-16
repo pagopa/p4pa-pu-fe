@@ -50,7 +50,7 @@ describe('MyOrganization', () => {
   beforeEach(() => {
     i18nTestSetup({
       'operatorsList.myOrganizationDataGrid.id': 'ID',
-      'operatorsList.myOrganizationDataGrid.name': 'Name',
+      'operatorsList.myOrganizationDataGrid.nameAndLastName': 'Name',
       'operatorsList.myOrganizationDataGrid.fiscalCode': 'Fiscal Code',
       'operatorsList.myOrganizationDataGrid.enabledDebtTypes':
         'Enabled Debt Types',
