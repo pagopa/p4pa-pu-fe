@@ -17,6 +17,7 @@ import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
 import { OperatorRole } from '../../../generated/apiClient';
 import { PageRoutes } from '../../routes';
+import config from '../../utils/config';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;
@@ -103,7 +104,7 @@ export const Header = (props: HeaderProps) => {
   const onSelectedParty = (organization: PartySwitchItem) => {
     setOrganizationId(Number(organization.id));
     setOperatorRole(organization.productRole as OperatorRole);
-    navigate(PageRoutes.HOME);
+    window.location.replace(config.deployPath);
   };
 
   return (

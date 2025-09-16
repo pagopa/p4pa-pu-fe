@@ -172,8 +172,6 @@ export const useMultiFilters = (props?: {
 
   const filterMap = getFilteredMap();
 
-  console.debug(validationErrors);
-
   return {
     filterMap,
     selectedFilters,
