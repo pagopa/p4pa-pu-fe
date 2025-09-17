@@ -2,6 +2,7 @@ import { RouteHandleObject } from '../models/Routes';
 import OperatorsList from './OperatorsList/OperatorsList';
 import { Outlet, RouteObject } from 'react-router';
 import { AdminRouteGuard } from '../components/RouteGuard/RouteGuard';
+import OperatorDetail from './OperatorsDetail';
 
 export const operatorsRoutes: Array<RouteObject> = [
   {
@@ -22,12 +23,13 @@ export const operatorsRoutes: Array<RouteObject> = [
         } as RouteHandleObject
       },
       {
-        id: 'OPERATORS_LIST_BYORG',
-        element: <OperatorsList />,
-        path: `:organizationId?`,
+        id: 'OPERATORS_DETAIL',
+        path: 'detail/:id',
+        element: <OperatorDetail />,
         handle: {
           backButton: true,
-          hideBreadcrumbs: false
+          hideBreadcrumbs: false,
+          custom: true
         } as RouteHandleObject
       }
     ]

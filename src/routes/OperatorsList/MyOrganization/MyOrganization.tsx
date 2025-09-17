@@ -1,13 +1,12 @@
-import { useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
-import { ArrowForwardIos } from '@mui/icons-material';
+import { RemoveCircleOutline, OpenInNew } from '@mui/icons-material';
 import CustomDataGrid, {
   DataGridContainer
 } from '../../../components/DataGrid/CustomDataGrid';
 import { useStore } from '../../../store/GlobalStore';
-import { useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE,
   FilterItem
@@ -18,6 +17,8 @@ import { BaseFilterValues } from '../../../models/Filters';
 import { useSearch } from '../../../hooks/useSearch';
 import { OrganizationOperator } from '../../../../generated/data-contracts';
 import { useOrganizationOperatorsSearch } from '../../../api/organizationOperators';
+import ActionMenu from '../../../components/ActionMenu/ActionMenu';
+import { PageRoutes } from '../..';
 
 type OperatorFilters = {
   firstName?: string;
@@ -33,7 +34,7 @@ type Operator = {
 };
 
 export const MyOrganization = () => {
-  const theme = useTheme();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { organizationId: organizationIdByURL } = useParams<{
     organizationId: string;
@@ -107,19 +108,39 @@ export const MyOrganization = () => {
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<Operator>) => (
-        <ArrowForwardIos
-          fontSize="small"
-          sx={{ color: theme.palette.primary.main, cursor: 'pointer' }}
-          onClick={() => handleRowClick(params.row)}
+        <ActionMenu
+          rowId={params.row.id}
+          menuItems={[
+            {
+              icon: <RemoveCircleOutline color="error" />,
+              label: t('commons.onlyRemove'),
+              // TODO: Add remove operation
+              action: () => null
+            },
+            {
+              icon: <OpenInNew color="primary" />,
+              label: t('commons.goToDetail'),
+              action: () => handleRowClick(params.row)
+            }
+          ]}
         />
       )
     }
   ];
 
   const handleRowClick = (row: Operator | undefined) => {
-    if (!row) return;
-    // TODO: Add navigation to operator detail
-    console.log('Navigate to operator detail:', row.id);
+    if (row) {
+      const detailPath = generatePath(PageRoutes.OPERATORS_DETAIL, {
+        id: row.id
+      });
+      navigate(detailPath, {
+        state: {
+          operatorName: row?.nameAndLastName
+        }
+      });
+    } else {
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
   };
 
   const items: Array<FilterItem> = [

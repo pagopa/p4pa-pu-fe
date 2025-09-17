@@ -41,15 +41,17 @@ export type footerLinkConfig = {
   iconPosition?: 'left' | 'right';
 };
 
+export type DetailSection = {
+  title?: titleConfig;
+  description?: string;
+  data: Array<DetailData>;
+  inline?: boolean;
+  footerLink?: footerLinkConfig;
+  divider?: boolean;
+};
+
 export type DetailSectionProps = {
-  sections: Array<{
-    title?: titleConfig;
-    description?: string;
-    data: Array<DetailData>;
-    inline?: boolean;
-    footerLink?: footerLinkConfig;
-    divider?: boolean;
-  }>;
+  sections: Array<DetailSection>;
   fullWidthSections?: boolean;
 };
 

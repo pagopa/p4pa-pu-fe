@@ -1,4 +1,10 @@
 {
+  "OperatorDetail": {
+    "code": "Cod. Gestionale",
+    "debtPositionTypeDescription": "Tipo di dovuto",
+    "accessibleTitle": "Dettagli operatore",
+    "associatedDebtPositionTypes": "Tipi di dovuto associati"
+  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -598,6 +604,8 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "id": "id",
+    "role": "Ruolo",
     "404": "404: risorsa non disponibile",
     "info": "Informazioni",
     "add": "Aggiungi",
@@ -621,6 +629,7 @@
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
     "backToStart": "Torna alla sezione",
+    "goToDetail": "Vedi dettaglio",
     "creationFrom": "Creazione dal",
     "debtFlow": "Flussi dovuti",
     "debtType": "Tipo dovuto",
