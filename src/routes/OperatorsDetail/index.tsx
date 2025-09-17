@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Grid, Typography, useTheme, Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';
 import { Search } from '@mui/icons-material';
 import OperatorDetailDataGrid from './components/OperatorDetailDataGrid';
-import { useStore } from '../../store/GlobalStore';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import utils from '../../utils';
@@ -25,23 +24,25 @@ export const OperatorDetail = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
-  const {
-    state: { organizationId, userInfo }
-  } = useStore();
 
-  if (!organizationId || !userInfo?.mappedExternalUserId) {
+  const { organizationId, mappedExternalUserId } = useParams<{
+    organizationId: string;
+    mappedExternalUserId: string;
+  }>();
+
+  if (!organizationId || !mappedExternalUserId || !Number(organizationId)) {
     navigate(PageRoutes.RESPONSES_ERROR);
   }
 
   const debtPositionTypesByOrg = useDebtPositionTypesByOrg({
-    organizationId
+    organizationId: Number(organizationId)
   });
 
   const [appliedFilters, setAppliedFilters] = useState(initialFilters);
 
   const query = useOperatorDetailSearch(
-    organizationId,
-    userInfo?.mappedExternalUserId as string
+    Number(organizationId),
+    mappedExternalUserId as string
   );
 
   const operatorDetail = useSearch({ query, filters: appliedFilters });
@@ -89,10 +90,7 @@ export const OperatorDetail = () => {
   return (
     <>
       <TitleComponent
-        title={
-          data?.operatorName ||
-          `${t('operator.operator')} ${data?.operatorId || ''}`
-        }
+        title={`${data?.operatorName} ${data?.operatorLastName}`}
         accessibleTitle={t('OperatorDetail.accessibleTitle', {
           operatorId: data?.operatorId,
           interpolation: { escapeValue: false }

@@ -131,13 +131,10 @@ export const MyOrganization = () => {
   const handleRowClick = (row: Operator | undefined) => {
     if (row) {
       const detailPath = generatePath(PageRoutes.OPERATORS_DETAIL, {
-        id: row.id
+        organizationId: organizationId,
+        mappedExternalUserId: row?.id
       });
-      navigate(detailPath, {
-        state: {
-          operatorName: row?.nameAndLastName
-        }
-      });
+      navigate(detailPath);
     } else {
       navigate(PageRoutes.RESPONSES_ERROR);
     }

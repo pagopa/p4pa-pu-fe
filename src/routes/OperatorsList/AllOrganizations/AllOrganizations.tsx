@@ -1,8 +1,7 @@
-import { useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
-import { ArrowForwardIos } from '@mui/icons-material';
+import { OpenInNew, RemoveCircleOutline } from '@mui/icons-material';
 import CustomDataGrid, {
   DataGridContainer
 } from '../../../components/DataGrid/CustomDataGrid';
@@ -18,13 +17,14 @@ import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
 import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/data-contracts';
 import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
+import ActionMenu from '../../../components/ActionMenu/ActionMenu';
+import { useStore } from '../../../store/GlobalStore';
 
 type BrokerOrganizationFilters = BaseFilterValues & {
   ipaCode?: string;
 };
 
 export const AllOrganizations = () => {
-  const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -37,6 +37,10 @@ export const AllOrganizations = () => {
   const query = useBrokerOrganizationsSearch();
 
   const {
+    state: { userInfo }
+  } = useStore();
+
+  const {
     query: { data },
     applyFilters
   } = useSearch({
@@ -44,7 +48,9 @@ export const AllOrganizations = () => {
     filters
   });
 
-  const columns: Array<GridColDef> = [
+  const columns: Array<
+    GridColDef<OrganizationWithDebtPositionTypeOrgAndOperatorsCount>
+  > = [
     {
       field: 'ipaCode',
       headerName: t('debtTypesCreated.managedOrganizationsDataGrid.IPACode'),
@@ -73,10 +79,23 @@ export const AllOrganizations = () => {
       renderCell: (
         params: GridRenderCellParams<OrganizationWithDebtPositionTypeOrgAndOperatorsCount>
       ) => (
-        <ArrowForwardIos
-          fontSize="small"
-          sx={{ color: theme.palette.primary.main, cursor: 'pointer' }}
-          onClick={() => handleRowClick(params.row)}
+        <ActionMenu
+          // TODO: this cast should be removed
+          // once an unique id is available
+          rowId={params.row.organizationId as number}
+          menuItems={[
+            {
+              icon: <RemoveCircleOutline color="error" />,
+              label: t('commons.onlyRemove'),
+              // TODO: Add remove operation
+              action: () => null
+            },
+            {
+              icon: <OpenInNew color="primary" />,
+              label: t('commons.goToDetail'),
+              action: () => handleRowClick(params.row)
+            }
+          ]}
         />
       )
     }
@@ -85,12 +104,15 @@ export const AllOrganizations = () => {
   const handleRowClick = (
     row: OrganizationWithDebtPositionTypeOrgAndOperatorsCount | undefined
   ) => {
-    if (!row) return;
-    navigate(
-      generatePath(PageRoutes.OPERATORS_LIST_BYORG, {
-        organizationId: row.organizationId
-      })
-    );
+    if (row) {
+      const detailPath = generatePath(PageRoutes.OPERATORS_DETAIL, {
+        organizationId: row?.organizationId,
+        mappedExternalUserId: userInfo?.mappedExternalUserId
+      });
+      navigate(detailPath);
+    } else {
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
   };
 
   const items: Array<FilterItem> = [

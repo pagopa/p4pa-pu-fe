@@ -24,7 +24,7 @@ export const operatorsRoutes: Array<RouteObject> = [
       },
       {
         id: 'OPERATORS_DETAIL',
-        path: 'detail/:id',
+        path: 'detail/:organizationId/:mappedExternalUserId',
         element: <OperatorDetail />,
         handle: {
           backButton: true,
