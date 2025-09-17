@@ -14,8 +14,10 @@ import FilterContainer, {
 } from '../../../components/FilterContainer/FilterContainer';
 import { BaseFilterValues } from '../../../models/Filters';
 import Search from '@mui/icons-material/Search';
-import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '../..';
 import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/data-contracts';
+import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
 
 type BrokerOrganizationFilters = BaseFilterValues & {
   ipaCode?: string;
@@ -24,6 +26,7 @@ type BrokerOrganizationFilters = BaseFilterValues & {
 export const AllOrganizations = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const initialFilters: BrokerOrganizationFilters = utils.URI.decode(
     window.location.hash
@@ -83,8 +86,11 @@ export const AllOrganizations = () => {
     row: OrganizationWithDebtPositionTypeOrgAndOperatorsCount | undefined
   ) => {
     if (!row) return;
-    // TODO: Add navigation to operators of specific organization
-    console.log('Navigate to operators for organization:', row.organizationId);
+    navigate(
+      generatePath(PageRoutes.OPERATORS_LIST_BYORG, {
+        organizationId: row.organizationId
+      })
+    );
   };
 
   const items: Array<FilterItem> = [

@@ -915,6 +915,7 @@
       "TREASURY_SEARCH_RESULTS": "Risultato ricerca",
       "USERS": "Utenti",
       "OPERATORS_LIST": "Gestione operatori",
+      "OPERATORS_LIST_BYORG": "Ente gestito",
       "CLASSIFICATION_DETAIL": "Dettaglio Pagamento"
     },
     "saveDraft": "Salva bozza",
