@@ -9,6 +9,8 @@ import {
 import { AllOrganizations } from './AllOrganizations';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 
+const mockNavigate = vi.fn();
+
 vi.mock('react-router', async () => {
   const actual = (await vi.importActual('react-router')) as Record<
     string,
@@ -16,8 +18,8 @@ vi.mock('react-router', async () => {
   >;
   return {
     ...actual,
-    useNavigate: vi.fn(() => vi.fn()),
-    generatePath: vi.fn(() => '/mock-path'),
+    useNavigate: vi.fn(() => mockNavigate),
+    generatePath: vi.fn(() => '/operators/1'),
     useSearchParams: vi.fn(() => [new URLSearchParams(), vi.fn()])
   };
 });
@@ -57,6 +59,7 @@ describe('AllOrganizations', () => {
     });
 
     vi.clearAllMocks();
+    mockNavigate.mockClear();
 
     // Mock API hook to return mutate function and data
     (useBrokerOrganizationsSearch as unknown as Mock).mockReturnValue({
@@ -150,8 +153,7 @@ describe('AllOrganizations', () => {
     expect(mockApplyFilters).toHaveBeenCalled();
   });
 
-  it('handles row click and logs organization id', async () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
+  it('handles row click and navigates to organization', async () => {
     render(<AllOrganizations />);
 
     await waitFor(() => {
@@ -164,12 +166,7 @@ describe('AllOrganizations', () => {
     const arrowButtons = within(grid).getAllByTestId('ArrowForwardIosIcon');
     fireEvent.click(arrowButtons[0]);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Navigate to operators for organization:',
-      1
-    );
-
-    consoleSpy.mockRestore();
+    expect(mockNavigate).toHaveBeenCalledWith('/operators/1');
   });
 
   it('displays empty state when no data available', async () => {
