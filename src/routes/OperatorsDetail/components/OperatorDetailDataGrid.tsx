@@ -1,12 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import { ReadMore } from '@mui/icons-material';
+import { OpenInNew, ReadMore, RemoveCircleOutline } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import {
   DebtPositionTypeOrgDTO,
   PagedDebtPositionTypeOrgDTO
 } from '../../../../generated/apiClient';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
+import ActionMenu from '../../../components/ActionMenu/ActionMenu';
 
 type OperatorDetailDataGridProps = {
   data?: PagedDebtPositionTypeOrgDTO;
@@ -46,16 +47,35 @@ const OperatorDetailDataGrid = ({
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<DebtPositionTypeOrgDTO>) => (
-        <IconButton
-          color="primary"
-          size="small"
-          // TODO: Add detail operation
-          onClick={() => null}
-          aria-label="go to operator detail item"
-          data-testid={`navigate-to-detail-${params.row.debtPositionTypeOrgId}`}
-        >
-          <ReadMore />
-        </IconButton>
+        <ActionMenu
+          rowId={params.row.debtPositionTypeId}
+          menuItems={[
+            {
+              icon: (
+                <RemoveCircleOutline
+                  color="error"
+                  aria-label="remove operator detail item"
+                  data-testid={`remove-detail-${params.row.debtPositionTypeId}`}
+                />
+              ),
+              label: t('commons.onlyRemove'),
+              // TODO: add remove logic
+              action: () => null
+            },
+            {
+              icon: (
+                <OpenInNew
+                  color="primary"
+                  aria-label="go to operator detail item"
+                  data-testid={`navigate-to-detail-${params.row.debtPositionTypeId}`}
+                />
+              ),
+              label: t('commons.goToDetail'),
+              // TODO: add go to detail
+              action: () => null
+            }
+          ]}
+        />
       )
     }
   ];
