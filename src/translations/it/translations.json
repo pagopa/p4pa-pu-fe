@@ -275,7 +275,7 @@
   "assessmentsRegistrySearchResults": {
     "sectionCode": "Codice Capitolo",
     "operatingYear": "Anno",
-    "debtPositionTypeOrgCode": "Tipo dovuto",
+    "debtPositionTypeOrgDescription": "Tipo dovuto",
     "assessmentCode": "Codice accertamento",
     "officeCode": "Codice ufficio",
     "status": "Stato ufficio",
@@ -564,6 +564,30 @@
         "title": "Sei sicuro di voler eliminare il Client SIL?",
         "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
       }
+    }
+  },
+  "operatorsList": {
+    "accessibleTitle": "Gestione operatori ente: {{orgName}}",
+    "description": "In questa sezione trovi gli operatori presenti per il proprio ente.",
+    "descriptionFull": "In questa sezione trovi gli operatori presenti per il proprio ente o per gli enti gestiti.",
+    "tabMyOrganization": "Il mio ente",
+    "tabAllOrganizations": "Enti gestiti",
+    "searchByName": "Cerca per nome",
+    "searchByLastName": "Cerca per cognome",
+    "searchByFiscalCode": "Cerca per CF",
+    "searchByIPACode": "Cerca per codice IPA",
+    "myOrganizationDataGrid": {
+      "id": "ID",
+      "nameAndLastName": "Nome e cognome",
+      "fiscalCode": "Codice Fiscale",
+      "enabledDebtTypes": "Tipi di dovuto abilitati"
+    },
+    "allOrganizationsDataGrid": {
+      "id": "ID",
+      "name": "Nome",
+      "fiscalCode": "Codice Fiscale",
+      "enabledDebtTypes": "Tipi di dovuto abilitati",
+      "operators": "Operatori"
     }
   },
   "clientSilDetail": {
@@ -891,6 +915,8 @@
       "TREASURY_INDEX": "Pagina principale",
       "TREASURY_SEARCH_RESULTS": "Risultato ricerca",
       "USERS": "Utenti",
+      "OPERATORS_LIST": "Gestione operatori",
+      "OPERATORS_LIST_BYORG": "Ente gestito",
       "CLASSIFICATION_DETAIL": "Dettaglio Pagamento"
     },
     "saveDraft": "Salva bozza",
