@@ -1,31 +1,34 @@
-export type OrganizationOperatorsFilters = {
-  firstName?: string;
-  lastName?: string;
-  fiscalCode?: string;
-};
+import { FilteredRequest } from '../../models/Filters';
+import utils from '../../utils';
 
-export type OrganizationOperatorsFilteredRequest = {
-  filters: OrganizationOperatorsFilters;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
+type GetOrganizationOperatorsQueryParams = Parameters<
+  typeof utils.apiClient.bff.getOrganizationOperators
+>[1];
 
-export type BrokerOrganizationsFilters = {
-  orgName?: string;
-  ipaCode?: string;
-};
+type GetOrganizationsByBrokerIdQueryParams = Parameters<
+  typeof utils.apiClient.bff.getOrganizationsByBrokerIdAndFilters
+>[0];
 
-export type BrokerOrganizationsFilteredRequest = {
-  filters: BrokerOrganizationsFilters;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
+export type OrganizationOperatorsFilters = Pick<
+  NonNullable<GetOrganizationOperatorsQueryParams>,
+  'firstName' | 'lastName' | 'fiscalCode'
+>;
+
+export type BrokerOrganizationsFilters = Pick<
+  NonNullable<GetOrganizationsByBrokerIdQueryParams>,
+  'orgName' | 'ipaCode'
+>;
+
+export type OrganizationOperatorsFilteredRequest =
+  FilteredRequest<OrganizationOperatorsFilters>;
+export type BrokerOrganizationsFilteredRequest =
+  FilteredRequest<BrokerOrganizationsFilters>;
 
 export const buildOrganizationOperatorsQueryParams = ({
   filters,
   pagination,
   sort
-}: OrganizationOperatorsFilteredRequest) => ({
+}: OrganizationOperatorsFilteredRequest): GetOrganizationOperatorsQueryParams => ({
   page: pagination.page,
   size: pagination.size,
   firstName: filters.firstName,
@@ -38,7 +41,7 @@ export const buildBrokerOrganizationsQueryParams = ({
   filters,
   pagination,
   sort
-}: BrokerOrganizationsFilteredRequest) => ({
+}: BrokerOrganizationsFilteredRequest): GetOrganizationsByBrokerIdQueryParams => ({
   page: pagination.page,
   size: pagination.size,
   orgName: filters.orgName,

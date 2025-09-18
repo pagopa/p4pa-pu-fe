@@ -70,7 +70,7 @@ export const MyOrganization = () => {
         `${operator.firstName || '-'} ${operator.lastName || '-'}`.trim() ||
         '-',
       fiscalCode: operator.fiscalCode || '-',
-      enabledDebtTypes: operator.debtPositionTypeOrgCount || '-'
+      enabledDebtTypes: operator.debtPositionTypeOrgCount ?? '-'
     })) || [];
 
   const columns: Array<GridColDef> = [
