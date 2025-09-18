@@ -1,6 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import dotenv from 'dotenv';
+import svgr from 'vite-plugin-svgr';
 dotenv.config();
 
 const DEPLOY_PATH = process.env.DEPLOY_PATH || '';
@@ -16,7 +17,18 @@ export default defineConfig({
     // sourcemap generation for debugging purposes. Please disable in production.
     sourcemap: true
   },
-  plugins: [react()],
+  plugins: [
+    react(),
+    svgr({
+      svgrOptions: {
+        exportType: 'default',
+        ref: true,
+        svgo: false,
+        titleProp: true
+      },
+      include: '**/*.svg'
+    })
+  ],
   resolve: {
     extensions: ['.ts', '.js', '.mjs', '.json', '.tsx']
   },
