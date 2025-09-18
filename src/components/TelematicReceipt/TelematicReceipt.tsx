@@ -7,7 +7,10 @@ import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useCallback, useState } from 'react';
-import { noFilterSetted } from '../../utils/filtersValidation';
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../utils/filtersValidation';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import utils from '../../utils';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
@@ -22,7 +25,7 @@ export const TelematicReceipt = () => {
 
   const navigateToResults = useCallback(() => {
     if (noFilterSetted(filters)) {
-      setError(true);
+      setError(shouldShowGeneralError(filters));
     } else {
       setError(false);
       const params = utils.URI.encode(filters);

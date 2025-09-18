@@ -17,6 +17,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { getTreasuries } from '../../api/treasuries';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import { shouldShowGeneralError } from '../../utils/filtersValidation';
 
 export type LocationState = {
   category: string;
@@ -59,7 +60,7 @@ const TreasurySearchResults = () => {
       treasury.applyFilters(filterValues);
       setDrawerOpen(false);
     } else {
-      setError(true);
+      setError(shouldShowGeneralError(filterValues));
     }
   };
 

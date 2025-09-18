@@ -5,7 +5,10 @@ import { BaseFilterValues } from '../../models/Filters';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
 import { PagedReceiptView } from '../../../generated/data-contracts';
 import { useState } from 'react';
-import { noFilterSetted } from '../../utils/filtersValidation';
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../utils/filtersValidation';
 import { getReceipts } from '../../api/receipts';
 import { useStore } from '../../store/GlobalStore';
 import { useSearch } from '../../hooks/useSearch';
@@ -43,9 +46,10 @@ const TelematicReceiptSearchResults = () => {
       telematicReceipt.applyFilters(filterValues);
       setError(false);
     } else {
-      setError(true);
+      setError(shouldShowGeneralError(filterValues));
     }
   };
+
   const { filters } = useTelematicReceiptsFilters({
     onFilter: applyFilters
   });

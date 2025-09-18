@@ -15,7 +15,10 @@ import { FilterFieldIds } from '../../models/SearchCardFields';
 import { DateValidationError } from '@mui/x-date-pickers';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import utils from '../../utils';
-import { noFilterSetted } from '../../utils/filtersValidation';
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../utils/filtersValidation';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
@@ -32,7 +35,7 @@ export const DebtPositionsPage = () => {
 
   const navigateToResults = useCallback(() => {
     if (!filters?.length || noFilterSetted(filters[activeTabIndex])) {
-      setShowError(true);
+      setShowError(shouldShowGeneralError(filters[activeTabIndex]));
       return;
     }
 
