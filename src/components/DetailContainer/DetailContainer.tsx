@@ -47,10 +47,12 @@ export type DetailSectionProps = {
     description?: string;
     data: Array<DetailData>;
     inline?: boolean;
+    inlineSizeFirstElement?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
     footerLink?: footerLinkConfig;
     divider?: boolean;
   }>;
   fullWidthSections?: boolean;
+  omitFlexGridDirection?: boolean;
 };
 
 type Status = 'Pagato';
@@ -61,7 +63,8 @@ const stateColors: Record<Status, ChipOwnProps['color']> = {
 
 const DetailContainer = ({
   sections,
-  fullWidthSections
+  fullWidthSections,
+  omitFlexGridDirection = false
 }: DetailSectionProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -131,6 +134,9 @@ const DetailContainer = ({
         <Grid container spacing={2}>
           {sections.map((section, index) => {
             const iconPosition = section.footerLink?.iconPosition || 'left';
+            const setColumnWidth = section.inlineSizeFirstElement
+              ? 12 - section.inlineSizeFirstElement
+              : 6;
             return (
               <Grid
                 item
@@ -151,7 +157,10 @@ const DetailContainer = ({
                     {section.description}
                   </Typography>
                 ) : null}
-                <Grid container direction="column">
+                <Grid
+                  container
+                  direction={omitFlexGridDirection ? undefined : 'column'}
+                >
                   {section.data.map((item, index) => (
                     <Grid
                       container
@@ -163,8 +172,11 @@ const DetailContainer = ({
                       {item.label && (
                         <Grid
                           item
-                          lg={section.inline ? 6 : 12}
-                          md={section.inline ? 6 : 12}
+                          md={
+                            section.inline
+                              ? section.inlineSizeFirstElement || 6
+                              : 12
+                          }
                         >
                           <Typography
                             variant="body2"
@@ -176,8 +188,11 @@ const DetailContainer = ({
                       )}
                       <Grid
                         item
-                        lg={section.inline ? 6 : 12}
-                        md={section.inline ? 6 : 12}
+                        md={
+                          section.inline && !item.childrenComponent
+                            ? setColumnWidth
+                            : 12
+                        }
                       >
                         {renderItemValue(item)}
                       </Grid>

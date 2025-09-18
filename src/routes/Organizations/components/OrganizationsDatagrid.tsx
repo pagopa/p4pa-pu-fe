@@ -8,6 +8,8 @@ import {
   OrganizationWithDebtPositionTypeOrgAndOperatorsCount,
   StatusEnum
 } from '../../../../generated/data-contracts';
+import { PageRoutes } from '../..';
+import { generatePath, useNavigate } from 'react-router';
 
 export type OrganizationsDataGridProps = {
   data: PagedOrganizationWithDebtPositionTypeOrgAndOperatorsCount;
@@ -19,6 +21,7 @@ const OrganizationsDatagrid = ({
   isLoading = false
 }: OrganizationsDataGridProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const columns: Array<GridColDef> = [
     {
@@ -92,7 +95,11 @@ const OrganizationsDatagrid = ({
           color="primary"
           size="small"
           onClick={() => {
-            console.log(params.id);
+            navigate(
+              generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
+                organizationId: params.id
+              })
+            );
           }}
         >
           <ChevronRight />

@@ -566,29 +566,6 @@
       }
     }
   },
-  "operatorsList": {
-    "description": "In questa sezione trovi gli operatori presenti per il proprio ente.",
-    "descriptionFull": "In questa sezione trovi gli operatori presenti per il proprio ente o per gli enti gestiti.",
-    "tabMyOrganization": "Il mio ente",
-    "tabAllOrganizations": "Enti gestiti",
-    "searchByName": "Cerca per nome",
-    "searchByLastName": "Cerca per cognome",
-    "searchByFiscalCode": "Cerca per CF",
-    "searchByIPACode": "Cerca per codice IPA",
-    "myOrganizationDataGrid": {
-      "id": "ID",
-      "nameAndLastName": "Nome e cognome",
-      "fiscalCode": "Codice Fiscale",
-      "enabledDebtTypes": "Tipi di dovuto abilitati"
-    },
-    "allOrganizationsDataGrid": {
-      "id": "ID",
-      "name": "Nome",
-      "fiscalCode": "Codice Fiscale",
-      "enabledDebtTypes": "Tipi di dovuto abilitati",
-      "operators": "Operatori"
-    }
-  },
   "clientSilDetail": {
     "accessibleTitle": "Dettaglio client sil: {{clientName}}",
     "description": "Ecco i dettagli del Client SIL censito",
@@ -599,7 +576,10 @@
   "commons": {
     "404": "404: risorsa non disponibile",
     "info": "Informazioni",
+    "infoSingular": "Informazione",
+    "accountingInformation": "Informazione contabile",
     "add": "Aggiungi",
+    "additionalLanguage": "Lingua addizionale",
     "all": "Tutti",
     "addfilter": "Aggiunge filtro",
     "amount": "Importo",
@@ -612,6 +592,8 @@
     "breadcrumbsElement": "Elemento breadcrumb",
     "breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
     "cancel": "Annulla",
+    "cashJournal": "Giornale di cassa",
+    "cbill": "CBILL",
     "close": "Chiudi",
     "collectionReason": "Motivo Riscossione",
     "continue": "Continua",
@@ -623,6 +605,7 @@
     "creationFrom": "Creazione dal",
     "debtFlow": "Flussi dovuti",
     "debtType": "Tipo dovuto",
+    "debtTypes": "Tipo di dovuti",
     "debtTypeCode": "Codice Tipo dovuto",
     "debtTypeName": "Nome del Tipo dovuto",
     "debtor": "Debitore",
@@ -782,6 +765,7 @@
     "from": "Dal",
     "key": "Chiave",
     "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
+    "iban": "IBAN",
     "importFlow": "Importa flusso",
     "importFlowErrorMessage": "Non è stato possibile importare il flusso",
     "importFlows": "Importa flussi",
@@ -796,6 +780,7 @@
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
     "inThisPage": "in questa pagina",
+    "ipaCode": "Codice IPA",
     "iud": "IUD",
     "iuf": "IUF",
     "iun": "Identificativo univoco notifica",
@@ -841,6 +826,7 @@
     "person": "Persona fisica",
     "personLegal": "Persona giuridica",
     "postAccount": "Conto Corrente Postale",
+    "postIban": "IBAN Postale",
     "psp": "Gestore della transazione (PSP)",
     "reason": "Causale",
     "reload": "Rigenera",
@@ -934,6 +920,7 @@
     "searchOperator": "Cerca operatore",
     "searchRegulationUniqueIdentifier": "Cerca ID Regolamento",
     "secret": "Secret",
+    "segregationCode": "Codice segregazione",
     "selectedOperator_one": "Operatore selezionato",
     "selectedOperator_other": "Operatori selezionati",
     "serviceType": "Tipo Servizio",
@@ -1731,11 +1718,28 @@
     "byOrg": "Ente mittente*",
     "byService": "Servizio mittente*"
   },
-  "organizations": {
-    "name": "Nome o ragione sociale",
-    "fiscalCode": "Codice fiscale",
-    "activeOperators": "Operatori attivi",
-    "activeDebtTypes": "Tipi dovuti attivi"
+  "operatorsList": {
+    "description": "In questa sezione trovi gli operatori presenti per il proprio ente.",
+    "descriptionFull": "In questa sezione trovi gli operatori presenti per il proprio ente o per gli enti gestiti.",
+    "tabMyOrganization": "Il mio ente",
+    "tabAllOrganizations": "Enti gestiti",
+    "searchByName": "Cerca per nome",
+    "searchByLastName": "Cerca per cognome",
+    "searchByFiscalCode": "Cerca per CF",
+    "searchByIPACode": "Cerca per codice IPA",
+    "myOrganizationDataGrid": {
+      "id": "ID",
+      "nameAndLastName": "Nome e cognome",
+      "fiscalCode": "Codice Fiscale",
+      "enabledDebtTypes": "Tipi di dovuto abilitati"
+    },
+    "allOrganizationsDataGrid": {
+      "id": "ID",
+      "name": "Nome",
+      "fiscalCode": "Codice Fiscale",
+      "enabledDebtTypes": "Tipi di dovuto abilitati",
+      "operators": "Operatori"
+    }
   },
   "orgSilService": {
     "accessibleTitle": "Ricerca org sil service",
@@ -1840,6 +1844,19 @@
         "goToDetail": "Vedi dettaglio API"
       }
     }
+  },
+  "organizations": {
+    "name": "Nome o ragione sociale",
+    "fiscalCode": "Codice fiscale",
+    "activeOperators": "Operatori attivi",
+    "activeDebtTypes": "Tipi dovuti attivi",
+    "ioMessagge": "Messaggi sull'app IO",
+    "otherProducts": "Integrazione con gli altri prodotti PagoPA",
+    "paymentPushNotification": "Notifica push pagamenti",
+    "paymentNotified": "Pagamenti notificati",
+    "pdndIntegration": "Integrazione con PDND",
+    "printKeyAPI": "API Key stampa avvisi",
+    "orgEmail": "Email ente"
   },
   "registry": {
     "detail": {
