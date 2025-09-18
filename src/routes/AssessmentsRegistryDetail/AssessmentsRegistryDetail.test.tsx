@@ -73,7 +73,7 @@ describe('AssessmentRegistryDetail', () => {
 
     mockGetAssessmentsRegistry.mockReturnValue({
       data: {
-        debtPositionTypeOrgCode: 'Type A',
+        debtPositionTypeOrgDescription: 'Type A',
         operatingYear: 2023,
         status: 'Active',
         sectionDescription: 'Section Desc',

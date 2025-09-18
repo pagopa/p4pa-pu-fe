@@ -33,12 +33,14 @@ export const SearchResultsDataGrid = ({ data }: DataGridProps) => {
     {
       field: 'operatingYear',
       headerName: t('assessmentsRegistrySearchResults.operatingYear'),
-      flex: 1,
+      flex: 0.5,
       type: 'string'
     },
     {
-      field: 'debtPositionTypeOrgCode',
-      headerName: t('assessmentsRegistrySearchResults.debtPositionTypeOrgCode'),
+      field: 'debtPositionTypeOrgDescription',
+      headerName: t(
+        'assessmentsRegistrySearchResults.debtPositionTypeOrgDescription'
+      ),
       flex: 1,
       type: 'string'
     },

@@ -275,7 +275,7 @@
   "assessmentsRegistrySearchResults": {
     "sectionCode": "Codice Capitolo",
     "operatingYear": "Anno",
-    "debtPositionTypeOrgCode": "Tipo dovuto",
+    "debtPositionTypeOrgDescription": "Tipo dovuto",
     "assessmentCode": "Codice accertamento",
     "officeCode": "Codice ufficio",
     "status": "Stato ufficio",
@@ -901,6 +901,7 @@
       "TREASURY_SEARCH_RESULTS": "Risultato ricerca",
       "USERS": "Utenti",
       "OPERATORS_LIST": "Gestione operatori",
+      "OPERATORS_LIST_BYORG": "Ente gestito",
       "CLASSIFICATION_DETAIL": "Dettaglio Pagamento"
     },
     "saveDraft": "Salva bozza",
@@ -1719,6 +1720,7 @@
     "byService": "Servizio mittente*"
   },
   "operatorsList": {
+    "accessibleTitle": "Gestione operatori ente: {{orgName}}",
     "description": "In questa sezione trovi gli operatori presenti per il proprio ente.",
     "descriptionFull": "In questa sezione trovi gli operatori presenti per il proprio ente o per gli enti gestiti.",
     "tabMyOrganization": "Il mio ente",
