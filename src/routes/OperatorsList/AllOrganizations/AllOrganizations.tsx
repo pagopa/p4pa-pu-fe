@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
-import { OpenInNew, RemoveCircleOutline } from '@mui/icons-material';
+import { ChevronRight } from '@mui/icons-material';
 import CustomDataGrid, {
   DataGridContainer
 } from '../../../components/DataGrid/CustomDataGrid';
@@ -13,12 +13,10 @@ import FilterContainer, {
 } from '../../../components/FilterContainer/FilterContainer';
 import { BaseFilterValues } from '../../../models/Filters';
 import Search from '@mui/icons-material/Search';
+import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
+import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/data-contracts';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
-import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/data-contracts';
-import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
-import ActionMenu from '../../../components/ActionMenu/ActionMenu';
-import { useStore } from '../../../store/GlobalStore';
 
 type BrokerOrganizationFilters = BaseFilterValues & {
   ipaCode?: string;
@@ -35,10 +33,6 @@ export const AllOrganizations = () => {
     useState<BrokerOrganizationFilters>(initialFilters);
 
   const query = useBrokerOrganizationsSearch();
-
-  const {
-    state: { userInfo }
-  } = useStore();
 
   const {
     query: { data },
@@ -79,23 +73,11 @@ export const AllOrganizations = () => {
       renderCell: (
         params: GridRenderCellParams<OrganizationWithDebtPositionTypeOrgAndOperatorsCount>
       ) => (
-        <ActionMenu
-          // TODO: this cast should be removed
-          // once an unique id is available
-          rowId={params.row.organizationId as number}
-          menuItems={[
-            {
-              icon: <RemoveCircleOutline color="error" />,
-              label: t('commons.onlyRemove'),
-              // TODO: Add remove operation
-              action: () => null
-            },
-            {
-              icon: <OpenInNew color="primary" />,
-              label: t('commons.goToDetail'),
-              action: () => handleRowClick(params.row)
-            }
-          ]}
+        <ChevronRight
+          fontSize="small"
+          color="primary"
+          sx={{ cursor: 'pointer' }}
+          onClick={() => handleRowClick(params.row)}
         />
       )
     }
@@ -105,9 +87,9 @@ export const AllOrganizations = () => {
     row: OrganizationWithDebtPositionTypeOrgAndOperatorsCount | undefined
   ) => {
     if (row) {
-      const detailPath = generatePath(PageRoutes.OPERATORS_DETAIL, {
+      const detailPath = generatePath(PageRoutes.BROKER_OPERATORS, {
         organizationId: row?.organizationId,
-        mappedExternalUserId: userInfo?.mappedExternalUserId
+        orgName: row?.orgName
       });
       navigate(detailPath);
     } else {

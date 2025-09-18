@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Grid, Typography, useTheme, Box } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
@@ -18,6 +18,7 @@ import DetailContainer, {
   DetailSection
 } from '../../components/DetailContainer/DetailContainer';
 import { useDebtPositionTypesByOrg } from '../../hooks/useDebtPositionTypesByOrg';
+import { useBreadcrumbs } from './hooks/useBreadcrumbs';
 
 export const OperatorDetail = () => {
   const { t } = useTranslation();
@@ -25,12 +26,12 @@ export const OperatorDetail = () => {
   const navigate = useNavigate();
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
 
-  const { organizationId, mappedExternalUserId } = useParams<{
-    organizationId: string;
-    mappedExternalUserId: string;
-  }>();
+  const { organizationId: paramOrganizationId, mappedExternalUserId } =
+    useParams();
 
-  if (!organizationId || !mappedExternalUserId || !Number(organizationId)) {
+  const organizationId = Number(paramOrganizationId);
+
+  if (isNaN(organizationId) || !mappedExternalUserId) {
     navigate(PageRoutes.RESPONSES_ERROR);
   }
 
@@ -41,27 +42,21 @@ export const OperatorDetail = () => {
   const [appliedFilters, setAppliedFilters] = useState(initialFilters);
 
   const query = useOperatorDetailSearch(
-    Number(organizationId),
+    organizationId,
     mappedExternalUserId as string
   );
 
-  const operatorDetail = useSearch({ query, filters: appliedFilters });
+  useBreadcrumbs(query);
 
-  const { isError, error, data } = query;
+  const {
+    query: { isError, error, data, isSuccess },
+    applyFilters
+  } = useSearch({ query, filters: appliedFilters });
 
-  useEffect(() => {
-    if (isError && error) {
-      console.error('Error loading operator details:', error);
-      navigate(PageRoutes.RESPONSES_ERROR);
-    }
-  }, [isError, error, navigate]);
-
-  const handleFilterChange = (id: string, value: FilterFieldValue) => {
-    setAppliedFilters((prevFilters) => ({
-      ...prevFilters,
-      [id]: value
-    }));
-  };
+  if (isError) {
+    console.error('Error loading operator details:', error);
+    navigate(PageRoutes.RESPONSES_ERROR);
+  }
 
   const detailSections: Array<DetailSection> = [
     {
@@ -87,10 +82,49 @@ export const OperatorDetail = () => {
     }
   ];
 
+  const filterItems = [
+    {
+      id: 'debtPositionTypeOrgDescription',
+      type: COMPONENT_TYPE.textField,
+      label: t('commons.searchForDescription'),
+      adornment: <Search />,
+      gridWidth: 4
+    },
+    {
+      id: 'debtPositionTypeOrgCode',
+      type: COMPONENT_TYPE.textField,
+      label: t('commons.searchForCode'),
+      adornment: <Search />,
+      gridWidth: 3
+    },
+    {
+      type: COMPONENT_TYPE.select,
+      id: 'debtPositionTypeId',
+      label: t('commons.debtType'),
+      gridWidth: 4,
+      options: debtPositionTypesByOrg?.data?.optionsMap
+    },
+    {
+      type: COMPONENT_TYPE.button,
+      label: t('commons.filters.filterResults'),
+      gridWidth: 1,
+      onClick: () => applyFilters(appliedFilters)
+    }
+  ];
+
+  const handleFilterChange = (id: string, value: FilterFieldValue) => {
+    setAppliedFilters((prevFilters) => ({
+      ...prevFilters,
+      [id]: value
+    }));
+  };
+
   return (
     <>
       <TitleComponent
-        title={`${data?.operatorName} ${data?.operatorLastName}`}
+        title={
+          isSuccess ? `${data?.operatorName} ${data?.operatorLastName}` : '-'
+        }
         accessibleTitle={t('OperatorDetail.accessibleTitle', {
           operatorId: data?.operatorId,
           interpolation: { escapeValue: false }
@@ -128,35 +162,7 @@ export const OperatorDetail = () => {
           <FilterContainer
             onChange={handleFilterChange}
             values={appliedFilters}
-            items={[
-              {
-                id: 'debtPositionTypeOrgDescription',
-                type: COMPONENT_TYPE.textField,
-                label: t('commons.searchForDescription'),
-                adornment: <Search />,
-                gridWidth: 4
-              },
-              {
-                id: 'debtPositionTypeOrgCode',
-                type: COMPONENT_TYPE.textField,
-                label: t('commons.searchForCode'),
-                adornment: <Search />,
-                gridWidth: 3
-              },
-              {
-                type: COMPONENT_TYPE.select,
-                id: 'debtPositionTypeId',
-                label: t('commons.debtType'),
-                gridWidth: 4,
-                options: debtPositionTypesByOrg?.data?.optionsMap
-              },
-              {
-                type: COMPONENT_TYPE.button,
-                label: t('commons.filters.filterResults'),
-                gridWidth: 1,
-                onClick: () => operatorDetail.applyFilters(appliedFilters)
-              }
-            ]}
+            items={filterItems}
           />
         </Grid>
         <Grid

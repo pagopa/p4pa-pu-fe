@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useState } from 'react';
-import { RemoveCircleOutline, OpenInNew } from '@mui/icons-material';
+import { useEffect, useState } from 'react';
+import { ChevronRight } from '@mui/icons-material';
 import CustomDataGrid, {
   DataGridContainer
 } from '../../../components/DataGrid/CustomDataGrid';
@@ -17,8 +17,8 @@ import { BaseFilterValues } from '../../../models/Filters';
 import { useSearch } from '../../../hooks/useSearch';
 import { OrganizationOperator } from '../../../../generated/data-contracts';
 import { useOrganizationOperatorsSearch } from '../../../api/organizationOperators';
-import ActionMenu from '../../../components/ActionMenu/ActionMenu';
 import { PageRoutes } from '../..';
+import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';
 
 type OperatorFilters = {
   firstName?: string;
@@ -36,24 +36,42 @@ type Operator = {
 export const MyOrganization = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { organizationId: organizationIdByURL } = useParams<{
+  const { organizationId: urlOrganizationId, orgName } = useParams<{
     organizationId: string;
+    orgName: string;
   }>();
+
+  const {
+    state: { organizationId: storeOrganizationId }
+  } = useStore();
+
+  const organizationId =
+    Number(urlOrganizationId) || Number(storeOrganizationId);
+
+  if (isNaN(organizationId)) {
+    navigate(PageRoutes.RESPONSES_ERROR);
+  }
+
+  useEffect(() => {
+    setCustomBreadcrumbsItems([
+      {
+        pathname: PageRoutes.OPERATORS_LIST,
+        id: 'OPERATORS_LIST'
+      },
+      {
+        pathname: '',
+        label: orgName,
+        id: 'BROKER_OPERATORS'
+      }
+    ]);
+  }, [orgName]);
 
   const initialFilters: OperatorFilters = utils.URI.decode(
     window.location.hash
   );
   const [filters, setFilters] = useState<OperatorFilters>(initialFilters);
 
-  const {
-    state: { organizationId }
-  } = useStore();
-
-  const query = useOrganizationOperatorsSearch(
-    organizationIdByURL && !isNaN(Number(organizationIdByURL))
-      ? Number(organizationIdByURL)
-      : organizationId
-  );
+  const query = useOrganizationOperatorsSearch(organizationId);
 
   const {
     query: { data },
@@ -108,21 +126,11 @@ export const MyOrganization = () => {
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<Operator>) => (
-        <ActionMenu
-          rowId={params.row.id}
-          menuItems={[
-            {
-              icon: <RemoveCircleOutline color="error" />,
-              label: t('commons.onlyRemove'),
-              // TODO: Add remove operation
-              action: () => null
-            },
-            {
-              icon: <OpenInNew color="primary" />,
-              label: t('commons.goToDetail'),
-              action: () => handleRowClick(params.row)
-            }
-          ]}
+        <ChevronRight
+          fontSize="small"
+          color="primary"
+          sx={{ cursor: 'pointer' }}
+          onClick={() => handleRowClick(params.row)}
         />
       )
     }
@@ -131,7 +139,8 @@ export const MyOrganization = () => {
   const handleRowClick = (row: Operator | undefined) => {
     if (row) {
       const detailPath = generatePath(PageRoutes.OPERATORS_DETAIL, {
-        organizationId: organizationId,
+        organizationId,
+        orgName,
         mappedExternalUserId: row?.id
       });
       navigate(detailPath);
