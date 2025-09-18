@@ -103,7 +103,7 @@ const OrganizationsDatagrid = ({
         <IconButton
           color="primary"
           size="small"
-          onClick={() => handleRowClick()}
+          onClick={() => handleRowClick(params.row)}
         >
           <ChevronRight />
         </IconButton>
