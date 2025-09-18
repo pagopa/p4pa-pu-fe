@@ -20,6 +20,15 @@ export const operatorsRoutes: Array<RouteObject> = [
           backButton: false,
           hideBreadcrumbs: true
         } as RouteHandleObject
+      },
+      {
+        id: 'OPERATORS_LIST_BYORG',
+        element: <OperatorsList />,
+        path: `:organizationId?`,
+        handle: {
+          backButton: true,
+          hideBreadcrumbs: false
+        } as RouteHandleObject
       }
     ]
   }
