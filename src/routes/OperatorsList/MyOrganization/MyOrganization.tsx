@@ -19,6 +19,7 @@ import { OrganizationOperator } from '../../../../generated/data-contracts';
 import { useOrganizationOperatorsSearch } from '../../../api/organizationOperators';
 import { PageRoutes } from '../..';
 import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';
+import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 
 type OperatorFilters = {
   firstName?: string;
@@ -181,6 +182,13 @@ export const MyOrganization = () => {
 
   return (
     <>
+      {orgName && (
+        <TitleComponent
+          title={orgName}
+          accessibleTitle={`${t('commons.routes.OPERATORS_LIST')} - ${orgName}`}
+          description={t('operatorsList.brokerDescription')}
+        />
+      )}
       <FilterContainer
         items={items}
         values={filters}

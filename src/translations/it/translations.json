@@ -3,7 +3,8 @@
     "code": "Cod. Gestionale",
     "debtPositionTypeDescription": "Tipo di dovuto",
     "accessibleTitle": "Dettagli operatore",
-    "associatedDebtPositionTypes": "Tipi di dovuto associati"
+    "associatedDebtPositionTypes": "Tipi di dovuto associati",
+    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto"
   },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
@@ -582,6 +583,7 @@
     "searchByLastName": "Cerca per cognome",
     "searchByFiscalCode": "Cerca per CF",
     "searchByIPACode": "Cerca per codice IPA",
+    "brokerDescription": "Trovi gli operatori presenti per l’ente gestito.",
     "myOrganizationDataGrid": {
       "id": "ID",
       "nameAndLastName": "Nome e cognome",

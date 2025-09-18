@@ -36,10 +36,10 @@ export const OperatorDetail = () => {
   }
 
   const debtPositionTypesByOrg = useDebtPositionTypesByOrg({
-    organizationId: Number(organizationId)
+    organizationId
   });
 
-  const [appliedFilters, setAppliedFilters] = useState(initialFilters);
+  const [filters, setFilters] = useState(initialFilters);
 
   const query = useOperatorDetailSearch(
     organizationId,
@@ -51,7 +51,7 @@ export const OperatorDetail = () => {
   const {
     query: { isError, error, data, isSuccess },
     applyFilters
-  } = useSearch({ query, filters: appliedFilters });
+  } = useSearch({ query, filters });
 
   if (isError) {
     console.error('Error loading operator details:', error);
@@ -72,7 +72,7 @@ export const OperatorDetail = () => {
         },
         {
           label: t('commons.role'),
-          value: data?.operatorRole
+          value: t(`commons.roles.${data?.operatorRole}`) || data?.operatorRole
         },
         {
           label: t('commons.fiscalCode'),
@@ -108,12 +108,12 @@ export const OperatorDetail = () => {
       type: COMPONENT_TYPE.button,
       label: t('commons.filters.filterResults'),
       gridWidth: 1,
-      onClick: () => applyFilters(appliedFilters)
+      onClick: () => applyFilters(filters)
     }
   ];
 
   const handleFilterChange = (id: string, value: FilterFieldValue) => {
-    setAppliedFilters((prevFilters) => ({
+    setFilters((prevFilters) => ({
       ...prevFilters,
       [id]: value
     }));
@@ -161,7 +161,7 @@ export const OperatorDetail = () => {
         >
           <FilterContainer
             onChange={handleFilterChange}
-            values={appliedFilters}
+            values={filters}
             items={filterItems}
           />
         </Grid>

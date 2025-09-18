@@ -50,11 +50,10 @@ export const useBrokerOrganizationsSearch = () => {
   });
 };
 
-export type OperatorDetailQuery = {
-  debtPositionTypeOrgCode?: string;
-  debtPositionTypeOrgDescription?: string;
-  debtPositionTypeId?: number;
-};
+export type OperatorDetailQuery = Omit<
+  Parameters<typeof utils.apiClient.bff.getOperatorDetails>[2],
+  'page' | 'size' | 'sort'
+>;
 
 export const useOperatorDetailSearch = (
   organizationId: number,
@@ -65,8 +64,7 @@ export const useOperatorDetailSearch = (
     mutationFn: async (args: FilteredRequest<OperatorDetailQuery>) => {
       const query = {
         ...args.filters,
-        page: args.pagination.page,
-        size: args.pagination.size,
+        ...args.pagination,
         sort: args.sort
       };
 

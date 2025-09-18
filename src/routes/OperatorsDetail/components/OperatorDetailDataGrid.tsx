@@ -1,23 +1,19 @@
 import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import { OpenInNew, ReadMore, RemoveCircleOutline } from '@mui/icons-material';
-import { IconButton } from '@mui/material';
+import { OpenInNew, RemoveCircleOutline } from '@mui/icons-material';
 import {
   DebtPositionTypeOrgDTO,
   PagedDebtPositionTypeOrgDTO
 } from '../../../../generated/apiClient';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import ActionMenu from '../../../components/ActionMenu/ActionMenu';
+import EmptyDetailContainer from '../../../components/DebtPositionsInstallmentDetail/EmptyDetailContainer';
 
 type OperatorDetailDataGridProps = {
   data?: PagedDebtPositionTypeOrgDTO;
-  isLoading?: boolean;
 };
 
-const OperatorDetailDataGrid = ({
-  data,
-  isLoading = false
-}: OperatorDetailDataGridProps) => {
+const OperatorDetailDataGrid = ({ data }: OperatorDetailDataGridProps) => {
   const { t } = useTranslation();
 
   const columns: Array<GridColDef<DebtPositionTypeOrgDTO>> = [
@@ -80,6 +76,15 @@ const OperatorDetailDataGrid = ({
     }
   ];
 
+  if (data?.content?.length === 0) {
+    return (
+      <EmptyDetailContainer
+        description={t('OperatorDetail.emptyData')}
+        sx={{ width: '100%' }}
+      />
+    );
+  }
+
   return (
     <CustomDataGrid
       rows={data?.content || []}
@@ -90,7 +95,6 @@ const OperatorDetailDataGrid = ({
       }
       disableColumnMenu
       disableColumnResize
-      loading={isLoading}
       totalPages={data?.totalPages || 1}
     />
   );

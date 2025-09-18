@@ -1,8 +1,19 @@
-import { Card, CardContent, Typography, useTheme } from '@mui/material';
+import {
+  Card,
+  CardContent,
+  CardOwnProps,
+  Typography,
+  useTheme
+} from '@mui/material';
 import { Category } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 
-const EmptyDetailContainer = () => {
+type EmptyDetailContainerProps = {
+  sx?: CardOwnProps['sx'];
+  description?: string;
+};
+
+const EmptyDetailContainer = (props: EmptyDetailContainerProps) => {
   const { t } = useTranslation();
   const theme = useTheme();
 
@@ -14,7 +25,8 @@ const EmptyDetailContainer = () => {
         height: '50%',
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        ...props.sx
       }}
     >
       <CardContent sx={{ textAlign: 'center' }}>
@@ -24,7 +36,7 @@ const EmptyDetailContainer = () => {
           color={theme.palette.text.secondary}
           sx={{ mt: 1 }}
         >
-          {t('commons.noPaymentMade')}
+          {props.description || t('commons.noPaymentMade')}
         </Typography>
       </CardContent>
     </Card>
