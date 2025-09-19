@@ -1,8 +1,7 @@
-import { useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
-import { ArrowForwardIos } from '@mui/icons-material';
+import { ChevronRight } from '@mui/icons-material';
 import CustomDataGrid, {
   DataGridContainer
 } from '../../../components/DataGrid/CustomDataGrid';
@@ -14,17 +13,16 @@ import FilterContainer, {
 } from '../../../components/FilterContainer/FilterContainer';
 import { BaseFilterValues } from '../../../models/Filters';
 import Search from '@mui/icons-material/Search';
+import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
+import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/data-contracts';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
-import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/data-contracts';
-import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
 
 type BrokerOrganizationFilters = BaseFilterValues & {
   ipaCode?: string;
 };
 
 export const AllOrganizations = () => {
-  const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -44,7 +42,9 @@ export const AllOrganizations = () => {
     filters
   });
 
-  const columns: Array<GridColDef> = [
+  const columns: Array<
+    GridColDef<OrganizationWithDebtPositionTypeOrgAndOperatorsCount>
+  > = [
     {
       field: 'ipaCode',
       headerName: t('debtTypesCreated.managedOrganizationsDataGrid.IPACode'),
@@ -73,9 +73,10 @@ export const AllOrganizations = () => {
       renderCell: (
         params: GridRenderCellParams<OrganizationWithDebtPositionTypeOrgAndOperatorsCount>
       ) => (
-        <ArrowForwardIos
+        <ChevronRight
           fontSize="small"
-          sx={{ color: theme.palette.primary.main, cursor: 'pointer' }}
+          color="primary"
+          sx={{ cursor: 'pointer' }}
           onClick={() => handleRowClick(params.row)}
         />
       )
@@ -85,12 +86,15 @@ export const AllOrganizations = () => {
   const handleRowClick = (
     row: OrganizationWithDebtPositionTypeOrgAndOperatorsCount | undefined
   ) => {
-    if (!row) return;
-    navigate(
-      generatePath(PageRoutes.OPERATORS_LIST_BYORG, {
-        organizationId: row.organizationId
-      })
-    );
+    if (row) {
+      const detailPath = generatePath(PageRoutes.BROKER_OPERATORS, {
+        organizationId: row?.organizationId,
+        orgName: row?.orgName
+      });
+      navigate(detailPath);
+    } else {
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
   };
 
   const items: Array<FilterItem> = [
