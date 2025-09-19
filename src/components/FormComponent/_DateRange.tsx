@@ -2,7 +2,7 @@ import { Stack, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateValidationError } from '@mui/x-date-pickers/models';
 import { endOfDay, startOfDay } from 'date-fns';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type DateRange = {
@@ -21,6 +21,9 @@ export type _DateRangeProps = {
   onFromErrorChange?: (error: DateValidationError | null) => void;
   onToErrorChange?: (error: DateValidationError | null) => void;
   rangeLabel?: string;
+  shouldValidate?: boolean;
+  validationErrorMessage?: string;
+  validatePartialRange?: boolean;
 };
 
 export const _DateRange = ({
@@ -30,7 +33,10 @@ export const _DateRange = ({
   required,
   onFromErrorChange,
   onToErrorChange,
-  rangeLabel
+  rangeLabel,
+  shouldValidate = false,
+  validationErrorMessage,
+  validatePartialRange = true
 }: _DateRangeProps) => {
   const { t } = useTranslation();
   const [startDateError, setStartDateError] =
@@ -39,6 +45,24 @@ export const _DateRange = ({
     null
   );
   const [isToDialogOpen, setIsToDialogOpen] = useState<boolean>(false);
+  const [partialFromError, setPartialFromError] = useState<string>('');
+  const [partialToError, setPartialToError] = useState<string>('');
+
+  useEffect(() => {
+    if (!validatePartialRange) return;
+
+    const hasFrom = Boolean(from?.value);
+    const hasTo = Boolean(to?.value);
+
+    setPartialFromError('');
+    setPartialToError('');
+
+    if (hasFrom && !hasTo) {
+      setPartialToError(t('dates.validations.insertTo'));
+    } else if (!hasFrom && hasTo) {
+      setPartialFromError(t('dates.validations.insertFrom'));
+    }
+  }, [from?.value, to?.value, validatePartialRange]);
 
   const handleStartDateChange = (date: Date | null) => {
     from?.onChange?.(date);
@@ -69,6 +93,37 @@ export const _DateRange = ({
     }
   };
 
+  const isFromMissingOnSubmit =
+    shouldValidate && !!validationErrorMessage && !from?.value;
+  const isToMissingOnSubmit =
+    shouldValidate && !!validationErrorMessage && !to?.value;
+
+  const fromHasError =
+    Boolean(startDateError) ||
+    isFromMissingOnSubmit ||
+    Boolean(partialFromError);
+
+  const toHasError =
+    Boolean(endDateError) || isToMissingOnSubmit || Boolean(partialToError);
+
+  let fromHelperText = '';
+  if (startDateError) {
+    fromHelperText = from?.errorMessage ?? t('dates.validations.from');
+  } else if (partialFromError) {
+    fromHelperText = partialFromError;
+  } else if (isFromMissingOnSubmit) {
+    fromHelperText = validationErrorMessage || '';
+  }
+
+  let toHelperText = '';
+  if (endDateError) {
+    toHelperText = to?.errorMessage ?? t('dates.validations.to');
+  } else if (partialToError) {
+    toHelperText = partialToError;
+  } else if (isToMissingOnSubmit) {
+    toHelperText = validationErrorMessage || '';
+  }
+
   return (
     <Stack spacing={1} width="100%">
       {rangeLabel && (
@@ -76,6 +131,7 @@ export const _DateRange = ({
           {rangeLabel}
         </Typography>
       )}
+
       <Stack
         direction={{ xs: 'row' }}
         justifyContent="row"
@@ -89,7 +145,7 @@ export const _DateRange = ({
           maxDate={from?.todayValue || undefined}
           sx={{ width: '100%' }}
           label={from?.label || t('dates.from')}
-          value={from?.value && startOfDay(from?.value)}
+          value={from?.value ? startOfDay(from.value) : null}
           onChange={handleStartDateChange}
           onAccept={handleStartDateOnAccept}
           onError={handleStartDateError}
@@ -97,10 +153,8 @@ export const _DateRange = ({
             textField: {
               size: 'small',
               variant: 'outlined',
-              error: !!startDateError,
-              helperText: startDateError
-                ? (from?.errorMessage ?? t('dates.validations.from'))
-                : '',
+              error: fromHasError,
+              helperText: fromHelperText,
               required
             }
           }}
@@ -110,7 +164,7 @@ export const _DateRange = ({
           <DatePicker
             sx={{ width: '100%' }}
             label={t('dates.to')}
-            value={to?.value && endOfDay(to?.value)}
+            value={to?.value ? endOfDay(to.value) : null}
             onChange={to?.onChange}
             open={isToDialogOpen}
             onClose={() => setIsToDialogOpen(false)}
@@ -124,10 +178,8 @@ export const _DateRange = ({
               textField: {
                 size: 'small',
                 variant: 'outlined',
-                error: !!endDateError,
-                helperText: endDateError
-                  ? (to?.errorMessage ?? t('dates.validations.to'))
-                  : '',
+                error: toHasError,
+                helperText: toHelperText,
                 required
               },
               inputAdornment: {
