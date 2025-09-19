@@ -23,14 +23,16 @@ const OrganizationsDatagrid = ({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const handleRowClick = (params: OrganizationWithDebtPositionTypeOrgAndOperatorsCount | undefined ) => {
-     if (!params) return;
-            navigate(
-              generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-                organizationId: params.organizationId
-              })
-            );
-          };
+  const handleRowClick = (
+    params: OrganizationWithDebtPositionTypeOrgAndOperatorsCount | undefined
+  ) => {
+    if (!params) return;
+    navigate(
+      generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
+        organizationId: params.organizationId
+      })
+    );
+  };
 
   const columns: Array<GridColDef> = [
     {
