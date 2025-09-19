@@ -247,7 +247,7 @@ const FilterContainer = ({
           item
           xs={gridWidth ?? 12}
           key={key}
-          sx={{ display: 'flex', alignItems: 'center', width: '100%' }}
+          sx={{ display: 'flex', alignItems: 'start', width: '100%' }}
         >
           <RenderComponent item={item} values={values} onChange={onChange} />
         </Grid>

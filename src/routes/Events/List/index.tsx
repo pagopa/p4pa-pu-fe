@@ -23,7 +23,10 @@ import { useTranslation } from 'react-i18next';
 import { Stack } from '@mui/material';
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
 import utils from '../../../utils';
-import { noFilterSetted } from '../../../utils/filtersValidation';
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../../utils/filtersValidation';
 import { useSearch } from '../../../hooks/useSearch';
 import {
   PagedPagoPaRegistry,
@@ -64,7 +67,7 @@ export const EventList = () => {
 
   const onSubmit = () => {
     if (noFilterSetted(filters)) {
-      setError(true);
+      setError(shouldShowGeneralError(filters));
     } else {
       setError(false);
       applyFilters(filters);

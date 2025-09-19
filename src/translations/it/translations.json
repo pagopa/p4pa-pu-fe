@@ -1052,7 +1052,9 @@
     "to": "Al",
     "validations": {
       "from": "Data non valida",
-      "to": "Data non valida"
+      "to": "Data non valida",
+      "insertFrom": "Seleziona una data di inizio",
+      "insertTo": "Seleziona una data di fine"
     },
     "year": "Anno"
   },
