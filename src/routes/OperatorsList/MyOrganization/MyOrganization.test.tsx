@@ -6,21 +6,18 @@ import {
   fireEvent,
   within
 } from '../../../__tests__/renderers';
+import { useOrganizationOperatorsSearch } from '../../../api/organizationOperators';
+import { useSearch } from '../../../hooks/useSearch';
+import { generatePath, useNavigate } from 'react-router';
+
 import { MyOrganization } from './MyOrganization';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
+import { PageRoutes } from '../..';
 
-vi.mock('react-router', async () => {
-  const actual = (await vi.importActual('react-router')) as Record<
-    string,
-    unknown
-  >;
-  return {
-    ...actual,
-    useParams: vi.fn(() => ({
-      organizationId: undefined
-    }))
-  };
-});
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: vi.fn()
+}));
 
 vi.mock('../../../store/GlobalStore', () => ({
   useStore: () => ({
@@ -39,12 +36,12 @@ vi.mock('../../../hooks/useSearch', () => ({
   useSearch: vi.fn()
 }));
 
-import { useOrganizationOperatorsSearch } from '../../../api/organizationOperators';
-import { useSearch } from '../../../hooks/useSearch';
-
 describe('MyOrganization', () => {
   const mockMutateAsync = vi.fn();
   const mockApplyFilters = vi.fn();
+  const mockNavigate = vi.fn();
+
+  vi.clearAllMocks();
 
   beforeEach(() => {
     i18nTestSetup({
@@ -59,13 +56,13 @@ describe('MyOrganization', () => {
       'commons.search': 'Search'
     });
 
-    vi.clearAllMocks();
+    (useNavigate as Mock).mockReturnValue(mockNavigate);
 
-    (useOrganizationOperatorsSearch as unknown as Mock).mockReturnValue({
+    (useOrganizationOperatorsSearch as Mock).mockReturnValue({
       mutate: mockMutateAsync
     });
 
-    (useSearch as unknown as Mock).mockReturnValue({
+    (useSearch as Mock).mockReturnValue({
       query: {
         mutateAsync: mockMutateAsync,
         data: {
@@ -148,25 +145,24 @@ describe('MyOrganization', () => {
   });
 
   it('handles row click and logs operator id', async () => {
-    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(vi.fn());
     render(<MyOrganization />);
 
     await waitFor(() => {
       const grid = screen.getByRole('grid');
-      const arrowButtons = within(grid).getAllByTestId('ArrowForwardIosIcon');
+      const arrowButtons = within(grid).getAllByTestId('ChevronRightIcon');
       expect(arrowButtons.length).toBeGreaterThan(0);
     });
 
     const grid = screen.getByRole('grid');
-    const arrowButtons = within(grid).getAllByTestId('ArrowForwardIosIcon');
+    const arrowButtons = within(grid).getAllByTestId('ChevronRightIcon');
     fireEvent.click(arrowButtons[0]);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'Navigate to operator detail:',
-      '100'
+    expect(mockNavigate).toHaveBeenCalledWith(
+      generatePath(PageRoutes.OPERATORS_DETAIL, {
+        organizationId: '123',
+        mappedExternalUserId: '100'
+      })
     );
-
-    consoleSpy.mockRestore();
   });
 
   it('displays empty state when no data available', async () => {

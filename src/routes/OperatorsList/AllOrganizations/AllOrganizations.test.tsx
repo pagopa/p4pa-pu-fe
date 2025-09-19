@@ -158,12 +158,12 @@ describe('AllOrganizations', () => {
 
     await waitFor(() => {
       const grid = screen.getByRole('grid');
-      const arrowButtons = within(grid).getAllByTestId('ArrowForwardIosIcon');
+      const arrowButtons = within(grid).getAllByTestId('ChevronRightIcon');
       expect(arrowButtons.length).toBeGreaterThan(0);
     });
 
     const grid = screen.getByRole('grid');
-    const arrowButtons = within(grid).getAllByTestId('ArrowForwardIosIcon');
+    const arrowButtons = within(grid).getAllByTestId('ChevronRightIcon');
     fireEvent.click(arrowButtons[0]);
 
     expect(mockNavigate).toHaveBeenCalledWith('/operators/1');

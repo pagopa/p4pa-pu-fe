@@ -1,4 +1,11 @@
 {
+  "OperatorDetail": {
+    "code": "Cod. Gestionale",
+    "debtPositionTypeDescription": "Tipo di dovuto",
+    "accessibleTitle": "Dettagli operatore",
+    "associatedDebtPositionTypes": "Tipi di dovuto associati",
+    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto"
+  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -600,6 +607,7 @@
     "searchByLastName": "Cerca per cognome",
     "searchByFiscalCode": "Cerca per CF",
     "searchByIPACode": "Cerca per codice IPA",
+    "brokerDescription": "Trovi gli operatori presenti per l’ente gestito.",
     "myOrganizationDataGrid": {
       "id": "ID",
       "nameAndLastName": "Nome e cognome",
@@ -622,6 +630,8 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "id": "id",
+    "role": "Ruolo",
     "404": "404: risorsa non disponibile",
     "info": "Informazioni",
     "add": "Aggiungi",
@@ -645,6 +655,7 @@
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
     "backToStart": "Torna alla sezione",
+    "goToDetail": "Vedi dettaglio",
     "creationFrom": "Creazione dal",
     "debtFlow": "Flussi dovuti",
     "debtType": "Tipo dovuto",
