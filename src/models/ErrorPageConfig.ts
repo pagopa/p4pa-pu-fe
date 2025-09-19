@@ -9,7 +9,7 @@ type ErrorPage = {
 type ErrorOpts = Record<string, ErrorPage>;
 
 export const ErrorPageConfig: ErrorOpts = {
-  default: {
+  defaultOptions: {
     title: 'utilityPages.genericError.title',
     description: 'utilityPages.genericError.description',
     buttonConfig: [

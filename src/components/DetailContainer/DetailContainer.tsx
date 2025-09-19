@@ -41,16 +41,18 @@ export type footerLinkConfig = {
   iconPosition?: 'left' | 'right';
 };
 
+export type DetailSection = {
+  title?: titleConfig;
+  description?: string;
+  data: Array<DetailData>;
+  inline?: boolean;
+  inlineSizeFirstElement?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
+  footerLink?: footerLinkConfig;
+  divider?: boolean;
+};
+
 export type DetailSectionProps = {
-  sections: Array<{
-    title?: titleConfig;
-    description?: string;
-    data: Array<DetailData>;
-    inline?: boolean;
-    inlineSizeFirstElement?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
-    footerLink?: footerLinkConfig;
-    divider?: boolean;
-  }>;
+  sections: Array<DetailSection>;
   fullWidthSections?: boolean;
   omitFlexGridDirection?: boolean;
 };

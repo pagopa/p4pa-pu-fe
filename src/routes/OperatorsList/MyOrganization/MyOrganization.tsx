@@ -1,13 +1,12 @@
-import { useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { useState } from 'react';
-import { ArrowForwardIos } from '@mui/icons-material';
+import { useEffect, useState } from 'react';
+import { ChevronRight } from '@mui/icons-material';
 import CustomDataGrid, {
   DataGridContainer
 } from '../../../components/DataGrid/CustomDataGrid';
 import { useStore } from '../../../store/GlobalStore';
-import { useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE,
   FilterItem
@@ -18,6 +17,9 @@ import { BaseFilterValues } from '../../../models/Filters';
 import { useSearch } from '../../../hooks/useSearch';
 import { OrganizationOperator } from '../../../../generated/data-contracts';
 import { useOrganizationOperatorsSearch } from '../../../api/organizationOperators';
+import { PageRoutes } from '../..';
+import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';
+import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 
 type OperatorFilters = {
   firstName?: string;
@@ -33,26 +35,44 @@ type Operator = {
 };
 
 export const MyOrganization = () => {
-  const theme = useTheme();
+  const navigate = useNavigate();
   const { t } = useTranslation();
-  const { organizationId: organizationIdByURL } = useParams<{
+  const { organizationId: urlOrganizationId, orgName } = useParams<{
     organizationId: string;
+    orgName: string;
   }>();
+
+  const {
+    state: { organizationId: storeOrganizationId }
+  } = useStore();
+
+  const organizationId =
+    Number(urlOrganizationId) || Number(storeOrganizationId);
+
+  if (isNaN(organizationId)) {
+    navigate(PageRoutes.RESPONSES_ERROR);
+  }
+
+  useEffect(() => {
+    setCustomBreadcrumbsItems([
+      {
+        pathname: PageRoutes.OPERATORS_LIST,
+        id: 'OPERATORS_LIST'
+      },
+      {
+        pathname: '',
+        label: orgName,
+        id: 'BROKER_OPERATORS'
+      }
+    ]);
+  }, [orgName]);
 
   const initialFilters: OperatorFilters = utils.URI.decode(
     window.location.hash
   );
   const [filters, setFilters] = useState<OperatorFilters>(initialFilters);
 
-  const {
-    state: { organizationId }
-  } = useStore();
-
-  const query = useOrganizationOperatorsSearch(
-    organizationIdByURL && !isNaN(Number(organizationIdByURL))
-      ? Number(organizationIdByURL)
-      : organizationId
-  );
+  const query = useOrganizationOperatorsSearch(organizationId);
 
   const {
     query: { data },
@@ -107,9 +127,10 @@ export const MyOrganization = () => {
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<Operator>) => (
-        <ArrowForwardIos
+        <ChevronRight
           fontSize="small"
-          sx={{ color: theme.palette.primary.main, cursor: 'pointer' }}
+          color="primary"
+          sx={{ cursor: 'pointer' }}
           onClick={() => handleRowClick(params.row)}
         />
       )
@@ -117,9 +138,16 @@ export const MyOrganization = () => {
   ];
 
   const handleRowClick = (row: Operator | undefined) => {
-    if (!row) return;
-    // TODO: Add navigation to operator detail
-    console.log('Navigate to operator detail:', row.id);
+    if (row) {
+      const detailPath = generatePath(PageRoutes.OPERATORS_DETAIL, {
+        organizationId,
+        orgName,
+        mappedExternalUserId: row?.id
+      });
+      navigate(detailPath);
+    } else {
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
   };
 
   const items: Array<FilterItem> = [
@@ -154,6 +182,13 @@ export const MyOrganization = () => {
 
   return (
     <>
+      {orgName && (
+        <TitleComponent
+          title={orgName}
+          accessibleTitle={`${t('commons.routes.OPERATORS_LIST')} - ${orgName}`}
+          description={t('operatorsList.brokerDescription')}
+        />
+      )}
       <FilterContainer
         items={items}
         values={filters}

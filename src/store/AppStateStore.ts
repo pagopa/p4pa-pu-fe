@@ -1,5 +1,6 @@
 import { signal } from '@preact/signals-react';
 import { AppState } from '../models/AppState';
+import { BredcrumbItem } from '../components/Breadcrumbs/Breadcrumbs';
 
 export const appState = signal<AppState>({
   loading: false,
@@ -15,8 +16,6 @@ export function setLoading(newState: AppState['loading']) {
   appState.value.loading = newState;
 }
 
-export function setCustomBreadcrumbsItems(
-  newState: AppState['customBreadcrumbsItems']
-) {
-  appState.value.customBreadcrumbsItems = newState;
+export function setCustomBreadcrumbsItems(newState: Array<BredcrumbItem>) {
+  appState.value = { ...appState.value, customBreadcrumbsItems: newState };
 }

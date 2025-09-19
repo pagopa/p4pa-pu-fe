@@ -80,6 +80,13 @@
       "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
     }
   },
+  "OperatorDetail": {
+    "code": "Cod. Gestionale",
+    "debtPositionTypeDescription": "Tipo di dovuto",
+    "accessibleTitle": "Dettagli operatore",
+    "associatedDebtPositionTypes": "Tipi di dovuto associati",
+    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto"
+  },
   "appPreview": {
     "title": "Anteprima in App IO",
     "messageInfo": "*Verrà mostrato il nome dell’ente e il servizio assegnati per inviare il messaggio.",
@@ -575,6 +582,8 @@
   },
   "commons": {
     "404": "404: risorsa non disponibile",
+    "id": "id",
+    "role": "Ruolo",
     "info": "Informazioni",
     "infoSingular": "Informazione",
     "accountingInformation": "Informazione contabile",
@@ -602,6 +611,7 @@
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
     "backToStart": "Torna alla sezione",
+    "goToDetail": "Vedi dettaglio",
     "creationFrom": "Creazione dal",
     "debtFlow": "Flussi dovuti",
     "debtType": "Tipo dovuto",

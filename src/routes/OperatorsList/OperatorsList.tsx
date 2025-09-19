@@ -54,10 +54,6 @@ export const OperatorsList = () => {
     const params = new URLSearchParams(searchParams);
     params.set('tab', newValue.toString());
 
-    // Reset pagination when changing tab to avoid confusion
-    params.delete('page');
-    params.delete('size');
-
     setSearchParams(params, { replace: true });
   };
 
