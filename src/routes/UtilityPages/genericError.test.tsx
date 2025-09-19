@@ -18,7 +18,7 @@ vi.mock('react-router', async () => {
 
 vi.mock('../../../models/ErrorPageConfig', () => ({
   ErrorPageConfig: {
-    default: {
+    defaultOptions: {
       title: 'utilityPages.genericError.title',
       description: 'utilityPages.genericError.description',
       buttonConfig: [
