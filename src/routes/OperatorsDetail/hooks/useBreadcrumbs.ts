@@ -36,7 +36,10 @@ export const useBreadcrumbs = ({
     if (isSuccess) {
       breadcrumbs.push({
         pathname: '',
-        label: `${data?.operatorName} ${data?.operatorLastName}`,
+        label:
+          data?.operatorName || data?.operatorLastName
+            ? `${data?.operatorName || ''} ${data?.operatorLastName || ''}`
+            : data?.operatorFiscalCode || data?.operatorId || '',
         id: 'OPERATORS_DETAIL'
       });
     }

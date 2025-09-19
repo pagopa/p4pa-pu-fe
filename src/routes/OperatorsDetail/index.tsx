@@ -123,7 +123,9 @@ export const OperatorDetail = () => {
     <>
       <TitleComponent
         title={
-          isSuccess ? `${data?.operatorName} ${data?.operatorLastName}` : '-'
+          isSuccess
+            ? `${data?.operatorName || ''} ${data?.operatorLastName || ''}`
+            : '-'
         }
         accessibleTitle={t('OperatorDetail.accessibleTitle', {
           operatorId: data?.operatorId,
