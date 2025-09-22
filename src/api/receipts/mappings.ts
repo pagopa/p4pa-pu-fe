@@ -25,7 +25,7 @@ export const buildQueryParams = ({
   pagination,
   sort
 }: TelematicReceiptsFilteredRequest): TelematicReceiptsFiltered => ({
-  receiptOrigin: ReceiptOriginType.RECEIPT_PAGOPA,
+  receiptOrigins: [ReceiptOriginType.RECEIPT_PAGOPA],
   iuv: filters.iuv,
   paymentDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
   paymentDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
