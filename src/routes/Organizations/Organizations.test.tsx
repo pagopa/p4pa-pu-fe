@@ -39,8 +39,7 @@ vi.mock('react-router', async (importOriginal) => {
     ...actual,
     useParams: vi.fn(),
     useNavigate: vi.fn(),
-    Link: ({ children }: { children: React.ReactNode }) => children,
-    generatePath: vi.fn().mockReturnValue('/mock-path')
+    Link: ({ children }: { children: React.ReactNode }) => children
   };
 });
 
@@ -65,6 +64,9 @@ vi.mock('../../utils', () => ({
   default: {
     URI: {
       decode: vi.fn(() => ({}))
+    },
+    config: {
+      deployPath: '/piattaformaunitaria'
     }
   }
 }));
