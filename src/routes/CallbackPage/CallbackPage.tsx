@@ -24,7 +24,7 @@ const CallbackPage = () => {
     if (outcome === 'ok') return 'ok';
     if (outcome === 'ko') return 'ko';
     if (outcome === 'cancel') return 'cancel';
-    return 'ok';
+    return 'ko';
   };
 
   const getCallbackConfig = (type: CallbackType): CallbackConfig => {

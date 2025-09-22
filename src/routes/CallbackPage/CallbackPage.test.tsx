@@ -158,57 +158,43 @@ describe('CallbackPage', () => {
   });
 
   describe('Parameter detection logic', () => {
-    it('should default to success state for undefined outcome parameter', () => {
+    it('should default to error state for undefined outcome parameter', () => {
       mockParams(undefined);
 
       render(<CallbackPage />);
 
-      expect(
-        screen.getByText('Pagamento completato con successo')
-      ).toBeInTheDocument();
-      expect(screen.getByTestId('callback-page-ok')).toBeInTheDocument();
-      expect(
-        screen.getByTestId('CheckCircleOutlineOutlinedIcon')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Pagamento non riuscito')).toBeInTheDocument();
+      expect(screen.getByTestId('callback-page-ko')).toBeInTheDocument();
+      expect(screen.getByTestId('ErrorOutlineIcon')).toBeInTheDocument();
     });
 
-    it('should default to success state for unknown outcome parameter', () => {
+    it('should default to error state for unknown outcome parameter', () => {
       mockParams('unknown');
 
       render(<CallbackPage />);
 
-      expect(
-        screen.getByText('Pagamento completato con successo')
-      ).toBeInTheDocument();
-      expect(screen.getByTestId('callback-page-ok')).toBeInTheDocument();
-      expect(
-        screen.getByTestId('CheckCircleOutlineOutlinedIcon')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Pagamento non riuscito')).toBeInTheDocument();
+      expect(screen.getByTestId('callback-page-ko')).toBeInTheDocument();
+      expect(screen.getByTestId('ErrorOutlineIcon')).toBeInTheDocument();
     });
 
-    it('should default to success state for empty string outcome', () => {
+    it('should default to error state for empty string outcome', () => {
       mockParams('');
 
       render(<CallbackPage />);
 
-      expect(
-        screen.getByText('Pagamento completato con successo')
-      ).toBeInTheDocument();
-      expect(screen.getByTestId('callback-page-ok')).toBeInTheDocument();
+      expect(screen.getByText('Pagamento non riuscito')).toBeInTheDocument();
+      expect(screen.getByTestId('callback-page-ko')).toBeInTheDocument();
     });
 
     it('should handle case sensitivity correctly', () => {
       mockParams('OK');
       const { rerender } = render(<CallbackPage />);
-      expect(
-        screen.getByText('Pagamento completato con successo')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Pagamento non riuscito')).toBeInTheDocument();
 
       mockParams('Ko');
       rerender(<CallbackPage />);
-      expect(
-        screen.getByText('Pagamento completato con successo')
-      ).toBeInTheDocument();
+      expect(screen.getByText('Pagamento non riuscito')).toBeInTheDocument();
     });
 
     it('should correctly handle different valid outcomes in sequence', () => {
@@ -386,13 +372,13 @@ describe('CallbackPage', () => {
 
     it('should handle missing translations gracefully', () => {
       i18nTestSetup({});
-      mockParams('ok');
+      mockParams('ko');
 
       render(<CallbackPage />);
 
-      expect(screen.getByText('callback.success.title')).toBeInTheDocument();
+      expect(screen.getByText('callback.error.title')).toBeInTheDocument();
       expect(
-        screen.getByText('callback.success.description')
+        screen.getByText('callback.error.description')
       ).toBeInTheDocument();
     });
   });
@@ -449,7 +435,7 @@ describe('CallbackPage', () => {
     it('should generate default data-testid for unknown outcome', () => {
       mockParams('unknown');
       render(<CallbackPage />);
-      expect(screen.getByTestId('callback-page-ok')).toBeInTheDocument();
+      expect(screen.getByTestId('callback-page-ko')).toBeInTheDocument();
     });
   });
 });
