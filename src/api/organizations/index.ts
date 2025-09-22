@@ -1,6 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
-import { parseAndLog } from '../../utils/loaders';
 import { pagedOrganizationWithDebtPositionTypeOrgAndOperatorsCountSchema } from '../../../generated/zod-schema';
 import {
   buildOrganizationsQueryParams,
