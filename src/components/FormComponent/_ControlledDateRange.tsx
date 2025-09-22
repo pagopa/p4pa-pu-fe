@@ -7,11 +7,15 @@ export type _ControlledDateRangeProps<T extends FieldValues> =
     name: Path<T>;
     control: Control<T>;
     label?: string;
+    shouldValidate?: boolean;
+    validationErrorMessage?: string;
+    validatePartialRange?: boolean;
   };
 
 export function _ControlledDateRange<T extends FieldValues>({
   name,
   control,
+  validatePartialRange = true,
   ...props
 }: _ControlledDateRangeProps<T>) {
   return (
@@ -24,26 +28,26 @@ export function _ControlledDateRange<T extends FieldValues>({
         return (
           <_DateRange
             {...props}
+            validatePartialRange={validatePartialRange}
+            shouldValidate={!!fieldState.error}
+            validationErrorMessage={fieldState.error?.message}
             from={
               props?.from
                 ? {
+                    ...props.from,
                     value: value.from,
                     onChange: (date) => {
                       field.onChange({ ...value, from: date });
-                    },
-                    errorMessage: fieldState.error?.message,
-                    ...props?.from
+                    }
                   }
                 : undefined
             }
             to={
               props?.to
                 ? {
+                    ...props.to,
                     value: value.to,
-                    onChange: (date) => field.onChange({ ...value, to: date }),
-                    errorMessage: fieldState.error?.message,
-                    label: props?.to?.label,
-                    ...props?.to
+                    onChange: (date) => field.onChange({ ...value, to: date })
                   }
                 : undefined
             }

@@ -4,8 +4,7 @@ import { Box, Divider, Stack, Typography } from '@mui/material';
 import { TFunction } from 'i18next';
 import Appio from '../../../assets/appio.svg';
 import Send from '../../../assets/send.svg';
-
-const displayNames = new Intl.DisplayNames(['it'], { type: 'language' });
+import ShowSecretValue from '../../../components/ShowSecretValue';
 
 export const accountingInfo = (
   organizationDetailData: OrganizationDetailDTO,
@@ -30,7 +29,8 @@ export const accountingInfo = (
 ];
 export const paymentInfo = (
   organizationDetailData: OrganizationDetailDTO,
-  t: TFunction
+  t: TFunction,
+  displayNames: Intl.DisplayNames
 ): Array<DetailData> => [
   {
     label: t('commons.segregationCode'),
@@ -53,8 +53,17 @@ export const paymentInfo = (
     value: organizationDetailData?.flagPaymentNotification
       ? t('commons.enabled')
       : '-'
+  },
+  {
+    childrenComponent: (
+      <ShowSecretValue
+        label={t('organizations.printKeyAPI')}
+        secretValue={organizationDetailData.generateNoticeApiKey}
+      />
+    )
   }
 ];
+
 export const info = (
   organizationDetailData: OrganizationDetailDTO,
   t: TFunction
@@ -109,6 +118,14 @@ export const integrationBox = (
     value: organizationDetailData?.flagNotifyIo ? t('commons.enabled') : '-'
   },
   {
+    childrenComponent: (
+      <ShowSecretValue
+        label={t('commons.apiKey')}
+        secretValue={organizationDetailData.ioApiKey}
+      />
+    )
+  },
+  {
     childrenComponent: <Divider></Divider>
   },
   {
@@ -126,5 +143,13 @@ export const integrationBox = (
   {
     label: t('organizations.pdndIntegration'),
     value: organizationDetailData?.pdndEnabled ? t('commons.enabled') : '-'
+  },
+  {
+    childrenComponent: (
+      <ShowSecretValue
+        label={t('commons.apiKey')}
+        secretValue={organizationDetailData.sendApiKey}
+      />
+    )
   }
 ];
