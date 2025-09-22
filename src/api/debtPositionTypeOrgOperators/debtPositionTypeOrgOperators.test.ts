@@ -1,53 +1,28 @@
-import { describe, it, expect, vi, beforeEach, Mock } from 'vitest';
-import { renderHook } from '../../__tests__/renderers';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { renderHook, waitFor } from '../../__tests__/renderers';
 import utils from '../../utils';
 import { getDebtPositionTypeOrgOperators } from '.';
-import type { UseQueryOptions } from '@tanstack/react-query';
 import type { PagedDebtPositionTypeOrgOperatorDTO } from '../../../generated/data-contracts';
 import { AxiosResponse } from 'axios';
+import { DebtPositionTypeOrgOperatorFilteredRequest } from './mappings';
 
-type OperatorQueryKey = [string, number, Record<string, unknown>];
-
-vi.mock('@tanstack/react-query', async () => {
-  const actual = await vi.importActual<typeof import('@tanstack/react-query')>(
-    '@tanstack/react-query'
-  );
-
-  return {
-    ...actual,
-    useQuery: vi.fn(
-      (
-        options: UseQueryOptions<
-          PagedDebtPositionTypeOrgOperatorDTO,
-          Error,
-          PagedDebtPositionTypeOrgOperatorDTO,
-          OperatorQueryKey
-        >
-      ) => {
-        useQueryMock.lastOptions = options;
-        return actual.useQuery(options);
+vi.mock('../../utils', () => ({
+  default: {
+    apiClient: {
+      bff: {
+        getDebtPositionTypeOrgOperators: vi.fn()
       }
-    )
-  };
-});
+    }
+  }
+}));
 
-type QueryMock = {
-  lastOptions: UseQueryOptions<
-    PagedDebtPositionTypeOrgOperatorDTO,
-    Error,
-    PagedDebtPositionTypeOrgOperatorDTO,
-    OperatorQueryKey
-  > | null;
-};
-
-const useQueryMock: QueryMock = {
-  lastOptions: null
-};
+vi.mock('../../utils/loaders', () => ({
+  parseAndLog: vi.fn()
+}));
 
 describe('getDebtPositionTypeOrgOperators', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    useQueryMock.lastOptions = null;
   });
 
   it('should fetch and return operators with default parameters', async () => {
@@ -74,16 +49,21 @@ describe('getDebtPositionTypeOrgOperators', () => {
 
     const { result } = renderHook(() => getDebtPositionTypeOrgOperators(3));
 
-    const data = await result.current.mutateAsync({
+    const request: DebtPositionTypeOrgOperatorFilteredRequest = {
       filters: {},
       pagination: { page: 0, size: 10 },
       sort: []
-    });
+    };
+
+    const data = await result.current.mutateAsync(request);
 
     expect(data).toEqual(mockData);
     expect(
       utils.apiClient.bff.getDebtPositionTypeOrgOperators
-    ).toHaveBeenCalledWith(3, { page: 0, size: 10, sort: [] });
+    ).toHaveBeenCalledWith(3, {
+      page: 0,
+      size: 10
+    });
   });
 
   it('should handle sort parameters correctly', async () => {
@@ -95,19 +75,20 @@ describe('getDebtPositionTypeOrgOperators', () => {
       totalElements: 0
     };
 
-    (
-      utils.apiClient.bff.getDebtPositionTypeOrgOperators as Mock
-    ).mockResolvedValue({
-      data: mockData
-    });
+    vi.spyOn(
+      utils.apiClient.bff,
+      'getDebtPositionTypeOrgOperators'
+    ).mockResolvedValue({ data: mockData } as AxiosResponse);
 
     const { result } = renderHook(() => getDebtPositionTypeOrgOperators(3));
 
-    const data = await result.current.mutateAsync({
+    const request: DebtPositionTypeOrgOperatorFilteredRequest = {
       filters: {},
       pagination: { page: 0, size: 10 },
-      sort: ['operator,asc', 'firstName,desc']
-    });
+      sort: ['firstName,asc', 'lastName,desc']
+    };
+
+    const data = await result.current.mutateAsync(request);
 
     expect(data).toEqual(mockData);
     expect(
@@ -115,32 +96,41 @@ describe('getDebtPositionTypeOrgOperators', () => {
     ).toHaveBeenCalledWith(3, {
       page: 0,
       size: 10,
-      sort: ['operator,asc', 'firstName,desc']
+      sort: ['firstName,asc', 'lastName,desc']
     });
   });
 
   it('should handle debtPositionTypeOrgId parameter', async () => {
     const mockData: PagedDebtPositionTypeOrgOperatorDTO = {
-      content: [],
-      totalPages: 0,
+      content: [
+        {
+          operatorId: 'op2',
+          firstName: 'Jane',
+          lastName: 'Smith',
+          mappedExternalUserId: 'ext2',
+          enabled: false
+        }
+      ],
+      totalPages: 1,
       number: 0,
       size: 10,
-      totalElements: 0
+      totalElements: 1
     };
 
-    (
-      utils.apiClient.bff.getDebtPositionTypeOrgOperators as Mock
-    ).mockResolvedValue({
-      data: mockData
-    });
+    vi.spyOn(
+      utils.apiClient.bff,
+      'getDebtPositionTypeOrgOperators'
+    ).mockResolvedValue({ data: mockData } as AxiosResponse);
 
     const { result } = renderHook(() => getDebtPositionTypeOrgOperators(3));
 
-    const data = await result.current.mutateAsync({
+    const request: DebtPositionTypeOrgOperatorFilteredRequest = {
       filters: { debtPositionTypeOrgId: 123 },
       pagination: { page: 0, size: 10 },
       sort: []
-    });
+    };
+
+    const data = await result.current.mutateAsync(request);
 
     expect(data).toEqual(mockData);
     expect(
@@ -148,65 +138,67 @@ describe('getDebtPositionTypeOrgOperators', () => {
     ).toHaveBeenCalledWith(3, {
       debtPositionTypeOrgId: 123,
       page: 0,
-      size: 10,
-      sort: []
+      size: 10
     });
   });
 
   it('should handle errors correctly', async () => {
     const error = new Error('API error');
-    (
-      utils.apiClient.bff.getDebtPositionTypeOrgOperators as Mock
+    vi.spyOn(
+      utils.apiClient.bff,
+      'getDebtPositionTypeOrgOperators'
     ).mockRejectedValue(error);
 
     const { result } = renderHook(() => getDebtPositionTypeOrgOperators(3));
 
-    expect(
-      result.current.mutateAsync({
-        filters: {},
-        pagination: { page: 0, size: 10 },
-        sort: []
-      })
-    ).rejects.toThrow('API error');
-  });
-
-  it.skip('should use correct query key structure', async () => {
-    const mockData: PagedDebtPositionTypeOrgOperatorDTO = {
-      content: [],
-      totalPages: 0,
-      number: 0,
-      size: 10,
-      totalElements: 0
+    const request: DebtPositionTypeOrgOperatorFilteredRequest = {
+      filters: {},
+      pagination: { page: 0, size: 10 },
+      sort: []
     };
 
-    (
-      utils.apiClient.bff.getDebtPositionTypeOrgOperators as Mock
-    ).mockResolvedValue({
-      data: mockData
+    await result.current.mutateAsync(request).catch((err) => {
+      expect(err).toBe(error);
     });
 
-    const queryParams = {
-      debtPositionTypeOrgId: 123,
-      page: 0,
-      size: 10,
-      sort: ['operator,asc']
+    await waitFor(() => {
+      expect(result.current.isError).toBe(true);
+      expect(result.current.error).toBe(error);
+    });
+  });
+
+  it('should handle different pagination parameters', async () => {
+    const mockData: PagedDebtPositionTypeOrgOperatorDTO = {
+      content: [],
+      totalPages: 5,
+      number: 2,
+      size: 25,
+      totalElements: 100
     };
+
+    vi.spyOn(
+      utils.apiClient.bff,
+      'getDebtPositionTypeOrgOperators'
+    ).mockResolvedValue({ data: mockData } as AxiosResponse);
 
     const { result } = renderHook(() => getDebtPositionTypeOrgOperators(3));
 
-    result.current.mutateAsync({
-      filters: { debtPositionTypeOrgId: 123 },
-      pagination: { page: 0, size: 10 },
-      sort: []
-    });
+    const request: DebtPositionTypeOrgOperatorFilteredRequest = {
+      filters: { debtPositionTypeOrgId: 456 },
+      pagination: { page: 2, size: 25 },
+      sort: ['enabled,desc', 'firstName,asc']
+    };
 
-    expect(useQueryMock.lastOptions).toBeTruthy();
-    if (useQueryMock.lastOptions) {
-      expect(useQueryMock.lastOptions.queryKey).toEqual([
-        'getDebtPositionTypeOrgOperators',
-        3,
-        queryParams
-      ]);
-    }
+    const data = await result.current.mutateAsync(request);
+
+    expect(data).toEqual(mockData);
+    expect(
+      utils.apiClient.bff.getDebtPositionTypeOrgOperators
+    ).toHaveBeenCalledWith(3, {
+      debtPositionTypeOrgId: 456,
+      page: 2,
+      size: 25,
+      sort: ['enabled,desc', 'firstName,asc']
+    });
   });
 });

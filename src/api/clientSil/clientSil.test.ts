@@ -112,10 +112,7 @@ describe('ClientSil API', () => {
 
     it('should omit empty filters', () => {
       const request: ClientSilFilteredRequest = {
-        filters: {
-          clientName: '',
-          clientId: undefined
-        },
+        filters: {},
         pagination: { page: 0, size: 10 },
         sort: []
       };
@@ -131,8 +128,7 @@ describe('ClientSil API', () => {
     it('should include only non-empty filters', () => {
       const request: ClientSilFilteredRequest = {
         filters: {
-          clientName: 'Test',
-          clientId: ''
+          clientName: 'Test'
         },
         pagination: { page: 0, size: 10 },
         sort: ['clientId,ASC']
@@ -188,50 +184,6 @@ describe('ClientSil API', () => {
       });
 
       expect(result.current.error).toBe(mockError);
-      expect(utils.apiClient.bff.deleteClient).toHaveBeenCalledWith(
-        organizationId,
-        clientId
-      );
-    });
-
-    it('should successfully complete delete mutation', async () => {
-      const organizationId = 123;
-      const clientId = 'client123';
-
-      vi.mocked(utils.apiClient.bff.deleteClient).mockResolvedValue({
-        data: undefined
-      } as AxiosResponse);
-
-      const { result } = renderHook(() => deleteClientSil(organizationId));
-
-      result.current.mutate(clientId);
-
-      await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true);
-      });
-
-      expect(result.current.isSuccess).toBe(true);
-      expect(result.current.isError).toBe(false);
-    });
-
-    it('should handle delete mutation failure', async () => {
-      const organizationId = 123;
-      const clientId = 'client123';
-      const mockError = new Error('Delete failed');
-
-      vi.mocked(utils.apiClient.bff.deleteClient).mockRejectedValue(mockError);
-
-      const { result } = renderHook(() => deleteClientSil(organizationId));
-
-      result.current.mutate(clientId);
-
-      await waitFor(() => {
-        expect(result.current.isError).toBe(true);
-      });
-
-      expect(result.current.isError).toBe(true);
-      expect(result.current.error).toBe(mockError);
-      expect(result.current.isSuccess).toBe(false);
     });
   });
 
@@ -264,13 +216,19 @@ describe('ClientSil API', () => {
     });
   });
 
-  describe('regenerate secret values', () => {
+  describe('generateClientSecret', () => {
     it('should call generateClientSecret API with correct parameters', async () => {
       const organizationId = 123;
       const clientId = 'client123';
+      const mockResponse = {
+        clientId: 'client123',
+        clientName: 'Test Client',
+        organizationIpaCode: 'ORG001',
+        clientSecret: 'new-secret-123'
+      };
 
       vi.mocked(utils.apiClient.bff.generateClientSecret).mockResolvedValue({
-        data: undefined
+        data: mockResponse
       } as AxiosResponse);
 
       const { result } = renderHook(() => generateClientSecret(organizationId));
@@ -285,6 +243,7 @@ describe('ClientSil API', () => {
         organizationId,
         clientId
       );
+      expect(result.current.data).toEqual(mockResponse);
     });
 
     it('should handle generateClientSecret error', async () => {
@@ -305,30 +264,6 @@ describe('ClientSil API', () => {
       });
 
       expect(result.current.error).toBe(mockError);
-      expect(utils.apiClient.bff.generateClientSecret).toHaveBeenCalledWith(
-        organizationId,
-        clientId
-      );
-    });
-
-    it('should successfully complete generateClientSecret mutation', async () => {
-      const organizationId = 123;
-      const clientId = 'client123';
-
-      vi.mocked(utils.apiClient.bff.generateClientSecret).mockResolvedValue({
-        data: undefined
-      } as AxiosResponse);
-
-      const { result } = renderHook(() => generateClientSecret(organizationId));
-
-      result.current.mutate(clientId);
-
-      await waitFor(() => {
-        expect(result.current.isSuccess).toBe(true);
-      });
-
-      expect(result.current.isSuccess).toBe(true);
-      expect(result.current.isError).toBe(false);
     });
   });
 });

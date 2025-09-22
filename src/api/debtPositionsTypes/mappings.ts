@@ -1,27 +1,31 @@
+import { FilteredRequest } from '../../models/Filters';
 import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
 import { Step2Data } from '../../routes/DebtTypeCreate/components/Step2Settings';
+import utils from '../../utils';
 
-export type DebtPositionTypeWithCountFilters = {
-  description?: string;
-};
+type GetDebtPositionTypeWithCountQueryParams = Parameters<
+  typeof utils.apiClient.bff.getDebtPositionTypeWithCount
+>[1];
 
-export type DebtPositionTypeWithCountFilteredRequest = {
-  filters: DebtPositionTypeWithCountFilters;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
+export type DebtPositionTypeWithCountFilters = Pick<
+  NonNullable<GetDebtPositionTypeWithCountQueryParams>,
+  'description'
+>;
+
+export type DebtPositionTypeWithCountFilteredRequest =
+  FilteredRequest<DebtPositionTypeWithCountFilters>;
 
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: DebtPositionTypeWithCountFilteredRequest) => ({
+}: DebtPositionTypeWithCountFilteredRequest): GetDebtPositionTypeWithCountQueryParams => ({
   page: pagination.page,
   size: pagination.size,
   ...(filters?.description && {
     description: filters.description
   }),
-  ...(sort.length && { sort })
+  ...(sort?.length && { sort })
 });
 
 export const buildQueryPostParams = (

@@ -1,42 +1,35 @@
-import {
-  ExportFileStatus,
-  ExportFileTypeEnum
-} from '../../../generated/data-contracts';
+import { FilteredRequest } from '../../models/Filters';
 import utils from '../../utils';
 
-export type DebtPositionTypeOrgOperatorFilters = {
-  debtPositionTypeOrgId?: number;
-};
-
-export type ExportQuery = {
-  exportFileType: ExportFileTypeEnum;
-  creationDateFrom?: Date;
-  creationDateTo?: Date;
-  status?: ExportFileStatus;
-  fileName?: string;
-};
-
-export type ExportFilesFilteredRequest = {
-  filters: ExportQuery;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
-
-type GetExportFilesQuery = Parameters<
+type GetExportFilesQueryParams = Parameters<
   typeof utils.apiClient.bff.getExportFiles
 >[1];
+
+export type ExportFilesFilters = Pick<
+  NonNullable<GetExportFilesQueryParams>,
+  'exportFileType' | 'status' | 'fileName'
+> & {
+  creationDateFrom?: Date;
+  creationDateTo?: Date;
+};
+
+export type ExportFilesFilteredRequest = FilteredRequest<ExportFilesFilters>;
 
 export const buildGetExportFilesQueryParams = ({
   filters,
   pagination,
   sort
-}: ExportFilesFilteredRequest): GetExportFilesQuery => ({
+}: ExportFilesFilteredRequest): GetExportFilesQueryParams => ({
   exportFileType: filters.exportFileType,
-  creationDateTimeFrom: utils.formatters.date.code(filters.creationDateFrom),
-  creationDateTimeTo: utils.formatters.date.code(filters.creationDateTo),
-  status: filters.status as ExportFileStatus,
+  creationDateTimeFrom: filters.creationDateFrom
+    ? utils.formatters.date.code(filters.creationDateFrom)
+    : undefined,
+  creationDateTimeTo: filters.creationDateTo
+    ? utils.formatters.date.code(filters.creationDateTo)
+    : undefined,
+  status: filters.status,
   fileName: filters.fileName,
   page: pagination.page,
   size: pagination.size,
-  sort
+  ...(sort?.length && { sort })
 });

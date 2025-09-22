@@ -27,13 +27,25 @@ describe('getDebtPositionTypeWithCount', () => {
   it('should fetch and return paged debt position types with count', async () => {
     const mockData = {
       content: [
-        { id: 1, description: 'Type A', count: 5 },
-        { id: 2, description: 'Type B', count: 10 }
+        {
+          debtPositionTypeId: 1,
+          code: 'TYPE_A',
+          description: 'Type A',
+          updateDate: '2023-01-01T10:00:00Z',
+          activeOrganizations: 5
+        },
+        {
+          debtPositionTypeId: 2,
+          code: 'TYPE_B',
+          description: 'Type B',
+          updateDate: '2023-01-02T10:00:00Z',
+          activeOrganizations: 10
+        }
       ],
+      size: 10,
       totalElements: 2,
       totalPages: 1,
-      number: 0,
-      size: 10
+      number: 0
     };
 
     (
@@ -65,13 +77,25 @@ describe('getDebtPositionTypeWithCount', () => {
   it('should handle query with sort parameters and description filter', async () => {
     const mockData = {
       content: [
-        { id: 2, description: 'Type B', count: 10 },
-        { id: 1, description: 'Type A', count: 5 }
+        {
+          debtPositionTypeId: 2,
+          code: 'TYPE_B',
+          description: 'Type B',
+          updateDate: '2023-01-02T10:00:00Z',
+          activeOrganizations: 10
+        },
+        {
+          debtPositionTypeId: 1,
+          code: 'TYPE_A',
+          description: 'Type A',
+          updateDate: '2023-01-01T10:00:00Z',
+          activeOrganizations: 5
+        }
       ],
+      size: 10,
       totalElements: 2,
       totalPages: 1,
-      number: 0,
-      size: 10
+      number: 0
     };
 
     (
@@ -84,7 +108,7 @@ describe('getDebtPositionTypeWithCount', () => {
     const query: DebtPositionTypeWithCountFilteredRequest = {
       filters: { description: 'Type A' },
       pagination: { page: 0, size: 10 },
-      sort: ['count,desc']
+      sort: ['activeOrganizations,desc']
     };
 
     const { result } = renderHook(() =>
@@ -100,7 +124,7 @@ describe('getDebtPositionTypeWithCount', () => {
       page: 0,
       size: 10,
       description: 'Type A',
-      sort: ['count,desc']
+      sort: ['activeOrganizations,desc']
     });
   });
 
@@ -126,5 +150,43 @@ describe('getDebtPositionTypeWithCount', () => {
 
     expect(data).toBeNull();
     expect(parseAndLog).not.toHaveBeenCalled();
+  });
+
+  it('should handle empty filters correctly', async () => {
+    const mockData = {
+      content: [],
+      size: 10,
+      totalElements: 0,
+      totalPages: 0,
+      number: 0
+    };
+
+    (
+      utils.apiClient.bff.getDebtPositionTypeWithCount as Mock
+    ).mockResolvedValue({
+      data: mockData
+    });
+
+    const organizationId = 123;
+    const query: DebtPositionTypeWithCountFilteredRequest = {
+      filters: {},
+      pagination: { page: 1, size: 25 },
+      sort: ['description,asc']
+    };
+
+    const { result } = renderHook(() =>
+      getDebtPositionTypeWithCount({ organizationId })
+    );
+
+    const data = await result.current.mutateAsync(query);
+
+    expect(data).toEqual(mockData);
+    expect(
+      utils.apiClient.bff.getDebtPositionTypeWithCount
+    ).toHaveBeenCalledWith(organizationId, {
+      page: 1,
+      size: 25,
+      sort: ['description,asc']
+    });
   });
 });

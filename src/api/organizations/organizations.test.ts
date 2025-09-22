@@ -3,6 +3,7 @@ import { act, renderHook } from '../../__tests__/renderers';
 import { getOrganizationsByBrokerIdAndFilters } from './';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
+import { OrganizationsFilteredRequest } from './mappings';
 
 vi.mock('../../utils', () => ({
   default: {
@@ -23,15 +24,21 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
     const mockData = {
       content: [
         {
-          id: 1,
-          name: 'Test Organization 1',
+          organizationId: 1,
+          orgName: 'Test Organization 1',
           ipaCode: 'IPA001',
+          orgFiscalCode: '12345678901',
+          debtPositionTypeOrgCount: 5,
+          operatorsCount: 3,
           status: 'ACTIVE'
         },
         {
-          id: 2,
-          name: 'Test Organization 2',
+          organizationId: 2,
+          orgName: 'Test Organization 2',
           ipaCode: 'IPA002',
+          orgFiscalCode: '12345678902',
+          debtPositionTypeOrgCount: 2,
+          operatorsCount: 1,
           status: 'ACTIVE'
         }
       ],
@@ -41,12 +48,14 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
       number: 0
     };
 
-    const filters = {
-      orgName: 'Test Organization',
-      ipaCode: 'IPA001'
+    const request: OrganizationsFilteredRequest = {
+      filters: {
+        orgName: 'Test Organization',
+        ipaCode: 'IPA001'
+      },
+      pagination: { page: 0, size: 10 },
+      sort: ['orgName,asc']
     };
-    const pagination = { page: 0, size: 10 };
-    const sort = ['name,asc'];
 
     mockGetOrganizationsByBrokerIdAndFilters.mockResolvedValue({
       data: mockData
@@ -55,11 +64,7 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
     const { result } = renderHook(() => getOrganizationsByBrokerIdAndFilters());
 
     await act(async () => {
-      const response = await result.current.mutateAsync({
-        filters,
-        pagination,
-        sort
-      });
+      const response = await result.current.mutateAsync(request);
       expect(response).toEqual(mockData);
     });
 
@@ -68,7 +73,7 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
       size: 10,
       orgName: 'Test Organization',
       ipaCode: 'IPA001',
-      sort: ['name,asc']
+      sort: ['orgName,asc']
     });
   });
 
@@ -76,9 +81,12 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
     const mockData = {
       content: [
         {
-          id: 1,
-          name: 'All Organizations Test',
+          organizationId: 1,
+          orgName: 'All Organizations Test',
           ipaCode: 'IPA999',
+          orgFiscalCode: '99999999999',
+          debtPositionTypeOrgCount: 1,
+          operatorsCount: 1,
           status: 'ACTIVE'
         }
       ],
@@ -88,9 +96,11 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
       number: 0
     };
 
-    const filters = {};
-    const pagination = { page: 0, size: 20 };
-    const sort = ['id,desc'];
+    const request: OrganizationsFilteredRequest = {
+      filters: {},
+      pagination: { page: 0, size: 20 },
+      sort: ['organizationId,desc']
+    };
 
     mockGetOrganizationsByBrokerIdAndFilters.mockResolvedValue({
       data: mockData
@@ -99,11 +109,7 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
     const { result } = renderHook(() => getOrganizationsByBrokerIdAndFilters());
 
     await act(async () => {
-      const response = await result.current.mutateAsync({
-        filters,
-        pagination,
-        sort
-      });
+      const response = await result.current.mutateAsync(request);
       expect(response).toEqual(mockData);
     });
 
@@ -112,30 +118,26 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
       size: 20,
       orgName: undefined,
       ipaCode: undefined,
-      sort: ['id,desc']
+      sort: ['organizationId,desc']
     });
   });
 
   it('handles API error gracefully', async () => {
     const mockError = new Error('API request failed');
-    const filters = { orgName: 'Test' };
-    const pagination = { page: 0, size: 10 };
-    const sort = ['name,asc'];
+    const request: OrganizationsFilteredRequest = {
+      filters: { orgName: 'Test' },
+      pagination: { page: 0, size: 10 },
+      sort: ['orgName,asc']
+    };
 
     mockGetOrganizationsByBrokerIdAndFilters.mockRejectedValueOnce(mockError);
 
     const { result } = renderHook(() => getOrganizationsByBrokerIdAndFilters());
 
     await act(async () => {
-      await result.current
-        .mutateAsync({
-          filters,
-          pagination,
-          sort
-        })
-        .catch((error) => {
-          expect(error).toBe(mockError);
-        });
+      await result.current.mutateAsync(request).catch((error) => {
+        expect(error).toBe(mockError);
+      });
     });
 
     expect(mockGetOrganizationsByBrokerIdAndFilters).toHaveBeenCalledWith({
@@ -143,7 +145,7 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
       size: 10,
       orgName: 'Test',
       ipaCode: undefined,
-      sort: ['name,asc']
+      sort: ['orgName,asc']
     });
   });
 
@@ -151,9 +153,12 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
     const mockData = {
       content: [
         {
-          id: 5,
-          name: 'Specific Org',
+          organizationId: 5,
+          orgName: 'Specific Org',
           ipaCode: 'SPEC001',
+          orgFiscalCode: '55555555555',
+          debtPositionTypeOrgCount: 10,
+          operatorsCount: 2,
           status: 'ACTIVE'
         }
       ],
@@ -163,9 +168,11 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
       number: 0
     };
 
-    const filters = { orgName: 'Specific Org' };
-    const pagination = { page: 1, size: 5 };
-    const sort = ['name,desc', 'id,asc'];
+    const request: OrganizationsFilteredRequest = {
+      filters: { orgName: 'Specific Org' },
+      pagination: { page: 1, size: 5 },
+      sort: ['orgName,desc', 'organizationId,asc']
+    };
 
     mockGetOrganizationsByBrokerIdAndFilters.mockResolvedValue({
       data: mockData
@@ -174,11 +181,7 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
     const { result } = renderHook(() => getOrganizationsByBrokerIdAndFilters());
 
     await act(async () => {
-      const response = await result.current.mutateAsync({
-        filters,
-        pagination,
-        sort
-      });
+      const response = await result.current.mutateAsync(request);
       expect(response).toEqual(mockData);
     });
 
@@ -187,7 +190,7 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
       size: 5,
       orgName: 'Specific Org',
       ipaCode: undefined,
-      sort: ['name,desc', 'id,asc']
+      sort: ['orgName,desc', 'organizationId,asc']
     });
   });
 
@@ -195,9 +198,12 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
     const mockData = {
       content: [
         {
-          id: 3,
-          name: 'IPA Specific Organization',
+          organizationId: 3,
+          orgName: 'IPA Specific Organization',
           ipaCode: 'UNIQUE123',
+          orgFiscalCode: '33333333333',
+          debtPositionTypeOrgCount: 7,
+          operatorsCount: 4,
           status: 'ACTIVE'
         }
       ],
@@ -213,12 +219,14 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
 
     const { result } = renderHook(() => getOrganizationsByBrokerIdAndFilters());
 
+    const request: OrganizationsFilteredRequest = {
+      filters: { ipaCode: 'UNIQUE123' },
+      pagination: { page: 0, size: 10 },
+      sort: []
+    };
+
     await act(async () => {
-      const response = await result.current.mutateAsync({
-        filters: { ipaCode: 'UNIQUE123' },
-        pagination: { page: 0, size: 10 },
-        sort: []
-      });
+      const response = await result.current.mutateAsync(request);
       expect(response).toEqual(mockData);
     });
 

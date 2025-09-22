@@ -1,5 +1,14 @@
+import { FilteredRequest } from '../../models/Filters';
 import { DebtPositionStatus } from '../../../generated/data-contracts';
 import utils from '../../utils';
+
+type GetInstallmentsQueryParams = Parameters<
+  typeof utils.apiClient.bff.getInstallments
+>[1];
+
+type GetDebtPositionViewsQueryParams = Parameters<
+  typeof utils.apiClient.bff.getDebtPositionViews
+>[1];
 
 export type DebtPositionsFilters = {
   dateRange?: {
@@ -12,25 +21,13 @@ export type DebtPositionsFilters = {
   typeOrgId?: number;
 };
 
-export type DebtPositionFilteredRequest = {
-  filters: DebtPositionsFilters;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
-
-type InstallmentsQueryParameters = Parameters<
-  typeof utils.apiClient.bff.getInstallments
->[1];
-
-type debtPositionsQueryParameters = Parameters<
-  typeof utils.apiClient.bff.getDebtPositionViews
->[1];
+export type DebtPositionFilteredRequest = FilteredRequest<DebtPositionsFilters>;
 
 export const buildInstallmentsQueryParams = ({
   filters,
   pagination,
   sort
-}: DebtPositionFilteredRequest): InstallmentsQueryParameters => ({
+}: DebtPositionFilteredRequest): GetInstallmentsQueryParams => ({
   dueDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
   dueDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
   page: pagination.page,
@@ -45,7 +42,7 @@ export const buildDebtPositionsQueryParams = ({
   filters,
   pagination,
   sort
-}: DebtPositionFilteredRequest): debtPositionsQueryParameters => ({
+}: DebtPositionFilteredRequest): GetDebtPositionViewsQueryParams => ({
   creationDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
   creationDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
   debtPositionTypeOrgId: filters.typeOrgId,

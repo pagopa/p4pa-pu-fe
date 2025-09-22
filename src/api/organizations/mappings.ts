@@ -1,19 +1,23 @@
-export type OrganizationsFilters = {
-  orgName?: string;
-  ipaCode?: string;
-};
+import { FilteredRequest } from '../../models/Filters';
+import utils from '../../utils';
 
-export type OrganizationsFilteredRequest = {
-  filters: OrganizationsFilters;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
+type GetOrganizationsByBrokerIdQueryParams = Parameters<
+  typeof utils.apiClient.bff.getOrganizationsByBrokerIdAndFilters
+>[0];
+
+export type OrganizationsFilters = Pick<
+  NonNullable<GetOrganizationsByBrokerIdQueryParams>,
+  'orgName' | 'ipaCode'
+>;
+
+export type OrganizationsFilteredRequest =
+  FilteredRequest<OrganizationsFilters>;
 
 export const buildOrganizationsQueryParams = ({
   filters,
   pagination,
   sort
-}: OrganizationsFilteredRequest) => ({
+}: OrganizationsFilteredRequest): GetOrganizationsByBrokerIdQueryParams => ({
   page: pagination.page,
   size: pagination.size,
   orgName: filters.orgName,
