@@ -594,6 +594,7 @@
     "amount": "Importo",
     "anonymousFiscalCode": "Codice Fiscale Anonimo",
     "appName": "Piattaforma Unitaria",
+    "apiKey": "API Key",
     "auditor": "Gestore della transazione (PSP)",
     "back": "Indietro",
     "behavior": "Comportamento",

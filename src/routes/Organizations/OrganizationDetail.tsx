@@ -15,10 +15,15 @@ import {
   paymentInfo
 } from './components/OrganizationDetailSections';
 import { theme } from '@pagopa/mui-italia';
+import { useLanguage } from '../../hooks/useLanguage';
 
 export const OrganizationDetail = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const {language} = useLanguage();
+
+  const displayNames = new Intl.DisplayNames(language, { type: 'language' });
 
   const { organizationId: organizationIdByURL } = useParams<{
     organizationId: string;
@@ -86,6 +91,7 @@ export const OrganizationDetail = () => {
                 display={'flex'}
                 justifyContent={'center'}
               >
+                {organizationDetailData?.orgLogo && 
                 <Box
                   sx={{
                     border: `1px solid ${theme.palette.grey[300]}`,
@@ -96,8 +102,9 @@ export const OrganizationDetail = () => {
                     width: '150px'
                   }}
                 >
-                  <img src={organizationDetailData?.orgLogo} width={'100%'} />
+                  <img src={organizationDetailData.orgLogo} width={'100%'} />
                 </Box>
+                }
               </Box>
             </Grid>
           </Grid>
@@ -136,7 +143,7 @@ export const OrganizationDetail = () => {
                     fontSize: '14px',
                     label: t('commons.payments')
                   },
-                  data: paymentInfo(organizationDetailData, t)
+                  data: paymentInfo(organizationDetailData, t, displayNames)
                 }
               ]}
             />
