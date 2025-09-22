@@ -18,7 +18,10 @@ import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../routes';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
-import { noFilterSetted } from '../../utils/filtersValidation';
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../utils/filtersValidation';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 import utils from '../../utils';
 
@@ -70,7 +73,7 @@ export const DebtPositionResults = () => {
       debtPosition.applyFilters(filterValues);
       setError(false);
     } else {
-      setError(true);
+      setError(shouldShowGeneralError(filterValues));
     }
   };
 

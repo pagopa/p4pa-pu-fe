@@ -2,6 +2,7 @@ import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import {
+  operatorsDetailSchema,
   pagedOrganizationOperatorSchema,
   pagedOrganizationWithDebtPositionTypeOrgAndOperatorsCountSchema
 } from '../../../generated/zod-schema';
@@ -11,6 +12,7 @@ import {
   OrganizationOperatorsFilteredRequest,
   BrokerOrganizationsFilteredRequest
 } from './mappings';
+import { FilteredRequest } from '../../models/Filters';
 
 export const useOrganizationOperatorsSearch = (organizationId: number) => {
   return useMutation({
@@ -44,6 +46,36 @@ export const useBrokerOrganizationsSearch = () => {
       );
 
       return response;
+    }
+  });
+};
+
+export type OperatorDetailQuery = Omit<
+  Parameters<typeof utils.apiClient.bff.getOperatorDetails>[2],
+  'page' | 'size' | 'sort'
+>;
+
+export const useOperatorDetailSearch = (
+  organizationId: number,
+  mappedExternalUserId: string
+) => {
+  return useMutation({
+    mutationKey: ['searchOperatorDetail', organizationId, mappedExternalUserId],
+    mutationFn: async (args: FilteredRequest<OperatorDetailQuery>) => {
+      const query = {
+        ...args.filters,
+        ...args.pagination,
+        sort: args.sort
+      };
+
+      const { data } = await utils.apiClient.bff.getOperatorDetails(
+        organizationId,
+        mappedExternalUserId,
+        query
+      );
+
+      parseAndLog(operatorsDetailSchema, data);
+      return data;
     }
   });
 };

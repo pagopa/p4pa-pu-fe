@@ -1,4 +1,11 @@
 {
+  "OperatorDetail": {
+    "code": "Cod. Gestionale",
+    "debtPositionTypeDescription": "Tipo di dovuto",
+    "accessibleTitle": "Dettagli operatore",
+    "associatedDebtPositionTypes": "Tipi di dovuto associati",
+    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto"
+  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -73,6 +80,30 @@
       "titleIUV": "Avvisi (IUV)",
       "accessibleTitleIUV": "Risultato ricerca Avvisi",
       "accessibleTitleDP": "Risultato ricerca posizioni debitorie"
+    },
+    "status": {
+      "tooltip": {
+        "DRAFT": "Non ci sono ancora avvisi di pagamento per questa posizione debitoria.",
+        "TO_SYNC": "La posizione debitoria è stata creata ma non è ancora pagabile.",
+        "UNPAID": "La posizione debitoria è stata creata ed è pagabile.",
+        "PARTIALLY_PAID": "È stato effettuato solo una parte del pagamento.",
+        "PAID": "Tutti i pagamenti sono stati completati.",
+        "REPORTED": "Tutti i pagamenti sono stati rendicontati.",
+        "EXPIRED": "I pagamenti non sono stati effettuati entro la data di scadenza prevista.",
+        "CANCELLED": "La posizione debitoria è stata rimossa da un operatore."
+      }
+    },
+    "installment": {
+      "tooltip": {
+        "DRAFT": "L'avviso di pagamento non è stato ancora emesso.",
+        "TO_SYNC": "L'avviso di pagamento è stato registrato ma non è ancora pagabile.",
+        "UNPAID": "L'avviso di pagamento è stato emesso ed è pagabile.",
+        "PAID": "Il pagamento è stato completato.",
+        "REPORTED": "L'avviso di pagamento è stato rendicontato.",
+        "EXPIRED": "Il pagamento non è stato completato entro la data di scadenza stabilita.",
+        "INVALID": "L'avviso è stato invalidato perché il debitore ha avviato il pagamento con un'altra opzione.",
+        "CANCELLED": "L'avviso di pagamento è stato rimosso da un operatore."
+      }
     }
   },
   "FileUploaderFlowImport": {
@@ -590,6 +621,7 @@
     "searchByLastName": "Cerca per cognome",
     "searchByFiscalCode": "Cerca per CF",
     "searchByIPACode": "Cerca per codice IPA",
+    "brokerDescription": "Trovi gli operatori presenti per l’ente gestito.",
     "myOrganizationDataGrid": {
       "id": "ID",
       "nameAndLastName": "Nome e cognome",
@@ -612,6 +644,8 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "id": "id",
+    "role": "Ruolo",
     "404": "404: risorsa non disponibile",
     "info": "Informazioni",
     "add": "Aggiungi",
@@ -635,6 +669,7 @@
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
     "backToStart": "Torna alla sezione",
+    "goToDetail": "Vedi dettaglio",
     "creationFrom": "Creazione dal",
     "debtFlow": "Flussi dovuti",
     "debtType": "Tipo dovuto",
@@ -1031,7 +1066,9 @@
     "to": "Al",
     "validations": {
       "from": "Data non valida",
-      "to": "Data non valida"
+      "to": "Data non valida",
+      "insertFrom": "Seleziona una data di inizio",
+      "insertTo": "Seleziona una data di fine"
     },
     "year": "Anno"
   },

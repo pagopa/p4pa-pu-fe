@@ -7,7 +7,10 @@ import { PageRoutes } from '../..';
 import { RegistryType } from '../configs';
 import { useCallback, useState } from 'react';
 import { ErrorMessage } from '../../../components/ErrorMessage/ErrorMessage';
-import { noFilterSetted } from '../../../utils/filtersValidation';
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../../utils/filtersValidation';
 import utils from '../../../utils';
 import { FilterFieldValue } from '../../../models/Filters';
 
@@ -35,7 +38,7 @@ export const EventPage = () => {
 
   const navigateToResults = useCallback(() => {
     if (noFilterSetted(filters)) {
-      setError(true);
+      setError(shouldShowGeneralError(filters));
     } else {
       setError(false);
       const params = utils.URI.encode(filters);
@@ -47,7 +50,7 @@ export const EventPage = () => {
       );
       navigate(`${route}#${params}`);
     }
-  }, [filters, navigate]);
+  }, [filters, navigate, activeTabIndex]);
 
   return (
     <>

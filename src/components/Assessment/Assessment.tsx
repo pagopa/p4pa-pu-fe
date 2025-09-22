@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { PageRoutes } from '../../routes';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { useAppNavigate } from '../../hooks/useAppNavigation';
+import { shouldShowGeneralError } from '../../utils/filtersValidation';
 
 export const Assessment = () => {
   const { t } = useTranslation();
@@ -43,7 +44,7 @@ export const Assessment = () => {
         hashObject: filterValues
       });
     } else {
-      setError(true);
+      setError(shouldShowGeneralError(filterValues));
     }
   }
 

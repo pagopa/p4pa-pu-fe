@@ -30,12 +30,13 @@ const Breadcrumbs = ({ separator, custom }: BreadcrumbsProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
-    state: { appState }
+    state: {
+      appState: { customBreadcrumbsItems }
+    }
   } = useStore();
   const matches = (useMatches() as Array<BredcrumbItem>).slice(1);
-  const customBreadcrumbsItems = appState.customBreadcrumbsItems;
-  const items = customBreadcrumbsItems || undefined;
-  const itemsToList = custom ? items || matches : matches;
+  const itemsToList =
+    custom && customBreadcrumbsItems ? customBreadcrumbsItems : matches;
 
   const mdUp = useMediaQuery(theme.breakpoints.up('md'));
 

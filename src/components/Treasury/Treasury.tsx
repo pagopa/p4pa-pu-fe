@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { useAppNavigate } from '../../hooks/useAppNavigation';
+import { shouldShowGeneralError } from '../../utils/filtersValidation';
 
 export const Treasury = () => {
   const { t } = useTranslation();
@@ -23,11 +24,12 @@ export const Treasury = () => {
 
   function submitSearch() {
     if (isValid) {
+      setError(false);
       navigate(PageRoutes.TREASURY_SEARCH_RESULTS, {
         hashObject: filterValues
       });
     } else {
-      setError(true);
+      setError(shouldShowGeneralError(filterValues));
     }
   }
 
