@@ -71,15 +71,7 @@ const routesDef = [
     loader: postTokenOrError
   },
   {
-    path: `${deployPath}/checkout-callback/ok`,
-    element: <CallbackPage />
-  },
-  {
-    path: `${deployPath}/checkout-callback/ko`,
-    element: <CallbackPage />
-  },
-  {
-    path: `${deployPath}/checkout-callback/cancel`,
+    path: `${deployPath}/checkout-callback/:outcome`,
     element: <CallbackPage />
   },
   {

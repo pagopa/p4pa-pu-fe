@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router';
+import { useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Box } from '@mui/material';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
@@ -17,14 +17,13 @@ type CallbackConfig = {
 };
 
 const CallbackPage = () => {
-  const location = useLocation();
+  const { outcome } = useParams<{ outcome: string }>();
   const { t } = useTranslation();
 
   const getCallbackType = (): CallbackType => {
-    const pathname = location.pathname;
-    if (pathname.includes('/ok')) return 'ok';
-    if (pathname.includes('/ko')) return 'ko';
-    if (pathname.includes('/cancel')) return 'cancel';
+    if (outcome === 'ok') return 'ok';
+    if (outcome === 'ko') return 'ko';
+    if (outcome === 'cancel') return 'cancel';
     return 'ok';
   };
 
