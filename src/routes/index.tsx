@@ -21,6 +21,7 @@ import { backofficeRoutes } from '../routes/backoffice';
 import { debtTypeOrgsRoutes } from '../routes/debtTypeOrgs';
 import { operatorsRoutes } from '../routes/operators';
 import { organizationsRoutes } from './organizations';
+import CallbackPage from './CallbackPage/CallbackPage';
 
 const deployPath = utils.config.deployPath;
 
@@ -68,6 +69,18 @@ const routesDef = [
     path: `${deployPath}/auth-callback`,
     element: <AuthCallback />,
     loader: postTokenOrError
+  },
+  {
+    path: `${deployPath}/checkout-callback/ok`,
+    element: <CallbackPage />
+  },
+  {
+    path: `${deployPath}/checkout-callback/ko`,
+    element: <CallbackPage />
+  },
+  {
+    path: `${deployPath}/checkout-callback/cancel`,
+    element: <CallbackPage />
   },
   {
     id: 'LOGGED_OUT',
