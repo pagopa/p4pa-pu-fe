@@ -2,13 +2,19 @@ import React from 'react';
 import { Tooltip, Chip } from '@mui/material';
 import { ChipProps } from '@mui/material/Chip';
 
-const ChipTruncateTooltip: React.FC<ChipProps> = ({
+type ChipTruncateTooltipProps = ChipProps & {
+  tooltipLabel?: string;
+};
+
+const ChipTruncateTooltip: React.FC<ChipTruncateTooltipProps> = ({
   label,
   color,
-  variant
+  variant,
+  tooltipLabel,
+  ...otherProps
 }) => {
   return (
-    <Tooltip title={label} arrow>
+    <Tooltip title={tooltipLabel || label} arrow>
       <Chip
         label={label}
         color={color}
@@ -23,6 +29,7 @@ const ChipTruncateTooltip: React.FC<ChipProps> = ({
             cursor: 'default'
           }
         }}
+        {...otherProps}
       />
     </Tooltip>
   );
