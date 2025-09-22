@@ -21,7 +21,7 @@ export const OrganizationDetail = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const {language} = useLanguage();
+  const { language } = useLanguage();
 
   const displayNames = new Intl.DisplayNames(language, { type: 'language' });
 
@@ -91,20 +91,20 @@ export const OrganizationDetail = () => {
                 display={'flex'}
                 justifyContent={'center'}
               >
-                {organizationDetailData?.orgLogo && 
-                <Box
-                  sx={{
-                    border: `1px solid ${theme.palette.grey[300]}`,
-                    borderRadius: 2,
-                    display: 'inline-block',
-                    fontSize: 0,
-                    padding: 2,
-                    width: '150px'
-                  }}
-                >
-                  <img src={organizationDetailData.orgLogo} width={'100%'} />
-                </Box>
-                }
+                {organizationDetailData?.orgLogo && (
+                  <Box
+                    sx={{
+                      border: `1px solid ${theme.palette.grey[300]}`,
+                      borderRadius: 2,
+                      display: 'inline-block',
+                      fontSize: 0,
+                      padding: 2,
+                      width: '150px'
+                    }}
+                  >
+                    <img src={organizationDetailData.orgLogo} width={'100%'} />
+                  </Box>
+                )}
               </Box>
             </Grid>
           </Grid>

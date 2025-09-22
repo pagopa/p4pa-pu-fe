@@ -6,7 +6,6 @@ import Appio from '../../../assets/appio.svg';
 import Send from '../../../assets/send.svg';
 import ShowSecretValue from '../../../components/ShowSecretValue';
 
-
 export const accountingInfo = (
   organizationDetailData: OrganizationDetailDTO,
   t: TFunction
@@ -30,7 +29,7 @@ export const accountingInfo = (
 ];
 export const paymentInfo = (
   organizationDetailData: OrganizationDetailDTO,
-  t: TFunction, 
+  t: TFunction,
   displayNames: Intl.DisplayNames
 ): Array<DetailData> => [
   {
@@ -56,7 +55,12 @@ export const paymentInfo = (
       : '-'
   },
   {
-    childrenComponent: <ShowSecretValue label={t('organizations.printKeyAPI')} secretValue={organizationDetailData.generateNoticeApiKey} />
+    childrenComponent: (
+      <ShowSecretValue
+        label={t('organizations.printKeyAPI')}
+        secretValue={organizationDetailData.generateNoticeApiKey}
+      />
+    )
   }
 ];
 
@@ -114,7 +118,12 @@ export const integrationBox = (
     value: organizationDetailData?.flagNotifyIo ? t('commons.enabled') : '-'
   },
   {
-    childrenComponent: <ShowSecretValue label={t('commons.apiKey')} secretValue={organizationDetailData.ioApiKey} />
+    childrenComponent: (
+      <ShowSecretValue
+        label={t('commons.apiKey')}
+        secretValue={organizationDetailData.ioApiKey}
+      />
+    )
   },
   {
     childrenComponent: <Divider></Divider>
@@ -136,6 +145,11 @@ export const integrationBox = (
     value: organizationDetailData?.pdndEnabled ? t('commons.enabled') : '-'
   },
   {
-    childrenComponent: <ShowSecretValue label={t('commons.apiKey')} secretValue={organizationDetailData.sendApiKey} />
-  },
+    childrenComponent: (
+      <ShowSecretValue
+        label={t('commons.apiKey')}
+        secretValue={organizationDetailData.sendApiKey}
+      />
+    )
+  }
 ];
