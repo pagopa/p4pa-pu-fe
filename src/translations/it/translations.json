@@ -45,6 +45,20 @@
     "subtitle": "Gestisci i parametri del capitolo.",
     "configuration": "Configurazione del capitolo"
   },
+  "callback": {
+    "success": {
+      "title": "Pagamento completato con successo",
+      "description": "Il tuo pagamento è stato processato correttamente."
+    },
+    "error": {
+      "title": "Pagamento non riuscito",
+      "description": "Si è verificato un errore durante il processo di pagamento."
+    },
+    "cancel": {
+      "title": "Pagamento annullato",
+      "description": "Il processo di pagamento è stato annullato."
+    }
+  },
   "DebtPositions": {
     "Results": {
       "filters": {
