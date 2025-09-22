@@ -1,20 +1,46 @@
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
-import { OpenInNew, RemoveCircleOutline } from '@mui/icons-material';
 import {
   DebtPositionTypeOrgDTO,
   PagedDebtPositionTypeOrgDTO
 } from '../../../../generated/apiClient';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import ActionMenu from '../../../components/ActionMenu/ActionMenu';
 import EmptyDetailContainer from '../../../components/DebtPositionsInstallmentDetail/EmptyDetailContainer';
+import { GridActionMenu } from './ActionMenu';
+import utils from '../../../utils';
 
 type OperatorDetailDataGridProps = {
   data?: PagedDebtPositionTypeOrgDTO;
+  onDelete: (row: DebtPositionTypeOrgDTO) => void;
+  operatorName: string;
 };
 
-const OperatorDetailDataGrid = ({ data }: OperatorDetailDataGridProps) => {
+const OperatorDetailDataGrid = ({
+  data,
+  onDelete: propsOnDelete,
+  operatorName
+}: OperatorDetailDataGridProps) => {
   const { t } = useTranslation();
+
+  const onDelete = (row: DebtPositionTypeOrgDTO) => {
+    utils.dialog.open({
+      ['data-testid']: 'delete-dialog',
+      title: t('OperatorDetail.deleteDialog.title'),
+      message: (
+        <Trans
+          i18nKey="OperatorDetail.deleteDialog.message"
+          values={{ operatorName }}
+        />
+      ),
+      confirmLabel: t('commons.onlyRemove'),
+      cancelLabel: t('commons.close'),
+      onConfirm: () => {
+        propsOnDelete(row);
+        utils.dialog.close();
+      },
+      onClose: () => utils.dialog.close()
+    });
+  };
 
   const columns: Array<GridColDef<DebtPositionTypeOrgDTO>> = [
     {
@@ -43,35 +69,7 @@ const OperatorDetailDataGrid = ({ data }: OperatorDetailDataGridProps) => {
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<DebtPositionTypeOrgDTO>) => (
-        <ActionMenu
-          rowId={params.row.debtPositionTypeId}
-          menuItems={[
-            {
-              icon: (
-                <RemoveCircleOutline
-                  color="error"
-                  aria-label="remove operator detail item"
-                  data-testid={`remove-detail-${params.row.debtPositionTypeId}`}
-                />
-              ),
-              label: t('commons.onlyRemove'),
-              // TODO: add remove logic
-              action: () => null
-            },
-            {
-              icon: (
-                <OpenInNew
-                  color="primary"
-                  aria-label="go to operator detail item"
-                  data-testid={`navigate-to-detail-${params.row.debtPositionTypeId}`}
-                />
-              ),
-              label: t('commons.goToDetail'),
-              // TODO: add go to detail
-              action: () => null
-            }
-          ]}
-        />
+        <GridActionMenu row={params.row} onDelete={onDelete} />
       )
     }
   ];

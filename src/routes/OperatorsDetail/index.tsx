@@ -19,12 +19,15 @@ import DetailContainer, {
 } from '../../components/DetailContainer/DetailContainer';
 import { useDebtPositionTypesByOrg } from '../../hooks/useDebtPositionTypesByOrg';
 import { useBreadcrumbs } from './hooks/useBreadcrumbs';
+import { DebtPositionTypeOrgDTO } from '../../../generated/data-contracts';
+import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 
 export const OperatorDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
+  const deleteMutation = removeDebtPositionTypeOrgFromOperator();
 
   const { organizationId: paramOrganizationId, mappedExternalUserId } =
     useParams();
@@ -49,7 +52,7 @@ export const OperatorDetail = () => {
   useBreadcrumbs(query);
 
   const {
-    query: { isError, error, data, isSuccess },
+    query: { isError, error, data },
     applyFilters
   } = useSearch({ query, filters });
 
@@ -57,6 +60,11 @@ export const OperatorDetail = () => {
     console.error('Error loading operator details:', error);
     navigate(PageRoutes.RESPONSES_ERROR);
   }
+
+  const operatorName =
+    data?.operatorName || data?.operatorLastName
+      ? `${data?.operatorName || ''} ${data?.operatorLastName || ''}`
+      : data?.operatorFiscalCode || data?.operatorId || '-';
 
   const detailSections: Array<DetailSection> = [
     {
@@ -112,6 +120,26 @@ export const OperatorDetail = () => {
     }
   ];
 
+  const onDelete = ({
+    organizationId,
+    debtPositionTypeOrgId
+  }: DebtPositionTypeOrgDTO) => {
+    if (organizationId && mappedExternalUserId && debtPositionTypeOrgId) {
+      deleteMutation.mutateAsync({
+        organizationId,
+        mappedExternalUserId,
+        debtPositionTypeOrgId
+      });
+      applyFilters(filters);
+    } else {
+      utils.notify.emit(t('errors.generic'));
+    }
+  };
+
+  if (deleteMutation.isError) {
+    utils.notify.emit(t('errors.generic'));
+  }
+
   const handleFilterChange = (id: string, value: FilterFieldValue) => {
     setFilters((prevFilters) => ({
       ...prevFilters,
@@ -122,11 +150,7 @@ export const OperatorDetail = () => {
   return (
     <>
       <TitleComponent
-        title={
-          isSuccess
-            ? `${data?.operatorName || ''} ${data?.operatorLastName || ''}`
-            : '-'
-        }
+        title={operatorName}
         accessibleTitle={t('OperatorDetail.accessibleTitle', {
           operatorId: data?.operatorId,
           interpolation: { escapeValue: false }
@@ -177,7 +201,11 @@ export const OperatorDetail = () => {
           }}
           aria-label="results-table"
         >
-          <OperatorDetailDataGrid data={data?.pagedDebtPositionTypeOrg} />
+          <OperatorDetailDataGrid
+            data={data?.pagedDebtPositionTypeOrg}
+            operatorName={operatorName}
+            onDelete={onDelete}
+          />
         </Grid>
       </Grid>
     </>
