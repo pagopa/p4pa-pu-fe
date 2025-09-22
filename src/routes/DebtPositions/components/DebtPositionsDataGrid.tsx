@@ -72,6 +72,7 @@ export const DebtPositionsDataGrid = ({ data }: DataGridProps) => {
       renderCell: (params: GridRenderCellParams<ResultDataRow>) => (
         <ChipTruncateTooltip
           label={t(`commons.status.${params.value}`)}
+          tooltipLabel={t(`DebtPositions.status.tooltip.${params.value}`)}
           color={stateColors[params.value as DebtPositionStatus]}
         />
       )

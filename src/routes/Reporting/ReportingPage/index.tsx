@@ -12,7 +12,10 @@ import SearchCard from '../../../components/SearchCard/SearchCard';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import { FilterFieldIds } from '../../../models/SearchCardFields';
 import { useAppNavigate } from '../../../hooks/useAppNavigation';
-import { noFilterSetted } from '../../../utils/filtersValidation';
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../../utils/filtersValidation';
 
 export const Reporting = () => {
   const { t } = useTranslation();
@@ -31,11 +34,11 @@ export const Reporting = () => {
   });
   const [error, setError] = useState<boolean>(false);
 
-  // Reporting.tsx
   const navigateToResults = (filters: FieldValues) => {
     if (noFilterSetted(filters)) {
-      setError(true);
+      setError(shouldShowGeneralError(filters));
     } else {
+      setError(false);
       navigate(PageRoutes.REPORTING_SEARCH_RESULTS, { hashObject: filters });
     }
   };

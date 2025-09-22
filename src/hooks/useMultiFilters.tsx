@@ -181,6 +181,6 @@ export const useMultiFilters = (props?: {
     validationErrors,
     isValid:
       !noFilterIsSelected.peek() &&
-      !Object.values(validationErrors).some((value) => value)
+      !Object.values(validationErrors).some((value) => value !== null)
   };
 };

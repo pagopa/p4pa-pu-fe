@@ -4,7 +4,10 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { getPaymentsReporting } from '../../../api/getPaymentsReporting';
-import { noFilterSetted } from '../../../utils/filtersValidation';
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../../utils/filtersValidation';
 import { PagedPaymentsReportingView } from '../../../../generated/data-contracts';
 import { ReportingFilters } from '../components/ReportingFilters';
 import SearchResultsDataGrid from './ReportingDataGrid';
@@ -37,7 +40,7 @@ const ReportingSearchResults = () => {
 
   const applyFilters = (filters: FieldValues) => {
     if (noFilterSetted(filters)) {
-      setError(true);
+      setError(shouldShowGeneralError(filters));
     } else {
       setError(false);
       reporting.applyFilters(filters);

@@ -78,37 +78,12 @@ const ClassificationExportPage = () => {
     []
   );
 
-  const getDateRangeValidation = useCallback(
-    (rangeName: keyof typeof dateRanges) => {
-      const range = dateRanges[rangeName];
-      const hasOnlyOne =
-        (!!range.from && !range.to) || (!range.from && !!range.to);
-
-      if (hasOnlyOne) {
-        return {
-          hasError: true,
-          errorMessage: t(
-            'classificationsExport.errorMessages.singleInstanceBothDates'
-          )
-        };
-      }
-
-      return {
-        hasError: false,
-        errorMessage: ''
-      };
-    },
-    [dateRanges, t]
-  );
-
   const renderValidatedDateRange = useCallback(
     (
       rangeName: keyof typeof dateRanges,
       rangeLabel: string,
       required = false
     ) => {
-      const validation = getDateRangeValidation(rangeName);
-
       return (
         <Box sx={{ mb: 2 }}>
           <FormComponent.DateRange
@@ -116,40 +91,18 @@ const ClassificationExportPage = () => {
             required={required}
             from={{
               value: dateRanges[rangeName].from,
-              onChange: (date) => updateDateRange(rangeName, 'from', date),
-              errorMessage: validation.hasError
-                ? validation.errorMessage
-                : undefined
+              onChange: (date) => updateDateRange(rangeName, 'from', date)
             }}
             to={{
               value: dateRanges[rangeName].to,
-              onChange: (date) => updateDateRange(rangeName, 'to', date),
-              errorMessage: validation.hasError
-                ? validation.errorMessage
-                : undefined
+              onChange: (date) => updateDateRange(rangeName, 'to', date)
             }}
           />
-          {validation.hasError && (
-            <Typography
-              variant="caption"
-              color="error.dark"
-              sx={{ mt: 1, display: 'block' }}
-            >
-              {validation.errorMessage}
-            </Typography>
-          )}
         </Box>
       );
     },
-    [dateRanges, updateDateRange, getDateRangeValidation]
+    [dateRanges, updateDateRange]
   );
-
-  const areDatePairsValid = useCallback((): boolean => {
-    return Object.keys(dateRanges).every((key) => {
-      const validation = getDateRangeValidation(key as keyof typeof dateRanges);
-      return !validation.hasError;
-    });
-  }, [dateRanges, getDateRangeValidation]);
 
   const handleSubmit = useCallback(() => {
     const formData = formMethods.getValues();
@@ -166,11 +119,6 @@ const ClassificationExportPage = () => {
       return;
     }
 
-    if (!areDatePairsValid()) {
-      utils.notify.emit(t('classificationsExport.errorMessages.bothDates'));
-      return;
-    }
-
     const payload = buildApiPayload(processedFormData, dateRanges);
 
     createClassificationsExport.mutate(
@@ -184,7 +132,6 @@ const ClassificationExportPage = () => {
       }
     );
   }, [
-    areDatePairsValid,
     formMethods,
     validateForm,
     buildApiPayload,
