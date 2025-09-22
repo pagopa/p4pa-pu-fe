@@ -1,6 +1,9 @@
 import utils from '../../utils';
-import { act, renderHook } from '../../__tests__/renderers';
-import { getOrganizationsByBrokerIdAndFilters } from './';
+import { act, renderHook, waitFor } from '../../__tests__/renderers';
+import {
+  getOrganizationDetail,
+  getOrganizationsByBrokerIdAndFilters
+} from './';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { OrganizationsFilteredRequest } from './mappings';
@@ -9,7 +12,8 @@ vi.mock('../../utils', () => ({
   default: {
     apiClient: {
       bff: {
-        getOrganizationsByBrokerIdAndFilters: vi.fn()
+        getOrganizationsByBrokerIdAndFilters: vi.fn(),
+        getOrganizationDetail: vi.fn()
       }
     }
   }
@@ -236,6 +240,47 @@ describe('getOrganizationsByBrokerIdAndFilters', () => {
       orgName: undefined,
       ipaCode: 'UNIQUE123',
       sort: []
+    });
+  });
+});
+
+describe('getOrganizationDetail', () => {
+  it('returns data correctly', async () => {
+    const dataMock = {
+      organizationId: 33,
+      flagTreasury: false,
+      ipaCode: 'IPA_TEST',
+      orgFiscalCode: '99999999990',
+      orgName: 'Ente P4PA intermediato 1',
+      orgTypeCode: '03',
+      orgEmail: 'enteditest@email.it',
+      iban: 'IT111',
+      segregationCode: '00',
+      orgLogo: '',
+      status: 'ACTIVE',
+      additionalLanguage: 'EN',
+      startDate: '2024-12-19',
+      brokerId: 1,
+      ioApiKey: '111',
+      flagNotifyIo: true,
+      flagNotifyOutcomePush: false,
+      flagPaymentNotification: false,
+      pdndEnabled: false
+    };
+
+    const params = { organizationId: 33 };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getOrganizationDetail')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      getOrganizationDetail(params.organizationId)
+    );
+
+    await waitFor(() => {
+      expect(apiMock).toHaveBeenCalledWith(params.organizationId);
+      expect(result.current.data).toEqual(dataMock);
     });
   });
 });
