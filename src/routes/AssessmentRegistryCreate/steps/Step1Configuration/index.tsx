@@ -61,12 +61,15 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
           title={t('AssessmentRegistryCreate.assessmentRegistry')}
           adornment={<ListAltIcon />}
         >
-          <Stack direction="row" spacing={3}>
+          <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
             <FormComponent.ControlledSelect
               name="status"
               data-testid="status"
               control={control}
-              sx={{ flex: 0.7 }}
+              sx={{
+                flex: { xs: 1, md: 0.4 },
+                minWidth: { xs: 'auto', md: '200px' }
+              }}
               label={t('AssessmentRegistryCreate.status')}
               options={[
                 {
@@ -80,7 +83,12 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               ]}
               required
             />
-            <Stack sx={{ flex: 0.3 }}>
+            <Stack
+              sx={{
+                flex: { xs: 1, md: 0.6 },
+                minWidth: { xs: 'auto', md: '250px' }
+              }}
+            >
               <FormComponent.ControlledDateRange
                 name="operatingYear"
                 data-testid="operatingYear"
