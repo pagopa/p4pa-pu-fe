@@ -116,28 +116,33 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
     (newSelectedIds: Array<string>) => {
       const currentPageIds = currentPageRows.map((row) => row.id);
 
-      const otherPagesSelections = enabledOperators.filter(
+      const otherPagesEnabled = enabledOperators.filter(
         (opId) => !currentPageIds.includes(opId)
       );
 
-      const updatedEnabled = [...otherPagesSelections, ...newSelectedIds];
+      const finalSelectedIds =
+        defaultOperator && !newSelectedIds.includes(defaultOperator)
+          ? [...newSelectedIds, defaultOperator]
+          : [...newSelectedIds];
+
+      const updatedEnabled = [...otherPagesEnabled, ...finalSelectedIds];
 
       setValue('enabledOperators', updatedEnabled);
 
-      const newlyDisabled = enabledOperators.filter(
-        (opId) =>
-          currentPageIds.includes(opId) && !newSelectedIds.includes(opId)
+      const currentPageDisabled = currentPageIds.filter(
+        (opId) => !finalSelectedIds.includes(opId) && opId !== defaultOperator
       );
 
       const currentDisabled = watch('disabledOperators') || [];
-      const updatedDisabled = [
-        ...currentDisabled.filter((opId) => !currentPageIds.includes(opId)),
-        ...newlyDisabled
-      ].filter((opId) => !newSelectedIds.includes(opId));
+      const otherPagesDisabled = currentDisabled.filter(
+        (opId) => !currentPageIds.includes(opId)
+      );
+
+      const updatedDisabled = [...otherPagesDisabled, ...currentPageDisabled];
 
       setValue('disabledOperators', updatedDisabled);
     },
-    [enabledOperators, currentPageRows, setValue, watch]
+    [enabledOperators, currentPageRows, setValue, watch, defaultOperator]
   );
 
   const handleRowSelectionChange = useCallback(
@@ -152,9 +157,20 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   );
 
   const handleClearSelection = useCallback(() => {
-    setValue('enabledOperators', []);
-    setValue('disabledOperators', []);
-  }, [setValue]);
+    const currentDefaultOperator = userInfo?.mappedExternalUserId;
+
+    const previouslySelected = enabledOperators.filter(
+      (opId) => opId !== currentDefaultOperator
+    );
+
+    if (currentDefaultOperator) {
+      setValue('enabledOperators', [currentDefaultOperator]);
+    } else {
+      setValue('enabledOperators', []);
+    }
+
+    setValue('disabledOperators', previouslySelected);
+  }, [setValue, userInfo, enabledOperators]);
 
   const columns: Array<GridColDef> = [
     {
