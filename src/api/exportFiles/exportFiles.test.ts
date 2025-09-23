@@ -6,9 +6,39 @@ import { AxiosResponse } from 'axios';
 import {
   ExportFileStatus,
   ExportFileTypeEnum
-} from '../../../generated/apiClient';
+} from '../../../generated/data-contracts';
+import { ExportFilesFilteredRequest } from './mapping';
+
+vi.mock('../../utils', () => ({
+  default: {
+    apiClient: {
+      bff: {
+        getExportFiles: vi.fn()
+      }
+    },
+    fileshareClient: {
+      organization: {
+        downloadExportFile: vi.fn()
+      }
+    },
+    formatters: {
+      date: {
+        code: vi.fn()
+      },
+      extractFilename: vi.fn()
+    }
+  }
+}));
+
+vi.mock('../../utils/loaders', () => ({
+  parseAndLog: vi.fn()
+}));
 
 describe('getExportFiles', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
   it('fetches and returns export files data', async () => {
     const dataMock = {
       content: [
@@ -17,7 +47,9 @@ describe('getExportFiles', () => {
           fileName: 'test-file.csv',
           creationDate: '2023-01-01T12:00:00Z',
           operator: 'testOperator',
-          status: ExportFileStatus.COMPLETED
+          status: ExportFileStatus.COMPLETED,
+          fileSize: 1024,
+          totalRows: 100
         }
       ],
       size: 10,
@@ -27,43 +59,36 @@ describe('getExportFiles', () => {
     };
 
     const organizationId = 123;
-    const filters = {
-      exportFileType: ExportFileTypeEnum.PAID,
-      page: 0,
-      size: 10,
-      sort: undefined
+    const request: ExportFilesFilteredRequest = {
+      filters: {
+        exportFileType: ExportFileTypeEnum.PAID
+      },
+      pagination: { page: 0, size: 10 },
+      sort: []
     };
-
-    vi.spyOn(utils.formatters.date, 'code').mockReturnValue(
-      '2024-08-01T00:00:00+02:00'
-    );
 
     const spyGetExportFiles = vi
       .spyOn(utils.apiClient.bff, 'getExportFiles')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const { result } = renderHook(() =>
-      getExportFiles(organizationId, '' /* routingCategory placeholder */)
+      getExportFiles(organizationId, 'payments')
     );
 
-    // We must call mutateAsync since useMutation returns a mutate function:
-    const data = await result.current.mutateAsync({
-      filters,
-      pagination: { page: filters.page, size: filters.size },
-      sort: filters.sort || []
-    });
+    const data = await result.current.mutateAsync(request);
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
 
     expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
-      ...filters,
-      page: filters.page,
-      size: filters.size,
-      sort: filters.sort || [],
-      creationDateTimeFrom: '2024-08-01T00:00:00+02:00',
-      creationDateTimeTo: '2024-08-01T00:00:00+02:00'
+      exportFileType: ExportFileTypeEnum.PAID,
+      page: 0,
+      size: 10,
+      creationDateTimeFrom: undefined,
+      creationDateTimeTo: undefined,
+      status: undefined,
+      fileName: undefined
     });
     expect(data).toEqual(dataMock);
   });
@@ -71,48 +96,91 @@ describe('getExportFiles', () => {
   it('supports complex filter queries', async () => {
     const dataMock = {
       content: [],
-      size: 10,
+      size: 20,
       totalElements: 0,
       totalPages: 0,
       number: 0
     };
+
     const organizationId = 123;
-    const complexFilters = {
-      exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
-      creationDateTimeFrom: new Date('2023-01-01'),
-      creationDateTimeTo: new Date('2023-01-31'),
-      status: ExportFileStatus.COMPLETED,
-      fileName: 'test',
-      page: 0,
-      size: 20,
+    const request: ExportFilesFilteredRequest = {
+      filters: {
+        exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
+        creationDateFrom: new Date('2023-01-01'),
+        creationDateTo: new Date('2023-01-31'),
+        status: ExportFileStatus.COMPLETED,
+        fileName: 'test'
+      },
+      pagination: { page: 0, size: 20 },
       sort: ['creationDate,desc', 'fileName,asc']
     };
 
-    vi.spyOn(utils.formatters.date, 'code').mockReturnValue(
-      '2024-08-01T00:00:00+02:00'
-    );
+    vi.spyOn(utils.formatters.date, 'code')
+      .mockReturnValueOnce('2023-01-01T00:00:00Z')
+      .mockReturnValueOnce('2023-01-31T23:59:59Z');
 
     const spyGetExportFiles = vi
       .spyOn(utils.apiClient.bff, 'getExportFiles')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
-    const { result } = renderHook(() => getExportFiles(organizationId, ''));
+    const { result } = renderHook(() =>
+      getExportFiles(organizationId, 'classifications')
+    );
 
-    await result.current.mutateAsync({
-      filters: complexFilters,
-      pagination: { page: complexFilters.page, size: complexFilters.size },
-      sort: complexFilters.sort
-    });
+    await result.current.mutateAsync(request);
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
 
     expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
-      ...complexFilters,
-      sort: complexFilters.sort,
-      creationDateTimeFrom: '2024-08-01T00:00:00+02:00',
-      creationDateTimeTo: '2024-08-01T00:00:00+02:00'
+      exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
+      creationDateTimeFrom: '2023-01-01T00:00:00Z',
+      creationDateTimeTo: '2023-01-31T23:59:59Z',
+      status: ExportFileStatus.COMPLETED,
+      fileName: 'test',
+      page: 0,
+      size: 20,
+      sort: ['creationDate,desc', 'fileName,asc']
+    });
+  });
+
+  it('handles minimal filter query', async () => {
+    const dataMock = {
+      content: [],
+      size: 25,
+      totalElements: 0,
+      totalPages: 0,
+      number: 0
+    };
+
+    const organizationId = 456;
+    const request: ExportFilesFilteredRequest = {
+      filters: {
+        exportFileType: ExportFileTypeEnum.RECEIPTS_ARCHIVING
+      },
+      pagination: { page: 1, size: 25 },
+      sort: []
+    };
+
+    const spyGetExportFiles = vi
+      .spyOn(utils.apiClient.bff, 'getExportFiles')
+      .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      getExportFiles(organizationId, 'receipts')
+    );
+
+    await result.current.mutateAsync(request);
+
+    expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
+      exportFileType: ExportFileTypeEnum.RECEIPTS_ARCHIVING,
+      page: 1,
+      size: 25,
+      creationDateTimeFrom: undefined,
+      creationDateTimeTo: undefined,
+      status: undefined,
+      fileName: undefined
     });
   });
 });
@@ -122,7 +190,7 @@ describe('getExportFile', () => {
     const fileBlob = new Blob(['data'], { type: 'text/plain' });
     const contentDispositionHeader = 'attachment; filename="test-file.csv"';
 
-    const spyExtracFileName = vi
+    const spyExtractFileName = vi
       .spyOn(utils.formatters, 'extractFilename')
       .mockImplementation((header) => {
         if (header.includes('test-file.csv')) return 'test-file.csv';
@@ -144,7 +212,7 @@ describe('getExportFile', () => {
     expect(spyDownloadExportFile).toHaveBeenCalledWith(123, 456, {
       format: 'blob'
     });
-    expect(spyExtracFileName).toHaveBeenCalledWith(contentDispositionHeader);
+    expect(spyExtractFileName).toHaveBeenCalledWith(contentDispositionHeader);
   });
 
   it('uses default filename if no content-disposition header', async () => {
@@ -158,7 +226,7 @@ describe('getExportFile', () => {
       headers: {}
     } as unknown as AxiosResponse);
 
-    const spyExtracFileName = vi
+    const spyExtractFileName = vi
       .spyOn(utils.formatters, 'extractFilename')
       .mockImplementation(() => null);
 
@@ -167,6 +235,6 @@ describe('getExportFile', () => {
     const data = await result.current.mutateAsync(456);
 
     expect(data).toEqual({ data: fileBlob, fileName: 'file-456' });
-    expect(spyExtracFileName).toHaveBeenCalledWith('');
+    expect(spyExtractFileName).toHaveBeenCalledWith('');
   });
 });

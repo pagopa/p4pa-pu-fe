@@ -7,13 +7,6 @@ import {
   DebtPositionTypeOrgOperatorFilteredRequest
 } from './mappings';
 
-export type DebtPositionTypeOrgOperatorQuery = {
-  debtPositionTypeOrgId?: number;
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
-};
-
 export const getDebtPositionTypeOrgOperators = (organizationId: number) =>
   useMutation({
     mutationKey: ['getDebtPositionTypeOrgOperators', organizationId],
