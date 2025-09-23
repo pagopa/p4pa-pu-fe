@@ -70,7 +70,7 @@ const config: Config = {
   deployPath: VITE_DEPLOY_PATH,
   loginUrl: VITE_LOGIN_URL,
   /** This array is populated by paths that don't need a auth token */
-  tokenHeaderExcludePaths: ['/auth-callback'],
+  tokenHeaderExcludePaths: ['/auth-callback', '/checkout-callback/*'],
   /** A global custom parameters serializer:
    * - null value and empty string parameters are strippef off.
    * - arrays separated by comma.
