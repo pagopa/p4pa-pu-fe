@@ -7,7 +7,7 @@ import {
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { CopyAll } from '@mui/icons-material';
-import { useMemo, useEffect } from 'react';
+import { useMemo, useEffect, useCallback, useState } from 'react';
 import { DebtPositionTypeOrgOperatorDTO } from '../../../../../../generated/apiClient';
 import CustomDataGrid from '../../../../../components/DataGrid/CustomDataGrid';
 import { useFormContext } from 'react-hook-form';
@@ -29,6 +29,7 @@ type OperatorData = {
 
 export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const { debtPositionTypeOrgId } = useParams<{
     debtPositionTypeOrgId: string;
@@ -42,34 +43,8 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
 
   const { watch, setValue } = useFormContext<DebtTypeOrgForm>();
 
-  const enabledOperators = watch('enabledOperators');
-  const disabledOperators = watch('disabledOperators');
+  const enabledOperators = watch('enabledOperators') || [];
   const operatorsSelection = watch('operatorsSelection');
-
-  const onSelectionChange = (selection: Array<string>) => {
-    // Default to empty arrays if undefined
-    const currentEnabled = enabledOperators ?? [];
-    const currentDisabled = disabledOperators ?? [];
-
-    // Find newly enabled (added) and newly disabled (removed) operators
-    const added = selection.filter((op) => !currentEnabled.includes(op));
-    const removed = currentEnabled.filter((op) => !selection.includes(op));
-
-    // Update enabledOperators: Add new, remove removed
-    const newEnabled = [
-      ...currentEnabled.filter((op) => !removed.includes(op)),
-      ...added
-    ];
-
-    // Update disabledOperators: Add removed, remove added
-    const newDisabled = [
-      ...currentDisabled.filter((op) => !added.includes(op)),
-      ...removed
-    ];
-
-    setValue('enabledOperators', newEnabled);
-    setValue('disabledOperators', newDisabled);
-  };
 
   const query = getDebtPositionTypeOrgOperators(organizationId);
 
@@ -79,25 +54,6 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
     },
     query
   });
-
-  const isRowSelectable = (params: GridRowParams) => {
-    // Coerce id to string for comparison, since defaultOperator is string
-    return String(params.id) !== defaultOperator;
-  };
-
-  useEffect(() => {
-    if (debtTypeOrgOperators.query?.data) {
-      onSelectionChange(
-        operators.filter((op) => op.enabled).map((op) => op.id)
-      );
-
-      if (edit) {
-        setValue('operatorsSelection', OperatorsSelection.SELECTED);
-      } else if (defaultOperator) {
-        setValue('enabledOperators', [defaultOperator]);
-      }
-    }
-  }, [debtTypeOrgOperators.query?.data]);
 
   const operators: Array<OperatorData> = useMemo(() => {
     if (!debtTypeOrgOperators.query?.data?.content) return [];
@@ -115,13 +71,90 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
     );
   }, [debtTypeOrgOperators.query?.data]);
 
-  const handleSelectionChange = (newSelection: GridRowSelectionModel) => {
-    onSelectionChange(newSelection as Array<string>);
+  useEffect(() => {
+    if (debtTypeOrgOperators.query?.data && !isInitialized) {
+      if (edit) {
+        const enabledFromApi = operators
+          .filter((op) => op.enabled)
+          .map((op) => op.id);
+        setValue('enabledOperators', enabledFromApi);
+        setValue('operatorsSelection', OperatorsSelection.SELECTED);
+      } else if (defaultOperator) {
+        setValue('enabledOperators', [defaultOperator]);
+      }
+      setIsInitialized(true);
+    }
+  }, [
+    debtTypeOrgOperators.query?.data,
+    operators,
+    edit,
+    defaultOperator,
+    setValue,
+    isInitialized
+  ]);
+
+  const isRowSelectable = (params: GridRowParams) => {
+    return String(params.id) !== defaultOperator;
   };
 
-  const handleClearSelection = () => {
-    onSelectionChange([]);
-  };
+  const currentPageRows = useMemo(() => {
+    return operators.map((op) => ({
+      id: op.id
+    }));
+  }, [operators]);
+
+  const currentPageSelectedIds = useMemo(() => {
+    if (!enabledOperators || enabledOperators.length === 0) return [];
+    if (currentPageRows.length === 0) return [];
+
+    const currentPageIds = new Set(currentPageRows.map((row) => row.id));
+
+    return enabledOperators.filter((opId) => currentPageIds.has(opId));
+  }, [enabledOperators, currentPageRows]);
+
+  const handleSelectionChange = useCallback(
+    (newSelectedIds: Array<string>) => {
+      const currentPageIds = currentPageRows.map((row) => row.id);
+
+      const otherPagesSelections = enabledOperators.filter(
+        (opId) => !currentPageIds.includes(opId)
+      );
+
+      const updatedEnabled = [...otherPagesSelections, ...newSelectedIds];
+
+      setValue('enabledOperators', updatedEnabled);
+
+      const newlyDisabled = enabledOperators.filter(
+        (opId) =>
+          currentPageIds.includes(opId) && !newSelectedIds.includes(opId)
+      );
+
+      const currentDisabled = watch('disabledOperators') || [];
+      const updatedDisabled = [
+        ...currentDisabled.filter((opId) => !currentPageIds.includes(opId)),
+        ...newlyDisabled
+      ].filter((opId) => !newSelectedIds.includes(opId));
+
+      setValue('disabledOperators', updatedDisabled);
+    },
+    [enabledOperators, currentPageRows, setValue, watch]
+  );
+
+  const handleRowSelectionChange = useCallback(
+    (newSelection: GridRowSelectionModel) => {
+      const selectedIds = newSelection
+        .map((id) => (typeof id === 'string' ? id : null))
+        .filter((id): id is string => id !== null);
+
+      handleSelectionChange(selectedIds);
+    },
+    [handleSelectionChange]
+  );
+
+  const handleClearSelection = useCallback(() => {
+    setValue('enabledOperators', []);
+    setValue('disabledOperators', []);
+  }, [setValue]);
 
   const columns: Array<GridColDef> = [
     {
@@ -133,11 +166,12 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
     }
   ];
 
-  const selectedCount = enabledOperators?.length;
+  const totalSelected = enabledOperators.length;
+  const currentPageSelected = currentPageSelectedIds.length;
 
-  return operatorsSelection == OperatorsSelection.SELECTED ? (
+  return operatorsSelection === OperatorsSelection.SELECTED ? (
     <Box sx={{ mt: 2 }}>
-      {selectedCount ? (
+      {totalSelected > 0 && (
         <Alert
           severity="info"
           variant="outlined"
@@ -149,10 +183,20 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
             </Button>
           }
         >
-          ({selectedCount}){' '}
-          {t('commons.selectedOperator', { count: selectedCount })}
+          <Box component="span" sx={{ fontWeight: 'medium' }}>
+            ({totalSelected}){' '}
+            {t('commons.selectedOperator', { count: totalSelected })}
+            {totalSelected > currentPageSelected && (
+              <Box
+                component="span"
+                sx={{ fontStyle: 'italic', ml: 1, color: 'text.secondary' }}
+              >
+                ({currentPageSelected} {t('commons.inThisPage')})
+              </Box>
+            )}
+          </Box>
         </Alert>
-      ) : null}
+      )}
 
       <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
         <CustomDataGrid
@@ -163,9 +207,9 @@ export const OperatorSelector = ({ edit }: { edit?: boolean }) => {
           disableColumnMenu
           disableColumnResize
           checkboxSelection
-          rowSelectionModel={enabledOperators}
+          rowSelectionModel={currentPageSelectedIds}
           hideFooterSelectedRowCount
-          onRowSelectionModelChange={handleSelectionChange}
+          onRowSelectionModelChange={handleRowSelectionChange}
           totalPages={debtTypeOrgOperators.query?.data?.totalPages || 1}
         />
       </Box>
