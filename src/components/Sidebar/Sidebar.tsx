@@ -19,11 +19,11 @@ import ViewSidebarIcon from '@mui/icons-material/ViewSidebar';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
-import PeopleIcon from '@mui/icons-material/People';
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AllInboxIcon from '@mui/icons-material/AllInbox';
+import DomainIcon from '@mui/icons-material/Domain';
 import { sidebarStyles } from './sidebar.styles';
 import { PageRoutes } from '../../routes';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
@@ -31,6 +31,7 @@ import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
 import { Dns } from '@mui/icons-material';
+import { generatePath } from 'react-router';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -52,6 +53,7 @@ export const Sidebar: React.FC = () => {
   };
   const { state } = useStore();
   const isSuperAdmin = utils.roles.useIsSuperAdmin();
+  const { organizationId, operatorRole } = state;
 
   const menuItems: Array<ISidebarMenuItem> = [
     {
@@ -109,7 +111,7 @@ export const Sidebar: React.FC = () => {
 
   const additionalItems = [];
 
-  if (isSuperAdmin || state.operatorRole == 'ROLE_ADMIN') {
+  if (isSuperAdmin || operatorRole == 'ROLE_ADMIN') {
     const debtypes = [];
 
     // Debtypes catalog only for superAdmin
@@ -129,9 +131,11 @@ export const Sidebar: React.FC = () => {
 
     additionalItems.push(
       {
-        label: t('commons.routes.USERS'),
-        icon: PeopleIcon,
-        route: '/debtpositions',
+        label: t('commons.routes.ORGANIZATIONS_DETAIL'),
+        icon: DomainIcon,
+        route: generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
+          organizationId: organizationId
+        }),
         end: true
       },
       {

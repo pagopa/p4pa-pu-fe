@@ -2,7 +2,7 @@ import utils from '../../utils';
 import * as mapping from './mappings';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { renderHook, waitFor } from '../../__tests__/renderers'; // your custom renderHook wrapper
+import { renderHook, waitFor } from '../../__tests__/renderers';
 import type { ClassificationsFilteredRequest } from './mappings';
 import { FilterValues } from '../../models/Filters';
 import { getClassifications } from '.';
@@ -28,26 +28,40 @@ vi.mock('./mappings', () => ({
 
 describe('getClassifications', () => {
   const dataMock = {
-    classifications: [
+    content: [
       {
-        classificationId: '123',
-        name: 'Classification A',
-        description: 'Description A'
+        classificationId: 123,
+        organizationId: 1,
+        transferId: 456,
+        label: 'RT_IUF',
+        iuv: 'IUV001',
+        iur: 'IUR001',
+        iud: 'IUD001',
+        iuf: 'IUF001',
+        remittanceInformation: 'Some info',
+        pspCompanyName: 'PSP Company'
       },
       {
-        classificationId: '456',
-        name: 'Classification B',
-        description: 'Description B'
+        classificationId: 789,
+        organizationId: 1,
+        transferId: 101112,
+        label: 'DOPPI',
+        iuv: 'IUV002',
+        iur: 'IUR002',
+        iud: 'IUD002',
+        iuf: 'IUF002',
+        remittanceInformation: 'Other info',
+        pspCompanyName: 'Other PSP'
       }
     ],
-    total: 2,
-    page: 0,
-    size: 10
+    size: 10,
+    totalElements: 2,
+    totalPages: 1,
+    number: 0
   };
 
   const organizationId = 1;
 
-  // Provide a fully typed filters object matching your FilterValues type
   const filters: FilterValues = {
     ACCOUNTING_DATE_FROM: null,
     ACCOUNTING_DATE_TO: null,
@@ -76,7 +90,7 @@ describe('getClassifications', () => {
     REGION_VALUE_DATE_TO: null,
     PAY_DATE_FROM: null,
     PAY_DATE_TO: null,
-    CLASSIFICATION_TYPE: 'TypeA',
+    CLASSIFICATION_TYPE: 'RT_IUF',
     LAST_CLASSIFICATION_DATE_FROM: null,
     LAST_CLASSIFICATION_DATE_TO: null,
     REGULATION_DATE_FROM: null,
@@ -102,7 +116,7 @@ describe('getClassifications', () => {
   const request: ClassificationsFilteredRequest = {
     filters,
     pagination: { page: 0, size: 10 },
-    sort: ['name']
+    sort: ['classificationId,asc']
   };
 
   beforeEach(() => {
@@ -110,8 +124,19 @@ describe('getClassifications', () => {
   });
 
   it('returns data correctly', async () => {
+    const mockQueryParams = {
+      label: 'RT_IUF',
+      iuv: 'IUV001',
+      iur: 'IUR001',
+      iud: 'IUD001',
+      iuf: 'IUF001',
+      page: 0,
+      size: 10,
+      sort: ['classificationId,asc']
+    };
+
     (mapping.buildQueryParams as ReturnType<typeof vi.fn>).mockReturnValue(
-      'mock-query-string'
+      mockQueryParams
     );
 
     const apiMock = vi
@@ -127,7 +152,7 @@ describe('getClassifications', () => {
     });
 
     expect(mapping.buildQueryParams).toHaveBeenCalledWith(request);
-    expect(apiMock).toHaveBeenCalledWith(organizationId, 'mock-query-string');
+    expect(apiMock).toHaveBeenCalledWith(organizationId, mockQueryParams);
   });
 
   it('does not fetch data when organizationId is 0', () => {

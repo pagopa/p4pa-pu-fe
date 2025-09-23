@@ -1,4 +1,15 @@
 {
+  "OperatorDetail": {
+    "code": "Cod. Gestionale",
+    "debtPositionTypeDescription": "Tipo di dovuto",
+    "accessibleTitle": "Dettagli operatore",
+    "associatedDebtPositionTypes": "Tipi di dovuto associati",
+    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto",
+    "deleteDialog": {
+      "title": "Sei sicuro di voler rimuovere il Tipo di dovuto?",
+      "message": "Una volta rimosso l'utente <strong>{{operatorName}}</strong> non potrà gestire e operare su questo tipo di dovuto."
+    }
+  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -44,20 +55,6 @@
     "title": "Modifica capitolo",
     "subtitle": "Gestisci i parametri del capitolo.",
     "configuration": "Configurazione del capitolo"
-  },
-  "callback": {
-    "success": {
-      "title": "Pagamento completato con successo",
-      "description": "Il tuo pagamento è stato processato correttamente."
-    },
-    "error": {
-      "title": "Pagamento non riuscito",
-      "description": "Si è verificato un errore durante il processo di pagamento."
-    },
-    "cancel": {
-      "title": "Pagamento annullato",
-      "description": "Il processo di pagamento è stato annullato."
-    }
   },
   "DebtPositions": {
     "Results": {
@@ -117,13 +114,6 @@
       "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
       "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
     }
-  },
-  "OperatorDetail": {
-    "code": "Cod. Gestionale",
-    "debtPositionTypeDescription": "Tipo di dovuto",
-    "accessibleTitle": "Dettagli operatore",
-    "associatedDebtPositionTypes": "Tipi di dovuto associati",
-    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto"
   },
   "appPreview": {
     "title": "Anteprima in App IO",
@@ -325,6 +315,20 @@
     "officeCode": "Codice ufficio",
     "status": "Stato ufficio",
     "uploadFlow": "Crea nuovo capitolo"
+  },
+  "callback": {
+    "success": {
+      "title": "Pagamento completato con successo",
+      "description": "Il tuo pagamento è stato processato correttamente."
+    },
+    "error": {
+      "title": "Pagamento non riuscito",
+      "description": "Si è verificato un errore durante il processo di pagamento."
+    },
+    "cancel": {
+      "title": "Pagamento annullato",
+      "description": "Il processo di pagamento è stato annullato."
+    }
   },
   "classifications": {
     "title": "Dettaglio Pagamento",
@@ -925,6 +929,7 @@
       "IMPORT": "Import",
       "IMPORT_FLOWS": "Importa flusso",
       "ORGANIZATIONS": "Enti gestiti",
+      "ORGANIZATIONS_DETAIL": "Anagrafica ente",
       "ORG_SIL_SERVICE": "Org Sil Service",
       "ORG_SIL_SERVICE_DETAIL": "Dettaglio Org Sil Service",
       "REPORTING": "Rendicontazione",

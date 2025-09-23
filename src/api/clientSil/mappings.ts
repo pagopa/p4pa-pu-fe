@@ -1,17 +1,16 @@
-/**
- * Mapping and types for the API of Client SIL
- */
+import { FilteredRequest } from '../../models/Filters';
+import utils from '../../utils';
 
-export type ClientSilFilters = {
-  clientName?: string;
-  clientId?: string;
-};
+type GetClientsQueryParams = Parameters<
+  typeof utils.apiClient.bff.getClients
+>[1];
 
-export type ClientSilFilteredRequest = {
-  filters: ClientSilFilters;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
+export type ClientSilFilters = Pick<
+  NonNullable<GetClientsQueryParams>,
+  'clientName' | 'clientId'
+>;
+
+export type ClientSilFilteredRequest = FilteredRequest<ClientSilFilters>;
 
 export type ClientSilCreateRequest = {
   clientName: string;
@@ -21,10 +20,10 @@ export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: ClientSilFilteredRequest) => ({
+}: ClientSilFilteredRequest): GetClientsQueryParams => ({
   page: pagination.page,
   size: pagination.size,
   ...(filters?.clientName && { clientName: filters.clientName }),
   ...(filters?.clientId && { clientId: filters.clientId }),
-  ...(sort.length && { sort })
+  ...(sort?.length && { sort })
 });

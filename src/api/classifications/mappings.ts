@@ -1,23 +1,23 @@
+import { FilteredRequest } from '../../models/Filters';
 import { ClassificationsEnum } from '../../../generated/data-contracts';
 import { FilterValues } from '../../models/Filters';
 import { euroToCents } from '../../utils/formatters';
 import utils from '../../utils';
 
-export type ClassificationsFilteredRequest = {
-  filters: FilterValues;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
-
-type ClassificationsQueryParams = Parameters<
+type GetTreasuredClassificationsQueryParams = Parameters<
   typeof utils.apiClient.bff.getTreasuredClassifications
 >[1];
+
+export type ClassificationsFilters = FilterValues;
+
+export type ClassificationsFilteredRequest =
+  FilteredRequest<ClassificationsFilters>;
 
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: ClassificationsFilteredRequest): ClassificationsQueryParams => ({
+}: ClassificationsFilteredRequest): GetTreasuredClassificationsQueryParams => ({
   label: filters.CLASSIFICATION_TYPE as ClassificationsEnum,
   iuv: filters.IUV,
   iur: filters.IUR,
