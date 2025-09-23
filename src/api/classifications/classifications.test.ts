@@ -26,10 +26,6 @@ vi.mock('./mappings', () => ({
   buildQueryParams: vi.fn()
 }));
 
-vi.mock('../../utils/loaders', () => ({
-  parseAndLog: vi.fn((_schema, data) => data)
-}));
-
 describe('getClassifications', () => {
   const dataMock = {
     content: [
