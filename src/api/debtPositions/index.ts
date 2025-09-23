@@ -104,6 +104,11 @@ const deleteDebtPositionTypeOrgs = (
   debtPositionTypeOrgId: number
 ) =>
   useMutation({
+    mutationKey: [
+      'deleteDebtPositionTypeOrgs',
+      organizationId,
+      debtPositionTypeOrgId
+    ],
     mutationFn: () =>
       utils.apiClient.bff.deleteDebtPositionTypeOrg(
         organizationId,
@@ -278,18 +283,18 @@ const getInstallmentRegistriesMutation = () => {
 };
 
 export default {
-  getDebtPositionViews,
-  getInstallments,
-  getInstallmentDetail,
-  getDebtPositionDetail,
+  createDebtPosition,
+  deleteDebtPosition,
   deleteDebtPositionType,
   deleteDebtPositionTypeOrgs,
-  deleteDebtPosition,
-  publishDebtPosition,
-  createDebtPosition,
-  manageDebtPositionInstallments,
+  getDebtPositionDetail,
   getDebtPositionRegistriesMutation,
+  getDebtPositionViews,
+  getDebtPositionZipFile,
+  getInstallmentDetail,
   getInstallmentRegistriesMutation,
+  getInstallments,
   getPaymentNoticeFile,
-  getDebtPositionZipFile
+  manageDebtPositionInstallments,
+  publishDebtPosition
 };

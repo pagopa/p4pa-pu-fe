@@ -21,3 +21,18 @@ export const getDebtPositionTypeOrgOperators = (organizationId: number) =>
       return response;
     }
   });
+
+export const removeDebtPositionTypeOrgFromOperator = () =>
+  useMutation({
+    mutationKey: ['removeDebtPositionTypeOrgFromOperator'],
+    mutationFn: (params: {
+      organizationId: number;
+      mappedExternalUserId: string;
+      debtPositionTypeOrgId: number;
+    }) =>
+      utils.apiClient.bff.removeDebtPositionTypeOrgFromOperator(
+        params.organizationId,
+        params.mappedExternalUserId,
+        params.debtPositionTypeOrgId
+      )
+  });
