@@ -31,6 +31,7 @@ export const Step3Accounting = () => {
           label={t('debtTypeOrgCreate.accounting.postalIban')}
           disabled={!!iban}
           required={false}
+          InputLabelProps={{ shrink: true }}
         />
         <FormComponent.ControlledTextField
           name="iban"
@@ -39,6 +40,7 @@ export const Step3Accounting = () => {
           label={t('debtTypeOrgCreate.accounting.pspIban')}
           disabled={!!postalIban}
           required={false}
+          InputLabelProps={{ shrink: true }}
         />
         <FormComponent.ControlledTextField
           name="postalAccountCode"
@@ -46,6 +48,7 @@ export const Step3Accounting = () => {
           control={control}
           label={t('debtTypeOrgCreate.accounting.postalAccount')}
           required={false}
+          InputLabelProps={{ shrink: true }}
         />
         <FormComponent.ControlledTextField
           name="holderPostalCc"
@@ -53,6 +56,7 @@ export const Step3Accounting = () => {
           control={control}
           label={t('debtTypeOrgCreate.accounting.postalAccountHolder')}
           required={false}
+          InputLabelProps={{ shrink: true }}
         />
       </SectionBox>
       <SectionBox
@@ -75,6 +79,7 @@ export const Step3Accounting = () => {
           control={control}
           label={t('debtTypeOrgCreate.accounting.entitySector')}
           required={false}
+          InputLabelProps={{ shrink: true }}
         />
       </SectionBox>
     </WizardStepWrapper>
