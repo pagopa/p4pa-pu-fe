@@ -41,13 +41,13 @@ describe('_Button', () => {
     expect(btn).toBeDisabled();
   });
 
-  it('has sane defaults: fullWidth, size="small", variant="contained"', () => {
+  it('has sane defaults: fullWidth, size="medium", variant="contained"', () => {
     render(<_Button label="Defaults" />);
 
     const btn = screen.getByRole('button', { name: 'Defaults' });
 
     expect(btn).toHaveClass('MuiButton-root');
-    expect(btn).toHaveClass('MuiButton-sizeSmall');
+    expect(btn).toHaveClass('MuiButton-sizeMedium');
     expect(btn).toHaveClass('MuiButton-contained');
     expect(btn).toHaveClass('MuiButton-fullWidth');
   });

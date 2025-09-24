@@ -2,7 +2,7 @@ import SearchCard from '../SearchCard/SearchCard';
 import ActionCard from '../ActionCard/ActionCard';
 import AddIcon from '@mui/icons-material/Add';
 import BookmarksIcon from '@mui/icons-material/Bookmarks';
-import { Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { useMultiFilters, FilterCategory } from '../../hooks/useMultiFilters';
@@ -62,9 +62,10 @@ export const Assessment = () => {
           }
         ]}
       />
+      <Box py={2}></Box>
       <Grid container direction="row">
         <Grid container spacing={2}>
-          <Grid item xs={12} lg={6}>
+          <Grid item xs={12} md={7}>
             <SearchCard
               title={t('assessment.search')}
               description={t('assessment.searchDescription')}
@@ -96,7 +97,7 @@ export const Assessment = () => {
             />
           </Grid>
 
-          <Grid item xs={12} lg={6}>
+          <Grid item xs={12} md={5}>
             <ActionCard
               title={t('assessment.chapters')}
               titleIcon={<BookmarksIcon />}
