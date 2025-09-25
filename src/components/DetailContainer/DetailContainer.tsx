@@ -160,14 +160,14 @@ const DetailContainer = ({
                   </Typography>
                 ) : null}
                 <Grid
+                  py={1}
                   container
                   direction={omitFlexGridDirection ? undefined : 'column'}
                 >
                   {section.data.map((item, index) => (
                     <Grid
                       container
-                      spacing={1}
-                      marginTop={1}
+                      py={1}
                       key={index}
                       direction={section.inline ? 'row' : 'column'}
                     >
