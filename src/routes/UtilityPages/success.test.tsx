@@ -151,7 +151,7 @@ describe('SuccessPage', () => {
 
       expect(mockNavigate).toHaveBeenCalledWith(
         PageRoutes.ASSESSMENT_DETAIL.replace(':id', '123'),
-        { replace: true }
+        { replace: true, state: { fromSuccess: true } }
       );
     });
 
@@ -171,7 +171,7 @@ describe('SuccessPage', () => {
 
       expect(mockNavigate).toHaveBeenCalledWith(
         PageRoutes.ORG_SIL_SERVICE_DETAIL.replace(':orgSilServiceId', '456'),
-        { replace: true }
+        { replace: true, state: { fromSuccess: true } }
       );
     });
 
@@ -191,7 +191,7 @@ describe('SuccessPage', () => {
 
       expect(mockNavigate).toHaveBeenCalledWith(
         PageRoutes.CLIENT_SIL_DETAIL.replace(':clientId', 'client789'),
-        { replace: true }
+        { replace: true, state: { fromSuccess: true } }
       );
     });
 
@@ -307,7 +307,7 @@ describe('SuccessPage', () => {
 
       expect(mockNavigate).toHaveBeenCalledWith(
         PageRoutes.ASSESSMENT_DETAIL.replace(':id', '456'),
-        { replace: true }
+        { replace: true, state: { fromSuccess: true } }
       );
     });
 

@@ -33,7 +33,7 @@ export const SuccessPage = () => {
         const detailPath = generatePath(PageRoutes.ASSESSMENT_DETAIL, {
           id: location.state.assessmentId.toString()
         });
-        navigate(detailPath, { replace: true });
+        navigate(detailPath, { replace: true, state: { fromSuccess: true } });
       } else if (
         btn.customNavigation === 'ORG_SIL_SERVICE_DETAIL' &&
         location?.state?.orgSilServiceId
@@ -41,7 +41,7 @@ export const SuccessPage = () => {
         const detailPath = generatePath(PageRoutes.ORG_SIL_SERVICE_DETAIL, {
           orgSilServiceId: location.state.orgSilServiceId.toString()
         });
-        navigate(detailPath, { replace: true });
+        navigate(detailPath, { replace: true, state: { fromSuccess: true } });
       } else if (
         btn.customNavigation === 'CLIENT_SIL_DETAIL' &&
         location?.state?.clientId
@@ -49,7 +49,7 @@ export const SuccessPage = () => {
         const detailPath = generatePath(PageRoutes.CLIENT_SIL_DETAIL, {
           clientId: location.state.clientId.toString()
         });
-        navigate(detailPath, { replace: true });
+        navigate(detailPath, { replace: true, state: { fromSuccess: true } });
       } else {
         navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
       }
