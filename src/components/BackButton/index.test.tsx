@@ -61,7 +61,7 @@ describe('BackButton', () => {
       expect(button).toHaveTextContent(customText);
     });
 
-    it('should call navigate(-1) when clicked without custom onClick', () => {
+    it('should call navigate(-1) when clicked without fromSuccess flag', () => {
       render(<BackButton />);
 
       const button = screen.getByRole('button', { name: 'Back' });
@@ -71,8 +71,92 @@ describe('BackButton', () => {
       expect(mockNavigate).toHaveBeenCalledTimes(1);
     });
 
-    it('should call custom onClick when provided', () => {
+    it('should call navigate(-2) when fromSuccess flag is true', () => {
+      mockUseLocation.mockReturnValue({
+        key: 'some-key',
+        pathname: '/current-path',
+        search: '',
+        hash: '',
+        state: { fromSuccess: true }
+      });
+
+      render(<BackButton />);
+
+      const button = screen.getByRole('button', { name: 'Back' });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(-2);
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call navigate(-2) when category includes success', () => {
+      mockUseLocation.mockReturnValue({
+        key: 'some-key',
+        pathname: '/current-path',
+        search: '',
+        hash: '',
+        state: { category: 'assessment-create-success' }
+      });
+
+      render(<BackButton />);
+
+      const button = screen.getByRole('button', { name: 'Back' });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(-2);
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call navigate(-2) when both fromSuccess and category are present', () => {
+      mockUseLocation.mockReturnValue({
+        key: 'some-key',
+        pathname: '/current-path',
+        search: '',
+        hash: '',
+        state: {
+          fromSuccess: true,
+          category: 'org-sil-service-update-success'
+        }
+      });
+
+      render(<BackButton />);
+
+      const button = screen.getByRole('button', { name: 'Back' });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(-2);
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call navigate(-1) when category exists but does not include success', () => {
+      mockUseLocation.mockReturnValue({
+        key: 'some-key',
+        pathname: '/current-path',
+        search: '',
+        hash: '',
+        state: { category: 'assessment-create-pending' }
+      });
+
+      render(<BackButton />);
+
+      const button = screen.getByRole('button', { name: 'Back' });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(-1);
+      expect(mockNavigate).toHaveBeenCalledTimes(1);
+    });
+
+    it('should call custom onClick when provided and ignore navigation logic', () => {
       const mockOnClick = vi.fn();
+
+      mockUseLocation.mockReturnValue({
+        key: 'some-key',
+        pathname: '/current-path',
+        search: '',
+        hash: '',
+        state: { fromSuccess: true }
+      });
+
       render(<BackButton onClick={mockOnClick} />);
 
       const button = screen.getByRole('button', { name: 'Back' });
@@ -172,6 +256,57 @@ describe('BackButton', () => {
       const button = screen.getByRole('button', { name: '' });
       expect(button).toBeInTheDocument();
       expect(button).toHaveTextContent('');
+    });
+
+    it('should handle null state gracefully', () => {
+      mockUseLocation.mockReturnValue({
+        key: 'some-key',
+        pathname: '/current-path',
+        search: '',
+        hash: '',
+        state: null
+      });
+
+      render(<BackButton />);
+
+      const button = screen.getByRole('button', { name: 'Back' });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(-1);
+    });
+
+    it('should handle undefined state gracefully', () => {
+      mockUseLocation.mockReturnValue({
+        key: 'some-key',
+        pathname: '/current-path',
+        search: '',
+        hash: '',
+        state: undefined
+      });
+
+      render(<BackButton />);
+
+      const button = screen.getByRole('button', { name: 'Back' });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(-1);
+    });
+
+    it('should handle state without fromSuccess or category', () => {
+      mockUseLocation.mockReturnValue({
+        key: 'some-key',
+        pathname: '/current-path',
+        search: '',
+        hash: '',
+        state: { someOtherProperty: 'value' }
+      });
+
+      render(<BackButton />);
+
+      const button = screen.getByRole('button', { name: 'Back' });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(-1);
     });
   });
 });
