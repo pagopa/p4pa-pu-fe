@@ -26,7 +26,7 @@ export const GenericErrorPage = () => {
 
   const buttonConfig = pageConfig?.buttonConfig?.map((btn) => {
     const handleClick = () => {
-      navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
+      navigate(PageRoutes[btn.actionID || PageRoutes.HOME], { replace: true });
     };
 
     return {

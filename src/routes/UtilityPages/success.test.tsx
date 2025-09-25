@@ -150,7 +150,8 @@ describe('SuccessPage', () => {
       fireEvent.click(button);
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        PageRoutes.ASSESSMENT_DETAIL.replace(':id', '123')
+        PageRoutes.ASSESSMENT_DETAIL.replace(':id', '123'),
+        { replace: true }
       );
     });
 
@@ -169,7 +170,8 @@ describe('SuccessPage', () => {
       fireEvent.click(button);
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        PageRoutes.ORG_SIL_SERVICE_DETAIL.replace(':orgSilServiceId', '456')
+        PageRoutes.ORG_SIL_SERVICE_DETAIL.replace(':orgSilServiceId', '456'),
+        { replace: true }
       );
     });
 
@@ -188,7 +190,8 @@ describe('SuccessPage', () => {
       fireEvent.click(button);
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        PageRoutes.CLIENT_SIL_DETAIL.replace(':clientId', 'client789')
+        PageRoutes.CLIENT_SIL_DETAIL.replace(':clientId', 'client789'),
+        { replace: true }
       );
     });
 
@@ -303,7 +306,8 @@ describe('SuccessPage', () => {
       fireEvent.click(button);
 
       expect(mockNavigate).toHaveBeenCalledWith(
-        PageRoutes.ASSESSMENT_DETAIL.replace(':id', '456')
+        PageRoutes.ASSESSMENT_DETAIL.replace(':id', '456'),
+        { replace: true }
       );
     });
 

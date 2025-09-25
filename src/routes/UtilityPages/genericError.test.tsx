@@ -52,6 +52,8 @@ describe('GenericErrorPage', () => {
       name: 'commons.back'
     });
     fireEvent.click(button);
-    expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.HOME);
+    expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.HOME, {
+      replace: true
+    });
   });
 });
