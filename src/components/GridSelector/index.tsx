@@ -37,7 +37,7 @@ export type GridSelectorProps<
 
   // Custom labels
   clearButtonLabel?: string;
-  selectedCountLabel?: (count: number) => string;
+  selectedCountLabel?: string;
 
   // Data grid props
   totalPages?: number;
@@ -89,9 +89,6 @@ export const GridSelector = <T extends GridValidRowModel, K extends GridRowId>({
   // Default labels
   const defaultClearButtonLabel =
     clearButtonLabel || t('commons.deleteSelection');
-  const defaultSelectedCountLabel =
-    selectedCountLabel ||
-    ((count: number) => t('commons.selectedOperator', { count }));
 
   if (!show) {
     return null;
@@ -99,7 +96,7 @@ export const GridSelector = <T extends GridValidRowModel, K extends GridRowId>({
 
   return (
     <Box sx={{ mt: 2 }}>
-      {showSelectedAlert && selectedIds.length > 0 && (
+      {showSelectedAlert && (
         <Alert
           severity="info"
           variant="outlined"
@@ -113,7 +110,7 @@ export const GridSelector = <T extends GridValidRowModel, K extends GridRowId>({
             ) : undefined
           }
         >
-          ({selectedIds.length}) {defaultSelectedCountLabel(selectedIds.length)}
+          {selectedCountLabel}
         </Alert>
       )}
 
@@ -131,6 +128,7 @@ export const GridSelector = <T extends GridValidRowModel, K extends GridRowId>({
           onRowSelectionModelChange={handleSelectionChange}
           totalPages={totalPages}
           loading={loading}
+          keepNonExistentRowsSelected
         />
       </Box>
     </Box>

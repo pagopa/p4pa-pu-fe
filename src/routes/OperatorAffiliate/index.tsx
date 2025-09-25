@@ -213,9 +213,10 @@ export const OperatorAffiliate = () => {
         selectedIds={enabledDebtPositionCodes}
         onSelectionChange={setEnabledDebtPositionCodes}
         totalPages={data?.totalPages || 1}
-        selectedCountLabel={(count) =>
-          t('OperatorDetail.affiliate.countLabel', { count })
-        }
+        selectedCountLabel={t('OperatorDetail.affiliate.countLabel', {
+          count: enabledDebtPositionCodes.length
+        })}
+        showSelectedAlert={enabledDebtPositionCodes.length > 0}
         clearButtonLabel={t('commons.deleteSelection')}
       />
       <WizardStepButtons

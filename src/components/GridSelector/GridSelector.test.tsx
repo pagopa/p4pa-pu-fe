@@ -62,7 +62,7 @@ describe('GridSelector component', () => {
     expect(onSelectionChange).toHaveBeenCalled();
   });
 
-  it('shows selected alert with count and clear button', () => {
+  it('shows selected alert and clear button', () => {
     render(
       <GridSelector
         data={data}
@@ -74,11 +74,11 @@ describe('GridSelector component', () => {
         showClearButton={true}
         showSelectedAlert={true}
         clearButtonLabel="Clear selection"
-        selectedCountLabel={(count: number) => `Selected ${count} rows`}
+        selectedCountLabel={`Selected rows`}
       />
     );
 
-    expect(screen.getByText('(2) Selected 2 rows')).toBeInTheDocument();
+    expect(screen.getByText('Selected rows')).toBeInTheDocument();
 
     const clearButton = screen.getByRole('button', {
       name: /Clear selection/i

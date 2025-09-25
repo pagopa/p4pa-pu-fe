@@ -11,8 +11,8 @@
     },
     "affiliate": {
       "title": "Associa Tipi di dovuto",
-      "countLabel_one": "Tipo di dovuto",
-      "countLabel_other": "Tipi di dovuto",
+      "countLabel_one": "({{count}}) Tipo di dovuto",
+      "countLabel_other": "({{count}}) Tipi di dovuto",
       "noSelection": "Seleziona almeno un Tipo di dovuto",
       "success": {
         "title_one": "{{count}} Tipo di dovuto associato correttamente all'utente {{operatorName}}",
