@@ -49,7 +49,7 @@ export const SuccessPage = () => {
         const detailPath = generatePath(PageRoutes.CLIENT_SIL_DETAIL, {
           clientId: location.state.clientId.toString()
         });
-        navigate(detailPath);
+        navigate(detailPath, { replace: true, state: { fromSuccess: true } });
       } else if (btn.customNavigation === 'OPERATORS_DETAIL') {
         const { organizationId, orgName, mappedExternalUserId } =
           location?.state || {};
@@ -60,7 +60,7 @@ export const SuccessPage = () => {
           mappedExternalUserId
         });
 
-        navigate(detailPath);
+        navigate(detailPath, { replace: true, state: { fromSuccess: true } });
       } else {
         navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
       }
