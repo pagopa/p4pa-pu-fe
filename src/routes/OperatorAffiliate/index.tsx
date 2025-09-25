@@ -1,6 +1,5 @@
 import { useNavigate, useParams } from 'react-router';
 import {
-  OperatorDebtPositionQuery,
   useEnbleDebtPositionTypeOrgsForOperator,
   useOperatorDebtPositionTypeOrgSearch
 } from '../../api/organizationOperators';
@@ -24,11 +23,23 @@ import utils from '../../utils';
 export const OperatorAffiliate = () => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const initialFilters: OperatorDebtPositionQuery = utils.URI.decode(
-    window.location.hash
-  );
+  const {
+    debtPositionTypeOrgDescription,
+    debtPositionTypeOrgCode,
+    debtPositionTypeId,
+    page,
+    size,
+    sort
+  } = utils.URI.decode(window.location.hash);
 
-  const [filters, setFilters] = useState(initialFilters);
+  const [filters, setFilters] = useState({
+    debtPositionTypeOrgDescription,
+    debtPositionTypeOrgCode,
+    debtPositionTypeId,
+    page,
+    size,
+    sort
+  });
   const [enabledDebtPositionCodes, setEnabledDebtPositionCodes] = useState<
     Array<number>
   >([]);
