@@ -7,13 +7,6 @@ import {
   DebtPositionTypeOrgOperatorFilteredRequest
 } from './mappings';
 
-export type DebtPositionTypeOrgOperatorQuery = {
-  debtPositionTypeOrgId?: number;
-  page?: number;
-  size?: number;
-  sort?: Array<string>;
-};
-
 export const getDebtPositionTypeOrgOperators = (organizationId: number) =>
   useMutation({
     mutationKey: ['getDebtPositionTypeOrgOperators', organizationId],
@@ -27,4 +20,19 @@ export const getDebtPositionTypeOrgOperators = (organizationId: number) =>
       parseAndLog(pagedDebtPositionTypeOrgOperatorDTOSchema, response);
       return response;
     }
+  });
+
+export const removeDebtPositionTypeOrgFromOperator = () =>
+  useMutation({
+    mutationKey: ['removeDebtPositionTypeOrgFromOperator'],
+    mutationFn: (params: {
+      organizationId: number;
+      mappedExternalUserId: string;
+      debtPositionTypeOrgId: number;
+    }) =>
+      utils.apiClient.bff.removeDebtPositionTypeOrgFromOperator(
+        params.organizationId,
+        params.mappedExternalUserId,
+        params.debtPositionTypeOrgId
+      )
   });

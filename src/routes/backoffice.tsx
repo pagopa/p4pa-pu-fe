@@ -133,10 +133,10 @@ export const backofficeRoutes = [
             path: ':orgSilServiceId',
             element: <OrgSilServiceDetailPage />,
             handle: {
-              backButton: false,
+              backButton: true,
               hideBreadcrumbs: false,
               sidebar: {
-                visible: true
+                visible: false
               }
             }
           },

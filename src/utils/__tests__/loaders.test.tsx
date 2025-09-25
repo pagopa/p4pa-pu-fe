@@ -1,7 +1,8 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
-  OperatorRoleEnum,
-  OrganizationDTO
+  OperatorRole,
+  OrganizationDTO,
+  OrganizationStatus
 } from '../../../generated/data-contracts';
 import { AxiosResponse } from 'axios';
 import { renderHook, waitFor } from '../../__tests__/renderers';
@@ -39,11 +40,12 @@ describe('loaders', () => {
           organizationId: 1,
           ipaCode: 'IPA01',
           orgName: 'Test Org',
-          operatorRole: OperatorRoleEnum.ROLE_ADMIN,
+          operatorRole: OperatorRole.ROLE_ADMIN,
           orgFiscalCode: '123456789',
           flagNotifyIo: false,
           flagNotifyOutcomePush: false,
-          flagPaymentNotification: false
+          flagPaymentNotification: false,
+          status: OrganizationStatus.ACTIVE
         }
       ];
 

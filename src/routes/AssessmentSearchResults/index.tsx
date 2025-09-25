@@ -19,6 +19,7 @@ import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { getAssessments } from '../../api/assessments';
+import { shouldShowGeneralError } from '../../utils/filtersValidation';
 
 export type LocationState = {
   category: string;
@@ -65,7 +66,7 @@ const AssessmentSearchResults = () => {
       assessments.applyFilters(filterValues);
       setDrawerOpen(false);
     } else {
-      setError(true);
+      setError(shouldShowGeneralError(filterValues));
     }
   };
 

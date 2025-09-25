@@ -14,7 +14,7 @@ type MenuItemProps = {
 };
 
 type ActionMenuProps = {
-  rowId: number;
+  rowId: number | string;
   menuItems: Array<MenuItemProps>;
 };
 

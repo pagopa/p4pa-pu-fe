@@ -15,8 +15,9 @@ import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch'
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
-import { OperatorRoleEnum } from '../../../generated/apiClient';
+import { OperatorRole } from '../../../generated/apiClient';
 import { PageRoutes } from '../../routes';
+import config from '../../utils/config';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;
@@ -45,12 +46,14 @@ export const Header = (props: HeaderProps) => {
     : undefined;
 
   const organizationsToMenuItems: Array<PartySwitchItem> =
-    organizations?.map((org) => ({
-      id: org.organizationId.toString(),
-      logoUrl: org.orgLogo,
-      name: org.orgName || t('commons.unknownOrganization'),
-      productRole: t(`commons.roles.${org.operatorRole}`, org.operatorRole)
-    })) || [];
+    organizations
+      ?.filter((org) => org.status === 'ACTIVE')
+      .map((org) => ({
+        id: org.organizationId.toString(),
+        logoUrl: org.orgLogo,
+        name: org.orgName || t('commons.unknownOrganization'),
+        productRole: t(`commons.roles.${org.operatorRole}`, org.operatorRole)
+      })) || [];
 
   const currentOrgExists =
     organizationId &&
@@ -102,8 +105,8 @@ export const Header = (props: HeaderProps) => {
 
   const onSelectedParty = (organization: PartySwitchItem) => {
     setOrganizationId(Number(organization.id));
-    setOperatorRole(organization.productRole as OperatorRoleEnum);
-    navigate(0);
+    setOperatorRole(organization.productRole as OperatorRole);
+    window.location.replace(config.deployPath);
   };
 
   return (

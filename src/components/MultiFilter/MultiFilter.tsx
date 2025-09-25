@@ -76,6 +76,7 @@ const MultiFilter = ({ filterMap, onFilterInteraction }: MultiFilterProps) => {
           onClick={addNextFilterRow}
           startIcon={<Add />}
           disabled={selectedFilters.length >= Object.keys(filterMap).length}
+          sx={{ px: 0 }}
         >
           {t('commons.addfilter')}
         </Button>

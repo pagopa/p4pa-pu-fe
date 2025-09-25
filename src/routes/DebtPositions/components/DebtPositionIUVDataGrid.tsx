@@ -78,6 +78,7 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
       renderCell: (params: GridRenderCellParams<InstallmentView>) => (
         <ChipTruncateTooltip
           label={t(`commons.status.${params.value}`)}
+          tooltipLabel={t(`DebtPositions.installment.tooltip.${params.value}`)}
           color={stateColors[params.value as InstallmentStatus]}
           variant="outlined"
         />

@@ -11,7 +11,7 @@ import { ReactNode } from 'react';
 export type GenericDialogProps = {
   open: boolean;
   title: string;
-  message?: string;
+  message?: string | React.ReactElement;
   confirmLabel?: string;
   cancelLabel?: string;
   children?: ReactNode;

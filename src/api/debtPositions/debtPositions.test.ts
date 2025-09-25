@@ -28,6 +28,10 @@ vi.mock('../debtPositions/mapping', () => ({
   buildDebtPositionsQueryParams: vi.fn()
 }));
 
+vi.mock('../../utils/loaders', () => ({
+  parseAndLog: vi.fn((_schema, data) => data)
+}));
+
 describe('debtPositions API', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -38,17 +42,24 @@ describe('debtPositions API', () => {
     const query: DebtPositionFilteredRequest = {
       filters: {
         status: DebtPositionStatus.PAID,
-        fiscalCode: ''
+        fiscalCode: 'RSSMRA85M01H501Z'
       },
       pagination: { page: 0, size: 10 },
-      sort: []
+      sort: ['creationDate,desc']
     };
 
     it('returns data correctly', async () => {
       const dataMock = createMock(pagedDebtPositionViewSchema);
+      const mockQueryParams = {
+        status: DebtPositionStatus.PAID,
+        fiscalCode: 'RSSMRA85M01H501Z',
+        page: 0,
+        size: 10,
+        sort: ['creationDate,desc']
+      };
 
       (mapping.buildDebtPositionsQueryParams as Mock).mockReturnValue(
-        'mock-query-string'
+        mockQueryParams
       );
 
       const apiMock = vi
@@ -66,15 +77,22 @@ describe('debtPositions API', () => {
       expect(mapping.buildDebtPositionsQueryParams).toHaveBeenCalledWith(query);
       expect(apiMock).toHaveBeenCalledWith(
         params.organizationId,
-        'mock-query-string'
+        mockQueryParams
       );
     });
 
     it('handles errors correctly', async () => {
       const error = new Error('API error');
+      const mockQueryParams = {
+        status: DebtPositionStatus.PAID,
+        fiscalCode: 'RSSMRA85M01H501Z',
+        page: 0,
+        size: 10,
+        sort: ['creationDate,desc']
+      };
 
       (mapping.buildDebtPositionsQueryParams as Mock).mockReturnValue(
-        'mock-query-string'
+        mockQueryParams
       );
 
       vi.spyOn(utils.apiClient.bff, 'getDebtPositionViews').mockRejectedValue(
@@ -97,18 +115,31 @@ describe('debtPositions API', () => {
     const params = { organizationId: 10 };
     const query: DebtPositionFilteredRequest = {
       filters: {
-        status: DebtPositionStatus.PAID,
-        fiscalCode: ''
+        fiscalCode: 'RSSMRA85M01H501Z',
+        iuv: 'IUV123456789',
+        dateRange: {
+          from: new Date('2023-01-01'),
+          to: new Date('2023-12-31')
+        }
       },
       pagination: { page: 0, size: 10 },
-      sort: []
+      sort: ['dueDate,asc']
     };
 
     it('returns data correctly', async () => {
       const dataMock = createMock(pagedInstallmentViewSchema);
+      const mockQueryParams = {
+        fiscalCode: 'RSSMRA85M01H501Z',
+        iuv: 'IUV123456789',
+        dueDateTimeFrom: '2023-01-01T00:00:00.000Z',
+        dueDateTimeTo: '2023-12-31T23:59:59.999Z',
+        page: 0,
+        size: 10,
+        sort: ['dueDate,asc']
+      };
 
       (mapping.buildInstallmentsQueryParams as Mock).mockReturnValue(
-        'mock-query-string'
+        mockQueryParams
       );
 
       const apiMock = vi
@@ -126,15 +157,21 @@ describe('debtPositions API', () => {
       expect(mapping.buildInstallmentsQueryParams).toHaveBeenCalledWith(query);
       expect(apiMock).toHaveBeenCalledWith(
         params.organizationId,
-        'mock-query-string'
+        mockQueryParams
       );
     });
 
     it('handles errors correctly', async () => {
       const error = new Error('API error');
+      const mockQueryParams = {
+        fiscalCode: 'RSSMRA85M01H501Z',
+        page: 0,
+        size: 10,
+        sort: ['dueDate,asc']
+      };
 
       (mapping.buildInstallmentsQueryParams as Mock).mockReturnValue(
-        'mock-query-string'
+        mockQueryParams
       );
 
       vi.spyOn(utils.apiClient.bff, 'getInstallments').mockRejectedValue(error);
@@ -148,6 +185,44 @@ describe('debtPositions API', () => {
       await waitFor(() => {
         expect(result.current.error).toEqual(error);
       });
+    });
+
+    it('handles request with minimal filters', async () => {
+      const minimalQuery: DebtPositionFilteredRequest = {
+        filters: {},
+        pagination: { page: 0, size: 20 },
+        sort: []
+      };
+
+      const dataMock = createMock(pagedInstallmentViewSchema);
+      const mockQueryParams = {
+        page: 0,
+        size: 20,
+        sort: []
+      };
+
+      (mapping.buildInstallmentsQueryParams as Mock).mockReturnValue(
+        mockQueryParams
+      );
+
+      const apiMock = vi
+        .spyOn(utils.apiClient.bff, 'getInstallments')
+        .mockResolvedValue({ data: dataMock } as AxiosResponse);
+
+      const { result } = renderHook(() =>
+        debtPositions.getInstallments(params)
+      );
+
+      const data = await result.current.mutateAsync(minimalQuery);
+
+      expect(data).toEqual(dataMock);
+      expect(mapping.buildInstallmentsQueryParams).toHaveBeenCalledWith(
+        minimalQuery
+      );
+      expect(apiMock).toHaveBeenCalledWith(
+        params.organizationId,
+        mockQueryParams
+      );
     });
   });
 });

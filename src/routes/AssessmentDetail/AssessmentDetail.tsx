@@ -248,7 +248,6 @@ export const AssessmentDetail = () => {
     }));
   };
 
-  console.debug(appliedFilters);
   return (
     <>
       <TitleComponent

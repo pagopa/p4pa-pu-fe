@@ -1,20 +1,27 @@
-export type DebtPositionTypeOrgOperatorFilters = {
-  debtPositionTypeOrgId?: number;
-};
+import { FilteredRequest } from '../../models/Filters';
+import utils from '../../utils';
 
-export type DebtPositionTypeOrgOperatorFilteredRequest = {
-  filters: DebtPositionTypeOrgOperatorFilters;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
+type GetDebtPositionTypeOrgOperatorsQueryParams = Parameters<
+  typeof utils.apiClient.bff.getDebtPositionTypeOrgOperators
+>[1];
+
+export type DebtPositionTypeOrgOperatorFilters = Pick<
+  NonNullable<GetDebtPositionTypeOrgOperatorsQueryParams>,
+  'debtPositionTypeOrgId'
+>;
+
+export type DebtPositionTypeOrgOperatorFilteredRequest =
+  FilteredRequest<DebtPositionTypeOrgOperatorFilters>;
 
 export const buildQueryParams = ({
   filters,
   pagination,
   sort
-}: DebtPositionTypeOrgOperatorFilteredRequest) => ({
-  debtPositionTypeOrgId: filters.debtPositionTypeOrgId,
+}: DebtPositionTypeOrgOperatorFilteredRequest): GetDebtPositionTypeOrgOperatorsQueryParams => ({
+  ...(filters.debtPositionTypeOrgId && {
+    debtPositionTypeOrgId: filters.debtPositionTypeOrgId
+  }),
   page: pagination.page,
   size: pagination.size,
-  sort
+  ...(sort?.length && { sort })
 });

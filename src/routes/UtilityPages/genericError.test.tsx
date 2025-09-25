@@ -18,7 +18,7 @@ vi.mock('react-router', async () => {
 
 vi.mock('../../../models/ErrorPageConfig', () => ({
   ErrorPageConfig: {
-    default: {
+    defaultOptions: {
       title: 'utilityPages.genericError.title',
       description: 'utilityPages.genericError.description',
       buttonConfig: [
@@ -52,6 +52,8 @@ describe('GenericErrorPage', () => {
       name: 'commons.back'
     });
     fireEvent.click(button);
-    expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.HOME);
+    expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.HOME, {
+      replace: true
+    });
   });
 });

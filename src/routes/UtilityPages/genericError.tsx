@@ -14,9 +14,9 @@ export const GenericErrorPage = () => {
   const { errorType } = location?.state || {};
   const { i18nParams } = location?.state || {};
 
-  const pageConfig =
-    ErrorPageConfig[errorType as keyof typeof ErrorPageConfig] ||
-    ErrorPageConfig['default'];
+  const pageConfig = errorType
+    ? ErrorPageConfig[errorType]
+    : ErrorPageConfig.defaultOptions;
 
   useEffect(() => {
     if (!pageConfig) {
@@ -26,7 +26,7 @@ export const GenericErrorPage = () => {
 
   const buttonConfig = pageConfig?.buttonConfig?.map((btn) => {
     const handleClick = () => {
-      navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
+      navigate(PageRoutes[btn.actionID || PageRoutes.HOME], { replace: true });
     };
 
     return {

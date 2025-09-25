@@ -172,8 +172,6 @@ export const useMultiFilters = (props?: {
 
   const filterMap = getFilteredMap();
 
-  console.debug(validationErrors);
-
   return {
     filterMap,
     selectedFilters,
@@ -183,6 +181,6 @@ export const useMultiFilters = (props?: {
     validationErrors,
     isValid:
       !noFilterIsSelected.peek() &&
-      !Object.values(validationErrors).some((value) => value)
+      !Object.values(validationErrors).some((value) => value !== null)
   };
 };

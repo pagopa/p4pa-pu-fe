@@ -1,4 +1,15 @@
 {
+  "OperatorDetail": {
+    "code": "Cod. Gestionale",
+    "debtPositionTypeDescription": "Tipo di dovuto",
+    "accessibleTitle": "Dettagli operatore",
+    "associatedDebtPositionTypes": "Tipi di dovuto associati",
+    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto",
+    "deleteDialog": {
+      "title": "Sei sicuro di voler rimuovere il Tipo di dovuto?",
+      "message": "Una volta rimosso l'utente <strong>{{operatorName}}</strong> non potrà gestire e operare su questo tipo di dovuto."
+    }
+  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -59,6 +70,30 @@
       "titleIUV": "Avvisi (IUV)",
       "accessibleTitleIUV": "Risultato ricerca Avvisi",
       "accessibleTitleDP": "Risultato ricerca posizioni debitorie"
+    },
+    "status": {
+      "tooltip": {
+        "DRAFT": "Non ci sono ancora avvisi di pagamento per questa posizione debitoria.",
+        "TO_SYNC": "La posizione debitoria è stata creata ma non è ancora pagabile.",
+        "UNPAID": "La posizione debitoria è stata creata ed è pagabile.",
+        "PARTIALLY_PAID": "È stato effettuato solo una parte del pagamento.",
+        "PAID": "Tutti i pagamenti sono stati completati.",
+        "REPORTED": "Tutti i pagamenti sono stati rendicontati.",
+        "EXPIRED": "I pagamenti non sono stati effettuati entro la data di scadenza prevista.",
+        "CANCELLED": "La posizione debitoria è stata rimossa da un operatore."
+      }
+    },
+    "installment": {
+      "tooltip": {
+        "DRAFT": "L'avviso di pagamento non è stato ancora emesso.",
+        "TO_SYNC": "L'avviso di pagamento è stato registrato ma non è ancora pagabile.",
+        "UNPAID": "L'avviso di pagamento è stato emesso ed è pagabile.",
+        "PAID": "Il pagamento è stato completato.",
+        "REPORTED": "L'avviso di pagamento è stato rendicontato.",
+        "EXPIRED": "Il pagamento non è stato completato entro la data di scadenza stabilita.",
+        "INVALID": "L'avviso è stato invalidato perché il debitore ha avviato il pagamento con un'altra opzione.",
+        "CANCELLED": "L'avviso di pagamento è stato rimosso da un operatore."
+      }
     }
   },
   "FileUploaderFlowImport": {
@@ -275,11 +310,25 @@
   "assessmentsRegistrySearchResults": {
     "sectionCode": "Codice Capitolo",
     "operatingYear": "Anno",
-    "debtPositionTypeOrgCode": "Tipo dovuto",
+    "debtPositionTypeOrgDescription": "Tipo dovuto",
     "assessmentCode": "Codice accertamento",
     "officeCode": "Codice ufficio",
     "status": "Stato ufficio",
     "uploadFlow": "Crea nuovo capitolo"
+  },
+  "callback": {
+    "success": {
+      "title": "Pagamento completato con successo",
+      "description": "Il tuo pagamento è stato processato correttamente."
+    },
+    "error": {
+      "title": "Pagamento non riuscito",
+      "description": "Si è verificato un errore durante il processo di pagamento."
+    },
+    "cancel": {
+      "title": "Pagamento annullato",
+      "description": "Il processo di pagamento è stato annullato."
+    }
   },
   "classifications": {
     "title": "Dettaglio Pagamento",
@@ -575,13 +624,19 @@
   },
   "commons": {
     "404": "404: risorsa non disponibile",
+    "id": "id",
+    "role": "Ruolo",
     "info": "Informazioni",
+    "infoSingular": "Informazione",
+    "accountingInformation": "Informazione contabile",
     "add": "Aggiungi",
+    "additionalLanguage": "Lingua addizionale",
     "all": "Tutti",
     "addfilter": "Aggiunge filtro",
     "amount": "Importo",
     "anonymousFiscalCode": "Codice Fiscale Anonimo",
     "appName": "Piattaforma Unitaria",
+    "apiKey": "API Key",
     "auditor": "Gestore della transazione (PSP)",
     "back": "Indietro",
     "behavior": "Comportamento",
@@ -589,6 +644,8 @@
     "breadcrumbsElement": "Elemento breadcrumb",
     "breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
     "cancel": "Annulla",
+    "cashJournal": "Giornale di cassa",
+    "cbill": "CBILL",
     "close": "Chiudi",
     "collectionReason": "Motivo Riscossione",
     "continue": "Continua",
@@ -597,9 +654,11 @@
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
     "backToStart": "Torna alla sezione",
+    "goToDetail": "Vedi dettaglio",
     "creationFrom": "Creazione dal",
     "debtFlow": "Flussi dovuti",
     "debtType": "Tipo dovuto",
+    "debtTypes": "Tipo di dovuti",
     "debtTypeCode": "Codice Tipo dovuto",
     "debtTypeName": "Nome del Tipo dovuto",
     "debtor": "Debitore",
@@ -759,6 +818,7 @@
     "from": "Dal",
     "key": "Chiave",
     "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
+    "iban": "IBAN",
     "importFlow": "Importa flusso",
     "importFlowErrorMessage": "Non è stato possibile importare il flusso",
     "importFlows": "Importa flussi",
@@ -773,6 +833,7 @@
     "importNewFlow": "Carica un nuovo flusso",
     "internalCode": "Codice Interno",
     "inThisPage": "in questa pagina",
+    "ipaCode": "Codice IPA",
     "iud": "IUD",
     "iuf": "IUF",
     "iun": "Identificativo univoco notifica",
@@ -818,6 +879,7 @@
     "person": "Persona fisica",
     "personLegal": "Persona giuridica",
     "postAccount": "Conto Corrente Postale",
+    "postIban": "IBAN Postale",
     "psp": "Gestore della transazione (PSP)",
     "reason": "Causale",
     "reload": "Rigenera",
@@ -867,6 +929,7 @@
       "IMPORT": "Import",
       "IMPORT_FLOWS": "Importa flusso",
       "ORGANIZATIONS": "Enti gestiti",
+      "ORGANIZATIONS_DETAIL": "Anagrafica ente",
       "ORG_SIL_SERVICE": "Org Sil Service",
       "ORG_SIL_SERVICE_DETAIL": "Dettaglio Org Sil Service",
       "REPORTING": "Rendicontazione",
@@ -891,6 +954,8 @@
       "TREASURY_INDEX": "Pagina principale",
       "TREASURY_SEARCH_RESULTS": "Risultato ricerca",
       "USERS": "Utenti",
+      "OPERATORS_LIST": "Gestione operatori",
+      "OPERATORS_LIST_BYORG": "Ente gestito",
       "CLASSIFICATION_DETAIL": "Dettaglio Pagamento"
     },
     "saveDraft": "Salva bozza",
@@ -902,6 +967,7 @@
     "searchForCode": "Cerca per codice",
     "searchForDescription": "Cerca per descrizione",
     "searchForIPACode": "Cerca per codice IPA",
+    "searchForOrganization": "Cerca ente",
     "searchForOrganizationName": "Cerca per nome ente",
     "searchIUF": "Cerca ID Rendicontazione",
     "searchIUV": "Cerca IUV",
@@ -909,6 +975,7 @@
     "searchOperator": "Cerca operatore",
     "searchRegulationUniqueIdentifier": "Cerca ID Regolamento",
     "secret": "Secret",
+    "segregationCode": "Codice segregazione",
     "selectedOperator_one": "Operatore selezionato",
     "selectedOperator_other": "Operatori selezionati",
     "serviceType": "Tipo Servizio",
@@ -990,7 +1057,9 @@
     "to": "Al",
     "validations": {
       "from": "Data non valida",
-      "to": "Data non valida"
+      "to": "Data non valida",
+      "insertFrom": "Seleziona una data di inizio",
+      "insertTo": "Seleziona una data di fine"
     },
     "year": "Anno"
   },
@@ -1706,6 +1775,30 @@
     "byOrg": "Ente mittente*",
     "byService": "Servizio mittente*"
   },
+  "operatorsList": {
+    "accessibleTitle": "Gestione operatori ente: {{orgName}}",
+    "description": "In questa sezione trovi gli operatori presenti per il proprio ente.",
+    "descriptionFull": "In questa sezione trovi gli operatori presenti per il proprio ente o per gli enti gestiti.",
+    "tabMyOrganization": "Il mio ente",
+    "tabAllOrganizations": "Enti gestiti",
+    "searchByName": "Cerca per nome",
+    "searchByLastName": "Cerca per cognome",
+    "searchByFiscalCode": "Cerca per CF",
+    "searchByIPACode": "Cerca per codice IPA",
+    "myOrganizationDataGrid": {
+      "id": "ID",
+      "nameAndLastName": "Nome e cognome",
+      "fiscalCode": "Codice Fiscale",
+      "enabledDebtTypes": "Tipi di dovuto abilitati"
+    },
+    "allOrganizationsDataGrid": {
+      "id": "ID",
+      "name": "Nome",
+      "fiscalCode": "Codice Fiscale",
+      "enabledDebtTypes": "Tipi di dovuto abilitati",
+      "operators": "Operatori"
+    }
+  },
   "orgSilService": {
     "accessibleTitle": "Ricerca org sil service",
     "amountActualization": "Attualizzazione importo",
@@ -1809,6 +1902,19 @@
         "goToDetail": "Vedi dettaglio API"
       }
     }
+  },
+  "organizations": {
+    "name": "Nome o ragione sociale",
+    "fiscalCode": "Codice fiscale",
+    "activeOperators": "Operatori attivi",
+    "activeDebtTypes": "Tipi dovuti attivi",
+    "ioMessagge": "Messaggi sull'app IO",
+    "otherProducts": "Integrazione con gli altri prodotti PagoPA",
+    "paymentPushNotification": "Notifica push pagamenti",
+    "paymentNotified": "Pagamenti notificati",
+    "pdndIntegration": "Integrazione con PDND",
+    "printKeyAPI": "API Key stampa avvisi",
+    "orgEmail": "Email ente"
   },
   "registry": {
     "detail": {

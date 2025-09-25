@@ -1,5 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
+import { parseAndLog } from '../../utils/loaders';
+import { pagedTreasuredClassificationExtendedDTOSchema } from '../../../generated/zod-schema';
 import { buildQueryParams, ClassificationsFilteredRequest } from './mappings';
 
 export const getClassifications = ({
@@ -16,6 +18,9 @@ export const getClassifications = ({
           organizationId,
           query
         );
+
+      parseAndLog(pagedTreasuredClassificationExtendedDTOSchema, response);
+
       return response;
     }
   });
