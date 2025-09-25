@@ -57,6 +57,7 @@ export const ReportingFilters = ({
         {layout === 'inline' && (
           <FormComponent.Button
             label={t('commons.filters.filterResults')}
+            size="small"
             sx={{ flex: 0.1 }}
             type="submit"
             key="applyFilters"

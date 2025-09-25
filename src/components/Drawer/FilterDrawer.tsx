@@ -1,6 +1,6 @@
 import MultiFilter from '../MultiFilter/MultiFilter';
 import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
-import { Grid, Button } from '@mui/material';
+import { Grid, Button, ButtonProps } from '@mui/material';
 import { Drawer, DrawerProps } from '../Drawer';
 
 type FilterDrawerProps = DrawerProps & {
@@ -12,7 +12,7 @@ type FilterDrawerProps = DrawerProps & {
   buttons?: Array<{
     buttonText?: string;
     onButtonClick?: () => void;
-    variant?: 'contained' | 'outlined' | 'text';
+    variant?: ButtonProps['variant'];
     disabled?: boolean;
     id?: string;
   }>;
@@ -48,7 +48,7 @@ export const FilterDrawer = ({
             <Button
               id={btn.id}
               fullWidth
-              size="large"
+              size="medium"
               variant={btn.variant}
               onClick={btn.onButtonClick}
               disabled={btn.disabled}

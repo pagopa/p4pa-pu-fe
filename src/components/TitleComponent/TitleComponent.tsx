@@ -16,7 +16,7 @@ import { useTranslation } from 'react-i18next';
 
 type ActionMenuItem = {
   icon?: React.ReactNode;
-  variant?: 'text' | 'outlined' | 'contained';
+  variant?: ButtonProps['variant'];
   buttonText?: string;
   color?:
     | 'inherit'
@@ -133,7 +133,7 @@ const TitleComponent = ({
     return (
       <Button
         key={`button-${action.buttonText}-${index}`}
-        size="large"
+        size="medium"
         startIcon={action.buttonText ? action.icon : undefined}
         variant={action.variant || 'contained'}
         color={(action.color as ButtonProps['color']) || 'primary'}

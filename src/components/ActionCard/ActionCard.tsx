@@ -11,6 +11,7 @@ import { ArrowForward } from '@mui/icons-material';
 
 export type ActionCardProps = {
   actionButtonVariant?: ButtonProps['variant'];
+  actionButtonSize?: ButtonProps['size'];
   actionLabel: string;
   actionIcon?: React.ReactNode;
   description: string;
@@ -27,6 +28,7 @@ export type ActionCardProps = {
 const ActionCard = ({
   actionLabel,
   actionIcon,
+  actionButtonSize = 'medium',
   actionButtonVariant = 'outlined',
   description,
   footerText,
@@ -75,7 +77,7 @@ const ActionCard = ({
         <Grid container direction="column" justifyContent={'start'}>
           <Grid item lg={12}>
             <Button
-              size="large"
+              size={actionButtonSize}
               startIcon={actionIcon}
               variant={actionButtonVariant}
               fullWidth={false}
@@ -99,13 +101,13 @@ const ActionCard = ({
             <Grid item lg={12}>
               <Button
                 id="action-card-linklabel-btn"
-                size="large"
+                size="medium"
                 endIcon={<ArrowForward />}
                 variant="text"
                 fullWidth={false}
                 onClick={onLinkClick}
                 data-testid={linkDataTestId}
-                sx={{ py: 1 }}
+                sx={{ py: 1, px: 0 }}
               >
                 {linkLabel}
               </Button>
