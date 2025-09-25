@@ -143,6 +143,7 @@ const RenderComponent = ({
       return (
         <FormComponent.Button
           {...buttonItem}
+          size="small"
           onClick={(e: ButtonClickEvent) => {
             if (buttonItem?.onClick) {
               buttonItem.onClick(e);
