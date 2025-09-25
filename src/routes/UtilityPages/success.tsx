@@ -49,7 +49,18 @@ export const SuccessPage = () => {
         const detailPath = generatePath(PageRoutes.CLIENT_SIL_DETAIL, {
           clientId: location.state.clientId.toString()
         });
-        navigate(detailPath, { replace: true, state: { fromSuccess: true } });
+        navigate(detailPath);
+      } else if (btn.customNavigation === 'OPERATORS_DETAIL') {
+        const { organizationId, orgName, mappedExternalUserId } =
+          location?.state || {};
+
+        const detailPath = generatePath(PageRoutes.OPERATORS_DETAIL, {
+          organizationId,
+          orgName,
+          mappedExternalUserId
+        });
+
+        navigate(detailPath);
       } else {
         navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
       }
@@ -90,7 +101,11 @@ export const SuccessPage = () => {
             interpolation: { escapeValue: false }
           })
         )}
-        description={pageConfig?.description ? t(pageConfig.description) : ''}
+        description={
+          pageConfig?.description
+            ? String(t(pageConfig.description, i18nParams))
+            : ''
+        }
         buttonConfig={buttonConfig}
       />
     </>

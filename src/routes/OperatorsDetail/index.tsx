@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { Grid, Typography, useTheme, Box } from '@mui/material';
+import { Grid, Typography, useTheme, Box, Button } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../components/FilterContainer/FilterContainer';
-import { Search } from '@mui/icons-material';
+import { Search, Add } from '@mui/icons-material';
 import OperatorDetailDataGrid from './components/OperatorDetailDataGrid';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
@@ -29,8 +29,11 @@ export const OperatorDetail = () => {
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
   const deleteMutation = removeDebtPositionTypeOrgFromOperator();
 
-  const { organizationId: paramOrganizationId, mappedExternalUserId } =
-    useParams();
+  const {
+    organizationId: paramOrganizationId,
+    mappedExternalUserId,
+    orgName
+  } = useParams();
 
   const organizationId = Number(paramOrganizationId);
 
@@ -147,6 +150,17 @@ export const OperatorDetail = () => {
     }));
   };
 
+  const onAffiliateClick = () => {
+    navigate(
+      generatePath(PageRoutes.OPERATORS_AFFILIATE, {
+        organizationId,
+        mappedExternalUserId,
+        operatorName,
+        orgName
+      })
+    );
+  };
+
   return (
     <>
       <TitleComponent
@@ -175,6 +189,14 @@ export const OperatorDetail = () => {
           <Typography variant="h6">
             {t('OperatorDetail.associatedDebtPositionTypes')}
           </Typography>
+          <Button
+            variant="outlined"
+            color="primary"
+            startIcon={<Add />}
+            onClick={onAffiliateClick}
+          >
+            {t('commons.affiliateNew')}
+          </Button>
         </Box>
         <Grid
           container
