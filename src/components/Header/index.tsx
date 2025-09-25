@@ -46,13 +46,14 @@ export const Header = (props: HeaderProps) => {
     : undefined;
 
   const organizationsToMenuItems: Array<PartySwitchItem> =
-    organizations?.filter(org => org.status === "ACTIVE")
-    .map((org) => ({
-      id: org.organizationId.toString(),
-      logoUrl: org.orgLogo,
-      name: org.orgName || t('commons.unknownOrganization'),
-      productRole: t(`commons.roles.${org.operatorRole}`, org.operatorRole)
-    })) || [];
+    organizations
+      ?.filter((org) => org.status === 'ACTIVE')
+      .map((org) => ({
+        id: org.organizationId.toString(),
+        logoUrl: org.orgLogo,
+        name: org.orgName || t('commons.unknownOrganization'),
+        productRole: t(`commons.roles.${org.operatorRole}`, org.operatorRole)
+      })) || [];
 
   const currentOrgExists =
     organizationId &&
