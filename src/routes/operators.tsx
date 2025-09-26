@@ -4,6 +4,7 @@ import { Outlet, RouteObject } from 'react-router';
 import { AdminRouteGuard } from '../components/RouteGuard/RouteGuard';
 import OperatorDetail from './OperatorsDetail';
 import MyOrganization from './OperatorsList/MyOrganization/MyOrganization';
+import { OperatorAffiliate } from './OperatorAffiliate';
 
 export const operatorsRoutes: Array<RouteObject> = [
   {
@@ -42,6 +43,20 @@ export const operatorsRoutes: Array<RouteObject> = [
           backButton: true,
           hideBreadcrumbs: false,
           custom: true
+        } as RouteHandleObject
+      },
+      {
+        id: 'OPERATORS_AFFILIATE',
+        // orgName is an optional param
+        path: 'affiliate/:organizationId/:mappedExternalUserId/:operatorName/:orgName?',
+        element: <OperatorAffiliate />,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
         } as RouteHandleObject
       }
     ]

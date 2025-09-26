@@ -3,6 +3,7 @@ import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import {
   operatorsDetailSchema,
+  pagedDebtPositionTypeOrgDTOSchema,
   pagedOrganizationOperatorSchema,
   pagedOrganizationWithDebtPositionTypeOrgAndOperatorsCountSchema
 } from '../../../generated/zod-schema';
@@ -79,3 +80,62 @@ export const useOperatorDetailSearch = (
     }
   });
 };
+
+export type OperatorDebtPositionQuery = Omit<
+  Parameters<
+    typeof utils.apiClient.bff.getDebtPositionTypeOrgsNotEnabledForOperator
+  >[2],
+  'page' | 'size' | 'sort'
+>;
+
+export const useOperatorDebtPositionTypeOrgSearch = (
+  organizationId: number,
+  mappedExternalUserId: string
+) =>
+  useMutation({
+    mutationKey: [
+      'searchOperatorDebtPosition',
+      organizationId,
+      mappedExternalUserId
+    ],
+    mutationFn: async (args: FilteredRequest<OperatorDebtPositionQuery>) => {
+      const query = {
+        ...args.filters,
+        ...args.pagination,
+        sort: args.sort
+      };
+      const { data } =
+        await utils.apiClient.bff.getDebtPositionTypeOrgsNotEnabledForOperator(
+          organizationId,
+          mappedExternalUserId,
+          query
+        );
+      parseAndLog(pagedDebtPositionTypeOrgDTOSchema, data);
+      return data;
+    }
+  });
+
+type EnableDebtPositionTypeOrgsForOperatorQuery = Parameters<
+  typeof utils.apiClient.bff.enableDebtPositionTypeOrgsForOperator
+>[2];
+
+export const useEnbleDebtPositionTypeOrgsForOperator = (
+  organizationId: number,
+  mappedExternalUserId: string
+) =>
+  useMutation({
+    mutationKey: [
+      'useEnbleDebtPositionTypeOrgsForOperator',
+      organizationId,
+      mappedExternalUserId
+    ],
+    mutationFn: async (query: EnableDebtPositionTypeOrgsForOperatorQuery) => {
+      const { data } =
+        await utils.apiClient.bff.enableDebtPositionTypeOrgsForOperator(
+          organizationId,
+          mappedExternalUserId,
+          query
+        );
+      return data;
+    }
+  });

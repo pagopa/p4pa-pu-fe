@@ -247,5 +247,17 @@ export const SuccessPageConfig: SuccessOpts = {
         customNavigation: 'ORG_SIL_SERVICE_DETAIL'
       }
     ]
+  },
+  'operator-affiliate': {
+    title: 'OperatorDetail.affiliate.success.title',
+    description: 'OperatorDetail.affiliate.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'OperatorDetail.affiliate.success.buttonLabel',
+        customNavigation: 'OPERATORS_DETAIL'
+      }
+    ]
   }
 };
