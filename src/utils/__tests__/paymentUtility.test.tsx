@@ -188,7 +188,9 @@ describe('hasFieldError and getFieldErrorMessage', () => {
       errors: {} as FieldErrors<FieldValues>,
       fieldNamePrefix: 'beneficiaries',
       getValues: vi.fn(),
-      t: vi.fn()
+      t: vi.fn(),
+      submissionCount: 1,
+      creationSubmissionCount: 0
     };
   });
 

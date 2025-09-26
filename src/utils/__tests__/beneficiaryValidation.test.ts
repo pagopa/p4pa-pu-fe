@@ -14,26 +14,26 @@ import {
   checkPaymentFields,
   validateSingleAmount,
   createBaseValidationRule,
-  createPaymentMethodValidator,
-  ValidationContext
+  createPaymentMethodValidator
 } from '../beneficiaryValidation';
+import type { BeneficiaryValidationContext } from '../../models/paymentTypes';
 
 describe('beneficiaryValidation', () => {
   describe('isEmpty', () => {
-    it('restituisce true per valori vuoti', () => {
+    it('returns true for empty values', () => {
       expect(isEmpty('')).toBe(true);
       expect(isEmpty('   ')).toBe(true);
       expect(isEmpty()).toBe(true);
       expect(isEmpty(null)).toBe(true);
     });
 
-    it('restituisce false per valori non vuoti', () => {
+    it('returns false for non-empty values', () => {
       expect(isEmpty('test')).toBe(false);
       expect(isEmpty('0')).toBe(false);
       expect(isEmpty(' test ')).toBe(false);
     });
 
-    it('restituisce true per valori non stringa', () => {
+    it('returns true for non-string values', () => {
       expect(isEmpty(0)).toBe(true);
       expect(isEmpty(123)).toBe(true);
       expect(isEmpty({})).toBe(true);
@@ -42,7 +42,7 @@ describe('beneficiaryValidation', () => {
   });
 
   describe('getErrorData', () => {
-    it('restituisce dati di errore corretti', () => {
+    it('returns correct error data', () => {
       const mockErrors = {
         beneficiaries: {
           0: {
@@ -60,7 +60,7 @@ describe('beneficiaryValidation', () => {
       });
     });
 
-    it('gestisce correttamente gli errori mancanti', () => {
+    it('handles missing errors correctly', () => {
       const mockErrors = {} as FieldErrors<Record<string, unknown>>;
 
       const result = getErrorData(mockErrors, 'beneficiaries', 0, 'entityName');
@@ -70,7 +70,7 @@ describe('beneficiaryValidation', () => {
       });
     });
 
-    it('gestisce correttamente un errore senza messaggio', () => {
+    it('correctly handles an error without a message', () => {
       const mockErrors = {
         beneficiaries: {
           0: {
@@ -88,7 +88,7 @@ describe('beneficiaryValidation', () => {
   });
 
   describe('isBeneficiaryNew', () => {
-    it('restituisce true se il beneficiario è nuovo', () => {
+    it('returns true if the beneficiary is new', () => {
       const mockWasSubmittedRef = { current: true };
       const mockExistingBeneficiaries = { 'id-1': true };
 
@@ -97,7 +97,7 @@ describe('beneficiaryValidation', () => {
       ).toBe(true);
     });
 
-    it('restituisce false se il beneficiario esiste già', () => {
+    it('returns false if the beneficiary already exists', () => {
       const mockWasSubmittedRef = { current: true };
       const mockExistingBeneficiaries = { 'id-1': true };
 
@@ -106,7 +106,7 @@ describe('beneficiaryValidation', () => {
       ).toBe(false);
     });
 
-    it('restituisce false se wasSubmittedRef è false', () => {
+    it('returns false if wasSubmittedRef is false', () => {
       const mockWasSubmittedRef = { current: false };
       const mockExistingBeneficiaries = {};
 
@@ -117,7 +117,7 @@ describe('beneficiaryValidation', () => {
   });
 
   describe('isRecentlyCreated', () => {
-    it('restituisce true se wasSubmittedRef è false', () => {
+    it('returns true if wasSubmittedRef is false', () => {
       const mockWasSubmittedRef = { current: false };
       const mockExistingBeneficiaries = {};
 
@@ -130,7 +130,7 @@ describe('beneficiaryValidation', () => {
       ).toBe(true);
     });
 
-    it('restituisce true se il beneficiario non è tra quelli esistenti', () => {
+    it('returns true if the beneficiary is not in existing beneficiaries', () => {
       const mockWasSubmittedRef = { current: true };
       const mockExistingBeneficiaries = { 'id-1': true };
 
@@ -143,7 +143,7 @@ describe('beneficiaryValidation', () => {
       ).toBe(true);
     });
 
-    it('restituisce false se il beneficiario è tra quelli esistenti e wasSubmittedRef è true', () => {
+    it('returns false if the beneficiary is among existing ones and wasSubmittedRef is true', () => {
       const mockWasSubmittedRef = { current: true };
       const mockExistingBeneficiaries = { 'id-1': true };
 
@@ -158,7 +158,7 @@ describe('beneficiaryValidation', () => {
   });
 
   describe('shouldShowValidationErrors', () => {
-    it('restituisce true se isSubmitted è true e il beneficiario esiste', () => {
+    it('returns true if isSubmitted is true and the beneficiary exists', () => {
       const mockWasSubmittedRef = { current: true };
       const mockExistingBeneficiaries = { 'id-1': true };
 
@@ -172,7 +172,7 @@ describe('beneficiaryValidation', () => {
       ).toBe(true);
     });
 
-    it('restituisce false se isSubmitted è false', () => {
+    it('returns false if isSubmitted is false', () => {
       const mockWasSubmittedRef = { current: true };
       const mockExistingBeneficiaries = { 'id-1': true };
 
@@ -186,7 +186,7 @@ describe('beneficiaryValidation', () => {
       ).toBe(false);
     });
 
-    it('restituisce false se il beneficiario è nuovo e wasSubmittedRef è false', () => {
+    it('returns false if the beneficiary is new and wasSubmittedRef is false', () => {
       const mockWasSubmittedRef = { current: false };
       const mockExistingBeneficiaries = {};
 
@@ -202,7 +202,7 @@ describe('beneficiaryValidation', () => {
   });
 
   describe('shouldSkipValidation', () => {
-    it('restituisce true se non si devono mostrare errori di validazione', () => {
+    it('returns true if validation errors should not be shown', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: false,
@@ -212,13 +212,15 @@ describe('beneficiaryValidation', () => {
         fieldNamePrefix: 'beneficiaries',
         index: 0,
         getValues: vi.fn(),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(shouldSkipValidation(mockContext)).toBe(true);
     });
 
-    it('restituisce false se si devono mostrare errori di validazione', () => {
+    it('returns false if validation errors should be shown', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: true,
@@ -228,15 +230,17 @@ describe('beneficiaryValidation', () => {
         fieldNamePrefix: 'beneficiaries',
         index: 0,
         getValues: vi.fn(),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 2,
+        creationSubmissionCount: 1
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(shouldSkipValidation(mockContext)).toBe(false);
     });
   });
 
   describe('buildFieldPath', () => {
-    it('costruisce correttamente il path del campo', () => {
+    it('builds the field path correctly', () => {
       expect(buildFieldPath('beneficiaries', 0, 'entityName')).toBe(
         'beneficiaries.0.entityName'
       );
@@ -245,7 +249,7 @@ describe('beneficiaryValidation', () => {
   });
 
   describe('hasFieldError', () => {
-    it('restituisce false se shouldSkipValidation è true', () => {
+    it('returns false if shouldSkipValidation is true', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: false,
@@ -255,13 +259,15 @@ describe('beneficiaryValidation', () => {
         fieldNamePrefix: 'beneficiaries',
         index: 0,
         getValues: vi.fn(),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(hasFieldError('entityName', mockContext)).toBe(false);
     });
 
-    it('restituisce true se il campo ha un errore', () => {
+    it('returns true if the field has an error', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: true,
@@ -279,13 +285,15 @@ describe('beneficiaryValidation', () => {
         fieldNamePrefix: 'beneficiaries',
         index: 0,
         getValues: vi.fn(),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 2,
+        creationSubmissionCount: 1
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(hasFieldError('entityName', mockContext)).toBe(true);
     });
 
-    it('restituisce false se il campo non ha errori', () => {
+    it('returns false if the field has no errors', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: true,
@@ -295,15 +303,17 @@ describe('beneficiaryValidation', () => {
         fieldNamePrefix: 'beneficiaries',
         index: 0,
         getValues: vi.fn(),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(hasFieldError('entityName', mockContext)).toBe(false);
     });
   });
 
   describe('getFieldErrorMessage', () => {
-    it('restituisce stringa vuota se shouldSkipValidation è true', () => {
+    it('returns empty string if shouldSkipValidation is true', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: false,
@@ -313,13 +323,15 @@ describe('beneficiaryValidation', () => {
         fieldNamePrefix: 'beneficiaries',
         index: 0,
         getValues: vi.fn(),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(getFieldErrorMessage('entityName', mockContext)).toBe('');
     });
 
-    it('restituisce il messaggio di errore per un campo con errore', () => {
+    it('returns the error message for a field with an error', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: true,
@@ -337,15 +349,17 @@ describe('beneficiaryValidation', () => {
         fieldNamePrefix: 'beneficiaries',
         index: 0,
         getValues: vi.fn(),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 2,
+        creationSubmissionCount: 1
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(getFieldErrorMessage('entityName', mockContext)).toBe(
         'Campo obbligatorio'
       );
     });
 
-    it('restituisce stringa vuota se isSubmitted è false', () => {
+    it('returns empty string if isSubmitted is false', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: false,
@@ -363,15 +377,17 @@ describe('beneficiaryValidation', () => {
         fieldNamePrefix: 'beneficiaries',
         index: 0,
         getValues: vi.fn(),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(getFieldErrorMessage('entityName', mockContext)).toBe('');
     });
   });
 
   describe('getFieldValue', () => {
-    it('recupera il valore di un campo dal contesto', () => {
+    it('retrieves the value of a field from the context', () => {
       const mockGetValues = vi.fn().mockReturnValue('Test Entity');
 
       const mockContext = {
@@ -383,8 +399,10 @@ describe('beneficiaryValidation', () => {
         fieldNamePrefix: 'beneficiaries',
         index: 0,
         getValues: mockGetValues,
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getFieldValue(mockContext, 'entityName');
 
@@ -394,7 +412,7 @@ describe('beneficiaryValidation', () => {
   });
 
   describe('checkPaymentFields', () => {
-    it('restituisce i valori dei campi di pagamento e lo stato bothEmpty=true se entrambi vuoti', () => {
+    it('returns payment field values and bothEmpty=true when both are empty', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: false,
@@ -408,8 +426,10 @@ describe('beneficiaryValidation', () => {
           if (path.includes('postalAccount')) return '';
           return 'default-value';
         }),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = checkPaymentFields(mockContext);
 
@@ -420,7 +440,7 @@ describe('beneficiaryValidation', () => {
       });
     });
 
-    it('restituisce i valori dei campi di pagamento e lo stato bothEmpty=false se almeno uno è valorizzato', () => {
+    it('returns payment field values and bothEmpty=false when at least one is filled', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: false,
@@ -434,8 +454,10 @@ describe('beneficiaryValidation', () => {
           if (path.includes('postalAccount')) return '';
           return 'default-value';
         }),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = checkPaymentFields(mockContext);
 
@@ -448,7 +470,7 @@ describe('beneficiaryValidation', () => {
   });
 
   describe('validateSingleAmount', () => {
-    it('restituisce undefined se il beneficiario è nuovo e wasSubmittedRef è false', () => {
+    it('returns undefined if the beneficiary is new and wasSubmittedRef is false', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: false,
@@ -458,13 +480,15 @@ describe('beneficiaryValidation', () => {
         fieldNamePrefix: 'beneficiaries',
         index: 0,
         getValues: vi.fn(),
-        t: vi.fn()
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: vi.fn(),
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(validateSingleAmount('100', mockContext)).toBeUndefined();
     });
 
-    it('restituisce undefined se il valore è valido', () => {
+    it('returns undefined if the value is valid', () => {
       const mockContext = {
         id: 'id-1',
         isSubmitted: true,
@@ -475,12 +499,12 @@ describe('beneficiaryValidation', () => {
         index: 0,
         getValues: vi.fn(),
         t: vi.fn().mockReturnValue('Importo non valido')
-      } as unknown as ValidationContext<Record<string, unknown>>;
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(validateSingleAmount('100', mockContext)).toBeUndefined();
     });
 
-    it('restituisce un messaggio di errore se il valore non è valido', () => {
+    it('returns an error message if the value is invalid', () => {
       const mockT = vi.fn().mockReturnValue('Importo non valido');
       const mockContext = {
         id: 'id-1',
@@ -492,7 +516,7 @@ describe('beneficiaryValidation', () => {
         index: 0,
         getValues: vi.fn(),
         t: mockT
-      } as unknown as ValidationContext<Record<string, unknown>>;
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       expect(validateSingleAmount('-10', mockContext)).toBe(
         'Importo non valido'
@@ -508,7 +532,7 @@ describe('beneficiaryValidation', () => {
   });
 
   describe('createBaseValidationRule', () => {
-    it('esegue la validazione solo se wasSubmittedRef è true', () => {
+    it('runs validation only if wasSubmittedRef is true', () => {
       const mockWasSubmittedRef = { current: false };
       const mockValidator = vi.fn().mockReturnValue('Errore');
 
@@ -521,7 +545,7 @@ describe('beneficiaryValidation', () => {
       expect(mockValidator).not.toHaveBeenCalled();
     });
 
-    it('restituisce il risultato del validator quando wasSubmittedRef è true', () => {
+    it('returns the validator result when wasSubmittedRef is true', () => {
       const mockWasSubmittedRef = { current: true };
       const mockValidator = vi.fn().mockReturnValue('Errore');
 
@@ -536,7 +560,7 @@ describe('beneficiaryValidation', () => {
   });
 
   describe('createPaymentMethodValidator', () => {
-    it('restituisce undefined se uno dei due campi è valorizzato', () => {
+    it('returns undefined if either field is filled', () => {
       const getOtherFieldValue = vi.fn().mockReturnValue('valorizzato');
       const validator = vi.fn();
 
@@ -549,7 +573,7 @@ describe('beneficiaryValidation', () => {
       expect(validator).not.toHaveBeenCalled();
     });
 
-    it('restituisce il risultato del validator quando entrambi i campi sono vuoti', () => {
+    it('returns the validator result when both fields are empty', () => {
       const getOtherFieldValue = vi.fn().mockReturnValue('');
       const validator = vi.fn().mockReturnValue('Errore pagamento richiesto');
 

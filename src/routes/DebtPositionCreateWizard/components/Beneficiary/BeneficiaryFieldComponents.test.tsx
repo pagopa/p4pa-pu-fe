@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { UseFormTrigger } from 'react-hook-form';
-import { ValidationContext } from '../../../../utils/beneficiaryValidation';
+import type { BeneficiaryValidationContext } from '../../../../models/paymentTypes';
 import {
   handleAmountChange,
   handleIBANChange,
@@ -298,8 +298,10 @@ describe('Render Components', () => {
         errors: {},
         fieldNamePrefix: mockFieldNamePrefix,
         getValues: vi.fn(),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       render(
         <EntityNameField field={mockField} t={mockT} context={mockContext} />
@@ -338,8 +340,10 @@ describe('Render Components', () => {
         errors: {},
         fieldNamePrefix: mockFieldNamePrefix,
         getValues: vi.fn(),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       // Render the component
       const { container } = render(
@@ -373,8 +377,10 @@ describe('Validation Error Handling', () => {
         errors: {},
         fieldNamePrefix: mockFieldNamePrefix,
         getValues: vi.fn().mockImplementation(() => ''),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = hasIBANError(mockContext, {});
       expect(result).toBe(false);
@@ -394,8 +400,10 @@ describe('Validation Error Handling', () => {
           if (path.includes('iban')) return '';
           return '';
         }),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = hasIBANError(mockContext, {});
       expect(result).toBe(false);
@@ -425,8 +433,10 @@ describe('Validation Error Handling', () => {
           if (path.includes('iban')) return 'INVALID';
           return '';
         }),
-        t: mockT
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = hasIBANError(mockContext, mockErrors);
       expect(result).toBe(true);
@@ -444,8 +454,10 @@ describe('Validation Error Handling', () => {
         errors: {},
         fieldNamePrefix: mockFieldNamePrefix,
         getValues: vi.fn().mockImplementation(() => ''),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getIBANErrorMessage(mockContext, {});
       expect(result).toBe('');
@@ -461,8 +473,10 @@ describe('Validation Error Handling', () => {
         errors: {},
         fieldNamePrefix: mockFieldNamePrefix,
         getValues: vi.fn().mockImplementation(() => ''),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getIBANErrorMessage(mockContext, {});
       expect(result).toBe(
@@ -494,8 +508,10 @@ describe('Validation Error Handling', () => {
           if (path.includes('iban')) return 'INVALID';
           return '';
         }),
-        t: mockT
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getIBANErrorMessage(mockContext, mockErrors);
       expect(result).toBe('Errore IBAN');
@@ -513,8 +529,10 @@ describe('Validation Error Handling', () => {
         errors: {},
         fieldNamePrefix: mockFieldNamePrefix,
         getValues: vi.fn().mockImplementation(() => ''),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = hasPostalAccountError(mockContext, {});
       expect(result).toBe(false);
@@ -534,8 +552,10 @@ describe('Validation Error Handling', () => {
           if (path.includes('postalAccount')) return '';
           return '';
         }),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = hasPostalAccountError(mockContext, {});
       expect(result).toBe(false);
@@ -565,8 +585,10 @@ describe('Validation Error Handling', () => {
           if (path.includes('postalAccount')) return 'INVALID';
           return '';
         }),
-        t: mockT
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = hasPostalAccountError(mockContext, mockErrors);
       expect(result).toBe(true);
@@ -584,8 +606,10 @@ describe('Validation Error Handling', () => {
         errors: {},
         fieldNamePrefix: mockFieldNamePrefix,
         getValues: vi.fn().mockImplementation(() => ''),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getPostalAccountErrorMessage(mockContext, {});
       expect(result).toBe('');
@@ -601,8 +625,10 @@ describe('Validation Error Handling', () => {
         errors: {},
         fieldNamePrefix: mockFieldNamePrefix,
         getValues: vi.fn().mockImplementation(() => ''),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getPostalAccountErrorMessage(mockContext, {});
       expect(result).toBe(
@@ -634,8 +660,10 @@ describe('Validation Error Handling', () => {
           if (path.includes('postalAccount')) return 'INVALID';
           return '';
         }),
-        t: mockT
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getPostalAccountErrorMessage(mockContext, mockErrors);
       expect(result).toBe('Errore conto postale');
@@ -669,8 +697,10 @@ describe('AmountField', () => {
       errors: {},
       fieldNamePrefix: 'beneficiaries',
       getValues: vi.fn(),
-      t: mockT
-    } as ValidationContext<Record<string, unknown>>;
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
 
     const mockFields: Array<Record<string, unknown>> = [{}];
 
@@ -732,8 +762,10 @@ describe('IBANField', () => {
       getValues: vi
         .fn()
         .mockImplementation(() => 'IT60X0542811101000000123456'),
-      t: mockT
-    } as ValidationContext<Record<string, unknown>>;
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
 
     const { container } = render(
       <IBANField
@@ -797,8 +829,10 @@ describe('IBANField', () => {
         if (path.includes('iban')) return 'INVALID';
         return '';
       }),
-      t: mockT
-    } as unknown as ValidationContext<Record<string, unknown>>;
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
     render(
       <IBANField
@@ -842,8 +876,10 @@ describe('PostalAccountField', () => {
       errors: {},
       fieldNamePrefix: 'beneficiaries',
       getValues: vi.fn().mockImplementation(() => '123456789012'),
-      t: mockT
-    } as ValidationContext<Record<string, unknown>>;
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
 
     const { container } = render(
       <PostalAccountField
@@ -902,8 +938,10 @@ describe('PostalAccountField', () => {
         if (path.includes('postalAccount')) return 'INVALID';
         return '';
       }),
-      t: mockT
-    } as unknown as ValidationContext<Record<string, unknown>>;
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
     render(
       <PostalAccountField
@@ -944,8 +982,10 @@ describe('TaxonomyCodeField', () => {
       errors: {},
       fieldNamePrefix: 'beneficiaries',
       getValues: vi.fn(),
-      t: mockT
-    } as ValidationContext<Record<string, unknown>>;
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
 
     const { container } = render(
       <TaxonomyCodeField field={mockField} t={mockT} context={mockContext} />
@@ -996,8 +1036,10 @@ describe('TaxonomyCodeField', () => {
       errors: mockErrors,
       fieldNamePrefix: 'beneficiaries',
       getValues: vi.fn(),
-      t: mockT
-    } as unknown as ValidationContext<Record<string, unknown>>;
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
     render(
       <TaxonomyCodeField field={mockField} t={mockT} context={mockContext} />
@@ -1030,8 +1072,10 @@ describe('RemittanceField', () => {
       errors: {},
       fieldNamePrefix: 'beneficiaries',
       getValues: vi.fn(),
-      t: mockT
-    } as ValidationContext<Record<string, unknown>>;
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
 
     const { container } = render(
       <RemittanceField field={mockField} t={mockT} context={mockContext} />
@@ -1087,8 +1131,10 @@ describe('RemittanceField', () => {
       errors: mockErrors,
       fieldNamePrefix: 'beneficiaries',
       getValues: vi.fn().mockReturnValue(''),
-      t: mockT
-    } as unknown as ValidationContext<Record<string, unknown>>;
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
     render(
       <RemittanceField field={mockField} t={mockT} context={mockContext} />
@@ -1161,8 +1207,10 @@ describe('PostalIban Components', () => {
         errors: {},
         fieldNamePrefix: mockFieldNamePrefix,
         getValues: vi.fn().mockImplementation(() => ''),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = hasPostalIbanError(mockContext, {});
       expect(result).toBe(false);
@@ -1181,8 +1229,10 @@ describe('PostalIban Components', () => {
           if (path.includes('postalIban')) return '';
           return undefined;
         }),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = hasPostalIbanError(mockContext, {});
       expect(result).toBe(false);
@@ -1211,8 +1261,10 @@ describe('PostalIban Components', () => {
           if (path.includes('postalIban')) return 'INVALID_IBAN';
           return undefined;
         }),
-        t: mockT
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = hasPostalIbanError(mockContext, mockErrors);
       expect(result).toBe(true);
@@ -1245,8 +1297,10 @@ describe('PostalIban Components', () => {
           if (path.includes('postalIban')) return 'INVALID_IBAN';
           return undefined;
         }),
-        t: mockT
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = hasPostalIbanError(mockContext, mockErrors);
       expect(result).toBe(true);
@@ -1264,8 +1318,10 @@ describe('PostalIban Components', () => {
         errors: {},
         fieldNamePrefix: mockFieldNamePrefix,
         getValues: vi.fn().mockImplementation(() => ''),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getPostalIbanErrorMessage(mockContext, {});
       expect(result).toBe('');
@@ -1284,8 +1340,10 @@ describe('PostalIban Components', () => {
           if (path.includes('postalIban')) return '';
           return undefined;
         }),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getPostalIbanErrorMessage(mockContext, {});
       expect(result).toBe('');
@@ -1314,8 +1372,10 @@ describe('PostalIban Components', () => {
           if (path.includes('postalIban')) return 'INVALID_IBAN';
           return undefined;
         }),
-        t: mockT
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getPostalIbanErrorMessage(mockContext, mockErrors);
       expect(result).toBe('Invalid postalIban format');
@@ -1348,8 +1408,10 @@ describe('PostalIban Components', () => {
           if (path.includes('postalIban')) return 'INVALID_IBAN';
           return undefined;
         }),
-        t: mockT
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const result = getPostalIbanErrorMessage(mockContext, mockErrors);
       expect(result).toBe('Invalid postalIban in installment');
@@ -1382,8 +1444,10 @@ describe('PostalIban Components', () => {
         getValues: vi
           .fn()
           .mockImplementation(() => 'IT60X0542811101000000123456'),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const { container } = render(
         <PostalIbanField
@@ -1446,8 +1510,10 @@ describe('PostalIban Components', () => {
           if (path.includes('postalIban')) return 'INVALID';
           return '';
         }),
-        t: mockT
-      } as unknown as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as unknown as BeneficiaryValidationContext<Record<string, unknown>>;
 
       render(
         <PostalIbanField
@@ -1487,8 +1553,10 @@ describe('PostalIban Components', () => {
         errors: {},
         fieldNamePrefix: 'beneficiaries',
         getValues: vi.fn().mockImplementation(() => ''),
-        t: mockT
-      } as ValidationContext<Record<string, unknown>>;
+        t: mockT,
+        submissionCount: 1,
+        creationSubmissionCount: 0
+      } as BeneficiaryValidationContext<Record<string, unknown>>;
 
       const { container } = render(
         <PostalIbanField
