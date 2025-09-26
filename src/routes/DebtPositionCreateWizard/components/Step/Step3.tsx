@@ -13,7 +13,7 @@ import SectionBox from '../../../../components/Wizard/SectionBox';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';
 import utils from '../../../../utils';
@@ -190,6 +190,13 @@ const Step3 = ({
   // Ref to track if the last action was publish (for correct title in completed page)
   const lastActionWasPublish = useRef(false);
 
+  // State to track if a final CTA (Create or Save draft) has been clicked
+  const [hasClickedFinalCTA, setHasClickedFinalCTA] = useState(false);
+
+  // Counter to track the number of submissions
+  // It is incremented on each final CTA click to distinguish between subsequent submissions
+  const [submissionCount, setSubmissionCount] = useState(0);
+
   const isDraftInEdit =
     isEditing && debtPositionDetail?.status === DebtPositionStatus.DRAFT;
 
@@ -225,7 +232,7 @@ const Step3 = ({
   const {
     handleSubmit,
     control,
-    formState: { errors, isSubmitted },
+    formState: { errors },
     watch,
     setValue,
     trigger,
@@ -396,6 +403,11 @@ const Step3 = ({
     const value = e.target.value;
     field.onChange(value);
 
+    // Reset hasClickedFinalCTA and submissionCount when payment mode changes
+    // Each mode should start "clean" without premature errors
+    setHasClickedFinalCTA(false);
+    setSubmissionCount(0);
+
     switch (value) {
       case DebtPositionTypeEnum.INSTALLMENTS:
         reset({
@@ -486,14 +498,38 @@ const Step3 = ({
     return { isValid: true, syncedInstallments };
   };
 
+  const handleCreateClick = () => {
+    setHasClickedFinalCTA(true);
+    setSubmissionCount((prev) => prev + 1);
+
+    // Force a re-render and then submit
+    setTimeout(() => {
+      handleSubmit((values) => onSubmit(values, false, isDraftInEdit))();
+    }, 0);
+  };
+
+  const handleSaveDraftClick = () => {
+    setHasClickedFinalCTA(true);
+    setSubmissionCount((prev) => prev + 1);
+
+    // Force a re-render and then submit
+    setTimeout(() => {
+      if (isDraftInEdit) {
+        handleSubmit((values) => onSubmit(values, false, false))();
+      } else {
+        handleSubmit((values) => onSubmit(values, true))();
+      }
+    }, 0);
+  };
+
   const getSaveDraftHandler = (): (() => void) | undefined => {
     if (isDraftInEdit) {
       // DRAFT in edit: save without publishing
-      return handleSubmit((values) => onSubmit(values, false, false));
+      return handleSaveDraftClick;
     }
     if (!isEditing) {
       // Creation mode: save as draft
-      return handleSubmit((values) => onSubmit(values, true));
+      return handleSaveDraftClick;
     }
     // UNPAID/EXPIRED in edit: no save draft option
     return undefined;
@@ -707,12 +743,12 @@ const Step3 = ({
                     required={!isInstallment}
                     disabled={data.paymentObject?.readonly || isInstallment}
                     error={
-                      isSubmitted &&
+                      hasClickedFinalCTA &&
                       !!errors.paymentObject?.value &&
                       !isInstallment
                     }
                     helperText={
-                      isSubmitted &&
+                      hasClickedFinalCTA &&
                       errors.paymentObject?.value?.message &&
                       !isInstallment
                         ? errors.paymentObject?.value?.message
@@ -743,8 +779,12 @@ const Step3 = ({
                     )}
                     required
                     disabled={data.paymentOption?.readonly}
-                    error={!!errors.paymentOption?.value}
-                    helperText={errors.paymentOption?.value?.message || ''}
+                    error={hasClickedFinalCTA && !!errors.paymentOption?.value}
+                    helperText={
+                      hasClickedFinalCTA && errors.paymentOption?.value?.message
+                        ? errors.paymentOption?.value?.message
+                        : ''
+                    }
                     onChange={(e) => handlePaymentOptionChange(e, field)}
                   >
                     <MenuItem
@@ -795,14 +835,16 @@ const Step3 = ({
                       }
                     }}
                     error={
-                      isSubmitted && !!errors.amount?.value && !isInstallment
+                      hasClickedFinalCTA &&
+                      !!errors.amount?.value &&
+                      !isInstallment
                     }
                     helperText={
                       isInstallment
                         ? t(
                             'debtPositionCreateWizard.step3.amount.installmentHelperText'
                           )
-                        : isSubmitted && errors.amount?.value?.message
+                        : hasClickedFinalCTA && errors.amount?.value?.message
                     }
                     onChange={(e) => handleAmountChange(e, field.onChange)}
                     onBlur={(e) => handleAmountBlur(e, field)}
@@ -831,14 +873,17 @@ const Step3 = ({
                           fullWidth: true,
                           required: data.flagMandatoryDueDate,
                           error: data.flagMandatoryDueDate
-                            ? isSubmitted && (!value || !!errors.dueDate?.value)
-                            : isSubmitted && !!errors.dueDate?.value,
+                            ? hasClickedFinalCTA &&
+                              (!value || !!errors.dueDate?.value)
+                            : hasClickedFinalCTA && !!errors.dueDate?.value,
                           helperText:
-                            isSubmitted && data.flagMandatoryDueDate && !value
+                            hasClickedFinalCTA &&
+                            data.flagMandatoryDueDate &&
+                            !value
                               ? t(
                                   'debtPositionCreateWizard.step3.dueDate.required'
                                 )
-                              : (isSubmitted &&
+                              : (hasClickedFinalCTA &&
                                   errors.dueDate?.value?.message) ||
                                 ''
                         },
@@ -903,7 +948,7 @@ const Step3 = ({
                   ref={beneficiaryFieldRef}
                   control={control}
                   errors={errors}
-                  isSubmitted={isSubmitted}
+                  isSubmitted={false}
                   totalAmount={totalAmount}
                   fieldNamePrefix="beneficiaries"
                   disabled={false}
@@ -912,6 +957,8 @@ const Step3 = ({
                   trigger={trigger}
                   onToggleMultibeneficiary={handleMultibeneficiaryToggle}
                   isEditing={isEditing}
+                  hasClickedFinalCTA={hasClickedFinalCTA}
+                  submissionCount={submissionCount}
                 />
               </Grid>
             )}
@@ -924,7 +971,7 @@ const Step3 = ({
           <InstallmentField<Step3FormValues>
             control={control}
             errors={errors}
-            isSubmitted={isSubmitted}
+            isSubmitted={hasClickedFinalCTA}
             fieldNamePrefix="installments"
             disabled={false}
             flagMandatoryDueDate={data.flagMandatoryDueDate}
@@ -933,14 +980,14 @@ const Step3 = ({
             trigger={trigger}
             onInstallmentsChange={handleInstallmentsChange}
             isEditing={isEditing}
+            hasClickedFinalCTA={hasClickedFinalCTA}
+            submissionCount={submissionCount}
           />
         </div>
       )}
       <WizardStepButtons
         onBack={onBack}
-        onNext={handleSubmit((values) =>
-          onSubmit(values, false, isDraftInEdit)
-        )}
+        onNext={handleCreateClick}
         onSaveDraft={getSaveDraftHandler()}
         disableNext={false}
         nextLabel={getNextButtonLabel()}

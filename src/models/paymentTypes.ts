@@ -168,6 +168,8 @@ export type BeneficiaryValidationContext<T extends FieldValues> = {
   fieldNamePrefix: string;
   getValues: UseFormGetValues<T>;
   t: (key: string) => string;
+  submissionCount: number;
+  creationSubmissionCount: number;
 };
 
 export type BaseHookProps<T extends FieldValues> = {
@@ -200,6 +202,7 @@ export type InstallmentManagementProps<T extends FieldValues> =
     readonly fieldNamePrefix: FieldArrayPath<T>;
     readonly setValue: UseFormSetValue<T>;
     readonly flagMandatoryDueDate?: boolean;
+    readonly submissionCount?: number;
     readonly onInstallmentsChange?: (
       installments: Array<Installment>,
       totalAmount: string

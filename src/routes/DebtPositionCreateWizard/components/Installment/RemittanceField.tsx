@@ -18,6 +18,7 @@ type RemittanceFieldProps<T extends FieldValues> = {
   };
   validateRemittance?: (index: number, trigger: UseFormTrigger<T>) => void;
   trigger: UseFormTrigger<T>;
+  showErrors?: boolean;
 };
 
 /**
@@ -30,7 +31,8 @@ const RemittanceField = <T extends FieldValues>({
   disabled = false,
   error,
   validateRemittance,
-  trigger
+  trigger,
+  showErrors = true
 }: RemittanceFieldProps<T>) => {
   const { t } = useTranslation();
 
@@ -56,8 +58,8 @@ const RemittanceField = <T extends FieldValues>({
           required
           disabled={disabled}
           value={field.value || ''}
-          error={!!error}
-          helperText={error?.message || ''}
+          error={showErrors && !!error}
+          helperText={showErrors && error?.message ? error.message : ''}
           onChange={(e) => {
             field.onChange(e.target.value);
           }}

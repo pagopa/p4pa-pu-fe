@@ -47,7 +47,10 @@ const BeneficiaryControl = <T extends FieldValues>({
   trigger,
   isMultibeneficiary,
   toggleMultibeneficiary,
-  isEditing = false
+  isEditing = false,
+  submissionCount = 0,
+  existingInstallments = {},
+  installmentFieldId
 }: {
   index: number;
   control: Control<T>;
@@ -61,6 +64,9 @@ const BeneficiaryControl = <T extends FieldValues>({
   isMultibeneficiary: boolean;
   toggleMultibeneficiary: (value: boolean) => void;
   isEditing?: boolean;
+  submissionCount?: number;
+  existingInstallments?: Record<string, boolean>;
+  installmentFieldId?: string;
 }) => {
   const { t } = useTranslation();
 
@@ -579,24 +585,40 @@ const BeneficiaryControl = <T extends FieldValues>({
 
       {isMultibeneficiary && showBeneficiaryForm && (
         <Grid item xs={12} mt={1}>
-          <BeneficiaryField
-            control={control}
-            errors={errors}
-            isSubmitted={isSubmitted}
-            totalAmount={getValues(amountPath) || ''}
-            fieldNamePrefix={
-              `${fieldNamePrefix}.${index}.beneficiaries` as FieldArrayPath<T>
-            }
-            disabled={false}
-            setValue={setValue}
-            getValues={getValues}
-            trigger={trigger}
-            onToggleMultibeneficiary={toggleMultibeneficiary}
-            isInsideInstallment={true}
-            installmentIndex={index}
-            installmentsFieldNamePrefix={fieldNamePrefix}
-            isEditing={isEditing}
-          />
+          {(() => {
+            // Check if this installment was created after submit using the real field ID
+            const installmentWasCreatedAfterSubmit =
+              submissionCount > 0 &&
+              installmentFieldId &&
+              !existingInstallments[installmentFieldId];
+            const shouldShowBeneficiaryErrors =
+              isSubmitted && !installmentWasCreatedAfterSubmit;
+
+            // Store the shouldShowBeneficiaryErrors in a way we can access it below
+            return (
+              <BeneficiaryField
+                control={control}
+                errors={errors}
+                isSubmitted={shouldShowBeneficiaryErrors}
+                totalAmount={getValues(amountPath) || ''}
+                fieldNamePrefix={
+                  `${fieldNamePrefix}.${index}.beneficiaries` as FieldArrayPath<T>
+                }
+                disabled={false}
+                setValue={setValue}
+                getValues={getValues}
+                trigger={trigger}
+                onToggleMultibeneficiary={toggleMultibeneficiary}
+                isInsideInstallment={true}
+                installmentIndex={index}
+                installmentsFieldNamePrefix={fieldNamePrefix}
+                isEditing={isEditing}
+                hasClickedFinalCTA={shouldShowBeneficiaryErrors}
+                submissionCount={submissionCount}
+                creationSubmissionCount={submissionCount}
+              />
+            );
+          })()}
         </Grid>
       )}
     </>

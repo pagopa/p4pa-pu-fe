@@ -89,7 +89,9 @@ describe('BeneficiaryAmountFields', () => {
       errors: {},
       fieldNamePrefix: fieldNamePrefix,
       getValues: vi.fn(),
-      t: t
+      t: t,
+      submissionCount: 0,
+      creationSubmissionCount: 0
     };
 
     render(
@@ -129,7 +131,9 @@ describe('BeneficiaryAmountFields', () => {
       errors: {},
       fieldNamePrefix: fieldNamePrefix,
       getValues: vi.fn(),
-      t: t
+      t: t,
+      submissionCount: 1,
+      creationSubmissionCount: 0
     };
 
     render(
@@ -164,7 +168,9 @@ describe('BeneficiaryAmountFields', () => {
       errors: {},
       fieldNamePrefix: fieldNamePrefix,
       getValues: vi.fn(),
-      t: t
+      t: t,
+      submissionCount: 0,
+      creationSubmissionCount: 0
     };
 
     render(

@@ -20,6 +20,7 @@ type DateFieldProps<T extends FieldValues> = {
   validateDueDate: (index: number, trigger: UseFormTrigger<T>) => void;
   trigger: UseFormTrigger<T>;
   flagMandatoryDueDate?: boolean;
+  showErrors?: boolean;
 };
 
 const DateField = <T extends FieldValues>({
@@ -29,7 +30,8 @@ const DateField = <T extends FieldValues>({
   disabled = false,
   validateDueDate,
   trigger,
-  flagMandatoryDueDate = true
+  flagMandatoryDueDate = true,
+  showErrors = true
 }: DateFieldProps<T>) => {
   const { t } = useTranslation();
 
@@ -74,8 +76,8 @@ const DateField = <T extends FieldValues>({
                 id: `installment-due-date-${index}`,
                 fullWidth: true,
                 required: flagMandatoryDueDate,
-                error: !!error,
-                helperText: error?.message || '',
+                error: showErrors && !!error,
+                helperText: showErrors && error?.message ? error.message : '',
                 size: 'small'
               },
               actionBar: {

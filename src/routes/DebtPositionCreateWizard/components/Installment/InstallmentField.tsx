@@ -44,6 +44,8 @@ type InstallmentFieldProps<T extends FieldValues> = {
   readonly flagMandatoryDueDate?: boolean;
   readonly onInstallmentsChange?: (totalAmount: string) => void;
   readonly isEditing?: boolean;
+  readonly hasClickedFinalCTA?: boolean;
+  readonly submissionCount?: number;
 };
 
 /**
@@ -61,7 +63,9 @@ function InstallmentField<T extends FieldValues>({
   disabled = false,
   flagMandatoryDueDate = true,
   onInstallmentsChange,
-  isEditing = false
+  isEditing = false,
+  hasClickedFinalCTA = false,
+  submissionCount = 0
 }: InstallmentFieldProps<T>) {
   const { t } = useTranslation();
 
@@ -70,7 +74,8 @@ function InstallmentField<T extends FieldValues>({
     MIN_INSTALLMENTS,
     MAX_INSTALLMENTS,
     addInstallment,
-    removeInstallment
+    removeInstallment,
+    existingInstallments
   } = useInstallmentManagement<T>({
     control,
     fieldNamePrefix: fieldNamePrefix as FieldArrayPath<T>,
@@ -79,6 +84,7 @@ function InstallmentField<T extends FieldValues>({
     setValue,
     trigger,
     flagMandatoryDueDate,
+    submissionCount,
     onInstallmentsChange: (_installments, totalAmount) => {
       if (onInstallmentsChange) {
         onInstallmentsChange(totalAmount);
@@ -163,6 +169,9 @@ function InstallmentField<T extends FieldValues>({
                 flagMandatoryDueDate={flagMandatoryDueDate}
                 isEditing={isEditing}
                 readonlyProps={readonlyProps}
+                hasClickedFinalCTA={hasClickedFinalCTA}
+                submissionCount={submissionCount}
+                existingInstallments={existingInstallments}
               />
             </Grid>
           );

@@ -185,6 +185,10 @@ export function useBeneficiaryManagement<T extends FieldValues>(
 
     setExistingBeneficiaries({});
 
+    // Reset also wasSubmittedRef to avoid premature errors
+    // being shown when changing payment mode
+    wasSubmittedRef.current = false;
+
     if (onBeneficiariesChange) {
       onBeneficiariesChange([]);
     }

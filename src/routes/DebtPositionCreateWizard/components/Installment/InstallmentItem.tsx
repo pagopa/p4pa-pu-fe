@@ -66,6 +66,9 @@ type InstallmentItemProps<T extends FieldValues> = {
     remittance?: boolean;
     isMultibeneficiary?: boolean;
   };
+  readonly hasClickedFinalCTA?: boolean;
+  readonly submissionCount?: number;
+  readonly existingInstallments?: Record<string, boolean>;
 };
 
 /**
@@ -75,6 +78,7 @@ type InstallmentItemProps<T extends FieldValues> = {
  */
 const InstallmentItem = <T extends FieldValues>({
   index,
+  field,
   control,
   errors,
   isSubmitted,
@@ -87,7 +91,10 @@ const InstallmentItem = <T extends FieldValues>({
   onRemove,
   flagMandatoryDueDate = true,
   isEditing,
-  readonlyProps
+  readonlyProps,
+  hasClickedFinalCTA = false,
+  submissionCount = 0,
+  existingInstallments = {}
 }: InstallmentItemProps<T>) => {
   const { t } = useTranslation();
 
@@ -111,10 +118,18 @@ const InstallmentItem = <T extends FieldValues>({
   const dueDatePath = `${fieldNamePrefix}.${index}.dueDate` as Path<T>;
   const remittancePath = `${fieldNamePrefix}.${index}.remittance` as Path<T>;
 
-  // Typed access to errors
+  // Track if this installment was created after the final CTA was clicked
+  // An installment is considered "created after submit" if:
+  // 1. A submit has already happened (submissionCount > 0)
+  // 2. This installment was NOT in the existingInstallments registry (wasn't present at submit time)
+  const wasCreatedAfterSubmit =
+    submissionCount > 0 && !existingInstallments[field.id];
+
+  // Show errors only if installment existed at submit time
+  const shouldShowErrors = hasClickedFinalCTA && !wasCreatedAfterSubmit;
   const fieldErrors = errors[fieldNamePrefix as keyof typeof errors];
   const amountErrors =
-    fieldErrors && index in fieldErrors
+    shouldShowErrors && fieldErrors && index in fieldErrors
       ? (
           fieldErrors as Record<
             number,
@@ -129,7 +144,7 @@ const InstallmentItem = <T extends FieldValues>({
         )[index]?.amount
       : undefined;
   const dueDateErrors =
-    fieldErrors && index in fieldErrors
+    shouldShowErrors && fieldErrors && index in fieldErrors
       ? (
           fieldErrors as Record<
             number,
@@ -144,7 +159,7 @@ const InstallmentItem = <T extends FieldValues>({
         )[index]?.dueDate
       : undefined;
   const remittanceErrors =
-    fieldErrors && index in fieldErrors
+    shouldShowErrors && fieldErrors && index in fieldErrors
       ? (
           fieldErrors as Record<
             number,
@@ -214,6 +229,7 @@ const InstallmentItem = <T extends FieldValues>({
               validateInstallmentAmount={validators.validateInstallmentAmount}
               trigger={trigger}
               onAmountChange={handleInstallmentAmountChange}
+              showErrors={shouldShowErrors}
             />
           </Grid>
 
@@ -228,10 +244,11 @@ const InstallmentItem = <T extends FieldValues>({
               validateDueDate={validators.validateDueDate}
               trigger={trigger}
               flagMandatoryDueDate={flagMandatoryDueDate}
+              showErrors={shouldShowErrors}
             />
           </Grid>
 
-          {/* Remittance Field - Campo causale */}
+          {/* Remittance Field - Remittance field */}
           <Grid item xs={12}>
             <RemittanceField<T>
               control={control}
@@ -241,6 +258,7 @@ const InstallmentItem = <T extends FieldValues>({
               error={remittanceErrors}
               validateRemittance={validators.validateRemittance}
               trigger={trigger}
+              showErrors={shouldShowErrors}
             />
           </Grid>
 
@@ -249,7 +267,7 @@ const InstallmentItem = <T extends FieldValues>({
             index={index}
             control={control}
             errors={errors}
-            isSubmitted={isSubmitted}
+            isSubmitted={hasClickedFinalCTA}
             fieldNamePrefix={fieldNamePrefix}
             disabled={disabled || readonlyProps?.isMultibeneficiary}
             getValues={getValues}
@@ -258,6 +276,9 @@ const InstallmentItem = <T extends FieldValues>({
             isMultibeneficiary={isMultibeneficiary}
             toggleMultibeneficiary={toggleMultibeneficiary}
             isEditing={isEditing}
+            submissionCount={submissionCount}
+            existingInstallments={existingInstallments}
+            installmentFieldId={field.id}
           />
         </Grid>
       </Box>

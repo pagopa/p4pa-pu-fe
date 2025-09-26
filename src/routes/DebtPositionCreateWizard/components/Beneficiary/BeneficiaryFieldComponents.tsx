@@ -14,12 +14,12 @@ import {
   UseFormTrigger
 } from 'react-hook-form';
 import {
-  ValidationContext,
   hasFieldError,
   getFieldErrorMessage,
   shouldSkipValidation,
   buildFieldPath
 } from '../../../../utils/beneficiaryValidation';
+import type { BeneficiaryValidationContext } from '../../../../models/paymentTypes';
 import {
   handleAmountInputBlur,
   handleAmountInputChange,
@@ -175,7 +175,7 @@ export function EntityNameField<T extends FieldValues>(
     };
     t: (key: string) => string;
     disabled?: boolean;
-    context: ValidationContext<T>;
+    context: BeneficiaryValidationContext<T>;
   }>
 ) {
   const { field, t, disabled = false, context } = props;
@@ -212,7 +212,7 @@ export function AmountField<T extends FieldValues>(
     };
     t: (key: string) => string;
     disabled?: boolean;
-    context: ValidationContext<T>;
+    context: BeneficiaryValidationContext<T>;
     index: number;
     fields: Array<Record<string, unknown>>;
     trigger: UseFormTrigger<T>;
@@ -280,7 +280,7 @@ export function TaxCodeField<T extends FieldValues>(
     };
     t: (key: string) => string;
     disabled?: boolean;
-    context: ValidationContext<T>;
+    context: BeneficiaryValidationContext<T>;
   }>
 ) {
   const { field, t, disabled = false, context } = props;
@@ -317,7 +317,7 @@ export function RemittanceField<T extends FieldValues>(
     };
     t: (key: string) => string;
     disabled?: boolean;
-    context: ValidationContext<T>;
+    context: BeneficiaryValidationContext<T>;
   }>
 ) {
   const { field, t, disabled = false, context } = props;
@@ -344,7 +344,7 @@ export function RemittanceField<T extends FieldValues>(
 }
 
 export function hasIBANError<T extends FieldValues>(
-  context: ValidationContext<T>,
+  context: BeneficiaryValidationContext<T>,
   errors: FieldErrors<T>
 ): boolean {
   if (shouldSkipValidation(context)) {
@@ -405,7 +405,7 @@ export function hasIBANError<T extends FieldValues>(
 }
 
 export function hasPostalIbanError<T extends FieldValues>(
-  context: ValidationContext<T>,
+  context: BeneficiaryValidationContext<T>,
   errors: FieldErrors<T>
 ): boolean {
   if (shouldSkipValidation(context)) {
@@ -460,7 +460,7 @@ export function hasPostalIbanError<T extends FieldValues>(
 }
 
 export function getIBANErrorMessage<T extends FieldValues>(
-  context: ValidationContext<T>,
+  context: BeneficiaryValidationContext<T>,
   errors: FieldErrors<T>
 ): string {
   if (shouldSkipValidation(context)) {
@@ -534,7 +534,7 @@ export function getIBANErrorMessage<T extends FieldValues>(
 }
 
 export function getPostalIbanErrorMessage<T extends FieldValues>(
-  context: ValidationContext<T>,
+  context: BeneficiaryValidationContext<T>,
   errors: FieldErrors<T>
 ): string {
   if (shouldSkipValidation(context)) {
@@ -602,7 +602,7 @@ export function IBANField<T extends FieldValues>(
     };
     t: (key: string) => string;
     disabled?: boolean;
-    context: ValidationContext<T>;
+    context: BeneficiaryValidationContext<T>;
     index: number;
     trigger: UseFormTrigger<T>;
     fieldNamePrefix: string;
@@ -656,7 +656,7 @@ export function PostalIbanField<T extends FieldValues>(
     };
     t: (key: string) => string;
     disabled?: boolean;
-    context: ValidationContext<T>;
+    context: BeneficiaryValidationContext<T>;
     index: number;
     trigger: UseFormTrigger<T>;
     fieldNamePrefix: string;
@@ -705,7 +705,7 @@ export function PostalIbanField<T extends FieldValues>(
 }
 
 export function hasPostalAccountError<T extends FieldValues>(
-  context: ValidationContext<T>,
+  context: BeneficiaryValidationContext<T>,
   errors: FieldErrors<T>
 ): boolean {
   if (shouldSkipValidation(context)) {
@@ -770,7 +770,7 @@ export function hasPostalAccountError<T extends FieldValues>(
 }
 
 export function getPostalAccountErrorMessage<T extends FieldValues>(
-  context: ValidationContext<T>,
+  context: BeneficiaryValidationContext<T>,
   errors: FieldErrors<T>
 ): string {
   if (shouldSkipValidation(context)) {
@@ -854,7 +854,7 @@ export function PostalAccountField<T extends FieldValues>(
     };
     t: (key: string) => string;
     disabled?: boolean;
-    context: ValidationContext<T>;
+    context: BeneficiaryValidationContext<T>;
     index: number;
     trigger: UseFormTrigger<T>;
     fieldNamePrefix: string;
@@ -901,7 +901,7 @@ export function TaxonomyCodeField<T extends FieldValues>(
     };
     t: (key: string) => string;
     disabled?: boolean;
-    context: ValidationContext<T>;
+    context: BeneficiaryValidationContext<T>;
   }>
 ) {
   const { field, t, disabled = false, context } = props;
