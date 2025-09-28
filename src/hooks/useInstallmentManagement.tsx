@@ -6,7 +6,11 @@ import { useReducer, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFieldArray, Path, FieldValues, PathValue } from 'react-hook-form';
 import { createAmountValidator } from '../utils/fieldValidation';
-import { formatDate, moneyFormat } from '../utils/formatters';
+import {
+  formatDate,
+  parseAmountToNumber,
+  formatAmountForDisplay
+} from '../utils/formatters';
 import {
   Installment,
   InstallmentManagementProps,
@@ -174,11 +178,7 @@ export function useInstallmentManagement<T extends FieldValues>(
 
       // Get amount and format it if present
       const amount = installmentData?.amount;
-      const formattedAmount = amount
-        ? moneyFormat(parseFloat(amount) * 100)
-            .replace('€', '')
-            .trim()
-        : '';
+      const formattedAmount = amount ? formatAmountForDisplay(amount) : '';
 
       return {
         ...installmentData,
@@ -206,7 +206,7 @@ export function useInstallmentManagement<T extends FieldValues>(
           `${fieldNamePrefix}.${index}` as Path<T>
         );
         const amount = installmentData?.amount as string | undefined;
-        const amountValue = amount ? parseFloat(amount.replace(',', '.')) : 0;
+        const amountValue = amount ? parseAmountToNumber(amount) || 0 : 0;
         return total + amountValue;
       }, 0)
       .toFixed(2);
