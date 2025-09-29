@@ -50,7 +50,9 @@ vi.mock('../utils/formatters', async () => {
       const stringVal = String(value);
       // Format with two decimal places and replace dot with comma
       const numValue = parseFloat(stringVal);
-      return isNaN(numValue) ? stringVal : numValue.toFixed(2).replace('.', ',');
+      return isNaN(numValue)
+        ? stringVal
+        : numValue.toFixed(2).replace('.', ',');
     })
   };
 });
@@ -492,7 +494,9 @@ describe('useInstallmentManagement', () => {
     expect(installmentsData[1].isMultibeneficiary).toBe(true);
 
     // Verify that formatAmountForDisplay was called
-    expect(vi.mocked(formattersModule.formatAmountForDisplay)).toHaveBeenCalled();
+    expect(
+      vi.mocked(formattersModule.formatAmountForDisplay)
+    ).toHaveBeenCalled();
   });
 
   it('should store existing installments after submit', () => {

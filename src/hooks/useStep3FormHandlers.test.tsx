@@ -24,8 +24,7 @@ describe('useStep3FormHandlers', () => {
   const mockTrigger = vi.fn();
   const mockReset = vi.fn();
   const mockGetValues = vi.fn();
-  const mockSetHasClickedFinalCTA = vi.fn();
-  const mockSetSubmissionCount = vi.fn();
+  const mockResetValidationState = vi.fn();
   const mockBeneficiaryFieldRef = {
     current: {
       resetAllBeneficiaries: vi.fn()
@@ -51,8 +50,7 @@ describe('useStep3FormHandlers', () => {
     beneficiaries: [],
     paymentOption: DebtPositionTypeEnum.SINGLE,
     beneficiaryFieldRef: mockBeneficiaryFieldRef,
-    setHasClickedFinalCTA: mockSetHasClickedFinalCTA,
-    setSubmissionCount: mockSetSubmissionCount
+    resetValidationState: mockResetValidationState
   };
 
   beforeEach(() => {
@@ -207,8 +205,7 @@ describe('useStep3FormHandlers', () => {
       expect(mockField.onChange).toHaveBeenCalledWith(
         DebtPositionTypeEnum.INSTALLMENTS
       );
-      expect(mockSetHasClickedFinalCTA).toHaveBeenCalledWith(false);
-      expect(mockSetSubmissionCount).toHaveBeenCalledWith(0);
+      expect(mockResetValidationState).toHaveBeenCalled();
     });
 
     it('should reset fields when changing to installments', () => {

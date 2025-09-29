@@ -513,7 +513,7 @@ describe('BeneficiaryField', () => {
         trigger={mockTrigger}
         onToggleMultibeneficiary={mockOnToggleMultibeneficiary}
         onBeneficiariesChange={mockOnBeneficiariesChange}
-        hasClickedFinalCTA={hasClickedFinalCTA}
+        shouldShowErrors={() => hasClickedFinalCTA}
       />
     );
 
