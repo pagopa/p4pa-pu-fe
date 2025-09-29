@@ -100,7 +100,11 @@ describe('getReceipts', () => {
     const mockError = new Error('API Error');
 
     vi.mocked(buildQueryParams).mockReturnValue({
-      receiptOrigins: [ReceiptOriginType.RECEIPT_PAGOPA],
+      receiptOrigins: [
+        ReceiptOriginType.RECEIPT_PAGOPA,
+        ReceiptOriginType.PAYMENTS_REPORTING,
+        ReceiptOriginType.RECEIPT_FILE
+      ],
       page: 1,
       size: 20
     });
@@ -127,7 +131,11 @@ describe('getReceipts', () => {
     };
 
     vi.mocked(buildQueryParams).mockReturnValue({
-      receiptOrigins: [ReceiptOriginType.RECEIPT_PAGOPA],
+      receiptOrigins: [
+        ReceiptOriginType.RECEIPT_PAGOPA,
+        ReceiptOriginType.PAYMENTS_REPORTING,
+        ReceiptOriginType.RECEIPT_FILE
+      ],
       debtPositionTypeOrgId: 789,
       sort: ['date:desc'],
       page: 2,
