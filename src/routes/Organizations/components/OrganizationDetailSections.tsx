@@ -24,7 +24,9 @@ export const accountingInfo = (
   },
   {
     label: t('commons.cashJournal'),
-    value: organizationDetailData?.flagTreasury ? t('commons.enabled') : '-'
+    value: organizationDetailData?.flagTreasury
+      ? t('commons.enabled')
+      : t('commons.disabled')
   }
 ];
 export const paymentInfo = (
@@ -46,13 +48,13 @@ export const paymentInfo = (
     label: t('organizations.paymentPushNotification'),
     value: organizationDetailData?.flagNotifyOutcomePush
       ? t('commons.enabled')
-      : '-'
+      : t('commons.disabled')
   },
   {
     label: t('organizations.paymentNotified'),
     value: organizationDetailData?.flagPaymentNotification
       ? t('commons.enabled')
-      : '-'
+      : t('commons.disabled')
   },
   {
     childrenComponent: (
@@ -115,7 +117,9 @@ export const integrationBox = (
   },
   {
     label: t('organizations.ioMessagge'),
-    value: organizationDetailData?.flagNotifyIo ? t('commons.enabled') : '-'
+    value: organizationDetailData?.flagNotifyIo
+      ? t('commons.enabled')
+      : t('commons.disabled')
   },
   {
     childrenComponent: (
@@ -142,7 +146,9 @@ export const integrationBox = (
   },
   {
     label: t('organizations.pdndIntegration'),
-    value: organizationDetailData?.pdndEnabled ? t('commons.enabled') : '-'
+    value: organizationDetailData?.pdndEnabled
+      ? t('commons.enabled')
+      : t('commons.disabled')
   },
   {
     childrenComponent: (
