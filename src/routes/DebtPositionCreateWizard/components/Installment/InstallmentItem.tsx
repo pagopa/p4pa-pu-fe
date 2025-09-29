@@ -268,6 +268,7 @@ const InstallmentItem = <T extends FieldValues>({
 
           {/* Beneficiary Controls - Using extracted component */}
           <BeneficiaryControl<T>
+            key={`beneficiary-control-${field.id}-${index}`}
             index={index}
             control={control}
             errors={errors}

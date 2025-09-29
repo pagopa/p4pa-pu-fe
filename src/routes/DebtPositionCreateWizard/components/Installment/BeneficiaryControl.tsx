@@ -48,7 +48,8 @@ const BeneficiaryControl = <T extends FieldValues>({
   toggleMultibeneficiary,
   isEditing = false,
   submissionCount = 0,
-  shouldShowErrors
+  shouldShowErrors,
+  installmentFieldId
 }: {
   index: number;
   control: Control<T>;
@@ -379,7 +380,8 @@ const BeneficiaryControl = <T extends FieldValues>({
     setValue,
     sameBeneficiariesAsBeforePath,
     copyBeneficiariesFromPreviousInstallment,
-    isEditing
+    isEditing,
+    installmentFieldId
   ]);
 
   /**
@@ -410,7 +412,8 @@ const BeneficiaryControl = <T extends FieldValues>({
     hasPreviousBeneficiaries,
     sameBeneficiariesAsBeforePath,
     copyBeneficiariesFromPreviousInstallment,
-    isEditing
+    isEditing,
+    installmentFieldId
   ]);
 
   /**
