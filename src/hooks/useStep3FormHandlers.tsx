@@ -26,8 +26,8 @@ export type UseStep3FormHandlersProps = {
   beneficiaries: Array<Beneficiary>;
   paymentOption: PaymentOption;
   beneficiaryFieldRef: React.MutableRefObject<BeneficiaryFieldRef>;
-  setHasClickedFinalCTA: (value: boolean) => void;
-  setSubmissionCount: (value: number | ((prev: number) => number)) => void;
+  /** Function to reset validation state when changing payment options */
+  resetValidationState: () => void;
 };
 
 /**
@@ -65,8 +65,7 @@ export const useStep3FormHandlers = (
     beneficiaries,
     paymentOption,
     beneficiaryFieldRef,
-    setHasClickedFinalCTA,
-    setSubmissionCount
+    resetValidationState
   } = props;
 
   /**
@@ -116,10 +115,9 @@ export const useStep3FormHandlers = (
     const value = e.target.value;
     field.onChange(value);
 
-    // Reset hasClickedFinalCTA and submissionCount when changing the payment mode
+    // Reset validation state when changing the payment mode
     // Each mode should start "clean" without premature errors
-    setHasClickedFinalCTA(false);
-    setSubmissionCount(0);
+    resetValidationState();
 
     // Reset the fields based on the selected mode
     resetFieldsForPaymentOption(value);

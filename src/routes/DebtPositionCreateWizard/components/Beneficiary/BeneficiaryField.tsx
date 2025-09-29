@@ -54,9 +54,10 @@ type BeneficiaryFieldProps<T extends FieldValues = FieldValues> = {
   readonly installmentIndex?: number;
   readonly installmentsFieldNamePrefix?: string;
   readonly isEditing?: boolean;
-  readonly hasClickedFinalCTA?: boolean;
-  readonly submissionCount?: number;
-  readonly creationSubmissionCount?: number;
+  /** Function to determine when to show errors based on component creation timing */
+  readonly shouldShowErrors?: (componentCreationCount?: number) => boolean;
+  readonly submissionCount?: number; // Still needed for creation tracking
+  readonly creationSubmissionCount?: number; // Still needed for creation tracking
 };
 
 /**
@@ -92,7 +93,7 @@ const InternalBeneficiaryField = <T extends FieldValues>(
     installmentIndex,
     installmentsFieldNamePrefix,
     isEditing,
-    hasClickedFinalCTA = false,
+    shouldShowErrors,
     submissionCount = 0,
     creationSubmissionCount = 0
   } = props;
@@ -112,7 +113,9 @@ const InternalBeneficiaryField = <T extends FieldValues>(
           control,
           index: installmentIndex,
           installmentsFieldNamePrefix,
-          isSubmitted: hasClickedFinalCTA, // Use hasClickedFinalCTA to synchronize with validation
+          isSubmitted: shouldShowErrors
+            ? shouldShowErrors(creationSubmissionCountRef.current)
+            : false, // Use centralized shouldShowErrors logic
           getValues,
           setValue,
           trigger,
@@ -121,7 +124,9 @@ const InternalBeneficiaryField = <T extends FieldValues>(
       : useBeneficiaryManagement<T>({
           control,
           fieldNamePrefix: fieldNamePrefix as FieldArrayPath<T>,
-          isSubmitted: hasClickedFinalCTA, // Use hasClickedFinalCTA to synchronize with validation
+          isSubmitted: shouldShowErrors
+            ? shouldShowErrors(creationSubmissionCountRef.current)
+            : false, // Use centralized shouldShowErrors logic
           getValues,
           trigger,
           totalAmount,
@@ -189,9 +194,9 @@ const InternalBeneficiaryField = <T extends FieldValues>(
     const context = {
       id: field.id,
       index,
-      isSubmitted:
-        hasClickedFinalCTA &&
-        submissionCount > creationSubmissionCountRef.current, // Show errors only if created before current submission
+      isSubmitted: shouldShowErrors
+        ? shouldShowErrors(creationSubmissionCountRef.current)
+        : false, // Use centralized shouldShowErrors logic
       wasSubmittedRef,
       existingBeneficiaries,
       errors,

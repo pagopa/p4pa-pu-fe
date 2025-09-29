@@ -44,8 +44,8 @@ type InstallmentFieldProps<T extends FieldValues> = {
   readonly flagMandatoryDueDate?: boolean;
   readonly onInstallmentsChange?: (totalAmount: string) => void;
   readonly isEditing?: boolean;
-  readonly hasClickedFinalCTA?: boolean;
-  readonly submissionCount?: number;
+  readonly shouldShowErrors?: (componentCreationCount?: number) => boolean;
+  readonly submissionCount?: number; // Still needed for creation tracking
 };
 
 /**
@@ -64,7 +64,7 @@ function InstallmentField<T extends FieldValues>({
   flagMandatoryDueDate = true,
   onInstallmentsChange,
   isEditing = false,
-  hasClickedFinalCTA = false,
+  shouldShowErrors,
   submissionCount = 0
 }: InstallmentFieldProps<T>) {
   const { t } = useTranslation();
@@ -169,7 +169,7 @@ function InstallmentField<T extends FieldValues>({
                 flagMandatoryDueDate={flagMandatoryDueDate}
                 isEditing={isEditing}
                 readonlyProps={readonlyProps}
-                hasClickedFinalCTA={hasClickedFinalCTA}
+                shouldShowErrors={shouldShowErrors}
                 submissionCount={submissionCount}
                 existingInstallments={existingInstallments}
               />

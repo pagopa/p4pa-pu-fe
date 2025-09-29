@@ -39,7 +39,6 @@ const BeneficiaryControl = <T extends FieldValues>({
   index,
   control,
   errors,
-  isSubmitted,
   fieldNamePrefix,
   disabled = false,
   getValues,
@@ -49,13 +48,11 @@ const BeneficiaryControl = <T extends FieldValues>({
   toggleMultibeneficiary,
   isEditing = false,
   submissionCount = 0,
-  existingInstallments = {},
-  installmentFieldId
+  shouldShowErrors
 }: {
   index: number;
   control: Control<T>;
   errors: FieldErrors<T>;
-  isSubmitted: boolean;
   fieldNamePrefix: string;
   disabled?: boolean;
   getValues: UseFormGetValues<T>;
@@ -67,6 +64,7 @@ const BeneficiaryControl = <T extends FieldValues>({
   submissionCount?: number;
   existingInstallments?: Record<string, boolean>;
   installmentFieldId?: string;
+  shouldShowErrors?: (componentCreationCount?: number) => boolean;
 }) => {
   const { t } = useTranslation();
 
@@ -587,19 +585,12 @@ const BeneficiaryControl = <T extends FieldValues>({
         <Grid item xs={12} mt={1}>
           {(() => {
             // Check if this installment was created after submit using the real field ID
-            const installmentWasCreatedAfterSubmit =
-              submissionCount > 0 &&
-              installmentFieldId &&
-              !existingInstallments[installmentFieldId];
-            const shouldShowBeneficiaryErrors =
-              isSubmitted && !installmentWasCreatedAfterSubmit;
-
-            // Store the shouldShowBeneficiaryErrors in a way we can access it below
+            // Pass the centralized shouldShowErrors to BeneficiaryField
             return (
               <BeneficiaryField
                 control={control}
                 errors={errors}
-                isSubmitted={shouldShowBeneficiaryErrors}
+                isSubmitted={false}
                 totalAmount={getValues(amountPath) || ''}
                 fieldNamePrefix={
                   `${fieldNamePrefix}.${index}.beneficiaries` as FieldArrayPath<T>
@@ -613,7 +604,7 @@ const BeneficiaryControl = <T extends FieldValues>({
                 installmentIndex={index}
                 installmentsFieldNamePrefix={fieldNamePrefix}
                 isEditing={isEditing}
-                hasClickedFinalCTA={shouldShowBeneficiaryErrors}
+                shouldShowErrors={shouldShowErrors}
                 submissionCount={submissionCount}
                 creationSubmissionCount={submissionCount}
               />

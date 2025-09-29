@@ -66,8 +66,8 @@ type InstallmentItemProps<T extends FieldValues> = {
     remittance?: boolean;
     isMultibeneficiary?: boolean;
   };
-  readonly hasClickedFinalCTA?: boolean;
-  readonly submissionCount?: number;
+  readonly shouldShowErrors?: (componentCreationCount?: number) => boolean;
+  readonly submissionCount?: number; // Still needed for creation tracking
   readonly existingInstallments?: Record<string, boolean>;
 };
 
@@ -92,7 +92,7 @@ const InstallmentItem = <T extends FieldValues>({
   flagMandatoryDueDate = true,
   isEditing,
   readonlyProps,
-  hasClickedFinalCTA = false,
+  shouldShowErrors,
   submissionCount = 0,
   existingInstallments = {}
 }: InstallmentItemProps<T>) => {
@@ -126,10 +126,14 @@ const InstallmentItem = <T extends FieldValues>({
     submissionCount > 0 && !existingInstallments[field.id];
 
   // Show errors only if installment existed at submit time
-  const shouldShowErrors = hasClickedFinalCTA && !wasCreatedAfterSubmit;
+  // Pass 0 for existing installments, current submissionCount for new ones
+  const componentCreationCount = wasCreatedAfterSubmit ? submissionCount : 0;
+  const shouldShowFieldErrors = shouldShowErrors
+    ? shouldShowErrors(componentCreationCount)
+    : false;
   const fieldErrors = errors[fieldNamePrefix as keyof typeof errors];
   const amountErrors =
-    shouldShowErrors && fieldErrors && index in fieldErrors
+    shouldShowFieldErrors && fieldErrors && index in fieldErrors
       ? (
           fieldErrors as Record<
             number,
@@ -144,7 +148,7 @@ const InstallmentItem = <T extends FieldValues>({
         )[index]?.amount
       : undefined;
   const dueDateErrors =
-    shouldShowErrors && fieldErrors && index in fieldErrors
+    shouldShowFieldErrors && fieldErrors && index in fieldErrors
       ? (
           fieldErrors as Record<
             number,
@@ -159,7 +163,7 @@ const InstallmentItem = <T extends FieldValues>({
         )[index]?.dueDate
       : undefined;
   const remittanceErrors =
-    shouldShowErrors && fieldErrors && index in fieldErrors
+    shouldShowFieldErrors && fieldErrors && index in fieldErrors
       ? (
           fieldErrors as Record<
             number,
@@ -229,7 +233,7 @@ const InstallmentItem = <T extends FieldValues>({
               validateInstallmentAmount={validators.validateInstallmentAmount}
               trigger={trigger}
               onAmountChange={handleInstallmentAmountChange}
-              showErrors={shouldShowErrors}
+              showErrors={shouldShowFieldErrors}
             />
           </Grid>
 
@@ -244,7 +248,7 @@ const InstallmentItem = <T extends FieldValues>({
               validateDueDate={validators.validateDueDate}
               trigger={trigger}
               flagMandatoryDueDate={flagMandatoryDueDate}
-              showErrors={shouldShowErrors}
+              showErrors={shouldShowFieldErrors}
             />
           </Grid>
 
@@ -258,7 +262,7 @@ const InstallmentItem = <T extends FieldValues>({
               error={remittanceErrors}
               validateRemittance={validators.validateRemittance}
               trigger={trigger}
-              showErrors={shouldShowErrors}
+              showErrors={shouldShowFieldErrors}
             />
           </Grid>
 
@@ -267,7 +271,6 @@ const InstallmentItem = <T extends FieldValues>({
             index={index}
             control={control}
             errors={errors}
-            isSubmitted={hasClickedFinalCTA}
             fieldNamePrefix={fieldNamePrefix}
             disabled={disabled || readonlyProps?.isMultibeneficiary}
             getValues={getValues}
@@ -279,6 +282,7 @@ const InstallmentItem = <T extends FieldValues>({
             submissionCount={submissionCount}
             existingInstallments={existingInstallments}
             installmentFieldId={field.id}
+            shouldShowErrors={shouldShowErrors}
           />
         </Grid>
       </Box>

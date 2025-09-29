@@ -13,7 +13,7 @@ import SectionBox from '../../../../components/Wizard/SectionBox';
 import ArticleIcon from '@mui/icons-material/Article';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import BeneficiaryField from '../Beneficiary/BeneficiaryField';
 import InstallmentField from '../Installment/InstallmentField';
 import type { PaymentOption } from '../../../../models/paymentTypes';
@@ -34,11 +34,7 @@ import {
 } from '../../../../models/Step3Schema';
 import { useStep3ApiOperations } from '../../../../hooks/useStep3ApiOperations';
 import { useStep3FormHandlers } from '../../../../hooks/useStep3FormHandlers';
-import {
-  validateFormFields,
-  validateBusinessLogic,
-  createValidateInstallmentsData
-} from '../../../../utils/step3ValidationUtils';
+import { useStep3Validation } from '../../../../hooks/useStep3Validation';
 import {
   hasActualDataToPopulate,
   populateAllFormFields,
@@ -83,13 +79,6 @@ const Step3 = ({
 
   // Ref to avoid executing the setup logic more than once
   const hasSetupStep3Data = useRef(false);
-
-  // State to track if a final CTA (Create or Save draft) has been clicked
-  const [hasClickedFinalCTA, setHasClickedFinalCTA] = useState(false);
-
-  // Counter to track the number of submissions
-  // It is incremented on each final CTA click to distinguish between subsequent submissions
-  const [submissionCount, setSubmissionCount] = useState(0);
 
   const isDraftInEdit =
     isEditing && debtPositionDetail?.status === DebtPositionStatus.DRAFT;
@@ -139,6 +128,21 @@ const Step3 = ({
     reValidateMode: 'onChange',
     criteriaMode: 'all',
     context: { flagMandatoryDueDate: data.flagMandatoryDueDate }
+  });
+
+  // Centralized validation hook - manages hasClickedFinalCTA, submissionCount, and validation logic
+  const {
+    hasClickedFinalCTA,
+    submissionCount,
+    markFinalCTAClicked,
+    resetValidationState,
+    validateStep3Form,
+    shouldShowErrors
+  } = useStep3Validation({
+    setValue,
+    trigger,
+    getValues,
+    flagMandatoryDueDate: data.flagMandatoryDueDate
   });
 
   // Effect to populate form fields when data is available in edit mode
@@ -196,8 +200,7 @@ const Step3 = ({
     beneficiaries,
     paymentOption,
     beneficiaryFieldRef,
-    setHasClickedFinalCTA,
-    setSubmissionCount
+    resetValidationState
   });
 
   // Effect to handle beneficiaries initialization
@@ -238,16 +241,8 @@ const Step3 = ({
     setValue('amount.value', totalAmount);
   };
 
-  // Create the validateInstallmentsData function with the form parameters
-  const validateInstallmentsDataFn = createValidateInstallmentsData({
-    getValues,
-    setValue,
-    trigger
-  });
-
   const handleCreateClick = () => {
-    setHasClickedFinalCTA(true);
-    setSubmissionCount((prev) => prev + 1);
+    markFinalCTAClicked();
 
     // Force a re-render and then submit
     setTimeout(() => {
@@ -256,8 +251,7 @@ const Step3 = ({
   };
 
   const handleSaveDraftClick = () => {
-    setHasClickedFinalCTA(true);
-    setSubmissionCount((prev) => prev + 1);
+    markFinalCTAClicked();
 
     // Force a re-render and then submit
     setTimeout(() => {
@@ -287,30 +281,14 @@ const Step3 = ({
     isDraft = false,
     shouldPublish = false
   ) => {
-    // Validate form fields including mandatory due date
-    const isFormValid = await validateFormFields({
-      values,
+    // Use centralized validation
+    const { isValid, syncedInstallments } = await validateStep3Form({
       isInstallment,
-      setValue,
-      trigger
+      isMultibeneficiary,
+      totalAmount
     });
-    if (!isFormValid) {
-      return;
-    }
 
-    // Validate business logic (beneficiaries or installments)
-    const { isValid: isBusinessValid, syncedInstallments } =
-      await validateBusinessLogic({
-        isInstallment,
-        isMultibeneficiary,
-        totalAmount,
-        getValues,
-        trigger,
-        setValue,
-        validateInstallmentsData: validateInstallmentsDataFn
-      });
-
-    if (!isBusinessValid) {
+    if (!isValid) {
       return;
     }
 
@@ -597,7 +575,7 @@ const Step3 = ({
                   trigger={trigger}
                   onToggleMultibeneficiary={handleMultibeneficiaryToggle}
                   isEditing={isEditing}
-                  hasClickedFinalCTA={hasClickedFinalCTA}
+                  shouldShowErrors={shouldShowErrors}
                   submissionCount={submissionCount}
                 />
               </Grid>
@@ -620,7 +598,7 @@ const Step3 = ({
             trigger={trigger}
             onInstallmentsChange={handleInstallmentsChange}
             isEditing={isEditing}
-            hasClickedFinalCTA={hasClickedFinalCTA}
+            shouldShowErrors={shouldShowErrors}
             submissionCount={submissionCount}
           />
         </div>
