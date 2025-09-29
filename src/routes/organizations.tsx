@@ -1,5 +1,7 @@
-import { Outlet } from 'react-router';
-import { SuperAdminRouteGuard } from '../components/RouteGuard/RouteGuard';
+import {
+  AdminRouteGuard,
+  SuperAdminRouteGuard
+} from '../components/RouteGuard/RouteGuard';
 import Organizations from './Organizations/Organizations';
 import OrganizationDetail from './Organizations/OrganizationDetail';
 
@@ -7,15 +9,14 @@ export const organizationsRoutes = [
   {
     id: 'ORGANIZATIONS',
     path: 'organizations/',
-    element: (
-      <SuperAdminRouteGuard>
-        <Outlet />
-      </SuperAdminRouteGuard>
-    ),
     children: [
       {
         id: 'ORGANIZATIONS_INDEX',
-        element: <Organizations />,
+        element: (
+          <SuperAdminRouteGuard>
+            <Organizations />
+          </SuperAdminRouteGuard>
+        ),
         index: true,
         handle: {
           hideBreadcrumbs: true,
@@ -24,7 +25,11 @@ export const organizationsRoutes = [
       },
       {
         id: 'ORGANIZATIONS_DETAIL',
-        element: <OrganizationDetail />,
+        element: (
+          <AdminRouteGuard>
+            <OrganizationDetail />
+          </AdminRouteGuard>
+        ),
         path: `:organizationId?`,
         handle: {
           backButton: false,
