@@ -1210,7 +1210,7 @@
           "required": "Il campo conto corrente postale è obbligatorio"
         },
         "sumMustBeLessThanTotal": "La somma degli importi dei beneficiari deve essere minore dell'importo totale",
-        "sumMustBeLessThanTotalInstallments": "La somma degli importi dei beneficiari deve essere minore dell'importo totale, clicca su No per modificare",
+        "sumMustBeLessThanTotalInstallments": "La somma degli importi dei beneficiari deve essere minore dell'importo totale della rata.",
         "taxCodeOrVat": {
           "invalid": "Codice fiscale o partita IVA non validi",
           "label": "Codice Fiscale o Partita IVA",

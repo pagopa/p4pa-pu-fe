@@ -39,7 +39,6 @@ const BeneficiaryControl = <T extends FieldValues>({
   index,
   control,
   errors,
-  isSubmitted,
   fieldNamePrefix,
   disabled = false,
   getValues,
@@ -47,12 +46,14 @@ const BeneficiaryControl = <T extends FieldValues>({
   trigger,
   isMultibeneficiary,
   toggleMultibeneficiary,
-  isEditing = false
+  isEditing = false,
+  submissionCount = 0,
+  shouldShowErrors,
+  installmentFieldId
 }: {
   index: number;
   control: Control<T>;
   errors: FieldErrors<T>;
-  isSubmitted: boolean;
   fieldNamePrefix: string;
   disabled?: boolean;
   getValues: UseFormGetValues<T>;
@@ -61,6 +62,10 @@ const BeneficiaryControl = <T extends FieldValues>({
   isMultibeneficiary: boolean;
   toggleMultibeneficiary: (value: boolean) => void;
   isEditing?: boolean;
+  submissionCount?: number;
+  existingInstallments?: Record<string, boolean>;
+  installmentFieldId?: string;
+  shouldShowErrors?: (componentCreationCount?: number) => boolean;
 }) => {
   const { t } = useTranslation();
 
@@ -375,7 +380,8 @@ const BeneficiaryControl = <T extends FieldValues>({
     setValue,
     sameBeneficiariesAsBeforePath,
     copyBeneficiariesFromPreviousInstallment,
-    isEditing
+    isEditing,
+    installmentFieldId
   ]);
 
   /**
@@ -406,7 +412,8 @@ const BeneficiaryControl = <T extends FieldValues>({
     hasPreviousBeneficiaries,
     sameBeneficiariesAsBeforePath,
     copyBeneficiariesFromPreviousInstallment,
-    isEditing
+    isEditing,
+    installmentFieldId
   ]);
 
   /**
@@ -579,24 +586,33 @@ const BeneficiaryControl = <T extends FieldValues>({
 
       {isMultibeneficiary && showBeneficiaryForm && (
         <Grid item xs={12} mt={1}>
-          <BeneficiaryField
-            control={control}
-            errors={errors}
-            isSubmitted={isSubmitted}
-            totalAmount={getValues(amountPath) || ''}
-            fieldNamePrefix={
-              `${fieldNamePrefix}.${index}.beneficiaries` as FieldArrayPath<T>
-            }
-            disabled={false}
-            setValue={setValue}
-            getValues={getValues}
-            trigger={trigger}
-            onToggleMultibeneficiary={toggleMultibeneficiary}
-            isInsideInstallment={true}
-            installmentIndex={index}
-            installmentsFieldNamePrefix={fieldNamePrefix}
-            isEditing={isEditing}
-          />
+          {(() => {
+            // Check if this installment was created after submit using the real field ID
+            // Pass the centralized shouldShowErrors to BeneficiaryField
+            return (
+              <BeneficiaryField
+                control={control}
+                errors={errors}
+                isSubmitted={false}
+                totalAmount={getValues(amountPath) || ''}
+                fieldNamePrefix={
+                  `${fieldNamePrefix}.${index}.beneficiaries` as FieldArrayPath<T>
+                }
+                disabled={false}
+                setValue={setValue}
+                getValues={getValues}
+                trigger={trigger}
+                onToggleMultibeneficiary={toggleMultibeneficiary}
+                isInsideInstallment={true}
+                installmentIndex={index}
+                installmentsFieldNamePrefix={fieldNamePrefix}
+                isEditing={isEditing}
+                shouldShowErrors={shouldShowErrors}
+                submissionCount={submissionCount}
+                creationSubmissionCount={submissionCount}
+              />
+            );
+          })()}
         </Grid>
       )}
     </>

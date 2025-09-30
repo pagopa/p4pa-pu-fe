@@ -1,9 +1,5 @@
-import {
-  FieldErrors,
-  FieldValues,
-  Path,
-  UseFormGetValues
-} from 'react-hook-form';
+import { FieldErrors, FieldValues, Path } from 'react-hook-form';
+import type { BeneficiaryValidationContext } from '../models/paymentTypes';
 
 // ===== VALIDATION TYPES =====
 export type BeneficiaryFieldValidators = {
@@ -14,18 +10,6 @@ export type BeneficiaryFieldValidators = {
     iban: string,
     postalAccount: string
   ) => string | undefined;
-};
-
-export type ValidationContext<T extends FieldValues> = {
-  id: string;
-  index: number;
-  isSubmitted: boolean;
-  wasSubmittedRef: React.RefObject<boolean>;
-  existingBeneficiaries: Record<string, boolean>;
-  errors: FieldErrors<T>;
-  fieldNamePrefix: string;
-  getValues: UseFormGetValues<T>;
-  t: (key: string) => string;
 };
 
 // ===== UTILITY FUNCTIONS =====
@@ -135,23 +119,25 @@ export function shouldShowValidationErrors(
 ): boolean {
   return (
     isSubmitted &&
-    !(
-      isRecentlyCreated(id, wasSubmittedRef, existingBeneficiaries) &&
-      !wasSubmittedRef.current
-    )
+    !isRecentlyCreated(id, wasSubmittedRef, existingBeneficiaries)
+  );
+}
+
+// Enhanced version with context for checking isNew property
+export function shouldShowValidationErrorsWithContext<T extends FieldValues>(
+  context: BeneficiaryValidationContext<T>
+): boolean {
+  return (
+    context.isSubmitted &&
+    context.creationSubmissionCount < context.submissionCount
   );
 }
 
 // Checks if validation should be skipped
 export function shouldSkipValidation<T extends FieldValues>(
-  context: ValidationContext<T>
+  context: BeneficiaryValidationContext<T>
 ): boolean {
-  return !shouldShowValidationErrors(
-    context.id,
-    context.isSubmitted,
-    context.wasSubmittedRef,
-    context.existingBeneficiaries
-  );
+  return !shouldShowValidationErrorsWithContext(context);
 }
 
 // Helper to build a typed path for form fields
@@ -166,7 +152,7 @@ export function buildFieldPath<T extends FieldValues, K extends string>(
 // Checks if a field has errors
 export function hasFieldError<T extends FieldValues>(
   fieldName: string,
-  context: ValidationContext<T>
+  context: BeneficiaryValidationContext<T>
 ): boolean {
   if (shouldSkipValidation(context)) {
     return false;
@@ -201,7 +187,7 @@ export function hasFieldError<T extends FieldValues>(
 // Gets the error message for a field
 export function getFieldErrorMessage<T extends FieldValues>(
   fieldName: string,
-  context: ValidationContext<T>
+  context: BeneficiaryValidationContext<T>
 ): string {
   if (shouldSkipValidation(context)) {
     return '';
@@ -234,7 +220,7 @@ export function getFieldErrorMessage<T extends FieldValues>(
 
 // Gets a field value from the form
 export function getFieldValue<T extends FieldValues, K extends string>(
-  context: ValidationContext<T>,
+  context: BeneficiaryValidationContext<T>,
   field: K
 ): string {
   return context.getValues(
@@ -244,7 +230,7 @@ export function getFieldValue<T extends FieldValues, K extends string>(
 
 // Checks payment fields (IBAN and postal account)
 export function checkPaymentFields<T extends FieldValues>(
-  context: ValidationContext<T>
+  context: BeneficiaryValidationContext<T>
 ): { iban: string; postalAccount: string; bothEmpty: boolean } {
   const iban = getFieldValue(context, 'iban');
   const postalAccount = getFieldValue(context, 'postalAccount');
@@ -256,7 +242,7 @@ export function checkPaymentFields<T extends FieldValues>(
 // Validates a single amount
 export function validateSingleAmount<T extends FieldValues>(
   value: string,
-  context: ValidationContext<T>
+  context: BeneficiaryValidationContext<T>
 ): string | undefined {
   const amount = parseFloat(value);
   if (

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import React, { useImperativeHandle } from 'react';
+import React, { useImperativeHandle, useRef } from 'react';
 import {
   Control,
   UseFormGetValues,
@@ -54,6 +54,10 @@ type BeneficiaryFieldProps<T extends FieldValues = FieldValues> = {
   readonly installmentIndex?: number;
   readonly installmentsFieldNamePrefix?: string;
   readonly isEditing?: boolean;
+  /** Function to determine when to show errors based on component creation timing */
+  readonly shouldShowErrors?: (componentCreationCount?: number) => boolean;
+  readonly submissionCount?: number; // Still needed for creation tracking
+  readonly creationSubmissionCount?: number; // Still needed for creation tracking
 };
 
 /**
@@ -76,7 +80,6 @@ const InternalBeneficiaryField = <T extends FieldValues>(
 ) => {
   const {
     control,
-    isSubmitted,
     errors,
     totalAmount,
     fieldNamePrefix,
@@ -89,10 +92,18 @@ const InternalBeneficiaryField = <T extends FieldValues>(
     isInsideInstallment = false,
     installmentIndex,
     installmentsFieldNamePrefix,
-    isEditing
+    isEditing,
+    shouldShowErrors,
+    submissionCount = 0,
+    creationSubmissionCount = 0
   } = props;
 
   const { t } = useTranslation();
+
+  // Track the submissionCount at the moment the beneficiary is activated
+  // If the beneficiary is activated after a submit, it should not show errors
+  // until the next submit
+  const creationSubmissionCountRef = useRef(creationSubmissionCount);
 
   const beneficiaryManager =
     isInsideInstallment &&
@@ -102,7 +113,9 @@ const InternalBeneficiaryField = <T extends FieldValues>(
           control,
           index: installmentIndex,
           installmentsFieldNamePrefix,
-          isSubmitted,
+          isSubmitted: shouldShowErrors
+            ? shouldShowErrors(creationSubmissionCountRef.current)
+            : false, // Use centralized shouldShowErrors logic
           getValues,
           setValue,
           trigger,
@@ -111,7 +124,9 @@ const InternalBeneficiaryField = <T extends FieldValues>(
       : useBeneficiaryManagement<T>({
           control,
           fieldNamePrefix: fieldNamePrefix as FieldArrayPath<T>,
-          isSubmitted,
+          isSubmitted: shouldShowErrors
+            ? shouldShowErrors(creationSubmissionCountRef.current)
+            : false, // Use centralized shouldShowErrors logic
           getValues,
           trigger,
           totalAmount,
@@ -174,17 +189,25 @@ const InternalBeneficiaryField = <T extends FieldValues>(
     field: BeneficiaryField,
     index: number
   ): BeneficiaryValidationContext<T> => {
-    return {
+    // wasSubmittedRef is handled automatically by the hook through isSubmitted
+
+    const context = {
       id: field.id,
       index,
-      isSubmitted,
+      isSubmitted: shouldShowErrors
+        ? shouldShowErrors(creationSubmissionCountRef.current)
+        : false, // Use centralized shouldShowErrors logic
       wasSubmittedRef,
       existingBeneficiaries,
       errors,
       fieldNamePrefix,
       getValues,
-      t
+      t,
+      submissionCount,
+      creationSubmissionCount: creationSubmissionCountRef.current
     };
+
+    return context;
   };
 
   /**
