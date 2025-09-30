@@ -184,7 +184,7 @@ const Step3 = ({
   // Reference to BeneficiaryField component to access its methods
   const beneficiaryFieldRef = useRef<BeneficiaryFieldRef>({});
 
-  // Custom hook per gestire gli event handlers del form
+  // Custom hook for managing the form event handlers
   const {
     handleAmountChange,
     handleAmountBlur,
