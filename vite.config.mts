@@ -5,6 +5,7 @@ import svgr from 'vite-plugin-svgr';
 dotenv.config();
 
 const DEPLOY_PATH = process.env.DEPLOY_PATH || '';
+const ENV = process.env.ENV || '';
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -15,7 +16,7 @@ export default defineConfig({
   build: {
     target: 'esnext',
     // sourcemap generation for debugging purposes. Please disable in production.
-    sourcemap: true
+    sourcemap: ENV !== 'PROD'
   },
   plugins: [
     react(),
