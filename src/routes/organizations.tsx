@@ -4,6 +4,7 @@ import {
 } from '../components/RouteGuard/RouteGuard';
 import Organizations from './Organizations/Organizations';
 import OrganizationDetail from './Organizations/OrganizationDetail';
+import OrganizationEditWizard from './Organizations/OrganizationEditWizard/OrganizationEditWizard';
 
 export const organizationsRoutes = [
   {
@@ -21,6 +22,23 @@ export const organizationsRoutes = [
         handle: {
           hideBreadcrumbs: true,
           backButton: false
+        }
+      },
+      {
+        id: 'ORGANIZATIONS_EDIT',
+        element: (
+          <AdminRouteGuard>
+            <OrganizationEditWizard />
+          </AdminRouteGuard>
+        ),
+        path: `:organizationId/edit`,
+        handle: {
+          backButton: true,
+          backButtonText: 'commons.exit',
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
         }
       },
       {

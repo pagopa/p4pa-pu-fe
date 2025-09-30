@@ -35,6 +35,26 @@ export const isValidCodiceFiscale = (cf: string): boolean => {
 };
 
 /**
+ * Checks if an email address is valid
+ * @param email - Email address to validate
+ * @returns true if the email is valid, false otherwise
+ */
+export const isValidEmail = (email: string): boolean => {
+  // If the email is empty or null, immediately returns false
+  if (!email) return false;
+
+  // Normalizes the email by trimming whitespace
+  email = email.trim();
+
+  // Standard email validation regex pattern
+  // Checks for: alphanumeric + special chars @ domain . extension
+  const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+  // Verifies the format using the regular expression and returns the result
+  return regex.test(email);
+};
+
+/**
  * Checks if an Italian VAT number is valid
  * @param piva - VAT number to validate
  * @returns true if the VAT number is valid, false otherwise

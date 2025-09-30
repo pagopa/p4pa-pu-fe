@@ -1939,6 +1939,39 @@
     "printKeyAPI": "API Key stampa avvisi",
     "orgEmail": "Email ente"
   },
+  "organizationEditWizard": {
+    "title": "Modifica il tuo ente",
+    "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
+    "step1": {
+      "title": "Anagrafica ente",
+      "label": "Anagrafica ente",
+      "orgName": {
+        "label": "Ragione sociale",
+        "placeholder": "<ragione sociale>"
+      },
+      "orgFiscalCode": {
+        "label": "Codice Fiscale",
+        "placeholder": "<123456789012>",
+        "invalid": "Formato codice fiscale non valido"
+      },
+      "orgEmail": {
+        "label": "Email",
+        "helperText": "Indirizzo email al quale l'ente riceverà le comunicazioni di servizio della piattaforma",
+        "invalid": "Formato email non valido"
+      },
+      "orgLogo": {
+        "title": "CARICA IL LOGO DEL SERVIZIO",
+        "optional": "Facoltativo",
+        "description": "Inserisci solo il logo del tuo ente. Aiuterà a rendere legittime le ricevute telematiche e gli avvisi.",
+        "uploadDescription": "Trascina qui il file o seleziona dal computer",
+        "requirements": "Hai dubbi su formato o dimensioni?",
+        "learnMore": "Leggi qui"
+      }
+    },
+    "step2": {
+      "label": "Configurazione ente"
+    }
+  },
   "registry": {
     "detail": {
       "eventDetailTitle": "Dettaglio evento",
