@@ -1,5 +1,13 @@
 // TypeScript models for Organization Edit Wizard following project patterns
 
+// Language options for additional language select
+export const LANGUAGE_OPTIONS = {
+  IT: 'it',
+  EN: 'en'
+} as const;
+
+export type LanguageCode = typeof LANGUAGE_OPTIONS[keyof typeof LANGUAGE_OPTIONS];
+
 export type FieldData<T> = {
   value: T;
   readonly: boolean;
@@ -13,8 +21,18 @@ export type OrganizationEditStep1Data = {
 };
 
 export type OrganizationEditStep2Data = {
-  // TODO: Define the fields of step2 when necessary
-  // Placeholder for future fields of organization configuration
+  // Accounting Information
+  iban: FieldData<string>;
+  ibanContabile: FieldData<string>;
+  cbill: FieldData<string>;
+  integratedCashJournal: FieldData<boolean>;
+  // Payments Information
+  segregationCode: FieldData<string>;
+  generateNoticeApiKey: FieldData<string>;
+  additionalLanguage: FieldData<boolean>;
+  selectedLanguage: FieldData<string>;
+  flagNotifyOutcomePush: FieldData<boolean | null>;
+  flagPaymentNotification: FieldData<boolean | null>;
 };
 
 export type OrganizationEditFormData = {

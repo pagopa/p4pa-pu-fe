@@ -9,6 +9,7 @@ import { OrganizationDetailDTO } from '../../../../generated/data-contracts';
 import { OrganizationEditFormData } from '../../../models/OrganizationEditTypes';
 
 import Step1AnagraficaEnte from './components/Step/Step1AnagraficaEnte';
+import Step2ConfigurazioneEnte from './components/Step/Step2ConfigurazioneEnte';
 import utils from '../../../utils';
 
 const initialData: OrganizationEditFormData = {
@@ -30,7 +31,50 @@ const initialData: OrganizationEditFormData = {
       readonly: false
     }
   },
-  step2: {}
+  step2: {
+    // Accounting Information
+    iban: {
+      value: '',
+      readonly: false
+    },
+    ibanContabile: {
+      value: '',
+      readonly: false
+    },
+    cbill: {
+      value: '',
+      readonly: false
+    },
+    integratedCashJournal: {
+      value: false,
+      readonly: false
+    },
+    // Payments Information
+    segregationCode: {
+      value: '',
+      readonly: false
+    },
+    generateNoticeApiKey: {
+      value: '',
+      readonly: false
+    },
+    additionalLanguage: {
+      value: false,
+      readonly: false
+    },
+    selectedLanguage: {
+      value: '',
+      readonly: false
+    },
+    flagNotifyOutcomePush: {
+      value: null,
+      readonly: false
+    },
+    flagPaymentNotification: {
+      value: null,
+      readonly: false
+    }
+  }
 };
 
 const OrganizationEditWizard = () => {
@@ -103,7 +147,52 @@ const OrganizationEditWizard = () => {
           readonly: false // Logo is always editable
         }
       },
-      step2: {}
+      step2: {
+        // Accounting Information
+        iban: {
+          value: orgData.iban || '',
+          readonly: false
+        },
+        ibanContabile: {
+          value: orgData.postalIban || '',
+          readonly: false
+        },
+        cbill: {
+          value: orgData.cbillInterBankCode || '',
+          readonly: false
+        },
+        integratedCashJournal: {
+          value: false, // Default value as this might not come from API
+          readonly: false
+        },
+        // Payments Information
+        segregationCode: {
+          value: orgData.segregationCode || '',
+          readonly: false
+        },
+        generateNoticeApiKey: {
+          value: orgData.generateNoticeApiKey || '',
+          readonly: false
+        },
+        additionalLanguage: {
+          value: !!(orgData.additionalLanguage && orgData.additionalLanguage.trim()),
+          readonly: false
+        },
+        selectedLanguage: {
+          value: orgData.additionalLanguage && orgData.additionalLanguage.trim()
+            ? orgData.additionalLanguage.toLowerCase()
+            : '',
+          readonly: false
+        },
+        flagNotifyOutcomePush: {
+          value: orgData.flagNotifyOutcomePush ?? null,
+          readonly: false
+        },
+        flagPaymentNotification: {
+          value: orgData.flagPaymentNotification ?? null,
+          readonly: false
+        }
+      }
     };
   };
 
@@ -142,15 +231,18 @@ const OrganizationEditWizard = () => {
         {
           label: t('organizationEditWizard.step2.label'),
           content: (
-            <div key="step2">
-              {/* TODO: Implement Step2 in the future */}
-              <div style={{ padding: '20px', textAlign: 'center' }}>
-                <h3>Step 2 - Organization configuration</h3>
-                <p>This step will be implemented in the future</p>
-                <button onClick={() => setStep(0)}>Back</button>
-                <button onClick={handleGoBack}>Save and exit</button>
-              </div>
-            </div>
+            <Step2ConfigurazioneEnte
+              key="step2"
+              data={formData.step2}
+              setData={(data) => {
+                setFormData((prev) => ({ ...prev, step2: data }));
+              }}
+              onNext={() => {
+                // TODO: Implement next step or finish wizard
+                handleGoBack(); // For now, go back to detail page
+              }}
+              onBack={() => setStep(0)}
+            />
           )
         }
       ]}

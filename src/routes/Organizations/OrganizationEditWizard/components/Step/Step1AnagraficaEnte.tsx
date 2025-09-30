@@ -115,10 +115,7 @@ const Step1AnagraficaEnte = ({ data, setData, onNext, onBack }: Props) => {
             color="error.main"
             sx={{ fontWeight: 600, marginBottom: 3 }}
           >
-            {t(
-              'commons.requiredFieldDescription',
-              '* Indica un campo obbligatorio'
-            )}
+            {t('commons.requiredFieldDescription')}
           </Typography>
 
           <Grid container spacing={2}>
@@ -215,8 +212,8 @@ const Step1AnagraficaEnte = ({ data, setData, onNext, onBack }: Props) => {
           padding={4}
         >
           <Typography
-            variant="h6"
-            fontWeight={600}
+            variant="body2"
+            fontWeight={800}
             color="textPrimary"
             sx={{ mb: 1 }}
           >
@@ -255,6 +252,12 @@ const Step1AnagraficaEnte = ({ data, setData, onNext, onBack }: Props) => {
               component="a"
               href="#"
               color="primary"
+              onClick={(event) => {
+                event.preventDefault();
+                console.log(
+                  'TODO: Handle "Learn more" action for logo requirements'
+                );
+              }}
               sx={{
                 textDecoration: 'underline',
                 cursor: 'pointer',

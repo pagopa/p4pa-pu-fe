@@ -38,7 +38,9 @@ export const base64ToFile = (
 
     // Extract MIME type and base64 data
     const [header, base64Data] = base64String.split(',');
-    const mimeType = header.match(/:(.*?);/)?.[1] || 'image/png';
+    const mimeTypeRegex = /^data:([^;]+);/;
+    const mimeTypeMatch = mimeTypeRegex.exec(header);
+    const mimeType = mimeTypeMatch?.[1] || 'image/png';
 
     // Generate file name if not provided
     if (!fileName) {

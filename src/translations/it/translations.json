@@ -1969,7 +1969,65 @@
       }
     },
     "step2": {
-      "label": "Configurazione ente"
+      "label": "Configurazione ente",
+      "title": "Configurazione ente",
+      "accountingInfo": {
+        "title": "INFORMAZIONE CONTABILE"
+      },
+      "iban": {
+        "label": "IBAN",
+        "placeholder": "",
+        "required": "Il campo IBAN è obbligatorio",
+        "invalid": "Formato IBAN non valido"
+      },
+      "ibanContabile": {
+        "label": "IBAN Contabile",
+        "placeholder": "",
+        "invalid": "Formato IBAN non valido"
+      },
+      "cbill": {
+        "label": "CBILL",
+        "placeholder": ""
+      },
+      "integratedCashJournal": {
+        "label": "Il giornale di cassa è integrato"
+      },
+      "paymentsInfo": {
+        "title": "PAGAMENTI"
+      },
+      "segregationCode": {
+        "label": "Codice Segregazione",
+        "placeholder": "",
+        "required": "Il campo Codice Segregazione è obbligatorio"
+      },
+      "generateNoticeApiKey": {
+        "label": "API Key stampa avvisi",
+        "placeholder": "",
+        "required": "Il campo API Key stampa avvisi è obbligatorio"
+      },
+      "additionalLanguage": {
+        "label": "Gli avvisi hanno una lingua addizionale"
+      },
+      "selectedLanguage": {
+        "label": "Lingua Addizionale",
+        "options": {
+          "it": "Italiano",
+          "en": "Inglese"
+        },
+        "required": "Seleziona una lingua quando il campo è abilitato"
+      },
+      "flagNotifyOutcomePush": {
+        "label": "Notifiche push di pagamenti gestiti da piattaforme esterne",
+        "description": "Dovrà essere integrata una API per ricevere notifiche",
+        "abilita": "Abilita",
+        "disabilita": "Disabilita"
+      },
+      "flagPaymentNotification": {
+        "label": "Notifiche di pagamenti gestiti da Piattaforma Unitaria",
+        "description": "Dovrà essere configurato il Org Sil Service per ricevere le notifiche",
+        "abilita": "Abilita",
+        "disabilita": "Disabilita"
+      }
     }
   },
   "registry": {
