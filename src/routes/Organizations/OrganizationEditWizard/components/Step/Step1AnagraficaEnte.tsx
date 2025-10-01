@@ -2,11 +2,14 @@ import { Grid, TextField, Typography, Box } from '@mui/material';
 import { Visibility } from '@mui/icons-material';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
+import { useMemo } from 'react';
 import WizardStepButtons from '../../../../../components/Wizard/WizardStepButtons';
 import { OrganizationEditStep1Data } from '../../../../../models/OrganizationEditTypes';
 import { isValidEmail } from '../../../../../utils/fieldValidation';
-import { base64ToFile } from '../../../../../utils/filevalidation';
+import {
+  base64ToFile,
+  fileToBase64
+} from '../../../../../utils/filevalidation';
 import { FormComponent } from '../../../../../components/FormComponent';
 import { theme } from '@pagopa/mui-italia';
 
@@ -27,49 +30,46 @@ type Step1FormValues = {
 const Step1AnagraficaEnte = ({ data, setData, onNext, onBack }: Props) => {
   const { t } = useTranslation();
 
+  // Convert logo from base64 to File only once using useMemo
+  const logoFile = useMemo(() => {
+    if (data.orgLogo.value) {
+      return base64ToFile(data.orgLogo.value);
+    }
+    return null;
+  }, [data.orgLogo.value]);
+
+  // Calculate initial values dynamically to prevent rendering with empty data
+  const getInitialValues = (): Step1FormValues => {
+    return {
+      orgName: data.orgName.value || '',
+      orgFiscalCode: data.orgFiscalCode.value || '',
+      orgEmail: data.orgEmail.value || '',
+      orgLogo: logoFile
+    };
+  };
+
   const {
     handleSubmit,
     control,
-    formState: { errors },
-    setValue
+    formState: { errors }
   } = useForm<Step1FormValues>({
-    defaultValues: {
-      orgName: data.orgName.value,
-      orgFiscalCode: data.orgFiscalCode.value,
-      orgEmail: data.orgEmail.value,
-      orgLogo: null
-    },
+    defaultValues: getInitialValues(),
+    values: getInitialValues(), // This ensures form updates when data changes
     mode: 'onSubmit'
   });
 
-  // Prepopulate the fields when the API data arrives
-  useEffect(() => {
-    if (data.orgName.value) {
-      setValue('orgName', data.orgName.value);
-    }
-    if (data.orgFiscalCode.value) {
-      setValue('orgFiscalCode', data.orgFiscalCode.value);
-    }
-    if (data.orgEmail.value) {
-      setValue('orgEmail', data.orgEmail.value);
-    }
+  const onSubmit = async (values: Step1FormValues) => {
+    let logoValue = data.orgLogo.value; // Keep existing logo by default
 
-    // Convert the base64 logo to File object for the FileUploader
-    if (data.orgLogo.value) {
-      const file = base64ToFile(data.orgLogo.value);
-      if (file) {
-        setValue('orgLogo', file);
+    // If a new logo file is uploaded, convert it to base64
+    if (values.orgLogo) {
+      try {
+        logoValue = await fileToBase64(values.orgLogo);
+      } catch (error) {
+        console.error('Error converting logo to base64:', error);
       }
     }
-  }, [
-    data.orgName.value,
-    data.orgFiscalCode.value,
-    data.orgEmail.value,
-    data.orgLogo.value,
-    setValue
-  ]);
 
-  const onSubmit = (values: Step1FormValues) => {
     setData({
       orgName: {
         value: values.orgName,
@@ -84,9 +84,7 @@ const Step1AnagraficaEnte = ({ data, setData, onNext, onBack }: Props) => {
         readonly: data.orgEmail.readonly
       },
       orgLogo: {
-        value: values.orgLogo
-          ? URL.createObjectURL(values.orgLogo)
-          : data.orgLogo.value, // Keep the existing logo if no new file is uploaded
+        value: logoValue,
         readonly: data.orgLogo.readonly
       }
     });
@@ -189,7 +187,7 @@ const Step1AnagraficaEnte = ({ data, setData, onNext, onBack }: Props) => {
                     fullWidth
                     type="email"
                     label={t('organizationEditWizard.step1.orgEmail.label')}
-                    disabled={data.orgEmail.readonly}
+                    disabled={true}
                     error={!!errors.orgEmail}
                     helperText={
                       errors.orgEmail?.message ||

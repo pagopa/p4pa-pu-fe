@@ -21,6 +21,28 @@ export const isExtensionAllowed = (
 };
 
 /**
+ * Converts a File object to a base64 data URL string
+ * @param file - File object to convert
+ * @returns Promise that resolves to base64 data URL string (e.g., "data:image/png;base64,...")
+ */
+export const fileToBase64 = (file: File): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject(new Error('Failed to convert file to base64'));
+      }
+    };
+    reader.onerror = () => {
+      reject(new Error('Error reading file'));
+    };
+    reader.readAsDataURL(file);
+  });
+};
+
+/**
  * Converts a base64 data URL string to a File object
  * @param base64String - Base64 data URL (e.g., "data:image/png;base64,...")
  * @param fileName - Optional custom file name. If not provided, generates one based on MIME type

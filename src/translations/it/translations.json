@@ -1942,6 +1942,9 @@
   "organizationEditWizard": {
     "title": "Modifica il tuo ente",
     "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
+    "saveChanges": "Salva modifiche",
+    "errorLoadingData": "Errore nel caricamento dei dati dell'ente",
+    "successMessage": "Modifiche salvate con successo",
     "step1": {
       "title": "Anagrafica ente",
       "label": "Anagrafica ente",
@@ -2012,7 +2015,9 @@
         "label": "Lingua Addizionale",
         "options": {
           "it": "Italiano",
-          "en": "Inglese"
+          "en": "Inglese",
+          "fr": "Francese",
+          "de": "Tedesco"
         },
         "required": "Seleziona una lingua quando il campo è abilitato"
       },
@@ -2027,6 +2032,25 @@
         "description": "Dovrà essere configurato il Org Sil Service per ricevere le notifiche",
         "abilita": "Abilita",
         "disabilita": "Disabilita"
+      },
+      "pagoPaIntegration": {
+        "title": "INTEGRAZIONE CON I PRODOTTI PAGOPA",
+        "io": {
+          "label": "Messaggi sull'app IO",
+          "description": "Abilita l'ente a inviare messaggi sui pagamenti",
+          "apiKeyLabel": "API key",
+          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche IO",
+          "apiKeyRequired": "Il campo API key è obbligatorio",
+          "apiKeyHelperText": "Inserisci la API key per inviare messaggi sull'app IO"
+        },
+        "send": {
+          "label": "Autenticazione con PDND",
+          "description": "Abilita l'autenticazione su SEND tramite PDND",
+          "apiKeyLabel": "API key",
+          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche SEND",
+          "apiKeyRequired": "Il campo API key è obbligatorio",
+          "apiKeyHelperText": "Inserisci la API key per inviare notifiche SEND"
+        }
       }
     }
   },

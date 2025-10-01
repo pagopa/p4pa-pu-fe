@@ -5,30 +5,31 @@ import {
   Box,
   FormControlLabel,
   Switch,
-  Radio,
-  RadioGroup,
-  FormControl,
-  FormLabel,
   Select,
   MenuItem,
   InputLabel,
-  Divider
+  Divider,
+  FormControl
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import WizardStepButtons from '../../../../../components/Wizard/WizardStepButtons';
+import { FormComponent } from '../../../../../components/FormComponent';
 import {
   OrganizationEditStep2Data,
-  LANGUAGE_OPTIONS
+  LANGUAGE_OPTIONS,
+  FieldData
 } from '../../../../../models/OrganizationEditTypes';
 import { isValidIBAN } from '../../../../../utils/fieldValidation';
 import { theme } from '@pagopa/mui-italia';
+import Appio from '../../../../../assets/appio.svg';
+import Send from '../../../../../assets/send.svg';
 
 type Props = {
   data: OrganizationEditStep2Data;
   setData: (data: OrganizationEditStep2Data) => void;
-  onNext: () => void;
+  onNext: (data?: OrganizationEditStep2Data) => void;
   onBack: () => void;
 };
 
@@ -37,14 +38,63 @@ type Step2FormValues = {
   iban: string;
   ibanContabile: string;
   cbill: string;
-  integratedCashJournal: boolean;
+  flagTreasury: boolean;
   // Payments Information
   segregationCode: string;
   generateNoticeApiKey: string;
   additionalLanguage: boolean;
   selectedLanguage: string;
-  flagNotifyOutcomePush: boolean | null;
-  flagPaymentNotification: boolean | null;
+  flagNotifyOutcomePush: boolean;
+  flagPaymentNotification: boolean;
+  // PagoPA Products Integration
+  flagNotifyIo: boolean;
+  ioApiKey: string;
+  pdndEnabled: boolean;
+  sendApiKey: string;
+};
+
+// Utility function to create FieldData from form value and original field
+const createFieldData = function <T>(
+  formValue: T,
+  originalField: FieldData<T>
+): FieldData<T> {
+  return {
+    value: formValue,
+    readonly: originalField.readonly
+  };
+};
+
+// Utility function to populate form fields from Step2 data
+const populateFormFields = (
+  data: OrganizationEditStep2Data,
+  setValue: (name: keyof Step2FormValues, value: any) => void
+) => {
+  // Accounting Information
+  if (data.iban.value) setValue('iban', data.iban.value);
+  if (data.ibanContabile.value)
+    setValue('ibanContabile', data.ibanContabile.value);
+  if (data.cbill.value) setValue('cbill', data.cbill.value);
+  setValue('flagTreasury', data.flagTreasury.value);
+
+  // Payments Information
+  if (data.segregationCode.value)
+    setValue('segregationCode', data.segregationCode.value);
+  if (data.generateNoticeApiKey.value)
+    setValue('generateNoticeApiKey', data.generateNoticeApiKey.value);
+  setValue('additionalLanguage', data.additionalLanguage.value);
+  setValue('selectedLanguage', data.selectedLanguage.value);
+  // Convert null to false for radio groups
+  setValue('flagNotifyOutcomePush', data.flagNotifyOutcomePush.value ?? false);
+  setValue(
+    'flagPaymentNotification',
+    data.flagPaymentNotification.value ?? false
+  );
+
+  // PagoPA Products Integration
+  if (data.flagNotifyIo) setValue('flagNotifyIo', data.flagNotifyIo.value);
+  if (data.ioApiKey?.value) setValue('ioApiKey', data.ioApiKey.value);
+  if (data.pdndEnabled) setValue('pdndEnabled', data.pdndEnabled.value);
+  if (data.sendApiKey?.value) setValue('sendApiKey', data.sendApiKey.value);
 };
 
 const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
@@ -62,107 +112,95 @@ const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
       iban: data.iban.value,
       ibanContabile: data.ibanContabile.value,
       cbill: data.cbill.value,
-      integratedCashJournal: data.integratedCashJournal.value,
+      flagTreasury: data.flagTreasury.value,
       // Payments Information
       segregationCode: data.segregationCode.value,
       generateNoticeApiKey: data.generateNoticeApiKey.value,
       additionalLanguage: data.additionalLanguage.value,
       selectedLanguage: data.selectedLanguage.value,
-      flagNotifyOutcomePush: data.flagNotifyOutcomePush.value,
-      flagPaymentNotification: data.flagPaymentNotification.value
+      // Convert null to false for radio groups
+      flagNotifyOutcomePush: data.flagNotifyOutcomePush.value ?? false,
+      flagPaymentNotification: data.flagPaymentNotification.value ?? false,
+      // PagoPA Products Integration
+      flagNotifyIo: data.flagNotifyIo.value,
+      ioApiKey: data.ioApiKey.value,
+      pdndEnabled: data.pdndEnabled.value,
+      sendApiKey: data.sendApiKey.value
     },
     mode: 'onSubmit'
   });
 
   // Watch the additionalLanguage switch to show/hide select
   const watchAdditionalLanguage = watch('additionalLanguage');
+  // Watch the flagNotifyIo switch to show/hide IO API Key field
+  const watchFlagNotifyIo = watch('flagNotifyIo');
 
   // Prepopulate the fields when the API data arrives
   useEffect(() => {
-    // Accounting Information
-    if (data.iban.value) {
-      setValue('iban', data.iban.value);
-    }
-    if (data.ibanContabile.value) {
-      setValue('ibanContabile', data.ibanContabile.value);
-    }
-    if (data.cbill.value) {
-      setValue('cbill', data.cbill.value);
-    }
-    setValue('integratedCashJournal', data.integratedCashJournal.value);
-
-    // Payments Information
-    if (data.segregationCode.value) {
-      setValue('segregationCode', data.segregationCode.value);
-    }
-    if (data.generateNoticeApiKey.value) {
-      setValue('generateNoticeApiKey', data.generateNoticeApiKey.value);
-    }
-    setValue('additionalLanguage', data.additionalLanguage.value);
-    setValue('selectedLanguage', data.selectedLanguage.value);
-    setValue('flagNotifyOutcomePush', data.flagNotifyOutcomePush.value);
-    setValue('flagPaymentNotification', data.flagPaymentNotification.value);
+    populateFormFields(data, setValue);
   }, [
     data.iban.value,
     data.ibanContabile.value,
     data.cbill.value,
-    data.integratedCashJournal.value,
+    data.flagTreasury.value,
     data.segregationCode.value,
     data.generateNoticeApiKey.value,
     data.additionalLanguage.value,
     data.selectedLanguage.value,
     data.flagNotifyOutcomePush.value,
     data.flagPaymentNotification.value,
+    data.flagNotifyIo.value,
+    data.ioApiKey.value,
+    data.pdndEnabled.value,
+    data.sendApiKey.value,
     setValue
   ]);
 
   const onSubmit = (values: Step2FormValues) => {
-    setData({
+    const step2Data = {
       // Accounting Information
-      iban: {
-        value: values.iban,
-        readonly: data.iban.readonly
-      },
-      ibanContabile: {
-        value: values.ibanContabile,
-        readonly: data.ibanContabile.readonly
-      },
-      cbill: {
-        value: values.cbill,
-        readonly: data.cbill.readonly
-      },
-      integratedCashJournal: {
-        value: values.integratedCashJournal,
-        readonly: data.integratedCashJournal.readonly
-      },
+      iban: createFieldData(values.iban, data.iban),
+      ibanContabile: createFieldData(values.ibanContabile, data.ibanContabile),
+      cbill: createFieldData(values.cbill, data.cbill),
+      flagTreasury: createFieldData(
+        values.flagTreasury,
+        data.flagTreasury
+      ),
       // Payments Information
-      segregationCode: {
-        value: values.segregationCode,
-        readonly: data.segregationCode.readonly
-      },
-      generateNoticeApiKey: {
-        value: values.generateNoticeApiKey,
-        readonly: data.generateNoticeApiKey.readonly
-      },
-      additionalLanguage: {
-        value: values.additionalLanguage,
-        readonly: data.additionalLanguage.readonly
-      },
-      selectedLanguage: {
-        value: values.selectedLanguage,
-        readonly: data.selectedLanguage.readonly
-      },
-      flagNotifyOutcomePush: {
-        value: values.flagNotifyOutcomePush,
-        readonly: data.flagNotifyOutcomePush.readonly
-      },
-      flagPaymentNotification: {
-        value: values.flagPaymentNotification,
-        readonly: data.flagPaymentNotification.readonly
-      }
-    });
+      segregationCode: createFieldData(
+        values.segregationCode,
+        data.segregationCode
+      ),
+      generateNoticeApiKey: createFieldData(
+        values.generateNoticeApiKey,
+        data.generateNoticeApiKey
+      ),
+      additionalLanguage: createFieldData(
+        values.additionalLanguage,
+        data.additionalLanguage
+      ),
+      selectedLanguage: createFieldData(
+        values.selectedLanguage,
+        data.selectedLanguage
+      ),
+      // Convert boolean back to boolean | null (keeping boolean for now as API expects it)
+      flagNotifyOutcomePush: createFieldData(
+        values.flagNotifyOutcomePush,
+        data.flagNotifyOutcomePush
+      ),
+      flagPaymentNotification: createFieldData(
+        values.flagPaymentNotification,
+        data.flagPaymentNotification
+      ),
+      // PagoPA Products Integration
+      flagNotifyIo: createFieldData(values.flagNotifyIo, data.flagNotifyIo),
+      ioApiKey: createFieldData(values.ioApiKey, data.ioApiKey),
+      pdndEnabled: createFieldData(values.pdndEnabled, data.pdndEnabled),
+      sendApiKey: createFieldData(values.sendApiKey, data.sendApiKey)
+    };
 
-    onNext();
+    setData(step2Data);
+    onNext(step2Data);
   };
 
   return (
@@ -298,7 +336,7 @@ const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
             {/* Integrated Cash Journal Toggle */}
             <Grid item xs={12} sx={{ mt: 2 }}>
               <Controller
-                name="integratedCashJournal"
+                name="flagTreasury"
                 control={control}
                 render={({ field }) => (
                   <FormControlLabel
@@ -306,8 +344,8 @@ const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
                       <Switch
                         {...field}
                         checked={field.value}
-                        disabled={data.integratedCashJournal.readonly}
-                        data-testid="integrated-cash-journal-switch"
+                        disabled={data.flagTreasury.readonly}
+                        data-testid="flag-treasury-switch"
                       />
                     }
                     label={t(
@@ -463,14 +501,19 @@ const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
                         displayEmpty
                         data-testid="selected-language-select"
                       >
-                        <MenuItem value={LANGUAGE_OPTIONS.IT}>
-                          {t(
-                            'organizationEditWizard.step2.selectedLanguage.options.it'
-                          )}
-                        </MenuItem>
                         <MenuItem value={LANGUAGE_OPTIONS.EN}>
                           {t(
                             'organizationEditWizard.step2.selectedLanguage.options.en'
+                          )}
+                        </MenuItem>
+                        <MenuItem value={LANGUAGE_OPTIONS.FR}>
+                          {t(
+                            'organizationEditWizard.step2.selectedLanguage.options.fr'
+                          )}
+                        </MenuItem>
+                        <MenuItem value={LANGUAGE_OPTIONS.DE}>
+                          {t(
+                            'organizationEditWizard.step2.selectedLanguage.options.de'
                           )}
                         </MenuItem>
                       </Select>
@@ -498,126 +541,268 @@ const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
 
             {/* Notifications of payments managed by external platforms */}
             <Grid item xs={12} sx={{ mt: 3 }}>
-              <Controller
+              <Typography
+                variant="body2"
+                color="text.primary"
+                sx={{ fontSize: 20, mb: 1 }}
+              >
+                {t('organizationEditWizard.step2.flagNotifyOutcomePush.label')}
+                <Typography component="span" color="error.main">
+                  *
+                </Typography>
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                {t(
+                  'organizationEditWizard.step2.flagNotifyOutcomePush.description'
+                )}
+              </Typography>
+              <FormComponent.ControlledRadioGroup
                 name="flagNotifyOutcomePush"
                 control={control}
-                render={({ field }) => (
-                  <FormControl>
-                    <FormLabel component="legend">
-                      <Typography
-                        variant="body2"
-                        color="text.primary"
-                        sx={{ fontWeight: 600 }}
-                      >
-                        {t(
-                          'organizationEditWizard.step2.flagNotifyOutcomePush.label'
-                        )}
-                        <Typography component="span" color="error.main">
-                          *
-                        </Typography>
-                      </Typography>
-                    </FormLabel>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      sx={{ mb: 2 }}
-                    >
-                      {t(
-                        'organizationEditWizard.step2.flagNotifyOutcomePush.description'
-                      )}
-                    </Typography>
-                    <RadioGroup
-                      {...field}
-                      value={field.value === null ? '' : field.value.toString()}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === ''
-                            ? null
-                            : e.target.value === 'true'
-                        )
-                      }
-                      row
-                    >
-                      <FormControlLabel
-                        value="true"
-                        control={<Radio />}
-                        label={t(
-                          'organizationEditWizard.step2.flagNotifyOutcomePush.abilita'
-                        )}
-                        disabled={data.flagNotifyOutcomePush.readonly}
-                      />
-                      <FormControlLabel
-                        value="false"
-                        control={<Radio />}
-                        label={t(
-                          'organizationEditWizard.step2.flagNotifyOutcomePush.disabilita'
-                        )}
-                        disabled={data.flagNotifyOutcomePush.readonly}
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                )}
+                disabled={data.flagNotifyOutcomePush.readonly}
+                sx={{ flexDirection: 'row' }}
+                options={[
+                  {
+                    value: true,
+                    label: t(
+                      'organizationEditWizard.step2.flagNotifyOutcomePush.abilita'
+                    )
+                  },
+                  {
+                    value: false,
+                    label: t(
+                      'organizationEditWizard.step2.flagNotifyOutcomePush.disabilita'
+                    )
+                  }
+                ]}
               />
             </Grid>
 
             {/* Notifications of payments managed by Unitary Platform */}
             <Grid item xs={12} sx={{ mt: 3 }}>
-              <Controller
+              <Typography
+                variant="body2"
+                color="text.primary"
+                sx={{ fontSize: 20, mb: 1 }}
+              >
+                {t(
+                  'organizationEditWizard.step2.flagPaymentNotification.label'
+                )}
+                <Typography component="span" color="error.main">
+                  *
+                </Typography>
+              </Typography>
+              <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
+                {t(
+                  'organizationEditWizard.step2.flagPaymentNotification.description'
+                )}
+              </Typography>
+              <FormComponent.ControlledRadioGroup
                 name="flagPaymentNotification"
                 control={control}
-                render={({ field }) => (
-                  <FormControl>
-                    <FormLabel component="legend">
-                      <Typography variant="body2" color="text.primary" sx={{ fontWeight: 600 }}>
-                        {t(
-                          'organizationEditWizard.step2.flagPaymentNotification.label'
-                        )}
-                        <Typography component="span" color="error.main">
-                          *
-                        </Typography>
-                      </Typography>
-                    </FormLabel>
-                    <Typography
-                      variant="body2"
-                      color="textSecondary"
-                      sx={{ mb: 2 }}
-                    >
-                      {t(
-                        'organizationEditWizard.step2.flagPaymentNotification.description'
-                      )}
-                    </Typography>
-                    <RadioGroup
-                      {...field}
-                      value={field.value === null ? '' : field.value.toString()}
-                      onChange={(e) =>
-                        field.onChange(
-                          e.target.value === ''
-                            ? null
-                            : e.target.value === 'true'
-                        )
-                      }
-                      row
-                    >
-                      <FormControlLabel
-                        value="true"
-                        control={<Radio />}
-                        label={t(
-                          'organizationEditWizard.step2.flagPaymentNotification.abilita'
-                        )}
-                        disabled={data.flagPaymentNotification.readonly}
-                      />
-                      <FormControlLabel
-                        value="false"
-                        control={<Radio />}
-                        label={t(
-                          'organizationEditWizard.step2.flagPaymentNotification.disabilita'
-                        )}
-                        disabled={data.flagPaymentNotification.readonly}
-                      />
-                    </RadioGroup>
-                  </FormControl>
-                )}
+                disabled={data.flagPaymentNotification.readonly}
+                sx={{ flexDirection: 'row' }}
+                options={[
+                  {
+                    value: true,
+                    label: t(
+                      'organizationEditWizard.step2.flagPaymentNotification.abilita'
+                    )
+                  },
+                  {
+                    value: false,
+                    label: t(
+                      'organizationEditWizard.step2.flagPaymentNotification.disabilita'
+                    )
+                  }
+                ]}
               />
+            </Grid>
+          </Grid>
+        </Box>
+      </Grid>
+
+      {/* PagoPA Products Integration Section */}
+      <Grid item xs={12} sx={{ mt: 4 }}>
+        <Box
+          borderRadius={2}
+          bgcolor={theme.palette.background.paper}
+          padding={4}
+        >
+          <Typography
+            variant="body2"
+            fontWeight={800}
+            color="textPrimary"
+            sx={{ mb: 3, mt: 3 }}
+          >
+            {t('organizationEditWizard.step2.pagoPaIntegration.title')}
+          </Typography>
+
+          <Grid container spacing={3}>
+            {/* IO Section */}
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 2,
+                  mb: 2
+                }}
+              >
+                <Box sx={{ width: 40 }} aria-hidden="true">
+                  <Appio />
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
+                    IO
+                  </Typography>
+                  <Controller
+                    name="flagNotifyIo"
+                    control={control}
+                    render={({ field }) => (
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            {...field}
+                            checked={field.value}
+                            disabled={data.flagNotifyIo.readonly}
+                            data-testid="flag-notify-io-switch"
+                          />
+                        }
+                        label={t(
+                          'organizationEditWizard.step2.pagoPaIntegration.io.label'
+                        )}
+                      />
+                    )}
+                  />
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ mt: 1 }}
+                  >
+                    {t(
+                      'organizationEditWizard.step2.pagoPaIntegration.io.description'
+                    )}
+                  </Typography>
+
+                  {/* IO API Key Field - Conditional */}
+                  {watchFlagNotifyIo && (
+                    <Box sx={{ mt: 2 }}>
+                      <Controller
+                        name="ioApiKey"
+                        control={control}
+                        rules={{
+                          required: {
+                            value: watchFlagNotifyIo,
+                            message: t(
+                              'organizationEditWizard.step2.pagoPaIntegration.io.apiKeyRequired'
+                            )
+                          }
+                        }}
+                        render={({ field }) => (
+                          <TextField
+                            {...field}
+                            fullWidth
+                            label={t(
+                              'organizationEditWizard.step2.pagoPaIntegration.io.apiKeyLabel'
+                            )}
+                            placeholder={t(
+                              'organizationEditWizard.step2.pagoPaIntegration.io.apiKeyPlaceholder'
+                            )}
+                            disabled={data.ioApiKey.readonly}
+                            error={!!errors.ioApiKey}
+                            helperText={
+                              errors.ioApiKey?.message ||
+                              t(
+                                'organizationEditWizard.step2.pagoPaIntegration.io.apiKeyHelperText'
+                              )
+                            }
+                            data-testid="io-api-key-field"
+                            required
+                          />
+                        )}
+                      />
+                    </Box>
+                  )}
+                </Box>
+              </Box>
+            </Grid>
+
+            <Grid item xs={12}>
+              <Divider />
+            </Grid>
+
+            {/* SEND Section */}
+            <Grid item xs={12}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  gap: 2,
+                  mb: 2
+                }}
+              >
+                <Box sx={{ width: 40 }} aria-hidden="true">
+                  <Send />
+                </Box>
+                <Box sx={{ flex: 1 }}>
+                  <Typography variant="h6" fontWeight={600} sx={{ mb: 1 }}>
+                    SEND
+                  </Typography>
+                  <Controller
+                    name="pdndEnabled"
+                    control={control}
+                    render={({ field }) => (
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            {...field}
+                            checked={field.value}
+                            disabled={data.pdndEnabled.readonly}
+                            data-testid="pdnd-enabled-switch"
+                          />
+                        }
+                        label={t(
+                          'organizationEditWizard.step2.pagoPaIntegration.send.label'
+                        )}
+                      />
+                    )}
+                  />
+                  <Typography
+                    variant="body2"
+                    color="textSecondary"
+                    sx={{ mt: 1 }}
+                  >
+                    {t(
+                      'organizationEditWizard.step2.pagoPaIntegration.send.description'
+                    )}
+                  </Typography>
+
+                  {/* SEND API Key Field - Always visible */}
+                  <Box sx={{ mt: 2 }}>
+                    <Controller
+                      name="sendApiKey"
+                      control={control}
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          fullWidth
+                          label={t(
+                            'organizationEditWizard.step2.pagoPaIntegration.send.apiKeyLabel'
+                          )}
+                          placeholder={t(
+                            'organizationEditWizard.step2.pagoPaIntegration.send.apiKeyPlaceholder'
+                          )}
+                          disabled={data.sendApiKey.readonly}
+                          error={!!errors.sendApiKey}
+                          helperText={errors.sendApiKey?.message}
+                          data-testid="send-api-key-field"
+                        />
+                      )}
+                    />
+                  </Box>
+                </Box>
+              </Box>
             </Grid>
           </Grid>
         </Box>
@@ -627,7 +812,7 @@ const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
         onBack={onBack}
         onNext={handleSubmit(onSubmit)}
         disableNext={false}
-        nextLabel="commons.continue"
+        nextLabel="organizationEditWizard.saveChanges"
         backLabel="commons.back"
       />
     </form>

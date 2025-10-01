@@ -2,8 +2,9 @@
 
 // Language options for additional language select
 export const LANGUAGE_OPTIONS = {
-  IT: 'it',
-  EN: 'en'
+  EN: 'en',
+  FR: 'fr',
+  DE: 'de'
 } as const;
 
 export type LanguageCode = typeof LANGUAGE_OPTIONS[keyof typeof LANGUAGE_OPTIONS];
@@ -25,7 +26,7 @@ export type OrganizationEditStep2Data = {
   iban: FieldData<string>;
   ibanContabile: FieldData<string>;
   cbill: FieldData<string>;
-  integratedCashJournal: FieldData<boolean>;
+  flagTreasury: FieldData<boolean>;
   // Payments Information
   segregationCode: FieldData<string>;
   generateNoticeApiKey: FieldData<string>;
@@ -33,6 +34,11 @@ export type OrganizationEditStep2Data = {
   selectedLanguage: FieldData<string>;
   flagNotifyOutcomePush: FieldData<boolean | null>;
   flagPaymentNotification: FieldData<boolean | null>;
+  // PagoPA Products Integration
+  flagNotifyIo: FieldData<boolean>;
+  ioApiKey: FieldData<string>;
+  pdndEnabled: FieldData<boolean>;
+  sendApiKey: FieldData<string>;
 };
 
 export type OrganizationEditFormData = {

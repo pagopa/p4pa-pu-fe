@@ -4,7 +4,10 @@ import { useNavigate, useParams, generatePath } from 'react-router';
 import { StepperContainer } from '../../../components/Stepper';
 import { PageRoutes } from '../../../routes';
 import { useStore } from '../../../store/GlobalStore';
-import { getOrganizationDetail } from '../../../api/organizations';
+import {
+  getOrganizationDetail,
+  updateOrganization
+} from '../../../api/organizations';
 import { OrganizationDetailDTO } from '../../../../generated/data-contracts';
 import { OrganizationEditFormData } from '../../../models/OrganizationEditTypes';
 
@@ -45,7 +48,7 @@ const initialData: OrganizationEditFormData = {
       value: '',
       readonly: false
     },
-    integratedCashJournal: {
+    flagTreasury: {
       value: false,
       readonly: false
     },
@@ -73,6 +76,23 @@ const initialData: OrganizationEditFormData = {
     flagPaymentNotification: {
       value: null,
       readonly: false
+    },
+    // PagoPA Products Integration
+    flagNotifyIo: {
+      value: false,
+      readonly: false
+    },
+    ioApiKey: {
+      value: '',
+      readonly: false
+    },
+    pdndEnabled: {
+      value: false,
+      readonly: false
+    },
+    sendApiKey: {
+      value: '',
+      readonly: false
     }
   }
 };
@@ -81,7 +101,8 @@ const OrganizationEditWizard = () => {
   const [formData, setFormData] =
     useState<OrganizationEditFormData>(initialData);
   const [step, setStep] = useState(0);
-  const hasSetupFormData = useRef(false);
+  const [isDataReady, setIsDataReady] = useState(false);
+  const organizationDetailDataRef = useRef<OrganizationDetailDTO | null>(null);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { organizationId: organizationIdByURL } = useParams<{
@@ -103,9 +124,11 @@ const OrganizationEditWizard = () => {
     data: organizationDetailData
   } = getOrganizationDetail(getOrganizationId);
 
+  const update = updateOrganization();
+
   useEffect(() => {
     if (isError) {
-      // Se c'è un errore nel caricamento, torna alla pagina di dettaglio
+      // If there is an error loading, go back to the detail page
       utils.notify.emit(t('organizationEditWizard.errorLoadingData'), 'error');
       navigate(
         generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
@@ -115,15 +138,25 @@ const OrganizationEditWizard = () => {
       return;
     }
 
-    if (isSuccess && organizationDetailData) {
+    if (isSuccess && organizationDetailData && !isDataReady) {
       // Fill form with existing organization data
       const transformedData = transformApiDataToFormData(
         organizationDetailData
       );
       setFormData(transformedData);
-      hasSetupFormData.current = true;
+      // Store original data for PUT request
+      organizationDetailDataRef.current = organizationDetailData;
+      setIsDataReady(true);
     }
-  }, [isError, isSuccess, organizationDetailData, navigate, getOrganizationId]);
+  }, [
+    isError,
+    isSuccess,
+    organizationDetailData,
+    navigate,
+    getOrganizationId,
+    isDataReady,
+    t
+  ]);
 
   const transformApiDataToFormData = (
     orgData: OrganizationDetailDTO
@@ -161,8 +194,8 @@ const OrganizationEditWizard = () => {
           value: orgData.cbillInterBankCode || '',
           readonly: false
         },
-        integratedCashJournal: {
-          value: false, // Default value as this might not come from API
+        flagTreasury: {
+          value: orgData.flagTreasury ?? false,
           readonly: false
         },
         // Payments Information
@@ -175,13 +208,16 @@ const OrganizationEditWizard = () => {
           readonly: false
         },
         additionalLanguage: {
-          value: !!(orgData.additionalLanguage && orgData.additionalLanguage.trim()),
+          value: !!(
+            orgData.additionalLanguage && orgData.additionalLanguage.trim()
+          ),
           readonly: false
         },
         selectedLanguage: {
-          value: orgData.additionalLanguage && orgData.additionalLanguage.trim()
-            ? orgData.additionalLanguage.toLowerCase()
-            : '',
+          value:
+            orgData.additionalLanguage && orgData.additionalLanguage.trim()
+              ? orgData.additionalLanguage.toLowerCase()
+              : '',
           readonly: false
         },
         flagNotifyOutcomePush: {
@@ -191,9 +227,108 @@ const OrganizationEditWizard = () => {
         flagPaymentNotification: {
           value: orgData.flagPaymentNotification ?? null,
           readonly: false
+        },
+        // PagoPA Products Integration
+        flagNotifyIo: {
+          value: orgData.flagNotifyIo ?? false,
+          readonly: false
+        },
+        ioApiKey: {
+          value: orgData.ioApiKey || '',
+          readonly: false
+        },
+        pdndEnabled: {
+          value: orgData.pdndEnabled ?? false,
+          readonly: false
+        },
+        sendApiKey: {
+          value: orgData.sendApiKey || '',
+          readonly: false
         }
       }
     };
+  };
+
+  // Transform form data to API payload format
+  const transformFormDataToApiPayload = (
+    formData: OrganizationEditFormData,
+    originalData: OrganizationDetailDTO
+  ): OrganizationDetailDTO => {
+    return {
+      // Fields from original API (readonly)
+      organizationId: originalData.organizationId,
+      flagTreasury: formData.step2.flagTreasury.value,
+      externalOrganizationId: originalData.externalOrganizationId,
+      ipaCode: originalData.ipaCode,
+      orgTypeCode: originalData.orgTypeCode,
+      status: originalData.status,
+      startDate: originalData.startDate,
+      brokerId: originalData.brokerId,
+      password: originalData.password,
+      // Step1 editable fields
+      orgFiscalCode: formData.step1.orgFiscalCode.value,
+      orgName: formData.step1.orgName.value,
+      orgEmail: formData.step1.orgEmail.value,
+      orgLogo: formData.step1.orgLogo.value || originalData.orgLogo,
+      // Step2 accounting fields
+      iban: formData.step2.iban.value,
+      postalIban: formData.step2.ibanContabile.value,
+      cbillInterBankCode: formData.step2.cbill.value,
+      // Step2 payment fields
+      segregationCode: formData.step2.segregationCode.value,
+      generateNoticeApiKey: formData.step2.generateNoticeApiKey.value,
+      additionalLanguage: formData.step2.additionalLanguage.value
+        ? formData.step2.selectedLanguage.value.toUpperCase()
+        : '',
+      flagNotifyOutcomePush:
+        formData.step2.flagNotifyOutcomePush.value ?? false,
+      flagPaymentNotification:
+        formData.step2.flagPaymentNotification.value ?? false,
+      // Step2 PagoPA integration fields
+      flagNotifyIo: formData.step2.flagNotifyIo.value,
+      ioApiKey: formData.step2.ioApiKey.value,
+      pdndEnabled: formData.step2.pdndEnabled.value,
+      sendApiKey: formData.step2.sendApiKey.value
+    };
+  };
+
+  // Submit handler for final step
+  const handleFinalSubmit = async (
+    step2Values?: OrganizationEditFormData['step2']
+  ) => {
+    if (!organizationDetailDataRef.current) {
+      console.error('Original organization data not available');
+      navigate(PageRoutes.RESPONSES_ERROR);
+      return;
+    }
+
+    try {
+      // Use the passed values or the current formData state
+      const dataToUse: OrganizationEditFormData = step2Values
+        ? { ...formData, step2: step2Values }
+        : formData;
+
+      const payload = transformFormDataToApiPayload(
+        dataToUse,
+        organizationDetailDataRef.current
+      );
+
+      await update.mutateAsync({
+        organizationId: getOrganizationId,
+        organizationData: payload
+      });
+
+      utils.notify.emit(t('organizationEditWizard.successMessage'), 'success');
+
+      navigate(
+        generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
+          organizationId: getOrganizationId
+        })
+      );
+    } catch (error) {
+      console.error(error);
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
   };
 
   const handleGoBack = () => {
@@ -205,7 +340,7 @@ const OrganizationEditWizard = () => {
   };
 
   // Don't render anything until the data is ready
-  if (isLoading || !hasSetupFormData.current) {
+  if (isLoading || !isDataReady) {
     return null;
   }
 
@@ -237,10 +372,7 @@ const OrganizationEditWizard = () => {
               setData={(data) => {
                 setFormData((prev) => ({ ...prev, step2: data }));
               }}
-              onNext={() => {
-                // TODO: Implement next step or finish wizard
-                handleGoBack(); // For now, go back to detail page
-              }}
+              onNext={handleFinalSubmit}
               onBack={() => setStep(0)}
             />
           )
