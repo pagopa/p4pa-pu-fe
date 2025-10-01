@@ -7,7 +7,8 @@ export const LANGUAGE_OPTIONS = {
   DE: 'de'
 } as const;
 
-export type LanguageCode = typeof LANGUAGE_OPTIONS[keyof typeof LANGUAGE_OPTIONS];
+export type LanguageCode =
+  (typeof LANGUAGE_OPTIONS)[keyof typeof LANGUAGE_OPTIONS];
 
 export type FieldData<T> = {
   value: T;
@@ -44,6 +45,34 @@ export type OrganizationEditStep2Data = {
 export type OrganizationEditFormData = {
   step1: OrganizationEditStep1Data;
   step2: OrganizationEditStep2Data;
+};
+
+// Form values types
+export type Step1FormValues = {
+  orgName: string;
+  orgFiscalCode: string;
+  orgEmail: string;
+  orgLogo: File | null;
+};
+
+export type Step2FormValues = {
+  // Accounting Information
+  iban: string;
+  ibanContabile: string;
+  cbill: string;
+  flagTreasury: boolean;
+  // Payments Information
+  segregationCode: string;
+  generateNoticeApiKey: string;
+  additionalLanguage: boolean;
+  selectedLanguage: string;
+  flagNotifyOutcomePush: boolean;
+  flagPaymentNotification: boolean;
+  // PagoPA Products Integration
+  flagNotifyIo: boolean;
+  ioApiKey: string;
+  pdndEnabled: boolean;
+  sendApiKey: string;
 };
 
 // Type for the final payload of the organization update API

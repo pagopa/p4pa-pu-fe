@@ -4,7 +4,10 @@ import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { useMemo } from 'react';
 import WizardStepButtons from '../../../../../components/Wizard/WizardStepButtons';
-import { OrganizationEditStep1Data } from '../../../../../models/OrganizationEditTypes';
+import {
+  OrganizationEditStep1Data,
+  Step1FormValues
+} from '../../../../../models/OrganizationEditTypes';
 import { isValidEmail } from '../../../../../utils/fieldValidation';
 import {
   base64ToFile,
@@ -18,13 +21,6 @@ type Props = {
   setData: (data: OrganizationEditStep1Data) => void;
   onNext: () => void;
   onBack: () => void;
-};
-
-type Step1FormValues = {
-  orgName: string;
-  orgFiscalCode: string;
-  orgEmail: string;
-  orgLogo: File | null;
 };
 
 const Step1EntityProfile = ({ data, setData, onNext, onBack }: Props) => {
