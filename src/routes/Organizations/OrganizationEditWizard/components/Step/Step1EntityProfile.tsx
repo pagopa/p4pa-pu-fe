@@ -27,7 +27,7 @@ type Step1FormValues = {
   orgLogo: File | null;
 };
 
-const Step1AnagraficaEnte = ({ data, setData, onNext, onBack }: Props) => {
+const Step1EntityProfile = ({ data, setData, onNext, onBack }: Props) => {
   const { t } = useTranslation();
 
   // Convert logo from base64 to File only once using useMemo
@@ -284,4 +284,4 @@ const Step1AnagraficaEnte = ({ data, setData, onNext, onBack }: Props) => {
   );
 };
 
-export default Step1AnagraficaEnte;
+export default Step1EntityProfile;

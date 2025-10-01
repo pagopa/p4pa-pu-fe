@@ -13,7 +13,6 @@ import {
 } from '@mui/material';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { useEffect } from 'react';
 import WizardStepButtons from '../../../../../components/Wizard/WizardStepButtons';
 import { FormComponent } from '../../../../../components/FormComponent';
 import {
@@ -53,6 +52,27 @@ type Step2FormValues = {
   sendApiKey: string;
 };
 
+// Validation rules factory for IBAN fields
+const createIBANValidationRules = (t: (key: string) => string, isRequired = false) => {
+  const rules: any = {
+    validate: {
+      validIBAN: (value: string) => {
+        if (!value) return true;
+        return isValidIBAN(value) || t('organizationEditWizard.step2.iban.invalid');
+      }
+    }
+  };
+
+  if (isRequired) {
+    rules.required = {
+      value: true,
+      message: t('organizationEditWizard.step2.iban.required')
+    };
+  }
+
+  return rules;
+};
+
 // Utility function to create FieldData from form value and original field
 const createFieldData = function <T>(
   formValue: T,
@@ -64,69 +84,64 @@ const createFieldData = function <T>(
   };
 };
 
-// Utility function to populate form fields from Step2 data
-const populateFormFields = (
-  data: OrganizationEditStep2Data,
-  setValue: (name: keyof Step2FormValues, value: any) => void
-) => {
-  // Accounting Information
-  if (data.iban.value) setValue('iban', data.iban.value);
-  if (data.ibanContabile.value)
-    setValue('ibanContabile', data.ibanContabile.value);
-  if (data.cbill.value) setValue('cbill', data.cbill.value);
-  setValue('flagTreasury', data.flagTreasury.value);
-
-  // Payments Information
-  if (data.segregationCode.value)
-    setValue('segregationCode', data.segregationCode.value);
-  if (data.generateNoticeApiKey.value)
-    setValue('generateNoticeApiKey', data.generateNoticeApiKey.value);
-  setValue('additionalLanguage', data.additionalLanguage.value);
-  setValue('selectedLanguage', data.selectedLanguage.value);
-  // Convert null to false for radio groups
-  setValue('flagNotifyOutcomePush', data.flagNotifyOutcomePush.value ?? false);
-  setValue(
-    'flagPaymentNotification',
-    data.flagPaymentNotification.value ?? false
-  );
-
-  // PagoPA Products Integration
-  if (data.flagNotifyIo) setValue('flagNotifyIo', data.flagNotifyIo.value);
-  if (data.ioApiKey?.value) setValue('ioApiKey', data.ioApiKey.value);
-  if (data.pdndEnabled) setValue('pdndEnabled', data.pdndEnabled.value);
-  if (data.sendApiKey?.value) setValue('sendApiKey', data.sendApiKey.value);
+// Utility function to convert form values to Step2Data format
+const formValuesToFieldData = (
+  values: Step2FormValues,
+  originalData: OrganizationEditStep2Data
+): OrganizationEditStep2Data => {
+  return {
+    iban: createFieldData(values.iban, originalData.iban),
+    ibanContabile: createFieldData(values.ibanContabile, originalData.ibanContabile),
+    cbill: createFieldData(values.cbill, originalData.cbill),
+    flagTreasury: createFieldData(values.flagTreasury, originalData.flagTreasury),
+    segregationCode: createFieldData(values.segregationCode, originalData.segregationCode),
+    generateNoticeApiKey: createFieldData(values.generateNoticeApiKey, originalData.generateNoticeApiKey),
+    additionalLanguage: createFieldData(values.additionalLanguage, originalData.additionalLanguage),
+    selectedLanguage: createFieldData(values.selectedLanguage, originalData.selectedLanguage),
+    flagNotifyOutcomePush: createFieldData(values.flagNotifyOutcomePush, originalData.flagNotifyOutcomePush),
+    flagPaymentNotification: createFieldData(values.flagPaymentNotification, originalData.flagPaymentNotification),
+    flagNotifyIo: createFieldData(values.flagNotifyIo, originalData.flagNotifyIo),
+    ioApiKey: createFieldData(values.ioApiKey, originalData.ioApiKey),
+    pdndEnabled: createFieldData(values.pdndEnabled, originalData.pdndEnabled),
+    sendApiKey: createFieldData(values.sendApiKey, originalData.sendApiKey)
+  };
 };
 
-const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
+const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
   const { t } = useTranslation();
 
-  const {
-    handleSubmit,
-    control,
-    formState: { errors },
-    setValue,
-    watch
-  } = useForm<Step2FormValues>({
-    defaultValues: {
+  // Calculate initial values dynamically to sync with parent data changes
+  const getInitialValues = (): Step2FormValues => {
+    return {
       // Accounting Information
-      iban: data.iban.value,
-      ibanContabile: data.ibanContabile.value,
-      cbill: data.cbill.value,
+      iban: data.iban.value || '',
+      ibanContabile: data.ibanContabile.value || '',
+      cbill: data.cbill.value || '',
       flagTreasury: data.flagTreasury.value,
       // Payments Information
-      segregationCode: data.segregationCode.value,
-      generateNoticeApiKey: data.generateNoticeApiKey.value,
+      segregationCode: data.segregationCode.value || '',
+      generateNoticeApiKey: data.generateNoticeApiKey.value || '',
       additionalLanguage: data.additionalLanguage.value,
-      selectedLanguage: data.selectedLanguage.value,
+      selectedLanguage: data.selectedLanguage.value || '',
       // Convert null to false for radio groups
       flagNotifyOutcomePush: data.flagNotifyOutcomePush.value ?? false,
       flagPaymentNotification: data.flagPaymentNotification.value ?? false,
       // PagoPA Products Integration
       flagNotifyIo: data.flagNotifyIo.value,
-      ioApiKey: data.ioApiKey.value,
+      ioApiKey: data.ioApiKey.value || '',
       pdndEnabled: data.pdndEnabled.value,
-      sendApiKey: data.sendApiKey.value
-    },
+      sendApiKey: data.sendApiKey.value || ''
+    };
+  };
+
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+    watch
+  } = useForm<Step2FormValues>({
+    defaultValues: getInitialValues(),
+    values: getInitialValues(), // This ensures form updates when data changes
     mode: 'onSubmit'
   });
 
@@ -135,70 +150,8 @@ const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
   // Watch the flagNotifyIo switch to show/hide IO API Key field
   const watchFlagNotifyIo = watch('flagNotifyIo');
 
-  // Prepopulate the fields when the API data arrives
-  useEffect(() => {
-    populateFormFields(data, setValue);
-  }, [
-    data.iban.value,
-    data.ibanContabile.value,
-    data.cbill.value,
-    data.flagTreasury.value,
-    data.segregationCode.value,
-    data.generateNoticeApiKey.value,
-    data.additionalLanguage.value,
-    data.selectedLanguage.value,
-    data.flagNotifyOutcomePush.value,
-    data.flagPaymentNotification.value,
-    data.flagNotifyIo.value,
-    data.ioApiKey.value,
-    data.pdndEnabled.value,
-    data.sendApiKey.value,
-    setValue
-  ]);
-
   const onSubmit = (values: Step2FormValues) => {
-    const step2Data = {
-      // Accounting Information
-      iban: createFieldData(values.iban, data.iban),
-      ibanContabile: createFieldData(values.ibanContabile, data.ibanContabile),
-      cbill: createFieldData(values.cbill, data.cbill),
-      flagTreasury: createFieldData(
-        values.flagTreasury,
-        data.flagTreasury
-      ),
-      // Payments Information
-      segregationCode: createFieldData(
-        values.segregationCode,
-        data.segregationCode
-      ),
-      generateNoticeApiKey: createFieldData(
-        values.generateNoticeApiKey,
-        data.generateNoticeApiKey
-      ),
-      additionalLanguage: createFieldData(
-        values.additionalLanguage,
-        data.additionalLanguage
-      ),
-      selectedLanguage: createFieldData(
-        values.selectedLanguage,
-        data.selectedLanguage
-      ),
-      // Convert boolean back to boolean | null (keeping boolean for now as API expects it)
-      flagNotifyOutcomePush: createFieldData(
-        values.flagNotifyOutcomePush,
-        data.flagNotifyOutcomePush
-      ),
-      flagPaymentNotification: createFieldData(
-        values.flagPaymentNotification,
-        data.flagPaymentNotification
-      ),
-      // PagoPA Products Integration
-      flagNotifyIo: createFieldData(values.flagNotifyIo, data.flagNotifyIo),
-      ioApiKey: createFieldData(values.ioApiKey, data.ioApiKey),
-      pdndEnabled: createFieldData(values.pdndEnabled, data.pdndEnabled),
-      sendApiKey: createFieldData(values.sendApiKey, data.sendApiKey)
-    };
-
+    const step2Data = formValuesToFieldData(values, data);
     setData(step2Data);
     onNext(step2Data);
   };
@@ -243,21 +196,7 @@ const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
               <Controller
                 name="iban"
                 control={control}
-                rules={{
-                  required: {
-                    value: true,
-                    message: t('organizationEditWizard.step2.iban.required')
-                  },
-                  validate: {
-                    validIBAN: (value: string) => {
-                      if (!value) return true;
-                      return (
-                        isValidIBAN(value) ||
-                        t('organizationEditWizard.step2.iban.invalid')
-                      );
-                    }
-                  }
-                }}
+                rules={createIBANValidationRules(t, true)}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -281,17 +220,7 @@ const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
               <Controller
                 name="ibanContabile"
                 control={control}
-                rules={{
-                  validate: {
-                    validIBAN: (value: string) => {
-                      if (!value) return true;
-                      return (
-                        isValidIBAN(value) ||
-                        t('organizationEditWizard.step2.ibanContabile.invalid')
-                      );
-                    }
-                  }
-                }}
+                rules={createIBANValidationRules(t, false)}
                 render={({ field }) => (
                   <TextField
                     {...field}
@@ -819,4 +748,4 @@ const Step2ConfigurazioneEnte = ({ data, setData, onNext, onBack }: Props) => {
   );
 };
 
-export default Step2ConfigurazioneEnte;
+export default Step2EntityConfiguration;

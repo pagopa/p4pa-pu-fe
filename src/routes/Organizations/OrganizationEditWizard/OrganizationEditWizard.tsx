@@ -11,8 +11,8 @@ import {
 import { OrganizationDetailDTO } from '../../../../generated/data-contracts';
 import { OrganizationEditFormData } from '../../../models/OrganizationEditTypes';
 
-import Step1AnagraficaEnte from './components/Step/Step1AnagraficaEnte';
-import Step2ConfigurazioneEnte from './components/Step/Step2ConfigurazioneEnte';
+import Step1AnagraficaEnte from './components/Step/Step1EntityProfile';
+import Step2ConfigurazioneEnte from './components/Step/Step2EntityConfiguration';
 import utils from '../../../utils';
 
 const initialData: OrganizationEditFormData = {
