@@ -78,7 +78,6 @@ const Step1EntityProfile = ({ data, setData, onNext, onBack }: Props) => {
       // If a new logo file is uploaded, convert it to base64
       try {
         logoValue = await fileToBase64(values.orgLogo);
-        logoRemoved = false;
       } catch (error) {
         console.error('Error converting logo to base64:', error);
       }

@@ -88,7 +88,8 @@ describe('AccountingInfoSection', () => {
     flagNotifyIo: { value: false, readonly: false },
     ioApiKey: { value: '', readonly: false },
     pdndEnabled: { value: false, readonly: false },
-    sendApiKey: { value: '', readonly: false }
+    sendApiKey: { value: '', readonly: false },
+    organizationStatus: 'DRAFT'
   };
 
   const mockFilledData: OrganizationEditStep2Data = {
@@ -195,10 +196,29 @@ describe('AccountingInfoSection', () => {
       expect(screen.getByTestId('flag-treasury-switch')).toBeInTheDocument();
     });
 
-    it('should render IBAN field with required attribute', () => {
+    it('should NOT render IBAN field with required attribute for DRAFT status', () => {
       render(
         <TestWrapper
           data={mockData}
+          defaultValues={defaultFormValues}
+          createIBANValidationRules={mockCreateIBANValidationRules}
+          t={mockT}
+        />
+      );
+
+      const ibanField = screen.getByTestId('iban-field').querySelector('input');
+      expect(ibanField).not.toHaveAttribute('required');
+    });
+
+    it('should render IBAN field with required attribute for ACTIVE status', () => {
+      const activeData = {
+        ...mockData,
+        organizationStatus: 'ACTIVE'
+      };
+
+      render(
+        <TestWrapper
+          data={activeData}
           defaultValues={defaultFormValues}
           createIBANValidationRules={mockCreateIBANValidationRules}
           t={mockT}
@@ -369,10 +389,28 @@ describe('AccountingInfoSection', () => {
   });
 
   describe('Validation Rules', () => {
-    it('should call createIBANValidationRules for IBAN field with required=true', () => {
+    it('should call createIBANValidationRules for IBAN field with required=false for DRAFT', () => {
       render(
         <TestWrapper
           data={mockData}
+          defaultValues={defaultFormValues}
+          createIBANValidationRules={mockCreateIBANValidationRules}
+          t={mockT}
+        />
+      );
+
+      expect(mockCreateIBANValidationRules).toHaveBeenCalledWith(mockT, false);
+    });
+
+    it('should call createIBANValidationRules for IBAN field with required=true for ACTIVE', () => {
+      const activeData = {
+        ...mockData,
+        organizationStatus: 'ACTIVE'
+      };
+
+      render(
+        <TestWrapper
+          data={activeData}
           defaultValues={defaultFormValues}
           createIBANValidationRules={mockCreateIBANValidationRules}
           t={mockT}

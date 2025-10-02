@@ -1968,7 +1968,8 @@
         "description": "Inserisci solo il logo del tuo ente. Aiuterà a rendere legittime le ricevute telematiche e gli avvisi.",
         "uploadDescription": "Trascina qui il file o seleziona dal computer",
         "requirements": "Hai dubbi su formato o dimensioni?",
-        "learnMore": "Leggi qui"
+        "learnMore": "Leggi qui",
+        "required": "Il logo è obbligatorio"
       }
     },
     "step2": {

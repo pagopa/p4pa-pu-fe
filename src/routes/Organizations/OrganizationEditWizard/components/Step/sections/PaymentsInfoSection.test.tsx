@@ -86,7 +86,8 @@ describe('PaymentsInfoSection', () => {
     flagNotifyIo: { value: false, readonly: false },
     ioApiKey: { value: '', readonly: false },
     pdndEnabled: { value: false, readonly: false },
-    sendApiKey: { value: '', readonly: false }
+    sendApiKey: { value: '', readonly: false },
+    organizationStatus: 'DRAFT'
   };
 
   const mockFilledData: OrganizationEditStep2Data = {
@@ -246,10 +247,35 @@ describe('PaymentsInfoSection', () => {
       ).toBeInTheDocument();
     });
 
-    it('should render required fields with required attribute', () => {
+    it('should render segregationCode as NOT required for DRAFT status', () => {
       render(
         <TestWrapper
           data={mockData}
+          defaultValues={defaultFormValues}
+          t={mockT}
+        />
+      );
+
+      const segregationCodeInput = screen
+        .getByTestId('segregation-code-field')
+        .querySelector('input');
+      const generateNoticeApiKeyInput = screen
+        .getByTestId('generate-notice-api-key-field')
+        .querySelector('input');
+
+      expect(segregationCodeInput).not.toHaveAttribute('required');
+      expect(generateNoticeApiKeyInput).toHaveAttribute('required'); // This is always required
+    });
+
+    it('should render segregationCode as required for ACTIVE status', () => {
+      const activeData = {
+        ...mockData,
+        organizationStatus: 'ACTIVE'
+      };
+
+      render(
+        <TestWrapper
+          data={activeData}
           defaultValues={defaultFormValues}
           t={mockT}
         />

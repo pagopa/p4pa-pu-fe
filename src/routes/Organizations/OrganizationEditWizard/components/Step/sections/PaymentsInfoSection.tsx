@@ -252,7 +252,9 @@ export const PaymentsInfoSection = ({
                   />
                   <FormControlLabel
                     value={false}
-                    control={<Radio data-testid="flagNotifyOutcomePush-false" />}
+                    control={
+                      <Radio data-testid="flagNotifyOutcomePush-false" />
+                    }
                     label={t(
                       'organizationEditWizard.step2.flagNotifyOutcomePush.disabilita'
                     )}

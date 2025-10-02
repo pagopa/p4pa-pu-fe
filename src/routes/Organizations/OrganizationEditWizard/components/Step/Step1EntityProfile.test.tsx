@@ -87,7 +87,9 @@ describe('Step1EntityProfile', () => {
     orgLogo: {
       value: '',
       readonly: false
-    }
+    },
+    logoRemoved: false,
+    organizationStatus: 'DRAFT'
   };
 
   const mockFilledData: OrganizationEditStep1Data = {
@@ -106,7 +108,9 @@ describe('Step1EntityProfile', () => {
     orgLogo: {
       value: 'data:image/png;base64,iVBORw0KGgo...',
       readonly: false
-    }
+    },
+    logoRemoved: false,
+    organizationStatus: 'DRAFT'
   };
 
   const translations = {
@@ -132,7 +136,8 @@ describe('Step1EntityProfile', () => {
           description: 'Carica il logo del tuo ente',
           uploadDescription: 'Trascina qui il file o clicca per selezionarlo',
           requirements: 'Requisiti:',
-          learnMore: 'Scopri di più'
+          learnMore: 'Scopri di più',
+          required: 'Il logo è obbligatorio'
         }
       }
     },
@@ -609,6 +614,130 @@ describe('Step1EntityProfile', () => {
       expect(vi.mocked(fileValidation.base64ToFile).mock.calls.length).toBe(
         callCount
       );
+    });
+  });
+
+  describe('Logo Validation for ACTIVE Status', () => {
+    it('should show validation error when removing logo from ACTIVE organization', async () => {
+      const activeOrgData: OrganizationEditStep1Data = {
+        ...mockFilledData,
+        organizationStatus: 'ACTIVE'
+      };
+
+      render(
+        <Step1EntityProfile
+          data={activeOrgData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      );
+
+      // Simulate form submission (logo will be null because mock doesn't upload)
+      const nextButton = screen.getByTestId('next-button');
+      fireEvent.click(nextButton);
+
+      await waitFor(() => {
+        // onNext should not be called because validation failed
+        expect(mockOnNext).not.toHaveBeenCalled();
+      });
+    });
+
+    it('should allow submission without logo for DRAFT organization', async () => {
+      const draftOrgData: OrganizationEditStep1Data = {
+        ...mockInitialData,
+        organizationStatus: 'DRAFT'
+      };
+
+      render(
+        <Step1EntityProfile
+          data={draftOrgData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      );
+
+      const nextButton = screen.getByTestId('next-button');
+      fireEvent.click(nextButton);
+
+      await waitFor(() => {
+        expect(mockSetData).toHaveBeenCalled();
+        expect(mockOnNext).toHaveBeenCalled();
+      });
+    });
+
+    it('should allow submission without logo for CANCELLED organization', async () => {
+      const cancelledOrgData: OrganizationEditStep1Data = {
+        ...mockInitialData,
+        organizationStatus: 'CANCELLED'
+      };
+
+      render(
+        <Step1EntityProfile
+          data={cancelledOrgData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      );
+
+      const nextButton = screen.getByTestId('next-button');
+      fireEvent.click(nextButton);
+
+      await waitFor(() => {
+        expect(mockSetData).toHaveBeenCalled();
+        expect(mockOnNext).toHaveBeenCalled();
+      });
+    });
+
+    it('should include organizationStatus in setData call', async () => {
+      const activeOrgData: OrganizationEditStep1Data = {
+        ...mockFilledData,
+        organizationStatus: 'ACTIVE'
+      };
+
+      render(
+        <Step1EntityProfile
+          data={activeOrgData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      );
+
+      const nextButton = screen.getByTestId('next-button');
+      fireEvent.click(nextButton);
+
+      await waitFor(() => {
+        expect(mockSetData).toHaveBeenCalledWith(
+          expect.objectContaining({
+            organizationStatus: 'ACTIVE'
+          })
+        );
+      });
+    });
+
+    it('should include logoRemoved flag in setData call', async () => {
+      render(
+        <Step1EntityProfile
+          data={mockInitialData}
+          setData={mockSetData}
+          onNext={mockOnNext}
+          onBack={mockOnBack}
+        />
+      );
+
+      const nextButton = screen.getByTestId('next-button');
+      fireEvent.click(nextButton);
+
+      await waitFor(() => {
+        expect(mockSetData).toHaveBeenCalledWith(
+          expect.objectContaining({
+            logoRemoved: expect.any(Boolean)
+          })
+        );
+      });
     });
   });
 });
