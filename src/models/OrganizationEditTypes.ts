@@ -1,5 +1,3 @@
-// TypeScript models for Organization Edit Wizard following project patterns
-
 // Language options for additional language select
 export const LANGUAGE_OPTIONS = {
   EN: 'en',

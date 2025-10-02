@@ -199,7 +199,6 @@ export const PaymentsInfoSection = ({
           </Grid>
         )}
 
-        {/* Divider after language select when visible */}
         {watchAdditionalLanguage && (
           <Grid item xs={12} sx={{ mt: 2 }}>
             <Divider />

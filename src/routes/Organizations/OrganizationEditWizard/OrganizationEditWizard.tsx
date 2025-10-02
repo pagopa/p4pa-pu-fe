@@ -165,19 +165,19 @@ const OrganizationEditWizard = () => {
       step1: {
         orgName: {
           value: orgData.orgName || '',
-          readonly: !!orgData.orgName // If present, becomes readonly
+          readonly: true
         },
         orgFiscalCode: {
           value: orgData.orgFiscalCode || '',
-          readonly: !!orgData.orgFiscalCode // If present, becomes readonly
+          readonly: true
         },
         orgEmail: {
           value: orgData.orgEmail || '',
-          readonly: false // Email is always editable
+          readonly: false
         },
         orgLogo: {
           value: orgData.orgLogo || null,
-          readonly: false // Logo is always editable
+          readonly: false
         }
       },
       step2: {
