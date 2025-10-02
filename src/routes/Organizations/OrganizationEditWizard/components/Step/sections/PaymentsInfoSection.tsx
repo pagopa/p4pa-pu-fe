@@ -46,14 +46,14 @@ export const PaymentsInfoSection = ({
       </Typography>
 
       <Grid container spacing={2}>
-        {/* Codice Segregazione Field - Required */}
+        {/* Codice Segregazione Field - Required only if status is ACTIVE */}
         <Grid item xs={12}>
           <Controller
             name="segregationCode"
             control={control}
             rules={{
               required: {
-                value: true,
+                value: data.organizationStatus === 'ACTIVE',
                 message: t(
                   'organizationEditWizard.step2.segregationCode.required'
                 )
@@ -71,7 +71,7 @@ export const PaymentsInfoSection = ({
                 error={!!errors.segregationCode}
                 helperText={errors.segregationCode?.message}
                 data-testid="segregation-code-field"
-                required
+                required={data.organizationStatus === 'ACTIVE'}
               />
             )}
           />

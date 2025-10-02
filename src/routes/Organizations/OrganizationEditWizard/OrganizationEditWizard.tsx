@@ -32,7 +32,9 @@ const initialData: OrganizationEditFormData = {
     orgLogo: {
       value: null,
       readonly: false
-    }
+    },
+    logoRemoved: false,
+    organizationStatus: undefined
   },
   step2: {
     // Accounting Information
@@ -93,7 +95,8 @@ const initialData: OrganizationEditFormData = {
     sendApiKey: {
       value: '',
       readonly: false
-    }
+    },
+    organizationStatus: undefined
   }
 };
 
@@ -178,7 +181,9 @@ const OrganizationEditWizard = () => {
         orgLogo: {
           value: orgData.orgLogo || null,
           readonly: false
-        }
+        },
+        logoRemoved: false,
+        organizationStatus: orgData.status
       },
       step2: {
         // Accounting Information
@@ -244,7 +249,8 @@ const OrganizationEditWizard = () => {
         sendApiKey: {
           value: orgData.sendApiKey || '',
           readonly: false
-        }
+        },
+        organizationStatus: orgData.status
       }
     };
   };
@@ -254,7 +260,20 @@ const OrganizationEditWizard = () => {
     formData: OrganizationEditFormData,
     originalData: OrganizationDetailDTO
   ): OrganizationDetailDTO => {
-    return {
+    // Determine orgLogo value based on user actions
+    let orgLogoValue: string | undefined;
+    if (formData.step1.logoRemoved) {
+      // User explicitly removed the logo, send undefined to remove it
+      orgLogoValue = undefined;
+    } else if (formData.step1.orgLogo.value) {
+      // User uploaded a new logo or kept existing one
+      orgLogoValue = formData.step1.orgLogo.value;
+    } else {
+      // No logo action taken, keep original
+      orgLogoValue = originalData.orgLogo;
+    }
+
+    const payload = {
       // Fields from original API (readonly)
       organizationId: originalData.organizationId,
       flagTreasury: formData.step2.flagTreasury.value,
@@ -269,7 +288,7 @@ const OrganizationEditWizard = () => {
       orgFiscalCode: formData.step1.orgFiscalCode.value,
       orgName: formData.step1.orgName.value,
       orgEmail: formData.step1.orgEmail.value,
-      orgLogo: formData.step1.orgLogo.value || originalData.orgLogo,
+      orgLogo: orgLogoValue,
       // Step2 accounting fields
       iban: formData.step2.iban.value,
       postalIban: formData.step2.ibanPostal.value,
@@ -290,6 +309,8 @@ const OrganizationEditWizard = () => {
       pdndEnabled: formData.step2.pdndEnabled.value,
       sendApiKey: formData.step2.sendApiKey.value
     };
+
+    return payload;
   };
 
   // Submit handler for final step

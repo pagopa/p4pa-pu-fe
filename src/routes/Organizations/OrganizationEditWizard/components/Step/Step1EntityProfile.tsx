@@ -47,7 +47,8 @@ const Step1EntityProfile = ({ data, setData, onNext, onBack }: Props) => {
   const {
     handleSubmit,
     control,
-    formState: { errors }
+    formState: { errors },
+    setError
   } = useForm<Step1FormValues>({
     defaultValues: getInitialValues(),
     values: getInitialValues(), // This ensures form updates when data changes
@@ -56,17 +57,43 @@ const Step1EntityProfile = ({ data, setData, onNext, onBack }: Props) => {
 
   const onSubmit = async (values: Step1FormValues) => {
     let logoValue = data.orgLogo.value; // Keep existing logo by default
+    let logoRemoved = false;
 
-    // If a new logo file is uploaded, convert it to base64
-    if (values.orgLogo) {
+    // Check if user has explicitly removed the logo
+    if (data.orgLogo.value && !values.orgLogo) {
+      // User had a logo before and now it's null = logo was removed
+      logoValue = null;
+      logoRemoved = true;
+
+      // Validate: If status is ACTIVE and logo is removed, show error
+      if (data.organizationStatus === 'ACTIVE') {
+        // Set error on orgLogo field
+        setError('orgLogo', {
+          type: 'manual',
+          message: t('organizationEditWizard.step1.orgLogo.required')
+        });
+        return;
+      }
+    } else if (values.orgLogo) {
+      // If a new logo file is uploaded, convert it to base64
       try {
         logoValue = await fileToBase64(values.orgLogo);
+        logoRemoved = false;
       } catch (error) {
         console.error('Error converting logo to base64:', error);
       }
+    } else {
+      // Validate: If status is ACTIVE and no logo exists at all
+      if (data.organizationStatus === 'ACTIVE' && !data.orgLogo.value) {
+        setError('orgLogo', {
+          type: 'manual',
+          message: t('organizationEditWizard.step1.orgLogo.required')
+        });
+        return;
+      }
     }
 
-    setData({
+    const step1Data = {
       orgName: {
         value: values.orgName,
         readonly: data.orgName.readonly
@@ -82,9 +109,12 @@ const Step1EntityProfile = ({ data, setData, onNext, onBack }: Props) => {
       orgLogo: {
         value: logoValue,
         readonly: data.orgLogo.readonly
-      }
-    });
+      },
+      logoRemoved,
+      organizationStatus: data.organizationStatus
+    };
 
+    setData(step1Data);
     onNext();
   };
 

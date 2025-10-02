@@ -18,6 +18,8 @@ export type OrganizationEditStep1Data = {
   orgFiscalCode: FieldData<string>;
   orgEmail: FieldData<string>;
   orgLogo: FieldData<string | null>;
+  logoRemoved: boolean; // Flag to track if user explicitly removed the logo
+  organizationStatus?: string; // Organization status for conditional validation
 };
 
 export type OrganizationEditStep2Data = {
@@ -38,6 +40,7 @@ export type OrganizationEditStep2Data = {
   ioApiKey: FieldData<string>;
   pdndEnabled: FieldData<boolean>;
   sendApiKey: FieldData<string>;
+  organizationStatus?: string; // Organization status for conditional validation
 };
 
 export type OrganizationEditFormData = {

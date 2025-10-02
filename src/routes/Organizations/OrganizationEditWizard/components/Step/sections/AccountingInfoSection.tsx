@@ -41,12 +41,15 @@ export const AccountingInfoSection = ({
       </Typography>
 
       <Grid container spacing={2}>
-        {/* IBAN Field - Required */}
+        {/* IBAN Field - Required only if status is ACTIVE */}
         <Grid item xs={12}>
           <Controller
             name="iban"
             control={control}
-            rules={createIBANValidationRules(t, true)}
+            rules={createIBANValidationRules(
+              t,
+              data.organizationStatus === 'ACTIVE'
+            )}
             render={({ field }) => (
               <TextField
                 {...field}
@@ -57,7 +60,7 @@ export const AccountingInfoSection = ({
                 error={!!errors.iban}
                 helperText={errors.iban?.message}
                 data-testid="iban-field"
-                required
+                required={data.organizationStatus === 'ACTIVE'}
               />
             )}
           />
