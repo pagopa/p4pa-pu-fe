@@ -21,12 +21,17 @@ type Props = {
 };
 
 // Validation rules factory for IBAN fields
-const createIBANValidationRules = (t: (key: string) => string, isRequired = false) => {
-  const rules: any = {
+const createIBANValidationRules = (
+  t: (key: string) => string,
+  isRequired = false
+): Record<string, unknown> => {
+  const rules: Record<string, unknown> = {
     validate: {
       validIBAN: (value: string) => {
         if (!value) return true;
-        return isValidIBAN(value) || t('organizationEditWizard.step2.iban.invalid');
+        return (
+          isValidIBAN(value) || t('organizationEditWizard.step2.iban.invalid')
+        );
       }
     }
   };
@@ -59,16 +64,43 @@ const formValuesToFieldData = (
 ): OrganizationEditStep2Data => {
   return {
     iban: createFieldData(values.iban, originalData.iban),
-    ibanContabile: createFieldData(values.ibanContabile, originalData.ibanContabile),
+    ibanContabile: createFieldData(
+      values.ibanContabile,
+      originalData.ibanContabile
+    ),
     cbill: createFieldData(values.cbill, originalData.cbill),
-    flagTreasury: createFieldData(values.flagTreasury, originalData.flagTreasury),
-    segregationCode: createFieldData(values.segregationCode, originalData.segregationCode),
-    generateNoticeApiKey: createFieldData(values.generateNoticeApiKey, originalData.generateNoticeApiKey),
-    additionalLanguage: createFieldData(values.additionalLanguage, originalData.additionalLanguage),
-    selectedLanguage: createFieldData(values.selectedLanguage, originalData.selectedLanguage),
-    flagNotifyOutcomePush: createFieldData(values.flagNotifyOutcomePush, originalData.flagNotifyOutcomePush),
-    flagPaymentNotification: createFieldData(values.flagPaymentNotification, originalData.flagPaymentNotification),
-    flagNotifyIo: createFieldData(values.flagNotifyIo, originalData.flagNotifyIo),
+    flagTreasury: createFieldData(
+      values.flagTreasury,
+      originalData.flagTreasury
+    ),
+    segregationCode: createFieldData(
+      values.segregationCode,
+      originalData.segregationCode
+    ),
+    generateNoticeApiKey: createFieldData(
+      values.generateNoticeApiKey,
+      originalData.generateNoticeApiKey
+    ),
+    additionalLanguage: createFieldData(
+      values.additionalLanguage,
+      originalData.additionalLanguage
+    ),
+    selectedLanguage: createFieldData(
+      values.selectedLanguage,
+      originalData.selectedLanguage
+    ),
+    flagNotifyOutcomePush: createFieldData(
+      values.flagNotifyOutcomePush,
+      originalData.flagNotifyOutcomePush
+    ),
+    flagPaymentNotification: createFieldData(
+      values.flagPaymentNotification,
+      originalData.flagPaymentNotification
+    ),
+    flagNotifyIo: createFieldData(
+      values.flagNotifyIo,
+      originalData.flagNotifyIo
+    ),
     ioApiKey: createFieldData(values.ioApiKey, originalData.ioApiKey),
     pdndEnabled: createFieldData(values.pdndEnabled, originalData.pdndEnabled),
     sendApiKey: createFieldData(values.sendApiKey, originalData.sendApiKey)

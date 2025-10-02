@@ -53,7 +53,9 @@ export const PaymentsInfoSection = ({
             rules={{
               required: {
                 value: true,
-                message: t('organizationEditWizard.step2.segregationCode.required')
+                message: t(
+                  'organizationEditWizard.step2.segregationCode.required'
+                )
               }
             }}
             render={({ field }) => (
@@ -61,7 +63,9 @@ export const PaymentsInfoSection = ({
                 {...field}
                 fullWidth
                 label={t('organizationEditWizard.step2.segregationCode.label')}
-                placeholder={t('organizationEditWizard.step2.segregationCode.placeholder')}
+                placeholder={t(
+                  'organizationEditWizard.step2.segregationCode.placeholder'
+                )}
                 disabled={data.segregationCode.readonly}
                 error={!!errors.segregationCode}
                 helperText={errors.segregationCode?.message}
@@ -80,15 +84,21 @@ export const PaymentsInfoSection = ({
             rules={{
               required: {
                 value: true,
-                message: t('organizationEditWizard.step2.generateNoticeApiKey.required')
+                message: t(
+                  'organizationEditWizard.step2.generateNoticeApiKey.required'
+                )
               }
             }}
             render={({ field }) => (
               <TextField
                 {...field}
                 fullWidth
-                label={t('organizationEditWizard.step2.generateNoticeApiKey.label')}
-                placeholder={t('organizationEditWizard.step2.generateNoticeApiKey.placeholder')}
+                label={t(
+                  'organizationEditWizard.step2.generateNoticeApiKey.label'
+                )}
+                placeholder={t(
+                  'organizationEditWizard.step2.generateNoticeApiKey.placeholder'
+                )}
                 disabled={data.generateNoticeApiKey.readonly}
                 error={!!errors.generateNoticeApiKey}
                 helperText={errors.generateNoticeApiKey?.message}
@@ -114,7 +124,9 @@ export const PaymentsInfoSection = ({
                     data-testid="additional-language-switch"
                   />
                 }
-                label={t('organizationEditWizard.step2.additionalLanguage.label')}
+                label={t(
+                  'organizationEditWizard.step2.additionalLanguage.label'
+                )}
                 sx={{ mt: 1 }}
               />
             )}
@@ -130,7 +142,9 @@ export const PaymentsInfoSection = ({
               rules={{
                 required: {
                   value: watchAdditionalLanguage,
-                  message: t('organizationEditWizard.step2.selectedLanguage.required')
+                  message: t(
+                    'organizationEditWizard.step2.selectedLanguage.required'
+                  )
                 }
               }}
               render={({ field }) => (
@@ -144,23 +158,35 @@ export const PaymentsInfoSection = ({
                   <Select
                     {...field}
                     labelId="selected-language-label"
-                    label={t('organizationEditWizard.step2.selectedLanguage.label')}
+                    label={t(
+                      'organizationEditWizard.step2.selectedLanguage.label'
+                    )}
                     disabled={data.selectedLanguage.readonly}
                     displayEmpty
                     data-testid="selected-language-select"
                   >
                     <MenuItem value={LANGUAGE_OPTIONS.EN}>
-                      {t('organizationEditWizard.step2.selectedLanguage.options.en')}
+                      {t(
+                        'organizationEditWizard.step2.selectedLanguage.options.en'
+                      )}
                     </MenuItem>
                     <MenuItem value={LANGUAGE_OPTIONS.FR}>
-                      {t('organizationEditWizard.step2.selectedLanguage.options.fr')}
+                      {t(
+                        'organizationEditWizard.step2.selectedLanguage.options.fr'
+                      )}
                     </MenuItem>
                     <MenuItem value={LANGUAGE_OPTIONS.DE}>
-                      {t('organizationEditWizard.step2.selectedLanguage.options.de')}
+                      {t(
+                        'organizationEditWizard.step2.selectedLanguage.options.de'
+                      )}
                     </MenuItem>
                   </Select>
                   {errors.selectedLanguage && (
-                    <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
+                    <Typography
+                      variant="caption"
+                      color="error"
+                      sx={{ mt: 0.5 }}
+                    >
                       {errors.selectedLanguage.message}
                     </Typography>
                   )}
@@ -179,14 +205,20 @@ export const PaymentsInfoSection = ({
 
         {/* Notifications of payments managed by external platforms */}
         <Grid item xs={12} sx={{ mt: 3 }}>
-          <Typography variant="body2" color="text.primary" sx={{ fontSize: 20, mb: 1 }}>
+          <Typography
+            variant="body2"
+            color="text.primary"
+            sx={{ fontSize: 20, mb: 1 }}
+          >
             {t('organizationEditWizard.step2.flagNotifyOutcomePush.label')}
             <Typography component="span" color="error.main">
               *
             </Typography>
           </Typography>
           <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-            {t('organizationEditWizard.step2.flagNotifyOutcomePush.description')}
+            {t(
+              'organizationEditWizard.step2.flagNotifyOutcomePush.description'
+            )}
           </Typography>
           <FormComponent.ControlledRadioGroup
             name="flagNotifyOutcomePush"
@@ -196,11 +228,15 @@ export const PaymentsInfoSection = ({
             options={[
               {
                 value: true,
-                label: t('organizationEditWizard.step2.flagNotifyOutcomePush.abilita')
+                label: t(
+                  'organizationEditWizard.step2.flagNotifyOutcomePush.abilita'
+                )
               },
               {
                 value: false,
-                label: t('organizationEditWizard.step2.flagNotifyOutcomePush.disabilita')
+                label: t(
+                  'organizationEditWizard.step2.flagNotifyOutcomePush.disabilita'
+                )
               }
             ]}
           />
@@ -208,14 +244,20 @@ export const PaymentsInfoSection = ({
 
         {/* Notifications of payments managed by Unitary Platform */}
         <Grid item xs={12} sx={{ mt: 3 }}>
-          <Typography variant="body2" color="text.primary" sx={{ fontSize: 20, mb: 1 }}>
+          <Typography
+            variant="body2"
+            color="text.primary"
+            sx={{ fontSize: 20, mb: 1 }}
+          >
             {t('organizationEditWizard.step2.flagPaymentNotification.label')}
             <Typography component="span" color="error.main">
               *
             </Typography>
           </Typography>
           <Typography variant="body2" color="textSecondary" sx={{ mb: 2 }}>
-            {t('organizationEditWizard.step2.flagPaymentNotification.description')}
+            {t(
+              'organizationEditWizard.step2.flagPaymentNotification.description'
+            )}
           </Typography>
           <FormComponent.ControlledRadioGroup
             name="flagPaymentNotification"
@@ -225,11 +267,15 @@ export const PaymentsInfoSection = ({
             options={[
               {
                 value: true,
-                label: t('organizationEditWizard.step2.flagPaymentNotification.abilita')
+                label: t(
+                  'organizationEditWizard.step2.flagPaymentNotification.abilita'
+                )
               },
               {
                 value: false,
-                label: t('organizationEditWizard.step2.flagPaymentNotification.disabilita')
+                label: t(
+                  'organizationEditWizard.step2.flagPaymentNotification.disabilita'
+                )
               }
             ]}
           />

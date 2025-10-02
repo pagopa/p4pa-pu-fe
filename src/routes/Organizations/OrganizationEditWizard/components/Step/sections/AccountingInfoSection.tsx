@@ -1,4 +1,10 @@
-import { FormControlLabel, Grid, Switch, TextField, Typography } from '@mui/material';
+import {
+  FormControlLabel,
+  Grid,
+  Switch,
+  TextField,
+  Typography
+} from '@mui/material';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
 import {
   OrganizationEditStep2Data,
@@ -10,7 +16,10 @@ type AccountingInfoSectionProps = {
   errors: FieldErrors<Step2FormValues>;
   data: OrganizationEditStep2Data;
   t: (key: string) => string;
-  createIBANValidationRules: (t: (key: string) => string, isRequired?: boolean) => any;
+  createIBANValidationRules: (
+    t: (key: string) => string,
+    isRequired?: boolean
+  ) => Record<string, unknown>;
 };
 
 export const AccountingInfoSection = ({
@@ -65,7 +74,9 @@ export const AccountingInfoSection = ({
                 {...field}
                 fullWidth
                 label={t('organizationEditWizard.step2.ibanContabile.label')}
-                placeholder={t('organizationEditWizard.step2.ibanContabile.placeholder')}
+                placeholder={t(
+                  'organizationEditWizard.step2.ibanContabile.placeholder'
+                )}
                 disabled={data.ibanContabile.readonly}
                 error={!!errors.ibanContabile}
                 helperText={errors.ibanContabile?.message}
@@ -85,7 +96,9 @@ export const AccountingInfoSection = ({
                 {...field}
                 fullWidth
                 label={t('organizationEditWizard.step2.cbill.label')}
-                placeholder={t('organizationEditWizard.step2.cbill.placeholder')}
+                placeholder={t(
+                  'organizationEditWizard.step2.cbill.placeholder'
+                )}
                 disabled={data.cbill.readonly}
                 error={!!errors.cbill}
                 helperText={errors.cbill?.message}
@@ -110,7 +123,9 @@ export const AccountingInfoSection = ({
                     data-testid="flag-treasury-switch"
                   />
                 }
-                label={t('organizationEditWizard.step2.integratedCashJournal.label')}
+                label={t(
+                  'organizationEditWizard.step2.integratedCashJournal.label'
+                )}
                 sx={{ mt: 1 }}
               />
             )}

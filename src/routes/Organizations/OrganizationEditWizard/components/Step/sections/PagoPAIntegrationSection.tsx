@@ -72,12 +72,16 @@ export const PagoPAIntegrationSection = ({
                         data-testid="flag-notify-io-switch"
                       />
                     }
-                    label={t('organizationEditWizard.step2.pagoPaIntegration.io.label')}
+                    label={t(
+                      'organizationEditWizard.step2.pagoPaIntegration.io.label'
+                    )}
                   />
                 )}
               />
               <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                {t('organizationEditWizard.step2.pagoPaIntegration.io.description')}
+                {t(
+                  'organizationEditWizard.step2.pagoPaIntegration.io.description'
+                )}
               </Typography>
 
               {/* IO API Key Field - Conditional */}
@@ -108,7 +112,9 @@ export const PagoPAIntegrationSection = ({
                         error={!!errors.ioApiKey}
                         helperText={
                           errors.ioApiKey?.message ||
-                          t('organizationEditWizard.step2.pagoPaIntegration.io.apiKeyHelperText')
+                          t(
+                            'organizationEditWizard.step2.pagoPaIntegration.io.apiKeyHelperText'
+                          )
                         }
                         data-testid="io-api-key-field"
                         required
@@ -155,12 +161,16 @@ export const PagoPAIntegrationSection = ({
                         data-testid="pdnd-enabled-switch"
                       />
                     }
-                    label={t('organizationEditWizard.step2.pagoPaIntegration.send.label')}
+                    label={t(
+                      'organizationEditWizard.step2.pagoPaIntegration.send.label'
+                    )}
                   />
                 )}
               />
               <Typography variant="body2" color="textSecondary" sx={{ mt: 1 }}>
-                {t('organizationEditWizard.step2.pagoPaIntegration.send.description')}
+                {t(
+                  'organizationEditWizard.step2.pagoPaIntegration.send.description'
+                )}
               </Typography>
 
               {/* SEND API Key Field - Always visible */}
