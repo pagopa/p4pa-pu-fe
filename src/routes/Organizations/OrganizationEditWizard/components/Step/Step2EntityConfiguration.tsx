@@ -64,10 +64,7 @@ const formValuesToFieldData = (
 ): OrganizationEditStep2Data => {
   return {
     iban: createFieldData(values.iban, originalData.iban),
-    ibanContabile: createFieldData(
-      values.ibanContabile,
-      originalData.ibanContabile
-    ),
+    ibanPostal: createFieldData(values.ibanPostal, originalData.ibanPostal),
     cbill: createFieldData(values.cbill, originalData.cbill),
     flagTreasury: createFieldData(
       values.flagTreasury,
@@ -115,7 +112,7 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
     return {
       // Accounting Information
       iban: data.iban.value || '',
-      ibanContabile: data.ibanContabile.value || '',
+      ibanPostal: data.ibanPostal.value || '',
       cbill: data.cbill.value || '',
       flagTreasury: data.flagTreasury.value,
       // Payments Information

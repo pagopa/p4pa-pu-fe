@@ -76,7 +76,7 @@ describe('AccountingInfoSection', () => {
 
   const mockData: OrganizationEditStep2Data = {
     iban: { value: '', readonly: false },
-    ibanContabile: { value: '', readonly: false },
+    ibanPostal: { value: '', readonly: false },
     cbill: { value: '', readonly: false },
     flagTreasury: { value: false, readonly: false },
     segregationCode: { value: '', readonly: false },
@@ -94,7 +94,7 @@ describe('AccountingInfoSection', () => {
   const mockFilledData: OrganizationEditStep2Data = {
     ...mockData,
     iban: { value: 'IT60X0542811101000000123456', readonly: false },
-    ibanContabile: { value: 'IT60X0542811101000000654321', readonly: false },
+    ibanPostal: { value: 'IT60X0542811101000000654321', readonly: false },
     cbill: { value: 'CBILL001', readonly: false },
     flagTreasury: { value: true, readonly: false }
   };
@@ -111,8 +111,8 @@ describe('AccountingInfoSection', () => {
           invalid: 'IBAN non valido',
           required: 'IBAN obbligatorio'
         },
-        ibanContabile: {
-          label: 'IBAN Contabile',
+        ibanPostal: {
+          label: 'IBAN Postale',
           placeholder: 'IT00X0000000000000000000000'
         },
         cbill: {
@@ -128,14 +128,14 @@ describe('AccountingInfoSection', () => {
 
   const defaultFormValues: Partial<Step2FormValues> = {
     iban: '',
-    ibanContabile: '',
+    ibanPostal: '',
     cbill: '',
     flagTreasury: false
   };
 
   const filledFormValues: Partial<Step2FormValues> = {
     iban: 'IT60X0542811101000000123456',
-    ibanContabile: 'IT60X0542811101000000654321',
+    ibanPostal: 'IT60X0542811101000000654321',
     cbill: 'CBILL001',
     flagTreasury: true
   };
@@ -152,8 +152,8 @@ describe('AccountingInfoSection', () => {
           'IT00X0000000000000000000000',
         'organizationEditWizard.step2.iban.invalid': 'IBAN non valido',
         'organizationEditWizard.step2.iban.required': 'IBAN obbligatorio',
-        'organizationEditWizard.step2.ibanContabile.label': 'IBAN Contabile',
-        'organizationEditWizard.step2.ibanContabile.placeholder':
+        'organizationEditWizard.step2.ibanPostal.label': 'IBAN Postale',
+        'organizationEditWizard.step2.ibanPostal.placeholder':
           'IT00X0000000000000000000000',
         'organizationEditWizard.step2.cbill.label': 'Codice CBILL',
         'organizationEditWizard.step2.cbill.placeholder':
@@ -190,7 +190,7 @@ describe('AccountingInfoSection', () => {
       );
 
       expect(screen.getByTestId('iban-field')).toBeInTheDocument();
-      expect(screen.getByTestId('iban-contabile-field')).toBeInTheDocument();
+      expect(screen.getByTestId('iban-postal-field')).toBeInTheDocument();
       expect(screen.getByTestId('cbill-field')).toBeInTheDocument();
       expect(screen.getByTestId('flag-treasury-switch')).toBeInTheDocument();
     });
@@ -220,7 +220,7 @@ describe('AccountingInfoSection', () => {
       );
 
       expect(screen.getAllByText('IBAN').length).toBeGreaterThan(0);
-      expect(screen.getAllByText('IBAN Contabile').length).toBeGreaterThan(0);
+      expect(screen.getAllByText('IBAN Postale').length).toBeGreaterThan(0);
       expect(screen.getAllByText('Codice CBILL').length).toBeGreaterThan(0);
       expect(
         screen.getByText('Giornale di cassa integrato')
@@ -240,8 +240,8 @@ describe('AccountingInfoSection', () => {
       );
 
       const ibanInput = screen.getByTestId('iban-field').querySelector('input');
-      const ibanContabileInput = screen
-        .getByTestId('iban-contabile-field')
+      const ibanPostalInput = screen
+        .getByTestId('iban-postal-field')
         .querySelector('input');
       const cbillInput = screen
         .getByTestId('cbill-field')
@@ -251,7 +251,7 @@ describe('AccountingInfoSection', () => {
         .querySelector('input');
 
       expect(ibanInput).toHaveValue('');
-      expect(ibanContabileInput).toHaveValue('');
+      expect(ibanPostalInput).toHaveValue('');
       expect(cbillInput).toHaveValue('');
       expect(flagTreasurySwitch).not.toBeChecked();
     });
@@ -267,8 +267,8 @@ describe('AccountingInfoSection', () => {
       );
 
       const ibanInput = screen.getByTestId('iban-field').querySelector('input');
-      const ibanContabileInput = screen
-        .getByTestId('iban-contabile-field')
+      const ibanPostalInput = screen
+        .getByTestId('iban-postal-field')
         .querySelector('input');
       const cbillInput = screen
         .getByTestId('cbill-field')
@@ -278,7 +278,7 @@ describe('AccountingInfoSection', () => {
         .querySelector('input');
 
       expect(ibanInput).toHaveValue('IT60X0542811101000000123456');
-      expect(ibanContabileInput).toHaveValue('IT60X0542811101000000654321');
+      expect(ibanPostalInput).toHaveValue('IT60X0542811101000000654321');
       expect(cbillInput).toHaveValue('CBILL001');
       expect(flagTreasurySwitch).toBeChecked();
     });
@@ -304,10 +304,10 @@ describe('AccountingInfoSection', () => {
       expect(ibanInput).toBeDisabled();
     });
 
-    it('should disable IBAN Contabile field when readonly is true', () => {
+    it('should disable IBAN Postale field when readonly is true', () => {
       const readonlyData = {
         ...mockData,
-        ibanContabile: { ...mockData.ibanContabile, readonly: true }
+        ibanPostal: { ...mockData.ibanPostal, readonly: true }
       };
 
       render(
@@ -319,10 +319,10 @@ describe('AccountingInfoSection', () => {
         />
       );
 
-      const ibanContabileInput = screen
-        .getByTestId('iban-contabile-field')
+      const ibanPostalInput = screen
+        .getByTestId('iban-postal-field')
         .querySelector('input');
-      expect(ibanContabileInput).toBeDisabled();
+      expect(ibanPostalInput).toBeDisabled();
     });
 
     it('should disable CBILL field when readonly is true', () => {
@@ -382,7 +382,7 @@ describe('AccountingInfoSection', () => {
       expect(mockCreateIBANValidationRules).toHaveBeenCalledWith(mockT, true);
     });
 
-    it('should call createIBANValidationRules for IBAN Contabile field with required=false', () => {
+    it('should call createIBANValidationRules for IBAN Postale field with required=false', () => {
       render(
         <TestWrapper
           data={mockData}
@@ -469,7 +469,7 @@ describe('AccountingInfoSection', () => {
         'organizationEditWizard.step2.iban.placeholder'
       );
       expect(mockT).toHaveBeenCalledWith(
-        'organizationEditWizard.step2.ibanContabile.label'
+        'organizationEditWizard.step2.ibanPostal.label'
       );
       expect(mockT).toHaveBeenCalledWith(
         'organizationEditWizard.step2.cbill.label'

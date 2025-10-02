@@ -74,7 +74,7 @@ describe('PaymentsInfoSection', () => {
 
   const mockData: OrganizationEditStep2Data = {
     iban: { value: '', readonly: false },
-    ibanContabile: { value: '', readonly: false },
+    ibanPostal: { value: '', readonly: false },
     cbill: { value: '', readonly: false },
     flagTreasury: { value: false, readonly: false },
     segregationCode: { value: '', readonly: false },

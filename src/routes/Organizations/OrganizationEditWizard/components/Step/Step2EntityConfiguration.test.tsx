@@ -98,7 +98,7 @@ describe('Step2EntityConfiguration', () => {
 
   const mockInitialData: OrganizationEditStep2Data = {
     iban: { value: '', readonly: false },
-    ibanContabile: { value: '', readonly: false },
+    ibanPostal: { value: '', readonly: false },
     cbill: { value: '', readonly: false },
     flagTreasury: { value: false, readonly: false },
     segregationCode: { value: '', readonly: false },
@@ -115,7 +115,7 @@ describe('Step2EntityConfiguration', () => {
 
   const mockFilledData: OrganizationEditStep2Data = {
     iban: { value: 'IT60X0542811101000000123456', readonly: false },
-    ibanContabile: { value: 'IT60X0542811101000000654321', readonly: false },
+    ibanPostal: { value: 'IT60X0542811101000000654321', readonly: false },
     cbill: { value: 'CBILL001', readonly: false },
     flagTreasury: { value: true, readonly: false },
     segregationCode: { value: '01', readonly: false },
@@ -374,7 +374,7 @@ describe('Step2EntityConfiguration', () => {
             iban: expect.objectContaining({
               value: 'IT60X0542811101000000123456'
             }),
-            ibanContabile: expect.objectContaining({
+            ibanPostal: expect.objectContaining({
               value: 'IT60X0542811101000000654321'
             }),
             cbill: expect.objectContaining({ value: 'CBILL001' }),

@@ -1983,8 +1983,8 @@
         "required": "Il campo IBAN è obbligatorio",
         "invalid": "Formato IBAN non valido"
       },
-      "ibanContabile": {
-        "label": "IBAN Contabile",
+      "ibanPostal": {
+        "label": "IBAN Postale",
         "placeholder": "",
         "invalid": "Formato IBAN non valido"
       },

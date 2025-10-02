@@ -23,7 +23,7 @@ export type OrganizationEditStep1Data = {
 export type OrganizationEditStep2Data = {
   // Accounting Information
   iban: FieldData<string>;
-  ibanContabile: FieldData<string>;
+  ibanPostal: FieldData<string>;
   cbill: FieldData<string>;
   flagTreasury: FieldData<boolean>;
   // Payments Information
@@ -56,7 +56,7 @@ export type Step1FormValues = {
 export type Step2FormValues = {
   // Accounting Information
   iban: string;
-  ibanContabile: string;
+  ibanPostal: string;
   cbill: string;
   flagTreasury: boolean;
   // Payments Information

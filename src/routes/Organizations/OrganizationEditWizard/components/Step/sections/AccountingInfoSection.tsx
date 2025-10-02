@@ -63,24 +63,24 @@ export const AccountingInfoSection = ({
           />
         </Grid>
 
-        {/* IBAN Contabile Field */}
+        {/* IBAN Postale Field */}
         <Grid item xs={12}>
           <Controller
-            name="ibanContabile"
+            name="ibanPostal"
             control={control}
             rules={createIBANValidationRules(t, false)}
             render={({ field }) => (
               <TextField
                 {...field}
                 fullWidth
-                label={t('organizationEditWizard.step2.ibanContabile.label')}
+                label={t('organizationEditWizard.step2.ibanPostal.label')}
                 placeholder={t(
-                  'organizationEditWizard.step2.ibanContabile.placeholder'
+                  'organizationEditWizard.step2.ibanPostal.placeholder'
                 )}
-                disabled={data.ibanContabile.readonly}
-                error={!!errors.ibanContabile}
-                helperText={errors.ibanContabile?.message}
-                data-testid="iban-contabile-field"
+                disabled={data.ibanPostal.readonly}
+                error={!!errors.ibanPostal}
+                helperText={errors.ibanPostal?.message}
+                data-testid="iban-postal-field"
               />
             )}
           />

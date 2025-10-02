@@ -40,7 +40,7 @@ const initialData: OrganizationEditFormData = {
       value: '',
       readonly: false
     },
-    ibanContabile: {
+    ibanPostal: {
       value: '',
       readonly: false
     },
@@ -186,7 +186,7 @@ const OrganizationEditWizard = () => {
           value: orgData.iban || '',
           readonly: false
         },
-        ibanContabile: {
+        ibanPostal: {
           value: orgData.postalIban || '',
           readonly: false
         },
@@ -272,7 +272,7 @@ const OrganizationEditWizard = () => {
       orgLogo: formData.step1.orgLogo.value || originalData.orgLogo,
       // Step2 accounting fields
       iban: formData.step2.iban.value,
-      postalIban: formData.step2.ibanContabile.value,
+      postalIban: formData.step2.ibanPostal.value,
       cbillInterBankCode: formData.step2.cbill.value,
       // Step2 payment fields
       segregationCode: formData.step2.segregationCode.value,
