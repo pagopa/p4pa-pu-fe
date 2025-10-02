@@ -496,8 +496,8 @@ describe('PaymentsInfoSection', () => {
       const radioTrue = screen.getByTestId('flagNotifyOutcomePush-true');
       const radioFalse = screen.getByTestId('flagNotifyOutcomePush-false');
 
-      expect(radioTrue).toBeDisabled();
-      expect(radioFalse).toBeDisabled();
+      expect(radioTrue).toHaveAttribute('aria-disabled', 'true');
+      expect(radioFalse).toHaveAttribute('aria-disabled', 'true');
     });
 
     it('should disable payment notification radio when readonly is true', () => {
@@ -520,8 +520,8 @@ describe('PaymentsInfoSection', () => {
       const radioTrue = screen.getByTestId('flagPaymentNotification-true');
       const radioFalse = screen.getByTestId('flagPaymentNotification-false');
 
-      expect(radioTrue).toBeDisabled();
-      expect(radioFalse).toBeDisabled();
+      expect(radioTrue).toHaveAttribute('aria-disabled', 'true');
+      expect(radioFalse).toHaveAttribute('aria-disabled', 'true');
     });
   });
 

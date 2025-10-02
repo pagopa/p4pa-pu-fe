@@ -240,10 +240,11 @@ export const PaymentsInfoSection = ({
                     const value = e.target.value === 'true';
                     field.onChange(value);
                   }}
+                  data-testid="flagNotifyOutcomePush-radio-group"
                 >
                   <FormControlLabel
                     value={true}
-                    control={<Radio />}
+                    control={<Radio data-testid="flagNotifyOutcomePush-true" />}
                     label={t(
                       'organizationEditWizard.step2.flagNotifyOutcomePush.abilita'
                     )}
@@ -251,7 +252,7 @@ export const PaymentsInfoSection = ({
                   />
                   <FormControlLabel
                     value={false}
-                    control={<Radio />}
+                    control={<Radio data-testid="flagNotifyOutcomePush-false" />}
                     label={t(
                       'organizationEditWizard.step2.flagNotifyOutcomePush.disabilita'
                     )}
@@ -303,10 +304,13 @@ export const PaymentsInfoSection = ({
                     const value = e.target.value === 'true';
                     field.onChange(value);
                   }}
+                  data-testid="flagPaymentNotification-radio-group"
                 >
                   <FormControlLabel
                     value={true}
-                    control={<Radio />}
+                    control={
+                      <Radio data-testid="flagPaymentNotification-true" />
+                    }
                     label={t(
                       'organizationEditWizard.step2.flagPaymentNotification.abilita'
                     )}
@@ -314,7 +318,9 @@ export const PaymentsInfoSection = ({
                   />
                   <FormControlLabel
                     value={false}
-                    control={<Radio />}
+                    control={
+                      <Radio data-testid="flagPaymentNotification-false" />
+                    }
                     label={t(
                       'organizationEditWizard.step2.flagPaymentNotification.disabilita'
                     )}
