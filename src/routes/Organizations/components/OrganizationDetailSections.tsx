@@ -5,6 +5,9 @@ import { TFunction } from 'i18next';
 import Appio from '../../../assets/appio.svg';
 import Send from '../../../assets/send.svg';
 import ShowSecretValue from '../../../components/ShowSecretValue';
+import LaunchIcon from '@mui/icons-material/Launch';
+import { generatePath, Link } from 'react-router';
+import { PageRoutes } from '../..';
 
 export const accountingInfo = (
   organizationDetailData: OrganizationDetailDTO,
@@ -91,11 +94,38 @@ export const info = (
   },
   {
     label: t('commons.operators'),
-    value: '0'
+    value: '00',
+    valueType: 'withicon',
+    iconConfig: {
+      icon: (
+        <Link
+          to={generatePath(PageRoutes.BROKER_OPERATORS, {
+            organizationId: organizationDetailData.organizationId,
+            orgName: organizationDetailData.orgName
+          })}
+          target={'_blank'}
+        >
+          <LaunchIcon color={'primary'} />
+        </Link>
+      )
+    }
   },
   {
     label: t('commons.debtTypes'),
-    value: '0'
+    value: '00',
+    valueType: 'withicon',
+    iconConfig: {
+      icon: (
+        <Link
+          to={generatePath(PageRoutes.DEBT_TYPES_DASHBOARD_BYORG, {
+            organizationId: organizationDetailData.organizationId
+          })}
+          target={'_blank'}
+        >
+          <LaunchIcon color={'primary'} />
+        </Link>
+      )
+    }
   }
 ];
 
