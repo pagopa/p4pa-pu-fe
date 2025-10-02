@@ -2014,13 +2014,13 @@
       "selectedLanguage": {
         "label": "Lingua Addizionale",
         "options": {
-          "it": "Italiano",
           "en": "Inglese",
           "fr": "Francese",
           "de": "Tedesco"
         },
-        "required": "Seleziona una lingua quando il campo è abilitato"
+        "required": "Devi selezionare una lingua addizionale."
       },
+      "radioRequired": "Devi selezionare una delle due opzioni",
       "flagNotifyOutcomePush": {
         "label": "Notifiche push di pagamenti gestiti da piattaforme esterne",
         "description": "Dovrà essere integrata una API per ricevere notifiche",

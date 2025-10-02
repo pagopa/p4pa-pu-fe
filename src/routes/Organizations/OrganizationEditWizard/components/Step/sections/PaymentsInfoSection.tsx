@@ -4,6 +4,8 @@ import {
   Grid,
   InputLabel,
   MenuItem,
+  Radio,
+  RadioGroup,
   Select,
   Switch,
   TextField,
@@ -11,7 +13,6 @@ import {
   Divider
 } from '@mui/material';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
-import { FormComponent } from '../../../../../../components/FormComponent';
 import {
   LANGUAGE_OPTIONS,
   OrganizationEditStep2Data,
@@ -148,10 +149,11 @@ export const PaymentsInfoSection = ({
                 }
               }}
               render={({ field }) => (
-                <FormControl fullWidth error={!!errors.selectedLanguage}>
+                <FormControl fullWidth>
                   <InputLabel id="selected-language-label">
                     {t('organizationEditWizard.step2.selectedLanguage.label')}
                     <Typography component="span" color="error.main">
+                      {' '}
                       *
                     </Typography>
                   </InputLabel>
@@ -163,6 +165,7 @@ export const PaymentsInfoSection = ({
                     )}
                     disabled={data.selectedLanguage.readonly}
                     displayEmpty
+                    error={!!errors.selectedLanguage}
                     data-testid="selected-language-select"
                   >
                     <MenuItem value={LANGUAGE_OPTIONS.EN}>
@@ -220,25 +223,49 @@ export const PaymentsInfoSection = ({
               'organizationEditWizard.step2.flagNotifyOutcomePush.description'
             )}
           </Typography>
-          <FormComponent.ControlledRadioGroup
+          <Controller
             name="flagNotifyOutcomePush"
             control={control}
-            disabled={data.flagNotifyOutcomePush.readonly}
-            sx={{ flexDirection: 'row' }}
-            options={[
-              {
-                value: true,
-                label: t(
-                  'organizationEditWizard.step2.flagNotifyOutcomePush.abilita'
-                )
-              },
-              {
-                value: false,
-                label: t(
-                  'organizationEditWizard.step2.flagNotifyOutcomePush.disabilita'
-                )
-              }
-            ]}
+            rules={{
+              validate: (value) =>
+                value !== null ||
+                t('organizationEditWizard.step2.radioRequired')
+            }}
+            render={({ field, fieldState }) => (
+              <>
+                <RadioGroup
+                  {...field}
+                  sx={{ flexDirection: 'row' }}
+                  value={field.value === null ? '' : field.value}
+                  onChange={(e) => {
+                    const value = e.target.value === 'true';
+                    field.onChange(value);
+                  }}
+                >
+                  <FormControlLabel
+                    value={true}
+                    control={<Radio />}
+                    label={t(
+                      'organizationEditWizard.step2.flagNotifyOutcomePush.abilita'
+                    )}
+                    disabled={data.flagNotifyOutcomePush.readonly}
+                  />
+                  <FormControlLabel
+                    value={false}
+                    control={<Radio />}
+                    label={t(
+                      'organizationEditWizard.step2.flagNotifyOutcomePush.disabilita'
+                    )}
+                    disabled={data.flagNotifyOutcomePush.readonly}
+                  />
+                </RadioGroup>
+                {fieldState.error && (
+                  <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
+                    {fieldState.error.message}
+                  </Typography>
+                )}
+              </>
+            )}
           />
         </Grid>
 
@@ -259,25 +286,49 @@ export const PaymentsInfoSection = ({
               'organizationEditWizard.step2.flagPaymentNotification.description'
             )}
           </Typography>
-          <FormComponent.ControlledRadioGroup
+          <Controller
             name="flagPaymentNotification"
             control={control}
-            disabled={data.flagPaymentNotification.readonly}
-            sx={{ flexDirection: 'row' }}
-            options={[
-              {
-                value: true,
-                label: t(
-                  'organizationEditWizard.step2.flagPaymentNotification.abilita'
-                )
-              },
-              {
-                value: false,
-                label: t(
-                  'organizationEditWizard.step2.flagPaymentNotification.disabilita'
-                )
-              }
-            ]}
+            rules={{
+              validate: (value) =>
+                value !== null ||
+                t('organizationEditWizard.step2.radioRequired')
+            }}
+            render={({ field, fieldState }) => (
+              <>
+                <RadioGroup
+                  {...field}
+                  sx={{ flexDirection: 'row' }}
+                  value={field.value === null ? '' : field.value}
+                  onChange={(e) => {
+                    const value = e.target.value === 'true';
+                    field.onChange(value);
+                  }}
+                >
+                  <FormControlLabel
+                    value={true}
+                    control={<Radio />}
+                    label={t(
+                      'organizationEditWizard.step2.flagPaymentNotification.abilita'
+                    )}
+                    disabled={data.flagPaymentNotification.readonly}
+                  />
+                  <FormControlLabel
+                    value={false}
+                    control={<Radio />}
+                    label={t(
+                      'organizationEditWizard.step2.flagPaymentNotification.disabilita'
+                    )}
+                    disabled={data.flagPaymentNotification.readonly}
+                  />
+                </RadioGroup>
+                {fieldState.error && (
+                  <Typography variant="caption" color="error" sx={{ mt: 0.5 }}>
+                    {fieldState.error.message}
+                  </Typography>
+                )}
+              </>
+            )}
           />
         </Grid>
       </Grid>

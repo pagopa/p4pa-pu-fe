@@ -123,9 +123,9 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
       generateNoticeApiKey: data.generateNoticeApiKey.value || '',
       additionalLanguage: data.additionalLanguage.value,
       selectedLanguage: data.selectedLanguage.value || '',
-      // Convert null to false for radio groups
-      flagNotifyOutcomePush: data.flagNotifyOutcomePush.value ?? false,
-      flagPaymentNotification: data.flagPaymentNotification.value ?? false,
+      // Preserve null values for required radio groups
+      flagNotifyOutcomePush: data.flagNotifyOutcomePush.value,
+      flagPaymentNotification: data.flagPaymentNotification.value,
       // PagoPA Products Integration
       flagNotifyIo: data.flagNotifyIo.value,
       ioApiKey: data.ioApiKey.value || '',

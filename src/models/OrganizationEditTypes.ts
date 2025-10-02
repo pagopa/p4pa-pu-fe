@@ -66,8 +66,8 @@ export type Step2FormValues = {
   generateNoticeApiKey: string;
   additionalLanguage: boolean;
   selectedLanguage: string;
-  flagNotifyOutcomePush: boolean;
-  flagPaymentNotification: boolean;
+  flagNotifyOutcomePush: boolean | null;
+  flagPaymentNotification: boolean | null;
   // PagoPA Products Integration
   flagNotifyIo: boolean;
   ioApiKey: string;
