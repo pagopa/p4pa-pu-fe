@@ -8,7 +8,8 @@ import {
   ChipOwnProps,
   Button,
   Divider,
-  TypographyOwnProps
+  TypographyOwnProps,
+  Stack
 } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import {
@@ -21,13 +22,16 @@ import React from 'react';
 export type DetailData = {
   label?: string;
   value?: string | number;
-  valueType?: 'amount' | 'date' | 'dateTime' | 'status';
+  valueType?: 'amount' | 'date' | 'dateTime' | 'status' | 'withicon';
   variant?: 'body1' | 'body2' | 'h6' | 'subtitle1' | 'monospaced';
   chipConfig?: {
     color?: ChipOwnProps['color'];
     variant?: ChipOwnProps['variant'];
   };
   childrenComponent?: React.ReactNode;
+  iconConfig?: {
+    icon: React.ReactNode;
+  };
 };
 
 export type titleConfig = {
@@ -121,6 +125,17 @@ const DetailContainer = ({
 
                 const formattedDateTime = formatDateTime(`${item.value}`);
                 return formattedDateTime || '-';
+              }
+              if (
+                item.valueType === 'withicon' &&
+                item.iconConfig !== undefined
+              ) {
+                const iconConfig = item.iconConfig;
+                return (
+                  <Stack direction={'row'} justifyContent={'space-between'}>
+                    {item.value} {iconConfig.icon}
+                  </Stack>
+                );
               }
               return item.value || '-';
             })()
