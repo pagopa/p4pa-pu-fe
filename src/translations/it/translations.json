@@ -2014,6 +2014,7 @@
       },
       "selectedLanguage": {
         "label": "Lingua Addizionale",
+        "placeholder": "Seleziona una lingua",
         "options": {
           "en": "Inglese",
           "fr": "Francese",

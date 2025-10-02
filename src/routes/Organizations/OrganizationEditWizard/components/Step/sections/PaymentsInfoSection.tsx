@@ -164,8 +164,8 @@ export const PaymentsInfoSection = ({
                       'organizationEditWizard.step2.selectedLanguage.label'
                     )}
                     disabled={data.selectedLanguage.readonly}
-                    displayEmpty
                     error={!!errors.selectedLanguage}
+                    required={watchAdditionalLanguage}
                     data-testid="selected-language-select"
                   >
                     <MenuItem value={LANGUAGE_OPTIONS.EN}>

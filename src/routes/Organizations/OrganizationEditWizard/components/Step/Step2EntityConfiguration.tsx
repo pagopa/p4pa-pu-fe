@@ -172,7 +172,7 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
           <Typography
             variant="body2"
             color="error.main"
-            sx={{ fontWeight: 600, marginBottom: 3 }}
+            sx={{ marginBottom: 3 }}
           >
             {t('commons.requiredFieldDescription')}
           </Typography>

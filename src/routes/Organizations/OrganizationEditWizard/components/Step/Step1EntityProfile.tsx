@@ -136,7 +136,7 @@ const Step1EntityProfile = ({ data, setData, onNext, onBack }: Props) => {
           <Typography
             variant="body2"
             color="error.main"
-            sx={{ fontWeight: 600, marginBottom: 3 }}
+            sx={{ marginBottom: 3 }}
           >
             {t('commons.requiredFieldDescription')}
           </Typography>
@@ -241,13 +241,15 @@ const Step1EntityProfile = ({ data, setData, onNext, onBack }: Props) => {
             sx={{ mb: 1 }}
           >
             {t('organizationEditWizard.step1.orgLogo.title')}
-            <Typography
-              component="span"
-              color="textSecondary"
-              sx={{ ml: 1, fontWeight: 400 }}
-            >
-              - {t('organizationEditWizard.step1.orgLogo.optional')}
-            </Typography>
+            {data.organizationStatus !== 'ACTIVE' && (
+              <Typography
+                component="span"
+                color="textSecondary"
+                sx={{ ml: 1, fontWeight: 400 }}
+              >
+                - {t('organizationEditWizard.step1.orgLogo.optional')}
+              </Typography>
+            )}
           </Typography>
 
           <Typography variant="body2" color="textSecondary">
