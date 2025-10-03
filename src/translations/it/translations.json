@@ -1153,6 +1153,10 @@
         },
         "required": "Il campo tipo di soggetto è obbligatorio"
       },
+      "anonymousSubject": {
+        "label": "Soggetto anonimo",
+        "helperText": "Nei casi dove il cittadino non ha un Codice Fiscale"
+      },
       "taxCode": {
         "invalid": "Verifica che il Codice fiscale sia corretto",
         "invalidVAT": "Verifica che la Partita IVA sia corretta",

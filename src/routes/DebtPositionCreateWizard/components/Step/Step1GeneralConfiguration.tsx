@@ -84,7 +84,8 @@ const Step1GeneralConfiguration = ({
     return sortedTypes.map((type) => ({
       label: type.description,
       value: type.debtPositionTypeOrgId as number,
-      flagMandatoryDueDate: type.flagMandatoryDueDate || false
+      flagMandatoryDueDate: type.flagMandatoryDueDate || false,
+      flagAnonymousFiscalCode: type.flagAnonymousFiscalCode || false
     }));
   }, [debtPositionTypeOrgsData, isEditing, debtPositionTypeOrgCode]);
 
@@ -177,7 +178,9 @@ const Step1GeneralConfiguration = ({
                 ...data.debtPositionType,
                 value: matchingSelectOption.value.toString(),
                 flagMandatoryDueDate:
-                  matchingSelectOption.flagMandatoryDueDate || false
+                  matchingSelectOption.flagMandatoryDueDate || false,
+                flagAnonymousFiscalCode:
+                  matchingSelectOption.flagAnonymousFiscalCode || false
               }
             };
             setData(updatedData);
@@ -211,6 +214,7 @@ const Step1GeneralConfiguration = ({
       debtPositionType: {
         value: values.debtPositionType,
         flagMandatoryDueDate: selectedType?.flagMandatoryDueDate ?? false,
+        flagAnonymousFiscalCode: selectedType?.flagAnonymousFiscalCode ?? false,
         readonly: data.debtPositionType.readonly
       },
       description: {

@@ -1,7 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useForm, Controller, Resolver, FieldErrors } from 'react-hook-form';
-import { Grid, MenuItem, TextField, Typography } from '@mui/material';
+import {
+  Grid,
+  MenuItem,
+  TextField,
+  Typography,
+  FormControlLabel,
+  Switch,
+  Box
+} from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import { z } from 'zod';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
@@ -20,6 +28,7 @@ type Props = {
   onNext: () => void;
   onBack?: () => void;
   isEditing?: boolean;
+  flagAnonymousFiscalCode?: boolean;
 };
 
 type FieldErrorValue = {
@@ -38,40 +47,52 @@ const Step2AddDebtor = ({
   setData,
   onNext,
   onBack,
-  isEditing
+  isEditing,
+  flagAnonymousFiscalCode = false
 }: Props) => {
   const { t } = useTranslation();
+  const hasInitializedRef = useRef(false);
 
   useEffect(() => {
-    initializeDefaultValues();
-  }, [data, setData]);
+    // Don't initialize defaults in edit mode - data comes from API
+    if (!isEditing) {
+      initializeDefaultValues();
+    }
+  }, [data, setData, isEditing]);
 
   const initializeDefaultValues = () => {
-    const fieldsToInitialize: Array<Step2DataField> = [
-      'address',
-      'civicNumber',
-      'zipCode',
-      'country',
-      'province',
-      'city'
-    ];
-
     let hasUpdates = false;
     const updatedData = { ...data };
 
-    fieldsToInitialize.forEach((field) => {
+    // Initialize string fields with empty value
+    const stringFields = [
+      'address',
+      'civicNumber',
+      'zipCode',
+      'province',
+      'city'
+    ] as const;
+
+    stringFields.forEach((field) => {
       if (!updatedData[field]) {
-        if (field === 'country') {
-          updatedData[field] = { value: 'IT', readonly: false };
-        } else {
-          updatedData[field] = { value: '', readonly: false };
-        }
+        updatedData[field] = { value: '', readonly: false };
         hasUpdates = true;
       }
     });
 
-    if (updatedData.country && updatedData.country.value === '') {
+    // Initialize country with 'IT' default
+    if (!updatedData.country) {
+      updatedData.country = { value: 'IT', readonly: false };
+      hasUpdates = true;
+    } else if (updatedData.country.value === '') {
       updatedData.country.value = 'IT';
+      hasUpdates = true;
+    }
+
+    // Initialize anonymousSubject ONLY if completely missing
+    // Don't overwrite if it exists (even if false) to preserve edit mode data
+    if (updatedData.anonymousSubject === undefined) {
+      updatedData.anonymousSubject = { value: false, readonly: false };
       hasUpdates = true;
     }
 
@@ -157,68 +178,77 @@ const Step2AddDebtor = ({
     formState: { errors, isSubmitted },
     trigger,
     clearErrors,
-    setValue
+    setValue,
+    reset
   } = useForm<Step2Data>({
     defaultValues: {
       ...data,
       country: {
         ...data.country,
         value: data.country?.value || 'IT'
+      },
+      anonymousSubject: {
+        ...data.anonymousSubject,
+        value: data.anonymousSubject?.value ?? false
       }
     },
     resolver: zodFormResolver,
     mode: 'onChange'
   });
 
+  // Reset form values when edit data is loaded - only once
   useEffect(() => {
-    if (data?.subjectType?.value) {
-      setValue('subjectType.value', data.subjectType.value);
+    if (
+      isEditing &&
+      data &&
+      data.taxCode?.value &&
+      !hasInitializedRef.current
+    ) {
+      hasInitializedRef.current = true;
+      const resetData = {
+        ...data,
+        country: {
+          ...data.country,
+          value: data.country?.value || 'IT'
+        },
+        anonymousSubject: {
+          ...data.anonymousSubject,
+          value: data.anonymousSubject?.value ?? false
+        }
+      };
+      reset(resetData, { keepDefaultValues: false });
+
+      // Force setValue for anonymousSubject to ensure it's updated
+      setValue(
+        'anonymousSubject.value',
+        data.anonymousSubject?.value ?? false,
+        { shouldValidate: false }
+      );
     }
-    if (data?.taxCode?.value) {
-      setValue('taxCode.value', data.taxCode.value);
-    }
-    if (data?.fullName?.value) {
-      setValue('fullName.value', data.fullName.value);
-    }
-    if (data?.address?.value) {
-      setValue('address.value', data.address.value);
-    }
-    if (data?.civicNumber?.value) {
-      setValue('civicNumber.value', data.civicNumber.value);
-    }
-    if (data?.zipCode?.value) {
-      setValue('zipCode.value', data.zipCode.value);
-    }
-    if (data?.country?.value) {
-      setValue('country.value', data.country.value);
-    }
-    if (data?.province?.value) {
-      setValue('province.value', data.province.value);
-    }
-    if (data?.city?.value) {
-      setValue('city.value', data.city.value);
-    }
-  }, [
-    data?.subjectType?.value,
-    data?.taxCode?.value,
-    data?.fullName?.value,
-    data?.address?.value,
-    data?.civicNumber?.value,
-    data?.zipCode?.value,
-    data?.country?.value,
-    data?.province?.value,
-    data?.city?.value,
-    setValue
-  ]);
+  }, [isEditing, data?.taxCode?.value, data?.anonymousSubject?.value]);
 
   const subjectTypeValue = watch('subjectType.value') || '';
+
+  // Track previous subject type to detect changes
+  const prevSubjectTypeRef = useRef(subjectTypeValue);
 
   useEffect(() => {
     if (isSubmitted) {
       trigger('taxCode.value');
       trigger('fullName.value');
     }
-  }, [subjectTypeValue, trigger, isSubmitted]);
+
+    // Clean taxCode when subject type changes (e.g., from INDIVIDUAL to BUSINESS or vice versa)
+    if (
+      prevSubjectTypeRef.current &&
+      prevSubjectTypeRef.current !== subjectTypeValue
+    ) {
+      setValue('taxCode.value', '');
+    }
+
+    // Update ref with current value
+    prevSubjectTypeRef.current = subjectTypeValue;
+  }, [subjectTypeValue, trigger, isSubmitted, setValue]);
 
   const handleFieldChange = async (
     fieldName: NestedFieldName,
@@ -243,7 +273,17 @@ const Step2AddDebtor = ({
   };
 
   const onSubmit = async (values: Step2Data) => {
-    setData(values);
+    const submittedData = { ...values };
+
+    // If user is anonymous, set taxCode to 'ANONIMO' in the payload
+    if (submittedData.anonymousSubject?.value === true) {
+      submittedData.taxCode = {
+        value: 'ANONIMO',
+        readonly: submittedData.taxCode.readonly
+      };
+    }
+    console.log('submittedData', submittedData);
+    setData(submittedData);
     onNext();
   };
 
@@ -275,6 +315,73 @@ const Step2AddDebtor = ({
       ? t('debtPositionCreateWizard.step2.companyName.label')
       : t('debtPositionCreateWizard.step2.fullName.label');
   };
+
+  /**
+   * Helper function to determine if the anonymous subject switch should be disabled
+   * The switch is disabled when:
+   * - The subject type is BUSINESS (legal entity)
+   * - Or in editing mode (fiscal data cannot be changed)
+   */
+  const isAnonymousSubjectDisabled = () => {
+    return (
+      subjectTypeValue === SubjectType.BUSINESS || isFieldDisabled('fiscal')
+    );
+  };
+
+  /**
+   * Helper function to determine if the tax code field should be shown
+   * The field is hidden when ALL these conditions are met:
+   * - flagAnonymousFiscalCode is true (debt type allows anonymous)
+   * - Subject type is INDIVIDUAL (person, not business)
+   * - Anonymous subject switch is enabled
+   */
+  const shouldShowTaxCodeField = () => {
+    const anonymousSubjectValue = watch('anonymousSubject.value') || false;
+
+    return !(
+      flagAnonymousFiscalCode &&
+      subjectTypeValue === SubjectType.INDIVIDUAL &&
+      anonymousSubjectValue === true
+    );
+  };
+
+  // Reset anonymousSubject to false when it becomes disabled
+  // BUT preserve the value in editing mode (data comes from API)
+  useEffect(() => {
+    if (
+      isAnonymousSubjectDisabled() &&
+      data.anonymousSubject?.value &&
+      !isEditing
+    ) {
+      setValue('anonymousSubject.value', false);
+    }
+  }, [subjectTypeValue, isEditing, data.anonymousSubject?.value, setValue]);
+
+  // Reset taxCode to empty string when anonymousSubject becomes true
+  // But don't clear it if it's already 'ANONIMO' (edit mode scenario)
+  useEffect(() => {
+    const anonymousSubjectValue = watch('anonymousSubject.value') || false;
+    const taxCodeValue = data.taxCode?.value;
+
+    if (
+      anonymousSubjectValue === true &&
+      taxCodeValue &&
+      taxCodeValue !== 'ANONIMO'
+    ) {
+      setValue('taxCode.value', '');
+    }
+  }, [watch('anonymousSubject.value'), data.taxCode?.value, setValue]);
+
+  // Clean taxCode if it contains 'ANONIMO' when switch is turned off
+  useEffect(() => {
+    const anonymousSubjectValue = watch('anonymousSubject.value') || false;
+    const taxCodeValue = data.taxCode?.value;
+
+    // If switch is OFF and taxCode contains 'ANONIMO', clean it
+    if (anonymousSubjectValue === false && taxCodeValue === 'ANONIMO') {
+      setValue('taxCode.value', '');
+    }
+  }, [watch('anonymousSubject.value'), data.taxCode?.value, setValue]);
 
   return (
     <form id="step2-add-debtor-form" data-testid="step2-form">
@@ -332,31 +439,72 @@ const Step2AddDebtor = ({
             )}
           />
 
-          <Controller
-            name="taxCode.value"
-            control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                id="tax-code-input"
-                data-testid="tax-code-field"
-                label={getTaxCodeLabel()}
-                placeholder={getTaxCodePlaceholder()}
-                required
-                fullWidth
-                margin="normal"
-                disabled={isFieldDisabled('fiscal')}
-                error={isSubmitted && !!errors.taxCode?.value}
-                helperText={isSubmitted && errors.taxCode?.value?.message}
-                onChange={(e) => {
-                  const upper = e.target.value.toUpperCase();
-                  field.onChange(upper);
-                  handleFieldChange('taxCode.value', upper);
-                }}
-                inputProps={{ maxLength: 16 }}
+          {/* Anonymous Subject Switch - only visible when flagAnonymousFiscalCode is true */}
+          {flagAnonymousFiscalCode && (
+            <Box sx={{ mt: 2, mb: 2 }}>
+              <Controller
+                name="anonymousSubject.value"
+                control={control}
+                render={({ field }) => (
+                  <FormControlLabel
+                    data-testid="anonymous-subject-switch"
+                    control={
+                      <Switch
+                        {...field}
+                        checked={field.value}
+                        disabled={isAnonymousSubjectDisabled()}
+                        onChange={(e) => {
+                          field.onChange(e.target.checked);
+                          setValue('anonymousSubject.value', e.target.checked);
+                        }}
+                      />
+                    }
+                    label={t(
+                      'debtPositionCreateWizard.step2.anonymousSubject.label'
+                    )}
+                  />
+                )}
               />
-            )}
-          />
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ ml: 5.5, mt: 0.25 }}
+              >
+                {t(
+                  'debtPositionCreateWizard.step2.anonymousSubject.helperText'
+                )}
+              </Typography>
+            </Box>
+          )}
+
+          {/* Tax Code field - hidden when anonymous subject is enabled */}
+          {shouldShowTaxCodeField() && (
+            <Controller
+              name="taxCode.value"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  id="tax-code-input"
+                  data-testid="tax-code-field"
+                  label={getTaxCodeLabel()}
+                  placeholder={getTaxCodePlaceholder()}
+                  required
+                  fullWidth
+                  margin="normal"
+                  disabled={isFieldDisabled('fiscal')}
+                  error={isSubmitted && !!errors.taxCode?.value}
+                  helperText={isSubmitted && errors.taxCode?.value?.message}
+                  onChange={(e) => {
+                    const upper = e.target.value.toUpperCase();
+                    field.onChange(upper);
+                    handleFieldChange('taxCode.value', upper);
+                  }}
+                  inputProps={{ maxLength: 16 }}
+                />
+              )}
+            />
+          )}
 
           <Typography variant="subtitle1" sx={{ mt: 3 }} gutterBottom>
             {t('debtPositionCreateWizard.step2.personalData')}
