@@ -107,7 +107,7 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
 
       // Otherwise, taxCode must be present and not empty
       const taxCode = data.taxCode.value;
-      return taxCode !== undefined && taxCode !== null && taxCode.trim().length > 0;
+      return taxCode != null && taxCode.trim().length > 0;
     },
     {
       message: t('debtPositionCreateWizard.step2.taxCode.required'),

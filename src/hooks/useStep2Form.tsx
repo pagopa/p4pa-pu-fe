@@ -229,9 +229,13 @@ export const useStep2Form = ({
       reset(resetData, { keepDefaultValues: false });
 
       // Force setValue for anonymousSubject to ensure it's updated
-      setValue('anonymousSubject.value', data.anonymousSubject?.value ?? false, {
-        shouldValidate: false
-      });
+      setValue(
+        'anonymousSubject.value',
+        data.anonymousSubject?.value ?? false,
+        {
+          shouldValidate: false
+        }
+      );
     }
   }, [isEditing, data?.taxCode?.value, data?.anonymousSubject?.value]);
 
