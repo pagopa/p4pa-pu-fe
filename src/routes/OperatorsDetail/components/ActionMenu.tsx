@@ -3,17 +3,35 @@ import { DebtPositionTypeOrgDTO } from '../../../../generated/data-contracts';
 import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
 import OpenInNew from '@mui/icons-material/OpenInNew';
 import { useTranslation } from 'react-i18next';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '../..';
+import utils from '../../../utils';
 
 type ActionMenuProps = {
   row: DebtPositionTypeOrgDTO;
   onDelete: (row: DebtPositionTypeOrgDTO) => void;
 };
 
-export const GridActionMenu = ({ row, onDelete }: ActionMenuProps) => {
+export const GridActionMenu = ({
+  row,
+  onDelete: onDeleteProp
+}: ActionMenuProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
-  const deleteItem = () => {
-    onDelete(row);
+  const onDelete = () => {
+    onDeleteProp(row);
+  };
+
+  const onDetail = () => {
+    if (row?.debtPositionTypeOrgId) {
+      const path = generatePath(PageRoutes.DEBT_TYPE_ORG_DETAIL, {
+        debtPositionTypeOrgId: row.debtPositionTypeOrgId
+      });
+      navigate(path);
+    } else {
+      utils.notify.emit(t('errors.generic'));
+    }
   };
 
   return (
@@ -30,7 +48,7 @@ export const GridActionMenu = ({ row, onDelete }: ActionMenuProps) => {
             />
           ),
           label: t('commons.onlyRemove'),
-          action: deleteItem
+          action: onDelete
         },
         {
           icon: (
@@ -42,8 +60,7 @@ export const GridActionMenu = ({ row, onDelete }: ActionMenuProps) => {
             />
           ),
           label: t('commons.goToDetail'),
-          // TODO: add go to detail
-          action: () => null
+          action: onDetail
         }
       ]}
     />

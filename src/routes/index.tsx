@@ -1,31 +1,32 @@
 import { createBrowserRouter, Navigate, RouteObject } from 'react-router';
 import utils from '../utils';
-import { setupOrError, setupFallback } from '../utils/setup';
-import { Layout } from '../components/layout/Layout';
-import Home from './Home';
-import { RouteHandleObject } from '../models/Routes';
-import AuthCallback from './AuthCallback';
-import { postTokenOrError } from '../api/token';
-import LoggedOut from './UtilityPages/loggedout';
-import ErrorPage from './UtilityPages/error';
-import { flowsRoutes } from '../routes/flows';
-import { importRoutes } from '../routes/import';
-import { classificationsRoutes } from '../routes/classifications';
+import { setupFallback, appSetup } from '../utils/setup';
 import { assessmentRoutes } from '../routes/assessment';
-import { detailRoutes } from '../routes/detail';
-import { exportRoutes } from '../routes/export';
-import { debtTypesRoutes } from '../routes/debtTypes';
-import { responsesRoutes } from '../routes/responses';
-import { debtPositionsRoutes } from '../routes/debtPositions';
+import AuthCallback from './AuthCallback';
 import { backofficeRoutes } from '../routes/backoffice';
+import CallbackPage from './CallbackPage/CallbackPage';
+import { classificationsRoutes } from '../routes/classifications';
+import { CourtesyPage } from '../routes/CourtesyPage';
+import { debtPositionsRoutes } from '../routes/debtPositions';
 import { debtTypeOrgsRoutes } from '../routes/debtTypeOrgs';
+import { debtTypesRoutes } from '../routes/debtTypes';
+import { detailRoutes } from '../routes/detail';
+import ErrorPage from './UtilityPages/error';
+import { exportRoutes } from '../routes/export';
+import { flowsRoutes } from '../routes/flows';
+import Home from './Home';
+import { importRoutes } from '../routes/import';
+import { Layout } from '../components/layout/Layout';
+import LoggedOut from './UtilityPages/loggedout';
 import { operatorsRoutes } from '../routes/operators';
 import { organizationsRoutes } from './organizations';
-import CallbackPage from './CallbackPage/CallbackPage';
+import { postTokenOrError } from '../api/token';
+import { responsesRoutes } from '../routes/responses';
+import { RouteHandleObject } from '../models/Routes';
 
 const deployPath = utils.config.deployPath;
 
-const routesDef = [
+const routesDef: Array<RouteObject> = [
   {
     path: '*',
     element: <Navigate replace to={`${deployPath}/home`} />
@@ -33,7 +34,7 @@ const routesDef = [
   {
     path: `${deployPath}/`,
     element: <Layout />,
-    loader: setupOrError,
+    loader: appSetup,
     HydrateFallback: setupFallback,
     shouldRevalidate: () => false,
     children: [
@@ -41,7 +42,6 @@ const routesDef = [
         element: <Navigate replace to={`${deployPath}/home`} />,
         index: true
       },
-      ...organizationsRoutes,
       {
         path: `home`,
         element: <Home />,
@@ -51,6 +51,19 @@ const routesDef = [
           hideBreadcrumbs: true
         } as RouteHandleObject
       },
+      {
+        id: 'DRAFT_COURTESY_PAGE',
+        path: 'organization/:organizationId/draft',
+        element: <CourtesyPage />,
+        handle: {
+          backButton: false,
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject
+      },
+      ...organizationsRoutes,
       ...assessmentRoutes,
       ...backofficeRoutes,
       ...classificationsRoutes,
