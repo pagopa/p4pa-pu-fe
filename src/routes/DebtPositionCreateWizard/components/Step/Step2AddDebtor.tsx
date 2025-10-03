@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useForm, Controller, Resolver, FieldErrors } from 'react-hook-form';
+import { Controller } from 'react-hook-form';
 import {
   Grid,
   MenuItem,
@@ -11,13 +11,14 @@ import {
   Box
 } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
-import { z } from 'zod';
 import WizardStepButtons from '../../../../components/Wizard/WizardStepButtons';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { SubjectType } from '../../../../utils/fieldValidation';
 import { Step2Data } from '../../../../models/DebtPositionType';
 import { createNestedStep2AddDebtorSchema } from '../../../../models/Step2AddDebtorSchema';
+import { Step2ControlledTextField } from './Step2ControlledTextField';
+import { useStep2Form } from '../../../../hooks/useStep2Form';
 
 type Step2DataField = keyof Step2Data;
 type NestedFieldName = `${Step2DataField}.value`;
@@ -31,17 +32,6 @@ type Props = {
   flagAnonymousFiscalCode?: boolean;
 };
 
-type FieldErrorValue = {
-  type: string;
-  message: string;
-};
-
-type NestedFieldErrors<T> = {
-  [K in keyof T]?: {
-    value?: FieldErrorValue;
-  };
-};
-
 const Step2AddDebtor = ({
   data,
   setData,
@@ -51,181 +41,27 @@ const Step2AddDebtor = ({
   flagAnonymousFiscalCode = false
 }: Props) => {
   const { t } = useTranslation();
-  const hasInitializedRef = useRef(false);
 
-  useEffect(() => {
-    // Don't initialize defaults in edit mode - data comes from API
-    if (!isEditing) {
-      initializeDefaultValues();
-    }
-  }, [data, setData, isEditing]);
-
-  const initializeDefaultValues = () => {
-    let hasUpdates = false;
-    const updatedData = { ...data };
-
-    // Initialize string fields with empty value
-    const stringFields = [
-      'address',
-      'civicNumber',
-      'zipCode',
-      'province',
-      'city'
-    ] as const;
-
-    stringFields.forEach((field) => {
-      if (!updatedData[field]) {
-        updatedData[field] = { value: '', readonly: false };
-        hasUpdates = true;
-      }
-    });
-
-    // Initialize country with 'IT' default
-    if (!updatedData.country) {
-      updatedData.country = { value: 'IT', readonly: false };
-      hasUpdates = true;
-    } else if (updatedData.country.value === '') {
-      updatedData.country.value = 'IT';
-      hasUpdates = true;
-    }
-
-    // Initialize anonymousSubject ONLY if completely missing
-    // Don't overwrite if it exists (even if false) to preserve edit mode data
-    if (updatedData.anonymousSubject === undefined) {
-      updatedData.anonymousSubject = { value: false, readonly: false };
-      hasUpdates = true;
-    }
-
-    if (hasUpdates) {
-      setData(updatedData);
-    }
-  };
-
+  // Create schema
   const schema = createNestedStep2AddDebtorSchema(t);
 
-  const createFieldError = (message: string): FieldErrorValue => ({
-    type: 'validation',
-    message
-  });
-
-  const transformZodErrors = (zodError: z.ZodError, values: Step2Data) => {
-    const customizeErrorMessage = (
-      fieldName: Step2DataField,
-      message: string,
-      subjectType?: string
-    ): string => {
-      if (fieldName === 'taxCode' && subjectType === SubjectType.BUSINESS) {
-        if (message === t('debtPositionCreateWizard.step2.taxCode.required')) {
-          return t('debtPositionCreateWizard.step2.vat.required');
-        }
-      }
-
-      if (fieldName === 'fullName' && subjectType === SubjectType.BUSINESS) {
-        if (message === t('debtPositionCreateWizard.step2.fullName.required')) {
-          return t('debtPositionCreateWizard.step2.companyName.required');
-        }
-        if (
-          message === t('debtPositionCreateWizard.step2.fullName.minTwoWords')
-        ) {
-          return t('debtPositionCreateWizard.step2.companyName.minTwoWords');
-        }
-      }
-
-      return message;
-    };
-
-    return zodError.errors.reduce(
-      (formErrors: NestedFieldErrors<Step2Data>, error) => {
-        const path = error.path;
-
-        if (path.length >= 2 && path[1] === 'value') {
-          const fieldName = path[0] as Step2DataField;
-
-          const customMessage = customizeErrorMessage(
-            fieldName,
-            error.message,
-            values.subjectType?.value
-          );
-
-          formErrors[fieldName] = {
-            value: createFieldError(customMessage)
-          };
-        }
-
-        return formErrors;
-      },
-      {}
-    );
-  };
-
-  const zodFormResolver: Resolver<Step2Data> = async (values) => {
-    const result = schema.safeParse(values);
-
-    if (result.success) {
-      return { values, errors: {} };
-    }
-
-    return {
-      values: {},
-      errors: transformZodErrors(result.error, values) as FieldErrors<Step2Data>
-    };
-  };
-
+  // Use custom hook for form management
   const {
+    control,
     handleSubmit,
     watch,
-    control,
-    formState: { errors, isSubmitted },
+    errors,
+    isSubmitted,
     trigger,
     clearErrors,
-    setValue,
-    reset
-  } = useForm<Step2Data>({
-    defaultValues: {
-      ...data,
-      country: {
-        ...data.country,
-        value: data.country?.value || 'IT'
-      },
-      anonymousSubject: {
-        ...data.anonymousSubject,
-        value: data.anonymousSubject?.value ?? false
-      }
-    },
-    resolver: zodFormResolver,
-    mode: 'onChange'
+    setValue
+  } = useStep2Form({
+    data,
+    setData,
+    isEditing,
+    schema,
+    t
   });
-
-  // Reset form values when edit data is loaded - only once
-  useEffect(() => {
-    if (
-      isEditing &&
-      data &&
-      data.taxCode?.value &&
-      !hasInitializedRef.current
-    ) {
-      hasInitializedRef.current = true;
-      const resetData = {
-        ...data,
-        country: {
-          ...data.country,
-          value: data.country?.value || 'IT'
-        },
-        anonymousSubject: {
-          ...data.anonymousSubject,
-          value: data.anonymousSubject?.value ?? false
-        }
-      };
-      reset(resetData, { keepDefaultValues: false });
-
-      // Force setValue for anonymousSubject to ensure it's updated
-      setValue(
-        'anonymousSubject.value',
-        data.anonymousSubject?.value ?? false,
-        { shouldValidate: false }
-      );
-    }
-  }, [isEditing, data?.taxCode?.value, data?.anonymousSubject?.value]);
 
   const subjectTypeValue = watch('subjectType.value') || '';
 
@@ -282,7 +118,6 @@ const Step2AddDebtor = ({
         readonly: submittedData.taxCode.readonly
       };
     }
-    console.log('submittedData', submittedData);
     setData(submittedData);
     onNext();
   };
@@ -345,43 +180,45 @@ const Step2AddDebtor = ({
     );
   };
 
-  // Reset anonymousSubject to false when it becomes disabled
-  // BUT preserve the value in editing mode (data comes from API)
+  // Unified effect: Handle all anonymousSubject-related logic
   useEffect(() => {
+    const anonymousSubjectValue = watch('anonymousSubject.value') || false;
+    const taxCodeValue = data.taxCode?.value;
+
+    // 1. Reset anonymousSubject to false when it becomes disabled
+    //    BUT preserve the value in editing mode (data comes from API)
     if (
       isAnonymousSubjectDisabled() &&
       data.anonymousSubject?.value &&
       !isEditing
     ) {
       setValue('anonymousSubject.value', false);
+      return; // Early return to avoid conflicting updates
     }
-  }, [subjectTypeValue, isEditing, data.anonymousSubject?.value, setValue]);
 
-  // Reset taxCode to empty string when anonymousSubject becomes true
-  // But don't clear it if it's already 'ANONIMO' (edit mode scenario)
-  useEffect(() => {
-    const anonymousSubjectValue = watch('anonymousSubject.value') || false;
-    const taxCodeValue = data.taxCode?.value;
-
+    // 2. Reset taxCode to empty string when anonymousSubject becomes true
+    //    But don't clear it if it's already 'ANONIMO' (edit mode scenario)
     if (
       anonymousSubjectValue === true &&
       taxCodeValue &&
       taxCodeValue !== 'ANONIMO'
     ) {
       setValue('taxCode.value', '');
+      return; // Early return to avoid conflicting updates
     }
-  }, [watch('anonymousSubject.value'), data.taxCode?.value, setValue]);
 
-  // Clean taxCode if it contains 'ANONIMO' when switch is turned off
-  useEffect(() => {
-    const anonymousSubjectValue = watch('anonymousSubject.value') || false;
-    const taxCodeValue = data.taxCode?.value;
-
-    // If switch is OFF and taxCode contains 'ANONIMO', clean it
+    // 3. Clean taxCode if it contains 'ANONIMO' when switch is turned off
     if (anonymousSubjectValue === false && taxCodeValue === 'ANONIMO') {
       setValue('taxCode.value', '');
     }
-  }, [watch('anonymousSubject.value'), data.taxCode?.value, setValue]);
+  }, [
+    watch('anonymousSubject.value'),
+    data.anonymousSubject?.value,
+    data.taxCode?.value,
+    subjectTypeValue,
+    isEditing,
+    setValue
+  ]);
 
   return (
     <form id="step2-add-debtor-form" data-testid="step2-form">
@@ -479,30 +316,20 @@ const Step2AddDebtor = ({
 
           {/* Tax Code field - hidden when anonymous subject is enabled */}
           {shouldShowTaxCodeField() && (
-            <Controller
-              name="taxCode.value"
+            <Step2ControlledTextField
+              name="taxCode"
               control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  id="tax-code-input"
-                  data-testid="tax-code-field"
-                  label={getTaxCodeLabel()}
-                  placeholder={getTaxCodePlaceholder()}
-                  required
-                  fullWidth
-                  margin="normal"
-                  disabled={isFieldDisabled('fiscal')}
-                  error={isSubmitted && !!errors.taxCode?.value}
-                  helperText={isSubmitted && errors.taxCode?.value?.message}
-                  onChange={(e) => {
-                    const upper = e.target.value.toUpperCase();
-                    field.onChange(upper);
-                    handleFieldChange('taxCode.value', upper);
-                  }}
-                  inputProps={{ maxLength: 16 }}
-                />
-              )}
+              label={getTaxCodeLabel()}
+              placeholder={getTaxCodePlaceholder()}
+              required
+              disabled={isFieldDisabled('fiscal')}
+              isSubmitted={isSubmitted}
+              errors={errors}
+              onFieldChange={handleFieldChange}
+              transformValue={(value) => value.toUpperCase()}
+              inputProps={{ maxLength: 16 }}
+              id="tax-code-input"
+              data-testid="tax-code-field"
             />
           )}
 
@@ -510,108 +337,66 @@ const Step2AddDebtor = ({
             {t('debtPositionCreateWizard.step2.personalData')}
           </Typography>
 
-          <Controller
-            name="fullName.value"
+          <Step2ControlledTextField
+            name="fullName"
             control={control}
-            render={({ field }) => (
-              <TextField
-                {...field}
-                id="full-name-input"
-                data-testid="full-name-field"
-                label={getCompanyNameLabel()}
-                fullWidth
-                margin="normal"
-                required
-                disabled={isFieldDisabled('personal')}
-                error={isSubmitted && !!errors.fullName?.value}
-                helperText={isSubmitted && errors.fullName?.value?.message}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  field.onChange(value);
-                  handleFieldChange('fullName.value', value);
-                }}
-              />
-            )}
+            label={getCompanyNameLabel()}
+            required
+            disabled={isFieldDisabled('personal')}
+            isSubmitted={isSubmitted}
+            errors={errors}
+            onFieldChange={handleFieldChange}
+            id="full-name-input"
+            data-testid="full-name-field"
           />
 
           <Grid container spacing={2} mt={1}>
             <Grid item xs={12} sm={6} md={6}>
-              <Controller
-                name="address.value"
+              <Step2ControlledTextField
+                name="address"
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    id="address-input"
-                    data-testid="address-field"
-                    label={t('debtPositionCreateWizard.step2.address.label')}
-                    fullWidth
-                    required
-                    disabled={isFieldDisabled('personal')}
-                    error={isSubmitted && !!errors.address?.value}
-                    helperText={isSubmitted && errors.address?.value?.message}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value);
-                      handleFieldChange('address.value', value);
-                    }}
-                  />
-                )}
+                label={t('debtPositionCreateWizard.step2.address.label')}
+                required
+                disabled={isFieldDisabled('personal')}
+                isSubmitted={isSubmitted}
+                errors={errors}
+                onFieldChange={handleFieldChange}
+                id="address-input"
+                data-testid="address-field"
+                margin="none"
               />
             </Grid>
 
             <Grid item xs={6} sm={3} md={3}>
-              <Controller
-                name="civicNumber.value"
+              <Step2ControlledTextField
+                name="civicNumber"
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    id="civic-number-input"
-                    data-testid="civic-number-field"
-                    label={t(
-                      'debtPositionCreateWizard.step2.civicNumber.label'
-                    )}
-                    fullWidth
-                    required
-                    disabled={isFieldDisabled('personal')}
-                    error={isSubmitted && !!errors.civicNumber?.value}
-                    helperText={
-                      isSubmitted && errors.civicNumber?.value?.message
-                    }
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value);
-                      handleFieldChange('civicNumber.value', value);
-                    }}
-                  />
-                )}
+                label={t('debtPositionCreateWizard.step2.civicNumber.label')}
+                required
+                disabled={isFieldDisabled('personal')}
+                isSubmitted={isSubmitted}
+                errors={errors}
+                onFieldChange={handleFieldChange}
+                id="civic-number-input"
+                data-testid="civic-number-field"
+                margin="none"
               />
             </Grid>
 
             <Grid item xs={6} sm={3} md={3}>
-              <Controller
-                name="zipCode.value"
+              <Step2ControlledTextField
+                name="zipCode"
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    id="zip-code-input"
-                    data-testid="zip-code-field"
-                    label={t('debtPositionCreateWizard.step2.zipCode.label')}
-                    fullWidth
-                    required
-                    disabled={isFieldDisabled('personal')}
-                    error={isSubmitted && !!errors.zipCode?.value}
-                    helperText={isSubmitted && errors.zipCode?.value?.message}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value);
-                      handleFieldChange('zipCode.value', value);
-                    }}
-                    inputProps={{ maxLength: 5 }}
-                  />
-                )}
+                label={t('debtPositionCreateWizard.step2.zipCode.label')}
+                required
+                disabled={isFieldDisabled('personal')}
+                isSubmitted={isSubmitted}
+                errors={errors}
+                onFieldChange={handleFieldChange}
+                inputProps={{ maxLength: 5 }}
+                id="zip-code-input"
+                data-testid="zip-code-field"
+                margin="none"
               />
             </Grid>
           </Grid>
@@ -690,27 +475,18 @@ const Step2AddDebtor = ({
             </Grid>
 
             <Grid item xs={12} sm={4}>
-              <Controller
-                name="city.value"
+              <Step2ControlledTextField
+                name="city"
                 control={control}
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    id="city-input"
-                    data-testid="city-field"
-                    label={t('debtPositionCreateWizard.step2.city.label')}
-                    fullWidth
-                    required
-                    disabled={isFieldDisabled('personal')}
-                    error={isSubmitted && !!errors.city?.value}
-                    helperText={isSubmitted && errors.city?.value?.message}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      field.onChange(value);
-                      handleFieldChange('city.value', value);
-                    }}
-                  />
-                )}
+                label={t('debtPositionCreateWizard.step2.city.label')}
+                required
+                disabled={isFieldDisabled('personal')}
+                isSubmitted={isSubmitted}
+                errors={errors}
+                onFieldChange={handleFieldChange}
+                id="city-input"
+                data-testid="city-field"
+                margin="none"
               />
             </Grid>
           </Grid>
