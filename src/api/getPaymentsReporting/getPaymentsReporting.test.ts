@@ -27,6 +27,7 @@ describe('getPaymentsReporting', () => {
           ingestionFlowFileId: 1,
           organizationId: 3,
           iuf: 'iuf1',
+          iuv: '111',
           regulationUniqueIdentifier: '1',
           regulationDate: '2025-03-01',
           flowDateTime: '2025-04-01T00:00:00',
