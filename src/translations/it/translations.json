@@ -1939,6 +1939,123 @@
     "printKeyAPI": "API Key stampa avvisi",
     "orgEmail": "Email ente"
   },
+  "organizationEditWizard": {
+    "title": "Modifica il tuo ente",
+    "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
+    "saveChanges": "Salva modifiche",
+    "errorLoadingData": "Errore nel caricamento dei dati dell'ente",
+    "successMessage": "Modifiche salvate con successo",
+    "step1": {
+      "title": "Anagrafica ente",
+      "label": "Anagrafica ente",
+      "orgName": {
+        "label": "Ragione sociale",
+        "placeholder": "<ragione sociale>"
+      },
+      "orgFiscalCode": {
+        "label": "Codice Fiscale",
+        "placeholder": "<123456789012>",
+        "invalid": "Formato codice fiscale non valido"
+      },
+      "orgEmail": {
+        "label": "Email",
+        "helperText": "Indirizzo email al quale l'ente riceverà le comunicazioni di servizio della piattaforma",
+        "invalid": "Formato email non valido"
+      },
+      "orgLogo": {
+        "title": "CARICA IL LOGO DEL SERVIZIO",
+        "optional": "Facoltativo",
+        "description": "Inserisci solo il logo del tuo ente. Aiuterà a rendere legittime le ricevute telematiche e gli avvisi.",
+        "uploadDescription": "Trascina qui il file o seleziona dal computer",
+        "requirements": "Hai dubbi su formato o dimensioni?",
+        "learnMore": "Leggi qui",
+        "required": "Il logo è obbligatorio"
+      }
+    },
+    "step2": {
+      "label": "Configurazione ente",
+      "title": "Configurazione ente",
+      "accountingInfo": {
+        "title": "INFORMAZIONE CONTABILE"
+      },
+      "iban": {
+        "label": "IBAN",
+        "placeholder": "",
+        "required": "Il campo IBAN è obbligatorio",
+        "invalid": "Formato IBAN non valido"
+      },
+      "ibanPostal": {
+        "label": "IBAN Postale",
+        "placeholder": "",
+        "invalid": "Formato IBAN non valido"
+      },
+      "cbill": {
+        "label": "CBILL",
+        "placeholder": ""
+      },
+      "integratedCashJournal": {
+        "label": "Il giornale di cassa è integrato"
+      },
+      "paymentsInfo": {
+        "title": "PAGAMENTI"
+      },
+      "segregationCode": {
+        "label": "Codice Segregazione",
+        "placeholder": "",
+        "required": "Il campo Codice Segregazione è obbligatorio"
+      },
+      "generateNoticeApiKey": {
+        "label": "API Key stampa avvisi",
+        "placeholder": "",
+        "required": "Il campo API Key stampa avvisi è obbligatorio"
+      },
+      "additionalLanguage": {
+        "label": "Gli avvisi hanno una lingua addizionale"
+      },
+      "selectedLanguage": {
+        "label": "Lingua Addizionale",
+        "placeholder": "Seleziona una lingua",
+        "options": {
+          "en": "Inglese",
+          "fr": "Francese",
+          "de": "Tedesco"
+        },
+        "required": "Devi selezionare una lingua addizionale."
+      },
+      "radioRequired": "Devi selezionare una delle due opzioni",
+      "flagNotifyOutcomePush": {
+        "label": "Notifiche push di pagamenti gestiti da piattaforme esterne",
+        "description": "Dovrà essere integrata una API per ricevere notifiche",
+        "abilita": "Abilita",
+        "disabilita": "Disabilita"
+      },
+      "flagPaymentNotification": {
+        "label": "Notifiche di pagamenti gestiti da Piattaforma Unitaria",
+        "description": "Dovrà essere configurato il Org Sil Service per ricevere le notifiche",
+        "abilita": "Abilita",
+        "disabilita": "Disabilita"
+      },
+      "pagoPaIntegration": {
+        "title": "INTEGRAZIONE CON I PRODOTTI PAGOPA",
+        "io": {
+          "label": "Messaggi sull'app IO",
+          "description": "Abilita l'ente a inviare messaggi sui pagamenti",
+          "apiKeyLabel": "API key",
+          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche IO",
+          "apiKeyRequired": "Il campo API key è obbligatorio",
+          "apiKeyHelperText": "Inserisci la API key per inviare messaggi sull'app IO"
+        },
+        "send": {
+          "label": "Autenticazione con PDND",
+          "description": "Abilita l'autenticazione su SEND tramite PDND",
+          "apiKeyLabel": "API key",
+          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche SEND",
+          "apiKeyRequired": "Il campo API key è obbligatorio",
+          "apiKeyHelperText": "Inserisci la API key per inviare notifiche SEND"
+        }
+      }
+    }
+  },
   "registry": {
     "detail": {
       "eventDetailTitle": "Dettaglio evento",
