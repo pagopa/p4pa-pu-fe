@@ -92,23 +92,21 @@ export const SuccessPage = () => {
   };
 
   return (
-    <>
-      <ResponsePage
-        icon={getIcon()}
-        title={String(
-          t(pageConfig?.title, {
-            ...i18nParams,
-            interpolation: { escapeValue: false }
-          })
-        )}
-        description={
-          pageConfig?.description
-            ? String(t(pageConfig.description, i18nParams))
-            : ''
-        }
-        buttonConfig={buttonConfig}
-      />
-    </>
+    <ResponsePage
+      icon={getIcon()}
+      title={String(
+        t(pageConfig?.title, {
+          ...i18nParams,
+          interpolation: { escapeValue: false }
+        })
+      )}
+      description={
+        pageConfig?.description
+          ? String(t(pageConfig.description, i18nParams))
+          : ''
+      }
+      buttonConfig={buttonConfig}
+    />
   );
 };
 

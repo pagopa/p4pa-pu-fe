@@ -1,4 +1,10 @@
 {
+  "DraftCourtesyPage": {
+    "superadmin": {
+      "title": "Configura l'ente per accedere",
+      "description": "Per utilizzare Piattaforma Unitaria è necessario configurare i parametri dell’ente."
+    }
+  },
   "OperatorDetail": {
     "code": "Cod. Gestionale",
     "debtPositionTypeDescription": "Tipo di dovuto",
