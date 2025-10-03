@@ -2,18 +2,22 @@ import utils from '../../utils';
 import { act, renderHook, waitFor } from '../../__tests__/renderers';
 import {
   getOrganizationDetail,
-  getOrganizationsByBrokerIdAndFilters
+  getOrganizationsByBrokerIdAndFilters,
+  updateOrganization
 } from './';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
+import { randomUUID } from 'node:crypto';
 import { OrganizationsFilteredRequest } from './mappings';
+import { OrganizationStatus } from '../../../generated/data-contracts';
 
 vi.mock('../../utils', () => ({
   default: {
     apiClient: {
       bff: {
         getOrganizationsByBrokerIdAndFilters: vi.fn(),
-        getOrganizationDetail: vi.fn()
+        getOrganizationDetail: vi.fn(),
+        updateOrganization: vi.fn()
       }
     }
   }
@@ -282,5 +286,149 @@ describe('getOrganizationDetail', () => {
       expect(apiMock).toHaveBeenCalledWith(params.organizationId);
       expect(result.current.data).toEqual(dataMock);
     });
+  });
+});
+
+describe('updateOrganization', () => {
+  const mockUpdateOrganization = vi.mocked(
+    utils.apiClient.bff.updateOrganization
+  );
+
+  it('updates organization successfully', async () => {
+    const organizationId = 33;
+    const organizationData = {
+      organizationId: 33,
+      flagTreasury: true,
+      externalOrganizationId: 'EXT123',
+      ipaCode: 'IPA_TEST',
+      orgFiscalCode: '99999999990',
+      orgName: 'Updated Organization Name',
+      orgTypeCode: '03',
+      orgEmail: 'updated@email.it',
+      postalIban: 'IT60X0542811101000000123456',
+      iban: 'IT60X0542811101000000123456',
+      password: randomUUID(),
+      segregationCode: '01',
+      cbillInterBankCode: 'CBILL001',
+      orgLogo: 'data:image/png;base64,iVBORw0KGgo...',
+      status: OrganizationStatus.ACTIVE,
+      additionalLanguage: 'FR',
+      startDate: '2024-12-19',
+      brokerId: 1,
+      ioApiKey: '222',
+      sendApiKey: '333',
+      generateNoticeApiKey: '444',
+      flagNotifyIo: true,
+      flagNotifyOutcomePush: true,
+      flagPaymentNotification: true,
+      pdndEnabled: true
+    };
+
+    mockUpdateOrganization.mockResolvedValue({} as AxiosResponse);
+
+    const { result } = renderHook(() => updateOrganization());
+
+    await act(async () => {
+      await result.current.mutateAsync({ organizationId, organizationData });
+    });
+
+    expect(mockUpdateOrganization).toHaveBeenCalledWith(
+      organizationId,
+      organizationData
+    );
+    expect(mockUpdateOrganization).toHaveBeenCalledTimes(1);
+  });
+
+  it('handles API error during update', async () => {
+    const mockError = new Error('Update failed');
+    const organizationId = 33;
+    const organizationData = {
+      organizationId: 33,
+      flagTreasury: false,
+      externalOrganizationId: 'EXT123',
+      ipaCode: 'IPA_TEST',
+      orgFiscalCode: '99999999990',
+      orgName: 'Test Organization',
+      orgTypeCode: '03',
+      orgEmail: 'test@email.it',
+      postalIban: 'IT60X0542811101000000123456',
+      iban: 'IT60X0542811101000000123456',
+      password: randomUUID(),
+      segregationCode: '00',
+      cbillInterBankCode: 'CBILL001',
+      orgLogo: '',
+      status: OrganizationStatus.ACTIVE,
+      additionalLanguage: 'EN',
+      startDate: '2024-12-19',
+      brokerId: 1,
+      ioApiKey: '111',
+      sendApiKey: '222',
+      generateNoticeApiKey: '333',
+      flagNotifyIo: false,
+      flagNotifyOutcomePush: false,
+      flagPaymentNotification: false,
+      pdndEnabled: false
+    };
+
+    mockUpdateOrganization.mockRejectedValueOnce(mockError);
+
+    const { result } = renderHook(() => updateOrganization());
+
+    await act(async () => {
+      await result.current
+        .mutateAsync({ organizationId, organizationData })
+        .catch((error) => {
+          expect(error).toBe(mockError);
+        });
+    });
+
+    expect(mockUpdateOrganization).toHaveBeenCalledWith(
+      organizationId,
+      organizationData
+    );
+  });
+
+  it('updates organization with minimal required fields', async () => {
+    const organizationId = 1;
+    const organizationData = {
+      organizationId: 1,
+      flagTreasury: false,
+      externalOrganizationId: 'MIN001',
+      ipaCode: 'MIN',
+      orgFiscalCode: '11111111111',
+      orgName: 'Minimal Org',
+      orgTypeCode: '01',
+      orgEmail: 'minimal@test.it',
+      postalIban: 'IT60X0542811101000000111111',
+      iban: 'IT60X0542811101000000111111',
+      password: randomUUID(),
+      segregationCode: '00',
+      cbillInterBankCode: '',
+      orgLogo: '',
+      status: OrganizationStatus.ACTIVE,
+      additionalLanguage: '',
+      startDate: '2024-01-01',
+      brokerId: 1,
+      ioApiKey: '',
+      sendApiKey: '',
+      generateNoticeApiKey: '',
+      flagNotifyIo: false,
+      flagNotifyOutcomePush: false,
+      flagPaymentNotification: false,
+      pdndEnabled: false
+    };
+
+    mockUpdateOrganization.mockResolvedValue({} as AxiosResponse);
+
+    const { result } = renderHook(() => updateOrganization());
+
+    await act(async () => {
+      await result.current.mutateAsync({ organizationId, organizationData });
+    });
+
+    expect(mockUpdateOrganization).toHaveBeenCalledWith(
+      organizationId,
+      organizationData
+    );
   });
 });

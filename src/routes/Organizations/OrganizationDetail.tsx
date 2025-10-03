@@ -1,7 +1,7 @@
 import { Box, Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, generatePath } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { getOrganizationDetail } from '../../api/organizations';
 import { useEffect, useState } from 'react';
@@ -16,6 +16,7 @@ import {
 } from './components/OrganizationDetailSections';
 import { theme } from '@pagopa/mui-italia';
 import { useLanguage } from '../../hooks/useLanguage';
+import EditIcon from '@mui/icons-material/Edit';
 
 export const OrganizationDetail = () => {
   const { t } = useTranslation();
@@ -49,10 +50,27 @@ export const OrganizationDetail = () => {
     }
   }, [data]);
 
+  const handleEditClick = () => {
+    navigate(
+      generatePath(PageRoutes.ORGANIZATIONS_EDIT, {
+        organizationId: getOrganizationId
+      })
+    );
+  };
+
   return (
     <>
       <TitleComponent
         title={(isSuccess && organizationDetailData?.orgName) || ''}
+        callToAction={[
+          {
+            icon: <EditIcon />,
+            onActionClick: handleEditClick,
+            isIconButton: true,
+            color: 'primary',
+            dataTestId: 'edit-organization-button'
+          }
+        ]}
       />
       <Grid
         container
