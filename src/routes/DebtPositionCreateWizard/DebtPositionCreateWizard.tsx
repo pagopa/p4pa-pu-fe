@@ -45,6 +45,10 @@ const initialData: FormData = {
       value: '',
       readonly: false
     },
+    anonymousSubject: {
+      value: false,
+      readonly: false
+    },
     taxCode: {
       value: '',
       readonly: false
@@ -158,12 +162,18 @@ const DebtPositionCreateWizard = () => {
       }
     };
 
+    const isAnonymous = debtPositionDetail.debtor?.fiscalCode === 'ANONIMO';
+
     const step2: Step2Data = {
       subjectType: {
         value:
           debtPositionDetail.debtor?.entityType === PersonEntityType.F
             ? SubjectType.INDIVIDUAL
             : SubjectType.BUSINESS,
+        readonly: isEditing
+      },
+      anonymousSubject: {
+        value: isAnonymous,
         readonly: isEditing
       },
       taxCode: {
@@ -380,6 +390,9 @@ const DebtPositionCreateWizard = () => {
               onNext={() => setStep(2)}
               onBack={() => setStep(0)}
               isEditing={isEditing}
+              flagAnonymousFiscalCode={
+                formData.step1.debtPositionType.flagAnonymousFiscalCode
+              }
             />
           )
         },

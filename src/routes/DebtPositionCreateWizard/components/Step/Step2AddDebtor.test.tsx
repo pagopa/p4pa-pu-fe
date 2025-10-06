@@ -156,4 +156,195 @@ describe('Step2AddDebtor', () => {
     });
     expect(continueButton).toBeInTheDocument();
   });
+
+  describe('Anonymous Subject Switch', () => {
+    it('shows anonymous subject switch when flagAnonymousFiscalCode is true', () => {
+      render(
+        <Step2AddDebtor
+          data={defaultData}
+          setData={() => null}
+          onNext={() => null}
+          flagAnonymousFiscalCode={true}
+        />
+      );
+
+      const anonymousSwitch = screen.getByTestId('anonymous-subject-switch');
+      expect(anonymousSwitch).toBeInTheDocument();
+
+      const helperText = screen.getByText(
+        'debtPositionCreateWizard.step2.anonymousSubject.helperText'
+      );
+      expect(helperText).toBeInTheDocument();
+    });
+
+    it('does not show anonymous subject switch when flagAnonymousFiscalCode is false', () => {
+      render(
+        <Step2AddDebtor
+          data={defaultData}
+          setData={() => null}
+          onNext={() => null}
+          flagAnonymousFiscalCode={false}
+        />
+      );
+
+      const anonymousSwitch = screen.queryByTestId('anonymous-subject-switch');
+      expect(anonymousSwitch).not.toBeInTheDocument();
+    });
+
+    it('disables anonymous subject switch when subjectType is BUSINESS', async () => {
+      render(
+        <Step2AddDebtor
+          data={defaultData}
+          setData={() => null}
+          onNext={() => null}
+          flagAnonymousFiscalCode={true}
+        />
+      );
+
+      // Select BUSINESS subject type
+      const subjectTypeSelect = screen.getByRole('combobox', {
+        name: 'debtPositionCreateWizard.step2.subjectType.label'
+      }) as HTMLSelectElement;
+
+      fireEvent.mouseDown(subjectTypeSelect);
+      const businessOption = await screen.findByText(
+        'debtPositionCreateWizard.step2.subjectType.options.giuridica'
+      );
+      fireEvent.click(businessOption);
+
+      // Check that the switch is now disabled
+      const switchElement = screen
+        .getByTestId('anonymous-subject-switch')
+        .querySelector('input[type="checkbox"]') as HTMLInputElement;
+
+      expect(switchElement).toBeDisabled();
+    });
+
+    it('disables anonymous subject switch in edit mode', () => {
+      const dataWithAnonymous: Step2Data = {
+        ...defaultData,
+        subjectType: { value: 'INDIVIDUAL', readonly: false },
+        anonymousSubject: { value: false, readonly: false }
+      };
+
+      render(
+        <Step2AddDebtor
+          data={dataWithAnonymous}
+          setData={() => null}
+          onNext={() => null}
+          isEditing={true}
+          flagAnonymousFiscalCode={true}
+        />
+      );
+
+      const switchElement = screen
+        .getByTestId('anonymous-subject-switch')
+        .querySelector('input[type="checkbox"]') as HTMLInputElement;
+
+      expect(switchElement).toBeDisabled();
+    });
+
+    it('hides taxCode field when anonymous switch is active and subject type is INDIVIDUAL', async () => {
+      render(
+        <Step2AddDebtor
+          data={defaultData}
+          setData={() => null}
+          onNext={() => null}
+          flagAnonymousFiscalCode={true}
+        />
+      );
+
+      // Select INDIVIDUAL subject type
+      const subjectTypeSelect = screen.getByRole('combobox', {
+        name: 'debtPositionCreateWizard.step2.subjectType.label'
+      }) as HTMLSelectElement;
+
+      fireEvent.mouseDown(subjectTypeSelect);
+      const individualOption = await screen.findByText(
+        'debtPositionCreateWizard.step2.subjectType.options.fisica'
+      );
+      fireEvent.click(individualOption);
+
+      // TaxCode field should be visible initially
+      let taxCodeField = screen.getByTestId('tax-code-field');
+      expect(taxCodeField).toBeInTheDocument();
+
+      // Click anonymous switch
+      const switchElement = screen
+        .getByTestId('anonymous-subject-switch')
+        .querySelector('input[type="checkbox"]') as HTMLInputElement;
+
+      fireEvent.click(switchElement);
+
+      // TaxCode field should now be hidden
+      taxCodeField = screen.queryByTestId('tax-code-field') as HTMLElement;
+      expect(taxCodeField).not.toBeInTheDocument();
+    });
+
+    it('shows taxCode field when anonymous switch is inactive', async () => {
+      render(
+        <Step2AddDebtor
+          data={defaultData}
+          setData={() => null}
+          onNext={() => null}
+          flagAnonymousFiscalCode={true}
+        />
+      );
+
+      // Select INDIVIDUAL subject type
+      const subjectTypeSelect = screen.getByRole('combobox', {
+        name: 'debtPositionCreateWizard.step2.subjectType.label'
+      }) as HTMLSelectElement;
+
+      fireEvent.mouseDown(subjectTypeSelect);
+      const individualOption = await screen.findByText(
+        'debtPositionCreateWizard.step2.subjectType.options.fisica'
+      );
+      fireEvent.click(individualOption);
+
+      // TaxCode field should be visible when switch is off
+      const taxCodeField = screen.getByTestId('tax-code-field');
+      expect(taxCodeField).toBeInTheDocument();
+    });
+
+    it('resets anonymous switch when user changes subject type from INDIVIDUAL to BUSINESS', async () => {
+      render(
+        <Step2AddDebtor
+          data={defaultData}
+          setData={() => null}
+          onNext={() => null}
+          flagAnonymousFiscalCode={true}
+        />
+      );
+
+      // Select INDIVIDUAL subject type
+      const subjectTypeSelect = screen.getByRole('combobox', {
+        name: 'debtPositionCreateWizard.step2.subjectType.label'
+      }) as HTMLSelectElement;
+
+      fireEvent.mouseDown(subjectTypeSelect);
+      const individualOption = await screen.findByText(
+        'debtPositionCreateWizard.step2.subjectType.options.fisica'
+      );
+      fireEvent.click(individualOption);
+
+      // Activate anonymous switch
+      const switchElement = screen
+        .getByTestId('anonymous-subject-switch')
+        .querySelector('input[type="checkbox"]') as HTMLInputElement;
+
+      fireEvent.click(switchElement);
+      expect(switchElement.checked).toBe(true);
+
+      // Change subject type to BUSINESS
+      fireEvent.mouseDown(subjectTypeSelect);
+      const businessOption = await screen.findByText(
+        'debtPositionCreateWizard.step2.subjectType.options.giuridica'
+      );
+      fireEvent.click(businessOption);
+
+      // Switch should be automatically reset to false
+      expect(switchElement.checked).toBe(false);
+    });
+  });
 });
