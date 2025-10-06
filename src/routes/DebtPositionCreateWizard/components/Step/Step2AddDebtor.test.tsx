@@ -306,5 +306,45 @@ describe('Step2AddDebtor', () => {
       const taxCodeField = screen.getByTestId('tax-code-field');
       expect(taxCodeField).toBeInTheDocument();
     });
+
+    it('resets anonymous switch when user changes subject type from INDIVIDUAL to BUSINESS', async () => {
+      render(
+        <Step2AddDebtor
+          data={defaultData}
+          setData={() => null}
+          onNext={() => null}
+          flagAnonymousFiscalCode={true}
+        />
+      );
+
+      // Select INDIVIDUAL subject type
+      const subjectTypeSelect = screen.getByRole('combobox', {
+        name: 'debtPositionCreateWizard.step2.subjectType.label'
+      }) as HTMLSelectElement;
+
+      fireEvent.mouseDown(subjectTypeSelect);
+      const individualOption = await screen.findByText(
+        'debtPositionCreateWizard.step2.subjectType.options.fisica'
+      );
+      fireEvent.click(individualOption);
+
+      // Activate anonymous switch
+      const switchElement = screen
+        .getByTestId('anonymous-subject-switch')
+        .querySelector('input[type="checkbox"]') as HTMLInputElement;
+
+      fireEvent.click(switchElement);
+      expect(switchElement.checked).toBe(true);
+
+      // Change subject type to BUSINESS
+      fireEvent.mouseDown(subjectTypeSelect);
+      const businessOption = await screen.findByText(
+        'debtPositionCreateWizard.step2.subjectType.options.giuridica'
+      );
+      fireEvent.click(businessOption);
+
+      // Switch should be automatically reset to false
+      expect(switchElement.checked).toBe(false);
+    });
   });
 });

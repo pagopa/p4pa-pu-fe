@@ -186,10 +186,11 @@ const Step2AddDebtor = ({
     const taxCodeValue = data.taxCode?.value;
 
     // 1. Reset anonymousSubject to false when it becomes disabled
+    //    (e.g., user changes subject type to BUSINESS while switch is on)
     //    BUT preserve the value in editing mode (data comes from API)
     if (
       isAnonymousSubjectDisabled() &&
-      data.anonymousSubject?.value &&
+      anonymousSubjectValue === true &&
       !isEditing
     ) {
       setValue('anonymousSubject.value', false);
