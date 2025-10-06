@@ -4,6 +4,12 @@ import { Mock } from 'vitest';
 import { fireEvent, render, screen, waitFor } from '../../__tests__/renderers';
 import { PageRoutes } from '../../routes';
 import { setUserInfo } from '../../store/UserInfoStore';
+import { organizationsState } from '../../store/OrganizationsStore';
+import {
+  OperatorRole,
+  OrganizationDTO,
+  OrganizationStatus
+} from '../../../generated/data-contracts';
 
 // Mock dependencies
 vi.mock('react-router', async () => {
@@ -106,5 +112,33 @@ describe('Header component', () => {
     fireEvent.click(screen.getByText('commons.userActions.yourdata'));
 
     expect(mockNavigate).toHaveBeenCalledWith('/');
+  });
+
+  it('does not render canceled organizations in HeaderProduct', () => {
+    // Set organizations including one canceled and one active
+    organizationsState.value = [
+      {
+        organizationId: 1,
+        orgName: 'Active Org',
+        status: OrganizationStatus.ACTIVE,
+        operatorRole: OperatorRole.ROLE_ADMIN,
+        orgLogo: 'logo1.png'
+      },
+      {
+        organizationId: 2,
+        orgName: 'Canceled Org',
+        status: OrganizationStatus.CANCELLED,
+        operatorRole: OperatorRole.ROLE_ADMIN,
+        orgLogo: 'logo2.png'
+      }
+    ] as Array<OrganizationDTO>;
+
+    render(<Header />);
+
+    // Active org should be rendered
+    expect(screen.getByText('Active Org')).toBeInTheDocument();
+
+    // Canceled org should be excluded
+    expect(screen.queryByText('Canceled Org')).not.toBeInTheDocument();
   });
 });
