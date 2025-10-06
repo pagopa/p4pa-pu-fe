@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState } from 'react';
 import { Add } from '@mui/icons-material';
 import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
@@ -13,11 +13,12 @@ import orgSilServiceApi from '../../api/orgSilService';
 import { OrgSilServicesFilters } from '../../api/orgSilService/mappings';
 import {
   OrgSilServiceType,
-  OrgSilServiceView,
-  PagedOrgSilServiceView
+  OrgSilServiceView
 } from '../../../generated/apiClient';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '..';
+import { FilterFieldValue } from '../../models/Filters';
+import utils from '../../utils';
 
 const SERVICE_CONFIGS: Record<
   number,
@@ -40,88 +41,34 @@ export const OrgSilServicesPage = () => {
   } = useStore();
   const navigate = useNavigate();
 
+  const initialFilters = utils.URI.decode(window.location.hash);
+
   const [activeTab, setActiveTab] = useState(0);
-  const [filterValues, setFilterValues] = useState({
-    notifications: '',
-    actualization: ''
+  const [filters, setFilters] = useState<OrgSilServicesFilters>({
+    ...initialFilters,
+    serviceType: SERVICE_CONFIGS[activeTab].type
   });
 
-  const notificationsQuery = orgSilServiceApi.getOrgSilServices({
+  const query = orgSilServiceApi.getOrgSilServices({
     organizationId: Number(organizationId)
   });
 
-  const notificationsSearch = useSearch<
-    OrgSilServicesFilters,
-    PagedOrgSilServiceView
-  >({
-    filters: {
-      serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME,
-      applicationName: filterValues.notifications
-    },
-    query: notificationsQuery
+  const silSearch = useSearch({
+    filters,
+    query
   });
-
-  const actualizationQuery = orgSilServiceApi.getOrgSilServices({
-    organizationId: Number(organizationId)
-  });
-
-  const actualizationSearch = useSearch<
-    OrgSilServicesFilters,
-    PagedOrgSilServiceView
-  >({
-    filters: {
-      serviceType: OrgSilServiceType.ACTUALIZATION,
-      applicationName: filterValues.actualization
-    },
-    query: actualizationQuery
-  });
-
-  const activeFilters = useMemo(() => {
-    if (activeTab === 0) {
-      return {
-        serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME,
-        applicationName: filterValues.notifications
-      };
-    } else {
-      return {
-        serviceType: OrgSilServiceType.ACTUALIZATION,
-        applicationName: filterValues.actualization
-      };
-    }
-  }, [activeTab]);
-
-  const currentSearch = useMemo(
-    () => (activeTab === 0 ? notificationsSearch : actualizationSearch),
-    [activeTab, notificationsSearch, actualizationSearch]
-  );
 
   const { filters: filterItems } = useOrgSilServiceFilters({
-    onFilter: () => currentSearch.applyFilters(activeFilters)
+    onFilter: () => silSearch.applyFilters(filters)
   });
 
-  const handleFilterChange = (id: string, value: unknown) => {
-    if (id === 'applicationName') {
-      if (activeTab === 0) {
-        setFilterValues((prev) => ({
-          ...prev,
-          notifications: value as string
-        }));
-      } else {
-        setFilterValues((prev) => ({
-          ...prev,
-          actualization: value as string
-        }));
-      }
-    }
-  };
-
-  const handleTabChange = (newTab: number) => {
+  const handleTabChange = async (newTab: number) => {
+    const serviceType = SERVICE_CONFIGS[newTab].type;
     setActiveTab(newTab);
-    const targetSearch =
-      newTab === 0 ? notificationsSearch : actualizationSearch;
-    if (!targetSearch.query.data) {
-      targetSearch.applyFilters(activeFilters);
-    }
+    setFilters({ serviceType });
+    silSearch.applyFilters({
+      serviceType
+    });
   };
 
   const handleAddNew = () => {
@@ -137,6 +84,9 @@ export const OrgSilServicesPage = () => {
       })
     );
   };
+
+  const handleFilterChange = (id: string, value: FilterFieldValue) =>
+    setFilters({ ...filters, [id]: value });
 
   return (
     <>
@@ -161,12 +111,7 @@ export const OrgSilServicesPage = () => {
       >
         <FilterContainer
           items={filterItems}
-          values={{
-            applicationName:
-              activeTab === 0
-                ? filterValues.notifications
-                : filterValues.actualization
-          }}
+          values={filters}
           onChange={handleFilterChange}
         />
       </Grid>
@@ -176,9 +121,8 @@ export const OrgSilServicesPage = () => {
         onTabChange={handleTabChange}
         serviceConfigs={SERVICE_CONFIGS}
       />
-
       <ServiceDataGrid
-        data={currentSearch.query.data}
+        data={silSearch.query.data}
         onRowClick={handleRowClick}
       />
     </>

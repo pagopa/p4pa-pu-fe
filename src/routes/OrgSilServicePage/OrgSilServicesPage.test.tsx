@@ -1,24 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { render, screen, fireEvent } from '../../__tests__/renderers';
 import { OrgSilServicesPage } from './OrgSilServicesPage';
-import {
-  OrgSilServiceType,
-  PagedOrgSilServiceView
-} from '../../../generated/apiClient';
-import { COMPONENT_TYPE } from '../../components/FilterContainer/FilterContainer';
-
 import * as useSearchModule from '../../hooks/useSearch';
 import * as useOrgSilServiceFiltersModule from '../../hooks/useOrgSilServiceFilters';
-import { render, screen, fireEvent } from '../../__tests__/renderers';
+import { COMPONENT_TYPE } from '../../components/FilterContainer/FilterContainer';
 
-const mockNotificationsData: PagedOrgSilServiceView = {
+const mockNotificationsData = {
   content: [
     {
       orgSilServiceId: 1,
       applicationName: 'Notification Service',
       organizationId: 123,
       serviceUrl: 'http://notify.com',
-      serviceType: OrgSilServiceType.PAID_NOTIFICATION_OUTCOME
+      serviceType: 0
     }
   ],
   totalElements: 1,
@@ -27,14 +22,14 @@ const mockNotificationsData: PagedOrgSilServiceView = {
   number: 0
 };
 
-const mockActualizationData: PagedOrgSilServiceView = {
+const mockActualizationData = {
   content: [
     {
       orgSilServiceId: 2,
       applicationName: 'Actualization Service',
       organizationId: 123,
       serviceUrl: 'http://actualize.com',
-      serviceType: OrgSilServiceType.ACTUALIZATION
+      serviceType: 1
     }
   ],
   totalElements: 1,
@@ -45,21 +40,6 @@ const mockActualizationData: PagedOrgSilServiceView = {
 
 const mockApplyFilters = vi.fn();
 const mockHandlePaginationChange = vi.fn();
-
-vi.mock('../../api/orgSilService', () => ({
-  default: {
-    getOrgSilServices: vi.fn().mockReturnValue({
-      queryKey: ['orgSilServices'],
-      queryFn: vi.fn()
-    })
-  }
-}));
-
-vi.mock('../../hooks/useSearch');
-vi.mock('../../hooks/useOrgSilServiceFilters');
-vi.mock('../../components/TitleComponent/TitleComponent', () => ({
-  default: ({ title }: { title: string }) => <h1>{title}</h1>
-}));
 
 vi.mock('../../components/FilterContainer/FilterContainer', () => ({
   default: ({ items, values, onChange }: any) => (
@@ -97,22 +77,6 @@ vi.mock('./components/ServiceTab', () => ({
     </div>
   )
 }));
-vi.mock('./components/ServiceDataGrid', () => ({
-  ServiceDataGrid: ({ data }: any) => (
-    <div data-testid="service-data-grid">
-      {data?.content?.map((row: any) => (
-        <div key={row.orgSilServiceId}>{row.applicationName}</div>
-      ))}
-    </div>
-  )
-}));
-vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (key: string) => key })
-}));
-vi.mock('../../store/GlobalStore', () => ({
-  useStore: () => ({ state: { organizationId: '123' } }),
-  StoreProvider: ({ children }: { children: React.ReactNode }) => children
-}));
 
 describe('OrgSilServicesPage', () => {
   beforeEach(() => {
@@ -137,39 +101,38 @@ describe('OrgSilServicesPage', () => {
     vi.spyOn(useSearchModule, 'useSearch').mockReturnValue({
       applyFilters: mockApplyFilters,
       handlePaginationChange: mockHandlePaginationChange,
+      // @ts-expect-error query mocking
       query: {
         data: mockNotificationsData,
         isPending: false
       }
-    } as any);
+    });
   });
 
-  it('should render correctly and load initial data for the first tab', () => {
+  it('renders the page with initial data on first tab', () => {
     render(<OrgSilServicesPage />);
-
     expect(
       screen.getByText('commons.routes.ORG_SIL_SERVICE')
     ).toBeInTheDocument();
-
     expect(screen.getByText('Notification Service')).toBeInTheDocument();
   });
 
-  it('should call applyFilters when switching to a tab without data', () => {
+  it('switches tabs and triggers applyFilters when no data', () => {
     vi.spyOn(useSearchModule, 'useSearch')
       .mockReturnValueOnce({
         applyFilters: mockApplyFilters,
         handlePaginationChange: mockHandlePaginationChange,
+        // @ts-expect-error query mocking
         query: { data: mockNotificationsData, isPending: false }
-      } as any)
+      })
       .mockReturnValueOnce({
         applyFilters: mockApplyFilters,
         handlePaginationChange: mockHandlePaginationChange,
+        // @ts-expect-error query mocking
         query: { data: undefined, isPending: false }
-      } as any);
+      });
 
     render(<OrgSilServicesPage />);
-
-    mockApplyFilters.mockClear();
 
     const tab1Button = screen.getByTestId('tab-1');
     fireEvent.click(tab1Button);
@@ -177,8 +140,9 @@ describe('OrgSilServicesPage', () => {
     expect(mockApplyFilters).toHaveBeenCalledTimes(1);
   });
 
-  it('should display data for the second tab after switching', () => {
+  it('displays correct data when switching tabs', () => {
     let callCount = 0;
+    // @ts-expect-error query mocking
     vi.spyOn(useSearchModule, 'useSearch').mockImplementation(() => {
       callCount++;
       if (callCount === 1) {
@@ -186,18 +150,16 @@ describe('OrgSilServicesPage', () => {
           applyFilters: mockApplyFilters,
           handlePaginationChange: mockHandlePaginationChange,
           query: { data: mockNotificationsData, isPending: false }
-        } as any;
-      } else {
-        return {
-          applyFilters: mockApplyFilters,
-          handlePaginationChange: mockHandlePaginationChange,
-          query: { data: mockActualizationData, isPending: false }
-        } as any;
+        };
       }
+      return {
+        applyFilters: mockApplyFilters,
+        handlePaginationChange: mockHandlePaginationChange,
+        query: { data: mockActualizationData, isPending: false }
+      };
     });
 
     render(<OrgSilServicesPage />);
-
     expect(screen.getByText('Notification Service')).toBeInTheDocument();
 
     const tab1Button = screen.getByTestId('tab-1');
@@ -207,30 +169,12 @@ describe('OrgSilServicesPage', () => {
     expect(screen.queryByText('Notification Service')).not.toBeInTheDocument();
   });
 
-  it('should update filter values when typing in the filter input', () => {
+  it('updates filter values on user input', () => {
     render(<OrgSilServicesPage />);
-
     const filterInput = screen.getByTestId('filter-input');
 
     fireEvent.change(filterInput, { target: { value: 'Test Filter' } });
 
     expect(filterInput).toHaveValue('Test Filter');
-  });
-
-  it('should maintain separate filter values for different tabs', () => {
-    render(<OrgSilServicesPage />);
-
-    const filterInput = screen.getByTestId('filter-input');
-    fireEvent.change(filterInput, { target: { value: 'Notification Filter' } });
-
-    const tab1Button = screen.getByTestId('tab-1');
-    fireEvent.click(tab1Button);
-
-    expect(filterInput).toHaveValue('');
-
-    const tab0Button = screen.getByTestId('tab-0');
-    fireEvent.click(tab0Button);
-
-    expect(filterInput).toHaveValue('Notification Filter');
   });
 });
