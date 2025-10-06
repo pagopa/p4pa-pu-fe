@@ -1,11 +1,9 @@
 export type TaxonomyFields = {
   orgType: string;
-  macroAreaCode: string;
-  serviceTypeCode: string;
-  collectingReason: string;
-  taxonomyCode: string;
+  macroAreaCode?: string;
+  serviceTypeCode?: string;
+  collectingReason?: string;
+  taxonomyCode?: string;
 };
 
-export type TaxonomyFilters = Partial<TaxonomyFields> & {
-  orgType: string;
-};
+export type TaxonomyFilters = Partial<TaxonomyFields>;

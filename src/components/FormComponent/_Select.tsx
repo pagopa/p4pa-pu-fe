@@ -48,7 +48,7 @@ export const _Select = ({
     newValue: { label: string; value: FilterFieldValue } | null
   ) => {
     setSelectedOption(newValue);
-    onChange?.(newValue ? newValue.value : null);
+    onChange?.(newValue ? newValue.value : undefined);
   };
 
   // handle input change for display value

@@ -50,10 +50,16 @@ export const useFormDependencies = <T extends FieldValues>({
   }, [values, form, fieldOrder]);
 
   const keys = fieldOrder.reduce<Record<string, string>>(
-    (acc, fieldName, index) => ({
-      ...acc,
-      [fieldName]: `${fieldName}-${values[index] ?? index}`
-    }),
+    (acc, fieldName, index) => {
+      // Keep first field key stable to avoid remounting and reapplying defaultValues on clear
+      if (index === 0) {
+        return { ...acc, [fieldName]: `${fieldName}-base` };
+      }
+      return {
+        ...acc,
+        [fieldName]: `${fieldName}-${values[index] ?? index}`
+      };
+    },
     {}
   ) as Record<Path<T>, string>;
 
