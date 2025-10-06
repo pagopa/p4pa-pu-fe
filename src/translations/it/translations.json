@@ -1,40 +1,4 @@
 {
-  "DraftCourtesyPage": {
-    "superadmin": {
-      "title": "Configura l'ente per accedere",
-      "description": "Per utilizzare Piattaforma Unitaria è necessario configurare i parametri dell’ente."
-    }
-  },
-  "OperatorDetail": {
-    "code": "Cod. Gestionale",
-    "debtPositionTypeDescription": "Tipo di dovuto",
-    "accessibleTitle": "Dettagli operatore",
-    "associatedDebtPositionTypes": "Tipi di dovuto associati",
-    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto",
-    "deleteDialog": {
-      "title": "Sei sicuro di voler rimuovere il Tipo di dovuto?",
-      "message": "Una volta rimosso l'utente <strong>{{operatorName}}</strong> non potrà gestire e operare su questo tipo di dovuto."
-    },
-    "affiliate": {
-      "title": "Associa Tipi di dovuto",
-      "countLabel_one": "({{count}}) Tipo di dovuto",
-      "countLabel_other": "({{count}}) Tipi di dovuto",
-      "noSelection": "Seleziona almeno un Tipo di dovuto",
-      "success": {
-        "title_one": "{{count}} Tipo di dovuto associato correttamente all'utente {{operatorName}}",
-        "title_other": "{{count}} Tipi di dovuto associati correttamente all'utente {{operatorName}}",
-        "description_one": "Lo trovi nel dettaglio dell'operatore, dove puoi gestirlo in qualsiasi momento.",
-        "description_other": "Li trovi nel dettaglio dell'operatore, dove puoi gestirli in qualsiasi momento.",
-        "buttonLabel": "Vai al dettaglio operatore"
-      },
-      "dialog": {
-        "title": "Conferma associazione Tipi di dovuto",
-        "message_one": "All'utente <strong>{{operatorName}}</strong> verra assegnato <strong>{{count}}</strong> tipo di dovuto, sul quale potrà gestire e operare.",
-        "message_other": "All'utente <strong>{{operatorName}}</strong> verranno assegnati <strong>{{count}}</strong> tipi di dovuto, sui quali potrà gestire e operare.",
-        "button": "Associa"
-      }
-    }
-  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -121,6 +85,12 @@
       }
     }
   },
+  "DraftCourtesyPage": {
+    "superadmin": {
+      "title": "Configura l'ente per accedere",
+      "description": "Per utilizzare Piattaforma Unitaria è necessario configurare i parametri dell’ente."
+    }
+  },
   "FileUploaderFlowImport": {
     "debt-positions": {
       "description": "Carica qui il file .zip con i Dovuti"
@@ -138,6 +108,36 @@
     "error": {
       "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
       "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
+    }
+  },
+  "OperatorDetail": {
+    "code": "Cod. Gestionale",
+    "debtPositionTypeDescription": "Tipo di dovuto",
+    "accessibleTitle": "Dettagli operatore",
+    "associatedDebtPositionTypes": "Tipi di dovuto associati",
+    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto",
+    "deleteDialog": {
+      "title": "Sei sicuro di voler rimuovere il Tipo di dovuto?",
+      "message": "Una volta rimosso l'utente <strong>{{operatorName}}</strong> non potrà gestire e operare su questo tipo di dovuto."
+    },
+    "affiliate": {
+      "title": "Associa Tipi di dovuto",
+      "countLabel_one": "({{count}}) Tipo di dovuto",
+      "countLabel_other": "({{count}}) Tipi di dovuto",
+      "noSelection": "Seleziona almeno un Tipo di dovuto",
+      "success": {
+        "title_one": "{{count}} Tipo di dovuto associato correttamente all'utente {{operatorName}}",
+        "title_other": "{{count}} Tipi di dovuto associati correttamente all'utente {{operatorName}}",
+        "description_one": "Lo trovi nel dettaglio dell'operatore, dove puoi gestirlo in qualsiasi momento.",
+        "description_other": "Li trovi nel dettaglio dell'operatore, dove puoi gestirli in qualsiasi momento.",
+        "buttonLabel": "Vai al dettaglio operatore"
+      },
+      "dialog": {
+        "title": "Conferma associazione Tipi di dovuto",
+        "message_one": "All'utente <strong>{{operatorName}}</strong> verra assegnato <strong>{{count}}</strong> tipo di dovuto, sul quale potrà gestire e operare.",
+        "message_other": "All'utente <strong>{{operatorName}}</strong> verranno assegnati <strong>{{count}}</strong> tipi di dovuto, sui quali potrà gestire e operare.",
+        "button": "Associa"
+      }
     }
   },
   "appPreview": {
@@ -648,10 +648,10 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "404": "404: risorsa non disponibile",
     "affiliateNew": "Associa nuovo",
     "affiliate": "Associa",
     "confirm": "Conferma",
-    "404": "404: risorsa non disponibile",
     "id": "id",
     "role": "Ruolo",
     "info": "Informazioni",
@@ -1932,19 +1932,6 @@
       }
     }
   },
-  "organizations": {
-    "name": "Nome o ragione sociale",
-    "fiscalCode": "Codice fiscale",
-    "activeOperators": "Operatori attivi",
-    "activeDebtTypes": "Tipi dovuti attivi",
-    "ioMessagge": "Messaggi sull'app IO",
-    "otherProducts": "Integrazione con gli altri prodotti PagoPA",
-    "paymentPushNotification": "Notifica push pagamenti",
-    "paymentNotified": "Pagamenti notificati",
-    "pdndIntegration": "Integrazione con PDND",
-    "printKeyAPI": "API Key stampa avvisi",
-    "orgEmail": "Email ente"
-  },
   "organizationEditWizard": {
     "title": "Modifica il tuo ente",
     "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
@@ -2060,6 +2047,26 @@
           "apiKeyHelperText": "Inserisci la API key per inviare notifiche SEND"
         }
       }
+    }
+  },
+  "organizations": {
+    "name": "Nome o ragione sociale",
+    "fiscalCode": "Codice fiscale",
+    "activeOperators": "Operatori attivi",
+    "activeDebtTypes": "Tipi dovuti attivi",
+    "ioMessagge": "Messaggi sull'app IO",
+    "otherProducts": "Integrazione con gli altri prodotti PagoPA",
+    "paymentPushNotification": "Notifica push pagamenti",
+    "paymentNotified": "Pagamenti notificati",
+    "pdndIntegration": "Integrazione con PDND",
+    "printKeyAPI": "API Key stampa avvisi",
+    "orgEmail": "Email ente",
+    "enableOrg": "Abilita ente",
+    "enableDialog": {
+      "title": "Sei sicuro di voler abilitare l’ente ad operare?",
+      "message": "Una volta abilitato l'ente <strong>{{orgName}}</strong> potrà operare su Piattaforma Unitaria.",
+      "success": "Ente abilitato correttamente.",
+      "error": "Non è stato possibile abilitare l'Ente"
     }
   },
   "registry": {

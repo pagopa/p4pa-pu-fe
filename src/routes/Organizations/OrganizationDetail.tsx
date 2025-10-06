@@ -1,11 +1,19 @@
 import { Box, Grid } from '@mui/material';
-import { useTranslation } from 'react-i18next';
-import TitleComponent from '../../components/TitleComponent/TitleComponent';
+import { Trans, useTranslation } from 'react-i18next';
+import TitleComponent, {
+  ActionMenuItem
+} from '../../components/TitleComponent/TitleComponent';
 import { useNavigate, useParams, generatePath } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
-import { getOrganizationDetail } from '../../api/organizations';
+import {
+  getOrganizationDetail,
+  updateOrganization
+} from '../../api/organizations';
 import { useEffect, useState } from 'react';
-import { OrganizationDetailDTO } from '../../../generated/data-contracts';
+import {
+  OrganizationDetailDTO,
+  OrganizationStatus
+} from '../../../generated/data-contracts';
 import { PageRoutes } from '..';
 import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import {
@@ -17,6 +25,7 @@ import {
 import { theme } from '@pagopa/mui-italia';
 import { useLanguage } from '../../hooks/useLanguage';
 import EditIcon from '@mui/icons-material/Edit';
+import utils from '../../utils';
 
 export const OrganizationDetail = () => {
   const { t } = useTranslation();
@@ -40,7 +49,8 @@ export const OrganizationDetail = () => {
     ? Number(organizationIdByURL)
     : organizationId;
 
-  const { isError, isSuccess, data } = getOrganizationDetail(getOrganizationId);
+  const { isError, isSuccess, data, refetch } =
+    getOrganizationDetail(getOrganizationId);
 
   useEffect(() => {
     if (isError) {
@@ -58,19 +68,77 @@ export const OrganizationDetail = () => {
     );
   };
 
+  const isSuperAdmin = utils.roles.useIsSuperAdmin();
+
+  const enableCondition =
+    organizationDetailData?.status == 'DRAFT' &&
+    organizationDetailData?.iban &&
+    organizationDetailData.segregationCode &&
+    organizationDetailData?.orgLogo;
+
+  const update = updateOrganization();
+
+  const updateOrg = async () => {
+    if (organizationDetailData) {
+      try {
+        await update.mutateAsync({
+          organizationId: organizationDetailData.organizationId,
+          organizationData: {
+            ...organizationDetailData,
+            status: OrganizationStatus.ACTIVE
+          }
+        });
+        // reload Get to obtain fresh data (and hide the enableButton)
+        refetch();
+        utils.notify.emit(t('organizations.enableDialog.success'), 'success');
+      } catch {
+        utils.notify.emit(t('organizations.enableDialog.error'), 'error');
+      }
+    }
+    utils.dialog.close();
+  };
+
+  const handleActivateClick = () => {
+    utils.dialog.open({
+      ['data-testid']: 'enable-org-dialog',
+      title: t('organizations.enableDialog.title'),
+      message: (
+        <Trans
+          i18nKey="organizations.enableDialog.message"
+          values={{ orgName: organizationDetailData?.orgName || '' }}
+        />
+      ),
+      confirmLabel: t('organizations.enableOrg'),
+      cancelLabel: t('commons.close'),
+      onConfirm: updateOrg,
+      onClose: () => utils.dialog.close()
+    });
+  };
+
+  const callToAction: Array<ActionMenuItem | React.ReactNode> = [
+    {
+      icon: <EditIcon />,
+      onActionClick: handleEditClick,
+      isIconButton: true,
+      color: 'primary',
+      dataTestId: 'edit-organization-button'
+    }
+  ];
+
+  if (enableCondition && isSuperAdmin) {
+    callToAction.push({
+      buttonText: t('organizations.enableOrg'),
+      onActionClick: handleActivateClick,
+      color: 'primary',
+      dataTestId: 'enable-organization-button'
+    });
+  }
+
   return (
     <>
       <TitleComponent
         title={(isSuccess && organizationDetailData?.orgName) || ''}
-        callToAction={[
-          {
-            icon: <EditIcon />,
-            onActionClick: handleEditClick,
-            isIconButton: true,
-            color: 'primary',
-            dataTestId: 'edit-organization-button'
-          }
-        ]}
+        callToAction={callToAction}
       />
       <Grid
         container
