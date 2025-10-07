@@ -291,6 +291,7 @@ describe('Step1GeneralConfiguration', () => {
         debtPositionType: {
           value: '1',
           flagMandatoryDueDate: false,
+          flagAnonymousFiscalCode: false,
           readonly: false
         },
         description: {
@@ -346,6 +347,7 @@ describe('Step1GeneralConfiguration', () => {
         debtPositionType: {
           value: '1',
           flagMandatoryDueDate: false,
+          flagAnonymousFiscalCode: false,
           readonly: false
         },
         description: {
@@ -561,6 +563,7 @@ describe('Step1GeneralConfiguration', () => {
         debtPositionType: {
           value: '2',
           flagMandatoryDueDate: true,
+          flagAnonymousFiscalCode: false,
           readonly: false
         },
         description: {

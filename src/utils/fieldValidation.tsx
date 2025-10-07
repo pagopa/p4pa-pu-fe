@@ -259,12 +259,12 @@ export const isValidIBAN = (iban: string): boolean => {
   // Normalizes the IBAN by removing spaces and converting to uppercase
   iban = iban.replace(/\s/g, '').toUpperCase();
 
-  // Basic length check (between 15 and 34 characters according to ISO 13616 standard)
-  if (iban.length < 15 || iban.length > 34) return false;
+  // Basic length check (minimum 27 characters, maximum 34 according to ISO 13616 standard)
+  if (iban.length < 27 || iban.length > 34) return false;
 
   // Basic format for IBAN: two letters for country code, two check digits,
   // and then the BBAN (Basic Bank Account Number)
-  const regex = /^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/;
+  const regex = /^[A-Z]{2}\d{2}[A-Z0-9]{23,30}$/;
 
   // Verification with regular expression
   return regex.test(iban);
