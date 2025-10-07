@@ -1,12 +1,9 @@
 import {
-  FormControl,
   FormControlLabel,
   Grid,
-  InputLabel,
   MenuItem,
   Radio,
   RadioGroup,
-  Select,
   Switch,
   TextField,
   Typography,
@@ -149,51 +146,35 @@ export const PaymentsInfoSection = ({
                 }
               }}
               render={({ field }) => (
-                <FormControl fullWidth>
-                  <InputLabel id="selected-language-label">
-                    {t('organizationEditWizard.step2.selectedLanguage.label')}
-                    <Typography component="span" color="error.main">
-                      {' '}
-                      *
-                    </Typography>
-                  </InputLabel>
-                  <Select
-                    {...field}
-                    labelId="selected-language-label"
-                    label={t(
-                      'organizationEditWizard.step2.selectedLanguage.label'
-                    )}
-                    disabled={data.selectedLanguage.readonly}
-                    error={!!errors.selectedLanguage}
-                    required={watchAdditionalLanguage}
-                    data-testid="selected-language-select"
-                  >
-                    <MenuItem value={LANGUAGE_OPTIONS.EN}>
-                      {t(
-                        'organizationEditWizard.step2.selectedLanguage.options.en'
-                      )}
-                    </MenuItem>
-                    <MenuItem value={LANGUAGE_OPTIONS.FR}>
-                      {t(
-                        'organizationEditWizard.step2.selectedLanguage.options.fr'
-                      )}
-                    </MenuItem>
-                    <MenuItem value={LANGUAGE_OPTIONS.DE}>
-                      {t(
-                        'organizationEditWizard.step2.selectedLanguage.options.de'
-                      )}
-                    </MenuItem>
-                  </Select>
-                  {errors.selectedLanguage && (
-                    <Typography
-                      variant="caption"
-                      color="error"
-                      sx={{ mt: 0.5 }}
-                    >
-                      {errors.selectedLanguage.message}
-                    </Typography>
+                <TextField
+                  {...field}
+                  fullWidth
+                  select
+                  label={t(
+                    'organizationEditWizard.step2.selectedLanguage.label'
                   )}
-                </FormControl>
+                  disabled={data.selectedLanguage.readonly}
+                  error={!!errors.selectedLanguage}
+                  helperText={errors.selectedLanguage?.message}
+                  required={watchAdditionalLanguage}
+                  data-testid="selected-language-select"
+                >
+                  <MenuItem value={LANGUAGE_OPTIONS.EN}>
+                    {t(
+                      'organizationEditWizard.step2.selectedLanguage.options.en'
+                    )}
+                  </MenuItem>
+                  <MenuItem value={LANGUAGE_OPTIONS.FR}>
+                    {t(
+                      'organizationEditWizard.step2.selectedLanguage.options.fr'
+                    )}
+                  </MenuItem>
+                  <MenuItem value={LANGUAGE_OPTIONS.DE}>
+                    {t(
+                      'organizationEditWizard.step2.selectedLanguage.options.de'
+                    )}
+                  </MenuItem>
+                </TextField>
               )}
             />
           </Grid>
