@@ -2122,6 +2122,7 @@
     "flowDate": "Data flusso",
     "payments": "Pagamenti",
     "regulationDate": "Data Regolamento",
+    "iuv": "Codice Avviso (IUV)",
     "searchRegulationId": "ID Regolamento",
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"
