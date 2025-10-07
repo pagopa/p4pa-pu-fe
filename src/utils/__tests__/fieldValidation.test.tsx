@@ -93,9 +93,6 @@ describe('isValidIBAN', () => {
 
     it('validates IBAN with different formats that match the regex pattern', () => {
       expect(isValidIBAN('IT60X0542811101000000123456')).toBe(true);
-      expect(isValidIBAN('DE89370400440532013000')).toBe(true);
-      expect(isValidIBAN('IT60A1234512345')).toBe(true);
-      expect(isValidIBAN('IT60A12345123451234567890123456789')).toBe(true);
     });
   });
 
@@ -110,12 +107,15 @@ describe('isValidIBAN', () => {
 
     it('rejects IBAN with wrong length (too short)', () => {
       expect(isValidIBAN('IT60X05428111')).toBe(false);
+      expect(isValidIBAN('DE89370400440532013000')).toBe(false);
+      expect(isValidIBAN('IT60A1234512345')).toBe(false);
     });
 
     it('rejects IBAN with wrong length (too long)', () => {
       expect(isValidIBAN('IT60X0542811101000000123456789012345678901234')).toBe(
         false
       );
+      expect(isValidIBAN('IT60A123451234512345678901234567890')).toBe(false);
     });
 
     it('rejects IBAN with invalid format', () => {
