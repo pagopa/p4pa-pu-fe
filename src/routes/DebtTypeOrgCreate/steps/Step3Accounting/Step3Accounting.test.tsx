@@ -118,7 +118,7 @@ describe('Step3Accounting', () => {
     await waitFor(() => expect(ibanInput).toBeEnabled());
 
     // Fill iban disables postalIban
-    fireEvent.change(ibanInput, { target: { value: 'CH9300762011623852957' } });
+    fireEvent.change(ibanInput, { target: { value: 'IT60X0542811101000000123456' } });
     await waitFor(() => expect(postalIbanInput).toBeDisabled());
 
     // Clear iban enables postalIban
@@ -132,7 +132,7 @@ describe('Step3Accounting', () => {
     renderWithForm(<Step3Accounting />, onSubmit);
 
     fillField('debtTypeOrgCreate.accounting.postalIban', '123456');
-    fillField('debtTypeOrgCreate.accounting.pspIban', 'CH9300762011623852958');
+    fillField('debtTypeOrgCreate.accounting.pspIban', 'IT60X0542811101000000123456');
     fillField('debtTypeOrgCreate.accounting.postalAccount', '123456789');
     fillField('debtTypeOrgCreate.accounting.postalAccountHolder', 'John Doe');
     fillField(
@@ -148,7 +148,7 @@ describe('Step3Accounting', () => {
       expect(onSubmit).toHaveBeenCalledWith(
         {
           postalIban: '123456',
-          iban: 'CH9300762011623852958',
+          iban: 'IT60X0542811101000000123456',
           postalAccountCode: '123456789',
           holderPostalCc: 'John Doe',
           balance: 'Budget structure text',
