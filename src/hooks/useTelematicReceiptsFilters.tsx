@@ -30,26 +30,30 @@ export const useTelematicReceiptsFilters = ({
       type: COMPONENT_TYPE.textField,
       label: t('commons.searchIUV'),
       adornment: <SearchIcon />,
-      gridWidth: 3,
-      id: FilterFieldIds.IUV_CODE,
-      ...(layout === 'grid' ? { gridWidth: 12 } : {})
+      gridWidth: layout === 'grid' ? 12 : 2,
+      id: FilterFieldIds.IUV_CODE
+    },
+    {
+      type: COMPONENT_TYPE.textField,
+      label: t('commons.fiscalCode'),
+      adornment: <SearchIcon />,
+      gridWidth: layout === 'grid' ? 12 : 2,
+      id: FilterFieldIds.FISCAL_CODE
     },
     {
       type: COMPONENT_TYPE.select,
       label: t('commons.duetype'),
-      gridWidth: 3,
+      gridWidth: layout === 'grid' ? 12 : 3,
       options: debtPositionsTypes.optionsMap,
-      id: FilterFieldIds.TYPE_ORG,
-      ...(layout === 'grid' ? { gridWidth: 12 } : {})
+      id: FilterFieldIds.TYPE_ORG
     },
     {
       type: COMPONENT_TYPE.dateRange,
       label: 'dateRange',
-      gridWidth: 5,
+      gridWidth: layout === 'grid' ? 12 : 4,
       from: { label: t('commons.outcomeFrom') },
       to: { label: t('commons.to') },
-      id: FilterFieldIds.DATE_RANGE,
-      ...(layout === 'grid' ? { gridWidth: 12 } : {})
+      id: FilterFieldIds.DATE_RANGE
     }
   ];
 
