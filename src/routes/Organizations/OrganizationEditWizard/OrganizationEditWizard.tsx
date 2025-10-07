@@ -9,7 +9,10 @@ import {
   updateOrganization
 } from '../../../api/organizations';
 import { OrganizationDetailDTO } from '../../../../generated/data-contracts';
-import { OrganizationEditFormData } from '../../../models/OrganizationEditTypes';
+import {
+  OrganizationEditFormData,
+  LANGUAGE_OPTIONS
+} from '../../../models/OrganizationEditTypes';
 
 import Step1AnagraficaEnte from './components/Step/Step1EntityProfile';
 import Step2ConfigurazioneEnte from './components/Step/Step2EntityConfiguration';
@@ -164,6 +167,13 @@ const OrganizationEditWizard = () => {
   const transformApiDataToFormData = (
     orgData: OrganizationDetailDTO
   ): OrganizationEditFormData => {
+    // Validate and sanitize additionalLanguage from API
+    const validLanguages = Object.values(LANGUAGE_OPTIONS);
+    const normalizedLanguage = orgData.additionalLanguage?.toLowerCase() || '';
+    const isValidLanguage = validLanguages.includes(
+      normalizedLanguage as (typeof validLanguages)[number]
+    );
+
     return {
       step1: {
         orgName: {
@@ -213,16 +223,11 @@ const OrganizationEditWizard = () => {
           readonly: false
         },
         additionalLanguage: {
-          value: !!(
-            orgData.additionalLanguage && orgData.additionalLanguage.trim()
-          ),
+          value: isValidLanguage,
           readonly: false
         },
         selectedLanguage: {
-          value:
-            orgData.additionalLanguage && orgData.additionalLanguage.trim()
-              ? orgData.additionalLanguage.toLowerCase()
-              : '',
+          value: isValidLanguage ? normalizedLanguage : '',
           readonly: false
         },
         flagNotifyOutcomePush: {
