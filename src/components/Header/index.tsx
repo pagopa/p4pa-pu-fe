@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import { OperatorRole } from '../../../generated/apiClient';
 import { PageRoutes } from '../../routes';
 import config from '../../utils/config';
+import { OrganizationStatus } from '../../../generated/data-contracts';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;
@@ -47,7 +48,7 @@ export const Header = (props: HeaderProps) => {
 
   const organizationsToMenuItems: Array<PartySwitchItem> =
     organizations
-      ?.filter((org) => org.status === 'ACTIVE')
+      ?.filter((org) => org.status !== OrganizationStatus.CANCELLED)
       .map((org) => ({
         id: org.organizationId.toString(),
         logoUrl: org.orgLogo,

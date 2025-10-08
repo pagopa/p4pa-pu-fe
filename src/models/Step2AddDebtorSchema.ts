@@ -44,9 +44,10 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
       .nonempty(t('debtPositionCreateWizard.step2.subjectType.required'))
   );
 
-  const taxCodeSchema = createFieldSchema(
-    z.string().nonempty(t('debtPositionCreateWizard.step2.taxCode.required'))
-  );
+  const anonymousSubjectSchema = createFieldSchema(z.boolean());
+
+  // Tax code is optional at base level - will be validated conditionally based on anonymousSubject
+  const taxCodeSchema = createFieldSchema(z.string().optional());
 
   const fullNameSchema = createFieldSchema(
     z
@@ -86,6 +87,7 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
   // Base schema for the entire object
   const schema = z.object({
     subjectType: subjectTypeSchema,
+    anonymousSubject: anonymousSubjectSchema.optional(),
     taxCode: taxCodeSchema,
     fullName: fullNameSchema,
     address: addressSchema,
@@ -96,11 +98,36 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
     city: citySchema
   });
 
+  // Validation: taxCode is required when user is NOT anonymous
+  const taxCodeRequiredSchema = schema.refine(
+    (data) => {
+      // If anonymousSubject is true, taxCode is not required
+      const isAnonymous = data.anonymousSubject?.value === true;
+      if (isAnonymous) return true;
+
+      // Otherwise, taxCode must be present and not empty
+      const taxCode = data.taxCode.value;
+      return taxCode != null && taxCode.trim().length > 0;
+    },
+    {
+      message: t('debtPositionCreateWizard.step2.taxCode.required'),
+      path: ['taxCode', 'value']
+    }
+  );
+
   // Validation for individuals
-  const individualSchema = schema.refine(
+  const individualSchema = taxCodeRequiredSchema.refine(
     (data) => {
       if (data.subjectType.value !== SubjectType.INDIVIDUAL) return true;
+
+      // Skip validation if user is anonymous
+      const isAnonymous = data.anonymousSubject?.value === true;
+      if (isAnonymous) return true;
+
       const taxCode = data.taxCode.value;
+      // Skip validation if taxCode is undefined or empty (already handled by taxCodeRequiredSchema)
+      if (!taxCode || taxCode.trim().length === 0) return true;
+
       return isValidCodiceFiscale(taxCode) || isValidPartitaIVA(taxCode);
     },
     {
@@ -113,7 +140,15 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
   const businessSchema = individualSchema.refine(
     (data) => {
       if (data.subjectType.value !== SubjectType.BUSINESS) return true;
+
+      // Skip validation if user is anonymous
+      const isAnonymous = data.anonymousSubject?.value === true;
+      if (isAnonymous) return true;
+
       const taxCode = data.taxCode.value;
+      // Skip validation if taxCode is undefined or empty (already handled by taxCodeRequiredSchema)
+      if (!taxCode || taxCode.trim().length === 0) return true;
+
       return isValidPartitaIVA(taxCode);
     },
     {

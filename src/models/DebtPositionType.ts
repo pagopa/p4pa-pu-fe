@@ -6,6 +6,7 @@ export type DebtPositionType = {
   label: string;
   value: string | number;
   flagMandatoryDueDate?: boolean;
+  flagAnonymousFiscalCode?: boolean;
 };
 
 export type Step3Data = {
@@ -23,6 +24,7 @@ export type Step3Data = {
 
 export type Step2Data = {
   subjectType: { value: string; readonly: boolean }; // Subject type (individual/legal entity)
+  anonymousSubject?: { value: boolean; readonly: boolean }; // Anonymous subject flag (when flagAnonymousFiscalCode is true)
   taxCode: { value: string; readonly: boolean }; // Tax code or VAT number
   fullName: { value: string; readonly: boolean }; // Full name
   address: { value: string; readonly: boolean }; // Address
@@ -37,6 +39,7 @@ export type Step1Data = {
   debtPositionType: {
     value: string;
     flagMandatoryDueDate: boolean;
+    flagAnonymousFiscalCode?: boolean;
     readonly: boolean;
   };
   description: {

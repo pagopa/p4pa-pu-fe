@@ -86,9 +86,17 @@
     }
   },
   "DraftCourtesyPage": {
-    "superadmin": {
+    "ROLE_SUPERADMIN": {
       "title": "Configura l'ente per accedere",
       "description": "Per utilizzare Piattaforma Unitaria è necessario configurare i parametri dell’ente."
+    },
+    "ROLE_ADMIN": {
+      "title": "Configura l'ente per accedere",
+      "description": "Per utilizzare Piattaforma Unitaria è necessario configurare i parametri dell’ente."
+    },
+    "ROLE_OPER": {
+      "title": "Ente non abilitato",
+      "description": "Non riesci ad accedere alla Piattaforma Unitaria perché il tuo ente non è stato abilitato. Ti consigliamo di contattare l'amministratore del prodotto per assistenza."
     }
   },
   "FileUploaderFlowImport": {
@@ -681,6 +689,7 @@
     "create": "Crea",
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
+    "backToHome": "Torna alla home",
     "backToStart": "Torna alla sezione",
     "goToDetail": "Vedi dettaglio",
     "creationFrom": "Creazione dal",
@@ -1158,6 +1167,10 @@
           "giuridica": "Persone giuridiche"
         },
         "required": "Il campo tipo di soggetto è obbligatorio"
+      },
+      "anonymousSubject": {
+        "label": "Soggetto anonimo",
+        "helperText": "Nei casi dove il cittadino non ha un Codice Fiscale"
       },
       "taxCode": {
         "invalid": "Verifica che il Codice fiscale sia corretto",
@@ -2130,6 +2143,7 @@
     "flowDate": "Data flusso",
     "payments": "Pagamenti",
     "regulationDate": "Data Regolamento",
+    "iuv": "Codice Avviso (IUV)",
     "searchRegulationId": "ID Regolamento",
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"
