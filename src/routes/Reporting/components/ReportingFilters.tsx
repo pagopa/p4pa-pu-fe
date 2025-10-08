@@ -28,6 +28,15 @@ export const ReportingFilters = ({
         width="100%"
       >
         <FormComponent.ControlledTextField
+          name="iuv"
+          control={control}
+          label={t('commons.searchIUV')}
+          adornment={<SearchIcon />}
+          sx={{ flex: 0.3 }}
+          key={FilterFieldIds.SEARCH_IUV}
+          required={false}
+        />
+        <FormComponent.ControlledTextField
           name="iuf"
           control={control}
           label={t('commons.searchIUF')}

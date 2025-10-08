@@ -27,6 +27,7 @@ export const Reporting = () => {
 
   const form = useForm({
     defaultValues: {
+      [FilterFieldIds.SEARCH_IUV]: '',
       [FilterFieldIds.IUF]: '',
       [FilterFieldIds.REGULATION_UNIQUE_IDENTIFIER]: '',
       [FilterFieldIds.DATE_RANGE]: ''

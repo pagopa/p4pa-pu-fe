@@ -8,6 +8,7 @@ export type ReportingFilters = {
   regulationUniqueIdentifier?: string;
   organizationId?: number;
   iuf?: string;
+  iuv?: string;
 };
 
 export type ReportingFilteredRequest = {
@@ -25,6 +26,7 @@ export const buildQueryParams = ({
   pagination,
   sort
 }: ReportingFilteredRequest): getPaymentReportingQueryParameters => ({
+  iuv: filters.iuv,
   iuf: filters.iuf,
   regulationUniqueIdentifier: filters.regulationUniqueIdentifier,
   regulationDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),

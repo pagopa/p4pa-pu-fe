@@ -45,6 +45,7 @@ describe('useTelematicReceiptsFilters', () => {
     const filterIds = result.current.filters.map((f) => f.id);
     expect(filterIds).toEqual([
       'iuv',
+      'fiscalCode',
       'typeOrgId',
       'dateRange',
       'applyFilters'
@@ -60,7 +61,7 @@ describe('useTelematicReceiptsFilters', () => {
     );
 
     const filterIds = result.current.filters.map((f) => f.id);
-    expect(filterIds).toEqual(['iuv', 'typeOrgId', 'dateRange']);
+    expect(filterIds).toEqual(['iuv', 'fiscalCode', 'typeOrgId', 'dateRange']);
     expect(filterIds.includes('applyFilters')).toBe(false);
   });
 });
