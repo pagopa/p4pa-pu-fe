@@ -52,6 +52,12 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
 
   const columns: Array<GridColDef> = [
     {
+      field: 'iuv',
+      headerName: t('reportingSearchResults.iuv'),
+      flex: 1,
+      type: 'string'
+    },
+    {
       field: 'iuf',
       headerName: t('reportingSearchResults.searchReportingId'),
       flex: 1,
