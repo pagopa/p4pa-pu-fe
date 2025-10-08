@@ -26,6 +26,7 @@ import { theme } from '@pagopa/mui-italia';
 import { useLanguage } from '../../hooks/useLanguage';
 import EditIcon from '@mui/icons-material/Edit';
 import utils from '../../utils';
+import { OrganizationDetailAlert } from './OrganizationDetailAlert';
 
 export const OrganizationDetail = () => {
   const { t } = useTranslation();
@@ -70,15 +71,21 @@ export const OrganizationDetail = () => {
 
   const isSuperAdmin = utils.roles.useIsSuperAdmin();
 
-  const enableCondition =
-    organizationDetailData?.status == 'DRAFT' &&
-    organizationDetailData?.iban &&
-    organizationDetailData.segregationCode &&
-    organizationDetailData?.orgLogo;
+  const canShowEdit =
+    organizationDetailData?.status === OrganizationStatus.DRAFT && isSuperAdmin;
 
   const update = updateOrganization();
 
+  const filledFieldsConditions =
+    organizationDetailData?.orgLogo &&
+    organizationDetailData?.segregationCode &&
+    organizationDetailData?.iban;
+
   const updateOrg = async () => {
+    if (!filledFieldsConditions) {
+      utils.notify.emit(t('organizations.enableDialog.emptyFields'), 'error');
+      return;
+    }
     if (organizationDetailData) {
       try {
         await update.mutateAsync({
@@ -125,7 +132,7 @@ export const OrganizationDetail = () => {
     }
   ];
 
-  if (enableCondition && isSuperAdmin) {
+  if (canShowEdit) {
     callToAction.push({
       buttonText: t('organizations.enableOrg'),
       onActionClick: handleActivateClick,
@@ -140,6 +147,12 @@ export const OrganizationDetail = () => {
         title={(isSuccess && organizationDetailData?.orgName) || ''}
         callToAction={callToAction}
       />
+      {canShowEdit && (
+        <OrganizationDetailAlert
+          editFunction={handleEditClick}
+          organizationDetailData={organizationDetailData}
+        />
+      )}
       <Grid
         container
         direction={'column'}

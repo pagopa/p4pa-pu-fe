@@ -2061,12 +2061,17 @@
     "pdndIntegration": "Integrazione con PDND",
     "printKeyAPI": "API Key stampa avvisi",
     "orgEmail": "Email ente",
+    "orgLogo": "Logo dell'ente",
     "enableOrg": "Abilita ente",
+    "editOrg": "Modifica ente",
+    "alertTitle": "Completa i dati per attivare l'ente",
+    "alertBody": "È necessario compilare i seguenti campi obbligatori: {{emptyFields}}.",
     "enableDialog": {
       "title": "Sei sicuro di voler abilitare l’ente ad operare?",
       "message": "Una volta abilitato l'ente <strong>{{orgName}}</strong> potrà operare su Piattaforma Unitaria.",
       "success": "Ente abilitato correttamente.",
-      "error": "Non è stato possibile abilitare l'Ente"
+      "error": "Non è stato possibile abilitare l'Ente",
+      "emptyFields": "Non è stato possibile abilitare l'Ente. È necessario che i campi obbligatori siano compilati"
     }
   },
   "registry": {
