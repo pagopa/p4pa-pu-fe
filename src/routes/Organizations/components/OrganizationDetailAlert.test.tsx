@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '../../../__tests__/renderers';
-import OrganizationDetailAlert from '../OrganizationDetailAlert';
+import OrganizationDetailAlert from './OrganizationDetailAlert';
 import { OrganizationStatus } from '../../../../generated/apiClient';
 
 describe('OrganizationDetailAlert Component', () => {

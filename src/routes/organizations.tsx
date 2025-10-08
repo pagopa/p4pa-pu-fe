@@ -3,7 +3,7 @@ import {
   SuperAdminRouteGuard
 } from '../components/RouteGuard/RouteGuard';
 import Organizations from './Organizations/Organizations';
-import OrganizationDetail from './Organizations/components/OrganizationDetail';
+import OrganizationDetail from './Organizations/OrganizationDetail';
 import OrganizationEditWizard from './Organizations/OrganizationEditWizard/OrganizationEditWizard';
 
 export const organizationsRoutes = [

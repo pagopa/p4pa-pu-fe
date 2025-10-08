@@ -2,31 +2,31 @@ import { Box, Grid } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import TitleComponent, {
   ActionMenuItem
-} from '../../../components/TitleComponent/TitleComponent';
+} from '../../components/TitleComponent/TitleComponent';
 import { useNavigate, useParams, generatePath } from 'react-router';
-import { useStore } from '../../../store/GlobalStore';
+import { useStore } from '../../store/GlobalStore';
 import {
   getOrganizationDetail,
   updateOrganization
-} from '../../../api/organizations';
+} from '../../api/organizations';
 import { useEffect, useState } from 'react';
 import {
   OrganizationDetailDTO,
   OrganizationStatus
-} from '../../../../generated/data-contracts';
-import { PageRoutes } from '../..';
-import DetailContainer from '../../../components/DetailContainer/DetailContainer';
+} from '../../../generated/data-contracts';
+import { PageRoutes } from '..';
+import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import {
   accountingInfo,
   info,
   integrationBox,
   paymentInfo
-} from './OrganizationDetailSections';
+} from './components/OrganizationDetailSections';
 import { theme } from '@pagopa/mui-italia';
-import { useLanguage } from '../../../hooks/useLanguage';
+import { useLanguage } from '../../hooks/useLanguage';
 import EditIcon from '@mui/icons-material/Edit';
-import utils from '../../../utils';
-import { OrganizationDetailAlert } from '../OrganizationDetailAlert';
+import utils from '../../utils';
+import { OrganizationDetailAlert } from './components/OrganizationDetailAlert';
 
 export const OrganizationDetail = () => {
   const { t } = useTranslation();

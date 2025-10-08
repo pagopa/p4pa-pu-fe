@@ -2,7 +2,7 @@ import { Alert, AlertTitle, Button, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { ReactNode, useEffect, useState } from 'react';
 import { Trans, useTranslation } from 'react-i18next';
-import { OrganizationDetailDTO } from '../../../generated/data-contracts';
+import { OrganizationDetailDTO } from '../../../../generated/data-contracts';
 
 type OrganizationDetailAlertProps = {
   editFunction: () => void;
