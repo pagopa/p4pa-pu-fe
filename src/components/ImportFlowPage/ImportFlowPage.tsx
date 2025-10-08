@@ -64,7 +64,6 @@ const ImportFlow = () => {
           navigate(PageRoutes.RESPONSES_ERROR, {
             state: {
               category: config.category,
-              errorType: '4xx',
               statusCode
             }
           });

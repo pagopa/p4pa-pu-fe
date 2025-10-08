@@ -135,7 +135,6 @@ describe('ImportFlow', () => {
         expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
           state: {
             category: 'reporting-import',
-            errorType: '4xx',
             statusCode: 400
           }
         });
@@ -367,7 +366,6 @@ describe('ImportFlow', () => {
         expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
           state: {
             category: 'treasury-import',
-            errorType: '4xx',
             statusCode: 403
           }
         });

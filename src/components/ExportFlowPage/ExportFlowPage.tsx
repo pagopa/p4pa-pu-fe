@@ -93,7 +93,6 @@ export const ExportFlowPage = () => {
               category === 'receipt'
                 ? 'telematic-receipt-export'
                 : 'conservation-export',
-            errorType: '4xx',
             statusCode
           }
         });
