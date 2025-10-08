@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { getOrganizationDetail } from '../../api/organizations';
-import OrganizationDetail from './OrganizationDetail';
+import OrganizationDetail from './components/OrganizationDetail';
 
 vi.mock('../../assets/appio.svg', () => ({
   default: 'appio-svg-mock'
@@ -11,7 +11,8 @@ vi.mock('../../assets/send.svg', () => ({
 }));
 
 vi.mock('../../api/organizations', () => ({
-  getOrganizationDetail: vi.fn()
+  getOrganizationDetail: vi.fn(),
+  updateOrganization: vi.fn()
 }));
 
 vi.mock('react-router', async () => {
