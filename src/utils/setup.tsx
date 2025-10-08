@@ -5,10 +5,7 @@ import { setConfigFe } from '../store/ConfigFeStore';
 import { setUserInfo } from '../store/UserInfoStore';
 import { idTokenPayloadState } from '../store/IdTokenStore';
 import { CircularProgress, Stack } from '@mui/material';
-import {
-  operatorComputedRole,
-  setOperatorRole
-} from '../store/OperatorRoleStore';
+import { setOperatorRole } from '../store/OperatorRoleStore';
 import { OrganizationDTO } from '../../generated/apiClient';
 import { IdTokenPayload } from '../models/IdTokenPayload';
 import {
@@ -25,7 +22,6 @@ import utils from '.';
 import { OrganizationStatus } from '../../generated/data-contracts';
 import { PageRoutes } from '../routes';
 import { generatePath, LoaderFunctionArgs, redirect } from 'react-router';
-import { ExtendedOperatoRole } from '../models/OperatorRole';
 
 const deployPath = utils.config.deployPath;
 
@@ -99,14 +95,12 @@ const draftFallbackLoader = async ({ request }: LoaderFunctionArgs) => {
   const url = new URL(request.url);
   const currentPath = url.pathname;
   const selectedOrganization = selectedOrganizationState.value;
-  const operatorRole = operatorComputedRole.value;
 
   const draftPath = generatePath(PageRoutes.DRAFT_COURTESY_PAGE, {
     organizationId: selectedOrganization?.organizationId
   });
 
   if (
-    operatorRole === ExtendedOperatoRole.ROLE_SUPERADMIN &&
     selectedOrganization?.status === OrganizationStatus.DRAFT &&
     currentPath !== draftPath
   ) {
