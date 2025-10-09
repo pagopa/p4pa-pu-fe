@@ -14,7 +14,7 @@ import {
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
-type ActionMenuItem = {
+export type ActionMenuItem = {
   icon?: React.ReactNode;
   variant?: ButtonProps['variant'];
   buttonText?: string;

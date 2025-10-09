@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { getOrganizationDetail } from '../../api/organizations';
 import OrganizationDetail from './OrganizationDetail';
+import utils from '../../utils';
 
 vi.mock('../../assets/appio.svg', () => ({
   default: 'appio-svg-mock'
@@ -11,7 +12,8 @@ vi.mock('../../assets/send.svg', () => ({
 }));
 
 vi.mock('../../api/organizations', () => ({
-  getOrganizationDetail: vi.fn()
+  getOrganizationDetail: vi.fn(),
+  updateOrganization: vi.fn()
 }));
 
 vi.mock('react-router', async () => {
@@ -22,6 +24,22 @@ vi.mock('react-router', async () => {
     useNavigate: () => vi.fn()
   };
 });
+
+vi.mock('../../utils', async () => {
+  const actual = await vi.importActual('../../utils');
+  return {
+    ...actual,
+    default: {
+      config: {
+        deployPath: '/test',
+      },
+      roles: {
+        useIsSuperAdmin: vi.fn(() => false)
+      }
+    }
+  };
+});
+
 
 describe('OrganizationDetail Page', () => {
   const dataMock = {
@@ -62,5 +80,20 @@ describe('OrganizationDetail Page', () => {
 
     expect(screen.getByText(dataMock.orgTypeCode)).toBeInTheDocument();
     expect(screen.getByText(dataMock.iban)).toBeInTheDocument();
+  });
+
+  it('renders Organization Detail with enable-button', async () => {
+    const mockUseIsSuperAdmin = vi.mocked(utils.roles.useIsSuperAdmin);
+    const mockGetOrganizationDetail = getOrganizationDetail as ReturnType<
+      typeof vi.fn
+    >;
+    mockGetOrganizationDetail.mockReturnValue({
+      data: {...dataMock, status: 'DRAFT'}
+    });
+    mockUseIsSuperAdmin.mockReturnValue(true);
+    render(<OrganizationDetail />);
+
+    const enableBtn = screen.getByTestId('enable-organization-button');
+    expect(enableBtn).toBeInTheDocument();
   });
 });
