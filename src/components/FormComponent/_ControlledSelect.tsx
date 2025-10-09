@@ -50,7 +50,7 @@ export const _ControlledSelect = <T extends FieldValues>({
               optionsResult.isLoading ||
               !optionsResult.data?.length
             }
-            options={optionsResult.data}
+            options={optionsResult.data ?? []}
             value={selectedOption}
             error={!!fieldState.error}
             helperText={

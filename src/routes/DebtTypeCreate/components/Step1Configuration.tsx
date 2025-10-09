@@ -128,7 +128,7 @@ export const Step1Configuration = ({
             ) : (
               <TaxonomyFilter
                 requiredFields={true}
-                disableFieldReset={true}
+                disableFieldReset={false}
                 render={(fields) => (
                   <Stack
                     gap={2}
