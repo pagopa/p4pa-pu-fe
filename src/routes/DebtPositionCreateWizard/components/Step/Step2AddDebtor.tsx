@@ -19,6 +19,7 @@ import { Step2Data } from '../../../../models/DebtPositionType';
 import { createNestedStep2AddDebtorSchema } from '../../../../models/Step2AddDebtorSchema';
 import { Step2ControlledTextField } from './Step2ControlledTextField';
 import { useStep2Form } from '../../../../hooks/useStep2Form';
+import { ITALIAN_PROVINCES } from '../../../../models/Province';
 
 type Step2DataField = keyof Step2Data;
 type NestedFieldName = `${Step2DataField}.value`;
@@ -461,15 +462,15 @@ const Step2AddDebtor = ({
                       handleFieldChange('province.value', value);
                     }}
                   >
-                    <MenuItem value="MI" data-testid="province-option-MI">
-                      MI
-                    </MenuItem>
-                    <MenuItem value="RM" data-testid="province-option-RM">
-                      RM
-                    </MenuItem>
-                    <MenuItem value="TO" data-testid="province-option-TO">
-                      TO
-                    </MenuItem>
+                    {ITALIAN_PROVINCES.map((province) => (
+                      <MenuItem
+                        key={province.code}
+                        value={province.code}
+                        data-testid={`province-option-${province.code}`}
+                      >
+                        {province.code}
+                      </MenuItem>
+                    ))}
                   </TextField>
                 )}
               />
