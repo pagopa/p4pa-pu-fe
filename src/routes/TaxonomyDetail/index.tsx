@@ -5,7 +5,7 @@ import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';
-import { useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { formatDate } from '../../utils/formatters';
 import { PageRoutes } from '../../routes';
 import { getTaxonomyDetail } from '../../api/taxonomy';
@@ -14,67 +14,68 @@ export const TaxonomyDetailPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { taxonomyId } = useParams<{ taxonomyId: string }>();
-  const taxonomyInfo: Array<DetailData> = [];
-  const dateInfo: Array<DetailData> = [];
-
-  if (isNaN(Number(taxonomyId))) {
-    navigate(PageRoutes.RESPONSES_ERROR);
-  }
 
   const { data, isError } = getTaxonomyDetail(Number(taxonomyId));
 
-  if (isError) {
-    navigate(PageRoutes.RESPONSES_ERROR);
-  }
-
   useEffect(() => {
-    if (data) {
-      taxonomyInfo.push(
-        {
-          label: t('taxonomyPage.fields.organizationType'),
-          value: data.organizationType
-        },
-        {
-          label: t('taxonomyPage.fields.organizationTypeDescription'),
-          value: data.organizationTypeDescription
-        },
-        {
-          label: t('taxonomyPage.fields.macroAreaCode'),
-          value: data.macroAreaCode
-        },
-        {
-          label: t('taxonomyPage.fields.macroAreaName'),
-          value: data.macroAreaName
-        },
-        {
-          label: t('taxonomyPage.fields.serviceTypeCode'),
-          value: data.serviceTypeCode
-        },
-        {
-          label: t('taxonomyPage.fields.serviceType'),
-          value: data.serviceType
-        },
-        {
-          label: t('taxonomyPage.fields.serviceTypeDescription'),
-          value: data.serviceTypeDescription
-        },
-        {
-          label: t('taxonomyPage.fields.collectionReason'),
-          value: data.collectionReason
-        }
-      );
-      dateInfo.push(
-        {
-          label: t('taxonomyPage.fields.startDateValidity'),
-          value: formatDate(data.startDateValidity)
-        },
-        {
-          label: t('taxonomyPage.fields.endDateOfValidity'),
-          value: formatDate(data.endDateOfValidity)
-        }
-      );
+    if (isNaN(Number(taxonomyId)) || isError) {
+      navigate(PageRoutes.RESPONSES_ERROR);
     }
-  }, [data]);
+  }, [taxonomyId, isError, navigate]);
+
+  const taxonomyInfo: Array<DetailData> = useMemo(() => {
+    if (!data) return [];
+
+    return [
+      {
+        label: t('taxonomyPage.fields.organizationType'),
+        value: data.organizationType
+      },
+      {
+        label: t('taxonomyPage.fields.organizationTypeDescription'),
+        value: data.organizationTypeDescription
+      },
+      {
+        label: t('taxonomyPage.fields.macroAreaCode'),
+        value: data.macroAreaCode
+      },
+      {
+        label: t('taxonomyPage.fields.macroAreaName'),
+        value: data.macroAreaName
+      },
+      {
+        label: t('taxonomyPage.fields.serviceTypeCode'),
+        value: data.serviceTypeCode
+      },
+      {
+        label: t('taxonomyPage.fields.serviceType'),
+        value: data.serviceType
+      },
+      {
+        label: t('taxonomyPage.fields.serviceTypeDescription'),
+        value: data.serviceTypeDescription
+      },
+      {
+        label: t('taxonomyPage.fields.collectionReason'),
+        value: data.collectionReason
+      }
+    ];
+  }, [data, t]);
+
+  const dateInfo: Array<DetailData> = useMemo(() => {
+    if (!data) return [];
+
+    return [
+      {
+        label: t('taxonomyPage.fields.startDateValidity'),
+        value: formatDate(data.startDateValidity)
+      },
+      {
+        label: t('taxonomyPage.fields.endDateOfValidity'),
+        value: formatDate(data.endDateOfValidity)
+      }
+    ];
+  }, [data, t]);
 
   return (
     <>
