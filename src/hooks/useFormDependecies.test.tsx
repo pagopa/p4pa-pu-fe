@@ -36,21 +36,20 @@ describe('useFormDependencies hook', () => {
     render(<TestForm />);
     const keysText = screen.getByTestId('keys').textContent;
     const keys = keysText ? JSON.parse(keysText) : {};
-    expect(keys).toEqual({ f1: 'f1-base', f2: 'f2-', f3: 'f3-' });
+    expect(keys).toEqual({ f1: 'f1-', f2: 'f2-', f3: 'f3-' });
   });
 
   it('resets dependent fields and updates keys on value change', async () => {
     render(<TestForm />);
 
-    // Change f1 -> should reset f2 and f3
     fireEvent.change(screen.getByTestId('f1'), { target: { value: 'A' } });
 
     await waitFor(() => {
       const keysText = screen.getByTestId('keys').textContent;
       const keys = keysText ? JSON.parse(keysText) : {};
-      expect(keys.f1).toBe('f1-base');
-      expect(keys.f2).toBe('f2-'); // f2 reset to default ''
-      expect(keys.f3).toBe('f3-');
+      expect(keys.f1).toBe('f1-A');
+      expect(keys.f2).toBe('f2-1');
+      expect(keys.f3).toBe('f3-2');
     });
   });
 });

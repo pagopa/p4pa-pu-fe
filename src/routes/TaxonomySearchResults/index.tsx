@@ -3,12 +3,12 @@ import { Stack } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import TaxonomyDataGrid from './TaxonomyDataGrid';
 import { TaxonomyFilter } from '../../components/TaxonomyFilter';
-import { FieldValues, FormProvider, useForm } from 'react-hook-form';
+import { FieldValues, FormProvider, useForm, Path } from 'react-hook-form';
 import { FormComponent } from '../../components/FormComponent';
 import { getTaxonomies } from '../../api/taxonomy';
 import { useSearch } from '../../hooks/useSearch';
 import utils from '../../utils';
-import { useState } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import {
   noFilterSetted,
   shouldShowGeneralError
@@ -18,9 +18,34 @@ import { PagedTaxonomy } from '../../../generated/apiClient';
 
 const TaxonomySearchResults = () => {
   const { t } = useTranslation();
-  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
+
+  //  Read initialFilters only ONCE using useMemo to prevent re-reading from URL on every render.
+  const initialFilters: FieldValues = useMemo(() => {
+    return utils.URI.decode(window.location.hash);
+  }, []);
+
   const [error, setError] = useState(false);
-  const form = useForm({ defaultValues: initialFilters });
+
+  // Create form with defaultValues
+  // Values from URL hash will be used as initial values
+  const form = useForm({
+    defaultValues: initialFilters
+  });
+
+  //  Clear defaultValues after first render to allow field clearing and reset form to empty, then repopulate with setValue (without defaultValues)
+  useEffect(() => {
+    const currentValues = form.getValues();
+
+    // Reset form to empty object to clear all defaultValues
+    form.reset({}, { keepValues: false, keepDefaultValues: false });
+
+    // Repopulate form with current values without setting them as defaultValues
+    Object.entries(currentValues).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        form.setValue(key as Path<FieldValues>, value, { shouldDirty: false });
+      }
+    });
+  }, []);
 
   const query = getTaxonomies();
 

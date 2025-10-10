@@ -49,7 +49,7 @@ export const TaxonomyPage = () => {
           }
         )
     ),
-    mode: 'onTouched'
+    mode: 'onSubmit'
   });
 
   const syncMutation = synchronizeTaxonomy();

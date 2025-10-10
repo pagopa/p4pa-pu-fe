@@ -1,6 +1,8 @@
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete, {
+  AutocompleteInputChangeReason
+} from '@mui/material/Autocomplete';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
-import { useEffect, useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { FilterFieldValue } from '../../models/Filters';
 
 export type SelectItem = {
@@ -31,31 +33,59 @@ export const _Select = ({
   id,
   ...props
 }: _SelectProps) => {
-  // internal state for selected option object
-  const [selectedOption, setSelectedOption] = useState<SelectItem | null>(null);
+  // Derive selected option from value prop (fully controlled component)
+  const selectedOption = options.find((opt) => opt.value === value) || null;
 
-  // update internal state when value prop changes
-  useEffect(() => {
-    setSelectedOption(options.find((opt) => opt.value === value) || null);
-  }, [options, value]);
-
-  // internal state for input text display
+  // Internal state for input text display
   const [inputValue, setInputValue] = useState('');
+  // Track if user clicked the clear button to prevent premature re-sync
+  const userClearingRef = useRef(false);
 
-  // handle selection change to update internal state and notify parent
+  // Sync inputValue with selectedOption to keep display in sync with form state
+  // Special handling: when user clears, wait for value to become undefined before syncing
+  useEffect(() => {
+    // If user is clearing, wait until value is actually undefined
+    if (userClearingRef.current) {
+      if (value === undefined || value === null) {
+        // Clear completed, reset flag and sync empty string
+        userClearingRef.current = false;
+        setInputValue('');
+      }
+      // Still waiting for clear to complete, skip sync
+      return;
+    }
+
+    // Normal sync: update inputValue to match selected option
+    const newInputValue = selectedOption?.label || '';
+    setInputValue(newInputValue);
+  }, [selectedOption, value, id]);
+
+  // Handle selection change and notify parent component
   const handleChange = (
     _event: React.SyntheticEvent,
     newValue: { label: string; value: FilterFieldValue } | null
   ) => {
-    setSelectedOption(newValue);
     onChange?.(newValue ? newValue.value : undefined);
   };
 
-  // handle input change for display value
+  // Handle input text changes (typing, clearing, etc.)
   const handleInputChange = (
     _event: React.SyntheticEvent,
-    newInputValue: string
+    newInputValue: string,
+    reason: AutocompleteInputChangeReason
   ) => {
+    // User clicked clear button: mark as clearing and let useEffect handle the sync
+    if (reason === 'clear') {
+      userClearingRef.current = true;
+      return;
+    }
+
+    // Block MUI's automatic reset during clearing to prevent flickering
+    if (reason === 'reset' && userClearingRef.current) {
+      return;
+    }
+
+    // Normal input change: update display value
     setInputValue(newInputValue);
   };
 
