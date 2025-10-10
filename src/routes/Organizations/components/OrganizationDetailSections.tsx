@@ -5,6 +5,9 @@ import { TFunction } from 'i18next';
 import Appio from '../../../assets/appio.svg';
 import Send from '../../../assets/send.svg';
 import ShowSecretValue from '../../../components/ShowSecretValue';
+import LaunchIcon from '@mui/icons-material/Launch';
+import { generatePath, Link } from 'react-router';
+import { PageRoutes } from '../..';
 
 export const accountingInfo = (
   organizationDetailData: OrganizationDetailDTO,
@@ -24,7 +27,9 @@ export const accountingInfo = (
   },
   {
     label: t('commons.cashJournal'),
-    value: organizationDetailData?.flagTreasury ? t('commons.enabled') : '-'
+    value: organizationDetailData?.flagTreasury
+      ? t('commons.enabled')
+      : t('commons.disabled')
   }
 ];
 export const paymentInfo = (
@@ -46,13 +51,13 @@ export const paymentInfo = (
     label: t('organizations.paymentPushNotification'),
     value: organizationDetailData?.flagNotifyOutcomePush
       ? t('commons.enabled')
-      : '-'
+      : t('commons.disabled')
   },
   {
     label: t('organizations.paymentNotified'),
     value: organizationDetailData?.flagPaymentNotification
       ? t('commons.enabled')
-      : '-'
+      : t('commons.disabled')
   },
   {
     childrenComponent: (
@@ -89,11 +94,38 @@ export const info = (
   },
   {
     label: t('commons.operators'),
-    value: '0'
+    value: '00',
+    valueType: 'withicon',
+    iconConfig: {
+      icon: (
+        <Link
+          to={generatePath(PageRoutes.BROKER_OPERATORS, {
+            organizationId: organizationDetailData.organizationId,
+            orgName: organizationDetailData.orgName
+          })}
+          target={'_blank'}
+        >
+          <LaunchIcon color={'primary'} />
+        </Link>
+      )
+    }
   },
   {
     label: t('commons.debtTypes'),
-    value: '0'
+    value: '00',
+    valueType: 'withicon',
+    iconConfig: {
+      icon: (
+        <Link
+          to={generatePath(PageRoutes.DEBT_TYPES_DASHBOARD_BYORG, {
+            organizationId: organizationDetailData.organizationId
+          })}
+          target={'_blank'}
+        >
+          <LaunchIcon color={'primary'} />
+        </Link>
+      )
+    }
   }
 ];
 
@@ -115,7 +147,9 @@ export const integrationBox = (
   },
   {
     label: t('organizations.ioMessagge'),
-    value: organizationDetailData?.flagNotifyIo ? t('commons.enabled') : '-'
+    value: organizationDetailData?.flagNotifyIo
+      ? t('commons.enabled')
+      : t('commons.disabled')
   },
   {
     childrenComponent: (
@@ -142,7 +176,9 @@ export const integrationBox = (
   },
   {
     label: t('organizations.pdndIntegration'),
-    value: organizationDetailData?.pdndEnabled ? t('commons.enabled') : '-'
+    value: organizationDetailData?.pdndEnabled
+      ? t('commons.enabled')
+      : t('commons.disabled')
   },
   {
     childrenComponent: (

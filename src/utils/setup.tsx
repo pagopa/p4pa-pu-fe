@@ -8,7 +8,10 @@ import { CircularProgress, Stack } from '@mui/material';
 import { setOperatorRole } from '../store/OperatorRoleStore';
 import { OrganizationDTO } from '../../generated/apiClient';
 import { IdTokenPayload } from '../models/IdTokenPayload';
-import { setOrganizations } from '../store/OrganizationsStore';
+import {
+  selectedOrganizationState,
+  setOrganizations
+} from '../store/OrganizationsStore';
 import {
   organizationIdState,
   setOrganizationId
@@ -16,6 +19,9 @@ import {
 import { setAppState } from '../store/AppStateStore';
 import { setupInterceptors } from './interceptors';
 import utils from '.';
+import { OrganizationStatus } from '../../generated/data-contracts';
+import { PageRoutes } from '../routes';
+import { generatePath, LoaderFunctionArgs, redirect } from 'react-router';
 
 const deployPath = utils.config.deployPath;
 
@@ -60,7 +66,7 @@ const setupOrganizations = (
 };
 
 /** Initial setup function to prepare the application state and necessary config */
-const setup = async () => {
+const stateSetup = async () => {
   // configuring Interceptors
   setupInterceptors(utils.apiClient);
   setupInterceptors(utils.fileshareClient);
@@ -79,15 +85,41 @@ const setup = async () => {
 
 const setupOrError = async () => {
   try {
-    await setup();
+    await stateSetup();
   } catch {
     window.location.replace(`${deployPath}/errorBlocking`);
   }
 };
-/** Fallback component to show while setup is in progress */
+
+const draftFallbackLoader = async ({ request }: LoaderFunctionArgs) => {
+  const url = new URL(request.url);
+  const currentPath = url.pathname;
+  const selectedOrganization = selectedOrganizationState.value;
+
+  const draftPath = generatePath(PageRoutes.DRAFT_COURTESY_PAGE, {
+    organizationId: selectedOrganization?.organizationId
+  });
+
+  if (
+    selectedOrganization?.status === OrganizationStatus.DRAFT &&
+    currentPath !== draftPath
+  ) {
+    throw redirect(draftPath);
+  }
+
+  return null;
+};
+
+const appSetup = async (args: LoaderFunctionArgs) => {
+  await setupOrError();
+  await draftFallbackLoader(args);
+};
+
+/** Fallback component to show while stateSetup is in progress */
 const setupFallback = () => (
   <Stack justifyContent={'center'} alignItems={'center'} height={'100vh'}>
     <CircularProgress size={40} />
   </Stack>
 );
-export { setupOrError, setupFallback };
+
+export { setupOrError, setupFallback, draftFallbackLoader, appSetup };

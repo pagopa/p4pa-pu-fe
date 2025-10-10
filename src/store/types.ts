@@ -1,9 +1,12 @@
 import { AppState } from '../models/AppState';
 import { ConfigFE } from '../../generated/apiClient';
 import { FilterValues } from '../models/Filters';
-import { OperatoRole } from '../models/OperatorRole';
 import { OrganizationIdMemo } from '../models/Organization';
-import { OrganizationDTO, UserInfo } from '../../generated/data-contracts';
+import {
+  OperatorRole,
+  OrganizationDTO,
+  UserInfo
+} from '../../generated/data-contracts';
 import { IdTokenPayload } from '../models/IdTokenPayload';
 import { FilterMap } from '../hooks/useMultiFilters';
 
@@ -15,7 +18,7 @@ export type State = {
   [STATE.APP_STATE]: AppState;
   [STATE.SELECTED_FILTERS]: Array<keyof FilterMap>;
   [STATE.FILTER_VALUES]: FilterValues;
-  [STATE.OPERATOR_ROLE]: OperatoRole | undefined;
+  [STATE.OPERATOR_ROLE]: OperatorRole | undefined;
   [STATE.ID_TOKEN]: IdTokenPayload | undefined;
 };
 

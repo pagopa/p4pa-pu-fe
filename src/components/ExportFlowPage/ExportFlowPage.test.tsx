@@ -215,7 +215,6 @@ describe('ExportFlow', () => {
         expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
           state: {
             category: 'conservation-export',
-            errorType: '4xx',
             statusCode: 403
           }
         });
@@ -308,7 +307,6 @@ describe('ExportFlow', () => {
         expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
           state: {
             category: 'telematic-receipt-export',
-            errorType: '4xx',
             statusCode: 400
           }
         });

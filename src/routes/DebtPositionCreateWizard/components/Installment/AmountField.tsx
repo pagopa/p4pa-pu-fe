@@ -28,6 +28,7 @@ type AmountFieldProps<T extends FieldValues> = {
   ) => void;
   trigger: UseFormTrigger<T>;
   onAmountChange: (value: string) => void;
+  showErrors?: boolean;
 };
 
 const AmountField = <T extends FieldValues>({
@@ -38,7 +39,8 @@ const AmountField = <T extends FieldValues>({
   error,
   validateInstallmentAmount,
   trigger,
-  onAmountChange
+  onAmountChange,
+  showErrors = true
 }: AmountFieldProps<T>) => {
   const { t } = useTranslation();
 
@@ -64,8 +66,8 @@ const AmountField = <T extends FieldValues>({
               style: { textAlign: 'left' }
             }
           }}
-          error={!!error}
-          helperText={error?.message || ''}
+          error={showErrors && !!error}
+          helperText={showErrors && error?.message ? error.message : ''}
           onChange={(e) => {
             const normalizedValue = handleAmountInputChange(e.target.value);
             onAmountChange(normalizedValue);

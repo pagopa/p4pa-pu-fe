@@ -35,6 +35,26 @@ export const isValidCodiceFiscale = (cf: string): boolean => {
 };
 
 /**
+ * Checks if an email address is valid
+ * @param email - Email address to validate
+ * @returns true if the email is valid, false otherwise
+ */
+export const isValidEmail = (email: string): boolean => {
+  // If the email is empty or null, immediately returns false
+  if (!email) return false;
+
+  // Normalizes the email by trimming whitespace
+  email = email.trim();
+
+  // Standard email validation regex pattern
+  // Checks for: alphanumeric + special chars @ domain . extension
+  const regex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+  // Verifies the format using the regular expression and returns the result
+  return regex.test(email);
+};
+
+/**
  * Checks if an Italian VAT number is valid
  * @param piva - VAT number to validate
  * @returns true if the VAT number is valid, false otherwise
@@ -239,12 +259,12 @@ export const isValidIBAN = (iban: string): boolean => {
   // Normalizes the IBAN by removing spaces and converting to uppercase
   iban = iban.replace(/\s/g, '').toUpperCase();
 
-  // Basic length check (between 15 and 34 characters according to ISO 13616 standard)
-  if (iban.length < 15 || iban.length > 34) return false;
+  // Basic length check (minimum 27 characters, maximum 34 according to ISO 13616 standard)
+  if (iban.length < 27 || iban.length > 34) return false;
 
   // Basic format for IBAN: two letters for country code, two check digits,
   // and then the BBAN (Basic Bank Account Number)
-  const regex = /^[A-Z]{2}\d{2}[A-Z0-9]{1,30}$/;
+  const regex = /^[A-Z]{2}\d{2}[A-Z0-9]{23,30}$/;
 
   // Verification with regular expression
   return regex.test(iban);

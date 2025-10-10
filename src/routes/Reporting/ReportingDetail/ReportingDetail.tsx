@@ -37,20 +37,6 @@ export const ReportingDetail = () => {
     state: { organizationId }
   } = useStore();
   const location = useLocation();
-  const { ingestionFlowFileId } = location.state;
-
-  const mutation = getIngestionFlowFile(organizationId);
-
-  const downloadIngestionFlowFile = async () => {
-    try {
-      const { fileName, data } =
-        await mutation.mutateAsync(ingestionFlowFileId);
-      downloadBlob(data, fileName);
-    } catch (error) {
-      console.error('Error downloading file:', error);
-      utils.notify.emit(t('commons.files.downloadFailed'));
-    }
-  };
 
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
   const [appliedFilters, setAppliedFilters] = useState(initialFilters);
@@ -61,6 +47,9 @@ export const ReportingDetail = () => {
   }
 
   const [detailItem, setDetailItem] = useState<PaymentsReporting | null>(null);
+  const [currentIngestionFlowFileId, setCurrentIngestionFlowFileId] = useState<
+    number | undefined
+  >(location.state?.ingestionFlowFileId);
 
   const query = getPaymentsReportingRows(organizationId, iuf, {
     enabled: !!organizationId && !!iuf
@@ -86,6 +75,35 @@ export const ReportingDetail = () => {
       setDetailItem(reportingRows.query.data.content[0]);
     }
   }, [reportingRows.query.data, detailItem]);
+
+  useEffect(() => {
+    if (
+      !currentIngestionFlowFileId &&
+      reportingRows.query.data?.content?.[0]?.ingestionFlowFileId
+    ) {
+      setCurrentIngestionFlowFileId(
+        reportingRows.query.data.content[0].ingestionFlowFileId
+      );
+    }
+  }, [reportingRows.query.data, currentIngestionFlowFileId]);
+
+  const mutation = getIngestionFlowFile(organizationId);
+
+  const downloadIngestionFlowFile = async () => {
+    if (!currentIngestionFlowFileId) {
+      utils.notify.emit(t('commons.files.downloadFailed'));
+      return;
+    }
+    try {
+      const { fileName, data } = await mutation.mutateAsync(
+        currentIngestionFlowFileId
+      );
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+      utils.notify.emit(t('commons.files.downloadFailed'));
+    }
+  };
 
   const handleFiltersApplied = () => {
     reportingRows.applyFilters(appliedFilters);

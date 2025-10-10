@@ -66,6 +66,9 @@ type InstallmentItemProps<T extends FieldValues> = {
     remittance?: boolean;
     isMultibeneficiary?: boolean;
   };
+  readonly shouldShowErrors?: (componentCreationCount?: number) => boolean;
+  readonly submissionCount?: number; // Still needed for creation tracking
+  readonly existingInstallments?: Record<string, boolean>;
 };
 
 /**
@@ -75,6 +78,7 @@ type InstallmentItemProps<T extends FieldValues> = {
  */
 const InstallmentItem = <T extends FieldValues>({
   index,
+  field,
   control,
   errors,
   isSubmitted,
@@ -87,7 +91,10 @@ const InstallmentItem = <T extends FieldValues>({
   onRemove,
   flagMandatoryDueDate = true,
   isEditing,
-  readonlyProps
+  readonlyProps,
+  shouldShowErrors,
+  submissionCount = 0,
+  existingInstallments = {}
 }: InstallmentItemProps<T>) => {
   const { t } = useTranslation();
 
@@ -111,10 +118,22 @@ const InstallmentItem = <T extends FieldValues>({
   const dueDatePath = `${fieldNamePrefix}.${index}.dueDate` as Path<T>;
   const remittancePath = `${fieldNamePrefix}.${index}.remittance` as Path<T>;
 
-  // Typed access to errors
+  // Track if this installment was created after the final CTA was clicked
+  // An installment is considered "created after submit" if:
+  // 1. A submit has already happened (submissionCount > 0)
+  // 2. This installment was NOT in the existingInstallments registry (wasn't present at submit time)
+  const wasCreatedAfterSubmit =
+    submissionCount > 0 && !existingInstallments[field.id];
+
+  // Show errors only if installment existed at submit time
+  // Pass 0 for existing installments, current submissionCount for new ones
+  const componentCreationCount = wasCreatedAfterSubmit ? submissionCount : 0;
+  const shouldShowFieldErrors = shouldShowErrors
+    ? shouldShowErrors(componentCreationCount)
+    : false;
   const fieldErrors = errors[fieldNamePrefix as keyof typeof errors];
   const amountErrors =
-    fieldErrors && index in fieldErrors
+    shouldShowFieldErrors && fieldErrors && index in fieldErrors
       ? (
           fieldErrors as Record<
             number,
@@ -129,7 +148,7 @@ const InstallmentItem = <T extends FieldValues>({
         )[index]?.amount
       : undefined;
   const dueDateErrors =
-    fieldErrors && index in fieldErrors
+    shouldShowFieldErrors && fieldErrors && index in fieldErrors
       ? (
           fieldErrors as Record<
             number,
@@ -144,7 +163,7 @@ const InstallmentItem = <T extends FieldValues>({
         )[index]?.dueDate
       : undefined;
   const remittanceErrors =
-    fieldErrors && index in fieldErrors
+    shouldShowFieldErrors && fieldErrors && index in fieldErrors
       ? (
           fieldErrors as Record<
             number,
@@ -214,6 +233,7 @@ const InstallmentItem = <T extends FieldValues>({
               validateInstallmentAmount={validators.validateInstallmentAmount}
               trigger={trigger}
               onAmountChange={handleInstallmentAmountChange}
+              showErrors={shouldShowFieldErrors}
             />
           </Grid>
 
@@ -228,10 +248,11 @@ const InstallmentItem = <T extends FieldValues>({
               validateDueDate={validators.validateDueDate}
               trigger={trigger}
               flagMandatoryDueDate={flagMandatoryDueDate}
+              showErrors={shouldShowFieldErrors}
             />
           </Grid>
 
-          {/* Remittance Field - Campo causale */}
+          {/* Remittance Field - Remittance field */}
           <Grid item xs={12}>
             <RemittanceField<T>
               control={control}
@@ -241,15 +262,16 @@ const InstallmentItem = <T extends FieldValues>({
               error={remittanceErrors}
               validateRemittance={validators.validateRemittance}
               trigger={trigger}
+              showErrors={shouldShowFieldErrors}
             />
           </Grid>
 
           {/* Beneficiary Controls - Using extracted component */}
           <BeneficiaryControl<T>
+            key={`beneficiary-control-${field.id}-${index}`}
             index={index}
             control={control}
             errors={errors}
-            isSubmitted={isSubmitted}
             fieldNamePrefix={fieldNamePrefix}
             disabled={disabled || readonlyProps?.isMultibeneficiary}
             getValues={getValues}
@@ -258,6 +280,10 @@ const InstallmentItem = <T extends FieldValues>({
             isMultibeneficiary={isMultibeneficiary}
             toggleMultibeneficiary={toggleMultibeneficiary}
             isEditing={isEditing}
+            submissionCount={submissionCount}
+            existingInstallments={existingInstallments}
+            installmentFieldId={field.id}
+            shouldShowErrors={shouldShowErrors}
           />
         </Grid>
       </Box>

@@ -227,7 +227,7 @@ describe('BeneficiaryControl', () => {
         index={0}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={mockGetValues}
         setValue={mockSetValue}
@@ -247,7 +247,7 @@ describe('BeneficiaryControl', () => {
         index={0}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={mockGetValues}
         setValue={mockSetValue}
@@ -278,7 +278,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           mockGetValuesForTest as unknown as UseFormGetValues<TestFormData>
@@ -305,7 +305,7 @@ describe('BeneficiaryControl', () => {
         index={0}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={mockGetValues}
         setValue={mockSetValue}
@@ -353,7 +353,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={getValuesMock as unknown as UseFormGetValues<TestFormData>}
         setValue={mockSetValue}
@@ -419,7 +419,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={getValuesMock as unknown as UseFormGetValues<TestFormData>}
         setValue={mockSetValue}
@@ -454,7 +454,7 @@ describe('BeneficiaryControl', () => {
         index={0}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={mockGetValues}
         setValue={mockSetValue}
@@ -474,7 +474,7 @@ describe('BeneficiaryControl', () => {
         index={0}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={mockGetValues}
         setValue={mockSetValue}
@@ -506,7 +506,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           getValuesNoPrevBeneficiaries as unknown as UseFormGetValues<TestFormData>
@@ -545,7 +545,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           getValuesWithExistingBeneficiaries as unknown as UseFormGetValues<TestFormData>
@@ -599,7 +599,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           getValuesWithShowForm as unknown as UseFormGetValues<TestFormData>
@@ -652,7 +652,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           getValuesWithAmountsAndBeneficiaries as unknown as UseFormGetValues<TestFormData>
@@ -703,7 +703,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           mockGetValuesAutoDefault as unknown as UseFormGetValues<TestFormData>
@@ -750,7 +750,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           mockGetValuesEditing as unknown as UseFormGetValues<TestFormData>
@@ -789,7 +789,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           mockGetValuesNoPrev as unknown as UseFormGetValues<TestFormData>
@@ -828,7 +828,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           mockGetValuesEditingForm as unknown as UseFormGetValues<TestFormData>
@@ -868,7 +868,7 @@ describe('BeneficiaryControl', () => {
         index={0}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={mockGetValues}
         setValue={mockSetValue}
@@ -894,7 +894,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={mockGetValues}
         setValue={mockSetValue}
@@ -924,7 +924,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           mockGetValuesNoValidBeneficiaries as unknown as UseFormGetValues<TestFormData>
@@ -960,7 +960,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           mockGetValuesNull as unknown as UseFormGetValues<TestFormData>
@@ -997,7 +997,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           mockGetValuesForDefault as unknown as UseFormGetValues<TestFormData>
@@ -1042,7 +1042,7 @@ describe('BeneficiaryControl', () => {
         index={1}
         control={mockControl}
         errors={mockErrors}
-        isSubmitted={false}
+        shouldShowErrors={() => false}
         fieldNamePrefix="installments"
         getValues={
           mockGetValuesCopyTest as unknown as UseFormGetValues<TestFormData>
@@ -1061,6 +1061,205 @@ describe('BeneficiaryControl', () => {
     await waitFor(() => {
       expect(mockSetValueCopy).toHaveBeenCalled();
     });
+  });
+
+  test('should pass submissionCount prop to BeneficiaryField', () => {
+    const testSubmissionCount = 5;
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={0}
+        control={mockControl}
+        errors={mockErrors}
+        shouldShowErrors={() => true}
+        fieldNamePrefix="installments"
+        getValues={mockGetValues}
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        submissionCount={testSubmissionCount}
+      />
+    );
+
+    // Verify BeneficiaryField component exists
+    expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+  });
+
+  test('should pass shouldShowErrors to BeneficiaryField correctly', () => {
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={0}
+        control={mockControl}
+        errors={mockErrors}
+        shouldShowErrors={() => true}
+        fieldNamePrefix="installments"
+        getValues={mockGetValues}
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+      />
+    );
+
+    // Verify that the component renders with isSubmitted=true passed as hasClickedFinalCTA
+    expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+  });
+
+  test('should handle empty beneficiaries array when copying', async () => {
+    const mockGetValuesEmpty = createMockGetValuesWithConsistentReturn({
+      installment0: {
+        isMultibeneficiary: true,
+        beneficiaries: []
+      },
+      installment1Amount: '100,00',
+      sameBeneficiariesAsBefore: false
+    });
+
+    const mockSetValueEmpty = vi.fn();
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        shouldShowErrors={() => false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesEmpty as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValueEmpty}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+      />
+    );
+
+    // When previous beneficiaries are empty, radio buttons should not be shown
+    expect(
+      screen.queryByText(
+        'Are the beneficiaries the same as the previous installment?'
+      )
+    ).not.toBeInTheDocument();
+
+    expect(screen.queryByText('Yes')).not.toBeInTheDocument();
+    expect(screen.queryByText('No')).not.toBeInTheDocument();
+
+    // But BeneficiaryField should still be shown for creating new beneficiaries
+    expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+  });
+
+  test('should handle malformed beneficiary data gracefully', async () => {
+    const mockGetValuesMalformed = vi
+      .fn()
+      .mockImplementation((path: string): unknown => {
+        if (path === 'installments.0') {
+          return { isMultibeneficiary: true, beneficiaries: null } as unknown; // malformed data
+        }
+        if (path === 'installments.1.amount') {
+          return '100,00' as unknown;
+        }
+        return undefined as unknown;
+      });
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        shouldShowErrors={() => false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesMalformed as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+      />
+    );
+
+    // Should not show radio buttons when beneficiaries data is malformed
+    expect(
+      screen.queryByText(
+        'Are the beneficiaries the same as the previous installment?'
+      )
+    ).not.toBeInTheDocument();
+  });
+
+  test('should handle default submissionCount when prop is not provided', () => {
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={0}
+        control={mockControl}
+        errors={mockErrors}
+        shouldShowErrors={() => false}
+        fieldNamePrefix="installments"
+        getValues={mockGetValues}
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        // submissionCount not provided - should default to 0
+      />
+    );
+
+    expect(screen.getByTestId('beneficiary-field')).toBeInTheDocument();
+  });
+
+  test('should handle radio button interaction without errors', () => {
+    const mockGetValuesForRadio = createMockGetValuesWithConsistentReturn({
+      installment0: {
+        isMultibeneficiary: true,
+        beneficiaries: [
+          { amount: '50,00', denomination: 'Previous beneficiary' }
+        ]
+      },
+      installment1Amount: '100,00',
+      sameBeneficiariesAsBefore: false
+    });
+
+    render(
+      <BeneficiaryControl<TestFormData>
+        index={1}
+        control={mockControl}
+        errors={mockErrors}
+        shouldShowErrors={() => false}
+        fieldNamePrefix="installments"
+        getValues={
+          mockGetValuesForRadio as unknown as UseFormGetValues<TestFormData>
+        }
+        setValue={mockSetValue}
+        trigger={mockTrigger}
+        isMultibeneficiary={true}
+        toggleMultibeneficiary={mockToggleMultibeneficiary}
+        isEditing={false}
+      />
+    );
+
+    // Should show radio buttons
+    expect(
+      screen.getByText(
+        'Are the beneficiaries the same as the previous installment?'
+      )
+    ).toBeInTheDocument();
+
+    const yesRadio = screen.getByText('Yes');
+    const noRadio = screen.getByText('No');
+
+    expect(yesRadio).toBeInTheDocument();
+    expect(noRadio).toBeInTheDocument();
+
+    // Should be able to click radio buttons without errors
+    fireEvent.click(yesRadio);
+    fireEvent.click(noRadio);
+
+    // Component should still be in the document after interactions
+    expect(
+      screen.getByText(
+        'Are the beneficiaries the same as the previous installment?'
+      )
+    ).toBeInTheDocument();
   });
 });
 

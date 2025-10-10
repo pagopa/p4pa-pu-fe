@@ -1,15 +1,4 @@
 {
-  "OperatorDetail": {
-    "code": "Cod. Gestionale",
-    "debtPositionTypeDescription": "Tipo di dovuto",
-    "accessibleTitle": "Dettagli operatore",
-    "associatedDebtPositionTypes": "Tipi di dovuto associati",
-    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto",
-    "deleteDialog": {
-      "title": "Sei sicuro di voler rimuovere il Tipo di dovuto?",
-      "message": "Una volta rimosso l'utente <strong>{{operatorName}}</strong> non potrà gestire e operare su questo tipo di dovuto."
-    }
-  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -96,6 +85,20 @@
       }
     }
   },
+  "DraftCourtesyPage": {
+    "ROLE_SUPERADMIN": {
+      "title": "Configura l'ente per accedere",
+      "description": "Per utilizzare Piattaforma Unitaria è necessario configurare i parametri dell’ente."
+    },
+    "ROLE_ADMIN": {
+      "title": "Configura l'ente per accedere",
+      "description": "Per utilizzare Piattaforma Unitaria è necessario configurare i parametri dell’ente."
+    },
+    "ROLE_OPER": {
+      "title": "Ente non abilitato",
+      "description": "Non riesci ad accedere alla Piattaforma Unitaria perché il tuo ente non è stato abilitato. Ti consigliamo di contattare l'amministratore del prodotto per assistenza."
+    }
+  },
   "FileUploaderFlowImport": {
     "debt-positions": {
       "description": "Carica qui il file .zip con i Dovuti"
@@ -113,6 +116,36 @@
     "error": {
       "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
       "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
+    }
+  },
+  "OperatorDetail": {
+    "code": "Cod. Gestionale",
+    "debtPositionTypeDescription": "Tipo di dovuto",
+    "accessibleTitle": "Dettagli operatore",
+    "associatedDebtPositionTypes": "Tipi di dovuto associati",
+    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto",
+    "deleteDialog": {
+      "title": "Sei sicuro di voler rimuovere il Tipo di dovuto?",
+      "message": "Una volta rimosso l'utente <strong>{{operatorName}}</strong> non potrà gestire e operare su questo tipo di dovuto."
+    },
+    "affiliate": {
+      "title": "Associa Tipi di dovuto",
+      "countLabel_one": "({{count}}) Tipo di dovuto",
+      "countLabel_other": "({{count}}) Tipi di dovuto",
+      "noSelection": "Seleziona almeno un Tipo di dovuto",
+      "success": {
+        "title_one": "{{count}} Tipo di dovuto associato correttamente all'utente {{operatorName}}",
+        "title_other": "{{count}} Tipi di dovuto associati correttamente all'utente {{operatorName}}",
+        "description_one": "Lo trovi nel dettaglio dell'operatore, dove puoi gestirlo in qualsiasi momento.",
+        "description_other": "Li trovi nel dettaglio dell'operatore, dove puoi gestirli in qualsiasi momento.",
+        "buttonLabel": "Vai al dettaglio operatore"
+      },
+      "dialog": {
+        "title": "Conferma associazione Tipi di dovuto",
+        "message_one": "All'utente <strong>{{operatorName}}</strong> verra assegnato <strong>{{count}}</strong> tipo di dovuto, sul quale potrà gestire e operare.",
+        "message_other": "All'utente <strong>{{operatorName}}</strong> verranno assegnati <strong>{{count}}</strong> tipi di dovuto, sui quali potrà gestire e operare.",
+        "button": "Associa"
+      }
     }
   },
   "appPreview": {
@@ -624,6 +657,9 @@
   },
   "commons": {
     "404": "404: risorsa non disponibile",
+    "affiliateNew": "Associa nuovo",
+    "affiliate": "Associa",
+    "confirm": "Conferma",
     "id": "id",
     "role": "Ruolo",
     "info": "Informazioni",
@@ -653,6 +689,7 @@
     "create": "Crea",
     "createNew": "Crea nuova",
     "createNewOne": "Crea nuovo",
+    "backToHome": "Torna alla home",
     "backToStart": "Torna alla sezione",
     "goToDetail": "Vedi dettaglio",
     "creationFrom": "Creazione dal",
@@ -1131,6 +1168,10 @@
         },
         "required": "Il campo tipo di soggetto è obbligatorio"
       },
+      "anonymousSubject": {
+        "label": "Soggetto anonimo",
+        "helperText": "Nei casi dove il cittadino non ha un Codice Fiscale"
+      },
       "taxCode": {
         "invalid": "Verifica che il Codice fiscale sia corretto",
         "invalidVAT": "Verifica che la Partita IVA sia corretta",
@@ -1188,7 +1229,7 @@
           "required": "Il campo conto corrente postale è obbligatorio"
         },
         "sumMustBeLessThanTotal": "La somma degli importi dei beneficiari deve essere minore dell'importo totale",
-        "sumMustBeLessThanTotalInstallments": "La somma degli importi dei beneficiari deve essere minore dell'importo totale, clicca su No per modificare",
+        "sumMustBeLessThanTotalInstallments": "La somma degli importi dei beneficiari deve essere minore dell'importo totale della rata.",
         "taxCodeOrVat": {
           "invalid": "Codice fiscale o partita IVA non validi",
           "label": "Codice Fiscale o Partita IVA",
@@ -1784,6 +1825,7 @@
     "searchByName": "Cerca per nome",
     "searchByLastName": "Cerca per cognome",
     "searchByFiscalCode": "Cerca per CF",
+    "brokerDescription": "Trovi gli operatori presenti per l’ente gestito.",
     "searchByIPACode": "Cerca per codice IPA",
     "myOrganizationDataGrid": {
       "id": "ID",
@@ -1903,6 +1945,123 @@
       }
     }
   },
+  "organizationEditWizard": {
+    "title": "Modifica il tuo ente",
+    "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
+    "saveChanges": "Salva modifiche",
+    "errorLoadingData": "Errore nel caricamento dei dati dell'ente",
+    "successMessage": "Modifiche salvate con successo",
+    "step1": {
+      "title": "Anagrafica ente",
+      "label": "Anagrafica ente",
+      "orgName": {
+        "label": "Ragione sociale",
+        "placeholder": "<ragione sociale>"
+      },
+      "orgFiscalCode": {
+        "label": "Codice Fiscale",
+        "placeholder": "<123456789012>",
+        "invalid": "Formato codice fiscale non valido"
+      },
+      "orgEmail": {
+        "label": "Email",
+        "helperText": "Indirizzo email al quale l'ente riceverà le comunicazioni di servizio della piattaforma",
+        "invalid": "Formato email non valido"
+      },
+      "orgLogo": {
+        "title": "CARICA IL LOGO DEL SERVIZIO",
+        "optional": "Facoltativo",
+        "description": "Inserisci solo il logo del tuo ente. Aiuterà a rendere legittime le ricevute telematiche e gli avvisi.",
+        "uploadDescription": "Trascina qui il file o seleziona dal computer",
+        "requirements": "Hai dubbi su formato o dimensioni?",
+        "learnMore": "Leggi qui",
+        "required": "Il logo è obbligatorio"
+      }
+    },
+    "step2": {
+      "label": "Configurazione ente",
+      "title": "Configurazione ente",
+      "accountingInfo": {
+        "title": "INFORMAZIONE CONTABILE"
+      },
+      "iban": {
+        "label": "IBAN",
+        "placeholder": "",
+        "required": "Il campo IBAN è obbligatorio",
+        "invalid": "Formato IBAN non valido"
+      },
+      "ibanPostal": {
+        "label": "IBAN Postale",
+        "placeholder": "",
+        "invalid": "Formato IBAN non valido"
+      },
+      "cbill": {
+        "label": "CBILL",
+        "placeholder": ""
+      },
+      "integratedCashJournal": {
+        "label": "Il giornale di cassa è integrato"
+      },
+      "paymentsInfo": {
+        "title": "PAGAMENTI"
+      },
+      "segregationCode": {
+        "label": "Codice Segregazione",
+        "placeholder": "",
+        "required": "Il campo Codice Segregazione è obbligatorio"
+      },
+      "generateNoticeApiKey": {
+        "label": "API Key stampa avvisi",
+        "placeholder": "",
+        "required": "Il campo API Key stampa avvisi è obbligatorio"
+      },
+      "additionalLanguage": {
+        "label": "Gli avvisi hanno una lingua addizionale"
+      },
+      "selectedLanguage": {
+        "label": "Lingua Addizionale",
+        "placeholder": "Seleziona una lingua",
+        "options": {
+          "en": "Inglese",
+          "fr": "Francese",
+          "de": "Tedesco"
+        },
+        "required": "Devi selezionare una lingua addizionale."
+      },
+      "radioRequired": "Devi selezionare una delle due opzioni",
+      "flagNotifyOutcomePush": {
+        "label": "Notifiche push di pagamenti gestiti da piattaforme esterne",
+        "description": "Dovrà essere integrata una API per ricevere notifiche",
+        "abilita": "Abilita",
+        "disabilita": "Disabilita"
+      },
+      "flagPaymentNotification": {
+        "label": "Notifiche di pagamenti gestiti da Piattaforma Unitaria",
+        "description": "Dovrà essere configurato il Org Sil Service per ricevere le notifiche",
+        "abilita": "Abilita",
+        "disabilita": "Disabilita"
+      },
+      "pagoPaIntegration": {
+        "title": "INTEGRAZIONE CON I PRODOTTI PAGOPA",
+        "io": {
+          "label": "Messaggi sull'app IO",
+          "description": "Abilita l'ente a inviare messaggi sui pagamenti",
+          "apiKeyLabel": "API key",
+          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche IO",
+          "apiKeyRequired": "Il campo API key è obbligatorio",
+          "apiKeyHelperText": "Inserisci la API key per inviare messaggi sull'app IO"
+        },
+        "send": {
+          "label": "Autenticazione con PDND",
+          "description": "Abilita l'autenticazione su SEND tramite PDND",
+          "apiKeyLabel": "API key",
+          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche SEND",
+          "apiKeyRequired": "Il campo API key è obbligatorio",
+          "apiKeyHelperText": "Inserisci la API key per inviare notifiche SEND"
+        }
+      }
+    }
+  },
   "organizations": {
     "name": "Nome o ragione sociale",
     "fiscalCode": "Codice fiscale",
@@ -1914,7 +2073,19 @@
     "paymentNotified": "Pagamenti notificati",
     "pdndIntegration": "Integrazione con PDND",
     "printKeyAPI": "API Key stampa avvisi",
-    "orgEmail": "Email ente"
+    "orgEmail": "Email ente",
+    "orgLogo": "Logo dell'ente",
+    "enableOrg": "Abilita ente",
+    "editOrg": "Modifica ente",
+    "alertTitle": "Completa i dati per attivare l'ente",
+    "alertBody": "È necessario compilare i seguenti campi obbligatori: {{emptyFields}}.",
+    "enableDialog": {
+      "title": "Sei sicuro di voler abilitare l’ente ad operare?",
+      "message": "Una volta abilitato l'ente <strong>{{orgName}}</strong> potrà operare su Piattaforma Unitaria.",
+      "success": "Ente abilitato correttamente.",
+      "error": "Non è stato possibile abilitare l'Ente",
+      "emptyFields": "Non è stato possibile abilitare l'Ente. È necessario che i campi obbligatori siano compilati"
+    }
   },
   "registry": {
     "detail": {
@@ -1972,6 +2143,7 @@
     "flowDate": "Data flusso",
     "payments": "Pagamenti",
     "regulationDate": "Data Regolamento",
+    "iuv": "Codice Avviso (IUV)",
     "searchRegulationId": "ID Regolamento",
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"

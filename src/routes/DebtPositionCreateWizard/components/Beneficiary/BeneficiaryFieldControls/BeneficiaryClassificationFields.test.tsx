@@ -70,7 +70,9 @@ describe('BeneficiaryClassificationFields', () => {
     errors: {},
     fieldNamePrefix: 'beneficiaries',
     getValues: vi.fn(),
-    t: mockT
+    t: mockT,
+    submissionCount: 0,
+    creationSubmissionCount: 0
   };
 
   const defaultProps = {

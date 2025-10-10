@@ -44,6 +44,15 @@ vi.mock('../utils/formatters', async () => {
     moneyFormat: vi.fn((amount: number) => `€ ${(amount / 100).toFixed(2)}`),
     formatDate: vi.fn((dateString: string) => {
       return dateString ? '01/01/2023' : '';
+    }),
+    formatAmountForDisplay: vi.fn((value: unknown) => {
+      if (!value && value !== 0) return '';
+      const stringVal = String(value);
+      // Format with two decimal places and replace dot with comma
+      const numValue = parseFloat(stringVal);
+      return isNaN(numValue)
+        ? stringVal
+        : numValue.toFixed(2).replace('.', ',');
     })
   };
 });
@@ -476,7 +485,7 @@ describe('useInstallmentManagement', () => {
     const installmentsData = result.current.getInstallmentsData();
 
     expect(installmentsData.length).toBe(2);
-    expect(installmentsData[0].amount).toBe('100.00');
+    expect(installmentsData[0].amount).toBe('100,00');
     expect(installmentsData[0].dueDate).toBe('01/01/2023');
     expect(installmentsData[0].remittance).toBe('Rata 1');
     expect(installmentsData[0].isMultibeneficiary).toBe(false);
@@ -484,8 +493,10 @@ describe('useInstallmentManagement', () => {
     expect(installmentsData[1].remittance).toBe('Rata 2');
     expect(installmentsData[1].isMultibeneficiary).toBe(true);
 
-    // Verify that moneyFormat was called
-    expect(vi.mocked(formattersModule.moneyFormat)).toHaveBeenCalled();
+    // Verify that formatAmountForDisplay was called
+    expect(
+      vi.mocked(formattersModule.formatAmountForDisplay)
+    ).toHaveBeenCalled();
   });
 
   it('should store existing installments after submit', () => {

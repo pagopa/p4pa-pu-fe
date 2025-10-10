@@ -463,7 +463,7 @@ describe('BeneficiaryField', () => {
   it("passa correttamente i parametri all'hook useBeneficiaryManagement", () => {
     const totalAmount = '200.00';
     const fieldNamePrefix = 'beneficiaries';
-    const isSubmitted = true;
+    const hasClickedFinalCTA = true;
 
     const mockControl = {
       _formValues: {},
@@ -503,7 +503,7 @@ describe('BeneficiaryField', () => {
     render(
       <BeneficiaryField
         control={mockControl}
-        isSubmitted={isSubmitted}
+        isSubmitted={false}
         errors={mockErrors}
         totalAmount={totalAmount}
         fieldNamePrefix={fieldNamePrefix}
@@ -513,6 +513,7 @@ describe('BeneficiaryField', () => {
         trigger={mockTrigger}
         onToggleMultibeneficiary={mockOnToggleMultibeneficiary}
         onBeneficiariesChange={mockOnBeneficiariesChange}
+        shouldShowErrors={() => hasClickedFinalCTA}
       />
     );
 
@@ -521,7 +522,7 @@ describe('BeneficiaryField', () => {
     ).toHaveBeenCalledWith(
       expect.objectContaining({
         control: mockControl,
-        isSubmitted,
+        isSubmitted: hasClickedFinalCTA,
         totalAmount,
         fieldNamePrefix,
         trigger: mockTrigger,

@@ -6,7 +6,11 @@ import { useReducer, useCallback, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useFieldArray, Path, FieldValues, PathValue } from 'react-hook-form';
 import { createAmountValidator } from '../utils/fieldValidation';
-import { formatDate, moneyFormat } from '../utils/formatters';
+import {
+  formatDate,
+  parseAmountToNumber,
+  formatAmountForDisplay
+} from '../utils/formatters';
 import {
   Installment,
   InstallmentManagementProps,
@@ -22,6 +26,8 @@ type InstallmentState = {
   existingInstallments: Record<string, boolean>;
   /** Flag indicating if form was submitted */
   wasSubmitted: boolean;
+  /** Last submission count when installments were registered */
+  lastSubmissionCount: number;
   /** Flag indicating if initialization is in progress */
   isInitializing: boolean;
   /** Flag indicating if initialization is complete */
@@ -37,7 +43,11 @@ type InstallmentState = {
  */
 type InstallmentAction =
   | { type: 'MARK_SUBMITTED' }
-  | { type: 'SET_EXISTING_INSTALLMENTS'; installments: Record<string, boolean> }
+  | {
+      type: 'SET_EXISTING_INSTALLMENTS';
+      installments: Record<string, boolean>;
+      submissionCount: number;
+    }
   | { type: 'START_INITIALIZING' }
   | { type: 'FINISH_INITIALIZING' }
   | { type: 'MARK_INITIALIZED' }
@@ -61,7 +71,8 @@ function installmentReducer(
     case 'SET_EXISTING_INSTALLMENTS':
       return {
         ...state,
-        existingInstallments: action.installments
+        existingInstallments: action.installments,
+        lastSubmissionCount: action.submissionCount
       };
     case 'START_INITIALIZING':
       return {
@@ -112,7 +123,8 @@ export function useInstallmentManagement<T extends FieldValues>(
     getValues,
     trigger,
     flagMandatoryDueDate = true,
-    onInstallmentsChange
+    onInstallmentsChange,
+    submissionCount = 0
   } = props;
 
   const MIN_INSTALLMENTS = 2;
@@ -121,6 +133,7 @@ export function useInstallmentManagement<T extends FieldValues>(
   const [state, dispatch] = useReducer(installmentReducer, {
     existingInstallments: {},
     wasSubmitted: false,
+    lastSubmissionCount: 0,
     isInitializing: false,
     hasInitialized: false,
     lastTotalAmount: '',
@@ -165,11 +178,7 @@ export function useInstallmentManagement<T extends FieldValues>(
 
       // Get amount and format it if present
       const amount = installmentData?.amount;
-      const formattedAmount = amount
-        ? moneyFormat(parseFloat(amount) * 100)
-            .replace('€', '')
-            .trim()
-        : '';
+      const formattedAmount = amount ? formatAmountForDisplay(amount) : '';
 
       return {
         ...installmentData,
@@ -197,7 +206,7 @@ export function useInstallmentManagement<T extends FieldValues>(
           `${fieldNamePrefix}.${index}` as Path<T>
         );
         const amount = installmentData?.amount as string | undefined;
-        const amountValue = amount ? parseFloat(amount.replace(',', '.')) : 0;
+        const amountValue = amount ? parseAmountToNumber(amount) || 0 : 0;
         return total + amountValue;
       }, 0)
       .toFixed(2);
@@ -270,9 +279,15 @@ export function useInstallmentManagement<T extends FieldValues>(
     ]
   );
 
-  // Register existing installments on first submit
+  // Register existing installments on every new submit
   useEffect(() => {
-    if (isSubmitted && !state.wasSubmitted) {
+    // Register installments if:
+    // 1. Form is submitted AND
+    // 2. (First submit OR submission count has increased since last registration)
+    if (
+      isSubmitted &&
+      (!state.wasSubmitted || submissionCount > state.lastSubmissionCount)
+    ) {
       // Store current state of installments
       const currentInstallments = fields.reduce<Record<string, boolean>>(
         (acc, field) => {
@@ -285,11 +300,18 @@ export function useInstallmentManagement<T extends FieldValues>(
       // Update state
       dispatch({
         type: 'SET_EXISTING_INSTALLMENTS',
-        installments: currentInstallments
+        installments: currentInstallments,
+        submissionCount
       });
       dispatch({ type: 'MARK_SUBMITTED' });
     }
-  }, [isSubmitted, fields, state.wasSubmitted]);
+  }, [
+    isSubmitted,
+    fields,
+    state.wasSubmitted,
+    submissionCount,
+    state.lastSubmissionCount
+  ]);
 
   // Update validation when amounts change
   useEffect(() => {
