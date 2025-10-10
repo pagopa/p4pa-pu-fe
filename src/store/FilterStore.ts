@@ -155,6 +155,16 @@ export const removeFilterRow = (id: KeyofFilterMap) => {
 };
 
 export const updateFilter = (id: KeyofFilterMap, index: number) => {
+  // If id is undefined, it means user cleared the filter select
+  // In this case, remove the filter row instead of updating it
+  if (id === undefined) {
+    const filterToRemove = selectedFilters.value[index];
+    if (filterToRemove !== undefined) {
+      removeFilterRow(filterToRemove);
+    }
+    return;
+  }
+
   const filters = [...selectedFilters.value];
   const previousFilter = filters[index];
   filters[index] = id;

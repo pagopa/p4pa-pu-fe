@@ -42,11 +42,12 @@ export const _Select = ({
   const userClearingRef = useRef(false);
 
   // Sync inputValue with selectedOption to keep display in sync with form state
-  // Special handling: when user clears, wait for value to become undefined before syncing
+  // Special handling: when user clears, wait for value to become undefined/null/empty before syncing
   useEffect(() => {
-    // If user is clearing, wait until value is actually undefined
+    // If user is clearing, wait until value is actually cleared (undefined, null, or empty string)
     if (userClearingRef.current) {
-      if (value === undefined || value === null) {
+      // Consider undefined, null, and empty string as "cleared"
+      if (value === undefined || value === null || value === '') {
         // Clear completed, reset flag and sync empty string
         userClearingRef.current = false;
         setInputValue('');
