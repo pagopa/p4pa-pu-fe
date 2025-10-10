@@ -154,12 +154,13 @@ export const removeFilterRow = (id: KeyofFilterMap) => {
   });
 };
 
-export const updateFilter = (id: KeyofFilterMap, index: number) => {
+export const updateFilter = (id: KeyofFilterMap | undefined, index: number) => {
   // If id is undefined, it means user cleared the filter select
   // In this case, remove the filter row instead of updating it
   if (id === undefined) {
-    const filterToRemove = selectedFilters.value[index];
-    if (filterToRemove !== undefined) {
+    // Check if the index exists in the array
+    if (index >= 0 && index < selectedFilters.value.length) {
+      const filterToRemove = selectedFilters.value[index];
       removeFilterRow(filterToRemove);
     }
     return;
