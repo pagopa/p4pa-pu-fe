@@ -105,8 +105,8 @@ export const _Select = ({
       disableClearable={false}
       disabled={props.disabled}
       getOptionDisabled={(option) => !!option?.disabled}
-      renderOption={(props, option) => (
-        <li {...props} key={`${label}-${option.value}`}>
+      renderOption={(props, option, state) => (
+        <li {...props} key={`${id}-${state.index}`}>
           {option.label}
         </li>
       )}
