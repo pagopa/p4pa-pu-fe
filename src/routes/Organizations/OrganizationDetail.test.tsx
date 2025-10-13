@@ -31,7 +31,7 @@ vi.mock('../../utils', async () => {
     ...actual,
     default: {
       config: {
-        deployPath: '/test',
+        deployPath: '/test'
       },
       roles: {
         useIsSuperAdmin: vi.fn(() => false)
@@ -39,7 +39,6 @@ vi.mock('../../utils', async () => {
     }
   };
 });
-
 
 describe('OrganizationDetail Page', () => {
   const dataMock = {
@@ -88,7 +87,7 @@ describe('OrganizationDetail Page', () => {
       typeof vi.fn
     >;
     mockGetOrganizationDetail.mockReturnValue({
-      data: {...dataMock, status: 'DRAFT'}
+      data: { ...dataMock, status: 'DRAFT' }
     });
     mockUseIsSuperAdmin.mockReturnValue(true);
     render(<OrganizationDetail />);
