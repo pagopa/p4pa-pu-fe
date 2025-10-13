@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import {
-  OrganizationDetailDTO,
+  OrganizationDetail,
   OrganizationStatus
 } from '../../../../generated/data-contracts';
 import {
@@ -25,7 +25,6 @@ describe('OrganizationDetailSections helpers', () => {
     originalDisplayNames = (
       Intl as unknown as { DisplayNames?: typeof Intl.DisplayNames }
     ).DisplayNames;
-    // Simple mock for Intl.DisplayNames.of
     (Intl as unknown as { DisplayNames: DisplayNamesCtor }).DisplayNames = vi
       .fn()
       .mockImplementation(() => ({
@@ -41,25 +40,25 @@ describe('OrganizationDetailSections helpers', () => {
     }
   });
 
-  const baseOrganization: OrganizationDetailDTO = {
+  const baseOrganization: OrganizationDetail = {
     organizationId: 123,
     orgName: 'Comune di Test',
     status: OrganizationStatus.ACTIVE,
     ipaCode: 'IPA123',
     orgFiscalCode: 'CF123',
     orgTypeCode: 'COMUNE'
-  } as unknown as OrganizationDetailDTO;
+  } as unknown as OrganizationDetail;
 
   const tMock: TFunction = ((key: string) => key) as unknown as TFunction;
 
   it('accountingInfo maps accounting fields and treasury flag correctly', () => {
-    const data: OrganizationDetailDTO = {
+    const data: OrganizationDetail = {
       ...baseOrganization,
       iban: 'IT00A0000000000000000000000',
       postalIban: 'IT00B0000000000000000000000',
       cbillInterBankCode: 'ABCDE',
       flagTreasury: true
-    } as unknown as OrganizationDetailDTO;
+    } as unknown as OrganizationDetail;
 
     const result = accountingInfo(data, tMock);
 
@@ -71,14 +70,14 @@ describe('OrganizationDetailSections helpers', () => {
   });
 
   it('paymentInfo exposes additional language, flags and secret correctly', () => {
-    const data: OrganizationDetailDTO = {
+    const data: OrganizationDetail = {
       ...baseOrganization,
       segregationCode: 'SEG123',
       additionalLanguage: 'fr',
       flagNotifyOutcomePush: true,
       flagPaymentNotification: false,
       generateNoticeApiKey: 'secret-key'
-    } as unknown as OrganizationDetailDTO;
+    } as unknown as OrganizationDetail;
 
     const displayNames = new Intl.DisplayNames(['it'], { type: 'language' });
     const result = paymentInfo(data, tMock, displayNames);
@@ -96,44 +95,42 @@ describe('OrganizationDetailSections helpers', () => {
   });
 
   it('info builds state with label, chip color and action links', () => {
-    const data: OrganizationDetailDTO = {
+    const data: OrganizationDetail = {
       ...baseOrganization,
-      status: OrganizationStatus.ACTIVE
-    } as unknown as OrganizationDetailDTO;
+      status: OrganizationStatus.ACTIVE,
+      operatorsCount: 7,
+      debtPositionTypeOrgCount: 3
+    } as unknown as OrganizationDetail;
 
     const result = info(data, tMock);
 
-    // Stato
     expect(result[0].label).toBe('commons.state');
     expect(result[0].value).toBe('ENABLED');
     expect(result[0].valueType).toBe('status');
     expect(result[0].chipConfig?.color).toBe('success');
 
-    // Operatori
     const operators = result.find((r) => r.label === 'commons.operators');
-    expect(operators?.value).toBe('00');
+    expect(operators?.value).toBe(7);
     expect(operators?.valueType).toBe('withicon');
     expect(operators?.iconConfig?.icon).toBeDefined();
 
-    // Tipologie debito
     const debtTypes = result.find((r) => r.label === 'commons.debtTypes');
-    expect(debtTypes?.value).toBe('00');
+    expect(debtTypes?.value).toBe(3);
     expect(debtTypes?.valueType).toBe('withicon');
     expect(debtTypes?.iconConfig?.icon).toBeDefined();
   });
 
   it('integrationBox exposes IO/SEND flags and secret fields correctly', () => {
-    const data: OrganizationDetailDTO = {
+    const data: OrganizationDetail = {
       ...baseOrganization,
       flagNotifyIo: true,
       ioApiKey: 'io-secret',
       pdndEnabled: false,
       sendApiKey: 'send-secret'
-    } as unknown as OrganizationDetailDTO;
+    } as unknown as OrganizationDetail;
 
     const result = integrationBox(data, tMock);
 
-    // IO section values
     const ioEnabled = result.find(
       (r) => r.label === 'organizations.ioMessagge'
     );
@@ -141,7 +138,6 @@ describe('OrganizationDetailSections helpers', () => {
     const ioSecret = result.find((r) => r.childrenComponent && !r.label);
     expect(ioSecret).toBeDefined();
 
-    // SEND section values
     const pdnd = result.find(
       (r) => r.label === 'organizations.pdndIntegration'
     );
