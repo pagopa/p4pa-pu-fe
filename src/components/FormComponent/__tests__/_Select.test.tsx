@@ -96,7 +96,7 @@ describe('_Select', () => {
     expect(input).toBeDisabled();
   });
 
-  it('allows clearing the selection and calls onChange(null)', async () => {
+  it('allows clearing the selection and calls onChange(undefined)', async () => {
     const { onChange } = setup({ value: 'OPEN' });
     const input = screen.getByLabelText('Status') as HTMLInputElement;
     expect(input.value).toBe('Open');
@@ -106,7 +106,7 @@ describe('_Select', () => {
     const user = userEvent.setup();
     await user.click(clearBtn);
 
-    expect(onChange).toHaveBeenCalledWith(null);
+    expect(onChange).toHaveBeenCalledWith(undefined);
     expect(input.value).toBe('');
   });
 

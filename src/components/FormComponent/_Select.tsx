@@ -18,7 +18,7 @@ export type _SelectProps = Omit<
 > & {
   options?: SelectOptions;
   forwardRef?: React.Ref<HTMLInputElement>;
-  onChange?: (value: FilterFieldValue) => void;
+  onChange?: (value: FilterFieldValue | undefined) => void;
   value?: FilterFieldValue; // initial selection (uncontrolled)
 };
 
@@ -48,7 +48,7 @@ export const _Select = ({
     newValue: { label: string; value: FilterFieldValue } | null
   ) => {
     setSelectedOption(newValue);
-    onChange?.(newValue ? newValue.value : null);
+    onChange?.(newValue ? newValue.value : undefined);
   };
 
   // handle input change for display value
