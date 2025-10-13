@@ -28,7 +28,7 @@ const MultiFilter = ({ filterMap, onFilterInteraction }: MultiFilterProps) => {
   } = useStore();
 
   const onChange = (value: FilterFieldValue, index: number) => {
-    updateFilter(value as KeyofFilterMap, index);
+    updateFilter(value as KeyofFilterMap | undefined, index);
     onFilterInteraction?.();
   };
 

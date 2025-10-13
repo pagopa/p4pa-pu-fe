@@ -12,7 +12,10 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TaxonomyFields } from '../../models/Taxonomy';
 import { useState } from 'react';
-import { noFilterSetted } from '../../utils/filtersValidation';
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../utils/filtersValidation';
 import {
   getScheduleLastUpdatedTime,
   synchronizeTaxonomy
@@ -27,17 +30,26 @@ export const TaxonomyPage = () => {
 
   const form = useForm({
     resolver: zodResolver(
-      z.object({
-        orgType: z.string({
-          required_error: 'taxonomy.orgType.required'
-        }),
-        macroAreaCode: z.string().optional(),
-        serviceTypeCode: z.string().optional(),
-        collectingReason: z.string().optional(),
-        taxonomyCode: z.string().optional()
-      })
+      z
+        .object({
+          orgType: z.string().optional(),
+          macroAreaCode: z.string().optional(),
+          serviceTypeCode: z.string().optional(),
+          collectingReason: z.string().optional(),
+          taxonomyCode: z.string().optional()
+        })
+        .refine(
+          (data) => {
+            // orgType is required for submission
+            return data.orgType !== undefined && data.orgType !== '';
+          },
+          {
+            message: 'taxonomy.orgType.required',
+            path: ['orgType']
+          }
+        )
     ),
-    mode: 'onTouched'
+    mode: 'onSubmit'
   });
 
   const syncMutation = synchronizeTaxonomy();
@@ -59,15 +71,9 @@ export const TaxonomyPage = () => {
 
   const handleSearch = () => {
     const currentValues = form.getValues();
-    const optionalFilters = {
-      macroAreaCode: currentValues.macroAreaCode,
-      serviceTypeCode: currentValues.serviceTypeCode,
-      collectingReason: currentValues.collectingReason,
-      taxonomyCode: currentValues.taxonomyCode
-    };
 
-    if (noFilterSetted(optionalFilters)) {
-      setError(true);
+    if (noFilterSetted(currentValues)) {
+      setError(shouldShowGeneralError(currentValues));
     } else {
       setError(false);
     }
@@ -76,11 +82,8 @@ export const TaxonomyPage = () => {
   };
 
   const onSubmit = async (filters: Partial<TaxonomyFields>) => {
-    if (error) {
-      return;
-    }
-
     const params = utils.URI.encode(filters);
+
     navigate(`${PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS}#${params}`);
   };
 

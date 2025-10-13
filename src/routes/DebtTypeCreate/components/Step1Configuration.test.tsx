@@ -8,9 +8,9 @@ import {
 } from '../../../__tests__/renderers';
 import { Step1Configuration } from './Step1Configuration';
 
-// Mock taxonomySchema to exclude taxonomy fields from validation in this test
+// Mock taxonomyFieldsSchema to exclude taxonomy fields from validation in this test
 vi.mock('../../../components/TaxonomyFilter/schema', () => ({
-  taxonomySchema: z.object({})
+  taxonomyFieldsSchema: z.object({})
 }));
 
 // Mock TaxonomyFilter and TaxonomyEdit components
