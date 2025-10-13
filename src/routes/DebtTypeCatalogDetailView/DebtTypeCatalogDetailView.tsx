@@ -80,7 +80,15 @@ export const DebtTypeCatalogDetailView = () => {
     setOpenDeleteDialog(false);
     try {
       await deleteDebtPositionType.mutateAsync();
-      navigate(PageRoutes.DEBT_TYPES_CATALOG);
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'debt-type-delete-success',
+          i18nParams: {
+            description: data?.description
+          }
+        }
+      });
     } catch (error: unknown) {
       setOpenErrorDialog(true);
       if (isAxiosError(error) && error.response?.status === 409) {
