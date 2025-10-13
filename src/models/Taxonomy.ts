@@ -1,3 +1,4 @@
+// Taxonomy fields for form - all required
 export type TaxonomyFields = {
   orgType: string;
   macroAreaCode: string;
@@ -6,6 +7,5 @@ export type TaxonomyFields = {
   taxonomyCode: string;
 };
 
-export type TaxonomyFilters = Partial<TaxonomyFields> & {
-  orgType: string;
-};
+// Taxonomy filters for search - all optional
+export type TaxonomyFilters = Partial<TaxonomyFields>;

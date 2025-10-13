@@ -828,6 +828,7 @@
       "operatingYear": "Anno esercizio"
     },
     "fiscalCode": "Codice Fiscale",
+    "email": "Email",
     "fiscalCodeorVat": "CF / Partita IVA",
     "fiscalCodeorVatExecutor": "CF / Partita IVA",
     "flowImport": {

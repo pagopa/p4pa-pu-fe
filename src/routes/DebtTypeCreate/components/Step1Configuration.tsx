@@ -14,7 +14,7 @@ import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
 import { DebtPositionTypeDetailDTO } from '../../../../generated/data-contracts';
 import { TaxonomyFilter } from '../../../components/TaxonomyFilter';
 import { TaxonomyEdit } from './components/TaxonomyEdit';
-import { taxonomySchema } from '../../../components/TaxonomyFilter/schema';
+import { taxonomyFieldsSchema } from '../../../components/TaxonomyFilter/schema';
 import { TaxonomyFields } from '../../../models/Taxonomy';
 
 export type Step1Data = TaxonomyFields & {
@@ -41,7 +41,7 @@ const schema = z
       })
       .max(100, 'debtTypeCreate.configuration.debtType.maxCharacters')
   })
-  .merge(taxonomySchema);
+  .merge(taxonomyFieldsSchema);
 
 export const Step1Configuration = ({
   setData,
@@ -128,7 +128,7 @@ export const Step1Configuration = ({
             ) : (
               <TaxonomyFilter
                 requiredFields={true}
-                disableFieldReset={true}
+                disableFieldReset={false}
                 render={(fields) => (
                   <Stack
                     gap={2}
