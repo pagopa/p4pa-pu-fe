@@ -62,15 +62,13 @@ export const TaxonomyFilter = ({
 
   // resets fields after changes in previous fields
   // keys are used to reset mui select
-  // Only use form dependencies if reset is not disabled
-  const { keys } = disableFieldReset
-    ? {
-        keys: fieldOrder.reduce(
-          (acc, field, index) => ({ ...acc, [field]: `${field}-${index}` }),
-          {} as Record<string, string>
-        )
-      }
-    : useFormDependencies({ form, fieldOrder });
+  // Always call useFormDependencies (never conditionally - React hooks rule)
+  // The hook now handles first-render skip internally, so we don't need disabled flag
+  const { keys } = useFormDependencies({
+    form,
+    fieldOrder,
+    disabled: disableFieldReset // Still pass flag for cases where it's explicitly needed
+  });
 
   // values for conditional rendering and query params
   const organizationType = watch('orgType');

@@ -88,6 +88,10 @@ export const OperatorDetail = () => {
         {
           label: t('commons.fiscalCode'),
           value: data?.operatorFiscalCode
+        },
+        {
+          label: t('commons.email'),
+          value: data?.operatorEmail
         }
       ]
     }
