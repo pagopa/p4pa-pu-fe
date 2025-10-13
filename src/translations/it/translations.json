@@ -1038,6 +1038,7 @@
     "status": {
       "ALL": "Tutti",
       "ACTIVE": "Attivo",
+      "ENABLED": "Abilitato",
       "INACTIVE": "Disattivo",
       "COMPLETED": "Elaborato",
       "DISABLED": "Disabilitato",
