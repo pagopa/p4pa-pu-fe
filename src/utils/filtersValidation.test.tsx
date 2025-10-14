@@ -2,7 +2,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   canPerformSearch,
-  hasOnlyPartialDateRangeErrors,
+  hasPartialDateRangeErrors,
   noFilterSetted,
   shouldShowGeneralError
 } from './filtersValidation';
@@ -171,19 +171,19 @@ describe('canPerformSearch', () => {
   });
 });
 
-describe('hasOnlyPartialDateRangeErrors', () => {
+describe('hasPartialDateRangeErrors', () => {
   it('should return false when filters object is empty', () => {
-    expect(hasOnlyPartialDateRangeErrors({})).toBe(false);
+    expect(hasPartialDateRangeErrors({})).toBe(false);
   });
 
   it('should return false when filters is null or undefined', () => {
-    expect(hasOnlyPartialDateRangeErrors(null as any)).toBe(false);
-    expect(hasOnlyPartialDateRangeErrors(undefined as any)).toBe(false);
+    expect(hasPartialDateRangeErrors(null as any)).toBe(false);
+    expect(hasPartialDateRangeErrors(undefined as any)).toBe(false);
   });
 
   it('should return true when only partial date range exists (only from)', () => {
     expect(
-      hasOnlyPartialDateRangeErrors({
+      hasPartialDateRangeErrors({
         name: '',
         active: false,
         count: 0,
@@ -194,7 +194,7 @@ describe('hasOnlyPartialDateRangeErrors', () => {
 
   it('should return true when only partial date range exists (only to)', () => {
     expect(
-      hasOnlyPartialDateRangeErrors({
+      hasPartialDateRangeErrors({
         name: '',
         active: false,
         count: 0,
@@ -205,7 +205,7 @@ describe('hasOnlyPartialDateRangeErrors', () => {
 
   it('should return false when date range is complete', () => {
     expect(
-      hasOnlyPartialDateRangeErrors({
+      hasPartialDateRangeErrors({
         name: '',
         active: false,
         count: 0,
@@ -214,42 +214,42 @@ describe('hasOnlyPartialDateRangeErrors', () => {
     ).toBe(false);
   });
 
-  it('should return false when there are valid non-date filters', () => {
+  it('should return true when there are valid non-date filters and partial dates', () => {
     expect(
-      hasOnlyPartialDateRangeErrors({
+      hasPartialDateRangeErrors({
         name: 'Mario',
         active: false,
         count: 0,
         date: { from: new Date(), to: null }
       })
-    ).toBe(false);
+    ).toBe(true);
   });
 
-  it('should return false when there are valid boolean filters', () => {
+  it('should return true when there are valid boolean filters and partial dates', () => {
     expect(
-      hasOnlyPartialDateRangeErrors({
+      hasPartialDateRangeErrors({
         name: '',
         active: true,
         count: 0,
         date: { from: new Date(), to: null }
       })
-    ).toBe(false);
+    ).toBe(true);
   });
 
-  it('should return false when there are valid numeric filters', () => {
+  it('should return true when there are valid numeric filters and partial dates', () => {
     expect(
-      hasOnlyPartialDateRangeErrors({
+      hasPartialDateRangeErrors({
         name: '',
         active: false,
         count: 42,
         date: { from: new Date(), to: null }
       })
-    ).toBe(false);
+    ).toBe(true);
   });
 
   it('should return false when both date fields are null', () => {
     expect(
-      hasOnlyPartialDateRangeErrors({
+      hasPartialDateRangeErrors({
         name: '',
         active: false,
         count: 0,
@@ -260,7 +260,7 @@ describe('hasOnlyPartialDateRangeErrors', () => {
 
   it('should ignore error fields in the check', () => {
     expect(
-      hasOnlyPartialDateRangeErrors({
+      hasPartialDateRangeErrors({
         name: '',
         active: false,
         count: 0,
