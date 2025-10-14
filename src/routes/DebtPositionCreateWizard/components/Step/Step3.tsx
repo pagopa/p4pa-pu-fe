@@ -85,7 +85,7 @@ const Step3 = ({
 
   const getNextButtonLabel = (): string => {
     if (isEditing) {
-      return isDraftInEdit ? 'commons.create' : 'commons.save';
+      return isDraftInEdit ? 'commons.edit' : 'commons.save';
     }
     return 'commons.create';
   };
