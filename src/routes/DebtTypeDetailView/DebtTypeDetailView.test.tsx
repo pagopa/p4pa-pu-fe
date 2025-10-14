@@ -222,6 +222,7 @@ describe('DebtTypeDetailView', () => {
           code: 'TEST_CODE',
           debtPositionTypeDescription: 'Test Description',
           flagActive: true,
+          organizationId: 3,
           ...overrides.debtType
         }
       },
@@ -657,6 +658,24 @@ describe('DebtTypeDetailView', () => {
 
         expect(mockConfirmDialog.showDisableDialog).toHaveBeenCalled();
       });
+    });
+  });
+
+  describe('No buttons when the org is not the same of detail', () => {
+    // cfr #P4ADEV-3915
+
+    beforeEach(() => {
+      setupDefaultMocks({
+        debtType: { flagActive: true, organizationId: 78 }
+      });
+    });
+
+    it('no edit button', async () => {
+      render(<DebtTypeDetailView />);
+
+      expect(
+        screen.queryByTestId('action-edit-button')
+      ).not.toBeInTheDocument();
     });
   });
 

@@ -236,6 +236,14 @@ export const DebtTypeDetailView = () => {
   const { titleActions, bottomActions } = useMemo(() => {
     const isActive = data?.response?.flagActive;
 
+    // no buttons it the org used != org owned
+    if (data?.response.organizationId !== organizationId) {
+      return {
+        titleActions: [],
+        bottomActions: []
+      };
+    }
+
     if (isActive) {
       const actionMenuButton = {
         icon: <MoreVert />,
@@ -251,6 +259,7 @@ export const DebtTypeDetailView = () => {
         buttonText: t('commons.edit'),
         color: 'primary' as const,
         variant: 'contained' as const,
+        dataTestId: 'action-edit-button',
         disabled: false,
         onActionClick: handleEditClick
       };
