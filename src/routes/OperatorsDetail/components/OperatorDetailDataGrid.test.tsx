@@ -128,6 +128,7 @@ describe('OperatorDetailDataGrid', () => {
   it('renders rows correctly', () => {
     render(
       <OperatorDetailDataGrid
+        isSameOrg={true}
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
