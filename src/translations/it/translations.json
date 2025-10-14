@@ -1420,6 +1420,11 @@
       "alreadyUsedDescription": "Questo tipo dovuto è presente in un Catalogo / Posizione Debitoria, pertanto non può essere eliminato.",
       "genericErrorDescription": "Siamo spiacenti, al momento non è possibile eliminare questo tipo di dovuto.",
       "title": "Il tipo dovuto non può essere eliminato"
+    },
+    "successPage": {
+      "title": "Tipo dovuto eliminato con successo",
+      "description": "Il tipo dovuto: {{description}} è stato eliminato correttamente.",
+      "backToCatalog": "Torna al catalogo"
     }
   },
   "debtTypeCatalogEdit": {

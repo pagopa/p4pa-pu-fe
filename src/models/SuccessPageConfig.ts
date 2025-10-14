@@ -105,6 +105,18 @@ export const SuccessPageConfig: SuccessOpts = {
       }
     ]
   },
+  'debt-type-delete-success': {
+    title: 'debtTypeCatalogDetail.successPage.title',
+    description: 'debtTypeCatalogDetail.successPage.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'debtTypeCatalogDetail.successPage.backToCatalog',
+        actionID: 'DEBT_TYPES_CATALOG'
+      }
+    ]
+  },
   'debt-type-catalog-edit': {
     title: 'debtTypeCatalogEditSuccess.title',
     description: 'debtTypeCatalogEditSuccess.description',
