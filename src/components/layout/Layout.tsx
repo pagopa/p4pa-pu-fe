@@ -67,12 +67,19 @@ export function Layout() {
   const skitToContent = () => {
     const mainContent = document.getElementById('main-content');
     mainContent?.focus();
-    console.log('---->')
   };
 
   return (
     <>
-      <Button id="skip-to-content" color='primary' variant='contained' onClick={skitToContent} size='large'>{t('commons.skipToContent')}</Button>
+      <Button
+        id="skip-to-content"
+        color="primary"
+        variant="contained"
+        onClick={skitToContent}
+        size="large"
+      >
+        {t('commons.skipToContent')}
+      </Button>
       <GenericDialog
         {...utils.dialog.status.dialogPayload.value}
         open={utils.dialog.status.isDialogVisible.value}
