@@ -1,5 +1,6 @@
 import {
   Alert,
+  Button,
   Container,
   Grid,
   Snackbar,
@@ -21,6 +22,7 @@ import useCollapseMenu from '../../hooks/useCollapseMenu';
 import { useFooterData } from '../../hooks/useFooterData';
 import { useTranslation } from 'react-i18next';
 import GenericDialog from '../GenericDialog/GenericDialog';
+import '../../style.css';
 
 const defaultRouteHandle: RouteHandleObject = {
   backButton: true,
@@ -62,8 +64,15 @@ export function Layout() {
   const sidePadding = sidebar.visible ? 3 : { xs: 3, md: 12, lg: 27, xl: 34 };
   const mainColumnWidth = getMainColumnWidth();
 
+  const skitToContent = () => {
+    const mainContent = document.getElementById('main-content');
+    mainContent?.focus();
+    console.log('---->')
+  };
+
   return (
     <>
+      <Button id="skip-to-content" color='primary' variant='contained' onClick={skitToContent} size='large'>{t('commons.skipToContent')}</Button>
       <GenericDialog
         {...utils.dialog.status.dialogPayload.value}
         open={utils.dialog.status.isDialogVisible.value}
@@ -100,6 +109,8 @@ export function Layout() {
               height={'100%'}
               xs={mainColumnWidth}
               paddingX={sidePadding}
+              id="main-content"
+              tabIndex={0}
             >
               <Stack
                 direction="row"
