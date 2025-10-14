@@ -32,6 +32,7 @@ export type FileUploaderProps = {
   fileExtensionsAllowed: Array<string>;
   header?: React.ReactNode;
   disabled?: boolean;
+  checkVersion?: boolean;
 };
 
 const FileUploader = ({
@@ -45,17 +46,25 @@ const FileUploader = ({
   requiredFileText,
   fileExtensionsAllowed,
   header,
-  disabled
+  disabled,
+  checkVersion = false
 }: FileUploaderProps) => {
   const { t } = useTranslation();
 
   const [error, setError] = useState<string | null>(null);
+
+  // eslint-disable-next-line sonarjs/slow-regex
+  const checkVersionPattern = /\d+_\d+(?=\.[^.]+$)/;
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
     if (selectedFile) {
       if (!isExtensionAllowed(selectedFile, fileExtensionsAllowed)) {
         setError(t('commons.files.notvalid'));
+        return;
+      }
+      if (checkVersion && !checkVersionPattern.test(selectedFile.name)) {
+        setError(t('commons.files.missingVersion'));
         return;
       }
       setError(null);
@@ -71,6 +80,10 @@ const FileUploader = ({
     if (selectedFile) {
       if (!isExtensionAllowed(selectedFile, fileExtensionsAllowed)) {
         setError(t('commons.files.notvalid'));
+        return;
+      }
+      if (checkVersion && !checkVersionPattern.test(selectedFile.name)) {
+        setError(t('commons.files.missingVersion'));
         return;
       }
       setError(null);
@@ -205,6 +218,7 @@ const FileUploader = ({
             color={disabled ? 'gray' : 'textSecondary'}
           >
             {requiredFileText}
+            {checkVersion && ` ${t('commons.files.missingVersion')}`}
           </Typography>
         </>
       )}
