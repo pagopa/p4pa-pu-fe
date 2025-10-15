@@ -53,6 +53,7 @@ const ClientSilDetail = () => {
   }, [isError, error, navigate]);
 
   useEffect(() => {
+    console.log(data?.clientName);
     if (data && !clientItem) {
       setClientItem(data);
     }
@@ -84,7 +85,15 @@ const ClientSilDetail = () => {
     try {
       await deleteClientMutation.mutateAsync(clientId);
       utils.dialog.close();
-      navigate(PageRoutes.CLIENT_SIL_INDEX);
+
+      console.log('clientName:', data?.clientName);
+
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'client-sil-delete-success'
+        }
+      });
     } catch (error: unknown) {
       utils.dialog.close();
       console.error('Error while deleting the client:', error);
