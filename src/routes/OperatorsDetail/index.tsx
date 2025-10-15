@@ -21,6 +21,7 @@ import { useDebtPositionTypesByOrg } from '../../hooks/useDebtPositionTypesByOrg
 import { useBreadcrumbs } from './hooks/useBreadcrumbs';
 import { DebtPositionTypeOrgDTO } from '../../../generated/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
+import { useStore } from '../../store/GlobalStore';
 
 export const OperatorDetail = () => {
   const { t } = useTranslation();
@@ -36,6 +37,12 @@ export const OperatorDetail = () => {
   } = useParams();
 
   const organizationId = Number(paramOrganizationId);
+
+  const {
+    state: { organizationId: organizationIdStored }
+  } = useStore();
+  // this is to check if the org selected is the same who want operate
+  const isSameOrg = organizationIdStored === organizationId;
 
   if (isNaN(organizationId) || !mappedExternalUserId) {
     navigate(PageRoutes.RESPONSES_ERROR);
@@ -193,14 +200,16 @@ export const OperatorDetail = () => {
           <Typography variant="h6">
             {t('OperatorDetail.associatedDebtPositionTypes')}
           </Typography>
-          <Button
-            variant="outlined"
-            color="primary"
-            startIcon={<Add />}
-            onClick={onAffiliateClick}
-          >
-            {t('commons.affiliateNew')}
-          </Button>
+          {isSameOrg && (
+            <Button
+              variant="outlined"
+              color="primary"
+              startIcon={<Add />}
+              onClick={onAffiliateClick}
+            >
+              {t('commons.affiliateNew')}
+            </Button>
+          )}
         </Box>
         <Grid
           container
@@ -231,6 +240,7 @@ export const OperatorDetail = () => {
             data={data?.pagedDebtPositionTypeOrg}
             operatorName={operatorName}
             onDelete={onDelete}
+            isSameOrg={isSameOrg}
           />
         </Grid>
       </Grid>
