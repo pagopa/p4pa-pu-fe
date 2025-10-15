@@ -10,11 +10,13 @@ import utils from '../../../utils';
 type ActionMenuProps = {
   row: DebtPositionTypeOrgDTO;
   onDelete: (row: DebtPositionTypeOrgDTO) => void;
+  canDelete: boolean;
 };
 
 export const GridActionMenu = ({
   row,
-  onDelete: onDeleteProp
+  onDelete: onDeleteProp,
+  canDelete
 }: ActionMenuProps) => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -34,35 +36,35 @@ export const GridActionMenu = ({
     }
   };
 
-  return (
-    <ActionMenu
-      rowId={row.debtPositionTypeId}
-      menuItems={[
-        {
-          icon: (
-            <RemoveCircleOutline
-              fontSize="small"
-              color="error"
-              aria-label="remove operator detail item"
-              data-testid={`remove-detail-${row.debtPositionTypeId}`}
-            />
-          ),
-          label: t('commons.onlyRemove'),
-          action: onDelete
-        },
-        {
-          icon: (
-            <OpenInNew
-              color="primary"
-              fontSize="small"
-              aria-label="go to operator detail item"
-              data-testid={`navigate-to-detail-${row.debtPositionTypeId}`}
-            />
-          ),
-          label: t('commons.goToDetail'),
-          action: onDetail
-        }
-      ]}
-    />
-  );
+  const menuItems = [
+    {
+      icon: (
+        <OpenInNew
+          color="primary"
+          fontSize="small"
+          aria-label="go to operator detail item"
+          data-testid={`navigate-to-detail-${row.debtPositionTypeId}`}
+        />
+      ),
+      label: t('commons.goToDetail'),
+      action: onDetail
+    }
+  ];
+
+  if (canDelete) {
+    menuItems.push({
+      icon: (
+        <RemoveCircleOutline
+          fontSize="small"
+          color="error"
+          aria-label="remove operator detail item"
+          data-testid={`remove-detail-${row.debtPositionTypeId}`}
+        />
+      ),
+      label: t('commons.onlyRemove'),
+      action: onDelete
+    });
+  }
+
+  return <ActionMenu rowId={row.debtPositionTypeId} menuItems={menuItems} />;
 };

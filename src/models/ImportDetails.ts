@@ -7,6 +7,7 @@ type ImportFlowDetail = {
   category: string;
   requiredFieldDescription?: string;
   flowTypes: Array<IngestionFlowFileType>;
+  checkVersion: boolean;
 };
 
 type ImportFlowDetails = Record<string, ImportFlowDetail>;
@@ -17,14 +18,16 @@ export const importFlowConfig: ImportFlowDetails = {
     fileExtensionsAllowed: ['zip'],
     backRoute: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW',
     category: 'telematic-receipt-import',
-    flowTypes: [IngestionFlowFileType.RECEIPT]
+    flowTypes: [IngestionFlowFileType.RECEIPT],
+    checkVersion: true
   },
   reporting: {
     title: 'commons.importNewFlow',
     fileExtensionsAllowed: ['zip'],
     backRoute: 'REPORTING_IMPORT_OVERVIEW',
     category: 'reporting-import',
-    flowTypes: [IngestionFlowFileType.PAYMENTS_REPORTING]
+    flowTypes: [IngestionFlowFileType.PAYMENTS_REPORTING],
+    checkVersion: false
   },
   treasury: {
     title: 'commons.importNewFlow',
@@ -37,13 +40,15 @@ export const importFlowConfig: ImportFlowDetails = {
       IngestionFlowFileType.TREASURY_CSV,
       IngestionFlowFileType.TREASURY_OPI,
       IngestionFlowFileType.TREASURY_POSTE
-    ]
+    ],
+    checkVersion: true
   },
   'debt-positions': {
     title: 'commons.importNewFlow',
     fileExtensionsAllowed: ['zip'],
     backRoute: 'DEBT_POSITIONS',
     category: 'debt-positions',
-    flowTypes: [IngestionFlowFileType.DP_INSTALLMENTS]
+    flowTypes: [IngestionFlowFileType.DP_INSTALLMENTS],
+    checkVersion: true
   }
 };

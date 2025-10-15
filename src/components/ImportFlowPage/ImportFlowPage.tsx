@@ -154,6 +154,7 @@ const ImportFlow = () => {
                 setFile={setFile}
                 description={t(fileUploaderDescriptionKey)}
                 requiredFileText={t('FileUploaderFlowImport.requiredFileText')}
+                checkVersion={config.checkVersion}
                 fileExtensionsAllowed={config.fileExtensionsAllowed}
               />
             </Box>
