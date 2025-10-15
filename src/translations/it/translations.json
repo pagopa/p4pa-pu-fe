@@ -2084,6 +2084,7 @@
     "printKeyAPI": "API Key stampa avvisi",
     "orgEmail": "Email ente",
     "orgLogo": "Logo dell'ente",
+    "orgLogoDescription": "Questo logo è usato per la generazione di Ricevute Telematiche.",
     "enableOrg": "Abilita ente",
     "editOrg": "Modifica ente",
     "alertTitle": "Completa i dati per attivare l'ente",

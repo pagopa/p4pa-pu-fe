@@ -1,4 +1,4 @@
-import { Box, Grid } from '@mui/material';
+import { Box, Grid, Typography } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import TitleComponent, {
   ActionMenuItem
@@ -186,24 +186,56 @@ export const OrganizationDetail = () => {
               <Box
                 borderRadius={2}
                 bgcolor={theme.palette.background.paper}
-                padding={2}
-                display={'flex'}
-                justifyContent={'center'}
+                padding={3}
               >
-                {organizationDetailData?.orgLogo && (
-                  <Box
-                    sx={{
-                      border: `1px solid ${theme.palette.grey[300]}`,
-                      borderRadius: 2,
-                      display: 'inline-block',
-                      fontSize: 0,
-                      padding: 2,
-                      width: '150px'
-                    }}
-                  >
-                    <img src={organizationDetailData.orgLogo} width={'100%'} />
-                  </Box>
-                )}
+                <Typography
+                  variant="overline"
+                  component="h3"
+                  sx={{
+                    fontWeight: 700,
+                    fontSize: '14px',
+                    color: theme.palette.text.primary,
+                    display: 'block',
+                    mb: 2
+                  }}
+                >
+                  {t('organizations.orgLogo')}
+                </Typography>
+                <Box display="flex" justifyContent="center" mb={2}>
+                  {organizationDetailData?.orgLogo && (
+                    <Box
+                      sx={{
+                        border: `1px solid ${theme.palette.grey[300]}`,
+                        borderRadius: 2,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        padding: 3,
+                        width: '200px',
+                        height: '200px',
+                        bgcolor: theme.palette.common.white
+                      }}
+                    >
+                      <img
+                        src={organizationDetailData.orgLogo}
+                        alt={t('organizations.orgLogoTitle')}
+                        style={{
+                          maxWidth: '100%',
+                          maxHeight: '100%',
+                          objectFit: 'contain'
+                        }}
+                      />
+                    </Box>
+                  )}
+                </Box>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  textAlign="center"
+                  sx={{ fontSize: '14px' }}
+                >
+                  {t('organizations.orgLogoDescription')}
+                </Typography>
               </Box>
             </Grid>
           </Grid>
