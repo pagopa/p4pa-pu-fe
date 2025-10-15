@@ -188,8 +188,10 @@ export const OrganizationDetail = () => {
                 borderRadius={2}
                 bgcolor={theme.palette.background.paper}
                 padding={3}
+                height="100%"
+                display="flex"
+                flexDirection="column"
               >
-                {/* Titolo */}
                 <Typography
                   variant="overline"
                   component="h3"
@@ -204,7 +206,14 @@ export const OrganizationDetail = () => {
                   {t('organizations.orgLogo')}
                 </Typography>
 
-                <Box display="flex" justifyContent="center" mb={2}>
+                <Box
+                  display="flex"
+                  flexDirection="column"
+                  justifyContent="center"
+                  alignItems="center"
+                  flexGrow={1}
+                  mb={2}
+                >
                   <Box
                     sx={{
                       border: `1px solid ${theme.palette.grey[300]}`,

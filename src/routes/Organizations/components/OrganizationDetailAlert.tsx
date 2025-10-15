@@ -1,7 +1,7 @@
 import { Alert, AlertTitle, Button, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { ReactNode, useEffect, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { OrganizationDetailDTO } from '../../../../generated/data-contracts';
 
 type OrganizationDetailAlertProps = {
@@ -30,6 +30,8 @@ export const OrganizationDetailAlert: React.FC<
     .filter((key) => !(key in organizationDetailData))
     .map((key) => mandatoryFields[key] ?? key);
 
+  const emptyFieldsString = missingKeys.join(', ');
+
   useEffect(() => {
     if (missingKeys.length > 0) setShowAlert(true);
   }, [missingKeys]);
@@ -50,10 +52,10 @@ export const OrganizationDetailAlert: React.FC<
         >
           <AlertTitle>{t('organizations.alertTitle')}</AlertTitle>
           <Typography variant={'body2'}>
-            <Trans
-              i18nKey="organizations.alertBody"
-              values={{ emptyFields: missingKeys }}
-            />
+            {t('organizations.alertBody', {
+              emptyFields: emptyFieldsString,
+              interpolation: { escapeValue: false }
+            })}
           </Typography>
         </Alert>
       )}
