@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material';
+import { Box, Grid, Typography, Alert } from '@mui/material';
 import { Trans, useTranslation } from 'react-i18next';
 import TitleComponent, {
   ActionMenuItem
@@ -27,6 +27,7 @@ import { useLanguage } from '../../hooks/useLanguage';
 import EditIcon from '@mui/icons-material/Edit';
 import utils from '../../utils';
 import { OrganizationDetailAlert } from './components/OrganizationDetailAlert';
+import logoBoxPlaceholder from '../../assets/logoBox.jpg';
 
 export const OrganizationDetail = () => {
   const { t } = useTranslation();
@@ -188,6 +189,7 @@ export const OrganizationDetail = () => {
                 bgcolor={theme.palette.background.paper}
                 padding={3}
               >
+                {/* Titolo */}
                 <Typography
                   variant="overline"
                   component="h3"
@@ -201,41 +203,67 @@ export const OrganizationDetail = () => {
                 >
                   {t('organizations.orgLogo')}
                 </Typography>
+
                 <Box display="flex" justifyContent="center" mb={2}>
-                  {organizationDetailData?.orgLogo && (
-                    <Box
-                      sx={{
-                        border: `1px solid ${theme.palette.grey[300]}`,
-                        borderRadius: 2,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        padding: 3,
-                        width: '200px',
-                        height: '200px',
-                        bgcolor: theme.palette.common.white
-                      }}
-                    >
+                  <Box
+                    sx={{
+                      border: `1px solid ${theme.palette.grey[300]}`,
+                      borderRadius: 2,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: 3,
+                      width: '200px',
+                      height: '200px',
+                      bgcolor: organizationDetailData?.orgLogo
+                        ? theme.palette.common.white
+                        : theme.palette.grey[50]
+                    }}
+                  >
+                    {organizationDetailData?.orgLogo ? (
                       <img
                         src={organizationDetailData.orgLogo}
-                        alt={t('organizations.orgLogoTitle')}
+                        alt={t('organizations.orgLogo')}
                         style={{
                           maxWidth: '100%',
                           maxHeight: '100%',
                           objectFit: 'contain'
                         }}
                       />
-                    </Box>
-                  )}
+                    ) : (
+                      <img
+                        src={logoBoxPlaceholder}
+                        alt={t('organizations.logoPlaceholder')}
+                        style={{
+                          objectFit: 'contain',
+                          opacity: 0.5
+                        }}
+                      />
+                    )}
+                  </Box>
                 </Box>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  textAlign="center"
-                  sx={{ fontSize: '14px' }}
-                >
-                  {t('organizations.orgLogoDescription')}
-                </Typography>
+
+                {organizationDetailData?.orgLogo ? (
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    textAlign="center"
+                    sx={{ fontSize: '14px' }}
+                  >
+                    {t('organizations.orgLogoDescription')}
+                  </Typography>
+                ) : (
+                  <Alert
+                    severity="error"
+                    sx={{
+                      '& .MuiAlert-message': {
+                        fontSize: '14px'
+                      }
+                    }}
+                  >
+                    {t('organizations.orgLogoMissingAlert')}
+                  </Alert>
+                )}
               </Box>
             </Grid>
           </Grid>
