@@ -1,4 +1,9 @@
 {
+  "a11y": {
+    "navigation": {
+      "announcement": "Hai raggiunto la pagina {{page}}"
+    }
+  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -646,6 +651,11 @@
         "title": "Sei sicuro di voler eliminare il Client SIL?",
         "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
       }
+    },
+    "successPage": {
+      "title": "Client SIL eliminato con successo",
+      "description": "Il Client SIL è stato eliminato correttamente.",
+      "backToCatalog": "Torna alla lista"
     }
   },
   "clientSilDetail": {
@@ -979,6 +989,7 @@
       "REPORTING_INDEX": "Pagina principale",
       "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
       "REPORTING_SEARCH_RESULTS": "Risultato ricerca",
+      "STATISTICS": "Statistiche",
       "TELEMATIC_RECEIPT": "Ricevute Telematiche",
       "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
       "TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
