@@ -271,5 +271,17 @@ export const SuccessPageConfig: SuccessOpts = {
         customNavigation: 'OPERATORS_DETAIL'
       }
     ]
+  },
+  'client-sil-delete-success': {
+    title: 'clientSil.successPage.title',
+    description: 'clientSil.successPage.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'clientSil.successPage.backToCatalog',
+        actionID: 'CLIENT_SIL_INDEX'
+      }
+    ]
   }
 };
