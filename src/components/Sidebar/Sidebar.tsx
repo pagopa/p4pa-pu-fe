@@ -24,6 +24,7 @@ import DashboardIcon from '@mui/icons-material/Dashboard';
 import SettingsIcon from '@mui/icons-material/Settings';
 import AllInboxIcon from '@mui/icons-material/AllInbox';
 import DomainIcon from '@mui/icons-material/Domain';
+import BarChartIcon from '@mui/icons-material/BarChart';
 import { sidebarStyles } from './sidebar.styles';
 import { PageRoutes } from '../../routes';
 import { ISidebarMenuItem } from '../../models/SidebarMenuItem';
@@ -32,6 +33,7 @@ import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
 import { Dns } from '@mui/icons-material';
 import { generatePath } from 'react-router';
+import config from '../../utils/config';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -190,6 +192,24 @@ export const Sidebar: React.FC = () => {
     });
   }
 
+  // STATISTICS SECTION
+  const handleStatisticsClick = () => {
+    const accessToken = localStorage.getItem('accessToken');
+    const statisticsUrl = `${config.statsUrl}/sso-login/?token=${accessToken}`;
+    window.open(statisticsUrl, '_blank', 'noopener,noreferrer');
+    if (!lg) setCollapsed(true);
+  };
+
+  const statisticsItem: ISidebarMenuItem = {
+    label: t('commons.routes.STATISTICS'),
+    icon: BarChartIcon,
+    end: true
+  };
+
+  // STATISTICS SECTION SHOULD BE VISIBLE ONLY IN DEV
+  const showStatistics =
+    import.meta.env.ENV === 'LOCAL' || import.meta.env.ENV === 'DEV';
+
   return (
     <>
       <Grid
@@ -295,6 +315,28 @@ export const Sidebar: React.FC = () => {
               />
             ))}
           </List>
+          {showStatistics && (
+            <>
+              <Divider
+                orientation="horizontal"
+                flexItem
+                sx={{ display: lg ? 'block' : 'none' }}
+              />
+              <List
+                sx={styles.list}
+                component="ol"
+                aria-hidden={collapsed && !lg}
+                aria-label={t('commons.sidebar.menudescription')}
+              >
+                <SidebarMenuItem
+                  onClick={handleStatisticsClick}
+                  collapsed={collapsed}
+                  item={statisticsItem}
+                  key="statistics"
+                />
+              </List>
+            </>
+          )}
           <Box sx={styles.hamburgerBox}>
             <Divider
               orientation="horizontal"
