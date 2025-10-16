@@ -293,7 +293,7 @@ const ImportFlowOverview = ({
               label: 'dateRange',
               gridWidth: 4,
               from: {
-                label: t('commons.exportFrom'),
+                label: t('commons.importFrom'),
                 errorMessage: t('dates.validations.from'),
                 value: filters.creationDateFrom
                   ? new Date(filters.creationDateFrom)
