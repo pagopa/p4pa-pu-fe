@@ -1,6 +1,6 @@
 import { Box, Button, Stack } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { Delete, Edit } from '@mui/icons-material';
+import { Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import DetailAccordion from '../../components/DetailAccordion/DetailAccordion';
 import { DetailSectionProps } from '../../components/DetailContainer/DetailContainer';
@@ -53,6 +53,7 @@ const ClientSilDetail = () => {
   }, [isError, error, navigate]);
 
   useEffect(() => {
+    console.log(data?.clientName);
     if (data && !clientItem) {
       setClientItem(data);
     }
@@ -84,7 +85,15 @@ const ClientSilDetail = () => {
     try {
       await deleteClientMutation.mutateAsync(clientId);
       utils.dialog.close();
-      navigate(PageRoutes.CLIENT_SIL_INDEX);
+
+      console.log('clientName:', data?.clientName);
+
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category: 'client-sil-delete-success'
+        }
+      });
     } catch (error: unknown) {
       utils.dialog.close();
       console.error('Error while deleting the client:', error);
@@ -120,13 +129,6 @@ const ClientSilDetail = () => {
       color: 'error' as const,
       variant: 'outlined' as const,
       onActionClick: handleDelete
-    },
-    {
-      icon: <Edit />,
-      buttonText: t('commons.edit'),
-      color: 'primary' as const,
-      variant: 'contained' as const,
-      onActionClick: () => console.log('TO-DO')
     }
   ];
 
