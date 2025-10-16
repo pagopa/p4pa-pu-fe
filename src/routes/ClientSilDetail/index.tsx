@@ -1,6 +1,6 @@
 import { Box, Button, Stack } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
-import { Delete, Edit } from '@mui/icons-material';
+import { Delete } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import DetailAccordion from '../../components/DetailAccordion/DetailAccordion';
 import { DetailSectionProps } from '../../components/DetailContainer/DetailContainer';
@@ -129,13 +129,6 @@ const ClientSilDetail = () => {
       color: 'error' as const,
       variant: 'outlined' as const,
       onActionClick: handleDelete
-    },
-    {
-      icon: <Edit />,
-      buttonText: t('commons.edit'),
-      color: 'primary' as const,
-      variant: 'contained' as const,
-      onActionClick: () => console.log('TO-DO')
     }
   ];
 
