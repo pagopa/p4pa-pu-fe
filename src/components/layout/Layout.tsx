@@ -23,6 +23,7 @@ import { useFooterData } from '../../hooks/useFooterData';
 import { useTranslation } from 'react-i18next';
 import GenericDialog from '../GenericDialog/GenericDialog';
 import '../../style.css';
+import { RouteChangeAnnouncement } from '../RouteChangeAnnouncement';
 
 const defaultRouteHandle: RouteHandleObject = {
   backButton: true,
@@ -71,6 +72,7 @@ export function Layout() {
 
   return (
     <>
+      <RouteChangeAnnouncement />
       <Button
         id="skip-to-content"
         color="primary"

@@ -1,4 +1,9 @@
 {
+  "a11y": {
+    "navigation": {
+      "announcement": "Hai raggiunto la pagina {{page}}"
+    }
+  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -644,6 +649,11 @@
         "title": "Sei sicuro di voler eliminare il Client SIL?",
         "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
       }
+    },
+    "successPage": {
+      "title": "Client SIL eliminato con successo",
+      "description": "Il Client SIL è stato eliminato correttamente.",
+      "backToCatalog": "Torna alla lista"
     }
   },
   "clientSilDetail": {
