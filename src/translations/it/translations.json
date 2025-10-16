@@ -388,8 +388,6 @@
           "receiptPaymentAmount": "Importo",
           "receiptPaymentDateTime": "Data Esito",
           "receiptPspCompanyName": "Gestore della transazione (PSP)",
-          "receiptPayerExecutorFullName": "Anagrafica pagatore",
-          "receiptPayerExecutorFiscalCode": "Codice fiscale pagatore",
           "iuv": "IUV",
           "iud": "IUD",
           "iur": "IUR",
