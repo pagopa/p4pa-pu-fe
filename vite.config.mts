@@ -18,6 +18,10 @@ export default defineConfig({
     // sourcemap generation for debugging purposes. Please disable in production.
     sourcemap: ENV !== 'PROD'
   },
+  define: {
+    // needed to hide the STATISTICS section
+    'import.meta.env.ENV': JSON.stringify(ENV)
+  },
   plugins: [
     react(),
     svgr({
