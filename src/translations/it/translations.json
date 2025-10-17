@@ -1,4 +1,9 @@
 {
+  "a11y": {
+    "navigation": {
+      "announcement": "Hai raggiunto la pagina {{page}}"
+    }
+  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -646,6 +651,11 @@
         "title": "Sei sicuro di voler eliminare il Client SIL?",
         "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
       }
+    },
+    "successPage": {
+      "title": "Client SIL eliminato con successo",
+      "description": "Il Client SIL è stato eliminato correttamente.",
+      "backToCatalog": "Torna alla lista"
     }
   },
   "clientSilDetail": {
@@ -979,6 +989,7 @@
       "REPORTING_INDEX": "Pagina principale",
       "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
       "REPORTING_SEARCH_RESULTS": "Risultato ricerca",
+      "STATISTICS": "Statistiche",
       "TELEMATIC_RECEIPT": "Ricevute Telematiche",
       "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
       "TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
@@ -2084,6 +2095,9 @@
     "printKeyAPI": "API Key stampa avvisi",
     "orgEmail": "Email ente",
     "orgLogo": "Logo dell'ente",
+    "orgLogoDescription": "Questo logo è usato per la generazione di Ricevute Telematiche.",
+    "orgLogoMissingAlert": "Inserisci il logo del tuo ente. Aiuterà a rendere legittime le ricevute telematiche e gli avvisi.",
+    "logoPlaceholder": "Logo placeholder",
     "enableOrg": "Abilita ente",
     "editOrg": "Modifica ente",
     "alertTitle": "Completa i dati per attivare l'ente",
@@ -2128,7 +2142,7 @@
   },
   "reportingDetail": {
     "accessibleTitle": "Dettaglio rendicontazione: {{iuf}}",
-    "hourAndDate": "Data e ora",
+    "hourAndDate": "Data e ora Flusso",
     "regulationDate": "Data Regolamento",
     "regulationId": "ID Regolamento",
     "reportingIdOrIUF": "ID Rendicontazione / IUF",
