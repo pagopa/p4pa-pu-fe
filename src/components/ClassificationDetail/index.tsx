@@ -131,14 +131,6 @@ export const ClassificationDetails = () => {
     {
       label: t(`${targetTranslationDebtType}.receiptPayerFiscalCode`),
       value: data?.receiptDebtor?.fiscalCode
-    },
-    {
-      label: t(`${targetTranslationDebtType}.receiptPayerExecutorFullName`),
-      value: data?.receiptPayer?.fullName
-    },
-    {
-      label: t(`${targetTranslationDebtType}.receiptPayerExecutorFiscalCode`),
-      value: data?.receiptPayer?.fiscalCode
     }
   ];
 
