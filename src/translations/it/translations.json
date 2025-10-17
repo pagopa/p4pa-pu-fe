@@ -2139,7 +2139,7 @@
   },
   "reportingDetail": {
     "accessibleTitle": "Dettaglio rendicontazione: {{iuf}}",
-    "hourAndDate": "Data e ora",
+    "hourAndDate": "Data e ora Flusso",
     "regulationDate": "Data Regolamento",
     "regulationId": "ID Regolamento",
     "reportingIdOrIUF": "ID Rendicontazione / IUF",
