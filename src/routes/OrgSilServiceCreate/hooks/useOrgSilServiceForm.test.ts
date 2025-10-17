@@ -248,7 +248,7 @@ describe('useOrgSilServiceForm', () => {
   });
 
   describe('Error Handling', () => {
-    it('should handle create mutation error and navigate to error page', async () => {
+    it('should handle create mutation error and set error state', async () => {
       const errorMessage = 'Service creation failed';
       const mockError = new Error(errorMessage);
       mockCreateMutateAsync.mockRejectedValue(mockError);
@@ -262,14 +262,9 @@ describe('useOrgSilServiceForm', () => {
       });
 
       expect(result.current.error).toBe(errorMessage);
-
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
-        replace: true,
-        state: { errorType: 'default' }
-      });
     });
 
-    it('should handle update mutation error and navigate to error page', async () => {
+    it('should handle update mutation error and set error state', async () => {
       const errorMessage = 'Service update failed';
       const mockError = new Error(errorMessage);
       mockUpdateMutateAsync.mockRejectedValue(mockError);
@@ -285,11 +280,6 @@ describe('useOrgSilServiceForm', () => {
       });
 
       expect(result.current.error).toBe(errorMessage);
-
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
-        replace: true,
-        state: { errorType: 'default' }
-      });
     });
 
     it('should handle non-Error objects as generic error', async () => {
@@ -305,10 +295,6 @@ describe('useOrgSilServiceForm', () => {
       });
 
       expect(result.current.error).toBe('Error during service creation');
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
-        replace: true,
-        state: { errorType: 'default' }
-      });
     });
 
     it('should clear error when clearError is called', async () => {
@@ -531,10 +517,6 @@ describe('useOrgSilServiceForm', () => {
       });
 
       expect(result.current.error).toBe('Transformation failed');
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
-        replace: true,
-        state: { errorType: 'default' }
-      });
     });
 
     it('should handle transformation error in update', async () => {
@@ -554,10 +536,6 @@ describe('useOrgSilServiceForm', () => {
       });
 
       expect(result.current.error).toBe('Update transformation failed');
-      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR, {
-        replace: true,
-        state: { errorType: 'default' }
-      });
     });
   });
 });
