@@ -6,6 +6,7 @@ import {
   ExportFileTypeEnum,
   LabelEnum
 } from '../../generated/apiClient';
+import { format } from 'date-fns';
 
 const isValidLabelEnum = (value: string): value is LabelEnum => {
   return Object.values(LabelEnum).includes(value as LabelEnum);
@@ -49,7 +50,7 @@ export const useClassificationExport = (organizationId: number) => {
   });
 
   const dateToIso = useCallback((date: Date | null): string | undefined => {
-    return date ? date.toISOString().split('T')[0] : undefined;
+    return date ? format(date, 'yyyy-MM-dd') : undefined;
   }, []);
 
   const validateForm = useCallback(
