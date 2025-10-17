@@ -50,11 +50,6 @@ export const useOrgSilServiceForm = ({
       const errorMessage =
         err instanceof Error ? err.message : 'Error during service creation';
       setError(errorMessage);
-
-      navigate(PageRoutes.RESPONSES_ERROR, {
-        replace: true,
-        state: { errorType: 'default' }
-      });
     }
   };
 
@@ -99,11 +94,6 @@ export const useOrgSilServiceForm = ({
       const errorMessage =
         err instanceof Error ? err.message : 'Error during service update';
       setError(errorMessage);
-
-      navigate(PageRoutes.RESPONSES_ERROR, {
-        replace: true,
-        state: { errorType: 'default' }
-      });
     }
   };
 
