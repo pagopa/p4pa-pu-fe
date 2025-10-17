@@ -13,16 +13,8 @@ export const getExportFiles = (
 ) => {
   return useMutation({
     mutationKey: ['exportFiles', organizationId, routingCategory],
-    mutationFn: async ({
-      filters,
-      pagination,
-      sort
-    }: ExportFilesFilteredRequest) => {
-      const query = buildGetExportFilesQueryParams({
-        filters,
-        pagination,
-        sort
-      });
+    mutationFn: async (args: ExportFilesFilteredRequest) => {
+      const query = buildGetExportFilesQueryParams(args);
       const { data: files } = await utils.apiClient.bff.getExportFiles(
         organizationId,
         query

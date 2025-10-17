@@ -29,7 +29,16 @@ const isDateFilter = (value: FilterFieldValue): boolean => {
 export const noFilterSetted = (filters: BaseFilterValues): boolean => {
   if (!filters || typeof filters !== 'object') return true;
 
-  const entries = Object.entries(filters);
+  const rawFilters: BaseFilterValues = {
+    ...filters,
+    page: null,
+    size: null,
+    sort: null,
+    sortDirection: null,
+    sortField: null
+  };
+
+  const entries = Object.entries(rawFilters);
   if (entries.length === 0) return true;
 
   const hasInvalidDateRange = entries.some(([key, value]) => {
