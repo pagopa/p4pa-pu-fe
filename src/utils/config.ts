@@ -11,7 +11,7 @@ const {
   VITE_FILESHARE_APIHOST = 'http://localhost',
   VITE_API_TIMEOUT = '10000',
   VITE_LOGIN_URL = '/login',
-  VITE_STATS_URL = 'https://stats.example.com'
+  VITE_STATS_URL = 'https://analytics.internal.dev.p4pa.pagopa.it'
 } = import.meta.env;
 const PARSED_API_TIMEOUT = Number.parseInt(VITE_API_TIMEOUT, 10);
 

@@ -2095,6 +2095,9 @@
     "printKeyAPI": "API Key stampa avvisi",
     "orgEmail": "Email ente",
     "orgLogo": "Logo dell'ente",
+    "orgLogoDescription": "Questo logo è usato per la generazione di Ricevute Telematiche.",
+    "orgLogoMissingAlert": "Inserisci il logo del tuo ente. Aiuterà a rendere legittime le ricevute telematiche e gli avvisi.",
+    "logoPlaceholder": "Logo placeholder",
     "enableOrg": "Abilita ente",
     "editOrg": "Modifica ente",
     "alertTitle": "Completa i dati per attivare l'ente",
@@ -2139,7 +2142,7 @@
   },
   "reportingDetail": {
     "accessibleTitle": "Dettaglio rendicontazione: {{iuf}}",
-    "hourAndDate": "Data e ora",
+    "hourAndDate": "Data e ora Flusso",
     "regulationDate": "Data Regolamento",
     "regulationId": "ID Regolamento",
     "reportingIdOrIUF": "ID Rendicontazione / IUF",
