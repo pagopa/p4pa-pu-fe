@@ -167,9 +167,14 @@ const DebtPositionDetail = () => {
 
   const showDeleteOption =
     debtPositionDetail?.status !== DebtPositionStatus.CANCELLED;
+
+  const hasSinglePaymentOption =
+    (debtPositionDetail?.paymentOptions?.length || 0) === 1;
   const showEditOption =
-    debtPositionDetail?.debtPositionOrigin === DebtPositionOrigin.ORDINARY ||
-    debtPositionDetail?.debtPositionOrigin === DebtPositionOrigin.ORDINARY_SIL;
+    hasSinglePaymentOption &&
+    (debtPositionDetail?.debtPositionOrigin === DebtPositionOrigin.ORDINARY ||
+      debtPositionDetail?.debtPositionOrigin ===
+        DebtPositionOrigin.ORDINARY_SIL);
 
   const showDownloadCTA =
     debtPositionDetail?.status !== DebtPositionStatus.DRAFT &&

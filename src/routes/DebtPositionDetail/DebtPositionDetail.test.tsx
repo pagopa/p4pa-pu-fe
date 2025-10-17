@@ -790,6 +790,7 @@ describe('DebtPositionDetail Component', () => {
     const mockData = { ...mockDebtPositionDetail };
     mockData.status = DebtPositionStatus.DRAFT;
     mockData.debtPositionOrigin = DebtPositionOrigin.ORDINARY;
+    mockData.paymentOptions = [mockData.paymentOptions![0]];
 
     vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
       data: mockData,
@@ -1061,6 +1062,7 @@ describe('DebtPositionDetail Component', () => {
     const mockData = { ...mockDebtPositionDetail };
     mockData.status = DebtPositionStatus.TO_SYNC;
     mockData.debtPositionOrigin = DebtPositionOrigin.ORDINARY;
+    mockData.paymentOptions = [mockData.paymentOptions![0]];
 
     vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
       data: mockData,

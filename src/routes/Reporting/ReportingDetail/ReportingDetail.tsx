@@ -18,7 +18,7 @@ import {
   formatDateTime,
   moneyFormat
 } from '../../../utils/formatters';
-import { PaymentsReporting } from '../../../../generated/apiClient';
+import { PaymentsReportingWithReceiptView } from '../../../../generated/apiClient';
 import { PageRoutes } from '../../../routes';
 import { getPaymentsReportingRows } from '../../../api/reporting';
 import { useSearch } from '../../../hooks/useSearch';
@@ -46,7 +46,8 @@ export const ReportingDetail = () => {
     return null;
   }
 
-  const [detailItem, setDetailItem] = useState<PaymentsReporting | null>(null);
+  const [detailItem, setDetailItem] =
+    useState<PaymentsReportingWithReceiptView | null>(null);
   const [currentIngestionFlowFileId, setCurrentIngestionFlowFileId] = useState<
     number | undefined
   >(location.state?.ingestionFlowFileId);

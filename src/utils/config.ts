@@ -10,7 +10,8 @@ const {
   VITE_APIHOST = 'http://localhost',
   VITE_FILESHARE_APIHOST = 'http://localhost',
   VITE_API_TIMEOUT = '10000',
-  VITE_LOGIN_URL = '/login'
+  VITE_LOGIN_URL = '/login',
+  VITE_STATS_URL = 'https://analytics.internal.dev.p4pa.pagopa.it'
 } = import.meta.env;
 const PARSED_API_TIMEOUT = Number.parseInt(VITE_API_TIMEOUT, 10);
 
@@ -20,12 +21,14 @@ const DEPLOY_PATH_schema = z.string();
 const APIHOST_schema = z.string().url();
 const FILESHARE_APIHOST_schema = z.string().url();
 const API_TIMEOUT_schema = z.number();
+const STATS_URL_schema = z.string().url();
 
 try {
   DEPLOY_PATH_schema.parse(VITE_DEPLOY_PATH);
   APIHOST_schema.parse(import.meta.env.VITE_APIHOST);
   FILESHARE_APIHOST_schema.parse(import.meta.env.VITE_FILESHARE_APIHOST);
   API_TIMEOUT_schema.parse(PARSED_API_TIMEOUT);
+  STATS_URL_schema.parse(VITE_STATS_URL);
 } catch (e) {
   console.error('ENV variables validation fails', (e as ZodError).issues);
 }
@@ -38,6 +41,7 @@ type Config = {
   fileshareURL: string;
   apiTimeout: number;
   loginUrl: string;
+  statsUrl: string;
   paramsSerializer: CustomParamsSerializer;
 };
 
@@ -69,6 +73,7 @@ const config: Config = {
   fileshareURL: VITE_FILESHARE_APIHOST,
   deployPath: VITE_DEPLOY_PATH,
   loginUrl: VITE_LOGIN_URL,
+  statsUrl: VITE_STATS_URL,
   /** This array is populated by paths that don't need a auth token */
   tokenHeaderExcludePaths: ['/auth-callback', '/checkout-callback/*'],
   /** A global custom parameters serializer:
