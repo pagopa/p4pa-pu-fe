@@ -16,7 +16,7 @@ export const OrganizationDetailAlert: React.FC<
   organizationDetailData
 }: OrganizationDetailAlertProps) => {
   const { t } = useTranslation();
-  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [emptyFieldsString, setEmptyFieldsString] = useState<string>('');
 
   const mandatoryFields: Partial<Record<keyof OrganizationDetailDTO, string>> =
     {
@@ -24,17 +24,15 @@ export const OrganizationDetailAlert: React.FC<
       orgLogo: t('organizations.orgLogo'),
       segregationCode: t('commons.segregationCode')
     };
-  const missingKeys = (
-    Object.keys(mandatoryFields) as Array<keyof OrganizationDetailDTO>
-  )
-    .filter((key) => !(key in organizationDetailData))
-    .map((key) => mandatoryFields[key] ?? key);
-
-  const emptyFieldsString = missingKeys.join(', ');
 
   useEffect(() => {
-    if (missingKeys.length > 0) setShowAlert(true);
-  }, [missingKeys]);
+    const missingKeys = (
+      Object.keys(mandatoryFields) as Array<keyof OrganizationDetailDTO>
+    )
+      .filter((key) => !(key in organizationDetailData))
+      .map((key) => mandatoryFields[key] ?? key);
+    setEmptyFieldsString(missingKeys.join(', '));
+  }, [organizationDetailData]);
 
   const editButton: ReactNode = (
     <Button startIcon={<EditIcon />} onClick={editFunction}>
@@ -44,7 +42,7 @@ export const OrganizationDetailAlert: React.FC<
 
   return (
     <>
-      {showAlert && (
+      {emptyFieldsString && (
         <Alert
           severity="info"
           data-testid="org-empty-fields-error"
