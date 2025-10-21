@@ -38,7 +38,11 @@ describe('loaders', () => {
       const mockOrganizations: Array<OrganizationDTO> = [
         {
           organizationId: 1,
+<<<<<<< HEAD
           brokerId: 1,
+=======
+          brokerId: 2,
+>>>>>>> develop
           ipaCode: 'IPA01',
           orgName: 'Test Org',
           operatorRole: OperatorRole.ROLE_ADMIN,

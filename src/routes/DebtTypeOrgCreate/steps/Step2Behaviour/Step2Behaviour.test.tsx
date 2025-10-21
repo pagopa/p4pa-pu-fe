@@ -180,12 +180,12 @@ describe('Step2Behaviour', () => {
     const optionACheckbox = screen.getByRole('checkbox', {
       name: 'debtTypeOrgCreate.behaviour.optionA.label debtTypeOrgCreate.behaviour.optionA.description'
     });
-    expect(optionACheckbox).toBeDisabled();
+    expect(optionACheckbox).toBeEnabled();
 
     const optionBCheckbox = screen.getByRole('checkbox', {
       name: 'debtTypeOrgCreate.behaviour.optionB.label debtTypeOrgCreate.behaviour.optionB.description'
     });
-    expect(optionBCheckbox).toBeDisabled();
+    expect(optionBCheckbox).toBeEnabled();
   });
 
   it('shows payment method selector when spontaneous is enabled', () => {
