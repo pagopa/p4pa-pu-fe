@@ -1034,6 +1034,7 @@
     "showMore": "Vedi di più",
     "showOtherBeneficiaries": "Vedi altri beneficiari",
     "sidebar": {
+      "collapse": "Comprimi il menu",
       "entities": "Enti gestiti",
       "expand": "Espandi il menu",
       "menu": "Menu",

@@ -7,6 +7,7 @@ import {
   List,
   Typography,
   useTheme,
+  Tooltip,
   useMediaQuery,
   type Theme
 } from '@mui/material';
@@ -229,15 +230,25 @@ export const Sidebar: React.FC = () => {
         >
           {overlay && (
             <Box sx={styles.collapseIcon}>
-              <IconButton
-                data-testid="collapseClose"
+              <Tooltip
+                placement="left"
+                title={t(
+                  !collapsed
+                    ? 'commons.sidebar.collapse'
+                    : 'commons.sidebar.expand'
+                )}
                 aria-hidden="true"
-                tabIndex={-1}
-                onClick={changeMenuState}
-                size="large"
               >
-                <CloseIcon />
-              </IconButton>
+                <IconButton
+                  data-testid="collapseClose"
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  onClick={changeMenuState}
+                  size="large"
+                >
+                  <CloseIcon />
+                </IconButton>
+              </Tooltip>
             </Box>
           )}
           {isSuperAdmin && (
@@ -331,24 +342,34 @@ export const Sidebar: React.FC = () => {
               sx={{ display: lg ? 'block' : 'none' }}
             />
             <Box sx={styles.hamburgerIcon}>
-              <IconButton
-                data-testid="hamburgerButton"
-                aria-hidden="true"
-                tabIndex={-1}
-                onClick={changeMenuState}
-                size="large"
-              >
-                <MenuIcon />
-                {!lg && (
-                  <Typography
-                    variant="button"
-                    sx={styles.hamburgerTypography}
-                    aria-hidden="true"
-                  >
-                    {t('commons.sidebar.menu')}
-                  </Typography>
+              <Tooltip
+                placement="right"
+                title={t(
+                  !collapsed
+                    ? 'commons.sidebar.collapse'
+                    : 'commons.sidebar.expand'
                 )}
-              </IconButton>
+                aria-hidden="true"
+              >
+                <IconButton
+                  data-testid="hamburgerButton"
+                  aria-hidden="true"
+                  tabIndex={-1}
+                  onClick={changeMenuState}
+                  size="large"
+                >
+                  <MenuIcon />
+                  {!lg && (
+                    <Typography
+                      variant="button"
+                      sx={styles.hamburgerTypography}
+                      aria-hidden="true"
+                    >
+                      {t('commons.sidebar.menu')}
+                    </Typography>
+                  )}
+                </IconButton>
+              </Tooltip>
             </Box>
           </Box>
         </Box>
