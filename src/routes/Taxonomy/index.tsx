@@ -22,6 +22,7 @@ import {
 } from '../../api/taxonomy';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
 import { ScheduleEnum } from '../../../generated/data-contracts';
+import { formatDateTime } from '../../utils/formatters';
 
 export const TaxonomyPage = () => {
   const { t } = useTranslation();
@@ -134,7 +135,7 @@ export const TaxonomyPage = () => {
               actionLabel={t('taxonomyPage.APIUpdateCTA')}
               footerText={
                 lastUpdatedTime.isSuccess && lastUpdatedTime.data?.lastUpdatedAt
-                  ? `${t('commons.lastUpdate')} ${lastUpdatedTime.data.lastUpdatedAt}`
+                  ? `${t('commons.lastUpdate')} ${formatDateTime(lastUpdatedTime.data.lastUpdatedAt)}`
                   : ''
               }
               actionButtonVariant="contained"
