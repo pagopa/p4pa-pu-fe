@@ -237,14 +237,12 @@ export const Sidebar: React.FC = () => {
                     ? 'commons.sidebar.collapse'
                     : 'commons.sidebar.expand'
                 )}
+                aria-hidden="true"
               >
                 <IconButton
                   data-testid="collapseClose"
-                  aria-label={t(
-                    !collapsed
-                      ? 'commons.sidebar.collapse'
-                      : 'commons.sidebar.expand'
-                  )}
+                  aria-hidden="true"
+                  tabIndex={-1}
                   onClick={changeMenuState}
                   size="large"
                 >
@@ -351,14 +349,12 @@ export const Sidebar: React.FC = () => {
                     ? 'commons.sidebar.collapse'
                     : 'commons.sidebar.expand'
                 )}
+                aria-hidden="true"
               >
                 <IconButton
                   data-testid="hamburgerButton"
-                  aria-label={t(
-                    !collapsed
-                      ? 'commons.sidebar.collapse'
-                      : 'commons.sidebar.expand'
-                  )}
+                  aria-hidden="true"
+                  tabIndex={-1}
                   onClick={changeMenuState}
                   size="large"
                 >
@@ -367,6 +363,7 @@ export const Sidebar: React.FC = () => {
                     <Typography
                       variant="button"
                       sx={styles.hamburgerTypography}
+                      aria-hidden="true"
                     >
                       {t('commons.sidebar.menu')}
                     </Typography>
