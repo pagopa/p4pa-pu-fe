@@ -61,7 +61,6 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
             data-testid="flagMandatoryDueDate"
             label={t('debtTypeOrgCreate.behaviour.optionA.label')}
             description={t('debtTypeOrgCreate.behaviour.optionA.description')}
-            disabled={edit}
           />
           <FormComponent.ControlledCheckbox
             control={control}
@@ -69,7 +68,6 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
             data-testid="flagAnonymousFiscalCode"
             label={t('debtTypeOrgCreate.behaviour.optionB.label')}
             description={t('debtTypeOrgCreate.behaviour.optionB.description')}
-            disabled={edit}
           />
         </SectionBox>
       )}
