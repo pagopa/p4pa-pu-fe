@@ -22,10 +22,15 @@ import { downloadBlob } from '../../utils/download';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
 import { formatDateTime, formatFileSize } from '../../utils/formatters';
 import utils from '../../utils';
-import { ReactNode, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearch } from '../../hooks/useSearch';
-import { FieldValues } from 'react-hook-form';
-import { ExportFileFilters } from '../../models/Filters';
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../utils/filtersValidation';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import { PagedExportFile } from '../../../generated/data-contracts';
+import { ExportFilesFilters } from '../../api/exportFiles/mapping';
 
 export type ExportFlowOverviewProps = {
   routingCategory: string;
@@ -54,35 +59,26 @@ const ExportFlowOverview = ({
 
   const { state } = useStore();
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
-
-  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
-
   const defaultDateRange = utils.formatters.getDefaultDateRange();
-  const [filters, setFilters] = useState<ExportFileFilters>({
-    creationDateFrom: defaultDateRange.from,
-    creationDateTo: defaultDateRange.to,
-    page: 0,
-    size: 10,
+
+  const initialFilters = utils.URI.decode(window.location.hash);
+
+  const [error, setError] = useState<boolean>(false);
+  const [filters, setFilters] = useState({
+    dateRange: defaultDateRange,
     ...initialFilters,
     exportFileType: exportFileTypes
   });
 
   const query = getExportFiles(organizationId, routingCategory);
 
-  const exportFilters = useSearch({
+  const exportFilters = useSearch<ExportFilesFilters, PagedExportFile>({
     filters,
     query
   });
 
   const { data, isError } = exportFilters.query;
   const isEmptyData = !data?.content.length;
-
-  const updateFilterValue = (key: string, value: string | undefined) => {
-    setFilters((prev) => ({
-      ...prev,
-      [key]: value
-    }));
-  };
 
   useEffect(() => {
     if (isError) {
@@ -143,6 +139,19 @@ const ExportFlowOverview = ({
       ? () => navigate(specializedExportPage)
       : defaultReservation);
 
+  const applyFilters = () => {
+    const rawFilters = {
+      ...filters,
+      exportFileType: null
+    };
+    if (noFilterSetted(rawFilters)) {
+      setError(shouldShowGeneralError(rawFilters));
+    } else {
+      setError(false);
+      exportFilters.applyFilters(filters);
+    }
+  };
+
   const columns: Array<GridColDef> = [
     {
       field: 'fileName',
@@ -185,17 +194,35 @@ const ExportFlowOverview = ({
     }
   ];
 
-  const [error, setError] = useState<boolean>(false);
-  const errorMessage: ReactNode = (
-    <Typography
-      variant="body2"
-      color="error"
-      mt={2}
-      data-testid="explort-error-text"
-    >
-      {t('commons.filters.atLeastOneFilter')}
-    </Typography>
-  );
+  const items = [
+    {
+      type: COMPONENT_TYPE.textField,
+      label: t('commons.searchName'),
+      id: 'fileName',
+      adornment: <Search />,
+      gridWidth: 6
+    },
+    {
+      type: COMPONENT_TYPE.dateRange,
+      label: 'dateRange',
+      id: 'dateRange',
+      gridWidth: 5,
+      from: {
+        label: t('commons.exportFrom'),
+        errorMessage: t('dates.validations.from')
+      },
+      to: {
+        label: t('dates.to'),
+        errorMessage: t('dates.validations.to')
+      }
+    },
+    {
+      type: COMPONENT_TYPE.button,
+      label: t('commons.filters.filterResults'),
+      gridWidth: 1,
+      onClick: applyFilters
+    }
+  ];
 
   return (
     <>
@@ -218,53 +245,16 @@ const ExportFlowOverview = ({
             <Typography variant="h4">{sectionTitle}</Typography>
           </Box>
         )}
-        {error && errorMessage}
+        {error && <ErrorMessage variant="outlined" />}
         <FilterContainer
-          items={[
-            {
-              type: COMPONENT_TYPE.textField,
-              label: t('commons.searchName'),
-              adornment: <Search />,
-              gridWidth: 6,
-              value: filters.fileName || '',
-              onChange: (e) => updateFilterValue('fileName', e.target.value)
-            },
-            {
-              type: COMPONENT_TYPE.dateRange,
-              label: 'dateRange',
-              gridWidth: 5,
-              from: {
-                label: t('commons.exportFrom'),
-                errorMessage: t('dates.validations.from'),
-                value: filters.creationDateFrom
-                  ? new Date(filters.creationDateFrom)
-                  : null,
-                onChange: (value) =>
-                  updateFilterValue(
-                    'creationDateFrom',
-                    value ? new Date(value).toISOString() : undefined
-                  )
-              },
-              to: {
-                label: t('dates.to'),
-                errorMessage: t('dates.validations.to'),
-                value: filters.creationDateTo
-                  ? new Date(filters.creationDateTo)
-                  : null,
-                onChange: (value) =>
-                  updateFilterValue(
-                    'creationDateTo',
-                    value ? new Date(value).toISOString() : undefined
-                  )
-              }
-            },
-            {
-              type: COMPONENT_TYPE.button,
-              label: t('commons.filters.filterResults'),
-              gridWidth: 1,
-              onClick: () => exportFilters.applyFilters(filters)
-            }
-          ]}
+          items={items}
+          values={filters}
+          onChange={(id, value) =>
+            setFilters((filters) => ({
+              ...filters,
+              [id]: value
+            }))
+          }
         />
 
         <Box

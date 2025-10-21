@@ -12,6 +12,21 @@ export type FilteredRequest<T> = {
   sort: Array<string>;
 };
 
+export type DateRangeValue = {
+  from?: Date | null;
+  to?: Date | null;
+};
+
+export type FilterFieldValue =
+  | string
+  | number
+  | boolean
+  | Date
+  | DateRangeValue
+  | null
+  | undefined;
+
+export type BaseFilterValues = Record<string, FilterFieldValue>;
 export type FilterValues = {
   ACCOUNTING_DATE_FROM: Date | null;
   ACCOUNTING_DATE_TO: Date | null;
@@ -67,27 +82,20 @@ export type FlowFilters = {
   ingestionFlowFileTypes: Array<IngestionFlowFileTypeEnum>;
   fileName?: string;
   status?: IngestionFlowFileStatus;
-  creationDateFrom?: Date;
-  creationDateTo?: Date;
-  sort?: Array<string>;
+  dateRange?: DateRangeValue;
 };
 
 export type ExportFlowFilters = {
   exportFileType: ExportFileTypeEnum;
   fileName?: string;
   status?: ExportFileStatus;
-  creationDateFrom?: Date;
-  creationDateTo?: Date;
-  sort?: Array<string>;
+  dateRange?: DateRangeValue;
 };
 
 export type PaginationParams = {
   size: number;
   page: number;
 };
-
-export type FlowFileFilters = FlowFilters & PaginationParams;
-export type ExportFileFilters = ExportFlowFilters & PaginationParams;
 
 export const STATE_COLORS: Record<
   FlowStatus,
@@ -114,19 +122,3 @@ export const EXPORT_STATE_COLORS: Record<
 export const MENU_STATES = ['COMPLETED', 'ERROR'] as const;
 export const DOWNLOAD_STATES = ['UPLOADED'] as const;
 export const EXPORT_DOWNLOAD_STATES = [ExportFileStatus.COMPLETED];
-
-export type DateRangeValue = {
-  from?: Date | null;
-  to?: Date | null;
-};
-
-export type FilterFieldValue =
-  | string
-  | number
-  | boolean
-  | Date
-  | DateRangeValue
-  | null
-  | undefined;
-
-export type BaseFilterValues = Record<string, FilterFieldValue>;
