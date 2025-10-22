@@ -276,7 +276,6 @@ describe('_ControlledDateRange', () => {
       </TestForm>
     );
 
-    // Quando required=true, MUI aggiunge automaticamente "*" alla label
     const fromInput = screen.getByLabelText('Data inizio *');
     const toInput = screen.getByLabelText('A *');
 
