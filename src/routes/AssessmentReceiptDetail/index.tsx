@@ -1,12 +1,18 @@
 import { useTranslation } from 'react-i18next';
-import { generatePath, useNavigate, useParams } from 'react-router';
+import {
+  generatePath,
+  useLocation,
+  useNavigate,
+  useParams
+} from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { PageRoutes } from '../../routes';
 import ReceiptDetail from '../../components/ReceiptDetail';
 import { useReceiptDetail } from '../../hooks/useReceiptDetail';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { BredcrumbItem } from '../../components/Breadcrumbs/Breadcrumbs';
 import { setCustomBreadcrumbsItems } from '../../store/AppStateStore';
+import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
 
 export const AssessmentReceiptDetail = () => {
   const { t } = useTranslation();
@@ -14,14 +20,44 @@ export const AssessmentReceiptDetail = () => {
     state: { organizationId }
   } = useStore();
   const navigate = useNavigate();
-  const params = useParams();
+  const { receiptId: receiptIdString, assessmentId: assessmentIdString } =
+    useParams();
+  const { state } = useLocation();
 
-  const { receiptId: receiptIdString, assessmentId } = params;
+  const [assessmentName, setAssessmentName] = useState(
+    state?.assessmentName || ''
+  );
+
   const receiptId = Number(receiptIdString);
-
-  if (isNaN(receiptId)) {
+  const assessmentId = Number(assessmentIdString);
+  if (isNaN(receiptId) || isNaN(assessmentId)) {
     navigate(PageRoutes.RESPONSES_ERROR);
   }
+
+  const getAssessmentDetailMutation = getAssessmentDetail(
+    organizationId,
+    assessmentId,
+    { page: 0, size: 1 }
+  );
+
+  const getAssesmentName = async () => {
+    try {
+      const response = await getAssessmentDetailMutation.mutateAsync({
+        filters: {},
+        pagination: { page: 0, size: 1 },
+        sort: []
+      });
+      setAssessmentName(response.assessmentsName);
+    } catch {
+      setAssessmentName(`${t('assessment.assessment')} ${assessmentId}`);
+    }
+  };
+
+  useEffect(() => {
+    if (!assessmentName) {
+      getAssesmentName();
+    }
+  }, [assessmentName]);
 
   // Setup custom breadcrumb for assessment context
   useEffect(() => {
@@ -38,8 +74,7 @@ export const AssessmentReceiptDetail = () => {
         pathname: generatePath(PageRoutes.ASSESSMENT_DETAIL, {
           id: assessmentId
         }),
-        // FIXME: This should be the assessment name
-        label: '__ASSESSMENT_NAME_HERE__',
+        label: assessmentName,
         id: 'ASSESSMENT_DETAIL'
       },
       {
@@ -52,7 +87,7 @@ export const AssessmentReceiptDetail = () => {
       }
     ];
     setCustomBreadcrumbsItems(customBreadcrumbsItems);
-  }, [receiptId]);
+  }, [receiptId, assessmentId, assessmentName]);
 
   const { paymentData, summaryData } = useReceiptDetail(
     organizationId,

@@ -31,7 +31,11 @@ const AssessmentDetailDataGrid = ({
         assessmentId
       });
 
-      navigate(detailUrl);
+      navigate(detailUrl, {
+        state: {
+          assessmentName: data?.assessmentsName
+        }
+      });
     }
   };
 
