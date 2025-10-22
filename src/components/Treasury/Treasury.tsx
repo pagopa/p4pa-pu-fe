@@ -46,6 +46,7 @@ export const Treasury = () => {
               title={t('treasury.search')}
               description={t('treasury.searchdescription')}
               multiFilterConfig={filterMap}
+              onSubmit={submitSearch}
               render={
                 error && <ErrorMessage testId="multifilters-error-text" />
               }
@@ -65,7 +66,6 @@ export const Treasury = () => {
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: submitSearch,
                   id: 'searchcard-search-btn'
                 }
               ]}

@@ -60,6 +60,7 @@ export const TelematicReceipt = () => {
               fields={filtersGrid}
               filterValues={filters}
               onFilterChange={handleFilterChange}
+              onSubmit={navigateToResults}
               render={error && <ErrorMessage />}
               button={[
                 {
@@ -71,7 +72,6 @@ export const TelematicReceipt = () => {
                 {
                   label: t('commons.filters.filterResults'),
                   variant: 'contained',
-                  onClick: navigateToResults,
                   id: 'telematic-receipt-search-btn'
                 }
               ]}

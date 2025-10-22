@@ -69,6 +69,7 @@ const TelematicReceiptSearchResults = () => {
           onChange={(field, value) =>
             setFilterValues({ ...filterValues, [field]: value })
           }
+          onSubmit={applyFilters}
         />
         <Grid
           container
