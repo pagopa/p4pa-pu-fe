@@ -1,4 +1,4 @@
-import { FieldValues, FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm } from 'react-hook-form';
 import { FileUpload } from '@mui/icons-material';
 import { generatePath } from 'react-router';
 import { Grid } from '@mui/material';
@@ -35,7 +35,8 @@ export const Reporting = () => {
   });
   const [error, setError] = useState<boolean>(false);
 
-  const navigateToResults = (filters: FieldValues) => {
+  const navigateToResults = () => {
+    const filters = form.getValues();
     if (noFilterSetted(filters)) {
       setError(shouldShowGeneralError(filters));
     } else {
@@ -54,27 +55,25 @@ export const Reporting = () => {
         <Grid container spacing={2}>
           <Grid item xs={12} md={6}>
             <FormProvider {...form}>
-              <form noValidate onSubmit={form.handleSubmit(navigateToResults)}>
-                <SearchCard
-                  title={t('reporting.searchTitleContainer')}
-                  description={t('reporting.searchDescriptionContainer')}
-                  button={[
-                    {
-                      label: t('commons.filters.remove'),
-                      variant: 'outlined',
-                      onClick: handleReset,
-                      id: 'reporting-reset-btn'
-                    },
-                    {
-                      label: t('commons.filters.filterResults'),
-                      variant: 'contained',
-                      type: 'submit',
-                      id: 'reporting-search-btn'
-                    }
-                  ]}
-                  render={<ReportingFilters layout="grid" error={error} />}
-                />
-              </form>
+              <SearchCard
+                title={t('reporting.searchTitleContainer')}
+                description={t('reporting.searchDescriptionContainer')}
+                onSubmit={navigateToResults}
+                button={[
+                  {
+                    label: t('commons.filters.remove'),
+                    variant: 'outlined',
+                    onClick: handleReset,
+                    id: 'reporting-reset-btn'
+                  },
+                  {
+                    label: t('commons.filters.filterResults'),
+                    variant: 'contained',
+                    id: 'reporting-search-btn'
+                  }
+                ]}
+                render={<ReportingFilters layout="grid" error={error} />}
+              />
             </FormProvider>
           </Grid>
 

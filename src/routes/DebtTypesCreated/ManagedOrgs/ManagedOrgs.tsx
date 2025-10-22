@@ -108,7 +108,6 @@ export const ManagedOrgs = () => {
     {
       type: COMPONENT_TYPE.button,
       label: t('commons.search'),
-      onClick: () => applyFilters(filters),
       gridWidth: 1.5
     }
   ];
@@ -119,6 +118,7 @@ export const ManagedOrgs = () => {
         items={items}
         values={filters}
         onChange={(field, value) => setFilters({ ...filters, [field]: value })}
+        onSubmit={() => applyFilters(filters)}
         sx={{ py: 3 }}
       />
       <DataGridContainer>
