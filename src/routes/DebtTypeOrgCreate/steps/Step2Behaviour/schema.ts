@@ -9,7 +9,10 @@ export const step2Schema = z
     isAnonymousFiscalCode: z.boolean().optional().default(false),
 
     paymentMethod: z.nativeEnum(PaymentMethodOption),
-    amountCents: z.coerce.number().optional(),
+    amountCents: z.coerce
+      .number({ invalid_type_error: '' })
+      .gt(0, 'commons.validation.minAmountRequired')
+      .optional(),
     xsdDefinitionRef: z.any().optional(),
     externalPaymentUrl: z.string().optional(),
 

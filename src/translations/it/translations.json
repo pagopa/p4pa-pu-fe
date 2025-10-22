@@ -1091,6 +1091,7 @@
     "validation": {
       "selectAtLeastOneOption": "Seleziona almeno un'opzione",
       "amountRequired": "L'importo è obbligatorio",
+      "minAmountRequired": "L'importo deve essere maggiore di zero",
       "urlRequired": "L'URL è obbligatorio",
       "invalidUrl": "Formato URL non valido",
       "fieldRequired": "Campo obbligatorio",

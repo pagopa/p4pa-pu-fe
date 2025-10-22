@@ -18,6 +18,7 @@ import {
   useActualizationServices,
   useNotificationServices
 } from '../../hooks/useOrgSilServices';
+import { PaymentMethodOption } from '../Step2Behaviour/components/PaymentMethodSelector';
 
 export type Step1Data = {
   debtPositionTypeId: string;
@@ -104,6 +105,29 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     actualizationQuery.isLoading,
     notificationQuery.isLoading
   ]);
+
+  useEffect(() => {
+    if (
+      edit &&
+      detailQuery.isSuccess &&
+      detailQuery.data.response.flagSpontaneous
+    ) {
+      const detail = detailQuery.data.response;
+      if (detail?.amountCents) {
+        setValue('paymentMethod', PaymentMethodOption.AMOUNT);
+        setValue('amountCents', detail.amountCents / 100);
+      } else if (detail?.xsdDefinitionRef) {
+        const blob = new Blob([detail.xsdDefinitionRef], {
+          type: 'application/xml'
+        });
+        setValue('xsdDefinitionRef', blob);
+      } else if (detail?.externalPaymentUrl) {
+        setValue('paymentMethod', PaymentMethodOption.EXTERNAL);
+      } else {
+        setValue('paymentMethod', PaymentMethodOption.FREE);
+      }
+    }
+  }, [detailQuery.isSuccess]);
 
   return (
     <WizardStepWrapper

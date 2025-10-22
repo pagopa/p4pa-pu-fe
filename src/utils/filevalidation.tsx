@@ -1,4 +1,6 @@
 const mimeTypes: Record<string, Array<string>> = {
+  xsd: ['application/xml', 'text/xml'],
+  xml: ['application/xml', 'text/xml'],
   jpg: ['image/jpeg'],
   png: ['image/png'],
   pdf: ['application/pdf'],

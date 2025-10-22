@@ -19,7 +19,7 @@ export type DebtTypeOrgForm = {
 
   amountCents?: number;
   externalPaymentUrl?: string;
-  xsdDefinitionRef?: File;
+  xsdDefinitionRef?: Blob;
 
   flagNotifyOutcomePush?: 'enabled' | 'disabled';
   notifyOutcomePushOrgSilServiceId?: number;
