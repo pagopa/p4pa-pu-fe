@@ -8,7 +8,7 @@ import TelematicReceiptSearchResults from './TelematicReceiptSearchResults';
 import Treasury from './Treasury';
 import TreasuryImportFlowOverview from './TreasuryImportFlowOverview';
 import TreasurySearchResults from './TreasurySearchResults';
-import TelematicReceiptDetail from './TelematicReceiptDetail';
+import { TelematicReceiptDetail } from './TelematicReceiptDetail';
 import TreasuryDetail from './TreasuryDetail';
 import TelematicReceiptFlowExportOverview from './TelematicReceiptFlowExportOverview';
 import { Reporting } from './Reporting/ReportingPage';
@@ -54,8 +54,7 @@ export const flowsRoutes = [
           {
             element: <TelematicReceiptDetail />,
             id: 'TELEMATIC_RECEIPT_DETAIL',
-            path: ':id',
-            loader: loaderWithId,
+            path: ':receiptId',
             handle: {
               backButton: true,
               sidebar: {

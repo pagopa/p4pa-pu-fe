@@ -36,7 +36,7 @@ vi.mock('../../routes', () => ({
     ASSESSMENT_INDEX: '/assessment',
     ASSESSMENT_SEARCH_RESULTS: '/assessment/search-results',
     ASSESSMENT_DETAIL: '/assessment/:id',
-    ASSESSMENT_DETAIL_DETAIL: '/assessment/:id/detail/:receiptId'
+    ASSESSMENT_RECEIPT_DETAIL: '/assessment/:id/detail/:receiptId'
   }
 }));
 

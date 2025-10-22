@@ -9,6 +9,7 @@ import { AssessmentRegistryDetail } from './AssessmentsRegistryDetail';
 import { AssessmentRegistryCreate } from './AssessmentRegistryCreate';
 import { AssessmentRegistryEdit } from './AssessmentRegistryCreate/AssessmentRegistryEdit';
 import utils from '../utils';
+import { AssessmentReceiptDetail } from './AssessmentReceiptDetail';
 
 export const assessmentRoutes = [
   {
@@ -64,9 +65,9 @@ export const assessmentRoutes = [
         } as RouteHandleObject
       },
       {
-        id: 'ASSESSMENT_DETAIL_DETAIL',
-        path: 'detail/:id/:receiptId',
-        element: <TelematicReceiptDetail />,
+        id: 'ASSESSMENT_RECEIPT_DETAIL',
+        path: 'detail/:assessmentId/receipt/:receiptId',
+        element: <AssessmentReceiptDetail />,
         handle: {
           backButton: true,
           hideBreadcrumbs: false,
