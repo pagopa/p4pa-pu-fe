@@ -43,6 +43,7 @@ vi.mock('../../components/Drawer/FilterDrawer', () => ({
     const {
       open,
       onClose,
+      onSubmit,
       title,
       render,
       buttons,
@@ -56,7 +57,10 @@ vi.mock('../../components/Drawer/FilterDrawer', () => ({
         <div>{title}</div>
         {render}
         {buttons?.map((btn: any, idx: number) => (
-          <button key={idx} onClick={btn.onButtonClick}>
+          <button
+            key={idx}
+            onClick={btn.onButtonClick ? btn.onButtonClick : onSubmit}
+          >
             {btn.buttonText}
           </button>
         ))}

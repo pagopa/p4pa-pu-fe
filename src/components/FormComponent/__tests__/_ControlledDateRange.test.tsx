@@ -276,10 +276,9 @@ describe('_ControlledDateRange', () => {
       </TestForm>
     );
 
-    const fromInput = screen.getByLabelText(/Data inizio/);
-    const toInput =
-      // eslint-disable-next-line sonarjs/slow-regex
-      screen.queryByLabelText(/Data fine/) || screen.getByLabelText(/A.*\*/);
+    // Quando required=true, MUI aggiunge automaticamente "*" alla label
+    const fromInput = screen.getByLabelText('Data inizio *');
+    const toInput = screen.getByLabelText('A *');
 
     expect(fromInput).toHaveAttribute('required');
     expect(toInput).toHaveAttribute('required');

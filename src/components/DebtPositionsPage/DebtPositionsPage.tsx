@@ -191,6 +191,7 @@ export const DebtPositionsPage = () => {
               onTabChange={handleTabChange}
               filterValues={filters[activeTabIndex]}
               onFilterChange={handleFilterChange}
+              onSubmit={navigateToResults}
               button={[
                 {
                   label: t('commons.filters.remove'),
@@ -199,8 +200,7 @@ export const DebtPositionsPage = () => {
                 },
                 {
                   label: t('commons.filters.filterResults'),
-                  variant: 'contained',
-                  onClick: navigateToResults
+                  variant: 'contained'
                 }
               ]}
             />
