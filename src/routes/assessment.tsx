@@ -2,7 +2,6 @@ import { RouteHandleObject } from '../models/Routes';
 import Assessment from '../components/Assessment';
 import AssessmentSearchResults from './AssessmentSearchResults';
 import AssessmentDetail from './AssessmentDetail/AssessmentDetail';
-import TelematicReceiptDetail from './TelematicReceiptDetail';
 import { AssessmentsRegistrySearchResults } from './AssessmentsRegistrySearchResults';
 import { AssessmentCreate } from './AssessmentCreate/AssessmentCreate';
 import { AssessmentRegistryDetail } from './AssessmentsRegistryDetail';

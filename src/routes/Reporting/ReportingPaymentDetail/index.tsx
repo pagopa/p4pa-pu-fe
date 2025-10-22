@@ -1,34 +1,31 @@
 import { useEffect } from 'react';
-import { Grid } from '@mui/material';
 import { generatePath } from 'react-router';
 import { useParams, useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 
-import DetailContainer, {
-  DetailData
-} from '../../../components/DetailContainer/DetailContainer';
-import TitleComponent from '../../../components/TitleComponent/TitleComponent';
+import { DetailData } from '../../../components/DetailContainer/DetailContainer';
 import { useStore } from '../../../store/GlobalStore';
 import { getPaymentsReportingDetail } from '../../../api/getPaymentsReportingDetail';
 import { setAppState } from '../../../store/AppStateStore';
 import { formatDate } from '../../../utils/formatters';
 import { BredcrumbItem } from '../../../components/Breadcrumbs/Breadcrumbs';
 import { PageRoutes } from '../../../routes';
+import ReceiptDetail from '../../../components/ReceiptDetail';
 
 function ReportingPaymentDetail() {
-  const { iuf, id } = useParams();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const {
     state: { organizationId }
   } = useStore();
-  const navigate = useNavigate();
+  const { iuf, id } = useParams();
 
   if (!iuf || !id) {
     navigate(PageRoutes.RESPONSES_ERROR);
     return null;
   }
 
-  const { data, isLoading, isError, error } = getPaymentsReportingDetail(
+  const { data, isError, error } = getPaymentsReportingDetail(
     organizationId,
     iuf,
     id
@@ -140,36 +137,14 @@ function ReportingPaymentDetail() {
     }
   ];
 
-  return !isLoading ? (
-    <>
-      <TitleComponent
-        title={t('reportingPaymentDetail.title')}
-        accessibleTitle={t('reportingPaymentDetail.accessibleTitle')}
-      />
-      <Grid container spacing={3}>
-        <Grid item md={6}>
-          <DetailContainer
-            sections={[
-              {
-                title: { label: t('commons.summary'), variant: 'overline' },
-                data: summaryData
-              }
-            ]}
-          />
-        </Grid>
-        <Grid item md={6}>
-          <DetailContainer
-            sections={[
-              {
-                title: { label: t('commons.payment'), variant: 'overline' },
-                data: paymentData
-              }
-            ]}
-          />
-        </Grid>
-      </Grid>
-    </>
-  ) : null;
+  return (
+    <ReceiptDetail
+      summaryData={summaryData}
+      paymentData={paymentData}
+      pageTitle={t('reportingPaymentDetail.title')}
+      accessibleTitle={t('reportingPaymentDetail.accessibleTitle')}
+    />
+  );
 }
 
 export default ReportingPaymentDetail;

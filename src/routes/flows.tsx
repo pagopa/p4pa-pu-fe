@@ -125,7 +125,6 @@ export const flowsRoutes = [
             element: <ReportingPaymentDetail />,
             id: 'REPORTING_PAYMENT_DETAIL',
             path: ':iuf/:id/',
-            loader: loaderWithId,
             handle: {
               backButton: true,
               custom: true

@@ -197,7 +197,7 @@ describe('TelematicReceiptDetail Component', () => {
 
     const consoleErrorSpy = vi
       .spyOn(console, 'error')
-      .mockImplementation(() => {});
+      .mockImplementation(() => null);
 
     render(<TelematicReceiptDetail />);
 

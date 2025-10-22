@@ -23,7 +23,7 @@ const ReportingDetailDataGrid = ({
 }: ReportingDetailDataGridProps) => {
   const { t } = useTranslation();
 
-  const columns: Array<GridColDef> = [
+  const columns: Array<GridColDef<PaymentsReportingWithReceiptView>> = [
     {
       field: 'iuv',
       headerName: t('commons.iuv'),
@@ -63,7 +63,6 @@ const ReportingDetailDataGrid = ({
       renderCell: (params) => (
         <Link
           to={generatePath(PageRoutes.REPORTING_PAYMENT_DETAIL, {
-            category: 'reporting',
             iuf: params.row.iuf,
             id: params.row.paymentsReportingId
           })}
