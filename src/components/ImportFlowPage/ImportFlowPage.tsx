@@ -60,13 +60,21 @@ const ImportFlow = () => {
           ? error.response?.status
           : undefined;
 
-        if (statusCode && statusCode >= 400 && statusCode < 500) {
+        if (statusCode && statusCode > 400 && statusCode < 500) {
           navigate(PageRoutes.RESPONSES_ERROR, {
             state: {
               category: config.category,
               statusCode
             }
           });
+        } else if (statusCode && statusCode === 400) {
+          navigate(PageRoutes.RESPONSES_ERROR, {
+            state: {
+              category: config.category,
+              statusCode
+            }
+          });
+          utils.notify.emit(t('commons.files.missingVersion'));
         } else {
           utils.notify.emit(t('commons.importFlowErrorMessage'));
         }

@@ -1,9 +1,4 @@
 {
-  "a11y": {
-    "navigation": {
-      "announcement": "Hai raggiunto la pagina {{page}}"
-    }
-  },
   "AssessmentRegistryCreate": {
     "accessibleTitle": "Creazione capitolo",
     "success": {
@@ -151,6 +146,11 @@
         "message_other": "All'utente <strong>{{operatorName}}</strong> verranno assegnati <strong>{{count}}</strong> tipi di dovuto, sui quali potrà gestire e operare.",
         "button": "Associa"
       }
+    }
+  },
+  "a11y": {
+    "navigation": {
+      "announcement": "Hai raggiunto la pagina {{page}}"
     }
   },
   "appPreview": {
@@ -766,7 +766,7 @@
       "downloadFailed": "Errore durante il download.",
       "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria",
       "missingDebtPositionId": "Manca l'ID della posizione debitoria",
-      "missingVersion": "Il nome del file deve essere versionato, contenere un Numero_Numero."
+      "missingVersion": "Il nome del file deve essere versionato, contenere un Numero_Numero se previsto."
     },
     "filters": {
       "accountingDate": {
