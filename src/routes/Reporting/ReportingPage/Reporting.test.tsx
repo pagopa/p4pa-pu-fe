@@ -49,10 +49,7 @@ describe('Reporting', () => {
     render(<Reporting />);
     await userEvent.click(screen.getByText('commons.filters.filterResults'));
     expect(mockNavigate).not.toHaveBeenCalled();
-    // Error message is now shown via ErrorMessage component
-    expect(
-      await screen.findByText('commons.filters.filterError')
-    ).toBeInTheDocument();
+    expect(await screen.findByTestId('alert-filter-error')).toBeInTheDocument();
   });
 
   it('navigates with hash when filters are set', async () => {
