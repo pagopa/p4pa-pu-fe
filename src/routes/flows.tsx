@@ -14,7 +14,6 @@ import TelematicReceiptFlowExportOverview from './TelematicReceiptFlowExportOver
 import { Reporting } from './Reporting/ReportingPage';
 import ReportingSearchResults from './Reporting/ReportingSearchResults';
 import ReportingDetail from './Reporting/ReportingDetail/ReportingDetail';
-import ReportingPaymentDetail from './Reporting/ReportingPaymentDetail';
 import ReportingImportFlowOverview from './Reporting/ReportingImportFlowOverview';
 
 const deployPath = config.deployPath;
@@ -119,15 +118,6 @@ export const flowsRoutes = [
             loader: loaderWithId,
             handle: {
               backButton: true
-            } as RouteHandleObject
-          },
-          {
-            element: <ReportingPaymentDetail />,
-            id: 'REPORTING_PAYMENT_DETAIL',
-            path: ':iuf/:id/',
-            handle: {
-              backButton: true,
-              custom: true
             } as RouteHandleObject
           },
           {
