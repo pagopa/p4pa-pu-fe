@@ -13,8 +13,6 @@ type ServiceSelectorState = {
   isLoading: boolean;
   hasError: boolean;
   noOptionsAvailable: boolean;
-  placeholderKey: string;
-  helperTextKey: string;
 };
 
 const hasValidId = (
@@ -26,9 +24,7 @@ const hasValidId = (
 };
 
 export const useServiceSelectorState = (
-  query: UseQueryResult<Array<OrgSilServiceExtendedDTO>, Error>,
-  edit = false,
-  baseTranslationKey: string
+  query: UseQueryResult<Array<OrgSilServiceExtendedDTO>, Error>
 ): ServiceSelectorState => {
   const { data: services, isLoading, error } = query;
 
@@ -45,25 +41,10 @@ export const useServiceSelectorState = (
   const noOptionsAvailable = !isLoading && options.length === 0;
   const hasError = !!error;
 
-  const placeholderKey = useMemo(() => {
-    if (isLoading) return 'commons.loading';
-    if (noOptionsAvailable) return `${baseTranslationKey}.noOptions`;
-    return `${baseTranslationKey}.placeholder`;
-  }, [isLoading, noOptionsAvailable, baseTranslationKey]);
-
-  const helperTextKey = useMemo(() => {
-    if (hasError) return `${baseTranslationKey}.error`;
-    if (edit) return `${baseTranslationKey}.editHelperText`;
-    if (noOptionsAvailable) return `${baseTranslationKey}.noOptionsHelp`;
-    return `${baseTranslationKey}.helperText`;
-  }, [hasError, edit, noOptionsAvailable, baseTranslationKey]);
-
   return {
     options,
     isLoading,
     hasError,
-    noOptionsAvailable,
-    placeholderKey,
-    helperTextKey
+    noOptionsAvailable
   };
 };

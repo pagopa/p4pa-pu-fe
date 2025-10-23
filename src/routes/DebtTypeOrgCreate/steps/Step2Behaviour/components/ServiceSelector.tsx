@@ -11,7 +11,6 @@ type ServiceSelectorProps = {
   name: keyof DebtTypeOrgForm;
   labelKey: string;
   query: UseQueryResult<Array<OrgSilServiceExtendedDTO>, Error>;
-  edit?: boolean;
   required?: boolean;
   baseTranslationKey: string;
   allowNone?: boolean;
@@ -24,7 +23,6 @@ export const ServiceSelector = ({
   name,
   labelKey,
   query,
-  edit = false,
   required = false,
   baseTranslationKey
 }: ServiceSelectorProps) => {
@@ -32,7 +30,7 @@ export const ServiceSelector = ({
   const { errors } = useFormState({ control });
 
   const { options, isLoading, hasError, noOptionsAvailable } =
-    useServiceSelectorState(query, edit, baseTranslationKey);
+    useServiceSelectorState(query);
 
   const enhancedOptions = [
     {

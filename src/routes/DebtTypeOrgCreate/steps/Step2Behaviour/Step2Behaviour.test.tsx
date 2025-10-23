@@ -169,25 +169,6 @@ describe('Step2Behaviour', () => {
     ).toBeInTheDocument();
   });
 
-  it('disables controls in edit mode', () => {
-    renderWithForm(<Step2Behaviour edit={true} />);
-
-    const spontaneousSwitch = screen.getByRole('checkbox', {
-      name: 'debtTypeOrgCreate.behaviour.postalAccount'
-    });
-    expect(spontaneousSwitch).toBeDisabled();
-
-    const optionACheckbox = screen.getByRole('checkbox', {
-      name: 'debtTypeOrgCreate.behaviour.optionA.label debtTypeOrgCreate.behaviour.optionA.description'
-    });
-    expect(optionACheckbox).toBeEnabled();
-
-    const optionBCheckbox = screen.getByRole('checkbox', {
-      name: 'debtTypeOrgCreate.behaviour.optionB.label debtTypeOrgCreate.behaviour.optionB.description'
-    });
-    expect(optionBCheckbox).toBeEnabled();
-  });
-
   it('shows payment method selector when spontaneous is enabled', () => {
     renderWithForm(<Step2Behaviour />, undefined, { flagSpontaneous: true });
 

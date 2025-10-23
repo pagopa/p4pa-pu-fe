@@ -49,7 +49,6 @@ export const NotificationConfigSelector = ({
       data-testid="notifyOutcomePushOrgSilServiceId"
       labelKey="debtTypeOrgCreate.behaviour.notifications.configuration.label"
       query={query}
-      edit={edit}
       required={true}
       baseTranslationKey="debtTypeOrgCreate.behaviour.notifications.configuration"
     />

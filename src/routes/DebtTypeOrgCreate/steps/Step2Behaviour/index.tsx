@@ -103,7 +103,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
         subtitle={t('debtTypeOrgCreate.behaviour.actualization.subtitle')}
         adornment={<MonetizationOnIcon />}
       >
-        <ActualizationConfigSelector control={control} edit={edit} />
+        <ActualizationConfigSelector control={control} />
       </SectionBox>
     </WizardStepWrapper>
   );

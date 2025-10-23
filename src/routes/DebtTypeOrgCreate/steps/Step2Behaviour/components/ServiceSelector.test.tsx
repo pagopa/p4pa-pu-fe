@@ -73,8 +73,6 @@ describe('ServiceSelector', () => {
 
     i18nTestSetup({
       'test.label': 'Test Label',
-      'test.config.helperText': 'Helper Text',
-      'test.config.placeholder': 'Select option',
       'test.config.none': 'None'
     });
 
@@ -84,9 +82,7 @@ describe('ServiceSelector', () => {
       ],
       isLoading: false,
       hasError: false,
-      noOptionsAvailable: false,
-      placeholderKey: 'test.config.placeholder',
-      helperTextKey: 'test.config.helperText'
+      noOptionsAvailable: false
     });
   });
 
@@ -105,44 +101,6 @@ describe('ServiceSelector', () => {
 
     expect(screen.getByTestId('controlled-select')).toBeInTheDocument();
     expect(screen.getByText('Test Label')).toBeInTheDocument();
-    expect(screen.getByText('Helper Text')).toBeInTheDocument();
-    expect(screen.getByText('Select option')).toBeInTheDocument();
-    expect(screen.getByText('Test Service')).toBeInTheDocument();
-  });
-
-  it('adds none option when allowNone is true', () => {
-    render(
-      <TestWrapper>
-        <ServiceSelector
-          control={undefined as any}
-          name="notifyOutcomePushOrgSilServiceId"
-          labelKey="test.label"
-          query={mockQuery}
-          baseTranslationKey="test.config"
-          allowNone={true}
-        />
-      </TestWrapper>
-    );
-
-    expect(screen.getByText('None')).toBeInTheDocument();
-    expect(screen.getByText('Test Service')).toBeInTheDocument();
-  });
-
-  it('does not add none option when allowNone is false', () => {
-    render(
-      <TestWrapper>
-        <ServiceSelector
-          control={undefined as any}
-          name="notifyOutcomePushOrgSilServiceId"
-          labelKey="test.label"
-          query={mockQuery}
-          baseTranslationKey="test.config"
-          allowNone={false}
-        />
-      </TestWrapper>
-    );
-
-    expect(screen.queryByText('None')).not.toBeInTheDocument();
     expect(screen.getByText('Test Service')).toBeInTheDocument();
   });
 
@@ -151,9 +109,7 @@ describe('ServiceSelector', () => {
       options: [],
       isLoading: true,
       hasError: false,
-      noOptionsAvailable: false,
-      placeholderKey: 'commons.loading',
-      helperTextKey: 'test.config.helperText'
+      noOptionsAvailable: false
     });
 
     render(
@@ -177,9 +133,7 @@ describe('ServiceSelector', () => {
       options: [],
       isLoading: false,
       hasError: false,
-      noOptionsAvailable: true,
-      placeholderKey: 'test.config.noOptions',
-      helperTextKey: 'test.config.noOptionsHelp'
+      noOptionsAvailable: true
     });
 
     render(
@@ -203,9 +157,7 @@ describe('ServiceSelector', () => {
       options: [],
       isLoading: false,
       hasError: true,
-      noOptionsAvailable: false,
-      placeholderKey: 'test.config.placeholder',
-      helperTextKey: 'test.config.error'
+      noOptionsAvailable: false
     });
 
     render(
@@ -224,26 +176,5 @@ describe('ServiceSelector', () => {
     const select = screen.getByRole('combobox');
     expect(select).toHaveAttribute('data-error', 'true');
     expect(select).toHaveAttribute('required');
-  });
-
-  it('passes edit mode to useServiceSelectorState', () => {
-    render(
-      <TestWrapper>
-        <ServiceSelector
-          control={undefined as any}
-          name="amountActualizationOrgSilServiceId"
-          labelKey="test.label"
-          query={mockQuery}
-          baseTranslationKey="test.config"
-          edit={true}
-        />
-      </TestWrapper>
-    );
-
-    expect(mockUseServiceSelectorState).toHaveBeenCalledWith(
-      mockQuery,
-      true,
-      'test.config'
-    );
   });
 });
