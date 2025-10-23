@@ -30,6 +30,20 @@ vi.mock('../../../../../components/FormComponent', () => ({
         readOnly
       />
     ),
+    ControlledAmountField: ({
+      label,
+      name,
+      placeholder,
+      defaultValue
+    }: any) => (
+      <input
+        data-testid={`text-field-${name}`}
+        aria-label={label}
+        placeholder={placeholder}
+        value={defaultValue}
+        readOnly
+      />
+    ),
     ControlledFileUploader: ({ description, header }: any) => (
       <div data-testid="file-uploader">
         <div>{header}</div>

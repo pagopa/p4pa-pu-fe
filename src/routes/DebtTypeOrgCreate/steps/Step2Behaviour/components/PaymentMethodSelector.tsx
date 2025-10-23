@@ -1,10 +1,8 @@
 import { Control, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import { FormComponent } from '../../../../../components/FormComponent';
 import Typography from '@mui/material/Typography';
-import EuroIcon from '@mui/icons-material/Euro';
 import { DebtTypeOrgForm } from '../../../types';
 
 export enum PaymentMethodOption {
@@ -29,22 +27,12 @@ export const SelectedField = ({
   switch (selectedValue) {
     case PaymentMethodOption.AMOUNT:
       return (
-        <FormComponent.ControlledTextField
+        <FormComponent.ControlledAmountField
           key="amountCents"
           name="amountCents"
           control={control}
-          label={t('debtTypeOrgCreate.behaviour.spontaneous.amountValue.label')}
           placeholder="0,00"
-          inputProps={{
-            type: 'number',
-            inputMode: 'decimal',
-            pattern: '[0-9]*[,.]?[0-9]*',
-            endAdornment: (
-              <InputAdornment position="end">
-                <EuroIcon />
-              </InputAdornment>
-            )
-          }}
+          label={t('debtTypeOrgCreate.behaviour.spontaneous.amountValue.label')}
         />
       );
 

@@ -114,8 +114,8 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     ) {
       const detail = detailQuery.data.response;
       if (detail?.amountCents) {
-        setValue('paymentMethod', PaymentMethodOption.AMOUNT);
         setValue('amountCents', detail.amountCents / 100);
+        setValue('paymentMethod', PaymentMethodOption.AMOUNT);
       } else if (detail?.xsdDefinitionRef) {
         const blob = new Blob([detail.xsdDefinitionRef], {
           type: 'application/xml'
