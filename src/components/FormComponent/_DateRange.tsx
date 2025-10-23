@@ -1,9 +1,32 @@
 import { Stack, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { DateValidationError } from '@mui/x-date-pickers/models';
-import { endOfDay, startOfDay } from 'date-fns';
+import { endOfDay, startOfDay, format } from 'date-fns';
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+
+//Generates an accessible label for the calendar open button. If there is a value, shows "Change date, [formatted date]", otherwise "Choose date".
+
+const getDatePickerAriaLabel = (
+  t: (key: string) => string,
+  value: Date | null | undefined,
+  label?: string
+): string => {
+  if (value) {
+    // Checks if the date is valid before formatting it
+    const isValidDate = value instanceof Date && !isNaN(value.getTime());
+
+    if (!isValidDate) {
+      const baseLabel = t('dates.chooseDate');
+      return label ? `${baseLabel}, ${label}` : baseLabel;
+    }
+
+    const formattedDate = format(value, 'dd/MM/yyyy');
+    return `${t('dates.changeDate')}, ${formattedDate}`;
+  }
+  const baseLabel = t('dates.chooseDate');
+  return label ? `${baseLabel}, ${label}` : baseLabel;
+};
 
 export type DateRange = {
   label?: string;
@@ -124,6 +147,23 @@ export const _DateRange = ({
     toHelperText = validationErrorMessage || '';
   }
 
+  // Pre-process the dates to avoid calling startOfDay/endOfDay with invalid dates
+  let fromDateValue = null;
+  if (from?.value) {
+    const isValidFromDate = !isNaN(from.value.getTime());
+    if (isValidFromDate) {
+      fromDateValue = startOfDay(from.value);
+    }
+  }
+
+  let toDateValue = null;
+  if (to?.value) {
+    const isValidToDate = !isNaN(to.value.getTime());
+    if (isValidToDate) {
+      toDateValue = endOfDay(to.value);
+    }
+  }
+
   return (
     <Stack spacing={1} width="100%">
       {rangeLabel && (
@@ -145,7 +185,7 @@ export const _DateRange = ({
           maxDate={from?.todayValue || undefined}
           sx={{ width: '100%' }}
           label={from?.label || t('dates.from')}
-          value={from?.value ? startOfDay(from.value) : null}
+          value={fromDateValue}
           onChange={handleStartDateChange}
           onAccept={handleStartDateOnAccept}
           onError={handleStartDateError}
@@ -156,6 +196,9 @@ export const _DateRange = ({
               error: fromHasError,
               helperText: fromHelperText,
               required
+            },
+            openPickerButton: {
+              'aria-label': getDatePickerAriaLabel(t, from?.value, from?.label)
             }
           }}
         />
@@ -164,7 +207,7 @@ export const _DateRange = ({
           <DatePicker
             sx={{ width: '100%' }}
             label={t('dates.to')}
-            value={to?.value ? endOfDay(to.value) : null}
+            value={toDateValue}
             onChange={to?.onChange}
             open={isToDialogOpen}
             onClose={() => setIsToDialogOpen(false)}
@@ -184,6 +227,9 @@ export const _DateRange = ({
               },
               inputAdornment: {
                 onClick: () => setIsToDialogOpen(!isToDialogOpen)
+              },
+              openPickerButton: {
+                'aria-label': getDatePickerAriaLabel(t, to?.value, to?.label)
               }
             }}
           />

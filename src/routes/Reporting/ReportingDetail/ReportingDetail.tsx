@@ -219,14 +219,14 @@ export const ReportingDetail = () => {
               {
                 type: COMPONENT_TYPE.button,
                 label: t('commons.filters.filterResults'),
-                gridWidth: 1,
-                onClick: handleFiltersApplied
+                gridWidth: 1
               }
             ]}
             values={appliedFilters}
             onChange={(field, value) =>
               setAppliedFilters({ ...appliedFilters, [field]: value })
             }
+            onSubmit={handleFiltersApplied}
           />
         </Grid>
         <Grid

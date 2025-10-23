@@ -157,7 +157,6 @@ export const MyOrg = () => {
     },
     {
       type: COMPONENT_TYPE.select,
-      defaultValue: '',
       id: 'flagActive',
       name: 'flagActive',
       label: t('commons.state'),
@@ -167,7 +166,6 @@ export const MyOrg = () => {
     {
       type: COMPONENT_TYPE.button,
       label: t('commons.search'),
-      onClick: () => applyFilters(filters),
       gridWidth: 1
     }
   ];
@@ -178,6 +176,7 @@ export const MyOrg = () => {
         items={items}
         values={filters}
         onChange={(field, value) => setFilters({ ...filters, [field]: value })}
+        onSubmit={() => applyFilters(filters)}
         sx={{ py: 3 }}
       />
       <DataGridContainer>

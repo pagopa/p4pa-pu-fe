@@ -1105,6 +1105,8 @@
   "dates": {
     "from": "Dal",
     "to": "Al",
+    "chooseDate": "Scegli data",
+    "changeDate": "Modifica data",
     "validations": {
       "from": "Data non valida",
       "to": "Data non valida",
@@ -2170,6 +2172,8 @@
     "totalAmount": "Importo totale"
   },
   "taxonomy": {
+    "search": "Cerca tassonomia",
+    "searchDescription": "Inserisci al meno un filtro per avviare la ricerca.",
     "orgType": {
       "label": "Tipo ente",
       "required": "Il campo Tipo ente è obbligatorio",

@@ -49,8 +49,7 @@ export const useTabsConfig = (): Array<TabsConfig> => {
           type: COMPONENT_TYPE.select,
           label: t('commons.duetype'),
           options: types.optionsMap,
-          id: FilterFieldIds.TYPE_ORG,
-          defaultValue: ''
+          id: FilterFieldIds.TYPE_ORG
         }
       ]
     },
@@ -75,16 +74,14 @@ export const useTabsConfig = (): Array<TabsConfig> => {
           label: t('commons.duetype'),
           options: types.optionsMap,
           gridWidth: 6,
-          id: FilterFieldIds.TYPE_ORG,
-          defaultValue: ''
+          id: FilterFieldIds.TYPE_ORG
         },
         {
           type: COMPONENT_TYPE.select,
           label: t('commons.state'),
           options: debtPositionList,
           gridWidth: 6,
-          id: FilterFieldIds.STATE,
-          defaultValue: ''
+          id: FilterFieldIds.STATE
         }
       ]
     }

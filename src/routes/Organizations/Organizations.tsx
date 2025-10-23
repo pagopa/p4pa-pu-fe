@@ -61,10 +61,10 @@ export const Organizations = () => {
             {
               type: COMPONENT_TYPE.button,
               label: t('commons.search'),
-              gridWidth: 1.5,
-              onClick: applyFilters
+              gridWidth: 1.5
             }
           ]}
+          onSubmit={applyFilters}
         />
       </Grid>
       <Box

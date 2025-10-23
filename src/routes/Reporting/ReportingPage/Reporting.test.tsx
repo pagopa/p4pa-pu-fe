@@ -49,12 +49,17 @@ describe('Reporting', () => {
     render(<Reporting />);
     await userEvent.click(screen.getByText('commons.filters.filterResults'));
     expect(mockNavigate).not.toHaveBeenCalled();
-    expect(screen.getByTestId('alert-filter-error')).toBeInTheDocument();
+    expect(await screen.findByTestId('alert-filter-error')).toBeInTheDocument();
   });
 
   it('navigates with hash when filters are set', async () => {
     vi.mocked(noFilterSetted).mockReturnValue(false);
     render(<Reporting />);
+
+    // Fill in at least one field to satisfy validation
+    const iuvInput = screen.getByLabelText('commons.searchIUV');
+    await userEvent.type(iuvInput, '123456');
+
     await userEvent.click(screen.getByText('commons.filters.filterResults'));
     expect(mockNavigate).toHaveBeenCalledWith(
       PageRoutes.REPORTING_SEARCH_RESULTS,

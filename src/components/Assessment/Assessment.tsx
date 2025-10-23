@@ -70,6 +70,7 @@ export const Assessment = () => {
               title={t('assessment.search')}
               description={t('assessment.searchDescription')}
               multiFilterConfig={filterMap}
+              onSubmit={submitSearch}
               render={
                 error && <ErrorMessage testId="multifilters-error-text" />
               }
@@ -90,7 +91,6 @@ export const Assessment = () => {
                 {
                   label: t('commons.search'),
                   variant: 'contained',
-                  onClick: submitSearch,
                   id: 'assessment-search-btn'
                 }
               ]}

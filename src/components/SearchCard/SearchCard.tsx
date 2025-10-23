@@ -31,6 +31,7 @@ export type SearchCardProps = {
   render?: React.ReactNode;
   filterCategory?: FilterCategory;
   extraProps?: Record<string, unknown>;
+  onSubmit?: () => void; //Callback called when the form is submitted (Enter or click on button submit) if provided, SearchCard is wrapped in a <form> and handles the submit
 };
 
 const SearchCard = ({
@@ -47,7 +48,8 @@ const SearchCard = ({
   onTabChange,
   filterValues = {},
   onFilterChange,
-  onReset
+  onReset,
+  onSubmit
 }: SearchCardProps) => {
   const [localActiveTab, setLocalActiveTab] = useState<number>(activeTabIndex);
 
@@ -85,14 +87,23 @@ const SearchCard = ({
     return index === 0 ? 8 : 4;
   };
 
-  return (
-    <Box
-      component="section"
-      width="100%"
-      borderRadius={0.5}
-      padding={3}
-      sx={{ backgroundColor: 'background.paper' }}
-    >
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSubmit?.();
+  };
+
+  // Identify which button should be of type submit. By convention, the last button (or the one with variant="contained") is the submit
+  const getButtonType = (index: number): 'submit' | 'button' => {
+    if (!onSubmit) return 'button';
+
+    // If there are buttons, the last one is the submit
+    if (button && index === button.length - 1) return 'submit';
+
+    return 'button';
+  };
+
+  const cardContent = (
+    <>
       <Typography variant="h6" component={'h2'} fontWeight={700} mb={1}>
         {title}
       </Typography>
@@ -150,11 +161,33 @@ const SearchCard = ({
         <Grid container spacing={2} mt={2} sx={{ width: 'auto' }}>
           {button?.map((btn, index) => (
             <Grid item key={index} md={getButtonLenght(button.length, index)}>
-              <FormComponent.Button {...btn} fullWidth />
+              <FormComponent.Button
+                {...btn}
+                fullWidth
+                type={getButtonType(index)}
+              />
             </Grid>
           ))}
         </Grid>
       </Stack>
+    </>
+  );
+
+  return (
+    <Box
+      component="section"
+      width="100%"
+      borderRadius={0.5}
+      padding={3}
+      sx={{ backgroundColor: 'background.paper' }}
+    >
+      {onSubmit ? (
+        <form onSubmit={handleSubmit} noValidate style={{ width: '100%' }}>
+          {cardContent}
+        </form>
+      ) : (
+        cardContent
+      )}
     </Box>
   );
 };
