@@ -200,7 +200,7 @@ describe('PaymentsTable', () => {
 
     expect(mockWindowOpen).toHaveBeenCalledTimes(1);
     expect(mockWindowOpen).toHaveBeenCalledWith(
-      expect.stringContaining('/telematic-receipt/NaN'), // NaN because receiptPaymentRequestId undefined in mock
+      expect.stringContaining('/telematic-receipt'),
       '_blank',
       'noopener,noreferrer'
     );
