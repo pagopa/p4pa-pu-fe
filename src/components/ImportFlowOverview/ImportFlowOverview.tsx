@@ -277,8 +277,7 @@ const ImportFlowOverview = ({
     {
       type: COMPONENT_TYPE.button,
       label: t('commons.filters.filterResults'),
-      gridWidth: 1,
-      onClick: applyFilters
+      gridWidth: 1
     }
   ];
 
@@ -309,6 +308,7 @@ const ImportFlowOverview = ({
               [id]: value
             }))
           }
+          onSubmit={applyFilters}
         />
 
         <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>

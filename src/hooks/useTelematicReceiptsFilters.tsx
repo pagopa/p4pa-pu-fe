@@ -15,7 +15,6 @@ type UseTelematicReceiptsProps = {
 };
 
 export const useTelematicReceiptsFilters = ({
-  onFilter,
   layout = 'inline'
 }: UseTelematicReceiptsProps) => {
   const { t } = useTranslation();
@@ -62,8 +61,7 @@ export const useTelematicReceiptsFilters = ({
       type: COMPONENT_TYPE.button,
       label: t('commons.filters.filterResults'),
       gridWidth: 1,
-      id: 'applyFilters',
-      onClick: onFilter
+      id: 'applyFilters'
     });
   }
 

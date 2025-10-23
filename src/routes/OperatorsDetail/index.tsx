@@ -129,8 +129,7 @@ export const OperatorDetail = () => {
     {
       type: COMPONENT_TYPE.button,
       label: t('commons.filters.filterResults'),
-      gridWidth: 1,
-      onClick: () => applyFilters(filters)
+      gridWidth: 1
     }
   ];
 
@@ -224,6 +223,7 @@ export const OperatorDetail = () => {
             onChange={handleFilterChange}
             values={filters}
             items={filterItems}
+            onSubmit={() => applyFilters(filters)}
           />
         </Grid>
         <Grid

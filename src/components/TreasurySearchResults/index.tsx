@@ -100,6 +100,7 @@ const TreasurySearchResults = () => {
         onClose={toggleDrawer}
         title={t('commons.filters.filtersField')}
         filterMap={filterMap}
+        onSubmit={applyFilters}
         render={
           error && (
             <ErrorMessage variant="outlined" testId="multifilters-error-text" />
@@ -108,7 +109,6 @@ const TreasurySearchResults = () => {
         buttons={[
           {
             buttonText: t('commons.filters.filterResults'),
-            onButtonClick: applyFilters,
             variant: 'contained',
             id: 'multifilter-drawer-search-btn'
           },
