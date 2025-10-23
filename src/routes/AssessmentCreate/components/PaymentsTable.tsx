@@ -165,7 +165,7 @@ export const PaymentsTable = ({
   const handleDetailClick = useCallback(
     (row: PaymentRow) => {
       const detailPath = generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-        id: isRemoveMode
+        receiptId: isRemoveMode
           ? Number(row.receiptId)
           : Number(row.receiptPaymentRequestId)
       });

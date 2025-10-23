@@ -303,7 +303,7 @@ export const ClassificationDetails = () => {
                         if (data?.receiptPaymentReceiptId) {
                           navigate(
                             generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-                              id: data.receiptPaymentRequestId
+                              receiptId: data?.receiptPaymentRequestId
                             })
                           );
                         }
