@@ -67,14 +67,12 @@ export const TaxonomyPage = () => {
   };
 
   const onSubmit = (data: Partial<TaxonomyFields>) => {
-    // Validazione passata, procedi con la navigazione
     setError(false);
     const params = utils.URI.encode(data);
     navigate(`${PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS}#${params}`);
   };
 
   const onError = () => {
-    // Validazione fallita, mostra l'alert generale
     setError(true);
   };
 

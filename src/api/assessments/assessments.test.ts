@@ -931,7 +931,7 @@ describe('createAssessmentsRegistry', () => {
 
     expect(apiMock).toHaveBeenCalledWith(organizationId, assessmentRegistry);
     expect(mockParseAndLog).toHaveBeenCalledWith(
-      assessmentsRegistryDTOSchema,
+      assessmentsRegistrySchema,
       expectedResponse
     );
   });
