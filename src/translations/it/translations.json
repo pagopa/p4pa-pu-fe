@@ -1067,6 +1067,7 @@
       "TO_SYNC": "Da sincronizzare",
       "UNPAID": "Da pagare",
       "UNPAYABLE": "Non pagabile",
+      "WARNING": "Elaborato con errori",
       "WAITING_FILE": "In attesa del file"
     },
     "subject": "Oggetto",
