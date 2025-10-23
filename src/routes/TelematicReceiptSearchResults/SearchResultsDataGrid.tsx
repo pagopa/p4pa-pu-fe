@@ -81,9 +81,9 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<SearchResultDataRow>) => (
+      renderCell: ({ row }: GridRenderCellParams<SearchResultDataRow>) => (
         <ActionMenu
-          rowId={params.row.id}
+          rowId={row.id}
           menuItems={[
             {
               icon: <ReadMore fontSize="small" />,
@@ -91,14 +91,14 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
               action: () =>
                 navigate(
                   generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-                    id: params.row.receiptId
+                    receiptId: row.receiptId
                   })
                 )
             },
             {
               icon: <FileDownload fontSize="small" />,
               label: t('commons.files.download'),
-              action: () => handleDownloadReceiptPdf(params.row.receiptId)
+              action: () => handleDownloadReceiptPdf(row.receiptId)
             }
           ]}
         />

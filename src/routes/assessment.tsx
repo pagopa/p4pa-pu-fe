@@ -2,13 +2,13 @@ import { RouteHandleObject } from '../models/Routes';
 import Assessment from '../components/Assessment';
 import AssessmentSearchResults from './AssessmentSearchResults';
 import AssessmentDetail from './AssessmentDetail/AssessmentDetail';
-import TelematicReceiptDetail from './TelematicReceiptDetail';
 import { AssessmentsRegistrySearchResults } from './AssessmentsRegistrySearchResults';
 import { AssessmentCreate } from './AssessmentCreate/AssessmentCreate';
 import { AssessmentRegistryDetail } from './AssessmentsRegistryDetail';
 import { AssessmentRegistryCreate } from './AssessmentRegistryCreate';
 import { AssessmentRegistryEdit } from './AssessmentRegistryCreate/AssessmentRegistryEdit';
 import utils from '../utils';
+import { AssessmentReceiptDetail } from './AssessmentReceiptDetail';
 
 export const assessmentRoutes = [
   {
@@ -64,9 +64,9 @@ export const assessmentRoutes = [
         } as RouteHandleObject
       },
       {
-        id: 'ASSESSMENT_DETAIL_DETAIL',
-        path: 'detail/:id/:receiptId',
-        element: <TelematicReceiptDetail />,
+        id: 'ASSESSMENT_RECEIPT_DETAIL',
+        path: 'detail/:assessmentId/receipt/:receiptId',
+        element: <AssessmentReceiptDetail />,
         handle: {
           backButton: true,
           hideBreadcrumbs: false,
