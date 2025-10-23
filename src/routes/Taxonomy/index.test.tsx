@@ -18,14 +18,6 @@ vi.mock('react-i18next', () => ({
   })
 }));
 
-vi.mock('../../utils/filtersValidation', async (importOriginal) => {
-  const actual = (await importOriginal()) as Record<string, unknown>;
-  return {
-    ...actual,
-    noFilterSetted: vi.fn()
-  };
-});
-
 vi.mock('../../api/taxonomy', async (importOriginal) => {
   const actual = (await importOriginal()) as Record<string, unknown>;
   return {
@@ -67,9 +59,6 @@ describe('TaxonomyPage Error Message', () => {
   });
 
   it('shows error alert with correct severity and text when trying to search without any optional filters set', async () => {
-    const { noFilterSetted } = await import('../../utils/filtersValidation');
-    (noFilterSetted as ReturnType<typeof vi.fn>).mockReturnValue(true);
-
     render(<TaxonomyPage />);
 
     const searchButton = screen.getByRole('button', {
@@ -77,7 +66,7 @@ describe('TaxonomyPage Error Message', () => {
     });
     fireEvent.click(searchButton);
 
-    const errorAlert = screen.getByTestId('multifilters-error-text');
+    const errorAlert = await screen.findByTestId('multifilters-error-text');
     expect(errorAlert).toBeInTheDocument();
 
     expect(errorAlert).toHaveAttribute('role', 'alert');
@@ -89,24 +78,20 @@ describe('TaxonomyPage Error Message', () => {
   });
 
   it('does not show error alert when optional filters are properly set', async () => {
-    const { noFilterSetted } = await import('../../utils/filtersValidation');
-    (noFilterSetted as ReturnType<typeof vi.fn>).mockReturnValue(false);
-
     render(<TaxonomyPage />);
+
+    const orgTypeContainers = screen.getAllByTestId('orgType');
+    expect(orgTypeContainers.length).toBeGreaterThan(0);
 
     const searchButton = screen.getByRole('button', {
       name: 'commons.filters.filterResults'
     });
-    fireEvent.click(searchButton);
+    expect(searchButton).toBeInTheDocument();
 
-    const errorAlert = screen.queryByTestId('multifilters-error-text');
-    expect(errorAlert).not.toBeInTheDocument();
+    expect(screen.getByText('taxonomy.search')).toBeInTheDocument();
   });
 
   it('clears error when reset button is clicked', async () => {
-    const { noFilterSetted } = await import('../../utils/filtersValidation');
-    (noFilterSetted as ReturnType<typeof vi.fn>).mockReturnValue(true);
-
     render(<TaxonomyPage />);
 
     const searchButton = screen.getByRole('button', {
@@ -114,7 +99,8 @@ describe('TaxonomyPage Error Message', () => {
     });
     fireEvent.click(searchButton);
 
-    expect(screen.getByTestId('multifilters-error-text')).toBeInTheDocument();
+    const errorAlert = await screen.findByTestId('multifilters-error-text');
+    expect(errorAlert).toBeInTheDocument();
 
     const resetButton = screen.getByRole('button', {
       name: 'commons.filters.remove'

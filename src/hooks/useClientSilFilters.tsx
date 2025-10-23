@@ -4,16 +4,11 @@ import {
   COMPONENT_TYPE,
   FilterItem
 } from '../components/FilterContainer/FilterContainer';
-import type { ClientSilFilters } from '../api/clientSil/mappings';
-
-type UseClientSilFiltersProps = {
-  onFilter: (filters: ClientSilFilters) => void;
-};
 
 /**
  * Hook for the configuration of the filters of the Client SIL page
  */
-export const useClientSilFilters = ({ onFilter }: UseClientSilFiltersProps) => {
+export const useClientSilFilters = () => {
   const { t } = useTranslation();
 
   const getFilterItems = (): Array<FilterItem> => [
@@ -37,8 +32,7 @@ export const useClientSilFilters = ({ onFilter }: UseClientSilFiltersProps) => {
       type: COMPONENT_TYPE.button,
       label: t('commons.filters.filterResults'),
       gridWidth: 2,
-      id: 'applyFilters',
-      onClick: onFilter
+      id: 'applyFilters'
     }
   ];
 

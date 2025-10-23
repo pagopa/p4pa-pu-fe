@@ -74,7 +74,7 @@ export const EventList = () => {
     }
   };
 
-  const items = getFiltersWithSubmitButton(registryType || 'pagopa', onSubmit);
+  const items = getFiltersWithSubmitButton(registryType || 'pagopa');
 
   const action = (id: GridRowId) => {
     if (id && registryType) {
@@ -107,6 +107,7 @@ export const EventList = () => {
           onChange={(field, value) =>
             setFilters({ ...filters, [field]: value })
           }
+          onSubmit={onSubmit}
         />
         {data?.content?.length || isPending ? (
           <DataGridContainer>

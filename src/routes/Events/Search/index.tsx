@@ -64,6 +64,7 @@ export const EventPage = () => {
         onTabChange={handleTabChange}
         onFilterChange={handleFilterChange}
         render={error && <ErrorMessage />}
+        onSubmit={navigateToResults}
         button={[
           {
             label: t('commons.filters.remove'),
@@ -72,8 +73,7 @@ export const EventPage = () => {
           },
           {
             label: t('commons.filters.filterResults'),
-            variant: 'contained',
-            onClick: navigateToResults
+            variant: 'contained'
           }
         ]}
       />

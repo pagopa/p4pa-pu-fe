@@ -13,10 +13,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { TaxonomyFields } from '../../models/Taxonomy';
 import { useState } from 'react';
 import {
-  noFilterSetted,
-  shouldShowGeneralError
-} from '../../utils/filtersValidation';
-import {
   getScheduleLastUpdatedTime,
   synchronizeTaxonomy
 } from '../../api/taxonomy';
@@ -70,22 +66,16 @@ export const TaxonomyPage = () => {
     }
   };
 
-  const handleSearch = () => {
-    const currentValues = form.getValues();
-
-    if (noFilterSetted(currentValues)) {
-      setError(shouldShowGeneralError(currentValues));
-    } else {
-      setError(false);
-    }
-
-    form.handleSubmit(onSubmit)();
+  const onSubmit = (data: Partial<TaxonomyFields>) => {
+    // Validazione passata, procedi con la navigazione
+    setError(false);
+    const params = utils.URI.encode(data);
+    navigate(`${PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS}#${params}`);
   };
 
-  const onSubmit = async (filters: Partial<TaxonomyFields>) => {
-    const params = utils.URI.encode(filters);
-
-    navigate(`${PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS}#${params}`);
+  const onError = () => {
+    // Validazione fallita, mostra l'alert generale
+    setError(true);
   };
 
   const handleReset = () => {
@@ -95,55 +85,53 @@ export const TaxonomyPage = () => {
 
   return (
     <FormProvider {...form}>
-      <form>
-        <TitleComponent title={t('commons.routes.BACKOFFICE_TAXONOMY_INDEX')} />
+      <TitleComponent title={t('commons.routes.BACKOFFICE_TAXONOMY_INDEX')} />
 
-        <Grid container spacing={2}>
-          <Grid item xs={12} lg={6}>
-            <SearchCard
-              title={t('Cerca tassonomia')}
-              render={
-                <>
-                  <Grid mb={2}>
-                    {error && <ErrorMessage testId="multifilters-error-text" />}
-                  </Grid>
-                  <TaxonomyFilter />
-                </>
+      <Grid container spacing={2}>
+        <Grid item xs={12} lg={6}>
+          <SearchCard
+            title={t('taxonomy.search')}
+            render={
+              <>
+                <Grid mb={2}>
+                  {error && <ErrorMessage testId="multifilters-error-text" />}
+                </Grid>
+                <TaxonomyFilter />
+              </>
+            }
+            description={t('taxonomy.searchDescription')}
+            button={[
+              {
+                label: t('commons.filters.remove'),
+                variant: 'outlined',
+                type: 'button',
+                onClick: handleReset
+              },
+              {
+                label: t('commons.filters.filterResults'),
+                variant: 'contained',
+                type: 'submit'
               }
-              description={t(
-                'Inserisci al meno un filtro per avviare la ricerca.'
-              )}
-              button={[
-                {
-                  label: t('commons.filters.remove'),
-                  variant: 'outlined',
-                  onClick: handleReset
-                },
-                {
-                  label: t('commons.filters.filterResults'),
-                  onClick: handleSearch,
-                  variant: 'contained'
-                }
-              ]}
-            />
-          </Grid>
-
-          <Grid item xs={12} lg={6}>
-            <ActionCard
-              title={t('taxonomyPage.APIUpdate')}
-              description={t('taxonomyPage.APIUpdateText')}
-              actionLabel={t('taxonomyPage.APIUpdateCTA')}
-              footerText={
-                lastUpdatedTime.isSuccess && lastUpdatedTime.data?.lastUpdatedAt
-                  ? `${t('commons.lastUpdate')} ${formatDateTime(lastUpdatedTime.data.lastUpdatedAt)}`
-                  : ''
-              }
-              actionButtonVariant="contained"
-              onActionClick={handleUpdateCTA}
-            />
-          </Grid>
+            ]}
+            onSubmit={form.handleSubmit(onSubmit, onError)}
+          />
         </Grid>
-      </form>
+
+        <Grid item xs={12} lg={6}>
+          <ActionCard
+            title={t('taxonomyPage.APIUpdate')}
+            description={t('taxonomyPage.APIUpdateText')}
+            actionLabel={t('taxonomyPage.APIUpdateCTA')}
+            footerText={
+              lastUpdatedTime.isSuccess && lastUpdatedTime.data?.lastUpdatedAt
+                ? `${t('commons.lastUpdate')} ${formatDateTime(lastUpdatedTime.data.lastUpdatedAt)}`
+                : ''
+            }
+            actionButtonVariant="contained"
+            onActionClick={handleUpdateCTA}
+          />
+        </Grid>
+      </Grid>
     </FormProvider>
   );
 };
