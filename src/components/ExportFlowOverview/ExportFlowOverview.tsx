@@ -24,10 +24,6 @@ import { formatDateTime, formatFileSize } from '../../utils/formatters';
 import utils from '../../utils';
 import { useEffect, useState } from 'react';
 import { useSearch } from '../../hooks/useSearch';
-import {
-  noFilterSetted,
-  shouldShowGeneralError
-} from '../../utils/filtersValidation';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { PagedExportFile } from '../../../generated/data-contracts';
 import { ExportFilesFilters } from '../../api/exportFiles/mapping';
@@ -64,7 +60,7 @@ const ExportFlowOverview = ({
   const initialFilters = utils.URI.decode(window.location.hash);
 
   const [error, setError] = useState<boolean>(false);
-  const [filters, setFilters] = useState({
+  const [filters, setFilters] = useState<ExportFilesFilters>({
     dateRange: defaultDateRange,
     ...initialFilters,
     exportFileType: exportFileTypes
@@ -79,6 +75,21 @@ const ExportFlowOverview = ({
 
   const { data, isError } = exportFilters.query;
   const isEmptyData = !data?.content.length;
+
+  // Apply filters with client-side validation
+  // Check if at least one filter is set before applyings
+  const handleApplyFilters = () => {
+    // Check if at least the file name or the date range are set
+    const hasFileName = filters.fileName && filters.fileName.trim() !== '';
+    const hasDateRange = filters.dateRange?.from && filters.dateRange?.to;
+
+    if (hasFileName || hasDateRange) {
+      setError(false);
+      exportFilters.applyFilters(filters);
+    } else {
+      setError(true);
+    }
+  };
 
   useEffect(() => {
     if (isError) {
@@ -138,19 +149,6 @@ const ExportFlowOverview = ({
     (specializedExportPage
       ? () => navigate(specializedExportPage)
       : defaultReservation);
-
-  const applyFilters = () => {
-    const rawFilters = {
-      ...filters,
-      exportFileType: null
-    };
-    if (noFilterSetted(rawFilters)) {
-      setError(shouldShowGeneralError(rawFilters));
-    } else {
-      setError(false);
-      exportFilters.applyFilters(filters);
-    }
-  };
 
   const columns: Array<GridColDef> = [
     {
@@ -219,8 +217,7 @@ const ExportFlowOverview = ({
     {
       type: COMPONENT_TYPE.button,
       label: t('commons.filters.filterResults'),
-      gridWidth: 1,
-      onClick: applyFilters
+      gridWidth: 1
     }
   ];
 
@@ -245,7 +242,9 @@ const ExportFlowOverview = ({
             <Typography variant="h4">{sectionTitle}</Typography>
           </Box>
         )}
-        {error && <ErrorMessage variant="outlined" />}
+        {error && (
+          <ErrorMessage variant="outlined" testId="multifilters-error-text" />
+        )}
         <FilterContainer
           items={items}
           values={filters}
@@ -255,6 +254,7 @@ const ExportFlowOverview = ({
               [id]: value
             }))
           }
+          onSubmit={handleApplyFilters}
         />
 
         <Box
