@@ -5,13 +5,7 @@ import {
   FilterItem
 } from '../components/FilterContainer/FilterContainer';
 
-type UseOrgSilServiceFiltersProps = {
-  onFilter: () => void;
-};
-
-export const useOrgSilServiceFilters = ({
-  onFilter
-}: UseOrgSilServiceFiltersProps) => {
+export const useOrgSilServiceFilters = () => {
   const { t } = useTranslation();
 
   const filters: Array<FilterItem> = [
@@ -26,8 +20,7 @@ export const useOrgSilServiceFilters = ({
       type: COMPONENT_TYPE.button,
       label: t('commons.search'),
       gridWidth: 1,
-      id: 'applyFilters',
-      onClick: onFilter
+      id: 'applyFilters'
     }
   ];
 

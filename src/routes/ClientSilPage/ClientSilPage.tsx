@@ -47,9 +47,7 @@ export const ClientSilPage = () => {
     clientSilSearch.applyFilters(filterValues);
   }, [clientSilSearch, filterValues]);
 
-  const { filters: filterItems } = useClientSilFilters({
-    onFilter: applyFilters
-  });
+  const { filters: filterItems } = useClientSilFilters();
 
   const handleFilterChange = useCallback((id: string, value: unknown) => {
     setFilterValues((prev) => ({
@@ -89,6 +87,7 @@ export const ClientSilPage = () => {
         items={filterItems}
         values={filterValues}
         onChange={handleFilterChange}
+        onSubmit={applyFilters}
       />
       <Grid
         container

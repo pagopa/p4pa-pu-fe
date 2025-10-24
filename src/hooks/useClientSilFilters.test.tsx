@@ -14,16 +14,8 @@ vi.mock('@mui/icons-material/Search', () => ({
 }));
 
 describe('useClientSilFilters', () => {
-  const mockOnFilter = vi.fn();
-
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   it('should return correct filter configuration', () => {
-    const { result } = renderHook(() =>
-      useClientSilFilters({ onFilter: mockOnFilter })
-    );
+    const { result } = renderHook(() => useClientSilFilters());
 
     const filters = result.current.filters;
 
@@ -53,14 +45,12 @@ describe('useClientSilFilters', () => {
     });
 
     if (filters[2].type === COMPONENT_TYPE.button) {
-      expect(filters[2].onClick).toBe(mockOnFilter);
+      expect(filters[2].onClick).toBeUndefined();
     }
   });
 
   it('should use correct translation keys', () => {
-    const { result } = renderHook(() =>
-      useClientSilFilters({ onFilter: mockOnFilter })
-    );
+    const { result } = renderHook(() => useClientSilFilters());
 
     const filters = result.current.filters;
 
@@ -81,10 +71,8 @@ describe('useClientSilFilters', () => {
     expect(filters[2].label).toBe('commons.filters.filterResults');
   });
 
-  it('should pass onFilter callback to button', () => {
-    const { result } = renderHook(() =>
-      useClientSilFilters({ onFilter: mockOnFilter })
-    );
+  it('should return button without onClick handler', () => {
+    const { result } = renderHook(() => useClientSilFilters());
 
     const filterButton = result.current.filters.find(
       (filter) => filter.id === 'applyFilters'
@@ -94,7 +82,7 @@ describe('useClientSilFilters', () => {
     expect(filterButton?.type).toBe(COMPONENT_TYPE.button);
 
     if (filterButton?.type === COMPONENT_TYPE.button) {
-      expect(filterButton.onClick).toBe(mockOnFilter);
+      expect(filterButton.onClick).toBeUndefined();
     }
   });
 });
