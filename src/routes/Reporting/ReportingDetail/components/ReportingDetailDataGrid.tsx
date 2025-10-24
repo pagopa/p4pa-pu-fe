@@ -63,7 +63,7 @@ const ReportingDetailDataGrid = ({
       renderCell: (params) => (
         <Link
           to={generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-            receiptId: params.row?.receiptPaymentRequestId
+            receiptId: params.row?.receiptId
           })}
           aria-label={t('commons.routes.TELEMATIC_RECEIPT_DETAIL')}
         >
