@@ -23,12 +23,14 @@ export type _SelectProps = Omit<
   onChange?: (value: FilterFieldValue) => void;
   value?: FilterFieldValue; // initial selection (uncontrolled)
   onClose?: () => void; // callback called when the dropdown is closed
+  disableClearable?: boolean;
 };
 
 export const _Select = ({
   forwardRef,
   options = [],
   value,
+  disableClearable,
   onChange,
   onClose,
   label,
@@ -163,7 +165,7 @@ export const _Select = ({
       onInputChange={handleInputChange}
       onOpen={() => setIsOpen(true)}
       onClose={handleClose}
-      disableClearable={false}
+      disableClearable={disableClearable}
       disabled={props.disabled}
       getOptionDisabled={(option) => !!option?.disabled}
       filterOptions={(options, state) => {

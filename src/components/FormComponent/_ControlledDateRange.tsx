@@ -1,9 +1,8 @@
 import { Controller, Control, FieldValues, Path } from 'react-hook-form';
-import { _DateRange } from './_DateRange';
-import { DateRangeProps } from '.';
+import { _DateRange, _DateRangeProps } from './_DateRange';
 
 export type _ControlledDateRangeProps<T extends FieldValues> =
-  DateRangeProps & {
+  _DateRangeProps & {
     name: Path<T>;
     control: Control<T>;
     label?: string;

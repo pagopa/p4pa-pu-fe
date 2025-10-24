@@ -9,10 +9,7 @@ import { DebtTypeOrgForm } from '../../types';
 
 export const Step3Accounting = () => {
   const { t } = useTranslation();
-  const { control, watch } = useFormContext<DebtTypeOrgForm>();
-
-  const postalIban = watch('postalIban');
-  const iban = watch('iban');
+  const { control } = useFormContext<DebtTypeOrgForm>();
 
   return (
     <WizardStepWrapper
@@ -29,7 +26,6 @@ export const Step3Accounting = () => {
           data-testid="postalIban"
           control={control}
           label={t('debtTypeOrgCreate.accounting.postalIban')}
-          disabled={!!iban}
           required={false}
           InputLabelProps={{ shrink: true }}
         />
@@ -38,7 +34,6 @@ export const Step3Accounting = () => {
           data-testid="iban"
           control={control}
           label={t('debtTypeOrgCreate.accounting.pspIban')}
-          disabled={!!postalIban}
           required={false}
           InputLabelProps={{ shrink: true }}
         />

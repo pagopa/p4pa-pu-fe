@@ -1,62 +1,45 @@
 import { Control, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import InputAdornment from '@mui/material/InputAdornment';
 import Stack from '@mui/material/Stack';
 import { FormComponent } from '../../../../../components/FormComponent';
 import Typography from '@mui/material/Typography';
-import EuroIcon from '@mui/icons-material/Euro';
-import { DebtTypeOrgForm } from '../../../types';
-
-export enum PaymentMethodOption {
-  FREE = 'free',
-  AMOUNT = 'amount',
-  CUSTOM = 'custom',
-  EXTERNAL = 'external'
-}
+import { DebtTypeOrgForm, PaymentMethodOption } from '../../../types';
 
 export type PaymentMethodProps = {
   control: Control<DebtTypeOrgForm>;
   name: Path<DebtTypeOrgForm>;
   selectedValue: PaymentMethodOption;
-  edit?: boolean;
 };
 
 export const SelectedField = ({
   selectedValue,
-  control,
-  edit
+  control
 }: Omit<PaymentMethodProps, 'name'>) => {
   const { t } = useTranslation();
 
   switch (selectedValue) {
     case PaymentMethodOption.AMOUNT:
       return (
-        <FormComponent.ControlledTextField
+        <FormComponent.ControlledAmountField
+          key="amountCents"
           name="amountCents"
           control={control}
+          placeholder="0,00"
           label={t('debtTypeOrgCreate.behaviour.spontaneous.amountValue.label')}
-          InputProps={{
-            endAdornment: (
-              <InputAdornment position="end">
-                <EuroIcon />
-              </InputAdornment>
-            )
-          }}
         />
       );
 
     case PaymentMethodOption.CUSTOM:
       return (
         <FormComponent.ControlledFileUploader
-          disabled={edit}
           name="xsdDefinitionRef"
           control={control}
           description={t(
             'debtTypeOrgCreate.behaviour.spontaneous.file.description'
           )}
-          fileExtensionsAllowed={['xsd']}
+          fileExtensionsAllowed={['xsd', 'xml']}
           header={
-            <Typography fontWeight="bold" color={edit ? 'gray' : 'textPrimary'}>
+            <Typography fontWeight="bold" color="textPrimary">
               {t('debtTypeOrgCreate.behaviour.spontaneous.file.header')}
               <Typography component="span" color="error">
                 *
@@ -69,8 +52,8 @@ export const SelectedField = ({
     case PaymentMethodOption.EXTERNAL:
       return (
         <FormComponent.ControlledTextField
+          key="externalPaymentUrl"
           name="externalPaymentUrl"
-          disabled={edit}
           control={control}
           label={t('debtTypeOrgCreate.behaviour.spontaneous.externalUrl.label')}
           defaultValue="https://"
@@ -85,8 +68,7 @@ export const SelectedField = ({
 export const PaymentMethodSelector = ({
   control,
   name,
-  selectedValue,
-  edit
+  selectedValue
 }: PaymentMethodProps) => {
   const { t } = useTranslation();
 
@@ -97,8 +79,8 @@ export const PaymentMethodSelector = ({
         control={control}
         label={t('debtTypeOrgCreate.behaviour.spontaneous.label')}
         required
-        disabled={edit}
         fullWidth
+        disableClearable
         options={[
           {
             label: t('debtTypeOrgCreate.behaviour.spontaneous.free'),
@@ -119,11 +101,7 @@ export const PaymentMethodSelector = ({
         ]}
       />
 
-      <SelectedField
-        selectedValue={selectedValue}
-        control={control}
-        edit={edit}
-      />
+      <SelectedField selectedValue={selectedValue} control={control} />
     </Stack>
   );
 };

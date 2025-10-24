@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { CreateDebtPositionTypeOrg } from '../../../api/debtPositionsTypeOrg';
-import { PaymentMethodOption } from '../steps/Step2Behaviour/components/PaymentMethodSelector';
-import { DebtTypeOrgForm } from '../types';
+import { DebtTypeOrgForm, PaymentMethodOption } from '../types';
+import { euroToCents } from '../../../utils/formatters';
 
 type OriginalDebtTypeOrgData = {
   debtPositionTypeOrgId?: number;
@@ -52,11 +52,16 @@ export const useApiOperations = (organizationId: number) => {
         flagNotifyIo: data.flagNotifyIo || false,
         flagNotifyOutcomePush: data.flagNotifyOutcomePush === 'enabled',
 
-        ...(data.amountCents && { amountCents: data.amountCents }),
-        ...(data.externalPaymentUrl && {
-          externalPaymentUrl: data.externalPaymentUrl
-        }),
-        ...(xsdDefinitionRef && { xsdDefinitionRef }),
+        ...(data.paymentMethod === PaymentMethodOption.AMOUNT &&
+          data.amountCents && {
+            amountCents: euroToCents(data.amountCents)
+          }),
+        ...(data.paymentMethod === PaymentMethodOption.EXTERNAL &&
+          data.externalPaymentUrl && {
+            externalPaymentUrl: data.externalPaymentUrl
+          }),
+        ...(data.paymentMethod === PaymentMethodOption.CUSTOM &&
+          xsdDefinitionRef && { xsdDefinitionRef }),
 
         ...(data.serviceId && { serviceId: data.serviceId }),
         ...(data.ioTemplateSubject && {
@@ -77,10 +82,7 @@ export const useApiOperations = (organizationId: number) => {
               data.amountActualizationOrgSilServiceId
           }),
 
-        flagAmountActualization: !!(
-          data.amountActualizationOrgSilServiceId &&
-          data.amountActualizationOrgSilServiceId !== 0
-        )
+        flagAmountActualization: false
       };
 
       const debtPositionTypeOrgPayload =

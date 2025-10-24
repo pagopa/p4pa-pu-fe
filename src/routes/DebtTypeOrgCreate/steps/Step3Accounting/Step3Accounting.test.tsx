@@ -1,11 +1,6 @@
 import React from 'react';
 import { vi } from 'vitest';
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor
-} from '../../../../__tests__/renderers';
+import { render, screen, waitFor } from '../../../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
 import { Step3Accounting } from '.';
 import { StoreProvider } from '../../../../store/GlobalStore';
@@ -91,41 +86,6 @@ describe('Step3Accounting', () => {
     ].forEach((label) => {
       expect(screen.getByRole('textbox', { name: label })).toBeInTheDocument();
     });
-  });
-
-  it('disables iban field when postalIban is filled and vice versa', async () => {
-    renderWithForm(<Step3Accounting />);
-
-    const postalIbanInput = screen.getByRole('textbox', {
-      name: 'debtTypeOrgCreate.accounting.postalIban'
-    });
-    const ibanInput = screen.getByRole('textbox', {
-      name: 'debtTypeOrgCreate.accounting.pspIban'
-    });
-
-    // Initially both enabled
-    expect(postalIbanInput).toBeEnabled();
-    expect(ibanInput).toBeEnabled();
-
-    // Fill postalIban disables iban
-    fireEvent.change(postalIbanInput, {
-      target: { value: '123456' }
-    });
-    await waitFor(() => expect(ibanInput).toBeDisabled());
-
-    // Clear postalIban enables iban
-    fireEvent.change(postalIbanInput, { target: { value: '' } });
-    await waitFor(() => expect(ibanInput).toBeEnabled());
-
-    // Fill iban disables postalIban
-    fireEvent.change(ibanInput, {
-      target: { value: 'IT60X0542811101000000123456' }
-    });
-    await waitFor(() => expect(postalIbanInput).toBeDisabled());
-
-    // Clear iban enables postalIban
-    fireEvent.change(ibanInput, { target: { value: '' } });
-    await waitFor(() => expect(postalIbanInput).toBeEnabled());
   });
 
   it('submits form with valid data and calls onSubmit', async () => {

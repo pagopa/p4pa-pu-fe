@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { PaymentMethodOption } from './components/PaymentMethodSelector';
 import { requireField, validateUrl } from '../../../../utils/schema';
+import { PaymentMethodOption } from '../../types';
 
 export const step2Schema = z
   .object({
@@ -9,7 +9,10 @@ export const step2Schema = z
     isAnonymousFiscalCode: z.boolean().optional().default(false),
 
     paymentMethod: z.nativeEnum(PaymentMethodOption),
-    amountCents: z.coerce.number().optional(),
+    amountCents: z.coerce
+      .number({ invalid_type_error: '' })
+      .gt(0, 'commons.validation.minAmountRequired')
+      .optional(),
     xsdDefinitionRef: z.any().optional(),
     externalPaymentUrl: z.string().optional(),
 
