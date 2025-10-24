@@ -18,7 +18,7 @@ import {
   formatDateTime,
   moneyFormat
 } from '../../../utils/formatters';
-import { PaymentsReporting } from '../../../../generated/apiClient';
+import { PaymentsReportingWithReceiptView } from '../../../../generated/apiClient';
 import { PageRoutes } from '../../../routes';
 import { getPaymentsReportingRows } from '../../../api/reporting';
 import { useSearch } from '../../../hooks/useSearch';
@@ -46,7 +46,8 @@ export const ReportingDetail = () => {
     return null;
   }
 
-  const [detailItem, setDetailItem] = useState<PaymentsReporting | null>(null);
+  const [detailItem, setDetailItem] =
+    useState<PaymentsReportingWithReceiptView | null>(null);
   const [currentIngestionFlowFileId, setCurrentIngestionFlowFileId] = useState<
     number | undefined
   >(location.state?.ingestionFlowFileId);
@@ -218,14 +219,14 @@ export const ReportingDetail = () => {
               {
                 type: COMPONENT_TYPE.button,
                 label: t('commons.filters.filterResults'),
-                gridWidth: 1,
-                onClick: handleFiltersApplied
+                gridWidth: 1
               }
             ]}
             values={appliedFilters}
             onChange={(field, value) =>
               setAppliedFilters({ ...appliedFilters, [field]: value })
             }
+            onSubmit={handleFiltersApplied}
           />
         </Grid>
         <Grid

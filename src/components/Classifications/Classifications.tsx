@@ -41,6 +41,7 @@ export const Classifications = () => {
               title={t('classifications.search')}
               description={t('classifications.searchdescription')}
               multiFilterConfig={filterMap}
+              onSubmit={submitSearch}
               render={
                 error && <ErrorMessage testId="multifilters-error-text" />
               }
@@ -58,7 +59,6 @@ export const Classifications = () => {
                 {
                   label: t('commons.search'),
                   variant: 'contained',
-                  onClick: submitSearch,
                   id: 'searchcard-search-btn'
                 }
               ]}

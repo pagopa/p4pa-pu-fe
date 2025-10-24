@@ -9,8 +9,10 @@ export type ExportFilesFilters = Pick<
   NonNullable<GetExportFilesQueryParams>,
   'exportFileType' | 'status' | 'fileName'
 > & {
-  creationDateFrom?: Date;
-  creationDateTo?: Date;
+  dateRange?: {
+    from: Date;
+    to: Date;
+  };
 };
 
 export type ExportFilesFilteredRequest = FilteredRequest<ExportFilesFilters>;
@@ -21,12 +23,8 @@ export const buildGetExportFilesQueryParams = ({
   sort
 }: ExportFilesFilteredRequest): GetExportFilesQueryParams => ({
   exportFileType: filters.exportFileType,
-  creationDateTimeFrom: filters.creationDateFrom
-    ? utils.formatters.date.code(filters.creationDateFrom)
-    : undefined,
-  creationDateTimeTo: filters.creationDateTo
-    ? utils.formatters.date.code(filters.creationDateTo)
-    : undefined,
+  creationDateTimeFrom: utils.formatters.date.code(filters?.dateRange?.from),
+  creationDateTimeTo: utils.formatters.date.code(filters?.dateRange?.to),
   status: filters.status,
   fileName: filters.fileName,
   page: pagination.page,

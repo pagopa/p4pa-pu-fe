@@ -96,8 +96,17 @@ describe('_Select', () => {
     expect(input).toBeDisabled();
   });
 
-  it('allows clearing the selection and calls onChange(null)', async () => {
-    const { onChange } = setup({ value: 'OPEN' });
+  it('allows clearing the selection and calls onChange(undefined)', async () => {
+    const onChange = vi.fn();
+    const { rerender } = render(
+      <_Select
+        id="status-select"
+        label="Status"
+        options={OPTIONS}
+        value={'OPEN'}
+        onChange={onChange}
+      />
+    );
     const input = screen.getByLabelText('Status') as HTMLInputElement;
     expect(input.value).toBe('Open');
 
@@ -106,7 +115,19 @@ describe('_Select', () => {
     const user = userEvent.setup();
     await user.click(clearBtn);
 
-    expect(onChange).toHaveBeenCalledWith(null);
+    expect(onChange).toHaveBeenCalledWith(undefined);
+
+    rerender(
+      <_Select
+        id="status-select"
+        label="Status"
+        options={OPTIONS}
+        value={undefined}
+        onChange={onChange}
+      />
+    );
+
+    // After parent updates value prop, input should be cleared
     expect(input.value).toBe('');
   });
 

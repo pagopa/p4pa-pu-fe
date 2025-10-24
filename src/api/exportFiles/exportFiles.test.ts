@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import { getExportFiles, getExportFile } from '.';
 import utils from '../../utils';
@@ -75,12 +75,14 @@ describe('getExportFiles', () => {
       getExportFiles(organizationId, 'payments')
     );
 
+    // Act
     const data = await result.current.mutateAsync(request);
 
     await waitFor(() => {
       expect(result.current.isSuccess).toBe(true);
     });
 
+    // Assert
     expect(spyGetExportFiles).toHaveBeenCalledWith(organizationId, {
       exportFileType: ExportFileTypeEnum.PAID,
       page: 0,
@@ -106,8 +108,10 @@ describe('getExportFiles', () => {
     const request: ExportFilesFilteredRequest = {
       filters: {
         exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
-        creationDateFrom: new Date('2023-01-01'),
-        creationDateTo: new Date('2023-01-31'),
+        dateRange: {
+          from: new Date('2023-01-01'),
+          to: new Date('2023-01-31')
+        },
         status: ExportFileStatus.COMPLETED,
         fileName: 'test'
       },

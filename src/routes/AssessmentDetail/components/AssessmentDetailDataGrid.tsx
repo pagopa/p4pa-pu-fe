@@ -24,15 +24,11 @@ const AssessmentDetailDataGrid = ({
   const navigate = useNavigate();
   const { id: assessmentId } = useParams<{ id: string }>();
 
-  /**
-   * Handle navigation to the assessment detail record
-   * @param receiptId - ID of the assessment detail
-   */
   const navigateToDetail = (receiptId?: number) => {
-    if (receiptId && assessmentId) {
-      const detailUrl = generatePath(PageRoutes.ASSESSMENT_DETAIL_DETAIL, {
-        id: assessmentId.toString(),
-        receiptId: receiptId.toString()
+    if (receiptId) {
+      const detailUrl = generatePath(PageRoutes.ASSESSMENT_RECEIPT_DETAIL, {
+        receiptId,
+        assessmentId
       });
 
       navigate(detailUrl, {

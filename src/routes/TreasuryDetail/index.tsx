@@ -11,6 +11,9 @@ import DetailContainer, {
 import { getTreasuryDetail } from '../../api/treasuryDetail';
 import { useEffect } from 'react';
 import { PageRoutes } from '../../routes';
+import { getIngestionFlowFile } from '../../api/ingestionFlowFiles';
+import { downloadBlob } from '../../utils/download';
+import utils from '../../utils';
 
 export const TreasuryDetail = () => {
   const { t } = useTranslation();
@@ -27,12 +30,33 @@ export const TreasuryDetail = () => {
 
   const { data, isError, error } = getTreasuryDetail(organizationId, id);
 
+  const mutation = getIngestionFlowFile(organizationId);
+
   useEffect(() => {
     if (isError && error) {
       console.error('Error loading treasury detail:', error);
       navigate(PageRoutes.RESPONSES_ERROR);
     }
   }, [isError, error, navigate]);
+
+  // Downloads the ingestion flow file associated with this treasury record.
+  const downloadIngestionFlowFile = async () => {
+    if (!data?.ingestionFlowFileId) {
+      utils.notify.emit(t('commons.files.downloadFailed'));
+      return;
+    }
+
+    try {
+      const { fileName, data: fileData } = await mutation.mutateAsync(
+        data.ingestionFlowFileId
+      );
+
+      downloadBlob(fileData, fileName);
+    } catch (error) {
+      console.error('Error downloading treasury file:', error);
+      utils.notify.emit(t('commons.files.downloadFailed'));
+    }
+  };
 
   const summaryData: Array<DetailData> = [
     {
@@ -101,7 +125,7 @@ export const TreasuryDetail = () => {
             icon: <Download />,
             variant: 'contained',
             buttonText: t('commons.files.download'),
-            onActionClick: () => console.log('download')
+            onActionClick: downloadIngestionFlowFile
           }
         ]}
       />

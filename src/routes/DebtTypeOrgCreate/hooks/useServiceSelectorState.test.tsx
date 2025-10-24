@@ -5,8 +5,6 @@ import { useServiceSelectorState } from './useServiceSelectorState';
 import { OrgSilServiceExtendedDTO } from '../../../../generated/data-contracts';
 
 describe('useServiceSelectorState', () => {
-  const baseTranslationKey = 'test.service';
-
   const mockServices: Array<OrgSilServiceExtendedDTO> = [
     {
       orgSilServiceId: 1,
@@ -33,9 +31,7 @@ describe('useServiceSelectorState', () => {
       error: null
     } as any;
 
-    const { result } = renderHook(() =>
-      useServiceSelectorState(mockQuery, false, baseTranslationKey)
-    );
+    const { result } = renderHook(() => useServiceSelectorState(mockQuery));
 
     expect(result.current.options).toEqual([
       {
@@ -82,9 +78,7 @@ describe('useServiceSelectorState', () => {
       error: null
     } as any;
 
-    const { result } = renderHook(() =>
-      useServiceSelectorState(mockQuery, false, baseTranslationKey)
-    );
+    const { result } = renderHook(() => useServiceSelectorState(mockQuery));
 
     expect(result.current.options).toHaveLength(2);
     expect(result.current.options.every((option) => option.value > 0)).toBe(
@@ -111,15 +105,9 @@ describe('useServiceSelectorState', () => {
       error: null
     } as any;
 
-    const { result } = renderHook(() =>
-      useServiceSelectorState(mockQuery, false, baseTranslationKey)
-    );
+    const { result } = renderHook(() => useServiceSelectorState(mockQuery));
 
     expect(result.current.isLoading).toBe(true);
-    expect(result.current.placeholderKey).toBe('commons.loading');
-    expect(result.current.helperTextKey).toBe(
-      `${baseTranslationKey}.helperText`
-    );
   });
 
   it('handles error state correctly', () => {
@@ -129,12 +117,9 @@ describe('useServiceSelectorState', () => {
       error: new Error('API Error')
     } as any;
 
-    const { result } = renderHook(() =>
-      useServiceSelectorState(mockQuery, false, baseTranslationKey)
-    );
+    const { result } = renderHook(() => useServiceSelectorState(mockQuery));
 
     expect(result.current.hasError).toBe(true);
-    expect(result.current.helperTextKey).toBe(`${baseTranslationKey}.error`);
   });
 
   it('handles no options available state', () => {
@@ -144,49 +129,9 @@ describe('useServiceSelectorState', () => {
       error: null
     } as any;
 
-    const { result } = renderHook(() =>
-      useServiceSelectorState(mockQuery, false, baseTranslationKey)
-    );
+    const { result } = renderHook(() => useServiceSelectorState(mockQuery));
 
     expect(result.current.noOptionsAvailable).toBe(true);
-    expect(result.current.placeholderKey).toBe(
-      `${baseTranslationKey}.noOptions`
-    );
-    expect(result.current.helperTextKey).toBe(
-      `${baseTranslationKey}.noOptionsHelp`
-    );
-  });
-
-  it('handles edit mode correctly', () => {
-    const mockQuery = {
-      data: mockServices,
-      isLoading: false,
-      error: null
-    } as any;
-
-    const { result } = renderHook(() =>
-      useServiceSelectorState(mockQuery, true, baseTranslationKey)
-    );
-
-    expect(result.current.helperTextKey).toBe(
-      `${baseTranslationKey}.editHelperText`
-    );
-  });
-
-  it('returns correct placeholder for normal state', () => {
-    const mockQuery = {
-      data: mockServices,
-      isLoading: false,
-      error: null
-    } as any;
-
-    const { result } = renderHook(() =>
-      useServiceSelectorState(mockQuery, false, baseTranslationKey)
-    );
-
-    expect(result.current.placeholderKey).toBe(
-      `${baseTranslationKey}.placeholder`
-    );
   });
 
   it('handles empty data correctly', () => {
@@ -196,9 +141,7 @@ describe('useServiceSelectorState', () => {
       error: null
     } as any;
 
-    const { result } = renderHook(() =>
-      useServiceSelectorState(mockQuery, false, baseTranslationKey)
-    );
+    const { result } = renderHook(() => useServiceSelectorState(mockQuery));
 
     expect(result.current.options).toEqual([]);
     expect(result.current.noOptionsAvailable).toBe(true);
@@ -221,9 +164,7 @@ describe('useServiceSelectorState', () => {
       error: null
     } as any;
 
-    const { result } = renderHook(() =>
-      useServiceSelectorState(mockQuery, false, baseTranslationKey)
-    );
+    const { result } = renderHook(() => useServiceSelectorState(mockQuery));
 
     expect(result.current.options).toEqual([
       {
@@ -259,9 +200,7 @@ describe('useServiceSelectorState', () => {
       error: null
     } as any;
 
-    const { result } = renderHook(() =>
-      useServiceSelectorState(mockQuery, false, baseTranslationKey)
-    );
+    const { result } = renderHook(() => useServiceSelectorState(mockQuery));
 
     expect(result.current.options).toEqual([
       {
@@ -280,7 +219,7 @@ describe('useServiceSelectorState', () => {
     } as any;
 
     const { result, rerender } = renderHook(
-      ({ query }) => useServiceSelectorState(query, false, baseTranslationKey),
+      ({ query }) => useServiceSelectorState(query),
       { initialProps: { query: mockQuery } }
     );
 
@@ -299,42 +238,5 @@ describe('useServiceSelectorState', () => {
     rerender({ query: newMockQuery });
     expect(result.current.options).not.toBe(firstOptions);
     expect(result.current.options).toHaveLength(2);
-  });
-
-  it('handles all state combinations correctly', () => {
-    const testCases = [
-      {
-        query: { data: mockServices, isLoading: false, error: null },
-        edit: false,
-        expectedHelperText: `${baseTranslationKey}.helperText`
-      },
-      {
-        query: { data: mockServices, isLoading: false, error: null },
-        edit: true,
-        expectedHelperText: `${baseTranslationKey}.editHelperText`
-      },
-      {
-        query: { data: [], isLoading: false, error: null },
-        edit: false,
-        expectedHelperText: `${baseTranslationKey}.noOptionsHelp`
-      },
-      {
-        query: {
-          data: mockServices,
-          isLoading: false,
-          error: new Error('Test')
-        },
-        edit: false,
-        expectedHelperText: `${baseTranslationKey}.error`
-      }
-    ];
-
-    testCases.forEach(({ query, edit, expectedHelperText }) => {
-      const { result } = renderHook(() =>
-        useServiceSelectorState(query as any, edit, baseTranslationKey)
-      );
-
-      expect(result.current.helperTextKey).toBe(expectedHelperText);
-    });
   });
 });

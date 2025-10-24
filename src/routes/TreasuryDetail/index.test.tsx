@@ -1,21 +1,48 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TreasuryDetail } from '.';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { useLoaderData } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import { getTreasuryDetail } from '../../api/treasuryDetail';
+import { getIngestionFlowFile } from '../../api/ingestionFlowFiles';
+import { downloadBlob } from '../../utils/download';
+import utils from '../../utils';
 
 const mockNavigate = vi.fn();
+const mockMutateAsync = vi.fn();
 
 vi.mock('../../api/treasuryDetail', () => ({
   getTreasuryDetail: vi.fn()
 }));
+
+vi.mock('../../api/ingestionFlowFiles', () => ({
+  getIngestionFlowFile: vi.fn()
+}));
+
+vi.mock('../../utils/download', () => ({
+  downloadBlob: vi.fn()
+}));
+
+vi.mock('../../utils', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('../../utils')>();
+  return {
+    ...actual,
+    default: {
+      ...actual.default,
+      notify: {
+        emit: vi.fn()
+      }
+    }
+  };
+});
+
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useLoaderData: vi.fn(),
   useNavigate: () => mockNavigate
 }));
+
 vi.mock('../../store/GlobalStore', () => ({
   useStore: vi.fn()
 }));
@@ -67,6 +94,7 @@ describe('Treasury detail Page', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockNavigate.mockClear();
+    mockMutateAsync.mockClear();
 
     mockUseLoaderData.mockReturnValue(mockData.treasuryId);
     (useStore as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
@@ -75,6 +103,12 @@ describe('Treasury detail Page', () => {
 
     (getTreasuryDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
       data: mockData
+    });
+
+    (
+      getIngestionFlowFile as unknown as ReturnType<typeof vi.fn>
+    ).mockReturnValue({
+      mutateAsync: mockMutateAsync
     });
   });
 
@@ -106,5 +140,81 @@ describe('Treasury detail Page', () => {
     render(<TreasuryDetail />);
 
     expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
+  });
+
+  it('renders download button correctly', () => {
+    render(<TreasuryDetail />);
+
+    const downloadButton = screen.getByText('commons.files.download');
+    expect(downloadButton).toBeInTheDocument();
+  });
+
+  it('downloads file successfully when ingestionFlowFileId is present', async () => {
+    const mockFileName = 'treasury-file.zip';
+    const mockFileData = new Blob(['test data'], { type: 'application/zip' });
+
+    mockMutateAsync.mockResolvedValue({
+      fileName: mockFileName,
+      data: mockFileData
+    });
+
+    render(<TreasuryDetail />);
+
+    const downloadButton = screen.getByText('commons.files.download');
+    fireEvent.click(downloadButton);
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith(
+        mockData.ingestionFlowFileId
+      );
+      expect(downloadBlob).toHaveBeenCalledWith(mockFileData, mockFileName);
+    });
+  });
+
+  it('shows error notification when ingestionFlowFileId is missing', async () => {
+    (getTreasuryDetail as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      data: { ...mockData, ingestionFlowFileId: undefined }
+    });
+
+    render(<TreasuryDetail />);
+
+    const downloadButton = screen.getByText('commons.files.download');
+    fireEvent.click(downloadButton);
+
+    await waitFor(() => {
+      expect(utils.notify.emit).toHaveBeenCalledWith(
+        'commons.files.downloadFailed'
+      );
+      expect(mockMutateAsync).not.toHaveBeenCalled();
+    });
+  });
+
+  it('handles download API error and shows notification', async () => {
+    const mockError = new Error('Download failed');
+    mockMutateAsync.mockRejectedValue(mockError);
+
+    const consoleErrorSpy = vi
+      .spyOn(console, 'error')
+      .mockImplementation(() => undefined);
+
+    render(<TreasuryDetail />);
+
+    const downloadButton = screen.getByText('commons.files.download');
+    fireEvent.click(downloadButton);
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith(
+        mockData.ingestionFlowFileId
+      );
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Error downloading treasury file:',
+        mockError
+      );
+      expect(utils.notify.emit).toHaveBeenCalledWith(
+        'commons.files.downloadFailed'
+      );
+    });
+
+    consoleErrorSpy.mockRestore();
   });
 });

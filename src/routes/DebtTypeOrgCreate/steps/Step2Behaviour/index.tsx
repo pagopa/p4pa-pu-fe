@@ -20,6 +20,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
 
   const isSpontaneous = watch('flagSpontaneous');
   const flagNotifyOutcomePush = watch('flagNotifyOutcomePush');
+  const paymentMethod = watch('paymentMethod');
 
   return (
     <WizardStepWrapper
@@ -32,7 +33,6 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
         name="flagSpontaneous"
         data-testid="flagSpontaneous"
         label={t('debtTypeOrgCreate.behaviour.postalAccount')}
-        disabled={edit}
       />
 
       {isSpontaneous ? (
@@ -46,8 +46,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
             control={control}
             name="paymentMethod"
             data-testid="paymentMethod"
-            selectedValue={watch('paymentMethod')}
-            edit={edit}
+            selectedValue={paymentMethod}
           />
         </SectionBox>
       ) : (
@@ -61,7 +60,6 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
             data-testid="flagMandatoryDueDate"
             label={t('debtTypeOrgCreate.behaviour.optionA.label')}
             description={t('debtTypeOrgCreate.behaviour.optionA.description')}
-            disabled={edit}
           />
           <FormComponent.ControlledCheckbox
             control={control}
@@ -69,7 +67,6 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
             data-testid="flagAnonymousFiscalCode"
             label={t('debtTypeOrgCreate.behaviour.optionB.label')}
             description={t('debtTypeOrgCreate.behaviour.optionB.description')}
-            disabled={edit}
           />
         </SectionBox>
       )}
@@ -106,7 +103,7 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
         subtitle={t('debtTypeOrgCreate.behaviour.actualization.subtitle')}
         adornment={<MonetizationOnIcon />}
       >
-        <ActualizationConfigSelector control={control} edit={edit} />
+        <ActualizationConfigSelector control={control} />
       </SectionBox>
     </WizardStepWrapper>
   );

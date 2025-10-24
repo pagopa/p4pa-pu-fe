@@ -1,4 +1,4 @@
-import { Box, Grid, IconButton, useTheme } from '@mui/material';
+import { Box, IconButton, Stack, useTheme } from '@mui/material';
 import { Search, Upload } from '@mui/icons-material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
@@ -12,8 +12,8 @@ import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import {
+  BaseFilterValues,
   DOWNLOAD_STATES,
-  FlowFileFilters,
   FlowStatus,
   MENU_STATES,
   STATE_COLORS
@@ -35,18 +35,13 @@ import { useStore } from '../../store/GlobalStore';
 import ChipTruncateTooltip from '../ChipTruncateTooltip';
 import { useSearch } from '../../hooks/useSearch';
 import { useState } from 'react';
-import { FieldValues } from 'react-hook-form';
-
-const getDefaultDateRange = () => {
-  const today = new Date();
-  const oneYearAgo = new Date();
-  oneYearAgo.setFullYear(today.getFullYear() - 1);
-
-  return {
-    creationDateFrom: new Date(oneYearAgo.setHours(0, 0, 0, 0)).toISOString(),
-    creationDateTo: new Date(today.setHours(23, 59, 59, 999)).toISOString()
-  };
-};
+import {
+  noFilterSetted,
+  shouldShowGeneralError
+} from '../../utils/filtersValidation';
+import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import { FlowFilesFilters } from '../../api/ingestionFlowFiles/mappings';
+import { PagedIngestionFlowFile } from '../../../generated/data-contracts';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
@@ -71,21 +66,19 @@ const ImportFlowOverview = ({
     state: { organizationId }
   } = useStore();
 
-  const defaultDateRange = getDefaultDateRange();
+  const defaultDateRange = utils.formatters.getDefaultDateRange();
+  const initialFilters = utils.URI.decode(window.location.hash);
 
-  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
-  const [filters, setFilters] = useState<FlowFileFilters>({
-    creationDateFrom: new Date(defaultDateRange.creationDateFrom),
-    creationDateTo: new Date(defaultDateRange.creationDateTo),
-    page: 0,
-    size: 10,
+  const [error, setError] = useState<boolean>(false);
+  const [filters, setFilters] = useState<FlowFilesFilters>({
+    dateRange: defaultDateRange,
     ...initialFilters,
     ingestionFlowFileTypes
   });
 
   const query = getIngestionFlowFiles(organizationId, routingCategory);
 
-  const flowFilters = useSearch({
+  const flowFilters = useSearch<FlowFilesFilters, PagedIngestionFlowFile>({
     filters,
     query
   });
@@ -168,6 +161,19 @@ const ImportFlowOverview = ({
     return null;
   };
 
+  const applyFilters = () => {
+    const rawFilters = {
+      ...filters,
+      ingestionFlowFileTypes: null
+    };
+    if (noFilterSetted(rawFilters)) {
+      setError(shouldShowGeneralError(rawFilters));
+    } else {
+      setError(false);
+      flowFilters.applyFilters(filters);
+    }
+  };
+
   const columns: Array<GridColDef> = [
     {
       field: 'ingestionFlowFileId',
@@ -234,6 +240,47 @@ const ImportFlowOverview = ({
     }
   ];
 
+  const items = [
+    {
+      type: COMPONENT_TYPE.textField,
+      label: t('commons.searchName'),
+      id: 'fileName',
+      adornment: <Search />,
+      gridWidth: 5
+    },
+    {
+      type: COMPONENT_TYPE.select,
+      label: t('commons.state'),
+      gridWidth: 2,
+      options: [
+        ...Object.values(IngestionFlowFileStatus).map((status) => ({
+          label: t(`commons.status.${status}`),
+          value: status
+        }))
+      ],
+      id: 'status'
+    },
+    {
+      type: COMPONENT_TYPE.dateRange,
+      label: 'dateRange',
+      id: 'dateRange',
+      gridWidth: 4,
+      from: {
+        label: t('commons.importFrom'),
+        errorMessage: t('dates.validations.from')
+      },
+      to: {
+        label: t('dates.to'),
+        errorMessage: t('dates.validations.to')
+      }
+    },
+    {
+      type: COMPONENT_TYPE.button,
+      label: t('commons.filters.filterResults'),
+      gridWidth: 1
+    }
+  ];
+
   return (
     <>
       <TitleComponent
@@ -250,104 +297,41 @@ const ImportFlowOverview = ({
         accessibleTitle={accessibleTitle}
       />
 
-      <Grid
-        container
-        direction="row"
-        sx={{
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: 2
-        }}
-      >
+      <Stack gap={3}>
+        {error && <ErrorMessage variant="outlined" />}
         <FilterContainer
-          items={[
-            {
-              type: COMPONENT_TYPE.textField,
-              label: t('commons.searchName'),
-              adornment: <Search />,
-              gridWidth: 5,
-              value: filters.fileName || '',
-              onChange: (e) =>
-                setFilters((prev) => ({ ...prev, fileName: e.target.value }))
-            },
-            {
-              type: COMPONENT_TYPE.select,
-              label: t('commons.state'),
-              gridWidth: 2,
-              options: [
-                ...Object.values(IngestionFlowFileStatus).map((status) => ({
-                  label: t(`commons.status.${status}`),
-                  value: status
-                }))
-              ],
-              value: filters.status,
-              onChange: (value) => {
-                setFilters((prev) => ({
-                  ...prev,
-                  status: value as IngestionFlowFileStatus
-                }));
-              }
-            },
-            {
-              type: COMPONENT_TYPE.dateRange,
-              label: 'dateRange',
-              gridWidth: 4,
-              from: {
-                label: t('commons.exportFrom'),
-                errorMessage: t('dates.validations.from'),
-                value: filters.creationDateFrom
-                  ? new Date(filters.creationDateFrom)
-                  : null,
-                onChange: (value) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    creationDateFrom: value ? new Date(value) : undefined
-                  }))
-              },
-              to: {
-                label: t('dates.to'),
-                errorMessage: t('dates.validations.to'),
-                value: filters.creationDateTo
-                  ? new Date(filters.creationDateTo)
-                  : null,
-                onChange: (value) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    creationDateTo: value ? new Date(value) : undefined
-                  }))
-              }
-            },
-            {
-              type: COMPONENT_TYPE.button,
-              label: t('commons.filters.filterResults'),
-              gridWidth: 1,
-              onClick: () => flowFilters.applyFilters(filters)
-            }
-          ]}
+          items={items}
+          values={filters as BaseFilterValues}
+          onChange={(id, value) =>
+            setFilters((filters) => ({
+              ...filters,
+              [id]: value
+            }))
+          }
+          onSubmit={applyFilters}
         />
-      </Grid>
 
-      <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
-        {isEmptyData && query.data && query.data.totalElements === 0 ? (
-          <EmptyDataGrid
-            title={t('commons.noFlows')}
-            action={{
-              label: t('commons.importFlows'),
-              onClick: handleImportFlow
-            }}
-          />
-        ) : (
-          <CustomDataGrid
-            rows={query.data?.content || []}
-            columns={columns}
-            getRowId={(row) => row.ingestionFlowFileId}
-            disableColumnMenu
-            disableColumnResize
-            loading={query.isPending}
-            totalPages={query.data?.totalPages || 1}
-          />
-        )}
-      </Box>
+        <Box sx={{ bgcolor: theme.palette.grey[200], padding: 2 }}>
+          {isEmptyData && query.data && query.data.totalElements === 0 ? (
+            <EmptyDataGrid
+              title={t('commons.noFlows')}
+              action={{
+                label: t('commons.importFlows'),
+                onClick: handleImportFlow
+              }}
+            />
+          ) : (
+            <CustomDataGrid
+              rows={query.data?.content || []}
+              columns={columns}
+              getRowId={(row) => row.ingestionFlowFileId}
+              disableColumnMenu
+              disableColumnResize
+              totalPages={query.data?.totalPages || 1}
+            />
+          )}
+        </Box>
+      </Stack>
     </>
   );
 };

@@ -32,6 +32,7 @@ export type FileUploaderProps = {
   fileExtensionsAllowed: Array<string>;
   header?: React.ReactNode;
   disabled?: boolean;
+  checkVersion?: boolean;
 };
 
 const FileUploader = ({
@@ -45,7 +46,8 @@ const FileUploader = ({
   requiredFileText,
   fileExtensionsAllowed,
   header,
-  disabled
+  disabled,
+  checkVersion = false
 }: FileUploaderProps) => {
   const { t } = useTranslation();
 
@@ -205,6 +207,7 @@ const FileUploader = ({
             color={disabled ? 'gray' : 'textSecondary'}
           >
             {requiredFileText}
+            {checkVersion}
           </Typography>
         </>
       )}

@@ -106,7 +106,7 @@
     "reporting": {
       "description": "Carica qui il file .zip con le Rendicontazioni"
     },
-    "requiredFileText": "Campo obbligatorio. Carica un file .zip",
+    "requiredFileText": "Campo obbligatorio. Carica un file .zip.",
     "telematic-receipt": {
       "description": "Carica qui il file .zip con le Ricevute Telematiche"
     },
@@ -146,6 +146,11 @@
         "message_other": "All'utente <strong>{{operatorName}}</strong> verranno assegnati <strong>{{count}}</strong> tipi di dovuto, sui quali potrà gestire e operare.",
         "button": "Associa"
       }
+    }
+  },
+  "a11y": {
+    "navigation": {
+      "announcement": "Hai raggiunto la pagina {{page}}"
     }
   },
   "appPreview": {
@@ -388,8 +393,6 @@
           "receiptPaymentAmount": "Importo",
           "receiptPaymentDateTime": "Data Esito",
           "receiptPspCompanyName": "Gestore della transazione (PSP)",
-          "receiptPayerExecutorFullName": "Anagrafica pagatore",
-          "receiptPayerExecutorFiscalCode": "Codice fiscale pagatore",
           "iuv": "IUV",
           "iud": "IUD",
           "iur": "IUR",
@@ -646,6 +649,11 @@
         "title": "Sei sicuro di voler eliminare il Client SIL?",
         "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
       }
+    },
+    "successPage": {
+      "title": "Client SIL eliminato con successo",
+      "description": "Il Client SIL è stato eliminato correttamente.",
+      "backToCatalog": "Torna alla lista"
     }
   },
   "clientSilDetail": {
@@ -757,7 +765,8 @@
       "uploadInProgress": "Caricamento in corso...",
       "downloadFailed": "Errore durante il download.",
       "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria",
-      "missingDebtPositionId": "Manca l'ID della posizione debitoria"
+      "missingDebtPositionId": "Manca l'ID della posizione debitoria",
+      "missingVersion": "Il nome del file deve essere versionato, contenere un Numero_Numero se previsto."
     },
     "filters": {
       "accountingDate": {
@@ -828,6 +837,7 @@
       "operatingYear": "Anno esercizio"
     },
     "fiscalCode": "Codice Fiscale",
+    "email": "Email",
     "fiscalCodeorVat": "CF / Partita IVA",
     "fiscalCodeorVatExecutor": "CF / Partita IVA",
     "flowImport": {
@@ -977,6 +987,7 @@
       "REPORTING_INDEX": "Pagina principale",
       "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
       "REPORTING_SEARCH_RESULTS": "Risultato ricerca",
+      "STATISTICS": "Statistiche",
       "TELEMATIC_RECEIPT": "Ricevute Telematiche",
       "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
       "TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
@@ -1030,6 +1041,7 @@
       "menudescription": "Lista di navigazione",
       "users": "Utenti"
     },
+    "skipToContent": "Vai al contenuto",
     "state": "Stato",
     "states": {
       "cancelled": "Annullato",
@@ -1038,6 +1050,7 @@
     "status": {
       "ALL": "Tutti",
       "ACTIVE": "Attivo",
+      "ENABLED": "Abilitato",
       "INACTIVE": "Disattivo",
       "COMPLETED": "Elaborato",
       "DISABLED": "Disabilitato",
@@ -1054,6 +1067,7 @@
       "TO_SYNC": "Da sincronizzare",
       "UNPAID": "Da pagare",
       "UNPAYABLE": "Non pagabile",
+      "WARNING": "Elaborato con errori",
       "WAITING_FILE": "In attesa del file"
     },
     "subject": "Oggetto",
@@ -1077,6 +1091,7 @@
     "validation": {
       "selectAtLeastOneOption": "Seleziona almeno un'opzione",
       "amountRequired": "L'importo è obbligatorio",
+      "minAmountRequired": "L'importo deve essere maggiore di zero",
       "urlRequired": "L'URL è obbligatorio",
       "invalidUrl": "Formato URL non valido",
       "fieldRequired": "Campo obbligatorio",
@@ -1092,6 +1107,8 @@
   "dates": {
     "from": "Dal",
     "to": "Al",
+    "chooseDate": "Scegli data",
+    "changeDate": "Modifica data",
     "validations": {
       "from": "Data non valida",
       "to": "Data non valida",
@@ -1418,6 +1435,11 @@
       "alreadyUsedDescription": "Questo tipo dovuto è presente in un Catalogo / Posizione Debitoria, pertanto non può essere eliminato.",
       "genericErrorDescription": "Siamo spiacenti, al momento non è possibile eliminare questo tipo di dovuto.",
       "title": "Il tipo dovuto non può essere eliminato"
+    },
+    "successPage": {
+      "title": "Tipo dovuto eliminato con successo",
+      "description": "Il tipo dovuto: {{description}} è stato eliminato correttamente.",
+      "backToCatalog": "Torna al catalogo"
     }
   },
   "debtTypeCatalogEdit": {
@@ -2075,6 +2097,9 @@
     "printKeyAPI": "API Key stampa avvisi",
     "orgEmail": "Email ente",
     "orgLogo": "Logo dell'ente",
+    "orgLogoDescription": "Questo logo è usato per la generazione di Ricevute Telematiche.",
+    "orgLogoMissingAlert": "Inserisci il logo del tuo ente. Aiuterà a rendere legittime le ricevute telematiche e gli avvisi.",
+    "logoPlaceholder": "Logo placeholder",
     "enableOrg": "Abilita ente",
     "editOrg": "Modifica ente",
     "alertTitle": "Completa i dati per attivare l'ente",
@@ -2119,7 +2144,7 @@
   },
   "reportingDetail": {
     "accessibleTitle": "Dettaglio rendicontazione: {{iuf}}",
-    "hourAndDate": "Data e ora",
+    "hourAndDate": "Data e ora Flusso",
     "regulationDate": "Data Regolamento",
     "regulationId": "ID Regolamento",
     "reportingIdOrIUF": "ID Rendicontazione / IUF",
@@ -2149,6 +2174,8 @@
     "totalAmount": "Importo totale"
   },
   "taxonomy": {
+    "search": "Cerca tassonomia",
+    "searchDescription": "Inserisci al meno un filtro per avviare la ricerca.",
     "orgType": {
       "label": "Tipo ente",
       "required": "Il campo Tipo ente è obbligatorio",

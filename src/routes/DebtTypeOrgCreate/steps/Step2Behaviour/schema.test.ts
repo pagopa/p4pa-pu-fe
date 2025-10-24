@@ -1,4 +1,4 @@
-import { PaymentMethodOption } from './components/PaymentMethodSelector';
+import { PaymentMethodOption } from '../../types';
 import { step2Schema } from './schema';
 
 describe('step2Schema', () => {

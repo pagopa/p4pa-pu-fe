@@ -9,7 +9,7 @@ import { PageRoutes } from '../../../../routes';
 import { moneyFormat } from '../../../../utils/formatters';
 import {
   PagedPaymentsReportingRow,
-  PaymentsReporting
+  PaymentsReportingWithReceiptView
 } from '../../../../../generated/apiClient';
 
 type ReportingDetailDataGridProps = {
@@ -23,7 +23,7 @@ const ReportingDetailDataGrid = ({
 }: ReportingDetailDataGridProps) => {
   const { t } = useTranslation();
 
-  const columns: Array<GridColDef> = [
+  const columns: Array<GridColDef<PaymentsReportingWithReceiptView>> = [
     {
       field: 'iuv',
       headerName: t('commons.iuv'),
@@ -41,8 +41,9 @@ const ReportingDetailDataGrid = ({
       headerName: t('commons.amount'),
       flex: 0.7,
       type: 'string',
-      renderCell: (params: GridRenderCellParams<PaymentsReporting>) =>
-        moneyFormat(params.value as number)
+      renderCell: (
+        params: GridRenderCellParams<PaymentsReportingWithReceiptView>
+      ) => moneyFormat(params.value as number)
     },
     {
       field: 'payDate',
@@ -61,12 +62,10 @@ const ReportingDetailDataGrid = ({
       headerAlign: 'right',
       renderCell: (params) => (
         <Link
-          to={generatePath(PageRoutes.REPORTING_PAYMENT_DETAIL, {
-            category: 'reporting',
-            iuf: params.row.iuf,
-            id: params.row.paymentsReportingId
+          to={generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
+            receiptId: params.row?.receiptId
           })}
-          aria-label="go to reporting payment detail"
+          aria-label={t('commons.routes.TELEMATIC_RECEIPT_DETAIL')}
         >
           <IconButton color="primary" size="small">
             <ReadMore />

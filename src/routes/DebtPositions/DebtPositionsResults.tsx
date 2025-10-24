@@ -78,8 +78,7 @@ export const DebtPositionResults = () => {
   };
 
   const { filters } = useDebtPositionFilters({
-    searchType,
-    onFilter: applyFilters
+    searchType
   });
 
   // Select DataGrid component based on searchType
@@ -136,6 +135,7 @@ export const DebtPositionResults = () => {
               [id]: value as string
             }))
           }
+          onSubmit={applyFilters}
         />
         <Grid
           container

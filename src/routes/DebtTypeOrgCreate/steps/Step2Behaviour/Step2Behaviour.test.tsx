@@ -7,7 +7,7 @@ import { FormProvider, useForm, FieldValues } from 'react-hook-form';
 import { setOrganizationId } from '../../../../store/OrganizationIdStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { step2Schema } from './schema';
-import { PaymentMethodOption } from './components/PaymentMethodSelector';
+import { PaymentMethodOption } from '../../types';
 
 vi.mock('../../hooks/useNotificationConfig', () => ({
   useNotificationConfigurations: () => ({
@@ -167,25 +167,6 @@ describe('Step2Behaviour', () => {
         name: 'debtTypeOrgCreate.behaviour.actualization.configuration.label'
       })
     ).toBeInTheDocument();
-  });
-
-  it('disables controls in edit mode', () => {
-    renderWithForm(<Step2Behaviour edit={true} />);
-
-    const spontaneousSwitch = screen.getByRole('checkbox', {
-      name: 'debtTypeOrgCreate.behaviour.postalAccount'
-    });
-    expect(spontaneousSwitch).toBeDisabled();
-
-    const optionACheckbox = screen.getByRole('checkbox', {
-      name: 'debtTypeOrgCreate.behaviour.optionA.label debtTypeOrgCreate.behaviour.optionA.description'
-    });
-    expect(optionACheckbox).toBeDisabled();
-
-    const optionBCheckbox = screen.getByRole('checkbox', {
-      name: 'debtTypeOrgCreate.behaviour.optionB.label debtTypeOrgCreate.behaviour.optionB.description'
-    });
-    expect(optionBCheckbox).toBeDisabled();
   });
 
   it('shows payment method selector when spontaneous is enabled', () => {

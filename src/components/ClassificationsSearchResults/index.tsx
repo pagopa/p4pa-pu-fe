@@ -118,11 +118,11 @@ const ClassificationsSearchResults = () => {
         filterMap={filterMap}
         filterCategory={FilterCategory.CLASSIFICATIONS}
         onFilterInteraction={handleFilterInteraction}
+        onSubmit={applyFilters}
         render={error && <ErrorMessage variant="outlined" />}
         buttons={[
           {
             buttonText: t('commons.filters.filterResults'),
-            onButtonClick: applyFilters,
             variant: 'contained',
             id: 'multifilter-drawer-search-btn'
           },

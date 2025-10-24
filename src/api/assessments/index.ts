@@ -111,7 +111,7 @@ export const createAssessmentsRegistry = (organizationId: number) =>
         organizationId,
         assessmentRegistry
       );
-      parseAndLog(assessmentsRegistryDTOSchema, data);
+      parseAndLog(assessmentsRegistrySchema, data);
       return data;
     }
   });

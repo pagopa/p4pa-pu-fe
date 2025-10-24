@@ -1,6 +1,9 @@
-import { OrganizationDetailDTO } from '../../../../generated/data-contracts';
+import {
+  OrganizationDetail,
+  OrganizationStatus
+} from '../../../../generated/data-contracts';
 import { DetailData } from '../../../components/DetailContainer/DetailContainer';
-import { Box, Divider, Stack, Typography } from '@mui/material';
+import { Box, ChipOwnProps, Divider, Stack, Typography } from '@mui/material';
 import { TFunction } from 'i18next';
 import Appio from '../../../assets/appio.svg';
 import Send from '../../../assets/send.svg';
@@ -9,8 +12,26 @@ import LaunchIcon from '@mui/icons-material/Launch';
 import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../..';
 
+const organizationStatusColors: Record<
+  OrganizationStatus,
+  ChipOwnProps['color']
+> = {
+  [OrganizationStatus.ACTIVE]: 'success',
+  [OrganizationStatus.DRAFT]: 'default',
+  [OrganizationStatus.CANCELLED]: 'error'
+};
+
+const getOrganizationStatusValue = (status: OrganizationStatus): string => {
+  const statusValueMap: Record<OrganizationStatus, string> = {
+    [OrganizationStatus.ACTIVE]: 'ENABLED',
+    [OrganizationStatus.DRAFT]: 'DRAFT',
+    [OrganizationStatus.CANCELLED]: 'CANCELLED'
+  };
+  return statusValueMap[status];
+};
+
 export const accountingInfo = (
-  organizationDetailData: OrganizationDetailDTO,
+  organizationDetailData: OrganizationDetail,
   t: TFunction
 ): Array<DetailData> => [
   {
@@ -33,7 +54,7 @@ export const accountingInfo = (
   }
 ];
 export const paymentInfo = (
-  organizationDetailData: OrganizationDetailDTO,
+  organizationDetailData: OrganizationDetail,
   t: TFunction,
   displayNames: Intl.DisplayNames
 ): Array<DetailData> => [
@@ -70,9 +91,17 @@ export const paymentInfo = (
 ];
 
 export const info = (
-  organizationDetailData: OrganizationDetailDTO,
+  organizationDetailData: OrganizationDetail,
   t: TFunction
 ): Array<DetailData> => [
+  {
+    label: t('commons.state'),
+    value: getOrganizationStatusValue(organizationDetailData?.status),
+    valueType: 'status',
+    chipConfig: {
+      color: organizationStatusColors[organizationDetailData?.status]
+    }
+  },
   {
     label: t('commons.ipaCode'),
     value: organizationDetailData?.ipaCode
@@ -94,7 +123,7 @@ export const info = (
   },
   {
     label: t('commons.operators'),
-    value: '00',
+    value: organizationDetailData?.operatorsCount,
     valueType: 'withicon',
     iconConfig: {
       icon: (
@@ -112,7 +141,7 @@ export const info = (
   },
   {
     label: t('commons.debtTypes'),
-    value: '00',
+    value: organizationDetailData?.debtPositionTypeOrgCount,
     valueType: 'withicon',
     iconConfig: {
       icon: (
@@ -130,7 +159,7 @@ export const info = (
 ];
 
 export const integrationBox = (
-  organizationDetailData: OrganizationDetailDTO,
+  organizationDetailData: OrganizationDetail,
   t: TFunction
 ): Array<DetailData> => [
   {

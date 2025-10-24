@@ -16,11 +16,7 @@ vi.mock('react-i18next', () => ({
 
 describe('useOrgSilServiceFilters', () => {
   it('should return the correct filter configuration', () => {
-    const mockOnFilter = vi.fn();
-
-    const { result } = renderHook(() =>
-      useOrgSilServiceFilters({ onFilter: mockOnFilter })
-    );
+    const { result } = renderHook(() => useOrgSilServiceFilters());
 
     expect(result.current.filters).toHaveLength(2);
 
@@ -32,6 +28,6 @@ describe('useOrgSilServiceFilters', () => {
 
     expect(button.id).toBe('applyFilters');
     expect(button.label).toBe('commons.search');
-    expect(button.onClick).toBe(mockOnFilter);
+    expect(button.onClick).toBeUndefined();
   });
 });

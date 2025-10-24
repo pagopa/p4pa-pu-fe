@@ -9,16 +9,13 @@ import { useStore } from '../store/GlobalStore';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 import { DebtPositionStatus } from '../../generated/data-contracts';
 import { optionMapsConverter } from '../utils/formatters';
-import { DebtPositionsFilters } from '../api/debtPositions/mapping';
 
 type UseDebtPositionSearchProps = {
   searchType: SearchType;
-  onFilter: (filters: DebtPositionsFilters) => void;
 };
 
 export const useDebtPositionFilters = ({
-  searchType,
-  onFilter
+  searchType
 }: UseDebtPositionSearchProps) => {
   const { t } = useTranslation();
   const {
@@ -60,15 +57,13 @@ export const useDebtPositionFilters = ({
           label: t('commons.duetype'),
           gridWidth: 2,
           options: debtPositionsTypes.optionsMap,
-          id: 'typeOrgId',
-          defaultValue: 0
+          id: 'typeOrgId'
         },
         {
           type: COMPONENT_TYPE.button,
           label: t('commons.filters.filterResults'),
           gridWidth: 1,
-          id: 'applyFilters',
-          onClick: onFilter
+          id: 'applyFilters'
         }
       ];
     }
@@ -101,15 +96,13 @@ export const useDebtPositionFilters = ({
         label: t('commons.duetype'),
         gridWidth: 2,
         options: debtPositionsTypes.optionsMap,
-        id: 'typeOrgId',
-        defaultValue: 0
+        id: 'typeOrgId'
       },
       {
         type: COMPONENT_TYPE.button,
         label: t('commons.filters.filterResults'),
         gridWidth: 1,
-        id: 'applyFilters',
-        onClick: onFilter
+        id: 'applyFilters'
       }
     ];
   };

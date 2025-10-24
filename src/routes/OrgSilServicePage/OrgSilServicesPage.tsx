@@ -58,9 +58,7 @@ export const OrgSilServicesPage = () => {
     query
   });
 
-  const { filters: filterItems } = useOrgSilServiceFilters({
-    onFilter: () => silSearch.applyFilters(filters)
-  });
+  const { filters: filterItems } = useOrgSilServiceFilters();
 
   const handleTabChange = async (newTab: number) => {
     const serviceType = SERVICE_CONFIGS[newTab].type;
@@ -113,6 +111,7 @@ export const OrgSilServicesPage = () => {
           items={filterItems}
           values={filters}
           onChange={handleFilterChange}
+          onSubmit={() => silSearch.applyFilters(filters)}
         />
       </Grid>
 

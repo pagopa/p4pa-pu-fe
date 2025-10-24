@@ -222,14 +222,48 @@ describe('Filter Component', () => {
     const selectElement = screen.getByRole('combobox');
     fireEvent.mouseDown(selectElement);
 
-    // Verify that the options are rendered correctly
     const options = screen.getAllByRole('option');
     expect(options).toHaveLength(Object.keys(mockFilterMap).length);
-    expect(options[0]).toHaveTextContent('AMOUNT');
-    expect(options[1]).toHaveTextContent('BILL_CODE');
 
-    // Verify that the selectedFilters disable the correct option
-    expect(options[0]).toHaveAttribute('aria-disabled', 'true');
+    expect(options[0]).toHaveTextContent('ACCOUNT_REGISTRY_CODE');
+    expect(options[2]).toHaveTextContent('AMOUNT');
+
+    expect(options[2]).toHaveAttribute('aria-disabled', 'false');
+  });
+
+  it('filters out selected options from other rows', () => {
+    const multipleSelectedFilters: Array<KeyofFilterMap> = [
+      'AMOUNT',
+      'BILL_CODE',
+      'IUV'
+    ];
+
+    render(
+      <Filter
+        filterMap={mockFilterMap}
+        onChange={onChange}
+        value={value}
+        selectedFilters={multipleSelectedFilters}
+      />
+    );
+
+    const selectElement = screen.getByRole('combobox');
+    fireEvent.mouseDown(selectElement);
+
+    const options = screen.getAllByRole('option');
+
+    const expectedLength = Object.keys(mockFilterMap).length - 2;
+    expect(options).toHaveLength(expectedLength);
+
+    const amountOption = options.find((opt) => opt.textContent === 'AMOUNT');
+    expect(amountOption).toBeDefined();
+
+    const billCodeOption = options.find(
+      (opt) => opt.textContent === 'BILL_CODE'
+    );
+    const iuvOption = options.find((opt) => opt.textContent === 'IUV');
+    expect(billCodeOption).toBeUndefined();
+    expect(iuvOption).toBeUndefined();
   });
 
   it('renders fields from the selected filter', () => {
@@ -242,7 +276,6 @@ describe('Filter Component', () => {
       />
     );
 
-    // Verify that the FilterContainer is rendered with the correct fields
     const filterContainer = screen.getByTestId('filter-container');
     expect(filterContainer).toBeInTheDocument();
 

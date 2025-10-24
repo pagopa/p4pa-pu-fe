@@ -29,7 +29,16 @@ const isDateFilter = (value: FilterFieldValue): boolean => {
 export const noFilterSetted = (filters: BaseFilterValues): boolean => {
   if (!filters || typeof filters !== 'object') return true;
 
-  const entries = Object.entries(filters);
+  const rawFilters: BaseFilterValues = {
+    ...filters,
+    page: null,
+    size: null,
+    sort: null,
+    sortDirection: null,
+    sortField: null
+  };
+
+  const entries = Object.entries(rawFilters);
   if (entries.length === 0) return true;
 
   const hasInvalidDateRange = entries.some(([key, value]) => {
@@ -86,48 +95,16 @@ export const canPerformSearch = (filters: BaseFilterValues): boolean => {
 };
 
 /**
- * Checks if there are only partial errors on date ranges (e.g., only 'from' or only 'to')
- * without any other valid filters set.
+ * Checks if there are partial date range errors (e.g., only 'from' or only 'to').
+ * Returns true whenever there are partial date ranges, regardless of other filters.
  */
-export const hasOnlyPartialDateRangeErrors = (
+export const hasPartialDateRangeErrors = (
   filters: BaseFilterValues
 ): boolean => {
   if (!filters || typeof filters !== 'object') return false;
 
   const entries = Object.entries(filters);
   if (entries.length === 0) return false;
-
-  const hasValidNonDateFilters = entries.some(([key, value]) => {
-    if (key.endsWith('_fromError') || key.endsWith('_toError')) {
-      return false;
-    }
-
-    if (isDateFilter(value)) {
-      return false;
-    }
-
-    if (typeof value === 'string') {
-      return !!value.trim();
-    }
-
-    if (typeof value === 'boolean') {
-      return value;
-    }
-
-    if (typeof value === 'number') {
-      return value !== 0;
-    }
-
-    if (value instanceof Date) {
-      return true;
-    }
-
-    return value != null;
-  });
-
-  if (hasValidNonDateFilters) {
-    return false;
-  }
 
   const hasPartialDateRange = entries.some(([key, value]) => {
     if (key.endsWith('_fromError') || key.endsWith('_toError')) {
@@ -150,12 +127,12 @@ export const hasOnlyPartialDateRangeErrors = (
 
 /**
  * Determines whether to display the general ErrorMessage.
- * Does not show the error if there are only partial issues with date ranges,
+ * Does not show the error if there are partial issues with date ranges,
  * which are already visually handled by the individual components.
  */
 export const shouldShowGeneralError = (filters: BaseFilterValues): boolean => {
   const noFilters = noFilterSetted(filters);
-  const onlyPartialErrors = hasOnlyPartialDateRangeErrors(filters);
+  const onlyPartialErrors = hasPartialDateRangeErrors(filters);
 
   return noFilters && !onlyPartialErrors;
 };
@@ -163,6 +140,6 @@ export const shouldShowGeneralError = (filters: BaseFilterValues): boolean => {
 export default {
   noFilterSetted,
   canPerformSearch,
-  hasOnlyPartialDateRangeErrors,
+  hasPartialDateRangeErrors,
   shouldShowGeneralError
 };

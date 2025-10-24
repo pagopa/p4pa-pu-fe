@@ -1,7 +1,7 @@
 import { Alert, AlertTitle, Button, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { ReactNode, useEffect, useState } from 'react';
-import { Trans, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 import { OrganizationDetailDTO } from '../../../../generated/data-contracts';
 
 type OrganizationDetailAlertProps = {
@@ -16,7 +16,7 @@ export const OrganizationDetailAlert: React.FC<
   organizationDetailData
 }: OrganizationDetailAlertProps) => {
   const { t } = useTranslation();
-  const [showAlert, setShowAlert] = useState<boolean>(false);
+  const [emptyFieldsString, setEmptyFieldsString] = useState<string>('');
 
   const mandatoryFields: Partial<Record<keyof OrganizationDetailDTO, string>> =
     {
@@ -24,15 +24,15 @@ export const OrganizationDetailAlert: React.FC<
       orgLogo: t('organizations.orgLogo'),
       segregationCode: t('commons.segregationCode')
     };
-  const missingKeys = (
-    Object.keys(mandatoryFields) as Array<keyof OrganizationDetailDTO>
-  )
-    .filter((key) => !(key in organizationDetailData))
-    .map((key) => mandatoryFields[key] ?? key);
 
   useEffect(() => {
-    if (missingKeys.length > 0) setShowAlert(true);
-  }, [missingKeys]);
+    const missingKeys = (
+      Object.keys(mandatoryFields) as Array<keyof OrganizationDetailDTO>
+    )
+      .filter((key) => !(key in organizationDetailData))
+      .map((key) => mandatoryFields[key] ?? key);
+    setEmptyFieldsString(missingKeys.join(', '));
+  }, [organizationDetailData]);
 
   const editButton: ReactNode = (
     <Button startIcon={<EditIcon />} onClick={editFunction}>
@@ -42,7 +42,7 @@ export const OrganizationDetailAlert: React.FC<
 
   return (
     <>
-      {showAlert && (
+      {emptyFieldsString && (
         <Alert
           severity="info"
           data-testid="org-empty-fields-error"
@@ -50,10 +50,10 @@ export const OrganizationDetailAlert: React.FC<
         >
           <AlertTitle>{t('organizations.alertTitle')}</AlertTitle>
           <Typography variant={'body2'}>
-            <Trans
-              i18nKey="organizations.alertBody"
-              values={{ emptyFields: missingKeys }}
-            />
+            {t('organizations.alertBody', {
+              emptyFields: emptyFieldsString,
+              interpolation: { escapeValue: false }
+            })}
           </Typography>
         </Alert>
       )}

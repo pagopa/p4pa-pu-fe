@@ -8,13 +8,12 @@ import TelematicReceiptSearchResults from './TelematicReceiptSearchResults';
 import Treasury from './Treasury';
 import TreasuryImportFlowOverview from './TreasuryImportFlowOverview';
 import TreasurySearchResults from './TreasurySearchResults';
-import TelematicReceiptDetail from './TelematicReceiptDetail';
+import { TelematicReceiptDetail } from './TelematicReceiptDetail';
 import TreasuryDetail from './TreasuryDetail';
 import TelematicReceiptFlowExportOverview from './TelematicReceiptFlowExportOverview';
 import { Reporting } from './Reporting/ReportingPage';
 import ReportingSearchResults from './Reporting/ReportingSearchResults';
 import ReportingDetail from './Reporting/ReportingDetail/ReportingDetail';
-import ReportingPaymentDetail from './Reporting/ReportingPaymentDetail';
 import ReportingImportFlowOverview from './Reporting/ReportingImportFlowOverview';
 
 const deployPath = config.deployPath;
@@ -54,8 +53,7 @@ export const flowsRoutes = [
           {
             element: <TelematicReceiptDetail />,
             id: 'TELEMATIC_RECEIPT_DETAIL',
-            path: ':id',
-            loader: loaderWithId,
+            path: ':receiptId',
             handle: {
               backButton: true,
               sidebar: {
@@ -120,16 +118,6 @@ export const flowsRoutes = [
             loader: loaderWithId,
             handle: {
               backButton: true
-            } as RouteHandleObject
-          },
-          {
-            element: <ReportingPaymentDetail />,
-            id: 'REPORTING_PAYMENT_DETAIL',
-            path: ':iuf/:id/',
-            loader: loaderWithId,
-            handle: {
-              backButton: true,
-              custom: true
             } as RouteHandleObject
           },
           {

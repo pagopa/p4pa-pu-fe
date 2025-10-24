@@ -1,6 +1,8 @@
 import { z } from 'zod';
 
-export const taxonomySchema = z.object({
+// Schema for validation of taxonomy fields in forms (es. debt type creation)
+// All fields are required to ensure data completeness
+export const taxonomyFieldsSchema = z.object({
   orgType: z.string({
     required_error: 'taxonomy.orgType.required'
   }),

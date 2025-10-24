@@ -6,14 +6,7 @@ import {
   RequestParams
 } from '../../../generated/fileshare/fileshareClient';
 import { extractFilename } from '../../utils/formatters';
-import { buildQueryParams } from './mappings';
-import { FlowFileFilters } from '../../models/Filters';
-
-export type FlowFileFilteredRequest = {
-  filters: FlowFileFilters;
-  pagination: { page: number; size: number };
-  sort: Array<string>;
-};
+import { buildQueryParams, FlowFileFilteredRequest } from './mappings';
 
 export const getIngestionFlowFiles = (
   organizationId: number,

@@ -1,5 +1,11 @@
 import { OperatorsSelection } from '../../../generated/apiClient';
-import { PaymentMethodOption } from './steps/Step2Behaviour/components/PaymentMethodSelector';
+
+export enum PaymentMethodOption {
+  FREE = 'free',
+  AMOUNT = 'amount',
+  CUSTOM = 'custom',
+  EXTERNAL = 'external'
+}
 
 export type DebtTypeOrgForm = {
   // Step 1
@@ -19,7 +25,7 @@ export type DebtTypeOrgForm = {
 
   amountCents?: number;
   externalPaymentUrl?: string;
-  xsdDefinitionRef?: File;
+  xsdDefinitionRef?: Blob;
 
   flagNotifyOutcomePush?: 'enabled' | 'disabled';
   notifyOutcomePushOrgSilServiceId?: number;

@@ -107,6 +107,7 @@ describe('OperatorDetailDataGrid', () => {
   it('renders column headers correctly', () => {
     render(
       <OperatorDetailDataGrid
+        isSameOrg={true}
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
@@ -128,6 +129,7 @@ describe('OperatorDetailDataGrid', () => {
   it('renders rows correctly', () => {
     render(
       <OperatorDetailDataGrid
+        isSameOrg={true}
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
@@ -169,6 +171,7 @@ describe('OperatorDetailDataGrid', () => {
         }}
         onDelete={mockOnDelete}
         operatorName={operatorName}
+        isSameOrg={true}
       />
     );
 
@@ -182,6 +185,7 @@ describe('OperatorDetailDataGrid', () => {
       <OperatorDetailDataGrid
         onDelete={mockOnDelete}
         operatorName={operatorName}
+        isSameOrg={true}
       />
     );
 
@@ -195,6 +199,7 @@ describe('OperatorDetailDataGrid', () => {
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
+        isSameOrg={true}
       />
     );
 
@@ -218,6 +223,7 @@ describe('OperatorDetailDataGrid', () => {
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
+        isSameOrg={true}
       />
     );
 
@@ -241,6 +247,7 @@ describe('OperatorDetailDataGrid', () => {
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
+        isSameOrg={true}
       />
     );
 
@@ -264,6 +271,7 @@ describe('OperatorDetailDataGrid', () => {
         data={sampleData}
         onDelete={mockOnDelete}
         operatorName={operatorName}
+        isSameOrg={true}
       />
     );
 
@@ -291,6 +299,7 @@ describe('OperatorDetailDataGrid', () => {
         data={dataWithoutId}
         onDelete={mockOnDelete}
         operatorName={operatorName}
+        isSameOrg={true}
       />
     );
 

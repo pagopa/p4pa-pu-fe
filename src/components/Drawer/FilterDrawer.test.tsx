@@ -34,4 +34,31 @@ describe('Drawer Component', () => {
     const selectLabels = screen.getAllByText('commons.addfilter');
     expect(selectLabels[0]).toBeTruthy();
   });
+
+  describe('Form submission', () => {
+    it('should wrap content in a form when onSubmit is provided', () => {
+      const { result } = renderHook(() => useMultiFilters());
+      const mockOnSubmit = vi.fn();
+
+      render(
+        <FilterDrawer
+          open={true}
+          onClose={mockOnClose}
+          title="Test Drawer"
+          filterMap={result.current.filterMap}
+          onSubmit={mockOnSubmit}
+          buttons={[
+            {
+              buttonText: 'Submit',
+              variant: 'contained'
+            }
+          ]}
+        />
+      );
+
+      const formElement = document.querySelector('form');
+      expect(formElement).toBeTruthy();
+      expect(formElement).toHaveAttribute('novalidate');
+    });
+  });
 });

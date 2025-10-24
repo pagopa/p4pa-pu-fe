@@ -204,10 +204,7 @@ export const getEventsColumns = (
   }
 ];
 
-export const getFiltersWithSubmitButton = (
-  registryType: RegistryType,
-  onSubmit: () => void
-) => {
+export const getFiltersWithSubmitButton = (registryType: RegistryType) => {
   const filtersWidth: Record<string, number> = {
     iuv: 2,
     eventDate: 4,
@@ -226,8 +223,7 @@ export const getFiltersWithSubmitButton = (
       type: COMPONENT_TYPE.button,
       label: i18n.t('commons.search'),
       id: 'search',
-      gridWidth: filtersWidth['search'],
-      onClick: onSubmit
+      gridWidth: filtersWidth['search']
     }
   ];
 

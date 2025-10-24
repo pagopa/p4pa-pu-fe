@@ -22,8 +22,6 @@ vi.mock('./useDebtPositionsTypeOrg', () => ({
 }));
 
 describe('useDebtPositionFilters', () => {
-  const mockOnFilter = vi.fn();
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -43,8 +41,7 @@ describe('useDebtPositionFilters', () => {
 
     const { result } = renderHook(() =>
       useDebtPositionFilters({
-        searchType: SearchType.DEBT_POSITION,
-        onFilter: mockOnFilter
+        searchType: SearchType.DEBT_POSITION
       })
     );
 
@@ -88,8 +85,7 @@ describe('useDebtPositionFilters', () => {
 
     const { result } = renderHook(() =>
       useDebtPositionFilters({
-        searchType: SearchType.IUV,
-        onFilter: mockOnFilter
+        searchType: SearchType.IUV
       })
     );
 
@@ -103,7 +99,7 @@ describe('useDebtPositionFilters', () => {
     ]);
   });
 
-  it('should call onFilter when the apply button is triggered', () => {
+  it('should return button without onClick handler', () => {
     (getDebtPositionTypeOrgs as unknown as Mock).mockReturnValue({
       isSuccess: true,
       data: {
@@ -118,8 +114,7 @@ describe('useDebtPositionFilters', () => {
 
     const { result } = renderHook(() =>
       useDebtPositionFilters({
-        searchType: SearchType.DEBT_POSITION,
-        onFilter: mockOnFilter
+        searchType: SearchType.DEBT_POSITION
       })
     );
 
@@ -127,12 +122,9 @@ describe('useDebtPositionFilters', () => {
     const applyButton = result.current.filters.find(
       (f) => f.id === 'applyFilters'
     ) as ButtonField;
-    expect(applyButton?.onClick).toBeDefined();
 
-    if (applyButton?.onClick) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      applyButton.onClick({} as any);
-      expect(mockOnFilter).toHaveBeenCalled();
-    }
+    expect(applyButton).toBeDefined();
+    expect(applyButton?.id).toBe('applyFilters');
+    expect(applyButton?.onClick).toBeUndefined();
   });
 });

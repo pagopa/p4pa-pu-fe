@@ -1,12 +1,12 @@
 import { Controller, Control, Path, FieldValues } from 'react-hook-form';
-import { FormComponent, SelectProps } from '../FormComponent';
-import { SelectOptions } from './_Select';
+import { _Select, _SelectProps, SelectOptions } from './_Select';
 import { UseQueryResult } from '@tanstack/react-query';
 import { ErrorMessage } from './ErrorMessage';
 import utils from '../../utils';
 import { useTranslation } from 'react-i18next';
+import { FilterFieldValue } from '../../models/Filters';
 
-export type _ControlledSelectProps<T extends FieldValues> = SelectProps & {
+export type _ControlledSelectProps<T extends FieldValues> = _SelectProps & {
   name: Path<T>;
   control: Control<T>;
   label: string;
@@ -35,30 +35,45 @@ export const _ControlledSelect = <T extends FieldValues>({
     <Controller
       name={name}
       control={control}
-      render={({ field: { ref, value, ...field }, fieldState }) => {
-        // value here is the entire option object or undefined
-        // Make sure default to null if undefined for Autocomplete compatibility
-        const selectedOption = value ?? undefined;
+      render={({ field: { ref, value, onChange, onBlur }, fieldState }) => {
+        const options = optionsResult.data ?? [];
+
+        //ensure value exists in options to prevent MUI Autocomplete errors
+        // If value is not in options (e.g., during field reset), use undefined
+        const valueInOptions =
+          value !== undefined &&
+          value !== null &&
+          options.some((opt) => opt.value === value);
+
+        const safeValue =
+          valueInOptions || value === undefined || value === null
+            ? value
+            : undefined;
+
+        // Handle field value changes
+        const handleChange = (newValue: FilterFieldValue) => {
+          // Update field value through react-hook-form Controller
+          onChange(newValue);
+        };
 
         return (
-          <FormComponent.Select
+          <_Select
             forwardRef={ref}
             id={name}
             required={props.required}
             disabled={
-              props.disabled ||
-              optionsResult.isLoading ||
-              !optionsResult.data?.length
+              props.disabled || optionsResult.isLoading || !options.length
             }
-            options={optionsResult.data}
-            value={selectedOption}
+            options={options}
+            value={safeValue}
+            onChange={handleChange}
+            onBlur={onBlur}
             error={!!fieldState.error}
             helperText={
               fieldState.error && (
                 <ErrorMessage messageKey={fieldState.error?.message} />
               )
             }
-            {...field}
             {...props}
           />
         );

@@ -105,6 +105,18 @@ export const SuccessPageConfig: SuccessOpts = {
       }
     ]
   },
+  'debt-type-delete-success': {
+    title: 'debtTypeCatalogDetail.successPage.title',
+    description: 'debtTypeCatalogDetail.successPage.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'debtTypeCatalogDetail.successPage.backToCatalog',
+        actionID: 'DEBT_TYPES_CATALOG'
+      }
+    ]
+  },
   'debt-type-catalog-edit': {
     title: 'debtTypeCatalogEditSuccess.title',
     description: 'debtTypeCatalogEditSuccess.description',
@@ -257,6 +269,18 @@ export const SuccessPageConfig: SuccessOpts = {
         size: 'large',
         buttonLabel: 'OperatorDetail.affiliate.success.buttonLabel',
         customNavigation: 'OPERATORS_DETAIL'
+      }
+    ]
+  },
+  'client-sil-delete-success': {
+    title: 'clientSil.successPage.title',
+    description: 'clientSil.successPage.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'clientSil.successPage.backToCatalog',
+        actionID: 'CLIENT_SIL_INDEX'
       }
     ]
   }

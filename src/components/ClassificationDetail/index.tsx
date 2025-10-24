@@ -131,14 +131,6 @@ export const ClassificationDetails = () => {
     {
       label: t(`${targetTranslationDebtType}.receiptPayerFiscalCode`),
       value: data?.receiptDebtor?.fiscalCode
-    },
-    {
-      label: t(`${targetTranslationDebtType}.receiptPayerExecutorFullName`),
-      value: data?.receiptPayer?.fullName
-    },
-    {
-      label: t(`${targetTranslationDebtType}.receiptPayerExecutorFiscalCode`),
-      value: data?.receiptPayer?.fiscalCode
     }
   ];
 
@@ -311,7 +303,7 @@ export const ClassificationDetails = () => {
                         if (data?.receiptPaymentReceiptId) {
                           navigate(
                             generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-                              id: data.receiptPaymentRequestId
+                              receiptId: data?.receiptPaymentRequestId
                             })
                           );
                         }

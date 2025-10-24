@@ -79,7 +79,7 @@ describe('ImportFlow', () => {
     it('should enable button when a file is uploaded', async () => {
       render(<ImportFlow />);
 
-      const file = new File(['content'], 'test.zip', {
+      const file = new File(['content'], 'test1_2.zip', {
         type: 'application/zip'
       });
       const dropZone = screen.getByTestId('drop-zone');
@@ -92,7 +92,7 @@ describe('ImportFlow', () => {
       });
 
       await vi.waitFor(() =>
-        expect(screen.getAllByText('test.zip')).toBeDefined()
+        expect(screen.getAllByText('test1_2.zip')).toBeDefined()
       );
       const successButton = screen.getByTestId('success-button');
 
@@ -112,7 +112,7 @@ describe('ImportFlow', () => {
 
       render(<ImportFlow />);
 
-      const file = new File(['content'], 'test.zip', {
+      const file = new File(['content'], 'test1_2.zip', {
         type: 'application/zip'
       });
       const dropZone = screen.getByTestId('drop-zone');
@@ -125,7 +125,7 @@ describe('ImportFlow', () => {
       });
 
       await vi.waitFor(() =>
-        expect(screen.getAllByText('test.zip')).toBeDefined()
+        expect(screen.getAllByText('test1_2.zip')).toBeDefined()
       );
 
       const successButton = screen.getByTestId('success-button');
@@ -154,7 +154,7 @@ describe('ImportFlow', () => {
 
       render(<ImportFlow />);
 
-      const file = new File(['content'], 'test.zip', {
+      const file = new File(['content'], 'test1_2.zip', {
         type: 'application/zip'
       });
       const dropZone = screen.getByTestId('drop-zone');
@@ -167,7 +167,7 @@ describe('ImportFlow', () => {
       });
 
       await vi.waitFor(() =>
-        expect(screen.getAllByText('test.zip')).toBeDefined()
+        expect(screen.getAllByText('test1_2.zip')).toBeDefined()
       );
 
       const successButton = screen.getByTestId('success-button');
@@ -189,7 +189,7 @@ describe('ImportFlow', () => {
 
       render(<ImportFlow />);
 
-      const file = new File(['content'], 'test.zip', {
+      const file = new File(['content'], 'test1_2.zip', {
         type: 'application/zip'
       });
       const dropZone = screen.getByTestId('drop-zone');
@@ -202,7 +202,7 @@ describe('ImportFlow', () => {
       });
 
       await vi.waitFor(() =>
-        expect(screen.getAllByText('test.zip')).toBeDefined()
+        expect(screen.getAllByText('test1_2.zip')).toBeDefined()
       );
 
       const successButton = screen.getByTestId('success-button');
@@ -222,7 +222,7 @@ describe('ImportFlow', () => {
 
       render(<ImportFlow />);
 
-      const file = new File(['content'], 'test.zip', {
+      const file = new File(['content'], 'test1_2.zip', {
         type: 'application/zip'
       });
       const dropZone = screen.getByTestId('drop-zone');
@@ -235,7 +235,7 @@ describe('ImportFlow', () => {
       });
 
       await vi.waitFor(() =>
-        expect(screen.getAllByText('test.zip')).toBeDefined()
+        expect(screen.getAllByText('test1_2.zip')).toBeDefined()
       );
 
       const successButton = screen.getByTestId('success-button');
@@ -298,7 +298,7 @@ describe('ImportFlow', () => {
     it('should enable button when a file is uploaded and a flow type is selected', async () => {
       render(<ImportFlow />);
 
-      const file = new File(['content'], 'test.zip', {
+      const file = new File(['content'], 'test1_2.zip', {
         type: 'application/zip'
       });
       const dropZone = screen.getByTestId('drop-zone');
@@ -311,7 +311,7 @@ describe('ImportFlow', () => {
       });
 
       await vi.waitFor(() =>
-        expect(screen.getAllByText('test.zip')).toBeDefined()
+        expect(screen.getAllByText('test1_2.zip')).toBeDefined()
       );
 
       const selectCombo = screen.getByRole('combobox', {
@@ -343,7 +343,7 @@ describe('ImportFlow', () => {
 
       render(<ImportFlow />);
 
-      const file = new File(['content'], 'test.zip', {
+      const file = new File(['content'], 'test1_2.zip', {
         type: 'application/zip'
       });
       const dropZone = screen.getByTestId('drop-zone');
@@ -356,7 +356,7 @@ describe('ImportFlow', () => {
       });
 
       await vi.waitFor(() =>
-        expect(screen.getAllByText('test.zip')).toBeDefined()
+        expect(screen.getAllByText('test1_2.zip')).toBeDefined()
       );
 
       const successButton = screen.getByTestId('success-button');

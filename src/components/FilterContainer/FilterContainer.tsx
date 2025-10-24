@@ -78,16 +78,19 @@ type FilterContainerProps = {
   values?: BaseFilterValues;
   onChange?: (id: string, value: FilterFieldValue) => void;
   sx?: GridOwnProps['sx'];
+  onSubmit?: () => void; //Callback called when the form is submitted (Enter or click on button submit) if provided, FilterContainer is wrapped in a <form> and handles the submit
 };
 
 const RenderComponent = ({
   item,
   values,
-  onChange
+  onChange,
+  shouldBeSubmit
 }: {
   item: FilterItem;
   values?: BaseFilterValues;
   onChange?: (id: string, value: FilterFieldValue) => void;
+  shouldBeSubmit?: boolean;
 }) => {
   const fieldId = item.id || item.label.replace(/\s+/g, '').toLowerCase();
 
@@ -122,9 +125,12 @@ const RenderComponent = ({
           ? ((values[fieldId] as string) ?? defaultValue)
           : (item.value ?? defaultValue);
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, sonarjs/no-unused-vars
+      const { value: _, ...itemWithoutValue } = item;
+
       return (
         <FormComponent.Select
-          {...item}
+          {...itemWithoutValue}
           value={currentValue}
           onChange={(value) => {
             if (onChange) {
@@ -139,13 +145,18 @@ const RenderComponent = ({
 
     case COMPONENT_TYPE.button: {
       const buttonItem = item as ButtonField;
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars, sonarjs/no-unused-vars
+      const { type: _, ...buttonItemWithoutType } = buttonItem;
+      const computedType = shouldBeSubmit ? 'submit' : 'button';
 
       return (
         <FormComponent.Button
-          {...buttonItem}
+          {...buttonItemWithoutType}
           size="small"
+          type={computedType}
           onClick={(e: ButtonClickEvent) => {
-            if (buttonItem?.onClick) {
+            // If the button is type="submit", do not call onClick because the submit is handled by the form
+            if (!shouldBeSubmit && buttonItem?.onClick) {
               buttonItem.onClick(e);
             }
           }}
@@ -237,24 +248,45 @@ const FilterContainer = ({
   items,
   values,
   onChange,
-  sx
-}: FilterContainerProps) => (
-  <Grid container spacing={2} data-testid="filter-container" sx={sx}>
-    {items.map(({ gridWidth, ...item }, index) => {
-      const key = `${item.type}-${item.label}-${index}`;
+  sx,
+  onSubmit
+}: FilterContainerProps) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    onSubmit?.();
+  };
 
-      return (
-        <Grid
-          item
-          xs={gridWidth ?? 12}
-          key={key}
-          sx={{ display: 'flex', alignItems: 'start', width: '100%' }}
-        >
-          <RenderComponent item={item} values={values} onChange={onChange} />
-        </Grid>
-      );
-    })}
-  </Grid>
-);
+  const gridContent = (
+    <Grid container spacing={2} data-testid="filter-container" sx={sx}>
+      {items.map(({ gridWidth, ...item }, index) => {
+        const key = `${item.type}-${item.label}-${index}`;
+
+        return (
+          <Grid
+            item
+            xs={gridWidth ?? 12}
+            key={key}
+            sx={{ display: 'flex', alignItems: 'start', width: '100%' }}
+          >
+            <RenderComponent
+              item={item}
+              values={values}
+              onChange={onChange}
+              shouldBeSubmit={onSubmit && item.type === COMPONENT_TYPE.button}
+            />
+          </Grid>
+        );
+      })}
+    </Grid>
+  );
+
+  return onSubmit ? (
+    <form onSubmit={handleSubmit} noValidate style={{ width: '100%' }}>
+      {gridContent}
+    </form>
+  ) : (
+    gridContent
+  );
+};
 
 export default FilterContainer;
