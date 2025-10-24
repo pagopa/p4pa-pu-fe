@@ -11,14 +11,13 @@ import { FormComponent } from '../../../../components/FormComponent';
 import { useStore } from '../../../../store/GlobalStore';
 import { useDebtPositionTypesByOrg } from '../../../../hooks/useDebtPositionTypesByOrg';
 import { useEffect } from 'react';
-import { DebtTypeOrgForm } from '../../types';
+import { DebtTypeOrgForm, PaymentMethodOption } from '../../types';
 import { useParams } from 'react-router';
 import { getDebtPositionTypeOrgById } from '../../../../api/debtPositionsTypeOrg';
 import {
   useActualizationServices,
   useNotificationServices
 } from '../../hooks/useOrgSilServices';
-import { PaymentMethodOption } from '../Step2Behaviour/components/PaymentMethodSelector';
 
 export type Step1Data = {
   debtPositionTypeId: string;

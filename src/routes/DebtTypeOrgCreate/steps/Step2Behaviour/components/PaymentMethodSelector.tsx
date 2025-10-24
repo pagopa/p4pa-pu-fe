@@ -3,14 +3,7 @@ import { useTranslation } from 'react-i18next';
 import Stack from '@mui/material/Stack';
 import { FormComponent } from '../../../../../components/FormComponent';
 import Typography from '@mui/material/Typography';
-import { DebtTypeOrgForm } from '../../../types';
-
-export enum PaymentMethodOption {
-  FREE = 'free',
-  AMOUNT = 'amount',
-  CUSTOM = 'custom',
-  EXTERNAL = 'external'
-}
+import { DebtTypeOrgForm, PaymentMethodOption } from '../../../types';
 
 export type PaymentMethodProps = {
   control: Control<DebtTypeOrgForm>;

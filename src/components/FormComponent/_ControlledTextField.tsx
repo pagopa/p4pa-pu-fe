@@ -1,9 +1,9 @@
 import { Controller, Control, Path, FieldValues } from 'react-hook-form';
-import { FormComponent, TextFieldProps } from '../FormComponent';
+import { _TextField, _TextFieldProps } from './_TextField';
 import { ErrorMessage } from './ErrorMessage';
 
 export type _ControlledTextFieldProps<T extends FieldValues> =
-  TextFieldProps & {
+  _TextFieldProps & {
     name: Path<T>;
     control: Control<T>;
   };
@@ -17,7 +17,7 @@ export const _ControlledTextField = <T extends FieldValues>({
     name={name}
     control={control}
     render={({ field: { ref, ...field }, fieldState }) => (
-      <FormComponent.TextField
+      <_TextField
         forwardRef={ref}
         id={name}
         noAdornment={!props?.adornment}

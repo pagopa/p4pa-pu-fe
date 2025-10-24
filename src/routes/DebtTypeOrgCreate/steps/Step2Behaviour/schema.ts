@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { PaymentMethodOption } from './components/PaymentMethodSelector';
 import { requireField, validateUrl } from '../../../../utils/schema';
+import { PaymentMethodOption } from '../../types';
 
 export const step2Schema = z
   .object({

@@ -1,13 +1,12 @@
 import { Controller, Control, Path, FieldValues } from 'react-hook-form';
-import { FormComponent, SelectProps } from '../FormComponent';
-import { SelectOptions } from './_Select';
+import { _Select, _SelectProps, SelectOptions } from './_Select';
 import { UseQueryResult } from '@tanstack/react-query';
 import { ErrorMessage } from './ErrorMessage';
 import utils from '../../utils';
 import { useTranslation } from 'react-i18next';
 import { FilterFieldValue } from '../../models/Filters';
 
-export type _ControlledSelectProps<T extends FieldValues> = SelectProps & {
+export type _ControlledSelectProps<T extends FieldValues> = _SelectProps & {
   name: Path<T>;
   control: Control<T>;
   label: string;
@@ -58,7 +57,7 @@ export const _ControlledSelect = <T extends FieldValues>({
         };
 
         return (
-          <FormComponent.Select
+          <_Select
             forwardRef={ref}
             id={name}
             required={props.required}

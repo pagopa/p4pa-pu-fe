@@ -1,15 +1,14 @@
 import { Controller, Control, Path, FieldValues } from 'react-hook-form';
-import { FormComponent, TextFieldProps } from '../FormComponent';
 import { ErrorMessage } from './ErrorMessage';
-import { AmountFieldProps } from './_AmountField';
+import { _AmountField, AmountFieldProps } from './_AmountField';
 
-export type _ControlledAmountFieldProps<T extends AmountFieldProps> =
-  TextFieldProps & {
+export type _ControlledAmountFieldProps<T extends FieldValues> =
+  AmountFieldProps & {
     name: Path<T>;
     control: Control<T>;
   };
 
-export const _ControlledAmountField = <T extends AmountFieldProps>({
+export const _ControlledAmountField = <T extends FieldValues>({
   name,
   control,
   ...props
@@ -18,7 +17,7 @@ export const _ControlledAmountField = <T extends AmountFieldProps>({
     name={name}
     control={control}
     render={({ field: { ref, ...field }, fieldState }) => (
-      <FormComponent.AmountField
+      <_AmountField
         forwardRef={ref}
         id={name}
         noAdornment={!props?.adornment}

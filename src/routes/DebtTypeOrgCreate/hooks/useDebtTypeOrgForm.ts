@@ -8,12 +8,11 @@ import {
   updateDebtPositionTypeOrg,
   getDebtPositionTypeOrgById
 } from '../../../api/debtPositionsTypeOrg';
-import { DebtTypeOrgForm } from '../types';
+import { DebtTypeOrgForm, PaymentMethodOption } from '../types';
 import { useApiOperations } from './useApiOperations';
 import { useFormSchemas } from './useFormSchemas';
 import { useStore } from '../../../store/GlobalStore';
 import { OperatorsSelection } from '../../../../generated/apiClient';
-import { PaymentMethodOption } from '../steps/Step2Behaviour/components/PaymentMethodSelector';
 import utils from '../../../utils';
 import { useDebtTypeOrgId } from '../../../hooks/useDebtTypeOrgId';
 import { useTranslation } from 'react-i18next';

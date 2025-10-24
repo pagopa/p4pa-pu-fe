@@ -1,7 +1,6 @@
 import { useCallback } from 'react';
 import { CreateDebtPositionTypeOrg } from '../../../api/debtPositionsTypeOrg';
-import { PaymentMethodOption } from '../steps/Step2Behaviour/components/PaymentMethodSelector';
-import { DebtTypeOrgForm } from '../types';
+import { DebtTypeOrgForm, PaymentMethodOption } from '../types';
 import { euroToCents } from '../../../utils/formatters';
 
 type OriginalDebtTypeOrgData = {

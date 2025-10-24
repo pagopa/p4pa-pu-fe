@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '../../../__tests__/renderers';
 import { useApiOperations } from './useApiOperations';
-import { PaymentMethodOption } from '../steps/Step2Behaviour/components/PaymentMethodSelector';
 import { OperatorsSelection } from '../../../../generated/apiClient';
+import { PaymentMethodOption } from '../types';
 
 describe('useApiOperations', () => {
   const organizationId = 42;

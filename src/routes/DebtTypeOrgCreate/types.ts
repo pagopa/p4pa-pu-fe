@@ -1,5 +1,11 @@
 import { OperatorsSelection } from '../../../generated/apiClient';
-import { PaymentMethodOption } from './steps/Step2Behaviour/components/PaymentMethodSelector';
+
+export enum PaymentMethodOption {
+  FREE = 'free',
+  AMOUNT = 'amount',
+  CUSTOM = 'custom',
+  EXTERNAL = 'external'
+}
 
 export type DebtTypeOrgForm = {
   // Step 1
