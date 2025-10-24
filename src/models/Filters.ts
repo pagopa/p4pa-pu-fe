@@ -99,12 +99,13 @@ export type PaginationParams = {
 
 export const STATE_COLORS: Record<
   FlowStatus,
-  'success' | 'info' | 'secondary' | 'error'
+  'success' | 'info' | 'secondary' | 'error' | 'warning'
 > = {
   COMPLETED: 'success',
   UPLOADED: 'info',
   PROCESSING: 'info',
   WAITING_FILE: 'info',
+  WARNING: 'warning',
   ERROR: 'error'
 };
 
