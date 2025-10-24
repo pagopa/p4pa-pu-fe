@@ -48,7 +48,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
   const actualizationQuery = useActualizationServices();
   const notificationQuery = useNotificationServices();
 
-  const { control, watch, setValue, trigger, reset, getValues } =
+  const { control, watch, setValue, trigger } =
     useFormContext<DebtTypeOrgForm>();
 
   const description = watch('description');
@@ -76,57 +76,46 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
 
   useEffect(() => {
     const response = detailQuery.data?.response;
-
     const areSelectsReady =
       !actualizationQuery.isLoading && !notificationQuery.isLoading;
 
     if (edit && response && areSelectsReady) {
-      const formValues: Partial<DebtTypeOrgForm> = {};
-
+      // Set all fields from API response
       Object.entries(response).forEach(([key, val]) => {
-        formValues[key as keyof DebtTypeOrgForm] = val;
+        const field = key as keyof DebtTypeOrgForm;
+
+        // Handle special transformations
+        if (field === 'flagNotifyOutcomePush') {
+          setValue(field, val ? 'enabled' : 'disabled');
+        } else if (field === 'amountCents' && val) {
+          setValue(field, val / 100);
+        } else if (field === 'xsdDefinitionRef' && val) {
+          setValue(field, new Blob([val], { type: 'application/xml' }));
+        } else {
+          setValue(field, val);
+        }
       });
 
-      formValues.flagNotifyOutcomePush = response.flagNotifyOutcomePush
-        ? 'enabled'
-        : 'disabled';
-
-      reset({
-        ...getValues(),
-        ...formValues
-      });
+      // Set payment method if spontaneous
+      if (response.flagSpontaneous) {
+        if (response.amountCents) {
+          setValue('paymentMethod', PaymentMethodOption.AMOUNT);
+        } else if (response.xsdDefinitionRef) {
+          setValue('paymentMethod', PaymentMethodOption.CUSTOM);
+        } else if (response.externalPaymentUrl) {
+          setValue('paymentMethod', PaymentMethodOption.EXTERNAL);
+        } else {
+          setValue('paymentMethod', PaymentMethodOption.FREE);
+        }
+      }
     }
   }, [
     edit,
     detailQuery.data,
-    reset,
-    getValues,
+    setValue,
     actualizationQuery.isLoading,
     notificationQuery.isLoading
   ]);
-
-  useEffect(() => {
-    if (
-      edit &&
-      detailQuery.isSuccess &&
-      detailQuery.data.response.flagSpontaneous
-    ) {
-      const detail = detailQuery.data.response;
-      if (detail?.amountCents) {
-        setValue('amountCents', detail.amountCents / 100);
-        setValue('paymentMethod', PaymentMethodOption.AMOUNT);
-      } else if (detail?.xsdDefinitionRef) {
-        const blob = new Blob([detail.xsdDefinitionRef], {
-          type: 'application/xml'
-        });
-        setValue('xsdDefinitionRef', blob);
-      } else if (detail?.externalPaymentUrl) {
-        setValue('paymentMethod', PaymentMethodOption.EXTERNAL);
-      } else {
-        setValue('paymentMethod', PaymentMethodOption.FREE);
-      }
-    }
-  }, [detailQuery.isSuccess]);
 
   return (
     <WizardStepWrapper
