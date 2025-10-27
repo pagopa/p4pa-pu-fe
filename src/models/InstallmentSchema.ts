@@ -56,11 +56,12 @@ export const createInstallmentRemittanceFieldSchema = (t: TFunction) => {
 
 /**
  * Creates a Zod schema to validate the dueDate field for installments
- * @param isMandatory Indicates if the date is required
+ * @param t Translation function
+ * @param isMandatory Indicates if the date is required (defaults to true for backward compatibility)
  */
 export const createInstallmentDueDateFieldSchema = (
   t: TFunction,
-  isMandatory = true
+  isMandatory: boolean = true
 ) => {
   // Base schema accepting string, Date or null
   const baseSchema = z.union([z.string(), z.date(), z.null()]);

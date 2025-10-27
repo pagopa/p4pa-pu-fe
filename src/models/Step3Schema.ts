@@ -548,8 +548,13 @@ export function hasValidBeneficiaries(installment: {
 
 /**
  * Complete schema for Step3 with conditional validation for payment object
+ * @param t Translation function
+ * @param flagMandatoryDueDate Flag indicating if due date is mandatory for installments
  */
-export const createStep3Schema = (t: TFunction) => {
+export const createStep3Schema = (
+  t: TFunction,
+  flagMandatoryDueDate: boolean = true
+) => {
   const entityNameSchema = createEntityNameFieldSchema(t);
   const amountFieldSchema = createAmountFieldSchema(t);
   const taxCodeFieldSchema = createTaxCodeFieldSchema(t);
@@ -601,7 +606,7 @@ export const createStep3Schema = (t: TFunction) => {
       .array(
         z.object({
           amount: createInstallmentAmountFieldSchema(t),
-          dueDate: createInstallmentDueDateFieldSchema(t),
+          dueDate: createInstallmentDueDateFieldSchema(t, flagMandatoryDueDate),
           remittance: createInstallmentRemittanceFieldSchema(t),
           isMultibeneficiary: z.boolean(),
           sameBeneficiariesAsBefore: z
@@ -781,11 +786,10 @@ function isInstallmentOption(values: Step3FormValues): boolean {
 export const createStep3Resolver = (
   t: TFunction
 ): Resolver<Step3FormValues> => {
-  const schema = createStep3Schema(t);
-
   return (values, context, options) => {
     const contextData = context?.context || {};
     const isMandatoryDueDate = contextData.flagMandatoryDueDate === true;
+    const schema = createStep3Schema(t, isMandatoryDueDate);
     const isSinglePayment =
       values.paymentOption?.value === DebtPositionTypeEnum.SINGLE;
 
