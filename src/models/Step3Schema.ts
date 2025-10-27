@@ -553,7 +553,7 @@ export function hasValidBeneficiaries(installment: {
  */
 export const createStep3Schema = (
   t: TFunction,
-  flagMandatoryDueDate: boolean = true
+  flagMandatoryDueDate = true
 ) => {
   const entityNameSchema = createEntityNameFieldSchema(t);
   const amountFieldSchema = createAmountFieldSchema(t);

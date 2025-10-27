@@ -61,7 +61,7 @@ export const createInstallmentRemittanceFieldSchema = (t: TFunction) => {
  */
 export const createInstallmentDueDateFieldSchema = (
   t: TFunction,
-  isMandatory: boolean = true
+  isMandatory = true
 ) => {
   // Base schema accepting string, Date or null
   const baseSchema = z.union([z.string(), z.date(), z.null()]);
