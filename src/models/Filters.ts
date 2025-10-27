@@ -120,6 +120,6 @@ export const EXPORT_STATE_COLORS: Record<
   ERROR: 'error'
 };
 
-export const MENU_STATES = ['COMPLETED', 'ERROR'] as const;
+export const MENU_STATES = ['COMPLETED', 'ERROR', 'WARNING'] as const;
 export const DOWNLOAD_STATES = ['UPLOADED'] as const;
 export const EXPORT_DOWNLOAD_STATES = [ExportFileStatus.COMPLETED];
