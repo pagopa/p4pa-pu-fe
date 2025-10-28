@@ -1834,6 +1834,26 @@
     "reservationDate": "Data prenotazione",
     "uploadDate": "Data Caricamento"
   },
+  "home": {
+    "opening": "Ciao, {{user}}",
+    "cta": "Crea Posizione Debitoria",
+    "tabsTypes": "Tipi di ricerca",
+    "fillAtLeast": "Inserisci un valore per avviare la ricerca",
+    "tabs": {
+      "1": {
+        "label": "Avviso",
+        "fieldLabel": "IUV"
+      },
+      "2": {
+        "label": "Cittadino",
+        "fieldLabel": "CF / Partita IVA"
+      },
+      "3": {
+        "label": "Rendicontazione",
+        "fieldLabel": "IUF"
+      }
+    }
+  },
   "notificationPreview": {
     "byOrg": "Ente mittente*",
     "byService": "Servizio mittente*"
