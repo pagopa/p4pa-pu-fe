@@ -123,26 +123,30 @@ const ImportFlowOverview = ({
   };
 
   const renderActionCell = (params: GridRenderCellParams) => {
-    const { ingestionFlowFileId, status } = params.row;
+    const { ingestionFlowFileId, status, discardFileName } = params.row;
 
     if (MENU_STATES.includes(status)) {
-      return (
-        <ActionMenu
-          rowId={ingestionFlowFileId}
-          menuItems={[
-            {
-              icon: <DownloadIcon fontSize="small" color="primary" />,
-              label: t('commons.files.imported'),
-              action: () => handleDownloadFile(ingestionFlowFileId)
-            },
-            {
-              icon: <DownloadIcon fontSize="small" color="primary" />,
-              label: t('commons.files.importedResult'),
-              action: () => handleDownloadFileError(ingestionFlowFileId)
-            }
-          ]}
-        />
-      );
+      const menuItems = [
+        {
+          icon: <DownloadIcon fontSize="small" color="primary" />,
+          label: t('commons.files.imported'),
+          action: () => handleDownloadFile(ingestionFlowFileId)
+        }
+      ];
+
+      const shouldShowImportResult =
+        status === 'COMPLETED' ||
+        (discardFileName !== undefined && discardFileName !== null);
+
+      if (shouldShowImportResult) {
+        menuItems.push({
+          icon: <DownloadIcon fontSize="small" color="primary" />,
+          label: t('commons.files.importedResult'),
+          action: () => handleDownloadFileError(ingestionFlowFileId)
+        });
+      }
+
+      return <ActionMenu rowId={ingestionFlowFileId} menuItems={menuItems} />;
     }
 
     if (DOWNLOAD_STATES.includes(status)) {
