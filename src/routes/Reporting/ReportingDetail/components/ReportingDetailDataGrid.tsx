@@ -60,18 +60,23 @@ const ReportingDetailDataGrid = ({
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params) => (
-        <Link
-          to={generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-            receiptId: params.row?.receiptId
-          })}
-          aria-label={t('commons.routes.TELEMATIC_RECEIPT_DETAIL')}
-        >
-          <IconButton color="primary" size="small">
-            <ReadMore />
-          </IconButton>
-        </Link>
-      )
+      renderCell: (params) => {
+        if (!params.row?.receiptId) {
+          return null;
+        }
+        return (
+          <Link
+            to={generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
+              receiptId: params.row.receiptId
+            })}
+            aria-label={t('commons.routes.TELEMATIC_RECEIPT_DETAIL')}
+          >
+            <IconButton color="primary" size="small">
+              <ReadMore />
+            </IconButton>
+          </Link>
+        );
+      }
     }
   ];
 
