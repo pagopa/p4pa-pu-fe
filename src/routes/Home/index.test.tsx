@@ -3,13 +3,21 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import utils from '../../utils';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import { render, screen } from '../../__tests__/renderers';
+import { setUserInfo } from '../../store/UserInfoStore';
 
 vi.mock('../../utils', () => ({
   default: {
     notify: {
       emit: vi.fn()
+    },
+    config: {
+      deployPath: '/test',
     }
   }
+}));
+vi.mock('react-router', async (importOriginal) => ({
+  ...(await importOriginal()),
+  useNavigate: vi.fn(),
 }));
 
 describe('Home page', () => {
@@ -20,12 +28,26 @@ describe('Home page', () => {
     clear: vi.fn()
   };
 
+  const user = {
+          userId: 'userId',
+          familyName: 'Polo',
+          name: 'Marco',
+          fiscalCode: 'XXXXXXX',
+          canManageUsers: false,
+          issuer: 'Issuer',
+          organizations: [],
+          mappedExternalUserId: 'mappedExternalUserId'
+        };
+
   beforeEach(() => {
     vi.clearAllMocks();
 
     i18nTestSetup({
-      HOME: 'HOME'
+      home: {
+        opening: 'Ciao, {{user}}'
+      }
     });
+    setUserInfo(user);
 
     Object.defineProperty(window, 'sessionStorage', {
       value: mockSessionStorage,
@@ -37,11 +59,11 @@ describe('Home page', () => {
     return render(<Home />);
   };
 
-  it('renders Home without crashing', () => {
+  it('renders Home with the name of the user', () => {
     mockSessionStorage.getItem.mockReturnValue(null);
     renderHome();
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent('HOME');
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(`${user.name} ${user.familyName}`);
   });
 
   it('handles pending notification when present in sessionStorage', () => {

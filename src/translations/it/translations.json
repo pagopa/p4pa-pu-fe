@@ -933,6 +933,7 @@
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
+    "results": "Risultati",
     "roles": {
       "ROLE_ADMIN": "Amministratore",
       "ROLE_OPER": "Operatore"
@@ -1833,6 +1834,29 @@
     "paymentToDate": "Pagamento al",
     "reservationDate": "Data prenotazione",
     "uploadDate": "Data Caricamento"
+  },
+  "home": {
+    "cta": "Crea Posizione Debitoria",
+    "drawer": {
+      "actions": "Azioni disponibili"
+    },
+    "fillAtLeast": "Inserisci un valore per avviare la ricerca",
+    "opening": "Ciao, {{user}}",
+    "tabs": {
+      "1": {
+        "label": "Avviso",
+        "fieldLabel": "IUV"
+      },
+      "2": {
+        "label": "Cittadino",
+        "fieldLabel": "CF / Partita IVA"
+      },
+      "3": {
+        "label": "Rendicontazione",
+        "fieldLabel": "IUF"
+      }
+    },
+    "tabsTypes": "Tipi di ricerca"
   },
   "notificationPreview": {
     "byOrg": "Ente mittente*",
