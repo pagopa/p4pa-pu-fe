@@ -24,6 +24,8 @@ import TabPanel from '@mui/lab/TabPanel';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PersonIcon from '@mui/icons-material/Person';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
+import { Drawer } from '../../components/Drawer';
+import { HomeDrawerBody } from './components/HomeDrawerBody';
 
 const Home = () => {
   const { t } = useTranslation();
@@ -34,6 +36,9 @@ const Home = () => {
 
   const [value, setValue] = useState('1');
   const [error, setError] = useState(false);
+  const [showDrawer, setShowDrawer] = useState(false);
+  const [searchLabel, setSearchLabel] = useState('');
+  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     const pendingNotification = sessionStorage.getItem('pendingNotification');
@@ -90,25 +95,22 @@ const Home = () => {
    *
    * @param event Form event
    * @param formData Data extracted by the form submitted
-   * @param searchName Distinguish name between the different type of search
    */
   const searchHandler = (
     event: React.FormEvent<HTMLFormElement>,
-    formData: FormData,
-    searchName: string
+    formData: FormData
   ) => {
     event?.preventDefault();
-    const searchValue = formData.get('searchValue');
+    const searchValue = formData.get('searchValue')?.toString() || '';
 
     if (!searchValue) {
       setError(true);
       return;
     }
-
     setError(false);
-
-    // TO-DO
-    console.log(searchValue, searchName);
+    setSearchLabel(value);
+    setSearchValue(searchValue);
+    setShowDrawer(true);
   };
 
   return (
@@ -162,11 +164,7 @@ const Home = () => {
                 name={tab.searchName}
                 data-testid={`home-form-${tab.value}`}
                 onSubmit={(event) =>
-                  searchHandler(
-                    event,
-                    new FormData(event.currentTarget),
-                    tab.searchName
-                  )
+                  searchHandler(event, new FormData(event.currentTarget))
                 }
               >
                 <Stack
@@ -196,6 +194,18 @@ const Home = () => {
           ))}
         </TabContext>
       </Box>
+      <Drawer
+        open={showDrawer}
+        onClose={() => {
+          setShowDrawer(false);
+        }}
+        title={t('commons.results')}
+      >
+        <HomeDrawerBody
+          searchLabel={searchLabel}
+          searchValue={searchValue}
+        ></HomeDrawerBody>
+      </Drawer>
     </>
   );
 };

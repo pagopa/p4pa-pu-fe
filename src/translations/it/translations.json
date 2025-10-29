@@ -933,6 +933,7 @@
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
+    "results": "Risultati",
     "roles": {
       "ROLE_ADMIN": "Amministratore",
       "ROLE_OPER": "Operatore"
@@ -1835,10 +1836,12 @@
     "uploadDate": "Data Caricamento"
   },
   "home": {
-    "opening": "Ciao, {{user}}",
     "cta": "Crea Posizione Debitoria",
-    "tabsTypes": "Tipi di ricerca",
+    "drawer": {
+      "actions": "Azioni disponibili"
+    },
     "fillAtLeast": "Inserisci un valore per avviare la ricerca",
+    "opening": "Ciao, {{user}}",
     "tabs": {
       "1": {
         "label": "Avviso",
@@ -1852,7 +1855,8 @@
         "label": "Rendicontazione",
         "fieldLabel": "IUF"
       }
-    }
+    },
+    "tabsTypes": "Tipi di ricerca"
   },
   "notificationPreview": {
     "byOrg": "Ente mittente*",

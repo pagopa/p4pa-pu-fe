@@ -11,13 +11,13 @@ vi.mock('../../utils', () => ({
       emit: vi.fn()
     },
     config: {
-      deployPath: '/test',
+      deployPath: '/test'
     }
   }
 }));
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
-  useNavigate: vi.fn(),
+  useNavigate: vi.fn()
 }));
 
 describe('Home page', () => {
@@ -29,22 +29,22 @@ describe('Home page', () => {
   };
 
   const user = {
-          userId: 'userId',
-          familyName: 'Polo',
-          name: 'Marco',
-          fiscalCode: 'XXXXXXX',
-          canManageUsers: false,
-          issuer: 'Issuer',
-          organizations: [],
-          mappedExternalUserId: 'mappedExternalUserId'
-        };
+    userId: 'userId',
+    familyName: 'Polo',
+    name: 'Marco',
+    fiscalCode: 'XXXXXXX',
+    canManageUsers: false,
+    issuer: 'Issuer',
+    organizations: [],
+    mappedExternalUserId: 'mappedExternalUserId'
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
 
     i18nTestSetup({
-      home : {
-        opening: "Ciao, {{user}}"
+      home: {
+        opening: 'Ciao, {{user}}'
       }
     });
     setUserInfo(user);
@@ -63,7 +63,9 @@ describe('Home page', () => {
     mockSessionStorage.getItem.mockReturnValue(null);
     renderHome();
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(`${user.name} ${user.familyName}`);
+    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+      `${user.name} ${user.familyName}`
+    );
   });
 
   it('handles pending notification when present in sessionStorage', () => {
