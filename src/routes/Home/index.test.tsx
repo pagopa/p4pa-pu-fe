@@ -43,8 +43,8 @@ describe('Home page', () => {
     vi.clearAllMocks();
 
     i18nTestSetup({
-      home : {
-        opening: "Ciao, {{user}}"
+      home: {
+        opening: 'Ciao, {{user}}'
       }
     });
     setUserInfo(user);
