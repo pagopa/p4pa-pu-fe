@@ -93,70 +93,81 @@ export const paymentInfo = (
 export const info = (
   organizationDetailData: OrganizationDetail,
   t: TFunction
-): Array<DetailData> => [
-  {
-    label: t('commons.state'),
-    value: getOrganizationStatusValue(organizationDetailData?.status),
-    valueType: 'status',
-    chipConfig: {
-      color: organizationStatusColors[organizationDetailData?.status]
+): Array<DetailData> => {
+  const out: Array<DetailData> = [
+    {
+      label: t('commons.state'),
+      value: getOrganizationStatusValue(organizationDetailData?.status),
+      valueType: 'status',
+      chipConfig: {
+        color: organizationStatusColors[organizationDetailData?.status]
+      }
+    },
+    {
+      label: t('commons.ipaCode'),
+      value: organizationDetailData?.ipaCode
+    },
+    {
+      label: t('commons.fiscalCode'),
+      value: organizationDetailData?.orgFiscalCode
+    },
+    {
+      label: t('commons.organizationType'),
+      value: organizationDetailData?.orgTypeCode
+    },
+    {
+      label: t('organizations.orgEmail'),
+      value: organizationDetailData?.orgEmail
+    },
+    {
+      childrenComponent: <Divider></Divider>
     }
-  },
-  {
-    label: t('commons.ipaCode'),
-    value: organizationDetailData?.ipaCode
-  },
-  {
-    label: t('commons.fiscalCode'),
-    value: organizationDetailData?.orgFiscalCode
-  },
-  {
-    label: t('commons.organizationType'),
-    value: organizationDetailData?.orgTypeCode
-  },
-  {
-    label: t('organizations.orgEmail'),
-    value: organizationDetailData?.orgEmail
-  },
-  {
-    childrenComponent: <Divider></Divider>
-  },
-  {
-    label: t('commons.operators'),
-    value: organizationDetailData?.operatorsCount,
-    valueType: 'withicon',
-    iconConfig: {
-      icon: (
-        <Link
-          to={generatePath(PageRoutes.BROKER_OPERATORS, {
-            organizationId: organizationDetailData.organizationId,
-            orgName: organizationDetailData.orgName
-          })}
-          target={'_blank'}
-        >
-          <LaunchIcon color={'primary'} />
-        </Link>
-      )
+  ];
+
+  const active_info: Array<DetailData> = [
+    {
+      label: t('commons.operators'),
+      value: organizationDetailData?.operatorsCount,
+      valueType: 'withicon',
+      iconConfig: {
+        icon: (
+          <Link
+            to={generatePath(PageRoutes.BROKER_OPERATORS, {
+              organizationId: organizationDetailData.organizationId,
+              orgName: organizationDetailData.orgName
+            })}
+            target={'_blank'}
+          >
+            <LaunchIcon color={'primary'} />
+          </Link>
+        )
+      }
+    },
+    {
+      label: t('commons.debtTypes'),
+      value: organizationDetailData?.debtPositionTypeOrgCount,
+      valueType: 'withicon',
+      iconConfig: {
+        icon: (
+          <Link
+            to={generatePath(PageRoutes.DEBT_TYPES_DASHBOARD_BYORG, {
+              organizationId: organizationDetailData.organizationId
+            })}
+            target={'_blank'}
+          >
+            <LaunchIcon color={'primary'} />
+          </Link>
+        )
+      }
     }
-  },
-  {
-    label: t('commons.debtTypes'),
-    value: organizationDetailData?.debtPositionTypeOrgCount,
-    valueType: 'withicon',
-    iconConfig: {
-      icon: (
-        <Link
-          to={generatePath(PageRoutes.DEBT_TYPES_DASHBOARD_BYORG, {
-            organizationId: organizationDetailData.organizationId
-          })}
-          target={'_blank'}
-        >
-          <LaunchIcon color={'primary'} />
-        </Link>
-      )
-    }
+  ];
+
+  if (organizationDetailData?.status === OrganizationStatus.ACTIVE) {
+    out.push(...active_info);
   }
-];
+
+  return out;
+};
 
 export const integrationBox = (
   organizationDetailData: OrganizationDetail,
