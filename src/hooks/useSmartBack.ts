@@ -55,9 +55,8 @@ const isDetailPageUrl = (url: string): boolean => {
   return isNumericId || isAlphanumericId;
 };
 
-/**
- * Configuration options for the useSmartBack hook
- */
+// Configuration options for the useSmartBack hook
+
 type UseSmartBackOptions = {
   /**
    * Fallback route (full path) used when the history
@@ -67,27 +66,20 @@ type UseSmartBackOptions = {
    */
   fallbackRoute?: string;
 
-  /**
-   * Maximum number of back iterations in the history to avoid infinite loops.
-   * Default: 10 (sufficient for complex flows with multiple wizards)
-   */
+  // Maximum number of back iterations in the history to avoid infinite loops.
+  // Default: 10 (sufficient for complex flows with multiple wizards)
+
   maxIterations?: number;
 
-  /**
-   * Callback invoked when the back navigation is completed
-   * (either successfully or via fallback)
-   */
+  // Callback invoked when the back navigation is completed
+  // (either successfully or via fallback)
   onNavigationComplete?: () => void;
 };
 
-/**
- * Return value of the useSmartBack hook
- */
+// Return value of the useSmartBack hook
 type UseSmartBackReturn = {
-  /**
-   * Function that performs smart back navigation
-   * automatically skipping consecutive success pages
-   */
+  // Function that performs smart back navigation
+  // automatically skipping consecutive success pages
   handleSmartBack: () => void;
 };
 
@@ -140,9 +132,7 @@ export const useSmartBack = (
 
   const { fallbackRoute, maxIterations = 10, onNavigationComplete } = options;
 
-  /**
-   * Cleans up listeners and resets internal state
-   */
+  // Cleans up listeners and resets internal state
   const cleanup = useCallback(() => {
     if (popstateHandlerRef.current) {
       window.removeEventListener('popstate', popstateHandlerRef.current);
@@ -152,9 +142,7 @@ export const useSmartBack = (
     hasSkippedWizardOrFormRef.current = false;
   }, []);
 
-  /**
-   * Navigates to the fallback route if configured
-   */
+  // Navigates to the fallback route if configured
   const navigateToFallback = useCallback(() => {
     cleanup();
     if (fallbackRoute) {
@@ -163,9 +151,7 @@ export const useSmartBack = (
     onNavigationComplete?.();
   }, [fallbackRoute, navigate, cleanup, onNavigationComplete]);
 
-  /**
-   * Executes smart back navigation
-   */
+  // Executes smart back navigation
   const handleSmartBack = useCallback(() => {
     // Guard: no available history, go to fallback
     if (!hasValidHistory()) {
@@ -193,10 +179,8 @@ export const useSmartBack = (
     const initialUrl = currentUrl;
     const initialState = currentState;
 
-    /**
-     * Popstate handler that checks each reached page
-     * during back navigation and decides whether to continue or stop
-     */
+    // Popstate handler that checks each reached page
+    // during back navigation and decides whether to continue or stop
     const handlePopstate = () => {
       iterationCountRef.current++;
 
