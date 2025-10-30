@@ -14,9 +14,17 @@ vi.mock('react-router', async () => {
   };
 });
 
+vi.mock('../../hooks/useSmartBack', () => ({
+  useSmartBack: vi.fn()
+}));
+
 const mockNavigate = vi.fn();
+const mockHandleSmartBack = vi.fn();
 const mockUseNavigate = useNavigate as ReturnType<typeof vi.fn>;
 const mockUseLocation = vi.mocked(await import('react-router')).useLocation;
+const mockUseSmartBack = vi.mocked(
+  await import('../../hooks/useSmartBack')
+).useSmartBack;
 
 describe('BackButton', () => {
   beforeEach(() => {
@@ -25,7 +33,9 @@ describe('BackButton', () => {
     });
 
     mockNavigate.mockClear();
+    mockHandleSmartBack.mockClear();
     mockUseNavigate.mockReturnValue(mockNavigate);
+    mockUseSmartBack.mockReturnValue({ handleSmartBack: mockHandleSmartBack });
 
     Object.defineProperty(window, 'history', {
       value: { length: 2 },
@@ -61,17 +71,17 @@ describe('BackButton', () => {
       expect(button).toHaveTextContent(customText);
     });
 
-    it('should call navigate(-1) when clicked without fromSuccess flag', () => {
+    it('should call handleSmartBack when clicked (default Smart Back enabled)', () => {
       render(<BackButton />);
 
       const button = screen.getByRole('button', { name: 'Back' });
       fireEvent.click(button);
 
-      expect(mockNavigate).toHaveBeenCalledWith(-1);
-      expect(mockNavigate).toHaveBeenCalledTimes(1);
+      expect(mockHandleSmartBack).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    it('should call navigate(-2) when fromSuccess flag is true', () => {
+    it('should call navigate(-2) when fromSuccess flag is true (legacy mode)', () => {
       mockUseLocation.mockReturnValue({
         key: 'some-key',
         pathname: '/current-path',
@@ -80,7 +90,7 @@ describe('BackButton', () => {
         state: { fromSuccess: true }
       });
 
-      render(<BackButton />);
+      render(<BackButton enableSmartBack={false} />);
 
       const button = screen.getByRole('button', { name: 'Back' });
       fireEvent.click(button);
@@ -89,7 +99,7 @@ describe('BackButton', () => {
       expect(mockNavigate).toHaveBeenCalledTimes(1);
     });
 
-    it('should call navigate(-2) when category includes success', () => {
+    it('should call navigate(-2) when category includes success (legacy mode)', () => {
       mockUseLocation.mockReturnValue({
         key: 'some-key',
         pathname: '/current-path',
@@ -98,7 +108,7 @@ describe('BackButton', () => {
         state: { category: 'assessment-create-success' }
       });
 
-      render(<BackButton />);
+      render(<BackButton enableSmartBack={false} />);
 
       const button = screen.getByRole('button', { name: 'Back' });
       fireEvent.click(button);
@@ -107,7 +117,7 @@ describe('BackButton', () => {
       expect(mockNavigate).toHaveBeenCalledTimes(1);
     });
 
-    it('should call navigate(-2) when both fromSuccess and category are present', () => {
+    it('should call navigate(-2) when both fromSuccess and category are present (legacy mode)', () => {
       mockUseLocation.mockReturnValue({
         key: 'some-key',
         pathname: '/current-path',
@@ -119,7 +129,7 @@ describe('BackButton', () => {
         }
       });
 
-      render(<BackButton />);
+      render(<BackButton enableSmartBack={false} />);
 
       const button = screen.getByRole('button', { name: 'Back' });
       fireEvent.click(button);
@@ -128,7 +138,7 @@ describe('BackButton', () => {
       expect(mockNavigate).toHaveBeenCalledTimes(1);
     });
 
-    it('should call navigate(-1) when category exists but does not include success', () => {
+    it('should call navigate(-1) when category exists but does not include success (legacy mode)', () => {
       mockUseLocation.mockReturnValue({
         key: 'some-key',
         pathname: '/current-path',
@@ -137,7 +147,7 @@ describe('BackButton', () => {
         state: { category: 'assessment-create-pending' }
       });
 
-      render(<BackButton />);
+      render(<BackButton enableSmartBack={false} />);
 
       const button = screen.getByRole('button', { name: 'Back' });
       fireEvent.click(button);
@@ -258,7 +268,7 @@ describe('BackButton', () => {
       expect(button).toHaveTextContent('');
     });
 
-    it('should handle null state gracefully', () => {
+    it('should handle null state gracefully with Smart Back', () => {
       mockUseLocation.mockReturnValue({
         key: 'some-key',
         pathname: '/current-path',
@@ -272,10 +282,11 @@ describe('BackButton', () => {
       const button = screen.getByRole('button', { name: 'Back' });
       fireEvent.click(button);
 
-      expect(mockNavigate).toHaveBeenCalledWith(-1);
+      expect(mockHandleSmartBack).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    it('should handle undefined state gracefully', () => {
+    it('should handle undefined state gracefully with Smart Back', () => {
       mockUseLocation.mockReturnValue({
         key: 'some-key',
         pathname: '/current-path',
@@ -289,10 +300,11 @@ describe('BackButton', () => {
       const button = screen.getByRole('button', { name: 'Back' });
       fireEvent.click(button);
 
-      expect(mockNavigate).toHaveBeenCalledWith(-1);
+      expect(mockHandleSmartBack).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
-    it('should handle state without fromSuccess or category', () => {
+    it('should handle state without fromSuccess or category with Smart Back', () => {
       mockUseLocation.mockReturnValue({
         key: 'some-key',
         pathname: '/current-path',
@@ -306,7 +318,8 @@ describe('BackButton', () => {
       const button = screen.getByRole('button', { name: 'Back' });
       fireEvent.click(button);
 
-      expect(mockNavigate).toHaveBeenCalledWith(-1);
+      expect(mockHandleSmartBack).toHaveBeenCalledTimes(1);
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 });

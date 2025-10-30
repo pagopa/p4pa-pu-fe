@@ -1,0 +1,162 @@
+import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { AssessmentRegistryCreate } from './index';
+
+const { mockMutateAsync, mockCreateAssessmentsRegistry } = vi.hoisted(() => ({
+  mockMutateAsync: vi.fn(),
+  mockCreateAssessmentsRegistry: vi.fn()
+}));
+
+vi.mock('../../api/assessments', () => ({
+  createAssessmentsRegistry: (...args: Array<unknown>) =>
+    mockCreateAssessmentsRegistry(...args)
+}));
+
+const { mockNavigate } = vi.hoisted(() => ({ mockNavigate: vi.fn() }));
+
+vi.mock('react-router', async () => {
+  const actual =
+    await vi.importActual<typeof import('react-router')>('react-router');
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate
+  };
+});
+
+vi.mock('../../routes', () => ({
+  PageRoutes: {
+    RESPONSES_SUCCESS: '/success',
+    RESPONSES_ERROR: '/error'
+  }
+}));
+
+vi.mock('../../store/GlobalStore', () => ({
+  useStore: () => ({
+    state: { organizationId: '123' }
+  }),
+  StoreProvider: ({ children }: { children: React.ReactNode }) => children
+}));
+
+vi.mock('../../components/Wizard/WizardStepButtons', () => ({
+  default: ({
+    onBack,
+    onNext,
+    nextLabel,
+    backLabel
+  }: {
+    onBack: () => void;
+    onNext: () => void;
+    nextLabel: string;
+    backLabel: string;
+  }) => (
+    <div data-testid="wizard-step-buttons">
+      <button data-testid="back-button" onClick={onBack}>
+        {backLabel}
+      </button>
+      <button data-testid="next-button" onClick={onNext}>
+        {nextLabel}
+      </button>
+    </div>
+  )
+}));
+
+const fakeData = {
+  debtPositionType: 'TYPE1',
+  status: 'ACTIVE',
+  operatingYear: { from: new Date(2024, 0, 1), to: null },
+  sectionCode: 'SC01',
+  sectionDescription: 'Capitolo A',
+  officeCode: 'OFF01',
+  officeDescription: 'Ufficio 1',
+  assessmentCode: 'AC01',
+  assessmentDescription: 'Accertamento 1'
+};
+
+vi.mock('react-hook-form', async () => {
+  const actual =
+    await vi.importActual<typeof import('react-hook-form')>('react-hook-form');
+  return {
+    ...actual,
+    useForm: () => ({
+      handleSubmit: (fn: (data: unknown) => void) => () => fn(fakeData),
+      register: vi.fn(),
+      control: {},
+      formState: { errors: {} }
+    }),
+    useFormContext: () => ({
+      control: {},
+      register: vi.fn(),
+      setValue: vi.fn(),
+      watch: vi.fn(),
+      formState: { errors: {} }
+    }),
+    FormProvider: ({ children }: { children: React.ReactNode }) => (
+      <>{children}</>
+    )
+  };
+});
+
+vi.mock('./steps/Step1Configuration', () => ({
+  Step1Configuration: () => <div data-testid="step1" />
+}));
+
+describe('AssessmentRegistryCreate', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockCreateAssessmentsRegistry.mockReturnValue({
+      mutateAsync: mockMutateAsync,
+      isPending: false
+    });
+  });
+
+  const renderComponent = () => render(<AssessmentRegistryCreate />);
+
+  it('renders the form', () => {
+    renderComponent();
+    expect(screen.getByRole('form')).toBeInTheDocument();
+  });
+
+  it('submits and navigates to success with correct state', async () => {
+    mockMutateAsync.mockResolvedValueOnce({
+      assessmentRegistryId: 77,
+      sectionDescription: 'Capitolo A'
+    });
+
+    renderComponent();
+
+    const nextBtn = await screen.findByTestId('next-button');
+    fireEvent.click(nextBtn);
+
+    await waitFor(() => {
+      expect(mockMutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          organizationId: '123',
+          debtPositionTypeOrgCode: 'TYPE1',
+          operatingYear: '2024'
+        })
+      );
+    });
+
+    expect(mockNavigate).toHaveBeenCalledWith('/success', {
+      replace: true,
+      state: {
+        category: 'assessment-registry-create',
+        assessmentRegistryId: 77,
+        i18nParams: { paymentObject: 'Capitolo A' }
+      }
+    });
+  });
+
+  it('navigates to error on submit failure', async () => {
+    mockMutateAsync.mockRejectedValueOnce(new Error('create failed'));
+
+    renderComponent();
+
+    const nextBtn = await screen.findByTestId('next-button');
+    fireEvent.click(nextBtn);
+
+    await waitFor(() => {
+      expect(mockNavigate).toHaveBeenCalledWith('/error');
+    });
+  });
+});
