@@ -88,6 +88,9 @@ export const backofficeRoutes = [
           {
             id: 'BACKOFFICE_REGISTRY_LIST',
             path: ':registryType/',
+            handle: {
+              hideBreadcrumbElement: true
+            },
             children: [
               {
                 id: 'BACKOFFICE_REGISTRY_LIST_INDEX',
