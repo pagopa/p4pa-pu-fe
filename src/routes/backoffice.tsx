@@ -135,6 +135,7 @@ export const backofficeRoutes = [
             handle: {
               backButton: true,
               hideBreadcrumbs: false,
+              backFallbackRoute: 'ORG_SIL_SERVICE_INDEX',
               sidebar: {
                 visible: false
               }
@@ -206,6 +207,7 @@ export const backofficeRoutes = [
             handle: {
               hideBreadcrumbs: true,
               backButton: true,
+              backFallbackRoute: 'CLIENT_SIL_INDEX',
               sidebar: {
                 visible: false
               }

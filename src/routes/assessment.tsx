@@ -60,7 +60,8 @@ export const assessmentRoutes = [
         handle: {
           backButton: true,
           hideBreadcrumbs: false,
-          custom: true
+          custom: true,
+          backFallbackRoute: 'ASSESSMENT_INDEX'
         } as RouteHandleObject
       },
       {
@@ -96,6 +97,7 @@ export const assessmentRoutes = [
         handle: {
           backButton: true,
           backButtonText: 'commons.back',
+          backFallbackRoute: 'ASSESSMENT_REGISTRY_SEARCH_RESULTS',
           hideBreadcrumbs: true,
           sidebar: {
             visible: false

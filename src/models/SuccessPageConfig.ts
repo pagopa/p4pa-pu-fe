@@ -16,8 +16,8 @@ export const SuccessPageConfig: SuccessOpts = {
       {
         variant: 'contained',
         size: 'large',
-        buttonLabel: 'AssessmentRegistryUpdate.success.backToStart',
-        actionID: 'ASSESSMENT_REGISTRY_SEARCH_RESULTS'
+        buttonLabel: 'AssessmentRegistryUpdate.success.goToDetail',
+        customNavigation: 'ASSESSMENT_REGISTRY_DETAIL'
       }
     ]
   },
@@ -28,8 +28,8 @@ export const SuccessPageConfig: SuccessOpts = {
       {
         variant: 'contained',
         size: 'large',
-        buttonLabel: 'AssessmentRegistryCreate.success.backToStart',
-        actionID: 'ASSESSMENT_REGISTRY_SEARCH_RESULTS'
+        buttonLabel: 'AssessmentRegistryCreate.success.goToDetail',
+        customNavigation: 'ASSESSMENT_REGISTRY_DETAIL'
       }
     ]
   },

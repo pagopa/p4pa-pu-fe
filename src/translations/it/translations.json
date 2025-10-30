@@ -3,8 +3,9 @@
     "accessibleTitle": "Creazione capitolo",
     "success": {
       "backToStart": "Visualizza capitoli",
+      "goToDetail": "Visualizza capitolo",
       "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
-      "title": "Il Capitolo ‘{{paymentObject}}’ è stato creato!"
+      "title": "Il Capitolo '{{paymentObject}}' è stato creato!"
     },
     "title": "Crea un nuovo capitolo",
     "configuration": "Crea un nuovo capitolo",
@@ -38,8 +39,9 @@
     "accessibleTitle": "Modifica capitolo",
     "success": {
       "backToStart": "Visualizza capitoli",
+      "goToDetail": "Visualizza capitolo",
       "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
-      "title": "Il Capitolo ‘{{paymentObject}}’ è stato aggiornato!"
+      "title": "Il Capitolo '{{paymentObject}}' è stato aggiornato!"
     },
     "title": "Modifica capitolo",
     "subtitle": "Gestisci i parametri del capitolo.",
