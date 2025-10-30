@@ -1992,6 +1992,11 @@
     }
   },
   "organizationEditWizard": {
+    "success": {
+      "title": "Le modifiche sull’ente ‘{{orgName}}’ sono state salvate con successo.",
+      "description": "Lo trovi in anagrafiche ente, dove puoi gestirlo in qualsiasi momento.",
+      "buttonLabel": "Vai al dettaglio ente"
+    },
     "title": "Modifica il tuo ente",
     "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
     "saveChanges": "Salva modifiche",

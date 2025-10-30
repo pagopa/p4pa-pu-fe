@@ -344,13 +344,18 @@ const OrganizationEditWizard = () => {
         organizationData: payload
       });
 
-      utils.notify.emit(t('organizationEditWizard.successMessage'), 'success');
+      const category = 'organization-edit';
 
-      navigate(
-        generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
-          organizationId: getOrganizationId
-        })
-      );
+      navigate(PageRoutes.RESPONSES_SUCCESS, {
+        replace: true,
+        state: {
+          category,
+          organizationId: payload.organizationId,
+          i18nParams: {
+            orgName: payload.orgName
+          }
+        }
+      });
     } catch (error) {
       console.error(error);
       navigate(PageRoutes.RESPONSES_ERROR);

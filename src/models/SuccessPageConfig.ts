@@ -283,5 +283,17 @@ export const SuccessPageConfig: SuccessOpts = {
         actionID: 'CLIENT_SIL_INDEX'
       }
     ]
+  },
+  'organization-edit': {
+    title: 'organizationEditWizard.success.title',
+    description: 'organizationEditWizard.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'organizationEditWizard.success.buttonLabel',
+        customNavigation: 'ORGANIZATIONS_DETAIL'
+      }
+    ]
   }
 };

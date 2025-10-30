@@ -12,11 +12,12 @@ export const SuccessPage = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
-  const { category } = location?.state || {};
-  const { i18nParams } = location?.state || {};
+  const { category } = (location?.state || {}) as {
+    category: keyof typeof SuccessPageConfig;
+  };
 
-  const pageConfig =
-    SuccessPageConfig[category as keyof typeof SuccessPageConfig];
+  const { i18nParams } = location?.state || {};
+  const pageConfig = SuccessPageConfig[category];
 
   useEffect(() => {
     if (!pageConfig) {
@@ -60,6 +61,14 @@ export const SuccessPage = () => {
           mappedExternalUserId
         });
 
+        navigate(detailPath, { replace: true, state: { fromSuccess: true } });
+      } else if (
+        btn.customNavigation === 'ORGANIZATIONS_DETAIL' &&
+        location?.state?.organizationId
+      ) {
+        const detailPath = generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
+          organizationId: location.state.organizationId.toString()
+        });
         navigate(detailPath, { replace: true, state: { fromSuccess: true } });
       } else {
         navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
