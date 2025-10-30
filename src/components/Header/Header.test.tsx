@@ -45,6 +45,7 @@ describe('Header component', () => {
       canManageUsers: false,
       issuer: 'Issuer',
       organizations: [],
+      brokerId: 1,
       mappedExternalUserId: 'mappedExternalUserId'
     });
   });
@@ -122,6 +123,7 @@ describe('Header component', () => {
         orgName: 'Active Org',
         status: OrganizationStatus.ACTIVE,
         operatorRole: OperatorRole.ROLE_ADMIN,
+        brokerId: 1,
         orgLogo: 'logo1.png'
       },
       {
@@ -129,6 +131,7 @@ describe('Header component', () => {
         orgName: 'Canceled Org',
         status: OrganizationStatus.CANCELLED,
         operatorRole: OperatorRole.ROLE_ADMIN,
+        brokerId: 1,
         orgLogo: 'logo2.png'
       }
     ] as Array<OrganizationDTO>;
@@ -140,5 +143,32 @@ describe('Header component', () => {
 
     // Canceled org should be excluded
     expect(screen.queryByText('Canceled Org')).not.toBeInTheDocument();
+  });
+
+  it('does not render organizations of different brokers', () => {
+    organizationsState.value = [
+      {
+        organizationId: 1,
+        orgName: 'My broker Org',
+        status: OrganizationStatus.ACTIVE,
+        operatorRole: OperatorRole.ROLE_ADMIN,
+        brokerId: 1, // userInfo brokerId
+        orgLogo: 'logo1.png'
+      },
+      {
+        organizationId: 2,
+        orgName: 'Another broker Org',
+        status: OrganizationStatus.ACTIVE,
+        operatorRole: OperatorRole.ROLE_ADMIN,
+        brokerId: 99,
+        orgLogo: 'logo2.png'
+      }
+    ] as Array<OrganizationDTO>;
+
+    render(<Header />);
+
+    expect(screen.getByText('My broker Org')).toBeInTheDocument();
+
+    expect(screen.queryByText('Another broker Org')).not.toBeInTheDocument();
   });
 });
