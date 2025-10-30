@@ -49,6 +49,7 @@ export const Header = (props: HeaderProps) => {
   const organizationsToMenuItems: Array<PartySwitchItem> =
     organizations
       ?.filter((org) => org.status !== OrganizationStatus.CANCELLED)
+      ?.filter((org) => org.brokerId === userInfo?.brokerId)
       .map((org) => ({
         id: org.organizationId.toString(),
         logoUrl: org.orgLogo,
