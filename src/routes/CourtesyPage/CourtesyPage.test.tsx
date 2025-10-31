@@ -31,6 +31,19 @@ vi.mock('../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
+vi.mock('../../../generated/data-contracts', async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import('../../../generated/data-contracts')>();
+
+  return {
+    ...actual,
+    OperatorRole: {
+      ...actual.OperatorRole,
+      ROLE_SUPERADMIN: 'ROLE_SUPERADMIN'
+    }
+  };
+});
+
 describe('CourtesyPage component', () => {
   const mockNavigate = vi.fn();
 
@@ -84,7 +97,8 @@ describe('CourtesyPage component', () => {
   });
 
   it('renders a specific cta button for ROLE_SUPERADMIN', () => {
-    operatorRoleState.value = OperatorRole.ROLE_SUPERADMIN;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    operatorRoleState.value = (OperatorRole as any).ROLE_SUPERADMIN;
     render(<CourtesyPage />);
 
     const button = screen.getByRole('button', { name: 'commons.configure' });
