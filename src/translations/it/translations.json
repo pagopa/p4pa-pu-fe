@@ -1841,20 +1841,30 @@
   "home": {
     "cta": "Crea Posizione Debitoria",
     "drawer": {
-      "actions": "Azioni disponibili"
+      "actions": "Azioni disponibili",
+      "installment": "Visualizza dettaglio Avviso",
+      "installments": "Visualizza dettaglio Avvisi",
+      "debtPosition": "Visualizza Posizione Debitoria",
+      "debtPositions": "Visualizza Posizione Debitorie",
+      "receipt": "Scarica Ricevuta Telematica",
+      "receipts": "Scarica Ricevuta Telematiche",
+      "iuf": "Visualizza rendicontazione",
+      "iufs": "Visualizza le rendicontazioni",
+      "classification": "Verifica lo stato del pagamento",
+      "classifications": "Verifica lo stato dei pagamenti"
     },
     "fillAtLeast": "Inserisci un valore per avviare la ricerca",
     "opening": "Ciao, {{user}}",
     "tabs": {
-      "1": {
+      "IUV": {
         "label": "Avviso",
         "fieldLabel": "IUV"
       },
-      "2": {
+      "FC": {
         "label": "Cittadino",
         "fieldLabel": "CF / Partita IVA"
       },
-      "3": {
+      "IUF": {
         "label": "Rendicontazione",
         "fieldLabel": "IUF"
       }
