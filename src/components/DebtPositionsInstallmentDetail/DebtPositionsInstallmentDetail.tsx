@@ -141,6 +141,7 @@ export const DebtPositionsInstallmentDetail = () => {
         value: installment?.iuv || '',
         variant: 'monospaced'
       },
+      { label: t('commons.iud'), value: installment?.iud || '' },
       {
         label: t('debtPositionSearchResults.amount'),
         value: installment?.amountCents as number,
@@ -203,7 +204,6 @@ export const DebtPositionsInstallmentDetail = () => {
         label: t('commons.transactionManager'),
         value: installment?.pspCompanyName || ''
       },
-      { label: t('commons.iud'), value: installment?.iud || '' },
       { label: t('commons.iur'), value: installment?.iur || '' }
     ]
   };
