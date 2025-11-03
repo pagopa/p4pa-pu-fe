@@ -10,15 +10,13 @@ import { DrawerItemConfig } from '../models';
 
 type HomeDrawerFCProps = {
   searchValue: string;
-  searchResults?: DashboardByFc;
+  searchResults: DashboardByFc;
 };
 
 // TODO: Check if actions are correct
 export const HomeDrawerFC = ({ searchResults }: HomeDrawerFCProps) => {
   const { t } = useTranslation();
   const navigate = useAppNavigate();
-
-  if (!searchResults) return null;
 
   const navigateToInstallment = () => {
     const { installmentId } = searchResults;

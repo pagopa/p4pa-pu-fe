@@ -8,15 +8,13 @@ import { DrawerItemConfig } from '../models';
 
 type HomeDrawerIUFProps = {
   searchValue: string;
-  searchResults?: DashboardByIuf;
+  searchResults: DashboardByIuf;
 };
 
 // TODO: Check if actions are correct
 export const HomeDrawerIUF = ({ searchResults }: HomeDrawerIUFProps) => {
   const { t } = useTranslation();
   const navigate = useAppNavigate();
-
-  if (!searchResults) return null;
 
   const navigateToIuf = () => {
     const { iuf } = searchResults;

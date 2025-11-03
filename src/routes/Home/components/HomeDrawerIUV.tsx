@@ -5,15 +5,16 @@ import { generatePath } from 'react-router';
 import { PageRoutes } from '../..';
 import { SearchType } from '../../../models/DebtPositions';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import DescriptionIcon from '@mui/icons-material/Description';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import CategoryIcon from '@mui/icons-material/Category';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import AltRouteIcon from '@mui/icons-material/AltRoute';
+import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import { DashboardByIuv } from '../../../../generated/data-contracts';
 import { DrawerItemConfig } from '../models';
+import { useReceiptDownload } from '../../TelematicReceiptDetail/useReceiptDownload';
 
 type HomeDrawerIUVProps = {
   searchValue: string;
-  searchResults?: DashboardByIuv;
+  searchResults: DashboardByIuv;
 };
 
 export const HomeDrawerIUV = ({
@@ -22,10 +23,9 @@ export const HomeDrawerIUV = ({
 }: HomeDrawerIUVProps) => {
   const { t } = useTranslation();
   const navigate = useAppNavigate();
+  const { downloadReceipt } = useReceiptDownload();
 
-  if (!searchResults) return null;
-
-  const navigateToInstallment = () => {
+  const installmentAction = () => {
     const { installmentId } = searchResults;
     if (installmentId) {
       const path = generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
@@ -40,7 +40,7 @@ export const HomeDrawerIUV = ({
     }
   };
 
-  const navigateToDebtPosition = () => {
+  const debtPositionAction = () => {
     const { debtPositionId } = searchResults;
     if (debtPositionId) {
       const path = generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
@@ -48,36 +48,45 @@ export const HomeDrawerIUV = ({
       });
       navigate(path);
     } else {
-      const path = generatePath(PageRoutes.DEBT_POSITIONS_RESULTS);
+      navigate(PageRoutes.DEBT_POSITIONS_RESULTS, {
+        hashObject: { iuv: searchValue }
+      });
+    }
+  };
+
+  const receiptAction = () => {
+    const { receiptId } = searchResults;
+    if (receiptId) {
+      downloadReceipt({ receiptId });
+    } else {
+      navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS, {
+        hashObject: { iuv: searchValue }
+      });
+    }
+  };
+
+  const classificationAction = () => {
+    const { classificationId } = searchResults;
+    if (classificationId) {
+      const path = generatePath(PageRoutes.CLASSIFICATION_DETAIL, {
+        classificationId
+      });
+      navigate(generatePath(path));
+    } else {
+      const path = PageRoutes.CLASSIFICATIONS_SEARCH_RESULTS;
       navigate(path, { hashObject: { iuv: searchValue } });
     }
   };
 
-  const navigateToReceipt = () => {
-    const { receiptId } = searchResults;
-    const path = '/receipt';
-    if (receiptId) {
-      navigate(generatePath(path, { receiptId }));
-    } else {
-      navigate(path);
-    }
-  };
-
-  const navigateToClassification = () => {
-    const { classificationId } = searchResults;
-    if (classificationId) {
-      navigate(generatePath('/classification', { classificationId }));
-    } else {
-      navigate('/classifications');
-    }
-  };
-
-  const navigateToTreasury = () => {
+  const reportingAction = () => {
     const { iuf } = searchResults;
     if (iuf) {
-      navigate(generatePath('/treasury', { treasuryId: iuf }));
+      const path = generatePath(PageRoutes.REPORTING_DETAIL, { id: iuf });
+      navigate(path);
     } else {
-      navigate('/treasuries');
+      navigate(PageRoutes.REPORTING_SEARCH_RESULTS, {
+        hashObject: { iuv: searchValue }
+      });
     }
   };
 
@@ -90,45 +99,51 @@ export const HomeDrawerIUV = ({
         ? 'home.drawer.installment'
         : 'home.drawer.installments',
       shouldShow: searchResults.hasInstallment,
-      onAction: navigateToInstallment
+      onAction: installmentAction
     },
     {
       key: 'debtPosition',
-      icon: <DescriptionIcon fontSize="small" color="primary" />,
+      icon: <ReceiptLongIcon fontSize="small" color="primary" />,
       actionIcon: 'visit',
       labelKey: searchResults.debtPositionId
         ? 'home.drawer.debtPosition'
         : 'home.drawer.debtPositions',
       shouldShow: searchResults.hasDebtPosition,
-      onAction: navigateToDebtPosition
+      onAction: debtPositionAction
     },
     {
       key: 'receipt',
-      icon: <ReceiptLongIcon fontSize="small" color="primary" />,
+      icon: <DescriptionOutlinedIcon fontSize="small" color="primary" />,
       actionIcon: 'download',
       labelKey: 'home.drawer.receipt',
       shouldShow: searchResults.hasReceipt,
-      onAction: navigateToReceipt
+      onAction: receiptAction
+    },
+    {
+      key: 'reporting',
+      icon: (
+        <AltRouteIcon
+          fontSize="small"
+          color="primary"
+          sx={{ transform: 'rotate(90deg)' }}
+        />
+      ),
+      actionIcon: 'visit',
+      labelKey: searchResults.iuf
+        ? 'home.drawer.reporting'
+        : 'home.drawer.reportings',
+      shouldShow: searchResults.hasIuf,
+      onAction: reportingAction
     },
     {
       key: 'classification',
-      icon: <CategoryIcon fontSize="small" color="primary" />,
+      icon: <PlaylistAddCheckIcon fontSize="small" color="primary" />,
       actionIcon: 'visit',
       labelKey: searchResults.classificationId
         ? 'home.drawer.classification'
         : 'home.drawer.classifications',
       shouldShow: searchResults.hasClassification,
-      onAction: navigateToClassification
-    },
-    {
-      key: 'treasury',
-      icon: <AccountBalanceIcon fontSize="small" color="primary" />,
-      actionIcon: 'visit',
-      labelKey: searchResults.iuf
-        ? 'home.drawer.treasury'
-        : 'home.drawer.treasuries',
-      shouldShow: searchResults.hasIuf,
-      onAction: navigateToTreasury
+      onAction: classificationAction
     }
   ];
 
