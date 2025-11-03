@@ -31,6 +31,13 @@ export const useDebtPositionFilters = ({
       return [
         {
           type: COMPONENT_TYPE.textField,
+          label: t('commons.searchIUV'),
+          adornment: <SearchIcon />,
+          gridWidth: 2,
+          id: 'iuv'
+        },
+        {
+          type: COMPONENT_TYPE.textField,
           label: t('commons.searchCF'),
           adornment: <SearchIcon />,
           gridWidth: 2,
@@ -39,7 +46,7 @@ export const useDebtPositionFilters = ({
         {
           type: COMPONENT_TYPE.dateRange,
           label: 'dateRange',
-          gridWidth: 5,
+          gridWidth: 4,
           from: { label: t('DebtPositions.Results.filters.from') },
           to: { label: t('dates.to') },
           id: 'dateRange'
@@ -48,7 +55,7 @@ export const useDebtPositionFilters = ({
         {
           type: COMPONENT_TYPE.select,
           label: t('commons.state'),
-          gridWidth: 2,
+          gridWidth: 1,
           options: optionMapsConverter(debtPositionsStatus, 'commons.status'),
           id: 'status'
         },

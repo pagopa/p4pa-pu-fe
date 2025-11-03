@@ -3,6 +3,7 @@ import {
   DashboardByIuf,
   DashboardByIuv
 } from '../../../generated/data-contracts';
+import { ReactNode } from 'react';
 
 export enum TABS {
   IUV = 'IUV',
@@ -12,26 +13,11 @@ export enum TABS {
 
 export type DashboardResult = DashboardByIuv & DashboardByIuf & DashboardByFc;
 
-export type ItemConfig = {
-  labelKey: string;
-  route: string;
-  locationState?: Record<string, string>;
-  filterKey?: string;
-};
-
 export type DrawerItemConfig = {
-  hasKey: keyof DashboardResult;
-  idKey: keyof DashboardResult;
-  idParamName?: string;
-  icon: React.ReactNode;
+  key: string;
+  icon: ReactNode;
   actionIcon: 'visit' | 'download';
-  detail: ItemConfig;
-  list: ItemConfig;
-};
-
-export type DrawerItem = {
-  icon: React.ReactNode;
-  label: string;
-  actionIcon: 'visit' | 'download';
+  labelKey: string;
+  shouldShow?: boolean;
   onAction: () => void;
 };

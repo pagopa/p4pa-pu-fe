@@ -1,8 +1,9 @@
 import { Box, MenuList, Typography, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { HomeDrawerListItem } from './HomeDrawerListItem';
-import { useDrawerItems } from '../hooks/useDrawerItems';
-import { DashboardResult } from '../models';
+import { TABS, DashboardResult } from '../models';
+import { HomeDrawerIUV } from './HomeDrawerIUV';
+import { HomeDrawerFC } from './HomeDrawerFC';
+import { HomeDrawerIUF } from './HomeDrawerIUF';
 
 type HomeDrawerBodyProps = {
   searchLabel: string;
@@ -18,39 +19,58 @@ export const HomeDrawerBody = ({
   const theme = useTheme();
   const { t } = useTranslation();
 
-  // hook to get drawer items
-  const drawerItems = useDrawerItems(searchResults, searchValue);
+  const getDrawerItems = () => {
+    switch (searchLabel) {
+      case TABS.IUV:
+        return (
+          <HomeDrawerIUV
+            searchValue={searchValue}
+            searchResults={searchResults}
+          />
+        );
+      case TABS.IUF:
+        return (
+          <HomeDrawerIUF
+            searchValue={searchValue}
+            searchResults={searchResults}
+          />
+        );
+      case TABS.FC:
+        return (
+          <HomeDrawerFC
+            searchValue={searchValue}
+            searchResults={searchResults}
+          />
+        );
+      default:
+        return null;
+    }
+  };
+
+  const drawerItems = getDrawerItems();
 
   return (
     <>
       <Box my={2}>
-        <Typography component={'p'} variant={'body2'}>
+        <Typography component="p" variant="body2">
           {t(`home.tabs.${searchLabel}.fieldLabel`)}
         </Typography>
-        <Typography component={'p'} variant={'body1'} fontWeight={600}>
+        <Typography component="p" variant="body1" fontWeight={600}>
           {searchValue}
         </Typography>
       </Box>
-      {drawerItems.length > 0 && (
+      {drawerItems && (
         <Box my={2}>
           <Typography
-            variant={'button'}
-            textTransform={'uppercase'}
+            variant="button"
+            textTransform="uppercase"
             color={theme.palette.grey[700]}
             id="home-drawer-actions"
           >
             {t('home.drawer.actions')}
           </Typography>
           <MenuList dense={false} aria-labelledby="home-drawer-actions">
-            {drawerItems.map((item, index) => (
-              <HomeDrawerListItem
-                key={`drawer-item-${index}`}
-                actionIcon={item.actionIcon}
-                actionFunction={item.onAction}
-                icon={item.icon}
-                label={item.label}
-              />
-            ))}
+            {drawerItems}
           </MenuList>
         </Box>
       )}

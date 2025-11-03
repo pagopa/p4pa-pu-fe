@@ -36,7 +36,6 @@ export const DebtPositionResults = () => {
   // Extract initial state from location.state or fallback
   const { searchType: locationSearchType } = location.state ?? {};
   const initialFilters = utils.URI.decode(window.location.hash);
-  console.debug(initialFilters);
 
   // Determine searchType with fallback based on pathname
   const searchType = useMemo<SearchType>(() => {

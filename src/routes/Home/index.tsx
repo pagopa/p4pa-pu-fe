@@ -97,10 +97,10 @@ const Home = () => {
   ];
 
   const mutationByTab = (currentTab: TABS) => {
-    // TODO: handle other tabs mutations
     switch (currentTab) {
       case TABS.IUV:
         return dashboardByIuvMutation;
+    // TODO: handle other tabs mutations
       case TABS.IUF:
         return null;
       case TABS.FC:
