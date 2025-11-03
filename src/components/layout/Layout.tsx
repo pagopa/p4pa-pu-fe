@@ -24,13 +24,14 @@ import { useTranslation } from 'react-i18next';
 import GenericDialog from '../GenericDialog/GenericDialog';
 import '../../style.css';
 import { RouteChangeAnnouncement } from '../RouteChangeAnnouncement';
+import { PageRoutes } from '../../routes';
 
 const defaultRouteHandle: RouteHandleObject = {
   backButton: true,
   custom: false,
   hideBreadcrumbs: false,
   sidebar: { visible: true },
-  backButtonText: 'commons.back' // <- default: Indietro
+  backButtonText: 'commons.back'
 };
 
 export function Layout() {
@@ -55,7 +56,9 @@ export function Layout() {
     sidebar,
     backButton,
     backButtonText,
-    backButtonFunction
+    backButtonFunction,
+    backFallbackRoute,
+    enableSmartBack
   } = {
     ...defaultRouteHandle,
     ...(currentMatch.find((match) => Boolean(match.handle))?.handle || {})
@@ -131,6 +134,14 @@ export function Layout() {
                   <BackButton
                     onClick={backButtonFunction}
                     text={t(backButtonText ?? 'commons.back')}
+                    fallbackRoute={
+                      backFallbackRoute
+                        ? PageRoutes[
+                            backFallbackRoute as keyof typeof PageRoutes
+                          ]
+                        : undefined
+                    }
+                    enableSmartBack={enableSmartBack}
                   />
                 )}
 

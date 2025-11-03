@@ -53,7 +53,6 @@ const ClientSilDetail = () => {
   }, [isError, error, navigate]);
 
   useEffect(() => {
-    console.log(data?.clientName);
     if (data && !clientItem) {
       setClientItem(data);
     }
@@ -85,9 +84,6 @@ const ClientSilDetail = () => {
     try {
       await deleteClientMutation.mutateAsync(clientId);
       utils.dialog.close();
-
-      console.log('clientName:', data?.clientName);
-
       navigate(PageRoutes.RESPONSES_SUCCESS, {
         replace: true,
         state: {
