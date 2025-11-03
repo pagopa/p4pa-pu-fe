@@ -22,6 +22,8 @@ import utils from '.';
 import { OrganizationStatus } from '../../generated/data-contracts';
 import { PageRoutes } from '../routes';
 import { generatePath, LoaderFunctionArgs, redirect } from 'react-router';
+import { AxiosError } from 'axios';
+import navigation from './navigation';
 
 const deployPath = utils.config.deployPath;
 
@@ -67,20 +69,29 @@ const setupOrganizations = (
 
 /** Initial setup function to prepare the application state and necessary config */
 const stateSetup = async () => {
-  // configuring Interceptors
-  setupInterceptors(utils.apiClient);
-  setupInterceptors(utils.fileshareClient);
-  // store critical data
-  const organizationId = organizationIdState.state.value;
-  const idToken = idTokenPayloadState.value;
-  const orgs = await loader.getOrganizationsPlain();
-  const brokersConfigPlain = await brokers.getBrokersConfigPlain();
-  const userInfo = await user.getUserInfoPlain();
+  try {
+    // configuring Interceptors
+    setupInterceptors(utils.apiClient);
+    setupInterceptors(utils.fileshareClient);
+    // store critical data
+    const organizationId = organizationIdState.state.value;
+    const idToken = idTokenPayloadState.value;
+    const orgs = await loader.getOrganizationsPlain();
+    const brokersConfigPlain = await brokers.getBrokersConfigPlain();
+    const userInfo = await user.getUserInfoPlain();
 
-  setUserInfo(userInfo);
-  setConfigFe(brokersConfigPlain);
-  setupOrganizations(orgs, organizationId, idToken);
-  setAppState({ ready: true });
+    setUserInfo(userInfo);
+    setConfigFe(brokersConfigPlain);
+    setupOrganizations(orgs, organizationId, idToken);
+    setAppState({ ready: true });
+  } catch (error) {
+    // 401: interceptor already handled logout/redirect.
+    // Exit silently to prevent race condition with other loaders.
+    if (error instanceof AxiosError && error.response?.status === 401) {
+      return;
+    }
+    throw error;
+  }
 };
 
 const setupOrError = async () => {
@@ -92,12 +103,22 @@ const setupOrError = async () => {
 };
 
 const draftFallbackLoader = async ({ request }: LoaderFunctionArgs) => {
+  // If there's an auth error in progress, exit silently
+  if (navigation.isAuthErrorInProgress()) {
+    return null;
+  }
+
   const url = new URL(request.url);
   const currentPath = url.pathname;
   const selectedOrganization = selectedOrganizationState.value;
 
+  // Guard against missing organization (e.g., after failed setup)
+  if (!selectedOrganization?.organizationId) {
+    return null;
+  }
+
   const draftPath = generatePath(PageRoutes.DRAFT_COURTESY_PAGE, {
-    organizationId: selectedOrganization?.organizationId
+    organizationId: selectedOrganization.organizationId
   });
 
   if (
