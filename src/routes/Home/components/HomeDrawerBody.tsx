@@ -19,7 +19,14 @@ export const HomeDrawerBody = ({
   const theme = useTheme();
   const { t } = useTranslation();
 
-  const getDrawerItems = () => {
+  const noResults =
+    !searchResults || Object.values(searchResults).every((v) => !v);
+
+  const DrawerItems = ({
+    searchResults
+  }: {
+    searchResults: DashboardResult;
+  }) => {
     switch (searchLabel) {
       case TABS.IUV:
         return (
@@ -47,8 +54,6 @@ export const HomeDrawerBody = ({
     }
   };
 
-  const drawerItems = getDrawerItems();
-
   return (
     <>
       <Box my={2}>
@@ -59,21 +64,25 @@ export const HomeDrawerBody = ({
           {searchValue}
         </Typography>
       </Box>
-      {drawerItems && (
-        <Box my={2}>
-          <Typography
-            variant="button"
-            textTransform="uppercase"
-            color={theme.palette.grey[700]}
-            id="home-drawer-actions"
-          >
-            {t('home.drawer.actions')}
-          </Typography>
-          <MenuList dense={false} aria-labelledby="home-drawer-actions">
-            {drawerItems}
-          </MenuList>
-        </Box>
-      )}
+      <Box my={2}>
+        <Typography
+          variant="button"
+          textTransform="uppercase"
+          color={theme.palette.grey[700]}
+          id="home-drawer-actions"
+        >
+          {t('home.drawer.actions')}
+        </Typography>
+        <MenuList dense={false} aria-labelledby="home-drawer-actions">
+          {noResults ? (
+            <Typography variant="body2">
+              {t('home.noResults.description')}
+            </Typography>
+          ) : (
+            <DrawerItems searchResults={searchResults} />
+          )}
+        </MenuList>
+      </Box>
     </>
   );
 };

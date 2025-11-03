@@ -2,12 +2,10 @@ import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
-import { getReceiptPdf } from '../../api/receiptPdf';
-import utils from '../../utils';
-import { downloadBlob } from '../../utils/download';
 import { PageRoutes } from '../../routes';
 import ReceiptDetail from '../../components/ReceiptDetail';
 import { useReceiptDetail } from '../../hooks/useReceiptDetail';
+import { useReceiptDownload } from './useReceiptDownload';
 
 export const TelematicReceiptDetail = () => {
   const { t } = useTranslation();
@@ -16,6 +14,7 @@ export const TelematicReceiptDetail = () => {
   } = useStore();
   const navigate = useNavigate();
   const params = useParams();
+  const { downloadReceipt } = useReceiptDownload();
 
   const { receiptId: receiptIdString } = params;
   const receiptId = Number(receiptIdString);
@@ -29,17 +28,7 @@ export const TelematicReceiptDetail = () => {
     receiptId
   );
 
-  const getReceiptPdfMutation = getReceiptPdf(organizationId);
-  const handleDownloadReceiptPdf = async () => {
-    try {
-      const result = await getReceiptPdfMutation.mutateAsync(receiptId);
-      const { data, fileName } = result;
-      downloadBlob(data, fileName);
-    } catch (error) {
-      console.error(error);
-      utils.notify.emit(t('commons.files.downloadFailed'), 'error');
-    }
-  };
+  const onActionClick = () => downloadReceipt({ receiptId });
 
   return (
     <ReceiptDetail
@@ -49,7 +38,7 @@ export const TelematicReceiptDetail = () => {
         icon: <Download />,
         variant: 'contained',
         buttonText: t('commons.files.download'),
-        onActionClick: handleDownloadReceiptPdf
+        onActionClick
       }}
       pageTitle={t('telematicReceiptDetail.title')}
       accessibleTitle={t('telematicReceiptDetail.title')}
