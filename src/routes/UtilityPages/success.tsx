@@ -22,7 +22,7 @@ export const SuccessPage = () => {
     if (!pageConfig) {
       navigate(PageRoutes.HOME, { replace: true });
     }
-  }, [pageConfig]);
+  }, [pageConfig, navigate]);
 
   const buttonConfig = pageConfig?.buttonConfig?.map((btn) => {
     const handleClick = () => {
@@ -59,10 +59,18 @@ export const SuccessPage = () => {
           orgName,
           mappedExternalUserId
         });
-
+        navigate(detailPath, { replace: true, state: { fromSuccess: true } });
+      } else if (
+        btn.customNavigation === 'ASSESSMENT_REGISTRY_DETAIL' &&
+        location?.state?.assessmentRegistryId
+      ) {
+        const detailPath = generatePath(PageRoutes.ASSESSMENT_REGISTRY_DETAIL, {
+          assessmentRegistryId: location.state.assessmentRegistryId.toString()
+        });
         navigate(detailPath, { replace: true, state: { fromSuccess: true } });
       } else {
-        navigate(PageRoutes[btn.actionID || PageRoutes.HOME]);
+        const to = PageRoutes[btn.actionID || PageRoutes.HOME];
+        navigate(to);
       }
     };
 
