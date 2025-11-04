@@ -26,7 +26,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import { Drawer } from '../../components/Drawer';
 import { HomeDrawerBody } from './components/HomeDrawerBody';
-import { useDashboardByIuv } from '../../api/home';
+import { useDashboardByIuf, useDashboardByIuv } from '../../api/home';
 import { DashboardResult, TABS } from './models';
 
 const Home = () => {
@@ -44,6 +44,7 @@ const Home = () => {
   const [searchResults, setSearchResults] = useState<DashboardResult>();
 
   const dashboardByIuvMutation = useDashboardByIuv({ organizationId });
+  const dashboardByIufMutation = useDashboardByIuf({ organizationId });
 
   useEffect(() => {
     const pendingNotification = sessionStorage.getItem('pendingNotification');
@@ -100,9 +101,8 @@ const Home = () => {
     switch (currentTab) {
       case TABS.IUV:
         return dashboardByIuvMutation;
-    // TODO: handle other tabs mutations
       case TABS.IUF:
-        return null;
+        return dashboardByIufMutation;
       case TABS.FC:
         return null;
       default:
@@ -159,7 +159,7 @@ const Home = () => {
         callToAction={[cta]}
       />
 
-      <Box>
+      <Box py={2}>
         <TabContext value={currentTab}>
           <Box>
             <TabList
