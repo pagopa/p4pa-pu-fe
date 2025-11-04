@@ -32,7 +32,7 @@ export const setupInterceptors = (client: Client) => {
         navigation.setAuthErrorState(true);
         utils.storage.clear();
         navigation.navigateToLoggedOut();
-        return Promise.resolve();
+        return Promise.reject(error);
       }
 
       if (status === 400) {

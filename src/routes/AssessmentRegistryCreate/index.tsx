@@ -51,6 +51,7 @@ export const AssessmentRegistryCreate = () => {
         replace: true,
         state: {
           category: 'assessment-registry-create',
+          assessmentRegistryId: response.assessmentRegistryId,
           i18nParams: {
             paymentObject: response.sectionDescription
           }

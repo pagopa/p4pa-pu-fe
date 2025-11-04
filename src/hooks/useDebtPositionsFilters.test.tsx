@@ -47,12 +47,13 @@ describe('useDebtPositionFilters', () => {
 
     await waitFor(() => {
       expect(result.current.filters).toBeDefined();
-      // DEBT_POSITION type should yield 5 filters
-      expect(result.current.filters).toHaveLength(5);
+      // DEBT_POSITION type should yield 6 filters
+      expect(result.current.filters).toHaveLength(6);
     });
 
     const filterIds = result.current.filters.map((f) => f.id);
     expect(filterIds).toEqual([
+      'iuv',
       'fiscalCode',
       'dateRange',
       'status',

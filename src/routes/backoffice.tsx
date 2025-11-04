@@ -88,6 +88,9 @@ export const backofficeRoutes = [
           {
             id: 'BACKOFFICE_REGISTRY_LIST',
             path: ':registryType/',
+            handle: {
+              hideBreadcrumbElement: true
+            },
             children: [
               {
                 id: 'BACKOFFICE_REGISTRY_LIST_INDEX',
@@ -135,6 +138,7 @@ export const backofficeRoutes = [
             handle: {
               backButton: true,
               hideBreadcrumbs: false,
+              backFallbackRoute: 'ORG_SIL_SERVICE_INDEX',
               sidebar: {
                 visible: false
               }
@@ -206,6 +210,7 @@ export const backofficeRoutes = [
             handle: {
               hideBreadcrumbs: true,
               backButton: true,
+              backFallbackRoute: 'CLIENT_SIL_INDEX',
               sidebar: {
                 visible: false
               }
