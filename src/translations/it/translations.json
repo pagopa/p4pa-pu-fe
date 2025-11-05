@@ -3,9 +3,8 @@
     "accessibleTitle": "Creazione capitolo",
     "success": {
       "backToStart": "Visualizza capitoli",
-      "goToDetail": "Visualizza capitolo",
       "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
-      "title": "Il Capitolo '{{paymentObject}}' è stato creato!"
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato creato!"
     },
     "title": "Crea un nuovo capitolo",
     "configuration": "Crea un nuovo capitolo",
@@ -39,9 +38,8 @@
     "accessibleTitle": "Modifica capitolo",
     "success": {
       "backToStart": "Visualizza capitoli",
-      "goToDetail": "Visualizza capitolo",
       "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
-      "title": "Il Capitolo '{{paymentObject}}' è stato aggiornato!"
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato aggiornato!"
     },
     "title": "Modifica capitolo",
     "subtitle": "Gestisci i parametri del capitolo.",
@@ -669,7 +667,6 @@
     "404": "404: risorsa non disponibile",
     "affiliateNew": "Associa nuovo",
     "affiliate": "Associa",
-    "configure": "Configura",
     "confirm": "Conferma",
     "id": "id",
     "role": "Ruolo",
@@ -1841,20 +1838,35 @@
   "home": {
     "cta": "Crea Posizione Debitoria",
     "drawer": {
-      "actions": "Azioni disponibili"
+      "actions": "Azioni disponibili",
+      "installment": "Visualizza dettaglio Avviso",
+      "installments": "Visualizza dettaglio Avvisi",
+      "debtPosition": "Visualizza Posizione Debitoria",
+      "debtPositions": "Visualizza Posizione Debitorie",
+      "receipt": "Scarica Ricevuta Telematica",
+      "receipts": "Visualizza Ricevute Telematiche",
+      "reporting": "Visualizza rendicontazione",
+      "reportings": "Visualizza le rendicontazioni",
+      "classification": "Verifica lo stato del pagamento",
+      "classifications": "Verifica lo stato dei pagamenti"
+    },
+    "noResults": {
+      "title": "Azioni disponibili",
+      "description": "Non abbiamo trovato azioni disponibili. Verifica che lo IUV sia corretto.",
+      "descriptionFc": "Non abbiamo trovato azioni disponibili. Verifica che il Codice Fiscale o la Partita Iva siano corrette."
     },
     "fillAtLeast": "Inserisci un valore per avviare la ricerca",
     "opening": "Ciao, {{user}}",
     "tabs": {
-      "1": {
+      "IUV": {
         "label": "Avviso",
         "fieldLabel": "IUV"
       },
-      "2": {
+      "FC": {
         "label": "Cittadino",
         "fieldLabel": "CF / Partita IVA"
       },
-      "3": {
+      "IUF": {
         "label": "Rendicontazione",
         "fieldLabel": "IUF"
       }
