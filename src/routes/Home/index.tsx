@@ -140,7 +140,6 @@ const Home = () => {
       setError(true);
       return;
     }
-
     const mutation = mutationByTab(currentTab);
 
     if (!mutation) {

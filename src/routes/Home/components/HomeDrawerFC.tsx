@@ -36,6 +36,7 @@ export const HomeDrawerFC = ({
         state: { searchType: SearchType.IUV }
       });
       navigate(path, { hashObject: { fiscalCode: searchValue } });
+      navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS);
     }
   };
 
