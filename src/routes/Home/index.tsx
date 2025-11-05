@@ -26,7 +26,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import { Drawer } from '../../components/Drawer';
 import { HomeDrawerBody } from './components/HomeDrawerBody';
-import { useDashboardByIuv } from '../../api/home';
+import { useDashboardByIuv, useDashboardByFiscalCode } from '../../api/home';
 import { DashboardResult, TABS } from './models';
 
 const Home = () => {
@@ -44,6 +44,9 @@ const Home = () => {
   const [searchResults, setSearchResults] = useState<DashboardResult>();
 
   const dashboardByIuvMutation = useDashboardByIuv({ organizationId });
+  const dashboardByFiscalCodeMutation = useDashboardByFiscalCode({
+    organizationId
+  });
 
   useEffect(() => {
     const pendingNotification = sessionStorage.getItem('pendingNotification');
@@ -83,14 +86,14 @@ const Home = () => {
     {
       id: TABS.FC,
       label: t('home.tabs.FC.label'),
-      icon: <RotatedAltRouteIcon />,
+      icon: <PersonIcon />,
       searchLabel: t('home.tabs.FC.fieldLabel'),
       searchName: 'cf'
     },
     {
       id: TABS.IUF,
       label: t('home.tabs.IUF.label'),
-      icon: <PersonIcon />,
+      icon: <RotatedAltRouteIcon />,
       searchLabel: t('home.tabs.IUF.fieldLabel'),
       searchName: 'iuf'
     }
@@ -100,14 +103,23 @@ const Home = () => {
     switch (currentTab) {
       case TABS.IUV:
         return dashboardByIuvMutation;
-    // TODO: handle other tabs mutations
       case TABS.IUF:
         return null;
       case TABS.FC:
-        return null;
+        return dashboardByFiscalCodeMutation;
       default:
         navigate(PageRoutes.RESPONSES_ERROR);
         return null;
+    }
+  };
+
+  // Remove spaces in input fields as the user types (IUV/CF/P.IVA/IUF)
+  const handleSanitizeInput = (event: React.FormEvent<HTMLInputElement>) => {
+    const input = event.currentTarget;
+    if (!input) return;
+    const next = input.value.replace(/\s/g, '');
+    if (next !== input.value) {
+      input.value = next;
     }
   };
 
@@ -121,12 +133,14 @@ const Home = () => {
     formData: FormData
   ) => {
     event?.preventDefault();
-    const searchValue = formData.get('searchValue')?.toString() || '';
+    const rawValue = formData.get('searchValue')?.toString() || '';
+    const searchValue = rawValue.replace(/\s/g, '');
 
     if (!searchValue) {
       setError(true);
       return;
     }
+
     const mutation = mutationByTab(currentTab);
 
     if (!mutation) {
@@ -218,6 +232,7 @@ const Home = () => {
                     data-testid={`home-form-input-${tab.id}`}
                     size="small"
                     sx={{ flexGrow: 1 }}
+                    onInput={handleSanitizeInput}
                   />
                   <Button
                     variant="contained"

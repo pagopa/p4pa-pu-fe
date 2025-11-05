@@ -4,6 +4,8 @@ import { useAppNavigate } from '../../../hooks/useAppNavigation';
 import { generatePath } from 'react-router';
 import { PageRoutes } from '../..';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import { useReceiptDownload } from '../../TelematicReceiptDetail/useReceiptDownload';
 import { DashboardByFc } from '../../../../generated/data-contracts';
 import { DrawerItemConfig } from '../models';
 
@@ -13,9 +15,13 @@ type HomeDrawerFCProps = {
 };
 
 // TODO: Check if actions are correct
-export const HomeDrawerFC = ({ searchResults }: HomeDrawerFCProps) => {
+export const HomeDrawerFC = ({
+  searchValue,
+  searchResults
+}: HomeDrawerFCProps) => {
   const { t } = useTranslation();
   const navigate = useAppNavigate();
+  const { downloadReceipt } = useReceiptDownload();
 
   const navigateToInstallment = () => {
     const { installmentId } = searchResults;
@@ -41,6 +47,17 @@ export const HomeDrawerFC = ({ searchResults }: HomeDrawerFCProps) => {
     }
   };
 
+  const navigateOrDownloadReceipt = () => {
+    const { receiptId } = searchResults;
+    if (receiptId) {
+      downloadReceipt({ receiptId });
+    } else {
+      navigate(PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS, {
+        hashObject: { fiscalCode: searchValue }
+      });
+    }
+  };
+
   const drawerItemsConfig: Array<DrawerItemConfig> = [
     {
       key: 'installment',
@@ -61,6 +78,16 @@ export const HomeDrawerFC = ({ searchResults }: HomeDrawerFCProps) => {
         : 'home.drawer.debtPositions',
       shouldShow: searchResults.hasDebtPosition,
       onAction: navigateToDebtPosition
+    },
+    {
+      key: 'receipt',
+      icon: <DescriptionOutlinedIcon fontSize="small" color="primary" />,
+      actionIcon: searchResults.receiptId ? 'download' : 'visit',
+      labelKey: searchResults.receiptId
+        ? 'home.drawer.receipt'
+        : 'home.drawer.receipts',
+      shouldShow: !!searchResults.hasReceipt,
+      onAction: navigateOrDownloadReceipt
     }
   ];
 
