@@ -4,7 +4,6 @@ import utils from '../../utils';
 import { useDashboardByIuf, useDashboardByIuv } from '.';
 import { AxiosResponse } from 'axios';
 
-
 vi.mock('../../utils', () => ({
   default: {
     apiClient: {
@@ -21,7 +20,6 @@ vi.mock('../../utils/loaders', () => ({
 }));
 
 describe('useDashboardByIuv', () => {
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -31,33 +29,29 @@ describe('useDashboardByIuv', () => {
     const IUV = '01000000020043462';
 
     const mockData = {
-    "hasInstallment": false,
-    "hasDebtPosition": false,
-    "hasReceipt": false,
-    "hasIuf": false,
-    "hasClassification": false
+      hasInstallment: false,
+      hasDebtPosition: false,
+      hasReceipt: false,
+      hasIuf: false,
+      hasClassification: false
     };
 
     const apiMock = vi
-          .spyOn(utils.apiClient.bff, 'getDashboardByIuv')
-          .mockResolvedValue({ data: mockData } as AxiosResponse);
+      .spyOn(utils.apiClient.bff, 'getDashboardByIuv')
+      .mockResolvedValue({ data: mockData } as AxiosResponse);
 
-
-    const { result } = renderHook(() => useDashboardByIuv({organizationId}));
+    const { result } = renderHook(() => useDashboardByIuv({ organizationId }));
 
     await result.current.mutateAsync(IUV);
 
     await waitFor(() => {
       expect(result.current.data).toBe(mockData);
     });
-     expect(apiMock).toHaveBeenCalledWith(organizationId, { iuv: IUV });
-
+    expect(apiMock).toHaveBeenCalledWith(organizationId, { iuv: IUV });
   });
-
 });
 
 describe('useDashboardByIuf', () => {
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -67,27 +61,24 @@ describe('useDashboardByIuf', () => {
     const IUF = '1111';
 
     const mockData = {
-    "hasIuf": true,
-    "iuf": "1111",
-    "hasClassification": true,
-    "classificationId": 6610,
-    "hasTreasury": false
-};
+      hasIuf: true,
+      iuf: '1111',
+      hasClassification: true,
+      classificationId: 6610,
+      hasTreasury: false
+    };
 
     const apiMock = vi
-          .spyOn(utils.apiClient.bff, 'getDashboardByIuf')
-          .mockResolvedValue({ data: mockData } as AxiosResponse);
+      .spyOn(utils.apiClient.bff, 'getDashboardByIuf')
+      .mockResolvedValue({ data: mockData } as AxiosResponse);
 
-
-    const { result } = renderHook(() => useDashboardByIuf({organizationId}));
+    const { result } = renderHook(() => useDashboardByIuf({ organizationId }));
 
     await result.current.mutateAsync(IUF);
 
     await waitFor(() => {
       expect(result.current.data).toBe(mockData);
     });
-     expect(apiMock).toHaveBeenCalledWith(organizationId, { iuf: IUF });
-
+    expect(apiMock).toHaveBeenCalledWith(organizationId, { iuf: IUF });
   });
-
 });
