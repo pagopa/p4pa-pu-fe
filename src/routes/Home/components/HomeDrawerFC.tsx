@@ -3,6 +3,7 @@ import { HomeDrawerListItem } from './HomeDrawerListItem';
 import { useAppNavigate } from '../../../hooks/useAppNavigation';
 import { generatePath } from 'react-router';
 import { PageRoutes } from '../..';
+import { SearchType } from '../../../models/DebtPositions';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import { useReceiptDownload } from '../../TelematicReceiptDetail/useReceiptDownload';
@@ -14,7 +15,6 @@ type HomeDrawerFCProps = {
   searchResults: DashboardByFc;
 };
 
-// TODO: Check if actions are correct
 export const HomeDrawerFC = ({
   searchValue,
   searchResults
@@ -31,7 +31,10 @@ export const HomeDrawerFC = ({
       });
       navigate(path);
     } else {
-      navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS);
+      navigate(PageRoutes.DEBT_POSITION_SEARCH_RESULTS, {
+        state: { searchType: SearchType.IUV },
+        hashObject: { fiscalCode: searchValue }
+      });
     }
   };
 
@@ -43,7 +46,9 @@ export const HomeDrawerFC = ({
       });
       navigate(path);
     } else {
-      navigate(PageRoutes.DEBT_POSITIONS_RESULTS);
+      navigate(PageRoutes.DEBT_POSITIONS_RESULTS, {
+        hashObject: { fiscalCode: searchValue }
+      });
     }
   };
 
