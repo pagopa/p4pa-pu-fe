@@ -1852,7 +1852,11 @@
       "reporting": "Visualizza rendicontazione",
       "reportings": "Visualizza le rendicontazioni",
       "classification": "Verifica lo stato del pagamento",
-      "classifications": "Verifica lo stato dei pagamenti"
+      "classifications": "Verifica lo stato dei pagamenti",
+      "iuf": "Visualizza dettaglio rendicontazione",
+      "iufs": "Visualizza le Rendicontazioni.",
+      "treasury": "Visualizza la bolletta",
+      "treasuries": "Visualizza le bollette"
     },
     "noResults": {
       "title": "Azioni disponibili",
