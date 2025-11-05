@@ -365,6 +365,20 @@ describe('DebtPositionCreateWizard', () => {
       });
     });
 
+    it('shows loader while fetching and hides step1 form', () => {
+      (debtPositions.getDebtPositionDetail as Mock).mockReturnValue({
+        data: null,
+        error: null,
+        isLoading: true,
+        isFetching: true
+      });
+
+      render(<DebtPositionCreateWizard />);
+
+      expect(screen.getByTestId('step1-loading')).toBeInTheDocument();
+      expect(screen.queryByTestId('step1-next')).not.toBeInTheDocument();
+    });
+
     it('renders in editing mode with correct titles and data', async () => {
       render(<DebtPositionCreateWizard />);
 

@@ -886,7 +886,7 @@
     "iun": "Identificativo univoco notifica",
     "iur": "IUR",
     "iuv": "IUV",
-    "loading": "caricamento",
+    "loading": "Caricamento...",
     "lastUpdate": "Ultimo aggiornamento",
     "macroarea": "Macroarea",
     "mandatoryDueDate": "Data di Scadenza Obbligatoria",
@@ -1135,6 +1135,7 @@
       "subtitle": "Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento.",
       "title": "Configurazione generale"
     },
+    "loadingDebtPosition": "Caricamento posizione debitoria",
     "step1": {
       "debtPositionType": {
         "label": "Tipo di dovuto",

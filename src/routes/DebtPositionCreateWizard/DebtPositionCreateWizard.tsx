@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useLocation } from 'react-router';
 import Step1GeneralConfiguration from './components/Step/Step1GeneralConfiguration';
+import Step1Loading from './components/Step/Step1Loading';
 import Step2AddDebtor from './components/Step/Step2AddDebtor';
 import Step3 from './components/Step/Step3';
 import { StepperContainer } from '../../components/Stepper';
@@ -120,8 +121,12 @@ const DebtPositionCreateWizard = () => {
   const isEditing = location.state?.isEditing === true;
   const debtPositionId = location.state?.debtPositionId;
 
-  const { data: debtPositionDetail, error } =
-    debtPositions.getDebtPositionDetail(organizationId, debtPositionId || 0);
+  const debtPositionDetailQuery = debtPositions.getDebtPositionDetail(
+    organizationId,
+    debtPositionId || 0
+  );
+  const { data: debtPositionDetail, error } = debtPositionDetailQuery;
+  const { isLoading, isFetching } = debtPositionDetailQuery;
 
   useEffect(() => {
     if (isEditing && !debtPositionId) {
@@ -362,21 +367,24 @@ const DebtPositionCreateWizard = () => {
       steps={[
         {
           label: t('debtPositionCreateWizard.wizardStepper.step1'),
-          content: (
-            <Step1GeneralConfiguration
-              key="step1"
-              data={formData.step1}
-              setData={(data) => {
-                setFormData((prev) => ({ ...prev, step1: data }));
-              }}
-              onNext={() => setStep(1)}
-              onBack={() => navigate(PageRoutes.DEBT_POSITIONS_INDEX)}
-              isEditing={isEditing}
-              debtPositionTypeOrgCode={
-                debtPositionDetail?.debtPositionTypeOrgCode
-              }
-            />
-          )
+          content:
+            isEditing && (isLoading || isFetching) ? (
+              <Step1Loading key="step1-loading" />
+            ) : (
+              <Step1GeneralConfiguration
+                key="step1"
+                data={formData.step1}
+                setData={(data) => {
+                  setFormData((prev) => ({ ...prev, step1: data }));
+                }}
+                onNext={() => setStep(1)}
+                onBack={() => navigate(PageRoutes.DEBT_POSITIONS_INDEX)}
+                isEditing={isEditing}
+                debtPositionTypeOrgCode={
+                  debtPositionDetail?.debtPositionTypeOrgCode
+                }
+              />
+            )
         },
         {
           label: t('debtPositionCreateWizard.wizardStepper.step2'),
