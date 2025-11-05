@@ -5,8 +5,8 @@ import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
 import { useParams } from 'react-router';
 import * as receiptPdf from '../../api/receiptPdf';
 import { useReceiptDetail } from '../../hooks/useReceiptDetail';
-import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
+import notify from '../../utils/notify';
 
 const mockNavigate = vi.fn();
 
@@ -29,11 +29,9 @@ vi.mock('../../utils/download', () => ({
   downloadBlob: vi.fn()
 }));
 
-vi.mock('../../utils', () => ({
+vi.mock('../../utils/notify', () => ({
   default: {
-    notify: {
-      emit: vi.fn()
-    }
+    emit: vi.fn()
   }
 }));
 
@@ -206,7 +204,7 @@ describe('TelematicReceiptDetail Component', () => {
 
     await waitFor(() => {
       expect(consoleErrorSpy).toHaveBeenCalledWith(mockError);
-      expect(utils.notify.emit).toHaveBeenCalledWith(
+      expect(notify.emit).toHaveBeenCalledWith(
         'commons.files.downloadFailed',
         'error'
       );

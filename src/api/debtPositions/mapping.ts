@@ -48,6 +48,7 @@ export const buildDebtPositionsQueryParams = ({
   debtPositionTypeOrgId: filters.typeOrgId,
   fiscalCode: filters.fiscalCode,
   status: filters.status,
+  iuv: filters.iuv,
   page: pagination.page,
   size: pagination.size,
   sort

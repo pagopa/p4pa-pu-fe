@@ -26,19 +26,24 @@ import PersonIcon from '@mui/icons-material/Person';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import { Drawer } from '../../components/Drawer';
 import { HomeDrawerBody } from './components/HomeDrawerBody';
+import { useDashboardByIuv } from '../../api/home';
+import { DashboardResult, TABS } from './models';
 
 const Home = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
-    state: { userInfo }
+    state: { userInfo, organizationId }
   } = useStore();
 
-  const [value, setValue] = useState('1');
+  const [currentTab, setCurrentTab] = useState(TABS.IUV);
   const [error, setError] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [searchLabel, setSearchLabel] = useState('');
   const [searchValue, setSearchValue] = useState('');
+  const [searchResults, setSearchResults] = useState<DashboardResult>();
+
+  const dashboardByIuvMutation = useDashboardByIuv({ organizationId });
 
   useEffect(() => {
     const pendingNotification = sessionStorage.getItem('pendingNotification');
@@ -49,8 +54,8 @@ const Home = () => {
     }
   }, []);
 
-  const handleChange = (_event: React.SyntheticEvent, newValue: string) => {
-    setValue(newValue);
+  const handleChange = (_event: React.SyntheticEvent, newTab: TABS) => {
+    setCurrentTab(newTab);
     setError(false);
   };
 
@@ -59,7 +64,7 @@ const Home = () => {
   const cta: ActionMenuItem = {
     variant: 'contained',
     buttonText: t('home.cta'),
-    icon: <AddIcon></AddIcon>,
+    icon: <AddIcon />,
     onActionClick: () => navigate(PageRoutes.DEBT_POSITION_CREATE_WIZARD)
   };
 
@@ -69,34 +74,49 @@ const Home = () => {
 
   const tabsConfig = [
     {
-      value: '1',
-      label: t('home.tabs.1.label'),
+      id: TABS.IUV,
+      label: t('home.tabs.IUV.label'),
       icon: <ReceiptLongIcon />,
-      searchLabel: t('home.tabs.1.fieldLabel'),
+      searchLabel: t('home.tabs.IUV.fieldLabel'),
       searchName: 'iuv'
     },
     {
-      value: '2',
-      label: t('home.tabs.2.label'),
-      icon: <PersonIcon />,
-      searchLabel: t('home.tabs.2.fieldLabel'),
+      id: TABS.FC,
+      label: t('home.tabs.FC.label'),
+      icon: <RotatedAltRouteIcon />,
+      searchLabel: t('home.tabs.FC.fieldLabel'),
       searchName: 'cf'
     },
     {
-      value: '3',
-      label: t('home.tabs.3.label'),
-      icon: <RotatedAltRouteIcon />,
-      searchLabel: t('home.tabs.3.fieldLabel'),
+      id: TABS.IUF,
+      label: t('home.tabs.IUF.label'),
+      icon: <PersonIcon />,
+      searchLabel: t('home.tabs.IUF.fieldLabel'),
       searchName: 'iuf'
     }
   ];
+
+  const mutationByTab = (currentTab: TABS) => {
+    switch (currentTab) {
+      case TABS.IUV:
+        return dashboardByIuvMutation;
+    // TODO: handle other tabs mutations
+      case TABS.IUF:
+        return null;
+      case TABS.FC:
+        return null;
+      default:
+        navigate(PageRoutes.RESPONSES_ERROR);
+        return null;
+    }
+  };
 
   /**
    *
    * @param event Form event
    * @param formData Data extracted by the form submitted
    */
-  const searchHandler = (
+  const searchHandler = async (
     event: React.FormEvent<HTMLFormElement>,
     formData: FormData
   ) => {
@@ -107,10 +127,28 @@ const Home = () => {
       setError(true);
       return;
     }
-    setError(false);
-    setSearchLabel(value);
-    setSearchValue(searchValue);
-    setShowDrawer(true);
+    const mutation = mutationByTab(currentTab);
+
+    if (!mutation) {
+      setError(true);
+      setShowDrawer(false);
+      utils.notify.emit(t('errors.generic'));
+      return;
+    }
+
+    try {
+      const results = await mutation.mutateAsync(searchValue);
+      setSearchResults(results);
+      setSearchLabel(currentTab);
+      setSearchValue(searchValue);
+      setError(false);
+      setShowDrawer(true);
+    } catch (error) {
+      console.error(error);
+      setError(true);
+      setShowDrawer(false);
+      utils.notify.emit(t('errors.generic'));
+    }
   };
 
   return (
@@ -119,10 +157,10 @@ const Home = () => {
         title={t('home.opening', { user: user })}
         accessibleTitle={t('commons.routes.HOME')}
         callToAction={[cta]}
-      ></TitleComponent>
+      />
 
       <Box>
-        <TabContext value={value}>
+        <TabContext value={currentTab}>
           <Box>
             <TabList
               onChange={handleChange}
@@ -132,22 +170,22 @@ const Home = () => {
             >
               {tabsConfig.map((tab) => (
                 <Tab
-                  key={tab.value}
+                  key={tab.id}
                   icon={tab.icon}
                   iconPosition={'start'}
                   label={tab.label}
-                  value={tab.value}
-                  data-testid={`home-tab-${tab.value}`}
+                  value={tab.id}
+                  data-testid={`home-tab-${tab.id}`}
                 />
               ))}
             </TabList>
           </Box>
           {tabsConfig.map((tab) => (
             <TabPanel
-              key={tab.value}
-              value={tab.value}
+              key={tab.id}
+              value={tab.id}
               sx={{ bgcolor: 'background.paper' }}
-              data-testid={`home-tabpanel-${tab.value}`}
+              data-testid={`home-tabpanel-${tab.id}`}
             >
               {error && (
                 <Alert
@@ -162,7 +200,7 @@ const Home = () => {
                 fullWidth={true}
                 component={'form'}
                 name={tab.searchName}
-                data-testid={`home-form-${tab.value}`}
+                data-testid={`home-form-${tab.id}`}
                 onSubmit={(event) =>
                   searchHandler(event, new FormData(event.currentTarget))
                 }
@@ -174,17 +212,18 @@ const Home = () => {
                   justifyContent={'space-between'}
                 >
                   <TextField
+                    autoFocus
                     label={tab.searchLabel}
                     name={'searchValue'}
-                    data-testid={`home-form-input-${tab.value}`}
+                    data-testid={`home-form-input-${tab.id}`}
                     size="small"
                     sx={{ flexGrow: 1 }}
-                  ></TextField>
+                  />
                   <Button
                     variant="contained"
                     type={'submit'}
                     startIcon={<SearchIcon />}
-                    data-testid={`home-form-btn-${tab.value}`}
+                    data-testid={`home-form-btn-${tab.id}`}
                   >
                     {t('commons.search')}
                   </Button>
@@ -204,7 +243,8 @@ const Home = () => {
         <HomeDrawerBody
           searchLabel={searchLabel}
           searchValue={searchValue}
-        ></HomeDrawerBody>
+          searchResults={searchResults}
+        />
       </Drawer>
     </>
   );
