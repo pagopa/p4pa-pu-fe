@@ -4,7 +4,6 @@ import { useAppNavigate } from '../../../hooks/useAppNavigation';
 import { generatePath } from 'react-router';
 import { PageRoutes } from '../..';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
-import DescriptionIcon from '@mui/icons-material/Description';
 import { DashboardByFc } from '../../../../generated/data-contracts';
 import { DrawerItemConfig } from '../models';
 
@@ -55,7 +54,7 @@ export const HomeDrawerFC = ({ searchResults }: HomeDrawerFCProps) => {
     },
     {
       key: 'debtPosition',
-      icon: <DescriptionIcon fontSize="small" color="primary" />,
+      icon: <ReceiptLongIcon fontSize="small" color="primary" />,
       actionIcon: 'visit',
       labelKey: searchResults.debtPositionId
         ? 'home.drawer.debtPosition'
