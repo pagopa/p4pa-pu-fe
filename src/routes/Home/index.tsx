@@ -121,7 +121,7 @@ const Home = () => {
     formData: FormData
   ) => {
     event?.preventDefault();
-    const searchValue = formData.get('searchValue')?.toString() || '';
+    const searchValue = formData.get('searchValue')?.toString().trim() || '';
 
     if (!searchValue) {
       setError(true);
