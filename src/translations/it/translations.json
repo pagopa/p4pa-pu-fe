@@ -3,6 +3,7 @@
     "accessibleTitle": "Creazione capitolo",
     "success": {
       "backToStart": "Visualizza capitoli",
+      "goToDetail": "Visualizza capitolo",
       "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
       "title": "Il Capitolo ‘{{paymentObject}}’ è stato creato!"
     },
@@ -38,6 +39,7 @@
     "accessibleTitle": "Modifica capitolo",
     "success": {
       "backToStart": "Visualizza capitoli",
+      "goToDetail": "Visualizza capitolo",
       "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
       "title": "Il Capitolo ‘{{paymentObject}}’ è stato aggiornato!"
     },
