@@ -47,13 +47,9 @@ describe('HomeDrawerFC', () => {
       />
     );
 
-    // Click on receipt item triggers download
     const receiptItem = await screen.findByText('Scarica Ricevuta Telematica');
     await userEvent.click(receiptItem);
     expect(mockDownloadReceipt).toHaveBeenCalledWith({ receiptId: 123 });
-
-    // Action icon should be download (right chevron replaced by download)
-    // We check by role text since the icon has no role; presence of label is enough here
   });
 
   it('shows receipt item as visit when multiple receipts (no receiptId)', async () => {
@@ -70,7 +66,6 @@ describe('HomeDrawerFC', () => {
       />
     );
 
-    // Label should be plural and clicking navigates to search results with hash
     const pluralItem = await screen.findByText(
       'Visualizza Ricevute Telematiche'
     );
