@@ -1,7 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import utils from '../../utils';
-import { useDashboardByIuf, useDashboardByIuv } from '.';
+import {
+  useDashboardByIuf,
+  useDashboardByIuv,
+  useDashboardByFiscalCode
+} from '.';
 import { AxiosResponse } from 'axios';
 
 vi.mock('../../utils', () => ({
@@ -9,7 +13,8 @@ vi.mock('../../utils', () => ({
     apiClient: {
       bff: {
         getDashboardByIuv: vi.fn(),
-        getDashboardByIuf: vi.fn()
+        getDashboardByIuf: vi.fn(),
+        getDashboardByFiscalCode: vi.fn()
       }
     }
   }
@@ -48,6 +53,43 @@ describe('useDashboardByIuv', () => {
       expect(result.current.data).toBe(mockData);
     });
     expect(apiMock).toHaveBeenCalledWith(organizationId, { iuv: IUV });
+  });
+});
+
+describe('useDashboardByFiscalCode', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('should fetch and return Dashboard called with a orgid & fiscalCode', async () => {
+    const organizationId = 123;
+    const FISCAL_CODE = 'RSSMRA80A01H501U';
+
+    const mockData = {
+      hasInstallment: true,
+      installmentId: 33448,
+      hasDebtPosition: true,
+      debtPositionId: 30862,
+      hasReceipt: true,
+      receiptId: 5125
+    };
+
+    const apiMock = vi
+      .spyOn(utils.apiClient.bff, 'getDashboardByFiscalCode')
+      .mockResolvedValue({ data: mockData } as AxiosResponse);
+
+    const { result } = renderHook(() =>
+      useDashboardByFiscalCode({ organizationId })
+    );
+
+    await result.current.mutateAsync(FISCAL_CODE);
+
+    await waitFor(() => {
+      expect(result.current.data).toBe(mockData);
+    });
+    expect(apiMock).toHaveBeenCalledWith(organizationId, {
+      fiscalCode: FISCAL_CODE
+    });
   });
 });
 

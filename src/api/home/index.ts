@@ -2,7 +2,8 @@ import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import {
   dashboardByIufSchema,
-  dashboardByIuvSchema
+  dashboardByIuvSchema,
+  dashboardByFcSchema
 } from '../../../generated/zod-schema';
 import { parseAndLog } from '../../utils/loaders';
 
@@ -12,6 +13,10 @@ export type getDashboardByIuvQuery = Parameters<
 
 export type getDashboardByIufQuery = Parameters<
   typeof utils.apiClient.bff.getDashboardByIuf
+>[1];
+
+export type getDashboardByFiscalCodeQuery = Parameters<
+  typeof utils.apiClient.bff.getDashboardByFiscalCode
 >[1];
 
 export const useDashboardByIuv = ({
@@ -50,6 +55,26 @@ export const useDashboardByIuf = ({
       );
 
       parseAndLog(dashboardByIufSchema, data);
+      return data;
+    }
+  });
+
+export const useDashboardByFiscalCode = ({
+  organizationId
+}: {
+  organizationId: number;
+}) =>
+  useMutation({
+    mutationKey: ['getDashboardByFiscalCode', organizationId],
+    mutationFn: async (value: string) => {
+      const query: getDashboardByFiscalCodeQuery = { fiscalCode: value };
+
+      const { data } = await utils.apiClient.bff.getDashboardByFiscalCode(
+        organizationId,
+        query
+      );
+
+      parseAndLog(dashboardByFcSchema, data);
       return data;
     }
   });

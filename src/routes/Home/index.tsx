@@ -26,7 +26,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import { Drawer } from '../../components/Drawer';
 import { HomeDrawerBody } from './components/HomeDrawerBody';
-import { useDashboardByIuf, useDashboardByIuv } from '../../api/home';
+import {
+  useDashboardByIuf,
+  useDashboardByIuv,
+  useDashboardByFiscalCode
+} from '../../api/home';
 import { DashboardResult, TABS } from './models';
 
 const Home = () => {
@@ -45,6 +49,9 @@ const Home = () => {
 
   const dashboardByIuvMutation = useDashboardByIuv({ organizationId });
   const dashboardByIufMutation = useDashboardByIuf({ organizationId });
+  const dashboardByFiscalCodeMutation = useDashboardByFiscalCode({
+    organizationId
+  });
 
   useEffect(() => {
     const pendingNotification = sessionStorage.getItem('pendingNotification');
@@ -84,14 +91,14 @@ const Home = () => {
     {
       id: TABS.FC,
       label: t('home.tabs.FC.label'),
-      icon: <RotatedAltRouteIcon />,
+      icon: <PersonIcon />,
       searchLabel: t('home.tabs.FC.fieldLabel'),
       searchName: 'cf'
     },
     {
       id: TABS.IUF,
       label: t('home.tabs.IUF.label'),
-      icon: <PersonIcon />,
+      icon: <RotatedAltRouteIcon />,
       searchLabel: t('home.tabs.IUF.fieldLabel'),
       searchName: 'iuf'
     }
@@ -104,7 +111,7 @@ const Home = () => {
       case TABS.IUF:
         return dashboardByIufMutation;
       case TABS.FC:
-        return null;
+        return dashboardByFiscalCodeMutation;
       default:
         navigate(PageRoutes.RESPONSES_ERROR);
         return null;
@@ -121,12 +128,16 @@ const Home = () => {
     formData: FormData
   ) => {
     event?.preventDefault();
-    const searchValue = formData.get('searchValue')?.toString().trim() || '';
+    const searchValue = (formData.get('searchValue')?.toString() || '').replace(
+      /\s/g,
+      ''
+    );
 
     if (!searchValue) {
       setError(true);
       return;
     }
+
     const mutation = mutationByTab(currentTab);
 
     if (!mutation) {

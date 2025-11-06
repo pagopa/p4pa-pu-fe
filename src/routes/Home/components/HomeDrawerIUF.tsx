@@ -52,7 +52,7 @@ export const HomeDrawerIUF = ({
     const { treasuryId } = searchResults;
     if (treasuryId) {
       const path = generatePath(PageRoutes.TREASURY_DETAIL, {
-        treasuryId
+        id: treasuryId
       });
       navigate(generatePath(path));
     } else {

@@ -76,7 +76,9 @@ export const HomeDrawerBody = ({
         <MenuList dense={false} aria-labelledby="home-drawer-actions">
           {noResults ? (
             <Typography variant="body2">
-              {t('home.noResults.description')}
+              {searchLabel === TABS.FC
+                ? t('home.noResults.descriptionFc')
+                : t('home.noResults.description')}
             </Typography>
           ) : (
             <DrawerItems searchResults={searchResults} />
