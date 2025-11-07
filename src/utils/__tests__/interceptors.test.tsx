@@ -268,12 +268,11 @@ describe('Response interceptor auth error handling', () => {
       toJSON: () => ({})
     };
 
-    const result = await responseErrorHandler(error);
+    await expect(responseErrorHandler(error)).rejects.toBe(error);
 
     expect(navigation.setAuthErrorState).toHaveBeenCalledWith(true);
     expect(utils.storage.clear).toHaveBeenCalled();
     expect(navigation.navigateToLoggedOut).toHaveBeenCalled();
-    expect(result).toBeUndefined();
   });
 
   it('should handle 403 error (Forbidden)', async () => {

@@ -120,6 +120,28 @@ describe('OrganizationDetailSections helpers', () => {
     expect(debtTypes?.iconConfig?.icon).toBeDefined();
   });
 
+  it('Does not show operatorsCount and debtPositionTypeOrgCount if status is not ACTIVE', () => {
+    const data: OrganizationDetail = {
+      ...baseOrganization,
+      status: OrganizationStatus.DRAFT,
+      operatorsCount: 7,
+      debtPositionTypeOrgCount: 3
+    } as unknown as OrganizationDetail;
+
+    const result = info(data, tMock);
+
+    expect(result[0].label).toBe('commons.state');
+    expect(result[0].value).toBe('DRAFT');
+    expect(result[0].valueType).toBe('status');
+    expect(result[0].chipConfig?.color).toBe('default');
+
+    const operators = result.find((r) => r.label === 'commons.operators');
+    expect(operators).toBeUndefined();
+
+    const debtTypes = result.find((r) => r.label === 'commons.debtTypes');
+    expect(debtTypes).toBeUndefined();
+  });
+
   it('integrationBox exposes IO/SEND flags and secret fields correctly', () => {
     const data: OrganizationDetail = {
       ...baseOrganization,

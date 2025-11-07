@@ -3,6 +3,7 @@
     "accessibleTitle": "Creazione capitolo",
     "success": {
       "backToStart": "Visualizza capitoli",
+      "goToDetail": "Visualizza capitolo",
       "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
       "title": "Il Capitolo ‘{{paymentObject}}’ è stato creato!"
     },
@@ -38,6 +39,7 @@
     "accessibleTitle": "Modifica capitolo",
     "success": {
       "backToStart": "Visualizza capitoli",
+      "goToDetail": "Visualizza capitolo",
       "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
       "title": "Il Capitolo ‘{{paymentObject}}’ è stato aggiornato!"
     },
@@ -886,7 +888,7 @@
     "iun": "Identificativo univoco notifica",
     "iur": "IUR",
     "iuv": "IUV",
-    "loading": "caricamento",
+    "loading": "Caricamento...",
     "lastUpdate": "Ultimo aggiornamento",
     "macroarea": "Macroarea",
     "mandatoryDueDate": "Data di Scadenza Obbligatoria",
@@ -933,6 +935,7 @@
     "remove": "Rimuovi",
     "required": "Campo obbligatorio",
     "requiredFieldDescription": "* Indica un campo obbligatorio",
+    "results": "Risultati",
     "roles": {
       "ROLE_ADMIN": "Amministratore",
       "ROLE_OPER": "Operatore"
@@ -1134,6 +1137,7 @@
       "subtitle": "Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento.",
       "title": "Configurazione generale"
     },
+    "loadingDebtPosition": "Caricamento posizione debitoria",
     "step1": {
       "debtPositionType": {
         "label": "Tipo di dovuto",
@@ -1833,6 +1837,48 @@
     "paymentToDate": "Pagamento al",
     "reservationDate": "Data prenotazione",
     "uploadDate": "Data Caricamento"
+  },
+  "home": {
+    "cta": "Crea Posizione Debitoria",
+    "drawer": {
+      "actions": "Azioni disponibili",
+      "installment": "Visualizza dettaglio Avviso",
+      "installments": "Visualizza dettaglio Avvisi",
+      "debtPosition": "Visualizza Posizione Debitoria",
+      "debtPositions": "Visualizza Posizioni Debitorie",
+      "receipt": "Scarica Ricevuta Telematica",
+      "receipts": "Visualizza Ricevute Telematiche",
+      "reporting": "Visualizza rendicontazione",
+      "reportings": "Visualizza le rendicontazioni",
+      "classification": "Verifica lo stato del pagamento",
+      "classifications": "Verifica lo stato dei pagamenti",
+      "iuf": "Visualizza dettaglio rendicontazione",
+      "iufs": "Visualizza le Rendicontazioni.",
+      "treasury": "Visualizza la bolletta",
+      "treasuries": "Visualizza le bollette"
+    },
+    "noResults": {
+      "title": "Azioni disponibili",
+      "description": "Non abbiamo trovato azioni disponibili. Verifica che lo IUV sia corretto.",
+      "descriptionFc": "Non abbiamo trovato azioni disponibili. Verifica che il Codice Fiscale o la Partita Iva siano corrette."
+    },
+    "fillAtLeast": "Inserisci un valore per avviare la ricerca",
+    "opening": "Ciao, {{user}}",
+    "tabs": {
+      "IUV": {
+        "label": "Avviso",
+        "fieldLabel": "IUV"
+      },
+      "FC": {
+        "label": "Cittadino",
+        "fieldLabel": "CF / Partita IVA"
+      },
+      "IUF": {
+        "label": "Rendicontazione",
+        "fieldLabel": "IUF"
+      }
+    },
+    "tabsTypes": "Tipi di ricerca"
   },
   "notificationPreview": {
     "byOrg": "Ente mittente*",
