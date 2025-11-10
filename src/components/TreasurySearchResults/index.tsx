@@ -4,7 +4,8 @@ import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
+import { useFocusAfterClose } from '../../hooks/useFocusAfterClose';
 import {
   FilterCategory,
   FilterMap,
@@ -38,6 +39,11 @@ const TreasurySearchResults = () => {
   } = useMultiFilters({ filterCategory: FilterCategory.TREASURY });
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const { armFocus } = useFocusAfterClose({
+    isOpen: drawerOpen,
+    rootRef: tableContainerRef
+  });
 
   const toggleDrawer = () => {
     setDrawerOpen((prev) => !prev);
@@ -58,6 +64,7 @@ const TreasurySearchResults = () => {
     if (isValid) {
       setError(false);
       treasury.applyFilters(filterValues);
+      armFocus();
       setDrawerOpen(false);
     } else {
       setError(shouldShowGeneralError(filterValues));
@@ -85,10 +92,12 @@ const TreasurySearchResults = () => {
       </Grid>
 
       <Grid
+        ref={tableContainerRef}
         container
         p={2}
         sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
         aria-label="results-table"
+        tabIndex={-1}
       >
         <SearchResultsDataGrid
           data={treasury.query.data as PagedTreasuryView}

@@ -5,7 +5,7 @@ import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
 import AddIcon from '@mui/icons-material/Add';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   FilterCategory,
   FilterMap,
@@ -20,6 +20,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { getAssessments } from '../../api/assessments';
 import { shouldShowGeneralError } from '../../utils/filtersValidation';
+import { useFocusAfterClose } from '../../hooks/useFocusAfterClose';
 
 export type LocationState = {
   category: string;
@@ -45,6 +46,11 @@ const AssessmentSearchResults = () => {
   } = useMultiFilters({ filterCategory: FilterCategory.ASSESSMENT });
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const { armFocus } = useFocusAfterClose({
+    isOpen: drawerOpen,
+    rootRef: tableContainerRef
+  });
 
   const toggleDrawer = () => {
     setDrawerOpen((prev) => !prev);
@@ -64,6 +70,7 @@ const AssessmentSearchResults = () => {
     if (isValid) {
       setError(false);
       assessments.applyFilters(filterValues);
+      armFocus();
       setDrawerOpen(false);
     } else {
       setError(shouldShowGeneralError(filterValues));
@@ -99,11 +106,13 @@ const AssessmentSearchResults = () => {
       </Grid>
 
       <Grid
+        ref={tableContainerRef}
         container
         p={2}
         sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
         aria-label="results-table"
         data-testid="assessment-results-container"
+        tabIndex={-1}
       >
         <AssessmentSearchResultsDataGrid
           data={assessments.query.data}

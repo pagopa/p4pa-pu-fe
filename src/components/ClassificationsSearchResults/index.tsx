@@ -4,7 +4,7 @@ import SearchResultsDataGrid from './SearchResultsDataGrid';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import {
@@ -20,6 +20,7 @@ import { getClassifications } from '../../api/classifications';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
+import { useFocusAfterClose } from '../../hooks/useFocusAfterClose';
 
 export type LocationState = {
   category: string;
@@ -41,6 +42,11 @@ const ClassificationsSearchResults = () => {
   } = useMultiFilters({ filterCategory: FilterCategory.CLASSIFICATIONS });
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const { armFocus } = useFocusAfterClose({
+    isOpen: drawerOpen,
+    rootRef: tableContainerRef
+  });
 
   const toggleDrawer = () => {
     setDrawerOpen((prev) => !prev);
@@ -60,6 +66,7 @@ const ClassificationsSearchResults = () => {
     if (isValid) {
       setError(false);
       classifications.applyFilters(filterValues);
+      armFocus();
       setDrawerOpen(false);
     } else {
       setError(true);
@@ -98,10 +105,12 @@ const ClassificationsSearchResults = () => {
       </Grid>
 
       <Grid
+        ref={tableContainerRef}
         container
         p={2}
         sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
         aria-label="results-table"
+        tabIndex={-1}
       >
         <SearchResultsDataGrid
           data={

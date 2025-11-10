@@ -2,7 +2,7 @@ import { Grid, useTheme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   FilterCategory,
   FilterMap,
@@ -17,6 +17,7 @@ import { SearchResultsDataGrid } from './SearchResultDataGrid';
 import { getAssessmentsRegistries } from '../../api/assessments';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
+import { useFocusAfterClose } from '../../hooks/useFocusAfterClose';
 
 export type LocationState = {
   category: string;
@@ -32,6 +33,11 @@ export const AssessmentsRegistrySearchResults = () => {
     useMultiFilters({ filterCategory: FilterCategory.ASSESSMENTS_REGISTRY });
 
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const { armFocus } = useFocusAfterClose({
+    isOpen: drawerOpen,
+    rootRef: tableContainerRef
+  });
 
   const toggleDrawer = () => {
     setDrawerOpen((prev) => !prev);
@@ -50,6 +56,7 @@ export const AssessmentsRegistrySearchResults = () => {
 
   const applyFilters = () => {
     assessments.applyFilters(filterValues);
+    armFocus();
     setDrawerOpen(false);
   };
 
@@ -79,10 +86,12 @@ export const AssessmentsRegistrySearchResults = () => {
       </Grid>
 
       <Grid
+        ref={tableContainerRef}
         container
         p={2}
         sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
         aria-label="results-table"
+        tabIndex={-1}
       >
         <SearchResultsDataGrid data={assessments.query.data} />
       </Grid>
@@ -92,10 +101,10 @@ export const AssessmentsRegistrySearchResults = () => {
         onClose={toggleDrawer}
         title={t('commons.filters.filtersField')}
         filterMap={filterMap}
+        onSubmit={applyFilters}
         buttons={[
           {
             buttonText: t('commons.filters.filterResults'),
-            onButtonClick: applyFilters,
             variant: 'contained',
             id: 'multifilter-drawer-search-btn'
           },

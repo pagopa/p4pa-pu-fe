@@ -1,3 +1,4 @@
+import React from 'react';
 import MultiFilter from '../MultiFilter/MultiFilter';
 import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
 import { Grid, Button, ButtonProps } from '@mui/material';
