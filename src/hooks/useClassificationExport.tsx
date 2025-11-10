@@ -99,7 +99,7 @@ export const useClassificationExport = (organizationId: number) => {
         filterFields.iud = formData.iud;
       }
       if (formData.iuf) {
-        filterFields.iuf = formData.iuf;
+        filterFields.iuf = [formData.iuf];
       }
 
       const iurValue = formData.iur || formData.reportingIur;
