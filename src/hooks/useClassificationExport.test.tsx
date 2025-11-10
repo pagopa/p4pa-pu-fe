@@ -295,7 +295,7 @@ describe('useClassificationExport', () => {
         filterFields: {
           iuv: ['IUV123456'],
           iud: 'IUD123456',
-          iuf: 'IUF123456',
+          iuf: ['IUF123456'],
           iur: ['IUR123456'],
           label: [LabelEnum.DOPPI],
           remittanceInformation: 'Test remittance',
