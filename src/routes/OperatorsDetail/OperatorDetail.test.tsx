@@ -120,10 +120,15 @@ describe('OperatorDetail Component', () => {
     expect(screen.getByText('OperatorDetail.code')).toBeInTheDocument();
   });
 
-  it('navigates to error page if required params are missing', () => {
-    mockUseParams.mockReturnValue({
-      organizationId: 'not-a-number',
-      mappedExternalUserId: undefined
+  it('navigates to error page if there are api errors', () => {
+    mockUseSearch.mockReturnValue({
+      query: {
+        isError: true,
+        isSuccess: false,
+        error: 'error',
+        data: null
+      },
+      applyFilters: vi.fn()
     });
     render(<OperatorDetail />);
     expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.RESPONSES_ERROR);

@@ -44,10 +44,6 @@ export const OperatorDetail = () => {
   // this is to check if the org selected is the same who want operate
   const isSameOrg = organizationIdStored === organizationId;
 
-  if (isNaN(organizationId) || !mappedExternalUserId) {
-    navigate(PageRoutes.RESPONSES_ERROR);
-  }
-
   const debtPositionTypesByOrg = useDebtPositionTypesByOrg({
     organizationId
   });
