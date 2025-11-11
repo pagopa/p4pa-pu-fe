@@ -33,27 +33,20 @@ export const AssessmentDetail = () => {
   const theme = useTheme();
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const assessmentId = id ? Number(id) : null;
+  const assessmentId = Number(id);
   const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
   const {
     state: { organizationId }
   } = useStore();
-
-  if (!assessmentId || isNaN(assessmentId)) {
-    navigate(PageRoutes.RESPONSES_ERROR);
-    return null;
-  }
-
   const [detailItem, setDetailItem] = useState<AssessmentsDetail | null>(null);
-
   const [appliedFilters, setAppliedFilters] =
     useState<AssessmentDetailFilters>(initialFilters);
 
   const query = getAssessmentDetail(organizationId, assessmentId);
+  const { data, isPending, isError, error } = query;
 
-  const assessmentDetail = useSearch({ query, filters: appliedFilters });
+  const { applyFilters } = useSearch({ query, filters: appliedFilters });
 
-  const { isPending, isError, error, data } = query;
   useEffect(() => {
     if (isError && error) {
       console.error('Error loading assessment details:', error);
@@ -93,6 +86,12 @@ export const AssessmentDetail = () => {
       });
     }
   }, [detailItem, assessmentId, data?.assessmentsName]);
+
+  useEffect(() => {
+    if (!assessmentId || isNaN(assessmentId)) {
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [assessmentId, navigate]);
 
   const canModifyAssessment = () => {
     const hasManualGeneration = data?.flagManualGeneration === true;
@@ -356,7 +355,7 @@ export const AssessmentDetail = () => {
                 type: COMPONENT_TYPE.button,
                 label: t('commons.filters.filterResults'),
                 gridWidth: 1,
-                onClick: () => assessmentDetail.applyFilters(appliedFilters)
+                onClick: () => applyFilters(appliedFilters)
               }
             ]}
           />

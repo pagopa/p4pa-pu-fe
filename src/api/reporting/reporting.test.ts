@@ -131,24 +131,4 @@ describe('getPaymentsReportingRows', () => {
 
     expect(data).toEqual(mockData);
   });
-
-  it('should not fetch data when organizationId or iuf is missing or disabled', () => {
-    // Disabled by missing organizationId
-    const { result: result1 } = renderHook(() =>
-      getPaymentsReportingRows(0, iuf)
-    );
-    expect(result1.current.data).toBeUndefined();
-
-    // Disabled by missing iuf
-    const { result: result2 } = renderHook(() =>
-      getPaymentsReportingRows(organizationId, '')
-    );
-    expect(result2.current.data).toBeUndefined();
-
-    // Disabled by option
-    const { result: result3 } = renderHook(() =>
-      getPaymentsReportingRows(organizationId, iuf, { enabled: false })
-    );
-    expect(result3.current.data).toBeUndefined();
-  });
 });

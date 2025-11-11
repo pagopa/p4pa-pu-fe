@@ -38,7 +38,13 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
       type: 'string'
     },
     {
-      field: 'receiptPaymentAmount',
+      field: 'iuf',
+      headerName: t('commons.iuf'),
+      flex: 1,
+      type: 'string'
+    },
+    {
+      field: 'calculatedAmount',
       headerName: t('commons.filters.amount.label'),
       flex: 1,
       type: 'string',

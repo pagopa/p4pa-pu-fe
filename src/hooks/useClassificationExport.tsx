@@ -93,18 +93,18 @@ export const useClassificationExport = (organizationId: number) => {
       const filterFields: ClassificationsExportFileFilter = {};
 
       if (formData.iuv) {
-        filterFields.iuv = [formData.iuv];
+        filterFields.iuvs = [formData.iuv];
       }
       if (formData.iud) {
         filterFields.iud = formData.iud;
       }
       if (formData.iuf) {
-        filterFields.iuf = [formData.iuf];
+        filterFields.iufs = [formData.iuf];
       }
 
       const iurValue = formData.iur || formData.reportingIur;
       if (iurValue) {
-        filterFields.iur = [iurValue];
+        filterFields.iurs = [iurValue];
       }
 
       if (formData.label) {

@@ -9,8 +9,7 @@ import {
 
 export const getPaymentsReportingRows = (
   organizationId: number,
-  iuf: string,
-  options: { enabled?: boolean } & Record<string, unknown> = {}
+  iuf: string
 ) => {
   return useMutation({
     mutationKey: ['getPaymentsReportingRows', organizationId, iuf],
@@ -24,8 +23,6 @@ export const getPaymentsReportingRows = (
         );
       parseAndLog(pagedPaymentsReportingRowSchema, paymentsReportingRows);
       return paymentsReportingRows;
-    },
-    enabled: options?.enabled !== false && !!organizationId && !!iuf,
-    ...options
+    }
   });
 };

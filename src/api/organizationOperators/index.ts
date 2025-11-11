@@ -69,14 +69,19 @@ export const useOperatorDetailSearch = (
         sort: args.sort
       };
 
-      const { data } = await utils.apiClient.bff.getOperatorDetails(
-        organizationId,
-        mappedExternalUserId,
-        query
-      );
-
-      parseAndLog(operatorsDetailSchema, data);
-      return data;
+      try {
+        const { data } = await utils.apiClient.bff.getOperatorDetails(
+          organizationId,
+          mappedExternalUserId,
+          query
+        );
+        parseAndLog(operatorsDetailSchema, data);
+        return data;
+      } catch (error) {
+        // TODO: status error should be handled in an interceptor;
+        console.error(error);
+        return;
+      }
     }
   });
 };

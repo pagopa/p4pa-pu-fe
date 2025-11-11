@@ -25,7 +25,6 @@ export const TreasuryDetail = () => {
 
   if (!id) {
     navigate(PageRoutes.RESPONSES_ERROR);
-    return null;
   }
 
   const { data, isError, error } = getTreasuryDetail(organizationId, id);

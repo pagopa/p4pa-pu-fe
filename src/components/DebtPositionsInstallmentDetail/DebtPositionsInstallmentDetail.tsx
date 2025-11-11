@@ -33,32 +33,13 @@ export const DebtPositionsInstallmentDetail = () => {
   const [timelineOpen, setTimelineOpen] = useState(false);
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
 
-  const toggleDrawer = () => {
-    setDrawerOpen((prev) => !prev);
-  };
-
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const installmentId = Number(id);
 
-  if (isNaN(installmentId)) {
-    navigate(PageRoutes.RESPONSES_ERROR);
-    return null;
-  }
-
-  const {
-    data: installment,
-    isError,
-    error
-  } = debtPositions.getInstallmentDetail(organizationId, installmentId);
-
-  useEffect(() => {
-    if (isError && error) {
-      console.error('Error loading installment detail:', error);
-      navigate(PageRoutes.RESPONSES_ERROR);
-    }
-  }, [isError, error, navigate]);
-
-  const statusInstallment = installment?.status;
+  const { data: installment, isError } = debtPositions.getInstallmentDetail(
+    organizationId,
+    installmentId
+  );
 
   const {
     mutate: fetchInstallmentRegistries,
@@ -71,6 +52,20 @@ export const DebtPositionsInstallmentDetail = () => {
     installment?.iuv || ''
   );
 
+  const timelineElements = useTimelineData(installmentRegistries);
+
+  useEffect(() => {
+    if (isNaN(installmentId) || isError) {
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [installmentId, navigate, isError]);
+
+  const toggleDrawer = () => {
+    setDrawerOpen((prev) => !prev);
+  };
+
+  const statusInstallment = installment?.status;
+
   const handleTimelineOpen = () => {
     setTimelineOpen(true);
 
@@ -82,8 +77,6 @@ export const DebtPositionsInstallmentDetail = () => {
       });
     }
   };
-
-  const timelineElements = useTimelineData(installmentRegistries);
 
   const handleDownloadInstallment = async () => {
     try {
