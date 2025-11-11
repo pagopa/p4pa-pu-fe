@@ -103,11 +103,21 @@ const RenderComponent = ({
           ? ((values[fieldId] as string) ?? defaultValue)
           : (textItem.value ?? defaultValue);
 
+      // Check for field-specific error (e.g., fiscalCode_error)
+      const fieldError = values?.[`${fieldId}_error`] as string | undefined;
+      const hasError = !!fieldError;
+
       return (
         <FormComponent.TextField
           {...textItem}
           value={currentValue}
+          error={hasError}
+          helperText={fieldError}
           onChange={(e: TextFieldChangeEvent) => {
+            // Clear error when user starts typing
+            if (hasError && onChange) {
+              onChange(`${fieldId}_error`, '');
+            }
             if (onChange) {
               onChange(fieldId, e.target.value);
             } else if (textItem.onChange) {
