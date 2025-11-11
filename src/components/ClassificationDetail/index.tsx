@@ -35,10 +35,6 @@ export const ClassificationDetails = () => {
     }
   }, [classificationId, isError, error, navigate]);
 
-  if (isNaN(Number(classificationId))) {
-    return null;
-  }
-
   const visibleTabs = useMemo(() => {
     if (!data) return [];
 

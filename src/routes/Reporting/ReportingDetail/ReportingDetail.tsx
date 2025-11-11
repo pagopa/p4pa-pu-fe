@@ -32,7 +32,7 @@ export const ReportingDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
-  const { id: iuf } = useParams<{ id: string }>();
+  const { id: iuf } = useParams();
   const {
     state: { organizationId }
   } = useStore();
@@ -52,9 +52,7 @@ export const ReportingDetail = () => {
     number | undefined
   >(location.state?.ingestionFlowFileId);
 
-  const query = getPaymentsReportingRows(organizationId, iuf, {
-    enabled: !!organizationId && !!iuf
-  });
+  const query = getPaymentsReportingRows(organizationId, iuf);
 
   const reportingRows = useSearch({
     query,

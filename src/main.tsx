@@ -7,6 +7,9 @@ import { StoreProvider } from './store/GlobalStore';
 import { it } from 'date-fns/locale/it';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFnsV3';
+import { ErrorBoundary } from './components/ErrorBoundary/ErrorBoundary';
+import { ErrorFallback } from './components/ErrorFallback';
+import { Theme } from './utils/theme';
 
 const container = document.getElementById('root') as HTMLElement;
 
@@ -17,13 +20,17 @@ if (container) {
 
   root.render(
     <StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <StoreProvider>
+      <ErrorBoundary fallback={<ErrorFallback />}>
+        <Theme>
           <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={it}>
-            <App />
+            <StoreProvider>
+              <QueryClientProvider client={queryClient}>
+                <App />
+              </QueryClientProvider>
+            </StoreProvider>
           </LocalizationProvider>
-        </StoreProvider>
-      </QueryClientProvider>
+        </Theme>
+      </ErrorBoundary>
     </StrictMode>
   );
 }

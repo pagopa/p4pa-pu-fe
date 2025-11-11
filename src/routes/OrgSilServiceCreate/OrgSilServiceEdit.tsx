@@ -93,10 +93,6 @@ export const OrgSilServiceEdit = () => {
     navigate(-1);
   };
 
-  if (!orgSilServiceId || !organizationId) {
-    return null;
-  }
-
   if (error) {
     navigate(PageRoutes.RESPONSES_ERROR);
   }
