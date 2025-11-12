@@ -1,18 +1,11 @@
 import { z } from 'zod';
-import {
-  isValidIBAN,
-  isValidPostalAccount
-} from '../../../../utils/fieldValidation';
+import { isValidIBAN } from '../../../../utils/fieldValidation';
 
 export const step3Schema = z.object({
   postalIban: z
     .literal(undefined)
     .or(z.literal(''))
-    .or(
-      z
-        .string()
-        .refine(isValidPostalAccount, 'commons.validation.invalidPostalIban')
-    ),
+    .or(z.string().refine(isValidIBAN, 'commons.validation.invalidPostalIban')),
   iban: z
     .literal(undefined)
     .or(z.literal(''))

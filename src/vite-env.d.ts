@@ -3,6 +3,7 @@
 
 type ImportMetaEnv = Readonly<{
   VITE_DEPLOY_PATH: string;
+  ENV: string;
 }>;
 
 type ImportMeta = Readonly<{

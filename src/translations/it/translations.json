@@ -1101,7 +1101,8 @@
       "fieldRequired": "Campo obbligatorio",
       "checkboxRequired": "Questa conferma è obbligatoria",
       "invalidIban": "Formato IBAN non valido",
-      "invalidPostalIban": "Formato conto poste non valido"
+      "invalidPostalIban": "Formato conto poste non valido",
+      "invalidFiscalCodeOrVat": "Il codice fiscale o la partita IVA non sono corretti"
     },
     "yes": "Si"
   },

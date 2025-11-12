@@ -93,7 +93,10 @@ describe('Step3Accounting', () => {
 
     renderWithForm(<Step3Accounting />, onSubmit);
 
-    fillField('debtTypeOrgCreate.accounting.postalIban', '123456');
+    fillField(
+      'debtTypeOrgCreate.accounting.postalIban',
+      'IT60X0542811101000000654321'
+    );
     fillField(
       'debtTypeOrgCreate.accounting.pspIban',
       'IT60X0542811101000000123456'
@@ -112,7 +115,7 @@ describe('Step3Accounting', () => {
     await waitFor(() => {
       expect(onSubmit).toHaveBeenCalledWith(
         {
-          postalIban: '123456',
+          postalIban: 'IT60X0542811101000000654321',
           iban: 'IT60X0542811101000000123456',
           postalAccountCode: '123456789',
           holderPostalCc: 'John Doe',
