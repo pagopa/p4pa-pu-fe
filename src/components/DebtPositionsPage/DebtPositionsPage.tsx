@@ -19,6 +19,16 @@ import {
   noFilterSetted,
   shouldShowGeneralError
 } from '../../utils/filtersValidation';
+import {
+  isValidFiscalCodeOrPIVA,
+  normalizeFiscalCodeOrPIVA,
+  normalizeCompact
+} from '../../utils/fieldValidation';
+import {
+  clearFieldError,
+  setFieldError,
+  stripErrorFields
+} from '../../utils/filterErrors';
 
 export const DebtPositionsPage = () => {
   const { t } = useTranslation();
@@ -43,37 +53,84 @@ export const DebtPositionsPage = () => {
 
     const tabFilters = filters[activeTabIndex];
 
-    const cleanedFilters = Object.entries(tabFilters).reduce(
-      (acc, [key, value]) => {
-        if (key.endsWith('_fromError') || key.endsWith('_toError')) {
-          return acc;
-        }
+    // Normalize and validate fields
+    let nextTabFilters = { ...tabFilters };
 
-        if (
-          typeof value === 'object' &&
-          value !== null &&
-          'from' in value &&
-          'to' in value
-        ) {
-          const dateRange = value as { from?: Date | null; to?: Date | null };
-          if (dateRange.from && dateRange.to) {
-            acc[key] = value;
-          }
-        } else if (value !== null && value !== undefined && value !== '') {
-          if (typeof value === 'string') {
-            const trimmedValue = value.trim();
-            if (trimmedValue) {
-              acc[key] = trimmedValue;
-            }
-          } else {
-            acc[key] = value;
-          }
-        }
+    // Normalize IUV if present
+    const iuv = tabFilters[FilterFieldIds.IUV_CODE] as string | undefined;
+    if (iuv && typeof iuv === 'string' && iuv.trim() !== '') {
+      const normalizedIUV = normalizeCompact(iuv);
+      nextTabFilters = {
+        ...nextTabFilters,
+        [FilterFieldIds.IUV_CODE]: normalizedIUV
+      };
+    }
 
-        return acc;
-      },
-      {} as BaseFilterValues
-    );
+    // Validate fiscalCode if present
+    const fiscalCode = tabFilters[FilterFieldIds.FISCAL_CODE] as
+      | string
+      | undefined;
+
+    if (
+      fiscalCode &&
+      typeof fiscalCode === 'string' &&
+      fiscalCode.trim() !== ''
+    ) {
+      // Normalize the value (remove spaces, uppercase)
+      const normalizedFiscalCode = normalizeFiscalCodeOrPIVA(fiscalCode);
+      const isValid = isValidFiscalCodeOrPIVA(normalizedFiscalCode);
+
+      if (!isValid) {
+        const newFilters = [...filters];
+        newFilters[activeTabIndex] = setFieldError(
+          tabFilters,
+          FilterFieldIds.FISCAL_CODE,
+          t('commons.validation.invalidFiscalCodeOrVat')
+        ) as typeof tabFilters;
+        setFilters(newFilters);
+        return;
+      }
+      // Prepare next filters with normalized value and cleared error
+      nextTabFilters = {
+        ...nextTabFilters,
+        [FilterFieldIds.FISCAL_CODE]: normalizedFiscalCode,
+        [`${FilterFieldIds.FISCAL_CODE}_error`]: ''
+      };
+    }
+
+    // Persist normalized values in state
+    if (iuv || fiscalCode) {
+      const newFilters = [...filters];
+      newFilters[activeTabIndex] = nextTabFilters;
+      setFilters(newFilters);
+    }
+
+    const cleanedFilters = Object.entries(
+      stripErrorFields(nextTabFilters) as BaseFilterValues
+    ).reduce((acc, [key, value]) => {
+      if (
+        typeof value === 'object' &&
+        value !== null &&
+        'from' in value &&
+        'to' in value
+      ) {
+        const dateRange = value as { from?: Date | null; to?: Date | null };
+        if (dateRange.from && dateRange.to) {
+          acc[key] = value;
+        }
+      } else if (value !== null && value !== undefined && value !== '') {
+        if (typeof value === 'string') {
+          const trimmedValue = value.trim();
+          if (trimmedValue) {
+            acc[key] = trimmedValue;
+          }
+        } else {
+          acc[key] = value;
+        }
+      }
+
+      return acc;
+    }, {} as BaseFilterValues);
 
     const params = utils.URI.encode(cleanedFilters);
 
@@ -90,7 +147,7 @@ export const DebtPositionsPage = () => {
         }
       });
     }
-  }, [activeTabIndex, filters, navigate]);
+  }, [activeTabIndex, filters, navigate, t]);
 
   const resetCurrentFilters = useCallback(() => {
     const newFilters = [...filters];
@@ -115,6 +172,17 @@ export const DebtPositionsPage = () => {
       }
 
       const newFilters = [...filters];
+
+      // Clear fiscalCode error when user changes the field
+      if (id === FilterFieldIds.FISCAL_CODE) {
+        const currentTabFilters = newFilters[activeTabIndex] || {};
+        if (currentTabFilters[`${FilterFieldIds.FISCAL_CODE}_error`]) {
+          newFilters[activeTabIndex] = clearFieldError(
+            currentTabFilters,
+            FilterFieldIds.FISCAL_CODE
+          ) as typeof currentTabFilters;
+        }
+      }
 
       if (id === FilterFieldIds.DATE_RANGE) {
         const dateRangeValue = value as {
@@ -142,6 +210,7 @@ export const DebtPositionsPage = () => {
       } else if (id === FilterFieldIds.DATE_RANGE + '_toError') {
         setToError(value as DateValidationError | null);
       } else {
+        // Handle all other field changes (including fiscalCode_error)
         newFilters[activeTabIndex] = {
           ...newFilters[activeTabIndex],
           [id]: value

@@ -37,6 +37,11 @@ import {
 import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { HomeTabs } from './components/HomeTabs';
+import {
+  isValidFiscalCodeOrPIVA,
+  normalizeFiscalCodeOrPIVA,
+  normalizeCompact
+} from '../../utils/fieldValidation';
 
 const Home = () => {
   const { t } = useTranslation();
@@ -48,6 +53,7 @@ const Home = () => {
   const [currentTab, setCurrentTab] = useState(TABS.IUV);
   const [dialogOpen, setDialogOpen] = useState(true);
   const [error, setError] = useState(false);
+  const [fiscalCodeError, setFiscalCodeError] = useState<string | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
   const [searchLabel, setSearchLabel] = useState('');
   const [searchValue, setSearchValue] = useState('');
@@ -141,6 +147,8 @@ const Home = () => {
   const tabsHandleChange = (_event: React.SyntheticEvent, newTab: TABS) => {
     setCurrentTab(newTab);
     setError(false);
+    setFiscalCodeError(null); // Clear fiscal code error when switching tabs
+    setSearchValue(''); // Reset search input when switching tabs
   };
 
   const userProfileConfirmChange = () => {
@@ -165,14 +173,30 @@ const Home = () => {
     formData: FormData
   ) => {
     event?.preventDefault();
-    const searchValue = (formData.get('searchValue')?.toString() || '').replace(
-      /\s/g,
-      ''
-    );
+    let searchValue = formData.get('searchValue')?.toString() || '';
 
     if (!searchValue) {
       setError(true);
       return;
+    }
+
+    // Normalize/validate per tab
+    if (currentTab === TABS.FC) {
+      // Normalize the value (remove spaces, uppercase)
+      searchValue = normalizeFiscalCodeOrPIVA(searchValue);
+      // Reflect normalized value in the input immediately
+      setSearchValue(searchValue);
+      if (!isValidFiscalCodeOrPIVA(searchValue)) {
+        setFiscalCodeError(t('commons.validation.invalidFiscalCodeOrVat'));
+        setError(false);
+        return;
+      }
+      // Clear error if validation passes
+      setFiscalCodeError(null);
+    } else {
+      // For IUV and IUF: normalize by removing spaces and reflect in input
+      searchValue = normalizeCompact(searchValue);
+      setSearchValue(searchValue);
     }
 
     const mutation = mutationByTab(currentTab);
@@ -237,6 +261,10 @@ const Home = () => {
         defaultUserProfile={defaultUserProfile}
         searchHandler={searchHandler}
         error={error}
+        searchValue={searchValue}
+        setSearchValue={setSearchValue}
+        fiscalCodeError={fiscalCodeError}
+        setFiscalCodeError={setFiscalCodeError}
       />
 
       <Drawer

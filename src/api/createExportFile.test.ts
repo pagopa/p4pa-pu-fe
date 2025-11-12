@@ -141,7 +141,7 @@ describe('createClassificationsExportFile', () => {
           from: '2024-01-01',
           to: '2024-12-31'
         },
-        iuf: ['IUF123456'],
+        iufs: ['IUF123456'],
         label: [LabelEnum.DOPPI]
       }
     };

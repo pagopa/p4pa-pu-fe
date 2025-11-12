@@ -17,7 +17,7 @@ describe('step3Schema validation', () => {
 
   it('accepts valid IBANs', () => {
     const validData = {
-      postalIban: '123456',
+      postalIban: 'IT60X0542811101000000123456',
       iban: 'IT60X0542811101000000123456'
     };
     const result = step3Schema.safeParse(validData);

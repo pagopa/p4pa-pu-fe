@@ -70,6 +70,10 @@ describe('Home tabs component', () => {
         defaultUserProfile={USER_PROFILES.DP}
         searchHandler={mockIuvMutate}
         error={false}
+        searchValue=""
+        setSearchValue={vi.fn()}
+        fiscalCodeError={null}
+        setFiscalCodeError={vi.fn()}
       />
     );
 

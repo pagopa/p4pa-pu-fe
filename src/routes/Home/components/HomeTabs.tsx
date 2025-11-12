@@ -23,6 +23,10 @@ type HomeTabsProps = {
     formData: FormData
   ) => Promise<void>;
   error: boolean;
+  searchValue: string;
+  setSearchValue: (value: string) => void;
+  fiscalCodeError: string | null;
+  setFiscalCodeError: (error: string | null) => void;
 };
 
 export const HomeTabs = ({
@@ -32,7 +36,11 @@ export const HomeTabs = ({
   profileSelected,
   defaultUserProfile,
   searchHandler,
-  error
+  error,
+  searchValue,
+  setSearchValue,
+  fiscalCodeError,
+  setFiscalCodeError
 }: HomeTabsProps) => {
   const { t } = useTranslation();
 
@@ -99,6 +107,18 @@ export const HomeTabs = ({
                     data-testid={`home-form-input-${tab.id}`}
                     size="small"
                     sx={{ flexGrow: 1 }}
+                    value={tab.id === currentTab ? searchValue : ''}
+                    error={tab.id === TABS.FC && !!fiscalCodeError}
+                    helperText={
+                      tab.id === TABS.FC ? fiscalCodeError : undefined
+                    }
+                    onChange={(e) => {
+                      setSearchValue((e.target as HTMLInputElement).value);
+                      // Clear fiscal code error when user types
+                      if (tab.id === TABS.FC && fiscalCodeError) {
+                        setFiscalCodeError(null);
+                      }
+                    }}
                   />
                   <Button
                     variant="contained"
