@@ -23,7 +23,13 @@ import {
   shouldShowGeneralError
 } from '../../utils/filtersValidation';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
+import {
+  isValidFiscalCodeOrPIVA,
+  normalizeFiscalCodeOrPIVA,
+  normalizeCompact
+} from '../../utils/fieldValidation';
 import utils from '../../utils';
+import { clearFieldError, setFieldError } from '../../utils/filterErrors';
 
 export const DebtPositionResults = () => {
   const theme = useTheme();
@@ -69,11 +75,52 @@ export const DebtPositionResults = () => {
   });
 
   const applyFilters = () => {
-    if (!noFilterSetted(filterValues)) {
-      debtPosition.applyFilters(filterValues);
+    let nextValues = { ...filterValues };
+
+    // Normalize IUV if present
+    const iuv = filterValues?.iuv as string | undefined;
+    if (iuv && typeof iuv === 'string' && iuv.trim() !== '') {
+      const normalizedIUV = normalizeCompact(iuv);
+      nextValues = {
+        ...nextValues,
+        iuv: normalizedIUV
+      };
+    }
+
+    // Validate fiscalCode if present
+    const fiscalCode = filterValues?.fiscalCode as string | undefined;
+    if (fiscalCode && fiscalCode.trim() !== '') {
+      // Normalize the value (remove spaces, uppercase)
+      const normalizedFiscalCode = normalizeFiscalCodeOrPIVA(fiscalCode);
+      if (!isValidFiscalCodeOrPIVA(normalizedFiscalCode)) {
+        setFilterValues(
+          (prev) =>
+            setFieldError(
+              prev,
+              'fiscalCode',
+              t('commons.validation.invalidFiscalCodeOrVat')
+            ) as typeof prev
+        );
+        return;
+      }
+      // Update with normalized value and clear error if validation passes
+      nextValues = {
+        ...nextValues,
+        fiscalCode: normalizedFiscalCode,
+        fiscalCode_error: ''
+      };
+    }
+
+    // Persist normalized values in state
+    if (iuv || fiscalCode) {
+      setFilterValues(nextValues);
+    }
+
+    if (!noFilterSetted(nextValues)) {
+      debtPosition.applyFilters(nextValues);
       setError(false);
     } else {
-      setError(shouldShowGeneralError(filterValues));
+      setError(shouldShowGeneralError(nextValues));
     }
   };
 
@@ -129,12 +176,32 @@ export const DebtPositionResults = () => {
         <FilterContainer
           items={filters}
           values={filterValues}
-          onChange={(id, value) =>
-            setFilterValues((filterValues) => ({
-              ...filterValues,
-              [id]: value as string
-            }))
-          }
+          onChange={(id, value) => {
+            // Clear fiscalCode error when user changes the field
+            if (id === 'fiscalCode' && filterValues?.fiscalCode_error) {
+              setFilterValues(
+                (prev) =>
+                  clearFieldError(
+                    {
+                      ...prev,
+                      [id]: value as string
+                    },
+                    'fiscalCode'
+                  ) as typeof prev
+              );
+            } else if (id === 'fiscalCode_error') {
+              // Handle fiscalCode error field changes
+              setFilterValues((prev) => ({
+                ...prev,
+                [id]: value as string
+              }));
+            } else {
+              setFilterValues((filterValues) => ({
+                ...filterValues,
+                [id]: value as string
+              }));
+            }
+          }}
           onSubmit={applyFilters}
         />
         <Grid

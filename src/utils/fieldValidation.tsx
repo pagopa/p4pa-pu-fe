@@ -55,22 +55,123 @@ export const isValidEmail = (email: string): boolean => {
 };
 
 /**
+ * Determines if the Partita IVA check digit validation should be enabled
+ * The check digit validation is enabled only in PROD environment
+ * @returns true if check digit validation should be enabled (PROD), false otherwise (DEV/UAT/LOCAL)
+ */
+export const isPIVACheckEnabled = (): boolean => {
+  return import.meta.env.ENV === 'PROD';
+};
+
+/**
+ * Validates the check digit of an Italian VAT number using the Luhn algorithm
+ * @param pi - VAT number (must be 11 digits, already normalized)
+ * @returns true if the check digit is valid, false otherwise
+ */
+const validatePIVACheckDigit = (pi: string): boolean => {
+  let sum = 0;
+
+  // Sum digits in even positions (0, 2, 4, 6, 8)
+  for (let i = 0; i <= 8; i += 2) {
+    sum += parseInt(pi[i], 10);
+  }
+
+  // Digits in odd positions (1, 3, 5, 7, 9): multiply by 2 and adjust
+  for (let i = 1; i <= 9; i += 2) {
+    let doubled = parseInt(pi[i], 10) * 2;
+    if (doubled > 9) {
+      doubled -= 9; // e.g., 8*2=16 -> 16-9=7
+    }
+    sum += doubled;
+  }
+
+  // Verify check digit (last digit)
+  const checkDigit = (10 - (sum % 10)) % 10;
+  return checkDigit === parseInt(pi[10], 10);
+};
+
+/**
  * Checks if an Italian VAT number is valid
  * @param piva - VAT number to validate
  * @returns true if the VAT number is valid, false otherwise
+ * @remarks
+ * - In PROD environment: validates format (11 digits) + check digit (Luhn algorithm)
+ * - In DEV/UAT/LOCAL environments: validates only format (11 digits)
  */
 export const isValidPartitaIVA = (piva: string): boolean => {
-  // If the VAT number is empty or null, immediately returns false
-  if (!piva) return false;
+  // 1. Basic checks
+  if (!piva) {
+    return false;
+  }
 
   // Normalizes the VAT number by removing all spaces
   piva = piva.replace(/\s/g, '');
 
-  // Checks that:
-  // 1. The length is exactly 11 characters (Italian VAT number standard)
-  // 2. It consists only of numerical digits (0-9)
-  // Note: this validation only checks the format
-  return piva.length === 11 && /^\d{11}$/.test(piva);
+  // 2. Check length after normalization
+  if (piva.length !== 11) {
+    return false;
+  }
+
+  // 3. Verify that all characters are digits
+  if (!/^\d{11}$/.test(piva)) {
+    return false;
+  }
+
+  // 4. If check is disabled, stop here
+  if (!isPIVACheckEnabled()) {
+    return true;
+  }
+
+  // 5. Luhn algorithm for checksum validation
+  return validatePIVACheckDigit(piva);
+};
+
+/**
+ * Normalizes a fiscal code or VAT number by removing spaces and converting to uppercase
+ * @param value - Fiscal code, VAT number, or "ANONIMO" to normalize
+ * @returns Normalized value (spaces removed, uppercase)
+ */
+export const normalizeFiscalCodeOrPIVA = (value: string): string => {
+  if (!value) {
+    return '';
+  }
+  return value.replace(/\s/g, '').toUpperCase();
+};
+
+/**
+ * Removes all spaces from a string without altering case.
+ * Useful for compacting identifiers like IUV/IUF.
+ */
+export const normalizeCompact = (value: string): string => {
+  if (!value) {
+    return '';
+  }
+  return value.replace(/\s/g, '');
+};
+
+/**
+ * Validates a fiscal code or VAT number, accepting also "ANONIMO" as valid value
+ * This function is used in search forms where anonymous subjects are allowed
+ * @param value - Fiscal code, VAT number, or "ANONIMO" to validate
+ * @returns true if the value is valid (CF, P.IVA, or "ANONIMO"), false otherwise
+ */
+export const isValidFiscalCodeOrPIVA = (value: string): boolean => {
+  if (!value) {
+    return false;
+  }
+
+  // Normalize the value by removing spaces and converting to uppercase
+  const normalizedValue = normalizeFiscalCodeOrPIVA(value);
+
+  // Accept "ANONIMO" as valid (case-insensitive)
+  if (normalizedValue === 'ANONIMO') {
+    return true;
+  }
+
+  // Otherwise, validate as Codice Fiscale or Partita IVA
+  return (
+    isValidCodiceFiscale(normalizedValue) || isValidPartitaIVA(normalizedValue)
+  );
 };
 
 /**
@@ -268,22 +369,6 @@ export const isValidIBAN = (iban: string): boolean => {
 
   // Verification with regular expression
   return regex.test(iban);
-};
-
-/**
- * Checks if an Italian postal account number is valid
- * @param postalAccount - Postal account number to validate
- * @returns true if the number is valid, false otherwise
- */
-export const isValidPostalAccount = (postalAccount: string): boolean => {
-  if (!postalAccount) return false;
-
-  // Normalizes the postal account number by removing spaces
-  postalAccount = postalAccount.replace(/\s/g, '');
-
-  // Italian postal accounts consist of 12 numerical digits
-  // or shorter numbers (minimum 6 digits)
-  return /^\d{6,12}$/.test(postalAccount);
 };
 
 /**
