@@ -32,6 +32,11 @@ import {
   useDashboardByFiscalCode
 } from '../../api/home';
 import { DashboardResult, TABS } from './models';
+import {
+  isValidFiscalCodeOrPIVA,
+  normalizeFiscalCodeOrPIVA,
+  normalizeCompact
+} from '../../utils/fieldValidation';
 
 const Home = () => {
   const { t } = useTranslation();
@@ -42,6 +47,7 @@ const Home = () => {
 
   const [currentTab, setCurrentTab] = useState(TABS.IUV);
   const [error, setError] = useState(false);
+  const [fiscalCodeError, setFiscalCodeError] = useState<string | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
   const [searchLabel, setSearchLabel] = useState('');
   const [searchValue, setSearchValue] = useState('');
@@ -65,6 +71,8 @@ const Home = () => {
   const handleChange = (_event: React.SyntheticEvent, newTab: TABS) => {
     setCurrentTab(newTab);
     setError(false);
+    setFiscalCodeError(null); // Clear fiscal code error when switching tabs
+    setSearchValue(''); // Reset search input when switching tabs
   };
 
   const user = userInfo ? `${userInfo.name} ${userInfo.familyName} ` : '';
@@ -128,14 +136,30 @@ const Home = () => {
     formData: FormData
   ) => {
     event?.preventDefault();
-    const searchValue = (formData.get('searchValue')?.toString() || '').replace(
-      /\s/g,
-      ''
-    );
+    let searchValue = formData.get('searchValue')?.toString() || '';
 
     if (!searchValue) {
       setError(true);
       return;
+    }
+
+    // Normalize/validate per tab
+    if (currentTab === TABS.FC) {
+      // Normalize the value (remove spaces, uppercase)
+      searchValue = normalizeFiscalCodeOrPIVA(searchValue);
+      // Reflect normalized value in the input immediately
+      setSearchValue(searchValue);
+      if (!isValidFiscalCodeOrPIVA(searchValue)) {
+        setFiscalCodeError(t('commons.validation.invalidFiscalCodeOrVat'));
+        setError(false);
+        return;
+      }
+      // Clear error if validation passes
+      setFiscalCodeError(null);
+    } else {
+      // For IUV and IUF: normalize by removing spaces and reflect in input
+      searchValue = normalizeCompact(searchValue);
+      setSearchValue(searchValue);
     }
 
     const mutation = mutationByTab(currentTab);
@@ -229,6 +253,18 @@ const Home = () => {
                     data-testid={`home-form-input-${tab.id}`}
                     size="small"
                     sx={{ flexGrow: 1 }}
+                    value={tab.id === currentTab ? searchValue : ''}
+                    error={tab.id === TABS.FC && !!fiscalCodeError}
+                    helperText={
+                      tab.id === TABS.FC ? fiscalCodeError : undefined
+                    }
+                    onChange={(e) => {
+                      setSearchValue((e.target as HTMLInputElement).value);
+                      // Clear fiscal code error when user types
+                      if (tab.id === TABS.FC && fiscalCodeError) {
+                        setFiscalCodeError(null);
+                      }
+                    }}
                   />
                   <Button
                     variant="contained"
