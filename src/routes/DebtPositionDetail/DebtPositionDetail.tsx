@@ -360,12 +360,12 @@ const DebtPositionDetail = () => {
           pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
             id: debtPositionDetail.paymentOptions[0].debtPositionId
           }),
-          label: debtPositionDetail.debtPositionTypeOrgDescription || '',
+          label: debtPositionDetail.description || '-',
           id: 'branch'
         }
       ]);
     }
-  }, [debtPositionDetail?.paymentOptions]);
+  }, [debtPositionDetail?.paymentOptions, debtPositionDetail?.description]);
 
   const getStatusChipProps = (
     status: string
