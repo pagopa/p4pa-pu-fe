@@ -127,19 +127,12 @@ export const TelematicReceipt = () => {
       }));
       return;
     }
+
     if (id === FilterFieldIds.DATE_RANGE) {
-      const range = value as
-        | { from?: Date | null; to?: Date | null }
-        | undefined;
-      const normalized =
-        range && range.from && range.to
-          ? { from: range.from as Date, to: range.to as Date }
-          : undefined;
+      const range = value as { from?: Date | null; to?: Date | null };
       setFilters((prev) => ({
         ...prev,
-        dateRange: normalized as
-          | TelematicReceiptsFilters['dateRange']
-          | undefined
+        dateRange: range as TelematicReceiptsFilters['dateRange'] | undefined
       }));
     }
   };
