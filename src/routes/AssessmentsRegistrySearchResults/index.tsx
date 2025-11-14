@@ -18,6 +18,7 @@ import { getAssessmentsRegistries } from '../../api/assessments';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
 import { useFocusAfterClose } from '../../hooks/useFocusAfterClose';
+import { useDataGridTabNavigation } from '../../hooks/useDataGridTabNavigation';
 
 export type LocationState = {
   category: string;
@@ -52,6 +53,11 @@ export const AssessmentsRegistrySearchResults = () => {
   const assessments = useSearch({
     filters: filterValues,
     query
+  });
+
+  useDataGridTabNavigation({
+    containerRef: tableContainerRef,
+    rows: assessments.query.data?.content
   });
 
   const applyFilters = () => {

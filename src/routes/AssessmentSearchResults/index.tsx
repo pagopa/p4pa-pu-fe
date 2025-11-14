@@ -21,6 +21,7 @@ import { useStore } from '../../store/GlobalStore';
 import { getAssessments } from '../../api/assessments';
 import { shouldShowGeneralError } from '../../utils/filtersValidation';
 import { useFocusAfterClose } from '../../hooks/useFocusAfterClose';
+import { useDataGridTabNavigation } from '../../hooks/useDataGridTabNavigation';
 
 export type LocationState = {
   category: string;
@@ -64,6 +65,11 @@ const AssessmentSearchResults = () => {
   const assessments = useSearch({
     filters: filterValues,
     query
+  });
+
+  useDataGridTabNavigation({
+    containerRef: tableContainerRef,
+    rows: assessments.query.data?.content
   });
 
   const applyFilters = () => {

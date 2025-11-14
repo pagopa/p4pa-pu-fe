@@ -21,6 +21,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { useFocusAfterClose } from '../../hooks/useFocusAfterClose';
+import { useDataGridTabNavigation } from '../../hooks/useDataGridTabNavigation';
 
 export type LocationState = {
   category: string;
@@ -60,6 +61,11 @@ const ClassificationsSearchResults = () => {
   const classifications = useSearch({
     filters: filterValues,
     query
+  });
+
+  useDataGridTabNavigation({
+    containerRef: tableContainerRef,
+    rows: classifications.query.data?.content
   });
 
   const applyFilters = () => {

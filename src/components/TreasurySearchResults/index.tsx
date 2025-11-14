@@ -6,6 +6,7 @@ import { ButtonNaked } from '@pagopa/mui-italia';
 import { FilterAlt } from '@mui/icons-material';
 import { useState, useRef } from 'react';
 import { useFocusAfterClose } from '../../hooks/useFocusAfterClose';
+import { useDataGridTabNavigation } from '../../hooks/useDataGridTabNavigation';
 import {
   FilterCategory,
   FilterMap,
@@ -58,6 +59,11 @@ const TreasurySearchResults = () => {
   const treasury = useSearch({
     filters: filterValues,
     query
+  });
+
+  useDataGridTabNavigation({
+    containerRef: tableContainerRef,
+    rows: treasury.query.data?.content
   });
 
   const applyFilters = () => {
