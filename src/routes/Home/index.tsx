@@ -8,19 +8,15 @@ import { useStore } from '../../store/GlobalStore';
 import { PageRoutes } from '..';
 import { useNavigate } from 'react-router';
 import AddIcon from '@mui/icons-material/Add';
-import SearchIcon from '@mui/icons-material/Search';
 import {
-  Alert,
   Box,
-  Button,
   FormControl,
-  Stack,
-  Tab,
-  TextField
+  FormControlLabel,
+  Link,
+  Radio,
+  RadioGroup,
+  Typography
 } from '@mui/material';
-import TabContext from '@mui/lab/TabContext';
-import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import PersonIcon from '@mui/icons-material/Person';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
@@ -31,7 +27,16 @@ import {
   useDashboardByIuv,
   useDashboardByFiscalCode
 } from '../../api/home';
-import { DashboardResult, TABS } from './models';
+import {
+  DashboardResult,
+  TABS,
+  tabsConfigProps,
+  tabsPerProfile,
+  USER_PROFILES
+} from './models';
+import GenericDialog from '../../components/GenericDialog/GenericDialog';
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import { HomeTabs } from './components/HomeTabs';
 import {
   isValidFiscalCodeOrPIVA,
   normalizeFiscalCodeOrPIVA,
@@ -46,12 +51,16 @@ const Home = () => {
   } = useStore();
 
   const [currentTab, setCurrentTab] = useState(TABS.IUV);
+  const [dialogOpen, setDialogOpen] = useState(true);
   const [error, setError] = useState(false);
   const [fiscalCodeError, setFiscalCodeError] = useState<string | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
   const [searchLabel, setSearchLabel] = useState('');
   const [searchValue, setSearchValue] = useState('');
   const [searchResults, setSearchResults] = useState<DashboardResult>();
+  const defaultUserProfile = USER_PROFILES.DP;
+  const [radioValue, setRadioValue] =
+    useState<USER_PROFILES>(defaultUserProfile);
 
   const dashboardByIuvMutation = useDashboardByIuv({ organizationId });
   const dashboardByIufMutation = useDashboardByIuf({ organizationId });
@@ -68,13 +77,6 @@ const Home = () => {
     }
   }, []);
 
-  const handleChange = (_event: React.SyntheticEvent, newTab: TABS) => {
-    setCurrentTab(newTab);
-    setError(false);
-    setFiscalCodeError(null); // Clear fiscal code error when switching tabs
-    setSearchValue(''); // Reset search input when switching tabs
-  };
-
   const user = userInfo ? `${userInfo.name} ${userInfo.familyName} ` : '';
 
   const cta: ActionMenuItem = {
@@ -88,7 +90,7 @@ const Home = () => {
     return <AltRouteIcon sx={{ transform: 'rotate(90deg)', mr: 1 }} />;
   };
 
-  const tabsConfig = [
+  const tabsConfig: Array<tabsConfigProps> = [
     {
       id: TABS.IUV,
       label: t('home.tabs.IUV.label'),
@@ -112,6 +114,12 @@ const Home = () => {
     }
   ];
 
+  const tabsPerProfile: tabsPerProfile = {
+    [USER_PROFILES.DP]: [TABS.IUV, TABS.FC],
+    [USER_PROFILES.TM]: [TABS.IUF, TABS.IUV],
+    [USER_PROFILES.OM]: [TABS.IUV, TABS.FC, TABS.IUF]
+  };
+
   const mutationByTab = (currentTab: TABS) => {
     switch (currentTab) {
       case TABS.IUV:
@@ -124,6 +132,35 @@ const Home = () => {
         navigate(PageRoutes.RESPONSES_ERROR);
         return null;
     }
+  };
+
+  const tabsAvailableForProfile = (profile: USER_PROFILES) => {
+    const tabs = tabsPerProfile[profile]
+      .map((tabId) => tabsConfig.find((tab) => tab.id === tabId))
+      .filter(Boolean);
+    return (tabs as Array<tabsConfigProps>) || tabsConfig;
+  };
+
+  const [profileSelected, setProfileSelected] =
+    useState<USER_PROFILES>(defaultUserProfile);
+
+  const tabsHandleChange = (_event: React.SyntheticEvent, newTab: TABS) => {
+    setCurrentTab(newTab);
+    setError(false);
+    setFiscalCodeError(null); // Clear fiscal code error when switching tabs
+    setSearchValue(''); // Reset search input when switching tabs
+  };
+
+  const userProfileConfirmChange = () => {
+    const tabsPerProfile = tabsAvailableForProfile(radioValue as USER_PROFILES);
+    setProfileSelected(radioValue as USER_PROFILES);
+    setCurrentTab(tabsPerProfile[0].id);
+    setDialogOpen(false);
+  };
+
+  const userProfileCancelChange = () => {
+    setRadioValue(profileSelected);
+    setDialogOpen(false);
   };
 
   /**
@@ -194,92 +231,42 @@ const Home = () => {
         callToAction={[cta]}
       />
 
-      <Box py={2}>
-        <TabContext value={currentTab}>
-          <Box>
-            <TabList
-              onChange={handleChange}
-              aria-label={t('home.tabsType')}
-              variant="fullWidth"
-              data-testid="home-tabs-list"
-            >
-              {tabsConfig.map((tab) => (
-                <Tab
-                  key={tab.id}
-                  icon={tab.icon}
-                  iconPosition={'start'}
-                  label={tab.label}
-                  value={tab.id}
-                  data-testid={`home-tab-${tab.id}`}
-                />
-              ))}
-            </TabList>
-          </Box>
-          {tabsConfig.map((tab) => (
-            <TabPanel
-              key={tab.id}
-              value={tab.id}
-              sx={{ bgcolor: 'background.paper' }}
-              data-testid={`home-tabpanel-${tab.id}`}
-            >
-              {error && (
-                <Alert
-                  severity="error"
-                  data-testid="home-tabs-error"
-                  sx={{ mb: 2 }}
-                >
-                  {t('home.fillAtLeast')}
-                </Alert>
-              )}
-              <FormControl
-                fullWidth={true}
-                component={'form'}
-                name={tab.searchName}
-                data-testid={`home-form-${tab.id}`}
-                onSubmit={(event) =>
-                  searchHandler(event, new FormData(event.currentTarget))
-                }
-              >
-                <Stack
-                  direction={'row'}
-                  spacing={2}
-                  alignItems={'center'}
-                  justifyContent={'space-between'}
-                >
-                  <TextField
-                    autoFocus
-                    label={tab.searchLabel}
-                    name={'searchValue'}
-                    data-testid={`home-form-input-${tab.id}`}
-                    size="small"
-                    sx={{ flexGrow: 1 }}
-                    value={tab.id === currentTab ? searchValue : ''}
-                    error={tab.id === TABS.FC && !!fiscalCodeError}
-                    helperText={
-                      tab.id === TABS.FC ? fiscalCodeError : undefined
-                    }
-                    onChange={(e) => {
-                      setSearchValue((e.target as HTMLInputElement).value);
-                      // Clear fiscal code error when user types
-                      if (tab.id === TABS.FC && fiscalCodeError) {
-                        setFiscalCodeError(null);
-                      }
-                    }}
-                  />
-                  <Button
-                    variant="contained"
-                    type={'submit'}
-                    startIcon={<SearchIcon />}
-                    data-testid={`home-form-btn-${tab.id}`}
-                  >
-                    {t('commons.search')}
-                  </Button>
-                </Stack>
-              </FormControl>
-            </TabPanel>
-          ))}
-        </TabContext>
-      </Box>
+      <Typography variant="body2">
+        {t(`home.viewAs`)}
+        <Link
+          role="button"
+          fontWeight={600}
+          data-testid="home-choose-widget-btn"
+          ml={1}
+          display={'inline-flex'}
+          color={'inherit'}
+          href="#"
+          onClick={() => setDialogOpen(true)}
+        >
+          {t(`home.chooseWidget.profiles.${profileSelected}.title`)}
+          <ModeEditIcon
+            fontSize="small"
+            color="primary"
+            aria-hidden="true"
+            sx={{ ml: 1, lineHeight: 'inherit' }}
+          />
+        </Link>
+      </Typography>
+
+      <HomeTabs
+        tabsHandleChange={tabsHandleChange}
+        currentTab={currentTab}
+        tabsAvailableForProfile={tabsAvailableForProfile}
+        profileSelected={profileSelected}
+        defaultUserProfile={defaultUserProfile}
+        searchHandler={searchHandler}
+        error={error}
+        searchValue={searchValue}
+        setSearchValue={setSearchValue}
+        fiscalCodeError={fiscalCodeError}
+        setFiscalCodeError={setFiscalCodeError}
+      />
+
       <Drawer
         open={showDrawer}
         onClose={() => {
@@ -293,6 +280,58 @@ const Home = () => {
           searchResults={searchResults}
         />
       </Drawer>
+      <GenericDialog
+        open={dialogOpen}
+        title={t('home.chooseWidget.title')}
+        confirmLabel={t('commons.continue')}
+        cancelLabel={t('commons.close')}
+        data-testid="home-choose-widget"
+        fullWidth={true}
+        onConfirm={userProfileConfirmChange}
+        onClose={userProfileCancelChange}
+      >
+        <Typography variant="body1" mb={2}>
+          {t('home.chooseWidget.message')}
+        </Typography>
+        <Box my={{ xs: 1, sm: 2 }}>
+          <FormControl>
+            <RadioGroup
+              aria-label={t('home.chooseWidget.title')}
+              name="chooseprofile"
+              defaultValue={defaultUserProfile}
+              value={radioValue}
+              data-testid="home-choose-widget-radio-group"
+              onChange={(event) =>
+                setRadioValue(event.target.value as USER_PROFILES)
+              }
+            >
+              {Object.values(USER_PROFILES).map((profile) => (
+                <FormControlLabel
+                  sx={{ my: 1 }}
+                  key={profile}
+                  value={profile}
+                  aria-label={t(`home.chooseWidget.profiles.${profile}.title`)}
+                  control={<Radio />}
+                  data-testid={`home-choose-widget-radio-item`}
+                  label={
+                    <>
+                      <Typography variant="body1">
+                        {t(`home.chooseWidget.profiles.${profile}.title`)}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        {t(`home.chooseWidget.profiles.${profile}.description`)}
+                      </Typography>
+                    </>
+                  }
+                />
+              ))}
+            </RadioGroup>
+          </FormControl>
+        </Box>
+        <Typography variant="body2">
+          {t('home.chooseWidget.closingText')}
+        </Typography>
+      </GenericDialog>
     </>
   );
 };

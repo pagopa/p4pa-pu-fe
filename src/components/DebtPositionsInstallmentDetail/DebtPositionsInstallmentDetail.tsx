@@ -30,6 +30,9 @@ export const DebtPositionsInstallmentDetail = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
+  const [remittanceInformation, setRemittanceInformation] = useState<
+    string | undefined
+  >(undefined);
 
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const installmentId = Number(id);
@@ -204,7 +207,7 @@ export const DebtPositionsInstallmentDetail = () => {
           pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
             id: installment.debtPositionId
           }),
-          label: installment.debtPositionTypeOrgDescription || '',
+          label: installment.debtPositionDescription || '-',
           id: 'branch'
         },
         {
@@ -248,7 +251,7 @@ export const DebtPositionsInstallmentDetail = () => {
           <DetailContainer
             sections={[
               {
-                description: installment?.debtPositionDescription,
+                description: remittanceInformation || '-',
                 data: installmentDetailData.summaryData,
                 inline: true,
                 footerLink: {
@@ -306,6 +309,7 @@ export const DebtPositionsInstallmentDetail = () => {
         title={t('debtPositionInstallmentDetail.drawer.title')}
         installmentId={installmentId}
         organizationId={organizationId}
+        onRemittanceInformationChange={setRemittanceInformation}
       />
 
       <Timeline.Drawer
