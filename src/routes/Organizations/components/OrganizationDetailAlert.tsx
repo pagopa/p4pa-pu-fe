@@ -26,10 +26,14 @@ export const OrganizationDetailAlert: React.FC<
     };
 
   useEffect(() => {
+    // create an error bucket if a mandatory key missing in data or exists with an empty value
     const missingKeys = (
       Object.keys(mandatoryFields) as Array<keyof OrganizationDetailDTO>
     )
-      .filter((key) => !(key in organizationDetailData))
+      .filter((key) => {
+        const value = organizationDetailData[key];
+        return !(key in organizationDetailData) || value === '';
+      })
       .map((key) => mandatoryFields[key] ?? key);
     setEmptyFieldsString(missingKeys.join(', '));
   }, [organizationDetailData]);
