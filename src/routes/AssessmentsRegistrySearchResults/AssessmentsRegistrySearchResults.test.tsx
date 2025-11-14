@@ -44,15 +44,17 @@ vi.mock('../../components/Drawer/FilterDrawer', () => ({
     onClose,
     title,
     render,
-    buttons
+    buttons,
+    onSubmit
   }: {
     open: boolean;
     onClose: () => void;
     title: string;
     render?: React.ReactNode;
+    onSubmit?: () => void;
     buttons: Array<{
       buttonText: string;
-      onButtonClick: () => void;
+      onButtonClick?: () => void;
       variant: string;
       id: string;
     }>;
@@ -61,13 +63,32 @@ vi.mock('../../components/Drawer/FilterDrawer', () => ({
       data-testid="drawer"
       style={{ visibility: open ? 'visible' : 'hidden' }}
     >
-      <span>{title}</span>
-      {render}
-      {buttons.map((btn) => (
-        <button key={btn.id} onClick={btn.onButtonClick} data-testid={btn.id}>
-          {btn.buttonText}
-        </button>
-      ))}
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          onSubmit?.();
+        }}
+      >
+        <span>{title}</span>
+        {render}
+        {buttons.map((btn, index) => {
+          const isSubmitButton =
+            onSubmit &&
+            btn.variant === 'contained' &&
+            buttons.findIndex((b) => b.variant === 'contained') === index;
+
+          return (
+            <button
+              key={btn.id}
+              type={isSubmitButton ? 'submit' : 'button'}
+              onClick={isSubmitButton ? undefined : btn.onButtonClick}
+              data-testid={btn.id}
+            >
+              {btn.buttonText}
+            </button>
+          );
+        })}
+      </form>
       <button onClick={onClose} data-testid="close-drawer">
         Close
       </button>
