@@ -2039,8 +2039,12 @@
     "title": "Modifica il tuo ente",
     "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
     "saveChanges": "Salva modifiche",
+    "enableOrg": "Abilita ente",
+    "errorEnablingOrg": "Non è stato possibile abilitare l'ente perché non sono stati compilati i campi obbligatori",
     "errorLoadingData": "Errore nel caricamento dei dati dell'ente",
+    "successDraftMessage": "Modifiche salvate con successo in stato bozza",
     "successMessage": "Modifiche salvate con successo",
+    "successMessageNotEnable": "Modifiche salvate con successo, ma non abilitato",
     "step1": {
       "title": "Anagrafica ente",
       "label": "Anagrafica ente",

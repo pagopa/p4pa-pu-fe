@@ -8,7 +8,10 @@ import {
   getOrganizationDetail,
   updateOrganization
 } from '../../../api/organizations';
-import { OrganizationDetailDTO } from '../../../../generated/data-contracts';
+import {
+  OrganizationDetailDTO,
+  OrganizationStatus
+} from '../../../../generated/data-contracts';
 import {
   OrganizationEditFormData,
   LANGUAGE_OPTIONS
@@ -320,7 +323,8 @@ const OrganizationEditWizard = () => {
 
   // Submit handler for final step
   const handleFinalSubmit = async (
-    step2Values?: OrganizationEditFormData['step2']
+    step2Values?: OrganizationEditFormData['step2'],
+    enableOrg?: boolean
   ) => {
     if (!organizationDetailDataRef.current) {
       console.error('Original organization data not available');
@@ -339,12 +343,38 @@ const OrganizationEditWizard = () => {
         organizationDetailDataRef.current
       );
 
+      const mandatoryFieldsFilled =
+        payload.iban && payload.orgLogo && payload.segregationCode;
+
+      if (enableOrg) {
+        if (mandatoryFieldsFilled) {
+          payload.status = OrganizationStatus.ACTIVE;
+        } else {
+          console.error('Missed required fields to activate');
+        }
+      }
+
       await update.mutateAsync({
         organizationId: getOrganizationId,
         organizationData: payload
       });
 
-      utils.notify.emit(t('organizationEditWizard.successMessage'), 'success');
+      if (payload.status === OrganizationStatus.DRAFT && !enableOrg) {
+        utils.notify.emit(
+          t('organizationEditWizard.successDraftMessage'),
+          'success'
+        );
+      } else if (payload.status === OrganizationStatus.DRAFT && enableOrg) {
+        utils.notify.emit(
+          t('organizationEditWizard.successMessageNotEnable'),
+          'warning'
+        );
+      } else {
+        utils.notify.emit(
+          t('organizationEditWizard.successMessage'),
+          'success'
+        );
+      }
 
       navigate(
         generatePath(PageRoutes.ORGANIZATIONS_DETAIL, {
