@@ -16,7 +16,7 @@ import { PagoPAIntegrationSection } from './sections/PagoPAIntegrationSection';
 type Props = {
   data: OrganizationEditStep2Data;
   setData: (data: OrganizationEditStep2Data) => void;
-  onNext: (data?: OrganizationEditStep2Data) => void;
+  onNext: (data?: OrganizationEditStep2Data, enableOrg?: boolean) => void;
   onBack: () => void;
 };
 
@@ -147,14 +147,14 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
   // Watch the flagNotifyIo switch to show/hide IO API Key field
   const watchFlagNotifyIo = watch('flagNotifyIo');
 
-  const onSubmit = (values: Step2FormValues) => {
+  const onSubmit = (values: Step2FormValues, enableOrg?: boolean) => {
     const step2Data = formValuesToFieldData(values, data);
     setData(step2Data);
-    onNext(step2Data);
+    onNext(step2Data, enableOrg);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form>
       <Grid item xs={12} sx={{ mt: 4 }}>
         <Box
           borderRadius={2}
@@ -222,12 +222,25 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
         </Box>
       </Grid>
 
+      {/* Buttons: when in draft, a user can save in draft or save&enable
+          when in active can only edit */}
       <WizardStepButtons
         onBack={onBack}
-        onNext={handleSubmit(onSubmit)}
+        onNext={handleSubmit((step2Data) =>
+          onSubmit(
+            step2Data,
+            data.organizationStatus === 'DRAFT' ? true : false
+          )
+        )}
         disableNext={false}
-        nextLabel="organizationEditWizard.saveChanges"
+        nextLabel={
+          data.organizationStatus === 'DRAFT'
+            ? 'organizationEditWizard.enableOrg'
+            : 'organizationEditWizard.saveChanges'
+        }
         backLabel="commons.back"
+        showSaveDraft={data.organizationStatus === 'DRAFT' ? true : false}
+        onSaveDraft={handleSubmit((step2Data) => onSubmit(step2Data, false))}
       />
     </form>
   );
