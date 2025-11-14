@@ -189,6 +189,7 @@ export const _DateRange = ({
           onChange={handleStartDateChange}
           onAccept={handleStartDateOnAccept}
           onError={handleStartDateError}
+          closeOnSelect={true}
           slotProps={{
             textField: {
               size: 'small',
