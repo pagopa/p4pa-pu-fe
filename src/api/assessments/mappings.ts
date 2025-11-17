@@ -76,7 +76,6 @@ export const buildAssessmentDetailQueryParams = ({
   sort
 }: FilteredRequest<AssessmentDetailFilters>): getAssessmentsDetailQueryParameters => ({
   iuv: filters.iuv,
-  iud: filters.iuv,
   updateDateTimeFrom: filters?.update?.from
     ? utils.formatters.date.code(
         new Date(filters.update.from.setHours(0, 0, 0, 0))
