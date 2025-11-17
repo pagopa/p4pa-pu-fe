@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stepper } from '../../components/Stepper/types';
 import { StepperContainer } from '../../components/Stepper';
@@ -7,8 +7,13 @@ import { Step2Data, Step2Settings } from './components/Step2Settings';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { useSignal } from '@preact/signals-react';
-import { postDebtPositionType } from '../../api/debtPositionsTypes';
+import {
+  postDebtPositionType,
+  useDebtPositionTypeCodeValidation
+} from '../../api/debtPositionsTypes';
 import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
+import { useStore } from '../../store/GlobalStore';
+import utils from '../../utils';
 
 const initialData: DebtPositionTypeRequestBody = {
   code: '',
@@ -29,9 +34,85 @@ export const DebtTypeCreate = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  const {
+    state: { organizationId }
+  } = useStore();
+
   const [step, setStep] = useState(0);
   const formData = useSignal<DebtPositionTypeRequestBody>(initialData);
   const debtTypeCreate = postDebtPositionType();
+
+  // Mutable object to access the form methods of Step1Configuration
+  // Using Partial<> to make methods optional until Step1Configuration initializes them
+  const step1FormMethods = useRef<
+    Partial<{
+      getValues: () => Step1Data;
+      setError: (
+        name: keyof Step1Data,
+        error: { type: string; message: string }
+      ) => void;
+      clearErrors: () => void;
+      trigger: (name?: keyof Step1Data) => Promise<boolean>;
+      setValue: (
+        name: keyof Step1Data,
+        value: unknown,
+        options?: { shouldValidate?: boolean }
+      ) => void;
+    }>
+  >({});
+
+  // Mutation to check the uniqueness of the code
+  const codeValidationMutation =
+    useDebtPositionTypeCodeValidation(organizationId);
+
+  // Handles the transition to the next step with code validation
+  const handleStep1Next = useCallback(async () => {
+    try {
+      const methods = step1FormMethods.current;
+
+      // Methods are guaranteed to be available at this point since Step1Configuration
+      // initializes them synchronously via useEffect after mount
+      if (
+        !methods.getValues ||
+        !methods.clearErrors ||
+        !methods.trigger ||
+        !methods.setValue
+      ) {
+        return;
+      }
+
+      const { getValues, clearErrors, trigger, setValue } = methods;
+
+      clearErrors();
+      const values = getValues();
+
+      // Check the uniqueness of the code only if it has been inserted
+      let isCodeUnique: boolean | undefined;
+      if (values.code && values.code.trim()) {
+        isCodeUnique = await codeValidationMutation.mutateAsync(values.code);
+        // Set isCodeUnique in the form values for Zod validation
+        // Use shouldValidate: false to avoid premature validation
+        setValue('isCodeUnique', isCodeUnique, { shouldValidate: false });
+      }
+
+      // Trigger the complete validation for all fields
+      // This includes the code field validation with isCodeUnique check via superRefine
+      const isValid = await trigger();
+
+      if (!isValid) {
+        return;
+      }
+
+      // Save the data in formData before proceeding
+      formData.value = { ...formData.value, ...values };
+
+      // If everything is valid, proceed to the next step
+      setStep(1);
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('errors.generic'));
+    }
+  }, [codeValidationMutation, t, formData]);
 
   const submit = async () => {
     try {
@@ -57,11 +138,9 @@ export const DebtTypeCreate = () => {
       content: (
         <Step1Configuration
           key="step1"
-          setData={(data: Step1Data) => {
-            formData.value = { ...formData.value, ...data };
-          }}
-          onNext={() => setStep(1)}
+          onNext={handleStep1Next}
           onBack={() => navigate(PageRoutes.DEBT_TYPES_CATALOG)}
+          formMethods={step1FormMethods.current}
         />
       )
     },

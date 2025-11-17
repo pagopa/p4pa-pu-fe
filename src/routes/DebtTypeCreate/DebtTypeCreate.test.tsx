@@ -7,28 +7,30 @@ import { StepperContainerProps } from '../../components/Stepper';
 import { PageRoutes } from '..';
 
 vi.mock('./components/Step1Configuration', () => ({
-  Step1Configuration: ({ setData, onNext }: Step1Props) => (
-    <div data-testid="step1-configuration">
-      <button
-        onClick={() => {
-          if (setData) {
-            setData({
-              description: 'Test Debt Type',
-              code: 'CODE1',
-              orgType: 'ORG1',
-              macroAreaCode: 'MACRO1',
-              serviceTypeCode: 'SERVICE1',
-              collectingReason: 'REASON1',
-              taxonomyCode: 'TAX1'
-            });
-          }
-          onNext();
-        }}
-      >
-        Mock Next Step1
-      </button>
-    </div>
-  )
+  Step1Configuration: ({ onNext, onBack, formMethods }: Step1Props) => {
+    if (formMethods) {
+      formMethods.getValues = () => ({
+        description: 'Test Debt Type',
+        code: 'CODE1',
+        orgType: 'ORG1',
+        macroAreaCode: 'MACRO1',
+        serviceTypeCode: 'SERVICE1',
+        collectingReason: 'REASON1',
+        taxonomyCode: 'TAX1'
+      });
+      formMethods.setError = vi.fn();
+      formMethods.clearErrors = vi.fn();
+      formMethods.trigger = vi.fn().mockResolvedValue(true);
+      formMethods.setValue = vi.fn();
+    }
+
+    return (
+      <div data-testid="step1-configuration">
+        <button onClick={onBack}>Mock Back Step1</button>
+        <button onClick={onNext}>Mock Next Step1</button>
+      </div>
+    );
+  }
 }));
 
 vi.mock('./components/Step2Settings', () => ({
@@ -78,6 +80,9 @@ vi.mock('../../api/debtPositionsTypes', () => ({
       ioTemplateSubject: 'Test Subject',
       ioTemplateMessage: 'Test Message'
     })
+  })),
+  useDebtPositionTypeCodeValidation: vi.fn(() => ({
+    mutateAsync: vi.fn().mockResolvedValue(true)
   }))
 }));
 
@@ -124,8 +129,10 @@ describe('DebtTypeCreate', () => {
     // Complete step 1
     fireEvent.click(screen.getByText('Mock Next Step1'));
 
-    // Should move to step 2
-    expect(screen.getByTestId('active-step').textContent).toBe('1');
+    await waitFor(() => {
+      expect(screen.getByTestId('active-step').textContent).toBe('1');
+    });
+
     expect(screen.getByTestId('step2-settings')).toBeInTheDocument();
     expect(screen.queryByTestId('step1-configuration')).not.toBeInTheDocument();
   });
@@ -135,6 +142,10 @@ describe('DebtTypeCreate', () => {
 
     // Complete step 1
     fireEvent.click(screen.getByText('Mock Next Step1'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('active-step').textContent).toBe('1');
+    });
 
     // Now on step 2, click back to verify step 1 data was saved
     fireEvent.click(screen.getByText('Mock Back'));
@@ -146,13 +157,21 @@ describe('DebtTypeCreate', () => {
     fireEvent.click(screen.getByText('Mock Next Step1'));
 
     // Should move to step 2 again
-    expect(screen.getByTestId('active-step').textContent).toBe('1');
+    await waitFor(() => {
+      expect(screen.getByTestId('active-step').textContent).toBe('1');
+    });
   });
 
   it('navigates to success page with form data when finishing step 2', async () => {
     render(<DebtTypeCreate />);
 
+    // Complete step 1
     fireEvent.click(screen.getByText('Mock Next Step1'));
+
+    await waitFor(() => {
+      expect(screen.getByTestId('active-step').textContent).toBe('1');
+    });
+
     fireEvent.click(screen.getByText('Mock Finish'));
 
     // Should navigate to success page
@@ -169,14 +188,15 @@ describe('DebtTypeCreate', () => {
     });
   });
 
-  it('moves back to step 1 when back button is clicked in step 2', () => {
+  it('moves back to step 1 when back button is clicked in step 2', async () => {
     render(<DebtTypeCreate />);
 
     // Complete step 1
     fireEvent.click(screen.getByText('Mock Next Step1'));
 
-    // Should be on step 2
-    expect(screen.getByTestId('active-step').textContent).toBe('1');
+    await waitFor(() => {
+      expect(screen.getByTestId('active-step').textContent).toBe('1');
+    });
 
     // Click back button
     fireEvent.click(screen.getByText('Mock Back'));
