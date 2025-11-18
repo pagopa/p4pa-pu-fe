@@ -18,9 +18,14 @@ function isDateString(value: string): boolean {
 }
 
 function encodeValue(value: unknown): string {
-  return value instanceof Date
-    ? formatDate(value, 'dd-MM-yyyy')
-    : String(value);
+  if (value instanceof Date) {
+    // Guard: skip Invalid Date to prevent "Invalid time value" error
+    if (isNaN(value.getTime())) {
+      return '';
+    }
+    return formatDate(value, 'dd-MM-yyyy');
+  }
+  return String(value);
 }
 
 function decode(fragment: string): Record<string, string | Date> {
@@ -50,7 +55,12 @@ export function encode<T extends Record<string, unknown>>(obj: T): string {
   // Convert all values to strings, formatting dates
   Object.entries(flattened).forEach(([key, value]) => {
     if (value && key) {
-      flatStrings[key] = encodeValue(value);
+      const encoded = encodeValue(value);
+      // Only add to flatStrings if encoded value is not empty
+      // This prevents Invalid Date from creating empty query params like "dateRange.from="
+      if (encoded !== '') {
+        flatStrings[key] = encoded;
+      }
     }
   });
   return queryString.stringify(flatStrings);

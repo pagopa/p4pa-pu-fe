@@ -1,7 +1,8 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { Grid, Typography, useTheme, Button, Box, Chip } from '@mui/material';
 import { Add, RemoveCircleOutline } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
+import { hasPartialDateRangeErrors } from '../../utils/filtersValidation';
 import DetailContainer, {
   DetailData
 } from '../../components/DetailContainer/DetailContainer';
@@ -34,13 +35,22 @@ export const AssessmentDetail = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const assessmentId = Number(id);
-  const initialFilters: FieldValues = utils.URI.decode(window.location.hash);
+  const [initialFilters] = useState<FieldValues>(() =>
+    utils.URI.decode(window.location.hash)
+  );
   const {
     state: { organizationId }
   } = useStore();
   const [detailItem, setDetailItem] = useState<AssessmentsDetail | null>(null);
   const [appliedFilters, setAppliedFilters] =
     useState<AssessmentDetailFilters>(initialFilters);
+  // State for saving the total payments when there are no active filters
+  // This value is used to determine if the "Remove" button should be shown independently of the applied filters
+  const [totalPaymentsWithoutFilters, setTotalPaymentsWithoutFilters] =
+    useState<number | null>(null);
+  // Ref to track if we have already made the initial call without filters
+  // This prevents multiple calls when the page is loaded with filters
+  const hasFetchedInitialTotal = useRef(false);
 
   const query = getAssessmentDetail(organizationId, assessmentId);
   const { data, isPending, isError, error } = query;
@@ -93,6 +103,77 @@ export const AssessmentDetail = () => {
     }
   }, [assessmentId, navigate]);
 
+  const hasActiveFilters = useCallback(
+    (filters: AssessmentDetailFilters): boolean => {
+      // Check if there are active filters: IUV, update date, or outcome date
+      return (
+        (filters.iuv && filters.iuv.trim() !== '') ||
+        !!filters.update?.from ||
+        !!filters.update?.to ||
+        !!filters.outcome?.from ||
+        !!filters.outcome?.to
+      );
+    },
+    []
+  );
+
+  // Handles the initial case: if the page is loaded with filters in the URL hash, make a call API without filters to get the real total payments
+  useEffect(() => {
+    // If we have already made this call, don't make it again
+    if (hasFetchedInitialTotal.current) {
+      return;
+    }
+
+    const hasInitialFilters = hasActiveFilters(initialFilters);
+
+    // If the page is loaded with filters and we have the necessary parameters, make a call API without filters to get the real total payments
+    // facciamo una chiamata API senza filtri per ottenere il totale reale
+    if (
+      hasInitialFilters &&
+      organizationId &&
+      assessmentId &&
+      !isNaN(assessmentId)
+    ) {
+      hasFetchedInitialTotal.current = true;
+      query
+        .mutateAsync({
+          filters: {},
+          pagination: { page: 0, size: 1 },
+          sort: []
+        })
+        .then((response) => {
+          const totalElements =
+            response?.pagedAssessmentsRowsDetail?.totalElements;
+          if (totalElements != null) {
+            setTotalPaymentsWithoutFilters(totalElements);
+          }
+        })
+        .catch((error) => {
+          console.error(
+            'Error fetching total payments without filters:',
+            error
+          );
+          // Reset il flag in caso di errore per permettere un nuovo tentativo
+          hasFetchedInitialTotal.current = false;
+        });
+    }
+  }, [initialFilters, organizationId, assessmentId, hasActiveFilters]);
+
+  // Save the total payments when there are no active filters
+  // This value is used to determine if the "Remove" button should be shown independently of the applied filters
+  // independently of the filters applied subsequently
+  useEffect(() => {
+    const hasFilters = hasActiveFilters(appliedFilters);
+    const totalElements = data?.pagedAssessmentsRowsDetail?.totalElements;
+
+    // Save the total only if:
+    // 1. There are no active filters (to have the real total, not filtered)
+    // 2. The data is available (totalElements is defined)
+    if (!hasFilters && totalElements !== undefined) {
+      setTotalPaymentsWithoutFilters(totalElements);
+    }
+  }, [appliedFilters, data?.pagedAssessmentsRowsDetail?.totalElements]);
+
   const canModifyAssessment = () => {
     const hasManualGeneration = data?.flagManualGeneration === true;
     const isActive = data?.status !== undefined && data.status === 'ACTIVE';
@@ -105,12 +186,24 @@ export const AssessmentDetail = () => {
   }, [data?.flagManualGeneration, data?.status]);
 
   const shouldShowRemoveButton = useMemo(() => {
-    return (
-      shouldShowButtons &&
-      data?.pagedAssessmentsRowsDetail?.content &&
-      data.pagedAssessmentsRowsDetail.content.length > 0
-    );
-  }, [shouldShowButtons, data?.pagedAssessmentsRowsDetail?.content]);
+    if (!shouldShowButtons) {
+      return false;
+    }
+
+    // Use the saved total without filters if available, otherwise use the current totalElements
+    // This ensures that the button is visible if the assessment has payments,
+    // independently of the filters applied
+    const totalPayments =
+      totalPaymentsWithoutFilters ??
+      data?.pagedAssessmentsRowsDetail?.totalElements ??
+      0;
+
+    return totalPayments > 0;
+  }, [
+    shouldShowButtons,
+    totalPaymentsWithoutFilters,
+    data?.pagedAssessmentsRowsDetail?.totalElements
+  ]);
 
   const showCannotModifyDialog = () =>
     utils.dialog.open({
@@ -247,6 +340,22 @@ export const AssessmentDetail = () => {
     }));
   };
 
+  /**
+   * Validates filters before applying them to prevent API calls with partial date ranges.
+   * Shows notification if there are validation errors.
+   */
+  const handleApplyFilters = useCallback(() => {
+    // Check if there are partial date range errors (only 'from' or only 'to' filled)
+    if (hasPartialDateRangeErrors(appliedFilters)) {
+      // Don't apply filters if there are partial date range errors
+      // The DateRange component already shows visual error messages
+      return;
+    }
+
+    // Apply filters if validation passes
+    applyFilters(appliedFilters);
+  }, [appliedFilters, applyFilters]);
+
   return (
     <>
       <TitleComponent
@@ -355,7 +464,7 @@ export const AssessmentDetail = () => {
                 type: COMPONENT_TYPE.button,
                 label: t('commons.filters.filterResults'),
                 gridWidth: 1,
-                onClick: () => applyFilters(appliedFilters)
+                onClick: handleApplyFilters
               }
             ]}
           />
