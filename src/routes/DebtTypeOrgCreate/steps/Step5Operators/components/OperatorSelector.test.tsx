@@ -9,7 +9,7 @@ import {
 import { useForm, FormProvider } from 'react-hook-form';
 import {
   OperatorsSelection,
-  UserInfo
+  UserInfoDTO
 } from '../../../../../../generated/data-contracts';
 import * as api from '../../../../../api/debtPositionTypeOrgOperators';
 import { OperatorSelector } from './OperatorSelector';
@@ -134,7 +134,7 @@ describe('OperatorSelector component integration', () => {
     // Set default operator user info mappedExternalUserId
     setUserInfo({
       mappedExternalUserId: 'default-op'
-    } as UserInfo);
+    } as UserInfoDTO);
 
     renderWithProviders(true);
 
