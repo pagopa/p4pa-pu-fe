@@ -1,7 +1,7 @@
 import { renderHook, waitFor } from '../__tests__/renderers';
 import utils from '../utils';
 import { vi, Mock } from 'vitest';
-import { userInfoSchema } from '../../generated/zod-schema';
+import { userInfoDTOSchema } from '../../generated/zod-schema';
 import user from './user';
 import { createMock } from 'zodock';
 
@@ -18,7 +18,7 @@ vi.mock('../utils', () => {
 });
 
 describe('getUserInfo', () => {
-  const mockUser = createMock(userInfoSchema);
+  const mockUser = createMock(userInfoDTOSchema);
 
   it('should return user data when API call is successful', async () => {
     (utils.apiClient.bff.getUserInfo as Mock).mockResolvedValue({

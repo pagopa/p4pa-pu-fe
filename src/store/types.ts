@@ -5,13 +5,13 @@ import { OrganizationIdMemo } from '../models/Organization';
 import {
   OperatorRole,
   OrganizationDTO,
-  UserInfo
+  UserInfoDTO
 } from '../../generated/data-contracts';
 import { IdTokenPayload } from '../models/IdTokenPayload';
 import { FilterMap } from '../hooks/useMultiFilters';
 
 export type State = {
-  [STATE.USER_INFO]: UserInfo | undefined;
+  [STATE.USER_INFO]: UserInfoDTO | undefined;
   [STATE.ORGANIZATIONS]: Array<OrganizationDTO>;
   [STATE.ORGANIZATION_ID]: OrganizationIdMemo;
   [STATE.CONFIG_FE]: ConfigFE | undefined;
