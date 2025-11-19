@@ -46,7 +46,9 @@ describe('Header component', () => {
       issuer: 'Issuer',
       organizations: [],
       brokerId: 1,
-      mappedExternalUserId: 'mappedExternalUserId'
+      mappedExternalUserId: 'mappedExternalUserId',
+      traceId: 'test-trace-id',
+      _type: 'UserInfoDTO'
     });
   });
 
