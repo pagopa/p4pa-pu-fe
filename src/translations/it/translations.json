@@ -2245,6 +2245,10 @@
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"
   },
+  "statistics": {
+    "urlNotAvailable": "URL non disponibile",
+    "urlGenerationFailed": "La generazione dell'URL di accesso non è andata a buon fine"
+  },
   "taxonomy": {
     "search": "Cerca tassonomia",
     "searchDescription": "Inserisci al meno un filtro per avviare la ricerca.",
