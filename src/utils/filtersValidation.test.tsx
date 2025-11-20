@@ -107,6 +107,33 @@ describe('noFilterSetted', () => {
       })
     ).toBe(true);
   });
+
+  it('should return false when a Date object is provided as a direct filter value', () => {
+    expect(
+      noFilterSetted({
+        name: '',
+        singleDate: new Date()
+      })
+    ).toBe(false);
+  });
+
+  it('should return true when an invalid Date object is provided as a direct filter value', () => {
+    const invalidDate = new Date('invalid-date');
+    expect(
+      noFilterSetted({
+        name: '',
+        singleDate: invalidDate
+      })
+    ).toBe(true);
+  });
+
+  it('should handle null filters', () => {
+    expect(noFilterSetted(null as any)).toBe(true);
+  });
+
+  it('should handle undefined filters', () => {
+    expect(noFilterSetted(undefined as any)).toBe(true);
+  });
 });
 
 describe('canPerformSearch', () => {
@@ -269,6 +296,35 @@ describe('hasPartialDateRangeErrors', () => {
         date_toError: 'Another error'
       })
     ).toBe(true);
+  });
+
+  it('should return false for keys ending with _fromError even if they have date filter structure', () => {
+    expect(
+      hasPartialDateRangeErrors({
+        name: '',
+        date_fromError: { from: new Date(), to: null }
+      })
+    ).toBe(false);
+  });
+
+  it('should return false for keys ending with _toError even if they have date filter structure', () => {
+    expect(
+      hasPartialDateRangeErrors({
+        name: '',
+        date_toError: { from: null, to: new Date() }
+      })
+    ).toBe(false);
+  });
+
+  it('should return false for keys ending with _fromError or _toError and ignore them in partial date check', () => {
+    expect(
+      hasPartialDateRangeErrors({
+        name: '',
+        date_fromError: { from: new Date(), to: null },
+        date_toError: { from: null, to: new Date() },
+        otherDate: { from: new Date(), to: new Date() }
+      })
+    ).toBe(false);
   });
 });
 

@@ -64,10 +64,13 @@ export const date = {
    * // Represent 15 August 2025 at 13:00:
    * console.log(code(new Date('2025-08-15T13:00:00Z')))
    * // => '2025-08-15T15:00:00+02:00' */
-  code: (dateObj?: Date | null) =>
-    dateObj
-      ? formatInTimeZone(dateObj, date.TIME_ZONE, date.DATE_FORMAT)
-      : undefined,
+  code: (dateObj?: Date | null) => {
+    // Guard: return undefined for falsy values or Invalid Date
+    if (!dateObj || isNaN(dateObj.getTime())) {
+      return undefined;
+    }
+    return formatInTimeZone(dateObj, date.TIME_ZONE, date.DATE_FORMAT);
+  },
   /** This method takes an string and convert to human redable date */
   decode: () => 'To be implemented',
   DATE_FORMAT: "yyyy-MM-dd'T'HH:mm:ssXXX",
@@ -112,11 +115,19 @@ export function formatDateTime(
 }
 
 export function toStartOfDay(date?: Date | null) {
-  return date ? startOfDay(date) : null;
+  // Guard: return null for falsy values or Invalid Date
+  if (!date || isNaN(date.getTime())) {
+    return null;
+  }
+  return startOfDay(date);
 }
 
 export function toEndOfDay(date?: Date | null) {
-  return date ? endOfDay(date) : null;
+  // Guard: return null for falsy values or Invalid Date
+  if (!date || isNaN(date.getTime())) {
+    return null;
+  }
+  return endOfDay(date);
 }
 
 export function extractFilename(header: string): string | null {
