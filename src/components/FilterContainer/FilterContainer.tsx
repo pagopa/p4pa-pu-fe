@@ -188,10 +188,11 @@ const RenderComponent = ({
             onChange: (date: Date | null) => {
               dateItem?.from?.onChange?.(toStartOfDay(date));
 
-              onChange?.(fieldId, {
+              const newValue = {
                 from: toStartOfDay(date),
                 to: toEndOfDay(currentValue?.to)
-              });
+              };
+              onChange?.(fieldId, newValue);
             }
           }
         : undefined;
@@ -203,10 +204,11 @@ const RenderComponent = ({
             onChange: (date: Date | null) => {
               dateItem?.to?.onChange?.(toEndOfDay(date));
 
-              onChange?.(fieldId, {
+              const newValue = {
                 from: toStartOfDay(currentValue?.from),
                 to: toEndOfDay(date)
-              });
+              };
+              onChange?.(fieldId, newValue);
             }
           }
         : undefined;
