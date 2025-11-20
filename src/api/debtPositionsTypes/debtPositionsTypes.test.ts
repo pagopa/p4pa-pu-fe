@@ -207,48 +207,19 @@ describe('useDebtPositionTypeCodeValidation', () => {
   });
 
   it('should return true when code is unique (does not exist)', async () => {
-    const firstPageResponse = {
-      content: [
-        {
-          debtPositionTypeId: 1,
-          code: 'TYPE_A',
-          description: 'Type A',
-          updateDate: '2023-01-01T10:00:00Z',
-          activeOrganizations: 5
-        }
-      ],
+    const response = {
+      content: [],
       size: 1,
-      totalElements: 2,
-      totalPages: 2,
+      totalElements: 0,
+      totalPages: 0,
       number: 0
     };
 
-    const allDataResponse = {
-      content: [
-        {
-          debtPositionTypeId: 1,
-          code: 'TYPE_A',
-          description: 'Type A',
-          updateDate: '2023-01-01T10:00:00Z',
-          activeOrganizations: 5
-        },
-        {
-          debtPositionTypeId: 2,
-          code: 'TYPE_B',
-          description: 'Type B',
-          updateDate: '2023-01-02T10:00:00Z',
-          activeOrganizations: 10
-        }
-      ],
-      size: 2,
-      totalElements: 2,
-      totalPages: 1,
-      number: 0
-    };
-
-    (utils.apiClient.bff.getDebtPositionTypeWithCount as Mock)
-      .mockResolvedValueOnce({ data: firstPageResponse })
-      .mockResolvedValueOnce({ data: allDataResponse });
+    (
+      utils.apiClient.bff.getDebtPositionTypeWithCount as Mock
+    ).mockResolvedValue({
+      data: response
+    });
 
     const organizationId = 123;
     const { result } = renderHook(() =>
@@ -260,17 +231,18 @@ describe('useDebtPositionTypeCodeValidation', () => {
     expect(isUnique).toBe(true);
     expect(
       utils.apiClient.bff.getDebtPositionTypeWithCount
-    ).toHaveBeenCalledTimes(2);
+    ).toHaveBeenCalledTimes(1);
     expect(
       utils.apiClient.bff.getDebtPositionTypeWithCount
-    ).toHaveBeenNthCalledWith(1, organizationId, { page: 0, size: 1 });
-    expect(
-      utils.apiClient.bff.getDebtPositionTypeWithCount
-    ).toHaveBeenNthCalledWith(2, organizationId, { page: 0, size: 2 });
+    ).toHaveBeenCalledWith(organizationId, {
+      code: 'TYPE_C',
+      page: 0,
+      size: 1
+    });
   });
 
   it('should return false when code already exists', async () => {
-    const firstPageResponse = {
+    const response = {
       content: [
         {
           debtPositionTypeId: 1,
@@ -281,37 +253,16 @@ describe('useDebtPositionTypeCodeValidation', () => {
         }
       ],
       size: 1,
-      totalElements: 2,
-      totalPages: 2,
-      number: 0
-    };
-
-    const allDataResponse = {
-      content: [
-        {
-          debtPositionTypeId: 1,
-          code: 'TYPE_A',
-          description: 'Type A',
-          updateDate: '2023-01-01T10:00:00Z',
-          activeOrganizations: 5
-        },
-        {
-          debtPositionTypeId: 2,
-          code: 'TYPE_B',
-          description: 'Type B',
-          updateDate: '2023-01-02T10:00:00Z',
-          activeOrganizations: 10
-        }
-      ],
-      size: 2,
-      totalElements: 2,
+      totalElements: 1,
       totalPages: 1,
       number: 0
     };
 
-    (utils.apiClient.bff.getDebtPositionTypeWithCount as Mock)
-      .mockResolvedValueOnce({ data: firstPageResponse })
-      .mockResolvedValueOnce({ data: allDataResponse });
+    (
+      utils.apiClient.bff.getDebtPositionTypeWithCount as Mock
+    ).mockResolvedValue({
+      data: response
+    });
 
     const organizationId = 123;
     const { result } = renderHook(() =>
@@ -323,7 +274,14 @@ describe('useDebtPositionTypeCodeValidation', () => {
     expect(isUnique).toBe(false);
     expect(
       utils.apiClient.bff.getDebtPositionTypeWithCount
-    ).toHaveBeenCalledTimes(2);
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      utils.apiClient.bff.getDebtPositionTypeWithCount
+    ).toHaveBeenCalledWith(organizationId, {
+      code: 'TYPE_A',
+      page: 0,
+      size: 1
+    });
   });
 
   it('should return true when code is empty or whitespace', async () => {
@@ -342,10 +300,10 @@ describe('useDebtPositionTypeCodeValidation', () => {
     ).not.toHaveBeenCalled();
   });
 
-  it('should return true when firstPageResponse is null', async () => {
+  it('should return true when response is null', async () => {
     (
       utils.apiClient.bff.getDebtPositionTypeWithCount as Mock
-    ).mockResolvedValueOnce({ data: null });
+    ).mockResolvedValue({ data: null });
 
     const organizationId = 123;
     const { result } = renderHook(() =>
@@ -358,10 +316,17 @@ describe('useDebtPositionTypeCodeValidation', () => {
     expect(
       utils.apiClient.bff.getDebtPositionTypeWithCount
     ).toHaveBeenCalledTimes(1);
+    expect(
+      utils.apiClient.bff.getDebtPositionTypeWithCount
+    ).toHaveBeenCalledWith(organizationId, {
+      code: 'TYPE_A',
+      page: 0,
+      size: 1
+    });
   });
 
-  it('should return true when totalElements is 0', async () => {
-    const firstPageResponse = {
+  it('should return true when response content is empty', async () => {
+    const response = {
       content: [],
       size: 1,
       totalElements: 0,
@@ -371,7 +336,7 @@ describe('useDebtPositionTypeCodeValidation', () => {
 
     (
       utils.apiClient.bff.getDebtPositionTypeWithCount as Mock
-    ).mockResolvedValueOnce({ data: firstPageResponse });
+    ).mockResolvedValue({ data: response });
 
     const organizationId = 123;
     const { result } = renderHook(() =>
@@ -384,28 +349,29 @@ describe('useDebtPositionTypeCodeValidation', () => {
     expect(
       utils.apiClient.bff.getDebtPositionTypeWithCount
     ).toHaveBeenCalledTimes(1);
+    expect(
+      utils.apiClient.bff.getDebtPositionTypeWithCount
+    ).toHaveBeenCalledWith(organizationId, {
+      code: 'TYPE_A',
+      page: 0,
+      size: 1
+    });
   });
 
-  it('should return true when allDataResponse is null', async () => {
-    const firstPageResponse = {
-      content: [
-        {
-          debtPositionTypeId: 1,
-          code: 'TYPE_A',
-          description: 'Type A',
-          updateDate: '2023-01-01T10:00:00Z',
-          activeOrganizations: 5
-        }
-      ],
+  it('should return true when response content is null', async () => {
+    const response = {
+      content: null,
       size: 1,
-      totalElements: 2,
-      totalPages: 2,
+      totalElements: 0,
+      totalPages: 0,
       number: 0
     };
 
-    (utils.apiClient.bff.getDebtPositionTypeWithCount as Mock)
-      .mockResolvedValueOnce({ data: firstPageResponse })
-      .mockResolvedValueOnce({ data: null });
+    (
+      utils.apiClient.bff.getDebtPositionTypeWithCount as Mock
+    ).mockResolvedValue({
+      data: response
+    });
 
     const organizationId = 123;
     const { result } = renderHook(() =>
@@ -417,120 +383,94 @@ describe('useDebtPositionTypeCodeValidation', () => {
     expect(isUnique).toBe(true);
     expect(
       utils.apiClient.bff.getDebtPositionTypeWithCount
-    ).toHaveBeenCalledTimes(2);
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      utils.apiClient.bff.getDebtPositionTypeWithCount
+    ).toHaveBeenCalledWith(organizationId, {
+      code: 'TYPE_A',
+      page: 0,
+      size: 1
+    });
   });
 
-  it('should return true when allDataResponse.content is null or empty', async () => {
-    const firstPageResponse = {
-      content: [
-        {
-          debtPositionTypeId: 1,
-          code: 'TYPE_A',
-          description: 'Type A',
-          updateDate: '2023-01-01T10:00:00Z',
-          activeOrganizations: 5
-        }
-      ],
-      size: 1,
-      totalElements: 2,
-      totalPages: 2,
-      number: 0
-    };
-
-    const allDataResponseNull = {
-      content: null,
-      size: 0,
-      totalElements: 2,
-      totalPages: 1,
-      number: 0
-    };
-
-    const allDataResponseEmpty = {
+  it('should return true when response content is empty array', async () => {
+    const response = {
       content: [],
-      size: 0,
-      totalElements: 2,
-      totalPages: 1,
-      number: 0
-    };
-
-    const organizationId = 123;
-
-    // Test with null content
-    (utils.apiClient.bff.getDebtPositionTypeWithCount as Mock)
-      .mockResolvedValueOnce({ data: firstPageResponse })
-      .mockResolvedValueOnce({ data: allDataResponseNull });
-
-    const { result: result1 } = renderHook(() =>
-      useDebtPositionTypeCodeValidation(organizationId)
-    );
-
-    const isUnique1 = await result1.current.mutateAsync('TYPE_A');
-    expect(isUnique1).toBe(true);
-
-    vi.clearAllMocks();
-
-    // Test with empty content
-    (utils.apiClient.bff.getDebtPositionTypeWithCount as Mock)
-      .mockResolvedValueOnce({ data: firstPageResponse })
-      .mockResolvedValueOnce({ data: allDataResponseEmpty });
-
-    const { result: result2 } = renderHook(() =>
-      useDebtPositionTypeCodeValidation(organizationId)
-    );
-
-    const isUnique2 = await result2.current.mutateAsync('TYPE_A');
-    expect(isUnique2).toBe(true);
-  });
-
-  it('should trim the code before checking', async () => {
-    const firstPageResponse = {
-      content: [
-        {
-          debtPositionTypeId: 1,
-          code: 'TYPE_A',
-          description: 'Type A',
-          updateDate: '2023-01-01T10:00:00Z',
-          activeOrganizations: 5
-        }
-      ],
       size: 1,
-      totalElements: 1,
-      totalPages: 1,
+      totalElements: 0,
+      totalPages: 0,
       number: 0
     };
 
-    const allDataResponse = {
-      content: [
-        {
-          debtPositionTypeId: 1,
-          code: 'TYPE_A',
-          description: 'Type A',
-          updateDate: '2023-01-01T10:00:00Z',
-          activeOrganizations: 5
-        }
-      ],
-      size: 1,
-      totalElements: 1,
-      totalPages: 1,
-      number: 0
-    };
-
-    (utils.apiClient.bff.getDebtPositionTypeWithCount as Mock)
-      .mockResolvedValueOnce({ data: firstPageResponse })
-      .mockResolvedValueOnce({ data: allDataResponse });
+    (
+      utils.apiClient.bff.getDebtPositionTypeWithCount as Mock
+    ).mockResolvedValue({
+      data: response
+    });
 
     const organizationId = 123;
     const { result } = renderHook(() =>
       useDebtPositionTypeCodeValidation(organizationId)
     );
 
-    // Code with whitespace should be trimmed and match
+    const isUnique = await result.current.mutateAsync('TYPE_A');
+
+    expect(isUnique).toBe(true);
+    expect(
+      utils.apiClient.bff.getDebtPositionTypeWithCount
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      utils.apiClient.bff.getDebtPositionTypeWithCount
+    ).toHaveBeenCalledWith(organizationId, {
+      code: 'TYPE_A',
+      page: 0,
+      size: 1
+    });
+  });
+
+  it('should trim the code before checking', async () => {
+    const response = {
+      content: [
+        {
+          debtPositionTypeId: 1,
+          code: 'TYPE_A',
+          description: 'Type A',
+          updateDate: '2023-01-01T10:00:00Z',
+          activeOrganizations: 5
+        }
+      ],
+      size: 1,
+      totalElements: 1,
+      totalPages: 1,
+      number: 0
+    };
+
+    (
+      utils.apiClient.bff.getDebtPositionTypeWithCount as Mock
+    ).mockResolvedValue({
+      data: response
+    });
+
+    const organizationId = 123;
+    const { result } = renderHook(() =>
+      useDebtPositionTypeCodeValidation(organizationId)
+    );
+
+    // Code with whitespace should be trimmed before API call
     const isUnique = await result.current.mutateAsync('  TYPE_A  ');
 
     expect(isUnique).toBe(false);
     expect(
       utils.apiClient.bff.getDebtPositionTypeWithCount
-    ).toHaveBeenCalledTimes(2);
+    ).toHaveBeenCalledTimes(1);
+    // The trimmed code should be used in the API call
+    expect(
+      utils.apiClient.bff.getDebtPositionTypeWithCount
+    ).toHaveBeenCalledWith(organizationId, {
+      code: 'TYPE_A', // Trimmed code
+      page: 0,
+      size: 1
+    });
   });
 });
 

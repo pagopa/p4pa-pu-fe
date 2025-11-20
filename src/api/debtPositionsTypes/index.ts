@@ -95,54 +95,32 @@ export const getDebtPositionTypesByOrganizationId = ({
  * Check if the code is unique for the debt position types of the catalog.
  * Returns true if the code is unique (does not exist), false if it already exists.
  * Strategy:
- * 1. Call getDebtPositionTypeWithCount with size 1 to get totalElements
- * 2. Call with size = totalElements to get all types in one call
- * 3. Search the code in the resulting array
+ * Single API call with code filter and size: 1. If content.length === 0, the code is unique.
  */
 export const useDebtPositionTypeCodeValidation = (organizationId: number) => {
   return useMutation({
     mutationKey: ['validateDebtPositionTypeCode', organizationId],
     mutationFn: async (code: string): Promise<boolean> => {
       if (!code || !code.trim()) {
-        return true;
+        return true; // Empty code cannot be duplicated
       }
 
       const codeToCheck = code.trim();
 
-      // First call with size 1 only to get totalElements
-      const { data: firstPageResponse } =
+      // Single call with code filter and size: 1
+      const { data: response } =
         await utils.apiClient.bff.getDebtPositionTypeWithCount(organizationId, {
+          code: codeToCheck,
           page: 0,
           size: 1
         });
 
-      if (!firstPageResponse) {
-        return true;
+      if (!response) {
+        return true; // Fail-safe: in case of error, consider code valid
       }
 
-      const totalElements = firstPageResponse.totalElements || 0;
-
-      // If there are no elements, the code is unique
-      if (totalElements === 0) {
-        return true;
-      }
-
-      // Call with size = totalElements to get all types in one call
-      const { data: allDataResponse } =
-        await utils.apiClient.bff.getDebtPositionTypeWithCount(organizationId, {
-          page: 0,
-          size: totalElements
-        });
-
-      if (!allDataResponse || !allDataResponse.content) {
-        return true;
-      }
-
-      const data = allDataResponse.content;
-
-      // Check if a type with the same code already exists
-      const codeExists = data.some((type) => type.code === codeToCheck);
-      const isUnique = !codeExists;
+      // If content is null or empty, the code is unique
+      const isUnique = !response.content || response.content.length === 0;
 
       return isUnique;
     }
