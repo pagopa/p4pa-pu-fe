@@ -193,7 +193,7 @@ describe('BackButton', () => {
   });
 
   describe('when history is NOT available', () => {
-    it('should NOT render when location.key is "default"', () => {
+    it('should NOT render when location.key is "default" AND history.length is 1', () => {
       mockUseLocation.mockReturnValue({
         key: 'default',
         pathname: '/current-path',
@@ -202,10 +202,42 @@ describe('BackButton', () => {
         state: null
       });
 
+      Object.defineProperty(window, 'history', {
+        value: { length: 1 },
+        writable: true
+      });
+
       render(<BackButton />);
 
       const button = screen.queryByRole('button', { name: 'Back' });
       expect(button).not.toBeInTheDocument();
+    });
+
+    it('should render when location.key is "default" BUT history.length > 1 (browser history available)', () => {
+      const mockHistoryBack = vi.fn();
+      mockUseLocation.mockReturnValue({
+        key: 'default',
+        pathname: '/current-path',
+        search: '',
+        hash: '',
+        state: null
+      });
+
+      Object.defineProperty(window, 'history', {
+        value: { length: 2, back: mockHistoryBack },
+        writable: true,
+        configurable: true
+      });
+
+      render(<BackButton />);
+
+      const button = screen.queryByRole('button', { name: 'Back' });
+      expect(button).toBeInTheDocument();
+
+      fireEvent.click(button!);
+      expect(mockHistoryBack).toHaveBeenCalledTimes(1);
+      expect(mockHandleSmartBack).not.toHaveBeenCalled();
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
 
     it('should NOT render when window.history.length is 1', () => {
