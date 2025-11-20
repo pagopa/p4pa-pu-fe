@@ -1,14 +1,22 @@
 import { BaseFilterValues, FilterFieldValue } from '../models/Filters';
 
 /**
+ * Helper function to check if a Date value is valid (not null, not undefined, and not Invalid Date)
+ */
+const isValidDate = (date: unknown): date is Date => {
+  return date instanceof Date && !isNaN(date.getTime());
+};
+
+/**
  * Validates a date filter object ensuring both 'from' and 'to' are truthy if either is set.
+ * Also validates that Date values are not Invalid Date.
  */
 const isValidDateFilter = (value: FilterFieldValue): boolean => {
   if (typeof value !== 'object' || value === null) return false;
 
   if ('from' in value && 'to' in value) {
-    const hasFrom = Boolean(value.from);
-    const hasTo = Boolean(value.to);
+    const hasFrom = isValidDate(value.from);
+    const hasTo = isValidDate(value.to);
 
     return hasFrom && hasTo;
   }
@@ -48,8 +56,8 @@ export const noFilterSetted = (filters: BaseFilterValues): boolean => {
 
     if (isDateFilter(value)) {
       const dateRange = value as { from?: Date | null; to?: Date | null };
-      const hasFrom = Boolean(dateRange.from);
-      const hasTo = Boolean(dateRange.to);
+      const hasFrom = isValidDate(dateRange.from);
+      const hasTo = isValidDate(dateRange.to);
 
       return (hasFrom && !hasTo) || (!hasFrom && hasTo);
     }
@@ -83,7 +91,7 @@ export const noFilterSetted = (filters: BaseFilterValues): boolean => {
     }
 
     if (value instanceof Date) {
-      return true;
+      return isValidDate(value);
     }
 
     return value != null;
@@ -113,8 +121,8 @@ export const hasPartialDateRangeErrors = (
 
     if (isDateFilter(value)) {
       const dateRange = value as { from?: Date | null; to?: Date | null };
-      const hasFrom = Boolean(dateRange.from);
-      const hasTo = Boolean(dateRange.to);
+      const hasFrom = isValidDate(dateRange.from);
+      const hasTo = isValidDate(dateRange.to);
 
       return (hasFrom && !hasTo) || (!hasFrom && hasTo);
     }
