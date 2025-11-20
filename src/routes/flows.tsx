@@ -66,7 +66,8 @@ export const flowsRoutes = [
             path: 'export-overview',
             element: <TelematicReceiptFlowExportOverview />,
             handle: {
-              backButton: true
+              backButton: true,
+              backFallbackRoute: 'TELEMATIC_RECEIPT_INDEX'
             } as RouteHandleObject
           },
           {
@@ -151,7 +152,8 @@ export const flowsRoutes = [
             path: 'import-overview',
             element: <TreasuryImportFlowOverview />,
             handle: {
-              backButton: true
+              backButton: true,
+              backFallbackRoute: 'TREASURY_INDEX'
             } as RouteHandleObject
           },
           {

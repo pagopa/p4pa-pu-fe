@@ -70,7 +70,17 @@ export const SuccessPage = () => {
         navigate(detailPath, { replace: true, state: { fromSuccess: true } });
       } else {
         const to = PageRoutes[btn.actionID || PageRoutes.HOME];
-        navigate(to);
+        // If navigating to an import/export overview, pass fromSuccess: true
+        // to allow Smart Back to skip the success page
+        const isImportOrExportOverview =
+          btn.actionID?.endsWith('_IMPORT_OVERVIEW') ||
+          btn.actionID?.endsWith('_EXPORT_OVERVIEW');
+
+        if (isImportOrExportOverview) {
+          navigate(to, { state: { fromSuccess: true } });
+        } else {
+          navigate(to);
+        }
       }
     };
 
