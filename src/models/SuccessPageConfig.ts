@@ -89,7 +89,7 @@ export const SuccessPageConfig: SuccessOpts = {
         variant: 'contained',
         size: 'large',
         buttonLabel: 'commons.close',
-        actionID: 'DEBT_POSITIONS'
+        actionID: 'DEBT_POSITIONS_IMPORT_OVERVIEW'
       }
     ]
   },
