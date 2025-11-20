@@ -9,7 +9,7 @@ type GetDebtPositionTypeWithCountQueryParams = Parameters<
 
 export type DebtPositionTypeWithCountFilters = Pick<
   NonNullable<GetDebtPositionTypeWithCountQueryParams>,
-  'description'
+  'code' | 'description'
 >;
 
 export type DebtPositionTypeWithCountFilteredRequest =
@@ -22,6 +22,9 @@ export const buildQueryParams = ({
 }: DebtPositionTypeWithCountFilteredRequest): GetDebtPositionTypeWithCountQueryParams => ({
   page: pagination.page,
   size: pagination.size,
+  ...(filters?.code && {
+    code: filters.code
+  }),
   ...(filters?.description && {
     description: filters.description
   }),

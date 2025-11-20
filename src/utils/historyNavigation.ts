@@ -89,7 +89,18 @@ export const isPageToSkip = (historyState: unknown, url?: string): boolean => {
     }
   }
 
-  // Case 3: Form/Wizard pages (URL analysis fallback)
+  // Case 3: Success pages (URL analysis)
+  // Check if URL is a success page (only in pathname, not in query params)
+  if (url && typeof url === 'string') {
+    // Extract pathname (before query params and hash)
+    const pathname = url.split('?')[0].split('#')[0];
+    const isSuccessUrl = pathname.includes('/success');
+    if (isSuccessUrl) {
+      return true;
+    }
+  }
+
+  // Case 4: Form/Wizard pages (URL analysis fallback)
   // If there are no explicit markers, analyze the URL
   if (url) {
     return isFormOrWizardUrl(url);

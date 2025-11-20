@@ -36,7 +36,8 @@ export const debtPositionsRoutes = [
         path: 'import-overview',
         element: <DebtPositionsImportOverview />,
         handle: {
-          backButton: true
+          backButton: true,
+          backFallbackRoute: 'DEBT_POSITIONS_INDEX'
         } as RouteHandleObject
       },
       {
