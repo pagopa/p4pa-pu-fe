@@ -1475,7 +1475,8 @@
       },
       "debtTypeCode": {
         "label": "Codice Tipo dovuto",
-        "required": "Il codice del Tipo dovuto è obbligatorio"
+        "required": "Il codice del Tipo dovuto è obbligatorio",
+        "notUnique": "Codice già esistente. Inserisci un altro codice"
       },
       "subtitle": "Definisce il nome e tassonomia del nuovo Tipo dovuto.",
       "title": "Configurazione Tipo dovuto"

@@ -19,7 +19,6 @@ import { Timeline } from '../Timeline';
 import { setAppState } from '../../store/AppStateStore';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
-import GenericDialog from '../GenericDialog/GenericDialog';
 import { useTimelineData } from '../../hooks/useTimelineData';
 import { stateColors } from '../../routes/DebtPositions/components/DebtPositionIUVDataGrid';
 
@@ -31,7 +30,6 @@ export const DebtPositionsInstallmentDetail = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [remittanceInformation, setRemittanceInformation] = useState<
     string | undefined
   >(undefined);
@@ -85,9 +83,6 @@ export const DebtPositionsInstallmentDetail = () => {
     try {
       if (!installment?.iuv || !installment.debtPositionId) {
         return utils.notify.emit(t('commons.files.missingIuv'), 'error');
-      }
-      if (statusInstallment !== InstallmentStatus.UNPAID) {
-        return setOpenDeleteDialog(true);
       }
       const result = await downloadMutation.mutateAsync();
       const { data, fileName } = result;
@@ -239,8 +234,7 @@ export const DebtPositionsInstallmentDetail = () => {
             variant: 'text',
             onActionClick: handleTimelineOpen
           },
-          ...(statusInstallment !== InstallmentStatus.DRAFT &&
-          statusInstallment !== InstallmentStatus.CANCELLED
+          ...(statusInstallment === InstallmentStatus.UNPAID
             ? [
                 {
                   icon: <Download />,
@@ -345,15 +339,6 @@ export const DebtPositionsInstallmentDetail = () => {
           )}
         </>
       </Timeline.Drawer>
-
-      <GenericDialog
-        data-testid="confirm-delete-dialog"
-        open={openDeleteDialog}
-        title={t('debtPositionInstallmentDetail.dialogDownload.title')}
-        message={t('debtPositionInstallmentDetail.dialogDownload.message')}
-        confirmLabel={t('commons.close')}
-        onConfirm={() => setOpenDeleteDialog(false)}
-      />
     </>
   );
 };

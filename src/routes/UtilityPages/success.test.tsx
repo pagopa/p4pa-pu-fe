@@ -83,6 +83,36 @@ vi.mock('../../models/SuccessPageConfig', () => ({
           customNavigation: 'ASSESSMENT_DETAIL'
         }
       ]
+    },
+    'debt-positions': {
+      title: 'commons.successImport',
+      description: 'debtPositionsImportThankYouPage.description',
+      buttonConfig: [
+        {
+          buttonLabel: 'commons.close',
+          actionID: 'DEBT_POSITIONS_IMPORT_OVERVIEW'
+        }
+      ]
+    },
+    'treasury-import': {
+      title: 'commons.successImport',
+      description: 'reportingImportThankYouPage.description',
+      buttonConfig: [
+        {
+          buttonLabel: 'commons.close',
+          actionID: 'TREASURY_IMPORT_OVERVIEW'
+        }
+      ]
+    },
+    'telematic-receipt-export': {
+      title: 'commons.successExport',
+      description: 'commons.successExportDescription',
+      buttonConfig: [
+        {
+          buttonLabel: 'commons.close',
+          actionID: 'TELEMATIC_RECEIPT_EXPORT_OVERVIEW'
+        }
+      ]
     }
   }
 }));
@@ -330,6 +360,86 @@ describe('SuccessPage', () => {
         '[data-testid="WarningAmberOutlinedIcon"]'
       );
       expect(warningIcon).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Import/Export Overview navigation', () => {
+    it('passes fromSuccess: true when navigating to import overview', () => {
+      mockUseLocation.mockReturnValue({
+        state: {
+          category: 'debt-positions'
+        }
+      });
+
+      render(<SuccessPage />);
+      const button = screen.getByRole('button', {
+        name: 'commons.close'
+      });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        PageRoutes.DEBT_POSITIONS_IMPORT_OVERVIEW,
+        { state: { fromSuccess: true } }
+      );
+    });
+
+    it('passes fromSuccess: true when navigating to treasury import overview', () => {
+      mockUseLocation.mockReturnValue({
+        state: {
+          category: 'treasury-import'
+        }
+      });
+
+      render(<SuccessPage />);
+      const button = screen.getByRole('button', {
+        name: 'commons.close'
+      });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        PageRoutes.TREASURY_IMPORT_OVERVIEW,
+        { state: { fromSuccess: true } }
+      );
+    });
+
+    it('passes fromSuccess: true when navigating to export overview', () => {
+      mockUseLocation.mockReturnValue({
+        state: {
+          category: 'telematic-receipt-export'
+        }
+      });
+
+      render(<SuccessPage />);
+      const button = screen.getByRole('button', {
+        name: 'commons.close'
+      });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(
+        PageRoutes.TELEMATIC_RECEIPT_EXPORT_OVERVIEW,
+        { state: { fromSuccess: true } }
+      );
+    });
+
+    it('does not pass fromSuccess for normal actionID navigation', () => {
+      mockUseLocation.mockReturnValue({
+        state: {
+          category: 'debt-type-catalog-create',
+          i18nParams: { paymentObject: 'TestObject' }
+        }
+      });
+
+      render(<SuccessPage />);
+      const button = screen.getByRole('button', {
+        name: 'debtTypeCreateSuccess.backToStart'
+      });
+      fireEvent.click(button);
+
+      expect(mockNavigate).toHaveBeenCalledWith(PageRoutes.DEBT_TYPES_CATALOG);
+      expect(mockNavigate).not.toHaveBeenCalledWith(
+        PageRoutes.DEBT_TYPES_CATALOG,
+        expect.objectContaining({ state: { fromSuccess: true } })
+      );
     });
   });
 });

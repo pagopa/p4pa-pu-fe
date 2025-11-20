@@ -203,14 +203,7 @@ const DetailContainer = ({
                           </Typography>
                         </Grid>
                       )}
-                      <Grid
-                        item
-                        md={
-                          section.inline && !item.childrenComponent
-                            ? setColumnWidth
-                            : 12
-                        }
-                      >
+                      <Grid item md={section.inline ? setColumnWidth : 12}>
                         {renderItemValue(item)}
                       </Grid>
                       {section.divider && index !== section.data.length - 1 && (

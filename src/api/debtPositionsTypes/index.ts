@@ -90,3 +90,39 @@ export const getDebtPositionTypesByOrganizationId = ({
       return { response: data, optionsMap, codeMap };
     }
   });
+
+/**
+ * Check if the code is unique for the debt position types of the catalog.
+ * Returns true if the code is unique (does not exist), false if it already exists.
+ * Strategy:
+ * Single API call with code filter and size: 1. If content.length === 0, the code is unique.
+ */
+export const useDebtPositionTypeCodeValidation = (organizationId: number) => {
+  return useMutation({
+    mutationKey: ['validateDebtPositionTypeCode', organizationId],
+    mutationFn: async (code: string): Promise<boolean> => {
+      if (!code || !code.trim()) {
+        return true; // Empty code cannot be duplicated
+      }
+
+      const codeToCheck = code.trim();
+
+      // Single call with code filter and size: 1
+      const { data: response } =
+        await utils.apiClient.bff.getDebtPositionTypeWithCount(organizationId, {
+          code: codeToCheck,
+          page: 0,
+          size: 1
+        });
+
+      if (!response) {
+        return true; // Fail-safe: in case of error, consider code valid
+      }
+
+      // If content is null or empty, the code is unique
+      const isUnique = !response.content || response.content.length === 0;
+
+      return isUnique;
+    }
+  });
+};
