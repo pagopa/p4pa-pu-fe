@@ -293,10 +293,10 @@ describe('useClassificationExport', () => {
         exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
         fileVersion: 'v1.0',
         filterFields: {
-          iuv: ['IUV123456'],
+          iuvs: ['IUV123456'],
           iud: 'IUD123456',
-          iuf: 'IUF123456',
-          iur: ['IUR123456'],
+          iufs: ['IUF123456'],
+          iurs: ['IUR123456'],
           label: [LabelEnum.DOPPI],
           remittanceInformation: 'Test remittance',
           billAmountCents: 10050,
@@ -367,7 +367,7 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      expect(payload.filterFields.iur).toStrictEqual(['IUR123']);
+      expect(payload.filterFields.iurs).toStrictEqual(['IUR123']);
     });
 
     it('should use reportingIur when iur is empty', () => {
@@ -386,7 +386,7 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      expect(payload.filterFields.iur).toStrictEqual(['REPORTING_IUR456']);
+      expect(payload.filterFields.iurs).toStrictEqual(['REPORTING_IUR456']);
     });
 
     it('should use iur when reportingIur is empty', () => {
@@ -405,7 +405,7 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      expect(payload.filterFields.iur).toStrictEqual(['IUR123']);
+      expect(payload.filterFields.iurs).toStrictEqual(['IUR123']);
     });
 
     it('should not include iur when both are empty', () => {
@@ -424,7 +424,7 @@ describe('useClassificationExport', () => {
 
       const payload = result.current.buildApiPayload(formData, emptyDateRanges);
 
-      expect(payload.filterFields.iur).toBeUndefined();
+      expect(payload.filterFields.iurs).toBeUndefined();
     });
 
     it('should convert billAmountCents from euros to cents', () => {

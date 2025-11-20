@@ -1,10 +1,11 @@
 import { Search } from '@mui/icons-material';
 import { useParams, useNavigate, useLocation } from 'react-router';
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { Variant } from '@mui/material/styles/createTypography';
 import { Grid, Typography, useTheme } from '@mui/material';
 import DownloadIcon from '@mui/icons-material/Download';
 import { useTranslation } from 'react-i18next';
+import { hasPartialDateRangeErrors } from '../../../utils/filtersValidation';
 
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import DetailContainer from '../../../components/DetailContainer/DetailContainer';
@@ -32,7 +33,7 @@ export const ReportingDetail = () => {
   const { t } = useTranslation();
   const theme = useTheme();
   const navigate = useNavigate();
-  const { id: iuf } = useParams<{ id: string }>();
+  const { id: iuf } = useParams();
   const {
     state: { organizationId }
   } = useStore();
@@ -52,9 +53,7 @@ export const ReportingDetail = () => {
     number | undefined
   >(location.state?.ingestionFlowFileId);
 
-  const query = getPaymentsReportingRows(organizationId, iuf, {
-    enabled: !!organizationId && !!iuf
-  });
+  const query = getPaymentsReportingRows(organizationId, iuf);
 
   const reportingRows = useSearch({
     query,
@@ -106,9 +105,20 @@ export const ReportingDetail = () => {
     }
   };
 
-  const handleFiltersApplied = () => {
+  /**
+   * Validates filters before applying them to prevent API calls with partial date ranges.
+   */
+  const handleFiltersApplied = useCallback(() => {
+    // Check if there are partial date range errors (only 'from' or only 'to' filled)
+    if (hasPartialDateRangeErrors(appliedFilters)) {
+      // Don't apply filters if there are partial date range errors
+      // The DateRange component already shows visual error messages
+      return;
+    }
+
+    // Apply filters if validation passes
     reportingRows.applyFilters(appliedFilters);
-  };
+  }, [appliedFilters, reportingRows]);
 
   const detailSections = useMemo(() => {
     const firstReportItem = detailItem;

@@ -9,7 +9,8 @@ import {
   useTheme,
   Tooltip,
   useMediaQuery,
-  type Theme
+  type Theme,
+  CircularProgress
 } from '@mui/material';
 import { SidebarMenuItem } from './SidebarMenuItem';
 import { useTranslation } from 'react-i18next';
@@ -33,7 +34,7 @@ import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
 import { Dns } from '@mui/icons-material';
 import { generatePath } from 'react-router';
-import config from '../../utils/config';
+import { useGenerateSupersetUrl } from '../../api/statistics';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -42,6 +43,9 @@ export const Sidebar: React.FC = () => {
 
   const { collapsed, changeMenuState, setCollapsed, setOverlay, overlay } =
     useCollapseMenu(!lg);
+
+  const { mutate: generateSupersetUrl, isPending: isLoadingStatistics } =
+    useGenerateSupersetUrl();
 
   useEffect(() => {
     setOverlay(!(lg || collapsed));
@@ -194,15 +198,37 @@ export const Sidebar: React.FC = () => {
 
   // STATISTICS SECTION
   const handleStatisticsClick = () => {
-    const accessToken = localStorage.getItem('accessToken');
-    const statisticsUrl = `${config.statsUrl}/sso-login/?token=${accessToken}`;
-    window.open(statisticsUrl, '_blank', 'noopener,noreferrer');
-    if (!lg) setCollapsed(true);
+    if (isLoadingStatistics) return;
+
+    generateSupersetUrl(
+      { organizationId },
+      {
+        onSuccess: (response) => {
+          if (response.data?.authorizedUrl) {
+            window.open(
+              response.data.authorizedUrl,
+              '_blank',
+              'noopener,noreferrer'
+            );
+
+            if (!lg) setCollapsed(true);
+          } else {
+            utils.notify.emit(t('statistics.urlNotAvailable'), 'error');
+          }
+        },
+        onError: (error) => {
+          console.error('Error retrieving Superset URL:', error);
+          utils.notify.emit(t('statistics.urlGenerationFailed'), 'error');
+        }
+      }
+    );
   };
 
   const statisticsItem: ISidebarMenuItem = {
     label: t('commons.routes.STATISTICS'),
-    icon: BarChartIcon,
+    icon: isLoadingStatistics
+      ? () => <CircularProgress size={24} />
+      : BarChartIcon,
     end: true
   };
 

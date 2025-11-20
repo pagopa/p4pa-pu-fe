@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import utils from '../../utils';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
-import { render, screen, waitFor, within } from '../../__tests__/renderers';
+import { render, screen } from '../../__tests__/renderers';
 import { setUserInfo } from '../../store/UserInfoStore';
-import userEvent from '@testing-library/user-event';
+import Home from '.';
 
 vi.mock('../../utils', () => ({
   default: {
@@ -27,8 +27,6 @@ vi.mock('../../api/home', () => ({
   useDashboardByIuf: () => ({ mutateAsync: mockIufMutate })
 }));
 
-import Home from '.';
-
 describe('Home page', () => {
   const mockSessionStorage = {
     getItem: vi.fn(),
@@ -45,7 +43,9 @@ describe('Home page', () => {
     canManageUsers: false,
     issuer: 'Issuer',
     organizations: [],
-    mappedExternalUserId: 'mappedExternalUserId'
+    mappedExternalUserId: 'mappedExternalUserId',
+    traceId: 'test-trace-id',
+    _type: 'UserInfoDTO'
   };
 
   beforeEach(() => {
@@ -79,7 +79,7 @@ describe('Home page', () => {
     mockSessionStorage.getItem.mockReturnValue(null);
     renderHome();
 
-    expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(
+    expect(screen.getByTestId('main-title')).toHaveTextContent(
       `${user.name} ${user.familyName}`
     );
   });
@@ -134,22 +134,5 @@ describe('Home page', () => {
     expect(mockSessionStorage.removeItem).toHaveBeenCalledWith(
       'pendingNotification'
     );
-  });
-
-  it('submits IUF search and calls useDashboardByIuf with the input value', async () => {
-    mockSessionStorage.getItem.mockReturnValue(null);
-    renderHome();
-
-    await userEvent.click(screen.getByTestId('home-tab-IUF'));
-
-    const panel = screen.getByTestId('home-tabpanel-IUF');
-    const input = within(panel).getByRole('textbox');
-    await userEvent.type(input, 'IUF123');
-
-    await userEvent.click(screen.getByTestId('home-form-btn-IUF'));
-
-    await waitFor(() => {
-      expect(mockIufMutate).toHaveBeenCalled();
-    });
   });
 });

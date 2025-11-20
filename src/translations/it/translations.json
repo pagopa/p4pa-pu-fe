@@ -670,6 +670,7 @@
     "affiliateNew": "Associa nuovo",
     "affiliate": "Associa",
     "confirm": "Conferma",
+    "configure": "Configura",
     "id": "id",
     "role": "Ruolo",
     "info": "Informazioni",
@@ -1100,7 +1101,8 @@
       "fieldRequired": "Campo obbligatorio",
       "checkboxRequired": "Questa conferma è obbligatoria",
       "invalidIban": "Formato IBAN non valido",
-      "invalidPostalIban": "Formato conto poste non valido"
+      "invalidPostalIban": "Formato conto poste non valido",
+      "invalidFiscalCodeOrVat": "Il codice fiscale o la partita IVA non sono corretti"
     },
     "yes": "Si"
   },
@@ -1473,7 +1475,8 @@
       },
       "debtTypeCode": {
         "label": "Codice Tipo dovuto",
-        "required": "Il codice del Tipo dovuto è obbligatorio"
+        "required": "Il codice del Tipo dovuto è obbligatorio",
+        "notUnique": "Codice già esistente. Inserisci un altro codice"
       },
       "subtitle": "Definisce il nome e tassonomia del nuovo Tipo dovuto.",
       "title": "Configurazione Tipo dovuto"
@@ -1840,6 +1843,26 @@
   },
   "home": {
     "cta": "Crea Posizione Debitoria",
+    "viewAs": "Stai visualizzando come",
+    "chooseWidget": {
+      "title": "Scegli la tua attività principale",
+      "closingText": "Potrai modificare la tua scelta in qualsiasi momento.",
+      "message": "Scegli un profilo che rispecchi le tue attività quotidiane per accedere a contenuti e funzioni su misura per te.",
+      "profiles": {
+        "debtpositionsManager": {
+          "title": "Gestore delle Posizioni Debitorie",
+          "description": "Crea e consulta avvisi di pagamento su base giornaliera."
+        },
+        "treasuriesManager": {
+          "title": "Responsabile delle entrate",
+          "description": "Monitora delle operazioni di incasso, tale come rendicontazioni e giornale di cassa."
+        },
+        "officeManager": {
+          "title": "Responsabile ufficio",
+          "description": "Gestisci sia le posizioni debitorie che le operazioni di incasso."
+        }
+      }
+    },
     "drawer": {
       "actions": "Azioni disponibili",
       "installment": "Visualizza dettaglio Avviso",
@@ -1859,7 +1882,7 @@
     },
     "noResults": {
       "title": "Azioni disponibili",
-      "description": "Non abbiamo trovato azioni disponibili. Verifica che lo IUV sia corretto.",
+      "description": "Non abbiamo trovato azioni disponibili. Verifica che il dato inserito sia corretto.",
       "descriptionFc": "Non abbiamo trovato azioni disponibili. Verifica che il Codice Fiscale o la Partita Iva siano corrette."
     },
     "fillAtLeast": "Inserisci un valore per avviare la ricerca",
@@ -1875,7 +1898,7 @@
       },
       "IUF": {
         "label": "Rendicontazione",
-        "fieldLabel": "IUF"
+        "fieldLabel": "ID Rendicontazione / IUF"
       }
     },
     "tabsTypes": "Tipi di ricerca"
@@ -2017,8 +2040,12 @@
     "title": "Modifica il tuo ente",
     "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
     "saveChanges": "Salva modifiche",
+    "enableOrg": "Abilita ente",
+    "errorEnablingOrg": "Non è stato possibile abilitare l'ente perché non sono stati compilati i campi obbligatori",
     "errorLoadingData": "Errore nel caricamento dei dati dell'ente",
+    "successDraftMessage": "Modifiche salvate con successo in stato bozza",
     "successMessage": "Modifiche salvate con successo",
+    "successMessageNotEnable": "Modifiche salvate con successo, ma non abilitato",
     "step1": {
       "title": "Anagrafica ente",
       "label": "Anagrafica ente",
@@ -2218,6 +2245,10 @@
     "searchRegulationId": "ID Regolamento",
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"
+  },
+  "statistics": {
+    "urlNotAvailable": "URL non disponibile",
+    "urlGenerationFailed": "La generazione dell'URL di accesso non è andata a buon fine"
   },
   "taxonomy": {
     "search": "Cerca tassonomia",

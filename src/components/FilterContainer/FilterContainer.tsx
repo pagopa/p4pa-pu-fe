@@ -103,11 +103,21 @@ const RenderComponent = ({
           ? ((values[fieldId] as string) ?? defaultValue)
           : (textItem.value ?? defaultValue);
 
+      // Check for field-specific error (e.g., fiscalCode_error)
+      const fieldError = values?.[`${fieldId}_error`] as string | undefined;
+      const hasError = !!fieldError;
+
       return (
         <FormComponent.TextField
           {...textItem}
           value={currentValue}
+          error={hasError}
+          helperText={fieldError}
           onChange={(e: TextFieldChangeEvent) => {
+            // Clear error when user starts typing
+            if (hasError && onChange) {
+              onChange(`${fieldId}_error`, '');
+            }
             if (onChange) {
               onChange(fieldId, e.target.value);
             } else if (textItem.onChange) {
@@ -178,10 +188,11 @@ const RenderComponent = ({
             onChange: (date: Date | null) => {
               dateItem?.from?.onChange?.(toStartOfDay(date));
 
-              onChange?.(fieldId, {
+              const newValue = {
                 from: toStartOfDay(date),
                 to: toEndOfDay(currentValue?.to)
-              });
+              };
+              onChange?.(fieldId, newValue);
             }
           }
         : undefined;
@@ -193,10 +204,11 @@ const RenderComponent = ({
             onChange: (date: Date | null) => {
               dateItem?.to?.onChange?.(toEndOfDay(date));
 
-              onChange?.(fieldId, {
+              const newValue = {
                 from: toStartOfDay(currentValue?.from),
                 to: toEndOfDay(date)
-              });
+              };
+              onChange?.(fieldId, newValue);
             }
           }
         : undefined;

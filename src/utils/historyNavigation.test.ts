@@ -28,6 +28,24 @@ describe('historyNavigation', () => {
         const state = { category: 'some-other-category' };
         expect(isPageToSkip(state)).toBe(false);
       });
+
+      it('returns true when URL contains /success', () => {
+        expect(isPageToSkip({}, '/piattaformaunitaria/success')).toBe(true);
+        expect(isPageToSkip({}, '/success')).toBe(true);
+        expect(isPageToSkip({}, '/some/path/success')).toBe(true);
+      });
+
+      it('returns true for success URL even without state', () => {
+        expect(isPageToSkip(null, '/success')).toBe(true);
+        expect(isPageToSkip(undefined, '/piattaformaunitaria/success')).toBe(
+          true
+        );
+      });
+
+      it('returns false when /success is in query params but not in pathname', () => {
+        expect(isPageToSkip({}, '/some-page?redirect=/success')).toBe(false);
+        expect(isPageToSkip({}, '/page?url=/success')).toBe(false);
+      });
     });
 
     describe('Form/Wizard pages detection via state markers', () => {

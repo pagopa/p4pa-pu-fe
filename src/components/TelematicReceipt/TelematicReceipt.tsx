@@ -16,29 +16,125 @@ import utils from '../../utils';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
 import { TelematicReceiptsFilters } from '../../api/receipts/mappings';
 import { FilterFieldValue } from '../../models/Filters';
+import { FilterFieldIds } from '../../models/SearchCardFields';
+import {
+  isValidFiscalCodeOrPIVA,
+  normalizeFiscalCodeOrPIVA,
+  normalizeCompact
+} from '../../utils/fieldValidation';
+import {
+  clearFieldError,
+  setFieldError,
+  stripErrorFields
+} from '../../utils/filterErrors';
+
+type TelematicReceiptsFiltersWithErrors = TelematicReceiptsFilters & {
+  fiscalCode_error?: string;
+};
 
 export const TelematicReceipt = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [filters, setFilters] = useState<TelematicReceiptsFilters>({});
+  const [filters, setFilters] = useState<TelematicReceiptsFiltersWithErrors>(
+    {}
+  );
   const [error, setError] = useState<boolean>(false);
 
   const navigateToResults = useCallback(() => {
-    if (noFilterSetted(filters)) {
-      setError(shouldShowGeneralError(filters));
+    // Prepare working copy and normalize IUV if present
+    let nextFilters = { ...filters } as TelematicReceiptsFiltersWithErrors;
+    const iuv = (filters as Record<string, unknown>)[
+      FilterFieldIds.IUV_CODE
+    ] as string | undefined;
+    if (iuv && typeof iuv === 'string' && iuv.trim() !== '') {
+      const normalizedIUV = normalizeCompact(iuv);
+      nextFilters = {
+        ...nextFilters,
+        [FilterFieldIds.IUV_CODE]: normalizedIUV
+      };
+      setFilters(nextFilters);
+    }
+    // Validate fiscalCode when present
+    const fiscalCode = filters.fiscalCode as string | undefined;
+    if (
+      fiscalCode &&
+      typeof fiscalCode === 'string' &&
+      fiscalCode.trim() !== ''
+    ) {
+      // Normalize the value (remove spaces, uppercase)
+      const normalizedFiscalCode = normalizeFiscalCodeOrPIVA(fiscalCode);
+      const isValid = isValidFiscalCodeOrPIVA(normalizedFiscalCode);
+      if (!isValid) {
+        setFilters(
+          (prev) =>
+            setFieldError(
+              prev,
+              FilterFieldIds.FISCAL_CODE,
+              t('commons.validation.invalidFiscalCodeOrVat')
+            ) as typeof prev
+        );
+        return;
+      }
+      // Prepare next filters with normalized value and cleared error
+      nextFilters = {
+        ...nextFilters,
+        fiscalCode: normalizedFiscalCode,
+        fiscalCode_error: ''
+      };
+      setFilters(nextFilters);
+    }
+
+    if (noFilterSetted(nextFilters)) {
+      setError(shouldShowGeneralError(nextFilters));
     } else {
       setError(false);
-      const params = utils.URI.encode(filters);
+      // Exclude field errors from URL params
+      const cleanedFilters = stripErrorFields(nextFilters);
+      const params = utils.URI.encode(cleanedFilters);
       navigate(`${PageRoutes.TELEMATIC_RECEIPT_SEARCH_RESULTS}#${params}`);
     }
-  }, [filters, navigate]);
+  }, [filters, navigate, t]);
 
   const resetCurrentFilters = useCallback(() => {
     setFilters({});
   }, [filters]);
 
   const handleFilterChange = (id: string, value: FilterFieldValue) => {
-    setFilters((prev) => ({ ...prev, [id]: value }));
+    if (id === FilterFieldIds.FISCAL_CODE) {
+      setFilters(
+        (prev) =>
+          clearFieldError(
+            {
+              ...prev,
+              fiscalCode: (value as string) ?? ''
+            },
+            FilterFieldIds.FISCAL_CODE
+          ) as typeof prev
+      );
+      return;
+    }
+    if (id === FilterFieldIds.IUV_CODE) {
+      setFilters((prev) => ({
+        ...prev,
+        iuv: (value as string) ?? ''
+      }));
+      return;
+    }
+    if (id === FilterFieldIds.TYPE_ORG) {
+      setFilters((prev) => ({
+        ...prev,
+        typeOrgId: (value as number) ?? undefined
+      }));
+      return;
+    }
+
+    if (id === FilterFieldIds.DATE_RANGE) {
+      const range = value as { from?: Date | null; to?: Date | null };
+      setFilters((prev) => ({
+        ...prev,
+        dateRange: range as TelematicReceiptsFilters['dateRange'] | undefined
+      }));
+    }
   };
 
   const { filters: filtersGrid } = useTelematicReceiptsFilters({

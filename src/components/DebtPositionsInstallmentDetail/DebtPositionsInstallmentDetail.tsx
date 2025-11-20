@@ -19,7 +19,6 @@ import { Timeline } from '../Timeline';
 import { setAppState } from '../../store/AppStateStore';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
-import GenericDialog from '../GenericDialog/GenericDialog';
 import { useTimelineData } from '../../hooks/useTimelineData';
 import { stateColors } from '../../routes/DebtPositions/components/DebtPositionIUVDataGrid';
 
@@ -31,34 +30,17 @@ export const DebtPositionsInstallmentDetail = () => {
 
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [timelineOpen, setTimelineOpen] = useState(false);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-
-  const toggleDrawer = () => {
-    setDrawerOpen((prev) => !prev);
-  };
+  const [remittanceInformation, setRemittanceInformation] = useState<
+    string | undefined
+  >(undefined);
 
   const organizationId = Number(state[STATE.ORGANIZATION_ID]);
   const installmentId = Number(id);
 
-  if (isNaN(installmentId)) {
-    navigate(PageRoutes.RESPONSES_ERROR);
-    return null;
-  }
-
-  const {
-    data: installment,
-    isError,
-    error
-  } = debtPositions.getInstallmentDetail(organizationId, installmentId);
-
-  useEffect(() => {
-    if (isError && error) {
-      console.error('Error loading installment detail:', error);
-      navigate(PageRoutes.RESPONSES_ERROR);
-    }
-  }, [isError, error, navigate]);
-
-  const statusInstallment = installment?.status;
+  const { data: installment, isError } = debtPositions.getInstallmentDetail(
+    organizationId,
+    installmentId
+  );
 
   const {
     mutate: fetchInstallmentRegistries,
@@ -70,6 +52,20 @@ export const DebtPositionsInstallmentDetail = () => {
     installment?.debtPositionId || 0,
     installment?.iuv || ''
   );
+
+  const timelineElements = useTimelineData(installmentRegistries);
+
+  useEffect(() => {
+    if (isNaN(installmentId) || isError) {
+      navigate(PageRoutes.RESPONSES_ERROR);
+    }
+  }, [installmentId, navigate, isError]);
+
+  const toggleDrawer = () => {
+    setDrawerOpen((prev) => !prev);
+  };
+
+  const statusInstallment = installment?.status;
 
   const handleTimelineOpen = () => {
     setTimelineOpen(true);
@@ -83,15 +79,10 @@ export const DebtPositionsInstallmentDetail = () => {
     }
   };
 
-  const timelineElements = useTimelineData(installmentRegistries);
-
   const handleDownloadInstallment = async () => {
     try {
       if (!installment?.iuv || !installment.debtPositionId) {
         return utils.notify.emit(t('commons.files.missingIuv'), 'error');
-      }
-      if (statusInstallment !== InstallmentStatus.UNPAID) {
-        return setOpenDeleteDialog(true);
       }
       const result = await downloadMutation.mutateAsync();
       const { data, fileName } = result;
@@ -216,7 +207,7 @@ export const DebtPositionsInstallmentDetail = () => {
           pathname: generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
             id: installment.debtPositionId
           }),
-          label: installment.debtPositionTypeOrgDescription || '',
+          label: installment.debtPositionDescription || '-',
           id: 'branch'
         },
         {
@@ -243,8 +234,7 @@ export const DebtPositionsInstallmentDetail = () => {
             variant: 'text',
             onActionClick: handleTimelineOpen
           },
-          ...(statusInstallment !== InstallmentStatus.DRAFT &&
-          statusInstallment !== InstallmentStatus.CANCELLED
+          ...(statusInstallment === InstallmentStatus.UNPAID
             ? [
                 {
                   icon: <Download />,
@@ -261,7 +251,7 @@ export const DebtPositionsInstallmentDetail = () => {
           <DetailContainer
             sections={[
               {
-                description: installment?.debtPositionDescription,
+                description: remittanceInformation || '-',
                 data: installmentDetailData.summaryData,
                 inline: true,
                 footerLink: {
@@ -319,6 +309,7 @@ export const DebtPositionsInstallmentDetail = () => {
         title={t('debtPositionInstallmentDetail.drawer.title')}
         installmentId={installmentId}
         organizationId={organizationId}
+        onRemittanceInformationChange={setRemittanceInformation}
       />
 
       <Timeline.Drawer
@@ -348,15 +339,6 @@ export const DebtPositionsInstallmentDetail = () => {
           )}
         </>
       </Timeline.Drawer>
-
-      <GenericDialog
-        data-testid="confirm-delete-dialog"
-        open={openDeleteDialog}
-        title={t('debtPositionInstallmentDetail.dialogDownload.title')}
-        message={t('debtPositionInstallmentDetail.dialogDownload.message')}
-        confirmLabel={t('commons.close')}
-        onConfirm={() => setOpenDeleteDialog(false)}
-      />
     </>
   );
 };

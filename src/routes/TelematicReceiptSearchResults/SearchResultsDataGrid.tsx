@@ -109,7 +109,7 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
   return (
     <CustomDataGrid
       rows={data?.content ?? []}
-      getRowId={(row) => row.receiptId}
+      getRowId={(row) => row.iud}
       columns={columns}
       disableColumnMenu
       disableColumnResize
