@@ -1,23 +1,12 @@
-import { render, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { Sidebar } from './Sidebar';
-import { StoreProvider } from '../../store/GlobalStore';
 import { OperatorRole } from '../../../generated/data-contracts';
-import { Theme } from '../../utils/theme';
-import { MemoryRouter } from 'react-router';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import utils from '../../utils';
 import { vi } from 'vitest';
+import { render } from '../../__tests__/renderers';
 
-const renderSidebar = () =>
-  render(
-    <StoreProvider>
-      <MemoryRouter>
-        <Theme>
-          <Sidebar />
-        </Theme>
-      </MemoryRouter>
-    </StoreProvider>
-  );
+const renderSidebar = () => render(<Sidebar />);
 
 describe('Sidebar component', () => {
   it('should not render backoffice section when the role is operator', () => {
