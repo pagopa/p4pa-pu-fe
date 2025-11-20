@@ -43,7 +43,9 @@ describe('Home page', () => {
     canManageUsers: false,
     issuer: 'Issuer',
     organizations: [],
-    mappedExternalUserId: 'mappedExternalUserId'
+    mappedExternalUserId: 'mappedExternalUserId',
+    traceId: 'test-trace-id',
+    _type: 'UserInfoDTO'
   };
 
   beforeEach(() => {

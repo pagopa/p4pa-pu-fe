@@ -35,7 +35,15 @@ export const BackButton = (props: BackButtonProps) => {
     enableSmartBack = true
   } = props;
 
-  const hasHistory = location.key !== 'default' && window.history.length > 1;
+  // Check if there is history available
+  // If location.key === 'default' but there is history in the browser, it might be
+  // that the history has been modified directly (e.g. pushState) without React Router
+  const hasReactRouterHistory =
+    location.key !== 'default' && window.history.length > 1;
+  const hasBrowserHistory = window.history.length > 1;
+  const hasHistory = hasReactRouterHistory || hasBrowserHistory;
+  // If location.key is 'default', use window.history.back() instead of navigate
+  const useBrowserHistory = location.key === 'default' && hasBrowserHistory;
 
   const { handleSmartBack } = useSmartBack({
     fallbackRoute
@@ -58,6 +66,14 @@ export const BackButton = (props: BackButtonProps) => {
    * - Otherwise does navigate(-1)
    */
   const handleBack = () => {
+    // If location.key is 'default', it means that React Router did not track this entry
+    // (probably because the history has been modified directly with pushState)
+    // In this case, use window.history.back() directly
+    if (useBrowserHistory) {
+      window.history.back();
+      return;
+    }
+
     if (enableSmartBack) {
       handleSmartBack();
     } else {
