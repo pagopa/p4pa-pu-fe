@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import utils from '../../utils';
 import TitleComponent, {
   ActionMenuItem
@@ -42,7 +42,10 @@ import {
   normalizeFiscalCodeOrPIVA,
   normalizeCompact
 } from '../../utils/fieldValidation';
-import { saveUserProfilePreference } from '../../utils/userPreferences';
+import {
+  getUserProfilePreference,
+  saveUserProfilePreference
+} from '../../utils/userPreferences';
 import type { UserProfilePreference } from '../../utils/userPreferences';
 
 const Home = () => {
@@ -92,29 +95,32 @@ const Home = () => {
     return <AltRouteIcon sx={{ transform: 'rotate(90deg)', mr: 1 }} />;
   };
 
-  const tabsConfig: Array<tabsConfigProps> = [
-    {
-      id: TABS.IUV,
-      label: t('home.tabs.IUV.label'),
-      icon: <ReceiptLongIcon />,
-      searchLabel: t('home.tabs.IUV.fieldLabel'),
-      searchName: 'iuv'
-    },
-    {
-      id: TABS.FC,
-      label: t('home.tabs.FC.label'),
-      icon: <PersonIcon />,
-      searchLabel: t('home.tabs.FC.fieldLabel'),
-      searchName: 'cf'
-    },
-    {
-      id: TABS.IUF,
-      label: t('home.tabs.IUF.label'),
-      icon: <RotatedAltRouteIcon />,
-      searchLabel: t('home.tabs.IUF.fieldLabel'),
-      searchName: 'iuf'
-    }
-  ];
+  const tabsConfig = useMemo<Array<tabsConfigProps>>(
+    () => [
+      {
+        id: TABS.IUV,
+        label: t('home.tabs.IUV.label'),
+        icon: <ReceiptLongIcon />,
+        searchLabel: t('home.tabs.IUV.fieldLabel'),
+        searchName: 'iuv'
+      },
+      {
+        id: TABS.FC,
+        label: t('home.tabs.FC.label'),
+        icon: <PersonIcon />,
+        searchLabel: t('home.tabs.FC.fieldLabel'),
+        searchName: 'cf'
+      },
+      {
+        id: TABS.IUF,
+        label: t('home.tabs.IUF.label'),
+        icon: <RotatedAltRouteIcon />,
+        searchLabel: t('home.tabs.IUF.fieldLabel'),
+        searchName: 'iuf'
+      }
+    ],
+    [t]
+  );
 
   const tabsPerProfile: tabsPerProfile = {
     [USER_PROFILES.DP]: [TABS.IUV, TABS.FC],
@@ -136,15 +142,43 @@ const Home = () => {
     }
   };
 
-  const tabsAvailableForProfile = (profile: USER_PROFILES) => {
-    const tabs = tabsPerProfile[profile]
-      .map((tabId) => tabsConfig.find((tab) => tab.id === tabId))
-      .filter(Boolean);
-    return (tabs as Array<tabsConfigProps>) || tabsConfig;
-  };
+  const tabsAvailableForProfile = useCallback(
+    (profile: USER_PROFILES) => {
+      const tabs = tabsPerProfile[profile]
+        .map((tabId) => tabsConfig.find((tab) => tab.id === tabId))
+        .filter(Boolean);
+      return (tabs as Array<tabsConfigProps>) || tabsConfig;
+    },
+    [tabsConfig]
+  );
 
   const [profileSelected, setProfileSelected] =
     useState<USER_PROFILES>(defaultUserProfile);
+
+  /**
+   * Load the user profile preference saved in localStorage
+   * If present, set the profile, tabs and close the dialog
+   * If not present, the dialog remains open to allow selection
+   */
+  useEffect(() => {
+    if (!userInfo?.mappedExternalUserId) {
+      return;
+    }
+    const storedPreference = getUserProfilePreference(
+      userInfo.mappedExternalUserId
+    );
+    if (!storedPreference) {
+      return;
+    }
+    const availableTabs = tabsAvailableForProfile(storedPreference);
+    if (!availableTabs.length) {
+      return;
+    }
+    setProfileSelected(storedPreference);
+    setRadioValue(storedPreference);
+    setCurrentTab(availableTabs[0].id);
+    setDialogOpen(false);
+  }, [tabsAvailableForProfile, userInfo?.mappedExternalUserId]);
 
   const tabsHandleChange = (_event: React.SyntheticEvent, newTab: TABS) => {
     setCurrentTab(newTab);
@@ -170,9 +204,37 @@ const Home = () => {
     persistUserProfilePreference(radioValue as USER_PROFILES);
   };
 
+  /**
+   * Handles the closing of the dialog without confirmation
+   * - If the user has no stored preference: save the selected profile in the radio button and update the UI
+   * - If the user has a stored preference: keep the current profile without modifying it
+   */
   const userProfileCancelChange = () => {
-    persistUserProfilePreference(radioValue as USER_PROFILES);
-    setRadioValue(profileSelected);
+    if (!userInfo?.mappedExternalUserId) {
+      setRadioValue(profileSelected);
+      setDialogOpen(false);
+      return;
+    }
+
+    const storedPreference = getUserProfilePreference(
+      userInfo.mappedExternalUserId
+    );
+
+    // If there is no stored preference, save the selected profile in the dialog and update the UI
+    if (!storedPreference) {
+      persistUserProfilePreference(radioValue as USER_PROFILES);
+      const availableTabs = tabsAvailableForProfile(
+        radioValue as USER_PROFILES
+      );
+      if (availableTabs.length > 0) {
+        setProfileSelected(radioValue as USER_PROFILES);
+        setCurrentTab(availableTabs[0].id);
+      }
+    } else {
+      // If there is a stored preference, restore the radio button to the current value
+      setRadioValue(profileSelected);
+    }
+
     setDialogOpen(false);
   };
 
