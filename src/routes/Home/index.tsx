@@ -42,6 +42,8 @@ import {
   normalizeFiscalCodeOrPIVA,
   normalizeCompact
 } from '../../utils/fieldValidation';
+import { saveUserProfilePreference } from '../../utils/userPreferences';
+import type { UserProfilePreference } from '../../utils/userPreferences';
 
 const Home = () => {
   const { t } = useTranslation();
@@ -151,14 +153,25 @@ const Home = () => {
     setSearchValue(''); // Reset search input when switching tabs
   };
 
+  const persistUserProfilePreference = (
+    preference: UserProfilePreference
+  ): void => {
+    if (!userInfo?.mappedExternalUserId) {
+      return;
+    }
+    saveUserProfilePreference(userInfo.mappedExternalUserId, preference);
+  };
+
   const userProfileConfirmChange = () => {
     const tabsPerProfile = tabsAvailableForProfile(radioValue as USER_PROFILES);
     setProfileSelected(radioValue as USER_PROFILES);
     setCurrentTab(tabsPerProfile[0].id);
     setDialogOpen(false);
+    persistUserProfilePreference(radioValue as USER_PROFILES);
   };
 
   const userProfileCancelChange = () => {
+    persistUserProfilePreference(radioValue as USER_PROFILES);
     setRadioValue(profileSelected);
     setDialogOpen(false);
   };
