@@ -21,6 +21,8 @@ import {
 import {
   getIngestionFlowFile,
   getIngestionFlowFileError,
+  getIngestionFlowFileIuv,
+  getIngestionFlowFileNotice,
   getIngestionFlowFiles
 } from '../../api/ingestionFlowFiles';
 import {
@@ -90,6 +92,12 @@ const ImportFlowOverview = ({
 
   const getIngestionFlowFileMutation = getIngestionFlowFile(organizationId);
 
+  const getIngestionFlowFileIuvMutation =
+    getIngestionFlowFileIuv(organizationId);
+
+  const getIngestionFlowFileNoticeMutation =
+    getIngestionFlowFileNotice(organizationId);
+
   const handleDownloadFile = async (ingestionFlowFileId: number) => {
     try {
       const { data, fileName } =
@@ -114,6 +122,30 @@ const ImportFlowOverview = ({
     }
   };
 
+  const handleDownloadIuvFile = async (ingestionFlowFileId: number) => {
+    try {
+      const { data, fileName } =
+        await getIngestionFlowFileIuvMutation.mutateAsync(ingestionFlowFileId);
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('FileUploaderFlowImport.error.errorFlowFile'));
+    }
+  };
+
+  const handleDownloadNoticeFile = async (ingestionFlowFileId: number) => {
+    try {
+      const { data, fileName } =
+        await getIngestionFlowFileNoticeMutation.mutateAsync(
+          ingestionFlowFileId
+        );
+      downloadBlob(data, fileName);
+    } catch (error) {
+      console.error(error);
+      utils.notify.emit(t('FileUploaderFlowImport.error.errorFlowFile'));
+    }
+  };
+
   const handleImportFlow = () => {
     navigate(
       generatePath(PageRoutes.IMPORT_FLOWS, {
@@ -122,8 +154,47 @@ const ImportFlowOverview = ({
     );
   };
 
+  /**
+   * Checks if the export CTAs (IUV and ZIP avvisi) should be shown.
+   * The CTAs are available only for DP_INSTALLMENTS flows and are shown if:
+   * - The status is COMPLETED (ELABORATO), or
+   * - The status is WARNING (ELABORATO CON ERRORI) and the correctly imported rows count is greater than 0
+   *
+   * @param status - The status of the import flow
+   * @param correctlyImportedRows - The number of correctly imported rows (optional)
+   * @returns true if the CTAs should be shown, false otherwise
+   */
+  const shouldShowExportCTAs = (
+    status: string,
+    correctlyImportedRows?: number
+  ): boolean => {
+    // The CTAs are available only for DP_INSTALLMENTS flows
+    const isDebtPositionsFlow = ingestionFlowFileTypes.includes(
+      IngestionFlowFileTypeEnum.DP_INSTALLMENTS
+    );
+
+    if (!isDebtPositionsFlow) {
+      return false;
+    }
+
+    if (status === 'COMPLETED') {
+      return true;
+    }
+
+    if (status === 'WARNING') {
+      return (correctlyImportedRows ?? 0) > 0;
+    }
+
+    return false;
+  };
+
   const renderActionCell = (params: GridRenderCellParams) => {
-    const { ingestionFlowFileId, status, discardFileName } = params.row;
+    const {
+      ingestionFlowFileId,
+      status,
+      discardFileName,
+      correctlyImportedRows
+    } = params.row;
 
     if (MENU_STATES.includes(status)) {
       const menuItems = [
@@ -143,6 +214,21 @@ const ImportFlowOverview = ({
           icon: <DownloadIcon fontSize="small" color="primary" />,
           label: t('commons.files.importedResult'),
           action: () => handleDownloadFileError(ingestionFlowFileId)
+        });
+      }
+
+      // Add the export CTAs (IUV and ZIP avvisi) if the conditions are met
+      if (shouldShowExportCTAs(status, correctlyImportedRows)) {
+        menuItems.push({
+          icon: <DownloadIcon fontSize="small" color="primary" />,
+          label: t('commons.files.importedIuv'),
+          action: () => handleDownloadIuvFile(ingestionFlowFileId)
+        });
+
+        menuItems.push({
+          icon: <DownloadIcon fontSize="small" color="primary" />,
+          label: t('commons.files.importedNotice'),
+          action: () => handleDownloadNoticeFile(ingestionFlowFileId)
         });
       }
 
