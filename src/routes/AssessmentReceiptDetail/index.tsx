@@ -3,7 +3,8 @@ import {
   generatePath,
   useLocation,
   useNavigate,
-  useParams
+  useParams,
+  useSearchParams
 } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { PageRoutes } from '../../routes';
@@ -23,6 +24,7 @@ export const AssessmentReceiptDetail = () => {
   const { receiptId: receiptIdString, assessmentId: assessmentIdString } =
     useParams();
   const { state } = useLocation();
+  const [searchParams] = useSearchParams();
 
   const [assessmentName, setAssessmentName] = useState(
     state?.assessmentName || ''
@@ -30,8 +32,11 @@ export const AssessmentReceiptDetail = () => {
 
   const receiptId = Number(receiptIdString);
   const assessmentId = Number(assessmentIdString);
-  if (isNaN(receiptId) || isNaN(assessmentId)) {
+  const iud = searchParams.get('iud') ?? undefined;
+
+  if (isNaN(receiptId) || isNaN(assessmentId) || !iud) {
     navigate(PageRoutes.RESPONSES_ERROR);
+    return null;
   }
 
   const getAssessmentDetailMutation = getAssessmentDetail(
@@ -91,7 +96,8 @@ export const AssessmentReceiptDetail = () => {
 
   const { paymentData, summaryData } = useReceiptDetail(
     organizationId,
-    receiptId
+    receiptId,
+    { iud }
   );
 
   return (

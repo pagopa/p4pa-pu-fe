@@ -21,20 +21,27 @@ vi.mock('./utils', () => {
 describe('get Receipt Detail ', () => {
   it('returns data correctly', async () => {
     const dataMock = createMock(receiptDetailDTOSchema);
-    const params = { organizationId: 33, receiptId: dataMock.receiptId };
+    const params = {
+      organizationId: 33,
+      receiptId: dataMock.receiptId,
+      iud: 'IUD123'
+    };
 
     const apiMock = vi
       .spyOn(utils.apiClient.bff, 'getReceiptDetail')
       .mockResolvedValue({ data: dataMock } as AxiosResponse);
 
     const { result } = renderHook(() =>
-      getReceiptDetail(params.organizationId, params.receiptId)
+      getReceiptDetail(params.organizationId, params.receiptId, {
+        iud: params.iud
+      })
     );
 
     await waitFor(() => {
       expect(apiMock).toHaveBeenCalledWith(
         params.organizationId,
-        params.receiptId
+        params.receiptId,
+        { iud: params.iud }
       );
       expect(result.current.data).toEqual(dataMock);
     });

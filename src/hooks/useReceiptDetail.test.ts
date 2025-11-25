@@ -68,7 +68,28 @@ describe('useReceiptDetail', () => {
 
     expect(mockGetReceiptDetail).toHaveBeenCalledWith(
       mockOrganizationId,
-      mockReceiptId
+      mockReceiptId,
+      undefined
+    );
+  });
+
+  it('passes iud option to getReceiptDetail', () => {
+    mockGetReceiptDetail.mockReturnValue({
+      data: mockReceiptData,
+      isLoading: false,
+      isError: false
+    } as any);
+
+    const options = { iud: 'IUD-123' };
+
+    renderHook(() =>
+      useReceiptDetail(mockOrganizationId, mockReceiptId, options)
+    );
+
+    expect(mockGetReceiptDetail).toHaveBeenCalledWith(
+      mockOrganizationId,
+      mockReceiptId,
+      options
     );
   });
 
