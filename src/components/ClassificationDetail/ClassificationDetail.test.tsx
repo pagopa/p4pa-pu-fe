@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { render, screen, waitFor } from '../../__tests__/renderers';
+import { render, screen, waitFor, fireEvent } from '../../__tests__/renderers';
 import ClassificationsDetail from './';
 import * as classificationService from '../../api/getClassificationDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
@@ -424,6 +424,45 @@ describe('Classifications Detail:', () => {
           'classifications.detail.statusBar.status.reconciliationState.title'
         )
       ).toBeInTheDocument();
+    });
+
+    it('displays ID Rendicontazione / IUF field in treasury tab when data is collected and treasury is available', async () => {
+      const mockDataWithTreasury = createMockData({
+        payed: true,
+        reported: true,
+        collected: true,
+        flagTreasury: true,
+        iuf: 'IUF123',
+        sealCode: 'SEAL123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataWithTreasury,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      const earningsTab = screen.getByRole('tab', {
+        name: 'classifications.detail.sections.earnings.title'
+      });
+      fireEvent.click(earningsTab);
+
+      expect(
+        screen.getByText(
+          'classifications.detail.sections.earnings.reportingIdIuf'
+        )
+      ).toBeInTheDocument();
+
+      expect(screen.getByText('IUF123')).toBeInTheDocument();
     });
   });
 

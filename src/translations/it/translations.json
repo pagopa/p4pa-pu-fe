@@ -424,6 +424,7 @@
         },
         "earnings": {
           "title": "Giornale di cassa",
+          "reportingIdIuf": "ID Rendicontazione / IUF",
           "accountCode": "Conto",
           "pspLastName": "Gestore della transazione (PSP)",
           "documentCode": "Codice documento",

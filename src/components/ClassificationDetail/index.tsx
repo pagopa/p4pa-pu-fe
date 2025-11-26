@@ -196,6 +196,10 @@ export const ClassificationDetails = () => {
   const targetTranslationEarnings = 'classifications.detail.sections.earnings';
   const earningsData: Array<DetailData> = [
     {
+      label: t(`${targetTranslationEarnings}.reportingIdIuf`),
+      value: data?.iuf
+    },
+    {
       label: t(`${targetTranslationEarnings}.accountCode`),
       value: data?.sealCode
     },
