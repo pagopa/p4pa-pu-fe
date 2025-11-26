@@ -14,7 +14,7 @@ import { DebtPositionDetailDTO } from '../../../generated/apiClient';
 import { UseQueryResult } from '@tanstack/react-query';
 import {
   InstallmentStatus,
-  PaymentOptionTypeEnum,
+  PaymentOptionType,
   PaymentOptionStatus,
   DebtPositionStatus,
   DebtPositionOrigin
@@ -31,7 +31,7 @@ mockDebtPositionDetail.paymentOptions = [
     debtPositionId: 10,
     totalAmountCents: 5400,
     status: PaymentOptionStatus.REPORTED,
-    paymentOptionType: PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+    paymentOptionType: PaymentOptionType.SINGLE_INSTALLMENT,
     paymentOptionIndex: 1,
     installments: [
       {
@@ -50,7 +50,7 @@ mockDebtPositionDetail.paymentOptions = [
     debtPositionId: 10,
     totalAmountCents: 5400,
     status: PaymentOptionStatus.REPORTED,
-    paymentOptionType: PaymentOptionTypeEnum.INSTALLMENTS,
+    paymentOptionType: PaymentOptionType.INSTALLMENTS,
     paymentOptionIndex: 2,
     installments: [
       {
@@ -69,7 +69,7 @@ mockDebtPositionDetail.paymentOptions = [
     debtPositionId: 10,
     totalAmountCents: 5400,
     status: PaymentOptionStatus.REPORTED,
-    paymentOptionType: PaymentOptionTypeEnum.DOWN_PAYMENT,
+    paymentOptionType: PaymentOptionType.DOWN_PAYMENT,
     paymentOptionIndex: 3,
     installments: [
       {
@@ -731,7 +731,7 @@ describe('DebtPositionDetail Component', () => {
         debtPositionId: 10,
         totalAmountCents: 1000,
         status: PaymentOptionStatus.REPORTED,
-        paymentOptionType: PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+        paymentOptionType: PaymentOptionType.SINGLE_INSTALLMENT,
         paymentOptionIndex: 1,
         installments: []
       }
