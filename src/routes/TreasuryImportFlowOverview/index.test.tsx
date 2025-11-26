@@ -36,6 +36,12 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFileError: vi.fn(() => ({
     mutateAsync: vi.fn()
   })),
+  getIngestionFlowFileIuv: vi.fn(() => ({
+    mutateAsync: vi.fn()
+  })),
+  getIngestionFlowFileNotice: vi.fn(() => ({
+    mutateAsync: vi.fn()
+  })),
   uploadIngestionFlowFile: vi.fn(() => ({
     mutateAsync: vi.fn()
   }))

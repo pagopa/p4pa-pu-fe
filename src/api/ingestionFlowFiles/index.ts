@@ -91,3 +91,42 @@ export const getIngestionFlowFileError = (organizationId: number) =>
       return { data: response.data, fileName };
     }
   });
+
+/** returns a mutation to get the ingestion flow IUV file blob */
+export const getIngestionFlowFileIuv = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['getIngestionFlowFileIuv', organizationId],
+    mutationFn: async (ingestionFlowFileId: number) => {
+      const response = await utils.fileshareClient.organization.downloadIuvFile(
+        organizationId,
+        ingestionFlowFileId,
+        { format: 'blob' }
+      );
+
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const fileName =
+        extractFilename(contentDisposition) || `iuv-${ingestionFlowFileId}`;
+
+      return { data: response.data, fileName };
+    }
+  });
+
+/** returns a mutation to get the ingestion flow notice file blob (ZIP with PDF avvisi) */
+export const getIngestionFlowFileNotice = (organizationId: number) =>
+  useMutation({
+    mutationKey: ['getIngestionFlowFileNotice', organizationId],
+    mutationFn: async (ingestionFlowFileId: number) => {
+      const response = await utils.fileshareClient.organization.downloadNotice(
+        organizationId,
+        ingestionFlowFileId,
+        { format: 'blob' }
+      );
+
+      const contentDisposition = response.headers['content-disposition'] || '';
+      const fileName =
+        extractFilename(contentDisposition) ||
+        `notice-${ingestionFlowFileId}.zip`;
+
+      return { data: response.data, fileName };
+    }
+  });

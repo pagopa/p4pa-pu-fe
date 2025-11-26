@@ -3,6 +3,8 @@ import { act, renderHook } from '../../__tests__/renderers';
 import {
   getIngestionFlowFiles,
   getIngestionFlowFile,
+  getIngestionFlowFileIuv,
+  getIngestionFlowFileNotice,
   uploadIngestionFlowFile
 } from './';
 import {
@@ -24,7 +26,9 @@ vi.mock('../../utils', () => ({
     fileshareClient: {
       organization: {
         uploadIngestionFlowFile: vi.fn(),
-        downloadIngestionFlowFile: vi.fn()
+        downloadIngestionFlowFile: vi.fn(),
+        downloadIuvFile: vi.fn(),
+        downloadNotice: vi.fn()
       }
     },
     formatters: {
@@ -49,6 +53,14 @@ const mockUploadIngestionFlowFile = vi.mocked(
 
 const mockDownloadIngestionFlowFile = vi.mocked(
   utils.fileshareClient.organization.downloadIngestionFlowFile
+);
+
+const mockDownloadIuvFile = vi.mocked(
+  utils.fileshareClient.organization.downloadIuvFile
+);
+
+const mockDownloadNotice = vi.mocked(
+  utils.fileshareClient.organization.downloadNotice
 );
 
 const mockExtractFilename = vi.mocked(formatters.extractFilename);
@@ -223,5 +235,168 @@ describe('getIngestionFlowFile', () => {
     });
 
     expect(mockExtractFilename).toHaveBeenCalledWith('');
+  });
+});
+
+describe('getIngestionFlowFileIuv', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockExtractFilename.mockImplementation((header) => {
+      if (header.includes('iuv-file.csv')) {
+        return 'iuv-file.csv';
+      }
+      return null;
+    });
+  });
+
+  it('returns blob and filename from response with content-disposition header', async () => {
+    const mockFileData = new Blob(['iuv data'], { type: 'text/plain' });
+    const mockFileName = 'iuv-file.csv';
+
+    mockDownloadIuvFile.mockResolvedValueOnce({
+      data: mockFileData,
+      headers: {
+        'content-disposition': `attachment; filename="${mockFileName}"`
+      }
+    } as unknown as AxiosResponse);
+
+    const { result } = renderHook(() => getIngestionFlowFileIuv(123));
+
+    await act(async () => {
+      const response = await result.current.mutateAsync(789);
+      expect(response).toEqual({ data: mockFileData, fileName: mockFileName });
+    });
+
+    expect(mockDownloadIuvFile).toHaveBeenCalledWith(123, 789, {
+      format: 'blob'
+    });
+
+    expect(mockExtractFilename).toHaveBeenCalledWith(
+      `attachment; filename="${mockFileName}"`
+    );
+  });
+
+  it('uses default filename when content-disposition header is missing', async () => {
+    const mockFileData = new Blob(['iuv data'], { type: 'text/plain' });
+
+    mockDownloadIuvFile.mockResolvedValueOnce({
+      data: mockFileData,
+      headers: {}
+    } as unknown as AxiosResponse);
+
+    mockExtractFilename.mockReturnValueOnce(null);
+    const { result } = renderHook(() => getIngestionFlowFileIuv(123));
+
+    await act(async () => {
+      const response = await result.current.mutateAsync(789);
+      expect(response).toEqual({ data: mockFileData, fileName: 'iuv-789' });
+    });
+
+    expect(mockDownloadIuvFile).toHaveBeenCalledWith(123, 789, {
+      format: 'blob'
+    });
+
+    expect(mockExtractFilename).toHaveBeenCalledWith('');
+  });
+
+  it('handles download error', async () => {
+    const mockError = new Error('Download failed');
+
+    mockDownloadIuvFile.mockRejectedValueOnce(mockError);
+
+    const { result } = renderHook(() => getIngestionFlowFileIuv(123));
+
+    await act(async () => {
+      await result.current.mutateAsync(789).catch((error) => {
+        expect(error).toBe(mockError);
+      });
+    });
+
+    expect(mockDownloadIuvFile).toHaveBeenCalledWith(123, 789, {
+      format: 'blob'
+    });
+  });
+});
+
+describe('getIngestionFlowFileNotice', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockExtractFilename.mockImplementation((header) => {
+      if (header.includes('notice-file.zip')) {
+        return 'notice-file.zip';
+      }
+      return null;
+    });
+  });
+
+  it('returns blob and filename from response with content-disposition header', async () => {
+    const mockFileData = new Blob(['notice data'], { type: 'application/zip' });
+    const mockFileName = 'notice-file.zip';
+
+    mockDownloadNotice.mockResolvedValueOnce({
+      data: mockFileData,
+      headers: {
+        'content-disposition': `attachment; filename="${mockFileName}"`
+      }
+    } as unknown as AxiosResponse);
+
+    const { result } = renderHook(() => getIngestionFlowFileNotice(123));
+
+    await act(async () => {
+      const response = await result.current.mutateAsync(101);
+      expect(response).toEqual({ data: mockFileData, fileName: mockFileName });
+    });
+
+    expect(mockDownloadNotice).toHaveBeenCalledWith(123, 101, {
+      format: 'blob'
+    });
+
+    expect(mockExtractFilename).toHaveBeenCalledWith(
+      `attachment; filename="${mockFileName}"`
+    );
+  });
+
+  it('uses default filename when content-disposition header is missing', async () => {
+    const mockFileData = new Blob(['notice data'], { type: 'application/zip' });
+
+    mockDownloadNotice.mockResolvedValueOnce({
+      data: mockFileData,
+      headers: {}
+    } as unknown as AxiosResponse);
+
+    mockExtractFilename.mockReturnValueOnce(null);
+    const { result } = renderHook(() => getIngestionFlowFileNotice(123));
+
+    await act(async () => {
+      const response = await result.current.mutateAsync(101);
+      expect(response).toEqual({
+        data: mockFileData,
+        fileName: 'notice-101.zip'
+      });
+    });
+
+    expect(mockDownloadNotice).toHaveBeenCalledWith(123, 101, {
+      format: 'blob'
+    });
+
+    expect(mockExtractFilename).toHaveBeenCalledWith('');
+  });
+
+  it('handles download error', async () => {
+    const mockError = new Error('Download failed');
+
+    mockDownloadNotice.mockRejectedValueOnce(mockError);
+
+    const { result } = renderHook(() => getIngestionFlowFileNotice(123));
+
+    await act(async () => {
+      await result.current.mutateAsync(101).catch((error) => {
+        expect(error).toBe(mockError);
+      });
+    });
+
+    expect(mockDownloadNotice).toHaveBeenCalledWith(123, 101, {
+      format: 'blob'
+    });
   });
 });
