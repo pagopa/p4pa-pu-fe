@@ -17,9 +17,9 @@ export type UserProfilePreference = USER_PROFILES;
 
 /**
  * Base key used to build the localStorage key
- * Final format: `userProfilePreference_${mappedExternalUserId}`
+ * Final format: `userProfilePreference:${mappedExternalUserId}`
  */
-const STORAGE_KEY_PREFIX = 'userProfilePreference_';
+const STORAGE_KEY_PREFIX = 'userProfilePreference:';
 
 /**
  * Builds the localStorage key for a specific user
