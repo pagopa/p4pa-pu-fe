@@ -69,7 +69,7 @@ describe('userPreferences', () => {
       const result = saveUserProfilePreference(validUserId, validPreference);
 
       expect(result).toBe(true);
-      expect(localStorage.getItem(`userProfilePreference_${validUserId}`)).toBe(
+      expect(localStorage.getItem(`userProfilePreference:${validUserId}`)).toBe(
         validPreference
       );
     });
@@ -87,7 +87,7 @@ describe('userPreferences', () => {
         const result = saveUserProfilePreference(userId, pref);
 
         expect(result).toBe(true);
-        expect(localStorage.getItem(`userProfilePreference_${userId}`)).toBe(
+        expect(localStorage.getItem(`userProfilePreference:${userId}`)).toBe(
           pref
         );
       }
@@ -95,14 +95,14 @@ describe('userPreferences', () => {
 
     it('overwrites an existing preference', () => {
       saveUserProfilePreference(validUserId, USER_PROFILES.DP);
-      expect(localStorage.getItem(`userProfilePreference_${validUserId}`)).toBe(
+      expect(localStorage.getItem(`userProfilePreference:${validUserId}`)).toBe(
         USER_PROFILES.DP
       );
 
       const result = saveUserProfilePreference(validUserId, USER_PROFILES.TM);
 
       expect(result).toBe(true);
-      expect(localStorage.getItem(`userProfilePreference_${validUserId}`)).toBe(
+      expect(localStorage.getItem(`userProfilePreference:${validUserId}`)).toBe(
         USER_PROFILES.TM
       );
     });
@@ -113,7 +113,7 @@ describe('userPreferences', () => {
 
         expect(result).toBe(false);
         expect(console.error).toHaveBeenCalled();
-        expect(localStorage.getItem('userProfilePreference_')).toBeNull();
+        expect(localStorage.getItem('userProfilePreference:')).toBeNull();
       });
 
       it('returns false if mappedExternalUserId is null', () => {
@@ -155,7 +155,7 @@ describe('userPreferences', () => {
         expect(result).toBe(false);
         expect(console.error).toHaveBeenCalled();
         expect(
-          localStorage.getItem(`userProfilePreference_${validUserId}`)
+          localStorage.getItem(`userProfilePreference:${validUserId}`)
         ).toBeNull();
       });
 
@@ -188,7 +188,7 @@ describe('userPreferences', () => {
         expect(result).toBe(false);
         expect(console.error).toHaveBeenCalled();
         expect(
-          localStorage.getItem(`userProfilePreference_${validUserId}`)
+          localStorage.getItem(`userProfilePreference:${validUserId}`)
         ).toBeNull();
       });
     });
@@ -227,7 +227,7 @@ describe('userPreferences', () => {
 
     it('retrieves a saved preference correctly', () => {
       const preference = USER_PROFILES.DP;
-      localStorage.setItem(`userProfilePreference_${validUserId}`, preference);
+      localStorage.setItem(`userProfilePreference:${validUserId}`, preference);
 
       const result = getUserProfilePreference(validUserId);
 
@@ -244,7 +244,7 @@ describe('userPreferences', () => {
       for (let index = 0; index < preferences.length; index += 1) {
         const pref = preferences[index];
         const userId = `user-${index}`;
-        localStorage.setItem(`userProfilePreference_${userId}`, pref);
+        localStorage.setItem(`userProfilePreference:${userId}`, pref);
 
         const result = getUserProfilePreference(userId);
         expect(result).toBe(pref);
@@ -260,7 +260,7 @@ describe('userPreferences', () => {
     it('removes and returns null if saved value is invalid', () => {
       const invalidValue = 'invalidPreference';
       localStorage.setItem(
-        `userProfilePreference_${validUserId}`,
+        `userProfilePreference:${validUserId}`,
         invalidValue
       );
 
@@ -269,7 +269,7 @@ describe('userPreferences', () => {
       expect(result).toBeNull();
       expect(console.warn).toHaveBeenCalled();
       expect(
-        localStorage.getItem(`userProfilePreference_${validUserId}`)
+        localStorage.getItem(`userProfilePreference:${validUserId}`)
       ).toBeNull();
     });
 
@@ -325,10 +325,10 @@ describe('userPreferences', () => {
 
     it('removes an existing preference correctly', () => {
       localStorage.setItem(
-        `userProfilePreference_${validUserId}`,
+        `userProfilePreference:${validUserId}`,
         validPreference
       );
-      expect(localStorage.getItem(`userProfilePreference_${validUserId}`)).toBe(
+      expect(localStorage.getItem(`userProfilePreference:${validUserId}`)).toBe(
         validPreference
       );
 
@@ -336,7 +336,7 @@ describe('userPreferences', () => {
 
       expect(result).toBe(true);
       expect(
-        localStorage.getItem(`userProfilePreference_${validUserId}`)
+        localStorage.getItem(`userProfilePreference:${validUserId}`)
       ).toBeNull();
     });
 
@@ -345,7 +345,7 @@ describe('userPreferences', () => {
 
       expect(result).toBe(true);
       expect(
-        localStorage.getItem(`userProfilePreference_${validUserId}`)
+        localStorage.getItem(`userProfilePreference:${validUserId}`)
       ).toBeNull();
     });
 
