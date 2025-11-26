@@ -8,7 +8,7 @@ import {
   ManageDebtPositionDTO,
   DebtPositionStatus,
   DebtPositionOrigin,
-  PaymentOptionTypeEnum
+  PaymentOptionType
 } from '../../generated/data-contracts';
 import {
   Step1Data,
@@ -110,7 +110,7 @@ describe('useStep3ApiOperations', () => {
       {
         paymentOptionId: 1,
         totalAmountCents: 10000,
-        paymentOptionType: PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+        paymentOptionType: PaymentOptionType.SINGLE_INSTALLMENT,
         installments: []
       }
     ]
@@ -377,7 +377,7 @@ describe('useStep3ApiOperations', () => {
           paymentOptions: expect.arrayContaining([
             expect.objectContaining({
               totalAmountCents: 10000,
-              paymentOptionType: PaymentOptionTypeEnum.SINGLE_INSTALLMENT
+              paymentOptionType: PaymentOptionType.SINGLE_INSTALLMENT
             })
           ])
         }),
@@ -463,7 +463,7 @@ describe('useStep3ApiOperations', () => {
           status: DebtPositionStatus.DRAFT,
           paymentOptions: expect.arrayContaining([
             expect.objectContaining({
-              paymentOptionType: PaymentOptionTypeEnum.INSTALLMENTS,
+              paymentOptionType: PaymentOptionType.INSTALLMENTS,
               description:
                 'debtPositionCreateWizard.step3.paymentOption.installments'
             })
