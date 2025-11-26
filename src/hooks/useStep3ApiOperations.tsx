@@ -8,7 +8,7 @@ import {
   ManageDebtPositionDTO,
   DebtPositionStatus,
   DebtPositionOrigin,
-  PaymentOptionTypeEnum
+  PaymentOptionType
 } from '../../generated/data-contracts';
 import { PageRoutes } from '../routes';
 import {
@@ -193,8 +193,8 @@ export const useStep3ApiOperations = (): UseStep3ApiOperationsResult => {
             ? t('debtPositionCreateWizard.step3.paymentOption.installments')
             : t('debtPositionCreateWizard.step3.paymentOption.single'),
           paymentOptionType: isInstallment
-            ? PaymentOptionTypeEnum.INSTALLMENTS
-            : PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+            ? PaymentOptionType.INSTALLMENTS
+            : PaymentOptionType.SINGLE_INSTALLMENT,
           paymentOptionIndex: DEFAULT_VALUES.PAYMENT_OPTION_INDEX,
           installments: isInstallment
             ? formattedData.installments?.map((installment) =>
