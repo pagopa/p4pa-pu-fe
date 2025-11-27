@@ -761,6 +761,8 @@
       "file": "File",
       "imported": "File importato",
       "importedResult": "Esito dell'importazione",
+      "importedIuv": "Esportazione IUV caricati",
+      "importedNotice": "Esportazione ZIP file con avvisi PDF",
       "notvalid": "Il file non è valido",
       "remove": "Rimuovi file",
       "size": "Dimensione File",

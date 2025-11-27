@@ -38,6 +38,14 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFileError: vi.fn(() => ({
     mutate: vi.fn(),
     mutateAsync: vi.fn()
+  })),
+  getIngestionFlowFileIuv: vi.fn(() => ({
+    mutate: vi.fn(),
+    mutateAsync: vi.fn()
+  })),
+  getIngestionFlowFileNotice: vi.fn(() => ({
+    mutate: vi.fn(),
+    mutateAsync: vi.fn()
   }))
 }));
 
