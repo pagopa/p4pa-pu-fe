@@ -12,6 +12,7 @@ import TitleComponent from '../TitleComponent/TitleComponent';
 import { StatusBar } from '../StatusBar/StatusBar';
 import { PageRoutes } from '../../routes';
 import { OpenInNew } from '@mui/icons-material';
+import { buildTelematicReceiptDetailPath } from '../../utils/receiptNavigation';
 
 export const ClassificationDetails = () => {
   const store = useStore();
@@ -300,11 +301,12 @@ export const ClassificationDetails = () => {
                       icon: <OpenInNew />,
                       iconPosition: 'right',
                       onLinkClick: () => {
-                        if (data?.receiptPaymentReceiptId) {
+                        if (data?.receiptPaymentRequestId && data?.iud) {
                           navigate(
-                            generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-                              receiptId: data?.receiptPaymentRequestId
-                            })
+                            buildTelematicReceiptDetailPath(
+                              data.receiptPaymentRequestId,
+                              data.iud
+                            )
                           );
                         }
                       }

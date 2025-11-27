@@ -60,7 +60,8 @@ describe('PaymentsTable', () => {
     amount: 100.5,
     paymentDateTime: '2023-01-01T10:30:00Z',
     receiptCreationDate: '2023-01-02T15:45:00Z',
-    organizationId: 123
+    organizationId: 123,
+    receiptPaymentRequestId: '456'
   };
 
   const mockData: PagedPaidInstallmentsDTO = {

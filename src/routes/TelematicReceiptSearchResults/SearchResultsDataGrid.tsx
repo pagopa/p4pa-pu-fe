@@ -5,25 +5,22 @@ import {
 } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { FileDownload, ReadMore } from '@mui/icons-material';
-import { generatePath, useNavigate } from 'react-router';
-import { PageRoutes } from '../../routes';
+import { useNavigate } from 'react-router';
 import { moneyFormat } from '../../utils/formatters';
-import { PagedReceiptView } from '../../../generated/data-contracts';
+import {
+  PagedReceiptView,
+  ReceiptView
+} from '../../../generated/data-contracts';
 import { getReceiptPdf } from '../../api/receiptPdf';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
+import { buildTelematicReceiptDetailPath } from '../../utils/receiptNavigation';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import ActionMenu from '../../components/ActionMenu/ActionMenu';
 import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
 
-type SearchResultDataRow = {
-  id: number;
-  iuv: string;
-  amount: string;
-  dueType: string;
-  paymentDate: string;
-} & GridValidRowModel;
+type SearchResultDataRow = ReceiptView & GridValidRowModel;
 
 export type DataGridProps = {
   data: PagedReceiptView;
@@ -88,17 +85,23 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
             {
               icon: <ReadMore fontSize="small" />,
               label: t('commons.detail'),
-              action: () =>
-                navigate(
-                  generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-                    receiptId: row.receiptId
-                  })
-                )
+              action: () => {
+                const { receiptId, iud } = row;
+                if (receiptId === undefined) {
+                  return;
+                }
+                navigate(buildTelematicReceiptDetailPath(receiptId, iud));
+              }
             },
             {
               icon: <FileDownload fontSize="small" />,
               label: t('commons.files.download'),
-              action: () => handleDownloadReceiptPdf(row.receiptId)
+              action: () => {
+                if (row.receiptId === undefined) {
+                  return;
+                }
+                handleDownloadReceiptPdf(row.receiptId);
+              }
             }
           ]}
         />

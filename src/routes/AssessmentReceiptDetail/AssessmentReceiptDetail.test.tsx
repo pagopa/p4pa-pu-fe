@@ -8,12 +8,14 @@ import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/asse
 import * as AppStateStore from '../../store/AppStateStore';
 
 const mockNavigate = vi.fn();
+const mockUseSearchParams = vi.fn();
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useNavigate: () => mockNavigate,
   useParams: vi.fn(),
   useLocation: vi.fn(),
+  useSearchParams: () => mockUseSearchParams(),
   generatePath: (path: string, params: any) => {
     return path
       .replace(':assessmentId', params.assessmentId)
@@ -67,6 +69,7 @@ describe('AssessmentReceiptDetail Component', () => {
   const mockUseLocation = vi.mocked(useLocation);
   const mockUseReceiptDetail = vi.mocked(useReceiptDetail);
   const mockGetAssessmentDetail = vi.mocked(getAssessmentDetail);
+  const mockIud = 'IUD-999';
 
   const mockPaymentData = [
     { label: 'commons.paymentdate', value: '15/01/2025' }
@@ -81,6 +84,11 @@ describe('AssessmentReceiptDetail Component', () => {
       receiptId: String(mockReceiptId),
       assessmentId: String(mockAssessmentId)
     });
+
+    mockUseSearchParams.mockReturnValue([
+      new URLSearchParams(`iud=${mockIud}`),
+      vi.fn()
+    ]);
 
     mockUseLocation.mockReturnValue({
       state: null,
@@ -141,8 +149,17 @@ describe('AssessmentReceiptDetail Component', () => {
 
     expect(mockUseReceiptDetail).toHaveBeenCalledWith(
       mockOrganizationId,
-      mockReceiptId
+      mockReceiptId,
+      { iud: mockIud }
     );
+  });
+
+  it('navigates to error page when iud is missing', () => {
+    mockUseSearchParams.mockReturnValue([new URLSearchParams(), vi.fn()]);
+
+    render(<AssessmentReceiptDetail />);
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
   });
 
   it('initializes getAssessmentDetail with correct parameters', () => {

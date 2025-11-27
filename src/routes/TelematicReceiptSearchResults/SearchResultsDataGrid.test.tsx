@@ -7,13 +7,18 @@ import { STATE } from '../../store/types';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
 
-const { mockNavigate, mockMutateAsync, mockGeneratePath } = vi.hoisted(() => ({
-  mockNavigate: vi.fn(),
-  mockMutateAsync: vi.fn(),
-  mockGeneratePath: vi.fn(
-    (_, params) => `/telematic-receipts/${params?.receiptId}`
-  )
-}));
+const { mockNavigate, mockMutateAsync, mockBuildTelematicReceiptDetailPath } =
+  vi.hoisted(() => ({
+    mockNavigate: vi.fn(),
+    mockMutateAsync: vi.fn(),
+    mockBuildTelematicReceiptDetailPath: vi.fn(
+      (receiptId: number | string, iud?: string) => {
+        const basePath = `/test-deploy-path/flows/telematic-receipt/${receiptId}`;
+        const queryString = iud ? `?iud=${iud}` : '';
+        return `${basePath}${queryString}`;
+      }
+    )
+  }));
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (key: string) => key })
@@ -21,8 +26,11 @@ vi.mock('react-i18next', () => ({
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
-  useNavigate: () => mockNavigate,
-  generatePath: mockGeneratePath
+  useNavigate: () => mockNavigate
+}));
+
+vi.mock('../../utils/receiptNavigation', () => ({
+  buildTelematicReceiptDetailPath: mockBuildTelematicReceiptDetailPath
 }));
 
 vi.mock('../../store/GlobalStore', () => ({
@@ -142,7 +150,7 @@ const mockData = {
 describe('SearchResultsDataGrid', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockGeneratePath.mockClear();
+    mockBuildTelematicReceiptDetailPath.mockClear();
     mockMutateAsync.mockReset();
     vi.mocked(downloadBlob).mockClear();
     vi.mocked(utils.notify.emit).mockClear();
@@ -175,11 +183,32 @@ describe('SearchResultsDataGrid', () => {
     const detailButtons = screen.getAllByTestId('action-commons.detail');
     fireEvent.click(detailButtons[0]);
 
-    expect(mockGeneratePath).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({ receiptId: 10 })
+    expect(mockBuildTelematicReceiptDetailPath).toHaveBeenCalledWith(
+      10,
+      'IUD-001'
     );
-    expect(mockNavigate).toHaveBeenCalledWith('/telematic-receipts/10');
+    expect(mockNavigate).toHaveBeenCalledWith(
+      '/test-deploy-path/flows/telematic-receipt/10?iud=IUD-001'
+    );
+  });
+
+  it('does not navigate when receiptId is missing', () => {
+    const invalidData = {
+      ...mockData,
+      content: [
+        {
+          ...mockData.content[0],
+          receiptId: undefined
+        }
+      ]
+    } as unknown as PagedReceiptView;
+
+    render(<SearchResultsDataGrid data={invalidData} />);
+
+    const detailButtons = screen.getAllByTestId('action-commons.detail');
+    fireEvent.click(detailButtons[0]);
+
+    expect(mockNavigate).not.toHaveBeenCalled();
   });
 
   it('downloads the receipt PDF when the action succeeds', async () => {
