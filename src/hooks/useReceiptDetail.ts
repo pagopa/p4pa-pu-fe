@@ -14,13 +14,15 @@ type UseReceiptDetailReturn = {
 
 export const useReceiptDetail = (
   organizationId: number,
-  receiptId: number
+  receiptId: number,
+  options?: { iud?: string }
 ): UseReceiptDetailReturn => {
   const { t } = useTranslation();
 
   const { data, isLoading, isError } = getReceiptDetail(
     organizationId,
-    receiptId
+    receiptId,
+    options?.iud ? { iud: options.iud } : undefined
   );
 
   if (isError) {

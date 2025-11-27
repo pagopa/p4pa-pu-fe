@@ -9,11 +9,13 @@ import { downloadBlob } from '../../utils/download';
 import notify from '../../utils/notify';
 
 const mockNavigate = vi.fn();
+const mockUseSearchParams = vi.fn();
 
 vi.mock('react-router', async (importOriginal) => ({
   ...(await importOriginal()),
   useNavigate: () => mockNavigate,
-  useParams: vi.fn()
+  useParams: vi.fn(),
+  useSearchParams: () => mockUseSearchParams()
 }));
 
 vi.mock('../../hooks/useReceiptDetail', () => ({
@@ -65,6 +67,7 @@ describe('TelematicReceiptDetail Component', () => {
   const mockReceiptId = 456;
   const mockUseParams = vi.mocked(useParams);
   const mockUseReceiptDetail = vi.mocked(useReceiptDetail);
+  const mockIud = 'IUD-123456';
 
   const mockPaymentData = [
     { label: 'commons.paymentdate', value: '15/01/2025' }
@@ -78,6 +81,10 @@ describe('TelematicReceiptDetail Component', () => {
     mockUseParams.mockReturnValue({
       receiptId: String(mockReceiptId)
     });
+    mockUseSearchParams.mockReturnValue([
+      new URLSearchParams(`iud=${mockIud}`),
+      vi.fn()
+    ]);
 
     mockUseReceiptDetail.mockReturnValue({
       paymentData: mockPaymentData,
@@ -107,6 +114,14 @@ describe('TelematicReceiptDetail Component', () => {
     expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
   });
 
+  it('navigates to error page when iud is missing', () => {
+    mockUseSearchParams.mockReturnValue([new URLSearchParams(), vi.fn()]);
+
+    render(<TelematicReceiptDetail />);
+
+    expect(mockNavigate).toHaveBeenCalledWith('RESPONSES_ERROR');
+  });
+
   it('calls useReceiptDetail with correct parameters', () => {
     vi.spyOn(receiptPdf, 'getReceiptPdf').mockImplementation(
       () =>
@@ -119,7 +134,8 @@ describe('TelematicReceiptDetail Component', () => {
 
     expect(mockUseReceiptDetail).toHaveBeenCalledWith(
       mockOrganizationId,
-      mockReceiptId
+      mockReceiptId,
+      { iud: mockIud }
     );
   });
 

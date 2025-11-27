@@ -2,15 +2,14 @@ import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
-import { Link, generatePath } from 'react-router';
-
+import { Link } from 'react-router';
 import CustomDataGrid from '../../../../components/DataGrid/CustomDataGrid';
-import { PageRoutes } from '../../../../routes';
 import { moneyFormat } from '../../../../utils/formatters';
 import {
   PagedPaymentsReportingRow,
   PaymentsReportingWithReceiptView
 } from '../../../../../generated/apiClient';
+import { buildTelematicReceiptDetailPath } from '../../../../utils/receiptNavigation';
 
 type ReportingDetailDataGridProps = {
   data?: PagedPaymentsReportingRow;
@@ -61,14 +60,16 @@ const ReportingDetailDataGrid = ({
       align: 'right',
       headerAlign: 'right',
       renderCell: (params) => {
-        if (!params.row?.receiptId) {
+        if (!params.row?.receiptId || !params.row?.iud) {
           return null;
         }
+        const detailPath = buildTelematicReceiptDetailPath(
+          params.row.receiptId,
+          params.row.iud
+        );
         return (
           <Link
-            to={generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-              receiptId: params.row.receiptId
-            })}
+            to={detailPath}
             aria-label={t('commons.routes.TELEMATIC_RECEIPT_DETAIL')}
           >
             <IconButton color="primary" size="small">
