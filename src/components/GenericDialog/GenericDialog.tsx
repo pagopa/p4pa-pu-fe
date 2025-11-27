@@ -19,6 +19,8 @@ export type GenericDialogProps = {
   onConfirm?: () => void;
   onClose?: () => void;
   'data-testid'?: string;
+  ariaDescribedby?: string;
+  ariaLabelledby?: string;
 };
 
 const GenericDialog = ({
@@ -29,6 +31,8 @@ const GenericDialog = ({
   cancelLabel,
   children,
   fullWidth = false,
+  ariaDescribedby,
+  ariaLabelledby,
   onConfirm,
   onClose,
   'data-testid': testId
@@ -39,8 +43,10 @@ const GenericDialog = ({
       onClose={onClose}
       fullWidth={fullWidth}
       data-testid={testId}
+      aria-describedby={ariaDescribedby}
+      aria-labelledby={ariaLabelledby || "generic-dialog-title"}
     >
-      <DialogTitle sx={{ px: 4, pt: 4 }}>{title}</DialogTitle>
+      <DialogTitle sx={{ px: 4, pt: 4 }} id="generic-dialog-title">{title}</DialogTitle>
       <DialogContent sx={{ px: 4 }}>
         {message && <DialogContentText>{message}</DialogContentText>}
         {children}
