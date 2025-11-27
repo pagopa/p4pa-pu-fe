@@ -4,7 +4,9 @@ import { useNavigate, generatePath, useSearchParams } from 'react-router';
 import {
   getIngestionFlowFiles,
   getIngestionFlowFile,
-  getIngestionFlowFileError
+  getIngestionFlowFileError,
+  getIngestionFlowFileIuv,
+  getIngestionFlowFileNotice
 } from '../../api/ingestionFlowFiles';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../routes';
@@ -43,6 +45,8 @@ vi.mock('../../api/ingestionFlowFiles', () => ({
   getIngestionFlowFiles: vi.fn().mockReturnValue({ data: { content: [] } }),
   getIngestionFlowFileError: vi.fn(),
   getIngestionFlowFile: vi.fn(),
+  getIngestionFlowFileIuv: vi.fn(),
+  getIngestionFlowFileNotice: vi.fn(),
   IngestionFlowFileType: {
     RECEIPT: 'RECEIPT',
     RECEIPT_PAGOPA: 'RECEIPT_PAGOPA',
@@ -220,7 +224,6 @@ vi.mock('../../hooks/useSearch', () => ({
         number: 0
       },
       isPending: false,
-      isLoading: false,
       error: null,
       isError: false,
       mutateAsync: mockMutateAsync
@@ -246,11 +249,31 @@ const getIngestionFlowFileErrorMock = {
   })
 };
 
+const getIngestionFlowFileIuvMock = {
+  mutateAsync: mockDownloadMutateAsync.mockResolvedValue({
+    data: new Blob(['iuv file content']),
+    fileName: 'iuv-file.csv'
+  })
+};
+
+const getIngestionFlowFileNoticeMock = {
+  mutateAsync: mockDownloadMutateAsync.mockResolvedValue({
+    data: new Blob(['notice file content']),
+    fileName: 'notice-file.zip'
+  })
+};
+
 (getIngestionFlowFile as Mock).mockImplementation(
   () => getIngestionFlowFileMock
 );
 (getIngestionFlowFileError as Mock).mockImplementation(
   () => getIngestionFlowFileErrorMock
+);
+(getIngestionFlowFileIuv as Mock).mockImplementation(
+  () => getIngestionFlowFileIuvMock
+);
+(getIngestionFlowFileNotice as Mock).mockImplementation(
+  () => getIngestionFlowFileNoticeMock
 );
 
 describe('ImportFlowOverview Component', () => {
