@@ -457,9 +457,7 @@ describe('Classifications Detail:', () => {
       fireEvent.click(earningsTab);
 
       expect(
-        screen.getByText(
-          'classifications.detail.sections.earnings.reportingIdIuf'
-        )
+        screen.getByText('reportingDetail.reportingIdOrIUF')
       ).toBeInTheDocument();
 
       expect(screen.getByText('IUF123')).toBeInTheDocument();

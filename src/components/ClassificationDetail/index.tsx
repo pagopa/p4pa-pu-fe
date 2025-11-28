@@ -197,7 +197,7 @@ export const ClassificationDetails = () => {
   const targetTranslationEarnings = 'classifications.detail.sections.earnings';
   const earningsData: Array<DetailData> = [
     {
-      label: t(`${targetTranslationEarnings}.reportingIdIuf`),
+      label: t('reportingDetail.reportingIdOrIUF'),
       value: data?.iuf
     },
     {
