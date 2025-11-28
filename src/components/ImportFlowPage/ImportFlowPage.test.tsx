@@ -180,6 +180,50 @@ describe('ImportFlow', () => {
       });
     });
 
+    it('handles 409 error by showing specific notification without navigating', async () => {
+      const mockError = {
+        response: {
+          status: 409
+        }
+      };
+
+      mockUploadMutate.mockImplementation((_file, options) => {
+        options.onError(mockError);
+      });
+
+      render(<ImportFlow />);
+
+      const file = new File(['content'], 'test1_2.zip', {
+        type: 'application/zip'
+      });
+      const dropZone = screen.getByTestId('drop-zone');
+
+      fireEvent.dragOver(dropZone);
+      fireEvent.drop(dropZone, {
+        dataTransfer: {
+          files: [file]
+        }
+      });
+
+      await vi.waitFor(() =>
+        expect(screen.getAllByText('test1_2.zip')).toBeDefined()
+      );
+
+      const successButton = screen.getByTestId('success-button');
+      fireEvent.click(successButton);
+
+      await waitFor(() => {
+        expect(mockNotifyEmit).toHaveBeenCalledWith(
+          'commons.files.alreadyExists',
+          'error'
+        );
+        expect(mockNavigate).not.toHaveBeenCalledWith(
+          PageRoutes.RESPONSES_ERROR,
+          expect.anything()
+        );
+      });
+    });
+
     it('handles network error by showing notification', async () => {
       const mockError = new Error('Network Error');
 

@@ -60,14 +60,7 @@ const ImportFlow = () => {
           ? error.response?.status
           : undefined;
 
-        if (statusCode && statusCode > 400 && statusCode < 500) {
-          navigate(PageRoutes.RESPONSES_ERROR, {
-            state: {
-              category: config.category,
-              statusCode
-            }
-          });
-        } else if (statusCode && statusCode === 400) {
+        if (statusCode === 400) {
           navigate(PageRoutes.RESPONSES_ERROR, {
             state: {
               category: config.category,
@@ -75,6 +68,15 @@ const ImportFlow = () => {
             }
           });
           utils.notify.emit(t('commons.files.missingVersion'));
+        } else if (statusCode === 409) {
+          utils.notify.emit(t('commons.files.alreadyExists'), 'error');
+        } else if (statusCode && statusCode > 400 && statusCode < 500) {
+          navigate(PageRoutes.RESPONSES_ERROR, {
+            state: {
+              category: config.category,
+              statusCode
+            }
+          });
         } else {
           utils.notify.emit(t('commons.importFlowErrorMessage'));
         }
