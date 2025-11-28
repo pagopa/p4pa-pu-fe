@@ -82,7 +82,6 @@ export const AssessmentsRegistrySearchResults = () => {
         container
         p={2}
         sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
-        aria-label="results-table"
       >
         <SearchResultsDataGrid data={assessments.query.data} />
       </Grid>
