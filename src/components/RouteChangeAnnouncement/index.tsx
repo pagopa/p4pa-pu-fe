@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
 
@@ -6,13 +6,24 @@ export const RouteChangeAnnouncement = () => {
   const location = useLocation();
   const { t } = useTranslation();
   const [message, setMessage] = useState('');
+  const isInitialMount = useRef(true);
 
   const updateMessage = () => {
     const page = document?.title.replace(/ - .+$/, ''); // Remove trailing app name
-    const newMessage = t('a11y.navigation.announcement', {
-      page
-    });
-    setMessage(newMessage);
+    const mainContent = document.getElementById('main-content');
+
+    // This IF is useful to set the focus only on route changes, not on the initial mount
+    if (isInitialMount.current) {
+      isInitialMount.current = false;
+    } else {
+      if (mainContent) {
+        mainContent.focus();
+      }
+      const newMessage = t('a11y.navigation.announcement', {
+        page
+      });
+      setMessage(newMessage);
+    }
   };
 
   useEffect(() => {
