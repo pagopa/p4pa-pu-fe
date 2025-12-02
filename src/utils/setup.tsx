@@ -80,6 +80,12 @@ const stateSetup = async () => {
     const brokersConfigPlain = await brokers.getBrokersConfigPlain();
     const userInfo = await user.getUserInfoPlain();
 
+    if (!userInfo.brokerId) {
+      console.error('User brokerId is missing');
+      throw new Error('User brokerId is missing');
+      window.location.replace(`${deployPath}/errorBlocking`);
+    }
+
     setUserInfo(userInfo);
     setConfigFe(brokersConfigPlain);
     setupOrganizations(orgs, organizationId, idToken);
