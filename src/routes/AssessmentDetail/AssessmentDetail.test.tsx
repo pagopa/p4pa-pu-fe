@@ -385,8 +385,7 @@ describe('AssessmentDetail', () => {
 
     renderAssessmentDetail();
 
-    const filterContainer =
-      screen.getByLabelText(/results-table/i).parentElement;
+    const filterContainer = screen.getByTestId('results-table').parentElement;
     expect(filterContainer).toBeInTheDocument();
   });
 

@@ -11,6 +11,7 @@ import { useCallback } from 'react';
 import CustomPagination from './CustomPagination';
 import utils from '../../utils';
 import { useHashParamsListener } from '../../hooks/useHashParamsListener';
+import { useTranslation } from 'react-i18next';
 
 const StyledDataGrid = styled(DataGrid)({
   border: 'none !important',
@@ -84,6 +85,8 @@ const CustomDataGrid = <T extends GridValidRowModel>({
   const pageSize = getSizeFromHash();
   const sortModel = getSortModelFromHash();
 
+  const { t } = useTranslation();
+
   // Write updated params into URL hash
   const updateHashParams = useCallback(
     (newPage: number, newSize: number, newSortModel: GridSortModel) => {
@@ -130,6 +133,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
       sortModel={sortModel}
       onSortModelChange={handleSortModelChange}
       hideFooterSelectedRowCount
+      aria-label={t('commons.tableResults')}
       slots={{
         pagination: () => (
           <CustomPagination

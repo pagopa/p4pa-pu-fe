@@ -154,7 +154,6 @@ const TelematicReceiptSearchResults = () => {
             bgcolor: theme.palette.grey[200],
             overflow: 'auto'
           }}
-          aria-label="results-table"
         >
           <SearchResultsDataGrid
             data={telematicReceipt.query.data as PagedReceiptView}
