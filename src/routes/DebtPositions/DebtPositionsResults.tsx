@@ -209,7 +209,6 @@ export const DebtPositionResults = () => {
           p={2}
           height="100%"
           sx={{ bgcolor: theme.palette.grey[200], overflow: 'auto' }}
-          aria-label="results-table"
         >
           <DataGrid
             data={
