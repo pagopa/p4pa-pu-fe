@@ -364,14 +364,15 @@ const Home = () => {
         fullWidth={true}
         onConfirm={userProfileConfirmChange}
         onClose={userProfileCancelChange}
+        ariaDescribedby="home-choose-widget-description"
       >
-        <Typography variant="body1" mb={2}>
+        <Typography variant="body1" mb={2} id="home-choose-widget-description">
           {t('home.chooseWidget.message')}
         </Typography>
         <Box my={{ xs: 1, sm: 2 }}>
           <FormControl>
             <RadioGroup
-              aria-label={t('home.chooseWidget.title')}
+              aria-label={t('home.chooseWidget.listDescription')}
               name="chooseprofile"
               defaultValue={defaultUserProfile}
               value={radioValue}
