@@ -771,7 +771,8 @@
       "downloadFailed": "Errore durante il download.",
       "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria",
       "missingDebtPositionId": "Manca l'ID della posizione debitoria",
-      "missingVersion": "Il nome del file deve essere versionato, contenere un Numero_Numero se previsto."
+      "missingVersion": "Il nome del file deve essere versionato, contenere un Numero_Numero se previsto.",
+      "alreadyExists": "Esiste già un file caricato con questo nome. Modifica il nome del file e riprova."
     },
     "filters": {
       "accountingDate": {
