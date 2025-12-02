@@ -247,7 +247,7 @@ export const ReportingDetail = () => {
             bgcolor: theme.palette.grey[200],
             overflow: 'auto'
           }}
-          aria-label="results-table"
+          data-testid="results-table"
         >
           <ReportingDetailDataGrid
             data={reportingRows.query.data}

@@ -477,7 +477,7 @@ export const AssessmentDetail = () => {
             bgcolor: theme.palette.grey[200],
             overflow: 'auto'
           }}
-          aria-label="results-table"
+          data-testid="results-table"
         >
           <AssessmentDetailDataGrid data={data} isLoading={isPending} />
         </Grid>

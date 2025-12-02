@@ -1082,6 +1082,7 @@
     "successExportDescription": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
     "successImport": "Flusso caricato con successo",
     "summary": "riepilogo",
+    "tableResults": "Risultati della ricerca in forma tabellare",
     "taxCode": "Codice Tassonomico",
     "taxonomy": "Tassonomia",
     "to": "Al",
@@ -1851,6 +1852,7 @@
       "title": "Scegli la tua attività principale",
       "closingText": "Potrai modificare la tua scelta in qualsiasi momento.",
       "message": "Scegli un profilo che rispecchi le tue attività quotidiane per accedere a contenuti e funzioni su misura per te.",
+      "listDescription": "Lista dei profili disponibili",
       "profiles": {
         "debtpositionsManager": {
           "title": "Gestore delle Posizioni Debitorie",
