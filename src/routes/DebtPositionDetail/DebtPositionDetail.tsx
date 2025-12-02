@@ -455,7 +455,7 @@ const DebtPositionDetail = () => {
     };
   };
 
-  const priorityType = [
+  const priorityType: Array<PaymentOptionType> = [
     PaymentOptionType.SINGLE_INSTALLMENT,
     PaymentOptionType.DOWN_PAYMENT,
     PaymentOptionType.INSTALLMENTS
