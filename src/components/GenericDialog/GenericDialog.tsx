@@ -44,9 +44,11 @@ const GenericDialog = ({
       fullWidth={fullWidth}
       data-testid={testId}
       aria-describedby={ariaDescribedby}
-      aria-labelledby={ariaLabelledby || "generic-dialog-title"}
+      aria-labelledby={ariaLabelledby || 'generic-dialog-title'}
     >
-      <DialogTitle sx={{ px: 4, pt: 4 }} id="generic-dialog-title">{title}</DialogTitle>
+      <DialogTitle sx={{ px: 4, pt: 4 }} id="generic-dialog-title">
+        {title}
+      </DialogTitle>
       <DialogContent sx={{ px: 4 }}>
         {message && <DialogContentText>{message}</DialogContentText>}
         {children}

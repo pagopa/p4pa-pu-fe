@@ -7,18 +7,20 @@ import {
   TextField,
   Typography
 } from '@mui/material';
+import CallMergeIcon from '@mui/icons-material/CallMerge';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
+import { theme } from '@pagopa/mui-italia';
 import {
-  OrganizationEditStep2Data,
-  Step2FormValues
+  UnifiedFormData,
+  UnifiedFormValues
 } from '../../../../../../models/OrganizationEditTypes';
 import Appio from '../../../../../../assets/appio.svg';
 import Send from '../../../../../../assets/send.svg';
 
 type PagoPAIntegrationSectionProps = {
-  control: Control<Step2FormValues>;
-  errors: FieldErrors<Step2FormValues>;
-  data: OrganizationEditStep2Data;
+  control: Control<UnifiedFormValues>;
+  errors: FieldErrors<UnifiedFormValues>;
+  data: UnifiedFormData;
   t: (key: string) => string;
   watchFlagNotifyIo: boolean;
 };
@@ -31,15 +33,21 @@ export const PagoPAIntegrationSection = ({
   watchFlagNotifyIo
 }: PagoPAIntegrationSectionProps) => {
   return (
-    <>
-      <Typography
-        variant="body2"
-        fontWeight={800}
-        color="textPrimary"
-        sx={{ mb: 3, mt: 3 }}
-      >
-        {t('organizationEditWizard.step2.pagoPaIntegration.title')}
-      </Typography>
+    <Box
+      border={1}
+      borderRadius={2}
+      borderColor={theme.palette.divider}
+      bgcolor={theme.palette.background.paper}
+      padding={3}
+      sx={{ mb: 3, mt: 3 }}
+    >
+      {/* Section Title with Icon */}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+        <CallMergeIcon sx={{ color: 'text.primary' }} fontSize="small" />
+        <Typography variant="body2" fontWeight={800} color="textPrimary">
+          {t('organizationEditWizard.step2.pagoPaIntegration.title')}
+        </Typography>
+      </Box>
 
       <Grid container spacing={3}>
         {/* IO Section */}
@@ -200,6 +208,6 @@ export const PagoPAIntegrationSection = ({
           </Box>
         </Grid>
       </Grid>
-    </>
+    </Box>
   );
 };

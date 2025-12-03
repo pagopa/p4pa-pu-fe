@@ -3,47 +3,21 @@ import { useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import WizardStepButtons from '../../../../../components/Wizard/WizardStepButtons';
 import {
-  OrganizationEditStep2Data,
-  Step2FormValues,
+  UnifiedFormData,
+  UnifiedFormValues,
   FieldData
 } from '../../../../../models/OrganizationEditTypes';
-import { isValidIBAN } from '../../../../../utils/fieldValidation';
 import { theme } from '@pagopa/mui-italia';
 import { AccountingInfoSection } from './sections/AccountingInfoSection';
 import { PaymentsInfoSection } from './sections/PaymentsInfoSection';
 import { PagoPAIntegrationSection } from './sections/PagoPAIntegrationSection';
+import { createIBANValidationRules } from '../../../../../utils/validationRules';
 
 type Props = {
-  data: OrganizationEditStep2Data;
-  setData: (data: OrganizationEditStep2Data) => void;
-  onNext: (data?: OrganizationEditStep2Data, enableOrg?: boolean) => void;
+  data: UnifiedFormData;
+  setData: (data: UnifiedFormData) => void;
+  onNext: (data?: UnifiedFormData, enableOrg?: boolean) => void;
   onBack: () => void;
-};
-
-// Validation rules factory for IBAN fields
-const createIBANValidationRules = (
-  t: (key: string) => string,
-  isRequired = false
-): Record<string, unknown> => {
-  const rules: Record<string, unknown> = {
-    validate: {
-      validIBAN: (value: string) => {
-        if (!value) return true;
-        return (
-          isValidIBAN(value) || t('organizationEditWizard.step2.iban.invalid')
-        );
-      }
-    }
-  };
-
-  if (isRequired) {
-    rules.required = {
-      value: true,
-      message: t('organizationEditWizard.step2.iban.required')
-    };
-  }
-
-  return rules;
 };
 
 // Utility function to create FieldData from form value and original field
@@ -57,12 +31,18 @@ const createFieldData = function <T>(
   };
 };
 
-// Utility function to convert form values to Step2Data format
 const formValuesToFieldData = (
-  values: Step2FormValues,
-  originalData: OrganizationEditStep2Data
-): OrganizationEditStep2Data => {
+  values: UnifiedFormValues,
+  originalData: UnifiedFormData
+): UnifiedFormData => {
   return {
+    // Step 1 fields - preserve original values
+    orgName: originalData.orgName,
+    orgFiscalCode: originalData.orgFiscalCode,
+    orgEmail: originalData.orgEmail,
+    orgLogo: originalData.orgLogo,
+    logoRemoved: originalData.logoRemoved,
+    // Step 2 Accounting Information
     iban: createFieldData(values.iban, originalData.iban),
     ibanPostal: createFieldData(values.ibanPostal, originalData.ibanPostal),
     cbill: createFieldData(values.cbill, originalData.cbill),
@@ -70,6 +50,7 @@ const formValuesToFieldData = (
       values.flagTreasury,
       originalData.flagTreasury
     ),
+    // Step 2 Payments Information
     segregationCode: createFieldData(
       values.segregationCode,
       originalData.segregationCode
@@ -94,13 +75,15 @@ const formValuesToFieldData = (
       values.flagPaymentNotification,
       originalData.flagPaymentNotification
     ),
+    // Step 2 PagoPA Products Integration
     flagNotifyIo: createFieldData(
       values.flagNotifyIo,
       originalData.flagNotifyIo
     ),
     ioApiKey: createFieldData(values.ioApiKey, originalData.ioApiKey),
     pdndEnabled: createFieldData(values.pdndEnabled, originalData.pdndEnabled),
-    sendApiKey: createFieldData(values.sendApiKey, originalData.sendApiKey)
+    sendApiKey: createFieldData(values.sendApiKey, originalData.sendApiKey),
+    organizationStatus: originalData.organizationStatus
   };
 };
 
@@ -108,14 +91,19 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
   const { t } = useTranslation();
 
   // Calculate initial values dynamically to sync with parent data changes
-  const getInitialValues = (): Step2FormValues => {
+  const getInitialValues = (): UnifiedFormValues => {
     return {
-      // Accounting Information
+      // Step 1 fields
+      orgName: data.orgName.value || '',
+      orgFiscalCode: data.orgFiscalCode.value || '',
+      orgEmail: data.orgEmail.value || '',
+      orgLogo: null, // Logo is handled separately
+      // Step 2 Accounting Information
       iban: data.iban.value || '',
       ibanPostal: data.ibanPostal.value || '',
       cbill: data.cbill.value || '',
       flagTreasury: data.flagTreasury.value,
-      // Payments Information
+      // Step 2 Payments Information
       segregationCode: data.segregationCode.value || '',
       generateNoticeApiKey: data.generateNoticeApiKey.value || '',
       additionalLanguage: data.additionalLanguage.value,
@@ -123,7 +111,7 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
       // Preserve null values for required radio groups
       flagNotifyOutcomePush: data.flagNotifyOutcomePush.value,
       flagPaymentNotification: data.flagPaymentNotification.value,
-      // PagoPA Products Integration
+      // Step 2 PagoPA Products Integration
       flagNotifyIo: data.flagNotifyIo.value,
       ioApiKey: data.ioApiKey.value || '',
       pdndEnabled: data.pdndEnabled.value,
@@ -136,7 +124,7 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
     control,
     formState: { errors },
     watch
-  } = useForm<Step2FormValues>({
+  } = useForm<UnifiedFormValues>({
     defaultValues: getInitialValues(),
     values: getInitialValues(), // This ensures form updates when data changes
     mode: 'onSubmit'
@@ -147,7 +135,7 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
   // Watch the flagNotifyIo switch to show/hide IO API Key field
   const watchFlagNotifyIo = watch('flagNotifyIo');
 
-  const onSubmit = (values: Step2FormValues, enableOrg?: boolean) => {
+  const onSubmit = (values: UnifiedFormValues, enableOrg?: boolean) => {
     const step2Data = formValuesToFieldData(values, data);
     setData(step2Data);
     onNext(step2Data, enableOrg);
