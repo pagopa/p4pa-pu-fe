@@ -59,7 +59,6 @@ vi.mock('../models/Step3Schema', () => ({
 
 vi.mock('../utils/paymentUtility', () => ({
   DEFAULT_VALUES: {
-    FLAG_IUV_VOLATILE: false,
     MULTI_DEBTOR: false,
     FLAG_PAGO_PA_PU_PAYMENT: true,
     PAYMENT_OPTION_INDEX: 0
