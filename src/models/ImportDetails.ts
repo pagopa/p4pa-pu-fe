@@ -8,6 +8,8 @@ type ImportFlowDetail = {
   requiredFieldDescription?: string;
   flowTypes: Array<IngestionFlowFileType>;
   checkVersion: boolean;
+  descriptionKey?: string;
+  boxDescriptionKey?: string;
 };
 
 type ImportFlowDetails = Record<string, ImportFlowDetail>;
@@ -19,7 +21,8 @@ export const importFlowConfig: ImportFlowDetails = {
     backRoute: 'TELEMATIC_RECEIPT_IMPORT_OVERVIEW',
     category: 'telematic-receipt-import',
     flowTypes: [IngestionFlowFileType.RECEIPT],
-    checkVersion: true
+    checkVersion: true,
+    descriptionKey: 'commons.flowImport.descriptionByCategory.telematic-receipt'
   },
   reporting: {
     title: 'commons.importNewFlow',
@@ -27,7 +30,8 @@ export const importFlowConfig: ImportFlowDetails = {
     backRoute: 'REPORTING_IMPORT_OVERVIEW',
     category: 'reporting-import',
     flowTypes: [IngestionFlowFileType.PAYMENTS_REPORTING],
-    checkVersion: false
+    checkVersion: false,
+    descriptionKey: 'commons.flowImport.descriptionByCategory.reporting'
   },
   treasury: {
     title: 'commons.importNewFlow',
@@ -41,7 +45,8 @@ export const importFlowConfig: ImportFlowDetails = {
       IngestionFlowFileType.TREASURY_OPI,
       IngestionFlowFileType.TREASURY_POSTE
     ],
-    checkVersion: true
+    checkVersion: true,
+    descriptionKey: 'commons.flowImport.descriptionByCategory.treasury'
   },
   'debt-positions': {
     title: 'commons.importNewFlow',
@@ -49,6 +54,7 @@ export const importFlowConfig: ImportFlowDetails = {
     backRoute: 'DEBT_POSITIONS',
     category: 'debt-positions',
     flowTypes: [IngestionFlowFileType.DP_INSTALLMENTS],
-    checkVersion: true
+    checkVersion: true,
+    boxDescriptionKey: 'commons.flowImport.boxDescription'
   }
 };
