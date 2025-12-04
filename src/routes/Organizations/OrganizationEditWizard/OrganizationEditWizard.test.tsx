@@ -1,3 +1,8 @@
+/**
+ * Tests for OrganizationEditWizard component
+ * Tests the unified form container that loads organization data and renders OrganizationEditForm
+ */
+
 import { beforeEach, describe, expect, it, vi, Mock } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { render, screen, waitFor } from '../../../__tests__/renderers';
@@ -11,6 +16,7 @@ import OrganizationEditWizard from './OrganizationEditWizard';
 import utils from '../../../utils';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import { OrganizationStatus } from '../../../../generated/data-contracts';
+import { UnifiedFormData } from '../../../models/OrganizationEditTypes';
 
 vi.mock('../../../api/organizations', () => ({
   getOrganizationDetail: vi.fn(),
@@ -47,50 +53,62 @@ vi.mock('../../../utils', () => ({
   }
 }));
 
-vi.mock('./components/Step/Step1EntityProfile', () => ({
-  default: vi.fn(({ onNext, onBack }) => (
-    <div data-testid="step1-entity-profile">
-      Step 1 Entity Profile
-      <button onClick={onNext}>Next Step 1</button>
-      <button onClick={onBack}>Back Step 1</button>
-    </div>
-  ))
+vi.mock('../../../utils/organizationFormTransformers', () => ({
+  transformApiDataToFormData: vi.fn((data) => {
+    return {
+      orgName: { value: data.orgName || '', readonly: true },
+      orgFiscalCode: { value: data.orgFiscalCode || '', readonly: true },
+      orgEmail: { value: data.orgEmail || '', readonly: false },
+      orgLogo: { value: data.orgLogo || null, readonly: false },
+      logoRemoved: false,
+      iban: { value: data.iban || '', readonly: false },
+      ibanPostal: { value: data.postalIban || '', readonly: false },
+      cbill: { value: data.cbillInterBankCode || '', readonly: false },
+      flagTreasury: { value: data.flagTreasury ?? false, readonly: false },
+      segregationCode: { value: data.segregationCode || '', readonly: false },
+      generateNoticeApiKey: {
+        value: data.generateNoticeApiKey || '',
+        readonly: false
+      },
+      additionalLanguage: {
+        value: !!data.additionalLanguage,
+        readonly: false
+      },
+      selectedLanguage: {
+        value: data.additionalLanguage?.toLowerCase() || '',
+        readonly: false
+      },
+      flagNotifyOutcomePush: {
+        value: data.flagNotifyOutcomePush ?? null,
+        readonly: false
+      },
+      flagPaymentNotification: {
+        value: data.flagPaymentNotification ?? null,
+        readonly: false
+      },
+      flagNotifyIo: { value: data.flagNotifyIo ?? false, readonly: false },
+      ioApiKey: { value: data.ioApiKey || '', readonly: false },
+      pdndEnabled: { value: data.pdndEnabled ?? false, readonly: false },
+      sendApiKey: { value: data.sendApiKey || '', readonly: false },
+      organizationStatus: data.status
+    } as UnifiedFormData;
+  })
 }));
 
-vi.mock('./components/Step/Step2EntityConfiguration', () => ({
-  default: vi.fn(({ onNext, onBack, data }) => (
-    <div data-testid="step2-entity-configuration">
-      Step 2 Entity Configuration
-      <button onClick={() => onNext(data)}>Save</button>
-      <button onClick={onBack}>Back Step 2</button>
-    </div>
-  ))
-}));
-
-vi.mock('../../../components/Stepper', () => ({
-  StepperContainer: ({
-    title,
-    description,
-    steps,
-    activeStep
+vi.mock('./components/OrganizationEditForm', () => ({
+  OrganizationEditForm: ({
+    formData,
+    organizationId
   }: {
-    title: string;
-    description: string;
-    steps: Array<{ label: string; content: React.ReactNode }>;
-    activeStep: number;
+    formData: UnifiedFormData;
+    organizationId: number;
+    originalData: unknown;
   }) => (
-    <div>
-      <div data-testid="stepper-title">{title}</div>
-      <div data-testid="stepper-description">{description}</div>
-      <div data-testid="stepper-container">
-        {steps.map((step, index) => (
-          <div key={index} data-testid={`step-label-${index}`}>
-            {step.label}
-          </div>
-        ))}
-      </div>
-      <div data-testid={`step-content-${activeStep}`}>
-        {steps[activeStep].content}
+    <div data-testid="organization-edit-form">
+      <div data-testid="form-organization-id">{organizationId}</div>
+      <div data-testid="form-organization-name">{formData.orgName.value}</div>
+      <div data-testid="form-organization-status">
+        {formData.organizationStatus}
       </div>
     </div>
   )
@@ -104,7 +122,6 @@ describe('OrganizationEditWizard', () => {
   const mockUseParams = useParams as Mock;
   const mockUseNavigate = useNavigate as Mock;
   const mockUseStore = useStore as Mock;
-  const mockMutateAsync = vi.fn();
 
   const organizationDetailMock = {
     organizationId: 33,
@@ -141,6 +158,12 @@ describe('OrganizationEditWizard', () => {
       errorLoadingData: 'Errore nel caricamento dei dati',
       successMessage: 'Ente aggiornato con successo',
       updateError: "Errore durante l'aggiornamento",
+      titleCreate: 'Configura ente gestito',
+      titleEdit: 'Modifica ente gestito',
+      descriptionCreate:
+        "Inserisci le informazioni e le configurazioni relative all'ente intermediato.",
+      descriptionEdit:
+        "Aggiorna le informazioni e le configurazioni relative all'ente intermediato.",
       step1: {
         label: 'Anagrafica Ente',
         title: 'Anagrafica Ente'
@@ -152,7 +175,8 @@ describe('OrganizationEditWizard', () => {
     },
     commons: {
       back: 'Indietro',
-      continue: 'Continua'
+      continue: 'Continua',
+      requiredFieldDescription: '* Indica un campo obbligatorio'
     }
   };
 
@@ -186,34 +210,51 @@ describe('OrganizationEditWizard', () => {
     });
 
     mockUpdateOrganization.mockReturnValue({
-      mutateAsync: mockMutateAsync
+      mutateAsync: vi.fn().mockResolvedValue({})
     });
 
     vi.mocked(utils.notify.emit).mockClear();
   });
 
   describe('Rendering and UI', () => {
-    it('should render wizard with stepper', () => {
+    it('should render OrganizationEditForm when data is loaded', async () => {
       render(<OrganizationEditWizard />);
 
-      expect(screen.getByText('Modifica Ente')).toBeInTheDocument();
-      expect(screen.getByTestId('step1-entity-profile')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('organization-edit-form')
+        ).toBeInTheDocument();
+      });
     });
 
-    it('should show step 1 initially', () => {
+    it('should pass correct organizationId to OrganizationEditForm', async () => {
       render(<OrganizationEditWizard />);
 
-      expect(screen.getByTestId('step1-entity-profile')).toBeInTheDocument();
-      expect(
-        screen.queryByTestId('step2-entity-configuration')
-      ).not.toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByTestId('form-organization-id')).toHaveTextContent(
+          '33'
+        );
+      });
     });
 
-    it('should render stepper with 2 steps', () => {
+    it('should pass transformed formData to OrganizationEditForm', async () => {
       render(<OrganizationEditWizard />);
 
-      expect(screen.getByText('Anagrafica Ente')).toBeInTheDocument();
-      expect(screen.getByText('Configurazione Ente')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(screen.getByTestId('form-organization-name')).toHaveTextContent(
+          'Ente P4PA intermediato 1'
+        );
+      });
+    });
+
+    it('should pass organization status to OrganizationEditForm', async () => {
+      render(<OrganizationEditWizard />);
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('form-organization-status')
+        ).toHaveTextContent('ACTIVE');
+      });
     });
   });
 
@@ -224,7 +265,7 @@ describe('OrganizationEditWizard', () => {
       expect(mockGetOrganizationDetail).toHaveBeenCalledWith(33);
     });
 
-    it('should handle loading state', () => {
+    it('should handle loading state - not render form while loading', () => {
       mockGetOrganizationDetail.mockReturnValue({
         data: undefined,
         isLoading: true,
@@ -235,7 +276,7 @@ describe('OrganizationEditWizard', () => {
       render(<OrganizationEditWizard />);
 
       expect(
-        screen.queryByTestId('step1-entity-profile')
+        screen.queryByTestId('organization-edit-form')
       ).not.toBeInTheDocument();
     });
 
@@ -261,153 +302,17 @@ describe('OrganizationEditWizard', () => {
       });
     });
 
-    it('should populate form data when organization detail loads', async () => {
+    it('should transform API data to form data when organization detail loads', async () => {
+      const { transformApiDataToFormData } = await import(
+        '../../../utils/organizationFormTransformers'
+      );
+
       render(<OrganizationEditWizard />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('step1-entity-profile')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('Navigation between steps', () => {
-    it('should navigate to step 2 when clicking next on step 1', async () => {
-      render(<OrganizationEditWizard />);
-
-      const nextButton = screen.getByText('Next Step 1');
-      nextButton.click();
-
-      await waitFor(() => {
-        expect(
-          screen.getByTestId('step2-entity-configuration')
-        ).toBeInTheDocument();
-      });
-    });
-
-    it('should navigate back to organizations detail when clicking back on step 1', async () => {
-      render(<OrganizationEditWizard />);
-
-      const backButton = screen.getByText('Back Step 1');
-      backButton.click();
-
-      await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalled();
-        expect(mockNavigate.mock.calls[0][0]).toContain('/organizations/33');
-      });
-    });
-
-    it('should navigate back to step 1 when clicking back on step 2', async () => {
-      render(<OrganizationEditWizard />);
-
-      const nextButton = screen.getByText('Next Step 1');
-      nextButton.click();
-
-      await waitFor(() => {
-        expect(
-          screen.getByTestId('step2-entity-configuration')
-        ).toBeInTheDocument();
-      });
-
-      const backButton = screen.getByText('Back Step 2');
-      backButton.click();
-
-      await waitFor(() => {
-        expect(screen.getByTestId('step1-entity-profile')).toBeInTheDocument();
-      });
-    });
-  });
-
-  describe('Form Submission', () => {
-    beforeEach(() => {
-      mockMutateAsync.mockResolvedValue({});
-    });
-
-    it('should call updateOrganization when submitting from step 2', async () => {
-      render(<OrganizationEditWizard />);
-
-      const nextButton = screen.getByText('Next Step 1');
-      nextButton.click();
-
-      await waitFor(() => {
-        expect(
-          screen.getByTestId('step2-entity-configuration')
-        ).toBeInTheDocument();
-      });
-
-      const saveButton = screen.getByText('Save');
-      saveButton.click();
-
-      await waitFor(() => {
-        expect(mockMutateAsync).toHaveBeenCalled();
-      });
-    });
-
-    it('should show success notification on successful update', async () => {
-      render(<OrganizationEditWizard />);
-
-      const nextButton = screen.getByText('Next Step 1');
-      nextButton.click();
-
-      await waitFor(() => {
-        expect(
-          screen.getByTestId('step2-entity-configuration')
-        ).toBeInTheDocument();
-      });
-
-      const saveButton = screen.getByText('Save');
-      saveButton.click();
-
-      await waitFor(() => {
-        expect(utils.notify.emit).toHaveBeenCalledWith(
-          'Ente aggiornato con successo',
-          'success'
+        expect(transformApiDataToFormData).toHaveBeenCalledWith(
+          organizationDetailMock
         );
-      });
-    });
-
-    it('should navigate to organization detail on successful update', async () => {
-      render(<OrganizationEditWizard />);
-
-      const nextButton = screen.getByText('Next Step 1');
-      nextButton.click();
-
-      await waitFor(() => {
-        expect(
-          screen.getByTestId('step2-entity-configuration')
-        ).toBeInTheDocument();
-      });
-
-      const saveButton = screen.getByText('Save');
-      saveButton.click();
-
-      await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalled();
-        expect(
-          mockNavigate.mock.calls[mockNavigate.mock.calls.length - 1][0]
-        ).toContain('/organizations/33');
-      });
-    });
-
-    it('should handle update error', async () => {
-      const errorMessage = 'Update failed';
-      mockMutateAsync.mockRejectedValue(new Error(errorMessage));
-
-      render(<OrganizationEditWizard />);
-
-      const nextButton = screen.getByText('Next Step 1');
-      nextButton.click();
-
-      await waitFor(() => {
-        expect(
-          screen.getByTestId('step2-entity-configuration')
-        ).toBeInTheDocument();
-      });
-
-      const saveButton = screen.getByText('Save');
-      saveButton.click();
-
-      await waitFor(() => {
-        expect(mockNavigate).toHaveBeenCalled();
       });
     });
   });
@@ -419,18 +324,30 @@ describe('OrganizationEditWizard', () => {
       expect(mockGetOrganizationDetail).toHaveBeenCalledWith(33);
     });
 
-    it('should handle missing organizationId', () => {
+    it('should handle missing organizationId in URL params', () => {
       mockUseParams.mockReturnValueOnce({ organizationId: undefined });
-      mockGetOrganizationDetail.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        isSuccess: false,
-        isError: false
+      mockUseStore.mockReturnValueOnce({
+        state: {
+          organizationId: 42
+        }
       });
 
       render(<OrganizationEditWizard />);
 
-      expect(mockGetOrganizationDetail).toHaveBeenCalled();
+      expect(mockGetOrganizationDetail).toHaveBeenCalledWith(42);
+    });
+
+    it('should prioritize URL params over store organizationId', () => {
+      mockUseParams.mockReturnValueOnce({ organizationId: '99' });
+      mockUseStore.mockReturnValueOnce({
+        state: {
+          organizationId: 42
+        }
+      });
+
+      render(<OrganizationEditWizard />);
+
+      expect(mockGetOrganizationDetail).toHaveBeenCalledWith(99);
     });
   });
 
@@ -441,26 +358,28 @@ describe('OrganizationEditWizard', () => {
       expect(() => unmount()).not.toThrow();
     });
 
-    it('should maintain form state during re-renders', () => {
+    it('should not re-render form if data is already ready', async () => {
       const { rerender } = render(<OrganizationEditWizard />);
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('organization-edit-form')
+        ).toBeInTheDocument();
+      });
+
+      const initialRenderCount = screen.getAllByTestId(
+        'organization-edit-form'
+      ).length;
 
       rerender(<OrganizationEditWizard />);
 
-      expect(screen.getByTestId('step1-entity-profile')).toBeInTheDocument();
+      expect(screen.getAllByTestId('organization-edit-form')).toHaveLength(
+        initialRenderCount
+      );
     });
   });
 
   describe('Data Transformation', () => {
-    it('should correctly transform API data to form data', async () => {
-      render(<OrganizationEditWizard />);
-
-      await waitFor(() => {
-        expect(screen.getByTestId('step1-entity-profile')).toBeInTheDocument();
-      });
-
-      expect(mockGetOrganizationDetail).toHaveBeenCalledWith(33);
-    });
-
     it('should handle null values in organization detail', async () => {
       const dataWithNulls = {
         ...organizationDetailMock,
@@ -478,7 +397,31 @@ describe('OrganizationEditWizard', () => {
       render(<OrganizationEditWizard />);
 
       await waitFor(() => {
-        expect(screen.getByTestId('step1-entity-profile')).toBeInTheDocument();
+        expect(
+          screen.getByTestId('organization-edit-form')
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('should handle DRAFT organization status', async () => {
+      const draftData = {
+        ...organizationDetailMock,
+        status: OrganizationStatus.DRAFT
+      };
+
+      mockGetOrganizationDetail.mockReturnValue({
+        data: draftData,
+        isLoading: false,
+        isSuccess: true,
+        isError: false
+      });
+
+      render(<OrganizationEditWizard />);
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('form-organization-status')
+        ).toHaveTextContent('DRAFT');
       });
     });
   });
@@ -492,33 +435,53 @@ describe('OrganizationEditWizard', () => {
       expect(mockGetOrganizationDetail).toHaveBeenCalledWith(123);
     });
 
-    it('should handle invalid organizationId format', () => {
+    it('should handle invalid organizationId format in URL', () => {
       mockUseParams.mockReturnValueOnce({ organizationId: 'invalid' });
-      mockGetOrganizationDetail.mockReturnValue({
-        data: undefined,
-        isLoading: false,
-        isSuccess: false,
-        isError: false
+      mockUseStore.mockReturnValueOnce({
+        state: {
+          organizationId: 42
+        }
       });
 
       render(<OrganizationEditWizard />);
 
-      expect(mockGetOrganizationDetail).toHaveBeenCalled();
+      expect(mockGetOrganizationDetail).toHaveBeenCalledWith(42);
     });
   });
 
-  describe('Stepper Configuration', () => {
-    it('should have correct step labels', () => {
+  describe('Error Handling', () => {
+    it('should navigate to organization detail page on error', async () => {
+      mockGetOrganizationDetail.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isSuccess: false,
+        isError: true
+      });
+
       render(<OrganizationEditWizard />);
 
-      expect(screen.getByText('Anagrafica Ente')).toBeInTheDocument();
-      expect(screen.getByText('Configurazione Ente')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(mockNavigate).toHaveBeenCalled();
+        expect(mockGeneratePath).toHaveBeenCalled();
+      });
     });
 
-    it('should start at step 0', () => {
+    it('should show error notification on loading error', async () => {
+      mockGetOrganizationDetail.mockReturnValue({
+        data: undefined,
+        isLoading: false,
+        isSuccess: false,
+        isError: true
+      });
+
       render(<OrganizationEditWizard />);
 
-      expect(screen.getByTestId('step1-entity-profile')).toBeInTheDocument();
+      await waitFor(() => {
+        expect(utils.notify.emit).toHaveBeenCalledWith(
+          'Errore nel caricamento dei dati',
+          'error'
+        );
+      });
     });
   });
 });

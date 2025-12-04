@@ -3,8 +3,8 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useForm } from 'react-hook-form';
 import { AccountingInfoSection } from './AccountingInfoSection';
 import {
-  OrganizationEditStep2Data,
-  Step2FormValues
+  UnifiedFormData,
+  UnifiedFormValues
 } from '../../../../../../models/OrganizationEditTypes';
 import { i18nTestSetup } from '../../../../../../__tests__/i18nTestSetup';
 
@@ -21,8 +21,8 @@ const TestWrapper = ({
   createIBANValidationRules,
   t
 }: {
-  data: OrganizationEditStep2Data;
-  defaultValues: Partial<Step2FormValues>;
+  data: UnifiedFormData;
+  defaultValues: Partial<UnifiedFormValues>;
   createIBANValidationRules: (
     t: (key: string) => string,
     isRequired?: boolean
@@ -32,8 +32,8 @@ const TestWrapper = ({
   const {
     control,
     formState: { errors }
-  } = useForm<Step2FormValues>({
-    defaultValues: defaultValues as Step2FormValues,
+  } = useForm<UnifiedFormValues>({
+    defaultValues: defaultValues as UnifiedFormValues,
     mode: 'onSubmit'
   });
 
@@ -74,17 +74,26 @@ describe('AccountingInfoSection', () => {
     }
   );
 
-  const mockData: OrganizationEditStep2Data = {
+  const mockData: UnifiedFormData = {
+    // Step 1 fields
+    orgName: { value: '', readonly: false },
+    orgFiscalCode: { value: '', readonly: false },
+    orgEmail: { value: '', readonly: false },
+    orgLogo: { value: null, readonly: false },
+    logoRemoved: false,
+    // Step 2 Accounting fields
     iban: { value: '', readonly: false },
     ibanPostal: { value: '', readonly: false },
     cbill: { value: '', readonly: false },
     flagTreasury: { value: false, readonly: false },
+    // Step 2 Payments fields
     segregationCode: { value: '', readonly: false },
     generateNoticeApiKey: { value: '', readonly: false },
     additionalLanguage: { value: false, readonly: false },
     selectedLanguage: { value: '', readonly: false },
     flagNotifyOutcomePush: { value: false, readonly: false },
     flagPaymentNotification: { value: false, readonly: false },
+    // Step 2 PagoPA Integration fields
     flagNotifyIo: { value: false, readonly: false },
     ioApiKey: { value: '', readonly: false },
     pdndEnabled: { value: false, readonly: false },
@@ -92,7 +101,7 @@ describe('AccountingInfoSection', () => {
     organizationStatus: 'DRAFT'
   };
 
-  const mockFilledData: OrganizationEditStep2Data = {
+  const mockFilledData: UnifiedFormData = {
     ...mockData,
     iban: { value: 'IT60X0542811101000000123456', readonly: false },
     ibanPostal: { value: 'IT60X0542811101000000654321', readonly: false },
@@ -127,14 +136,33 @@ describe('AccountingInfoSection', () => {
     }
   };
 
-  const defaultFormValues: Partial<Step2FormValues> = {
+  const defaultFormValues: Partial<UnifiedFormValues> = {
+    // Step 1 fields
+    orgName: '',
+    orgFiscalCode: '',
+    orgEmail: '',
+    orgLogo: null,
+    // Step 2 Accounting fields
     iban: '',
     ibanPostal: '',
     cbill: '',
-    flagTreasury: false
+    flagTreasury: false,
+    // Step 2 Payments fields
+    segregationCode: '',
+    generateNoticeApiKey: '',
+    additionalLanguage: false,
+    selectedLanguage: '',
+    flagNotifyOutcomePush: null,
+    flagPaymentNotification: null,
+    // Step 2 PagoPA Integration fields
+    flagNotifyIo: false,
+    ioApiKey: '',
+    pdndEnabled: false,
+    sendApiKey: ''
   };
 
-  const filledFormValues: Partial<Step2FormValues> = {
+  const filledFormValues: Partial<UnifiedFormValues> = {
+    ...defaultFormValues,
     iban: 'IT60X0542811101000000123456',
     ibanPostal: 'IT60X0542811101000000654321',
     cbill: 'CBILL001',
