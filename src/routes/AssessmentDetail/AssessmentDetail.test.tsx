@@ -48,6 +48,8 @@ vi.mock('../../utils/filtersValidation', () => ({
     mockHasPartialDateRangeErrors(...args)
 }));
 
+const mockGetPagedAssessmentsDetails = vi.fn();
+
 vi.mock('../../utils', () => ({
   default: {
     URI: {
@@ -62,6 +64,12 @@ vi.mock('../../utils', () => ({
     },
     config: {
       deployPath: '/test'
+    },
+    apiClient: {
+      bff: {
+        getPagedAssessmentsDetails: (...args: Array<unknown>) =>
+          mockGetPagedAssessmentsDetails(...args)
+      }
     }
   }
 }));
@@ -106,6 +114,14 @@ describe('AssessmentDetail', () => {
     (useNavigate as unknown as ReturnType<typeof vi.fn>).mockReturnValue(
       mockNavigate
     );
+
+    mockGetPagedAssessmentsDetails.mockResolvedValue({
+      data: {
+        pagedAssessmentsRowsDetail: {
+          totalElements: 15
+        }
+      }
+    });
 
     i18nTestSetup({
       'assessment.assessment': 'Assessment',
@@ -438,25 +454,21 @@ describe('AssessmentDetail', () => {
       iuv: 'TEST_IUV'
     });
 
-    const mutateAsyncMock = vi.fn().mockResolvedValue({
-      pagedAssessmentsRowsDetail: {
-        totalElements: 15
+    mockGetPagedAssessmentsDetails.mockResolvedValue({
+      data: {
+        pagedAssessmentsRowsDetail: {
+          totalElements: 15
+        }
       }
-    });
-
-    mockGetAssessmentDetail.mockReturnValue({
-      ...mockQuery,
-      mutateAsync: mutateAsyncMock
     });
 
     renderAssessmentDetail();
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    expect(mutateAsyncMock).toHaveBeenCalledWith({
-      filters: {},
-      pagination: { page: 0, size: 1 },
-      sort: []
+    expect(mockGetPagedAssessmentsDetails).toHaveBeenCalledWith(1, 123, {
+      page: 0,
+      size: 1
     });
   });
 
@@ -469,14 +481,9 @@ describe('AssessmentDetail', () => {
       iuv: 'TEST_IUV'
     });
 
-    const mutateAsyncMock = vi
-      .fn()
-      .mockRejectedValue(new Error('Network error'));
-
-    mockGetAssessmentDetail.mockReturnValue({
-      ...mockQuery,
-      mutateAsync: mutateAsyncMock
-    });
+    mockGetPagedAssessmentsDetails.mockRejectedValue(
+      new Error('Network error')
+    );
 
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(vi.fn());
 
@@ -839,22 +846,11 @@ describe('AssessmentDetail', () => {
 
     vi.mocked(utils.URI.decode).mockReturnValue({});
 
-    const mutateAsyncMock = vi.fn().mockResolvedValue({
-      pagedAssessmentsRowsDetail: {
-        totalElements: 15
-      }
-    });
-
-    mockGetAssessmentDetail.mockReturnValue({
-      ...mockQuery,
-      mutateAsync: mutateAsyncMock
-    });
-
     renderAssessmentDetail();
 
     await new Promise((resolve) => setTimeout(resolve, 100));
 
-    expect(mutateAsyncMock).not.toHaveBeenCalled();
+    expect(mockGetPagedAssessmentsDetails).not.toHaveBeenCalled();
   });
 
   it('does not fetch initial total when assessmentId is invalid', async () => {
@@ -864,17 +860,6 @@ describe('AssessmentDetail', () => {
 
     vi.mocked(utils.URI.decode).mockReturnValue({
       iuv: 'TEST_IUV'
-    });
-
-    const mutateAsyncMock = vi.fn().mockResolvedValue({
-      pagedAssessmentsRowsDetail: {
-        totalElements: 15
-      }
-    });
-
-    mockGetAssessmentDetail.mockReturnValue({
-      ...mockQuery,
-      mutateAsync: mutateAsyncMock
     });
 
     renderAssessmentDetail();
