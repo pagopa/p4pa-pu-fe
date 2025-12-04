@@ -66,11 +66,13 @@ describe('ImportFlow', () => {
       render(<ImportFlow />);
 
       expect(screen.getByText('commons.importNewFlow')).toBeDefined();
-      expect(screen.getByText('commons.flowImport.description')).toBeDefined();
+      expect(
+        screen.getByText('commons.flowImport.descriptionByCategory.reporting')
+      ).toBeDefined();
       expect(screen.getByText('commons.flowImport.boxTitle')).toBeDefined();
       expect(
-        screen.getByText('commons.flowImport.boxDescription')
-      ).toBeDefined();
+        screen.queryByText('commons.flowImport.boxDescription')
+      ).toBeNull();
       expect(screen.getByText('commons.flowImport.manualLink')).toBeDefined();
       expect(screen.queryByText('commons.requiredFieldDescription')).toBeNull();
       expect(screen.queryByLabelText('commons.flowType')).toBeNull();

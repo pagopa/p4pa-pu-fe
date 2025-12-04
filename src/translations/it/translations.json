@@ -850,6 +850,11 @@
       "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
       "boxTitle": "Configurazione flusso",
       "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+      "descriptionByCategory": {
+        "telematic-receipt": "Carica il file contenente i dati necessari per integrare le informazioni relative alle Ricevute Telematiche.",
+        "reporting": "Carica il file contenente i dati necessari per integrare le informazioni sulle rendicontazioni.",
+        "treasury": "Carica il file contenente i dati necessari per integrare le informazioni relative alla Tesoreria."
+      },
       "manualLink": "Dubbi? Vai al manuale",
       "uploadButton": "Carica il flusso"
     },
@@ -2332,9 +2337,9 @@
     "exportFrom": "Esportati dal"
   },
   "telematicReceiptFlowImport": {
-    "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+    "boxDescription": "Carica il file .zip con i dati necessari per integrare le informazioni relative alle Ricevute Telematiche.",
     "boxTitle": "Configurazione flusso",
-    "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+    "description": "Carica il file contenente i dati necessari per integrare le informazioni relative alle Ricevute Telematiche.",
     "manualLink": "Dubbi? Vai al manuale",
     "uploadButton": "Carica il flusso"
   },

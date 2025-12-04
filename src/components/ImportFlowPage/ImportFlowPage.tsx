@@ -113,7 +113,9 @@ const ImportFlow = () => {
         >
           <TitleComponent
             title={t(config.title)}
-            description={t('commons.flowImport.description')}
+            description={t(
+              config.descriptionKey ?? 'commons.flowImport.description'
+            )}
             accessibleTitle={t('commons.importNewFlowWithCategory', {
               category: categorySuffix,
               interpolation: { escapeValue: false }
@@ -130,9 +132,11 @@ const ImportFlow = () => {
                 <Typography variant="h6" gutterBottom>
                   {t('commons.flowImport.boxTitle')}
                 </Typography>
-                <Typography variant="caption" gutterBottom>
-                  {t('commons.flowImport.boxDescription')}
-                </Typography>
+                {config.boxDescriptionKey && (
+                  <Typography variant="caption" gutterBottom>
+                    {t(config.boxDescriptionKey)}
+                  </Typography>
+                )}
               </Grid>
               <Button variant="naked" size="small">
                 {t('commons.flowImport.manualLink')}
