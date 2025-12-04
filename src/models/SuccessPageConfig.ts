@@ -283,5 +283,41 @@ export const SuccessPageConfig: SuccessOpts = {
         actionID: 'CLIENT_SIL_INDEX'
       }
     ]
+  },
+  'organization-draft-saved': {
+    title: 'organizationEditWizard.successDraftPage.title',
+    description: 'organizationEditWizard.successCommon.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'organizationEditWizard.successCommon.goToDetail',
+        customNavigation: 'ORGANIZATIONS_DETAIL'
+      }
+    ]
+  },
+  'organization-enabled': {
+    title: 'organizationEditWizard.successEnablePage.title',
+    description: 'organizationEditWizard.successCommon.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'organizationEditWizard.successCommon.goToDetail',
+        customNavigation: 'ORGANIZATIONS_DETAIL'
+      }
+    ]
+  },
+  'organization-updated': {
+    title: 'organizationEditWizard.successUpdatePage.title',
+    description: 'organizationEditWizard.successCommon.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'organizationEditWizard.successCommon.goToDetail',
+        customNavigation: 'ORGANIZATIONS_DETAIL'
+      }
+    ]
   }
 };

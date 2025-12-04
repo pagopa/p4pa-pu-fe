@@ -180,7 +180,6 @@ export const useStep3ApiOperations = (): UseStep3ApiOperationsResult => {
       status: isDraft ? DebtPositionStatus.DRAFT : DebtPositionStatus.UNPAID,
       organizationId: organizationId,
       debtPositionTypeOrgId: Number(step1Data?.debtPositionType.value || 0),
-      flagIuvVolatile: DEFAULT_VALUES.FLAG_IUV_VOLATILE,
       debtPositionOrigin: DebtPositionOrigin.ORDINARY,
       multiDebtor: DEFAULT_VALUES.MULTI_DEBTOR,
       flagPuPagoPaPayment: DEFAULT_VALUES.FLAG_PAGO_PA_PU_PAYMENT,

@@ -9,7 +9,10 @@ import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { randomUUID } from 'node:crypto';
 import { OrganizationsFilteredRequest } from './mappings';
-import { OrganizationStatus } from '../../../generated/data-contracts';
+import {
+  OrganizationStatus,
+  OrganizationAdditionalLanguage
+} from '../../../generated/data-contracts';
 
 vi.mock('../../utils', () => ({
   default: {
@@ -262,7 +265,7 @@ describe('getOrganizationDetail', () => {
       segregationCode: '00',
       orgLogo: '',
       status: 'ACTIVE',
-      additionalLanguage: 'EN',
+      additionalLanguage: OrganizationAdditionalLanguage.EN,
       startDate: '2024-12-19',
       brokerId: 1,
       ioApiKey: '111',
@@ -312,7 +315,7 @@ describe('updateOrganization', () => {
       cbillInterBankCode: 'CBILL001',
       orgLogo: 'data:image/png;base64,iVBORw0KGgo...',
       status: OrganizationStatus.ACTIVE,
-      additionalLanguage: 'FR',
+      additionalLanguage: OrganizationAdditionalLanguage.FR,
       startDate: '2024-12-19',
       brokerId: 1,
       ioApiKey: '222',
@@ -358,7 +361,7 @@ describe('updateOrganization', () => {
       cbillInterBankCode: 'CBILL001',
       orgLogo: '',
       status: OrganizationStatus.ACTIVE,
-      additionalLanguage: 'EN',
+      additionalLanguage: OrganizationAdditionalLanguage.EN,
       startDate: '2024-12-19',
       brokerId: 1,
       ioApiKey: '111',
@@ -406,7 +409,7 @@ describe('updateOrganization', () => {
       cbillInterBankCode: '',
       orgLogo: '',
       status: OrganizationStatus.ACTIVE,
-      additionalLanguage: '',
+      additionalLanguage: undefined,
       startDate: '2024-01-01',
       brokerId: 1,
       ioApiKey: '',

@@ -1,4 +1,5 @@
 import {
+  Box,
   FormControlLabel,
   Grid,
   MenuItem,
@@ -9,17 +10,19 @@ import {
   Typography,
   Divider
 } from '@mui/material';
+import PaymentsIcon from '@mui/icons-material/Payments';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
+import { theme } from '@pagopa/mui-italia';
 import {
   LANGUAGE_OPTIONS,
-  OrganizationEditStep2Data,
-  Step2FormValues
+  UnifiedFormData,
+  UnifiedFormValues
 } from '../../../../../../models/OrganizationEditTypes';
 
 type PaymentsInfoSectionProps = {
-  control: Control<Step2FormValues>;
-  errors: FieldErrors<Step2FormValues>;
-  data: OrganizationEditStep2Data;
+  control: Control<UnifiedFormValues>;
+  errors: FieldErrors<UnifiedFormValues>;
+  data: UnifiedFormData;
   t: (key: string) => string;
   watchAdditionalLanguage: boolean;
 };
@@ -32,15 +35,20 @@ export const PaymentsInfoSection = ({
   watchAdditionalLanguage
 }: PaymentsInfoSectionProps) => {
   return (
-    <>
-      <Typography
-        variant="body2"
-        fontWeight={800}
-        color="textPrimary"
-        sx={{ mb: 3, mt: 3 }}
-      >
-        {t('organizationEditWizard.step2.paymentsInfo.title')}
-      </Typography>
+    <Box
+      border={1}
+      borderRadius={2}
+      borderColor={theme.palette.divider}
+      bgcolor={theme.palette.background.paper}
+      padding={3}
+      sx={{ mb: 3, mt: 3 }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+        <PaymentsIcon sx={{ color: 'text.primary' }} fontSize="small" />
+        <Typography variant="body2" fontWeight={800} color="textPrimary">
+          {t('organizationEditWizard.step2.paymentsInfo.title')}
+        </Typography>
+      </Box>
 
       <Grid container spacing={2}>
         {/* Codice Segregazione Field - Required only if status is ACTIVE */}
@@ -320,6 +328,6 @@ export const PaymentsInfoSection = ({
           />
         </Grid>
       </Grid>
-    </>
+    </Box>
   );
 };

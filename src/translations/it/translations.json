@@ -2044,6 +2044,10 @@
   "organizationEditWizard": {
     "title": "Modifica il tuo ente",
     "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
+    "titleCreate": "Configura ente gestito",
+    "titleEdit": "Modifica ente gestito",
+    "descriptionCreate": "Inserisci le informazioni e le configurazioni relative all'ente intermediato.",
+    "descriptionEdit": "Aggiorna le informazioni e le configurazioni relative all'ente intermediato.",
     "saveChanges": "Salva modifiche",
     "enableOrg": "Abilita ente",
     "errorEnablingOrg": "Non è stato possibile abilitare l'ente perché non sono stati compilati i campi obbligatori",
@@ -2051,6 +2055,19 @@
     "successDraftMessage": "Modifiche salvate con successo in stato bozza",
     "successMessage": "Modifiche salvate con successo",
     "successMessageNotEnable": "Modifiche salvate con successo, ma non abilitato",
+    "successCommon": {
+      "description": "Lo trovi negli enti gestiti, dove puoi gestirlo in qualsiasi momento.",
+      "goToDetail": "Vai al dettaglio ente"
+    },
+    "successDraftPage": {
+      "title": "L’ente ‘{{orgName}}’ è stato salvato in bozza."
+    },
+    "successEnablePage": {
+      "title": "L’ente ‘{{orgName}}’ è ora attivo e può operare in Piattaforma Unitaria."
+    },
+    "successUpdatePage": {
+      "title": "Le modifiche sull’ente ‘{{orgName}}’ sono state salvate con successo."
+    },
     "step1": {
       "title": "Anagrafica ente",
       "label": "Anagrafica ente",
@@ -2082,7 +2099,7 @@
       "label": "Configurazione ente",
       "title": "Configurazione ente",
       "accountingInfo": {
-        "title": "INFORMAZIONE CONTABILE"
+        "title": "Informazione contabile"
       },
       "iban": {
         "label": "IBAN",
@@ -2103,7 +2120,7 @@
         "label": "Il giornale di cassa è integrato"
       },
       "paymentsInfo": {
-        "title": "PAGAMENTI"
+        "title": "Pagamenti"
       },
       "segregationCode": {
         "label": "Codice Segregazione",
@@ -2142,7 +2159,7 @@
         "disabilita": "Disabilita"
       },
       "pagoPaIntegration": {
-        "title": "INTEGRAZIONE CON I PRODOTTI PAGOPA",
+        "title": "Integrazione con i prodotti PagoPA",
         "io": {
           "label": "Messaggi sull'app IO",
           "description": "Abilita l'ente a inviare messaggi sui pagamenti",
