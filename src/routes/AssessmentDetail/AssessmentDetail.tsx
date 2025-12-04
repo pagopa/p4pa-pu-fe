@@ -117,7 +117,10 @@ export const AssessmentDetail = () => {
     []
   );
 
-  // Handles the initial case: if the page is loaded with filters in the URL hash, make a call API without filters to get the real total payments
+  // Handles the initial case: if the page is loaded with filters in the URL hash,
+  // make a direct API call (not through mutation) to get the real total payments.
+  // FIX: Using direct API call instead of query.mutateAsync() to prevent
+  // the size=1 response from overwriting the UI state and causing wrong pagination.
   useEffect(() => {
     // If we have already made this call, don't make it again
     if (hasFetchedInitialTotal.current) {
@@ -126,8 +129,8 @@ export const AssessmentDetail = () => {
 
     const hasInitialFilters = hasActiveFilters(initialFilters);
 
-    // If the page is loaded with filters and we have the necessary parameters, make a call API without filters to get the real total payments
-    // facciamo una chiamata API senza filtri per ottenere il totale reale
+    // If the page is loaded with filters and we have the necessary parameters,
+    // make a direct API call without filters to get the real total payments
     if (
       hasInitialFilters &&
       organizationId &&
@@ -135,15 +138,16 @@ export const AssessmentDetail = () => {
       !isNaN(assessmentId)
     ) {
       hasFetchedInitialTotal.current = true;
-      query
-        .mutateAsync({
-          filters: {},
-          pagination: { page: 0, size: 1 },
-          sort: []
+
+      // Direct API call - does not update the mutation state/UI
+      utils.apiClient.bff
+        .getPagedAssessmentsDetails(organizationId, assessmentId, {
+          page: 0,
+          size: 1
         })
         .then((response) => {
           const totalElements =
-            response?.pagedAssessmentsRowsDetail?.totalElements;
+            response?.data?.pagedAssessmentsRowsDetail?.totalElements;
           if (totalElements != null) {
             setTotalPaymentsWithoutFilters(totalElements);
           }
