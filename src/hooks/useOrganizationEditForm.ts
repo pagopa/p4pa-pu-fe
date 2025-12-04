@@ -18,7 +18,10 @@ import {
 import { base64ToFile } from '../utils/filevalidation';
 import { isValidEmail } from '../utils/fieldValidation';
 import { createIBANValidationRules } from '../utils/validationRules';
-import { handleLogoConversion } from '../utils/organizationFormTransformers';
+import {
+  handleLogoConversion,
+  unifiedFormDataToFormValues
+} from '../utils/organizationFormTransformers';
 
 type UseOrganizationEditFormParams = {
   initialData: UnifiedFormData;
@@ -107,31 +110,7 @@ export const useOrganizationEditForm = ({
    * Converts UnifiedFormData to UnifiedFormValues for react-hook-form
    */
   const getInitialValues = (): UnifiedFormValues => {
-    return {
-      // Step 1 fields (Entity Profile)
-      orgName: initialData.orgName.value || '',
-      orgFiscalCode: initialData.orgFiscalCode.value || '',
-      orgEmail: initialData.orgEmail.value || '',
-      orgLogo: logoFile,
-      // Step 2 fields (Accounting Information)
-      iban: initialData.iban.value || '',
-      ibanPostal: initialData.ibanPostal.value || '',
-      cbill: initialData.cbill.value || '',
-      flagTreasury: initialData.flagTreasury.value,
-      // Step 2 fields (Payments Information)
-      segregationCode: initialData.segregationCode.value || '',
-      generateNoticeApiKey: initialData.generateNoticeApiKey.value || '',
-      additionalLanguage: initialData.additionalLanguage.value,
-      selectedLanguage: initialData.selectedLanguage.value || '',
-      // Preserve null values for required radio groups
-      flagNotifyOutcomePush: initialData.flagNotifyOutcomePush.value,
-      flagPaymentNotification: initialData.flagPaymentNotification.value,
-      // Step 2 fields (PagoPA Products Integration)
-      flagNotifyIo: initialData.flagNotifyIo.value,
-      ioApiKey: initialData.ioApiKey.value || '',
-      pdndEnabled: initialData.pdndEnabled.value,
-      sendApiKey: initialData.sendApiKey.value || ''
-    };
+    return unifiedFormDataToFormValues(initialData, { logoFile });
   };
 
   // Setup react-hook-form

@@ -3,7 +3,9 @@ import {
   transformApiDataToFormData,
   transformFormDataToApiPayload,
   transformFormValuesToFieldData,
-  handleLogoConversion
+  handleLogoConversion,
+  unifiedFormDataToFormValues,
+  mapStep2ValuesToFieldData
 } from '../organizationFormTransformers';
 import {
   UnifiedFormData,
@@ -52,6 +54,57 @@ describe('organizationFormTransformers', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  describe('unifiedFormDataToFormValues', () => {
+    it('should map UnifiedFormData to UnifiedFormValues and use provided logoFile', () => {
+      const formData = transformApiDataToFormData(baseOrganization);
+      const logoFile = new File(['dummy-logo'], 'logo.png', {
+        type: 'image/png'
+      });
+
+      const values = unifiedFormDataToFormValues(formData, { logoFile });
+
+      // Step 1
+      expect(values.orgName).toBe(formData.orgName.value);
+      expect(values.orgFiscalCode).toBe(formData.orgFiscalCode.value);
+      expect(values.orgEmail).toBe(formData.orgEmail.value);
+      expect(values.orgLogo).toBe(logoFile);
+
+      // Step 2 - accounting
+      expect(values.iban).toBe(formData.iban.value);
+      expect(values.ibanPostal).toBe(formData.ibanPostal.value);
+      expect(values.cbill).toBe(formData.cbill.value);
+      expect(values.flagTreasury).toBe(formData.flagTreasury.value);
+
+      // Step 2 - payments
+      expect(values.segregationCode).toBe(formData.segregationCode.value);
+      expect(values.generateNoticeApiKey).toBe(
+        formData.generateNoticeApiKey.value
+      );
+      expect(values.additionalLanguage).toBe(formData.additionalLanguage.value);
+      expect(values.selectedLanguage).toBe(formData.selectedLanguage.value);
+      expect(values.flagNotifyOutcomePush).toBe(
+        formData.flagNotifyOutcomePush.value
+      );
+      expect(values.flagPaymentNotification).toBe(
+        formData.flagPaymentNotification.value
+      );
+
+      // Step 2 - PagoPA integration
+      expect(values.flagNotifyIo).toBe(formData.flagNotifyIo.value);
+      expect(values.ioApiKey).toBe(formData.ioApiKey.value);
+      expect(values.pdndEnabled).toBe(formData.pdndEnabled.value);
+      expect(values.sendApiKey).toBe(formData.sendApiKey.value);
+    });
+
+    it('should default orgLogo to null when logoFile is not provided', () => {
+      const formData = transformApiDataToFormData(baseOrganization);
+
+      const values = unifiedFormDataToFormValues(formData);
+
+      expect(values.orgLogo).toBeNull();
+    });
   });
 
   describe('transformApiDataToFormData', () => {
@@ -178,6 +231,98 @@ describe('organizationFormTransformers', () => {
       expect(updatedData.logoRemoved).toEqual(originalData.logoRemoved);
       expect(updatedData.organizationStatus).toBe(
         originalData.organizationStatus
+      );
+    });
+  });
+
+  describe('mapStep2ValuesToFieldData', () => {
+    it('should update only Step 2 fields and preserve readonly flags', () => {
+      const originalData = transformApiDataToFormData(baseOrganization);
+
+      const values: UnifiedFormValues = {
+        orgName: 'Ignored Org Name',
+        orgFiscalCode: 'Ignored Fiscal Code',
+        orgEmail: 'ignored@org.it',
+        orgLogo: null,
+        iban: 'IT11X0542811101000000123456',
+        ibanPostal: 'IT11X0542811101000000654321',
+        cbill: 'CBILL02',
+        flagTreasury: true,
+        segregationCode: '01',
+        generateNoticeApiKey: 'new-notice-key',
+        additionalLanguage: true,
+        selectedLanguage: LANGUAGE_OPTIONS.EN,
+        flagNotifyOutcomePush: false,
+        flagPaymentNotification: true,
+        flagNotifyIo: false,
+        ioApiKey: 'new-io-key',
+        pdndEnabled: true,
+        sendApiKey: 'new-send-key'
+      };
+
+      const step2Data = mapStep2ValuesToFieldData(values, originalData);
+
+      // Values updated
+      expect(step2Data.iban.value).toBe(values.iban);
+      expect(step2Data.ibanPostal.value).toBe(values.ibanPostal);
+      expect(step2Data.cbill.value).toBe(values.cbill);
+      expect(step2Data.flagTreasury.value).toBe(values.flagTreasury);
+
+      expect(step2Data.segregationCode.value).toBe(values.segregationCode);
+      expect(step2Data.generateNoticeApiKey.value).toBe(
+        values.generateNoticeApiKey
+      );
+      expect(step2Data.additionalLanguage.value).toBe(
+        values.additionalLanguage
+      );
+      expect(step2Data.selectedLanguage.value).toBe(values.selectedLanguage);
+      expect(step2Data.flagNotifyOutcomePush.value).toBe(
+        values.flagNotifyOutcomePush
+      );
+      expect(step2Data.flagPaymentNotification.value).toBe(
+        values.flagPaymentNotification
+      );
+      expect(step2Data.flagNotifyIo.value).toBe(values.flagNotifyIo);
+      expect(step2Data.ioApiKey.value).toBe(values.ioApiKey);
+      expect(step2Data.pdndEnabled.value).toBe(values.pdndEnabled);
+      expect(step2Data.sendApiKey.value).toBe(values.sendApiKey);
+
+      // Readonly preserved
+      expect(step2Data.iban.readonly).toBe(originalData.iban.readonly);
+      expect(step2Data.ibanPostal.readonly).toBe(
+        originalData.ibanPostal.readonly
+      );
+      expect(step2Data.cbill.readonly).toBe(originalData.cbill.readonly);
+      expect(step2Data.flagTreasury.readonly).toBe(
+        originalData.flagTreasury.readonly
+      );
+      expect(step2Data.segregationCode.readonly).toBe(
+        originalData.segregationCode.readonly
+      );
+      expect(step2Data.generateNoticeApiKey.readonly).toBe(
+        originalData.generateNoticeApiKey.readonly
+      );
+      expect(step2Data.additionalLanguage.readonly).toBe(
+        originalData.additionalLanguage.readonly
+      );
+      expect(step2Data.selectedLanguage.readonly).toBe(
+        originalData.selectedLanguage.readonly
+      );
+      expect(step2Data.flagNotifyOutcomePush.readonly).toBe(
+        originalData.flagNotifyOutcomePush.readonly
+      );
+      expect(step2Data.flagPaymentNotification.readonly).toBe(
+        originalData.flagPaymentNotification.readonly
+      );
+      expect(step2Data.flagNotifyIo.readonly).toBe(
+        originalData.flagNotifyIo.readonly
+      );
+      expect(step2Data.ioApiKey.readonly).toBe(originalData.ioApiKey.readonly);
+      expect(step2Data.pdndEnabled.readonly).toBe(
+        originalData.pdndEnabled.readonly
+      );
+      expect(step2Data.sendApiKey.readonly).toBe(
+        originalData.sendApiKey.readonly
       );
     });
   });

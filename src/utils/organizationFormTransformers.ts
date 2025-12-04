@@ -121,6 +121,50 @@ export const transformApiDataToFormData = (
 };
 
 /**
+ * Transforms UnifiedFormData to UnifiedFormValues
+ * Centralized mapping used to initialize react-hook-form values
+ *
+ * NOTE:
+ * - All string fields use `|| ''` to avoid undefined values in the form
+ * - Boolean and nullable fields preserve their original values
+ * - Logo handling is delegated via the `logoFile` option to keep responsibilities separated
+ *
+ * @param formData - Unified form data from the domain model
+ * @param options - Optional configuration (e.g. logo File instance)
+ * @returns UnifiedFormValues - Values suitable for react-hook-form
+ */
+export const unifiedFormDataToFormValues = (
+  formData: UnifiedFormData,
+  options?: { logoFile?: File | null }
+): UnifiedFormValues => {
+  return {
+    // Step 1 fields (Entity Profile)
+    orgName: formData.orgName.value || '',
+    orgFiscalCode: formData.orgFiscalCode.value || '',
+    orgEmail: formData.orgEmail.value || '',
+    orgLogo: options?.logoFile ?? null,
+    // Step 2 fields (Accounting Information)
+    iban: formData.iban.value || '',
+    ibanPostal: formData.ibanPostal.value || '',
+    cbill: formData.cbill.value || '',
+    flagTreasury: formData.flagTreasury.value,
+    // Step 2 fields (Payments Information)
+    segregationCode: formData.segregationCode.value || '',
+    generateNoticeApiKey: formData.generateNoticeApiKey.value || '',
+    additionalLanguage: formData.additionalLanguage.value,
+    selectedLanguage: formData.selectedLanguage.value || '',
+    // Preserve null values for required radio groups
+    flagNotifyOutcomePush: formData.flagNotifyOutcomePush.value,
+    flagPaymentNotification: formData.flagPaymentNotification.value,
+    // Step 2 fields (PagoPA Products Integration)
+    flagNotifyIo: formData.flagNotifyIo.value,
+    ioApiKey: formData.ioApiKey.value || '',
+    pdndEnabled: formData.pdndEnabled.value,
+    sendApiKey: formData.sendApiKey.value || ''
+  };
+};
+
+/**
  * Transforms UnifiedFormData to API OrganizationDetailDTO payload
  * Converts the unified form data structure to the API request format
  *
@@ -214,6 +258,71 @@ function createFieldData<T>(
 }
 
 /**
+ * Maps Step 2 fields (accounting, payments, PagoPA integration)
+ * from UnifiedFormValues to UnifiedFormData, preserving readonly flags.
+ *
+ * This helper is reused by:
+ * - Unified form transformer (`transformFormValuesToFieldData`)
+ * - Wizard step transformers
+ */
+export const mapStep2ValuesToFieldData = (
+  values: UnifiedFormValues,
+  originalData: UnifiedFormData
+): Pick<
+  UnifiedFormData,
+  | 'iban'
+  | 'ibanPostal'
+  | 'cbill'
+  | 'flagTreasury'
+  | 'segregationCode'
+  | 'generateNoticeApiKey'
+  | 'additionalLanguage'
+  | 'selectedLanguage'
+  | 'flagNotifyOutcomePush'
+  | 'flagPaymentNotification'
+  | 'flagNotifyIo'
+  | 'ioApiKey'
+  | 'pdndEnabled'
+  | 'sendApiKey'
+> => ({
+  // Step 2 fields (Accounting Information)
+  iban: createFieldData(values.iban, originalData.iban),
+  ibanPostal: createFieldData(values.ibanPostal, originalData.ibanPostal),
+  cbill: createFieldData(values.cbill, originalData.cbill),
+  flagTreasury: createFieldData(values.flagTreasury, originalData.flagTreasury),
+  // Step 2 fields (Payments Information)
+  segregationCode: createFieldData(
+    values.segregationCode,
+    originalData.segregationCode
+  ),
+  generateNoticeApiKey: createFieldData(
+    values.generateNoticeApiKey,
+    originalData.generateNoticeApiKey
+  ),
+  additionalLanguage: createFieldData(
+    values.additionalLanguage,
+    originalData.additionalLanguage
+  ),
+  selectedLanguage: createFieldData(
+    values.selectedLanguage,
+    originalData.selectedLanguage
+  ),
+  flagNotifyOutcomePush: createFieldData(
+    values.flagNotifyOutcomePush,
+    originalData.flagNotifyOutcomePush
+  ),
+  flagPaymentNotification: createFieldData(
+    values.flagPaymentNotification,
+    originalData.flagPaymentNotification
+  ),
+  // Step 2 fields (PagoPA Products Integration)
+  flagNotifyIo: createFieldData(values.flagNotifyIo, originalData.flagNotifyIo),
+  ioApiKey: createFieldData(values.ioApiKey, originalData.ioApiKey),
+  pdndEnabled: createFieldData(values.pdndEnabled, originalData.pdndEnabled),
+  sendApiKey: createFieldData(values.sendApiKey, originalData.sendApiKey)
+});
+
+/**
  * Transforms UnifiedFormValues to UnifiedFormData
  * Converts react-hook-form values to the unified form data structure
  * Preserves readonly flags from original data
@@ -229,6 +338,8 @@ export const transformFormValuesToFieldData = (
   values: UnifiedFormValues,
   originalData: UnifiedFormData
 ): UnifiedFormData => {
+  const step2Data = mapStep2ValuesToFieldData(values, originalData);
+
   return {
     // Step 1 fields (Entity Profile)
     orgName: createFieldData(values.orgName, originalData.orgName),
@@ -241,47 +352,8 @@ export const transformFormValuesToFieldData = (
     // It will be updated via handleLogoConversion
     orgLogo: originalData.orgLogo,
     logoRemoved: originalData.logoRemoved,
-    // Step 2 fields (Accounting Information)
-    iban: createFieldData(values.iban, originalData.iban),
-    ibanPostal: createFieldData(values.ibanPostal, originalData.ibanPostal),
-    cbill: createFieldData(values.cbill, originalData.cbill),
-    flagTreasury: createFieldData(
-      values.flagTreasury,
-      originalData.flagTreasury
-    ),
-    // Step 2 fields (Payments Information)
-    segregationCode: createFieldData(
-      values.segregationCode,
-      originalData.segregationCode
-    ),
-    generateNoticeApiKey: createFieldData(
-      values.generateNoticeApiKey,
-      originalData.generateNoticeApiKey
-    ),
-    additionalLanguage: createFieldData(
-      values.additionalLanguage,
-      originalData.additionalLanguage
-    ),
-    selectedLanguage: createFieldData(
-      values.selectedLanguage,
-      originalData.selectedLanguage
-    ),
-    flagNotifyOutcomePush: createFieldData(
-      values.flagNotifyOutcomePush,
-      originalData.flagNotifyOutcomePush
-    ),
-    flagPaymentNotification: createFieldData(
-      values.flagPaymentNotification,
-      originalData.flagPaymentNotification
-    ),
-    // Step 2 fields (PagoPA Products Integration)
-    flagNotifyIo: createFieldData(
-      values.flagNotifyIo,
-      originalData.flagNotifyIo
-    ),
-    ioApiKey: createFieldData(values.ioApiKey, originalData.ioApiKey),
-    pdndEnabled: createFieldData(values.pdndEnabled, originalData.pdndEnabled),
-    sendApiKey: createFieldData(values.sendApiKey, originalData.sendApiKey),
+    // Step 2 fields (Accounting, Payments, PagoPA Integration)
+    ...step2Data,
     organizationStatus: originalData.organizationStatus
   };
 };

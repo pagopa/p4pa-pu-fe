@@ -4,14 +4,17 @@ import { useTranslation } from 'react-i18next';
 import WizardStepButtons from '../../../../../components/Wizard/WizardStepButtons';
 import {
   UnifiedFormData,
-  UnifiedFormValues,
-  FieldData
+  UnifiedFormValues
 } from '../../../../../models/OrganizationEditTypes';
 import { theme } from '@pagopa/mui-italia';
 import { AccountingInfoSection } from './sections/AccountingInfoSection';
 import { PaymentsInfoSection } from './sections/PaymentsInfoSection';
 import { PagoPAIntegrationSection } from './sections/PagoPAIntegrationSection';
 import { createIBANValidationRules } from '../../../../../utils/validationRules';
+import {
+  mapStep2ValuesToFieldData,
+  unifiedFormDataToFormValues
+} from '../../../../../utils/organizationFormTransformers';
 
 type Props = {
   data: UnifiedFormData;
@@ -20,21 +23,12 @@ type Props = {
   onBack: () => void;
 };
 
-// Utility function to create FieldData from form value and original field
-const createFieldData = function <T>(
-  formValue: T,
-  originalField: FieldData<T>
-): FieldData<T> {
-  return {
-    value: formValue,
-    readonly: originalField.readonly
-  };
-};
-
 const formValuesToFieldData = (
   values: UnifiedFormValues,
   originalData: UnifiedFormData
 ): UnifiedFormData => {
+  const step2Data = mapStep2ValuesToFieldData(values, originalData);
+
   return {
     // Step 1 fields - preserve original values
     orgName: originalData.orgName,
@@ -42,47 +36,8 @@ const formValuesToFieldData = (
     orgEmail: originalData.orgEmail,
     orgLogo: originalData.orgLogo,
     logoRemoved: originalData.logoRemoved,
-    // Step 2 Accounting Information
-    iban: createFieldData(values.iban, originalData.iban),
-    ibanPostal: createFieldData(values.ibanPostal, originalData.ibanPostal),
-    cbill: createFieldData(values.cbill, originalData.cbill),
-    flagTreasury: createFieldData(
-      values.flagTreasury,
-      originalData.flagTreasury
-    ),
-    // Step 2 Payments Information
-    segregationCode: createFieldData(
-      values.segregationCode,
-      originalData.segregationCode
-    ),
-    generateNoticeApiKey: createFieldData(
-      values.generateNoticeApiKey,
-      originalData.generateNoticeApiKey
-    ),
-    additionalLanguage: createFieldData(
-      values.additionalLanguage,
-      originalData.additionalLanguage
-    ),
-    selectedLanguage: createFieldData(
-      values.selectedLanguage,
-      originalData.selectedLanguage
-    ),
-    flagNotifyOutcomePush: createFieldData(
-      values.flagNotifyOutcomePush,
-      originalData.flagNotifyOutcomePush
-    ),
-    flagPaymentNotification: createFieldData(
-      values.flagPaymentNotification,
-      originalData.flagPaymentNotification
-    ),
-    // Step 2 PagoPA Products Integration
-    flagNotifyIo: createFieldData(
-      values.flagNotifyIo,
-      originalData.flagNotifyIo
-    ),
-    ioApiKey: createFieldData(values.ioApiKey, originalData.ioApiKey),
-    pdndEnabled: createFieldData(values.pdndEnabled, originalData.pdndEnabled),
-    sendApiKey: createFieldData(values.sendApiKey, originalData.sendApiKey),
+    // Step 2 fields (Accounting, Payments, PagoPA Integration)
+    ...step2Data,
     organizationStatus: originalData.organizationStatus
   };
 };
@@ -92,31 +47,8 @@ const Step2EntityConfiguration = ({ data, setData, onNext, onBack }: Props) => {
 
   // Calculate initial values dynamically to sync with parent data changes
   const getInitialValues = (): UnifiedFormValues => {
-    return {
-      // Step 1 fields
-      orgName: data.orgName.value || '',
-      orgFiscalCode: data.orgFiscalCode.value || '',
-      orgEmail: data.orgEmail.value || '',
-      orgLogo: null, // Logo is handled separately
-      // Step 2 Accounting Information
-      iban: data.iban.value || '',
-      ibanPostal: data.ibanPostal.value || '',
-      cbill: data.cbill.value || '',
-      flagTreasury: data.flagTreasury.value,
-      // Step 2 Payments Information
-      segregationCode: data.segregationCode.value || '',
-      generateNoticeApiKey: data.generateNoticeApiKey.value || '',
-      additionalLanguage: data.additionalLanguage.value,
-      selectedLanguage: data.selectedLanguage.value || '',
-      // Preserve null values for required radio groups
-      flagNotifyOutcomePush: data.flagNotifyOutcomePush.value,
-      flagPaymentNotification: data.flagPaymentNotification.value,
-      // Step 2 PagoPA Products Integration
-      flagNotifyIo: data.flagNotifyIo.value,
-      ioApiKey: data.ioApiKey.value || '',
-      pdndEnabled: data.pdndEnabled.value,
-      sendApiKey: data.sendApiKey.value || ''
-    };
+    // Logo is handled separately in this step, keep it explicitly null here
+    return unifiedFormDataToFormValues(data, { logoFile: null });
   };
 
   const {

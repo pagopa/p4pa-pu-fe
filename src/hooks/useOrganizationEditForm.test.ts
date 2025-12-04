@@ -16,12 +16,18 @@ vi.mock('../utils/filevalidation', () => ({
   base64ToFile: (...args: Array<unknown>) => mockBase64ToFile(...args)
 }));
 
-// Mock handleLogoConversion utility
 const mockHandleLogoConversion = vi.fn();
-vi.mock('../utils/organizationFormTransformers', () => ({
-  handleLogoConversion: (...args: Array<unknown>) =>
-    mockHandleLogoConversion(...args)
-}));
+vi.mock('../utils/organizationFormTransformers', async () => {
+  const actual = await vi.importActual<
+    typeof import('../utils/organizationFormTransformers')
+  >('../utils/organizationFormTransformers');
+
+  return {
+    ...actual,
+    handleLogoConversion: (...args: Array<unknown>) =>
+      mockHandleLogoConversion(...args)
+  };
+});
 
 const createBaseInitialData = (
   overrides: Partial<UnifiedFormData & { organizationStatus?: string }> = {}
