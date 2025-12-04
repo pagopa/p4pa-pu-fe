@@ -60,14 +60,7 @@ const ImportFlow = () => {
           ? error.response?.status
           : undefined;
 
-        if (statusCode && statusCode > 400 && statusCode < 500) {
-          navigate(PageRoutes.RESPONSES_ERROR, {
-            state: {
-              category: config.category,
-              statusCode
-            }
-          });
-        } else if (statusCode && statusCode === 400) {
+        if (statusCode === 400) {
           navigate(PageRoutes.RESPONSES_ERROR, {
             state: {
               category: config.category,
@@ -75,6 +68,15 @@ const ImportFlow = () => {
             }
           });
           utils.notify.emit(t('commons.files.missingVersion'));
+        } else if (statusCode === 409) {
+          utils.notify.emit(t('commons.files.alreadyExists'), 'error');
+        } else if (statusCode && statusCode > 400 && statusCode < 500) {
+          navigate(PageRoutes.RESPONSES_ERROR, {
+            state: {
+              category: config.category,
+              statusCode
+            }
+          });
         } else {
           utils.notify.emit(t('commons.importFlowErrorMessage'));
         }
@@ -111,7 +113,9 @@ const ImportFlow = () => {
         >
           <TitleComponent
             title={t(config.title)}
-            description={t('commons.flowImport.description')}
+            description={t(
+              config.descriptionKey ?? 'commons.flowImport.description'
+            )}
             accessibleTitle={t('commons.importNewFlowWithCategory', {
               category: categorySuffix,
               interpolation: { escapeValue: false }
@@ -128,9 +132,11 @@ const ImportFlow = () => {
                 <Typography variant="h6" gutterBottom>
                   {t('commons.flowImport.boxTitle')}
                 </Typography>
-                <Typography variant="caption" gutterBottom>
-                  {t('commons.flowImport.boxDescription')}
-                </Typography>
+                {config.boxDescriptionKey && (
+                  <Typography variant="caption" gutterBottom>
+                    {t(config.boxDescriptionKey)}
+                  </Typography>
+                )}
               </Grid>
               <Button variant="naked" size="small">
                 {t('commons.flowImport.manualLink')}

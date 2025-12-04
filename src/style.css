@@ -14,3 +14,7 @@
   left: 1rem;
   top: 1rem;
 }
+
+#main-content:focus {
+  outline: none;
+}

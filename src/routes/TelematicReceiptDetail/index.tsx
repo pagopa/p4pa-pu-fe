@@ -1,6 +1,6 @@
 import { Download } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { PageRoutes } from '../../routes';
 import ReceiptDetail from '../../components/ReceiptDetail';
@@ -14,18 +14,23 @@ export const TelematicReceiptDetail = () => {
   } = useStore();
   const navigate = useNavigate();
   const params = useParams();
+  const [searchParams] = useSearchParams();
   const { downloadReceipt } = useReceiptDownload();
 
   const { receiptId: receiptIdString } = params;
   const receiptId = Number(receiptIdString);
 
-  if (isNaN(receiptId)) {
+  const iud = searchParams.get('iud') ?? undefined;
+
+  if (isNaN(receiptId) || !iud) {
     navigate(PageRoutes.RESPONSES_ERROR);
+    return null;
   }
 
   const { paymentData, summaryData } = useReceiptDetail(
     organizationId,
-    receiptId
+    receiptId,
+    { iud }
   );
 
   const onActionClick = () => downloadReceipt({ receiptId });

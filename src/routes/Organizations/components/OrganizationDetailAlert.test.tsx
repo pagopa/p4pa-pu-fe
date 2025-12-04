@@ -1,7 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '../../../__tests__/renderers';
 import OrganizationDetailAlert from './OrganizationDetailAlert';
-import { OrganizationStatus } from '../../../../generated/apiClient';
+import {
+  OrganizationStatus,
+  OrganizationAdditionalLanguage
+} from '../../../../generated/apiClient';
 
 describe('OrganizationDetailAlert Component', () => {
   const dataMock = {
@@ -17,7 +20,7 @@ describe('OrganizationDetailAlert Component', () => {
     segregationCode: '01',
     cbillInterBankCode: '',
     status: OrganizationStatus.DRAFT,
-    additionalLanguage: 'EN',
+    additionalLanguage: OrganizationAdditionalLanguage.EN,
     startDate: '2024-12-19',
     brokerId: 1,
     ioApiKey: '6ba7',

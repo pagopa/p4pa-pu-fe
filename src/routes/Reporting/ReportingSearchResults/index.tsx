@@ -66,7 +66,6 @@ const ReportingSearchResults = () => {
                 bgcolor: theme.palette.grey[200],
                 overflow: 'auto'
               }}
-              aria-label="results-table"
             >
               <SearchResultsDataGrid
                 data={reporting.query.data as PagedPaymentsReportingView}

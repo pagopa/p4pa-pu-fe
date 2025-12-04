@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import Step2EntityConfiguration from './Step2EntityConfiguration';
-import { OrganizationEditStep2Data } from '../../../../../models/OrganizationEditTypes';
+import { UnifiedFormData } from '../../../../../models/OrganizationEditTypes';
 import { i18nTestSetup } from '../../../../../__tests__/i18nTestSetup';
 
 vi.mock('../../../../../utils/fieldValidation', () => ({
@@ -42,7 +42,7 @@ vi.mock('./sections/AccountingInfoSection', () => ({
   }: {
     control: unknown;
     errors: unknown;
-    data: OrganizationEditStep2Data;
+    data: UnifiedFormData;
     t: (key: string) => string;
   }) => (
     <div data-testid="accounting-info-section">
@@ -61,7 +61,7 @@ vi.mock('./sections/PaymentsInfoSection', () => ({
   }: {
     control: unknown;
     errors: unknown;
-    data: OrganizationEditStep2Data;
+    data: UnifiedFormData;
     t: (key: string) => string;
     watchAdditionalLanguage: boolean;
   }) => (
@@ -80,7 +80,7 @@ vi.mock('./sections/PagoPAIntegrationSection', () => ({
   }: {
     control: unknown;
     errors: unknown;
-    data: OrganizationEditStep2Data;
+    data: UnifiedFormData;
     t: (key: string) => string;
     watchFlagNotifyIo: boolean;
   }) => (
@@ -96,24 +96,35 @@ describe('Step2EntityConfiguration', () => {
   const mockOnNext = vi.fn();
   const mockOnBack = vi.fn();
 
-  const mockInitialData: OrganizationEditStep2Data = {
+  const mockInitialData: UnifiedFormData = {
+    // Step 1 fields
+    orgName: { value: '', readonly: false },
+    orgFiscalCode: { value: '', readonly: false },
+    orgEmail: { value: '', readonly: false },
+    orgLogo: { value: null, readonly: false },
+    logoRemoved: false,
+    // Step 2 Accounting fields
     iban: { value: '', readonly: false },
     ibanPostal: { value: '', readonly: false },
     cbill: { value: '', readonly: false },
     flagTreasury: { value: false, readonly: false },
+    // Step 2 Payments fields
     segregationCode: { value: '', readonly: false },
     generateNoticeApiKey: { value: '', readonly: false },
     additionalLanguage: { value: false, readonly: false },
     selectedLanguage: { value: '', readonly: false },
     flagNotifyOutcomePush: { value: false, readonly: false },
     flagPaymentNotification: { value: false, readonly: false },
+    // Step 2 PagoPA Integration fields
     flagNotifyIo: { value: false, readonly: false },
     ioApiKey: { value: '', readonly: false },
     pdndEnabled: { value: false, readonly: false },
-    sendApiKey: { value: '', readonly: false }
+    sendApiKey: { value: '', readonly: false },
+    organizationStatus: 'DRAFT'
   };
 
-  const mockFilledData: OrganizationEditStep2Data = {
+  const mockFilledData: UnifiedFormData = {
+    ...mockInitialData,
     iban: { value: 'IT60X0542811101000000123456', readonly: false },
     ibanPostal: { value: 'IT60X0542811101000000654321', readonly: false },
     cbill: { value: 'CBILL001', readonly: false },
@@ -254,7 +265,7 @@ describe('Step2EntityConfiguration', () => {
     });
 
     it('should handle null values by converting to false for boolean fields', () => {
-      const dataWithNulls: OrganizationEditStep2Data = {
+      const dataWithNulls: UnifiedFormData = {
         ...mockInitialData,
         flagNotifyOutcomePush: {
           value: null as unknown as boolean,
@@ -419,10 +430,15 @@ describe('Step2EntityConfiguration', () => {
       expect(mockOnNext).not.toHaveBeenCalled();
     });
 
-    it('should display correct button labels', () => {
+    it('should display correct button labels for DRAFT status', () => {
+      const draftData = {
+        ...mockInitialData,
+        organizationStatus: 'DRAFT' as const
+      };
+
       render(
         <Step2EntityConfiguration
-          data={mockInitialData}
+          data={draftData}
           setData={mockSetData}
           onNext={mockOnNext}
           onBack={mockOnBack}
@@ -431,7 +447,7 @@ describe('Step2EntityConfiguration', () => {
 
       expect(screen.getByText('commons.back')).toBeInTheDocument();
       expect(
-        screen.getByText('organizationEditWizard.saveChanges')
+        screen.getByText('organizationEditWizard.enableOrg')
       ).toBeInTheDocument();
     });
   });
@@ -600,7 +616,7 @@ describe('Step2EntityConfiguration', () => {
     });
 
     it('should convert empty strings to empty values in form', () => {
-      const emptyData: OrganizationEditStep2Data = {
+      const emptyData: UnifiedFormData = {
         ...mockInitialData,
         iban: { value: '', readonly: false },
         segregationCode: { value: '', readonly: false }

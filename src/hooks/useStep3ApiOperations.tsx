@@ -8,7 +8,7 @@ import {
   ManageDebtPositionDTO,
   DebtPositionStatus,
   DebtPositionOrigin,
-  PaymentOptionTypeEnum
+  PaymentOptionType
 } from '../../generated/data-contracts';
 import { PageRoutes } from '../routes';
 import {
@@ -180,7 +180,6 @@ export const useStep3ApiOperations = (): UseStep3ApiOperationsResult => {
       status: isDraft ? DebtPositionStatus.DRAFT : DebtPositionStatus.UNPAID,
       organizationId: organizationId,
       debtPositionTypeOrgId: Number(step1Data?.debtPositionType.value || 0),
-      flagIuvVolatile: DEFAULT_VALUES.FLAG_IUV_VOLATILE,
       debtPositionOrigin: DebtPositionOrigin.ORDINARY,
       multiDebtor: DEFAULT_VALUES.MULTI_DEBTOR,
       flagPuPagoPaPayment: DEFAULT_VALUES.FLAG_PAGO_PA_PU_PAYMENT,
@@ -193,8 +192,8 @@ export const useStep3ApiOperations = (): UseStep3ApiOperationsResult => {
             ? t('debtPositionCreateWizard.step3.paymentOption.installments')
             : t('debtPositionCreateWizard.step3.paymentOption.single'),
           paymentOptionType: isInstallment
-            ? PaymentOptionTypeEnum.INSTALLMENTS
-            : PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+            ? PaymentOptionType.INSTALLMENTS
+            : PaymentOptionType.SINGLE_INSTALLMENT,
           paymentOptionIndex: DEFAULT_VALUES.PAYMENT_OPTION_INDEX,
           installments: isInstallment
             ? formattedData.installments?.map((installment) =>

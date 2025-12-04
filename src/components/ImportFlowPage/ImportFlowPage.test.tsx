@@ -66,11 +66,13 @@ describe('ImportFlow', () => {
       render(<ImportFlow />);
 
       expect(screen.getByText('commons.importNewFlow')).toBeDefined();
-      expect(screen.getByText('commons.flowImport.description')).toBeDefined();
+      expect(
+        screen.getByText('commons.flowImport.descriptionByCategory.reporting')
+      ).toBeDefined();
       expect(screen.getByText('commons.flowImport.boxTitle')).toBeDefined();
       expect(
-        screen.getByText('commons.flowImport.boxDescription')
-      ).toBeDefined();
+        screen.queryByText('commons.flowImport.boxDescription')
+      ).toBeNull();
       expect(screen.getByText('commons.flowImport.manualLink')).toBeDefined();
       expect(screen.queryByText('commons.requiredFieldDescription')).toBeNull();
       expect(screen.queryByLabelText('commons.flowType')).toBeNull();
@@ -176,6 +178,50 @@ describe('ImportFlow', () => {
       await waitFor(() => {
         expect(mockNotifyEmit).toHaveBeenCalledWith(
           'commons.importFlowErrorMessage'
+        );
+      });
+    });
+
+    it('handles 409 error by showing specific notification without navigating', async () => {
+      const mockError = {
+        response: {
+          status: 409
+        }
+      };
+
+      mockUploadMutate.mockImplementation((_file, options) => {
+        options.onError(mockError);
+      });
+
+      render(<ImportFlow />);
+
+      const file = new File(['content'], 'test1_2.zip', {
+        type: 'application/zip'
+      });
+      const dropZone = screen.getByTestId('drop-zone');
+
+      fireEvent.dragOver(dropZone);
+      fireEvent.drop(dropZone, {
+        dataTransfer: {
+          files: [file]
+        }
+      });
+
+      await vi.waitFor(() =>
+        expect(screen.getAllByText('test1_2.zip')).toBeDefined()
+      );
+
+      const successButton = screen.getByTestId('success-button');
+      fireEvent.click(successButton);
+
+      await waitFor(() => {
+        expect(mockNotifyEmit).toHaveBeenCalledWith(
+          'commons.files.alreadyExists',
+          'error'
+        );
+        expect(mockNavigate).not.toHaveBeenCalledWith(
+          PageRoutes.RESPONSES_ERROR,
+          expect.anything()
         );
       });
     });

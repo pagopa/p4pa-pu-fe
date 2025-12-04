@@ -104,3 +104,64 @@ export type OrganizationUpdatePayload = {
   flagPaymentNotification: boolean;
   pdndEnabled: boolean;
 };
+
+/**
+ * Unified form data type - combines step1 and step2 into a single structure
+ * Used for the unified form (no wizard steps)
+ */
+export type UnifiedFormData = {
+  // Step 1 fields (Entity Profile)
+  orgName: FieldData<string>;
+  orgFiscalCode: FieldData<string>;
+  orgEmail: FieldData<string>;
+  orgLogo: FieldData<string | null>;
+  logoRemoved: boolean; // Flag to track if user explicitly removed the logo
+  // Step 2 fields (Accounting Information)
+  iban: FieldData<string>;
+  ibanPostal: FieldData<string>;
+  cbill: FieldData<string>;
+  flagTreasury: FieldData<boolean>;
+  // Step 2 fields (Payments Information)
+  segregationCode: FieldData<string>;
+  generateNoticeApiKey: FieldData<string>;
+  additionalLanguage: FieldData<boolean>;
+  selectedLanguage: FieldData<string>;
+  flagNotifyOutcomePush: FieldData<boolean | null>;
+  flagPaymentNotification: FieldData<boolean | null>;
+  // Step 2 fields (PagoPA Products Integration)
+  flagNotifyIo: FieldData<boolean>;
+  ioApiKey: FieldData<string>;
+  pdndEnabled: FieldData<boolean>;
+  sendApiKey: FieldData<string>;
+  // Common field
+  organizationStatus?: string; // Organization status for conditional validation
+};
+
+/**
+ * Unified form values type - combines Step1FormValues and Step2FormValues
+ * Used for react-hook-form values in the unified form
+ */
+export type UnifiedFormValues = {
+  // Step 1 fields (Entity Profile)
+  orgName: string;
+  orgFiscalCode: string;
+  orgEmail: string;
+  orgLogo: File | null;
+  // Step 2 fields (Accounting Information)
+  iban: string;
+  ibanPostal: string;
+  cbill: string;
+  flagTreasury: boolean;
+  // Step 2 fields (Payments Information)
+  segregationCode: string;
+  generateNoticeApiKey: string;
+  additionalLanguage: boolean;
+  selectedLanguage: string;
+  flagNotifyOutcomePush: boolean | null;
+  flagPaymentNotification: boolean | null;
+  // Step 2 fields (PagoPA Products Integration)
+  flagNotifyIo: boolean;
+  ioApiKey: string;
+  pdndEnabled: boolean;
+  sendApiKey: string;
+};

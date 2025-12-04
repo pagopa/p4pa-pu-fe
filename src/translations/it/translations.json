@@ -760,6 +760,8 @@
       "file": "File",
       "imported": "File importato",
       "importedResult": "Esito dell'importazione",
+      "importedIuv": "Esportazione IUV caricati",
+      "importedNotice": "Esportazione ZIP file con avvisi PDF",
       "notvalid": "Il file non è valido",
       "remove": "Rimuovi file",
       "size": "Dimensione File",
@@ -769,7 +771,8 @@
       "downloadFailed": "Errore durante il download.",
       "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria",
       "missingDebtPositionId": "Manca l'ID della posizione debitoria",
-      "missingVersion": "Il nome del file deve essere versionato, contenere un Numero_Numero se previsto."
+      "missingVersion": "Il nome del file deve essere versionato, contenere un Numero_Numero se previsto.",
+      "alreadyExists": "Esiste già un file caricato con questo nome. Modifica il nome del file e riprova."
     },
     "filters": {
       "accountingDate": {
@@ -847,6 +850,11 @@
       "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
       "boxTitle": "Configurazione flusso",
       "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+      "descriptionByCategory": {
+        "telematic-receipt": "Carica il file contenente i dati necessari per integrare le informazioni relative alle Ricevute Telematiche.",
+        "reporting": "Carica il file contenente i dati necessari per integrare le informazioni sulle rendicontazioni.",
+        "treasury": "Carica il file contenente i dati necessari per integrare le informazioni relative alla Tesoreria."
+      },
       "manualLink": "Dubbi? Vai al manuale",
       "uploadButton": "Carica il flusso"
     },
@@ -1079,6 +1087,7 @@
     "successExportDescription": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
     "successImport": "Flusso caricato con successo",
     "summary": "riepilogo",
+    "tableResults": "Risultati della ricerca in forma tabellare",
     "taxCode": "Codice Tassonomico",
     "taxonomy": "Tassonomia",
     "to": "Al",
@@ -1848,6 +1857,7 @@
       "title": "Scegli la tua attività principale",
       "closingText": "Potrai modificare la tua scelta in qualsiasi momento.",
       "message": "Scegli un profilo che rispecchi le tue attività quotidiane per accedere a contenuti e funzioni su misura per te.",
+      "listDescription": "Lista dei profili disponibili",
       "profiles": {
         "debtpositionsManager": {
           "title": "Gestore delle Posizioni Debitorie",
@@ -2039,6 +2049,10 @@
   "organizationEditWizard": {
     "title": "Modifica il tuo ente",
     "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
+    "titleCreate": "Configura ente gestito",
+    "titleEdit": "Modifica ente gestito",
+    "descriptionCreate": "Inserisci le informazioni e le configurazioni relative all'ente intermediato.",
+    "descriptionEdit": "Aggiorna le informazioni e le configurazioni relative all'ente intermediato.",
     "saveChanges": "Salva modifiche",
     "enableOrg": "Abilita ente",
     "errorEnablingOrg": "Non è stato possibile abilitare l'ente perché non sono stati compilati i campi obbligatori",
@@ -2046,6 +2060,19 @@
     "successDraftMessage": "Modifiche salvate con successo in stato bozza",
     "successMessage": "Modifiche salvate con successo",
     "successMessageNotEnable": "Modifiche salvate con successo, ma non abilitato",
+    "successCommon": {
+      "description": "Lo trovi negli enti gestiti, dove puoi gestirlo in qualsiasi momento.",
+      "goToDetail": "Vai al dettaglio ente"
+    },
+    "successDraftPage": {
+      "title": "L’ente ‘{{orgName}}’ è stato salvato in bozza."
+    },
+    "successEnablePage": {
+      "title": "L’ente ‘{{orgName}}’ è ora attivo e può operare in Piattaforma Unitaria."
+    },
+    "successUpdatePage": {
+      "title": "Le modifiche sull’ente ‘{{orgName}}’ sono state salvate con successo."
+    },
     "step1": {
       "title": "Anagrafica ente",
       "label": "Anagrafica ente",
@@ -2077,7 +2104,7 @@
       "label": "Configurazione ente",
       "title": "Configurazione ente",
       "accountingInfo": {
-        "title": "INFORMAZIONE CONTABILE"
+        "title": "Informazione contabile"
       },
       "iban": {
         "label": "IBAN",
@@ -2098,7 +2125,7 @@
         "label": "Il giornale di cassa è integrato"
       },
       "paymentsInfo": {
-        "title": "PAGAMENTI"
+        "title": "Pagamenti"
       },
       "segregationCode": {
         "label": "Codice Segregazione",
@@ -2137,7 +2164,7 @@
         "disabilita": "Disabilita"
       },
       "pagoPaIntegration": {
-        "title": "INTEGRAZIONE CON I PRODOTTI PAGOPA",
+        "title": "Integrazione con i prodotti PagoPA",
         "io": {
           "label": "Messaggi sull'app IO",
           "description": "Abilita l'ente a inviare messaggi sui pagamenti",
@@ -2310,9 +2337,9 @@
     "exportFrom": "Esportati dal"
   },
   "telematicReceiptFlowImport": {
-    "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+    "boxDescription": "Carica il file .zip con i dati necessari per integrare le informazioni relative alle Ricevute Telematiche.",
     "boxTitle": "Configurazione flusso",
-    "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+    "description": "Carica il file contenente i dati necessari per integrare le informazioni relative alle Ricevute Telematiche.",
     "manualLink": "Dubbi? Vai al manuale",
     "uploadButton": "Carica il flusso"
   },

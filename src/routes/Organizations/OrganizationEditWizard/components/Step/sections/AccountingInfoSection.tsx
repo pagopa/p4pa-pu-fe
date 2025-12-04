@@ -1,20 +1,23 @@
 import {
+  Box,
   FormControlLabel,
   Grid,
   Switch,
   TextField,
   Typography
 } from '@mui/material';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import { Controller, Control, FieldErrors } from 'react-hook-form';
+import { theme } from '@pagopa/mui-italia';
 import {
-  OrganizationEditStep2Data,
-  Step2FormValues
+  UnifiedFormData,
+  UnifiedFormValues
 } from '../../../../../../models/OrganizationEditTypes';
 
 type AccountingInfoSectionProps = {
-  control: Control<Step2FormValues>;
-  errors: FieldErrors<Step2FormValues>;
-  data: OrganizationEditStep2Data;
+  control: Control<UnifiedFormValues>;
+  errors: FieldErrors<UnifiedFormValues>;
+  data: UnifiedFormData;
   t: (key: string) => string;
   createIBANValidationRules: (
     t: (key: string) => string,
@@ -30,18 +33,22 @@ export const AccountingInfoSection = ({
   createIBANValidationRules
 }: AccountingInfoSectionProps) => {
   return (
-    <>
-      <Typography
-        variant="body2"
-        fontWeight={800}
-        color="textPrimary"
-        sx={{ mb: 3, mt: 3 }}
-      >
-        {t('organizationEditWizard.step2.accountingInfo.title')}
-      </Typography>
+    <Box
+      border={1}
+      borderRadius={2}
+      borderColor={theme.palette.divider}
+      bgcolor={theme.palette.background.paper}
+      padding={3}
+      sx={{ mb: 3, mt: 3 }}
+    >
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 3 }}>
+        <AccountBalanceIcon sx={{ color: 'text.primary' }} fontSize="small" />
+        <Typography variant="body2" fontWeight={800} color="textPrimary">
+          {t('organizationEditWizard.step2.accountingInfo.title')}
+        </Typography>
+      </Box>
 
       <Grid container spacing={2}>
-        {/* IBAN Field - Required only if status is ACTIVE */}
         <Grid item xs={12}>
           <Controller
             name="iban"
@@ -65,8 +72,6 @@ export const AccountingInfoSection = ({
             )}
           />
         </Grid>
-
-        {/* IBAN Postale Field */}
         <Grid item xs={12}>
           <Controller
             name="ibanPostal"
@@ -135,6 +140,6 @@ export const AccountingInfoSection = ({
           />
         </Grid>
       </Grid>
-    </>
+    </Box>
   );
 };

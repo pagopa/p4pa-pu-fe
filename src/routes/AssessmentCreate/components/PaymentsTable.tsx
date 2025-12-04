@@ -14,10 +14,9 @@ import {
   PaidInstallmentDTO
 } from '../../../api/classifications/paidInstallments/mappings';
 import { usePaymentsTableFilters } from '../../../hooks/usePaymentsTableFilters';
-import { generatePath } from 'react-router';
-import { PageRoutes } from '../..';
 import { useHashParamsListener } from '../../../hooks/useHashParamsListener';
 import utils from '../../../utils';
+import { buildTelematicReceiptDetailPath } from '../../../utils/receiptNavigation';
 
 // Payment row type with additional fields for table display
 type PaymentRow = PaidInstallmentDTO & {
@@ -164,11 +163,18 @@ export const PaymentsTable = ({
   // Handle clicking detail icon button
   const handleDetailClick = useCallback(
     (row: PaymentRow) => {
-      const detailPath = generatePath(PageRoutes.TELEMATIC_RECEIPT_DETAIL, {
-        receiptId: isRemoveMode
-          ? Number(row.receiptId)
-          : Number(row.receiptPaymentRequestId)
-      });
+      const receiptIdentifier = isRemoveMode
+        ? Number(row.receiptId)
+        : Number(row.receiptPaymentRequestId);
+
+      if (!receiptIdentifier || Number.isNaN(receiptIdentifier) || !row.iud) {
+        return;
+      }
+
+      const detailPath = buildTelematicReceiptDetailPath(
+        receiptIdentifier,
+        row.iud
+      );
       const fullUrl = `${window.location.origin}${detailPath}`;
       window.open(fullUrl, '_blank', 'noopener,noreferrer');
     },

@@ -122,7 +122,7 @@ export function Layout() {
               xs={mainColumnWidth}
               paddingX={sidePadding}
               id="main-content"
-              tabIndex={0}
+              tabIndex={-1}
             >
               <Stack
                 direction="row"

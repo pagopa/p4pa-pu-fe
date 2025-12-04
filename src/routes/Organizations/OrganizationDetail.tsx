@@ -85,6 +85,7 @@ export const OrganizationDetail = () => {
   const updateOrg = async () => {
     if (!filledFieldsConditions) {
       utils.notify.emit(t('organizations.enableDialog.emptyFields'), 'error');
+      utils.dialog.close();
       return;
     }
     if (organizationDetailData) {

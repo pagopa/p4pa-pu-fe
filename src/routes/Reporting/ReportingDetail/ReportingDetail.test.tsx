@@ -131,7 +131,7 @@ describe('ReportingDetail Page', () => {
     expect(screen.getByText('commons.payments')).toBeInTheDocument();
     expect(screen.getByText('commons.detail')).toBeInTheDocument();
 
-    expect(screen.getByLabelText('results-table')).toBeInTheDocument();
+    expect(screen.getByTestId('results-table')).toBeInTheDocument();
 
     expect(
       screen.getByText('commons.filters.filterResults')

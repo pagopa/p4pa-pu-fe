@@ -230,7 +230,6 @@ export const OperatorDetail = () => {
             bgcolor: theme.palette.grey[200],
             overflow: 'auto'
           }}
-          aria-label="results-table"
         >
           <OperatorDetailDataGrid
             data={data?.pagedDebtPositionTypeOrg}

@@ -3,8 +3,8 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { useForm } from 'react-hook-form';
 import { PaymentsInfoSection } from './PaymentsInfoSection';
 import {
-  OrganizationEditStep2Data,
-  Step2FormValues,
+  UnifiedFormData,
+  UnifiedFormValues,
   LANGUAGE_OPTIONS
 } from '../../../../../../models/OrganizationEditTypes';
 import { i18nTestSetup } from '../../../../../../__tests__/i18nTestSetup';
@@ -45,16 +45,16 @@ const TestWrapper = ({
   t,
   watchAdditionalLanguage = false
 }: {
-  data: OrganizationEditStep2Data;
-  defaultValues: Partial<Step2FormValues>;
+  data: UnifiedFormData;
+  defaultValues: Partial<UnifiedFormValues>;
   t: (key: string) => string;
   watchAdditionalLanguage?: boolean;
 }) => {
   const {
     control,
     formState: { errors }
-  } = useForm<Step2FormValues>({
-    defaultValues: defaultValues as Step2FormValues,
+  } = useForm<UnifiedFormValues>({
+    defaultValues: defaultValues as UnifiedFormValues,
     mode: 'onSubmit'
   });
 
@@ -72,17 +72,26 @@ const TestWrapper = ({
 describe('PaymentsInfoSection', () => {
   const mockT = vi.fn((key: string) => key);
 
-  const mockData: OrganizationEditStep2Data = {
+  const mockData: UnifiedFormData = {
+    // Step 1 fields
+    orgName: { value: '', readonly: false },
+    orgFiscalCode: { value: '', readonly: false },
+    orgEmail: { value: '', readonly: false },
+    orgLogo: { value: null, readonly: false },
+    logoRemoved: false,
+    // Step 2 Accounting fields
     iban: { value: '', readonly: false },
     ibanPostal: { value: '', readonly: false },
     cbill: { value: '', readonly: false },
     flagTreasury: { value: false, readonly: false },
+    // Step 2 Payments fields
     segregationCode: { value: '', readonly: false },
     generateNoticeApiKey: { value: '', readonly: false },
     additionalLanguage: { value: false, readonly: false },
     selectedLanguage: { value: '', readonly: false },
     flagNotifyOutcomePush: { value: false, readonly: false },
     flagPaymentNotification: { value: false, readonly: false },
+    // Step 2 PagoPA Integration fields
     flagNotifyIo: { value: false, readonly: false },
     ioApiKey: { value: '', readonly: false },
     pdndEnabled: { value: false, readonly: false },
@@ -90,7 +99,7 @@ describe('PaymentsInfoSection', () => {
     organizationStatus: 'DRAFT'
   };
 
-  const mockFilledData: OrganizationEditStep2Data = {
+  const mockFilledData: UnifiedFormData = {
     ...mockData,
     segregationCode: { value: '01', readonly: false },
     generateNoticeApiKey: { value: 'api-key-123', readonly: false },
@@ -144,16 +153,33 @@ describe('PaymentsInfoSection', () => {
     }
   };
 
-  const defaultFormValues: Partial<Step2FormValues> = {
+  const defaultFormValues: Partial<UnifiedFormValues> = {
+    // Step 1 fields
+    orgName: '',
+    orgFiscalCode: '',
+    orgEmail: '',
+    orgLogo: null,
+    // Step 2 Accounting fields
+    iban: '',
+    ibanPostal: '',
+    cbill: '',
+    flagTreasury: false,
+    // Step 2 Payments fields
     segregationCode: '',
     generateNoticeApiKey: '',
     additionalLanguage: false,
     selectedLanguage: '',
-    flagNotifyOutcomePush: false,
-    flagPaymentNotification: false
+    flagNotifyOutcomePush: null,
+    flagPaymentNotification: null,
+    // Step 2 PagoPA Integration fields
+    flagNotifyIo: false,
+    ioApiKey: '',
+    pdndEnabled: false,
+    sendApiKey: ''
   };
 
-  const filledFormValues: Partial<Step2FormValues> = {
+  const filledFormValues: Partial<UnifiedFormValues> = {
+    ...defaultFormValues,
     segregationCode: '01',
     generateNoticeApiKey: 'api-key-123',
     additionalLanguage: true,

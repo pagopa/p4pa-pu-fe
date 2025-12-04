@@ -9,7 +9,7 @@ import utils from '../../utils';
 import {
   DebtPositionDetailDTO,
   PersonEntityType,
-  PaymentOptionTypeEnum,
+  PaymentOptionType,
   DebtPositionStatus
 } from '../../../generated/data-contracts';
 import { PageRoutes } from '..';
@@ -157,7 +157,7 @@ const mockDebtPositionDetail: DebtPositionDetailDTO = {
   },
   paymentOptions: [
     {
-      paymentOptionType: PaymentOptionTypeEnum.SINGLE_INSTALLMENT,
+      paymentOptionType: PaymentOptionType.SINGLE_INSTALLMENT,
       totalAmountCents: 10000,
       installments: [
         {
@@ -214,7 +214,7 @@ const mockInstallmentDebtPositionDetail: DebtPositionDetailDTO = {
   },
   paymentOptions: [
     {
-      paymentOptionType: PaymentOptionTypeEnum.INSTALLMENTS,
+      paymentOptionType: PaymentOptionType.INSTALLMENTS,
       totalAmountCents: 30000,
       installments: [
         {
@@ -576,7 +576,7 @@ describe('DebtPositionCreateWizard', () => {
         },
         paymentOptions: [
           {
-            paymentOptionType: PaymentOptionTypeEnum.INSTALLMENTS,
+            paymentOptionType: PaymentOptionType.INSTALLMENTS,
             totalAmountCents: 5000,
             installments: [
               {
@@ -629,7 +629,7 @@ describe('DebtPositionCreateWizard', () => {
         },
         paymentOptions: [
           {
-            paymentOptionType: PaymentOptionTypeEnum.INSTALLMENTS,
+            paymentOptionType: PaymentOptionType.INSTALLMENTS,
             totalAmountCents: 15000,
             installments: [
               {
