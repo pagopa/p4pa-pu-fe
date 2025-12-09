@@ -7,6 +7,7 @@ import { theme } from '@pagopa/mui-italia';
 import { SuccessPageConfig } from '../../models/SuccessPageConfig';
 import { useEffect } from 'react';
 import ResponsePage from '../../components/ResponsePage/ResponsePage';
+import { truncateParams } from '../../utils/textUtils';
 
 export const SuccessPage = () => {
   const { t } = useTranslation();
@@ -14,6 +15,9 @@ export const SuccessPage = () => {
   const location = useLocation();
   const { category } = location?.state || {};
   const { i18nParams } = location?.state || {};
+
+  // Truncate placeholder values to avoid long strings breaking the layout
+  const truncatedParams = truncateParams(i18nParams, 50);
 
   const pageConfig =
     SuccessPageConfig[category as keyof typeof SuccessPageConfig];
@@ -122,13 +126,13 @@ export const SuccessPage = () => {
       icon={getIcon()}
       title={String(
         t(pageConfig?.title, {
-          ...i18nParams,
+          ...truncatedParams,
           interpolation: { escapeValue: false }
         })
       )}
       description={
         pageConfig?.description
-          ? String(t(pageConfig.description, i18nParams))
+          ? String(t(pageConfig.description, truncatedParams))
           : ''
       }
       buttonConfig={buttonConfig}
