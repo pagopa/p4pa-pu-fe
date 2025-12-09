@@ -1162,24 +1162,20 @@
     },
     "step2": {
       "address": {
-        "label": "Indirizzo",
-        "required": "Il campo indirizzo è obbligatorio"
+        "label": "Indirizzo"
       },
       "city": {
-        "label": "Località",
-        "required": "Il campo località è obbligatorio"
+        "label": "Località"
       },
       "civicNumber": {
-        "label": "Civico",
-        "required": "Il campo civico è obbligatorio"
+        "label": "Civico"
       },
       "companyName": {
         "label": "Ragione sociale",
         "required": "Il campo ragione sociale è obbligatorio"
       },
       "country": {
-        "label": "Nazione",
-        "required": "Il campo nazione è obbligatorio"
+        "label": "Nazione"
       },
       "fiscalData": "DATI FISCALI",
       "fullName": {
@@ -1189,8 +1185,7 @@
       },
       "personalData": "DATI PERSONALI",
       "province": {
-        "label": "Provincia",
-        "required": "Il campo provincia è obbligatorio"
+        "label": "Provincia"
       },
       "subjectType": {
         "label": "Tipo di soggetto",
@@ -1211,6 +1206,12 @@
         "placeholder": "Inserisci il codice fiscale (16 caratteri)",
         "required": "Il campo codice fiscale è obbligatorio"
       },
+      "taxCodeBusiness": {
+        "label": "Codice fiscale / P. IVA",
+        "placeholder": "Inserisci il Codice fiscale (16 caratteri) o la Partita IVA (11 cifre)",
+        "required": "Il campo Codice fiscale / P. IVA è obbligatorio",
+        "invalid": "Verifica che il Codice fiscale o la Partita IVA siano corretti"
+      },
       "title": "Debitore",
       "vat": {
         "invalid": "Verifica che la Partita IVA sia corretta",
@@ -1221,8 +1222,7 @@
       "zipCode": {
         "error": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
         "invalid": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
-        "label": "CAP",
-        "required": "Il campo CAP è obbligatorio"
+        "label": "CAP"
       }
     },
     "step3": {

@@ -58,31 +58,17 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
       })
   );
 
-  const addressSchema = createFieldSchema(
-    z.string().nonempty(t('debtPositionCreateWizard.step2.address.required'))
-  );
+  const addressSchema = createFieldSchema(z.string());
 
-  const civicNumberSchema = createFieldSchema(
-    z
-      .string()
-      .nonempty(t('debtPositionCreateWizard.step2.civicNumber.required'))
-  );
+  const civicNumberSchema = createFieldSchema(z.string());
 
-  const zipCodeSchema = createFieldSchema(
-    z.string().nonempty(t('debtPositionCreateWizard.step2.zipCode.required'))
-  );
+  const zipCodeSchema = createFieldSchema(z.string());
 
-  const countrySchema = createFieldSchema(
-    z.string().nonempty(t('debtPositionCreateWizard.step2.country.required'))
-  );
+  const countrySchema = createFieldSchema(z.string());
 
-  const provinceSchema = createFieldSchema(
-    z.string().nonempty(t('debtPositionCreateWizard.step2.province.required'))
-  );
+  const provinceSchema = createFieldSchema(z.string());
 
-  const citySchema = createFieldSchema(
-    z.string().nonempty(t('debtPositionCreateWizard.step2.city.required'))
-  );
+  const citySchema = createFieldSchema(z.string());
 
   // Base schema for the entire object
   const schema = z.object({
@@ -110,12 +96,13 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
       return taxCode != null && taxCode.trim().length > 0;
     },
     {
+      // Message will be customized in resolver based on subject type
       message: t('debtPositionCreateWizard.step2.taxCode.required'),
       path: ['taxCode', 'value']
     }
   );
 
-  // Validation for individuals
+  // Validation for individuals: only Codice Fiscale is allowed
   const individualSchema = taxCodeRequiredSchema.refine(
     (data) => {
       if (data.subjectType.value !== SubjectType.INDIVIDUAL) return true;
@@ -128,7 +115,7 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
       // Skip validation if taxCode is undefined or empty (already handled by taxCodeRequiredSchema)
       if (!taxCode || taxCode.trim().length === 0) return true;
 
-      return isValidCodiceFiscale(taxCode) || isValidPartitaIVA(taxCode);
+      return isValidCodiceFiscale(taxCode);
     },
     {
       message: t('debtPositionCreateWizard.step2.taxCode.invalid'),
@@ -136,7 +123,7 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
     }
   );
 
-  // Validation for businesses
+  // Validation for businesses: accept both CF and P.IVA, share same invalid message
   const businessSchema = individualSchema.refine(
     (data) => {
       if (data.subjectType.value !== SubjectType.BUSINESS) return true;
@@ -149,10 +136,10 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
       // Skip validation if taxCode is undefined or empty (already handled by taxCodeRequiredSchema)
       if (!taxCode || taxCode.trim().length === 0) return true;
 
-      return isValidPartitaIVA(taxCode);
+      return isValidCodiceFiscale(taxCode) || isValidPartitaIVA(taxCode);
     },
     {
-      message: t('debtPositionCreateWizard.step2.taxCode.invalidVAT'),
+      message: t('debtPositionCreateWizard.step2.taxCodeBusiness.invalid'),
       path: ['taxCode', 'value']
     }
   );
@@ -184,18 +171,19 @@ export const createNestedStep2AddDebtorSchema = (t: TFunction) => {
     }
   );
 
-  // Validation for zipCode (only for Italy must be 5 digits)
+  // Validation for zipCode (only for Italy must be 5 digits; optional field)
   return fullNameValidationSchema.refine(
     (data) => {
       const zipCode = data.zipCode.value;
       const country = data.country.value;
 
+      const trimmed = (zipCode || '').trim();
+      // Field is now optional: skip validation when empty
+      if (trimmed.length === 0) {
+        return true;
+      }
+
       if (country === 'IT' || !country) {
-        const trimmed = (zipCode || '').trim();
-        if (trimmed.length === 0) {
-          // Let the base required validation handle emptiness
-          return true;
-        }
         return /^\d{5}$/.test(trimmed);
       }
 

@@ -6,7 +6,6 @@ import { SubjectType } from '../utils/fieldValidation';
 import { TFunction } from 'i18next';
 import { z } from 'zod';
 
-// Mock react-i18next
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string) => key
@@ -329,7 +328,7 @@ describe('useStep2Form', () => {
 
       await waitFor(() => {
         expect(result.current.errors.taxCode?.value?.message).toBe(
-          'debtPositionCreateWizard.step2.vat.required'
+          'debtPositionCreateWizard.step2.taxCodeBusiness.required'
         );
       });
     });
