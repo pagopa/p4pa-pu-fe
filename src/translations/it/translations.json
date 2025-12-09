@@ -418,7 +418,7 @@
           "idReporting": "ID Rendicontazione",
           "flowDateTime": "Data ora flusso",
           "regulationUniqueIdentifier": "ID regolamento",
-          "regionValueDate": "Data regolamento",
+          "regulationDate": "Data regolamento",
           "totalPayments": "Importo Totale",
           "link": "Vedi Flusso di Rendicontazione"
         },
