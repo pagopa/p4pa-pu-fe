@@ -82,7 +82,7 @@ export const StatusBar: React.FC<StatusBarProps> = ({ classificationData }) => {
     <Box sx={{ mb: 3 }}>
       <Alert severity={alertInfo.severity} variant="outlined" sx={{ mb: 3 }}>
         <Typography
-          variant="h6"
+          variant="caption-semibold"
           component="div"
           sx={{ fontWeight: 600, mb: 0.5 }}
         >

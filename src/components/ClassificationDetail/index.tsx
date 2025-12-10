@@ -183,8 +183,8 @@ export const ClassificationDetails = () => {
       value: data?.regulationUniqueIdentifier
     },
     {
-      label: t(`${targetTranslationReporting}.regionValueDate`),
-      value: data?.regionValueDate,
+      label: t(`${targetTranslationReporting}.regulationDate`),
+      value: data?.regulationDate,
       valueType: 'date'
     },
     {
