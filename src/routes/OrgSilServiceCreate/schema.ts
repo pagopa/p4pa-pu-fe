@@ -9,10 +9,12 @@ export const orgSilServiceFormSchema = z
   .object({
     applicationName: z
       .string()
-      .min(1, t('orgSilServiceCreate.validations.requiredAPIName')),
+      .min(1, t('orgSilServiceCreate.validations.requiredAPIName'))
+      .max(255),
     serviceUrl: z
       .string()
       .min(1, t('orgSilServiceCreate.validations.requiredURL'))
+      .max(500)
       .url(t('orgSilServiceCreate.validations.invalidURL')),
     serviceType: z.nativeEnum(OrgSilServiceType, {
       required_error: t('orgSilServiceCreate.validations.requiredServiceType')
