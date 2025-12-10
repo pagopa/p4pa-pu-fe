@@ -121,7 +121,7 @@ export const OperatorsList = () => {
 
       <Box>
         {tabValue === 0 ? (
-          <MyOrganization key={`myorg-tab-${tabValue}`} />
+          <MyOrganization key={`myorg-tab-${tabValue}`} omitOrgName={true} />
         ) : (
           <AllOrganizations key={`allorgs-tab-${tabValue}`} />
         )}
