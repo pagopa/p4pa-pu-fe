@@ -26,7 +26,7 @@ export const operatorsRoutes: Array<RouteObject> = [
       },
       {
         id: 'BROKER_OPERATORS',
-        path: 'brokers/:organizationId/:orgName',
+        path: 'brokers/:organizationId',
         element: <MyOrganization />,
         handle: {
           backButton: true,
@@ -47,8 +47,7 @@ export const operatorsRoutes: Array<RouteObject> = [
       },
       {
         id: 'OPERATORS_AFFILIATE',
-        // orgName is an optional param
-        path: 'affiliate/:organizationId/:mappedExternalUserId/:operatorName/:orgName?',
+        path: 'affiliate/:organizationId/:mappedExternalUserId/:operatorName',
         element: <OperatorAffiliate />,
         handle: {
           backButton: true,

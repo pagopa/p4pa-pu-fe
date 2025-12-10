@@ -63,12 +63,10 @@ export const SuccessPage = () => {
         });
         navigate(detailPath, { replace: true, state: { fromSuccess: true } });
       } else if (btn.customNavigation === 'OPERATORS_DETAIL') {
-        const { organizationId, orgName, mappedExternalUserId } =
-          location?.state || {};
+        const { organizationId, mappedExternalUserId } = location?.state || {};
 
         const detailPath = generatePath(PageRoutes.OPERATORS_DETAIL, {
           organizationId,
-          orgName,
           mappedExternalUserId
         });
         navigate(detailPath, { replace: true, state: { fromSuccess: true } });

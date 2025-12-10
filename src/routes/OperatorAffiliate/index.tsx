@@ -47,8 +47,7 @@ export const OperatorAffiliate = () => {
   const {
     organizationId: paramOrganizationId,
     mappedExternalUserId: paramMappedExternalUserId,
-    operatorName,
-    orgName
+    operatorName
   } = useParams();
 
   const organizationId = Number(paramOrganizationId);
@@ -157,7 +156,6 @@ export const OperatorAffiliate = () => {
             operatorName
           },
           organizationId,
-          orgName,
           mappedExternalUserId
         }
       });
