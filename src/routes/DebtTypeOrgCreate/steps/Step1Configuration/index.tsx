@@ -134,6 +134,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
           disabled={!selectionQuery?.data?.optionsMap?.length || edit}
           options={selectionQuery?.data?.optionsMap}
           data-testid="debtPositionTypeId"
+          required
         />
       </SectionBox>
 
@@ -151,6 +152,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
             label={t('debtTypeOrgCreate.configuration.code.label')}
             disabled={edit}
             noAdornment
+            required
           />
           <Stack flex={3}>
             <FormComponent.ControlledTextField
@@ -160,6 +162,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               disabled={edit}
               label={t('debtTypeOrgCreate.configuration.description.label')}
               adornment={`${description?.length || 0}/100`}
+              required
             />
             <Typography variant="caption" px={1.5}>
               {t('debtTypeOrgCreate.configuration.description.caption')}
