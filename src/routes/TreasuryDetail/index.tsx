@@ -110,6 +110,14 @@ export const TreasuryDetail = () => {
       value: data?.provisionalCode || ''
     },
     {
+      label: t('treasury.orgBtCode'),
+      value: data?.orgBtCode || ''
+    },
+    {
+      label: t('treasury.orgIstatCode'),
+      value: data?.orgIstatCode || ''
+    },
+    {
       label: t('commons.reason'),
       value: data?.remittanceDescription || ''
     }
