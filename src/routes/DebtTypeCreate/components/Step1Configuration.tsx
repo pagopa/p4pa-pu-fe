@@ -62,6 +62,7 @@ export const Step1Configuration = ({
   // Monitor the code field to reset isCodeUnique when it changes
   const codeValue = useWatch({ control, name: 'code' });
   const prevCodeValueRef = useRef<string | undefined>(undefined);
+  const descriptionValue = useWatch({ control, name: 'description' });
 
   // Reset isCodeUnique when the code changes
   useEffect(() => {
@@ -120,6 +121,7 @@ export const Step1Configuration = ({
                 defaultValue={editmode ? prefilledData?.code : ''}
                 disabled={editmode}
                 required={!editmode}
+                inputProps={{ maxLength: 255 }}
               />
               <Stack flex={3}>
                 <FormComponent.ControlledTextField
@@ -130,7 +132,8 @@ export const Step1Configuration = ({
                   placeholder={t(
                     'debtTypeCreate.configuration.debtType.placeholder'
                   )}
-                  adornment={`${form.getValues('description')?.length || 0}/100`}
+                  inputProps={{ maxLength: 100 }}
+                  adornment={`${descriptionValue?.length || 0}/100`}
                   defaultValue={editmode ? prefilledData?.description : ''}
                   disabled={editmode}
                   required={!editmode}

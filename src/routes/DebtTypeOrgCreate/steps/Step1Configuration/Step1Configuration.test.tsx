@@ -88,13 +88,13 @@ describe('Step1Configuration', () => {
   it('updates character count for description field', () => {
     renderWithForm(<Step1Configuration />);
 
-    expect(screen.getByText('0/100')).toBeInTheDocument();
+    expect(screen.getByText('0/200')).toBeInTheDocument();
 
     fillField(
       'debtTypeOrgCreate.configuration.description.label',
       'Test description'
     );
 
-    expect(screen.getByText('16/100')).toBeInTheDocument();
+    expect(screen.getByText('16/200')).toBeInTheDocument();
   });
 });
