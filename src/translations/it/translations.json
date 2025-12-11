@@ -2385,7 +2385,9 @@
     "search": "Cerca flussi di Tesoreria",
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
     "provisionalCode": "Codice provvisorio",
-    "tempDocumentYear": "Anno codice Provvisorio"
+    "tempDocumentYear": "Anno codice Provvisorio",
+    "orgBtCode": "Codice Banca Tesoriere",
+    "orgIstatCode": "Codice ISTAT"
   },
   "treasuryImportFlowOverview": {
     "accessibleTitle": "Flussi importati: tesoreria",

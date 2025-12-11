@@ -3,9 +3,11 @@ import { taxonomyFieldsSchema } from '../../../components/TaxonomyFilter/schema'
 
 const baseSchema = z
   .object({
-    code: z.string({
-      required_error: 'debtTypeCreate.configuration.debtTypeCode.required'
-    }),
+    code: z
+      .string({
+        required_error: 'debtTypeCreate.configuration.debtTypeCode.required'
+      })
+      .max(255),
     description: z
       .string({
         required_error: 'debtTypeCreate.configuration.debtType.required'

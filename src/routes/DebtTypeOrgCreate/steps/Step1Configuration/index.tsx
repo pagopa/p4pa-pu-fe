@@ -1,4 +1,4 @@
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import BookIcon from '@mui/icons-material/MenuBook';
@@ -48,11 +48,10 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
   const actualizationQuery = useActualizationServices();
   const notificationQuery = useNotificationServices();
 
-  const { control, watch, setValue, trigger } =
-    useFormContext<DebtTypeOrgForm>();
+  const { control, setValue, trigger } = useFormContext<DebtTypeOrgForm>();
 
-  const description = watch('description');
-  const selectedId = watch('debtPositionTypeId');
+  const description = useWatch({ control, name: 'description' });
+  const selectedId = useWatch({ control, name: 'debtPositionTypeId' });
 
   // Auto-fill other fields when selection changes
   useEffect(() => {
@@ -151,6 +150,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
             control={control}
             label={t('debtTypeOrgCreate.configuration.code.label')}
             disabled={edit}
+            inputProps={{ maxLength: 255 }}
             noAdornment
             required
           />
@@ -161,8 +161,8 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               disabled={edit}
               label={t('debtTypeOrgCreate.configuration.description.label')}
-              adornment={`${description?.length || 0}/100`}
-              required
+              inputProps={{ maxLength: 200 }}
+              adornment={`${description?.length || 0}/200`}
             />
             <Typography variant="caption" px={1.5}>
               {t('debtTypeOrgCreate.configuration.description.caption')}
