@@ -67,8 +67,8 @@ describe('step1Schema validation', () => {
     }
   });
 
-  it('fails if description is longer than 100 characters', () => {
-    const longDescription = 'a'.repeat(101);
+  it('fails if description is longer than 200 characters', () => {
+    const longDescription = 'a'.repeat(201);
     const invalidData = {
       debtPositionTypeId: '1',
       code: 'CODE123',

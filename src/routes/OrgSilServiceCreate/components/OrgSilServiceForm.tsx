@@ -90,6 +90,7 @@ export const OrgSilServiceForm = ({
                   control={control}
                   label={t('orgSilServiceCreate.APIName')}
                   required
+                  inputProps={{ maxLength: 255 }}
                   noAdornment
                 />
                 <FormComponent.ControlledTextField
@@ -97,6 +98,7 @@ export const OrgSilServiceForm = ({
                   control={control}
                   label={t('orgSilServiceCreate.serviceURL')}
                   required
+                  inputProps={{ maxLength: 500 }}
                   noAdornment
                 />
                 <FormComponent.ControlledSelect
