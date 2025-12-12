@@ -136,13 +136,13 @@ const Step2AddDebtor = ({
 
   const getTaxCodeLabel = () => {
     return subjectTypeValue === SubjectType.BUSINESS
-      ? t('debtPositionCreateWizard.step2.vat.label')
+      ? t('debtPositionCreateWizard.step2.taxCodeBusiness.label')
       : t('debtPositionCreateWizard.step2.taxCode.label');
   };
 
   const getTaxCodePlaceholder = () => {
     return subjectTypeValue === SubjectType.BUSINESS
-      ? t('debtPositionCreateWizard.step2.vat.placeholder')
+      ? t('debtPositionCreateWizard.step2.taxCodeBusiness.placeholder')
       : t('debtPositionCreateWizard.step2.taxCode.placeholder');
   };
 
@@ -358,7 +358,6 @@ const Step2AddDebtor = ({
                 name="address"
                 control={control}
                 label={t('debtPositionCreateWizard.step2.address.label')}
-                required
                 disabled={isFieldDisabled('personal')}
                 isSubmitted={isSubmitted}
                 errors={errors}
@@ -374,7 +373,6 @@ const Step2AddDebtor = ({
                 name="civicNumber"
                 control={control}
                 label={t('debtPositionCreateWizard.step2.civicNumber.label')}
-                required
                 disabled={isFieldDisabled('personal')}
                 isSubmitted={isSubmitted}
                 errors={errors}
@@ -390,7 +388,6 @@ const Step2AddDebtor = ({
                 name="zipCode"
                 control={control}
                 label={t('debtPositionCreateWizard.step2.zipCode.label')}
-                required
                 disabled={isFieldDisabled('personal')}
                 isSubmitted={isSubmitted}
                 errors={errors}
@@ -416,7 +413,6 @@ const Step2AddDebtor = ({
                     label={t('debtPositionCreateWizard.step2.country.label')}
                     select
                     fullWidth
-                    required
                     disabled={isFieldDisabled('personal')}
                     error={isSubmitted && !!errors.country?.value}
                     helperText={isSubmitted && errors.country?.value?.message}
@@ -452,7 +448,6 @@ const Step2AddDebtor = ({
                     label={t('debtPositionCreateWizard.step2.province.label')}
                     select
                     fullWidth
-                    required
                     disabled={isFieldDisabled('personal')}
                     error={isSubmitted && !!errors.province?.value}
                     helperText={isSubmitted && errors.province?.value?.message}
@@ -481,7 +476,6 @@ const Step2AddDebtor = ({
                 name="city"
                 control={control}
                 label={t('debtPositionCreateWizard.step2.city.label')}
-                required
                 disabled={isFieldDisabled('personal')}
                 isSubmitted={isSubmitted}
                 errors={errors}

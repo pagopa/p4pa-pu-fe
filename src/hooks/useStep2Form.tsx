@@ -115,10 +115,13 @@ export const useStep2Form = ({
     message: string,
     subjectType?: string
   ): string => {
-    // Customize taxCode errors for BUSINESS type (VAT instead of Tax Code)
+    // Customize taxCode errors for BUSINESS type (CF/P.IVA label)
     if (fieldName === 'taxCode' && subjectType === SubjectType.BUSINESS) {
       if (message === t('debtPositionCreateWizard.step2.taxCode.required')) {
-        return t('debtPositionCreateWizard.step2.vat.required');
+        return t('debtPositionCreateWizard.step2.taxCodeBusiness.required');
+      }
+      if (message === t('debtPositionCreateWizard.step2.taxCode.invalid')) {
+        return t('debtPositionCreateWizard.step2.taxCodeBusiness.invalid');
       }
     }
 
