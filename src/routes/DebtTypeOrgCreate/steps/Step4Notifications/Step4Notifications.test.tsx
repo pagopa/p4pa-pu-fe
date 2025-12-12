@@ -63,9 +63,6 @@ describe('Step4Notifications', () => {
     expect(
       screen.getByText('debtTypeOrgCreate.notifications.subtitle')
     ).toBeInTheDocument();
-    expect(
-      screen.getByText('debtTypeOrgCreate.notifications.alertMessage')
-    ).toBeInTheDocument();
 
     expect(
       screen.getByRole('checkbox', {
@@ -86,6 +83,10 @@ describe('Step4Notifications', () => {
       name: 'debtTypeOrgCreate.notifications.enableNotifications'
     });
     fireEvent.click(switchInput);
+
+    expect(
+      screen.getByText('debtTypeOrgCreate.notifications.alertMessage')
+    ).toBeInTheDocument();
 
     expect(
       screen.getByText('debtTypeOrgCreate.notifications.section.message')
