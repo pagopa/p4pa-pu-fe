@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import Step2AddDebtor from './Step2AddDebtor';
 import { Step2Data } from '../../../../models/DebtPositionType';
 
@@ -105,6 +105,100 @@ describe('Step2AddDebtor', () => {
     }) as HTMLInputElement;
     fireEvent.change(zipCodeInput, { target: { value: '20100' } });
     expect(zipCodeInput.value).toBe('20100');
+  });
+
+  it('does not accept Partita IVA for INDIVIDUAL', async () => {
+    const onNext = vi.fn();
+
+    render(
+      <Step2AddDebtor data={defaultData} setData={() => null} onNext={onNext} />
+    );
+
+    // Select INDIVIDUAL
+    const subjectTypeSelect = screen.getByRole('combobox', {
+      name: 'debtPositionCreateWizard.step2.subjectType.label'
+    }) as HTMLSelectElement;
+    fireEvent.mouseDown(subjectTypeSelect);
+    const individualOption = await screen.findByText(
+      'debtPositionCreateWizard.step2.subjectType.options.fisica'
+    );
+    fireEvent.click(individualOption);
+
+    const taxCodeInput = screen.getByRole('textbox', {
+      name: 'debtPositionCreateWizard.step2.taxCode.label'
+    }) as HTMLInputElement;
+    fireEvent.change(taxCodeInput, { target: { value: '12345678901' } }); // P.IVA format
+
+    const fullNameInput = screen.getByRole('textbox', {
+      name: 'debtPositionCreateWizard.step2.fullName.label'
+    }) as HTMLInputElement;
+    fireEvent.change(fullNameInput, { target: { value: 'Mario Rossi' } });
+
+    const continueButton = screen.getByRole('button', {
+      name: 'commons.continue'
+    });
+    fireEvent.click(continueButton);
+
+    await waitFor(() => expect(onNext).not.toHaveBeenCalled());
+  });
+
+  it('accepts CF or P.IVA for BUSINESS', async () => {
+    const onNext = vi.fn();
+
+    render(
+      <Step2AddDebtor data={defaultData} setData={() => null} onNext={onNext} />
+    );
+
+    // Select BUSINESS
+    const subjectTypeSelect = screen.getByRole('combobox', {
+      name: 'debtPositionCreateWizard.step2.subjectType.label'
+    }) as HTMLSelectElement;
+    fireEvent.mouseDown(subjectTypeSelect);
+    const businessOption = await screen.findByText(
+      'debtPositionCreateWizard.step2.subjectType.options.giuridica'
+    );
+    fireEvent.click(businessOption);
+
+    // Fill required fields with a valid P.IVA format (11 digits)
+    const taxCodeInput = screen.getByRole('textbox', {
+      name: 'debtPositionCreateWizard.step2.taxCodeBusiness.label'
+    }) as HTMLInputElement;
+    fireEvent.change(taxCodeInput, { target: { value: '12345678901' } });
+
+    const fullNameInput = screen.getByRole('textbox', {
+      name: 'debtPositionCreateWizard.step2.companyName.label'
+    }) as HTMLInputElement;
+    fireEvent.change(fullNameInput, { target: { value: 'ACME SPA' } });
+
+    const continueButton = screen.getByRole('button', {
+      name: 'commons.continue'
+    });
+    fireEvent.click(continueButton);
+
+    await waitFor(() => expect(onNext).toHaveBeenCalledTimes(1));
+  });
+
+  it('renders address-related fields as optional', () => {
+    const setData = vi.fn();
+    const onNext = vi.fn();
+
+    render(
+      <Step2AddDebtor data={defaultData} setData={setData} onNext={onNext} />
+    );
+
+    const addressInput = screen.getByTestId('address-field');
+    const civicNumberInput = screen.getByTestId('civic-number-field');
+    const zipCodeInput = screen.getByTestId('zip-code-field');
+    const countrySelect = screen.getByTestId('country-field');
+    const provinceSelect = screen.getByTestId('province-field');
+    const cityInput = screen.getByTestId('city-field');
+
+    expect(addressInput).not.toHaveAttribute('required');
+    expect(civicNumberInput).not.toHaveAttribute('required');
+    expect(zipCodeInput).not.toHaveAttribute('required');
+    expect(countrySelect).not.toHaveAttribute('required');
+    expect(provinceSelect).not.toHaveAttribute('required');
+    expect(cityInput).not.toHaveAttribute('required');
   });
 
   it('allows selecting country and province', async () => {
