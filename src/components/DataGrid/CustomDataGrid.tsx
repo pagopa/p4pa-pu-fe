@@ -146,6 +146,9 @@ const CustomDataGrid = <T extends GridValidRowModel>({
           />
         )
       }}
+      localeText={{
+        noRowsLabel: t('commons.noRows')
+      }}
       {...restProps}
     />
   );

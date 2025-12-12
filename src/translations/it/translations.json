@@ -79,6 +79,7 @@
         "DRAFT": "L'avviso di pagamento non è stato ancora emesso.",
         "TO_SYNC": "L'avviso di pagamento è stato registrato ma non è ancora pagabile.",
         "UNPAID": "L'avviso di pagamento è stato emesso ed è pagabile.",
+        "UNPAYABLE": "L'avviso non è pagabile.",
         "PAID": "Il pagamento è stato completato.",
         "REPORTED": "L'avviso di pagamento è stato rendicontato.",
         "EXPIRED": "Il pagamento non è stato completato entro la data di scadenza stabilita.",
@@ -909,6 +910,7 @@
     "NO_EVENTS": "Nessun evento",
     "noFlows": "Non ci sono flussi.",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+    "noRows": "Nessun risultato trovato",
     "notificationFeeCents": "Costo di notifica",
     "notifications": "Notifiche",
     "notificationsConfig": "Configurazione",
@@ -1718,9 +1720,9 @@
     },
     "notifications": {
       "title": "Messaggi",
-      "subtitle": "Crea un messaggio per notificare digitalmente ai cittadini la disponibilità degli avvisi e aggiornamenti.",
-      "alertMessage": "* Indica una domanda obbligatoria",
-      "enableNotifications": "Abilita notifiche",
+      "subtitle": "Crea un messaggio per informare i cittadini sulla disponibilità di avvisi e aggiornamenti in formato digitale.",
+      "alertMessage": "* Indica un campo obbligatorio",
+      "enableNotifications": "Invia messaggio su app IO",
       "section": {
         "message": "Messaggio"
       },
@@ -1730,13 +1732,13 @@
         "required": "API Key servizio è obbligatorio"
       },
       "messageSubject": {
-        "label": "Oggetto del messaggio",
+        "label": "Scrivi qui l'oggetto del messaggio",
         "caption": "Leggi come scrivere correttamente il <0>nome di un servizio</0>",
         "required": "Oggetto del messaggio è obbligatorio"
       },
       "messageBody": {
-        "label": "Corpo del messaggio",
-        "caption": "Leggi come usare correttamente il <0>linguaggio markdown</0>",
+        "label": "Scrivi qui il corpo del messaggio",
+        "caption": "Scopri come <0>scrivere un messaggio sull’app IO</0>",
         "required": "Corpo del messaggio è obbligatorio"
       }
     },
@@ -1776,7 +1778,7 @@
     "managedOrganizationsDataGrid": {
       "IPACode": "Cod. IPA",
       "managedOrg": "Ente gestito",
-      "debtTypesSet": "Tipi dovuti impostati"
+      "debtTypesSet": "Tipi dovuti impostati attivi"
     },
     "myOrganizationDataGrid": {
       "code": "Cod. Gestionale",
