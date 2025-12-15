@@ -50,7 +50,7 @@ export const HomeTabs = ({
         <Box>
           <TabList
             onChange={tabsHandleChange}
-            aria-label={t('home.tabsType')}
+            aria-label={t('home.tabsTypes')}
             variant="fullWidth"
             data-testid="home-tabs-list"
           >
@@ -61,6 +61,7 @@ export const HomeTabs = ({
                   icon={tab.icon}
                   iconPosition={'start'}
                   label={tab.label}
+                  aria-label={`${t('commons.searchFor')} ${tab.label}`}
                   value={tab.id}
                   data-testid={`home-tab-${tab.id}`}
                 />
@@ -101,7 +102,6 @@ export const HomeTabs = ({
                   justifyContent={'space-between'}
                 >
                   <TextField
-                    autoFocus
                     label={tab.searchLabel}
                     name={'searchValue'}
                     data-testid={`home-form-input-${tab.id}`}

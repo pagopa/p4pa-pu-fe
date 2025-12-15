@@ -1855,6 +1855,7 @@
   "home": {
     "cta": "Crea Posizione Debitoria",
     "viewAs": "Stai visualizzando come",
+    "changeView": "Clicca per modificare",
     "chooseWidget": {
       "title": "Scegli la tua attività principale",
       "closingText": "Potrai modificare la tua scelta in qualsiasi momento.",
