@@ -134,6 +134,11 @@ const CustomDataGrid = <T extends GridValidRowModel>({
       onSortModelChange={handleSortModelChange}
       hideFooterSelectedRowCount
       aria-label={t('commons.tableResults')}
+      slotProps={{
+        root: {
+          id: 'data-results-table'
+        }
+      }}
       slots={{
         pagination: () => (
           <CustomPagination
@@ -145,6 +150,9 @@ const CustomDataGrid = <T extends GridValidRowModel>({
             onPageSizeChange={handlePageSizeChange}
           />
         )
+      }}
+      localeText={{
+        noRowsLabel: t('commons.noRows')
       }}
       {...restProps}
     />

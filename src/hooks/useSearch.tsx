@@ -64,6 +64,11 @@ export function useSearch<
       pagination: { size: 10, page: 0 },
       sort: []
     });
+
+    const resultsTable = document.getElementById('data-results-table');
+    const resultsFocusable =
+      resultsTable?.getElementsByClassName('MuiDataGrid-main');
+    (resultsFocusable?.[0] as HTMLElement).focus();
   };
 
   return {
