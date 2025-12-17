@@ -26,7 +26,7 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
 
   const columns: Array<GridColDef> = [
     {
-      field: 'debtPositionTypeOrgCode',
+      field: 'debtPositionTypeOrgDescription',
       headerName: t('commons.debtType'),
       flex: 1,
       type: 'string'
