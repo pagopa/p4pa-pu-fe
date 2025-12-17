@@ -320,7 +320,9 @@ const Home = () => {
           onClick={() => setDialogOpen(true)}
         >
           {t(`home.chooseWidget.profiles.${profileSelected}.title`)}
-          <Typography sx={visuallyHidden} component={'span'}>{t('home.changeView')}</Typography>
+          <Typography sx={visuallyHidden} component={'span'}>
+            {t('home.changeView')}
+          </Typography>
           <ModeEditIcon
             fontSize="small"
             color="primary"
