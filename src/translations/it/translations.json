@@ -901,7 +901,7 @@
     "loading": "Caricamento...",
     "lastUpdate": "Ultimo aggiornamento",
     "macroarea": "Macroarea",
-    "mandatoryDueDate": "Data di Scadenza Obbligatoria",
+    "mandatoryDueDate": "Scadenza Obbligatoria",
     "message": "Messaggio",
     "messages": "Messaggi",
     "notificationDate": "Data di notifica",
@@ -1584,7 +1584,7 @@
         "description": "La trovi nella sezione I tuoi Tipi Dovuti."
       }
     },
-    "title": "Imposta nuovo Tipo dovuto",
+    "title": "Abilita nuovo tipo di dovuto",
     "description": "Compila i campi e configura un nuovo Tipo dovuto per il tuo ente.",
     "success": {
       "title": "Il Tipo dovuto '{{paymentObject}}' è stato impostato!",
@@ -1592,12 +1592,17 @@
     },
     "configuration": {
       "title": "Configurazione generale",
-      "subtitle": "Definisce quale sarà il Tipo Dovuto.",
+      "subtitle": "Definisce quale sarà il tipo di dovuto.",
       "alertMessage": "* Indica un campo obbligatorio",
       "debtType": {
         "title": "Tipo dovuto",
         "label": "Tipo dovuto",
         "required": "Il Tipo dovuto è obbligatorio"
+      },
+      "taxonomyCode": {
+        "label": "Codice tassonomico",
+        "placeholder": "Nessun codice disponibile",
+        "helper": "Verifica che sia corretto per il dovuto che vuoi attivare."
       },
       "debtTypeVersion": {
         "title": "Versione Tipo dovuto",
@@ -1626,12 +1631,16 @@
       "subtitle": "Configura le caratteristiche di questo Tipo dovuto",
       "alertMessage": "* Indica una domanda obbligatoria",
       "postalAccount": "Pagamento Spontaneo",
+      "characteristics": {
+        "title": "Caratteristiche del tipo di dovuto"
+      },
       "section": {
         "spontaneousPaymentTitle": "Modalità di pagamento spontaneo",
         "behaviourTitle": "Comportamento"
       },
       "spontaneous": {
-        "label": "Modalità",
+        "label": "Pagamento spontaneo",
+        "description": "Abilita il pagamento su iniziativa del cittadino.",
         "free": "Compilazione libera",
         "amount": "Importo predefinito",
         "custom": "Campi personalizzati",
@@ -1645,16 +1654,43 @@
           "required": "Campo obbligatorio. Carica un file .XSD"
         },
         "externalUrl": {
-          "label": "URL Pagamento Dovuto"
+          "label": "Link portale esterno",
+          "required": "Il Link portale esterno è obbligatorio"
         }
       },
       "optionA": {
-        "label": "Data di Scadenza Obbligatoria",
+        "label": "Scadenza obbligatoria",
         "description": "Imposta la Data di Scadenza un campo obbligatorio nella creazione."
       },
       "optionB": {
         "label": "Codice Fiscale Anonimo",
         "description": "Permette di creare dovuti senza segnalare un Codice Fiscale nel caso di assenza."
+      },
+      "presetAmount": {
+        "label": "Importo predefinito",
+        "description": "L'importo delle posizioni debitorie sarà fisso.",
+        "info": "L'importo verrà compilato con la somma predefinita"
+      },
+      "spontaneousMode": {
+        "label": "Modulo di pagamento",
+        "helper": "Scegli i dati che desideri richiedere ai cittadini per effettuare il pagamento.",
+        "required": "Seleziona il modulo di pagamento",
+        "options": {
+          "standard": "Con dati standard richiesti dal sistema",
+          "custom": "Con dati personalizzati / precompilati",
+          "external": "Portale esterno"
+        }
+      },
+      "customForms": {
+        "select": {
+          "label": "Modulo personalizzato",
+          "helper": "Seleziona il modulo personalizzato che contiene i dati richiesti ai cittadini."
+        },
+        "empty": {
+          "message": "Non ci sono moduli personalizzati. Aggiungi un nuovo modulo nella sezione",
+          "action": "per poterli utilizzare.",
+          "linkLabel": "Moduli personalizzati"
+        }
       },
       "notifications": {
         "title": "Notifiche Esito Pagamento",
@@ -1756,10 +1792,10 @@
     },
     "stepper": {
       "step1": "Configurazione Generale",
-      "step2": "Ulteriori impostazioni ",
+      "step2": "Configurazione tipo di dovuto",
       "step3": "Contabilità",
       "step4": "Messaggi",
-      "step5": "Operatori abilitati"
+      "step5": "Operatori associati"
     }
   },
   "debtTypes": {

@@ -1,10 +1,11 @@
 import { Controller, Control, FieldValues, Path } from 'react-hook-form';
 import { Switch, FormControlLabel, SwitchProps } from '@mui/material';
+import { ReactNode } from 'react';
 
 export type _ControlledSwitchProps<T extends FieldValues> = {
   name: Path<T>;
   control: Control<T>;
-  label: string;
+  label: ReactNode;
 } & Omit<SwitchProps, 'name' | 'control'>;
 
 export const _ControlledSwitch = <T extends FieldValues>({

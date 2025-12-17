@@ -79,7 +79,7 @@ export const getDebtPositionTypesByOrganizationId = ({
 
       const optionsMap = sorted.map((type) => ({
         label: type.description,
-        value: type.debtPositionTypeId
+        value: String(type.debtPositionTypeId)
       }));
 
       const codeMap = sorted.map((type) => ({

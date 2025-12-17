@@ -4,14 +4,14 @@ import PostAddIcon from '@mui/icons-material/PostAdd';
 import BookIcon from '@mui/icons-material/MenuBook';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
-
+import TextField from '@mui/material/TextField';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../../components/FormComponent';
 import { useStore } from '../../../../store/GlobalStore';
 import { useDebtPositionTypesByOrg } from '../../../../hooks/useDebtPositionTypesByOrg';
-import { useEffect } from 'react';
-import { DebtTypeOrgForm, PaymentMethodOption } from '../../types';
+import { useEffect, useMemo } from 'react';
+import { DebtTypeOrgForm } from '../../types';
 import { useParams } from 'react-router';
 import { getDebtPositionTypeOrgById } from '../../../../api/debtPositionsTypeOrg';
 import {
@@ -45,13 +45,32 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
     debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
   });
 
-  const actualizationQuery = useActualizationServices();
-  const notificationQuery = useNotificationServices();
+  useActualizationServices();
+  useNotificationServices();
 
   const { control, setValue, trigger } = useFormContext<DebtTypeOrgForm>();
 
   const description = useWatch({ control, name: 'description' });
   const selectedId = useWatch({ control, name: 'debtPositionTypeId' });
+
+  const selectedTaxonomyCode = useMemo(() => {
+    const response = selectionQuery.data?.response as Array<
+      { debtPositionTypeId: number; taxonomyCode?: string } | undefined
+    >;
+    if (selectedId && response?.length) {
+      const selectedType = response.find(
+        (d) => d?.debtPositionTypeId === Number(selectedId)
+      );
+      if (selectedType?.taxonomyCode) {
+        return selectedType.taxonomyCode;
+      }
+    }
+
+    const detail = detailQuery.data?.response as
+      | { taxonomyCode?: string }
+      | undefined;
+    return detail?.taxonomyCode || '';
+  }, [detailQuery.data, selectedId, selectionQuery.data]);
 
   // Auto-fill other fields when selection changes
   useEffect(() => {
@@ -67,54 +86,13 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
           const field = key as keyof DebtTypeOrgForm;
           // code should not be auto-filled
           if (field === 'code') return;
+
+          if (field === 'debtPositionTypeId') return;
           setValue(field, value);
         });
       }
     }
   }, [edit, selectedId, selectionQuery.data, setValue, trigger]);
-
-  useEffect(() => {
-    const response = detailQuery.data?.response;
-    const areSelectsReady =
-      !actualizationQuery.isLoading && !notificationQuery.isLoading;
-
-    if (edit && response && areSelectsReady) {
-      // Set all fields from API response
-      Object.entries(response).forEach(([key, val]) => {
-        const field = key as keyof DebtTypeOrgForm;
-
-        // Handle special transformations
-        if (field === 'flagNotifyOutcomePush') {
-          setValue(field, val ? 'enabled' : 'disabled');
-        } else if (field === 'amountCents' && val) {
-          setValue(field, val / 100);
-        } else if (field === 'xsdDefinitionRef' && val) {
-          setValue(field, new Blob([val], { type: 'application/xml' }));
-        } else {
-          setValue(field, val);
-        }
-      });
-
-      // Set payment method if spontaneous
-      if (response.flagSpontaneous) {
-        if (response.amountCents) {
-          setValue('paymentMethod', PaymentMethodOption.AMOUNT);
-        } else if (response.xsdDefinitionRef) {
-          setValue('paymentMethod', PaymentMethodOption.CUSTOM);
-        } else if (response.externalPaymentUrl) {
-          setValue('paymentMethod', PaymentMethodOption.EXTERNAL);
-        } else {
-          setValue('paymentMethod', PaymentMethodOption.FREE);
-        }
-      }
-    }
-  }, [
-    edit,
-    detailQuery.data,
-    setValue,
-    actualizationQuery.isLoading,
-    notificationQuery.isLoading
-  ]);
 
   return (
     <WizardStepWrapper
@@ -126,15 +104,39 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
         title={t('debtTypeOrgCreate.configuration.debtType.title')}
         adornment={<BookIcon />}
       >
-        <FormComponent.ControlledSelect
-          control={control}
-          label={t('debtTypeOrgCreate.configuration.debtType.label')}
-          name="debtPositionTypeId"
-          disabled={!selectionQuery?.data?.optionsMap?.length || edit}
-          options={selectionQuery?.data?.optionsMap}
-          data-testid="debtPositionTypeId"
-          required
-        />
+        <Stack direction={{ xs: 'column', md: 'row' }} spacing={3}>
+          <Stack sx={{ flex: 1, minWidth: 0 }}>
+            <FormComponent.ControlledSelect
+              control={control}
+              label={t('debtTypeOrgCreate.configuration.debtType.label')}
+              name="debtPositionTypeId"
+              disabled={!selectionQuery?.data?.optionsMap?.length || edit}
+              options={selectionQuery?.data?.optionsMap}
+              data-testid="debtPositionTypeId"
+              sx={{ flex: 1, minWidth: 0 }}
+              required
+            />
+          </Stack>
+          <Stack sx={{ flex: 1, minWidth: 0 }}>
+            <TextField
+              label={t('debtTypeOrgCreate.configuration.taxonomyCode.label')}
+              value={selectedTaxonomyCode || ''}
+              placeholder={t(
+                'debtTypeOrgCreate.configuration.taxonomyCode.placeholder'
+              )}
+              InputProps={{ readOnly: true }}
+              disabled
+              fullWidth
+              size="small"
+              helperText={
+                selectedTaxonomyCode
+                  ? t('debtTypeOrgCreate.configuration.taxonomyCode.helper')
+                  : undefined
+              }
+              data-testid="taxonomyCode"
+            />
+          </Stack>
+        </Stack>
       </SectionBox>
 
       <SectionBox

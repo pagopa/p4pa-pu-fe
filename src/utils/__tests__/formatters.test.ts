@@ -13,7 +13,9 @@ import {
   isValidAmountInput,
   sanitizeAmountInput,
   parseAmountToNumber,
-  toCamelCase
+  toCamelCase,
+  convertToDateValue,
+  isDateInPast
 } from '../formatters';
 
 describe('moneyFormat', () => {
@@ -276,16 +278,24 @@ describe('formatFileSize', () => {
 
 describe('Amount Formatters', () => {
   describe('formatAmountForDisplay', () => {
-    it('converts dot to comma for display', () => {
+    it('converts dot to comma for display with 2 decimal places', () => {
       expect(formatAmountForDisplay('135.50')).toBe('135,50');
-      expect(formatAmountForDisplay(135.5)).toBe('135,5');
+      expect(formatAmountForDisplay(135.5)).toBe('135,50');
+      expect(formatAmountForDisplay(135)).toBe('135,00');
     });
 
     it('handles edge cases', () => {
       expect(formatAmountForDisplay('')).toBe('');
       expect(formatAmountForDisplay(null)).toBe('');
       expect(formatAmountForDisplay(undefined)).toBe('');
-      expect(formatAmountForDisplay(0)).toBe('0');
+      expect(formatAmountForDisplay(0)).toBe('0,00');
+    });
+
+    it('formats numbers with correct decimal precision', () => {
+      expect(formatAmountForDisplay(100)).toBe('100,00');
+      expect(formatAmountForDisplay(99.9)).toBe('99,90');
+      expect(formatAmountForDisplay(0.5)).toBe('0,50');
+      expect(formatAmountForDisplay(1234.56)).toBe('1234,56');
     });
   });
 
@@ -338,6 +348,55 @@ describe('Amount Formatters', () => {
       expect(parseAmountToNumber('abc')).toBe(null);
       expect(parseAmountToNumber('   ')).toBe(null);
     });
+  });
+});
+
+describe('convertToDateValue', () => {
+  it('should return null for falsy values', () => {
+    expect(convertToDateValue(null)).toBeNull();
+    expect(convertToDateValue(undefined)).toBeNull();
+    expect(convertToDateValue('')).toBeNull();
+  });
+
+  it('should convert string to Date', () => {
+    const dateString = '2023-10-15T14:30:00Z';
+    const result = convertToDateValue(dateString);
+    expect(result).toBeInstanceOf(Date);
+    expect(result?.toISOString()).toBe('2023-10-15T14:30:00.000Z');
+  });
+
+  it('should return Date object as is', () => {
+    const date = new Date('2023-10-15T14:30:00Z');
+    const result = convertToDateValue(date);
+    expect(result).toBe(date);
+  });
+});
+
+describe('isDateInPast', () => {
+  it('should return false for null or undefined', () => {
+    expect(isDateInPast(null)).toBe(false);
+    expect(isDateInPast(undefined)).toBe(false);
+  });
+
+  it('should return true for past dates', () => {
+    const pastDate = new Date('2020-01-01');
+    expect(isDateInPast(pastDate)).toBe(true);
+    expect(isDateInPast('2020-01-01')).toBe(true);
+  });
+
+  it('should return false for future dates', () => {
+    const futureDate = new Date();
+    futureDate.setFullYear(futureDate.getFullYear() + 1);
+    expect(isDateInPast(futureDate)).toBe(false);
+  });
+
+  it('should return false for today', () => {
+    const today = new Date();
+    expect(isDateInPast(today)).toBe(false);
+  });
+
+  it('should return false for invalid date strings', () => {
+    expect(isDateInPast('not-a-date')).toBe(false);
   });
 });
 

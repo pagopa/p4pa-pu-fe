@@ -20,7 +20,8 @@ export const _ControlledAmountField = <T extends FieldValues>({
       <_AmountField
         forwardRef={ref}
         id={name}
-        noAdornment={!props?.adornment}
+        // Always show the default euro adornment unless explicitly overridden
+        noAdornment={props.noAdornment}
         error={!!fieldState.error}
         helperText={<ErrorMessage messageKey={fieldState.error?.message} />}
         InputLabelProps={{
