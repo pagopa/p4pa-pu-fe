@@ -50,6 +50,7 @@ export const CustomFormSelector = ({
             <Link
               href={t('debtTypeOrgCreate.behaviour.customForms.empty.linkHref')}
               underline="always"
+              fontWeight="bold"
               onClick={(e) => {
                 e.preventDefault();
                 // TODO: replace with navigation when available
