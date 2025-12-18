@@ -2169,7 +2169,8 @@
       "segregationCode": {
         "label": "Codice Segregazione",
         "placeholder": "",
-        "required": "Il campo Codice Segregazione è obbligatorio"
+        "required": "Il campo Codice Segregazione è obbligatorio",
+        "invalidFormat": "Il campo Codice Segregazione può contenere solo e soltanto due caratteri numerici"
       },
       "generateNoticeApiKey": {
         "label": "API Key stampa avvisi",
