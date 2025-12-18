@@ -11,8 +11,9 @@ export const step1SchemaEdit = z.object({
   description: z
     .string()
     .nonempty('debtTypeOrgCreate.configuration.description.required')
-    .max(200, 'debtTypeOrgCreate.configuration.description.maxCharacters'),
-  isCodeUnique: z.boolean().optional()
+    .max(100, 'debtTypeOrgCreate.configuration.description.maxCharacters'),
+  isCodeUnique: z.boolean().optional(),
+  taxonomyCode: z.string().optional()
 });
 
 export const step1SchemaNew = step1SchemaEdit.superRefine((data, ctx) => {

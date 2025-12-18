@@ -1,6 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { ZodError } from 'zod';
-import { useCallback } from 'react';
+import { ZodError, z } from 'zod';
+import { useCallback, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import {
   createDebtPositionTypeOrg,
@@ -8,7 +8,11 @@ import {
   updateDebtPositionTypeOrg,
   getDebtPositionTypeOrgById
 } from '../../../api/debtPositionsTypeOrg';
-import { DebtTypeOrgForm, PaymentMethodOption } from '../types';
+import {
+  DebtTypeOrgForm,
+  PaymentMethodOption,
+  SpontaneousMode
+} from '../types';
 import { useApiOperations } from './useApiOperations';
 import { useFormSchemas } from './useFormSchemas';
 import { useStore } from '../../../store/GlobalStore';
@@ -16,13 +20,80 @@ import { OperatorsSelection } from '../../../../generated/apiClient';
 import utils from '../../../utils';
 import { useDebtTypeOrgId } from '../../../hooks/useDebtTypeOrgId';
 import { useTranslation } from 'react-i18next';
+import { debtPositionTypeOrgSchema } from '../../../../generated/zod-schema';
 
-// Error messages
 const ERROR_MESSAGES = {
   INVALID_ID: 'errors.invalidId',
   GENERIC: 'errors.generic',
   VALIDATION: 'errors.validation'
 } as const;
+
+type DebtPositionTypeOrgResponse = z.infer<typeof debtPositionTypeOrgSchema>;
+
+export const mapDebtTypeOrgDetailToForm = (
+  response: Partial<DebtPositionTypeOrgResponse> | null | undefined
+): Partial<DebtTypeOrgForm> => {
+  if (!response) return {};
+
+  const {
+    xsdDefinitionRef,
+    debtPositionTypeId,
+    flagNotifyOutcomePush,
+    amountCents,
+    spontaneousFormId,
+    ...rest
+  } = response;
+
+  const mapped: Partial<DebtTypeOrgForm> = {
+    // Spread compatible properties (xsdDefinitionRef is handled separately)
+    ...(rest as Partial<DebtTypeOrgForm>),
+    // Normalize ids to string as the form expects string
+    debtPositionTypeId:
+      debtPositionTypeId != null ? String(debtPositionTypeId) : '',
+    // Convert booleans to the radio-friendly value
+    flagNotifyOutcomePush: flagNotifyOutcomePush ? 'enabled' : 'disabled',
+    // Euro amount from cents
+    amountCents:
+      typeof amountCents === 'number' ? amountCents / 100 : undefined,
+    // Custom form id mapping
+    customFormId: spontaneousFormId,
+    // Default values / derived values
+    flagPresetAmount:
+      (response as { flagPresetAmount?: boolean }).flagPresetAmount ??
+      (amountCents != null ? true : undefined)
+  };
+
+  // xsdDefinitionRef string -> Blob for the uploader
+  if (xsdDefinitionRef) {
+    mapped.xsdDefinitionRef = new Blob([xsdDefinitionRef], {
+      type: 'application/xml'
+    });
+  }
+
+  // Derive payment method (order of precedence mirrors existing UI logic)
+  if (amountCents) {
+    mapped.paymentMethod = PaymentMethodOption.AMOUNT;
+  } else if (xsdDefinitionRef) {
+    mapped.paymentMethod = PaymentMethodOption.CUSTOM;
+  } else if (response.externalPaymentUrl) {
+    mapped.paymentMethod = PaymentMethodOption.EXTERNAL;
+  } else {
+    mapped.paymentMethod = PaymentMethodOption.FREE;
+  }
+
+  // Derive spontaneous mode
+  if (spontaneousFormId) {
+    mapped.spontaneousMode = SpontaneousMode.CUSTOM_FORM;
+  } else if (response.externalPaymentUrl) {
+    mapped.spontaneousMode = SpontaneousMode.EXTERNAL_URL;
+  } else if (response.flagSpontaneous) {
+    mapped.spontaneousMode = SpontaneousMode.STANDARD;
+  } else {
+    mapped.spontaneousMode = undefined;
+  }
+
+  return mapped;
+};
 
 type UseDebtTypeOrgFormParams = {
   edit: boolean;
@@ -44,10 +115,11 @@ export const useDebtTypeOrgForm = ({
   const debtTypeCreate = createDebtPositionTypeOrg();
   const debtTypeUpdate = updateDebtPositionTypeOrg();
 
-  const { data: originalDataQuery } = getDebtPositionTypeOrgById({
-    organizationId,
-    debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
-  });
+  const { data: originalDataQuery, isLoading: isDetailLoading } =
+    getDebtPositionTypeOrgById({
+      organizationId,
+      debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
+    });
 
   const { createRequestPayload } = useApiOperations(organizationId);
 
@@ -56,6 +128,13 @@ export const useDebtTypeOrgForm = ({
       debtPositionTypeId: '',
       code: '',
       description: '',
+      taxonomyCode: '',
+      flagSpontaneous: false,
+      spontaneousMode: undefined,
+      customFormId: undefined,
+      flagMandatoryDueDate: false,
+      flagAnonymousFiscalCode: false,
+      flagPresetAmount: false,
       iban: '',
       operatorsSelection: OperatorsSelection.ALL,
       paymentMethod: PaymentMethodOption.FREE,
@@ -65,8 +144,24 @@ export const useDebtTypeOrgForm = ({
       amountActualizationOrgSilServiceId: undefined
     },
     resolver: zodResolver(combinedSchema),
-    mode: 'onTouched'
+    mode: 'onSubmit'
   });
+
+  // Populate form on edit when detail query is ready
+  useEffect(() => {
+    if (!edit) return;
+    const response = originalDataQuery?.response;
+    if (!response || isDetailLoading) return;
+
+    const mappedValues = mapDebtTypeOrgDetailToForm(response);
+    methods.reset(
+      {
+        ...methods.getValues(),
+        ...mappedValues
+      },
+      { keepDefaultValues: true }
+    );
+  }, [edit, originalDataQuery?.response, isDetailLoading, methods]);
 
   const validateStep = useCallback(
     (step: number, values: DebtTypeOrgForm) => {

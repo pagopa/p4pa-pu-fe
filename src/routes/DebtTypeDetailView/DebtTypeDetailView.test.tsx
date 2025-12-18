@@ -141,6 +141,9 @@ describe('DebtTypeDetailView', () => {
     mutateAsync: vi.fn()
   };
 
+  let updateSuccessCallback: (() => void) | undefined;
+  let updateErrorCallback: (() => void) | undefined;
+
   const defaultConfirmDialog = {
     isOpen: false,
     currentAction: null,
@@ -199,7 +202,16 @@ describe('DebtTypeDetailView', () => {
     );
     (
       updateFlagActiveDebtPositionTypeOrg as ReturnType<typeof vi.fn>
-    ).mockReturnValue(mockUpdateFlagActive);
+    ).mockImplementation(
+      (
+        onSuccess: () => void,
+        onError: () => void
+      ): typeof mockUpdateFlagActive => {
+        updateSuccessCallback = onSuccess;
+        updateErrorCallback = onError;
+        return mockUpdateFlagActive;
+      }
+    );
 
     (
       debtPositions.deleteDebtPositionTypeOrgs as ReturnType<typeof vi.fn>
@@ -398,6 +410,94 @@ describe('DebtTypeDetailView', () => {
         expect(mockConfirmDialog.showDeleteDialog).toHaveBeenCalled();
       });
     });
+
+    it('shows alreadyUsedDescription when delete from menu fails with conflict', async () => {
+      const conflictError = new AxiosError(
+        'Conflict',
+        '409',
+        { headers: {} as any },
+        {},
+        {
+          data: {},
+          status: 409,
+          statusText: 'Conflict',
+          headers: {},
+          config: { headers: {} as any }
+        }
+      );
+
+      mockMutateAsync.mockRejectedValue(conflictError);
+
+      render(<DebtTypeDetailView />);
+
+      const actionMenuButton = screen.getByTestId('action-menu-button');
+      fireEvent.click(actionMenuButton);
+
+      await waitFor(() => {
+        const deleteMenuItem = screen.getByText('Elimina');
+        fireEvent.click(deleteMenuItem);
+        expect(mockConfirmDialog.showDeleteDialog).toHaveBeenCalled();
+      });
+
+      const deleteCallback = mockConfirmDialog.showDeleteDialog.mock
+        .calls[0][0] as () => Promise<void>;
+
+      await expect(deleteCallback()).rejects.toThrow();
+      expect(mockConfirmDialog.showErrorDialog).toHaveBeenCalledWith(
+        'alreadyUsedDescription'
+      );
+    });
+
+    it('shows genericErrorDescription when delete from menu fails with generic error', async () => {
+      mockMutateAsync.mockRejectedValue(new Error('Generic failure'));
+
+      render(<DebtTypeDetailView />);
+
+      const actionMenuButton = screen.getByTestId('action-menu-button');
+      fireEvent.click(actionMenuButton);
+
+      await waitFor(() => {
+        const deleteMenuItem = screen.getByText('Elimina');
+        fireEvent.click(deleteMenuItem);
+        expect(mockConfirmDialog.showDeleteDialog).toHaveBeenCalled();
+      });
+
+      const deleteCallback = mockConfirmDialog.showDeleteDialog.mock
+        .calls[0][0] as () => Promise<void>;
+
+      await expect(deleteCallback()).rejects.toThrow();
+      expect(mockConfirmDialog.showErrorDialog).toHaveBeenCalledWith(
+        'genericErrorDescription'
+      );
+    });
+
+    it('logs error when disable mutation fails', async () => {
+      const error = new Error('Disable failed');
+      mockUpdateFlagActive.mutateAsync.mockRejectedValue(error);
+      const consoleSpy = vi
+        .spyOn(console, 'error')
+        .mockImplementation(() => {});
+
+      render(<DebtTypeDetailView />);
+
+      const actionMenuButton = screen.getByTestId('action-menu-button');
+      fireEvent.click(actionMenuButton);
+
+      await waitFor(() => {
+        const disableMenuItem = screen.getByText('Disabilita');
+        fireEvent.click(disableMenuItem);
+        expect(mockConfirmDialog.showDisableDialog).toHaveBeenCalled();
+      });
+
+      const disableCallback = mockConfirmDialog.showDisableDialog.mock
+        .calls[0][0] as () => Promise<void>;
+
+      await disableCallback();
+
+      expect(consoleSpy).toHaveBeenCalledWith('Disable error:', error);
+
+      consoleSpy.mockRestore();
+    });
   });
 
   describe('Inactive debt type actions', () => {
@@ -434,6 +534,28 @@ describe('DebtTypeDetailView', () => {
       fireEvent.click(deleteButtons[0]);
 
       expect(mockConfirmDialog.showDeleteDialog).toHaveBeenCalled();
+    });
+
+    it('shows notification when enable mutation fails', async () => {
+      const error = new Error('Enable failed');
+      mockUpdateFlagActive.mutateAsync.mockRejectedValue(error);
+
+      render(<DebtTypeDetailView />);
+
+      const enableButtons = screen.getAllByRole('button', { name: 'Abilita' });
+      fireEvent.click(enableButtons[0]);
+
+      expect(mockConfirmDialog.showEnableDialog).toHaveBeenCalled();
+
+      const enableCallback = mockConfirmDialog.showEnableDialog.mock
+        .calls[0][0] as () => Promise<void>;
+
+      await enableCallback();
+
+      expect(utils.notify.emit).toHaveBeenCalledWith(
+        'Abilitazione fallita',
+        'error'
+      );
     });
   });
 
@@ -624,6 +746,36 @@ describe('DebtTypeDetailView', () => {
       render(<DebtTypeDetailView />);
 
       expect(screen.getByText(/3 operatori/i)).toBeInTheDocument();
+    });
+
+    it('executes updateFlagActive success callback and schedules reload', () => {
+      render(<DebtTypeDetailView />);
+
+      expect(updateSuccessCallback).toBeDefined();
+
+      vi.useFakeTimers();
+
+      (updateSuccessCallback as () => void)();
+
+      expect(utils.notify.emit).toHaveBeenCalledWith(
+        'Aggiornato con successo',
+        'success'
+      );
+
+      vi.runOnlyPendingTimers();
+      vi.useRealTimers();
+    });
+
+    it('executes updateFlagActive error callback and shows generic dialog', () => {
+      render(<DebtTypeDetailView />);
+
+      expect(updateErrorCallback).toBeDefined();
+
+      (updateErrorCallback as () => void)();
+
+      expect(mockConfirmDialog.showErrorDialog).toHaveBeenCalledWith(
+        'genericErrorDescription'
+      );
     });
 
     it('handles missing operators data gracefully', () => {

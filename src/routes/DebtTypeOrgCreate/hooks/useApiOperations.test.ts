@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { renderHook } from '../../../__tests__/renderers';
 import { useApiOperations } from './useApiOperations';
 import { OperatorsSelection } from '../../../../generated/apiClient';
-import { PaymentMethodOption } from '../types';
+import { PaymentMethodOption, SpontaneousMode } from '../types';
 
 describe('useApiOperations', () => {
   const organizationId = 42;
@@ -342,5 +342,96 @@ describe('useApiOperations', () => {
     expect(payload.data.debtPositionTypeOrg.flagAmountActualization).toBe(
       false
     );
+  });
+
+  it('includes spontaneousFormId when spontaneousMode is custom_form', async () => {
+    const { result } = renderHook(() => useApiOperations(organizationId));
+
+    const formData = {
+      ...minimalFormData,
+      flagSpontaneous: true,
+      spontaneousMode: SpontaneousMode.CUSTOM_FORM,
+      customFormId: 123
+    };
+
+    const payload = await result.current.createRequestPayload(formData);
+
+    expect(payload.data.debtPositionTypeOrg.spontaneousFormId).toBe(123);
+  });
+
+  it('does not include spontaneousFormId when spontaneousMode is not custom_form', async () => {
+    const { result } = renderHook(() => useApiOperations(organizationId));
+
+    const formData = {
+      ...minimalFormData,
+      flagSpontaneous: true,
+      spontaneousMode: SpontaneousMode.STANDARD,
+      customFormId: 123
+    };
+
+    const payload = await result.current.createRequestPayload(formData);
+
+    expect(payload.data.debtPositionTypeOrg.spontaneousFormId).toBeUndefined();
+  });
+
+  it('includes externalPaymentUrl when spontaneousMode is external_url', async () => {
+    const { result } = renderHook(() => useApiOperations(organizationId));
+
+    const formData = {
+      ...minimalFormData,
+      flagSpontaneous: true,
+      spontaneousMode: SpontaneousMode.EXTERNAL_URL,
+      externalPaymentUrl: 'https://external-portal.com/payment'
+    };
+
+    const payload = await result.current.createRequestPayload(formData);
+
+    expect(payload.data.debtPositionTypeOrg.externalPaymentUrl).toBe(
+      'https://external-portal.com/payment'
+    );
+  });
+
+  it('includes externalPaymentUrl when paymentMethod is EXTERNAL', async () => {
+    const { result } = renderHook(() => useApiOperations(organizationId));
+
+    const formData = {
+      ...minimalFormData,
+      paymentMethod: PaymentMethodOption.EXTERNAL,
+      externalPaymentUrl: 'https://example.com/payment'
+    };
+
+    const payload = await result.current.createRequestPayload(formData);
+
+    expect(payload.data.debtPositionTypeOrg.externalPaymentUrl).toBe(
+      'https://example.com/payment'
+    );
+  });
+
+  it('includes amountCents when flagPresetAmount is true', async () => {
+    const { result } = renderHook(() => useApiOperations(organizationId));
+
+    const formData = {
+      ...minimalFormData,
+      flagPresetAmount: true,
+      amountCents: 15.75
+    };
+
+    const payload = await result.current.createRequestPayload(formData);
+
+    expect(payload.data.debtPositionTypeOrg.amountCents).toBe(1575);
+  });
+
+  it('includes amountCents when paymentMethod is AMOUNT', async () => {
+    const { result } = renderHook(() => useApiOperations(organizationId));
+
+    const formData = {
+      ...minimalFormData,
+      paymentMethod: PaymentMethodOption.AMOUNT,
+      amountCents: 20.5
+    };
+
+    const payload = await result.current.createRequestPayload(formData);
+
+    expect(payload.data.debtPositionTypeOrg.amountCents).toBe(2050);
   });
 });

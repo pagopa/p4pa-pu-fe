@@ -74,68 +74,58 @@ export const getAccordionSectionsConfig = (
   operators: OperatorsData | null,
   t: (key: string) => string
 ): Array<AccordionSectionConfig> => {
-  const getSpontaneousConfig = (
-    data: DebtPositionTypeOrgDTO
-  ): AccordionSectionConfig['sections'][number] => {
+  const buildSpontaneousModeDetails = (
+    debtType: DebtPositionTypeOrgDTO
+  ): Array<DetailData> => {
+    // Show details only when spontaneous payments are enabled
+    if (!debtType.flagSpontaneous) {
+      return [];
+    }
+
     const details: Array<DetailData> = [];
 
-    if (
-      !data?.amountCents &&
-      !data?.externalPaymentUrl &&
-      !data?.xsdDefinitionRef
-    ) {
-      details.push({
-        label: t('debtTypeOrgCreate.behaviour.spontaneous.label'),
-        value: t('debtTypeOrgCreate.behaviour.spontaneous.free')
-      });
-    }
+    // Standard mode: no custom form and no external URL
+    const hasCustomForm =
+      debtType.spontaneousFormId != null ||
+      !!debtType.spontaneousFormCode ||
+      !!debtType.xsdDefinitionRef;
+    const hasExternalUrl = !!debtType.externalPaymentUrl;
 
-    if (data?.amountCents) {
+    if (hasCustomForm) {
+      // Custom form / prefilled data
       details.push(
         {
-          label: t('debtTypeOrgCreate.behaviour.spontaneous.label'),
-          value: t('debtTypeOrgCreate.behaviour.spontaneous.amount')
+          label: t('debtTypeOrgCreate.behaviour.spontaneousMode.label'),
+          value: t('debtTypeOrgCreate.behaviour.spontaneousMode.options.custom')
         },
         {
-          label: t('debtTypeOrgCreate.behaviour.spontaneous.amountValue.label'),
-          value: moneyFormat(data?.amountCents)
+          label: t('debtTypeOrgCreate.behaviour.customForms.select.label'),
+          value: checkStringValue(debtType.spontaneousFormCode)
         }
       );
-    }
-
-    if (data?.externalPaymentUrl) {
+    } else if (hasExternalUrl) {
+      // External portal
       details.push(
         {
-          label: t('debtTypeOrgCreate.behaviour.spontaneous.label'),
-          value: t('debtTypeOrgCreate.behaviour.spontaneous.external')
+          label: t('debtTypeOrgCreate.behaviour.spontaneousMode.label'),
+          value: t(
+            'debtTypeOrgCreate.behaviour.spontaneousMode.options.external'
+          )
         },
         {
           label: t('debtTypeDetail.debtConfiguration.externalPaymentUrl'),
-          value: checkStringValue(data?.externalPaymentUrl)
+          value: checkStringValue(debtType.externalPaymentUrl)
         }
       );
+    } else {
+      // Standard system data
+      details.push({
+        label: t('debtTypeOrgCreate.behaviour.spontaneousMode.label'),
+        value: t('debtTypeOrgCreate.behaviour.spontaneousMode.options.standard')
+      });
     }
 
-    if (data?.xsdDefinitionRef) {
-      details.push(
-        {
-          label: t('debtTypeOrgCreate.behaviour.spontaneous.label'),
-          value: t('debtTypeOrgCreate.behaviour.spontaneous.custom')
-        },
-        {
-          label: t('debtTypeDetail.debtConfiguration.xsdAttachment'),
-          value: checkStringValue(data?.xsdDefinitionRef)
-        }
-      );
-    }
-
-    return {
-      title: {
-        label: t('debtTypeOrgCreate.behaviour.section.spontaneousPaymentTitle'),
-        variant: 'subtitle1'
-      },
-      data: details
-    };
+    return details;
   };
 
   const sections: Array<AccordionSectionConfig> = [
@@ -150,6 +140,10 @@ export const getAccordionSectionsConfig = (
             {
               label: t('commons.debtTypeName'),
               value: checkStringValue(data?.description)
+            },
+            {
+              label: t('debtTypeOrgCreate.configuration.taxonomyCode.label'),
+              value: checkStringValue(data?.debtPositionTypeTaxonomyCode)
             }
           ]
         },
@@ -177,16 +171,8 @@ export const getAccordionSectionsConfig = (
       description: t('debtTypeOrgCreate.behaviour.subtitle'),
       sections: [
         {
-          data: [
-            {
-              label: t('debtTypeOrgCreate.behaviour.postalAccount'),
-              value: data?.flagSpontaneous ? t('commons.yes') : t('commons.no')
-            }
-          ]
-        },
-        {
           title: {
-            label: t('debtTypeCreate.settings.behaviour'),
+            label: t('debtTypeOrgCreate.behaviour.characteristics.title'),
             variant: 'subtitle1'
           },
           data: [
@@ -197,10 +183,35 @@ export const getAccordionSectionsConfig = (
             {
               label: t('commons.anonymousFiscalCode'),
               value: t(getFlagLabel(data?.flagAnonymousFiscalCode))
-            }
+            },
+            {
+              label: t('debtTypeOrgCreate.behaviour.presetAmount.label'),
+              value: t(
+                getFlagLabel(
+                  (data as { flagPresetAmount?: boolean }).flagPresetAmount ??
+                    data?.amountCents != null
+                )
+              )
+            },
+            ...(((data as { flagPresetAmount?: boolean }).flagPresetAmount ??
+              data?.amountCents != null) &&
+            data?.amountCents != null
+              ? [
+                  {
+                    label: t(
+                      'debtTypeOrgCreate.behaviour.spontaneous.amountValue.label'
+                    ),
+                    value: moneyFormat(data.amountCents)
+                  }
+                ]
+              : []),
+            {
+              label: t('debtTypeOrgCreate.behaviour.postalAccount'),
+              value: t(getFlagLabel(data?.flagSpontaneous))
+            },
+            ...buildSpontaneousModeDetails(data)
           ]
         },
-        ...(data?.flagSpontaneous ? [getSpontaneousConfig(data)] : []),
         {
           title: {
             label: t('debtTypeOrgCreate.behaviour.notifications.title'),

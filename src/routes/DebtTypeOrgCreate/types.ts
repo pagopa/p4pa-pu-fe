@@ -7,18 +7,28 @@ export enum PaymentMethodOption {
   EXTERNAL = 'external'
 }
 
+export enum SpontaneousMode {
+  STANDARD = 'standard',
+  CUSTOM_FORM = 'custom_form',
+  EXTERNAL_URL = 'external_url'
+}
+
 export type DebtTypeOrgForm = {
   // Step 1
   debtPositionTypeId: string;
   description: string;
   code: string;
   isCodeUnique?: boolean;
+  taxonomyCode?: string;
 
   // Step 2
   flagSpontaneous?: boolean;
+  spontaneousMode?: SpontaneousMode;
+  customFormId?: number;
 
   flagMandatoryDueDate?: boolean;
   flagAnonymousFiscalCode?: boolean;
+  flagPresetAmount?: boolean;
 
   // FREE if nothing is passed
   paymentMethod: PaymentMethodOption;

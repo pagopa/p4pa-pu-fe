@@ -41,7 +41,7 @@ export type SearchField = {
 
 export type AmountField = {
   type: COMPONENT_TYPE.amount;
-} & TextFieldProps;
+} & Omit<TextFieldProps, 'onBlur' | 'onFocus'>;
 
 export type SelectField = {
   type: COMPONENT_TYPE.select;
