@@ -165,6 +165,7 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               label={t('debtTypeOrgCreate.configuration.description.label')}
               inputProps={{ maxLength: 200 }}
               adornment={`${description?.length || 0}/200`}
+              required
             />
             <Typography variant="caption" px={1.5}>
               {t('debtTypeOrgCreate.configuration.description.caption')}
