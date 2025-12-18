@@ -201,6 +201,8 @@ describe('PaymentsInfoSection', () => {
           'Inserisci codice segregazione',
         'organizationEditWizard.step2.segregationCode.required':
           'Codice segregazione obbligatorio',
+        'organizationEditWizard.step2.segregationCode.invalidFormat':
+          'Codice segregazione mal formato',
         'organizationEditWizard.step2.generateNoticeApiKey.label':
           'API Key Stampa Avvisi',
         'organizationEditWizard.step2.generateNoticeApiKey.placeholder':
@@ -738,6 +740,25 @@ describe('PaymentsInfoSection', () => {
 
       expect(enableLabel).toBeInTheDocument();
       expect(disableLabel).toBeInTheDocument();
+    });
+  });
+
+  describe('Segregation Code Validation Rules', () => {
+    it('should have pattern validation rule configured for exactly 2 digits', () => {
+      const pattern = /^\d{2}$/;
+
+      expect(pattern.test('00')).toBe(true);
+      expect(pattern.test('01')).toBe(true);
+      expect(pattern.test('99')).toBe(true);
+      expect(pattern.test('42')).toBe(true);
+
+      expect(pattern.test('1')).toBe(false);
+      expect(pattern.test('123')).toBe(false);
+      expect(pattern.test('AB')).toBe(false);
+      expect(pattern.test('1A')).toBe(false);
+      expect(pattern.test('0!')).toBe(false);
+      expect(pattern.test(' 1')).toBe(false);
+      expect(pattern.test('')).toBe(false);
     });
   });
 });

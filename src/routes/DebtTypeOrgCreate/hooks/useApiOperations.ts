@@ -1,6 +1,10 @@
 import { useCallback } from 'react';
 import { CreateDebtPositionTypeOrg } from '../../../api/debtPositionsTypeOrg';
-import { DebtTypeOrgForm, PaymentMethodOption } from '../types';
+import {
+  DebtTypeOrgForm,
+  PaymentMethodOption,
+  SpontaneousMode
+} from '../types';
 import { euroToCents } from '../../../utils/formatters';
 
 type OriginalDebtTypeOrgData = {
@@ -36,7 +40,6 @@ export const useApiOperations = (organizationId: number) => {
         organizationId,
         description: data.description,
         code: data.code,
-
         ...(data.iban && { iban: data.iban }),
         ...(data.postalIban && { postalIban: data.postalIban }),
         ...(data.postalAccountCode && {
@@ -45,18 +48,25 @@ export const useApiOperations = (organizationId: number) => {
         ...(data.holderPostalCc && { holderPostalCc: data.holderPostalCc }),
         ...(data.balance && { balance: data.balance }),
         ...(data.orgSector && { orgSector: data.orgSector }),
-
         flagSpontaneous: data.flagSpontaneous || false,
         flagMandatoryDueDate: data.flagMandatoryDueDate || false,
         flagAnonymousFiscalCode: data.flagAnonymousFiscalCode || false,
         flagNotifyIo: data.flagNotifyIo || false,
         flagNotifyOutcomePush: data.flagNotifyOutcomePush === 'enabled',
-
+        ...(data.spontaneousMode === SpontaneousMode.CUSTOM_FORM &&
+          data.customFormId && {
+            spontaneousFormId: data.customFormId
+          }),
         ...(data.paymentMethod === PaymentMethodOption.AMOUNT &&
           data.amountCents && {
             amountCents: euroToCents(data.amountCents)
           }),
-        ...(data.paymentMethod === PaymentMethodOption.EXTERNAL &&
+        ...(data.flagPresetAmount &&
+          data.amountCents && {
+            amountCents: euroToCents(data.amountCents)
+          }),
+        ...((data.paymentMethod === PaymentMethodOption.EXTERNAL ||
+          data.spontaneousMode === SpontaneousMode.EXTERNAL_URL) &&
           data.externalPaymentUrl && {
             externalPaymentUrl: data.externalPaymentUrl
           }),

@@ -9,7 +9,8 @@ import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 const {
   mockFormatAmountForDisplay,
   mockIsValidAmountInput,
-  mockSanitizeAmountInput
+  mockSanitizeAmountInput,
+  mockParseAmountToNumber
 } = vi.hoisted(() => {
   return {
     mockFormatAmountForDisplay: vi.fn((v: unknown) => {
@@ -22,14 +23,21 @@ const {
       // eslint-disable-next-line sonarjs/concise-regex
       /^[0-9]*([,.][0-9]*)?$/.test(s)
     ),
-    mockSanitizeAmountInput: vi.fn((s: string) => s.replace(/[^\d.,]/g, ''))
+    mockSanitizeAmountInput: vi.fn((s: string) => s.replace(/[^\d.,]/g, '')),
+    mockParseAmountToNumber: vi.fn((amount: string): number | null => {
+      if (!amount || amount.trim() === '') return null;
+      const normalizedAmount = amount.replace(',', '.');
+      const parsed = parseFloat(normalizedAmount);
+      return isNaN(parsed) ? null : parsed;
+    })
   };
 });
 
 vi.mock('../../../utils/formatters', () => ({
   formatAmountForDisplay: mockFormatAmountForDisplay,
   isValidAmountInput: mockIsValidAmountInput,
-  sanitizeAmountInput: mockSanitizeAmountInput
+  sanitizeAmountInput: mockSanitizeAmountInput,
+  parseAmountToNumber: mockParseAmountToNumber
 }));
 
 import { _AmountField, AmountFieldProps } from '../_AmountField';
@@ -43,6 +51,7 @@ describe('_AmountField', () => {
     mockFormatAmountForDisplay.mockClear();
     mockIsValidAmountInput.mockClear();
     mockSanitizeAmountInput.mockClear();
+    mockParseAmountToNumber.mockClear();
   });
 
   describe('Rendering and Initial State', () => {
@@ -488,6 +497,117 @@ describe('_AmountField', () => {
       const result = mockFormatAmountForDisplay(123.45);
       expect(result).toBe('123,45');
       expect(mockFormatAmountForDisplay).toHaveBeenCalledWith(123.45);
+    });
+  });
+
+  describe('Blur Handling', () => {
+    it('should format value to 2 decimal places on blur', async () => {
+      const onChangeMock = vi.fn();
+      render(<_AmountField {...defaultProps} onChange={onChangeMock} />);
+
+      const input = screen.getByRole('textbox', { name: 'Amount' });
+
+      fireEvent.change(input, { target: { value: '123,4' } });
+      fireEvent.blur(input);
+
+      await waitFor(() => {
+        expect(input).toHaveValue('123,40');
+        expect(mockParseAmountToNumber).toHaveBeenCalledWith('123,4');
+        expect(onChangeMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            target: expect.objectContaining({
+              value: '123.40'
+            })
+          })
+        );
+      });
+    });
+
+    it('should format integer value to 2 decimal places on blur', async () => {
+      const onChangeMock = vi.fn();
+      render(<_AmountField {...defaultProps} onChange={onChangeMock} />);
+
+      const input = screen.getByRole('textbox', { name: 'Amount' });
+
+      fireEvent.change(input, { target: { value: '100' } });
+      fireEvent.blur(input);
+
+      await waitFor(() => {
+        expect(input).toHaveValue('100,00');
+        expect(onChangeMock).toHaveBeenCalledWith(
+          expect.objectContaining({
+            target: expect.objectContaining({
+              value: '100.00'
+            })
+          })
+        );
+      });
+    });
+
+    it('should call onBlur callback when provided', async () => {
+      const onBlurMock = vi.fn();
+      render(<_AmountField {...defaultProps} onBlur={onBlurMock} />);
+
+      const input = screen.getByRole('textbox', { name: 'Amount' });
+
+      fireEvent.change(input, { target: { value: '50,5' } });
+      fireEvent.blur(input);
+
+      await waitFor(() => {
+        expect(onBlurMock).toHaveBeenCalledTimes(1);
+      });
+    });
+
+    it('should not throw error when onBlur is undefined', async () => {
+      render(<_AmountField {...defaultProps} />);
+
+      const input = screen.getByRole('textbox', { name: 'Amount' });
+
+      expect(() => {
+        fireEvent.change(input, { target: { value: '99,9' } });
+        fireEvent.blur(input);
+      }).not.toThrow();
+
+      await waitFor(() => {
+        expect(input).toHaveValue('99,90');
+      });
+    });
+
+    it('should not format empty value on blur', async () => {
+      const onChangeMock = vi.fn();
+      render(<_AmountField {...defaultProps} onChange={onChangeMock} />);
+
+      const input = screen.getByRole('textbox', { name: 'Amount' });
+
+      fireEvent.blur(input);
+
+      await waitFor(() => {
+        expect(input).toHaveValue('');
+        expect(mockParseAmountToNumber).not.toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('Focus Handling', () => {
+    it('should call onFocus callback when field is focused', () => {
+      const onFocusMock = vi.fn();
+      render(<_AmountField {...defaultProps} onFocus={onFocusMock} />);
+
+      const input = screen.getByRole('textbox', { name: 'Amount' });
+
+      fireEvent.focus(input);
+
+      expect(onFocusMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not throw error when onFocus is undefined', () => {
+      render(<_AmountField {...defaultProps} />);
+
+      const input = screen.getByRole('textbox', { name: 'Amount' });
+
+      expect(() => {
+        fireEvent.focus(input);
+      }).not.toThrow();
     });
   });
 });

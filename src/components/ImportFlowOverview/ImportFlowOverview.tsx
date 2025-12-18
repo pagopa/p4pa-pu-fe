@@ -205,9 +205,9 @@ const ImportFlowOverview = ({
         }
       ];
 
+      // Show import result only if there's an error file to download
       const shouldShowImportResult =
-        status === 'COMPLETED' ||
-        (discardFileName !== undefined && discardFileName !== null);
+        discardFileName !== undefined && discardFileName !== null;
 
       if (shouldShowImportResult) {
         menuItems.push({

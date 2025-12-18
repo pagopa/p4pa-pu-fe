@@ -79,6 +79,7 @@
         "DRAFT": "L'avviso di pagamento non è stato ancora emesso.",
         "TO_SYNC": "L'avviso di pagamento è stato registrato ma non è ancora pagabile.",
         "UNPAID": "L'avviso di pagamento è stato emesso ed è pagabile.",
+        "UNPAYABLE": "L'avviso non è pagabile.",
         "PAID": "Il pagamento è stato completato.",
         "REPORTED": "L'avviso di pagamento è stato rendicontato.",
         "EXPIRED": "Il pagamento non è stato completato entro la data di scadenza stabilita.",
@@ -418,7 +419,7 @@
           "idReporting": "ID Rendicontazione",
           "flowDateTime": "Data ora flusso",
           "regulationUniqueIdentifier": "ID regolamento",
-          "regionValueDate": "Data regolamento",
+          "regulationDate": "Data regolamento",
           "totalPayments": "Importo Totale",
           "link": "Vedi Flusso di Rendicontazione"
         },
@@ -900,7 +901,7 @@
     "loading": "Caricamento...",
     "lastUpdate": "Ultimo aggiornamento",
     "macroarea": "Macroarea",
-    "mandatoryDueDate": "Data di Scadenza Obbligatoria",
+    "mandatoryDueDate": "Scadenza Obbligatoria",
     "message": "Messaggio",
     "messages": "Messaggi",
     "notificationDate": "Data di notifica",
@@ -909,6 +910,7 @@
     "NO_EVENTS": "Nessun evento",
     "noFlows": "Non ci sono flussi.",
     "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+    "noRows": "Nessun risultato trovato",
     "notificationFeeCents": "Costo di notifica",
     "notifications": "Notifiche",
     "notificationsConfig": "Configurazione",
@@ -1162,24 +1164,20 @@
     },
     "step2": {
       "address": {
-        "label": "Indirizzo",
-        "required": "Il campo indirizzo è obbligatorio"
+        "label": "Indirizzo"
       },
       "city": {
-        "label": "Località",
-        "required": "Il campo località è obbligatorio"
+        "label": "Località"
       },
       "civicNumber": {
-        "label": "Civico",
-        "required": "Il campo civico è obbligatorio"
+        "label": "Civico"
       },
       "companyName": {
         "label": "Ragione sociale",
         "required": "Il campo ragione sociale è obbligatorio"
       },
       "country": {
-        "label": "Nazione",
-        "required": "Il campo nazione è obbligatorio"
+        "label": "Nazione"
       },
       "fiscalData": "DATI FISCALI",
       "fullName": {
@@ -1189,8 +1187,7 @@
       },
       "personalData": "DATI PERSONALI",
       "province": {
-        "label": "Provincia",
-        "required": "Il campo provincia è obbligatorio"
+        "label": "Provincia"
       },
       "subjectType": {
         "label": "Tipo di soggetto",
@@ -1211,6 +1208,12 @@
         "placeholder": "Inserisci il codice fiscale (16 caratteri)",
         "required": "Il campo codice fiscale è obbligatorio"
       },
+      "taxCodeBusiness": {
+        "label": "Codice fiscale / P. IVA",
+        "placeholder": "Inserisci il Codice fiscale (16 caratteri) o la Partita IVA (11 cifre)",
+        "required": "Il campo Codice fiscale / P. IVA è obbligatorio",
+        "invalid": "Verifica che il Codice fiscale o la Partita IVA siano corretti"
+      },
       "title": "Debitore",
       "vat": {
         "invalid": "Verifica che la Partita IVA sia corretta",
@@ -1221,8 +1224,7 @@
       "zipCode": {
         "error": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
         "invalid": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
-        "label": "CAP",
-        "required": "Il campo CAP è obbligatorio"
+        "label": "CAP"
       }
     },
     "step3": {
@@ -1582,7 +1584,7 @@
         "description": "La trovi nella sezione I tuoi Tipi Dovuti."
       }
     },
-    "title": "Imposta nuovo Tipo dovuto",
+    "title": "Abilita nuovo tipo di dovuto",
     "description": "Compila i campi e configura un nuovo Tipo dovuto per il tuo ente.",
     "success": {
       "title": "Il Tipo dovuto '{{paymentObject}}' è stato impostato!",
@@ -1590,12 +1592,17 @@
     },
     "configuration": {
       "title": "Configurazione generale",
-      "subtitle": "Definisce quale sarà il Tipo Dovuto.",
+      "subtitle": "Definisce quale sarà il tipo di dovuto.",
       "alertMessage": "* Indica un campo obbligatorio",
       "debtType": {
         "title": "Tipo dovuto",
         "label": "Tipo dovuto",
         "required": "Il Tipo dovuto è obbligatorio"
+      },
+      "taxonomyCode": {
+        "label": "Codice tassonomico",
+        "placeholder": "Nessun codice disponibile",
+        "helper": "Verifica che sia corretto per il dovuto che vuoi attivare."
       },
       "debtTypeVersion": {
         "title": "Versione Tipo dovuto",
@@ -1624,12 +1631,16 @@
       "subtitle": "Configura le caratteristiche di questo Tipo dovuto",
       "alertMessage": "* Indica una domanda obbligatoria",
       "postalAccount": "Pagamento Spontaneo",
+      "characteristics": {
+        "title": "Caratteristiche del tipo di dovuto"
+      },
       "section": {
         "spontaneousPaymentTitle": "Modalità di pagamento spontaneo",
         "behaviourTitle": "Comportamento"
       },
       "spontaneous": {
-        "label": "Modalità",
+        "label": "Pagamento spontaneo",
+        "description": "Abilita il pagamento su iniziativa del cittadino.",
         "free": "Compilazione libera",
         "amount": "Importo predefinito",
         "custom": "Campi personalizzati",
@@ -1643,16 +1654,43 @@
           "required": "Campo obbligatorio. Carica un file .XSD"
         },
         "externalUrl": {
-          "label": "URL Pagamento Dovuto"
+          "label": "Link portale esterno",
+          "required": "Il Link portale esterno è obbligatorio"
         }
       },
       "optionA": {
-        "label": "Data di Scadenza Obbligatoria",
+        "label": "Scadenza obbligatoria",
         "description": "Imposta la Data di Scadenza un campo obbligatorio nella creazione."
       },
       "optionB": {
         "label": "Codice Fiscale Anonimo",
         "description": "Permette di creare dovuti senza segnalare un Codice Fiscale nel caso di assenza."
+      },
+      "presetAmount": {
+        "label": "Importo predefinito",
+        "description": "L'importo delle posizioni debitorie sarà fisso.",
+        "info": "L'importo verrà compilato con la somma predefinita"
+      },
+      "spontaneousMode": {
+        "label": "Modulo di pagamento",
+        "helper": "Scegli i dati che desideri richiedere ai cittadini per effettuare il pagamento.",
+        "required": "Seleziona il modulo di pagamento",
+        "options": {
+          "standard": "Con dati standard richiesti dal sistema",
+          "custom": "Con dati personalizzati / precompilati",
+          "external": "Portale esterno"
+        }
+      },
+      "customForms": {
+        "select": {
+          "label": "Modulo personalizzato",
+          "helper": "Seleziona il modulo personalizzato che contiene i dati richiesti ai cittadini."
+        },
+        "empty": {
+          "message": "Non ci sono moduli personalizzati. Aggiungi un nuovo modulo nella sezione",
+          "action": "per poterli utilizzare.",
+          "linkLabel": "Moduli personalizzati"
+        }
       },
       "notifications": {
         "title": "Notifiche Esito Pagamento",
@@ -1718,9 +1756,9 @@
     },
     "notifications": {
       "title": "Messaggi",
-      "subtitle": "Crea un messaggio per notificare digitalmente ai cittadini la disponibilità degli avvisi e aggiornamenti.",
-      "alertMessage": "* Indica una domanda obbligatoria",
-      "enableNotifications": "Abilita notifiche",
+      "subtitle": "Crea un messaggio per informare i cittadini sulla disponibilità di avvisi e aggiornamenti in formato digitale.",
+      "alertMessage": "* Indica un campo obbligatorio",
+      "enableNotifications": "Invia messaggio su app IO",
       "section": {
         "message": "Messaggio"
       },
@@ -1730,13 +1768,13 @@
         "required": "API Key servizio è obbligatorio"
       },
       "messageSubject": {
-        "label": "Oggetto del messaggio",
+        "label": "Scrivi qui l'oggetto del messaggio",
         "caption": "Leggi come scrivere correttamente il <0>nome di un servizio</0>",
         "required": "Oggetto del messaggio è obbligatorio"
       },
       "messageBody": {
-        "label": "Corpo del messaggio",
-        "caption": "Leggi come usare correttamente il <0>linguaggio markdown</0>",
+        "label": "Scrivi qui il corpo del messaggio",
+        "caption": "Scopri come <0>scrivere un messaggio sull’app IO</0>",
         "required": "Corpo del messaggio è obbligatorio"
       }
     },
@@ -1754,10 +1792,10 @@
     },
     "stepper": {
       "step1": "Configurazione Generale",
-      "step2": "Ulteriori impostazioni ",
+      "step2": "Configurazione tipo di dovuto",
       "step3": "Contabilità",
       "step4": "Messaggi",
-      "step5": "Operatori abilitati"
+      "step5": "Operatori associati"
     }
   },
   "debtTypes": {
@@ -1776,7 +1814,7 @@
     "managedOrganizationsDataGrid": {
       "IPACode": "Cod. IPA",
       "managedOrg": "Ente gestito",
-      "debtTypesSet": "Tipi dovuti impostati"
+      "debtTypesSet": "Tipi dovuti impostati attivi"
     },
     "myOrganizationDataGrid": {
       "code": "Cod. Gestionale",
@@ -1853,6 +1891,7 @@
   "home": {
     "cta": "Crea Posizione Debitoria",
     "viewAs": "Stai visualizzando come",
+    "changeView": "Clicca per modificare",
     "chooseWidget": {
       "title": "Scegli la tua attività principale",
       "closingText": "Potrai modificare la tua scelta in qualsiasi momento.",
@@ -2130,7 +2169,8 @@
       "segregationCode": {
         "label": "Codice Segregazione",
         "placeholder": "",
-        "required": "Il campo Codice Segregazione è obbligatorio"
+        "required": "Il campo Codice Segregazione è obbligatorio",
+        "invalidFormat": "Il campo Codice Segregazione può contenere solo e soltanto due caratteri numerici"
       },
       "generateNoticeApiKey": {
         "label": "API Key stampa avvisi",
@@ -2383,7 +2423,9 @@
     "search": "Cerca flussi di Tesoreria",
     "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
     "provisionalCode": "Codice provvisorio",
-    "tempDocumentYear": "Anno codice Provvisorio"
+    "tempDocumentYear": "Anno codice Provvisorio",
+    "orgBtCode": "Codice Banca Tesoriere",
+    "orgIstatCode": "Codice ISTAT"
   },
   "treasuryImportFlowOverview": {
     "accessibleTitle": "Flussi importati: tesoreria",

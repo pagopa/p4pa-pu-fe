@@ -200,8 +200,10 @@ export function formatFileSize(size: number): string {
  */
 export function formatAmountForDisplay(value: unknown): string {
   if (!value && value !== 0) return '';
-  const stringVal = String(value);
-  return stringVal.replace('.', ',');
+
+  const num = parseAmountToNumber(String(value));
+  if (num === null) return '';
+  return num.toFixed(2).replace('.', ',');
 }
 
 /**

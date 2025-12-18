@@ -9,6 +9,7 @@ import Stack from '@mui/material/Stack';
 import Link from '@mui/material/Link';
 import { DebtTypeOrgForm } from '../../types';
 import { AppPreview } from '../../../../components/AppPreview';
+import { theme } from '@pagopa/mui-italia';
 
 export const Step4Notifications = () => {
   const { t } = useTranslation();
@@ -22,7 +23,6 @@ export const Step4Notifications = () => {
     <WizardStepWrapper
       title={t('debtTypeOrgCreate.notifications.title')}
       subtitle={t('debtTypeOrgCreate.notifications.subtitle')}
-      alertMessage={t('debtTypeOrgCreate.notifications.alertMessage')}
     >
       <FormComponent.ControlledSwitch
         label={t('debtTypeOrgCreate.notifications.enableNotifications')}
@@ -30,76 +30,73 @@ export const Step4Notifications = () => {
         control={control}
       />
       {flagNotifyIo && (
-        <SectionBox
-          title={t('debtTypeOrgCreate.notifications.section.message')}
-          adornment={<MessageIcon />}
-        >
-          <Stack gap={3}>
-            <Stack gap={0.5}>
-              <FormComponent.ControlledTextField
-                name="serviceId"
-                data-testid="serviceId"
-                control={control}
-                label={t('debtTypeOrgCreate.notifications.serviceApiKey.label')}
-                required
-              />
-              <Typography variant="caption" ml={2}>
-                {t('debtTypeOrgCreate.notifications.serviceApiKey.caption')}
-              </Typography>
-            </Stack>
-            <Stack gap={0.5}>
-              <FormComponent.ControlledTextField
-                name="ioTemplateSubject"
-                data-testid="ioTemplateSubject"
-                control={control}
-                label={t(
-                  'debtTypeOrgCreate.notifications.messageSubject.label'
-                )}
-                required
-              />
-              <Typography variant="caption" component="span" ml={2}>
-                <Trans
-                  i18nKey="debtTypeOrgCreate.notifications.messageSubject.caption"
-                  components={[
-                    <Link
-                      key="link"
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      underline="none"
-                    />
-                  ]}
+        <>
+          <Typography mt={2} variant="body2" color={theme.palette.error.dark}>
+            {t('debtTypeOrgCreate.notifications.alertMessage')}
+          </Typography>
+          <SectionBox
+            title={t('debtTypeOrgCreate.notifications.section.message')}
+            adornment={<MessageIcon />}
+          >
+            <Stack gap={3}>
+              <Stack gap={0.5}>
+                <FormComponent.ControlledTextField
+                  name="serviceId"
+                  data-testid="serviceId"
+                  control={control}
+                  label={t(
+                    'debtTypeOrgCreate.notifications.serviceApiKey.label'
+                  )}
+                  required
                 />
-              </Typography>
-            </Stack>
-            <Stack gap={0.5}>
-              <FormComponent.ControlledTextField
-                name="ioTemplateMessage"
-                data-testid="ioTemplateMessage"
-                control={control}
-                label={t('debtTypeOrgCreate.notifications.messageBody.label')}
-                multiline
-                rows={4}
-                required
-              />
-              <Typography variant="caption" component="span" ml={2}>
-                <Trans
-                  i18nKey="debtTypeOrgCreate.notifications.messageBody.caption"
-                  components={[
-                    <Link
-                      key="link"
-                      href="#"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      underline="none"
-                    />
-                  ]}
+                <Typography variant="caption" ml={2}>
+                  {t('debtTypeOrgCreate.notifications.serviceApiKey.caption')}
+                </Typography>
+              </Stack>
+              <Stack gap={0.5}>
+                <FormComponent.ControlledTextField
+                  name="ioTemplateSubject"
+                  data-testid="ioTemplateSubject"
+                  control={control}
+                  label={t(
+                    'debtTypeOrgCreate.notifications.messageSubject.label'
+                  )}
+                  required
                 />
-              </Typography>
+              </Stack>
+              <Stack gap={0.5}>
+                <FormComponent.ControlledTextField
+                  name="ioTemplateMessage"
+                  data-testid="ioTemplateMessage"
+                  control={control}
+                  label={t('debtTypeOrgCreate.notifications.messageBody.label')}
+                  multiline
+                  rows={4}
+                  required
+                />
+                <Typography variant="caption" component="span" ml={2}>
+                  <Trans
+                    i18nKey="debtTypeOrgCreate.notifications.messageBody.caption"
+                    components={[
+                      // TODO: add correct link to IO message guide
+                      <Link
+                        key="link"
+                        href="#"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        underline="none"
+                      />
+                    ]}
+                  />
+                </Typography>
+              </Stack>
             </Stack>
-          </Stack>
-          <AppPreview subject={ioTemplateSubject} message={ioTemplateMessage} />
-        </SectionBox>
+            <AppPreview
+              subject={ioTemplateSubject}
+              message={ioTemplateMessage}
+            />
+          </SectionBox>
+        </>
       )}
     </WizardStepWrapper>
   );

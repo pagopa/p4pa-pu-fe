@@ -158,14 +158,32 @@ const TitleComponent = ({
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          marginBottom: 2
+          marginBottom: 2,
+          minWidth: 0
         }}
       >
-        <Box display={'flex'} flexDirection={'row'} alignItems={'center'}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            minWidth: 0,
+            flex: 1,
+            overflow: 'hidden',
+            mr: 2
+          }}
+        >
           <Typography
             variant={variant}
-            sx={sx}
-            // render text as h1 if it's the main title, otherwise renders it as the variant provided
+            title={title}
+            sx={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              display: 'block',
+              maxWidth: '100%',
+              ...sx
+            }}
             {...(isMainPageTitle && { component: 'h1' as const })}
             data-testid={
               dataTestId || (isMainPageTitle ? 'main-title' : 'section-title')
@@ -175,12 +193,16 @@ const TitleComponent = ({
           </Typography>
 
           {chip && (
-            <Chip label={chip.label} color={chip.color} sx={{ ml: 2 }} />
+            <Chip
+              label={chip.label}
+              color={chip.color}
+              sx={{ ml: 2, flexShrink: 0 }}
+            />
           )}
         </Box>
 
         {callToAction != undefined && callToAction?.length > 0 && (
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box sx={{ display: 'flex', gap: 1, flexShrink: 0 }}>
             {callToAction.map((action, index) => renderAction(action, index))}
           </Box>
         )}

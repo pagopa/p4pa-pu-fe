@@ -47,6 +47,7 @@ import {
   saveUserProfilePreference
 } from '../../utils/userPreferences';
 import type { UserProfilePreference } from '../../utils/userPreferences';
+import { visuallyHidden } from '@mui/utils';
 
 const Home = () => {
   const { t } = useTranslation();
@@ -319,6 +320,9 @@ const Home = () => {
           onClick={() => setDialogOpen(true)}
         >
           {t(`home.chooseWidget.profiles.${profileSelected}.title`)}
+          <Typography sx={visuallyHidden} component={'span'}>
+            {t('home.changeView')}
+          </Typography>
           <ModeEditIcon
             fontSize="small"
             color="primary"

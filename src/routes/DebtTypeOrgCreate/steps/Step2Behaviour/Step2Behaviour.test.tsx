@@ -7,7 +7,30 @@ import { FormProvider, useForm, FieldValues } from 'react-hook-form';
 import { setOrganizationId } from '../../../../store/OrganizationIdStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { step2Schema } from './schema';
-import { PaymentMethodOption } from '../../types';
+import { PaymentMethodOption, SpontaneousMode } from '../../types';
+import type { SpontaneousForm } from '../../../../api/spontaneousForms';
+
+const { mockGetSpontaneousForms, mockNotifyEmit } = vi.hoisted(() => ({
+  mockGetSpontaneousForms: vi.fn<
+    () =>
+      | {
+          data?: Array<SpontaneousForm>;
+          isLoading: boolean;
+          isError: boolean;
+        }
+      | undefined
+  >(() => ({
+    data: [
+      {
+        spontaneousFormId: 10,
+        code: 'FORM10'
+      }
+    ],
+    isLoading: false,
+    isError: false
+  })),
+  mockNotifyEmit: vi.fn()
+}));
 
 vi.mock('../../hooks/useNotificationConfig', () => ({
   useNotificationConfigurations: () => ({
@@ -23,6 +46,23 @@ vi.mock('../../hooks/useActualizationConfig', () => ({
   })
 }));
 
+vi.mock('../../../../utils', async () => {
+  const actual =
+    await vi.importActual<typeof import('../../../../utils')>(
+      '../../../../utils'
+    );
+  return {
+    ...actual,
+    notify: {
+      emit: mockNotifyEmit
+    }
+  };
+});
+
+vi.mock('../../../../api/spontaneousForms', () => ({
+  getSpontaneousForms: vi.fn(() => mockGetSpontaneousForms())
+}));
+
 const renderWithForm = (
   ui: React.ReactElement,
   onSubmit?: (data: FieldValues) => void,
@@ -36,7 +76,7 @@ const renderWithForm = (
         flagNotifyOutcomePush: 'disabled',
         paymentMethod: PaymentMethodOption.FREE,
         flagMandatoryDueDate: false,
-        isAnonymousFiscalCode: false,
+        flagAnonymousFiscalCode: false,
         ...defaultValues
       }
     });
@@ -79,11 +119,8 @@ describe('Step2Behaviour', () => {
       screen.getByText('debtTypeOrgCreate.behaviour.alertMessage')
     ).toBeInTheDocument();
 
-    expect(
-      screen.getByRole('checkbox', {
-        name: 'debtTypeOrgCreate.behaviour.postalAccount'
-      })
-    ).toBeInTheDocument();
+    expect(screen.getByTestId('flagMandatoryDueDate')).toBeInTheDocument();
+    expect(screen.getByTestId('flagSpontaneous')).toBeInTheDocument();
 
     expect(
       screen.getByRole('radiogroup', {
@@ -95,42 +132,12 @@ describe('Step2Behaviour', () => {
   it('toggles spontaneous payment section correctly', () => {
     renderWithForm(<Step2Behaviour />);
 
-    expect(
-      screen.getByText('debtTypeOrgCreate.behaviour.section.behaviourTitle')
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText(
-        'debtTypeOrgCreate.behaviour.section.spontaneousPaymentTitle'
-      )
-    ).not.toBeInTheDocument();
-
-    const spontaneousSwitch = screen.getByRole('checkbox', {
-      name: 'debtTypeOrgCreate.behaviour.postalAccount'
-    });
+    const spontaneousSwitch = screen.getByTestId('flagSpontaneous');
     fireEvent.click(spontaneousSwitch);
 
     expect(
-      screen.getByText(
-        'debtTypeOrgCreate.behaviour.section.spontaneousPaymentTitle'
-      )
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText('debtTypeOrgCreate.behaviour.section.behaviourTitle')
-    ).not.toBeInTheDocument();
-  });
-
-  it('shows correct options in behaviour section when spontaneous is disabled', () => {
-    renderWithForm(<Step2Behaviour />);
-
-    expect(
-      screen.getByRole('checkbox', {
-        name: 'debtTypeOrgCreate.behaviour.optionA.label debtTypeOrgCreate.behaviour.optionA.description'
-      })
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole('checkbox', {
-        name: 'debtTypeOrgCreate.behaviour.optionB.label debtTypeOrgCreate.behaviour.optionB.description'
+      screen.getByRole('combobox', {
+        name: 'debtTypeOrgCreate.behaviour.spontaneousMode.label'
       })
     ).toBeInTheDocument();
   });
@@ -169,14 +176,12 @@ describe('Step2Behaviour', () => {
     ).toBeInTheDocument();
   });
 
-  it('shows payment method selector when spontaneous is enabled', () => {
+  it('shows spontaneous mode select when spontaneous is enabled', () => {
     renderWithForm(<Step2Behaviour />, undefined, { flagSpontaneous: true });
-
-    expect(screen.getByTestId('paymentMethod')).toBeInTheDocument();
 
     expect(
       screen.getByRole('combobox', {
-        name: /debtTypeOrgCreate\.behaviour\.spontaneous\.label/
+        name: 'debtTypeOrgCreate.behaviour.spontaneousMode.label'
       })
     ).toBeInTheDocument();
   });
@@ -211,7 +216,7 @@ describe('Step2Behaviour', () => {
     renderWithForm(<Step2Behaviour />);
 
     expect(
-      screen.getByText('debtTypeOrgCreate.behaviour.section.behaviourTitle')
+      screen.getByText('debtTypeOrgCreate.behaviour.title')
     ).toBeInTheDocument();
 
     expect(
@@ -221,5 +226,119 @@ describe('Step2Behaviour', () => {
     expect(
       screen.getByText('debtTypeOrgCreate.behaviour.actualization.title')
     ).toBeInTheDocument();
+  });
+
+  it('submits flagAnonymousFiscalCode set to true when toggled', async () => {
+    const onSubmit = vi.fn();
+    renderWithForm(<Step2Behaviour />, onSubmit);
+
+    const anonymousSwitch = screen.getByTestId('flagAnonymousFiscalCode');
+    fireEvent.click(anonymousSwitch);
+
+    const submitButton = screen.getByRole('button', { name: 'Submit' });
+    fireEvent.click(submitButton);
+
+    await screen.findByRole('button', { name: 'Submit' });
+
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+    expect(onSubmit.mock.calls[0]?.[0]).toMatchObject({
+      flagAnonymousFiscalCode: true
+    });
+  });
+
+  it('shows preset amount alert and custom form select when data is available', () => {
+    renderWithForm(<Step2Behaviour />, undefined, {
+      flagSpontaneous: true,
+      flagPresetAmount: true,
+      spontaneousMode: SpontaneousMode.CUSTOM_FORM
+    });
+
+    expect(screen.getByTestId('preset-amount-info')).toBeInTheDocument();
+    expect(screen.getByTestId('presetAmountValue')).toBeInTheDocument();
+    expect(screen.getAllByTestId('spontaneousMode')[0]).toBeInTheDocument();
+    expect(screen.getAllByTestId('customFormId')[0]).toBeInTheDocument();
+  });
+
+  it('shows external payment url field when external url mode is selected', () => {
+    renderWithForm(<Step2Behaviour />, undefined, {
+      flagSpontaneous: true,
+      spontaneousMode: SpontaneousMode.EXTERNAL_URL
+    });
+
+    const urlField = screen.getByTestId('externalPaymentUrl');
+    expect(urlField).toBeInTheDocument();
+
+    fireEvent.change(urlField, { target: { value: 'https://example.com' } });
+    expect(urlField).toHaveValue('https://example.com');
+  });
+
+  it('shows loading state when fetching custom forms', () => {
+    mockGetSpontaneousForms.mockReset();
+    mockGetSpontaneousForms.mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false
+    });
+
+    renderWithForm(<Step2Behaviour />, undefined, {
+      flagSpontaneous: true,
+      spontaneousMode: SpontaneousMode.CUSTOM_FORM
+    });
+
+    expect(
+      screen.getByText((_content, element) => {
+        return element?.textContent === 'commons.loading';
+      })
+    ).toBeInTheDocument();
+
+    mockGetSpontaneousForms.mockReset();
+    mockGetSpontaneousForms.mockReturnValue({
+      data: [
+        {
+          spontaneousFormId: 10,
+          code: 'FORM10'
+        }
+      ],
+      isLoading: false,
+      isError: false
+    });
+  });
+
+  it('shows empty state when no custom forms are available', () => {
+    mockGetSpontaneousForms.mockReset();
+    mockGetSpontaneousForms.mockReturnValue({
+      data: [],
+      isLoading: false,
+      isError: false
+    });
+
+    renderWithForm(<Step2Behaviour />, undefined, {
+      flagSpontaneous: true,
+      spontaneousMode: SpontaneousMode.CUSTOM_FORM
+    });
+
+    const messageElements = screen.getAllByText((_content, element) => {
+      const text = element?.textContent || '';
+      return text.includes(
+        'debtTypeOrgCreate.behaviour.customForms.empty.message'
+      );
+    });
+    expect(messageElements.length).toBeGreaterThan(0);
+
+    expect(
+      screen.getByText('debtTypeOrgCreate.behaviour.customForms.empty.action')
+    ).toBeInTheDocument();
+
+    mockGetSpontaneousForms.mockReset();
+    mockGetSpontaneousForms.mockReturnValue({
+      data: [
+        {
+          spontaneousFormId: 10,
+          code: 'FORM10'
+        }
+      ],
+      isLoading: false,
+      isError: false
+    });
   });
 });

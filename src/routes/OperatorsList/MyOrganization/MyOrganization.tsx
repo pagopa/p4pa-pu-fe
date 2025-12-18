@@ -34,13 +34,13 @@ type Operator = {
   enabledDebtTypes: number;
 };
 
-export const MyOrganization = () => {
+export const MyOrganization = ({ omitOrgName }: { omitOrgName?: boolean }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { organizationId: urlOrganizationId, orgName } = useParams<{
+  const { organizationId: urlOrganizationId } = useParams<{
     organizationId: string;
-    orgName: string;
   }>();
+  const [orgName, setOrgName] = useState<string>('');
 
   const {
     state: { organizationId: storeOrganizationId }
@@ -52,20 +52,6 @@ export const MyOrganization = () => {
   if (isNaN(organizationId)) {
     navigate(PageRoutes.RESPONSES_ERROR);
   }
-
-  useEffect(() => {
-    setCustomBreadcrumbsItems([
-      {
-        pathname: PageRoutes.OPERATORS_LIST,
-        id: 'OPERATORS_LIST'
-      },
-      {
-        pathname: '',
-        label: orgName,
-        id: 'BROKER_OPERATORS'
-      }
-    ]);
-  }, [orgName]);
 
   const initialFilters: OperatorFilters = utils.URI.decode(
     window.location.hash
@@ -81,6 +67,23 @@ export const MyOrganization = () => {
     query,
     filters
   });
+
+  useEffect(() => {
+    if (data && data.content[0] && data.content[0].orgName && orgName === '') {
+      setOrgName(data.content[0].orgName);
+      setCustomBreadcrumbsItems([
+        {
+          pathname: PageRoutes.OPERATORS_LIST,
+          id: 'OPERATORS_LIST'
+        },
+        {
+          pathname: '',
+          label: data.content[0].orgName,
+          id: 'BROKER_OPERATORS'
+        }
+      ]);
+    }
+  }, [data]);
 
   // Map datas from api to the data grid
   const mappedData =
@@ -141,7 +144,6 @@ export const MyOrganization = () => {
     if (row) {
       const detailPath = generatePath(PageRoutes.OPERATORS_DETAIL, {
         organizationId,
-        orgName,
         mappedExternalUserId: row?.id
       });
       navigate(detailPath);
@@ -181,7 +183,7 @@ export const MyOrganization = () => {
 
   return (
     <>
-      {orgName && (
+      {orgName && !omitOrgName && (
         <TitleComponent
           title={orgName}
           accessibleTitle={`${t('commons.routes.OPERATORS_LIST')} - ${orgName}`}

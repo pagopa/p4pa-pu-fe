@@ -724,9 +724,9 @@ describe('getDebtPositionTypesByOrganizationId', () => {
     expect(data).toBeDefined();
     expect(data?.response).toEqual(mockData);
     expect(data?.optionsMap).toEqual([
-      { label: 'Type A', value: 1 },
-      { label: 'Type B', value: 2 },
-      { label: 'Type C', value: 3 }
+      { label: 'Type A', value: '1' },
+      { label: 'Type B', value: '2' },
+      { label: 'Type C', value: '3' }
     ]);
     expect(data?.codeMap).toEqual([
       { label: 'Type A', value: 'TYPE_A' },
@@ -809,9 +809,9 @@ describe('getDebtPositionTypesByOrganizationId', () => {
     const data = result.current.data;
 
     expect(data?.optionsMap).toEqual([
-      { label: 'Alpha Type', value: 1 },
-      { label: 'Middle Type', value: 2 },
-      { label: 'Zebra Type', value: 3 }
+      { label: 'Alpha Type', value: '1' },
+      { label: 'Middle Type', value: '2' },
+      { label: 'Zebra Type', value: '3' }
     ]);
     expect(data?.codeMap).toEqual([
       { label: 'Alpha Type', value: 'TYPE_A' },
