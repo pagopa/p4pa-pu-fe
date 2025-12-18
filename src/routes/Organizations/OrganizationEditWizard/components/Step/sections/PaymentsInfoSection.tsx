@@ -62,6 +62,12 @@ export const PaymentsInfoSection = ({
                 message: t(
                   'organizationEditWizard.step2.segregationCode.required'
                 )
+              },
+              pattern: {
+                value: /^\d{2}$/,
+                message: t(
+                  'organizationEditWizard.step2.segregationCode.invalidFormat'
+                )
               }
             }}
             render={({ field }) => (
@@ -77,6 +83,7 @@ export const PaymentsInfoSection = ({
                 helperText={errors.segregationCode?.message}
                 data-testid="segregation-code-field"
                 required={data.organizationStatus === 'ACTIVE'}
+                inputProps={{ maxLength: 2 }}
               />
             )}
           />
