@@ -1403,6 +1403,13 @@
       "info": "Sono presenti altri beneficiari diversi dal tuo ente.",
       "title": "Beneficiari"
     },
+    "origin": {
+      "SECONDARY_ORG": "Vedi questo avviso perché sei beneficiario del pagamento di un avviso creato da un altro ente.",
+      "RECEIPT_FILE": "Questo avviso è stato generato automaticamente in seguito al caricamento di un flusso contenente ricevute di pagamenti effettuati tramite pagoPA.",
+      "RECEIPT_PAGOPA": "Questo avviso è stato generato automaticamente a seguito della ricezione di una ricevuta telematica di un pagamento non gestito in piattaforma.",
+      "REPORTING_PAGOPA": "Questo avviso è stato generato automaticamente in seguito alla ricezione di un flusso di rendicontazione con codice esito 8/9 (pagamento senza Ricevuta Telematica)."
+    },
+    "techDebtPositionDefault": "Posizione debitoria tecnica",
     "timeline": {
       "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio",
       "title": "Storico Avviso"
