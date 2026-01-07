@@ -93,6 +93,7 @@ describe('OrgSilServiceSectionConfigs', () => {
         legacyBasicAuthConfig: {
           authUrl: 'https://auth.test.com',
           user: 'testuser',
+          psw: 'testpassword',
           authConfig: ''
         }
       };
@@ -156,6 +157,7 @@ describe('OrgSilServiceSectionConfigs', () => {
         flagLegacy: true,
         legacyBasicAuthConfig: {
           authUrl: 'https://auth.test.com',
+          psw: 'testpassword',
           user: 'testuser',
           authConfig: ''
         }
@@ -236,8 +238,9 @@ describe('OrgSilServiceSectionConfigs', () => {
         ...createBaseOrgSilService(),
         flagLegacy: true,
         legacyBasicAuthConfig: {
-          authUrl: undefined,
-          user: undefined,
+          authUrl: '',
+          user: '',
+          psw: '',
           authConfig: ''
         }
       };
@@ -263,6 +266,7 @@ describe('OrgSilServiceSectionConfigs', () => {
         legacyBasicAuthConfig: {
           authUrl: 'https://basic.auth.com',
           user: 'basicuser',
+          psw: 'basicpassword',
           authConfig: ''
         },
         legacyJwtAuthConfig: {
@@ -302,10 +306,10 @@ describe('OrgSilServiceSectionConfigs', () => {
         ...createBaseOrgSilService(),
         flagLegacy: true,
         legacyJwtAuthConfig: {
-          kid: undefined,
+          kid: '',
           issuer: '',
-          subject: undefined,
-          algorithm: undefined,
+          subject: '',
+          algorithm: JwtAlgorithm.HS256,
           signingKey: '',
           authConfig: ''
         }
@@ -322,7 +326,7 @@ describe('OrgSilServiceSectionConfigs', () => {
       });
       expect(authSection?.data).toContainEqual({
         label: 'Algoritmo',
-        value: '-'
+        value: 'HS256'
       });
       expect(authSection?.data).toContainEqual({
         label: 'Chiave Firma',
