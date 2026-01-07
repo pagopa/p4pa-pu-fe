@@ -9,6 +9,7 @@ import { useStore } from '../store/GlobalStore';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 import { DebtPositionStatus } from '../../generated/data-contracts';
 import { optionMapsConverter } from '../utils/formatters';
+import { InstallmentStatus } from '../../generated/data-contracts';
 
 type UseDebtPositionSearchProps = {
   searchType: SearchType;
@@ -25,6 +26,8 @@ export const useDebtPositionFilters = ({
   const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
 
   const debtPositionsStatus = Object.values(DebtPositionStatus);
+
+  const installmentsStatus = Object.values(InstallmentStatus);
 
   const getFilterItems = (): Array<FilterItem> => {
     if (searchType === SearchType.DEBT_POSITION) {
@@ -93,7 +96,7 @@ export const useDebtPositionFilters = ({
       {
         type: COMPONENT_TYPE.dateRange,
         label: 'dateRange',
-        gridWidth: 5,
+        gridWidth: 3,
         from: { label: t('debtPositions.expirationFrom') },
         to: { label: t('dates.to') },
         id: 'dateRange'
@@ -104,6 +107,13 @@ export const useDebtPositionFilters = ({
         gridWidth: 2,
         options: debtPositionsTypes.optionsMap,
         id: 'typeOrgId'
+      },
+      {
+        type: COMPONENT_TYPE.select,
+        label: t('commons.state'),
+        gridWidth: 2,
+        options: optionMapsConverter(installmentsStatus, 'commons.status'),
+        id: 'status'
       },
       {
         type: COMPONENT_TYPE.button,
