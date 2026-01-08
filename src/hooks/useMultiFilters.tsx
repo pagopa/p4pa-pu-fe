@@ -123,6 +123,7 @@ export const useMultiFilters = (props?: {
     'ACCOUNT_REGISTRY_CODE',
     'AMOUNT',
     'BILL_DATE',
+    'BILL_CODE',
     'CLASSIFICATION_TYPE',
     'IUD',
     'IUF',
