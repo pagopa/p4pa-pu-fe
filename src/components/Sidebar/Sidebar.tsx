@@ -168,6 +168,11 @@ export const Sidebar: React.FC = () => {
         label: t('commons.routes.ORG_SIL_SERVICE'),
         route: PageRoutes.ORG_SIL_SERVICE_INDEX,
         end: true
+      },
+      {
+        label: t('commons.routes.SPONTANEOUS_FORM'),
+        route: PageRoutes.SPONTANEOUS_FORM_INDEX,
+        end: true
       }
     ];
 

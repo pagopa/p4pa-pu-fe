@@ -18,6 +18,7 @@ import ClientSilCreate from './ClientSilCreate/ClientSilCreate';
 import { OrgSilServiceCreate } from './OrgSilServiceCreate/OrgSilServiceCreate';
 import ClientSilDetail from './ClientSilDetail';
 import { OrgSilServiceEdit } from './OrgSilServiceCreate/OrgSilServiceEdit';
+import SpontaneousFormPage from './SpontaneousForm/SpontaneousFormPage/SpontaneousFormPage';
 
 const deployPath = config.deployPath;
 
@@ -214,6 +215,26 @@ export const backofficeRoutes = [
               sidebar: {
                 visible: false
               }
+            }
+          }
+        ]
+      },
+      {
+        id: 'SPONTANEOUS_FORM',
+        path: 'spontaneous-form/',
+        element: (
+          <AdminRouteGuard>
+            <Outlet />
+          </AdminRouteGuard>
+        ),
+        children: [
+          {
+            id: 'SPONTANEOUS_FORM_INDEX',
+            element: <SpontaneousFormPage />,
+            index: true,
+            handle: {
+              hideBreadcrumbs: true,
+              backButton: false
             }
           }
         ]
