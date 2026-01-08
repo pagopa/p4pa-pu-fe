@@ -19,7 +19,8 @@ import { extractFilename } from '../../utils/formatters';
 import {
   buildDebtPositionsQueryParams,
   buildInstallmentsQueryParams,
-  DebtPositionFilteredRequest
+  DebtPositionFilteredRequest,
+  InstallmentsFilteredRequest
 } from './mapping';
 import { z } from 'zod';
 
@@ -40,7 +41,7 @@ const getDebtPositionViews = ({ organizationId }: { organizationId: number }) =>
 const getInstallments = ({ organizationId }: { organizationId: number }) =>
   useMutation({
     mutationKey: ['getInstallments', organizationId],
-    mutationFn: async (args: DebtPositionFilteredRequest) => {
+    mutationFn: async (args: InstallmentsFilteredRequest) => {
       const query = buildInstallmentsQueryParams(args);
       const { data } = await utils.apiClient.bff.getInstallments(
         organizationId,
