@@ -8,7 +8,10 @@ import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
 import { STATE } from '../../store/types';
-import { InstallmentStatus } from '../../../generated/apiClient';
+import {
+  DebtPositionOrigin,
+  InstallmentStatus
+} from '../../../generated/apiClient';
 import React from 'react';
 
 global.ResizeObserver = vi.fn().mockImplementation(() => ({
@@ -567,7 +570,7 @@ describe('DebtPositionsInstallmentDetail', () => {
     ).toBeInTheDocument();
   });
 
-  it('renders REPORTED status installment correctly', () => {
+  it('renders REPORTED status installment correctly and NOT a tech debt position', () => {
     const reportedInstallment = {
       ...mockPaidInstallment,
       status: InstallmentStatus.REPORTED
@@ -580,6 +583,7 @@ describe('DebtPositionsInstallmentDetail', () => {
     render(<DebtPositionsInstallmentDetail />);
 
     expect(screen.getByText('commons.paymentInformation')).toBeInTheDocument();
+    expect(screen.queryByTestId('technical-debt-alert')).toBeNull();
   });
 
   it('handles download error with generic exception', async () => {
@@ -623,5 +627,20 @@ describe('DebtPositionsInstallmentDetail', () => {
     expect(
       screen.getByText('commons.routes.DEBT_POSITION_INSTALLMENT_DETAIL')
     ).toBeInTheDocument();
+  });
+
+  it('Check if is a technical debt position', () => {
+    const technicalDebtPosition = {
+      ...mockUnpaidInstallment,
+      debtPositionOrigin: DebtPositionOrigin.SECONDARY_ORG
+    };
+
+    vi.mocked(debtPositions.getInstallmentDetail).mockReturnValue({
+      data: technicalDebtPosition
+    } as any);
+
+    render(<DebtPositionsInstallmentDetail />);
+
+    expect(screen.getByTestId('technical-debt-alert')).toBeInTheDocument();
   });
 });

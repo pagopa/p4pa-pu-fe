@@ -1,5 +1,5 @@
 import { Download, History, ReadMore, Visibility } from '@mui/icons-material';
-import { Button, Divider, Grid, Typography } from '@mui/material';
+import { Alert, Button, Divider, Grid, Typography } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import TitleComponent from '../TitleComponent/TitleComponent';
 import DetailContainer, {
@@ -18,6 +18,7 @@ import { InstallmentDetailDrawer } from './InstallmentDetailDrawer';
 import { Timeline } from '../Timeline';
 import { setAppState } from '../../store/AppStateStore';
 import { downloadBlob } from '../../utils/download';
+import { isTechnicalDebtPosition } from '../../utils/debtpositions';
 import utils from '../../utils';
 import { useTimelineData } from '../../hooks/useTimelineData';
 import { stateColors } from '../../routes/DebtPositions/components/DebtPositionIUVDataGrid';
@@ -246,6 +247,23 @@ export const DebtPositionsInstallmentDetail = () => {
             : [])
         ]}
       />
+      {installment?.debtPositionOrigin &&
+        isTechnicalDebtPosition(installment?.debtPositionOrigin) && (
+          <Alert
+            severity="warning"
+            sx={{ mb: 3 }}
+            data-testid="technical-debt-alert"
+          >
+            {t(
+              `debtPositionInstallmentDetail.origin.${installment.debtPositionOrigin}`,
+              {
+                defaultValue: t(
+                  'debtPositionInstallmentDetail.techDebtPositionDefault'
+                )
+              }
+            )}
+          </Alert>
+        )}
       <Grid container spacing={3}>
         <Grid item md={6}>
           <DetailContainer

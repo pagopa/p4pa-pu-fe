@@ -10,6 +10,7 @@ import roles from './roles';
 import filtersValidation from './filtersValidation';
 import dialog from './dialog';
 import URI from './URI';
+import debtpositions from './debtpositions';
 import * as formatters from './formatters';
 
 export default {
@@ -32,5 +33,6 @@ export default {
   URI,
   roles,
   filtersValidation,
-  formatters
+  formatters,
+  debtpositions
 };
