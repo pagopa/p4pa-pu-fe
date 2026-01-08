@@ -102,20 +102,20 @@ export const transformFormDataToDTO = (
 const createBasicAuthConfig = (
   formData: OrgSilServiceFormData
 ): SilServiceLegacyBasicAuthConfigDTO => ({
-  authUrl: formData.basicAuthURL || undefined,
-  user: formData.basicUser || undefined,
-  psw: formData.basicPassword || undefined,
+  authUrl: formData.basicAuthURL || '',
+  user: formData.basicUser || '',
+  psw: formData.basicPassword || '',
   authConfig: 'legacyBasic'
 });
 
 const createJwtAuthConfig = (
   formData: OrgSilServiceFormData
 ): SilServiceLegacyJwtAuthConfigDTO => ({
-  kid: formData.jwtKid || undefined,
-  subject: formData.jwtSubject || undefined,
-  issuer: formData.jwtIssuer || undefined,
-  algorithm: formData.jwtAlgorithm || undefined,
-  signingKey: formData.jwtSigningKey || undefined,
+  kid: formData.jwtKid || '',
+  subject: formData.jwtSubject || '',
+  issuer: formData.jwtIssuer || '',
+  algorithm: formData.jwtAlgorithm || JwtAlgorithm.HS256,
+  signingKey: formData.jwtSigningKey || '',
   authConfig: 'legacyJwt'
 });
 

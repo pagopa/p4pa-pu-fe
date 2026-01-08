@@ -89,6 +89,7 @@ const mockOrgSilServiceLegacy: OrgSilServiceDecryptedDTO = {
   legacyBasicAuthConfig: {
     authUrl: 'https://auth.test.com',
     user: 'testuser',
+    psw: 'testpassword',
     authConfig: ''
   },
   legacyJwtAuthConfig: {
