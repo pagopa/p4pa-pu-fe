@@ -7,6 +7,8 @@ import {
   SpontaneousForm
 } from '../../../../../generated/data-contracts';
 import CustomDataGrid from '../../../../components/DataGrid/CustomDataGrid';
+import { generatePath, useNavigate } from 'react-router';
+import { PageRoutes } from '../../..';
 
 export type SpontaneousFormDataGridProps = {
   data: PagedSpontaneousForm;
@@ -18,6 +20,7 @@ const SpontaneousFormDataGrid = ({
   isLoading = false
 }: SpontaneousFormDataGridProps) => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const columns: Array<GridColDef> = [
     {
@@ -41,18 +44,16 @@ const SpontaneousFormDataGrid = ({
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      renderCell: (_params: GridRenderCellParams<SpontaneousForm>) => (
+      renderCell: (params: GridRenderCellParams<SpontaneousForm>) => (
         <IconButton
           color="primary"
           size="small"
           onClick={() => {
-            console.log('redirect to detail');
-            // navigate(
-            //   generatePath(PageRoutes.SPONTANEOUS_FORM_DETAIL, {
-            //     spontaneousFormId: params.row.spontaneousFormId
-            //   })
-            // );
+            navigate(
+              generatePath(PageRoutes.SPONTANEOUS_FORM_DETAIL, {
+                spontaneousFormId: params.row.spontaneousFormId
+              })
+            );
           }}
         >
           <ChevronRight />
