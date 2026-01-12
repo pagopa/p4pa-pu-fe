@@ -29,6 +29,10 @@ const mockRef = { current: false };
 const mockFieldNamePrefix = 'beneficiaries';
 const mockIndex = 0;
 
+vi.mock('../../../../api/transfers', () => ({
+  validateTaxonomyCategory: vi.fn()
+}));
+
 beforeEach(() => {
   vi.useFakeTimers();
 });
