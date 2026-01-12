@@ -1001,6 +1001,7 @@
       "REPORTING_INDEX": "Pagina principale",
       "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
       "REPORTING_SEARCH_RESULTS": "Risultato ricerca",
+      "SPONTANEOUS_FORM": "Moduli personalizzati",
       "STATISTICS": "Statistiche",
       "TELEMATIC_RECEIPT": "Ricevute Telematiche",
       "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
@@ -2321,6 +2322,26 @@
     "searchRegulationId": "ID Regolamento",
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"
+  },
+  "spontaneousForm": {
+    "detail": {
+      "formConfiguration": "Configurazione del modulo",
+      "generalConfiguration": "Configurazione generale",
+      "identificationCode": "Codice identificativo",
+      "structure": "Struttura",
+      "jsonCode": "Codice JSON",
+      "translations": "Traduzioni",
+      "dictionary": "Dizionario",
+      "inUse": "In uso",
+      "debtPositionTypeOrgCount": "Tipo di dovuti che utilizzano questo modulo",
+      "description": "Ecco i dettagli del modulo che i cittadini compilano quando effettuano pagamenti spontanei"
+    },
+    "description": "Gestisci i moduli personalizzati con i dati che i cittadini compilano quando effettuano pagamenti spontanei",
+    "searchByCode": "Cerca per descrizione",
+    "columns": {
+      "code": "Codice identificativo",
+      "debtPositionTypeOrgCount": "Utilizzato su tipi di dovuto"
+    }
   },
   "statistics": {
     "urlNotAvailable": "URL non disponibile",

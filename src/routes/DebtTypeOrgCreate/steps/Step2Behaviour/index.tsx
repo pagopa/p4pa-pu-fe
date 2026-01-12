@@ -15,8 +15,8 @@ import { DebtTypeOrgForm, SpontaneousMode } from '../../types';
 import Stack from '@mui/material/Stack';
 import Typography from '@mui/material/Typography';
 import { useStore } from '../../../../store/GlobalStore';
-import { getSpontaneousForms } from '../../../../api/spontaneousForms';
 import utils from '../../../../utils';
+import spontaneousForm from '../../../../api/spontaneousForm';
 
 export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
@@ -37,11 +37,10 @@ export const Step2Behaviour = ({ edit }: { edit?: boolean }) => {
   const flagPresetAmount = watch('flagPresetAmount');
   const spontaneousMode = watch('spontaneousMode');
 
-  const spontaneousFormsQuery: ReturnType<typeof getSpontaneousForms> =
-    getSpontaneousForms(
-      organizationId,
-      flagSpontaneous && spontaneousMode === SpontaneousMode.CUSTOM_FORM
-    );
+  const spontaneousFormsQuery = spontaneousForm.getSpontaneousFormsList(
+    organizationId,
+    flagSpontaneous && spontaneousMode === SpontaneousMode.CUSTOM_FORM
+  );
 
   const customFormOptions = useMemo(() => {
     if (!spontaneousFormsQuery.data) return [];
