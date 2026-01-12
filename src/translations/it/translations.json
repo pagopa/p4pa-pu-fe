@@ -2322,6 +2322,18 @@
     "totalAmount": "Importo totale"
   },
   "spontaneousForm": {
+    "detail": {
+      "formConfiguration": "Configurazione del modulo",
+      "generalConfiguration": "Configurazione generale",
+      "identificationCode": "Codice identificativo",
+      "structure": "Struttura",
+      "jsonCode": "Codice JSON",
+      "translations": "Traduzioni",
+      "dictionary": "Dizionario",
+      "inUse": "In uso",
+      "debtPositionTypeOrgCount": "Tipo di dovuti che utilizzano questo modulo",
+      "description": "Ecco i dettagli del modulo che i cittadini compilano quando effettuano pagamenti spontanei"
+    },
     "description": "Gestisci i moduli personalizzati con i dati che i cittadini compilano quando effettuano pagamenti spontanei",
     "searchByCode": "Cerca per descrizione",
     "columns": {

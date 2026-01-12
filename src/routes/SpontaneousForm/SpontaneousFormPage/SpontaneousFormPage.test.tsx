@@ -7,6 +7,7 @@ import {
 } from '../../../__tests__/renderers';
 import { useNavigate } from 'react-router';
 import SpontaneousFormPage from './SpontaneousFormPage';
+import { PageRoutes } from '../..';
 
 const mockData = {
   content: [
@@ -54,7 +55,12 @@ vi.mock('react-router', async (importOriginal) => {
     useParams: vi.fn(),
     useNavigate: vi.fn(),
     Link: ({ children }: { children: React.ReactNode }) => children,
-    generatePath: vi.fn().mockReturnValue('/mock-path')
+    generatePath: vi.fn((path: string, params: Record<string, unknown>) => {
+      if (path === PageRoutes.SPONTANEOUS_FORM_DETAIL) {
+        return `/backoffice/spontaneous-form/${params.spontaneousFormId}`;
+      }
+      return '/mock-path';
+    })
   };
 });
 
@@ -173,5 +179,33 @@ describe('SpontaneousFormPage', () => {
 
     expect(screen.getByText('5')).toBeInTheDocument();
     expect(screen.getByText('3')).toBeInTheDocument();
+  });
+
+  it('navigates to detail page when clicking on row detail button', async () => {
+    render(<SpontaneousFormPage />);
+
+    const detailButtons = screen.getAllByRole('button', { name: '' });
+    const firstDetailButton = detailButtons.find((button) =>
+      button.querySelector('[data-testid="ChevronRightIcon"]')
+    );
+
+    expect(firstDetailButton).toBeDefined();
+
+    if (firstDetailButton) {
+      fireEvent.click(firstDetailButton);
+
+      await waitFor(() => {
+        expect(navigateMock).toHaveBeenCalledWith(
+          '/backoffice/spontaneous-form/1'
+        );
+      });
+    }
+  });
+
+  it('renders detail navigation button for each row', () => {
+    render(<SpontaneousFormPage />);
+
+    const chevronIcons = screen.getAllByTestId('ChevronRightIcon');
+    expect(chevronIcons).toHaveLength(mockData.content.length);
   });
 });
