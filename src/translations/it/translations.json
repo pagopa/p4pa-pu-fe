@@ -391,7 +391,7 @@
       "sections": {
         "telematicReceipt": {
           "title": "Ricevuta Telematica",
-          "debtPositionTypeOrgCode": "Tipo dovuto",
+          "debtPositionTypeOrgDescription": "Tipo dovuto",
           "paymentObject": "Oggetto del pagamento",
           "receiptPaymentAmount": "Importo",
           "receiptPaymentDateTime": "Data Esito",
