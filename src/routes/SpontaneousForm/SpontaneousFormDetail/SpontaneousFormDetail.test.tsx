@@ -1,5 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { render, screen } from '../../../__tests__/renderers';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor
+} from '../../../__tests__/renderers';
+import { AxiosError, AxiosHeaders } from 'axios';
 import SpontaneousFormDetail from './SpontaneousFormDetail';
 
 const mockFormDetail = {
@@ -68,15 +74,29 @@ const mockFormDetailWithNullCount = {
   }
 };
 
-const { mockGetSpontaneousFormById, mockDeleteSpontaneousForm } = vi.hoisted(
-  () => ({
+const {
+  mockMutateAsync,
+  mockGetSpontaneousFormById,
+  mockDeleteSpontaneousForm,
+  mockNotify,
+  mockGeneratePath,
+  mockNavigate
+} = vi.hoisted(() => {
+  const mockMutateAsync = vi.fn();
+  return {
+    mockMutateAsync,
     mockGetSpontaneousFormById: vi.fn(),
     mockDeleteSpontaneousForm: vi.fn(() => ({
-      mutateAsync: vi.fn(),
+      mutateAsync: mockMutateAsync,
       isPending: false
-    }))
-  })
-);
+    })),
+    mockNotify: {
+      emit: vi.fn()
+    },
+    mockGeneratePath: vi.fn().mockReturnValue('/backoffice/spontaneous-form'),
+    mockNavigate: vi.fn()
+  };
+});
 
 vi.mock('../../../api/spontaneousForm', () => ({
   default: {
@@ -90,8 +110,8 @@ vi.mock('react-router', async (importOriginal) => {
   return {
     ...actual,
     useParams: vi.fn().mockReturnValue({ spontaneousFormId: '1' }),
-    useNavigate: vi.fn().mockReturnValue(vi.fn()),
-    generatePath: vi.fn().mockReturnValue('/mock-path')
+    useNavigate: vi.fn().mockReturnValue(mockNavigate),
+    generatePath: mockGeneratePath
   };
 });
 
@@ -106,9 +126,34 @@ vi.mock('../../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
+vi.mock('../../../utils', () => ({
+  default: {
+    notify: mockNotify
+  }
+}));
+
+vi.mock('../..', () => ({
+  PageRoutes: {
+    SPONTANEOUS_FORM_INDEX: '/backoffice/spontaneous-form'
+  }
+}));
+
+const createAxiosError = (status: number): AxiosError => {
+  const error = new AxiosError('Request failed');
+  error.response = {
+    status,
+    statusText: status === 409 ? 'Conflict' : 'Internal Server Error',
+    headers: {},
+    config: { headers: new AxiosHeaders() },
+    data: {}
+  };
+  return error;
+};
+
 describe('SpontaneousFormDetail', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockMutateAsync.mockResolvedValue(undefined);
   });
 
   describe('when data is loaded successfully', () => {
@@ -307,7 +352,7 @@ describe('SpontaneousFormDetail', () => {
       });
 
       mockDeleteSpontaneousForm.mockReturnValue({
-        mutateAsync: vi.fn(),
+        mutateAsync: mockMutateAsync,
         isPending: true
       });
     });
@@ -351,6 +396,267 @@ describe('SpontaneousFormDetail', () => {
       expect(mockDeleteSpontaneousForm).toHaveBeenCalledWith({
         organizationId: 123
       });
+    });
+  });
+
+  describe('Delete functionality - Successful deletion', () => {
+    beforeEach(() => {
+      mockGetSpontaneousFormById.mockReturnValue({
+        data: { response: mockFormDetail },
+        isLoading: false,
+        isError: false
+      });
+      mockDeleteSpontaneousForm.mockReturnValue({
+        mutateAsync: mockMutateAsync,
+        isPending: false
+      });
+    });
+
+    it('calls delete mutation when delete button is clicked', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalledWith(1);
+      });
+    });
+
+    it('shows success notification after successful deletion', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(mockNotify.emit).toHaveBeenCalledWith(
+          'spontaneousForm.detail.deleteSuccess',
+          'success'
+        );
+      });
+    });
+
+    it('navigates to list page after successful deletion', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(mockGeneratePath).toHaveBeenCalled();
+        expect(mockNavigate).toHaveBeenCalledWith(
+          '/backoffice/spontaneous-form'
+        );
+      });
+    });
+
+    it('does not show error dialog on successful deletion', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(mockMutateAsync).toHaveBeenCalled();
+      });
+
+      expect(screen.queryByTestId('error-dialog')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Delete functionality - 409 Conflict (form in use)', () => {
+    beforeEach(() => {
+      mockGetSpontaneousFormById.mockReturnValue({
+        data: { response: mockFormDetail },
+        isLoading: false,
+        isError: false
+      });
+      mockDeleteSpontaneousForm.mockReturnValue({
+        mutateAsync: mockMutateAsync,
+        isPending: false
+      });
+      mockMutateAsync.mockRejectedValue(createAxiosError(409));
+    });
+
+    it('opens error dialog when backend returns 409', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('error-dialog')).toBeVisible();
+      });
+    });
+
+    it('shows cannot delete title in error dialog', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('spontaneousForm.detail.cannotDeleteTitle')
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('shows cannot delete message in error dialog', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(
+          screen.getByText('spontaneousForm.detail.cannotDeleteMessage')
+        ).toBeInTheDocument();
+      });
+    });
+
+    it('shows only close button in error dialog', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId('error-dialog-confirm-button')
+        ).toBeInTheDocument();
+      });
+
+      expect(screen.getByText('commons.close')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('error-dialog-cancel-button')
+      ).not.toBeInTheDocument();
+    });
+
+    it('closes error dialog when close button is clicked', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('error-dialog')).toBeVisible();
+      });
+
+      fireEvent.click(screen.getByTestId('error-dialog-confirm-button'));
+
+      await waitFor(() => {
+        expect(screen.queryByTestId('error-dialog')).not.toBeInTheDocument();
+      });
+    });
+
+    it('does not navigate when backend returns 409', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('error-dialog')).toBeVisible();
+      });
+
+      expect(mockNavigate).not.toHaveBeenCalled();
+    });
+
+    it('does not show success notification when backend returns 409', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('error-dialog')).toBeVisible();
+      });
+
+      expect(mockNotify.emit).not.toHaveBeenCalledWith(
+        'spontaneousForm.detail.deleteSuccess',
+        'success'
+      );
+    });
+
+    it('does not show generic error notification when backend returns 409', async () => {
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(screen.getByTestId('error-dialog')).toBeVisible();
+      });
+
+      expect(mockNotify.emit).not.toHaveBeenCalledWith(
+        'spontaneousForm.detail.deleteError',
+        'error'
+      );
+    });
+  });
+
+  describe('Delete functionality - Other errors (non-409)', () => {
+    beforeEach(() => {
+      mockGetSpontaneousFormById.mockReturnValue({
+        data: { response: mockFormDetail },
+        isLoading: false,
+        isError: false
+      });
+      mockDeleteSpontaneousForm.mockReturnValue({
+        mutateAsync: mockMutateAsync,
+        isPending: false
+      });
+    });
+
+    it('shows error notification when backend returns 500', async () => {
+      mockMutateAsync.mockRejectedValue(createAxiosError(500));
+
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(mockNotify.emit).toHaveBeenCalledWith(
+          'spontaneousForm.detail.deleteError',
+          'error'
+        );
+      });
+    });
+
+    it('does not open error dialog when backend returns 500', async () => {
+      mockMutateAsync.mockRejectedValue(createAxiosError(500));
+
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(mockNotify.emit).toHaveBeenCalledWith(
+          'spontaneousForm.detail.deleteError',
+          'error'
+        );
+      });
+
+      expect(screen.queryByTestId('error-dialog')).not.toBeInTheDocument();
+    });
+
+    it('shows error notification when network error occurs', async () => {
+      mockMutateAsync.mockRejectedValue(new Error('Network error'));
+
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(mockNotify.emit).toHaveBeenCalledWith(
+          'spontaneousForm.detail.deleteError',
+          'error'
+        );
+      });
+    });
+
+    it('does not navigate when deletion fails with non-409 error', async () => {
+      mockMutateAsync.mockRejectedValue(createAxiosError(500));
+
+      render(<SpontaneousFormDetail />);
+
+      fireEvent.click(screen.getByTestId('delete-button'));
+
+      await waitFor(() => {
+        expect(mockNotify.emit).toHaveBeenCalled();
+      });
+
+      expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
 });
