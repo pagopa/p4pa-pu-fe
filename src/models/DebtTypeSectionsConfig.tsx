@@ -214,6 +214,20 @@ export const getAccordionSectionsConfig = (
         },
         {
           title: {
+            label: t('debtTypeOrgCreate.behaviour.updateAmount.title'),
+            variant: 'subtitle1'
+          },
+          data: [
+            {
+              label: t('commons.notificationsConfig'),
+              value: checkStringValue(
+                data?.amountActualizationOrgSilServiceApplicationName
+              )
+            }
+          ]
+        },
+        {
+          title: {
             label: t('debtTypeOrgCreate.behaviour.notifications.title'),
             variant: 'subtitle1'
           },
@@ -226,24 +240,6 @@ export const getAccordionSectionsConfig = (
               label: t('commons.notificationsConfig'),
               value: checkStringValue(
                 data?.notifyOutcomePushOrgSilServiceApplicationName
-              )
-            }
-          ]
-        },
-        {
-          title: {
-            label: t('debtTypeOrgCreate.behaviour.updateAmount.title'),
-            variant: 'subtitle1'
-          },
-          data: [
-            {
-              label: t('commons.notifications'),
-              value: t(getFlagLabel(data?.flagAmountActualization))
-            },
-            {
-              label: t('commons.notificationsConfig'),
-              value: checkStringValue(
-                data?.amountActualizationOrgSilServiceApplicationName
               )
             }
           ]
