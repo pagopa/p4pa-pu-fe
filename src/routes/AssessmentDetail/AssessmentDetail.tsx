@@ -315,6 +315,7 @@ export const AssessmentDetail = () => {
       {
         label: t('assessmentDetail.createdBy'),
         value:
+          data?.familyName ||
           data?.updateOperatorExternalId ||
           firstAssessmentItem?.updateOperatorExternalId ||
           '-'
