@@ -58,13 +58,13 @@ const AssessmentSearchResultsDataGrid = ({
         '-'
     },
     {
-      field: 'updateOperatorExternalId',
+      field: 'familyName',
       headerName: t('assessment.searchResults.columns.createdBy'),
       flex: 1.5,
       type: 'string',
       minWidth: 120,
       renderCell: (params: GridRenderCellParams<AssessmentDataRow>) =>
-        params.value || '-'
+        params.value || params.row.updateOperatorExternalId || '-'
     },
     {
       field: 'updateDate',
