@@ -1,16 +1,17 @@
 import { AxiosResponse } from 'axios';
 import { createMock } from 'zodock';
 import utils from '../utils';
-import { renderHook, waitFor } from '../__tests__/renderers';
+import { act, renderHook, waitFor } from '../__tests__/renderers';
 import { transferDTOSchema } from '../../generated/zod-schema';
-import { getTransfers } from './transfers';
+import { getTransfers, validateTaxonomyCategory } from './transfers';
 
 vi.mock('../utils', () => {
   return {
     default: {
       apiClient: {
         bff: {
-          getTransfers: vi.fn()
+          getTransfers: vi.fn(),
+          validateTaxonomyCategory: vi.fn()
         }
       }
     },
@@ -45,5 +46,29 @@ describe('getTransfers', () => {
     renderHook(() => getTransfers(0, 0));
 
     expect(apiMock).not.toHaveBeenCalled();
+  });
+});
+
+describe('validateTaxonomyCategory', async () => {
+  it('should successfully test a Taxonomy category', async () => {
+    const mockResponse = {
+      data: true,
+      status: 200,
+      statusText: 'OK'
+    };
+
+    vi.spyOn(utils.apiClient.bff, 'validateTaxonomyCategory').mockResolvedValue(
+      mockResponse as unknown as AxiosResponse
+    );
+
+    const { result } = renderHook(() => validateTaxonomyCategory());
+
+    await act(async () => {
+      const response = await result.current.mutateAsync({
+        data: { orgFiscalCode: '123', taxonomyCategory: 'TEST' }
+      });
+
+      expect(response.data).toBe(true);
+    });
   });
 });

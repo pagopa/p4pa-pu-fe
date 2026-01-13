@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   TextField,
   InputAdornment,
   Typography,
   Box,
-  Button
+  Button,
+  Stack
 } from '@mui/material';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import {
@@ -25,6 +26,8 @@ import {
   handleAmountInputChange,
   formatAmountForDisplay
 } from '../../../../utils/paymentUtility';
+import DoneIcon from '@mui/icons-material/Done';
+import { validateTaxonomyCategory } from '../../../../api/transfers';
 
 let ibanValidationTimer: ReturnType<typeof setTimeout> | null = null;
 let postalIbanValidationTimer: ReturnType<typeof setTimeout> | null = null;
@@ -906,23 +909,92 @@ export function TaxonomyCodeField<T extends FieldValues>(
 ) {
   const { field, t, disabled = false, context } = props;
 
+  const validateTaxonomyCategoryService = validateTaxonomyCategory();
+
   const actualValue =
     context.getValues(field.name as Path<T>) ?? field.value ?? '';
 
+  const [validCode, setValidCode] = useState<boolean>(false);
+
+  const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const taxonomyCode = e.target.value.trim();
+    field.onChange(taxonomyCode);
+    // set invalid if previously valid at onChange event
+    if (validCode) {
+      setValidCode(false);
+    }
+  };
+
+  const validateCode = async () => {
+    const taxCode = context
+      .getValues(
+        buildFieldPath<T, 'taxCode'>(
+          context.fieldNamePrefix,
+          context.index,
+          'taxCode'
+        )
+      )
+      .trim();
+    if (!taxCode || !actualValue) return; // skip validation if taxCode is empty
+
+    validateTaxonomyCategoryService.mutate(
+      { data: { orgFiscalCode: taxCode, taxonomyCategory: actualValue } },
+      {
+        onSuccess: (response) => setValidCode(response.data),
+        onError: () => setValidCode(false)
+      }
+    );
+  };
+
+  const validateCodeHelperText =
+    !validCode &&
+    !disabled &&
+    t('debtPositionCreateWizard.step3.beneficiary.taxonomyCode.invalid');
+
   return (
-    <TextField
-      {...field}
-      data-testid={`beneficiary-taxonomy-code-${context.index}`}
-      fullWidth
-      label={t('debtPositionCreateWizard.step3.beneficiary.taxonomyCode.label')}
-      required
-      disabled={disabled}
-      error={hasFieldError('taxonomyCode', context)}
-      helperText={getFieldErrorMessage('taxonomyCode', context)}
-      value={actualValue}
-      onChange={(e) => {
-        field.onChange(e.target.value);
-      }}
-    />
+    <Stack direction="row" spacing={2} alignItems="top">
+      <TextField
+        {...field}
+        data-testid={`beneficiary-taxonomy-code-${context.index}`}
+        fullWidth
+        label={t(
+          'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.label'
+        )}
+        required
+        disabled={disabled}
+        error={
+          hasFieldError('taxonomyCode', context) ||
+          (!validCode && actualValue !== '' && !disabled)
+        }
+        helperText={
+          getFieldErrorMessage('taxonomyCode', context) ||
+          validateCodeHelperText
+        }
+        value={actualValue}
+        onChange={(e) =>
+          handleOnChange(e as React.ChangeEvent<HTMLInputElement>)
+        }
+        sx={{ flex: 4 }}
+        InputProps={{
+          endAdornment: validCode ? (
+            <InputAdornment position="end">
+              <DoneIcon color="success" />
+            </InputAdornment>
+          ) : null
+        }}
+      />
+      {!disabled && (
+        <Button
+          size="large"
+          variant="outlined"
+          onClick={validateCode}
+          sx={{ flex: 1 }}
+        >
+          {t(
+            'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.validate'
+          )}
+        </Button>
+      )}
+    </Stack>
   );
 }

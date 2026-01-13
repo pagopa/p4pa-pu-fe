@@ -1282,7 +1282,9 @@
         },
         "taxonomyCode": {
           "label": "Codice Tassonomico",
-          "required": "Il campo codice tassonomico è obbligatorio"
+          "required": "Il campo codice tassonomico è obbligatorio",
+          "invalid": "Il codice tassonomico non è valido. Verifica che sia stato scritto correttamente.",
+          "validate": "Valida codice"
         },
         "title": "ENTE BENEFICIARIO"
       },
