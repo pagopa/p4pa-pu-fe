@@ -1,22 +1,30 @@
+import { useState } from 'react';
 import { Box, Button, Stack } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { generatePath, useNavigate, useParams } from 'react-router';
+import { AxiosError } from 'axios';
 import { useStore } from '../../../store/GlobalStore';
 import spontaneousFormApi from '../../../api/spontaneousForm';
 import DetailContainer, {
   DetailSectionProps
 } from '../../../components/DetailContainer/DetailContainer';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
+import GenericDialog from '../../../components/GenericDialog/GenericDialog';
 import { SpontaneousFormDetailDTO } from '../../../../generated/data-contracts';
+import utils from '../../../utils';
+import { PageRoutes } from '../..';
 
 const SpontaneousFormDetail = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { spontaneousFormId } = useParams<{ spontaneousFormId: string }>();
 
   const {
     state: { organizationId }
   } = useStore();
+
+  const [errorDialogOpen, setErrorDialogOpen] = useState(false);
 
   const { data, isLoading } = spontaneousFormApi.getSpontaneousFormById({
     organizationId: Number(organizationId),
@@ -33,6 +41,26 @@ const SpontaneousFormDetail = () => {
   const hasDictionary = Boolean(
     formDetail?.dictionary && Object.keys(formDetail.dictionary).length > 0
   );
+
+  const handleDeleteClick = async () => {
+    if (!formDetail?.spontaneousFormId) return;
+
+    try {
+      await deleteMutation.mutateAsync(formDetail.spontaneousFormId);
+      utils.notify.emit(t('spontaneousForm.detail.deleteSuccess'), 'success');
+      navigate(generatePath(PageRoutes.SPONTANEOUS_FORM_INDEX));
+    } catch (error) {
+      if (error instanceof AxiosError && error.response?.status === 409) {
+        setErrorDialogOpen(true);
+      } else {
+        utils.notify.emit(t('spontaneousForm.detail.deleteError'), 'error');
+      }
+    }
+  };
+
+  const handleErrorDialogClose = () => {
+    setErrorDialogOpen(false);
+  };
 
   const sections: DetailSectionProps['sections'] = [
     {
@@ -92,21 +120,6 @@ const SpontaneousFormDetail = () => {
     }
   ];
 
-  const actionButtons = [
-    {
-      icon: <Delete />,
-      buttonText: t('commons.delete'),
-      color: 'error' as const,
-      variant: 'outlined' as const
-    },
-    {
-      icon: <Edit />,
-      buttonText: t('commons.edit'),
-      color: 'primary' as const,
-      variant: 'contained' as const
-    }
-  ];
-
   if (isLoading) {
     return null;
   }
@@ -122,22 +135,38 @@ const SpontaneousFormDetail = () => {
       </Box>
       <Box mt={3} display="flex" justifyContent="flex-end">
         <Stack spacing={2} direction="row">
-          {actionButtons.map((button, index) => (
-            <Button
-              size="large"
-              key={index}
-              startIcon={button.icon}
-              color={button.color}
-              variant={button.variant}
-              disabled={
-                button.variant === 'outlined' && deleteMutation.isPending
-              }
-            >
-              {button.buttonText}
-            </Button>
-          ))}
+          <Button
+            size="large"
+            startIcon={<Delete />}
+            color="error"
+            variant="outlined"
+            disabled={deleteMutation.isPending}
+            onClick={handleDeleteClick}
+            data-testid="delete-button"
+          >
+            {t('commons.delete')}
+          </Button>
+          <Button
+            size="large"
+            startIcon={<Edit />}
+            color="primary"
+            variant="contained"
+            data-testid="edit-button"
+          >
+            {t('commons.edit')}
+          </Button>
         </Stack>
       </Box>
+
+      <GenericDialog
+        open={errorDialogOpen}
+        title={t('spontaneousForm.detail.cannotDeleteTitle')}
+        message={t('spontaneousForm.detail.cannotDeleteMessage')}
+        confirmLabel={t('commons.close')}
+        onConfirm={handleErrorDialogClose}
+        onClose={handleErrorDialogClose}
+        data-testid="error-dialog"
+      />
     </>
   );
 };
