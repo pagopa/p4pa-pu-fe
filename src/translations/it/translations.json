@@ -2324,6 +2324,34 @@
     "totalAmount": "Importo totale"
   },
   "spontaneousForm": {
+    "create": {
+      "title": "Nuovo modulo personalizzato",
+      "description": "Inserisci i codici JSON per definire i dati richiesti e le lingue supportate dal modulo.",
+      "formConfiguration": "Configurazione del modulo",
+      "generalConfiguration": "Configurazione generale",
+      "identificationCode": "Codice identificativo",
+      "codeHelperText": "Il codice identificativo del modulo deve essere univoco.",
+      "structure": "Struttura",
+      "structureHelperText": "Incolla il codice JSON che specifica i dati da compilare dal cittadino.",
+      "translations": "Traduzioni",
+      "dictionary": "Dizionario",
+      "dictionaryHelperText": "Incolla il codice JSON con il dizionario delle traduzioni.",
+      "success": {
+        "title": "Il modulo '{{formCode}}' è stato aggiunto con successo.",
+        "description": "Lo trovi nella sezione Moduli personalizzati, dove puoi modificarlo in qualsiasi momento.",
+        "goToList": "Chiudi"
+      },
+      "error": {
+        "title": "Qualcosa è andato storto",
+        "description": "A causa di un errore del sistema non è possibile completare la procedura. Ti chiediamo di riprovare più tardi."
+      },
+      "errors": {
+        "codeRequired": "Il campo codice identificativo è obbligatorio",
+        "structureRequired": "Il campo Struttura è obbligatorio",
+        "invalidJson": "Il formato JSON non è valido",
+        "codeAlreadyExists": "Il codice identificativo del modulo è già in uso. Prova a scegliere un altro nome."
+      }
+    },
     "detail": {
       "formConfiguration": "Configurazione del modulo",
       "generalConfiguration": "Configurazione generale",
