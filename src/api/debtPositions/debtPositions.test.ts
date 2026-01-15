@@ -10,7 +10,10 @@ import {
   pagedDebtPositionViewSchema,
   pagedInstallmentViewSchema
 } from '../../../generated/zod-schema';
-import { DebtPositionFilteredRequest } from '../debtPositions/mapping';
+import {
+  DebtPositionFilteredRequest,
+  InstallmentsFilteredRequest
+} from '../debtPositions/mapping';
 
 vi.mock('../../utils', () => ({
   default: {
@@ -113,7 +116,7 @@ describe('debtPositions API', () => {
 
   describe('getInstallments', () => {
     const params = { organizationId: 10 };
-    const query: DebtPositionFilteredRequest = {
+    const query: InstallmentsFilteredRequest = {
       filters: {
         fiscalCode: 'RSSMRA85M01H501Z',
         iuv: 'IUV123456789',
@@ -188,7 +191,7 @@ describe('debtPositions API', () => {
     });
 
     it('handles request with minimal filters', async () => {
-      const minimalQuery: DebtPositionFilteredRequest = {
+      const minimalQuery: InstallmentsFilteredRequest = {
         filters: {},
         pagination: { page: 0, size: 20 },
         sort: []

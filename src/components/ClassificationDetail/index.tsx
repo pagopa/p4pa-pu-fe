@@ -88,8 +88,8 @@ export const ClassificationDetails = () => {
     'classifications.detail.sections.telematicReceipt';
   const debtTypeData: Array<DetailData> = [
     {
-      label: t(`${targetTranslationDebtType}.debtPositionTypeOrgCode`),
-      value: data?.debtPositionTypeOrgCode
+      label: t(`${targetTranslationDebtType}.debtPositionTypeOrgDescription`),
+      value: data?.debtPositionTypeOrgDescription
     },
     {
       label: t(`${targetTranslationDebtType}.paymentObject`),

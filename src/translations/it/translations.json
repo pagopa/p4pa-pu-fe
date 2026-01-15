@@ -391,7 +391,7 @@
       "sections": {
         "telematicReceipt": {
           "title": "Ricevuta Telematica",
-          "debtPositionTypeOrgCode": "Tipo dovuto",
+          "debtPositionTypeOrgDescription": "Tipo dovuto",
           "paymentObject": "Oggetto del pagamento",
           "receiptPaymentAmount": "Importo",
           "receiptPaymentDateTime": "Data Esito",
@@ -1001,6 +1001,7 @@
       "REPORTING_INDEX": "Pagina principale",
       "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
       "REPORTING_SEARCH_RESULTS": "Risultato ricerca",
+      "SPONTANEOUS_FORM": "Moduli personalizzati",
       "STATISTICS": "Statistiche",
       "TELEMATIC_RECEIPT": "Ricevute Telematiche",
       "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
@@ -1281,7 +1282,9 @@
         },
         "taxonomyCode": {
           "label": "Codice Tassonomico",
-          "required": "Il campo codice tassonomico è obbligatorio"
+          "required": "Il campo codice tassonomico è obbligatorio",
+          "invalid": "Il codice tassonomico non è valido. Verifica che sia stato scritto correttamente.",
+          "validate": "Valida codice"
         },
         "title": "ENTE BENEFICIARIO"
       },
@@ -1403,6 +1406,13 @@
       "info": "Sono presenti altri beneficiari diversi dal tuo ente.",
       "title": "Beneficiari"
     },
+    "origin": {
+      "SECONDARY_ORG": "Vedi questo avviso perché sei beneficiario del pagamento di un avviso creato da un altro ente.",
+      "RECEIPT_FILE": "Questo avviso è stato generato automaticamente in seguito al caricamento di un flusso contenente ricevute di pagamenti effettuati tramite pagoPA.",
+      "RECEIPT_PAGOPA": "Questo avviso è stato generato automaticamente a seguito della ricezione di una ricevuta telematica di un pagamento non gestito in piattaforma.",
+      "REPORTING_PAGOPA": "Questo avviso è stato generato automaticamente in seguito alla ricezione di un flusso di rendicontazione con codice esito 8/9 (pagamento senza Ricevuta Telematica)."
+    },
+    "techDebtPositionDefault": "Posizione debitoria tecnica",
     "timeline": {
       "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio",
       "title": "Storico Avviso"
@@ -2312,6 +2322,29 @@
     "searchRegulationId": "ID Regolamento",
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"
+  },
+  "spontaneousForm": {
+    "detail": {
+      "formConfiguration": "Configurazione del modulo",
+      "generalConfiguration": "Configurazione generale",
+      "identificationCode": "Codice identificativo",
+      "structure": "Struttura",
+      "jsonCode": "Codice JSON",
+      "translations": "Traduzioni",
+      "dictionary": "Dizionario",
+      "inUse": "In uso",
+      "debtPositionTypeOrgCount": "Tipo di dovuti che utilizzano questo modulo",
+      "cannotDeleteTitle": "Il modulo non può essere eliminato",
+      "cannotDeleteMessage": "Questo modulo è in uso da uno o più tipi di dovuto, pertanto non può essere eliminato.",
+      "deleteSuccess": "Modulo eliminato con successo",
+      "deleteError": "Errore durante l'eliminazione del modulo personalizzato"
+    },
+    "description": "Gestisci i moduli personalizzati con i dati che i cittadini compilano quando effettuano pagamenti spontanei",
+    "searchByCode": "Cerca per descrizione",
+    "columns": {
+      "code": "Codice identificativo",
+      "debtPositionTypeOrgCount": "Utilizzato su tipi di dovuto"
+    }
   },
   "statistics": {
     "urlNotAvailable": "URL non disponibile",

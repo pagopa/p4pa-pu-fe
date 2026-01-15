@@ -1,7 +1,13 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import { transferDTOSchema } from '../../generated/zod-schema';
+import { RequestParams } from '../../generated/apiClient';
+
+export type ValidateTaxonomyCategoryParams = {
+  orgFiscalCode: string;
+  taxonomyCategory?: string;
+};
 
 export const getTransfers = (organizationId: number, installmentId: number) => {
   return useQuery({
@@ -19,5 +25,25 @@ export const getTransfers = (organizationId: number, installmentId: number) => {
       return transfers;
     },
     enabled: !!organizationId && !!installmentId
+  });
+};
+
+export const validateTaxonomyCategory = () => {
+  return useMutation({
+    mutationKey: ['validateTaxonomyCategory'],
+    mutationFn: async ({
+      data,
+      params
+    }: {
+      data: ValidateTaxonomyCategoryParams;
+      params?: RequestParams;
+    }) => {
+      const response = await utils.apiClient.bff.validateTaxonomyCategory(
+        data,
+        params
+      );
+
+      return response;
+    }
   });
 };

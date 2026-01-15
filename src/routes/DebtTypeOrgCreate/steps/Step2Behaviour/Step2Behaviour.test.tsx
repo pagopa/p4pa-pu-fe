@@ -8,10 +8,10 @@ import { setOrganizationId } from '../../../../store/OrganizationIdStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { step2Schema } from './schema';
 import { PaymentMethodOption, SpontaneousMode } from '../../types';
-import type { SpontaneousForm } from '../../../../api/spontaneousForms';
+import { SpontaneousForm } from '../../../../../generated/data-contracts';
 
-const { mockGetSpontaneousForms, mockNotifyEmit } = vi.hoisted(() => ({
-  mockGetSpontaneousForms: vi.fn<
+const { mockGetSpontaneousFormsList, mockNotifyEmit } = vi.hoisted(() => ({
+  mockGetSpontaneousFormsList: vi.fn<
     () =>
       | {
           data?: Array<SpontaneousForm>;
@@ -23,7 +23,9 @@ const { mockGetSpontaneousForms, mockNotifyEmit } = vi.hoisted(() => ({
     data: [
       {
         spontaneousFormId: 10,
-        code: 'FORM10'
+        code: 'FORM10',
+        organizationId: 123,
+        structure: { fields: [] }
       }
     ],
     isLoading: false,
@@ -53,14 +55,23 @@ vi.mock('../../../../utils', async () => {
     );
   return {
     ...actual,
-    notify: {
-      emit: mockNotifyEmit
+    default: {
+      ...actual.default,
+      notify: {
+        emit: mockNotifyEmit
+      }
     }
   };
 });
 
-vi.mock('../../../../api/spontaneousForms', () => ({
-  getSpontaneousForms: vi.fn(() => mockGetSpontaneousForms())
+vi.mock('../../../../api/spontaneousForm', () => ({
+  default: {
+    getSpontaneousFormsList: vi.fn(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      (_organizationId: number, _enabled: boolean) =>
+        mockGetSpontaneousFormsList()
+    )
+  }
 }));
 
 const renderWithForm = (
@@ -104,6 +115,19 @@ describe('Step2Behaviour', () => {
   beforeEach(() => {
     setOrganizationId(123);
     vi.clearAllMocks();
+
+    mockGetSpontaneousFormsList.mockReturnValue({
+      data: [
+        {
+          spontaneousFormId: 10,
+          code: 'FORM10',
+          organizationId: 123,
+          structure: { fields: [] }
+        }
+      ],
+      isLoading: false,
+      isError: false
+    });
   });
 
   it('renders main titles and controls', () => {
@@ -187,8 +211,6 @@ describe('Step2Behaviour', () => {
   });
 
   it('handles notification service errors in edit mode', () => {
-    const mockNotifyEmit = vi.fn();
-
     vi.doMock('../../../../utils', () => ({
       default: {
         notify: {
@@ -273,8 +295,7 @@ describe('Step2Behaviour', () => {
   });
 
   it('shows loading state when fetching custom forms', () => {
-    mockGetSpontaneousForms.mockReset();
-    mockGetSpontaneousForms.mockReturnValue({
+    mockGetSpontaneousFormsList.mockReturnValue({
       data: undefined,
       isLoading: true,
       isError: false
@@ -290,23 +311,10 @@ describe('Step2Behaviour', () => {
         return element?.textContent === 'commons.loading';
       })
     ).toBeInTheDocument();
-
-    mockGetSpontaneousForms.mockReset();
-    mockGetSpontaneousForms.mockReturnValue({
-      data: [
-        {
-          spontaneousFormId: 10,
-          code: 'FORM10'
-        }
-      ],
-      isLoading: false,
-      isError: false
-    });
   });
 
   it('shows empty state when no custom forms are available', () => {
-    mockGetSpontaneousForms.mockReset();
-    mockGetSpontaneousForms.mockReturnValue({
+    mockGetSpontaneousFormsList.mockReturnValue({
       data: [],
       isLoading: false,
       isError: false
@@ -328,17 +336,20 @@ describe('Step2Behaviour', () => {
     expect(
       screen.getByText('debtTypeOrgCreate.behaviour.customForms.empty.action')
     ).toBeInTheDocument();
+  });
 
-    mockGetSpontaneousForms.mockReset();
-    mockGetSpontaneousForms.mockReturnValue({
-      data: [
-        {
-          spontaneousFormId: 10,
-          code: 'FORM10'
-        }
-      ],
+  it('shows error notification when API fails', () => {
+    mockGetSpontaneousFormsList.mockReturnValue({
+      data: undefined,
       isLoading: false,
-      isError: false
+      isError: true
     });
+
+    renderWithForm(<Step2Behaviour />, undefined, {
+      flagSpontaneous: true,
+      spontaneousMode: SpontaneousMode.CUSTOM_FORM
+    });
+
+    expect(mockNotifyEmit).toHaveBeenCalledWith('errors.generic', 'error');
   });
 });

@@ -60,6 +60,8 @@ export const buildQueryParams = ({
   regionValueDateTimeTo: utils.formatters.date.code(
     filters.REGION_VALUE_DATE_TO || undefined
   ),
+  billCode: filters.BILL_CODE,
+  billYear: filters.BILL_FROM?.getFullYear().toString() || undefined,
   page: pagination.page,
   size: pagination.size,
   sort

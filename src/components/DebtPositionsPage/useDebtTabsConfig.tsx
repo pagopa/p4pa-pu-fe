@@ -7,6 +7,7 @@ import { useStore } from '../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
 import { DebtPositionStatus } from '../../../generated/data-contracts';
 import { optionMapsConverter } from '../../utils/formatters';
+import { InstallmentStatus } from '../../../generated/data-contracts';
 
 export const useTabsConfig = (): Array<TabsConfig> => {
   const { t } = useTranslation();
@@ -19,6 +20,12 @@ export const useTabsConfig = (): Array<TabsConfig> => {
   const debtPositionsStatus = Object.values(DebtPositionStatus);
   const debtPositionList = optionMapsConverter(
     debtPositionsStatus,
+    'commons.status'
+  );
+
+  const installmentsStatus = Object.values(InstallmentStatus);
+  const installmentList = optionMapsConverter(
+    installmentsStatus,
     'commons.status'
   );
 
@@ -50,6 +57,12 @@ export const useTabsConfig = (): Array<TabsConfig> => {
           label: t('commons.duetype'),
           options: types.optionsMap,
           id: FilterFieldIds.TYPE_ORG
+        },
+        {
+          type: COMPONENT_TYPE.select,
+          label: t('commons.state'),
+          options: installmentList,
+          id: FilterFieldIds.STATE
         }
       ]
     },

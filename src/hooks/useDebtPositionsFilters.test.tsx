@@ -96,6 +96,7 @@ describe('useDebtPositionFilters', () => {
       'fiscalCode',
       'dateRange',
       'typeOrgId',
+      'status',
       'applyFilters'
     ]);
   });
