@@ -150,7 +150,7 @@ const SpontaneousFormCreate = () => {
                       size="small"
                       multiline
                       minRows={4}
-                      maxRows={4}
+                      maxRows={16}
                       disabled={createMutation.isPending}
                       error={!!formState.errors.structure}
                       helperText={
@@ -181,7 +181,7 @@ const SpontaneousFormCreate = () => {
                     size="small"
                     multiline
                     minRows={4}
-                    maxRows={4}
+                    maxRows={16}
                     disabled={createMutation.isPending}
                     error={!!formState.errors.dictionary}
                     helperText={
