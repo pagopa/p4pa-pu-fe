@@ -2365,7 +2365,8 @@
       "cannotDeleteTitle": "Il modulo non può essere eliminato",
       "cannotDeleteMessage": "Questo modulo è in uso da uno o più tipi di dovuto, pertanto non può essere eliminato.",
       "deleteSuccess": "Modulo eliminato con successo",
-      "deleteError": "Errore durante l'eliminazione del modulo personalizzato"
+      "deleteError": "Errore durante l'eliminazione del modulo personalizzato",
+      "description": "Ecco i dettagli del modulo che i cittadini compilano quando effettuano pagamenti spontanei"
     },
     "description": "Gestisci i moduli personalizzati con i dati che i cittadini compilano quando effettuano pagamenti spontanei",
     "searchByCode": "Cerca per descrizione",
