@@ -61,7 +61,8 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
       field: 'regulationUniqueIdentifier',
       headerName: t('reportingSearchResults.searchRegulationId'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      sortable: false
     },
     {
       field: 'regulationDate',
@@ -69,7 +70,8 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams) =>
-        params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
+        params.value ? new Date(params.value).toLocaleDateString('it-IT') : '',
+      sortable: false
     },
     {
       field: 'flowDateTime',
@@ -77,13 +79,15 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams) =>
-        params.value ? new Date(params.value).toLocaleDateString('it-IT') : ''
+        params.value ? new Date(params.value).toLocaleDateString('it-IT') : '',
+      sortable: false
     },
     {
       field: 'totalPayments',
       headerName: t('reportingSearchResults.payments'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      sortable: false
     },
     {
       field: 'totalAmountCents',
@@ -91,7 +95,8 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
       flex: 1,
       type: 'string',
       renderCell: (params: GridRenderCellParams<SearchResultDataRow>) =>
-        moneyFormat(params.value as number)
+        moneyFormat(params.value as number),
+      sortable: false
     },
     {
       field: 'action',
