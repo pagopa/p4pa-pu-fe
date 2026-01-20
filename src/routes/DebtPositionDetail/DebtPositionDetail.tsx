@@ -581,21 +581,16 @@ const DebtPositionDetail = () => {
       </Menu>
 
       {debtPositionDetail?.debtPositionOrigin &&
-              isTechnicalDebtPosition(debtPositionDetail.debtPositionOrigin) && (
-                <Alert
-                  severity="warning"
-                  data-testid="technical-debt-alert"
-                >
-                  {t(
-                    `debtPositionDetail.origin.${debtPositionDetail.debtPositionOrigin}`,
-                    {
-                      defaultValue: t(
-                        'debtPositionDetail.techDebtPositionDefault'
-                      )
-                    }
-                  )}
-                </Alert>
-              )}
+        isTechnicalDebtPosition(debtPositionDetail.debtPositionOrigin) && (
+          <Alert severity="warning" data-testid="technical-debt-alert">
+            {t(
+              `debtPositionDetail.origin.${debtPositionDetail.debtPositionOrigin}`,
+              {
+                defaultValue: t('debtPositionDetail.techDebtPositionDefault')
+              }
+            )}
+          </Alert>
+        )}
 
       <Box mt={4} mb={3}>
         <Accordion
