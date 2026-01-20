@@ -503,11 +503,11 @@ describe('DebtTypeDetailView', () => {
   describe('Inactive debt type actions', () => {
     beforeEach(() => {
       setupDefaultMocks({
-        debtType: { flagActive: false }
+        debtType: { flagActive: false, debtPositionTypeId: 1 }
       });
     });
 
-    it('renders delete and enable buttons for inactive debt type', () => {
+    it('renders delete and enable buttons for inactive debt type with debtPositionTypeId >= 0', () => {
       render(<DebtTypeDetailView />);
 
       expect(screen.getAllByRole('button', { name: 'Elimina' })).toHaveLength(
@@ -516,6 +516,36 @@ describe('DebtTypeDetailView', () => {
       expect(screen.getAllByRole('button', { name: 'Abilita' })).toHaveLength(
         2
       );
+    });
+
+    it('renders only delete button for inactive debt type with debtPositionTypeId < 0', () => {
+      setupDefaultMocks({
+        debtType: { flagActive: false, debtPositionTypeId: -1 }
+      });
+
+      render(<DebtTypeDetailView />);
+
+      expect(screen.getAllByRole('button', { name: 'Elimina' })).toHaveLength(
+        2
+      );
+      expect(
+        screen.queryByRole('button', { name: 'Abilita' })
+      ).not.toBeInTheDocument();
+    });
+
+    it('renders only delete button for inactive debt type with undefined debtPositionTypeId', () => {
+      setupDefaultMocks({
+        debtType: { flagActive: false, debtPositionTypeId: undefined }
+      });
+
+      render(<DebtTypeDetailView />);
+
+      expect(screen.getAllByRole('button', { name: 'Elimina' })).toHaveLength(
+        2
+      );
+      expect(
+        screen.queryByRole('button', { name: 'Abilita' })
+      ).not.toBeInTheDocument();
     });
 
     it('calls enable dialog when enable button is clicked', () => {
