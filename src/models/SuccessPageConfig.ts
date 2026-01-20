@@ -319,5 +319,17 @@ export const SuccessPageConfig: SuccessOpts = {
         customNavigation: 'ORGANIZATIONS_DETAIL'
       }
     ]
+  },
+  'spontaneous-form-create': {
+    title: 'spontaneousForm.create.success.title',
+    description: 'spontaneousForm.create.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'spontaneousForm.create.success.goToList',
+        actionID: 'SPONTANEOUS_FORM_INDEX'
+      }
+    ]
   }
 };
