@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { UseMutationResult } from '@tanstack/react-query';
 import utils from '../utils';
 import { useHashParamsListener } from './useHashParamsListener';
+import { trimStringValues } from '../utils/textUtils';
 
 export type SearchVariables<T> = {
   filters: T;
@@ -52,15 +53,17 @@ export function useSearch<
 
   // Handle filter application: resetting pagination and sort model
   const applyFilters = (appliedFilters: T) => {
+    const trimmedFilters = trimStringValues(appliedFilters);
+
     const params = utils.URI.encode({
-      ...appliedFilters,
+      ...trimmedFilters,
       page: null,
       size: null,
       sort: null
     });
     utils.URI.set(params, { replace: true });
     query.mutateAsync({
-      filters: appliedFilters,
+      filters: trimmedFilters,
       pagination: { size: 10, page: 0 },
       sort: []
     });
@@ -68,7 +71,7 @@ export function useSearch<
     const resultsTable = document.getElementById('data-results-table');
     const resultsFocusable =
       resultsTable?.getElementsByClassName('MuiDataGrid-main');
-    (resultsFocusable?.[0] as HTMLElement).focus();
+    (resultsFocusable?.[0] as HTMLElement)?.focus();
   };
 
   return {
