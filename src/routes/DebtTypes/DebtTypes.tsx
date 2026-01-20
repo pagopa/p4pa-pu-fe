@@ -16,6 +16,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { PagedDebtPositionTypeWithCount } from '../../../generated/data-contracts';
 
 type DebtTypesFilters = {
+  code?: string;
   description?: string;
 };
 
@@ -73,11 +74,20 @@ export const DebtTypes = () => {
           items={[
             {
               type: COMPONENT_TYPE.textField,
+              id: 'code',
+              label: t('commons.searchForCode'),
+              onChange: (e) => onFilterChange({ code: e.target.value }),
+              adornment: <Search />,
+              value: filterValues.code || '',
+              gridWidth: 3.5
+            },
+            {
+              type: COMPONENT_TYPE.textField,
               label: t('commons.searchForDescription'),
               value: filterValues.description || '',
               onChange: (e) => onFilterChange({ description: e.target.value }),
               adornment: <Search />,
-              gridWidth: 10.5
+              gridWidth: 7
             },
             {
               type: COMPONENT_TYPE.button,
