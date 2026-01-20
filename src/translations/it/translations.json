@@ -1379,6 +1379,13 @@
       "title": "La posizione debitoria non può essere modificata",
       "description": "Siamo spiacenti, non è possibile modificare questa posizione debitoria."
     },
+    "origin": {
+      "SECONDARY_ORG": "Vedi questa posizione debitoria perché sei beneficiario del pagamento di un avviso creato da un altro ente.",
+      "RECEIPT_FILE": "Questa posizione debitoria è stata generata automaticamente in seguito al caricamento di un flusso contenente ricevute di pagamenti effettuati tramite pagoPA.",
+      "RECEIPT_PAGOPA": "Questa posizione debitoria è stata generata automaticamente a seguito della ricezione di una ricevuta telematica di un pagamento non gestito in piattaforma.",
+      "REPORTING_PAGOPA": "Questa posizione debitoria è stata generata automaticamente in seguito alla ricezione di un flusso di rendicontazione con codice esito 8/9 (pagamento senza Ricevuta Telematica)."
+    },
+    "techDebtPositionDefault": "Posizione debitoria tecnica",
     "toSyncEditErrorDialog": {
       "description": "Le posizioni debitorie in stato \"Da sincronizzare\" non possono essere modificate. Si prega di ricaricare la pagina o riprovare più tardi."
     },
