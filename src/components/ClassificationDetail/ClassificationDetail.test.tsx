@@ -6,6 +6,7 @@ import * as classificationService from '../../api/getClassificationDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { createMock } from 'zodock';
 import { classificationDetailDTOSchema } from '../../../generated/zod-schema';
+import { ClassificationsEnum } from '../../../generated/data-contracts';
 import * as ReactRouter from 'react-router';
 
 const { mockNavigate, mockGeneratePath } = vi.hoisted(() => ({
@@ -37,9 +38,11 @@ const mockData = createMock(classificationDetailDTOSchema);
 const createMockData = (overrides = {}) => {
   const baseData = {
     id: 673,
-    payed: false,
+    paid: false,
     reported: false,
     collected: false,
+    label: null,
+    flagPaymentNotification: false,
     debtPositionTypeOrgCode: null,
     remittanceInformation: null,
     receiptPaymentAmount: null,
@@ -186,9 +189,9 @@ describe('Classifications Detail:', () => {
   });
 
   describe('Tabs optional visibilty', () => {
-    it('shows only payed tab when only payed data is available', async () => {
-      const payedOnlyData = createMockData({
-        payed: true,
+    it('shows only paid tab when only paid data is available', async () => {
+      const paidOnlyData = createMockData({
+        paid: true,
         reported: false,
         collected: false,
         debtPositionTypeOrgCode: 'DEBT123',
@@ -200,7 +203,7 @@ describe('Classifications Detail:', () => {
         classificationService,
         'getClassificationDetail'
       ).mockReturnValue({
-        data: payedOnlyData,
+        data: paidOnlyData,
         isError: false,
         error: null
       } as any);
@@ -220,7 +223,7 @@ describe('Classifications Detail:', () => {
 
     it('shows only reported tab when only reported data is available', async () => {
       const reportedOnlyData = createMockData({
-        payed: false,
+        paid: false,
         reported: true,
         collected: false,
         iuf: 'IUF123',
@@ -251,7 +254,7 @@ describe('Classifications Detail:', () => {
 
     it('shows all tabs when all data types are available', async () => {
       const allDataAvailable = createMockData({
-        payed: true,
+        paid: true,
         reported: true,
         collected: true,
         debtPositionTypeOrgCode: 'DEBT123',
@@ -283,7 +286,7 @@ describe('Classifications Detail:', () => {
 
     it('hides tab list when only one tab is visible', async () => {
       const singleTabData = createMockData({
-        payed: true,
+        paid: true,
         reported: false,
         collected: false,
         debtPositionTypeOrgCode: 'DEBT123'
@@ -317,7 +320,7 @@ describe('Classifications Detail:', () => {
 
     beforeEach(() => {
       allDataAvailable = createMockData({
-        payed: true,
+        paid: true,
         reported: true,
         collected: true,
         debtPositionTypeOrgCode: 'DEBT123',
@@ -367,7 +370,7 @@ describe('Classifications Detail:', () => {
   describe('Tabs content', () => {
     it('displays component with debt type data', async () => {
       const mockDataWithDebtType = createMockData({
-        payed: true,
+        paid: true,
         debtPositionTypeOrgCode: 'DEBT123',
         remittanceInformation: 'Test Payment Object',
         receiptPaymentAmount: 1000,
@@ -398,7 +401,7 @@ describe('Classifications Detail:', () => {
 
     it('displays component with reporting data', async () => {
       const mockDataWithReporting = createMockData({
-        payed: true,
+        paid: true,
         reported: true,
         iuf: 'IUF123',
         regulationUniqueIdentifier: 'REG456'
@@ -428,7 +431,7 @@ describe('Classifications Detail:', () => {
 
     it('displays ID Rendicontazione / IUF field in treasury tab when data is collected and treasury is available', async () => {
       const mockDataWithTreasury = createMockData({
-        payed: true,
+        paid: true,
         reported: true,
         collected: true,
         flagTreasury: true,
@@ -467,7 +470,7 @@ describe('Classifications Detail:', () => {
   describe('Link handling', () => {
     it('renders component with receipt data', async () => {
       const mockDataWithReceiptId = createMockData({
-        payed: true,
+        paid: true,
         receiptPaymentReceiptId: 'receipt123',
         receiptPaymentRequestId: 'request456'
       });
@@ -496,7 +499,7 @@ describe('Classifications Detail:', () => {
 
     it('renders component with iuf data', async () => {
       const mockDataWithIuf = createMockData({
-        payed: true,
+        paid: true,
         reported: true,
         iuf: 'iuf789'
       });
@@ -527,7 +530,7 @@ describe('Classifications Detail:', () => {
   describe('Notified Payment section', () => {
     it('renders component with notified payment data', async () => {
       const mockDataWithNotifiedPayment = createMockData({
-        payed: true,
+        paid: true,
         paymentNotificationDebtPositionTypeOrgCode: 'NOTIF123',
         paymentNotificationRemittanceInformation: 'Notification Info',
         paymentNotificationAmountPaidCents: 5000
@@ -557,7 +560,7 @@ describe('Classifications Detail:', () => {
 
     it('renders component without notified payment data', async () => {
       const mockDataWithoutNotifiedPayment = createMockData({
-        payed: true,
+        paid: true,
         paymentNotificationDebtPositionTypeOrgCode: null,
         paymentNotificationRemittanceInformation: null,
         paymentNotificationAmountPaidCents: null
@@ -581,6 +584,147 @@ describe('Classifications Detail:', () => {
       expect(
         screen.getByText(
           'classifications.detail.statusBar.status.reconciliationState.title'
+        )
+      ).toBeInTheDocument();
+    });
+
+    it('shows telematic receipt tab when label is IUD_NO_RT and flagPaymentNotification is true', async () => {
+      const mockDataIudNoRt = createMockData({
+        paid: false,
+        reported: false,
+        collected: false,
+        label: ClassificationsEnum.IUD_NO_RT,
+        flagPaymentNotification: true,
+        paymentNotificationDebtPositionTypeOrgCode: 'NOTIF123',
+        paymentNotificationRemittanceInformation: 'Notification Info',
+        paymentNotificationAmountPaidCents: 5000
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataIudNoRt,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByTestId('ClassificationDetailTabPanelDebtType')
+      ).toBeInTheDocument();
+    });
+
+    it('does not show telematic receipt tab when label is IUD_NO_RT but flagPaymentNotification is false', async () => {
+      const mockDataIudNoRtNoFlag = createMockData({
+        paid: false,
+        reported: true,
+        collected: false,
+        label: ClassificationsEnum.IUD_NO_RT,
+        flagPaymentNotification: false,
+        iuf: 'IUF123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataIudNoRtNoFlag,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.queryByTestId('ClassificationDetailTabPanelDebtType')
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows notified payment section but not telematic receipt section when IUD_NO_RT and flagPaymentNotification is true', async () => {
+      const mockDataIudNoRt = createMockData({
+        paid: false,
+        reported: false,
+        collected: false,
+        label: ClassificationsEnum.IUD_NO_RT,
+        flagPaymentNotification: true,
+        paymentNotificationDebtPositionTypeOrgCode: 'NOTIF123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataIudNoRt,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByText(
+          'classifications.detail.sections.notifiedPayment.title'
+        )
+      ).toBeInTheDocument();
+
+      expect(
+        screen.queryByText(
+          'classifications.detail.sections.telematicReceipt.link'
+        )
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows both sections when paid is true and flagPaymentNotification is true', async () => {
+      const mockDataBothSections = createMockData({
+        paid: true,
+        reported: false,
+        collected: false,
+        flagPaymentNotification: true,
+        debtPositionTypeOrgCode: 'DEBT123',
+        paymentNotificationDebtPositionTypeOrgCode: 'NOTIF123'
+      });
+
+      vi.spyOn(
+        classificationService,
+        'getClassificationDetail'
+      ).mockReturnValue({
+        data: mockDataBothSections,
+        isError: false,
+        error: null
+      } as any);
+
+      render(<ClassificationsDetail />);
+
+      await waitFor(() => {
+        expect(screen.getByText('classifications.title')).toBeInTheDocument();
+      });
+
+      expect(
+        screen.getByTestId('ClassificationDetailTabPanelDebtType')
+      ).toBeInTheDocument();
+
+      expect(
+        screen.getByText(
+          'classifications.detail.sections.telematicReceipt.link'
+        )
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          'classifications.detail.sections.notifiedPayment.title'
         )
       ).toBeInTheDocument();
     });
@@ -610,7 +754,7 @@ describe('Classifications Detail:', () => {
 
     it('shows title and status bar when data is loaded', async () => {
       const loadedData = createMockData({
-        payed: true,
+        paid: true,
         reported: true,
         collected: true,
         debtPositionTypeOrgCode: 'DEBT123',
@@ -644,7 +788,7 @@ describe('Classifications Detail:', () => {
   describe('Accessibility', () => {
     it('renders component with proper structure', async () => {
       const allDataAvailable = createMockData({
-        payed: true,
+        paid: true,
         reported: true,
         collected: true,
         debtPositionTypeOrgCode: 'DEBT123',
@@ -676,7 +820,7 @@ describe('Classifications Detail:', () => {
 
     it('renders with proper accessibility structure', async () => {
       const allDataAvailable = createMockData({
-        payed: true,
+        paid: true,
         reported: true,
         collected: true,
         debtPositionTypeOrgCode: 'DEBT123',

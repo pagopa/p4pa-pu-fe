@@ -22,20 +22,20 @@ export const StatusBar: React.FC<StatusBarProps> = ({ classificationData }) => {
 
   const reconciliationStates: Array<ReconciliationState> = [
     {
-      icon: classificationData.payed ? (
+      icon: classificationData.paid ? (
         <CheckBox sx={{ color: 'success.main', fontSize: 20 }} />
       ) : (
         <DisabledByDefault sx={{ color: 'error.main', fontSize: 20 }} />
       ),
       label: t('classifications.detail.statusBar.status.states.paid.label'),
-      description: classificationData.payed
+      description: classificationData.paid
         ? t(
             'classifications.detail.statusBar.status.states.paid.descriptionActive'
           )
         : t(
             'classifications.detail.statusBar.status.states.paid.descriptionInactive'
           ),
-      isActive: Boolean(classificationData.payed)
+      isActive: Boolean(classificationData.paid)
     },
     {
       icon: classificationData.reported ? (
