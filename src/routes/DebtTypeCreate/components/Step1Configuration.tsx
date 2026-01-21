@@ -167,8 +167,8 @@ export const Step1Configuration = ({
                       In search mode, show fields only if orgType is selected
                     */}
                     <Stack direction="row" gap={2}>
-                      {fields.macroAreaCode}
-                      {fields.serviceTypeCode}
+                      {fields.macroArea}
+                      {fields.serviceType}
                     </Stack>
                     <Stack direction="row" gap={2}>
                       {fields.collectingReason}
