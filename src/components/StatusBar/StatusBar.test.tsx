@@ -65,7 +65,7 @@ describe('StatusBar Component', () => {
   const createMockClassificationData = (
     overrides: Partial<ClassificationDetailDTO> = {}
   ): ClassificationDetailDTO => ({
-    payed: false,
+    paid: false,
     reported: false,
     collected: false,
     flagTreasury: true,
@@ -166,7 +166,7 @@ describe('StatusBar Component', () => {
 
     it('shows inactive states when all flags are false and flagTreasury is true', () => {
       const mockData = createMockClassificationData({
-        payed: false,
+        paid: false,
         reported: false,
         collected: false,
         flagTreasury: true
@@ -180,7 +180,7 @@ describe('StatusBar Component', () => {
 
     it('shows inactive states when all flags are false and flagTreasury is false', () => {
       const mockData = createMockClassificationData({
-        payed: false,
+        paid: false,
         reported: false,
         collected: false,
         flagTreasury: false
@@ -194,9 +194,9 @@ describe('StatusBar Component', () => {
       ).not.toBeInTheDocument();
     });
 
-    it('shows active state for paid when payed is true', () => {
+    it('shows active state for paid when paid is true', () => {
       const mockData = createMockClassificationData({
-        payed: true,
+        paid: true,
         reported: false,
         collected: false,
         flagTreasury: false
@@ -212,7 +212,7 @@ describe('StatusBar Component', () => {
 
     it('shows active state for reported when reported is true', () => {
       const mockData = createMockClassificationData({
-        payed: false,
+        paid: false,
         reported: true,
         collected: false,
         flagTreasury: false
@@ -228,7 +228,7 @@ describe('StatusBar Component', () => {
 
     it('shows active state for collected when collected is true and flagTreasury is true', () => {
       const mockData = createMockClassificationData({
-        payed: false,
+        paid: false,
         reported: false,
         collected: true,
         flagTreasury: true
@@ -242,7 +242,7 @@ describe('StatusBar Component', () => {
 
     it('does not show collected state when collected is true but flagTreasury is false', () => {
       const mockData = createMockClassificationData({
-        payed: false,
+        paid: false,
         reported: false,
         collected: true,
         flagTreasury: false
@@ -256,7 +256,7 @@ describe('StatusBar Component', () => {
 
     it('shows all active states when all flags are true', () => {
       const mockData = createMockClassificationData({
-        payed: true,
+        paid: true,
         reported: true,
         collected: true,
         flagTreasury: true
@@ -272,7 +272,7 @@ describe('StatusBar Component', () => {
   describe('State icons', () => {
     it('displays correct icons for inactive states when flagTreasury is false', () => {
       const mockData = createMockClassificationData({
-        payed: false,
+        paid: false,
         reported: false,
         collected: false,
         flagTreasury: false
@@ -285,7 +285,7 @@ describe('StatusBar Component', () => {
 
     it('displays correct icons for inactive states when flagTreasury is true', () => {
       const mockData = createMockClassificationData({
-        payed: false,
+        paid: false,
         reported: false,
         collected: false,
         flagTreasury: true
@@ -298,7 +298,7 @@ describe('StatusBar Component', () => {
 
     it('displays correct icons for active states when flagTreasury is true', () => {
       const mockData = createMockClassificationData({
-        payed: true,
+        paid: true,
         reported: true,
         collected: true,
         flagTreasury: true
@@ -311,7 +311,7 @@ describe('StatusBar Component', () => {
 
     it('displays correct icons for active states when flagTreasury is false', () => {
       const mockData = createMockClassificationData({
-        payed: true,
+        paid: true,
         reported: true,
         collected: true,
         flagTreasury: false
@@ -324,7 +324,7 @@ describe('StatusBar Component', () => {
 
     it('displays mixed icons for mixed states when flagTreasury is true', () => {
       const mockData = createMockClassificationData({
-        payed: true,
+        paid: true,
         reported: false,
         collected: true,
         flagTreasury: true
@@ -339,7 +339,7 @@ describe('StatusBar Component', () => {
 
     it('displays mixed icons for mixed states when flagTreasury is false', () => {
       const mockData = createMockClassificationData({
-        payed: true,
+        paid: true,
         reported: false,
         collected: true,
         flagTreasury: false
@@ -477,7 +477,7 @@ describe('StatusBar Component', () => {
   describe('Edge case scenarios', () => {
     it('handles null/undefined values gracefully when flagTreasury is false', () => {
       const mockData = createMockClassificationData({
-        payed: undefined as any,
+        paid: undefined as any,
         reported: undefined as any,
         collected: false,
         flagTreasury: false
@@ -493,7 +493,7 @@ describe('StatusBar Component', () => {
 
     it('handles null/undefined values gracefully when flagTreasury is true', () => {
       const mockData = createMockClassificationData({
-        payed: undefined as any,
+        paid: undefined as any,
         reported: undefined as any,
         collected: false,
         flagTreasury: true
@@ -507,7 +507,7 @@ describe('StatusBar Component', () => {
 
     it('handles truthy values correctly when flagTreasury is true', () => {
       const mockData = createMockClassificationData({
-        payed: 1 as any,
+        paid: 1 as any,
         reported: 'yes' as any,
         collected: {} as any,
         flagTreasury: true
@@ -521,7 +521,7 @@ describe('StatusBar Component', () => {
 
     it('handles truthy values correctly when flagTreasury is false', () => {
       const mockData = createMockClassificationData({
-        payed: 1 as any,
+        paid: 1 as any,
         reported: 'yes' as any,
         collected: {} as any,
         flagTreasury: false
@@ -537,13 +537,13 @@ describe('StatusBar Component', () => {
   describe('Visual consistency', () => {
     it('maintains consistent layout with different state combinations when flagTreasury is true', () => {
       const scenarios = [
-        { payed: true, reported: false, collected: false, flagTreasury: true },
-        { payed: false, reported: true, collected: false, flagTreasury: true },
-        { payed: false, reported: false, collected: true, flagTreasury: true },
-        { payed: true, reported: true, collected: false, flagTreasury: true },
-        { payed: true, reported: false, collected: true, flagTreasury: true },
-        { payed: false, reported: true, collected: true, flagTreasury: true },
-        { payed: true, reported: true, collected: true, flagTreasury: true }
+        { paid: true, reported: false, collected: false, flagTreasury: true },
+        { paid: false, reported: true, collected: false, flagTreasury: true },
+        { paid: false, reported: false, collected: true, flagTreasury: true },
+        { paid: true, reported: true, collected: false, flagTreasury: true },
+        { paid: true, reported: false, collected: true, flagTreasury: true },
+        { paid: false, reported: true, collected: true, flagTreasury: true },
+        { paid: true, reported: true, collected: true, flagTreasury: true }
       ];
 
       scenarios.forEach((scenario, _index) => {
@@ -562,13 +562,13 @@ describe('StatusBar Component', () => {
 
     it('maintains consistent layout with different state combinations when flagTreasury is false', () => {
       const scenarios = [
-        { payed: true, reported: false, collected: false, flagTreasury: false },
-        { payed: false, reported: true, collected: false, flagTreasury: false },
-        { payed: false, reported: false, collected: true, flagTreasury: false },
-        { payed: true, reported: true, collected: false, flagTreasury: false },
-        { payed: true, reported: false, collected: true, flagTreasury: false },
-        { payed: false, reported: true, collected: true, flagTreasury: false },
-        { payed: true, reported: true, collected: true, flagTreasury: false }
+        { paid: true, reported: false, collected: false, flagTreasury: false },
+        { paid: false, reported: true, collected: false, flagTreasury: false },
+        { paid: false, reported: false, collected: true, flagTreasury: false },
+        { paid: true, reported: true, collected: false, flagTreasury: false },
+        { paid: true, reported: false, collected: true, flagTreasury: false },
+        { paid: false, reported: true, collected: true, flagTreasury: false },
+        { paid: true, reported: true, collected: true, flagTreasury: false }
       ];
 
       scenarios.forEach((scenario, _index) => {

@@ -10,9 +10,9 @@ import {
 
 export const useClassificationAlert = (data: ClassificationDetailDTO) => {
   return useMemo(() => {
-    const { label, payed, reported, collected } = data;
+    const { label, paid, reported, collected } = data;
 
-    if (!payed && !reported && Boolean(collected)) {
+    if (!paid && !reported && Boolean(collected)) {
       return {
         severity: 'error' as const,
         titleKey:
