@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { Download } from '@mui/icons-material';
 import ReceiptDetail from '.';
+import { ReceiptDetailDTO } from '../../../generated/apiClient';
 
 vi.mock('../TitleComponent/TitleComponent', () => ({
   default: ({ title, accessibleTitle, callToAction }: any) => (
@@ -217,5 +218,32 @@ describe('ReceiptDetail Component', () => {
     expect(paymentSection.querySelector('h2')).toHaveTextContent(
       'commons.payment'
     );
+  });
+
+  it('renders view with a warning banner on tech debt position', () => {
+    const overridedProps = {
+      ...defaultProps,
+      debtPositionOrigin:
+        'RECEIPT_PAGOPA' as ReceiptDetailDTO['debtPositionOrigin'],
+      receiptOrigin: 'RECEIPT_PAGOPA' as ReceiptDetailDTO['receiptOrigin']
+    };
+    render(<ReceiptDetail {...overridedProps} />);
+
+    const warningBanner = screen.getByTestId('technical-debt-alert');
+
+    expect(warningBanner).toBeInTheDocument();
+  });
+
+  it('renders view without a warning banner on tech debt position', () => {
+    const overridedProps = {
+      ...defaultProps,
+      debtPositionOrigin: 'ORDINARY' as ReceiptDetailDTO['debtPositionOrigin'],
+      receiptOrigin: 'RECEIPT_PAGOPA' as ReceiptDetailDTO['receiptOrigin']
+    };
+    render(<ReceiptDetail {...overridedProps} />);
+
+    const warningBanner = screen.queryByTestId('technical-debt-alert');
+
+    expect(warningBanner).not.toBeInTheDocument();
   });
 });
