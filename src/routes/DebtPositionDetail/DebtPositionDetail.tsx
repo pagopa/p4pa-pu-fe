@@ -7,7 +7,8 @@ import {
   ChipProps,
   Divider,
   Menu,
-  MenuItem
+  MenuItem,
+  Alert
 } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import {
@@ -48,6 +49,7 @@ import utils from '../../utils';
 import { downloadBlob } from '../../utils/download';
 import { useTimelineData } from '../../hooks/useTimelineData';
 import { isDateInPast, moneyFormat } from '../../utils/formatters';
+import { isTechnicalDebtPosition } from '../../utils/debtpositions';
 
 export type PaymentOptionDisplayData = {
   title: string;
@@ -577,6 +579,18 @@ const DebtPositionDetail = () => {
           </MenuItem>
         </>
       </Menu>
+
+      {debtPositionDetail?.debtPositionOrigin &&
+        isTechnicalDebtPosition(debtPositionDetail.debtPositionOrigin) && (
+          <Alert severity="warning" data-testid="technical-debt-alert">
+            {t(
+              `debtPositionDetail.origin.${debtPositionDetail.debtPositionOrigin}`,
+              {
+                defaultValue: t('debtPositionDetail.techDebtPositionDefault')
+              }
+            )}
+          </Alert>
+        )}
 
       <Box mt={4} mb={3}>
         <Accordion
