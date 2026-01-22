@@ -51,6 +51,7 @@ export const getMacroAreas = ({
 type ServiceTypeQuery = Parameters<
   typeof utils.apiClient.bff.getServiceType
 >[0];
+
 export const getServiceTypes = (query: ServiceTypeQuery) =>
   useQuery({
     queryKey: ['getServiceType', query.macroAreaCode ?? 'none'],
@@ -59,9 +60,9 @@ export const getServiceTypes = (query: ServiceTypeQuery) =>
     queryFn: async () => await utils.apiClient.bff.getServiceType(query),
     select: ({ data }) => {
       parseAndLog(taxonomyServiceTypeCodeDTOSchema.array(), data);
-      return data.map((serviceType) => ({
-        value: serviceType.serviceTypeCode,
-        label: serviceType.serviceTypeDescription.toUpperCase()
+      return data.map((item) => ({
+        value: item.serviceTypeCode,
+        label: item.serviceType.toUpperCase()
       }));
     }
   });
@@ -69,6 +70,7 @@ export const getServiceTypes = (query: ServiceTypeQuery) =>
 type CollectionReasonQuery = Parameters<
   typeof utils.apiClient.bff.getCollectionReason
 >[0];
+
 export const getCollectionReasons = (query: CollectionReasonQuery) =>
   useQuery({
     queryKey: ['getCollectionReason', query.serviceTypeCode ?? 'none'],

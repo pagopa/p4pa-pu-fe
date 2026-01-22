@@ -5,12 +5,15 @@ import ActionCard from '../../components/ActionCard/ActionCard';
 import utils from '../../utils';
 import { useNavigate } from 'react-router';
 import { PageRoutes } from '..';
-import { TaxonomyFilter } from '../../components/TaxonomyFilter';
+import {
+  TaxonomyFilter,
+  SEARCH_FIELD_NAMES
+} from '../../components/TaxonomyFilter';
 import { FormProvider, useForm } from 'react-hook-form';
 import SearchCard from '../../components/SearchCard/SearchCard';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TaxonomyFields } from '../../models/Taxonomy';
+import { TaxonomyFilters } from '../../models/Taxonomy';
 import { useState } from 'react';
 import {
   getScheduleLastUpdatedTime,
@@ -66,7 +69,7 @@ export const TaxonomyPage = () => {
     }
   };
 
-  const onSubmit = (data: Partial<TaxonomyFields>) => {
+  const onSubmit = (data: Partial<TaxonomyFilters>) => {
     setError(false);
     const params = utils.URI.encode(data);
     navigate(`${PageRoutes.BACKOFFICE_TAXONOMY_SEARCH_RESULTS}#${params}`);
@@ -94,7 +97,7 @@ export const TaxonomyPage = () => {
                 <Grid mb={2}>
                   {error && <ErrorMessage testId="multifilters-error-text" />}
                 </Grid>
-                <TaxonomyFilter />
+                <TaxonomyFilter fieldNames={SEARCH_FIELD_NAMES} />
               </>
             }
             description={t('taxonomy.searchDescription')}

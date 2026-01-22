@@ -34,7 +34,16 @@ vi.mock('../../api/taxonomy', () => ({
 }));
 
 vi.mock('../../components/TaxonomyFilter', () => ({
-  TaxonomyFilter: () => <div data-testid="taxonomy-filter">Taxonomy Filter</div>
+  TaxonomyFilter: () => (
+    <div data-testid="taxonomy-filter">Taxonomy Filter</div>
+  ),
+  SEARCH_FIELD_NAMES: {
+    orgType: 'orgType',
+    macroArea: 'macroAreaCode',
+    serviceType: 'serviceTypeCode',
+    collectingReason: 'collectingReason',
+    taxonomyCode: 'taxonomyCode'
+  }
 }));
 
 vi.mock('./TaxonomyDataGrid', () => ({
