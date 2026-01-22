@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { truncateParams, truncateText } from '../textUtils';
+import { truncateParams, truncateText, trimStringValues } from '../textUtils';
 
 describe('textUtils', () => {
   describe('truncateText', () => {
@@ -115,6 +115,103 @@ describe('textUtils', () => {
 
       expect(result.name).toBe('Hello...');
       expect(result.items).toEqual(['one', 'two', 'three']);
+    });
+  });
+
+  describe('trimStringValues', () => {
+    it('should trim leading and trailing whitespace from string values', () => {
+      const params = {
+        name: '  Hello World  ',
+        code: '  ABC123  '
+      };
+      const result = trimStringValues(params);
+
+      expect(result.name).toBe('Hello World');
+      expect(result.code).toBe('ABC123');
+    });
+
+    it('should preserve whitespace in the middle of strings', () => {
+      const params = {
+        name: '  Test Redirect Name  '
+      };
+      const result = trimStringValues(params);
+
+      expect(result.name).toBe('Test Redirect Name');
+    });
+
+    it('should not modify non-string values', () => {
+      const params = {
+        name: '  Hello  ',
+        count: 42,
+        active: true,
+        data: null
+      };
+      const result = trimStringValues(params);
+
+      expect(result.name).toBe('Hello');
+      expect(result.count).toBe(42);
+      expect(result.active).toBe(true);
+      expect(result.data).toBe(null);
+    });
+
+    it('should handle empty object', () => {
+      const result = trimStringValues({});
+      expect(result).toEqual({});
+    });
+
+    it('should handle strings without whitespace', () => {
+      const params = {
+        name: 'NoWhitespace',
+        code: 'ABC123'
+      };
+      const result = trimStringValues(params);
+
+      expect(result.name).toBe('NoWhitespace');
+      expect(result.code).toBe('ABC123');
+    });
+
+    it('should handle empty strings', () => {
+      const params = {
+        name: '',
+        code: '   '
+      };
+      const result = trimStringValues(params);
+
+      expect(result.name).toBe('');
+      expect(result.code).toBe('');
+    });
+
+    it('should handle nested objects without modifying them', () => {
+      const params = {
+        name: '  Hello  ',
+        nested: { value: '  Not trimmed  ' }
+      };
+      const result = trimStringValues(params);
+
+      expect(result.name).toBe('Hello');
+      expect(result.nested).toEqual({ value: '  Not trimmed  ' });
+    });
+
+    it('should handle arrays without modifying them', () => {
+      const params = {
+        name: '  Hello  ',
+        items: ['  one  ', '  two  ']
+      };
+      const result = trimStringValues(params);
+
+      expect(result.name).toBe('Hello');
+      expect(result.items).toEqual(['  one  ', '  two  ']);
+    });
+
+    it('should handle tabs and newlines', () => {
+      const params = {
+        name: '\t  Hello World  \n',
+        code: '\n\nABC123\t\t'
+      };
+      const result = trimStringValues(params);
+
+      expect(result.name).toBe('Hello World');
+      expect(result.code).toBe('ABC123');
     });
   });
 });

@@ -114,7 +114,6 @@ const RenderComponent = ({
           error={hasError}
           helperText={fieldError}
           onChange={(e: TextFieldChangeEvent) => {
-            // Clear error when user starts typing
             if (hasError && onChange) {
               onChange(`${fieldId}_error`, '');
             }
@@ -122,6 +121,20 @@ const RenderComponent = ({
               onChange(fieldId, e.target.value);
             } else if (textItem.onChange) {
               textItem.onChange(e);
+            }
+          }}
+          onBlur={(e: TextFieldChangeEvent) => {
+            const trimmedValue = e.target.value.trim();
+            if (trimmedValue !== e.target.value) {
+              if (onChange) {
+                onChange(fieldId, trimmedValue);
+              } else if (textItem.onChange) {
+                const modifiedEvent = {
+                  ...e,
+                  target: { ...e.target, value: trimmedValue }
+                } as TextFieldChangeEvent;
+                textItem.onChange(modifiedEvent);
+              }
             }
           }}
         />
