@@ -14,14 +14,23 @@ export const buildQueryParams = ({
   ...(filters?.orgType && {
     organizationType: filters.orgType
   }),
-  ...(filters?.macroAreaCode && {
-    macroAreaCode: filters.macroAreaCode
+  // Support both field naming conventions:
+  // - macroAreaCode (search mode)
+  // - macroArea (creation mode)
+  ...((filters?.macroAreaCode || filters?.macroArea) && {
+    macroAreaCode: filters.macroAreaCode || filters.macroArea
   }),
-  ...(filters?.serviceTypeCode && {
-    serviceTypeCode: filters.serviceTypeCode
+  // Support both field naming conventions:
+  // - serviceTypeCode (search mode)
+  // - serviceType (creation mode)
+  ...((filters?.serviceTypeCode || filters?.serviceType) && {
+    serviceTypeCode: filters.serviceTypeCode || filters.serviceType
   }),
   ...(filters?.collectingReason && {
     collectionReason: filters.collectingReason
+  }),
+  ...(filters?.taxonomyCode && {
+    taxonomyCode: filters.taxonomyCode
   }),
   ...(sort?.length && { sort }),
   page: pagination.page,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stepper } from '../../components/Stepper/types';
@@ -104,7 +105,10 @@ export const DebtTypeCreate = () => {
       }
 
       // Save the data in formData before proceeding
-      formData.value = { ...formData.value, ...values };
+      // Exclude isCodeUnique as it's not part of DebtPositionTypeRequestBody
+      // eslint-disable-next-line sonarjs/no-unused-vars
+      const { isCodeUnique: _, ...dataToSave } = values;
+      formData.value = { ...formData.value, ...dataToSave };
 
       // If everything is valid, proceed to the next step
       setStep(1);

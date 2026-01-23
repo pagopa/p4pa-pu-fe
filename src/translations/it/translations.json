@@ -2459,7 +2459,14 @@
     "accessibleTitle": "Risultato ricerca tassonomia"
   },
   "telematicReceiptDetail": {
-    "title": "Dettaglio Ricevuta Telematica"
+    "title": "Dettaglio Ricevuta Telematica",
+    "origin": {
+      "RECEIPT_PAGOPA": "Questa ricevuta telematica è stata generata automaticamente in quanto sei beneficiario di un avviso creato da un altro Ente.",
+      "RECEIPT_PAGOPA__RECEIPT_PAGOPA": "Questa ricevuta telematica riguarda un pagamento non gestito sulla piattaforma.",
+      "RECEIPT_FILE": "Questa Ricevuta Telematica è stata generata automaticamente in seguito al caricamento di un flusso contenente ricevute di pagamenti effettuati tramite pagoPA.",
+      "PAYMENTS_REPORTING": "Questa ricevuta telematica è stata generata automaticamente in seguito alla ricezione di un flusso di rendicontazione con codice esito 8/9 (pagamento senza Ricevuta Telematica)."
+    },
+    "techDebtPositionDefault": "Posizione debitoria tecnica"
   },
   "telematicReceiptFlowExportOverview": {
     "accessibleTitle": "Flussi esportati: ricevute telematiche",

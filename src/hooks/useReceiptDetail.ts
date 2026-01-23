@@ -4,12 +4,15 @@ import { getReceiptDetail } from '../api/receiptDetail';
 import { moneyFormat } from '../utils/formatters';
 import { DetailData } from '../components/DetailContainer/DetailContainer';
 import notify from '../utils/notify';
+import { ReceiptDetailDTO } from '../../generated/apiClient';
 
 type UseReceiptDetailReturn = {
   summaryData: Array<DetailData>;
   paymentData: Array<DetailData>;
   isLoading: boolean;
   isError: boolean;
+  debtPositionOrigin?: ReceiptDetailDTO['debtPositionOrigin'];
+  receiptOrigin?: ReceiptDetailDTO['receiptOrigin'];
 };
 
 export const useReceiptDetail = (
@@ -80,5 +83,12 @@ export const useReceiptDetail = (
     ];
   }, [data, t]);
 
-  return { summaryData, paymentData, isLoading, isError };
+  return {
+    summaryData,
+    paymentData,
+    isLoading,
+    isError,
+    debtPositionOrigin: data?.debtPositionOrigin,
+    receiptOrigin: data?.receiptOrigin
+  };
 };
