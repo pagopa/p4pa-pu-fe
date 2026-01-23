@@ -1,4 +1,4 @@
-import { Alert, Grid } from '@mui/material';
+import { Grid } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import DetailContainer, {
   DetailData
@@ -7,6 +7,7 @@ import TitleComponent, {
   ActionMenuItem
 } from '../TitleComponent/TitleComponent';
 import { ReceiptDetailDTO } from '../../../generated/apiClient';
+import { ReceiptDetailWarningBanner } from './ReceiptDetailWarningBanner';
 
 type DetailProps = {
   pageTitle: string;
@@ -17,41 +18,6 @@ type DetailProps = {
   debtPositionOrigin?: ReceiptDetailDTO['debtPositionOrigin'];
   receiptOrigin?: ReceiptDetailDTO['receiptOrigin'];
 };
-/**
- *
- * @param receiptOrigin Enum ReceiptDetailDTO["receiptOrigin"]
- * @param debtPositionOrigin Enum ReceiptDetailDTO["debtPositionOrigin"]
- * @returns A string to use as key of Translation file
- */
-const i18nString = (
-  receiptOrigin?: ReceiptDetailDTO['receiptOrigin'],
-  debtPositionOrigin?: ReceiptDetailDTO['debtPositionOrigin']
-) => {
-  if (
-    receiptOrigin == 'RECEIPT_PAGOPA' &&
-    debtPositionOrigin == 'RECEIPT_PAGOPA'
-  ) {
-    return 'RECEIPT_PAGOPA__RECEIPT_PAGOPA';
-  }
-
-  return receiptOrigin || 'techDebtPositionDefault';
-};
-/**
- *
- * @param receiptOrigin Enum ReceiptDetailDTO["receiptOrigin"]
- * @param debtPositionOrigin Enum ReceiptDetailDTO["debtPositionOrigin"]
- * @returns If receiptOrigin as a value != RECEIPT_PAGOPA always return true. Otherwise checks debtPositionOrigin value.
- */
-const showWarning = (
-  receiptOrigin: ReceiptDetailDTO['receiptOrigin'],
-  debtPositionOrigin: ReceiptDetailDTO['debtPositionOrigin']
-): boolean =>
-  receiptOrigin !== 'RECEIPT_PAGOPA' ||
-  (
-    ['RECEIPT_PAGOPA', 'SECONDARY_ORG'] as Array<
-      ReceiptDetailDTO['debtPositionOrigin']
-    >
-  ).includes(debtPositionOrigin);
 
 const ReceiptDetail = ({
   pageTitle,
@@ -71,24 +37,14 @@ const ReceiptDetail = ({
         accessibleTitle={accessibleTitle}
         callToAction={callToAction ? [callToAction] : []}
       />
-      {receiptOrigin &&
-        debtPositionOrigin &&
-        showWarning(receiptOrigin, debtPositionOrigin) && (
-          <Alert
-            severity="warning"
-            data-testid="technical-debt-alert"
-            sx={{ mb: 3 }}
-          >
-            {t(
-              `telematicReceiptDetail.origin.${i18nString(receiptOrigin, debtPositionOrigin)}`,
-              {
-                defaultValue: t(
-                  'telematicReceiptDetail.techDebtPositionDefault'
-                )
-              }
-            )}
-          </Alert>
-        )}
+      {receiptOrigin && debtPositionOrigin && (
+        <ReceiptDetailWarningBanner
+          sx={{ mb: 3 }}
+          receiptOrigin={receiptOrigin}
+          debtPositionOrigin={debtPositionOrigin}
+        />
+      )}
+
       <Grid container spacing={3}>
         <Grid item md={6}>
           <DetailContainer
