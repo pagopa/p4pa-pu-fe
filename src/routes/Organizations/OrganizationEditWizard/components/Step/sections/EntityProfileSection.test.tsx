@@ -223,6 +223,20 @@ describe('EntityProfileSection', () => {
       expect(consoleSpy).toHaveBeenCalled();
       consoleSpy.mockRestore();
     });
+
+    it('should not show optional label for logo (logo is always required)', () => {
+      render(
+        <TestWrapper
+          data={baseData}
+          defaultValues={defaultFormValues}
+          t={mockT}
+        />
+      );
+
+      expect(
+        screen.queryByText('organizationEditWizard.step1.orgLogo.optional')
+      ).not.toBeInTheDocument();
+    });
   });
 
   describe('Readonly and disabled behavior', () => {
@@ -307,50 +321,222 @@ describe('EntityProfileSection', () => {
     });
   });
 
-  describe('Logo optional label', () => {
-    it('should show optional label when organization status is not ACTIVE', () => {
+  describe('Logo validation (always required)', () => {
+    it('should require logo when organization status is DRAFT and no logo exists', async () => {
       const dataDraft: UnifiedFormData = {
         ...baseData,
-        organizationStatus: 'DRAFT'
+        organizationStatus: 'DRAFT',
+        orgLogo: { value: null, readonly: false }
       };
 
       render(
         <TestWrapper
           data={dataDraft}
-          defaultValues={defaultFormValues}
+          defaultValues={{
+            ...defaultFormValues,
+            orgLogo: null
+          }}
           t={mockT}
         />
       );
 
-      const optionalTextElements = screen.queryAllByText(
-        (_content, element) => {
-          if (!element) return false;
-          const textContent = element.textContent || '';
-          return textContent.includes(
-            'organizationEditWizard.step1.orgLogo.optional'
-          );
-        }
-      );
-      expect(optionalTextElements.length).toBeGreaterThan(0);
+      const submitButton = screen.getByTestId('submit-entity-profile');
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockT).toHaveBeenCalledWith(
+          'organizationEditWizard.step1.orgLogo.required'
+        );
+      });
     });
 
-    it('should not show optional label when organization status is ACTIVE', () => {
+    it('should require logo when organization status is ACTIVE and no logo exists', async () => {
       const dataActive: UnifiedFormData = {
         ...baseData,
-        organizationStatus: 'ACTIVE'
+        organizationStatus: 'ACTIVE',
+        orgLogo: { value: null, readonly: false }
       };
 
       render(
         <TestWrapper
           data={dataActive}
-          defaultValues={defaultFormValues}
+          defaultValues={{
+            ...defaultFormValues,
+            orgLogo: null
+          }}
           t={mockT}
         />
       );
 
-      expect(
-        screen.queryByText('organizationEditWizard.step1.orgLogo.optional')
-      ).not.toBeInTheDocument();
+      const submitButton = screen.getByTestId('submit-entity-profile');
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockT).toHaveBeenCalledWith(
+          'organizationEditWizard.step1.orgLogo.required'
+        );
+      });
+    });
+
+    it('should NOT allow logo removal when organization status is DRAFT', async () => {
+      const dataDraftWithLogo: UnifiedFormData = {
+        ...baseData,
+        organizationStatus: 'DRAFT',
+        orgLogo: {
+          value: 'data:image/png;base64,existingLogo',
+          readonly: false
+        }
+      };
+
+      render(
+        <TestWrapper
+          data={dataDraftWithLogo}
+          defaultValues={{
+            ...defaultFormValues,
+            orgLogo: null
+          }}
+          t={mockT}
+        />
+      );
+
+      const submitButton = screen.getByTestId('submit-entity-profile');
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockT).toHaveBeenCalledWith(
+          'organizationEditWizard.step1.orgLogo.required'
+        );
+      });
+    });
+
+    it('should NOT allow logo removal when organization status is ACTIVE', async () => {
+      const dataActiveWithLogo: UnifiedFormData = {
+        ...baseData,
+        organizationStatus: 'ACTIVE',
+        orgLogo: {
+          value: 'data:image/png;base64,existingLogo',
+          readonly: false
+        }
+      };
+
+      render(
+        <TestWrapper
+          data={dataActiveWithLogo}
+          defaultValues={{
+            ...defaultFormValues,
+            orgLogo: null
+          }}
+          t={mockT}
+        />
+      );
+
+      const submitButton = screen.getByTestId('submit-entity-profile');
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        expect(mockT).toHaveBeenCalledWith(
+          'organizationEditWizard.step1.orgLogo.required'
+        );
+      });
+    });
+
+    it('should pass validation when logo file is present for DRAFT', async () => {
+      const dataDraft: UnifiedFormData = {
+        ...baseData,
+        organizationStatus: 'DRAFT',
+        orgLogo: { value: null, readonly: false }
+      };
+
+      const mockFile = new File(['logo'], 'logo.png', { type: 'image/png' });
+
+      render(
+        <TestWrapper
+          data={dataDraft}
+          defaultValues={{
+            ...defaultFormValues,
+            orgLogo: mockFile
+          }}
+          t={mockT}
+        />
+      );
+
+      const submitButton = screen.getByTestId('submit-entity-profile');
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        const requiredCalls = mockT.mock.calls.filter(
+          // eslint-disable-next-line sonarjs/no-nested-functions
+          (call) => call[0] === 'organizationEditWizard.step1.orgLogo.required'
+        );
+        expect(requiredCalls.length).toBe(0);
+      });
+    });
+
+    it('should pass validation when logo file is present for ACTIVE', async () => {
+      const dataActive: UnifiedFormData = {
+        ...baseData,
+        organizationStatus: 'ACTIVE',
+        orgLogo: { value: null, readonly: false }
+      };
+
+      const mockFile = new File(['logo'], 'logo.png', { type: 'image/png' });
+
+      render(
+        <TestWrapper
+          data={dataActive}
+          defaultValues={{
+            ...defaultFormValues,
+            orgLogo: mockFile
+          }}
+          t={mockT}
+        />
+      );
+
+      const submitButton = screen.getByTestId('submit-entity-profile');
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        const requiredCalls = mockT.mock.calls.filter(
+          // eslint-disable-next-line sonarjs/no-nested-functions
+          (call) => call[0] === 'organizationEditWizard.step1.orgLogo.required'
+        );
+        expect(requiredCalls.length).toBe(0);
+      });
+    });
+
+    it('should pass validation when existing logo is present and not removed', async () => {
+      const dataWithExistingLogo: UnifiedFormData = {
+        ...baseData,
+        organizationStatus: 'ACTIVE',
+        orgLogo: {
+          value: 'data:image/png;base64,existingLogo',
+          readonly: false
+        }
+      };
+
+      const mockFile = new File(['logo'], 'logo.png', { type: 'image/png' });
+
+      render(
+        <TestWrapper
+          data={dataWithExistingLogo}
+          defaultValues={{
+            ...defaultFormValues,
+            orgLogo: mockFile // New logo uploaded (replacing existing)
+          }}
+          t={mockT}
+        />
+      );
+
+      const submitButton = screen.getByTestId('submit-entity-profile');
+      fireEvent.click(submitButton);
+
+      await waitFor(() => {
+        const requiredCalls = mockT.mock.calls.filter(
+          // eslint-disable-next-line sonarjs/no-nested-functions
+          (call) => call[0] === 'organizationEditWizard.step1.orgLogo.required'
+        );
+        expect(requiredCalls.length).toBe(0);
+      });
     });
   });
 
