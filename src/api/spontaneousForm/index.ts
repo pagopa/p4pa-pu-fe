@@ -85,13 +85,8 @@ const updateSpontaneousForm = ({
   useMutation({
     mutationKey: ['updateSpontaneousForm', organizationId],
     mutationFn: async (payload: SpontaneousForm) => {
-      const { data } = await utils.apiClient.bff.updateSpontaneousForm(
-        organizationId,
-        payload
-      );
-
-      parseAndLog(spontaneousFormSchema, data);
-      return data;
+      // API returns void, no data to parse
+      await utils.apiClient.bff.updateSpontaneousForm(organizationId, payload);
     }
   });
 

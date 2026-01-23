@@ -331,5 +331,17 @@ export const SuccessPageConfig: SuccessOpts = {
         actionID: 'SPONTANEOUS_FORM_INDEX'
       }
     ]
+  },
+  'spontaneous-form-edit': {
+    title: 'spontaneousForm.edit.success.title',
+    description: 'spontaneousForm.edit.success.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'spontaneousForm.edit.success.goToList',
+        actionID: 'SPONTANEOUS_FORM_INDEX'
+      }
+    ]
   }
 };
