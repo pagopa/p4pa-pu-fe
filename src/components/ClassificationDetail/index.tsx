@@ -14,6 +14,7 @@ import { PageRoutes } from '../../routes';
 import { OpenInNew } from '@mui/icons-material';
 import { buildTelematicReceiptDetailPath } from '../../utils/receiptNavigation';
 import { ClassificationsEnum } from '../../../generated/data-contracts';
+import ReceiptDetailWarningBanner from '../ReceiptDetail/ReceiptDetailWarningBanner';
 
 export const ClassificationDetails = () => {
   const store = useStore();
@@ -294,35 +295,44 @@ export const ClassificationDetails = () => {
           >
             <Stack spacing={3}>
               {data.paid && (
-                <DetailContainer
-                  sections={[
-                    {
-                      inline: true,
-                      title: {
-                        textTransform: 'uppercase',
-                        fontWeight: 700,
-                        fontSize: '14px',
-                        label: t(`${targetTranslationDebtType}.title`)
-                      },
-                      data: debtTypeData,
-                      footerLink: {
-                        label: t(`${targetTranslationDebtType}.link`),
-                        icon: <OpenInNew />,
-                        iconPosition: 'right',
-                        onLinkClick: () => {
-                          if (data?.receiptPaymentRequestId && data?.iud) {
-                            navigate(
-                              buildTelematicReceiptDetailPath(
-                                data.receiptPaymentRequestId,
-                                data.iud
-                              )
-                            );
+                <>
+                  {data.receiptOrigin && data.debtPositionOrigin && (
+                    <ReceiptDetailWarningBanner
+                      sx={{ pt: 3 }}
+                      receiptOrigin={data.receiptOrigin}
+                      debtPositionOrigin={data.debtPositionOrigin}
+                    />
+                  )}
+                  <DetailContainer
+                    sections={[
+                      {
+                        inline: true,
+                        title: {
+                          textTransform: 'uppercase',
+                          fontWeight: 700,
+                          fontSize: '14px',
+                          label: t(`${targetTranslationDebtType}.title`)
+                        },
+                        data: debtTypeData,
+                        footerLink: {
+                          label: t(`${targetTranslationDebtType}.link`),
+                          icon: <OpenInNew />,
+                          iconPosition: 'right',
+                          onLinkClick: () => {
+                            if (data?.receiptPaymentRequestId && data?.iud) {
+                              navigate(
+                                buildTelematicReceiptDetailPath(
+                                  data.receiptPaymentRequestId,
+                                  data.iud
+                                )
+                              );
+                            }
                           }
                         }
                       }
-                    }
-                  ]}
-                />
+                    ]}
+                  />
+                </>
               )}
               {(data.flagPaymentNotification ||
                 (data.label == ClassificationsEnum.IUD_NO_RT &&
