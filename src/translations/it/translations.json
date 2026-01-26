@@ -2359,6 +2359,24 @@
         "codeAlreadyExists": "Il codice identificativo del modulo è già in uso. Prova a scegliere un altro nome."
       }
     },
+    "edit": {
+      "title": "Modifica modulo personalizzato",
+      "description": "Inserisci i codici JSON per definire i campi richiesti e le lingue supportate dal modulo.",
+      "formConfiguration": "Configurazione del modulo",
+      "generalConfiguration": "Configurazione generale",
+      "translations": "Traduzione",
+      "identificationCode": "Codice identificativo",
+      "structure": "Struttura",
+      "dictionary": "Dizionario",
+      "codeHelperText": "Il codice identificativo non può essere modificato",
+      "structureHelperText": "Incolla il codice JSON che specifica i campi da compilare dal cittadino.",
+      "dictionaryHelperText": "Incolla il codice JSON con il dizionario delle traduzioni.",
+      "success": {
+        "title": "Il modulo '{{formCode}}' è stato modificato con successo.",
+        "description": "Lo trovi nella sezione Moduli personalizzati, dove puoi modificarlo in qualsiasi momento.",
+        "goToList": "Chiudi"
+      }
+    },
     "detail": {
       "formConfiguration": "Configurazione del modulo",
       "generalConfiguration": "Configurazione generale",
@@ -2373,7 +2391,10 @@
       "cannotDeleteMessage": "Questo modulo è in uso da uno o più tipi di dovuto, pertanto non può essere eliminato.",
       "deleteSuccess": "Modulo eliminato con successo",
       "deleteError": "Errore durante l'eliminazione del modulo personalizzato",
-      "description": "Ecco i dettagli del modulo che i cittadini compilano quando effettuano pagamenti spontanei"
+      "description": "Ecco i dettagli del modulo che i cittadini compilano quando effettuano pagamenti spontanei",
+      "editWarningTitle": "Attenzione",
+      "editWarningMessage": "Il modulo <bold>{{formCode}}</bold> è già utilizzato in <bold>{{count}}</bold> tipi di dovuti. Sei sicuro di volerlo modificare? Le modifiche si rifletteranno ovunque sia stato usato.",
+      "confirmEdit": "Sì, modifica"
     },
     "description": "Gestisci i moduli personalizzati con i dati che i cittadini compilano quando effettuano pagamenti spontanei",
     "searchByCode": "Cerca per descrizione",
