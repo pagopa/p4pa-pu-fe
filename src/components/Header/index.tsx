@@ -11,7 +11,7 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
+import { PartySwitchItem } from '@pagopa/mui-italia/components/PartySwitch';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
@@ -40,10 +40,10 @@ export const Header = (props: HeaderProps) => {
 
   const jwtUser: JwtUser | undefined = userInfo
     ? {
-        id: userInfo.userId,
-        name: userInfo.name,
-        surname: userInfo.familyName
-      }
+      id: userInfo.userId,
+      name: userInfo.name,
+      surname: userInfo.familyName
+    }
     : undefined;
 
   const organizationsToMenuItems: Array<PartySwitchItem> =
