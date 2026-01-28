@@ -23,6 +23,7 @@ import { organizationsRoutes } from './organizations';
 import { postTokenOrError } from '../api/token';
 import { responsesRoutes } from '../routes/responses';
 import { RouteHandleObject } from '../models/Routes';
+import IoMessageGuidePage from './IoMessageGuidePage/IoMessageGuidePage';
 
 const deployPath = utils.config.deployPath;
 
@@ -55,6 +56,18 @@ const routesDef: Array<RouteObject> = [
         id: 'DRAFT_COURTESY_PAGE',
         path: 'organization/:organizationId/draft',
         element: <CourtesyPage />,
+        handle: {
+          backButton: false,
+          hideBreadcrumbs: true,
+          sidebar: {
+            visible: false
+          }
+        } as RouteHandleObject
+      },
+      {
+        id: 'IO_MESSAGE_GUIDE',
+        path: 'io-message-guide',
+        element: <IoMessageGuidePage />,
         handle: {
           backButton: false,
           hideBreadcrumbs: true,
