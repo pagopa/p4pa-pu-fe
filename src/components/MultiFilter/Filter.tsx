@@ -41,7 +41,11 @@ export const Filter = ({
 
   const currentFields = filterMap[value]?.fields || [];
 
-  // Monitor when the fields of the FilterContainer are updated. When they change (e.g. after selecting a new filter type), automatically move the focus to the first available field.
+  // Monitor when the selected filter type changes. When it changes (e.g. after selecting a new filter type
+  // from the dropdown), automatically move the focus to the first available field.
+  // IMPORTANT: We depend on `value` (the selected filter key) instead of `currentFields` because
+  // currentFields is a new array reference on every render, which would cause the effect to run
+  // on every keystroke and steal focus from the input being edited.
   useEffect(() => {
     // Skip the first render to avoid moving the focus when the component is mounted initially
     if (isFirstRenderRef.current) {
@@ -71,7 +75,7 @@ export const Filter = ({
       };
     }
     return undefined;
-  }, [currentFields]);
+  }, [value]); // Depend on filter type selection, not on fields array reference
 
   return (
     <Stack

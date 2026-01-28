@@ -12,10 +12,11 @@ export const useBreadcrumbs = ({
   isSuccess: boolean;
   data: OperatorsDetail | undefined;
 }) => {
-  const { organizationId, orgName } = useParams();
+  const { organizationId } = useParams();
 
   useEffect(() => {
     const breadcrumbs: Array<BredcrumbItem> = [];
+    const orgName = data?.orgName;
 
     breadcrumbs.push({
       pathname: PageRoutes.OPERATORS_LIST,
@@ -45,5 +46,5 @@ export const useBreadcrumbs = ({
     }
 
     setCustomBreadcrumbsItems(breadcrumbs);
-  }, [orgName, isSuccess]);
+  }, [isSuccess, data, organizationId]);
 };
