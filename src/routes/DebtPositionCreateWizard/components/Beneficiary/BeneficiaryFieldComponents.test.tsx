@@ -23,6 +23,7 @@ import {
   TaxonomyCodeField,
   RemittanceField
 } from './BeneficiaryFieldComponents';
+import { validateTaxonomyCategory } from '../../../../api/transfers';
 
 // Utility function mocks for tests
 const mockRef = { current: false };
@@ -965,6 +966,16 @@ describe('PostalAccountField', () => {
 });
 
 describe('TaxonomyCodeField', () => {
+  const mockMutate = vi.fn();
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Configure the mock to return our mockMutate function
+    vi.mocked(validateTaxonomyCategory).mockReturnValue({
+      mutate: mockMutate
+    } as unknown as ReturnType<typeof validateTaxonomyCategory>);
+  });
+
   it('correctly renders the taxonomy code field', () => {
     const mockT = vi.fn((key: string) => key);
     const mockOnChange = vi.fn();
@@ -985,7 +996,7 @@ describe('TaxonomyCodeField', () => {
       existingBeneficiaries: {},
       errors: {},
       fieldNamePrefix: 'beneficiaries',
-      getValues: vi.fn(),
+      getValues: vi.fn().mockReturnValue('TAX123'),
       t: mockT,
       submissionCount: 1,
       creationSubmissionCount: 0
@@ -1039,7 +1050,7 @@ describe('TaxonomyCodeField', () => {
       existingBeneficiaries: {},
       errors: mockErrors,
       fieldNamePrefix: 'beneficiaries',
-      getValues: vi.fn(),
+      getValues: vi.fn().mockReturnValue(''),
       t: mockT,
       submissionCount: 1,
       creationSubmissionCount: 0
@@ -1051,6 +1062,343 @@ describe('TaxonomyCodeField', () => {
 
     // The test to verify that the error is displayed depends on the implementation of hasFieldError
     // and getFieldErrorMessage, which are already tested in other test cases
+  });
+
+  it('does not show validation error before user clicks validate button', () => {
+    const mockT = vi.fn((key: string) => key);
+
+    const mockField = {
+      onChange: vi.fn(),
+      onBlur: vi.fn(),
+      value: 'INVALID_CODE',
+      name: 'taxonomyCode',
+      ref: { current: null }
+    };
+
+    const mockContext = {
+      id: '1',
+      index: 0,
+      isSubmitted: false,
+      wasSubmittedRef: { current: false },
+      existingBeneficiaries: {},
+      errors: {},
+      fieldNamePrefix: 'beneficiaries',
+      getValues: vi.fn().mockReturnValue('INVALID_CODE'),
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
+
+    render(
+      <TaxonomyCodeField field={mockField} t={mockT} context={mockContext} />
+    );
+
+    // Should NOT show the invalid message before validation attempt
+    expect(
+      screen.queryByText(
+        'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.invalid'
+      )
+    ).not.toBeInTheDocument();
+  });
+
+  it('shows success message after successful validation', async () => {
+    const mockT = vi.fn((key: string) => key);
+
+    const mockField = {
+      onChange: vi.fn(),
+      onBlur: vi.fn(),
+      value: 'VALID_CODE',
+      name: 'taxonomyCode',
+      ref: { current: null }
+    };
+
+    const mockContext = {
+      id: '1',
+      index: 0,
+      isSubmitted: false,
+      wasSubmittedRef: { current: false },
+      existingBeneficiaries: {},
+      errors: {},
+      fieldNamePrefix: 'beneficiaries',
+      getValues: vi.fn().mockImplementation((path) => {
+        if (path.includes('taxCode')) return 'TAXCODE123';
+        return 'VALID_CODE';
+      }),
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
+
+    // Mock successful validation
+    mockMutate.mockImplementation((_, callbacks) => {
+      callbacks.onSuccess({ data: true });
+    });
+
+    render(
+      <TaxonomyCodeField field={mockField} t={mockT} context={mockContext} />
+    );
+
+    // Click validate button
+    const validateButton = screen.getByText(
+      'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.validate'
+    );
+    fireEvent.click(validateButton);
+
+    // Should show success message
+    expect(
+      screen.getByText(
+        'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.valid'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('shows error message after failed validation', async () => {
+    const mockT = vi.fn((key: string) => key);
+
+    const mockField = {
+      onChange: vi.fn(),
+      onBlur: vi.fn(),
+      value: 'INVALID_CODE',
+      name: 'taxonomyCode',
+      ref: { current: null }
+    };
+
+    const mockContext = {
+      id: '1',
+      index: 0,
+      isSubmitted: false,
+      wasSubmittedRef: { current: false },
+      existingBeneficiaries: {},
+      errors: {},
+      fieldNamePrefix: 'beneficiaries',
+      getValues: vi.fn().mockImplementation((path) => {
+        if (path.includes('taxCode')) return 'TAXCODE123';
+        return 'INVALID_CODE';
+      }),
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
+
+    // Mock failed validation (API returns false)
+    mockMutate.mockImplementation((_, callbacks) => {
+      callbacks.onSuccess({ data: false });
+    });
+
+    render(
+      <TaxonomyCodeField field={mockField} t={mockT} context={mockContext} />
+    );
+
+    // Click validate button
+    const validateButton = screen.getByText(
+      'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.validate'
+    );
+    fireEvent.click(validateButton);
+
+    // Should show error message
+    expect(
+      screen.getByText(
+        'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.invalid'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('shows error message on API error', async () => {
+    const mockT = vi.fn((key: string) => key);
+
+    const mockField = {
+      onChange: vi.fn(),
+      onBlur: vi.fn(),
+      value: 'SOME_CODE',
+      name: 'taxonomyCode',
+      ref: { current: null }
+    };
+
+    const mockContext = {
+      id: '1',
+      index: 0,
+      isSubmitted: false,
+      wasSubmittedRef: { current: false },
+      existingBeneficiaries: {},
+      errors: {},
+      fieldNamePrefix: 'beneficiaries',
+      getValues: vi.fn().mockImplementation((path) => {
+        if (path.includes('taxCode')) return 'TAXCODE123';
+        return 'SOME_CODE';
+      }),
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
+
+    // Mock API error
+    mockMutate.mockImplementation((_, callbacks) => {
+      callbacks.onError(new Error('API Error'));
+    });
+
+    render(
+      <TaxonomyCodeField field={mockField} t={mockT} context={mockContext} />
+    );
+
+    // Click validate button
+    const validateButton = screen.getByText(
+      'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.validate'
+    );
+    fireEvent.click(validateButton);
+
+    // Should show error message
+    expect(
+      screen.getByText(
+        'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.invalid'
+      )
+    ).toBeInTheDocument();
+  });
+
+  it('resets validation state when value changes', async () => {
+    const mockT = vi.fn((key: string) => key);
+    const mockOnChange = vi.fn();
+
+    const mockField = {
+      onChange: mockOnChange,
+      onBlur: vi.fn(),
+      value: 'VALID_CODE',
+      name: 'taxonomyCode',
+      ref: { current: null }
+    };
+
+    const mockContext = {
+      id: '1',
+      index: 0,
+      isSubmitted: false,
+      wasSubmittedRef: { current: false },
+      existingBeneficiaries: {},
+      errors: {},
+      fieldNamePrefix: 'beneficiaries',
+      getValues: vi.fn().mockImplementation((path) => {
+        if (path.includes('taxCode')) return 'TAXCODE123';
+        return 'VALID_CODE';
+      }),
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
+
+    // Mock successful validation
+    mockMutate.mockImplementation((_, callbacks) => {
+      callbacks.onSuccess({ data: true });
+    });
+
+    const { container } = render(
+      <TaxonomyCodeField field={mockField} t={mockT} context={mockContext} />
+    );
+
+    // Click validate button
+    const validateButton = screen.getByText(
+      'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.validate'
+    );
+    fireEvent.click(validateButton);
+
+    // Should show success message
+    expect(
+      screen.getByText(
+        'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.valid'
+      )
+    ).toBeInTheDocument();
+
+    // Change the input value
+    const input = container.querySelector('input') as HTMLInputElement;
+    fireEvent.change(input, { target: { value: 'NEW_CODE' } });
+
+    // Success message should disappear after value change
+    expect(
+      screen.queryByText(
+        'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.valid'
+      )
+    ).not.toBeInTheDocument();
+  });
+
+  it('does not call API if taxCode is empty', () => {
+    const mockT = vi.fn((key: string) => key);
+
+    const mockField = {
+      onChange: vi.fn(),
+      onBlur: vi.fn(),
+      value: 'SOME_CODE',
+      name: 'taxonomyCode',
+      ref: { current: null }
+    };
+
+    const mockContext = {
+      id: '1',
+      index: 0,
+      isSubmitted: false,
+      wasSubmittedRef: { current: false },
+      existingBeneficiaries: {},
+      errors: {},
+      fieldNamePrefix: 'beneficiaries',
+      getValues: vi.fn().mockImplementation((path) => {
+        if (path.includes('taxCode')) return ''; // Empty taxCode
+        return 'SOME_CODE';
+      }),
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
+
+    render(
+      <TaxonomyCodeField field={mockField} t={mockT} context={mockContext} />
+    );
+
+    // Click validate button
+    const validateButton = screen.getByText(
+      'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.validate'
+    );
+    fireEvent.click(validateButton);
+
+    // API should not be called
+    expect(mockMutate).not.toHaveBeenCalled();
+  });
+
+  it('does not call API if taxonomy code is empty', () => {
+    const mockT = vi.fn((key: string) => key);
+
+    const mockField = {
+      onChange: vi.fn(),
+      onBlur: vi.fn(),
+      value: '',
+      name: 'taxonomyCode',
+      ref: { current: null }
+    };
+
+    const mockContext = {
+      id: '1',
+      index: 0,
+      isSubmitted: false,
+      wasSubmittedRef: { current: false },
+      existingBeneficiaries: {},
+      errors: {},
+      fieldNamePrefix: 'beneficiaries',
+      getValues: vi.fn().mockImplementation((path) => {
+        if (path.includes('taxCode')) return 'TAXCODE123';
+        return ''; // Empty taxonomy code
+      }),
+      t: mockT,
+      submissionCount: 1,
+      creationSubmissionCount: 0
+    } as BeneficiaryValidationContext<Record<string, unknown>>;
+
+    render(
+      <TaxonomyCodeField field={mockField} t={mockT} context={mockContext} />
+    );
+
+    // Click validate button
+    const validateButton = screen.getByText(
+      'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.validate'
+    );
+    fireEvent.click(validateButton);
+
+    // API should not be called
+    expect(mockMutate).not.toHaveBeenCalled();
   });
 });
 
