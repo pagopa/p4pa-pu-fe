@@ -27,7 +27,7 @@ describe('useBreadcrumbs', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Set default mocks
-    mockUseParams.mockReturnValue({ organizationId: '42', orgName: 'TestOrg' });
+    mockUseParams.mockReturnValue({ organizationId: '42' });
     mockGeneratePath.mockImplementation(
       (path, params) => `${path}/${params.organizationId}/${params.orgName}`
     );
@@ -39,7 +39,8 @@ describe('useBreadcrumbs', () => {
         isSuccess: true,
         data: {
           operatorName: 'Maria',
-          operatorLastName: 'Rossi'
+          operatorLastName: 'Rossi',
+          orgName: 'TestOrg'
         } as OperatorsDetail
       })
     );
@@ -60,7 +61,12 @@ describe('useBreadcrumbs', () => {
   });
 
   it('sets breadcrumbs without operator detail when isSuccess false', () => {
-    renderHook(() => useBreadcrumbs({ isSuccess: false, data: undefined }));
+    renderHook(() =>
+      useBreadcrumbs({
+        isSuccess: false,
+        data: { orgName: 'TestOrg' } as OperatorsDetail
+      })
+    );
 
     expect(mockSetCustomBreadcrumbsItems).toHaveBeenCalledWith([
       { pathname: PageRoutes.OPERATORS_LIST, id: 'OPERATORS_LIST' },
@@ -80,7 +86,8 @@ describe('useBreadcrumbs', () => {
         isSuccess: true,
         data: {
           operatorName: 'Maria',
-          operatorLastName: 'Rossi'
+          operatorLastName: 'Rossi',
+          orgName: undefined
         } as OperatorsDetail
       })
     );

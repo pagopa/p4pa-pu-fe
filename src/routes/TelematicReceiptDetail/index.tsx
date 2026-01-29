@@ -27,11 +27,8 @@ export const TelematicReceiptDetail = () => {
     return null;
   }
 
-  const { paymentData, summaryData } = useReceiptDetail(
-    organizationId,
-    receiptId,
-    { iud }
-  );
+  const { paymentData, summaryData, debtPositionOrigin, receiptOrigin } =
+    useReceiptDetail(organizationId, receiptId, { iud });
 
   const onActionClick = () => downloadReceipt({ receiptId });
 
@@ -47,6 +44,8 @@ export const TelematicReceiptDetail = () => {
       }}
       pageTitle={t('telematicReceiptDetail.title')}
       accessibleTitle={t('telematicReceiptDetail.title')}
+      debtPositionOrigin={debtPositionOrigin}
+      receiptOrigin={receiptOrigin}
     />
   );
 };

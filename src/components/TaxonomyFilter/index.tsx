@@ -10,16 +10,49 @@ import {
   getTaxonomyCode
 } from '../../api/taxonomy';
 import { useTranslation } from 'react-i18next';
-import { useFormDependencies } from '../../hooks/useFormDependecies'; // Adjust path
+import { useFormDependencies } from '../../hooks/useFormDependecies';
 
 type TaxonomyFilterLayout = 'default' | 'singleRow';
 
 type TaxonomyFilterRenderProps = {
   orgType: React.ReactNode;
-  macroAreaCode: React.ReactNode;
-  serviceTypeCode: React.ReactNode;
+  macroArea: React.ReactNode;
+  serviceType: React.ReactNode;
   collectingReason: React.ReactNode;
   taxonomyCode: React.ReactNode;
+};
+
+/**
+ * Field names configuration for the TaxonomyFilter.
+ * Allows customization for different use cases:
+ * - Creation mode: uses names matching DebtPositionTypeRequestBody (macroArea, serviceType)
+ * - Search mode: uses names matching API query params (macroAreaCode, serviceTypeCode)
+ */
+type TaxonomyFieldNames = {
+  orgType: string;
+  macroArea: string;
+  serviceType: string;
+  collectingReason: string;
+  taxonomyCode: string;
+};
+
+const DEFAULT_FIELD_NAMES: TaxonomyFieldNames = {
+  orgType: 'orgType',
+  macroArea: 'macroArea',
+  serviceType: 'serviceType',
+  collectingReason: 'collectingReason',
+  taxonomyCode: 'taxonomyCode'
+};
+
+/**
+ * Field names for search/filter mode (legacy naming convention)
+ */
+export const SEARCH_FIELD_NAMES: TaxonomyFieldNames = {
+  orgType: 'orgType',
+  macroArea: 'macroAreaCode',
+  serviceType: 'serviceTypeCode',
+  collectingReason: 'collectingReason',
+  taxonomyCode: 'taxonomyCode'
 };
 
 type TaxonomyFilterProps = {
@@ -39,92 +72,100 @@ type TaxonomyFilterProps = {
    * @default false
    */
   disableFieldReset?: boolean;
+  /**
+   * Custom field names for form fields.
+   * Use DEFAULT_FIELD_NAMES for creation (matches DebtPositionTypeRequestBody)
+   * Use SEARCH_FIELD_NAMES for search (matches API query params)
+   * @default DEFAULT_FIELD_NAMES
+   */
+  fieldNames?: TaxonomyFieldNames;
 };
 
 export const TaxonomyFilter = ({
   layout = 'default',
   render,
   requiredFields = false,
-  disableFieldReset = false
+  disableFieldReset = false,
+  fieldNames = DEFAULT_FIELD_NAMES
 }: TaxonomyFilterProps) => {
   const form = useFormContext();
   const { control, watch } = form;
   const { t } = useTranslation();
 
-  // field order for dependency tracking
+  // Field order for dependency tracking using configured field names
   const fieldOrder = [
-    'orgType',
-    'macroAreaCode',
-    'serviceTypeCode',
-    'collectingReason',
-    'taxonomyCode'
+    fieldNames.orgType,
+    fieldNames.macroArea,
+    fieldNames.serviceType,
+    fieldNames.collectingReason,
+    fieldNames.taxonomyCode
   ];
 
-  // resets fields after changes in previous fields
-  // keys are used to reset mui select
-  // Always call useFormDependencies (never conditionally - React hooks rule)
-  // The hook now handles first-render skip internally, so we don't need disabled flag
+  // Resets fields after changes in previous fields
   const { keys } = useFormDependencies({
     form,
     fieldOrder,
-    disabled: disableFieldReset // Still pass flag for cases where it's explicitly needed
+    disabled: disableFieldReset
   });
 
-  // values for conditional rendering and query params
-  const organizationType = watch('orgType');
-  const macroAreaCode = watch('macroAreaCode');
-  const serviceTypeCode = watch('serviceTypeCode');
-  const collectionReason = watch('collectingReason');
+  // Values for conditional rendering and query params
+  const organizationType = watch(fieldNames.orgType);
+  const macroArea = watch(fieldNames.macroArea);
+  // serviceType field contains the serviceTypeCode (e.g., "100")
+  const serviceTypeCode = watch(fieldNames.serviceType);
+  const collectingReason = watch(fieldNames.collectingReason);
 
   // Prepare all selects as React nodes
   const fields: TaxonomyFilterRenderProps = {
     orgType: (
       <FormComponent.ControlledSelect
         required={requiredFields}
-        key={keys.orgType}
-        name="orgType"
+        key={keys[fieldNames.orgType]}
+        name={fieldNames.orgType}
         control={control}
         label={t('taxonomy.orgType.label')}
         data-testid="orgType"
         fetchFn={getOrganizationsTypes}
       />
     ),
-    macroAreaCode: (
+    macroArea: (
       <FormComponent.ControlledSelect
         required={requiredFields}
-        key={keys.macroAreaCode}
-        name="macroAreaCode"
+        key={keys[fieldNames.macroArea]}
+        name={fieldNames.macroArea}
         control={control}
         label={t('taxonomy.macroArea.label')}
-        data-testid="macroAreaCode"
+        data-testid="macroArea"
         fetchFn={() => getMacroAreas({ organizationType })}
         disabled={!organizationType}
       />
     ),
-    serviceTypeCode: (
+    serviceType: (
       <FormComponent.ControlledSelect
         required={requiredFields}
-        key={keys.serviceTypeCode}
-        name="serviceTypeCode"
+        key={keys[fieldNames.serviceType]}
+        name={fieldNames.serviceType}
         control={control}
         label={t('taxonomy.serviceType.label')}
-        data-testid="serviceTypeCode"
-        fetchFn={() => getServiceTypes({ organizationType, macroAreaCode })}
-        disabled={!macroAreaCode}
+        data-testid="serviceType"
+        fetchFn={() =>
+          getServiceTypes({ organizationType, macroAreaCode: macroArea })
+        }
+        disabled={!macroArea}
       />
     ),
     collectingReason: (
       <FormComponent.ControlledSelect
         required={requiredFields}
-        key={keys.collectingReason}
-        name="collectingReason"
+        key={keys[fieldNames.collectingReason]}
+        name={fieldNames.collectingReason}
         control={control}
         label={t('taxonomy.collectingReason.label')}
         data-testid="collectingReason"
         fetchFn={() =>
           getCollectionReasons({
             organizationType,
-            macroAreaCode,
+            macroAreaCode: macroArea,
             serviceTypeCode
           })
         }
@@ -134,20 +175,20 @@ export const TaxonomyFilter = ({
     taxonomyCode: (
       <FormComponent.ControlledSelect
         required={requiredFields}
-        key={keys.taxonomyCode}
-        name="taxonomyCode"
+        key={keys[fieldNames.taxonomyCode]}
+        name={fieldNames.taxonomyCode}
         control={control}
         label={t('taxonomy.taxonomyCode.label')}
         data-testid="taxonomyCode"
         fetchFn={() =>
           getTaxonomyCode({
             organizationType,
-            macroAreaCode,
+            macroAreaCode: macroArea,
             serviceTypeCode,
-            collectionReason
+            collectionReason: collectingReason
           })
         }
-        disabled={!collectionReason}
+        disabled={!collectingReason}
       />
     )
   };
@@ -161,8 +202,8 @@ export const TaxonomyFilter = ({
     return (
       <>
         {fields.orgType}
-        {fields.macroAreaCode}
-        {fields.serviceTypeCode}
+        {fields.macroArea}
+        {fields.serviceType}
         {fields.collectingReason}
         {fields.taxonomyCode}
       </>
@@ -173,9 +214,9 @@ export const TaxonomyFilter = ({
   return (
     <Stack gap={2} data-testid="taxonomy-filter-default">
       {fields.orgType}
-      {fields.macroAreaCode}
+      {fields.macroArea}
       <Stack direction="row" gap={2}>
-        {fields.serviceTypeCode}
+        {fields.serviceType}
         {fields.collectingReason}
       </Stack>
       {fields.taxonomyCode}

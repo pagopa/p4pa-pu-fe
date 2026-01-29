@@ -131,7 +131,7 @@ describe('useClassificationAlert Hook', () => {
   const createMockData = (
     overrides: Partial<ClassificationDetailDTO> = {}
   ): ClassificationDetailDTO => ({
-    payed: false,
+    paid: false,
     reported: false,
     collected: false,
     label: ClassificationsEnum.UNKNOWN,
@@ -175,9 +175,9 @@ describe('useClassificationAlert Hook', () => {
   });
 
   describe('Special case: Unknown Treasury Reversals', () => {
-    it('returns error severity when not payed, not reported, but collected', () => {
+    it('returns error severity when not paid, not reported, but collected', () => {
       const mockData = createMockData({
-        payed: false,
+        paid: false,
         reported: false,
         collected: true,
         label: ClassificationsEnum.IUD_RT_IUF
@@ -194,9 +194,9 @@ describe('useClassificationAlert Hook', () => {
       });
     });
 
-    it('does not trigger special case when payed is true', () => {
+    it('does not trigger special case when paid is true', () => {
       const mockData = createMockData({
-        payed: true,
+        paid: true,
         reported: false,
         collected: true,
         label: ClassificationsEnum.IUD_RT_IUF
@@ -215,7 +215,7 @@ describe('useClassificationAlert Hook', () => {
 
     it('does not trigger special case when reported is true', () => {
       const mockData = createMockData({
-        payed: false,
+        paid: false,
         reported: true,
         collected: true,
         label: ClassificationsEnum.IUD_RT_IUF
@@ -234,7 +234,7 @@ describe('useClassificationAlert Hook', () => {
 
     it('does not trigger special case when collected is false', () => {
       const mockData = createMockData({
-        payed: false,
+        paid: false,
         reported: false,
         collected: false,
         label: ClassificationsEnum.IUD_RT_IUF
@@ -256,7 +256,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns success severity for IUD_RT_IUF classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.IUD_RT_IUF,
-        payed: true,
+        paid: true,
         reported: true,
         collected: false
       });
@@ -275,7 +275,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns success severity for RT_IUF classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.RT_IUF,
-        payed: false,
+        paid: false,
         reported: true,
         collected: false
       });
@@ -294,7 +294,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns success severity for RT_TES classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.RT_TES,
-        payed: false,
+        paid: false,
         reported: true,
         collected: true
       });
@@ -313,7 +313,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns success severity for IUD_RT_IUF_TES classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.IUD_RT_IUF_TES,
-        payed: true,
+        paid: true,
         reported: true,
         collected: true
       });
@@ -332,7 +332,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns success severity for RT_IUF_TES classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.RT_IUF_TES,
-        payed: false,
+        paid: false,
         reported: true,
         collected: true
       });
@@ -353,7 +353,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns warning severity for RT_NO_IUF classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.RT_NO_IUF,
-        payed: false,
+        paid: false,
         reported: true,
         collected: false
       });
@@ -372,7 +372,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns warning severity for RT_NO_IUD classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.RT_NO_IUD,
-        payed: false,
+        paid: false,
         reported: true,
         collected: false
       });
@@ -391,7 +391,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns warning severity for IUF_NO_TES classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.IUF_NO_TES,
-        payed: false,
+        paid: false,
         reported: false,
         collected: false
       });
@@ -412,7 +412,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns error severity for DOPPI classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.DOPPI,
-        payed: true,
+        paid: true,
         reported: true,
         collected: false
       });
@@ -431,7 +431,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns error severity for IUV_NO_RT classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.IUV_NO_RT,
-        payed: true,
+        paid: true,
         reported: false,
         collected: false
       });
@@ -450,7 +450,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns error severity for TES_NO_IUF_OR_IUV classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.TES_NO_IUF_OR_IUV,
-        payed: false,
+        paid: false,
         reported: false,
         collected: true
       });
@@ -469,7 +469,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns error severity for TES_NO_IUF_OR_IUV classification without special case', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.TES_NO_IUF_OR_IUV,
-        payed: true,
+        paid: true,
         reported: false,
         collected: true
       });
@@ -488,7 +488,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns error severity for UNKNOWN classification', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.UNKNOWN,
-        payed: false,
+        paid: false,
         reported: false,
         collected: false
       });
@@ -509,7 +509,7 @@ describe('useClassificationAlert Hook', () => {
     it('falls back to UNKNOWN classification when label is not in map', () => {
       const mockData = createMockData({
         label: 'INVALID_CLASSIFICATION' as ClassificationsEnum,
-        payed: false,
+        paid: false,
         reported: false,
         collected: false
       });
@@ -528,7 +528,7 @@ describe('useClassificationAlert Hook', () => {
     it('handles undefined/null label gracefully', () => {
       const mockData = createMockData({
         label: undefined as any,
-        payed: false,
+        paid: false,
         reported: false,
         collected: false
       });
@@ -549,7 +549,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns the same object reference for the same input', () => {
       const mockData = createMockData({
         label: ClassificationsEnum.IUD_RT_IUF,
-        payed: true,
+        paid: true,
         reported: true,
         collected: false
       });
@@ -568,7 +568,7 @@ describe('useClassificationAlert Hook', () => {
     it('returns different object when data changes', () => {
       let mockData = createMockData({
         label: ClassificationsEnum.IUD_RT_IUF,
-        payed: true,
+        paid: true,
         reported: true,
         collected: false
       });
@@ -582,7 +582,7 @@ describe('useClassificationAlert Hook', () => {
 
       mockData = createMockData({
         label: ClassificationsEnum.DOPPI,
-        payed: false,
+        paid: false,
         reported: false,
         collected: false
       });
@@ -599,7 +599,7 @@ describe('useClassificationAlert Hook', () => {
   describe('Edge cases', () => {
     it('handles Boolean conversion for falsy values', () => {
       const mockData = createMockData({
-        payed: 0 as any,
+        paid: 0 as any,
         reported: '' as any,
         collected: null as any,
         label: ClassificationsEnum.IUD_RT_IUF
@@ -618,7 +618,7 @@ describe('useClassificationAlert Hook', () => {
 
     it('handles Boolean conversion for truthy values', () => {
       const mockData = createMockData({
-        payed: false,
+        paid: false,
         reported: false,
         collected: 'any string' as any,
         label: ClassificationsEnum.IUD_RT_IUF
@@ -645,7 +645,7 @@ describe('useClassificationAlert Hook', () => {
 
       testCases.forEach((classification) => {
         const mockData = createMockData({
-          payed: false,
+          paid: false,
           reported: false,
           collected: true,
           label: classification

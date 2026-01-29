@@ -20,6 +20,8 @@ import ClientSilDetail from './ClientSilDetail';
 import { OrgSilServiceEdit } from './OrgSilServiceCreate/OrgSilServiceEdit';
 import SpontaneousFormPage from './SpontaneousForm/SpontaneousFormPage/SpontaneousFormPage';
 import SpontaneousFormDetail from './SpontaneousForm/SpontaneousFormDetail/SpontaneousFormDetail';
+import SpontaneousFormCreate from './SpontaneousForm/SpontaneousFormCreate/SpontaneousFormCreate';
+import SpontaneousFormEdit from './SpontaneousForm/SpontaneousFormEdit/SpontaneousFormEdit';
 
 const deployPath = config.deployPath;
 
@@ -246,6 +248,32 @@ export const backofficeRoutes = [
               hideBreadcrumbs: true,
               backButton: true,
               backFallbackRoute: 'SPONTANEOUS_FORM',
+              sidebar: {
+                visible: false
+              }
+            }
+          },
+          {
+            id: 'SPONTANEOUS_FORM_CREATE',
+            path: 'create',
+            element: <SpontaneousFormCreate />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
+              sidebar: {
+                visible: false
+              }
+            }
+          },
+          {
+            id: 'SPONTANEOUS_FORM_EDIT',
+            path: ':spontaneousFormId/edit',
+            element: <SpontaneousFormEdit />,
+            handle: {
+              backButton: true,
+              backButtonText: 'commons.exit',
+              hideBreadcrumbs: true,
               sidebar: {
                 visible: false
               }

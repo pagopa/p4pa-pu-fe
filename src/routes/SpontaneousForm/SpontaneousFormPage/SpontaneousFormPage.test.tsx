@@ -158,9 +158,9 @@ describe('SpontaneousFormPage', () => {
     const createButton = screen.getByText('commons.createNewOne');
     fireEvent.click(createButton);
 
-    // expect(navigateMock).toHaveBeenCalledWith(
-    //   PageRoutes.SPONTANEOUS_FORM_CREATE
-    // );
+    expect(navigateMock).toHaveBeenCalledWith(
+      PageRoutes.SPONTANEOUS_FORM_CREATE
+    );
   });
 
   it('displays correct column headers', () => {

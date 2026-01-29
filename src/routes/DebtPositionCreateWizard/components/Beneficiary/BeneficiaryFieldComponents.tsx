@@ -915,13 +915,19 @@ export function TaxonomyCodeField<T extends FieldValues>(
     context.getValues(field.name as Path<T>) ?? field.value ?? '';
 
   const [validCode, setValidCode] = useState<boolean>(false);
+  // Track whether the user has attempted to validate the taxonomy code and received a response
+  const [hasValidationResult, setHasValidationResult] =
+    useState<boolean>(false);
+  // Track whether validation is in progress
+  const [isValidating, setIsValidating] = useState<boolean>(false);
 
   const handleOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const taxonomyCode = e.target.value.trim();
     field.onChange(taxonomyCode);
-    // set invalid if previously valid at onChange event
-    if (validCode) {
+    // Reset validation state when value changes
+    if (validCode || hasValidationResult) {
       setValidCode(false);
+      setHasValidationResult(false);
     }
   };
 
@@ -934,22 +940,63 @@ export function TaxonomyCodeField<T extends FieldValues>(
           'taxCode'
         )
       )
-      .trim();
+      ?.trim();
     if (!taxCode || !actualValue) return; // skip validation if taxCode is empty
+
+    // Start validation - don't show error during loading
+    setIsValidating(true);
 
     validateTaxonomyCategoryService.mutate(
       { data: { orgFiscalCode: taxCode, taxonomyCategory: actualValue } },
       {
-        onSuccess: (response) => setValidCode(response.data),
-        onError: () => setValidCode(false)
+        onSuccess: (response) => {
+          setValidCode(response.data);
+          setHasValidationResult(true);
+          setIsValidating(false);
+        },
+        onError: () => {
+          setValidCode(false);
+          setHasValidationResult(true);
+          setIsValidating(false);
+        }
       }
     );
   };
 
-  const validateCodeHelperText =
+  // Show validation error only if:
+  // 1. We have a validation result (API responded) AND the code is not valid
+  // 2. AND we're not currently validating (to avoid flash)
+  // 3. Or there's a form error (hasFieldError)
+  const showValidationError =
+    hasValidationResult &&
     !validCode &&
-    !disabled &&
-    t('debtPositionCreateWizard.step3.beneficiary.taxonomyCode.invalid');
+    !isValidating &&
+    actualValue !== '' &&
+    !disabled;
+
+  // Show success message when code is validated correctly
+  const showValidationSuccess =
+    hasValidationResult &&
+    validCode &&
+    !isValidating &&
+    actualValue !== '' &&
+    !disabled;
+
+  const getHelperText = () => {
+    const formErrorMessage = getFieldErrorMessage('taxonomyCode', context);
+    if (formErrorMessage) {
+      return formErrorMessage;
+    }
+    if (showValidationError) {
+      return t(
+        'debtPositionCreateWizard.step3.beneficiary.taxonomyCode.invalid'
+      );
+    }
+    if (showValidationSuccess) {
+      return t('debtPositionCreateWizard.step3.beneficiary.taxonomyCode.valid');
+    }
+    return undefined;
+  };
 
   return (
     <Stack direction="row" spacing={2} alignItems="top">
@@ -962,14 +1009,8 @@ export function TaxonomyCodeField<T extends FieldValues>(
         )}
         required
         disabled={disabled}
-        error={
-          hasFieldError('taxonomyCode', context) ||
-          (!validCode && actualValue !== '' && !disabled)
-        }
-        helperText={
-          getFieldErrorMessage('taxonomyCode', context) ||
-          validateCodeHelperText
-        }
+        error={hasFieldError('taxonomyCode', context) || showValidationError}
+        helperText={getHelperText()}
         value={actualValue}
         onChange={(e) =>
           handleOnChange(e as React.ChangeEvent<HTMLInputElement>)

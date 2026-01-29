@@ -12,6 +12,8 @@ import FilterContainer, {
 } from '../../../components/FilterContainer/FilterContainer';
 import { PagedSpontaneousForm } from '../../../../generated/data-contracts';
 import SpontaneousFormDataGrid from './components/SpontaneousFormDataGrid';
+import { PageRoutes } from '../..';
+import { useNavigate } from 'react-router';
 
 type SpontaneousFormFilters = {
   code?: string;
@@ -20,6 +22,7 @@ type SpontaneousFormFilters = {
 export const SpontaneousFormPage = () => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const {
     state: { organizationId }
@@ -56,8 +59,7 @@ export const SpontaneousFormPage = () => {
           {
             icon: <Add />,
             buttonText: t('commons.createNewOne'),
-            onActionClick: () => console.log('redirect to create')
-            //navigate(PageRoutes.SPONTANEOUS_FORM_CREATE)
+            onActionClick: () => navigate(PageRoutes.SPONTANEOUS_FORM_CREATE)
           }
         ]}
         description={t('spontaneousForm.description')}

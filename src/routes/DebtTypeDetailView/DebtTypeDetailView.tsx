@@ -278,18 +278,29 @@ export const DebtTypeDetailView = () => {
         onActionClick: handleDirectDeleteClick
       };
 
-      const enableButton = {
-        icon: <Check />,
-        buttonText: t('commons.enable'),
-        color: 'primary' as const,
-        variant: 'contained' as const,
-        disabled: false,
-        onActionClick: handleEnableClick
-      };
+      const canEnable =
+        data?.response?.debtPositionTypeId != undefined &&
+        data.response.debtPositionTypeId >= 0;
+
+      if (canEnable) {
+        const enableButton = {
+          icon: <Check />,
+          buttonText: t('commons.enable'),
+          color: 'primary' as const,
+          variant: 'contained' as const,
+          disabled: false,
+          onActionClick: handleEnableClick
+        };
+
+        return {
+          titleActions: [deleteButton, enableButton],
+          bottomActions: [deleteButton, enableButton]
+        };
+      }
 
       return {
-        titleActions: [deleteButton, enableButton],
-        bottomActions: [deleteButton, enableButton]
+        titleActions: [deleteButton],
+        bottomActions: [deleteButton]
       };
     }
   }, [data?.response?.flagActive, t]);

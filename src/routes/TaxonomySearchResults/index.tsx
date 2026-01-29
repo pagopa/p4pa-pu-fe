@@ -2,7 +2,10 @@ import { useTranslation } from 'react-i18next';
 import { Stack } from '@mui/material';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import TaxonomyDataGrid from './TaxonomyDataGrid';
-import { TaxonomyFilter } from '../../components/TaxonomyFilter';
+import {
+  TaxonomyFilter,
+  SEARCH_FIELD_NAMES
+} from '../../components/TaxonomyFilter';
 import { FieldValues, FormProvider, useForm, Path } from 'react-hook-form';
 import { FormComponent } from '../../components/FormComponent';
 import { getTaxonomies } from '../../api/taxonomy';
@@ -74,7 +77,10 @@ const TaxonomySearchResults = () => {
           {error && <ErrorMessage variant="outlined" />}
           <form noValidate onSubmit={form.handleSubmit(applyFilters)}>
             <Stack direction="row" gap={3} alignItems="center">
-              <TaxonomyFilter layout="singleRow" />
+              <TaxonomyFilter
+                layout="singleRow"
+                fieldNames={SEARCH_FIELD_NAMES}
+              />
               <FormComponent.Button type="submit">Cerca</FormComponent.Button>
             </Stack>
           </form>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Box, Button, Stack } from '@mui/material';
 import { Delete, Edit } from '@mui/icons-material';
-import { useTranslation } from 'react-i18next';
+import { Trans, useTranslation } from 'react-i18next';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { AxiosError } from 'axios';
 import { useStore } from '../../../store/GlobalStore';
@@ -25,6 +25,7 @@ const SpontaneousFormDetail = () => {
   } = useStore();
 
   const [errorDialogOpen, setErrorDialogOpen] = useState(false);
+  const [editWarningDialogOpen, setEditWarningDialogOpen] = useState(false);
 
   const { data, isLoading } = spontaneousFormApi.getSpontaneousFormById({
     organizationId: Number(organizationId),
@@ -42,6 +43,9 @@ const SpontaneousFormDetail = () => {
     formDetail?.dictionary && Object.keys(formDetail.dictionary).length > 0
   );
 
+  // Check if form is in use by any debt position types
+  const isInUse = (formDetail?.debtPositionTypeOrgCount ?? 0) > 0;
+
   const handleDeleteClick = async () => {
     if (!formDetail?.spontaneousFormId) return;
 
@@ -56,6 +60,35 @@ const SpontaneousFormDetail = () => {
         utils.notify.emit(t('spontaneousForm.detail.deleteError'), 'error');
       }
     }
+  };
+
+  const navigateToEdit = () => {
+    if (!spontaneousFormId) return;
+
+    const editPath = generatePath(PageRoutes.SPONTANEOUS_FORM_EDIT, {
+      spontaneousFormId
+    });
+    navigate(editPath);
+  };
+
+  const handleEditClick = () => {
+    if (!spontaneousFormId) return;
+
+    // If form is in use, show warning dialog first
+    if (isInUse) {
+      setEditWarningDialogOpen(true);
+    } else {
+      navigateToEdit();
+    }
+  };
+
+  const handleEditWarningConfirm = () => {
+    setEditWarningDialogOpen(false);
+    navigateToEdit();
+  };
+
+  const handleEditWarningCancel = () => {
+    setEditWarningDialogOpen(false);
   };
 
   const handleErrorDialogClose = () => {
@@ -151,6 +184,7 @@ const SpontaneousFormDetail = () => {
             startIcon={<Edit />}
             color="primary"
             variant="contained"
+            onClick={handleEditClick}
             data-testid="edit-button"
           >
             {t('commons.edit')}
@@ -166,6 +200,28 @@ const SpontaneousFormDetail = () => {
         onConfirm={handleErrorDialogClose}
         onClose={handleErrorDialogClose}
         data-testid="error-dialog"
+      />
+
+      <GenericDialog
+        open={editWarningDialogOpen}
+        title={t('spontaneousForm.detail.editWarningTitle')}
+        message={
+          <Trans
+            i18nKey="spontaneousForm.detail.editWarningMessage"
+            values={{
+              formCode: formDetail?.code,
+              count: formDetail?.debtPositionTypeOrgCount
+            }}
+            components={{
+              bold: <strong />
+            }}
+          />
+        }
+        confirmLabel={t('spontaneousForm.detail.confirmEdit')}
+        cancelLabel={t('commons.cancel')}
+        onConfirm={handleEditWarningConfirm}
+        onClose={handleEditWarningCancel}
+        data-testid="edit-warning-dialog"
       />
     </>
   );

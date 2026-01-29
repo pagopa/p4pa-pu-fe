@@ -28,3 +28,18 @@ export const truncateParams = <T extends Record<string, unknown>>(
     ])
   ) as T;
 };
+
+/**
+ * Trims leading and trailing whitespace from string values in an object.
+ * @param obj - Object containing key-value pairs
+ * @returns New object with trimmed string values
+ */
+export const trimStringValues = <T extends Record<string, unknown>>(
+  obj: T
+): T =>
+  Object.fromEntries(
+    Object.entries(obj).map(([key, value]) => [
+      key,
+      typeof value === 'string' ? value.trim() : value
+    ])
+  ) as T;

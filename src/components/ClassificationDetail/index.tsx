@@ -13,6 +13,8 @@ import { StatusBar } from '../StatusBar/StatusBar';
 import { PageRoutes } from '../../routes';
 import { OpenInNew } from '@mui/icons-material';
 import { buildTelematicReceiptDetailPath } from '../../utils/receiptNavigation';
+import { ClassificationsEnum } from '../../../generated/data-contracts';
+import ReceiptDetailWarningBanner from '../ReceiptDetail/ReceiptDetailWarningBanner';
 
 export const ClassificationDetails = () => {
   const store = useStore();
@@ -41,7 +43,12 @@ export const ClassificationDetails = () => {
 
     const tabs = [];
 
-    if (data.payed) {
+    const showTelematicReceiptTab =
+      data.paid ||
+      (data.label === ClassificationsEnum.IUD_NO_RT &&
+        data.flagPaymentNotification);
+
+    if (showTelematicReceiptTab) {
       tabs.push({
         index: 0,
         label: t('classifications.detail.sections.telematicReceipt.title'),
@@ -278,43 +285,58 @@ export const ClassificationDetails = () => {
           </TabList>
         )}
 
-        {data.payed && (
+        {(data.paid ||
+          (data.label == ClassificationsEnum.IUD_NO_RT &&
+            data.flagPaymentNotification)) && (
           <TabPanel
             value="telematic-receipt"
             sx={{ padding: 0 }}
             data-testid="ClassificationDetailTabPanelDebtType"
           >
             <Stack spacing={3}>
-              <DetailContainer
-                sections={[
-                  {
-                    inline: true,
-                    title: {
-                      textTransform: 'uppercase',
-                      fontWeight: 700,
-                      fontSize: '14px',
-                      label: t(`${targetTranslationDebtType}.title`)
-                    },
-                    data: debtTypeData,
-                    footerLink: {
-                      label: t(`${targetTranslationDebtType}.link`),
-                      icon: <OpenInNew />,
-                      iconPosition: 'right',
-                      onLinkClick: () => {
-                        if (data?.receiptPaymentRequestId && data?.iud) {
-                          navigate(
-                            buildTelematicReceiptDetailPath(
-                              data.receiptPaymentRequestId,
-                              data.iud
-                            )
-                          );
+              {data.paid && (
+                <>
+                  {data.receiptOrigin && data.debtPositionOrigin && (
+                    <ReceiptDetailWarningBanner
+                      sx={{ pt: 3 }}
+                      receiptOrigin={data.receiptOrigin}
+                      debtPositionOrigin={data.debtPositionOrigin}
+                    />
+                  )}
+                  <DetailContainer
+                    sections={[
+                      {
+                        inline: true,
+                        title: {
+                          textTransform: 'uppercase',
+                          fontWeight: 700,
+                          fontSize: '14px',
+                          label: t(`${targetTranslationDebtType}.title`)
+                        },
+                        data: debtTypeData,
+                        footerLink: {
+                          label: t(`${targetTranslationDebtType}.link`),
+                          icon: <OpenInNew />,
+                          iconPosition: 'right',
+                          onLinkClick: () => {
+                            if (data?.receiptPaymentRequestId && data?.iud) {
+                              navigate(
+                                buildTelematicReceiptDetailPath(
+                                  data.receiptPaymentRequestId,
+                                  data.iud
+                                )
+                              );
+                            }
+                          }
                         }
                       }
-                    }
-                  }
-                ]}
-              />
-              {data.flagPaymentNotification && (
+                    ]}
+                  />
+                </>
+              )}
+              {(data.flagPaymentNotification ||
+                (data.label == ClassificationsEnum.IUD_NO_RT &&
+                  data.flagPaymentNotification)) && (
                 <DetailContainer
                   sections={[
                     {

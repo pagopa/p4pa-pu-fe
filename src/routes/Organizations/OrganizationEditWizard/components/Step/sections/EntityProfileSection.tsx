@@ -145,15 +145,6 @@ export const EntityProfileSection = ({
               sx={{ mb: 1 }}
             >
               {t('organizationEditWizard.step1.orgLogo.title')}
-              {data.organizationStatus !== 'ACTIVE' && (
-                <Typography
-                  component="span"
-                  color="textSecondary"
-                  sx={{ ml: 1, fontWeight: 400 }}
-                >
-                  - {t('organizationEditWizard.step1.orgLogo.optional')}
-                </Typography>
-              )}
             </Typography>
 
             <Typography variant="body2" color="textSecondary">
@@ -165,18 +156,16 @@ export const EntityProfileSection = ({
               control={control}
               rules={{
                 validate: (value: File | null) => {
-                  if (data.organizationStatus === 'ACTIVE') {
-                    const logoWasRemoved =
-                      data.orgLogo.value !== null && value === null;
-                    const hasLogo =
-                      value !== null ||
-                      (data.orgLogo.value !== null && !logoWasRemoved);
-                    if (!hasLogo) {
-                      return t('organizationEditWizard.step1.orgLogo.required');
-                    }
-                    if (logoWasRemoved) {
-                      return t('organizationEditWizard.step1.orgLogo.required');
-                    }
+                  const logoWasRemoved =
+                    data.orgLogo.value !== null && value === null;
+                  const hasLogo =
+                    value !== null ||
+                    (data.orgLogo.value !== null && !logoWasRemoved);
+                  if (!hasLogo) {
+                    return t('organizationEditWizard.step1.orgLogo.required');
+                  }
+                  if (logoWasRemoved) {
+                    return t('organizationEditWizard.step1.orgLogo.required');
                   }
                   return true;
                 }
