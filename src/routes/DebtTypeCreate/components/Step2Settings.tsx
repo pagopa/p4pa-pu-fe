@@ -23,6 +23,8 @@ import {
   DebtPositionTypeRequestBody
 } from '../../../../generated/data-contracts';
 import { AppPreview } from '../../../components/AppPreview';
+import { PageRoutes } from '../..';
+import ExternalLink from '../../../components/ExternalLink/ExternalLink';
 
 export type Step2Data = Partial<DebtPositionTypeRequestBody> &
   Pick<
@@ -241,19 +243,9 @@ export const Step2Settings = ({
                   <Trans
                     i18nKey="debtTypeCreate.settings.message.guide"
                     components={[
-                      <Link
+                      <ExternalLink
                         key="link"
-                        href="#"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        underline="none"
-                      />,
-                      <Link
-                        key="link"
-                        href="#"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        underline="none"
+                        href={PageRoutes.IO_MESSAGE_GUIDE}
                       />
                     ]}
                   />
