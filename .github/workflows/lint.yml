@@ -19,5 +19,5 @@ jobs:
           yarn generate
           yarn lint --fix
         env:
-          OPENAPI_URL: ${{ vars.OPENAPI_URL }}
-          OPENAPIFILESHARE_URL: ${{ vars.OPENAPIFILESHARE_URL }}
+          OPENAPI_URL: ${{ vars.OPENAPI_URL || '' }}
+          OPENAPIFILESHARE_URL: ${{ vars.OPENAPIFILESHARE_URL || '' }}
