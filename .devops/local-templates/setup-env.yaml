@@ -12,14 +12,6 @@ parameters:
     type: string
     default: ''
 
-  - name: 'vite_apihost'
-    type: string
-    default: ''
-
-  - name: 'vite_fileshare_apihost'
-    type: string
-    default: ''
-
   - name: 'vite_login_url'
     type: string
     default: ''
@@ -31,8 +23,6 @@ steps:
       PU_ENV=${{ parameters.env }} \
       PU_VITE_DEPLOY_PATH=${{ parameters.vite_deploy_path }} \
       PU_VITE_API_TIMEOUT=${{ parameters.vite_api_timeout }} \
-      PU_VITE_APIHOST=${{ parameters.vite_apihost }} \
-      PU_VITE_FILESHARE_APIHOST=${{ parameters.vite_fileshare_apihost }} \
       PU_VITE_LOGIN_URL=${{ parameters.vite_login_url }} \
       bash env.sh
 
