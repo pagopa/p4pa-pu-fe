@@ -9,7 +9,7 @@ export const exportRoutes = [
     children: [
       {
         id: 'EXPORT_FLOWS',
-        path: 'flows/:category',
+        path: 'flowstest/:category',
         element: <ExportFlow />,
         handle: {
           backButton: true,
