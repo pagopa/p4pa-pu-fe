@@ -86,7 +86,7 @@
     "generate-fileshare-client": "node scripts/generate-api.js fileshare client",
     "generate-fileshare-contracts": "node scripts/generate-api.js fileshare contracts",
     "generate-zod-schema": "yarn ts-to-zod --all",
-    "replace-datetime": "node replaceDatetime.js",
+    "replace-datetime": "node scripts/replaceDatetime.js",
     "generate": "yarn generate-api-client && yarn generate-api-contracts && yarn generate-fileshare-client && yarn generate-fileshare-contracts && yarn generate-zod-schema && yarn replace-datetime",
     "dev": "yarn generate && vite",
     "build": "yarn generate && tsc -b && vite build",
