@@ -11,7 +11,7 @@ parameters:
   - name: 'vite_api_timeout'
     type: string
     default: ''
-
+    
   - name: 'vite_apihost'
     type: string
     default: ''
