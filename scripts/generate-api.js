@@ -4,13 +4,21 @@ const args = process.argv.slice(2);
 const type = args[0]; // 'api' or 'fileshare'
 const mode = args[1]; // 'client' or 'contracts'
 
-const envVar = type === 'fileshare' ? 'OPENAPIFILESHARE_URL' : 'OPENAPI_URL';
+const DEFAULT_URLS = {
+    api: 'https://raw.githubusercontent.com/pagopa/p4pa-pu-bff/refs/heads/develop/openapi/generated.openapi.json',
+    fileshare: 'https://raw.githubusercontent.com/pagopa/p4pa-fileshare/refs/heads/develop/openapi/generated.openapi.json'
+};
+
+const ENV_VARS = {
+    api: 'OPENAPI_URL',
+    fileshare: 'OPENAPIFILESHARE_URL'
+};
+
+const envVar = ENV_VARS[type];
 let url = process.env[envVar];
 
-if (url === 'undefined' || !url) {
-    url = type === 'fileshare'
-        ? 'https://raw.githubusercontent.com/pagopa/p4pa-fileshare/refs/heads/develop/openapi/generated.openapi.json'
-        : 'https://raw.githubusercontent.com/pagopa/p4pa-pu-bff/refs/heads/develop/openapi/generated.openapi.json';
+if (!url || url === 'undefined') {
+    url = DEFAULT_URLS[type];
 }
 
 const commands = {
