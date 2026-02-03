@@ -7,6 +7,7 @@ import {
   useTheme,
   Stack
 } from '@mui/material';
+import { TypographyProps } from '@mui/material/Typography';
 import Close from '@mui/icons-material/Close';
 import { DetailField } from '../DetailField';
 
@@ -16,6 +17,7 @@ export type DrawerProps = {
   title: string;
   children?: React.ReactNode;
   titleDecoration?: React.ReactNode;
+  titleVariant?: TypographyProps['variant'];
 };
 
 export const Drawer: React.FC<DrawerProps> & { Field: typeof DetailField } = ({
@@ -23,7 +25,8 @@ export const Drawer: React.FC<DrawerProps> & { Field: typeof DetailField } = ({
   onClose,
   title,
   children,
-  titleDecoration
+  titleDecoration,
+  titleVariant = 'h6'
 }: DrawerProps) => {
   const theme = useTheme();
 
@@ -55,7 +58,7 @@ export const Drawer: React.FC<DrawerProps> & { Field: typeof DetailField } = ({
       </Box>
       <Stack direction="row" alignItems="center" gap={1} mb={3}>
         {titleDecoration ?? null}
-        <Typography variant="h6" fontWeight={700}>
+        <Typography variant={titleVariant} fontWeight={700}>
           {title}
         </Typography>
       </Stack>
