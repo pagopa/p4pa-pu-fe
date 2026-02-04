@@ -95,5 +95,15 @@ describe('Sidebar component', () => {
     expect(screen.queryByText('commons.routes.FLOWS')).toBeDefined();
     expect(screen.queryByText('commons.routes.CLASSIFICATIONS')).toBeDefined();
     expect(screen.queryByText('commons.routes.ASSESSMENT')).toBeDefined();
+    expect(screen.queryByText('commons.routes.STATISTICS')).toBeDefined();
+  });
+
+  it('should render statistics section for all roles', () => {
+    setOperatorRole(OperatorRole.ROLE_OPER);
+    vi.spyOn(utils.roles, 'useIsSuperAdmin').mockImplementation(() => false);
+
+    renderSidebar();
+
+    expect(screen.queryByText('commons.routes.STATISTICS')).toBeDefined();
   });
 });
