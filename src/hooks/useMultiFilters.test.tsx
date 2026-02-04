@@ -87,7 +87,6 @@ describe('useMultiFilters', () => {
         'AMOUNT',
         'BILL_CODE',
         'DOCUMENT_CODE',
-        'IUV',
         'PAYER',
         'REPORT_ID',
         'VALUE_DATE'
