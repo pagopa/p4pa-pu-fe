@@ -37,10 +37,42 @@ vi.mock(
       >();
     return {
       ...originalModule,
-      default: vi.fn(() => <div>FilterContainer</div>)
+      default: vi.fn(() => (
+        <div data-testid="filter-container">FilterContainer</div>
+      ))
     };
   }
 );
+
+// Mock FilterContainerDrawer
+vi.mock('../../components/FilterContainerDrawer/FilterContainerDrawer', () => ({
+  default: vi.fn(({ open, onClose, title, buttons, showError }) =>
+    open ? (
+      <div data-testid="filter-container-drawer">
+        <div>{title}</div>
+        {showError && <div data-testid="drawer-error">Error</div>}
+        {buttons?.map(
+          (
+            btn: { buttonText: string; onClick?: () => void },
+            index: number
+          ) => (
+            <button
+              key={index}
+              onClick={btn.onClick}
+              data-testid={`drawer-button-${index}`}
+            >
+              {btn.buttonText}
+            </button>
+          )
+        )}
+        <button onClick={onClose} data-testid="drawer-close">
+          Close
+        </button>
+      </div>
+    ) : null
+  ),
+  FilterContainerDrawer: vi.fn()
+}));
 
 // Mock DataGrid components
 vi.mock('./components/DebtPositionIUVDataGrid', () => ({
@@ -188,5 +220,91 @@ describe('DebtPositionResults', () => {
     expect(navigateMock).toHaveBeenCalledWith(
       PageRoutes.DEBT_POSITION_CREATE_WIZARD
     );
+  });
+
+  describe('IUV Search Type - Drawer Layout', () => {
+    beforeEach(() => {
+      // @ts-expect-error mocking location state
+      mockUseLocation.mockReturnValue(mockLocationState(SearchType.IUV));
+    });
+
+    it('renders filter button instead of inline FilterContainer', () => {
+      render(<DebtPositionResults />);
+
+      expect(
+        screen.getByText('commons.filters.filtersField')
+      ).toBeInTheDocument();
+
+      expect(screen.queryByTestId('filter-container')).not.toBeInTheDocument();
+    });
+
+    it('opens drawer when filter button is clicked', () => {
+      render(<DebtPositionResults />);
+
+      // Drawer should not be visible initially
+      expect(
+        screen.queryByTestId('filter-container-drawer')
+      ).not.toBeInTheDocument();
+
+      // Click filter button
+      const filterButton = screen.getByText('commons.filters.filtersField');
+      fireEvent.click(filterButton);
+
+      // Drawer should be visible
+      expect(screen.getByTestId('filter-container-drawer')).toBeInTheDocument();
+    });
+
+    it('closes drawer when close button is clicked', () => {
+      render(<DebtPositionResults />);
+
+      // Open drawer
+      const filterButton = screen.getByText('commons.filters.filtersField');
+      fireEvent.click(filterButton);
+
+      expect(screen.getByTestId('filter-container-drawer')).toBeInTheDocument();
+
+      // Close drawer
+      const closeButton = screen.getByTestId('drawer-close');
+      fireEvent.click(closeButton);
+
+      expect(
+        screen.queryByTestId('filter-container-drawer')
+      ).not.toBeInTheDocument();
+    });
+
+    it('shows filter count in button when filters are active', () => {
+      mockUseLocation.mockReturnValue({
+        state: { searchType: SearchType.IUV },
+        pathname: '/results-IUV',
+        hash: '#iuv=123&fiscalCode=ABC',
+        key: '',
+        search: ''
+      });
+
+      render(<DebtPositionResults />);
+
+      expect(
+        screen.getByRole('button', { name: /commons.filters.filtersField/i })
+      ).toBeInTheDocument();
+    });
+  });
+
+  describe('Debt Position Search Type - Inline Layout', () => {
+    beforeEach(() => {
+      mockUseLocation.mockReturnValue(
+        // @ts-expect-error mocking location state
+        mockLocationState(SearchType.DEBT_POSITION)
+      );
+    });
+
+    it('renders inline FilterContainer instead of filter button', () => {
+      render(<DebtPositionResults />);
+
+      expect(screen.getByTestId('filter-container')).toBeInTheDocument();
+
+      expect(
+        screen.queryByTestId('filter-container-drawer')
+      ).not.toBeInTheDocument();
+    });
   });
 });

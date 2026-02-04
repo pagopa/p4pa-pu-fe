@@ -797,6 +797,7 @@
         "code": "Codice",
         "label": "Codice Documento"
       },
+      "filter": "Filtra",
       "filterResults": "Cerca",
       "filtersField": "Filtri",
       "iuv": {
@@ -1972,7 +1973,7 @@
   },
   "ioMessageGuide": {
     "title": "Come scrivere un messaggio su IO?",
-    "description": "Qui puoi trovare informazione utile per scrivere un messaggio su IO per avvisi di pagamento",
+    "description": "Qui puoi trovare informazioni utili per scrivere un messaggio su IO per avvisi di pagamento",
     "sections": {
       "howToWrite": {
         "title": "Cosa scrivere in un messaggio?",
@@ -2010,7 +2011,7 @@
       },
       "paymentReason": {
         "name": "Oggetto di pagamento",
-        "tooltip": "Motivo per il quale viene emessa l'avviso di pagamento"
+        "tooltip": "Motivo per il quale viene emesso l'avviso di pagamento"
       },
       "dueDate": {
         "name": "Data scadenza"
