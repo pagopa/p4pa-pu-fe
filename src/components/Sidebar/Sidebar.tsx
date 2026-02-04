@@ -60,6 +60,7 @@ export const Sidebar: React.FC = () => {
   const { state } = useStore();
   const isSuperAdmin = utils.roles.useIsSuperAdmin();
   const { organizationId, operatorRole } = state;
+  const isAdmin = isSuperAdmin || operatorRole == 'ROLE_ADMIN';
 
   const menuItems: Array<ISidebarMenuItem> = [
     {
@@ -117,7 +118,7 @@ export const Sidebar: React.FC = () => {
 
   const additionalItems = [];
 
-  if (isSuperAdmin || operatorRole == 'ROLE_ADMIN') {
+  if (isAdmin) {
     const debtypes = [];
 
     // Debtypes catalog only for superAdmin
@@ -237,10 +238,6 @@ export const Sidebar: React.FC = () => {
     end: true
   };
 
-  // STATISTICS SECTION SHOULD BE VISIBLE ONLY IN DEV
-  const showStatistics =
-    import.meta.env.ENV === 'LOCAL' || import.meta.env.ENV === 'DEV';
-
   return (
     <>
       <Grid
@@ -324,27 +321,7 @@ export const Sidebar: React.FC = () => {
               />
             ))}
           </List>
-          <Divider
-            orientation="horizontal"
-            flexItem
-            sx={{ display: lg ? 'block' : 'none' }}
-          />
-          <List
-            sx={styles.list}
-            component="ol"
-            aria-hidden={collapsed && !lg}
-            aria-label={t('commons.sidebar.menudescription')}
-          >
-            {additionalItems.map((item, index) => (
-              <SidebarMenuItem
-                onClick={() => !lg && setCollapsed(true)}
-                collapsed={collapsed}
-                item={item}
-                key={`${item.label}-${index}`}
-              />
-            ))}
-          </List>
-          {showStatistics && (
+          {additionalItems.length > 0 && (
             <>
               <Divider
                 orientation="horizontal"
@@ -357,15 +334,35 @@ export const Sidebar: React.FC = () => {
                 aria-hidden={collapsed && !lg}
                 aria-label={t('commons.sidebar.menudescription')}
               >
-                <SidebarMenuItem
-                  onClick={handleStatisticsClick}
-                  collapsed={collapsed}
-                  item={statisticsItem}
-                  key="statistics"
-                />
+                {additionalItems.map((item, index) => (
+                  <SidebarMenuItem
+                    onClick={() => !lg && setCollapsed(true)}
+                    collapsed={collapsed}
+                    item={item}
+                    key={`${item.label}-${index}`}
+                  />
+                ))}
               </List>
             </>
           )}
+          <Divider
+            orientation="horizontal"
+            flexItem
+            sx={{ display: lg ? 'block' : 'none' }}
+          />
+          <List
+            sx={styles.list}
+            component="ol"
+            aria-hidden={collapsed && !lg}
+            aria-label={t('commons.sidebar.menudescription')}
+          >
+            <SidebarMenuItem
+              onClick={handleStatisticsClick}
+              collapsed={collapsed}
+              item={statisticsItem}
+              key="statistics"
+            />
+          </List>
           <Box sx={styles.hamburgerBox}>
             <Divider
               orientation="horizontal"

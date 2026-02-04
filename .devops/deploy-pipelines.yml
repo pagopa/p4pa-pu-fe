@@ -28,6 +28,8 @@ variables:
     api_host: '$(UAT_API_HOST)'
     fileshare_host: '$(UAT_API_FILESHARE_HOST)'
     login_url: '$(UAT_LOGIN_URL)'
+    openapi_url: '$(UAT_OPENAPI_URL)'
+    openapifileshare_url: '$(UAT_OPENAPIFILESHARE_URL)'
 
   ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     environment: 'PROD'
@@ -41,6 +43,8 @@ variables:
     api_host: '$(PROD_API_HOST)'
     fileshare_host: '$(PROD_API_FILESHARE_HOST)'
     login_url: '$(PROD_LOGIN_URL)'
+    openapi_url: '$(PROD_OPENAPI_URL)'
+    openapifileshare_url: '$(PROD_OPENAPIFILESHARE_URL)'
 
   # every branch different from past will be considered as DEV
   ${{ else }}:
@@ -55,6 +59,8 @@ variables:
     api_host: '$(DEV_API_HOST)'
     fileshare_host: '$(DEV_API_FILESHARE_HOST)'
     login_url: '$(DEV_LOGIN_URL)'
+    openapi_url: '$(DEV_OPENAPI_URL)'
+    openapifileshare_url: '$(DEV_OPENAPIFILESHARE_URL)'
 
 pool:
   vmImage: '$(vmImageNameDefault)'
@@ -78,6 +84,8 @@ stages:
               vite_login_url: '$(login_url)'
 
           - script: |
+              export OPENAPI_URL=$(openapi_url)
+              export OPENAPIFILESHARE_URL=$(openapifileshare_url)
               yarn build
             displayName: 'yarn build'
 
