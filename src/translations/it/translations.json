@@ -1713,7 +1713,7 @@
       },
       "notifications": {
         "title": "Notifiche Esito Pagamento",
-        "radioLabel": "Desideri di ricevere notifiche di che il dovuto è stato pagato?",
+        "radioLabel": "Desideri ricevere notifiche sul pagamento del dovuto?",
         "options": {
           "no": "No",
           "yes": "Si"
