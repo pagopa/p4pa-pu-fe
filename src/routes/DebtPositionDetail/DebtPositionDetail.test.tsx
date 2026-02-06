@@ -1117,4 +1117,118 @@ describe('DebtPositionDetail Component', () => {
       });
     }
   });
+
+  describe('installment remittanceInformation display logic', () => {
+    it('displays originalRemittanceInformation when present', () => {
+      const mockData = { ...mockDebtPositionDetail };
+      mockData.paymentOptions = [
+        {
+          ...mockData.paymentOptions![0],
+          description: 'Payment Option Description',
+          installments: [
+            {
+              ...mockData.paymentOptions![0].installments![0],
+              originalRemittanceInformation: 'Original Remittance Info',
+              remittanceInformation: 'Standard Remittance Info'
+            }
+          ]
+        }
+      ];
+
+      vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+        data: mockData,
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: vi.fn(),
+        isRefetching: false,
+        isSuccess: true,
+        status: 'success',
+        isFetching: false,
+        isPaused: false,
+        isPending: false,
+        fetchStatus: 'idle'
+      } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+      render(<DebtPositionDetail />);
+
+      expect(screen.getByText('Original Remittance Info')).toBeInTheDocument();
+      expect(
+        screen.queryByText('Standard Remittance Info')
+      ).not.toBeInTheDocument();
+    });
+
+    it('falls back to remittanceInformation when originalRemittanceInformation is missing', () => {
+      const mockData = { ...mockDebtPositionDetail };
+      mockData.paymentOptions = [
+        {
+          ...mockData.paymentOptions![0],
+          description: 'Payment Option Description',
+          installments: [
+            {
+              ...mockData.paymentOptions![0].installments![0],
+              originalRemittanceInformation: undefined,
+              remittanceInformation: 'Standard Remittance Info'
+            }
+          ]
+        }
+      ];
+
+      vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+        data: mockData,
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: vi.fn(),
+        isRefetching: false,
+        isSuccess: true,
+        status: 'success',
+        isFetching: false,
+        isPaused: false,
+        isPending: false,
+        fetchStatus: 'idle'
+      } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+      render(<DebtPositionDetail />);
+
+      expect(screen.getByText('Standard Remittance Info')).toBeInTheDocument();
+    });
+
+    it('falls back to payment option description when both remittanceInformation fields are missing', () => {
+      const mockData = { ...mockDebtPositionDetail };
+      mockData.paymentOptions = [
+        {
+          ...mockData.paymentOptions![0],
+          description: 'Fallback Description',
+          installments: [
+            {
+              ...mockData.paymentOptions![0].installments![0],
+              originalRemittanceInformation: undefined,
+              remittanceInformation: ''
+            }
+          ]
+        }
+      ];
+
+      vi.mocked(debtPositions.getDebtPositionDetail).mockReturnValue({
+        data: mockData,
+        isLoading: false,
+        isError: false,
+        error: null,
+        refetch: vi.fn(),
+        isRefetching: false,
+        isSuccess: true,
+        status: 'success',
+        isFetching: false,
+        isPaused: false,
+        isPending: false,
+        fetchStatus: 'idle'
+      } as unknown as UseQueryResult<DebtPositionDetailDTO, Error>);
+
+      render(<DebtPositionDetail />);
+
+      const fallbackElements = screen.getAllByText('Fallback Description');
+      expect(fallbackElements.length).toBeGreaterThanOrEqual(1);
+    });
+  });
 });

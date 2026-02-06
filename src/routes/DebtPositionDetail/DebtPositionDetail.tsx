@@ -417,7 +417,11 @@ const DebtPositionDetail = () => {
     return {
       id: installment.installmentId ?? 0,
       iuv: installment.iuv ?? 'N/A',
-      subject: installment.remittanceInformation || description || 'N/A',
+      subject:
+        installment.originalRemittanceInformation ||
+        installment.remittanceInformation ||
+        description ||
+        'N/A',
       amount: installment.amountCents ?? 0,
       expirationDate: installment.dueDate
         ? format(parseISO(installment.dueDate), 'dd/MM/yyyy')

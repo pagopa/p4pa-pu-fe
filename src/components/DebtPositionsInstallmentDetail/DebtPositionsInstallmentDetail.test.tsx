@@ -106,7 +106,8 @@ describe('DebtPositionsInstallmentDetail', () => {
     debtPositionTypeOrgDescription: 'Test for Create Debt Position',
     debtPositionDescription: 'Debt Position Description',
     debtPositionId: 239,
-    iuv: '302000000000000001'
+    iuv: '302000000000000001',
+    originalRemittanceInformation: 'Original Remittance Info'
   };
 
   const mockUnpaidInstallment = {
@@ -129,9 +130,7 @@ describe('DebtPositionsInstallmentDetail', () => {
     ).mockReturnValue({ data: mockPaidInstallment });
 
     (useLocation as Mock).mockReturnValue({
-      state: {
-        remittanceInformation: 'test remittanceInformation'
-      }
+      state: {}
     });
     setOrganizationId(mockOrganizationId);
   });
@@ -642,5 +641,34 @@ describe('DebtPositionsInstallmentDetail', () => {
     render(<DebtPositionsInstallmentDetail />);
 
     expect(screen.getByTestId('technical-debt-alert')).toBeInTheDocument();
+  });
+
+  describe('remittanceInformation display logic', () => {
+    it('displays originalRemittanceInformation when present', () => {
+      vi.mocked(debtPositions.getInstallmentDetail).mockReturnValue({
+        data: mockPaidInstallment
+      } as any);
+
+      render(<DebtPositionsInstallmentDetail />);
+
+      expect(screen.getByText('Original Remittance Info')).toBeInTheDocument();
+    });
+
+    it('displays dash when originalRemittanceInformation is missing', () => {
+      const installmentWithoutRemittance = {
+        ...mockPaidInstallment,
+        originalRemittanceInformation: undefined
+      };
+
+      vi.mocked(debtPositions.getInstallmentDetail).mockReturnValue({
+        data: installmentWithoutRemittance
+      } as any);
+
+      render(<DebtPositionsInstallmentDetail />);
+
+      expect(
+        screen.queryByText('Original Remittance Info')
+      ).not.toBeInTheDocument();
+    });
   });
 });
