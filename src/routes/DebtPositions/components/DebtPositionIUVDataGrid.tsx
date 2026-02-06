@@ -1,13 +1,13 @@
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
-import { ChipProps, Typography } from '@mui/material';
+import { Box, ChipProps, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../../routes';
 import { generatePath, useNavigate } from 'react-router';
 import {
   InstallmentStatus,
-  InstallmentView,
+  InstallmentViewDTO,
   PagedInstallmentView
 } from '../../../../generated/data-contracts';
 import { formatDate, moneyFormat } from '../../../utils/formatters';
@@ -36,7 +36,7 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
   const safeRows =
     data?.content?.filter((row) => row.installmentId != null) || [];
 
-  const columns: Array<GridColDef<InstallmentView>> = [
+  const columns: Array<GridColDef<InstallmentViewDTO>> = [
     {
       field: 'iuv',
       headerName: t('debtPositionSearchResults.iuv'),
@@ -47,10 +47,12 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
       )
     },
     {
-      field: 'remittanceInformation',
+      field: 'originalRemittanceInformation',
       headerName: t('debtPositionSearchResults.subject'),
       flex: 1,
-      type: 'string'
+      type: 'string',
+      valueGetter: (_value, row) =>
+        row.originalRemittanceInformation || row.remittanceInformation || ''
     },
     {
       field: 'amountCents',
@@ -59,7 +61,7 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
       type: 'number',
       headerAlign: 'left',
       align: 'left',
-      renderCell: (params: GridRenderCellParams<InstallmentView>) =>
+      renderCell: (params: GridRenderCellParams<InstallmentViewDTO>) =>
         moneyFormat(params.value as number)
     },
     {
@@ -67,7 +69,7 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
       headerName: t('debtPositionSearchResults.expirationDate'),
       flex: 1,
       type: 'string',
-      renderCell: (params: GridRenderCellParams<InstallmentView>) =>
+      renderCell: (params: GridRenderCellParams<InstallmentViewDTO>) =>
         formatDate(params.value)
     },
     {
@@ -75,7 +77,7 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
       headerName: t('debtPositionSearchResults.status'),
       flex: 1,
       type: 'string',
-      renderCell: (params: GridRenderCellParams<InstallmentView>) => (
+      renderCell: (params: GridRenderCellParams<InstallmentViewDTO>) => (
         <ChipTruncateTooltip
           label={t(`commons.status.${params.value}`)}
           tooltipLabel={t(`DebtPositions.installment.tooltip.${params.value}`)}
@@ -91,24 +93,28 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
-      renderCell: (params: GridRenderCellParams<InstallmentView>) => (
-        <ReadMore
-          fontSize="small"
-          color="primary"
-          sx={{ cursor: 'pointer' }}
-          onClick={() => {
-            navigate(
-              generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
-                id: params.row.installmentId
-              }),
-              {
-                state: {
-                  remittanceInformation: params.row.remittanceInformation
-                }
-              }
-            );
+      renderCell: (params: GridRenderCellParams<InstallmentViewDTO>) => (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%'
           }}
-        />
+        >
+          <ReadMore
+            fontSize="small"
+            color="primary"
+            sx={{ cursor: 'pointer' }}
+            onClick={() => {
+              navigate(
+                generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
+                  id: params.row.installmentId
+                })
+              );
+            }}
+          />
+        </Box>
       )
     }
   ];
