@@ -269,7 +269,10 @@ export const DebtPositionsInstallmentDetail = () => {
           <DetailContainer
             sections={[
               {
-                description: remittanceInformation || '-',
+                description:
+                  installment?.originalRemittanceInformation ||
+                  remittanceInformation ||
+                  '-',
                 data: installmentDetailData.summaryData,
                 inline: true,
                 footerLink: {
