@@ -164,7 +164,13 @@ export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
           activeStep={currentStep}
         />
 
-        <WizardStepButtons onBack={handleBack} onNext={handleNext} />
+        <WizardStepButtons
+          onBack={handleBack}
+          onNext={handleNext}
+          nextLabel={
+            isLastStep ? 'debtTypeOrgCreate.submit' : 'commons.continue'
+          }
+        />
       </form>
     </FormProvider>
   );
