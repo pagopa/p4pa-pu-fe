@@ -36,7 +36,6 @@ export const mapDebtTypeOrgDetailToForm = (
   if (!response) return {};
 
   const {
-    xsdDefinitionRef,
     debtPositionTypeId,
     flagNotifyOutcomePush,
     amountCents,
@@ -45,7 +44,7 @@ export const mapDebtTypeOrgDetailToForm = (
   } = response;
 
   const mapped: Partial<DebtTypeOrgForm> = {
-    // Spread compatible properties (xsdDefinitionRef is handled separately)
+    // Spread compatible properties
     ...(rest as Partial<DebtTypeOrgForm>),
     // Normalize ids to string as the form expects string
     debtPositionTypeId:
@@ -63,18 +62,9 @@ export const mapDebtTypeOrgDetailToForm = (
       (amountCents != null ? true : undefined)
   };
 
-  // xsdDefinitionRef string -> Blob for the uploader
-  if (xsdDefinitionRef) {
-    mapped.xsdDefinitionRef = new Blob([xsdDefinitionRef], {
-      type: 'application/xml'
-    });
-  }
-
   // Derive payment method (order of precedence mirrors existing UI logic)
   if (amountCents) {
     mapped.paymentMethod = PaymentMethodOption.AMOUNT;
-  } else if (xsdDefinitionRef) {
-    mapped.paymentMethod = PaymentMethodOption.CUSTOM;
   } else if (response.externalPaymentUrl) {
     mapped.paymentMethod = PaymentMethodOption.EXTERNAL;
   } else {

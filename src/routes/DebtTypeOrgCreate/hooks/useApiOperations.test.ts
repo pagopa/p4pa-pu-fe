@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { renderHook } from '../../../__tests__/renderers';
 import { useApiOperations } from './useApiOperations';
 import { OperatorsSelection } from '../../../../generated/apiClient';
@@ -66,40 +66,6 @@ describe('useApiOperations', () => {
     expect(payload.data.debtPositionTypeOrg.externalPaymentUrl).toBe(
       'https://example.com/payment'
     );
-  });
-
-  it('converts file to text for CUSTOM payment method', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const mockFile = {
-      text: vi.fn().mockResolvedValue('<xsd>mock schema</xsd>')
-    } as unknown as File;
-
-    const formData = {
-      ...minimalFormData,
-      paymentMethod: PaymentMethodOption.CUSTOM,
-      xsdDefinitionRef: mockFile
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(mockFile.text).toHaveBeenCalledTimes(1);
-    expect(payload.data.debtPositionTypeOrg.xsdDefinitionRef).toBe(
-      '<xsd>mock schema</xsd>'
-    );
-  });
-
-  it('does not include xsdDefinitionRef when no file provided for CUSTOM', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
-      paymentMethod: PaymentMethodOption.CUSTOM
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.xsdDefinitionRef).toBeUndefined();
   });
 
   it('includes optional bank account fields when provided', async () => {

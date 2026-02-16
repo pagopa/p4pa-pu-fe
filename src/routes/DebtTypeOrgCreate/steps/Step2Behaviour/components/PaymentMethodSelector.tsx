@@ -2,7 +2,6 @@ import { Control, Path } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import Stack from '@mui/material/Stack';
 import { FormComponent } from '../../../../../components/FormComponent';
-import Typography from '@mui/material/Typography';
 import { DebtTypeOrgForm, PaymentMethodOption } from '../../../types';
 
 export type PaymentMethodProps = {
@@ -28,27 +27,6 @@ export const SelectedField = ({
           label={t('debtTypeOrgCreate.behaviour.spontaneous.amountValue.label')}
         />
       );
-
-    case PaymentMethodOption.CUSTOM:
-      return (
-        <FormComponent.ControlledFileUploader
-          name="xsdDefinitionRef"
-          control={control}
-          description={t(
-            'debtTypeOrgCreate.behaviour.spontaneous.file.description'
-          )}
-          fileExtensionsAllowed={['xsd', 'xml']}
-          header={
-            <Typography fontWeight="bold" color="textPrimary">
-              {t('debtTypeOrgCreate.behaviour.spontaneous.file.header')}
-              <Typography component="span" color="error">
-                *
-              </Typography>
-            </Typography>
-          }
-        />
-      );
-
     case PaymentMethodOption.EXTERNAL:
       return (
         <FormComponent.ControlledTextField
@@ -89,10 +67,6 @@ export const PaymentMethodSelector = ({
           {
             label: t('debtTypeOrgCreate.behaviour.spontaneous.amount'),
             value: PaymentMethodOption.AMOUNT
-          },
-          {
-            label: t('debtTypeOrgCreate.behaviour.spontaneous.custom'),
-            value: PaymentMethodOption.CUSTOM
           },
           {
             label: t('debtTypeOrgCreate.behaviour.spontaneous.external'),

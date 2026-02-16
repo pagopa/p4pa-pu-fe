@@ -86,9 +86,7 @@ export const getAccordionSectionsConfig = (
 
     // Standard mode: no custom form and no external URL
     const hasCustomForm =
-      debtType.spontaneousFormId != null ||
-      !!debtType.spontaneousFormCode ||
-      !!debtType.xsdDefinitionRef;
+      debtType.spontaneousFormId != null || !!debtType.spontaneousFormCode;
     const hasExternalUrl = !!debtType.externalPaymentUrl;
 
     if (hasCustomForm) {
