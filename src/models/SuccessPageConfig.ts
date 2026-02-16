@@ -343,5 +343,17 @@ export const SuccessPageConfig: SuccessOpts = {
         actionID: 'SPONTANEOUS_FORM_INDEX'
       }
     ]
+  },
+  'debt-type-org-delete-success': {
+    title: 'debtTypeDetail.successPage.title',
+    description: 'debtTypeDetail.successPage.description',
+    buttonConfig: [
+      {
+        variant: 'contained',
+        size: 'large',
+        buttonLabel: 'debtTypeDetail.successPage.backToDashboard',
+        actionID: 'DEBT_TYPES_DASHBOARD'
+      }
+    ]
   }
 };

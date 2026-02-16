@@ -1593,6 +1593,11 @@
     },
     "success": {
       "updated": "Stato del Tipo dovuto aggiornato con successo"
+    },
+    "successPage": {
+      "title": "Tipo dovuto impostato eliminato con successo",
+      "description": "Il tipo dovuto impostato: {{description}} è stato eliminato correttamente.",
+      "backToDashboard": "Torna alla lista"
     }
   },
   "debtTypeOrgCreate": {
