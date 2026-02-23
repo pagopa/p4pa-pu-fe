@@ -55,10 +55,7 @@ export const flowsRoutes = [
             id: 'TELEMATIC_RECEIPT_DETAIL',
             path: ':receiptId',
             handle: {
-              backButton: true,
-              sidebar: {
-                visible: false
-              }
+              backButton: true
             } as RouteHandleObject
           },
           {

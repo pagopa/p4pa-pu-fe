@@ -287,16 +287,6 @@ describe('mapDebtTypeOrgDetailToForm', () => {
     expect(result.flagPresetAmount).toBe(true);
   });
 
-  it('converts xsdDefinitionRef string to Blob', () => {
-    const response = {
-      xsdDefinitionRef: '<xml>test</xml>'
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.xsdDefinitionRef).toBeInstanceOf(Blob);
-    expect(result.xsdDefinitionRef?.type).toBe('application/xml');
-  });
-
   it('derives paymentMethod as AMOUNT when amountCents is present', () => {
     const response = {
       amountCents: 1000
@@ -304,15 +294,6 @@ describe('mapDebtTypeOrgDetailToForm', () => {
 
     const result = mapDebtTypeOrgDetailToForm(response);
     expect(result.paymentMethod).toBe(PaymentMethodOption.AMOUNT);
-  });
-
-  it('derives paymentMethod as CUSTOM when xsdDefinitionRef is present', () => {
-    const response = {
-      xsdDefinitionRef: '<xml>test</xml>'
-    };
-
-    const result = mapDebtTypeOrgDetailToForm(response);
-    expect(result.paymentMethod).toBe(PaymentMethodOption.CUSTOM);
   });
 
   it('derives paymentMethod as EXTERNAL when externalPaymentUrl is present', () => {

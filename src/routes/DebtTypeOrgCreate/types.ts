@@ -3,7 +3,6 @@ import { OperatorsSelection } from '../../../generated/apiClient';
 export enum PaymentMethodOption {
   FREE = 'free',
   AMOUNT = 'amount',
-  CUSTOM = 'custom',
   EXTERNAL = 'external'
 }
 
@@ -35,7 +34,6 @@ export type DebtTypeOrgForm = {
 
   amountCents?: number;
   externalPaymentUrl?: string;
-  xsdDefinitionRef?: Blob;
 
   flagNotifyOutcomePush?: 'enabled' | 'disabled';
   notifyOutcomePushOrgSilServiceId?: number;

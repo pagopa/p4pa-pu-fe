@@ -28,13 +28,6 @@ export const useApiOperations = (organizationId: number) => {
       originalData?: OriginalDebtTypeOrgData,
       isEdit = false
     ): Promise<CreateDebtPositionTypeOrg> => {
-      // File Blob to string
-      const xsdDefinitionRef =
-        data.paymentMethod === PaymentMethodOption.CUSTOM &&
-        data.xsdDefinitionRef
-          ? await data.xsdDefinitionRef.text()
-          : undefined;
-
       const basePayload = {
         debtPositionTypeId: Number(data.debtPositionTypeId),
         organizationId,
@@ -70,9 +63,6 @@ export const useApiOperations = (organizationId: number) => {
           data.externalPaymentUrl && {
             externalPaymentUrl: data.externalPaymentUrl
           }),
-        ...(data.paymentMethod === PaymentMethodOption.CUSTOM &&
-          xsdDefinitionRef && { xsdDefinitionRef }),
-
         ...(data.serviceId && { serviceId: data.serviceId }),
         ...(data.ioTemplateSubject && {
           ioTemplateSubject: data.ioTemplateSubject
