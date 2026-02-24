@@ -118,7 +118,15 @@ export const DebtTypeDetailView = () => {
     showDeleteDialog(async () => {
       try {
         await deleteDebtPositionTypeOrgs.mutateAsync();
-        navigate(PageRoutes.DEBT_TYPES_DASHBOARD);
+        navigate(PageRoutes.RESPONSES_SUCCESS, {
+          replace: true,
+          state: {
+            category: 'debt-type-org-delete-success',
+            i18nParams: {
+              description: data?.response?.description
+            }
+          }
+        });
       } catch (error: unknown) {
         if (isAxiosError(error) && error.response?.status === 409) {
           showErrorDialog('alreadyUsedDescription');
@@ -164,7 +172,15 @@ export const DebtTypeDetailView = () => {
     showDeleteDialog(async () => {
       try {
         await deleteDebtPositionTypeOrgs.mutateAsync();
-        navigate(PageRoutes.DEBT_TYPES_DASHBOARD);
+        navigate(PageRoutes.RESPONSES_SUCCESS, {
+          replace: true,
+          state: {
+            category: 'debt-type-org-delete-success',
+            i18nParams: {
+              description: data?.response?.description
+            }
+          }
+        });
       } catch (error: unknown) {
         if (isAxiosError(error) && error.response?.status === 409) {
           showErrorDialog('alreadyUsedDescription');

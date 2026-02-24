@@ -1593,6 +1593,11 @@
     },
     "success": {
       "updated": "Stato del Tipo dovuto aggiornato con successo"
+    },
+    "successPage": {
+      "title": "Tipo dovuto impostato eliminato con successo",
+      "description": "Il tipo dovuto impostato: {{description}} è stato eliminato correttamente.",
+      "backToDashboard": "Torna alla lista"
     }
   },
   "debtTypeOrgCreate": {
@@ -1815,7 +1820,8 @@
       "step3": "Contabilità",
       "step4": "Messaggi",
       "step5": "Operatori associati"
-    }
+    },
+    "submit": "Salva modifiche"
   },
   "debtTypes": {
     "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",

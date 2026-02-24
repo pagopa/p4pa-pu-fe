@@ -43,27 +43,6 @@ describe('step2Schema', () => {
       expect(result.success).toBe(true);
     });
 
-    it('should require xsdDefinitionRef for CUSTOM method', () => {
-      const data = {
-        ...baseSpontaneousData,
-        paymentMethod: PaymentMethodOption.CUSTOM,
-        xsdDefinitionRef: undefined
-      };
-
-      const result = step2Schema.safeParse(data);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(
-          result.error.issues.some(
-            (issue) =>
-              issue.path[0] === 'xsdDefinitionRef' &&
-              issue.message ===
-                'debtTypeOrgCreate.behaviour.spontaneous.file.required'
-          )
-        ).toBe(true);
-      }
-    });
-
     it('should require and validate externalPaymentUrl for EXTERNAL_URL spontaneous mode', () => {
       const dataMissingUrl = {
         ...baseSpontaneousData,

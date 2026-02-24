@@ -39,12 +39,6 @@ vi.mock('../../../../../components/FormComponent', () => ({
         value={defaultValue}
         readOnly
       />
-    ),
-    ControlledFileUploader: ({ description, header }: any) => (
-      <div data-testid="file-uploader">
-        <div>{header}</div>
-        <div>{description}</div>
-      </div>
     )
   }
 }));
@@ -55,7 +49,6 @@ const renderWithForm = (defaultValue: PaymentMethodOption) => {
       defaultValues: {
         paymentMethod: defaultValue,
         amountCents: 0,
-        xsdDefinitionRef: undefined,
         externalPaymentUrl: ''
       }
     });
@@ -91,9 +84,6 @@ describe('PaymentMethodSelector', () => {
       screen.getByText('debtTypeOrgCreate.behaviour.spontaneous.amount')
     ).toBeInTheDocument();
     expect(
-      screen.getByText('debtTypeOrgCreate.behaviour.spontaneous.custom')
-    ).toBeInTheDocument();
-    expect(
       screen.getByText('debtTypeOrgCreate.behaviour.spontaneous.external')
     ).toBeInTheDocument();
   });
@@ -120,20 +110,6 @@ describe('PaymentMethodSelector', () => {
       'debtTypeOrgCreate.behaviour.spontaneous.amountValue.label'
     );
     expect(amountField).toHaveAttribute('placeholder', '0,00');
-  });
-
-  it('renders file uploader when CUSTOM option is selected', () => {
-    renderWithForm(PaymentMethodOption.CUSTOM);
-
-    expect(screen.getByTestId('file-uploader')).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        'debtTypeOrgCreate.behaviour.spontaneous.file.description'
-      )
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText('debtTypeOrgCreate.behaviour.spontaneous.file.header')
-    ).toBeInTheDocument();
   });
 
   it('renders external URL text field when EXTERNAL option is selected', () => {
@@ -172,17 +148,6 @@ describe('SelectedField', () => {
     );
 
     expect(screen.getByTestId('text-field-amountCents')).toBeInTheDocument();
-  });
-
-  it('renders file uploader for CUSTOM payment method', () => {
-    render(
-      <SelectedField
-        selectedValue={PaymentMethodOption.CUSTOM}
-        control={mockControl}
-      />
-    );
-
-    expect(screen.getByTestId('file-uploader')).toBeInTheDocument();
   });
 
   it('renders external URL field for EXTERNAL payment method', () => {

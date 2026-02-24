@@ -72,7 +72,8 @@ vi.mock('../../utils', () => ({
 vi.mock('../../routes', () => ({
   PageRoutes: {
     DEBT_TYPES_DASHBOARD: '/debt-types',
-    DEBT_TYPE_ORG_EDIT: '/debt-type-org-edit/:debtPositionTypeOrgId'
+    DEBT_TYPE_ORG_EDIT: '/debt-type-org-edit/:debtPositionTypeOrgId',
+    RESPONSES_SUCCESS: '/success'
   }
 }));
 
@@ -411,6 +412,36 @@ describe('DebtTypeDetailView', () => {
       });
     });
 
+    it('navigates to success page after successful delete from menu', async () => {
+      mockMutateAsync.mockResolvedValue({});
+
+      render(<DebtTypeDetailView />);
+
+      const actionMenuButton = screen.getByTestId('action-menu-button');
+      fireEvent.click(actionMenuButton);
+
+      await waitFor(() => {
+        const deleteMenuItem = screen.getByText('Elimina');
+        fireEvent.click(deleteMenuItem);
+        expect(mockConfirmDialog.showDeleteDialog).toHaveBeenCalled();
+      });
+
+      const deleteCallback = mockConfirmDialog.showDeleteDialog.mock
+        .calls[0][0] as () => Promise<void>;
+
+      await deleteCallback();
+
+      expect(mockNavigate).toHaveBeenCalledWith('/success', {
+        replace: true,
+        state: {
+          category: 'debt-type-org-delete-success',
+          i18nParams: {
+            description: 'Test Debt Type'
+          }
+        }
+      });
+    });
+
     it('shows alreadyUsedDescription when delete from menu fails with conflict', async () => {
       const conflictError = new AxiosError(
         'Conflict',
@@ -564,6 +595,32 @@ describe('DebtTypeDetailView', () => {
       fireEvent.click(deleteButtons[0]);
 
       expect(mockConfirmDialog.showDeleteDialog).toHaveBeenCalled();
+    });
+
+    it('navigates to success page after successful direct delete', async () => {
+      mockMutateAsync.mockResolvedValue({});
+
+      render(<DebtTypeDetailView />);
+
+      const deleteButtons = screen.getAllByRole('button', { name: 'Elimina' });
+      fireEvent.click(deleteButtons[0]);
+
+      expect(mockConfirmDialog.showDeleteDialog).toHaveBeenCalled();
+
+      const deleteCallback = mockConfirmDialog.showDeleteDialog.mock
+        .calls[0][0] as () => Promise<void>;
+
+      await deleteCallback();
+
+      expect(mockNavigate).toHaveBeenCalledWith('/success', {
+        replace: true,
+        state: {
+          category: 'debt-type-org-delete-success',
+          i18nParams: {
+            description: 'Test Debt Type'
+          }
+        }
+      });
     });
 
     it('shows notification when enable mutation fails', async () => {

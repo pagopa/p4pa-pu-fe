@@ -15,7 +15,6 @@ export const step2Schema = z
       .number({ invalid_type_error: '' })
       .gt(0, 'commons.validation.minAmountRequired')
       .optional(),
-    xsdDefinitionRef: z.any().optional(),
     externalPaymentUrl: z.string().optional(),
     customFormId: z.coerce.number().optional(),
 
@@ -69,16 +68,6 @@ const validateSpontaneousPayment = (
           code: z.ZodIssueCode.custom,
           message: 'commons.validation.amountRequired',
           path: ['amountCents']
-        });
-      }
-      break;
-
-    case PaymentMethodOption.CUSTOM:
-      if (!data.xsdDefinitionRef) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'debtTypeOrgCreate.behaviour.spontaneous.file.required',
-          path: ['xsdDefinitionRef']
         });
       }
       break;
