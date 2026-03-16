@@ -51,7 +51,7 @@ export const DebtPositionsInstallmentDetail = () => {
   const downloadMutation = debtPositions.getPaymentNoticeFile(
     organizationId,
     installment?.debtPositionId || 0,
-    installment?.iuv || ''
+    installment?.nav || ''
   );
 
   const timelineElements = useTimelineData(installmentRegistries);
