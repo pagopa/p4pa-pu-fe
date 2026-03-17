@@ -106,7 +106,8 @@ describe('DebtPositionsInstallmentDetail', () => {
     debtPositionTypeOrgDescription: 'Test for Create Debt Position',
     debtPositionDescription: 'Debt Position Description',
     debtPositionId: 239,
-    iuv: '302000000000000001',
+    iuv: '02000000000000001',
+    nav: '302000000000000001',
     originalRemittanceInformation: 'Original Remittance Info'
   };
 
@@ -280,7 +281,7 @@ describe('DebtPositionsInstallmentDetail', () => {
     expect(debtPositions.getPaymentNoticeFile).toHaveBeenCalledWith(
       mockOrganizationId,
       mockUnpaidInstallment.debtPositionId,
-      mockUnpaidInstallment.iuv
+      mockUnpaidInstallment.nav
     );
 
     await vi.waitFor(() => {

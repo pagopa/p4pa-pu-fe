@@ -198,20 +198,20 @@ const manageDebtPositionInstallments = (
 const getPaymentNoticeFile = (
   organizationId: number,
   debtPositionId: number,
-  iuv: string
+  nav: string
 ) =>
   useMutation({
-    mutationKey: ['getPaymentNoticeFile', organizationId, debtPositionId, iuv],
+    mutationKey: ['getPaymentNoticeFile', organizationId, debtPositionId, nav],
     mutationFn: async () => {
       const response = await utils.apiClient.bff.getPaymentNotice(
         organizationId,
         debtPositionId,
-        { iuv },
+        { nav },
         { format: 'blob' }
       );
       const contentDisposition = response.headers['content-disposition'] || '';
       const fileName =
-        extractFilename(contentDisposition) || `notice-${iuv}.pdf`;
+        extractFilename(contentDisposition) || `notice-${nav}.pdf`;
 
       return { data: response.data, fileName };
     }
