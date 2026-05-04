@@ -1,0 +1,23 @@
+name: 'lint'
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: run lint
+        run: |
+          corepack enable
+          yarn install
+          yarn generate
+          yarn lint --fix
+        env:
+          OPENAPI_URL: ${{ vars.OPENAPI_URL }}
+          OPENAPIFILESHARE_URL: ${{ vars.OPENAPIFILESHARE_URL }}

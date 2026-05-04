@@ -1,0 +1,140 @@
+import { renderHook } from '../__tests__/renderers';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
+import { QueryObserverPendingResult } from '@tanstack/react-query';
+import { DebtPositionTypeOrg } from '../../generated/apiClient';
+import utils from '../utils';
+import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
+
+const mockT = vi.fn((key: string) => key);
+
+vi.mock('../api/debtPositionsTypeOrg', () => ({
+  getDebtPositionTypeOrgs: vi.fn()
+}));
+
+vi.mock('../utils', () => ({
+  default: {
+    notify: {
+      emit: vi.fn()
+    }
+  }
+}));
+
+vi.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: mockT,
+    i18n: {
+      language: 'it',
+      changeLanguage: vi.fn()
+    }
+  })
+}));
+
+type MockQueryType = QueryObserverPendingResult<
+  Array<DebtPositionTypeOrg>,
+  Error
+>;
+
+describe('useDebtPositionsTypeOrg', () => {
+  const mockQueryResult = {
+    data: null,
+    isLoading: false,
+    isError: false,
+    isSuccess: false,
+    error: null
+  } as unknown as MockQueryType;
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockT.mockClear();
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
+    mockT.mockClear();
+  });
+
+  it('should initialize with an empty options list', () => {
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue(mockQueryResult);
+
+    const { result } = renderHook(() =>
+      useDebtPositionsTypeOrg({ organizationId: 1 })
+    );
+
+    expect(result.current.optionsMap).toEqual([]);
+  });
+
+  it('should set options correctly on successful response with all option', () => {
+    const mockData = [
+      { description: 'Type A', debtPositionTypeOrgId: 1 },
+      { description: 'Type B', debtPositionTypeOrgId: 2 }
+    ];
+
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue({
+      ...mockQueryResult,
+      data: mockData,
+      isSuccess: true
+    } as unknown as MockQueryType);
+
+    const { result } = renderHook(() =>
+      useDebtPositionsTypeOrg({ organizationId: 1 })
+    );
+
+    expect(result.current.optionsMap).toEqual([
+      { label: 'Type A', value: '1', flagMandatoryDueDate: undefined },
+      { label: 'Type B', value: '2', flagMandatoryDueDate: undefined }
+    ]);
+  });
+
+  it('should set options correctly on successful response without all option', () => {
+    const mockData = [
+      { description: 'Type A', debtPositionTypeOrgId: 1 },
+      { description: 'Type B', debtPositionTypeOrgId: 2 }
+    ];
+
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue({
+      ...mockQueryResult,
+      data: mockData,
+      isSuccess: true
+    } as unknown as MockQueryType);
+
+    const { result } = renderHook(() =>
+      useDebtPositionsTypeOrg({ organizationId: 1 })
+    );
+
+    expect(result.current.optionsMap).toEqual([
+      { label: 'Type A', value: '1', flagMandatoryDueDate: undefined },
+      { label: 'Type B', value: '2', flagMandatoryDueDate: undefined }
+    ]);
+  });
+
+  it('should handle empty or invalid response without all option', () => {
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue({
+      ...mockQueryResult,
+      data: [],
+      isSuccess: true
+    } as unknown as MockQueryType);
+
+    const { result } = renderHook(() =>
+      useDebtPositionsTypeOrg({ organizationId: 1 })
+    );
+
+    expect(result.current.optionsMap).toEqual([]);
+  });
+
+  it('should handle API error and show notification', () => {
+    vi.mocked(getDebtPositionTypeOrgs).mockReturnValue({
+      ...mockQueryResult,
+      isError: true,
+      error: new Error('API error')
+    } as unknown as MockQueryType);
+
+    renderHook(() => useDebtPositionsTypeOrg({ organizationId: 1 }));
+
+    expect(mockT).toHaveBeenCalledWith('errors.fetchDebtPositionsTypes');
+    expect(utils.notify.emit).toHaveBeenCalledWith(
+      'errors.fetchDebtPositionsTypes',
+      'error'
+    );
+  });
+});

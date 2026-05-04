@@ -1,0 +1,28 @@
+name: 'coverage'
+on:
+  pull_request:
+    branches:
+      - develop
+      - main
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.18.0
+      - name: Enable corepack
+        run: corepack enable    
+      - name: Install dependencies
+        run: yarn
+      - name: Generate api client
+        run: yarn generate
+        env:
+          OPENAPI_URL: ${{ vars.OPENAPI_URL }}
+          OPENAPIFILESHARE_URL: ${{ vars.OPENAPIFILESHARE_URL }}
+      - name: Test and coverage
+        run: yarn coverage
+      - uses: davelosert/vitest-coverage-report-action@7727b0282e61c3cffa400550cf2ae57c2b16167d # v2

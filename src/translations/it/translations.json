@@ -1,0 +1,2620 @@
+{
+  "AssessmentRegistryCreate": {
+    "accessibleTitle": "Creazione capitolo",
+    "success": {
+      "backToStart": "Visualizza capitoli",
+      "goToDetail": "Visualizza capitolo",
+      "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato creato!"
+    },
+    "title": "Crea un nuovo capitolo",
+    "configuration": "Crea un nuovo capitolo",
+    "subtitle": "Inserisci i parametri per creare un nuovo capitolo.",
+    "step1": "Configurazione del capitolo",
+    "debtPositionType": "Tipo dovuto",
+    "assessmentRegistry": "Capitolo",
+    "status": "Stato ufficio",
+    "operatingYear": "Anno esercizio",
+    "sectionDescription": "Denominazione Capitolo",
+    "sectionCode": "Codice capitolo",
+    "officeCode": "Codice Ufficio",
+    "officeDescription": "Denominazione Ufficio",
+    "assessmentCode": "Codice Accertamento Capitolo",
+    "assessmentDescription": "Denominazione Accertamento Capitolo"
+  },
+  "AssessmentRegistryDetail": {
+    "description": "Ecco i dettagli del capitolo.",
+    "updatedAt": "Ultimo aggiornamento il",
+    "operatingYear": "Anno esercizio",
+    "status": "Stato ufficio",
+    "sectionDescription": "Capitolo",
+    "sectionCode": "Codice capitolo",
+    "officeCode": "Codice Ufficio",
+    "officeDescription": "Denominazione Ufficio",
+    "assessmentCode": "Codice Accertamento Capitolo",
+    "assessmentDescription": "Denominazione Accertamento Capitolo",
+    "debtPositionType": "Tipo dovuto"
+  },
+  "AssessmentRegistryUpdate": {
+    "accessibleTitle": "Modifica capitolo",
+    "success": {
+      "backToStart": "Visualizza capitoli",
+      "goToDetail": "Visualizza capitolo",
+      "description": "Lo trovi nella sezione capitoli, dove puoi consultarlo in qualsiasi momento.",
+      "title": "Il Capitolo ‘{{paymentObject}}’ è stato aggiornato!"
+    },
+    "title": "Modifica capitolo",
+    "subtitle": "Gestisci i parametri del capitolo.",
+    "configuration": "Configurazione del capitolo"
+  },
+  "DebtPositions": {
+    "Results": {
+      "filters": {
+        "from": "Creazione dal"
+      },
+      "table": {
+        "creationDate": "Data creazione",
+        "description": "Descrizione",
+        "status": "Stato"
+      },
+      "title": "Posizioni Debitorie",
+      "titleIUV": "Avvisi (IUV)",
+      "accessibleTitleIUV": "Risultato ricerca Avvisi",
+      "accessibleTitleDP": "Risultato ricerca posizioni debitorie"
+    },
+    "status": {
+      "tooltip": {
+        "DRAFT": "Non ci sono ancora avvisi di pagamento per questa posizione debitoria.",
+        "TO_SYNC": "La posizione debitoria è stata creata ma non è ancora pagabile.",
+        "UNPAID": "La posizione debitoria è stata creata ed è pagabile.",
+        "PARTIALLY_PAID": "È stato effettuato solo una parte del pagamento.",
+        "PAID": "Tutti i pagamenti sono stati completati.",
+        "REPORTED": "Tutti i pagamenti sono stati rendicontati.",
+        "EXPIRED": "I pagamenti non sono stati effettuati entro la data di scadenza prevista.",
+        "CANCELLED": "La posizione debitoria è stata rimossa da un operatore."
+      }
+    },
+    "installment": {
+      "tooltip": {
+        "DRAFT": "L'avviso di pagamento non è stato ancora emesso.",
+        "TO_SYNC": "L'avviso di pagamento è stato registrato ma non è ancora pagabile.",
+        "UNPAID": "L'avviso di pagamento è stato emesso ed è pagabile.",
+        "UNPAYABLE": "L'avviso non è pagabile.",
+        "PAID": "Il pagamento è stato completato.",
+        "REPORTED": "L'avviso di pagamento è stato rendicontato.",
+        "EXPIRED": "Il pagamento non è stato completato entro la data di scadenza stabilita.",
+        "INVALID": "L'avviso è stato invalidato perché il debitore ha avviato il pagamento con un'altra opzione.",
+        "CANCELLED": "L'avviso di pagamento è stato rimosso da un operatore."
+      }
+    }
+  },
+  "DraftCourtesyPage": {
+    "ROLE_SUPERADMIN": {
+      "title": "Configura l'ente per accedere",
+      "description": "Per utilizzare Piattaforma Unitaria è necessario configurare i parametri dell’ente."
+    },
+    "ROLE_ADMIN": {
+      "title": "Configura l'ente per accedere",
+      "description": "Per utilizzare Piattaforma Unitaria è necessario configurare i parametri dell’ente."
+    },
+    "ROLE_OPER": {
+      "title": "Ente non abilitato",
+      "description": "Non riesci ad accedere alla Piattaforma Unitaria perché il tuo ente non è stato abilitato. Ti consigliamo di contattare l'amministratore del prodotto per assistenza."
+    }
+  },
+  "FileUploaderFlowImport": {
+    "debt-positions": {
+      "description": "Carica qui il file .zip con i Dovuti"
+    },
+    "reporting": {
+      "description": "Carica qui il file .zip con le Rendicontazioni"
+    },
+    "requiredFileText": "Campo obbligatorio. Carica un file .zip.",
+    "telematic-receipt": {
+      "description": "Carica qui il file .zip con le Ricevute Telematiche"
+    },
+    "treasury": {
+      "description": "Carica qui il file .zip con i giornali di cassa"
+    },
+    "error": {
+      "flowFile": "Qualcosa non ha funzionato: impossibile scaricare il file",
+      "errorFlowFile": "Qualcosa non ha funzionato: impossibile scaricare il file"
+    }
+  },
+  "OperatorDetail": {
+    "code": "Cod. Gestionale",
+    "debtPositionTypeDescription": "Tipo di dovuto",
+    "accessibleTitle": "Dettagli operatore",
+    "associatedDebtPositionTypes": "Tipi di dovuto associati",
+    "emptyData": "Non è ancora stato associato alcun tipo di dovuto. Associa un nuovo tipo dovuto",
+    "deleteDialog": {
+      "title": "Sei sicuro di voler rimuovere il Tipo di dovuto?",
+      "message": "Una volta rimosso l'utente <strong>{{operatorName}}</strong> non potrà gestire e operare su questo tipo di dovuto."
+    },
+    "affiliate": {
+      "title": "Associa Tipi di dovuto",
+      "countLabel_one": "({{count}}) Tipo di dovuto",
+      "countLabel_other": "({{count}}) Tipi di dovuto",
+      "noSelection": "Seleziona almeno un Tipo di dovuto",
+      "success": {
+        "title_one": "{{count}} Tipo di dovuto associato correttamente all'utente {{operatorName}}",
+        "title_other": "{{count}} Tipi di dovuto associati correttamente all'utente {{operatorName}}",
+        "description_one": "Lo trovi nel dettaglio dell'operatore, dove puoi gestirlo in qualsiasi momento.",
+        "description_other": "Li trovi nel dettaglio dell'operatore, dove puoi gestirli in qualsiasi momento.",
+        "buttonLabel": "Vai al dettaglio operatore"
+      },
+      "dialog": {
+        "title": "Conferma associazione Tipi di dovuto",
+        "message_one": "All'utente <strong>{{operatorName}}</strong> verra assegnato <strong>{{count}}</strong> tipo di dovuto, sul quale potrà gestire e operare.",
+        "message_other": "All'utente <strong>{{operatorName}}</strong> verranno assegnati <strong>{{count}}</strong> tipi di dovuto, sui quali potrà gestire e operare.",
+        "button": "Associa"
+      }
+    }
+  },
+  "a11y": {
+    "navigation": {
+      "announcement": "Hai raggiunto la pagina {{page}}"
+    }
+  },
+  "appPreview": {
+    "title": "Anteprima in App IO",
+    "messageInfo": "*Verrà mostrato il nome dell’ente e il servizio assegnati per inviare il messaggio.",
+    "mousePopup": "Scorri con il cursore per visualizzare l’anteprima completa"
+  },
+  "assessment": {
+    "accessibleTitle": "Risultato ricerca accertamento pagamenti",
+    "title": "Accertamenti pagamenti",
+    "assessment": "Accertamento ",
+    "search": "Cerca accertamenti",
+    "searchDescription": "Cerca dei accertamenti e controlla l'andamento delle entrate.",
+    "chapters": "Capitoli",
+    "chaptersDescription": "Crea oppure visualizza capitoli di bilancio per distinguere le entrate per categoria.",
+    "createAssessment": "Crea accertamento",
+    "createChapter": "Crea nuovo capitolo",
+    "seeAllChapters": "Vedi tutti i capitoli",
+    "searchResults": {
+      "title": "Risultato ricerca accertamenti",
+      "description": "Questi sono i risultati della tua ricerca.",
+      "noResults": "Nessun risultato trovato per i filtri selezionati.",
+      "columns": {
+        "assessmentName": "Nome accertamento",
+        "debtType": "Tipo dovuto",
+        "createdBy": "Creato da",
+        "updatedAt": "Aggiornato il",
+        "status": "Stato"
+      }
+    },
+    "filters": {
+      "assessmentName": "Nome accertamento",
+      "debtType": "Tipo dovuto",
+      "status": "Stato",
+      "lastUpdateDate": "Data ultimo aggiornamento"
+    },
+    "statusOptions": {
+      "ACTIVE": "In corso",
+      "CLOSED": "Chiuso",
+      "CANCELLED": "Eliminato"
+    }
+  },
+  "assessmentCreate": {
+    "configuration": {
+      "title": "Configurazione accertamento",
+      "step1": {
+        "title": "Dettaglio accertamento",
+        "fields": {
+          "name": {
+            "label": "Nome accertamento",
+            "placeholder": "Accertamento",
+            "required": "Il campo nome è obbligatorio"
+          },
+          "debtPositionType": {
+            "label": "Tipo dovuto",
+            "placeholder": "Dovuto",
+            "required": "Selezionare un tipo di dovuto"
+          }
+        }
+      },
+      "step2": {
+        "addPayments": {
+          "radioLabel": "Vuoi aggiungere pagamenti nell'accertamento?",
+          "options": {
+            "yes": "Si",
+            "no": "No"
+          }
+        },
+        "selection": {
+          "banner": {
+            "single": "({{count}}) Pagamento selezionato",
+            "multiple": "({{count}}) Pagamenti selezionati",
+            "clearSelection": "Cancella la selezione"
+          }
+        },
+        "validation": {
+          "noPaymentsSelected": "Devi selezionare almeno un pagamento da aggiungere.",
+          "noFiltersSelected": "Selezionare almeno un filtro."
+        }
+      },
+      "step3": {
+        "title": "Assegna capitolo",
+        "fields": {
+          "operatingYear": {
+            "label": "Anno esercizio",
+            "placeholder": "Seleziona anno esercizio",
+            "required": "Il campo Anno esercizio è obbligatorio",
+            "noData": "Nessun anno disponibile"
+          },
+          "chapter": {
+            "label": "Capitolo",
+            "placeholder": "Seleziona capitolo",
+            "required": "Il campo Capitolo è obbligatorio",
+            "noData": "Nessun capitolo disponibile per l'anno selezionato"
+          }
+        }
+      }
+    },
+    "description": "Inserisci i parametri per creare un nuovo accertamento.",
+    "title": "Crea un nuovo accertamento",
+    "modify": {
+      "addPayments": {
+        "title": "Aggiungi pagamenti",
+        "description": "Seleziona i pagamenti da aggiungere all'accertamento.",
+        "stepTitle": "Aggiungi pagamenti"
+      }
+    },
+    "stepper": {
+      "step1": "Configurazione accertamento",
+      "step2": "Aggiungi pagamenti",
+      "step3": "Assegna capitolo"
+    },
+    "success": {
+      "title": "L'accertamento \"{{assessmentName}}\" è stato creato!",
+      "description": "Puoi trovarlo nella sezione accertamento pagamenti, dove puoi consultarlo in qualsiasi momento.",
+      "goToDetail": "Visualizza accertamento"
+    },
+    "partialSuccess": {
+      "title": "Accertamento \"{{assessmentName}}\" creato con pagamenti non associati",
+      "description": "L'accertamento è stato creato correttamente, ma non è stato possibile associare i pagamenti selezionati. Puoi aggiungerli manualmente accedendo al dettaglio dell'accertamento.",
+      "goToDetail": "Vai al dettaglio e aggiungi pagamenti"
+    },
+    "removePayments": {
+      "title": "Rimuovi pagamenti",
+      "description": "Cerca e seleziona i pagamenti nell’acertamento da rimuovere.",
+      "stepTitle": "Rimuovi pagamenti",
+      "success": {
+        "title": "Pagamenti rimossi correttamente nell'accertamento \"{{assessmentName}}\"",
+        "goToDetail": "Visualizza accertamento"
+      },
+      "confirmModal": {
+        "title": "Sei sicuro di voler rimuovere i pagamenti?",
+        "description": "Dopo la rimozione, i pagamenti non compariranno più nell'elenco dell'accertamento."
+      }
+    },
+    "addPayments": {
+      "title": "Pagamenti aggiunti",
+      "stepTitle": "Aggiungi pagamenti",
+      "success": {
+        "title": "Pagamenti aggiunti correttamente nell'accertamento \"{{assessmentName}}\"",
+        "description": "Li trovi nel dettaglio dell'accertamento, dove puoi gestirli in qualsiasi momento.",
+        "goToDetail": "Visualizza accertamento"
+      }
+    },
+    "error": {
+      "creationFailed": "Errore durante la creazione dell'assessment",
+      "nameAlreadyPresent": "Esiste già un accertamento con lo stesso Nome"
+    }
+  },
+  "assessmentDetail": {
+    "accessibleTitle": "Dettaglio accertamento: {{assessmentId}}",
+    "debtType": "Tipo dovuto",
+    "createdBy": "Creato da",
+    "paymentsAssociated": "Pagamenti associati",
+    "closeDialog": {
+      "title": "Sei sicuro di chiudere l’accertamento?",
+      "description": "Una volta chiuso, l’accertamento non potrà più essere modificato.",
+      "ok": "Chiudi l’accertamento",
+      "ko": "Annulla"
+    },
+    "cancelDialog": {
+      "title": "Sei sicuro di voler eliminare l’accertamento?",
+      "description": "Una volta cancellato, l’accertamento non potrà più essere riaperto. Potrai comunque consultarne i dettagli.",
+      "ok": "Elimina",
+      "ko": "Chiudi"
+    },
+    "deleteDialog": {
+      "title": "Conferma eliminazione",
+      "description": "Sei sicuro di voler eliminare questo accertamento? L'operazione non può essere annullata."
+    },
+    "cannotModifyDialog": {
+      "title": "Operazione non consentita",
+      "description": "Non è possibile aggiungere o rimuovere pagamenti per questo accertamento."
+    },
+    "paymentDetail": {
+      "accessibleTitle": "Dettaglio pagamento accertamento",
+      "title": "Dettaglio pagamento",
+      "summary": "Riepilogo",
+      "paymentInfo": "Informazione sul pagamento",
+      "iuv": "Codice Avviso (IUV)",
+      "amount": "Importo",
+      "paymentObject": "Oggetto del pagamento",
+      "duetype": "Tipo dovuto",
+      "debtor": "Debitore",
+      "fiscalCode": "CF / Partita IVA",
+      "paymentDate": "Data esito",
+      "psp": "Gestore della transazione (PSP)",
+      "iud": "IUD",
+      "iur": "IUR"
+    },
+    "error": {
+      "debtPositionTypeOrgCodeNotDefined": "Il tipo dovuto non è definito"
+    }
+  },
+  "assessmentsRegistrySearchResults": {
+    "sectionCode": "Codice Capitolo",
+    "operatingYear": "Anno",
+    "debtPositionTypeOrgDescription": "Tipo dovuto",
+    "assessmentCode": "Codice accertamento",
+    "officeCode": "Codice ufficio",
+    "status": "Stato ufficio",
+    "uploadFlow": "Crea nuovo capitolo"
+  },
+  "callback": {
+    "success": {
+      "title": "Pagamento completato con successo",
+      "description": "Il tuo pagamento è stato processato correttamente."
+    },
+    "error": {
+      "title": "Pagamento non riuscito",
+      "description": "Si è verificato un errore durante il processo di pagamento."
+    },
+    "cancel": {
+      "title": "Pagamento annullato",
+      "description": "Il processo di pagamento è stato annullato."
+    }
+  },
+  "classifications": {
+    "title": "Dettaglio Pagamento",
+    "accessibleTitle": "Dettaglio classificazione pagamenti",
+    "description": "Ricerca o visualizza classificazioni",
+    "search": "Cerca gli stati dei pagamenti",
+    "searchdescription": "Controlla se i pagamenti sono stati debitamente notificati, rendicontati e riconciliati oppure verifica degli errori. Inserisci al meno un filtro per avviare la ricerca.",
+    "exportTitle": "Scarica Flussi",
+    "exportDescription": "Richiede l'esportazione di Classificazioni dei pagamenti un certo intervallo di tempo.",
+    "sectionTitle": "Classificazioni esportati",
+    "showAllResults": "Vedi flussi esportati",
+    "exportFlowDescription": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+    "filters": {
+      "classificationType": "Tipo Classificazione",
+      "noOptionSelected": "Seleziona un'opzione"
+    },
+    "detail": {
+      "title": "Dettaglio Pagamento",
+      "sections": {
+        "telematicReceipt": {
+          "title": "Ricevuta Telematica",
+          "debtPositionTypeOrgDescription": "Tipo dovuto",
+          "paymentObject": "Oggetto del pagamento",
+          "receiptPaymentAmount": "Importo",
+          "receiptPaymentDateTime": "Data Esito",
+          "receiptPspCompanyName": "Gestore della transazione (PSP)",
+          "iuv": "IUV",
+          "iud": "IUD",
+          "iur": "IUR",
+          "receiptPayerFullName": "Anagrafica debitore",
+          "receiptPayerFiscalCode": "Codice fiscale debitore",
+          "link": "Vedi Ricevuta Telematica"
+        },
+        "notifiedPayment": {
+          "title": "pagamento notificato",
+          "debtType": "Tipo dovuto",
+          "paymentObject": "Oggetto del pagamento",
+          "amount": "Importo",
+          "receiptPayerFullName": "Anagrafica pagatore",
+          "receiptPayerFiscalCode": "Codice fiscale pagatore",
+          "esecutionDate": "Data esecuzione",
+          "otherdata": "Dati specifici riscossione",
+          "iud": "IUD"
+        },
+        "reporting": {
+          "title": "Rendicontazione pagoPA",
+          "idReporting": "ID Rendicontazione",
+          "flowDateTime": "Data ora flusso",
+          "regulationUniqueIdentifier": "ID regolamento",
+          "regulationDate": "Data regolamento",
+          "totalPayments": "Importo Totale",
+          "link": "Vedi Flusso di Rendicontazione"
+        },
+        "earnings": {
+          "title": "Giornale di cassa",
+          "accountCode": "Conto",
+          "pspLastName": "Gestore della transazione (PSP)",
+          "documentCode": "Codice documento",
+          "billDate": "Data Valuta",
+          "billYear": "Anno bolletta",
+          "provisionalAe": "Anno provvissorio",
+          "receptionDate": "Data Contabile",
+          "billCode": "Codice Bolletta",
+          "provisionalCode": "Codice provvisorio",
+          "link": "Vedi Bolletta"
+        }
+      },
+      "statusBar": {
+        "status": {
+          "alerts": {
+            "correctlyReported": {
+              "title": "Il pagamento è stato notificato e riconciliato",
+              "description": "Sono disponibili la ricevuta telematica, il flusso delle notifiche, la rendicontazione tramite PagoPA."
+            },
+            "reported": {
+              "title": "Il pagamento è stato rendicontato",
+              "description": "Sono disponibili la ricevuta telematica e la rendicontazione tramite PagoPA."
+            },
+            "punctualReversal": {
+              "title": "Il pagamento ha un riversamento puntuale",
+              "description": "Sono disponibili la ricevuta telematica e il giornale di cassa."
+            },
+            "notified": {
+              "title": "Il pagamento è stato notificato",
+              "description": "Sono disponibili la ricevuta telematica, il flusso delle notifiche, la rendicontazione tramite PagoPA e il giornale di cassa."
+            },
+            "cumulativeReversal": {
+              "title": "Il pagamento ha un riversamento cumulativo",
+              "description": "Sono disponibili la ricevuta telematica, la rendicontazione tramite PagoPA e il giornale di cassa."
+            },
+            "incorrectlyReported": {
+              "title": "Pagamento non correttamente rendicontato",
+              "description": "È disponibile la ricevuta telematica, ma manca il flusso con i dati di rendicontazione."
+            },
+            "incorrectlyNotified": {
+              "title": "Pagamento non correttamente notificato",
+              "description": "È disponibile la ricevuta telematica, ma manca il flusso delle notifiche."
+            },
+            "incorrectlyReversed": {
+              "title": "La rendicontazione non è stata correttamente riversata.",
+              "description": "È disponibile la rendicontazione tramite PagoPA, ma manca il giornale di cassa."
+            },
+            "duplicatePayments": {
+              "title": "Pagamenti doppi",
+              "description": "Pagamenti doppi"
+            },
+            "unexecutedReporting": {
+              "title": "Rendicontazione relativa a un pagamento non eseguito",
+              "description": "È disponibile la rendicontazione tramite PagoPA, ma manca la ricevuta telematica."
+            },
+            "unrecognizedReversal": {
+              "title": "Riversamento non rendicontato o relativo a un pagamento non eseguito",
+              "description": "È disponibile il giornale di cassa, ma manca la ricevuta telematica o il flusso con i dati di rendicontazione tramite PagoPA."
+            },
+            "differentAmountReversal": {
+              "title": "Rendicontazione con riversamento presente, riversato ma con importo differente",
+              "description": "È disponibile il flusso con i dati di rendicontazione tramite PagoPA e il giornale di cassa, ma hanno importi diversi."
+            },
+            "notifiedNotExecuted": {
+              "title": "Pagamento notificato ma non eseguito",
+              "description": "È disponibile il flusso delle notifiche, ma manca la ricevuta telematica."
+            },
+            "unrecognizedTreasuryReversal": {
+              "title": "Riversamento di tesoreria non riconosciuto",
+              "description": "È disponibile il giornale di cassa, ma manca il flusso con i dati di rendicontazione tramite PagoPA."
+            },
+            "unknownTreasuryReversals": {
+              "title": "Riversamenti di tesoreria sconosciuti",
+              "description": "È presente il giornale di cassa ma non il flusso di Rendicontazione"
+            },
+            "default": {
+              "title": "Stato di riconciliazione",
+              "description": "Informazioni sui dati disponibili per questo pagamento."
+            }
+          },
+          "reconciliationState": {
+            "title": "Stato Riconciliazione"
+          },
+          "states": {
+            "paid": {
+              "label": "Pagato",
+              "descriptionActive": "È presente la Ricevuta",
+              "descriptionInactive": "Ricevuta assente"
+            },
+            "reported": {
+              "label": "Rendicontato",
+              "descriptionActive": "È presente l'ID Rendicontazione",
+              "descriptionInactive": "Flusso di Rendicontazione assente"
+            },
+            "collected": {
+              "label": "Incassato",
+              "descriptionActive": "È presente il Giornale di cassa",
+              "descriptionInactive": "Giornale di cassa assente"
+            }
+          }
+        }
+      }
+    },
+    "statusChip": {
+      "ERROR": "Anomalie",
+      "INFO": "Verificato",
+      "WARNING": "In completamento"
+    }
+  },
+  "classificationsExport": {
+    "accessibleTitle": "Flussi esportati: classificazione pagamenti",
+    "descriptionOverview": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+    "classificationsOptions": {
+      "ALL": "Tutti",
+      "DOPPI": "Pagamenti doppi",
+      "RT_NO_IUF": "Pagamenti non correttamente rendicontati",
+      "RT_NO_IUD": "Pagamenti non correttamente notificati",
+      "IUV_NO_RT": "Rendicontazioni senza pagamenti generati",
+      "TES_NO_IUF_OR_IUV": "Riversamenti non rendicontati o di pagamenti non eseguiti",
+      "IUF_NO_TES": "Rendicontazioni non correttamente riversate",
+      "IUD_RT_IUF": "Pagamenti Notificati e Riconciliati",
+      "RT_IUF": "Pagamenti rendicontati",
+      "RT_TES": "Pagamenti con riscontro puntuale",
+      "IUD_RT_IUF_TES": "Pagamenti Notificati",
+      "RT_IUF_TES": "Pagamenti riversati cumulativamente",
+      "IUF_TES_DIV_IMP": "Rendicontazioni con riversamento ma con importo differente",
+      "IUD_NO_RT": "Notifiche di pagamenti non eseguiti",
+      "TES_NO_MATCH": "Riversamenti di tesoreria sconosciuti",
+      "UNKNOWN": "Sconosciuto"
+    },
+    "exportPage": {
+      "accessibleTitle": "Prenotazione export flusso: Conservazione"
+    },
+    "title": "Prenota export di un flusso",
+    "description": "Imposta i filtri e Inserisci i dati per prenotare l'esportazione delle classificazioni dei pagamenti e conoscere se è stato riconciliato o ci sono delle anomalie.",
+    "subTitle": "Configurazione dell'esportazione",
+    "subDescription": "L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
+    "sections": {
+      "paymentClassification": {
+        "title": "Classificazione pagamenti",
+        "type": "Tipo classificazione",
+        "lastUpdateDate": "Data ultimo aggiornamento"
+      },
+      "traceVersion": {
+        "title": "Versione tracciato",
+        "fileVersion": "Versione tracciato"
+      },
+      "notice": {
+        "remittanceInformation": "Oggetto del pagamento",
+        "applicant": "Attestante",
+        "paymentDate": "Data pagamento",
+        "paymentDateNotice": "Data pagamento ricevuta"
+      },
+      "reporting": {
+        "title": "Rendicontazione",
+        "paymentDate": "Data pagamento",
+        "regulationDate": "Data regolamento",
+        "payDateReporting": "Data pagamento rendicontazione",
+        "regulationUniqueIdentifier": "Identificativo univoco regolamento"
+      },
+      "treasury": {
+        "title": "Tesoreria",
+        "amount": "Importo",
+        "accountRegistryCode": "Codice conto",
+        "accountDate": "Data contabile",
+        "valueDate": "Data Valuta"
+      }
+    },
+    "errorMessages": {
+      "singleInstanceBothDates": "Compila entrambe le date dell'intervallo",
+      "bothDates": "Compila entrambe le date negli intervalli che vuoi utilizzare",
+      "missingRequiredFields": "Verifica di aver compilato i filtri obbligatori"
+    }
+  },
+  "classificationsSearchResults": {
+    "accessibleTitle": "Risultato ricerca classificazione pagamenti"
+  },
+  "clientSil": {
+    "accessibleTitle": "Ricerca client sil",
+    "addNew": "Aggiungi nuovo",
+    "filters": {
+      "clientName": "Nome Client SIL",
+      "clientNamePlaceholder": "Inserisci il nome del client",
+      "clientId": "Client ID",
+      "clientIdPlaceholder": "Inserisci l'ID del client"
+    },
+    "table": {
+      "clientName": "Nome Client SIL",
+      "clientId": "Client ID"
+    },
+    "title": "Client SIL",
+    "description": "Gestisci i Client SIL dell'organizzazione",
+    "create": {
+      "title": "Aggiungi nuovo Client SIL",
+      "subtitle": "Il client ID e key secret saranno generati automaticamente dopo la creazione.",
+      "formLabel": "Form di creazione Client SIL",
+      "section": {
+        "description": {
+          "title": "Configurazione generale",
+          "subtitle": "Descrizione"
+        }
+      },
+      "success": {
+        "title": "Il SIL '{{clientName}}' è stato aggiunto!",
+        "description": "La trovi nella sezione Gestione SIL, dove puoi consultarlo in qualsiasi momento.",
+        "goToDetail": "Vedi dettaglio SIL"
+      },
+      "fields": {
+        "clientName": {
+          "label": "Nome Client SIL",
+          "placeholder": "Tassa seconde case",
+          "required": "Il nome del Client SIL è obbligatorio",
+          "maxLength": "Il nome non può superare i 100 caratteri",
+          "invalid": "Il nome del Client SIL può contenere solo caratteri alfanumerici ed i simboli - e _"
+        }
+      },
+      "error": {
+        "nameAlreadyExists": "Esiste già un Client SIL con questo nome",
+        "invalidData": "I dati inseriti non sono validi",
+        "generic": "Errore durante la creazione del Client SIL"
+      }
+    },
+    "delete": {
+      "confirmDialog": {
+        "title": "Sei sicuro di voler eliminare il Client SIL?",
+        "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati."
+      }
+    },
+    "successPage": {
+      "title": "Client SIL eliminato con successo",
+      "description": "Il Client SIL è stato eliminato correttamente.",
+      "backToCatalog": "Torna alla lista"
+    }
+  },
+  "clientSilDetail": {
+    "accessibleTitle": "Dettaglio client sil: {{clientName}}",
+    "description": "Ecco i dettagli del Client SIL censito",
+    "key": "Key",
+    "reloadSecretOK": "Secret key rigenerata correttamente",
+    "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
+  },
+  "commons": {
+    "404": "404: risorsa non disponibile",
+    "affiliateNew": "Associa nuovo",
+    "affiliate": "Associa",
+    "confirm": "Conferma",
+    "configure": "Configura",
+    "id": "id",
+    "role": "Ruolo",
+    "info": "Informazioni",
+    "infoSingular": "Informazione",
+    "accountingInformation": "Informazione contabile",
+    "add": "Aggiungi",
+    "additionalLanguage": "Lingua addizionale",
+    "all": "Tutti",
+    "addfilter": "Aggiunge filtro",
+    "amount": "Importo",
+    "anonymousFiscalCode": "Codice Fiscale Anonimo",
+    "appName": "Piattaforma Unitaria",
+    "apiKey": "API Key",
+    "auditor": "Gestore della transazione (PSP)",
+    "back": "Indietro",
+    "behavior": "Comportamento",
+    "breadcrumbs": "Elementi di navigazione breadcrumbs",
+    "breadcrumbsElement": "Elemento breadcrumb",
+    "breadcrumbsElementClickable": "Elemento breadcrumb cliccabile",
+    "cancel": "Annulla",
+    "cashJournal": "Giornale di cassa",
+    "cbill": "CBILL",
+    "close": "Chiudi",
+    "collectionReason": "Motivo Riscossione",
+    "continue": "Continua",
+    "copied": "Copiato!",
+    "create": "Crea",
+    "createNew": "Crea nuova",
+    "createNewOne": "Crea nuovo",
+    "backToHome": "Torna alla home",
+    "backToStart": "Torna alla sezione",
+    "goToDetail": "Vedi dettaglio",
+    "creationFrom": "Creazione dal",
+    "debtFlow": "Flussi dovuti",
+    "debtType": "Tipo dovuto",
+    "debtTypes": "Tipo di dovuti",
+    "debtTypeCode": "Codice Tipo dovuto",
+    "debtTypeName": "Nome del Tipo dovuto",
+    "debtor": "Debitore",
+    "delete": "Elimina",
+    "deleteSelection": "Cancella la selezione",
+    "description": "Descrizione",
+    "detail": "Dettaglio",
+    "disable": "Disabilita",
+    "disabled": "Disabilitato",
+    "downloadInstallment": "Scarica avviso",
+    "DP_DESCRIPTION": {
+      "DP_CREATED": "Posizione Debitoria Creata - {{eventDescription}}",
+      "DP_CANCELLED": "Posizione Debitoria Cancellata - {{eventDescription}}",
+      "DP_UPDATED": "Posizione Debitoria Aggiornata - {{eventDescription}}",
+      "DPI_ADDED": "Avviso Aggiunto - {{eventDescription}}",
+      "DPI_CANCELLED": "Avviso Cancellato - {{eventDescription}}",
+      "DPI_EXPIRED": "Avviso Scaduto - {{eventDescription}}",
+      "DPI_REPORTED": "Avviso Rendicontato - {{eventDescription}}",
+      "DPI_UPDATED": "Avviso Aggiornato - {{eventDescription}}",
+      "IO_NOTIFIED": "È stato inviato un messaggio al cittadino su IO. - {{eventDescription}}",
+      "RT_RECEIVED": "Avviso Pagato - {{eventDescription}}",
+      "SEND_NOTIFICATION_CREATED": "Notifica SEND creata - {{eventDescription}}",
+      "SEND_NOTIFICATION_DATE": "La notifica è stata letta dal destinatario - {{eventDescription}}",
+      "SEND_NOTIFICATION_ERROR": "Errore notifica SEND - {{eventDescription}}",
+      "SYNC_ERROR": "Errore di sincronizzazione - {{eventDescription}}"
+    },
+    "DP_STATUS": {
+      "DPI_CANCELLED": "Cancellato",
+      "DPI_EXPIRED": "Scaduto",
+      "DPI_REPORTED": "Rendicontato",
+      "RT_RECEIVED": "Pagato",
+      "UNKNOWN": "Stato sconosciuto"
+    },
+    "duetype": "Tipo dovuto",
+    "edit": "Modifica",
+    "enable": "Abilita",
+    "enabled": "Abilitato",
+    "executedBy": "Eseguito da",
+    "exit": "Esci",
+    "exportedFlows": "Flussi esportati",
+    "exportFlows": "Esporta flussi",
+    "exportFlowCategories": {
+      "receipt": "Ricevute Telematiche",
+      "conservation": "Conservazione"
+    },
+    "exportFlowPageTitleWithCategory": "Prenotazione export flusso: {{category}}",
+    "exportFrom": "Esportati dal",
+    "files": {
+      "download": "Scarica",
+      "downloadFlow": "Scarica flusso",
+      "file": "File",
+      "imported": "File importato",
+      "importedResult": "Esito dell'importazione",
+      "importedIuv": "Esportazione IUV caricati",
+      "importedNotice": "Esportazione ZIP file con avvisi PDF",
+      "notvalid": "Il file non è valido",
+      "remove": "Rimuovi file",
+      "size": "Dimensione File",
+      "upload": "Carica il file",
+      "uploadDate": "Data Caricamento",
+      "uploadInProgress": "Caricamento in corso...",
+      "downloadFailed": "Errore durante il download.",
+      "missingIuv": "Manca il codice IUV o l'ID della posizione debitoria",
+      "missingDebtPositionId": "Manca l'ID della posizione debitoria",
+      "missingVersion": "Il nome del file deve essere versionato, contenere un Numero_Numero se previsto.",
+      "alreadyExists": "Esiste già un file caricato con questo nome. Modifica il nome del file e riprova."
+    },
+    "filters": {
+      "accountingDate": {
+        "date": "Data Contabile",
+        "label": "Data Contabile"
+      },
+      "add": "Aggiungi filtro",
+      "amount": {
+        "label": "Importo",
+        "value": "Importo"
+      },
+      "atLeastOneFilter": "Inserisci almeno uno dei parametri per avviare la ricerca",
+      "bill": {
+        "code": "Codice",
+        "date": {
+          "label": "Data Bolletta"
+        },
+        "label": "Bolletta"
+      },
+      "documentCode": {
+        "code": "Codice",
+        "label": "Codice Documento"
+      },
+      "filter": "Filtra",
+      "filterResults": "Cerca",
+      "filtersField": "Filtri",
+      "iuv": {
+        "code": "Codice IUV",
+        "label": "IUV"
+      },
+      "iur": {
+        "code": "Codice IUR",
+        "label": "IUR"
+      },
+      "iud": {
+        "code": "Codice IUD",
+        "label": "IUD"
+      },
+      "iuf": {
+        "code": "Codice IUF",
+        "label": "IUF"
+      },
+      "payer": {
+        "label": "Gestore della transazione (PSP)",
+        "name": "Nome ordinante"
+      },
+      "remove": "Rimuovi filtri",
+      "reportId": {
+        "code": "ID Rendicontazione",
+        "label": "ID Rendicontazione"
+      },
+      "temporaryCode": {
+        "code": "Codice",
+        "label": "Codice Provvisorio"
+      },
+      "valueDate": {
+        "date": "Data Valuta",
+        "label": "Data Valuta"
+      },
+      "officeCode": "Codice ufficio",
+      "officeDescription": "Denominazione ufficio",
+      "assessmentCode": "Codice accertamento",
+      "assessmentDescription": "Denominazione accertamento",
+      "sectionCode": "Codice capitolo",
+      "sectionDescription": "Capitolo",
+      "status": "Stato ufficio",
+      "debtPositionType": "Tipo dovuto",
+      "typeDescription": "Descrizione tipo dovuto",
+      "operatingYear": "Anno esercizio"
+    },
+    "fiscalCode": "Codice Fiscale",
+    "email": "Email",
+    "fiscalCodeorVat": "CF / Partita IVA",
+    "fiscalCodeorVatExecutor": "CF / Partita IVA",
+    "flowImport": {
+      "boxDescription": "Carica il file .zip con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+      "boxTitle": "Configurazione flusso",
+      "description": "Carica il file con i dati necessari a creare, modificare o annullare posizioni debitorie.",
+      "descriptionByCategory": {
+        "telematic-receipt": "Carica il file contenente i dati necessari per integrare le informazioni relative alle Ricevute Telematiche.",
+        "reporting": "Carica il file contenente i dati necessari per integrare le informazioni sulle rendicontazioni.",
+        "treasury": "Carica il file contenente i dati necessari per integrare le informazioni relative alla Tesoreria."
+      },
+      "manualLink": "Dubbi? Vai al manuale",
+      "uploadButton": "Carica il flusso"
+    },
+    "flowType": "Tipo flusso",
+    "flowTypes": {
+      "DP_INSTALLMENTS": "Rate posizioni debitorie",
+      "PAYMENTS_REPORTING": "Rendicontazione di pagamento",
+      "PAYMENTS_REPORTING_PAGOPA": "Rendicontazione di pagamento PagoPA",
+      "RECEIPT": "Ricevuta",
+      "RECEIPT_PAGOPA": "Ricevuta PagoPA",
+      "TREASURY_CSV": "Giornale di Cassa CSV",
+      "TREASURY_OPI": "Giornale di Cassa OPI",
+      "TREASURY_POSTE": "Estrato conto poste",
+      "TREASURY_XLS": "Giornale di Cassa XLS"
+    },
+    "footer": {
+      "infoFallback": "**PagoPA S.p.A.** - Società per azioni con socio unico - Capitale sociale di euro 1,000,000 interamente versato - Sede legale in Roma, Piazza Colonna 370, CAP 00187 - N. di iscrizione a Registro Imprese di Roma, CF e P.IVA 15376371009"
+    },
+    "from": "Dal",
+    "key": "Chiave",
+    "genericError": "Si è verificato un errore durante il recupero dei dati. Per favore prova più tardi.",
+    "iban": "IBAN",
+    "importFlow": "Importa flusso",
+    "importFlowErrorMessage": "Non è stato possibile importare il flusso",
+    "importFlows": "Importa flussi",
+    "importFlowCategories": {
+      "telematic-receipt": "di Ricevute Telematiche",
+      "reporting": "di Rendicontazione",
+      "treasury": "di Tesoreria",
+      "debt-positions": "di Posizioni Debitorie"
+    },
+    "importNewFlowWithCategory": "Carica un nuovo flusso {{category}}",
+    "importFrom": "Caricati dal",
+    "importNewFlow": "Carica un nuovo flusso",
+    "internalCode": "Codice Interno",
+    "inThisPage": "in questa pagina",
+    "ipaCode": "Codice IPA",
+    "iud": "IUD",
+    "iuf": "IUF",
+    "iun": "Identificativo univoco notifica",
+    "iur": "IUR",
+    "iuv": "IUV",
+    "loading": "Caricamento...",
+    "lastUpdate": "Ultimo aggiornamento",
+    "macroarea": "Macroarea",
+    "mandatoryDueDate": "Scadenza Obbligatoria",
+    "message": "Messaggio",
+    "messages": "Messaggi",
+    "notificationDate": "Data di notifica",
+    "nav": "NAV",
+    "no": "No",
+    "NO_EVENTS": "Nessun evento",
+    "noFlows": "Non ci sono flussi.",
+    "noPaymentMade": "Non è ancora stato effettuato alcun pagamento",
+    "noRows": "Nessun risultato trovato",
+    "notificationFeeCents": "Costo di notifica",
+    "notifications": "Notifiche",
+    "notificationsConfig": "Configurazione",
+    "notFound": "Risorsa non trovata",
+    "onlyRemove": "Rimuovi",
+    "operator": "Operatore",
+    "operators": "Operatori",
+    "optional": "opzionale",
+    "organizationType": "Tipo ente",
+    "outcomeFrom": "Esito dal",
+    "payer": "Pagatore",
+    "payerDetails": "Anagrafica Pagatore",
+    "payment": "Pagamento",
+    "paymentDate": "Data pagamento",
+    "paymentExecutor": "Versante",
+    "paymentInformation": "Informazione sul pagamento",
+    "paymentManager": "Gestore di pagamenti",
+    "paymentOptions": {
+      "DOWN_PAYMENT": "Anticipo",
+      "INSTALLMENTS": "Soluzione a Rate",
+      "SINGLE_INSTALLMENT": "Soluzione Unica",
+      "REDUCED_SINGLE_INSTALLMENT": "Pagamento scontato"
+    },
+    "paymentdate": "Data Esito",
+    "payments": "Pagamenti",
+    "person": "Persona fisica",
+    "personLegal": "Persona giuridica",
+    "postAccount": "Conto Corrente Postale",
+    "postIban": "IBAN Postale",
+    "psp": "Gestore della transazione (PSP)",
+    "reason": "Causale",
+    "reload": "Rigenera",
+    "remove": "Rimuovi",
+    "required": "Campo obbligatorio",
+    "requiredFieldDescription": "* Indica un campo obbligatorio",
+    "results": "Risultati",
+    "roles": {
+      "ROLE_ADMIN": "Amministratore",
+      "ROLE_OPER": "Operatore"
+    },
+    "routes": {
+      "ASSESSMENT": "Accertamento pagamenti",
+      "ASSESSMENT_CREATION": "Crea un nuovo accertamento",
+      "ASSESSMENT_REGISTRY_SEARCH_RESULTS": "Capitoli",
+      "BACKOFFICE": "Backoffice",
+      "BACKOFFICE_REGISTRIES": "Giornale degli eventi",
+      "BACKOFFICE_REGISTRY_DETAIL": "Dettaglio evento",
+      "BACKOFFICE_REGISTRY_LIST": "Risultato ricerca",
+      "BACKOFFICE_TAXONOMY": "Tassonomia",
+      "BACKOFFICE_TAXONOMY_INDEX": "Tassonomia",
+      "BACKOFFICE_TAXONOMY_DETAIL": "Dettaglio",
+      "BACKOFFICE_TAXONOMY_SEARCH_RESULTS": "Risultato ricerca",
+      "BACKOFFICE_EVENTS": "Giornale degli eventi",
+      "CLASSIFICATIONS": "Classificazione pagamenti",
+      "CLASSIFICATIONS_EXPORT_OVERVIEW": "Flussi esportati",
+      "CLASSIFICATIONS_SEARCH_RESULTS": "Risultato ricerca",
+      "CLIENT_SIL": "Client Sil",
+      "ASSESSMENT_SEARCH_RESULTS": "Risultato ricerca",
+      "ASSESSMENT_DETAIL": "Dettaglio",
+      "CONSERVATION": "Conservazione",
+      "CONSERVATION_INDEX": "Pagina principale",
+      "DEBT_POSITIONS": "Posizioni debitorie",
+      "DEBT_POSITIONS_IMPORT_OVERVIEW": "Flussi",
+      "DEBT_POSITIONS_RESULTS": "Posizioni debitorie",
+      "DEBT_POSITION_INSTALLMENT_DETAIL": "Dettaglio Avviso",
+      "DEBT_POSITION_SEARCH_RESULTS": "Avvisi (IUV)",
+      "DEBT_TYPES": "Tipi dovuti",
+      "DEBT_TYPES_CATALOG": "Catalogo Tipi dovuti",
+      "DEBT_TYPES_DASHBOARD": "Tipi dovuti impostati",
+      "DEBT_TYPES_DASHBOARD_BYORG": "Ente gestito",
+      "DETAIL": "Dettagli",
+      "DETAIL_FLOWS": "Dettaglio flusso",
+      "EXPORT": "Export",
+      "EXPORT_FLOWS": "Esportazione flussi",
+      "FLOWS": "Flussi",
+      "HOME": "Panoramica",
+      "IMPORT": "Import",
+      "IMPORT_FLOWS": "Importa flusso",
+      "ORGANIZATIONS": "Enti gestiti",
+      "ORGANIZATIONS_DETAIL": "Anagrafica ente",
+      "ORG_SIL_SERVICE": "Org Sil Service",
+      "ORG_SIL_SERVICE_DETAIL": "Dettaglio Org Sil Service",
+      "REPORTING": "Rendicontazione",
+      "REPORTING_DETAIL": "Dettaglio",
+      "REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
+      "REPORTING_IMPORT_FLOW_OVERVIEW": "Flussi importati",
+      "REPORTING_IMPORT_OVERVIEW": "Flussi importati",
+      "REPORTING_INDEX": "Pagina principale",
+      "REPORTING_PAYMENT_DETAIL": "Dettaglio Pagamento",
+      "REPORTING_SEARCH_RESULTS": "Risultato ricerca",
+      "SPONTANEOUS_FORM": "Moduli personalizzati",
+      "STATISTICS": "Statistiche",
+      "TELEMATIC_RECEIPT": "Ricevute Telematiche",
+      "TELEMATIC_RECEIPT_DETAIL": "Dettaglio Ricevuta Telematica",
+      "TELEMATIC_RECEIPT_EXPORT_OVERVIEW": "Flussi esportati",
+      "TELEMATIC_RECEIPT_IMPORT_FLOW": "Carica un nuovo flusso",
+      "TELEMATIC_RECEIPT_IMPORT_OVERVIEW": "Flussi importati",
+      "TELEMATIC_RECEIPT_INDEX": "Pagina principale",
+      "TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
+      "TREASURY": "Tesoreria",
+      "TREASURY_DETAIL": "Dettaglio Bolletta",
+      "TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
+      "TREASURY_IMPORT_OVERVIEW": "Flussi importati",
+      "TREASURY_INDEX": "Pagina principale",
+      "TREASURY_SEARCH_RESULTS": "Risultato ricerca",
+      "USERS": "Utenti",
+      "OPERATORS_LIST": "Gestione operatori",
+      "OPERATORS_LIST_BYORG": "Ente gestito",
+      "CLASSIFICATION_DETAIL": "Dettaglio Pagamento"
+    },
+    "saveDraft": "Salva bozza",
+    "save": "Salva modifiche",
+    "saveOnly": "Salva",
+    "search": "Cerca",
+    "searchCF": "Cerca CF",
+    "searchFor": "Cerca per",
+    "searchForCode": "Cerca per codice",
+    "searchForDescription": "Cerca per descrizione",
+    "searchForIPACode": "Cerca per codice IPA",
+    "searchForOrganization": "Cerca ente",
+    "searchForOrganizationName": "Cerca per nome ente",
+    "searchIUF": "Cerca ID Rendicontazione",
+    "searchIUV": "Cerca IUV",
+    "searchName": "Cerca Nome",
+    "searchOperator": "Cerca operatore",
+    "searchRegulationUniqueIdentifier": "Cerca ID Regolamento",
+    "secret": "Secret",
+    "segregationCode": "Codice segregazione",
+    "selectedOperator_one": "Operatore selezionato",
+    "selectedOperator_other": "Operatori selezionati",
+    "serviceType": "Tipo Servizio",
+    "serviceUnavailable": "Il servizio è temporaneamente non disponibile, vi preghiamo di riprovare più tardi.",
+    "showAllFlows": "Vedi tutti i flussi",
+    "showDebtPositions": "Vedi Posizione debitoria",
+    "showLess": "Vedi meno",
+    "showMore": "Vedi di più",
+    "showOtherBeneficiaries": "Vedi altri beneficiari",
+    "sidebar": {
+      "collapse": "Comprimi il menu",
+      "entities": "Enti gestiti",
+      "expand": "Espandi il menu",
+      "menu": "Menu",
+      "menudescription": "Lista di navigazione",
+      "users": "Utenti"
+    },
+    "skipToContent": "Vai al contenuto",
+    "state": "Stato",
+    "states": {
+      "cancelled": "Annullato",
+      "uploaded": "Caricato"
+    },
+    "status": {
+      "ALL": "Tutti",
+      "ACTIVE": "Attivo",
+      "ENABLED": "Abilitato",
+      "INACTIVE": "Disattivo",
+      "COMPLETED": "Elaborato",
+      "DISABLED": "Disabilitato",
+      "ERROR": "Errore",
+      "EXPIRED": "Scaduto",
+      "PROCESSING": "In elaborazione",
+      "UPLOADED": "Caricato",
+      "CANCELLED": "Cancellato",
+      "DRAFT": "Bozza",
+      "INVALID": "Non valido",
+      "PAID": "Pagato",
+      "PARTIALLY_PAID": "Pagamento iniziato",
+      "REPORTED": "Rendicontato",
+      "TO_SYNC": "Da sincronizzare",
+      "UNPAID": "Da pagare",
+      "UNPAYABLE": "Non pagabile",
+      "WARNING": "Elaborato con errori",
+      "WAITING_FILE": "In attesa del file"
+    },
+    "subject": "Oggetto",
+    "successExport": "Abbiamo ricevuto la tua richiesta!",
+    "successExportDescription": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
+    "successImport": "Flusso caricato con successo",
+    "summary": "riepilogo",
+    "tableResults": "Risultati della ricerca in forma tabellare",
+    "taxCode": "Codice Tassonomico",
+    "taxonomy": "Tassonomia",
+    "to": "Al",
+    "transactionManager": "Gestore della transazione (PSP)",
+    "unauthorized": "Non sei autorizzato ad accedere alla sezione, contatta il gestore dei permessi",
+    "unknownOrganization": "Ente senza nome",
+    "uploadedFrom": "Caricati dal",
+    "updatedFrom": "Aggiornato dal",
+    "userActions": {
+      "yourdata": "I tuoi dati",
+      "logout": "Esci"
+    },
+    "view": "Visualizza",
+    "validation": {
+      "selectAtLeastOneOption": "Seleziona almeno un'opzione",
+      "amountRequired": "L'importo è obbligatorio",
+      "minAmountRequired": "L'importo deve essere maggiore di zero",
+      "urlRequired": "L'URL è obbligatorio",
+      "invalidUrl": "Formato URL non valido",
+      "fieldRequired": "Campo obbligatorio",
+      "checkboxRequired": "Questa conferma è obbligatoria",
+      "invalidIban": "Formato IBAN non valido",
+      "invalidPostalIban": "Formato conto poste non valido",
+      "invalidFiscalCodeOrVat": "Il codice fiscale o la partita IVA non sono corretti"
+    },
+    "yes": "Si"
+  },
+  "conservation": {
+    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni."
+  },
+  "dates": {
+    "from": "Dal",
+    "to": "Al",
+    "chooseDate": "Scegli data",
+    "changeDate": "Modifica data",
+    "validations": {
+      "from": "Data non valida",
+      "to": "Data non valida",
+      "insertFrom": "Seleziona una data di inizio",
+      "insertTo": "Seleziona una data di fine"
+    },
+    "year": "Anno"
+  },
+  "debtPositionCreateWizard": {
+    "addDebtor": {
+      "subtitle": "Aggiungi i dati del destinatario principale della posizione debitoria.",
+      "title": "Aggiungi debitore"
+    },
+    "configurationAlert": {
+      "subtitle": "Indica la opzione di pagamento a disposizione del cittadino e aggiunge l'importo dovuto.",
+      "title": "Configurazione avviso"
+    },
+    "description": "Compila i campi e crea una Posizione Debitoria",
+    "editDescription": "Compila i campi e modifica una Posizione Debitoria.",
+    "errorLoadingData": "Si è verificato un errore durante il caricamento dei dati della posizione debitoria. Verifica i dati e riprova.",
+    "errorMissingId": "Si è verificato un errore durante il caricamento dei dati della posizione debitoria. Verifica i dati e riprova.",
+    "generalConfiguration": {
+      "subtitle": "Scegli tipo di dovuto su cui creare il nuovo dovuto e assegnarle un nome per il successivo tracciamento.",
+      "title": "Configurazione generale"
+    },
+    "loadingDebtPosition": "Caricamento posizione debitoria",
+    "step1": {
+      "debtPositionType": {
+        "label": "Tipo di dovuto",
+        "required": "Il campo tipo di dovuto è obbligatorio"
+      },
+      "description": {
+        "label": "Descrizione Posizione Debitoria",
+        "required": "Il campo descrizione è obbligatorio"
+      },
+      "title": "Descrizione"
+    },
+    "step2": {
+      "address": {
+        "label": "Indirizzo"
+      },
+      "city": {
+        "label": "Località"
+      },
+      "civicNumber": {
+        "label": "Civico"
+      },
+      "companyName": {
+        "label": "Ragione sociale",
+        "required": "Il campo ragione sociale è obbligatorio"
+      },
+      "country": {
+        "label": "Nazione"
+      },
+      "fiscalData": "DATI FISCALI",
+      "fullName": {
+        "label": "Nome e cognome",
+        "minTwoWords": "Controlla di aver scritto il nome e il cognome",
+        "required": "Il campo nome e cognome è obbligatorio"
+      },
+      "personalData": "DATI PERSONALI",
+      "province": {
+        "label": "Provincia"
+      },
+      "subjectType": {
+        "label": "Tipo di soggetto",
+        "options": {
+          "fisica": "Persone fisiche",
+          "giuridica": "Persone giuridiche"
+        },
+        "required": "Il campo tipo di soggetto è obbligatorio"
+      },
+      "anonymousSubject": {
+        "label": "Soggetto anonimo",
+        "helperText": "Nei casi dove il cittadino non ha un Codice Fiscale"
+      },
+      "taxCode": {
+        "invalid": "Verifica che il Codice fiscale sia corretto",
+        "invalidVAT": "Verifica che la Partita IVA sia corretta",
+        "label": "Codice Fiscale",
+        "placeholder": "Inserisci il codice fiscale (16 caratteri)",
+        "required": "Il campo codice fiscale è obbligatorio"
+      },
+      "taxCodeBusiness": {
+        "label": "Codice fiscale / P. IVA",
+        "placeholder": "Inserisci il Codice fiscale (16 caratteri) o la Partita IVA (11 cifre)",
+        "required": "Il campo Codice fiscale / P. IVA è obbligatorio",
+        "invalid": "Verifica che il Codice fiscale o la Partita IVA siano corretti"
+      },
+      "title": "Debitore",
+      "vat": {
+        "invalid": "Verifica che la Partita IVA sia corretta",
+        "label": "Partita IVA",
+        "placeholder": "Inserisci la partita IVA (11 cifre)",
+        "required": "Il campo partita IVA è obbligatorio"
+      },
+      "zipCode": {
+        "error": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
+        "invalid": "Verifica che il CAP sia corretto. Deve contenere 5 cifre",
+        "label": "CAP"
+      }
+    },
+    "step3": {
+      "amount": {
+        "installmentHelperText": "Calcolato sulla base delle rate",
+        "label": "Importo",
+        "positive": "Il campo importo deve essere maggiore di 0",
+        "required": "Il campo importo è obbligatorio",
+        "validNumber": "Il campo importo deve essere un numero valido"
+      },
+      "beneficiary": {
+        "addBeneficiary": "Aggiungi beneficiario",
+        "amount": {
+          "label": "Importo",
+          "required": "Il campo importo è obbligatorio"
+        },
+        "amountMustBeLessThanTotal": "L'importo del beneficiario deve essere minore dell'importo totale",
+        "entityName": {
+          "label": "Nome ente",
+          "required": "Il campo ente beneficiario è obbligatorio"
+        },
+        "iban": {
+          "invalid": "Il formato dell'IBAN non è valido",
+          "label": "IBAN",
+          "required": "Il campo iban è obbligatorio"
+        },
+        "postalIban": {
+          "label": "Conto corrente Postale"
+        },
+        "paymentMethod": {
+          "required": "Il campo IBAN è obbligatorio"
+        },
+        "postalAccount": {
+          "invalid": "Il formato del conto corrente postale non è valido",
+          "label": "Conto Corrente postale",
+          "required": "Il campo conto corrente postale è obbligatorio"
+        },
+        "sumMustBeLessThanTotal": "La somma degli importi dei beneficiari deve essere minore dell'importo totale",
+        "sumMustBeLessThanTotalInstallments": "La somma degli importi dei beneficiari deve essere minore dell'importo totale della rata.",
+        "taxCodeOrVat": {
+          "invalid": "Codice fiscale o partita IVA non validi",
+          "label": "Codice Fiscale o Partita IVA",
+          "required": "Il campo codice fiscale o partita IVA è obbligatorio"
+        },
+        "vat": {
+          "invalid": "Partita IVA non valida",
+          "label": "Partita IVA",
+          "placeholder": "Inserisci la partita IVA (11 cifre)",
+          "required": "Il campo partita IVA è obbligatorio"
+        },
+        "remittance": {
+          "label": "Causale",
+          "required": "Il campo causale è obbligatorio"
+        },
+        "taxonomyCode": {
+          "label": "Codice Tassonomico",
+          "required": "Il campo codice tassonomico è obbligatorio",
+          "invalid": "Il codice tassonomico non è valido. Verifica che sia stato scritto correttamente.",
+          "validate": "Valida codice",
+          "valid": "Codice Tassonomico validato correttamente"
+        },
+        "title": "ENTE BENEFICIARIO"
+      },
+      "dueDate": {
+        "invalid": "La data di scadenza non è valida o è incompleta",
+        "label": "Data scadenza",
+        "required": "Il campo data scadenza è obbligatorio",
+        "futureDate": "La data di scadenza non può essere nel passato"
+      },
+      "error": {
+        "subtitle": "Si è verificato un errore durante la creazione della posizione debitoria. Verifica i dati e riprova."
+      },
+      "installments": {
+        "addInstallment": "Aggiungi rata",
+        "amount": {
+          "label": "Importo",
+          "required": "Il campo importo è obbligatorio"
+        },
+        "dueDate": {
+          "label": "Data scadenza",
+          "required": "Il campo data scadenza è obbligatorio"
+        },
+        "installment": "RATA",
+        "maxInstallmentsReached": "Hai raggiunto il numero massimo di rate (12)",
+        "minInstallmentsRequired": "Sono richieste almeno 2 rate",
+        "remittance": {
+          "label": "Oggetto del pagamento",
+          "required": "Il campo oggetto del pagamento è obbligatorio"
+        },
+        "otherBeneficiaries": "Altri beneficiari",
+        "sameBeneficiaries": "I beneficiari sono uguali alla rata precedente?",
+        "title": "Configurazione rate",
+        "yes": "Sì",
+        "no": "No"
+      },
+      "isMultibeneficiary": {
+        "label": "Altri beneficiari"
+      },
+      "paymentObject": {
+        "label": "Oggetto del pagamento",
+        "required": "Il campo oggetto del pagamento è obbligatorio"
+      },
+      "paymentOption": {
+        "installments": "Soluzione rateale",
+        "label": "Opzione di pagamento",
+        "required": "Il campo opzione di pagamento è obbligatorio",
+        "single": "Soluzione unica"
+      },
+      "title": "Avviso"
+    },
+    "title": "Crea una nuova Posizione Debitoria",
+    "editTitle": "Modifica una Posizione Debitoria",
+    "wizardStepper": {
+      "step1": "Configurazione generale",
+      "step2": "Aggiungi debitore",
+      "step3": "Configurazione avviso"
+    }
+  },
+  "debtPositionCreateWizardCompleted": {
+    "backToStart": "Torna al'inizio",
+    "viewDebtPosition": "Vedi la posizione debitoria",
+    "downloadDebtPosition": "Scarica avvisi",
+    "description": "La trovi nella sezione Posizioni debitorie, dove puoi tenere traccia dell'andamento.",
+    "descriptionDraft": "La trovi nella sezione Posizioni debitorie, dove puoi vederla e modificarla.",
+    "title": "La posizione debitoria '{{paymentObject}}' è stata creata!",
+    "draft": "La posizione debitoria '{{paymentObject}}' è stata salvata in bozza.",
+    "edit": "La posizione debitoria '{{paymentObject}}' è stata modificata con successo!",
+    "editDraft": "La bozza della posizione debitoria '{{paymentObject}}' è stata modificata con successo!"
+  },
+  "debtPositionDetail": {
+    "debtPositionInfo": "Informazioni sulla posizione debitoria",
+    "paymentOptions": "Opzioni di pagamento",
+    "solutionDetail": "Dettaglio soluzione",
+    "downloadNotices": "Scarica avvisi",
+    "activePayment": "Attiva pagamento",
+    "edit": "Modifica",
+    "confirmDialog": {
+      "title": "Sei sicuro di voler eliminare la posizione debitoria?",
+      "description": "Una volta eliminata, la posizione debitoria non sarà più possibile pagarla ne modificarla.",
+      "descriptionDraft": "Una volta eliminata, tutti i dati saranno cancellati e non potranno essere recuperati."
+    },
+    "dialogDownload": {
+      "title": "L'avviso non può essere scaricato.",
+      "message": "Siamo spiacenti, questo file non può essere scaricato. Possono essere scaricati solo gli avvisi non pagati o con pagamento iniziato."
+    },
+    "deleteError": "Si è verificato un errore durante l'eliminazione della posizione debitoria. Vi preghiamo di riprovare più tardi.",
+    "errorDialog": {
+      "title": "La posizione debitoria non può essere eliminata",
+      "description": "Siamo spiacenti, al momento non è possibile eliminare questa posizione debitoria."
+    },
+    "editErrorDialog": {
+      "title": "La posizione debitoria non può essere modificata",
+      "description": "Siamo spiacenti, non è possibile modificare questa posizione debitoria."
+    },
+    "origin": {
+      "SECONDARY_ORG": "Vedi questa posizione debitoria perché sei beneficiario del pagamento di un avviso creato da un altro ente.",
+      "RECEIPT_FILE": "Questa posizione debitoria è stata generata automaticamente in seguito al caricamento di un flusso contenente ricevute di pagamenti effettuati tramite pagoPA.",
+      "RECEIPT_PAGOPA": "Questa posizione debitoria è stata generata automaticamente a seguito della ricezione di una ricevuta telematica di un pagamento non gestito in piattaforma.",
+      "REPORTING_PAGOPA": "Questa posizione debitoria è stata generata automaticamente in seguito alla ricezione di un flusso di rendicontazione con codice esito 8/9 (pagamento senza Ricevuta Telematica)."
+    },
+    "techDebtPositionDefault": "Posizione debitoria tecnica",
+    "toSyncEditErrorDialog": {
+      "description": "Le posizioni debitorie in stato \"Da sincronizzare\" non possono essere modificate. Si prega di ricaricare la pagina o riprovare più tardi."
+    },
+    "toSyncErrorDialog": {
+      "description": "Le posizioni debitorie in stato \"Da sincronizzare\" non possono essere eliminate. Si prega di ricaricare la pagina o riprovare più tardi."
+    },
+    "publishDialog": {
+      "title": "Vuoi attivare il pagamento?",
+      "description": "La posizione debitoria passerà allo stato 'Da pagare' e verranno generati degli avvisi. Una volta attivato, è possibile modificare l'oggetto di pagamento, l'importo e la data di scadenza, oppure eliminare la Posizione Debitoria.",
+      "confirmLabel": "Attiva"
+    },
+    "publishError": "Si è verificato un errore durante l'attivazione del pagamento. Vi preghiamo di riprovare più tardi.",
+    "timeline": {
+      "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio",
+      "title": "Storico Posizione Debitoria"
+    }
+  },
+  "debtPositionInstallmentDetail": {
+    "accessibleTitle": "Dettaglio Posizione Debitoria: {{description}}",
+    "dialogDownload": {
+      "title": "L'avviso non può essere scaricato.",
+      "message": "Siamo spiacenti, questo file non può essere scaricato. Possono essere scaricati solo gli avvisi non pagati."
+    },
+    "drawer": {
+      "info": "Sono presenti altri beneficiari diversi dal tuo ente.",
+      "title": "Beneficiari"
+    },
+    "origin": {
+      "SECONDARY_ORG": "Vedi questo avviso perché sei beneficiario del pagamento di un avviso creato da un altro ente.",
+      "RECEIPT_FILE": "Questo avviso è stato generato automaticamente in seguito al caricamento di un flusso contenente ricevute di pagamenti effettuati tramite pagoPA.",
+      "RECEIPT_PAGOPA": "Questo avviso è stato generato automaticamente a seguito della ricezione di una ricevuta telematica di un pagamento non gestito in piattaforma.",
+      "REPORTING_PAGOPA": "Questo avviso è stato generato automaticamente in seguito alla ricezione di un flusso di rendicontazione con codice esito 8/9 (pagamento senza Ricevuta Telematica)."
+    },
+    "techDebtPositionDefault": "Posizione debitoria tecnica",
+    "timeline": {
+      "message": "È stato inviato un messaggio al cittadino su IO. ID messaggio",
+      "title": "Storico Avviso"
+    }
+  },
+  "debtPositionSearchResults": {
+    "amount": "Importo",
+    "expirationDate": "Data Scadenza",
+    "iuv": "Codice Avviso (IUV)",
+    "status": "Stato",
+    "subject": "Oggetto del pagamento"
+  },
+  "debtPositions": {
+    "expirationFrom": "Scadenza dal",
+    "importDebtFlow": "Importa flussi di dovuti",
+    "importDebtFlowDescription": "Carica un file .zip con l'informazione necessaria di dovuti mancanti.",
+    "searchCardDebtPositionOption": "Posizione Debitoria",
+    "searchCardDescription": "Seleziona cosa stai cercando e inserisci i filtri per avviare la ricerca.",
+    "searchCardIUVOption": "Avviso (IUV)",
+    "searchCardTitle": "Cosa stai cercando?",
+    "searchFiscalCodeDescription": "Cerca Codice Fiscale",
+    "searchIUVDescription": "Cerca Codice Avviso (IUV)"
+  },
+  "debtPositionsImportFlowOverview": {
+    "accessibleTitle": "Flussi importati: posizioni debitorie"
+  },
+  "debtPositionsImportThankYouPage": {
+    "description": "Troverai il flusso caricato nella sezione Flussi importati"
+  },
+  "debtTypeCatalogDetail": {
+    "accessibleTitle": "Dettaglio tipo dovuto: {{description}}",
+    "IOAppMessageTemplate": "Template Messaggio su app IO",
+    "additionalSettings": {
+      "description": "Altre caratteristiche del Tipo dovuto.",
+      "title": "Ulteriori impostazioni"
+    },
+    "confirmDialog": {
+      "description": "Una volta eliminato, tutti i dati saranno cancellati e non potranno essere recuperati.",
+      "title": "Sei sicuro di voler eliminare il Tipo dovuto?"
+    },
+    "debtCatalogConfiguration": {
+      "description": "Definizione del nome e tassonomia del Tipo dovuto.",
+      "title": "Configurazione Tipo dovuto"
+    },
+    "description": "Ecco i dettagli del Tipo dovuto",
+    "errorDialog": {
+      "alreadyUsedDescription": "Questo tipo dovuto è presente in un Catalogo / Posizione Debitoria, pertanto non può essere eliminato.",
+      "genericErrorDescription": "Siamo spiacenti, al momento non è possibile eliminare questo tipo di dovuto.",
+      "title": "Il tipo dovuto non può essere eliminato"
+    },
+    "successPage": {
+      "title": "Tipo dovuto eliminato con successo",
+      "description": "Il tipo dovuto: {{description}} è stato eliminato correttamente.",
+      "backToCatalog": "Torna al catalogo"
+    }
+  },
+  "debtTypeCatalogEdit": {
+    "title": "Modifica il Tipo dovuto",
+    "description": "Compila i campi e modifica il Tipo dovuto nel propio catalogo."
+  },
+  "debtTypeCatalogEditSuccess": {
+    "backToStart": "Torna alla sezione",
+    "description": "La trovi nella sezione Catalogo Tipi Dovuti.",
+    "title": "Il tipo dovuto '{{paymentObject}}' è stato modificato!"
+  },
+  "debtTypeCreate": {
+    "title": "Crea un nuovo Tipo dovuto",
+    "description": "Compila i campi e crea un nuovo Tipo dovuto nel proprio catalogo.",
+    "configuration": {
+      "taxonomy": {
+        "title": "Tassonomia"
+      },
+      "alertMessage": "* Indica un campo obbligatorio",
+      "debtType": {
+        "label": "Nome del Tipo dovuto",
+        "helper": "Inserisce il nome attribuito al servizio di incasso",
+        "maxCharacters": "Il nome del Tipo dovuto deve avere al massimo 100 caratteri",
+        "placeholder": "Inserisce il nome attribuito al servizio di incasso",
+        "required": "Il nome del Tipo dovuto è obbligatorio",
+        "title": "Descrizione"
+      },
+      "debtTypeCode": {
+        "label": "Codice Tipo dovuto",
+        "required": "Il codice del Tipo dovuto è obbligatorio",
+        "notUnique": "Codice già esistente. Inserisci un altro codice"
+      },
+      "subtitle": "Definisce il nome e tassonomia del nuovo Tipo dovuto.",
+      "title": "Configurazione Tipo dovuto"
+    },
+    "settings": {
+      "behaviour": "Comportamento",
+      "message": {
+        "guide": "Leggi come <0>scrivere i messaggi su app IO</0>",
+        "label": "Messaggio",
+        "required": "il messaggio é obbligatorio"
+      },
+      "flagMandatoryDueDate": {
+        "description": "Data di Scadenza Obbligatoria",
+        "subtitle": "Imposta la Data di Scadenza un campo obbligatorio nella creazione."
+      },
+      "flagAnonymousFiscalCode": {
+        "description": "Codice Fiscale Anonimo",
+        "subtitle": "Permette di creare dovuti senza segnalare un Codice Fiscale nel caso di assenza."
+      },
+      "preview": "Vedi anteprima",
+      "subject": {
+        "guide": "Leggi come scrivere correttamente il <0>nome di un servizio</0>",
+        "label": "Oggetto del messaggio",
+        "placeholder": "Il servizio ti invia comunicazioni in merito alla Tassa sui rifiuti (TARI).",
+        "required": "l'oggetto del messaggio é obbligatorio"
+      },
+      "subtitle": "Definisci altre caratteristiche del tipo dovuto.",
+      "template": {
+        "checkbox": "Template Messaggio su app IO",
+        "helper": "Predefinisce template di messaggi per il Tipo dovuto da dove i Enti Gestiti possono cominciare.",
+        "label": "Predefinisce template di messaggi per il Tipo dovuto da dove i Enti Gestiti possono cominciare.",
+        "title": "Messaggi"
+      },
+      "title": "Ulteriori impostazioni "
+    },
+    "stepper": {
+      "step1": "Configurazione Tipo dovuto",
+      "step2": "Ulteriori impostazioni "
+    }
+  },
+  "debtTypeCreateSuccess": {
+    "backToStart": "Torna alla sezione",
+    "description": "La trovi nella sezione Catalogo Tipi dovuti, dove puoi modificarlo in qualsiasi momento.",
+    "title": "Il tipo dovuto '{{paymentObject}}' è stato creato!"
+  },
+  "debtTypeDetail": {
+    "accessibleTitle": "Dettaglio tipo dovuto impostato: {{description}}",
+    "confirmDisableDialog": {
+      "title": "Sei sicuro di voler Disabilitare il Tipo dovuto?",
+      "description": "Una volta disabilitato, non sarà più possibile creare nuove posizioni debitorie con questo Tipo dovuto. Le posizioni già create, tuttavia, resteranno valide."
+    },
+    "confirmEnableDialog": {
+      "title": "Sei sicuro di voler Abilitare il Tipo dovuto?",
+      "description": "Una volta abilitato, questo Tipo dovuto sarà disponibile per la creazione di nuove posizioni debitorie."
+    },
+    "errors": {
+      "servicesUnavailableCannotEdit": "Non è stato possibile recuperare configurazioni la modifica non è consentita al momento, riprova più tardi",
+      "enableFailed": "Abilitazione tipo dovuto non riuscita"
+    },
+    "description": "Ecco i dettagli del Tipo dovuto",
+    "debtMainConfiguration": {
+      "title": "Configurazione generale",
+      "description": "Definizione del Tipo dovuto"
+    },
+    "debtConfiguration": {
+      "externalPaymentUrl": "URL pagamento esterno",
+      "xsdAttachment": "Allegato XSD"
+    },
+    "accounting": {
+      "description": "Parametri per la gestione delle entrate."
+    },
+    "messages": {
+      "description": "Notifiche digitale ai cittadini.",
+      "IOApp": "App IO",
+      "sendMessage": "Invia messaggio",
+      "APIKey": "API Key"
+    },
+    "enabledOperators": {
+      "title": "Abilitazione agli operatori",
+      "description": "Operatori abilitati a questo Tipo Dovuto.",
+      "allOperatorsSelected": "Tutti gli operatori",
+      "selectedOperators": "Operatori selezionati",
+      "noSelectedOperators": "Senza operatori associati"
+    },
+    "success": {
+      "updated": "Stato del Tipo dovuto aggiornato con successo"
+    },
+    "successPage": {
+      "title": "Tipo dovuto impostato eliminato con successo",
+      "description": "Il tipo dovuto impostato: {{description}} è stato eliminato correttamente.",
+      "backToDashboard": "Torna alla lista"
+    }
+  },
+  "debtTypeOrgCreate": {
+    "edit": {
+      "title": "Modifica Tipo dovuto",
+      "success": {
+        "title": "Il Tipo dovuto '{{paymentObject}}' è stato modificato!",
+        "description": "La trovi nella sezione I tuoi Tipi Dovuti."
+      }
+    },
+    "title": "Abilita nuovo tipo di dovuto",
+    "description": "Compila i campi e configura un nuovo Tipo dovuto per il tuo ente.",
+    "success": {
+      "title": "Il Tipo dovuto '{{paymentObject}}' è stato impostato!",
+      "description": "La trovi nella sezione I tuoi Tipi Dovuti, dove puoi modificarlo in qualsiasi momento."
+    },
+    "configuration": {
+      "title": "Configurazione generale",
+      "subtitle": "Definisce quale sarà il tipo di dovuto.",
+      "alertMessage": "* Indica un campo obbligatorio",
+      "debtType": {
+        "title": "Tipo dovuto",
+        "label": "Tipo dovuto",
+        "required": "Il Tipo dovuto è obbligatorio"
+      },
+      "taxonomyCode": {
+        "label": "Codice tassonomico",
+        "placeholder": "Nessun codice disponibile",
+        "helper": "Verifica che sia corretto per il dovuto che vuoi attivare."
+      },
+      "debtTypeVersion": {
+        "title": "Versione Tipo dovuto",
+        "subtitle": "Aggiungi i dati che caratterizzano questo Tipo dovuto all'interno del tuo ente."
+      },
+      "code": {
+        "label": "Codice Sistema Gestionale",
+        "required": "Il Codice Sistema Gestionale é obbligatorio",
+        "notUnique": "Codice già esistente. Inserisci un altro codice"
+      },
+      "description": {
+        "label": "Descrizione",
+        "maxCharacters": "La descrizione del Tipo dovuto deve avere al massimo 100 caratteri",
+        "caption": "Ti aiuterà a riconoscere velocemente il dovuto nel caso in cui esistano due versioni dello stesso tipo dovuto.",
+        "required": "La descrizione del Tipo dovuto é obbligatorio"
+      },
+      "selection": {
+        "title": "Intermediario del Pagamento",
+        "label": "Chi gestirà i pagamenti di questo Tipo Dovuto?",
+        "option1": "pagoPA",
+        "option2": "Altri intermediari  (esterni)"
+      }
+    },
+    "behaviour": {
+      "title": "Configurazione dovuto",
+      "subtitle": "Configura le caratteristiche di questo Tipo dovuto",
+      "alertMessage": "* Indica una domanda obbligatoria",
+      "postalAccount": "Pagamento Spontaneo",
+      "characteristics": {
+        "title": "Caratteristiche del tipo di dovuto"
+      },
+      "section": {
+        "spontaneousPaymentTitle": "Modalità di pagamento spontaneo",
+        "behaviourTitle": "Comportamento"
+      },
+      "spontaneous": {
+        "label": "Pagamento spontaneo",
+        "description": "Abilita il pagamento su iniziativa del cittadino.",
+        "free": "Compilazione libera",
+        "amount": "Importo predefinito",
+        "custom": "Campi personalizzati",
+        "external": "Pagamento esterno",
+        "amountValue": {
+          "label": "Importo"
+        },
+        "file": {
+          "description": "Trascina qui il documento oppure selezionalo dal tuo computer",
+          "header": "Allega XSD con i campi richiesti",
+          "required": "Campo obbligatorio. Carica un file .XSD"
+        },
+        "externalUrl": {
+          "label": "Link portale esterno",
+          "required": "Il Link portale esterno è obbligatorio"
+        }
+      },
+      "optionA": {
+        "label": "Scadenza obbligatoria",
+        "description": "Imposta la Data di Scadenza un campo obbligatorio nella creazione."
+      },
+      "optionB": {
+        "label": "Codice Fiscale Anonimo",
+        "description": "Permette di creare dovuti senza segnalare un Codice Fiscale nel caso di assenza."
+      },
+      "presetAmount": {
+        "label": "Importo predefinito",
+        "description": "L'importo delle posizioni debitorie sarà fisso.",
+        "info": "L'importo verrà compilato con la somma predefinita"
+      },
+      "spontaneousMode": {
+        "label": "Modulo di pagamento",
+        "helper": "Scegli i dati che desideri richiedere ai cittadini per effettuare il pagamento.",
+        "required": "Seleziona il modulo di pagamento",
+        "options": {
+          "standard": "Con dati standard richiesti dal sistema",
+          "custom": "Con dati personalizzati / precompilati",
+          "external": "Portale esterno"
+        }
+      },
+      "customForms": {
+        "select": {
+          "label": "Modulo personalizzato",
+          "helper": "Seleziona il modulo personalizzato che contiene i dati richiesti ai cittadini."
+        },
+        "empty": {
+          "message": "Non ci sono moduli personalizzati. Aggiungi un nuovo modulo nella sezione",
+          "action": "per poterli utilizzare.",
+          "linkLabel": "Moduli personalizzati"
+        }
+      },
+      "notifications": {
+        "title": "Notifiche Esito Pagamento",
+        "radioLabel": "Desideri ricevere notifiche sul pagamento del dovuto?",
+        "options": {
+          "no": "No",
+          "yes": "Si"
+        },
+        "configuration": {
+          "label": "Configurazione notifiche",
+          "none": "Nessuna notifica",
+          "required": "La configurazione è obbligatoria se si sceglie di abilitare le notifiche",
+          "helperText": "Seleziona una configurazione per la gestione delle notifiche",
+          "editHelperText": "Seleziona una configurazione per la gestione delle notifiche",
+          "errorState": "Errore nel recupero delle configurazioni",
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione",
+          "noOptionsHelp": "Non sono presenti configurazioni di notifica"
+        }
+      },
+      "actualization": {
+        "title": "Attualizzazione importo",
+        "subtitle": "Configura l'attualizzazione importo e costi agguntivi.",
+        "configuration": {
+          "label": "Configurazione attualizzazione importo",
+          "none": "Nessuna attualizzazione",
+          "noneSelected": "Attualizzazione non configurata",
+          "noneEditHelper": "L'attualizzazione non può essere abilitata in modifica se non era precedentemente configurata",
+          "errorState": "Errore nel recupero delle configurazioni",
+          "helperText": "Una volta selezionata una configurazione per l'attualizzazione sarà possibile modificarla ma non rimuoverla",
+          "editHelperText": "È possibile la sola modifica della configurazione, non può essere rimossa",
+          "error": "Non è stato possibile recuperare le configurazioni disponibili ma è possibile proseguire con la creazione",
+          "noOptionsHelp": "Non sono presenti configurazioni di attualizzazione"
+        }
+      },
+      "errors": {
+        "notificationServiceUnavailable": "Servizio di configurazione notifiche non disponibile - alcune opzioni potrebbero essere limitate",
+        "actualizationServiceUnavailable": "Servizio di configurazione attualizzazione non disponibile - alcune opzioni potrebbero essere limitate",
+        "bothServicesUnavailable": "Servizi di configurazione notifiche e attualizzazione non disponibili - alcune opzioni potrebbero essere limitate"
+      },
+      "updateAmount": {
+        "title": "Attualizzazione importo",
+        "subtitle": "Configura l'attualizzazione importo e costi agguntivi.",
+        "notesLabel": "User attualizzazione importo",
+        "amountLabel": "Password attualizzazione importo",
+        "authUrlLabel": "Url Notifica Autenticazione",
+        "updateUrlLabel": "Url Notifica Attualizzazione"
+      }
+    },
+    "accounting": {
+      "title": "Contabilità",
+      "subtitle": "Definisce i parametri per la gestione delle entrate.",
+      "alertMessage": "* Indica una domanda obbligatoria",
+      "section": {
+        "creditInfo": "Informazione di accredito",
+        "budgetInfo": "Informazione di bilancio"
+      },
+      "postalIban": "IBAN Accredito Poste",
+      "pspIban": "IBAN Accredito PSP",
+      "postalAccount": "Conto Corrente Postale",
+      "postalAccountHolder": "Intestatario CC Poste",
+      "defaultBudgetStructure": "Struttura Bilancio Default",
+      "entitySector": "Settore Ente"
+    },
+    "notifications": {
+      "title": "Messaggi",
+      "subtitle": "Crea un messaggio per informare i cittadini sulla disponibilità di avvisi e aggiornamenti in formato digitale.",
+      "alertMessage": "* Indica un campo obbligatorio",
+      "enableNotifications": "Invia messaggio su app IO",
+      "section": {
+        "message": "Messaggio"
+      },
+      "serviceApiKey": {
+        "label": "API Key servizio",
+        "caption": "Incolla la chiave del sevizio da cui inviare il messaggio.",
+        "required": "API Key servizio è obbligatorio"
+      },
+      "messageSubject": {
+        "label": "Scrivi qui l'oggetto del messaggio",
+        "caption": "Leggi come scrivere correttamente il <0>nome di un servizio</0>",
+        "required": "Oggetto del messaggio è obbligatorio"
+      },
+      "messageBody": {
+        "label": "Scrivi qui il corpo del messaggio",
+        "caption": "Scopri come <0>scrivere un messaggio sull’app IO</0>",
+        "required": "Corpo del messaggio è obbligatorio"
+      }
+    },
+    "operators": {
+      "title": "Operatori associati",
+      "subtitle": "Seleziona quali saranno gli operatori abilitati a questo Tipo Dovuto.",
+      "section": {
+        "operatorEntities": "Enti operatori"
+      },
+      "options": {
+        "all": "Tutti gli operatori",
+        "none": "Senza operatori associati",
+        "selected": "Operatori selezionati"
+      }
+    },
+    "stepper": {
+      "step1": "Configurazione Generale",
+      "step2": "Configurazione tipo di dovuto",
+      "step3": "Contabilità",
+      "step4": "Messaggi",
+      "step5": "Operatori associati"
+    },
+    "submit": "Salva modifiche"
+  },
+  "debtTypes": {
+    "description": "Lista dei tipi dovuti che possono essere utilizzati dagli enti gestiti.",
+    "searchDescription": "Codice per Descrizione"
+  },
+  "debtTypesCreated": {
+    "accessibleTitle": "Tipi dovuti impostati ente: {{orgName}}",
+    "callToAction": "Imposta nuovo",
+    "descriptionFull": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente o negli enti gestiti.",
+    "descriptionByURL": "In questa sezione trovi i Tipi di dovuti presenti per l'ente gestito.",
+    "description": "In questa sezione trovi i Tipi di dovuti presenti nel proprio ente.",
+    "tabManagedOrganizations": "Enti gestiti",
+    "tabMyOrganization": "Il mio ente",
+    "title": "Tipi dovuti impostati",
+    "managedOrganizationsDataGrid": {
+      "IPACode": "Cod. IPA",
+      "managedOrg": "Ente gestito",
+      "debtTypesSet": "Tipi dovuti impostati attivi"
+    },
+    "myOrganizationDataGrid": {
+      "code": "Cod. Gestionale",
+      "debtType": "Tipo dovuto",
+      "description": "Descrizione",
+      "lastUpdateDate": "Ultima modifica",
+      "enabledOperators": "Operatori abilitati"
+    }
+  },
+  "errors": {
+    "fetchDebtPositionsTypes": "Impossibile caricare i tipi dovuto. Riprova più tardi.",
+    "fetchOperators": "Impossibile caricare la lista di tutti gli operatori. Riprova più tardi.",
+    "fetchOperatorsEnabled": "Impossibile caricare la lista degli operatori abilitati. Riprova più tardi.",
+    "fetchOperatingYears": "Impossibile caricare gli anni di esercizio. Riprova più tardi.",
+    "fetchChapters": "Impossibile caricare i capitoli. Riprova più tardi.",
+    "fetchPaidInstallments": "Impossibile caricare i pagamenti. Riprova più tardi.",
+    "noChaptersForYear": "Non ci sono capitoli per l'anno {{year}}",
+    "generic": "Si è verificato un errore. Riprova più tardi.",
+    "fetchOrgSilService": "Errore nel recuperare i dettagli del servizio"
+  },
+  "events": {
+    "searchCardTitle": "Cosa stai cercando?",
+    "searchCardDescription": "Seleziona l’evento che stai cercando e inserisci i filtri per avviare la ricerca.",
+    "tabs": {
+      "sil": "Eventi SIL",
+      "nodo": "Eventi nodo PagoPA"
+    },
+    "list": {
+      "accessibleTitleSil": "Risultati ricerca eventi Sil",
+      "accessibleTitlePagoPa": "Risultati ricerca eventi PagoPa",
+      "title": "Risultato ricerca",
+      "date": "Data evento",
+      "outcome": "Esito",
+      "iuv": "IUV",
+      "event": "Evento",
+      "subEvent": "Sottotipo",
+      "noResults": {
+        "title": "Nessun risultato trovato",
+        "description": "Non ci sono eventi che corrispondono alla tua ricerca, prova a impostare parametri diversi."
+      }
+    },
+    "searchIUVDescription": "IUV",
+    "searchEventDescription": "Evento",
+    "searchDateFromDescription": "Data dal",
+    "searchDateToDescription": "Al",
+    "searchEventOutcome": "Esito"
+  },
+  "exportFlow": {
+    "buttonConfirmReservation": "Prenota",
+    "buttonReservationExport": "Prenota export",
+    "description": "Inserisci i dati per prenotare la esportazione dei dati su dovuti pagati.",
+    "dueType": "Tipo di dovuto",
+    "dueTypePlaceHolder": "Tipo di dovuto da prenotare",
+    "fileVersion": "Versione tracciato",
+    "formDescription": "Indicando i dati è possibile scaricare i dati sui dovuti. L'esportazione dei dati non è immediata. Il sistema invierà una mail all'operatore quando l'esportazione è stata eseguita e il flusso è pronto per essere scaricato.",
+    "formTitle": "Configurazione della esportazione",
+    "title": "Prenota export di un flusso",
+    "errorMessage": "Si è verificato un errore durante la creazione dell'Export"
+  },
+  "flowDataGrid": {
+    "authorizedOrganizations": "Enti abilitati",
+    "code": "Codice",
+    "internalID": "ID Interno",
+    "lastUpdate": "Ultima Modifica",
+    "loadedDiscarded": "Validi/Scarti",
+    "name": "Nome",
+    "noDataRows": "Nessun elemento trovato",
+    "operator": "Operatore",
+    "paymentFromDate": "Pagamento dal",
+    "paymentToDate": "Pagamento al",
+    "reservationDate": "Data prenotazione",
+    "uploadDate": "Data Caricamento"
+  },
+  "home": {
+    "cta": "Crea Posizione Debitoria",
+    "viewAs": "Stai visualizzando come",
+    "changeView": "Clicca per modificare",
+    "chooseWidget": {
+      "title": "Scegli la tua attività principale",
+      "closingText": "Potrai modificare la tua scelta in qualsiasi momento.",
+      "message": "Scegli un profilo che rispecchi le tue attività quotidiane per accedere a contenuti e funzioni su misura per te.",
+      "listDescription": "Lista dei profili disponibili",
+      "profiles": {
+        "debtpositionsManager": {
+          "title": "Gestore delle Posizioni Debitorie",
+          "description": "Crea e consulta avvisi di pagamento su base giornaliera."
+        },
+        "treasuriesManager": {
+          "title": "Responsabile delle entrate",
+          "description": "Monitora delle operazioni di incasso, tale come rendicontazioni e giornale di cassa."
+        },
+        "officeManager": {
+          "title": "Responsabile ufficio",
+          "description": "Gestisci sia le posizioni debitorie che le operazioni di incasso."
+        }
+      }
+    },
+    "drawer": {
+      "actions": "Azioni disponibili",
+      "installment": "Visualizza dettaglio Avviso",
+      "installments": "Visualizza dettaglio Avvisi",
+      "debtPosition": "Visualizza Posizione Debitoria",
+      "debtPositions": "Visualizza Posizioni Debitorie",
+      "receipt": "Scarica Ricevuta Telematica",
+      "receipts": "Visualizza Ricevute Telematiche",
+      "reporting": "Visualizza rendicontazione",
+      "reportings": "Visualizza le rendicontazioni",
+      "classification": "Verifica lo stato del pagamento",
+      "classifications": "Verifica lo stato dei pagamenti",
+      "iuf": "Visualizza dettaglio rendicontazione",
+      "iufs": "Visualizza le Rendicontazioni.",
+      "treasury": "Visualizza la bolletta",
+      "treasuries": "Visualizza le bollette"
+    },
+    "noResults": {
+      "title": "Azioni disponibili",
+      "description": "Non abbiamo trovato azioni disponibili. Verifica che il dato inserito sia corretto.",
+      "descriptionFc": "Non abbiamo trovato azioni disponibili. Verifica che il Codice Fiscale o la Partita Iva siano corrette."
+    },
+    "fillAtLeast": "Inserisci un valore per avviare la ricerca",
+    "opening": "Ciao, {{user}}",
+    "tabs": {
+      "IUV": {
+        "label": "Avviso",
+        "fieldLabel": "IUV"
+      },
+      "FC": {
+        "label": "Cittadino",
+        "fieldLabel": "CF / Partita IVA"
+      },
+      "IUF": {
+        "label": "Rendicontazione",
+        "fieldLabel": "ID Rendicontazione / IUF"
+      }
+    },
+    "tabsTypes": "Tipi di ricerca"
+  },
+  "ioMessageGuide": {
+    "title": "Come scrivere un messaggio su IO?",
+    "description": "Qui puoi trovare informazioni utili per scrivere un messaggio su IO per avvisi di pagamento",
+    "sections": {
+      "howToWrite": {
+        "title": "Cosa scrivere in un messaggio?",
+        "description": "Semplifica la comunicazione con i cittadini utilizzando i template predefiniti di pagoPA per l'app IO.\nSeleziona il template più adatto al tuo servizio, copia il contenuto e personalizzalo in base alle specifiche esigenze del tuo ente.",
+        "link": "Template messaggio"
+      },
+      "howToFormat": {
+        "title": "Come formattare un messaggio?",
+        "description": "Personalizza i messaggi su IO con Markdown: aggiungi formattazione, link e elementi interattivi per comunicare in modo più chiaro ed efficace con i cittadini.",
+        "link": "Guida al markdown"
+      },
+      "dynamicFields": {
+        "title": "Come usare i campi dinamici?",
+        "description": "I campi dinamici permettono di personalizzare determinati aspetti di un messaggio come il nome e cognome del destinatario, l'importo del pagamento, la scadenza, ecc.\nUtilizza i tag riportati nella tabella all'interno del corpo del messaggio per personalizzarlo.",
+        "alert": "I dati vengono inseriti automaticamente solo quando l'avviso riguarda un debitore e una rata"
+      }
+    },
+    "dynamicFields": {
+      "debtorName": {
+        "name": "Nome debitore"
+      },
+      "fiscalCode": {
+        "name": "Codice Fiscale"
+      },
+      "totalAmount": {
+        "name": "Importo Totale"
+      },
+      "iuv": {
+        "name": "IUV",
+        "tooltip": "(Identificativo Univoco di Versamento) codice numerico che identifica in modo univoco un pagamento"
+      },
+      "noticeCode": {
+        "name": "Codice Avviso",
+        "tooltip": "Codice necessario per il pagamento, richiesto durante il checkout"
+      },
+      "paymentReason": {
+        "name": "Oggetto di pagamento",
+        "tooltip": "Motivo per il quale viene emesso l'avviso di pagamento"
+      },
+      "dueDate": {
+        "name": "Data scadenza"
+      }
+    },
+    "table": {
+      "name": "Nome",
+      "example": "Esempio",
+      "tag": "Tag"
+    },
+    "copy": "Copia",
+    "copied": "Copiato!",
+    "copyAriaLabel": "Copia tag {{tag}}"
+  },
+  "notificationPreview": {
+    "byOrg": "Ente mittente*",
+    "byService": "Servizio mittente*"
+  },
+  "operatorsList": {
+    "accessibleTitle": "Gestione operatori ente: {{orgName}}",
+    "description": "In questa sezione trovi gli operatori presenti per il proprio ente.",
+    "descriptionFull": "In questa sezione trovi gli operatori presenti per il proprio ente o per gli enti gestiti.",
+    "tabMyOrganization": "Il mio ente",
+    "tabAllOrganizations": "Enti gestiti",
+    "searchByName": "Cerca per nome",
+    "searchByLastName": "Cerca per cognome",
+    "searchByFiscalCode": "Cerca per CF",
+    "brokerDescription": "Trovi gli operatori presenti per l’ente gestito.",
+    "searchByIPACode": "Cerca per codice IPA",
+    "myOrganizationDataGrid": {
+      "id": "ID",
+      "nameAndLastName": "Nome e cognome",
+      "fiscalCode": "Codice Fiscale",
+      "enabledDebtTypes": "Tipi di dovuto abilitati"
+    },
+    "allOrganizationsDataGrid": {
+      "id": "ID",
+      "name": "Nome",
+      "fiscalCode": "Codice Fiscale",
+      "enabledDebtTypes": "Tipi di dovuto abilitati",
+      "operators": "Operatori"
+    }
+  },
+  "orgSilService": {
+    "accessibleTitle": "Ricerca org sil service",
+    "amountActualization": "Attualizzazione importo",
+    "api": "API",
+    "serviceType": "Tipo Servizio",
+    "paymentNotice": "Notifica Pagamenti",
+    "apiName": "Nome API",
+    "addAPI": "Aggiungi API"
+  },
+  "orgSilServiceCreate": {
+    "actualization": "Attualizzazione importo",
+    "paidNotificationOutcome": "Notifica Pagamenti",
+    "legacyBasic": "Legacy Basic",
+    "legacyJWT": "Legacy JWT",
+    "title": "Aggiungi nuova API",
+    "description": "Inserisci i dati delle API ad esporre in Piattaforma Unitaria per essere utilizzati nei processi di Notifica Pagamenti ed Attualizzazione Importo.",
+    "subTitle": "Configurazione dell'API",
+    "generalConfiguration": "Configurazione generale",
+    "APIName": "Nome API",
+    "serviceURL": "Service URL",
+    "serviceType": "Tipo Servizio",
+    "authMethod": "Modalità di autenticazione",
+    "flagLegacy": "L'API deve mantenere la retrocompatibilità con i vecchi metodi di autenticazione?",
+    "authConfig": "Auth Config",
+    "basicUser": "User",
+    "basicPassword": "Password",
+    "basicAuthURL": "Auth URL",
+    "jwtKid": "KID",
+    "jwtIssuer": "Issuer",
+    "jwtSubject": "Subject",
+    "jwtAlgorithm": "Algorithm",
+    "jwtSigningKey": "Signing key",
+    "newService": {
+      "success": {
+        "title": "L'API ‘{{applicationName}}’ è stata aggiunta!",
+        "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
+        "goToDetail": "Vedi dettaglio API"
+      }
+    },
+    "validations": {
+      "requiredAPIName": "Il nome dell'API è obbligatorio",
+      "requiredURL": "L'URL del servizio è obbligatorio",
+      "invalidURL": "Formato URL non valido",
+      "requiredServiceType": "Il tipo di servizio è obbligatorio",
+      "requiredLegacyType": "Seleziona un tipo di autenticazione legacy",
+      "requiredField": "Campo obbligatorio"
+    }
+  },
+  "orgSilServiceDetail": {
+    "accessibleTitle": "Dettaglio org sil service: {{applicationName}}",
+    "description": "Ecco i dettagli dell'API.",
+    "delete": {
+      "title": "Sei sicuro di voler eliminare l'API?",
+      "message": "Una volta eliminata, tutti i dati saranno cancellati e non potranno essere recuperati.",
+      "conflict": {
+        "title": "L'API non può essere eliminata"
+      },
+      "conflictMessage": "Questa API è associata ad un Tipo dovuto, pertanto non può essere eliminata."
+    },
+    "notFound": "Servizio non trovato",
+    "noAuthConfigured": "Nessuna configurazione di autenticazione",
+    "sections": {
+      "generalConfig": {
+        "title": "Configurazione generale"
+      },
+      "authConfig": {
+        "title": "Modalità di autenticazione"
+      }
+    },
+    "fields": {
+      "applicationName": "Nome API",
+      "serviceUrl": "Service URL",
+      "serviceType": "Tipo Servizio",
+      "apiLegacy": "API Legacy",
+      "authConfig": "Auth Config",
+      "authUrl": "Auth URL",
+      "username": "Username",
+      "kid": "KID",
+      "subject": "Subject",
+      "issuer": "Issuer",
+      "algorithm": "Algorithm",
+      "signingKey": "Signing Key",
+      "password": "password"
+    },
+    "serviceTypes": {
+      "paymentNotification": "Notifica Pagamenti",
+      "amountActualization": "Attualizzazione Importo"
+    },
+    "authTypes": {
+      "basicAuth": "Basic Auth",
+      "jwtAuth": "Legacy JWT"
+    }
+  },
+  "orgSilServiceEdit": {
+    "title": "Modifica API",
+    "description": "Modifica i dati delle API già esposte in Piattaforma Unitaria per essere utilizzati nei processi di Notifica Pagamenti ed Attualizzazione Importo.",
+    "updateService": {
+      "success": {
+        "title": "L'API ‘{{applicationName}}’ è stata modificata!",
+        "description": "La trovi nella sezione Org Sil Service, dove puoi consultarla in qualsiasi momento",
+        "goToDetail": "Vedi dettaglio API"
+      }
+    }
+  },
+  "organizationEditWizard": {
+    "title": "Modifica il tuo ente",
+    "description": "Aggiorna le informazioni e configurazioni del tuo ente.",
+    "titleCreate": "Configura ente gestito",
+    "titleEdit": "Modifica ente gestito",
+    "descriptionCreate": "Inserisci le informazioni e le configurazioni relative all'ente intermediato.",
+    "descriptionEdit": "Aggiorna le informazioni e le configurazioni relative all'ente intermediato.",
+    "saveChanges": "Salva modifiche",
+    "enableOrg": "Abilita ente",
+    "errorEnablingOrg": "Non è stato possibile abilitare l'ente perché non sono stati compilati i campi obbligatori",
+    "errorLoadingData": "Errore nel caricamento dei dati dell'ente",
+    "successDraftMessage": "Modifiche salvate con successo in stato bozza",
+    "successMessage": "Modifiche salvate con successo",
+    "successMessageNotEnable": "Modifiche salvate con successo, ma non abilitato",
+    "successCommon": {
+      "description": "Lo trovi negli enti gestiti, dove puoi gestirlo in qualsiasi momento.",
+      "goToDetail": "Vai al dettaglio ente"
+    },
+    "successDraftPage": {
+      "title": "L’ente ‘{{orgName}}’ è stato salvato in bozza."
+    },
+    "successEnablePage": {
+      "title": "L’ente ‘{{orgName}}’ è ora attivo e può operare in Piattaforma Unitaria."
+    },
+    "successUpdatePage": {
+      "title": "Le modifiche sull’ente ‘{{orgName}}’ sono state salvate con successo."
+    },
+    "step1": {
+      "title": "Anagrafica ente",
+      "label": "Anagrafica ente",
+      "orgName": {
+        "label": "Ragione sociale",
+        "placeholder": "<ragione sociale>"
+      },
+      "orgFiscalCode": {
+        "label": "Codice Fiscale",
+        "placeholder": "<123456789012>",
+        "invalid": "Formato codice fiscale non valido"
+      },
+      "orgEmail": {
+        "label": "Email",
+        "helperText": "Indirizzo email al quale l'ente riceverà le comunicazioni di servizio della piattaforma",
+        "invalid": "Formato email non valido"
+      },
+      "orgLogo": {
+        "title": "CARICA IL LOGO DEL SERVIZIO",
+        "description": "Inserisci solo il logo del tuo ente. Aiuterà a rendere legittime le ricevute telematiche e gli avvisi.",
+        "uploadDescription": "Trascina qui il file o seleziona dal computer",
+        "requirements": "Hai dubbi su formato o dimensioni?",
+        "learnMore": "Leggi qui",
+        "required": "Il logo è obbligatorio"
+      }
+    },
+    "step2": {
+      "label": "Configurazione ente",
+      "title": "Configurazione ente",
+      "accountingInfo": {
+        "title": "Informazione contabile"
+      },
+      "iban": {
+        "label": "IBAN",
+        "placeholder": "",
+        "required": "Il campo IBAN è obbligatorio",
+        "invalid": "Formato IBAN non valido"
+      },
+      "ibanPostal": {
+        "label": "IBAN Postale",
+        "placeholder": "",
+        "invalid": "Formato IBAN non valido"
+      },
+      "cbill": {
+        "label": "CBILL",
+        "placeholder": ""
+      },
+      "integratedCashJournal": {
+        "label": "Il giornale di cassa è integrato"
+      },
+      "paymentsInfo": {
+        "title": "Pagamenti"
+      },
+      "segregationCode": {
+        "label": "Codice Segregazione",
+        "placeholder": "",
+        "required": "Il campo Codice Segregazione è obbligatorio",
+        "invalidFormat": "Il campo Codice Segregazione può contenere solo e soltanto due caratteri numerici"
+      },
+      "generateNoticeApiKey": {
+        "label": "API Key stampa avvisi",
+        "placeholder": "",
+        "required": "Il campo API Key stampa avvisi è obbligatorio"
+      },
+      "additionalLanguage": {
+        "label": "Gli avvisi hanno una lingua addizionale"
+      },
+      "selectedLanguage": {
+        "label": "Lingua Addizionale",
+        "placeholder": "Seleziona una lingua",
+        "options": {
+          "en": "Inglese",
+          "fr": "Francese",
+          "de": "Tedesco"
+        },
+        "required": "Devi selezionare una lingua addizionale."
+      },
+      "radioRequired": "Devi selezionare una delle due opzioni",
+      "flagNotifyOutcomePush": {
+        "label": "Notifiche push di pagamenti gestiti da piattaforme esterne",
+        "description": "Dovrà essere integrata una API per ricevere notifiche",
+        "abilita": "Abilita",
+        "disabilita": "Disabilita"
+      },
+      "flagPaymentNotification": {
+        "label": "Notifiche di pagamenti gestiti da Piattaforma Unitaria",
+        "description": "Dovrà essere configurato il Org Sil Service per ricevere le notifiche",
+        "abilita": "Abilita",
+        "disabilita": "Disabilita"
+      },
+      "pagoPaIntegration": {
+        "title": "Integrazione con i prodotti PagoPA",
+        "io": {
+          "label": "Messaggi sull'app IO",
+          "description": "Abilita l'ente a inviare messaggi sui pagamenti",
+          "apiKeyLabel": "API key",
+          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche IO",
+          "apiKeyRequired": "Il campo API key è obbligatorio",
+          "apiKeyHelperText": "Inserisci la API key per inviare messaggi sull'app IO"
+        },
+        "send": {
+          "label": "Autenticazione con PDND",
+          "description": "Abilita l'autenticazione su SEND tramite PDND",
+          "apiKeyLabel": "API key",
+          "apiKeyPlaceholder": "Inserisci la API key per inviare notifiche SEND",
+          "apiKeyRequired": "Il campo API key è obbligatorio",
+          "apiKeyHelperText": "Inserisci la API key per inviare notifiche SEND"
+        }
+      }
+    }
+  },
+  "organizations": {
+    "name": "Nome o ragione sociale",
+    "fiscalCode": "Codice fiscale",
+    "activeOperators": "Operatori attivi",
+    "activeDebtTypes": "Tipi dovuti attivi",
+    "ioMessagge": "Messaggi sull'app IO",
+    "otherProducts": "Integrazione con gli altri prodotti PagoPA",
+    "paymentPushNotification": "Notifica push pagamenti",
+    "paymentNotified": "Pagamenti notificati",
+    "pdndIntegration": "Integrazione con PDND",
+    "printKeyAPI": "API Key stampa avvisi",
+    "orgEmail": "Email ente",
+    "orgLogo": "Logo dell'ente",
+    "orgLogoDescription": "Questo logo è usato per la generazione di Ricevute Telematiche.",
+    "orgLogoMissingAlert": "Inserisci il logo del tuo ente. Aiuterà a rendere legittime le ricevute telematiche e gli avvisi.",
+    "logoPlaceholder": "Logo placeholder",
+    "enableOrg": "Abilita ente",
+    "editOrg": "Modifica ente",
+    "alertTitle": "Completa i dati per attivare l'ente",
+    "alertBody": "È necessario compilare i seguenti campi obbligatori: {{emptyFields}}.",
+    "enableDialog": {
+      "title": "Sei sicuro di voler abilitare l’ente ad operare?",
+      "message": "Una volta abilitato l'ente <strong>{{orgName}}</strong> potrà operare su Piattaforma Unitaria.",
+      "success": "Ente abilitato correttamente.",
+      "error": "Non è stato possibile abilitare l'Ente",
+      "emptyFields": "Non è stato possibile abilitare l'Ente. È necessario che i campi obbligatori siano compilati"
+    }
+  },
+  "registry": {
+    "detail": {
+      "eventDetailTitle": "Dettaglio evento",
+      "event": "Evento",
+      "eventType": "Tipo",
+      "eventSubType": "Sottotipo",
+      "eventCategory": "Categoria",
+      "details": "Dettagli",
+      "outcome": "Esito",
+      "dateTime": "Data Ora Evento",
+      "registryId": "ID Evento",
+      "intermediateStationPA": "Stazione intermediario PA",
+      "paymentChannel": "Canale pagamento",
+      "interfaceSpecificParamsTitle": "Parametri specifici interfaccia",
+      "invalidRegistryTypeError": "Tipo evento non valido",
+      "loadError": "Impossibile caricare i dati",
+      "notFound": "Evento non trovato"
+    }
+  },
+  "reporting": {
+    "description": "Ricerca, visualizza o integra flussi di Rendicontazione nei tipi dovuti in cui sei abilitato.",
+    "importFlowsDescriptionContainer": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
+    "importFlowsTitleContainer": "Importa flussi di Rendicontazione",
+    "regulationFrom": "Regolamento dal",
+    "searchDescriptionContainer": "Inserisci al meno uno dei campi per cominciare la ricerca.",
+    "searchRegulationId": "Cerca ID Regolamento",
+    "searchReportingId": "Cerca ID Rendicontazione",
+    "searchTitleContainer": "Cerca flussi di Rendicontazione",
+    "title": "Rendicontazione"
+  },
+  "reportingDetail": {
+    "accessibleTitle": "Dettaglio rendicontazione: {{iuf}}",
+    "hourAndDate": "Data e ora Flusso",
+    "regulationDate": "Data Regolamento",
+    "regulationId": "ID Regolamento",
+    "reportingIdOrIUF": "ID Rendicontazione / IUF",
+    "totalAmount": "Importo totale",
+    "totalPayments": "Totale pagamenti"
+  },
+  "reportingImportFlowOverview": {
+    "accessibleTitle": "Flussi importati: rendicontazione",
+    "description": "Visualizza i flussi importati in precedenza e importa nuovi."
+  },
+  "reportingImportThankYouPage": {
+    "description": "Troverai il flusso caricato nella sezione Flussi importati"
+  },
+  "reportingPaymentDetail": {
+    "title": "Dettaglio Pagamento",
+    "accessibleTitle": "Dettaglio pagamento rendicontazione"
+  },
+  "reportingSearchResults": {
+    "accessibleTitle": "Risultato ricerca rendicontazione",
+    "description": "Visualizza in dettaglio e scarica i flussi di Rendicontazione.",
+    "flowDate": "Data flusso",
+    "payments": "Pagamenti",
+    "regulationDate": "Data Regolamento",
+    "iuv": "Codice Avviso (IUV)",
+    "searchRegulationId": "ID Regolamento",
+    "searchReportingId": "ID Rendicontazione",
+    "totalAmount": "Importo totale"
+  },
+  "spontaneousForm": {
+    "create": {
+      "title": "Nuovo modulo personalizzato",
+      "description": "Inserisci i codici JSON per definire i dati richiesti e le lingue supportate dal modulo.",
+      "formConfiguration": "Configurazione del modulo",
+      "generalConfiguration": "Configurazione generale",
+      "identificationCode": "Codice identificativo",
+      "codeHelperText": "Il codice identificativo del modulo deve essere univoco.",
+      "structure": "Struttura",
+      "structureHelperText": "Incolla il codice JSON che specifica i dati da compilare dal cittadino.",
+      "translations": "Traduzioni",
+      "dictionary": "Dizionario",
+      "dictionaryHelperText": "Incolla il codice JSON con il dizionario delle traduzioni.",
+      "success": {
+        "title": "Il modulo '{{formCode}}' è stato aggiunto con successo.",
+        "description": "Lo trovi nella sezione Moduli personalizzati, dove puoi modificarlo in qualsiasi momento.",
+        "goToList": "Chiudi"
+      },
+      "error": {
+        "title": "Qualcosa è andato storto",
+        "description": "A causa di un errore del sistema non è possibile completare la procedura. Ti chiediamo di riprovare più tardi."
+      },
+      "errors": {
+        "codeRequired": "Il campo codice identificativo è obbligatorio",
+        "structureRequired": "Il campo Struttura è obbligatorio",
+        "invalidJson": "Il formato JSON non è valido",
+        "codeAlreadyExists": "Il codice identificativo del modulo è già in uso. Prova a scegliere un altro nome."
+      }
+    },
+    "edit": {
+      "title": "Modifica modulo personalizzato",
+      "description": "Inserisci i codici JSON per definire i campi richiesti e le lingue supportate dal modulo.",
+      "formConfiguration": "Configurazione del modulo",
+      "generalConfiguration": "Configurazione generale",
+      "translations": "Traduzione",
+      "identificationCode": "Codice identificativo",
+      "structure": "Struttura",
+      "dictionary": "Dizionario",
+      "codeHelperText": "Il codice identificativo non può essere modificato",
+      "structureHelperText": "Incolla il codice JSON che specifica i campi da compilare dal cittadino.",
+      "dictionaryHelperText": "Incolla il codice JSON con il dizionario delle traduzioni.",
+      "success": {
+        "title": "Il modulo '{{formCode}}' è stato modificato con successo.",
+        "description": "Lo trovi nella sezione Moduli personalizzati, dove puoi modificarlo in qualsiasi momento.",
+        "goToList": "Chiudi"
+      }
+    },
+    "detail": {
+      "formConfiguration": "Configurazione del modulo",
+      "generalConfiguration": "Configurazione generale",
+      "identificationCode": "Codice identificativo",
+      "structure": "Struttura",
+      "jsonCode": "Codice JSON",
+      "translations": "Traduzioni",
+      "dictionary": "Dizionario",
+      "inUse": "In uso",
+      "debtPositionTypeOrgCount": "Tipo di dovuti che utilizzano questo modulo",
+      "cannotDeleteTitle": "Il modulo non può essere eliminato",
+      "cannotDeleteMessage": "Questo modulo è in uso da uno o più tipi di dovuto, pertanto non può essere eliminato.",
+      "deleteSuccess": "Modulo eliminato con successo",
+      "deleteError": "Errore durante l'eliminazione del modulo personalizzato",
+      "description": "Ecco i dettagli del modulo che i cittadini compilano quando effettuano pagamenti spontanei",
+      "editWarningTitle": "Attenzione",
+      "editWarningMessage": "Il modulo <bold>{{formCode}}</bold> è già utilizzato in <bold>{{count}}</bold> tipi di dovuti. Sei sicuro di volerlo modificare? Le modifiche si rifletteranno ovunque sia stato usato.",
+      "confirmEdit": "Sì, modifica"
+    },
+    "description": "Gestisci i moduli personalizzati con i dati che i cittadini compilano quando effettuano pagamenti spontanei",
+    "searchByCode": "Cerca per descrizione",
+    "columns": {
+      "code": "Codice identificativo",
+      "debtPositionTypeOrgCount": "Utilizzato su tipi di dovuto"
+    }
+  },
+  "statistics": {
+    "urlNotAvailable": "URL non disponibile",
+    "urlGenerationFailed": "La generazione dell'URL di accesso non è andata a buon fine"
+  },
+  "taxonomy": {
+    "search": "Cerca tassonomia",
+    "searchDescription": "Inserisci al meno un filtro per avviare la ricerca.",
+    "orgType": {
+      "label": "Tipo ente",
+      "required": "Il campo Tipo ente è obbligatorio",
+      "title": "Ente"
+    },
+    "macroArea": {
+      "label": "Macroarea",
+      "required": "Il campo macroarea é obbligatorio"
+    },
+    "serviceType": {
+      "label": "Tipo Servizio",
+      "required": "Il campo Tipo Servizio é obbligatorio"
+    },
+    "collectingReason": {
+      "label": "Motivo Riscossione",
+      "required": "Il Motivo Riscossione é obbligatorio"
+    },
+    "taxonomyCode": {
+      "label": "Codice Tassonomico",
+      "required": "Il campo codice tassonomico è obbligatorio"
+    }
+  },
+  "taxonomyPage": {
+    "accessibleTitle": "Dettaglio tassonomia: {{taxonomyCode}}",
+    "APIUpdate": "Aggiornamento Lista Codici Tassonomici",
+    "APIUpdateText": "Aggiornamento per recuperare da PagoPA eventuali aggiornamenti della Lista Codici Tassonomici",
+    "APIUpdateCTA": "Aggiorna Lista",
+    "APIUpdateOK": "Aggiornamento pianificato. Abbiamo ricevuto la richiesta è stata pianificata correttamente, sarà eseguita a breve dal sistema.",
+    "APIUpdateKO": "Aggiornamento non riuscito. Il sistema non è stato in grado di pianificare l'aggiornamento.",
+    "taxonomyInfo": "Informazioni sulla tassonomia",
+    "dateInfo": "Validità",
+    "fields": {
+      "organizationType": "Codice tipo organizzazione",
+      "organizationTypeDescription": "Tipo organizzazione",
+      "macroAreaCode": "Codice macroarea",
+      "macroAreaName": "Macroarea",
+      "serviceTypeCode": "Codice tipo servizio",
+      "collectionReason": "Motivo riscossione",
+      "startDateValidity": "Data inizio validità",
+      "endDateOfValidity": "Data fine validità",
+      "serviceType": "Tipo Servizio",
+      "serviceTypeDescription": "Descrizione tipo servizio",
+      "taxonomyCode": "Codice tassonomico"
+    }
+  },
+  "taxonomySearchResults": {
+    "accessibleTitle": "Risultato ricerca tassonomia"
+  },
+  "telematicReceiptDetail": {
+    "title": "Dettaglio Ricevuta Telematica",
+    "origin": {
+      "RECEIPT_PAGOPA": "Questa ricevuta telematica è stata generata automaticamente in quanto sei beneficiario di un avviso creato da un altro Ente.",
+      "RECEIPT_PAGOPA__RECEIPT_PAGOPA": "Questa ricevuta telematica riguarda un pagamento non gestito sulla piattaforma.",
+      "RECEIPT_FILE": "Questa Ricevuta Telematica è stata generata automaticamente in seguito al caricamento di un flusso contenente ricevute di pagamenti effettuati tramite pagoPA.",
+      "PAYMENTS_REPORTING": "Questa ricevuta telematica è stata generata automaticamente in seguito alla ricezione di un flusso di rendicontazione con codice esito 8/9 (pagamento senza Ricevuta Telematica)."
+    },
+    "techDebtPositionDefault": "Posizione debitoria tecnica"
+  },
+  "telematicReceiptFlowExportOverview": {
+    "accessibleTitle": "Flussi esportati: ricevute telematiche",
+    "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni.",
+    "exportFrom": "Esportati dal"
+  },
+  "telematicReceiptFlowImport": {
+    "boxDescription": "Carica il file .zip con i dati necessari per integrare le informazioni relative alle Ricevute Telematiche.",
+    "boxTitle": "Configurazione flusso",
+    "description": "Carica il file contenente i dati necessari per integrare le informazioni relative alle Ricevute Telematiche.",
+    "manualLink": "Dubbi? Vai al manuale",
+    "uploadButton": "Carica il flusso"
+  },
+  "telematicReceiptFlowImportThankYouPage": {
+    "description": "Troverai il flusso caricato nella sezione Flussi importati"
+  },
+  "telematicReceiptImportFlowOverview": {
+    "accessibleTitle": "Flussi importati: ricevute telematiche",
+    "description": "Visualizza i flussi importati in precedenza e importa nuovi.",
+    "internalID": "ID interno",
+    "loadedDiscarded": "Validi/Scarti"
+  },
+  "telematicReceipts": {
+    "description": "Ricerca, visualizza o integra delle Ricevute Telematiche nei tipi dovuti in cui sei abilitato.",
+    "downloadflowsdescription": "Richiede l'esportazione di Ricevute Telematiche in un certo intervallo di tempo.",
+    "downloadflowstitle": "Scarica Flussi di Ricevute Telematiche",
+    "exportedflowsviewbutton": "Vedi flussi esportati",
+    "exportrequestbutton": "Prenota export",
+    "importedflowsviewbutton": "Vedi flussi importati",
+    "importflowsdescription": "Carica un file .zip con l'informazione necessaria di Ricevute Telematiche mancanti.",
+    "importflowstitle": "Importa Flussi di Ricevute Telematiche",
+    "search": "Cerca Ricevuta Telematica",
+    "searchdescription": "Inserisci al meno uno dei campi per cominciare la ricerca.",
+    "tari": "TARI",
+    "trafficoffence": "Violazione al codice della strada"
+  },
+  "telematicreceiptSearchResults": {
+    "description": "Visualizza in dettaglio e scarica le Ricevute Telematiche",
+    "title": "Risultato ricerca",
+    "accessibleTitle": "Risultato ricerca ricevute telematiche"
+  },
+  "treasury": {
+    "account": "Conto",
+    "billDetail": "Dettaglio Bolletta",
+    "billingYear": "Anno codice documento",
+    "description": "Ricerca, visualizza o integra flussi di Tesoreria.",
+    "documentCode": "Codice documento",
+    "importflowsdescription": "Carica un file .zip con l'informazione necessaria di Giornale di Cassa mancanti.",
+    "importflowstitle": "Importa Flussi di Tesoreria",
+    "payer": "Gestore della transazione (PSP)",
+    "search": "Cerca flussi di Tesoreria",
+    "searchdescription": "inserisci almeno uno dei campi per cominciare la ricerca",
+    "provisionalCode": "Codice provvisorio",
+    "tempDocumentYear": "Anno codice Provvisorio",
+    "orgBtCode": "Codice Banca Tesoriere",
+    "orgIstatCode": "Codice ISTAT"
+  },
+  "treasuryImportFlowOverview": {
+    "accessibleTitle": "Flussi importati: tesoreria",
+    "description": "Visualizza i flussi importati in precedenza e importa nuovi."
+  },
+  "treasurySearchResults": {
+    "accessibleTitle": "Risultato ricerca tesoreria",
+    "accountingDate": "Data Contabile",
+    "billingCode": "Codice bolletta",
+    "billingYear": "Anno bolletta",
+    "description": "Visualizza i flussi, seleziona e prenota gli export.",
+    "reportingId": "ID Rendicontazione",
+    "reservationDate": "Data prenotazione",
+    "uploadFlow": "Carica flusso",
+    "valueDate": "Data Valuta"
+  },
+  "utilityPages": {
+    "error": {
+      "retry": "Riprova",
+      "subtitle": "Ti preghiamo di riprovare più tardi",
+      "title": "Si è verificato un errore durante l'accesso a Piattaforma Unitaria"
+    },
+    "genericError": {
+      "title": "Spiacenti, qualcosa è andato storto.",
+      "description": "Si è verificato un errore. Riprova più tardi."
+    },
+    "loggedout": {
+      "login": "Riconnettiti ora",
+      "subtitle": "Grazie per aver utilizzato Piattaforma Unitaria",
+      "title": "Sei stato disconnesso dal sistema"
+    }
+  }
+}

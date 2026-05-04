@@ -1,0 +1,207 @@
+import { useForm } from 'react-hook-form';
+import { useCallback } from 'react';
+import {
+  ClassificationsExportFileRequestDTO,
+  ClassificationsExportFileFilter,
+  ExportFileTypeEnum,
+  LabelEnum
+} from '../../generated/apiClient';
+import { format } from 'date-fns';
+
+const isValidLabelEnum = (value: string): value is LabelEnum => {
+  return Object.values(LabelEnum).includes(value as LabelEnum);
+};
+
+export type ClassificationFormFields = {
+  fileVersion: string;
+  label: string | Array<LabelEnum>;
+  iuv: string;
+  iud: string;
+  iuf: string;
+  iur: string;
+  remittanceInformation: string;
+  accountRegistryCode: string;
+  billAmountCents: string;
+  reportingIur: string;
+  pspLastName: string;
+  pspCompanyName: string;
+  regulationUniqueIdentifier: string;
+};
+
+const DEFAULT_VALUES: ClassificationFormFields = {
+  fileVersion: '',
+  label: '',
+  iuv: '',
+  remittanceInformation: '',
+  iur: '',
+  iud: '',
+  iuf: '',
+  reportingIur: '',
+  billAmountCents: '',
+  accountRegistryCode: '',
+  pspLastName: '',
+  pspCompanyName: '',
+  regulationUniqueIdentifier: ''
+};
+
+export const useClassificationExport = (organizationId: number) => {
+  const formMethods = useForm<ClassificationFormFields>({
+    defaultValues: DEFAULT_VALUES
+  });
+
+  const dateToIso = useCallback((date: Date | null): string | undefined => {
+    return date ? format(date, 'yyyy-MM-dd') : undefined;
+  }, []);
+
+  const validateForm = useCallback(
+    (
+      formData: ClassificationFormFields,
+      dateRanges: Record<string, { from: Date | null; to: Date | null }>
+    ): boolean => {
+      if (!formData.fileVersion) return false;
+
+      const classificationRange = dateRanges.classification;
+      const hasCompleteClassificationRange = !!(
+        classificationRange.from && classificationRange.to
+      );
+
+      const hasOtherCriteria = !!(
+        formData.label ||
+        formData.iuv ||
+        formData.iur ||
+        formData.iud ||
+        formData.iuf ||
+        formData.remittanceInformation ||
+        formData.billAmountCents ||
+        formData.accountRegistryCode ||
+        formData.pspLastName ||
+        formData.pspCompanyName ||
+        formData.regulationUniqueIdentifier ||
+        formData.reportingIur
+      );
+
+      return hasCompleteClassificationRange || hasOtherCriteria;
+    },
+    []
+  );
+
+  const buildApiPayload = useCallback(
+    (
+      formData: ClassificationFormFields,
+      dateRanges: Record<string, { from: Date | null; to: Date | null }>
+    ): ClassificationsExportFileRequestDTO => {
+      const filterFields: ClassificationsExportFileFilter = {};
+
+      if (formData.iuv) {
+        filterFields.iuvs = [formData.iuv];
+      }
+      if (formData.iud) {
+        filterFields.iud = formData.iud;
+      }
+      if (formData.iuf) {
+        filterFields.iufs = [formData.iuf];
+      }
+
+      const iurValue = formData.iur || formData.reportingIur;
+      if (iurValue) {
+        filterFields.iurs = [iurValue];
+      }
+
+      if (formData.label) {
+        if (Array.isArray(formData.label)) {
+          filterFields.label = formData.label;
+        } else if (isValidLabelEnum(formData.label)) {
+          filterFields.label = [formData.label as LabelEnum];
+        }
+      }
+
+      if (formData.remittanceInformation) {
+        filterFields.remittanceInformation = formData.remittanceInformation;
+      }
+
+      if (formData.billAmountCents) {
+        const amountInEuros = Number(formData.billAmountCents);
+        if (!isNaN(amountInEuros)) {
+          filterFields.billAmountCents = Math.round(amountInEuros * 100);
+        }
+      }
+
+      if (formData.accountRegistryCode) {
+        filterFields.accountRegistryCode = formData.accountRegistryCode;
+      }
+
+      if (formData.pspLastName) {
+        filterFields.pspLastName = formData.pspLastName;
+      }
+
+      if (formData.pspCompanyName) {
+        filterFields.pspCompanyName = formData.pspCompanyName;
+      }
+
+      if (formData.regulationUniqueIdentifier) {
+        filterFields.regulationUniqueIdentifier =
+          formData.regulationUniqueIdentifier;
+      }
+
+      const { classification, payment, reporting, accounting, value, payDate } =
+        dateRanges;
+
+      if (classification.from && classification.to) {
+        filterFields.lastClassificationDate = {
+          from: dateToIso(classification.from),
+          to: dateToIso(classification.to)
+        };
+      }
+
+      if (payment.from && payment.to) {
+        filterFields.paymentDate = {
+          from: dateToIso(payment.from),
+          to: dateToIso(payment.to)
+        };
+      }
+
+      if (reporting.from && reporting.to) {
+        filterFields.regulationDate = {
+          from: dateToIso(reporting.from),
+          to: dateToIso(reporting.to)
+        };
+      }
+
+      if (accounting.from && accounting.to) {
+        filterFields.billDate = {
+          from: dateToIso(accounting.from),
+          to: dateToIso(accounting.to)
+        };
+      }
+
+      if (value.from && value.to) {
+        filterFields.regionValueDate = {
+          from: dateToIso(value.from),
+          to: dateToIso(value.to)
+        };
+      }
+
+      if (payDate?.from && payDate?.to) {
+        filterFields.payDate = {
+          from: dateToIso(payDate.from),
+          to: dateToIso(payDate.to)
+        };
+      }
+
+      return {
+        organizationId,
+        exportFileType: ExportFileTypeEnum.CLASSIFICATIONS,
+        fileVersion: formData.fileVersion,
+        filterFields
+      };
+    },
+    [organizationId, dateToIso]
+  );
+
+  return {
+    formMethods,
+    validateForm,
+    buildApiPayload,
+    isValidLabelEnum
+  };
+};

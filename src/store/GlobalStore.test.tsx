@@ -1,0 +1,68 @@
+import { render, screen } from '@testing-library/react';
+import { vi, describe, it, expect, afterEach } from 'vitest';
+import { STATE } from './types';
+import { useStore, StoreProvider } from './GlobalStore';
+import 'vitest-dom/extend-expect';
+import { initialFilterValues } from './FilterStore';
+
+vi.mock('./OrganizationIdStore', () => ({
+  setOrganizationId: vi.fn(),
+  organizationIdState: { state: { value: null } }
+}));
+
+vi.mock('./UserInfoStore', () => ({
+  setUserInfo: vi.fn(),
+  userInfoState: { state: { value: null } }
+}));
+
+vi.mock('./ConfigFeStore', () => ({
+  configFeState: { value: null }
+}));
+
+vi.mock('./AppStateStore', () => ({
+  appState: { value: { loading: false } }
+}));
+
+describe('StoreContext', () => {
+  afterEach(() => {
+    // Restore the original console.error after the test
+    vi.restoreAllMocks();
+  });
+
+  it('should provide combined state to children', () => {
+    const TestComponent = () => {
+      const { state } = useStore();
+      return <div data-testid="app-state">{JSON.stringify(state)}</div>;
+    };
+
+    render(
+      <StoreProvider>
+        <TestComponent />
+      </StoreProvider>
+    );
+
+    const appStateElement = screen.getByTestId('app-state');
+    expect(appStateElement).toHaveTextContent(
+      JSON.stringify({
+        [STATE.APP_STATE]: { loading: false },
+        [STATE.CONFIG_FE]: null,
+        [STATE.ORGANIZATIONS]: [],
+        [STATE.ORGANIZATION_ID]: null,
+        [STATE.SELECTED_FILTERS]: [],
+        [STATE.FILTER_VALUES]: initialFilterValues
+      })
+    );
+  });
+
+  it('should throw an error if useStore is used outside of StoreProvider', () => {
+    vi.spyOn(console, 'error').mockImplementation(() => '');
+    const TestComponent = () => {
+      useStore();
+      return null;
+    };
+
+    expect(() => render(<TestComponent />)).toThrowError(
+      'useStore must be used within a StoreProvider'
+    );
+  });
+});

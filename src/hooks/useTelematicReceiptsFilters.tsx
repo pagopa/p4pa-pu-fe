@@ -1,0 +1,71 @@
+import { useTranslation } from 'react-i18next';
+import SearchIcon from '@mui/icons-material/Search';
+import {
+  COMPONENT_TYPE,
+  FilterItem
+} from '../components/FilterContainer/FilterContainer';
+import { useStore } from '../store/GlobalStore';
+import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
+import { FilterFieldIds } from '../models/SearchCardFields';
+import { TelematicReceiptsFilters } from '../api/receipts/mappings';
+
+type UseTelematicReceiptsProps = {
+  onFilter?: (filters: TelematicReceiptsFilters) => void;
+  layout?: 'inline' | 'grid';
+};
+
+export const useTelematicReceiptsFilters = ({
+  layout = 'inline'
+}: UseTelematicReceiptsProps) => {
+  const { t } = useTranslation();
+  const {
+    state: { organizationId }
+  } = useStore();
+
+  const debtPositionsTypes = useDebtPositionsTypeOrg({ organizationId });
+
+  const items: Array<FilterItem> = [
+    {
+      type: COMPONENT_TYPE.textField,
+      label: t('commons.searchIUV'),
+      adornment: <SearchIcon />,
+      gridWidth: layout === 'grid' ? 12 : 2,
+      id: FilterFieldIds.IUV_CODE
+    },
+    {
+      type: COMPONENT_TYPE.textField,
+      label: t('commons.fiscalCode'),
+      adornment: <SearchIcon />,
+      gridWidth: layout === 'grid' ? 12 : 2,
+      id: FilterFieldIds.FISCAL_CODE
+    },
+    {
+      type: COMPONENT_TYPE.select,
+      label: t('commons.duetype'),
+      gridWidth: layout === 'grid' ? 12 : 3,
+      options: debtPositionsTypes.optionsMap,
+      id: FilterFieldIds.TYPE_ORG
+    },
+    {
+      type: COMPONENT_TYPE.dateRange,
+      label: 'dateRange',
+      gridWidth: layout === 'grid' ? 12 : 4,
+      from: { label: t('commons.outcomeFrom') },
+      to: { label: t('commons.to') },
+      id: FilterFieldIds.DATE_RANGE
+    }
+  ];
+
+  if (layout === 'inline') {
+    items.push({
+      type: COMPONENT_TYPE.button,
+      label: t('commons.filters.filterResults'),
+      gridWidth: 1,
+      id: 'applyFilters'
+    });
+  }
+
+  return { filters: items };
+};
+
+export default useTelematicReceiptsFilters;
