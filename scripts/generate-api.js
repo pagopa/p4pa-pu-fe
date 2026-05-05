@@ -86,8 +86,8 @@ const fetchWithRetry = async (targetUrl, retries = RETRY_ATTEMPTS) => {
     }
 };
 
-// Remove nulls from spec
-const removeNulls = (obj) => {
+// Remove nullable: true from spec
+const removeNullableTrue = (obj) => {
     let count = 0;
 
     const walk = (node) => {
@@ -95,7 +95,7 @@ const removeNulls = (obj) => {
             node.forEach(walk);
         } else if (typeof node === 'object' && node !== null) {
             for (const k in node) {
-                if (node[k] === null) {
+                if (k === 'nullable' && node[k] === true) {
                     delete node[k];
                     count++;
                 } else {
@@ -122,9 +122,9 @@ const fetchAndClean = async (sourceUrl) => {
     }
 
     const jsonData = JSON.parse(rawData);
-    const removedCount = removeNulls(jsonData);
+    const removedCount = removeNullableTrue(jsonData);
 
-    console.log(`[${key}] Cleaned spec: removed ${removedCount} null field${removedCount !== 1 ? 's' : ''}`);
+    console.log(`[${key}] Cleaned spec: removed ${removedCount} "nullable: true" field${removedCount !== 1 ? 's' : ''}`);
 
     const outDir = './generated';
     if (!fs.existsSync(outDir)) {
