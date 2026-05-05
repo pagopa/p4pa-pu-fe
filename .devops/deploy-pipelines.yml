@@ -21,6 +21,7 @@ variables:
     azure_subscription: '$(UAT_AZURE_SUBSCRIPTION)'
     cdn_endpoint: '$(UAT_CDN_ENDPOINT)'
     cdn_profile: '$(UAT_CDN_PROFILE)'
+    cdn_domains: '$(UAT_CDN_DOMAINS)'
     storage_account: '$(UAT_STORAGE_ACCOUNT_NAME)'
     resource_group: '$(UAT_STORAGE_ACCOUNT_RG)'
     deploy_path: '$(UAT_DEPLOY_PATH)'
@@ -36,6 +37,7 @@ variables:
     azure_subscription: '$(PROD_AZURE_SUBSCRIPTION)'
     cdn_endpoint: '$(PROD_CDN_ENDPOINT)'
     cdn_profile: '$(PROD_CDN_PROFILE)'
+    cdn_domains: '$(PROD_CDN_DOMAINS)'
     storage_account: '$(PROD_STORAGE_ACCOUNT_NAME)'
     resource_group: '$(PROD_STORAGE_ACCOUNT_RG)'
     deploy_path: '$(PROD_DEPLOY_PATH)'
@@ -52,6 +54,7 @@ variables:
     azure_subscription: '$(DEV_AZURE_SUBSCRIPTION)'
     cdn_endpoint: '$(DEV_CDN_ENDPOINT)'
     cdn_profile: '$(DEV_CDN_PROFILE)'
+    cdn_domains: '$(DEV_CDN_DOMAINS)'
     storage_account: '$(DEV_STORAGE_ACCOUNT_NAME)'
     resource_group: '$(DEV_STORAGE_ACCOUNT_RG)'
     deploy_path: '$(DEV_DEPLOY_PATH)'
@@ -120,4 +123,4 @@ stages:
               azureSubscription: '$(AZURE_SUBSCRIPTION)'
               scriptLocation: inlineScript
               inlineScript: |
-                az cdn endpoint purge -g $(resource_group) -n $(cdn_endpoint) --profile-name $(cdn_profile) --content-paths "/" "/$(blob_container_path)" "/$(blob_container_path)/*"
+                az afd endpoint purge -g $(resource_group) --endpoint-name $(cdn_endpoint) --profile-name $(cdn_profile) --domains $(cdn_domains)  --content-paths "/" "/$(blob_container_path)" "/$(blob_container_path)/*"
