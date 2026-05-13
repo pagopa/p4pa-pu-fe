@@ -35,16 +35,24 @@ type listItemProps = {
   item: ISidebarMenuItem;
   children?: React.ReactNode;
   sx?: SxProps<Theme>;
+  open?: boolean;
 };
 
 const ListItem = (props: listItemProps) => {
-  const { component, to = '', onClick, item, children, sx } = props;
+  const { component, to = '', onClick, item, children, sx, open } = props;
   const theme = useTheme();
   return (
     <ListItemButton
       component={component}
       to={to}
       onClick={onClick}
+      role={component === 'button' ? 'button' : 'link'}
+      aria-controls={
+        component === 'button'
+          ? `submenu-${item.label.toLowerCase().replace(/ /g, '-')}`
+          : undefined
+      }
+      aria-expanded={component === 'button' ? open : undefined}
       sx={{
         px: 3,
         '&.hover': {
@@ -99,13 +107,28 @@ export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
     }
   };
 
+  //When the collapse animation finishes, focus the first item in the submenu for better accessibility.
+  const handleCollapseEnd = (el: HTMLElement) => {
+    const list = el.querySelector('ul');
+    const firstItem = list?.querySelector('a');
+    if (firstItem) {
+      console.log('Focusing first item:', firstItem);
+      firstItem.focus();
+    }
+  };
+
   return (
-    <Box sx={{ flexDirection: 'column', alignItems: 'stretch', width: '100%' }}>
+    <Box
+      sx={{ flexDirection: 'column', alignItems: 'stretch', width: '100%' }}
+      component={'li'}
+    >
       <ListItem
         item={item}
         to={item.route}
-        component={item.route && !item.items ? NavLink : 'div'}
+        component={item.route && !item.items ? NavLink : 'button'}
         onClick={item.items ? handleCollapseClick : onClick}
+        sx={{ width: '100%' }}
+        open={open}
       >
         {item.icon && (
           <ListItemIcon aria-hidden="true">
@@ -114,7 +137,7 @@ export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
         )}
         {!collapsed && (
           <ListItemText
-            id={`menu-item-${item.label.toLowerCase()}`}
+            data-testid={`item-${item.label.toLowerCase().replace(/ /g, '-')}`}
             sx={{ whiteSpace: 'nowrap', overflow: 'hidden' }}
             primary={item.label}
           />
@@ -129,12 +152,20 @@ export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
       </ListItem>
 
       {item.items && (
-        <Collapse in={open && !collapsed} timeout="auto" unmountOnExit>
-          <Box sx={{ pl: 1 }}>
-            <List component="div" disablePadding>
-              {item.items.map((subitem) => (
+        <Collapse
+          in={open && !collapsed}
+          onEntered={handleCollapseEnd}
+          timeout="auto"
+          unmountOnExit
+          sx={{ pl: 2 }}
+        >
+          <List
+            id={`submenu-${item.label.toLowerCase().replace(/ /g, '-')}`}
+            disablePadding
+          >
+            {item.items.map((subitem) => (
+              <li key={subitem.route}>
                 <ListItem
-                  key={subitem.route}
                   component={NavLink}
                   to={subitem.route}
                   item={subitem}
@@ -143,9 +174,9 @@ export const SidebarMenuItem = ({ collapsed, item, onClick }: Props) => {
                 >
                   <ListItemText primary={subitem.label} />
                 </ListItem>
-              ))}
-            </List>
-          </Box>
+              </li>
+            ))}
+          </List>
         </Collapse>
       )}
     </Box>

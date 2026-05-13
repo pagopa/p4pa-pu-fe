@@ -303,6 +303,7 @@ export const Sidebar: React.FC = () => {
                 orientation="horizontal"
                 flexItem
                 sx={{ display: lg ? 'block' : 'none' }}
+                aria-hidden={'true'}
               />
             </>
           )}
@@ -327,6 +328,7 @@ export const Sidebar: React.FC = () => {
                 orientation="horizontal"
                 flexItem
                 sx={{ display: lg ? 'block' : 'none' }}
+                aria-hidden={'true'}
               />
               <List
                 sx={styles.list}
@@ -349,6 +351,7 @@ export const Sidebar: React.FC = () => {
             orientation="horizontal"
             flexItem
             sx={{ display: lg ? 'block' : 'none' }}
+            aria-hidden={'true'}
           />
           <List
             sx={styles.list}
@@ -368,6 +371,7 @@ export const Sidebar: React.FC = () => {
               orientation="horizontal"
               flexItem
               sx={{ display: lg ? 'block' : 'none' }}
+              aria-hidden={'true'}
             />
             <Box sx={styles.hamburgerIcon}>
               <Tooltip
