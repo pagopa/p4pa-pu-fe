@@ -1,0 +1,33 @@
+{
+  "enterprise": {
+    "send": {
+      "title": "SEND - Gestione Ricevute",
+      "subtitle": "Visualizza e gestisci le ricevute telematiche",
+      "telematicReceipts": {
+        "title": "Ricevute Telematiche",
+        "columns": {
+          "receiptId": "ID Ricevuta",
+          "amount": "Importo",
+          "debtor": "Debitore",
+          "status": "Stato",
+          "paymentDate": "Data Pagamento"
+        },
+        "statuses": {
+          "SENT": "Inviato",
+          "DELIVERED": "Consegnato",
+          "FAILED": "Fallito",
+          "PENDING": "In Sospeso"
+        },
+        "errors": {
+          "loadingFailed": "Errore nel caricamento delle ricevute",
+          "noOrganization": "Nessuna organizzazione selezionata",
+          "noResults": "Nessuna ricevuta trovata per i filtri selezionati"
+        }
+      },
+      "sendIntegration": {
+        "title": "Integrazione SEND",
+        "description": "Configura l'integrazione con il sistema SEND"
+      }
+    }
+  }
+}

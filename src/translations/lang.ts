@@ -11,5 +11,5 @@ const lang: Languages & {
     translation: translationIT
   }
 };
-/* Are we sure we need a sorting function? The order wouldn't be the one commonly intended by us (which is usually: IT, EN, FR...)*/
+
 export default lang;

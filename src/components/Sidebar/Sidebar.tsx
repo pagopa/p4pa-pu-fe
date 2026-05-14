@@ -34,7 +34,10 @@ import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
 import { Dns } from '@mui/icons-material';
 import { generatePath } from 'react-router';
-import { useGenerateSupersetUrl } from '../../api/statistics';
+
+import { useGenerateSupersetUrl } from '@core/api/statistics';
+import { ExtensionSidebarMenuItem } from '@core/models/extensions';
+import { extensions } from '@extra/index';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -61,6 +64,17 @@ export const Sidebar: React.FC = () => {
   const isSuperAdmin = utils.roles.useIsSuperAdmin();
   const { organizationId, operatorRole } = state;
   const isAdmin = isSuperAdmin || operatorRole == 'ROLE_ADMIN';
+
+  const isItemVisible = (item: ExtensionSidebarMenuItem): boolean => {
+    if (!item.requiresRole) return true;
+    if (item.requiresRole === 'SUPERADMIN') return isSuperAdmin;
+    if (item.requiresRole === 'ADMIN') return isAdmin;
+    return true;
+  };
+
+  const enterpriseItems = extensions.sidebarItems
+    .filter(isItemVisible)
+    .map((item) => ({ ...item, priority: item.priority || 0 }));
 
   const menuItems: Array<ISidebarMenuItem> = [
     {
@@ -238,6 +252,10 @@ export const Sidebar: React.FC = () => {
     end: true
   };
 
+  const allMenuItems = [...menuItems, ...enterpriseItems].sort(
+    (a, b) => (b.priority || 0) - (a.priority || 0)
+  );
+
   return (
     <>
       <Grid
@@ -312,7 +330,7 @@ export const Sidebar: React.FC = () => {
             aria-hidden={collapsed && !lg}
             aria-label={t('commons.sidebar.menudescription')}
           >
-            {menuItems.map((item, index) => (
+            {allMenuItems.map((item, index) => (
               <SidebarMenuItem
                 onClick={() => !lg && setCollapsed(true)}
                 collapsed={collapsed}

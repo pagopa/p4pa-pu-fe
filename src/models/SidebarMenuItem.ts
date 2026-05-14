@@ -1,6 +1,7 @@
 import { SvgIconComponent } from '@mui/icons-material';
 
 export type ISidebarMenuItem = {
+  priority?: number;
   label: string;
   icon?: SvgIconComponent | (() => React.ReactNode);
   route?: string;

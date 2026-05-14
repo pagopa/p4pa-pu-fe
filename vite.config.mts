@@ -2,11 +2,17 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import dotenv from 'dotenv';
 import svgr from 'vite-plugin-svgr';
+import path from 'path';
+import fs from 'fs';
 dotenv.config();
 
 const DEPLOY_PATH = process.env.DEPLOY_PATH || '';
 const ENV = process.env.ENV || '';
 
+const extraPath = path.resolve(__dirname, 'src/extra/index.ts');
+const hasExtra = fs.existsSync(extraPath);
+
+console.debug('hasExtra', hasExtra);
 // https://vite.dev/config/
 export default defineConfig({
   base: `${DEPLOY_PATH}`,
@@ -31,7 +37,16 @@ export default defineConfig({
     })
   ],
   resolve: {
-    extensions: ['.ts', '.js', '.mjs', '.json', '.tsx']
+    extensions: ['.ts', '.js', '.mjs', '.json', '.tsx'],
+    alias: {
+      // Dynamic alias: point to extra if exists, otherwise to placeholder
+      '@extra': hasExtra
+        ? path.resolve(__dirname, 'src/extra')
+        : path.resolve(__dirname, 'src/extra-placeholder'),
+
+      // Alias for core modules (optional but recommended)
+      '@core': path.resolve(__dirname, 'src')
+    }
   },
   esbuild: {
     loader: 'tsx',
