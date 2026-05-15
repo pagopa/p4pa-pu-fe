@@ -3,7 +3,9 @@ import { LangCode } from '@pagopa/mui-italia';
 import i18n from '../translations/i18n';
 
 export const useLanguage = () => {
-  const [language, setLanguage] = useState<LangCode>('it');
+  const [language, setLanguage] = useState<LangCode>(
+    i18n.resolvedLanguage as LangCode
+  );
 
   const changeLanguage = (langCode: LangCode) => {
     i18n.changeLanguage(langCode);
