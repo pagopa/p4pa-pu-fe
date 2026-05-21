@@ -25,10 +25,10 @@ import { postTokenOrError } from '../api/token';
 import { responsesRoutes } from '../routes/responses';
 import { RouteHandleObject } from '../models/Routes';
 import IoMessageGuidePage from './IoMessageGuidePage/IoMessageGuidePage';
-
-import { extensions } from '@extra/index';
 import Loader from '@core/components/Loader/Loader';
+
 import { ExtensionRoute } from '@core/models/extensions';
+import { extensions } from '@extra/index';
 
 // helper to convert extension routes
 function convertExtensionRoutes(
@@ -48,8 +48,7 @@ function convertExtensionRoutes(
     errorElement: route.errorElement,
     handle: {
       ...route.handle,
-      enterprise: true,
-      module: extensions.metadata?.name || 'enterprise'
+      enterprise: true
     }
   }));
 }

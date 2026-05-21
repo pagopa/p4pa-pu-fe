@@ -8562,9 +8562,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"send@workspace:src/extra/module1":
+"send@workspace:src/extra/send":
   version: 0.0.0-use.local
-  resolution: "send@workspace:src/extra/module1"
+  resolution: "send@workspace:src/extra/send"
   dependencies:
     swagger-typescript-api: "npm:^13.0.3"
     ts-node: "npm:^10.9.2"

@@ -5,7 +5,7 @@
   "packageManager": "yarn@4.9.2",
   "type": "module",
   "workspaces": [
-    "src/extra/module1"
+    "src/extra/send"
   ],
   "lint-staged": {
     "*.json": [

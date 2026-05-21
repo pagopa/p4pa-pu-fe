@@ -22,6 +22,5 @@ export type ExtensionManifest = {
     version: string;
     author?: string;
   };
-  getTranslations?: () => Record<string, any>;
   onLoad?: () => void | Promise<void>;
 };
