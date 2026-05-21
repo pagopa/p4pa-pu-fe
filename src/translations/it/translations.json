@@ -1086,6 +1086,15 @@
       "WARNING": "Elaborato con errori",
       "WAITING_FILE": "In attesa del file"
     },
+    "stepper": {
+      "navigationLabel": "Procedura guidata",
+      "position": "Step {{current}} di {{total}}",
+      "status": {
+        "active": "Attivo",
+        "completed": "Completo",
+        "inactive": "Non Attivo"
+      }
+    },
     "subject": "Oggetto",
     "successExport": "Abbiamo ricevuto la tua richiesta!",
     "successExportDescription": "Troverai il flusso prenotato nella sezione Flussi esportati appena disponibile.",
