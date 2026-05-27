@@ -10,6 +10,7 @@ import {
 import { TypographyProps } from '@mui/material/Typography';
 import Close from '@mui/icons-material/Close';
 import { DetailField } from '../DetailField';
+import { useTranslation } from 'react-i18next';
 
 export type DrawerProps = {
   open: boolean;
@@ -29,6 +30,7 @@ export const Drawer: React.FC<DrawerProps> & { Field: typeof DetailField } = ({
   titleVariant = 'h6'
 }: DrawerProps) => {
   const theme = useTheme();
+  const { t } = useTranslation();
 
   return (
     <MuiDrawer
@@ -52,7 +54,11 @@ export const Drawer: React.FC<DrawerProps> & { Field: typeof DetailField } = ({
       }}
     >
       <Box display="flex" justifyContent="flex-end" alignItems="center">
-        <IconButton onClick={onClose} data-testid="close-icon">
+        <IconButton
+          onClick={onClose}
+          data-testid="close-icon"
+          aria-label={t('commons.closeDialog')}
+        >
           <Close />
         </IconButton>
       </Box>
