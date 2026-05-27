@@ -154,6 +154,18 @@
   "a11y": {
     "navigation": {
       "announcement": "Hai raggiunto la pagina {{page}}"
+    },
+    "grid": {
+      "asc": "crescente",
+      "desc": "decrescente",
+      "sortedBy": "Tabella ordinata per {{column}} in ordine {{order}}",
+      "sortCleared": "Ordinamento rimosso",
+      "pageChanged": "Pagina {{newPage}} di {{totalPages}}",
+      "pageSizeChanged": "Risultati per pagina: {{pageSize}}"
+    },
+    "search": {
+      "filtersApplied_one": "Tabella aggiornata con {{count}} risultato",
+      "filtersApplied_other": "Tabella aggiornata con {{count}} risultati"
     }
   },
   "appPreview": {

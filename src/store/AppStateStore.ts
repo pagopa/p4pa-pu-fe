@@ -5,7 +5,8 @@ import { BredcrumbItem } from '../components/Breadcrumbs/Breadcrumbs';
 export const appState = signal<AppState>({
   loading: false,
   customBreadcrumbsItems: [],
-  ready: false
+  ready: false,
+  announcement: ''
 });
 
 export function setAppState(newState: Partial<AppState>) {
@@ -18,4 +19,8 @@ export function setLoading(newState: AppState['loading']) {
 
 export function setCustomBreadcrumbsItems(newState: Array<BredcrumbItem>) {
   appState.value = { ...appState.value, customBreadcrumbsItems: newState };
+}
+
+export function setAnnouncement(newState: string) {
+  appState.value = { ...appState.value, announcement: newState };
 }

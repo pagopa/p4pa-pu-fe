@@ -3,6 +3,8 @@ import { UseMutationResult } from '@tanstack/react-query';
 import utils from '../utils';
 import { useHashParamsListener } from './useHashParamsListener';
 import { trimStringValues } from '../utils/textUtils';
+import { useScreenReaderAnnouncement } from './useScreenReaderAnnouncement';
+import { useTranslation } from 'react-i18next';
 
 export type SearchVariables<T> = {
   filters: T;
@@ -23,7 +25,7 @@ export type UseSearchProps<T, TData = unknown, TError = unknown> = {
  */
 export function useSearch<
   T extends Record<string, unknown>,
-  TData = unknown,
+  TData extends { totalElements: number },
   TError = unknown
 >({ filters, query }: UseSearchProps<T, TData, TError>) {
   const {
@@ -37,6 +39,9 @@ export function useSearch<
     sortDirection: string;
     sortField: string;
   };
+
+  const { t } = useTranslation();
+  const { announce } = useScreenReaderAnnouncement();
 
   const page = hashPage > 0 ? hashPage - 1 : 0;
 
@@ -52,7 +57,7 @@ export function useSearch<
   }, [page, size, sortDirection, sortField]);
 
   // Handle filter application: resetting pagination and sort model
-  const applyFilters = (appliedFilters: T) => {
+  const applyFilters = async (appliedFilters: T) => {
     const trimmedFilters = trimStringValues(appliedFilters);
 
     const params = utils.URI.encode({
@@ -62,7 +67,7 @@ export function useSearch<
       sort: null
     });
     utils.URI.set(params, { replace: true });
-    query.mutateAsync({
+    const response = await query.mutateAsync({
       filters: trimmedFilters,
       pagination: { size: 10, page: 0 },
       sort: []
@@ -72,6 +77,12 @@ export function useSearch<
     const resultsFocusable =
       resultsTable?.getElementsByClassName('MuiDataGrid-main');
     (resultsFocusable?.[0] as HTMLElement)?.focus();
+
+    if (query.isSuccess) {
+      announce(
+        t('a11y.search.filtersApplied', { count: response.totalElements })
+      );
+    }
   };
 
   return {
