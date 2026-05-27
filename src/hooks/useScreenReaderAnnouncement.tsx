@@ -7,7 +7,7 @@ export const useScreenReaderAnnouncement = () => {
     // Force reflow to trigger screen reader message
     setTimeout(() => {
       setAnnouncement(message);
-    }, 100);
+    }, 1000);
   };
 
   return {

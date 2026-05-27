@@ -161,11 +161,10 @@
       "sortedBy": "Tabella ordinata per {{column}} in ordine {{order}}",
       "sortCleared": "Ordinamento rimosso",
       "pageChanged": "Pagina {{newPage}} di {{totalPages}}",
-      "pageSizeChanged": "Risultati per pagina: {{pageSize}}"
-    },
-    "search": {
-      "filtersApplied_one": "Tabella aggiornata con {{count}} risultato",
-      "filtersApplied_other": "Tabella aggiornata con {{count}} risultati"
+      "pageSizeChanged": "Risultati per pagina: {{pageSize}}",
+      "filtersApplied_one": "Tabella aggiornata con {{count}} pagina",
+      "filtersApplied_other": "Tabella aggiornata con {{count}} pagine",
+      "noResults": "Nessun risultato trovato"
     }
   },
   "appPreview": {

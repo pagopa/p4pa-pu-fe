@@ -15,7 +15,8 @@ describe('AppState Store', () => {
     const newState: AppState = {
       loading: true,
       customBreadcrumbsItems: [],
-      ready: false
+      ready: false,
+      announcement: ''
     };
     setAppState(newState);
 
@@ -26,7 +27,8 @@ describe('AppState Store', () => {
     const initialState: AppState = {
       loading: false,
       customBreadcrumbsItems: [],
-      ready: false
+      ready: false,
+      announcement: ''
     };
     appState.value = initialState; // Reset the state for this test
 

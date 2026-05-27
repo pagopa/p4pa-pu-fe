@@ -69,6 +69,14 @@ const CustomDataGrid = <T extends GridValidRowModel>({
     return isNaN(page) || page < 1 ? initialPage : page;
   };
 
+  useEffect(() => {
+    if (totalPages > 1 || rows.length > 0) {
+      announce(t('a11y.grid.filtersApplied', { count: totalPages }));
+    } else {
+      announce(t('a11y.grid.noResults'));
+    }
+  }, [totalPages, rows.length]);
+
   const getSizeFromHash = () => {
     const size = hashSize ? Number(hashSize) : initialPageSize;
     return isNaN(size) || size < 1 ? initialPageSize : size;
