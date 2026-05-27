@@ -52,7 +52,7 @@ export function useSearch<
   }, [page, size, sortDirection, sortField]);
 
   // Handle filter application: resetting pagination and sort model
-  const applyFilters = async (appliedFilters: T) => {
+  const applyFilters = (appliedFilters: T) => {
     const trimmedFilters = trimStringValues(appliedFilters);
 
     const params = utils.URI.encode({

@@ -4,5 +4,4 @@ export type AppState = {
   loading: boolean;
   customBreadcrumbsItems: Array<BredcrumbItem>;
   ready: boolean;
-  announcement: string;
 };
