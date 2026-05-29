@@ -1,3 +1,4 @@
+import { useCallback, useEffect, useState } from 'react';
 import { Grid, styled, useTheme, Box, Typography } from '@mui/material';
 import {
   DataGrid,
@@ -7,12 +8,11 @@ import {
   GridSortModel
 } from '@mui/x-data-grid';
 import { theme } from '@pagopa/mui-italia';
-import { useCallback } from 'react';
 import CustomPagination from './CustomPagination';
 import utils from '../../utils';
 import { useHashParamsListener } from '../../hooks/useHashParamsListener';
 import { useTranslation } from 'react-i18next';
-
+import { HiddenDiv } from '../HiddenDiv';
 const StyledDataGrid = styled(DataGrid)({
   border: 'none !important',
   '& .MuiDataGrid-columnHeader': {
@@ -59,11 +59,28 @@ const CustomDataGrid = <T extends GridValidRowModel>({
     sortDirection: hashSortDirection,
     ...hashParams
   } = useHashParamsListener<Record<string, unknown>>();
+  const [announcement, setAnnouncement] = useState('');
+
+  const { t } = useTranslation();
+
+  const announce = (message: string) => {
+    setAnnouncement('');
+    // Force reflow to trigger screen reader message
+    setTimeout(() => {
+      setAnnouncement(message);
+    }, 1000);
+  };
 
   const getPageFromHash = () => {
     const page = hashPage ? Number(hashPage) : initialPage;
     return isNaN(page) || page < 1 ? initialPage : page;
   };
+
+  useEffect(() => {
+    if (totalPages && rows.length > 0) {
+      announce(t('a11y.grid.filtersApplied', { count: totalPages }));
+    }
+  }, [totalPages]);
 
   const getSizeFromHash = () => {
     const size = hashSize ? Number(hashSize) : initialPageSize;
@@ -81,11 +98,10 @@ const CustomDataGrid = <T extends GridValidRowModel>({
       ? [{ field: sortField, sort: sortDirection }]
       : initialSortModel;
   };
+
   const page = getPageFromHash();
   const pageSize = getSizeFromHash();
   const sortModel = getSortModelFromHash();
-
-  const { t } = useTranslation();
 
   // Write updated params into URL hash
   const updateHashParams = useCallback(
@@ -112,50 +128,73 @@ const CustomDataGrid = <T extends GridValidRowModel>({
   );
 
   const handlePageChange = (newPage: number) => {
+    announce(
+      t('a11y.grid.pageChanged', {
+        newPage,
+        totalPages
+      })
+    );
     updateHashParams(newPage, pageSize, sortModel);
   };
 
-  const handlePageSizeChange = (newSize: number) => {
-    updateHashParams(page, newSize, sortModel);
+  const handlePageSizeChange = (pageSize: number) => {
+    announce(t('a11y.grid.pageSizeChanged', { pageSize }));
+    updateHashParams(page, pageSize, sortModel);
   };
 
   const handleSortModelChange = (newSortModel: GridSortModel) => {
+    if (newSortModel.length > 0) {
+      const column =
+        columns.find((col) => col.field === newSortModel[0].field)
+          ?.headerName || newSortModel[0].field;
+      announce(
+        t('a11y.grid.sortedBy', {
+          column,
+          order: t(`a11y.grid.${newSortModel[0].sort}`)
+        })
+      );
+    } else {
+      announce(t('a11y.grid.sortCleared'));
+    }
     updateHashParams(page, pageSize, newSortModel);
   };
 
   return (
-    <StyledDataGrid
-      rows={rows}
-      columns={columns}
-      pagination
-      paginationMode="client"
-      sortingMode="client"
-      sortModel={sortModel}
-      onSortModelChange={handleSortModelChange}
-      hideFooterSelectedRowCount
-      aria-label={t('commons.tableResults')}
-      slotProps={{
-        root: {
-          id: 'data-results-table'
-        }
-      }}
-      slots={{
-        pagination: () => (
-          <CustomPagination
-            sizePageOptions={pageSizeOptions}
-            defaultPageOption={pageSize}
-            totalPages={totalPages}
-            currentPage={page}
-            onPageChange={handlePageChange}
-            onPageSizeChange={handlePageSizeChange}
-          />
-        )
-      }}
-      localeText={{
-        noRowsLabel: t('commons.noRows')
-      }}
-      {...restProps}
-    />
+    <>
+      <HiddenDiv message={announcement} />
+      <StyledDataGrid
+        rows={rows}
+        columns={columns}
+        pagination
+        paginationMode="client"
+        sortingMode="client"
+        sortModel={sortModel}
+        onSortModelChange={handleSortModelChange}
+        hideFooterSelectedRowCount
+        aria-label={t('commons.tableResults')}
+        slotProps={{
+          root: {
+            id: 'data-results-table'
+          }
+        }}
+        slots={{
+          pagination: () => (
+            <CustomPagination
+              sizePageOptions={pageSizeOptions}
+              defaultPageOption={pageSize}
+              totalPages={totalPages}
+              currentPage={page}
+              onPageChange={handlePageChange}
+              onPageSizeChange={handlePageSizeChange}
+            />
+          )
+        }}
+        localeText={{
+          noRowsLabel: t('commons.noRows')
+        }}
+        {...restProps}
+      />
+    </>
   );
 };
 
@@ -172,7 +211,7 @@ export const DataGridContainer = (props: { children: React.ReactNode }) => {
         bgcolor: theme.palette.grey[200],
         overflow: 'auto'
       }}
-      aria-label="results-table"
+      role="region"
     >
       {props.children}
     </Grid>
@@ -193,8 +232,9 @@ export const EmptyData = (props: { title: string; description: string }) => {
           bgcolor: theme.palette.background.paper,
           padding: 2
         }}
+        role="region"
       >
-        <Typography textAlign="center" fontWeight={600} mb={1}>
+        <Typography textAlign="center" fontWeight={600} mb={1} component="h2">
           {props.title}
         </Typography>
         <Typography textAlign="center">{props.description}</Typography>

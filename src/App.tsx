@@ -8,6 +8,7 @@ import ErrorPage from './routes/UtilityPages/error';
 
 export const App = () => {
   const { state } = useStore();
+
   return (
     <ErrorBoundary fallback={<ErrorPage />}>
       <Overlay visible={state.appState.loading} />
