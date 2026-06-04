@@ -118,7 +118,7 @@ export type UnifiedFormData = {
   logoRemoved: boolean; // Flag to track if user explicitly removed the logo
   // Step 2 fields (Accounting Information)
   iban: FieldData<string>;
-  ibanPostal: FieldData<string>;
+  ibanPostal: FieldData<string | undefined>;
   cbill: FieldData<string>;
   flagTreasury: FieldData<boolean>;
   // Step 2 fields (Payments Information)
@@ -149,7 +149,7 @@ export type UnifiedFormValues = {
   orgLogo: File | null;
   // Step 2 fields (Accounting Information)
   iban: string;
-  ibanPostal: string;
+  ibanPostal?: string;
   cbill: string;
   flagTreasury: boolean;
   // Step 2 fields (Payments Information)
