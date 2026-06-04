@@ -42,7 +42,7 @@ export const GridActionMenu = ({
         <OpenInNew
           color="primary"
           fontSize="small"
-          aria-label="go to operator detail item"
+          aria-label={t('commons.goToDetail')}
           data-testid={`navigate-to-detail-${row.debtPositionTypeId}`}
         />
       ),
@@ -57,7 +57,7 @@ export const GridActionMenu = ({
         <RemoveCircleOutline
           fontSize="small"
           color="error"
-          aria-label="remove operator detail item"
+          aria-label={t('commons.onlyRemove')}
           data-testid={`remove-detail-${row.debtPositionTypeId}`}
         />
       ),

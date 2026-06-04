@@ -82,7 +82,7 @@ export const SearchResultsDataGrid = ({ data }: DataGridProps) => {
           to={generatePath(PageRoutes.ASSESSMENT_REGISTRY_DETAIL, {
             assessmentRegistryId: params.row.assessmentRegistryId
           })}
-          aria-label={t('commons.detail')}
+          aria-label={t('commons.goToDetail')}
         >
           <IconButton color="primary" size="small">
             <ChevronRight />

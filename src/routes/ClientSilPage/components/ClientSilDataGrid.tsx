@@ -3,6 +3,7 @@ import {
   GridRenderCellParams,
   GridValidRowModel
 } from '@mui/x-data-grid';
+import { IconButton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { ChevronRight } from '@mui/icons-material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
@@ -60,22 +61,13 @@ export const ClientSilDataGrid = ({
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<ClientSilDataRow>) => (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            height: '100%',
-            width: '100%'
-          }}
+        <IconButton
+          aria-label={t('commons.detail')}
+          onClick={() => handleRowClick(params.row)}
+          data-testid={params.row.clientId}
         >
-          <ChevronRight
-            color="primary"
-            style={{ cursor: 'pointer' }}
-            data-testid={params.row.clientId}
-            onClick={() => handleRowClick(params.row)}
-          />
-        </div>
+          <ChevronRight color="primary" />
+        </IconButton>
       )
     }
   ];

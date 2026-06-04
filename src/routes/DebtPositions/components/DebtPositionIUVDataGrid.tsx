@@ -1,7 +1,7 @@
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useTranslation } from 'react-i18next';
 import { ReadMore } from '@mui/icons-material';
-import { Box, ChipProps, Typography } from '@mui/material';
+import { ChipProps, IconButton, Typography } from '@mui/material';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import { PageRoutes } from '../../../routes';
 import { generatePath, useNavigate } from 'react-router';
@@ -89,32 +89,25 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
     {
       field: 'action',
       headerName: '',
-      flex: 0.5,
+      flex: 0.2,
       sortable: false,
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<InstallmentViewDTO>) => (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            height: '100%'
+        <IconButton
+          size="small"
+          color="primary"
+          aria-label={t('commons.goToDetail')}
+          onClick={() => {
+            navigate(
+              generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
+                id: params.row.installmentId
+              })
+            );
           }}
         >
-          <ReadMore
-            fontSize="small"
-            color="primary"
-            sx={{ cursor: 'pointer' }}
-            onClick={() => {
-              navigate(
-                generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
-                  id: params.row.installmentId
-                })
-              );
-            }}
-          />
-        </Box>
+          <ReadMore />
+        </IconButton>
       )
     }
   ];

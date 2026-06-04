@@ -68,11 +68,12 @@ const ReportingDetailDataGrid = ({
           params.row.iud
         );
         return (
-          <Link
-            to={detailPath}
-            aria-label={t('commons.routes.TELEMATIC_RECEIPT_DETAIL')}
-          >
-            <IconButton color="primary" size="small">
+          <Link to={detailPath}>
+            <IconButton
+              aria-label={t('commons.routes.TELEMATIC_RECEIPT_DETAIL')}
+              color="primary"
+              size="small"
+            >
               <ReadMore />
             </IconButton>
           </Link>

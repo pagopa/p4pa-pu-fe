@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Grid, styled, useTheme, Box, Typography } from '@mui/material';
-import {
-  DataGrid,
-  DataGridProps,
-  GridColDef,
+  import { useCallback, useEffect, useState } from 'react';
+  import { Grid, styled, useTheme, Box, Typography } from '@mui/material';
+  import {
+    DataGrid,
+    DataGridProps,
+    GridColDef,
   GridValidRowModel,
   GridSortModel
 } from '@mui/x-data-grid';

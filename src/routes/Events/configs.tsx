@@ -15,6 +15,7 @@ import i18n from '../../translations/i18n';
 import { GridColDef, GridRowId } from '@mui/x-data-grid';
 import { formatDateTime } from '../../utils/formatters';
 import utils from '../../utils';
+import { IconButton } from '@mui/material';
 
 export const silFields: Array<FilterItem> = [
   {
@@ -180,25 +181,18 @@ export const getEventsColumns = (
   {
     field: 'action',
     headerName: '',
-    flex: 0.5,
+    flex: 0.2,
     sortable: false,
     align: 'right',
-    headerAlign: 'right',
     renderCell: (row) => {
       const { id } = row;
       return (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            height: '100%',
-            width: '100%',
-            cursor: 'pointer'
-          }}
+        <IconButton
+          aria-label={i18n.t('commons.goToDetail')}
+          onClick={() => action(id)}
         >
-          <ReadMore color="primary" onClick={() => action(id)} />
-        </div>
+          <ReadMore fontSize="small" color="primary" />
+        </IconButton>
       );
     }
   }

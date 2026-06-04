@@ -1,4 +1,4 @@
-import { Chip, useTheme } from '@mui/material';
+import { Chip, IconButton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
@@ -24,7 +24,6 @@ import utils from '../../../utils';
 import Search from '@mui/icons-material/Search';
 
 export const MyOrg = () => {
-  const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { organizationId: organizationIdByURL } = useParams<{
@@ -109,19 +108,22 @@ export const MyOrg = () => {
     {
       field: 'actions',
       headerName: '',
-      width: 50,
+      flex: 0.2,
       sortable: false,
       align: 'right',
       headerAlign: 'right',
       renderCell: (
         params: GridRenderCellParams<DebtPositionTypeOrgWithCount>
       ) => (
-        <ArrowForwardIos
-          fontSize="small"
-          sx={{ color: theme.palette.primary.main, cursor: 'pointer' }}
-          onClick={() => handleRowClick(params.row)}
+        <IconButton
           data-testid={`navigate-icon-${params.row.debtPositionTypeOrgId}`}
-        />
+          size="small"
+          color="primary"
+          aria-label={t('commons.goToDetail')}
+          onClick={() => handleRowClick(params.row)}
+        >
+          <ArrowForwardIos fontSize="small" />
+        </IconButton>
       )
     }
   ];

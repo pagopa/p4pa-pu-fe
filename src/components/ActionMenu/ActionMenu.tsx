@@ -7,6 +7,8 @@ import {
   ListItemText
 } from '@mui/material';
 import MoreVert from '@mui/icons-material/MoreVert';
+import { useTranslation } from 'react-i18next';
+
 type MenuItemProps = {
   icon: React.ReactNode;
   label: string;
@@ -19,6 +21,7 @@ type ActionMenuProps = {
 };
 
 const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
+  const { t } = useTranslation();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
 
@@ -36,8 +39,9 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
         color="primary"
         size="small"
         onClick={handleClick}
+        aria-label={t(open ? 'commons.closeMenu' : 'commons.openMenu')}
         aria-controls={open ? `menu-${rowId}` : undefined}
-        aria-haspopup="true"
+        aria-haspopup="menu"
         aria-expanded={open ? 'true' : undefined}
         data-testid={`action-menu-${rowId}`}
       >

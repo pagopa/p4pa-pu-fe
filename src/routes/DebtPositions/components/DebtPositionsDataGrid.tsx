@@ -15,6 +15,7 @@ import {
 } from '../../../../generated/data-contracts';
 import { format } from 'date-fns';
 import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
+import { IconButton } from '@mui/material';
 
 type ResultDataRow = {
   id: number;
@@ -80,31 +81,25 @@ export const DebtPositionsDataGrid = ({ data }: DataGridProps) => {
     {
       field: 'action',
       headerName: '',
-      flex: 0.5,
+      flex: 0.2,
       sortable: false,
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<ResultDataRow>) => (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            height: '100%',
-            width: '100%'
+        <IconButton
+          size="small"
+          color="primary"
+          aria-label={t('commons.goToDetail')}
+          onClick={() => {
+            navigate(
+              generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
+                id: params.row.debtPositionId
+              })
+            );
           }}
         >
-          <ChevronRight
-            color="primary"
-            onClick={() => {
-              navigate(
-                generatePath(PageRoutes.DEBT_POSITION_DETAIL, {
-                  id: params.row.debtPositionId
-                })
-              );
-            }}
-          />
-        </div>
+          <ChevronRight />
+        </IconButton>
       )
     }
   ];

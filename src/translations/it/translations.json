@@ -192,7 +192,8 @@
         "debtType": "Tipo dovuto",
         "createdBy": "Creato da",
         "updatedAt": "Aggiornato il",
-        "status": "Stato"
+        "status": "Stato",
+        "action": "Vai al dettaglio dell'accertamento: {{assessmentName}}"
       }
     },
     "filters": {
@@ -678,6 +679,9 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "menu": "Menu",
+    "openMenu": "Apri menu",
+    "closeMenu": "Chiudi menu",
     "404": "404: risorsa non disponibile",
     "affiliateNew": "Associa nuovo",
     "affiliate": "Associa",
@@ -770,6 +774,7 @@
     "files": {
       "download": "Scarica",
       "downloadFlow": "Scarica flusso",
+      "notFound": "File non presente",
       "file": "File",
       "imported": "File importato",
       "importedResult": "Esito dell'importazione",
@@ -2325,6 +2330,7 @@
     }
   },
   "organizations": {
+    "detail": "Dettaglio dell'ente: {{orgName}}",
     "name": "Nome o ragione sociale",
     "fiscalCode": "Codice fiscale",
     "activeOperators": "Operatori attivi",
