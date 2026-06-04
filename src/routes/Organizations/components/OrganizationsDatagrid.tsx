@@ -95,7 +95,7 @@ const OrganizationsDatagrid = ({
     {
       field: 'detail',
       headerName: '',
-      flex: 0.5,
+      flex: 0.2,
       sortable: false,
       align: 'right',
       headerAlign: 'right',
@@ -103,11 +103,14 @@ const OrganizationsDatagrid = ({
         params: GridRenderCellParams<OrganizationWithDebtPositionTypeOrgAndOperatorsCount>
       ) => (
         <IconButton
+          aria-label={t('organizations.detail', {
+            orgName: params.row.orgName
+          })}
           color="primary"
           size="small"
           onClick={() => handleRowClick(params.row)}
         >
-          <ChevronRight />
+          <ChevronRight fontSize="small" />
         </IconButton>
       )
     }

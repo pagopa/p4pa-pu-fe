@@ -47,6 +47,7 @@ const SpontaneousFormDataGrid = ({
       renderCell: (params: GridRenderCellParams<SpontaneousForm>) => (
         <IconButton
           color="primary"
+          aria-label={t('commons.goToDetail')}
           size="small"
           onClick={() => {
             navigate(

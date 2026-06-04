@@ -60,6 +60,9 @@ const TaxonomyDataGrid = ({
       renderCell: (params: GridRenderCellParams<Taxonomy>) => (
         <IconButton
           color="primary"
+          aria-label={t('taxonomyPage.accessibleTitle', {
+            taxonomyCode: params.row.taxonomyCode
+          })}
           size="small"
           onClick={() => {
             navigate(

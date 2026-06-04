@@ -184,7 +184,9 @@ describe('SpontaneousFormPage', () => {
   it('navigates to detail page when clicking on row detail button', async () => {
     render(<SpontaneousFormPage />);
 
-    const detailButtons = screen.getAllByRole('button', { name: '' });
+    const detailButtons = screen.getAllByRole('button', {
+      name: 'commons.goToDetail'
+    });
     const firstDetailButton = detailButtons.find((button) =>
       button.querySelector('[data-testid="ChevronRightIcon"]')
     );

@@ -81,9 +81,12 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
           to={generatePath(PageRoutes.TREASURY_DETAIL, {
             id: params.row.treasuryId
           })}
-          aria-label={t('commons.detail')}
         >
-          <IconButton color="primary" size="small">
+          <IconButton
+            aria-label={t('commons.detail')}
+            color="primary"
+            size="small"
+          >
             <ReadMore />
           </IconButton>
         </Link>

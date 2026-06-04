@@ -86,7 +86,7 @@ const AssessmentDetailDataGrid = ({
           color="primary"
           size="small"
           onClick={() => navigateToDetail(params.row.receiptId, params.row.iud)}
-          aria-label="go to assessment detail item"
+          aria-label={t('commons.detail')}
           data-testid={`navigate-to-detail-${params.row.receiptId}`}
         >
           <ReadMore />

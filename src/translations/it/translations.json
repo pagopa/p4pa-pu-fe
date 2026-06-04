@@ -154,6 +154,17 @@
   "a11y": {
     "navigation": {
       "announcement": "Hai raggiunto la pagina {{page}}"
+    },
+    "grid": {
+      "asc": "crescente",
+      "desc": "decrescente",
+      "sortedBy": "Tabella ordinata per {{column}} in ordine {{order}}",
+      "sortCleared": "Ordinamento rimosso",
+      "pageChanged": "Pagina {{newPage}} di {{totalPages}}",
+      "pageSizeChanged": "Risultati per pagina: {{pageSize}}",
+      "filtersApplied_one": "Tabella aggiornata con {{count}} pagina",
+      "filtersApplied_other": "Tabella aggiornata con {{count}} pagine",
+      "noResults": "Nessun risultato trovato"
     }
   },
   "appPreview": {
@@ -181,7 +192,8 @@
         "debtType": "Tipo dovuto",
         "createdBy": "Creato da",
         "updatedAt": "Aggiornato il",
-        "status": "Stato"
+        "status": "Stato",
+        "action": "Vai al dettaglio dell'accertamento: {{assessmentName}}"
       }
     },
     "filters": {
@@ -667,6 +679,9 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "menu": "Menu",
+    "openMenu": "Apri menu",
+    "closeMenu": "Chiudi menu",
     "404": "404: risorsa non disponibile",
     "affiliateNew": "Associa nuovo",
     "affiliate": "Associa",
@@ -695,6 +710,7 @@
     "cashJournal": "Giornale di cassa",
     "cbill": "CBILL",
     "close": "Chiudi",
+    "closeDialog": "Chiudi finestra di dialogo",
     "collectionReason": "Motivo Riscossione",
     "continue": "Continua",
     "copied": "Copiato!",
@@ -758,6 +774,7 @@
     "files": {
       "download": "Scarica",
       "downloadFlow": "Scarica flusso",
+      "notFound": "File non presente",
       "file": "File",
       "imported": "File importato",
       "importedResult": "Esito dell'importazione",
@@ -2313,6 +2330,7 @@
     }
   },
   "organizations": {
+    "detail": "Dettaglio dell'ente: {{orgName}}",
     "name": "Nome o ragione sociale",
     "fiscalCode": "Codice fiscale",
     "activeOperators": "Operatori attivi",

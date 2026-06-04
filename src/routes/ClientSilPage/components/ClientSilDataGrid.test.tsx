@@ -10,28 +10,6 @@ vi.mock('react-i18next', () => ({
 }));
 
 vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
-  const handleActionClick = (
-    col: {
-      renderCell?: (params: { row: Record<string, unknown> }) => {
-        props: { children: { props: { onClick: () => void } } };
-      };
-    },
-    row: Record<string, unknown>
-  ) => {
-    col.renderCell?.({ row }).props.children.props.onClick();
-  };
-
-  const createClickHandler = (
-    col: {
-      renderCell?: (params: { row: Record<string, unknown> }) => {
-        props: { children: { props: { onClick: () => void } } };
-      };
-    },
-    row: Record<string, unknown>
-  ) => {
-    return () => handleActionClick(col, row);
-  };
-
   return {
     default: ({
       rows,
@@ -43,9 +21,9 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
       rows: Array<Record<string, unknown>>;
       columns: Array<{
         field: string;
-        renderCell?: (params: { row: Record<string, unknown> }) => {
-          props: { children: { props: { onClick: () => void } } };
-        };
+        renderCell?: (params: {
+          row: Record<string, unknown>;
+        }) => React.ReactElement;
       }>;
       getRowId: (row: Record<string, unknown>) => string;
       loading: boolean;
@@ -59,11 +37,9 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
           <div key={getRowId(row)} data-testid={`row-${getRowId(row)}`}>
             {columns.map((col) => (
               <span key={col.field} data-testid={`cell-${col.field}`}>
-                {col.renderCell ? (
-                  <div onClick={createClickHandler(col, row)}>Action</div>
-                ) : (
-                  (row[col.field] as string)
-                )}
+                {col.renderCell
+                  ? col.renderCell({ row })
+                  : (row[col.field] as string)}
               </span>
             ))}
           </div>
@@ -74,11 +50,7 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
 });
 
 vi.mock('@mui/icons-material', () => ({
-  ChevronRight: ({ onClick }: { onClick?: () => void }) => (
-    <div data-testid="chevron-right" onClick={onClick}>
-      →
-    </div>
-  )
+  ChevronRight: () => <div data-testid="chevron-right">→</div>
 }));
 
 const mockClientData: ClientDTOPage = {
@@ -143,7 +115,9 @@ describe('ClientSilDataGrid', () => {
   it('should call onRowClick when action button is clicked', () => {
     renderComponent();
 
-    const actionButtons = screen.getAllByText('Action');
+    const actionButtons = screen.getAllByRole('button', {
+      name: 'commons.detail'
+    });
     fireEvent.click(actionButtons[0]);
 
     expect(mockOnRowClick).toHaveBeenCalledWith({

@@ -58,6 +58,7 @@ export const ServiceDataGrid: React.FC<ServiceDataGridProps> = ({
         <IconButton
           color="primary"
           size="small"
+          aria-label={t('commons.detail')}
           onClick={() => onRowClick(params.row)}
         >
           <ChevronRight />

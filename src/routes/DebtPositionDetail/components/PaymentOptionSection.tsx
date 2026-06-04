@@ -4,7 +4,8 @@ import {
   Accordion,
   AccordionSummary,
   Typography,
-  Chip
+  Chip,
+  IconButton
 } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
 import { t } from 'i18next';
@@ -80,33 +81,23 @@ export const PaymentOptionSection = ({
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams) => (
-        <div
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'flex-end',
-            height: '100%',
-            width: '100%'
+        <IconButton
+          aria-label={t('commons.detail')}
+          onClick={() => {
+            navigate(
+              generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
+                id: params.row.id
+              }),
+              {
+                state: {
+                  remittanceInformation: params.row.remittanceInformation
+                }
+              }
+            );
           }}
         >
-          <ReadMore
-            fontSize="small"
-            color="primary"
-            sx={{ cursor: 'pointer' }}
-            onClick={() => {
-              navigate(
-                generatePath(PageRoutes.DEBT_POSITION_INSTALLMENT_DETAIL, {
-                  id: params.row.id
-                }),
-                {
-                  state: {
-                    remittanceInformation: params.row.remittanceInformation
-                  }
-                }
-              );
-            }}
-          />
-        </div>
+          <ReadMore fontSize="small" color="primary" />
+        </IconButton>
       )
     }
   ];

@@ -1,4 +1,4 @@
-import { useTheme } from '@mui/material';
+import { IconButton } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
@@ -23,7 +23,6 @@ import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
 
 export const ManagedOrgs = () => {
-  const theme = useTheme();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
@@ -70,18 +69,19 @@ export const ManagedOrgs = () => {
     {
       field: 'actions',
       headerName: '',
-      width: 50,
+      flex: 0.5,
       sortable: false,
       align: 'right',
       headerAlign: 'right',
       renderCell: (
         params: GridRenderCellParams<OrganizationWithDebtPositionTypeOrgCount>
       ) => (
-        <ArrowForwardIos
-          fontSize="small"
-          sx={{ color: theme.palette.primary.main, cursor: 'pointer' }}
+        <IconButton
+          aria-label={t('commons.detail')}
           onClick={() => handleRowClick(params.row)}
-        />
+        >
+          <ArrowForwardIos fontSize="small" color="primary" />
+        </IconButton>
       )
     }
   ];
