@@ -101,7 +101,7 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
     {
       field: 'action',
       headerName: '',
-      flex: 0.5,
+      flex: 0.3,
       sortable: false,
       align: 'right',
       headerAlign: 'right',

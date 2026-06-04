@@ -110,8 +110,10 @@ const AssessmentSearchResultsDataGrid = ({
           color="primary"
           size="small"
           onClick={() => handleDetailClick(params.row.assessmentId)}
-          aria-label={t('commons.detail')}
           data-testid="assessment-detail-button"
+          aria-label={t('assessment.searchResults.columns.action', {
+            assessmentName: params.row?.assessmentName
+          })}
         >
           <ReadMore />
         </IconButton>

@@ -20,6 +20,7 @@ import { useOrganizationOperatorsSearch } from '../../../api/organizationOperato
 import { PageRoutes } from '../..';
 import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
+import { IconButton } from '@mui/material';
 
 type OperatorFilters = {
   firstName?: string;
@@ -125,17 +126,17 @@ export const MyOrganization = ({ omitOrgName }: { omitOrgName?: boolean }) => {
     {
       field: 'actions',
       headerName: '',
-      width: 50,
+      flex: 0.5,
       sortable: false,
       align: 'right',
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<Operator>) => (
-        <ChevronRight
-          fontSize="small"
-          color="primary"
-          sx={{ cursor: 'pointer' }}
+        <IconButton
+          aria-label={t('commons.goToDetail')}
           onClick={() => handleRowClick(params.row)}
-        />
+        >
+          <ChevronRight fontSize="small" color="primary" />
+        </IconButton>
       )
     }
   ];

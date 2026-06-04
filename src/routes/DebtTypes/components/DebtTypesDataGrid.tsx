@@ -62,6 +62,9 @@ const DebtTypesDataGrid = ({
       renderCell: (params: GridRenderCellParams<DebtPositionTypeWithCount>) => (
         <IconButton
           color="primary"
+          aria-label={t('debtTypeCatalogDetail.accessibleTitle', {
+            description: params.row.description
+          })}
           size="small"
           onClick={() => {
             navigate(

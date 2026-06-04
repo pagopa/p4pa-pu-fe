@@ -17,6 +17,7 @@ import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators
 import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/data-contracts';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
+import { IconButton } from '@mui/material';
 
 type BrokerOrganizationFilters = BaseFilterValues & {
   ipaCode?: string;
@@ -66,19 +67,19 @@ export const AllOrganizations = () => {
     {
       field: 'actions',
       headerName: '',
-      width: 50,
+      flex: 0.5,
       sortable: false,
       align: 'right',
       headerAlign: 'right',
       renderCell: (
         params: GridRenderCellParams<OrganizationWithDebtPositionTypeOrgAndOperatorsCount>
       ) => (
-        <ChevronRight
-          fontSize="small"
-          color="primary"
-          sx={{ cursor: 'pointer' }}
+        <IconButton
+          aria-label={t('commons.goToDetail')}
           onClick={() => handleRowClick(params.row)}
-        />
+        >
+          <ChevronRight fontSize="small" color="primary" />
+        </IconButton>
       )
     }
   ];

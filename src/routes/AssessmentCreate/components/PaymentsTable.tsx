@@ -226,6 +226,7 @@ export const PaymentsTable = ({
         disableColumnMenu: true,
         renderCell: (params) => (
           <IconButton
+            aria-label={t('commons.detail')}
             onClick={() => handleDetailClick(params.row)}
             size="small"
             sx={{ color: theme.palette.primary.main }}

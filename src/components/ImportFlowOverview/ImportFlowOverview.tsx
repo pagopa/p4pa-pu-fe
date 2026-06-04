@@ -240,6 +240,7 @@ const ImportFlowOverview = ({
         <IconButton
           color="primary"
           size="small"
+          aria-label={t('commons.files.download')}
           onClick={() => handleDownloadFile(ingestionFlowFileId)}
           data-testid="download-button"
         >

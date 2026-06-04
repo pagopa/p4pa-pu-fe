@@ -87,9 +87,12 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
           to={generatePath(PageRoutes.CLASSIFICATION_DETAIL, {
             classificationId: params.row.classificationId
           })}
-          aria-label={t('commons.detail')}
         >
-          <IconButton color="primary" size="small">
+          <IconButton
+            aria-label={t('commons.detail')}
+            color="primary"
+            size="small"
+          >
             <ReadMore />
           </IconButton>
         </Link>

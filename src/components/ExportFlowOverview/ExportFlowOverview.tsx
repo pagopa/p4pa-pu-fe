@@ -126,6 +126,7 @@ const ExportFlowOverview = ({
     if (status === ExportFileStatus.COMPLETED) {
       return (
         <IconButton
+          aria-label={t('commons.files.downloadFlow')}
           color="primary"
           size="small"
           onClick={() => handleDownloadFile(exportFileId)}
@@ -136,7 +137,7 @@ const ExportFlowOverview = ({
       );
     }
 
-    return null;
+    return <div aria-label={t('commons.files.notFound')} />;
   };
 
   const defaultReservation = () =>
