@@ -62,7 +62,7 @@ export const transformApiDataToFormData = (
       readonly: false
     },
     ibanPostal: {
-      value: orgData.postalIban || '',
+      value: orgData?.postalIban,
       readonly: false
     },
     cbill: {
@@ -145,7 +145,7 @@ export const unifiedFormDataToFormValues = (
     orgLogo: options?.logoFile ?? null,
     // Step 2 fields (Accounting Information)
     iban: formData.iban.value || '',
-    ibanPostal: formData.ibanPostal.value || '',
+    ibanPostal: formData.ibanPostal.value,
     cbill: formData.cbill.value || '',
     flagTreasury: formData.flagTreasury.value,
     // Step 2 fields (Payments Information)
