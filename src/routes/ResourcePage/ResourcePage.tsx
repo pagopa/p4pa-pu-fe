@@ -21,10 +21,8 @@ export const ResourcePage = ({ resource }: Props) => {
 
   if (isError) {
     return (
-      <Box padding={3}>
-        <Typography color="error">
-          {t('errors.resourceNotAvailable')}
-        </Typography>
+      <Box padding={3} minHeight="100vh">
+        <Typography color="error">{t('resourcePage.error')}</Typography>
       </Box>
     );
   }
@@ -35,7 +33,7 @@ export const ResourcePage = ({ resource }: Props) => {
         display="flex"
         justifyContent="flex-start"
         alignItems="flex-start"
-        height="100vh"
+        minHeight="100vh"
         flexDirection={'column'}
       >
         <ReactMarkdown>{content}</ReactMarkdown>
