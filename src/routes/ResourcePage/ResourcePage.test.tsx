@@ -21,8 +21,8 @@ describe('ResourcePage', () => {
     >[0]);
 
     i18nTestSetup({
-      errors: {
-        resourceNotAvailable: 'Risorsa non disponibile'
+      resourcePage: {
+        error: 'Risorsa non disponibile'
       }
     });
   });
