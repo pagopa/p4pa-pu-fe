@@ -43,6 +43,11 @@ export const DebtTypeCatalogDetailView = () => {
     debtPositionTypeId: Number(debtPositionTypeId)
   });
 
+  // Technical debt types (e.g. UNKNOWN) have a negative id and cannot be deleted.
+  // The id comes from the GET response, not from the route param.
+  const isTechnicalDebtType =
+    data?.debtPositionTypeId != undefined && data.debtPositionTypeId < 0;
+
   useEffect(() => {
     if (data) {
       const sections = getAccordionSectionsConfig(data, t) || [];
@@ -56,6 +61,7 @@ export const DebtTypeCatalogDetailView = () => {
       buttonText: t('commons.delete'),
       color: 'error' as const,
       variant: 'outlined' as const,
+      disabled: isTechnicalDebtType,
       onActionClick: () => setOpenDeleteDialog(true)
     },
     {
@@ -63,6 +69,7 @@ export const DebtTypeCatalogDetailView = () => {
       buttonText: t('commons.edit'),
       color: 'primary' as const,
       variant: 'contained' as const,
+      disabled: false,
       onActionClick: () =>
         navigate(
           generatePath(PageRoutes.DEBT_TYPE_CATALOG_EDIT, {
@@ -136,6 +143,7 @@ export const DebtTypeCatalogDetailView = () => {
                 startIcon={button.icon}
                 color={button.color}
                 variant={button.variant}
+                disabled={button.disabled}
                 onClick={button.onActionClick}
               >
                 {button.buttonText}
