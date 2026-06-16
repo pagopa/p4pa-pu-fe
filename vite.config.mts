@@ -11,7 +11,14 @@ const ENV = process.env.ENV || '';
 export default defineConfig({
   base: `${DEPLOY_PATH}`,
   server: {
-    port: 1234
+    port: 1234,
+    proxy: {
+      '/piattaformaunitaria-legaldocs': {
+        target: 'https://p4pa.pagopa.it',
+        changeOrigin: true,
+        secure: false
+      }
+    }
   },
   build: {
     target: 'esnext',

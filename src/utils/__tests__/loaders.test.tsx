@@ -10,6 +10,7 @@ import utils from '../index';
 import loaders from '../loaders';
 
 const getOrganizationsMock = vi.fn();
+const resourcesUrl = utils.config.resourcesUrl;
 
 beforeEach(() => {
   vi.resetAllMocks();
@@ -29,6 +30,8 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+  utils.config.resourcesUrl = resourcesUrl;
+  vi.unstubAllGlobals();
   vi.restoreAllMocks();
 });
 
@@ -68,6 +71,47 @@ describe('loaders', () => {
       const { result } = renderHook(() => loaders.getOrganizations());
 
       await waitFor(() => expect(result.current.isError).toBe(true));
+    });
+  });
+
+  describe('useResourceContent', () => {
+    beforeEach(() => {
+      utils.config.resourcesUrl =
+        'https://example.com/{BROKER_EXTERNAL_ID}/{DOCUMENT_TYPE}/{DOC_LANGUAGE}_{DOCUMENT_TYPE}.md';
+    });
+
+    it('should fetch resource content from the resolved URL', async () => {
+      const textMock = vi.fn().mockResolvedValue('Terms and conditions');
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        headers: new Headers({ 'content-type': 'text/markdown' }),
+        text: textMock
+      } as unknown as Response);
+      vi.stubGlobal('fetch', fetchMock);
+
+      const { result } = renderHook(() =>
+        loaders.useResourceContent('tos', 'en-US', 'broker-external-id')
+      );
+
+      await waitFor(() => expect(result.current.isSuccess).toBe(true));
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        'https://example.com/broker-external-id/tos/en_tos.md'
+      );
+      expect(textMock).toHaveBeenCalledTimes(1);
+      expect(result.current.data).toBe('Terms and conditions');
+    });
+
+    it('should not fetch resource content without broker externalId', () => {
+      const fetchMock = vi.fn();
+      vi.stubGlobal('fetch', fetchMock);
+
+      const { result } = renderHook(() =>
+        loaders.useResourceContent('pp', 'it', '')
+      );
+
+      expect(result.current.fetchStatus).toBe('idle');
+      expect(fetchMock).not.toHaveBeenCalled();
     });
   });
 });

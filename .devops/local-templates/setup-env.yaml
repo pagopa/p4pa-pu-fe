@@ -11,7 +11,7 @@ parameters:
   - name: 'vite_api_timeout'
     type: string
     default: ''
-    
+
   - name: 'vite_apihost'
     type: string
     default: ''
@@ -24,16 +24,21 @@ parameters:
     type: string
     default: ''
 
-steps:
-- bash: |
-    chmod +x env.sh
-    env -i \
-      PU_ENV=${{ parameters.env }} \
-      PU_VITE_DEPLOY_PATH=${{ parameters.vite_deploy_path }} \
-      PU_VITE_API_TIMEOUT=${{ parameters.vite_api_timeout }} \
-      PU_VITE_APIHOST=${{ parameters.vite_apihost }} \
-      PU_VITE_FILESHARE_APIHOST=${{ parameters.vite_fileshare_apihost }} \
-      PU_VITE_LOGIN_URL=${{ parameters.vite_login_url }} \
-      bash env.sh
+  - name: 'vite_resources_url'
+    type: string
+    default: ''
 
-  displayName: 'Populate environment file'
+steps:
+  - bash: |
+      chmod +x env.sh
+      env -i \
+        PU_ENV=${{ parameters.env }} \
+        PU_VITE_DEPLOY_PATH=${{ parameters.vite_deploy_path }} \
+        PU_VITE_API_TIMEOUT=${{ parameters.vite_api_timeout }} \
+        PU_VITE_APIHOST=${{ parameters.vite_apihost }} \
+        PU_VITE_FILESHARE_APIHOST=${{ parameters.vite_fileshare_apihost }} \
+        PU_VITE_LOGIN_URL=${{ parameters.vite_login_url }} \
+        PU_VITE_RESOURCES_URL=${{ parameters.vite_resources_url }} \
+        bash env.sh
+
+    displayName: 'Populate environment file'

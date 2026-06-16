@@ -24,6 +24,7 @@ import { postTokenOrError } from '../api/token';
 import { responsesRoutes } from '../routes/responses';
 import { RouteHandleObject } from '../models/Routes';
 import IoMessageGuidePage from './IoMessageGuidePage/IoMessageGuidePage';
+import ResourcePage from './ResourcePage/ResourcePage';
 
 const deployPath = utils.config.deployPath;
 
@@ -88,7 +89,17 @@ const routesDef: Array<RouteObject> = [
       ...flowsRoutes,
       ...importRoutes,
       ...operatorsRoutes,
-      ...responsesRoutes
+      ...responsesRoutes,
+      {
+        id: 'PRIVACYPOLICY',
+        path: 'informativa-privacy',
+        element: <ResourcePage resource="pp" />
+      },
+      {
+        id: 'TOS',
+        path: 'termini-di-servizio',
+        element: <ResourcePage resource="tos" />
+      }
     ]
   },
   {

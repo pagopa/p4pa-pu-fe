@@ -679,10 +679,10 @@
     "reloadSecretKO": "Non è stato possibile rigenerare la Secret key"
   },
   "commons": {
+    "404": "404: risorsa non disponibile",
     "menu": "Menu",
     "openMenu": "Apri menu",
     "closeMenu": "Chiudi menu",
-    "404": "404: risorsa non disponibile",
     "affiliateNew": "Associa nuovo",
     "affiliate": "Associa",
     "confirm": "Conferma",
@@ -1011,6 +1011,7 @@
       "ORGANIZATIONS_DETAIL": "Anagrafica ente",
       "ORG_SIL_SERVICE": "Org Sil Service",
       "ORG_SIL_SERVICE_DETAIL": "Dettaglio Org Sil Service",
+      "PRIVACYPOLICY": "Privacy Policy",
       "REPORTING": "Rendicontazione",
       "REPORTING_DETAIL": "Dettaglio",
       "REPORTING_IMPORT_FLOW": "Carica un nuovo flusso",
@@ -1028,6 +1029,7 @@
       "TELEMATIC_RECEIPT_IMPORT_OVERVIEW": "Flussi importati",
       "TELEMATIC_RECEIPT_INDEX": "Pagina principale",
       "TELEMATIC_RECEIPT_SEARCH_RESULTS": "Risultato ricerca",
+      "TOS": "Termini e condizioni d'uso",
       "TREASURY": "Tesoreria",
       "TREASURY_DETAIL": "Dettaglio Bolletta",
       "TREASURY_IMPORT_FLOW_OVERVIEW": "Flussi importati",
@@ -2418,6 +2420,9 @@
     "searchRegulationId": "ID Regolamento",
     "searchReportingId": "ID Rendicontazione",
     "totalAmount": "Importo totale"
+  },
+  "resourcePage": {
+    "error": "Risorsa non disponibile"
   },
   "spontaneousForm": {
     "create": {
