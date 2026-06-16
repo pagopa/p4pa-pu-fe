@@ -6,6 +6,7 @@ import {
   SelectChangeEvent
 } from '@mui/material';
 import { theme } from '@pagopa/mui-italia';
+import { useTranslation } from 'react-i18next';
 
 type CustomPaginationProps = {
   sizePageOptions?: Array<number>;
@@ -26,6 +27,8 @@ const CustomPagination = ({
 }: CustomPaginationProps) => {
   const hidePreviousButton = currentPage === 1;
   const hideNextButton = currentPage === totalPages;
+
+  const { t } = useTranslation();
 
   const handlePage = (_event: React.ChangeEvent<unknown>, value: number) => {
     onPageChange?.(value);
@@ -53,6 +56,9 @@ const CustomPagination = ({
         onChange={handlePageSizeChange}
         size="small"
         data-testid="result-set-select"
+        inputProps={{
+          'aria-label': t('a11y.grid.pageSize')
+        }}
         sx={{
           fontSize: 12
         }}
