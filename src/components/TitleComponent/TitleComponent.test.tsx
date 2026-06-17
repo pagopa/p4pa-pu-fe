@@ -435,4 +435,94 @@ describe('TitleComponent', () => {
 
     expect(screen.getByText('Valid Button')).toBeDefined();
   });
+
+  describe('disabled actions', () => {
+    it('disables Button action when disabled is true', () => {
+      const props = {
+        ...defaultProps,
+        callToAction: [
+          {
+            buttonText: 'Disabled Button',
+            disabled: true,
+            onActionClick: vi.fn()
+          }
+        ]
+      };
+      render(<TitleComponent {...props} />);
+
+      expect(
+        screen.getByText('Disabled Button').closest('button')
+      ).toBeDisabled();
+    });
+
+    it('does not disable Button action when disabled is false', () => {
+      const props = {
+        ...defaultProps,
+        callToAction: [
+          {
+            buttonText: 'Enabled Button',
+            disabled: false,
+            onActionClick: vi.fn()
+          }
+        ]
+      };
+      render(<TitleComponent {...props} />);
+
+      expect(
+        screen.getByText('Enabled Button').closest('button')
+      ).not.toBeDisabled();
+    });
+
+    it('does not disable Button action when disabled is omitted', () => {
+      const props = {
+        ...defaultProps,
+        callToAction: [
+          {
+            buttonText: 'Default Button',
+            onActionClick: vi.fn()
+          }
+        ]
+      };
+      render(<TitleComponent {...props} />);
+
+      expect(
+        screen.getByText('Default Button').closest('button')
+      ).not.toBeDisabled();
+    });
+
+    it('disables IconButton action when disabled is true', () => {
+      const props = {
+        ...defaultProps,
+        callToAction: [
+          {
+            icon: <Add />,
+            isIconButton: true,
+            disabled: true,
+            onActionClick: vi.fn(),
+            dataTestId: 'disabled-icon-button'
+          }
+        ]
+      };
+      render(<TitleComponent {...props} />);
+
+      expect(screen.getByTestId('disabled-icon-button')).toBeDisabled();
+    });
+
+    it('does not disable IconButton action when disabled is omitted', () => {
+      const props = {
+        ...defaultProps,
+        callToAction: [
+          {
+            icon: <Add />,
+            isIconButton: true,
+            onActionClick: vi.fn(),
+            dataTestId: 'enabled-icon-button'
+          }
+        ]
+      };
+      render(<TitleComponent {...props} />);
+
+      expect(screen.getByTestId('enabled-icon-button')).not.toBeDisabled();
+    });
+  });
 });

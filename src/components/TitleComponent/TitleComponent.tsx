@@ -29,6 +29,7 @@ export type ActionMenuItem = {
   onActionClick: () => void;
   dataTestId?: string;
   isIconButton?: boolean;
+  disabled?: boolean;
 };
 
 type TitleComponentProps = {
@@ -122,6 +123,7 @@ const TitleComponent = ({
             size="large"
             onClick={action.onActionClick}
             data-testid={action.dataTestId}
+            disabled={action.disabled}
             sx={{ color: getActionColor(action.color) }}
           >
             {action.icon}
@@ -140,6 +142,7 @@ const TitleComponent = ({
         onClick={action.onActionClick}
         aria-label={`${action.buttonText}`}
         data-testid={action.dataTestId}
+        disabled={action.disabled}
         sx={
           action.buttonText
             ? undefined
