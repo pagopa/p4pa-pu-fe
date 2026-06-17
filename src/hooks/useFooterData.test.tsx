@@ -15,9 +15,6 @@ const originalImage = global.Image;
 
 describe('useFooterData', () => {
   const mockConfigFe = {
-    footerPrivacyInfoUrl: 'https://privacy.example.com',
-    footerGDPRUrl: 'https://gdpr.example.com',
-    footerTermsCondUrl: 'https://terms.example.com',
     footerAccessibilityUrl: 'https://accessibility.example.com',
     footerDescText: 'Some legal information text',
     logoFooterImg:
