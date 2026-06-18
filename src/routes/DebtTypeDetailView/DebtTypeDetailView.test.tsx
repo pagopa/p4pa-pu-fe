@@ -951,4 +951,63 @@ describe('DebtTypeDetailView', () => {
       expect(titleElements.length).toBeGreaterThan(0);
     });
   });
+
+  describe('Technical debt type (UNKNOWN) delete restriction', () => {
+    it('disables delete buttons for an inactive technical debt type (debtPositionTypeId < 0)', () => {
+      setupDefaultMocks({
+        debtType: { flagActive: false, debtPositionTypeId: -1 }
+      });
+
+      render(<DebtTypeDetailView />);
+
+      const deleteButtons = screen.getAllByRole('button', { name: 'Elimina' });
+      expect(deleteButtons).toHaveLength(2);
+      deleteButtons.forEach((button) => expect(button).toBeDisabled());
+    });
+
+    it('keeps delete buttons enabled for an inactive standard debt type (debtPositionTypeId >= 0)', () => {
+      setupDefaultMocks({
+        debtType: { flagActive: false, debtPositionTypeId: 1 }
+      });
+
+      render(<DebtTypeDetailView />);
+
+      const deleteButtons = screen.getAllByRole('button', { name: 'Elimina' });
+      deleteButtons.forEach((button) => expect(button).not.toBeDisabled());
+    });
+
+    it('disables the delete menu item for an active technical debt type (debtPositionTypeId < 0)', async () => {
+      setupDefaultMocks({
+        debtType: { flagActive: true, debtPositionTypeId: -1 }
+      });
+
+      render(<DebtTypeDetailView />);
+
+      fireEvent.click(screen.getByTestId('action-menu-button'));
+
+      await waitFor(() => {
+        const deleteMenuItem = screen.getByRole('menuitem', {
+          name: 'Elimina'
+        });
+        expect(deleteMenuItem).toHaveAttribute('aria-disabled', 'true');
+      });
+    });
+
+    it('keeps the delete menu item enabled for an active standard debt type (debtPositionTypeId >= 0)', async () => {
+      setupDefaultMocks({
+        debtType: { flagActive: true, debtPositionTypeId: 1 }
+      });
+
+      render(<DebtTypeDetailView />);
+
+      fireEvent.click(screen.getByTestId('action-menu-button'));
+
+      await waitFor(() => {
+        const deleteMenuItem = screen.getByRole('menuitem', {
+          name: 'Elimina'
+        });
+        expect(deleteMenuItem).not.toHaveAttribute('aria-disabled', 'true');
+      });
+    });
+  });
 });

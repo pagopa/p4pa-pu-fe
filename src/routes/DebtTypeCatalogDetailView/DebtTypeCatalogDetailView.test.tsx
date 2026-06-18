@@ -76,4 +76,43 @@ describe('DebtTypeCatalogDetailView', () => {
     expect(screen.queryAllByTestId('confirm-dialog')).not.toBeNull();
     expect(screen.queryAllByTestId('error-dialog')).not.toBeNull();
   });
+
+  describe('technical debt type (UNKNOWN) delete restriction', () => {
+    it('disables delete buttons when debtPositionTypeId from the response is < 0', () => {
+      (
+        getDebtPositionTypeDetail as unknown as ReturnType<typeof vi.fn>
+      ).mockReturnValue({
+        data: { description: 'UNKNOWN', debtPositionTypeId: -1 },
+        isLoading: false
+      });
+
+      render(<DebtTypeCatalogDetailView />);
+
+      const deleteButtons = screen.getAllByRole('button', { name: 'Delete' });
+      expect(deleteButtons.length).toBeGreaterThanOrEqual(1);
+      deleteButtons.forEach((button) => expect(button).toBeDisabled());
+    });
+
+    it('keeps delete buttons enabled when debtPositionTypeId from the response is >= 0', () => {
+      (
+        getDebtPositionTypeDetail as unknown as ReturnType<typeof vi.fn>
+      ).mockReturnValue({
+        data: { description: 'Standard', debtPositionTypeId: 5 },
+        isLoading: false
+      });
+
+      render(<DebtTypeCatalogDetailView />);
+
+      const deleteButtons = screen.getAllByRole('button', { name: 'Delete' });
+      expect(deleteButtons.length).toBeGreaterThanOrEqual(1);
+      deleteButtons.forEach((button) => expect(button).not.toBeDisabled());
+    });
+
+    it('keeps delete buttons enabled when debtPositionTypeId is missing', () => {
+      render(<DebtTypeCatalogDetailView />);
+
+      const deleteButtons = screen.getAllByRole('button', { name: 'Delete' });
+      deleteButtons.forEach((button) => expect(button).not.toBeDisabled());
+    });
+  });
 });

@@ -3,6 +3,7 @@ import { useFooterData } from './useFooterData';
 import { ConfigFE } from '../../generated/apiClient';
 import { render, renderHook, act } from '../__tests__/renderers';
 import { setConfigFe } from '../store/ConfigFeStore';
+import { PageRoutes } from '../routes';
 
 const mockImage = {
   onload: vi.fn(),
@@ -14,9 +15,6 @@ const originalImage = global.Image;
 
 describe('useFooterData', () => {
   const mockConfigFe = {
-    footerPrivacyInfoUrl: 'https://privacy.example.com',
-    footerGDPRUrl: 'https://gdpr.example.com',
-    footerTermsCondUrl: 'https://terms.example.com',
     footerAccessibilityUrl: 'https://accessibility.example.com',
     footerDescText: 'Some legal information text',
     logoFooterImg:
@@ -39,20 +37,20 @@ describe('useFooterData', () => {
       {
         label: 'Informativa Privacy',
         ariaLabel: 'Informativa Privacy',
-        href: 'https://privacy.example.com',
-        linkType: 'external'
+        href: PageRoutes.PRIVACYPOLICY,
+        linkType: 'internal'
       },
       {
         label: 'Diritto alla protezione dei dati personali',
         ariaLabel: 'Diritto alla protezione dei dati personali',
-        href: 'https://gdpr.example.com',
-        linkType: 'external'
+        href: PageRoutes.PRIVACYPOLICY,
+        linkType: 'internal'
       },
       {
         label: 'Termini e condizioni d’uso',
         ariaLabel: 'Termini e condizioni d’uso',
-        href: 'https://terms.example.com',
-        linkType: 'external'
+        href: PageRoutes.TOS,
+        linkType: 'internal'
       },
       {
         label: 'Accessibilità',

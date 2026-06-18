@@ -94,6 +94,11 @@ export const DebtTypeDetailView = () => {
     debtPositionTypeOrgId: Number(debtPositionTypeOrgId)
   });
 
+  // Technical debt types (e.g. UNKNOWN) have a negative id and cannot be deleted
+  const isTechnicalDebtType =
+    data?.response?.debtPositionTypeId != undefined &&
+    data.response.debtPositionTypeId < 0;
+
   const operatorQuery = getDebtPositionTypeOrgOperators(organizationId);
 
   useEffect(() => {
@@ -290,7 +295,7 @@ export const DebtTypeDetailView = () => {
         buttonText: t('commons.delete'),
         color: 'error' as const,
         variant: 'outlined' as const,
-        disabled: false,
+        disabled: isTechnicalDebtType,
         onActionClick: handleDirectDeleteClick
       };
 
@@ -319,7 +324,7 @@ export const DebtTypeDetailView = () => {
         bottomActions: [deleteButton]
       };
     }
-  }, [data?.response?.flagActive, t]);
+  }, [data?.response?.flagActive, t, isTechnicalDebtType]);
 
   const getStatusChip = () => {
     if (data?.response?.flagActive) {
@@ -458,7 +463,7 @@ export const DebtTypeDetailView = () => {
             </ListItemIcon>
             <ListItemText>{t('commons.disable')}</ListItemText>
           </MenuItem>
-          <MenuItem onClick={handleDeleteClick}>
+          <MenuItem onClick={handleDeleteClick} disabled={isTechnicalDebtType}>
             <ListItemIcon>
               <Delete
                 fontSize="small"

@@ -31,6 +31,7 @@ variables:
     login_url: '$(UAT_LOGIN_URL)'
     openapi_url: '$(UAT_OPENAPI_URL)'
     openapifileshare_url: '$(UAT_OPENAPIFILESHARE_URL)'
+    resources_url: '$(UAT_LEGALDOCS_TEMPLATE_URL)'
 
   ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     environment: 'PROD'
@@ -47,6 +48,7 @@ variables:
     login_url: '$(PROD_LOGIN_URL)'
     openapi_url: '$(PROD_OPENAPI_URL)'
     openapifileshare_url: '$(PROD_OPENAPIFILESHARE_URL)'
+    resources_url: '$(PROD_LEGALDOCS_TEMPLATE_URL)'
 
   # every branch different from past will be considered as DEV
   ${{ else }}:
@@ -64,6 +66,7 @@ variables:
     login_url: '$(DEV_LOGIN_URL)'
     openapi_url: '$(DEV_OPENAPI_URL)'
     openapifileshare_url: '$(DEV_OPENAPIFILESHARE_URL)'
+    resources_url: '$(DEV_LEGALDOCS_TEMPLATE_URL)'
 
 pool:
   vmImage: '$(vmImageNameDefault)'
@@ -85,6 +88,7 @@ stages:
               vite_apihost: '$(api_host)'
               vite_fileshare_apihost: '$(fileshare_host)'
               vite_login_url: '$(login_url)'
+              vite_resources_url: '$(resources_url)'
 
           - script: |
               export OPENAPI_URL=$(openapi_url)

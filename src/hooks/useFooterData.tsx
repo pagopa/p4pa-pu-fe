@@ -6,6 +6,7 @@ import { FooterLinksType } from '@pagopa/mui-italia';
 import { CompanyLinkType } from '../components/Footer';
 import { useEffect, useState } from 'react';
 import { useStore } from '../store/GlobalStore';
+import { PageRoutes } from '../routes';
 
 const isValidImage = (imgSrc: string): Promise<boolean> => {
   return new Promise((resolve) => {
@@ -43,20 +44,20 @@ export const useFooterData = () => {
     {
       label: 'Informativa Privacy',
       ariaLabel: 'Informativa Privacy',
-      href: configFe?.footerPrivacyInfoUrl,
-      linkType: 'external'
+      href: PageRoutes.PRIVACYPOLICY,
+      linkType: 'internal'
     },
     {
       label: 'Diritto alla protezione dei dati personali',
       ariaLabel: 'Diritto alla protezione dei dati personali',
-      href: configFe?.footerGDPRUrl,
-      linkType: 'external'
+      href: PageRoutes.PRIVACYPOLICY,
+      linkType: 'internal'
     },
     {
       label: 'Termini e condizioni d’uso',
       ariaLabel: 'Termini e condizioni d’uso',
-      href: configFe?.footerTermsCondUrl,
-      linkType: 'external'
+      href: PageRoutes.TOS,
+      linkType: 'internal'
     },
     {
       label: 'Accessibilità',
