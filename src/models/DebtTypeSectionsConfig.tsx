@@ -5,6 +5,7 @@ import {
 import { DebtPositionTypeOrgDTO } from '../../generated/apiClient';
 import { moneyFormat } from '../utils/formatters';
 import { AppPreview } from '../components/AppPreview';
+import { BudgetCostsDetail } from '../components/BudgetCostsDetail/BudgetCostsDetail';
 
 export enum AccordionSectionsEnum {
   MAIN_CONFIGURATION = 'MAIN_CONFIGURATION',
@@ -286,6 +287,24 @@ export const getAccordionSectionsConfig = (
             {
               label: t('debtTypeOrgCreate.accounting.entitySector'),
               value: checkStringValue(data?.orgSector)
+            }
+          ]
+        },
+        {
+          title: {
+            label: t(
+              'debtTypeOrgCreate.accounting.section.specificBudgetItems'
+            ),
+            variant: 'subtitle1'
+          },
+          inline: false,
+          data: [
+            {
+              childrenComponent: (
+                <BudgetCostsDetail
+                  costs={data?.debtPositionTypeOrgBalanceCosts ?? []}
+                />
+              )
             }
           ]
         }
