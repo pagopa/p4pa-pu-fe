@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import {
   Box,
   Grid,
@@ -44,6 +44,22 @@ export const BudgetCostsDetail = ({ costs }: Props) => {
   const { t } = useTranslation();
   const [activeYear, setActiveYear] = useState(String(currentYear));
 
+  const baseId = useId();
+  const tabId = (year: string) => `budget-tab-${baseId}-${year}`;
+  const panelId = (year: string) => `budget-panel-${baseId}-${year}`;
+
+  // On year change move focus to the panel so screen readers announce the
+  // updated content (WAI-ARIA tabs pattern). Skip the initial mount.
+  const panelRef = useRef<HTMLDivElement>(null);
+  const isMountedRef = useRef(false);
+  useEffect(() => {
+    if (isMountedRef.current) {
+      panelRef.current?.focus();
+    } else {
+      isMountedRef.current = true;
+    }
+  }, [activeYear]);
+
   const yearCosts = costs.filter((cost) => cost.operatingYear === activeYear);
 
   return (
@@ -62,52 +78,74 @@ export const BudgetCostsDetail = ({ costs }: Props) => {
         }}
       >
         {YEARS.map((year) => (
-          <Tab key={year} value={year} label={year} />
+          <Tab
+            key={year}
+            value={year}
+            label={year}
+            id={tabId(year)}
+            aria-controls={panelId(year)}
+            aria-label={t(
+              'debtTypeOrgCreate.accounting.budgetCost.yearTabLabel',
+              {
+                year
+              }
+            )}
+          />
         ))}
       </Tabs>
 
-      <Stack spacing={3}>
-        {COST_TYPE_ORDER.map((type) => {
-          // Missing groups/values are still shown with a "-" placeholder
-          const cost = yearCosts.find((item) => item.type === type);
+      <Box
+        role="tabpanel"
+        id={panelId(activeYear)}
+        aria-labelledby={tabId(activeYear)}
+        tabIndex={0}
+        ref={panelRef}
+      >
+        <Stack spacing={3}>
+          {COST_TYPE_ORDER.map((type) => {
+            // Missing groups/values are still shown with a "-" placeholder
+            const cost = yearCosts.find((item) => item.type === type);
 
-          return (
-            <Box key={type}>
-              <Typography
-                variant="caption-semibold"
-                color={theme.palette.action.active}
-                sx={{ textTransform: 'uppercase' }}
-              >
-                {t(`debtTypeOrgCreate.accounting.budgetCost.type.${type}`)}
-              </Typography>
+            return (
+              <Box key={type}>
+                <Typography
+                  variant="caption-semibold"
+                  color={theme.palette.action.active}
+                  sx={{ textTransform: 'uppercase' }}
+                >
+                  {t(`debtTypeOrgCreate.accounting.budgetCost.type.${type}`)}
+                </Typography>
 
-              <Box mt={1}>
-                {ROW_FIELDS.map((field) => (
-                  <Grid container py={1} key={field}>
-                    <Grid item xs={12} md={6}>
-                      <Typography
-                        variant="body2"
-                        color={theme.palette.action.active}
-                      >
-                        {t(`debtTypeOrgCreate.accounting.budgetCost.${field}`)}
-                      </Typography>
+                <Box mt={1}>
+                  {ROW_FIELDS.map((field) => (
+                    <Grid container py={1} key={field}>
+                      <Grid item xs={12} md={6}>
+                        <Typography
+                          variant="body2"
+                          color={theme.palette.action.active}
+                        >
+                          {t(
+                            `debtTypeOrgCreate.accounting.budgetCost.${field}`
+                          )}
+                        </Typography>
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <Typography
+                          variant="body1"
+                          fontWeight={600}
+                          sx={{ wordBreak: 'break-word' }}
+                        >
+                          {cost?.[field] || '-'}
+                        </Typography>
+                      </Grid>
                     </Grid>
-                    <Grid item xs={12} md={6}>
-                      <Typography
-                        variant="body1"
-                        fontWeight={600}
-                        sx={{ wordBreak: 'break-word' }}
-                      >
-                        {cost?.[field] || '-'}
-                      </Typography>
-                    </Grid>
-                  </Grid>
-                ))}
+                  ))}
+                </Box>
               </Box>
-            </Box>
-          );
-        })}
-      </Stack>
+            );
+          })}
+        </Stack>
+      </Box>
     </Box>
   );
 };

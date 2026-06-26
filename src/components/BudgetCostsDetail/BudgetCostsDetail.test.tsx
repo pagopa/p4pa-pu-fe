@@ -37,14 +37,27 @@ describe('BudgetCostsDetail', () => {
   it('always renders previous, current and next year tabs, current selected', () => {
     render(<BudgetCostsDetail costs={costs} />);
 
-    expect(screen.getByRole('tab', { name: previousYear })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: currentYear })).toBeInTheDocument();
-    expect(screen.getByRole('tab', { name: nextYear })).toBeInTheDocument();
+    expect(screen.getAllByRole('tab')).toHaveLength(3);
+    expect(screen.getByText(previousYear)).toBeInTheDocument();
+    expect(screen.getByText(currentYear)).toBeInTheDocument();
+    expect(screen.getByText(nextYear)).toBeInTheDocument();
 
     expect(screen.getByRole('tab', { selected: true })).toHaveTextContent(
       currentYear
     );
     expect(screen.getByText('CAP-NOW')).toBeInTheDocument();
+  });
+
+  it('gives each tab a descriptive accessible name for screen readers', () => {
+    render(<BudgetCostsDetail costs={costs} />);
+
+    // Visible label stays the bare year; aria-label carries the spoken text.
+    // (test i18n echoes keys, so the interpolated key is the accessible name)
+    const tab = screen.getByText(currentYear).closest('[role="tab"]');
+    expect(tab).toHaveAttribute(
+      'aria-label',
+      'debtTypeOrgCreate.accounting.budgetCost.yearTabLabel'
+    );
   });
 
   it('always renders all three cost groups, even when a group has no data', () => {
@@ -58,22 +71,31 @@ describe('BudgetCostsDetail', () => {
   it('substitutes a "-" placeholder for missing values', () => {
     render(<BudgetCostsDetail costs={costs} />);
 
-    // INTEREST_COST only has sectionCode -> 5 missing fields; DELAY_COST -> 6
     expect(screen.getByText('CAP-INT')).toBeInTheDocument();
     expect(screen.getAllByText('-').length).toBeGreaterThanOrEqual(11);
   });
 
-  it('keeps the three groups (all placeholders) for a year without data', async () => {
+  it('moves focus to the tabpanel on year switch so the SR reads new content', async () => {
     render(<BudgetCostsDetail costs={costs} />);
 
-    await userEvent.click(screen.getByRole('tab', { name: previousYear }));
+    const panel = screen.getByRole('tabpanel');
+    expect(panel).not.toHaveFocus();
+
+    await userEvent.click(screen.getByText(previousYear));
 
     expect(screen.queryByText('CAP-NOW')).not.toBeInTheDocument();
-    expect(screen.getByText(typeKey('NOTIFICATION_COST'))).toBeInTheDocument();
+    expect(screen.getByRole('tabpanel')).toHaveFocus();
+    // groups still present, all placeholders for the empty year
     expect(screen.getByText(typeKey('DELAY_COST'))).toBeInTheDocument();
-    expect(screen.getByText(typeKey('INTEREST_COST'))).toBeInTheDocument();
-    // 3 groups x 6 rows, all empty
-    expect(screen.getAllByText('-').length).toBe(18);
+    expect(screen.getAllByText('-')).toHaveLength(18);
+  });
+
+  it('links the tabpanel to the active tab', () => {
+    render(<BudgetCostsDetail costs={costs} />);
+
+    const panel = screen.getByRole('tabpanel');
+    const selectedTab = screen.getByRole('tab', { selected: true });
+    expect(panel.getAttribute('aria-labelledby')).toBe(selectedTab.id);
   });
 
   it('still renders the 3 tabs and 3 groups when there are no costs at all', () => {

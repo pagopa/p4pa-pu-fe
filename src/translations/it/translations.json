@@ -1808,6 +1808,7 @@
       "defaultBudgetStructure": "Struttura Bilancio Default",
       "entitySector": "Settore Ente",
       "budgetCost": {
+        "yearTabLabel": "Anno di bilancio {{year}}",
         "type": {
           "NOTIFICATION_COST": "Costo notifica SEND",
           "DELAY_COST": "Oneri",
