@@ -180,12 +180,7 @@ const DetailContainer = ({
                   direction={omitFlexGridDirection ? undefined : 'column'}
                 >
                   {section.data.map((item, index) => (
-                    <Grid
-                      container
-                      py={1}
-                      key={index}
-                      direction={section.inline ? 'row' : 'column'}
-                    >
+                    <Grid container py={1} key={index} direction="row">
                       {item.label && (
                         <Grid
                           item
