@@ -116,7 +116,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.6 }}
               label={t('AssessmentRegistryCreate.sectionDescription')}
-              required
             />
           </Stack>
           <Stack direction="row" spacing={3}>
@@ -126,7 +125,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.4 }}
               label={t('AssessmentRegistryCreate.officeCode')}
-              required
             />
             <FormComponent.ControlledTextField
               name="officeDescription"
@@ -134,7 +132,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.6 }}
               label={t('AssessmentRegistryCreate.officeDescription')}
-              required
             />
           </Stack>
           <Stack direction="row" spacing={3}>
@@ -144,7 +141,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.4 }}
               label={t('AssessmentRegistryCreate.assessmentCode')}
-              required
             />
             <FormComponent.ControlledTextField
               name="assessmentDescription"
@@ -152,7 +148,6 @@ export const Step1Configuration = ({ edit }: { edit?: boolean }) => {
               control={control}
               sx={{ flex: 0.6 }}
               label={t('AssessmentRegistryCreate.assessmentDescription')}
-              required
             />
           </Stack>
         </SectionBox>
