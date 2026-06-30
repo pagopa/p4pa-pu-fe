@@ -21,9 +21,9 @@ export const assessmentRegistrySchema = z.object({
     to: z.null()
   }),
   sectionCode: z.string().min(1, { message: 'Required' }),
-  sectionDescription: z.string().min(1, { message: 'Required' }),
-  officeCode: z.string().min(1, { message: 'Required' }),
-  officeDescription: z.string().min(1, { message: 'Required' }),
-  assessmentCode: z.string().min(1, { message: 'Required' }),
-  assessmentDescription: z.string().min(1, { message: 'Required' })
+  sectionDescription: z.string(),
+  officeCode: z.string(),
+  officeDescription: z.string(),
+  assessmentCode: z.string(),
+  assessmentDescription: z.string()
 });
