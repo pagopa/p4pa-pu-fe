@@ -86,7 +86,7 @@ export const AssessmentRegistryEdit = () => {
           category: 'assessment-registry-update',
           assessmentRegistryId: Number(assessmentRegistryId),
           i18nParams: {
-            paymentObject: request.sectionDescription
+            paymentObject: request?.sectionDescription || request?.sectionCode
           }
         }
       });

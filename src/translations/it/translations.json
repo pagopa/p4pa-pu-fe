@@ -1798,14 +1798,29 @@
       "alertMessage": "* Indica una domanda obbligatoria",
       "section": {
         "creditInfo": "Informazione di accredito",
-        "budgetInfo": "Informazione di bilancio"
+        "budgetInfo": "Informazione di bilancio",
+        "specificBudgetItems": "Voci di bilancio specifiche"
       },
       "postalIban": "IBAN Accredito Poste",
       "pspIban": "IBAN Accredito PSP",
       "postalAccount": "Conto Corrente Postale",
       "postalAccountHolder": "Intestatario CC Poste",
       "defaultBudgetStructure": "Struttura Bilancio Default",
-      "entitySector": "Settore Ente"
+      "entitySector": "Settore Ente",
+      "budgetCost": {
+        "yearTabLabel": "Anno di bilancio {{year}}",
+        "type": {
+          "NOTIFICATION_COST": "Costo notifica SEND",
+          "DELAY_COST": "Oneri",
+          "INTEREST_COST": "Interessi"
+        },
+        "sectionCode": "Codice capitolo",
+        "sectionDescription": "Denominazione capitolo",
+        "officeCode": "Codice ufficio",
+        "officeDescription": "Denominazione ufficio",
+        "assessmentCode": "Codice accertamento",
+        "assessmentDescription": "Denominazione accertamento"
+      }
     },
     "notifications": {
       "title": "Messaggi",
