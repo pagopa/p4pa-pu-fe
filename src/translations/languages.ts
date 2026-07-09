@@ -9,6 +9,5 @@ const langMap = {
 
 // Done this way to respect switcher component props
 export const languages: Languages = {
-  it: langMap,
-  en: langMap
+  it: langMap
 };

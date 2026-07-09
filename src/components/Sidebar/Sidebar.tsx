@@ -240,7 +240,7 @@ export const Sidebar: React.FC = () => {
     end: true
   };
 
-  const allMenuItems = [...menuItems, ...extensions.sidebarItems].sort(
+  const allMenuItems = [...menuItems, ...extensions.sidebar].sort(
     (a, b) => (b.priority || 0) - (a.priority || 0)
   );
 

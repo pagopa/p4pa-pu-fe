@@ -36,8 +36,7 @@
 		],
 		"paths": {
 			"@extra/*": [
-				"./src/extra/*",
-				"./src/extra-placeholder/*"
+				"./src/extra/*"
 			],
 			"@core/*": [
 				"./src/*"
