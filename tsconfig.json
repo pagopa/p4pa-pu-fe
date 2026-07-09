@@ -1,5 +1,6 @@
 {
 	"compilerOptions": {
+		"baseUrl": ".",
 		"target": "esnext",
 		"module": "esnext",
 		"lib": [
@@ -32,10 +33,20 @@
 			"globals",
 			"react",
 			"react-dom"
-		]
+		],
+		"paths": {
+			"@extra/*": [
+				"./src/extra/*",
+				"./src/extra-placeholder/*"
+			],
+			"@core/*": [
+				"./src/*"
+			]
+		}
 	},
 	"include": [
 		"src",
+		"src/extra/**/*",
 		"vite.config.mts",
 		"vitest.config.mts",
 		"vitest.setup.ts"

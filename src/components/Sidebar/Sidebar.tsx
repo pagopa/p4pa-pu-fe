@@ -34,7 +34,9 @@ import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
 import { Dns } from '@mui/icons-material';
 import { generatePath } from 'react-router';
-import { useGenerateSupersetUrl } from '../../api/statistics';
+
+import { useGenerateSupersetUrl } from '@core/api/statistics';
+import { extensions } from '@extra/index';
 
 export const Sidebar: React.FC = () => {
   const { t } = useTranslation();
@@ -238,6 +240,10 @@ export const Sidebar: React.FC = () => {
     end: true
   };
 
+  const allMenuItems = [...menuItems, ...extensions.sidebarItems].sort(
+    (a, b) => (b.priority || 0) - (a.priority || 0)
+  );
+
   return (
     <>
       <Grid
@@ -313,7 +319,7 @@ export const Sidebar: React.FC = () => {
             aria-hidden={collapsed && !lg}
             aria-label={t('commons.sidebar.menudescription')}
           >
-            {menuItems.map((item, index) => (
+            {allMenuItems.map((item, index) => (
               <SidebarMenuItem
                 onClick={() => !lg && setCollapsed(true)}
                 collapsed={collapsed}

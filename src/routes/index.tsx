@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { createBrowserRouter, Navigate, RouteObject } from 'react-router';
 import utils from '../utils';
 import { setupFallback, appSetup } from '../utils/setup';
@@ -24,7 +25,34 @@ import { postTokenOrError } from '../api/token';
 import { responsesRoutes } from '../routes/responses';
 import { RouteHandleObject } from '../models/Routes';
 import IoMessageGuidePage from './IoMessageGuidePage/IoMessageGuidePage';
+import Loader from '@core/components/Loader/Loader';
+
+import { ExtensionRoute } from '@core/models/extensions';
+import { extensions } from '@extra/index';
 import ResourcePage from './ResourcePage/ResourcePage';
+
+// helper to convert extension routes
+function convertExtensionRoutes(
+  routes: Array<ExtensionRoute>
+): Array<RouteObject> {
+  if (!routes || routes.length === 0) return [];
+
+  return routes.map((route) => ({
+    path: route.path,
+    element: (
+      <Suspense fallback={<Loader />}>
+        <route.component />
+      </Suspense>
+    ),
+    id: `enterprise-${route.path}`,
+    loader: route.loader,
+    errorElement: route.errorElement,
+    handle: {
+      ...route.handle,
+      enterprise: true
+    }
+  }));
+}
 
 const deployPath = utils.config.deployPath;
 
@@ -40,6 +68,7 @@ const routesDef: Array<RouteObject> = [
     HydrateFallback: setupFallback,
     shouldRevalidate: () => false,
     children: [
+      ...convertExtensionRoutes(extensions.routes),
       {
         element: <Navigate replace to={`${deployPath}/home`} />,
         index: true
