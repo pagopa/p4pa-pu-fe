@@ -1,0 +1,3 @@
+[submodule "src/extra/p4pa-send-fe"]
+	path = src/extra/p4pa-send-fe
+	url = git@github.com:pagopa/p4pa-send-fe.git
