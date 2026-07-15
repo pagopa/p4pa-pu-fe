@@ -1,4 +1,17 @@
 {
+  "name": "p4pu",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "yarn@4.9.2",
+  "type": "module",
+  "workspaces": [
+    "src/extra"
+  ],
+  "lint-staged": {
+    "*.json": [
+      "yarn sort-translations"
+    ]
+  },
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
@@ -72,14 +85,6 @@
     "vitest-dom": "^0.1.1",
     "zodock": "^0.1.0"
   },
-  "lint-staged": {
-    "*.json": [
-      "yarn sort-translations"
-    ]
-  },
-  "name": "vite-project",
-  "packageManager": "yarn@4.9.2",
-  "private": true,
   "scripts": {
     "generate-api-client": "node scripts/generate-api.js api client",
     "generate-api-contracts": "node scripts/generate-api.js api contracts",
@@ -99,7 +104,5 @@
     "prettify": "prettier --write \"./**/*.{ts,tsx}\"",
     "sort-translations": "node scripts/sort-translations.js",
     "dependency-licenses": "license-checker --production --csv > dependency-licenses/licenses.csv"
-  },
-  "type": "module",
-  "version": "0.0.0"
+  }
 }

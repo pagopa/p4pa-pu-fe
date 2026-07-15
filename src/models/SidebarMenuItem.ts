@@ -8,4 +8,5 @@ export type ISidebarMenuItem = {
   If the URL is longer than to, it will no longer be considered active. */
   end?: boolean;
   items?: Array<ISidebarMenuItem>;
+  priority?: number;
 };
