@@ -37,7 +37,8 @@ export default tseslint.config([
       '@typescript-eslint/array-type': ['warn', { default: 'generic' }],
       'sonarjs/assertions-in-tests': 'off',
       'sonarjs/todo-tag': 'warn',
-      'sonarjs/cognitive-complexity': ['error', 30]
+      'sonarjs/cognitive-complexity': ['error', 30],
+      'sonarjs/regex-complexity': 'warn'
     }
   },
   {
