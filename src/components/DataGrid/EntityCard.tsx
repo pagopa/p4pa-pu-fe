@@ -1,17 +1,12 @@
-// EntityCard.tsx
-import { Typography, Box, Stack, Card } from '@mui/material';
-import { ChevronRight, MarkEmailReadOutlined } from '@mui/icons-material';
-import { CampaignRow } from '../CampaignCardGrid';
+import { Typography, Stack, Card } from '@mui/material';
 
-const EntityCardField = ({
-  icon,
-  label,
-  value
-}: {
-  icon?: React.ReactNode;
+export type EntityRowDetail = {
   label: string;
   value: string;
-}) => (
+  icon: React.ReactNode;
+};
+
+const EntityCardField = ({ icon, label, value }: EntityRowDetail) => (
   <Stack direction="row" alignItems="center" gap={2}>
     {icon}
     <Stack>
@@ -30,7 +25,12 @@ const EntityCardField = ({
   </Stack>
 );
 
-export const EntityCard = ({ row }: { row: CampaignRow }) => {
+type EntityCardProps = {
+  row: Array<EntityRowDetail>;
+  cta: React.ReactNode;
+};
+
+export const EntityCard = ({ row, cta }: EntityCardProps) => {
   return (
     <Card sx={{ p: 2 }}>
       <Stack
@@ -39,42 +39,11 @@ export const EntityCard = ({ row }: { row: CampaignRow }) => {
         width="100%"
         justifyContent="space-between"
       >
-        <EntityCardField label={row.id} value={row.title} />
+        {row.map((item, index) => (
+          <EntityCardField key={index} {...item} />
+        ))}
 
-        <EntityCardField
-          label="Data di invio"
-          value={`${row.sentDateFrom} - ${row.sentDateTo}`}
-        />
-
-        <EntityCardField
-          icon={
-            <MarkEmailReadOutlined
-              sx={{ color: 'grey.400' }}
-              fontSize="small"
-            />
-          }
-          label="Perfezionate / Inviate"
-          value={`${String(row.completed).padStart(4, '0')}/${String(row.sent).padStart(4, '0')}`}
-        />
-
-        <Box
-          component="a"
-          href={row.detailUrl}
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: 0.5,
-            color: 'primary.main',
-            fontWeight: 600,
-            fontSize: '16px',
-            textDecoration: 'none',
-            justifySelf: 'end',
-            '&:hover': { textDecoration: 'underline' }
-          }}
-        >
-          Apri dettaglio
-          <ChevronRight fontSize="small" />
-        </Box>
+        {cta}
       </Stack>
     </Card>
   );
