@@ -1,12 +1,12 @@
 import { useTranslation } from 'react-i18next';
 import { useLanguage } from './useLanguage';
 import { Markdown } from '../components/Markdown';
-import lang from '../translations/lang';
 import { FooterLinksType } from '@pagopa/mui-italia';
 import { CompanyLinkType } from '../components/Footer';
 import { useEffect, useState } from 'react';
 import { useStore } from '../store/GlobalStore';
-import { PageRoutes } from '../routes';
+import { languages } from '@core/translations/languages';
+import { PageRoutes } from '@core/routes';
 
 const isValidImage = (imgSrc: string): Promise<boolean> => {
   return new Promise((resolve) => {
@@ -74,7 +74,7 @@ export const useFooterData = () => {
   };
 
   return {
-    languages: lang,
+    languages,
     onLanguageChanged: changeLanguage,
     currentLangCode: language,
     links,

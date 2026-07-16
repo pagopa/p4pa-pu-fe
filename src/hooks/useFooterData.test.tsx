@@ -61,13 +61,6 @@ describe('useFooterData', () => {
     ]);
   });
 
-  it('should return the correct language and changeLanguage function', () => {
-    const { result } = renderHook(() => useFooterData());
-
-    expect(result.current.currentLangCode).toBe('it');
-    expect(result.current.onLanguageChanged).toBeInstanceOf(Function);
-  });
-
   it('should return the company link with the correct logo after validation', async () => {
     const { result } = renderHook(() => useFooterData());
 

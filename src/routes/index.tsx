@@ -25,6 +25,7 @@ import { responsesRoutes } from '../routes/responses';
 import { RouteHandleObject } from '../models/Routes';
 import IoMessageGuidePage from './IoMessageGuidePage/IoMessageGuidePage';
 import ResourcePage from './ResourcePage/ResourcePage';
+import { extensions } from '@extra/index';
 
 const deployPath = utils.config.deployPath;
 
@@ -40,6 +41,7 @@ const routesDef: Array<RouteObject> = [
     HydrateFallback: setupFallback,
     shouldRevalidate: () => false,
     children: [
+      ...extensions.routes,
       {
         element: <Navigate replace to={`${deployPath}/home`} />,
         index: true
