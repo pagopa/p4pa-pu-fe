@@ -41,6 +41,13 @@ const CustomPagination = ({
     }
   };
 
+  const getItemAriaLabel = (type: string, page: number | null) => {
+    if (type === 'page' && page !== null) {
+      return t('a11y.grid.paginationPage', { page });
+    }
+    return t(`a11y.grid.pagination.${type}`);
+  };
+
   return (
     <Box
       display="flex"
@@ -79,6 +86,7 @@ const CustomPagination = ({
         hidePrevButton={hidePreviousButton}
         hideNextButton={hideNextButton}
         onChange={handlePage}
+        getItemAriaLabel={getItemAriaLabel}
       />
     </Box>
   );

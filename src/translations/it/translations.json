@@ -165,7 +165,14 @@
       "filtersApplied_one": "Tabella aggiornata con {{count}} pagina",
       "filtersApplied_other": "Tabella aggiornata con {{count}} pagine",
       "noResults": "Nessun risultato trovato",
-      "pageSize": "Risultati per pagina"
+      "pageSize": "Risultati per pagina",
+      "pagination": {
+        "first": "vai alla prima pagina",
+        "last": "vai all'ultima pagina",
+        "next": "vai alla pagina successiva",
+        "previous": "vai alla pagina precedente"
+      },
+      "paginationPage": "vai a risultati di pagina {{page}}"
     }
   },
   "appPreview": {
