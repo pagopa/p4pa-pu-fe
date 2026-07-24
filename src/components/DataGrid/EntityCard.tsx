@@ -7,18 +7,19 @@ export type EntityRowDetail = {
 };
 
 const EntityCardField = ({ icon, label, value }: EntityRowDetail) => (
-  <Stack direction="row" alignItems="center" gap={2}>
+  <Stack direction="row" alignItems="center" gap={2} flex={1}>
     {icon}
-    <Stack>
+    <Stack component="dl">
       <Typography
         variant="body2"
         fontSize={14}
         color="text.secondary"
         fontWeight={400}
+        component="dt"
       >
         {label}
       </Typography>
-      <Typography variant="subtitle1" fontSize={16}>
+      <Typography component="dd" variant="subtitle1" fontSize={16}>
         {value}
       </Typography>
     </Stack>
