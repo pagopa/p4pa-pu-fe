@@ -9,6 +9,7 @@ import {
 import { useNavigate, useParams } from 'react-router';
 import { getPaymentsReportingRows } from '../../../api/reporting';
 import ReportingDetail from './ReportingDetail';
+import i18n from '../../../translations/i18n';
 import utils from '../../../utils';
 import { PageRoutes } from '../../../routes';
 
@@ -127,24 +128,24 @@ describe('ReportingDetail Page', () => {
       screen.getByText(mockData.regulationUniqueIdentifier)
     ).toBeInTheDocument();
 
-    expect(screen.getByText('commons.summary')).toBeInTheDocument();
-    expect(screen.getByText('commons.payments')).toBeInTheDocument();
-    expect(screen.getByText('commons.detail')).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('commons.summary'))).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('commons.payments'))).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('commons.detail'))).toBeInTheDocument();
 
     expect(screen.getByTestId('results-table')).toBeInTheDocument();
 
     expect(
-      screen.getByText('commons.filters.filterResults')
+      screen.getByText(i18n.t('commons.filters.filterResults'))
     ).toBeInTheDocument();
 
-    expect(screen.getByText('commons.files.downloadFlow')).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('commons.files.downloadFlow'))).toBeInTheDocument();
   });
 
   it('applies filters when filter button is clicked', async () => {
     render(<ReportingDetail />);
 
     const searchInput = screen.getByRole('textbox', {
-      name: 'commons.searchIUV'
+      name: i18n.t('commons.searchIUV')
     });
     fireEvent.change(searchInput, { target: { value: 'TEST-IUV' } });
 
