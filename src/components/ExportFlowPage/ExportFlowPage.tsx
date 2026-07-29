@@ -36,6 +36,11 @@ export const ExportFlowPage = () => {
   }>({
     fileVersion: ''
   });
+  const [submitted, setSubmitted] = useState(false);
+
+  // conservation has no fileVersion select: version is fixed to v1.0
+  const isFileVersionMissing =
+    category !== 'conservation' && !formData.fileVersion;
 
   const {
     fromDate,
@@ -68,7 +73,15 @@ export const ExportFlowPage = () => {
   const createReceiptsArchivingExport = createReceiptsArchivingExportFile();
 
   const handleExportClick = () => {
-    if (!fromDate || !toDate) return;
+    // the button is never disabled: an incomplete form must report itself inline
+    // and move focus to the first offending field, so screen readers announce it
+    if (isButtonDisabled || isFileVersionMissing || !fromDate || !toDate) {
+      setSubmitted(true);
+      requestAnimationFrame(() => {
+        document.querySelector<HTMLElement>('[aria-invalid="true"]')?.focus();
+      });
+      return;
+    }
 
     const formattedFrom = new Date(fromDate).toISOString().split('T')[0];
     const formattedTo = new Date(toDate).toISOString().split('T')[0];
@@ -204,6 +217,8 @@ export const ExportFlowPage = () => {
                 }}
                 onFromErrorChange={setFromError}
                 onToErrorChange={setToError}
+                shouldValidate={submitted}
+                validationErrorMessage={t('commons.required')}
               />
             )
           },
@@ -245,6 +260,7 @@ export const ExportFlowPage = () => {
         ]}
         formData={formData}
         onSelectChange={handleChange}
+        submitted={submitted}
       />
 
       <Grid container direction={'row'} justifyContent={'space-between'}>
@@ -263,7 +279,6 @@ export const ExportFlowPage = () => {
         <Grid item>
           <Button
             data-testid="success-button"
-            disabled={isButtonDisabled}
             size="large"
             variant="contained"
             fullWidth

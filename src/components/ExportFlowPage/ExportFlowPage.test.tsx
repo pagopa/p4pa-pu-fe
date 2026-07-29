@@ -45,6 +45,11 @@ vi.mock('../../api/createExportFile', () => ({
 }));
 vi.mock('../../hooks/useDateRange');
 
+const selectFileVersion = async () => {
+  fireEvent.mouseDown(screen.getAllByRole('combobox')[0]);
+  fireEvent.click(await screen.findByRole('option', { name: '1.0' }));
+};
+
 describe('ExportFlow', () => {
   const mockUseParams = vi.mocked(useParams);
   const mockUseNavigate = vi.mocked(useNavigate);
@@ -87,12 +92,21 @@ describe('ExportFlow', () => {
       expect(screen.getByTestId('success-button')).toBeDefined();
     });
 
-    it('keeps success button disabled initially', () => {
+    it('keeps success button enabled and reports missing dates on click', async () => {
       render(<ExportFlow />);
-      expect(screen.getByTestId('success-button')).toHaveProperty(
-        'disabled',
-        true
-      );
+
+      const successButton = screen.getByTestId('success-button');
+      expect(successButton).toHaveProperty('disabled', false);
+
+      fireEvent.click(successButton);
+
+      // both date fields are empty: the click must surface them, not export
+      await waitFor(() => {
+        expect(screen.getAllByText('commons.required').length).toBeGreaterThan(
+          0
+        );
+      });
+      expect(mockPaidExportMutate).not.toHaveBeenCalled();
     });
 
     it('initializes form data correctly', () => {
@@ -123,6 +137,7 @@ describe('ExportFlow', () => {
       });
 
       render(<ExportFlow />);
+      await selectFileVersion();
 
       const successButton = screen.getByTestId('success-button');
       fireEvent.click(successButton);
@@ -130,6 +145,69 @@ describe('ExportFlow', () => {
       await waitFor(() => {
         expect(mockPaidExportMutate).toHaveBeenCalled();
       });
+    });
+
+    it('reports the missing file version instead of exporting', async () => {
+      mockUseDateRange.mockReturnValue({
+        fromDate: new Date('2024-01-01'),
+        toDate: new Date('2024-01-31'),
+        setFromDate: vi.fn(),
+        setFromDateToday: vi.fn(),
+        setToDate: vi.fn(),
+        setToDateToday: vi.fn(),
+        setFromError: vi.fn(),
+        setToError: vi.fn(),
+        resetDates: vi.fn(),
+        isButtonDisabled: false
+      });
+
+      render(<ExportFlow />);
+
+      const successButton = screen.getByTestId('success-button');
+      // the button stays enabled: the click must be what surfaces the error
+      expect(successButton).toHaveProperty('disabled', false);
+
+      fireEvent.click(successButton);
+
+      const fileVersion = screen.getAllByRole('combobox')[0];
+      const error = await screen.findByText('commons.required');
+
+      expect(mockPaidExportMutate).not.toHaveBeenCalled();
+      expect(fileVersion.getAttribute('aria-describedby')).toBe(error.id);
+      // the combobox is what screen readers focus, so the state must live there
+      expect(fileVersion).toHaveAttribute('aria-required', 'true');
+      // focus moves to the offending field so screen readers announce it
+      expect(document.activeElement).toBe(fileVersion);
+
+      await selectFileVersion();
+      fireEvent.click(successButton);
+
+      await waitFor(() => {
+        expect(mockPaidExportMutate).toHaveBeenCalled();
+      });
+    });
+
+    it('shows an inline required error when file version is left empty', async () => {
+      render(<ExportFlow />);
+
+      const fileVersion = screen.getAllByRole('combobox')[0];
+      fireEvent.blur(fileVersion);
+
+      const error = await screen.findByText('commons.required');
+
+      // the error must be announced: linked to the combobox, not just visible
+      expect(fileVersion.getAttribute('aria-describedby')).toBe(error.id);
+      expect(fileVersion).toHaveAttribute('aria-invalid', 'true');
+    });
+
+    it('gives each select a unique label id', () => {
+      render(<ExportFlow />);
+
+      const labelledBy = screen
+        .getAllByRole('combobox')
+        .map((combo) => combo.getAttribute('aria-labelledby'));
+
+      expect(new Set(labelledBy).size).toBe(labelledBy.length);
     });
 
     it('handles unknown category in handleExitButton', () => {
@@ -242,6 +320,7 @@ describe('ExportFlow', () => {
       });
 
       render(<ExportFlow />);
+      await selectFileVersion();
 
       const successButton = screen.getByTestId('success-button');
       fireEvent.click(successButton);
@@ -299,6 +378,7 @@ describe('ExportFlow', () => {
       });
 
       render(<ExportFlow />);
+      await selectFileVersion();
 
       const successButton = screen.getByTestId('success-button');
       fireEvent.click(successButton);
@@ -326,11 +406,11 @@ describe('ExportFlow', () => {
       expect(screen.queryByText('exportFlow.dueType')).toBeNull();
     });
 
-    it('success button is initially disabled', () => {
+    it('success button is never disabled', () => {
       render(<ExportFlow />);
       expect(screen.getByTestId('success-button')).toHaveProperty(
         'disabled',
-        true
+        false
       );
     });
   });

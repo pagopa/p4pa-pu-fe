@@ -46,7 +46,9 @@ const DEFAULT_VALUES: ClassificationFormFields = {
 
 export const useClassificationExport = (organizationId: number) => {
   const formMethods = useForm<ClassificationFormFields>({
-    defaultValues: DEFAULT_VALUES
+    defaultValues: DEFAULT_VALUES,
+    // errors surface on blur too, not only on submit
+    mode: 'onTouched'
   });
 
   const dateToIso = useCallback((date: Date | null): string | undefined => {
