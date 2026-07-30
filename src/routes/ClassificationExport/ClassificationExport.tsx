@@ -209,6 +209,7 @@ const ClassificationExportPage = () => {
               options={versionOptions}
               control={formMethods.control}
               required
+              rules={{ required: 'commons.required' }}
               data-testid="trace-section-version"
             />
           </FormSection>
@@ -363,7 +364,7 @@ const ClassificationExportPage = () => {
           <Grid item>
             <Button
               variant="contained"
-              onClick={handleSubmit}
+              onClick={formMethods.handleSubmit(handleSubmit)}
               type="button"
               data-testid="confirmButton"
             >

@@ -1,4 +1,10 @@
-import { Controller, Control, Path, FieldValues } from 'react-hook-form';
+import {
+  Controller,
+  Control,
+  Path,
+  FieldValues,
+  RegisterOptions
+} from 'react-hook-form';
 import { _Select, _SelectProps, SelectOptions } from './_Select';
 import { UseQueryResult } from '@tanstack/react-query';
 import { ErrorMessage } from './ErrorMessage';
@@ -13,12 +19,14 @@ export type _ControlledSelectProps<T extends FieldValues> = _SelectProps & {
   fetchFn?: () => UseQueryResult<SelectOptions>;
   disabled?: boolean;
   required?: boolean;
+  rules?: RegisterOptions<T, Path<T>>;
 };
 
 export const _ControlledSelect = <T extends FieldValues>({
   name,
   control,
   fetchFn,
+  rules,
   ...props
 }: _ControlledSelectProps<T>) => {
   const { t } = useTranslation();
@@ -35,6 +43,7 @@ export const _ControlledSelect = <T extends FieldValues>({
     <Controller
       name={name}
       control={control}
+      rules={rules}
       render={({ field: { ref, value, onChange, onBlur }, fieldState }) => {
         const options = optionsResult.data ?? [];
 
