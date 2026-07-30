@@ -165,3 +165,5 @@ Extra modules live in `src/extra`, one directory per module. [`src/extra/index.t
 src/extra/[moduleName]/routes.tsx   // default export: Array<RouteObject>
 src/extra/[moduleName]/sidebar.ts   // default export: Array<ISidebarMenuItem>
 ```
+
+Translations can be added using the i18n-next addResourceBundle method.
