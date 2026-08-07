@@ -1893,6 +1893,9 @@
       "debtTypesSet": "Tipi dovuti impostati attivi"
     },
     "myOrganizationDataGrid": {
+      "detailManagedOrg": "Dettaglio Tipo Dovuto Impostato di Enti gestiti",
+      "detailMyOrg": "Dettaglio Tipo Dovuto Impostato del mio ente",
+      "detailColumn": "Dettaglio",
       "code": "Cod. Gestionale",
       "debtType": "Tipo dovuto",
       "description": "Descrizione",
