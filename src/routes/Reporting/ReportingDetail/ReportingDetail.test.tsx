@@ -138,9 +138,7 @@ describe('ReportingDetail Page', () => {
       screen.getByText(i18n.t('commons.filters.filterResults'))
     ).toBeInTheDocument();
 
-    expect(
-      screen.getByText(i18n.t('commons.files.downloadFlow'))
-    ).toBeInTheDocument();
+    expect(screen.getByText(i18n.t('commons.files.downloadFlow'))).toBeInTheDocument();
   });
 
   it('applies filters when filter button is clicked', async () => {

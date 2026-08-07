@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Grid,
   Typography,
   FormControl,
+  FormHelperText,
   InputLabel,
   Select,
   MenuItem,
@@ -38,19 +39,31 @@ type ExportFlowContainerProps = {
   }>;
   formData: Record<string, string>;
   onSelectChange: (field: string, value: string) => void;
+  // set once the user tries to submit: surfaces errors on fields never touched
+  submitted?: boolean;
 };
+
+const selectFieldId = (fieldKey: string) => `select-${fieldKey}`;
 
 const ExportFlowContainer = ({
   section,
   formData,
-  onSelectChange
+  onSelectChange,
+  submitted = false
 }: ExportFlowContainerProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const [touched, setTouched] = useState<Record<string, boolean>>({});
+
+  const markTouched = (fieldKey: string) =>
+    setTouched((prev) => ({ ...prev, [fieldKey]: true }));
 
   type SectionItem = ExportFlowContainerProps['section'][number];
 
-  const renderFields = (item: SectionItem): JSX.Element => {
+  const renderFields = (
+    item: SectionItem,
+    sectionIndex: number
+  ): JSX.Element => {
     if (item.dateRange) {
       return <React.Fragment>{item.dateRange}</React.Fragment>;
     }
@@ -58,32 +71,54 @@ const ExportFlowContainer = ({
     if (item.selectOptions) {
       return (
         <React.Fragment>
-          {item.inputFields.map((field, index) => (
-            <FormControl key={index} fullWidth size="small">
-              <InputLabel
-                required={field?.required}
-                id={`select-label-${index}`}
-              >
-                {field.label}
-              </InputLabel>
-              <Select
-                fullWidth
-                required={field?.required}
-                labelId={`select-label-${index}`}
-                value={formData[field?.fieldKey || ''] ?? ''}
-                onChange={(event) =>
-                  onSelectChange(field?.fieldKey ?? '', event.target.value)
-                }
-                label={field.label}
-              >
-                {item?.selectOptions?.map((option, index) => (
-                  <MenuItem key={index} value={option.value}>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          ))}
+          {item.inputFields.map((field, index) => {
+            const fieldKey = field?.fieldKey ?? '';
+            const hasError =
+              !!field?.required &&
+              (!!touched[fieldKey] || submitted) &&
+              !formData[fieldKey];
+            // ids must stay unique across sections: the field index alone repeats
+            const labelId = `select-label-${sectionIndex}-${index}`;
+            const helperId = `select-helper-${sectionIndex}-${index}`;
+
+            return (
+              <FormControl key={index} fullWidth size="small" error={hasError}>
+                <InputLabel required={field?.required} id={labelId}>
+                  {field.label}
+                </InputLabel>
+                <Select
+                  fullWidth
+                  required={field?.required}
+                  id={selectFieldId(fieldKey)}
+                  labelId={labelId}
+                  aria-describedby={hasError ? helperId : undefined}
+                  // MUI puts required/invalid on the hidden native input only:
+                  // the element screen readers focus is this display div
+                  SelectDisplayProps={{
+                    'aria-required': field?.required || undefined,
+                    'aria-invalid': hasError || undefined
+                  }}
+                  value={formData[fieldKey] ?? ''}
+                  onChange={(event) =>
+                    onSelectChange(fieldKey, event.target.value)
+                  }
+                  onBlur={() => markTouched(fieldKey)}
+                  label={field.label}
+                >
+                  {item?.selectOptions?.map((option, index) => (
+                    <MenuItem key={index} value={option.value}>
+                      {option.label}
+                    </MenuItem>
+                  ))}
+                </Select>
+                {hasError && (
+                  <FormHelperText id={helperId}>
+                    {t('commons.required')}
+                  </FormHelperText>
+                )}
+              </FormControl>
+            );
+          })}
         </React.Fragment>
       );
     }
@@ -164,7 +199,7 @@ const ExportFlowContainer = ({
             </Grid>
             <Grid container spacing={2}>
               <Grid item lg={12}>
-                {renderFields(item)}
+                {renderFields(item, index)}
               </Grid>
             </Grid>
           </Grid>

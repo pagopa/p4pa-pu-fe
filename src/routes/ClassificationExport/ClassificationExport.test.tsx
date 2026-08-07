@@ -113,6 +113,13 @@ describe('ClassificationExportPage', () => {
       ).toBeInTheDocument();
     });
 
+    it('should keep the confirm button enabled', () => {
+      render(<ClassificationExportPage />);
+
+      // required fields are reported inline on submit, never by disabling
+      expect(screen.getByTestId('confirmButton')).not.toBeDisabled();
+    });
+
     it('should render all form sections correctly', () => {
       render(<ClassificationExportPage />);
 
@@ -716,7 +723,7 @@ describe('ClassificationExportPage', () => {
       }
     });
 
-    it('should test ALL_CLASSIFICATIONS_VALUE constant usage', () => {
+    it('should test ALL_CLASSIFICATIONS_VALUE constant usage', async () => {
       render(<ClassificationExportPage />);
 
       expect(
@@ -731,7 +738,10 @@ describe('ClassificationExportPage', () => {
 
       fireEvent.click(submitButton);
 
-      expect(mockValidateForm).toHaveBeenCalled();
+      // submit now runs through react-hook-form validation, which is async
+      await waitFor(() => {
+        expect(mockValidateForm).toHaveBeenCalled();
+      });
     });
 
     it('should handle form submission with different label processing', async () => {
@@ -810,7 +820,7 @@ describe('ClassificationExportPage', () => {
       }
     });
 
-    it('should test the processedFormData logic branch coverage', () => {
+    it('should test the processedFormData logic branch coverage', async () => {
       render(<ClassificationExportPage />);
 
       expect(
@@ -830,7 +840,9 @@ describe('ClassificationExportPage', () => {
       mockValidateForm.mockReturnValue(false);
       fireEvent.click(submitButton);
 
-      expect(mockValidateForm).toHaveBeenCalled();
+      await waitFor(() => {
+        expect(mockValidateForm).toHaveBeenCalled();
+      });
     });
   });
 });
