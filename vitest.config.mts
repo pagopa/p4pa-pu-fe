@@ -43,6 +43,11 @@ export default defineConfig({
     env: {
       ...config({ path: './.env.test' }).parsed
     },
+    server: {
+      deps: {
+        inline: ['@pagopa/mui-italia']
+      }
+    },
     include: ['**/*.test.ts?(x)']
   }
 });

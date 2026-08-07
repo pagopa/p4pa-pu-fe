@@ -163,7 +163,7 @@ const FileUploader = ({
               border: `1px dashed ${theme.palette.primary.main}`,
               borderRadius: 2,
               p: 3,
-              bgcolor: alpha(theme.palette.primary[100], 0.5),
+              bgcolor: alpha(theme.palette.primary.light, 0.5),
               textAlign: 'center'
             }}
             data-testid="drop-zone"
@@ -223,7 +223,7 @@ const FileUploader = ({
             sx={{
               height: 8,
               borderRadius: 5,
-              bgcolor: theme.palette.primary[100],
+              bgcolor: theme.palette.primary.light,
               '& .MuiLinearProgress-bar': {
                 bgcolor: theme.palette.primary.main
               }

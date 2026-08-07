@@ -56,7 +56,6 @@ export const ServiceDataGrid: React.FC<ServiceDataGridProps> = ({
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<OrgSilServiceView>) => (
         <IconButton
-          color="primary"
           size="small"
           aria-label={t('commons.detail')}
           onClick={() => onRowClick(params.row)}

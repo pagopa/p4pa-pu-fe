@@ -84,7 +84,7 @@ export const SearchResultsDataGrid = ({ data }: DataGridProps) => {
           })}
           aria-label={t('commons.goToDetail')}
         >
-          <IconButton color="primary" size="small">
+          <IconButton size="small">
             <ChevronRight />
           </IconButton>
         </Link>

@@ -182,7 +182,6 @@ const SpontaneousFormDetail = () => {
           <Button
             size="large"
             startIcon={<Edit />}
-            color="primary"
             variant="contained"
             onClick={handleEditClick}
             data-testid="edit-button"

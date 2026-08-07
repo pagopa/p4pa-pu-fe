@@ -71,7 +71,6 @@ const ReportingDetailDataGrid = ({
           <Link to={detailPath}>
             <IconButton
               aria-label={t('commons.routes.TELEMATIC_RECEIPT_DETAIL')}
-              color="primary"
               size="small"
             >
               <ReadMore />

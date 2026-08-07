@@ -238,7 +238,6 @@ const ImportFlowOverview = ({
     if (DOWNLOAD_STATES.includes(status)) {
       return (
         <IconButton
-          color="primary"
           size="small"
           aria-label={t('commons.files.download')}
           onClick={() => handleDownloadFile(ingestionFlowFileId)}

@@ -96,7 +96,6 @@ export const IUVDataGrid = ({ data }: DataGridProps) => {
       renderCell: (params: GridRenderCellParams<InstallmentViewDTO>) => (
         <IconButton
           size="small"
-          color="primary"
           aria-label={t('commons.goToDetail')}
           onClick={() => {
             navigate(

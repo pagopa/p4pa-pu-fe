@@ -84,7 +84,6 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
         >
           <IconButton
             aria-label={t('commons.detail')}
-            color="primary"
             size="small"
           >
             <ReadMore />

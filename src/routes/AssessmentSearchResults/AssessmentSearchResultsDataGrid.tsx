@@ -107,7 +107,6 @@ const AssessmentSearchResultsDataGrid = ({
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<AssessmentDataRow>) => (
         <IconButton
-          color="primary"
           size="small"
           onClick={() => handleDetailClick(params.row.assessmentId)}
           data-testid="assessment-detail-button"

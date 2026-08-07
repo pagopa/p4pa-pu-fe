@@ -1556,9 +1556,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pagopa/mui-italia@npm:^1.5.1-0":
-  version: 1.5.1
-  resolution: "@pagopa/mui-italia@npm:1.5.1"
+"@pagopa/mui-italia@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "@pagopa/mui-italia@npm:2.6.0"
   dependencies:
     "@fontsource/dm-mono": "npm:^4.5.10"
     "@fontsource/titillium-web": "npm:^4.5.9"
@@ -1566,9 +1566,16 @@ __metadata:
     fp-ts: "npm:^2.12.3"
     io-ts: "npm:^2.2.18"
   peerDependencies:
-    react: ^18.2.0
+    "@emotion/react": ^11.14.0
+    "@emotion/styled": ^11.14.1
+    "@mui/icons-material": ^5.14.3
+    "@mui/lab": ^5.0.0-alpha.140
+    "@mui/material": ^5.14.5
+    "@mui/system": ^5.14.5
+    "@mui/x-date-pickers": ^6.17.0
+    react: ^18.3.1
     react-dom: ^18.2.0
-  checksum: 10c0/980016daab92c425765b39cb380bc5e4ceace9b7fbcf23f13e88f327d23939741472b841ef33e3ce445cb56f3e1ae8e2f8b7548783166042f485e3d6ab8121b4
+  checksum: 10c0/bc54ddbf5fee952bfa1fe24ffd633a3025a43e8219866bf1b23ea8134759ae704061739960af80a07dfa94f9730360071c3b64048e8e902638de5a4ec1b2ec17
   languageName: node
   linkType: hard
 
@@ -7436,7 +7443,7 @@ __metadata:
     "@mui/material": "npm:^5.15.15"
     "@mui/x-data-grid": "npm:^7.23.5"
     "@mui/x-date-pickers": "npm:^7.26.0"
-    "@pagopa/mui-italia": "npm:^1.5.1-0"
+    "@pagopa/mui-italia": "npm:^2.6.0"
     "@preact/signals-react": "npm:^2.2.0"
     "@tanstack/react-query": "npm:^5.40.0"
     "@testing-library/dom": "npm:^10.4.0"

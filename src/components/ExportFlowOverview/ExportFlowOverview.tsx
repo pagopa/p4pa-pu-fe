@@ -127,7 +127,6 @@ const ExportFlowOverview = ({
       return (
         <IconButton
           aria-label={t('commons.files.downloadFlow')}
-          color="primary"
           size="small"
           onClick={() => handleDownloadFile(exportFileId)}
           data-testid="download-button"

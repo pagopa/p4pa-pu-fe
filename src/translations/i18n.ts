@@ -17,7 +17,9 @@ await i18n
     detection: DETECTION_OPTIONS,
     fallbackLng: fallbackLang,
     resources: {
-      ...lang
+      it: {
+        translation: lang.it.translation
+      }
     }
   });
 

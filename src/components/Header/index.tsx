@@ -11,7 +11,6 @@ import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded';
 import { useNavigate } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
-import { PartySwitchItem } from '@pagopa/mui-italia/dist/components/PartySwitch';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import { useTranslation } from 'react-i18next';
@@ -19,6 +18,7 @@ import { OperatorRole } from '../../../generated/apiClient';
 import { PageRoutes } from '../../routes';
 import config from '../../utils/config';
 import { OrganizationStatus } from '../../../generated/data-contracts';
+import { PartySwitchItem } from '@pagopa/mui-italia/components/PartySwitch';
 
 export type HeaderProps = {
   onAssistanceClick?: () => void;
