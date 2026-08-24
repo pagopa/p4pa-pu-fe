@@ -7,14 +7,15 @@ import {
   fireEvent
 } from '../../../__tests__/renderers';
 import { MyOrg } from './MyOrg';
-import { useNavigate, generatePath } from 'react-router';
+import { useNavigate, generatePath, useParams } from 'react-router';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 
-// Mock react-router's useNavigate and generatePath
+// Mock react-router's useNavigate, generatePath and useParams
 vi.mock('react-router', async (importActual) => ({
   ...(await importActual()),
   useNavigate: vi.fn(),
-  generatePath: vi.fn()
+  generatePath: vi.fn(),
+  useParams: vi.fn()
 }));
 
 // Mock your store hook
@@ -35,6 +36,7 @@ import { useSearch } from '../../../hooks/useSearch';
 describe('MyOrg', () => {
   const mockNavigate = vi.fn();
   const mockGeneratePath = generatePath as unknown as ReturnType<typeof vi.fn>;
+  const mockUseParams = useParams as unknown as ReturnType<typeof vi.fn>;
   const mockMutateAsync = vi.fn();
   const mockApplyFilters = vi.fn();
 
@@ -45,6 +47,11 @@ describe('MyOrg', () => {
       'debtTypesCreated.myOrganizationDataGrid.lastUpdateDate': 'Last Update',
       'debtTypesCreated.myOrganizationDataGrid.enabledOperators':
         'Enabled Operators',
+      'debtTypesCreated.myOrganizationDataGrid.detailMyOrg':
+        'Detail of my organization debt type',
+      'debtTypesCreated.myOrganizationDataGrid.detailManagedOrg':
+        'Detail of managed organization debt type',
+      'debtTypesCreated.myOrganizationDataGrid.detailColumn': 'Detail',
       'commons.status.ACTIVE': 'Active',
       'commons.status.DISABLED': 'Disabled',
       'commons.state': 'State',
@@ -59,6 +66,7 @@ describe('MyOrg', () => {
       mockNavigate
     );
     mockGeneratePath.mockReturnValue('/mock-path');
+    mockUseParams.mockReturnValue({});
 
     // Setup useSearch mock to return expected structure used by MyOrg
     (useSearch as unknown as Mock).mockReturnValue({
@@ -137,5 +145,60 @@ describe('MyOrg', () => {
     expect(mockGeneratePath).toHaveBeenCalledWith(expect.any(String), {
       debtPositionTypeOrgId: 1
     });
+  });
+
+  it('exposes the detail arrow as a named button', async () => {
+    render(<MyOrg />);
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole('button', {
+          name: 'Detail of my organization debt type'
+        })
+      ).toHaveLength(2);
+    });
+    expect(
+      screen.getByRole('columnheader', { name: 'Detail' })
+    ).toBeInTheDocument();
+
+    // The grid delegates focus from the cell to the first tabbable descendant,
+    // so the arrow must stay a real, tabbable <button>.
+    const arrow = screen.getByTestId('navigate-icon-1');
+    expect(arrow.tagName).toBe('BUTTON');
+    expect(arrow).toHaveAttribute('tabindex', '0');
+  });
+
+  it('names the detail button after the managed organization section', async () => {
+    mockUseParams.mockReturnValue({ organizationId: '7' });
+    render(<MyOrg />);
+    await waitFor(() => {
+      expect(
+        screen.getAllByRole('button', {
+          name: 'Detail of managed organization debt type'
+        })
+      ).toHaveLength(2);
+    });
+  });
+
+  it('hands focus to the detail button when arrowing across the row', async () => {
+    const { container } = render(<MyOrg />);
+    await waitFor(() => screen.getByTestId('navigate-icon-1'));
+
+    const firstCell = container.querySelector(
+      '[role="gridcell"][data-field="code"]'
+    ) as HTMLElement;
+    firstCell.focus();
+    fireEvent.focus(firstCell);
+
+    // 5 columns to the right of "code" sits the actions cell
+    for (let i = 0; i < 5; i++) {
+      fireEvent.keyDown(document.activeElement as HTMLElement, {
+        key: 'ArrowRight'
+      });
+    }
+
+    // The grid must land on the button itself, not on the wrapping gridcell:
+    // only then does the screen reader announce a name and role, and only then
+    // does Enter reach a native <button>.
+    expect(document.activeElement).toBe(screen.getByTestId('navigate-icon-1'));
   });
 });

@@ -1,4 +1,5 @@
-import { Chip, IconButton } from '@mui/material';
+import { Box, Chip, IconButton } from '@mui/material';
+import { visuallyHidden } from '@mui/utils';
 import { useTranslation } from 'react-i18next';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import { useState } from 'react';
@@ -112,13 +113,23 @@ export const MyOrg = () => {
       sortable: false,
       align: 'right',
       headerAlign: 'right',
+      renderHeader: () => (
+        <Box component="span" sx={visuallyHidden}>
+          {t('debtTypesCreated.myOrganizationDataGrid.detailColumn')}
+        </Box>
+      ),
       renderCell: (
         params: GridRenderCellParams<DebtPositionTypeOrgWithCount>
       ) => (
         <IconButton
           data-testid={`navigate-icon-${params.row.debtPositionTypeOrgId}`}
           size="small"
-          aria-label={t('commons.goToDetail')}
+          color="primary"
+          aria-label={t(
+            organizationIdByURL
+              ? 'debtTypesCreated.myOrganizationDataGrid.detailManagedOrg'
+              : 'debtTypesCreated.myOrganizationDataGrid.detailMyOrg'
+          )}
           onClick={() => handleRowClick(params.row)}
         >
           <ArrowForwardIos fontSize="small" />
