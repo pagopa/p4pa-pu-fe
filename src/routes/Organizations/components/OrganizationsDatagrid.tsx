@@ -106,7 +106,6 @@ const OrganizationsDatagrid = ({
           aria-label={t('organizations.detail', {
             orgName: params.row.orgName
           })}
-          color="primary"
           size="small"
           onClick={() => handleRowClick(params.row)}
         >

@@ -88,7 +88,6 @@ export const DebtPositionsDataGrid = ({ data }: DataGridProps) => {
       renderCell: (params: GridRenderCellParams<ResultDataRow>) => (
         <IconButton
           size="small"
-          color="primary"
           aria-label={t('commons.goToDetail')}
           onClick={() => {
             navigate(

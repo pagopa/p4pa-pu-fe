@@ -108,7 +108,6 @@ const DynamicFieldsDataGrid = ({ data }: DynamicFieldsDataGridProps) => {
         >
           <IconButton
             size="small"
-            color="primary"
             onClick={() => handleCopyTag(params.row.tag)}
             aria-label={t('ioMessageGuide.copyAriaLabel', {
               tag: params.row.tag

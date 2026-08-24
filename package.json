@@ -1,17 +1,4 @@
 {
-  "name": "p4pu",
-  "version": "1.0.0",
-  "private": true,
-  "packageManager": "yarn@4.9.2",
-  "type": "module",
-  "workspaces": [
-    "src/extra"
-  ],
-  "lint-staged": {
-    "*.json": [
-      "yarn sort-translations"
-    ]
-  },
   "dependencies": {
     "@emotion/react": "^11.13.5",
     "@emotion/styled": "^11.13.5",
@@ -21,7 +8,7 @@
     "@mui/material": "^5.15.15",
     "@mui/x-data-grid": "^7.23.5",
     "@mui/x-date-pickers": "^7.26.0",
-    "@pagopa/mui-italia": "^1.5.1-0",
+    "@pagopa/mui-italia": "^2.6.0",
     "@preact/signals-react": "^2.2.0",
     "@tanstack/react-query": "^5.40.0",
     "axios": "^1.6.8",
@@ -85,6 +72,14 @@
     "vitest-dom": "^0.1.1",
     "zodock": "^0.1.0"
   },
+  "lint-staged": {
+    "*.json": [
+      "yarn sort-translations"
+    ]
+  },
+  "name": "p4pu",
+  "packageManager": "yarn@4.9.2",
+  "private": true,
   "scripts": {
     "generate-api-client": "node scripts/generate-api.js api client",
     "generate-api-contracts": "node scripts/generate-api.js api contracts",
@@ -104,5 +99,10 @@
     "prettify": "prettier --write \"./**/*.{ts,tsx}\"",
     "sort-translations": "node scripts/sort-translations.js",
     "dependency-licenses": "license-checker --production --csv > dependency-licenses/licenses.csv"
-  }
+  },
+  "type": "module",
+  "version": "1.0.0",
+  "workspaces": [
+    "src/extra"
+  ]
 }

@@ -83,7 +83,6 @@ const AssessmentDetailDataGrid = ({
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<AssessmentsDetail>) => (
         <IconButton
-          color="primary"
           size="small"
           onClick={() => navigateToDetail(params.row.receiptId, params.row.iud)}
           aria-label={t('commons.detail')}

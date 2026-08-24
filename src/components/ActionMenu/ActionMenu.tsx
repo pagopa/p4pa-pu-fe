@@ -36,7 +36,6 @@ const ActionMenu: React.FC<ActionMenuProps> = ({ rowId, menuItems }) => {
   return (
     <>
       <IconButton
-        color="primary"
         size="small"
         onClick={handleClick}
         aria-label={t(open ? 'commons.closeMenu' : 'commons.openMenu')}

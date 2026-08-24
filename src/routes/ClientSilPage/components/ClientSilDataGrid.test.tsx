@@ -49,7 +49,8 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
   };
 });
 
-vi.mock('@mui/icons-material', () => ({
+vi.mock('@mui/icons-material', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@mui/icons-material')>()),
   ChevronRight: () => <div data-testid="chevron-right">→</div>
 }));
 
