@@ -272,7 +272,8 @@ export const DebtTypeDetailView = () => {
         disabled: false,
         onActionClick: handleActionMenuOpen,
         dataTestId: 'action-menu-button',
-        isIconButton: true
+        isIconButton: true,
+        ariaLabel: t('commons.moreActions')
       };
 
       const editButton = {
