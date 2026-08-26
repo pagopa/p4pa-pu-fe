@@ -1,195 +1,96 @@
 /**
- * Generates API client and contracts for a given type and mode.
+ * Generates TypeScript API clients and contracts from local OpenAPI specs.
  *
- * Usage: node scripts/generate-api.js <type> <mode>
+ * Usage: node scripts/generate-api.js
  *
- * @param {string} type - 'api' or 'fileshare'
- * @param {string} mode - 'client' or 'contracts'
+ * Scrapes JSON specs at the root of ./generated (see scripts/download-openapi.js)
+ * and, for each spec, writes client and contracts into ./generated/<spec-name>/.
  */
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 
-// Unhandled rejection guard
 process.on('unhandledRejection', (err) => {
     console.error(`Unhandled rejection: ${err?.message ?? err}`);
     process.exit(1);
 });
 
-// Constants
-const VALID_TYPES = ['api', 'fileshare'];
-const VALID_MODES = ['client', 'contracts'];
+const GENERATED_DIR = './generated';
 
-const DEFAULT_URLS = {
-    api: 'https://raw.githubusercontent.com/pagopa/p4pa-pu-bff/refs/heads/develop/openapi/generated.openapi.json',
-    fileshare:
-        'https://raw.githubusercontent.com/pagopa/p4pa-fileshare/refs/heads/develop/openapi/generated.openapi.json',
+const toPascalCase = (value) =>
+    value
+        .split(/[-_]+/)
+        .filter(Boolean)
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join('');
+
+const listRootJsonSpecs = (dir) => {
+    if (!fs.existsSync(dir)) {
+        return [];
+    }
+
+    return fs
+        .readdirSync(dir, { withFileTypes: true })
+        .filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith('.json'))
+        .map((entry) => entry.name)
+        .sort();
 };
 
-const ENV_VARS = {
-    api: 'OPENAPI_URL',
-    fileshare: 'OPENAPIFILESHARE_URL',
+const runGeneration = (label, cmdArgs) => {
+    console.log(`[${label}] Generating from ${cmdArgs[cmdArgs.indexOf('-p') + 1]}…`);
+
+    const result = spawnSync('npx', cmdArgs, { stdio: 'inherit', shell: true });
+
+    if (result.status !== 0) {
+        console.error(`[${label}] Generation failed with exit code ${result.status}`);
+        process.exit(result.status || 1);
+    }
+
+    console.log(`[${label}] Done`);
 };
 
-const RETRY_ATTEMPTS = 3;
-const RETRY_BASE_DELAY_MS = 500;
+const buildCommands = (filePath, outDir, baseName) => {
+    const apiClassName = `${toPascalCase(baseName)}Api`;
 
-// Argument parsing & validation
-const args = process.argv.slice(2);
-const type = args[0];
-const mode = args[1];
+    return {
+        client: [
+            'swagger-typescript-api',
+            '--extract-enums',
+            '-p', filePath,
+            '-o', outDir,
+            '-n', 'client',
+            '--axios',
+            '--api-class-name', apiClassName,
+        ],
+        contracts: [
+            'swagger-typescript-api',
+            '--extract-enums',
+            '--modular',
+            '--no-client',
+            '-p', filePath,
+            '-o', outDir,
+        ],
+    };
+};
 
-if (
-    !type ||
-    !mode ||
-    !VALID_TYPES.includes(type) ||
-    !VALID_MODES.includes(mode)
-) {
+const specFiles = listRootJsonSpecs(GENERATED_DIR);
+
+if (specFiles.length === 0) {
     console.error(
-        [
-            'Usage: node scripts/generate-api.js <type> <mode>',
-            '',
-            '  type: api | fileshare',
-            '  mode: client | contracts',
-        ].join('\n'),
+        `No JSON specs found in ${GENERATED_DIR}. Run: node scripts/download-openapi.js`,
     );
     process.exit(1);
 }
 
-const key = `${type}-${mode}`;
+for (const specFile of specFiles) {
+    const filePath = path.join(GENERATED_DIR, specFile);
+    const baseName = path.basename(specFile, path.extname(specFile));
+    const outDir = path.join(GENERATED_DIR, baseName);
 
-// Resolve source URL
-const envVar = ENV_VARS[type];
-let url = process.env[envVar];
+    fs.mkdirSync(outDir, { recursive: true });
 
-if (!url || url === 'undefined') {
-    url = DEFAULT_URLS[type];
+    const commands = buildCommands(filePath, outDir, baseName);
+
+    runGeneration(`${baseName}-client`, commands.client);
+    runGeneration(`${baseName}-contracts`, commands.contracts);
 }
-
-// Fetch with retry
-const fetchWithRetry = async (targetUrl, retries = RETRY_ATTEMPTS) => {
-    for (let attempt = 1; attempt <= retries; attempt++) {
-        try {
-            const response = await fetch(targetUrl);
-            if (response.ok) return response;
-
-            if (attempt === retries) {
-                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-            }
-        } catch (err) {
-            if (attempt === retries) throw err;
-        }
-
-        const delay = Math.pow(2, attempt) * RETRY_BASE_DELAY_MS;
-        console.warn(`Attempt ${attempt}/${retries} failed, retrying in ${delay}ms…`);
-        await new Promise((r) => setTimeout(r, delay));
-    }
-};
-
-// Remove nullable: true from spec
-const removeNullableTrue = (obj) => {
-    let count = 0;
-
-    const walk = (node) => {
-        if (Array.isArray(node)) {
-            node.forEach(walk);
-        } else if (typeof node === 'object' && node !== null) {
-            for (const k in node) {
-                if (k === 'nullable' && node[k] === true) {
-                    delete node[k];
-                    count++;
-                } else {
-                    walk(node[k]);
-                }
-            }
-        }
-    };
-
-    walk(obj);
-    return count;
-};
-
-// Fetch, clean, and persist spec
-const fetchAndClean = async (sourceUrl) => {
-    console.log(`[${key}] Fetching spec from ${sourceUrl}`);
-
-    let rawData;
-    if (sourceUrl.startsWith('http')) {
-        const response = await fetchWithRetry(sourceUrl);
-        rawData = await response.text();
-    } else {
-        rawData = fs.readFileSync(sourceUrl, 'utf-8');
-    }
-
-    const jsonData = JSON.parse(rawData);
-    const removedCount = removeNullableTrue(jsonData);
-
-    console.log(`[${key}] Cleaned spec: removed ${removedCount} "nullable: true" field${removedCount !== 1 ? 's' : ''}`);
-
-    const outDir = './generated';
-    if (!fs.existsSync(outDir)) {
-        fs.mkdirSync(outDir, { recursive: true });
-    }
-
-    const tempFilePath = path.join(outDir, `${type}-openapi.json`);
-    fs.writeFileSync(tempFilePath, JSON.stringify(jsonData, null, 2));
-
-    return tempFilePath;
-};
-
-// Commands map
-const buildCommands = (filePath) => ({
-    'api-client': [
-        'swagger-typescript-api',
-        '--extract-enums',
-        '-p', filePath,
-        '-o', './generated',
-        '-n', 'apiClient',
-        '--axios',
-    ],
-    'api-contracts': [
-        'swagger-typescript-api',
-        '--extract-enums',
-        '--modular',
-        '--no-client',
-        '-p', filePath,
-        '-o', './generated',
-    ],
-    'fileshare-client': [
-        'swagger-typescript-api',
-        '--extract-enums',
-        '-p', filePath,
-        '-o', './generated/fileshare',
-        '--axios',
-        '-n', 'fileshareClient',
-        '--api-class-name', 'FileshareApi',
-    ],
-    'fileshare-contracts': [
-        'swagger-typescript-api',
-        '--extract-enums',
-        '--modular',
-        '--no-client',
-        '-p', filePath,
-        '-o', './generated/fileshare',
-    ],
-});
-
-// Main
-const localFilePath = await fetchAndClean(url);
-const cmdArgs = buildCommands(localFilePath)[key];
-
-if (!cmdArgs) {
-    console.error(`Unknown command key: ${key}`);
-    process.exit(1);
-}
-
-console.log(`[${key}] Generating ${mode} from ${localFilePath}…`);
-
-const result = spawnSync('npx', cmdArgs, { stdio: 'inherit', shell: true });
-
-if (result.status !== 0) {
-    console.error(`[${key}] Generation failed with exit code ${result.status}`);
-    process.exit(result.status || 1);
-}
-
-console.log(`[${key}] Done`);
