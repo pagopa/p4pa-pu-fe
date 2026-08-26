@@ -27,7 +27,7 @@ variables:
     deploy_path: '$(UAT_DEPLOY_PATH)'
     api_timeout: 0
     api_host: '$(UAT_API_HOST)'
-    fileshare_host: '$(UAT_API_FILESHARE_HOST)'
+    fileshare_host: '$(UAT_APIHOST_FILESHARE)'
     login_url: '$(UAT_LOGIN_URL)'
     openapi_url: '$(UAT_OPENAPI_URL)'
     openapifileshare_url: '$(UAT_OPENAPIFILESHARE_URL)'
@@ -44,7 +44,7 @@ variables:
     deploy_path: '$(PROD_DEPLOY_PATH)'
     api_timeout: 0
     api_host: '$(PROD_API_HOST)'
-    fileshare_host: '$(PROD_API_FILESHARE_HOST)'
+    fileshare_host: '$(PROD_APIHOST_FILESHARE)'
     login_url: '$(PROD_LOGIN_URL)'
     openapi_url: '$(PROD_OPENAPI_URL)'
     openapifileshare_url: '$(PROD_OPENAPIFILESHARE_URL)'
@@ -62,7 +62,7 @@ variables:
     deploy_path: '$(DEV_DEPLOY_PATH)'
     api_timeout: 0
     api_host: '$(DEV_API_HOST)'
-    fileshare_host: '$(DEV_API_FILESHARE_HOST)'
+    fileshare_host: '$(DEV_APIHOST_FILESHARE)'
     login_url: '$(DEV_LOGIN_URL)'
     openapi_url: '$(DEV_OPENAPI_URL)'
     openapifileshare_url: '$(DEV_OPENAPIFILESHARE_URL)'
@@ -86,7 +86,7 @@ stages:
               vite_deploy_path: '$(deploy_path)'
               vite_api_timeout: '$(api_timeout)'
               vite_apihost: '$(api_host)'
-              vite_fileshare_apihost: '$(fileshare_host)'
+              vite_apihost_fileshare: '$(fileshare_host)'
               vite_login_url: '$(login_url)'
               vite_resources_url: '$(resources_url)'
 
