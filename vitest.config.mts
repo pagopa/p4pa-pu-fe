@@ -7,7 +7,8 @@ export default defineConfig({
     extensions: ['.ts', '.js', '.mjs', '.json', '.tsx'],
     alias: {
       '@extra': path.resolve(__dirname, 'src/extra'),
-      '@core': path.resolve(__dirname, 'src')
+      '@core': path.resolve(__dirname, 'src'),
+      '@generated': path.resolve(__dirname, 'generated')
     }
   },
   test: {
