@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import {
   OrganizationDetailDTO,
   OrganizationStatus
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { PageRoutes } from '..';
 import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import {

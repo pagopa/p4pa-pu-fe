@@ -8,7 +8,7 @@ import {
   AssessmentsRegistry,
   AssessmentsRegistryStatus,
   PagedAssessmentsRegistry
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { PageRoutes } from '..';
 
 export type DataGridProps = {

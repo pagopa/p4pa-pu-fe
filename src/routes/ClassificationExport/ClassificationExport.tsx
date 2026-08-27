@@ -16,7 +16,7 @@ import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { FormSection } from './components/FormSection';
 import { FormComponent } from '../../components/FormComponent';
 import { useClassificationExport } from '../../hooks/useClassificationExport';
-import { LabelEnum } from '../../../generated/apiClient';
+import { LabelEnum } from '../../../generated/core/client';
 import { createClassificationsExportFile } from '../../api/createExportFile';
 import { PageRoutes } from '../../routes';
 import { useStore } from '../../store/GlobalStore';

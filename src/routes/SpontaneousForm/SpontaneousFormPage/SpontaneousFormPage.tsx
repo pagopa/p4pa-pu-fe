@@ -10,7 +10,7 @@ import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import FilterContainer, {
   COMPONENT_TYPE
 } from '../../../components/FilterContainer/FilterContainer';
-import { PagedSpontaneousForm } from '../../../../generated/data-contracts';
+import { PagedSpontaneousForm } from '../../../../generated/core/data-contracts';
 import SpontaneousFormDataGrid from './components/SpontaneousFormDataGrid';
 import { PageRoutes } from '../..';
 import { useNavigate } from 'react-router';

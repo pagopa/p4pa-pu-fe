@@ -10,7 +10,7 @@ import { useForm, FormProvider } from 'react-hook-form';
 import {
   OperatorsSelection,
   UserInfoDTO
-} from '../../../../../../generated/data-contracts';
+} from '../../../../../../generated/core/data-contracts';
 import * as api from '../../../../../api/debtPositionTypeOrgOperators';
 import { OperatorSelector } from './OperatorSelector';
 import { setUserInfo } from '../../../../../store/UserInfoStore';

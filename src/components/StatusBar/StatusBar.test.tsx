@@ -11,7 +11,7 @@ import {
 } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { StatusBar } from './StatusBar';
-import { ClassificationDetailDTO } from '../../../generated/data-contracts';
+import { ClassificationDetailDTO } from '../../../generated/core/data-contracts';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 
 vi.mock('./hooks/useClassificationAlert', () => ({

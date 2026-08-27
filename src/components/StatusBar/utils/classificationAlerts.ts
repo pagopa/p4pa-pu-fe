@@ -1,4 +1,4 @@
-import { ClassificationsEnum } from '../../../../generated/data-contracts';
+import { ClassificationsEnum } from '../../../../generated/core/data-contracts';
 
 export const CLASSIFICATION_SEVERITY_MAP = {
   // SUCCESS

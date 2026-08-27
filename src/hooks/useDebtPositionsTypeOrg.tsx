@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { DebtPositionTypeOrg } from '../../generated/apiClient';
+import { DebtPositionTypeOrg } from '../../generated/core/client';
 import { useTranslation } from 'react-i18next';
 import { DebtPositionType } from '../models/DebtPositionType';
 import utils from '../utils';

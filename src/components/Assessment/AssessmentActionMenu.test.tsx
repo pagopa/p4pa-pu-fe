@@ -1,7 +1,7 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import AssessmentActionMenu, { Props } from './AssessmentActionMenu';
 import { StoreProvider } from '../../store/GlobalStore';
-import { AssessmentStatus } from '../../../generated/data-contracts';
+import { AssessmentStatus } from '../../../generated/core/data-contracts';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import * as assessmentAPIS from '../../api/assessments';
 import { RouterProvider, createBrowserRouter } from 'react-router';

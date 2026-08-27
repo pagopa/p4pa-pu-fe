@@ -3,7 +3,7 @@ import {
   OperatorRole,
   OrganizationDTO,
   OrganizationStatus
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { AxiosResponse } from 'axios';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import utils from '../index';

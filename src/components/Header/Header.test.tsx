@@ -9,7 +9,7 @@ import {
   OperatorRole,
   OrganizationDTO,
   OrganizationStatus
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 
 // Mock dependencies
 vi.mock('react-router', async () => {

@@ -3,7 +3,7 @@ import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
 import { getClassificationDetail } from './getClassificationDetail';
 import { renderHook, waitFor } from '../__tests__/renderers';
-import { classificationDetailDTOSchema } from '../../generated/zod-schema';
+import { classificationDetailDTOSchema } from '../../generated/core/zod-schema';
 import { createMock } from 'zodock';
 
 const dataMock = createMock(classificationDetailDTOSchema);

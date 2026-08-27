@@ -33,7 +33,7 @@ import {
   TransferDTO,
   DebtPositionDetailDTO,
   PersonDTO
-} from '../../generated/data-contracts';
+} from '../../generated/core/data-contracts';
 
 /**
  * Base type for the installment structure in the form

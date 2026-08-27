@@ -6,7 +6,7 @@ import DetailContainer, {
   DetailData
 } from '../DetailContainer/DetailContainer';
 import EmptyDetailContainer from './EmptyDetailContainer';
-import { InstallmentStatus } from '../../../generated/data-contracts';
+import { InstallmentStatus } from '../../../generated/core/data-contracts';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';
 import debtPositions from '../../api/debtPositions';

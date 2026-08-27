@@ -2,7 +2,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { useOrgSilServiceForm } from './useOrgSilServiceForm';
-import { OrgSilServiceType } from '../../../../generated/data-contracts';
+import { OrgSilServiceType } from '../../../../generated/core/data-contracts';
 import { OrgSilServiceFormData } from '../schema';
 import { PageRoutes } from '../..';
 

@@ -7,7 +7,7 @@ import { SearchType } from '../../../models/DebtPositions';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
 import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import { useReceiptDownload } from '../../TelematicReceiptDetail/useReceiptDownload';
-import { DashboardByFc } from '../../../../generated/data-contracts';
+import { DashboardByFc } from '../../../../generated/core/data-contracts';
 import { DrawerItemConfig } from '../models';
 
 type HomeDrawerFCProps = {

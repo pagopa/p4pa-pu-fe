@@ -1,5 +1,5 @@
 import { FilteredRequest } from '../../models/Filters';
-import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
+import { DebtPositionTypeRequestBody } from '../../../generated/core/data-contracts';
 import { Step2Data } from '../../routes/DebtTypeCreate/components/Step2Settings';
 import utils from '../../utils';
 

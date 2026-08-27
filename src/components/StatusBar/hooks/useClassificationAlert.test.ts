@@ -6,7 +6,7 @@ import { useClassificationAlert } from './useClassificationAlert';
 import {
   ClassificationDetailDTO,
   ClassificationsEnum
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 
 vi.mock('../utils/classificationAlerts', () => ({
   CLASSIFICATION_SEVERITY_MAP: {

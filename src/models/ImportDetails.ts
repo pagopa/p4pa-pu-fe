@@ -1,4 +1,4 @@
-import { IngestionFlowFileType } from '../../generated/fileshare/fileshareClient';
+import { IngestionFlowFileType } from '../../generated/fileshare/client';
 
 type ImportFlowDetail = {
   title: string;

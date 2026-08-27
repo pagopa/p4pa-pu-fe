@@ -1,4 +1,4 @@
-import { OperatorsSelection } from '../../../generated/apiClient';
+import { OperatorsSelection } from '../../../generated/core/client';
 
 export enum PaymentMethodOption {
   FREE = 'free',

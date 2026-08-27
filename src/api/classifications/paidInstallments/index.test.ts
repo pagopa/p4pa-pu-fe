@@ -3,7 +3,7 @@ import { renderHook, waitFor, act } from '../../../__tests__/renderers';
 import { AxiosResponse } from 'axios';
 import utils from '../../../utils';
 import { parseAndLog } from '../../../utils/loaders';
-import { pagedClassificationPaidInstallmentsViewSchema } from '../../../../generated/zod-schema';
+import { pagedClassificationPaidInstallmentsViewSchema } from '../../../../generated/core/zod-schema';
 import { getPaidInstallments } from './index';
 import { PaidInstallmentsFilteredRequest, buildQueryParams } from './mappings';
 

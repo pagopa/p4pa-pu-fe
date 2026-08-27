@@ -8,9 +8,9 @@ import {
   taxonomyCodeDTOSchema,
   taxonomyOrganizationTypeDTOSchema,
   taxonomySchema
-} from '../../../generated/zod-schema';
+} from '../../../generated/core/zod-schema';
 import { buildQueryParams, TaxonomyFilteredRequest } from './mappings';
-import { ScheduleEnum } from '../../../generated/data-contracts';
+import { ScheduleEnum } from '../../../generated/core/data-contracts';
 
 export const getOrganizationsTypes = () =>
   useQuery({

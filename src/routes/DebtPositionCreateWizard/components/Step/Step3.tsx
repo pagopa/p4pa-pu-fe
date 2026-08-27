@@ -27,7 +27,7 @@ import {
   DebtPositionTypeEnum
 } from '../../../../models/DebtPositionType';
 import debtPositionsApi from '../../../../api/debtPositions';
-import { DebtPositionStatus } from '../../../../../generated/data-contracts';
+import { DebtPositionStatus } from '../../../../../generated/core/data-contracts';
 import {
   createStep3Resolver,
   Step3FormValues

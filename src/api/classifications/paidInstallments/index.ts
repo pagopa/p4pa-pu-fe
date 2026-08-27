@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../../utils';
 import { buildQueryParams, PaidInstallmentsFilteredRequest } from './mappings';
-import { pagedClassificationPaidInstallmentsViewSchema } from '../../../../generated/zod-schema';
+import { pagedClassificationPaidInstallmentsViewSchema } from '../../../../generated/core/zod-schema';
 import { parseAndLog } from '../../../utils/loaders';
 
 /**

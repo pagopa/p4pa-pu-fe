@@ -10,8 +10,8 @@ import {
 import {
   IngestionFlowFileType,
   UploadIngestionFlowFileResponseDTO
-} from '../../../generated/fileshare/fileshareClient';
-import { IngestionFlowFileTypeEnum } from '../../../generated/data-contracts';
+} from '../../../generated/fileshare/client';
+import { IngestionFlowFileTypeEnum } from '../../../generated/core/data-contracts';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import * as formatters from '../../utils/formatters';

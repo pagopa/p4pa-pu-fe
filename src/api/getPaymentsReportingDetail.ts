@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { paymentsReportingDetailDTOSchema } from '../../generated/zod-schema';
+import { paymentsReportingDetailDTOSchema } from '../../generated/core/zod-schema';
 
 type PaymentsReportingParams = Parameters<
   typeof utils.apiClient.bff.getPaymentsReporting

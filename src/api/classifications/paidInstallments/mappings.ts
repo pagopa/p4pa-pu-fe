@@ -1,7 +1,7 @@
 import {
   ClassificationPaidInstallmentsView,
   PagedClassificationPaidInstallmentsView
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { subDays } from 'date-fns';
 import { toStartOfDay, toEndOfDay } from '../../../utils/formatters';
 

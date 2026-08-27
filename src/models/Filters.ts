@@ -3,7 +3,7 @@ import {
   IngestionFlowFileTypeEnum,
   ExportFileTypeEnum,
   ExportFileStatus
-} from '../../generated/apiClient';
+} from '../../generated/core/client';
 export type FlowStatus = IngestionFlowFileStatus;
 
 export type FilteredRequest<T> = {

@@ -13,7 +13,7 @@ import { useStore } from '../../store/GlobalStore';
 import { PageRoutes } from '../../routes';
 import utils from '../../utils';
 import { useSearch } from '../../hooks/useSearch';
-import { PagedDebtPositionTypeWithCount } from '../../../generated/data-contracts';
+import { PagedDebtPositionTypeWithCount } from '../../../generated/core/data-contracts';
 
 type DebtTypesFilters = {
   code?: string;

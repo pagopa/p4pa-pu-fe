@@ -8,7 +8,7 @@ import { setOrganizationId } from '../../../../store/OrganizationIdStore';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { step2Schema } from './schema';
 import { PaymentMethodOption, SpontaneousMode } from '../../types';
-import { SpontaneousForm } from '../../../../../generated/data-contracts';
+import { SpontaneousForm } from '../../../../../generated/core/data-contracts';
 
 const { mockGetSpontaneousFormsList, mockNotifyEmit } = vi.hoisted(() => ({
   mockGetSpontaneousFormsList: vi.fn<

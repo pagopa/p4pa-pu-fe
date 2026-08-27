@@ -2,11 +2,11 @@ import { useQuery } from '@tanstack/react-query';
 import { z } from 'zod';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { orgSilServiceExtendedDTOSchema } from '../../generated/zod-schema';
+import { orgSilServiceExtendedDTOSchema } from '../../generated/core/zod-schema';
 import {
   OrgSilServiceType,
   OrgSilServiceExtendedDTO
-} from '../../generated/data-contracts';
+} from '../../generated/core/data-contracts';
 
 const isValidService = (
   service: OrgSilServiceExtendedDTO

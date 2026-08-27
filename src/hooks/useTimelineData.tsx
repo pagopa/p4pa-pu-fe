@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Typography, ChipOwnProps } from '@mui/material';
-import { PaymentEventType } from '../../generated/data-contracts';
+import { PaymentEventType } from '../../generated/core/data-contracts';
 
 export type TimelineElement = {
   date: Date;

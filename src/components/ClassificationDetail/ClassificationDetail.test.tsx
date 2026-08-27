@@ -5,8 +5,8 @@ import ClassificationsDetail from './';
 import * as classificationService from '../../api/getClassificationDetail';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { createMock } from 'zodock';
-import { classificationDetailDTOSchema } from '../../../generated/zod-schema';
-import { ClassificationsEnum } from '../../../generated/data-contracts';
+import { classificationDetailDTOSchema } from '../../../generated/core/zod-schema';
+import { ClassificationsEnum } from '../../../generated/core/data-contracts';
 import * as ReactRouter from 'react-router';
 
 const { mockNavigate, mockGeneratePath } = vi.hoisted(() => ({

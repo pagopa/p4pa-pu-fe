@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { configFESchema } from '../../generated/zod-schema';
+import { configFESchema } from '../../generated/core/zod-schema';
 
 const getBrokersConfigPlain = async () => {
   const { data: config } = await utils.apiClient.bff.getBrokerConfig();

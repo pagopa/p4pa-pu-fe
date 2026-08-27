@@ -1,7 +1,7 @@
 import { FilteredRequest } from '../../models/Filters';
-import { DebtPositionStatus } from '../../../generated/data-contracts';
+import { DebtPositionStatus } from '../../../generated/core/data-contracts';
 import utils from '../../utils';
-import { InstallmentStatus } from '../../../generated/data-contracts';
+import { InstallmentStatus } from '../../../generated/core/data-contracts';
 
 type GetInstallmentsQueryParams = Parameters<
   typeof utils.apiClient.bff.getInstallments

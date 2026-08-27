@@ -5,9 +5,9 @@ import { FilterFieldIds } from '../../models/SearchCardFields';
 import { useDebtPositionsTypeOrg } from '../../hooks/useDebtPositionsTypeOrg';
 import { useStore } from '../../store/GlobalStore';
 import { useTranslation } from 'react-i18next';
-import { DebtPositionStatus } from '../../../generated/data-contracts';
+import { DebtPositionStatus } from '../../../generated/core/data-contracts';
 import { optionMapsConverter } from '../../utils/formatters';
-import { InstallmentStatus } from '../../../generated/data-contracts';
+import { InstallmentStatus } from '../../../generated/core/data-contracts';
 
 export const useTabsConfig = (): Array<TabsConfig> => {
   const { t } = useTranslation();

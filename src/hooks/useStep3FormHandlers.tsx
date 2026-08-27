@@ -7,7 +7,7 @@ import {
 } from 'react-hook-form';
 import { Step3FormValues } from '../models/Step3Schema';
 import { DebtPositionTypeEnum } from '../models/DebtPositionType';
-import { PaymentOptionType } from '../../generated/data-contracts';
+import { PaymentOptionType } from '../../generated/core/data-contracts';
 import type { PaymentOption, Beneficiary } from '../models/paymentTypes';
 import { BeneficiaryFieldRef } from '../routes/DebtPositionCreateWizard/components/Beneficiary/BeneficiaryField';
 import { triggerValidationForAllBeneficiaries } from '../utils/paymentUtility';

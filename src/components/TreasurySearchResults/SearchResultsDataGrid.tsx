@@ -9,7 +9,7 @@ import { ReadMore } from '@mui/icons-material';
 import { IconButton } from '@mui/material';
 import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../../routes';
-import { PagedTreasuryView } from '../../../generated/apiClient';
+import { PagedTreasuryView } from '../../../generated/core/client';
 import { formatDate, moneyFormat } from '../../utils/formatters';
 
 type SearchResultDataRow = {

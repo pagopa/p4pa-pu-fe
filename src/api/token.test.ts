@@ -1,7 +1,7 @@
 import utils from '../utils';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
-import { accessTokenSchema } from '../../generated/zod-schema';
+import { accessTokenSchema } from '../../generated/core/zod-schema';
 import { createMock } from 'zodock';
 import { postTokenOrError } from './token';
 

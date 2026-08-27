@@ -4,7 +4,7 @@ import { useNavigate, useParams, generatePath } from 'react-router';
 import { PageRoutes } from '../../../routes';
 import { useStore } from '../../../store/GlobalStore';
 import { getOrganizationDetail } from '../../../api/organizations';
-import { OrganizationDetailDTO } from '../../../../generated/data-contracts';
+import { OrganizationDetailDTO } from '../../../../generated/core/data-contracts';
 import { UnifiedFormData } from '../../../models/OrganizationEditTypes';
 import { transformApiDataToFormData } from '../../../utils/organizationFormTransformers';
 import { OrganizationEditForm } from './components/OrganizationEditForm';

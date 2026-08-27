@@ -10,7 +10,7 @@ import {
   OrganizationsWithDebtPositionTypeOrgCountFilters,
   useManagedOrgsSearch
 } from '../../../api/debtTypesCreated';
-import { OrganizationWithDebtPositionTypeOrgCount } from '../../../../generated/data-contracts';
+import { OrganizationWithDebtPositionTypeOrgCount } from '../../../../generated/core/data-contracts';
 import { useStore } from '../../../store/GlobalStore';
 import utils from '../../../utils';
 import { useSearch } from '../../../hooks/useSearch';

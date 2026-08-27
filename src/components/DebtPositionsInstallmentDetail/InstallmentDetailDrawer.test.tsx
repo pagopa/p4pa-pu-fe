@@ -6,7 +6,7 @@ import {
   InstallmentDetailDrawer
 } from './InstallmentDetailDrawer';
 import { moneyFormat } from '../../utils/formatters';
-import { TransferDTO } from '../../../generated/data-contracts';
+import { TransferDTO } from '../../../generated/core/data-contracts';
 
 vi.mock('../../api/transfers', () => ({
   getTransfers: vi.fn()

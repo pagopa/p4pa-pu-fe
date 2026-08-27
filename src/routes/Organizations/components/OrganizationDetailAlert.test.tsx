@@ -4,7 +4,7 @@ import OrganizationDetailAlert from './OrganizationDetailAlert';
 import {
   OrganizationStatus,
   OrganizationAdditionalLanguage
-} from '../../../../generated/apiClient';
+} from '../../../../generated/core/client';
 
 describe('OrganizationDetailAlert Component', () => {
   const dataMock = {

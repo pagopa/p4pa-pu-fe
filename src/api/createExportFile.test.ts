@@ -5,7 +5,7 @@ import {
   ExportFileTypeEnum,
   PaidExportFileRequest,
   ReceiptsArchivingExportFileRequest
-} from '../../generated/apiClient';
+} from '../../generated/core/client';
 import {
   createClassificationsExportFile,
   createPaidExportFile,
@@ -14,7 +14,7 @@ import {
 import {
   ClassificationsExportFileRequestDTO,
   LabelEnum
-} from '../../generated/data-contracts';
+} from '../../generated/core/data-contracts';
 
 vi.mock('../utils', () => ({
   default: {

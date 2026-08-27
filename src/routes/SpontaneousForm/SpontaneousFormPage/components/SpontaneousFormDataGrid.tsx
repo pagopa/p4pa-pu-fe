@@ -5,7 +5,7 @@ import { ChevronRight } from '@mui/icons-material';
 import {
   PagedSpontaneousForm,
   SpontaneousForm
-} from '../../../../../generated/data-contracts';
+} from '../../../../../generated/core/data-contracts';
 import CustomDataGrid from '../../../../components/DataGrid/CustomDataGrid';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../..';

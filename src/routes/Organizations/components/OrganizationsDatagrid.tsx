@@ -7,7 +7,7 @@ import {
   PagedOrganizationWithDebtPositionTypeOrgAndOperatorsCount,
   OrganizationWithDebtPositionTypeOrgAndOperatorsCount,
   StatusEnum
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
 

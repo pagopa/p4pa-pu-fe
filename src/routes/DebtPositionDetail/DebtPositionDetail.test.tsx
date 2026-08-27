@@ -7,10 +7,10 @@ import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 import {
   debtPositionDetailDTOSchema,
   personDTOSchema
-} from '../../../generated/zod-schema';
+} from '../../../generated/core/zod-schema';
 import { createMock } from 'zodock';
 import debtPositions from '../../api/debtPositions';
-import { DebtPositionDetailDTO } from '../../../generated/apiClient';
+import { DebtPositionDetailDTO } from '../../../generated/core/client';
 import { UseQueryResult } from '@tanstack/react-query';
 import {
   InstallmentStatus,
@@ -18,7 +18,7 @@ import {
   PaymentOptionStatus,
   DebtPositionStatus,
   DebtPositionOrigin
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import * as utils from '../../utils/download';
 
 const mockDebtPositionDetail = createMock(debtPositionDetailDTOSchema);

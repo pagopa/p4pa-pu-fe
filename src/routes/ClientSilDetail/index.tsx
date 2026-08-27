@@ -7,7 +7,7 @@ import { DetailSectionProps } from '../../components/DetailContainer/DetailConta
 import { useStore } from '../../store/GlobalStore';
 import { useNavigate, useParams } from 'react-router';
 import { useCallback, useEffect, useState } from 'react';
-import { ClientDTO } from '../../../generated/data-contracts';
+import { ClientDTO } from '../../../generated/core/data-contracts';
 import { getClientDetail } from '../../api/clientSil';
 import { PageRoutes } from '..';
 import ClientSecret from './ClientSecret';

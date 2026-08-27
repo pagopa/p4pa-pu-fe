@@ -14,7 +14,7 @@ import {
   ExportFileTypeEnum,
   PaidExportFileRequest,
   ReceiptsArchivingExportFileRequest
-} from '../../../generated/apiClient';
+} from '../../../generated/core/client';
 import {
   createPaidExportFile,
   createReceiptsArchivingExportFile

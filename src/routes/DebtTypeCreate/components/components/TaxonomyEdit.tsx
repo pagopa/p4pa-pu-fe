@@ -2,7 +2,7 @@ import Stack from '@mui/material/Stack';
 import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { FormComponent } from '../../../../components/FormComponent';
-import { DebtPositionTypeDetailDTO } from '../../../../../generated/data-contracts';
+import { DebtPositionTypeDetailDTO } from '../../../../../generated/core/data-contracts';
 
 type TaxonomyEditProps = {
   prefilledData?: Partial<DebtPositionTypeDetailDTO>;

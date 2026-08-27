@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../../utils';
 import { parseAndLog } from '../../../utils/loaders';
-import { assessmentsRowsDetailSchema } from '../../../../generated/zod-schema';
+import { assessmentsRowsDetailSchema } from '../../../../generated/core/zod-schema';
 import { FilteredRequest } from '../../../models/Filters';
 import {
   AssessmentDetailFilters,

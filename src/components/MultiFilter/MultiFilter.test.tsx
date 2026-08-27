@@ -32,7 +32,7 @@ vi.mock('../FilterContainer/FilterContainer', () => ({
   }
 }));
 
-vi.mock('../../../generated/apiClient', async (importOriginal) => ({
+vi.mock('../../../generated/core/client', async (importOriginal) => ({
   ...(await importOriginal()),
   LabelEnum: {
     DOPPI: 'DOPPI',

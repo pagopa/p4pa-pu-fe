@@ -20,7 +20,7 @@ import {
   synchronizeTaxonomy
 } from '../../api/taxonomy';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
-import { ScheduleEnum } from '../../../generated/data-contracts';
+import { ScheduleEnum } from '../../../generated/core/data-contracts';
 import { formatDateTime } from '../../utils/formatters';
 
 export const TaxonomyPage = () => {

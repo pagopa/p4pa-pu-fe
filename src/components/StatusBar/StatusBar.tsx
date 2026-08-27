@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography, Alert, Stack } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ClassificationDetailDTO } from '../../../generated/data-contracts';
+import { ClassificationDetailDTO } from '../../../generated/core/data-contracts';
 import { CheckBox, DisabledByDefault } from '@mui/icons-material';
 import { useClassificationAlert } from './hooks/useClassificationAlert';
 

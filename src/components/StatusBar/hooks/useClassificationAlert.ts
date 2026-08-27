@@ -6,7 +6,7 @@ import {
 import {
   ClassificationDetailDTO,
   ClassificationsEnum
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 
 export const useClassificationAlert = (data: ClassificationDetailDTO) => {
   return useMemo(() => {

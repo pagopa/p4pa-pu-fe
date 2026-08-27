@@ -1,4 +1,4 @@
-import { ReceiptOriginType } from '../../../generated/data-contracts';
+import { ReceiptOriginType } from '../../../generated/core/data-contracts';
 import utils from '../../utils';
 
 export type TelematicReceiptsFilters = {

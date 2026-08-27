@@ -10,7 +10,7 @@ import { renderHook, waitFor } from '../../__tests__/renderers';
 import {
   Taxonomy,
   WorkflowCreatedDTO
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { buildQueryParams, TaxonomyFilteredRequest } from './mappings';
 
 vi.mock('../../utils', () => {

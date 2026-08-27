@@ -11,7 +11,7 @@ import { UnifiedFormData } from '../../../../models/OrganizationEditTypes';
 import {
   OrganizationDetailDTO,
   OrganizationStatus
-} from '../../../../../generated/data-contracts';
+} from '../../../../../generated/core/data-contracts';
 import { i18nTestSetup } from '../../../../__tests__/i18nTestSetup';
 
 // Mock hooks

@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { OperatorsSelection } from '../../../../../generated/data-contracts';
+import { OperatorsSelection } from '../../../../../generated/core/data-contracts';
 
 export const step5Schema = z.object({
   operatorsSelection: z.nativeEnum(OperatorsSelection, {

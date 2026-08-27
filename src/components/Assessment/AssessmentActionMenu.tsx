@@ -4,7 +4,7 @@ import { Button, Menu, MenuItem } from '@mui/material';
 import {
   AssessmentsRowsDetail,
   AssessmentStatus
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { useParams } from 'react-router';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';

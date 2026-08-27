@@ -14,7 +14,7 @@ import FilterContainer, {
 import { BaseFilterValues } from '../../../models/Filters';
 import Search from '@mui/icons-material/Search';
 import { useBrokerOrganizationsSearch } from '../../../api/organizationOperators';
-import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/data-contracts';
+import { OrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../../generated/core/data-contracts';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
 import { IconButton } from '@mui/material';

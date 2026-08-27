@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { ChipProps, IconButton } from '@mui/material';
-import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/apiClient';
+import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/core/client';
 import { formatDate, moneyFormat } from '../../utils/formatters';
 import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../../routes';

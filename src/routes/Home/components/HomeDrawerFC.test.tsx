@@ -3,7 +3,7 @@ import { render, screen } from '../../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 import { HomeDrawerFC } from './HomeDrawerFC';
-import { DashboardByFc } from '../../../../generated/data-contracts';
+import { DashboardByFc } from '../../../../generated/core/data-contracts';
 
 const mockDownloadReceipt = vi.fn();
 vi.mock('../../TelematicReceiptDetail/useReceiptDownload', () => ({

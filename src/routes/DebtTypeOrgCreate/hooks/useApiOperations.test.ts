@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '../../../__tests__/renderers';
 import { useApiOperations } from './useApiOperations';
-import { OperatorsSelection } from '../../../../generated/apiClient';
+import { OperatorsSelection } from '../../../../generated/core/client';
 import { PaymentMethodOption, SpontaneousMode } from '../types';
 
 describe('useApiOperations', () => {

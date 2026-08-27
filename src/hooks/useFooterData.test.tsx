@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useFooterData } from './useFooterData';
-import { ConfigFE } from '../../generated/apiClient';
+import { ConfigFE } from '../../generated/core/client';
 import { render, renderHook, act } from '../__tests__/renderers';
 import { setConfigFe } from '../store/ConfigFeStore';
 import { PageRoutes } from '../routes';

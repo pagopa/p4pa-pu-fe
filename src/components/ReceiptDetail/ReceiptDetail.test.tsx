@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { Download } from '@mui/icons-material';
 import ReceiptDetail from '.';
-import { ReceiptDetailDTO } from '../../../generated/apiClient';
+import { ReceiptDetailDTO } from '../../../generated/core/client';
 
 vi.mock('../TitleComponent/TitleComponent', () => ({
   default: ({ title, accessibleTitle, callToAction }: any) => (

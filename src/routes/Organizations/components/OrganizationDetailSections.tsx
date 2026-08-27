@@ -1,7 +1,7 @@
 import {
   OrganizationDetail,
   OrganizationStatus
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { DetailData } from '../../../components/DetailContainer/DetailContainer';
 import { Box, ChipOwnProps, Divider, Stack, Typography } from '@mui/material';
 import { TFunction } from 'i18next';

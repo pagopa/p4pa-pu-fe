@@ -4,7 +4,7 @@ import {
   dashboardByIufSchema,
   dashboardByIuvSchema,
   dashboardByFcSchema
-} from '../../../generated/zod-schema';
+} from '../../../generated/core/zod-schema';
 import { parseAndLog } from '../../utils/loaders';
 
 export type getDashboardByIuvQuery = Parameters<

@@ -10,12 +10,12 @@ import {
   assessmentsRegistrySchema,
   assessmentsSchema,
   assessmentsDetailSchema
-} from '../../../generated/zod-schema';
-import { pagedAssessmentsExtendedDTOSchema } from '../../../generated/zod-schema';
+} from '../../../generated/core/zod-schema';
+import { pagedAssessmentsExtendedDTOSchema } from '../../../generated/core/zod-schema';
 import {
   AssessmentsRegistry,
   AssessmentStatus
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { FilteredRequest, FilterValues } from '../../models/Filters';
 
 type AssessmentsParams = Parameters<

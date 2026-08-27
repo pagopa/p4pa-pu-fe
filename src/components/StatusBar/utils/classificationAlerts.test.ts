@@ -7,7 +7,7 @@ import {
   CLASSIFICATION_SEVERITY_MAP,
   CLASSIFICATION_ALERT_KEYS
 } from './classificationAlerts';
-import { ClassificationsEnum } from '../../../../generated/data-contracts';
+import { ClassificationsEnum } from '../../../../generated/core/data-contracts';
 
 describe('classificationAlerts', () => {
   describe('CLASSIFICATION_SEVERITY_MAP', () => {

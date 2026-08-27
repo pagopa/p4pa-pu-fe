@@ -2,7 +2,7 @@ import {
   RegistryOutcome,
   RegistryPagoPaEventType,
   RegistrySilEventType
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { Search } from '@mui/icons-material';
 import {
   COMPONENT_TYPE,

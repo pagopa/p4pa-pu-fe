@@ -14,7 +14,7 @@ import { Search } from '@mui/icons-material';
 import AssessmentDetailDataGrid from './components/AssessmentDetailDataGrid';
 import { useStore } from '../../store/GlobalStore';
 import { getAssessmentDetail } from '../../api/assessments/assessmentDetail/assessmentDetail';
-import { AssessmentsDetail } from '../../../generated/apiClient';
+import { AssessmentsDetail } from '../../../generated/core/client';
 import { Variant } from '@mui/material/styles/createTypography';
 import { PageRoutes } from '../../routes';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';

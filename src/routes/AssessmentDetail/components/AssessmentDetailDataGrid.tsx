@@ -7,7 +7,7 @@ import { moneyFormat, formatDate } from '../../../utils/formatters';
 import {
   AssessmentsDetail,
   AssessmentsRowsDetail
-} from '../../../../generated/apiClient';
+} from '../../../../generated/core/client';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { PageRoutes } from '../..';
 import { appendReceiptIudQuery } from '../../../utils/receiptNavigation';

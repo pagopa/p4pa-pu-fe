@@ -3,7 +3,7 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import {
   DebtPositionTypeOrgDTO,
   PagedDebtPositionTypeOrgDTO
-} from '../../../../generated/apiClient';
+} from '../../../../generated/core/client';
 import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
 import EmptyDetailContainer from '../../../components/DebtPositionsInstallmentDetail/EmptyDetailContainer';
 import { GridActionMenu } from './ActionMenu';

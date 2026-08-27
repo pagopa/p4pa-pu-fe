@@ -1,12 +1,12 @@
 import { AppState } from '../models/AppState';
-import { ConfigFE } from '../../generated/apiClient';
+import { ConfigFE } from '../../generated/core/client';
 import { FilterValues } from '../models/Filters';
 import { OrganizationIdMemo } from '../models/Organization';
 import {
   OperatorRole,
   OrganizationDTO,
   UserInfoDTO
-} from '../../generated/data-contracts';
+} from '../../generated/core/data-contracts';
 import { IdTokenPayload } from '../models/IdTokenPayload';
 import { FilterMap } from '../hooks/useMultiFilters';
 

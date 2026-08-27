@@ -5,8 +5,8 @@ import {
   pagedSpontaneousFormSchema,
   spontaneousFormDetailDTOSchema,
   spontaneousFormSchema
-} from '../../../generated/zod-schema';
-import { SpontaneousForm } from '../../../generated/apiClient';
+} from '../../../generated/core/zod-schema';
+import { SpontaneousForm } from '../../../generated/core/client';
 import { buildQueryParams, SpontaneousFormsFilteredRequest } from './mappings';
 
 const getSpontaneousForms = ({ organizationId }: { organizationId: number }) =>
