@@ -31,14 +31,6 @@ parameters:
 steps:
   - bash: |
       chmod +x env.sh
-      env -i \
-        PU_ENV=${{ parameters.env }} \
-        PU_VITE_DEPLOY_PATH=${{ parameters.vite_deploy_path }} \
-        PU_VITE_API_TIMEOUT=${{ parameters.vite_api_timeout }} \
-        PU_VITE_APIHOST=${{ parameters.vite_apihost }} \
-        PU_VITE_APIHOST_FILESHARE=${{ parameters.vite_apihost_fileshare }} \
-        PU_VITE_LOGIN_URL=${{ parameters.vite_login_url }} \
-        PU_VITE_RESOURCES_URL=${{ parameters.vite_resources_url }} \
-        bash env.sh
+      env -i $(env | grep '^PU_') bash env.sh
 
     displayName: 'Populate environment file'
