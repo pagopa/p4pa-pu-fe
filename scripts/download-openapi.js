@@ -115,9 +115,11 @@ const fetchAndClean = async (name, sourceUrl) => {
         fs.mkdirSync(outDir, { recursive: true });
     }
 
-    // Derive output filename from env var name: substring after first "_".
+    // Derive output filename from env var name: substring after "OPENAPI_".
     // Strip a trailing "_url" or "url" and fallback to "core" when empty.
-    const rawSuffix = name.includes('_') ? name.substring(name.indexOf('_') + 1) : '';
+    const marker = 'OPENAPI_';
+    const markerIndex = name.indexOf(marker);
+    const rawSuffix = markerIndex >= 0 ? name.substring(markerIndex + marker.length) : '';
     const suffix = rawSuffix.replace(/_?url$/i, '');
     const baseName = suffix.trim() === '' ? 'core' : suffix.toLowerCase();
 
