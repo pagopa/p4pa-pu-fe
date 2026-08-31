@@ -25,10 +25,10 @@ const RESOURCES_URL_schema = z.string().min(1);
 
 try {
   DEPLOY_PATH_schema.parse(VITE_DEPLOY_PATH);
-  APIHOST_schema.parse(import.meta.env.VITE_APIHOST);
-  APIHOST_FILESHARE_schema.parse(import.meta.env.VITE_APIHOST_FILESHARE);
+  APIHOST_schema.parse(VITE_APIHOST);
+  APIHOST_FILESHARE_schema.parse(VITE_APIHOST_FILESHARE);
   API_TIMEOUT_schema.parse(PARSED_API_TIMEOUT);
-  RESOURCES_URL_schema.parse(import.meta.env.VITE_RESOURCES_URL);
+  RESOURCES_URL_schema.parse(VITE_RESOURCES_URL);
 } catch (e) {
   console.error('ENV variables validation fails', (e as ZodError).issues);
 }
