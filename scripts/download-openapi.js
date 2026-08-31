@@ -4,11 +4,18 @@
  *
  * Usage: node scripts/download-openapi.js
  *
+ * Reads system env vars and project-root `.env` (via dotenv).
+ * System env vars take precedence over `.env`.
  * Defaults are used only for OPENAPI_URL and OPENAPI_FILESHARE_URL.
  * Output files are named from the env var suffix, e.g. OPENAPI_FILESHARE_URL -> generated/fileshare.json.
  */
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
+import dotenv from 'dotenv';
+
+const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+dotenv.config({ path: path.join(ROOT_DIR, '.env') });
 
 // Unhandled rejection guard
 process.on('unhandledRejection', (err) => {
