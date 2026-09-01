@@ -31,6 +31,9 @@ parameters:
 steps:
   - bash: |
       chmod +x env.sh
+      env -i \
+      ENV=${{ parameters.env }} \
+      $(env | while IFS='=' read -r k v; do case "$k" in "${{ parameters.env }}_VITE"*) printf '%s=%q ' "$k" "$v";; esac; done) \
       bash env.sh
 
     displayName: 'Populate environment file'
