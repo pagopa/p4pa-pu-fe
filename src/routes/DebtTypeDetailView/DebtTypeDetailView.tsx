@@ -40,6 +40,7 @@ import { OrgSilServiceType } from '../../../generated/data-contracts';
 import { theme } from '@pagopa/mui-italia';
 import { useConfirmDialog } from './hooks/useConfirmDialog';
 import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';
+import { useQueryClient } from '@tanstack/react-query';
 
 export const DebtTypeDetailView = () => {
   const {
@@ -55,6 +56,8 @@ export const DebtTypeDetailView = () => {
 
   const [actionMenuAnchorEl, setActionMenuAnchorEl] =
     useState<null | HTMLElement>(null);
+  const [shouldFocusTitle, setShouldFocusTitle] = useState(false);
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [accordionSections, setAccordionSections] = useState<
     Array<AccordionSectionConfig>
@@ -74,9 +77,8 @@ export const DebtTypeDetailView = () => {
   const updateFlagActive = updateFlagActiveDebtPositionTypeOrg(
     () => {
       utils.notify.emit(t('debtTypeDetail.success.updated'), 'success');
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      queryClient.invalidateQueries({ queryKey: ['getDebtPositionTypeOrgs'] });
+      setShouldFocusTitle(true);
     },
     () => {
       showErrorDialog('genericErrorDescription');
@@ -325,6 +327,17 @@ export const DebtTypeDetailView = () => {
       };
     }
   }, [data?.response?.flagActive, t, isTechnicalDebtType]);
+
+  // The button that opened the dialog is removed from the DOM once the status
+  // changes, so the restored focus would land on nothing: move it to the title.
+  useEffect(() => {
+    if (shouldFocusTitle && !isOpen) {
+      document
+        .querySelector<HTMLElement>('[data-testid="main-title"]')
+        ?.focus();
+      setShouldFocusTitle(false);
+    }
+  }, [shouldFocusTitle, isOpen]);
 
   const getStatusChip = () => {
     if (data?.response?.flagActive) {

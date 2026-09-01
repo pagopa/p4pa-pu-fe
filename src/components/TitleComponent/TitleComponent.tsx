@@ -187,7 +187,12 @@ const TitleComponent = ({
               maxWidth: '100%',
               ...sx
             }}
-            {...(isMainPageTitle && { component: 'h1' as const })}
+            {...(isMainPageTitle && {
+              component: 'h1' as const,
+              // programmatically focusable (not in the tab order) so actions
+              // that remove their own trigger can move focus back here
+              tabIndex: -1
+            })}
             data-testid={
               dataTestId || (isMainPageTitle ? 'main-title' : 'section-title')
             }
