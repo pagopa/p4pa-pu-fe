@@ -16,7 +16,6 @@ import dotenv from 'dotenv';
 
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 dotenv.config({ path: path.join(ROOT_DIR, '.env') });
-const environmentName = process.env.ENV?.trim().toLowerCase() || 'unknown';
 
 // Unhandled rejection guard
 process.on('unhandledRejection', (err) => {
@@ -36,6 +35,11 @@ const RETRY_BASE_DELAY_MS = 500;
 
 const isUsableValue = (value) =>
     typeof value === 'string' && value.trim() !== '' && value !== 'undefined';
+
+const resolveEnvironmentName = () => {
+    const envName = process.env.ENV ?? process.env.ENVIRONMENT;
+    return isUsableValue(envName) ? envName.trim().toLowerCase() : 'unknown';
+};
 
 const resolveSources = () => {
     const sources = {};
@@ -138,6 +142,7 @@ const fetchAndClean = async (name, sourceUrl) => {
 };
 
 const sources = resolveSources();
+const environmentName = resolveEnvironmentName();
 
 for (const [name, sourceUrl] of Object.entries(sources)) {
     try {
