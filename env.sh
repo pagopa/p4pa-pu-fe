@@ -13,10 +13,10 @@ prefix="${ENV}_VITE_"
 # Always keep ENV in the generated .env file
 echo "ENV=\"${ENV}\"" >> .env
 
-# Keep only variables named <ENV>_VITE_...
+# Keep only variables named <ENV>_VITE_..., writing them as VITE_...
 env | while IFS='=' read -r varname varvalue; do
     if [ -n "$varname" ] && [[ "$varname" == "${prefix}"* ]]; then
-        echo "${varname}=\"${varvalue}\"" >> .env
+        echo "${varname#"${ENV}_"}=\"${varvalue}\"" >> .env
     fi
 done
 
