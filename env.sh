@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Removing existing env file
-rm .env
+> .env
 
 # saving variables environment prefix in a variable
 varprefix="PU_"
