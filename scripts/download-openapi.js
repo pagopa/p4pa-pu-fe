@@ -38,8 +38,10 @@ const isUsableValue = (value) =>
 
 const resolveEnvironmentName = () => {
     const envName = process.env.ENV ?? process.env.ENVIRONMENT;
-    return isUsableValue(envName) ? envName.trim().toLowerCase() : 'unknown';
+    return isUsableValue(envName) ? envName.trim().toUpperCase() : 'unknown';
 };
+
+const environmentName = resolveEnvironmentName();
 
 const resolveSources = () => {
     const sources = {};
@@ -50,7 +52,9 @@ const resolveSources = () => {
     }
 
     for (const [name, value] of Object.entries(process.env)) {
-        if (!name.includes('OPENAPI') || name in DEFAULT_URLS) {
+        // Only consider env vars that contain "OPENAPI" or "DEV_OPENAPI" (example)
+        const substringName = environmentName !== 'LOCAL' ? `${environmentName}_OPENAPI` : 'OPENAPI';
+        if (!name.includes(substringName) || name in DEFAULT_URLS) {
             continue;
         }
 
@@ -142,7 +146,6 @@ const fetchAndClean = async (name, sourceUrl) => {
 };
 
 const sources = resolveSources();
-const environmentName = resolveEnvironmentName();
 
 for (const [name, sourceUrl] of Object.entries(sources)) {
     try {
