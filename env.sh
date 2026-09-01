@@ -4,7 +4,7 @@
 > .env
 
 # saving variables environment prefix in a variable
-varprefix="PU_"
+varprefix="VITE_"
 
 # Print relevant environment variables
 env | grep -i $varprefix

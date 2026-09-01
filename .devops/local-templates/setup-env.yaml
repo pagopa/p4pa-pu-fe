@@ -31,6 +31,6 @@ parameters:
 steps:
   - bash: |
       chmod +x env.sh
-      env -i $(env | grep '^PU_') bash env.sh
+      bash env.sh
 
     displayName: 'Populate environment file'
