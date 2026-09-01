@@ -16,6 +16,7 @@ import dotenv from 'dotenv';
 
 const ROOT_DIR = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 dotenv.config({ path: path.join(ROOT_DIR, '.env') });
+const environmentName = process.env.ENV?.trim().toLowerCase() || 'unknown';
 
 // Unhandled rejection guard
 process.on('unhandledRejection', (err) => {
@@ -141,7 +142,7 @@ const sources = resolveSources();
 for (const [name, sourceUrl] of Object.entries(sources)) {
     try {
         const localFilePath = await fetchAndClean(name, sourceUrl);
-        console.log(`[${name}] Saved cleaned spec to ${localFilePath}`);
+        console.log(`[${name}] | ${environmentName} | Saved cleaned spec to ${localFilePath}`);
     } catch (err) {
         console.warn(`[${name}] Warning: failed to download/clean spec: ${err?.message ?? err}`);
         // continue with next source without exiting
