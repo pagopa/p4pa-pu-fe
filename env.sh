@@ -20,3 +20,7 @@ for var in $(env | grep "$varprefix"); do
     echo "$varname=\"$varvalue\"" >> .env
 done
 
+# Print content of populated .env file
+echo -e "\n--- Contenuto di .env ---"
+cat .env
+
