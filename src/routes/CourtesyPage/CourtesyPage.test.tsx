@@ -33,7 +33,9 @@ vi.mock('../../store/GlobalStore', () => ({
 
 vi.mock('../../../generated/core/data-contracts', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('../../../generated/core/data-contracts')>();
+    await importOriginal<
+      typeof import('../../../generated/core/data-contracts')
+    >();
 
   return {
     ...actual,

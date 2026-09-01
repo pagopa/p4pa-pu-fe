@@ -88,10 +88,7 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
             classificationId: params.row.classificationId
           })}
         >
-          <IconButton
-            aria-label={t('commons.detail')}
-            size="small"
-          >
+          <IconButton aria-label={t('commons.detail')} size="small">
             <ReadMore />
           </IconButton>
         </Link>

@@ -1,8 +1,6 @@
-/* global module */
+/* eslint-disable */
 
 /**
- * eslint-env node
- *
  * ts-to-zod configuration.
  *
  * @type {import("ts-to-zod").TsToZodConfig}
@@ -37,9 +35,6 @@ module.exports = findDataContracts(generatedDir).map((input) => {
   return {
     name: path.relative(generatedDir, directory),
     input: path.relative(process.cwd(), input),
-    output: path.relative(
-      process.cwd(),
-      path.join(directory, 'zod-schema.ts')
-    )
+    output: path.relative(process.cwd(), path.join(directory, 'zod-schema.ts'))
   };
 });
