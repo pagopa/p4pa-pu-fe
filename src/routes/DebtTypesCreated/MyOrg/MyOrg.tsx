@@ -124,7 +124,6 @@ export const MyOrg = () => {
         <IconButton
           data-testid={`navigate-icon-${params.row.debtPositionTypeOrgId}`}
           size="small"
-          color="primary"
           aria-label={t(
             organizationIdByURL
               ? 'debtTypesCreated.myOrganizationDataGrid.detailManagedOrg'
