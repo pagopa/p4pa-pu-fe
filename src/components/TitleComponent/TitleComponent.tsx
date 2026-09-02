@@ -11,7 +11,7 @@ import {
   SxProps,
   Theme
 } from '@mui/material';
-import React, { useEffect } from 'react';
+import React, { useEffect, useId } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export type ActionMenuItem = {
@@ -62,6 +62,7 @@ const TitleComponent = ({
 }: TitleComponentProps) => {
   const theme = useTheme();
   const { t } = useTranslation();
+  const statusChipId = useId();
 
   // Update page title only for main page titles (h1, h2, h3)
   // Section titles (h4, h5, h6) are considered sub-sections and don't update the browser title
@@ -191,7 +192,10 @@ const TitleComponent = ({
               component: 'h1' as const,
               // programmatically focusable (not in the tab order) so actions
               // that remove their own trigger can move focus back here
-              tabIndex: -1
+              tabIndex: -1,
+              // the chip is a sibling of the title: without this the screen
+              // reader announces the title alone and the status is missed
+              'aria-describedby': chip ? statusChipId : undefined
             })}
             data-testid={
               dataTestId || (isMainPageTitle ? 'main-title' : 'section-title')
@@ -202,6 +206,7 @@ const TitleComponent = ({
 
           {chip && (
             <Chip
+              id={statusChipId}
               label={chip.label}
               color={chip.color}
               sx={{ ml: 2, flexShrink: 0 }}

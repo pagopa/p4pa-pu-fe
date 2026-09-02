@@ -535,6 +535,36 @@ describe('DebtTypeDetailView', () => {
 
       consoleSpy.mockRestore();
     });
+
+    it('moves focus to the title after a successful disable', async () => {
+      mockUpdateFlagActive.mutateAsync.mockResolvedValueOnce(undefined);
+
+      render(<DebtTypeDetailView />);
+
+      fireEvent.click(screen.getByTestId('action-menu-button'));
+
+      await waitFor(() => {
+        fireEvent.click(screen.getByText('Disabilita'));
+        expect(mockConfirmDialog.showDisableDialog).toHaveBeenCalled();
+      });
+
+      const disableCallback = mockConfirmDialog.showDisableDialog.mock
+        .calls[0][0] as () => Promise<void>;
+
+      await act(async () => {
+        await disableCallback();
+      });
+
+      expect(mockUpdateFlagActive.mutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({ flagActive: false })
+      );
+
+      act(() => (updateSuccessCallback as () => void)());
+
+      await waitFor(() =>
+        expect(screen.getByTestId('main-title')).toHaveFocus()
+      );
+    });
   });
 
   describe('Inactive debt type actions', () => {

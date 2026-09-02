@@ -56,7 +56,7 @@ export const DebtTypeDetailView = () => {
 
   const [actionMenuAnchorEl, setActionMenuAnchorEl] =
     useState<null | HTMLElement>(null);
-  const [shouldFocusTitle, setShouldFocusTitle] = useState(false);
+  const [pendingSuccessFeedback, setPendingSuccessFeedback] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [accordionSections, setAccordionSections] = useState<
@@ -76,9 +76,11 @@ export const DebtTypeDetailView = () => {
 
   const updateFlagActive = updateFlagActiveDebtPositionTypeOrg(
     () => {
-      utils.notify.emit(t('debtTypeDetail.success.updated'), 'success');
-      queryClient.invalidateQueries({ queryKey: ['getDebtPositionTypeOrgs'] });
-      setShouldFocusTitle(true);
+      queryClient.invalidateQueries({
+        queryKey: ['getDebtPositionTypeOrgs']
+      });
+      // notified once the dialog is gone, see the effect below
+      setPendingSuccessFeedback(true);
     },
     () => {
       showErrorDialog('genericErrorDescription');
@@ -88,6 +90,7 @@ export const DebtTypeDetailView = () => {
   const {
     data,
     isLoading,
+    isFetching,
     isError: isDebtTypeError,
     isSuccess,
     error: debtTypeError
@@ -328,16 +331,22 @@ export const DebtTypeDetailView = () => {
     }
   }, [data?.response?.flagActive, t, isTechnicalDebtType]);
 
-  // The button that opened the dialog is removed from the DOM once the status
-  // changes, so the restored focus would land on nothing: move it to the title.
+  // Runs once the confirm dialog is closed: while it is open MUI marks the rest
+  // of the page as aria-hidden, so a notification emitted there never reaches
+  // the screen reader. The button that opened the dialog is also removed from
+  // the DOM once the status changes, so the restored focus would land on
+  // nothing: move it to the title.
   useEffect(() => {
-    if (shouldFocusTitle && !isOpen) {
+    // isFetching: the invalidation above triggers a refetch, and the status
+    // chip must already carry the new value when the focus reaches the title
+    if (pendingSuccessFeedback && !isOpen && !isFetching) {
+      utils.notify.emit(t('debtTypeDetail.success.updated'), 'success');
       document
         .querySelector<HTMLElement>('[data-testid="main-title"]')
         ?.focus();
-      setShouldFocusTitle(false);
+      setPendingSuccessFeedback(false);
     }
-  }, [shouldFocusTitle, isOpen]);
+  }, [pendingSuccessFeedback, isOpen, isFetching, t]);
 
   const getStatusChip = () => {
     if (data?.response?.flagActive) {
