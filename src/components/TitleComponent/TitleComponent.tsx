@@ -30,6 +30,7 @@ export type ActionMenuItem = {
   dataTestId?: string;
   isIconButton?: boolean;
   disabled?: boolean;
+  ariaLabel?: string;
 };
 
 type TitleComponentProps = {
@@ -121,6 +122,7 @@ const TitleComponent = ({
           justifyContent={'center'}
         >
           <IconButton
+            aria-label={action.ariaLabel ?? `${action.buttonText}`}
             size="large"
             onClick={action.onActionClick}
             data-testid={action.dataTestId}
@@ -141,7 +143,7 @@ const TitleComponent = ({
         variant={action.variant || 'contained'}
         color={(action.color as ButtonProps['color']) || 'primary'}
         onClick={action.onActionClick}
-        aria-label={`${action.buttonText}`}
+        aria-label={action.ariaLabel ?? `${action.buttonText}`}
         data-testid={action.dataTestId}
         disabled={action.disabled}
         sx={
