@@ -30,7 +30,7 @@ variables:
     fileshare_host: '$(UAT_APIHOST_FILESHARE)'
     login_url: '$(UAT_LOGIN_URL)'
     openapi_url: '$(UAT_OPENAPI_URL)'
-    openapifileshare_url: '$(UAT_OPENAPIFILESHARE_URL)'
+    openapi_fileshare_url: '$(UAT_OPENAPI_FILESHARE_URL)'
     resources_url: '$(UAT_LEGALDOCS_TEMPLATE_URL)'
 
   ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
@@ -47,7 +47,7 @@ variables:
     fileshare_host: '$(PROD_APIHOST_FILESHARE)'
     login_url: '$(PROD_LOGIN_URL)'
     openapi_url: '$(PROD_OPENAPI_URL)'
-    openapifileshare_url: '$(PROD_OPENAPIFILESHARE_URL)'
+    openapi_fileshare_url: '$(PROD_OPENAPI_FILESHARE_URL)'
     resources_url: '$(PROD_LEGALDOCS_TEMPLATE_URL)'
 
   # every branch different from past will be considered as DEV
@@ -65,7 +65,7 @@ variables:
     fileshare_host: '$(DEV_APIHOST_FILESHARE)'
     login_url: '$(DEV_LOGIN_URL)'
     openapi_url: '$(DEV_OPENAPI_URL)'
-    openapifileshare_url: '$(DEV_OPENAPIFILESHARE_URL)'
+    openapi_fileshare_url: '$(DEV_OPENAPI_FILESHARE_URL)'
     resources_url: '$(DEV_LEGALDOCS_TEMPLATE_URL)'
 
 pool:
@@ -92,7 +92,7 @@ stages:
 
           - script: |
               export OPENAPI_URL=$(openapi_url)
-              export OPENAPIFILESHARE_URL=$(openapifileshare_url)
+              export OPENAPI_FILESHARE_URL=$(openapi_fileshare_url)
               yarn build
             displayName: 'yarn build'
 

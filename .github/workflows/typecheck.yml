@@ -20,4 +20,4 @@ jobs:
           yarn tsc
         env:
           OPENAPI_URL: ${{ vars.OPENAPI_URL }}
-          OPENAPIFILESHARE_URL: ${{ vars.OPENAPIFILESHARE_URL }}
+          OPENAPI_FILESHARE_URL: ${{ vars.OPENAPI_FILESHARE_URL }}
