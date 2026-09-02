@@ -139,3 +139,4 @@ tsconfig.tsbuildinfo
 **/sonar-project.properties
 node_modules
 .env
+src/extra/**
