@@ -16,11 +16,11 @@ import {
 import { useApiOperations } from './useApiOperations';
 import { useFormSchemas } from './useFormSchemas';
 import { useStore } from '../../../store/GlobalStore';
-import { OperatorsSelection } from '../../../../generated/apiClient';
+import { OperatorsSelection } from '../../../../generated/core/client';
 import utils from '../../../utils';
 import { useDebtTypeOrgId } from '../../../hooks/useDebtTypeOrgId';
 import { useTranslation } from 'react-i18next';
-import { debtPositionTypeOrgSchema } from '../../../../generated/zod-schema';
+import { debtPositionTypeOrgSchema } from '../../../../generated/core/zod-schema';
 
 const ERROR_MESSAGES = {
   INVALID_ID: 'errors.invalidId',

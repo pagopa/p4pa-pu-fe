@@ -9,7 +9,7 @@ import {
   DebtPositionStatus,
   DebtPositionOrigin,
   PaymentOptionType
-} from '../../generated/data-contracts';
+} from '../../generated/core/data-contracts';
 import {
   Step1Data,
   Step2Data,

@@ -4,7 +4,7 @@ import AssessmentSearchResultsDataGrid from './AssessmentSearchResultsDataGrid';
 import {
   PagedAssessmentsExtendedDTO,
   AssessmentsExtendedDTO
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 
 vi.mock('../../utils/formatters', () => ({
   formatDate: () => '01/01/2023',

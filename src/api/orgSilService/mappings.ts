@@ -1,4 +1,4 @@
-import { OrgSilServiceType } from '../../../generated/data-contracts';
+import { OrgSilServiceType } from '../../../generated/core/data-contracts';
 
 export type OrgSilServicesFilters = {
   applicationName?: string;

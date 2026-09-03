@@ -5,7 +5,7 @@ import {
   SilServiceLegacyBasicAuthConfigDTO,
   SilServiceLegacyJwtAuthConfigDTO,
   OrgSilServiceType
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { toCamelCase } from '../../../utils/formatters';
 import i18n from '../../../translations/i18n';
 import { t } from 'i18next';

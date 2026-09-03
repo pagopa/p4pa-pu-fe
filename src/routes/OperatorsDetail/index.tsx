@@ -19,7 +19,7 @@ import DetailContainer, {
 } from '../../components/DetailContainer/DetailContainer';
 import { useDebtPositionTypesByOrg } from '../../hooks/useDebtPositionTypesByOrg';
 import { useBreadcrumbs } from './hooks/useBreadcrumbs';
-import { DebtPositionTypeOrgDTO } from '../../../generated/data-contracts';
+import { DebtPositionTypeOrgDTO } from '../../../generated/core/data-contracts';
 import { removeDebtPositionTypeOrgFromOperator } from '../../api/debtPositionTypeOrgOperators';
 import { useStore } from '../../store/GlobalStore';
 

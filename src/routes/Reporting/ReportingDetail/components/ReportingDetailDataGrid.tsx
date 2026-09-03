@@ -8,7 +8,7 @@ import { moneyFormat } from '../../../../utils/formatters';
 import {
   PagedPaymentsReportingRow,
   PaymentsReportingWithReceiptView
-} from '../../../../../generated/apiClient';
+} from '../../../../../generated/core/client';
 import { buildTelematicReceiptDetailPath } from '../../../../utils/receiptNavigation';
 
 type ReportingDetailDataGridProps = {
@@ -71,7 +71,6 @@ const ReportingDetailDataGrid = ({
           <Link to={detailPath}>
             <IconButton
               aria-label={t('commons.routes.TELEMATIC_RECEIPT_DETAIL')}
-              color="primary"
               size="small"
             >
               <ReadMore />

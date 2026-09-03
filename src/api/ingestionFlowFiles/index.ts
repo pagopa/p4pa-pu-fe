@@ -4,7 +4,7 @@ import {
   FileOrigin,
   IngestionFlowFileType,
   RequestParams
-} from '../../../generated/fileshare/fileshareClient';
+} from '../../../generated/fileshare/client';
 import { extractFilename } from '../../utils/formatters';
 import { buildQueryParams, FlowFileFilteredRequest } from './mappings';
 

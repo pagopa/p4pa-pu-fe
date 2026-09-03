@@ -12,7 +12,7 @@ import { ChipProps } from '@mui/material/Chip';
 import {
   DebtPositionStatus,
   PagedDebtPositionView
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { format } from 'date-fns';
 import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
 import { IconButton } from '@mui/material';
@@ -88,7 +88,6 @@ export const DebtPositionsDataGrid = ({ data }: DataGridProps) => {
       renderCell: (params: GridRenderCellParams<ResultDataRow>) => (
         <IconButton
           size="small"
-          color="primary"
           aria-label={t('commons.goToDetail')}
           onClick={() => {
             navigate(

@@ -5,11 +5,11 @@ import { createMock } from 'zodock';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi, beforeEach, Mock } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
-import { DebtPositionStatus } from '../../../generated/data-contracts';
+import { DebtPositionStatus } from '../../../generated/core/data-contracts';
 import {
   pagedDebtPositionViewSchema,
   pagedInstallmentViewSchema
-} from '../../../generated/zod-schema';
+} from '../../../generated/core/zod-schema';
 import {
   DebtPositionFilteredRequest,
   InstallmentsFilteredRequest

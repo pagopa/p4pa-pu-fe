@@ -2,7 +2,7 @@ import { renderHook } from '../__tests__/renderers';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
 import { QueryObserverPendingResult } from '@tanstack/react-query';
-import { DebtPositionTypeOrg } from '../../generated/apiClient';
+import { DebtPositionTypeOrg } from '../../generated/core/client';
 import utils from '../utils';
 import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
 

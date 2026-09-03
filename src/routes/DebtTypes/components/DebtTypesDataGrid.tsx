@@ -6,7 +6,7 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import {
   PagedDebtPositionTypeWithCount,
   DebtPositionTypeWithCount
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { formatDateTime } from '../../../utils/formatters';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';
@@ -61,7 +61,6 @@ const DebtTypesDataGrid = ({
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<DebtPositionTypeWithCount>) => (
         <IconButton
-          color="primary"
           aria-label={t('debtTypeCatalogDetail.accessibleTitle', {
             description: params.row.description
           })}

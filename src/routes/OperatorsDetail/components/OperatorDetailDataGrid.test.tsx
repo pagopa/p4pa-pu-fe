@@ -2,7 +2,7 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import OperatorDetailDataGrid from './OperatorDetailDataGrid';
-import { PagedDebtPositionTypeOrgDTO } from '../../../../generated/apiClient';
+import { PagedDebtPositionTypeOrgDTO } from '../../../../generated/core/client';
 import utils from '../../../utils';
 
 vi.mock('../../../utils', () => ({

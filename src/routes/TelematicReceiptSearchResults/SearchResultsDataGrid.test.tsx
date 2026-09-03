@@ -2,7 +2,7 @@ import React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
-import { PagedReceiptView } from '../../../generated/data-contracts';
+import { PagedReceiptView } from '../../../generated/core/data-contracts';
 import { STATE } from '../../store/types';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';

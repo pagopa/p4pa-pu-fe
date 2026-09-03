@@ -8,7 +8,7 @@ import {
   RegistryOutcome,
   RegistryEventSubType,
   RegistryEventCategory
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { FilteredRequest } from '../../models/Filters';
 import { NodoFilterValues } from '../../routes/Events/configs';
 

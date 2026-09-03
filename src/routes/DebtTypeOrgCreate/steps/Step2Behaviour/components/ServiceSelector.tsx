@@ -4,7 +4,7 @@ import { FormComponent } from '../../../../../components/FormComponent';
 import { DebtTypeOrgForm } from '../../../types';
 import { useServiceSelectorState } from '../../../hooks/useServiceSelectorState';
 import { UseQueryResult } from '@tanstack/react-query';
-import { OrgSilServiceExtendedDTO } from '../.../../../../../../../generated/data-contracts';
+import { OrgSilServiceExtendedDTO } from '../.../../../../../../../generated/core/data-contracts';
 
 type ServiceSelectorProps = {
   control: Control<DebtTypeOrgForm>;

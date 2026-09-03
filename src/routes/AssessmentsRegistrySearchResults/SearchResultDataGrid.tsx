@@ -8,7 +8,7 @@ import {
   AssessmentsRegistry,
   AssessmentsRegistryStatus,
   PagedAssessmentsRegistry
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { PageRoutes } from '..';
 
 export type DataGridProps = {
@@ -84,7 +84,7 @@ export const SearchResultsDataGrid = ({ data }: DataGridProps) => {
           })}
           aria-label={t('commons.goToDetail')}
         >
-          <IconButton color="primary" size="small">
+          <IconButton size="small">
             <ChevronRight />
           </IconButton>
         </Link>

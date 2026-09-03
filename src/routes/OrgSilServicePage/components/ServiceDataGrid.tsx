@@ -7,7 +7,7 @@ import {
   OrgSilServiceType,
   OrgSilServiceView,
   PagedOrgSilServiceView
-} from '../../../../generated/apiClient';
+} from '../../../../generated/core/client';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 
 type ServiceDataGridProps = {
@@ -56,7 +56,6 @@ export const ServiceDataGrid: React.FC<ServiceDataGridProps> = ({
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<OrgSilServiceView>) => (
         <IconButton
-          color="primary"
           size="small"
           aria-label={t('commons.detail')}
           onClick={() => onRowClick(params.row)}

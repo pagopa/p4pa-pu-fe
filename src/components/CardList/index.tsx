@@ -58,9 +58,11 @@ const CardList = <T,>({
   return (
     <Stack spacing={2} role="region" aria-label={t('commons.tableResults')}>
       <HiddenDiv message={announcement} />
-      <Stack spacing={1.5}>
+      <Stack spacing={1.5} role="list">
         {rows.map((row) => (
-          <div key={getRowId(row)}>{renderCard(row)}</div>
+          <div key={getRowId(row)} role="listitem">
+            {renderCard(row)}
+          </div>
         ))}
       </Stack>
       <CustomPagination

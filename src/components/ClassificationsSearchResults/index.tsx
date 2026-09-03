@@ -14,7 +14,7 @@ import {
 } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
-import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/data-contracts';
+import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/core/data-contracts';
 import DownloadIcon from '@mui/icons-material/Download';
 import { getClassifications } from '../../api/classifications';
 import { useSearch } from '../../hooks/useSearch';

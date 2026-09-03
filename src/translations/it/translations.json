@@ -165,7 +165,14 @@
       "filtersApplied_one": "Tabella aggiornata con {{count}} pagina",
       "filtersApplied_other": "Tabella aggiornata con {{count}} pagine",
       "noResults": "Nessun risultato trovato",
-      "pageSize": "Risultati per pagina"
+      "pageSize": "Risultati per pagina",
+      "pagination": {
+        "first": "vai alla prima pagina",
+        "last": "vai all'ultima pagina",
+        "next": "vai alla pagina successiva",
+        "previous": "vai alla pagina precedente"
+      },
+      "paginationPage": "vai a risultati di pagina {{page}}"
     }
   },
   "appPreview": {
@@ -923,6 +930,7 @@
     "mandatoryDueDate": "Scadenza Obbligatoria",
     "message": "Messaggio",
     "messages": "Messaggi",
+    "moreActions": "Altre azioni possibili su questo contenuto",
     "notificationDate": "Data di notifica",
     "nav": "NAV",
     "no": "No",
@@ -1886,6 +1894,9 @@
       "debtTypesSet": "Tipi dovuti impostati attivi"
     },
     "myOrganizationDataGrid": {
+      "detailManagedOrg": "Dettaglio Tipo Dovuto Impostato di Enti gestiti",
+      "detailMyOrg": "Dettaglio Tipo Dovuto Impostato del mio ente",
+      "detailColumn": "Dettaglio",
       "code": "Cod. Gestionale",
       "debtType": "Tipo dovuto",
       "description": "Descrizione",

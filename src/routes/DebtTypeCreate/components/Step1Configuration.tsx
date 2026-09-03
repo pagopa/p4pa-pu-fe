@@ -10,7 +10,7 @@ import SectionBox from '../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../components/FormComponent';
 import WizardStepButtons from '../../../components/Wizard/WizardStepButtons';
-import { DebtPositionTypeDetailDTO } from '../../../../generated/data-contracts';
+import { DebtPositionTypeDetailDTO } from '../../../../generated/core/data-contracts';
 import { TaxonomyFilter } from '../../../components/TaxonomyFilter';
 import { TaxonomyEdit } from './components/TaxonomyEdit';
 import { TaxonomyFields } from '../../../models/Taxonomy';

@@ -21,7 +21,7 @@ import { FormComponent } from '../../../components/FormComponent';
 import {
   DebtPositionTypeDetailDTO,
   DebtPositionTypeRequestBody
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { AppPreview } from '../../../components/AppPreview';
 import { PageRoutes } from '../..';
 import ExternalLink from '../../../components/ExternalLink/ExternalLink';

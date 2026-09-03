@@ -5,7 +5,7 @@ import { useNavigate, generatePath } from 'react-router';
 import { downloadBlob } from '../../utils/download';
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../routes';
-import { ExportFileTypeEnum } from '../../../generated/apiClient';
+import { ExportFileTypeEnum } from '../../../generated/core/client';
 
 // Mock react-router hooks
 vi.mock('react-router', async (importOriginal) => ({

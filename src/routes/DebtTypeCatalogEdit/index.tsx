@@ -6,7 +6,7 @@ import { useNavigate, useParams } from 'react-router';
 import { PageRoutes } from '../../routes';
 import { useSignal } from '@preact/signals-react';
 import { patchDebtPositionType } from '../../api/debtPositionsTypes';
-import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
+import { DebtPositionTypeRequestBody } from '../../../generated/core/data-contracts';
 import { Step1Configuration } from '../DebtTypeCreate/components/Step1Configuration';
 import {
   Step2Data,

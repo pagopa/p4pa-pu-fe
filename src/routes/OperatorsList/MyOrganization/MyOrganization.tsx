@@ -15,7 +15,7 @@ import utils from '../../../utils';
 import Search from '@mui/icons-material/Search';
 import { BaseFilterValues } from '../../../models/Filters';
 import { useSearch } from '../../../hooks/useSearch';
-import { OrganizationOperator } from '../../../../generated/data-contracts';
+import { OrganizationOperator } from '../../../../generated/core/data-contracts';
 import { useOrganizationOperatorsSearch } from '../../../api/organizationOperators';
 import { PageRoutes } from '../..';
 import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';

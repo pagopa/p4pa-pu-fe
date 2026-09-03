@@ -4,7 +4,7 @@ import { getReceipts } from './index';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
 import { buildQueryParams } from './mappings';
-import { ReceiptOriginType } from '../../../generated/data-contracts';
+import { ReceiptOriginType } from '../../../generated/core/data-contracts';
 import { AxiosResponse } from 'axios';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 
@@ -26,7 +26,7 @@ vi.mock('./mappings', () => ({
   buildQueryParams: vi.fn()
 }));
 
-vi.mock('../../../generated/zod-schema', () => ({
+vi.mock('../../../generated/core/zod-schema', () => ({
   pagedReceiptViewSchema: {}
 }));
 

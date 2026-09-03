@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 
 import ImportFlowOverview from '../ImportFlowOverview/ImportFlowOverview';
-import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
+import { IngestionFlowFileTypeEnum } from '../../../generated/core/client';
 
 export const TreasuryImportFlowOverview = () => {
   const { t } = useTranslation();

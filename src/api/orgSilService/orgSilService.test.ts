@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import { buildQueryParams } from './mappings';
 import orgSilServiceApi from './index';
-import { OrgSilServiceType } from '../../../generated/data-contracts';
+import { OrgSilServiceType } from '../../../generated/core/data-contracts';
 import type { OrgSilServicesFilteredRequest } from './mappings';
 import utils from '../../utils';
 import { AxiosResponse } from 'axios';

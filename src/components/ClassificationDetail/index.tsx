@@ -13,7 +13,7 @@ import { StatusBar } from '../StatusBar/StatusBar';
 import { PageRoutes } from '../../routes';
 import { OpenInNew } from '@mui/icons-material';
 import { buildTelematicReceiptDetailPath } from '../../utils/receiptNavigation';
-import { ClassificationsEnum } from '../../../generated/data-contracts';
+import { ClassificationsEnum } from '../../../generated/core/data-contracts';
 import ReceiptDetailWarningBanner from '../ReceiptDetail/ReceiptDetailWarningBanner';
 
 export const ClassificationDetails = () => {

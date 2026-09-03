@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '../../__tests__/renderers';
 import utils from '../../utils';
 import { getDebtPositionTypeOrgOperators } from '.';
-import type { PagedDebtPositionTypeOrgOperatorDTO } from '../../../generated/data-contracts';
+import type { PagedDebtPositionTypeOrgOperatorDTO } from '../../../generated/core/data-contracts';
 import { AxiosResponse } from 'axios';
 import { DebtPositionTypeOrgOperatorFilteredRequest } from './mappings';
 

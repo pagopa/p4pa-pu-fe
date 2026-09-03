@@ -9,7 +9,7 @@ import { updateOrganization } from '../api/organizations';
 import {
   OrganizationDetailDTO,
   OrganizationStatus
-} from '../../generated/data-contracts';
+} from '../../generated/core/data-contracts';
 import { UnifiedFormData } from '../models/OrganizationEditTypes';
 import { PageRoutes } from '../routes';
 import utils from '../utils';

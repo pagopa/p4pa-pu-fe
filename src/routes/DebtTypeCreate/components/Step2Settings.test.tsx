@@ -1,7 +1,7 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi } from 'vitest';
 import { Step2Settings } from './Step2Settings';
-import { DebtPositionTypeRequestBody } from '../../../../generated/data-contracts';
+import { DebtPositionTypeRequestBody } from '../../../../generated/core/data-contracts';
 
 describe('Step2Settings', () => {
   const mockSetData = vi.fn();

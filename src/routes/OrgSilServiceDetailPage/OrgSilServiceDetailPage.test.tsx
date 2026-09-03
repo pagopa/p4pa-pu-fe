@@ -11,7 +11,7 @@ import {
   OrgSilServiceDecryptedDTO,
   OrgSilServiceType,
   JwtAlgorithm
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { STATE } from '../../store/types';
 import { PageRoutes } from '..';
 import utils from '../../utils';

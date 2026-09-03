@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { HomeDrawerListItem } from './HomeDrawerListItem';
 import { useAppNavigate } from '../../../hooks/useAppNavigation';
 import { generatePath } from 'react-router';
-import { DashboardByIuf } from '../../../../generated/data-contracts';
+import { DashboardByIuf } from '../../../../generated/core/data-contracts';
 import { DrawerItemConfig } from '../models';
 import AltRouteIcon from '@mui/icons-material/AltRoute';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { ExportFileTypeEnum } from '../../../generated/apiClient';
+import { ExportFileTypeEnum } from '../../../generated/core/client';
 import ExportFlowOverview from '../ExportFlowOverview/ExportFlowOverview';
 
 const Conservation = () => {

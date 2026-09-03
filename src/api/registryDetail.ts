@@ -1,11 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { RequestParams } from '../../generated/apiClient';
+import { RequestParams } from '../../generated/core/client';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
 import {
   pagoPaRegistryDTOSchema,
   silRegistryDTOSchema
-} from '../../generated/zod-schema';
+} from '../../generated/core/zod-schema';
 
 export const usePagoPaRegistry = (
   organizationId: number,

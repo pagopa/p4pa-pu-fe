@@ -24,14 +24,14 @@ variables:
     cdn_domains: '$(UAT_CDN_DOMAINS)'
     storage_account: '$(UAT_STORAGE_ACCOUNT_NAME)'
     resource_group: '$(UAT_STORAGE_ACCOUNT_RG)'
-    deploy_path: '$(UAT_DEPLOY_PATH)'
+    deploy_path: '$(UAT_VITE_DEPLOY_PATH)'
     api_timeout: 0
-    api_host: '$(UAT_API_HOST)'
-    fileshare_host: '$(UAT_API_FILESHARE_HOST)'
-    login_url: '$(UAT_LOGIN_URL)'
+    api_host: '$(UAT_VITE_APIHOST)'
+    fileshare_host: '$(UAT_VITE_APIHOST_FILESHARE)'
+    login_url: '$(UAT_VITE_LOGIN_URL)'
     openapi_url: '$(UAT_OPENAPI_URL)'
-    openapifileshare_url: '$(UAT_OPENAPIFILESHARE_URL)'
-    resources_url: '$(UAT_LEGALDOCS_TEMPLATE_URL)'
+    openapi_fileshare_url: '$(UAT_OPENAPI_FILESHARE_URL)'
+    resources_url: '$(UAT_VITE_RESOURCES_URL)'
 
   ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     environment: 'PROD'
@@ -41,14 +41,14 @@ variables:
     cdn_domains: '$(PROD_CDN_DOMAINS)'
     storage_account: '$(PROD_STORAGE_ACCOUNT_NAME)'
     resource_group: '$(PROD_STORAGE_ACCOUNT_RG)'
-    deploy_path: '$(PROD_DEPLOY_PATH)'
+    deploy_path: '$(PROD_VITE_DEPLOY_PATH)'
     api_timeout: 0
-    api_host: '$(PROD_API_HOST)'
-    fileshare_host: '$(PROD_API_FILESHARE_HOST)'
-    login_url: '$(PROD_LOGIN_URL)'
+    api_host: '$(PROD_VITE_APIHOST)'
+    fileshare_host: '$(PROD_VITE_APIHOST_FILESHARE)'
+    login_url: '$(PROD_VITE_LOGIN_URL)'
     openapi_url: '$(PROD_OPENAPI_URL)'
-    openapifileshare_url: '$(PROD_OPENAPIFILESHARE_URL)'
-    resources_url: '$(PROD_LEGALDOCS_TEMPLATE_URL)'
+    openapi_fileshare_url: '$(PROD_OPENAPI_FILESHARE_URL)'
+    resources_url: '$(PROD_VITE_RESOURCES_URL)'
 
   # every branch different from past will be considered as DEV
   ${{ else }}:
@@ -59,14 +59,14 @@ variables:
     cdn_domains: '$(DEV_CDN_DOMAINS)'
     storage_account: '$(DEV_STORAGE_ACCOUNT_NAME)'
     resource_group: '$(DEV_STORAGE_ACCOUNT_RG)'
-    deploy_path: '$(DEV_DEPLOY_PATH)'
+    deploy_path: '$(DEV_VITE_DEPLOY_PATH)'
     api_timeout: 0
-    api_host: '$(DEV_API_HOST)'
-    fileshare_host: '$(DEV_API_FILESHARE_HOST)'
-    login_url: '$(DEV_LOGIN_URL)'
+    api_host: '$(DEV_VITE_APIHOST)'
+    fileshare_host: '$(DEV_VITE_APIHOST_FILESHARE)'
+    login_url: '$(DEV_VITE_LOGIN_URL)'
     openapi_url: '$(DEV_OPENAPI_URL)'
-    openapifileshare_url: '$(DEV_OPENAPIFILESHARE_URL)'
-    resources_url: '$(DEV_LEGALDOCS_TEMPLATE_URL)'
+    openapi_fileshare_url: '$(DEV_OPENAPI_FILESHARE_URL)'
+    resources_url: '$(DEV_VITE_RESOURCES_URL)'
 
 pool:
   vmImage: '$(vmImageNameDefault)'
@@ -86,13 +86,13 @@ stages:
               vite_deploy_path: '$(deploy_path)'
               vite_api_timeout: '$(api_timeout)'
               vite_apihost: '$(api_host)'
-              vite_fileshare_apihost: '$(fileshare_host)'
+              vite_apihost_fileshare: '$(fileshare_host)'
               vite_login_url: '$(login_url)'
               vite_resources_url: '$(resources_url)'
 
           - script: |
               export OPENAPI_URL=$(openapi_url)
-              export OPENAPIFILESHARE_URL=$(openapifileshare_url)
+              export OPENAPI_FILESHARE_URL=$(openapi_fileshare_url)
               yarn build
             displayName: 'yarn build'
 

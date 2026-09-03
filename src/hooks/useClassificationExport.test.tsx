@@ -4,7 +4,7 @@ import {
   useClassificationExport,
   ClassificationFormFields
 } from './useClassificationExport';
-import { ExportFileTypeEnum, LabelEnum } from '../../generated/apiClient';
+import { ExportFileTypeEnum, LabelEnum } from '../../generated/core/client';
 
 describe('useClassificationExport', () => {
   const mockOrganizationId = 123;

@@ -9,7 +9,7 @@ import FilterContainer, {
 import { getOrganizationsByBrokerIdAndFilters } from '../../api/organizations';
 import utils from '../../utils';
 import { useSearch } from '../../hooks/useSearch';
-import { PagedOrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../generated/data-contracts';
+import { PagedOrganizationWithDebtPositionTypeOrgAndOperatorsCount } from '../../../generated/core/data-contracts';
 import OrganizationsDatagrid from './components/OrganizationsDatagrid';
 import { OrganizationsFilters } from '../../api/organizations/mappings';
 

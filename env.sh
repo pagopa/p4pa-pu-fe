@@ -1,22 +1,26 @@
 #!/bin/bash
 
 # Removing existing env file
-rm .env
+> .env
 
-# saving variables environment prefix in a variable
-varprefix="PU_"
+if [ -z "${ENV:-}" ]; then
+    echo "ENV is required (e.g. ENV=DEV)" >&2
+    exit 1
+fi
 
-# Print relevant environment variables
-env | grep -i $varprefix
+prefix="${ENV}_VITE_"
 
-# Recreate config file and assignment
+# Always keep ENV in the generated .env file
+echo "ENV=\"${ENV}\"" >> .env
 
-# Loop on environment variables prefixed with
-# PU_ and add them to .env file
-for var in $(env | grep "$varprefix"); do
-    varname=$(printf '%s\n' "${var#$varprefix}" | sed -e 's/=.*//')
-    varvalue=$(printf '%s\n' "$var" | sed -e 's/^[^=]*=//')
-
-    echo "$varname=\"$varvalue\"" >> .env
+# Keep only variables named <ENV>_VITE_..., writing them as VITE_...
+env | while IFS='=' read -r varname varvalue; do
+    if [ -n "$varname" ] && [[ "$varname" == "${prefix}"* ]]; then
+        echo "${varname#"${ENV}_"}=\"${varvalue}\"" >> .env
+    fi
 done
+
+# Print content of populated .env file
+echo -e "\n--- .env Contents ---"
+cat .env
 

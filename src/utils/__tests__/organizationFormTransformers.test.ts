@@ -16,7 +16,7 @@ import {
   OrganizationAdditionalLanguage,
   OrganizationDetailDTO,
   OrganizationStatus
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 
 vi.mock('../filevalidation', () => ({
   fileToBase64: vi.fn(async () => 'base64-logo-mocked')

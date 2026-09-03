@@ -7,7 +7,7 @@ import { PageRoutes } from '..';
 import { OrgSilServiceForm } from './components/OrgSilServiceForm';
 import { OrgSilServiceFormData } from './schema';
 import orgSilServiceApi from '../../api/orgSilService';
-import { OrgSilServiceDecryptedDTO } from '../../../generated/data-contracts';
+import { OrgSilServiceDecryptedDTO } from '../../../generated/core/data-contracts';
 import { useEffect, useRef } from 'react';
 
 export const OrgSilServiceEdit = () => {

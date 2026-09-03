@@ -4,7 +4,7 @@ import { getReceiptDetail } from '../api/receiptDetail';
 import { moneyFormat } from '../utils/formatters';
 import { DetailData } from '../components/DetailContainer/DetailContainer';
 import notify from '../utils/notify';
-import { ReceiptDetailDTO } from '../../generated/apiClient';
+import { ReceiptDetailDTO } from '../../generated/core/client';
 
 type UseReceiptDetailReturn = {
   summaryData: Array<DetailData>;

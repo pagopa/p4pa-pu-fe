@@ -1,5 +1,5 @@
 import { signal } from '@preact/signals-react';
-import { ConfigFE } from '../../generated/apiClient';
+import { ConfigFE } from '../../generated/core/client';
 
 export const configFeState = signal<ConfigFE | undefined>(undefined);
 

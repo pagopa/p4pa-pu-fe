@@ -4,7 +4,7 @@ import { waitFor } from '@testing-library/react';
 import { AxiosResponse } from 'axios';
 
 import utils from '../../utils';
-import { SupersetUrlResponseDTO } from '../../../generated/apiClient';
+import { SupersetUrlResponseDTO } from '../../../generated/core/client';
 import { renderHook } from '../../__tests__/renderers';
 import { useGenerateSupersetUrl } from '.';
 

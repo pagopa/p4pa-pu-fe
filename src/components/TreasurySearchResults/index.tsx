@@ -12,7 +12,7 @@ import {
 } from '../../hooks/useMultiFilters';
 import { FilterDrawer } from '../Drawer/FilterDrawer';
 import { BaseFilterValues } from '../../models/Filters';
-import { PagedTreasuryView } from '../../../generated/data-contracts';
+import { PagedTreasuryView } from '../../../generated/core/data-contracts';
 import { useSearch } from '../../hooks/useSearch';
 import { useStore } from '../../store/GlobalStore';
 import { getTreasuries } from '../../api/treasuries';

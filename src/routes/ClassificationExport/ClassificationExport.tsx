@@ -16,7 +16,7 @@ import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { FormSection } from './components/FormSection';
 import { FormComponent } from '../../components/FormComponent';
 import { useClassificationExport } from '../../hooks/useClassificationExport';
-import { LabelEnum } from '../../../generated/apiClient';
+import { LabelEnum } from '../../../generated/core/client';
 import { createClassificationsExportFile } from '../../api/createExportFile';
 import { PageRoutes } from '../../routes';
 import { useStore } from '../../store/GlobalStore';
@@ -209,6 +209,7 @@ const ClassificationExportPage = () => {
               options={versionOptions}
               control={formMethods.control}
               required
+              rules={{ required: 'commons.required' }}
               data-testid="trace-section-version"
             />
           </FormSection>
@@ -363,7 +364,7 @@ const ClassificationExportPage = () => {
           <Grid item>
             <Button
               variant="contained"
-              onClick={handleSubmit}
+              onClick={formMethods.handleSubmit(handleSubmit)}
               type="button"
               data-testid="confirmButton"
             >

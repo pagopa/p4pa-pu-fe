@@ -4,7 +4,7 @@ import { renderHook, waitFor } from '../__tests__/renderers';
 import {
   OrgSilServiceType,
   OrgSilServiceExtendedDTO
-} from '../../generated/data-contracts';
+} from '../../generated/core/data-contracts';
 import { setOrganizationId } from '../store/OrganizationIdStore';
 
 vi.mock('../utils', () => ({
@@ -21,7 +21,7 @@ vi.mock('../utils/loaders', () => ({
   parseAndLog: vi.fn()
 }));
 
-vi.mock('../../../generated/zod-schema', () => ({
+vi.mock('../../../generated/core/zod-schema', () => ({
   orgSilServiceSchema: {}
 }));
 

@@ -4,7 +4,7 @@ import { parseAndLog } from '../utils/loaders';
 import {
   pagedDebtPositionTypeOrgWithCountSchema,
   pagedOrganizationWithDebtPositionTypeOrgCountSchema
-} from '../../generated/zod-schema';
+} from '../../generated/core/zod-schema';
 import { FilteredRequest } from '../models/Filters';
 
 export type DebtPositionTypeOrgWithCountFilters = {

@@ -6,7 +6,7 @@ import {
   pagedDebtPositionTypeOrgDTOSchema,
   pagedOrganizationOperatorSchema,
   pagedOrganizationWithDebtPositionTypeOrgAndOperatorsCountSchema
-} from '../../../generated/zod-schema';
+} from '../../../generated/core/zod-schema';
 import {
   buildOrganizationOperatorsQueryParams,
   buildBrokerOrganizationsQueryParams,

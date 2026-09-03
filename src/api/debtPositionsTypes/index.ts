@@ -4,8 +4,8 @@ import { parseAndLog } from '../../utils/loaders';
 import {
   debtPositionTypeSchema,
   pagedDebtPositionTypeWithCountSchema
-} from '../../../generated/zod-schema';
-import { DebtPositionTypePatchRequestBody } from '../../../generated/data-contracts';
+} from '../../../generated/core/zod-schema';
+import { DebtPositionTypePatchRequestBody } from '../../../generated/core/data-contracts';
 import {
   buildQueryParams,
   buildQueryPostParams,

@@ -9,7 +9,7 @@ import {
   RegistrySilEventType,
   RegistryEventSubType,
   RegistryOutcome
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 
 vi.mock('../../api/registryDetail');
 

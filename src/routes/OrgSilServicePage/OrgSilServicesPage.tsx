@@ -14,7 +14,7 @@ import { OrgSilServicesFilters } from '../../api/orgSilService/mappings';
 import {
   OrgSilServiceType,
   OrgSilServiceView
-} from '../../../generated/apiClient';
+} from '../../../generated/core/client';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '..';
 import { FilterFieldValue } from '../../models/Filters';

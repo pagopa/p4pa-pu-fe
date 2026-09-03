@@ -7,9 +7,9 @@ import {
 import { SearchType } from '../models/DebtPositions';
 import { useStore } from '../store/GlobalStore';
 import { useDebtPositionsTypeOrg } from './useDebtPositionsTypeOrg';
-import { DebtPositionStatus } from '../../generated/data-contracts';
+import { DebtPositionStatus } from '../../generated/core/data-contracts';
 import { optionMapsConverter } from '../utils/formatters';
-import { InstallmentStatus } from '../../generated/data-contracts';
+import { InstallmentStatus } from '../../generated/core/data-contracts';
 
 type UseDebtPositionSearchProps = {
   searchType: SearchType;

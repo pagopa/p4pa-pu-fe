@@ -16,7 +16,7 @@ import { STATE } from '../../store/types';
 import {
   ExportFileStatus,
   ExportFileTypeEnum
-} from '../../../generated/apiClient';
+} from '../../../generated/core/client';
 import { getExportFile, getExportFiles } from '../../api/exportFiles';
 import { downloadBlob } from '../../utils/download';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
@@ -25,7 +25,7 @@ import utils from '../../utils';
 import { useEffect, useState } from 'react';
 import { useSearch } from '../../hooks/useSearch';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
-import { PagedExportFile } from '../../../generated/data-contracts';
+import { PagedExportFile } from '../../../generated/core/data-contracts';
 import { ExportFilesFilters } from '../../api/exportFiles/mapping';
 
 export type ExportFlowOverviewProps = {
@@ -127,7 +127,6 @@ const ExportFlowOverview = ({
       return (
         <IconButton
           aria-label={t('commons.files.downloadFlow')}
-          color="primary"
           size="small"
           onClick={() => handleDownloadFile(exportFileId)}
           data-testid="download-button"

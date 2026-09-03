@@ -7,7 +7,7 @@ import {
   waitFor
 } from '../../../__tests__/renderers';
 import { Step1Configuration } from './Step1Configuration';
-import { DebtPositionTypeDetailDTO } from '../../../../generated/data-contracts';
+import { DebtPositionTypeDetailDTO } from '../../../../generated/core/data-contracts';
 
 // Mock taxonomyFieldsSchema to exclude taxonomy fields from validation in this test
 vi.mock('../../../components/TaxonomyFilter/schema', () => ({

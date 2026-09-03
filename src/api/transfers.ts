@@ -1,8 +1,8 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { transferDTOSchema } from '../../generated/zod-schema';
-import { RequestParams } from '../../generated/apiClient';
+import { transferDTOSchema } from '../../generated/core/zod-schema';
+import { RequestParams } from '../../generated/core/client';
 
 export type ValidateTaxonomyCategoryParams = {
   orgFiscalCode: string;

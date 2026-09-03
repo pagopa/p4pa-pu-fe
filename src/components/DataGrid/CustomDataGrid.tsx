@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Grid, styled, useTheme, Box, Typography } from '@mui/material';
 import {
   DataGrid,
@@ -60,6 +60,8 @@ const CustomDataGrid = <T extends GridValidRowModel>({
     ...hashParams
   } = useHashParamsListener<Record<string, unknown>>();
   const [announcement, setAnnouncement] = useState('');
+  const resultsTableRef = useRef<HTMLDivElement | null>(null);
+  const shouldFocusResultsRef = useRef(false);
 
   const { t } = useTranslation();
 
@@ -102,6 +104,27 @@ const CustomDataGrid = <T extends GridValidRowModel>({
   const page = getPageFromHash();
   const pageSize = getSizeFromHash();
   const sortModel = getSortModelFromHash();
+  const previousPaginationRef = useRef({ page, pageSize });
+
+  /* Focus the results table when the page or page size changes, so that screen readers can read the new results. */
+  useEffect(() => {
+    const previousPagination = previousPaginationRef.current;
+    const hasPaginationChanged =
+      previousPagination.page !== page ||
+      previousPagination.pageSize !== pageSize;
+
+    if (hasPaginationChanged) {
+      shouldFocusResultsRef.current = true;
+      previousPaginationRef.current = { page, pageSize };
+    }
+  }, [page, pageSize]);
+
+  useEffect(() => {
+    if (shouldFocusResultsRef.current) {
+      resultsTableRef.current?.focus();
+      shouldFocusResultsRef.current = false;
+    }
+  }, [rows]);
 
   // Write updated params into URL hash
   const updateHashParams = useCallback(
@@ -163,6 +186,7 @@ const CustomDataGrid = <T extends GridValidRowModel>({
     <>
       <HiddenDiv message={announcement} />
       <StyledDataGrid
+        ref={resultsTableRef}
         rows={rows}
         columns={columns}
         pagination
@@ -174,7 +198,8 @@ const CustomDataGrid = <T extends GridValidRowModel>({
         aria-label={t('commons.tableResults')}
         slotProps={{
           root: {
-            id: 'data-results-table'
+            id: 'data-results-table',
+            tabIndex: -1
           }
         }}
         slots={{

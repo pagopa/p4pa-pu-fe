@@ -2,7 +2,7 @@ import { TFunction } from 'i18next';
 import {
   OrgSilServiceDecryptedDTO,
   OrgSilServiceType
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { DetailSectionProps } from '../../../components/DetailContainer/DetailContainer';
 
 export const getOrgSilServiceSectionsConfig = (

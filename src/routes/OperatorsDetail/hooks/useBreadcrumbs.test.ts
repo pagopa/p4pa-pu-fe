@@ -14,7 +14,7 @@ vi.mock('react-router', async (importOriginal) => {
 
 import { useBreadcrumbs } from './useBreadcrumbs';
 import { useParams, generatePath } from 'react-router';
-import { OperatorsDetail } from '../../../../generated/data-contracts';
+import { OperatorsDetail } from '../../../../generated/core/data-contracts';
 
 describe('useBreadcrumbs', () => {
   const mockSetCustomBreadcrumbsItems = vi.spyOn(

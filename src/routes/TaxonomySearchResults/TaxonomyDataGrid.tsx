@@ -4,7 +4,7 @@ import { IconButton } from '@mui/material';
 import { ChevronRight } from '@mui/icons-material';
 import { generatePath, useNavigate } from 'react-router';
 import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
-import { PagedTaxonomy, Taxonomy } from '../../../generated/apiClient';
+import { PagedTaxonomy, Taxonomy } from '../../../generated/core/client';
 import { PageRoutes } from '..';
 
 export type TaxonomyDataGridProps = {
@@ -59,7 +59,6 @@ const TaxonomyDataGrid = ({
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<Taxonomy>) => (
         <IconButton
-          color="primary"
           aria-label={t('taxonomyPage.accessibleTitle', {
             taxonomyCode: params.row.taxonomyCode
           })}

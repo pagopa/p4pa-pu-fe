@@ -4,7 +4,7 @@ import {
   PaidExportFileRequest,
   ReceiptsArchivingExportFileRequest,
   RequestParams
-} from '../../generated/apiClient';
+} from '../../generated/core/client';
 import utils from '../utils';
 
 export const createPaidExportFile = () =>

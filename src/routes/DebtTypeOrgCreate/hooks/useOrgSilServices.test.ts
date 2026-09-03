@@ -7,7 +7,7 @@ import {
   useActualizationServices,
   useNotificationServices
 } from './useOrgSilServices';
-import { OrgSilServiceType } from '../../../../generated/data-contracts';
+import { OrgSilServiceType } from '../../../../generated/core/data-contracts';
 import { setOrganizationId } from '../../../store/OrganizationIdStore';
 
 vi.mock('../../../api/orgSilServices', () => ({

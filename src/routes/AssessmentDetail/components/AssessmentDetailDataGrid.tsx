@@ -7,7 +7,7 @@ import { moneyFormat, formatDate } from '../../../utils/formatters';
 import {
   AssessmentsDetail,
   AssessmentsRowsDetail
-} from '../../../../generated/apiClient';
+} from '../../../../generated/core/client';
 import { generatePath, useNavigate, useParams } from 'react-router';
 import { PageRoutes } from '../..';
 import { appendReceiptIudQuery } from '../../../utils/receiptNavigation';
@@ -83,7 +83,6 @@ const AssessmentDetailDataGrid = ({
       headerAlign: 'right',
       renderCell: (params: GridRenderCellParams<AssessmentsDetail>) => (
         <IconButton
-          color="primary"
           size="small"
           onClick={() => navigateToDetail(params.row.receiptId, params.row.iud)}
           aria-label={t('commons.detail')}

@@ -15,7 +15,7 @@ import { useStore } from '../../../store/GlobalStore';
 import OrganizationEditWizard from './OrganizationEditWizard';
 import utils from '../../../utils';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
-import { OrganizationStatus } from '../../../../generated/data-contracts';
+import { OrganizationStatus } from '../../../../generated/core/data-contracts';
 import { UnifiedFormData } from '../../../models/OrganizationEditTypes';
 
 vi.mock('../../../api/organizations', () => ({

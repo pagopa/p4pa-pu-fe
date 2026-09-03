@@ -7,7 +7,7 @@ import {
   PagedOrganizationWithDebtPositionTypeOrgAndOperatorsCount,
   OrganizationWithDebtPositionTypeOrgAndOperatorsCount,
   StatusEnum
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../..';
 
@@ -106,7 +106,6 @@ const OrganizationsDatagrid = ({
           aria-label={t('organizations.detail', {
             orgName: params.row.orgName
           })}
-          color="primary"
           size="small"
           onClick={() => handleRowClick(params.row)}
         >

@@ -11,7 +11,7 @@ import {
   PersonEntityType,
   PaymentOptionType,
   DebtPositionStatus
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { PageRoutes } from '..';
 
 type Step1Props = {

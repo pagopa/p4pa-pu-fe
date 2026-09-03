@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import {
   DebtPositionTypeOrgBalanceCostDTO,
   DebtPositionTypeOrgBalanceCostType
-} from '../../../generated/apiClient';
+} from '../../../generated/core/client';
 
 type Props = {
   costs: Array<DebtPositionTypeOrgBalanceCostDTO>;

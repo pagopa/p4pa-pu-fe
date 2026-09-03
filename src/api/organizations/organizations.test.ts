@@ -12,7 +12,7 @@ import { OrganizationsFilteredRequest } from './mappings';
 import {
   OrganizationStatus,
   OrganizationAdditionalLanguage
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 
 vi.mock('../../utils', () => ({
   default: {

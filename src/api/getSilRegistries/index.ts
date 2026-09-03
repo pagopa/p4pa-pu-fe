@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
-import { pagedSilRegistrySchema } from '../../../generated/zod-schema';
+import { pagedSilRegistrySchema } from '../../../generated/core/zod-schema';
 import { FilteredRequest } from '../../models/Filters';
 import { SilFilterValues } from '../../routes/Events/configs';
 import { buildQueryParams } from './mapping';

@@ -1,4 +1,4 @@
-import { DebtPositionOrigin } from '../../generated/apiClient';
+import { DebtPositionOrigin } from '../../generated/core/client';
 
 /**
  *

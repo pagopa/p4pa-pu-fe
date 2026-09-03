@@ -138,3 +138,5 @@ tsconfig.tsbuildinfo
 **.scannerwork
 **/sonar-project.properties
 node_modules
+.env
+src/extra/**

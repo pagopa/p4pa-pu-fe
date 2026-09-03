@@ -7,7 +7,7 @@ import {
   useSilRegistry,
   useRegistry
 } from './registryDetail';
-import { RequestParams } from '../../generated/apiClient';
+import { RequestParams } from '../../generated/core/client';
 import {
   PagoPaRegistryDTO,
   SilRegistryDTO,
@@ -16,7 +16,7 @@ import {
   RegistryEventSubType,
   RegistryOutcome,
   RegistrySilEventType
-} from '../../generated/data-contracts';
+} from '../../generated/core/data-contracts';
 
 vi.mock('../utils', async () => {
   const actual = await vi.importActual<typeof import('../utils')>('../utils');

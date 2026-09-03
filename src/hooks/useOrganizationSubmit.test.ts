@@ -4,7 +4,7 @@ import { useOrganizationSubmit } from './useOrganizationSubmit';
 import {
   OrganizationDetailDTO,
   OrganizationStatus
-} from '../../generated/data-contracts';
+} from '../../generated/core/data-contracts';
 import { UnifiedFormData } from '../models/OrganizationEditTypes';
 import { PageRoutes } from '../routes';
 

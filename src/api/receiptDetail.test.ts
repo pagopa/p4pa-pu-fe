@@ -1,7 +1,7 @@
 import utils from '../utils';
 import { AxiosResponse } from 'axios';
 import { describe, expect, it, vi } from 'vitest';
-import { receiptDetailDTOSchema } from '../../generated/zod-schema';
+import { receiptDetailDTOSchema } from '../../generated/core/zod-schema';
 import { createMock } from 'zodock';
 import { getReceiptDetail } from './receiptDetail';
 import { renderHook, waitFor } from '../__tests__/renderers';

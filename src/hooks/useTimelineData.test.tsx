@@ -7,7 +7,7 @@ import {
   getEventDisplayInfo,
   RegistryItem
 } from './useTimelineData';
-import { PaymentEventType } from '../../generated/data-contracts';
+import { PaymentEventType } from '../../generated/core/data-contracts';
 
 const mockRegistryWithEventType: RegistryItem = {
   eventDateTime: '2025-05-16T10:45:30.987654Z',

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import { ClientSilDataGrid } from './ClientSilDataGrid';
-import type { ClientDTOPage } from '../../../../generated/apiClient';
+import type { ClientDTOPage } from '../../../../generated/core/client';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -49,7 +49,8 @@ vi.mock('../../../components/DataGrid/CustomDataGrid', () => {
   };
 });
 
-vi.mock('@mui/icons-material', () => ({
+vi.mock('@mui/icons-material', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('@mui/icons-material')>()),
   ChevronRight: () => <div data-testid="chevron-right">→</div>
 }));
 

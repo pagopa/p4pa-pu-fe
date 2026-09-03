@@ -9,7 +9,7 @@ import { theme } from '@pagopa/mui-italia';
 import { generatePath, useNavigate } from 'react-router';
 import TitleComponent from '../../../../components/TitleComponent/TitleComponent';
 import { UnifiedFormData } from '../../../../models/OrganizationEditTypes';
-import { OrganizationDetailDTO } from '../../../../../generated/data-contracts';
+import { OrganizationDetailDTO } from '../../../../../generated/core/data-contracts';
 import { PageRoutes } from '../../../../routes';
 import {
   transformFormValuesToFieldData,

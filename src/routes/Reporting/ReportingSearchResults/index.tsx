@@ -8,7 +8,7 @@ import {
   noFilterSetted,
   shouldShowGeneralError
 } from '../../../utils/filtersValidation';
-import { PagedPaymentsReportingView } from '../../../../generated/data-contracts';
+import { PagedPaymentsReportingView } from '../../../../generated/core/data-contracts';
 import { ReportingFilters } from '../components/ReportingFilters';
 import SearchResultsDataGrid from './ReportingDataGrid';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';

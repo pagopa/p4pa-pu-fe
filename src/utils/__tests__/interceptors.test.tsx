@@ -35,8 +35,9 @@ vi.mock('../navigation', () => ({
   }
 }));
 
-vi.mock('../../translations/i18n', () => ({
+vi.mock('@core/translations/i18n', () => ({
   default: {
+    addResourceBundle: vi.fn(),
     t: (key: string) => {
       const translations: Record<string, string> = {
         'commons.serviceUnavailable': 'Servizio temporaneamente non disponibile'

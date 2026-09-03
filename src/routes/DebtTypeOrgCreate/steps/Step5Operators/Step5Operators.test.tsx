@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { Step5Operators } from '.';
 import { StoreProvider } from '../../../../store/GlobalStore';
 import { FormProvider, useForm, FieldValues } from 'react-hook-form';
-import { OperatorsSelection } from '../../../../../generated/data-contracts';
+import { OperatorsSelection } from '../../../../../generated/core/data-contracts';
 import { setOrganizationId } from '../../../../store/OrganizationIdStore';
 
 // Mock the OperatorSelector component to isolate Step5Operators tests

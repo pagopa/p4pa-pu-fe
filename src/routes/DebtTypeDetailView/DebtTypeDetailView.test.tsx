@@ -1,6 +1,12 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act
+} from '../../__tests__/renderers';
 import { describe, it, vi, expect, beforeEach, afterEach } from 'vitest';
 import { DebtTypeDetailView } from './DebtTypeDetailView';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
@@ -529,6 +535,36 @@ describe('DebtTypeDetailView', () => {
 
       consoleSpy.mockRestore();
     });
+
+    it('moves focus to the title after a successful disable', async () => {
+      mockUpdateFlagActive.mutateAsync.mockResolvedValueOnce(undefined);
+
+      render(<DebtTypeDetailView />);
+
+      fireEvent.click(screen.getByTestId('action-menu-button'));
+
+      await waitFor(() => {
+        fireEvent.click(screen.getByText('Disabilita'));
+        expect(mockConfirmDialog.showDisableDialog).toHaveBeenCalled();
+      });
+
+      const disableCallback = mockConfirmDialog.showDisableDialog.mock
+        .calls[0][0] as () => Promise<void>;
+
+      await act(async () => {
+        await disableCallback();
+      });
+
+      expect(mockUpdateFlagActive.mutateAsync).toHaveBeenCalledWith(
+        expect.objectContaining({ flagActive: false })
+      );
+
+      act(() => (updateSuccessCallback as () => void)());
+
+      await waitFor(() =>
+        expect(screen.getByTestId('main-title')).toHaveFocus()
+      );
+    });
   });
 
   describe('Inactive debt type actions', () => {
@@ -835,22 +871,21 @@ describe('DebtTypeDetailView', () => {
       expect(screen.getByText(/3 operatori/i)).toBeInTheDocument();
     });
 
-    it('executes updateFlagActive success callback and schedules reload', () => {
+    it('executes updateFlagActive success callback and moves focus to the title', async () => {
       render(<DebtTypeDetailView />);
 
       expect(updateSuccessCallback).toBeDefined();
 
-      vi.useFakeTimers();
-
-      (updateSuccessCallback as () => void)();
+      act(() => (updateSuccessCallback as () => void)());
 
       expect(utils.notify.emit).toHaveBeenCalledWith(
         'Aggiornato con successo',
         'success'
       );
 
-      vi.runOnlyPendingTimers();
-      vi.useRealTimers();
+      await waitFor(() =>
+        expect(screen.getByTestId('main-title')).toHaveFocus()
+      );
     });
 
     it('executes updateFlagActive error callback and shows generic dialog', () => {

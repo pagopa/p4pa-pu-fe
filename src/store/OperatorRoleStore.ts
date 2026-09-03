@@ -2,7 +2,7 @@ import { computed, signal } from '@preact/signals-react';
 import { ExtendedOperatoRole } from '../models/OperatorRole';
 import { organizationsState } from './OrganizationsStore';
 import { configFeState } from './ConfigFeStore';
-import { OperatorRole } from '../../generated/data-contracts';
+import { OperatorRole } from '../../generated/core/data-contracts';
 
 export const operatorRoleState = signal<OperatorRole>();
 

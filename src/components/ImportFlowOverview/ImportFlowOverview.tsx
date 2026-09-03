@@ -29,7 +29,7 @@ import {
   IngestionFlowFile,
   IngestionFlowFileStatus,
   IngestionFlowFileTypeEnum
-} from '../../../generated/apiClient';
+} from '../../../generated/core/client';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';
 import EmptyDataGrid from '../EmptyDataGrid/EmptyDataGrid';
@@ -43,7 +43,7 @@ import {
 } from '../../utils/filtersValidation';
 import { ErrorMessage } from '../ErrorMessage/ErrorMessage';
 import { FlowFilesFilters } from '../../api/ingestionFlowFiles/mappings';
-import { PagedIngestionFlowFile } from '../../../generated/data-contracts';
+import { PagedIngestionFlowFile } from '../../../generated/core/data-contracts';
 
 export type ImportFlowOverviewProps = {
   routingCategory: string;
@@ -238,7 +238,6 @@ const ImportFlowOverview = ({
     if (DOWNLOAD_STATES.includes(status)) {
       return (
         <IconButton
-          color="primary"
           size="small"
           aria-label={t('commons.files.download')}
           onClick={() => handleDownloadFile(ingestionFlowFileId)}

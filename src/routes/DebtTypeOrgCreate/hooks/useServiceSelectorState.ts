@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { UseQueryResult } from '@tanstack/react-query';
-import { OrgSilServiceExtendedDTO } from '../../../../generated/data-contracts';
+import { OrgSilServiceExtendedDTO } from '../../../../generated/core/data-contracts';
 
 type ServiceSelectorOption = {
   value: number;

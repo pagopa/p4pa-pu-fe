@@ -2,7 +2,7 @@ import {
   DetailData,
   titleConfig
 } from '../components/DetailContainer/DetailContainer';
-import { DebtPositionTypeDetailDTO } from '../../generated/apiClient';
+import { DebtPositionTypeDetailDTO } from '../../generated/core/client';
 import { AppPreview } from '../components/AppPreview';
 
 export enum AccordionSectionsEnum {

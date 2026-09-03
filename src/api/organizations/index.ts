@@ -1,13 +1,13 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import utils from '../../utils';
-import { pagedOrganizationWithDebtPositionTypeOrgAndOperatorsCountSchema } from '../../../generated/zod-schema';
+import { pagedOrganizationWithDebtPositionTypeOrgAndOperatorsCountSchema } from '../../../generated/core/zod-schema';
 import {
   buildOrganizationsQueryParams,
   OrganizationsFilteredRequest
 } from './mappings';
 import { parseAndLog } from '../../utils/loaders';
-import { organizationDetailDTOSchema } from '../../../generated/zod-schema';
-import { OrganizationDetailDTO } from '../../../generated/data-contracts';
+import { organizationDetailDTOSchema } from '../../../generated/core/zod-schema';
+import { OrganizationDetailDTO } from '../../../generated/core/data-contracts';
 
 export const getOrganizationsByBrokerIdAndFilters = () =>
   useMutation({
