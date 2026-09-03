@@ -6,6 +6,7 @@ import {
   SpontaneousMode
 } from '../types';
 import { euroToCents } from '../../../utils/formatters';
+import { DebtPositionTypeOrgBalanceCostDTO } from '@generated/data-contracts';
 
 type OriginalDebtTypeOrgData = {
   debtPositionTypeOrgId?: number;
@@ -95,13 +96,36 @@ export const useApiOperations = (organizationId: number) => {
             }
           : basePayload;
 
+      const debtPositionTypeOrgBalanceCostRequestList =
+        data.debtPositionTypeOrgBalanceCostRequestList?.reduce<
+          Array<DebtPositionTypeOrgBalanceCostDTO>
+        >(
+          (acc, item) => [
+            ...acc,
+            {
+              assessmentCode: item?.enabled ? item?.assessmentCode : '',
+              assessmentDescription: item?.enabled
+                ? item?.assessmentDescription
+                : '',
+              officeCode: item?.enabled ? item?.officeCode : '',
+              officeDescription: item?.enabled ? item?.officeDescription : '',
+              operatingYear: item.operatingYear,
+              sectionCode: item?.enabled ? item?.sectionCode : '',
+              sectionDescription: item?.enabled ? item?.sectionDescription : '',
+              type: item.type
+            }
+          ],
+          []
+        );
+
       const baseRequest: CreateDebtPositionTypeOrg = {
         organizationId,
         data: {
           debtPositionTypeOrg: debtPositionTypeOrgPayload,
           operatorsSelection: data.operatorsSelection,
           enabledOperators: data.enabledOperators || [],
-          disabledOperators: data.disabledOperators || []
+          disabledOperators: data.disabledOperators || [],
+          debtPositionTypeOrgBalanceCostRequestList
         }
       };
 

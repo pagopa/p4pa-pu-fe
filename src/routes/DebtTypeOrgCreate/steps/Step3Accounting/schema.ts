@@ -1,5 +1,33 @@
 import { z } from 'zod';
 import { isValidIBAN } from '../../../../utils/fieldValidation';
+import { debtPositionTypeOrgBalanceCostDTOSchema } from '../../../../../generated/zod-schema';
+
+const debtPositionTypeOrgBalanceCostFormSchema =
+  debtPositionTypeOrgBalanceCostDTOSchema
+    .extend({
+      enabled: z.boolean()
+    })
+    .superRefine((value, ctx) => {
+      if (!value.enabled) {
+        return;
+      }
+
+      if (!value.sectionCode?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['sectionCode'],
+          message: 'commons.validation.sectionCodeRequired'
+        });
+      }
+
+      if (!value.sectionDescription?.trim()) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['sectionDescription'],
+          message: 'commons.validation.sectionDescriptionRequired'
+        });
+      }
+    });
 
 export const step3Schema = z.object({
   postalIban: z
@@ -14,5 +42,8 @@ export const step3Schema = z.object({
   postalAccountCode: z.string().optional(),
   holderPostalCc: z.string().optional(),
   balance: z.string().optional(),
-  orgSector: z.string().optional()
+  orgSector: z.string().optional(),
+  debtPositionTypeOrgBalanceCostRequestList: z
+    .array(debtPositionTypeOrgBalanceCostFormSchema)
+    .optional()
 });

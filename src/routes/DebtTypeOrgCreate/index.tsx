@@ -9,7 +9,7 @@ import { Step2Behaviour } from './steps/Step2Behaviour';
 import { Step3Accounting } from './steps/Step3Accounting';
 import { Step4Notifications } from './steps/Step4Notifications';
 import { Step5Operators } from './steps/Step5Operators';
-import { FormProvider } from 'react-hook-form';
+import { FieldPath, FormProvider } from 'react-hook-form';
 import WizardStepButtons from '../../components/Wizard/WizardStepButtons';
 import { DebtTypeOrgForm } from './types';
 import { useStepperLogic } from '../../hooks/useStepperLogic';
@@ -85,7 +85,7 @@ export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
       if (!isValid) {
         errors.forEach(({ path, message }) => {
           if (path.length > 0) {
-            setError(path[0] as keyof DebtTypeOrgForm, {
+            setError(path.join('.') as FieldPath<DebtTypeOrgForm>, {
               type: 'manual',
               message
             });
@@ -134,7 +134,7 @@ export const DebtTypeOrgCreate = ({ edit = false }: DebtTypeOrgCreateProps) => {
       },
       {
         label: t('debtTypeOrgCreate.stepper.step3'),
-        content: <Step3Accounting key="step3" />
+        content: <Step3Accounting key="step3" edit={edit} />
       },
       {
         label: t('debtTypeOrgCreate.stepper.step4'),

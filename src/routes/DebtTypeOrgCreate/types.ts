@@ -1,4 +1,7 @@
-import { OperatorsSelection } from '../../../generated/core/client';
+import {
+  DebtPositionTypeOrgBalanceCostDTO,
+  OperatorsSelection
+} from 'generated/data-contracts';
 
 export enum PaymentMethodOption {
   FREE = 'free',
@@ -11,6 +14,13 @@ export enum SpontaneousMode {
   CUSTOM_FORM = 'custom_form',
   EXTERNAL_URL = 'external_url'
 }
+
+export type FormBalanceCostList = Array<
+  DebtPositionTypeOrgBalanceCostDTO & {
+    enabled?: boolean;
+    readOnly?: boolean;
+  }
+>;
 
 export type DebtTypeOrgForm = {
   // Step 1
@@ -46,7 +56,7 @@ export type DebtTypeOrgForm = {
   holderPostalCc?: string;
   balance?: string;
   orgSector?: string;
-
+  debtPositionTypeOrgBalanceCostRequestList?: FormBalanceCostList;
   // Step 4
   flagNotifyIo?: boolean;
   serviceId?: string;

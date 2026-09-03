@@ -10,17 +10,22 @@ import {
 } from '../../../api/debtPositionsTypeOrg';
 import {
   DebtTypeOrgForm,
+  FormBalanceCostList,
   PaymentMethodOption,
   SpontaneousMode
 } from '../types';
 import { useApiOperations } from './useApiOperations';
 import { useFormSchemas } from './useFormSchemas';
 import { useStore } from '../../../store/GlobalStore';
-import { OperatorsSelection } from '../../../../generated/core/client';
 import utils from '../../../utils';
 import { useDebtTypeOrgId } from '../../../hooks/useDebtTypeOrgId';
 import { useTranslation } from 'react-i18next';
-import { debtPositionTypeOrgSchema } from '../../../../generated/core/zod-schema';
+import { debtPositionTypeOrgDTOSchema } from '@generated/zod-schema';
+import {
+  DebtPositionTypeOrgBalanceCostDTO,
+  DebtPositionTypeOrgBalanceCostType,
+  OperatorsSelection
+} from '@generated/data-contracts';
 
 const ERROR_MESSAGES = {
   INVALID_ID: 'errors.invalidId',
@@ -28,10 +33,40 @@ const ERROR_MESSAGES = {
   VALIDATION: 'errors.validation'
 } as const;
 
-type DebtPositionTypeOrgResponse = z.infer<typeof debtPositionTypeOrgSchema>;
+type DebtPositionTypeOrgResponse = z.infer<typeof debtPositionTypeOrgDTOSchema>;
+
+const balanceCostsNormalize = (
+  debtPositionTypeOrgBalanceCosts?: Array<DebtPositionTypeOrgBalanceCostDTO>
+) => {
+  const currentYear = Number(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Europe/Rome',
+      year: 'numeric'
+    }).format(new Date())
+  );
+
+  return debtPositionTypeOrgBalanceCosts
+    ? [...debtPositionTypeOrgBalanceCosts]
+        ?.sort(
+          (costA, costB) =>
+            Number(costA.operatingYear) - Number(costB.operatingYear)
+        )
+        ?.reduce<FormBalanceCostList>(
+          (acc, cost) => [
+            ...acc,
+            {
+              ...cost,
+              enabled: !!cost.sectionCode,
+              readOnly: Number(cost.operatingYear) < Number(currentYear)
+            }
+          ],
+          []
+        )
+    : [];
+};
 
 export const mapDebtTypeOrgDetailToForm = (
-  response: Partial<DebtPositionTypeOrgResponse> | null | undefined
+  response: DebtPositionTypeOrgResponse
 ): Partial<DebtTypeOrgForm> => {
   if (!response) return {};
 
@@ -40,6 +75,7 @@ export const mapDebtTypeOrgDetailToForm = (
     flagNotifyOutcomePush,
     amountCents,
     spontaneousFormId,
+    debtPositionTypeOrgBalanceCosts,
     ...rest
   } = response;
 
@@ -59,7 +95,10 @@ export const mapDebtTypeOrgDetailToForm = (
     // Default values / derived values
     flagPresetAmount:
       (response as { flagPresetAmount?: boolean }).flagPresetAmount ??
-      (amountCents != null ? true : undefined)
+      (amountCents != null ? true : undefined),
+    debtPositionTypeOrgBalanceCostRequestList: balanceCostsNormalize(
+      debtPositionTypeOrgBalanceCosts
+    )
   };
 
   // Derive payment method (order of precedence mirrors existing UI logic)
@@ -99,6 +138,24 @@ export const useDebtTypeOrgForm = ({
   } = useStore();
   const { t } = useTranslation();
 
+  const currentYear = Number(
+    new Intl.DateTimeFormat('en-US', {
+      timeZone: 'Europe/Rome',
+      year: 'numeric'
+    }).format(new Date())
+  );
+  const YEARS = [currentYear - 1, currentYear, currentYear + 1].map(String);
+
+  const balanceCostTypes = Object.values(DebtPositionTypeOrgBalanceCostType);
+
+  const defaultBalanceCost = YEARS.flatMap((operatingYear) =>
+    balanceCostTypes.map((type) => ({
+      type,
+      operatingYear,
+      sectionCode: ''
+    }))
+  );
+
   const debtPositionTypeOrgId = useDebtTypeOrgId(edit);
   const { stepSchemas, combinedSchema } = useFormSchemas(edit);
 
@@ -126,6 +183,7 @@ export const useDebtTypeOrgForm = ({
       flagAnonymousFiscalCode: false,
       flagPresetAmount: false,
       iban: '',
+      debtPositionTypeOrgBalanceCostRequestList: defaultBalanceCost,
       operatorsSelection: OperatorsSelection.ALL,
       paymentMethod: PaymentMethodOption.FREE,
       enabledOperators: [],

@@ -1152,7 +1152,9 @@
       "checkboxRequired": "Questa conferma è obbligatoria",
       "invalidIban": "Formato IBAN non valido",
       "invalidPostalIban": "Formato conto poste non valido",
-      "invalidFiscalCodeOrVat": "Il codice fiscale o la partita IVA non sono corretti"
+      "invalidFiscalCodeOrVat": "Il codice fiscale o la partita IVA non sono corretti",
+      "sectionCodeRequired": "Il campo codice capitolo è obbligatorio",
+      "sectionDescriptionRequired": "Il campo Denominazione capitolo è obbligatorio"
     },
     "yes": "Si"
   },
@@ -1815,6 +1817,19 @@
       "postalAccountHolder": "Intestatario CC Poste",
       "defaultBudgetStructure": "Struttura Bilancio Default",
       "entitySector": "Settore Ente",
+      "sectionCode": "Codice Capitolo",
+      "sectionDescription": "Denominazione Capitolo",
+      "officeCode": "Codice Ufficio",
+      "officeDescription": "Denominazione Ufficio",
+      "assessmentCode": "Codice Accertamento",
+      "assessmentDescription": "Denominazione Accertamento",
+      "budget": {
+        "subtitle": "Imposta dove registrare in bilancio i costi aggiuntivi sulle posizioni debitorie",
+        "year": "ANNO {{year}}",
+        "NOTIFICATION_COST": "Costo notifica",
+        "DELAY_COST": "Oneri",
+        "INTEREST_COST": "Interessi"
+      },
       "budgetCost": {
         "yearTabLabel": "Anno di bilancio {{year}}",
         "type": {
