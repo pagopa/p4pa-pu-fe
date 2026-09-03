@@ -1,11 +1,11 @@
 import { z } from 'zod';
 import { isValidIBAN } from '../../../../utils/fieldValidation';
-import { debtPositionTypeOrgBalanceCostDTOSchema } from '../../../../../generated/zod-schema';
+import { debtPositionTypeOrgBalanceCostDTOSchema } from '@generated/core/zod-schema';
 
 const debtPositionTypeOrgBalanceCostFormSchema =
   debtPositionTypeOrgBalanceCostDTOSchema
     .extend({
-      enabled: z.boolean()
+      enabled: z.boolean().optional().default(false)
     })
     .superRefine((value, ctx) => {
       if (!value.enabled) {

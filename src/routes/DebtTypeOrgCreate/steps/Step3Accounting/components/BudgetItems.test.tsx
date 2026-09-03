@@ -2,7 +2,7 @@ import { vi } from 'vitest';
 import { render, screen } from '../../../../../__tests__/renderers';
 
 import { BudgetItems } from './BudgetItems';
-import { DebtPositionTypeOrgBalanceCostType } from '@generated/data-contracts';
+import { DebtPositionTypeOrgBalanceCostType } from '@generated/core/data-contracts';
 
 const mockFields = [
   {

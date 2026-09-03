@@ -1,27 +1,59 @@
 import { describe, it, expect } from 'vitest';
 import { renderHook } from '../../../__tests__/renderers';
 import { useApiOperations } from './useApiOperations';
-import { OperatorsSelection } from '../../../../generated/core/client';
-import { PaymentMethodOption, SpontaneousMode } from '../types';
+import {
+  DebtTypeOrgForm,
+  PaymentMethodOption,
+  SpontaneousMode
+} from '../types';
+import {
+  DebtPositionTypeOrgBalanceCostType,
+  OperatorsSelection
+} from '@generated/core/data-contracts';
 
 describe('useApiOperations', () => {
   const organizationId = 42;
 
-  const minimalFormData = {
-    debtPositionTypeId: '123',
-    description: 'Test Description',
-    code: 'TEST_CODE',
-    paymentMethod: PaymentMethodOption.FREE,
-    operatorsSelection: OperatorsSelection.ALL
-  };
+  const createFormData = (
+    overrides: Partial<DebtTypeOrgForm> = {}
+  ): DebtTypeOrgForm =>
+    ({
+      debtPositionTypeId: '123',
+      description: 'Test Description',
+      code: 'TEST_CODE',
+      paymentMethod: PaymentMethodOption.FREE,
+      operatorsSelection: OperatorsSelection.ALL,
+      ...overrides
+    }) as DebtTypeOrgForm;
 
-  it('creates basic payload with required fields', async () => {
+  const createPayload = async (
+    formData: DebtTypeOrgForm = createFormData(),
+    originalData?: Parameters<
+      ReturnType<typeof useApiOperations>['createRequestPayload']
+    >[1],
+    isEdit = false
+  ) => {
     const { result } = renderHook(() => useApiOperations(organizationId));
 
-    const payload = await result.current.createRequestPayload(minimalFormData);
+    return result.current.createRequestPayload(formData, originalData, isEdit);
+  };
 
-    expect(payload.organizationId).toBe(organizationId);
-    expect(payload.data.debtPositionTypeOrg).toMatchObject({
+  const getDebtPositionTypeOrg = async (
+    formData: DebtTypeOrgForm = createFormData(),
+    originalData?: Parameters<
+      ReturnType<typeof useApiOperations>['createRequestPayload']
+    >[1],
+    isEdit = false
+  ) => {
+    const payload = await createPayload(formData, originalData, isEdit);
+
+    return payload.data.debtPositionTypeOrg;
+  };
+
+  it('creates payload with required fields and default flags', async () => {
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg();
+
+    expect(debtPositionTypeOrg).toMatchObject({
       debtPositionTypeId: 123,
       organizationId,
       description: 'Test Description',
@@ -33,94 +65,60 @@ describe('useApiOperations', () => {
       flagNotifyOutcomePush: false,
       flagAmountActualization: false
     });
-    expect(payload.data.operatorsSelection).toBe(OperatorsSelection.ALL);
-    expect(payload.data.enabledOperators).toEqual([]);
-    expect(payload.data.disabledOperators).toEqual([]);
   });
 
-  it('converts euro amount to cents for AMOUNT payment method', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
-      paymentMethod: PaymentMethodOption.AMOUNT,
-      amountCents: 10.5
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.amountCents).toBe(1050);
-  });
-
-  it('includes external payment URL for EXTERNAL payment method', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
-      paymentMethod: PaymentMethodOption.EXTERNAL,
-      externalPaymentUrl: 'https://example.com/payment'
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.externalPaymentUrl).toBe(
-      'https://example.com/payment'
+  it('includes optional fields when provided', async () => {
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+      createFormData({
+        iban: 'IT60X0542811101000000123456',
+        postalIban: 'IT60X0542811101000000654321',
+        postalAccountCode: '123456789',
+        holderPostalCc: 'John Doe',
+        balance: 'Balance Info',
+        orgSector: 'Public',
+        serviceId: 'service-123',
+        ioTemplateSubject: 'Payment Subject',
+        ioTemplateMessage: 'Payment Message'
+      })
     );
-  });
 
-  it('includes optional bank account fields when provided', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
+    expect(debtPositionTypeOrg).toMatchObject({
       iban: 'IT60X0542811101000000123456',
       postalIban: 'IT60X0542811101000000654321',
       postalAccountCode: '123456789',
       holderPostalCc: 'John Doe',
       balance: 'Balance Info',
-      orgSector: 'Public'
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg).toMatchObject({
-      iban: 'IT60X0542811101000000123456',
-      postalIban: 'IT60X0542811101000000654321',
-      postalAccountCode: '123456789',
-      holderPostalCc: 'John Doe',
-      balance: 'Balance Info',
-      orgSector: 'Public'
+      orgSector: 'Public',
+      serviceId: 'service-123',
+      ioTemplateSubject: 'Payment Subject',
+      ioTemplateMessage: 'Payment Message'
     });
   });
 
-  it('excludes optional bank account fields when not provided', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
+  it('excludes optional fields when not provided', async () => {
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg();
 
-    const payload = await result.current.createRequestPayload(minimalFormData);
-
-    expect(payload.data.debtPositionTypeOrg.iban).toBeUndefined();
-    expect(payload.data.debtPositionTypeOrg.postalIban).toBeUndefined();
-    expect(payload.data.debtPositionTypeOrg.postalAccountCode).toBeUndefined();
-    expect(payload.data.debtPositionTypeOrg.holderPostalCc).toBeUndefined();
-    expect(payload.data.debtPositionTypeOrg.balance).toBeUndefined();
-    expect(payload.data.debtPositionTypeOrg.orgSector).toBeUndefined();
+    expect(debtPositionTypeOrg).not.toHaveProperty('iban');
+    expect(debtPositionTypeOrg).not.toHaveProperty('postalIban');
+    expect(debtPositionTypeOrg).not.toHaveProperty('postalAccountCode');
+    expect(debtPositionTypeOrg).not.toHaveProperty('holderPostalCc');
+    expect(debtPositionTypeOrg).not.toHaveProperty('balance');
+    expect(debtPositionTypeOrg).not.toHaveProperty('orgSector');
+    expect(debtPositionTypeOrg).not.toHaveProperty('serviceId');
   });
 
-  it('handles boolean flags correctly', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
+  it('maps boolean flags correctly', async () => {
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+      createFormData({
+        flagSpontaneous: true,
+        flagMandatoryDueDate: true,
+        flagAnonymousFiscalCode: true,
+        flagNotifyIo: true,
+        flagNotifyOutcomePush: 'enabled'
+      })
+    );
 
-    const formData = {
-      ...minimalFormData,
-      flagSpontaneous: true,
-      flagMandatoryDueDate: true,
-      flagAnonymousFiscalCode: true,
-      flagNotifyIo: true,
-      flagNotifyOutcomePush: 'enabled' as const
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg).toMatchObject({
+    expect(debtPositionTypeOrg).toMatchObject({
       flagSpontaneous: true,
       flagMandatoryDueDate: true,
       flagAnonymousFiscalCode: true,
@@ -129,275 +127,233 @@ describe('useApiOperations', () => {
     });
   });
 
-  it('sets flagNotifyOutcomePush to false when not enabled', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
+  it('converts amount from euros to cents for AMOUNT payment method', async () => {
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+      createFormData({
+        paymentMethod: PaymentMethodOption.AMOUNT,
+        amountCents: 10.5
+      })
+    );
 
-    const formData = {
-      ...minimalFormData,
-      flagNotifyOutcomePush: 'disabled' as const
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.flagNotifyOutcomePush).toBe(false);
+    expect(debtPositionTypeOrg.amountCents).toBe(1050);
   });
 
-  it('includes IO template fields when provided', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
+  it('includes amountCents when preset amount is enabled', async () => {
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+      createFormData({
+        flagPresetAmount: true,
+        amountCents: 15.75
+      })
+    );
 
-    const formData = {
-      ...minimalFormData,
-      serviceId: 'service-123',
-      ioTemplateSubject: 'Payment Subject',
-      ioTemplateMessage: 'Payment Message'
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg).toMatchObject({
-      serviceId: 'service-123',
-      ioTemplateSubject: 'Payment Subject',
-      ioTemplateMessage: 'Payment Message'
-    });
+    expect(debtPositionTypeOrg.amountCents).toBe(1575);
   });
 
-  it('includes notifyOutcomePushOrgSilServiceId when provided and not zero', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
+  it.each([
+    {
+      paymentMethod: PaymentMethodOption.EXTERNAL,
+      spontaneousMode: undefined,
+      url: 'https://example.com/payment'
+    },
+    {
+      paymentMethod: PaymentMethodOption.FREE,
+      spontaneousMode: SpontaneousMode.EXTERNAL_URL,
+      url: 'https://external-portal.com/payment'
+    }
+  ])(
+    'includes external payment URL when the corresponding option is selected',
+    async ({ paymentMethod, spontaneousMode, url }) => {
+      const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+        createFormData({
+          paymentMethod,
+          spontaneousMode,
+          externalPaymentUrl: url
+        })
+      );
 
-    const formData = {
-      ...minimalFormData,
-      notifyOutcomePushOrgSilServiceId: 456
-    };
+      expect(debtPositionTypeOrg.externalPaymentUrl).toBe(url);
+    }
+  );
 
-    const payload = await result.current.createRequestPayload(formData);
+  it('includes spontaneous form ID only for custom form mode', async () => {
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+      createFormData({
+        spontaneousMode: SpontaneousMode.CUSTOM_FORM,
+        customFormId: 123
+      })
+    );
 
-    expect(
-      payload.data.debtPositionTypeOrg.notifyOutcomePushOrgSilServiceId
-    ).toBe(456);
+    expect(debtPositionTypeOrg.spontaneousFormId).toBe(123);
   });
 
-  it('excludes notifyOutcomePushOrgSilServiceId when zero', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
+  it('does not include spontaneous form ID for other modes', async () => {
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+      createFormData({
+        spontaneousMode: SpontaneousMode.STANDARD,
+        customFormId: 123
+      })
+    );
 
-    const formData = {
-      ...minimalFormData,
-      notifyOutcomePushOrgSilServiceId: 0
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(
-      payload.data.debtPositionTypeOrg.notifyOutcomePushOrgSilServiceId
-    ).toBeUndefined();
+    expect(debtPositionTypeOrg).not.toHaveProperty('spontaneousFormId');
   });
 
-  it('includes amountActualizationOrgSilServiceId when provided and not zero', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
+  it.each([
+    {
+      field: 'notifyOutcomePushOrgSilServiceId',
+      value: 456
+    },
+    {
+      field: 'amountActualizationOrgSilServiceId',
+      value: 789
+    }
+  ])('includes $field when provided and non-zero', async ({ field, value }) => {
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+      createFormData({
+        [field]: value
+      })
+    );
 
-    const formData = {
-      ...minimalFormData,
-      amountActualizationOrgSilServiceId: 789
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(
-      payload.data.debtPositionTypeOrg.amountActualizationOrgSilServiceId
-    ).toBe(789);
+    // @ts-expect-error using string key for indexing
+    expect(debtPositionTypeOrg[field]).toBe(value);
   });
 
-  it('excludes amountActualizationOrgSilServiceId when zero', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
+  it.each([
+    'notifyOutcomePushOrgSilServiceId',
+    'amountActualizationOrgSilServiceId'
+  ])('excludes %s when zero', async (field) => {
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+      createFormData({
+        [field]: 0
+      })
+    );
 
-    const formData = {
-      ...minimalFormData,
-      amountActualizationOrgSilServiceId: 0
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(
-      payload.data.debtPositionTypeOrg.amountActualizationOrgSilServiceId
-    ).toBeUndefined();
+    expect(debtPositionTypeOrg).not.toHaveProperty(field);
   });
 
-  it('includes operators when operatorsSelection is SELECTED', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
+  it('includes selected operators', async () => {
+    const payload = await createPayload(
+      createFormData({
+        operatorsSelection: OperatorsSelection.SELECTED,
+        enabledOperators: ['op1', 'op2'],
+        disabledOperators: ['op3', 'op4']
+      })
+    );
 
-    const formData = {
-      ...minimalFormData,
+    expect(payload.data).toMatchObject({
       operatorsSelection: OperatorsSelection.SELECTED,
       enabledOperators: ['op1', 'op2'],
       disabledOperators: ['op3', 'op4']
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.operatorsSelection).toBe(OperatorsSelection.SELECTED);
-    expect(payload.data.enabledOperators).toEqual(['op1', 'op2']);
-    expect(payload.data.disabledOperators).toEqual(['op3', 'op4']);
+    });
   });
 
-  it('uses empty arrays for operators when not provided', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const payload = await result.current.createRequestPayload(minimalFormData);
+  it('uses empty operator arrays when not provided', async () => {
+    const payload = await createPayload();
 
     expect(payload.data.enabledOperators).toEqual([]);
     expect(payload.data.disabledOperators).toEqual([]);
   });
 
-  it('includes original data fields in edit mode', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
+  it('preserves original fields in edit mode', async () => {
     const originalData = {
       debtPositionTypeOrgId: 999,
       flagActive: true,
-      flagExternal: false,
-      creationDate: '2023-01-01T00:00:00Z',
-      updateDate: '2023-06-15T12:30:00Z',
-      updateOperatorExternalId: 'operator-123',
-      updateTraceId: 'trace-456'
+      flagExternal: false
     };
 
-    const payload = await result.current.createRequestPayload(
-      minimalFormData,
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+      createFormData(),
       originalData,
       true
     );
 
-    expect(payload.data.debtPositionTypeOrg).toMatchObject({
+    expect(debtPositionTypeOrg).toMatchObject({
       debtPositionTypeOrgId: 999,
       flagActive: true,
       flagExternal: false
     });
   });
 
-  it('does not include original data fields in create mode', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
+  it('does not preserve original fields in create mode', async () => {
     const originalData = {
       debtPositionTypeOrgId: 999,
       flagActive: true,
       flagExternal: false
     };
 
-    const payload = await result.current.createRequestPayload(
-      minimalFormData,
+    const debtPositionTypeOrg = await getDebtPositionTypeOrg(
+      createFormData(),
       originalData,
       false
     );
 
-    expect(
-      payload.data.debtPositionTypeOrg.debtPositionTypeOrgId
-    ).toBeUndefined();
-    expect(payload.data.debtPositionTypeOrg.flagActive).toBeUndefined();
-    expect(payload.data.debtPositionTypeOrg.flagExternal).toBeUndefined();
+    expect(debtPositionTypeOrg).not.toHaveProperty('debtPositionTypeOrgId');
+    expect(debtPositionTypeOrg).not.toHaveProperty('flagActive');
+    expect(debtPositionTypeOrg).not.toHaveProperty('flagExternal');
   });
 
-  it('always sets flagAmountActualization to false', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
-      amountActualizationOrgSilServiceId: 789
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.flagAmountActualization).toBe(
-      false
+  it('maps enabled balance costs preserving their values', async () => {
+    const payload = await createPayload(
+      createFormData({
+        debtPositionTypeOrgBalanceCostRequestList: [
+          {
+            type: DebtPositionTypeOrgBalanceCostType.NOTIFICATION_COST,
+            operatingYear: '2026',
+            enabled: true,
+            sectionCode: 'SEC01',
+            sectionDescription: 'Section 1',
+            officeCode: 'OFF01',
+            officeDescription: 'Office 1',
+            assessmentCode: 'ASS01',
+            assessmentDescription: 'Assessment 1'
+          }
+        ]
+      })
     );
+
+    expect(payload.data.debtPositionTypeOrgBalanceCostRequestList).toEqual([
+      {
+        type: DebtPositionTypeOrgBalanceCostType.NOTIFICATION_COST,
+        operatingYear: '2026',
+        sectionCode: 'SEC01',
+        sectionDescription: 'Section 1',
+        officeCode: 'OFF01',
+        officeDescription: 'Office 1',
+        assessmentCode: 'ASS01',
+        assessmentDescription: 'Assessment 1'
+      }
+    ]);
   });
 
-  it('includes spontaneousFormId when spontaneousMode is custom_form', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
-      flagSpontaneous: true,
-      spontaneousMode: SpontaneousMode.CUSTOM_FORM,
-      customFormId: 123
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.spontaneousFormId).toBe(123);
-  });
-
-  it('does not include spontaneousFormId when spontaneousMode is not custom_form', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
-      flagSpontaneous: true,
-      spontaneousMode: SpontaneousMode.STANDARD,
-      customFormId: 123
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.spontaneousFormId).toBeUndefined();
-  });
-
-  it('includes externalPaymentUrl when spontaneousMode is external_url', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
-      flagSpontaneous: true,
-      spontaneousMode: SpontaneousMode.EXTERNAL_URL,
-      externalPaymentUrl: 'https://external-portal.com/payment'
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.externalPaymentUrl).toBe(
-      'https://external-portal.com/payment'
+  it('clears balance cost fields when the cost is disabled', async () => {
+    const payload = await createPayload(
+      createFormData({
+        debtPositionTypeOrgBalanceCostRequestList: [
+          {
+            type: DebtPositionTypeOrgBalanceCostType.DELAY_COST,
+            operatingYear: '2026',
+            enabled: false,
+            sectionCode: 'SEC01',
+            sectionDescription: 'Section 1',
+            officeCode: 'OFF01',
+            officeDescription: 'Office 1',
+            assessmentCode: 'ASS01',
+            assessmentDescription: 'Assessment 1'
+          }
+        ]
+      })
     );
-  });
 
-  it('includes externalPaymentUrl when paymentMethod is EXTERNAL', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
-      paymentMethod: PaymentMethodOption.EXTERNAL,
-      externalPaymentUrl: 'https://example.com/payment'
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.externalPaymentUrl).toBe(
-      'https://example.com/payment'
-    );
-  });
-
-  it('includes amountCents when flagPresetAmount is true', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
-      flagPresetAmount: true,
-      amountCents: 15.75
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.amountCents).toBe(1575);
-  });
-
-  it('includes amountCents when paymentMethod is AMOUNT', async () => {
-    const { result } = renderHook(() => useApiOperations(organizationId));
-
-    const formData = {
-      ...minimalFormData,
-      paymentMethod: PaymentMethodOption.AMOUNT,
-      amountCents: 20.5
-    };
-
-    const payload = await result.current.createRequestPayload(formData);
-
-    expect(payload.data.debtPositionTypeOrg.amountCents).toBe(2050);
+    expect(payload.data.debtPositionTypeOrgBalanceCostRequestList).toEqual([
+      {
+        type: DebtPositionTypeOrgBalanceCostType.DELAY_COST,
+        operatingYear: '2026',
+        sectionCode: '',
+        sectionDescription: '',
+        officeCode: '',
+        officeDescription: '',
+        assessmentCode: '',
+        assessmentDescription: ''
+      }
+    ]);
   });
 });

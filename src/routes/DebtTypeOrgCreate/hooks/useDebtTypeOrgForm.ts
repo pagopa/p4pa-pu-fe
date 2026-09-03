@@ -20,12 +20,12 @@ import { useStore } from '../../../store/GlobalStore';
 import utils from '../../../utils';
 import { useDebtTypeOrgId } from '../../../hooks/useDebtTypeOrgId';
 import { useTranslation } from 'react-i18next';
-import { debtPositionTypeOrgDTOSchema } from '@generated/zod-schema';
+import { debtPositionTypeOrgDTOSchema } from '@generated/core/zod-schema';
 import {
   DebtPositionTypeOrgBalanceCostDTO,
   DebtPositionTypeOrgBalanceCostType,
   OperatorsSelection
-} from '@generated/data-contracts';
+} from '@generated/core/data-contracts';
 
 const ERROR_MESSAGES = {
   INVALID_ID: 'errors.invalidId',

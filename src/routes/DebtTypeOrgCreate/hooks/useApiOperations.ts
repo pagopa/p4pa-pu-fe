@@ -6,7 +6,7 @@ import {
   SpontaneousMode
 } from '../types';
 import { euroToCents } from '../../../utils/formatters';
-import { DebtPositionTypeOrgBalanceCostDTO } from '@generated/data-contracts';
+import { DebtPositionTypeOrgBalanceCostDTO } from '@generated/core/data-contracts';
 
 type OriginalDebtTypeOrgData = {
   debtPositionTypeOrgId?: number;

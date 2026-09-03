@@ -1,5 +1,5 @@
+import { DebtPositionTypeOrgBalanceCostType } from '@generated/core/data-contracts';
 import { step3Schema } from './schema';
-import { DebtPositionTypeOrgBalanceCostType } from '../../../../../generated/data-contracts';
 
 const createBalanceCost = (
   overrides: Partial<{

@@ -3,10 +3,10 @@ import { useTranslation } from 'react-i18next';
 import TableRowsIcon from '@mui/icons-material/TableRows';
 import { Stack, Typography } from '@mui/material';
 import { DebtTypeOrgForm } from '@core/routes/DebtTypeOrgCreate/types';
-import { DebtPositionTypeOrgBalanceCostType } from '@generated/data-contracts';
 import SectionBox from '@core/components/Wizard/SectionBox';
 import { FormComponent } from '@core/components/FormComponent';
 import { CostConfiguration } from './CostConfiguration';
+import { DebtPositionTypeOrgBalanceCostType } from '@generated/core/data-contracts';
 
 export const BudgetItems = ({ edit }: { edit?: boolean }) => {
   const { t } = useTranslation();
