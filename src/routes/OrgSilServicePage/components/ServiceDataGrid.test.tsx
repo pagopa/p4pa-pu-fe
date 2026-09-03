@@ -7,7 +7,7 @@ import { ServiceDataGrid } from './ServiceDataGrid';
 import {
   OrgSilServiceType,
   PagedOrgSilServiceView
-} from '../../../../generated/apiClient';
+} from '../../../../generated/core/client';
 
 vi.mock('../../../components/DataGrid/CustomDataGrid', () => ({
   default: ({ rows, columns }: any) => (

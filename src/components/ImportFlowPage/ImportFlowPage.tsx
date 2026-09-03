@@ -19,7 +19,7 @@ import { importFlowConfig } from '../../models/ImportDetails';
 import { PageRoutes } from '../../routes';
 import { uploadIngestionFlowFile } from '../../api/ingestionFlowFiles';
 import { useStore } from '../../store/GlobalStore';
-import { IngestionFlowFileType } from '../../../generated/fileshare/fileshareClient';
+import { IngestionFlowFileType } from '../../../generated/fileshare/client';
 import utils from '../../utils';
 
 const ImportFlow = () => {

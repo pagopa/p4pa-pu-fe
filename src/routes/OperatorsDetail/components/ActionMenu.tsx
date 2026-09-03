@@ -1,5 +1,5 @@
 import ActionMenu from '../../../components/ActionMenu/ActionMenu';
-import { DebtPositionTypeOrgDTO } from '../../../../generated/data-contracts';
+import { DebtPositionTypeOrgDTO } from '../../../../generated/core/data-contracts';
 import RemoveCircleOutline from '@mui/icons-material/RemoveCircleOutline';
 import OpenInNew from '@mui/icons-material/OpenInNew';
 import { useTranslation } from 'react-i18next';

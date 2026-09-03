@@ -5,7 +5,7 @@ import { AxiosResponse } from 'axios';
 import utils from '../../../utils';
 import * as loaders from '../../../utils/loaders';
 import { getAssessmentDetail } from './assessmentDetail';
-import { assessmentsRowsDetailSchema } from '../../../../generated/zod-schema';
+import { assessmentsRowsDetailSchema } from '../../../../generated/core/zod-schema';
 import { createMock } from 'zodock';
 
 vi.mock('../../../utils', () => ({

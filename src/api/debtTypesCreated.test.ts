@@ -8,7 +8,7 @@ import utils from '../utils';
 import {
   pagedDebtPositionTypeOrgWithCountSchema,
   pagedOrganizationWithDebtPositionTypeOrgCountSchema
-} from '../../generated/zod-schema';
+} from '../../generated/core/zod-schema';
 import { AxiosResponse } from 'axios';
 import { createMock } from 'zodock';
 

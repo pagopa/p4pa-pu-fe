@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import SearchResultsDataGrid from './SearchResultsDataGrid';
 import { BaseFilterValues } from '../../models/Filters';
 import useTelematicReceiptsFilters from '../../hooks/useTelematicReceiptsFilters';
-import { PagedReceiptView } from '../../../generated/data-contracts';
+import { PagedReceiptView } from '../../../generated/core/data-contracts';
 import { useState } from 'react';
 import {
   noFilterSetted,

@@ -6,7 +6,7 @@ import {
 import {
   PagoPaRegistryDTO,
   SilRegistryDTO
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { ExpandableCard } from './components/ExpandableCard';
 import { formatDateTime } from '../../utils/formatters';
 

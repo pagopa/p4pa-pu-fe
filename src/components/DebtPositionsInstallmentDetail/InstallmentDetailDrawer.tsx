@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 import { getTransfers } from '../../api/transfers';
 import { moneyFormat } from '../../utils/formatters';
-import { TransferDTO } from '../../../generated/data-contracts';
+import { TransferDTO } from '../../../generated/core/data-contracts';
 import { Drawer, DrawerProps } from '../Drawer';
 
 export type InstallmentDetailDrawerProps = DrawerProps & {

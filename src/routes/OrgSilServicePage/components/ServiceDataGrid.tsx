@@ -7,7 +7,7 @@ import {
   OrgSilServiceType,
   OrgSilServiceView,
   PagedOrgSilServiceView
-} from '../../../../generated/apiClient';
+} from '../../../../generated/core/client';
 import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 
 type ServiceDataGridProps = {

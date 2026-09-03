@@ -13,7 +13,7 @@ import { format } from 'date-fns';
 import { Step2Data, Step3Data } from '../models/DebtPositionType';
 import { UseFormTrigger } from 'react-hook-form';
 import { isBeneficiariesTotalValid } from './fieldValidation';
-import { PersonEntityType } from '../../generated/data-contracts';
+import { PersonEntityType } from '../../generated/core/data-contracts';
 import { isSameBeneficiariesAsBeforeEnabled } from '../models/Step3Schema';
 
 /**

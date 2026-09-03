@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect } from 'vitest';
 import ReceiptDetailWarningBanner from './ReceiptDetailWarningBanner';
-import { ReceiptDetailDTO } from '../../../generated/apiClient';
+import { ReceiptDetailDTO } from '../../../generated/core/client';
 
 describe('ReceiptDetailWarningBanner', () => {
   const idAlertBanner = 'technical-debt-alert';

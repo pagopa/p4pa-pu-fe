@@ -11,7 +11,7 @@ import {
 import { setOrganizationId } from '../../store/OrganizationIdStore';
 import { PageRoutes } from '../../routes';
 import FlowOverview from './ImportFlowOverview';
-import { IngestionFlowFileTypeEnum } from '../../../generated/apiClient';
+import { IngestionFlowFileTypeEnum } from '../../../generated/core/client';
 import utils from '../../utils';
 import {
   noFilterSetted,

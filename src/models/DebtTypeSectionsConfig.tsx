@@ -2,7 +2,7 @@ import {
   DetailData,
   titleConfig
 } from '../components/DetailContainer/DetailContainer';
-import { DebtPositionTypeOrgDTO } from '../../generated/apiClient';
+import { DebtPositionTypeOrgDTO } from '../../generated/core/client';
 import { moneyFormat } from '../utils/formatters';
 import { AppPreview } from '../components/AppPreview';
 import { BudgetCostsDetail } from '../components/BudgetCostsDetail/BudgetCostsDetail';

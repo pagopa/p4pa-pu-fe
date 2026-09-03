@@ -2,7 +2,7 @@ import { AxiosResponse } from 'axios';
 import { createMock } from 'zodock';
 import utils from '../utils';
 import { act, renderHook, waitFor } from '../__tests__/renderers';
-import { transferDTOSchema } from '../../generated/zod-schema';
+import { transferDTOSchema } from '../../generated/core/zod-schema';
 import { getTransfers, validateTaxonomyCategory } from './transfers';
 
 vi.mock('../utils', () => {

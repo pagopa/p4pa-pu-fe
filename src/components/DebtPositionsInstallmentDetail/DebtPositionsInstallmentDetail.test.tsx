@@ -11,7 +11,7 @@ import { STATE } from '../../store/types';
 import {
   DebtPositionOrigin,
   InstallmentStatus
-} from '../../../generated/apiClient';
+} from '../../../generated/core/client';
 import React from 'react';
 
 global.ResizeObserver = vi.fn().mockImplementation(() => ({

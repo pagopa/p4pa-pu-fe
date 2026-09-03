@@ -9,12 +9,12 @@ import {
   installmentRegistrySchema,
   pagedDebtPositionViewSchema,
   pagedInstallmentViewSchema
-} from '../../../generated/zod-schema';
+} from '../../../generated/core/zod-schema';
 import { AxiosError } from 'axios';
 import {
   DebtPositionDTO,
   ManageDebtPositionDTO
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { extractFilename } from '../../utils/formatters';
 import {
   buildDebtPositionsQueryParams,

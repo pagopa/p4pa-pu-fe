@@ -12,7 +12,7 @@ import {
   postDebtPositionType,
   useDebtPositionTypeCodeValidation
 } from '../../api/debtPositionsTypes';
-import { DebtPositionTypeRequestBody } from '../../../generated/data-contracts';
+import { DebtPositionTypeRequestBody } from '../../../generated/core/data-contracts';
 import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
 

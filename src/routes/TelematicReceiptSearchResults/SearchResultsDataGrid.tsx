@@ -10,7 +10,7 @@ import { moneyFormat } from '../../utils/formatters';
 import {
   PagedReceiptView,
   ReceiptView
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { getReceiptPdf } from '../../api/receiptPdf';
 import { downloadBlob } from '../../utils/download';
 import utils from '../../utils';

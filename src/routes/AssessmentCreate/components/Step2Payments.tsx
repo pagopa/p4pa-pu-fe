@@ -32,7 +32,7 @@ import type {
   PaymentsUIFilters
 } from '../../../api/classifications/paidInstallments/mappings';
 import { convertFiltersToAPI } from '../../../api/classifications/paidInstallments/mappings';
-import { assessmentsRowsDetailSchema } from '../../../../generated/zod-schema';
+import { assessmentsRowsDetailSchema } from '../../../../generated/core/zod-schema';
 import { z } from 'zod';
 import utils from '../../../utils';
 

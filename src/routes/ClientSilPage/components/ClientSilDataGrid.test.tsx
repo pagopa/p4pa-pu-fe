@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent } from '../../../__tests__/renderers';
 import { ClientSilDataGrid } from './ClientSilDataGrid';
-import type { ClientDTOPage } from '../../../../generated/apiClient';
+import type { ClientDTOPage } from '../../../../generated/core/client';
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({

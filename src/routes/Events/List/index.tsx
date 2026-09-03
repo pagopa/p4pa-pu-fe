@@ -31,7 +31,7 @@ import { useSearch } from '../../../hooks/useSearch';
 import {
   PagedPagoPaRegistry,
   PagedSilRegistry
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { BaseFilterValues } from '../../../models/Filters';
 
 type EventsFilters = SilFilterValues | NodoFilterValues;

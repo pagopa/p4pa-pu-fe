@@ -2,7 +2,7 @@ import { z } from 'zod';
 import {
   OrgSilServiceType,
   JwtAlgorithm
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { t } from 'i18next';
 
 export const orgSilServiceFormSchema = z

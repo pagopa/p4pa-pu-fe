@@ -3,7 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '../../__tests__/renderers';
 import ClassificationExportPage from './ClassificationExport';
 import { PageRoutes } from '../../routes';
-import { ExportFileTypeEnum } from '../../../generated/apiClient';
+import { ExportFileTypeEnum } from '../../../generated/core/client';
 import { useForm } from 'react-hook-form';
 import { ClassificationFormFields } from '../../hooks/useClassificationExport';
 import utils from '../../utils';

@@ -9,7 +9,7 @@ import {
   InstallmentStatus,
   InstallmentViewDTO,
   PagedInstallmentView
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { formatDate, moneyFormat } from '../../../utils/formatters';
 import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
 

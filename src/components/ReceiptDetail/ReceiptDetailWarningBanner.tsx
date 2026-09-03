@@ -1,6 +1,6 @@
 import { Alert, Box, SxProps, Theme } from '@mui/material';
 import { useTranslation } from 'react-i18next';
-import { ReceiptDetailDTO } from '../../../generated/apiClient';
+import { ReceiptDetailDTO } from '../../../generated/core/client';
 
 type ReceiptDetailWarningBannerProps = {
   receiptOrigin: ReceiptDetailDTO['receiptOrigin'];

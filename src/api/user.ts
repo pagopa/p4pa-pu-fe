@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { userInfoDTOSchema } from '../../generated/zod-schema';
+import { userInfoDTOSchema } from '../../generated/core/zod-schema';
 
 const getUserInfoPlain = async () => {
   const { data: user } = await utils.apiClient.bff.getUserInfo();

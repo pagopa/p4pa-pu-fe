@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { AssessmentsRegistryStatus } from '../../../../../generated/data-contracts';
+import { AssessmentsRegistryStatus } from '../../../../../generated/core/data-contracts';
 
 export type AssessmentRegistryFormValues = {
   debtPositionType: string;

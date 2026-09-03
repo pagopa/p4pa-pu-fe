@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
 import {
   OrganizationDetail,
   OrganizationStatus
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import {
   accountingInfo,
   paymentInfo,

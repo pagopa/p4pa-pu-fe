@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '../../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
 import { HomeDrawerIUV } from './HomeDrawerIUV';
-import { DashboardByIuv } from '../../../../generated/data-contracts';
+import { DashboardByIuv } from '../../../../generated/core/data-contracts';
 import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
 
 const mockDownloadReceipt = vi.fn();

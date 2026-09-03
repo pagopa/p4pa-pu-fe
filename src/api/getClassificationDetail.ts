@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { classificationDetailDTOSchema } from '../../generated/zod-schema';
+import { classificationDetailDTOSchema } from '../../generated/core/zod-schema';
 
 export const getClassificationDetail = (
   organizationId: number,

@@ -4,7 +4,7 @@ import { orgSilServiceFormSchema, OrgSilServiceFormData } from './schema';
 import {
   OrgSilServiceType,
   JwtAlgorithm
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { i18nTestSetup } from '../../__tests__/i18nTestSetup';
 
 vi.mock('i18next', () => ({

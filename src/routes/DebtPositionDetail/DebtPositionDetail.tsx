@@ -34,7 +34,7 @@ import {
   DebtPositionStatus,
   InstallmentStatus,
   DebtPositionOrigin
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import debtPositions from '../../api/debtPositions';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';

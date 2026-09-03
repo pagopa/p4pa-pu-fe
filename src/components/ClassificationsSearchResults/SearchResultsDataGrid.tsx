@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import CustomDataGrid from '../DataGrid/CustomDataGrid';
 import { ReadMore } from '@mui/icons-material';
 import { ChipProps, IconButton } from '@mui/material';
-import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/apiClient';
+import { PagedTreasuredClassificationExtendedDTO } from '../../../generated/core/client';
 import { formatDate, moneyFormat } from '../../utils/formatters';
 import { generatePath, Link } from 'react-router';
 import { PageRoutes } from '../../routes';
@@ -88,10 +88,7 @@ const SearchResultsDataGrid = ({ data }: DataGridProps) => {
             classificationId: params.row.classificationId
           })}
         >
-          <IconButton
-            aria-label={t('commons.detail')}
-            size="small"
-          >
+          <IconButton aria-label={t('commons.detail')} size="small">
             <ReadMore />
           </IconButton>
         </Link>

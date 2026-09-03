@@ -14,7 +14,7 @@ import useDebtPositionFilters from '../../hooks/useDebtPositionsFilters';
 import {
   PagedInstallmentView,
   PagedDebtPositionView
-} from '../../../generated/apiClient';
+} from '../../../generated/core/client';
 import debtPositions from '../../api/debtPositions';
 import { PageRoutes } from '../../routes';
 import { useSearch } from '../../hooks/useSearch';

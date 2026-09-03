@@ -17,11 +17,11 @@ import { initialFilterValues } from '../../store/FilterStore';
 import {
   assessmentsRegistrySchema,
   assessmentsRegistryDTOSchema
-} from '../../../generated/zod-schema';
+} from '../../../generated/core/zod-schema';
 import { createMock } from 'zodock';
 import * as loaders from '../../utils/loaders';
-import type { AssessmentsRegistry } from '../../../generated/data-contracts';
-import { AssessmentsRegistryStatus } from '../../../generated/data-contracts';
+import type { AssessmentsRegistry } from '../../../generated/core/data-contracts';
+import { AssessmentsRegistryStatus } from '../../../generated/core/data-contracts';
 
 vi.mock('../../utils', async () => {
   const actual =

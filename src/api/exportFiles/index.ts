@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
-import { pagedExportFileSchema } from '../../../generated/zod-schema';
+import { pagedExportFileSchema } from '../../../generated/core/zod-schema';
 import {
   buildGetExportFilesQueryParams,
   ExportFilesFilteredRequest

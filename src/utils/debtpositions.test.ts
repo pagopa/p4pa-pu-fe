@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { DebtPositionOrigin } from '../../generated/apiClient';
+import { DebtPositionOrigin } from '../../generated/core/client';
 import { isTechnicalDebtPosition } from './debtpositions';
 
 describe('isTechnicalDebtPosition', () => {

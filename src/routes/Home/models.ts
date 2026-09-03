@@ -2,7 +2,7 @@ import {
   DashboardByFc,
   DashboardByIuf,
   DashboardByIuv
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { ReactElement, ReactNode } from 'react';
 
 export enum TABS {

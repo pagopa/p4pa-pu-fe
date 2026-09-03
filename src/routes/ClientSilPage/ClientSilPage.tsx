@@ -13,7 +13,7 @@ import type { ClientSilFilters } from '../../api/clientSil/mappings';
 import type {
   ClientDTOPage,
   ClientNoSecretDTO
-} from '../../../generated/apiClient';
+} from '../../../generated/core/client';
 import { PageRoutes } from '../../routes';
 import { generatePath, useNavigate } from 'react-router';
 

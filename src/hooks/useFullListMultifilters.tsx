@@ -8,8 +8,8 @@ import { useStore } from '../store/GlobalStore';
 import { ChangeEvent } from 'react';
 import { setFilterValues } from '../store/FilterStore';
 import { getDebtPositionTypeOrgs } from '../api/debtPositionsTypeOrg';
-import { LabelEnum } from '../../generated/apiClient';
-import { AssessmentsRegistryStatus } from '../../generated/data-contracts';
+import { LabelEnum } from '../../generated/core/client';
+import { AssessmentsRegistryStatus } from '../../generated/core/data-contracts';
 import { FilterFieldValue } from '../models/Filters';
 
 export const useFullListMultifilters = () => {

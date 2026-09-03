@@ -6,7 +6,7 @@ import DetailContainer, {
 import TitleComponent, {
   ActionMenuItem
 } from '../TitleComponent/TitleComponent';
-import { ReceiptDetailDTO } from '../../../generated/apiClient';
+import { ReceiptDetailDTO } from '../../../generated/core/client';
 import { ReceiptDetailWarningBanner } from './ReceiptDetailWarningBanner';
 
 type DetailProps = {

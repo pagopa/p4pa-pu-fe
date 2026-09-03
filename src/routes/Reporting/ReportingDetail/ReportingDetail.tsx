@@ -19,7 +19,7 @@ import {
   formatDateTime,
   moneyFormat
 } from '../../../utils/formatters';
-import { PaymentsReportingWithReceiptView } from '../../../../generated/apiClient';
+import { PaymentsReportingWithReceiptView } from '../../../../generated/core/client';
 import { PageRoutes } from '../../../routes';
 import { getPaymentsReportingRows } from '../../../api/reporting';
 import { useSearch } from '../../../hooks/useSearch';

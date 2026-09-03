@@ -1,4 +1,4 @@
-import { OperatorsSelection } from '../../../../../generated/data-contracts';
+import { OperatorsSelection } from '../../../../../generated/core/data-contracts';
 import { step5Schema } from './schema';
 
 describe('step5Schema validation', () => {

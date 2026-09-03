@@ -10,7 +10,7 @@ import {
   AssessmentRegistryFormValues,
   assessmentRegistrySchema
 } from './steps/Step1Configuration/schema';
-import { AssessmentsRegistry } from '../../../generated/data-contracts';
+import { AssessmentsRegistry } from '../../../generated/core/data-contracts';
 import {
   getAssessmentsRegistry,
   updateAssessmentsRegistry

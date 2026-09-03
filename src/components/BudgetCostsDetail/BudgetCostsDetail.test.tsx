@@ -5,7 +5,7 @@ import { BudgetCostsDetail } from './BudgetCostsDetail';
 import {
   DebtPositionTypeOrgBalanceCostDTO,
   DebtPositionTypeOrgBalanceCostType
-} from '../../../generated/apiClient';
+} from '../../../generated/core/client';
 
 const currentYear = String(new Date().getFullYear());
 const previousYear = String(new Date().getFullYear() - 1);

@@ -36,7 +36,7 @@ import GenericDialog from '../../components/GenericDialog/GenericDialog';
 import { AxiosError, isAxiosError } from 'axios';
 import { useStore } from '../../store/GlobalStore';
 import { useDebtPositionTypeOrgSearch } from '../../api/debtTypesCreated';
-import { OrgSilServiceType } from '../../../generated/data-contracts';
+import { OrgSilServiceType } from '../../../generated/core/data-contracts';
 import { theme } from '@pagopa/mui-italia';
 import { useConfirmDialog } from './hooks/useConfirmDialog';
 import { getDebtPositionTypeOrgOperators } from '../../api/debtPositionTypeOrgOperators';

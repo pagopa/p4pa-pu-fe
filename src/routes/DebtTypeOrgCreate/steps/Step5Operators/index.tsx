@@ -4,7 +4,7 @@ import PeopleIcon from '@mui/icons-material/People';
 import SectionBox from '../../../../components/Wizard/SectionBox';
 import WizardStepWrapper from '../../../../components/Wizard/WizardStepWrapper';
 import { FormComponent } from '../../../../components/FormComponent';
-import { OperatorsSelection } from '../../../../../generated/data-contracts';
+import { OperatorsSelection } from '../../../../../generated/core/data-contracts';
 import { DebtTypeOrgForm } from '../../types';
 import { OperatorSelector } from './components/OperatorSelector';
 

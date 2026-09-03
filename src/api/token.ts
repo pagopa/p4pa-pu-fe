@@ -1,6 +1,6 @@
 import utils from '../utils';
 import { parseAndLog } from '../utils/loaders';
-import { accessTokenSchema } from '../../generated/zod-schema';
+import { accessTokenSchema } from '../../generated/core/zod-schema';
 import navigation from '../utils/navigation';
 
 export const postToken = async () => {

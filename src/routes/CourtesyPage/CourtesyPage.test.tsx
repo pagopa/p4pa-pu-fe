@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import utils from '../../utils';
 import { CourtesyPage } from '.';
 import { operatorRoleState } from '../../store/OperatorRoleStore';
-import { OperatorRole } from '../../../generated/data-contracts';
+import { OperatorRole } from '../../../generated/core/data-contracts';
 import { useNavigate } from 'react-router';
 import { STATE } from '../../store/types';
 import { PageRoutes } from '..';
@@ -31,9 +31,11 @@ vi.mock('../../store/GlobalStore', () => ({
   StoreProvider: ({ children }: React.PropsWithChildren<object>) => children
 }));
 
-vi.mock('../../../generated/data-contracts', async (importOriginal) => {
+vi.mock('../../../generated/core/data-contracts', async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import('../../../generated/data-contracts')>();
+    await importOriginal<
+      typeof import('../../../generated/core/data-contracts')
+    >();
 
   return {
     ...actual,

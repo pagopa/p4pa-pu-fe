@@ -1,7 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import utils from '../../utils';
 import { parseAndLog } from '../../utils/loaders';
-import { pagedPaymentsReportingRowSchema } from '../../../generated/zod-schema';
+import { pagedPaymentsReportingRowSchema } from '../../../generated/core/zod-schema';
 import {
   buildQueryParams,
   PaymentReportingRowsFilteredRequest

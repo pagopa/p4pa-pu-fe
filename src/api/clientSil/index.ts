@@ -4,8 +4,8 @@ import { parseAndLog } from '../../utils/loaders';
 import {
   clientDTOPageSchema,
   clientDTOSchema
-} from '../../../generated/zod-schema';
-import type { CreateClientRequest } from '../../../generated/data-contracts';
+} from '../../../generated/core/zod-schema';
+import type { CreateClientRequest } from '../../../generated/core/data-contracts';
 import type { ClientSilFilteredRequest } from './mappings';
 import { buildQueryParams } from './mappings';
 

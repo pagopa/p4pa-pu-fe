@@ -1,7 +1,7 @@
 import { replaceInFile } from 'replace-in-file';
 
 const options = {
-  files: 'generated/zod-schema.ts',
+  files: 'generated/core/zod-schema.ts',
   from: /datetime\(\)/g,
   to: 'datetime({local: true})'
 };

@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router';
 import config from '../../utils/config';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 import { theme } from '@pagopa/mui-italia';
-import { DebtPositionStatus } from '../../../generated/data-contracts';
+import { DebtPositionStatus } from '../../../generated/core/data-contracts';
 import { Download } from '@mui/icons-material';
 import { useStore } from '../../store/GlobalStore';
 import { STATE } from '../../store/types';

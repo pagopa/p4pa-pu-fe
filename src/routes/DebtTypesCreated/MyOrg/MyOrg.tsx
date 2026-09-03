@@ -11,7 +11,7 @@ import {
   DebtPositionTypeOrgWithCountFilters,
   useDebtPositionTypeOrgSearch
 } from '../../../api/debtTypesCreated';
-import { DebtPositionTypeOrgWithCount } from '../../../../generated/data-contracts';
+import { DebtPositionTypeOrgWithCount } from '../../../../generated/core/data-contracts';
 import { useStore } from '../../../store/GlobalStore';
 import { formatDateTime } from '../../../utils/formatters';
 import { generatePath, useNavigate, useParams } from 'react-router';

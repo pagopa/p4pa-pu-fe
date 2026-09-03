@@ -3,7 +3,7 @@ import { BredcrumbItem } from '../../../components/Breadcrumbs/Breadcrumbs';
 import { PageRoutes } from '../..';
 import { generatePath, useParams } from 'react-router';
 import { setCustomBreadcrumbsItems } from '../../../store/AppStateStore';
-import { OperatorsDetail } from '../../../../generated/data-contracts';
+import { OperatorsDetail } from '../../../../generated/core/data-contracts';
 
 export const useBreadcrumbs = ({
   isSuccess,

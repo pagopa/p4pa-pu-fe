@@ -8,7 +8,7 @@ import { useSearch } from '../../hooks/useSearch';
 import { GridColDef } from '@mui/x-data-grid';
 import { Trans, useTranslation } from 'react-i18next';
 import { GridSelector } from '../../components/GridSelector';
-import { DebtPositionTypeOrgDTO } from '../../../generated/data-contracts';
+import { DebtPositionTypeOrgDTO } from '../../../generated/core/data-contracts';
 import { useState } from 'react';
 import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import FilterContainer, {

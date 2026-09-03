@@ -6,7 +6,7 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import {
   PagedDebtPositionTypeWithCount,
   DebtPositionTypeWithCount
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { formatDateTime } from '../../../utils/formatters';
 import { generatePath, useNavigate } from 'react-router';
 import { PageRoutes } from '../../../routes';

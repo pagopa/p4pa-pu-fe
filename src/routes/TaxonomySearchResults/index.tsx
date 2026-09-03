@@ -17,7 +17,7 @@ import {
   shouldShowGeneralError
 } from '../../utils/filtersValidation';
 import { ErrorMessage } from '../../components/ErrorMessage/ErrorMessage';
-import { PagedTaxonomy } from '../../../generated/apiClient';
+import { PagedTaxonomy } from '../../../generated/core/client';
 
 const TaxonomySearchResults = () => {
   const { t } = useTranslation();

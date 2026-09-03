@@ -6,7 +6,7 @@ import { AxiosResponse } from 'axios';
 import {
   ExportFileStatus,
   ExportFileTypeEnum
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { ExportFilesFilteredRequest } from './mapping';
 
 vi.mock('../../utils', () => ({

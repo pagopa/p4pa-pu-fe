@@ -10,7 +10,7 @@ import CustomDataGrid from '../../../components/DataGrid/CustomDataGrid';
 import type {
   ClientDTOPage,
   ClientNoSecretDTO
-} from '../../../../generated/apiClient';
+} from '../../../../generated/core/client';
 
 type ClientSilDataRow = ClientNoSecretDTO & GridValidRowModel;
 

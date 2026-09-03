@@ -1,6 +1,6 @@
 import { screen } from '@testing-library/react';
 import { Sidebar } from './Sidebar';
-import { OperatorRole } from '../../../generated/data-contracts';
+import { OperatorRole } from '../../../generated/core/data-contracts';
 import { setOperatorRole } from '../../store/OperatorRoleStore';
 import utils from '../../utils';
 import { vi } from 'vitest';

@@ -8,7 +8,7 @@ import { moneyFormat } from '../../../../utils/formatters';
 import {
   PagedPaymentsReportingRow,
   PaymentsReportingWithReceiptView
-} from '../../../../../generated/apiClient';
+} from '../../../../../generated/core/client';
 import { buildTelematicReceiptDetailPath } from '../../../../utils/receiptNavigation';
 
 type ReportingDetailDataGridProps = {

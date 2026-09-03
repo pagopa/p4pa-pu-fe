@@ -41,10 +41,7 @@ export const Phone = ({ children, open, onClose }: PhoneProps) => {
           alignItems="center"
         >
           <Typography variant="h6">{t('appPreview.title')}</Typography>
-          <IconButton
-            onClick={onClose}
-            aria-label={t('commons.close')}
-          >
+          <IconButton onClick={onClose} aria-label={t('commons.close')}>
             <CloseIcon fontSize="small" />
           </IconButton>
         </Stack>

@@ -2,7 +2,7 @@ import { format } from 'date-fns';
 import {
   AssessmentsRegistryStatus,
   AssessmentStatus
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { FilteredRequest, FilterValues } from '../../models/Filters';
 import utils from '../../utils';
 

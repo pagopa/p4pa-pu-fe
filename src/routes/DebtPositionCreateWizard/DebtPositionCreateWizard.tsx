@@ -20,7 +20,7 @@ import utils from '../../utils';
 import {
   DebtPositionDetailDTO,
   PersonEntityType
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import { SubjectType } from '../../utils/fieldValidation';
 
 type FormData = {

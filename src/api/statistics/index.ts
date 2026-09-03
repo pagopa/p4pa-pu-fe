@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { RequestParams } from '../../../generated/apiClient';
+import { RequestParams } from '../../../generated/core/client';
 import utils from '../../utils';
 
 export const useGenerateSupersetUrl = () =>

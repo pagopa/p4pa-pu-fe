@@ -5,7 +5,7 @@
 import {
   OrganizationAdditionalLanguage,
   OrganizationDetailDTO
-} from '../../generated/data-contracts';
+} from '../../generated/core/data-contracts';
 import {
   UnifiedFormData,
   UnifiedFormValues,

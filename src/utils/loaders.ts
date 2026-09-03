@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { ZodSchema } from 'zod';
-import * as zodSchema from '../../generated/zod-schema';
+import * as zodSchema from '../../generated/core/zod-schema';
 import utils from '.';
 import { getResourceUrl, ResourceType } from './resources';
 

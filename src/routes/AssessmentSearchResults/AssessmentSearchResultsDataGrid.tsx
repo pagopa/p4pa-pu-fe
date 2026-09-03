@@ -11,7 +11,7 @@ import { PageRoutes } from '../../routes';
 import {
   PagedAssessmentsExtendedDTO,
   AssessmentsExtendedDTO
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import CustomDataGrid from '../../components/DataGrid/CustomDataGrid';
 import { formatDate } from '../../utils/formatters';
 import { getAssessmentStatusChipProps } from '../../utils/assessmentHelpers';

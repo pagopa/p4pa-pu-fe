@@ -11,7 +11,7 @@ import DetailContainer, {
 } from '../../../components/DetailContainer/DetailContainer';
 import TitleComponent from '../../../components/TitleComponent/TitleComponent';
 import GenericDialog from '../../../components/GenericDialog/GenericDialog';
-import { SpontaneousFormDetailDTO } from '../../../../generated/data-contracts';
+import { SpontaneousFormDetailDTO } from '../../../../generated/core/data-contracts';
 import utils from '../../../utils';
 import { PageRoutes } from '../..';
 

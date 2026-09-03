@@ -9,7 +9,7 @@ import type {
   RegistryOutcome,
   RegistrySilEventType,
   RegistryPagoPaEventType
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 
 vi.mock('react-router', async (importOriginal) => {
   const actual = await importOriginal<typeof import('react-router')>();

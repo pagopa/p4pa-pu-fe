@@ -12,7 +12,7 @@ import { ChipProps } from '@mui/material/Chip';
 import {
   DebtPositionStatus,
   PagedDebtPositionView
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 import { format } from 'date-fns';
 import ChipTruncateTooltip from '../../../components/ChipTruncateTooltip';
 import { IconButton } from '@mui/material';

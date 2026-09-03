@@ -14,7 +14,7 @@ import {
   RegistryEventSubType,
   RegistryOutcome,
   RegistrySilEventType
-} from '../../../generated/data-contracts';
+} from '../../../generated/core/data-contracts';
 import * as formatters from '../../utils/formatters';
 
 vi.mock('../../utils/formatters', () => ({

@@ -5,7 +5,7 @@ import {
   ClassificationsExportFileFilter,
   ExportFileTypeEnum,
   LabelEnum
-} from '../../generated/apiClient';
+} from '../../generated/core/client';
 import { format } from 'date-fns';
 
 const isValidLabelEnum = (value: string): value is LabelEnum => {

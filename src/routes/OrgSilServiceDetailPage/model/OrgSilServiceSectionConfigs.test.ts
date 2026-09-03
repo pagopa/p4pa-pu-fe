@@ -7,7 +7,7 @@ import {
   JwtAlgorithm,
   OrgSilServiceDecryptedDTO,
   OrgSilServiceType
-} from '../../../../generated/data-contracts';
+} from '../../../../generated/core/data-contracts';
 
 const translations = {
   'orgSilServiceDetail.sections.generalConfig.title': 'Configurazione Generale',
