@@ -9,7 +9,7 @@ import { theme } from '@pagopa/mui-italia';
 import { generatePath, useNavigate } from 'react-router';
 import TitleComponent from '../../../../components/TitleComponent/TitleComponent';
 import { UnifiedFormData } from '../../../../models/OrganizationEditTypes';
-import { OrganizationDetailDTO } from '../../../../../generated/core/data-contracts';
+import { OrganizationDetail } from '../../../../../generated/core/data-contracts';
 import { PageRoutes } from '../../../../routes';
 import {
   transformFormValuesToFieldData,
@@ -29,7 +29,7 @@ import { FormActionButtons } from './FormActionButtons';
 type OrganizationEditFormProps = {
   formData: UnifiedFormData;
   organizationId: number;
-  originalData: OrganizationDetailDTO;
+  originalData: OrganizationDetail;
 };
 
 /**

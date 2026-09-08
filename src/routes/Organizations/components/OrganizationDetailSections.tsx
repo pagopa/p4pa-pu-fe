@@ -81,7 +81,7 @@ export const Registry = ({ organizationDetailData }: InfoProps) => {
       />
       <Row
         label={t('commons.organizationType')}
-        value={organizationDetailData?.orgTypeCode}
+        value={organizationDetailData?.orgTypeDescription}
       />
       <Row
         label={t('organizations.orgEmail')}

@@ -2,11 +2,11 @@ import { Alert, AlertTitle, Button, Typography } from '@mui/material';
 import EditIcon from '@mui/icons-material/Edit';
 import { ReactNode, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { OrganizationDetailDTO } from '../../../../generated/core/data-contracts';
+import { OrganizationDetail } from '../../../../generated/core/data-contracts';
 
 type OrganizationDetailAlertProps = {
   editFunction: () => void;
-  organizationDetailData: OrganizationDetailDTO;
+  organizationDetailData: OrganizationDetail;
 };
 
 export const OrganizationDetailAlert: React.FC<
@@ -18,17 +18,16 @@ export const OrganizationDetailAlert: React.FC<
   const { t } = useTranslation();
   const [emptyFieldsString, setEmptyFieldsString] = useState<string>('');
 
-  const mandatoryFields: Partial<Record<keyof OrganizationDetailDTO, string>> =
-    {
-      iban: t('commons.iban'),
-      orgLogo: t('organizations.orgLogo'),
-      segregationCode: t('commons.segregationCode')
-    };
+  const mandatoryFields: Partial<Record<keyof OrganizationDetail, string>> = {
+    iban: t('commons.iban'),
+    orgLogo: t('organizations.orgLogo'),
+    segregationCode: t('commons.segregationCode')
+  };
 
   useEffect(() => {
     // create an error bucket if a mandatory key missing in data or exists with an empty value
     const missingKeys = (
-      Object.keys(mandatoryFields) as Array<keyof OrganizationDetailDTO>
+      Object.keys(mandatoryFields) as Array<keyof OrganizationDetail>
     )
       .filter((key) => {
         const value = organizationDetailData[key];

@@ -9,8 +9,7 @@ import {
   useTheme,
   IconButton,
   SxProps,
-  Theme,
-  Avatar
+  Theme
 } from '@mui/material';
 import React, { useEffect, useId } from 'react';
 import { useTranslation } from 'react-i18next';

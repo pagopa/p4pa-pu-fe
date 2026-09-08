@@ -9,7 +9,7 @@ import { generatePath } from 'react-router';
 import { OrganizationEditForm } from './OrganizationEditForm';
 import { UnifiedFormData } from '../../../../models/OrganizationEditTypes';
 import {
-  OrganizationDetailDTO,
+  OrganizationDetail,
   OrganizationStatus
 } from '../../../../../generated/core/data-contracts';
 import { i18nTestSetup } from '../../../../__tests__/i18nTestSetup';
@@ -219,7 +219,7 @@ describe('OrganizationEditForm', () => {
     organizationStatus: 'ACTIVE'
   };
 
-  const mockOriginalData: OrganizationDetailDTO = {
+  const mockOriginalData: OrganizationDetail = {
     organizationId: 1,
     flagTreasury: false,
     externalOrganizationId: 'EXT123',

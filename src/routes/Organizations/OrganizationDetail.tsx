@@ -6,7 +6,7 @@ import EditIcon from '@mui/icons-material/Edit';
 
 import { PageRoutes } from '..';
 import {
-  OrganizationDetailDTO,
+  type OrganizationDetail as OrganizationDetailDTO,
   OrganizationStatus
 } from '../../../generated/core/data-contracts';
 import {
