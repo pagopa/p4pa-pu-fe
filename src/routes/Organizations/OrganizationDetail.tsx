@@ -1,33 +1,30 @@
-import { Box, Grid, Typography, Alert } from '@mui/material';
-import { Trans, useTranslation } from 'react-i18next';
-import TitleComponent, {
-  ActionMenuItem
-} from '../../components/TitleComponent/TitleComponent';
-import { useNavigate, useParams, generatePath } from 'react-router';
-import { useStore } from '../../store/GlobalStore';
-import {
-  getOrganizationDetail,
-  updateOrganization
-} from '../../api/organizations';
+import { Button, Stack } from '@mui/material';
 import { useEffect, useState } from 'react';
+import { Trans, useTranslation } from 'react-i18next';
+import { generatePath, useNavigate, useParams } from 'react-router';
+import EditIcon from '@mui/icons-material/Edit';
+
+import { PageRoutes } from '..';
 import {
   OrganizationDetailDTO,
   OrganizationStatus
 } from '../../../generated/core/data-contracts';
-import { PageRoutes } from '..';
-import DetailContainer from '../../components/DetailContainer/DetailContainer';
 import {
-  accountingInfo,
-  info,
-  integrationBox,
-  paymentInfo
-} from './components/OrganizationDetailSections';
-import { theme } from '@pagopa/mui-italia';
+  getOrganizationDetail,
+  updateOrganization
+} from '../../api/organizations';
+import TitleComponent from '../../components/TitleComponent/TitleComponent';
 import { useLanguage } from '../../hooks/useLanguage';
-import EditIcon from '@mui/icons-material/Edit';
+import { useStore } from '../../store/GlobalStore';
 import utils from '../../utils';
 import { OrganizationDetailAlert } from './components/OrganizationDetailAlert';
-import logoBoxPlaceholder from '../../assets/logoBox.jpg';
+import {
+  Accounting,
+  Management,
+  Payment,
+  Registry
+} from './components/OrganizationDetailSections';
+import { OrgAvatar } from '@core/components/OrgAvatar';
 
 export const OrganizationDetail = () => {
   const { t } = useTranslation();
@@ -124,223 +121,78 @@ export const OrganizationDetail = () => {
     });
   };
 
-  const callToAction: Array<ActionMenuItem | React.ReactNode> = [
-    {
-      icon: <EditIcon />,
-      onActionClick: handleEditClick,
-      isIconButton: true,
-      color: 'primary',
-      dataTestId: 'edit-organization-button'
-    }
-  ];
+  const CallToAction = () => (
+    <Stack direction="row" alignItems="center" gap={2} key="call-to-action">
+      {canShowEdit && (
+        <Button
+          key="enable"
+          variant="contained"
+          onClick={handleActivateClick}
+          data-testid="enable-organization-button"
+          color="primary"
+        >
+          {t('organizations.enableOrg')}
+        </Button>
+      )}
+      <Button
+        key="edit"
+        variant="outlined"
+        startIcon={<EditIcon />}
+        onClick={handleEditClick}
+        data-testid="edit-organization-button"
+      >
+        {t('commons.edit')}
+      </Button>
+      {/* TODO: add when real route is available */}
+      {/* <Button */}
+      {/*   key="manage-integrations" */}
+      {/*   variant="contained" */}
+      {/*   startIcon={<SettingsIcon />} */}
+      {/*   onClick={handleManageIntegrationsClick} */}
+      {/*   data-testid="manage-integrations-button" */}
+      {/* > */}
+      {/*   {t('organizations.manageIntegrations')} */}
+      {/* </Button> */}
+    </Stack>
+  );
 
-  if (canShowEdit) {
-    callToAction.push({
-      buttonText: t('organizations.enableOrg'),
-      onActionClick: handleActivateClick,
-      color: 'primary',
-      dataTestId: 'enable-organization-button'
-    });
-  }
+  const OrganizationLogo = () => (
+    <OrgAvatar
+      src={organizationDetailData?.orgLogo}
+      alt={`${organizationDetailData?.orgName} logo`}
+    />
+  );
 
   return (
-    <>
+    <Stack gap={5} pb={5}>
       <TitleComponent
         title={(isSuccess && organizationDetailData?.orgName) || ''}
-        callToAction={callToAction}
+        startDecoration={<OrganizationLogo />}
+        callToAction={[<CallToAction key="call-to-action" />]}
       />
+
       {canShowEdit && (
         <OrganizationDetailAlert
           editFunction={handleEditClick}
           organizationDetailData={organizationDetailData}
         />
       )}
-      <Grid
-        container
-        direction={'column'}
-        rowSpacing={2}
-        justifyContent={'flex-start'}
-        mt={2}
-      >
-        <Grid item xs={12}>
-          <Grid container direction={'row'} spacing={2}>
-            <Grid item md={7}>
-              {organizationDetailData && (
-                <DetailContainer
-                  omitFlexGridDirection={true}
-                  sections={[
-                    {
-                      inline: true,
-                      inlineSizeFirstElement: 5,
-                      title: {
-                        textTransform: 'uppercase',
-                        fontWeight: 700,
-                        fontSize: '14px',
-                        label: t('commons.infoSingular')
-                      },
-                      data: info(organizationDetailData, t)
-                    }
-                  ]}
-                />
-              )}
-            </Grid>
-            <Grid item md={5}>
-              <Box
-                borderRadius={2}
-                bgcolor={theme.palette.background.paper}
-                padding={3}
-                height="100%"
-                display="flex"
-                flexDirection="column"
-              >
-                <Typography
-                  variant="overline"
-                  component="h3"
-                  sx={{
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    color: theme.palette.text.primary,
-                    display: 'block',
-                    mb: 2
-                  }}
-                >
-                  {t('organizations.orgLogo')}
-                </Typography>
 
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  justifyContent="center"
-                  alignItems="center"
-                  flexGrow={1}
-                  mb={2}
-                >
-                  <Box
-                    sx={{
-                      border: `1px solid ${theme.palette.grey[300]}`,
-                      borderRadius: 2,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      padding: 3,
-                      width: '200px',
-                      height: '200px',
-                      bgcolor: organizationDetailData?.orgLogo
-                        ? theme.palette.common.white
-                        : theme.palette.grey[50]
-                    }}
-                  >
-                    {organizationDetailData?.orgLogo ? (
-                      <img
-                        src={organizationDetailData.orgLogo}
-                        alt={t('organizations.orgLogo')}
-                        style={{
-                          maxWidth: '100%',
-                          maxHeight: '100%',
-                          objectFit: 'contain'
-                        }}
-                      />
-                    ) : (
-                      <img
-                        src={logoBoxPlaceholder}
-                        alt={t('organizations.logoPlaceholder')}
-                        style={{
-                          objectFit: 'contain',
-                          opacity: 0.5
-                        }}
-                      />
-                    )}
-                  </Box>
-                </Box>
+      {organizationDetailData && (
+        <>
+          <Stack direction="row" gap={2} width="100%">
+            <Registry organizationDetailData={organizationDetailData} />
+            <Management organizationDetailData={organizationDetailData} />
+          </Stack>
 
-                {organizationDetailData?.orgLogo ? (
-                  <Typography
-                    variant="body2"
-                    color="text.secondary"
-                    textAlign="center"
-                    sx={{ fontSize: '14px' }}
-                  >
-                    {t('organizations.orgLogoDescription')}
-                  </Typography>
-                ) : (
-                  <Alert
-                    severity="error"
-                    sx={{
-                      '& .MuiAlert-message': {
-                        fontSize: '14px'
-                      }
-                    }}
-                  >
-                    {t('organizations.orgLogoMissingAlert')}
-                  </Alert>
-                )}
-              </Box>
-            </Grid>
-          </Grid>
-        </Grid>
-        <Grid item xs={12}>
-          {organizationDetailData && (
-            <DetailContainer
-              omitFlexGridDirection={true}
-              sections={[
-                {
-                  inline: true,
-                  inlineSizeFirstElement: 3,
-                  title: {
-                    textTransform: 'uppercase',
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    label: t('commons.accountingInformation')
-                  },
-                  data: accountingInfo(organizationDetailData, t)
-                }
-              ]}
-            />
-          )}
-        </Grid>
-        <Grid item xs={12}>
-          {organizationDetailData && (
-            <DetailContainer
-              omitFlexGridDirection={true}
-              sections={[
-                {
-                  inline: true,
-                  inlineSizeFirstElement: 3,
-                  title: {
-                    textTransform: 'uppercase',
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    label: t('commons.payments')
-                  },
-                  data: paymentInfo(organizationDetailData, t, displayNames)
-                }
-              ]}
-            />
-          )}
-        </Grid>
-        <Grid item xs={12}>
-          {organizationDetailData && (
-            <DetailContainer
-              omitFlexGridDirection={true}
-              sections={[
-                {
-                  inline: true,
-                  inlineSizeFirstElement: 3,
-                  title: {
-                    textTransform: 'uppercase',
-                    fontWeight: 700,
-                    fontSize: '14px',
-                    label: t('organizations.otherProducts')
-                  },
-                  data: integrationBox(organizationDetailData, t)
-                }
-              ]}
-            />
-          )}
-        </Grid>
-      </Grid>
-    </>
+          <Accounting organizationDetailData={organizationDetailData} />
+
+          <Payment
+            organizationDetailData={organizationDetailData}
+            displayNames={displayNames}
+          />
+        </>
+      )}
+    </Stack>
   );
 };
-
-export default OrganizationDetail;

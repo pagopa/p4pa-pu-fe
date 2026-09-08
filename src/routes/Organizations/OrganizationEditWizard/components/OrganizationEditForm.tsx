@@ -24,7 +24,6 @@ import { useOrganizationSubmit } from '../../../../hooks/useOrganizationSubmit';
 import { EntityProfileSection } from './Step/sections/EntityProfileSection';
 import { AccountingInfoSection } from './Step/sections/AccountingInfoSection';
 import { PaymentsInfoSection } from './Step/sections/PaymentsInfoSection';
-import { PagoPAIntegrationSection } from './Step/sections/PagoPAIntegrationSection';
 import { FormActionButtons } from './FormActionButtons';
 
 type OrganizationEditFormProps = {
@@ -55,7 +54,6 @@ export const OrganizationEditForm = ({
     handleSubmit,
     errors,
     watchAdditionalLanguage,
-    watchFlagNotifyIo,
     setError,
     trigger
   } = useOrganizationEditForm({
@@ -217,13 +215,6 @@ export const OrganizationEditForm = ({
                 data={formData}
                 t={t}
                 watchAdditionalLanguage={watchAdditionalLanguage}
-              />
-              <PagoPAIntegrationSection
-                control={control}
-                errors={errors}
-                data={formData}
-                t={t}
-                watchFlagNotifyIo={watchFlagNotifyIo}
               />
             </Box>
           </Grid>

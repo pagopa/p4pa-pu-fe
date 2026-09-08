@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { getOrganizationDetail } from '../../api/organizations';
-import OrganizationDetail from './OrganizationDetail';
+import { OrganizationDetail } from './OrganizationDetail';
 import utils from '../../utils';
 
 vi.mock('../../assets/appio.svg', () => ({
