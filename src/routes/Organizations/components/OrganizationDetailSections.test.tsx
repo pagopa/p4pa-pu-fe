@@ -1,170 +1,169 @@
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { MemoryRouter, generatePath } from 'react-router';
+
 import {
-  OrganizationDetail,
-  OrganizationStatus
-} from '../../../../generated/core/data-contracts';
-import {
-  accountingInfo,
-  paymentInfo,
-  info,
-  integrationBox
+  Registry,
+  Management,
+  Accounting,
+  Payment
 } from './OrganizationDetailSections';
-import { i18nTestSetup } from '../../../__tests__/i18nTestSetup';
-import translationIT from '../../../translations/it/translations.json';
-import type { TFunction } from 'i18next';
+import { OrganizationDetail } from '../../../../generated/core/data-contracts';
+import { PageRoutes } from '@core/routes';
 
-describe('OrganizationDetailSections helpers', () => {
-  let originalDisplayNames: typeof Intl.DisplayNames | undefined;
-  type DisplayNamesCtor = new (
-    locales: Array<string> | string,
-    options: { type: 'language' }
-  ) => { of: (code: string) => string };
+const baseOrganization = {
+  organizationId: 123,
+  orgName: 'Comune di Test'
+} as unknown as OrganizationDetail;
 
-  beforeAll(() => {
-    i18nTestSetup(translationIT as unknown as object);
-    originalDisplayNames = (
-      Intl as unknown as { DisplayNames?: typeof Intl.DisplayNames }
-    ).DisplayNames;
-    (Intl as unknown as { DisplayNames: DisplayNamesCtor }).DisplayNames = vi
-      .fn()
-      .mockImplementation(() => ({
-        of: (code: string) => (code === 'fr' ? 'French' : code)
-      })) as unknown as DisplayNamesCtor;
+const renderWithRouter = (ui: JSX.Element) =>
+  render(<MemoryRouter>{ui}</MemoryRouter>);
+
+describe('Registry', () => {
+  it('renders registry fields', () => {
+    const data = {
+      ...baseOrganization,
+      ipaCode: 'IPA123',
+      orgFiscalCode: 'CF123',
+      orgTypeDescription: 'Comune',
+      orgEmail: 'test@example.com'
+    } as OrganizationDetail;
+
+    render(<Registry organizationDetailData={data} />);
+
+    expect(screen.getByText('IPA123')).toBeInTheDocument();
+    expect(screen.getByText('CF123')).toBeInTheDocument();
+    expect(screen.getByText('Comune')).toBeInTheDocument();
+    expect(screen.getByText('test@example.com')).toBeInTheDocument();
   });
 
-  afterAll(() => {
-    if (originalDisplayNames) {
-      (
-        Intl as unknown as { DisplayNames: typeof originalDisplayNames }
-      ).DisplayNames = originalDisplayNames;
-    }
+  it('falls back to "-" for missing values', () => {
+    render(<Registry organizationDetailData={baseOrganization} />);
+
+    expect(screen.getAllByText('-')).toHaveLength(4);
+  });
+});
+
+describe('Management', () => {
+  const data = {
+    ...baseOrganization,
+    debtPositionTypeOrgCount: 3,
+    operatorsCount: 7
+  } as OrganizationDetail;
+
+  it('renders debt types and operators counts', () => {
+    renderWithRouter(<Management organizationDetailData={data} />);
+
+    expect(screen.getByText('3')).toBeInTheDocument();
+    expect(screen.getByText('7')).toBeInTheDocument();
   });
 
-  const baseOrganization: OrganizationDetail = {
-    organizationId: 123,
-    orgName: 'Comune di Test',
-    status: OrganizationStatus.ACTIVE,
-    ipaCode: 'IPA123',
-    orgFiscalCode: 'CF123',
-    orgTypeCode: 'COMUNE'
-  } as unknown as OrganizationDetail;
+  it('links to the debt types and operators pages', () => {
+    renderWithRouter(<Management organizationDetailData={data} />);
 
-  const tMock: TFunction = ((key: string) => key) as unknown as TFunction;
+    const debtTypesLink = screen
+      .getByText('organizations.management.debtTypesLink')
+      .closest('a');
+    const operatorsLink = screen
+      .getByText('organizations.management.operatorsLink')
+      .closest('a');
 
-  it('accountingInfo maps accounting fields and treasury flag correctly', () => {
-    const data: OrganizationDetail = {
+    expect(debtTypesLink).toHaveAttribute(
+      'href',
+      generatePath(PageRoutes.DEBT_TYPES_DASHBOARD_BYORG, {
+        organizationId: data.organizationId
+      })
+    );
+    expect(operatorsLink).toHaveAttribute(
+      'href',
+      generatePath(PageRoutes.BROKER_OPERATORS, {
+        organizationId: data.organizationId,
+        orgName: data.orgName
+      })
+    );
+  });
+});
+
+describe('Accounting', () => {
+  it('renders accounting fields', () => {
+    const data = {
       ...baseOrganization,
       iban: 'IT00A0000000000000000000000',
       postalIban: 'IT00B0000000000000000000000',
-      cbillInterBankCode: 'ABCDE',
-      flagTreasury: true
-    } as unknown as OrganizationDetail;
+      cbillInterBankCode: 'ABCDE'
+    } as OrganizationDetail;
 
-    const result = accountingInfo(data, tMock);
+    render(<Accounting organizationDetailData={data} />);
 
-    expect(result).toHaveLength(4);
-    expect(result[0].label).toBe('commons.iban');
-    expect(result[0].value).toBe('IT00A0000000000000000000000');
-    expect(result[3].label).toBe('commons.cashJournal');
-    expect(result[3].value).toBe('commons.enabled');
+    expect(screen.getByText('IT00A0000000000000000000000')).toBeInTheDocument();
+    expect(screen.getByText('IT00B0000000000000000000000')).toBeInTheDocument();
+    expect(screen.getByText('ABCDE')).toBeInTheDocument();
   });
 
-  it('paymentInfo exposes additional language, flags and secret correctly', () => {
-    const data: OrganizationDetail = {
+  it.each([
+    [true, 'commons.enabled'],
+    [false, 'commons.disabled']
+  ])(
+    'shows cash journal status when flagTreasury=%s',
+    (flagTreasury, expected) => {
+      const data = { ...baseOrganization, flagTreasury } as OrganizationDetail;
+
+      render(<Accounting organizationDetailData={data} />);
+
+      expect(screen.getByText(expected)).toBeInTheDocument();
+    }
+  );
+});
+
+describe('Payment', () => {
+  const displayNames = {
+    of: vi.fn((code: string) => (code === 'fr' ? 'French' : code))
+  } as unknown as Intl.DisplayNames;
+
+  it('renders segregation code and resolves the additional language', () => {
+    const data = {
       ...baseOrganization,
       segregationCode: 'SEG123',
-      additionalLanguage: 'fr',
+      additionalLanguage: 'FR'
+    } as OrganizationDetail;
+
+    render(
+      <Payment organizationDetailData={data} displayNames={displayNames} />
+    );
+
+    expect(screen.getByText('SEG123')).toBeInTheDocument();
+    expect(displayNames.of).toHaveBeenCalledWith('FR');
+  });
+
+  it('does not resolve a language when additionalLanguage is missing', () => {
+    render(
+      <Payment
+        organizationDetailData={baseOrganization}
+        displayNames={displayNames}
+      />
+    );
+
+    expect(displayNames.of).not.toHaveBeenCalled();
+  });
+
+  it('shows push and outcome notification statuses', () => {
+    const data = {
+      ...baseOrganization,
       flagNotifyOutcomePush: true,
-      flagPaymentNotification: false,
-      generateNoticeApiKey: 'secret-key'
-    } as unknown as OrganizationDetail;
+      flagPaymentNotification: false
+    } as OrganizationDetail;
 
-    const displayNames = new Intl.DisplayNames(['it'], { type: 'language' });
-    const result = paymentInfo(data, tMock, displayNames);
-
-    expect(result).toHaveLength(5);
-    expect(result[0].label).toBe('commons.segregationCode');
-    expect(result[0].value).toBe('SEG123');
-    expect(result[1].label).toBe('commons.additionalLanguage');
-    expect(result[1].value).toBe('French');
-    expect(result[2].label).toBe('organizations.paymentPushNotification');
-    expect(result[2].value).toBe('commons.enabled');
-    expect(result[3].label).toBe('organizations.paymentNotified');
-    expect(result[3].value).toBe('commons.disabled');
-    expect(result[4].childrenComponent).toBeDefined();
-  });
-
-  it('info builds state with label, chip color and action links', () => {
-    const data: OrganizationDetail = {
-      ...baseOrganization,
-      status: OrganizationStatus.ACTIVE,
-      operatorsCount: 7,
-      debtPositionTypeOrgCount: 3
-    } as unknown as OrganizationDetail;
-
-    const result = info(data, tMock);
-
-    expect(result[0].label).toBe('commons.state');
-    expect(result[0].value).toBe('ENABLED');
-    expect(result[0].valueType).toBe('status');
-    expect(result[0].chipConfig?.color).toBe('success');
-
-    const operators = result.find((r) => r.label === 'commons.operators');
-    expect(operators?.value).toBe(7);
-    expect(operators?.valueType).toBe('withicon');
-    expect(operators?.iconConfig?.icon).toBeDefined();
-
-    const debtTypes = result.find((r) => r.label === 'commons.debtTypes');
-    expect(debtTypes?.value).toBe(3);
-    expect(debtTypes?.valueType).toBe('withicon');
-    expect(debtTypes?.iconConfig?.icon).toBeDefined();
-  });
-
-  it('Does not show operatorsCount and debtPositionTypeOrgCount if status is not ACTIVE', () => {
-    const data: OrganizationDetail = {
-      ...baseOrganization,
-      status: OrganizationStatus.DRAFT,
-      operatorsCount: 7,
-      debtPositionTypeOrgCount: 3
-    } as unknown as OrganizationDetail;
-
-    const result = info(data, tMock);
-
-    expect(result[0].label).toBe('commons.state');
-    expect(result[0].value).toBe('DRAFT');
-    expect(result[0].valueType).toBe('status');
-    expect(result[0].chipConfig?.color).toBe('default');
-
-    const operators = result.find((r) => r.label === 'commons.operators');
-    expect(operators).toBeUndefined();
-
-    const debtTypes = result.find((r) => r.label === 'commons.debtTypes');
-    expect(debtTypes).toBeUndefined();
-  });
-
-  it('integrationBox exposes IO/SEND flags and secret fields correctly', () => {
-    const data: OrganizationDetail = {
-      ...baseOrganization,
-      flagNotifyIo: true,
-      ioApiKey: 'io-secret',
-      pdndEnabled: false,
-      sendApiKey: 'send-secret'
-    } as unknown as OrganizationDetail;
-
-    const result = integrationBox(data, tMock);
-
-    const ioEnabled = result.find(
-      (r) => r.label === 'organizations.ioMessagge'
+    render(
+      <Payment organizationDetailData={data} displayNames={displayNames} />
     );
-    expect(ioEnabled?.value).toBe('commons.enabled');
-    const ioSecret = result.find((r) => r.childrenComponent && !r.label);
-    expect(ioSecret).toBeDefined();
 
-    const pdnd = result.find(
-      (r) => r.label === 'organizations.pdndIntegration'
-    );
-    expect(pdnd?.value).toBe('commons.disabled');
-    const sendSecret = result[result.length - 1];
-    expect(sendSecret.childrenComponent).toBeDefined();
+    expect(
+      screen.getByText('organizations.paymentPushNotification')
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText('organizations.paymentNotified')
+    ).toBeInTheDocument();
+    expect(screen.getAllByText('commons.enabled')).toHaveLength(1);
+    expect(screen.getAllByText('commons.disabled')).toHaveLength(1);
   });
 });

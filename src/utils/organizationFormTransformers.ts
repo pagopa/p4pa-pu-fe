@@ -4,7 +4,8 @@
 
 import {
   OrganizationAdditionalLanguage,
-  OrganizationDetailDTO
+  OrganizationDetail,
+  OrganizationUpdateDTO
 } from '../../generated/core/data-contracts';
 import {
   UnifiedFormData,
@@ -22,7 +23,7 @@ import { fileToBase64 } from './filevalidation';
  * @returns UnifiedFormData - Form data structure for the unified form
  */
 export const transformApiDataToFormData = (
-  orgData: OrganizationDetailDTO
+  orgData: OrganizationDetail
 ): UnifiedFormData => {
   // Map additionalLanguage enum from API to boolean flag + selected language (lowercase)
   const additionalLangEnum = orgData.additionalLanguage;
@@ -174,8 +175,8 @@ export const unifiedFormDataToFormValues = (
  */
 export const transformFormDataToApiPayload = (
   formData: UnifiedFormData,
-  originalData: OrganizationDetailDTO
-): OrganizationDetailDTO => {
+  originalData: OrganizationUpdateDTO
+): OrganizationUpdateDTO => {
   // Determine orgLogo value based on user actions
   let orgLogoValue: string | undefined;
   if (formData.logoRemoved) {
@@ -203,7 +204,7 @@ export const transformFormDataToApiPayload = (
     }
   }
 
-  const payload: OrganizationDetailDTO = {
+  const payload: OrganizationUpdateDTO = {
     // Fields from original API (readonly)
     organizationId: originalData.organizationId,
     flagTreasury: formData.flagTreasury.value,

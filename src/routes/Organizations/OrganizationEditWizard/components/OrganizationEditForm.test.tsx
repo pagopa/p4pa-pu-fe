@@ -9,7 +9,7 @@ import { generatePath } from 'react-router';
 import { OrganizationEditForm } from './OrganizationEditForm';
 import { UnifiedFormData } from '../../../../models/OrganizationEditTypes';
 import {
-  OrganizationDetailDTO,
+  OrganizationDetail,
   OrganizationStatus
 } from '../../../../../generated/core/data-contracts';
 import { i18nTestSetup } from '../../../../__tests__/i18nTestSetup';
@@ -127,24 +127,6 @@ vi.mock('./Step/sections/PaymentsInfoSection', () => ({
   )
 }));
 
-vi.mock('./Step/sections/PagoPAIntegrationSection', () => ({
-  PagoPAIntegrationSection: ({
-    watchFlagNotifyIo
-  }: {
-    control: unknown;
-    errors: unknown;
-    data: UnifiedFormData;
-    t: (key: string) => string;
-    watchFlagNotifyIo: boolean;
-  }) => (
-    <div data-testid="pagopa-integration-section">
-      {watchFlagNotifyIo && (
-        <div data-testid="io-api-key-visible">IO API Key</div>
-      )}
-    </div>
-  )
-}));
-
 // Mock FormActionButtons
 vi.mock('./FormActionButtons', () => ({
   FormActionButtons: ({
@@ -219,7 +201,7 @@ describe('OrganizationEditForm', () => {
     organizationStatus: 'ACTIVE'
   };
 
-  const mockOriginalData: OrganizationDetailDTO = {
+  const mockOriginalData: OrganizationDetail = {
     organizationId: 1,
     flagTreasury: false,
     externalOrganizationId: 'EXT123',
@@ -293,9 +275,6 @@ describe('OrganizationEditForm', () => {
       expect(screen.getByTestId('entity-profile-section')).toBeInTheDocument();
       expect(screen.getByTestId('accounting-info-section')).toBeInTheDocument();
       expect(screen.getByTestId('payments-info-section')).toBeInTheDocument();
-      expect(
-        screen.getByTestId('pagopa-integration-section')
-      ).toBeInTheDocument();
     });
 
     it('should render TitleComponent with correct props for ACTIVE status', () => {
@@ -412,19 +391,6 @@ describe('OrganizationEditForm', () => {
       ).toBeInTheDocument();
     });
 
-    it('should pass watchFlagNotifyIo to PagoPAIntegrationSection', () => {
-      mockUseOrganizationEditForm.watchFlagNotifyIo = true;
-
-      render(
-        <OrganizationEditForm
-          formData={mockFormData}
-          organizationId={1}
-          originalData={mockOriginalData}
-        />
-      );
-
-      expect(screen.getByTestId('io-api-key-visible')).toBeInTheDocument();
-    });
   });
 
   describe('Navigation', () => {

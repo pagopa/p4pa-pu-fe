@@ -73,24 +73,6 @@ vi.mock('./sections/PaymentsInfoSection', () => ({
   )
 }));
 
-vi.mock('./sections/PagoPAIntegrationSection', () => ({
-  PagoPAIntegrationSection: ({
-    t,
-    watchFlagNotifyIo
-  }: {
-    control: unknown;
-    errors: unknown;
-    data: UnifiedFormData;
-    t: (key: string) => string;
-    watchFlagNotifyIo: boolean;
-  }) => (
-    <div data-testid="pagopa-integration-section">
-      <span>{t('organizationEditWizard.step2.pagoPAIntegration.title')}</span>
-      {watchFlagNotifyIo && <input data-testid="io-api-key-input" />}
-    </div>
-  )
-}));
-
 describe('Step2EntityConfiguration', () => {
   const mockSetData = vi.fn();
   const mockOnNext = vi.fn();
@@ -136,9 +118,7 @@ describe('Step2EntityConfiguration', () => {
     flagNotifyOutcomePush: { value: true, readonly: false },
     flagPaymentNotification: { value: true, readonly: false },
     flagNotifyIo: { value: true, readonly: false },
-    ioApiKey: { value: 'io-api-key-456', readonly: false },
-    pdndEnabled: { value: true, readonly: false },
-    sendApiKey: { value: 'send-api-key-789', readonly: false }
+    pdndEnabled: { value: true, readonly: false }
   };
 
   const translations = {
@@ -150,9 +130,6 @@ describe('Step2EntityConfiguration', () => {
         },
         paymentsInfo: {
           title: 'Informazioni Pagamenti'
-        },
-        pagoPAIntegration: {
-          title: 'Integrazione con i prodotti PagoPA'
         },
         iban: {
           invalid: 'IBAN non valido',
@@ -185,9 +162,6 @@ describe('Step2EntityConfiguration', () => {
 
       expect(screen.getByTestId('accounting-info-section')).toBeInTheDocument();
       expect(screen.getByTestId('payments-info-section')).toBeInTheDocument();
-      expect(
-        screen.getByTestId('pagopa-integration-section')
-      ).toBeInTheDocument();
     });
 
     it('should render step title and required field description', () => {
@@ -231,9 +205,6 @@ describe('Step2EntityConfiguration', () => {
 
       expect(screen.getByText('Informazioni Contabili')).toBeInTheDocument();
       expect(screen.getByText('Informazioni Pagamenti')).toBeInTheDocument();
-      expect(
-        screen.getByText('Integrazione con i prodotti PagoPA')
-      ).toBeInTheDocument();
     });
   });
 
@@ -388,9 +359,7 @@ describe('Step2EntityConfiguration', () => {
             additionalLanguage: expect.objectContaining({ value: true }),
             selectedLanguage: expect.objectContaining({ value: 'EN' }),
             flagNotifyIo: expect.objectContaining({ value: true }),
-            ioApiKey: expect.objectContaining({ value: 'io-api-key-456' }),
-            pdndEnabled: expect.objectContaining({ value: true }),
-            sendApiKey: expect.objectContaining({ value: 'send-api-key-789' })
+            pdndEnabled: expect.objectContaining({ value: true })
           })
         );
       });
@@ -481,21 +450,6 @@ describe('Step2EntityConfiguration', () => {
       expect(paymentsSection).toBeInTheDocument();
     });
 
-    it('should pass correct props to PagoPAIntegrationSection', () => {
-      render(
-        <Step2EntityConfiguration
-          data={mockFilledData}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      );
-
-      const integrationSection = screen.getByTestId(
-        'pagopa-integration-section'
-      );
-      expect(integrationSection).toBeInTheDocument();
-    });
   });
 
   describe('Conditional Rendering', () => {
@@ -528,37 +482,6 @@ describe('Step2EntityConfiguration', () => {
       );
 
       expect(screen.getByTestId('language-select')).toBeInTheDocument();
-    });
-
-    it('should not show IO API Key input when flagNotifyIo is false', () => {
-      render(
-        <Step2EntityConfiguration
-          data={mockInitialData}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      );
-
-      expect(screen.queryByTestId('io-api-key-input')).not.toBeInTheDocument();
-    });
-
-    it('should show IO API Key input when flagNotifyIo is true', () => {
-      const dataWithIo = {
-        ...mockInitialData,
-        flagNotifyIo: { value: true, readonly: false }
-      };
-
-      render(
-        <Step2EntityConfiguration
-          data={dataWithIo}
-          setData={mockSetData}
-          onNext={mockOnNext}
-          onBack={mockOnBack}
-        />
-      );
-
-      expect(screen.getByTestId('io-api-key-input')).toBeInTheDocument();
     });
   });
 
