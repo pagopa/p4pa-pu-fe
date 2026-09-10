@@ -342,7 +342,9 @@ describe('MultiFilter Component', () => {
     render(<MultiFilter filterMap={mockFilterMap} />);
 
     // Verify initial render has both filters
-    const removeButtons = screen.getAllByRole('button', { name: 'remove' });
+    const removeButtons = screen.getAllByRole('button', {
+      name: 'a11y.filters.removeFilter'
+    });
     expect(removeButtons).toHaveLength(2);
 
     // Remove first filter row
@@ -379,7 +381,9 @@ describe('MultiFilter Component', () => {
     it('allow to remove CLASSIFICATION_TYPE as filter', () => {
       setSelectedFilters(['AMOUNT', 'CLASSIFICATION_TYPE']);
       render(<MultiFilter filterMap={mockFilterMap} />);
-      const removeButtons = screen.getAllByLabelText('remove');
+      const removeButtons = screen.getAllByLabelText(
+        'a11y.filters.removeFilter'
+      );
       fireEvent.click(removeButtons[1]);
       expect(selectedFilters.value).not.toContain('CLASSIFICATION_TYPE');
     });
@@ -431,7 +435,9 @@ describe('MultiFilter Component', () => {
 
       render(<MultiFilter filterMap={mockFilterMap} />);
 
-      expect(screen.queryByLabelText('remove')).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText('a11y.filters.removeFilter')
+      ).not.toBeInTheDocument();
     });
 
     it('shows remove button when multiple filters are selected', () => {
@@ -439,8 +445,24 @@ describe('MultiFilter Component', () => {
 
       render(<MultiFilter filterMap={mockFilterMap} />);
 
-      const removeButtons = screen.getAllByLabelText('remove');
+      const removeButtons = screen.getAllByLabelText(
+        'a11y.filters.removeFilter'
+      );
       expect(removeButtons).toHaveLength(2);
+    });
+
+    it('announces the removal to screen readers', () => {
+      setSelectedFilters(['AMOUNT', 'BILL_CODE']);
+
+      render(<MultiFilter filterMap={mockFilterMap} />);
+
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+
+      fireEvent.click(screen.getAllByLabelText('a11y.filters.removeFilter')[0]);
+
+      expect(screen.getByRole('status')).toHaveTextContent(
+        'a11y.filters.filterRemoved'
+      );
     });
   });
 
