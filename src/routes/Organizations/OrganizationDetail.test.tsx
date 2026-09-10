@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '../../__tests__/renderers';
 import { getOrganizationDetail } from '../../api/organizations';
-import OrganizationDetail from './OrganizationDetail';
+import { OrganizationDetail } from './OrganizationDetail';
 import utils from '../../utils';
 
 vi.mock('../../assets/appio.svg', () => ({
@@ -26,10 +26,13 @@ vi.mock('react-router', async () => {
 });
 
 vi.mock('../../utils', async () => {
-  const actual = await vi.importActual('../../utils');
+  const actual = await vi.importActual<{ default: Record<string, unknown> }>(
+    '../../utils'
+  );
   return {
     ...actual,
     default: {
+      ...actual.default,
       config: {
         deployPath: '/test'
       },
@@ -48,6 +51,7 @@ describe('OrganizationDetail Page', () => {
     orgFiscalCode: '99999999990',
     orgName: 'Ente P4PA intermediato 1',
     orgTypeCode: '03',
+    orgTypeDescription: 'Comune',
     orgEmail: 'enteditest@email.it',
     iban: 'IT111',
     segregationCode: '00',
@@ -56,43 +60,44 @@ describe('OrganizationDetail Page', () => {
     additionalLanguage: 'EN',
     startDate: '2024-12-19',
     brokerId: 1,
-    ioApiKey: '111',
-    flagNotifyIo: true,
     flagNotifyOutcomePush: false,
-    flagPaymentNotification: false,
-    pdndEnabled: false
+    flagPaymentNotification: false
   };
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-
+  const mockQueryResult = (overrides: Partial<typeof dataMock> = {}) => {
     const mockGetOrganizationDetail = getOrganizationDetail as ReturnType<
       typeof vi.fn
     >;
     mockGetOrganizationDetail.mockReturnValue({
-      data: dataMock
+      data: { ...dataMock, ...overrides },
+      isSuccess: true,
+      isError: false,
+      refetch: vi.fn()
     });
+  };
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockQueryResult();
   });
 
   it('renders Organization Detail without crashing', async () => {
     render(<OrganizationDetail />);
 
-    expect(screen.getByText(dataMock.orgTypeCode)).toBeInTheDocument();
+    expect(screen.getByText(dataMock.ipaCode)).toBeInTheDocument();
+    expect(screen.getByText(dataMock.orgTypeDescription)).toBeInTheDocument();
     expect(screen.getByText(dataMock.iban)).toBeInTheDocument();
   });
 
   it('renders Organization Detail with enable-button', async () => {
     const mockUseIsSuperAdmin = vi.mocked(utils.roles.useIsSuperAdmin);
-    const mockGetOrganizationDetail = getOrganizationDetail as ReturnType<
-      typeof vi.fn
-    >;
-    mockGetOrganizationDetail.mockReturnValue({
-      data: { ...dataMock, status: 'DRAFT' }
-    });
+    mockQueryResult({ status: 'DRAFT' });
     mockUseIsSuperAdmin.mockReturnValue(true);
+
     render(<OrganizationDetail />);
 
-    const enableBtn = screen.getByTestId('enable-organization-button');
-    expect(enableBtn).toBeInTheDocument();
+    expect(
+      screen.getByTestId('enable-organization-button')
+    ).toBeInTheDocument();
   });
 });

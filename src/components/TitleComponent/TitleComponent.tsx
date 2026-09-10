@@ -35,6 +35,7 @@ export type ActionMenuItem = {
 
 type TitleComponentProps = {
   title?: string;
+  startDecoration?: React.ReactNode;
   variant?: TypographyOwnProps['variant'];
   description?: string;
   chip?: {
@@ -53,6 +54,7 @@ const isActionMenuItem = (
 
 const TitleComponent = ({
   title,
+  startDecoration,
   variant = 'h3',
   description,
   chip,
@@ -175,10 +177,12 @@ const TitleComponent = ({
             alignItems: 'center',
             minWidth: 0,
             flex: 1,
+            gap: 2,
             overflow: 'hidden',
             mr: 2
           }}
         >
+          {startDecoration}
           <Typography
             variant={variant}
             title={title}
