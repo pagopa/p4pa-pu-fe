@@ -1,7 +1,9 @@
 import { Box, Button, IconButton, Stack, useTheme } from '@mui/material';
 import { Add, RemoveCircleOutline } from '@mui/icons-material';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Filter } from './Filter';
+import { HiddenDiv } from '../HiddenDiv';
 import { FilterCategory, FilterMap } from '../../hooks/useMultiFilters';
 import { useStore } from '../../store/GlobalStore';
 import {
@@ -26,6 +28,17 @@ const MultiFilter = ({ filterMap, onFilterInteraction }: MultiFilterProps) => {
   const {
     state: { selectedFilters }
   } = useStore();
+
+  // Announcement for screen readers after a filter row is removed.
+  // `count` is used as React key so that removing the same filter twice in a
+  // row still updates the live region and gets announced again.
+  const [removed, setRemoved] = useState({ label: '', count: 0 });
+
+  const onRemove = (filterId: KeyofFilterMap) => {
+    const label = filterMap[filterId]?.label ?? '';
+    removeFilterRow(filterId);
+    setRemoved((prev) => ({ label, count: prev.count + 1 }));
+  };
 
   const onChange = (value: FilterFieldValue, index: number) => {
     updateFilter(value as KeyofFilterMap | undefined, index);
@@ -55,8 +68,10 @@ const MultiFilter = ({ filterMap, onFilterInteraction }: MultiFilterProps) => {
                 color: theme.palette.error.dark,
                 alignSelf: 'flex-start'
               }}
-              onClick={() => removeFilterRow(filterId)}
-              aria-label="remove"
+              onClick={() => onRemove(filterId)}
+              aria-label={t('a11y.filters.removeFilter', {
+                filter: filterMap[filterId]?.label ?? ''
+              })}
             >
               <RemoveCircleOutline fontSize="small" />
             </IconButton>
@@ -81,6 +96,13 @@ const MultiFilter = ({ filterMap, onFilterInteraction }: MultiFilterProps) => {
           {t('commons.addfilter')}
         </Button>
       </Box>
+
+      {removed.label && (
+        <HiddenDiv
+          key={removed.count}
+          message={t('a11y.filters.filterRemoved', { filter: removed.label })}
+        />
+      )}
     </Stack>
   );
 };

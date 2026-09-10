@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen, within } from '../../../__tests__/renderers';
+import { render, screen, waitFor, within } from '../../../__tests__/renderers';
 import userEvent from '@testing-library/user-event';
 import { _Select, SelectOptions } from '../_Select';
 
@@ -111,7 +111,7 @@ describe('_Select', () => {
     expect(input.value).toBe('Open');
 
     const root = screen.getByTestId('status-select');
-    const clearBtn = within(root).getByTitle('Clear');
+    const clearBtn = within(root).getByTitle('a11y.select.clear');
     const user = userEvent.setup();
     await user.click(clearBtn);
 
@@ -129,6 +129,32 @@ describe('_Select', () => {
 
     // After parent updates value prop, input should be cleared
     expect(input.value).toBe('');
+  });
+
+  it('clears the selection with the keyboard without opening the listbox', async () => {
+    const onChange = vi.fn();
+    render(
+      <_Select
+        id="status-select"
+        label="Status"
+        options={OPTIONS}
+        value={'OPEN'}
+        onChange={onChange}
+      />
+    );
+
+    // The component focuses the input on mount when a value is set: let that settle
+    await waitFor(() => expect(screen.getByLabelText('Status')).toHaveFocus());
+
+    const root = screen.getByTestId('status-select');
+    const clearBtn = within(root).getByTitle('a11y.select.clear');
+    clearBtn.focus();
+    expect(clearBtn).toHaveFocus();
+
+    await userEvent.setup().keyboard('{Enter}');
+
+    expect(onChange).toHaveBeenCalledWith(undefined);
+    expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
   });
 
   it('updates inputValue when typing in the field', async () => {

@@ -3,6 +3,7 @@ import Autocomplete, {
 } from '@mui/material/Autocomplete';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { useState, useEffect, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FilterFieldValue } from '../../models/Filters';
 
 export type SelectItem = {
@@ -41,6 +42,8 @@ export const _Select = ({
   const { defaultValue: _, ...safeProps } = props as typeof props & {
     defaultValue?: unknown;
   };
+
+  const { t } = useTranslation();
 
   // Derive selected option from value prop (fully controlled component)
   const selectedOption = options.find((opt) => opt.value === value) || null;
@@ -91,6 +94,9 @@ export const _Select = ({
     // User clicked clear button: mark as clearing and let useEffect handle the sync
     if (reason === 'clear') {
       userClearingRef.current = true;
+      // The clear button unmounts as soon as the value is gone: move the focus
+      // back to the input so keyboard/screen reader users are not left on body
+      requestAnimationFrame(() => inputRef.current?.focus());
       return;
     }
 
@@ -166,6 +172,15 @@ export const _Select = ({
       onOpen={() => setIsOpen(true)}
       onClose={handleClose}
       disableClearable={disableClearable}
+      clearText={t('a11y.select.clear')}
+      openText={t('a11y.select.open')}
+      closeText={t('a11y.select.close')}
+      slotProps={{
+        // MUI renders both indicators with tabIndex -1 and keeps the clear icon
+        // visible only on hover/focus of the input: unreachable by keyboard and
+        // not a reliable click target for screen readers.
+        clearIndicator: { tabIndex: 0, sx: { visibility: 'visible' } }
+      }}
       disabled={props.disabled}
       getOptionDisabled={(option) => !!option?.disabled}
       filterOptions={(options, state) => {
@@ -206,6 +221,12 @@ export const _Select = ({
               ...params.InputProps
             }}
             onKeyDown={(e) => {
+              // Keys coming from the clear/open buttons must not be treated as
+              // input keys, otherwise Enter on them submits the form instead of
+              // activating the button
+              if (!(e.target instanceof HTMLInputElement)) {
+                return;
+              }
               if (e.key === 'Enter') {
                 if (!isOpen) {
                   e.preventDefault();
