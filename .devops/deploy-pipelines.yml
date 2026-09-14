@@ -15,6 +15,7 @@ variables:
   NODE_VERSION: '22.12.0'
   vmImageNameDefault: 'ubuntu-latest'
   blob_container_path: 'piattaformaunitaria'
+  extra_modules_path: 'https://github.com/pagopa/p4pa-send-fe'
 
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
     environment: 'UAT'
@@ -72,6 +73,18 @@ pool:
   vmImage: '$(vmImageNameDefault)'
 
 stages:
+  - stage: checkout_extra_modules
+    displayName: 'Checkout extra modules'
+    jobs:
+      - job: job_download_extra_modules
+        displayName: 'Checkout extra modules'
+        steps:
+          - checkout: none
+
+          - script: |
+              git clone --depth 1 "$(extra_modules_path)" "$(Build.SourcesDirectory)/src/extra"
+            displayName: 'Clone extra module'
+
   - stage: prepare_artifact
     displayName: 'Build ${{ variables.environment }} app'
     jobs:
