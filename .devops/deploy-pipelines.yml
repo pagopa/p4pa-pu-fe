@@ -15,7 +15,7 @@ variables:
   NODE_VERSION: '22.12.0'
   vmImageNameDefault: 'ubuntu-latest'
   blob_container_path: 'piattaformaunitaria'
-  extra_modules_path: 'https://github.com/pagopa/p4pa-send-fe'
+  extra_modules_path: 'https://p4pa-pagopa-github-bot:$(UAT_CDN_ENDPOINT)@github.com/pagopa/p4pa-send-fe.git'
 
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
     environment: 'UAT'
@@ -82,14 +82,8 @@ stages:
           - checkout: none
 
           - script: |
-              set -euo pipefail
-              # backticks instead of $(...) so Azure DevOps macro substitution leaves it alone
-              AUTH=`printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0`
-              git -c http.extraheader="AUTHORIZATION: basic $AUTH" \
-                clone --depth 1 "$(extra_modules_path)" "$(Build.SourcesDirectory)/src/extra"
+              git clone --depth 1 "$(extra_modules_path)" "$(Build.SourcesDirectory)/src/extra"
             displayName: 'Clone extra module'
-            env:
-              GITHUB_TOKEN: $(GITHUB_TOKEN)
 
   - stage: prepare_artifact
     displayName: 'Build ${{ variables.environment }} app'
