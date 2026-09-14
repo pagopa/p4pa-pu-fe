@@ -15,7 +15,7 @@ variables:
   NODE_VERSION: '22.12.0'
   vmImageNameDefault: 'ubuntu-latest'
   blob_container_path: 'piattaformaunitaria'
-  extra_modules_path: 'https://p4pa-pagopa-github-bot:$(GITHUB_TOKEN)@github.com/pagopa/p4pa-send-fe.git'
+  extra_modules_path: 'https://github.com/pagopa/arpu-fe-e2e.git'
 
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
     environment: 'UAT'
