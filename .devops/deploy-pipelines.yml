@@ -73,14 +73,13 @@ pool:
   vmImage: '$(vmImageNameDefault)'
 
 stages:
-  - stage: checkout_extra_modules
-    displayName: 'Checkout extra modules'
-    jobs:
-      - job: job_download_extra_modules
-        displayName: 'Checkout extra modules'
-        steps:
-          - checkout: none
 
+  - stage: prepare_artifact
+    displayName: 'Build ${{ variables.environment }} app'
+    jobs:
+      - job: job_build
+        displayName: Build
+        steps:
           - script: |
               set -euo pipefail
               # backticks instead of $(...) so Azure DevOps macro substitution leaves it alone
@@ -91,12 +90,6 @@ stages:
             env:
               GITHUB_TOKEN: $(GITHUB_TOKEN)
 
-  - stage: prepare_artifact
-    displayName: 'Build ${{ variables.environment }} app'
-    jobs:
-      - job: job_build
-        displayName: Build
-        steps:
           - script: ls -la "$(Build.SourcesDirectory)/src/extra"
             displayName: 'check extra module'
 
