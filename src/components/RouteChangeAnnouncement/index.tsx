@@ -11,18 +11,21 @@ export const RouteChangeAnnouncement = () => {
   const updateMessage = () => {
     const page = document?.title.replace(/ - .+$/, ''); // Remove trailing app name
     const mainContent = document.getElementById('main-content');
+    const mainTitle = document.getElementById('main-title');
 
     // This IF is useful to set the focus only on route changes, not on the initial mount
     if (isInitialMount.current) {
       isInitialMount.current = false;
     } else {
-      if (mainContent) {
+      if (mainTitle) {
+        mainTitle.focus();
+      } else if (mainContent) {
         mainContent.focus();
+        const newMessage = t('a11y.navigation.announcement', {
+          page
+        });
+        setMessage(newMessage);
       }
-      const newMessage = t('a11y.navigation.announcement', {
-        page
-      });
-      setMessage(newMessage);
     }
   };
 

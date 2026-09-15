@@ -185,7 +185,6 @@ const TitleComponent = ({
           {startDecoration}
           <Typography
             variant={variant}
-            title={title}
             sx={{
               overflow: 'hidden',
               textOverflow: 'ellipsis',
@@ -206,6 +205,7 @@ const TitleComponent = ({
             data-testid={
               dataTestId || (isMainPageTitle ? 'main-title' : 'section-title')
             }
+            id="main-title"
           >
             {title}
           </Typography>
