@@ -81,6 +81,7 @@ stages:
         displayName: Build
         steps:
           - script: |
+              mkdir -p "$(Build.SourcesDirectory)/src/extra"
               cd "$(Build.SourcesDirectory)/src/extra"
               set -euo pipefail
               # backticks instead of $(...) so Azure DevOps macro substitution leaves it alone
