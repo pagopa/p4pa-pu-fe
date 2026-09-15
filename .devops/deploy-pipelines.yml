@@ -97,6 +97,9 @@ stages:
       - job: job_build
         displayName: Build
         steps:
+          - script: ls -la "$(Build.SourcesDirectory)/src/extra"
+            displayName: 'check extra module'
+
           - template: local-templates/node-job-setup.yaml
 
           - template: local-templates/setup-env.yaml
