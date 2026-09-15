@@ -81,11 +81,12 @@ stages:
         displayName: Build
         steps:
           - script: |
+              cd "$(Build.SourcesDirectory)/src/extra"
               set -euo pipefail
               # backticks instead of $(...) so Azure DevOps macro substitution leaves it alone
               AUTH=`printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0`
               git -c http.extraheader="AUTHORIZATION: basic $AUTH" \
-                clone --depth 1 "$(extra_modules_path)" "$(Build.SourcesDirectory)/src/extra"
+                clone --depth 1 "$(extra_modules_path)"
             displayName: 'Clone extra module'
             env:
               GITHUB_TOKEN: $(GITHUB_TOKEN)
