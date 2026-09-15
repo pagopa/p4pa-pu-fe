@@ -80,8 +80,9 @@ stages:
       - job: job_build
         displayName: Build
         steps:
+          - template: local-templates/node-job-setup.yaml
+    
           - script: |
-              mkdir -p "$(Build.SourcesDirectory)/src/extra"
               cd "$(Build.SourcesDirectory)/src/extra"
               set -euo pipefail
               # backticks instead of $(...) so Azure DevOps macro substitution leaves it alone
@@ -92,7 +93,6 @@ stages:
             env:
               GITHUB_TOKEN: $(GITHUB_TOKEN)
 
-          - template: local-templates/node-job-setup.yaml
 
           - template: local-templates/setup-env.yaml
             parameters:
