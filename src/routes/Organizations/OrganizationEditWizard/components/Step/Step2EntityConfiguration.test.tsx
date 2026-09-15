@@ -449,7 +449,6 @@ describe('Step2EntityConfiguration', () => {
       const paymentsSection = screen.getByTestId('payments-info-section');
       expect(paymentsSection).toBeInTheDocument();
     });
-
   });
 
   describe('Conditional Rendering', () => {

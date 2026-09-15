@@ -1156,7 +1156,11 @@
       "sectionCodeRequired": "Il campo codice capitolo è obbligatorio",
       "sectionDescriptionRequired": "Il campo Denominazione capitolo è obbligatorio"
     },
-    "yes": "Si"
+    "yes": "Si",
+    "steps": "Passaggi",
+    "step": "Passaggio",
+    "completedStep": "Completato",
+    "uncompletedStep": "Non completato"
   },
   "conservation": {
     "description": "Visualizza i flussi esportati in precedenza e prenota nuove esportazioni."

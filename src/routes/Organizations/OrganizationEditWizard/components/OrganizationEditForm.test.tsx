@@ -390,7 +390,6 @@ describe('OrganizationEditForm', () => {
         screen.getByTestId('additional-language-visible')
       ).toBeInTheDocument();
     });
-
   });
 
   describe('Navigation', () => {
