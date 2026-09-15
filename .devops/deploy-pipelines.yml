@@ -107,6 +107,8 @@ stages:
           - script: |
               export OPENAPI_URL=$(openapi_url)
               export OPENAPI_FILESHARE_URL=$(openapi_fileshare_url)
+              export VITE_APIHOST_SEND="https://api.dev.p4pa.pagopa.it/pu/send"
+              export OPENAPI_SEND="https://raw.githubusercontent.com/pagopa/p4pa-doc/refs/heads/main/openapi/uat/internal/p4pa-send-bff.generated.openapi.json"
               yarn build
             displayName: 'yarn build'
 
