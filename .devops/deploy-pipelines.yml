@@ -92,9 +92,6 @@ stages:
             env:
               GITHUB_TOKEN: $(GITHUB_TOKEN)
 
-          - script: ls -la "$(Build.SourcesDirectory)/src/extra"
-            displayName: 'check extra module'
-
           - template: local-templates/node-job-setup.yaml
 
           - template: local-templates/setup-env.yaml
@@ -112,6 +109,9 @@ stages:
               export OPENAPI_FILESHARE_URL=$(openapi_fileshare_url)
               yarn build
             displayName: 'yarn build'
+
+          - script: ls -la "$(Build.SourcesDirectory)/src/extra"
+            displayName: 'check extra module'
 
           - publish: dist
             artifact: Bundle
