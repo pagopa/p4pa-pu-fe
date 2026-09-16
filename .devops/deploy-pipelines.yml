@@ -89,13 +89,19 @@ stages:
               set -euo pipefail
               # backticks instead of $(...) so Azure DevOps macro substitution leaves it alone
               AUTH=`printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0`
-              # extra_modules_path may contain a comma-separated list of git urls
+              # extra_modules_path may contain a comma-separated list of "giturl#branch" entries
               IFS=',' read -ra REPOS <<< "$(extra_modules_path)"
-              for repo in "${REPOS[@]}"; do
-                repo="$(echo "$repo" | xargs)"
-                [ -z "$repo" ] && continue
+              for entry in "${REPOS[@]}"; do
+                entry="$(echo "$entry" | xargs)"
+                [ -z "$entry" ] && continue
+                if [[ "$entry" != *"#"* ]]; then
+                  echo "Missing #branch in extra_modules_path entry: $entry" >&2
+                  exit 1
+                fi
+                repo="${entry%%#*}"
+                branch="${entry#*#}"
                 git -c http.extraheader="AUTHORIZATION: basic $AUTH" \
-                  clone --depth 1 "$repo"
+                  clone --depth 1 --branch "$branch" "$repo"
               done
             displayName: 'Clone extra modules'
             env:
@@ -117,9 +123,6 @@ stages:
               export OPENAPI_FILESHARE_URL=$(openapi_fileshare_url)
               yarn build
             displayName: 'yarn build'
-
-          - script: ls -la "$(Build.SourcesDirectory)/src/extra"
-            displayName: 'check extra module'
 
           - publish: dist
             artifact: Bundle
