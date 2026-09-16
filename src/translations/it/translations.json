@@ -173,6 +173,15 @@
         "previous": "vai alla pagina precedente"
       },
       "paginationPage": "vai a risultati di pagina {{page}}"
+    },
+    "filters": {
+      "removeFilter": "Elimina filtro di ricerca {{filter}}",
+      "filterRemoved": "Filtro {{filter}} eliminato"
+    },
+    "select": {
+      "clear": "Cancella il valore selezionato",
+      "open": "Apri elenco opzioni",
+      "close": "Chiudi elenco opzioni"
     }
   },
   "appPreview": {
