@@ -15,7 +15,7 @@ variables:
   NODE_VERSION: '22.12.0'
   vmImageNameDefault: 'ubuntu-latest'
   blob_container_path: 'piattaformaunitaria'
-
+  
   ${{ if eq(variables['Build.SourceBranch'], 'refs/heads/uat') }}:
     environment: 'UAT'
     azure_subscription: '$(UAT_AZURE_SUBSCRIPTION)'
@@ -32,6 +32,7 @@ variables:
     openapi_url: '$(UAT_OPENAPI_URL)'
     openapi_fileshare_url: '$(UAT_OPENAPI_FILESHARE_URL)'
     resources_url: '$(UAT_VITE_RESOURCES_URL)'
+    extra_modules_path: '$(UAT_EXTRA_MODULES_PATH)'
 
   ${{ elseif eq(variables['Build.SourceBranch'], 'refs/heads/main') }}:
     environment: 'PROD'
@@ -49,6 +50,7 @@ variables:
     openapi_url: '$(PROD_OPENAPI_URL)'
     openapi_fileshare_url: '$(PROD_OPENAPI_FILESHARE_URL)'
     resources_url: '$(PROD_VITE_RESOURCES_URL)'
+    extra_modules_path: '$(PROD_EXTRA_MODULES_PATH)'
 
   # every branch different from past will be considered as DEV
   ${{ else }}:
@@ -67,6 +69,7 @@ variables:
     openapi_url: '$(DEV_OPENAPI_URL)'
     openapi_fileshare_url: '$(DEV_OPENAPI_FILESHARE_URL)'
     resources_url: '$(DEV_VITE_RESOURCES_URL)'
+    extra_modules_path: '$(DEV_EXTRA_MODULES_PATH)'
 
 pool:
   vmImage: '$(vmImageNameDefault)'
@@ -79,6 +82,29 @@ stages:
         displayName: Build
         steps:
           - template: local-templates/node-job-setup.yaml
+    
+          - script: |
+              cd "$(Build.SourcesDirectory)/src/extra"
+              set -euo pipefail
+              # backticks instead of $(...) so Azure DevOps macro substitution leaves it alone
+              AUTH=`printf 'x-access-token:%s' "$GITHUB_TOKEN" | base64 -w0`
+              # extra_modules_path may contain a comma-separated list of "giturl#branch" entries
+              IFS=',' read -ra REPOS <<< "$(extra_modules_path)"
+              for entry in "${REPOS[@]}"; do
+                entry="$(echo "$entry" | xargs)"
+                [ -z "$entry" ] && continue
+                if [[ "$entry" != *"#"* ]]; then
+                  echo "Missing #branch in extra_modules_path entry: $entry" >&2
+                  exit 1
+                fi
+                repo="${entry%%#*}"
+                branch="${entry#*#}"
+                git -c http.extraheader="AUTHORIZATION: basic $AUTH" \
+                  clone --depth 1 --branch "$branch" "$repo"
+              done
+            displayName: 'Clone extra modules'
+            env:
+              GITHUB_TOKEN: $(GITHUB_TOKEN)
 
           - template: local-templates/setup-env.yaml
             parameters:
