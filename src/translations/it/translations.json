@@ -1343,6 +1343,7 @@
         "subtitle": "Si è verificato un errore durante la creazione della posizione debitoria. Verifica i dati e riprova."
       },
       "installments": {
+        "removeInstallment": "Rimuovi rata",
         "addInstallment": "Aggiungi rata",
         "amount": {
           "label": "Importo",
