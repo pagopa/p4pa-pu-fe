@@ -79,10 +79,7 @@ stages:
               vite_login_url: '$(login_url)'
               vite_resources_url: '$(resources_url)'
 
-          - script: |
-              export OPENAPI_URL=$(openapi_url)
-              export OPENAPI_FILESHARE_URL=$(openapi_fileshare_url)
-              yarn build
+          - script: yarn build
             displayName: 'yarn build'
 
           - publish: dist
